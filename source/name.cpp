@@ -94,6 +94,10 @@ FNameEntry* AllocateNameEntry(const char* Name, dword Index,
 
 FName::FName(const char* Name, EFindName FindType)
 {
+	if (!Name || !*Name)
+	{
+		Name = "None";
+	}
 	Index = 0;
 	int HashIndex = GetTypeHash(Name) & 4095;
 	FNameEntry *TempHash = NameHash[HashIndex];
@@ -212,9 +216,12 @@ void FName::DeleteEntry(int i)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/11 08:10:12  dj_jl
+//	Map empty strings to NAME_None
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/18 18:57:11  dj_jl
 //	Added global name subsystem
 //	
