@@ -44,17 +44,15 @@ void Tick(float deltaTime)
 	int res2;
 
 	// First, raise the floor
-	res1 = T_MovePlane(sector, floorSpeed * deltaTime, floordest,
+	res1 = T_MovePlane(Sector, floorSpeed * deltaTime, floordest,
 		crush, 0, direction);	// floorOrCeiling, direction
 	// Then, lower the ceiling
-	res2 = T_MovePlane(sector, ceilingSpeed * deltaTime,
+	res2 = T_MovePlane(Sector, ceilingSpeed * deltaTime,
 		ceilingdest, crush, 1, -direction);
 	if (res1 == RES_PASTDEST && res2 == RES_PASTDEST)
 	{
-		sector->SpecialData = none;
-		SectorStopSequence(sector);
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
+		SectorStopSequence(Sector);
+		Finished();
 	}
 }
 
@@ -65,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

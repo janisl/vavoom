@@ -69,7 +69,7 @@ void P_SpawnFireFlicker(sector_t * sector)
 
 	Flick = NewSpecialThinker(FireFlicker);
 
-	Flick.sector = sector;
+	Flick.Sector = sector;
 	Flick.time = 4.0 / 35.0;
 	Flick.maxlight = sector->params.lightlevel;
 	Flick.minlight = FindMinSurroundingLight(sector,
@@ -90,7 +90,7 @@ void P_SpawnLightFlash(sector_t * sector)
 	LightFlash Flash;
 
 	Flash = NewSpecialThinker(LightFlash);
-	Flash.sector = sector;
+	Flash.Sector = sector;
 	Flash.maxlight = sector->params.lightlevel;
 
 	Flash.minlight = FindMinSurroundingLight(sector,
@@ -117,7 +117,7 @@ void P_SpawnGlowingLight(sector_t * sector)
 	GlowingLight G;
 
 	G = NewSpecialThinker(GlowingLight);
-	G.sector = sector;
+	G.Sector = sector;
 	G.minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
 	G.maxlight = sector->params.lightlevel;
 	G.direction = -1;
@@ -141,7 +141,7 @@ void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
 	Strobe Flash;
 
 	Flash = NewSpecialThinker(Strobe);
-	Flash.sector = sector;
+	Flash.Sector = sector;
 	Flash.darktime = itof(fastOrSlow) / 35.0;
 	Flash.brighttime = itof(maxtime) / 35.0;
 	Flash.maxlight = sector->params.lightlevel;
@@ -172,7 +172,7 @@ int EV_StartLightStrobing(line_t * line, int *args)
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
 		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (sec->LightingData)
 			continue;
 
 		P_SpawnStrobeFlash(sec, args[2], args[1], 0);
@@ -299,7 +299,7 @@ bool EV_SpawnLight(line_t * line, int *arg, int type)
 
 		Light = NewSpecialThinker(LightEffect);
 		Light.type = type;
-		Light.sector = sec;
+		Light.Sector = sec;
 		Light.time = 0.0;
 		rtn = true;
 		switch (type)
@@ -395,7 +395,7 @@ void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 	PhasedLight Phase;
 
 	Phase = NewSpecialThinker(PhasedLight);
-	Phase.sector = sector;
+	Phase.Sector = sector;
 	if (index == -1)
 	{
 		// sector->lightlevel as the index
@@ -499,6 +499,9 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.19  2005/01/20 08:15:08  dj_jl
 //  Fixed endless loop of phased lights.
 //

@@ -47,10 +47,10 @@ void Tick(float deltaTime)
 
 	amount = (P_Random() & 3) * 16;
 
-	if (sector->params.lightlevel - amount < minlight)
-		sector->params.lightlevel = minlight;
+	if (Sector->params.lightlevel - amount < minlight)
+		Sector->params.lightlevel = minlight;
 	else
-		sector->params.lightlevel = maxlight - amount;
+		Sector->params.lightlevel = maxlight - amount;
 
 	time = 4.0 / 35.0;
 }
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

@@ -451,7 +451,9 @@ addfields sector_t
 	Entity SoundTarget;
 
 	// Thinker for reversable actions
-	Thinker SpecialData;
+	Thinker		FloorData;
+	Thinker		CeilingData;
+	Thinker		LightingData;
 };
 
 #define GRAVITY			1225.0
@@ -700,6 +702,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.52  2005/03/01 14:39:22  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.51  2004/12/27 12:23:09  dj_jl
 //  Multiple small changes for version 1.16
 //

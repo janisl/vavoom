@@ -57,11 +57,9 @@ void Tick(float deltaTime)
 		if (scale <= 0.0)
 		{
 			// Remove
-			sector->floor.dist = originalHeight;
-			P_ChangeSector(sector, true);
-			sector->SpecialData = none;
-			TagFinished(sector->tag);
-			RemoveSpecialThinker(self);
+			Sector->floor.dist = originalHeight;
+			P_ChangeSector(Sector, true);
+			Finished();
 			return;
 		}
 		break;
@@ -77,9 +75,9 @@ void Tick(float deltaTime)
 		break;
 	}
 	accumulator += accSpeed * deltaTime;
-	sector->floor.dist = originalHeight +
+	Sector->floor.dist = originalHeight +
 		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
-	P_ChangeSector(sector, true);
+	P_ChangeSector(Sector, true);
 }
 
 defaultproperties
@@ -89,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

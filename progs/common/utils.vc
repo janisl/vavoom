@@ -1220,7 +1220,8 @@ bool TagBusy(int tag)
 	for (sectorIndex = FindSectorFromTag(tag, -1); sectorIndex >= 0;
 		sectorIndex = FindSectorFromTag(tag, sectorIndex))
 	{
-		if (GLevel.Sectors[sectorIndex].SpecialData)
+		if (GLevel.Sectors[sectorIndex].FloorData ||
+			GLevel.Sectors[sectorIndex].CeilingData)
 		{
 			return true;
 		}
@@ -1394,6 +1395,9 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2005/03/01 14:39:23  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.34  2005/01/25 17:44:36  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

@@ -29,18 +29,30 @@
 
 enum
 {
-	FLEV_LOWERFLOOR,	// lower floor to highest surrounding floor
-	FLEV_LOWERFLOORTOLOWEST,	// lower floor to lowest surrounding floor
-	FLEV_LOWERFLOORBYVALUE,
-	FLEV_RAISEFLOOR,	// raise floor to lowest surrounding CEILING
-	FLEV_RAISEFLOORTONEAREST,	// raise floor to next highest surrounding floor
-	FLEV_RAISEFLOORBYVALUE,
-	FLEV_RAISEFLOORCRUSH,
-	FLEV_RAISEBYVALUETIMES8,
-	FLEV_LOWERBYVALUETIMES8,
-	FLEV_LOWERTIMES8INSTANT,
-	FLEV_RAISETIMES8INSTANT,
-	FLEV_MOVETOVALUETIMES8
+	FLOOREV_LowerToHighest,
+	FLOOREV_RaiseToHighest,
+	FLOOREV_LowerToLowest,
+	FLOOREV_LowerToNearest,
+	FLOOREV_RaiseToNearest,
+	FLOOREV_RaiseToLowestCeiling,
+	FLOOREV_LowerByValue,
+	FLOOREV_RaiseByValue,
+	FLOOREV_LowerByValueTimes8,
+	FLOOREV_RaiseByValueTimes8,
+	FLOOREV_LowerTimes8Instant,
+	FLOOREV_RaiseTimes8Instant,
+	FLOOREV_MoveToValueTimes8,
+	FLOOREV_RaiseByTexture,
+	FLOOREV_LowerToLowestChange,
+	FLOOREV_RaiseToNearestChange,
+	FLOOREV_RaiseByValueChange,
+	FLOOREV_RaiseByValueChange2,
+	FLOOREV_RaiseAndCrush,
+	FLOOREV_Generic,
+	FLOOREV_GenericChange0,
+	FLOOREV_GenericChangeT,
+	FLOOREV_GenericChange,
+	FLOOREV_Donut
 };
 
 // TYPES -------------------------------------------------------------------
@@ -59,116 +71,30 @@ enum
 //
 //==========================================================================
 
-int EV_DoFloor(line_t * line, int *args, int floortype)
+int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
 {
-	int secnum;
-	int rtn;
-	sector_t *sec;
-	FloorMover Floor;
+	int			SecNum;
+	int			Rtn;
+	sector_t*	Sec;
+	FloorMover	Floor;
 
-	rtn = 0;
-	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
-		secnum = FindSectorFromTag(args[0], secnum))
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		sec = &GLevel.Sectors[secnum];
+		Sec = &GLevel.Sectors[SecNum];
 
-		//      ALREADY MOVING?  IF SO, KEEP GOING...
-		if (sec->SpecialData)
+		// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (Sec->FloorData)
 			continue;
 
-		//
-		//      new floor thinker
-		//
-		rtn = 1;
+		// new floor thinker
+		Rtn = true;
 		Floor = NewSpecialThinker(FloorMover);
-		sec->SpecialData = Floor;
-		Floor.sector = sec;
-		Floor.type = floortype;
-		Floor.crush = 0;
-		Floor.speed = itof(args[1]) * 35.0 / 8.0;//4.0;
-		if (floortype == FLEV_LOWERTIMES8INSTANT ||
-			floortype == FLEV_RAISETIMES8INSTANT)
-		{
-			Floor.speed = 32.0 * 2000.0;
-		}
-		switch (floortype)
-		{
-		case FLEV_LOWERFLOOR:
-			Floor.direction = -1;
-			Floor.floordestheight = FindHighestFloorSurrounding(sec, NULL);
-			break;
-		case FLEV_LOWERFLOORTOLOWEST:
-			Floor.direction = -1;
-			Floor.floordestheight = FindLowestFloorSurrounding(sec, NULL);
-			break;
-		case FLEV_LOWERFLOORBYVALUE:
-			Floor.direction = -1;
-			Floor.floordestheight = Floor.sector->floorheight -
-				itof(args[2]);
-			break;
-		case FLEV_LOWERTIMES8INSTANT:
-		case FLEV_LOWERBYVALUETIMES8:
-			Floor.direction = -1;
-			Floor.floordestheight = Floor.sector->floorheight -
-				itof(args[2]) * 8.0;
-			break;
-		case FLEV_RAISEFLOORCRUSH:
-			Floor.crush = args[2];	// arg[2] = crushing value
-			Floor.direction = 1;
-			Floor.floordestheight = sec->ceilingheight - 8.0;
-			break;
-		case FLEV_RAISEFLOOR:
-			Floor.direction = 1;
-			Floor.floordestheight = FindLowestCeilingSurrounding(sec, NULL);
-			if (Floor.floordestheight > sec->ceilingheight)
-				Floor.floordestheight = sec->ceilingheight;
-			break;
-		case FLEV_RAISEFLOORTONEAREST:
-			Floor.direction = 1;
-			Floor.floordestheight = FindNextHighestFloor(sec, NULL);
-			break;
-		case FLEV_RAISEFLOORBYVALUE:
-			Floor.direction = 1;
-			Floor.floordestheight = Floor.sector->floorheight +
-				itof(args[2]);
-			break;
-		case FLEV_RAISETIMES8INSTANT:
-		case FLEV_RAISEBYVALUETIMES8:
-			Floor.direction = 1;
-			Floor.floordestheight = Floor.sector->floorheight +
-				itof(args[2]) * 8.0;
-			break;
-		case FLEV_MOVETOVALUETIMES8:
-			Floor.floordestheight = itof(args[2]) * 8.0;
-			if (args[3])
-			{
-				Floor.floordestheight = -Floor.floordestheight;
-			}
-			if (Floor.floordestheight > Floor.sector->floorheight)
-			{
-				Floor.direction = 1;
-			}
-			else if (Floor.floordestheight < Floor.sector->floorheight)
-			{
-				Floor.direction = -1;
-			}
-			else
-			{	// already at lowest position
-				rtn = 0;
-			}
-			break;
-		default:
-			Error("Invalid floor type.");
-			rtn = 0;
-			break;
-		}
+		Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
-	if (rtn)
-	{
-		SectorStartSequence(Floor.sector,
-			seq_name[SEQ_PLATFORM + Floor.sector->seqType]);
-	}
-	return rtn;
+	return Rtn;
 }
 
 //==========================================================================
@@ -181,30 +107,20 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, bool raise)
 {
 	bool floor;
 	bool ceiling;
-	int secnum;
-	sector_t *sec;
 
 	if (raise)
 	{
-		floor = EV_DoFloor(line, args, FLEV_RAISEFLOORBYVALUE);
-		for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
-			secnum = FindSectorFromTag(args[0], secnum))
-		{
-			sec = &GLevel.Sectors[secnum];
-			sec->SpecialData = none;
-		}
-		ceiling = EV_DoCeiling(line, args, CLEV_RAISEBYVALUE);
+		floor = EV_DoFloor(args[0], args[1], args[2], args[3], args[4],
+			FLOOREV_RaiseByValue, line);
+		ceiling = EV_DoCeiling(args[0], args[1], args[2], args[3], args[4],
+			CEILEV_RaiseByValue, line);
 	}
 	else
 	{
-		floor = EV_DoFloor(line, args, FLEV_LOWERFLOORBYVALUE);
-		for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
-			secnum = FindSectorFromTag(args[0], secnum))
-		{
-			sec = &GLevel.Sectors[secnum];
-			sec->SpecialData = none;
-		}
-		ceiling = EV_DoCeiling(line, args, CLEV_LOWERBYVALUE);
+		floor = EV_DoFloor(args[0], args[1], args[2], args[3], args[4],
+			FLOOREV_LowerByValue, line);
+		ceiling = EV_DoCeiling(args[0], args[1], args[2], args[3], args[4],
+			CEILEV_LowerByValue, line);
 	}
 	return floor || ceiling;
 }
@@ -215,24 +131,74 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, bool raise)
 //
 //==========================================================================
 
-int EV_FloorCrushStop(line_t * line, int *args)
+int EV_FloorCrushStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
-	FloorMover Floor;
-	bool rtn;
+	FloorMover	Floor;
+	bool		Rtn;
 
-	rtn = 0;
+	Rtn = false;
 	FOREACH(FloorMover, Floor)
 	{
-		if (Floor.type != FLEV_RAISEFLOORCRUSH)
+		if (Floor.CrushStop(Arg1))
 		{
-			continue;
+			Rtn = true;
 		}
-		// Completely remove the crushing floor
-		SectorStopSequence(Floor.sector);
-		Floor.sector->SpecialData = none;
-		TagFinished(Floor.sector->tag);
-		RemoveSpecialThinker(Floor);
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_DoDonut
+//
+//  Handle donut function: lower pillar, raise surrounding pool, both to
+// height, texture and type of the sector surrounding the pool.
+//  Passed the linedef that triggered the donut
+//  Returns whether a thinker was created
+//
+//==========================================================================
+
+int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	sector_t *s1;
+	sector_t *s2;
+	sector_t *s3;
+	int secnum;
+	int rtn;
+	int i;
+	FloorMover Floor;
+
+	secnum = -1;
+	rtn = 0;
+	// do function on all sectors with same tag as linedef
+	while ((secnum = FindSectorFromTag(Arg1, secnum)) >= 0)
+	{
+		s1 = &GLevel.Sectors[secnum];	// s1 is pillar's sector
+
+		// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (s1->FloorData)
+			continue;
+
+		s2 = getNextSector(s1->lines[0], s1);	// s2 is pool's sector
 		rtn = 1;
+
+		// find a two sided line around the pool whose other side isn't the pillar
+		for (i = 0; i < s2->linecount; i++)
+		{
+			if ((!s2->lines[i]->flags & ML_TWOSIDED) ||
+				(s2->lines[i]->backsector == s1))
+				continue;
+			s3 = s2->lines[i]->backsector;
+
+			//  Spawn rising slime
+			Floor = NewSpecialThinker(FloorMover);
+			Floor.InitDonut(s2, s3, Arg2);
+
+			//  Spawn lowering donut-hole
+			Floor = NewSpecialThinker(FloorMover);
+			Floor.InitDonut2(s1, s3, Arg3);
+			break;
+		}
 	}
 	return rtn;
 }
@@ -243,224 +209,60 @@ int EV_FloorCrushStop(line_t * line, int *args)
 //
 //**************************************************************************
 
-// ===== Build Stairs Private Data =====
-
-#define STAIR_QUEUE_SIZE        32
-
 enum
 {
-	STAIRS_NORMAL,
-	STAIRS_SYNC,
-	STAIRS_PHASED
+	STAIRSEV_DownNormal,
+	STAIRSEV_UpNormal,
+	STAIRSEV_DownSync,
+	STAIRSEV_UpSync
 };
 
-struct stairqueue_t
-{
-	sector_t *sector;
-	int type;
-	float height;
-};
-
-stairqueue_t StairQueue[STAIR_QUEUE_SIZE];
-int StairQueueHead;
-int StairQueueTail;
-
-float StairStepDelta;
-int StairDirection;
-float StairSpeed;
-int StairTexture;
-float StairStartDelay;
-float StairStartDelayDelta;
-int StairTextureChange;
-float StairStartHeight;
-
 //==========================================================================
 //
-//  QueueStairSector
+//	EV_BuildStairs
 //
-//==========================================================================
-
-void QueueStairSector(sector_t * sec, int type, float height)
-{
-	if ((StairQueueTail + 1) % STAIR_QUEUE_SIZE == StairQueueHead)
-	{
-		Error("BuildStairs:  Too many branches located.");
-	}
-	StairQueue[StairQueueTail].sector = sec;
-	StairQueue[StairQueueTail].type = type;
-	StairQueue[StairQueueTail].height = height;
-
-	StairQueueTail = (StairQueueTail + 1) % STAIR_QUEUE_SIZE;
-}
-
-//==========================================================================
+//	BUILD A STAIRCASE!
 //
-//  DequeueStairSector
-//
-//==========================================================================
-
-sector_t *DequeueStairSector(int *type, float *height)
-{
-	sector_t *sec;
-
-	if (StairQueueHead == StairQueueTail)
-	{
-		// queue is empty
-		return NULL;
-	}
-	*type = StairQueue[StairQueueHead].type;
-	*height = StairQueue[StairQueueHead].height;
-	sec = StairQueue[StairQueueHead].sector;
-	StairQueueHead = (StairQueueHead + 1) % STAIR_QUEUE_SIZE;
-
-	return sec;
-}
-
-//==========================================================================
-//
-//  ProcessStairSector
-//
-//==========================================================================
-
-void ProcessStairSector(sector_t * sec, int type, float height,
-	int stairsType, float delay, float resetDelay)
-{
-	int i;
-	sector_t *tsec;
-	StairStepMover StairStep;
-
-	//
-	// new stairStep thinker
-	//
-	height += StairStepDelta;
-	StairStep = NewSpecialThinker(StairStepMover);
-	sec->SpecialData = StairStep;
-	StairStep.direction = StairDirection;
-	StairStep.sector = sec;
-	StairStep.floordestheight = height;
-	switch (stairsType)
-	{
-	case STAIRS_NORMAL:
-		StairStep.speed = StairSpeed;
-		if (delay)
-		{
-			StairStep.delayTotal = delay;
-			StairStep.stairsDelayHeight = sec->floorheight + StairStepDelta;
-			StairStep.stairsDelayHeightDelta = StairStepDelta;
-		}
-		StairStep.resetDelay = resetDelay;
-		StairStep.resetDelayTime = resetDelay;
-		StairStep.resetHeight = sec->floorheight;
-		break;
-	case STAIRS_SYNC:
-		StairStep.speed = StairSpeed * (height - StairStartHeight) / StairStepDelta;
-		StairStep.resetDelay = delay;	//arg4
-		StairStep.resetDelayTime = delay;
-		StairStep.resetHeight = sec->floorheight;
-		break;
-/*
-	case STAIRS_PHASED:
-		StairStep.floordestheight = sec->floorheight + StairStepDelta;
-		StairStep.speed = StairSpeed;
-		StairStep.delayTime = StairStartDelay;
-		StairStartDelay += StairStartDelayDelta;
-		StairStep.textureChange = StairTextureChange;
-		StairStep.resetDelayCount = StairStartDelay;
-		break;
-*/
-	default:
-		break;
-	}
-	SectorStartSequence(sec, seq_name[SEQ_PLATFORM + sec->seqType]);
-	//
-	// Find next sector to raise
-	// Find nearby sector with sector special equal to type
-	//
-	for (i = 0; i < sec->linecount; i++)
-	{
-		line_t *line;
-
-		line = sec->lines[i];
-		if (!(line->flags & ML_TWOSIDED))
-		{
-			continue;
-		}
-		tsec = line->frontsector;
-		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
-			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
-			tsec->validcount != *validcount)
-		{
-			QueueStairSector(tsec, type ^ 1, height);
-			tsec->validcount = *validcount;
-		}
-		tsec = line->backsector;
-		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
-			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
-			tsec->validcount != *validcount)
-		{
-			QueueStairSector(tsec, type ^ 1, height);
-			tsec->validcount = *validcount;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  EV_BuildStairs
-//
-//  BUILD A STAIRCASE!
-//
-//  StairDirection is either positive or negative, denoting build stairs
+//	StairDirection is either positive or negative, denoting build stairs
 // up or down.
 //
 //==========================================================================
 
-int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
+int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	int StairsType)
 {
-	int secnum;
-	float height;
-	float delay;
-	float resetDelay;
-	sector_t *sec;
-	sector_t *qSec;
-	int type;
+	int				SecNum;
+	sector_t*		Sec;
+	StairStepMover	StairStep;
+	StairStepMover	StairQueueHead;
 
-	// Set global stairs variables
-	StairTextureChange = 0;
-	StairDirection = direction;
-	StairStepDelta = itof(StairDirection * args[2]);
-	StairSpeed = itof(args[1]) * 4.0;
-	resetDelay = itof(args[4]) / 32.0;
-	delay = itof(args[3]) / 32.0;
-	if (stairsType == STAIRS_PHASED)
+	StairQueueHead = none;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		StairStartDelayDelta = itof(args[3]) / 32.0;
-		StairStartDelay = StairStartDelayDelta;
-		resetDelay = StairStartDelayDelta;
-		delay = 0.0;
-		StairTextureChange = args[4];
-	}
-
-	(*validcount)++;
-	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
-		secnum = FindSectorFromTag(args[0], secnum))
-	{
-		sec = &GLevel.Sectors[secnum];
-
-		StairTexture = sec->floor.pic;
-		StairStartHeight = sec->floorheight;
+		Sec = &GLevel.Sectors[SecNum];
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
-		if (sec->SpecialData)
+		if (Sec->FloorData)
 			continue;
 
-		QueueStairSector(sec, 0, sec->floorheight);
-		sec->special &= ~SECSPEC_BASE_MASK;
+		StairStep = NewSpecialThinker(StairStepMover);
+		StairStep.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5,
+			StairsType);
+		if (StairQueueHead)
+		{
+			StairQueueHead.AppendToQueue(StairStep);
+		}
+		else
+		{
+			StairQueueHead = StairStep;
+		}
+		Sec->special &= ~SECSPEC_BASE_MASK;
 	}
-	for (qSec = DequeueStairSector(&type, &height); qSec != NULL;
-		qSec = DequeueStairSector(&type, &height))
+	for (StairStep = StairQueueHead; StairStep;
+		StairStep = StairStep.QueueNext)
 	{
-		ProcessStairSector(qSec, type, height, stairsType, delay, resetDelay);
+		StairStep.ProcessStairSector();
 	}
 	return 1;
 }
@@ -490,7 +292,7 @@ int EV_BuildPillar(line_t * line, int *args, bool crush)
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
 		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (sec->FloorData || sec->CeilingData)
 			continue;	// already moving
 		if (sec->floorheight == sec->ceilingheight)
 		{
@@ -509,8 +311,9 @@ int EV_BuildPillar(line_t * line, int *args, bool crush)
 		}
 
 		pillar = NewSpecialThinker(Pillar);
-		sec->SpecialData = pillar;
-		pillar.sector = sec;
+		sec->FloorData = pillar;
+		sec->CeilingData = pillar;
+		pillar.Sector = sec;
 		if (!args[2])
 		{
 			pillar.floorSpeed = itof(args[1]) * 4.0;
@@ -533,8 +336,8 @@ int EV_BuildPillar(line_t * line, int *args, bool crush)
 		pillar.ceilingdest = newHeight;
 		pillar.direction = 1;
 		pillar.crush = crush * args[3];
-		SectorStartSequence(pillar.sector,
-			seq_name[SEQ_PLATFORM + pillar.sector->seqType]);
+		SectorStartSequence(pillar.Sector,
+			seq_name[SEQ_PLATFORM + pillar.Sector->seqType]);
 	}
 	return rtn;
 }
@@ -557,7 +360,7 @@ int EV_OpenPillar(line_t * line, int *args)
 		secnum = FindSectorFromTag(args[0], secnum))
 	{
 		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (sec->FloorData || sec->CeilingData)
 			continue;	// already moving
 		if (sec->floorheight != sec->ceilingheight)
 		{	// pillar isn't closed
@@ -565,8 +368,9 @@ int EV_OpenPillar(line_t * line, int *args)
 		}
 		rtn = 1;
 		pillar = NewSpecialThinker(Pillar);
-		sec->SpecialData = pillar;
-		pillar.sector = sec;
+		sec->FloorData = pillar;
+		sec->CeilingData = pillar;
+		pillar.Sector = sec;
 		if (!args[2])
 		{
 			pillar.floordest = FindLowestFloorSurrounding(sec, NULL);
@@ -599,8 +403,8 @@ int EV_OpenPillar(line_t * line, int *args)
 				(sec->ceilingheight - pillar.ceilingdest);
 		}
 		pillar.direction = -1;	// open the pillar
-		SectorStartSequence(pillar.sector,
-			seq_name[SEQ_PLATFORM + pillar.sector->seqType]);
+		SectorStartSequence(pillar.Sector,
+			seq_name[SEQ_PLATFORM + pillar.Sector->seqType]);
 	}
 	return rtn;
 }
@@ -634,15 +438,15 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 		sectorIndex = FindSectorFromTag(tag, sectorIndex))
 	{
 		sector = &GLevel.Sectors[sectorIndex];
-		if (sector->SpecialData)
+		if (sector->FloorData)
 		{
 			// Already busy with another thinker
 			continue;
 		}
 		retCode = true;
 		Waggle = NewSpecialThinker(FloorWaggle);
-		sector->SpecialData = Waggle;
-		Waggle.sector = sector;
+		sector->FloorData = Waggle;
+		Waggle.Sector = sector;
 		Waggle.originalHeight = sector->floor.dist;
 		Waggle.accumulator = itof(offset);
 		Waggle.accSpeed = itof(speed) / 2.0;
@@ -655,10 +459,13 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 	}
 	return retCode;
 }
-
+ 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.18  2005/01/25 17:45:16  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

@@ -78,30 +78,12 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		// if the sector has an active thinker, use it
 		Sec = GLevel.Sides[Line->sidenum[1]].sector;
 	
-		if (Sec->SpecialData)
+		if (Sec->CeilingData)
 		{
-			Door = VerticalDoor(Sec->SpecialData);
-			if (Door && Type == DOOREV_Raise && Door.Type == DOOREV_Raise)
+			Door = VerticalDoor(Sec->CeilingData);
+			if (Door)
 			{
-				// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
-				if (Door.Direction == -1)
-				{
-					Door.Direction = 1;	// go back up
-				}
-				else if (GET_SPAC(Line->flags) != SPAC_PUSH)
-					// [RH] activate push doors don't go back down when you
-					//		run into them (otherwise opening them would be
-					//		a real pain).
-				{
-					if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
-						return false;	// JDC: bad guys never close doors
-					Door.Direction = -1;	// start going down immediately
-				}
-				else
-				{
-					return false;
-				}
-				return true;
+				return Door.ReUse(Type, Line, Thing);
 			}
 			return false;
 		}
@@ -117,7 +99,7 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
 			Sec = &GLevel.Sectors[SecNum];
-			if (Sec->SpecialData)
+			if (Sec->CeilingData)
 			{
 				continue;
 			}
@@ -128,6 +110,56 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		}
 	}
 	return RetCode;
+}
+
+//==========================================================================
+//
+//  EV_GenericDoor
+//
+//	Boom's generic doors.
+//
+//==========================================================================
+
+int EV_GenericDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	line_t* Line, Actor Thing)
+{
+	int			Tag;
+	int			LightTag;
+
+	//	Check for locked door.
+	if (Arg5 && !CheckLock(Thing, Arg5))
+	{
+		return false;
+	}
+
+	//	Check for Boom's local door light special.
+	if (Arg3 & 128)
+	{
+		Tag = 0;
+		LightTag = Arg1;
+	}
+	else
+	{
+		Tag = Arg1;
+		LightTag = 0;
+	}
+
+	switch (Arg3 & 127)
+	{
+	case 0:
+		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0, DOOREV_Raise,
+			Line, Thing);
+	case 1:
+		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0, DOOREV_Open,
+			Line, Thing);
+	case 2:
+		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0, DOOREV_CloseWaitOpen,
+			Line, Thing);
+	case 3:
+		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0, DOOREV_Close,
+			Line, Thing);
+	}
+	return false;
 }
 
 //==========================================================================
@@ -149,15 +181,15 @@ int EV_TextureChangeDoor(line_t* line, int* args)
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
 		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (sec->CeilingData)
 			continue;
 
 		// new door thinker
 		rtn = 1;
 		Door = NewSpecialThinker(TextureChangeDoor);
-		sec->SpecialData = Door;
+		sec->CeilingData = Door;
 
-		Door.sector = sec;
+		Door.Sector = sec;
 		Door.topwait = itof(args[2]) / 35.0;
 		Door.speed = 99999.0;//itof(args[1]) * 4.0
 		Door.line = line;
@@ -192,15 +224,15 @@ int EV_ManualTextureChangeDoor(line_t * line, int* args, Actor thing)
 	// if the sector has an active thinker, use it
 	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
 
-	if (sec->SpecialData)
+	if (sec->CeilingData)
 	{
 		return 1;
 	}
 
 	// new door thinker
 	Door = NewSpecialThinker(TextureChangeDoor);
-	sec->SpecialData = Door;
-	Door.sector = sec;
+	sec->CeilingData = Door;
+	Door.Sector = sec;
 	Door.line = line;
 	Door.direction = 1;
 	Door.speed = 99999.0;//speed;
@@ -223,24 +255,10 @@ int EV_ManualTextureChangeDoor(line_t * line, int* args, Actor thing)
 void P_SpawnDoorCloseIn30(sector_t * sec)
 {
 	VerticalDoor	Door;
-	float			Height;
 
 	Door = NewSpecialThinker(VerticalDoor);
-
-	sec->SpecialData = Door;
+	Door.InitDoorCloseIn30(sec);
 	sec->special = 0;
-
-	Door.sector = sec;
-	Door.Direction = 0;
-	Door.Type = DOOREV_Raise;
-	Door.Speed = 70.0;
-	Door.TopTime = 30.0;
-	Height = FindHighestFloorPoint(sec, &Door.BotSpot);
-	Door.BotDist = DotProduct(vector(Door.BotSpot.x, Door.BotSpot.y, 
-		Height), sec->ceiling.normal);
-	Door.OldFloorDist = sec->floor.dist;
-	Door.TopHeight = sec->ceiling.dist;
-	Door.LightTag = 0;
 }
 
 //==========================================================================
@@ -273,6 +291,9 @@ void EV_LightTurnOnPartway(int LightTag, float Delta)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.18  2005/01/25 17:45:18  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

@@ -45,14 +45,14 @@ void Tick(float deltaTime)
 		return;
 	}
 
-	if (sector->params.lightlevel == minlight)
+	if (Sector->params.lightlevel == minlight)
 	{
-		sector->params.lightlevel = maxlight;
+		Sector->params.lightlevel = maxlight;
 		time = maxtime;
 	}
 	else
 	{
-		sector->params.lightlevel = minlight;
+		Sector->params.lightlevel = minlight;
 		time = mintime;
 	}
 }
@@ -64,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
 //

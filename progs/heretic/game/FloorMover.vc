@@ -25,14 +25,400 @@
 
 class FloorMover : SectorMover;
 
-int type;
-float speed;
-int crush;
-int direction;	// 1 = up, 0 = waiting, -1 = down
-int newspecial;
-int texture;
-float floordestheight;
-int textureChange;	// It's delta, not texture index
+int		Type;
+float	Speed;
+int		Crush;
+int		Direction;	// 1 = up, 0 = waiting, -1 = down
+int		NewSpecial;
+int		Texture;
+float	FloorDestDist;
+int		TextureChange;	// It's delta, not texture index
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, int InType, line_t* Line)
+{
+	sector_t*		ModelSec;
+	float			DestHeight;
+	float			CeilHeight;
+	TVec			Spot;
+	TVec			Spot2;
+
+	Sector = InSector;
+	Sector->FloorData = self;
+
+	Type = InType;
+	Crush = false;
+	Speed = itof(Arg2) * 35.0 / 8.0;
+	if (Type == FLOOREV_LowerTimes8Instant ||
+		Type == FLOOREV_RaiseTimes8Instant)
+	{
+		Speed = 35.0 * 2000.0;
+	}
+	Spot = *Sector->lines[0]->v1;
+	switch (Type)
+	{
+	case FLOOREV_LowerToHighest:
+		Direction = -1;
+		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		if (FloorDestDist != Sector->floor.dist)
+		{
+			Spot.z = DestHeight + itof(Arg3) - 128.0;
+			FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		}
+		break;
+
+	case FLOOREV_RaiseToHighest:
+		Direction = 1;
+		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_LowerToLowest:
+		Direction = -1;
+		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_LowerToNearest:
+		Direction = -1;
+		DestHeight = FindNextLowestFloor(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseToNearest:
+		Direction = 1;
+		DestHeight = FindNextHighestFloor(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseToLowestCeiling:
+		Direction = 1;
+		DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		CeilHeight = FindLowestCeilingPoint(Sector, &Spot2);
+		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
+			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
+			CeilHeight)
+		{
+			Spot2.z = CeilHeight;
+			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
+		}
+		break;
+
+	case FLOOREV_LowerByValue:
+		Direction = -1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) - itof(Arg3);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseByValue:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_LowerByValueTimes8:
+	case FLOOREV_LowerTimes8Instant:
+		Direction = -1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) - itof(Arg3) * 8.0;
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_RaiseByValueTimes8:
+	case FLOOREV_RaiseTimes8Instant:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3) * 8.0;
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_MoveToValueTimes8:
+		FindHighestFloorPoint(Sector, &Spot);
+		DestHeight = itof(Arg3) * 8.0;
+		if (Arg4)
+		{
+			DestHeight = -DestHeight;
+		}
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		if (FloorDestDist > Sector->floor.dist)
+		{
+			Direction = 1;
+		}
+		else
+		{
+			Direction = -1;
+		}
+		break;
+
+	case FLOOREV_RaiseByTexture:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
+			FindShortestTextureAround(Sector);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		break;
+
+	case FLOOREV_LowerToLowestChange:
+		Direction = -1;
+		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Texture = Sector->floor.pic;
+		// jff 1/24/98 make sure NewSpecial gets initialized
+		// in case no surrounding sector is at DestHeight
+		// --> should not affect compatibility <--
+		NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK; 
+		ModelSec = FindModelFloorSector(Sector, DestHeight);
+		if (ModelSec)
+		{
+			Texture = ModelSec->floor.pic;
+			NewSpecial = ModelSec->special & ~SECSPEC_SECRET_MASK;
+		}
+		break;
+
+	case FLOOREV_RaiseToNearestChange:
+		Direction = 1;
+		DestHeight = FindNextHighestFloor(Sector, &Spot);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		SetFloorPic(Sector, Line->frontsector->floor.pic);
+		// NO MORE DAMAGE, IF APPLICABLE
+		Sector->special &= SECSPEC_SECRET_MASK;
+		SectorStartSoundName(Sector, 'PlatformMove', CHAN_VOICE);
+		break;
+
+	case FLOOREV_RaiseByValueChange:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3);
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		SetFloorPic(Sector, Line->frontsector->floor.pic);
+		Sector->special = (Sector->special & SECSPEC_SECRET_MASK) |
+			(Line->frontsector->special & ~SECSPEC_SECRET_MASK);
+		break;
+
+	case FLOOREV_RaiseByValueChange2:
+		Direction = 1;
+		DestHeight = GetPlanePointZ(&Sector->floor, Spot) + itof(Arg3) * 8.0;
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		SetFloorPic(Sector, Line->frontsector->floor.pic);
+		SectorStartSoundName(Sector, 'PlatformMove', CHAN_VOICE);
+		break;
+
+	case FLOOREV_RaiseAndCrush:
+		Crush = Arg3;	// arg[2] = crushing value
+		Direction = 1;
+		DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+		Spot.z = DestHeight - 8.0;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		CeilHeight = FindLowestCeilingPoint(Sector, &Spot2);
+		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
+			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
+			CeilHeight)
+		{
+			Spot2.z = CeilHeight - 8.0;
+			FloorDestDist = DotProduct(Sector->floor.normal, Spot2);
+		}
+		break;
+
+	case FLOOREV_Generic:
+		Direction = (Arg5 & 8) ? 1 : -1;
+		Crush = (Arg4 & 16) ? 20 : 0;
+		switch (Arg4)
+		{
+		case 1:
+			DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+			break;
+		case 2:
+			DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+			break;
+		case 3:
+			if (Direction == 1)
+				DestHeight = FindNextHighestFloor(Sector, &Spot);
+			else
+				DestHeight = FindNextLowestFloor(Sector, &Spot);
+			break;
+		case 4:
+			DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+			break;
+		case 5:
+			DestHeight = FindLowestCeilingPoint(Sector, &Spot);
+			 break;
+		case 6:
+			DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
+				itof(Direction) * FindShortestTextureAround(Sector);
+			 break;
+		default:
+			DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
+				itof(Direction * Arg3);
+			break;
+		}
+		Spot.z = DestHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+
+		if (Arg5 & 3)
+		{
+			if (Arg5 & 4)
+			{
+				// Numeric model change
+				ModelSec = (Arg4 == 4 || Arg4 == 5) ?
+					FindModelCeilingSector(Sector, DestHeight) :
+					FindModelFloorSector(Sector, DestHeight);
+				if (ModelSec)
+				{
+					Texture = ModelSec->floor.pic;
+					switch (Arg5 & 3)
+					{
+					case 1:
+						NewSpecial = 0;
+						Type = FLOOREV_GenericChange0;
+						break;
+					case 2:
+						NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK;
+						Type = FLOOREV_GenericChangeT;
+						break;
+					case 3:
+						Type = FLOOREV_GenericChange;
+						break;
+					}
+				}
+			}
+			else if (Line)
+			{
+				// Trigger model change
+				Texture = Line->frontsector->floor.pic;
+				switch (Arg5 & 3)
+				{
+				case 1:
+					NewSpecial = 0;
+					Type = FLOOREV_GenericChange0;
+					break;
+				case 2:
+					NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK;
+					Type = FLOOREV_GenericChangeT;
+					break;
+				case 3:
+					Type = FLOOREV_GenericChange;
+					break;
+				}
+			}
+		}
+		break;
+	}
+#if 0//FIXME use sequences
+	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+#endif
+}
+
+//==========================================================================
+//
+//	InitStair
+//
+//==========================================================================
+
+void InitStair(sector_t* InSector, int Arg2, int InDirection, float InHeight)
+{
+	TVec			Spot;
+
+	Sector = InSector;
+	Sector->FloorData = self;
+
+	Type = FLOOREV_RaiseBuildStep;
+	Direction = InDirection;
+	Speed = itof(Arg2) * 35.0 / 8.0;
+	FindHighestFloorPoint(Sector, &Spot);
+	Spot.z = InHeight;
+	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+}
+
+//==========================================================================
+//
+//	InitDonut
+//
+//==========================================================================
+
+void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
+{
+	float		DestHeight;
+	TVec		Spot;
+
+	Sector = InSector;
+	Sector->FloorData = self;
+
+	Type = FLOOREV_Donut;
+	Crush = false;
+	Direction = 1;
+	Speed = itof(Arg2) * 4.0;
+	Texture = OtherSector->floor.pic;
+	NewSpecial = 0;
+	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
+	Spot.z = DestHeight;
+	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+}
+
+//==========================================================================
+//
+//	InitDonut2
+//
+//==========================================================================
+
+void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
+{
+	float		DestHeight;
+	TVec		Spot;
+
+	Sector = InSector;
+	Sector->FloorData = self;
+
+	Type = FLOOREV_LowerToNearest;
+	Crush = false;
+	Direction = -1;
+	Speed = itof(Arg3) * 35.0 / 8.0;
+	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
+	Spot.z = DestHeight;
+	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+}
+
+//==========================================================================
+//
+//	CrushStop
+//
+//==========================================================================
+
+bool CrushStop(int InTag)
+{
+	if (Type != FLOOREV_RaiseAndCrush)
+	{
+		return false;
+	}
+	if (Sector->tag != InTag)
+	{
+		return false;
+	}
+
+	// Completely remove the crushing floor
+	SectorStopSequence(Sector);
+	Finished();
+	return true;
+}
 
 //==========================================================================
 //
@@ -46,42 +432,46 @@ void Tick(float deltaTime)
 {
 	int res;
 
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
+	res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
+		Direction, false);
 
 	//FIXME sound sequence
 	if (!(level->tictime & 7))
 	{
-		if (type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
-			type == FLEV_RAISEFLOORTONEARESTCHANGE)
-			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
+		if (Type == FLOOREV_RaiseByValueChange2 ||
+			Type == FLOOREV_RaiseToNearestChange)
+			SectorStartSoundName(Sector, 'PlatformMove', CHAN_VOICE);
 		else
-			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'DoorMove', CHAN_VOICE);
 	}
 
 	if (res == RES_PASTDEST)
 	{
-		sector->SpecialData = none;
 		//FIXME sound sequence
-		if (type == raiseBuildStep ||
-			type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
-			type == FLEV_RAISEFLOORTONEARESTCHANGE)
+		if (Type == FLOOREV_RaiseBuildStep ||
+			Type == FLOOREV_RaiseByValueChange2 ||
+			Type == FLOOREV_RaiseToNearestChange)
 		{
-			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
 		}
-		if ((direction == 1 && type == FLEV_DONUT) ||
-			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
+		if ((Direction == 1 && Type == FLOOREV_Donut) ||
+			(Direction == -1 && Type == FLOOREV_LowerToLowestChange) ||
+			Type == FLOOREV_GenericChange0 ||
+			Type == FLOOREV_GenericChangeT)
 		{
-			sector->special = (sector->special & SECSPEC_SECRET_MASK) |
-				newspecial;
-			SetFloorPic(sector, texture);
+			Sector->special = (Sector->special & SECSPEC_SECRET_MASK) |
+				NewSpecial;
+			SetFloorPic(Sector, Texture);
 		}
-		if (textureChange)
+		else if (Type == FLOOREV_GenericChange)
 		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
+			SetFloorPic(Sector, Texture);
 		}
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
+		if (TextureChange)
+		{
+			SetFloorPic(Sector, Sector->floor.pic - TextureChange);
+		}
+		Finished();
 	}
 }
 
@@ -92,6 +482,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.2  2004/11/22 07:36:25  dj_jl
 //  Implemented all sector specials in all games.
 //

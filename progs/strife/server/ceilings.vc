@@ -35,18 +35,30 @@
 
 enum
 {
-	CLEV_LOWERTOFLOOR,
-	CLEV_RAISETOHIGHEST,
-	CLEV_LOWERANDCRUSH,
-	CLEV_CRUSHANDRAISE,
-	// Doom specials
-	CLEV_CRUSHANDRAISEA,
-	CLEV_CRUSHRAISEANDSTAYSILA,
-	// Hexen specials
-	CLEV_LOWERBYVALUE,
-	CLEV_RAISEBYVALUE,
-	CLEV_CRUSHRAISEANDSTAY,
-	CLEV_MOVETOVALUETIMES8
+	CEILEV_LowerToFloor,
+	CEILEV_LowerToHighestFloor,
+	CEILEV_LowerToLowest,
+	CEILEV_RaiseToHighest,
+	CEILEV_RaiseToNearest,
+	CEILEV_LowerByValue,
+	CEILEV_RaiseByValue,
+	CEILEV_LowerByValueTimes8,
+	CEILEV_RaiseByValueTimes8,
+	CEILEV_LowerTimes8Instant,
+	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValueTimes8,
+	CEILEV_LowerAndCrush,
+	CEILEV_CrushAndRaise,
+	CEILEV_CrushRaiseAndStay,
+	CEILEV_CrushAndRaiseA,
+	CEILEV_CrushAndRaiseSilA,
+	CEILEV_CrushRaiseAndStayA,
+	CEILEV_CrushRaiseAndStaySilA,
+	CEILEV_Generic,
+	CEILEV_GenericChange0,
+	CEILEV_GenericChangeT,
+	CEILEV_GenericChange,
+	CEILEV_GenericCrush
 };
 
 // TYPES -------------------------------------------------------------------
@@ -59,145 +71,45 @@ enum
 
 //==========================================================================
 //
-//  P_ActivateInStasisCeiling
-//
-//  Restart a ceiling that's in-stasis
-//
-//==========================================================================
-
-int P_ActivateInStasisCeiling(line_t * line)
-{
-	CeilingMover Ceiling;
-
-	FOREACH(CeilingMover, Ceiling)
-	{
-		if ((Ceiling.tag == line->arg1) && (Ceiling.direction == 0))
-		{
-			Ceiling.direction = Ceiling.olddirection;
-		}
-	}
-	return 1;
-}
-
-//==========================================================================
-//
 //  EV_DoCeiling
 //
 //  Move a ceiling up/down and all around!
 //
 //==========================================================================
 
-int EV_DoCeiling(line_t * line, int *args, int type)
+int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
 {
-	int secnum;
-	int rtn;
-	sector_t *sec;
-	CeilingMover Ceiling;
-	float destHeight;
+	int				SecNum;
+	int				Rtn;
+	sector_t*		Sec;
+	CeilingMover	Ceiling;
 
-	secnum = -1;
-	rtn = 0;
+	Rtn = false;
 
 	//  Reactivate in-stasis ceilings...for certain types.
-	switch (type)
+	if (Type == CEILEV_CrushAndRaiseA ||
+		Type == CEILEV_CrushAndRaiseSilA)
 	{
-	case CLEV_CRUSHRAISEANDSTAYSILA:
-	case CLEV_CRUSHANDRAISEA:
-		P_ActivateInStasisCeiling(line);
-	default:
-		break;
+		FOREACH(CeilingMover, Ceiling)
+		{
+			Ceiling.ActivateInStasis(Arg1);
+		}
 	}
 
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->CeilingData)
 			continue;
 
 		// new ceiling thinker
-		rtn = 1;
+		Rtn = true;
 		Ceiling = NewSpecialThinker(CeilingMover);
-		sec->SpecialData = Ceiling;
-		Ceiling.sector = sec;
-		Ceiling.crush = false;
-		Ceiling.speed = itof(args[1]) * 4.0;
-
-		switch (type)
-		{
-		case CLEV_LOWERTOFLOOR:
-			Ceiling.bottomheight = sec->floorheight;
-			Ceiling.direction = -1;
-			break;
-
-		case CLEV_RAISETOHIGHEST:
-			Ceiling.topheight = FindHighestCeilingSurrounding(sec, NULL);
-			Ceiling.direction = 1;
-			break;
-
-		case CLEV_LOWERANDCRUSH:
-			Ceiling.crush = args[2];	// args[2] = crushing value
-			Ceiling.bottomheight = sec->floorheight + 8.0;
-			Ceiling.direction = -1;
-			break;
-
-		case CLEV_CRUSHANDRAISE:
-			Ceiling.crush = args[2];	// args[2] = crushing value
-			Ceiling.topheight = sec->ceilingheight;
-			Ceiling.bottomheight = sec->floorheight + 8.0;
-			Ceiling.direction = -1;
-			break;
-
-		case CLEV_CRUSHANDRAISEA:
-		case CLEV_CRUSHRAISEANDSTAYSILA:
-			Ceiling.crush = args[3];	// args[3] = crushing value
-			Ceiling.topheight = sec->ceilingheight;
-			Ceiling.bottomheight = sec->floorheight + 8.0;
-			Ceiling.direction = -1;
-			Ceiling.dnspeed = itof(args[1]) * 4.0;
-			Ceiling.upspeed = itof(args[2]) * 4.0;
-			break;
-
-		case CLEV_CRUSHRAISEANDSTAY:
-			Ceiling.crush = args[2];	// args[2] = crushing value
-			Ceiling.topheight = sec->ceilingheight;
-			Ceiling.bottomheight = sec->floorheight + 8.0;
-			Ceiling.direction = -1;
-			break;
-		case CLEV_LOWERBYVALUE:
-			Ceiling.bottomheight = sec->ceilingheight - itof(args[2]);
-			Ceiling.direction = -1;
-			break;
-		case CLEV_RAISEBYVALUE:
-			Ceiling.topheight = sec->ceilingheight + itof(args[2]);
-			Ceiling.direction = 1;
-			break;
-		case CLEV_MOVETOVALUETIMES8:
-			destHeight = itof(args[2]) * 8.0;
-			if (args[3])
-			{
-				destHeight = -destHeight;
-			}
-			if (sec->ceilingheight <= destHeight)
-			{
-				Ceiling.direction = 1;
-				Ceiling.topheight = destHeight;
-				if (sec->ceilingheight == destHeight)
-				{
-					rtn = 0;
-				}
-			}
-			else if (sec->ceilingheight > destHeight)
-			{
-				Ceiling.direction = -1;
-				Ceiling.bottomheight = destHeight;
-			}
-			break;
-		}
-
-		Ceiling.tag = sec->tag;
-		Ceiling.type = type;
+		Ceiling.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
-	return rtn;
+	return Rtn;
 }
 
 //==========================================================================
@@ -210,17 +122,15 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 
 int EV_CeilingCrushStop(line_t * line, int *args)
 {
-	int rtn;
-	CeilingMover Ceiling;
+	int				rtn;
+	CeilingMover	Ceiling;
 
-	rtn = 0;
+	rtn = false;
 	FOREACH(CeilingMover, Ceiling)
 	{
-		if ((Ceiling.tag == args[0]) && (Ceiling.direction != 0))
+		if (Ceiling.CrushStop(args[0]))
 		{
-			Ceiling.olddirection = Ceiling.direction;
-			Ceiling.direction = 0;	// in-stasis
-			rtn = 1;
+			rtn = true;
 		}
 	}
 	return rtn;
@@ -229,6 +139,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.15  2005/01/25 17:45:17  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

@@ -33,14 +33,30 @@
 
 enum
 {
-	CLEV_LOWERTOFLOOR,
-	CLEV_RAISETOHIGHEST,
-	CLEV_LOWERANDCRUSH,
-	CLEV_CRUSHANDRAISE,
-	CLEV_LOWERBYVALUE,
-	CLEV_RAISEBYVALUE,
-	CLEV_CRUSHRAISEANDSTAY,
-	CLEV_MOVETOVALUETIMES8
+	CEILEV_LowerToFloor,
+	CEILEV_LowerToHighestFloor,
+	CEILEV_LowerToLowest,
+	CEILEV_RaiseToHighest,
+	CEILEV_RaiseToNearest,
+	CEILEV_LowerByValue,
+	CEILEV_RaiseByValue,
+	CEILEV_LowerByValueTimes8,
+	CEILEV_RaiseByValueTimes8,
+	CEILEV_LowerTimes8Instant,
+	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValueTimes8,
+	CEILEV_LowerAndCrush,
+	CEILEV_CrushAndRaise,
+	CEILEV_CrushRaiseAndStay,
+	CEILEV_CrushAndRaiseA,
+	CEILEV_CrushAndRaiseSilA,
+	CEILEV_CrushRaiseAndStayA,
+	CEILEV_CrushRaiseAndStaySilA,
+	CEILEV_Generic,
+	CEILEV_GenericChange0,
+	CEILEV_GenericChangeT,
+	CEILEV_GenericChange,
+	CEILEV_GenericCrush
 };
 
 // TYPES -------------------------------------------------------------------
@@ -51,106 +67,47 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-//==================================================================
+//==========================================================================
 //
 //  EV_DoCeiling
 //
 //  Move a ceiling up/down and all around!
 //
-//==================================================================
+//==========================================================================
 
-int EV_DoCeiling(line_t * line, int *arg, int type)
+int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
 {
-	int secnum, rtn;
-	float destHeight;
-	sector_t *sec;
-	CeilingMover Ceiling;
+	int				SecNum;
+	int				Rtn;
+	sector_t*		Sec;
+	CeilingMover	Ceiling;
 
-	secnum = -1;
-	rtn = 0;
+	Rtn = false;
 
-	for (secnum = FindSectorFromTag(arg[0], secnum); secnum >= 0;
-		secnum = FindSectorFromTag(arg[0], secnum))
+	//  Reactivate in-stasis ceilings...for certain types.
+	if (Type == CEILEV_CrushAndRaiseA ||
+		Type == CEILEV_CrushAndRaiseSilA)
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
-			continue;
-
-		//
-		// new door thinker
-		//
-		rtn = 1;
-		Ceiling = NewSpecialThinker(CeilingMover);
-		sec->SpecialData = Ceiling;
-		Ceiling.sector = sec;
-		Ceiling.crush = 0;
-		Ceiling.speed = itof(arg[1]) * 35.0 / 8.0;//4.0;
-		switch (type)
+		FOREACH(CeilingMover, Ceiling)
 		{
-		case CLEV_CRUSHRAISEANDSTAY:
-			Ceiling.crush = arg[2];	// arg[2] = crushing value
-			Ceiling.topheight = sec->ceilingheight;
-			Ceiling.bottomheight = sec->floorheight + 8.0;
-			Ceiling.direction = -1;
-			break;
-		case CLEV_CRUSHANDRAISE:
-			Ceiling.topheight = sec->ceilingheight;
-		case CLEV_LOWERANDCRUSH:
-			Ceiling.crush = arg[2];	// arg[2] = crushing value
-		case CLEV_LOWERTOFLOOR:
-			Ceiling.bottomheight = sec->floorheight;
-			if (type != CLEV_LOWERTOFLOOR)
-			{
-				Ceiling.bottomheight += 8.0;
-			}
-			Ceiling.direction = -1;
-			break;
-		case CLEV_RAISETOHIGHEST:
-			Ceiling.topheight = FindHighestCeilingSurrounding(sec, NULL);
-			Ceiling.direction = 1;
-			break;
-		case CLEV_LOWERBYVALUE:
-			Ceiling.bottomheight = sec->ceilingheight - itof(arg[2]);
-			Ceiling.direction = -1;
-			break;
-		case CLEV_RAISEBYVALUE:
-			Ceiling.topheight = sec->ceilingheight + itof(arg[2]);
-			Ceiling.direction = 1;
-			break;
-		case CLEV_MOVETOVALUETIMES8:
-			destHeight = itof(arg[2]) * 8.0;
-			if (arg[3])
-			{
-				destHeight = -destHeight;
-			}
-			if (sec->ceilingheight <= destHeight)
-			{
-				Ceiling.direction = 1;
-				Ceiling.topheight = destHeight;
-				if (sec->ceilingheight == destHeight)
-				{
-					rtn = 0;
-				}
-			}
-			else if (sec->ceilingheight > destHeight)
-			{
-				Ceiling.direction = -1;
-				Ceiling.bottomheight = destHeight;
-			}
-			break;
-		default:
-			rtn = 0;
-			break;
-		}
-		Ceiling.tag = sec->tag;
-		Ceiling.type = type;
-		if (rtn)
-		{
-			SectorStartSequence(Ceiling.sector,
-				seq_name[SEQ_PLATFORM + Ceiling.sector->seqType]);
+			Ceiling.ActivateInStasis(Arg1);
 		}
 	}
-	return rtn;
+
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->CeilingData)
+			continue;
+
+		// new ceiling thinker
+		Rtn = true;
+		Ceiling = NewSpecialThinker(CeilingMover);
+		Ceiling.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+	}
+	return Rtn;
 }
 
 //==================================================================
@@ -167,21 +124,20 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 
 	FOREACH(CeilingMover, C)
 	{
-		if (C.tag == args[0])
+		if (C.CrushStop(args[0]))
 		{
-			SectorStopSequence(C.sector);
-			C.sector->SpecialData = none;
-			TagFinished(C.sector->tag);
-			RemoveSpecialThinker(C);
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.15  2005/01/25 17:45:15  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

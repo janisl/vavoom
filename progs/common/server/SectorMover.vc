@@ -23,14 +23,24 @@
 //**
 //**************************************************************************
 
-class SectorMover:SectorThinker;
+class SectorMover : SectorThinker;
 
-void Unarchive(void)
+//==========================================================================
+//
+//	Finished
+//
+//==========================================================================
+
+void Finished()
 {
-	::Unarchive();
-
-	//  Set sector's specialdata
-	sector->SpecialData = self;
+	if (Sector->FloorData == self)
+		Sector->FloorData = none;
+	if (Sector->CeilingData == self)
+		Sector->CeilingData = none;
+	if (Sector->LightingData == self)
+		Sector->LightingData = none;
+	TagFinished(Sector->tag);
+	RemoveSpecialThinker(self);
 }
 
 defaultproperties
@@ -40,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

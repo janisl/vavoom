@@ -37,7 +37,7 @@ int base;
 void Tick(float deltaTime)
 {
 	index += deltaTime;
-	sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
+	Sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2004/11/22 07:36:25  dj_jl
 //  Implemented all sector specials in all games.
 //

@@ -507,13 +507,48 @@ enum
 	LNSPEC_3DFloor = 160,// 160
 	LNSPEC_Contents,
 
+	LNSPEC_PlaneUpNearestWaitDownStay = 172,
+
 	LNSPEC_PlaneAlign = 181,
 
-	LNSPEC_LineTranslucent = 208,
+	LNSPEC_CeilingLowerToHighestFloor = 192,
+	LNSPEC_CeilingLowerInstant,
+	LNSPEC_CeilingRaiseInstant,
+	LNSPEC_CeilingCrushRaiseAndStayA,
+	LNSPEC_CeilingCrushAndRaiseA,
+	LNSPEC_CeilingCrushAndRaiseSilentA,
+	LNSPEC_CeilingRaiseByValueTimes8,
+	LNSPEC_CeilingLowerByValueTimes8,
+	LNSPEC_FloorGeneric,// 200
+	LNSPEC_CeilingGeneric,
+	LNSPEC_DoorGeneric,
+	LNSPEC_PlatGeneric,
+
+	LNSPEC_CeilingGenericCrush = 205,
+	LNSPEC_PlatDownWaitUpStayLip,
+	LNSPEC_PlatPerpetualRaiseLip,
+	LNSPEC_LineTranslucent,
 
 	LNSPEC_TeleportLine = 215,
 
+	LNSPEC_FloorRaiseToNearestChange = 228,
+
+	LNSPEC_FloorRaiseByValueChangeTex = 230,// 230
+	LNSPEC_PlatToggle,
+
+	LNSPEC_FloorRaiseToLowestCeiling = 238,
+	LNSPEC_FloorRaiseByValueChange,
+	LNSPEC_FloorRaiseByTexture,// 240
+	LNSPEC_FloorLowerToLowestChange,
+	LNSPEC_FloorLowerToHighest,
+
 	LNSPEC_DoorCloseWaitOpen = 249,
+	LNSPEC_FloorDonut,// 250
+
+	LNSPEC_CeilingRaiseToNearest = 252,
+	LNSPEC_CeilingLowerToLowest,
+	LNSPEC_CeilingLowerToFloor,
+	LNSPEC_CeilingCrushRaiseAndStaySilentA,
 
 	LNSPEC_Max
 };
@@ -523,6 +558,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2005/03/01 14:39:22  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.23  2005/01/25 17:44:36  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

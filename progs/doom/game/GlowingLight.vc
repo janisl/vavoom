@@ -42,20 +42,20 @@ void Tick(float deltaTime)
 	{
 	case -1:
 		// DOWN
-		sector->params.lightlevel -= ftoi(Speed * deltaTime);
-		if (sector->params.lightlevel <= minlight)
+		Sector->params.lightlevel -= ftoi(Speed * deltaTime);
+		if (Sector->params.lightlevel <= minlight)
 		{
-			sector->params.lightlevel += ftoi(Speed * deltaTime);
+			Sector->params.lightlevel += ftoi(Speed * deltaTime);
 			direction = 1;
 		}
 		break;
 
 	case 1:
 		// UP
-		sector->params.lightlevel += ftoi(Speed * deltaTime);
-		if (sector->params.lightlevel >= maxlight)
+		Sector->params.lightlevel += ftoi(Speed * deltaTime);
+		if (Sector->params.lightlevel >= maxlight)
 		{
-			sector->params.lightlevel -= ftoi(Speed * deltaTime);
+			Sector->params.lightlevel -= ftoi(Speed * deltaTime);
 			direction = -1;
 		}
 		break;
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

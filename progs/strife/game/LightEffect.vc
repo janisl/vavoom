@@ -54,63 +54,63 @@ void Tick(float deltaTime)
 	switch (type)
 	{
 	case LITE_FADE:
-		sector->params.lightlevel += ftoi(delta * deltaTime);
+		Sector->params.lightlevel += ftoi(delta * deltaTime);
 		if (direction == 1)
 		{
-			if (sector->params.lightlevel >= value1)
+			if (Sector->params.lightlevel >= value1)
 			{
-				sector->params.lightlevel = value1;
+				Sector->params.lightlevel = value1;
 				RemoveSpecialThinker(self);
 			}
 		}
-		else if (sector->params.lightlevel <= value1)
+		else if (Sector->params.lightlevel <= value1)
 		{
-			sector->params.lightlevel = value1;
+			Sector->params.lightlevel = value1;
 			RemoveSpecialThinker(self);
 		}
 		break;
 
 	case LITE_GLOW:
-		sector->params.lightlevel += ftoi(delta * deltaTime);
+		Sector->params.lightlevel += ftoi(delta * deltaTime);
 		if (direction == 1)
 		{
-			if (sector->params.lightlevel >= value1)
+			if (Sector->params.lightlevel >= value1)
 			{
-				sector->params.lightlevel = value1;
+				Sector->params.lightlevel = value1;
 				delta = -delta;
 				direction = -1;	// reverse direction
 			}
 		}
-		else if (sector->params.lightlevel <= value2)
+		else if (Sector->params.lightlevel <= value2)
 		{
-			sector->params.lightlevel = value2;
+			Sector->params.lightlevel = value2;
 			delta = -delta;
 			direction = 1;	// reverse direction
 		}
 		break;
 
 	case LITE_FLICKER:
-		if (sector->params.lightlevel == value1)
+		if (Sector->params.lightlevel == value1)
 		{
-			sector->params.lightlevel = value2;
+			Sector->params.lightlevel = value2;
 			time = itof((P_Random() & 7) + 1) / 32.0;
 		}
 		else
 		{
-			sector->params.lightlevel = value1;
+			Sector->params.lightlevel = value1;
 			time = itof((P_Random() & 31) + 1) / 32.0;
 		}
 		break;
 
 	case LITE_STROBE:
-		if (sector->params.lightlevel == value1)
+		if (Sector->params.lightlevel == value1)
 		{
-			sector->params.lightlevel = value2;
+			Sector->params.lightlevel = value2;
 			time = time2;
 		}
 		else
 		{
-			sector->params.lightlevel = value1;
+			Sector->params.lightlevel = value1;
 			time = time1;
 		}
 		break;
@@ -127,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

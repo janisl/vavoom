@@ -107,7 +107,6 @@ void A_BossDeath(void)
 	string mapname;
 	int i;
 	Actor Other;
-	int args[5];
 
 	mapname = ARR2STR(level->mapname);
 	if (strcmp(mapname, "E3M8") && strcmp(mapname, "E4M8"))
@@ -137,12 +136,7 @@ void A_BossDeath(void)
 	// victory!
 	if (!strcmp(mapname, "E4M8"))
 	{
-		args[0] = 666;
-		args[1] = 8;
-		args[2] = 0;
-		args[3] = 0;
-		args[4] = 0;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		return;
 	}
 
@@ -209,6 +203,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.3  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

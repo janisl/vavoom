@@ -43,14 +43,14 @@ void Tick(float deltaTime)
 	if (time >= 0.0)
 		return;
 
-	if (sector->params.lightlevel == minlight)
+	if (Sector->params.lightlevel == minlight)
 	{
-		sector->params.lightlevel = maxlight;
+		Sector->params.lightlevel = maxlight;
 		time = brighttime;
 	}
 	else
 	{
-		sector->params.lightlevel = minlight;
+		Sector->params.lightlevel = minlight;
 		time = darktime;
 	}
 }
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

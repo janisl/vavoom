@@ -93,7 +93,6 @@ void A_BossDeath(void)
 {
 	int i;
 	Actor Other;
-	int args[5];
 
 	if (strcmp(ARR2STR(level->mapname), "MAP07"))
 	{
@@ -120,12 +119,7 @@ void A_BossDeath(void)
 	}
 
 	// victory!
-	args[0] = 667;
-	args[1] = 8;
-	args[2] = 0;
-	args[3] = 0;
-	args[4] = 0;
-	EV_DoFloor(NULL, &args[0], FLEV_RAISETOTEXTURE);
+	EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_RaiseByTexture, NULL);
 }
 
 __states__
@@ -190,6 +184,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.3  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

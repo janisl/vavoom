@@ -46,7 +46,7 @@ void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
 	FloorScroll Scroll;
 
 	Scroll = NewSpecialThinker(FloorScroll);
-	Scroll.sector = sector;
+	Scroll.Sector = sector;
 	Scroll.XSpeed = itof(xdir) * itof(1 << speed) * 16.0;
 	Scroll.YSpeed = itof(ydir) * itof(1 << speed) * 16.0;
 }
@@ -70,6 +70,9 @@ void SpawnWallScroller(line_t * line, int xdir, int ydir)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2004/11/22 07:36:29  dj_jl
 //  Implemented all sector specials in all games.
 //

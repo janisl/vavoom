@@ -947,7 +947,6 @@ void A_BossDeath()
 {
 	int i;
 	Actor Other;
-	int args[5];
 	int VoiceNum;
 
 	// make sure there is a player alive for victory
@@ -972,13 +971,7 @@ void A_BossDeath()
 	if (Class == Crusader)
 	{
 		A_Fall();
-
-		args[0] = 667;
-		args[1] = 8;
-		args[3] = 0;
-		args[4] = 0;
-		args[5] = 0;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == Inquisitor)
 	{
@@ -991,12 +984,7 @@ void A_BossDeath()
 	}
 	else if (Class == Specter1)
 	{
-		args[0] = 999;
-		args[1] = 8;
-		args[2] = 0;
-		args[3] = 0;
-		args[4] = 0;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		Enemy.Player.Objectives = 95;
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(svc_voice);
@@ -1091,12 +1079,7 @@ void A_BossDeath()
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(83);
 		}
-		args[0] = 666;
-		args[1] = 8;
-		args[2] = 0;
-		args[3] = 0;
-		args[4] = 0;
-		EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == SubEntity)
 	{
@@ -1335,6 +1318,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.8  2005/01/25 17:45:17  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

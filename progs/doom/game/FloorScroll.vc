@@ -36,8 +36,8 @@ float YSpeed;
 
 void Tick(float DeltaTime)
 {
-	sector->floor.xoffs += XSpeed * DeltaTime;
-	sector->floor.yoffs += YSpeed * DeltaTime;
+	Sector->floor.xoffs += XSpeed * DeltaTime;
+	Sector->floor.yoffs += YSpeed * DeltaTime;
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.1  2004/11/22 07:36:24  dj_jl
 //  Implemented all sector specials in all games.
 //

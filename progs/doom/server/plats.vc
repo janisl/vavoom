@@ -33,23 +33,26 @@
 
 enum
 {
-	PLAT_UP,
-	PLAT_DOWN,
-	PLAT_WAITING,
-	PLAT_IN_STASIS
+	PLAT_Up,
+	PLAT_Down,
+	PLAT_Waiting,
+	PLAT_InStasis
 };
 
 enum
 {
-	// Doom specials
-	PLAT_PERPETUALRAISELIP,
-	PLAT_DOWNWAITUPSTAYLIP,
-	// Hexen specials
-	PLAT_PERPETUALRAISE,
-	PLAT_DOWNWAITUPSTAY,
-	PLAT_DOWNBYVALUEWAITUPSTAY,
-	PLAT_UPWAITDOWNSTAY,
-	PLAT_UPBYVALUEWAITDOWNSTAY
+	PLATEV_PerpetualRaise,
+	PLATEV_PerpetualRaiseLip,
+	PLATEV_DownWaitUpStay,
+	PLATEV_DownWaitUpStayLip,
+	PLATEV_DownNearestWaitUpStay,
+	PLATEV_DownLowestCeilingWaitUpStay,
+	PLATEV_DownByValueWaitUpStay,
+	PLATEV_UpWaitDownStay,
+	PLATEV_UpNearestWaitDownStay,
+	PLATEV_UpByValueWaitDownStay,
+	PLATEV_Toggle,
+	PLATEV_Generic
 };
 
 // TYPES -------------------------------------------------------------------
@@ -62,131 +65,50 @@ enum
 
 //==========================================================================
 //
-//  P_ActivateInStasis
-//
-//==========================================================================
-
-void P_ActivateInStasis(int tag)
-{
-	Platform Plat;
-
-	FOREACH(Platform, Plat)
-	{
-		if ((Plat.tag == tag) && (Plat.status == PLAT_IN_STASIS))
-		{
-			Plat.status = Plat.oldstatus;
-		}
-	}
-}
-
-//==========================================================================
-//
 //  EV_DoPlat
 //
 //  Do Platforms.
 //
 //==========================================================================
 
-int EV_DoPlat(line_t * line, int *args, int type)
+int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
 {
-	Platform Plat;
-	int secnum;
-	int rtn;
-	sector_t *sec;
+	Platform	Plat;
+	int			SecNum;
+	int			Rtn;
+	sector_t*	Sec;
 
-	secnum = -1;
-	rtn = 0;
+	Rtn = false;
 
-	//  Activate all <type> plats that are PLAT_IN_STASIS
-	if (type == PLAT_PERPETUALRAISELIP)
+	//  Activate all <type> plats that are in stasis.
+	if (Type == PLATEV_PerpetualRaise ||
+		Type == PLATEV_PerpetualRaiseLip ||
+		Type == PLATEV_Toggle)
 	{
 		//  Activate in stasis
-		P_ActivateInStasis(args[0]);
+		FOREACH(Platform, Plat)
+		{
+			Plat.ActivateInStasis(Arg1);
+		}
+		if (Type == PLATEV_Toggle)
+		{
+			Rtn = true;
+		}
 	}
 
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		sec = &GLevel.Sectors[secnum];
-
-		if (sec->SpecialData)
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->FloorData)
 			continue;
 
 		// Find lowest & highest floors around sector
-		rtn = 1;
+		Rtn = 1;
 		Plat = NewSpecialThinker(Platform);
-
-		Plat.type = type;
-		Plat.sector = sec;
-		Plat.sector->SpecialData = Plat;
-		Plat.tag = args[0];
-		Plat.speed = itof(args[1]) * 4.0;
-
-		switch (type)
-		{
-		case PLAT_DOWNWAITUPSTAYLIP:
-			Plat.low = FindLowestFloorSurrounding(sec, NULL) + itof(args[3]);
-			if (Plat.low > sec->floorheight)
-				Plat.low = sec->floorheight;
-			Plat.high = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = PLAT_DOWN;
-			break;
-		case PLAT_PERPETUALRAISELIP:
-			Plat.low = FindLowestFloorSurrounding(sec, NULL) + itof(args[3]);
-			if (Plat.low > sec->floorheight)
-				Plat.low = sec->floorheight;
-			Plat.high = FindHighestFloorSurrounding(sec, NULL);
-			if (Plat.high < sec->floorheight)
-				Plat.high = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = P_Random() & 1;
-			break;
-		case PLAT_DOWNWAITUPSTAY:
-			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
-			if (Plat.low > sec->floorheight)
-				Plat.low = sec->floorheight;
-			Plat.high = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = PLAT_DOWN;
-			break;
-		case PLAT_DOWNBYVALUEWAITUPSTAY:
-			Plat.low = sec->floorheight - itof(args[3]) * 8.0;
-			if (Plat.low > sec->floorheight)
-				Plat.low = sec->floorheight;
-			Plat.high = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = PLAT_DOWN;
-			break;
-		case PLAT_UPWAITDOWNSTAY:
-			Plat.high = FindHighestFloorSurrounding(sec, NULL);
-			if (Plat.high < sec->floorheight)
-				Plat.high = sec->floorheight;
-			Plat.low = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = PLAT_UP;
-			break;
-		case PLAT_UPBYVALUEWAITDOWNSTAY:
-			Plat.high = sec->floorheight + itof(args[3]) * 8.0;
-			if (Plat.high < sec->floorheight)
-				Plat.high = sec->floorheight;
-			Plat.low = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = PLAT_UP;
-			break;
-		case PLAT_PERPETUALRAISE:
-			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
-			if (Plat.low > sec->floorheight)
-				Plat.low = sec->floorheight;
-			Plat.high = FindHighestFloorSurrounding(sec, NULL);
-			if (Plat.high < sec->floorheight)
-				Plat.high = sec->floorheight;
-			Plat.wait = itof(args[2]) / 35.0;
-			Plat.status = P_Random() & 1;
-			break;
-		}
-		SectorStartSoundName(sec, 'PlatformStart', CHAN_VOICE);
+		Plat.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 	}
-	return rtn;
+	return Rtn;
 }
 
 //==========================================================================
@@ -195,17 +117,13 @@ int EV_DoPlat(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-int EV_StopPlat(line_t * line, int *args)
+int EV_StopPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
-	Platform Plat;
+	Platform	Plat;
 
 	FOREACH(Platform, Plat)
 	{
-		if ((Plat.status != PLAT_IN_STASIS) && (Plat.tag == args[0]))
-		{
-			Plat.oldstatus = Plat.status;
-			Plat.status = PLAT_IN_STASIS;
-		}
+		Plat.StopPlat(Arg1);
 	}
 	return 1;
 }
@@ -213,6 +131,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.15  2005/01/25 17:45:12  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

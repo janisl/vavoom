@@ -81,7 +81,7 @@ void StartAnim()
 		opensound = 'BlazeDoorOpen';
 		closesound = 'BlazeDoorClose';
 	}
-	SectorStartSoundName(sector, opensound, CHAN_VOICE);
+	SectorStartSoundName(Sector, opensound, CHAN_VOICE);
 	SetLineTexture(line->sidenum[0], 1, texTop);
 	SetLineTexture(line->sidenum[1], 1, texTop);
 }
@@ -142,7 +142,7 @@ void Tick(float deltaTime)
 		case 8:
 			NewMidTexture = texTop + 6;
 			NewMidTexture = texTop + 6;
-			SectorStartSoundName(sector, closesound, CHAN_VOICE);
+			SectorStartSoundName(Sector, closesound, CHAN_VOICE);
 			break;
 		case 7:
 			NewMidTexture = texTop + 5;
@@ -184,22 +184,21 @@ void Tick(float deltaTime)
 
 	case -1:
 		// DOWN
-		res = T_MovePlane(sector, speed * deltaTime,
-			sector->floorheight, false, 1, direction);
+		res = T_MovePlane(Sector, speed * deltaTime,
+			Sector->floorheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
 			//	Clear mid texture in a case door will be open from other side.
 			SetLineTexture(line->sidenum[0], 1, 0);
 			SetLineTexture(line->sidenum[1], 1, 0);
-			sector->SpecialData = none;
-			RemoveSpecialThinker(self);	// unlink and free
-			for (i = 0; i < sector->linecount; i++)
+			for (i = 0; i < Sector->linecount; i++)
 			{
-				if (sector->lines[i]->backsector)
+				if (Sector->lines[i]->backsector)
 				{
-					sector->lines[i]->flags |= ML_BLOCKING;
+					Sector->lines[i]->flags |= ML_BLOCKING;
 				}
 			}
+			Finished();	// unlink and free
 		}
 		else if (res == RES_CRUSHED)
 		{
@@ -210,17 +209,17 @@ void Tick(float deltaTime)
 
 	case 1:
 		// UP
-		res = T_MovePlane(sector, speed * deltaTime, topheight,
+		res = T_MovePlane(Sector, speed * deltaTime, topheight,
 			false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
 			direction = 0;	// wait at top
 			toptime = topwait;
-			for (i = 0; i < sector->linecount; i++)
+			for (i = 0; i < Sector->linecount; i++)
 			{
-				if (sector->lines[i]->backsector)
+				if (Sector->lines[i]->backsector)
 				{
-					sector->lines[i]->flags &= ~ML_BLOCKING;
+					Sector->lines[i]->flags &= ~ML_BLOCKING;
 				}
 			}
 		}
@@ -235,6 +234,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.3  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

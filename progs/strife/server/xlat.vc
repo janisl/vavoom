@@ -53,114 +53,114 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  2
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  3
 	{LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false},	//  4
-	{238, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  5
-	{196, -1, 16, 16, 10, 0, SPAC_CROSS, false},	//  6
+	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  5
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, false},	//  6
 	{217, -1, 2, 8, 0, 0, SPAC_USE, false},	//  7
 	{217, -1, 2, 8, 0, 0, SPAC_CROSS, false},	//  8
-	{250, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
+	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
 
-	{206, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
 	{243, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11 --
 	{234, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false},	//  13
-	{230, -1, 4, 4, 0, 0, SPAC_USE, false},	//  14
-	{230, -1, 4, 3, 0, 0, SPAC_USE, false},	//  15
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, false},	//  14
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, false},	//  15
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, false},	//  16
 	{232, -1, 5, 35, 0, 0, SPAC_CROSS, false},	//  17
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, false},	//  18
-	{242, -1, 8, 128, 0, 0, SPAC_CROSS, false},	//  19
+	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, false},	//  19
 
-	{228, -1, 4, 0, 0, 0, SPAC_USE, false},	//  20
-	{206, -1, 32, 105, 0, 0, SPAC_USE, false},	//  21
-	{228, -1, 4, 0, 0, 0, SPAC_CROSS, false},	//  22
+	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, false},	//  20
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, false},	//  21
+	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, false},	//  22
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false},	//  23
-	{238, -1, 8, 0, 0, 0, SPAC_IMPACT, false},	//  24
-	{196, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  25
+	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_IMPACT, false},	//  24
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  25
 	{LNSPEC_DoorLockedRaise, 0, 16, 150, 4, 0, SPAC_USE, true},	//  26
 	{LNSPEC_DoorLockedRaise, 0, 16, 150, 3, 0, SPAC_USE, true},	//  27
 	{LNSPEC_DoorLockedRaise, 0, 16, 150, 11, 0, SPAC_USE, true},	//  28
 	{LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, false},	//  29
 
-	{240, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  30
+	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  30
 	{LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false},	//  31
 	{LNSPEC_DoorLockedRaise, 0, 16, 0, 4, 0, SPAC_USE, false},	//  32
 	{LNSPEC_DoorLockedRaise, 0, 16, 0, 11, 0, SPAC_USE, false},	//  33
 	{LNSPEC_DoorLockedRaise, 0, 16, 0, 3, 0, SPAC_USE, false},	//  34
 	{LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, false},	//  35
-	{242, -1, 32, 136, 0, 0, SPAC_CROSS, false},	//  36
-	{241, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  37
+	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false},	//  36
+	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  37
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  38
 	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  39
 
 	{84, 0, 0, 0, 0, 0, SPAC_USE, false},	//  40
-	{254, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
+	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true},	//  42
-	{254, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
+	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
 	{LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  44
-	{242, -1, 8, 128, 0, 0, SPAC_USE, true},	//  45
+	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, true},	//  45
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true},	//  46
-	{228, -1, 4, 0, 0, 0, SPAC_IMPACT, false},	//  47
+	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_IMPACT, false},	//  47
 	{LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  48
-	{196, -1, 8, 8, 10, 0, SPAC_USE, false},	//  49
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false},	//  49
 
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, false},	//  50
 	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51 S1 EndLevelSecret
 	{84, 0, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
-	{207, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
+	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
 	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  54
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false},	//  55
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false},	//  56
 	{LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  57
 	{LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, false},	//  58
-	{239, -1, 8, 24, 0, 0, SPAC_CROSS, false},	//  59
+	{LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, false},	//  59
 
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true},	//  60
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, true},	//  61
-	{206, -1, 32, 105, 0, 0, SPAC_USE, true},	//  62
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, true},	//  62
 	{LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, true},	//  63
-	{238, -1, 8, 0, 0, 0, SPAC_USE, true},	//  64
+	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, true},	//  64
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, true},	//  65
-	{230, -1, 4, 3, 0, 0, SPAC_USE, true},	//  66
-	{230, -1, 4, 4, 0, 0, SPAC_USE, true},	//  67
-	{228, -1, 4, 0, 0, 0, SPAC_USE, true},	//  68
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, true},	//  66
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, true},	//  67
+	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, true},	//  68
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, true},	//  69
 
-	{242, -1, 32, 136, 0, 0, SPAC_USE, true},	//  70
-	{242, -1, 32, 136, 0, 0, SPAC_USE, false},	//  71
+	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, true},	//  70
+	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, false},	//  71
 	{LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  72
-	{196, -1, 8, 8, 10, 0, SPAC_CROSS, true},	//  73
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, true},	//  73
 	{LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  74
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  75
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, true},	//  76
-	{196, -1, 16, 16, 10, 0, SPAC_CROSS, true},	//  77
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, true},	//  77
 	{78, -1, 0, 0, 0, 0, 0, 0},	//  78
 	{LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, true},	//  79
 
 	{234, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  80
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, true},	//  81
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  82
-	{242, -1, 8, 128, 0, 0, SPAC_CROSS, true},	//  83
-	{241, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  84
+	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, true},	//  83
+	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  84
 	{85, -1, 0, 0, 0, 0, 0, 0},	//  85
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  86
-	{207, -1, 8, 105, 0, 0, SPAC_CROSS, true},	//  87
-	{206, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  88
+	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true},	//  87
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  88
 	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  89
 
 	{LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, true},	//  90
-	{238, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  91
+	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  91
 	{LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, true},	//  92
-	{239, -1, 8, 24, 0, 0, SPAC_CROSS, true},	//  93
+	{LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, true},	//  93
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true},	//  94
-	{228, -1, 4, 0, 0, 0, SPAC_CROSS, true},	//  95
-	{240, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  96
+	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true},	//  95
+	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  96
 	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  97
-	{242, -1, 32, 136, 0, 0, SPAC_CROSS, true},	//  98
+	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true},	//  98
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 4, 0, SPAC_USE, true},	//  99
 
 	{217, -1, 32, 16, 0, 0, SPAC_CROSS, false},	//  100
-	{238, -1, 8, 0, 0, 0, SPAC_USE, false},	//  101
-	{242, -1, 8, 128, 0, 0, SPAC_USE, false},	//  102
+	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false},	//  101
+	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false},	//  102
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false},	//  103
 	{233, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  104
 	{LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_CROSS, true},	//  105
@@ -180,10 +180,10 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_DoorOpen, 0, 64, 0, 0, 0, SPAC_USE, false},	//  118
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  119
 
-	{206, -1, 64, 105, 0, 0, SPAC_CROSS, true},	//  120
-	{206, -1, 64, 105, 0, 0, SPAC_CROSS, false},	//  121
-	{206, -1, 64, 105, 0, 0, SPAC_USE, false},	//  122
-	{206, -1, 64, 105, 0, 0, SPAC_USE, true},	//  123
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_CROSS, true},	//  120
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_CROSS, false},	//  121
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, false},	//  122
+	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, true},	//  123
 	{244, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124 W1 EndLevelSecret UNUSED
 	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_MCROSS, false},	//  125
 	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  126
@@ -515,6 +515,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/03/01 14:39:33  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.15  2005/01/25 17:45:18  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

@@ -34,7 +34,7 @@ class BaronOfHell : Pawn
 //
 //==========================================================================
 
-void A_BruisAttack(void)
+void A_BruisAttack()
 {
 	int damage;
 
@@ -61,11 +61,10 @@ void A_BruisAttack(void)
 //
 //==========================================================================
 
-void A_BossDeath(void)
+void A_BossDeath()
 {
 	int i;
 	Actor Other;
-	int args[5];
 
 	if (strcmp(ARR2STR(level->mapname), "E1M8"))
 	{
@@ -92,12 +91,7 @@ void A_BossDeath(void)
 	}
 
 	// victory!
-	args[0] = 666;
-	args[1] = 8;
-	args[2] = 0;
-	args[3] = 0;
-	args[4] = 0;
-	EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOORTOLOWEST);
+	EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 }
 
 __states__
@@ -158,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/01 14:39:31  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.3  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

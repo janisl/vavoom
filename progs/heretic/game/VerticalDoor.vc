@@ -52,8 +52,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	float		Height;
 	TVec		Spot;
 
-	sector = InSector;
-	sector->SpecialData = self;
+	Sector = InSector;
+	Sector->CeilingData = self;
 
 	Type = InType;
 	Speed = itof(Arg2) * 35.0 / 8.0;
@@ -61,19 +61,19 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	switch (Type)
 	{
 	case DOOREV_Close:
-		Height = FindLowestCeilingSurrounding(sector, &Spot);
+		Height = FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
-		TopHeight = DotProduct(sector->ceiling.normal, Spot);
+		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 		break;
 
 	case DOOREV_CloseWaitOpen:
 		LightTag = Arg4;
-		TopHeight = sector->ceiling.dist;
+		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 		break;
 
 	case DOOREV_Raise:
@@ -100,29 +100,88 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			Type = DOOREV_Open;
 		}
 
-		Height = FindLowestCeilingSurrounding(sector, &Spot);
+		Height = FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
-		TopHeight = DotProduct(sector->ceiling.normal, Spot);
+		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = 1;
-		if (TopHeight != sector->ceilingheight)
+		if (TopHeight != Sector->ceilingheight)
 		{
-			SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 		}
 		break;
 
 	case DOOREV_RaiseIn5Mins:
 		Direction = 2;
-		Height = FindLowestCeilingSurrounding(sector, &Spot);
+		Height = FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
-		TopHeight = DotProduct(sector->ceiling.normal, Spot);
+		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		TopTime = 5.0 * 60.0;
 		break;
 	}
 
-	Height = FindHighestFloorPoint(sector, &BotSpot);
+	Height = FindHighestFloorPoint(Sector, &BotSpot);
 	BotDist = DotProduct(vector(BotSpot.x, BotSpot.y, Height),
-		sector->ceiling.normal);
-	OldFloorDist = sector->floor.dist;
+		Sector->ceiling.normal);
+	OldFloorDist = Sector->floor.dist;
+}
+
+//==========================================================================
+//
+//	InitCloseIn30
+//
+//	Spawn a door that closes after 30 seconds
+//
+//==========================================================================
+
+void InitCloseIn30(sector_t* InSector)
+{
+	float		Height;
+
+	Sector = InSector;
+	Sector->CeilingData = self;
+
+	Direction = 0;
+	Type = DOOREV_Raise;
+	Speed = 70.0;
+	TopTime = 30.0;
+	Height = FindHighestFloorPoint(Sector, &BotSpot);
+	BotDist = DotProduct(vector(BotSpot.x, BotSpot.y, Height),
+		Sector->ceiling.normal);
+	OldFloorDist = Sector->floor.dist;
+	TopHeight = Sector->ceiling.dist;
+	LightTag = 0;
+}
+
+//==========================================================================
+//
+//	ReUse
+//
+//==========================================================================
+
+bool ReUse(int InType, line_t* Line, Actor Thing)
+{
+	if (InType == DOOREV_Raise && Type == DOOREV_Raise)
+	{
+		if (Direction == -1)
+		{
+			Direction = 1;	// go back up
+			return true;
+		}
+		else if (GET_SPAC(Line->flags) != SPAC_PUSH)
+		// [RH] activate push doors don't go back down when you
+		//		run into them (otherwise opening them would be
+		//		a real pain).
+		{
+			if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
+			{
+				// Monsters don't close doors
+				return false;
+			}
+			Direction = -1;	// start going down immediately
+			return true;
+		}
+	}
+	return false;
 }
 
 //==========================================================================
@@ -135,11 +194,11 @@ void Tick(float deltaTime)
 {
 	int res;
 
-	if (sector->floor.dist != OldFloorDist)
+	if (Sector->floor.dist != OldFloorDist)
 	{
-		OldFloorDist = sector->floor.dist;
-		BotDist = DotProduct(sector->ceiling.normal, vector(BotSpot.x,
-			BotSpot.y, GetPlanePointZ(&sector->floor, BotSpot)));
+		OldFloorDist = Sector->floor.dist;
+		BotDist = DotProduct(Sector->ceiling.normal, vector(BotSpot.x,
+			BotSpot.y, GetPlanePointZ(&Sector->floor, BotSpot)));
 	}
 
 	switch (Direction)
@@ -153,11 +212,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -174,7 +233,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -182,14 +241,14 @@ void Tick(float deltaTime)
 		}
 		break;
 	case -1:	// DOWN
-		res = MovePlane(sector, Speed * deltaTime, BotDist, false, 1,
+		res = MovePlane(Sector, Speed * deltaTime, BotDist, false, 1,
 			Direction, false);
 
 		// killough 10/98: implement gradual lighting effects
-		if (LightTag && TopHeight != -sector->floor.dist)
+		if (LightTag && TopHeight != -Sector->floor.dist)
 		{
-			EV_LightTurnOnPartway(LightTag, (sector->ceiling.dist +
-				sector->floor.dist) / (TopHeight + sector->floor.dist));
+			EV_LightTurnOnPartway(LightTag, (Sector->ceiling.dist +
+				Sector->floor.dist) / (TopHeight + Sector->floor.dist));
 		}
 
 		if (res == RES_PASTDEST)
@@ -198,10 +257,8 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 			case DOOREV_Close:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);	// unlink and free
-				SectorStartSoundName(sector, 'DoorClose', CHAN_VOICE);
+				Finished();	// unlink and free
+				SectorStartSoundName(Sector, 'DoorClose', CHAN_VOICE);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 0;
@@ -219,20 +276,20 @@ void Tick(float deltaTime)
 				break;
 			default:
 				Direction = 1;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			}
 		}
 		break;
 	case 1:	// UP
-		res = MovePlane(sector, Speed * deltaTime, TopHeight, false, 1,
+		res = MovePlane(Sector, Speed * deltaTime, TopHeight, false, 1,
 			Direction, false);
 
 		//	killough 10/98: implement gradual lighting effects
-		if (LightTag && TopHeight != -sector->floor.dist)
+		if (LightTag && TopHeight != -Sector->floor.dist)
 		{
-			EV_LightTurnOnPartway(LightTag, (sector->ceiling.dist +
-				sector->floor.dist) / (TopHeight + sector->floor.dist));
+			EV_LightTurnOnPartway(LightTag, (Sector->ceiling.dist +
+				Sector->floor.dist) / (TopHeight + Sector->floor.dist));
 		}
 
 		if (res == RES_PASTDEST)
@@ -245,10 +302,8 @@ void Tick(float deltaTime)
 				break;
 			case DOOREV_Open:
 			case DOOREV_CloseWaitOpen:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);	// unlink and free
-				SectorStopSound(sector, CHAN_AUTO);
+				Finished();	// unlink and free
+				SectorStopSound(Sector, CHAN_AUTO);
 				break;
 			default:
 				break;
@@ -265,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/01 14:39:32  dj_jl
+//  Big update of line specials.
+//
 //  Revision 1.2  2005/01/25 17:45:13  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.
