@@ -23,25 +23,27 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Imp
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
+class Imp:Pawn
+	__mobjinfo__(66)
+{
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+int XCrashState;
 
 //==========================================================================
 //
-//  Actor::A_ImpMeAttack
+//  A_ImpMeAttack
 //
 //==========================================================================
 
-void Actor::A_ImpMeAttack(void)
+void A_ImpMeAttack(void)
 {
 	if (!Target)
 	{
@@ -56,11 +58,11 @@ void Actor::A_ImpMeAttack(void)
 
 //==========================================================================
 //
-//  Actor::A_ImpMsAttack
+//  A_ImpMsAttack
 //
 //==========================================================================
 
-void Actor::A_ImpMsAttack(void)
+void A_ImpMsAttack(void)
 {
 	if (!Target || P_Random() > 64)
 	{
@@ -91,13 +93,167 @@ void Actor::A_ImpMsAttack(void)
 
 //==========================================================================
 //
-//  Actor::A_ImpMsAttack2
+//  A_ImpDeath
+//
+//==========================================================================
+
+void A_ImpDeath(void)
+{
+	bSolid = false;
+	bFootClip = true;
+	if (Origin.z <= FloorZ)
+	{
+		SetState(CrashState);
+	}
+}
+
+//==========================================================================
+//
+//  A_ImpXDeath1
+//
+//==========================================================================
+
+void A_ImpXDeath1(void)
+{
+	bSolid = false;
+	bNoGravity = true;
+	bFootClip = true;
+	Special1 = 666;	// Flag the crash routine
+}
+
+//==========================================================================
+//
+//  A_ImpXDeath2
+//
+//==========================================================================
+
+void A_ImpXDeath2(void)
+{
+	bNoGravity = false;
+	if (Origin.z <= FloorZ)
+	{
+		SetState(CrashState);
+	}
+}
+
+//==========================================================================
+//
+//  A_ImpExplode
+//
+//==========================================================================
+
+void A_ImpExplode(void)
+{
+	Actor mo;
+
+	mo = Spawn(ImpChunk1, Origin);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
+	mo = Spawn(ImpChunk2, Origin);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
+	if (Special1 == 666)
+	{
+		// Extreme death crash
+		SetState(XCrashState);
+	}
+}
+
+__states__
+{
+	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle.md2', 0, 10.0 / 35.0, S_IMP_LOOK2) { A_Look(); }
+	S_IMP_LOOK2('IMPX', 1, 'monsters/gargoyle.md2', 1, 10.0 / 35.0, S_IMP_LOOK3) { A_Look(); }
+	S_IMP_LOOK3('IMPX', 2, 'monsters/gargoyle.md2', 2, 10.0 / 35.0, S_IMP_LOOK4) { A_Look(); }
+	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle.md2', 3, 10.0 / 35.0, S_IMP_LOOK1) { A_Look(); }
+	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle.md2', 4, 3.0 / 35.0, S_IMP_FLY2) { A_Chase(); }
+	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle.md2', 5, 3.0 / 35.0, S_IMP_FLY3) { A_Chase(); }
+	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle.md2', 6, 3.0 / 35.0, S_IMP_FLY4) { A_Chase(); }
+	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle.md2', 7, 3.0 / 35.0, S_IMP_FLY5) { A_Chase(); }
+	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle.md2', 8, 3.0 / 35.0, S_IMP_FLY6) { A_Chase(); }
+	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle.md2', 9, 3.0 / 35.0, S_IMP_FLY7) { A_Chase(); }
+	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle.md2', 10, 3.0 / 35.0, S_IMP_FLY8) { A_Chase(); }
+	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle.md2', 11, 3.0 / 35.0, S_IMP_FLY1) { A_Chase(); }
+	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle.md2', 12, 6.0 / 35.0, S_IMP_MEATK2) { A_FaceTarget(); }
+	S_IMP_MEATK2('IMPX', 4, 'monsters/gargoyle.md2', 13, 6.0 / 35.0, S_IMP_MEATK3) { A_FaceTarget(); }
+	S_IMP_MEATK3('IMPX', 5, 'monsters/gargoyle.md2', 14, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMeAttack(); }
+	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle.md2', 4, 10.0 / 35.0, S_IMP_MSATK1_2) { A_FaceTarget(); }
+	S_IMP_MSATK1_2('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { A_ImpMsAttack(); }
+	S_IMP_MSATK1_3('IMPX', 2, 'monsters/gargoyle.md2', 8, 6.0 / 35.0, S_IMP_MSATK1_4) { }
+	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle.md2', 10, 6.0 / 35.0, S_IMP_MSATK1_5) { }
+	S_IMP_MSATK1_5('IMPX', 0, 'monsters/gargoyle.md2', 4, 6.0 / 35.0, S_IMP_MSATK1_6) { }
+	S_IMP_MSATK1_6('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { }
+	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle.md2', 18, 3.0 / 35.0, S_IMP_PAIN2) { }
+	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle.md2', 19, 3.0 / 35.0, S_IMP_FLY1) { A_Pain(); }
+	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) { A_ImpDeath(); }
+	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) { }
+	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) { A_ImpXDeath1(); }
+	S_IMP_XDIE2('IMPX', 19, 5.0 / 35.0, S_IMP_XDIE3) { }
+	S_IMP_XDIE3('IMPX', 20, 5.0 / 35.0, S_IMP_XDIE4) { }
+	S_IMP_XDIE4('IMPX', 21, 5.0 / 35.0, S_IMP_XDIE5) { A_ImpXDeath2(); }
+	S_IMP_XDIE5('IMPX', 22, 5.0 / 35.0, S_IMP_XDIE5) { }
+	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) { A_ImpExplode(); }
+	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) { A_Scream(); }
+	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) { }
+	S_IMP_CRASH4('IMPX', 11, -1.0, S_NULL) { }
+	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) { }
+	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) { }
+	S_IMP_XCRASH3('IMPX', 25, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 40;
+	GibsHealth = -20;
+	Radius = 16.0;
+	Height = 36.0;
+	Mass = 50.0;
+	StepSpeed = 10.0;
+	PainChance = 200;
+	bNoGravity = true;
+	bFloat = true;
+	bSpawnFloat = true;
+	bFootClip = false;
+	SpawnState = S_IMP_LOOK1;
+	SeeState = S_IMP_FLY1;
+	MeleeState = S_IMP_MEATK1;
+	MissileState = S_IMP_MSATK1_1;
+	PainState = S_IMP_PAIN1;
+	DeathState = S_IMP_DIE1;
+	GibsDeathState = S_IMP_XDIE1;
+	CrashState = S_IMP_CRASH1;
+	XCrashState = S_IMP_XCRASH1;
+	SightSound = 'ImpSight';
+	ActiveSound = 'ImpActive';
+	AttackSound = 'ImpAttack1';
+	PainSound = 'ImpPain';
+	DeathSound = 'ImpDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ImpLeader
+//
+//**************************************************************************
+//**************************************************************************
+
+class ImpLeader:Imp
+	__mobjinfo__(5)
+{
+
+//==========================================================================
+//
+//  A_ImpMsAttack2
 //
 //  Fireball attack of the imp leader.
 //
 //==========================================================================
 
-void Actor::A_ImpMsAttack2(void)
+void A_ImpMsAttack2(void)
 {
 	if (!Target)
 	{
@@ -112,79 +268,30 @@ void Actor::A_ImpMsAttack2(void)
 	SpawnMissile(this, &Target, ImpBall);
 }
 
-//==========================================================================
-//
-//  Actor::A_ImpDeath
-//
-//==========================================================================
-
-void Actor::A_ImpDeath(void)
+__states__
 {
-	bSolid = false;
-	bFootClip = true;
-	if (Origin.z <= FloorZ)
-	{
-		SetState(S_IMP_CRASH1);
-	}
+	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle.md2', 15, 6.0 / 35.0, S_IMP_MSATK2_2) { A_FaceTarget(); }
+	S_IMP_MSATK2_2('IMPX', 4, 'monsters/gargoyle.md2', 16, 6.0 / 35.0, S_IMP_MSATK2_3) { A_FaceTarget(); }
+	S_IMP_MSATK2_3('IMPX', 5, 'monsters/gargoyle.md2', 17, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMsAttack2(); }
 }
 
-//==========================================================================
-//
-//  Actor::A_ImpXDeath1
-//
-//==========================================================================
-
-void Actor::A_ImpXDeath1(void)
+defaultproperties
 {
-	bSolid = false;
-	bNoGravity = true;
-	bFootClip = true;
-	Special1 = 666;	// Flag the crash routine
+	Health = 80;
+	GibsHealth = -40;
+	MeleeState = S_NULL;
+	MissileState = S_IMP_MSATK2_1;
+	AttackSound = 'ImpAttack2';
 }
 
-//==========================================================================
-//
-//  Actor::A_ImpXDeath2
-//
-//==========================================================================
-
-void Actor::A_ImpXDeath2(void)
-{
-	bNoGravity = false;
-	if (Origin.z <= FloorZ)
-	{
-		SetState(S_IMP_CRASH1);
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_ImpExplode
-//
-//==========================================================================
-
-void Actor::A_ImpExplode(void)
-{
-	Actor mo;
-
-	mo = SpawnActor(Origin, ImpChunk1);
-	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.z = 9.0 * 35.0;
-	mo = SpawnActor(Origin, ImpChunk2);
-	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.z = 9.0 * 35.0;
-	if (Special1 == 666)
-	{
-		// Extreme death crash
-		SetState(S_IMP_XCRASH1);
-	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.20  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

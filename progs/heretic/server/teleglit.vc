@@ -45,9 +45,8 @@ void Actor::A_SpawnTeleGlitter(void)
 {
 	Actor mo;
 
-	mo = SpawnActor(vector(Origin.x + Random() * 32.0 - 16.0,
-		Origin.y + Random() * 32.0 - 16.0,
-		FloorZ), TeleGlitter);
+	mo = Spawn(TeleGlitter, vector(Origin.x + Random() * 32.0 - 16.0,
+		Origin.y + Random() * 32.0 - 16.0, FloorZ));
 	mo.Velocity.z = 0.25 * 35.0;
 }
 
@@ -61,9 +60,8 @@ void Actor::A_SpawnTeleGlitter2(void)
 {
 	Actor mo;
 
-	mo = SpawnActor(vector(Origin.x + Random() * 32.0 - 16.0,
-		Origin.y + Random() * 32.0 - 16.0,
-		FloorZ), TeleGlitter2);
+	mo = Spawn(TeleGlitter2, vector(Origin.x + Random() * 32.0 - 16.0,
+		Origin.y + Random() * 32.0 - 16.0, FloorZ));
 	mo.Velocity.z = 0.25 * 35.0;
 }
 
@@ -84,6 +82,9 @@ void Actor::A_AccTeleGlitter(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.10  2002/02/26 17:49:48  dj_jl
 //  no message
 //

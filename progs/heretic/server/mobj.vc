@@ -139,7 +139,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	if (!bMissile)
 	{
 		bCheckLineBlocking = true;
-		if (Class != PlayerPawn && Class != Pod)
+		if (Class != HereticPlayer && Class != Pod)
 		{
 			bCheckLineBlockMonsters = true;
 		}
@@ -237,11 +237,11 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 //===========================================================================
 //
-//  SpawnActor
+//  Spawn
 //
 //===========================================================================
 
-Actor SpawnActor(TVec AOrigin, classid type)
+Actor Spawn(classid type, TVec AOrigin)
 {
 	Actor A;
 
@@ -278,7 +278,7 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 void P_RemoveMobj(mobj_t * mobj)
 {
 	// free block
-	RemoveMobjThinker(*mobj);
+	mobj->Remove();
 }
 
 //===========================================================================
@@ -438,7 +438,7 @@ void Actor::Kill(Actor source)
 		if (bFireDamage)
 		{
 			// Player flame death
-			SetState(S_PLAY_FDTH1);
+			SetState(PlayerPawn(self).FireDeathState);
 			return;
 		}
 	}
@@ -539,10 +539,10 @@ boolean Actor::ChickenMorphPlayer(void)
 		return false;
 	}
 
-	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	chicken = SpawnActor(Origin, ChickenPlayer);
+	chicken = Spawn(ChickenPlayer, Origin);
 	chicken.Special1 = Player->ReadyWeapon;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.Player = Player;
@@ -591,10 +591,10 @@ boolean Actor::ChickenMorph(void)
 		break;
 	}
 
-	fog = SpawnActor(Origin + vector(0.0, 0.0, TELEFOGHEIGHT), TeleportFog);
+	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	chicken = SpawnActor(Origin, Chicken);
+	chicken = Spawn(Chicken, Origin);
 	chicken.SpecialCID = Class;
 	chicken.Special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
 	chicken.Translucency = Translucency;
@@ -620,7 +620,7 @@ boolean Actor::AutoUseChaosDevice(void)
 	{
 		if (Player->Inventory[i].type == arti_teleport)
 		{
-			PlayerUseArtifact(Player, arti_teleport);
+			PlayerPawn(self).PlayerUseArtifact(arti_teleport);
 			Health = (Health + 1) / 2;
 			Player->Health = Health;
 			return true;
@@ -665,8 +665,8 @@ void Actor::AutoUseHealth(int saveHealth)
 		count = (saveHealth + 24) / 25;
 		for (i = 0; i < count; i++)
 		{
-			Player->Health += 25;
-			PlayerRemoveArtifact(Player, normalSlot);
+			Health += 25;
+			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -675,8 +675,8 @@ void Actor::AutoUseHealth(int saveHealth)
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			Player->Health += 100;
-			PlayerRemoveArtifact(Player, superSlot);
+			Health += 100;
+			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((gameskill == sk_baby)
@@ -687,20 +687,20 @@ void Actor::AutoUseHealth(int saveHealth)
 		saveHealth -= count * 25;
 		for (i = 0; i < count; i++)
 		{
-			Player->Health += 25;
-			PlayerRemoveArtifact(Player, normalSlot);
+			Health += 25;
+			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
-			Player->Health += 100;
+			Health += 100;
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			PlayerRemoveArtifact(Player, superSlot);
+			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
 		}
 	}
-	Health = Player->Health;
+	Player->Health = Health;
 }
 
 //==========================================================================
@@ -818,7 +818,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			if (Class == Sorcerer2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
-				DSparilTeleport();
+				Sorcerer2Base(self).DSparilTeleport();
 				return;
 			}
 			break;
@@ -971,7 +971,7 @@ void SpawnPuff(TVec org)
 	Actor puff;
 
 	org.z += (Random() - Random()) * 4.0;
-	puff = SpawnActor(org, PuffType);
+	puff = Spawn(PuffType, org);
 	if (puff.AttackSound)
 	{
 		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
@@ -1018,7 +1018,7 @@ void Actor::SpawnBloodSplatter(TVec org)
 {
 	Actor mo;
 
-	mo = SpawnActor(org, BloodSplatter);
+	mo = Spawn(BloodSplatter, org);
 	mo.Owner = self;
 	mo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -1039,7 +1039,7 @@ void Actor::SpawnRipperBlood(void)
 	org.x = Origin.x + (Random() - Random()) * 16.0;
 	org.y = Origin.y + (Random() - Random()) * 16.0;
 	org.z = Origin.z + (Random() - Random()) * 16.0;
-	th = SpawnActor(org, Blood);
+	th = Spawn(Blood, org);
 	th.bNoGravity = true;
 	th.Velocity.x = Velocity.x / 2.0;
 	th.Velocity.y = Velocity.y / 2.0;
@@ -1074,7 +1074,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, PlayerPawn);
+	mobj = P_SpawnMobj(x, y, z, HereticPlayer);
 	// set color translations for player sprites
 	mobj->Translation = p->Color;
 
@@ -1452,6 +1452,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.36  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

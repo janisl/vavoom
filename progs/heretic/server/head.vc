@@ -23,30 +23,30 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Head
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Head:Pawn
+	__mobjinfo__(6)
+{
 
 //==========================================================================
 //
-//  Actor::A_HeadAttack
+//  A_HeadAttack
 //
 //==========================================================================
 
-void Actor::A_HeadAttack(void)
+void A_HeadAttack(void)
 {
 	int i;
 	Actor fire;
-	mobj_t *baseFire;
-	mobj_t *mo;
+	Actor baseFire;
+	Actor A;
 	int randAttack;
 	int dist;
 
@@ -76,20 +76,20 @@ void Actor::A_HeadAttack(void)
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(this, &Target, HeadMissile3);
-		if (baseFire != NULL)
+		baseFire = *SpawnMissile(this, &Target, HeadMissile3);
+		if (baseFire != none)
 		{
-			baseFire->SetState(S_HEADFX3_4);	// Don't grow
+			baseFire.SetState(S_HEADFX3_4);	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
-				fire = SpawnActor(baseFire->Origin, HeadMissile3);
+				fire = Spawn(HeadMissile3, baseFire.Origin);
 				if (i == 0)
 				{
 					PlaySound('HeadAttack1', CHAN_WEAPON);
 				}
-				fire.Owner = baseFire->Owner;
-				fire.Angles.yaw = baseFire->Angles.yaw;
-				fire.Velocity = baseFire->Velocity;
+				fire.Owner = baseFire.Owner;
+				fire.Angles.yaw = baseFire.Angles.yaw;
+				fire.Velocity = baseFire.Velocity;
 				fire.MissileDamage = 0;
 				fire.Health = (i + 1) * 2;
 				CheckMissileSpawn(&fire);
@@ -99,17 +99,61 @@ void Actor::A_HeadAttack(void)
 	else
 	{
 		// Whirlwind
-		mo = SpawnMissile(this, &Target, WhirlWind);
-		if (mo != NULL)
+		A = *SpawnMissile(this, &Target, WhirlWind);
+		if (A != none)
 		{
-			mo->Origin.z -= 32.0;
-			mo->SpecialMobj1 = &Target;
-			mo->Special2 = 50;	// Timer for active sound
-			mo->Health = 20 * TICRATE;	// Duration
+			A.Origin.z -= 32.0;
+			A.SpecialMobj1 = &Target;
+			A.Special2 = 50;	// Timer for active sound
+			A.Health = 20 * TICRATE;	// Duration
 			PlaySound('HeadAttack3', CHAN_WEAPON);
 		}
 	}
 }
+
+__states__
+{
+	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }
+	S_HEAD_FLOAT('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Chase(); }
+	S_HEAD_ATK1('HEAD', 0, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
+	S_HEAD_ATK2('HEAD', 1, 20.0 / 35.0, S_HEAD_FLOAT) { A_HeadAttack(); }
+	S_HEAD_PAIN1('HEAD', 0, 4.0 / 35.0, S_HEAD_PAIN2) { }
+	S_HEAD_PAIN2('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Pain(); }
+	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) { }
+	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) { A_Scream(); }
+	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) { }
+	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) { }
+	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) { A_NoBlocking(); }
+	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) { }
+	S_HEAD_DIE7('HEAD', 8, -1.0, S_NULL) { A_BossDeath(); }
+}
+
+defaultproperties
+{
+	Health = 700;
+	Radius = 40.0;
+	Height = 72.0;
+	Mass = 325.0;
+	StepSpeed = 6.0;
+	PainChance = 32;
+	bNoBlood = true;
+	bFootClip = false;
+	SpawnState = S_HEAD_LOOK;
+	SeeState = S_HEAD_FLOAT;
+	MissileState = S_HEAD_ATK1;
+	PainState = S_HEAD_PAIN1;
+	DeathState = S_HEAD_DIE1;
+	SightSound = 'HeadSight';
+	ActiveSound = 'HeadActive';
+	AttackSound = 'HeadAttack1';
+	PainSound = 'HeadPain';
+	DeathSound = 'HeadDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //==========================================================================
 //
@@ -125,7 +169,7 @@ void Actor::A_HeadIceImpact(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		shard = SpawnActor(Origin, HeadMissile2);
+		shard = Spawn(HeadMissile2, Origin);
 		angle = itof(i) * 45.0;
 		shard.Owner = Owner;
 		shard.Angles.yaw = angle;
@@ -183,6 +227,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/16 17:45:12  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.20  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

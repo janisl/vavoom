@@ -414,25 +414,9 @@ void Actor::ApplyFriction(void)
 		// If in a walking frame, stop moving
 		if (bIsPlayer)
 		{
-			if (Player->ChickenTics)
+			if (StateNum >= SeeState && StateNum <= SeeState + 3)
 			{
-				int sn;
-
-				sn = StateNum;
-				if (sn >= S_CHICPLAY_RUN1 && sn <= S_CHICPLAY_RUN4)
-				{
-					SetState(S_CHICPLAY);
-				}
-			}
-			else
-			{
-				int sn;
-
-				sn = StateNum;
-				if (sn >= S_PLAY_RUN1 && sn <= S_PLAY_RUN4)
-				{
-					SetState(S_PLAY);
-				}
+				SetState(SpawnState);
 			}
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
@@ -925,6 +909,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.26  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

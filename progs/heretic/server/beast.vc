@@ -23,25 +23,25 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Beast
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Beast:Pawn
+	__mobjinfo__(70)
+{
 
 //==========================================================================
 //
-//  Actor::A_BeastAttack
+//  A_BeastAttack
 //
 //==========================================================================
 
-void Actor::A_BeastAttack(void)
+void A_BeastAttack(void)
 {
 	if (!Target)
 	{
@@ -55,6 +55,66 @@ void Actor::A_BeastAttack(void)
 	}
 	SpawnMissile(this, &Target, BeastBall);
 }
+
+__states__
+{
+	S_BEAST_LOOK1('BEAS', 0, 10.0 / 35.0, S_BEAST_LOOK2) { A_Look(); }
+	S_BEAST_LOOK2('BEAS', 1, 10.0 / 35.0, S_BEAST_LOOK1) { A_Look(); }
+	S_BEAST_WALK1('BEAS', 0, 3.0 / 35.0, S_BEAST_WALK2) { A_Chase(); }
+	S_BEAST_WALK2('BEAS', 1, 3.0 / 35.0, S_BEAST_WALK3) { A_Chase(); }
+	S_BEAST_WALK3('BEAS', 2, 3.0 / 35.0, S_BEAST_WALK4) { A_Chase(); }
+	S_BEAST_WALK4('BEAS', 3, 3.0 / 35.0, S_BEAST_WALK5) { A_Chase(); }
+	S_BEAST_WALK5('BEAS', 4, 3.0 / 35.0, S_BEAST_WALK6) { A_Chase(); }
+	S_BEAST_WALK6('BEAS', 5, 3.0 / 35.0, S_BEAST_WALK1) { A_Chase(); }
+	S_BEAST_ATK1('BEAS', 7, 10.0 / 35.0, S_BEAST_ATK2) { A_FaceTarget(); }
+	S_BEAST_ATK2('BEAS', 8, 10.0 / 35.0, S_BEAST_WALK1) { A_BeastAttack(); }
+	S_BEAST_PAIN1('BEAS', 6, 3.0 / 35.0, S_BEAST_PAIN2) { }
+	S_BEAST_PAIN2('BEAS', 6, 3.0 / 35.0, S_BEAST_WALK1) { A_Pain(); }
+	S_BEAST_DIE1('BEAS', 17, 6.0 / 35.0, S_BEAST_DIE2) { }
+	S_BEAST_DIE2('BEAS', 18, 6.0 / 35.0, S_BEAST_DIE3) { A_Scream(); }
+	S_BEAST_DIE3('BEAS', 19, 6.0 / 35.0, S_BEAST_DIE4) { }
+	S_BEAST_DIE4('BEAS', 20, 6.0 / 35.0, S_BEAST_DIE5) { }
+	S_BEAST_DIE5('BEAS', 21, 6.0 / 35.0, S_BEAST_DIE6) { }
+	S_BEAST_DIE6('BEAS', 22, 6.0 / 35.0, S_BEAST_DIE7) { A_NoBlocking(); }
+	S_BEAST_DIE7('BEAS', 23, 6.0 / 35.0, S_BEAST_DIE8) { }
+	S_BEAST_DIE8('BEAS', 24, 6.0 / 35.0, S_BEAST_DIE9) { }
+	S_BEAST_DIE9('BEAS', 25, -1.0, S_NULL) { }
+	S_BEAST_XDIE1('BEAS', 9, 5.0 / 35.0, S_BEAST_XDIE2) { }
+	S_BEAST_XDIE2('BEAS', 10, 6.0 / 35.0, S_BEAST_XDIE3) { A_Scream(); }
+	S_BEAST_XDIE3('BEAS', 11, 5.0 / 35.0, S_BEAST_XDIE4) { }
+	S_BEAST_XDIE4('BEAS', 12, 6.0 / 35.0, S_BEAST_XDIE5) { }
+	S_BEAST_XDIE5('BEAS', 13, 5.0 / 35.0, S_BEAST_XDIE6) { }
+	S_BEAST_XDIE6('BEAS', 14, 6.0 / 35.0, S_BEAST_XDIE7) { A_NoBlocking(); }
+	S_BEAST_XDIE7('BEAS', 15, 5.0 / 35.0, S_BEAST_XDIE8) { }
+	S_BEAST_XDIE8('BEAS', 16, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 220;
+	GibsHealth = -110;
+	Radius = 32.0;
+	Height = 74.0;
+	Mass = 200.0;
+	StepSpeed = 14.0;
+	PainChance = 100;
+	SpawnState = S_BEAST_LOOK1;
+	SeeState = S_BEAST_WALK1;
+	MissileState = S_BEAST_ATK1;
+	PainState = S_BEAST_PAIN1;
+	DeathState = S_BEAST_DIE1;
+	GibsDeathState = S_BEAST_XDIE1;
+	SightSound = 'BeastSight';
+	ActiveSound = 'BeastActive';
+	AttackSound = 'BeastAttack';
+	PainSound = 'BeastPain';
+	DeathSound = 'BeastDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //==========================================================================
 //
@@ -71,13 +131,16 @@ void Actor::A_BeastPuff(void)
 		org.x = Origin.x + (Random() - Random()) * 4.0;
 		org.y = Origin.y + (Random() - Random()) * 4.0;
 		org.z = Origin.z + (Random() - Random()) * 4.0;
-		SpawnActor(org, Puffy);
+		Spawn(Puffy, org);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/16 17:45:12  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.16  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

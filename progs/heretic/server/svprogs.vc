@@ -71,6 +71,7 @@ boolean respawnmonsters;
 #include "volcano.vc"
 #include "teleglit.vc"
 
+#include "player.vc"
 #include "chicken.vc"
 #include "imp.vc"
 #include "mummy.vc"
@@ -88,6 +89,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.12  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

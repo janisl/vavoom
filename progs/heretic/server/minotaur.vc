@@ -23,29 +23,33 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Minotaur
+//
+//**************************************************************************
+//**************************************************************************
+
+class Minotaur:Pawn
+	__mobjinfo__(9)
+{
 
 #define MNTR_CHARGE_SPEED	455.0
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+int ChargeAttackState;
+int FloorFireAttackState;
+int FloorFireAttackState2;
 
 //==========================================================================
 //
-//  Actor::A_MinotaurAtk1
+//  A_MinotaurAtk1
 //
 //  Melee attack.
 //
 //==========================================================================
 
-void Actor::A_MinotaurAtk1(void)
+void A_MinotaurAtk1(void)
 {
 	if (!Target)
 	{
@@ -65,13 +69,13 @@ void Actor::A_MinotaurAtk1(void)
 
 //==========================================================================
 //
-//  Actor::A_MinotaurDecide
+//  A_MinotaurDecide
 //
 //  Choose a missile attack.
 //
 //==========================================================================
 
-void Actor::A_MinotaurDecide(void)
+void A_MinotaurDecide(void)
 {
 	float dist;
 
@@ -87,7 +91,7 @@ void Actor::A_MinotaurDecide(void)
 	{
 		// Charge attack
 		// Don't call the state function right away
-		SetStateNF(S_MNTR_ATK4_1);
+		SetState(ChargeAttackState);
 		bSkullFly = true;
 		A_FaceTarget();
 		Velocity = Normalize(Target.Origin - Origin) * MNTR_CHARGE_SPEED;
@@ -97,7 +101,7 @@ void Actor::A_MinotaurDecide(void)
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
-		SetState(S_MNTR_ATK3_1);
+		SetState(FloorFireAttackState);
 		Special2 = 0;
 	}
 	else
@@ -111,15 +115,15 @@ void Actor::A_MinotaurDecide(void)
 
 //==========================================================================
 //
-//  Actor::A_MinotaurAtk2
+//  A_MinotaurAtk2
 //
 //  Swing attack.
 //
 //==========================================================================
 
-void Actor::A_MinotaurAtk2(void)
+void A_MinotaurAtk2(void)
 {
-	mobj_t *mo;
+	Actor A;
 	float angle;
 	TAVec ang;
 
@@ -133,12 +137,12 @@ void Actor::A_MinotaurAtk2(void)
 		Target.Damage(self, self, HITDICE(5));
 		return;
 	}
-	mo = SpawnMissile(this, &Target, MinotaurMissile);
-	if (mo)
+	A = *SpawnMissile(this, &Target, MinotaurMissile);
+	if (A)
 	{
-		mo->PlaySound('MinotaurAttack2', CHAN_WEAPON);
-		VectorAngles(&mo->Velocity, &ang);
-		angle = mo->Angles.yaw;
+		A.PlaySound('MinotaurAttack2', CHAN_WEAPON);
+		VectorAngles(&A.Velocity, &ang);
+		angle = A.Angles.yaw;
 		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
 		SpawnMissileAngles(this, MinotaurMissile,
@@ -152,15 +156,15 @@ void Actor::A_MinotaurAtk2(void)
 
 //==========================================================================
 //
-//  Actor::A_MinotaurAtk3
+//  A_MinotaurAtk3
 //
 //  Floor fire attack.
 //
 //==========================================================================
 
-void Actor::A_MinotaurAtk3(void)
+void A_MinotaurAtk3(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	if (!Target)
 	{
@@ -177,32 +181,32 @@ void Actor::A_MinotaurAtk3(void)
 	}
 	else
 	{
-		mo = SpawnMissile(this, &Target, MinotaurFloorFire);
-		if (mo != NULL)
+		A = *SpawnMissile(this, &Target, MinotaurFloorFire);
+		if (A != none)
 		{
-			mo->PlaySound('MinotaurAttack1', CHAN_VOICE);
+			A.PlaySound('MinotaurAttack1', CHAN_VOICE);
 		}
 	}
 	if (P_Random() < 192 && Special2 == 0)
 	{
-		SetState(S_MNTR_ATK3_4);
+		SetState(FloorFireAttackState2);
 		Special2 = 1;
 	}
 }
 
 //==========================================================================
 //
-//  Actor::A_MinotaurCharge
+//  A_MinotaurCharge
 //
 //==========================================================================
 
-void Actor::A_MinotaurCharge(void)
+void A_MinotaurCharge(void)
 {
 	Actor puff;
 
 	if (Special1)
 	{
-		puff = SpawnActor(Origin, PhoenixPuff);
+		puff = Spawn(PhoenixPuff, Origin);
 		puff.Velocity.z = 2.0 * 35.0;
 		Special1--;
 	}
@@ -212,6 +216,77 @@ void Actor::A_MinotaurCharge(void)
 		SetState(SeeState);
 	}
 }
+
+__states__
+{
+	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) { A_Look(); }
+	S_MNTR_LOOK2('MNTR', 1, 10.0 / 35.0, S_MNTR_LOOK1) { A_Look(); }
+	S_MNTR_WALK1('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) { A_Chase(); }
+	S_MNTR_WALK2('MNTR', 1, 5.0 / 35.0, S_MNTR_WALK3) { A_Chase(); }
+	S_MNTR_WALK3('MNTR', 2, 5.0 / 35.0, S_MNTR_WALK4) { A_Chase(); }
+	S_MNTR_WALK4('MNTR', 3, 5.0 / 35.0, S_MNTR_WALK1) { A_Chase(); }
+	S_MNTR_ATK1_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK1_2) { A_FaceTarget(); }
+	S_MNTR_ATK1_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK1_3) { A_FaceTarget(); }
+	S_MNTR_ATK1_3('MNTR', 23, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk1(); }
+	S_MNTR_ATK2_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK2_2) { A_MinotaurDecide(); }
+	S_MNTR_ATK2_2('MNTR', 24, 4.0 / 35.0, S_MNTR_ATK2_3) { A_FaceTarget(); }
+	S_MNTR_ATK2_3('MNTR', 25, 9.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk2(); }
+	S_MNTR_ATK3_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK3_2) { A_FaceTarget(); }
+	S_MNTR_ATK3_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK3_3) { A_FaceTarget(); }
+	S_MNTR_ATK3_3('MNTR', 23, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk3(); }
+	S_MNTR_ATK3_4('MNTR', 23, 12.0 / 35.0, S_MNTR_ATK3_1) { }
+	S_MNTR_ATK4_1('MNTR', 20, 2.0 / 35.0, S_MNTR_ATK4_2) { }
+	S_MNTR_ATK4_2('MNTR', 20, 2.0 / 35.0, S_MNTR_ATK4_2) { A_MinotaurCharge(); }
+	S_MNTR_PAIN1('MNTR', 4, 3.0 / 35.0, S_MNTR_PAIN2) { }
+	S_MNTR_PAIN2('MNTR', 4, 6.0 / 35.0, S_MNTR_WALK1) { A_Pain(); }
+	S_MNTR_DIE1('MNTR', 5, 6.0 / 35.0, S_MNTR_DIE2) { }
+	S_MNTR_DIE2('MNTR', 6, 5.0 / 35.0, S_MNTR_DIE3) { }
+	S_MNTR_DIE3('MNTR', 7, 6.0 / 35.0, S_MNTR_DIE4) { A_Scream(); }
+	S_MNTR_DIE4('MNTR', 8, 5.0 / 35.0, S_MNTR_DIE5) { }
+	S_MNTR_DIE5('MNTR', 9, 6.0 / 35.0, S_MNTR_DIE6) { }
+	S_MNTR_DIE6('MNTR', 10, 5.0 / 35.0, S_MNTR_DIE7) { }
+	S_MNTR_DIE7('MNTR', 11, 6.0 / 35.0, S_MNTR_DIE8) { }
+	S_MNTR_DIE8('MNTR', 12, 5.0 / 35.0, S_MNTR_DIE9) { A_NoBlocking(); }
+	S_MNTR_DIE9('MNTR', 13, 6.0 / 35.0, S_MNTR_DIE10) { }
+	S_MNTR_DIE10('MNTR', 14, 5.0 / 35.0, S_MNTR_DIE11) { }
+	S_MNTR_DIE11('MNTR', 15, 6.0 / 35.0, S_MNTR_DIE12) { }
+	S_MNTR_DIE12('MNTR', 16, 5.0 / 35.0, S_MNTR_DIE13) { }
+	S_MNTR_DIE13('MNTR', 17, 6.0 / 35.0, S_MNTR_DIE14) { }
+	S_MNTR_DIE14('MNTR', 18, 5.0 / 35.0, S_MNTR_DIE15) { }
+	S_MNTR_DIE15('MNTR', 19, -1.0, S_NULL) { A_BossDeath(); }
+}
+
+defaultproperties
+{
+	Health = 3000;
+	Radius = 28.0;
+	Height = 100.0;
+	Mass = 800.0;
+	StepSpeed = 16.0;
+	PainChance = 25;
+	MissileDamage = 7;
+	bDropOff = true;
+	bBoss = true;
+	SpawnState = S_MNTR_LOOK1;
+	SeeState = S_MNTR_WALK1;
+	MeleeState = S_MNTR_ATK1_1;
+	MissileState = S_MNTR_ATK2_1;
+	ChargeAttackState = S_MNTR_ATK4_1;
+	FloorFireAttackState = S_MNTR_ATK3_1;
+	FloorFireAttackState2 = S_MNTR_ATK3_4;
+	PainState = S_MNTR_PAIN1;
+	DeathState = S_MNTR_DIE1;
+	SightSound = 'MinotaurSight';
+	ActiveSound = 'MinotaurActive';
+	AttackSound = 'MinotaurAttack1';
+	PainSound = 'MinotaurPain';
+	DeathSound = 'MinotaurDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //==========================================================================
 //
@@ -228,7 +303,7 @@ void Actor::A_MntrFloorFire(void)
 	Origin.z = FloorZ;
 	i1 = Origin.x + (Random() - Random()) * 4.0;
 	i2 = Origin.y + (Random() - Random()) * 4.0;
-	mo = SpawnActor(vector(i1, i2, ONFLOORZ), MinotaurFloorFire2);
+	mo = Spawn(MinotaurFloorFire2, vector(i1, i2, ONFLOORZ));
 	mo.Owner = Owner;
 	mo.Velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(&mo);
@@ -237,6 +312,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.22  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

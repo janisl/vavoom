@@ -23,25 +23,25 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Mummy
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Mummy:Pawn
+	__mobjinfo__(68)
+{
 
 //==========================================================================
 //
-//  Actor::A_MummyAttack
+//  A_MummyAttack
 //
 //==========================================================================
 
-void Actor::A_MummyAttack(void)
+void A_MummyAttack(void)
 {
 	if (!Target)
 	{
@@ -59,15 +59,86 @@ void Actor::A_MummyAttack(void)
 
 //==========================================================================
 //
-//  Actor::A_MummyAttack2
+//  A_MummySoul
+//
+//==========================================================================
+
+void A_MummySoul(void)
+{
+	Actor mo;
+
+	mo = Spawn(MummySoul, Origin + vector(0.0, 0.0, 10.0));
+	mo.Velocity.z = 1.0 * 35.0;
+}
+
+__states__
+{
+	S_MUMMY_LOOK1('MUMM', 0, 10.0 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
+	S_MUMMY_LOOK2('MUMM', 1, 10.0 / 35.0, S_MUMMY_LOOK1) { A_Look(); }
+	S_MUMMY_WALK1('MUMM', 0, 4.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
+	S_MUMMY_WALK2('MUMM', 1, 4.0 / 35.0, S_MUMMY_WALK3) { A_Chase(); }
+	S_MUMMY_WALK3('MUMM', 2, 4.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
+	S_MUMMY_WALK4('MUMM', 3, 4.0 / 35.0, S_MUMMY_WALK1) { A_Chase(); }
+	S_MUMMY_ATK1('MUMM', 4, 6.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
+	S_MUMMY_ATK2('MUMM', 5, 6.0 / 35.0, S_MUMMY_ATK3) { A_MummyAttack(); }
+	S_MUMMY_ATK3('MUMM', 6, 6.0 / 35.0, S_MUMMY_WALK1) { A_FaceTarget(); }
+	S_MUMMY_PAIN1('MUMM', 7, 4.0 / 35.0, S_MUMMY_PAIN2) { }
+	S_MUMMY_PAIN2('MUMM', 7, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
+	S_MUMMY_DIE1('MUMM', 8, 5.0 / 35.0, S_MUMMY_DIE2) { }
+	S_MUMMY_DIE2('MUMM', 9, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
+	S_MUMMY_DIE3('MUMM', 10, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
+	S_MUMMY_DIE4('MUMM', 11, 5.0 / 35.0, S_MUMMY_DIE5) { }
+	S_MUMMY_DIE5('MUMM', 12, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
+	S_MUMMY_DIE6('MUMM', 13, 5.0 / 35.0, S_MUMMY_DIE7) { }
+	S_MUMMY_DIE7('MUMM', 14, 5.0 / 35.0, S_MUMMY_DIE8) { }
+	S_MUMMY_DIE8('MUMM', 15, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 80;
+	Radius = 22.0;
+	Height = 62.0;
+	Mass = 75.0;
+	StepSpeed = 12.0;
+	PainChance = 128;
+	SpawnState = S_MUMMY_LOOK1;
+	SeeState = S_MUMMY_WALK1;
+	MeleeState = S_MUMMY_ATK1;
+	PainState = S_MUMMY_PAIN1;
+	DeathState = S_MUMMY_DIE1;
+	SightSound = 'MumySight';
+	ActiveSound = 'MumyActive';
+	AttackSound = 'MumyAttack1';
+	PainSound = 'MumyPain';
+	DeathSound = 'MumyDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	MummyLeader
+//
+//**************************************************************************
+//**************************************************************************
+
+class MummyLeader:Mummy
+	__mobjinfo__(45)
+{
+
+//==========================================================================
+//
+//  A_MummyAttack2
 //
 //  Mummy leader missile attack.
 //
 //==========================================================================
 
-void Actor::A_MummyAttack2(void)
+void A_MummyAttack2(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	if (!Target)
 	{
@@ -78,26 +149,72 @@ void Actor::A_MummyAttack2(void)
 		Target.Damage(self, self, HITDICE(2));
 		return;
 	}
-	mo = SpawnMissile(this, &Target, MummyMissile);
-	if (mo)
+	A = *SpawnMissile(this, &Target, MummyMissile);
+	if (A)
 	{
-		mo->SpecialMobj1 = &Target;
+		A.SpecialMobj1 = &Target;
 	}
 }
 
-//==========================================================================
-//
-//  Actor::A_MummySoul
-//
-//==========================================================================
-
-void Actor::A_MummySoul(void)
+__states__
 {
-	Actor mo;
-
-	mo = SpawnActor(Origin + vector(0.0, 0.0, 10.0), MummySoul);
-	mo.Velocity.z = 1.0 * 35.0;
+	S_MUMMYL_ATK1('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK2) { A_FaceTarget(); }
+	S_MUMMYL_ATK2('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK3) { A_FaceTarget(); }
+	S_MUMMYL_ATK3('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK4) { A_FaceTarget(); }
+	S_MUMMYL_ATK4('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK5) { A_FaceTarget(); }
+	S_MUMMYL_ATK5('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK6) { A_FaceTarget(); }
+	S_MUMMYL_ATK6('MUMM', 24 | FF_FULLBRIGHT, 15.0 / 35.0, S_MUMMY_WALK1) { A_MummyAttack2(); }
 }
+
+defaultproperties
+{
+	Health = 100;
+	PainChance = 64;
+	MissileState = S_MUMMYL_ATK1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	MummyGhost
+//
+//**************************************************************************
+//**************************************************************************
+
+class MummyGhost:Mummy
+	__mobjinfo__(69)
+{
+
+defaultproperties
+{
+	Translucency = 33;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	MummyLeaderGhost
+//
+//**************************************************************************
+//**************************************************************************
+
+class MummyLeaderGhost:MummyLeader
+	__mobjinfo__(46)
+{
+
+defaultproperties
+{
+	Translucency = 33;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //==========================================================================
 //
@@ -113,6 +230,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.18  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

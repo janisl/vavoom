@@ -89,10 +89,6 @@
 #define AMMO_MACE_WIMPY 		20
 #define AMMO_MACE_HEFTY 		100
 
-void P_SetDormantArtifact(mobj_t * arti);
-void P_HideSpecialThing(mobj_t * thing);
-void P_RemoveMobj(mobj_t * mobj);
-
 int GetAmmoChange[] = {
 	wp_goldwand,
 	wp_crossbow,
@@ -544,70 +540,70 @@ void Actor::TouchSpecial(Actor Toucher)
 		if (Toucher.GiveArtifact(arti_health, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIHEALTH);
-			P_SetDormantArtifact(this);
+			SetDormantArtifact();
 		}
 		return;
 	case 'SOAR':	// Arti_Fly
 		if (Toucher.GiveArtifact(arti_fly, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIFLY);
-			P_SetDormantArtifact(this);
+			SetDormantArtifact();
 		}
 		return;
 	case 'INVU':	// Arti_Invulnerability
 		if (Toucher.GiveArtifact(arti_invulnerability, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIINVULNERABILITY);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'PWBK':	// Arti_TomeOfPower
 		if (Toucher.GiveArtifact(arti_tomeofpower, self))
 		{
 			cprint(Toucher.Player, TXT_ARTITOMEOFPOWER);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'INVS':	// Arti_Invisibility
 		if (Toucher.GiveArtifact(arti_invisibility, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIINVISIBILITY);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'EGGC':	// Arti_Egg
 		if (Toucher.GiveArtifact(arti_egg, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIEGG);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'SPHL':	// Arti_SuperHealth
 		if (Toucher.GiveArtifact(arti_superhealth, self))
 		{
 			cprint(Toucher.Player, TXT_ARTISUPERHEALTH);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'TRCH':	// Arti_Torch
 		if (Toucher.GiveArtifact(arti_torch, self))
 		{
 			cprint(Toucher.Player, TXT_ARTITORCH);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'FBMB':	// Arti_FireBomb
 		if (Toucher.GiveArtifact(arti_firebomb, self))
 		{
 			cprint(Toucher.Player, TXT_ARTIFIREBOMB);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 	case 'ATLP':	// Arti_Teleport
 		if (Toucher.GiveArtifact(arti_teleport, self))
 		{
 			cprint(Toucher.Player, TXT_ARTITELEPORT);
-			P_SetDormantArtifact(&self);
+			SetDormantArtifact();
 		}
 		return;
 
@@ -756,11 +752,11 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 	if (deathmatch && respawn && !bDropped)
 	{
-		P_HideSpecialThing(&self);
+		HideSpecialThing();
 	}
 	else
 	{
-		P_RemoveMobj(&self);
+		Remove();
 	}
 	Toucher.Player->BonusCount += BONUSADD;
 	Toucher.PlaySound(sound, CHAN_ITEM);
@@ -769,6 +765,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.15  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

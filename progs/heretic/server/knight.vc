@@ -23,25 +23,25 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Knight
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Knight:Pawn
+	__mobjinfo__(64)
+{
 
 //==========================================================================
 //
-//  Actor::A_KnightAttack
+//  A_KnightAttack
 //
 //==========================================================================
 
-void Actor::A_KnightAttack(void)
+void A_KnightAttack(void)
 {
 	if (!Target)
 	{
@@ -65,6 +65,76 @@ void Actor::A_KnightAttack(void)
 	SpawnMissile(this, &Target, KnightAxe);
 }
 
+__states__
+{
+	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) { A_Look(); }
+	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) { A_Look(); }
+	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
+	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) { A_Chase(); }
+	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
+	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) { A_Chase(); }
+	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
+	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) { A_FaceTarget(); }
+	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) { A_KnightAttack(); }
+	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) { A_FaceTarget(); }
+	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
+	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) { A_KnightAttack(); }
+	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
+	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
+	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) { }
+	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
+	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) { }
+	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) { A_NoBlocking(); }
+	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) { }
+	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) { }
+	S_KNIGHT_DIE7('KNIG', 14, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 200;
+	Radius = 24.0;
+	Height = 78.0;
+	Mass = 150.0;
+	StepSpeed = 12.0;
+	PainChance = 100;
+	SpawnState = S_KNIGHT_STND1;
+	SeeState = S_KNIGHT_WALK1;
+	MeleeState = S_KNIGHT_ATK1;
+	MissileState = S_KNIGHT_ATK1;
+	PainState = S_KNIGHT_PAIN1;
+	DeathState = S_KNIGHT_DIE1;
+	SightSound = 'KnightSight';
+	ActiveSound = 'KnightActive';
+	AttackSound = 'KnightAttack1';
+	PainSound = 'KnightPain';
+	DeathSound = 'KnightDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	KnightGhost
+//
+//**************************************************************************
+//**************************************************************************
+
+class KnightGhost:Knight
+	__mobjinfo__(65)
+{
+
+defaultproperties
+{
+	Translucency = 33;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
 //==========================================================================
 //
 //  Actor::A_DripBlood
@@ -75,8 +145,8 @@ void Actor::A_DripBlood(void)
 {
 	Actor mo;
 
-	mo = SpawnActor(Origin + vector((Random() - Random()) * 8.0,
-		(Random() - Random()) * 8.0, 0.0), Blood);
+	mo = Spawn(Blood, Origin + vector((Random() - Random()) * 8.0,
+		(Random() - Random()) * 8.0, 0.0));
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo.bNoGravity = false;
@@ -85,6 +155,9 @@ void Actor::A_DripBlood(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.21  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

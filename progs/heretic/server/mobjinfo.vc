@@ -2419,143 +2419,10 @@ class BloodSplatter:Actor
 	}
 };
 
-//==========================================================================
-//
-//	PlayerPawn
-//
-//==========================================================================
-
-class PlayerPawn:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		GibsHealth = -50;
-		Radius = 16.0;
-		Height = 56.0;
-		Mass = 100.0;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bPickUp = true;
-		bWindThrust = true;
-		bFootClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		SpawnState = S_PLAY;
-		SeeState = S_PLAY_RUN1;
-		MissileState = S_PLAY_ATK1;
-		PainState = S_PLAY_PAIN;
-		DeathState = S_PLAY_DIE1;
-		GibsDeathState = S_PLAY_XDIE1;
-		PainSound = 'PlayerPain';
-		DeathSound = 'PlayerDeath';
-	}
-};
-
-//==========================================================================
-//
-//	BloodySkull
-//
-//==========================================================================
-
-class BloodySkull:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 4.0;
-		Mass = 12.5;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bNoPassMobj = true;
-		bCannotPush = true;
-		SpawnState = S_BLOODYSKULL1;
-	}
-};
-
-//==========================================================================
-//
-//	ChickenPlayer
-//
-//==========================================================================
-
-class ChickenPlayer:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 16.0;
-		Height = 24.0;
-		Mass = 12.5;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bWindThrust = true;
-		bFootClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		SpawnState = S_CHICPLAY;
-		SeeState = S_CHICPLAY_RUN1;
-		MissileState = S_CHICPLAY_ATK1;
-		PainState = S_CHICPLAY_PAIN;
-		DeathState = S_CHICKEN_DIE1;
-		PainSound = 'ChickenPain';
-		DeathSound = 'ChickenDeath';
-	}
-};
-
-//==========================================================================
-//
-//	Chicken
-//
-//==========================================================================
-
-class Chicken:Actor
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 9.0;
-		Height = 22.0;
-		Mass = 40.0;
-		StepSpeed = 4.0;
-		ReactionCount = 8;
-		PainChance = 200;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bCountKill = true;
-		bWindThrust = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_CHICKEN_LOOK1;
-		SeeState = S_CHICKEN_WALK1;
-		MeleeState = S_CHICKEN_ATK1;
-		PainState = S_CHICKEN_PAIN1;
-		DeathState = S_CHICKEN_DIE1;
-		SightSound = 'ChickenPain';
-		ActiveSound = 'ChickenActive';
-		AttackSound = 'ChickenAttack';
-		PainSound = 'ChickenPain';
-		DeathSound = 'ChickenDeath';
-	}
-};
-
+class HereticPlayer;
+class BloodySkull;
+class ChickenPlayer;
+class Chicken;
 //==========================================================================
 //
 //	Feather
@@ -2583,194 +2450,10 @@ class Feather:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Mummy
-//
-//==========================================================================
-
-class Mummy:Actor
-	__mobjinfo__(68)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 80;
-		Radius = 22.0;
-		Height = 62.0;
-		Mass = 75.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 128;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_MUMMY_LOOK1;
-		SeeState = S_MUMMY_WALK1;
-		MeleeState = S_MUMMY_ATK1;
-		PainState = S_MUMMY_PAIN1;
-		DeathState = S_MUMMY_DIE1;
-		SightSound = 'MumySight';
-		ActiveSound = 'MumyActive';
-		AttackSound = 'MumyAttack1';
-		PainSound = 'MumyPain';
-		DeathSound = 'MumyDeath';
-	}
-};
-
-//==========================================================================
-//
-//	MummyLeader
-//
-//==========================================================================
-
-class MummyLeader:Actor
-	__mobjinfo__(45)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 22.0;
-		Height = 62.0;
-		Mass = 75.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 64;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_MUMMY_LOOK1;
-		SeeState = S_MUMMY_WALK1;
-		MeleeState = S_MUMMY_ATK1;
-		MissileState = S_MUMMYL_ATK1;
-		PainState = S_MUMMY_PAIN1;
-		DeathState = S_MUMMY_DIE1;
-		SightSound = 'MumySight';
-		ActiveSound = 'MumyActive';
-		AttackSound = 'MumyAttack1';
-		PainSound = 'MumyPain';
-		DeathSound = 'MumyDeath';
-	}
-};
-
-//==========================================================================
-//
-//	MummyGhost
-//
-//==========================================================================
-
-class MummyGhost:Actor
-	__mobjinfo__(69)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 80;
-		Radius = 22.0;
-		Height = 62.0;
-		Mass = 75.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 128;
-		Translucency = 33;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_MUMMY_LOOK1;
-		SeeState = S_MUMMY_WALK1;
-		MeleeState = S_MUMMY_ATK1;
-		PainState = S_MUMMY_PAIN1;
-		DeathState = S_MUMMY_DIE1;
-		SightSound = 'MumySight';
-		ActiveSound = 'MumyActive';
-		AttackSound = 'MumyAttack1';
-		PainSound = 'MumyPain';
-		DeathSound = 'MumyDeath';
-	}
-};
-
-//==========================================================================
-//
-//	MummyLeaderGhost
-//
-//==========================================================================
-
-class MummyLeaderGhost:Actor
-	__mobjinfo__(46)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 22.0;
-		Height = 62.0;
-		Mass = 75.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 64;
-		Translucency = 33;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_MUMMY_LOOK1;
-		SeeState = S_MUMMY_WALK1;
-		MeleeState = S_MUMMY_ATK1;
-		MissileState = S_MUMMYL_ATK1;
-		PainState = S_MUMMY_PAIN1;
-		DeathState = S_MUMMY_DIE1;
-		SightSound = 'MumySight';
-		ActiveSound = 'MumyActive';
-		AttackSound = 'MumyAttack1';
-		PainSound = 'MumyPain';
-		DeathSound = 'MumyDeath';
-	}
-};
-
+class Mummy;
+class MummyLeader;
+class MummyGhost;
+class MummyLeaderGhost;
 //==========================================================================
 //
 //	MummySoul
@@ -2822,54 +2505,7 @@ class MummyMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Beast
-//
-//==========================================================================
-
-class Beast:Actor
-	__mobjinfo__(70)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 220;
-		GibsHealth = -110;
-		Radius = 32.0;
-		Height = 74.0;
-		Mass = 200.0;
-		StepSpeed = 14.0;
-		ReactionCount = 8;
-		PainChance = 100;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_BEAST_LOOK1;
-		SeeState = S_BEAST_WALK1;
-		MissileState = S_BEAST_ATK1;
-		PainState = S_BEAST_PAIN1;
-		DeathState = S_BEAST_DIE1;
-		GibsDeathState = S_BEAST_XDIE1;
-		SightSound = 'BeastSight';
-		ActiveSound = 'BeastActive';
-		AttackSound = 'BeastAttack';
-		PainSound = 'BeastPain';
-		DeathSound = 'BeastDeath';
-	}
-};
-
+class Beast;
 //==========================================================================
 //
 //	BeastBall
@@ -2983,52 +2619,7 @@ class Puffy:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Snake
-//
-//==========================================================================
-
-class Snake:Actor
-	__mobjinfo__(92)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 280;
-		Radius = 22.0;
-		Height = 70.0;
-		Mass = 100.0;
-		StepSpeed = 10.0;
-		ReactionCount = 8;
-		PainChance = 48;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_SNAKE_LOOK1;
-		SeeState = S_SNAKE_WALK1;
-		MissileState = S_SNAKE_ATK1;
-		PainState = S_SNAKE_PAIN1;
-		DeathState = S_SNAKE_DIE1;
-		SightSound = 'SnakeSight';
-		ActiveSound = 'SnakeActive';
-		AttackSound = 'SnakeAttack';
-		PainSound = 'SnakePain';
-		DeathSound = 'SnakeDeath';
-	}
-};
-
+class Snake;
 //==========================================================================
 //
 //	SnakeProjectileA
@@ -3088,52 +2679,7 @@ class SnakeProjectileB:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Head
-//
-//==========================================================================
-
-class Head:Actor
-	__mobjinfo__(6)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 700;
-		Radius = 40.0;
-		Height = 72.0;
-		Mass = 325.0;
-		StepSpeed = 6.0;
-		ReactionCount = 8;
-		PainChance = 32;
-		bSolid = true;
-		bShootable = true;
-		bNoBlood = true;
-		bCountKill = true;
-		bActivateMCross = true;
-		SpawnState = S_HEAD_LOOK;
-		SeeState = S_HEAD_FLOAT;
-		MissileState = S_HEAD_ATK1;
-		PainState = S_HEAD_PAIN1;
-		DeathState = S_HEAD_DIE1;
-		SightSound = 'HeadSight';
-		ActiveSound = 'HeadActive';
-		AttackSound = 'HeadAttack1';
-		PainSound = 'HeadPain';
-		DeathSound = 'HeadDeath';
-	}
-};
-
+class Head;
 //==========================================================================
 //
 //	HeadMissile1
@@ -3252,100 +2798,8 @@ class WhirlWind:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Clink
-//
-//==========================================================================
-
-class Clink:Actor
-	__mobjinfo__(90)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 150;
-		Radius = 20.0;
-		Height = 64.0;
-		Mass = 75.0;
-		StepSpeed = 14.0;
-		ReactionCount = 8;
-		PainChance = 32;
-		bSolid = true;
-		bShootable = true;
-		bNoBlood = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_CLINK_LOOK1;
-		SeeState = S_CLINK_WALK1;
-		MeleeState = S_CLINK_ATK1;
-		PainState = S_CLINK_PAIN1;
-		DeathState = S_CLINK_DIE1;
-		SightSound = 'ClinkSight';
-		ActiveSound = 'ClinkActive';
-		AttackSound = 'ClinkAttack';
-		PainSound = 'ClinkPain';
-		DeathSound = 'ClinkDeath';
-	}
-};
-
-//==========================================================================
-//
-//	Wizard
-//
-//==========================================================================
-
-class Wizard:Actor
-	__mobjinfo__(15)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 180;
-		Radius = 16.0;
-		Height = 68.0;
-		Mass = 100.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 64;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bFloat = true;
-		bCountKill = true;
-		bActivateMCross = true;
-		SpawnState = S_WIZARD_LOOK1;
-		SeeState = S_WIZARD_WALK1;
-		MissileState = S_WIZARD_ATK1;
-		PainState = S_WIZARD_PAIN1;
-		DeathState = S_WIZARD_DIE1;
-		SightSound = 'WizardSight';
-		ActiveSound = 'WizardActive';
-		AttackSound = 'WizardAttack';
-		PainSound = 'WizardPain';
-		DeathSound = 'WizardDeath';
-	}
-};
-
+class Clink;
+class Wizard;
 //==========================================================================
 //
 //	WizardMissile
@@ -3375,109 +2829,8 @@ class WizardMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Imp
-//
-//==========================================================================
-
-class Imp:Actor
-	__mobjinfo__(66)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 40;
-		GibsHealth = -20;
-		Radius = 16.0;
-		Height = 36.0;
-		Mass = 50.0;
-		StepSpeed = 10.0;
-		ReactionCount = 8;
-		PainChance = 200;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bFloat = true;
-		bCountKill = true;
-		bSpawnFloat = true;
-		bActivateMCross = true;
-		SpawnState = S_IMP_LOOK1;
-		SeeState = S_IMP_FLY1;
-		MeleeState = S_IMP_MEATK1;
-		MissileState = S_IMP_MSATK1_1;
-		PainState = S_IMP_PAIN1;
-		CrashState = S_IMP_CRASH1;
-		DeathState = S_IMP_DIE1;
-		GibsDeathState = S_IMP_XDIE1;
-		SightSound = 'ImpSight';
-		ActiveSound = 'ImpActive';
-		AttackSound = 'ImpAttack1';
-		PainSound = 'ImpPain';
-		DeathSound = 'ImpDeath';
-	}
-};
-
-//==========================================================================
-//
-//	ImpLeader
-//
-//==========================================================================
-
-class ImpLeader:Actor
-	__mobjinfo__(5)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 80;
-		GibsHealth = -40;
-		Radius = 16.0;
-		Height = 36.0;
-		Mass = 50.0;
-		StepSpeed = 10.0;
-		ReactionCount = 8;
-		PainChance = 200;
-		bSolid = true;
-		bShootable = true;
-		bNoGravity = true;
-		bFloat = true;
-		bCountKill = true;
-		bSpawnFloat = true;
-		bActivateMCross = true;
-		SpawnState = S_IMP_LOOK1;
-		SeeState = S_IMP_FLY1;
-		MissileState = S_IMP_MSATK2_1;
-		PainState = S_IMP_PAIN1;
-		CrashState = S_IMP_CRASH1;
-		DeathState = S_IMP_DIE1;
-		GibsDeathState = S_IMP_XDIE1;
-		SightSound = 'ImpSight';
-		ActiveSound = 'ImpActive';
-		AttackSound = 'ImpAttack2';
-		PainSound = 'ImpPain';
-		DeathSound = 'ImpDeath';
-	}
-};
-
+class Imp;
+class ImpLeader;
 //==========================================================================
 //
 //	ImpChunk1
@@ -3550,101 +2903,8 @@ class ImpBall:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Knight
-//
-//==========================================================================
-
-class Knight:Actor
-	__mobjinfo__(64)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 200;
-		Radius = 24.0;
-		Height = 78.0;
-		Mass = 150.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 100;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_KNIGHT_STND1;
-		SeeState = S_KNIGHT_WALK1;
-		MeleeState = S_KNIGHT_ATK1;
-		MissileState = S_KNIGHT_ATK1;
-		PainState = S_KNIGHT_PAIN1;
-		DeathState = S_KNIGHT_DIE1;
-		SightSound = 'KnightSight';
-		ActiveSound = 'KnightActive';
-		AttackSound = 'KnightAttack1';
-		PainSound = 'KnightPain';
-		DeathSound = 'KnightDeath';
-	}
-};
-
-//==========================================================================
-//
-//	KnightGhost
-//
-//==========================================================================
-
-class KnightGhost:Actor
-	__mobjinfo__(65)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 200;
-		Radius = 24.0;
-		Height = 78.0;
-		Mass = 150.0;
-		StepSpeed = 12.0;
-		ReactionCount = 8;
-		PainChance = 100;
-		Translucency = 33;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bActivateMCross = true;
-		SpawnState = S_KNIGHT_STND1;
-		SeeState = S_KNIGHT_WALK1;
-		MeleeState = S_KNIGHT_ATK1;
-		MissileState = S_KNIGHT_ATK1;
-		PainState = S_KNIGHT_PAIN1;
-		DeathState = S_KNIGHT_DIE1;
-		SightSound = 'KnightSight';
-		ActiveSound = 'KnightActive';
-		AttackSound = 'KnightAttack1';
-		PainSound = 'KnightPain';
-		DeathSound = 'KnightDeath';
-	}
-};
-
+class Knight;
+class KnightGhost;
 //==========================================================================
 //
 //	KnightAxe
@@ -3708,53 +2968,7 @@ class KnightRedAxe:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Sorcerer1
-//
-//==========================================================================
-
-class Sorcerer1:Actor
-	__mobjinfo__(7)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 2000;
-		Radius = 28.0;
-		Height = 100.0;
-		Mass = 800.0;
-		StepSpeed = 16.0;
-		ReactionCount = 8;
-		PainChance = 56;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFootClip = true;
-		bBoss = true;
-		bActivateMCross = true;
-		SpawnState = S_SRCR1_LOOK1;
-		SeeState = S_SRCR1_WALK1;
-		MissileState = S_SRCR1_ATK1;
-		PainState = S_SRCR1_PAIN1;
-		DeathState = S_SRCR1_DIE1;
-		SightSound = 'SorcererDemonSight';
-		ActiveSound = 'SorcererDemonActive';
-		AttackSound = 'SorcererDemonAttack';
-		PainSound = 'SorcererDemonPain';
-		DeathSound = 'SorcererDemonDeath';
-	}
-};
-
+class Sorcerer1;
 //==========================================================================
 //
 //	Sorcerer1Missile
@@ -3785,52 +2999,7 @@ class Sorcerer1Missile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Sorcerer2
-//
-//==========================================================================
-
-class Sorcerer2:Actor
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 3500;
-		Radius = 16.0;
-		Height = 70.0;
-		Mass = 300.0;
-		StepSpeed = 14.0;
-		ReactionCount = 8;
-		PainChance = 32;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bCountKill = true;
-		bFootClip = true;
-		bBoss = true;
-		bActivateMCross = true;
-		SpawnState = S_SOR2_LOOK1;
-		SeeState = S_SOR2_WALK1;
-		MissileState = S_SOR2_ATK1;
-		PainState = S_SOR2_PAIN1;
-		DeathState = S_SOR2_DIE1;
-		SightSound = 'SorcererSight';
-		ActiveSound = 'SorcererActive';
-		AttackSound = 'SorcererAttack';
-		PainSound = 'SorcererPain';
-	}
-};
-
+class Sorcerer2;
 //==========================================================================
 //
 //	Sorcerer2Missile1
@@ -3934,56 +3103,7 @@ class Sorcerer2TeleFade:Actor
 	}
 };
 
-//==========================================================================
-//
-//	Minotaur
-//
-//==========================================================================
-
-class Minotaur:Actor
-	__mobjinfo__(9)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 3000;
-		Radius = 28.0;
-		Height = 100.0;
-		Mass = 800.0;
-		StepSpeed = 16.0;
-		ReactionCount = 8;
-		PainChance = 25;
-		MissileDamage = 7;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bCountKill = true;
-		bFootClip = true;
-		bBoss = true;
-		bActivateMCross = true;
-		SpawnState = S_MNTR_LOOK1;
-		SeeState = S_MNTR_WALK1;
-		MeleeState = S_MNTR_ATK1_1;
-		MissileState = S_MNTR_ATK2_1;
-		PainState = S_MNTR_PAIN1;
-		DeathState = S_MNTR_DIE1;
-		SightSound = 'MinotaurSight';
-		ActiveSound = 'MinotaurActive';
-		AttackSound = 'MinotaurAttack1';
-		PainSound = 'MinotaurPain';
-		DeathSound = 'MinotaurDeath';
-	}
-};
-
+class Minotaur;
 //==========================================================================
 //
 //	MinotaurMissile
@@ -4484,9 +3604,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/03/16 17:45:13  dj_jl
+//	Added Pawn and PlayerPawn classes, beautification.
+//
 //	Revision 1.24  2002/03/09 17:57:01  dj_jl
 //	Got rid of function pointers, made most of the physics functions native.
-//
+//	
 //	Revision 1.23  2002/02/22 18:00:17  dj_jl
 //	A lots of the renaming, beautification.
 //	

@@ -97,7 +97,7 @@ void Actor::A_RestoreArtifact(void)
 
 void Actor::A_InitKeyGizmo(void)
 {
-	mobj_t *mo;
+	Actor A;
 	int state;
 
 	switch (Class)
@@ -114,8 +114,8 @@ void Actor::A_InitKeyGizmo(void)
 	default:
 		break;
 	}
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 60.0, KeyGizmoFloat);
-	mo->SetState(state);
+	A = Spawn(KeyGizmoFloat, Origin + vector(0.0, 0.0, 60.0));
+	A.SetState(state);
 }
 
 //==========================================================================
@@ -140,6 +140,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/16 17:45:12  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.15  2002/02/22 18:00:15  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -23,63 +23,33 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
 #define MAX_BOSS_SPOTS 8
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
 
 int BossSpotCount;
 TVec BossSpot[MAX_BOSS_SPOTS];
 float BossSpot_angle[MAX_BOSS_SPOTS];
 
-// CODE --------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Sorcerer1
+//
+//**************************************************************************
+//**************************************************************************
 
-//==========================================================================
-//
-//  InitMonsters
-//
-//  Called at level load.
-//
-//==========================================================================
-
-void InitMonsters(void)
+class Sorcerer1:Pawn
+	__mobjinfo__(7)
 {
-	BossSpotCount = 0;
-}
+
+int ReAttackState;
 
 //==========================================================================
 //
-//  P_AddBossSpot
+//  A_Sor1Chase
 //
 //==========================================================================
 
-void AddBossSpot(float x, float y, float angle)
-{
-	if (BossSpotCount == MAX_BOSS_SPOTS)
-	{
-		Error("Too many boss spots.");
-	}
-	BossSpot[BossSpotCount].x = x;
-	BossSpot[BossSpotCount].y = y;
-	BossSpot[BossSpotCount].z = 0.0;	//FIXME
-	BossSpot_angle[BossSpotCount] = angle;
-	BossSpotCount++;
-}
-
-//==========================================================================
-//
-//  Actor::A_Sor1Chase
-//
-//==========================================================================
-
-void Actor::A_Sor1Chase(void)
+void A_Sor1Chase(void)
 {
 	if (Special1)
 	{
@@ -91,15 +61,15 @@ void Actor::A_Sor1Chase(void)
 
 //==========================================================================
 //
-//  Actor::A_Srcr1Attack
+//  A_Srcr1Attack
 //
 //  Sorcerer demon attack.
 //
 //==========================================================================
 
-void Actor::A_Srcr1Attack(void)
+void A_Srcr1Attack(void)
 {
-	mobj_t *mo;
+	Actor A;
 	TAVec ang;
 	float angle;
 
@@ -121,11 +91,11 @@ void Actor::A_Srcr1Attack(void)
 	else
 	{
 		// Spit three fireballs
-		mo = SpawnMissile(this, &Target, Sorcerer1Missile);
-		if (mo)
+		A = *SpawnMissile(this, &Target, Sorcerer1Missile);
+		if (A)
 		{
-			VectorAngles(&mo->Velocity, &ang);
-			angle = mo->Angles.yaw;
+			VectorAngles(&A.Velocity, &ang);
+			angle = A.Angles.yaw;
 			SpawnMissileAngles(this, Sorcerer1Missile,
 				AngleMod360(angle - 3.0), ang.pitch);
 			SpawnMissileAngles(this, Sorcerer1Missile,
@@ -143,7 +113,7 @@ void Actor::A_Srcr1Attack(void)
 			{
 				// Set state to attack again
 				Special1 = 1;
-				SetState(S_SRCR1_ATK4);
+				SetState(ReAttackState);
 			}
 		}
 	}
@@ -151,11 +121,11 @@ void Actor::A_Srcr1Attack(void)
 
 //==========================================================================
 //
-//  Actor::A_Sor1Pain
+//  A_Sor1Pain
 //
 //==========================================================================
 
-void Actor::A_Sor1Pain(void)
+void A_Sor1Pain(void)
 {
 	Special1 = 20;	// Number of steps to walk fast
 	A_Pain();
@@ -163,61 +133,134 @@ void Actor::A_Sor1Pain(void)
 
 //==========================================================================
 //
-//  Actor::A_SorZap
+//  A_SorZap
 //
 //==========================================================================
 
-void Actor::A_SorZap(void)
+void A_SorZap(void)
 {
 	PlayFullVolumeSound('SorcererZap', CHAN_BODY);
 }
 
 //==========================================================================
 //
-//  Actor::A_SorcererRise
+//  A_SorcererRise
 //
 //==========================================================================
 
-void Actor::A_SorcererRise(void)
+void A_SorcererRise(void)
 {
-	Actor mo;
+	Sorcerer2Base S2;
 
 	bSolid = false;
-	mo = SpawnActor(Origin, Sorcerer2);
-	mo.SetState(S_SOR2_RISE1);
-	mo.Angles.yaw = Angles.yaw;
-	mo.Target = Target;
+	S2 = Sorcerer2Base(Spawn(Sorcerer2, Origin));
+	S2.SetState(S2.RiseState);
+	S2.Angles.yaw = Angles.yaw;
+	S2.Target = Target;
 }
 
+__states__
+{
+	S_SRCR1_LOOK1('SRCR', 0, 10.0 / 35.0, S_SRCR1_LOOK2) { A_Look(); }
+	S_SRCR1_LOOK2('SRCR', 1, 10.0 / 35.0, S_SRCR1_LOOK1) { A_Look(); }
+	S_SRCR1_WALK1('SRCR', 0, 5.0 / 35.0, S_SRCR1_WALK2) { A_Sor1Chase(); }
+	S_SRCR1_WALK2('SRCR', 1, 5.0 / 35.0, S_SRCR1_WALK3) { A_Sor1Chase(); }
+	S_SRCR1_WALK3('SRCR', 2, 5.0 / 35.0, S_SRCR1_WALK4) { A_Sor1Chase(); }
+	S_SRCR1_WALK4('SRCR', 3, 5.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Chase(); }
+	S_SRCR1_PAIN1('SRCR', 16, 6.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Pain(); }
+	S_SRCR1_ATK1('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK2) { A_FaceTarget(); }
+	S_SRCR1_ATK2('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK3) { A_FaceTarget(); }
+	S_SRCR1_ATK3('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_ATK4('SRCR', 18, 10.0 / 35.0, S_SRCR1_ATK5) { A_FaceTarget(); }
+	S_SRCR1_ATK5('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK6) { A_FaceTarget(); }
+	S_SRCR1_ATK6('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK7) { A_FaceTarget(); }
+	S_SRCR1_ATK7('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_DIE1('SRCR', 4, 7.0 / 35.0, S_SRCR1_DIE2) { }
+	S_SRCR1_DIE2('SRCR', 5, 7.0 / 35.0, S_SRCR1_DIE3) { A_Scream(); }
+	S_SRCR1_DIE3('SRCR', 6, 7.0 / 35.0, S_SRCR1_DIE4) { }
+	S_SRCR1_DIE4('SRCR', 7, 6.0 / 35.0, S_SRCR1_DIE5) { }
+	S_SRCR1_DIE5('SRCR', 8, 6.0 / 35.0, S_SRCR1_DIE6) { }
+	S_SRCR1_DIE6('SRCR', 9, 6.0 / 35.0, S_SRCR1_DIE7) { }
+	S_SRCR1_DIE7('SRCR', 10, 6.0 / 35.0, S_SRCR1_DIE8) { }
+	S_SRCR1_DIE8('SRCR', 11, 25.0 / 35.0, S_SRCR1_DIE9) { A_SorZap(); }
+	S_SRCR1_DIE9('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE10) { }
+	S_SRCR1_DIE10('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE11) { }
+	S_SRCR1_DIE11('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE12) { }
+	S_SRCR1_DIE12('SRCR', 11, 20.0 / 35.0, S_SRCR1_DIE13) { A_SorZap(); }
+	S_SRCR1_DIE13('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE14) { }
+	S_SRCR1_DIE14('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE15) { }
+	S_SRCR1_DIE15('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE16) { }
+	S_SRCR1_DIE16('SRCR', 11, 12.0 / 35.0, S_SRCR1_DIE17) { }
+	S_SRCR1_DIE17('SRCR', 15, -1.0, S_NULL) { A_SorcererRise(); }
+}
+
+defaultproperties
+{
+	Health = 2000;
+	Radius = 28.0;
+	Height = 100.0;
+	Mass = 800.0;
+	StepSpeed = 16.0;
+	PainChance = 56;
+	bBoss = true;
+	SpawnState = S_SRCR1_LOOK1;
+	SeeState = S_SRCR1_WALK1;
+	MissileState = S_SRCR1_ATK1;
+	ReAttackState = S_SRCR1_ATK4;
+	PainState = S_SRCR1_PAIN1;
+	DeathState = S_SRCR1_DIE1;
+	SightSound = 'SorcererDemonSight';
+	ActiveSound = 'SorcererDemonActive';
+	AttackSound = 'SorcererDemonAttack';
+	PainSound = 'SorcererDemonPain';
+	DeathSound = 'SorcererDemonDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Sorcerer2
+//
+//**************************************************************************
+//**************************************************************************
+
+class Sorcerer2:Sorcerer2Base
+{
+
+int TeleportState;
+int DeathLoopState;
+
 //==========================================================================
 //
-//  Actor::A_SorRise
+//  A_SorRise
 //
 //==========================================================================
 
-void Actor::A_SorRise(void)
+void A_SorRise(void)
 {
 	PlayFullVolumeSound('SorcererRise', CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  Actor::A_SorSightSnd
+//  A_SorSightSnd
 //
 //==========================================================================
 
-void Actor::A_SorSightSnd(void)
+void A_SorSightSnd(void)
 {
 	PlayFullVolumeSound('SorcererSight', CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  Actor::DSparilTeleport
+//  DSparilTeleport
 //
 //==========================================================================
 
-void Actor::DSparilTeleport(void)
+void DSparilTeleport(void)
 {
 	int i;
 	float x;
@@ -242,9 +285,9 @@ void Actor::DSparilTeleport(void)
 	PrevOrg = Origin;
 	if (P_TeleportMove(this, x, y))
 	{
-		fog = SpawnActor(PrevOrg, Sorcerer2TeleFade);
+		fog = Spawn(Sorcerer2TeleFade, PrevOrg);
 		fog.PlaySound('Teleport', CHAN_VOICE);
-		SetState(S_SOR2_TELE1);
+		SetState(TeleportState);
 		PlaySound('Teleport', CHAN_VOICE);
 		Origin.z = FloorZ;
 		Angles.yaw = BossSpot_angle[i % BossSpotCount];
@@ -254,11 +297,11 @@ void Actor::DSparilTeleport(void)
 
 //==========================================================================
 //
-//  Actor::A_Srcr2Decide
+//  A_Srcr2Decide
 //
 //==========================================================================
 
-void Actor::A_Srcr2Decide(void)
+void A_Srcr2Decide(void)
 {
 	int chance;
 
@@ -305,11 +348,11 @@ void Actor::A_Srcr2Decide(void)
 
 //==========================================================================
 //
-//  Actor::A_Srcr2Attack
+//  A_Srcr2Attack
 //
 //==========================================================================
 
-void Actor::A_Srcr2Attack(void)
+void A_Srcr2Attack(void)
 {
 	int chance;
 
@@ -341,11 +384,11 @@ void Actor::A_Srcr2Attack(void)
 
 //==========================================================================
 //
-//  Actor::A_Sor2DthInit
+//  A_Sor2DthInit
 //
 //==========================================================================
 
-void Actor::A_Sor2DthInit(void)
+void A_Sor2DthInit(void)
 {
 	Special1 = 7;	// Animation loop counter
 	P_Massacre();	// Kill monsters early
@@ -353,50 +396,154 @@ void Actor::A_Sor2DthInit(void)
 
 //==========================================================================
 //
-//  Actor::A_SorDSph
+//  A_SorDSph
 //
 //==========================================================================
 
-void Actor::A_SorDSph(void)
+void A_SorDSph(void)
 {
 	PlayFullVolumeSound('SorcererDeath', CHAN_VOICE);
 }
 
 //==========================================================================
 //
-//  Actor::A_Sor2DthLoop
+//  A_Sor2DthLoop
 //
 //==========================================================================
 
-void Actor::A_Sor2DthLoop(void)
+void A_Sor2DthLoop(void)
 {
 	if (--Special1)
 	{
 		// Need to loop
-		SetState(S_SOR2_DIE4);
+		SetState(DeathLoopState);
 	}
 }
 
 //==========================================================================
 //
-//  Actor::A_SorDExp
+//  A_SorDExp
 //
 //==========================================================================
 
-void Actor::A_SorDExp(void)
+void A_SorDExp(void)
 {
 	PlayFullVolumeSound('SorcererExplodes', CHAN_BODY);
 }
 
 //==========================================================================
 //
-//  Actor::A_SorDBon
+//  A_SorDBon
 //
 //==========================================================================
 
-void Actor::A_SorDBon(void)
+void A_SorDBon(void)
 {
 	PlayFullVolumeSound('SorcererBones', CHAN_BODY);
+}
+
+__states__
+{
+	S_SOR2_RISE1('SOR2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
+	S_SOR2_RISE2('SOR2', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
+	S_SOR2_RISE3('SOR2', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
+	S_SOR2_RISE4('SOR2', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
+	S_SOR2_RISE5('SOR2', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
+	S_SOR2_RISE6('SOR2', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
+	S_SOR2_RISE7('SOR2', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
+	S_SOR2_LOOK1('SOR2', 12, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
+	S_SOR2_LOOK2('SOR2', 13, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
+	S_SOR2_WALK1('SOR2', 12, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
+	S_SOR2_WALK2('SOR2', 13, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
+	S_SOR2_WALK3('SOR2', 14, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
+	S_SOR2_WALK4('SOR2', 15, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
+	S_SOR2_PAIN1('SOR2', 16, 3.0 / 35.0, S_SOR2_PAIN2) { }
+	S_SOR2_PAIN2('SOR2', 16, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
+	S_SOR2_ATK1('SOR2', 17, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
+	S_SOR2_ATK2('SOR2', 18, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
+	S_SOR2_ATK3('SOR2', 19, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
+	S_SOR2_TELE1('SOR2', 11, 6.0 / 35.0, S_SOR2_TELE2) { }
+	S_SOR2_TELE2('SOR2', 10, 6.0 / 35.0, S_SOR2_TELE3) { }
+	S_SOR2_TELE3('SOR2', 9, 6.0 / 35.0, S_SOR2_TELE4) { }
+	S_SOR2_TELE4('SOR2', 8, 6.0 / 35.0, S_SOR2_TELE5) { }
+	S_SOR2_TELE5('SOR2', 7, 6.0 / 35.0, S_SOR2_TELE6) { }
+	S_SOR2_TELE6('SOR2', 6, 6.0 / 35.0, S_SOR2_WALK1) { }
+	S_SOR2_DIE1('SDTH', 0, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
+	S_SOR2_DIE2('SDTH', 1, 8.0 / 35.0, S_SOR2_DIE3) { }
+	S_SOR2_DIE3('SDTH', 2, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
+	S_SOR2_DIE4('SDTH', 3, 7.0 / 35.0, S_SOR2_DIE5) { }
+	S_SOR2_DIE5('SDTH', 4, 7.0 / 35.0, S_SOR2_DIE6) { }
+	S_SOR2_DIE6('SDTH', 5, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
+	S_SOR2_DIE7('SDTH', 6, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
+	S_SOR2_DIE8('SDTH', 7, 6.0 / 35.0, S_SOR2_DIE9) { }
+	S_SOR2_DIE9('SDTH', 8, 18.0 / 35.0, S_SOR2_DIE10) { }
+	S_SOR2_DIE10('SDTH', 9, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
+	S_SOR2_DIE11('SDTH', 10, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
+	S_SOR2_DIE12('SDTH', 11, 6.0 / 35.0, S_SOR2_DIE13) { }
+	S_SOR2_DIE13('SDTH', 12, 6.0 / 35.0, S_SOR2_DIE14) { }
+	S_SOR2_DIE14('SDTH', 13, 6.0 / 35.0, S_SOR2_DIE15) { }
+	S_SOR2_DIE15('SDTH', 14, -1.0, S_NULL) { A_BossDeath(); }
+}
+
+defaultproperties
+{
+	Health = 3500;
+	Radius = 16.0;
+	Height = 70.0;
+	Mass = 300.0;
+	StepSpeed = 14.0;
+	PainChance = 32;
+	bDropOff = true;
+	bBoss = true;
+	RiseState = S_SOR2_RISE1;
+	SpawnState = S_SOR2_LOOK1;
+	SeeState = S_SOR2_WALK1;
+	TeleportState = S_SOR2_TELE1;
+	MissileState = S_SOR2_ATK1;
+	PainState = S_SOR2_PAIN1;
+	DeathState = S_SOR2_DIE1;
+	DeathLoopState = S_SOR2_DIE4;
+	SightSound = 'SorcererSight';
+	ActiveSound = 'SorcererActive';
+	AttackSound = 'SorcererAttack';
+	PainSound = 'SorcererPain';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
+//==========================================================================
+//
+//  InitMonsters
+//
+//  Called at level load.
+//
+//==========================================================================
+
+void InitMonsters(void)
+{
+	BossSpotCount = 0;
+}
+
+//==========================================================================
+//
+//  P_AddBossSpot
+//
+//==========================================================================
+
+void AddBossSpot(float x, float y, float angle)
+{
+	if (BossSpotCount == MAX_BOSS_SPOTS)
+	{
+		Error("Too many boss spots.");
+	}
+	BossSpot[BossSpotCount].x = x;
+	BossSpot[BossSpotCount].y = y;
+	BossSpot[BossSpotCount].z = 0.0;	//FIXME
+	BossSpot_angle[BossSpotCount] = angle;
+	BossSpotCount++;
 }
 
 //==========================================================================
@@ -412,7 +559,7 @@ void Actor::A_BlueSpark(void)
 
 	for (i = 0; i < 2; i++)
 	{
-		spark = SpawnActor(Origin, Sorcerer2MissileSpark);
+		spark = Spawn(Sorcerer2MissileSpark, Origin);
 		spark.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		spark.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		spark.Velocity.z = (1.0 + Random()) * 35.0;
@@ -430,7 +577,7 @@ void Actor::A_GenWizard(void)
 	Actor mo;
 	Actor fog;
 
-	mo = SpawnActor(Origin, Wizard);
+	mo = Spawn(Wizard, Origin);
 	mo.Origin.z = Origin.z - mo.Height / 2.0;
 	if (!P_TestMobjLocation(&mo))
 	{
@@ -441,13 +588,16 @@ void Actor::A_GenWizard(void)
 	Velocity = vector(0.0, 0.0, 0.0);
 	SetState(DeathState);
 	bMissile = false;
-	fog = SpawnActor(Origin, TeleportFog);
+	fog = Spawn(TeleportFog, Origin);
 	fog.PlaySound('Teleport', CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.21  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

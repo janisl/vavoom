@@ -113,7 +113,7 @@ void Cheat_Gimme(void)
 		}
 		else
 		{
-			UseArtifact(&players[0], arti_tomeofpower);
+			PlayerPawn(*players[0].mo).UseArtifact(arti_tomeofpower);
 			cprint(&players[0], "POWER ON");
 		}
 	}
@@ -221,7 +221,7 @@ void Cheat_Morph(void)
 {
 	if (players[0].ChickenTics)
 	{
-		if (UndoPlayerChicken(&players[0]))
+		if (PlayerPawn(*players[0].mo).UndoPlayerChicken())
 		{
 			cprint(&players[0], "CHICKEN OFF");
 		}
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/16 17:45:12  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.12  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

@@ -460,84 +460,6 @@ __states__(Actor)
 	S_BLOODSPLATTER2('BLOD', 1, 8.0 / 35.0, S_BLOODSPLATTER3) { }
 	S_BLOODSPLATTER3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
 	S_BLOODSPLATTERX('BLOD', 0, 6.0 / 35.0, S_NULL) { }
-	S_PLAY('PLAY', 0, -1.0, S_NULL) { }
-	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
-	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
-	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
-	S_PLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_PLAY_RUN1) { }
-	S_PLAY_ATK1('PLAY', 4, 12.0 / 35.0, S_PLAY) { }
-	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_PLAY_ATK1) { }
-	S_PLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_PLAY_PAIN2) { }
-	S_PLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_PLAY) { A_Pain(); }
-	S_PLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_PLAY_DIE2) { }
-	S_PLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_PLAY_DIE3) { A_Scream(); }
-	S_PLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_PLAY_DIE4) { }
-	S_PLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_PLAY_DIE5) { }
-	S_PLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_PLAY_DIE6) { A_NoBlocking(); }
-	S_PLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_PLAY_DIE7) { }
-	S_PLAY_DIE7('PLAY', 13, 6.0 / 35.0, S_PLAY_DIE8) { }
-	S_PLAY_DIE8('PLAY', 14, 6.0 / 35.0, S_PLAY_DIE9) { }
-	S_PLAY_DIE9('PLAY', 15, -1.0, S_NULL) { A_AddPlayerCorpse(); }
-	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) { A_Scream(); }
-	S_PLAY_XDIE2('PLAY', 17, 5.0 / 35.0, S_PLAY_XDIE3) { A_SkullPop(); }
-	S_PLAY_XDIE3('PLAY', 18, 5.0 / 35.0, S_PLAY_XDIE4) { A_NoBlocking(); }
-	S_PLAY_XDIE4('PLAY', 19, 5.0 / 35.0, S_PLAY_XDIE5) { }
-	S_PLAY_XDIE5('PLAY', 20, 5.0 / 35.0, S_PLAY_XDIE6) { }
-	S_PLAY_XDIE6('PLAY', 21, 5.0 / 35.0, S_PLAY_XDIE7) { }
-	S_PLAY_XDIE7('PLAY', 22, 5.0 / 35.0, S_PLAY_XDIE8) { }
-	S_PLAY_XDIE8('PLAY', 23, 5.0 / 35.0, S_PLAY_XDIE9) { }
-	S_PLAY_XDIE9('PLAY', 24, -1.0, S_NULL) { A_AddPlayerCorpse(); }
-	S_PLAY_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH2) { A_FlameSnd(); }
-	S_PLAY_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
-	S_PLAY_FDTH3('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) { }
-	S_PLAY_FDTH4('FDTH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH5) { A_Scream(); }
-	S_PLAY_FDTH5('FDTH', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH6) { }
-	S_PLAY_FDTH6('FDTH', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH7) { }
-	S_PLAY_FDTH7('FDTH', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH8) { A_FlameSnd(); }
-	S_PLAY_FDTH8('FDTH', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH9) { }
-	S_PLAY_FDTH9('FDTH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH10) { }
-	S_PLAY_FDTH10('FDTH', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH11) { }
-	S_PLAY_FDTH11('FDTH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH12) { }
-	S_PLAY_FDTH12('FDTH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH13) { }
-	S_PLAY_FDTH13('FDTH', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH14) { }
-	S_PLAY_FDTH14('FDTH', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH15) { }
-	S_PLAY_FDTH15('FDTH', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH16) { A_NoBlocking(); }
-	S_PLAY_FDTH16('FDTH', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH17) { }
-	S_PLAY_FDTH17('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) { }
-	S_PLAY_FDTH18('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
-	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, S_NULL) { }
-	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL5('BSKL', 4, 5.0 / 35.0, S_BLOODYSKULL1) { A_CheckSkullFloor(); }
-	S_BLOODYSKULLX1('BSKL', 5, 16.0 / 35.0, S_BLOODYSKULLX1) { A_CheckSkullDone(); }
-	S_BLOODYSKULLX2('BSKL', 5, 1050.0 / 35.0, S_NULL) { }
-	S_CHICPLAY('CHKN', 0, -1.0, S_NULL) { }
-	S_CHICPLAY_RUN1('CHKN', 0, 3.0 / 35.0, S_CHICPLAY_RUN2) { }
-	S_CHICPLAY_RUN2('CHKN', 1, 3.0 / 35.0, S_CHICPLAY_RUN3) { }
-	S_CHICPLAY_RUN3('CHKN', 0, 3.0 / 35.0, S_CHICPLAY_RUN4) { }
-	S_CHICPLAY_RUN4('CHKN', 1, 3.0 / 35.0, S_CHICPLAY_RUN1) { }
-	S_CHICPLAY_ATK1('CHKN', 2, 12.0 / 35.0, S_CHICPLAY) { }
-	S_CHICPLAY_PAIN('CHKN', 3, 4.0 / 35.0, S_CHICPLAY_PAIN2) { A_Feathers(); }
-	S_CHICPLAY_PAIN2('CHKN', 2, 4.0 / 35.0, S_CHICPLAY) { A_Pain(); }
-	S_CHICKEN_LOOK1('CHKN', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) { A_ChicLook(); }
-	S_CHICKEN_LOOK2('CHKN', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) { A_ChicLook(); }
-	S_CHICKEN_WALK1('CHKN', 0, 3.0 / 35.0, S_CHICKEN_WALK2) { A_ChicChase(); }
-	S_CHICKEN_WALK2('CHKN', 1, 3.0 / 35.0, S_CHICKEN_WALK1) { A_ChicChase(); }
-	S_CHICKEN_PAIN1('CHKN', 3, 5.0 / 35.0, S_CHICKEN_PAIN2) { A_Feathers(); }
-	S_CHICKEN_PAIN2('CHKN', 2, 5.0 / 35.0, S_CHICKEN_WALK1) { A_ChicPain(); }
-	S_CHICKEN_ATK1('CHKN', 0, 8.0 / 35.0, S_CHICKEN_ATK2) { A_FaceTarget(); }
-	S_CHICKEN_ATK2('CHKN', 2, 10.0 / 35.0, S_CHICKEN_WALK1) { A_ChicAttack(); }
-	S_CHICKEN_DIE1('CHKN', 4, 6.0 / 35.0, S_CHICKEN_DIE2) { A_Scream(); }
-	S_CHICKEN_DIE2('CHKN', 5, 6.0 / 35.0, S_CHICKEN_DIE3) { A_Feathers(); }
-	S_CHICKEN_DIE3('CHKN', 6, 6.0 / 35.0, S_CHICKEN_DIE4) { }
-	S_CHICKEN_DIE4('CHKN', 7, 6.0 / 35.0, S_CHICKEN_DIE5) { A_NoBlocking(); }
-	S_CHICKEN_DIE5('CHKN', 8, 6.0 / 35.0, S_CHICKEN_DIE6) { }
-	S_CHICKEN_DIE6('CHKN', 9, 6.0 / 35.0, S_CHICKEN_DIE7) { }
-	S_CHICKEN_DIE7('CHKN', 10, 6.0 / 35.0, S_CHICKEN_DIE8) { }
-	S_CHICKEN_DIE8('CHKN', 11, -1.0, S_NULL) { }
 	S_FEATHER1('CHKN', 12, 3.0 / 35.0, S_FEATHER2) { }
 	S_FEATHER2('CHKN', 13, 3.0 / 35.0, S_FEATHER3) { }
 	S_FEATHER3('CHKN', 14, 3.0 / 35.0, S_FEATHER4) { }
@@ -547,31 +469,6 @@ __states__(Actor)
 	S_FEATHER7('CHKN', 14, 3.0 / 35.0, S_FEATHER8) { }
 	S_FEATHER8('CHKN', 13, 3.0 / 35.0, S_FEATHER1) { }
 	S_FEATHERX('CHKN', 13, 6.0 / 35.0, S_NULL) { }
-	S_MUMMY_LOOK1('MUMM', 0, 10.0 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
-	S_MUMMY_LOOK2('MUMM', 1, 10.0 / 35.0, S_MUMMY_LOOK1) { A_Look(); }
-	S_MUMMY_WALK1('MUMM', 0, 4.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
-	S_MUMMY_WALK2('MUMM', 1, 4.0 / 35.0, S_MUMMY_WALK3) { A_Chase(); }
-	S_MUMMY_WALK3('MUMM', 2, 4.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
-	S_MUMMY_WALK4('MUMM', 3, 4.0 / 35.0, S_MUMMY_WALK1) { A_Chase(); }
-	S_MUMMY_ATK1('MUMM', 4, 6.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
-	S_MUMMY_ATK2('MUMM', 5, 6.0 / 35.0, S_MUMMY_ATK3) { A_MummyAttack(); }
-	S_MUMMY_ATK3('MUMM', 6, 6.0 / 35.0, S_MUMMY_WALK1) { A_FaceTarget(); }
-	S_MUMMYL_ATK1('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK2) { A_FaceTarget(); }
-	S_MUMMYL_ATK2('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK3) { A_FaceTarget(); }
-	S_MUMMYL_ATK3('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK4) { A_FaceTarget(); }
-	S_MUMMYL_ATK4('MUMM', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYL_ATK5) { A_FaceTarget(); }
-	S_MUMMYL_ATK5('MUMM', 23, 5.0 / 35.0, S_MUMMYL_ATK6) { A_FaceTarget(); }
-	S_MUMMYL_ATK6('MUMM', 24 | FF_FULLBRIGHT, 15.0 / 35.0, S_MUMMY_WALK1) { A_MummyAttack2(); }
-	S_MUMMY_PAIN1('MUMM', 7, 4.0 / 35.0, S_MUMMY_PAIN2) { }
-	S_MUMMY_PAIN2('MUMM', 7, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
-	S_MUMMY_DIE1('MUMM', 8, 5.0 / 35.0, S_MUMMY_DIE2) { }
-	S_MUMMY_DIE2('MUMM', 9, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
-	S_MUMMY_DIE3('MUMM', 10, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
-	S_MUMMY_DIE4('MUMM', 11, 5.0 / 35.0, S_MUMMY_DIE5) { }
-	S_MUMMY_DIE5('MUMM', 12, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
-	S_MUMMY_DIE6('MUMM', 13, 5.0 / 35.0, S_MUMMY_DIE7) { }
-	S_MUMMY_DIE7('MUMM', 14, 5.0 / 35.0, S_MUMMY_DIE8) { }
-	S_MUMMY_DIE8('MUMM', 15, -1.0, S_NULL) { }
 	S_MUMMY_SOUL1('MUMM', 16, 5.0 / 35.0, S_MUMMY_SOUL2) { }
 	S_MUMMY_SOUL2('MUMM', 17, 5.0 / 35.0, S_MUMMY_SOUL3) { }
 	S_MUMMY_SOUL3('MUMM', 18, 5.0 / 35.0, S_MUMMY_SOUL4) { }
@@ -587,35 +484,6 @@ __states__(Actor)
 	S_MUMMYFXI1_2('FX15', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_3) { }
 	S_MUMMYFXI1_3('FX15', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MUMMYFXI1_4) { }
 	S_MUMMYFXI1_4('FX15', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_BEAST_LOOK1('BEAS', 0, 10.0 / 35.0, S_BEAST_LOOK2) { A_Look(); }
-	S_BEAST_LOOK2('BEAS', 1, 10.0 / 35.0, S_BEAST_LOOK1) { A_Look(); }
-	S_BEAST_WALK1('BEAS', 0, 3.0 / 35.0, S_BEAST_WALK2) { A_Chase(); }
-	S_BEAST_WALK2('BEAS', 1, 3.0 / 35.0, S_BEAST_WALK3) { A_Chase(); }
-	S_BEAST_WALK3('BEAS', 2, 3.0 / 35.0, S_BEAST_WALK4) { A_Chase(); }
-	S_BEAST_WALK4('BEAS', 3, 3.0 / 35.0, S_BEAST_WALK5) { A_Chase(); }
-	S_BEAST_WALK5('BEAS', 4, 3.0 / 35.0, S_BEAST_WALK6) { A_Chase(); }
-	S_BEAST_WALK6('BEAS', 5, 3.0 / 35.0, S_BEAST_WALK1) { A_Chase(); }
-	S_BEAST_ATK1('BEAS', 7, 10.0 / 35.0, S_BEAST_ATK2) { A_FaceTarget(); }
-	S_BEAST_ATK2('BEAS', 8, 10.0 / 35.0, S_BEAST_WALK1) { A_BeastAttack(); }
-	S_BEAST_PAIN1('BEAS', 6, 3.0 / 35.0, S_BEAST_PAIN2) { }
-	S_BEAST_PAIN2('BEAS', 6, 3.0 / 35.0, S_BEAST_WALK1) { A_Pain(); }
-	S_BEAST_DIE1('BEAS', 17, 6.0 / 35.0, S_BEAST_DIE2) { }
-	S_BEAST_DIE2('BEAS', 18, 6.0 / 35.0, S_BEAST_DIE3) { A_Scream(); }
-	S_BEAST_DIE3('BEAS', 19, 6.0 / 35.0, S_BEAST_DIE4) { }
-	S_BEAST_DIE4('BEAS', 20, 6.0 / 35.0, S_BEAST_DIE5) { }
-	S_BEAST_DIE5('BEAS', 21, 6.0 / 35.0, S_BEAST_DIE6) { }
-	S_BEAST_DIE6('BEAS', 22, 6.0 / 35.0, S_BEAST_DIE7) { A_NoBlocking(); }
-	S_BEAST_DIE7('BEAS', 23, 6.0 / 35.0, S_BEAST_DIE8) { }
-	S_BEAST_DIE8('BEAS', 24, 6.0 / 35.0, S_BEAST_DIE9) { }
-	S_BEAST_DIE9('BEAS', 25, -1.0, S_NULL) { }
-	S_BEAST_XDIE1('BEAS', 9, 5.0 / 35.0, S_BEAST_XDIE2) { }
-	S_BEAST_XDIE2('BEAS', 10, 6.0 / 35.0, S_BEAST_XDIE3) { A_Scream(); }
-	S_BEAST_XDIE3('BEAS', 11, 5.0 / 35.0, S_BEAST_XDIE4) { }
-	S_BEAST_XDIE4('BEAS', 12, 6.0 / 35.0, S_BEAST_XDIE5) { }
-	S_BEAST_XDIE5('BEAS', 13, 5.0 / 35.0, S_BEAST_XDIE6) { }
-	S_BEAST_XDIE6('BEAS', 14, 6.0 / 35.0, S_BEAST_XDIE7) { A_NoBlocking(); }
-	S_BEAST_XDIE7('BEAS', 15, 5.0 / 35.0, S_BEAST_XDIE8) { }
-	S_BEAST_XDIE8('BEAS', 16, -1.0, S_NULL) { }
 	S_BEASTBALL1('FRB1', 0, 2.0 / 35.0, S_BEASTBALL2) { A_BeastPuff(); }
 	S_BEASTBALL2('FRB1', 0, 2.0 / 35.0, S_BEASTBALL3) { A_BeastPuff(); }
 	S_BEASTBALL3('FRB1', 1, 2.0 / 35.0, S_BEASTBALL4) { A_BeastPuff(); }
@@ -648,33 +516,6 @@ __states__(Actor)
 	S_PUFFY3('FRB1', 5, 4.0 / 35.0, S_PUFFY4) { }
 	S_PUFFY4('FRB1', 6, 4.0 / 35.0, S_PUFFY5) { }
 	S_PUFFY5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
-	S_SNAKE_LOOK1('SNKE', 0, 10.0 / 35.0, S_SNAKE_LOOK2) { A_Look(); }
-	S_SNAKE_LOOK2('SNKE', 1, 10.0 / 35.0, S_SNAKE_LOOK1) { A_Look(); }
-	S_SNAKE_WALK1('SNKE', 0, 4.0 / 35.0, S_SNAKE_WALK2) { A_Chase(); }
-	S_SNAKE_WALK2('SNKE', 1, 4.0 / 35.0, S_SNAKE_WALK3) { A_Chase(); }
-	S_SNAKE_WALK3('SNKE', 2, 4.0 / 35.0, S_SNAKE_WALK4) { A_Chase(); }
-	S_SNAKE_WALK4('SNKE', 3, 4.0 / 35.0, S_SNAKE_WALK1) { A_Chase(); }
-	S_SNAKE_ATK1('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK2) { A_FaceTarget(); }
-	S_SNAKE_ATK2('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK3) { A_FaceTarget(); }
-	S_SNAKE_ATK3('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK4) { A_SnakeAttack(); }
-	S_SNAKE_ATK4('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK5) { A_SnakeAttack(); }
-	S_SNAKE_ATK5('SNKE', 5, 4.0 / 35.0, S_SNAKE_ATK6) { A_SnakeAttack(); }
-	S_SNAKE_ATK6('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK7) { A_FaceTarget(); }
-	S_SNAKE_ATK7('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK8) { A_FaceTarget(); }
-	S_SNAKE_ATK8('SNKE', 5, 5.0 / 35.0, S_SNAKE_ATK9) { A_FaceTarget(); }
-	S_SNAKE_ATK9('SNKE', 5, 4.0 / 35.0, S_SNAKE_WALK1) { A_SnakeAttack2(); }
-	S_SNAKE_PAIN1('SNKE', 4, 3.0 / 35.0, S_SNAKE_PAIN2) { }
-	S_SNAKE_PAIN2('SNKE', 4, 3.0 / 35.0, S_SNAKE_WALK1) { A_Pain(); }
-	S_SNAKE_DIE1('SNKE', 6, 5.0 / 35.0, S_SNAKE_DIE2) { }
-	S_SNAKE_DIE2('SNKE', 7, 5.0 / 35.0, S_SNAKE_DIE3) { A_Scream(); }
-	S_SNAKE_DIE3('SNKE', 8, 5.0 / 35.0, S_SNAKE_DIE4) { }
-	S_SNAKE_DIE4('SNKE', 9, 5.0 / 35.0, S_SNAKE_DIE5) { }
-	S_SNAKE_DIE5('SNKE', 10, 5.0 / 35.0, S_SNAKE_DIE6) { }
-	S_SNAKE_DIE6('SNKE', 11, 5.0 / 35.0, S_SNAKE_DIE7) { }
-	S_SNAKE_DIE7('SNKE', 12, 5.0 / 35.0, S_SNAKE_DIE8) { A_NoBlocking(); }
-	S_SNAKE_DIE8('SNKE', 13, 5.0 / 35.0, S_SNAKE_DIE9) { }
-	S_SNAKE_DIE9('SNKE', 14, 5.0 / 35.0, S_SNAKE_DIE10) { }
-	S_SNAKE_DIE10('SNKE', 15, -1.0, S_NULL) { }
 	S_SNAKEPRO_A1('SNFX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A2) { }
 	S_SNAKEPRO_A2('SNFX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A3) { }
 	S_SNAKEPRO_A3('SNFX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A4) { }
@@ -690,19 +531,6 @@ __states__(Actor)
 	S_SNAKEPRO_BX2('SNFX', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_BX3) { }
 	S_SNAKEPRO_BX3('SNFX', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_BX4) { }
 	S_SNAKEPRO_BX4('SNFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
-	S_HEAD_LOOK('HEAD', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }
-	S_HEAD_FLOAT('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Chase(); }
-	S_HEAD_ATK1('HEAD', 0, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
-	S_HEAD_ATK2('HEAD', 1, 20.0 / 35.0, S_HEAD_FLOAT) { A_HeadAttack(); }
-	S_HEAD_PAIN1('HEAD', 0, 4.0 / 35.0, S_HEAD_PAIN2) { }
-	S_HEAD_PAIN2('HEAD', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Pain(); }
-	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) { }
-	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) { A_Scream(); }
-	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) { }
-	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) { }
-	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) { A_NoBlocking(); }
-	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) { }
-	S_HEAD_DIE7('HEAD', 8, -1.0, S_NULL) { A_BossDeath(); }
 	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) { }
 	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) { }
 	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) { }
@@ -738,53 +566,6 @@ __states__(Actor)
 	S_HEADFXI4_2('FX07', 5, 4.0 / 35.0, S_HEADFXI4_3) { }
 	S_HEADFXI4_3('FX07', 4, 4.0 / 35.0, S_HEADFXI4_4) { }
 	S_HEADFXI4_4('FX07', 3, 4.0 / 35.0, S_NULL) { }
-	S_CLINK_LOOK1('CLNK', 0, 10.0 / 35.0, S_CLINK_LOOK2) { A_Look(); }
-	S_CLINK_LOOK2('CLNK', 1, 10.0 / 35.0, S_CLINK_LOOK1) { A_Look(); }
-	S_CLINK_WALK1('CLNK', 0, 3.0 / 35.0, S_CLINK_WALK2) { A_Chase(); }
-	S_CLINK_WALK2('CLNK', 1, 3.0 / 35.0, S_CLINK_WALK3) { A_Chase(); }
-	S_CLINK_WALK3('CLNK', 2, 3.0 / 35.0, S_CLINK_WALK4) { A_Chase(); }
-	S_CLINK_WALK4('CLNK', 3, 3.0 / 35.0, S_CLINK_WALK1) { A_Chase(); }
-	S_CLINK_ATK1('CLNK', 4, 5.0 / 35.0, S_CLINK_ATK2) { A_FaceTarget(); }
-	S_CLINK_ATK2('CLNK', 5, 4.0 / 35.0, S_CLINK_ATK3) { A_FaceTarget(); }
-	S_CLINK_ATK3('CLNK', 6, 7.0 / 35.0, S_CLINK_WALK1) { A_ClinkAttack(); }
-	S_CLINK_PAIN1('CLNK', 7, 3.0 / 35.0, S_CLINK_PAIN2) { }
-	S_CLINK_PAIN2('CLNK', 7, 3.0 / 35.0, S_CLINK_WALK1) { A_Pain(); }
-	S_CLINK_DIE1('CLNK', 8, 6.0 / 35.0, S_CLINK_DIE2) { }
-	S_CLINK_DIE2('CLNK', 9, 6.0 / 35.0, S_CLINK_DIE3) { }
-	S_CLINK_DIE3('CLNK', 10, 5.0 / 35.0, S_CLINK_DIE4) { A_Scream(); }
-	S_CLINK_DIE4('CLNK', 11, 5.0 / 35.0, S_CLINK_DIE5) { A_NoBlocking(); }
-	S_CLINK_DIE5('CLNK', 12, 5.0 / 35.0, S_CLINK_DIE6) { }
-	S_CLINK_DIE6('CLNK', 13, 5.0 / 35.0, S_CLINK_DIE7) { }
-	S_CLINK_DIE7('CLNK', 14, -1.0, S_NULL) { }
-	S_WIZARD_LOOK1('WZRD', 0, 'monsters/wizard.md2', 0, 10.0 / 35.0, S_WIZARD_LOOK2) { A_Look(); }
-	S_WIZARD_LOOK2('WZRD', 1, 'monsters/wizard.md2', 1, 10.0 / 35.0, S_WIZARD_LOOK1) { A_Look(); }
-	S_WIZARD_WALK1('WZRD', 0, 'monsters/wizard.md2', 2, 3.0 / 35.0, S_WIZARD_WALK2) { A_Chase(); }
-	S_WIZARD_WALK2('WZRD', 0, 'monsters/wizard.md2', 3, 4.0 / 35.0, S_WIZARD_WALK3) { A_Chase(); }
-	S_WIZARD_WALK3('WZRD', 0, 'monsters/wizard.md2', 4, 3.0 / 35.0, S_WIZARD_WALK4) { A_Chase(); }
-	S_WIZARD_WALK4('WZRD', 0, 'monsters/wizard.md2', 5, 4.0 / 35.0, S_WIZARD_WALK5) { A_Chase(); }
-	S_WIZARD_WALK5('WZRD', 1, 'monsters/wizard.md2', 6, 3.0 / 35.0, S_WIZARD_WALK6) { A_Chase(); }
-	S_WIZARD_WALK6('WZRD', 1, 'monsters/wizard.md2', 7, 4.0 / 35.0, S_WIZARD_WALK7) { A_Chase(); }
-	S_WIZARD_WALK7('WZRD', 1, 'monsters/wizard.md2', 8, 3.0 / 35.0, S_WIZARD_WALK8) { A_Chase(); }
-	S_WIZARD_WALK8('WZRD', 1, 'monsters/wizard.md2', 9, 4.0 / 35.0, S_WIZARD_WALK1) { A_Chase(); }
-	S_WIZARD_ATK1('WZRD', 2, 'monsters/wizard.md2', 10, 4.0 / 35.0, S_WIZARD_ATK2) { A_WizAtk1(); }
-	S_WIZARD_ATK2('WZRD', 2, 'monsters/wizard.md2', 11, 4.0 / 35.0, S_WIZARD_ATK3) { A_WizAtk2(); }
-	S_WIZARD_ATK3('WZRD', 2, 'monsters/wizard.md2', 12, 4.0 / 35.0, S_WIZARD_ATK4) { A_WizAtk1(); }
-	S_WIZARD_ATK4('WZRD', 2, 'monsters/wizard.md2', 13, 4.0 / 35.0, S_WIZARD_ATK5) { A_WizAtk2(); }
-	S_WIZARD_ATK5('WZRD', 2, 'monsters/wizard.md2', 14, 4.0 / 35.0, S_WIZARD_ATK6) { A_WizAtk1(); }
-	S_WIZARD_ATK6('WZRD', 2, 'monsters/wizard.md2', 15, 4.0 / 35.0, S_WIZARD_ATK7) { A_WizAtk2(); }
-	S_WIZARD_ATK7('WZRD', 2, 'monsters/wizard.md2', 16, 4.0 / 35.0, S_WIZARD_ATK8) { A_WizAtk1(); }
-	S_WIZARD_ATK8('WZRD', 2, 'monsters/wizard.md2', 17, 4.0 / 35.0, S_WIZARD_ATK9) { A_WizAtk2(); }
-	S_WIZARD_ATK9('WZRD', 3, 'monsters/wizard.md2', 18, 12.0 / 35.0, S_WIZARD_WALK1) { A_WizAtk3(); }
-	S_WIZARD_PAIN1('WZRD', 4, 'monsters/wizard.md2', 19, 3.0 / 35.0, S_WIZARD_PAIN2) { A_GhostOff(); }
-	S_WIZARD_PAIN2('WZRD', 4, 'monsters/wizard.md2', 20, 3.0 / 35.0, S_WIZARD_WALK1) { A_Pain(); }
-	S_WIZARD_DIE1('WZRD', 5, 'monsters/wizard.md2', 21, 6.0 / 35.0, S_WIZARD_DIE2) { A_GhostOff(); }
-	S_WIZARD_DIE2('WZRD', 6, 'monsters/wizard.md2', 22, 6.0 / 35.0, S_WIZARD_DIE3) { A_Scream(); }
-	S_WIZARD_DIE3('WZRD', 7, 'monsters/wizard.md2', 23, 6.0 / 35.0, S_WIZARD_DIE4) { }
-	S_WIZARD_DIE4('WZRD', 8, 'monsters/wizard.md2', 24, 6.0 / 35.0, S_WIZARD_DIE5) { }
-	S_WIZARD_DIE5('WZRD', 9, 'monsters/wizard.md2', 25, 6.0 / 35.0, S_WIZARD_DIE6) { A_NoBlocking(); }
-	S_WIZARD_DIE6('WZRD', 10, 'monsters/wizard.md2', 26, 6.0 / 35.0, S_WIZARD_DIE7) { }
-	S_WIZARD_DIE7('WZRD', 11, 'monsters/wizard.md2', 27, 6.0 / 35.0, S_WIZARD_DIE8) { }
-	S_WIZARD_DIE8('WZRD', 12, 'monsters/wizard.md2', 28, -1.0, S_NULL) { }
 	S_WIZFX1_1('FX11', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_WIZFX1_2) { }
 	S_WIZFX1_2('FX11', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_WIZFX1_1) { }
 	S_WIZFXI1_1('FX11', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_WIZFXI1_2) { }
@@ -792,46 +573,6 @@ __states__(Actor)
 	S_WIZFXI1_3('FX11', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_WIZFXI1_4) { }
 	S_WIZFXI1_4('FX11', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_WIZFXI1_5) { }
 	S_WIZFXI1_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle.md2', 0, 10.0 / 35.0, S_IMP_LOOK2) { A_Look(); }
-	S_IMP_LOOK2('IMPX', 1, 'monsters/gargoyle.md2', 1, 10.0 / 35.0, S_IMP_LOOK3) { A_Look(); }
-	S_IMP_LOOK3('IMPX', 2, 'monsters/gargoyle.md2', 2, 10.0 / 35.0, S_IMP_LOOK4) { A_Look(); }
-	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle.md2', 3, 10.0 / 35.0, S_IMP_LOOK1) { A_Look(); }
-	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle.md2', 4, 3.0 / 35.0, S_IMP_FLY2) { A_Chase(); }
-	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle.md2', 5, 3.0 / 35.0, S_IMP_FLY3) { A_Chase(); }
-	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle.md2', 6, 3.0 / 35.0, S_IMP_FLY4) { A_Chase(); }
-	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle.md2', 7, 3.0 / 35.0, S_IMP_FLY5) { A_Chase(); }
-	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle.md2', 8, 3.0 / 35.0, S_IMP_FLY6) { A_Chase(); }
-	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle.md2', 9, 3.0 / 35.0, S_IMP_FLY7) { A_Chase(); }
-	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle.md2', 10, 3.0 / 35.0, S_IMP_FLY8) { A_Chase(); }
-	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle.md2', 11, 3.0 / 35.0, S_IMP_FLY1) { A_Chase(); }
-	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle.md2', 12, 6.0 / 35.0, S_IMP_MEATK2) { A_FaceTarget(); }
-	S_IMP_MEATK2('IMPX', 4, 'monsters/gargoyle.md2', 13, 6.0 / 35.0, S_IMP_MEATK3) { A_FaceTarget(); }
-	S_IMP_MEATK3('IMPX', 5, 'monsters/gargoyle.md2', 14, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMeAttack(); }
-	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle.md2', 4, 10.0 / 35.0, S_IMP_MSATK1_2) { A_FaceTarget(); }
-	S_IMP_MSATK1_2('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { A_ImpMsAttack(); }
-	S_IMP_MSATK1_3('IMPX', 2, 'monsters/gargoyle.md2', 8, 6.0 / 35.0, S_IMP_MSATK1_4) { }
-	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle.md2', 10, 6.0 / 35.0, S_IMP_MSATK1_5) { }
-	S_IMP_MSATK1_5('IMPX', 0, 'monsters/gargoyle.md2', 4, 6.0 / 35.0, S_IMP_MSATK1_6) { }
-	S_IMP_MSATK1_6('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { }
-	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle.md2', 15, 6.0 / 35.0, S_IMP_MSATK2_2) { A_FaceTarget(); }
-	S_IMP_MSATK2_2('IMPX', 4, 'monsters/gargoyle.md2', 16, 6.0 / 35.0, S_IMP_MSATK2_3) { A_FaceTarget(); }
-	S_IMP_MSATK2_3('IMPX', 5, 'monsters/gargoyle.md2', 17, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMsAttack2(); }
-	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle.md2', 18, 3.0 / 35.0, S_IMP_PAIN2) { }
-	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle.md2', 19, 3.0 / 35.0, S_IMP_FLY1) { A_Pain(); }
-	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) { A_ImpDeath(); }
-	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) { }
-	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) { A_ImpXDeath1(); }
-	S_IMP_XDIE2('IMPX', 19, 5.0 / 35.0, S_IMP_XDIE3) { }
-	S_IMP_XDIE3('IMPX', 20, 5.0 / 35.0, S_IMP_XDIE4) { }
-	S_IMP_XDIE4('IMPX', 21, 5.0 / 35.0, S_IMP_XDIE5) { A_ImpXDeath2(); }
-	S_IMP_XDIE5('IMPX', 22, 5.0 / 35.0, S_IMP_XDIE5) { }
-	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) { A_ImpExplode(); }
-	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) { A_Scream(); }
-	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) { }
-	S_IMP_CRASH4('IMPX', 11, -1.0, S_NULL) { }
-	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) { }
-	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) { }
-	S_IMP_XCRASH3('IMPX', 25, -1.0, S_NULL) { }
 	S_IMP_CHUNKA1('IMPX', 12, 5.0 / 35.0, S_IMP_CHUNKA2) { }
 	S_IMP_CHUNKA2('IMPX', 13, 700.0 / 35.0, S_IMP_CHUNKA3) { }
 	S_IMP_CHUNKA3('IMPX', 14, 700.0 / 35.0, S_NULL) { }
@@ -845,27 +586,6 @@ __states__(Actor)
 	S_IMPFXI2('FX10', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_IMPFXI3) { }
 	S_IMPFXI3('FX10', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_IMPFXI4) { }
 	S_IMPFXI4('FX10', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_KNIGHT_STND1('KNIG', 0, 10.0 / 35.0, S_KNIGHT_STND2) { A_Look(); }
-	S_KNIGHT_STND2('KNIG', 1, 10.0 / 35.0, S_KNIGHT_STND1) { A_Look(); }
-	S_KNIGHT_WALK1('KNIG', 0, 4.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
-	S_KNIGHT_WALK2('KNIG', 1, 4.0 / 35.0, S_KNIGHT_WALK3) { A_Chase(); }
-	S_KNIGHT_WALK3('KNIG', 2, 4.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
-	S_KNIGHT_WALK4('KNIG', 3, 4.0 / 35.0, S_KNIGHT_WALK1) { A_Chase(); }
-	S_KNIGHT_ATK1('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
-	S_KNIGHT_ATK2('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK3) { A_FaceTarget(); }
-	S_KNIGHT_ATK3('KNIG', 6, 8.0 / 35.0, S_KNIGHT_ATK4) { A_KnightAttack(); }
-	S_KNIGHT_ATK4('KNIG', 4, 10.0 / 35.0, S_KNIGHT_ATK5) { A_FaceTarget(); }
-	S_KNIGHT_ATK5('KNIG', 5, 8.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
-	S_KNIGHT_ATK6('KNIG', 6, 8.0 / 35.0, S_KNIGHT_WALK1) { A_KnightAttack(); }
-	S_KNIGHT_PAIN1('KNIG', 7, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
-	S_KNIGHT_PAIN2('KNIG', 7, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
-	S_KNIGHT_DIE1('KNIG', 8, 6.0 / 35.0, S_KNIGHT_DIE2) { }
-	S_KNIGHT_DIE2('KNIG', 9, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
-	S_KNIGHT_DIE3('KNIG', 10, 6.0 / 35.0, S_KNIGHT_DIE4) { }
-	S_KNIGHT_DIE4('KNIG', 11, 6.0 / 35.0, S_KNIGHT_DIE5) { A_NoBlocking(); }
-	S_KNIGHT_DIE5('KNIG', 12, 6.0 / 35.0, S_KNIGHT_DIE6) { }
-	S_KNIGHT_DIE6('KNIG', 13, 6.0 / 35.0, S_KNIGHT_DIE7) { }
-	S_KNIGHT_DIE7('KNIG', 14, -1.0, S_NULL) { }
 	S_SPINAXE1('SPAX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE2) { A_ContMobjSound(); }
 	S_SPINAXE2('SPAX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE3) { }
 	S_SPINAXE3('SPAX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE1) { }
@@ -877,37 +597,6 @@ __states__(Actor)
 	S_REDAXEX1('RAXE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX2) { }
 	S_REDAXEX2('RAXE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX3) { }
 	S_REDAXEX3('RAXE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-	S_SRCR1_LOOK1('SRCR', 0, 10.0 / 35.0, S_SRCR1_LOOK2) { A_Look(); }
-	S_SRCR1_LOOK2('SRCR', 1, 10.0 / 35.0, S_SRCR1_LOOK1) { A_Look(); }
-	S_SRCR1_WALK1('SRCR', 0, 5.0 / 35.0, S_SRCR1_WALK2) { A_Sor1Chase(); }
-	S_SRCR1_WALK2('SRCR', 1, 5.0 / 35.0, S_SRCR1_WALK3) { A_Sor1Chase(); }
-	S_SRCR1_WALK3('SRCR', 2, 5.0 / 35.0, S_SRCR1_WALK4) { A_Sor1Chase(); }
-	S_SRCR1_WALK4('SRCR', 3, 5.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Chase(); }
-	S_SRCR1_PAIN1('SRCR', 16, 6.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Pain(); }
-	S_SRCR1_ATK1('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK2) { A_FaceTarget(); }
-	S_SRCR1_ATK2('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK3) { A_FaceTarget(); }
-	S_SRCR1_ATK3('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
-	S_SRCR1_ATK4('SRCR', 18, 10.0 / 35.0, S_SRCR1_ATK5) { A_FaceTarget(); }
-	S_SRCR1_ATK5('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK6) { A_FaceTarget(); }
-	S_SRCR1_ATK6('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK7) { A_FaceTarget(); }
-	S_SRCR1_ATK7('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
-	S_SRCR1_DIE1('SRCR', 4, 7.0 / 35.0, S_SRCR1_DIE2) { }
-	S_SRCR1_DIE2('SRCR', 5, 7.0 / 35.0, S_SRCR1_DIE3) { A_Scream(); }
-	S_SRCR1_DIE3('SRCR', 6, 7.0 / 35.0, S_SRCR1_DIE4) { }
-	S_SRCR1_DIE4('SRCR', 7, 6.0 / 35.0, S_SRCR1_DIE5) { }
-	S_SRCR1_DIE5('SRCR', 8, 6.0 / 35.0, S_SRCR1_DIE6) { }
-	S_SRCR1_DIE6('SRCR', 9, 6.0 / 35.0, S_SRCR1_DIE7) { }
-	S_SRCR1_DIE7('SRCR', 10, 6.0 / 35.0, S_SRCR1_DIE8) { }
-	S_SRCR1_DIE8('SRCR', 11, 25.0 / 35.0, S_SRCR1_DIE9) { A_SorZap(); }
-	S_SRCR1_DIE9('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE10) { }
-	S_SRCR1_DIE10('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE11) { }
-	S_SRCR1_DIE11('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE12) { }
-	S_SRCR1_DIE12('SRCR', 11, 20.0 / 35.0, S_SRCR1_DIE13) { A_SorZap(); }
-	S_SRCR1_DIE13('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE14) { }
-	S_SRCR1_DIE14('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE15) { }
-	S_SRCR1_DIE15('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE16) { }
-	S_SRCR1_DIE16('SRCR', 11, 12.0 / 35.0, S_SRCR1_DIE17) { }
-	S_SRCR1_DIE17('SRCR', 15, -1.0, S_NULL) { A_SorcererRise(); }
 	S_SRCRFX1_1('FX14', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_2) { }
 	S_SRCRFX1_2('FX14', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_3) { }
 	S_SRCRFX1_3('FX14', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_1) { }
@@ -916,45 +605,6 @@ __states__(Actor)
 	S_SRCRFXI1_3('FX14', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_4) { }
 	S_SRCRFXI1_4('FX14', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_5) { }
 	S_SRCRFXI1_5('FX14', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-	S_SOR2_RISE1('SOR2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
-	S_SOR2_RISE2('SOR2', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
-	S_SOR2_RISE3('SOR2', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
-	S_SOR2_RISE4('SOR2', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
-	S_SOR2_RISE5('SOR2', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
-	S_SOR2_RISE6('SOR2', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
-	S_SOR2_RISE7('SOR2', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
-	S_SOR2_LOOK1('SOR2', 12, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
-	S_SOR2_LOOK2('SOR2', 13, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
-	S_SOR2_WALK1('SOR2', 12, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
-	S_SOR2_WALK2('SOR2', 13, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
-	S_SOR2_WALK3('SOR2', 14, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
-	S_SOR2_WALK4('SOR2', 15, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
-	S_SOR2_PAIN1('SOR2', 16, 3.0 / 35.0, S_SOR2_PAIN2) { }
-	S_SOR2_PAIN2('SOR2', 16, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
-	S_SOR2_ATK1('SOR2', 17, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
-	S_SOR2_ATK2('SOR2', 18, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
-	S_SOR2_ATK3('SOR2', 19, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
-	S_SOR2_TELE1('SOR2', 11, 6.0 / 35.0, S_SOR2_TELE2) { }
-	S_SOR2_TELE2('SOR2', 10, 6.0 / 35.0, S_SOR2_TELE3) { }
-	S_SOR2_TELE3('SOR2', 9, 6.0 / 35.0, S_SOR2_TELE4) { }
-	S_SOR2_TELE4('SOR2', 8, 6.0 / 35.0, S_SOR2_TELE5) { }
-	S_SOR2_TELE5('SOR2', 7, 6.0 / 35.0, S_SOR2_TELE6) { }
-	S_SOR2_TELE6('SOR2', 6, 6.0 / 35.0, S_SOR2_WALK1) { }
-	S_SOR2_DIE1('SDTH', 0, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
-	S_SOR2_DIE2('SDTH', 1, 8.0 / 35.0, S_SOR2_DIE3) { }
-	S_SOR2_DIE3('SDTH', 2, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
-	S_SOR2_DIE4('SDTH', 3, 7.0 / 35.0, S_SOR2_DIE5) { }
-	S_SOR2_DIE5('SDTH', 4, 7.0 / 35.0, S_SOR2_DIE6) { }
-	S_SOR2_DIE6('SDTH', 5, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
-	S_SOR2_DIE7('SDTH', 6, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
-	S_SOR2_DIE8('SDTH', 7, 6.0 / 35.0, S_SOR2_DIE9) { }
-	S_SOR2_DIE9('SDTH', 8, 18.0 / 35.0, S_SOR2_DIE10) { }
-	S_SOR2_DIE10('SDTH', 9, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
-	S_SOR2_DIE11('SDTH', 10, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
-	S_SOR2_DIE12('SDTH', 11, 6.0 / 35.0, S_SOR2_DIE13) { }
-	S_SOR2_DIE13('SDTH', 12, 6.0 / 35.0, S_SOR2_DIE14) { }
-	S_SOR2_DIE14('SDTH', 13, 6.0 / 35.0, S_SOR2_DIE15) { }
-	S_SOR2_DIE15('SDTH', 14, -1.0, S_NULL) { A_BossDeath(); }
 	S_SOR2FX1_1('FX16', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_2) { A_BlueSpark(); }
 	S_SOR2FX1_2('FX16', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_3) { A_BlueSpark(); }
 	S_SOR2FX1_3('FX16', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_1) { A_BlueSpark(); }
@@ -981,40 +631,6 @@ __states__(Actor)
 	S_SOR2TELEFADE4('SOR2', 9, 6.0 / 35.0, S_SOR2TELEFADE5) { }
 	S_SOR2TELEFADE5('SOR2', 10, 6.0 / 35.0, S_SOR2TELEFADE6) { }
 	S_SOR2TELEFADE6('SOR2', 11, 6.0 / 35.0, S_NULL) { }
-	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) { A_Look(); }
-	S_MNTR_LOOK2('MNTR', 1, 10.0 / 35.0, S_MNTR_LOOK1) { A_Look(); }
-	S_MNTR_WALK1('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) { A_Chase(); }
-	S_MNTR_WALK2('MNTR', 1, 5.0 / 35.0, S_MNTR_WALK3) { A_Chase(); }
-	S_MNTR_WALK3('MNTR', 2, 5.0 / 35.0, S_MNTR_WALK4) { A_Chase(); }
-	S_MNTR_WALK4('MNTR', 3, 5.0 / 35.0, S_MNTR_WALK1) { A_Chase(); }
-	S_MNTR_ATK1_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK1_2) { A_FaceTarget(); }
-	S_MNTR_ATK1_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK1_3) { A_FaceTarget(); }
-	S_MNTR_ATK1_3('MNTR', 23, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk1(); }
-	S_MNTR_ATK2_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK2_2) { A_MinotaurDecide(); }
-	S_MNTR_ATK2_2('MNTR', 24, 4.0 / 35.0, S_MNTR_ATK2_3) { A_FaceTarget(); }
-	S_MNTR_ATK2_3('MNTR', 25, 9.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk2(); }
-	S_MNTR_ATK3_1('MNTR', 21, 10.0 / 35.0, S_MNTR_ATK3_2) { A_FaceTarget(); }
-	S_MNTR_ATK3_2('MNTR', 22, 7.0 / 35.0, S_MNTR_ATK3_3) { A_FaceTarget(); }
-	S_MNTR_ATK3_3('MNTR', 23, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk3(); }
-	S_MNTR_ATK3_4('MNTR', 23, 12.0 / 35.0, S_MNTR_ATK3_1) { }
-	S_MNTR_ATK4_1('MNTR', 20, 2.0 / 35.0, S_MNTR_ATK4_1) { A_MinotaurCharge(); }
-	S_MNTR_PAIN1('MNTR', 4, 3.0 / 35.0, S_MNTR_PAIN2) { }
-	S_MNTR_PAIN2('MNTR', 4, 6.0 / 35.0, S_MNTR_WALK1) { A_Pain(); }
-	S_MNTR_DIE1('MNTR', 5, 6.0 / 35.0, S_MNTR_DIE2) { }
-	S_MNTR_DIE2('MNTR', 6, 5.0 / 35.0, S_MNTR_DIE3) { }
-	S_MNTR_DIE3('MNTR', 7, 6.0 / 35.0, S_MNTR_DIE4) { A_Scream(); }
-	S_MNTR_DIE4('MNTR', 8, 5.0 / 35.0, S_MNTR_DIE5) { }
-	S_MNTR_DIE5('MNTR', 9, 6.0 / 35.0, S_MNTR_DIE6) { }
-	S_MNTR_DIE6('MNTR', 10, 5.0 / 35.0, S_MNTR_DIE7) { }
-	S_MNTR_DIE7('MNTR', 11, 6.0 / 35.0, S_MNTR_DIE8) { }
-	S_MNTR_DIE8('MNTR', 12, 5.0 / 35.0, S_MNTR_DIE9) { A_NoBlocking(); }
-	S_MNTR_DIE9('MNTR', 13, 6.0 / 35.0, S_MNTR_DIE10) { }
-	S_MNTR_DIE10('MNTR', 14, 5.0 / 35.0, S_MNTR_DIE11) { }
-	S_MNTR_DIE11('MNTR', 15, 6.0 / 35.0, S_MNTR_DIE12) { }
-	S_MNTR_DIE12('MNTR', 16, 5.0 / 35.0, S_MNTR_DIE13) { }
-	S_MNTR_DIE13('MNTR', 17, 6.0 / 35.0, S_MNTR_DIE14) { }
-	S_MNTR_DIE14('MNTR', 18, 5.0 / 35.0, S_MNTR_DIE15) { }
-	S_MNTR_DIE15('MNTR', 19, -1.0, S_NULL) { A_BossDeath(); }
 	S_MNTRFX1_1('FX12', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_2) { }
 	S_MNTRFX1_2('FX12', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_1) { }
 	S_MNTRFXI1_1('FX12', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_2) { }
@@ -1100,9 +716,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/03/16 17:45:13  dj_jl
+//	Added Pawn and PlayerPawn classes, beautification.
+//
 //	Revision 1.12  2002/03/02 17:37:22  dj_jl
 //	Weapon classes
-//
+//	
 //	Revision 1.11  2002/02/22 18:00:19  dj_jl
 //	A lots of the renaming, beautification.
 //	

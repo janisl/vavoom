@@ -65,157 +65,135 @@ void InitLava(void)
 
 //==========================================================================
 //
-//  ChickenPlayerThink
+//  PlayerPawn::ChickenPlayerThink
 //
 //==========================================================================
 
-void ChickenPlayerThink(player_t * player)
+void PlayerPawn::ChickenPlayerThink(void)
 {
-	mobj_t *pmo;
-
-	if (player->Health > 0)
+	if (Player->Health > 0)
 	{
 		// Handle beak movement
-		UpdateBeak(player, player->ViewEnts[ps_weapon]);
+		UpdateBeak(Player, Player->ViewEnts[ps_weapon]);
 	}
-	if (player->ChickenTics & 15)
+	if (Player->ChickenTics & 15)
 	{
 		return;
 	}
-	pmo = player->mo;
-	if (!(pmo->Velocity.x + pmo->Velocity.y) && P_Random() < 160)
+	if (!(Velocity.x + Velocity.y) && P_Random() < 160)
 	{
 		// Twitch view angle
-		pmo->Angles.yaw = AngleMod360(pmo->Angles.yaw +
+		Angles.yaw = AngleMod360(Angles.yaw +
 			(Random() - Random()) * 45.0 / 4.0);
+		Player->bFixAngle = true;
 	}
-	if ((pmo->Origin.z <= pmo->FloorZ) && (P_Random() < 32))
+	if ((Origin.z <= FloorZ) && (P_Random() < 32))
 	{
 		// Jump and noise
-		pmo->Velocity.z += 1.0 * 35.0;
-		pmo->SetState(S_CHICPLAY_PAIN);
+		Velocity.z += 1.0 * 35.0;
+		SetState(PainState);
 		return;
 	}
 	if (P_Random() < 48)
 	{
 		// Just noise
-		pmo->PlaySound('ChickenAttack', CHAN_VOICE);
+		PlaySound('ChickenAttack', CHAN_VOICE);
 	}
 }
 
 //==========================================================================
 //
-//  UndoPlayerChicken
+//  PlayerPawn::UndoPlayerChicken
 //
 //==========================================================================
 
-boolean UndoPlayerChicken(player_t * player)
+boolean PlayerPawn::UndoPlayerChicken(void)
 {
-	mobj_t *fog;
-	mobj_t *mo;
-	mobj_t *pmo;
-	float x;
-	float y;
-	float z;
-	float angle;
-	int weapon;
-	boolean OldbFly;
+	Actor fog;
+	Actor A;
 
-	pmo = player->mo;
-	P_UnsetThingPosition(*pmo);
-	x = pmo->Origin.x;
-	y = pmo->Origin.y;
-	z = pmo->Origin.z;
-	angle = pmo->Angles.yaw;
-	weapon = pmo->Special1;
-	OldbFly = pmo->bFly;
-	mo = P_SpawnMobj(x, y, z, PlayerPawn);
-	if (!P_TestMobjLocation(mo))
+	P_UnsetThingPosition(self);
+	A = Spawn(HereticPlayer, Origin);
+	if (!P_TestMobjLocation(&A))
 	{
 		// Didn't fit
-		P_RemoveMobj(mo);
-		P_SetThingPosition(*pmo);
-		player->ChickenTics = 2 * 35;
+		A.Remove();
+		P_SetThingPosition(self);
+		Player->ChickenTics = 2 * 35;
 		return false;
 	}
-	pmo->SetState(S_FREETARGMOBJ);
+	P_SetThingPosition(self);
 	// Set color translation
-	mo->Translation = player->Color;
-	mo->Angles.yaw = angle;
-	mo->Player = player;
-	mo->bIsPlayer = true;
-	mo->ReactionTime = 0.5;
-	if (OldbFly)
+	A.Translation = Player->Color;
+	A.Angles.yaw = Angles.yaw;
+	A.Player = Player;
+	A.bIsPlayer = true;
+	A.ReactionTime = 0.5;
+	if (bFly)
 	{
-		mo->bFly = true;
-		mo->bNoGravity = true;
+		A.bFly = true;
+		A.bNoGravity = true;
 	}
-	player->ChickenTics = 0;
-	player->Powers[pw_weaponlevel2] = 0;
-	mo->Health = MAXHEALTH;
-	player->Health = mo->Health;
-	player->mo = mo;
-	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
-		z + TELEFOGHEIGHT, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
-	PostChickenWeapon(player, weapon);
+	Player->ChickenTics = 0;
+	Player->Powers[pw_weaponlevel2] = 0;
+	A.Health = MAXHEALTH;
+	Player->Health = A.Health;
+	Player->mo = &A;
+	PostChickenWeapon(Player, Special1);
+
+	fog = Spawn(TeleportFog, Origin + vector(
+		20.0 * cos(Angles.yaw), 20.0 * sin(Angles.yaw), TELEFOGHEIGHT));
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	SetState(S_FREETARGMOBJ);
+
 	return true;
 }
 
 //==========================================================================
 //
-//  SetPlayerRunState
+//  PlayerPawn::SetPlayerRunState
 //
 //==========================================================================
 
-void SetPlayerRunState(player_t * player)
+void PlayerPawn::SetPlayerRunState(void)
 {
-	if (player->ChickenTics)
+	if (StateNum == SpawnState)
 	{
-		if (player->mo->StateNum == S_CHICPLAY)
-		{
-			player->mo->SetState(S_CHICPLAY_RUN1);
-		}
-	}
-	else
-	{
-		if (player->mo->StateNum == S_PLAY)
-		{
-			player->mo->SetState(S_PLAY_RUN1);
-		}
+		SetState(SeeState);
 	}
 }
 
 //==========================================================================
 //
-//  DeathPlayerThink
+//  PlayerPawn::DeathPlayerTick
 //
 //  Fall on your face when dying. Decrease POV height to floor height.
 //
 //==========================================================================
 
-void DeathPlayerThink(player_t * player)
+void PlayerPawn::DeathPlayerTick(float deltaTime)
 {
 	float angle;
 	float delta;
 	int lookDelta;
 
-	MovePsprites(player);
+	MovePsprites(Player);
 
-	onground = (player->mo->Origin.z <= player->mo->FloorZ);
+	onground = (Origin.z <= FloorZ);
 
-	if (player->mo->Class == BloodySkull)
+	if (Class == BloodySkull)
 	{
 		// Flying bloody skull
-		player->ViewHeight = 6.0;
-		player->DeltaViewHeight = 0.0;
+		Player->ViewHeight = 6.0;
+		Player->DeltaViewHeight = 0.0;
 		//player->damagecount = 20;
 		if (onground)
 		{
 #ifdef FIXME
-			if (player->lookdir < 60)
+			if (Player->lookdir < 60)
 			{
-				lookDelta = (60 - player->lookdir) / 8;
+				lookDelta = (60 - Player->lookdir) / 8;
 				if (lookDelta < 1 && (level->tictime & 1))
 				{
 					lookDelta = 1;
@@ -224,181 +202,178 @@ void DeathPlayerThink(player_t * player)
 				{
 					lookDelta = 6;
 				}
-				player->lookdir += lookDelta;
+				Player->lookdir += lookDelta;
 			}
 #endif
 		}
 	}
 	else
 	{	// Fall to ground
-		player->DeltaViewHeight = 0.0;
-		if (player->ViewHeight > 6.0)
-			player->ViewHeight -= 1.0;
-		if (player->ViewHeight < 6.0)
-			player->ViewHeight = 6.0;
+		Player->DeltaViewHeight = 0.0;
+		if (Player->ViewHeight > 6.0)
+			Player->ViewHeight -= 1.0;
+		if (Player->ViewHeight < 6.0)
+			Player->ViewHeight = 6.0;
 #ifdef FIXME
-		if (player->lookdir > 0)
+		if (Player->lookdir > 0)
 		{
-			player->lookdir -= 6;
+			Player->lookdir -= 6;
 		}
-		else if (player->lookdir < 0)
+		else if (Player->lookdir < 0)
 		{
-			player->lookdir += 6;
+			Player->lookdir += 6;
 		}
-		if (abs(player->lookdir) < 6)
+		if (abs(Player->lookdir) < 6)
 		{
-			player->lookdir = 0;
+			Player->lookdir = 0;
 		}
 #endif
 	}
-	CalcHeight(player);
+	CalcHeight(deltaTime);
 
-	if (player->Attacker && player->Attacker != player->mo)
+	if (Player->Attacker && Player->Attacker != this)
 	{
-		angle = atan2(player->Attacker->Origin.y - player->mo->Origin.y,
-			player->Attacker->Origin.x - player->mo->Origin.x);
-		delta = AngleMod180(angle - player->mo->Angles.yaw);
+		angle = atan2(Player->Attacker->Origin.y - Origin.y,
+			Player->Attacker->Origin.x - Origin.x);
+		delta = AngleMod180(angle - Angles.yaw);
 		if (delta < 5.0 && delta > -5.0)
 		{
 			// Looking at killer, so fade damage flash down
-			player->mo->Angles.yaw = angle;
-			if (player->DamageCount)
+			Angles.yaw = angle;
+			if (Player->DamageCount)
 			{
-				player->DamageCount--;
+				Player->DamageCount--;
 			}
 		}
 		else if (delta > 0.0)
-			player->mo->Angles.yaw += 5.0;
+			Angles.yaw += 5.0;
 		else
-			player->mo->Angles.yaw -= 5.0;
+			Angles.yaw -= 5.0;
 	}
-	else if (player->DamageCount)
+	else if (Player->DamageCount)
 	{
-		player->DamageCount--;
+		Player->DamageCount--;
 	}
 
-	if (player->Buttons & BT_USE)
+	if (Player->Buttons & BT_USE)
 	{
-		mobj_t *mo;
-
-		player->NewTorch = 0;
-		player->NewTorchDelta = 0;
-		player->Palette = 0;
-		player->InvCurPos = 0;
-		player->InvPtr = 0;
-		player->PlayerState = PST_REBORN;
+		Player->NewTorch = 0;
+		Player->NewTorchDelta = 0;
+		Player->Palette = 0;
+		Player->InvCurPos = 0;
+		Player->InvPtr = 0;
+		Player->PlayerState = PST_REBORN;
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
-		mo = player->mo;
-		mo->Special2 = 666;
+		Special2 = 666;
 	}
 }
 
 //==========================================================================
 //
-//  ArtiEgg
+//  PlayerPawn::UseArtiEgg
 //
 //==========================================================================
 
-void ArtiEgg(mobj_t * mo)
+void PlayerPawn::UseArtiEgg(void)
 {
-	SpawnPlayerMissile(mo, EggMissile);
-	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->Angles.yaw - (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->Angles.yaw + (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->Angles.yaw - (45.0 / 3.0)));
-	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->Angles.yaw + (45.0 / 3.0)));
+	SpawnPlayerMissile(this, EggMissile);
+	SpawnPlayerMissileAngle(this, EggMissile,
+		AngleMod360(Angles.yaw - (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(this, EggMissile,
+		AngleMod360(Angles.yaw + (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(this, EggMissile,
+		AngleMod360(Angles.yaw - (45.0 / 3.0)));
+	SpawnPlayerMissileAngle(this, EggMissile,
+		AngleMod360(Angles.yaw + (45.0 / 3.0)));
 }
 
 //==========================================================================
 //
-//  ArtiTomeOfPower
+//  PlayerPawn::UseArtiTomeOfPower
 //
 //==========================================================================
 
-boolean ArtiTomeOfPower(player_t * player)
+boolean PlayerPawn::UseArtiTomeOfPower(void)
 {
-	if (player->ChickenTics)
+	if (Player->ChickenTics)
 	{
 		// Attempt to undo chicken
-		if (UndoPlayerChicken(player) == false)
+		if (UndoPlayerChicken() == false)
 		{
 			// Failed
-			player->mo->Damage(none, none, 10000);
+			Damage(none, none, 10000);
 		}
 		else
 		{
 			// Succeeded
-			player->ChickenTics = 0;
-			player->mo->PlaySound('PickupWeapon', CHAN_ITEM);
+			Player->ChickenTics = 0;
+			PlaySound('PickupWeapon', CHAN_ITEM);
 		}
 	}
 	else
 	{
-		if (!player->mo->GivePower(pw_weaponlevel2))
+		if (!GivePower(pw_weaponlevel2))
 		{
 			return false;
 		}
-		Weapon(player->ViewEnts[ps_weapon]).WeaponLevel2Init();
+		Weapon(Player->ViewEnts[ps_weapon]).WeaponLevel2Init();
 	}
 	return true;
 }
 
 //==========================================================================
 //
-//  ArtiFireBomb
+//  PlayerPawn::UseArtiFireBomb
 //
 //==========================================================================
 
-void ArtiFireBomb(player_t * player)
+void PlayerPawn::UseArtiFireBomb(void)
 {
-	float angle = player->mo->Angles.yaw;
-	mobj_t *mo = P_SpawnMobj(player->mo->Origin.x + 24.0 * cos(angle),
-		player->mo->Origin.y + 24.0 * sin(angle),
-		player->mo->Origin.z - player->mo->FloorClip,
+	float angle = Angles.yaw;
+	mobj_t *mo = P_SpawnMobj(Origin.x + 24.0 * cos(angle),
+		Origin.y + 24.0 * sin(angle),
+		Origin.z - FloorClip,
 		FireBomb);
 
-	mo->Owner = *player->mo;
+	mo->Owner = self;
 }
 
 //==========================================================================
 //
-//  P_SetDormantArtifact
+//  Actor::SetDormantArtifact
 //
-//  Removes the MF_SPECIAL flag, and initiates the artifact pickup animation.
+//  Removes the bSpecial flag, and initiates the artifact pickup animation.
 //
 //==========================================================================
 
-void P_SetDormantArtifact(mobj_t * arti)
+void Actor::SetDormantArtifact(void)
 {
-	arti->bSpecial = false;
-	if (deathmatch && (arti->Class != ArtifactInvulnerability)
-		&& (arti->Class != ArtifactInvisibility))
+	bSpecial = false;
+	if (deathmatch && (Class != ArtifactInvulnerability)
+		&& (Class != ArtifactInvisibility))
 	{
-		arti->SetState(S_DORMANTARTI1);
+		SetState(S_DORMANTARTI1);
 	}
 	else
 	{
 		// Don't respawn
-		arti->SetState(S_DEADARTI1);
+		SetState(S_DEADARTI1);
 	}
-	arti->PlaySound('PickupArtifact', CHAN_ITEM);
+	PlaySound('PickupArtifact', CHAN_ITEM);
 }
 
 //==========================================================================
 //
-//  P_HideSpecialThing
+//  Actor::HideSpecialThing
 //
 //==========================================================================
 
-void P_HideSpecialThing(mobj_t * thing)
+void Actor::HideSpecialThing(void)
 {
-	thing->bSpecial = false;
-	thing->Translucency += 100;
-	thing->SetState(S_HIDESPECIAL1);
+	bSpecial = false;
+	Translucency += 100;
+	SetState(S_HIDESPECIAL1);
 }
 
 //==========================================================================
@@ -454,6 +429,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.23  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

@@ -247,13 +247,13 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //
 //==========================================================================
 
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 							boolean reverse)
 {
 	int searcher;
 	line_t *l;
 
-	if (side || thing->bNoTeleport || !line)
+	if (side || thing.bNoTeleport || !line)
 	{
 		return false;
 	}
@@ -261,10 +261,6 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 	searcher = -1;
 	for (l = P_FindLine(id, &searcher); l; l = P_FindLine(id, &searcher))
 	{
-		if (l == line || !l->backsector)
-		{
-			continue;
-		}
 		TVec SrcXAxis;
 		TVec SrcYAxis;
 		TVec DstXAxis;
@@ -275,11 +271,18 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 		float pos;
 		float TempX;
 		float TempY;
+		float oldZ;
+
+		if (l == line || !l->backsector)
+		{
+			continue;
+		}
 
 		// Get the thing's position along the source linedef
 		SrcXAxis = Normalize(*line->v2 - *line->v1);
 		SrcYAxis = -line->normal;
-		pos = DotProduct(SrcXAxis, thing->Origin - *line->v1);
+		pos = DotProduct(SrcXAxis, thing.Origin - *line->v1);
+		oldZ = thing.Origin.z;
 
 		// Interpolate position across the exit linedef
 		if (reverse)
@@ -287,8 +290,8 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 			DstXAxis = Normalize(*l->v2 - *l->v1);
 			DstYAxis = -l->normal;
 			newPos = *l->v1 + pos * DstXAxis;
-			newPos.z = thing->Origin.z - GetPlanePointZ(
-				line->frontsector->botregion->floor, thing->Origin) +
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
 				GetPlanePointZ(l->frontsector->botregion->floor, newPos);
 		}
 		else
@@ -296,48 +299,38 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 			DstXAxis = Normalize(*l->v1 - *l->v2);
 			DstYAxis = l->normal;
 			newPos = *l->v2 + pos * DstXAxis;
-			newPos.z = thing->Origin.z - GetPlanePointZ(
-				line->frontsector->botregion->floor, thing->Origin) +
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
 				GetPlanePointZ(l->backsector->botregion->floor, newPos);
 		}
 
 		// Attempt to teleport, aborting if blocked
-		//if (!P_TeleportMove(thing, newPos.x, newPos.y, newPos.z, false))
-		if (!P_TeleportMove(thing, newPos.x, newPos.y))
+//		if (!thing.TeleportMove(newPos))
+		if (!P_TeleportMove(&thing, newPos.x, newPos.y))
 		{
 			return false;
 		}
-		thing->Origin.z = newPos.z;
+		thing.Origin.z = newPos.z;
 
 		// Rotate thing's orientation according to difference in linedef angles
 		TempV.x = DotProduct(DstXAxis, SrcXAxis);
 		TempV.y = DotProduct(DstYAxis, SrcXAxis);
 		TempV.z = 0.0;
 		VectorAngles(&TempV, &TempA);
-		thing->Angles.yaw = AngleMod360(thing->Angles.yaw - TempA.yaw);
+		thing.Angles.yaw = AngleMod360(thing.Angles.yaw - TempA.yaw);
 
 		// Rotate thing's momentum to come out of exit just like it entered
-		TempX = DotProduct(thing->Velocity, SrcXAxis);
-		TempY = DotProduct(thing->Velocity, SrcYAxis);
-		thing->Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
-		thing->Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
+		TempX = DotProduct(thing.Velocity, SrcXAxis);
+		TempY = DotProduct(thing.Velocity, SrcYAxis);
+		thing.Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
+		thing.Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
 
 		// Adjust a player's view, in case there has been a height change
-		if (thing->bIsPlayer)
+		if (thing.bIsPlayer)
 		{
-			// Save the current deltaviewheight, used in stepping
-			float DeltaViewHeight = thing->Player->DeltaViewHeight;
+			thing.Player->ViewOrg.z += thing.Origin.z - oldZ;
 
-			// Clear DeltaViewHeight, since we don't want any changes now
-			thing->Player->DeltaViewHeight = 0.0;
-
-			// Set player's view according to the newly set parameters
-			CalcHeight(thing->Player);
-
-			// Reset the delta to have the same dynamics as before
-			thing->Player->DeltaViewHeight = DeltaViewHeight;
-
-			thing->Player->bFixAngle = true;
+			thing.Player->bFixAngle = true;
 		}
 		return true;
 	}
@@ -347,6 +340,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.21  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

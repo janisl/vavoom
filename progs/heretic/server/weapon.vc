@@ -414,7 +414,7 @@ void FireWeapon(player_t * player)
 	{
 		return;
 	}
-	player->mo->SetState(S_PLAY_ATK2);
+	player->mo->SetState(PlayerPawn(*player->mo).Attack2State);
 	if (player->Powers[pw_weaponlevel2])
 	{
 		attackState = player->Refire ?
@@ -515,10 +515,10 @@ void Weapon::A_WeaponReady(void)
 		return;
 	}
 	// Change player from attack state
-	if (Player->mo->StateNum == S_PLAY_ATK1 ||
-		Player->mo->StateNum == S_PLAY_ATK2)
+	if (Player->mo->StateNum == Player->mo->MissileState ||
+		Player->mo->StateNum == PlayerPawn(*Player->mo).Attack2State)
 	{
-		Player->mo->SetState(S_PLAY);
+		Player->mo->SetState(Player->mo->SpawnState);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
@@ -670,13 +670,13 @@ void Weapon::A_Light0(void)
 
 void Actor::A_BoltSpark(void)
 {
-	mobj_t *spark;
+	Actor spark;
 
 	if (P_Random() > 50)
 	{
-		spark = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CrossbowFX4);
-		spark->Origin.x += (Random() - Random()) * 4.0;
-		spark->Origin.y += (Random() - Random()) * 4.0;
+		spark = Spawn(CrossbowFX4, Origin);
+		spark.Origin.x += (Random() - Random()) * 4.0;
+		spark.Origin.y += (Random() - Random()) * 4.0;
 	}
 }
 
@@ -690,17 +690,17 @@ void Actor::A_SpawnRippers(void)
 {
 	int i;
 	float angle;
-	mobj_t *ripper;
+	Actor ripper;
 
 	for (i = 0; i < 8; i++)
 	{
-		ripper = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Ripper);
+		ripper = Spawn(Ripper, Origin);
 		angle = itof(i) * 45.0;
-		ripper->Owner = Owner;
-		ripper->Angles.yaw = angle;
-		ripper->Velocity.x = ripper->Speed * cos(angle);
-		ripper->Velocity.y = ripper->Speed * sin(angle);
-		CheckMissileSpawn(ripper);
+		ripper.Owner = Owner;
+		ripper.Angles.yaw = angle;
+		ripper.Velocity.x = ripper.Speed * cos(angle);
+		ripper.Velocity.y = ripper.Speed * sin(angle);
+		CheckMissileSpawn(&ripper);
 	}
 }
 
@@ -2134,7 +2134,7 @@ void A_BeakReady(void)
 	{
 		// Chicken beak attack
 		Player->bAttackDown = true;
-		Player->mo->SetState(S_CHICPLAY_ATK1);
+		Player->mo->SetState(Player->mo->MissileState);
 		if (Player->Powers[pw_weaponlevel2])
 		{
 			SetState(AttackState2);
@@ -2147,10 +2147,10 @@ void A_BeakReady(void)
 	}
 	else
 	{
-		if (Player->mo->StateNum == S_CHICPLAY_ATK1)
+		if (Player->mo->StateNum == Player->mo->MissileState)
 		{
 			// Take out of attack state
-			Player->mo->SetState(S_CHICPLAY);
+			Player->mo->SetState(Player->mo->SpawnState);
 		}
 		Player->bAttackDown = false;
 	}
@@ -2270,6 +2270,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.22  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

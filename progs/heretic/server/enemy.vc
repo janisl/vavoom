@@ -25,13 +25,29 @@
 
 //==========================================================================
 //
-//  Actor::A_Look
+//	Pawn::OnMapSpawn
+//
+//==========================================================================
+
+void Pawn::OnMapSpawn(mthing_t *mthing)
+{
+	if (bCheckNoMonsters && nomonsters)
+	{
+		RemoveMobjThinker(self);
+		return;
+	}
+	::OnMapSpawn(mthing);
+}
+
+//==========================================================================
+//
+//  Pawn::A_Look
 //
 //  Stay in state until a player is sighted
 //
 //==========================================================================
 
-void Actor::A_Look(void)
+void Pawn::A_Look(void)
 {
 	Actor targ;
 
@@ -76,13 +92,13 @@ void Actor::A_Look(void)
 
 //==========================================================================
 //
-//  Actor::A_Chase
+//  Pawn::A_Chase
 //
 //  Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-void Actor::A_Chase(void)
+void Pawn::A_Chase(void)
 {
 	float delta;
 
@@ -213,11 +229,11 @@ void Actor::A_Chase(void)
 
 //==========================================================================
 //
-//  Actor::A_FaceTarget
+//  Pawn::A_FaceTarget
 //
 //==========================================================================
 
-void Actor::A_FaceTarget(void)
+void Pawn::A_FaceTarget(void)
 {
 	if (!Target)
 		return;
@@ -234,11 +250,11 @@ void Actor::A_FaceTarget(void)
 
 //==========================================================================
 //
-//  Actor::A_Pain
+//  Pawn::A_Pain
 //
 //==========================================================================
 
-void Actor::A_Pain(void)
+void Pawn::A_Pain(void)
 {
 	if (PainSound)
 	{
@@ -264,7 +280,7 @@ void Actor::A_FreeTargMobj(void)
 	bDropOff = true;
 	bCorpse = true;
 	bNoPassMobj = true;
-	Player = NULL;
+//	Player = NULL;		//	Will do this later
 	bIsPlayer = false;
 }
 
@@ -283,25 +299,6 @@ void Actor::A_Scream(void)
 	case Minotaur:
 		// Make boss death sounds full volume
 		PlayFullVolumeSound(DeathSound, CHAN_VOICE);
-		break;
-	case PlayerPawn:
-		// Handle the different player death screams
-		if (Special1 < 10)
-		{	// Wimpy death sound
-			PlaySound('PlayerWimpyDeath', CHAN_VOICE);
-		}
-		else if (Health > -50)
-		{	// Normal death sound
-			PlaySound(DeathSound, CHAN_VOICE);
-		}
-		else if (Health > -100)
-		{	// Crazy death sound
-			PlaySound('PlayerCrazyDeath', CHAN_VOICE);
-		}
-		else
-		{	// Extreme death sound
-			PlaySound('PlayerExtremeDeath', CHAN_VOICE);
-		}
 		break;
 	default:
 		PlaySound(DeathSound, CHAN_VOICE);
@@ -361,33 +358,33 @@ void Actor::A_Explode(void)
 
 //==========================================================================
 //
-//  Actor::DropItem
+//  Pawn::DropItem
 //
 //==========================================================================
 
-void Actor::DropItem(classid type, int amount, int chance)
+void Pawn::DropItem(classid type, int amount, int chance)
 {
-	mobj_t *mo;
+	Actor A;
 
 	if (P_Random() > chance)
 	{
 		return;
 	}
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0, type);
-	mo->Velocity.x = (Random() - Random()) * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 35.0;
-	mo->Velocity.z = (5.0 + Random() * 4.0) * 35.0;
-	mo->bDropped = true;
-	mo->Health = amount;
+	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
+	A.Velocity.x = (Random() - Random()) * 35.0;
+	A.Velocity.y = (Random() - Random()) * 35.0;
+	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
+	A.bDropped = true;
+	A.Health = amount;
 }
 
 //==========================================================================
 //
-//  Actor::A_NoBlocking
+//  Pawn::A_NoBlocking
 //
 //==========================================================================
 
-void Actor::A_NoBlocking(void)
+void Pawn::A_NoBlocking(void)
 {
 	bSolid = false;
 	// Check for monsters dropping things
@@ -429,113 +426,34 @@ void Actor::A_NoBlocking(void)
 
 //==========================================================================
 //
-//	Actor::A_AddPlayerCorpse
+//	PlayerPawn::A_AddPlayerCorpse
 //
 //==========================================================================
 
 #define BODYQUESIZE		32
-mobj_t *bodyque[BODYQUESIZE];
+Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
-void Actor::A_AddPlayerCorpse(void)
+void PlayerPawn::A_AddPlayerCorpse(void)
 {
 	if (bodyqueslot >= BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		P_RemoveMobj(bodyque[bodyqueslot % BODYQUESIZE]);
+		bodyque[bodyqueslot % BODYQUESIZE].Remove();
 	}
-	bodyque[bodyqueslot % BODYQUESIZE] = this;
+	bodyque[bodyqueslot % BODYQUESIZE] = self;
 	bodyqueslot++;
 }
 
 //==========================================================================
 //
-//  Actor::A_SkullPop
-//
-//==========================================================================
-
-void Actor::A_SkullPop(void)
-{
-	mobj_t *mo;
-
-	bSolid = false;
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, BloodySkull);
-	mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.z = (2.0 + Random() / 4.0) * 35.0;
-	// Attach player mobj to bloody skull
-	mo->Player = Player;
-	mo->bIsPlayer = true;
-	Player = NULL;
-	bIsPlayer = false;
-	mo->Health = Health;
-	mo->Angles.yaw = Angles.yaw;
-	mo->Player->mo = mo;
-	mo->Player->DamageCount = 32;
-}
-
-//==========================================================================
-//
-//	Actor::A_FlameSnd
-//
-//==========================================================================
-
-void Actor::A_FlameSnd(void)
-{
-	PlaySound('HeadAttack1', CHAN_WEAPON);	// Burn sound
-}
-
-//==========================================================================
-//
-//  Actor::A_CheckBurnGone
-//
-//==========================================================================
-
-void Actor::A_CheckBurnGone(void)
-{
-	if (Special2 == 666)
-	{
-		SetState(S_PLAY_FDTH20);
-	}
-}
-
-//==========================================================================
-//
-//	Actor::A_CheckSkullFloor
-//
-//==========================================================================
-
-void Actor::A_CheckSkullFloor(void)
-{
-	if (Origin.z <= FloorZ)
-	{
-		SetState(S_BLOODYSKULLX1);
-	}
-}
-
-//==========================================================================
-//
-//	Actor::A_CheckSkullDone
-//
-//==========================================================================
-
-void Actor::A_CheckSkullDone(void)
-{
-	if (Special2 == 666)
-	{
-		SetState(S_BLOODYSKULLX2);
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_BossDeath
+//  Pawn::A_BossDeath
 //
 //  Trigger special effects if all bosses are dead.
 //
 //==========================================================================
 
-void Actor::A_BossDeath(void)
+void Pawn::A_BossDeath(void)
 {
 	string mapname;
 	Actor mo;
@@ -632,6 +550,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:45:12  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.23  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -45,7 +45,7 @@
 
 void Actor::A_MakePod(void)
 {
-	mobj_t *mo;
+	Actor A;
 	float x;
 	float y;
 	float z;
@@ -58,18 +58,18 @@ void Actor::A_MakePod(void)
 	x = Origin.x;
 	y = Origin.y;
 	z = Origin.z;
-	mo = P_SpawnMobj(x, y, ONFLOORZ, Pod);
-	if (!mo->CheckPosition(mo->Origin))
+	A = Spawn(Pod, vector(x, y, ONFLOORZ));
+	if (!A.CheckPosition(A.Origin))
 	{
 		// Didn't fit
-		P_RemoveMobj(mo);
+		A.Remove();
 		return;
 	}
-	mo->SetState(S_POD_GROW1);
-	mo->Thrust(Random() * 360.0, 4.5);
-	mo->PlaySound('PodNew', CHAN_VOICE);
+	A.SetState(S_POD_GROW1);
+	A.Thrust(Random() * 360.0, 4.5);
+	A.PlaySound('PodNew', CHAN_VOICE);
 	Special1++;	// Increment generated pod count
-	mo->SpecialMobj2 = this;	// Link the generator to the pod
+	A.SpecialMobj2 = this;	// Link the generator to the pod
 }
 
 //==========================================================================
@@ -83,7 +83,7 @@ void Actor::A_PodPain(void)
 	int i;
 	int count;
 	int chance;
-	mobj_t *goo;
+	Actor goo;
 
 	chance = P_Random();
 	if (chance < 128)
@@ -93,11 +93,11 @@ void Actor::A_PodPain(void)
 	count = chance > 240 ? 2 : 1;
 	for (i = 0; i < count; i++)
 	{
-		goo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, PodGoo);
-		goo->Owner = self;
-		goo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-		goo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		goo->Velocity.z = (0.5 + Random() * 2.0) * 35.0;
+		goo = Spawn(PodGoo, Origin + vector(0.0, 0.0, 48.0));
+		goo.Owner = self;
+		goo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		goo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		goo.Velocity.z = (0.5 + Random() * 2.0) * 35.0;
 	}
 }
 
@@ -109,14 +109,14 @@ void Actor::A_PodPain(void)
 
 void Actor::A_RemovePod(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	if (SpecialMobj2)
 	{
-		mo = SpecialMobj2;
-		if (mo->Special1 > 0)
+		A = *SpecialMobj2;
+		if (A.Special1 > 0)
 		{
-			mo->Special1--;
+			A.Special1--;
 		}
 	}
 }
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/16 17:45:13  dj_jl
+//  Added Pawn and PlayerPawn classes, beautification.
+//
 //  Revision 1.16  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
