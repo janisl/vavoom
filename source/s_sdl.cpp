@@ -519,7 +519,7 @@ void VDefaultSoundDevice::PlayVoice(const char *Name)
 
 	channels[chan].origin_id = 0;
 	channels[chan].origin    = TVec(0, 0, 0);
-	channels[chan].channel   = channel;
+	channels[chan].channel   = 1;
 	channels[chan].velocity  = TVec(0, 0, 0);
 	channels[chan].sound_id  = VOICE_SOUND_ID;
 	channels[chan].priority  = priority;
@@ -664,7 +664,7 @@ void VDefaultSoundDevice::Tick(float DeltaTime)
 		}
 
 		//	Move sound
-		Channel[i].origin += Channel[i].velocity * DeltaTime;
+		channels[i].origin += channels[i].velocity * DeltaTime;
 
 		dist = CalcDist(channels[i].origin);
 		if (dist >= MAX_SND_DIST)
@@ -757,9 +757,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/24 14:50:05  dj_jl
+//	Some fixes.
+//
 //	Revision 1.5  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.4  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
 //	
