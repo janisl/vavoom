@@ -136,7 +136,7 @@ static TCvarF	m_pitch("m_pitch", "0.022", CVAR_ARCHIVE);
 static TCvarF	m_forward("m_forward", "1.0", CVAR_ARCHIVE);
 static TCvarF	m_side("m_side", "0.8", CVAR_ARCHIVE);
 
-static TCvarF	joy_yaw("joy_yaw", "1", CVAR_ARCHIVE);
+static TCvarF	joy_yaw("joy_yaw", "140", CVAR_ARCHIVE);
 
 BUTTON(Forward)
 BUTTON(Backward)
@@ -344,7 +344,7 @@ void V_StopPitchDrift(void)
 static void AdjustAngles(void)
 {
 	guard(AdjustAngles);
-    float speed;
+	float speed;
 
 	if (KeySpeed.state & 1)
 		speed = host_frametime * cl_anglespeedkey;
@@ -360,14 +360,14 @@ static void AdjustAngles(void)
 
 	//	YAW
 	if (!(KeyStrafe.state & 1))
-    { 
-    	cl.viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
-    	cl.viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
+	{ 
+		cl.viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
+		cl.viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
 		if (joyxmove > 0)
-	    	cl.viewangles.yaw -= joy_yaw * speed;
+			cl.viewangles.yaw -= joy_yaw * speed;
 		if (joyxmove < 0)
-	    	cl.viewangles.yaw += joy_yaw * speed;
-    }
+			cl.viewangles.yaw += joy_yaw * speed;
+	}
 	if (!(KeyStrafe.state & 1) &&
 		(!lookstrafe || (!mouse_look && !(KeyMouseLook.state & 1))))
 	{
@@ -465,24 +465,24 @@ static void AdjustAngles(void)
 static void BuildTiccmd(ticcmd_t* cmd)
 {
 	guard(BuildTiccmd);
-    float		forward;
-    float		side;
+	float		forward;
+	float		side;
 	float		flyheight;
 
 	memset(cmd, 0, sizeof(*cmd));
 
-    forward = side = flyheight = 0;
+	forward = side = flyheight = 0;
     
-    // let movement keys cancel each other out
-    if (KeyStrafe.state & 1)
-    { 
-    	side += KeyRight.KeyState() * cl_sidespeed;
-    	side -= KeyLeft.KeyState() * cl_sidespeed;
+	// let movement keys cancel each other out
+	if (KeyStrafe.state & 1)
+	{ 
+		side += KeyRight.KeyState() * cl_sidespeed;
+		side -= KeyLeft.KeyState() * cl_sidespeed;
 		if (joyxmove > 0)
-	    	side += cl_sidespeed;
+			side += cl_sidespeed;
 		if (joyxmove < 0)
-	    	side -= cl_sidespeed;
-    }
+			side -= cl_sidespeed;
+	}
  
 	forward += KeyForward.KeyState() * cl_forwardspeed;
 	forward -= KeyBackward.KeyState() * cl_backspeed;
@@ -490,16 +490,16 @@ static void BuildTiccmd(ticcmd_t* cmd)
 	side += KeyMoveRight.KeyState() * cl_sidespeed;
 	side -= KeyMoveLeft.KeyState() * cl_sidespeed;
 
-    if (joyymove < 0) 
+	if (joyymove < 0) 
 		forward += cl_forwardspeed;
-    if (joyymove > 0) 
+	if (joyymove > 0) 
 		forward -= cl_backspeed;
 
 	// Fly up/down/drop keys
 	flyheight += KeyFlyUp.KeyState() * cl_flyspeed; // note that the actual flyheight will be twice this
 	flyheight -= KeyFlyDown.KeyState() * cl_flyspeed;
 
-    if (allways_run || (KeySpeed.state & 1))
+	if (allways_run || (KeySpeed.state & 1))
 	{
 		forward *= cl_movespeedkey;
 		side *= cl_movespeedkey;
@@ -511,16 +511,16 @@ static void BuildTiccmd(ticcmd_t* cmd)
 		forward += m_forward * mousey;
 	}
 
-    if ((KeyStrafe.state & 1) ||
-    	(lookstrafe && (mouse_look || (KeyMouseLook.state & 1))))
+	if ((KeyStrafe.state & 1) ||
+		(lookstrafe && (mouse_look || (KeyMouseLook.state & 1))))
 	{
 		side += m_side * mousex;
 	}
 
-    if (flyheight > 127)
-    	flyheight = 127;
+	if (flyheight > 127)
+		flyheight = 127;
 	if (flyheight < -127)
-    	flyheight = -127;
+		flyheight = -127;
 	if (KeyFlyCenter.KeyState())
 	{
 		flyheight = TOCENTER;
@@ -530,17 +530,17 @@ static void BuildTiccmd(ticcmd_t* cmd)
 	//	BUTTONS
 	//
 
-    // Fire buttons
-    if (KeyAttack.KeyState())
+	// Fire buttons
+	if (KeyAttack.KeyState())
 	{
 		cmd->buttons |= BT_ATTACK;
 	}
 
 	// Use buttons
-    if (KeyUse.KeyState())
-    { 
+	if (KeyUse.KeyState())
+	{ 
 		cmd->buttons |= BT_USE;
-    } 
+	} 
 
 	// Jumping
 	if (KeyJump.KeyState())
@@ -582,8 +582,8 @@ static void BuildTiccmd(ticcmd_t* cmd)
 		impulse_cmd = 0;
 	}
 
-    cmd->forwardmove = (int)forward;
-    cmd->sidemove = (int)side;
+	cmd->forwardmove = (int)forward;
+	cmd->sidemove = (int)side;
 	cmd->flymove = (int)flyheight;
 	unguard;
 }
@@ -616,7 +616,7 @@ void CL_SendMove(void)
 	{
 		AdjustAngles();
 		BuildTiccmd(&cmd);
-	    mousex = mousey = 0;
+		mousex = mousey = 0;
 		msg.Clear();
 		msg << (byte)clc_move
 			<< (byte)(AngleToByte(cl.viewangles.yaw))
@@ -693,9 +693,9 @@ boolean CL_Responder(event_t* ev)
 void CL_ClearInput(void)
 {
 	guard(CL_ClearInput);
-    // clear cmd building stuff
-    joyxmove = joyymove = 0; 
-    mousex = mousey = 0;
+	// clear cmd building stuff
+	joyxmove = joyymove = 0; 
+	mousex = mousey = 0;
 	impulse_cmd = 0;
 	unguard;
 }
@@ -703,9 +703,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/10/11 07:57:30  dj_jl
+//	Joystick yaw speed fixed.
+//
 //	Revision 1.10  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	
