@@ -364,8 +364,7 @@ float ConstFloatExpression(void);
 
 void PA_Parse(void);
 void ParseLocalVar(TType *type);
-void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
-	TType *class_type);
+void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
 int ParseStateCode(TType *class_type);
 void ParseDefaultProperties(field_t *method, TType *class_type);
 
@@ -532,9 +531,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/02/02 19:23:02  dj_jl
+//	Natives declared inside class declarations.
+//
 //	Revision 1.19  2002/01/17 18:19:53  dj_jl
 //	New style of adding to mobjinfo, some fixes
-//
+//	
 //	Revision 1.18  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
 //	

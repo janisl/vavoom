@@ -935,6 +935,20 @@ class_type->fields = &fields[0];
 			continue;
 		}
 
+		int Flags = 0;
+		bool flags_done = false;
+		do
+		{
+			if (TK_Check(KW_NATIVE))
+			{
+				Flags |= FUNC_Native;
+			}
+			else
+			{
+				flags_done = true;
+			}
+		} while (!flags_done);
+
 		type = CheckForType();
 		if (!type)
 		{
@@ -970,7 +984,7 @@ class_type->fields = &fields[0];
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, class_type);
+				ParseMethodDef(t, fi, otherfield, class_type, Flags);
 				need_semicolon = false;
 				break;
 			}
@@ -1366,9 +1380,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/02 19:23:02  dj_jl
+//	Natives declared inside class declarations.
+//
 //	Revision 1.20  2002/01/21 18:23:09  dj_jl
 //	Constructors with no names
-//
+//	
 //	Revision 1.19  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
 //	

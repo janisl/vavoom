@@ -1095,7 +1095,7 @@ static void ParseDef(TType *type, bool IsNative)
 //==========================================================================
 
 void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
-	TType *class_type)
+	TType *class_type, int FuncFlags)
 {
 	if (t->type == ev_class)
 	{
@@ -1210,6 +1210,15 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	functions[num].OuterClass = class_type;
 	functions[num].type = FindType(&functype);
 	functions[num].first_statement = 0;
+	functions[num].flags = FuncFlags;
+
+	if (FuncFlags & FUNC_Native)
+	{
+		functions[num].first_statement = -numbuiltins;
+		numbuiltins++;
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+		return;
+	}
 
 	if (TK_Check(PU_LBRACE))
 	{
@@ -1534,9 +1543,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/02 19:23:02  dj_jl
+//	Natives declared inside class declarations.
+//
 //	Revision 1.21  2002/01/21 18:23:09  dj_jl
 //	Constructors with no names
-//
+//	
 //	Revision 1.20  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
 //	
