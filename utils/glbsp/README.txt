@@ -2,7 +2,7 @@
 README for glBSP
 ================
 
-by Andrew Apted.  27th December 2001.
+by Andrew Apted. 30th August 2002.
 
 
 Introduction
@@ -22,7 +22,7 @@ and Vavoom.  See the links below.
 Status
 ------
 
-The current version of glBSP is 1.96.  It has been tested and known to
+The current version of glBSP is 2.00.  It has been tested and known to
 work on numerous large wads, including DOOM I shareware, DOOM II,
 TeamTNT's Eternal III, Fanatic's QDOOM, and many others.
 
@@ -73,7 +73,7 @@ Contact
 Questions, bug reports, suggestions, etc... about glBSP should be
 sent to the following email address:
 
-   glbsp-public@lists.sourceforge.net   
+   glbsp-public@lists.sourceforge.net
 
 
 Links
@@ -98,7 +98,7 @@ Look here for PrBOOM:
    http://prboom.sourceforge.net/
 
 The Vavoom site is here:
-   http://www.raven-games.com/hosted/vavoom
+   http://www.vavoom-engine.com/
 
 
 Acknowledgements
@@ -134,7 +134,7 @@ Raphael Quinet, for DEU and the original idea.
 id Software, for not only creating such an irresistable game, but
 releasing the source code for so much of their stuff.
 
-... and everyone else who deserves it ! 
+... and everyone else who deserves it !
 
 
 

@@ -37,4 +37,8 @@ void InitBlockmap(void);
 // build the blockmap and write the data into the BLOCKMAP lump
 void PutBlockmap(void);
 
+// utility routine.
+int CheckLinedefInsideBox(int xmin, int ymin, int xmax, int ymax,
+    int x1, int y1, int x2, int y2);
+
 #endif /* __GLBSP_BLOCKMAP_H__ */

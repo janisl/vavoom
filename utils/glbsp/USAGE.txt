@@ -2,7 +2,7 @@
 USING glBSP
 ===========
 
-by Andrew Apted.  24th September 2001.
+by Andrew Apted.  30th August 2002.
 
 
 Running glBSP
@@ -283,10 +283,8 @@ changed or abandoned.  Features that are different:
      needed.  Thus glBSP does not accept the following options that
      BSP 2.3 supports: -thold, -vp, -vpmark, -vpwarn.
 
-  +  glBSP should work on big-endian platforms (like the Mac).  The
-     code was rewritten with this in mind, though it has not been
-     tested yet (a report on this would be appreciated).
-  
+  +  glBSP works on big-endian platforms (like the Mac).
+
   +  The "just for a grin" special feature where a linedef with tag
      999 would cause an angle adjustment was removed.
  
@@ -294,7 +292,8 @@ changed or abandoned.  Features that are different:
  
   +  glBSP packs the blockmap, and can merge identical sidedefs.
 
-  +  glBSP has a much more modular architecture.
+  +  glBSP has a much more modular architecture, and can even serve as
+     a plug-in for other programs.
 
   +  The GUI version, glBSPX, is completely new.
  

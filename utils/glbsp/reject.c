@@ -206,9 +206,9 @@ void PutReject(void)
 
   CreateReject(matrix);
 
-  #if DEBUG_REJECT
+# if DEBUG_REJECT
   CountGroups();
-  #endif
+# endif
 
   lump = CreateLevelLump("REJECT");
 

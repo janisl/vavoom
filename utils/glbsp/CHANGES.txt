@@ -2,6 +2,33 @@
 CHANGELOG
 =========
 
+Changes in V2.00  (Unreleased)
+------------------------------
+
+ - fixed compilation problems under Digital Unix 4.0 (thanks to André
+   Majorel for the patch). 
+
+ - fixed a problem running on big-endian CPUs (thanks to Jussi
+   Pakkanen for testing on an IRIX 6.5 machine).
+ 
+ - made the endian checks run-time instead of compile-time, and added
+   sanity checks on the type sizes.
+
+ - made building GWA files *much* faster, by reusing the existing node
+   information (up to a point anyway).  It is now between 3 and 5
+   times faster than before.  It comes at a price though, the original
+   nodes may not be as good as the ones GLBSP can make.  There is a
+   new option "-fresh" to force GLBSP to build nodes from scratch.
+ 
+ - some more Hexen / ZDoom fixes, thanks to Janis Legzdinsh.
+ 
+ - now if any level fails to build properly (e.g. blockmap too big,
+   or too many segs) then a large "ATTENTION" message is shown at the
+   very end, showing which levels failed (perhaps all of them).
+ 
+ - glBSPX: new misc option "Fresh Partition Lines".
+
+
 Changes in V1.96  (1st January 2002)
 ------------------------------------
 

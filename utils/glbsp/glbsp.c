@@ -61,6 +61,7 @@ const nodebuildinfo_t default_buildinfo =
   FALSE,   // force_hexen
   FALSE,   // pack_sides
   FALSE,   // v1_vert
+  FALSE,   // choose_fresh
 
   FALSE,   // load_all
   FALSE,   // no_gl
@@ -190,6 +191,7 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
     HANDLE_BOOLEAN("warn",        mini_warnings)
     HANDLE_BOOLEAN("packsides",   pack_sides)
     HANDLE_BOOLEAN("v1",          v1_vert)
+    HANDLE_BOOLEAN("fresh",       choose_fresh)
 
     HANDLE_BOOLEAN("loadall",     load_all)
     HANDLE_BOOLEAN("nogl",        no_gl)
@@ -319,6 +321,7 @@ static glbsp_ret_e HandleLevel(void)
 {
   superblock_t *seg_list;
   node_t *root_node;
+  node_t *root_stale_node;
   subsec_t *root_sub;
 
   glbsp_ret_e ret;
@@ -326,7 +329,7 @@ static glbsp_ret_e HandleLevel(void)
   if (cur_comms->cancelled)
     return GLBSP_E_Cancelled;
 
-  DisplaySetBarLimit(1, 100);
+  DisplaySetBarLimit(1, 1000);
   DisplaySetBar(1, 0);
 
   cur_build_pos = 0;
@@ -338,8 +341,11 @@ static glbsp_ret_e HandleLevel(void)
   // create initial segs
   seg_list = CreateSegs();
 
+  root_stale_node = (num_stale_nodes == 0) ? NULL : 
+      LookupStaleNode(num_stale_nodes - 1);
+
   // recursively create nodes
-  ret = BuildNodes(seg_list, &root_node, &root_sub, 0);
+  ret = BuildNodes(seg_list, &root_node, &root_sub, 0, root_stale_node);
   FreeSuper(seg_list);
 
   if (ret == GLBSP_E_OK)
@@ -397,7 +403,8 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
   }
 
   InitDebug();
-  
+  InitEndian();
+ 
   if (info->missing_output)
     PrintMsg("* No output file specified. Using: %s\n\n", info->output_file);
   
@@ -422,7 +429,8 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
     return GLBSP_E_Unknown;
   }
    
-  PrintMsg("\nCreating nodes using tunable factor of %d\n", info->factor);
+  PrintMsg("\n");
+  PrintMsg("Creating nodes using tunable factor of %d\n", info->factor);
 
   DisplayOpen(DIS_BUILDPROGRESS);
   DisplaySetTitle("glBSP Build Progress");
@@ -453,11 +461,14 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
   if (ret == GLBSP_E_OK)
     ret = WriteWadFile(cur_info->output_file);
 
+  PrintMsg("\n");
+  PrintMsg("Total serious warnings: %d\n", total_big_warn);
+  PrintMsg("Total minor warnings: %d\n", total_small_warn);
+
+  ReportFailedLevels();
+
   // close wads and free memory
   CloseWads();
-
-  PrintMsg("\nTotal serious warnings: %d\n", total_big_warn);
-  PrintMsg("Total minor warnings: %d\n", total_small_warn);
 
   TermDebug();
 

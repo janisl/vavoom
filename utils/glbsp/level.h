@@ -162,13 +162,13 @@ typedef struct linedef_s
   sidedef_t *left;    // left sidede, or NULL if none
 
   // line is marked two-sided
-  int two_sided;
+  char two_sided;
 
   // prefer not to split
-  int is_precious;
+  char is_precious;
 
   // zero length (line should be totally ignored)
-  int zero_len;
+  char zero_len;
 
   int flags;
   int type;
@@ -337,6 +337,7 @@ extern int num_sectors;
 extern int num_segs;
 extern int num_subsecs;
 extern int num_nodes;
+extern int num_stale_nodes;
 
 extern int num_normal_vert;
 extern int num_gl_vert;
@@ -353,6 +354,7 @@ sector_t *NewSector(void);
 seg_t *NewSeg(void);
 subsec_t *NewSubsec(void);
 node_t *NewNode(void);
+node_t *NewStaleNode(void);
 
 // lookup routines
 vertex_t *LookupVertex(int index);
@@ -362,6 +364,7 @@ sector_t *LookupSector(int index);
 seg_t *LookupSeg(int index);
 subsec_t *LookupSubsec(int index);
 node_t *LookupNode(int index);
+node_t *LookupStaleNode(int index);
 
 // check whether the current level already has normal nodes
 int CheckForNormalNodes(void);

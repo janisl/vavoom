@@ -60,6 +60,11 @@ void PrintMsg(const char *str, ...);
 void PrintWarn(const char *str, ...);
 void PrintMiniWarn(const char *str, ...);
 
+// endian handling
+void InitEndian(void);
+uint16_g Endian_U16(uint16_g);
+uint32_g Endian_U32(uint32_g);
+
 // these are only used for debugging
 void InitDebug(void);
 void TermDebug(void);

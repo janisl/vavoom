@@ -47,6 +47,8 @@
 
 #define ALLOC_BLKNUM  1024
 
+#define POLY_BOX_SZ  10
+
 
 // per-level variables
 
@@ -61,14 +63,15 @@ static boolean_g doing_hexen;
     int NUMVAR = 0;
 
 
-LEVELARRAY(vertex_t,  vertices, num_vertices)
-LEVELARRAY(linedef_t, linedefs, num_linedefs)
-LEVELARRAY(sidedef_t, sidedefs, num_sidedefs)
-LEVELARRAY(sector_t,  sectors,  num_sectors)
-LEVELARRAY(seg_t,     segs,     num_segs)
-LEVELARRAY(subsec_t,  subsecs,  num_subsecs)
-LEVELARRAY(node_t,    nodes,    num_nodes)
-LEVELARRAY(wall_tip_t,wall_tips,num_wall_tips)
+LEVELARRAY(vertex_t,  vertices,   num_vertices)
+LEVELARRAY(linedef_t, linedefs,   num_linedefs)
+LEVELARRAY(sidedef_t, sidedefs,   num_sidedefs)
+LEVELARRAY(sector_t,  sectors,    num_sectors)
+LEVELARRAY(seg_t,     segs,       num_segs)
+LEVELARRAY(subsec_t,  subsecs,    num_subsecs)
+LEVELARRAY(node_t,    nodes,      num_nodes)
+LEVELARRAY(node_t,    stale_nodes,num_stale_nodes)
+LEVELARRAY(wall_tip_t,wall_tips,  num_wall_tips)
 
 
 int num_normal_vert = 0;
@@ -112,6 +115,9 @@ subsec_t *NewSubsec(void)
 node_t *NewNode(void)
   ALLIGATOR(node_t, nodes, num_nodes)
 
+node_t *NewStaleNode(void)
+  ALLIGATOR(node_t, stale_nodes, num_stale_nodes)
+
 wall_tip_t *NewWallTip(void)
   ALLIGATOR(wall_tip_t, wall_tips, num_wall_tips)
 
@@ -150,6 +156,9 @@ void FreeSubsecs(void)
 void FreeNodes(void)
   FREEMASON(node_t, nodes, num_nodes)
 
+void FreeStaleNodes(void)
+  FREEMASON(node_t, stale_nodes, num_stale_nodes)
+
 void FreeWallTips(void)
   FREEMASON(wall_tip_t, wall_tips, num_wall_tips)
 
@@ -185,6 +194,9 @@ subsec_t *LookupSubsec(int index)
 node_t *LookupNode(int index)
   LOOKERUPPER(nodes, num_nodes, "node")
 
+node_t *LookupStaleNode(int index)
+  LOOKERUPPER(stale_nodes, num_stale_nodes, "stale_node")
+
 
 /* ----- reading routines ------------------------------ */
 
@@ -196,7 +208,7 @@ boolean_g CheckForNormalNodes(void)
 {
   lump_t *lump;
   
-  // Note: an empty NODES lump can be valid.
+  /* Note: an empty NODES lump can be valid */
   if (FindLevelLump("NODES") == NULL)
     return FALSE;
  
@@ -227,9 +239,9 @@ void GetVertices(void)
 
   DisplayTicker();
 
-  #if DEBUG_LOAD
+# if DEBUG_LOAD
   PrintDebug("GetVertices: num = %d\n", count);
-  #endif
+# endif
 
   if (!lump || count == 0)
     FatalError("Couldn't find any Vertices");
@@ -268,9 +280,9 @@ void GetSectors(void)
 
   DisplayTicker();
 
-  #if DEBUG_LOAD
+# if DEBUG_LOAD
   PrintDebug("GetSectors: num = %d\n", count);
-  #endif
+# endif
 
   raw = (raw_sector_t *) lump->data;
 
@@ -291,10 +303,10 @@ void GetSectors(void)
     sector->coalesce = (sector->tag >= 900 && sector->tag < 1000) ?
         TRUE : FALSE;
 
-    // sector indices never change
+    /* sector indices never change */
     sector->index = i;
 
-    // Note: rej_* fields are handled completely in reject.c
+    /* Note: rej_* fields are handled completely in reject.c */
   }
 }
 
@@ -315,9 +327,9 @@ void GetSidedefs(void)
 
   DisplayTicker();
 
-  #if DEBUG_LOAD
+# if DEBUG_LOAD
   PrintDebug("GetSidedefs: num = %d\n", count);
-  #endif
+# endif
 
   raw = (raw_sidedef_t *) lump->data;
 
@@ -338,7 +350,7 @@ void GetSidedefs(void)
     memcpy(side->lower_tex, raw->lower_tex, sizeof(side->lower_tex));
     memcpy(side->mid_tex,   raw->mid_tex,   sizeof(side->mid_tex));
 
-    // sidedef indices never change
+    /* sidedef indices never change */
     side->index = i;
   }
 }
@@ -360,9 +372,9 @@ void GetLinedefs(void)
 
   DisplayTicker();
 
-  #if DEBUG_LOAD
+# if DEBUG_LOAD
   PrintDebug("GetLinedefs: num = %d\n", count);
-  #endif
+# endif
 
   raw = (raw_linedef_t *) lump->data;
 
@@ -381,7 +393,7 @@ void GetLinedefs(void)
     line->start = start;
     line->end   = end;
 
-    // check for zero-length line
+    /* check for zero-length line */
     line->zero_len = (fabs(start->x - end->x) < DIST_EPSILON) && 
         (fabs(start->y - end->y) < DIST_EPSILON);
 
@@ -432,9 +444,9 @@ void GetLinedefsHexen(void)
 
   DisplayTicker();
 
-  #if DEBUG_LOAD
+# if DEBUG_LOAD
   PrintDebug("GetLinedefs: num = %d\n", count);
-  #endif
+# endif
 
   raw = (raw_hexen_linedef_t *) lump->data;
 
@@ -461,7 +473,7 @@ void GetLinedefsHexen(void)
     line->type = UINT8(raw->type);
     line->tag  = 0;
 
-    // read specials
+    /* read specials */
     for (j=0; j < 5; j++)
       line->specials[j] = UINT8(raw->specials[j]);
 
@@ -492,6 +504,64 @@ void GetLinedefsHexen(void)
   }
 }
 
+//
+// GetStaleNodes
+//
+void GetStaleNodes(void)
+{
+  int i, count=-1;
+  raw_node_t *raw;
+  lump_t *lump = FindLevelLump("NODES");
+
+  if (lump)
+    count = lump->length / sizeof(raw_node_t);
+
+  if (!lump || count < 5)
+    return;
+
+  DisplayTicker();
+
+# if DEBUG_LOAD
+  PrintDebug("GetStaleNodes: num = %d\n", count);
+# endif
+
+  raw = (raw_node_t *) lump->data;
+
+  /* must allocate all the nodes beforehand, since they contain
+   * internal references to each other.
+   */
+  for (i=0; i < count; i++)
+  {
+    NewStaleNode();
+  }
+
+  for (i=0; i < count; i++, raw++)
+  {
+    node_t *nd = LookupStaleNode(i);
+
+    nd->x  = SINT16(raw->x);
+    nd->y  = SINT16(raw->y);
+    nd->dx = SINT16(raw->dx);
+    nd->dy = SINT16(raw->dy);
+
+    nd->index = i;
+    
+    /* Note: we ignore the subsector references */
+     
+    if ((UINT16(raw->right) & 0x8000) == 0)
+    {
+      nd->r.node = LookupStaleNode(UINT16(raw->right));
+    }
+
+    if ((UINT16(raw->left) & 0x8000) == 0)
+    {
+      nd->l.node = LookupStaleNode(UINT16(raw->left));
+    }
+
+    /* we also ignore the bounding boxes -- not needed */
+  }
+}
+
 static void MarkPolyobjSector(sector_t *sector)
 {
   int i;
@@ -499,13 +569,17 @@ static void MarkPolyobjSector(sector_t *sector)
   if (! sector)
     return;
 
-  #if DEBUG_POLYOBJ
+# if DEBUG_POLYOBJ
   PrintDebug("  Marking SECTOR %d\n", sector->index);
-  #endif
+# endif
 
-  // mark all lines of this sector as precious, to prevent the sector
-  // from being split.
- 
+  /* already marked ? */
+  if (sector->polyobj)
+    return;
+
+  /* mark all lines of this sector as precious, to prevent the sector
+   * from being split.
+   */ 
   sector->polyobj = TRUE;
 
   for (i = 0; i < num_linedefs; i++)
@@ -523,7 +597,8 @@ static void MarkPolyobjSector(sector_t *sector)
 static void MarkPolyobjPoint(float_g x, float_g y)
 {
   int i;
-  
+  int inside_count = 0;
+ 
   float_g best_dist = 999999;
   linedef_t *best_match = NULL;
   sector_t *sector = NULL;
@@ -531,11 +606,45 @@ static void MarkPolyobjPoint(float_g x, float_g y)
   float_g x1, y1;
   float_g x2, y2;
 
+  // -AJA- First we handle the "awkward" cases where the polyobj sits
+  //       directly on a linedef or even a vertex.  We check all lines
+  //       that intersect a small box around the spawn point.
+
+  int bminx = (int) (x - POLY_BOX_SZ);
+  int bminy = (int) (y - POLY_BOX_SZ);
+  int bmaxx = (int) (x + POLY_BOX_SZ);
+  int bmaxy = (int) (y + POLY_BOX_SZ);
+
+  for (i = 0; i < num_linedefs; i++)
+  {
+    linedef_t *L = linedefs[i];
+
+    if (CheckLinedefInsideBox(bminx, bminy, bmaxx, bmaxy,
+          (int) L->start->x, (int) L->start->y,
+          (int) L->end->x, (int) L->end->y))
+    {
+#     if DEBUG_POLYOBJ
+      PrintDebug("  Touching line was %d\n", L->index);
+#     endif
+
+      if (L->left)
+        MarkPolyobjSector(L->left->sector);
+
+      if (L->right)
+        MarkPolyobjSector(L->right->sector);
+
+      inside_count++;
+    }
+  }
+
+  if (inside_count > 0)
+    return;
+
   // -AJA- Algorithm is just like in DEU: we cast a line horizontally
-  // from the given (x,y) position and find all linedefs that
-  // intersect it, choosing the one with the closest distance.  If the
-  // point is sitting directly on a (two-sided) line, then we mark the
-  // sectors on both sides.
+  //       from the given (x,y) position and find all linedefs that
+  //       intersect it, choosing the one with the closest distance.
+  //       If the point is sitting directly on a (two-sided) line,
+  //       then we mark the sectors on both sides.
 
   for (i = 0; i < num_linedefs; i++)
   {
@@ -546,7 +655,7 @@ static void MarkPolyobjPoint(float_g x, float_g y)
     x1 = L->start->x;  y1 = L->start->y;
     x2 = L->end->x;    y2 = L->end->y;
 
-    // check vertical range
+    /* check vertical range */
     if (fabs(y2 - y1) < DIST_EPSILON)
       continue;
 
@@ -558,7 +667,7 @@ static void MarkPolyobjPoint(float_g x, float_g y)
 
     if (fabs(x_cut) < fabs(best_dist))
     {
-      // found a closer linedef
+      /* found a closer linedef */
 
       best_match = L;
       best_dist = x_cut;
@@ -574,35 +683,32 @@ static void MarkPolyobjPoint(float_g x, float_g y)
   y1 = best_match->start->y;
   y2 = best_match->end->y;
 
-  #if DEBUG_POLYOBJ
+# if DEBUG_POLYOBJ
   PrintDebug("  Closest line was %d Y=%1.0f..%1.0f (dist=%1.1f)\n",
       best_match->index, y1, y2, best_dist);
-  #endif
+# endif
 
-  // directly on the line ?
+  /* sanity check: shouldn't be directly on the line */
+# if DEBUG_POLYOBJ
   if (fabs(best_dist) < DIST_EPSILON)
   {
-    if (best_match->left)
-      MarkPolyobjSector(best_match->left->sector);
-
-    if (best_match->right)
-      MarkPolyobjSector(best_match->right->sector);
-
-    return;
+    PrintDebug("  Polyobj FAILURE: directly on the line (%d)\n",
+        best_match->index);
   }
-      
-  // check orientation of line, to determine which side the polyobj is
-  // actually on.
-
+# endif
+ 
+  /* check orientation of line, to determine which side the polyobj is
+   * actually on.
+   */
   if ((y1 > y2) == (best_dist > 0))
     sector = best_match->right ? best_match->right->sector : NULL;
   else
     sector = best_match->left ? best_match->left->sector : NULL;
 
-  #if DEBUG_POLYOBJ
+# if DEBUG_POLYOBJ
   PrintDebug("  Sector %d contains the polyobj.\n", 
       sector ? sector->index : -1);
-  #endif
+# endif
 
   if (! sector)
   {
@@ -623,7 +729,6 @@ void FindPolyobjSectors(void)
   int i, count=-1;
   raw_hexen_thing_t *raw;
   lump_t *lump;
-  int found;
   int hexen_style;
 
   // -JL- There's a conflict between Hexen polyobj thing types and Doom thing
@@ -636,18 +741,15 @@ void FindPolyobjSectors(void)
   //      used, otherwise Hexen polyobj thing types are used.
 
   // -JL- First go through all lines to see if level contains any polyobjs
-  found = FALSE;
   for (i = 0; i < num_linedefs; i++)
   {
     linedef_t *L = linedefs[i];
 
     if (L->type == HEXTYPE_POLY_START || L->type == HEXTYPE_POLY_EXPLICIT)
-    {
-      found = TRUE;
       break;
-    }
   }
-  if (!found)
+
+  if (i == num_linedefs)
   {
     // -JL- No polyobjs in this level
     return;
@@ -657,9 +759,9 @@ void FindPolyobjSectors(void)
   if (lump)
     count = lump->length / sizeof(raw_hexen_thing_t);
 
-  // Note: no error if no things exist, even though technically a map
-  // will be unplayable without the player starts.
-
+  /* Note: no error if no things exist, even though technically a map
+   * will be unplayable without the player starts.
+   */
   if (!lump || count==0)
     return;
 
@@ -667,12 +769,12 @@ void FindPolyobjSectors(void)
 
   // -JL- Detect what polyobj thing types are used - Hexen ones or ZDoom ones
   hexen_style = TRUE;
+  
   for (i = 0; i < count; i++, raw++)
   {
     int type = UINT16(raw->type);
 
-    // not a polyobj start spot
-    if (type == ZDOOM_PO_SPAWN_TYPE && type != ZDOOM_PO_SPAWNCRUSH_TYPE)
+    if (type == ZDOOM_PO_SPAWN_TYPE || type == ZDOOM_PO_SPAWNCRUSH_TYPE)
     {
       // -JL- A ZDoom style polyobj thing found
       hexen_style = FALSE;
@@ -680,6 +782,11 @@ void FindPolyobjSectors(void)
     }
   }
 
+# if DEBUG_POLYOBJ
+  PrintDebug("Using %s style polyobj things\n",
+      hexen_style ? "HEXEN" : "ZDOOM");
+# endif
+   
   // -JL- Reset to the begining.
   raw = (raw_hexen_thing_t*) lump->data;
 
@@ -690,25 +797,24 @@ void FindPolyobjSectors(void)
 
     int type = UINT16(raw->type);
 
+    // ignore everything except polyobj start spots
     if (hexen_style)
     {
       // -JL- Hexen style polyobj things
-      // not a polyobj start spot
       if (type != PO_SPAWN_TYPE && type != PO_SPAWNCRUSH_TYPE)
         continue;
     }
     else
     {
       // -JL- ZDoom style polyobj things
-      // not a polyobj start spot
       if (type != ZDOOM_PO_SPAWN_TYPE && type != ZDOOM_PO_SPAWNCRUSH_TYPE)
         continue;
     }
 
-    #if DEBUG_POLYOBJ
+#   if DEBUG_POLYOBJ
     PrintDebug("Thing %d at (%1.0f,%1.0f) is a polyobj spawner.\n",
         i, x, y);
-    #endif
+#   endif
     
     MarkPolyobjPoint(x, y);
   }
@@ -1141,7 +1247,7 @@ static void CalculateWallTips(void)
     VertexAddWallTip(line->end,   x1-x2, y1-y2, right, left);
   }
  
-  #if DEBUG_WALLTIPS
+# if DEBUG_WALLTIPS
   for (i=0; i < num_vertices; i++)
   {
     vertex_t *vert = vertices[i];
@@ -1156,7 +1262,7 @@ static void CalculateWallTips(void)
         tip->right ? tip->right->index : -1);
     }
   }
-  #endif
+# endif
 }
 
 //
@@ -1346,8 +1452,11 @@ void PutVertices(char *name, int do_gl)
   }
 
   if (count >= 32768)
+  {
     PrintWarn("Number of %svertices (%d) has OVERFLOWED the "
         "normal limit!\n", do_gl ? "GL " : "", count);
+    MarkLevelFailed();
+  }
 
   if (count != (do_gl ? num_gl_vert : num_normal_vert))
     InternalError("PutVertices miscounted (%d != %d)", count,
@@ -1384,8 +1493,11 @@ void PutV2Vertices(void)
   }
 
   if (count >= 32768)
+  {
     PrintWarn("Number of GL vertices (%d) has OVERFLOWED the "
         "normal limit!\n", count);
+    MarkLevelFailed();
+  }
 
   if (count != num_gl_vert)
     InternalError("PutV2Vertices miscounted (%d != %d)", count,
@@ -1418,8 +1530,11 @@ void PutSectors(void)
   }
 
   if (num_sectors >= 32768)
+  {
     PrintWarn("Number of sectors (%d) has OVERFLOWED the "
         "normal limit!\n", num_sectors);
+    MarkLevelFailed();
+  }
 }
 
 void PutSidedefs(void)
@@ -1448,8 +1563,11 @@ void PutSidedefs(void)
   }
 
   if (num_sidedefs >= 32768)
+  {
     PrintWarn("Number of sidedefs (%d) has OVERFLOWED the "
         "normal limit!\n", num_sidedefs);
+    MarkLevelFailed();
+  }
 }
 
 void PutLinedefs(void)
@@ -1478,8 +1596,11 @@ void PutLinedefs(void)
   }
 
   if (num_linedefs >= 32768)
+  {
     PrintWarn("Number of linedefs (%d) has OVERFLOWED the "
         "normal limit!\n", num_linedefs);
+    MarkLevelFailed();
+  }
 }
 
 void PutLinedefsHexen(void)
@@ -1511,8 +1632,11 @@ void PutLinedefsHexen(void)
   }
 
   if (num_linedefs >= 32768)
+  {
     PrintWarn("Number of linedefs (%d) has OVERFLOWED the "
         "normal limit!\n", num_linedefs);
+    MarkLevelFailed();
+  }
 }
 
 void PutSegs(void)
@@ -1545,18 +1669,21 @@ void PutSegs(void)
 
     count++;
 
-    #if DEBUG_BSP
+#   if DEBUG_BSP
     PrintDebug("PUT SEG: %04X  Vert %04X->%04X  Line %04X %s  "
         "Angle %04X  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n", seg->index,
         UINT16(raw.start), UINT16(raw.end), UINT16(raw.linedef), 
         seg->side ? "L" : "R", UINT16(raw.angle), 
         seg->start->x, seg->start->y, seg->end->x, seg->end->y);
-    #endif
+#   endif
   }
 
   if (count >= 32768)
+  {
     PrintWarn("Number of segs (%d) has OVERFLOWED the "
         "normal limit!\n", count);
+    MarkLevelFailed();
+  }
 
   if (count != num_complete_seg)
     InternalError("PutSegs miscounted (%d != %d)", count,
@@ -1600,17 +1727,20 @@ void PutGLSegs(void)
 
     count++;
 
-    #if DEBUG_BSP
+#   if DEBUG_BSP
     PrintDebug("PUT GL SEG: %04X  Line %04X %s  Partner %04X  "
       "(%1.1f,%1.1f) -> (%1.1f,%1.1f)\n", seg->index, UINT16(raw.linedef), 
       seg->side ? "L" : "R", UINT16(raw.partner),
       seg->start->x, seg->start->y, seg->end->x, seg->end->y);
-    #endif
+#   endif
   }
 
   if (count >= 32768)
+  {
     PrintWarn("Number of GL segs (%d) has OVERFLOWED the "
         "normal limit!\n", count);
+    MarkLevelFailed();
+  }
 
   if (count != num_complete_seg)
     InternalError("PutGLSegs miscounted (%d != %d)", count,
@@ -1639,15 +1769,18 @@ void PutSubsecs(char *name, int do_gl)
 
     AppendLevelLump(lump, &raw, sizeof(raw));
 
-    #if DEBUG_BSP
+#   if DEBUG_BSP
     PrintDebug("PUT SUBSEC %04X  First %04X  Num %04X\n",
       sub->index, UINT16(raw.first), UINT16(raw.num));
-    #endif
+#   endif
   }
 
   if (num_subsecs >= 32768)
+  {
     PrintWarn("Number of %ssubsectors (%d) has OVERFLOWED the "
         "normal limit!\n", do_gl ? "GL " : "", num_subsecs);
+    MarkLevelFailed();
+  }
 }
 
 static int node_cur_index;
@@ -1695,12 +1828,12 @@ static void PutOneNode(node_t *node, lump_t *lump)
 
   AppendLevelLump(lump, &raw, sizeof(raw));
 
-  #if DEBUG_BSP
+# if DEBUG_BSP
   PrintDebug("PUT NODE %04X  Left %04X  Right %04X  "
     "(%d,%d) -> (%d,%d)\n", node->index, UINT16(raw.left),
     UINT16(raw.right), node->x, node->y,
     node->x + node->dx, node->y + node->dy);
-  #endif
+# endif
 }
 
 void PutNodes(char *name, int do_gl, node_t *root)
@@ -1720,8 +1853,11 @@ void PutNodes(char *name, int do_gl, node_t *root)
     PutOneNode(root, lump);
   
   if (node_cur_index >= 32768)
+  {
     PrintWarn("Number of %snodes (%d) has OVERFLOWED the "
         "normal limit!\n", do_gl ? "GL " : "", node_cur_index);
+    MarkLevelFailed();
+  }
 
   if (node_cur_index != num_nodes)
     InternalError("PutNodes miscounted (%d != %d)",
@@ -1755,7 +1891,7 @@ void LoadLevel(void)
     sprintf(message, "Building GL nodes on %s", level_name);
   else
     sprintf(message, "Building _nothing_ on %s", level_name);
-  
+ 
   DisplaySetBarText(1, message);
   PrintMsg("\n\n%s\n\n", message);
 
@@ -1780,6 +1916,13 @@ void LoadLevel(void)
   PrintMsg("Loaded %d vertices, %d sectors, %d sides, %d lines\n", 
       num_vertices, num_sectors, num_sidedefs, num_linedefs);
 
+  if (!cur_info->choose_fresh && !doing_normal &&
+      normal_exists && num_sectors > 5 && num_linedefs > 100)
+  {
+    PrintMsg("Using original nodes to speed things up\n");
+    GetStaleNodes();
+  }
+ 
   if (doing_normal && !cur_info->no_prune)
   {
     DetectDuplicateVertices();
@@ -1816,6 +1959,7 @@ void FreeLevel(void)
   FreeSegs();
   FreeSubsecs();
   FreeNodes();
+  FreeStaleNodes();
   FreeWallTips();
 }
 

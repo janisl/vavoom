@@ -56,7 +56,7 @@ static int block_compression;
 #define DUMMY_DUP  0xFFFF
 
 
-static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
+int CheckLinedefInsideBox(int xmin, int ymin, int xmax, int ymax,
     int x1, int y1, int x2, int y2)
 {
   int count = 2;
@@ -69,7 +69,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (y2 > ymax)
         return FALSE;
         
-      x1 = x1 + (x2-x1) * (int)((double)(ymax-y1) / (double)(y2-y1));
+      x1 = x1 + (int) ((x2-x1) * (double)(ymax-y1) / (double)(y2-y1));
       y1 = ymax;
       
       count = 2;
@@ -81,7 +81,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (y2 < ymin)
         return FALSE;
       
-      x1 = x1 + (x2-x1) * (int)((double)(ymin-y1) / (double)(y2-y1));
+      x1 = x1 + (int) ((x2-x1) * (double)(ymin-y1) / (double)(y2-y1));
       y1 = ymin;
       
       count = 2;
@@ -93,7 +93,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (x2 > xmax)
         return FALSE;
         
-      y1 = y1 + (y2-y1) * (int)((double)(xmax-x1) / (double)(x2-x1));
+      y1 = y1 + (int) ((y2-y1) * (double)(xmax-x1) / (double)(x2-x1));
       x1 = xmax;
 
       count = 2;
@@ -105,7 +105,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (x2 < xmin)
         return FALSE;
         
-      y1 = y1 + (y2-y1) * (int)((double)(xmin-x1) / (double)(x2-x1));
+      y1 = y1 + (int) ((y2-y1) * (double)(xmin-x1) / (double)(x2-x1));
       x1 = xmin;
 
       count = 2;
@@ -117,12 +117,12 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
     if (count == 0)
       break;
 
-    // swap end points
+    /* swap end points */
     tmp=x1;  x1=x2;  x2=tmp;
     tmp=y1;  y1=y2;  y2=tmp;
   }
 
-  // linedef touches block
+  /* linedef touches block */
   return TRUE;
 }
 
@@ -140,9 +140,9 @@ static void BlockAdd(int blk_num, int line_index)
 {
   uint16_g *cur = block_lines[blk_num];
 
-  #if DEBUG_BLOCKMAP
+# if DEBUG_BLOCKMAP
   PrintDebug("Block %d has line %d\n", blk_num, line_index);
-  #endif
+# endif
 
   if (blk_num < 0 || blk_num >= block_count)
     InternalError("BlockAdd: bad block number %d", blk_num);
@@ -188,10 +188,10 @@ static void BlockAddLine(linedef_t *L)
   int bx, by;
   int line_index = L->index;
 
-  #if DEBUG_BLOCKMAP
+# if DEBUG_BLOCKMAP
   PrintDebug("BlockAddLine: %d (%d,%d) -> (%d,%d)\n", line_index, 
       x1, y1, x2, y2);
-  #endif
+# endif
 
   // handle truncated blockmaps
   if (bx1 < 0) bx1 = 0;
@@ -236,7 +236,7 @@ static void BlockAddLine(linedef_t *L)
     int maxx = minx + 127;
     int maxy = miny + 127;
 
-    if (CheckLinedefInside(minx, miny, maxx, maxy, x1, y1, x2, y2))
+    if (CheckLinedefInsideBox(minx, miny, maxx, maxy, x1, y1, x2, y2))
     {
       BlockAdd(blk_num, line_index);
     }
@@ -370,13 +370,17 @@ static void CompressBlockmap(void)
   }
 
   if (cur_offset > 65535)
+  {
     PrintWarn("Blockmap has OVERFLOWED!  May cause problems "
         "or even crash\n");
+    
+    MarkLevelFailed();
+  }
 
-  #if DEBUG_BLOCKMAP
+# if DEBUG_BLOCKMAP
   PrintDebug("Blockmap: Last ptr = %d  duplicates = %d\n", 
       cur_offset, dup_count);
-  #endif
+# endif
 
   block_compression = (orig_size - new_size) * 100 / orig_size;
 
@@ -507,10 +511,12 @@ static void TruncateBlockmap(void)
 
   block_count = block_w * block_h;
 
-  PrintWarn("Blockmap too large!  Truncated to %dx%d blocks\n",
+  PrintWarn("Blockmap TOO LARGE!  Truncated to %dx%d blocks\n",
       block_w, block_h);
 
-  // center the truncated blockmap
+  MarkLevelFailed();
+
+  /* center the truncated blockmap */
   block_x += (block_w - orig_w) * 128 / 2;
   block_y += (block_h - orig_h) * 128 / 2;
 }
@@ -522,7 +528,7 @@ void InitBlockmap(void)
 {
   bbox_t map_bbox;
 
-  // find limits of linedefs, and store as map limits
+  /* find limits of linedefs, and store as map limits */
   FindBlockmapLimits(&map_bbox);
 
   PrintMsg("Map goes from (%d,%d) to (%d,%d)\n",
@@ -555,8 +561,8 @@ void PutBlockmap(void)
   CreateBlockmap();
 
   // -AJA- second phase: compress the blockmap.  We do this by sorting
-  //       the blocks, which is a typical way (as I now know) to
-  //       detect duplicates in a large list.
+  //       the blocks, which is a typical way to detect duplicates in
+  //       a large list.
 
   CompressBlockmap();
  

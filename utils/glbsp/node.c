@@ -351,6 +351,7 @@ static seg_t *CreateOneSeg(linedef_t *line, vertex_t *start, vertex_t *end,
   {
     PrintWarn("Bad sidedef on linedef #%d (Z_CheckHeap error)\n",
         line->index);
+    MarkLevelFailed();
   }
  
   seg->start   = start;
@@ -491,9 +492,9 @@ static void ClockwiseOrder(subsec_t *sub)
   int i;
   int total = 0;
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: Clockwising %d\n", sub->index);
-  #endif
+# endif
 
   // count segs and create an array to manipulate them
   for (cur=sub->seg_list; cur; cur=cur->next)
@@ -555,7 +556,7 @@ static void ClockwiseOrder(subsec_t *sub)
   if (total > 32)
     UtilFree(array);
 
-  #if DEBUG_SORTER
+# if DEBUG_SORTER
   PrintDebug("Sorted SEGS around (%1.1f,%1.1f)\n", sub->mid_x, sub->mid_y);
 
   for (cur=sub->seg_list; cur; cur=cur->next)
@@ -566,7 +567,7 @@ static void ClockwiseOrder(subsec_t *sub)
     PrintDebug("  Seg %p: Angle %1.6f  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
       cur, angle, cur->start->x, cur->start->y, cur->end->x, cur->end->y);
   }
-  #endif
+# endif
 }
 
 //
@@ -593,13 +594,13 @@ static void SanityCheckClosed(subsec_t *sub)
         "(%d gaps, %d segs)\n", sub->index, 
         sub->mid_x, sub->mid_y, gaps, total);
 
-    #if DEBUG_SUBSEC
+#   if DEBUG_SUBSEC
     for (cur=sub->seg_list; cur; cur=cur->next)
     {
       PrintDebug("  SEG %p  (%1.1f,%1.1f) --> (%1.1f,%1.1f)\n", cur,
           cur->start->x, cur->start->y, cur->end->x, cur->end->y);
     }
-    #endif
+#   endif
   }
 }
 
@@ -652,15 +653,32 @@ static void SanityCheckSameSector(subsec_t *sub)
 }
 
 //
+// SanityCheckHasRealSeg
+//
+static void SanityCheckHasRealSeg(subsec_t *sub)
+{
+  seg_t *cur;
+
+  for (cur=sub->seg_list; cur; cur=cur->next)
+  {
+    if (cur->linedef)
+      return;
+  }
+
+  InternalError("Subsector #%d near (%1.1f,%1.1f) has no real seg !\n",
+      sub->index, sub->mid_x, sub->mid_y);
+}
+
+//
 // RenumberSubsecSegs
 //
 static void RenumberSubsecSegs(subsec_t *sub)
 {
   seg_t *cur;
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: Renumbering %d\n", sub->index);
-  #endif
+# endif
 
   sub->seg_count = 0;
 
@@ -671,10 +689,10 @@ static void RenumberSubsecSegs(subsec_t *sub)
 
     sub->seg_count++;
 
-    #if DEBUG_SUBSEC
+#   if DEBUG_SUBSEC
     PrintDebug("Subsec:   %d: Seg %p  Index %d\n", sub->seg_count,
         cur, cur->index);
-    #endif
+#   endif
   }
 }
 
@@ -734,9 +752,9 @@ static subsec_t *CreateSubsec(superblock_t *seg_list)
 
   DetermineMiddle(sub);
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: Creating %d\n", sub->index);
-  #endif
+# endif
 
   return sub;
 }
@@ -786,7 +804,7 @@ static void DebugShowSegs(superblock_t *seg_list)
 // BuildNodes
 //
 glbsp_ret_e BuildNodes(superblock_t *seg_list, 
-    node_t ** N, subsec_t ** S, int depth)
+    node_t ** N, subsec_t ** S, int depth, node_t *stale_nd)
 {
   node_t *node;
   seg_t *best;
@@ -795,6 +813,7 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
   superblock_t *lefts;
 
   intersection_t *cut_list;
+  int stale_opposite = 0;
 
   glbsp_ret_e ret;
 
@@ -804,33 +823,33 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
   if (cur_comms->cancelled)
     return GLBSP_E_Cancelled;
 
-  #if DEBUG_BUILDER
+# if DEBUG_BUILDER
   PrintDebug("Build: BEGUN @ %d\n", depth);
   DebugShowSegs(seg_list);
-  #endif
+# endif
 
-  // pick best node to use.  None indicates convexicity.
-  best = PickNode(seg_list, depth);
+  /* pick best node to use.  None indicates convexicity */
+  best = PickNode(seg_list, depth, &stale_nd, &stale_opposite);
 
   if (best == NULL)
   {
     if (cur_comms->cancelled)
       return GLBSP_E_Cancelled;
 
-    #if DEBUG_BUILDER
+#   if DEBUG_BUILDER
     PrintDebug("Build: CONVEX\n");
-    #endif
+#   endif
 
     *S = CreateSubsec(seg_list);
     return GLBSP_E_OK;
   }
 
-  #if DEBUG_BUILDER
+# if DEBUG_BUILDER
   PrintDebug("Build: PARTITION %p (%1.0f,%1.0f) -> (%1.0f,%1.0f)\n",
       best, best->start->x, best->start->y, best->end->x, best->end->y);
-  #endif
+# endif
 
-  // create left and right super blocks
+  /* create left and right super blocks */
   lefts  = (superblock_t *) NewSuperBlock();
   rights = (superblock_t *) NewSuperBlock();
 
@@ -839,12 +858,12 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
   lefts->x2 = rights->x2 = seg_list->x2;
   lefts->y2 = rights->y2 = seg_list->y2;
 
-  // divide the segs into two lists: left & right
+  /* divide the segs into two lists: left & right */
   cut_list = NULL;
 
   SeparateSegs(seg_list, best, lefts, rights, &cut_list);
 
-  // sanity checks...
+  /* sanity checks... */
   if (rights->real_num + rights->mini_num == 0)
     InternalError("Separated seg-list has no RIGHT side");
 
@@ -862,7 +881,7 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
   node->dx = (int)best->pdx;
   node->dy = (int)best->pdy;
 
-  // check for really long partition (overflows dx,dy in NODES)
+  /* check for really long partition (overflows dx,dy in NODES) */
   if (best->p_length >= 30000)
   {
     if (node->dx && node->dy && ((node->dx & 1) || (node->dy & 1)))
@@ -875,15 +894,17 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
     node->too_long = 1;
   }
 
-  // find limits of vertices
+  /* find limits of vertices */
   FindLimits(lefts,  &node->l.bounds);
   FindLimits(rights, &node->r.bounds);
 
-  #if DEBUG_BUILDER
+# if DEBUG_BUILDER
   PrintDebug("Build: Going LEFT\n");
-  #endif
+# endif
 
-  ret = BuildNodes(lefts,  &node->l.node, &node->l.subsec, depth+1);
+  ret = BuildNodes(lefts,  &node->l.node, &node->l.subsec, depth+1,
+      stale_nd ? (stale_opposite ? stale_nd->r.node : stale_nd->l.node) 
+      : NULL);
   FreeSuper(lefts);
 
   if (ret != GLBSP_E_OK)
@@ -892,16 +913,18 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
     return ret;
   }
 
-  #if DEBUG_BUILDER
+# if DEBUG_BUILDER
   PrintDebug("Build: Going RIGHT\n");
-  #endif
+# endif
 
-  ret = BuildNodes(rights, &node->r.node, &node->r.subsec, depth+1);
+  ret = BuildNodes(rights, &node->r.node, &node->r.subsec, depth+1,
+      stale_nd ? (stale_opposite ? stale_nd->l.node : stale_nd->r.node) 
+      : NULL);
   FreeSuper(rights);
 
-  #if DEBUG_BUILDER
+# if DEBUG_BUILDER
   PrintDebug("Build: DONE\n");
-  #endif
+# endif
 
   return ret;
 }
@@ -927,6 +950,7 @@ void ClockwiseBspTree(node_t *root)
     // do some sanity checks
     SanityCheckClosed(sub);
     SanityCheckSameSector(sub);
+    SanityCheckHasRealSeg(sub);
   }
 }
 
@@ -935,9 +959,9 @@ static void NormaliseSubsector(subsec_t *sub)
   seg_t *new_head = NULL;
   seg_t *new_tail = NULL;
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: Normalising %d\n", sub->index);
-  #endif
+# endif
 
   while (sub->seg_list)
   {
@@ -962,9 +986,9 @@ static void NormaliseSubsector(subsec_t *sub)
     }
     else
     {
-      #if DEBUG_SUBSEC
+#     if DEBUG_SUBSEC
       PrintDebug("Subsec: Removing miniseg %p\n", cur);
-      #endif
+#     endif
 
       // set index to a really high value, so that SortSegs() will
       // move all the minisegs to the top of the seg array.
@@ -1013,9 +1037,9 @@ static void RoundOffSubsector(subsec_t *sub)
   int real_total  = 0;
   int degen_total = 0;
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: Rounding off %d\n", sub->index);
-  #endif
+# endif
 
   // do an initial pass, just counting the degenerates
   for (cur=sub->seg_list; cur; cur=cur->next)
@@ -1044,9 +1068,9 @@ static void RoundOffSubsector(subsec_t *sub)
       real_total++;
   }
 
-  #if DEBUG_SUBSEC
+# if DEBUG_SUBSEC
   PrintDebug("Subsec: degen=%d real=%d\n", degen_total, real_total);
-  #endif
+# endif
 
   // handle the (hopefully rare) case where all of the real segs
   // became degenerate.
@@ -1056,21 +1080,21 @@ static void RoundOffSubsector(subsec_t *sub)
       InternalError("Subsector %d rounded off with NO real segs",
         sub->index);
     
-    #if DEBUG_SUBSEC
+#   if DEBUG_SUBSEC
     PrintDebug("Degenerate before: (%1.2f,%1.2f) -> (%1.2f,%1.2f)\n", 
         last_real_degen->start->x, last_real_degen->start->y,
         last_real_degen->end->x, last_real_degen->end->y);
-    #endif
+#   endif
 
     // create a new vertex for this baby
     last_real_degen->end = NewVertexDegenerate(last_real_degen->start,
         last_real_degen->end);
 
-    #if DEBUG_SUBSEC
+#   if DEBUG_SUBSEC
     PrintDebug("Degenerate after:  (%d,%d) -> (%d,%d)\n", 
         (int)last_real_degen->start->x, (int)last_real_degen->start->y,
         (int)last_real_degen->end->x, (int)last_real_degen->end->y);
-    #endif
+#   endif
 
     last_real_degen->degenerate = 0;
   }
@@ -1098,9 +1122,9 @@ static void RoundOffSubsector(subsec_t *sub)
     }
     else
     {
-      #if DEBUG_SUBSEC
+#     if DEBUG_SUBSEC
       PrintDebug("Subsec: Removing degenerate %p\n", cur);
-      #endif
+#     endif
 
       // set index to a really high value, so that SortSegs() will
       // move all the minisegs to the top of the seg array.
