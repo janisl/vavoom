@@ -1,2 +1,2 @@
-vcc -I../doom/client clprogs
-vcc -I../doom/server svprogs
+vcc -I../common -I../doom/client clprogs
+vcc -I../common -I../doom/server svprogs

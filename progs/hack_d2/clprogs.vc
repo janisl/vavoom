@@ -27,9 +27,9 @@
 //**
 //**************************************************************************
 
-#define DOOM2
+#include <client.vc>
 
-#include "../../common/client.vc"
+#define DOOM2
 
 #include "../doomdefs.vc"
 #include "../gendefs.vc"
@@ -67,16 +67,20 @@ boolean ExtendedWAD;
 #include "m_sound.vc"
 #include "m_help.vc"
 #include "m_quit.vc"
+#include "m_api.vc"
 
 #include "statbar.vc"
 
 #include "title.vc"
 
-#include "main.vc"
+#include "clmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/28 17:08:28  dj_jl
+//  Updated hackable progs
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

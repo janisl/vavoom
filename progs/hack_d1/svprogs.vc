@@ -27,10 +27,12 @@
 //**
 //**************************************************************************
 
-#include "../../common/server.vc"
+#include <server.vc>
 
+#define mobj_t Entity
 #include "../doomdefs.vc"
 #include "../gendefs.vc"
+#include "svdefs.vc"
 #include "strings.vc"
 
 #include "xlat.vc"
@@ -39,6 +41,7 @@
 #include "doors.vc"
 #include "floors.vc"
 #include "plats.vc"
+#include "polyobj.vc"
 #include "lights.vc"
 #include "spec.vc"
 
@@ -47,12 +50,12 @@
 #include "savegame.vc"
 #include "states.vc"
 #include "mobjinfo.vc"
+#include "wpninfo.vc"
 
 #ifdef GRENADE_LAUNCHER
 #include "grlaunch.vc"
 #endif
 
-#include "wpninfo.vc"
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
@@ -65,6 +68,8 @@
 #include "weapons.vc"
 #include "enemy.vc"
 #include "cheat.vc"
+
+#include "bot.vc"
 
 #include "zombiemn.vc"
 #include "shotguy.vc"
@@ -86,11 +91,14 @@
 
 #include "keen.vc"
 
-#include "main.vc"
+#include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/28 17:08:27  dj_jl
+//  Updated hackable progs
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
