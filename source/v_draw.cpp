@@ -48,6 +48,8 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static TCvarI		_driver("_driver", "0");
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -61,6 +63,7 @@ void V_Init(void)
 	if (M_CheckParm("-d3d"))
 	{
 		Drawer = _Direct3DDrawer;
+		_driver = 2;
 		if (!Drawer)
 		{
 			Sys_Error("Direct3D drawer is not available");
@@ -69,6 +72,7 @@ void V_Init(void)
 	else if (M_CheckParm("-opengl"))
 	{
 		Drawer = _OpenGLDrawer;
+		_driver = 1;
 		if (!Drawer)
 		{
 			Sys_Error("OpenGL drawer is not available");
@@ -77,6 +81,7 @@ void V_Init(void)
 	else
 	{
 		Drawer = _SoftwareDrawer;
+		_driver = 0;
 		if (!Drawer)
 		{
 			Sys_Error("Software drawer is not available");
@@ -132,9 +137,12 @@ void V_DarkenScreen(int darkening)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:23:28  dj_jl
+//	Added _driver variable
+//
 //	Revision 1.4  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
