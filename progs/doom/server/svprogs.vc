@@ -29,7 +29,6 @@
 
 #include <server.vc>
 
-#define mobj_t Actor
 #include "../doomdefs.vc"
 #include "../gendefs.vc"
 #include "svdefs.vc"
@@ -96,6 +95,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/16 17:38:37  dj_jl
 //  Moved grenade firing into weapon class.
 //

@@ -23,6 +23,1276 @@
 //**
 //**************************************************************************
 
+//**************************************************************************
+//**************************************************************************
+//
+//	Pickup
+//
+//**************************************************************************
+//**************************************************************************
+
+class Pickup:Actor
+	abstract
+{
+
+void TouchSpecial(Actor Toucher);
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing1
+//
+//  Make a special thing visible again.
+//
+//==========================================================================
+
+void A_RestoreSpecialThing1(void)
+{
+	bHidden = false;
+	PlaySound('Respawn', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing2
+//
+//==========================================================================
+
+void A_RestoreSpecialThing2(void)
+{
+	bSpecial = true;
+	SetState(SpawnState);
+}
+
+__states__
+{
+	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) { }
+	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) { A_RestoreSpecialThing1(); }
+	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) { }
+	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) { }
+	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) { }
+	S_HIDESPECIAL6('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL7) { }
+	S_HIDESPECIAL7('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL8) { }
+	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) { }
+	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) { }
+	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) { }
+	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, S_NULL) { A_RestoreSpecialThing2(); }
+}
+
+//==========================================================================
+//
+//  HideSpecialThing
+//
+//==========================================================================
+
+void HideSpecialThing(void)
+{
+	bSpecial = false;
+	bHidden = true;
+	SetState(S_HIDESPECIAL1);
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 32.0;
+	Mass = 100.0;
+	bSpecial = true;
+	bNoPassMobj = true;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemHealthPotion
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemHealthPotion:Pickup
+	__mobjinfo__(81)
+{
+
+__states__
+{
+	S_ITEM_PTN1_1('PTN1', 0, 'items/vial.md2', 0, 3.0 / 35.0, S_ITEM_PTN1_2) { }
+	S_ITEM_PTN1_2('PTN1', 1, 'items/vial.md2', 0, 3.0 / 35.0, S_ITEM_PTN1_3) { }
+	S_ITEM_PTN1_3('PTN1', 2, 'items/vial.md2', 0, 3.0 / 35.0, S_ITEM_PTN1_1) { }
+}
+
+defaultproperties
+{
+	bFloatBob = true;
+	SpawnState = S_ITEM_PTN1_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemShield1
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemShield1:Pickup
+	__mobjinfo__(85)
+{
+
+__states__
+{
+	S_ITEM_SHLD1('SHLD', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bFloatBob = true;
+	SpawnState = S_ITEM_SHLD1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemShield2
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemShield2:Pickup
+	__mobjinfo__(31)
+{
+
+__states__
+{
+	S_ITEM_SHD2_1('SHD2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bFloatBob = true;
+	SpawnState = S_ITEM_SHD2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemBagOfHolding
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemBagOfHolding:Pickup
+	__mobjinfo__(8)
+{
+
+__states__
+{
+	S_ITEM_BAGH1('BAGH', 0, 'items/bag.md2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bCountItem = true;
+	bFloatBob = true;
+	SpawnState = S_ITEM_BAGH1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemMap
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemMap:Pickup
+	__mobjinfo__(35)
+{
+
+__states__
+{
+	S_ITEM_SPMP1('SPMP', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bCountItem = true;
+	bFloatBob = true;
+	SpawnState = S_ITEM_SPMP1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Artifact
+//
+//**************************************************************************
+//**************************************************************************
+
+class Artifact:Pickup
+	abstract
+{
+
+int ArtifactType;
+bool bCanRespawn;
+
+void TouchSpecial(Actor Toucher);
+
+//==========================================================================
+//
+//  A_HideThing
+//
+//==========================================================================
+
+void A_HideThing(void)
+{
+	bHidden = true;
+}
+
+//==========================================================================
+//
+//  A_UnHideThing
+//
+//==========================================================================
+
+void A_UnHideThing(void)
+{
+	bHidden = false;
+}
+
+//==========================================================================
+//
+//  A_RestoreArtifact
+//
+//==========================================================================
+
+void A_RestoreArtifact(void)
+{
+	bSpecial = true;
+	SetState(SpawnState);
+	PlaySound('Respawn', CHAN_VOICE);
+}
+
+__states__
+{
+	S_DORMANTARTI1('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI2) { }
+	S_DORMANTARTI2('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI3) { }
+	S_DORMANTARTI3('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI4) { }
+	S_DORMANTARTI4('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI5) { }
+	S_DORMANTARTI5('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI6) { }
+	S_DORMANTARTI6('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI7) { }
+	S_DORMANTARTI7('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI8) { }
+	S_DORMANTARTI8('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI9) { }
+	S_DORMANTARTI9('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI10) { }
+	S_DORMANTARTI10('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI11) { }
+	S_DORMANTARTI11('ACLO', 0, 1400.0 / 35.0, S_DORMANTARTI12) { A_HideThing(); }
+	S_DORMANTARTI12('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI13) { A_UnHideThing(); }
+	S_DORMANTARTI13('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI14) { }
+	S_DORMANTARTI14('ACLO', 0, 3.0 / 35.0, S_DORMANTARTI15) { }
+	S_DORMANTARTI15('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI16) { }
+	S_DORMANTARTI16('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI17) { }
+	S_DORMANTARTI17('ACLO', 1, 3.0 / 35.0, S_DORMANTARTI18) { }
+	S_DORMANTARTI18('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI19) { }
+	S_DORMANTARTI19('ACLO', 3, 3.0 / 35.0, S_DORMANTARTI20) { }
+	S_DORMANTARTI20('ACLO', 2, 3.0 / 35.0, S_DORMANTARTI21) { }
+	S_DORMANTARTI21('ACLO', 3, 3.0 / 35.0, S_NULL) { A_RestoreArtifact(); }
+
+	S_DEADARTI1('ACLO', 3, 3.0 / 35.0, S_DEADARTI2) { }
+	S_DEADARTI2('ACLO', 2, 3.0 / 35.0, S_DEADARTI3) { }
+	S_DEADARTI3('ACLO', 3, 3.0 / 35.0, S_DEADARTI4) { }
+	S_DEADARTI4('ACLO', 2, 3.0 / 35.0, S_DEADARTI5) { }
+	S_DEADARTI5('ACLO', 1, 3.0 / 35.0, S_DEADARTI6) { }
+	S_DEADARTI6('ACLO', 2, 3.0 / 35.0, S_DEADARTI7) { }
+	S_DEADARTI7('ACLO', 1, 3.0 / 35.0, S_DEADARTI8) { }
+	S_DEADARTI8('ACLO', 0, 3.0 / 35.0, S_DEADARTI9) { }
+	S_DEADARTI9('ACLO', 1, 3.0 / 35.0, S_DEADARTI10) { }
+	S_DEADARTI10('ACLO', 0, 3.0 / 35.0, S_NULL) { }
+}
+
+//==========================================================================
+//
+//  SetDormantArtifact
+//
+//  Removes the bSpecial flag, and initiates the artifact pickup animation.
+//
+//==========================================================================
+
+void SetDormantArtifact(void)
+{
+	bSpecial = false;
+	if (deathmatch && bCanRespawn)
+	{
+		SetState(S_DORMANTARTI1);
+	}
+	else
+	{
+		// Don't respawn
+		SetState(S_DEADARTI1);
+	}
+	PlaySound('PickupArtifact', CHAN_ITEM);
+}
+
+defaultproperties
+{
+	bCountItem = true;
+	bFloatBob = true;
+	bCanRespawn = true;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactInvisibility
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactInvisibility:Artifact
+	__mobjinfo__(75)
+{
+
+__states__
+{
+	S_ARTI_INVS1('INVS', 0 | FF_FULLBRIGHT, 350.0 / 35.0, S_ARTI_INVS1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_invisibility;
+	bCanRespawn = false;
+	Translucency = 33;
+	SpawnState = S_ARTI_INVS1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactHealthFlask
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactHealthFlask:Artifact
+	__mobjinfo__(82)
+{
+
+__states__
+{
+	S_ARTI_PTN2_1('PTN2', 0, 'artifact/flask.md2', 0, 4.0 / 35.0, S_ARTI_PTN2_2) { }
+	S_ARTI_PTN2_2('PTN2', 1, 'artifact/flask.md2', 0, 4.0 / 35.0, S_ARTI_PTN2_3) { }
+	S_ARTI_PTN2_3('PTN2', 2, 'artifact/flask.md2', 0, 4.0 / 35.0, S_ARTI_PTN2_1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_health;
+	SpawnState = S_ARTI_PTN2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactFly
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactFly:Artifact
+	__mobjinfo__(83)
+{
+
+__states__
+{
+	S_ARTI_SOAR1('SOAR', 0, 5.0 / 35.0, S_ARTI_SOAR2) { }
+	S_ARTI_SOAR2('SOAR', 1, 5.0 / 35.0, S_ARTI_SOAR3) { }
+	S_ARTI_SOAR3('SOAR', 2, 5.0 / 35.0, S_ARTI_SOAR4) { }
+	S_ARTI_SOAR4('SOAR', 1, 5.0 / 35.0, S_ARTI_SOAR1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_fly;
+	SpawnState = S_ARTI_SOAR1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactInvulnerability
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactInvulnerability:Artifact
+	__mobjinfo__(84)
+{
+
+__states__
+{
+	S_ARTI_INVU1('INVU', 0, 3.0 / 35.0, S_ARTI_INVU2) { }
+	S_ARTI_INVU2('INVU', 1, 3.0 / 35.0, S_ARTI_INVU3) { }
+	S_ARTI_INVU3('INVU', 2, 3.0 / 35.0, S_ARTI_INVU4) { }
+	S_ARTI_INVU4('INVU', 3, 3.0 / 35.0, S_ARTI_INVU1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_invulnerability;
+	bCanRespawn = false;
+	SpawnState = S_ARTI_INVU1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactTomeOfPower
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactTomeOfPower:Artifact
+	__mobjinfo__(86)
+{
+
+__states__
+{
+	S_ARTI_PWBK1('PWBK', 0, 'artifact/tome.md2', 0, 350.0 / 35.0, S_ARTI_PWBK1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_tomeofpower;
+	SpawnState = S_ARTI_PWBK1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactEgg
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactEgg:Artifact
+	__mobjinfo__(30)
+{
+
+__states__
+{
+	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) { }
+	S_ARTI_EGGC2('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC3) { }
+	S_ARTI_EGGC3('EGGC', 2, 6.0 / 35.0, S_ARTI_EGGC4) { }
+	S_ARTI_EGGC4('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_egg;
+	SpawnState = S_ARTI_EGGC1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactSuperHeal
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactSuperHeal:Artifact
+	__mobjinfo__(32)
+{
+
+__states__
+{
+	S_ARTI_SPHL1('SPHL', 0, 'artifact/shboost.md2', 0, 350.0 / 35.0, S_ARTI_SPHL1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_superhealth;
+	SpawnState = S_ARTI_SPHL1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactTorch
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactTorch:Artifact
+	__mobjinfo__(33)
+{
+
+__states__
+{
+	S_ARTI_TRCH1('TRCH', 0 | FF_FULLBRIGHT, 'artifact/torch.md2', 0, 3.0 / 35.0, S_ARTI_TRCH2) { }
+	S_ARTI_TRCH2('TRCH', 1 | FF_FULLBRIGHT, 'artifact/torch.md2', 0, 3.0 / 35.0, S_ARTI_TRCH3) { }
+	S_ARTI_TRCH3('TRCH', 2 | FF_FULLBRIGHT, 'artifact/torch.md2', 0, 3.0 / 35.0, S_ARTI_TRCH1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_torch;
+	SpawnState = S_ARTI_TRCH1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactFireBomb
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactFireBomb:Artifact
+	__mobjinfo__(34)
+{
+
+__states__
+{
+	S_ARTI_FBMB1('FBMB', 4, 350.0 / 35.0, S_ARTI_FBMB1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_firebomb;
+	SpawnState = S_ARTI_FBMB1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ArtifactTeleport
+//
+//**************************************************************************
+//**************************************************************************
+
+class ArtifactTeleport:Artifact
+	__mobjinfo__(36)
+{
+
+__states__
+{
+	S_ARTI_ATLP1('ATLP', 0, 'artifact/teleport.md2', 0, 4.0 / 35.0, S_ARTI_ATLP2) { }
+	S_ARTI_ATLP2('ATLP', 1, 'artifact/teleport.md2', 0, 4.0 / 35.0, S_ARTI_ATLP3) { }
+	S_ARTI_ATLP3('ATLP', 2, 'artifact/teleport.md2', 0, 4.0 / 35.0, S_ARTI_ATLP4) { }
+	S_ARTI_ATLP4('ATLP', 1, 'artifact/teleport.md2', 0, 4.0 / 35.0, S_ARTI_ATLP1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_teleport;
+	SpawnState = S_ARTI_ATLP1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponPickup
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponPickup:Pickup
+	abstract
+{
+
+int WeaponType;
+
+void TouchSpecial(Actor Toucher);
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponGauntlets
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponGauntlets:WeaponPickup
+	__mobjinfo__(2005)
+{
+
+__states__
+{
+	S_WGNT('WGNT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_gauntlets;
+	SpawnState = S_WGNT;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponBlaster
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponBlaster:WeaponPickup
+	__mobjinfo__(53)
+{
+
+__states__
+{
+	S_BLSR('WBLS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_blaster;
+	SpawnState = S_BLSR;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponMace
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponMace:WeaponPickup
+	__mobjinfo__(2002)
+{
+
+void A_RestoreSpecialThing1(void);
+
+__states__
+{
+	S_WMCE('WMCE', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_mace;
+	SpawnState = S_WMCE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponSkullRod
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponSkullRod:WeaponPickup
+	__mobjinfo__(2004)
+{
+
+__states__
+{
+	S_WSKL('WSKL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_skullrod;
+	SpawnState = S_WSKL;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponPhoenixRod
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponPhoenixRod:WeaponPickup
+	__mobjinfo__(2003)
+{
+
+__states__
+{
+	S_WPHX('WPHX', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_phoenixrod;
+	SpawnState = S_WPHX;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemWeaponCrossbow
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemWeaponCrossbow:WeaponPickup
+	__mobjinfo__(2001)
+{
+
+__states__
+{
+	S_WBOW('WBOW', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	WeaponType = wp_crossbow;
+	SpawnState = S_WBOW;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Key
+//
+//**************************************************************************
+//**************************************************************************
+
+class Key:Pickup
+	abstract
+{
+
+int KeyType;
+
+void TouchSpecial(Actor Toucher);
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	if (deathmatch)
+	{
+		RemoveMobjThinker(self);
+		return;
+	}
+	::OnMapSpawn(mthing);
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemKeyGreen
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemKeyGreen:Key
+	__mobjinfo__(73)
+{
+
+__states__
+{
+	S_AKYY1('AKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY2) { }
+	S_AKYY2('AKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY3) { }
+	S_AKYY3('AKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY4) { }
+	S_AKYY4('AKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY5) { }
+	S_AKYY5('AKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY6) { }
+	S_AKYY6('AKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY7) { }
+	S_AKYY7('AKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY8) { }
+	S_AKYY8('AKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY9) { }
+	S_AKYY9('AKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY10) { }
+	S_AKYY10('AKYY', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_AKYY1) { }
+}
+
+defaultproperties
+{
+	KeyType = key_green;
+	SpawnState = S_AKYY1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemKeyBlue
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemKeyBlue:Key
+	__mobjinfo__(79)
+{
+
+__states__
+{
+	S_BKYY1('BKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY2) { }
+	S_BKYY2('BKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY3) { }
+	S_BKYY3('BKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY4) { }
+	S_BKYY4('BKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY5) { }
+	S_BKYY5('BKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY6) { }
+	S_BKYY6('BKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY7) { }
+	S_BKYY7('BKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY8) { }
+	S_BKYY8('BKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY9) { }
+	S_BKYY9('BKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY10) { }
+	S_BKYY10('BKYY', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_BKYY1) { }
+}
+
+defaultproperties
+{
+	KeyType = key_blue;
+	SpawnState = S_BKYY1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemKeyYellow
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemKeyYellow:Key
+	__mobjinfo__(80)
+{
+
+__states__
+{
+	S_CKYY1('CKYY', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY2) { }
+	S_CKYY2('CKYY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY3) { }
+	S_CKYY3('CKYY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY4) { }
+	S_CKYY4('CKYY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY5) { }
+	S_CKYY5('CKYY', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY6) { }
+	S_CKYY6('CKYY', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY7) { }
+	S_CKYY7('CKYY', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY8) { }
+	S_CKYY8('CKYY', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY9) { }
+	S_CKYY9('CKYY', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CKYY1) { }
+}
+
+defaultproperties
+{
+	KeyType = key_yellow;
+	SpawnState = S_CKYY1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	Ammo
+//
+//**************************************************************************
+//**************************************************************************
+
+class Ammo:Pickup
+	abstract
+{
+
+int AmmoType;
+int AmmoCount;
+int StringIndex;	// FIXME
+
+void TouchSpecial(Actor Toucher);
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoGoldWandWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoGoldWandWimpy:Ammo
+	__mobjinfo__(10)
+{
+
+__states__
+{
+	S_AMG1('AMG1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_goldwand;
+	AmmoCount = 10;
+	StringIndex = 0;
+	SpawnState = S_AMG1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoGoldWandHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoGoldWandHefty:Ammo
+	__mobjinfo__(12)
+{
+
+__states__
+{
+	S_AMG2_1('AMG2', 0, 4.0 / 35.0, S_AMG2_2) { }
+	S_AMG2_2('AMG2', 1, 4.0 / 35.0, S_AMG2_3) { }
+	S_AMG2_3('AMG2', 2, 4.0 / 35.0, S_AMG2_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_goldwand;
+	AmmoCount = 50;
+	StringIndex = 1;
+	SpawnState = S_AMG2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoMaceWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoMaceWimpy:Ammo
+	__mobjinfo__(13)
+{
+
+__states__
+{
+	S_AMM1('AMM1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_mace;
+	AmmoCount = 20;
+	StringIndex = 2;
+	SpawnState = S_AMM1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoMaceHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoMaceHefty:Ammo
+	__mobjinfo__(16)
+{
+
+__states__
+{
+	S_AMM2('AMM2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_mace;
+	AmmoCount = 100;
+	StringIndex = 3;
+	SpawnState = S_AMM2;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoCrossbowWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoCrossbowWimpy:Ammo
+	__mobjinfo__(18)
+{
+
+__states__
+{
+	S_AMC1('AMC1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_crossbow;
+	AmmoCount = 5;
+	StringIndex = 4;
+	SpawnState = S_AMC1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoCrossbowHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoCrossbowHefty:Ammo
+	__mobjinfo__(19)
+{
+
+__states__
+{
+	S_AMC2_1('AMC2', 0, 5.0 / 35.0, S_AMC2_2) { }
+	S_AMC2_2('AMC2', 1, 5.0 / 35.0, S_AMC2_3) { }
+	S_AMC2_3('AMC2', 2, 5.0 / 35.0, S_AMC2_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_crossbow;
+	AmmoCount = 20;
+	StringIndex = 5;
+	SpawnState = S_AMC2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoSkullRodWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoSkullRodWimpy:Ammo
+	__mobjinfo__(20)
+{
+
+__states__
+{
+	S_AMS1_1('AMS1', 0, 5.0 / 35.0, S_AMS1_2) { }
+	S_AMS1_2('AMS1', 1, 5.0 / 35.0, S_AMS1_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_skullrod;
+	AmmoCount = 20;
+	StringIndex = 8;
+	SpawnState = S_AMS1_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoSkullRodHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoSkullRodHefty:Ammo
+	__mobjinfo__(21)
+{
+
+__states__
+{
+	S_AMS2_1('AMS2', 0, 5.0 / 35.0, S_AMS2_2) { }
+	S_AMS2_2('AMS2', 1, 5.0 / 35.0, S_AMS2_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_skullrod;
+	AmmoCount = 100;
+	StringIndex = 9;
+	SpawnState = S_AMS2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoPhoenixWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoPhoenixWimpy:Ammo
+	__mobjinfo__(22)
+{
+
+__states__
+{
+	S_AMP1_1('AMP1', 0, 4.0 / 35.0, S_AMP1_2) { }
+	S_AMP1_2('AMP1', 1, 4.0 / 35.0, S_AMP1_3) { }
+	S_AMP1_3('AMP1', 2, 4.0 / 35.0, S_AMP1_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_phoenixrod;
+	AmmoCount = 1;
+	StringIndex = 10;
+	SpawnState = S_AMP1_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoPhoenixHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoPhoenixHefty:Ammo
+	__mobjinfo__(23)
+{
+
+__states__
+{
+	S_AMP2_1('AMP2', 0, 4.0 / 35.0, S_AMP2_2) { }
+	S_AMP2_2('AMP2', 1, 4.0 / 35.0, S_AMP2_3) { }
+	S_AMP2_3('AMP2', 2, 4.0 / 35.0, S_AMP2_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_phoenixrod;
+	AmmoCount = 10;
+	StringIndex = 11;
+	SpawnState = S_AMP2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoBlasterWimpy
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoBlasterWimpy:Ammo
+	__mobjinfo__(54)
+{
+
+__states__
+{
+	S_AMB1_1('AMB1', 0, 4.0 / 35.0, S_AMB1_2) { }
+	S_AMB1_2('AMB1', 1, 4.0 / 35.0, S_AMB1_3) { }
+	S_AMB1_3('AMB1', 2, 4.0 / 35.0, S_AMB1_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_blaster;
+	AmmoCount = 10;
+	StringIndex = 6;
+	SpawnState = S_AMB1_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ItemAmmoBlasterHefty
+//
+//**************************************************************************
+//**************************************************************************
+
+class ItemAmmoBlasterHefty:Ammo
+	__mobjinfo__(55)
+{
+
+__states__
+{
+	S_AMB2_1('AMB2', 0, 4.0 / 35.0, S_AMB2_2) { }
+	S_AMB2_2('AMB2', 1, 4.0 / 35.0, S_AMB2_3) { }
+	S_AMB2_3('AMB2', 2, 4.0 / 35.0, S_AMB2_1) { }
+}
+
+defaultproperties
+{
+	AmmoType = am_blaster;
+	AmmoCount = 25;
+	StringIndex = 7;
+	SpawnState = S_AMB2_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
 #define BONUSADD				6
 
 // Keys
@@ -130,16 +1400,60 @@ int maxammo[NUMAMMO] = {
 	150	// mace
 };
 
+string ArtifactText[NUMARTIFACTS] =
+{
+	"",
+	TXT_ARTIINVULNERABILITY,
+	TXT_ARTIINVISIBILITY,
+	TXT_ARTIHEALTH,
+	TXT_ARTISUPERHEALTH,
+	TXT_ARTITOMEOFPOWER,
+	TXT_ARTITORCH,
+	TXT_ARTIFIREBOMB,
+	TXT_ARTIEGG,
+	TXT_ARTIFLY,
+	TXT_ARTITELEPORT,
+};
+string WeaponText[] = {
+	"",
+	"",
+	TXT_WPNCROSSBOW,
+	TXT_WPNBLASTER,
+	TXT_WPNSKULLROD,
+	TXT_WPNPHOENIXROD,
+	TXT_WPNMACE,
+	TXT_WPNGAUNTLETS,
+};
+string KeyText[] = {
+	TXT_GOTYELLOWKEY,
+	TXT_GOTGREENKEY,
+	TXT_GOTBLUEKEY,
+};
+string AmmoText[] = {
+	TXT_AMMOGOLDWAND1,
+	TXT_AMMOGOLDWAND2,
+	TXT_AMMOMACE1,
+	TXT_AMMOMACE2,
+	TXT_AMMOCROSSBOW1,
+	TXT_AMMOCROSSBOW2,
+	TXT_AMMOBLASTER1,
+	TXT_AMMOBLASTER2,
+	TXT_AMMOSKULLROD1,
+	TXT_AMMOSKULLROD2,
+	TXT_AMMOPHOENIXROD1,
+	TXT_AMMOPHOENIXROD2,
+};
+
 //==========================================================================
 //
-//  Actor::GiveAmmo
+//  PlayerPawn::GiveAmmo
 //
 //  Returns true if the player accepted the ammo, false if it was
 // refused (player has maxammo[ammo]).
 //
 //==========================================================================
 
-boolean Actor::GiveAmmo(int ammo, int count)
+boolean PlayerPawn::GiveAmmo(int ammo, int count)
 {
 	int prevAmmo;
 	int max;
@@ -188,13 +1502,13 @@ boolean Actor::GiveAmmo(int ammo, int count)
 
 //==========================================================================
 //
-//  Actor::GiveWeapon
+//  PlayerPawn::GiveWeapon
 //
 //  Returns true if the weapon or its ammo was accepted.
 //
 //==========================================================================
 
-boolean Actor::GiveWeapon(int weapon)
+boolean PlayerPawn::GiveWeapon(int weapon)
 {
 	boolean gaveAmmo;
 	boolean gaveWeapon;
@@ -233,13 +1547,13 @@ boolean Actor::GiveWeapon(int weapon)
 
 //==========================================================================
 //
-//  Actor::GiveBody
+//  PlayerPawn::GiveBody
 //
 //  Returns false if the body isn't needed at all.
 //
 //==========================================================================
 
-boolean Actor::GiveBody(int num)
+boolean PlayerPawn::GiveBody(int num)
 {
 	int max;
 
@@ -263,13 +1577,13 @@ boolean Actor::GiveBody(int num)
 
 //==========================================================================
 //
-//  Actor::GiveArmor
+//  PlayerPawn::GiveArmor
 //
 //  Returns false if the armor is worse than the current armor.
 //
 //==========================================================================
 
-boolean Actor::GiveArmor(int armortype)
+boolean PlayerPawn::GiveArmor(int armortype)
 {
 	int hits;
 
@@ -285,11 +1599,11 @@ boolean Actor::GiveArmor(int armortype)
 
 //==========================================================================
 //
-//  Actor::GiveKey
+//  PlayerPawn::GiveKey
 //
 //==========================================================================
 
-boolean Actor::GiveKey(int key)
+boolean PlayerPawn::GiveKey(int key)
 {
 	if ((Player->Keys & (1 << key)))
 	{
@@ -302,13 +1616,13 @@ boolean Actor::GiveKey(int key)
 
 //==========================================================================
 //
-//  Actor::GivePower
+//  PlayerPawn::GivePower
 //
 //  Returns true if power accepted.
 //
 //==========================================================================
 
-boolean Actor::GivePower(int power)
+boolean PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
@@ -377,11 +1691,11 @@ boolean Actor::GivePower(int power)
 
 //==========================================================================
 //
-//  Actor::GiveItem
+//  PlayerPawn::GiveItem
 //
 //==========================================================================
 
-boolean Actor::GiveItem(int item)
+boolean PlayerPawn::GiveItem(int item)
 {
 	if (Player->Items & item)
 	{
@@ -393,13 +1707,13 @@ boolean Actor::GiveItem(int item)
 
 //==========================================================================
 //
-//  Actor::GiveArtifact
+//  PlayerPawn::GiveArtifact
 //
 //  Returns true if artifact accepted.
 //
 //==========================================================================
 
-boolean Actor::GiveArtifact(int arti, Actor mo)
+boolean PlayerPawn::GiveArtifact(int arti)
 {
 	int i;
 
@@ -428,24 +1742,20 @@ boolean Actor::GiveArtifact(int arti, Actor mo)
 		Player->ReadyArtifact = arti;
 	}
 	Player->ArtifactCount++;
-	if (mo && mo.bCountItem)
-	{
-		Player->ItemCount++;
-	}
 	return true;
 }
 
 //==========================================================================
 //
-//  Actor::TouchSpecial
+//  Pickup::TouchSpecial
 //
 //==========================================================================
 
-void Actor::TouchSpecial(Actor Toucher)
+void Pickup::TouchSpecial(Actor Toucher)
 {
 	int i;
 	name sound;
-	boolean respawn;
+	PlayerPawn P;
 
 	if (!Toucher.bPickUp)
 	{
@@ -457,300 +1767,54 @@ void Actor::TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
+	P = PlayerPawn(Toucher);
 	sound = 'PickupItem';
-	respawn = true;
-	switch (SpriteName)
+	switch (Class)
 	{
 		// Items
-	case 'PTN1':	// Item_HealingPotion
-		if (!Toucher.GiveBody(10))
+	case ItemHealthPotion:
+		if (!P.GiveBody(10))
 		{
 			return;
 		}
-		cprint(Toucher.Player, TXT_ITEMHEALTH);
+		cprint(P.Player, TXT_ITEMHEALTH);
 		break;
-	case 'SHLD':	// Item_Shield1
-		if (!Toucher.GiveArmor(1))
+	case ItemShield1:
+		if (!P.GiveArmor(1))
 		{
 			return;
 		}
-		cprint(Toucher.Player, TXT_ITEMSHIELD1);
+		cprint(P.Player, TXT_ITEMSHIELD1);
 		break;
-	case 'SHD2':	// Item_Shield2
-		if (!Toucher.GiveArmor(2))
+	case ItemShield2:
+		if (!P.GiveArmor(2))
 		{
 			return;
 		}
-		cprint(Toucher.Player, TXT_ITEMSHIELD2);
+		cprint(P.Player, TXT_ITEMSHIELD2);
 		break;
-	case 'BAGH':	// Item_BagOfHolding
-		Toucher.Player->Backpack = true;
-		Toucher.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
-		Toucher.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
-		Toucher.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
-		Toucher.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
-		Toucher.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
-		cprint(Toucher.Player, TXT_ITEMBAGOFHOLDING);
+	case ItemBagOfHolding:
+		P.Player->Backpack = true;
+		P.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
+		P.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
+		P.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
+		P.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
+		P.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
+		cprint(P.Player, TXT_ITEMBAGOFHOLDING);
 		break;
-	case 'SPMP':	// Item_SuperMap
-		if (!Toucher.GiveItem(IT_ALL_MAP))
+	case ItemMap:
+		if (!P.GiveItem(IT_ALL_MAP))
 		{
 			return;
 		}
-		cprint(Toucher.Player, TXT_ITEMSUPERMAP);
+		cprint(P.Player, TXT_ITEMSUPERMAP);
 		break;
-
-		// Keys
-	case 'BKYY':	// Key_Blue
-		if (Toucher.GiveKey(key_blue))
-		{
-			cprint(Toucher.Player, TXT_GOTBLUEKEY);
-		}
-		sound = 'PickupKey';
-		if (!netgame)
-		{
-			break;
-		}
-		return;
-	case 'CKYY':	// Key_Yellow
-		if (Toucher.GiveKey(key_yellow))
-		{
-			cprint(Toucher.Player, TXT_GOTYELLOWKEY);
-		}
-		sound = 'PickupKey';
-		if (!netgame)
-		{
-			break;
-		}
-		return;
-	case 'AKYY':	// Key_Green
-		if (Toucher.GiveKey(key_green))
-		{
-			cprint(Toucher.Player, TXT_GOTGREENKEY);
-		}
-		sound = 'PickupKey';
-		if (!netgame)
-		{
-			break;
-		}
-		return;
-
-		// Artifacts
-	case 'PTN2':	// Arti_HealingPotion
-		if (Toucher.GiveArtifact(arti_health, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIHEALTH);
-			SetDormantArtifact();
-		}
-		return;
-	case 'SOAR':	// Arti_Fly
-		if (Toucher.GiveArtifact(arti_fly, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIFLY);
-			SetDormantArtifact();
-		}
-		return;
-	case 'INVU':	// Arti_Invulnerability
-		if (Toucher.GiveArtifact(arti_invulnerability, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIINVULNERABILITY);
-			SetDormantArtifact();
-		}
-		return;
-	case 'PWBK':	// Arti_TomeOfPower
-		if (Toucher.GiveArtifact(arti_tomeofpower, self))
-		{
-			cprint(Toucher.Player, TXT_ARTITOMEOFPOWER);
-			SetDormantArtifact();
-		}
-		return;
-	case 'INVS':	// Arti_Invisibility
-		if (Toucher.GiveArtifact(arti_invisibility, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIINVISIBILITY);
-			SetDormantArtifact();
-		}
-		return;
-	case 'EGGC':	// Arti_Egg
-		if (Toucher.GiveArtifact(arti_egg, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIEGG);
-			SetDormantArtifact();
-		}
-		return;
-	case 'SPHL':	// Arti_SuperHealth
-		if (Toucher.GiveArtifact(arti_superhealth, self))
-		{
-			cprint(Toucher.Player, TXT_ARTISUPERHEALTH);
-			SetDormantArtifact();
-		}
-		return;
-	case 'TRCH':	// Arti_Torch
-		if (Toucher.GiveArtifact(arti_torch, self))
-		{
-			cprint(Toucher.Player, TXT_ARTITORCH);
-			SetDormantArtifact();
-		}
-		return;
-	case 'FBMB':	// Arti_FireBomb
-		if (Toucher.GiveArtifact(arti_firebomb, self))
-		{
-			cprint(Toucher.Player, TXT_ARTIFIREBOMB);
-			SetDormantArtifact();
-		}
-		return;
-	case 'ATLP':	// Arti_Teleport
-		if (Toucher.GiveArtifact(arti_teleport, self))
-		{
-			cprint(Toucher.Player, TXT_ARTITELEPORT);
-			SetDormantArtifact();
-		}
-		return;
-
-		// Ammo
-	case 'AMG1':	// Ammo_GoldWandWimpy
-		if (!Toucher.GiveAmmo(am_goldwand, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOGOLDWAND1);
-		break;
-	case 'AMG2':	// Ammo_GoldWandHefty
-		if (!Toucher.GiveAmmo(am_goldwand, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOGOLDWAND2);
-		break;
-	case 'AMM1':	// Ammo_MaceWimpy
-		if (!Toucher.GiveAmmo(am_mace, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOMACE1);
-		break;
-	case 'AMM2':	// Ammo_MaceHefty
-		if (!Toucher.GiveAmmo(am_mace, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOMACE2);
-		break;
-	case 'AMC1':	// Ammo_CrossbowWimpy
-		if (!Toucher.GiveAmmo(am_crossbow, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOCROSSBOW1);
-		break;
-	case 'AMC2':	// Ammo_CrossbowHefty
-		if (!Toucher.GiveAmmo(am_crossbow, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOCROSSBOW2);
-		break;
-	case 'AMB1':	// Ammo_BlasterWimpy
-		if (!Toucher.GiveAmmo(am_blaster, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOBLASTER1);
-		break;
-	case 'AMB2':	// Ammo_BlasterHefty
-		if (!Toucher.GiveAmmo(am_blaster, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOBLASTER2);
-		break;
-	case 'AMS1':	// Ammo_SkullRodWimpy
-		if (!Toucher.GiveAmmo(am_skullrod, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOSKULLROD1);
-		break;
-	case 'AMS2':	// Ammo_SkullRodHefty
-		if (!Toucher.GiveAmmo(am_skullrod, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOSKULLROD2);
-		break;
-	case 'AMP1':	// Ammo_PhoenixRodWimpy
-		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOPHOENIXROD1);
-		break;
-	case 'AMP2':	// Ammo_PhoenixRodHefty
-		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_AMMOPHOENIXROD2);
-		break;
-
-		// Weapons
-	case 'WMCE':	// Weapon_Mace
-		if (!Toucher.GiveWeapon(wp_mace))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNMACE);
-		sound = 'PickupWeapon';
-		break;
-	case 'WBOW':	// Weapon_Crossbow
-		if (!Toucher.GiveWeapon(wp_crossbow))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNCROSSBOW);
-		sound = 'PickupWeapon';
-		break;
-	case 'WBLS':	// Weapon_Blaster
-		if (!Toucher.GiveWeapon(wp_blaster))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNBLASTER);
-		sound = 'PickupWeapon';
-		break;
-	case 'WSKL':	// Weapon_SkullRod
-		if (!Toucher.GiveWeapon(wp_skullrod))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNSKULLROD);
-		sound = 'PickupWeapon';
-		break;
-	case 'WPHX':	// Weapon_PhoenixRod
-		if (!Toucher.GiveWeapon(wp_phoenixrod))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNPHOENIXROD);
-		sound = 'PickupWeapon';
-		break;
-	case 'WGNT':	// Weapon_Gauntlets
-		if (!Toucher.GiveWeapon(wp_gauntlets))
-		{
-			return;
-		}
-		cprint(Toucher.Player, TXT_WPNGAUNTLETS);
-		sound = 'PickupWeapon';
-		break;
-
-	default:
-		Error("Unknown gettable thing %n", SpriteName);
 	}
 	if (bCountItem)
 	{
-		Toucher.Player->ItemCount++;
+		P.Player->ItemCount++;
 	}
-	if (deathmatch && respawn && !bDropped)
+	if (deathmatch && !bDropped)
 	{
 		HideSpecialThing();
 	}
@@ -758,13 +1822,171 @@ void Actor::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	Toucher.Player->BonusCount += BONUSADD;
-	Toucher.PlaySound(sound, CHAN_ITEM);
+	P.Player->BonusCount += BONUSADD;
+	P.PlaySound(sound, CHAN_ITEM);
+}
+
+//==========================================================================
+//
+//  Artifact::TouchSpecial
+//
+//==========================================================================
+
+void Artifact::TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (P.GiveArtifact(ArtifactType))
+	{
+		cprint(P.Player, ArtifactText[ArtifactType]);
+		if (bCountItem)
+		{
+			P.Player->ItemCount++;
+		}
+		SetDormantArtifact();
+	}
+}
+
+//==========================================================================
+//
+//  WeaponPickup::TouchSpecial
+//
+//==========================================================================
+
+void WeaponPickup::TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (!P.GiveWeapon(WeaponType))
+	{
+		return;
+	}
+	cprint(P.Player, WeaponText[WeaponType]);
+	if (bCountItem)
+	{
+		P.Player->ItemCount++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	P.Player->BonusCount += BONUSADD;
+	P.PlaySound('PickupWeapon', CHAN_ITEM);
+}
+
+//==========================================================================
+//
+//  Key::TouchSpecial
+//
+//==========================================================================
+
+void Key::TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (P.GiveKey(KeyType))
+	{
+		cprint(P.Player, KeyText[KeyType]);
+	}
+	if (netgame)
+	{
+		return;
+	}
+	if (bCountItem)
+	{
+		P.Player->ItemCount++;
+	}
+	Remove();
+	P.Player->BonusCount += BONUSADD;
+	P.PlaySound('PickupKey', CHAN_ITEM);
+}
+
+//==========================================================================
+//
+//  Ammo::TouchSpecial
+//
+//==========================================================================
+
+void Ammo::TouchSpecial(Actor Toucher)
+{
+	int i;
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (!P.GiveAmmo(AmmoType, AmmoCount))
+	{
+		return;
+	}
+	cprint(P.Player, AmmoText[StringIndex]);
+	if (bCountItem)
+	{
+		P.Player->ItemCount++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	P.Player->BonusCount += BONUSADD;
+	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.16  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

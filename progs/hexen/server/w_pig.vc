@@ -54,7 +54,7 @@ void A_SnoutAttack(void)
 	PuffType = SnoutPuff;
 	PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	LineAttack(*Player->mo, &vforward, MELEERANGE, damage);
+	LineAttack(*Player->mo, vforward, MELEERANGE, damage);
 	Player->mo->PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
@@ -106,6 +106,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -299,7 +299,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-int EV_VerticalDoor(line_t * line, mobj_t * thing)
+int EV_VerticalDoor(line_t * line, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
@@ -340,7 +340,7 @@ int EV_VerticalDoor(line_t * line, mobj_t * thing)
 			}
 			else
 			{
-				if (!thing->bIsPlayer)
+				if (!thing.bIsPlayer)
 					return 0;	// JDC: bad guys never close doors
 				Door.direction = -1;	// start going down immediately
 			}
@@ -429,6 +429,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.10  2002/02/14 19:20:57  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -122,24 +122,27 @@ void AddMaceSpot(float x, float y)
 	MaceSpotCount++;
 }
 
-//===========================================================================
+//==========================================================================
 //
-//  RepositionMace
+//  ItemWeaponMace::A_RestoreSpecialThing1
 //
 //  Chooses the next spot to place the mace.
 //
-//===========================================================================
+//==========================================================================
 
-void RepositionMace(mobj_t * mo)
+void ItemWeaponMace::A_RestoreSpecialThing1(void)
 {
 	int spot;
 
+	// Do random mace placement
 	spot = P_Random() % MaceSpotCount;
-	P_UnsetThingPosition(*mo);
-	mo->Origin.x = MaceSpot_x[spot];
-	mo->Origin.y = MaceSpot_y[spot];
-	P_SetThingPosition(*mo);
-	mo->Origin.z = mo->FloorZ;
+	P_UnsetThingPosition(self);
+	Origin.x = MaceSpot_x[spot];
+	Origin.y = MaceSpot_y[spot];
+	P_SetThingPosition(self);
+	Origin.z = FloorZ;
+
+	::A_RestoreSpecialThing1();
 }
 
 //===========================================================================
@@ -165,7 +168,8 @@ void CloseWeapons(void)
 		return;
 	}
 	spot = P_Random() % MaceSpotCount;
-	P_SpawnMobj(MaceSpot_x[spot], MaceSpot_y[spot], ONFLOORZ, ItemWeaponMace);
+	Spawn(ItemWeaponMace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
+		ONFLOORZ));
 }
 
 //===========================================================================
@@ -364,44 +368,6 @@ boolean CheckAmmo(player_t * player)
 
 //===========================================================================
 //
-//  BulletSlope
-//
-//  Sets a slope so a near miss is at aproximately the height of the
-// intended target
-//
-//===========================================================================
-
-TVec BulletSlope(mobj_t * mo)
-{
-	TAVec angles;
-	TVec dir;
-
-	//
-	// see which target is to be aimed at
-	//
-	angles = mo->Angles;
-
-	dir = AimLineAttack(mo, angles, 16.0 * 64.0);
-	if (!linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		dir = AimLineAttack(mo, angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			dir = AimLineAttack(mo, angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-				AngleVector(&angles, &dir);
-			}
-		}
-	}
-	return dir;
-}
-
-//===========================================================================
-//
 //  FireWeapon
 //
 //===========================================================================
@@ -428,7 +394,7 @@ void FireWeapon(player_t * player)
 			Weapon(player->ViewEnts[ps_weapon]).AttackState;
 	}
 	SetPsprite(player, ps_weapon, attackState);
-	P_NoiseAlert(player->mo, player->mo);
+	P_NoiseAlert(*player->mo, *player->mo);
 	if (player->ReadyWeapon == wp_gauntlets && !player->Refire)
 	{
 		// Play the sound for the initial gauntlet attack
@@ -696,11 +662,11 @@ void Actor::A_SpawnRippers(void)
 	{
 		ripper = Spawn(Ripper, Origin);
 		angle = itof(i) * 45.0;
-		ripper.Owner = Owner;
+		ripper.Instigator = Instigator;
 		ripper.Angles.yaw = angle;
 		ripper.Velocity.x = ripper.Speed * cos(angle);
 		ripper.Velocity.y = ripper.Speed * sin(angle);
-		CheckMissileSpawn(&ripper);
+		ripper.CheckMissileSpawn();
 	}
 }
 
@@ -712,7 +678,7 @@ void Actor::A_SpawnRippers(void)
 
 void Actor::A_SkullRodPL2Seek(void)
 {
-	P_SeekerMissile(this, 10.0, 30.0);
+	SeekerMissile(10.0, 30.0);
 }
 
 //===========================================================================
@@ -779,7 +745,7 @@ void Actor::A_SkullRodStorm(void)
 {
 	float x;
 	float y;
-	mobj_t *mo;
+	Actor A;
 	int playerNum;
 	player_t *player;
 	classid rain_type;
@@ -823,12 +789,12 @@ void Actor::A_SkullRodStorm(void)
 	case 2: rain_type = RainPlayer3; break;
 	case 3: rain_type = RainPlayer4; break;
 	}
-	mo = P_SpawnMobj(x, y, ONCEILINGZ, rain_type);
-	mo->Owner = Owner;
-	mo->Velocity.x = 0.00001;	// Force collision detection
-	mo->Velocity.z = -mo->Speed;
-	mo->Special2 = Special2;	// Transfer player number
-	CheckMissileSpawn(mo);
+	A = Spawn(rain_type, vector(x, y, ONCEILINGZ));
+	A.Instigator = Instigator;
+	A.Velocity.x = 0.00001;	// Force collision detection
+	A.Velocity.z = -A.Speed;
+	A.Special2 = Special2;	// Transfer player number
+	A.CheckMissileSpawn();
 	if (!(Special1 & 31))
 	{
 		PlaySound('SkullRodRain', CHAN_VOICE);
@@ -873,20 +839,20 @@ void Actor::A_HideInCeiling(void)
 
 void Actor::A_PhoenixPuff(void)
 {
-	mobj_t *puff;
+	Actor puff;
 	float angle;
 
-	P_SeekerMissile(this, 5.0, 10.0);
-	puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
+	SeekerMissile(5.0, 10.0);
+	puff = Spawn(PhoenixPuff, Origin);
 	angle = AngleMod360(Angles.yaw + 90.0);
-	puff->Velocity.x = 1.3 * cos(angle) * 35.0;
-	puff->Velocity.y = 1.3 * sin(angle) * 35.0;
-	puff->Velocity.z = 0.0;
-	puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+	puff = Spawn(PhoenixPuff, Origin);
 	angle = AngleMod360(Angles.yaw - 90.0);
-	puff->Velocity.x = 1.3 * cos(angle) * 35.0;
-	puff->Velocity.y = 1.3 * sin(angle) * 35.0;
-	puff->Velocity.z = 0.0;
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
 }
 
 //===========================================================================
@@ -949,7 +915,7 @@ void Actor::A_MaceBallImpact(void)
 	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
-		P_RemoveMobj(this);
+		Remove();
 		return;
 	}
 	if ((Health != MAGIC_JUNK) && (Origin.z <= FloorZ) && Velocity.z)
@@ -977,13 +943,13 @@ void Actor::A_MaceBallImpact(void)
 
 void Actor::A_MaceBallImpact2(void)
 {
-	mobj_t *tiny;
+	Actor tiny;
 	float angle;
 
 	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
-		P_RemoveMobj(this);
+		Remove();
 		return;
 	}
 	if ((Origin.z != FloorZ) || (Velocity.z < 2.0 * 35.0))
@@ -999,27 +965,27 @@ void Actor::A_MaceBallImpact2(void)
 		Velocity.z = Velocity.z * 192.0 / 256.0;
 		SetState(SpawnState);
 
-		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
+		tiny = Spawn(MaceFX3, Origin);
 		angle = AngleMod360(Angles.yaw + 90.0);
-		tiny->Owner = Owner;
-		tiny->Angles.yaw = angle;
-		tiny->Velocity.x =
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
-		tiny->Velocity.y =
+		tiny.Velocity.y =
 			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
-		tiny->Velocity.z = Velocity.z;
-		CheckMissileSpawn(tiny);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
 
-		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
+		tiny = Spawn(MaceFX3, Origin);
 		angle = AngleMod360(Angles.yaw - 90.0);
-		tiny->Owner = Owner;
-		tiny->Angles.yaw = angle;
-		tiny->Velocity.x =
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
 			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
-		tiny->Velocity.y =
+		tiny.Velocity.y =
 			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
-		tiny->Velocity.z = Velocity.z;
-		CheckMissileSpawn(tiny);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
 	}
 }
 
@@ -1032,7 +998,6 @@ void Actor::A_MaceBallImpact2(void)
 void Actor::A_DeathBallImpact(void)
 {
 	int i;
-	mobj_t *targ;
 	float angle;
 	int newAngle;
 	TAVec angles;
@@ -1040,26 +1005,25 @@ void Actor::A_DeathBallImpact(void)
 	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
-		P_RemoveMobj(this);
+		Remove();
 		return;
 	}
 	if ((Origin.z <= FloorZ) && Velocity.z)
 	{
 		// Bounce
 		newAngle = false;
-		targ = SpecialMobj1;
-		if (targ)
+		if (Enemy)
 		{
-			if (!targ->bShootable)
+			if (!Enemy.bShootable)
 			{
 				// Target died
-				SpecialMobj1 = NULL;
+				Enemy = none;
 			}
 			else
 			{
 				// Seek
-				angle = atan2(targ->Origin.y - Origin.y,
-					targ->Origin.x - Origin.x);
+				angle = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
 				newAngle = true;
 			}
 		}
@@ -1071,12 +1035,12 @@ void Actor::A_DeathBallImpact(void)
 			angles.roll = 0.0;
 			for (i = 0; i < 16; i++)
 			{
-				AimLineAttack(this, angles, 10.0 * 64.0);
-				if (linetarget && Owner != *linetarget)
+				AimLineAttack(self, angles, 10.0 * 64.0);
+				if (linetarget && Instigator != linetarget)
 				{
-					SpecialMobj1 = linetarget;
-					angle = atan2(linetarget->Origin.y - Origin.y,
-						linetarget->Origin.x - Origin.x);
+					Enemy = linetarget;
+					angle = atan2(linetarget.Origin.y - Origin.y,
+						linetarget.Origin.x - Origin.x);
 					newAngle = true;
 					break;
 				}
@@ -1149,15 +1113,15 @@ void A_StaffAttackPL1(void)
 	angles = Player->mo->Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
 	PuffType = StaffPuff;
-	LineAttack(Player->mo, dir, MELEERANGE, damage);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
 		Player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			atan2(linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -1180,15 +1144,15 @@ void A_StaffAttackPL2(void)
 	angles = Player->mo->Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
 	PuffType = StaffPuff2;
-	LineAttack(Player->mo, dir, MELEERANGE, damage);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
 		Player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			atan2(linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -1305,8 +1269,8 @@ void A_GauntletAttack(void)
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = AimLineAttack(Player->mo, angles, dist);
-	LineAttack(Player->mo, dir, dist, damage);
+	dir = AimLineAttack(*Player->mo, angles, dist);
+	LineAttack(*Player->mo, dir, dist, damage);
 	if (!linetarget)
 	{
 		if (P_Random() > 64)
@@ -1331,7 +1295,7 @@ void A_GauntletAttack(void)
 	}
 	if (Player->Powers[pw_weaponlevel2])
 	{
-		Player->mo->GiveBody(damage >> 1);
+		PlayerPawn(*Player->mo).GiveBody(damage >> 1);
 		Player->mo->PlaySound('GauntletHit2', CHAN_WEAPON);
 	}
 	else
@@ -1339,8 +1303,8 @@ void A_GauntletAttack(void)
 		Player->mo->PlaySound('GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget->Origin.y - Player->mo->Origin.y,
-		linetarget->Origin.x - Player->mo->Origin.x);
+	angle = atan2(linetarget.Origin.y - Player->mo->Origin.y,
+		linetarget.Origin.x - Player->mo->Origin.x);
 	if (AngleMod360(angle - Player->mo->Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player->mo->Angles.yaw) < 360.0 - 90.0 / 20.0)
@@ -1421,20 +1385,18 @@ class WeaponGoldWand:Weapon
 
 void A_FireGoldWandPL1(void)
 {
-	mobj_t *mo;
 	int damage;
 	TVec dir;
 
-	mo = Player->mo;
 	Player->Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
-	dir = BulletSlope(mo);
+	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
 	if (Player->Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = GoldWandPuff1;
-	LineAttack(mo, dir, MISSILERANGE, damage);
+	LineAttack(*Player->mo, dir, MISSILERANGE, damage);
 	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
 }
 
@@ -1447,27 +1409,25 @@ void A_FireGoldWandPL1(void)
 void A_FireGoldWandPL2(void)
 {
 	int i;
-	mobj_t *mo;
 	int damage;
 	float momz;
 	TAVec angles;
 	TVec dir;
 
-	mo = Player->mo;
 	Player->Ammo[am_goldwand] -=
 		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	PuffType = GoldWandPuff2;
-	dir = BulletSlope(mo);
+	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
-	SpawnMissileAngles(mo, GoldWandMissile2,
+	Player->mo->SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
-	SpawnMissileAngles(mo, GoldWandMissile2,
+	Player->mo->SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
 	VectorRotateAroundZ(&dir, -45.0 / 8.0);
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
-		LineAttack(mo, dir, MISSILERANGE, damage);
+		LineAttack(*Player->mo, dir, MISSILERANGE, damage);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
 	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
@@ -1525,15 +1485,12 @@ class WeaponCrossbow:Weapon
 
 void A_FireCrossbowPL1(void)
 {
-	mobj_t *pmo;
-
-	pmo = Player->mo;
 	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
-	SpawnPlayerMissile(pmo, CrossbowFX1);
-	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->Angles.yaw - (45.0 / 10.0)));
-	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->Angles.yaw + (45.0 / 10.0)));
+	Player->mo->SpawnPlayerMissile(CrossbowFX1);
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->mo->Angles.yaw - (45.0 / 10.0)));
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->mo->Angles.yaw + (45.0 / 10.0)));
 }
 
 //===========================================================================
@@ -1544,20 +1501,17 @@ void A_FireCrossbowPL1(void)
 
 void A_FireCrossbowPL2(void)
 {
-	mobj_t *pmo;
-
-	pmo = Player->mo;
 	Player->Ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
-	SpawnPlayerMissile(pmo, CrossbowFX2);
-	SpawnPlayerMissileAngle(pmo, CrossbowFX2,
-		AngleMod360(pmo->Angles.yaw - (45.0 / 10.0)));
-	SpawnPlayerMissileAngle(pmo, CrossbowFX2,
-		AngleMod360(pmo->Angles.yaw + (45.0 / 10.0)));
-	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->Angles.yaw - (45.0 / 5.0)));
-	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->Angles.yaw + (45.0 / 5.0)));
+	Player->mo->SpawnPlayerMissile(CrossbowFX2);
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->mo->Angles.yaw - (45.0 / 10.0)));
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->mo->Angles.yaw + (45.0 / 10.0)));
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->mo->Angles.yaw - (45.0 / 5.0)));
+	Player->mo->SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->mo->Angles.yaw + (45.0 / 5.0)));
 }
 
 __states__
@@ -1637,22 +1591,20 @@ class WeaponBlaster:Weapon
 
 void A_FireBlasterPL1(void)
 {
-	mobj_t *mo;
 	int damage;
 	float bulletslope;
 	TVec dir;
 
-	mo = Player->mo;
-	mo->PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player->mo->PlaySound('GoldWandFire', CHAN_WEAPON);
 	Player->Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = BulletSlope(mo);
+	dir = Aim(*Player->mo, Player->mo->Angles.yaw, 16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player->Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = BlasterPuff1;
-	LineAttack(mo, dir, MISSILERANGE, damage);
+	LineAttack(*Player->mo, dir, MISSILERANGE, damage);
 	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
 }
 
@@ -1664,14 +1616,14 @@ void A_FireBlasterPL1(void)
 
 void A_FireBlasterPL2(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	Player->Ammo[am_blaster] -=
 		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
-	mo = SpawnPlayerMissile(Player->mo, BlasterFX1);
-	if (mo)
+	A = Player->mo->SpawnPlayerMissile(BlasterFX1);
+	if (A)
 	{
-		mo->bBlaster = true;
+		A.bBlaster = true;
 	}
 	Player->mo->PlaySound('BlasterFire', CHAN_WEAPON);
 }
@@ -1732,18 +1684,18 @@ class WeaponSkullRod:Weapon
 
 void A_FireSkullRodPL1(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	if (Player->Ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
 	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
-	mo = SpawnPlayerMissile(Player->mo, HornRodMissile1);
+	A = Player->mo->SpawnPlayerMissile(HornRodMissile1);
 	// Randomize the first frame
-	if (mo && P_Random() > 128)
+	if (A && P_Random() > 128)
 	{
-		mo->SetState(S_HRODFX1_2);
+		A.SetState(S_HRODFX1_2);
 	}
 }
 
@@ -1761,25 +1713,25 @@ void A_FireSkullRodPL2(void)
 {
 	Player->Ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	SpawnPlayerMissile(Player->mo, HornRodMissile2);
+	Player->mo->SpawnPlayerMissile(HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
 	if (netgame)
 	{
 		// Multi-player game
-		MissileMobj->Special2 = P_GetPlayerNum(Player);
+		MissileMobj.Special2 = P_GetPlayerNum(Player);
 	}
 	else
 	{
 		// Always use red missiles in single player games
-		MissileMobj->Special2 = 2;
+		MissileMobj.Special2 = 2;
 	}
 	if (linetarget)
 	{
-		MissileMobj->SpecialMobj1 = linetarget;
+		MissileMobj.Enemy = linetarget;
 	}
-	MissileMobj->PlaySound('SkullRodFire2', CHAN_WEAPON);
+	MissileMobj.PlaySound('SkullRodFire2', CHAN_WEAPON);
 }
 
 __states__
@@ -1859,7 +1811,7 @@ void A_FirePhoenixPL1(void)
 	TVec vforward;
 
 	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
-	SpawnPlayerMissile(Player->mo, PhoenixFX1);
+	Player->mo->SpawnPlayerMissile(PhoenixFX1);
 	AngleVector(&Player->mo->Angles, &vforward);
 	Player->mo->Velocity -= vforward * 140.0;
 }
@@ -1885,10 +1837,9 @@ void A_InitPhoenixPL2(void)
 
 void A_FirePhoenixPL2(void)
 {
-	mobj_t *mo;
-	mobj_t *pmo;
+	Actor A;
 	TVec dir;
-	float x, y, z;
+	TVec org;
 
 	if (--Player->FlameCount == 0)
 	{
@@ -1897,22 +1848,21 @@ void A_FirePhoenixPL2(void)
 		Player->Refire = 0;
 		return;
 	}
-	pmo = Player->mo;
-	x = pmo->Origin.x + (Random() - Random()) * 2.0;
-	y = pmo->Origin.y + (Random() - Random()) * 2.0;
-	z = pmo->Origin.z + 26.0 - sin(Player->mo->Angles.pitch);
-	z -= pmo->FloorClip;
-	mo = P_SpawnMobj(x, y, z, PhoenixFX2);
-	mo->Owner = *pmo;
-	mo->Angles.yaw = pmo->Angles.yaw;
-	mo->Angles.pitch = pmo->Angles.pitch;
-	AngleVector(&mo->Angles, &dir);
-	mo->Velocity = pmo->Velocity + mo->Speed * dir;
+	org.x = Player->mo->Origin.x + (Random() - Random()) * 2.0;
+	org.y = Player->mo->Origin.y + (Random() - Random()) * 2.0;
+	org.z = Player->mo->Origin.z + 26.0 - sin(Player->mo->Angles.pitch);
+	org.z -= Player->mo->FloorClip;
+	A = Spawn(PhoenixFX2, org);
+	A.Instigator = *Player->mo;
+	A.Angles.yaw = Player->mo->Angles.yaw;
+	A.Angles.pitch = Player->mo->Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Player->mo->Velocity + A.Speed * dir;
 	if (!Player->Refire || !(level->tictime % 38))
 	{
 		Player->mo->PlaySound('PhoenixHit2', CHAN_WEAPON);
 	}
-	CheckMissileSpawn(mo);
+	A.CheckMissileSpawn();
 }
 
 //===========================================================================
@@ -1980,8 +1930,7 @@ class WeaponMace:Weapon
 
 void A_FireMacePL1B(void)
 {
-	mobj_t *pmo;
-	mobj_t *ball;
+	Actor ball;
 	float angle;
 
 	if (Player->Ammo[am_mace] < USE_MACE_AMMO_1)
@@ -1989,19 +1938,18 @@ void A_FireMacePL1B(void)
 		return;
 	}
 	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
-	pmo = Player->mo;
-	ball = P_SpawnMobj(pmo->Origin.x, pmo->Origin.y, pmo->Origin.z + 28.0
-		- pmo->FloorClip, MaceFX2);
-	ball->Velocity.z =
+	ball = Spawn(MaceFX2, Player->mo->Origin +
+		vector(0.0, 0.0, 28.0 - Player->mo->FloorClip));
+	ball.Velocity.z =
 		(2.0 + 173.0 * -tan(Player->mo->Angles.pitch) / 32.0) * 35.0;
-	angle = pmo->Angles.yaw;
-	ball->Owner = *pmo;
-	ball->Angles.yaw = angle;
-	ball->Origin.z += 173.0 * -tan(Player->mo->Angles.pitch) / 16.0;
-	ball->Velocity.x = pmo->Velocity.x / 2.0 + ball->Speed * cos(angle);
-	ball->Velocity.y = pmo->Velocity.y / 2.0 + ball->Speed * sin(angle);
-	ball->PlaySound('MaceFire', CHAN_WEAPON);
-	CheckMissileSpawn(ball);
+	angle = Player->mo->Angles.yaw;
+	ball.Instigator = *Player->mo;
+	ball.Angles.yaw = angle;
+	ball.Origin.z += 173.0 * -tan(Player->mo->Angles.pitch) / 16.0;
+	ball.Velocity.x = Player->mo->Velocity.x / 2.0 + ball.Speed * cos(angle);
+	ball.Velocity.y = Player->mo->Velocity.y / 2.0 + ball.Speed * sin(angle);
+	ball.PlaySound('MaceFire', CHAN_WEAPON);
+	ball.CheckMissileSpawn();
 }
 
 //===========================================================================
@@ -2012,7 +1960,7 @@ void A_FireMacePL1B(void)
 
 void A_FireMacePL1(void)
 {
-	mobj_t *ball;
+	Actor ball;
 
 	if (P_Random() < 28)
 	{
@@ -2026,11 +1974,11 @@ void A_FireMacePL1(void)
 	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
-	ball = SpawnPlayerMissileAngle(Player->mo, MaceFX1,
+	ball = Player->mo->SpawnPlayerMissileAngle(MaceFX1,
 		AngleMod360(Player->mo->Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
-		ball->Special1 = 16;	// tics till dropoff
+		ball.Special1 = 16;	// tics till dropoff
 	}
 }
 
@@ -2042,19 +1990,19 @@ void A_FireMacePL1(void)
 
 void A_FireMacePL2(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	Player->Ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	mo = SpawnPlayerMissile(Player->mo, MaceFX4);
-	if (mo)
+	A = Player->mo->SpawnPlayerMissile(MaceFX4);
+	if (A)
 	{
-		mo->Velocity.x += Player->mo->Velocity.x;
-		mo->Velocity.y += Player->mo->Velocity.y;
-		mo->Velocity.z =
+		A.Velocity.x += Player->mo->Velocity.x;
+		A.Velocity.y += Player->mo->Velocity.y;
+		A.Velocity.z =
 			(2.0 + 173.0 * -tan(Player->mo->Angles.pitch) / 32.0) * 35.0;
 		if (linetarget)
 		{
-			mo->SpecialMobj1 = linetarget;
+			A.Enemy = linetarget;
 		}
 	}
 	Player->mo->PlaySound('MaceFire', CHAN_WEAPON);
@@ -2143,7 +2091,7 @@ void A_BeakReady(void)
 		{
 			SetState(AttackState);
 		}
-		P_NoiseAlert(Player->mo, Player->mo);
+		P_NoiseAlert(*Player->mo, *Player->mo);
 	}
 	else
 	{
@@ -2171,14 +2119,14 @@ void A_BeakAttackPL1(void)
 
 	damage = 1 + (P_Random() & 3);
 	avcpy(Player->mo->Angles, angles);
-	dir = AimLineAttack(Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player->mo, dir, MELEERANGE, damage);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		Player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			atan2(linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 	switch (P_Random() % 3)
@@ -2213,14 +2161,14 @@ void A_BeakAttackPL2(void)
 
 	damage = HITDICE(4);
 	avcpy(Player->mo->Angles, angles);
-	dir = AimLineAttack(Player->mo, angles, MELEERANGE);
+	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player->mo, dir, MELEERANGE, damage);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		Player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			atan2(linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 	switch (P_Random() % 3)
@@ -2270,6 +2218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.23  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

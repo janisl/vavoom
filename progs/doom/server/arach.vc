@@ -61,13 +61,13 @@ void Actor::A_BabyMetal(void)
 
 void Actor::A_BspiAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 
 	// launch a missile
-	SpawnMissile(this, &Target, ArachnotronPlasma);
+	SpawnMissile(Enemy, ArachnotronPlasma);
 }
 
 #else
@@ -87,6 +87,9 @@ void Actor::A_BspiAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.12  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

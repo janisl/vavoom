@@ -38,7 +38,7 @@
 int numbraintargets;
 int braintargeton;
 int brain_easy = 0;
-mobj_t *braintargets[32];
+Actor braintargets[32];
 
 // CODE --------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ void Actor::A_BrainAwake(void)
 	{
 		if (m.Class == BossTarget)
 		{
-			braintargets[numbraintargets] = &m;
+			braintargets[numbraintargets] = m;
 			numbraintargets++;
 		}
 	}
@@ -79,8 +79,8 @@ void Actor::A_BrainAwake(void)
 
 void Actor::A_BrainSpit(void)
 {
-	mobj_t *targ;
-	mobj_t *newmobj;
+	Actor targ;
+	Actor A;
 
 	brain_easy ^= 1;
 	if (gameskill <= sk_easy && (!brain_easy))
@@ -91,10 +91,10 @@ void Actor::A_BrainSpit(void)
 	braintargeton = (braintargeton + 1) % numbraintargets;
 
 	// spawn brain missile
-	newmobj = SpawnMissile(this, targ, SpawnShot);
-	newmobj->Target = *targ;
-	newmobj->ReactionCount = ftoi((targ->Origin.y - Origin.y) /
-		newmobj->Velocity.y / newmobj->StateTime);
+	A = SpawnMissile(targ, SpawnShot);
+	A.Enemy = targ;
+	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
+		A.Velocity.y / A.StateTime);
 
 	PlayFullVolumeSound('BossFire', CHAN_WEAPON);
 }
@@ -214,7 +214,7 @@ void Actor::A_SpawnFly(void)
 		return;	// still flying
 
 	// First spawn teleport fog.
-	fog = Spawn(SpawnFire, Target.Origin);
+	fog = Spawn(SpawnFire, Enemy.Origin);
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	// Randomly select monster to spawn.
@@ -245,12 +245,12 @@ void Actor::A_SpawnFly(void)
 	else
 		type = BaronOfHell;
 
-	newmobj = Spawn(type, Target.Origin);
+	newmobj = Spawn(type, Enemy.Origin);
 	if (newmobj.LookForPlayers(true))
 		newmobj.SetState(newmobj.SeeState);
 
 	// telefrag anything in this spot
-	P_TeleportMove(&newmobj, newmobj.Origin.x, newmobj.Origin.y);
+	newmobj.TeleportMove(newmobj.Origin);
 
 	// remove self (i.e., cube).
 	Remove();
@@ -303,6 +303,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.18  2002/03/16 17:44:01  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

@@ -39,14 +39,11 @@ struct tagged_line_t
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-int CanActivateCross(mobj_t * thing);
 void P_RespawnSpecials(void);
 
-int EV_Teleport(int tag, mobj_t * thing, boolean usefog);
+int EV_Teleport(int tag, Actor thing, boolean usefog);
 boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 							boolean reverse);
-
-void P_ThrustMobj(mobj_t *mo, float an, float force);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -67,13 +64,9 @@ int TaggedLineCount;
 //
 //==========================================================================
 
-boolean CheckLock(mobj_t * user, int lock)
+boolean CheckLock(Actor user, int lock)
 {
-	player_t *player;
-
-	player = user->Player;
-
-	if (!player)
+	if (!user.bIsPlayer)
 	{
 		return false;
 	}
@@ -85,112 +78,112 @@ boolean CheckLock(mobj_t * user, int lock)
 	switch (lock)
 	{
 	case 2:	// Blue Lock
-		if (!(player->Keys & (1 << it_bluecard)))
+		if (!(user.Player->Keys & (1 << it_bluecard)))
 		{
-			centerprint(player, "You need a blue keycard");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a blue keycard");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 1:	// Red Lock
-		if (!(player->Keys & (1 << it_redcard)))
+		if (!(user.Player->Keys & (1 << it_redcard)))
 		{
-			centerprint(player, "You need a red keycard");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a red keycard");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 3:	// Yellow Lock
-		if (!(player->Keys & (1 << it_yellowcard)))
+		if (!(user.Player->Keys & (1 << it_yellowcard)))
 		{
-			centerprint(player, "You need a yellow keycard");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a yellow keycard");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 5:	// Blue Lock
-		if (!(player->Keys & (1 << it_blueskull)))
+		if (!(user.Player->Keys & (1 << it_blueskull)))
 		{
-			centerprint(player, "You need a blue skullkey");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a blue skullkey");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 4:	// Red Lock
-		if (!(player->Keys & (1 << it_redskull)))
+		if (!(user.Player->Keys & (1 << it_redskull)))
 		{
-			centerprint(player, "You need a red skullkey");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a red skullkey");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 6:	// Yellow Lock
-		if (!(player->Keys & (1 << it_yellowskull)))
+		if (!(user.Player->Keys & (1 << it_yellowskull)))
 		{
-			centerprint(player, "You need a yellow skullkey");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a yellow skullkey");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 100:	// Any key
 	case 128 + 100:	// Any key
-		if (!player->Keys)
+		if (!user.Player->Keys)
 		{
-			centerprint(player, "You need any key");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need any key");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 110:	// All keys
-		if (player->Keys != 0x3f)
+		if (user.Player->Keys != 0x3f)
 		{
-			centerprint(player, "You need all keycards and skullkeys");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need all keycards and skullkeys");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 2:	// Blue Lock
-		if (!(player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		if (!(user.Player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
-			centerprint(player, "You need a blue key");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a blue key");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 1:	// Red Lock
-		if (!(player->Keys & ((1 << it_redcard) | (1 << it_redskull))))
+		if (!(user.Player->Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
-			centerprint(player, "You need a red key");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a red key");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 3:	// Yellow Lock
-		if (!(player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(user.Player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			centerprint(player, "You need a yellow key");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need a yellow key");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
 
 	case 128 + 101:	// All keys
-		if (!(player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
-			!(player->Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
-			!(player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(user.Player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
+			!(user.Player->Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
+			!(user.Player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			centerprint(player, "You need all keys");
-			player->mo->PlaySound('PlayerLand', CHAN_VOICE);
+			centerprint(user.Player, "You need all keys");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -205,12 +198,12 @@ boolean CheckLock(mobj_t * user, int lock)
 //
 //==========================================================================
 
-boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
+boolean StartLockedACS(line_t * line, int *args, Actor A, int side)
 {
 	int i;
 	int newArgs[5];
 
-	if (!CheckLock(mo, args[4]))
+	if (!CheckLock(A, args[4]))
 	{
 		return false;
 	}
@@ -219,7 +212,7 @@ boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
 		newArgs[i] = args[i];
 	}
 	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], *mo, line, side);
+	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
 }
 
 //==========================================================================
@@ -229,7 +222,7 @@ boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
 //==========================================================================
 
 boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
-	mobj_t * mo)
+	Actor A)
 {
 	boolean buttonSuccess;
 
@@ -264,7 +257,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 11:	// Door Open
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, mo);
+			buttonSuccess = EV_VerticalDoor(line, A);
 		}
 		else
 		{
@@ -274,7 +267,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 12:	// Door Raise
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, mo);
+			buttonSuccess = EV_VerticalDoor(line, A);
 		}
 		else
 		{
@@ -282,11 +275,11 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 13:	// Door Locked_Raise
-		if (CheckLock(mo, args[3]))
+		if (CheckLock(A, args[3]))
 		{
 			if (!args[0])
 			{
-				buttonSuccess = EV_VerticalDoor(line, mo);
+				buttonSuccess = EV_VerticalDoor(line, A);
 			}
 			else
 			{
@@ -395,7 +388,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		if (side == 0)
 		{
 			// Only teleport when crossing the front side of a line
-			buttonSuccess = EV_Teleport(args[0], mo, true);
+			buttonSuccess = EV_Teleport(args[0], A, true);
 		}
 		break;
 /*		case 71: // Teleport, no fog
@@ -407,26 +400,26 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 72: // Thrust Mobj
 		if (!side) // Only thrust on side 0
 		{
-			P_ThrustMobj(mo, itof(args[0]) * (90.0 / 64.0), itof(args[1]));
+			A.Thrust(itof(args[0]) * (90.0 / 64.0), itof(args[1]));
 			buttonSuccess = 1;
 		}
 		break;
 	case 73: // Damage Mobj
 		if (args[0])
 		{
-			mo->Damage(none, none, args[0]);
+			A.Damage(none, none, args[0]);
 		}
 		else
 		{
 			// If arg1 is zero, then guarantee a kill
-			mo->Damage(none, none, 10000);
+			A.Damage(none, none, 10000);
 		}
 		buttonSuccess = 1;
 		break;
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -436,7 +429,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->bIsPlayer && mo->Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -451,7 +444,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], *mo, line, side);
+		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -460,7 +453,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = TerminateACS(args[0], args[1]);
 		break;
 	case 83:	// ACS_LockedExecute
-		buttonSuccess = StartLockedACS(line, args, mo, side);
+		buttonSuccess = StartLockedACS(line, args, A, side);
 		break;
 	case 90: // Poly Rotate Left Override
 		buttonSuccess = EV_RotatePoly(line, args, 1, true);
@@ -567,13 +560,13 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_DoPlat(line, args, PLAT_PERPETUALRAISELIP);
 		break;
 	case 215:	// Teleport_Line
-		buttonSuccess = EV_SilentLineTeleport(line, side, *mo, args[1], args[2]);
+		buttonSuccess = EV_SilentLineTeleport(line, side, A, args[1], args[2]);
 		break;
 	case 217:	// Stairs_BuildUpDoom
 		buttonSuccess = EV_BuildStairsOld(line, args);
 		break;
 	case 226:	// ACS_ExecuteAlways
-		buttonSuccess = StartACS(args[0], args[1], &args[2], *mo, line, side);
+		buttonSuccess = StartACS(args[0], args[1], &args[2], A, line, side);
 		break;
 	case 228:	// Plat_RaiseAndStayTx0
 		buttonSuccess =
@@ -818,7 +811,7 @@ void P_UpdateSpecials(void)
 //
 //==========================================================================
 
-boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
+boolean CheckActivation(int activationType, line_t * line, Actor A)
 {
 	int lineActivation;
 	boolean noway = true;
@@ -829,7 +822,7 @@ boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
 	{
 		return false;
 	}
-	if (!mo->bIsPlayer && !mo->bMissile)
+	if (!A.bIsPlayer && !A.bMissile)
 	{
 		if ((activationType == SPAC_USE || activationType == SPAC_PUSH)
 			&& (line->flags & ML_SECRET))
@@ -877,20 +870,19 @@ boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
 	return true;
 }
 
-//============================================================================
+//==========================================================================
 //
 //  P_ActivateLine
 //
-//============================================================================
+//==========================================================================
 
-boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
-	int activationType)
+boolean P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 {
 	int lineActivation;
 	boolean repeat;
 	boolean buttonSuccess;
 
-	if (!CheckActivation(activationType, line, mo))
+	if (!CheckActivation(activationType, line, A))
 	{
 		return false;
 	}
@@ -898,7 +890,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	lineActivation = GET_SPAC(line->flags);
 	repeat = line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
-		side, mo);
+		side, A);
 	if (!repeat && buttonSuccess)
 	{
 		// clear the special on non-retriggerable lines
@@ -937,6 +929,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

@@ -56,11 +56,11 @@ void Pawn::A_Look(void)
 
 	if (targ && targ.bShootable)
 	{
-		Target = targ;
+		Enemy = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Target))
+			if (!P_CheckSight(self, Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -110,7 +110,7 @@ void Pawn::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Target || Target.Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -146,7 +146,7 @@ void Pawn::A_Chase(void)
 		}
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -196,7 +196,7 @@ void Pawn::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Target))
+		if (!P_CheckSight(self, Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -235,14 +235,14 @@ void Pawn::A_Chase(void)
 
 void Pawn::A_FaceTarget(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 
-	if (Target.Translucency)
+	if (Enemy.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -334,7 +334,7 @@ void Actor::A_Explode(void)
 	default:
 		break;
 	}
-	P_RadiusAttack(this, &Owner, damage, 0, 0);
+	RadiusAttack(damage, 0, 0);
 	HitFloorEffect();
 	if (Class == FireBomb)
 	{
@@ -375,7 +375,10 @@ void Pawn::DropItem(classid type, int amount, int chance)
 	A.Velocity.y = (Random() - Random()) * 35.0;
 	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 	A.bDropped = true;
-	A.Health = amount;
+	if (Ammo(A))
+	{
+		Ammo(A).AmmoCount = amount;
+	}
 }
 
 //==========================================================================
@@ -550,6 +553,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.24  2002/03/16 17:45:12  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

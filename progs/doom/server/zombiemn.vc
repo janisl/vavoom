@@ -48,19 +48,19 @@ void Actor::A_PosAttack(void)
 	int damage;
 	TVec dir;
 
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 
-	dir = AimLineAttack(this, Angles, MISSILERANGE);
+	dir = AimLineAttack(self, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 
 	PlaySound('PistolFire', CHAN_WEAPON);
 
 	damage = ((P_Random() % 5) + 1) * 3;
 
-	LineAttack(this, &dir, MISSILERANGE, damage);
+	LineAttack(self, dir, MISSILERANGE, damage);
 
 	Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -68,6 +68,9 @@ void Actor::A_PosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

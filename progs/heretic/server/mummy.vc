@@ -43,14 +43,14 @@ class Mummy:Pawn
 
 void A_MummyAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 		PlaySound('MumyAttack2', CHAN_WEAPON);
 		return;
 	}
@@ -140,19 +140,19 @@ void A_MummyAttack2(void)
 {
 	Actor A;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 		return;
 	}
-	A = *SpawnMissile(this, &Target, MummyMissile);
+	A = SpawnMissile(Enemy, MummyMissile);
 	if (A)
 	{
-		A.SpecialMobj1 = &Target;
+		A.Enemy = Enemy;
 	}
 }
 
@@ -224,12 +224,15 @@ defaultproperties
 
 void Actor::A_MummyFX1Seek(void)
 {
-	P_SeekerMissile(this, 10.0, 20.0);
+	SeekerMissile(10.0, 20.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.19  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

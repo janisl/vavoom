@@ -28,7 +28,7 @@
 //**************************************************************************
 
 float teleport_bbox[4];
-mobj_t *teleport_thing;
+Actor teleport_thing;
 float teleport_x;
 float teleport_y;
 
@@ -45,7 +45,7 @@ boolean PIT_StompThing(MapObject Other)
 	if (!Actor(Other).bShootable)
 		return true;
 
-	blockdist = Other.Radius + teleport_thing->Radius;
+	blockdist = Other.Radius + teleport_thing.Radius;
 
 	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
 		fabs(Other.Origin.y - teleport_y) >= blockdist)
@@ -55,32 +55,32 @@ boolean PIT_StompThing(MapObject Other)
 	}
 
 	// don't clip against self
-	if (Other == *teleport_thing)
+	if (Other == teleport_thing)
 		return true;
 
 #ifdef DOOM2
 	// monsters don't stomp things except on boss level
-	if (!(teleport_thing->bIsPlayer ||
+	if (!(teleport_thing.bIsPlayer ||
 		!strcmp(ptrtos(&level->mapname[0]), "MAP30")))
 #else
-	if (!teleport_thing->bIsPlayer)
+	if (!teleport_thing.bIsPlayer)
 #endif
 	{
 		return false;
 	}
 
-	Actor(Other).Damage(*teleport_thing, *teleport_thing, 10000);
+	Actor(Other).Damage(teleport_thing, teleport_thing, 10000);
 
 	return true;
 }
 
 //==========================================================================
 //
-//  P_TeleportMove
+//  Actor::TeleportMove
 //
 //==========================================================================
 
-boolean P_TeleportMove(mobj_t * thing, float x, float y)
+boolean Actor::TeleportMove(TVec org)
 {
 	int xl;
 	int xh;
@@ -90,16 +90,16 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 	int by;
 
 	// kill anything occupying the position
-	teleport_thing = thing;
+	teleport_thing = self;
 
-	teleport_x = x;
-	teleport_y = y;
+	teleport_x = org.x;
+	teleport_y = org.y;
 
 	// stomp on any things contacted
-	xl = MapBlock(x - thing->Radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(x + thing->Radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(y - thing->Radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(y + thing->Radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(org.x - Radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(org.x + Radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(org.y - Radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(org.y + Radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
@@ -108,60 +108,50 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(*thing);
-
-	thing->Origin.x = x;
-	thing->Origin.y = y;
-
-	P_SetThingPosition(*thing);
+	P_UnsetThingPosition(self);
+	Origin = org;
+	P_SetThingPosition(self);
 
 	return true;
 }
 
 //==========================================================================
 //
-//  P_Teleport
+//  Actor::Teleport
 //
 //==========================================================================
 
-int P_Teleport(mobj_t * thing, float x, float y, float angle)
+int Actor::Teleport(float x, float y, float angle)
 {
-	float oldx;
-	float oldy;
-	float oldz;
-	mobj_t *fog;
+	TVec oldOrg;
+	Actor fog;
 
-	oldx = thing->Origin.x;
-	oldy = thing->Origin.y;
-	oldz = thing->Origin.z;
+	oldOrg = Origin;
 
-	if (!P_TeleportMove(thing, x, y))
+	if (!TeleportMove(vector(x, y, Origin.z)))
 		return 0;
 
-	thing->Origin.z = thing->FloorZ;	//fixme: not needed?
-	if (thing->bIsPlayer)
-		thing->Player->ViewOrg.z =
-			thing->Origin.z + thing->Player->ViewHeight;
+	Origin.z = FloorZ;	//fixme: not needed?
+	if (bIsPlayer)
+		Player->ViewOrg.z = Origin.z + Player->ViewHeight;
 
 	// spawn teleport fog at source and destination
-	fog = P_SpawnMobj(oldx, oldy, oldz, TeleportFog);
-	fog->PlaySound('Teleport', CHAN_VOICE);
+	fog = Spawn(TeleportFog, oldOrg);
+	fog.PlaySound('Teleport', CHAN_VOICE);
 
-	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), thing->Origin.z, TeleportFog);
-
-	// emit sound, where?
-	fog->PlaySound('Teleport', CHAN_VOICE);
+	fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
+		y + 20.0 * sin(angle), Origin.z));
+	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	// don't move for a bit
-	if (thing->bIsPlayer)
+	if (bIsPlayer)
 	{
-		thing->ReactionTime = 0.5;
-		thing->Player->bFixAngle = true;
+		ReactionTime = 0.5;
+		Player->bFixAngle = true;
 	}
 
-	thing->Angles.yaw = angle;
-	thing->Velocity = vector(0.0, 0.0, 0.0);
+	Angles.yaw = angle;
+	Velocity = vector(0.0, 0.0, 0.0);
 	return 1;
 }
 
@@ -171,14 +161,14 @@ int P_Teleport(mobj_t * thing, float x, float y, float angle)
 //
 //==========================================================================
 
-int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
+int EV_Teleport(int tag, Actor thing, boolean usefog)
 {
 	int i;
 	Actor m;
 	sector_t *sector;
 
 	// don't teleport missiles
-	if (thing->bMissile)
+	if (thing.bMissile)
 		return 0;
 
 	FOREACH(Actor, m)
@@ -191,7 +181,7 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 		if (m.TID != tag)
 			continue;
 
-		return P_Teleport(thing, m.Origin.x, m.Origin.y, m.Angles.yaw);
+		return thing.Teleport(m.Origin.x, m.Origin.y, m.Angles.yaw);
 	}
 	return 0;
 }
@@ -268,8 +258,7 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 		}
 
 		// Attempt to teleport, aborting if blocked
-//		if (!thing.TeleportMove(newPos))
-		if (!P_TeleportMove(&thing, newPos.x, newPos.y))
+		if (!thing.TeleportMove(newPos))
 		{
 			return false;
 		}
@@ -303,6 +292,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.20  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

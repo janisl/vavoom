@@ -25,7 +25,7 @@
 
 #define	BODYQUESIZE				32
 
-mobj_t *bodyque[BODYQUESIZE];
+Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
 //==========================================================================
@@ -57,7 +57,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float y;
 	subsector_t *ss;
 	float an;
-	mobj_t *mo;
+	Actor A;
 	int mtnum;
 	int sfxnum;
 	int i;
@@ -82,17 +82,17 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	// flush an old corpse if needed 
 	if (bodyqueslot >= BODYQUESIZE)
-		P_RemoveMobj(bodyque[bodyqueslot % BODYQUESIZE]);
-	bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].mo;
+		bodyque[bodyqueslot % BODYQUESIZE].Remove();
+	bodyque[bodyqueslot % BODYQUESIZE] = *players[playernum].mo;
 	bodyqueslot++;
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
 	an = itof(45 * (mthing->angle / 45));
 
-	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight, TeleportFog);
-	mo->PlaySound('Teleport', CHAN_VOICE);	// don't start sound on first frame
+	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		ss->sector->floorheight));
+	A.PlaySound('Teleport', CHAN_VOICE);	// don't start sound on first frame
 
 	return true;
 }
@@ -113,7 +113,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	float y;
 	float z;
 
-	mobj_t *mobj;
+	Actor A;
 
 	p = &players[mthing->type - 1];
 
@@ -127,17 +127,17 @@ void P_SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, StrifePlayer);
+	A = Spawn(StrifePlayer, vector(x, y, z));
 
 	// set color translations for player sprites
-	mobj->Translation = p->Color;
+	A.Translation = p->Color;
 
-	mobj->Angles.yaw = itof(45 * (mthing->angle / 45));
-	mobj->Player = p;
-	mobj->bIsPlayer = true;
-	mobj->Health = p->Health;
+	A.Angles.yaw = itof(45 * (mthing->angle / 45));
+	A.Player = p;
+	A.bIsPlayer = true;
+	A.Health = p->Health;
 
-	p->mo = mobj;
+	p->mo = &A;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
 	p->DamageCount = 0;
@@ -145,7 +145,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->ExtraLight = 0;
 	p->FixedColormap = 0;
 	p->ViewHeight = VIEWHEIGHT;
-	p->ViewAngles = mobj->Angles;
+	p->ViewAngles = A.Angles;
 	p->bFixAngle = true;
 
 	// setup gun psprite
@@ -172,38 +172,21 @@ void P_SpawnPlayer(mthing_t * mthing)
 Actor PlayerPawn::SpawnPlayerMissile(classid type)
 {
 	Actor A;
-	TAVec angles;
-	TVec vforward;
+	TVec dir;
 
 	// see which target is to be aimed at
-	angles = Angles;
-	AimLineAttack(this, &angles, 16.0 * 64.0);
-	if (!linetarget)
-	{
-		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(this, &angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0 / 8.0);
-			AimLineAttack(this, &angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-			}
-		}
-	}
+	dir = Aim(self, 16.0 * 64.0);
 
 	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Owner = self;
-	avcpy(angles, A.Angles);
-	AngleVector(&angles, &vforward);
-	A.Velocity = vforward * A.Speed;
+	A.Instigator = self;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
 
-	CheckMissileSpawn(&A);
+	A.CheckMissileSpawn();
 
 	return A;
 }
@@ -211,6 +194,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.22  2002/03/16 17:48:58  dj_jl
 //  Added PlayerPawn class, beautifucation.
 //

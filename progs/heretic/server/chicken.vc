@@ -56,7 +56,7 @@ boolean UpdateChicken(int tics)
 	moType = SpecialCID;
 	P_UnsetThingPosition(self);
 	A = Spawn(moType, Origin);
-	if (P_TestMobjLocation(&A) == false)
+	if (A.TestLocation() == false)
 	{
 		// Didn't fit
 		A.Remove();
@@ -65,7 +65,7 @@ boolean UpdateChicken(int tics)
 		return false;
 	}
 	A.Angles.yaw = Angles.yaw;
-	A.Target = Target;
+	A.Enemy = Enemy;
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 	SetState(S_FREETARGMOBJ);
@@ -114,13 +114,13 @@ void A_ChicAttack(void)
 	{
 		return;
 	}
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, 1 + (P_Random() & 1));
+		Enemy.Damage(self, self, 1 + (P_Random() & 1));
 	}
 }
 
@@ -211,7 +211,7 @@ void Actor::A_Feathers(void)
 	for (i = 0; i < count; i++)
 	{
 		mo = Spawn(Feather, Origin + vector(0.0, 0.0, 20.0));
-		mo.Owner = self;
+		mo.Instigator = self;
 		mo.Velocity.x = (Random() - Random()) * 35.0;
 		mo.Velocity.y = (Random() - Random()) * 35.0;
 		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
@@ -222,6 +222,9 @@ void Actor::A_Feathers(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.19  2002/03/16 17:45:12  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

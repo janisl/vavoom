@@ -29,8 +29,6 @@
 
 #define BONUSADD	6
 
-void P_RemoveMobj(mobj_t * mobj);
-
 //==========================================================================
 //
 //	Actor::GiveAmmo
@@ -622,7 +620,7 @@ void Actor::TouchSpecial(Actor Toucher)
 
 	if (bCountItem)
 		Toucher.Player->ItemCount++;
-	P_RemoveMobj(this);
+	Remove();
 	Toucher.Player->BonusCount += BONUSADD;
 	Toucher.PlaySound(sound, CHAN_ITEM);
 }
@@ -630,6 +628,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

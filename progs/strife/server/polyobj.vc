@@ -572,12 +572,12 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
+void PolyThrustMobj(Actor A, TVec thrustDir, polyobj_t * po)
 {
 	float force;
 	PolyobjThinker pe;
 
-	if (!mobj->bShootable && !mobj->bIsPlayer)
+	if (!A.bShootable && !A.bIsPlayer)
 	{
 		return;
 	}
@@ -600,15 +600,15 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		force = 1.0;
 	}
 
-	mobj->Velocity += force * thrustDir;
+	A.Velocity += force * thrustDir;
 	if (po->crush)
 	{
 		TVec testPos;
 
-		testPos = mobj->Origin + force * thrustDir * frametime;
-		if (!mobj->CheckPosition(testPos))
+		testPos = A.Origin + force * thrustDir * frametime;
+		if (!A.CheckPosition(testPos))
 		{
-			mobj->Damage(none, none, 3);
+			A.Damage(none, none, 3);
 		}
 	}
 }
@@ -637,6 +637,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.11  2002/03/16 17:36:38  dj_jl
 //  Changed to use CheckPosition since object is not moving yet.
 //

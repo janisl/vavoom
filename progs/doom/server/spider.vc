@@ -51,7 +51,7 @@ void Actor::A_SpidRefire(void)
 	if (P_Random() < 10)
 		return;
 
-	if (!Target || Target.Health <= 0 || !P_CheckSight(self, Target))
+	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
 	{
 		SetState(SeeState);
 	}
@@ -60,6 +60,9 @@ void Actor::A_SpidRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.10  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

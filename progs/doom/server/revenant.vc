@@ -47,7 +47,7 @@
 
 void Actor::A_SkelWhoosh(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 	A_FaceTarget();
 	PlaySound('RavenantSwing', CHAN_WEAPON);
@@ -65,7 +65,7 @@ void Actor::A_SkelFist(void)
 {
 	int damage;
 
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
@@ -74,7 +74,7 @@ void Actor::A_SkelFist(void)
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
 		PlaySound('RavenantPunch', CHAN_WEAPON);
-		Target.Damage(self, self, damage);
+		Enemy.Damage(self, self, damage);
 	}
 }
 
@@ -88,18 +88,18 @@ void Actor::A_SkelFist(void)
 
 void Actor::A_SkelMissile(void)
 {
-	mobj_t *mo;
+	Actor A;
 
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
 	Origin.z += 16.0;	// so missile spawns higher
-	mo = SpawnMissile(this, &Target, RevenantTracer);
+	A = SpawnMissile(Enemy, RevenantTracer);
 	Origin.z -= 16.0;	// back to normal
 
-	mo->Origin = mo->Origin + mo->Velocity * 0.03;
-	mo->Target = Target;
+	A.Origin = A.Origin + A.Velocity * 0.03;
+	A.Enemy = Enemy;
 }
 
 //==========================================================================
@@ -134,10 +134,10 @@ void Actor::A_Tracer(void)
 		A.StateTime = 0.1;
 
 	// adjust direction
-	if (!Target || Target.Health <= 0)
+	if (!Enemy || Enemy.Health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter(Target) - Origin);
+	wishdir = Normalize(MobjCenter(Enemy) - Origin);
 	currdir = Normalize(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
@@ -175,6 +175,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.10  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

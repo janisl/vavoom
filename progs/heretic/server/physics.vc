@@ -176,8 +176,8 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
@@ -214,8 +214,8 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
@@ -226,12 +226,10 @@ void Actor::SlideMove(void)
 			newx = Velocity.x * frametime * bestslidefrac;
 			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!P_TryMove(this, Origin.x + newx, Origin.y + newy))
+			if (!TryMove(Origin.x + newx, Origin.y + newy))
 			{
-				if (!P_TryMove(this, Origin.x,
-						Origin.y + Velocity.y * frametime))
-					P_TryMove(this, Origin.x + Velocity.x * frametime,
-						Origin.y);
+				if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+					TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 				return;
 			}
 		}
@@ -251,7 +249,7 @@ void Actor::SlideMove(void)
 			bestslideline->normal, 1.0);
 
 	}
-	while (!P_TryMove(this, Origin.x + Velocity.x * frametime,
+	while (!TryMove(Origin.x + Velocity.x * frametime,
 			Origin.y + Velocity.y * frametime));
 }
 
@@ -526,7 +524,7 @@ void Actor::XYMovement(void)
 			xmove = 0.0;
 			ymove = 0.0;
 		}
-		if (!P_TryMove(this, ptryx, ptryy))
+		if (!TryMove(ptryx, ptryy))
 		{
 			// Blocked move
 			if (bSlide)
@@ -547,7 +545,7 @@ void Actor::XYMovement(void)
 					}
 					else
 					{
-						P_RemoveMobj(this);
+						Remove();
 					}
 					return;
 				}
@@ -595,13 +593,13 @@ void Actor::ZMovement(void)
 	// adjust height
 	//
 	Origin.z += Velocity.z * frametime;
-	if (bFloat && Target)
+	if (bFloat && Enemy)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist(self, Target);
-			delta = Target.Origin.z + Height / 2.0 - Origin.z;
+			dist = MobjDist(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -688,7 +686,7 @@ void Actor::ZMovement(void)
 				}
 				else
 				{
-					P_RemoveMobj(this);
+					Remove();
 				}
 				return;
 			}
@@ -712,7 +710,7 @@ boolean Actor::BlasterPhysics(void)
 	float xfrac;
 	float yfrac;
 	float zfrac;
-	float z;
+	TVec org;
 	boolean changexy;
 
 	// Handle movement
@@ -727,7 +725,7 @@ boolean Actor::BlasterPhysics(void)
 		{
 			if (changexy)
 			{
-				if (!P_TryMove(this, Origin.x + xfrac, Origin.y + yfrac))
+				if (!TryMove(Origin.x + xfrac, Origin.y + yfrac))
 				{
 					// Blocked move
 					ExplodeMissile();
@@ -752,12 +750,13 @@ boolean Actor::BlasterPhysics(void)
 			}
 			if (changexy && (P_Random() < 64))
 			{
-				z = Origin.z - 8.0;
-				if (z < FloorZ)
+				org = Origin;
+				org.z = Origin.z - 8.0;
+				if (org.z < FloorZ)
 				{
-					z = FloorZ;
+					org.z = FloorZ;
 				}
-				P_SpawnMobj(Origin.x, Origin.y, z, BlasterSmoke);
+				Spawn(BlasterSmoke, org);
 			}
 		}
 	}
@@ -909,6 +908,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.27  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

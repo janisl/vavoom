@@ -259,19 +259,19 @@ void Cheat_Gimme(void)
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		P_GivePower(&players[0], pw_invulnerability);
+		PlayerPawn(*players[0].mo).GivePower(pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-		P_GivePower(&players[0], pw_strength);
+		PlayerPawn(*players[0].mo).GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-		P_GivePower(&players[0], pw_invisibility);
+		PlayerPawn(*players[0].mo).GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-		P_GivePower(&players[0], pw_ironfeet);
+		PlayerPawn(*players[0].mo).GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-		P_GivePower(&players[0], pw_infrared);
+		PlayerPawn(*players[0].mo).GivePower(pw_infrared);
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		P_GiveItem(&players[0], IT_ALL_MAP);
+		PlayerPawn(*players[0].mo).GiveItem(IT_ALL_MAP);
 
 	// Health
 	if ((i1 & GIMME_HEALTH) && (players[0].Health < 100))
@@ -337,6 +337,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.11  2002/03/12 19:21:24  dj_jl
 //  No need for linefeed in client-printing
 //

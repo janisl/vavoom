@@ -310,7 +310,7 @@ void FireWeapon(player_t * player)
 
 	player->mo->SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	P_NoiseAlert(player->mo, player->mo);
+	P_NoiseAlert(*player->mo, *player->mo);
 }
 
 //===========================================================================
@@ -319,7 +319,7 @@ void FireWeapon(player_t * player)
 //
 //===========================================================================
 
-void GunShot(mobj_t * mo, int accurate, TVec dir)
+void GunShot(Actor A, int accurate, TVec dir)
 {
 	int damage;
 
@@ -336,7 +336,7 @@ void GunShot(mobj_t * mo, int accurate, TVec dir)
 
 	damage = 5 * (P_Random() % 3 + 1);
 
-	LineAttack(mo, &dir, MISSILERANGE, damage);
+	LineAttack(A, dir, MISSILERANGE, damage);
 }
 
 //***************************************************************************
@@ -575,16 +575,16 @@ void Weapon::A_Punch(void)
 	aimAngles = Player->mo->Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->mo, aimAngles, MELEERANGE);
-	LineAttack(Player->mo, &dir, MELEERANGE, damage);
+	dir = AimLineAttack(*Player->mo, aimAngles, MELEERANGE);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
 		Player->mo->PlaySound('Punch', CHAN_WEAPON);
 		Player->mo->Angles.yaw = atan2(
-			linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -608,8 +608,8 @@ void Weapon::A_Saw(void)
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = AimLineAttack(Player->mo, aimAng, MELEERANGE + 0.00001);
-	LineAttack(Player->mo, &dir, MELEERANGE + 0.00001, damage);
+	dir = AimLineAttack(*Player->mo, aimAng, MELEERANGE + 0.00001);
+	LineAttack(*Player->mo, dir, MELEERANGE + 0.00001, damage);
 
 	if (!linetarget)
 	{
@@ -619,8 +619,8 @@ void Weapon::A_Saw(void)
 	Player->mo->PlaySound('ChainsawHit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(linetarget->Origin.y - Player->mo->Origin.y,
-		linetarget->Origin.x - Player->mo->Origin.x);
+	angle = atan2(linetarget.Origin.y - Player->mo->Origin.y,
+		linetarget.Origin.x - Player->mo->Origin.x);
 	if (AngleMod360(angle - Player->mo->Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player->mo->Angles.yaw) < -90.0 / 20.0)
@@ -657,8 +657,8 @@ void Weapon::A_FirePistol(void)
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	dir = Aim(Player->mo, 16.0 * 64.0);
-	GunShot(Player->mo, !Player->Refire, dir);
+	dir = Aim(*Player->mo, 16.0 * 64.0);
+	GunShot(*Player->mo, !Player->Refire, dir);
 	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
@@ -680,10 +680,10 @@ void Weapon::A_FireShotgun(void)
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	dir = Aim(Player->mo, 16.0 * 64.0);
+	dir = Aim(*Player->mo, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(Player->mo, false, dir);
+		GunShot(*Player->mo, false, dir);
 	}
 	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -711,7 +711,7 @@ void Weapon::A_FireShotgun2(void)
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	aimDir = Aim(Player->mo, 16.0 * 64.0);
+	aimDir = Aim(*Player->mo, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -719,7 +719,7 @@ void Weapon::A_FireShotgun2(void)
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(Player->mo, &dir, MISSILERANGE, damage);
+		LineAttack(*Player->mo, dir, MISSILERANGE, damage);
 	}
 	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -802,8 +802,8 @@ void Weapon::A_FireCGun(void)
 
 	SetPsprite(Player, ps_flash, FlashState + StateNum - S_CHAIN1);
 
-	dir = Aim(Player->mo, 16.0 * 64.0);
-	GunShot(Player->mo, !Player->Refire, dir);
+	dir = Aim(*Player->mo, 16.0 * 64.0);
+	GunShot(*Player->mo, !Player->Refire, dir);
 	Player->mo->Effects |= EF_DL_MUZZLEFLASH;
 }
 
@@ -881,14 +881,14 @@ void Actor::A_BFGSpray(void)
 
 		// target is the originator (player)
 		//  of the missile
-		AimLineAttack(&Owner, aimAng, 16.0 * 64.0);
+		AimLineAttack(Instigator, aimAng, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			continue;
 		}
 
-		emo = Spawn(ExtraBFG, linetarget->Origin +
-			vector(0.0, 0.0, linetarget->Height / 4.0));
+		emo = Spawn(ExtraBFG, linetarget.Origin +
+			vector(0.0, 0.0, linetarget.Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -901,13 +901,16 @@ void Actor::A_BFGSpray(void)
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget->Damage(Owner, Owner, damage);
+		linetarget.Damage(Instigator, Instigator, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.22  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

@@ -910,7 +910,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(Actor t1, TVec * dir, float distance, int damage)
+int LineAttack(Actor t1, TVec dir, float distance, int damage)
 {
 	TVec dst;
 
@@ -920,7 +920,7 @@ int LineAttack(Actor t1, TVec * dir, float distance, int damage)
 	shoot_origin = t1.Origin;
 	shoot_origin.z += t1.Height * 0.5 + 8.0 - t1.FloorClip;
 
-	shoot_dir = *dir;
+	shoot_dir = dir;
 	shoot_range = distance;
 
 	dst = shoot_origin + shoot_range * shoot_dir;
@@ -1105,6 +1105,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.25  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

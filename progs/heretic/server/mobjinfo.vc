@@ -29,268 +29,17 @@
 //**
 //**************************************************************************
 
-//==========================================================================
-//
-//	ItemHealthPotion
-//
-//==========================================================================
-
-class ItemHealthPotion:Actor
-	__mobjinfo__(81)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ITEM_PTN1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemShield1
-//
-//==========================================================================
-
-class ItemShield1:Actor
-	__mobjinfo__(85)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ITEM_SHLD1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemShield2
-//
-//==========================================================================
-
-class ItemShield2:Actor
-	__mobjinfo__(31)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ITEM_SHD2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemBagOfHolding
-//
-//==========================================================================
-
-class ItemBagOfHolding:Actor
-	__mobjinfo__(8)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ITEM_BAGH1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemMap
-//
-//==========================================================================
-
-class ItemMap:Actor
-	__mobjinfo__(35)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ITEM_SPMP1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactInvisibility
-//
-//==========================================================================
-
-class ArtifactInvisibility:Actor
-	__mobjinfo__(75)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		Translucency = 33;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_INVS1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactHealthFlask
-//
-//==========================================================================
-
-class ArtifactHealthFlask:Actor
-	__mobjinfo__(82)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_PTN2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactFly
-//
-//==========================================================================
-
-class ArtifactFly:Actor
-	__mobjinfo__(83)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_SOAR1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactInvulnerability
-//
-//==========================================================================
-
-class ArtifactInvulnerability:Actor
-	__mobjinfo__(84)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_INVU1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactTomeOfPower
-//
-//==========================================================================
-
-class ArtifactTomeOfPower:Actor
-	__mobjinfo__(86)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_PWBK1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactEgg
-//
-//==========================================================================
-
-class ArtifactEgg:Actor
-	__mobjinfo__(30)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_EGGC1;
-	}
-};
-
+class ItemHealthPotion;
+class ItemShield1;
+class ItemShield2;
+class ItemBagOfHolding;
+class ItemMap;
+class ArtifactInvisibility;
+class ArtifactHealthFlask;
+class ArtifactFly;
+class ArtifactInvulnerability;
+class ArtifactTomeOfPower;
+class ArtifactEgg;
 //==========================================================================
 //
 //	EggMissile
@@ -319,78 +68,9 @@ class EggMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactSuperHeal
-//
-//==========================================================================
-
-class ArtifactSuperHeal:Actor
-	__mobjinfo__(32)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_SPHL1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactTorch
-//
-//==========================================================================
-
-class ArtifactTorch:Actor
-	__mobjinfo__(33)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_TRCH1;
-	}
-};
-
-//==========================================================================
-//
-//	ArtifactFireBomb
-//
-//==========================================================================
-
-class ArtifactFireBomb:Actor
-	__mobjinfo__(34)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_FBMB1;
-	}
-};
-
+class ArtifactSuperHeal;
+class ArtifactTorch;
+class ArtifactFireBomb;
 //==========================================================================
 //
 //	FireBomb
@@ -414,30 +94,7 @@ class FireBomb:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ArtifactTeleport
-//
-//==========================================================================
-
-class ArtifactTeleport:Actor
-	__mobjinfo__(36)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bCountItem = true;
-		bNoPassMobj = true;
-		bFloatBob = true;
-		SpawnState = S_ARTI_ATLP1;
-	}
-};
-
+class ArtifactTeleport;
 //==========================================================================
 //
 //	Pod
@@ -1468,28 +1125,7 @@ class BeakPuff:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponGauntlets
-//
-//==========================================================================
-
-class ItemWeaponGauntlets:Actor
-	__mobjinfo__(2005)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_WGNT;
-	}
-};
-
+class ItemWeaponGauntlets;
 //==========================================================================
 //
 //	GauntletPuff1
@@ -1536,28 +1172,7 @@ class GauntletPuff2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponBlaster
-//
-//==========================================================================
-
-class ItemWeaponBlaster:Actor
-	__mobjinfo__(53)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_BLSR;
-	}
-};
-
+class ItemWeaponBlaster;
 //==========================================================================
 //
 //	BlasterFX1
@@ -1687,28 +1302,7 @@ class BlasterPuff2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponMace
-//
-//==========================================================================
-
-class ItemWeaponMace:Actor
-	__mobjinfo__(2002)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_WMCE;
-	}
-};
-
+class ItemWeaponMace;
 //==========================================================================
 //
 //	MaceFX1
@@ -1827,28 +1421,7 @@ class MaceFX4:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponSkullRod
-//
-//==========================================================================
-
-class ItemWeaponSkullRod:Actor
-	__mobjinfo__(2004)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_WSKL;
-	}
-};
-
+class ItemWeaponSkullRod;
 //==========================================================================
 //
 //	HornRodMissile1
@@ -2127,28 +1700,7 @@ class GoldWandPuff2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponPhoenixRod
-//
-//==========================================================================
-
-class ItemWeaponPhoenixRod:Actor
-	__mobjinfo__(2003)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_WPHX;
-	}
-};
-
+class ItemWeaponPhoenixRod;
 //==========================================================================
 //
 //	PhoenixFX1
@@ -2236,28 +1788,7 @@ class PhoenixFX2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemWeaponCrossbow
-//
-//==========================================================================
-
-class ItemWeaponCrossbow:Actor
-	__mobjinfo__(2001)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_WBOW;
-	}
-};
-
+class ItemWeaponCrossbow;
 //==========================================================================
 //
 //	CrossbowFX1
@@ -3195,366 +2726,21 @@ class MinotaurFloorFire2:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ItemKeyGreen
-//
-//==========================================================================
-
-class ItemKeyGreen:Actor
-	__mobjinfo__(73)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AKYY1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKeyBlue
-//
-//==========================================================================
-
-class ItemKeyBlue:Actor
-	__mobjinfo__(79)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_BKYY1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemKeyYellow
-//
-//==========================================================================
-
-class ItemKeyYellow:Actor
-	__mobjinfo__(80)
-{
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (deathmatch)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
-
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_CKYY1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoGoldWandWimpy
-//
-//==========================================================================
-
-class ItemAmmoGoldWandWimpy:Actor
-	__mobjinfo__(10)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMG1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoGoldWandHefty
-//
-//==========================================================================
-
-class ItemAmmoGoldWandHefty:Actor
-	__mobjinfo__(12)
-{
-	defaultproperties
-	{
-		Health = 50;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMG2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoMaceWimpy
-//
-//==========================================================================
-
-class ItemAmmoMaceWimpy:Actor
-	__mobjinfo__(13)
-{
-	defaultproperties
-	{
-		Health = 20;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMM1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoMaceHefty
-//
-//==========================================================================
-
-class ItemAmmoMaceHefty:Actor
-	__mobjinfo__(16)
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMM2;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoCrossbowWimpy
-//
-//==========================================================================
-
-class ItemAmmoCrossbowWimpy:Actor
-	__mobjinfo__(18)
-{
-	defaultproperties
-	{
-		Health = 5;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMC1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoCrossbowHefty
-//
-//==========================================================================
-
-class ItemAmmoCrossbowHefty:Actor
-	__mobjinfo__(19)
-{
-	defaultproperties
-	{
-		Health = 20;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMC2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoSkullRodWimpy
-//
-//==========================================================================
-
-class ItemAmmoSkullRodWimpy:Actor
-	__mobjinfo__(20)
-{
-	defaultproperties
-	{
-		Health = 20;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMS1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoSkullRodHefty
-//
-//==========================================================================
-
-class ItemAmmoSkullRodHefty:Actor
-	__mobjinfo__(21)
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMS2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoPhoenixWimpy
-//
-//==========================================================================
-
-class ItemAmmoPhoenixWimpy:Actor
-	__mobjinfo__(22)
-{
-	defaultproperties
-	{
-		Health = 1;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMP1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoPhoenixHefty
-//
-//==========================================================================
-
-class ItemAmmoPhoenixHefty:Actor
-	__mobjinfo__(23)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMP2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoBlasterWimpy
-//
-//==========================================================================
-
-class ItemAmmoBlasterWimpy:Actor
-	__mobjinfo__(54)
-{
-	defaultproperties
-	{
-		Health = 10;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMB1_1;
-	}
-};
-
-//==========================================================================
-//
-//	ItemAmmoBlasterHefty
-//
-//==========================================================================
-
-class ItemAmmoBlasterHefty:Actor
-	__mobjinfo__(55)
-{
-	defaultproperties
-	{
-		Health = 25;
-		Radius = 20.0;
-		Height = 32.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
-		SpawnState = S_AMB2_1;
-	}
-};
-
+class ItemKeyGreen;
+class ItemKeyBlue;
+class ItemKeyYellow;
+class ItemAmmoGoldWandWimpy;
+class ItemAmmoGoldWandHefty;
+class ItemAmmoMaceWimpy;
+class ItemAmmoMaceHefty;
+class ItemAmmoCrossbowWimpy;
+class ItemAmmoCrossbowHefty;
+class ItemAmmoSkullRodWimpy;
+class ItemAmmoSkullRodHefty;
+class ItemAmmoPhoenixWimpy;
+class ItemAmmoPhoenixHefty;
+class ItemAmmoBlasterWimpy;
+class ItemAmmoBlasterHefty;
 //==========================================================================
 //
 //	SoundWind
@@ -3604,9 +2790,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/03/20 19:07:46  dj_jl
+//	Got rid of a lots of legacy, beautification.
+//
 //	Revision 1.25  2002/03/16 17:45:13  dj_jl
 //	Added Pawn and PlayerPawn classes, beautification.
-//
+//	
 //	Revision 1.24  2002/03/09 17:57:01  dj_jl
 //	Got rid of function pointers, made most of the physics functions native.
 //	

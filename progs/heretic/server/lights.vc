@@ -850,7 +850,7 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 //
 //==========================================================================
 
-class misc_static_light:mobj_t
+class misc_static_light:Actor
 	__mobjinfo__(1502)
 {
 	void OnMapSpawn(mthing_t * mthing)
@@ -872,7 +872,7 @@ class misc_static_light:mobj_t
 //
 //==========================================================================
 
-class misc_static_rgb_light:mobj_t
+class misc_static_rgb_light:Actor
 	__mobjinfo__(1503)
 {
 	void OnMapSpawn(mthing_t * mthing)
@@ -892,6 +892,9 @@ class misc_static_rgb_light:mobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.11  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

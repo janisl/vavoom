@@ -25,46 +25,46 @@
 
 //==========================================================================
 //
-//  A_Look
+//  Actor::A_Look
 //
 //  Stay in state until a player is sighted
 //
 //==========================================================================
 
-void A_Look(mobj_t * actor)
+void Actor::A_Look(void)
 {
 	Actor targ;
 	int sound;
 
-	actor->Threshold = 0;	// any shot will wake up
-	targ = Actor(actor->Sector->SoundTarget);
+	Threshold = 0;	// any shot will wake up
+	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
-		actor->Target = targ;
+		Enemy = targ;
 
-		if (actor->bAmbush)
+		if (bAmbush)
 		{
-			if (!P_CheckSight(*actor, actor->Target))
+			if (!P_CheckSight(self, Enemy))
 			{
-				if (!P_LookForPlayers(actor, false))
+				if (!LookForPlayers(false))
 					return;
 			}
 		}
 	}
 	else
 	{
-		if (!P_LookForPlayers(actor, false))
+		if (!LookForPlayers(false))
 			return;
 	}
 
 	// go into chase state
-	if (actor->SightSound)
+	if (SightSound)
 	{
-		actor->PlaySound(actor->SightSound, CHAN_VOICE);
+		PlaySound(SightSound, CHAN_VOICE);
 	}
 
-	actor->SetState(actor->SeeState);
+	SetState(SeeState);
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ void Actor::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Target || Target.Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -113,10 +113,10 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
-		if (P_LookForPlayers(this, true))
+		if (LookForPlayers(true))
 		{
 			return;	// got a new target
 		}
@@ -130,13 +130,13 @@ void Actor::A_Chase(void)
 		bJustAttacked = false;
 		if (!fastparm)
 		{
-			P_NewChaseDir(this);
+			NewChaseDir();
 		}
 		return;
 	}
 
 	// check for melee attack
-	if (MeleeState && P_CheckMeleeRange(this))
+	if (MeleeState && CheckMeleeRange())
 	{
 		if (AttackSound)
 		{
@@ -151,7 +151,7 @@ void Actor::A_Chase(void)
 	{
 		if (fastparm || !MoveCount)
 		{
-			if (P_CheckMissileRange(this))
+			if (CheckMissileRange())
 			{
 				SetState(MissileState);
 				bJustAttacked = true;
@@ -163,17 +163,17 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Target))
+		if (!P_CheckSight(self, Enemy))
 		{
-			if (P_LookForPlayers(this, true))
+			if (LookForPlayers(true))
 				return;	// got a new target
 		}
 	}
 
 	// chase towards player
-	if (--MoveCount < 0 || !P_Move(this))
+	if (--MoveCount < 0 || !StepMove())
 	{
-		P_NewChaseDir(this);
+		NewChaseDir();
 	}
 
 	// make active sound
@@ -185,24 +185,23 @@ void Actor::A_Chase(void)
 
 //==========================================================================
 //
-//  A_FaceTarget
+//  Actor::A_FaceTarget
 //
 //==========================================================================
 
-void A_FaceTarget(mobj_t * actor)
+void Actor::A_FaceTarget(void)
 {
-	if (!actor->Target)
+	if (!Enemy)
 		return;
 
-	actor->bAmbush = false;
+	bAmbush = false;
 
-	actor->Angles.yaw = atan2(actor->Target.Origin.y - actor->Origin.y,
-		actor->Target.Origin.x - actor->Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
+		Enemy.Origin.x - Origin.x);
 
-	if (actor->Target.Translucency)
+	if (Enemy.Translucency)
 	{
-		actor->Angles.yaw = AngleMod360(actor->Angles.yaw +
-			(Random() - Random()) * 45.0);
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
 }
 
@@ -222,16 +221,16 @@ void Actor::A_Pain(void)
 
 //==========================================================================
 //
-//  A_Explode
+//  Actor::A_Explode
 //
 //  Rocket and barrel explosion.
 //
 //==========================================================================
 
-void A_Explode(mobj_t * thingy)
+void Actor::A_Explode(void)
 {
-	thingy->Translucency = 50;
-	P_RadiusAttack(thingy, &thingy->Target, 128, 0, 0);
+	Translucency = 50;
+	RadiusAttack(128, 0, 0);
 }
 
 //==========================================================================
@@ -252,15 +251,15 @@ void Actor::A_Scream(void)
 
 //==========================================================================
 //
-//  A_XScream
+//  Actor::A_XScream
 //
 //  Explode death sound.
 //
 //==========================================================================
 
-void A_XScream(mobj_t * actor)
+void Actor::A_XScream(void)
 {
-	actor->PlaySound('Slop', CHAN_VOICE);
+	PlaySound('Slop', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -303,6 +302,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.18  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

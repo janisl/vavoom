@@ -48,19 +48,19 @@ boolean Actor::CheckMeleeRange(void)
 {
 	float dist;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return false;
 	}
 
-	dist = MobjDist(Target, self);
+	dist = MobjDist(Enemy, self);
 
-	if (dist >= MELEERANGE - 20.0 + Target.Radius)
+	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
 	{
 		return false;
 	}
 
-	if (!P_CheckSight(self, Target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -97,7 +97,7 @@ boolean Actor::CheckMissileRange(void)
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(self, Target) - 64.0;
+	dist = MobjDist(self, Enemy) - 64.0;
 
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -196,7 +196,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 			}
 		}
 
-		Target = mo;
+		Enemy = mo;
 		return true;
 	}
 	return false;
@@ -250,7 +250,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 			}
 		}
 
-		Target = mo;
+		Enemy = mo;
 		return true;
 	}
 	return false;
@@ -328,7 +328,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 			}
 		}
 
-		Target = *P->mo;
+		Enemy = *P->mo;
 		return true;
 	}
 
@@ -362,7 +362,7 @@ boolean Actor::StepMove(void)
 	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
 	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
-	if (!P_TryMove(this, tryx, tryy))
+	if (!TryMove(tryx, tryy))
 	{
 		// open any specials
 		if (bFloat && floatok)
@@ -388,7 +388,7 @@ boolean Actor::StepMove(void)
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_ActivateLine(ld, this, 0, SPAC_USE))
+			if (P_ActivateLine(ld, self, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -447,7 +447,7 @@ void Actor::NewChaseDir(void)
 
 	int turnaround;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		Error("P_NewChaseDir: called with no target");
 	}
@@ -455,8 +455,8 @@ void Actor::NewChaseDir(void)
 	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = Target.Origin.x - Origin.x;
-	deltay = Target.Origin.y - Origin.y;
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -562,6 +562,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.18  2002/03/16 17:44:01  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

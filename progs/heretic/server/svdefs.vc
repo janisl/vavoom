@@ -210,7 +210,6 @@ class Actor:Entity
 	bool bDropOff;		// allow jumps from high places
 	bool bPickUp;		// for players to pick up items
 	bool bFloat;		// allow moves to any height, no gravity
-	bool bTeleport;		// don't cross lines or look at heights
 	bool bMissile;		// don't hit same species, explode on block
 	bool bDropped;		// dropped by a demon, not level spawned
 	bool bNoBlood;		// don't bleed when shot (use puff)
@@ -251,14 +250,15 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or NULL).
-	Actor Target;
+	Actor Enemy;
 	// The originator for missiles.
-	Actor Owner;
+	Actor Instigator;
+
+	//	Generator for pods
+	Actor Generator;
 
 	int Special1;	// Special info
 	int Special2;	// Special info
-	mobj_t *SpecialMobj1;
-	mobj_t *SpecialMobj2;
 	classid SpecialCID;
 
 	int MissileDamage;	// For missiles
@@ -282,24 +282,12 @@ class Actor:Entity
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
 
-	boolean GiveAmmo(int ammo, int count);
-	boolean GiveWeapon(int weapon);
-	boolean GiveBody(int num);
-	boolean GiveArmor(int armortype);
-	boolean GiveKey(int key);
-	boolean GivePower(int power);
-	boolean GiveItem(int item);
-	boolean GiveArtifact(int arti, Actor mo);
-	void TouchSpecial(Actor Toucher);
-
-	void SetDormantArtifact(void);
-	void HideSpecialThing(void);
-
+	boolean TestLocation(void);
 	boolean	Touch(MapObject Other);
+	void PushLine(void);
+	boolean TryMove(float x, float y);
 
 	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
 
 	int GetFloorType(void);
 	void SetOrigin2(TVec origin);
@@ -321,6 +309,9 @@ class Actor:Entity
 	void Thrust(float angle, float move);
 	void NightmareRespawn(void);
 
+	boolean HeightClip(void);
+	void RadiusAttack(int damage, int distance, boolean damageSource);
+
 	// Physics
 	void SlideMove(void);
 #if 0
@@ -332,6 +323,16 @@ class Actor:Entity
 	boolean BlasterPhysics(void);
 	boolean Physics(void);
 
+	boolean CheckMissileSpawn(void);
+	Actor SpawnMissile(Actor dest, classid type);
+	Actor SpawnMissileAngles(classid type, float yaw, float pitch);
+	Actor SpawnPlayerMissile(classid type);
+	Actor SpawnPlayerMissileAngle(classid type, float angle);
+	boolean SeekerMissile(float thresh, float turnMax);
+
+	boolean TeleportMove(TVec newOrg);
+	boolean Teleport(float x, float y, float angle);
+
 	boolean CheckMeleeRange(void);
 	boolean CheckMissileRange(void);
 	boolean LookForMonsters(void);
@@ -342,11 +343,6 @@ class Actor:Entity
 
 	// Action functions
 	void A_FreeTargMobj(void);
-	void A_RestoreSpecialThing1(void);
-	void A_RestoreSpecialThing2(void);
-	void A_HideThing(void);
-	void A_UnHideThing(void);
-	void A_RestoreArtifact(void);
 	void A_Scream(void);
 	void A_Explode(void);
 	void A_PodPain(void);
@@ -420,6 +416,20 @@ class PlayerPawn:Pawn
 {
 	int Attack2State;
 	int FireDeathState;
+
+	boolean GiveAmmo(int ammo, int count);
+	boolean GiveWeapon(int weapon);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype);
+	boolean GiveKey(int key);
+	boolean GivePower(int power);
+	boolean GiveItem(int item);
+	boolean GiveArtifact(int arti);
+
+	void InventoryLeft(void);
+	void InventoryRight(void);
+	void InventoryUse(void);
+	void InventoryTick(float deltaTime);
 
 	void ThrustPlayer(float angle, float move, float deltaTime);
 	void CalcHeight(float deltaTime);
@@ -714,8 +724,6 @@ addfields player_t
 
 	sb_stats_t Stats;
 
-	int InventoryTics;
-
 	int ArtifactFlash;
 	int InvPtr;
 	int InvCurPos;
@@ -752,6 +760,7 @@ addfields player_t
 
 	float FlyHeight;
 
+	float InventoryTime;
 	int ArtifactCount;
 
 	// Refired shots are less accurate.
@@ -769,7 +778,7 @@ addfields player_t
 	boolean WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
-	mobj_t *Attacker;
+	Actor *Attacker;
 
 	// For screen flashing (red or bright).
 	int DamageCount;
@@ -783,8 +792,8 @@ addfields player_t
 	int ArmorType;
 
 	int ChickenPeck;	// chicken peck countdown
-	mobj_t *Rain1;	// active rain maker 1
-	mobj_t *Rain2;	// active rain maker 2
+	Actor *Rain1;	// active rain maker 1
+	Actor *Rain2;	// active rain maker 2
 
 	int NewTorch;	// used in the torch flicker effect.
 	int NewTorchDelta;
@@ -798,7 +807,7 @@ addfields player_t
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = NUM_STATS + 9 + 2 * NUMARTIFACTS;
+int num_stats = NUM_STATS + 7 + 2 * NUMARTIFACTS;
 
 float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
@@ -830,6 +839,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.27  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

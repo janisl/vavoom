@@ -51,18 +51,18 @@ int FloorFireAttackState2;
 
 void A_MinotaurAtk1(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('StaffHit2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(4));
-		if (Target.bIsPlayer)
+		Enemy.Damage(self, self, HITDICE(4));
+		if (Enemy.bIsPlayer)
 		{
 			// Squish the player
-			Target.Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -16.0;
 		}
 	}
 }
@@ -79,14 +79,14 @@ void A_MinotaurDecide(void)
 {
 	float dist;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('MinotaurSight', CHAN_VOICE);
-	dist = MobjDist(self, Target);
-	if (Target.Origin.z + Target.Height > Origin.z &&
-		Target.Origin.z + Target.Height < Origin.z + Height &&
+	dist = MobjDist(self, Enemy);
+	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
+		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
@@ -94,10 +94,10 @@ void A_MinotaurDecide(void)
 		SetState(ChargeAttackState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(Target.Origin - Origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(Enemy.Origin - Origin) * MNTR_CHARGE_SPEED;
 		Special1 = 35 / 2;	// Charge duration
 	}
-	else if (Target.Origin.z == Target.FloorZ &&
+	else if (Enemy.Origin.z == Enemy.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
@@ -127,29 +127,29 @@ void A_MinotaurAtk2(void)
 	float angle;
 	TAVec ang;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound('MinotaurAttack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(5));
+		Enemy.Damage(self, self, HITDICE(5));
 		return;
 	}
-	A = *SpawnMissile(this, &Target, MinotaurMissile);
+	A = SpawnMissile(Enemy, MinotaurMissile);
 	if (A)
 	{
 		A.PlaySound('MinotaurAttack2', CHAN_WEAPON);
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
-		SpawnMissileAngles(this, MinotaurMissile,
+		SpawnMissileAngles(MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(this, MinotaurMissile,
+		SpawnMissileAngles(MinotaurMissile,
 			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
-		SpawnMissileAngles(this, MinotaurMissile,
+		SpawnMissileAngles(MinotaurMissile,
 			AngleMod360(angle - (45.0 / 16.0)), ang.pitch);
-		SpawnMissileAngles(this, MinotaurMissile,
+		SpawnMissileAngles(MinotaurMissile,
 			AngleMod360(angle + (45.0 / 16.0)), ang.pitch);
 	}
 }
@@ -166,22 +166,22 @@ void A_MinotaurAtk3(void)
 {
 	Actor A;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(5));
-		if (Target.Player)
+		Enemy.Damage(self, self, HITDICE(5));
+		if (Enemy.Player)
 		{
 			// Squish the player
-			Target.Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -16.0;
 		}
 	}
 	else
 	{
-		A = *SpawnMissile(this, &Target, MinotaurFloorFire);
+		A = SpawnMissile(Enemy, MinotaurFloorFire);
 		if (A != none)
 		{
 			A.PlaySound('MinotaurAttack1', CHAN_VOICE);
@@ -304,14 +304,17 @@ void Actor::A_MntrFloorFire(void)
 	i1 = Origin.x + (Random() - Random()) * 4.0;
 	i2 = Origin.y + (Random() - Random()) * 4.0;
 	mo = Spawn(MinotaurFloorFire2, vector(i1, i2, ONFLOORZ));
-	mo.Owner = Owner;
+	mo.Instigator = Instigator;
 	mo.Velocity.x = 0.00001;	// Force block checking
-	CheckMissileSpawn(&mo);
+	mo.CheckMissileSpawn();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.23  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

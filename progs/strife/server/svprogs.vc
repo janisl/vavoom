@@ -29,7 +29,6 @@
 
 #include <server.vc>
 
-#define mobj_t Actor
 #include "../strfdefs.vc"
 #include "svdefs.vc"
 
@@ -72,6 +71,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.11  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

@@ -824,8 +824,8 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 	Actor botmo;
 	TVec hit_point;
 
-	bot = usething->Player->Bot;
-	botmo = *usething;
+	bot = usething.Player->Bot;
+	botmo = usething;
 
 	if (in->isaline)
 	{
@@ -947,7 +947,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 	y1 = botmo.Origin.y;
  	x2 = x1 + dist * bottracedir.x;
  	y2 = y1 + dist * bottracedir.y;
-	usething = &botmo;
+	usething = botmo;
 
 	P_UseLines(player);
 
@@ -2037,6 +2037,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.13  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -317,7 +317,7 @@ void SB_DrawMainBar(void)
 		R_ShadeRect(19 + i, 190, 1, 10, 9 + 15 - i);
 	}
 
-	if (!cl->inventoryTics)
+	if (!(cl->stats.flags & SBF_INVENTORY_OPEN))
 	{
 		//  Main interface
 		R_DrawPic(34, 160, pic_mainbar);
@@ -423,7 +423,7 @@ void SB_DrawFullscreenStats(void)
 		R_DrawPic(270, 184, pic_ammoicon[cl->readyweapon - 1]);
 	}
 
-	if (cl->inventoryTics)
+	if (cl->stats.flags & SBF_INVENTORY_OPEN)
 	{
 		//  Inventory
 		x = cl->inv_ptr - cl->curpos;
@@ -591,6 +591,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.9  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

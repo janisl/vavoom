@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-void P_ExplodeMissile(mobj_t * missile);
-
 //==========================================================================
 //
 //  weapon_grenade_launcher
@@ -59,7 +57,7 @@ class missile_grenade:Actor
 {
 	void A_ExplodeMissile(void)
 	{
-		P_ExplodeMissile(this);
+		ExplodeMissile();
 	}
 
 	__states__
@@ -168,6 +166,9 @@ void A_FireGrenade(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.14  2002/03/16 17:38:37  dj_jl
 //  Moved grenade firing into weapon class.
 //

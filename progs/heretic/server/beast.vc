@@ -43,17 +43,17 @@ class Beast:Pawn
 
 void A_BeastAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(3));
+		Enemy.Damage(self, self, HITDICE(3));
 		return;
 	}
-	SpawnMissile(this, &Target, BeastBall);
+	SpawnMissile(Enemy, BeastBall);
 }
 
 __states__
@@ -138,6 +138,9 @@ void Actor::A_BeastPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.17  2002/03/16 17:45:12  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

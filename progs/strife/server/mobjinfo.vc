@@ -2274,7 +2274,7 @@ class Thing52:Actor
 		PainChance = 128;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -2663,7 +2663,7 @@ class Thing60:Actor
 		PainChance = 128;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -2709,7 +2709,7 @@ class Thing61:Actor
 		PainChance = 128;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -2756,7 +2756,7 @@ class Enforcer:Actor
 		PainChance = 100;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -2846,7 +2846,7 @@ class Priest:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -2898,7 +2898,7 @@ class Thing65:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3017,7 +3017,7 @@ class Thing69:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3071,7 +3071,7 @@ class Thing70:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3125,7 +3125,7 @@ class Thing71:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3179,7 +3179,7 @@ class Thing72:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3233,7 +3233,7 @@ class Thing73:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3286,7 +3286,7 @@ class Thing74:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bCountKill = true;
 		bUnknown2 = true;
 		bUnknown3 = true;
@@ -3728,7 +3728,7 @@ class Thing89:Actor
 		bNoGravity = true;
 		bPickUp = true;
 		bFloat = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -3776,7 +3776,7 @@ class Thing90:Actor
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		bCountKill = true;
 		bActivateMCross = true;
@@ -4657,7 +4657,7 @@ class Thing122:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1210;
 		DeathState = S_1212;
@@ -4683,7 +4683,7 @@ class Thing123:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1221;
 		DeathState = S_1225;
@@ -4777,7 +4777,7 @@ class ThaliteOre:Actor
 		bSpecial = true;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1239;
 		DeathState = S_1240;
@@ -6567,7 +6567,7 @@ class Thing201:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1350;
 		DeathState = S_1351;
@@ -6593,7 +6593,7 @@ class Thing202:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1358;
 		DeathState = S_1359;
@@ -6620,7 +6620,7 @@ class Thing203:Actor
 		PainChance = 255;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bNoBlood = true;
 		SpawnState = S_1277;
 		PainState = S_1278;
@@ -8400,7 +8400,7 @@ class Thing286:Actor
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
-		bTeleport = true;
+		bUnknown4 = true;
 		bDropped = true;
 		bNoBlood = true;
 		SpawnState = S_1285;
@@ -9023,9 +9023,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/03/20 19:07:47  dj_jl
+//	Got rid of a lots of legacy, beautification.
+//
 //	Revision 1.24  2002/03/16 17:48:58  dj_jl
 //	Added PlayerPawn class, beautifucation.
-//
+//	
 //	Revision 1.23  2002/03/04 18:31:36  dj_jl
 //	Replaced bNoClip with two seperate flags, beautification.
 //	

@@ -180,18 +180,18 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 	Actor A;
 	TVec dir;
 
-	dir = Aim(this, 16.0 * 64.0);
+	dir = Aim(self, 16.0 * 64.0);
 
 	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Owner = self;
+	A.Instigator = self;
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 
-	CheckMissileSpawn(&A);
+	A.CheckMissileSpawn();
 
 	return A;
 }
@@ -199,6 +199,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.24  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

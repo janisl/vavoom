@@ -202,7 +202,6 @@ class Actor:Entity
 	bool bDormant;		// thing is dormant
 	bool bBounce;
 	bool bWaterJump;
-	bool bNoClip;		// player cheat
 	bool bSkullFly;		// skull in flight
 
 	//  Params
@@ -213,9 +212,9 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or NULL).
-	Actor Target;
+	Actor Enemy;
 	// The originator for missiles.
-	Actor Owner;
+	Actor Instigator;
 
 	// Player number last looked for.
 	int LastLook;
@@ -248,6 +247,20 @@ class Actor:Entity
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
+	boolean TryMove(float x, float y);
+	void Thrust(float angle, float move);
+	boolean TeleportMove(TVec org);
+	int Teleport(float x, float y, float angle);
+
+	void SetOrigin2(TVec origin);
+	void CheckMissileSpawn(void);
+	Actor SpawnMissile(Actor dest, classid type);
+	void ExplodeMissile(void);
+	void Died(Actor source);
+	void NightmareRespawn(void);
+
+	boolean HeightClip(void);
+	void RadiusAttack(int damage, int distance, boolean damageSource);
 
 	void Think(void);
 	void Remove(void);
@@ -652,7 +665,7 @@ addfields player_t
 	int PendingWeapon;
 
 	// Who did damage (NULL for floors/ceilings).
-	mobj_t *Attacker;
+	Actor *Attacker;
 
 	int JumpTics;
 
@@ -702,6 +715,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/20 19:07:44  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.27  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

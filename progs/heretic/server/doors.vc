@@ -243,9 +243,9 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-boolean CheckLockedDoor(mobj_t * user, int lock)
+boolean CheckLockedDoor(Actor user, int lock)
 {
-	if (!user->bIsPlayer)
+	if (!user.bIsPlayer)
 	{
 		return false;
 	}
@@ -253,10 +253,10 @@ boolean CheckLockedDoor(mobj_t * user, int lock)
 	{
 		return true;
 	}
-	if (!(user->Player->Keys & (1 << (lock - 1))))
+	if (!(user.Player->Keys & (1 << (lock - 1))))
 	{
-		centerprint(user->Player, keymsg[lock - 1]);
-		user->PlaySound('PlayerLand', CHAN_VOICE);
+		centerprint(user.Player, keymsg[lock - 1]);
+		user.PlaySound('PlayerLand', CHAN_VOICE);
 		return false;
 	}
 	return true;
@@ -268,7 +268,7 @@ boolean CheckLockedDoor(mobj_t * user, int lock)
 //
 //==========================================================================
 
-boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
+boolean EV_VerticalDoor(line_t * line, Actor thing)
 {
 	sector_t *sec;
 	VerticalDoor Door;
@@ -291,8 +291,9 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 			}
 			else
 			{
-				if (!thing->bIsPlayer)
-				{	// Monsters don't close doors
+				if (!thing.bIsPlayer)
+				{
+					// Monsters don't close doors
 					return false;
 				}
 				Door.direction = -1;	// start going down immediately
@@ -379,6 +380,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.12  2002/02/22 18:00:16  dj_jl
 //  A lots of the renaming, beautification.
 //

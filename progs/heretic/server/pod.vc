@@ -69,7 +69,7 @@ void Actor::A_MakePod(void)
 	A.Thrust(Random() * 360.0, 4.5);
 	A.PlaySound('PodNew', CHAN_VOICE);
 	Special1++;	// Increment generated pod count
-	A.SpecialMobj2 = this;	// Link the generator to the pod
+	A.Generator = self;	// Link the generator to the pod
 }
 
 //==========================================================================
@@ -94,7 +94,7 @@ void Actor::A_PodPain(void)
 	for (i = 0; i < count; i++)
 	{
 		goo = Spawn(PodGoo, Origin + vector(0.0, 0.0, 48.0));
-		goo.Owner = self;
+		goo.Instigator = self;
 		goo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		goo.Velocity.z = (0.5 + Random() * 2.0) * 35.0;
@@ -109,21 +109,18 @@ void Actor::A_PodPain(void)
 
 void Actor::A_RemovePod(void)
 {
-	Actor A;
-
-	if (SpecialMobj2)
+	if (Generator && Generator.Special1 > 0)
 	{
-		A = *SpecialMobj2;
-		if (A.Special1 > 0)
-		{
-			A.Special1--;
-		}
+		Generator.Special1--;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.17  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

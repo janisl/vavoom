@@ -44,33 +44,12 @@ void UnarchivePlayer(player_t * player)
 	player->Attacker = NULL;
 }
 
-//==========================================================================
-//
-//  mobj_t::Archive
-//
-//==========================================================================
-
-void mobj_t::Archive(void)
-{
-	MobjToNum(&SpecialMobj1);
-	MobjToNum(&SpecialMobj2);
-}
-
-//==========================================================================
-//
-//  mobj_t::Unarchive
-//
-//==========================================================================
-
-void mobj_t::Unarchive(void)
-{
-	NumToMobj(&SpecialMobj1);
-	NumToMobj(&SpecialMobj2);
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.11  2002/02/26 17:49:48  dj_jl
 //  no message
 //

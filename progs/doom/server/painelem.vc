@@ -74,14 +74,14 @@ void Actor::A_PainShootSkull(float angle)
 		prestep * cos(angle), prestep * sin(angle), 8.0));
 
 	// Check for movements.
-	if (!P_TryMove(&newmobj, newmobj.Origin.x, newmobj.Origin.y))
+	if (!newmobj.TryMove(newmobj.Origin.x, newmobj.Origin.y))
 	{
 		// kill it immediately
 		newmobj.Damage(self, self, 10000);
 		return;
 	}
 
-	newmobj.Target = Target;
+	newmobj.Enemy = Enemy;
 	newmobj.A_SkullAttack();
 }
 
@@ -95,7 +95,7 @@ void Actor::A_PainShootSkull(float angle)
 
 void Actor::A_PainAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
@@ -135,6 +135,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.18  2002/03/16 17:44:02  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

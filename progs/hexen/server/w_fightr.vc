@@ -70,7 +70,7 @@ void A_FPunchAttack(void)
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Owner, vforward, 2.0 * MELEERANGE, damage))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -101,7 +101,7 @@ void A_FPunchAttack(void)
 				PuffType = HammerPuff;
 			}
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(Owner, vforward, 2.0 * MELEERANGE, damage))
 			{
 				if (PuffType == HammerPuff)
 				{
@@ -128,7 +128,7 @@ void A_FPunchAttack(void)
 		angles = Owner.Angles;
 		AimLineAttack(Owner, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(Owner, &vforward, MELEERANGE, damage))
+		if (LineAttack(Owner, vforward, MELEERANGE, damage))
 		{
 			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
 		}
@@ -230,7 +230,7 @@ void A_FAxeAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, AXERANGE, damage))
+			if (LineAttack(Owner, vforward, AXERANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -248,7 +248,7 @@ void A_FAxeAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, AXERANGE, damage))
+			if (LineAttack(Owner, vforward, AXERANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -267,7 +267,7 @@ void A_FAxeAttack(void)
 		angles = Owner.Angles;
 		AimLineAttack(Owner, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(Owner, &vforward, MELEERANGE, damage))
+		if (LineAttack(Owner, vforward, MELEERANGE, damage))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -467,7 +467,7 @@ void A_FHammerAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
+			if (LineAttack(Owner, vforward, HAMMER_RANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -485,7 +485,7 @@ void A_FHammerAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
+			if (LineAttack(Owner, vforward, HAMMER_RANGE, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -505,7 +505,7 @@ void A_FHammerAttack(void)
 		angles = Owner.Angles;
 		AimLineAttack(Owner, &angles, HAMMER_RANGE);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(Owner, &vforward, HAMMER_RANGE, damage))
+		if (LineAttack(Owner, vforward, HAMMER_RANGE, damage))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -681,6 +681,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.19  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -150,7 +150,7 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				players[0].mo->GiveArtifact(i, none);
+				PlayerPawn(*players[0].mo).GiveArtifact(i);
 			}
 		}
 		cprint(&players[0], "YOU GOT IT");
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/20 19:07:46  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.13  2002/03/16 17:45:12  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

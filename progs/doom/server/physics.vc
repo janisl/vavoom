@@ -169,8 +169,8 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
@@ -207,8 +207,8 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
-				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
@@ -219,11 +219,10 @@ void Actor::SlideMove(void)
 			newx = Velocity.x * frametime * bestslidefrac;
 			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!P_TryMove(this, Origin.x + newx, Origin.y + newy))
+			if (!TryMove(Origin.x + newx, Origin.y + newy))
 			{
-				if (!P_TryMove(this, Origin.x,
-						Origin.y + Velocity.y * frametime))
-					P_TryMove(this, Origin.x + Velocity.x * frametime,
+				if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+					TryMove(Origin.x + Velocity.x * frametime,
 						Origin.y);
 				return;
 			}
@@ -244,7 +243,7 @@ void Actor::SlideMove(void)
 			bestslideline->normal, 1.0);
 
 	}
-	while (!P_TryMove(this, Origin.x + Velocity.x * frametime,
+	while (!TryMove(Origin.x + Velocity.x * frametime,
 			Origin.y + Velocity.y * frametime));
 }
 
@@ -395,7 +394,7 @@ boolean Actor::XYMovement(void)
 			ymove = 0.0;
 		}
 
-		if (!P_TryMove(this, ptryx, ptryy))
+		if (!TryMove(ptryx, ptryy))
 		{
 			// blocked move
 			if (bIsPlayer)
@@ -433,7 +432,7 @@ boolean Actor::XYMovement(void)
 						else
 						{
 							// Struck a player/creature
-							P_ExplodeMissile(this);
+							ExplodeMissile();
 						}
 					}
 					else
@@ -460,10 +459,10 @@ boolean Actor::XYMovement(void)
 					// Hack to prevent missiles exploding
 					// against the sky.
 					// Does not handle sky floors.
-					P_RemoveMobj(this);
+					Remove();
 					return false;
 				}
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 			}
 			else
 			{
@@ -504,14 +503,14 @@ void Actor::ZMovement(void)
 	// adjust height
 	Origin.z += Velocity.z * frametime;
 
-	if (bFloat && Target)
+	if (bFloat && Enemy)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Target);
+			dist = MobjDist2(self, Enemy);
 
-			delta = Target.Origin.z + Height / 2.0 - Origin.z;
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				Origin.z -= FLOATSPEED * frametime;
@@ -553,7 +552,7 @@ void Actor::ZMovement(void)
 		{
 			if (bColideWithWorld && !bBounce)
 			{
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 				return;
 			}
 			if (bBounce && PainSound && Length(Velocity) > 256.0)
@@ -582,7 +581,7 @@ void Actor::ZMovement(void)
 		{
 			if (bColideWithWorld && !bBounce)
 			{
-				P_ExplodeMissile(this);
+				ExplodeMissile();
 				return;
 			}
 			if (bBounce && PainSound && Length(Velocity) > 256.0)
@@ -758,7 +757,7 @@ void Actor::Think(void)
 		MoveCount++;
 		if (MoveCount >= 30 * 35)
 		{
-			P_RemoveMobj(this);
+			Remove();
 			return;
 		}
 	}
@@ -797,7 +796,7 @@ void Actor::Think(void)
 			if (P_Random() > 32)
 				return;
 
-			P_NightmareRespawn(this);
+			NightmareRespawn();
 		}
 		else
 		{
@@ -815,7 +814,7 @@ void Actor::Think(void)
 			if (P_Random() > 4)
 				return;
 
-			P_NightmareRespawn(this);
+			NightmareRespawn();
 		}
 	}
 }
@@ -823,6 +822,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.26  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

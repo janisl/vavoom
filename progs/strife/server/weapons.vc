@@ -235,39 +235,6 @@ int CheckAmmo(player_t * player)
 
 //===========================================================================
 //
-//  BulletSlope
-//
-//  Sets a slope so a near miss is at aproximately the height of the
-// intended target
-//
-//===========================================================================
-
-void BulletSlope(mobj_t * mo, TAVec * angles)
-{
-	// see which target is to be aimed at
-	angles->pitch = mo->Angles.pitch;
-	angles->yaw = mo->Angles.yaw;
-	angles->roll = mo->Angles.roll;
-
-	AimLineAttack(mo, angles, 16.0 * 64.0);
-	if (!linetarget)
-	{
-		angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
-		AimLineAttack(mo, angles, 16.0 * 64.0);
-		if (!linetarget)
-		{
-			angles->yaw = AngleMod360(angles->yaw - 45.0 / 4.0);
-			AimLineAttack(mo, angles, 16.0 * 64.0);
-			if (!linetarget)
-			{
-				angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
-			}
-		}
-	}
-}
-
-//===========================================================================
-//
 //  FireWeapon
 //
 //===========================================================================
@@ -281,7 +248,7 @@ void FireWeapon(player_t * player)
 
 	player->mo->SetState(S_PLAY_ATK1);
 	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	P_NoiseAlert(player->mo, player->mo);
+	P_NoiseAlert(*player->mo, *player->mo);
 }
 
 //***************************************************************************
@@ -437,27 +404,23 @@ void Weapon::A_ReFire(void)
 
 //===========================================================================
 //
-//  A_CheckReload
+//  Weapon::A_CheckReload
 //
 //===========================================================================
 
-void A_CheckReload(mobj_t * actor)
+void Weapon::A_CheckReload(void)
 {
-	player_t *Player = actor->Player;
-
 	CheckAmmo(Player);
 }
 
 //===========================================================================
 //
-//  A_GunFlash
+//  Weapon::A_GunFlash
 //
 //===========================================================================
 
-void A_GunFlash(mobj_t * actor)
+void Weapon::A_GunFlash(void)
 {
-	player_t *Player = actor->Player;
-
 	Player->mo->SetState(S_PLAY_ATK2);
 	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
 }
@@ -475,27 +438,23 @@ void Weapon::A_Light0(void)
 
 //===========================================================================
 //
-//  A_Light1
+//  Weapon::A_Light1
 //
 //===========================================================================
 
-void A_Light1(mobj_t * actor)
+void Weapon::A_Light1(void)
 {
-	player_t *Player = actor->Player;
-
 	Player->ExtraLight = 1;
 }
 
 //===========================================================================
 //
-//  A_Light2
+//  Weapon::A_Light2
 //
 //===========================================================================
 
-void A_Light2(mobj_t * actor)
+void Weapon::A_Light2(void)
 {
-	player_t *Player = actor->Player;
-
 	Player->ExtraLight = 2;
 }
 
@@ -536,7 +495,7 @@ void A_Punch(void)
 {
 	int damage;
 	TAVec angles;
-	TVec vforward;
+	TVec dir;
 
 	damage = (P_Random() % 10 + 1) << 1;
 
@@ -546,17 +505,16 @@ void A_Punch(void)
 	avcpy(Player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimLineAttack(Player->mo, &angles, MELEERANGE);
-	AngleVector(&angles, &vforward);
-	LineAttack(Player->mo, &vforward, MELEERANGE, damage);
+	dir = AimLineAttack(*Player->mo, angles, MELEERANGE);
+	LineAttack(*Player->mo, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
 		Player->mo->PlaySound('Punch', CHAN_WEAPON);
 		Player->mo->Angles.yaw =
-			atan2(linetarget->Origin.y - Player->mo->Origin.y,
-			linetarget->Origin.x - Player->mo->Origin.x);
+			atan2(linetarget.Origin.y - Player->mo->Origin.y,
+			linetarget.Origin.x - Player->mo->Origin.x);
 		Player->bFixAngle = true;
 	}
 }
@@ -947,6 +905,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.15  2002/03/02 17:35:56  dj_jl
 //  Weapon classes
 //

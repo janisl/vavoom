@@ -39,7 +39,7 @@ class TLavaInflictor:Actor
 
 	void Unarchive(void)
 	{
-		LavaInflictor = this;
+		LavaInflictor = self;
 	}
 
 	defaultproperties
@@ -59,7 +59,7 @@ class TLavaInflictor:Actor
 
 void InitLava(void)
 {
-	LavaInflictor = &TLavaInflictor(NewMobjThinker(TLavaInflictor));
+	LavaInflictor = TLavaInflictor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_PHOENIXFX2;
 }
 
@@ -114,7 +114,7 @@ boolean PlayerPawn::UndoPlayerChicken(void)
 
 	P_UnsetThingPosition(self);
 	A = Spawn(HereticPlayer, Origin);
-	if (!P_TestMobjLocation(&A))
+	if (!A.TestLocation())
 	{
 		// Didn't fit
 		A.Remove();
@@ -277,14 +277,14 @@ void PlayerPawn::DeathPlayerTick(float deltaTime)
 
 void PlayerPawn::UseArtiEgg(void)
 {
-	SpawnPlayerMissile(this, EggMissile);
-	SpawnPlayerMissileAngle(this, EggMissile,
+	SpawnPlayerMissile(EggMissile);
+	SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(Angles.yaw - (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(this, EggMissile,
+	SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(Angles.yaw + (45.0 / 6.0)));
-	SpawnPlayerMissileAngle(this, EggMissile,
+	SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(Angles.yaw - (45.0 / 3.0)));
-	SpawnPlayerMissileAngle(this, EggMissile,
+	SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(Angles.yaw + (45.0 / 3.0)));
 }
 
@@ -331,49 +331,10 @@ boolean PlayerPawn::UseArtiTomeOfPower(void)
 void PlayerPawn::UseArtiFireBomb(void)
 {
 	float angle = Angles.yaw;
-	mobj_t *mo = P_SpawnMobj(Origin.x + 24.0 * cos(angle),
-		Origin.y + 24.0 * sin(angle),
-		Origin.z - FloorClip,
-		FireBomb);
+	Actor A = Spawn(FireBomb, Origin + vector(24.0 * cos(angle),
+		24.0 * sin(angle), -FloorClip));
 
-	mo->Owner = self;
-}
-
-//==========================================================================
-//
-//  Actor::SetDormantArtifact
-//
-//  Removes the bSpecial flag, and initiates the artifact pickup animation.
-//
-//==========================================================================
-
-void Actor::SetDormantArtifact(void)
-{
-	bSpecial = false;
-	if (deathmatch && (Class != ArtifactInvulnerability)
-		&& (Class != ArtifactInvisibility))
-	{
-		SetState(S_DORMANTARTI1);
-	}
-	else
-	{
-		// Don't respawn
-		SetState(S_DEADARTI1);
-	}
-	PlaySound('PickupArtifact', CHAN_ITEM);
-}
-
-//==========================================================================
-//
-//  Actor::HideSpecialThing
-//
-//==========================================================================
-
-void Actor::HideSpecialThing(void)
-{
-	bSpecial = false;
-	Translucency += 100;
-	SetState(S_HIDESPECIAL1);
+	A.Instigator = self;
 }
 
 //==========================================================================
@@ -391,7 +352,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float y;
 	subsector_t *ss;
 	float an;
-	mobj_t *mo;
+	Actor A;
 	int i;
 
 	if (!players[playernum].mo)
@@ -419,9 +380,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	ss = PointInSubsector(x, y);
 	an = itof(45 * (mthing->angle / 45));
 
-	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
-	mo->PlaySound('Teleport', CHAN_VOICE);
+	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+		ss->sector->floorheight + TELEFOGHEIGHT));
+	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -429,6 +390,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.24  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

@@ -1163,7 +1163,8 @@ class SpawnShot:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		bMissile = true;
 		bActivatePCross = true;
 		SpawnState = S_SPAWN1;
@@ -3684,9 +3685,12 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/03/20 19:07:43  dj_jl
+//	Got rid of a lots of legacy, beautification.
+//
 //	Revision 1.24  2002/03/16 17:44:01  dj_jl
 //	Added PlayerPawn class, added function Spawn, beautification.
-//
+//	
 //	Revision 1.23  2002/02/22 18:00:10  dj_jl
 //	A lots of the renaming, beautification.
 //	

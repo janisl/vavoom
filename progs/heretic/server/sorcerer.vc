@@ -73,32 +73,32 @@ void A_Srcr1Attack(void)
 	TAVec ang;
 	float angle;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(8));
+		Enemy.Damage(self, self, HITDICE(8));
 		return;
 	}
 	if (Health > (SpawnHealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(this, &Target, Sorcerer1Missile);
+		SpawnMissile(Enemy, Sorcerer1Missile);
 	}
 	else
 	{
 		// Spit three fireballs
-		A = *SpawnMissile(this, &Target, Sorcerer1Missile);
+		A = SpawnMissile(Enemy, Sorcerer1Missile);
 		if (A)
 		{
 			VectorAngles(&A.Velocity, &ang);
 			angle = A.Angles.yaw;
-			SpawnMissileAngles(this, Sorcerer1Missile,
+			SpawnMissileAngles(Sorcerer1Missile,
 				AngleMod360(angle - 3.0), ang.pitch);
-			SpawnMissileAngles(this, Sorcerer1Missile,
+			SpawnMissileAngles(Sorcerer1Missile,
 				AngleMod360(angle + 3.0), ang.pitch);
 		}
 		if (Health < SpawnHealth / 3)
@@ -156,7 +156,7 @@ void A_SorcererRise(void)
 	S2 = Sorcerer2Base(Spawn(Sorcerer2, Origin));
 	S2.SetState(S2.RiseState);
 	S2.Angles.yaw = Angles.yaw;
-	S2.Target = Target;
+	S2.Enemy = Enemy;
 }
 
 __states__
@@ -283,7 +283,7 @@ void DSparilTeleport(void)
 	}
 	while (Length(dir) < 128.0);
 	PrevOrg = Origin;
-	if (P_TeleportMove(this, x, y))
+	if (TeleportMove(vector(x, y, Origin.z)))
 	{
 		fog = Spawn(Sorcerer2TeleFade, PrevOrg);
 		fog.PlaySound('Teleport', CHAN_VOICE);
@@ -356,29 +356,29 @@ void A_Srcr2Attack(void)
 {
 	int chance;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlayFullVolumeSound(AttackSound, CHAN_AUTO);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(20));
+		Enemy.Damage(self, self, HITDICE(20));
 		return;
 	}
 	chance = Health < SpawnHealth / 2 ? 96 : 48;
 	if (P_Random() < chance)
 	{
 		// Wizard spawners
-		SpawnMissileAngles(this, Sorcerer2Missile2,
+		SpawnMissileAngles(Sorcerer2Missile2,
 			AngleMod360(Angles.yaw - 45.0), 30.0);
-		SpawnMissileAngles(this, Sorcerer2Missile2,
+		SpawnMissileAngles(Sorcerer2Missile2,
 			AngleMod360(Angles.yaw + 45.0), 30.0);
 	}
 	else
 	{
 		// Blue bolt
-		SpawnMissile(this, &Target, Sorcerer2Missile1);
+		SpawnMissile(Enemy, Sorcerer2Missile1);
 	}
 }
 
@@ -574,15 +574,15 @@ void Actor::A_BlueSpark(void)
 
 void Actor::A_GenWizard(void)
 {
-	Actor mo;
+	Actor A;
 	Actor fog;
 
-	mo = Spawn(Wizard, Origin);
-	mo.Origin.z = Origin.z - mo.Height / 2.0;
-	if (!P_TestMobjLocation(&mo))
+	A = Spawn(Wizard, Origin);
+	A.Origin.z = Origin.z - A.Height / 2.0;
+	if (!A.TestLocation())
 	{
 		// Didn't fit
-		P_RemoveMobj(&mo);
+		A.Remove();
 		return;
 	}
 	Velocity = vector(0.0, 0.0, 0.0);
@@ -595,6 +595,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.22  2002/03/16 17:45:13  dj_jl
 //  Added Pawn and PlayerPawn classes, beautification.
 //

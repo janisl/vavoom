@@ -40,11 +40,11 @@ void Actor::A_Look(void)
 
 	if (targ && targ.bShootable)
 	{
-		Target = targ;
+		Enemy = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Target))
+			if (!P_CheckSight(self, Enemy))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -132,7 +132,7 @@ void Actor::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Target || Target.Health <= 0)
+		if (!Enemy || Enemy.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -168,7 +168,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new target
 		if (LookForPlayers(true))
@@ -218,7 +218,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Target))
+		if (!P_CheckSight(self, Enemy))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -246,14 +246,14 @@ void Actor::A_Chase(void)
 
 void Actor::A_FaceTarget(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 
-	if (Target.Translucency)
+	if (Enemy.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -290,7 +290,7 @@ void Actor::A_Pain(void)
 void Actor::A_Explode(void)
 {
 	Translucency = 50;
-	P_RadiusAttack(this, &Owner, 128, 0, 0);
+	RadiusAttack(128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);
@@ -594,6 +594,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.22  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

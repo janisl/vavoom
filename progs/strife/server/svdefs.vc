@@ -77,10 +77,6 @@
 
 #define INITIAL_HEALTH		100
 #define INITIAL_AMMO		50
-#define BFGCELLS			40
-#define SOULSPHERE_MAX		200
-#define SOULSPHERE_HEALTH	100
-#define MEGASPHERE_HEALTH	200
 #define GOD_HEALTH			100
 
 // [RH] Equivalents for BOOM's generalized sector types
@@ -89,50 +85,6 @@
 #define SECRET_MASK		0x0400
 #define FRICTION_MASK	0x0800
 #define PUSH_MASK		0x1000
-
-#define PD_BLUEO		"You need a blue key to activate this object"
-#define PD_REDO		"You need a red key to activate this object"
-#define PD_YELLOWO		"You need a yellow key to activate this object"
-#define PD_BLUEK		"You need a blue key to open this door"
-#define PD_REDK		"You need a red key to open this door"
-#define PD_YELLOWK		"You need a yellow key to open this door"
-#define GOTARMOR		"Picked up the armor."
-#define GOTMEGA		"Picked up the MegaArmor!"
-#define GOTHTHBONUS		"Picked up a health bonus."
-#define GOTARMBONUS		"Picked up an armor bonus."
-#define GOTSTIM		"Picked up a stimpack."
-#define GOTMEDINEED		"Picked up a medikit that you REALLY need!"
-#define GOTMEDIKIT		"Picked up a medikit."
-#define GOTSUPER		"Supercharge!"
-#define GOTBLUECARD		"Picked up a blue keycard."
-#define GOTYELWCARD		"Picked up a yellow keycard."
-#define GOTREDCARD		"Picked up a red keycard."
-#define GOTBLUESKUL		"Picked up a blue skull key."
-#define GOTYELWSKUL		"Picked up a yellow skull key."
-#define GOTREDSKULL		"Picked up a red skull key."
-#define GOTINVUL		"Invulnerability!"
-#define GOTBERSERK		"Berserk!"
-#define GOTINVIS		"Partial Invisibility"
-#define GOTSUIT		"Radiation Shielding Suit"
-#define GOTMAP		"Computer Area Map"
-#define GOTVISOR		"Light Amplification Visor"
-#define GOTMSPHERE		"MegaSphere!"
-#define GOTCLIP		"Picked up a clip."
-#define GOTCLIPBOX		"Picked up a box of bullets."
-#define GOTROCKET		"Picked up a rocket."
-#define GOTROCKBOX		"Picked up a box of rockets."
-#define GOTCELL		"Picked up an energy cell."
-#define GOTCELLBOX		"Picked up an energy cell pack."
-#define GOTSHELLS		"Picked up 4 shotgun shells."
-#define GOTSHELLBOX		"Picked up a box of shotgun shells."
-#define GOTBACKPACK		"Picked up a backpack full of ammo!"
-#define GOTBFG9000		"You got the BFG9000!  Oh, yes."
-#define GOTCHAINGUN		"You got the chaingun!"
-#define GOTCHAINSAW		"A chainsaw!  Find some meat!"
-#define GOTLAUNCHER		"You got the rocket launcher!"
-#define GOTPLASMA		"You got the plasma gun!"
-#define GOTSHOTGUN		"You got the shotgun!"
-#define GOTSHOTGUN2		"You got the super shotgun!"
 
 enum
 {
@@ -268,7 +220,7 @@ class Actor:Entity
 	bool bPickUp;			// for players to pick up items
 	bool bSlide;			// keep info about sliding along walls
 	bool bFloat;			// allow moves to any height, no gravity
-	bool bTeleport;			// don't cross lines or look at heights
+	bool bUnknown4;
 	bool bMissile;			// don't hit same species, explode on block
 	bool bDropped;			// dropped by a demon, not level spawned
 	bool bNoBlood;			// don't bleed when shot (use puff)
@@ -296,9 +248,9 @@ class Actor:Entity
 	name ClassName;
 
 	// Thing being chased/attacked (or NULL),
-	Actor Target;
+	Actor Enemy;
 	// also the originator for missiles.
-	Actor Owner;
+	Actor Instigator;
 
 	int MissileDamage;	// For missiles
 
@@ -324,12 +276,24 @@ class Actor:Entity
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
+	boolean TryMove(float x, float y);
 
 	void Think(void);
 	void OnMapSpawn(mthing_t *mthing);
 
+	void SetOrigin2(TVec origin);
+	void ExplodeMissile(void);
+	void CheckMissileSpawn(void);
+	Actor SpawnMissile(Actor dest, classid type);
+	void Died(Actor source);
 	void Damage(Actor inflictor, Actor source, int damage);
 	void Remove(void);
+	void NightmareRespawn(void);
+
+	boolean TeleportMove(TVec org);
+	int Teleport(float x, float y, float angle);
+
+	void Thrust(float angle, float move);
 
 	// Physics
 	void SlideMove(void);
@@ -342,7 +306,22 @@ class Actor:Entity
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
 
+	boolean HeightClip(void);
+	void RadiusAttack(int damage, int distance, boolean damageSource);
+
+	int CheckMeleeRange(void);
+	int CheckMissileRange(void);
+	boolean LookForMonsters(boolean allaround);
+	boolean LookForPlayers(boolean allaround);
+	boolean StepMove(void);
+	boolean TryWalk(void);
+	void NewChaseDir(void);
+
+	void A_Look(void);
 	void A_Chase(void);
+	void A_FaceTarget(void);
+	void A_Explode(void);
+	void A_XScream(void);
 
 	// Action functions
 	void A_24(void);
@@ -443,6 +422,14 @@ class Actor:Entity
 class PlayerPawn:Actor
 	abstract
 {
+	boolean GiveAmmo(int ammo, int num);
+	boolean GiveWeapon(int weapon, boolean dropped);
+	boolean GiveBody(int num);
+	boolean GiveArmor(int armortype);
+	boolean GiveKey(int key);
+	boolean GiveItem(int item);
+	boolean GivePower(int power);
+
 	void ThrustPlayer(float angle, float move, float deltaTime);
 	void CalcHeight(float deltaTime);
 	void MovePlayer(float deltaTime);
@@ -474,6 +461,11 @@ class Weapon:ViewEntity
 	int AttackState;
 	int HoldAttackState;
 	int FlashState;
+
+	void A_CheckReload(void);
+	void A_GunFlash(void);
+	void A_Light1(void);
+	void A_Light2(void);
 
 	void A_Light0(void);
 	void A_WeaponReady(void);
@@ -530,7 +522,7 @@ addfields player_t
 	int PendingWeapon;
 
 	// Who did damage (NULL for floors/ceilings).
-	mobj_t *Attacker;
+	Actor *Attacker;
 
 	int JumpTics;
 
@@ -571,6 +563,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.26  2002/03/16 17:48:58  dj_jl
 //  Added PlayerPawn class, beautifucation.
 //

@@ -57,7 +57,7 @@ void A_CMaceAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(*Player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(*Player->mo, vforward, 2.0 * MELEERANGE, damage))
 			{
 				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -70,7 +70,7 @@ void A_CMaceAttack(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(*Player->mo, &vforward, 2.0 * MELEERANGE, damage))
+			if (LineAttack(*Player->mo, vforward, 2.0 * MELEERANGE, damage))
 			{
 				Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -82,7 +82,7 @@ void A_CMaceAttack(void)
 	avcpy(Player->mo->Angles, angles);
 	AimLineAttack(*Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (LineAttack(*Player->mo, &vforward, MELEERANGE, damage))
+	if (LineAttack(*Player->mo, vforward, MELEERANGE, damage))
 	{
 		Player->mo->PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
@@ -192,7 +192,7 @@ void A_CStaffCheck(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
+			LineAttack(pmo, vforward, 1.5 * MELEERANGE, damage);
 			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
 				linetarget.Origin.x - pmo.Origin.x);
 			if ((linetarget.bIsPlayer || linetarget.bCountKill) &&
@@ -214,7 +214,7 @@ void A_CStaffCheck(void)
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
+			LineAttack(pmo, vforward, 1.5 * MELEERANGE, damage);
 			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
 				linetarget.Origin.x - pmo.Origin.x);
 			if (linetarget.bIsPlayer || linetarget.bCountKill)
@@ -940,6 +940,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.23  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

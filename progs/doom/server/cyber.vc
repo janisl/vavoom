@@ -73,16 +73,19 @@ void Actor::A_Metal(void)
 
 void Actor::A_CyberAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	A_FaceTarget();
-	SpawnMissile(this, &Target, Rocket);
+	SpawnMissile(Enemy, Rocket);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.12  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

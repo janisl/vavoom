@@ -40,29 +40,27 @@ float yspeed[8] =
 
 //==========================================================================
 //
-//  P_CheckMeleeRange
+//  Actor::CheckMeleeRange
 //
 //==========================================================================
 
-int P_CheckMeleeRange(mobj_t * actor)
+int Actor::CheckMeleeRange(void)
 {
-	mobj_t *pl;
 	float dist;
 
-	if (!actor->Target)
+	if (!Enemy)
 	{
 		return false;
 	}
 
-	pl = &actor->Target;
-	dist = MobjDist(*pl, *actor);
+	dist = MobjDist(Enemy, self);
 
-	if (dist >= MELEERANGE - 20.0 + pl->Radius)
+	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
 	{
 		return false;
 	}
 
-	if (!P_CheckSight(*actor, actor->Target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
@@ -72,36 +70,36 @@ int P_CheckMeleeRange(mobj_t * actor)
 
 //==========================================================================
 //
-//  P_CheckMissileRange
+//  Actor::CheckMissileRange
 //
 //==========================================================================
 
-int P_CheckMissileRange(mobj_t * actor)
+int Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(*actor, actor->Target))
+	if (!P_CheckSight(self, Enemy))
 	{
 		return false;
 	}
 
-	if (actor->bJustHit)
+	if (bJustHit)
 	{
 		// the target just hit the enemy,
 		// so fight back!
-		actor->bJustHit = false;
+		bJustHit = false;
 		return true;
 	}
 
-	if (actor->ReactionCount)
+	if (ReactionCount)
 	{
 		return false;	// do not attack yet
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(*actor, actor->Target) - 64.0;
+	dist = MobjDist(self, Enemy) - 64.0;
 
-	if (!actor->MeleeState)
+	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
 
 /*    if (actor->type == MT_VILE)
@@ -139,38 +137,17 @@ int P_CheckMissileRange(mobj_t * actor)
 
 //==========================================================================
 //
-//  P_FindOther
+//  Actor::LookForMonsters
 //
 //==========================================================================
 
-int P_FindOther(mobj_t * mo)
-{
-	Actor mo2;
-
-	FOREACH(Actor, mo2)
-	{
-		if (mo2 != *mo && mo2.Class == mo->Class && mo2.Health > 0)
-		{
-			// other mobj of the same type not dead
-			return true;
-		}
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  P_LookForMonsters
-//
-//==========================================================================
-
-boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
+boolean Actor::LookForMonsters(boolean allaround)
 {
 	Actor mo;
 	float an;
 	float dist;
 
-	if (!P_CheckSight(*actor, *players[0].mo))
+	if (!P_CheckSight(self, *players[0].mo))
 	{
 		return false;	//  Not seen by player
 	}
@@ -180,13 +157,13 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 		if (mo.Health <= 0)
 			continue;	// dead
 
-		if (mo == *actor)
+		if (mo == self)
 			continue;	// self
 
 		if (!mo.bCountKill)
 			continue;	// not a monster
 
-		if (!P_CheckSight(*actor, mo))
+		if (!P_CheckSight(self, mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -194,19 +171,19 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo.Origin.y - actor->Origin.y,
-				mo.Origin.x - actor->Origin.x) - actor->Angles.yaw);
+			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
+				mo.Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, *actor);
+				dist = MobjDist(mo, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		actor->Target = mo;
+		Enemy = mo;
 		return true;
 	}
 	return false;
@@ -214,14 +191,14 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 
 //==========================================================================
 //
-//  P_LookForPlayers
+//  Actor::LookForPlayers
 //
 //  If allaround is false, only look 180 degrees in front.
 //  Returns true if a player is targeted.
 //
 //==========================================================================
 
-boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
+boolean Actor::LookForPlayers(boolean allaround)
 {
 	int c;
 	int stop;
@@ -231,21 +208,21 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
 	{
-		return P_LookForMonsters(actor, allaround);
+		return LookForMonsters(allaround);
 	}
 
 	c = 0;
-	stop = (actor->LastLook - 1) & 3;
+	stop = (LastLook - 1) & (MAXPLAYERS - 1);
 
-	for (;; actor->LastLook = (actor->LastLook + 1) & (MAXPLAYERS - 1))
+	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
 	{
-		if (actor->LastLook == stop)
+		if (LastLook == stop)
 		{
 			// done looking
 			return false;
 		}
 
-		player = &players[actor->LastLook];
+		player = &players[LastLook];
 
 		if (!player->bActive)
 			continue;
@@ -262,24 +239,24 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 		if (player->Health <= 0)
 			continue;	// dead
 
-		if (!P_CheckSight(*actor, *player->mo))
+		if (!P_CheckSight(self, *player->mo))
 			continue;	//  out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(player->mo->Origin.y - actor->Origin.y,
-				player->mo->Origin.x - actor->Origin.x) - actor->Angles.yaw);
+			an = AngleMod360(atan2(player->mo->Origin.y - Origin.y,
+				player->mo->Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(*player->mo, *actor);
+				dist = MobjDist(*player->mo, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		actor->Target = *player->mo;
+		Enemy = *player->mo;
 		return true;
 	}
 
@@ -288,13 +265,13 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 //==========================================================================
 //
-//  P_Move
+//  Actor::StepMove
 //
 //  Move in the current direction, returns false if the move is blocked.
 //
 //==========================================================================
 
-boolean P_Move(mobj_t * actor)
+boolean Actor::StepMove(void)
 {
 	float tryx;
 	float tryy;
@@ -302,36 +279,36 @@ boolean P_Move(mobj_t * actor)
 	line_t *ld;
 	boolean good;
 
-	if (actor->MoveDir == DI_NODIR)
+	if (MoveDir == DI_NODIR)
 		return false;
 
 #ifdef RANGECHECK
-	if (actor->MoveDir >= 8 || actor->MoveDir < 0)
-		I_Error("Weird actor->MoveDir!");
+	if (MoveDir >= 8 || MoveDir < 0)
+		I_Error("Weird MoveDir!");
 #endif
 
-	tryx = actor->Origin.x + actor->StepSpeed * xspeed[actor->MoveDir];
-	tryy = actor->Origin.y + actor->StepSpeed * yspeed[actor->MoveDir];
+	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
 
-	if (!P_TryMove(actor, tryx, tryy))
+	if (!TryMove(tryx, tryy))
 	{
 		// open any specials
-		if (actor->bFloat && floatok)
+		if (bFloat && floatok)
 		{
 			// must adjust height
-			if (actor->Origin.z < saved_tmfloorz)
-				actor->Origin.z += FLOATSPEED * frametime;
+			if (Origin.z < saved_tmfloorz)
+				Origin.z += FLOATSPEED * frametime;
 			else
-				actor->Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * frametime;
 
-			actor->bInFloat = true;
+			bInFloat = true;
 			return true;
 		}
 
 		if (!tmtrace->NumSpecHit)
 			return false;
 
-		actor->MoveDir = DI_NODIR;
+		MoveDir = DI_NODIR;
 		good = false;
 		while (tmtrace->NumSpecHit--)
 		{
@@ -339,7 +316,7 @@ boolean P_Move(mobj_t * actor)
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_ActivateLine(ld, actor, 0, SPAC_USE))
+			if (P_ActivateLine(ld, self, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -348,19 +325,19 @@ boolean P_Move(mobj_t * actor)
 	}
 	else
 	{
-		actor->bInFloat = false;
+		bInFloat = false;
 	}
 
-	if (!actor->bFloat)
+	if (!bFloat)
 	{
-		actor->Origin.z = actor->FloorZ;
+		Origin.z = FloorZ;
 	}
 	return true;
 }
 
 //==========================================================================
 //
-//  P_TryWalk
+//  Actor::TryWalk
 //
 //  Attempts to move actor on in its current (ob->moveangle) direction.
 // If blocked by either a wall or an actor returns FALSE
@@ -369,24 +346,24 @@ boolean P_Move(mobj_t * actor)
 //
 //==========================================================================
 
-boolean P_TryWalk(mobj_t * actor)
+boolean Actor::TryWalk(void)
 {
-	if (!P_Move(actor))
+	if (!StepMove())
 	{
 		return false;
 	}
 
-	actor->MoveCount = P_Random() & 15;
+	MoveCount = P_Random() & 15;
 	return true;
 }
 
 //==========================================================================
 //
-//  P_NewChaseDir
+//  Actor::NewChaseDir
 //
 //==========================================================================
 
-void P_NewChaseDir(mobj_t * actor)
+void Actor::NewChaseDir(void)
 {
 	float deltax;
 	float deltay;
@@ -398,16 +375,16 @@ void P_NewChaseDir(mobj_t * actor)
 
 	int turnaround;
 
-	if (!actor->Target)
+	if (!Enemy)
 	{
 		Error("P_NewChaseDir: called with no target");
 	}
 
-	olddir = actor->MoveDir;
+	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = actor->Target.Origin.x - actor->Origin.x;
-	deltay = actor->Target.Origin.y - actor->Origin.y;
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -426,8 +403,8 @@ void P_NewChaseDir(mobj_t * actor)
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		actor->MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
-		if (actor->MoveDir != turnaround && P_TryWalk(actor))
+		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
 
@@ -446,8 +423,8 @@ void P_NewChaseDir(mobj_t * actor)
 
 	if (d[1] != DI_NODIR)
 	{
-		actor->MoveDir = d[1];
-		if (P_TryWalk(actor))
+		MoveDir = d[1];
+		if (TryWalk())
 		{
 			// either moved forward or attacked
 			return;
@@ -456,9 +433,9 @@ void P_NewChaseDir(mobj_t * actor)
 
 	if (d[2] != DI_NODIR)
 	{
-		actor->MoveDir = d[2];
+		MoveDir = d[2];
 
-		if (P_TryWalk(actor))
+		if (TryWalk())
 			return;
 	}
 
@@ -466,9 +443,9 @@ void P_NewChaseDir(mobj_t * actor)
 	// so pick another direction.
 	if (olddir != DI_NODIR)
 	{
-		actor->MoveDir = olddir;
+		MoveDir = olddir;
 
-		if (P_TryWalk(actor))
+		if (TryWalk())
 			return;
 	}
 
@@ -479,9 +456,9 @@ void P_NewChaseDir(mobj_t * actor)
 		{
 			if (tdir != turnaround)
 			{
-				actor->MoveDir = tdir;
+				MoveDir = tdir;
 
-				if (P_TryWalk(actor))
+				if (TryWalk())
 					return;
 			}
 		}
@@ -492,9 +469,9 @@ void P_NewChaseDir(mobj_t * actor)
 		{
 			if (tdir != turnaround)
 			{
-				actor->MoveDir = tdir;
+				MoveDir = tdir;
 
-				if (P_TryWalk(actor))
+				if (TryWalk())
 					return;
 			}
 		}
@@ -502,17 +479,20 @@ void P_NewChaseDir(mobj_t * actor)
 
 	if (turnaround != DI_NODIR)
 	{
-		actor->MoveDir = turnaround;
-		if (P_TryWalk(actor))
+		MoveDir = turnaround;
+		if (TryWalk())
 			return;
 	}
 
-	actor->MoveDir = DI_NODIR;	// can not move
+	MoveDir = DI_NODIR;	// can not move
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/20 19:07:47  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.17  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

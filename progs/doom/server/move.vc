@@ -65,12 +65,12 @@ boolean Actor::Touch(MapObject InOther)
 	// missiles can hit other things
 	if (bMissile)
 	{
-		if (Owner && (Owner.Class == Other.Class ||
-			(Owner.Class == HellKnight && Other.Class == BaronOfHell) ||
-			(Owner.Class == BaronOfHell && Other.Class == HellKnight)))
+		if (Instigator && (Instigator.Class == Other.Class ||
+			(Instigator.Class == HellKnight && Other.Class == BaronOfHell) ||
+			(Instigator.Class == BaronOfHell && Other.Class == HellKnight)))
 		{
 			// Don't hit same species as originator.
-			if (Other == Owner)
+			if (Other == Instigator)
 				return true;
 
 			if (Other.Class != DoomPlayer)
@@ -89,7 +89,7 @@ boolean Actor::Touch(MapObject InOther)
 
 		// damage / explode
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
-		Other.Damage(self, Owner, damage);
+		Other.Damage(self, Instigator, damage);
 		// don't traverse any more
 		return false;
 	}
@@ -112,14 +112,14 @@ float saved_tmfloorz;
 
 //==========================================================================
 //
-//  P_TryMove
+//  Actor::TryMove
 //
 //  Attempt to move to a new position, crossing special lines unless
 // MF_TELEPORT is set.
 //
 //==========================================================================
 
-boolean P_TryMove(mobj_t * thing, float x, float y)
+boolean Actor::TryMove(float x, float y)
 {
 	boolean check;
 	TVec oldorg;
@@ -127,27 +127,27 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	int oldside;
 	line_t *ld;
 
-	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
+	check = CheckRelPosition(vector(x, y, Origin.z));
 	saved_tmfloorz = tmtrace->FloorZ;
 	floatok = false;
 	if (!check)
 	{
 		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer ||
-			!thing->bIsPlayer || tmtrace->BlockingMobj.Origin.z +
-			tmtrace->BlockingMobj.Height - thing->Origin.z > 24.0 ||
+			!bIsPlayer || tmtrace->BlockingMobj.Origin.z +
+			tmtrace->BlockingMobj.Height - Origin.z > 24.0 ||
 			(tmtrace->BlockingMobj.Sector->ceilingheight -
 				(tmtrace->BlockingMobj.Origin.z +
-				tmtrace->BlockingMobj.Height) < thing->Height) ||
+				tmtrace->BlockingMobj.Height) < Height) ||
 		   	(tmtrace->CeilingZ - (tmtrace->BlockingMobj.Origin.z +
-			   	tmtrace->BlockingMobj.Height) < thing->Height))
+			   	tmtrace->BlockingMobj.Height) < Height))
 		{
 			return false;
 		}
 	}
 
-	if (thing->bColideWithWorld)
+	if (bColideWithWorld)
 	{
-		if (tmtrace->CeilingZ - tmtrace->FloorZ < thing->Height)
+		if (tmtrace->CeilingZ - tmtrace->FloorZ < Height)
 		{
 			// Doesn't fit
 			return false;
@@ -155,67 +155,67 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 		floatok = true;
 
-		if (!thing->bTeleport &&
-			tmtrace->CeilingZ - thing->Origin.z < thing->Height)
+		if (!bTeleport &&
+			tmtrace->CeilingZ - Origin.z < Height)
 		{
 			// mobj must lower itself to fit
 			return false;
 		}
 
-		if (!thing->bTeleport && tmtrace->FloorZ - thing->Origin.z > 24.0)
+		if (!bTeleport && tmtrace->FloorZ - Origin.z > 24.0)
 			return false;	// too big a step up
 
-		if (!thing->bDropOff && !thing->bFloat &&
+		if (!bDropOff && !bFloat &&
 			tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
 			return false;	// don't stand over a dropoff
 	}
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(*thing);
+	P_UnsetThingPosition(self);
 
-	oldorg = thing->Origin;
-	thing->Origin.x = x;
-	thing->Origin.y = y;
+	oldorg = Origin;
+	Origin.x = x;
+	Origin.y = y;
 
-	P_SetThingPosition(*thing);
-	thing->FloorZ = tmtrace->FloorZ;
-	thing->CeilingZ = tmtrace->CeilingZ;
-	thing->Floor = tmtrace->Floor;
-	thing->Ceiling = tmtrace->Ceiling;
+	P_SetThingPosition(self);
+	FloorZ = tmtrace->FloorZ;
+	CeilingZ = tmtrace->CeilingZ;
+	Floor = tmtrace->Floor;
+	Ceiling = tmtrace->Ceiling;
 
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!thing->bTeleport && thing->bColideWithWorld)
+	if (!bTeleport && bColideWithWorld)
 	{
 		while (tmtrace->NumSpecHit > 0)
 		{
 			tmtrace->NumSpecHit--;
 			// see if the line was crossed
 			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
-			side = PointOnPlaneSide(thing->Origin, ld);
+			side = PointOnPlaneSide(Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
 			{
 				if (ld->special)
 				{
-					if (thing->bIsPlayer)
+					if (bIsPlayer)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_CROSS);
 					}
-					else if (thing->bActivateMCross)
+					else if (bActivateMCross)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
 					}
-					else if (thing->bActivatePCross)
+					else if (bActivatePCross)
 					{
-						P_ActivateLine(ld, thing, oldside, SPAC_PCROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_PCROSS);
 					}
 					else if (ld->special == 70)
 					{
 						//	Teleport hack
-						P_ActivateLine(ld, thing, oldside, SPAC_MCROSS);
+						P_ActivateLine(ld, self, oldside, SPAC_MCROSS);
 					}
 				}
 			}
@@ -227,19 +227,22 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 //==========================================================================
 //
-//  P_ThrustMobj
+//  Actor::Thrust
 //
 //==========================================================================
 
-void P_ThrustMobj(mobj_t * mo, float angle, float move)
+void Actor::Thrust(float angle, float move)
 {
-	mo->Velocity.x += move * cos(angle) * 35.0;
-	mo->Velocity.y += move * sin(angle) * 35.0;
+	Velocity.x += move * cos(angle) * 35.0;
+	Velocity.y += move * sin(angle) * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.24  2002/03/16 17:44:01  dj_jl
 //  Added PlayerPawn class, added function Spawn, beautification.
 //

@@ -64,16 +64,16 @@ void Actor::A_FatRaise(void)
 
 void Actor::A_FatAttack1(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	A_FaceTarget();
 	// Change direction  to ...
 	Angles.yaw = AngleMod360(Angles.yaw + FATSPREAD);
-	SpawnMissile(this, &Target, MancubusMissile);
+	SpawnMissile(Enemy, MancubusMissile);
 
-	mo = SpawnMissile(this, &Target, MancubusMissile);
-	mo->Angles.yaw = AngleMod360(mo->Angles.yaw + FATSPREAD);
-	VectorRotateAroundZ(&mo->Velocity, FATSPREAD);
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + FATSPREAD);
+	VectorRotateAroundZ(&A.Velocity, FATSPREAD);
 }
 
 //==========================================================================
@@ -86,16 +86,16 @@ void Actor::A_FatAttack1(void)
 
 void Actor::A_FatAttack2(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	A_FaceTarget();
 	// Now here choose opposite deviation.
 	Angles.yaw = AngleMod360(Angles.yaw - FATSPREAD);
-	SpawnMissile(this, &Target, MancubusMissile);
+	SpawnMissile(Enemy, MancubusMissile);
 
-	mo = SpawnMissile(this, &Target, MancubusMissile);
-	mo->Angles.yaw = AngleMod360(mo->Angles.yaw - FATSPREAD * 2.0);
-	VectorRotateAroundZ(&mo->Velocity, -FATSPREAD * 2.0);
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - FATSPREAD * 2.0);
+	VectorRotateAroundZ(&A.Velocity, -FATSPREAD * 2.0);
 }
 
 //==========================================================================
@@ -108,17 +108,17 @@ void Actor::A_FatAttack2(void)
 
 void Actor::A_FatAttack3(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	A_FaceTarget();
 
-	mo = SpawnMissile(this, &Target, MancubusMissile);
-	mo->Angles.yaw = AngleMod360(mo->Angles.yaw - FATSPREAD / 2.0);
-	VectorRotateAroundZ(&mo->Velocity, -FATSPREAD / 2.0);
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - FATSPREAD / 2.0);
+	VectorRotateAroundZ(&A.Velocity, -FATSPREAD / 2.0);
 
-	mo = SpawnMissile(this, &Target, MancubusMissile);
-	mo->Angles.yaw = AngleMod360(mo->Angles.yaw + FATSPREAD / 2.0);
-	VectorRotateAroundZ(&mo->Velocity, FATSPREAD / 2.0);
+	A = SpawnMissile(Enemy, MancubusMissile);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + FATSPREAD / 2.0);
+	VectorRotateAroundZ(&A.Velocity, FATSPREAD / 2.0);
 }
 
 #else
@@ -148,6 +148,9 @@ void Actor::A_FatAttack3(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/20 19:07:43  dj_jl
+//  Got rid of a lots of legacy, beautification.
+//
 //  Revision 1.14  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
