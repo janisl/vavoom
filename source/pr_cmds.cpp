@@ -64,8 +64,6 @@ void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 
-float R_TextureHeight(int pic);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -634,6 +632,40 @@ static void PF_ptrtos(void)
 
 	ptr = (char*)Pop();
 	Push(STR_TO_PROG(ptr));
+}
+
+//==========================================================================
+//
+//	PF_strgetchar
+//
+//==========================================================================
+
+PF(strgetchar)
+{
+	int		str;
+	int		i;
+
+	i = Pop();
+	str = Pop();
+	Push(byte(PROG_TO_STR(str)[i]));
+}
+
+//==========================================================================
+//
+//	PF_strsetchar
+//
+//==========================================================================
+
+PF(strsetchar)
+{
+	int		str;
+	int		i;
+	int		chr;
+
+	chr = Pop();
+	i = Pop();
+	str = Pop();
+	PROG_TO_STR(str)[i] = chr;
 }
 
 //==========================================================================
@@ -2424,7 +2456,7 @@ PF(R_DrawModelFrame)
 	skin = Pop();
 	frame = Pop();
 	model = (model_t*)Pop();
-	angle = Pop();
+	angle = Popf();
 	origin = Popv();
 	R_DrawModelFrame(origin, angle, model, frame, PROG_TO_STR(skin));
 }
@@ -2625,61 +2657,20 @@ PF(LocalSoundTillDone)
 	S_PlayTillDone(PROG_TO_STR(name));
 }
 
-//**************************************************************************
-//
-//	Input line
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	PF_InputLine_Init
-//
-//==========================================================================
-
-PF(InputLine_Init)
-{
-	TILine	*iline;
-
-	iline = (TILine*)Pop();
-	iline->Init();
-}
-
 //==========================================================================
 //
 //	PF_InputLine_SetValue
 //
 //==========================================================================
 
-PF(InputLine_SetValue)
+PF(TranslateKey)
 {
-	TILine	*iline;
-	int		text;
+	int ch;
 
-	text = Pop();
-	iline = (TILine*)Pop();
-	char *ch = PROG_TO_STR(text);
-	while (*ch)
-	{
-		iline->AddChar(*ch++);
-	}
+	ch = Pop();
+	Push(IN_TranslateKey(ch));
 }
 
-//==========================================================================
-//
-//	PF_InputLine_Key
-//
-//==========================================================================
-
-PF(InputLine_Key)
-{
-	TILine	*iline;
-	int		key;
-
-	key = Pop();
-	iline = (TILine*)Pop();
-	Push(iline->Key(key));
-}
 #endif
 
 //==========================================================================
@@ -2946,6 +2937,8 @@ builtin_info_t BuiltinInfo[] =
 
 	//	String functions
 	{"ptrtos", PF_ptrtos},
+	_(strgetchar),
+	_(strsetchar),
 	{"strlen", PF_strlen},
 	{"strcmp", PF_strcmp},
 	{"stricmp", PF_stricmp},
@@ -3034,10 +3027,7 @@ builtin_info_t BuiltinInfo[] =
 	_(LocalSound),
 	_(LocalSoundTillDone),
 
-	//	Input line
-	_(InputLine_Init),
-	_(InputLine_SetValue),
-	_(InputLine_Key),
+	_(TranslateKey),
 #endif
 #ifdef SERVER
 	//	Print functions
@@ -3130,9 +3120,13 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2001/11/09 14:33:35  dj_jl
+//	Moved input line to progs
+//	Builtins for accessing and changing characters in strings
+//
 //	Revision 1.19  2001/10/27 07:50:55  dj_jl
 //	Some new builtins
-//
+//	
 //	Revision 1.18  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
