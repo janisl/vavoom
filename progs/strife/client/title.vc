@@ -1,0 +1,152 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	$Id$
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// demo loop control
+int				demosequence = -1;	// -1 = don't play demos
+
+float			pagetime;
+int				page_pic;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	AdvanceDemo
+//
+//	This cycles through the demo sequences.
+//
+//==========================================================================
+
+void AdvanceDemo(void)
+{
+	demosequence++;
+	demosequence %= 4;
+    
+    switch (demosequence)
+    {
+      case 0:
+		pagetime = 170.0 / 35.0;
+		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+//		S_StartSong("D_STRIFE", P_GetCDTitleTrack(), false);
+		CmdBuf_AddText("music play D_STRIFE");
+		break;
+
+      case 1:
+		CmdBuf_AddText("PlayDemo demo1\n");
+		break;
+
+      case 2:
+		pagetime = 200.0 / 35.0;
+		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
+		break;
+
+      case 3:
+		CmdBuf_AddText("PlayDemo demo2\n");
+		break;
+    }
+}
+
+//==========================================================================
+//
+//	ForceTitle
+//
+//==========================================================================
+
+void ForceTitle(void)
+{
+	pagetime = 11.0;
+	page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+}
+
+//==========================================================================
+//
+//	PageDrawer
+//
+//==========================================================================
+
+void PageDrawer(void)
+{
+	pagetime -= frametime;
+    if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
+	{
+		AdvanceDemo();
+	}
+
+	R_DrawPic(0, 0, page_pic);
+}
+
+//==========================================================================
+//
+//	OnHostEndGame
+//
+//==========================================================================
+
+void OnHostEndGame(void)
+{
+	if (demosequence != -1)
+		AdvanceDemo();
+	ForceTitle();
+}
+
+//==========================================================================
+//
+//	OnHostError
+//
+//==========================================================================
+
+void OnHostError(void)
+{
+	demosequence = -1;
+	ForceTitle();
+}
+
+//==========================================================================
+//
+//	StopDemoLoop
+//
+//==========================================================================
+
+void StopDemoLoop(void)
+{
+	demosequence = -1;			// not in the demo loop now
+}
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.1  2001/08/04 17:18:35  dj_jl
+//	Moved title / demo loop to progs
+//
+//**************************************************************************

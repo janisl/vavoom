@@ -1,0 +1,167 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	$Id$
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// demo loop control
+int				demosequence = -1;	// -1 = don't play demos
+
+float			pagetime;
+int				page_pic;
+int				advisor_pic;
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	AdvanceDemo
+//
+//	This cycles through the demo sequences.
+//
+//==========================================================================
+
+void AdvanceDemo(void)
+{
+	demosequence++;
+	demosequence %= 6;
+    
+    switch (demosequence)
+    {
+      case 0:
+		pagetime = 490.0 / 35.0;
+		page_pic = R_RegisterPic("TITLE", PIC_RAW);
+//		S_StartSong("hexen", P_GetCDTitleTrack(), true);
+		CmdBuf_AddText("music play hexen\n");
+		break;
+
+      case 1:
+		advisor_pic = R_RegisterPic("ADVISOR", PIC_PATCH);
+		CmdBuf_AddText("PlayDemo demo1\n");
+		break;
+
+      case 2:
+		pagetime = 200.0 / 35.0;
+		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
+		break;
+
+      case 3:
+		CmdBuf_AddText("PlayDemo demo2\n");
+		break;
+
+      case 4:
+		pagetime = 200.0 / 35.0;
+		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
+		break;
+
+      case 5:
+		CmdBuf_AddText("PlayDemo demo3\n");
+		break;
+    }
+}
+
+//==========================================================================
+//
+//	ForceTitle
+//
+//==========================================================================
+
+void ForceTitle(void)
+{
+	pagetime = 14.0;
+	page_pic = R_RegisterPic("TITLE", PIC_RAW);
+}
+
+//==========================================================================
+//
+//	PageDrawer
+//
+//==========================================================================
+
+void PageDrawer(void)
+{
+	pagetime -= frametime;
+    if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
+	{
+		AdvanceDemo();
+	}
+
+	R_DrawPic(0, 0, page_pic);
+	if (demosequence == 1)
+	{
+		R_DrawPic(4, 160, advisor_pic);
+	}
+}
+
+//==========================================================================
+//
+//	OnHostEndGame
+//
+//==========================================================================
+
+void OnHostEndGame(void)
+{
+	if (demosequence != -1)
+		AdvanceDemo();
+	ForceTitle();
+}
+
+//==========================================================================
+//
+//	OnHostError
+//
+//==========================================================================
+
+void OnHostError(void)
+{
+	demosequence = -1;
+	ForceTitle();
+}
+
+//==========================================================================
+//
+//	StopDemoLoop
+//
+//==========================================================================
+
+void StopDemoLoop(void)
+{
+	demosequence = -1;			// not in the demo loop now
+}
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.1  2001/08/04 17:18:35  dj_jl
+//	Moved title / demo loop to progs
+//
+//**************************************************************************
