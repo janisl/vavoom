@@ -439,13 +439,14 @@ void TDirect3DDrawer::InitResolution(void)
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATEALPHA);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGTABLEMODE, D3DFOG_LINEAR);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, D3DFOG_LINEAR);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR, 0x007f7f7f);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(0.5));
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(0.5));
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(0.8));
+	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(1.0));
+	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(2048.0));
 }
 
 //==========================================================================
@@ -536,9 +537,8 @@ void TDirect3DDrawer::Setup2D(void)
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_VIEW, &IdentityMatrix);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -615,9 +615,9 @@ void TDirect3DDrawer::SetupFrame(void)
 	matView(3, 3) = 1;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_VIEW, &matView);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_CCW);
+
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, r_use_fog ? TRUE : FALSE);
@@ -1722,9 +1722,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:54  dj_jl
+//	Fixed fog, beautification
+//
 //	Revision 1.4  2001/08/01 17:40:09  dj_jl
 //	Fixed check for sprite sorting, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
