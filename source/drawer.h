@@ -124,7 +124,7 @@ class TDrawer
 	virtual void DrawSkyPolygon(TVec*, int, int, float, int, float) = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
-	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int) = 0;
+	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles(void) = 0;
@@ -157,9 +157,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:11  dj_jl
+//	Added depth hack for weapon models
+//
 //	Revision 1.4  2001/08/01 17:42:22  dj_jl
 //	Fixed sprite lump drawing in player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

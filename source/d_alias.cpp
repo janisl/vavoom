@@ -797,7 +797,7 @@ void R_AliasSetupFrame(int frame)
 //==========================================================================
 
 void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
-	int skinnum, dword light, int translucency)
+	int skinnum, dword light, int translucency, bool is_view_model)
 {
 	finalvert_t		finalverts[MAXALIASVERTS +
 						((CACHE_SIZE - 1) / sizeof(finalvert_t)) + 1];
@@ -827,10 +827,11 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 	D_Aff8Patch();
 #endif
 
-//	if (currententity != &cl.viewent)
+	// hack the depth range to prevent view model from poking into walls
+	if (is_view_model)
+		ziscale = (float)0x8000 * (float)0x10000 * 3.0;
+	else
 		ziscale = (float)0x8000 * (float)0x10000;
-//	else
-//		ziscale = (float)0x8000 * (float)0x10000 * 3.0;
 
 	if (a_trivial_accept)
 		R_AliasPrepareUnclippedPoints();
@@ -845,7 +846,8 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
 //==========================================================================
 
 void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency)
+	model_t *model, int frame, int skinnum, dword light, int translucency,
+	bool is_view_model)
 {
 	modelorg = vieworg - origin;
 
@@ -856,15 +858,18 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		return;
 	}
 
-	R_AliasDrawModel(angles, model, frame, skinnum, light, translucency);
+	R_AliasDrawModel(angles, model, frame, skinnum, light, translucency, is_view_model);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:11  dj_jl
+//	Added depth hack for weapon models
+//
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

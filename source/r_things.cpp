@@ -387,7 +387,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
 				(model_t*)spr.surf, spr.lump, spr.translation,
-				spr.light, spr.translucency - 1);
+				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
 		{
@@ -736,7 +736,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
 					(model_t*)spr.surf, spr.lump, spr.translation,
-					spr.light, spr.translucency - 1);
+					spr.light, spr.translucency - 1, false);
 			}
 			else if (spr.type)
 			{
@@ -764,7 +764,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 		}
 	}
 	Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->alias_model,
-		mobj->alias_frame, mobj->alias_skinnum, light, mobj->translucency);
+		mobj->alias_frame, mobj->alias_skinnum, light, mobj->translucency, false);
 }
 
 //==========================================================================
@@ -837,7 +837,7 @@ void R_DrawTranslucentPolys(void)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
 					(model_t*)spr.surf, spr.lump, spr.translation,
-					spr.light, spr.translucency - 1);
+					spr.light, spr.translucency - 1, false);
 			}
 			else if (spr.type)
 			{
@@ -959,8 +959,8 @@ static void RenderPSprite(cl_pspdef_t* psp)
 
 static void RenderViewModel(cl_pspdef_t *psp)
 {
-	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 16.0 -
-		(psp->sy - 32.0) * viewup / 16.0;
+	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
+		(psp->sy - 32.0) * viewup / 8.0;
 	TAVec angles = cl.viewangles;
 
 	dword light;
@@ -974,7 +974,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 	}
 
 	Drawer->DrawAliasModel(origin, angles, psp->alias_model,
-		psp->alias_frame, 0, light, cl.translucency);
+		psp->alias_frame, 0, light, cl.translucency, true);
 }
 
 //==========================================================================
@@ -1069,9 +1069,12 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:11  dj_jl
+//	Added depth hack for weapon models
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:11:56  dj_jl
 //	Some fixes in model rendering
 //	

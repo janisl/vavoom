@@ -127,7 +127,7 @@ class TSoftwareDrawer : public TDrawer
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -443,9 +443,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:11  dj_jl
+//	Added depth hack for weapon models
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

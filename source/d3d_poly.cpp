@@ -790,7 +790,8 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency)
+	model_t *model, int frame, int skinnum, dword light, int translucency,
+	bool is_view_model)
 {
 	mmdl_t				*pmdl;
 	mframe_t			*pframedesc;
@@ -813,6 +814,13 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec				alias_right;
 	TVec				alias_up;
 	dword				alpha;
+
+	if (is_view_model)
+	{
+		// hack the depth range to prevent view model from poking into walls
+		viewData.dvMaxZ = 0.3;
+		RenderDevice->SetViewport(&viewData);
+	}
 
 	//
 	// get lighting information
@@ -924,6 +932,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
+	if (is_view_model)
+	{
+		viewData.dvMaxZ = 1.0;
+		RenderDevice->SetViewport(&viewData);
+	}
 }
 
 //==========================================================================
@@ -990,9 +1003,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:29:11  dj_jl
+//	Added depth hack for weapon models
+//
 //	Revision 1.4  2001/08/01 17:36:11  dj_jl
 //	Added alpha test to the particle drawing
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
