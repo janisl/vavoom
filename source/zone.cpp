@@ -700,7 +700,7 @@ void *Z_Malloc(int size, int tag, void** user)
 	else
 	{
 		ptr = mainzone->Malloc(size, tag, user,
-			tag == PU_LEVEL || tag == PU_LEVSPEC || tag == PU_LOW);
+			/*tag == PU_LEVEL || tag == PU_LEVSPEC || */tag == PU_LOW);
 	}
 	if (!ptr)
 	{
@@ -847,9 +847,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/08/30 17:44:45  dj_jl
 //	Print heap dump on Z_Malloc failure
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

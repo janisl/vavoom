@@ -105,9 +105,10 @@ void R_DrawTranslucentPolys(void);
 //
 // R_Sky
 //
+void R_InitSkyBoxes(void);
 void R_InitSky(const mapInfo_t &info);
 void R_AnimateSky(void);
-void R_DrawSkyBox(void);
+void R_DrawSky(void);
 
 //
 //	R_Tex
@@ -149,9 +150,12 @@ extern refdef_t			refdef;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

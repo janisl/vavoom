@@ -29,6 +29,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_MAPS			99
+
 #define MAPINFO_SCRIPT_NAME	"MAPINFO"
 #define UNKNOWN_MAP_NAME	"DEVELOPMENT MAP"
 #define DEFAULT_SKY_NAME	"SKY1"
@@ -38,12 +40,15 @@ enum
 {
 	MCMD_SKY1,
 	MCMD_SKY2,
+	MCMD_SKYBOX,
 	MCMD_DOUBLESKY,
 	MCMD_LIGHTNING,
 	MCMD_FADETABLE,
 	MCMD_CLUSTER,
 	MCMD_WARPTRANS,
 	MCMD_NEXT,
+	MCMD_SECRET,
+	MCMD_MAPALIAS,
 	MCMD_MUSIC,
 	MCMD_CDTRACK,
 	MCMD_CD_STARTTRACK,
@@ -68,19 +73,22 @@ enum
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static mapInfo_t	MapInfo[99];
-static int 			MapCount = 98;
+static mapInfo_t	MapInfo[MAX_MAPS];
+static int 			MapCount;
 
 static const char *MapCmdNames[] =
 {
 	"SKY1",
 	"SKY2",
+	"SKYBOX",
 	"DOUBLESKY",
 	"LIGHTNING",
 	"FADETABLE",
 	"CLUSTER",
 	"WARPTRANS",
 	"NEXT",
+	"SECRET",
+	"MAPALIAS",
     "MUSIC",
 	"CDTRACK",
 	"CD_START_TRACK",
@@ -107,6 +115,7 @@ void InitMapInfo(void)
 	int 		mcmdValue;
 	mapInfo_t 	*info;
 	char 		songMulch[10];
+	int			NumMapAlias;
 
 	MapCount = 1;
 
@@ -150,6 +159,7 @@ void InitMapInfo(void)
 		info->warpTrans = MapCount;
 
 		MapCount++;
+		NumMapAlias = 0;
 
 		SC_MustGetString();
 		if (sc_String[0] >= '0' && sc_String[0] <= '9')
@@ -200,6 +210,28 @@ void InitMapInfo(void)
 					SC_MustGetString();
 					strcpy(info->nextMap, sc_String);
 					break;
+				case MCMD_SECRET:
+					SC_MustGetString();
+					strcpy(info->secretMap, sc_String);
+					break;
+				case MCMD_MAPALIAS:
+con << "Map alias\n";
+					SC_MustGetStringName("{");
+					SC_MustGetString();
+					while (!SC_Compare("}"))
+					{
+						if (NumMapAlias == MAX_MAP_ALIAS)
+						{
+							SC_ScriptError("Too many map alias");
+						}
+						SC_UnGet();
+						SC_MustGetNumber();
+						info->mapalias[NumMapAlias].num = sc_Number;
+						SC_MustGetString();
+						strcpy(info->mapalias[NumMapAlias].name, sc_String);
+						SC_MustGetString();
+					}
+					break;
 				case MCMD_CDTRACK:
 					SC_MustGetNumber();
 					info->cdTrack = sc_Number;
@@ -215,6 +247,10 @@ void InitMapInfo(void)
 					info->sky2Texture = R_CheckTextureNumForName(sc_String);
 					SC_MustGetNumber();
 					info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
+					break;
+				case MCMD_SKYBOX:
+					SC_MustGetString();
+					strcpy(info->skybox, sc_String);
 					break;
 				case MCMD_DOUBLESKY:
 					info->doubleSky = true;
@@ -264,7 +300,7 @@ static int QualifyMap(int map)
 
 void P_GetMapInfo(const char *map, mapInfo_t &info)
 {
-	for (int i = 1; i < 99; i++)
+	for (int i = 1; i < MAX_MAPS; i++)
 	{
 		if (!stricmp(map, MapInfo[i].lumpname))
 		{
@@ -320,20 +356,20 @@ int P_GetMapWarpTrans(int map)
 //
 //==========================================================================
 
-/*int P_TranslateMap(int map)
+char *P_TranslateMap(int map)
 {
 	int i;
 
-	for (i = 1; i < 99; i++) // Make this a macro
+	for (i = 1; i < MAX_MAPS; i++)
 	{
 		if (MapInfo[i].warpTrans == map)
 		{
-			return i;
+			return MapInfo[i].lumpname;
 		}
 	}
 	// Not found
-	return -1;
-}*/
+	return MapInfo[1].lumpname;
+}
 
 //==========================================================================
 //
@@ -427,9 +463,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.1  2001/10/08 17:30:23  dj_jl
 //	Renamed to mapinfo.*
-//
+//	
 //	Revision 1.4  2001/08/04 17:27:39  dj_jl
 //	Added consts to script functions
 //	

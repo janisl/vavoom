@@ -42,6 +42,26 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct skysurface_t : surface_t
+{
+	TVec			__verts[3];
+};
+
+struct sky_t
+{
+	int 			texture1;
+	int 			texture2;
+	int 			baseTexture1;
+	int 			baseTexture2;
+	float			columnOffset1;
+	float			columnOffset2;
+	float			scrollDelta1;
+	float			scrollDelta2;
+	skysurface_t	surf;
+	TPlane			plane;
+	texinfo_t		texinfo;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -56,85 +76,37 @@ static void R_LightningFlash(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int 			Sky1BaseTexture;
-static int 			Sky2BaseTexture;
-static int 			Sky1TopBaseTexture;
-static int 			Sky2TopBaseTexture;
-static int 			Sky1BotBaseTexture;
-static int 			Sky2BotBaseTexture;
-
-static int 			Sky1Texture;
-static int 			Sky2Texture;
-static int 			Sky1TopTexture;
-static int 			Sky2TopTexture;
-static int 			Sky1BotTexture;
-static int 			Sky2BotTexture;
-
-static float		Sky1ColumnOffset;
-static float		Sky2ColumnOffset;
-static float		Sky1ScrollDelta;
-static float		Sky2ScrollDelta;
-
-static float		Sky1TopXOffset;
-static float		Sky1TopYOffset;
-static float		Sky2TopXOffset;
-static float		Sky2TopYOffset;
-static float		Sky1TopXDelta;
-static float		Sky1TopYDelta;
-static float		Sky2TopXDelta;
-static float		Sky2TopYDelta;
-
-static boolean 		DoubleSky;
-
 static boolean		LevelHasLightning;
 static int			NextLightningFlash;
 static int			LightningFlash;
 static int			*LightningLightLevels;
 
-static float		skytop;
-static float		skybot;
-
-struct skysurface_t : surface_t
-{
-	TVec			__verts[3];
-};
-
-static skysurface_t		skysurf[6];
-static TPlane			skyplane[6];
-static texinfo_t		skytexinfo[6];
+static sky_t		sky[6];
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	R_InitSky
-//
-//	Called at level load.
+//	R_InitSkyBoxes
 //
 //==========================================================================
 
-void R_InitSky(const mapInfo_t &info)
+void R_InitSkyBoxes(void)
 {
-	Sky1Texture = Sky1BaseTexture = info.sky1Texture;
-	Sky2Texture = Sky2BaseTexture = info.sky2Texture;
-	Sky1ScrollDelta = info.sky1ScrollDelta;
-	Sky2ScrollDelta = info.sky2ScrollDelta;
-	Sky1ColumnOffset = 0.0;
-	Sky2ColumnOffset = 0.0;
-	DoubleSky =	info.doubleSky;
+	SC_Open("skyboxes");
 
-	Sky1TopTexture = Sky1TopBaseTexture = Sky1Texture;
-	Sky2TopTexture = Sky2TopBaseTexture = Sky2Texture;
-	Sky1BotTexture = Sky1BotBaseTexture = Sky1Texture;
-	Sky2BotTexture = Sky2BotBaseTexture = Sky2Texture;
-	Sky1TopXOffset = 0;
-	Sky1TopYOffset = 0;
-	Sky2TopXOffset = 0;
-	Sky2TopYOffset = 0;
-	Sky1TopXDelta = 32;
-	Sky1TopYDelta = 8;
-	Sky2TopXDelta = 32;
-	Sky2TopYDelta = 8;
+	SC_Close();
+}
+
+//==========================================================================
+//
+//	R_InitOldSky
+//
+//==========================================================================
+
+static void R_InitOldSky(const mapInfo_t &info)
+{
+	memset(sky, 0, sizeof(sky));
 
 	// Check if the level is a lightning level
 	LevelHasLightning = false;
@@ -160,7 +132,10 @@ void R_InitSky(const mapInfo_t &info)
 		}
 	}
 
-	float skyheight = textures[Sky1Texture]->height;
+	float skyheight = textures[info.sky1Texture]->height;
+	float skytop;
+	float skybot;
+
 	if (skyheight <= 128.0)
 	{
 		skytop = 95;
@@ -171,82 +146,112 @@ void R_InitSky(const mapInfo_t &info)
 	}
 	skybot = skytop - skyheight;
 
-	memset(skysurf, 0, sizeof(skysurf));
+	sky[0].surf.verts[0] = TVec(128, 128, skybot);
+	sky[0].surf.verts[1] = TVec(128, 128, skytop);
+	sky[0].surf.verts[2] = TVec(128, -128, skytop);
+	sky[0].surf.verts[3] = TVec(128, -128, skybot);
 
-	skysurf[0].verts[0] = TVec(128, 128, skybot);
-	skysurf[0].verts[1] = TVec(128, 128, skytop);
-	skysurf[0].verts[2] = TVec(128, -128, skytop);
-	skysurf[0].verts[3] = TVec(128, -128, skybot);
+	sky[1].surf.verts[0] = TVec(128, -128, skybot);
+	sky[1].surf.verts[1] = TVec(128, -128, skytop);
+	sky[1].surf.verts[2] = TVec(-128, -128, skytop);
+	sky[1].surf.verts[3] = TVec(-128, -128, skybot);
 
-	skysurf[1].verts[0] = TVec(128, -128, skybot);
-	skysurf[1].verts[1] = TVec(128, -128, skytop);
-	skysurf[1].verts[2] = TVec(-128, -128, skytop);
-	skysurf[1].verts[3] = TVec(-128, -128, skybot);
+	sky[2].surf.verts[0] = TVec(-128, -128, skybot);
+	sky[2].surf.verts[1] = TVec(-128, -128, skytop);
+	sky[2].surf.verts[2] = TVec(-128, 128, skytop);
+	sky[2].surf.verts[3] = TVec(-128, 128, skybot);
 
-	skysurf[2].verts[0] = TVec(-128, -128, skybot);
-	skysurf[2].verts[1] = TVec(-128, -128, skytop);
-	skysurf[2].verts[2] = TVec(-128, 128, skytop);
-	skysurf[2].verts[3] = TVec(-128, 128, skybot);
+	sky[3].surf.verts[0] = TVec(-128, 128, skybot);
+	sky[3].surf.verts[1] = TVec(-128, 128, skytop);
+	sky[3].surf.verts[2] = TVec(128, 128, skytop);
+	sky[3].surf.verts[3] = TVec(128, 128, skybot);
 
-	skysurf[3].verts[0] = TVec(-128, 128, skybot);
-	skysurf[3].verts[1] = TVec(-128, 128, skytop);
-	skysurf[3].verts[2] = TVec(128, 128, skytop);
-	skysurf[3].verts[3] = TVec(128, 128, skybot);
+	sky[4].surf.verts[0] = TVec(128.0, 128.0, skytop);
+	sky[4].surf.verts[1] = TVec(-128.0, 128.0, skytop);
+	sky[4].surf.verts[2] = TVec(-128.0, -128.0, skytop);
+	sky[4].surf.verts[3] = TVec(128.0, -128.0, skytop);
 
-	skysurf[4].verts[0] = TVec(128.0, 128.0, skytop);
-	skysurf[4].verts[1] = TVec(-128.0, 128.0, skytop);
-	skysurf[4].verts[2] = TVec(-128.0, -128.0, skytop);
-	skysurf[4].verts[3] = TVec(128.0, -128.0, skytop);
+	sky[5].surf.verts[0] = TVec(128, 128, skybot);
+	sky[5].surf.verts[1] = TVec(128, -128, skybot);
+	sky[5].surf.verts[2] = TVec(-128, -128, skybot);
+	sky[5].surf.verts[3] = TVec(-128, 128, skybot);
 
-	skysurf[5].verts[0] = TVec(128, 128, skybot);
-	skysurf[5].verts[1] = TVec(128, -128, skybot);
-	skysurf[5].verts[2] = TVec(-128, -128, skybot);
-	skysurf[5].verts[3] = TVec(-128, 128, skybot);
+	sky[0].plane.Set(TVec(-1, 0, 0), -128);
+	sky[0].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[0].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[0].texinfo.texorg = TVec(128, 128, skytop);
 
-	skyplane[0].Set(TVec(-1, 0, 0), -128);
-	skytexinfo[0].saxis = TVec(0, -1.0, 0);
-	skytexinfo[0].taxis = TVec(0, 0, -1.0);
-	skytexinfo[0].texorg = TVec(128, 128, skytop);
+	sky[1].plane.Set(TVec(0, 1, 0), -128);
+	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
+	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[1].texinfo.texorg = TVec(128 + 256, -128, skytop);
 
-	skyplane[1].Set(TVec(0, 1, 0), -128);
-	skytexinfo[1].saxis = TVec(-1.0, 0, 0);
-	skytexinfo[1].taxis = TVec(0, 0, -1.0);
-	skytexinfo[1].texorg = TVec(128 + 256, -128, skytop);
+	sky[2].plane.Set(TVec(1, 0, 0), -128);
+	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
+	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[2].texinfo.texorg = TVec(-128, -128 - 512, skytop);
 
-	skyplane[2].Set(TVec(1, 0, 0), -128);
-	skytexinfo[2].saxis = TVec(0, 1.0, 0);
-	skytexinfo[2].taxis = TVec(0, 0, -1.0);
-	skytexinfo[2].texorg = TVec(-128, -128 - 512, skytop);
+	sky[3].plane.Set(TVec(0, -1, 0), -128);
+	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
+	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[3].texinfo.texorg = TVec(-128 - 768, 128, skytop);
 
-	skyplane[3].Set(TVec(0, -1, 0), -128);
-	skytexinfo[3].saxis = TVec(1.0, 0, 0);
-	skytexinfo[3].taxis = TVec(0, 0, -1.0);
-	skytexinfo[3].texorg = TVec(-128 - 768, 128, skytop);
+	sky[4].plane.Set(TVec(0, 0, -1), -skytop);
+	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[4].texinfo.taxis = TVec(1.0, 0, 0);
+	sky[4].texinfo.texorg = TVec(-128, 128, skytop);
 
-	skyplane[4].Set(TVec(0, 0, -1), -skytop);
-	skytexinfo[4].saxis = TVec(0, -1.0, 0);
-	skytexinfo[4].taxis = TVec(1.0, 0, 0);
-	skytexinfo[4].texorg = TVec(-128, 128, skytop);
-
-	skyplane[5].Set(TVec(0, 0, 1), skybot);
-	skytexinfo[5].saxis = TVec(0, -1.0, 0);
-	skytexinfo[5].taxis = TVec(1.0, 0, 0);
-	skytexinfo[5].texorg = TVec(-128, 128, skybot);
+	sky[5].plane.Set(TVec(0, 0, 1), skybot);
+	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[5].texinfo.taxis = TVec(1.0, 0, 0);
+	sky[5].texinfo.texorg = TVec(-128, 128, skybot);
 
 	for (int j = 0; j < 6; j++)
 	{
-		skysurf[j].plane = &skyplane[j];
-		skysurf[j].texinfo = &skytexinfo[j];
-		skysurf[j].count = 4;
+		sky[j].baseTexture1 = info.sky1Texture;
+		sky[j].baseTexture2 = info.sky2Texture;
+		if (info.doubleSky)
+		{
+			sky[j].texture1 = sky[j].baseTexture2;
+			sky[j].texture2 = sky[j].baseTexture1;
+			sky[j].scrollDelta1 = info.sky2ScrollDelta;
+			sky[j].scrollDelta2 = info.sky1ScrollDelta;
+		}
+		else
+		{
+			sky[j].texture1 = sky[j].baseTexture1;
+			sky[j].scrollDelta1 = info.sky1ScrollDelta;
+		}
+		sky[j].surf.plane = &sky[j].plane;
+		sky[j].surf.texinfo = &sky[j].texinfo;
+		sky[j].surf.count = 4;
 	}
 
+	sky[4].texinfo.taxis *= skyheight / 256.0;
+	sky[5].texinfo.taxis *= skyheight / 256.0;
+
 	//	Precache textures
-	Drawer->SetSkyTexture(Sky1Texture, DoubleSky);
-	Drawer->SetSkyTexture(Sky2Texture, false);
-	Drawer->SetSkyTexture(Sky1TopTexture, DoubleSky);
-	Drawer->SetSkyTexture(Sky2TopTexture, false);
-	Drawer->SetSkyTexture(Sky1BotTexture, DoubleSky);
-	Drawer->SetSkyTexture(Sky2BotTexture, false);
+	Drawer->SetSkyTexture(info.sky1Texture, info.doubleSky);
+	Drawer->SetSkyTexture(info.sky2Texture, false);
+}
+
+//==========================================================================
+//
+//	R_InitSky
+//
+//	Called at level load.
+//
+//==========================================================================
+
+void R_InitSky(const mapInfo_t &info)
+{
+	if (info.skybox[0])
+	{
+	}
+	else
+	{
+		R_InitOldSky(info);
+	}
 }
 
 //==========================================================================
@@ -258,12 +263,11 @@ void R_InitSky(const mapInfo_t &info)
 void R_AnimateSky(void)
 {
 	//	Update sky column offsets
-	Sky1ColumnOffset += Sky1ScrollDelta * host_frametime;
-	Sky2ColumnOffset += Sky2ScrollDelta * host_frametime;
-	Sky1TopXOffset += Sky1TopXDelta * host_frametime;
-	Sky1TopYOffset += Sky1TopYDelta * host_frametime;
-	Sky2TopXOffset += Sky2TopXDelta * host_frametime;
-	Sky2TopYOffset += Sky2TopYDelta * host_frametime;
+	for (int i = 0; i < 6; i++)
+	{
+		sky[i].columnOffset1 += sky[i].scrollDelta1 * host_frametime;
+		sky[i].columnOffset2 += sky[i].scrollDelta2 * host_frametime;
+	}
 
 	//	Update lightning
 	if (LevelHasLightning)
@@ -328,9 +332,10 @@ static void R_LightningFlash(void)
 					tempLight++;
 				}
 			}
-			Sky1Texture = Sky1BaseTexture;
-			Sky1TopTexture = Sky1TopBaseTexture;
-			Sky1BotTexture = Sky1BotBaseTexture;
+			for (i = 0; i < 6; i++)
+			{
+				sky[i].texture1 = sky[i].baseTexture1;
+			}
 		}
 		return;
 	}
@@ -377,9 +382,10 @@ static void R_LightningFlash(void)
 	}
 	if (foundSec)
 	{
-		Sky1Texture = Sky2BaseTexture; // set alternate sky
-		Sky1TopTexture = Sky2TopBaseTexture; // set alternate sky
-		Sky1BotTexture = Sky2BotBaseTexture; // set alternate sky
+		for (i = 0; i < 6; i++)
+		{
+			sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
+		}
 		S_StartSoundName("ThunderCrash");
 	}
 	// Calculate the next lighting flash
@@ -417,36 +423,28 @@ void R_ForceLightning(void)
 
 //==========================================================================
 //
-//	R_DrawSkyBox
+//	R_DrawSky
 //
 //==========================================================================
 
-void R_DrawSkyBox(void)
+void R_DrawSky(void)
 {
 	Drawer->BeginSky();
 
 	for (int i = 0; i < 6; i++)
 	{
-		r_saxis = skytexinfo[i].saxis;
-		r_taxis = skytexinfo[i].taxis;
-		r_texorg = skytexinfo[i].texorg;
+		r_saxis = sky[i].texinfo.saxis;
+		r_taxis = sky[i].texinfo.taxis;
+		r_texorg = sky[i].texinfo.texorg;
 
-		r_normal = skyplane[i].normal;
-		r_dist = skyplane[i].dist;
+		r_normal = sky[i].plane.normal;
+		r_dist = sky[i].plane.dist;
 
-		skysurf[i].lightlevel = 255;
+		sky[i].surf.lightlevel = 255;
 
-		r_surface = &skysurf[i];
-		if (DoubleSky)
-		{
-			Drawer->DrawSkyPolygon(skysurf[i].verts, 4, Sky2Texture,
-				Sky2ColumnOffset, Sky1Texture, Sky1ColumnOffset);
-		}
-		else
-		{
-			Drawer->DrawSkyPolygon(skysurf[i].verts, 4,
-				Sky1Texture, Sky1ColumnOffset, 0, 0);
-		}
+		r_surface = &sky[i].surf;
+		Drawer->DrawSkyPolygon(sky[i].surf.verts, 4, sky[i].texture1,
+			sky[i].columnOffset1, sky[i].texture2, sky[i].columnOffset2);
 	}
 
 	Drawer->EndSky();
@@ -455,9 +453,12 @@ void R_DrawSkyBox(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

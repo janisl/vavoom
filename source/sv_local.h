@@ -253,6 +253,7 @@ void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 void SV_SetLineTexture(int side, int position, int texture);
 void SV_SetLineTransluc(line_t *line, int trans);
+const char *SV_GetMapName(int num);
 
 void SV_ReadMove(void);
 
@@ -315,9 +316,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.8  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
-//
+//	
 //	Revision 1.7  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

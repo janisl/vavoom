@@ -27,24 +27,35 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_MAP_ALIAS	16
+
 // TYPES -------------------------------------------------------------------
+
+struct mapalias_t
+{
+	int num;
+	char name[12];
+};
 
 struct mapInfo_t
 {
-	char	lumpname[12];
-	int		cluster;    // Defines what cluster level belongs to
-	int		warpTrans;  // Actual map number in case maps are not sequential
-	char	nextMap[12];// Map to teleport to upon exit of timed deathmatch
-	int		cdTrack;    // CD track to play during level
-	char	name[32];   // Name of map
-	int		sky1Texture;// Default sky texture
-	int		sky2Texture;// Alternate sky displayed in Sky2 sectors
-	float	sky1ScrollDelta;// Default sky texture speed
-	float	sky2ScrollDelta;// Alternate sky texture speed
-	boolean	doubleSky;  // parallax sky: sky2 behind sky1
-	boolean	lightning;  // Use of lightning on the level flashes from sky1 to sky2
-	char	fadetable[12];// Fade table {fogmap}
-	char	songLump[12];// Background music (MUS or MIDI)
+	char lumpname[12];
+	int cluster;		// Defines what cluster level belongs to
+	int warpTrans;		// Actual map number in case maps are not sequential
+	char nextMap[12];	// Map to teleport to upon exit of timed deathmatch
+	char secretMap[12];	// Map to teleport upon secret exit
+	int cdTrack;		// CD track to play during level
+	char name[32];		// Name of map
+	int sky1Texture;	// Default sky texture
+	int sky2Texture;	// Alternate sky displayed in Sky2 sectors
+	float sky1ScrollDelta;// Default sky texture speed
+	float sky2ScrollDelta;// Alternate sky texture speed
+	boolean doubleSky;	// parallax sky: sky2 behind sky1
+	boolean lightning;	// Use of lightning on the level flashes from sky1 to sky2
+	char fadetable[12];	// Fade table {fogmap}
+	char songLump[12];	// Background music (MUS or MIDI)
+	char skybox[32];	// Sky box
+	mapalias_t mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -64,9 +75,12 @@ int P_GetCDTitleTrack(void);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.1  2001/10/08 17:30:23  dj_jl
 //	Renamed to mapinfo.*
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

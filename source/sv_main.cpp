@@ -95,6 +95,7 @@ TMessage	sv_signon(sv_signon_buf, MAX_MSGLEN);
 player_t	*sv_player;
 
 char			sv_next_map[12];
+char			sv_secret_map[12];
 
 int 		TimerGame;
 
@@ -1501,22 +1502,20 @@ void G_ExitLevel(void)
 
 void G_SecretExitLevel(void)
 {
+	if (!sv_secret_map[0])
+	{
+		// No secret map, use normal exit
+		G_ExitLevel();
+		return;
+	}
+
 	if (!in_secret)
 	{
     	strcpy(mapaftersecret, sv_next_map);
 	}
 	completed = true;
 
-	if (sv_next_map[0] == 'E' && sv_next_map[2] == 'M')
-	{
-		//	Doom or Heretic
-		sv_next_map[3] = '9'; 	// go to secret level
-	}
-	else if (!in_secret)
-	{
-		//	Doom2
-		strcpy(sv_next_map, "MAP31");
-	}
+	strcpy(sv_next_map, sv_secret_map); 	// go to secret level
 
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -1550,7 +1549,7 @@ void G_Completed(int map, int position)
 		map = 1;
 		position = 0;
 	}
-	sprintf(sv_next_map, "MAP%02d", map);
+	strcpy(sv_next_map, SV_GetMapName(map));
 
 	LeavePosition = position;
 	completed = true;
@@ -1799,6 +1798,8 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 	P_GetMapInfo(level.mapname, info);
 	strcpy(sv_next_map, info.nextMap);
+	strcpy(sv_secret_map, info.secretMap);
+	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
 
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
@@ -1873,6 +1874,30 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	SV_CreateBaseline();
 
 	cond << "Server spawned\n";
+}
+
+//==========================================================================
+//
+//	SV_GetMapName
+//
+//==========================================================================
+
+const char *SV_GetMapName(int num)
+{
+	//  Check map aliases
+	for (int i = 0; i < MAX_MAP_ALIAS; i++)
+	{
+		if (sv.mapalias[i].num == num)
+		{
+			return sv.mapalias[i].name;
+		}
+	}
+
+	//  Use defalt map name in form MAP##
+	static char namebuf[12];
+
+	sprintf(namebuf, "MAP%02d", num);
+	return namebuf;
 }
 
 //==========================================================================
@@ -2460,9 +2485,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.15  2001/10/09 17:30:45  dj_jl
 //	Improved stats updates
-//
+//	
 //	Revision 1.14  2001/10/08 17:33:01  dj_jl
 //	Different client and server level structures
 //	

@@ -2738,6 +2738,7 @@ PF(WadLumpPresent)
 struct slist_t;
 
 char* P_GetMapName(int map);
+char *P_TranslateMap(int map);
 void KeyNameForNum(int KeyNr, char* NameString);
 
 void StartSearch(void);
@@ -2756,6 +2757,14 @@ PF(P_GetMapName)
 
 	map = Pop();
 	Push(STR_TO_PROG(P_GetMapName(map)));
+}
+
+PF(P_TranslateMap)
+{
+	int map;
+
+	map = Pop();
+	Push(STR_TO_PROG(P_TranslateMap(map)));
 }
 
 PF(KeyNameForNum)
@@ -2846,20 +2855,6 @@ PF(NewParticle)
 
 builtin_info_t BuiltinInfo[] =
 {
-#ifdef CLIENT
-	_(P_GetMapName),
-	_(KeyNameForNum),
-	_(IN_GetBindingKeys),
-	_(IN_SetBinding),
-	_(SV_GetSaveString),
-	__(StartSearch),
-	_(GetSlist),
-
-	_(LoadTextLump),
-	_(AllocDlight),
-	_(NewParticle),
-#endif
-
 	//	Error functions
 	{"Error", PF_Error},
 	{"FatalError", PF_FatalError},
@@ -2933,6 +2928,19 @@ builtin_info_t BuiltinInfo[] =
 	_(WadLumpPresent),
 
 #ifdef CLIENT
+	_(P_GetMapName),
+	_(P_TranslateMap),
+	_(KeyNameForNum),
+	_(IN_GetBindingKeys),
+	_(IN_SetBinding),
+	_(SV_GetSaveString),
+	__(StartSearch),
+	_(GetSlist),
+
+	_(LoadTextLump),
+	_(AllocDlight),
+	_(NewParticle),
+
 	//	Graphics
 	_(R_RegisterPic),
 	_(R_RegisterPicPal),
@@ -3058,9 +3066,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.15  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.14  2001/10/02 17:36:08  dj_jl
 //	Removed status bar widgets
 //	

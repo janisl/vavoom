@@ -56,8 +56,6 @@ double 	sc_Float;
 int 	sc_Line;
 boolean sc_End;
 boolean sc_Crossed;
-boolean sc_FileScripts = false;
-char 	*sc_ScriptsDir = "";
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -74,15 +72,17 @@ static boolean 	AlreadyGot = false;
 
 //==========================================================================
 //
-// SC_Open
+//	SC_Open
 //
 //==========================================================================
 
 void SC_Open(const char *name)
 {
-	if (sc_FileScripts)
+	char filename[MAX_OSPATH];
+
+	if (fl_devmode && FL_FindFile(va("scripts/%s.txt", name), filename))
 	{
-		SC_OpenFile(va("%s%s.txt", sc_ScriptsDir, name));
+		SC_OpenFile(filename);
 	}
 	else
 	{
@@ -485,7 +485,7 @@ boolean SC_Compare(const char *text)
 
 void SC_ScriptError(const char *message)
 {
-	if(message == NULL)
+	if (message == NULL)
 	{
 		message = "Bad syntax.";
 	}
@@ -510,9 +510,12 @@ static void CheckOpen(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/08/04 17:27:39  dj_jl
 //	Added consts to script functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

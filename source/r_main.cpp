@@ -112,6 +112,7 @@ void R_Init(void)
 {
 	r_back2front = (Drawer != _SoftwareDrawer);
 	R_InitTexture();
+	R_InitSkyBoxes();
 	R_InitData();
 	Drawer->InitTextures();
 	Drawer->InitData();
@@ -644,9 +645,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.10  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.9  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
 //	

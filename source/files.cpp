@@ -59,11 +59,7 @@ static void SetupGameDir(const char *dirname);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef DEVELOPER
-bool	fl_devmode = true;
-#else
 bool	fl_devmode = false;
-#endif
 char	fl_basedir[MAX_OSPATH];
 char	fl_gamedir[MAX_OSPATH];
 char	fl_mainwad[MAX_OSPATH];
@@ -274,6 +270,10 @@ void FL_Init(void)
 	else
 	{
 		ParseBase("basev/games.txt");
+#ifdef DEVELOPER
+		//  I need progs to be loaded from files
+		fl_devmode = true;
+#endif
 	}
 
 	p = M_CheckParm("-file");
@@ -647,9 +647,12 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.7  2001/08/31 17:21:01  dj_jl
 //	Finished base game script
 //	

@@ -432,7 +432,7 @@ void R_RenderWorld(void)
 
 	if (sky_is_visible)
 	{
-		R_DrawSkyBox();
+		R_DrawSky();
 	}
 
 	Drawer->WorldDrawing();
@@ -441,9 +441,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.4  2001/09/12 17:33:39  dj_jl
 //	Fixed paranoid errors
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

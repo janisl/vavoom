@@ -35,6 +35,8 @@ struct server_t
 
 	int			intermission;
 	int			intertime;
+
+	mapalias_t	mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
 struct server_static_t
@@ -59,9 +61,12 @@ extern TMessage			sv_signon;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

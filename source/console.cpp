@@ -30,10 +30,15 @@
 
 // MACROS ------------------------------------------------------------------
 
+//#define USE640
+
 #define MAXHISTORY			32
 #define MAX_LINES			1024
-//#define MAX_LINE_LENGTH		40
+#ifdef USE640
 #define MAX_LINE_LENGTH		80
+#else
+#define MAX_LINE_LENGTH		40
+#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -62,6 +67,7 @@ class TConBuf : public streambuf
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void T_DrawCursor640(void);
+void T_DrawString640(int x, int y, const char* String);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -301,24 +307,41 @@ void C_Drawer(void)
     T_SetAlign(hleft, vtop);
 
     // Input line
-//	y = (int)cons_h - 10;
+#ifdef USE640
 	y = (int)(cons_h * 480 / 200) - 10;
-	T_DrawString8(4, y, ">");
-    i = strlen(c_iline.Data) - 37;
-    if (i < 0)
-    	i = 0;
-	T_DrawString8(12, y, c_iline.Data + i);
-//    T_DrawCursor();
-    T_DrawCursor640();
-   	y -= 10;
+	T_DrawString640(4, y, ">");
+	i = strlen(c_iline.Data) - 37;
+	if (i < 0)
+		i = 0;
+	T_DrawString640(12, y, c_iline.Data + i);
+	T_DrawCursor640();
+	y -= 10;
 
-    // Lines
+	// Lines
 	i = last_line;
-    while ((y + 9 > 0) && i--)
+	while ((y + 9 > 0) && i--)
+	{
+		T_DrawString640(4, y, clines[(i + first_line) % MAX_LINES]);
+		y -= 9;
+	}
+#else
+	y = (int)cons_h - 10;
+	T_DrawString8(4, y, ">");
+	i = strlen(c_iline.Data) - 37;
+	if (i < 0)
+		i = 0;
+	T_DrawString8(12, y, c_iline.Data + i);
+	T_DrawCursor();
+	y -= 10;
+
+	// Lines
+	i = last_line;
+	while ((y + 9 > 0) && i--)
 	{
 		T_DrawString8(4, y, clines[(i + first_line) % MAX_LINES]);
-       	y -= 9;
+		y -= 9;
 	}
+#endif
 }
 
 //==========================================================================
@@ -773,9 +796,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.8  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.7  2001/10/04 17:19:32  dj_jl
 //	Seperated drawing of notify and center messages
 //	

@@ -436,7 +436,7 @@ boolean P_StartACS(int number, int map_num, int *args, mobj_t *activator,
 	int infoIndex;
 	aste_t *statePtr;
 char map[12] = "";
-if (map_num) sprintf(map, "MAP%02d", map_num);
+if (map_num) strcpy(map, SV_GetMapName(map_num));
 
 	NewScript = NULL;
 	if (map[0] && strcmp(map, level.mapname))
@@ -1722,9 +1722,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/12 17:31:13  dj_jl
+//	no message
+//
 //	Revision 1.7  2001/10/09 17:28:41  dj_jl
 //	Moved thing counting to progs
-//
+//	
 //	Revision 1.6  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
 //	
