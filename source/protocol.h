@@ -27,7 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PROTOCOL_VERSION	7
+#define PROTOCOL_VERSION	8
 
 enum
 {
@@ -91,6 +91,7 @@ enum
 	svc_line_transluc,
 	svc_sec_transluc,
 	svc_extra_floor,
+	svc_swap_planes,
 
 	svc_static_light,
 	svc_static_light_rgb,
@@ -143,9 +144,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/11 08:09:34  dj_jl
+//	Added sector plane swapping
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
 //	

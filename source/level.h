@@ -469,6 +469,7 @@ void LoadLevel(cl_level_t &lev, const char *mapname);
 subsector_t* PointInSubsector(const base_level_t &lev, float x, float y);
 byte *LeafPVS(const base_level_t &lev, const subsector_t *ss);
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
+void SwapPlanes(sector_t *);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -478,9 +479,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/11 08:09:34  dj_jl
+//	Added sector plane swapping
+//
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.16  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	

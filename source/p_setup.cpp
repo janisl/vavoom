@@ -66,6 +66,8 @@ static byte novis[32 * 1024 / 8];
 
 static bool AuxiliaryMap;
 
+static TCvarI ignore_missing_textures("ignore_missing_textures", "0");
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -89,6 +91,11 @@ int FTNumForName(const char *name)
 		{
 			namet[8] = 0;
 			memcpy(namet, name, 8);
+			if (ignore_missing_textures)
+			{
+				con << "FTNumForName: " << namet << " not found\n";
+				return 0;
+			}
 			Host_Error("FTNumForName: %s not found", namet);
 		}
 	}
@@ -116,6 +123,11 @@ int TFNumForName(const char *name)
 		{
 			namet[8] = 0;
 			memcpy(namet, name, 8);
+			if (ignore_missing_textures)
+			{
+				con << "TFNumForName: " << namet << " not found\n";
+				return 0;
+			}
 			Host_Error("TFNumForName: %s not found", namet);
 		}
 	}
@@ -1214,13 +1226,50 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 			return region;
 		}
 	}
-	Host_Error("Invalid extra floor, tag %d", dst->tag);
+	con << "Invalid extra floor, tag " << dst->tag << endl;
 	return NULL;
+}
+
+//==========================================================================
+//
+//	SwapPlanes
+//
+//==========================================================================
+
+void SwapPlanes(sector_t *s)
+{
+	float tempHeight;
+	int tempTexture;
+
+	tempHeight = s->floorheight;
+	tempTexture = s->floor.pic;
+
+	//	Floor
+	s->floorheight = s->ceilingheight;
+	s->floor.dist = s->floorheight;
+	s->floor.minz = s->floorheight;
+	s->floor.maxz = s->floorheight;
+
+	s->ceilingheight = tempHeight;
+	s->ceiling.dist = -s->ceilingheight;
+	s->ceiling.minz = s->ceilingheight;
+	s->ceiling.maxz = s->ceilingheight;
+
+	s->floor.pic = s->ceiling.pic;
+	s->ceiling.pic = tempTexture;
+
+	s->floor.base_pic = s->floor.pic;
+	s->ceiling.base_pic = s->ceiling.pic;
+	s->base_floorheight = s->floor.dist;
+	s->base_ceilingheight = s->ceiling.dist;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/11 08:09:34  dj_jl
+//  Added sector plane swapping
+//
 //  Revision 1.15  2002/01/07 12:16:43  dj_jl
 //  Changed copyright year
 //

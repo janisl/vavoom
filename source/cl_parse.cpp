@@ -987,6 +987,11 @@ void CL_ParseServerMessage(void)
 			CL_ParseExtraFloor();
 			break;
 
+		 case svc_swap_planes:
+			i = net_msg.ReadShort();
+			SwapPlanes(&cl_level.sectors[i]);
+			break;
+
 		 case svc_static_light:
 			origin.x = net_msg.ReadShort();
 			origin.y = net_msg.ReadShort();
@@ -1025,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/01/11 08:09:34  dj_jl
+//	Added sector plane swapping
+//
 //	Revision 1.20  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.19  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	
