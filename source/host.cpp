@@ -45,14 +45,6 @@ void InitMapInfo(void);
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct
-{
-	char *name;
-	void (*func)(char **args, int tag);
-	int requiredArgs;
-	int tag;
-} execOpt_t;
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 int Z_FreeMemory(void);
@@ -64,8 +56,6 @@ void Cmd_WriteAlias(FILE *f);
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void 	HandleArgs(void);
-static void 	ExecOptionSCRIPTS(char **args, int tag);
-static void 	ExecOptionDEVMAPS(char **args, int tag);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -88,11 +78,6 @@ int				host_framecount;
 
 Game_t			Game;
 
-boolean 		DevMaps;				// true = Map development mode
-char*			DevMapsDir = "";		// development maps directory
-
-boolean			singletics = false; 	// debug flag to cancel adaptiveness
-
 boolean			host_initialized = false;
 
 jmp_buf			host_abort;
@@ -110,13 +95,6 @@ static TCvarI	fastparm("Fast", "0");				// checkparm of -fast
 static TCvarI	show_time("show_time", "0");
 
 static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
-
-static execOpt_t ExecOptions[] =
-{
-	{ "-scripts", 	ExecOptionSCRIPTS, 1, 0 },
-	{ "-devmaps", 	ExecOptionDEVMAPS, 1, 0 },
-	{ NULL, NULL, 0, 0 } // Terminator
-};
 
 // CODE --------------------------------------------------------------------
 
@@ -574,8 +552,6 @@ void Host_Error(const char *error, ...)
 //==========================================================================
 //==========================================================================
 
-void FL_AddFile(const char *file);
-
 //==========================================================================
 //
 //	HandleArgs
@@ -585,67 +561,14 @@ void FL_AddFile(const char *file);
 static void HandleArgs(void)
 {
  	int			p;
-	execOpt_t*	opt;
 
 	// Process command line options
-	for (opt = ExecOptions; opt->name != NULL; opt++)
+	p = M_CheckParm("-scripts");
+	if (p && p < myargc - 1)
 	{
-		p = M_CheckParm(opt->name);
-		if (p && p < myargc - opt->requiredArgs)
-		{
-			opt->func(&myargv[p], opt->tag);
-		}
+		sc_FileScripts = true;
+		sc_ScriptsDir = myargv[p + 1];
 	}
-}
-
-//==========================================================================
-//
-//	ExecOptionSCRIPTS
-//
-//==========================================================================
-
-static void ExecOptionSCRIPTS(char **args, int)
-{
-	sc_FileScripts = true;
-	sc_ScriptsDir = args[1];
-}
-
-//==========================================================================
-//
-// ExecOptionDEVMAPS
-//
-//==========================================================================
-
-static void ExecOptionDEVMAPS(char **args, int)
-{
-	DevMaps = true;
-	cond << "Map development mode enabled:\n";
-	cond << "[config    ] = " << args[1] << endl;
-	SC_OpenFile(args[1]);
-	SC_MustGetStringName("mapsdir");
-	SC_MustGetString();
-	cond << "[mapsdir   ] = " << sc_String << endl;
-	DevMapsDir = (char*)Z_Malloc(strlen(sc_String) + 1, PU_STATIC, 0);
-	strcpy(DevMapsDir, sc_String);
-	SC_MustGetStringName("scriptsdir");
-	SC_MustGetString();
-	cond << "[scriptsdir] = " << sc_String << endl;
-	sc_FileScripts = true;
-	sc_ScriptsDir = (char*)Z_Malloc(strlen(sc_String) + 1, PU_STATIC, 0);
-	strcpy(sc_ScriptsDir, sc_String);
-	while (SC_GetString())
-	{
-		if (SC_Compare("file"))
-		{
-			SC_MustGetString();
-			FL_AddFile(sc_String);
-		}
-		else
-		{
-			SC_ScriptError(NULL);
-		}
-	}
-	SC_Close();
 }
 
 //==========================================================================
@@ -672,10 +595,13 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:41:33  dj_jl
+//	Removed -devmaps option
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:07:41  dj_jl
 //	Changes for filesystem and localising demo loop
 //	

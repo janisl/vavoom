@@ -54,9 +54,6 @@ extern TCvarI		developer;
 
 extern Game_t		Game;
 
-extern boolean 		DevMaps;	// true = Map development mode
-extern char*		DevMapsDir;	// development maps directory
-
 extern boolean		host_initialized;
 
 extern int			host_frametics;
@@ -68,10 +65,13 @@ extern int			host_framecount;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/21 17:41:33  dj_jl
+//	Removed -devmaps option
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
