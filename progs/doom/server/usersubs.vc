@@ -36,9 +36,9 @@ int bodyqueslot;
 
 void PlayerPawn::SetPlayerRunState(void)
 {
-	if (StateNum == S_PLAY)
+	if (StateNum == SpawnState)
 	{
-		SetState(S_PLAY_RUN1);
+		SetState(SeeState);
 	}
 }
 
@@ -199,6 +199,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/05/03 17:11:55  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.26  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -1,0 +1,558 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//***************************************************************************
+//
+//  WEAPON UTILITES
+//
+//***************************************************************************
+
+//==========================================================================
+//
+//	SetWeapon
+//
+//==========================================================================
+
+void SetWeapon(player_t * player, int NewWeapon)
+{
+	player->ReadyWeapon = NewWeapon;
+	player->PendingWeapon = wp_nochange;
+	if (player->ViewEnts[ps_weapon])
+	{
+		player->ViewEnts[ps_weapon].Destroy();
+	}
+	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	player->ViewEnts[ps_weapon].Player = player;
+	player->WeaponModel =
+		GetModelIndex(Weapon(player->ViewEnts[ps_weapon]).ThirdPersonModel);
+}
+
+//===========================================================================
+//
+//  SetPsprite
+//
+//===========================================================================
+
+void SetPsprite(player_t * player, int position, int stnum)
+{
+	player->ViewEnts[position].SetState(stnum);
+}
+
+//===========================================================================
+//
+//  BringUpWeapon
+//
+//  Starts bringing the pending weapon up from the bottom of the screen.
+// Uses player
+//
+//===========================================================================
+
+void BringUpWeapon(player_t * player)
+{
+	if (player->ReadyWeapon == wp_chainsaw)
+		player->MO.PlaySound('ChainsawStart', CHAN_WEAPON);
+
+	player->PendingWeapon = wp_nochange;
+	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
+}
+
+//==========================================================================
+//
+//  ChangeWeapon
+//
+//  The actual changing of the weapon is done when the weapon psprite can
+// do it (read: not in the middle of an attack).
+//
+//==========================================================================
+
+void ChangeWeapon(player_t * player, int newweapon)
+{
+	if (newweapon == wp_fist && player->WeaponOwned[wp_chainsaw]
+		&& !(player->ReadyWeapon == wp_chainsaw
+			&& player->Powers[pw_strength]))
+	{
+		newweapon = wp_chainsaw;
+	}
+
+#ifdef DOOM2
+	if (newweapon == wp_shotgun && player->WeaponOwned[wp_supershotgun]
+		&& player->ReadyWeapon != wp_supershotgun)
+	{
+		newweapon = wp_supershotgun;
+	}
+#endif
+
+#ifdef GRENADE_LAUNCHER
+	if (newweapon == wp_missile && player->WeaponOwned[wp_grenade]
+		&& player->ReadyWeapon != wp_grenade)
+	{
+		newweapon = wp_grenade;
+	}
+#endif
+
+	if (player->WeaponOwned[newweapon] && newweapon != player->ReadyWeapon)
+	{
+#ifdef DOOM2
+		player->PendingWeapon = newweapon;
+#else
+		// Do not go to plasma or BFG in shareware, even if cheated.
+		if ((newweapon != wp_plasma && newweapon != wp_bfg) || !shareware)
+		{
+			player->PendingWeapon = newweapon;
+		}
+#endif
+	}
+}
+
+//===========================================================================
+//
+//  DropWeapon
+//
+//  Player died, so put the weapon away.
+//
+//===========================================================================
+
+void DropWeapon(player_t * player)
+{
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
+}
+
+//===========================================================================
+//
+//  SetupPsprites
+//
+//  Called at start of level for each player.
+//
+//===========================================================================
+
+void SetupPsprites(player_t * player)
+{
+	int i;
+
+	// remove all psprites
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		player->ViewEnts[i].StateNum = 0;
+	}
+
+	// spawn the gun
+	BringUpWeapon(player);
+}
+
+//==========================================================================
+//
+//  MovePsprites
+//
+//  Called every tic by player thinking routine.
+//
+//==========================================================================
+
+void MovePsprites(player_t * player)
+{
+	int i;
+	ViewEntity e;
+
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		e = player->ViewEnts[i];
+		// a null state means not active
+		if (e.StateNum)
+		{
+			// drop tic count and possibly change state
+
+			// a -1 tic count never changes
+			if (e.StateTime != -1.0)
+			{
+				e.StateTime -= frametime;
+				if (e.StateTime <= 0.0)
+				{
+					e.StateTime = 0.0;
+					SetPsprite(player, i, e.NextState);
+				}
+			}
+		}
+	}
+
+	player->ViewEnts[ps_flash].SX = player->ViewEnts[ps_weapon].SX;
+	player->ViewEnts[ps_flash].SY = player->ViewEnts[ps_weapon].SY;
+}
+
+//==========================================================================
+//
+//  CheckAmmo
+//
+//  Returns true if there is enough ammo to shoot.
+// If not, selects the next weapon to use.
+//
+//==========================================================================
+
+int CheckAmmo(player_t * player)
+{
+	int ammo;
+	int count;
+
+	ammo = Weapon(player->ViewEnts[ps_weapon]).Ammo;
+
+	// Minimal amount for one shot varies.
+	if (player->ReadyWeapon == wp_bfg)
+		count = BFGCELLS;
+#ifdef DOOM2
+	else if (player->ReadyWeapon == wp_supershotgun)
+		count = 2;	// Double barrel.
+#endif
+	else
+		count = 1;	// Regular.
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (ammo == am_noammo || player->Ammo[ammo] >= count)
+		return true;
+
+	// Out of ammo, pick a weapon to change to.
+	// Preferences are set here.
+	do
+	{
+#ifndef DOOM2
+		if (player->WeaponOwned[wp_plasma]
+			&& player->Ammo[am_cell] && (!shareware))
+#else
+		if (player->WeaponOwned[wp_plasma] && player->Ammo[am_cell])
+#endif
+		{
+			player->PendingWeapon = wp_plasma;
+		}
+#ifdef DOOM2
+		else if (player->WeaponOwned[wp_supershotgun]
+			&& player->Ammo[am_shell] > 2)
+		{
+			player->PendingWeapon = wp_supershotgun;
+		}
+#endif
+		else if (player->WeaponOwned[wp_chaingun] && player->Ammo[am_clip])
+		{
+			player->PendingWeapon = wp_chaingun;
+		}
+		else if (player->WeaponOwned[wp_shotgun] && player->Ammo[am_shell])
+		{
+			player->PendingWeapon = wp_shotgun;
+		}
+		else if (player->Ammo[am_clip])
+		{
+			player->PendingWeapon = wp_pistol;
+		}
+		else if (player->WeaponOwned[wp_chainsaw])
+		{
+			player->PendingWeapon = wp_chainsaw;
+		}
+		else if (player->WeaponOwned[wp_missile] && player->Ammo[am_misl])
+		{
+			player->PendingWeapon = wp_missile;
+		}
+#ifdef DOOM2
+		else if (player->WeaponOwned[wp_bfg] && player->Ammo[am_cell] > 40)
+#else
+		else if (player->WeaponOwned[wp_bfg]
+			&& player->Ammo[am_cell] > BFGCELLS && (!shareware))
+#endif
+		{
+			player->PendingWeapon = wp_bfg;
+		}
+		else
+		{
+			// If everything fails.
+			player->PendingWeapon = wp_fist;
+		}
+	}
+	while (player->PendingWeapon == wp_nochange);
+
+	// Now set appropriate weapon overlay.
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
+
+	return false;
+}
+
+//===========================================================================
+//
+//  FireWeapon
+//
+//===========================================================================
+
+void FireWeapon(player_t * player)
+{
+	if (!CheckAmmo(player))
+	{
+		return;
+	}
+
+	player->MO.SetState(player->MO.MissileState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
+	P_NoiseAlert(player->MO, player->MO);
+}
+
+//===========================================================================
+//
+//  GunShot
+//
+//===========================================================================
+
+void GunShot(Actor A, int accurate, TVec dir)
+{
+	int damage;
+
+	//  Make a copy of angles because inacurate shoot will modify them
+	if (!accurate)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+
+	damage = 5 * (P_Random() % 3 + 1);
+
+	LineAttack(A, dir, MISSILERANGE, damage);
+}
+
+//***************************************************************************
+//
+//  WEAPON ACTIONS
+//
+//***************************************************************************
+
+//===========================================================================
+//
+//  Weapon::A_WeaponReady
+//
+//  The player can fire the weapon or change to another weapon at this time.
+// Follows after getting weapon up, or after previous attack/fire sequence.
+//
+//===========================================================================
+
+void Weapon::A_WeaponReady(void)
+{
+	float angle;
+
+	// get out of attack state
+	if (Player->MO.StateNum == Player->MO.MissileState ||
+		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
+	{
+		Player->MO.SetState(Player->MO.SpawnState);
+	}
+
+	if (Player->ReadyWeapon == wp_chainsaw && StateNum == ReadyState)//S_SAW)
+	{
+		Player->MO.PlaySound('ChainsawIdle', CHAN_WEAPON);
+	}
+
+	// check for change
+	//  if player is dead, put the weapon away
+	if (Player->PendingWeapon != wp_nochange || !Player->Health)
+	{
+		// change weapon
+		//  (pending weapon should allready be validated)
+		SetPsprite(Player, ps_weapon, DownState);
+		return;
+	}
+
+	// check for fire
+	//  the missile launcher and bfg do not auto fire
+	if (Player->Buttons & BT_ATTACK)
+	{
+		if (!Player->bAttackDown
+			|| (Player->ReadyWeapon != wp_missile
+			&& Player->ReadyWeapon != wp_bfg))
+		{
+			Player->bAttackDown = true;
+			FireWeapon(Player);
+			return;
+		}
+	}
+	else
+		Player->bAttackDown = false;
+
+	// bob the weapon based on movement speed
+	angle = AngleMod360(180.0 * level->time);
+	SX = 1.0 + Player->Bob * cos(angle);
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
+	SY = WEAPONTOP + Player->Bob * sin(angle);
+}
+
+//===========================================================================
+//
+//  Weapon::A_Lower
+//
+//  Lowers current weapon, and changes weapon at bottom.
+//
+//===========================================================================
+
+void Weapon::A_Lower(void)
+{
+	SY += LOWERSPEED;
+
+	// Is already down.
+	if (SY < WEAPONBOTTOM)
+		return;
+
+	// Player is dead.
+	if (Player->PlayerState == PST_DEAD)
+	{
+		SY = WEAPONBOTTOM;
+
+		// don't bring weapon back up
+		return;
+	}
+
+	// The old weapon has been lowered off the screen,
+	// so change the weapon and start raising it
+	if (!Player->Health)
+	{
+		// Player is dead, so keep the weapon off screen.
+		SetPsprite(Player, ps_weapon, S_NULL);
+		return;
+	}
+
+	SetWeapon(Player, Player->PendingWeapon);
+
+	BringUpWeapon(Player);
+}
+
+//===========================================================================
+//
+//  Weapon::A_Raise
+//
+//===========================================================================
+
+void Weapon::A_Raise(void)
+{
+	SY -= RAISESPEED;
+
+	if (SY > WEAPONTOP)
+	{
+		return;
+	}
+
+	SY = WEAPONTOP;
+
+	// The weapon has been raised all the way,
+	//  so change to the ready state.
+	SetPsprite(Player, ps_weapon, ReadyState);
+}
+
+//===========================================================================
+//
+//  Weapon::A_ReFire
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+void Weapon::A_ReFire(void)
+{
+	// check for fire
+	//  (if a weaponchange is pending, let it go through instead)
+	if ((Player->Buttons & BT_ATTACK)
+		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	{
+		Player->Refire++;
+		FireWeapon(Player);
+	}
+	else
+	{
+		Player->Refire = 0;
+		CheckAmmo(Player);
+	}
+}
+
+//===========================================================================
+//
+//  Weapon::A_CheckReload
+//
+//===========================================================================
+
+void Weapon::A_CheckReload(void)
+{
+	CheckAmmo(Player);
+}
+
+//===========================================================================
+//
+//  Weapon::A_GunFlash
+//
+//===========================================================================
+
+void Weapon::A_GunFlash(void)
+{
+	Player->MO.SetState(PlayerPawn(Player->MO).Attack2State);
+	SetPsprite(Player, ps_flash, FlashState);
+}
+
+//===========================================================================
+//
+//  Weapon::A_Light0
+//
+//===========================================================================
+
+void Weapon::A_Light0(void)
+{
+	Player->ExtraLight = 0;
+	Player->MO.Effects &= ~EF_DLIGHT_MASK;
+}
+
+//===========================================================================
+//
+//  Weapon::A_Light1
+//
+//===========================================================================
+
+void Weapon::A_Light1(void)
+{
+	Player->ExtraLight = 1;
+}
+
+//===========================================================================
+//
+//  Weapon::A_Light2
+//
+//===========================================================================
+
+void Weapon::A_Light2(void)
+{
+	Player->ExtraLight = 2;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/03 17:11:55  dj_jl
+//  Object classes split up into their files.
+//
+//**************************************************************************

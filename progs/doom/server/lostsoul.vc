@@ -23,29 +23,27 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
 #define	SKULLSPEED		700.0
 
-// CONSTANTS ---------------------------------------------------------------
+//**************************************************************************
+//
+//	LostSoul
+//
+//**************************************************************************
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class LostSoul:Pawn
+	__mobjinfo__(3006)
+{
 
 //==========================================================================
 //
-//  Actor::A_SkullAttack
+//  A_SkullAttack
 //
 //  Lost soul attack. Fly at the player like a missile.
 //
 //==========================================================================
 
-void Actor::A_SkullAttack(void)
+void A_SkullAttack(void)
 {
 	if (!Enemy)
 		return;
@@ -57,9 +55,59 @@ void Actor::A_SkullAttack(void)
 	Velocity = Normalize(MobjCenter(Enemy) - Origin) * SKULLSPEED;
 }
 
+__states__
+{
+	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 0, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
+	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 1, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
+	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 2, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
+	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 3, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
+	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 4, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
+	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 5, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
+	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 6, 4.0 / 35.0, S_SKULL_ATK4) { }
+	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 7, 4.0 / 35.0, S_SKULL_ATK3) { }
+	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 8, 3.0 / 35.0, S_SKULL_PAIN2) { }
+	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 9, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
+	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE2) { }
+	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
+	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE4) { }
+	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); }
+	S_SKULL_DIE5('SKUL', 9, 6.0 / 35.0, S_SKULL_DIE6) { }
+	S_SKULL_DIE6('SKUL', 10, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 100;
+	Radius = 16.0;
+	Height = 56.0;
+	Mass = 50.0;
+	StepSpeed = 8.0;
+	PainChance = 256;
+	MissileDamage = 3;
+	Translucency = 33;
+	bCountKill = false;
+	bNoGravity = true;
+	bFloat = true;
+	SpawnState = S_SKULL_STND;
+	SeeState = S_SKULL_RUN1;
+	MissileState = S_SKULL_ATK1;
+	PainState = S_SKULL_PAIN;
+	DeathState = S_SKULL_DIE1;
+	ActiveSound = 'DemonActive';
+	AttackSound = 'LostSoulAttack';
+	PainSound = 'DemonPain';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_MISSILE;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.16  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

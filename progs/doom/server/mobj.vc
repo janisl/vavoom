@@ -110,6 +110,17 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
+	if (bNoDeathmatch && deathmatch)
+	{
+		RemoveMobjThinker(self);
+		return;
+	}
+	if (bCheckNoMonsters && nomonsters)
+	{
+		RemoveMobjThinker(self);
+		return;
+	}
+
 	SpawnHealth = Health;
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
@@ -423,7 +434,7 @@ void Actor::ExplodeMissile(void)
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
 
-	if (DeathState != S_EXPLODE1 && (Effects & EF_DLIGHT_MASK))
+	if (Class != Rocket && (Effects & EF_DLIGHT_MASK))
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -865,6 +876,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/05/03 17:11:54  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.40  2002/04/11 16:52:13  dj_jl
 //  Made TryMove native.
 //

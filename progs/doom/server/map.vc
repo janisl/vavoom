@@ -859,9 +859,61 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 			P_BlockThingsIterator(x, y, 'PIT_RadiusAttack');
 }
 
+//==========================================================================
+//
+//  PIT_VileCheck
+//
+//  Detect a corpse that could be raised.
+//
+//==========================================================================
+
+Actor CorpseHit;
+Actor vileobj;
+float viletryx;
+float viletryy;
+
+boolean PIT_VileCheck(MapObject Other)
+{
+	float maxdist;
+	boolean check;
+
+	if (!Actor(Other).bCorpse)
+		return true;	// not a monster
+
+	if (Actor(Other).StateTime != -1.0)
+		return true;	// not lying still yet
+
+	if (Actor(Other).RaiseState == S_NULL)
+		return true;	// monster doesn't have a raise state
+
+	maxdist = Other.Radius + vileobj.Radius;
+
+	if (fabs(Other.Origin.x - viletryx) > maxdist ||
+		fabs(Other.Origin.y - viletryy) > maxdist)
+		return true;	// not actually touching
+
+	if (!P_CheckSight(vileobj, Other))
+		return true;	//  Con't see, possibly in other region
+
+	CorpseHit = Actor(Other);
+	CorpseHit.Velocity.x = 0.0;
+	CorpseHit.Velocity.y = 0.0;
+	CorpseHit.Height *= 4.0;
+	check = CorpseHit.CheckPosition(CorpseHit.Origin);
+	CorpseHit.Height /= 4.0;
+
+	if (!check)
+		return true;	// doesn't fit here
+
+	return false;	// got one, so stop checking
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/05/03 17:11:54  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.26  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

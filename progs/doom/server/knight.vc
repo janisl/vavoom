@@ -23,48 +23,71 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
+//**************************************************************************
 //
-//  Actor::A_BruisAttack
+//	HellKnight
 //
-//  Hell knight, Baron of hell attack.
-//
-//==========================================================================
+//**************************************************************************
 
-void Actor::A_BruisAttack(void)
+class HellKnight:BaronOfHell
+	__mobjinfo__(69)
 {
-	int damage;
 
-	if (!Enemy)
-		return;
+__states__
+{
+	S_BOS2_STND('BOS2', 0, 'monsters/knight.md2', 0, 10.0 / 35.0, S_BOS2_STND2) { A_Look(); }
+	S_BOS2_STND2('BOS2', 1, 'monsters/knight.md2', 1, 10.0 / 35.0, S_BOS2_STND) { A_Look(); }
+	S_BOS2_RUN1('BOS2', 0, 'monsters/knight.md2', 2, 3.0 / 35.0, S_BOS2_RUN2) { A_Chase(); }
+	S_BOS2_RUN2('BOS2', 0, 'monsters/knight.md2', 3, 3.0 / 35.0, S_BOS2_RUN3) { A_Chase(); }
+	S_BOS2_RUN3('BOS2', 1, 'monsters/knight.md2', 4, 3.0 / 35.0, S_BOS2_RUN4) { A_Chase(); }
+	S_BOS2_RUN4('BOS2', 1, 'monsters/knight.md2', 5, 3.0 / 35.0, S_BOS2_RUN5) { A_Chase(); }
+	S_BOS2_RUN5('BOS2', 2, 'monsters/knight.md2', 6, 3.0 / 35.0, S_BOS2_RUN6) { A_Chase(); }
+	S_BOS2_RUN6('BOS2', 2, 'monsters/knight.md2', 7, 3.0 / 35.0, S_BOS2_RUN7) { A_Chase(); }
+	S_BOS2_RUN7('BOS2', 3, 'monsters/knight.md2', 8, 3.0 / 35.0, S_BOS2_RUN8) { A_Chase(); }
+	S_BOS2_RUN8('BOS2', 3, 'monsters/knight.md2', 9, 3.0 / 35.0, S_BOS2_RUN1) { A_Chase(); }
+	S_BOS2_ATK1('BOS2', 4, 'monsters/knight.md2', 10, 8.0 / 35.0, S_BOS2_ATK2) { A_FaceTarget(); }
+	S_BOS2_ATK2('BOS2', 5, 'monsters/knight.md2', 11, 8.0 / 35.0, S_BOS2_ATK3) { A_FaceTarget(); }
+	S_BOS2_ATK3('BOS2', 6, 'monsters/knight.md2', 12, 8.0 / 35.0, S_BOS2_RUN1) { A_BruisAttack(); }
+	S_BOS2_PAIN('BOS2', 7, 'monsters/knight.md2', 13, 2.0 / 35.0, S_BOS2_PAIN2) { }
+	S_BOS2_PAIN2('BOS2', 7, 'monsters/knight.md2', 14, 2.0 / 35.0, S_BOS2_RUN1) { A_Pain(); }
+	S_BOS2_DIE1('BOS2', 8, 'monsters/knidie.md2', 0, 8.0 / 35.0, S_BOS2_DIE2) { }
+	S_BOS2_DIE2('BOS2', 9, 'monsters/knidie.md2', 1, 8.0 / 35.0, S_BOS2_DIE3) { A_Scream(); }
+	S_BOS2_DIE3('BOS2', 10, 'monsters/knidie.md2', 2, 8.0 / 35.0, S_BOS2_DIE4) { }
+	S_BOS2_DIE4('BOS2', 11, 'monsters/knidie.md2', 3, 8.0 / 35.0, S_BOS2_DIE5) { A_Fall(); }
+	S_BOS2_DIE5('BOS2', 12, 'monsters/knidie.md2', 4, 8.0 / 35.0, S_BOS2_DIE6) { }
+	S_BOS2_DIE6('BOS2', 13, 'monsters/knidie.md2', 5, 8.0 / 35.0, S_BOS2_DIE7) { }
+	S_BOS2_DIE7('BOS2', 14, 'monsters/knidie.md2', 6, -1.0, S_NULL) { }
+	S_BOS2_RAISE1('BOS2', 14, 'monsters/knidie.md2', 7, 8.0 / 35.0, S_BOS2_RAISE2) { }
+	S_BOS2_RAISE2('BOS2', 13, 'monsters/knidie.md2', 8, 8.0 / 35.0, S_BOS2_RAISE3) { }
+	S_BOS2_RAISE3('BOS2', 12, 'monsters/knidie.md2', 9, 8.0 / 35.0, S_BOS2_RAISE4) { }
+	S_BOS2_RAISE4('BOS2', 11, 'monsters/knidie.md2', 10, 8.0 / 35.0, S_BOS2_RAISE5) { }
+	S_BOS2_RAISE5('BOS2', 10, 'monsters/knidie.md2', 11, 8.0 / 35.0, S_BOS2_RAISE6) { }
+	S_BOS2_RAISE6('BOS2', 9, 'monsters/knidie.md2', 12, 8.0 / 35.0, S_BOS2_RAISE7) { }
+	S_BOS2_RAISE7('BOS2', 8, 'monsters/knidie.md2', 13, 8.0 / 35.0, S_BOS2_RUN1) { }
+}
 
-	if (CheckMeleeRange())
-	{
-		PlaySound('ImpAttack', CHAN_WEAPON);
-		damage = (P_Random() % 8 + 1) * 10;
-		Enemy.Damage(self, self, damage);
-		return;
-	}
+defaultproperties
+{
+	Health = 500;
+	SpawnState = S_BOS2_STND;
+	SeeState = S_BOS2_RUN1;
+	MeleeState = S_BOS2_ATK1;
+	MissileState = S_BOS2_ATK1;
+	PainState = S_BOS2_PAIN;
+	DeathState = S_BOS2_DIE1;
+	RaiseState = S_BOS2_RAISE1;
+	SightSound = 'KnightSight';
+	DeathSound = 'KnightDeath';
+}
 
-	// launch a missile
-	SpawnMissile(Enemy, BruiserShot);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.16  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

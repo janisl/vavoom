@@ -58,13 +58,7 @@ boolean PIT_StompThing(MapObject Other)
 	if (Other == teleport_thing)
 		return true;
 
-#ifdef DOOM2
-	// monsters don't stomp things except on boss level
-	if (!(teleport_thing.bIsPlayer ||
-		!strcmp(ptrtos(&level->mapname[0]), "MAP30")))
-#else
-	if (!teleport_thing.bIsPlayer)
-#endif
+	if (!teleport_thing.bTelestomp)
 	{
 		return false;
 	}
@@ -292,6 +286,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/03 17:11:55  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.21  2002/03/20 19:07:44  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -23,31 +23,27 @@
 //**
 //**************************************************************************
 
-#ifdef DOOM2
-
-// MACROS ------------------------------------------------------------------
-
 #define	FATSPREAD	(90.0 / 8.0)
 
-// CONSTANTS ---------------------------------------------------------------
+//**************************************************************************
+//
+//	Mancubus
+//
+//**************************************************************************
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Mancubus:Pawn
+	__mobjinfo__(67)
+{
 
 //==========================================================================
 //
-//  Actor::A_FatRaise
+//  A_FatRaise
 //
 //  Mancubus attack sound.
 //
 //==========================================================================
 
-void Actor::A_FatRaise(void)
+void A_FatRaise(void)
 {
 	A_FaceTarget();
 	PlaySound('MancubusAttack', CHAN_WEAPON);
@@ -55,14 +51,14 @@ void Actor::A_FatRaise(void)
 
 //==========================================================================
 //
-//  Actor::A_FatAttack1
+//  A_FatAttack1
 //
 //  Mancubus attack, firing three missiles (bruisers) in three different
 // directions? Doesn't look like it.
 //
 //==========================================================================
 
-void Actor::A_FatAttack1(void)
+void A_FatAttack1(void)
 {
 	Actor A;
 
@@ -78,13 +74,13 @@ void Actor::A_FatAttack1(void)
 
 //==========================================================================
 //
-//  Actor::A_FatAttack2
+//  A_FatAttack2
 //
 //  Mancubus attack, second direction.
 //
 //==========================================================================
 
-void Actor::A_FatAttack2(void)
+void A_FatAttack2(void)
 {
 	Actor A;
 
@@ -100,13 +96,13 @@ void Actor::A_FatAttack2(void)
 
 //==========================================================================
 //
-//  Actor::A_FatAttack3
+//  A_FatAttack3
 //
 //  Mancubus attack, third direction.
 //
 //==========================================================================
 
-void Actor::A_FatAttack3(void)
+void A_FatAttack3(void)
 {
 	Actor A;
 
@@ -121,33 +117,116 @@ void Actor::A_FatAttack3(void)
 	VectorRotateAroundZ(&A.Velocity, FATSPREAD / 2.0);
 }
 
-#else
-
-void Actor::A_FatRaise(void)
+__states__
 {
-	NotDoom2();
+	S_FATT_STND('FATT', 0, 'monsters/mancubus.md2', 0, 15.0 / 35.0, S_FATT_STND2) { A_Look(); }
+	S_FATT_STND2('FATT', 1, 'monsters/mancubus.md2', 1, 15.0 / 35.0, S_FATT_STND) { A_Look(); }
+	S_FATT_RUN1('FATT', 0, 'monsters/mancubus.md2', 2, 4.0 / 35.0, S_FATT_RUN2) { A_Chase(); }
+	S_FATT_RUN2('FATT', 0, 'monsters/mancubus.md2', 3, 4.0 / 35.0, S_FATT_RUN3) { A_Chase(); }
+	S_FATT_RUN3('FATT', 1, 'monsters/mancubus.md2', 4, 4.0 / 35.0, S_FATT_RUN4) { A_Chase(); }
+	S_FATT_RUN4('FATT', 1, 'monsters/mancubus.md2', 5, 4.0 / 35.0, S_FATT_RUN5) { A_Chase(); }
+	S_FATT_RUN5('FATT', 2, 'monsters/mancubus.md2', 6, 4.0 / 35.0, S_FATT_RUN6) { A_Chase(); }
+	S_FATT_RUN6('FATT', 2, 'monsters/mancubus.md2', 7, 4.0 / 35.0, S_FATT_RUN7) { A_Chase(); }
+	S_FATT_RUN7('FATT', 3, 'monsters/mancubus.md2', 8, 4.0 / 35.0, S_FATT_RUN8) { A_Chase(); }
+	S_FATT_RUN8('FATT', 3, 'monsters/mancubus.md2', 9, 4.0 / 35.0, S_FATT_RUN9) { A_Chase(); }
+	S_FATT_RUN9('FATT', 4, 'monsters/mancubus.md2', 10, 4.0 / 35.0, S_FATT_RUN10) { A_Chase(); }
+	S_FATT_RUN10('FATT', 4, 'monsters/mancubus.md2', 11, 4.0 / 35.0, S_FATT_RUN11) { A_Chase(); }
+	S_FATT_RUN11('FATT', 5, 'monsters/mancubus.md2', 12, 4.0 / 35.0, S_FATT_RUN12) { A_Chase(); }
+	S_FATT_RUN12('FATT', 5, 'monsters/mancubus.md2', 13, 4.0 / 35.0, S_FATT_RUN1) { A_Chase(); }
+	S_FATT_ATK1('FATT', 6, 'monsters/mancubus.md2', 14, 20.0 / 35.0, S_FATT_ATK2) { A_FatRaise(); }
+	S_FATT_ATK2('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK3) { A_FatAttack1(); }
+	S_FATT_ATK3('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK4) { A_FaceTarget(); }
+	S_FATT_ATK4('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_ATK5) { A_FaceTarget(); }
+	S_FATT_ATK5('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK6) { A_FatAttack2(); }
+	S_FATT_ATK6('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK7) { A_FaceTarget(); }
+	S_FATT_ATK7('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_ATK8) { A_FaceTarget(); }
+	S_FATT_ATK8('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK9) { A_FatAttack3(); }
+	S_FATT_ATK9('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK10) { A_FaceTarget(); }
+	S_FATT_ATK10('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_RUN1) { A_FaceTarget(); }
+	S_FATT_PAIN('FATT', 9, 'monsters/mancubus.md2', 16, 3.0 / 35.0, S_FATT_PAIN2) { }
+	S_FATT_PAIN2('FATT', 9, 'monsters/mancubus.md2', 17, 3.0 / 35.0, S_FATT_RUN1) { A_Pain(); }
+	S_FATT_DIE1('FATT', 10, 'monsters/mancdie.md2', 0, 6.0 / 35.0, S_FATT_DIE2) { }
+	S_FATT_DIE2('FATT', 11, 'monsters/mancdie.md2', 1, 6.0 / 35.0, S_FATT_DIE3) { A_Scream(); }
+	S_FATT_DIE3('FATT', 12, 'monsters/mancdie.md2', 2, 6.0 / 35.0, S_FATT_DIE4) { A_Fall(); }
+	S_FATT_DIE4('FATT', 13, 'monsters/mancdie.md2', 3, 6.0 / 35.0, S_FATT_DIE5) { }
+	S_FATT_DIE5('FATT', 14, 'monsters/mancdie.md2', 4, 6.0 / 35.0, S_FATT_DIE6) { }
+	S_FATT_DIE6('FATT', 15, 'monsters/mancdie.md2', 5, 6.0 / 35.0, S_FATT_DIE7) { }
+	S_FATT_DIE7('FATT', 16, 'monsters/mancdie.md2', 6, 6.0 / 35.0, S_FATT_DIE8) { }
+	S_FATT_DIE8('FATT', 17, 'monsters/mancdie.md2', 7, 6.0 / 35.0, S_FATT_DIE9) { }
+	S_FATT_DIE9('FATT', 18, 'monsters/mancdie.md2', 8, 6.0 / 35.0, S_FATT_DIE10) { }
+	S_FATT_DIE10('FATT', 19, 'monsters/mancdie.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
+	S_FATT_RAISE1('FATT', 17, 'monsters/mancdie.md2', 10, 5.0 / 35.0, S_FATT_RAISE2) { }
+	S_FATT_RAISE2('FATT', 16, 'monsters/mancdie.md2', 11, 5.0 / 35.0, S_FATT_RAISE3) { }
+	S_FATT_RAISE3('FATT', 15, 'monsters/mancdie.md2', 12, 5.0 / 35.0, S_FATT_RAISE4) { }
+	S_FATT_RAISE4('FATT', 14, 'monsters/mancdie.md2', 13, 5.0 / 35.0, S_FATT_RAISE5) { }
+	S_FATT_RAISE5('FATT', 13, 'monsters/mancdie.md2', 14, 5.0 / 35.0, S_FATT_RAISE6) { }
+	S_FATT_RAISE6('FATT', 12, 'monsters/mancdie.md2', 15, 5.0 / 35.0, S_FATT_RAISE7) { }
+	S_FATT_RAISE7('FATT', 11, 'monsters/mancdie.md2', 16, 5.0 / 35.0, S_FATT_RAISE8) { }
+	S_FATT_RAISE8('FATT', 10, 'monsters/mancdie.md2', 17, 5.0 / 35.0, S_FATT_RUN1) { }
 }
 
-void Actor::A_FatAttack1(void)
+defaultproperties
 {
-	NotDoom2();
+	Health = 600;
+	Radius = 48.0;
+	Height = 64.0;
+	Mass = 1000.0;
+	StepSpeed = 8.0;
+	PainChance = 80;
+	SpawnState = S_FATT_STND;
+	SeeState = S_FATT_RUN1;
+	MissileState = S_FATT_ATK1;
+	PainState = S_FATT_PAIN;
+	DeathState = S_FATT_DIE1;
+	RaiseState = S_FATT_RAISE1;
+	SightSound = 'MancubusSight';
+	ActiveSound = 'ZombieActive';
+	PainSound = 'MancubusPain';
+	DeathSound = 'MancubusDeath';
 }
 
-void Actor::A_FatAttack2(void)
-{
-	NotDoom2();
 }
 
-void Actor::A_FatAttack3(void)
+//**************************************************************************
+//
+//	MancubusMissile
+//
+//**************************************************************************
+
+class MancubusMissile:Projectile
 {
-	NotDoom2();
+
+__states__
+{
+	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT2) { }
+	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT1) { }
+	S_FATSHOTX1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_FATSHOTX2) { }
+	S_FATSHOTX2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FATSHOTX3) { }
+	S_FATSHOTX3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 }
 
-#endif
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 8;
+	Translucency = 33;
+	SpawnState = S_FATSHOT1;
+	DeathState = S_FATSHOTX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_RBALL;
+}
+
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/05/03 17:11:54  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.15  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

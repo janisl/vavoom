@@ -1,0 +1,166 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	Puff
+//
+//**************************************************************************
+
+class Puff:Effect
+{
+
+__states__
+{
+	S_PUFF1('PUFF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) { }
+	S_PUFF2('PUFF', 1, 4.0 / 35.0, S_PUFF3) { }
+	S_PUFF3('PUFF', 2, 4.0 / 35.0, S_PUFF4) { }
+	S_PUFF4('PUFF', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	SpawnState = S_PUFF1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Blood
+//
+//**************************************************************************
+
+class Blood:Effect
+{
+
+__states__
+{
+	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) { }
+	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) { }
+	S_BLOOD3('BLUD', 0, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bNoGravity = false;
+	SpawnState = S_BLOOD1;
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportFog
+//
+//**************************************************************************
+
+class TeleportFog:Effect
+{
+
+__states__
+{
+	S_TFOG('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG01) { }
+	S_TFOG01('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG02) { }
+	S_TFOG02('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
+	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
+	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
+	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
+	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
+	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
+	S_TFOG7('TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
+	S_TFOG8('TFOG', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
+	S_TFOG9('TFOG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
+	S_TFOG10('TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	SpawnState = S_TFOG;
+}
+
+}
+
+//**************************************************************************
+//
+//	ItemRespawnFog
+//
+//**************************************************************************
+
+class ItemRespawnFog:Effect
+{
+
+__states__
+{
+	S_IFOG('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG01) { }
+	S_IFOG01('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG02) { }
+	S_IFOG02('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG2) { }
+	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) { }
+	S_IFOG3('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) { }
+	S_IFOG4('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) { }
+	S_IFOG5('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	SpawnState = S_IFOG;
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportSpot
+//
+//**************************************************************************
+
+class TeleportSpot:Actor
+	__mobjinfo__(14)
+{
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/03 17:11:54  dj_jl
+//  Object classes split up into their files.
+//
+//**************************************************************************

@@ -23,29 +23,25 @@
 //**
 //**************************************************************************
 
-#ifdef DOOM2
+//**************************************************************************
+//
+//	CommanderKeen
+//
+//**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class CommanderKeen:Pawn
+	__mobjinfo__(72)
+{
 
 //==========================================================================
 //
-//  Actor::A_KeenDie
+//  A_KeenDie
 //
 //  DOOM II special, map 32. Uses special tag 666.
 //
 //==========================================================================
 
-void Actor::A_KeenDie(void)
+void A_KeenDie(void)
 {
 	int args[5];
 
@@ -63,18 +59,49 @@ void Actor::A_KeenDie(void)
 	EV_DoDoor(NULL, &args[0], doorOpen);
 }
 
-#else
-
-void Actor::A_KeenDie(void)
+__states__
 {
-	NotDoom2();
+	S_KEENSTND('KEEN', 0, -1.0, S_KEENSTND) { }
+	S_COMMKEEN('KEEN', 0, 6.0 / 35.0, S_COMMKEEN2) { }
+	S_COMMKEEN2('KEEN', 1, 6.0 / 35.0, S_COMMKEEN3) { }
+	S_COMMKEEN3('KEEN', 2, 6.0 / 35.0, S_COMMKEEN4) { A_Scream(); }
+	S_COMMKEEN4('KEEN', 3, 6.0 / 35.0, S_COMMKEEN5) { }
+	S_COMMKEEN5('KEEN', 4, 6.0 / 35.0, S_COMMKEEN6) { }
+	S_COMMKEEN6('KEEN', 5, 6.0 / 35.0, S_COMMKEEN7) { }
+	S_COMMKEEN7('KEEN', 6, 6.0 / 35.0, S_COMMKEEN8) { }
+	S_COMMKEEN8('KEEN', 7, 6.0 / 35.0, S_COMMKEEN9) { }
+	S_COMMKEEN9('KEEN', 8, 6.0 / 35.0, S_COMMKEEN10) { }
+	S_COMMKEEN10('KEEN', 9, 6.0 / 35.0, S_COMMKEEN11) { }
+	S_COMMKEEN11('KEEN', 10, 6.0 / 35.0, S_COMMKEEN12) { A_KeenDie(); }
+	S_COMMKEEN12('KEEN', 11, -1.0, S_NULL) { }
+	S_KEENPAIN('KEEN', 12, 4.0 / 35.0, S_KEENPAIN2) { }
+	S_KEENPAIN2('KEEN', 12, 8.0 / 35.0, S_KEENSTND) { A_Pain(); }
 }
 
-#endif
+defaultproperties
+{
+	Health = 100;
+	Radius = 16.0;
+	Height = 72.0;
+	Mass = 10000000.0;
+	PainChance = 256;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	SpawnState = S_KEENSTND;
+	PainState = S_KEENPAIN;
+	DeathState = S_COMMKEEN;
+	PainSound = 'KeenPain';
+	DeathSound = 'KeenDeath';
+}
+
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.6  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

@@ -23,34 +23,127 @@
 //**
 //**************************************************************************
 
-#ifdef DOOM2
+class BrainExplosion;
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//
+//	BossBrain
+//
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int numbraintargets;
-int braintargeton;
-int brain_easy = 0;
-Actor braintargets[32];
-
-// CODE --------------------------------------------------------------------
+class BossBrain:Actor
+	__mobjinfo__(88)
+{
 
 //==========================================================================
 //
-//  Actor::A_BrainAwake
+//  A_BrainPain
+//
+//  Brain pain sound.
+//
+//==========================================================================
+
+void A_BrainPain(void)
+{
+	PlayFullVolumeSound('BossPain', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_BrainScream
+//
+//  Brain death sound, make explosions.
+//
+//==========================================================================
+
+void A_BrainScream(void)
+{
+	TVec org;
+	Actor A;
+
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
+	{
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(BrainExplosion, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
+
+		A.SetState(A.SpawnState);
+
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	PlayFullVolumeSound('BossDeath', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_BrainDie
+//
+//  Killed brain, exit level.
+//
+//==========================================================================
+
+void A_BrainDie(void)
+{
+	G_ExitLevel();
+}
+
+__states__
+{
+	S_BRAIN('BBRN', 0, -1.0, S_NULL) { }
+	S_BRAIN_PAIN('BBRN', 1, 36.0 / 35.0, S_BRAIN) { A_BrainPain(); }
+	S_BRAIN_DIE1('BBRN', 0, 100.0 / 35.0, S_BRAIN_DIE2) { A_BrainScream(); }
+	S_BRAIN_DIE2('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE3) { }
+	S_BRAIN_DIE3('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE4) { }
+	S_BRAIN_DIE4('BBRN', 0, -1.0, S_NULL) { A_BrainDie(); }
+}
+
+defaultproperties
+{
+	Health = 250;
+	Radius = 16.0;
+	Height = 16.0;
+	Mass = 10000000.0;
+	ReactionCount = 8;
+	PainChance = 255;
+	bSolid = true;
+	bShootable = true;
+	SpawnState = S_BRAIN;
+	PainState = S_BRAIN_PAIN;
+	DeathState = S_BRAIN_DIE1;
+	PainSound = 'BossPain';
+	DeathSound = 'BossDeath';
+}
+
+}
+
+//**************************************************************************
+//
+//	BossEye
+//
+//**************************************************************************
+
+class BossEye:Actor
+	__mobjinfo__(89)
+{
+
+int numbraintargets;
+int braintargeton;
+int brain_easy;
+Actor braintargets[32];
+
+//==========================================================================
+//
+//  A_BrainAwake
 //
 //  Init boss spawner.
 //
 //==========================================================================
 
-void Actor::A_BrainAwake(void)
+void A_BrainAwake(void)
 {
 	Actor m;
 
@@ -71,13 +164,13 @@ void Actor::A_BrainAwake(void)
 
 //==========================================================================
 //
-//  Actor::A_BrainSpit
+//  A_BrainSpit
 //
 //  Spawn a cube.
 //
 //==========================================================================
 
-void Actor::A_BrainSpit(void)
+void A_BrainSpit(void)
 {
 	Actor targ;
 	Actor A;
@@ -99,111 +192,69 @@ void Actor::A_BrainSpit(void)
 	PlayFullVolumeSound('BossFire', CHAN_WEAPON);
 }
 
-//==========================================================================
-//
-//  Actor::A_BrainPain
-//
-//  Brain pain sound.
-//
-//==========================================================================
-
-void Actor::A_BrainPain(void)
+__states__
 {
-	PlayFullVolumeSound('BossPain', CHAN_VOICE);
+	S_BRAINEYE('SSWV', 0, 10.0 / 35.0, S_BRAINEYE) { A_Look(); }
+	S_BRAINEYESEE('SSWV', 0, 181.0 / 35.0, S_BRAINEYE1) { A_BrainAwake(); }
+	S_BRAINEYE1('SSWV', 0, 150.0 / 35.0, S_BRAINEYE1) { A_BrainSpit(); }
 }
 
-//==========================================================================
-//
-//  Actor::A_BrainScream
-//
-//  Brain death sound, make explosions.
-//
-//==========================================================================
-
-void Actor::A_BrainScream(void)
+defaultproperties
 {
-	TVec org;
-	Actor A;
-
-	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
-	{
-		org.y = Origin.y - 320.0;
-		org.z = 1.0 / 512.0 + Random() * 512.0;
-		A = Spawn(Rocket, org);
-		A.Velocity.z = Random() * 2.0 * 35.0;
-
-		A.SetState(S_BRAINEXPLODE1);
-
-		A.StateTime -= Random() * 0.2;
-		if (A.StateTime < 0.1)
-			A.StateTime = 0.1;
-	}
-
-	PlayFullVolumeSound('BossDeath', CHAN_VOICE);
+	Health = 1000;
+	Radius = 20.0;
+	Height = 32.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	SpawnState = S_BRAINEYE;
+	SeeState = S_BRAINEYESEE;
 }
 
-//==========================================================================
-//
-//  Actor::A_BrainExplode
-//
-//  Brain explosions.
-//
-//==========================================================================
-
-void Actor::A_BrainExplode(void)
-{
-	TVec org;
-	Actor A;
-
-	org.x = Origin.x + (Random() - Random()) * 8.0;
-	org.y = Origin.y;
-	org.z = 1.0 / 512.0 + Random() * 512.0;
-	A = Spawn(Rocket, org);
-	A.Velocity.z = Random() * 2.0 * 35.0;
-
-	A.SetState(S_BRAINEXPLODE1);
-
-	A.StateTime -= Random() * 0.2;
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
 }
 
-//==========================================================================
+//**************************************************************************
 //
-//  Actor::A_BrainDie
+//	BossTarget
 //
-//  Killed brain, exit level.
-//
-//==========================================================================
+//**************************************************************************
 
-void Actor::A_BrainDie(void)
+class BossTarget:Actor
+	__mobjinfo__(87)
 {
-	G_ExitLevel();
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 32.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
 }
 
-//==========================================================================
-//
-//  Actor::A_SpawnSound
-//
-//  Travelling cube sound.
-//
-//==========================================================================
-
-void Actor::A_SpawnSound(void)
-{
-	PlaySound('CubeFly', CHAN_VOICE);
-	A_SpawnFly();
 }
 
+//**************************************************************************
+//
+//	SpawnShot
+//
+//**************************************************************************
+
+class SpawnShot:Projectile
+{
+
 //==========================================================================
 //
-//  Actor::A_SpawnFly
+//  A_SpawnFly
 //
 //  Cube flying, spawn monster, when finished.
 //
 //==========================================================================
 
-void Actor::A_SpawnFly(void)
+void A_SpawnFly(void)
 {
 	Actor newmobj;
 	Actor fog;
@@ -250,59 +301,135 @@ void Actor::A_SpawnFly(void)
 		newmobj.SetState(newmobj.SeeState);
 
 	// telefrag anything in this spot
+	newmobj.bTelestomp = true;
 	newmobj.TeleportMove(newmobj.Origin);
 
 	// remove self (i.e., cube).
 	Remove();
 }
 
-#else
+//==========================================================================
+//
+//  A_SpawnSound
+//
+//  Travelling cube sound.
+//
+//==========================================================================
 
-void Actor::A_BrainAwake(void)
+void A_SpawnSound(void)
 {
-	NotDoom2();
+	PlaySound('CubeFly', CHAN_VOICE);
+	A_SpawnFly();
 }
 
-void Actor::A_BrainSpit(void)
+__states__
 {
-	NotDoom2();
+	S_SPAWN1('BOSF', 0 | FF_FULLBRIGHT, 'monsters/cube.md2', 0, 3.0 / 35.0, S_SPAWN2) { A_SpawnSound(); }
+	S_SPAWN2('BOSF', 1 | FF_FULLBRIGHT, 'monsters/cube.md2', 1, 3.0 / 35.0, S_SPAWN3) { A_SpawnFly(); }
+	S_SPAWN3('BOSF', 2 | FF_FULLBRIGHT, 'monsters/cube.md2', 2, 3.0 / 35.0, S_SPAWN4) { A_SpawnFly(); }
+	S_SPAWN4('BOSF', 3 | FF_FULLBRIGHT, 'monsters/cube.md2', 3, 3.0 / 35.0, S_SPAWN1) { A_SpawnFly(); }
 }
 
-void Actor::A_BrainPain(void)
+defaultproperties
 {
-	NotDoom2();
+	Radius = 6.0;
+	Height = 32.0;
+	Speed = 350.0;
+	MissileDamage = 3;
+	bColideWithThings = false;
+	bColideWithWorld = false;
+	SpawnState = S_SPAWN1;
+	SightSound = 'BossFire';
+	DeathSound = 'FireballExplode';
 }
 
-void Actor::A_BrainScream(void)
-{
-	NotDoom2();
 }
 
-void Actor::A_BrainExplode(void)
+//**************************************************************************
+//
+//	SpawnFire
+//
+//**************************************************************************
+
+class SpawnFire:Effect
 {
-	NotDoom2();
+
+__states__
+{
+	S_SPAWNFIRE1('FIRE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE2) { }
+	S_SPAWNFIRE2('FIRE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE3) { }
+	S_SPAWNFIRE3('FIRE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE4) { }
+	S_SPAWNFIRE4('FIRE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE5) { }
+	S_SPAWNFIRE5('FIRE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE6) { }
+	S_SPAWNFIRE6('FIRE', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE7) { }
+	S_SPAWNFIRE7('FIRE', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE8) { }
+	S_SPAWNFIRE8('FIRE', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 }
 
-void Actor::A_BrainDie(void)
+defaultproperties
 {
-	NotDoom2();
+	Translucency = 33;
+	SpawnState = S_SPAWNFIRE1;
+	Effects = EF_DL_MISSILE;
 }
 
-void Actor::A_SpawnSound(void)
-{
-	NotDoom2();
 }
 
-void Actor::A_SpawnFly(void)
+//**************************************************************************
+//
+//	BrainExplosion
+//
+//**************************************************************************
+
+class BrainExplosion:Rocket
 {
-	NotDoom2();
+
+//==========================================================================
+//
+//  A_BrainExplode
+//
+//  Brain explosions.
+//
+//==========================================================================
+
+void A_BrainExplode(void)
+{
+	TVec org;
+	Actor A;
+
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(BrainExplosion, org);
+	A.Velocity.z = Random() * 2.0 * 35.0;
+
+	A.SetState(A.SpawnState);
+
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
 }
 
-#endif
+__states__
+{
+	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) { }
+	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) { }
+	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, S_NULL) { A_BrainExplode(); }
+}
+
+defaultproperties
+{
+	SpawnState = S_BRAINEXPLODE1;
+}
+
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/05/03 17:11:52  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.19  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

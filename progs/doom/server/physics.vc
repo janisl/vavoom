@@ -641,8 +641,8 @@ void Actor::ApplyFriction(void)
 		if (bIsPlayer)
 		{
 			// if in a walking frame, stop moving
-			if (StateNum >= S_PLAY_RUN1 && StateNum <= S_PLAY_RUN4)
-				SetState(S_PLAY);
+			if (StateNum >= SeeState && StateNum <= SeeState + 3)
+				SetState(SpawnState);
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -822,6 +822,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/05/03 17:11:55  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.28  2002/04/11 16:50:53  dj_jl
 //  Made TryMove native, Tick function.
 //

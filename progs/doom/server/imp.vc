@@ -23,27 +23,25 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//
+//	Imp
+//
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Imp:Pawn
+	__mobjinfo__(3001)
+{
 
 //==========================================================================
 //
-//  Actor::A_TroopAttack
+//  A_TroopAttack
 //
 //  Imp attack.
 //
 //==========================================================================
 
-void Actor::A_TroopAttack(void)
+void A_TroopAttack(void)
 {
 	int damage;
 
@@ -63,9 +61,108 @@ void Actor::A_TroopAttack(void)
 	SpawnMissile(Enemy, ImpMissile);
 }
 
+__states__
+{
+	S_TROO_STND('TROO', 0, 'monsters/imp.md2', 0, 10.0 / 35.0, S_TROO_STND2) { A_Look(); }
+	S_TROO_STND2('TROO', 1, 'monsters/imp.md2', 1, 10.0 / 35.0, S_TROO_STND) { A_Look(); }
+	S_TROO_RUN1('TROO', 0, 'monsters/imp.md2', 8, 3.0 / 35.0, S_TROO_RUN2) { A_Chase(); }
+	S_TROO_RUN2('TROO', 0, 'monsters/imp.md2', 9, 3.0 / 35.0, S_TROO_RUN3) { A_Chase(); }
+	S_TROO_RUN3('TROO', 1, 'monsters/imp.md2', 10, 3.0 / 35.0, S_TROO_RUN4) { A_Chase(); }
+	S_TROO_RUN4('TROO', 1, 'monsters/imp.md2', 11, 3.0 / 35.0, S_TROO_RUN5) { A_Chase(); }
+	S_TROO_RUN5('TROO', 2, 'monsters/imp.md2', 12, 3.0 / 35.0, S_TROO_RUN6) { A_Chase(); }
+	S_TROO_RUN6('TROO', 2, 'monsters/imp.md2', 13, 3.0 / 35.0, S_TROO_RUN7) { A_Chase(); }
+	S_TROO_RUN7('TROO', 3, 'monsters/imp.md2', 14, 3.0 / 35.0, S_TROO_RUN8) { A_Chase(); }
+	S_TROO_RUN8('TROO', 3, 'monsters/imp.md2', 15, 3.0 / 35.0, S_TROO_RUN1) { A_Chase(); }
+	S_TROO_ATK1('TROO', 4, 'monsters/imp.md2', 16, 8.0 / 35.0, S_TROO_ATK2) { A_FaceTarget(); }
+	S_TROO_ATK2('TROO', 5, 'monsters/imp.md2', 17, 8.0 / 35.0, S_TROO_ATK3) { A_FaceTarget(); }
+	S_TROO_ATK3('TROO', 6, 'monsters/imp.md2', 18, 6.0 / 35.0, S_TROO_RUN1) { A_TroopAttack(); }
+	S_TROO_PAIN('TROO', 7, 'monsters/imp.md2', 19, 2.0 / 35.0, S_TROO_PAIN2) { }
+	S_TROO_PAIN2('TROO', 7, 'monsters/imp.md2', 20, 2.0 / 35.0, S_TROO_RUN1) { A_Pain(); }
+	S_TROO_DIE1('TROO', 8, 'monsters/impdie.md2', 0, 8.0 / 35.0, S_TROO_DIE2) { }
+	S_TROO_DIE2('TROO', 9, 'monsters/impdie.md2', 1, 8.0 / 35.0, S_TROO_DIE3) { A_Scream(); }
+	S_TROO_DIE3('TROO', 10, 'monsters/impdie.md2', 2, 6.0 / 35.0, S_TROO_DIE4) { }
+	S_TROO_DIE4('TROO', 11, 'monsters/impdie.md2', 3, 6.0 / 35.0, S_TROO_DIE5) { A_Fall(); }
+	S_TROO_DIE5('TROO', 12, 'monsters/impdie.md2', 4, -1.0, S_NULL) { }
+	S_TROO_XDIE1('TROO', 13, 'gibs/impgib.md2', 0, 5.0 / 35.0, S_TROO_XDIE2) { }
+	S_TROO_XDIE2('TROO', 14, 'gibs/impgib.md2', 1, 5.0 / 35.0, S_TROO_XDIE3) { A_XScream(); }
+	S_TROO_XDIE3('TROO', 15, 'gibs/impgib.md2', 2, 5.0 / 35.0, S_TROO_XDIE4) { }
+	S_TROO_XDIE4('TROO', 16, 'gibs/impgib.md2', 3, 5.0 / 35.0, S_TROO_XDIE5) { A_Fall(); }
+	S_TROO_XDIE5('TROO', 17, 'gibs/impgib.md2', 4, 5.0 / 35.0, S_TROO_XDIE6) { }
+	S_TROO_XDIE6('TROO', 18, 'gibs/impgib.md2', 5, 5.0 / 35.0, S_TROO_XDIE7) { }
+	S_TROO_XDIE7('TROO', 19, 'gibs/impgib.md2', 6, 5.0 / 35.0, S_TROO_XDIE8) { }
+	S_TROO_XDIE8('TROO', 20, 'gibs/impgib.md2', 7, -1.0, S_NULL) { }
+	S_TROO_RAISE1('TROO', 12, 'monsters/impdie.md2', 5, 8.0 / 35.0, S_TROO_RAISE2) { }
+	S_TROO_RAISE2('TROO', 11, 'monsters/impdie.md2', 6, 8.0 / 35.0, S_TROO_RAISE3) { }
+	S_TROO_RAISE3('TROO', 10, 'monsters/impdie.md2', 7, 6.0 / 35.0, S_TROO_RAISE4) { }
+	S_TROO_RAISE4('TROO', 9, 'monsters/impdie.md2', 8, 6.0 / 35.0, S_TROO_RAISE5) { }
+	S_TROO_RAISE5('TROO', 8, 'monsters/impdie.md2', 9, 6.0 / 35.0, S_TROO_RUN1) { }
+}
+
+defaultproperties
+{
+	Health = 60;
+	GibsHealth = -60;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 100.0;
+	StepSpeed = 8.0;
+	PainChance = 200;
+	SpawnState = S_TROO_STND;
+	SeeState = S_TROO_RUN1;
+	MeleeState = S_TROO_ATK1;
+	MissileState = S_TROO_ATK1;
+	PainState = S_TROO_PAIN;
+	DeathState = S_TROO_DIE1;
+	GibsDeathState = S_TROO_XDIE1;
+	RaiseState = S_TROO_RAISE1;
+	SightSound = 'ImpSight1';
+	ActiveSound = 'ImpActive';
+	PainSound = 'ZombiePain';
+	DeathSound = 'ImpDeath1';
+}
+
+}
+
+//**************************************************************************
+//
+//	ImpMissile
+//
+//**************************************************************************
+
+class ImpMissile:Projectile
+{
+
+__states__
+{
+	S_TBALL1('BAL1', 0 | FF_FULLBRIGHT, 'missiles/impball.md2', 0, 4.0 / 35.0, S_TBALL2) { }
+	S_TBALL2('BAL1', 1 | FF_FULLBRIGHT, 'missiles/impball.md2', 1, 4.0 / 35.0, S_TBALL1) { }
+	S_TBALLX1('BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX2) { }
+	S_TBALLX2('BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX3) { }
+	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 3;
+	Translucency = 33;
+	SpawnState = S_TBALL1;
+	DeathState = S_TBALLX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_RBALL;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.16  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

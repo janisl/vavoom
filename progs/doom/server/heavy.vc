@@ -23,29 +23,25 @@
 //**
 //**************************************************************************
 
-#ifdef DOOM2
+//**************************************************************************
+//
+//	ChaingunGuy
+//
+//**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class ChaingunGuy:Pawn
+	__mobjinfo__(65)
+{
 
 //==========================================================================
 //
-//  Actor::A_CPosAttack
+//  A_CPosAttack
 //
 //  Heavy weapon dude attack.
 //
 //==========================================================================
 
-void Actor::A_CPosAttack(void)
+void A_CPosAttack(void)
 {
 	int damage;
 	TVec dir;
@@ -65,13 +61,13 @@ void Actor::A_CPosAttack(void)
 
 //==========================================================================
 //
-//  Actor::A_CPosRefire
+//  A_CPosRefire
 //
 //  Heavy weapon dude refire.
 //
 //==========================================================================
 
-void Actor::A_CPosRefire(void)
+void A_CPosRefire(void)
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -85,23 +81,144 @@ void Actor::A_CPosRefire(void)
 	}
 }
 
-#else
-
-void Actor::A_CPosAttack(void)
+__states__
 {
-	NotDoom2();
+	S_CPOS_STND('CPOS', 0, 'monsters/chainguy.md2', 0, 10.0 / 35.0, S_CPOS_STND2) { A_Look(); }
+	S_CPOS_STND2('CPOS', 1, 'monsters/chainguy.md2', 1, 10.0 / 35.0, S_CPOS_STND) { A_Look(); }
+	S_CPOS_RUN1('CPOS', 0, 'monsters/chainguy.md2', 2, 3.0 / 35.0, S_CPOS_RUN2) { A_Chase(); }
+	S_CPOS_RUN2('CPOS', 0, 'monsters/chainguy.md2', 3, 3.0 / 35.0, S_CPOS_RUN3) { A_Chase(); }
+	S_CPOS_RUN3('CPOS', 1, 'monsters/chainguy.md2', 4, 3.0 / 35.0, S_CPOS_RUN4) { A_Chase(); }
+	S_CPOS_RUN4('CPOS', 1, 'monsters/chainguy.md2', 5, 3.0 / 35.0, S_CPOS_RUN5) { A_Chase(); }
+	S_CPOS_RUN5('CPOS', 2, 'monsters/chainguy.md2', 6, 3.0 / 35.0, S_CPOS_RUN6) { A_Chase(); }
+	S_CPOS_RUN6('CPOS', 2, 'monsters/chainguy.md2', 7, 3.0 / 35.0, S_CPOS_RUN7) { A_Chase(); }
+	S_CPOS_RUN7('CPOS', 3, 'monsters/chainguy.md2', 8, 3.0 / 35.0, S_CPOS_RUN8) { A_Chase(); }
+	S_CPOS_RUN8('CPOS', 3, 'monsters/chainguy.md2', 9, 3.0 / 35.0, S_CPOS_RUN1) { A_Chase(); }
+	S_CPOS_ATK1('CPOS', 4, 'monsters/chainguy.md2', 10, 10.0 / 35.0, S_CPOS_ATK2) { A_FaceTarget(); }
+	S_CPOS_ATK2('CPOS', 5 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 11, 4.0 / 35.0, S_CPOS_ATK3) { A_CPosAttack(); }
+	S_CPOS_ATK3('CPOS', 4 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 12, 4.0 / 35.0, S_CPOS_ATK4) { A_CPosAttack(); }
+	S_CPOS_ATK4('CPOS', 5, 'monsters/chainguy.md2', 13, 1.0 / 35.0, S_CPOS_ATK2) { A_CPosRefire(); }
+	S_CPOS_PAIN('CPOS', 6, 'monsters/chainguy.md2', 14, 3.0 / 35.0, S_CPOS_PAIN2) { }
+	S_CPOS_PAIN2('CPOS', 6, 'monsters/chainguy.md2', 15, 3.0 / 35.0, S_CPOS_RUN1) { A_Pain(); }
+	S_CPOS_DIE1('CPOS', 7, 'monsters/chaindie.md2', 0, 5.0 / 35.0, S_CPOS_DIE2) { }
+	S_CPOS_DIE2('CPOS', 8, 'monsters/chaindie.md2', 1, 5.0 / 35.0, S_CPOS_DIE3) { A_Scream(); }
+	S_CPOS_DIE3('CPOS', 9, 'monsters/chaindie.md2', 2, 5.0 / 35.0, S_CPOS_DIE4) { A_Fall(); }
+	S_CPOS_DIE4('CPOS', 10, 'monsters/chaindie.md2', 3, 5.0 / 35.0, S_CPOS_DIE5) { }
+	S_CPOS_DIE5('CPOS', 11, 'monsters/chaindie.md2', 4, 5.0 / 35.0, S_CPOS_DIE6) { }
+	S_CPOS_DIE6('CPOS', 12, 'monsters/chaindie.md2', 5, 5.0 / 35.0, S_CPOS_DIE7) { }
+	S_CPOS_DIE7('CPOS', 13, 'monsters/chaindie.md2', 6, -1.0, S_NULL) { }
+	S_CPOS_XDIE1('CPOS', 14, 'gibs/chaingib.md2', 0, 5.0 / 35.0, S_CPOS_XDIE2) { }
+	S_CPOS_XDIE2('CPOS', 15, 'gibs/chaingib.md2', 1, 5.0 / 35.0, S_CPOS_XDIE3) { A_XScream(); }
+	S_CPOS_XDIE3('CPOS', 16, 'gibs/chaingib.md2', 2, 5.0 / 35.0, S_CPOS_XDIE4) { A_Fall(); }
+	S_CPOS_XDIE4('CPOS', 17, 'gibs/chaingib.md2', 3, 5.0 / 35.0, S_CPOS_XDIE5) { }
+	S_CPOS_XDIE5('CPOS', 18, 'gibs/chaingib.md2', 4, 5.0 / 35.0, S_CPOS_XDIE6) { }
+	S_CPOS_XDIE6('CPOS', 19, 'gibs/chaingib.md2', 5, -1.0, S_NULL) { }
+	S_CPOS_RAISE1('CPOS', 13, 'monsters/chaindie.md2', 7, 5.0 / 35.0, S_CPOS_RAISE2) { }
+	S_CPOS_RAISE2('CPOS', 12, 'monsters/chaindie.md2', 8, 5.0 / 35.0, S_CPOS_RAISE3) { }
+	S_CPOS_RAISE3('CPOS', 11, 'monsters/chaindie.md2', 9, 5.0 / 35.0, S_CPOS_RAISE4) { }
+	S_CPOS_RAISE4('CPOS', 10, 'monsters/chaindie.md2', 10, 5.0 / 35.0, S_CPOS_RAISE5) { }
+	S_CPOS_RAISE5('CPOS', 9, 'monsters/chaindie.md2', 11, 5.0 / 35.0, S_CPOS_RAISE6) { }
+	S_CPOS_RAISE6('CPOS', 8, 'monsters/chaindie.md2', 12, 5.0 / 35.0, S_CPOS_RAISE7) { }
+	S_CPOS_RAISE7('CPOS', 7, 'monsters/chaindie.md2', 13, 5.0 / 35.0, S_CPOS_RUN1) { }
 }
 
-void Actor::A_CPosRefire(void)
+defaultproperties
 {
-	NotDoom2();
+	Health = 70;
+	GibsHealth = -70;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 100.0;
+	StepSpeed = 8.0;
+	PainChance = 170;
+	SpawnState = S_CPOS_STND;
+	SeeState = S_CPOS_RUN1;
+	MissileState = S_CPOS_ATK1;
+	PainState = S_CPOS_PAIN;
+	DeathState = S_CPOS_DIE1;
+	GibsDeathState = S_CPOS_XDIE1;
+	RaiseState = S_CPOS_RAISE1;
+	SightSound = 'ZombieSight2';
+	ActiveSound = 'ZombieActive';
+	PainSound = 'ZombiePain';
+	DeathSound = 'ZombieDeath2';
 }
 
-#endif
+}
+
+//**************************************************************************
+//
+//	WolfSS
+//
+//**************************************************************************
+
+class WolfSS:ChaingunGuy
+	__mobjinfo__(84)
+{
+
+__states__
+{
+	S_SSWV_STND('SSWV', 0, 'monsters/ss.md2', 0, 10.0 / 35.0, S_SSWV_STND2) { A_Look(); }
+	S_SSWV_STND2('SSWV', 1, 'monsters/ss.md2', 1, 10.0 / 35.0, S_SSWV_STND) { A_Look(); }
+	S_SSWV_RUN1('SSWV', 0, 'monsters/ss.md2', 2, 3.0 / 35.0, S_SSWV_RUN2) { A_Chase(); }
+	S_SSWV_RUN2('SSWV', 0, 'monsters/ss.md2', 3, 3.0 / 35.0, S_SSWV_RUN3) { A_Chase(); }
+	S_SSWV_RUN3('SSWV', 1, 'monsters/ss.md2', 4, 3.0 / 35.0, S_SSWV_RUN4) { A_Chase(); }
+	S_SSWV_RUN4('SSWV', 1, 'monsters/ss.md2', 5, 3.0 / 35.0, S_SSWV_RUN5) { A_Chase(); }
+	S_SSWV_RUN5('SSWV', 2, 'monsters/ss.md2', 6, 3.0 / 35.0, S_SSWV_RUN6) { A_Chase(); }
+	S_SSWV_RUN6('SSWV', 2, 'monsters/ss.md2', 7, 3.0 / 35.0, S_SSWV_RUN7) { A_Chase(); }
+	S_SSWV_RUN7('SSWV', 3, 'monsters/ss.md2', 8, 3.0 / 35.0, S_SSWV_RUN8) { A_Chase(); }
+	S_SSWV_RUN8('SSWV', 3, 'monsters/ss.md2', 9, 3.0 / 35.0, S_SSWV_RUN1) { A_Chase(); }
+	S_SSWV_ATK1('SSWV', 4, 'monsters/ss.md2', 10, 10.0 / 35.0, S_SSWV_ATK2) { A_FaceTarget(); }
+	S_SSWV_ATK2('SSWV', 5, 'monsters/ss.md2', 11, 10.0 / 35.0, S_SSWV_ATK3) { A_FaceTarget(); }
+	S_SSWV_ATK3('SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, S_SSWV_ATK4) { A_CPosAttack(); }
+	S_SSWV_ATK4('SSWV', 5, 'monsters/ss.md2', 13, 6.0 / 35.0, S_SSWV_ATK5) { A_FaceTarget(); }
+	S_SSWV_ATK5('SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, S_SSWV_ATK6) { A_CPosAttack(); }
+	S_SSWV_ATK6('SSWV', 5, 'monsters/ss.md2', 13, 1.0 / 35.0, S_SSWV_ATK2) { A_CPosRefire(); }
+	S_SSWV_PAIN('SSWV', 7, 'monsters/ss.md2', 14, 3.0 / 35.0, S_SSWV_PAIN2) { }
+	S_SSWV_PAIN2('SSWV', 7, 'monsters/ss.md2', 15, 3.0 / 35.0, S_SSWV_RUN1) { A_Pain(); }
+	S_SSWV_DIE1('SSWV', 8, 'monsters/ssdie.md2', 0, 5.0 / 35.0, S_SSWV_DIE2) { }
+	S_SSWV_DIE2('SSWV', 9, 'monsters/ssdie.md2', 1, 5.0 / 35.0, S_SSWV_DIE3) { A_Scream(); }
+	S_SSWV_DIE3('SSWV', 10, 'monsters/ssdie.md2', 2, 5.0 / 35.0, S_SSWV_DIE4) { A_Fall(); }
+	S_SSWV_DIE4('SSWV', 11, 'monsters/ssdie.md2', 3, 5.0 / 35.0, S_SSWV_DIE5) { }
+	S_SSWV_DIE5('SSWV', 12, 'monsters/ssdie.md2', 4, -1.0, S_NULL) { }
+	S_SSWV_XDIE1('SSWV', 13, 'gibs/ssgib.md2', 0, 5.0 / 35.0, S_SSWV_XDIE2) { }
+	S_SSWV_XDIE2('SSWV', 14, 'gibs/ssgib.md2', 1, 5.0 / 35.0, S_SSWV_XDIE3) { A_XScream(); }
+	S_SSWV_XDIE3('SSWV', 15, 'gibs/ssgib.md2', 2, 5.0 / 35.0, S_SSWV_XDIE4) { A_Fall(); }
+	S_SSWV_XDIE4('SSWV', 16, 'gibs/ssgib.md2', 3, 5.0 / 35.0, S_SSWV_XDIE5) { }
+	S_SSWV_XDIE5('SSWV', 17, 'gibs/ssgib.md2', 4, 5.0 / 35.0, S_SSWV_XDIE6) { }
+	S_SSWV_XDIE6('SSWV', 18, 'gibs/ssgib.md2', 5, 5.0 / 35.0, S_SSWV_XDIE7) { }
+	S_SSWV_XDIE7('SSWV', 19, 'gibs/ssgib.md2', 6, 5.0 / 35.0, S_SSWV_XDIE8) { }
+	S_SSWV_XDIE8('SSWV', 20, 'gibs/ssgib.md2', 7, 5.0 / 35.0, S_SSWV_XDIE9) { }
+	S_SSWV_XDIE9('SSWV', 21, 'gibs/ssgib.md2', 8, -1.0, S_NULL) { }
+	S_SSWV_RAISE1('SSWV', 12, 'monsters/ssdie.md2', 5, 5.0 / 35.0, S_SSWV_RAISE2) { }
+	S_SSWV_RAISE2('SSWV', 11, 'monsters/ssdie.md2', 6, 5.0 / 35.0, S_SSWV_RAISE3) { }
+	S_SSWV_RAISE3('SSWV', 10, 'monsters/ssdie.md2', 7, 5.0 / 35.0, S_SSWV_RAISE4) { }
+	S_SSWV_RAISE4('SSWV', 9, 'monsters/ssdie.md2', 8, 5.0 / 35.0, S_SSWV_RAISE5) { }
+	S_SSWV_RAISE5('SSWV', 8, 'monsters/ssdie.md2', 9, 5.0 / 35.0, S_SSWV_RUN1) { }
+}
+
+defaultproperties
+{
+	Health = 50;
+	GibsHealth = -50;
+	SpawnState = S_SSWV_STND;
+	SeeState = S_SSWV_RUN1;
+	MissileState = S_SSWV_ATK1;
+	PainState = S_SSWV_PAIN;
+	DeathState = S_SSWV_DIE1;
+	GibsDeathState = S_SSWV_XDIE1;
+	RaiseState = S_SSWV_RAISE1;
+	SightSound = 'SSNaziSight';
+	DeathSound = 'SSNaziDeath';
+}
+
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.17  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

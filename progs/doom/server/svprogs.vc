@@ -60,6 +60,7 @@
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
+#include "wpnbase.vc"
 #include "weapons.vc"
 #include "enemy.vc"
 #include "cheat.vc"
@@ -70,17 +71,19 @@
 
 #include "bot.vc"
 
+#include "player.vc"
 #include "zombiemn.vc"
 #include "shotguy.vc"
 #include "imp.vc"
 #include "demon.vc"
 #include "caco.vc"
-#include "knight.vc"
+#include "baron.vc"
 #include "lostsoul.vc"
 #include "cyber.vc"
 #include "spider.vc"
 
 #include "heavy.vc"
+#include "knight.vc"
 #include "arach.vc"
 #include "painelem.vc"
 #include "revenant.vc"
@@ -90,11 +93,21 @@
 
 #include "keen.vc"
 
+#include "miscobj.vc"
+#include "items.vc"
+#include "decorat.vc"
+
+#include "deh_wpn.vc"
+#include "deh_act.vc"
+
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/05/03 17:11:55  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.16  2002/03/20 19:07:44  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

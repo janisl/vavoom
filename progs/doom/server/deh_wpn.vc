@@ -1,0 +1,317 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HackedWeapon:Weapon
+{
+
+//===========================================================================
+//
+//  A_Punch
+//
+//===========================================================================
+
+void A_Punch(void)
+{
+	int damage;
+	TAVec aimAngles;
+	TVec dir;
+
+	damage = (P_Random() % 10 + 1) << 1;
+
+	if (Player->Powers[pw_strength])
+		damage *= 10;
+
+	aimAngles = Player->MO.Angles;
+	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+	dir = AimLineAttack(Player->MO, aimAngles, MELEERANGE);
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+
+	// turn to face target
+	if (linetarget)
+	{
+		Player->MO.PlaySound('Punch', CHAN_WEAPON);
+		Player->MO.Angles.yaw = atan2(
+			linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+}
+
+//===========================================================================
+//
+//  A_Saw
+//
+//===========================================================================
+
+void A_Saw(void)
+{
+	float angle;
+	int damage;
+	TAVec aimAng;
+	TVec dir;
+
+	damage = 2 * (P_Random() % 10 + 1);
+	aimAng = Player->MO.Angles;
+	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+
+	// use meleerange + 1 se the puff doesn't skip the flash
+	dir = AimLineAttack(Player->MO, aimAng, MELEERANGE + 0.00001);
+	LineAttack(Player->MO, dir, MELEERANGE + 0.00001, damage);
+
+	if (!linetarget)
+	{
+		Player->MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
+		return;
+	}
+	Player->MO.PlaySound('ChainsawHit', CHAN_WEAPON);
+
+	// turn to face target
+	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
+		linetarget.Origin.x - Player->MO.Origin.x);
+	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
+	{
+		if (AngleMod360(angle - Player->MO.Angles.yaw) < -90.0 / 20.0)
+			Player->MO.Angles.yaw = angle + 90.0 / 21.0;
+		else
+			Player->MO.Angles.yaw = Player->MO.Angles.yaw - 90.0 / 20.0;
+	}
+	else
+	{
+		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
+			Player->MO.Angles.yaw = angle - 90.0 / 21.0;
+		else
+			Player->MO.Angles.yaw += 90.0 / 20.0;
+	}
+	Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw);
+	Player->MO.bJustAttacked = true;
+	Player->bFixAngle = true;
+}
+
+//===========================================================================
+//
+//  A_FirePistol
+//
+//===========================================================================
+
+void A_FirePistol(void)
+{
+	TVec dir;
+
+	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
+
+	Player->MO.SetState(S_PLAY_ATK2);
+	Player->Ammo[Ammo]--;
+
+	SetPsprite(Player, ps_flash, FlashState);
+
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	GunShot(Player->MO, !Player->Refire, dir);
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+}
+
+//===========================================================================
+//
+//  A_FireShotgun
+//
+//===========================================================================
+
+void A_FireShotgun(void)
+{
+	int i;
+	TVec dir;
+
+	Player->MO.PlaySound('ShotgunFire', CHAN_WEAPON);
+	Player->MO.SetState(S_PLAY_ATK2);
+
+	Player->Ammo[Ammo]--;
+
+	SetPsprite(Player, ps_flash, FlashState);
+
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	for (i = 0; i < 7; i++)
+	{
+		GunShot(Player->MO, false, dir);
+	}
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+}
+
+//===========================================================================
+//
+//  A_FireShotgun2
+//
+//===========================================================================
+
+void A_FireShotgun2(void)
+{
+	int i;
+	int damage;
+	TAVec rot;
+	TVec aimDir;
+	TVec dir;
+
+	Player->MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
+	Player->MO.SetState(S_PLAY_ATK2);
+
+	Player->Ammo[Ammo] -= 2;
+
+	SetPsprite(Player, ps_flash, FlashState);
+
+	aimDir = Aim(Player->MO, 16.0 * 64.0);
+	for (i = 0; i < 20; i++)
+	{
+		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
+		rot.yaw = (Random() - Random()) * 45.0 / 4.0;
+		rot.roll = 0.0;
+		dir = RotateDirectionVector(aimDir, rot);
+		damage = 5 * (P_Random() % 3 + 1);
+		LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	}
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+}
+
+//===========================================================================
+//
+//  A_OpenShotgun2
+//
+//===========================================================================
+
+void A_OpenShotgun2(void)
+{
+	Player->MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_LoadShotgun2
+//
+//===========================================================================
+
+void A_LoadShotgun2(void)
+{
+	Player->MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_CloseShotgun2
+//
+//===========================================================================
+
+void A_CloseShotgun2(void)
+{
+	Player->MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
+	A_ReFire();
+}
+
+//===========================================================================
+//
+//  A_FireCGun
+//
+//===========================================================================
+
+void A_FireCGun(void)
+{
+	TVec dir;
+
+	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
+
+	if (!Player->Ammo[Ammo])
+		return;
+
+	Player->MO.SetState(S_PLAY_ATK2);
+	Player->Ammo[Ammo]--;
+
+	SetPsprite(Player, ps_flash, FlashState + StateNum - AttackState);//S_CHAIN1);
+
+	dir = Aim(Player->MO, 16.0 * 64.0);
+	GunShot(Player->MO, !Player->Refire, dir);
+	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+}
+
+//===========================================================================
+//
+//  A_FireMissile
+//
+//===========================================================================
+
+void A_FireMissile(void)
+{
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(Rocket);
+}
+
+//===========================================================================
+//
+//  A_FirePlasma
+//
+//===========================================================================
+
+void A_FirePlasma(void)
+{
+	Player->Ammo[Ammo]--;
+
+	SetPsprite(Player, ps_flash, FlashState + (P_Random() & 1));
+
+	PlayerPawn(Player->MO).SpawnPlayerMissile(PlasmaShot);
+}
+
+//===========================================================================
+//
+//  A_BFGsound
+//
+//===========================================================================
+
+void A_BFGsound(void)
+{
+	Player->MO.PlaySound('BFGFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireBFG
+//
+//===========================================================================
+
+void A_FireBFG(void)
+{
+	Player->Ammo[Ammo] -= BFGCELLS;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(BFGShot);
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
+//**************************************************************************

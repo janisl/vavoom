@@ -23,78 +23,27 @@
 //**
 //**************************************************************************
 
-#ifdef DOOM2
-
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
+//**************************************************************************
 //
-//  PIT_VileCheck
+//	ArchVile
 //
-//  Detect a corpse that could be raised.
-//
-//==========================================================================
+//**************************************************************************
 
-Actor CorpseHit;
-Actor vileobj;
-float viletryx;
-float viletryy;
-
-boolean PIT_VileCheck(MapObject Other)
+class ArchVile:Pawn
+	__mobjinfo__(64)
 {
-	float maxdist;
-	boolean check;
 
-	if (!Actor(Other).bCorpse)
-		return true;	// not a monster
-
-	if (Actor(Other).StateTime != -1.0)
-		return true;	// not lying still yet
-
-	if (Actor(Other).RaiseState == S_NULL)
-		return true;	// monster doesn't have a raise state
-
-	maxdist = Other.Radius + vileobj.Radius;
-
-	if (fabs(Other.Origin.x - viletryx) > maxdist ||
-		fabs(Other.Origin.y - viletryy) > maxdist)
-		return true;	// not actually touching
-
-	if (!P_CheckSight(vileobj, Other))
-		return true;	//  Con't see, possibly in other region
-
-	CorpseHit = Actor(Other);
-	CorpseHit.Velocity.x = 0.0;
-	CorpseHit.Velocity.y = 0.0;
-	CorpseHit.Height *= 4.0;
-	check = CorpseHit.CheckPosition(CorpseHit.Origin);
-	CorpseHit.Height /= 4.0;
-
-	if (!check)
-		return true;	// doesn't fit here
-
-	return false;	// got one, so stop checking
-}
+int HealState;
 
 //==========================================================================
 //
-//  Actor::A_VileChase
+//  A_VileChase
 //
 //  Arch-vile check for ressurecting a body.
 //
 //==========================================================================
 
-void Actor::A_VileChase(void)
+void A_VileChase(void)
 {
 	int xl;
 	int xh;
@@ -132,7 +81,7 @@ void Actor::A_VileChase(void)
 					A_FaceTarget();
 					Enemy = temp;
 
-					SetState(S_VILE_HEAL1);
+					SetState(HealState);
 					CorpseHit.PlaySound('Slop', CHAN_BODY);
 
 					CorpseHit.SetState(CorpseHit.RaiseState);
@@ -161,26 +110,26 @@ void Actor::A_VileChase(void)
 
 //==========================================================================
 //
-//  Actor::A_VileStart
+//  A_VileStart
 //
 //  Arch-vile attack start sound.
 //
 //==========================================================================
 
-void Actor::A_VileStart(void)
+void A_VileStart(void)
 {
 	PlaySound('ArchVileAttack', CHAN_WEAPON);
 }
 
 //==========================================================================
 //
-//  Actor::A_VileTarget
+//  A_VileTarget
 //
 //  Spawn the hellfire.
 //
 //==========================================================================
 
-void Actor::A_VileTarget(void)
+void A_VileTarget(void)
 {
 	Actor fog;
 
@@ -194,18 +143,18 @@ void Actor::A_VileTarget(void)
 	Instigator = fog;//FIXME!!!!!!!
 	fog.Instigator = self;
 	fog.Enemy = Enemy;
-	fog.A_Fire();
+	fog.SetState(fog.SpawnState);
 }
 
 //==========================================================================
 //
-//  Actor::A_VileAttack
+//  A_VileAttack
 //
 //  Arch-vile attack.
 //
 //==========================================================================
 
-void Actor::A_VileAttack(void)
+void A_VileAttack(void)
 {
 	Actor fire;
 
@@ -232,29 +181,90 @@ void Actor::A_VileAttack(void)
 	fire.RadiusAttack(70, 0, 0);
 }
 
-//==========================================================================
-//
-//  Actor::A_StartFire
-//
-//  Make fire start sound.
-//
-//==========================================================================
-
-void Actor::A_StartFire(void)
+__states__
 {
-	PlaySound('FlameStart', CHAN_VOICE);
-	A_Fire();
+	S_VILE_STND('VILE', 0, 'monsters/vile.md2', 0, 10.0 / 35.0, S_VILE_STND2) { A_Look(); }
+	S_VILE_STND2('VILE', 1, 'monsters/vile.md2', 1, 10.0 / 35.0, S_VILE_STND) { A_Look(); }
+	S_VILE_RUN1('VILE', 0, 'monsters/vile.md2', 2, 2.0 / 35.0, S_VILE_RUN2) { A_VileChase(); }
+	S_VILE_RUN2('VILE', 0, 'monsters/vile.md2', 3, 2.0 / 35.0, S_VILE_RUN3) { A_VileChase(); }
+	S_VILE_RUN3('VILE', 1, 'monsters/vile.md2', 4, 2.0 / 35.0, S_VILE_RUN4) { A_VileChase(); }
+	S_VILE_RUN4('VILE', 1, 'monsters/vile.md2', 5, 2.0 / 35.0, S_VILE_RUN5) { A_VileChase(); }
+	S_VILE_RUN5('VILE', 2, 'monsters/vile.md2', 6, 2.0 / 35.0, S_VILE_RUN6) { A_VileChase(); }
+	S_VILE_RUN6('VILE', 2, 'monsters/vile.md2', 7, 2.0 / 35.0, S_VILE_RUN7) { A_VileChase(); }
+	S_VILE_RUN7('VILE', 3, 'monsters/vile.md2', 8, 2.0 / 35.0, S_VILE_RUN8) { A_VileChase(); }
+	S_VILE_RUN8('VILE', 3, 'monsters/vile.md2', 9, 2.0 / 35.0, S_VILE_RUN9) { A_VileChase(); }
+	S_VILE_RUN9('VILE', 4, 'monsters/vile.md2', 10, 2.0 / 35.0, S_VILE_RUN10) { A_VileChase(); }
+	S_VILE_RUN10('VILE', 4, 'monsters/vile.md2', 11, 2.0 / 35.0, S_VILE_RUN11) { A_VileChase(); }
+	S_VILE_RUN11('VILE', 5, 'monsters/vile.md2', 12, 2.0 / 35.0, S_VILE_RUN12) { A_VileChase(); }
+	S_VILE_RUN12('VILE', 5, 'monsters/vile.md2', 13, 2.0 / 35.0, S_VILE_RUN1) { A_VileChase(); }
+	S_VILE_ATK1('VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 0.0 / 35.0, S_VILE_ATK2) { A_VileStart(); }
+	S_VILE_ATK2('VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 10.0 / 35.0, S_VILE_ATK3) { A_FaceTarget(); }
+	S_VILE_ATK3('VILE', 7 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 1, 8.0 / 35.0, S_VILE_ATK4) { A_VileTarget(); }
+	S_VILE_ATK4('VILE', 8 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 2, 8.0 / 35.0, S_VILE_ATK5) { A_FaceTarget(); }
+	S_VILE_ATK5('VILE', 9 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 3, 8.0 / 35.0, S_VILE_ATK6) { A_FaceTarget(); }
+	S_VILE_ATK6('VILE', 10 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 4, 8.0 / 35.0, S_VILE_ATK7) { A_FaceTarget(); }
+	S_VILE_ATK7('VILE', 11 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 5, 8.0 / 35.0, S_VILE_ATK8) { A_FaceTarget(); }
+	S_VILE_ATK8('VILE', 12 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 6, 8.0 / 35.0, S_VILE_ATK9) { A_FaceTarget(); }
+	S_VILE_ATK9('VILE', 13 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 7, 8.0 / 35.0, S_VILE_ATK10) { A_FaceTarget(); }
+	S_VILE_ATK10('VILE', 14 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 8, 8.0 / 35.0, S_VILE_ATK11) { A_VileAttack(); }
+	S_VILE_ATK11('VILE', 15 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 9, 20.0 / 35.0, S_VILE_RUN1) { }
+	S_VILE_PAIN('VILE', 16, 'monsters/vile.md2', 17, 5.0 / 35.0, S_VILE_PAIN2) { }
+	S_VILE_PAIN2('VILE', 16, 'monsters/vile.md2', 18, 5.0 / 35.0, S_VILE_RUN1) { A_Pain(); }
+	S_VILE_DIE1('VILE', 16, 'monsters/viledie.md2', 0, 7.0 / 35.0, S_VILE_DIE2) { }
+	S_VILE_DIE2('VILE', 17, 'monsters/viledie.md2', 1, 7.0 / 35.0, S_VILE_DIE3) { A_Scream(); }
+	S_VILE_DIE3('VILE', 18, 'monsters/viledie.md2', 2, 7.0 / 35.0, S_VILE_DIE4) { A_Fall(); }
+	S_VILE_DIE4('VILE', 19, 'monsters/viledie.md2', 3, 7.0 / 35.0, S_VILE_DIE5) { }
+	S_VILE_DIE5('VILE', 20, 'monsters/viledie.md2', 4, 7.0 / 35.0, S_VILE_DIE6) { }
+	S_VILE_DIE6('VILE', 21, 'monsters/viledie.md2', 5, 7.0 / 35.0, S_VILE_DIE7) { }
+	S_VILE_DIE7('VILE', 22, 'monsters/viledie.md2', 6, 7.0 / 35.0, S_VILE_DIE8) { }
+	S_VILE_DIE8('VILE', 23, 'monsters/viledie.md2', 7, 5.0 / 35.0, S_VILE_DIE9) { }
+	S_VILE_DIE9('VILE', 24, 'monsters/viledie.md2', 8, 5.0 / 35.0, S_VILE_DIE10) { }
+	S_VILE_DIE10('VILE', 25, 'monsters/viledie.md2', 9, -1.0, S_NULL) { }
+	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 'monsters/vile.md2', 14, 10.0 / 35.0, S_VILE_HEAL2) { }
+	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 'monsters/vile.md2', 15, 10.0 / 35.0, S_VILE_HEAL3) { }
+	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 'monsters/vile.md2', 16, 10.0 / 35.0, S_VILE_RUN1) { }
 }
 
+defaultproperties
+{
+	Health = 700;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 500.0;
+	StepSpeed = 15.0;
+	PainChance = 10;
+	SpawnState = S_VILE_STND;
+	SeeState = S_VILE_RUN1;
+	MissileState = S_VILE_ATK1;
+	PainState = S_VILE_PAIN;
+	DeathState = S_VILE_DIE1;
+	HealState = S_VILE_HEAL1;
+	SightSound = 'ArchVileSight';
+	ActiveSound = 'ArchVileActive';
+	PainSound = 'ArchVilePain';
+	DeathSound = 'ArchVileDeath';
+}
+
+}
+
+//**************************************************************************
+//
+//	ArchvileFire
+//
+//**************************************************************************
+
+class ArchvileFire:Effect
+{
+
 //==========================================================================
 //
-//  Actor::A_Fire
+//  A_Fire
 //
 //  Keep fire in front of player unless out of sight.
 //
 //==========================================================================
 
-void Actor::A_Fire(void)
+void A_Fire(void)
 {
 	if (!Enemy)
 		return;
@@ -272,60 +282,81 @@ void Actor::A_Fire(void)
 
 //==========================================================================
 //
-//  Actor::A_FireCrackle
+//  A_StartFire
+//
+//  Make fire start sound.
+//
+//==========================================================================
+
+void A_StartFire(void)
+{
+	PlaySound('FlameStart', CHAN_VOICE);
+	A_Fire();
+}
+
+//==========================================================================
+//
+//  A_FireCrackle
 //
 //  Fire sound.
 //
 //==========================================================================
 
-void Actor::A_FireCrackle(void)
+void A_FireCrackle(void)
 {
 	PlaySound('Flame', CHAN_VOICE);
 	A_Fire();
 }
 
-#else
-
-void Actor::A_VileChase(void)
+__states__
 {
-	NotDoom2();
+	S_FIRE1('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE2) { A_StartFire(); }
+	S_FIRE2('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE3) { A_Fire(); }
+	S_FIRE3('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE4) { A_Fire(); }
+	S_FIRE4('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE5) { A_Fire(); }
+	S_FIRE5('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE6) { A_FireCrackle(); }
+	S_FIRE6('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE7) { A_Fire(); }
+	S_FIRE7('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE8) { A_Fire(); }
+	S_FIRE8('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE9) { A_Fire(); }
+	S_FIRE9('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE10) { A_Fire(); }
+	S_FIRE10('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE11) { A_Fire(); }
+	S_FIRE11('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE12) { A_Fire(); }
+	S_FIRE12('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE13) { A_Fire(); }
+	S_FIRE13('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE14) { A_Fire(); }
+	S_FIRE14('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE15) { A_Fire(); }
+	S_FIRE15('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE16) { A_Fire(); }
+	S_FIRE16('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE17) { A_Fire(); }
+	S_FIRE17('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE18) { A_Fire(); }
+	S_FIRE18('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE19) { A_Fire(); }
+	S_FIRE19('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE20) { A_FireCrackle(); }
+	S_FIRE20('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE21) { A_Fire(); }
+	S_FIRE21('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE22) { A_Fire(); }
+	S_FIRE22('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE23) { A_Fire(); }
+	S_FIRE23('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE24) { A_Fire(); }
+	S_FIRE24('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE25) { A_Fire(); }
+	S_FIRE25('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE26) { A_Fire(); }
+	S_FIRE26('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE27) { A_Fire(); }
+	S_FIRE27('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE28) { A_Fire(); }
+	S_FIRE28('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE29) { A_Fire(); }
+	S_FIRE29('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE30) { A_Fire(); }
+	S_FIRE30('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { A_Fire(); }
 }
 
-void Actor::A_VileStart(void)
+defaultproperties
 {
-	NotDoom2();
+	Translucency = 33;
+	SpawnState = S_FIRE1;
+	Effects = EF_DL_MISSILE;
 }
 
-void Actor::A_VileTarget(void)
-{
-	NotDoom2();
 }
-
-void Actor::A_VileAttack(void)
-{
-	NotDoom2();
-}
-
-void Actor::A_StartFire(void)
-{
-	NotDoom2();
-}
-
-void Actor::A_Fire(void)
-{
-	NotDoom2();
-}
-
-void Actor::A_FireCrackle(void)
-{
-	NotDoom2();
-}
-
-#endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/05/03 17:11:52  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.24  2002/03/28 18:23:31  dj_jl
 //  Fixed archvile respawning unkillable monsters.
 //

@@ -23,74 +23,70 @@
 //**
 //**************************************************************************
 
-//==========================================================================
+//**************************************************************************
 //
-//  weapon_grenade_launcher
+//	ItemWeaponGrenadeLauncher
 //
-//==========================================================================
+//**************************************************************************
 
-class weapon_grenade_launcher:Actor
+class ItemWeaponGrenadeLauncher:Pickup
 	__mobjinfo__(90)
 {
-	__states__
-	{
-		//  Weapon on ground
-		S_GLAUNCH('GLAU', 0, -1.0, S_NULL) { }
-	}
 
-	defaultproperties
-	{
-		Radius = 20.0;
-		Height = 16.0;
-		bSpecial = true;
-		SpawnState = S_GLAUNCH;
-	}
-};
-
-//==========================================================================
-//
-//	missile_grenade
-//
-//==========================================================================
-
-class missile_grenade:Actor
+__states__
 {
-	void A_ExplodeMissile(void)
+	//  Weapon on ground
+	S_GLAUNCH('GLAU', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	SpawnState = S_GLAUNCH;
+}
+
+}
+
+//**************************************************************************
+//
+//	Grenade
+//
+//**************************************************************************
+
+class Grenade:Rocket
+{
+
+__states__
+{
+	//  Flying grenade
+	S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) { }
+	S_GRENADE_EXPLODE('GREN', 0 | FF_FULLBRIGHT, 0.0, S_EXPLODE1)
 	{
 		ExplodeMissile();
 	}
+}
 
-	__states__
-	{
-		//  Flying grenade
-		S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) { }
-		S_GRENADE_EXPLODE('GREN', 0 | FF_FULLBRIGHT, 0.0, S_EXPLODE1) { A_ExplodeMissile(); }
-	}
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 600.0;
+	MissileDamage = 20;
+	bNoGravity = false;
+	bBounce = true;
+	SpawnState = S_GRENADE;
+	DeathState = S_EXPLODE1;
+	SightSound = 'LauncherFire';
+	PainSound = 'GrenadeBounce';
+	DeathSound = 'BarrelExplode';
+}
 
-	defaultproperties
-	{
-		Radius = 11.0;
-		Height = 8.0;
-		Mass = 100.0;
-		Speed = 600.0;
-		MissileDamage = 20;
-		bNoBlockmap = true;
-		bDropOff = true;
- 		bMissile = true;
- 		bBounce = true;
-		SpawnState = S_GRENADE;
-		DeathState = S_EXPLODE1;
-		SightSound = 'LauncherFire';
-		PainSound = 'GrenadeBounce';
-		DeathSound = 'BarrelExplode';
-	}
-};
+}
 
-//==========================================================================
+//**************************************************************************
 //
 //	WeaponGrenade
 //
-//==========================================================================
+//**************************************************************************
 
 class WeaponGrenade:Weapon
 {
@@ -107,7 +103,7 @@ void A_FireGrenade(void)
 
 	Player->Ammo[Ammo]--;
 
-	A = Spawn(missile_grenade, Player->mo->Origin + vector(0.0, 0.0, 32.0));
+	A = Spawn(Grenade, Player->mo->Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
@@ -136,36 +132,40 @@ void A_FireGrenade(void)
 	CheckMissileSpawn(&A);
 }
 
-	__states__
-	{
-		//  Weapon in player view
-		S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
-		S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
-		S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
-		S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
-		S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
-		S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
-		S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
-		S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
-		S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
-		S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
-	}
+__states__
+{
+	//  Weapon in player view
+	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
+	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
+	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
+	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
+	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
+	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
+	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
+	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
+	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
+	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+}
 
-	defaultproperties
-	{
-		Ammo = am_misl;
-		UpState = S_GRENLAUNCHUP;
-		DownState = S_GRENLAUNCHDOWN;
-		ReadyState = S_GRENLAUNCH;
-		AttackState = S_GRENLAUNCH1;
-		HoldAttackState = S_NULL;
-		FlashState = S_GRENLAUNCHFLASH1;
-	}
+defaultproperties
+{
+	Ammo = am_misl;
+	UpState = S_GRENLAUNCHUP;
+	DownState = S_GRENLAUNCHDOWN;
+	ReadyState = S_GRENLAUNCH;
+	AttackState = S_GRENLAUNCH1;
+	HoldAttackState = S_NULL;
+	FlashState = S_GRENLAUNCHFLASH1;
+}
+
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/05/03 17:11:53  dj_jl
+//  Object classes split up into their files.
+//
 //  Revision 1.15  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
