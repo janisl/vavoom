@@ -80,6 +80,7 @@ int T_TextWidth(char*);
 int T_TextHeight(char*);
 
 void T_DrawString(int, int, char*);
+void T_DrawString8(int, int, char*);
 void T_DrawText(int, int, char*);
 
 void T_DrawNString(int, int, char*, int);
@@ -93,9 +94,12 @@ void T_DrawCursorAt(int, int);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:20:06  dj_jl
+//	Moved prototype of T_DrawString8 from console.cpp
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
