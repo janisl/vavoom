@@ -44,25 +44,25 @@ native void FatalError(string format, ...);
 //
 
 //  Create a new cvar
-native void CreateCvar(string name, string default_value, int flags);
+native void CreateCvar(string Name, string default_value, int flags);
 
 //  Read value
-native int GetCvar(string name);
+native int GetCvar(string Name);
 
 //  Set cvar value
-native void SetCvar(string name, int value);
+native void SetCvar(string Name, int value);
 
 //  Read float value
-native float GetCvarF(string name);
+native float GetCvarF(string Name);
 
 //  Set cvar float value
-native void SetCvarF(string name, float value);
+native void SetCvarF(string Name, float value);
 
 //  Read string value
-native string GetCvarS(string name);
+native string GetCvarS(string Name);
 
 //  Set cvar string value
-native void SetCvarS(string name, string value);
+native void SetCvarS(string Name, string value);
 
 //
 //  Math functions
@@ -179,10 +179,10 @@ native void dprint(string format, ...);
 //  Texture / flat number retrieval
 //
 
-native int CheckTextureNumForName(string name);
-native int TextureNumForName(string name);
-native int CheckFlatNumForName(string name);
-native int FlatNumForName(string name);
+native int CheckTextureNumForName(string Name);
+native int TextureNumForName(string Name);
+native int CheckFlatNumForName(string Name);
+native int FlatNumForName(string Name);
 native float TextureHeight(int pic);
 
 //
@@ -217,7 +217,7 @@ native void CmdBuf_AddText(string format, ...);
 native string Info_ValueForKey(string info, string key);
 
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
-native boolean WadLumpPresent(string name);
+native boolean WadLumpPresent(string Name);
 
 native Object Spawn(classid cid, Object owner);
 native void Object::Destroy(void);
@@ -237,10 +237,10 @@ native boolean Object::IsDestroyed(void);
 //
 
 //  Registers a graphic, returns handle
-native int R_RegisterPic(string name, int type);
+native int R_RegisterPic(string Name, int type);
 
 //  Registers a graphic with custom palette, returns handle
-native int R_RegisterPicPal(string name, int type, string palname);
+native int R_RegisterPicPal(string Name, int type, string palname);
 
 //  Retrieves pic info
 native void R_GetPicInfo(int handle, picinfo_t * info);
@@ -255,14 +255,14 @@ native void R_DrawPic2(int x, int y, int handle, int trans);
 native void R_DrawShadowedPic(int x, int y, int handle);
 
 //  Installs a sprite model
-native void R_InstallSprite(string name, int index);
+native void R_InstallSprite(string Name, int index);
 
 //  Draws a sprite
 native void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 	int translation);
 
 //  Installs model
-native model_t *InstallModel(string name);
+native model_t *InstallModel(string Name);
 
 //  Draws a model
 native void R_DrawModelFrame(TVec origin, float angle, model_t * model,
@@ -270,7 +270,7 @@ native void R_DrawModelFrame(TVec origin, float angle, model_t * model,
 
 //  Draws a rectangle filled with a flat
 native void R_FillRectWithFlat(int x, int y, int width, int height,
-	string name);
+	string Name);
 
 //  Darkens a screen region
 native void R_ShadeRect(int x, int y, int w, int h, int shade);
@@ -308,10 +308,10 @@ native void T_DrawCursor(void);
 //
 
 //  Plays a sound
-native void LocalSound(string name);
+native void LocalSound(string Name);
 
 //  Plays a sound and waits untill it finishes
-native void LocalSoundTillDone(string name);
+native void LocalSoundTillDone(string Name);
 
 //  Handle shift+key
 native int TranslateKey(int c);
@@ -325,7 +325,7 @@ native void KeyNameForNum(int KeyNr, string NameString);
 native void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native void IN_SetBinding(int key, string ondown, string onup);
 
-native void LoadTextLump(string name, void *buf, int bufsize);
+native void LoadTextLump(string Name, void *buf, int bufsize);
 
 native dlight_t *AllocDlight(int key);
 native particle_t *NewParticle(void);
@@ -384,6 +384,10 @@ native opening_t *FindOpening(opening_t * gaps, float z1, float z2);
 native sec_region_t *PointInRegion(sector_t * sector, TVec p);
 native int PointContents(sector_t * sector, TVec p);
 native sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
+
+//	Swap sector's floor and ceiling, it's used by level converter to support
+// EDGE and Legacy 3D floors.
+native void SwapPlanes(sector_t *s);
 native int MapBlock(float val);
 
 //
@@ -442,14 +446,14 @@ native void StopSound(Entity * mobj, int channel);
 native void SectorStartSound(sector_t * sec, int sound, int channel);
 native void SectorStopSound(sector_t * sec, int channel);
 native boolean GetSoundPlayingInfo(Entity * mobj, int sound_id);
-native int GetSoundID(string name);
+native int GetSoundID(string Name);
 native void SectorStartSequence(sector_t * sector, string sequence);
 native void SectorStopSequence(sector_t * sector);
 native void PolyobjStartSequence(polyobj_t * mobj, string sequence);
 native void PolyobjStopSequence(polyobj_t * mobj);
 
-#define StartSoundName(origin, name, channel)	StartSound(origin, GetSoundID(name), channel)
-#define SectorStartSoundName(sec, name, channel)	SectorStartSound(sec, GetSoundID(name), channel)
+#define StartSoundName(origin, Name, channel)	StartSound(origin, GetSoundID(Name), channel)
+#define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
 
 //
 //  Savegame archieve / unarchieve utilite functions
@@ -477,8 +481,8 @@ native void SetCeilPic(sector_t * sec, int texture);
 native void SetLineTransluc(line_t * line, int trans);
 native void SendFloorSlope(sector_t * sector);
 native void SendCeilingSlope(sector_t * sector);
-native int FindModel(string name);
-native int FindSkin(string name);
+native int FindModel(string Name);
+native int FindSkin(string Name);
 
 native void MSG_SelectClientMsg(int msgtype, player_t * client);
 
@@ -487,6 +491,10 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/01/11 08:04:00  dj_jl
+//  Renamed 'name' to "Name'
+//  Added support for EDGE 3D floors
+//
 //  Revision 1.22  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //
