@@ -211,7 +211,14 @@ class Entity:MapObject
 	int xdeathstate;
 	int raisestate;
 
-	//  Sounds
+	//	Sounds
+	name SightSound;
+	name ActiveSound;
+	name AttackSound;
+	name PainSound;
+	name DeathSound;
+
+	//  Sound IDs
 	int sound_sight;
 	int sound_active;
 	int sound_attack;
@@ -681,6 +688,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/12 18:00:47  dj_jl
+//  Sound names initialized as names
+//
 //  Revision 1.12  2002/01/11 18:16:33  dj_jl
 //  Moved here Actor and Weapon class declarations
 //

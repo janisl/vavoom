@@ -209,6 +209,11 @@ void Entity::OnMapSpawn(mthing_t * mthing)
 	state_t *st;
 
 	spawnhealth = health;
+	sound_sight = GetSoundID(SightSound);
+	sound_active = GetSoundID(ActiveSound);
+	sound_attack = GetSoundID(AttackSound);
+	sound_pain = GetSoundID(PainSound);
+	sound_death = GetSoundID(DeathSound);
 
 	if (gameskill == sk_nightmare)
 	{
@@ -1543,6 +1548,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/01/12 18:00:47  dj_jl
+//  Sound names initialized as names
+//
 //  Revision 1.19  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -64,11 +64,19 @@ void mobj_t::Archive(void)
 void mobj_t::Unarchive(void)
 {
 	target = NumToMobj(target);
+	SightSound = UnarchiveName(SightSound);
+	ActiveSound = UnarchiveName(ActiveSound);
+	AttackSound = UnarchiveName(AttackSound);
+	PainSound = UnarchiveName(PainSound);
+	DeathSound = UnarchiveName(DeathSound);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/12 18:01:33  dj_jl
+//  Sound names initialized as names
+//
 //  Revision 1.7  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //
