@@ -249,7 +249,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
     pcx.bytes_per_line = LittleShort(width);
     pcx.palette_type = LittleShort(1);	// not a grey scale
     memset(pcx.filler, 0, sizeof(pcx.filler));
-	Ar->Serialize(&pcx, sizeof(pcx));
+	Ar->Serialise(&pcx, sizeof(pcx));
 
     // pack the image
 	if (bpp == 8)
@@ -271,7 +271,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 		// write the palette
 		byte PalId = 0x0c;	// palette ID byte
 		*Ar << PalId;
-		Ar->Serialize(palette, 768);
+		Ar->Serialise(palette, 768);
 	}
 	else if	(bpp == 24)
 	{
@@ -728,9 +728,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.22  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.21  2003/11/03 07:16:55  dj_jl
 //	No memory message
 //	

@@ -34,7 +34,7 @@ class FOutputDevice
 {
 public:
 	// FOutputDevice interface.
-	virtual void Serialize(const char* V, EName Event) = 0;
+	virtual void Serialise(const char* V, EName Event) = 0;
 
 	// Simple text printing.
 	void Log(const char* S);
@@ -65,9 +65,12 @@ extern FOutputDevice	*GCon;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.8  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

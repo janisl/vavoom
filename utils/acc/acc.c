@@ -22,7 +22,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define VERSION_TEXT "1.10"
+#define VERSION_TEXT "1.31"
 #define COPYRIGHT_YEARS_TEXT "1995"
 
 // TYPES -------------------------------------------------------------------
@@ -65,27 +65,44 @@ static char ObjectFileName[MAX_FILE_NAME_LENGTH];
 
 int main(int argc, char **argv)
 {
+	int i;
+
 	ArgCount = argc;
 	ArgVector = argv;
 	DisplayBanner();
 	Init();
-
 	TK_OpenSource(acs_SourceFileName);
 	PC_OpenObject(ObjectFileName, DEFAULT_OBJECT_SIZE, 0);
 	PA_Parse();
 	PC_CloseObject();
 	TK_CloseSource();
 
-	MS_Message(MSG_NORMAL, "\n\"%s\":\n  %d %s (%d included),",
-		acs_SourceFileName, tk_Line, tk_Line == 1 ? "line" : "lines",
+	MS_Message(MSG_NORMAL, "\n\"%s\":\n  %d line%s (%d included)\n",
+		acs_SourceFileName, tk_Line, tk_Line == 1 ? "" : "s",
 		tk_IncludedLines);
-	MS_Message(MSG_NORMAL, " %d %s (%d open), %d functions\n",
-		pa_ScriptCount, pa_ScriptCount == 1 ? "script" : "scripts",
-		pa_OpenScriptCount, 0);
-	MS_Message(MSG_NORMAL, "  %d world %s, %d map %s\n",
-		pa_WorldVarCount, pa_WorldVarCount == 1 ? "variable" :
-		"variables", pa_MapVarCount, pa_MapVarCount == 1 ?
-		"variable" : "variables");
+	MS_Message(MSG_NORMAL, "  %d function%s\n  %d script%s\n",
+		pc_FunctionCount, pc_FunctionCount == 1 ? "" : "s",
+		pa_ScriptCount, pa_ScriptCount == 1 ? "" : "s");
+	for (i = 0; pa_TypedScriptCounts[i].TypeName; i++)
+	{
+		if (pa_TypedScriptCounts[i].TypeCount > 0)
+		{
+			MS_Message(MSG_NORMAL, "%5d %s\n",
+				pa_TypedScriptCounts[i].TypeCount,
+				pa_TypedScriptCounts[i].TypeName);
+		}
+	}
+	MS_Message(MSG_NORMAL, "  %d global variable%s\n"
+						   "  %d world variable%s\n"
+						   "  %d map variable%s\n"
+						   "  %d global array%s\n"
+						   "  %d world array%s\n",
+		pa_GlobalVarCount, pa_GlobalVarCount == 1 ? "" : "s",
+		pa_WorldVarCount, pa_WorldVarCount == 1 ? "" : "s",
+		pa_MapVarCount, pa_MapVarCount == 1 ? "" : "s",
+		pa_GlobalArrayCount, pa_GlobalArrayCount == 1 ? "" : "s",
+		pa_WorldArrayCount, pa_WorldArrayCount == 1 ? "" : "s"
+		);
 	MS_Message(MSG_NORMAL, "  object \"%s\": %d bytes\n",
 		ObjectFileName, pc_Address);
 	ERR_RemoveErrorFile();
@@ -100,13 +117,14 @@ int main(int argc, char **argv)
 
 static void DisplayBanner(void)
 {
-	fprintf(stderr, "\nACC Version "VERSION_TEXT" ("__DATE__")"
-		" by Ben Gokey\n");
+	fprintf(stderr, "\nOriginal ACC Version 1.10 by Ben Gokey\n");
 	fprintf(stderr, "Copyright (c) "COPYRIGHT_YEARS_TEXT
-		" Raven Software, Corp.\n");
-#ifdef __WATCOMC__
-	fprintf(stderr, "Uses the PMODE/W DOS extender, v1.21\n");
-#endif
+		" Raven Software, Corp.\n\n");
+	fprintf(stderr, "This is version "VERSION_TEXT" ("__DATE__")\n");
+	fprintf(stderr, "This software is not supported by Raven Software or Activision\n");
+	fprintf(stderr, "ZDoom changes and language extensions by Randy Heit\n");
+	fprintf(stderr, "Further changes by Brad Carney\n");
+	fprintf(stderr, "Error reporting improvements and limit expansion by Ty Halderman\n");
 }
 
 //==========================================================================
@@ -117,12 +135,12 @@ static void DisplayBanner(void)
 
 static void Init(void)
 {
-#ifdef __NeXT__
-	// Fix this to properly detect host byte order on NeXT systems
-	acs_BigEndianHost = NO;
-#else
-	acs_BigEndianHost = NO;
-#endif
+	short endianTest = 1;
+
+	if (*(char *)&endianTest)
+		acs_BigEndianHost = NO;
+	else
+		acs_BigEndianHost = YES;
 	acs_VerboseMode = YES;
 	acs_DebugMode = NO;
 	acs_DebugFile = NULL;
@@ -161,20 +179,6 @@ static void ProcessArgs(void)
 			option = toupper(*text++);
 			switch(option)
 			{
-				case 'B':
-					if(*text != 0)
-					{
-						DisplayUsage();
-					}
-					acs_BigEndianHost = YES;
-					break;
-				case 'L':
-					if(*text != 0)
-					{
-						DisplayUsage();
-					}
-					acs_BigEndianHost = NO;
-					break;
 				case 'D':
 					acs_DebugMode = YES;
 					acs_VerboseMode = YES;
@@ -182,6 +186,9 @@ static void ProcessArgs(void)
 					{
 						OpenDebugFile(text);
 					}
+					break;
+				case 'H':
+					pc_NoShrink = TRUE;
 					break;
 				default:
 					DisplayUsage();
@@ -225,10 +232,9 @@ static void ProcessArgs(void)
 
 static void DisplayUsage(void)
 {
-	puts("Usage: ACC [options] source[.acs] [object[.o]]\n");
-    puts("-b        Set host native byte order to big endian");
-	puts("-l        Set host native byte order to little endian");
+	puts("\nUsage: ACC [options] source[.acs] [object[.o]]\n");
 	puts("-d[file]  Output debugging information");
+	puts("-h        Create pcode compatible with Hexen and old ZDooms");
 	exit(1);
 }
 

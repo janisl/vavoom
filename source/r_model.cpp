@@ -799,7 +799,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	hdr.height = LittleShort(height);
 	hdr.bpp = bpp;
 	hdr.descriptor_bits = bot2top ? 0 : 0x20;
-	Ar->Serialize(&hdr, sizeof(hdr));
+	Ar->Serialise(&hdr, sizeof(hdr));
 
 	if (bpp == 8)
 	{
@@ -813,7 +813,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 
 	if (bpp == 8)
 	{
-		Ar->Serialize(data, width * height);
+		Ar->Serialise(data, width * height);
 	}
 	else if (bpp == 24)
 	{
@@ -1003,9 +1003,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.9  2004/11/30 07:19:01  dj_jl
 //	Support for high resolution textures.
-//
+//	
 //	Revision 1.8  2004/03/18 08:02:34  dj_jl
 //	Fixed tga loading with no palette
 //	

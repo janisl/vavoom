@@ -310,30 +310,37 @@ class VEntity : public VThinker
 //
 //==========================================================================
 
-#define MAX_ACS_SCRIPT_VARS	10
-#define MAX_ACS_MAP_VARS 	32
-#define MAX_ACS_WORLD_VARS 	64
-#define ACS_STACK_DEPTH 	32
-#define MAX_ACS_STORE 		20
+#define MAX_ACS_SCRIPT_VARS	20
+#define MAX_ACS_MAP_VARS	128
+#define MAX_ACS_WORLD_VARS	256
+#define MAX_ACS_GLOBAL_VARS	64
+#define MAX_ACS_STORE		20
 
-enum aste_t
+//	Script types
+enum
 {
-	ASTE_INACTIVE,
-	ASTE_RUNNING,
-	ASTE_SUSPENDED,
-	ASTE_WAITINGFORTAG,
-	ASTE_WAITINGFORPOLY,
-	ASTE_WAITINGFORSCRIPT,
-	ASTE_TERMINATING
+	SCRIPT_Closed		= 0,
+	SCRIPT_Open			= 1,
+	SCRIPT_Respawn		= 2,
+	SCRIPT_Death		= 3,
+	SCRIPT_Enter		= 4,
+	SCRIPT_Pickup		= 5,
+	SCRIPT_BlueReturn	= 6,
+	SCRIPT_RedReturn	= 7,
+	SCRIPT_WhiteReturn	= 8,
+	SCRIPT_Lightning	= 12,
 };
 
-struct acsInfo_t
+class FACSGrowingArray
 {
-	int 	number;
-	int 	*address;
-	int 	argCount;
-	aste_t 	state;
-	int 	waitValue;
+private:
+	int		Size;
+	int*	Data;
+public:
+	void Redim(int NewSize);
+	void SetElemVal(int Index, int Value);
+	int GetElemVal(int Index);
+	void Serialise(FArchive& Ar);
 };
 
 struct acsstore_t
@@ -343,7 +350,8 @@ struct acsstore_t
 	int 	args[4];	// Padded to 4 for alignment
 };
 
-void P_LoadACScripts(boolean spawn_thinkers);
+void P_LoadACScripts(int Lump);
+void P_StartTypedACScripts(int Type);
 boolean P_StartACS(int number, int map, int *args, VEntity *activator,
 	line_t *line, int side);
 boolean P_TerminateACS(int number, int map);
@@ -352,12 +360,13 @@ void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
 void P_CheckACSStore(void);
+void P_SerialiseScripts(FArchive& Ar);
 
-extern int 			ACScriptCount;
-extern acsInfo_t 	*ACSInfo;
-extern int 			MapVars[MAX_ACS_MAP_VARS];
-extern int 			WorldVars[MAX_ACS_WORLD_VARS];
-extern acsstore_t 	ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
+extern int				WorldVars[MAX_ACS_WORLD_VARS];
+extern int				GlobalVars[MAX_ACS_GLOBAL_VARS];
+extern FACSGrowingArray	WorldArrays[MAX_ACS_WORLD_VARS];
+extern FACSGrowingArray	GlobalArrays[MAX_ACS_GLOBAL_VARS];
+extern acsstore_t		ACSStore[MAX_ACS_STORE + 1]; // +1 for termination marker
 
 //==========================================================================
 //
@@ -487,6 +496,7 @@ struct server_vars_t
 };
 
 void SV_StartSound(const VEntity *, int, int, int);
+void SV_StartLocalSound(const VEntity *, int, int, int);
 void SV_StopSound(const VEntity *, int);
 void SV_SectorStartSound(const sector_t *, int, int, int);
 void SV_SectorStopSound(const sector_t *, int);
@@ -577,9 +587,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.31  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.30  2003/09/24 16:42:31  dj_jl
 //	Fixed rough block checking
 //	

@@ -53,7 +53,7 @@ enum cons_state_t
 class FConsoleDevice : public FOutputDevice
 {
 public:
-	void Serialize(const char* V, EName Event);
+	void Serialise(const char* V, EName Event);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -104,19 +104,19 @@ static int				c_ac_Count = 0;
 
 void FOutputDevice::Log(const char* S)
 {
-	Serialize(S, NAME_Log);
+	Serialise(S, NAME_Log);
 }
 void FOutputDevice::Log(EName Type, const char* S)
 {
-	Serialize(S, Type);
+	Serialise(S, Type);
 }
 void FOutputDevice::Log(const FString& S)
 {
-	Serialize(*S, NAME_Log);
+	Serialise(*S, NAME_Log);
 }
 void FOutputDevice::Log(EName Type, const FString& S)
 {
-	Serialize(*S, Type);
+	Serialise(*S, Type);
 }
 void FOutputDevice::Logf(const char* Fmt, ...)
 {
@@ -127,7 +127,7 @@ void FOutputDevice::Logf(const char* Fmt, ...)
 	vsprintf(string, Fmt, argptr);
 	va_end(argptr);
 
-	Serialize(string, NAME_Log);
+	Serialise(string, NAME_Log);
 }
 void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 {
@@ -138,7 +138,7 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 	vsprintf(string, Fmt, argptr);
 	va_end(argptr);
 
-	Serialize(string, Type);
+	Serialise(string, Type);
 }
 
 //==========================================================================
@@ -661,11 +661,11 @@ static void DoPrint(const char *buf)
 
 //==========================================================================
 //
-//	FConsoleDevice::Serialize
+//	FConsoleDevice::Serialise
 //
 //==========================================================================
 
-void FConsoleDevice::Serialize(const char* V, EName Event)
+void FConsoleDevice::Serialise(const char* V, EName Event)
 {
 	dprintf("%s: %s\n", *FName(Event), V);
 	DoPrint(V);
@@ -794,9 +794,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.21  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
-//
+//	
 //	Revision 1.20  2003/03/08 12:08:03  dj_jl
 //	Beautification.
 //	

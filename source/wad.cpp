@@ -722,7 +722,7 @@ public:
 		if (Data)
 			Close();
 	}
-	void Serialize(void* V, int Length)
+	void Serialise(void* V, int Length)
 	{
 		if (Length > Size - Pos)
 		{
@@ -926,6 +926,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2004/12/03 16:15:47  dj_jl
+//  Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //  Revision 1.13  2004/11/23 12:43:10  dj_jl
 //  Wad file lump namespaces.
 //

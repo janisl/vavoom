@@ -539,6 +539,26 @@ void SV_StartSound(const VEntity * origin, int sound_id, int channel,
 
 //==========================================================================
 //
+//	SV_StartLocalSound
+//
+//==========================================================================
+
+void SV_StartLocalSound(const VEntity * origin, int sound_id, int channel,
+	int volume)
+{
+	guard(SV_StartSound);
+	if (origin && origin->Player)
+	{
+		origin->Player->Message << (byte)svc_start_sound
+								<< (word)sound_id
+								<< (word)(channel << 13)
+								<< (byte)volume;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_StopSound
 //
 //==========================================================================
@@ -2097,7 +2117,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	}
 	Z_Free(GLevel->Things);
 	PO_Init(); // Initialize the polyobjs
-	P_LoadACScripts(spawn_thinkers);
 
 	if (deathmatch)
 	{
@@ -2150,6 +2169,9 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 //		}
 		return;
 	}
+
+	//	Start open scripts.
+	P_StartTypedACScripts(SCRIPT_Open);
 
 	P_Ticker();
 	P_Ticker();
@@ -2819,7 +2841,7 @@ COMMAND(Say)
 class FConsoleDevice : public FOutputDevice
 {
 public:
-	void Serialize(const char* V, EName)
+	void Serialise(const char* V, EName)
 	{
 		printf("%s\n", V);
 	}
@@ -2831,19 +2853,19 @@ FOutputDevice			*GCon = &Console;
 
 void FOutputDevice::Log(const char* S)
 {
-	Serialize(S, NAME_Log);
+	Serialise(S, NAME_Log);
 }
 void FOutputDevice::Log(EName Type, const char* S)
 {
-	Serialize(S, Type);
+	Serialise(S, Type);
 }
 void FOutputDevice::Log(const FString& S)
 {
-	Serialize(*S, NAME_Log);
+	Serialise(*S, NAME_Log);
 }
 void FOutputDevice::Log(EName Type, const FString& S)
 {
-	Serialize(*S, Type);
+	Serialise(*S, Type);
 }
 void FOutputDevice::Logf(const char* Fmt, ...)
 {
@@ -2854,7 +2876,7 @@ void FOutputDevice::Logf(const char* Fmt, ...)
 	vsprintf(string, Fmt, argptr);
 	va_end(argptr);
 
-	Serialize(string, NAME_Log);
+	Serialise(string, NAME_Log);
 }
 void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 {
@@ -2865,7 +2887,7 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 	vsprintf(string, Fmt, argptr);
 	va_end(argptr);
 
-	Serialize(string, Type);
+	Serialise(string, Type);
 }
 
 #endif
@@ -2873,9 +2895,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.60  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.59  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.58  2004/04/15 07:08:05  dj_jl
 //	Fixed bot spawning at first time
 //	

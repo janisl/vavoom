@@ -459,9 +459,6 @@ class VLevel : public VObject
 	int				NumThings;
 	mthing_t		*Things;
 
-	int				BehaviorSize;
-	int				*Behavior;
-
 	//
 	//	BLOCKMAP
 	//	Created from axis aligned bounding box of the map, a rectangular
@@ -584,9 +581,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.27  2003/10/22 06:23:46  dj_jl
 //	Increased maximal start spot count
-//
+//	
 //	Revision 1.26  2003/07/03 18:11:13  dj_jl
 //	Moving extrafloors
 //	

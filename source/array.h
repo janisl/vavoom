@@ -235,14 +235,14 @@ public:
 		A.CountBytes( Ar );
 		if( sizeof(T)==1 )
 		{
-			// Serialize simple bytes which require no construction or destruction.
+			// Serialise simple bytes which require no construction or destruction.
 			Ar << AR_INDEX(A.ArrayNum);
 			if( Ar.IsLoading() )
 			{
 				A.ArrayMax = A.ArrayNum;
 				A.Realloc( sizeof(T) );
 			}
-			Ar.Serialize( &A(0), A.Num() );
+			Ar.Serialise( &A(0), A.Num() );
 		}
 		else if( Ar.IsLoading() )
 		{
@@ -602,9 +602,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.7  2004/08/21 14:54:06  dj_jl
 //	Fix.
-//
+//	
 //	Revision 1.6  2003/09/26 16:59:23  dj_jl
 //	Added zone tag to array
 //	

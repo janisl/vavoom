@@ -627,9 +627,9 @@ public:
 		return !ArIsError;
 		unguardSlow;
 	}
-	void Serialize(void* V, int Length)
+	void Serialise(void* V, int Length)
 	{
-		guardSlow(FArchiveFileReader::Serialize);
+		guardSlow(FArchiveFileReader::Serialise);
 		if (fread(V, Length, 1, File) != 1)
 		{
 			ArIsError = true;
@@ -720,9 +720,9 @@ public:
 		return !ArIsError;
 		unguardSlow;
 	}
-	void Serialize(void* V, int Length)
+	void Serialise(void* V, int Length)
 	{
-		guardSlow(FArchiveFileWriter::Serialize);
+		guardSlow(FArchiveFileWriter::Serialise);
 		if (fwrite(V, Length, 1, File) != 1)
 		{
 			ArIsError = true;
@@ -759,9 +759,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.15  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.14  2002/11/16 17:13:09  dj_jl
 //	Some compatibility changes.
 //	

@@ -245,11 +245,11 @@ void VObject::Destroy(void)
 
 //==========================================================================
 //
-//	VObject::Serialize
+//	VObject::Serialise
 //
 //==========================================================================
 
-void VObject::Serialize(FArchive &Ar)
+void VObject::Serialise(FArchive &Ar)
 {
 }
 
@@ -403,9 +403,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.13  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.12  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

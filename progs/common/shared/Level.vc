@@ -63,9 +63,6 @@ void *__NoVis;
 int NumThings;
 mthing_t *Things;
 
-int BehaviorSize;
-int *Behavior;
-
 //
 //  BLOCKMAP
 //  Created from axis aligned bounding box of the map, a rectangular
@@ -113,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/12/03 16:15:46  dj_jl
+//  Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

@@ -121,7 +121,7 @@ void CL_WriteDemoMessage(void)
 	guard(CL_WriteDemoMessage);
 	*cls.demofile << net_msg.CurSize;
 	*cls.demofile << cl.viewangles;
-	cls.demofile->Serialize(net_msg.Data, net_msg.CurSize);
+	cls.demofile->Serialise(net_msg.Data, net_msg.CurSize);
 	cls.demofile->Flush();
 	unguard;
 }
@@ -171,7 +171,7 @@ int CL_GetMessage(void)
 
 		if (net_msg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
-		cls.demofile->Serialize(net_msg.Data, net_msg.CurSize);
+		cls.demofile->Serialise(net_msg.Data, net_msg.CurSize);
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -315,7 +315,7 @@ COMMAND(Record)
 		return;
 	}
 
-	cls.demofile->Serialize(const_cast<char *>("VDEM"), 4);
+	cls.demofile->Serialise(const_cast<char *>("VDEM"), 4);
 
 	cls.demorecording = true;
 	unguard;
@@ -365,7 +365,7 @@ COMMAND(PlayDemo)
 		return;
 	}
 
-	cls.demofile->Serialize(magic, 4);
+	cls.demofile->Serialise(magic, 4);
 	magic[4] = 0;
 	if (strcmp(magic, "VDEM"))
 	{
@@ -416,9 +416,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.10  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

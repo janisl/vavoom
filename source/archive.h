@@ -33,15 +33,15 @@ public:
 	// FArchive interface.
 	virtual ~FArchive(void)
 	{}
-	virtual void Serialize(void*, int)
+	virtual void Serialise(void*, int)
 	{}
-	virtual void SerializeBits(void* V, int LengthBits)
+	virtual void SerialiseBits(void* V, int LengthBits)
 	{
-		Serialize(V, (LengthBits + 7) / 8);
+		Serialise(V, (LengthBits + 7) / 8);
 		if (IsLoading())
 			((byte *)V)[LengthBits / 8] &= ((1 << (LengthBits & 7)) - 1);
 	}
-	virtual void SerializeInt(dword& Value, dword)
+	virtual void SerialiseInt(dword& Value, dword)
 	{
 		*this << *(dword*)Value;
 	}
@@ -92,21 +92,21 @@ public:
 	}
 
 	// Hardcoded datatype routines that may not be overridden.
-	FArchive& ByteOrderSerialize(void* V, int Length)
+	FArchive& ByteOrderSerialise(void* V, int Length)
 	{
 #if defined __i386__ || defined _M_IX86
-		Serialize(V, Length);
+		Serialise(V, Length);
 #else
 		if (GBigEndian && ArIsPersistent)
 		{
 			// Transferring between memory and file, so flip the byte order.
 			for (int i = Length - 1; i >= 0; i--)
-				Serialize((byte*)V + i, 1);
+				Serialise((byte*)V + i, 1);
 		}
 		else
 		{
 			// Transferring around within memory, so keep the byte order.
-			Serialize(V, Length);
+			Serialise(V, Length);
 		}
 #endif
 		return *this;
@@ -131,47 +131,47 @@ public:
 	// Friend archivers.
 	friend FArchive& operator << (FArchive& Ar, char& C)
 	{
-		Ar.Serialize(&C, 1);
+		Ar.Serialise(&C, 1);
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, byte& B)
 	{
-		Ar.Serialize(&B, 1);
+		Ar.Serialise(&B, 1);
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, signed char& B)
 	{
-		Ar.Serialize(&B, 1);
+		Ar.Serialise(&B, 1);
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, word& W)
 	{
-		Ar.ByteOrderSerialize(&W, sizeof(W));
+		Ar.ByteOrderSerialise(&W, sizeof(W));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, short& S)
 	{
-		Ar.ByteOrderSerialize(&S, sizeof(S));
+		Ar.ByteOrderSerialise(&S, sizeof(S));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, dword& D)
 	{
-		Ar.ByteOrderSerialize(&D, sizeof(D));
+		Ar.ByteOrderSerialise(&D, sizeof(D));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, int& I)
 	{
-		Ar.ByteOrderSerialize(&I, sizeof(I));
+		Ar.ByteOrderSerialise(&I, sizeof(I));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, float& F)
 	{
-		Ar.ByteOrderSerialize(&F, sizeof(F));
+		Ar.ByteOrderSerialise(&F, sizeof(F));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, double& F)
 	{
-		Ar.ByteOrderSerialize(&F, sizeof(F));
+		Ar.ByteOrderSerialise(&F, sizeof(F));
 		return Ar;
 	}
 
@@ -197,9 +197,12 @@ template <class T> T Arctor(FArchive& Ar)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.4  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.3  2002/02/15 19:12:53  dj_jl
 //	Got rid of warnings
 //	

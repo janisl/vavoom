@@ -27,6 +27,7 @@ typedef enum
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void *MS_Alloc(size_t size, error_t error);
+void *MS_Realloc(void *base, size_t size, error_t error);
 U_WORD MS_LittleUWORD(U_WORD val);
 U_LONG MS_LittleULONG(U_LONG val);
 int MS_LoadFile(char *name, void **buffer);

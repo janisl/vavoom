@@ -181,7 +181,7 @@ public:
 	// VObject interface.
 	virtual void Register(void);
 	virtual void Destroy(void);
-	virtual void Serialize(FArchive &Ar);
+	virtual void Serialise(FArchive &Ar);
 
 	// Systemwide functions.
 	static void StaticInit(void);
@@ -313,9 +313,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.12  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.11  2003/03/08 11:36:03  dj_jl
 //	API fixes.
 //	

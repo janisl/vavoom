@@ -12,11 +12,17 @@
 #else
 #include <fcntl.h>
 #include <stdlib.h>
-#ifndef __linux__
+#ifndef unix
 #include <io.h>
 #endif
+#endif
+#ifdef __GNUC__
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
+#ifdef _WIN32
+#include <sys/stat.h>
+#include <sys/types.h>
 #endif
 #include <stdio.h>
 #include <stddef.h>
@@ -68,7 +74,24 @@ void *MS_Alloc(size_t size, error_t error)
 
 	if((mem = malloc(size)) == NULL)
 	{
-		ERR_Exit(error, NO, NULL);
+		ERR_Exit(error, NO);
+	}
+	return mem;
+}
+
+//==========================================================================
+//
+// MS_Realloc
+//
+//==========================================================================
+
+void *MS_Realloc(void *base, size_t size, error_t error)
+{
+	void *mem;
+
+	if((mem = realloc(base, size)) == NULL)
+	{
+		ERR_Exit(error, NO);
 	}
 	return mem;
 }
@@ -124,15 +147,15 @@ int MS_LoadFile(char *name, void **buffer)
 
 	if(strlen(name) >= MAX_FILE_NAME_LENGTH)
 	{
-		ERR_Exit(ERR_FILE_NAME_TOO_LONG, NO, "File: \"%s\".", name);
+		ERR_Exit(ERR_FILE_NAME_TOO_LONG, NO, name);
 	}
 	if((handle = open(name, O_RDONLY|O_BINARY, 0666)) == -1)
 	{
-		ERR_Exit(ERR_CANT_OPEN_FILE, NO, "File: \"%s\".", name);
+		ERR_Exit(ERR_CANT_OPEN_FILE, NO, name);
 	}
 	if(fstat(handle, &fileInfo) == -1)
 	{
-		ERR_Exit(ERR_CANT_READ_FILE, NO, "File: \"%s\".", name);
+		ERR_Exit(ERR_CANT_READ_FILE, NO, name);
 	}
 	size = fileInfo.st_size;
 	if((addr = malloc(size)) == NULL)
@@ -144,7 +167,7 @@ int MS_LoadFile(char *name, void **buffer)
 	close(handle);
 	if(count < size)
 	{
-		ERR_Exit(ERR_CANT_READ_FILE, NO, "File: \"%s\".", name);
+		ERR_Exit(ERR_CANT_READ_FILE, NO, name);
 	}
 	*buffer = addr;
 	return size;

@@ -142,28 +142,28 @@ void VLevel::LoadMap(const char *mapname)
 		if (bExtended)
 		{
 			LoadThings2(lumpnum + ML_THINGS);
+#ifdef SERVER
 			//	ACS object code
-			Behavior = (int*)W_CacheLumpNum(lumpnum + ML_BEHAVIOR, PU_LEVEL);
-			BehaviorSize = W_LumpLength(lumpnum + ML_BEHAVIOR);
+			P_LoadACScripts(lumpnum + ML_BEHAVIOR);
+#endif
 		}
 		else
 		{
 			LoadThings1(lumpnum + ML_THINGS);
+#ifdef SERVER
 			mapInfo_t mi;
 			P_GetMapInfo(mapname, mi);
 			if (mi.acsLump[0])
 			{
 				//	ACS object code
-				int ACSLumpNum = W_GetNumForName(mi.acsLump);
-				Behavior = (int*)W_CacheLumpNum(ACSLumpNum, PU_LEVEL);
-				BehaviorSize = W_LumpLength(ACSLumpNum);
+				P_LoadACScripts(W_GetNumForName(mi.acsLump, WADNS_ACSLibrary));
 			}
 			else
 			{
 				//	Inform ACS, that we don't have scripts
-				Behavior = NULL;
-				BehaviorSize = 0;
+				P_LoadACScripts(-1);
 			}
+#endif
 		}
 	}
 
@@ -1223,9 +1223,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/12/03 16:15:46  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.3  2004/10/11 15:55:43  dj_jl
 //	Support for version 3 GL nodes and ACS helpers.
-//
+//	
 //	Revision 1.2  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

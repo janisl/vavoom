@@ -83,7 +83,7 @@ FArchive& operator << (FArchive& Ar, FNameEntry& E)
 		Size = strlen(E.Name) + 1;
 	}
 	Ar << Size;
-	Ar.Serialize(E.Name, Size);
+	Ar.Serialise(E.Name, Size);
 	return Ar;
 }
 
@@ -234,9 +234,12 @@ void FName::DeleteEntry(int i)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.4  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.3  2002/01/11 08:10:12  dj_jl
 //	Map empty strings to NAME_None
 //	

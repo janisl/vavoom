@@ -15,10 +15,39 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define OPEN_SCRIPTS_BASE 1000
+// Values added to script number to indicate its type
+enum
+{
+	OPEN_SCRIPTS_BASE		= 1000,
+	RESPAWN_SCRIPTS_BASE	= 2000,	// [BC]
+	DEATH_SCRIPTS_BASE		= 3000,	// [BC]
+	ENTER_SCRIPTS_BASE		= 4000,	// [BC]
+	PICKUP_SCRIPTS_BASE		= 5000,	// [BC]
+	T1RETURN_SCRIPTS_BASE	= 6000,	// [BC]
+	T2RETURN_SCRIPTS_BASE	= 7000,	// [BC]
+	LIGHTNING_SCRIPTS_BASE	= 12000,
+};
+
+// Values added to script number to indicate flags (requires new-style .o)
+enum
+{
+	NET_SCRIPT_FLAG			= 0x00010000
+};
+
+// Or'ed with variable index when passing variables of type "out"
+// An idea that was never realized.
+enum
+{
+	OUTVAR_SCRIPT_SPEC		= 0x40000000,
+	OUTVAR_MAP_SPEC			= 0x80000000,
+	OUTVAR_WORLD_SPEC		= 0xc0000000,
+	OUTVAR_GLOBAL_SPEC		= 0x00000000
+};
 
 // TYPES -------------------------------------------------------------------
 
+struct symbolNode_s;	// Defined in symbol.h
+	
 typedef enum
 {
 	PCD_NOP,
@@ -123,6 +152,164 @@ typedef enum
 	PCD_SETLINESPECIAL,
 	PCD_THINGSOUND,
 	PCD_ENDPRINTBOLD,
+// [RH] End of Hexen p-codes
+	PCD_ACTIVATORSOUND,
+	PCD_LOCALAMBIENTSOUND,
+	PCD_SETLINEMONSTERBLOCKING,
+// [BC] Start of new pcodes
+	PCD_PLAYERBLUESKULL,
+	PCD_PLAYERREDSKULL,
+	PCD_PLAYERYELLOWSKULL,
+	PCD_PLAYERMASTERSKULL,
+	PCD_PLAYERBLUECARD,
+	PCD_PLAYERREDCARD,
+	PCD_PLAYERYELLOWCARD,
+	PCD_PLAYERMASTERCARD,
+	PCD_PLAYERBLACKSKULL,
+	PCD_PLAYERSILVERSKULL,
+	PCD_PLAYERGOLDSKULL,
+	PCD_PLAYERBLACKCARD,
+	PCD_PLAYERSILVERCARD,
+	PCD_PLAYERGOLDCARD,
+	PCD_PLAYERTEAM1,
+	PCD_PLAYERHEALTH,
+	PCD_PLAYERARMORPOINTS,
+	PCD_PLAYERFRAGS,
+	PCD_PLAYEREXPERT,
+	PCD_TEAM1COUNT,
+	PCD_TEAM2COUNT,
+	PCD_TEAM1SCORE,
+	PCD_TEAM2SCORE,
+	PCD_TEAM1FRAGPOINTS,
+	PCD_LSPEC6,				// [RH] LSPEC6 is never actually used.
+	PCD_LSPEC6DIRECT,		// Should these be removed?
+	PCD_PRINTNAME,
+	PCD_MUSICCHANGE,
+	PCD_TEAM2FRAGPOINTS,
+	PCD_CONSOLECOMMAND,
+	PCD_SINGLEPLAYER,
+// [RH] End of Skull Tag p-codes
+	PCD_FIXEDMUL,
+	PCD_FIXEDDIV,
+	PCD_SETGRAVITY,
+	PCD_SETGRAVITYDIRECT,
+	PCD_SETAIRCONTROL,
+	PCD_SETAIRCONTROLDIRECT,
+	PCD_CLEARINVENTORY,
+	PCD_GIVEINVENTORY,
+	PCD_GIVEINVENTORYDIRECT,
+	PCD_TAKEINVENTORY,
+	PCD_TAKEINVENTORYDIRECT,
+	PCD_CHECKINVENTORY,
+	PCD_CHECKINVENTORYDIRECT,
+	PCD_SPAWN,
+	PCD_SPAWNDIRECT,
+	PCD_SPAWNSPOT,
+	PCD_SPAWNSPOTDIRECT,
+	PCD_SETMUSIC,
+	PCD_SETMUSICDIRECT,
+	PCD_LOCALSETMUSIC,
+	PCD_LOCALSETMUSICDIRECT,
+	PCD_PRINTFIXED,
+	PCD_PRINTLOCALIZED,
+	PCD_MOREHUDMESSAGE,
+	PCD_OPTHUDMESSAGE,
+	PCD_ENDHUDMESSAGE,
+	PCD_ENDHUDMESSAGEBOLD,
+	PCD_SETSTYLE,
+	PCD_SETSTYLEDIRECT,
+	PCD_SETFONT,
+	PCD_SETFONTDIRECT,
+	PCD_PUSHBYTE,		// Valid in compact-script mode only
+	PCD_LSPEC1DIRECTB,	// "
+	PCD_LSPEC2DIRECTB,	// "
+	PCD_LSPEC3DIRECTB,	// "
+	PCD_LSPEC4DIRECTB,	// "
+	PCD_LSPEC5DIRECTB,	// "
+	PCD_DELAYDIRECTB,	// "
+	PCD_RANDOMDIRECTB,	// "
+	PCD_PUSHBYTES,		// "
+	PCD_PUSH2BYTES,		// "
+	PCD_PUSH3BYTES,		// "
+	PCD_PUSH4BYTES,		// "
+	PCD_PUSH5BYTES,		// "
+	PCD_SETTHINGSPECIAL,
+	PCD_ASSIGNGLOBALVAR,
+	PCD_PUSHGLOBALVAR,
+	PCD_ADDGLOBALVAR,
+	PCD_SUBGLOBALVAR,
+	PCD_MULGLOBALVAR,
+	PCD_DIVGLOBALVAR,
+	PCD_MODGLOBALVAR,
+	PCD_INCGLOBALVAR,
+	PCD_DECGLOBALVAR,
+	PCD_FADETO,
+	PCD_FADERANGE,
+	PCD_CANCELFADE,
+	PCD_PLAYMOVIE,
+	PCD_SETFLOORTRIGGER,
+	PCD_SETCEILINGTRIGGER,
+	PCD_GETACTORX,
+	PCD_GETACTORY,
+	PCD_GETACTORZ,
+	PCD_STARTTRANSLATION,
+	PCD_TRANSLATIONRANGE1,
+	PCD_TRANSLATIONRANGE2,
+	PCD_ENDTRANSLATION,
+	PCD_CALL,
+	PCD_CALLDISCARD,
+	PCD_RETURNVOID,
+	PCD_RETURNVAL,
+	PCD_PUSHMAPARRAY,
+	PCD_ASSIGNMAPARRAY,
+	PCD_ADDMAPARRAY,
+	PCD_SUBMAPARRAY,
+	PCD_MULMAPARRAY,
+	PCD_DIVMAPARRAY,
+	PCD_MODMAPARRAY,
+	PCD_INCMAPARRAY,
+	PCD_DECMAPARRAY,
+	PCD_DUP,
+	PCD_SWAP,
+	PCD_WRITETOINI,
+	PCD_GETFROMINI,
+	PCD_SIN,
+	PCD_COS,
+	PCD_VECTORANGLE,
+	PCD_CHECKWEAPON,
+	PCD_SETWEAPON,
+	PCD_TAGSTRING,
+	PCD_PUSHWORLDARRAY,
+	PCD_ASSIGNWORLDARRAY,
+	PCD_ADDWORLDARRAY,
+	PCD_SUBWORLDARRAY,
+	PCD_MULWORLDARRAY,
+	PCD_DIVWORLDARRAY,
+	PCD_MODWORLDARRAY,
+	PCD_INCWORLDARRAY,
+	PCD_DECWORLDARRAY,
+	PCD_PUSHGLOBALARRAY,
+	PCD_ASSIGNGLOBALARRAY,
+	PCD_ADDGLOBALARRAY,
+	PCD_SUBGLOBALARRAY,
+	PCD_MULGLOBALARRAY,
+	PCD_DIVGLOBALARRAY,
+	PCD_MODGLOBALARRAY,
+	PCD_INCGLOBALARRAY,
+	PCD_DECGLOBALARRAY,
+	PCD_SETMARINEWEAPON,
+	PCD_SETACTORPROPERTY,
+	PCD_GETACTORPROPERTY,
+	PCD_PLAYERNUMBER,
+	PCD_ACTIVATORTID,
+	PCD_SETMARINESPRITE,
+	PCD_GETSCREENWIDTH,
+	PCD_GETSCREENHEIGHT,
+	PCD_THING_PROJECTILE2,
+	PCD_STRLEN,
+	PCD_SETHUDSIZE,
+	PCD_GETCVAR,
+
 	PCODE_COMMAND_COUNT
 } pcd_t;
 
@@ -131,13 +318,15 @@ typedef enum
 void PC_OpenObject(char *name, size_t size, int flags);
 void PC_CloseObject(void);
 void PC_Append(void *buffer, size_t size);
-//void PC_AppendByte(U_BYTE val);
-//void PC_AppendWord(U_WORD val);
+void PC_AppendByte(U_BYTE val);
+void PC_AppendWord(U_WORD val);
 void PC_AppendLong(U_LONG val);
 void PC_AppendString(char *string);
 void PC_AppendCmd(pcd_t command);
+void PC_AppendPushVal(U_LONG val);
+void PC_AppendShrink(U_BYTE val);
 void PC_Write(void *buffer, size_t size, int address);
-//void PC_WriteByte(U_BYTE val, int address);
+void PC_WriteByte(U_BYTE val, int address);
 //void PC_WriteWord(U_WORD val, int address);
 void PC_WriteLong(U_LONG val, int address);
 void PC_WriteString(char *string, int address);
@@ -147,6 +336,12 @@ void PC_Skip(size_t size);
 //void PC_SkipWord(void);
 void PC_SkipLong(void);
 void PC_AddScript(int number, int argCount);
+void PC_AddFunction(struct symbolNode_s *sym);
+void PC_PutMapVariable(int index, int value);
+void PC_NameMapVariable(int index, struct symbolNode_s *sym);
+void PC_AddArray(int index, int size);
+void PC_InitArray(int index, int *entries, boolean hasStrings);
+int PC_AddImport(char *name);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -154,5 +349,10 @@ extern int pc_Address;
 extern byte *pc_Buffer;
 extern byte *pc_BufferPtr;
 extern int pc_ScriptCount;
+extern int pc_FunctionCount;
+extern boolean pc_NoShrink;
+extern boolean pc_WadAuthor;
+extern boolean pc_EncryptStrings;
+extern int pc_LastAppendedCommand;
 
 #endif

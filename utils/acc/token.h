@@ -83,6 +83,8 @@ typedef enum
 	TK_OPEN,			// 'open'
 	TK_PRINT,			// 'print'
 	TK_PRINTBOLD,		// 'printbold'
+	TK_HUDMESSAGE,		// 'hudmessage'
+	TK_HUDMESSAGEBOLD,	// 'hudmessagebold'
 	TK_RESTART,			// 'restart'
 	TK_SCRIPT,			// 'script'
 	TK_SPECIAL,			// 'special'
@@ -93,7 +95,29 @@ typedef enum
 	TK_UNTIL,			// 'until'
 	TK_VOID,			// 'void'
 	TK_WHILE,			// 'while'
-	TK_WORLD			// 'world'
+	TK_WORLD,			// 'world'
+	TK_GLOBAL,			// 'global'
+	TK_RESPAWN,			// 'respawn'		[BC]
+	TK_DEATH,			// 'death'			[BC]
+	TK_ENTER,			// 'enter'			[BC]
+	TK_PICKUP,			// 'pickup'			[BC]
+	TK_T1RETURN,		// 'team1return'	[BC]
+	TK_T2RETURN,		// 'team2return'	[BC]
+	TK_LOCALIZEDSTRINGS,// 'localizedstrings'
+	TK_NOCOMPACT,		// 'nocompact'
+	TK_LIGHTNING,		// 'ligtning'
+	TK_CREATETRANSLATION,// 'createtranslation'
+	TK_FUNCTION,		// 'function'
+	TK_RETURN,			// 'return'
+	TK_WADAUTHOR,		// 'wadauthor'
+	TK_NOWADAUTHOR,		// 'nowadauthor'
+	TK_ACSEXECUTEWAIT,	// 'acs_executewait'
+	TK_ENCRYPTSTRINGS,	// 'encryptstrings'
+	TK_IMPORT,			// 'import'
+	TK_LIBRARY,			// 'library'
+	TK_LIBDEFINE,		// 'libdefine'
+	TK_BOOL,			// 'bool'
+	TK_NET,				// 'net'
 } tokenType_t;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -101,13 +125,17 @@ typedef enum
 void TK_Init(void);
 void TK_OpenSource(char *fileName);
 void TK_Include(char *fileName);
+void TK_Import(char *fileName, enum ImportModes prevMode);
 void TK_CloseSource(void);
 tokenType_t TK_NextToken(void);
 int TK_NextCharacter(void);
-void TK_NextTokenMustBe(tokenType_t token, error_t error);
-void TK_TokenMustBe(tokenType_t token, error_t error);
+boolean TK_NextTokenMustBe(tokenType_t token, error_t error);
+boolean TK_TokenMustBe(tokenType_t token, error_t error);
 boolean TK_Member(tokenType_t *list);
 void TK_Undo(void);
+void TK_SkipLine(void);
+void TK_SkipPast(tokenType_t token);
+void TK_SkipTo(tokenType_t token);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -115,9 +143,13 @@ extern tokenType_t tk_Token;
 extern int tk_Line;
 extern int tk_Number;
 extern char *tk_String;
-extern int tk_SpecialValue;
+extern U_BYTE tk_SpecialValue;
 extern int tk_SpecialArgCount;
-extern char tk_SourceName[MAX_FILE_NAME_LENGTH];
+extern char *tk_SourceName;
 extern int tk_IncludedLines;
+extern boolean forSemicolonHack;
+extern char MasterSourceLine[];  // master line - Ty 07jan2000
+extern int MasterSourcePos;      // master position - Ty 07jan2000
+extern boolean ClearMasterSourceLine; // ready for new line - Ty 07jan2000
 
 #endif

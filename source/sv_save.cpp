@@ -199,7 +199,7 @@ static void StreamOutFloat(float val)
 
 static void StreamOutBuffer(const void *buffer, int size)
 {
-	Saver->Serialize(const_cast<void *>(buffer), size);
+	Saver->Serialise(const_cast<void *>(buffer), size);
 }
 
 //==========================================================================
@@ -452,7 +452,7 @@ VObject *ReadVObject(int tag)
 
 	//  Allocate object and copy data
 	VObject *o = VObject::StaticSpawnObject(Class, NULL, tag);
-	Loader->Serialize((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
+	Loader->Serialise((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
 	return o;
 	unguard;
 }
@@ -531,7 +531,7 @@ static void UnarchivePlayers(void)
 		{
 			continue;
 		}
-		Loader->Serialize((byte*)svvars.Players[i] + sizeof(VObject),
+		Loader->Serialise((byte*)svvars.Players[i] + sizeof(VObject),
 			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
 		svvars.Players[i]->MO = NULL; // Will be set when unarc thinker
 		svpr.Exec(pf_unarchive_player, (int)svvars.Players[i]);
@@ -553,13 +553,13 @@ static void UnarchivePlayers(void)
 
 //==========================================================================
 //
-//	Level__Serialize
+//	Level__Serialise
 //
 //==========================================================================
 
-static void Level__Serialize(FArchive &Ar)
+static void Level__Serialise(FArchive &Ar)
 {
-	guard(Level__Serialize);
+	guard(Level__Serialise);
 	int i;
 	int j;
 	sector_t* sec;
@@ -649,7 +649,7 @@ static void ArchiveWorld(void)
 {
 	StreamOutLong(ASEG_WORLD);
 
-	Level__Serialize(*Saver);
+	Level__Serialise(*Saver);
 }
 
 //==========================================================================
@@ -662,7 +662,7 @@ static void UnarchiveWorld(void)
 {
 	AssertSegment(ASEG_WORLD);
 
-	Level__Serialize(*Loader);
+	Level__Serialise(*Loader);
 }
 
 //==========================================================================
@@ -872,15 +872,8 @@ static void UnarchiveThinkers(void)
 
 static void ArchiveScripts(void)
 {
-	int i;
-
 	StreamOutLong(ASEG_SCRIPTS);
-	for (i = 0; i < ACScriptCount; i++)
-	{
-		StreamOutWord((word)ACSInfo[i].state);
-		StreamOutWord((word)ACSInfo[i].waitValue);
-	}
-	StreamOutBuffer(MapVars, sizeof(MapVars));
+	P_SerialiseScripts(*Saver);
 }
 
 //==========================================================================
@@ -891,15 +884,8 @@ static void ArchiveScripts(void)
 
 static void UnarchiveScripts(void)
 {
-	int i;
-
 	AssertSegment(ASEG_SCRIPTS);
-	for(i = 0; i < ACScriptCount; i++)
-	{
-		ACSInfo[i].state = (aste_t)GET_WORD;
-		ACSInfo[i].waitValue = GET_WORD;
-	}
-	Loader->Serialize(MapVars, sizeof(MapVars));
+	P_SerialiseScripts(*Loader);
 }
 
 //==========================================================================
@@ -1068,9 +1054,9 @@ static void SV_LoadMap(char *mapname, int slot)
 	int len = GET_LONG;
 	sv_signon.Clear();
 	void *tmp = Z_StrMalloc(len);
-	Loader->Serialize(tmp, len);
+	Loader->Serialise(tmp, len);
 	sv_signon.Write(tmp, len);
-	Loader->Serialize(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
+	Loader->Serialise(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
 
 	UnarchiveWorld();
 	UnarchiveThinkers();
@@ -1098,6 +1084,7 @@ void SV_SaveGame(int slot, char* description)
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 	char fileName[100];
+	int i;
 
 	CreateSavePath();
 
@@ -1130,6 +1117,15 @@ void SV_SaveGame(int slot, char* description)
 
 	// Write global script info
 	StreamOutBuffer(WorldVars, sizeof(WorldVars));
+	StreamOutBuffer(GlobalVars, sizeof(GlobalVars));
+	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		WorldArrays[i].Serialise(*Saver);
+	}
+	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		GlobalArrays[i].Serialise(*Saver);
+	}
 	StreamOutBuffer(ACSStore, sizeof(ACSStore));
 
 	ArchivePlayers();
@@ -1165,6 +1161,7 @@ void SV_LoadGame(int slot)
 	guard(SV_LoadGame);
 	char		fileName[100];
 	char		mapname[12];
+	int			i;
 
 	SV_ShutdownServer(false);
 #ifdef CLIENT
@@ -1186,11 +1183,11 @@ void SV_LoadGame(int slot)
 
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
-	Loader->Serialize(desc, SAVE_DESCRIPTION_LENGTH);
+	Loader->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
 
 	// Check the version text
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
-	Loader->Serialize(versionText, SAVE_VERSION_TEXT_LENGTH);
+	Loader->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
 	if (strcmp(versionText, SAVE_VERSION_TEXT))
 	{
 		// Bad version
@@ -1207,7 +1204,7 @@ void SV_LoadGame(int slot)
 	AssertSegment(ASEG_GAME_HEADER);
 
 	gameskill = (skill_t)GET_BYTE;
-	Loader->Serialize(mapname, 8);
+	Loader->Serialise(mapname, 8);
 	mapname[8] = 0;
 
 	//	Init skill hacks
@@ -1215,12 +1212,21 @@ void SV_LoadGame(int slot)
 
 	// Read secret level info
 	in_secret = GET_BYTE;
-	Loader->Serialize(mapaftersecret, 8);
+	Loader->Serialise(mapaftersecret, 8);
 	mapaftersecret[8] = 0;
 
 	// Read global script info
-	Loader->Serialize(WorldVars, sizeof(WorldVars));
-	Loader->Serialize(ACSStore, sizeof(ACSStore));
+	Loader->Serialise(WorldVars, sizeof(WorldVars));
+	Loader->Serialise(GlobalVars, sizeof(GlobalVars));
+	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		WorldArrays[i].Serialise(*Saver);
+	}
+	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		GlobalArrays[i].Serialise(*Saver);
+	}
+	Loader->Serialise(ACSStore, sizeof(ACSStore));
 
 	// Read the player structures
 	UnarchivePlayers();
@@ -1456,9 +1462,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2004/12/03 16:15:47  dj_jl
+//	Implemented support for extended ACS format scripts, functions, libraries and more.
+//
 //	Revision 1.34  2004/01/30 17:32:59  dj_jl
 //	Fixed loading
-//
+//	
 //	Revision 1.33  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

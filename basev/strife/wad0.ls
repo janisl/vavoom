@@ -1,6 +1,10 @@
 progs/clprogs.dat
 progs/svprogs.dat
 
+$label A_START
+strfhelp.o
+$label A_END
+
 scripts/mapinfo.txt
 scripts/skyboxes.txt
 scripts/animdefs.txt

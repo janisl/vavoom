@@ -7,6 +7,12 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <malloc.h>
+#include <stdio.h>
+
 #include "common.h"
 #include "parse.h"
 #include "symbol.h"
@@ -57,31 +63,49 @@ typedef struct
 	int address;
 } caseInfo_t;
 
+typedef struct prefunc_s
+{
+	struct prefunc_s *next;
+	symbolNode_t *sym;
+	int address;
+	int argcount;
+	int line;
+	char *source;
+} prefunc_t;
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void CountScript(int type);
 static void Outside(void);
 static void OuterScript(void);
+static void OuterFunction(void);
 static void OuterMapVar(void);
-static void OuterWorldVar(void);
+static void OuterWorldVar(boolean isGlobal);
 static void OuterSpecialDef(void);
-static void OuterDefine(void);
+static void OuterDefine(boolean force);
 static void OuterInclude(void);
+static void OuterImport(void);
+static void OuterLocalizedStrings(void);
 static boolean ProcessStatement(statement_t owner);
 static void LeadingCompoundStatement(statement_t owner);
 static void LeadingVarDeclare(void);
-static void LeadingLineSpecial(void);
+static void LeadingLineSpecial(boolean executewait);
 static void LeadingIdentifier(void);
+static void BuildPrintString(void);
 static void LeadingPrint(void);
+static void LeadingHudMessage(void);
 static void LeadingVarAssign(symbolNode_t *sym);
 static pcd_t GetAssignPCD(tokenType_t token, symbolType_t symbol);
 static void LeadingInternFunc(symbolNode_t *sym);
+static void LeadingScriptFunc(symbolNode_t *sym);
 static void LeadingSuspend(void);
 static void LeadingTerminate(void);
 static void LeadingRestart(void);
+static void LeadingReturn(void);
 static void LeadingIf(void);
 static void LeadingFor(void);
 static void LeadingWhileUntil(void);
@@ -91,6 +115,8 @@ static void LeadingCase(void);
 static void LeadingDefault(void);
 static void LeadingBreak(void);
 static void LeadingContinue(void);
+static void LeadingCreateTranslation(void);
+static void LeadingIncDec(int token);
 static void PushCase(int value, boolean isDefault);
 static caseInfo_t *GetCaseInfo(void);
 static boolean DefaultInCurrent(void);
@@ -101,6 +127,7 @@ static void PushContinue(void);
 static void WriteContinues(int address);
 static boolean ContinueAncestor(void);
 static void ProcessInternFunc(symbolNode_t *sym);
+static void ProcessScriptFunc(symbolNode_t *sym, boolean discardReturn);
 static void EvalExpression(void);
 static void ExprLevA(void);
 static void ExprLevB(void);
@@ -121,16 +148,30 @@ static pcd_t TokenToPCD(tokenType_t token);
 static pcd_t GetPushVarPCD(symbolType_t symType);
 static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol);
 static int EvalConstExpression(void);
+static void ParseArrayIndices(symbolNode_t *sym);
+static void InitializeArray(symbolNode_t *sym, int dims[MAX_ARRAY_DIMS], int size);
 static symbolNode_t *DemandSymbol(char *name);
+static symbolNode_t *SpeculateSymbol(char *name, boolean hasReturn);
+static symbolNode_t *SpeculateFunction(const char *name, boolean hasReturn);
+static void UnspeculateFunction(symbolNode_t *sym);
+static void AddScriptFuncRef(symbolNode_t *sym, int address, int argcount);
+static void CheckForUndefinedFunctions(void);
+static void SkipBraceBlock(int depth);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int pa_ScriptCount;
-int pa_OpenScriptCount;
+struct ScriptTypes *pa_TypedScriptCounts;
 int pa_MapVarCount;
 int pa_WorldVarCount;
+int pa_GlobalVarCount;
+int pa_WorldArrayCount;
+int pa_GlobalArrayCount;
+enum ImportModes ImportMode = IMPORT_None;
+boolean ExporterFlagged;
+boolean pa_ConstExprIsString;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -147,6 +188,10 @@ static int StatementLevel;
 static int ExprStack[EXPR_STACK_DEPTH];
 static int ExprStackIndex;
 static boolean ConstantExpression;
+static symbolNode_t *InsideFunction;
+static prefunc_t *FillinFunctions;
+static prefunc_t **FillinFunctionsLatest = &FillinFunctions;
+static boolean ArrayHasStrings;
 
 static int AdjustStmtLevel[] =
 {
@@ -230,6 +275,20 @@ static tokenType_t AssignOps[] =
 	TK_NONE
 };
 
+static struct ScriptTypes ScriptCounts[] =
+{
+	{ "closed",		0 },
+	{ "open",		OPEN_SCRIPTS_BASE },
+	{ "respawn",	RESPAWN_SCRIPTS_BASE },
+	{ "death",		DEATH_SCRIPTS_BASE },
+	{ "enter",		ENTER_SCRIPTS_BASE },
+	{ "pickup",		PICKUP_SCRIPTS_BASE },
+	{ "t1return",	T1RETURN_SCRIPTS_BASE },
+	{ "t2return",	T2RETURN_SCRIPTS_BASE },
+	{ "lightning",	LIGHTNING_SCRIPTS_BASE },
+	{ NULL, -1 }
+};
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -240,12 +299,49 @@ static tokenType_t AssignOps[] =
 
 void PA_Parse(void)
 {
+	int i;
+
 	pa_ScriptCount = 0;
-	pa_OpenScriptCount = 0;
+	pa_TypedScriptCounts = ScriptCounts;
+	for (i = 0; ScriptCounts[i].TypeName != NULL; i++)
+	{
+		ScriptCounts[i].TypeCount = 0;
+	}
 	pa_MapVarCount = 0;
 	pa_WorldVarCount = 0;
+	pa_GlobalVarCount = 0;
+	pa_WorldArrayCount = 0;
+	pa_GlobalArrayCount = 0;
 	TK_NextToken();
 	Outside();
+	CheckForUndefinedFunctions();
+	ERR_Finish();
+}
+
+//==========================================================================
+//
+// CountScript
+//
+//==========================================================================
+
+static void CountScript(int type)
+{
+	int i;
+
+	for (i = 0; ScriptCounts[i].TypeName != NULL; i++)
+	{
+		if (ScriptCounts[i].TypeBase == type)
+		{
+			if (type != 0)
+			{
+				MS_Message(MSG_DEBUG, "Script type: %s\n",
+					ScriptCounts[i].TypeName);
+			}
+			ScriptCounts[i].TypeCount++;
+			return;
+		}
+	}
+	return;
 }
 
 //==========================================================================
@@ -263,40 +359,109 @@ static void Outside(void)
 	{
 		switch(tk_Token)
 		{
-			case TK_EOF:
-				done = YES;
+		case TK_EOF:
+
+			done = YES;
+			break;
+		case TK_SCRIPT:
+			OuterScript();
+			break;
+		case TK_FUNCTION:
+			OuterFunction();
+			break;
+		case TK_INT:
+		case TK_STR:
+		case TK_BOOL:
+			OuterMapVar();
+			break;
+		case TK_WORLD:
+			OuterWorldVar(NO);
+			break;
+		case TK_GLOBAL:
+			OuterWorldVar(YES);
+			break;
+		case TK_SPECIAL:
+			OuterSpecialDef();
+			break;
+		case TK_LOCALIZEDSTRINGS:
+			OuterLocalizedStrings();
+			break;
+		case TK_NUMBERSIGN:
+			TK_NextToken();
+			switch(tk_Token)
+			{
+			case TK_DEFINE:
+				OuterDefine(NO);
 				break;
-			case TK_SCRIPT:
-				OuterScript();
+			case TK_LIBDEFINE:
+				OuterDefine(YES);
 				break;
-			case TK_INT:
-			case TK_STR:
-				OuterMapVar();
+			case TK_INCLUDE:
+				OuterInclude();
 				break;
-			case TK_WORLD:
-				OuterWorldVar();
-				break;
-			case TK_SPECIAL:
-				OuterSpecialDef();
-				break;
-			case TK_NUMBERSIGN:
-				TK_NextToken();
-				switch(tk_Token)
+			case TK_NOCOMPACT:
+				if(ImportMode != IMPORT_Importing)
 				{
-					case TK_DEFINE:
-						OuterDefine();
-						break;
-					case TK_INCLUDE:
-						OuterInclude();
-						break;
-					default:
-						ERR_Exit(ERR_INVALID_DIRECTIVE, YES, NULL);
-						break;
+					if(pc_Address != 8)
+					{
+						ERR_Error(ERR_NOCOMPACT_NOT_HERE, YES);
+					}
+					MS_Message(MSG_DEBUG, "Forcing NoShrink\n");
+					pc_NoShrink = TRUE;
 				}
+				TK_NextToken();
+				break;
+			case TK_WADAUTHOR:
+				if(ImportMode != IMPORT_Importing)
+				{
+					MS_Message(MSG_DEBUG, "Will write WadAuthor-compatible object\n");
+					MS_Message(MSG_NORMAL, "You don't need to use #wadauthor anymore.\n");
+					pc_WadAuthor = TRUE;
+				}
+				TK_NextToken();
+				break;
+			case TK_NOWADAUTHOR:
+				if(ImportMode != IMPORT_Importing)
+				{
+					MS_Message(MSG_DEBUG, "Will write WadAuthor-incompatible object\n");
+					pc_WadAuthor = FALSE;
+				}
+				TK_NextToken();
+				break;
+			case TK_ENCRYPTSTRINGS:
+				if(ImportMode != IMPORT_Importing)
+				{
+					MS_Message(MSG_DEBUG, "Strings will be encrypted\n");
+					pc_EncryptStrings = TRUE;
+				}
+				TK_NextToken();
+				break;
+			case TK_IMPORT:
+				OuterImport();
+				break;
+			case TK_LIBRARY:
+				TK_NextTokenMustBe(TK_STRING, ERR_STRING_LIT_NOT_FOUND);
+				if(ImportMode == IMPORT_None)
+				{
+					MS_Message(MSG_DEBUG, "Allocations modified for exporting\n");
+					ImportMode = IMPORT_Exporting;
+				}
+				else if(ImportMode == IMPORT_Importing)
+				{
+					PC_AddImport(tk_String);
+					ExporterFlagged = YES;
+				}
+				TK_NextToken();
 				break;
 			default:
-				ERR_Exit(ERR_INVALID_DECLARATOR, YES, NULL);
+				ERR_Error(ERR_INVALID_DIRECTIVE, YES);
+				TK_SkipLine();
 				break;
+			}
+			break;
+		default:
+			ERR_Exit(ERR_INVALID_DECLARATOR, YES, NULL);
+			break;
 	   	}
 	}
 }
@@ -311,6 +476,7 @@ static void OuterScript(void)
 {
 	int scriptNumber;
 	symbolNode_t *sym;
+	int scriptType;
 
 	MS_Message(MSG_DEBUG, "---- OuterScript ----\n");
 	BreakIndex = 0;
@@ -319,8 +485,28 @@ static void OuterScript(void)
 	ScriptVarCount = 0;
 	SY_FreeLocals();
 	TK_NextToken();
+
+	if(ImportMode == IMPORT_Importing)
+	{
+		// When importing, the script number is not recorded, because
+		// it might be a #define that is not included by the main .acs
+		// file, so processing it would generate a syntax error.
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+
 	scriptNumber = EvalConstExpression();
+	if(scriptNumber < 1 || scriptNumber > 999)
+	{
+		TK_Undo();
+		ERR_Error(ERR_SCRIPT_OUT_OF_RANGE, YES, NULL);
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
 	MS_Message(MSG_DEBUG, "Script number: %d\n", scriptNumber);
+	scriptType = 0;
 	if(tk_Token == TK_LPAREN)
 	{
 		if(TK_NextToken() == TK_VOID)
@@ -334,43 +520,235 @@ static void OuterScript(void)
 			{
 				TK_NextTokenMustBe(TK_INT, ERR_BAD_VAR_TYPE);
 				TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+				if(ScriptVarCount == 3)
+				{
+					ERR_Error(ERR_TOO_MANY_SCRIPT_ARGS, YES);
+				}
 				if(SY_FindLocal(tk_String) != NULL)
 				{ // Redefined
-					ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-						"Identifier: %s", tk_String);
+					ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
 				}
-				sym = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
-				sym->info.var.index = ScriptVarCount;
-				ScriptVarCount++;
+				else if(ScriptVarCount < 3)
+				{
+					sym = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
+					sym->info.var.index = ScriptVarCount;
+					ScriptVarCount++;
+				}
 				TK_NextToken();
 			} while(tk_Token == TK_COMMA);
 			TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
-			if(ScriptVarCount > 3)
-			{
-				ERR_Exit(ERR_TOO_MANY_SCRIPT_ARGS, YES, NULL);
-			}
 		}
-		MS_Message(MSG_DEBUG, "Script type: CLOSED (%d %s)\n",
+		MS_Message(MSG_DEBUG, "Script type: closed (%d %s)\n",
 			ScriptVarCount, ScriptVarCount == 1 ? "arg" : "args");
 	}
-	else if(tk_Token == TK_OPEN)
+	else switch (tk_Token)
 	{
-		MS_Message(MSG_DEBUG, "Script type: OPEN\n");
-		scriptNumber += OPEN_SCRIPTS_BASE;
-		pa_OpenScriptCount++;
+	case TK_OPEN:
+		scriptType = OPEN_SCRIPTS_BASE;
+		break;
+
+	case TK_RESPAWN:	// [BC]
+		scriptType = RESPAWN_SCRIPTS_BASE;
+		break;
+
+	case TK_DEATH:		// [BC]
+		scriptType = DEATH_SCRIPTS_BASE;
+		break;
+
+	case TK_ENTER:		// [BC]
+		scriptType = ENTER_SCRIPTS_BASE;
+		break;
+
+	case TK_PICKUP:		// [BC]
+		scriptType = PICKUP_SCRIPTS_BASE;
+		break;
+
+	case TK_T1RETURN:	// [BC]
+		scriptType = T1RETURN_SCRIPTS_BASE;
+		break;
+
+	case TK_T2RETURN:	// [BC]
+		scriptType = T2RETURN_SCRIPTS_BASE;
+		break;
+
+	case TK_LIGHTNING:
+		scriptType = LIGHTNING_SCRIPTS_BASE;
+		break;
+
+	default:
+		ERR_Error(ERR_BAD_SCRIPT_DECL, YES);
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+	TK_NextToken();
+	if (tk_Token == TK_NET)
+	{
+		scriptNumber += NET_SCRIPT_FLAG;
+		TK_NextToken();
+	}
+	CountScript(scriptType);
+	PC_AddScript(scriptNumber + scriptType, ScriptVarCount);
+	pc_LastAppendedCommand = PCD_NOP;
+	if(ProcessStatement(STMT_SCRIPT) == NO)
+	{
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
+	}
+	if(pc_LastAppendedCommand != PCD_TERMINATE)
+	{
+		PC_AppendCmd(PCD_TERMINATE);
+	}
+	pa_ScriptCount++;
+}
+
+//==========================================================================
+//
+// OuterFunction
+//
+//==========================================================================
+
+static void OuterFunction(void)
+{
+	enum ImportModes importing;
+	boolean hasReturn;
+	symbolNode_t *sym;
+	int defLine;
+
+	MS_Message(MSG_DEBUG, "---- OuterFunction ----\n");
+	importing = ImportMode;
+	BreakIndex = 0;
+	CaseIndex = 0;
+	StatementLevel = 0;
+	ScriptVarCount = 0;
+	SY_FreeLocals();
+	TK_NextToken();
+	if(tk_Token != TK_STR && tk_Token != TK_INT &&
+		tk_Token != TK_VOID && tk_Token != TK_BOOL)
+	{
+		ERR_Error(ERR_BAD_RETURN_TYPE, YES);
+		tk_Token = TK_VOID;
+	}
+	hasReturn = tk_Token != TK_VOID;
+	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+	sym = SY_FindGlobal(tk_String);
+	if(sym != NULL)
+	{
+		if(sym->type != SY_SCRIPTFUNC)
+		{ // Redefined
+			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
+			SkipBraceBlock(0);
+			TK_NextToken();
+			return;
+		}
+		if(!sym->info.scriptFunc.predefined)
+		{
+			ERR_Error(ERR_FUNCTION_ALREADY_DEFINED, YES);
+			ERR_ErrorAt(sym->info.scriptFunc.sourceName, sym->info.scriptFunc.sourceLine);
+			ERR_Error(ERR_NONE, YES, "Previous definition was here.");
+			SkipBraceBlock(0);
+			TK_NextToken();
+			return;
+		}
+		if(sym->info.scriptFunc.hasReturnValue && !hasReturn)
+		{
+			ERR_Error(ERR_PREVIOUS_NOT_VOID, YES);
+			ERR_ErrorAt(sym->info.scriptFunc.sourceName, sym->info.scriptFunc.sourceLine);
+			ERR_Error(ERR_NONE, YES, "Previous use was here.");
+		}
 	}
 	else
 	{
-		ERR_Exit(ERR_BAD_SCRIPT_DECL, YES, NULL);
+		sym = SY_InsertGlobal(tk_String, SY_SCRIPTFUNC);
+		sym->info.scriptFunc.address = (importing == IMPORT_Importing ? 0 : pc_Address);
+		sym->info.scriptFunc.predefined = NO;
 	}
-	PC_AddScript(scriptNumber, ScriptVarCount);
-	TK_NextToken();
-	if(ProcessStatement(STMT_SCRIPT) == NO)
+	defLine = tk_Line;
+
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	if(TK_NextToken() == TK_VOID)
 	{
-		ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+		TK_NextTokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
 	}
-	PC_AppendCmd(PCD_TERMINATE);
-	pa_ScriptCount++;
+	else
+	{
+		TK_Undo();
+		do
+		{
+			symbolNode_t *local;
+
+			TK_NextToken();
+			if(tk_Token != TK_INT && tk_Token != TK_STR && tk_Token != TK_BOOL)
+			{
+				ERR_Error(ERR_BAD_VAR_TYPE, YES);
+				tk_Token = TK_INT;
+			}
+			TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+			if(SY_FindLocal(tk_String) != NULL)
+			{ // Redefined
+				ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
+			}
+			else
+			{
+				local = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
+				local->info.var.index = ScriptVarCount;
+				ScriptVarCount++;
+			}
+			TK_NextToken();
+		} while(tk_Token == TK_COMMA);
+		TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	}
+
+	sym->info.scriptFunc.sourceLine = defLine;
+	sym->info.scriptFunc.sourceName = tk_SourceName;
+	sym->info.scriptFunc.argCount = ScriptVarCount;
+	sym->info.scriptFunc.address = (importing == IMPORT_Importing) ? 0 : pc_Address;
+	sym->info.scriptFunc.hasReturnValue = hasReturn;
+
+	if(importing == IMPORT_Importing)
+	{
+		SkipBraceBlock(0);
+		TK_NextToken();
+		sym->info.scriptFunc.predefined = NO;
+		sym->info.scriptFunc.varCount = ScriptVarCount;
+		return;
+	}
+
+	TK_NextToken();
+	InsideFunction = sym;
+	pc_LastAppendedCommand = PCD_NOP;
+
+	// If we just call ProcessStatement(STMT_SCRIPT), and this function
+	// needs to return a value but the last pcode output was not a return,
+	// then the line number given in the error can be confusing because it
+	// is beyond the end of the function. To avoid this, we process the
+	// compound statement ourself and check if it returned something
+	// before checking for the '}'. If a return is required, then the error
+	// line will be shown as the one that contains the '}' (if present).
+
+	TK_TokenMustBe(TK_LBRACE, ERR_MISSING_LBRACE);
+	TK_NextToken();
+	do ; while(ProcessStatement(STMT_SCRIPT) == YES);
+
+	if(pc_LastAppendedCommand != PCD_RETURNVOID &&
+	   pc_LastAppendedCommand != PCD_RETURNVAL)
+	{
+		if(hasReturn)
+		{
+			TK_Undo();
+			ERR_Error(ERR_MUST_RETURN_A_VALUE, YES, NULL);
+		}
+		PC_AppendCmd(PCD_RETURNVOID);
+	}
+
+	TK_TokenMustBe(TK_RBRACE, ERR_INVALID_STATEMENT);
+	TK_NextToken();
+
+	sym->info.scriptFunc.predefined = NO;
+	sym->info.scriptFunc.varCount = ScriptVarCount -
+		sym->info.scriptFunc.argCount;
+	PC_AddFunction(sym);
+	UnspeculateFunction(sym);
+	InsideFunction = NULL;
 }
 
 //==========================================================================
@@ -381,25 +759,127 @@ static void OuterScript(void)
 
 static void OuterMapVar(void)
 {
-	symbolNode_t *sym;
+	symbolNode_t *sym = NULL;
+	int index;
 
 	MS_Message(MSG_DEBUG, "---- OuterMapVar ----\n");
 	do
 	{
-		if(pa_MapVarCount == MAX_MAP_VARIABLES)
+		if(pa_MapVarCount >= MAX_MAP_VARIABLES)
 		{
-			ERR_Exit(ERR_TOO_MANY_MAP_VARS, YES, NULL);
+			ERR_Error(ERR_TOO_MANY_MAP_VARS, YES);
+			index = MAX_MAP_VARIABLES;
 		}
 		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
 		if(SY_FindGlobal(tk_String) != NULL)
 		{ // Redefined
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-				"Identifier: %s", tk_String);
+			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
+			index = MAX_MAP_VARIABLES;
 		}
-		sym = SY_InsertGlobal(tk_String, SY_MAPVAR);
-		sym->info.var.index = pa_MapVarCount;
-		pa_MapVarCount++;
+		else
+		{
+			sym = SY_InsertGlobal(tk_String, SY_MAPVAR);
+			if(ImportMode == IMPORT_Importing)
+			{
+				sym->info.var.index = index = 0;
+			}
+			else
+			{
+				sym->info.var.index = index = pa_MapVarCount;
+				PC_NameMapVariable(index, sym);
+				pa_MapVarCount++;
+			}
+		}
 		TK_NextToken();
+		if(tk_Token == TK_ASSIGN)
+		{
+			if(ImportMode != IMPORT_Importing)
+			{
+				TK_NextToken();
+				PC_PutMapVariable (index, EvalConstExpression());
+			}
+			else
+			{
+				// When importing, skip the initializer, because we don't care.
+				do
+				{
+					TK_NextToken();
+				} while(tk_Token != TK_COMMA && tk_Token != TK_SEMICOLON);
+			}
+		}
+		else if(tk_Token == TK_LBRACKET)
+		{
+			int size = 0;
+			int ndim = 0;
+			int dims[MAX_ARRAY_DIMS];
+
+			memset(dims, 0, sizeof(dims));
+
+			while(tk_Token == TK_LBRACKET)
+			{
+				if(ndim == MAX_ARRAY_DIMS)
+				{
+					ERR_Error(ERR_TOO_MANY_ARRAY_DIMS, YES);
+					do
+					{
+						TK_NextToken();
+					} while(tk_Token != TK_COMMA && tk_Token != TK_SEMICOLON);
+					break;
+				}
+				TK_NextToken();
+				if (tk_Token == TK_RBRACKET)
+				{
+					ERR_Error(ERR_NEED_ARRAY_SIZE, YES);
+				}
+				else
+				{
+					dims[ndim] = EvalConstExpression();
+					if(dims[ndim] == 0)
+					{
+						ERR_Error(ERR_ZERO_DIMENSION, YES);
+						dims[ndim] = 1;
+					}
+					if(ndim == 0)
+					{
+						size = dims[ndim];
+					}
+					else
+					{
+						size *= dims[ndim];
+					}
+				}
+				ndim++;
+				TK_TokenMustBe(TK_RBRACKET, ERR_MISSING_RBRACKET);
+				TK_NextToken();
+			}
+			if(sym != NULL)
+			{
+				if(ImportMode != IMPORT_Importing)
+				{
+					PC_AddArray(index, size);
+				}
+				MS_Message(MSG_DEBUG, "%s changed to an array of size %d\n", sym->name, size);
+				sym->type = SY_MAPARRAY;
+				sym->info.array.index = index;
+				sym->info.array.ndim = ndim;
+				sym->info.array.size = size;
+				if(ndim > 0)
+				{
+					int i;
+
+					sym->info.array.dimensions[ndim-1] = 1;
+					for(i = ndim - 2; i >= 0; --i)
+					{
+						sym->info.array.dimensions[i] =
+							sym->info.array.dimensions[i+1] * dims[i+1];
+					}
+				}
+				if(tk_Token == TK_ASSIGN)
+				{
+					InitializeArray(sym, dims, size);
+				}
+			}
+		}
 	} while(tk_Token == TK_COMMA);
 	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	TK_NextToken();
@@ -411,35 +891,78 @@ static void OuterMapVar(void)
 //
 //==========================================================================
 
-static void OuterWorldVar(void)
+static void OuterWorldVar(boolean isGlobal)
 {
 	int index;
 	symbolNode_t *sym;
 
-	MS_Message(MSG_DEBUG, "---- OuterWorldVar ----\n");
+	MS_Message(MSG_DEBUG, "---- Outer%sVar ----\n", isGlobal ? "Global" : "World");
 	if(TK_NextToken() != TK_INT)
 	{
-		TK_TokenMustBe(TK_STR, ERR_BAD_VAR_TYPE);
+		if(tk_Token != TK_BOOL)
+		{
+			TK_TokenMustBe(TK_STR, ERR_BAD_VAR_TYPE);
+		}
 	}
 	do
 	{
 		TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_WVAR_INDEX);
-		if(tk_Number >= MAX_WORLD_VARIABLES)
+		if(tk_Number >= (isGlobal ? MAX_GLOBAL_VARIABLES : MAX_WORLD_VARIABLES))
 		{
-			ERR_Exit(ERR_BAD_WVAR_INDEX, YES, NULL);
+			ERR_Error(ERR_BAD_WVAR_INDEX+isGlobal, YES);
+			index = 0;
 		}
-		index = tk_Number;
-		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_WVAR_COLON);
+		else
+		{
+			index = tk_Number;
+		}
+		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_WVAR_COLON+isGlobal);
 		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
 		if(SY_FindGlobal(tk_String) != NULL)
 		{ // Redefined
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-				"Identifier: %s", tk_String);
+			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
 		}
-		sym = SY_InsertGlobal(tk_String, SY_WORLDVAR);
-		sym->info.var.index = index;
-		TK_NextToken();
-		pa_WorldVarCount++;
+		else
+		{
+			TK_NextToken();
+			if(tk_Token == TK_LBRACKET)
+			{
+				TK_NextToken ();
+				if(tk_Token != TK_RBRACKET)
+				{
+					ERR_Error(ERR_NO_NEED_ARRAY_SIZE, YES);
+					TK_SkipPast(TK_RBRACKET);
+				}
+				else
+				{
+					TK_NextToken();
+				}
+				if(tk_Token == TK_LBRACKET)
+				{
+					ERR_Error(ERR_NO_MULTIDIMENSIONS, YES);
+					do
+					{
+						TK_SkipPast(TK_RBRACKET);
+					}
+					while(tk_Token == TK_LBRACKET);
+				}
+				sym = SY_InsertGlobal(tk_String, isGlobal ? SY_GLOBALARRAY : SY_WORLDARRAY);
+				sym->info.var.index = index;
+				if (isGlobal)
+					pa_GlobalArrayCount++;
+				else
+					pa_WorldArrayCount++;
+			}
+			else
+			{
+				sym = SY_InsertGlobal(tk_String, isGlobal ? SY_GLOBALVAR : SY_WORLDVAR);
+				sym->info.var.index = index;
+				if (isGlobal)
+					pa_GlobalVarCount++;
+				else
+					pa_WorldVarCount++;
+			}
+		}
 	} while(tk_Token == TK_COMMA);
 	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	TK_NextToken();
@@ -457,26 +980,113 @@ static void OuterSpecialDef(void)
 	symbolNode_t *sym;
 
 	MS_Message(MSG_DEBUG, "---- OuterSpecialDef ----\n");
-	do
+	if(ImportMode == IMPORT_Importing)
 	{
-		TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_VAL);
-		special = tk_Number;
-		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_SPEC_COLON);
-		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
-		if(SY_FindGlobal(tk_String) != NULL)
-		{ // Redefined
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-				"Identifier: %s", tk_String);
-		}
-		sym = SY_InsertGlobal(tk_String, SY_SPECIAL);
-		TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
-		TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_ARGC);
-		sym->info.special.value = special;
-		sym->info.special.argCount = tk_Number;
-		TK_NextTokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+		// No need to process special definitions when importing.
+		TK_SkipPast(TK_SEMICOLON);
+	}
+	else
+	{
+		do
+		{
+			TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_VAL);
+			special = tk_Number;
+			TK_NextTokenMustBe(TK_COLON, ERR_MISSING_SPEC_COLON);
+			TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+			sym = SY_InsertGlobalUnique(tk_String, SY_SPECIAL);
+			TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+			TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_ARGC);
+			sym->info.special.value = special;
+			sym->info.special.argCount = tk_Number | (tk_Number << 16);
+			TK_NextToken();
+			if(tk_Token == TK_COMMA)
+			{ // Get maximum arg count
+				TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_ARGC);
+				sym->info.special.argCount =
+					(sym->info.special.argCount & 0xffff) | (tk_Number << 16);
+			}
+			else
+			{
+				TK_Undo ();
+			}
+			TK_NextTokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+			TK_NextToken();
+		} while(tk_Token == TK_COMMA);
+		TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 		TK_NextToken();
-	} while(tk_Token == TK_COMMA);
-	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	}
+}
+
+//==========================================================================
+//
+// OuterLocalizedStrings
+//
+//==========================================================================
+
+static void OuterLocalizedStrings(void)
+{
+	int language = 0;	// Shut up, GCC
+	int strIndex;
+
+	MS_Message(MSG_DEBUG, "---- OuterLocalizedStrings ----\n");
+	if(ImportMode == IMPORT_Importing)
+	{ // We don't care about localizations when importing, because the
+	  // importer has no way of accessing them.
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+
+	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_MISSING_LANGCODE);
+
+	if(strlen(tk_String) != 3 && strlen(tk_String) != 2)
+	{
+		ERR_Error(ERR_LANGCODE_SIZE, YES);
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+	tk_String[0] = tolower(tk_String[0]);
+	tk_String[1] = tolower(tk_String[1]);
+	tk_String[2] = tolower(tk_String[2]);
+	if (tk_String[0] < 'a' || tk_String[0] > 'z' ||
+		tk_String[1] < 'a' || tk_String[1] > 'z' ||
+		(tk_String[2] && (tk_String[2] < 'a' || tk_String[2] > 'z')))
+	{
+		ERR_Error(ERR_BAD_LANGCODE, YES);
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+	if (ImportMode != IMPORT_Importing)
+	{
+		language = STR_FindLanguage(tk_String);
+		MS_Message(MSG_DEBUG, "Language %s (%d)\n", tk_String, language);
+	}
+
+	TK_NextToken();
+	if(tk_Token != TK_LBRACE)
+	{
+		ERR_Error(ERR_MISSING_LBRACE_LOC, YES);
+		SkipBraceBlock(0);
+		TK_NextToken();
+		return;
+	}
+	TK_NextToken();
+
+	while (tk_Token == TK_STRING)
+	{
+		strIndex = STR_Find(tk_String);
+		TK_NextTokenMustBe(TK_ASSIGN, ERR_MISSING_ASSIGN_OP);
+		TK_NextTokenMustBe(TK_STRING, ERR_MISSING_LOCALIZED);
+		if (ImportMode != IMPORT_Importing)
+		{
+			STR_PutStringInLanguage(language, strIndex, tk_String);
+		}
+		TK_NextToken();
+	}
+
+	TK_TokenMustBe(TK_RBRACE, ERR_MISSING_RBRACE_LOC);
 	TK_NextToken();
 }
 
@@ -486,23 +1096,29 @@ static void OuterSpecialDef(void)
 //
 //==========================================================================
 
-static void OuterDefine(void)
+static void OuterDefine(boolean force)
 {
 	int value;
 	symbolNode_t *sym;
 
-	MS_Message(MSG_DEBUG, "---- OuterDefine ----\n");
-	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
-	if(SY_FindGlobal(tk_String) != NULL)
-	{ // Redefined
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-			"Identifier: %s", tk_String);
+	// Don't define inside an import
+	if(ImportMode != IMPORT_Importing || force)
+	{
+		MS_Message(MSG_DEBUG, "---- OuterDefine %s----\n",
+			force ? "(forced) " : "");
+		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+		sym = SY_InsertGlobalUnique(tk_String, SY_CONSTANT);
+		TK_NextToken();
+		value = EvalConstExpression();
+		MS_Message(MSG_DEBUG, "Constant value: %d\n", value);
+		sym->info.constant.value = value;
 	}
-	sym = SY_InsertGlobal(tk_String, SY_CONSTANT);
-	TK_NextToken();
-	value = EvalConstExpression();
-	MS_Message(MSG_DEBUG, "Constant value: %d\n", value);
-	sym->info.constant.value = value;
+	else
+	{
+		TK_NextToken();
+		TK_NextToken();
+		EvalConstExpression();
+	}
 }
 
 //==========================================================================
@@ -513,9 +1129,41 @@ static void OuterDefine(void)
 
 static void OuterInclude(void)
 {
-	MS_Message(MSG_DEBUG, "---- OuterInclude ----\n");
-	TK_NextTokenMustBe(TK_STRING, ERR_STRING_LIT_NOT_FOUND);
-	TK_Include(tk_String);
+	// Don't include inside an import
+	if(ImportMode != IMPORT_Importing)
+	{
+		MS_Message(MSG_DEBUG, "---- OuterInclude ----\n");
+		TK_NextTokenMustBe(TK_STRING, ERR_STRING_LIT_NOT_FOUND);
+		TK_Include(tk_String);
+	}
+	else
+	{
+		TK_NextToken();
+	}
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+// OuterImport
+//
+//==========================================================================
+
+static void OuterImport(void)
+{
+
+	MS_Message(MSG_DEBUG, "---- OuterImport ----\n");
+	if(ImportMode == IMPORT_Importing)
+	{
+		// Don't import inside an import
+		TK_NextToken();
+	}
+	else
+	{
+		MS_Message(MSG_DEBUG, "Importing a file\n");
+		TK_NextTokenMustBe(TK_STRING, ERR_STRING_LIT_NOT_FOUND);
+		TK_Import(tk_String, ImportMode);
+	}
 	TK_NextToken();
 }
 
@@ -529,17 +1177,23 @@ static boolean ProcessStatement(statement_t owner)
 {
 	if(StatementIndex == MAX_STATEMENT_DEPTH)
 	{
-		ERR_Exit(ERR_STATEMENT_OVERFLOW, YES, NULL);
+		ERR_Exit(ERR_STATEMENT_OVERFLOW, YES);
 	}
 	StatementHistory[StatementIndex++] = owner;
 	switch(tk_Token)
 	{
 		case TK_INT:
 		case TK_STR:
+		case TK_BOOL:
 			LeadingVarDeclare();
 			break;
 		case TK_LINESPECIAL:
-			LeadingLineSpecial();
+			LeadingLineSpecial(NO);
+			break;
+		case TK_ACSEXECUTEWAIT:
+			tk_SpecialArgCount = 1 | (5<<16);
+			tk_SpecialValue = 80;
+			LeadingLineSpecial(YES);
 			break;
 		case TK_RESTART:
 			LeadingRestart();
@@ -550,12 +1204,19 @@ static boolean ProcessStatement(statement_t owner)
 		case TK_TERMINATE:
 			LeadingTerminate();
 			break;
+		case TK_RETURN:
+			LeadingReturn();
+			break;
 		case TK_IDENTIFIER:
 			LeadingIdentifier();
 			break;
 		case TK_PRINT:
 		case TK_PRINTBOLD:
 			LeadingPrint();
+			break;
+		case TK_HUDMESSAGE:
+		case TK_HUDMESSAGEBOLD:
+			LeadingHudMessage();
 			break;
 		case TK_IF:
 			LeadingIf();
@@ -576,40 +1237,64 @@ static boolean ProcessStatement(statement_t owner)
 		case TK_CASE:
 			if(owner != STMT_SWITCH)
 			{
-				ERR_Exit(ERR_CASE_NOT_IN_SWITCH, YES, NULL);
+				ERR_Error(ERR_CASE_NOT_IN_SWITCH, YES);
+				TK_SkipPast(TK_COLON);
 			}
-			LeadingCase();
+			else
+			{
+				LeadingCase();
+			}
 			break;
 		case TK_DEFAULT:
 			if(owner != STMT_SWITCH)
 			{
-				ERR_Exit(ERR_DEFAULT_NOT_IN_SWITCH, YES, NULL);
+				ERR_Error(ERR_DEFAULT_NOT_IN_SWITCH, YES);
+				TK_SkipPast(TK_COLON);
 			}
-			if(DefaultInCurrent() == YES)
+			else if(DefaultInCurrent() == YES)
 			{
-				ERR_Exit(ERR_MULTIPLE_DEFAULT, YES, NULL);
+				ERR_Error(ERR_MULTIPLE_DEFAULT, YES);
+				TK_SkipPast(TK_COLON);
 			}
-			LeadingDefault();
+			else
+			{
+				LeadingDefault();
+			}
 			break;
 		case TK_BREAK:
 			if(BreakAncestor() == NO)
 			{
-				ERR_Exit(ERR_MISPLACED_BREAK, YES, NULL);
+				ERR_Error(ERR_MISPLACED_BREAK, YES);
+				TK_SkipPast(TK_SEMICOLON);
 			}
-			LeadingBreak();
+			else
+			{
+				LeadingBreak();
+			}
 			break;
 		case TK_CONTINUE:
 			if(ContinueAncestor() == NO)
 			{
-				ERR_Exit(ERR_MISPLACED_CONTINUE, YES, NULL);
+				ERR_Error(ERR_MISPLACED_CONTINUE, YES);
+				TK_SkipPast(TK_SEMICOLON);
 			}
-			LeadingContinue();
+			else
+			{
+				LeadingContinue();
+			}
+			break;
+		case TK_CREATETRANSLATION:
+			LeadingCreateTranslation();
 			break;
 		case TK_LBRACE:
 			LeadingCompoundStatement(owner);
 			break;
 		case TK_SEMICOLON:
 			TK_NextToken();
+			break;
+		case TK_INC:
+		case TK_DEC:
+			LeadingIncDec(tk_Token);
 			break;
 		default:
 			StatementIndex--;
@@ -644,25 +1329,46 @@ static void LeadingCompoundStatement(statement_t owner)
 
 static void LeadingVarDeclare(void)
 {
-	symbolNode_t *sym;
+	symbolNode_t *sym = NULL;
 
 	MS_Message(MSG_DEBUG, "---- LeadingVarDeclare ----\n");
 	do
 	{
+		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
 		if(ScriptVarCount == MAX_SCRIPT_VARIABLES)
 		{
-			ERR_Exit(ERR_TOO_MANY_SCRIPT_VARS, YES, NULL);
+			ERR_Error(InsideFunction
+				? ERR_TOO_MANY_FUNCTION_VARS
+				: ERR_TOO_MANY_SCRIPT_VARS,
+				YES, NULL);
+			ScriptVarCount++;
 		}
-		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
-		if(SY_FindLocal(tk_String) != NULL)
+		else if(SY_FindLocal(tk_String) != NULL)
 		{ // Redefined
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, YES,
-				"Identifier: %s", tk_String);
+			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
 		}
-		sym = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
-		sym->info.var.index = ScriptVarCount;
-		ScriptVarCount++;
+		else
+		{
+			sym = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
+			sym->info.var.index = ScriptVarCount;
+			ScriptVarCount++;
+		}
 		TK_NextToken();
+		if(tk_Token == TK_LBRACKET)
+		{
+			ERR_Error(ERR_ARRAY_MAPVAR_ONLY, YES);
+			do ; while(TK_NextToken() != TK_COMMA && tk_Token != TK_SEMICOLON);
+		}
+		else if(tk_Token == TK_ASSIGN)
+		{
+			TK_NextToken();
+			EvalExpression();
+			if(sym != NULL)
+			{
+				PC_AppendCmd(PCD_ASSIGNSCRIPTVAR);
+				PC_AppendShrink(sym->info.var.index);
+			}
+		}
 	} while(tk_Token == TK_COMMA);
 	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	TK_NextToken();
@@ -674,57 +1380,138 @@ static void LeadingVarDeclare(void)
 //
 //==========================================================================
 
-static void LeadingLineSpecial(void)
+static void LeadingLineSpecial(boolean executewait)
 {
 	int i;
 	int argCount;
-	int specialValue;
+	int argCountMin;
+	int argCountMax;
+	int argSave[8];
+	U_BYTE specialValue;
 	boolean direct;
 
 	MS_Message(MSG_DEBUG, "---- LeadingLineSpecial ----\n");
-	argCount = tk_SpecialArgCount;
+	argCountMin = tk_SpecialArgCount & 0xffff;
+	argCountMax = tk_SpecialArgCount >> 16;
 	specialValue = tk_SpecialValue;
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
-	if(TK_NextToken() == TK_CONST)
-	{
-		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
-		PC_AppendCmd(PCD_LSPEC1DIRECT+(argCount-1));
-		PC_AppendLong(specialValue);
-		direct = YES;
-	}
-	else
-	{
-		TK_Undo();
-		direct = NO;
-	}
 	i = 0;
-	do
+	if(argCountMax > 0)
 	{
-		if(i == argCount)
+		if(TK_NextToken() == TK_CONST)
 		{
-			ERR_Exit(ERR_BAD_LSPEC_ARG_COUNT, YES, NULL);
-		}
-		TK_NextToken();
-		if(direct == YES)
-		{
-			PC_AppendLong(EvalConstExpression());
+			TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
+			direct = YES;
 		}
 		else
 		{
-			EvalExpression();
+			TK_Undo();
+			direct = NO;
 		}
-		i++;
-	} while(tk_Token == TK_COMMA);
-	if(i != argCount)
+		do
+		{
+			if(i == argCountMax)
+			{
+				ERR_Error(ERR_BAD_LSPEC_ARG_COUNT, YES);
+				i = argCountMax+1;
+			}
+			TK_NextToken();
+			if(direct == YES)
+			{
+				argSave[i] = EvalConstExpression();
+			}
+			else
+			{
+				EvalExpression();
+				if (i == 0 && executewait)
+				{
+					PC_AppendCmd(PCD_DUP);
+				}
+			}
+			if(i < argCountMax)
+			{
+				i++;
+			}
+		} while(tk_Token == TK_COMMA);
+		if(i < argCountMin)
+		{
+			ERR_Error(ERR_BAD_LSPEC_ARG_COUNT, YES);
+			TK_SkipPast(TK_SEMICOLON);
+			return;
+		}
+		argCount = i;
+	}
+	else
 	{
-		ERR_Exit(ERR_BAD_LSPEC_ARG_COUNT, YES, NULL);
+		// [RH] I added some zero-argument specials without realizing that
+		// ACS won't allow for less than one, so fake them as one-argument
+		// specials with a parameter of 0.
+		argCount = 1;
+		direct = YES;
+		argSave[0] = 0;
+		TK_NextToken ();
 	}
 	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
 	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	if(direct == NO)
 	{
 		PC_AppendCmd(PCD_LSPEC1+(argCount-1));
-		PC_AppendLong(specialValue);
+		if(pc_NoShrink)
+		{
+			PC_AppendLong(specialValue);
+		}
+		else
+		{
+			PC_AppendByte(specialValue);
+		}
+		if(executewait)
+		{
+			PC_AppendCmd(PCD_SCRIPTWAIT);
+		}
+	}
+	else
+	{
+		boolean uselongform;
+
+		if(pc_NoShrink)
+		{
+			PC_AppendCmd(PCD_LSPEC1DIRECT+(argCount-1));
+			PC_AppendLong(specialValue);
+			uselongform = YES;
+		}
+		else
+		{
+			uselongform = NO;
+			for (i = 0; i < argCount; i++)
+			{
+				if ((unsigned int)argSave[i] > 255)
+				{
+					uselongform = YES;
+					break;
+				}
+			}
+			PC_AppendCmd((argCount-1)+(uselongform?PCD_LSPEC1DIRECT:PCD_LSPEC1DIRECTB));
+			PC_AppendByte(specialValue);
+		}
+		if (uselongform)
+		{
+			for (i = 0; i < argCount; i++)
+			{
+				PC_AppendLong(argSave[i]);
+			}
+		}
+		else
+		{
+			for (i = 0; i < argCount; i++)
+			{
+				PC_AppendByte((U_BYTE)argSave[i]);
+			}
+		}
+		if(executewait)
+		{
+			PC_AppendCmd(PCD_SCRIPTWAITDIRECT);
+			PC_AppendLong(argSave[0]);
+		}
 	}
 	TK_NextToken();
 }
@@ -739,16 +1526,23 @@ static void LeadingIdentifier(void)
 {
 	symbolNode_t *sym;
 
-	sym = DemandSymbol(tk_String);
+	sym = SpeculateSymbol(tk_String, NO);
 	switch(sym->type)
 	{
+		case SY_MAPARRAY:
 		case SY_SCRIPTVAR:
 		case SY_MAPVAR:
 		case SY_WORLDVAR:
+		case SY_GLOBALVAR:
+		case SY_WORLDARRAY:
+		case SY_GLOBALARRAY:
 			LeadingVarAssign(sym);
 			break;
 		case SY_INTERNFUNC:
 			LeadingInternFunc(sym);
+			break;
+		case SY_SCRIPTFUNC:
+			LeadingScriptFunc(sym);
 			break;
 		default:
 			break;
@@ -763,6 +1557,10 @@ static void LeadingIdentifier(void)
 
 static void LeadingInternFunc(symbolNode_t *sym)
 {
+	if(InsideFunction && sym->info.internFunc.latent)
+	{
+		ERR_Error(ERR_LATENT_IN_FUNC, YES);
+	}
 	ProcessInternFunc(sym);
 	if(sym->info.internFunc.hasReturnValue == YES)
 	{
@@ -782,58 +1580,393 @@ static void ProcessInternFunc(symbolNode_t *sym)
 {
 	int i;
 	int argCount;
+	int optMask;
+	int outMask;
 	boolean direct;
+	boolean specialDirect;
+	int argSave[8];
 
 	MS_Message(MSG_DEBUG, "---- ProcessInternFunc ----\n");
 	argCount = sym->info.internFunc.argCount;
+	optMask = sym->info.internFunc.optMask;
+	outMask = sym->info.internFunc.outMask;
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
 	if(TK_NextToken() == TK_CONST)
 	{
 		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
 		if(sym->info.internFunc.directCommand == PCD_NOP)
 		{
-			ERR_Exit(ERR_NO_DIRECT_VER, YES, NULL);
+			ERR_Error(ERR_NO_DIRECT_VER, YES, NULL);
+			direct = NO;
+			specialDirect = NO;
 		}
-		PC_AppendCmd(sym->info.internFunc.directCommand);
-		direct = YES;
+		else
+		{
+			direct = YES;
+			if (pc_NoShrink || argCount > 2 ||
+				(sym->info.internFunc.directCommand != PCD_DELAYDIRECT &&
+				 sym->info.internFunc.directCommand != PCD_RANDOMDIRECT))
+			{
+				specialDirect = NO;
+				PC_AppendCmd(sym->info.internFunc.directCommand);
+			}
+			else
+			{
+				specialDirect = YES;
+			}
+		}
 		TK_NextToken();
 	}
 	else
 	{
 		direct = NO;
+		specialDirect = NO;	// keep GCC quiet
 	}
 	i = 0;
 	if(argCount > 0)
 	{
-		TK_Undo(); // Adjust for first expression
-		do
+		if(tk_Token == TK_RPAREN)
 		{
-			if(i == argCount)
+			ERR_Error(ERR_MISSING_PARAM, YES);
+		}
+		else
+		{
+			TK_Undo(); // Adjust for first expression
+			do
 			{
-				ERR_Exit(ERR_BAD_ARG_COUNT, YES, NULL);
-			}
-			TK_NextToken();
-			if(direct == YES)
+				if(i == argCount)
+				{
+					ERR_Error(ERR_BAD_ARG_COUNT, YES);
+					TK_SkipTo(TK_SEMICOLON);
+					TK_Undo();
+					return;
+				}
+				TK_NextToken();
+				if(direct == YES)
+				{
+					if (tk_Token != TK_COMMA)
+					{
+						if (specialDirect)
+						{
+							argSave[i] = EvalConstExpression();
+						}
+						else
+						{
+							PC_AppendLong(EvalConstExpression());
+						}
+					}
+					else
+					{
+						if (optMask & 1)
+						{
+							if (specialDirect)
+							{
+								argSave[i] = 0;
+							}
+							else
+							{
+								PC_AppendLong(0);
+							}
+						}
+						else
+						{
+							ERR_Error(ERR_MISSING_PARAM, YES);
+						}
+					}
+				}
+				else
+				{
+					if (tk_Token != TK_COMMA)
+					{
+						if (!(outMask & 1))
+						{
+							EvalExpression();
+						}
+						else if (tk_Token != TK_IDENTIFIER)
+						{
+							ERR_Error (ERR_PARM_MUST_BE_VAR, YES);
+							do
+							{
+								TK_NextToken();
+							} while (tk_Token != TK_COMMA && tk_Token != TK_RPAREN);
+						}
+						else
+						{
+							symbolNode_t *sym = DemandSymbol (tk_String);
+							PC_AppendCmd (PCD_PUSHNUMBER);
+							switch (sym->type)
+							{
+							case SY_SCRIPTVAR:
+								PC_AppendLong(sym->info.var.index | OUTVAR_SCRIPT_SPEC);
+								break;
+							case SY_MAPVAR:
+								PC_AppendLong(sym->info.var.index | OUTVAR_MAP_SPEC);
+								break;
+							case SY_WORLDVAR:
+								PC_AppendLong(sym->info.var.index | OUTVAR_WORLD_SPEC);
+								break;
+							case SY_GLOBALVAR:
+								PC_AppendLong(sym->info.var.index | OUTVAR_GLOBAL_SPEC);
+								break;
+							default:
+								ERR_Error (ERR_PARM_MUST_BE_VAR, YES);
+								do
+								{
+									TK_NextToken();
+								} while (tk_Token != TK_COMMA && tk_Token != TK_RPAREN);
+								break;
+							}
+							TK_NextToken ();
+						}
+					}
+					else
+					{
+						if (optMask & 1)
+						{
+							PC_AppendPushVal(0);
+						}
+						else
+						{
+							ERR_Error(ERR_MISSING_PARAM, YES);
+						}
+					}
+				}
+				i++;
+				optMask >>= 1;
+				outMask >>= 1;
+			} while(tk_Token == TK_COMMA);
+		}
+	}
+	while (i < argCount && (optMask & 1))
+	{
+		if (direct == YES)
+		{
+			if (specialDirect)
 			{
-				PC_AppendLong(EvalConstExpression());
+				argSave[i] = 0;
 			}
 			else
 			{
-				EvalExpression();
+				PC_AppendLong(0);
 			}
-			i++;
-		} while(tk_Token == TK_COMMA);
+		}
+		else
+		{
+			PC_AppendPushVal(0);
+		}
+		i++;
+		optMask >>= 1;
 	}
-	if(i != argCount)
+	if(i != argCount && i > 0)
 	{
-		ERR_Exit(ERR_BAD_ARG_COUNT, YES, NULL);
+		ERR_Error(ERR_BAD_ARG_COUNT, YES);
 	}
-	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	TK_TokenMustBe(TK_RPAREN, argCount > 0 ? ERR_MISSING_RPAREN : ERR_BAD_ARG_COUNT);
 	if(direct == NO)
 	{
 		PC_AppendCmd(sym->info.internFunc.stackCommand);
 	}
+	else if (specialDirect)
+	{
+		boolean uselongform = NO;
+		pcd_t shortpcd;
+
+		switch (sym->info.internFunc.directCommand)
+		{
+		case PCD_DELAYDIRECT:
+			shortpcd = PCD_DELAYDIRECTB;
+			break;
+		case PCD_RANDOMDIRECT:
+			shortpcd = PCD_RANDOMDIRECTB;
+			break;
+		default:
+			uselongform = YES;
+			shortpcd = PCD_NOP;
+			break;
+		}
+
+		if (!uselongform)
+		{
+			for (i = 0; i < argCount; i++)
+			{
+				if ((unsigned int)argSave[i] > 255)
+				{
+					uselongform = YES;
+					break;
+				}
+			}
+		}
+
+		if (uselongform)
+		{
+			PC_AppendCmd(sym->info.internFunc.directCommand);
+			for (i = 0; i < argCount; i++)
+			{
+				PC_AppendLong (argSave[i]);
+			}
+		}
+		else
+		{
+			PC_AppendCmd (shortpcd);
+			for (i = 0; i < argCount; i++)
+			{
+				PC_AppendByte ((U_BYTE)argSave[i]);
+			}
+		}
+	}
 	TK_NextToken();
+}
+
+//==========================================================================
+//
+// LeadingScriptFunc
+//
+//==========================================================================
+
+static void LeadingScriptFunc(symbolNode_t *sym)
+{
+	ProcessScriptFunc(sym, YES);
+	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	TK_NextToken();
+}
+
+
+//==========================================================================
+//
+// ProcessScriptFunc
+//
+//==========================================================================
+
+static void ProcessScriptFunc(symbolNode_t *sym, boolean discardReturn)
+{
+	int i;
+	int argCount;
+
+	MS_Message(MSG_DEBUG, "---- ProcessScriptFunc ----\n");
+	argCount = sym->info.scriptFunc.argCount;
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	i = 0;
+	if(argCount == 0)
+	{
+		TK_NextTokenMustBe(TK_RPAREN, ERR_BAD_ARG_COUNT);
+	}
+	else if(argCount > 0)
+	{
+		TK_NextToken();
+		if(tk_Token == TK_RPAREN)
+		{
+			ERR_Error(ERR_BAD_ARG_COUNT, YES);
+			TK_SkipTo(TK_SEMICOLON);
+			return;
+		}
+		TK_Undo();
+		do
+		{
+			if(i == argCount)
+			{
+				ERR_Error(ERR_BAD_ARG_COUNT, YES);
+				TK_SkipTo(TK_SEMICOLON);
+				return;
+			}
+			TK_NextToken();
+			if (tk_Token != TK_COMMA)
+			{
+				EvalExpression();
+			}
+			else
+			{
+				ERR_Error(ERR_MISSING_PARAM, YES);
+				TK_SkipTo(TK_SEMICOLON);
+				return;
+			}
+			i++;
+		} while(tk_Token == TK_COMMA);
+	}
+	if(argCount < 0)
+	{ // Function has not been defined yet, so assume arg count is correct
+		TK_NextToken();
+		while (tk_Token != TK_RPAREN)
+		{
+			EvalExpression();
+			i++;
+			if (tk_Token == TK_COMMA)
+			{
+				TK_NextToken();
+			}
+			else if (tk_Token != TK_RPAREN)
+			{
+				ERR_Error(ERR_MISSING_PARAM, YES);
+				TK_SkipTo(TK_SEMICOLON);
+				return;
+			}
+		}
+	}
+	else if(i != argCount)
+	{
+		ERR_Error(ERR_BAD_ARG_COUNT, YES);
+		TK_SkipTo(TK_SEMICOLON);
+		return;
+	}
+	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	PC_AppendCmd(discardReturn ? PCD_CALLDISCARD : PCD_CALL);
+	if(sym->info.scriptFunc.predefined && ImportMode != IMPORT_Importing)
+	{
+		AddScriptFuncRef(sym, pc_Address, i);
+	}
+	if (pc_NoShrink)
+	{
+		PC_AppendLong(sym->info.scriptFunc.funcNumber);
+	}
+	else
+	{
+		PC_AppendByte((U_BYTE)sym->info.scriptFunc.funcNumber);
+	}
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+// BuildPrintString
+//
+//==========================================================================
+
+static void BuildPrintString(void)
+{
+	pcd_t printCmd;
+
+	do
+	{
+		switch(TK_NextCharacter())
+		{
+			case 's': // string
+				printCmd = PCD_PRINTSTRING;
+				break;
+			case 'l': // [RH] localized string
+				printCmd = PCD_PRINTLOCALIZED;
+				break;
+			case 'i': // integer
+			case 'd': // decimal
+				printCmd = PCD_PRINTNUMBER;
+				break;
+			case 'c': // character
+				printCmd = PCD_PRINTCHARACTER;
+				break;
+			case 'n': // [BC] name
+				printCmd = PCD_PRINTNAME;
+				break;
+			case 'f': // [RH] fixed point
+				printCmd = PCD_PRINTFIXED;
+				break;
+			default:
+				printCmd = PCD_PRINTSTRING;
+				ERR_Error(ERR_UNKNOWN_PRTYPE, YES);
+				break;
+		}
+		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
+		TK_NextToken();
+		EvalExpression();
+		PC_AppendCmd(printCmd);
+	} while(tk_Token == TK_COMMA);
 }
 
 //==========================================================================
@@ -844,36 +1977,13 @@ static void ProcessInternFunc(symbolNode_t *sym)
 
 static void LeadingPrint(void)
 {
-	pcd_t printCmd = 0;
 	tokenType_t stmtToken;
 
 	MS_Message(MSG_DEBUG, "---- LeadingPrint ----\n");
 	stmtToken = tk_Token; // Will be TK_PRINT or TK_PRINTBOLD
 	PC_AppendCmd(PCD_BEGINPRINT);
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
-	do
-	{
-		switch(TK_NextCharacter())
-		{
-			case 's': // string
-				printCmd = PCD_PRINTSTRING;
-				break;
-			case 'i': // integer
-			case 'd': // decimal
-				printCmd = PCD_PRINTNUMBER;
-				break;
-			case 'c': // character
-				printCmd = PCD_PRINTCHARACTER;
-				break;
-			default:
-				ERR_Exit(ERR_UNKNOWN_PRTYPE, YES, NULL);
-				break;
-		}
-		TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
-		TK_NextToken();
-		EvalExpression();
-		PC_AppendCmd(printCmd);
-	} while(tk_Token == TK_COMMA);
+	BuildPrintString();
 	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
 	if(stmtToken == TK_PRINT)
 	{
@@ -883,6 +1993,128 @@ static void LeadingPrint(void)
 	{
 		PC_AppendCmd(PCD_ENDPRINTBOLD);
 	}
+	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+// LeadingHudMessage
+//
+// hudmessage(str text; int type, int id, int color, fixed x, fixed y, fixed holdtime, ...)
+//
+//==========================================================================
+
+static void LeadingHudMessage(void)
+{
+	tokenType_t stmtToken;
+	int i;
+
+	MS_Message(MSG_DEBUG, "---- LeadingHudMessage ----\n");
+	stmtToken = tk_Token; // Will be TK_HUDMESSAGE or TK_HUDMESSAGEBOLD
+	PC_AppendCmd(PCD_BEGINPRINT);
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	BuildPrintString();
+	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_PARAM);
+	PC_AppendCmd(PCD_MOREHUDMESSAGE);
+	for (i = 6; i > 0; i--)
+	{
+		TK_NextToken();
+		EvalExpression();
+		if (i > 1)
+			TK_TokenMustBe(TK_COMMA, ERR_MISSING_PARAM);
+	}
+	if (tk_Token == TK_COMMA)
+	{ // HUD message has optional parameters
+		PC_AppendCmd(PCD_OPTHUDMESSAGE);
+		do
+		{
+			TK_NextToken();
+			EvalExpression();
+		} while (tk_Token == TK_COMMA);
+	}
+	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	PC_AppendCmd(stmtToken == TK_HUDMESSAGE ? 
+		PCD_ENDHUDMESSAGE : PCD_ENDHUDMESSAGEBOLD);
+	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+// LeadingCreateTranslation
+//
+// Simple grammar:
+//
+// tranlationstmt: CreateTranslation ( exp opt_args ) ;
+// opt_args: /* empty: just reset the translation */ | , arglist
+// arglist: arg | arglist arg
+// arg: range = replacement
+// range: exp : exp
+// replacement: palrep | colorrep
+// palrep: exp : exp
+// colorrep: [exp,exp,exp]:[exp,exp,exp]
+//==========================================================================
+
+static void LeadingCreateTranslation(void)
+{
+	MS_Message(MSG_DEBUG, "---- LeadingCreateTranslation ----\n");
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	TK_NextToken();
+	EvalExpression();
+	PC_AppendCmd(PCD_STARTTRANSLATION);
+	while (tk_Token == TK_COMMA)
+	{
+		TK_NextToken();
+		EvalExpression();	// Get first palette entry in range
+		TK_TokenMustBe(TK_COLON, ERR_MISSING_COLON);
+		TK_NextToken();
+		EvalExpression();	// Get second palette entry in range
+		TK_TokenMustBe(TK_ASSIGN, ERR_MISSING_ASSIGN);
+
+		TK_NextToken();
+		if(tk_Token == TK_LBRACKET)
+		{ // Replacement is color range
+			int i, j;
+
+			TK_NextToken();
+
+			for(j = 2; j != 0; --j)
+			{
+				for(i = 3; i != 0; --i)
+				{
+					EvalExpression();
+					if(i != 1)
+					{
+						TK_TokenMustBe(TK_COMMA, ERR_MISSING_COMMA);
+					}
+					else
+					{
+						TK_TokenMustBe(TK_RBRACKET, ERR_MISSING_RBRACKET);
+					}
+					TK_NextToken();
+				}
+				if(j == 2)
+				{
+					TK_TokenMustBe(TK_COLON, ERR_MISSING_COLON);
+					TK_NextTokenMustBe(TK_LBRACKET, ERR_MISSING_LBRACKET);
+					TK_NextToken();
+				}
+			}
+			PC_AppendCmd(PCD_TRANSLATIONRANGE2);
+		}
+		else
+		{ // Replacement is palette range
+			EvalExpression();
+			TK_TokenMustBe(TK_COLON, ERR_MISSING_COLON);
+			TK_NextToken();
+			EvalExpression();
+			PC_AppendCmd(PCD_TRANSLATIONRANGE1);
+		}
+	}
+	PC_AppendCmd(PCD_ENDTRANSLATION);
+	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	TK_NextToken();
 }
 
@@ -908,7 +2140,7 @@ static void LeadingIf(void)
 	TK_NextToken();
 	if(ProcessStatement(STMT_IF) == NO)
 	{
-		ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
 	}
 	if(tk_Token == TK_ELSE)
 	{
@@ -919,7 +2151,7 @@ static void LeadingIf(void)
 		TK_NextToken();
 		if(ProcessStatement(STMT_ELSE) == NO)
 		{
-			ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+			ERR_Error(ERR_INVALID_STATEMENT, YES);
 		}
 		PC_WriteLong(pc_Address, jumpAddrPtr2);
 	}
@@ -937,6 +2169,47 @@ static void LeadingIf(void)
 
 static void LeadingFor(void)
 {
+	int exprAddr;
+	int incAddr;
+	int ifgotoAddr;
+	int	gotoAddr;
+
+	MS_Message(MSG_DEBUG, "---- LeadingFor ----\n");
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	TK_NextToken();
+	if(ProcessStatement(STMT_FOR) == NO)
+	{
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
+	}
+	exprAddr = pc_Address;
+	EvalExpression();
+	TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	TK_NextToken();
+	PC_AppendCmd(PCD_IFGOTO);
+	ifgotoAddr = pc_Address;
+	PC_SkipLong();
+	PC_AppendCmd(PCD_GOTO);
+	gotoAddr = pc_Address;
+	PC_SkipLong();
+	incAddr = pc_Address;
+	forSemicolonHack = TRUE;
+	if(ProcessStatement(STMT_FOR) == NO)
+	{
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
+	}
+	forSemicolonHack = FALSE;
+	PC_AppendCmd(PCD_GOTO);
+	PC_AppendLong(exprAddr);
+	PC_WriteLong(pc_Address,ifgotoAddr);
+	if(ProcessStatement(STMT_FOR) == NO)
+	{
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
+	}
+	PC_AppendCmd(PCD_GOTO);
+	PC_AppendLong(incAddr);
+	WriteContinues(incAddr);
+	WriteBreaks();
+	PC_WriteLong(pc_Address,gotoAddr);
 }
 
 //==========================================================================
@@ -964,7 +2237,7 @@ static void LeadingWhileUntil(void)
 	TK_NextToken();
 	if(ProcessStatement(STMT_WHILEUNTIL) == NO)
 	{
-		ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+		ERR_Error(ERR_INVALID_STATEMENT, YES);
 	}
 	PC_AppendCmd(PCD_GOTO);
 	PC_AppendLong(topAddr);
@@ -992,11 +2265,13 @@ static void LeadingDo(void)
 	TK_NextToken();
 	if(ProcessStatement(STMT_DO) == NO)
 	{
-		ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+		ERR_Error(ERR_INVALID_STATEMENT, YES, NULL);
 	}
 	if(tk_Token != TK_WHILE && tk_Token != TK_UNTIL)
 	{
-		ERR_Exit(ERR_BAD_DO_STATEMENT, YES, NULL);
+		ERR_Error(ERR_BAD_DO_STATEMENT, YES, NULL);
+		TK_SkipPast(TK_SEMICOLON);
+		return;
 	}
 	stmtToken = tk_Token;
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
@@ -1039,7 +2314,7 @@ static void LeadingSwitch(void)
 	TK_NextToken();
 	if(ProcessStatement(STMT_SWITCH) == NO)
 	{
-		ERR_Exit(ERR_INVALID_STATEMENT, YES, NULL);
+		ERR_Error(ERR_INVALID_STATEMENT, YES, NULL);
 	}
 
 	PC_AppendCmd(PCD_GOTO);
@@ -1111,7 +2386,7 @@ static void PushCase(int value, boolean isDefault)
 {
 	if(CaseIndex == MAX_CASE)
 	{
-		ERR_Exit(ERR_CASE_OVERFLOW, YES, NULL);
+		ERR_Exit(ERR_CASE_OVERFLOW, YES);
 	}
 	CaseInfo[CaseIndex].level = StatementLevel;
 	CaseInfo[CaseIndex].value = value;
@@ -1186,7 +2461,7 @@ static void PushBreak(void)
 {
 	if(BreakIndex == MAX_CASE)
 	{
-		ERR_Exit(ERR_BREAK_OVERFLOW, YES, NULL);
+		ERR_Exit(ERR_BREAK_OVERFLOW, YES);
 	}
 	BreakInfo[BreakIndex].level = StatementLevel;
 	BreakInfo[BreakIndex].addressPtr = pc_Address;
@@ -1201,10 +2476,6 @@ static void PushBreak(void)
 
 static void WriteBreaks(void)
 {
-	if(BreakIndex == 0)
-	{
-		return;
-	}
 	while(BreakIndex && BreakInfo[BreakIndex-1].level > StatementLevel)
 	{
 		PC_WriteLong(pc_Address, BreakInfo[--BreakIndex].addressPtr);
@@ -1260,7 +2531,7 @@ static void PushContinue(void)
 {
 	if(ContinueIndex == MAX_CONTINUE)
 	{
-		ERR_Exit(ERR_CONTINUE_OVERFLOW, YES, NULL);
+		ERR_Exit(ERR_CONTINUE_OVERFLOW, YES);
 	}
 	ContinueInfo[ContinueIndex].level = StatementLevel;
 	ContinueInfo[ContinueIndex].addressPtr = pc_Address;
@@ -1305,6 +2576,50 @@ static boolean ContinueAncestor(void)
 	return NO;
 }
 
+static void LeadingIncDec(int token)
+{
+	symbolNode_t *sym;
+
+	MS_Message(MSG_DEBUG, "---- LeadingIncDec ----\n");
+	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INCDEC_OP_ON_NON_VAR);
+	sym = DemandSymbol(tk_String);
+	if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
+		&& sym->type != SY_WORLDVAR && sym->type != SY_GLOBALVAR
+		&& sym->type != SY_MAPARRAY && sym->type != SY_GLOBALARRAY
+		&& sym->type != SY_WORLDARRAY)
+	{
+		ERR_Error(ERR_INCDEC_OP_ON_NON_VAR, YES);
+		TK_SkipPast(TK_SEMICOLON);
+		return;
+	}
+	TK_NextToken();
+	if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
+		|| sym->type == SY_GLOBALARRAY)
+	{
+		ParseArrayIndices(sym);
+		PC_AppendCmd(PCD_DUP);
+	}
+	else if(tk_Token == TK_LBRACKET)
+	{
+		ERR_Error(ERR_NOT_AN_ARRAY, YES, sym->name);
+		while(tk_Token == TK_LBRACKET)
+		{
+			TK_SkipPast(TK_RBRACKET);
+		}
+	}
+	PC_AppendCmd(GetIncDecPCD(token, sym->type));
+	PC_AppendShrink(sym->info.var.index);
+	if(forSemicolonHack)
+	{
+		TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	}
+	else
+	{
+		TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	}
+	TK_NextToken();
+}
+
 //==========================================================================
 //
 // LeadingVarAssign
@@ -1321,32 +2636,57 @@ static void LeadingVarAssign(symbolNode_t *sym)
 	do
 	{
 		TK_NextToken(); // Fetch assignment operator
+		if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
+			|| sym->type == SY_GLOBALARRAY)
+		{
+			ParseArrayIndices(sym);
+		}
+		else if(tk_Token == TK_LBRACKET)
+		{
+			ERR_Error(ERR_NOT_AN_ARRAY, YES, sym->name);
+			while(tk_Token == TK_LBRACKET)
+			{
+				TK_SkipPast(TK_RBRACKET);
+			}
+		}
 		if(tk_Token == TK_INC || tk_Token == TK_DEC)
 		{ // Postfix increment or decrement
 			PC_AppendCmd(GetIncDecPCD(tk_Token, sym->type));
-			PC_AppendLong(sym->info.var.index);
+			if (pc_NoShrink)
+			{
+				PC_AppendLong(sym->info.var.index);
+			}
+			else
+			{
+				PC_AppendByte(sym->info.var.index);
+			}
 			TK_NextToken();
 		}
 		else
 		{ // Normal operator
 			if(TK_Member(AssignOps) == NO)
 			{
-				ERR_Exit(ERR_MISSING_ASSIGN_OP, YES, NULL);
+				ERR_Error(ERR_MISSING_ASSIGN_OP, YES);
+				TK_SkipPast(TK_SEMICOLON);
+				return;
 			}
 			assignToken = tk_Token;
 			TK_NextToken();
 			EvalExpression();
 			PC_AppendCmd(GetAssignPCD(assignToken, sym->type));
-			PC_AppendLong(sym->info.var.index);
+			PC_AppendShrink(sym->info.var.index);
 		}
 		if(tk_Token == TK_COMMA)
 		{
 			TK_NextTokenMustBe(TK_IDENTIFIER, ERR_BAD_ASSIGNMENT);
 			sym = DemandSymbol(tk_String);
 			if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
-				&& sym->type != SY_WORLDVAR)
+				&& sym->type != SY_WORLDVAR && sym->type != SY_GLOBALVAR
+				&& sym->type != SY_WORLDARRAY && sym->type != SY_GLOBALARRAY)
 			{
-				ERR_Exit(ERR_BAD_ASSIGNMENT, YES, NULL);
+				ERR_Error(ERR_BAD_ASSIGNMENT, YES);
+				TK_SkipPast(TK_SEMICOLON);
+				return;
 			}
 		}
 		else
@@ -1366,41 +2706,39 @@ static void LeadingVarAssign(symbolNode_t *sym)
 
 static pcd_t GetAssignPCD(tokenType_t token, symbolType_t symbol)
 {
-	int i;
-	static struct
+	int i, j;
+	static tokenType_t tokenLookup[] =
 	{
-		tokenType_t token;
-		symbolType_t symbol;
-		pcd_t pcd;
-	}  assignmentLookup[] =
+		TK_ASSIGN, TK_ADDASSIGN, TK_SUBASSIGN,
+		TK_MULASSIGN, TK_DIVASSIGN, TK_MODASSIGN
+	};
+	static symbolType_t symbolLookup[] =
 	{
-		TK_ASSIGN, SY_SCRIPTVAR, PCD_ASSIGNSCRIPTVAR,
-		TK_ASSIGN, SY_MAPVAR, PCD_ASSIGNMAPVAR,
-		TK_ASSIGN, SY_WORLDVAR, PCD_ASSIGNWORLDVAR,
-		TK_ADDASSIGN, SY_SCRIPTVAR, PCD_ADDSCRIPTVAR,
-		TK_ADDASSIGN, SY_MAPVAR, PCD_ADDMAPVAR,
-		TK_ADDASSIGN, SY_WORLDVAR, PCD_ADDWORLDVAR,
-		TK_SUBASSIGN, SY_SCRIPTVAR, PCD_SUBSCRIPTVAR,
-		TK_SUBASSIGN, SY_MAPVAR, PCD_SUBMAPVAR,
-		TK_SUBASSIGN, SY_WORLDVAR, PCD_SUBWORLDVAR,
-		TK_MULASSIGN, SY_SCRIPTVAR, PCD_MULSCRIPTVAR,
-		TK_MULASSIGN, SY_MAPVAR, PCD_MULMAPVAR,
-		TK_MULASSIGN, SY_WORLDVAR, PCD_MULWORLDVAR,
-		TK_DIVASSIGN, SY_SCRIPTVAR, PCD_DIVSCRIPTVAR,
-		TK_DIVASSIGN, SY_MAPVAR, PCD_DIVMAPVAR,
-		TK_DIVASSIGN, SY_WORLDVAR, PCD_DIVWORLDVAR,
-		TK_MODASSIGN, SY_SCRIPTVAR, PCD_MODSCRIPTVAR,
-		TK_MODASSIGN, SY_MAPVAR, PCD_MODMAPVAR,
-		TK_MODASSIGN, SY_WORLDVAR, PCD_MODWORLDVAR,
-		TK_NONE
+		SY_SCRIPTVAR, SY_MAPVAR, SY_WORLDVAR, SY_GLOBALVAR, SY_MAPARRAY,
+		SY_WORLDARRAY, SY_GLOBALARRAY
+	};
+	static pcd_t assignmentLookup[6][7] =
+	{
+		{ PCD_ASSIGNSCRIPTVAR, PCD_ASSIGNMAPVAR, PCD_ASSIGNWORLDVAR, PCD_ASSIGNGLOBALVAR, PCD_ASSIGNMAPARRAY, PCD_ASSIGNWORLDARRAY, PCD_ASSIGNGLOBALARRAY },
+		{ PCD_ADDSCRIPTVAR, PCD_ADDMAPVAR, PCD_ADDWORLDVAR, PCD_ADDGLOBALVAR, PCD_ADDMAPARRAY, PCD_ADDWORLDARRAY, PCD_ADDGLOBALARRAY },
+		{ PCD_SUBSCRIPTVAR, PCD_SUBMAPVAR, PCD_SUBWORLDVAR, PCD_SUBGLOBALVAR, PCD_SUBMAPARRAY, PCD_SUBWORLDARRAY, PCD_SUBGLOBALARRAY },
+		{ PCD_MULSCRIPTVAR, PCD_MULMAPVAR, PCD_MULWORLDVAR, PCD_MULGLOBALVAR, PCD_MULMAPARRAY, PCD_MULWORLDARRAY, PCD_MULGLOBALARRAY },
+		{ PCD_DIVSCRIPTVAR, PCD_DIVMAPVAR, PCD_DIVWORLDVAR, PCD_DIVGLOBALVAR, PCD_DIVMAPARRAY, PCD_DIVWORLDARRAY, PCD_DIVGLOBALARRAY },
+		{ PCD_MODSCRIPTVAR, PCD_MODMAPVAR, PCD_MODWORLDVAR, PCD_MODGLOBALVAR, PCD_MODMAPARRAY, PCD_MODWORLDARRAY, PCD_MODGLOBALARRAY }
 	};
 
-	for(i = 0; assignmentLookup[i].token != TK_NONE; i++)
+	for(i = 0; i < ARRAY_SIZE(tokenLookup); ++i)
 	{
-		if(assignmentLookup[i].token == token
-			&& assignmentLookup[i].symbol == symbol)
+		if(tokenLookup[i] == token)
 		{
-			return assignmentLookup[i].pcd;
+			for(j = 0; j < ARRAY_SIZE(symbolLookup); ++j)
+			{
+				if (symbolLookup[j] == symbol)
+				{
+					return assignmentLookup[i][j];
+				}
+			}
+			break;
 		}
 	}
 	return PCD_NOP;
@@ -1415,6 +2753,10 @@ static pcd_t GetAssignPCD(tokenType_t token, symbolType_t symbol)
 static void LeadingSuspend(void)
 {
 	MS_Message(MSG_DEBUG, "---- LeadingSuspend ----\n");
+	if(InsideFunction)
+	{
+		ERR_Error(ERR_SUSPEND_IN_FUNCTION, YES);
+	}
 	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	PC_AppendCmd(PCD_SUSPEND);
 	TK_NextToken();
@@ -1429,6 +2771,10 @@ static void LeadingSuspend(void)
 static void LeadingTerminate(void)
 {
 	MS_Message(MSG_DEBUG, "---- LeadingTerminate ----\n");
+	if(InsideFunction)
+	{
+		ERR_Error(ERR_TERMINATE_IN_FUNCTION, YES);
+	}
 	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	PC_AppendCmd(PCD_TERMINATE);
 	TK_NextToken();
@@ -1443,9 +2789,56 @@ static void LeadingTerminate(void)
 static void LeadingRestart(void)
 {
 	MS_Message(MSG_DEBUG, "---- LeadingRestart ----\n");
+	if(InsideFunction)
+	{
+		ERR_Error(ERR_RESTART_IN_FUNCTION, YES);
+	}
 	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	PC_AppendCmd(PCD_RESTART);
 	TK_NextToken();
+}
+
+//==========================================================================
+//
+// LeadingReturn
+//
+//==========================================================================
+
+static void LeadingReturn(void)
+{
+	MS_Message(MSG_DEBUG, "---- LeadingReturn ----\n");
+	if(!InsideFunction)
+	{
+		ERR_Error(ERR_RETURN_OUTSIDE_FUNCTION, YES);
+		while (TK_NextToken () != TK_SEMICOLON)
+		{
+			if (tk_Token == TK_EOF)
+				break;
+		}
+	}
+	else
+	{
+		TK_NextToken();
+		if(tk_Token == TK_SEMICOLON)
+		{
+			if(InsideFunction->info.scriptFunc.hasReturnValue)
+			{
+				ERR_Error(ERR_MUST_RETURN_A_VALUE, YES);
+			}
+			PC_AppendCmd(PCD_RETURNVOID);
+		}
+		else
+		{
+			if(!InsideFunction->info.scriptFunc.hasReturnValue)
+			{
+				ERR_Error(ERR_MUST_NOT_RETURN_A_VALUE, YES);
+			}
+			EvalExpression();
+			TK_TokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+			PC_AppendCmd(PCD_RETURNVAL);
+		}
+		TK_NextToken();
+	}
 }
 
 //==========================================================================
@@ -1456,12 +2849,15 @@ static void LeadingRestart(void)
 
 static int EvalConstExpression(void)
 {
+	pa_ConstExprIsString = NO;	// Used by PC_PutMapVariable
 	ExprStackIndex = 0;
 	ConstantExpression = YES;
 	ExprLevA();
 	if(ExprStackIndex != 1)
 	{
-		ERR_Exit(ERR_BAD_CONST_EXPR, YES, NULL);
+		ERR_Error(ERR_BAD_CONST_EXPR, YES, NULL);
+		ExprStack[0] = 0;
+		ExprStackIndex = 1;
 	}
 	return PopExStk();
 }
@@ -1645,79 +3041,177 @@ static void ExprFactor(void)
 
 	switch(tk_Token)
 	{
-		case TK_STRING:
-			PC_AppendCmd(PCD_PUSHNUMBER);
-			PC_AppendLong(STR_Find(tk_String));
-			TK_NextToken();
-			break;
-		case TK_NUMBER:
-			PC_AppendCmd(PCD_PUSHNUMBER);
-			PC_AppendLong(tk_Number);
-			TK_NextToken();
-			break;
-		case TK_LPAREN:
-			TK_NextToken();
-			ExprLevA();
-			if(tk_Token != TK_RPAREN)
+	case TK_STRING:
+		if (ImportMode != IMPORT_Importing)
+		{
+			tk_Number = STR_Find(tk_String);
+			PC_AppendPushVal(tk_Number);
+			if (ImportMode == IMPORT_Exporting)
 			{
-				ERR_Exit(ERR_BAD_EXPR, YES, NULL);
+				// The VM identifies strings by storing a library ID in the
+				// high word of the string index. The library ID is not
+				// known until the script actually gets loaded into the game,
+				// so we need to use this p-code to tack the ID of the
+				// currently running library to the index of the string that
+				// just got pushed onto the stack.
+				//
+				// Simply assuming that a string is from the current library
+				// is not good enough, because they can be passed around
+				// between libraries and the map's behavior. Thus, we need
+				// to know which object file a particular string belongs to.
+				//
+				// A specific example:
+				// A map's behavior calls a function in a library and passes
+				// a string:
+				//
+				//    LibFunc ("The library will do something with this string.");
+				//
+				// The library function needs to know that the string originated
+				// outside the library. Similarly, if a library function returns
+				// a string, the caller needs to know that the string did not
+				// originate from the same object file.
+				//
+				// And that's why strings have library IDs tacked onto them.
+				// The map's main behavior (i.e. an object that is not a library)
+				// always uses library ID 0 to identify its strings, so its
+				// strings don't need to be tagged.
+				PC_AppendCmd(PCD_TAGSTRING);
 			}
+		}
+		TK_NextToken();
+		break;
+	case TK_NUMBER:
+		PC_AppendPushVal(tk_Number);
+		TK_NextToken();
+		break;
+	case TK_LPAREN:
+		TK_NextToken();
+		ExprLevA();
+		if(tk_Token != TK_RPAREN)
+		{
+			ERR_Error(ERR_BAD_EXPR, YES, NULL);
+			TK_SkipPast(TK_RPAREN);
+		}
+		else
+		{
 			TK_NextToken();
-			break;
-		case TK_NOT:
+		}
+		break;
+	case TK_NOT:
+		TK_NextToken();
+		ExprFactor();
+		PC_AppendCmd(PCD_NEGATELOGICAL);
+		break;
+	case TK_INC:
+	case TK_DEC:
+		opToken = tk_Token;
+		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INCDEC_OP_ON_NON_VAR);
+		sym = DemandSymbol(tk_String);
+		if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
+			&& sym->type != SY_WORLDVAR && sym->type != SY_GLOBALVAR
+			&& sym->type != SY_MAPARRAY && sym->type != SY_WORLDARRAY
+			&& sym->type != SY_GLOBALARRAY)
+		{
+			ERR_Error(ERR_INCDEC_OP_ON_NON_VAR, YES);
+		}
+		else
+		{
 			TK_NextToken();
-			ExprFactor();
-			PC_AppendCmd(PCD_NEGATELOGICAL);
-			break;
-		case TK_INC:
-		case TK_DEC:
-			opToken = tk_Token;
-			TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INCDEC_OP_ON_NON_VAR);
-			sym = DemandSymbol(tk_String);
-			if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
-				&& sym->type != SY_WORLDVAR)
+			if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
+				|| sym->type == SY_GLOBALARRAY)
 			{
-				ERR_Exit(ERR_INCDEC_OP_ON_NON_VAR, YES, NULL);
+				ParseArrayIndices(sym);
+				PC_AppendCmd(PCD_DUP);
+			}
+			else if(tk_Token == TK_LBRACKET)
+			{
+				ERR_Error(ERR_NOT_AN_ARRAY, YES, sym->name);
+				while(tk_Token == TK_LBRACKET)
+				{
+					TK_SkipPast(TK_RBRACKET);
+				}
 			}
 			PC_AppendCmd(GetIncDecPCD(opToken, sym->type));
-			PC_AppendLong(sym->info.var.index);
+			PC_AppendShrink(sym->info.var.index);
 			PC_AppendCmd(GetPushVarPCD(sym->type));
-			PC_AppendLong(sym->info.var.index);
-			TK_NextToken();
-			break;
-		case TK_IDENTIFIER:
-			sym = DemandSymbol(tk_String);
-			switch(sym->type)
-			{
-				case SY_SCRIPTVAR:
-				case SY_MAPVAR:
-				case SY_WORLDVAR:
-					PC_AppendCmd(GetPushVarPCD(sym->type));
-					PC_AppendLong(sym->info.var.index);
+			PC_AppendShrink(sym->info.var.index);
+		}
+		break;
+	case TK_IDENTIFIER:
+		sym = SpeculateSymbol(tk_String, YES);
+		switch(sym->type)
+		{
+			case SY_MAPARRAY:
+			case SY_WORLDARRAY:
+			case SY_GLOBALARRAY:
+				TK_NextToken();
+				ParseArrayIndices(sym);
+				// fallthrough
+			case SY_SCRIPTVAR:
+			case SY_MAPVAR:
+			case SY_WORLDVAR:
+			case SY_GLOBALVAR:
+				if(sym->type != SY_MAPARRAY && sym->type != SY_WORLDARRAY
+					&& sym->type != SY_GLOBALARRAY)
+				{
 					TK_NextToken();
-					if(tk_Token == TK_INC || tk_Token == TK_DEC)
+					if(tk_Token == TK_LBRACKET)
 					{
-						PC_AppendCmd(GetIncDecPCD(tk_Token, sym->type));
-						PC_AppendLong(sym->info.var.index);
-						TK_NextToken();
+						ERR_Error(ERR_NOT_AN_ARRAY, YES, sym->name);
+						while(tk_Token == TK_LBRACKET)
+						{
+							TK_SkipPast(TK_RBRACKET);
+						}
 					}
-					break;
-				case SY_INTERNFUNC:
-					if(sym->info.internFunc.hasReturnValue == NO)
+				}
+				if((tk_Token == TK_INC || tk_Token == TK_DEC)
+					&& (sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
+						|| sym->type == SY_GLOBALARRAY))
+				{
+					PC_AppendCmd(PCD_DUP);
+				}
+				PC_AppendCmd(GetPushVarPCD(sym->type));
+				PC_AppendShrink(sym->info.var.index);
+				if(tk_Token == TK_INC || tk_Token == TK_DEC)
+				{
+					if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
+						|| sym->type == SY_GLOBALARRAY)
 					{
-						ERR_Exit(ERR_EXPR_FUNC_NO_RET_VAL, YES, NULL);
+						PC_AppendCmd(PCD_SWAP);
 					}
-					ProcessInternFunc(sym);
-					break;
-				default:
-					ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, YES,
-						"Identifier: %s", tk_String);
-					break;
-			}
-			break;
-		default:
-			ERR_Exit(ERR_BAD_EXPR, YES, NULL);
-			break;
+					PC_AppendCmd(GetIncDecPCD(tk_Token, sym->type));
+					PC_AppendShrink(sym->info.var.index);
+					TK_NextToken();
+				}
+				break;
+			case SY_INTERNFUNC:
+				if(sym->info.internFunc.hasReturnValue == NO)
+				{
+					ERR_Error(ERR_EXPR_FUNC_NO_RET_VAL, YES);
+				}
+				ProcessInternFunc(sym);
+				break;
+			case SY_SCRIPTFUNC:
+				if(sym->info.scriptFunc.hasReturnValue == NO)
+				{
+					ERR_Error(ERR_EXPR_FUNC_NO_RET_VAL, YES);
+				}
+				ProcessScriptFunc(sym, NO);
+				break;
+			default:
+				ERR_Error(ERR_ILLEGAL_EXPR_IDENT, YES, tk_String);
+				TK_NextToken();
+				break;
+		}
+		break;
+	case TK_LINESPECIAL:
+		PC_AppendPushVal(tk_SpecialValue);
+		TK_NextToken();
+		break;
+	default:
+		ERR_Error(ERR_BAD_EXPR, YES);
+		TK_NextToken();
+		break;
 	}
 }
 
@@ -1725,31 +3219,55 @@ static void ConstExprFactor(void)
 {
 	switch(tk_Token)
 	{
-		case TK_STRING:
-			PushExStk(STR_Find(tk_String));
-			TK_NextToken();
-			break;
-		case TK_NUMBER:
-			PushExStk(tk_Number);
-			TK_NextToken();
-			break;
-		case TK_LPAREN:
-			TK_NextToken();
-			ExprLevA();
-			if(tk_Token != TK_RPAREN)
+	case TK_STRING:
+		if (ImportMode != IMPORT_Importing)
+		{
+			int strnum = STR_Find(tk_String);
+			if (ImportMode == IMPORT_Exporting)
 			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, YES, NULL);
+				pa_ConstExprIsString = YES;
 			}
+			PushExStk(strnum);
+		}
+		else
+		{
+			// Importing, so it doesn't matter
+			PushExStk(0);
+		}
+		TK_NextToken();
+		break;
+	case TK_NUMBER:
+		PushExStk(tk_Number);
+		TK_NextToken();
+		break;
+	case TK_LPAREN:
+		TK_NextToken();
+		ExprLevA();
+		if(tk_Token != TK_RPAREN)
+		{
+			ERR_Error(ERR_BAD_CONST_EXPR, YES);
+			TK_SkipPast(TK_RPAREN);
+		}
+		else
+		{
 			TK_NextToken();
-			break;
-		case TK_NOT:
+		}
+		break;
+	case TK_NOT:
+		TK_NextToken();
+		ConstExprFactor();
+		SendExprCommand(PCD_NEGATELOGICAL);
+		break;
+	default:
+		ERR_Error(ERR_BAD_CONST_EXPR, YES);
+		PushExStk(0);
+		while(tk_Token != TK_COMMA &&
+			tk_Token != TK_SEMICOLON &&
+			tk_Token != TK_RPAREN)
+		{
 			TK_NextToken();
-			ConstExprFactor();
-			SendExprCommand(PCD_NEGATELOGICAL);
-			break;
-		default:
-			ERR_Exit(ERR_BAD_CONST_EXPR, YES, NULL);
-			break;
+		}
+		break;
 	}
 }
 
@@ -1836,7 +3354,7 @@ static void SendExprCommand(pcd_t pcd)
 			PushExStk(-PopExStk());
 			break;
 		default:
-			ERR_Exit(ERR_UNKNOWN_CONST_EXPR_PCD, YES, NULL);
+			ERR_Exit(ERR_UNKNOWN_CONST_EXPR_PCD, YES);
 			break;
 	}
 }
@@ -1851,7 +3369,7 @@ static void PushExStk(int value)
 {
 	if(ExprStackIndex == EXPR_STACK_DEPTH)
 	{
-		ERR_Exit(ERR_EXPR_STACK_OVERFLOW, YES, NULL);
+		ERR_Exit(ERR_EXPR_STACK_OVERFLOW, YES);
 	}
 	ExprStack[ExprStackIndex++] = value;
 }
@@ -1866,7 +3384,8 @@ static int PopExStk(void)
 {
 	if(ExprStackIndex < 1)
 	{
-		ERR_Exit(ERR_EXPR_STACK_EMPTY, YES, NULL);
+		ERR_Error(ERR_EXPR_STACK_EMPTY, YES);
+		return 0;
 	}
 	return ExprStack[--ExprStackIndex];
 }
@@ -1886,20 +3405,20 @@ static pcd_t TokenToPCD(tokenType_t token)
 		pcd_t pcd;
 	}  operatorLookup[] =
 	{
-		TK_EQ, PCD_EQ,
-		TK_NE, PCD_NE,
-		TK_LT, PCD_LT,
-		TK_LE, PCD_LE,
-		TK_GT, PCD_GT,
-		TK_GE, PCD_GE,
-		TK_LSHIFT, PCD_LSHIFT,
-		TK_RSHIFT, PCD_RSHIFT,
-		TK_PLUS, PCD_ADD,
-		TK_MINUS, PCD_SUBTRACT,
-		TK_ASTERISK, PCD_MULTIPLY,
-		TK_SLASH, PCD_DIVIDE,
-		TK_PERCENT, PCD_MODULUS,
-		TK_NONE
+		{ TK_EQ, PCD_EQ },
+		{ TK_NE, PCD_NE },
+		{ TK_LT, PCD_LT },
+		{ TK_LE, PCD_LE },
+		{ TK_GT, PCD_GT },
+		{ TK_GE, PCD_GE },
+		{ TK_LSHIFT, PCD_LSHIFT },
+		{ TK_RSHIFT, PCD_RSHIFT },
+		{ TK_PLUS, PCD_ADD },
+		{ TK_MINUS, PCD_SUBTRACT },
+		{ TK_ASTERISK, PCD_MULTIPLY },
+		{ TK_SLASH, PCD_DIVIDE },
+		{ TK_PERCENT, PCD_MODULUS },
+		{ TK_NONE }
 	};
 
 	for(i = 0; operatorLookup[i].token != TK_NONE; i++)
@@ -1928,6 +3447,14 @@ static pcd_t GetPushVarPCD(symbolType_t symType)
 			return PCD_PUSHMAPVAR;
 		case SY_WORLDVAR:
 			return PCD_PUSHWORLDVAR;
+		case SY_GLOBALVAR:
+			return PCD_PUSHGLOBALVAR;
+		case SY_MAPARRAY:
+			return PCD_PUSHMAPARRAY;
+		case SY_WORLDARRAY:
+			return PCD_PUSHWORLDARRAY;
+		case SY_GLOBALARRAY:
+			return PCD_PUSHGLOBALARRAY;
 		default:
 			break;
 	}
@@ -1950,13 +3477,23 @@ static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol)
 		pcd_t pcd;
 	}  incDecLookup[] =
 	{
-		TK_INC, SY_SCRIPTVAR, PCD_INCSCRIPTVAR,
-		TK_INC, SY_MAPVAR, PCD_INCMAPVAR,
-		TK_INC, SY_WORLDVAR, PCD_INCWORLDVAR,
-		TK_DEC, SY_SCRIPTVAR, PCD_DECSCRIPTVAR,
-		TK_DEC, SY_MAPVAR, PCD_DECMAPVAR,
-		TK_DEC, SY_WORLDVAR, PCD_DECWORLDVAR,
-		TK_NONE
+		{ TK_INC, SY_SCRIPTVAR, PCD_INCSCRIPTVAR },
+		{ TK_INC, SY_MAPVAR, PCD_INCMAPVAR },
+		{ TK_INC, SY_WORLDVAR, PCD_INCWORLDVAR },
+		{ TK_INC, SY_GLOBALVAR, PCD_INCGLOBALVAR },
+		{ TK_INC, SY_MAPARRAY, PCD_INCMAPARRAY },
+		{ TK_INC, SY_WORLDARRAY, PCD_INCWORLDARRAY },
+		{ TK_INC, SY_GLOBALARRAY, PCD_INCGLOBALARRAY },
+
+		{ TK_DEC, SY_SCRIPTVAR, PCD_DECSCRIPTVAR },
+		{ TK_DEC, SY_MAPVAR, PCD_DECMAPVAR },
+		{ TK_DEC, SY_WORLDVAR, PCD_DECWORLDVAR },
+		{ TK_DEC, SY_GLOBALVAR, PCD_DECGLOBALVAR },
+		{ TK_DEC, SY_MAPARRAY, PCD_DECMAPARRAY },
+		{ TK_DEC, SY_WORLDARRAY, PCD_DECWORLDARRAY },
+		{ TK_DEC, SY_GLOBALARRAY, PCD_DECGLOBALARRAY },
+
+		{ TK_NONE }
 	};
 
 	for(i = 0; incDecLookup[i].token != TK_NONE; i++)
@@ -1972,6 +3509,150 @@ static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol)
 
 //==========================================================================
 //
+// ParseArrayIndices
+//
+//==========================================================================
+
+static void ParseArrayIndices(symbolNode_t *sym)
+{
+	boolean warned = NO;
+	int i;
+
+	TK_TokenMustBe(TK_LBRACKET, ERR_MISSING_LBRACKET);
+	i = 0;
+	while(tk_Token == TK_LBRACKET)
+	{
+		TK_NextToken();
+		if((sym->type == SY_MAPARRAY && i == sym->info.array.ndim) ||
+			(sym->type != SY_MAPARRAY && i > 0))
+		{
+			if (!warned)
+			{
+				warned = YES;
+				ERR_Error(ERR_TOO_MANY_DIM_USED, YES,
+					sym->name, sym->info.array.ndim);
+			}
+		}
+		if(i > 0)
+		{
+			PC_AppendPushVal(sym->info.array.dimensions[i-1]);
+			PC_AppendCmd(PCD_MULTIPLY);
+		}
+		EvalExpression();
+		if(i > 0)
+		{
+			PC_AppendCmd(PCD_ADD);
+		}
+		i++;
+		TK_TokenMustBe(TK_RBRACKET, ERR_MISSING_RBRACKET);
+		TK_NextToken();
+	}
+}
+
+static int *ProcessArrayLevel(int level, int *entry, int ndim,
+	int dims[MAX_ARRAY_DIMS], int muls[MAX_ARRAY_DIMS], char *name)
+{
+	int i;
+
+	for(i = 0; i < dims[level-1]; ++i)
+	{
+		if(tk_Token == TK_COMMA)
+		{
+			entry += muls[level-1];
+			TK_NextToken();
+		}
+		else if(tk_Token == TK_RBRACE)
+		{
+			TK_NextToken();
+			if(level > 1)
+			{
+				return entry + muls[level-2] - i;
+			}
+			else
+			{
+				return entry + (muls[0]*dims[0]) - i;
+			}
+		}
+		else
+		{
+			if(level == ndim)
+			{
+				if(tk_Token == TK_LBRACE)
+				{
+					ERR_Error(ERR_TOO_MANY_DIM_USED, YES, name, ndim);
+					SkipBraceBlock(0);
+					TK_NextToken();
+					entry++;
+				}
+				else
+				{
+					*entry++ = EvalConstExpression();
+					ArrayHasStrings |= pa_ConstExprIsString;
+				}
+			}
+			else
+			{
+				TK_TokenMustBe(TK_LBRACE, ERR_MISSING_LBRACE_ARR);
+				TK_NextToken();
+				entry = ProcessArrayLevel(level+1, entry, ndim, dims, muls, name);
+			}
+			if(i < dims[level-1]-1)
+			{
+				if(tk_Token != TK_RBRACE)
+				{
+					TK_TokenMustBe(TK_COMMA, ERR_MISSING_COMMA);
+					TK_NextToken();
+				}
+			}
+			else
+			{
+				if(tk_Token != TK_COMMA)
+				{
+					TK_TokenMustBe(TK_RBRACE, ERR_MISSING_RBRACE_ARR);
+				}
+				else
+				{
+					TK_NextToken();
+				}
+			}
+		}
+	}
+	TK_TokenMustBe(TK_RBRACE, ERR_MISSING_RBRACE_ARR);
+	TK_NextToken();
+	return entry;
+}
+
+//==========================================================================
+//
+// InitializeArray
+//
+//==========================================================================
+
+static void InitializeArray(symbolNode_t *sym, int dims[MAX_ARRAY_DIMS], int size)
+{
+	static int *entries = NULL;
+	static int lastsize = -1;
+
+	if(lastsize < size)
+	{
+		entries = MS_Realloc(entries, sizeof(int)*size, ERR_OUT_OF_MEMORY);
+		lastsize = size;
+	}
+	memset(entries, 0, sizeof(int)*size);
+
+	TK_NextTokenMustBe(TK_LBRACE, ERR_MISSING_LBRACE_ARR);
+	TK_NextToken();
+	ArrayHasStrings = NO;
+	ProcessArrayLevel(1, entries, sym->info.array.ndim, dims,
+		sym->info.array.dimensions, sym->name);
+	if(ImportMode != IMPORT_Importing)
+	{
+		PC_InitArray(sym->info.array.index, entries, ArrayHasStrings);
+	}
+}
+
+//==========================================================================
+//
 // DemandSymbol
 //
 //==========================================================================
@@ -1982,8 +3663,191 @@ static symbolNode_t *DemandSymbol(char *name)
 
 	if((sym = SY_Find(name)) == NULL)
 	{
-		ERR_Exit(ERR_UNKNOWN_IDENTIFIER, YES,
-			"Identifier: %s", name);
+		ERR_Exit(ERR_UNKNOWN_IDENTIFIER, YES, name);
 	}
 	return sym;
+}
+
+//==========================================================================
+//
+// SpeculateSymbol
+//
+//==========================================================================
+
+static symbolNode_t *SpeculateSymbol(char *name, boolean hasReturn)
+{
+	symbolNode_t *sym;
+
+	sym = SY_Find(name);
+	if(sym == NULL)
+	{
+		char name[MAX_IDENTIFIER_LENGTH];
+
+		strcpy (name, tk_String);
+		TK_NextToken();
+		if(tk_Token == TK_LPAREN)
+		{ // Looks like a function call
+			sym = SpeculateFunction(name, hasReturn);
+			TK_Undo();
+		}
+		else
+		{
+			ERR_Exit(ERR_UNKNOWN_IDENTIFIER, YES, name);
+		}
+	}
+	return sym;
+}
+
+//==========================================================================
+//
+// SpeculateFunction
+//
+// Add a temporary symbol for a function that is used before it is defined.
+//
+//==========================================================================
+
+static symbolNode_t *SpeculateFunction(const char *name, boolean hasReturn)
+{
+	symbolNode_t *sym;
+	
+	MS_Message(MSG_DEBUG, "---- SpeculateFunction %s ----\n", name);
+	sym = SY_InsertGlobal(tk_String, SY_SCRIPTFUNC);
+	sym->info.scriptFunc.predefined = YES;
+	sym->info.scriptFunc.hasReturnValue = hasReturn;
+	sym->info.scriptFunc.sourceLine = tk_Line;
+	sym->info.scriptFunc.sourceName = tk_SourceName;
+	sym->info.scriptFunc.argCount = -1;
+	sym->info.scriptFunc.funcNumber = 0;
+	return sym;
+}
+
+//==========================================================================
+//
+// UnspeculateFunction
+//
+// Fills in function calls that were made before this function was defined.
+//
+//==========================================================================
+
+static void UnspeculateFunction(symbolNode_t *sym)
+{
+	prefunc_t *fillin;
+	prefunc_t **prev;
+
+	prev = &FillinFunctions;
+	fillin = FillinFunctions;
+	while(fillin != NULL)
+	{
+		prefunc_t *next = fillin->next;
+		if(fillin->sym == sym)
+		{
+			if(fillin->argcount != sym->info.scriptFunc.argCount)
+			{
+				ERR_ErrorAt(fillin->source, fillin->line);
+				ERR_Error(ERR_FUNC_ARGUMENT_COUNT, YES, sym->name,
+					sym->info.scriptFunc.argCount,
+					sym->info.scriptFunc.argCount == 1 ? "" : "s");
+			}
+
+			if(pc_NoShrink)
+			{
+				PC_WriteLong(sym->info.scriptFunc.funcNumber, fillin->address);
+			}
+			else
+			{
+				PC_WriteByte((U_BYTE)sym->info.scriptFunc.funcNumber, fillin->address);
+			}
+			if(FillinFunctionsLatest == &fillin->next)
+			{
+				FillinFunctionsLatest = prev;
+			}
+			free (fillin);
+			*prev = next;
+		}
+		else
+		{
+			prev = &fillin->next;
+		}
+		fillin = next;
+	}
+}
+
+//==========================================================================
+//
+// AddScriptFuncRef
+//
+//==========================================================================
+
+static void AddScriptFuncRef(symbolNode_t *sym, int address, int argcount)
+{
+	prefunc_t *fillin = MS_Alloc(sizeof(*fillin), ERR_OUT_OF_MEMORY);
+	fillin->next = NULL;
+	fillin->sym = sym;
+	fillin->address = address;
+	fillin->argcount = argcount;
+	fillin->line = tk_Line;
+	fillin->source = tk_SourceName;
+	*FillinFunctionsLatest = fillin;
+	FillinFunctionsLatest = &fillin->next;
+}
+
+//==========================================================================
+//
+// Check for undefined functions
+//
+//==========================================================================
+
+static void CheckForUndefinedFunctions(void)
+{
+	prefunc_t *fillin = FillinFunctions;
+
+	while(fillin != NULL)
+	{
+		ERR_ErrorAt(fillin->source, fillin->line);
+		ERR_Error(ERR_UNDEFINED_FUNC, YES, fillin->sym->name);
+		fillin = fillin->next;
+	}
+}
+
+//==========================================================================
+//
+// SkipBraceBlock
+//
+// If depth is 0, it scans for the first { and then starts going from there.
+// At exit, the terminating } is left as the current token.
+//
+//==========================================================================
+
+void SkipBraceBlock(int depth)
+{
+	if (depth == 0)
+	{
+		// Find first {
+		while(tk_Token != TK_LBRACE)
+		{
+			if(tk_Token == TK_EOF)
+			{
+				ERR_Exit(ERR_EOF, NO);
+			}
+			TK_NextToken();
+		}
+		depth = 1;
+	}
+	// Match it with a }
+	do
+	{
+		TK_NextToken();
+		if(tk_Token == TK_EOF)
+		{
+			ERR_Exit(ERR_EOF, NO);
+		}
+		else if (tk_Token == TK_LBRACE)
+		{
+			depth++;
+		}
+		else if (tk_Token == TK_RBRACE)
+		{
+			depth--;
+		}
+	} while (depth > 0);
 }
