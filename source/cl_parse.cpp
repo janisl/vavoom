@@ -361,7 +361,7 @@ static void CL_ParseViewData(void)
 	cl.health = net_msg.ReadByte();
 	net_msg >> cl.items;
 	for (i = 0; i < MAXPLAYERS; i++)
-		cl.frags[i] = net_msg.ReadByte();
+		cl.frags[i] = (char)net_msg.ReadByte();
 
 	bits = net_msg.ReadByte();
 	for (i = 0; i < NUM_CSHIFTS; i++)
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/28 17:59:04  dj_jl
+//	Fixed negative frags.
+//
 //	Revision 1.23  2002/03/12 19:21:55  dj_jl
 //	No need for linefeed in client-printing
-//
+//	
 //	Revision 1.22  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	
