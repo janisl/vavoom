@@ -686,8 +686,13 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 void Z_Init(void* base, int size)
 {
 	guard(Z_Init);
-	int			minsize = 256 * 1024;
+	int			minsize;
 
+	minsize = size / 32;
+	if (minsize < 256 * 1024)
+	{
+		minsize = 256 * 1024;
+	}
 	int p = M_CheckParm("-minzone");
 	if (p && p < myargc - 1)
 	{
@@ -874,9 +879,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/01/30 17:33:36  dj_jl
+//	Better minzone size
+//
 //	Revision 1.12  2003/12/19 17:37:33  dj_jl
 //	Got rid of new header
-//
+//	
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	
