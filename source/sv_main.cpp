@@ -1843,8 +1843,7 @@ int SV_FindSkin(const char *name)
 void SV_SendServerInfo(player_t *player)
 {
 	int			i;
-	byte		buf[MAX_MSGLEN];
-	TMessage	msg(buf, MAX_MSGLEN);
+	TMessage	&msg = player->Message;
 
 	msg << (byte)svc_server_info
 		<< (byte)PROTOCOL_VERSION
@@ -1887,11 +1886,6 @@ void SV_SendServerInfo(player_t *player)
 
 	msg << (byte)svc_signonnum
 		<< (byte)1;
-	if (NET_SendMessage(player->NetCon, &msg) == -1)
-	{
-		SV_DropClient(true);
-		cond << "Send failed\n";
-	}
 }
 
 //==========================================================================
@@ -2694,9 +2688,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2002/02/16 16:30:36  dj_jl
+//	Fixed sending server infor to remote clients
+//
 //	Revision 1.35  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.34  2002/02/14 19:23:58  dj_jl
 //	Beautification
 //	
