@@ -79,7 +79,6 @@ void S_InitScript(void)
     //	Allocate memory for sound info
     //
 
-	S_sfx.SetTag(PU_STATIC);
 	S_sfx.AddZeroed();
 
     //
@@ -343,10 +342,13 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/12 18:05:00  dj_jl
+//	Beautification
+//
 //	Revision 1.6  2002/01/11 08:11:05  dj_jl
 //	Changes in sound list
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
