@@ -39,6 +39,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void FixupHeights(void);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -693,6 +695,7 @@ void ProcessDehackedFiles(int argc, char **argv)
         	break;
 	if (p == argc)
     {
+		FixupHeights();
     	return;
     }
 
@@ -711,9 +714,12 @@ void ProcessDehackedFiles(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/27 17:04:39  dj_jl
+//	Effects and static lights in mobjinfo, mobj classes
+//
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -877,7 +877,12 @@ sfx2_None,		// deathsound
 0,		// damage
 sfx2_None,		// activesound
 MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
-0		// flags2
+0,		// flags2
+0,
+0,
+0,
+"AddStaticLight(origin,\n"
+"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
 {		// MT_SERPTORCH
@@ -904,7 +909,12 @@ sfx2_None,		// deathsound
 0,		// damage
 sfx2_None,		// activesound
 MF_SOLID,		// flags
-0		// flags2
+0,		// flags2
+0,
+0,
+0,
+"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
 {		// MT_SMALLPILLAR
@@ -1066,7 +1076,12 @@ sfx2_None,		// deathsound
 0,		// damage
 sfx2_None,		// activesound
 MF_SOLID,		// flags
-0		// flags2
+0,		// flags2
+0,
+0,
+0,
+"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
 {		// MT_BARREL
@@ -1201,7 +1216,12 @@ sfx2_None,		// deathsound
 0,		// damage
 sfx2_None,		// activesound
 MF_NOGRAVITY,		// flags
-0		// flags2
+0,		// flags2
+0,
+0,
+0,
+"AddStaticLight(origin + vector(0.0, 0.0, 80.0),\n"
+"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
 {		// MT_MISC11
@@ -1390,7 +1410,10 @@ sfx2_volhit,		// deathsound
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
-MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_VOLCANOTBLAST
@@ -1417,7 +1440,10 @@ sfx2_None,		// deathsound
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF,		// flags
-MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_TELEGLITGEN
@@ -1795,7 +1821,10 @@ sfx2_blshit,		// deathsound
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_BLUE"
  },
 
 {		// MT_BLASTERSMOKE
@@ -2092,7 +2121,10 @@ sfx2_hrnhit,		// deathsound
 3,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_HORNRODFX2
@@ -2119,7 +2151,10 @@ sfx2_ramphit,		// deathsound
 10,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_RAINPLR1
@@ -2254,7 +2289,10 @@ sfx2_gldhit,		// deathsound
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,	// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_GOLDWANDFX2
@@ -2281,7 +2319,10 @@ S2_NULL,		// xdeathstate
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_GOLDWANDPUFF1
@@ -2389,7 +2430,10 @@ sfx2_phohit,		// deathsound
 20,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_THRUGHOST|MF2_NOTELEPORT		// flags2
+MF2_THRUGHOST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_PHOENIXPUFF
@@ -2443,7 +2487,10 @@ S2_NULL,		// xdeathstate
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_MISC15
@@ -2524,7 +2571,10 @@ sfx2_hrnhit,		// deathsound
 6,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_GREEN"
  },
 
 {		// MT_CRBOWFX3
@@ -2551,7 +2601,10 @@ sfx2_hrnhit,		// deathsound
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_GREEN"
  },
 
 {		// MT_CRBOWFX4
@@ -2929,7 +2982,10 @@ S2_NULL,		// xdeathstate
 4,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_BEAST
@@ -2983,7 +3039,10 @@ S2_NULL,		// xdeathstate
 4,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_BURNBALL
@@ -3010,7 +3069,10 @@ S2_NULL,		// xdeathstate
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_BURNBALLFB
@@ -3037,7 +3099,10 @@ S2_NULL,		// xdeathstate
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_NOGRAVITY|MF_MISSILE,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_PUFFY
@@ -3118,7 +3183,10 @@ S2_NULL,		// xdeathstate
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_MAGENTA"
  },
 
 {		// MT_SNAKEPRO_B
@@ -3145,7 +3213,10 @@ S2_NULL,		// xdeathstate
 3,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_HEAD
@@ -3199,7 +3270,10 @@ S2_NULL,		// xdeathstate
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_THRUGHOST		// flags2
+MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
+0,
+0,
+"EF_DL_BLUE"
  },
 
 {		// MT_HEADFX2
@@ -3226,7 +3300,10 @@ S2_NULL,		// xdeathstate
 3,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_BLUE"
  },
 
 {		// MT_HEADFX3
@@ -3253,7 +3330,10 @@ S2_NULL,		// xdeathstate
 5,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_WHIRLWIND
@@ -3361,7 +3441,10 @@ S2_NULL,		// xdeathstate
 3,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_MAGENTA"
  },
 
 {		// MT_IMP
@@ -3496,7 +3579,10 @@ S2_NULL,		// xdeathstate
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_KNIGHT
@@ -3577,7 +3663,10 @@ sfx2_hrnhit,		// deathsound
 2,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_THRUGHOST		// flags2
+MF2_WINDTHRUST|MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
+0,
+0,
+"EF_DL_GREEN"
  },
 
 {		// MT_REDAXE
@@ -3604,7 +3693,10 @@ sfx2_hrnhit,		// deathsound
 7,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_THRUGHOST		// flags2
+MF2_NOTELEPORT|MF2_THRUGHOST,		// flags2
+0,
+0,
+"EF_DL_RED"
  },
 
 {		// MT_SORCERER1
@@ -3658,7 +3750,10 @@ S2_NULL,		// xdeathstate
 10,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_SORCERER2
@@ -3712,7 +3807,10 @@ S2_NULL,		// xdeathstate
 1,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_BLUE"
  },
 
 {		// MT_SOR2FXSPARK
@@ -3766,7 +3864,10 @@ S2_NULL,		// xdeathstate
 10,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT		// flags2
+MF2_NOTELEPORT,		// flags2
+0,
+0,
+"EF_DL_BLUE"
  },
 
 {		// MT_SOR2TELEFADE
@@ -3847,7 +3948,10 @@ S2_NULL,		// xdeathstate
 3,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_MNTRFX2
@@ -3874,7 +3978,10 @@ sfx2_phohit,		// deathsound
 4,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_MNTRFX3
@@ -3901,7 +4008,10 @@ sfx2_phohit,		// deathsound
 4,		// damage
 sfx2_None,		// activesound
 MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
-MF2_NOTELEPORT|MF2_FIREDAMAGE		// flags2
+MF2_NOTELEPORT|MF2_FIREDAMAGE,		// flags2
+0,
+0,
+"EF_DL_WHITE"
  },
 
 {		// MT_AKYY
@@ -4367,9 +4477,12 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/27 17:04:39  dj_jl
+//	Effects and static lights in mobjinfo, mobj classes
+//
 //	Revision 1.3  2001/09/20 16:34:58  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

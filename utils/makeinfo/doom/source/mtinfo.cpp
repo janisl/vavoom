@@ -167,7 +167,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_MISSILE",
     },
 
     {		// MT_UNDEAD
@@ -223,7 +225,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_RBALL"
     },
 
     {		// MT_SMOKE
@@ -307,7 +311,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_RBALL"
     },
 
     {		// MT_CHAINGUY
@@ -503,7 +509,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_GBALL"
     },
 
     {		// MT_KNIGHT
@@ -559,7 +567,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_dmact,		// activesound
 	MF_SOLID|MF_SHOOTABLE|MF_FLOAT|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_MISSILE"
     },
 
     {		// MT_SPIDER
@@ -867,7 +877,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_MISSILE"
     },
 
     {		// MT_BARREL
@@ -923,7 +935,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_RBALL"
     },
 
     {		// MT_HEADSHOT
@@ -951,7 +965,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_RBALL"
     },
 
     {		// MT_ROCKET
@@ -979,7 +995,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_MISSILE | EF_ROCKET"
     },
 
     {		// MT_PLASMA
@@ -1007,7 +1025,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_PLASMA"
     },
 
     {		// MT_BFG
@@ -1035,7 +1055,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_GBALL"
     },
 
     {		// MT_ARACHPLAZ
@@ -1063,7 +1085,9 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	"EF_DL_MISSILE"
     },
 
     {		// MT_PUFF
@@ -1201,7 +1225,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_NOBLOCKMAP|MF_NOSECTOR|MF_TRANSLUCENT,		// flags
+	MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
     0,	// flags2
 	S1_NULL		// raisestate
     },
@@ -2267,7 +2291,11 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin + vector(0.0, 0.0, 64.0),\n"
+	"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
     {		// MT_MISC30
@@ -2295,7 +2323,11 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin + vector(0.0, 0.0, 48.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
     {		// MT_MISC31
@@ -2323,7 +2355,11 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
     {		// MT_MISC32
@@ -2519,7 +2555,11 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
     {		// MT_MISC39
@@ -2601,9 +2641,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
     {		// MT_MISC42
@@ -2629,9 +2673,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
     {		// MT_MISC43
@@ -2657,9 +2705,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
     {		// MT_MISC44
@@ -2685,9 +2737,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
     {		// MT_MISC45
@@ -2713,9 +2769,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
     {		// MT_MISC46
@@ -2741,9 +2801,13 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx1_None,		// activesound
-	MF_SOLID|MF_TRANSLUCENT,		// flags
+	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
     {		// MT_MISC47
@@ -2827,7 +2891,10 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	0,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);"
     },
 
     {		// MT_MISC50
@@ -2855,7 +2922,11 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	sfx1_None,		// activesound
 	MF_SOLID,		// flags
     0,	// flags2
-	S1_NULL		// raisestate
+	S1_NULL,		// raisestate
+	0,
+	0,
+	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
     {		// MT_MISC51
@@ -3866,12 +3937,46 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
     }
 };
 
+void FixupHeights(void)
+{
+	mobjinfo[MT1_MISC29].height = 72*FRACUNIT;
+	mobjinfo[MT1_MISC30].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC31].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC32].height = 52*FRACUNIT;
+	mobjinfo[MT1_MISC33].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC34].height = 52*FRACUNIT;
+	mobjinfo[MT1_MISC35].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC36].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC37].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC39].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC40].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC41].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC42].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC43].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC44].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC45].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC46].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC47].height = 40*FRACUNIT;
+	mobjinfo[MT1_MISC48].height = 120*FRACUNIT;
+	mobjinfo[MT1_MISC50].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC70].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC72].height = 56*FRACUNIT;
+	mobjinfo[MT1_MISC73].height = 48*FRACUNIT;
+	mobjinfo[MT1_MISC74].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC75].height = 64*FRACUNIT;
+	mobjinfo[MT1_MISC76].height = 96*FRACUNIT;
+	mobjinfo[MT1_MISC77].height = 32*FRACUNIT;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/27 17:04:39  dj_jl
+//	Effects and static lights in mobjinfo, mobj classes
+//
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
