@@ -99,6 +99,7 @@ qsocket_t *NetNull_Connect(char *)
 
 qsocket_t *NetNull_CheckNewConnections(void)
 {
+	guard(NetNull_CheckNewConnections);
 	qsocket_t *sock;
 
 	if (!net_connect_bot)
@@ -113,6 +114,7 @@ qsocket_t *NetNull_CheckNewConnections(void)
 	}
 	strcpy(sock->address, "NULL");
 	return sock;
+	unguard;
 }
 
 //==========================================================================
@@ -193,9 +195,12 @@ void NetNull_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

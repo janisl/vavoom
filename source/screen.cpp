@@ -322,6 +322,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 
 COMMAND(ScreenShot)
 {
+	guard(COMMAND ScreenShot);
 	int		i;
 	int		bpp;
 	bool	bot2top;
@@ -365,6 +366,7 @@ COMMAND(ScreenShot)
 		}
 		Z_Free(data);
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -381,6 +383,7 @@ COMMAND(ScreenShot)
 
 static void DrawFPS(void)
 {
+	guard(DrawFPS);
 	double		time;
 
 	if (draw_fps)
@@ -399,6 +402,7 @@ static void DrawFPS(void)
 		T_SetAlign(hright, vtop);
 		T_DrawString(319, 0, va("%d fps", show_fps));
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -415,6 +419,7 @@ static void DrawFPS(void)
 
 static void ChangeResolution(int width, int height, int bpp)
 {
+	guard(ChangeResolution);
 	if (width > MAXSCREENWIDTH)
 		width = MAXSCREENWIDTH;
 	if (height > MAXSCREENHEIGHT)
@@ -460,6 +465,7 @@ static void ChangeResolution(int width, int height, int bpp)
 
     ScaleX640 = (float)ScreenWidth / 640.0;
     ScaleY640 = (float)ScreenHeight / 480.0;
+	unguard;
 }
 
 //==========================================================================
@@ -470,6 +476,7 @@ static void ChangeResolution(int width, int height, int bpp)
 
 static void CheckResolutionChange(void)
 {
+	guard(CheckResolutionChange);
 	bool		must_set_pal = false;
 	bool		res_changed = false;
 
@@ -515,6 +522,7 @@ static void CheckResolutionChange(void)
 		R_SetViewSize(screenblocks);
 	}
 	graphics_started = true;
+	unguard;
 }
 
 //==========================================================================
@@ -583,6 +591,7 @@ void SCR_Init(void)
 
 void SCR_Update(void)
 {
+	guard(SCR_Update);
 	if (cls.state == ca_connected && cls.signon != SIGNONS)
 	{
 		return;
@@ -646,6 +655,7 @@ void SCR_Update(void)
 	DrawFPS();
 
 	Drawer->Update();              // page flip or blit buffer
+	unguard;
 }
 
 //==========================================================================
@@ -656,12 +666,14 @@ void SCR_Update(void)
 
 void Draw_TeleportIcon(void)
 {
+	guard(Draw_TeleportIcon);
 	if (W_CheckNumForName("teleicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("teleicon", PIC_PATCH));
 		Drawer->EndDirectUpdate();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -672,12 +684,14 @@ void Draw_TeleportIcon(void)
 
 void Draw_SaveIcon(void)
 {
+	guard(Draw_SaveIcon);
 	if (W_CheckNumForName("saveicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("saveicon", PIC_PATCH));
 		Drawer->EndDirectUpdate();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -688,20 +702,25 @@ void Draw_SaveIcon(void)
 
 void Draw_LoadIcon(void)
 {
+	guard(Draw_LoadIcon);
 	if (W_CheckNumForName("loadicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("loadicon", PIC_PATCH));
 		Drawer->EndDirectUpdate();
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.17  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.16  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

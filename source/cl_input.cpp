@@ -172,6 +172,7 @@ BUTTON(MouseLook)
 
 void TKButton::KeyDown(char *c)
 {
+	guard(TKButton::KeyDown);
 	int		k;
 
 	if (c[0])
@@ -195,6 +196,7 @@ void TKButton::KeyDown(char *c)
 	if (state & 1)
 		return;		// still down
 	state |= 1 + 2;	// down + impulse down
+	unguard;
 }
 
 //==========================================================================
@@ -205,6 +207,7 @@ void TKButton::KeyDown(char *c)
 
 void TKButton::KeyUp(char *c)
 {
+	guard(TKButton::KeyUp);
 	int		k;
 	
 	if (c[0])
@@ -229,6 +232,7 @@ void TKButton::KeyUp(char *c)
 		return;		// still up (this should not happen)
 	state &= ~1;		// now up
 	state |= 4; 		// impulse up
+	unguard;
 }
 
 //==========================================================================
@@ -244,6 +248,7 @@ void TKButton::KeyUp(char *c)
 
 float TKButton::KeyState(void)
 {
+	guard(TKButton::KeyState);
 	static const float newVal[8] =
 	{
 		0.0f,	// up the entire frame
@@ -260,6 +265,7 @@ float TKButton::KeyState(void)
 	state &= 1;		// clear impulses
 	
 	return val;
+	unguard;
 }
 
 //==========================================================================
@@ -270,7 +276,9 @@ float TKButton::KeyState(void)
 
 void TCmdKeyDown::Run(void)
 {
+	guard(TCmdKeyDown::Run);
 	Key.KeyDown(Argv(1));
+	unguard;
 }
 
 //==========================================================================
@@ -281,7 +289,9 @@ void TCmdKeyDown::Run(void)
 
 void TCmdKeyUp::Run(void)
 {
+	guard(TCmdKeyUp::Run);
 	Key.KeyUp(Argv(1));
+	unguard;
 }
 
 //==========================================================================
@@ -292,7 +302,9 @@ void TCmdKeyUp::Run(void)
 
 COMMAND(Impulse)
 {
+	guard(COMMAND Impulse);
 	impulse_cmd = atoi(Argv(1));
+	unguard;
 }
 
 //==========================================================================
@@ -303,7 +315,9 @@ COMMAND(Impulse)
 
 COMMAND(ToggleAlwaysRun)
 {
+	guard(COMMAND ToggleAlwaysRun);
 	allways_run = !allways_run;
+	unguard;
 }
 
 //==========================================================================
@@ -329,6 +343,7 @@ void V_StopPitchDrift(void)
 
 static void AdjustAngles(void)
 {
+	guard(AdjustAngles);
     float speed;
 
 	if (KeySpeed.state & 1)
@@ -435,6 +450,7 @@ static void AdjustAngles(void)
 	{
 		cl.viewangles.roll = -80.0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -448,6 +464,7 @@ static void AdjustAngles(void)
 
 static void BuildTiccmd(ticcmd_t* cmd)
 {
+	guard(BuildTiccmd);
     float		forward;
     float		side;
 	float		flyheight;
@@ -568,6 +585,7 @@ static void BuildTiccmd(ticcmd_t* cmd)
     cmd->forwardmove = (int)forward;
     cmd->sidemove = (int)side;
 	cmd->flymove = (int)flyheight;
+	unguard;
 }
 
 //==========================================================================
@@ -578,6 +596,7 @@ static void BuildTiccmd(ticcmd_t* cmd)
 
 void CL_SendMove(void)
 {
+	guard(CL_SendMove);
 	byte		buf[MAX_DATAGRAM];
 	TMessage	msg(buf, MAX_DATAGRAM);
 	ticcmd_t	cmd;
@@ -630,6 +649,7 @@ void CL_SendMove(void)
 	}
 
 	cls.message.Clear();
+	unguard;
 }
 
 //==========================================================================
@@ -641,26 +661,27 @@ void CL_SendMove(void)
 //==========================================================================
 
 boolean CL_Responder(event_t* ev)
-{ 
-    switch (ev->type) 
-    { 
-	 case ev_mouse:
+{
+	guard(CL_Responder);
+	switch (ev->type) 
+	{
+	case ev_mouse:
 		mousex = ev->data2 * mouse_x_sensitivity;
 		mousey = ev->data3 * mouse_y_sensitivity;
-       	if ((int)invert_mouse)
-       		mousey = -mousey;
+		if (invert_mouse)
+			mousey = -mousey;
 		return true;    // eat events
- 
-	 case ev_joystick:
+
+	case ev_joystick:
 		joyxmove = ev->data2;
 		joyymove = ev->data3;
 		return true;    // eat events
 
 	default:
 		break;
-    } 
- 
-    return false; 
+	}
+	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -671,18 +692,23 @@ boolean CL_Responder(event_t* ev)
 
 void CL_ClearInput(void)
 {
+	guard(CL_ClearInput);
     // clear cmd building stuff
     joyxmove = joyymove = 0; 
     mousex = mousey = 0;
 	impulse_cmd = 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.9  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

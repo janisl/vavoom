@@ -83,6 +83,7 @@ static FFunction *pf_ParseServerCommand;
 
 void CL_Clear(void)
 {
+	guard(CL_Clear);
 	memset(&cl, 0, sizeof(cl));
 	memset(&cl_level, 0, sizeof(cl_level));
 	memset(cl_mobjs, 0, sizeof(cl_mobjs));
@@ -103,6 +104,7 @@ void CL_Clear(void)
 	cls.signon = 0;
 
 	pf_ParseServerCommand = clpr.FuncForName("ParseServerCommand");
+	unguard;
 }
 
 static void CL_ReadMobjBase(clmobjbase_t &mobj)
@@ -208,8 +210,7 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base)
 
 static void CL_ParseUpdateMobj(void)
 {
-try
-{
+	guard(CL_ParseUpdateMobj);
 	int		i;
 	int		bits;
 
@@ -247,11 +248,7 @@ try
 	{
 		net_msg.ReadShort();
 	}
-}
-catch (...)
-{
-	dprintf("- CL_ParseUpdateMobj\n");
-}
+	unguard;
 }
 
 //==========================================================================
@@ -440,6 +437,7 @@ static void CL_ParseStopSeq(void)
 
 static void CL_ParseTime()
 {
+	guard(CL_ParseTime);
 	int		new_time;
 	int		i;
 
@@ -496,6 +494,7 @@ static void CL_ParseTime()
 	net_msg >> new_time;
 	cl_level.tictime = new_time;
 	cl_level.time = (float)new_time / 35.0;
+	unguard;
 }
 
 //==========================================================================
@@ -519,6 +518,7 @@ void CL_SetupLevel(void);
 
 static void CL_ParseServerInfo(void)
 {
+	guard(CL_ParseServerInfo);
 	byte		ver;
 	mapInfo_t	info;
 
@@ -561,6 +561,7 @@ static void CL_ParseServerInfo(void)
     Z_CheckHeap();
 
 	GCon->Log(NAME_Dev, "Client level loaded");
+	unguard;
 }
 
 //==========================================================================
@@ -711,6 +712,7 @@ static void CL_ParseExtraFloor(void)
 
 void CL_ParseServerMessage(void)
 {
+	guard(CL_ParseServerMessage);
 	int			i;
 	byte		cmd_type;
 	float		x;
@@ -1023,14 +1025,18 @@ void CL_ParseServerMessage(void)
 			break;
 		}
    	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.27  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.26  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
 //	

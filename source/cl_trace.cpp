@@ -78,6 +78,7 @@ static int PlaneSide2(const TVec &point, const TPlane* plane)
 
 static bool CheckPlane(const sec_plane_t *plane)
 {
+	guard(CheckPlane);
 	float		org_dist;
 	float		hit_dist;
 
@@ -101,6 +102,7 @@ static bool CheckPlane(const sec_plane_t *plane)
 
 	//	Crosses plane
 	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -111,6 +113,7 @@ static bool CheckPlane(const sec_plane_t *plane)
 
 static bool CheckPlanes(sector_t *sec)
 {
+	guard(CheckPlanes);
 	sec_region_t	*reg;
 
 	for (reg = sec->topregion; reg; reg = reg->prev)
@@ -127,6 +130,7 @@ static bool CheckPlanes(sector_t *sec)
 		}
 	}
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -137,6 +141,7 @@ static bool CheckPlanes(sector_t *sec)
 
 static bool CheckLine(seg_t* seg)
 {
+	guard(CheckLine);
     line_t*			line;
     int				s1;
     int				s2;
@@ -253,6 +258,7 @@ static bool CheckLine(seg_t* seg)
 	}
 
     return false;		// stop
+	unguard;
 }
 
 //==========================================================================
@@ -265,6 +271,7 @@ static bool CheckLine(seg_t* seg)
 
 static bool CrossSubsector(int num)
 {
+	guard(CrossSubsector);
     subsector_t*	sub;
     int				count;
     seg_t*			seg;
@@ -299,7 +306,8 @@ static bool CrossSubsector(int num)
         }
     }
     // passed the subsector ok
-    return true;		
+    return true;
+	unguard;
 }
 
 //==========================================================================
@@ -312,6 +320,7 @@ static bool CrossSubsector(int num)
 
 static bool CrossBSPNode(int bspnum)
 {
+	guard(CrossBSPNode);
     node_t*	bsp;
     int		side;
 
@@ -343,6 +352,7 @@ static bool CrossBSPNode(int bspnum)
     
     // cross the ending side		
     return CrossBSPNode(bsp->children[side^1]);
+	unguard;
 }
 
 //==========================================================================
@@ -353,6 +363,7 @@ static bool CrossBSPNode(int bspnum)
 
 bool CL_TraceLine(const TVec &start, const TVec &end)
 {
+	guard(CL_TraceLine);
 	cl_validcount++;
 
 	trace_start = start;
@@ -370,14 +381,18 @@ bool CL_TraceLine(const TVec &start, const TVec &end)
 	    return CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
 	}
 	return false;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.7  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

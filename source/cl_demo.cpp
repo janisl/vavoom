@@ -65,6 +65,7 @@ void CL_Disconnect(void);
 
 void CL_FinishTimeDemo(void)
 {
+	guard(CL_FinishTimeDemo);
 	int		frames;
 	float	time;
 	
@@ -76,6 +77,7 @@ void CL_FinishTimeDemo(void)
 	if (!time)
 		time = 1;
 	GCon->Logf("%d frames %f seconds %f fps", frames, time, frames / time);
+	unguard;
 }
 
 //==========================================================================
@@ -88,6 +90,7 @@ void CL_FinishTimeDemo(void)
 
 void CL_StopPlayback(void)
 {
+	guard(CL_StopPlayback);
 	if (!cls.demoplayback)
 	{
 		return;
@@ -102,6 +105,7 @@ void CL_StopPlayback(void)
 	{
 		CL_FinishTimeDemo();
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -114,10 +118,12 @@ void CL_StopPlayback(void)
 
 void CL_WriteDemoMessage(void)
 {
+	guard(CL_WriteDemoMessage);
 	*cls.demofile << net_msg.CurSize;
 	*cls.demofile << cl.viewangles;
 	cls.demofile->Serialize(net_msg.Data, net_msg.CurSize);
 	cls.demofile->Flush();
+	unguard;
 }
 
 //==========================================================================
@@ -130,6 +136,7 @@ void CL_WriteDemoMessage(void)
 
 int CL_GetMessage(void)
 {
+	guard(CL_GetMessage);
 	int r;
 
 	if (cls.demoplayback)
@@ -195,6 +202,7 @@ int CL_GetMessage(void)
 	}
 	
 	return r;
+	unguard;
 }
 
 //==========================================================================
@@ -205,6 +213,7 @@ int CL_GetMessage(void)
 
 void CL_StopRecording(void)
 {
+	guard(CL_StopRecording);
 	// write a disconnect message to the demo file
 	net_msg.Clear();
 	net_msg << (byte)svc_disconnect;
@@ -215,6 +224,7 @@ void CL_StopRecording(void)
 	cls.demofile = NULL;
 	cls.demorecording = false;
 	GCon->Log("Completed demo");
+	unguard;
 }
 
 //==========================================================================
@@ -227,6 +237,7 @@ void CL_StopRecording(void)
 
 COMMAND(StopDemo)
 {
+	guard(COMMAND StopDemo);
 	if (cmd_source != src_command)
 	{
 		return;
@@ -238,6 +249,7 @@ COMMAND(StopDemo)
 		return;
 	}
 	CL_StopRecording();
+	unguard;
 }
 
 //==========================================================================
@@ -250,6 +262,7 @@ COMMAND(StopDemo)
 
 COMMAND(Record)
 {
+	guard(COMMAND Record);
 	int		c;
 	char	name[MAX_VPATH];
 
@@ -305,6 +318,7 @@ COMMAND(Record)
 	cls.demofile->Serialize(const_cast<char *>("VDEM"), 4);
 
 	cls.demorecording = true;
+	unguard;
 }
 
 //==========================================================================
@@ -317,6 +331,7 @@ COMMAND(Record)
 
 COMMAND(PlayDemo)
 {
+	guard(COMMAND PlayDemo);
 	char	name[256];
 	char	magic[8];
 
@@ -362,6 +377,7 @@ COMMAND(PlayDemo)
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
+	unguard;
 }
 
 //==========================================================================
@@ -374,6 +390,7 @@ COMMAND(PlayDemo)
 
 COMMAND(TimeDemo)
 {
+	guard(COMMAND TimeDemo);
 	if (cmd_source != src_command)
 	{
 		return;
@@ -393,14 +410,18 @@ COMMAND(TimeDemo)
 	cls.timedemo = true;
 	cls.td_startframe = host_framecount;
 	cls.td_lastframe = -1;		// get a new message this frame
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.10  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.9  2002/05/29 16:54:33  dj_jl
 //	Added const cast.
 //	

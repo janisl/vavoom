@@ -146,6 +146,7 @@ static int		net_landriverlevel = 0;
 
 static word NetbufferChecksum(const byte *buf, int len)
 {
+	guardSlow(NetbufferChecksum);
 	TCRC	crc;
 
 	crc.Init();
@@ -156,6 +157,7 @@ static word NetbufferChecksum(const byte *buf, int len)
 	}
 
 	return crc;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -167,6 +169,7 @@ static word NetbufferChecksum(const byte *buf, int len)
 #ifdef DEBUG
 static char *StrAddr(sockaddr_t *addr)
 {
+	guardSlow(StrAddr);
 	static char buf[34];
 	byte *p = (byte *)addr;
 	int n;
@@ -174,6 +177,7 @@ static char *StrAddr(sockaddr_t *addr)
 	for (n = 0; n < 16; n++)
 		sprintf(buf + n * 2, "%02x", *p++);
 	return buf;
+	unguardSlow;
 }
 #endif
 
@@ -185,6 +189,7 @@ static char *StrAddr(sockaddr_t *addr)
 
 int Datagram_Init(void)
 {
+	guard(Datagram_Init);
 	int		i;
 	int		csock;
 
@@ -201,6 +206,7 @@ int Datagram_Init(void)
 	}
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -211,11 +217,13 @@ int Datagram_Init(void)
 
 void Datagram_Listen(boolean state)
 {
+	guard(Datagram_Listen);
 	int i;
 
 	for (i = 0; i < net_numlandrivers; i++)
 		if (net_landrivers[i].initialized)
 			net_landrivers[i].Listen (state);
+	unguard;
 }
 
 //==========================================================================
@@ -226,6 +234,7 @@ void Datagram_Listen(boolean state)
 
 static void _Datagram_SearchForHosts(boolean xmit)
 {
+	guard(_Datagram_SearchForHosts);
 	sockaddr_t	myaddr;
 	sockaddr_t	readaddr;
 	int			len;
@@ -335,6 +344,7 @@ static void _Datagram_SearchForHosts(boolean xmit)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -345,6 +355,7 @@ static void _Datagram_SearchForHosts(boolean xmit)
 
 void Datagram_SearchForHosts(boolean xmit)
 {
+	guard(Datagram_SearchForHosts);
 	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
 	{
 		if (hostCacheCount == HOSTCACHESIZE)
@@ -352,6 +363,7 @@ void Datagram_SearchForHosts(boolean xmit)
 		if (net_landrivers[net_landriverlevel].initialized)
 			_Datagram_SearchForHosts(xmit);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -362,6 +374,7 @@ void Datagram_SearchForHosts(boolean xmit)
 
 static qsocket_t *_Datagram_Connect(char *host)
 {
+	guard(_Datagram_Connect);
 #ifdef CLIENT
 	sockaddr_t		sendaddr;
 	sockaddr_t		readaddr;
@@ -530,6 +543,7 @@ ErrorReturn2:
 //	}
 #endif
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -540,6 +554,7 @@ ErrorReturn2:
 
 qsocket_t *Datagram_Connect(char *host)
 {
+	guard(Datagram_Connect);
 	qsocket_t *ret;
 
 	for (net_landriverlevel = 0;
@@ -556,6 +571,7 @@ qsocket_t *Datagram_Connect(char *host)
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -566,6 +582,7 @@ qsocket_t *Datagram_Connect(char *host)
 
 static qsocket_t *_Datagram_CheckNewConnections(void)
 {
+	guard(_Datagram_CheckNewConnections);
 #ifdef SERVER
 	sockaddr_t	clientaddr;
 	sockaddr_t	newaddr;
@@ -730,6 +747,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 #else
 	return NULL;
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -740,6 +758,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 
 qsocket_t *Datagram_CheckNewConnections(void)
 {
+	guard(Datagram_CheckNewConnections);
 	qsocket_t *ret;
 
 	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
@@ -752,6 +771,7 @@ qsocket_t *Datagram_CheckNewConnections(void)
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -762,6 +782,7 @@ qsocket_t *Datagram_CheckNewConnections(void)
 
 int Datagram_GetMessage(qsocket_t *sock)
 {
+	guard(Datagram_GetMessage);
 	dword		sequence;
 	dword		length;
 	dword		flags;
@@ -931,6 +952,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 		SendMessageNext(sock);
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -941,6 +963,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(Datagram_SendMessage);
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
@@ -986,6 +1009,7 @@ int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 	sock->lastSendTime = net_time;
 	packetsSent++;
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -996,6 +1020,7 @@ int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 
 static int SendMessageNext(qsocket_t *sock)
 {
+	guard(SendMessageNext);
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
@@ -1027,6 +1052,7 @@ static int SendMessageNext(qsocket_t *sock)
 	sock->lastSendTime = net_time;
 	packetsSent++;
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -1037,6 +1063,7 @@ static int SendMessageNext(qsocket_t *sock)
 
 static int ReSendMessage(qsocket_t *sock)
 {
+	guard(ReSendMessage);
 	dword		packetLen;
 	dword		dataLen;
 	dword		eom;
@@ -1067,6 +1094,7 @@ static int ReSendMessage(qsocket_t *sock)
 	sock->lastSendTime = net_time;
 	packetsReSent++;
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -1077,15 +1105,16 @@ static int ReSendMessage(qsocket_t *sock)
 
 int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(Datagram_SendUnreliableMessage);
 	dword		packetLen;
 	word		crc;
 
-#ifdef DEBUG
+#ifdef PARANOID
 	if (data->CurSize == 0)
-		I_Error("Datagram_SendUnreliableMessage: zero length message\n");
+		Sys_Error("Datagram_SendUnreliableMessage: zero length message\n");
 
 	if (data->CurSize > MAX_DATAGRAM)
-		I_Error("Datagram_SendUnreliableMessage: message too big %u\n", data->CurSize);
+		Sys_Error("Datagram_SendUnreliableMessage: message too big %u\n", data->CurSize);
 #endif
 
 	packetLen = NET_HEADERSIZE + data->CurSize;
@@ -1100,6 +1129,7 @@ int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 
 	packetsSent++;
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -1110,10 +1140,12 @@ int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 
 boolean Datagram_CanSendMessage(qsocket_t *sock)
 {
+	guard(Datagram_CanSendMessage);
 	if (sock->sendNext)
 		SendMessageNext(sock);
 
 	return sock->canSend;
+	unguard;
 }
 
 //==========================================================================
@@ -1135,7 +1167,9 @@ boolean Datagram_CanSendUnreliableMessage(qsocket_t *)
 
 void Datagram_Close(qsocket_t *sock)
 {
+	guard(Datagram_Close);
 	sfunc.CloseSocket(sock->socket);
+	unguard;
 }
 
 //==========================================================================
@@ -1146,6 +1180,7 @@ void Datagram_Close(qsocket_t *sock)
 
 void Datagram_Shutdown(void)
 {
+	guard(Datagram_Shutdown);
 	int i;
 
 	//
@@ -1159,6 +1194,7 @@ void Datagram_Shutdown(void)
 			net_landrivers[i].initialized = false;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1183,6 +1219,7 @@ static void PrintStats(qsocket_t *s)
 
 COMMAND(NetStats)
 {
+	guard(COMMAND NetStats);
 	qsocket_t	*s;
 
 	if (Argc() == 1)
@@ -1218,14 +1255,18 @@ COMMAND(NetStats)
 			return;
 		PrintStats(s);
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -73,6 +73,7 @@ static dword		myAddr;
 
 int MPATH_Init(void)
 {
+	guard(MPATH_Init);
 	hostent		*local = NULL;
 	char		buff[MAXHOSTNAMELEN];
 	sockaddr_t	addr;
@@ -144,6 +145,7 @@ int MPATH_Init(void)
 	tcpipAvailable = true;
 
 	return net_controlsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -154,8 +156,10 @@ int MPATH_Init(void)
 
 void MPATH_Shutdown(void)
 {
+	guard(MPATH_Shutdown);
 	MPATH_Listen(false);
 	MPATH_CloseSocket(net_controlsocket);
+	unguard;
 }
 
 //==========================================================================
@@ -166,6 +170,7 @@ void MPATH_Shutdown(void)
 
 void MPATH_Listen(boolean state)
 {
+	guard(MPATH_Listen);
 	if (state)
 	{
 		// enable listening
@@ -185,6 +190,7 @@ void MPATH_Listen(boolean state)
 			net_acceptsocket = -1;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -195,6 +201,7 @@ void MPATH_Listen(boolean state)
 
 int MPATH_OpenSocket(int port)
 {
+	guard(MPATH_OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
 	u_long		trueval = true;
@@ -221,6 +228,7 @@ int MPATH_OpenSocket(int port)
 	}
 
 	return newsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -231,9 +239,11 @@ int MPATH_OpenSocket(int port)
 
 int MPATH_CloseSocket(int socket)
 {
+	guard(MPATH_CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return closesocket(socket);
+	unguard;
 }
 
 //==========================================================================
@@ -255,6 +265,7 @@ int MPATH_Connect(int , sockaddr_t *)
 
 int MPATH_CheckNewConnections(void)
 {
+	guard(MPATH_CheckNewConnections);
 	char	buf[4];
 
 	if (net_acceptsocket == -1)
@@ -263,6 +274,7 @@ int MPATH_CheckNewConnections(void)
 	if (recvfrom(net_acceptsocket, buf, 4, MSG_PEEK, NULL, NULL) > 0)
 		return net_acceptsocket;
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -273,6 +285,7 @@ int MPATH_CheckNewConnections(void)
 
 int MPATH_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(MPATH_Read);
 	int		addrlen = sizeof(sockaddr_t);
 	int		ret;
 
@@ -285,6 +298,7 @@ int MPATH_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 			return 0;
 	}
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -295,6 +309,7 @@ int MPATH_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int MPATH_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(MPATH_Write);
 	int ret;
 
 	ret = sendto(socket, (char*)buf, len, 0, (sockaddr *)addr, sizeof(sockaddr));
@@ -304,6 +319,7 @@ int MPATH_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 	sockets_flush();
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -314,6 +330,7 @@ int MPATH_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int MPATH_Broadcast(int socket, byte *buf, int len)
 {
+	guard(MPATH_Broadcast);
 	int			i = 1;
 
 	if (socket != net_broadcastsocket)
@@ -332,6 +349,7 @@ int MPATH_Broadcast(int socket, byte *buf, int len)
 	}
 
 	return MPATH_Write(socket, buf, len, &broadcastaddr);
+	unguard;
 }
 
 //==========================================================================
@@ -342,6 +360,7 @@ int MPATH_Broadcast(int socket, byte *buf, int len)
 
 char *MPATH_AddrToString(sockaddr_t *addr)
 {
+	guard(MPATH_AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -350,6 +369,7 @@ char *MPATH_AddrToString(sockaddr_t *addr)
 		(haddr >> 16) & 0xff, (haddr >> 8) & 0xff, haddr & 0xff,
 		ntohs(((sockaddr_in *)addr)->sin_port));
 	return buffer;
+	unguard;
 }
 
 //==========================================================================
@@ -360,6 +380,7 @@ char *MPATH_AddrToString(sockaddr_t *addr)
 
 int MPATH_StringToAddr(char *string, sockaddr_t *addr)
 {
+	guard(MPATH_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -370,6 +391,7 @@ int MPATH_StringToAddr(char *string, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = htonl(ipaddr);
 	((sockaddr_in *)addr)->sin_port = htons(hp);
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -380,6 +402,7 @@ int MPATH_StringToAddr(char *string, sockaddr_t *addr)
 
 int MPATH_GetSocketAddr(int socket, sockaddr_t *addr)
 {
+	guard(MPATH_GetSocketAddr);
 	int		addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -390,6 +413,7 @@ int MPATH_GetSocketAddr(int socket, sockaddr_t *addr)
 		((sockaddr_in *)addr)->sin_addr.s_addr = myAddr;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -400,6 +424,7 @@ int MPATH_GetSocketAddr(int socket, sockaddr_t *addr)
 
 int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
 {
+	guard(MPATH_GetNameFromAddr);
 	hostent		*hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(in_addr), AF_INET);
@@ -411,6 +436,7 @@ int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 	strcpy(name, MPATH_AddrToString(addr));
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -424,6 +450,7 @@ int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 {
+	guard(PartialIPAddress);
 	char buff[256];
 	char *b;
 	int addr;
@@ -469,6 +496,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 	((sockaddr_in *)hostaddr)->sin_addr.s_addr = (myAddr & htonl(mask)) | htonl(addr);
 	
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -479,6 +507,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 
 int MPATH_GetAddrFromName(char *name, sockaddr_t *addr)
 {
+	guard(MPATH_GetAddrFromName);
 	hostent		*hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
@@ -493,6 +522,7 @@ int MPATH_GetAddrFromName(char *name, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -503,6 +533,7 @@ int MPATH_GetAddrFromName(char *name, sockaddr_t *addr)
 
 int MPATH_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 {
+	guard(MPATH_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -513,6 +544,7 @@ int MPATH_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 		return 1;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -523,7 +555,9 @@ int MPATH_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 int MPATH_GetSocketPort(sockaddr_t *addr)
 {
+	guard(MPATH_GetSocketPort);
 	return ntohs(((sockaddr_in *)addr)->sin_port);
+	unguard;
 }
 
 //==========================================================================
@@ -534,16 +568,21 @@ int MPATH_GetSocketPort(sockaddr_t *addr)
 
 int MPATH_SetSocketPort(sockaddr_t *addr, int port)
 {
+	guard(MPATH_SetSocketPort);
 	((sockaddr_in *)addr)->sin_port = htons(port);
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.6  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -84,6 +84,7 @@ static dword		myAddr;
 
 int UDP_Init(void)
 {
+	guard(UDP_Init);
 	hostent		*local;
 	char		buff[MAXHOSTNAMELEN];
 	sockaddr_t	addr;
@@ -121,6 +122,7 @@ int UDP_Init(void)
 	tcpipAvailable = true;
 
 	return net_controlsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -131,8 +133,10 @@ int UDP_Init(void)
 
 void UDP_Shutdown(void)
 {
+	guard(UDP_Shutdown);
 	UDP_Listen(false);
 	UDP_CloseSocket(net_controlsocket);
+	unguard;
 }
 
 //==========================================================================
@@ -143,6 +147,7 @@ void UDP_Shutdown(void)
 
 void UDP_Listen(boolean state)
 {
+	guard(UDP_Listen);
 	if (state)
 	{
 		// enable listening
@@ -162,6 +167,7 @@ void UDP_Listen(boolean state)
 			net_acceptsocket = -1;
 		}
 	}
+	unguard;
 }
 //==========================================================================
 //
@@ -171,6 +177,7 @@ void UDP_Listen(boolean state)
 
 int UDP_OpenSocket(int port)
 {
+	guard(UDP_OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
 	boolean		trueval = true;
@@ -197,6 +204,7 @@ int UDP_OpenSocket(int port)
 	}
 
 	return newsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -207,9 +215,11 @@ int UDP_OpenSocket(int port)
 
 int UDP_CloseSocket(int socket)
 {
+	guard(UDP_CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return close(socket);
+	unguard;
 }
 
 //==========================================================================
@@ -231,6 +241,7 @@ int UDP_Connect(int , sockaddr_t *)
 
 int UDP_CheckNewConnections(void)
 {
+	guard(UDP_CheckNewConnections);
 	dword		available;
 
 	if (net_acceptsocket == -1)
@@ -241,6 +252,7 @@ int UDP_CheckNewConnections(void)
 	if (available)
 		return net_acceptsocket;
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -251,6 +263,7 @@ int UDP_CheckNewConnections(void)
 
 int UDP_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(UDP_Read);
 	socklen_t	addrlen = sizeof(sockaddr_t);
 	int		ret;
 
@@ -258,6 +271,7 @@ int UDP_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 	if (ret == -1 && (errno == EWOULDBLOCK || errno == ECONNREFUSED))
 		return 0;
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -268,12 +282,14 @@ int UDP_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int UDP_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(UDP_Write);
 	int ret;
 
 	ret = sendto(socket, buf, len, 0, (sockaddr *)addr, sizeof(sockaddr));
 	if (ret == -1 && errno == EWOULDBLOCK)
 		return 0;
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -284,6 +300,7 @@ int UDP_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int UDP_Broadcast(int socket, byte *buf, int len)
 {
+	guard(UDP_Broadcast);
 	int			i = 1;
 
 
@@ -303,6 +320,7 @@ int UDP_Broadcast(int socket, byte *buf, int len)
 	}
 
 	return UDP_Write(socket, buf, len, &broadcastaddr);
+	unguard;
 }
 
 //==========================================================================
@@ -313,6 +331,7 @@ int UDP_Broadcast(int socket, byte *buf, int len)
 
 char *UDP_AddrToString(sockaddr_t *addr)
 {
+	guard(UDP_AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -321,6 +340,7 @@ char *UDP_AddrToString(sockaddr_t *addr)
 		(haddr >> 16) & 0xff, (haddr >> 8) & 0xff, haddr & 0xff,
 		ntohs(((sockaddr_in *)addr)->sin_port));
 	return buffer;
+	unguard;
 }
 
 //==========================================================================
@@ -331,6 +351,7 @@ char *UDP_AddrToString(sockaddr_t *addr)
 
 int UDP_StringToAddr(char *string, sockaddr_t *addr)
 {
+	guard(UDP_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -341,6 +362,7 @@ int UDP_StringToAddr(char *string, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = htonl(ipaddr);
 	((sockaddr_in *)addr)->sin_port = htons(hp);
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -351,6 +373,7 @@ int UDP_StringToAddr(char *string, sockaddr_t *addr)
 
 int UDP_GetSocketAddr(int socket, sockaddr_t *addr)
 {
+	guard(UDP_GetSocketAddr);
 	socklen_t	addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -361,6 +384,7 @@ int UDP_GetSocketAddr(int socket, sockaddr_t *addr)
 		((sockaddr_in *)addr)->sin_addr.s_addr = myAddr;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -371,6 +395,7 @@ int UDP_GetSocketAddr(int socket, sockaddr_t *addr)
 
 int UDP_GetNameFromAddr(sockaddr_t *addr, char *name)
 {
+	guard(UDP_GetNameFromAddr);
 	hostent		*hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(in_addr), AF_INET);
@@ -382,6 +407,7 @@ int UDP_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 	strcpy(name, UDP_AddrToString(addr));
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -393,8 +419,9 @@ int UDP_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-static int PartialIPAddress (char *in, sockaddr_t *hostaddr)
+static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 {
+	guard(PartialIPAddress);
 	char buff[256];
 	char *b;
 	int addr;
@@ -440,6 +467,7 @@ static int PartialIPAddress (char *in, sockaddr_t *hostaddr)
 	((sockaddr_in *)hostaddr)->sin_addr.s_addr = (myAddr & htonl(mask)) | htonl(addr);
 	
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -450,6 +478,7 @@ static int PartialIPAddress (char *in, sockaddr_t *hostaddr)
 
 int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
 {
+	guard(UDP_GetAddrFromName);
 	hostent		*hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
@@ -464,6 +493,7 @@ int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -474,6 +504,7 @@ int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
 
 int UDP_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 {
+	guard(UDP_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -484,6 +515,7 @@ int UDP_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 		return 1;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -494,7 +526,9 @@ int UDP_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 int UDP_GetSocketPort(sockaddr_t *addr)
 {
+	guard(UDP_GetSocketPort);
 	return ntohs(((sockaddr_in *)addr)->sin_port);
+	unguard;
 }
 
 //==========================================================================
@@ -505,16 +539,21 @@ int UDP_GetSocketPort(sockaddr_t *addr)
 
 int UDP_SetSocketPort(sockaddr_t *addr, int port)
 {
+	guard(UDP_SetSocketPort);
 	((sockaddr_in *)addr)->sin_port = htons(port);
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.6  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

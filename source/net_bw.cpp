@@ -113,7 +113,7 @@ struct sockaddr_in
 
 #pragma pack(1)
 
-typedef struct
+struct BW_UDPinfo_t
 {
 	char			state;			// always 1
 	short			localPort;
@@ -121,26 +121,26 @@ typedef struct
 	char			reason;			// always 0
 	char			options;
 	short			dataAvailable;
-} BW_UDPinfo_t;
+};
 
-typedef struct
+struct BW_UDPreadInfo1_t
 {
 	char			reserved1[6];
 	word			info2Offset;
 	char			reserved2[18];
 	in_addr			remoteAddr;
-} BW_UDPreadInfo1_t;
+};
 
-typedef struct
+struct BW_UDPreadInfo2_t
 {
 	short			remotePort;
 	char			reserved1[2];
 	word			dataLenPlus8;
 	char			reserved2[2];
 	char			data[1];			// actual size is <dataLenPlus8> - 8		
-} BW_UDPreadInfo2_t;
+};
 
-typedef struct
+struct BW_writeInfo_t
 {
 	char			reserved1[2];
 	short			remotePort;
@@ -148,9 +148,9 @@ typedef struct
 	in_addr			remoteAddr;
 	char			reserved2[42];
 	char			data[1];			// actual size is <datalen>
-} BW_writeInfo_t;
+};
 
-typedef struct
+struct BW_ethdevinfo_t
 {
 	short	ioport;
 	byte	dma;
@@ -172,7 +172,7 @@ typedef struct
 	short	driverSegment;
 	byte	transferSize;
 	char	cardName[9];
-} BW_ethdevinfo_t;
+};
 
 #pragma pack()
 
@@ -209,10 +209,12 @@ static int				net_controlsocket = 0;
 
 static int dos_int86(int vec, __dpmi_regs *)
 {
+	guardSlow(dos_int86);
     int rc;
     regs.x.ss = regs.x.sp = 0;
     rc = _go32_dpmi_simulate_int(vec, &regs);
     return rc || (regs.x.flags & 1);
+	unguardSlow;
 }
 
 //==========================================================================
@@ -223,6 +225,7 @@ static int dos_int86(int vec, __dpmi_regs *)
 
 static int BW_ioctl(int s, char *msg, int msglen)
 {
+	guardSlow(BW_ioctl);
 	dosmemput(msg, msglen, __tb);
 
 	regs.x.ax = 0x4403;
@@ -233,6 +236,7 @@ static int BW_ioctl(int s, char *msg, int msglen)
 	if (dos_int86(0x21, &regs))
 		return regs.x.ax;
 	return 0;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -243,6 +247,7 @@ static int BW_ioctl(int s, char *msg, int msglen)
 
 static int BW_TranslateError(int error)
 {
+	guardSlow(BW_TranslateError);
 	switch (error)
 	{
 		case BW_ERR_USR_HANGUP:	return ECONNABORTED;
@@ -256,6 +261,7 @@ static int BW_TranslateError(int error)
 		case BW_ERR_SHUTDOWN:	return ESHUTDOWN;
 	}
 	return EIO;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -266,6 +272,7 @@ static int BW_TranslateError(int error)
 
 static int GetEthdevinfo(void)
 {
+	guard(GetEthdevinfo);
 	int fd;
 
 	dosmemput("ETHDEV27", 9, __tb);
@@ -295,6 +302,7 @@ static int GetEthdevinfo(void)
 	dos_int86(0x21, &regs);
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -305,6 +313,7 @@ static int GetEthdevinfo(void)
 
 int BW_Init(void)
 {
+	guard(BW_Init);
 	sockaddr_t	addr;
 	char		*colon;
 
@@ -335,6 +344,7 @@ int BW_Init(void)
 	tcpipAvailable = true;
 
 	return net_controlsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -345,8 +355,10 @@ int BW_Init(void)
 
 void BW_Shutdown(void)
 {
+	guard(BW_Shutdown);
 	BW_Listen(false);
 	BW_CloseSocket(net_controlsocket);
+	unguard;
 }
 
 //==========================================================================
@@ -357,6 +369,7 @@ void BW_Shutdown(void)
 
 void BW_Listen(boolean state)
 {
+	guard(BW_Listen);
 	if (state)
 	{
 		// enable listening
@@ -376,6 +389,7 @@ void BW_Listen(boolean state)
 			net_acceptsocket = -1;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -390,6 +404,7 @@ void BW_Listen(boolean state)
 
 int BW_OpenSocket(int port)
 {
+	guard(BW_OpenSocket);
 	int s;
 	int ret;
 	int deadman = 3 * 1024;
@@ -455,6 +470,7 @@ int BW_OpenSocket(int port)
 	if (ret)
 		return -1;
 	return s;
+	unguard;
 }
 
 //==========================================================================
@@ -465,6 +481,7 @@ int BW_OpenSocket(int port)
 
 int BW_CloseSocket(int socket)
 {
+	guard(BW_CloseSocket);
 	regs.h.ah = 0x3e;
 	regs.x.bx = socket;
 	if (dos_int86(0x21, &regs))
@@ -474,6 +491,7 @@ int BW_CloseSocket(int socket)
 		return -1;
 	}
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -484,7 +502,9 @@ int BW_CloseSocket(int socket)
 
 int BW_Connect(int, sockaddr_t *)
 {
+	guard(BW_Connect);
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -495,6 +515,7 @@ int BW_Connect(int, sockaddr_t *)
 
 int BW_CheckNewConnections(void)
 {
+	guard(BW_CheckNewConnections);
 	if (net_acceptsocket == 0)
 		return -1;
 
@@ -505,6 +526,7 @@ int BW_CheckNewConnections(void)
 	if (regs.x.ax == 0)
 		return -1;
 	return net_acceptsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -515,6 +537,7 @@ int BW_CheckNewConnections(void)
 
 int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 {
+	guard(BW_Read);
 	BW_UDPreadInfo1_t *info1;
 	BW_UDPreadInfo2_t *info2;
 	int copylen;
@@ -561,6 +584,7 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 	memcpy(buf, info2->data, copylen);
 
 	return copylen;
+	unguard;
 }
 
 //==========================================================================
@@ -571,6 +595,7 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 
 int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 {
+	guard(BW_Write);
 	BW_writeInfo_t *writeInfo;
 
 	// ask if we're clear to send
@@ -604,6 +629,7 @@ int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 	}
 
 	return len;
+	unguard;
 }
 
 //==========================================================================
@@ -614,6 +640,7 @@ int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 
 int BW_Broadcast(int s, byte *msg, int len)
 {
+	guard(BW_Broadcast);
 	BW_writeInfo_t *writeInfo;
 
 	// ask if we're clear to send
@@ -647,6 +674,7 @@ int BW_Broadcast(int s, byte *msg, int len)
 	}
 
 	return len;
+	unguard;
 }
 
 //==========================================================================
@@ -657,6 +685,7 @@ int BW_Broadcast(int s, byte *msg, int len)
 
 char *BW_AddrToString(sockaddr_t *addr)
 {
+	guard(BW_AddrToString);
 	static char buffer[22];
 
 	sprintf(buffer, "%d.%d.%d.%d:%d",
@@ -667,6 +696,7 @@ char *BW_AddrToString(sockaddr_t *addr)
 		(word)BigShort(((sockaddr_in *)addr)->sin_port)
 		);
 	return buffer;
+	unguard;
 }
 
 //==========================================================================
@@ -677,6 +707,7 @@ char *BW_AddrToString(sockaddr_t *addr)
 
 int BW_StringToAddr(char *string, sockaddr_t *addr)
 {
+	guard(BW_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -687,6 +718,7 @@ int BW_StringToAddr(char *string, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = BigLong(ipaddr);
 	((sockaddr_in *)addr)->sin_port = BigShort((short)hp);
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -697,6 +729,7 @@ int BW_StringToAddr(char *string, sockaddr_t *addr)
 
 int BW_GetSocketAddr(int socket, sockaddr_t *addr)
 {
+	guard(BW_GetSocketAddr);
 	regs.x.ax = 0x4402;
 	regs.x.bx = socket;
 	regs.x.cx = sizeof(BW_UDPinfo_t);
@@ -711,6 +744,7 @@ int BW_GetSocketAddr(int socket, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_port = BigShort(buffer.localPort);
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -721,8 +755,10 @@ int BW_GetSocketAddr(int socket, sockaddr_t *addr)
 
 int BW_GetNameFromAddr(sockaddr_t *addr, char *name)
 {
+	guard(BW_GetNameFromAddr);
 	strcpy(name, BW_AddrToString(addr));
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -733,6 +769,7 @@ int BW_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 int BW_GetAddrFromName(char *name, sockaddr_t *hostaddr)
 {
+	guard(BW_GetAddrFromName);
 	char buff[MAXHOSTNAMELEN];
 	char *b;
 	int addr;
@@ -784,6 +821,7 @@ int BW_GetAddrFromName(char *name, sockaddr_t *hostaddr)
 	((ethdevinfo.inetAddr & mask) | addr);
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -794,6 +832,7 @@ int BW_GetAddrFromName(char *name, sockaddr_t *hostaddr)
 
 int BW_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 {
+	guard(BW_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -804,6 +843,7 @@ int BW_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 		return 1;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -814,7 +854,9 @@ int BW_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 int BW_GetSocketPort(sockaddr_t *addr)
 {
+	guard(BW_GetSocketPort);
 	return BigShort(((sockaddr_in *)addr)->sin_port);
+	unguard;
 }
 
 //==========================================================================
@@ -825,16 +867,21 @@ int BW_GetSocketPort(sockaddr_t *addr)
 
 int BW_SetSocketPort(sockaddr_t *addr, int port)
 {
+	guard(BW_SetSocketPort);
 	((sockaddr_in *)addr)->sin_port = BigShort(port);
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

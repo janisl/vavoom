@@ -222,8 +222,10 @@ static char			*keybindings_up[256];
 
 void IN_PostEvent(event_t* ev)
 {
+	guard(IN_PostEvent);
     events[eventhead] = *ev;
     eventhead = (++eventhead) & (MAXEVENTS - 1);
+	unguard;
 }
 
 //==========================================================================
@@ -236,6 +238,7 @@ void IN_PostEvent(event_t* ev)
 
 void IN_KeyEvent(int key, int press)
 {
+	guard(IN_KeyEvent);
 	if (!key)
     {
     	return;
@@ -245,6 +248,7 @@ void IN_KeyEvent(int key, int press)
     events[eventhead].data2 = 0;
     events[eventhead].data3 = 0;
     eventhead = (++eventhead) & (MAXEVENTS - 1);
+	unguard;
 }
 
 //==========================================================================
@@ -257,6 +261,7 @@ void IN_KeyEvent(int key, int press)
 
 void IN_ProcessEvents(void)
 {
+	guard(IN_ProcessEvents);
     event_t*	ev;
 	char		*kb;
 
@@ -362,6 +367,7 @@ void IN_ProcessEvents(void)
 		if (CL_Responder(ev))
 			continue;
     }
+	unguard;
 }
 
 //==========================================================================
@@ -372,6 +378,7 @@ void IN_ProcessEvents(void)
 
 int IN_ReadKey(void)
 {
+	guard(IN_ReadKey);
 	int		ret = 0;
 
 	do
@@ -388,6 +395,7 @@ int IN_ReadKey(void)
     } while (!ret);
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -427,6 +435,7 @@ void CheckAbort(void)
 
 static int KeyNumForName(char* Name)
 {
+	guard(KeyNumForName);
 	int		i;
 
     if (!Name || !Name[0])
@@ -446,6 +455,7 @@ static int KeyNumForName(char* Name)
 			return i + 0x80;
 
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -458,6 +468,7 @@ static int KeyNumForName(char* Name)
 
 void KeyNameForNum(int KeyNr, char* NameString)
 {
+	guard(KeyNameForNum);
 	if (KeyNr == ' ')
 		sprintf(NameString, "SPACE");
 	else if (KeyNr >= 0x80)
@@ -466,6 +477,7 @@ void KeyNameForNum(int KeyNr, char* NameString)
 		sprintf(NameString, "%c", KeyNr);
 	else
       	NameString[0] = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -476,6 +488,7 @@ void KeyNameForNum(int KeyNr, char* NameString)
 
 void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
 {
+	guard(IN_SetBinding);
 	char	*str;
 	int		l;
 			
@@ -506,6 +519,7 @@ void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
 	strcpy(str, binding_up);
 	str[l] = 0;
 	keybindings_up[keynum] = str;
+	unguard;
 }
 
 //==========================================================================
@@ -516,6 +530,7 @@ void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
 
 COMMAND(Unbind)
 {
+	guard(COMMAND Unbind);
 	int		b;
 
 	if (Argc() != 2)
@@ -532,6 +547,7 @@ COMMAND(Unbind)
 	}
 
 	IN_SetBinding(b, "", "");
+	unguard;
 }
 
 //==========================================================================
@@ -542,11 +558,13 @@ COMMAND(Unbind)
 
 COMMAND(UnbindAll)
 {
+	guard(COMMAND UnbindAll);
 	int		i;
 	
 	for (i = 0; i < 256; i++)
 		if (keybindings_down[i])
 			IN_SetBinding(i, "", "");
+	unguard;
 }
 
 //==========================================================================
@@ -557,6 +575,7 @@ COMMAND(UnbindAll)
 
 COMMAND(Bind)
 {
+	guard(COMMAND Bind);
 	int			c, b;
 	
 	c = Argc();
@@ -593,6 +612,7 @@ COMMAND(Bind)
 	{
 		IN_SetBinding(b, Argv(2), Argv(3));
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -605,6 +625,7 @@ COMMAND(Bind)
 
 void IN_WriteBindings(FILE *f)
 {
+	guard(IN_WriteBindings);
 	int i;
 	char name[32];
 
@@ -618,6 +639,7 @@ void IN_WriteBindings(FILE *f)
 				name, keybindings_down[i], keybindings_up[i]);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -628,6 +650,7 @@ void IN_WriteBindings(FILE *f)
 
 void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 {
+	guard(IN_GetBindingKeys);
 	int		i;
 
 	key1 = -1;
@@ -644,6 +667,7 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 			key1 = i;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -654,19 +678,24 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 
 int IN_TranslateKey(int ch)
 {
+	guard(IN_TranslateKey);
    	if (shiftdown)
 	{
 		ch = shiftxform[ch];
 	}
 	return ch;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -111,6 +111,7 @@ static boolean			listening = false;
 
 void NET_Init(void)
 {
+	guard(NET_Init);
 	int			i;
 	qsocket_t	*s;
 
@@ -163,6 +164,7 @@ void NET_Init(void)
 		GCon->Logf(NAME_DevNet, "IPX address %s", my_ipx_address);
 	if (*my_tcpip_address)
 		GCon->Logf(NAME_DevNet, "TCP/IP address %s", my_tcpip_address);
+	unguard;
 }
 
 //==========================================================================
@@ -173,6 +175,7 @@ void NET_Init(void)
 
 void NET_Shutdown(void)
 {
+	guard(NET_Shutdown);
 	qsocket_t	*sock;
 
 	SetNetTime();
@@ -191,6 +194,7 @@ void NET_Shutdown(void)
 			net_drivers[net_driverlevel].initialized = false;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -201,8 +205,10 @@ void NET_Shutdown(void)
 
 double SetNetTime(void)
 {
+	guard(SetNetTime);
 	net_time = Sys_Time();
 	return net_time;
+	unguard;
 }
 
 //==========================================================================
@@ -213,6 +219,7 @@ double SetNetTime(void)
 
 void NET_Poll(void)
 {
+	guard(NET_Poll);
 	SetNetTime();
 
 	for (PollProcedure *pp = pollProcedureList; pp; pp = pp->next)
@@ -222,6 +229,7 @@ void NET_Poll(void)
 		pollProcedureList = pp->next;
 		pp->procedure(pp->arg);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -232,6 +240,7 @@ void NET_Poll(void)
 
 void SchedulePollProcedure(PollProcedure *proc, double timeOffset)
 {
+	guard(SchedulePollProcedure);
 	PollProcedure *pp, *prev;
 
 	proc->nextTime = Sys_Time() + timeOffset;
@@ -252,6 +261,7 @@ void SchedulePollProcedure(PollProcedure *proc, double timeOffset)
 		proc->next = pp;
 		prev->next = proc;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -265,6 +275,7 @@ void SchedulePollProcedure(PollProcedure *proc, double timeOffset)
 
 qsocket_t *NET_NewQSocket(void)
 {
+	guard(NET_NewQSocket);
 	qsocket_t	*sock;
 
 	if (net_freeSockets == NULL)
@@ -301,6 +312,7 @@ qsocket_t *NET_NewQSocket(void)
 	sock->receiveMessageLength = 0;
 
 	return sock;
+	unguard;
 }
 
 //==========================================================================
@@ -311,6 +323,7 @@ qsocket_t *NET_NewQSocket(void)
 
 void NET_FreeQSocket(qsocket_t *sock)
 {
+	guard(NET_FreeQSocket);
 	qsocket_t	*s;
 
 	// remove it from active list
@@ -338,6 +351,7 @@ void NET_FreeQSocket(qsocket_t *sock)
 	sock->next = net_freeSockets;
 	net_freeSockets = sock;
 	sock->disconnected = true;
+	unguard;
 }
 
 #if defined CLIENT && defined SERVER // I think like this
@@ -350,6 +364,7 @@ void NET_FreeQSocket(qsocket_t *sock)
 
 COMMAND(Listen)
 {
+	guard(COMMAND Listen);
 	if (Argc() != 2)
 	{
 		GCon->Logf("\"listen\" is \"%d\"", listening ? 1 : 0);
@@ -364,6 +379,7 @@ COMMAND(Listen)
 			continue;
 		dfunc.Listen(listening);
 	}
+	unguard;
 }
 
 #endif
@@ -376,6 +392,7 @@ COMMAND(Listen)
 
 COMMAND(Port)
 {
+	guard(COMMAND Port);
 	int 	n;
 
 	if (Argc() != 2)
@@ -400,6 +417,7 @@ COMMAND(Port)
 		CmdBuf << "listen 0\n";
 		CmdBuf << "listen 1\n";
 	}
+	unguard;
 }
 
 #ifdef CLIENT
@@ -461,6 +479,7 @@ static void PrintSlistTrailer(void)
 
 static void Slist_Send(void*)
 {
+	guard(Slist_Send);
 	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
 	{
 		if (!slistLocal && net_driverlevel == 0)
@@ -472,6 +491,7 @@ static void Slist_Send(void*)
 
 	if ((Sys_Time() - slistStartTime) < 0.5)
 		SchedulePollProcedure(&slistSendProcedure, 0.75);
+	unguard;
 }
 
 //==========================================================================
@@ -482,6 +502,7 @@ static void Slist_Send(void*)
 
 static void Slist_Poll(void*)
 {
+	guard(Slist_Poll);
 	for (net_driverlevel=0; net_driverlevel < net_numdrivers; net_driverlevel++)
 	{
 		if (!slistLocal && net_driverlevel == 0)
@@ -506,6 +527,7 @@ static void Slist_Poll(void*)
 	slistSilent = false;
 	slistLocal = true;
 	slistSorted = false;
+	unguard;
 }
 
 //==========================================================================
@@ -516,6 +538,7 @@ static void Slist_Poll(void*)
 
 void NET_Slist(void)
 {
+	guard(NET_Slist);
 	if (slistInProgress)
 		return;
 
@@ -532,6 +555,7 @@ void NET_Slist(void)
 	SchedulePollProcedure(&slistPollProcedure, 0.1);
 
 	hostCacheCount = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -542,7 +566,9 @@ void NET_Slist(void)
 
 COMMAND(Slist)
 {
+	guard(COMMAND Slist);
 	NET_Slist();
+	unguard;
 }
 
 //==========================================================================
@@ -553,6 +579,7 @@ COMMAND(Slist)
 
 qsocket_t *NET_Connect(char *host)
 {
+	guard(NET_Connect);
 	qsocket_t	*ret;
 	int			numdrivers = net_numdrivers;
 	int			n;
@@ -633,6 +660,7 @@ JustDoIt:
 	}
 	
 	return NULL;
+	unguard;
 }
 
 #endif
@@ -646,6 +674,7 @@ JustDoIt:
 
 qsocket_t *NET_CheckNewConnections(void)
 {
+	guard(NET_CheckNewConnections);
 	qsocket_t	*ret;
 
 	SetNetTime();
@@ -664,6 +693,7 @@ qsocket_t *NET_CheckNewConnections(void)
 	}
 	
 	return NULL;
+	unguard;
 }
 
 #endif
@@ -676,6 +706,7 @@ qsocket_t *NET_CheckNewConnections(void)
 
 void NET_Close(qsocket_t *sock)
 {
+	guard(NET_Close);
 	if (!sock)
 		return;
 
@@ -688,6 +719,7 @@ void NET_Close(qsocket_t *sock)
 	sfunc.Close(sock);
 
 	NET_FreeQSocket(sock);
+	unguard;
 }
 
 //==========================================================================
@@ -705,6 +737,7 @@ void NET_Close(qsocket_t *sock)
 
 int	NET_GetMessage(qsocket_t *sock)
 {
+	guard(NET_GetMessage);
 	int			ret;
 
 	if (!sock)
@@ -743,6 +776,7 @@ int	NET_GetMessage(qsocket_t *sock)
 	}
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -759,6 +793,7 @@ int	NET_GetMessage(qsocket_t *sock)
 
 int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(NET_SendMessage);
 	int		r;
 	
 	if (!sock)
@@ -776,6 +811,7 @@ int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
 		messagesSent++;
 
 	return r;
+	unguard;
 }
 
 //==========================================================================
@@ -786,6 +822,7 @@ int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
 
 int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(NET_SendUnreliableMessage);
 	int		r;
 	
 	if (!sock)
@@ -803,6 +840,7 @@ int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 		unreliableMessagesSent++;
 
 	return r;
+	unguard;
 }
 
 //==========================================================================
@@ -816,6 +854,7 @@ int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 
 boolean NET_CanSendMessage(qsocket_t *sock)
 {
+	guard(NET_CanSendMessage);
 	int		r;
 	
 	if (!sock)
@@ -829,6 +868,7 @@ boolean NET_CanSendMessage(qsocket_t *sock)
 	r = sfunc.CanSendMessage(sock);
 	
 	return r;
+	unguard;
 }
 
 //==========================================================================
@@ -860,6 +900,7 @@ void StartSearch(void)
 
 slist_t * GetSlist(void)
 {
+	guard(GetSlist);
 	int		i, j;
 
 	if (!slistSorted)
@@ -885,6 +926,7 @@ slist_t * GetSlist(void)
 	memcpy(slist.cache, hostcache, sizeof(hostcache));
 	strcpy(slist.return_reason, m_return_reason);
 	return &slist;
+	unguard;
 }
 
 #endif
@@ -892,9 +934,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.10  2002/06/14 15:41:35  dj_jl
 //	Got rid of a warning.
-//
+//	
 //	Revision 1.9  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

@@ -71,6 +71,7 @@ static double		blocktime;
 
 int WINS_Init(void)
 {
+	guard(WINS_Init);
 	int		i;
 	char	buff[MAXHOSTNAMELEN];
 	char	*p;
@@ -158,6 +159,7 @@ int WINS_Init(void)
 	tcpipAvailable = true;
 
 	return net_controlsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -168,10 +170,12 @@ int WINS_Init(void)
 
 void WINS_Shutdown(void)
 {
+	guard(WINS_Shutdown);
 	WINS_Listen(false);
 	WINS_CloseSocket(net_controlsocket);
 	if (--winsock_initialized == 0)
 		WSACleanup();
+	unguard;
 }
 
 //==========================================================================
@@ -181,28 +185,30 @@ void WINS_Shutdown(void)
 //==========================================================================
 
 static BOOL PASCAL FAR BlockingHook(void)
-{ 
-    MSG		msg;
-    BOOL	ret;
- 
+{
+	guard(BlockingHook);
+	MSG		msg;
+	BOOL	ret;
+
 	if ((Sys_Time() - blocktime) > 2.0)
 	{
 		WSACancelBlockingCall();
 		return FALSE;
 	}
 
-    /* get the next message, if any */ 
-    ret = (BOOL)PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
- 
-    /* if we got one, process it */ 
-    if (ret)
-    {
-        TranslateMessage(&msg); 
-        DispatchMessage(&msg); 
-    } 
- 
-    /* TRUE if we got a message */ 
-    return ret; 
+	// get the next message, if any
+	ret = (BOOL)PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
+
+	// if we got one, process it
+	if (ret)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	// TRUE if we got a message
+	return ret;
+	unguard;
 } 
 
 //==========================================================================
@@ -213,6 +219,7 @@ static BOOL PASCAL FAR BlockingHook(void)
 
 static void WINS_GetLocalAddress(void)
 {
+	guard(WINS_GetLocalAddress);
 	hostent		*local;
 	char		buff[MAXHOSTNAMELEN];
 	dword		addr;
@@ -234,6 +241,7 @@ static void WINS_GetLocalAddress(void)
 
 	addr = ntohl(myAddr);
 	sprintf(my_tcpip_address, "%d.%d.%d.%d", (addr >> 24) & 0xff, (addr >> 16) & 0xff, (addr >> 8) & 0xff, addr & 0xff);
+	unguard;
 }
 
 //==========================================================================
@@ -244,6 +252,7 @@ static void WINS_GetLocalAddress(void)
 
 void WINS_Listen(boolean state)
 {
+	guard(WINS_Listen);
 	if (state)
 	{
 		// enable listening
@@ -264,6 +273,7 @@ void WINS_Listen(boolean state)
 			net_acceptsocket = -1;
 		}
 	}
+	unguard;
 }
 
 
@@ -275,6 +285,7 @@ void WINS_Listen(boolean state)
 
 int WINS_OpenSocket(int port)
 {
+	guard(WINS_OpenSocket);
 	int				newsocket;
 	sockaddr_in		address;
 	dword			trueval = 1;
@@ -297,6 +308,7 @@ int WINS_OpenSocket(int port)
 ErrorReturn:
 	closesocket(newsocket);
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -307,9 +319,11 @@ ErrorReturn:
 
 int WINS_CloseSocket(int socket)
 {
+	guard(WINS_CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return closesocket(socket);
+	unguard;
 }
 
 //==========================================================================
@@ -331,6 +345,7 @@ int WINS_Connect(int , sockaddr_t *)
 
 int WINS_CheckNewConnections(void)
 {
+	guard(WINS_CheckNewConnections);
 	char	buf[4096];
 
 	if (net_acceptsocket == -1)
@@ -341,6 +356,7 @@ int WINS_CheckNewConnections(void)
 		return net_acceptsocket;
 	}
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -351,6 +367,7 @@ int WINS_CheckNewConnections(void)
 
 int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(WINS_Read);
 	int addrlen = sizeof(sockaddr_t);
 	int ret;
 
@@ -363,6 +380,7 @@ int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 			return 0;
 	}
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -373,6 +391,7 @@ int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(WINS_Write);
 	int ret;
 
 	ret = sendto(socket, (char*)buf, len, 0, (sockaddr *)addr, sizeof(sockaddr_t));
@@ -381,6 +400,7 @@ int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 			return 0;
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -391,6 +411,7 @@ int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 
 int WINS_Broadcast(int socket, byte *buf, int len)
 {
+	guard(WINS_Broadcast);
 	int	i = 1;
 
 	if (socket != net_broadcastsocket)
@@ -410,6 +431,7 @@ int WINS_Broadcast(int socket, byte *buf, int len)
 	}
 
 	return WINS_Write(socket, buf, len, &broadcastaddr);
+	unguard;
 }
 
 //==========================================================================
@@ -420,6 +442,7 @@ int WINS_Broadcast(int socket, byte *buf, int len)
 
 char *WINS_AddrToString(sockaddr_t *addr)
 {
+	guard(WINS_AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -428,6 +451,7 @@ char *WINS_AddrToString(sockaddr_t *addr)
 		(haddr >> 16) & 0xff, (haddr >> 8) & 0xff,
 		haddr & 0xff, ntohs(((sockaddr_in *)addr)->sin_port));
 	return buffer;
+	unguard;
 }
 
 //==========================================================================
@@ -438,6 +462,7 @@ char *WINS_AddrToString(sockaddr_t *addr)
 
 int WINS_StringToAddr(char *string, sockaddr_t *addr)
 {
+	guard(WINS_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -448,6 +473,7 @@ int WINS_StringToAddr(char *string, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = htonl(ipaddr);
 	((sockaddr_in *)addr)->sin_port = htons((word)hp);
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -458,6 +484,7 @@ int WINS_StringToAddr(char *string, sockaddr_t *addr)
 
 int WINS_GetSocketAddr(int socket, sockaddr_t *addr)
 {
+	guard(WINS_GetSocketAddr);
 	int		addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -468,6 +495,7 @@ int WINS_GetSocketAddr(int socket, sockaddr_t *addr)
 		((sockaddr_in *)addr)->sin_addr.s_addr = myAddr;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -478,6 +506,7 @@ int WINS_GetSocketAddr(int socket, sockaddr_t *addr)
 
 int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
 {
+	guard(WINS_GetNameFromAddr);
 	hostent *hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(struct in_addr), AF_INET);
@@ -489,6 +518,7 @@ int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 	strcpy(name, WINS_AddrToString(addr));
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -502,6 +532,7 @@ int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 {
+	guard(PartialIPAddress);
 	char buff[256];
 	char *b;
 	int addr;
@@ -547,6 +578,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 	((sockaddr_in *)hostaddr)->sin_addr.s_addr = (myAddr & htonl(mask)) | htonl(addr);
 	
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -557,6 +589,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 
 int WINS_GetAddrFromName(char *name, sockaddr_t *addr)
 {
+	guard(WINS_GetAddrFromName);
 	hostent *hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
@@ -571,6 +604,7 @@ int WINS_GetAddrFromName(char *name, sockaddr_t *addr)
 	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -581,6 +615,7 @@ int WINS_GetAddrFromName(char *name, sockaddr_t *addr)
 
 int WINS_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 {
+	guard(WINS_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -591,6 +626,7 @@ int WINS_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 		return 1;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -601,7 +637,9 @@ int WINS_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 int WINS_GetSocketPort(sockaddr_t *addr)
 {
+	guard(WINS_GetSocketPort);
 	return ntohs(((sockaddr_in *)addr)->sin_port);
+	unguard;
 }
 
 //==========================================================================
@@ -612,16 +650,21 @@ int WINS_GetSocketPort(sockaddr_t *addr)
 
 int WINS_SetSocketPort(sockaddr_t *addr, int port)
 {
+	guard(WINS_SetSocketPort);
 	((sockaddr_in *)addr)->sin_port = htons((word)port);
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.7  2002/01/11 08:12:49  dj_jl
 //	Changes for MinGW
 //	

@@ -69,6 +69,7 @@ VWindow::VWindow(void)
 
 void VWindow::Init(VWindow *InParent)
 {
+	guard(VWindow::Init);
 	Parent = InParent;
 	WinGC = (VGC *)StaticSpawnObject(VGC::StaticClass(), NULL, PU_STRING);
 	if (Parent)
@@ -79,6 +80,7 @@ void VWindow::Init(VWindow *InParent)
 	InitWindow();
 	WindowReady();
 	bIsInitialized = true;
+	unguard;
 }
 
 //==========================================================================
@@ -792,9 +794,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.3  2002/07/27 18:12:14  dj_jl
 //	Added Selectability flag.
-//
+//	
 //	Revision 1.2  2002/06/14 15:39:22  dj_jl
 //	Some fixes for Borland.
 //	

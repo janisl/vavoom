@@ -95,6 +95,7 @@ static int				LastY;
 
 void T_Init(void)
 {
+	guard(T_Init);
 	// Load fonts
 	if (W_CheckNumForName("STCFN033") >= 0)
 	{
@@ -112,6 +113,7 @@ void T_Init(void)
 	T_SetFont(font_small);
 	T_SetDist(-1, 1);
 	T_SetAlign(hleft, vtop);
+	unguard;
 }
 
 //==========================================================================
@@ -254,6 +256,7 @@ void T_SetShadow(bool state)
 
 int T_StringWidth(const char* String)
 {
+	guard(T_StringWidth);
 	int				i;
 	int				w = 0;
 	int				c;
@@ -270,6 +273,7 @@ int T_StringWidth(const char* String)
 	if (w) w -= HDistance;
 		
 	return w;
+	unguard;
 }
 
 //==========================================================================
@@ -280,6 +284,7 @@ int T_StringWidth(const char* String)
 
 int T_StringHeight(const char* String)
 {
+	guard(T_StringHeight);
 	int		i;
 	int		c;
 	int		h = Font->SpaceHeight;
@@ -294,6 +299,7 @@ int T_StringHeight(const char* String)
 	}
 		
 	return h;
+	unguard;
 }
 
 //==========================================================================
@@ -304,6 +310,7 @@ int T_StringHeight(const char* String)
 
 int T_TextWidth(const char* String)
 {
+	guard(T_TextWidth);
 	char		cs[256];
 	int			i;
 	int			w1;
@@ -320,6 +327,7 @@ int T_TextWidth(const char* String)
 			start = i;
 		}
 	return w;
+	unguard;
 }
 
 //==========================================================================
@@ -330,6 +338,7 @@ int T_TextWidth(const char* String)
 
 int T_TextHeight(const char* String)
 {
+	guard(T_TextHeight);
 	char		cs[256];
 	int			i;
 	int			h = 0;
@@ -345,6 +354,7 @@ int T_TextHeight(const char* String)
 		}
 	h -= VDistance;
 	return h;
+	unguard;
 }
 
 //==========================================================================
@@ -357,6 +367,7 @@ int T_TextHeight(const char* String)
 
 void T_DrawNString(int x, int y, const char* String, int lenght)
 {
+	guard(T_DrawNString);
 	int		w;
 	int		c;
 	int		cx;
@@ -414,6 +425,7 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 	}
 	LastX = cx;
 	LastY = cy;
+	unguard;
 }
 
 //==========================================================================
@@ -435,6 +447,7 @@ void T_DrawString(int x, int y, const char* String)
 
 void T_DrawNText(int x, int y, const char* String, int lenght)
 {
+	guard(T_DrawNText);
 	int			start = 0;
 	int			cx;
 	int			cy;
@@ -471,6 +484,7 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 			T_DrawNString(cx, cy, String + start, lenght - start);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -503,8 +517,10 @@ void T_DrawCursor(void)
 
 void T_DrawCursorAt(int x, int y)
 {
+	guard(T_DrawCursorAt);
 	if ((int)(host_time * 4) & 1)
 		R_DrawPic(x, y, Font->Pics['_' - 32]);
+	unguard;
 }
 
 //==========================================================================
@@ -515,8 +531,10 @@ void T_DrawCursorAt(int x, int y)
 
 void T_DrawCursor640(void)
 {
+	guard(T_DrawCursor640);
 	if ((int)(host_time * 4) & 1)
 		R_DrawPic640(LastX, LastY, Font->Pics['_' - 32]);
+	unguard;
 }
 
 //==========================================================================
@@ -529,6 +547,7 @@ void T_DrawCursor640(void)
 
 void T_DrawString8(int x, int y, const char* String)
 {
+	guard(T_DrawString8);
 	int		w;
 	int		c;
 	int		cx;
@@ -576,6 +595,7 @@ void T_DrawString8(int x, int y, const char* String)
 	}
 	LastX = cx;
 	LastY = cy;
+	unguard;
 }
 
 //==========================================================================
@@ -588,6 +608,7 @@ void T_DrawString8(int x, int y, const char* String)
 
 void T_DrawString640(int x, int y, const char* String)
 {
+	guard(T_DrawString640);
 	int		w;
 	int		c;
 	int		cx;
@@ -635,14 +656,18 @@ void T_DrawString640(int x, int y, const char* String)
 	}
 	LastX = cx;
 	LastY = cy;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.11  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

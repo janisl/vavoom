@@ -459,8 +459,10 @@ static void _FreeDOSMemory(void)
 
 void IPX_PollProcedure(void*)
 {
+	guard(IPX_PollProcedure);
 	_IPX_RelinquishControl();
 	SchedulePollProcedure(&pollProcedure, 0.01);
+	unguard;
 }
 
 //==========================================================================
@@ -471,6 +473,7 @@ void IPX_PollProcedure(void*)
 
 int IPX_Init(void)
 {
+	guard(IPX_Init);
 	size_t		i;
 	sockaddr_t	addr;
 	char		*colon;
@@ -513,6 +516,7 @@ int IPX_Init(void)
 	ipxAvailable = true;
 	GCon->Log(NAME_Init, "IPX initialized");
 	return net_controlsocket;
+	unguard;
 }
 
 //==========================================================================
@@ -523,9 +527,11 @@ int IPX_Init(void)
 
 void IPX_Shutdown(void)
 {
+	guard(IPX_Shutdown);
 	IPX_Listen(false);
 	IPX_CloseSocket(net_controlsocket);
     _FreeDOSMemory();
+	unguard;
 }
 
 //==========================================================================
@@ -536,6 +542,7 @@ void IPX_Shutdown(void)
 
 void IPX_Listen(boolean state)
 {
+	guard(IPX_Listen);
 	if (state)
 	{
 		// enable listening
@@ -557,6 +564,7 @@ void IPX_Listen(boolean state)
 			net_acceptsocket = -1;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -567,6 +575,7 @@ void IPX_Listen(boolean state)
 
 int IPX_OpenSocket(int port)
 {
+	guard(IPX_OpenSocket);
 	int		handle;
 	int		socket;
 
@@ -609,6 +618,7 @@ int IPX_OpenSocket(int port)
 
 	// "this will NEVER happen"
 	Sys_Error("IPX_OpenSocket: handle allocation failed\n");
+	unguard;
 }
 
 //==========================================================================
@@ -619,6 +629,7 @@ int IPX_OpenSocket(int port)
 
 int IPX_CloseSocket(int handle)
 {
+	guard(IPX_CloseSocket);
 	// if there's a send in progress, give it one last chance
 	if (_PacketInUse(BasePacket[handle]))
     {
@@ -632,6 +643,7 @@ int IPX_CloseSocket(int handle)
 	handlesInUse--;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -642,6 +654,7 @@ int IPX_CloseSocket(int handle)
 
 int IPX_Connect(int handle, sockaddr_t *addr)
 {
+	guard(IPX_Connect);
 	IPXAddr		ipxaddr;
 	packet_t	packet;
 
@@ -656,6 +669,7 @@ int IPX_Connect(int handle, sockaddr_t *addr)
 	_PutPacket(BasePacket[handle], &packet);
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -666,6 +680,7 @@ int IPX_Connect(int handle, sockaddr_t *addr)
 
 int IPX_CheckNewConnections(void)
 {
+	guard(IPX_CheckNewConnections);
 	int n;
 
 	if (net_acceptsocket == -1)
@@ -675,6 +690,7 @@ int IPX_CheckNewConnections(void)
 		if (_PacketInUse(BasePacket[net_acceptsocket] + n) == 0)
 			return net_acceptsocket;
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -685,6 +701,7 @@ int IPX_CheckNewConnections(void)
 
 int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(IPX_Read);
 	int				packetnum;
 	long			besttic;
 	int				copylen;
@@ -756,6 +773,7 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 	_IPX_ListenForPacket(_PacketOffset(packetnum));
 
 	return copylen;
+	unguard;
 }
 
 //==========================================================================
@@ -766,6 +784,7 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 
 int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 {
+	guard(IPX_Write);
 	packet_t	packet;
 
 	// has the previous send completed?
@@ -829,6 +848,7 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 	_IPX_SendPacket(_PacketOffset(BasePacket[handle]));
 
 	return len;
+	unguard;
 }
 
 //==========================================================================
@@ -839,6 +859,7 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 
 int IPX_Broadcast(int handle, byte *buf, int len)
 {
+	guard(IPX_Broadcast);
 	sockaddr_ipx	addr;
 	packet_t		packet;
 
@@ -851,6 +872,7 @@ int IPX_Broadcast(int handle, byte *buf, int len)
 	_PutPacket(BasePacket[handle], &packet);
 
 	return IPX_Write(handle, buf, len, (sockaddr_t *)&addr);
+	unguard;
 }
 
 //==========================================================================
@@ -861,6 +883,7 @@ int IPX_Broadcast(int handle, byte *buf, int len)
 
 char *IPX_AddrToString(sockaddr_t *addr)
 {
+	guard(IPX_AddrToString);
 	static char buf[28];
 
 	sprintf(buf, "%02x%02x%02x%02x:%02x%02x%02x%02x%02x%02x:%u",
@@ -877,6 +900,7 @@ char *IPX_AddrToString(sockaddr_t *addr)
 		(word)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket)
 		);
 	return buf;
+	unguard;
 }
 
 //==========================================================================
@@ -887,6 +911,7 @@ char *IPX_AddrToString(sockaddr_t *addr)
 
 int IPX_StringToAddr(char *string, sockaddr_t *addr)
 {
+	guard(IPX_StringToAddr);
 	int		val;
 	char	buf[3];
 
@@ -917,6 +942,7 @@ int IPX_StringToAddr(char *string, sockaddr_t *addr)
 	((sockaddr_ipx*)addr)->sipx_addr.socket = BigShort(val);
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -927,11 +953,13 @@ int IPX_StringToAddr(char *string, sockaddr_t *addr)
 
 int IPX_GetSocketAddr(int handle, sockaddr_t *addr)
 {
+	guard(IPX_GetSocketAddr);
 	memset(addr, 0, sizeof(sockaddr_t));
 	addr->sa_family = AF_NETWARE;
 	_IPX_GetLocalAddress(&((sockaddr_ipx *)addr)->sipx_addr);
 	((sockaddr_ipx *)addr)->sipx_addr.socket = Socket[handle];
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -942,8 +970,10 @@ int IPX_GetSocketAddr(int handle, sockaddr_t *addr)
 
 int IPX_GetNameFromAddr(sockaddr_t *addr, char *name)
 {
+	guard(IPX_GetNameFromAddr);
 	strcpy(name, IPX_AddrToString(addr));
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -954,6 +984,7 @@ int IPX_GetNameFromAddr(sockaddr_t *addr, char *name)
 
 int IPX_GetAddrFromName(char *name, sockaddr_t *addr)
 {
+	guard(IPX_GetAddrFromName);
 	int		n;
 	char	buf[32];
 
@@ -973,6 +1004,7 @@ int IPX_GetAddrFromName(char *name, sockaddr_t *addr)
 		return IPX_StringToAddr(name, addr);
 
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -983,6 +1015,7 @@ int IPX_GetAddrFromName(char *name, sockaddr_t *addr)
 
 int IPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 {
+	guard(IPX_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -993,6 +1026,7 @@ int IPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 		return 1;
 
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -1003,7 +1037,9 @@ int IPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 int IPX_GetSocketPort(sockaddr_t *addr)
 {
+	guard(IPX_GetSocketPort);
 	return (word)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket);
+	unguard;
 }
 
 //==========================================================================
@@ -1014,16 +1050,21 @@ int IPX_GetSocketPort(sockaddr_t *addr)
 
 int IPX_SetSocketPort(sockaddr_t *addr, int port)
 {
+	guard(IPX_SetSocketPort);
 	((sockaddr_ipx *)addr)->sipx_addr.socket = (word)BigShort(port);
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

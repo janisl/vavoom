@@ -62,6 +62,7 @@ static float 	PolyStartY;
 
 static void	UpdatePolySegs(polyobj_t *po)
 {
+	guard(CL UpdatePolySegs);
 	seg_t **segList;
 	int count;
 
@@ -73,6 +74,7 @@ static void	UpdatePolySegs(polyobj_t *po)
 		CalcSeg(*segList);
 		R_SegMoved(*segList);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -83,6 +85,7 @@ static void	UpdatePolySegs(polyobj_t *po)
 
 static void MovePolyobj(int num, float x, float y)
 {
+	guard(CL MovePolyobj);
 	int count;
 	seg_t **segList;
 	seg_t **veryTempSeg;
@@ -114,6 +117,7 @@ static void MovePolyobj(int num, float x, float y)
 	po->startSpot.x += x;
 	po->startSpot.y += y;
 	UpdatePolySegs(po);
+	unguard;
 }
 
 //==========================================================================
@@ -124,6 +128,7 @@ static void MovePolyobj(int num, float x, float y)
 
 static void RotatePolyobj(int num, float angle)
 {
+	guard(CL RotatePolyobj);
 	// Get a pointer to the polyobject.
 	polyobj_t *po = &cl_level.polyobjs[num];
 
@@ -157,6 +162,7 @@ static void RotatePolyobj(int num, float angle)
 	// Update the angle and segments.
 	po->angle = angle;
 	UpdatePolySegs(po);
+	unguard;
 }
 
 //==========================================================================
@@ -170,6 +176,7 @@ static void RotatePolyobj(int num, float angle)
 
 static void IterFindPolySegs(float x, float y, seg_t **segList)
 {
+	guard(CL IterFindPolySegs);
 	int i;
 
 	if (x == PolyStartX && y == PolyStartY)
@@ -195,7 +202,8 @@ static void IterFindPolySegs(float x, float y, seg_t **segList)
 			return;
 		}
 	}
-	Sys_Error("IterFindPolySegs:  Non-closed Polyobj located.\n");
+	Host_Error("IterFindPolySegs:  Non-closed Polyobj located.\n");
+	unguard;
 }
 
 
@@ -207,6 +215,7 @@ static void IterFindPolySegs(float x, float y, seg_t **segList)
 
 void CL_PO_SpawnPolyobj(float x, float y, int tag)
 {
+	guard(CL_PO_SpawnPolyobj);
 	int i;
 	int j;
 	int psIndex;
@@ -339,6 +348,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 		(*cl_level.polyobjs[index].segs)->linedef->arg2 =
 			(*cl_level.polyobjs[index].segs)->linedef->arg3;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -349,6 +359,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 
 void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 {
+	guard(CL_PO_TranslateToStartSpot);
 	seg_t **tempSeg;
 	seg_t **veryTempSeg;
 	vertex_t *tempPt;
@@ -415,6 +426,7 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 	}
 	sub->poly = po;
 	UpdatePolySegs(po);
+	unguard;
 }
 
 //==========================================================================
@@ -425,19 +437,24 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 
 void CL_PO_Update(int i, float x, float y, float angle)
 {
+	guard(CL_PO_Update);
 	if (!cl_level.numpolyobjs)
 		return;
 
 	RotatePolyobj(i, angle);
 	MovePolyobj(i, x, y);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.8  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

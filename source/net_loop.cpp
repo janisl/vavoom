@@ -86,6 +86,7 @@ void Loop_Listen(boolean)
 
 void Loop_SearchForHosts(boolean)
 {
+	guard(Loop_SearchForHosts);
 #ifdef SERVER
 	if (!sv.active)
 		return;
@@ -100,6 +101,7 @@ void Loop_SearchForHosts(boolean)
 	hostcache[0].maxusers = svs.max_clients;
 	strcpy(hostcache[0].cname, "local");
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -110,6 +112,7 @@ void Loop_SearchForHosts(boolean)
 
 qsocket_t *Loop_Connect(char *host)
 {
+	guard(Loop_Connect);
 	if (strcmp(host,"local") != 0)
 		return NULL;
 	
@@ -147,6 +150,7 @@ qsocket_t *Loop_Connect(char *host)
 	loop_server->driverdata = (void *)loop_client;
 	
 	return loop_client;	
+	unguard;
 }
 
 //==========================================================================
@@ -157,6 +161,7 @@ qsocket_t *Loop_Connect(char *host)
 
 qsocket_t *Loop_CheckNewConnections(void)
 {
+	guard(Loop_CheckNewConnections);
 	if (!localconnectpending)
 		return NULL;
 
@@ -168,6 +173,7 @@ qsocket_t *Loop_CheckNewConnections(void)
 	loop_client->receiveMessageLength = 0;
 	loop_client->canSend = true;
 	return loop_server;
+	unguard;
 }
 
 //==========================================================================
@@ -189,6 +195,7 @@ static int IntAlign(int value)
 
 int Loop_GetMessage(qsocket_t *sock)
 {
+	guard(Loop_GetMessage);
 	int		ret;
 	int		length;
 
@@ -211,6 +218,7 @@ int Loop_GetMessage(qsocket_t *sock)
 		((qsocket_t *)sock->driverdata)->canSend = true;
 
 	return ret;
+	unguard;
 }
 
 //==========================================================================
@@ -221,6 +229,7 @@ int Loop_GetMessage(qsocket_t *sock)
 
 int Loop_SendMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(Loop_SendMessage);
 	byte	*buffer;
 	int		*bufferLength;
 
@@ -250,6 +259,7 @@ int Loop_SendMessage(qsocket_t *sock, TSizeBuf *data)
 
 	sock->canSend = false;
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -260,6 +270,7 @@ int Loop_SendMessage(qsocket_t *sock, TSizeBuf *data)
 
 int Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 {
+	guard(Loop_SendUnreliableMessage);
 	byte	*buffer;
 	int		*bufferLength;
 
@@ -287,6 +298,7 @@ int Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 	memcpy(buffer, data->Data, data->CurSize);
 	*bufferLength = IntAlign(*bufferLength + data->CurSize + 4);
 	return 1;
+	unguard;
 }
 
 //==========================================================================
@@ -297,9 +309,11 @@ int Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 
 boolean Loop_CanSendMessage(qsocket_t *sock)
 {
+	guard(Loop_CanSendMessage);
 	if (!sock->driverdata)
 		return false;
 	return sock->canSend;
+	unguard;
 }
 
 //==========================================================================
@@ -321,6 +335,7 @@ boolean Loop_CanSendUnreliableMessage(qsocket_t *)
 
 void Loop_Close(qsocket_t *sock)
 {
+	guard(Loop_Close);
 	if (sock->driverdata)
 		((qsocket_t *)sock->driverdata)->driverdata = NULL;
 	sock->receiveMessageLength = 0;
@@ -330,6 +345,7 @@ void Loop_Close(qsocket_t *sock)
 		loop_client = NULL;
 	else
 		loop_server = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -345,9 +361,12 @@ void Loop_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

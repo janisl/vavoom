@@ -78,6 +78,7 @@ static bool UserInfoSent;
 
 void CL_Init(void)
 {
+	guard(CL_Init);
 	clpr.Load("clprogs");
 	clpr.SetGlobal("cl", (int)&cl);
 	clpr.SetGlobal("level", (int)&cl_level);
@@ -85,6 +86,7 @@ void CL_Init(void)
 	pf_CL_UpdateMobj = clpr.FuncForName("CL_UpdateMobj");
 
 	cls.message.Alloc(NET_MAXMESSAGE);
+	unguard;
 }
 
 //==========================================================================
@@ -95,6 +97,7 @@ void CL_Init(void)
 
 void CL_Ticker(void)
 {
+	guard(CL_Ticker);
     // do main actions
     switch (cl.intermission)
     { 
@@ -111,6 +114,7 @@ void CL_Ticker(void)
 		F_Ticker();
 		break;
     }
+	unguard;
 }
 
 //==========================================================================
@@ -121,6 +125,7 @@ void CL_Ticker(void)
 
 dlight_t *CL_AllocDlight(int key)
 {
+	guard(CL_AllocDlight);
 	int			i;
 	dlight_t	*dl;
 
@@ -170,6 +175,7 @@ dlight_t *CL_AllocDlight(int key)
 	memset(dl, 0, sizeof(*dl));
 	dl->key = key;
 	return dl;
+	unguard;
 }
 
 //==========================================================================
@@ -180,6 +186,7 @@ dlight_t *CL_AllocDlight(int key)
 
 void CL_DecayLights(void)
 {
+	guard(CL_DecayLights);
 	int			i;
 	dlight_t	*dl;
 	float		time;
@@ -197,6 +204,7 @@ void CL_DecayLights(void)
 		if (dl->radius < 0)
 			dl->radius = 0;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -207,6 +215,7 @@ void CL_DecayLights(void)
 
 void CL_UpdateMobjs(void)
 {
+	guard(CL_UpdateMobjs);
 	for (int i = 0; i < MAX_MOBJS; i++)
 	{
 		if (cl_mobjs[i].in_use)
@@ -214,6 +223,7 @@ void CL_UpdateMobjs(void)
 			clpr.Exec(pf_CL_UpdateMobj, (int)&cl_mobjs[i], i);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -226,6 +236,7 @@ void CL_UpdateMobjs(void)
 
 void CL_ReadFromServer(void)
 {
+	guard(CL_ReadFromServer);
 	int		ret;
 
 	if (cls.state != ca_connected)
@@ -250,6 +261,7 @@ void CL_ReadFromServer(void)
 
 	CL_UpdateMobjs();
    	CL_Ticker();
+	unguard;
 }
 
 //==========================================================================
@@ -260,6 +272,7 @@ void CL_ReadFromServer(void)
 
 void CL_SignonReply(void)
 {
+	guard(CL_SignonReply);
 	switch (cls.signon)
 	{
 	 case 1:
@@ -280,6 +293,7 @@ void CL_SignonReply(void)
 		cls.message << (byte)clc_stringcmd << "Begin\n";
 		break;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -293,6 +307,7 @@ void CL_SignonReply(void)
 
 void CL_KeepaliveMessage(void)
 {
+	guard(CL_KeepaliveMessage);
 	float			time;
 	static float	lastmsg;
 	int				ret;
@@ -344,6 +359,7 @@ void CL_KeepaliveMessage(void)
 	cls.message << (byte)clc_nop;
 	NET_SendMessage(cls.netcon, &cls.message);
 	cls.message.Clear();
+	unguard;
 }
 
 //==========================================================================
@@ -357,6 +373,7 @@ void CL_KeepaliveMessage(void)
 
 void CL_Disconnect(void)
 {
+	guard(CL_Disconnect);
     if (cl.paused)
     { 
 		cl.paused = false;
@@ -399,6 +416,7 @@ void CL_Disconnect(void)
 	cls.demoplayback = false;
 	cls.timedemo = false;
 	cls.signon = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -411,6 +429,7 @@ void CL_Disconnect(void)
 
 void CL_EstablishConnection(char *host)
 {
+	guard(CL_EstablishConnection);
 	if (cls.state == ca_dedicated)
 	{
 		return;
@@ -438,6 +457,7 @@ void CL_EstablishConnection(char *host)
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
+	unguard;
 }
 
 //==========================================================================
@@ -516,9 +536,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/08/05 17:20:00  dj_jl
+//	Added guarding.
+//
 //	Revision 1.13  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.12  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	
