@@ -55,8 +55,8 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-//#define PARANOID
-//#define DEVELOPER
+#define PARANOID
+#define DEVELOPER
 
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	9
@@ -115,9 +115,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/12 17:33:01  dj_jl
+//	Back to development mode
+//
 //	Revision 1.6  2001/08/31 17:29:45  dj_jl
 //	Changes for release
-//
+//	
 //	Revision 1.5  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
 //	
