@@ -802,7 +802,7 @@ boolean Actor::Physics(void)
 	else if ((Origin.z != FloorZ) || Velocity.z)
 	{
 		// Handle Z momentum and gravity
-		if (!bNoPassMobj)
+		if (!bNoPassMobj && !bMissile)
 		{
 			onmo = Actor(CheckOnmobj());
 			if (!onmo)
@@ -908,6 +908,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/03/28 18:28:26  dj_jl
+//  No checking for on-mobj for missiles.
+//
 //  Revision 1.28  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

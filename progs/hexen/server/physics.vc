@@ -420,8 +420,7 @@ void Actor::ApplyFriction(void)
 				SetState(SpawnState);
 			}
 		}
-		Velocity.x = 0.0;
-		Velocity.y = 0.0;
+		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
@@ -528,9 +527,9 @@ boolean Actor::HitMobj(Entity Other)
 //				Velocity.z = -Velocity.z;
 				if (bSeekerMissile)
 				{
-					Target = Owner;
+					Enemy = Instigator;
 				}
-				Owner = Other;
+				Instigator = Other;
 				return true;
 			}
 		}
@@ -940,13 +939,13 @@ boolean Actor::ZMovement(void)
 	// adjust height
 	//
 	Origin.z += Velocity.z * frametime;
-	if (bFloat && Target)
+	if (bFloat && Enemy)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Target);
-			delta = Target.Origin.z + Height / 2.0 - Origin.z;
+			dist = MobjDist2(self, Enemy);
+			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
 				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < delta * 3.0)
@@ -1159,7 +1158,7 @@ boolean Actor::Physics(void)
 	else if ((Origin.z != FloorZ) || Velocity.z || tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
-		if (!bNoPassMobj)
+		if (!bNoPassMobj && !bMissile)
 		{
 			onmo = Actor(CheckOnmobj());
 			if (!onmo)
@@ -1245,6 +1244,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/03/28 18:28:26  dj_jl
+//  No checking for on-mobj for missiles.
+//
 //  Revision 1.30  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //
