@@ -1111,7 +1111,8 @@ static void StopChannel(int chan_num)
 
 		for (i = 0; i < MAX_VOICES; i++)
 		{
-			if (!free_buffers[i].sound_id)
+			if (!free_buffers[i].sound_id &&
+				Channel[chan_num].sound_id != VOICE_SOUND_ID)
 			{
 				free_buffers[i].buf = dsbuffer;
 				free_buffers[i].sound_id = Channel[chan_num].sound_id;
@@ -1205,9 +1206,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2004/01/09 08:17:44  dj_jl
+//	Fixed repeating voices
+//
 //	Revision 1.19  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.18  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	
