@@ -73,20 +73,24 @@ class VEntity:public VMapObject
 	int WaterLevel;
 	int WaterType;
 
+	static int FIndex_Remove;
 	static int FIndex_Touch;
 	static int FIndex_BlockedByLine;
 	static int FIndex_ApplyFriction;
-	static FFunction *pfRemoveMobj;
 
-	boolean Touch(VMapObject *Other)
+	void eventRemove(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_Remove), (int)this);
+	}
+	boolean eventTouch(VMapObject *Other)
 	{
 		return svpr.Exec(GetVFunction(FIndex_Touch), (int)this, (int)Other);
 	}
-	void BlockedByLine(line_t * ld)
+	void eventBlockedByLine(line_t * ld)
 	{
 		svpr.Exec(GetVFunction(FIndex_BlockedByLine), (int)this, (int)ld);
 	}
-	void ApplyFriction(void)
+	void eventApplyFriction(void)
 	{
 		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
 	}
@@ -128,7 +132,7 @@ IMPLEMENT_CLASS(VEntity);
 int VEntity::FIndex_Touch;
 int VEntity::FIndex_BlockedByLine;
 int VEntity::FIndex_ApplyFriction;
-FFunction *VEntity::pfRemoveMobj;
+int VEntity::FIndex_Remove;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -153,7 +157,7 @@ boolean VEntity::SetState(int state)
 		{
 			// Remove mobj
 			StateNum = 0;
-			svpr.Exec(pfRemoveMobj, (int)this);
+			eventRemove();
 			return false;
 		}
 
@@ -534,7 +538,7 @@ boolean PIT_CheckRelThing(VMapObject *Other)
 	}
 
 	tmtrace.BlockingMobj = Other;
-	return tmtrace.Thing->Touch(Other);
+	return tmtrace.Thing->eventTouch(Other);
 }
 
 //==========================================================================
@@ -573,21 +577,21 @@ boolean PIT_CheckRelLine(line_t * ld)
 	if (!ld->backsector)
 	{
 		// One sided line
-		tmtrace.Thing->BlockedByLine(ld);
+		tmtrace.Thing->eventBlockedByLine(ld);
 		return false;
 	}
 
 	if (tmtrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
 	{
 		// Explicitly blocking everything
-		tmtrace.Thing->BlockedByLine(ld);
+		tmtrace.Thing->eventBlockedByLine(ld);
 		return false;
 	}
 
 	if (tmtrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
 	{
 		// Block monsters only
-		tmtrace.Thing->BlockedByLine(ld);
+		tmtrace.Thing->eventBlockedByLine(ld);
 		return false;
 	}
 
@@ -791,7 +795,7 @@ void VEntity::UpdateVelocity(void)
 	// Friction
 	if (Velocity.x || Velocity.y || Velocity.z)
 	{
-		ApplyFriction();
+		eventApplyFriction();
 	}
 	unguard;
 }
@@ -856,9 +860,6 @@ boolean PIT_CheckOnmobjZ(VMapObject *Other)
 
 void VEntity::FakeZMovement(void)
 {
-	float dist;
-	float delta;
-
 	//
 	//  adjust height
 	//
@@ -869,8 +870,8 @@ void VEntity::FakeZMovement(void)
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Target);
-			delta = Target.Origin.z + Height / 2.0 - tzorg.z;
+			float dist = MobjDist2(self, Target);
+			float delta = Target.Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -1129,13 +1130,14 @@ void EntInit(void)
 	svpr.SetGlobal("tmtrace", (int)&tmtrace);
 	GStates = (state_t *)svpr.GlobalAddr("states");
 	GSpriteNames = (FName *)svpr.GlobalAddr("sprite_names");
+	VEntity::FIndex_Remove =
+		VEntity::StaticClass()->GetFunctionIndex("Remove");
 	VEntity::FIndex_Touch = 
 		VEntity::StaticClass()->GetFunctionIndex("Touch");
 	VEntity::FIndex_BlockedByLine = 
 		VEntity::StaticClass()->GetFunctionIndex("BlockedByLine");
 	VEntity::FIndex_ApplyFriction = 
 		VEntity::StaticClass()->GetFunctionIndex("ApplyFriction");
-	VEntity::pfRemoveMobj = svpr.FuncForName("P_RemoveMobj");
 }
 
 //==========================================================================
@@ -1147,7 +1149,10 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/03/16 17:55:12  dj_jl
+//	Some small changes.
+//
 //	Revision 1.1  2002/03/09 18:06:25  dj_jl
 //	Made Entity class and most of it's functions native
-//
+//	
 //**************************************************************************

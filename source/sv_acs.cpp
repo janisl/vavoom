@@ -340,7 +340,7 @@ static line_t *P_FindLine(int lineTag, int *searchPosition)
 
 static VMapObject *P_FindMobjFromTID(int tid, int *searchPosition)
 {
-	return (VMapObject*)svpr.Exec("P_FindMobjFromTID", tid, (int)searchPosition);
+	return (VMapObject*)svpr.Exec("FindMobjFromTID", tid, (int)searchPosition);
 }
 
 //==========================================================================
@@ -1805,9 +1805,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/03/16 17:55:11  dj_jl
+//	Some small changes.
+//
 //	Revision 1.15  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.14  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	
