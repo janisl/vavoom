@@ -46,8 +46,6 @@ void OnMapSpawn(mthing_t *mthing)
 
 void TouchSpecial(Actor Toucher)
 {
-	PlayerPawn P;
-
 	if (!Toucher.bPickUp)
 	{
 		// can't remove thing
@@ -58,10 +56,9 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
-	if (P.GiveKey(KeyType))
+	if (Toucher.Player.GiveKey(KeyType))
 	{
-		cprint(P.Player, KeyText[KeyType]);
+		cprint(Toucher.Player, KeyText[KeyType]);
 	}
 	if (netgame)
 	{
@@ -69,11 +66,11 @@ void TouchSpecial(Actor Toucher)
 	}
 	if (bCountItem)
 	{
-		P.Player.ItemCount++;
+		Toucher.Player.ItemCount++;
 	}
 	Remove();
-	P.Player.BonusFlash += BONUSADD;
-	P.PlaySound('PickupKey', CHAN_ITEM);
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound('PickupKey', CHAN_ITEM);
 }
 
 defaultproperties
@@ -83,6 +80,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

@@ -40,7 +40,7 @@ void A_FireFlamethrower()
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	Player.bFixAngle = true;
-	A = PlayerPawn(Player.MO).SpawnPlayerMissile(FlameFX1);
+	A = Player.SpawnPlayerMissile(FlameFX1);
 	if (A)
 	{
 		A.Velocity.z += 5.0 * 35.0;
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/08/22 19:23:27  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.3  2004/01/30 17:39:34  dj_jl
 //  Implemented many action functions.
 //

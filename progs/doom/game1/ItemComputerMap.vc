@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemComputerMap:Pickup
+class ItemComputerMap : Pickup
 	__mobjinfo__(2026);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class ItemComputerMap:Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	if (!Toucher.GiveItem(IT_ALL_MAP))
+	if (!Toucher.Player.GiveItem(IT_ALL_MAP))
 		return false;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('PickupPower', CHAN_ITEM);
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

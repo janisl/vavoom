@@ -39,7 +39,7 @@ bool HandlePickup(Actor Toucher)
 	Toucher.Player.Backpack = true;
 	for (i = 0; i < NUMAMMO; i++)
 	{
-		PlayerPawn(Toucher).GiveAmmo(i, 1);
+		Toucher.Player.GiveAmmo(i, 1);
 	}
 	return true;
 }
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:27  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2004/03/01 07:10:31  dj_jl
 //  Implemented ammo satchel
 //

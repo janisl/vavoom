@@ -406,7 +406,7 @@ void Kill(Actor source)
 				if (source.Player.ChickenTime)
 				{
 					// Make a super chicken
-					PlayerPawn(source).GivePower(pw_weaponlevel2);
+					source.Player.GivePower(pw_weaponlevel2);
 				}
 			}
 		}
@@ -524,7 +524,7 @@ bool ChickenMorphPlayer(void)
 			!Player.Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
-			PlayerPawn(self).GivePower(pw_weaponlevel2);
+			Player.GivePower(pw_weaponlevel2);
 		}
 		return false;
 	}
@@ -615,7 +615,7 @@ bool AutoUseChaosDevice(void)
 	{
 		if (Player.Inventory[i].type == arti_teleport)
 		{
-			PlayerPawn(self).PlayerUseArtifact(arti_teleport);
+			Player.PlayerUseArtifact(arti_teleport);
 			Health = (Health + 1) / 2;
 			Player.Health = Health;
 			return true;
@@ -661,7 +661,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
+			Player.PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -671,7 +671,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
+			Player.PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((gameskill == sk_baby)
@@ -683,7 +683,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
+			Player.PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
@@ -692,7 +692,7 @@ void AutoUseHealth(int saveHealth)
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
+			Player.PlayerRemoveArtifact(superSlot);
 		}
 	}
 	Player.Health = Health;
@@ -2828,7 +2828,7 @@ void A_FreeTargMobj(void)
 	bDropOff = true;
 	bCorpse = true;
 	bNoPassMobj = true;
-//	Player = NULL;		//	Will do this later
+	Player = none;
 	bIsPlayer = false;
 }
 
@@ -2919,6 +2919,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.5  2004/03/12 07:21:39  dj_jl
 //  Monster desth special action
 //

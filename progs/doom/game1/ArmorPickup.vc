@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArmorPickup:Pickup
+class ArmorPickup : Pickup
 	abstract;
 
 int ArmorClass;
@@ -36,7 +36,7 @@ int ArmorClass;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (!Toucher.GiveArmor(ArmorClass))
+	if (!Toucher.Player.GiveArmor(ArmorClass))
 		return false;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('PickupItem', CHAN_ITEM);
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

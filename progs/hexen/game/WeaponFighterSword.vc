@@ -39,15 +39,15 @@ void A_FSwordAttack(void)
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	Player.Mana[MANA_2] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
+	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
-	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
+	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 8.0));
-	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin, FighterSwordMissile,
+	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin, FighterSwordMissile,
 		Owner.Angles.yaw);
-	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
+	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 8.0));
-	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
+	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 4.0));
 	Owner.PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

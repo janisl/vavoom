@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SummonMissile:Projectile;
+class SummonMissile : Projectile;
 
 //==========================================================================
 //
@@ -55,7 +55,7 @@ void A_Summon(void)
 		{
 			//	Master isn't dead
 			A.Instigator = Instigator;	// Pointer to master
-			PlayerPawn(Instigator).GivePower(pw_minotaur);
+			Instigator.Player.GivePower(pw_minotaur);
 		}
 
 		// Make smoke puff
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/03/08 12:41:44  dj_jl
 //  Removing class pointers.
 //

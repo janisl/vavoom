@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyPickup:Pickup
+class KeyPickup : Pickup
 	abstract;
 
 int KeyType;
@@ -36,7 +36,7 @@ int KeyType;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (Toucher.GiveCard(KeyType))
+	if (Toucher.Player.GiveCard(KeyType))
 		cprint(Toucher.Player, PickupMessage);
 	if (netgame)
 		return false;
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

@@ -37,7 +37,6 @@ int PieceValue;
 
 void TouchSpecial(Actor Toucher)
 {
-	PlayerPawn P;
 	bool remove;
 	bool checkAssembled;
 	bool gaveWeapon;
@@ -53,16 +52,10 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
-	if (!P)
-	{
-		//	Shouldn't happen
-		return;
-	}
 	remove = true;
 	checkAssembled = true;
 	gaveWeapon = false;
-	if (P.Player.PClass != PieceClass)
+	if (Toucher.Player.PClass != PieceClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -71,7 +64,7 @@ void TouchSpecial(Actor Toucher)
 			return;
 		}
 		checkAssembled = false;
-		gaveMana = P.GiveMana(MANA_BOTH, 20);
+		gaveMana = Toucher.Player.GiveMana(MANA_BOTH, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
@@ -81,20 +74,20 @@ void TouchSpecial(Actor Toucher)
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (P.Player.Pieces & PieceValue)
+		if (Toucher.Player.Pieces & PieceValue)
 		{
 			// Already has the piece
 			return;
 		}
 		PieceValue = pieceValueTrans[PieceValue];
-		P.GiveMana(MANA_BOTH, 20);
+		Toucher.Player.GiveMana(MANA_BOTH, 20);
 		remove = false;
 	}
 	else
 	{
 		// Deathmatch or single player game
-		gaveMana = P.GiveMana(MANA_BOTH, 20);
-		if (P.Player.Pieces & PieceValue)
+		gaveMana = Toucher.Player.GiveMana(MANA_BOTH, 20);
+		if (Toucher.Player.Pieces & PieceValue)
 		{
 			// Already has the piece, check if mana needed
 			if (!gaveMana)
@@ -109,7 +102,7 @@ void TouchSpecial(Actor Toucher)
 	// Pick up the weapon piece
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, Toucher);
 		Special = 0;
 	}
 	if (remove)
@@ -123,30 +116,30 @@ void TouchSpecial(Actor Toucher)
 			Remove();
 		}
 	}
-	P.Player.BonusFlash += BONUSADD;
+	Toucher.Player.BonusFlash += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
 	{
-		P.Player.Pieces |= PieceValue;
-		if (P.Player.Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
+		Toucher.Player.Pieces |= PieceValue;
+		if (Toucher.Player.Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 		{
 			gaveWeapon = true;
-			P.Player.WeaponOwned[WP_FOURTH] = true;
-			P.Player.PendingWeapon = WP_FOURTH;
+			Toucher.Player.WeaponOwned[WP_FOURTH] = true;
+			Toucher.Player.PendingWeapon = WP_FOURTH;
 		}
 	}
 
 	if (gaveWeapon)
 	{
-		cprint(P.Player, fourthWeaponText[PieceClass]);
+		cprint(Toucher.Player, fourthWeaponText[PieceClass]);
 		// Play the build-sound full volume for all players
-		P.PlayFullVolumeSound('WeaponBuild', CHAN_ITEM);
+		Toucher.PlayFullVolumeSound('WeaponBuild', CHAN_ITEM);
 	}
 	else
 	{
-		cprint(P.Player, weaponPieceText[PieceClass]);
-		P.PlayFullVolumeSound('PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
+		cprint(Toucher.Player, weaponPieceText[PieceClass]);
+		Toucher.PlayFullVolumeSound('PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
 	}
 }
 
@@ -158,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

@@ -74,7 +74,7 @@ void A_FAxeAttack(void)
 			{
 				linetarget.Thrust(angles.yaw, power);
 			}
-			PlayerPawn(Owner).AdjustPlayerAngle();
+			Player.AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -92,7 +92,7 @@ void A_FAxeAttack(void)
 			{
 				linetarget.Thrust(angles.yaw, power);
 			}
-			PlayerPawn(Owner).AdjustPlayerAngle();
+			Player.AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -264,6 +264,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

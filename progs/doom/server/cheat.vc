@@ -285,19 +285,19 @@ void Cheat_Gimme(void)
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		player.MO.GivePower(pw_invulnerability);
+		player.GivePower(pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-		player.MO.GivePower(pw_strength);
+		player.GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-		player.MO.GivePower(pw_invisibility);
+		player.GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-		player.MO.GivePower(pw_ironfeet);
+		player.GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-		player.MO.GivePower(pw_infrared);
+		player.GivePower(pw_infrared);
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		player.MO.GiveItem(IT_ALL_MAP);
+		player.GiveItem(IT_ALL_MAP);
 
 	// Health
 	if ((i1 & GIMME_HEALTH) && (player.Health < 100))
@@ -363,6 +363,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.15  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

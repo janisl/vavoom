@@ -58,7 +58,7 @@ void A_FHammerAttack(void)
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			PlayerPawn(Owner).AdjustPlayerAngle();
+			Player.AdjustPlayerAngle();
 			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
 				linetarget.Thrust(angles.yaw, power);
@@ -76,7 +76,7 @@ void A_FHammerAttack(void)
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
-			PlayerPawn(Owner).AdjustPlayerAngle();
+			Player.AdjustPlayerAngle();
 			if (linetarget.bCountKill || linetarget.bIsPlayer)
 			{
 				linetarget.Thrust(angles.yaw, power);
@@ -129,7 +129,7 @@ void A_FHammerThrow(void)
 	}
 	Player.Mana[MANA_2] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	PlayerPawn(Player.MO).SpawnPlayerMissile(HammerMissile);
+	Player.SpawnPlayerMissile(HammerMissile);
 }
 
 __states__
@@ -166,6 +166,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

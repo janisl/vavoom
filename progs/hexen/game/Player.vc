@@ -103,7 +103,2438 @@ float MorphTime;	// player is a pig if > 0
 
 TVec MoveDir;
 
+// For cleric's invulnerability effect
+bool bAltShadow;
+bool bShadow;
+bool bDontDraw;
+
 BotPlayer Bot;
+
+//==========================================================================
+//
+//  GiveMana
+//
+//  Returns true if the player accepted the mana, false if it was
+// refused (player has MAX_MANA).
+//
+//==========================================================================
+
+bool GiveMana(int mana, int count)
+{
+	int prevMana;
+
+	if (mana == MANA_NONE)
+	{
+		return false;
+	}
+	if (mana == MANA_BOTH)
+	{
+		//	Give both types. Do this here to simplify other code.
+		// Use bitwise or to make sure bot types are given.
+		return GiveMana(MANA_1, count) | GiveMana(MANA_2, count);
+	}
+	if (mana < 0 || mana > NUMMANA)
+	{
+		Error("Actor::GiveMana: bad type %i", mana);
+	}
+	if (Mana[mana] == MAX_MANA)
+	{
+		return false;
+	}
+	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	{
+		// extra mana in baby mode and nightmare mode
+		count += count >> 1;
+	}
+	prevMana = Mana[mana];
+
+	Mana[mana] += count;
+	if (Mana[mana] > MAX_MANA)
+	{
+		Mana[mana] = MAX_MANA;
+	}
+	if (prevMana <= 0)
+	{
+		Weapon(ViewEnts[ps_weapon]).GotMana(mana);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveBody
+//
+//  Returns false if the body isn't needed at all.
+//
+//==========================================================================
+
+bool GiveBody(int num)
+{
+	int max;
+
+	max = MAXHEALTH;
+	if (MorphTime)
+	{
+		max = MAXMORPHHEALTH;
+	}
+	if (Health >= max)
+	{
+		return false;
+	}
+	Health += num;
+	if (Health > max)
+	{
+		Health = max;
+	}
+	MO.Health = Health;
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveArmor
+//
+//  Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool GiveArmor(int armortype, int amount)
+{
+	float hits;
+	float totalArmor;
+
+	if (amount == -1)
+	{
+		hits = ArmorIncrement[PClass * NUMARMOR + armortype];
+		if (ArmorPoints[armortype] >= hits)
+		{
+			return false;
+		}
+		else
+		{
+			ArmorPoints[armortype] = hits;
+		}
+	}
+	else
+	{
+		hits = itof(amount) * 5.0;
+		totalArmor = ArmorPoints[ARMOR_ARMOR]
+			+ ArmorPoints[ARMOR_SHIELD]
+			+ ArmorPoints[ARMOR_HELMET]
+			+ ArmorPoints[ARMOR_AMULET]
+			+ AutoArmorSave[PClass];
+		if (totalArmor < ArmorMax[PClass] * 5.0)
+		{
+			ArmorPoints[armortype] += hits;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveKey
+//
+//==========================================================================
+
+bool GiveKey(int key)
+{
+	if (Keys & (1 << key))
+	{
+		return false;
+	}
+	BonusFlash += BONUSADD;
+	Keys |= 1 << key;
+	return true;
+}
+
+//==========================================================================
+//
+//  GivePower
+//
+//  Returns true if power accepted.
+//
+//==========================================================================
+
+bool GivePower(int power)
+{
+	if (power == pw_invulnerability)
+	{
+		if (Powers[power] > BLINKTHRESHOLD)
+		{
+			// Already have it
+			return false;
+		}
+		Powers[power] = INVULNTIME;
+		MO.bInvulnerable = true;
+		if (PClass == PCLASS_MAGE)
+		{
+			MO.bReflective = true;
+		}
+		return true;
+	}
+	if (power == pw_flight)
+	{
+		if (Powers[power] > BLINKTHRESHOLD)
+		{
+			// Already have it
+			return false;
+		}
+		Powers[power] = FLIGHTTIME;
+		MO.bFly = true;
+		MO.bNoGravity = true;
+		if (MO.Origin.z <= MO.FloorZ)
+		{
+			FlyHeight = 10.0;	// thrust the player in the air a bit
+		}
+		return (true);
+	}
+	if (power == pw_infrared)
+	{
+		if (Powers[power] > BLINKTHRESHOLD)
+		{
+			// Already have it
+			return false;
+		}
+		Powers[power] = INFRATIME;
+		return true;
+	}
+	if (power == pw_speed)
+	{
+		if (Powers[power] > BLINKTHRESHOLD)
+		{
+			// Already have it
+			return false;
+		}
+		Powers[power] = SPEEDTIME;
+		return true;
+	}
+	if (power == pw_minotaur)
+	{
+		// Doesn't matter if already have power, renew ticker
+		Powers[power] = MAULATORTIME;
+		return true;
+	}
+	if (Powers[power])
+	{
+		return false;	// already got it
+	}
+	Powers[power] = 1.0;
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveArtifact
+//
+//  Returns true if artifact accepted.
+//
+//==========================================================================
+
+bool GiveArtifact(int arti)
+{
+	int i;
+	int j;
+	bool slidePointer;
+
+	slidePointer = false;
+	i = 0;
+	while (Inventory[i].type != arti && i < InventorySlotNum)
+	{
+		i++;
+	}
+	if (i == InventorySlotNum)
+	{
+		if (arti < arti_firstpuzzitem)
+		{
+			i = 0;
+			while (Inventory[i].type < arti_firstpuzzitem
+				&& i < InventorySlotNum)
+			{
+				i++;
+			}
+			if (i != InventorySlotNum)
+			{
+				for (j = InventorySlotNum; j > i; j--)
+				{
+					Inventory[j].count = Inventory[j - 1].count;
+					Inventory[j].type = Inventory[j - 1].type;
+					slidePointer = true;
+				}
+			}
+		}
+		Inventory[i].count = 1;
+		Inventory[i].type = arti;
+		InventorySlotNum++;
+	}
+	else
+	{
+		if (arti >= arti_firstpuzzitem && netgame && !deathmatch)
+		{
+			// Can't carry more than 1 puzzle item in coop netplay
+			return false;
+		}
+		if (Inventory[i].count >= 25)
+		{
+			// Player already has 25 of this item
+			return false;
+		}
+		Inventory[i].count++;
+	}
+	if (!ArtifactCount)
+	{
+		ReadyArtifact = arti;
+	}
+	else if (slidePointer && i <= InvPtr)
+	{
+		InvPtr++;
+		InvCurPos++;
+		if (InvCurPos > 6)
+		{
+			InvCurPos = 6;
+		}
+	}
+	ArtifactCount++;
+	return true;
+}
+
+//==========================================================================
+//
+//  InventoryLeft
+//
+//==========================================================================
+
+void InventoryLeft()
+{
+	if (!InventoryTime)
+	{
+		InventoryTime = 5.0;
+		return;
+	}
+	InventoryTime = 5.0;
+	InvPtr--;
+	if (InvPtr < 0)
+	{
+		InvPtr = 0;
+	}
+	else
+	{
+		InvCurPos--;
+		if (InvCurPos < 0)
+		{
+			InvCurPos = 0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  InventoryRight
+//
+//==========================================================================
+
+void InventoryRight()
+{
+	if (!InventoryTime)
+	{
+		InventoryTime = 5.0;
+		return;
+	}
+	InventoryTime = 5.0;
+	InvPtr++;
+	if (InvPtr >= InventorySlotNum)
+	{
+		InvPtr--;
+		if (InvPtr < 0)
+			InvPtr = 0;
+	}
+	else
+	{
+		InvCurPos++;
+		if (InvCurPos > 6)
+		{
+			InvCurPos = 6;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  InventoryUse
+//
+//==========================================================================
+
+void InventoryUse()
+{
+	ReadyArtifact = Inventory[InvPtr].type;
+	// flag to denote that it's okay to use an artifact
+	if (InventoryTime)
+	{
+		InventoryTime = 0.0;
+	}
+	else
+	{
+		Arti = ReadyArtifact;
+	}
+}
+
+//==========================================================================
+//
+//  InventoryTick
+//
+//==========================================================================
+
+void InventoryTick(float deltaTime)
+{
+	// turn inventory off after a certain amount of time
+	if (InventoryTime)
+	{
+		InventoryTime -= deltaTime;
+		if (InventoryTime <= 0.0)
+		{
+			InventoryTime = 0.0;
+			ReadyArtifact = Inventory[InvPtr].type;
+		}
+	}
+	if (ArtifactFlash)
+	{
+		ArtifactFlash--;
+	}
+}
+
+//==========================================================================
+//
+//  MovePlayer
+//
+//==========================================================================
+
+void MovePlayer(float deltaTime)
+{
+	float fly;
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
+
+	forward = ForwardMove;
+	side = SideMove;
+
+	//  Adjust speed depending on class. Originaly this is done in input
+	// code, but to simplify it, we do it here.
+	//  Fighter moves faster, cleric at original speed, mage - slower,
+	// pig - slower, but faster than mage
+	switch (PClass)
+	{
+	case PCLASS_FIGHTER:
+		forward *= 1.18;
+		side *= 1.3;
+		break;
+
+	case PCLASS_CLERIC:
+		break;
+
+	case PCLASS_MAGE:
+		forward *= 0.9;
+		side *= 0.9;
+		break;
+
+	case PCLASS_PIG:
+		forward *= 0.97;
+		side *= 0.97;
+		break;
+	}
+
+	if (Powers[pw_speed] && !MorphTime)
+	{
+		// Adjust for a player with a speed artifact
+		forward *= 1.5;
+		side *= 1.5;
+	}
+	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
+		MO.GetFloorType() == FLOOR_ICE)	// Friction_Low
+	{
+		forward *= 0.5;
+		side *= 0.5;
+	}
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+	if (!(onground || MO.bFly))
+	{
+		//  not on ground, so little effect on velocity
+		forward *= air_control;
+		side *= air_control;
+	}
+
+	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
+
+	wishvel = forward * vforward + side * vright;
+	if (onground && !MO.bFly)
+	{
+		wishvel.z = 0.0;
+	}
+
+	MO.Velocity += 5.0 * deltaTime * wishvel;
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	fly = FlyMove / 16.0;
+	if (fly && Powers[pw_flight])
+	{
+		if (FlyMove != TOCENTER)
+		{
+			FlyHeight = fly * 2.0;
+			if (!MO.bFly)
+			{
+				MO.bFly = true;
+				MO.bNoGravity = true;
+				if (MO.Velocity.z <= -39.0 * 35.0)
+				{
+					// stop falling scream
+					MO.StopSound(CHAN_AUTO);
+				}
+			}
+		}
+		else
+		{
+			MO.bFly = false;
+			MO.bNoGravity = false;
+		}
+	}
+	else if (fly > 0.0)
+	{
+		PlayerUseArtifact(arti_fly);
+	}
+	if (MO.bFly)
+	{
+		MO.Velocity.z = FlyHeight * 35.0 + wishvel.z;
+		if (FlyHeight)
+		{
+			FlyHeight /= 2.0;
+		}
+	}
+	if ((Buttons & BT_JUMP) && onground && !JumpTime)
+	{
+		if (MorphTime)
+		{
+			MO.Velocity.z = 6.0 * 35.0;
+		}
+		else
+		{
+			MO.Velocity.z = 9.0 * 35.0;
+		}
+		MO.bOnMobj = false;
+		JumpTime = 0.5;
+	}
+}
+
+//==========================================================================
+//
+//  CheckWaterJump
+//
+//==========================================================================
+
+void CheckWaterJump()
+{
+	TVec start;
+	TVec end;
+	TVec vforward;
+
+	// check for a jump-out-of-water
+	AngleVector(&MO.Angles, &vforward);
+	start = MO.Origin;
+	start.z += MO.Height * 0.5 + 8.0;
+	vforward.z = 0.0;
+	vforward = Normalize(vforward);
+	end = start + vforward * 24.0;
+	if (!TraceLine(start, end))
+	{
+		// solid at waist
+		start.z = MO.Origin.z + MO.Height;
+		end = start + vforward * 24.0;
+		MoveDir = trace_plane_normal * -50.0;
+		if (TraceLine(start, end))
+		{
+			// open at eye level
+			MO.bWaterJump = true;
+			MO.Velocity.z = 350.0;
+			MO.ReactionTime = 2.0;	// safety net
+		}
+	}
+}
+
+//==========================================================================
+//
+//  WaterMove
+//
+//==========================================================================
+
+void WaterMove(float deltaTime)
+{
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+
+	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
+
+	forward = ForwardMove;
+	side = SideMove;
+
+	//  Adjust speed depending on class. Originaly this is done in input
+	// code, but to simplify it, we do it here.
+	//  Fighter moves faster, cleric at original speed, mage - slower,
+	// pig - slower, but faster than mage
+	switch (PClass)
+	{
+	case PCLASS_FIGHTER:
+		forward *= 1.18;
+		side *= 1.3;
+		break;
+
+	case PCLASS_CLERIC:
+		break;
+
+	case PCLASS_MAGE:
+		forward *= 0.9;
+		side *= 0.9;
+		break;
+
+	case PCLASS_PIG:
+		forward *= 0.97;
+		side *= 0.97;
+		break;
+	}
+
+	if (Powers[pw_speed] && !MorphTime)
+	{
+		// Adjust for a player with a speed artifact
+		forward *= 1.5;
+		side *= 1.5;
+	}
+
+	wishvel = vforward * forward + vright * side;
+	if (!forward && !side /* && !cmd.upmove */ )
+		wishvel.z -= 60.0;	// drift towards bottom
+//  else
+//      wishvel.z += cmd.upmove;
+
+	MO.Velocity += 3.5 * deltaTime * wishvel;
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if (Buttons & BT_JUMP)
+	{
+		if (MO.WaterType == CONTENTS_WATER)
+			MO.Velocity.z = 100.0;
+		else if (MO.WaterType == CONTENTS_SLUDGE)
+			MO.Velocity.z = 80.0;
+		else
+			MO.Velocity.z = 50.0;
+	}
+	CheckWaterJump();
+}
+
+//==========================================================================
+//
+//  WaterJump
+//
+//==========================================================================
+
+void WaterJump()
+{
+	if (!MO.ReactionTime || !MO.WaterLevel)
+	{
+		MO.bWaterJump = false;
+		MO.ReactionTime = 0.0;
+	}
+	MO.Velocity.x = MoveDir.x;
+	MO.Velocity.y = MoveDir.y;
+}
+
+//==========================================================================
+//
+//  ThrustPlayer
+//
+//  Moves the given origin along a given angle.
+//
+//==========================================================================
+
+void ThrustPlayer(float angle, float move, float deltaTime)
+{
+	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
+		MO.GetFloorType() == FLOOR_ICE)	// Friction_Low
+	{
+		move *= 0.5;
+	}
+	MO.Velocity.x += move * cos(angle) * deltaTime;
+	MO.Velocity.y += move * sin(angle) * deltaTime;
+}
+
+//==========================================================================
+//
+//  CalcHeight
+//
+//  Calculate the walking / running height adjustment
+//
+//==========================================================================
+
+void CalcHeight(float deltaTime)
+{
+	float angle;
+	float bob;
+
+	// Regular movement bobbing
+	// (needs to be calculated for gun swing
+	// even if not on ground)
+	// OPTIMIZE: tablify angle
+	// Note: a LUT allows for effects
+	//  like a ramp with low health.
+	Bob = MO.Velocity.x * MO.Velocity.x + MO.Velocity.y * MO.Velocity.y;
+	Bob /= 4.0 * 35.0 * 35.0;
+	if (Bob > MAXBOB)
+		Bob = MAXBOB;
+
+	if (MO.bFly && !onground)
+	{
+		Bob = 0.5;
+	}
+
+	angle = 180.0 * 35.0 / 10.0 * level->time;
+	bob = Bob / 2.0 * sin(angle);
+
+	// move viewheight
+	if (PlayerState == PST_LIVE)
+	{
+		ViewHeight += DeltaViewHeight * deltaTime;
+
+		if (ViewHeight > VIEWHEIGHT)
+		{
+			ViewHeight = VIEWHEIGHT;
+			DeltaViewHeight = 0.0;
+		}
+
+		if (ViewHeight < VIEWHEIGHT / 2.0)
+		{
+			ViewHeight = VIEWHEIGHT / 2.0;
+			if (DeltaViewHeight <= 0.0)
+				DeltaViewHeight = 0.00001;
+		}
+
+		if (DeltaViewHeight)
+		{
+			DeltaViewHeight += 256.0 * deltaTime;
+			if (!DeltaViewHeight)
+				DeltaViewHeight = 0.00001;
+		}
+	}
+	if (MorphTime)
+	{
+		ViewOrg.z = MO.Origin.z + ViewHeight - 20.0;
+	}
+	else
+	{
+		ViewOrg.z = MO.Origin.z + ViewHeight + bob;
+	}
+	if (MO.FloorClip && PlayerState != PST_DEAD &&
+		MO.Origin.z <= MO.FloorZ)
+	{
+		ViewOrg.z -= MO.FloorClip;
+	}
+	if (ViewOrg.z < MO.FloorZ + 4.0)
+	{
+		ViewOrg.z = MO.FloorZ + 4.0;
+	}
+
+	if (ViewOrg.z > MO.CeilingZ - 4.0)
+		ViewOrg.z = MO.CeilingZ - 4.0;
+}
+
+//==========================================================================
+//
+//  PlayerInSpecialSector
+//
+//  Called every tic frame that the player origin is in a special sector.
+//
+//==========================================================================
+
+void PlayerInSpecialSector(float deltaTime)
+{
+	//FIXME Bullshit, doesn't work on slopes
+	if (MO.Origin.z != MO.Sector->floorheight)
+	{
+		// Player is not touching the floor
+		return;
+	}
+	switch (MO.Sector->special)
+	{
+	case 9:	// SecretArea
+		SecretCount++;
+		MO.Sector->special = 0;
+		break;
+
+	case 201:
+	case 202:
+	case 203:	// Scroll_North_xxx
+		ThrustPlayer(90.0, pushTab[MO.Sector->special - 201], deltaTime);
+		break;
+	case 204:
+	case 205:
+	case 206:	// Scroll_East_xxx
+		ThrustPlayer(0.0, pushTab[MO.Sector->special - 204], deltaTime);
+		break;
+	case 207:
+	case 208:
+	case 209:	// Scroll_South_xxx
+		ThrustPlayer(270.0, pushTab[MO.Sector->special - 207], deltaTime);
+		break;
+	case 210:
+	case 211:
+	case 212:	// Scroll_West_xxx
+		ThrustPlayer(180.0, pushTab[MO.Sector->special - 210], deltaTime);
+		break;
+	case 213:
+	case 214:
+	case 215:	// Scroll_NorthWest_xxx
+		ThrustPlayer(135.0, pushTab[MO.Sector->special - 213], deltaTime);
+		break;
+	case 216:
+	case 217:
+	case 218:	// Scroll_NorthEast_xxx
+		ThrustPlayer(45.0, pushTab[MO.Sector->special - 216], deltaTime);
+		break;
+	case 219:
+	case 220:
+	case 221:	// Scroll_SouthEast_xxx
+		ThrustPlayer(315.0, pushTab[MO.Sector->special - 219], deltaTime);
+		break;
+	case 222:
+	case 223:
+	case 224:	// Scroll_SouthWest_xxx
+		ThrustPlayer(225.0, pushTab[MO.Sector->special - 222], deltaTime);
+		break;
+
+	case 40:
+	case 41:
+	case 42:
+	case 43:
+	case 44:
+	case 45:
+	case 46:
+	case 47:
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+		// Wind specials are handled in (P_mobj):P_XYMovement
+		break;
+
+	case 26:	// Stairs_Special1
+	case 27:	// Stairs_Special2
+		// Used in (P_floor):ProcessStairSector
+		break;
+
+	case 198:	// Lightning Special
+	case 199:	// Lightning Flash special
+	case 200:	// Sky2
+		// Used in (R_plane):R_Drawplanes
+		break;
+	}
+}
+
+//============================================================================
+//
+//  PlayerOnSpecialFlat
+//
+//============================================================================
+
+void PlayerOnSpecialFlat(int floorType)
+{
+	if (MO.Origin.z != MO.FloorZ)
+	{
+		// Player is not touching the floor
+		return;
+	}
+	switch (floorType)
+	{
+	case FLOOR_LAVA:
+		if (!(level->tictime & 31))
+		{
+			MO.Damage(GLavaInflictor, none, 10);
+			MO.PlaySound('LavaSizzle', CHAN_BODY);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  PlayerInContents
+//
+//==========================================================================
+
+void PlayerInContents()
+{
+	if (!MO.WaterLevel)
+	{
+		return;
+	}
+	switch (MO.WaterType)
+	{
+	case CONTENTS_LAVA:
+		if (!(level->tictime & 31))
+		{
+			MO.Damage(GLavaInflictor, none, 10);
+			MO.PlaySound('LavaSizzle', CHAN_BODY);
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  PlayerImpulse
+//
+//==========================================================================
+
+void PlayerImpulse()
+{
+	int impulse;
+	int i;
+
+	impulse = Impulse;
+	Impulse = 0;
+	Arti = 0;
+
+	if (impulse <= NUMWEAPONS)
+	{
+		// The actual changing of the weapon is done when the weapon
+		// psprite can do it (A_WeaponReady), so it doesn't happen in
+		// the middle of an attack.
+		if (WeaponOwned[impulse - 1] &&
+			impulse - 1 != ReadyWeapon && !MorphTime)
+		{
+			PendingWeapon = impulse - 1;
+		}
+	}
+	else if (impulse == 13)
+	{
+		InventoryLeft();
+	}
+	else if (impulse == 14)
+	{
+		InventoryRight();
+	}
+	else if (impulse == 15)
+	{
+		InventoryUse();
+	}
+	else if (impulse == 16)
+	{
+		MO.Damage(none, none, 10000);
+	}
+	// Hexen artifact hot keys
+	if (!Arti)
+	{
+		if (impulse == 11)
+		{
+			Arti = NUMARTIFACTS;
+		}
+		else if (impulse == 12 && (Health < MAXHEALTH))
+		{
+			Arti = arti_health;
+		}
+		else if (impulse == 10)
+		{
+			Arti = arti_poisonbag;
+		}
+		else if (impulse == 9)
+		{
+			Arti = arti_blastradius;
+		}
+		else if (impulse == 8)
+		{
+			Arti = arti_teleport;
+		}
+		else if (impulse == 7)
+		{
+			Arti = arti_teleportother;
+		}
+		else if (impulse == 6)
+		{
+			Arti = arti_egg;
+		}
+		else if (impulse == 5 && !Powers[pw_invulnerability])
+		{
+			Arti = arti_invulnerability;
+		}
+	}
+
+	if (Arti)
+	{
+		// Use an artifact
+		if (Arti == NUMARTIFACTS)
+		{
+			// use one of each artifact (except puzzle artifacts)
+			for (i = 1; i < arti_firstpuzzitem; i++)
+			{
+				PlayerUseArtifact(i);
+			}
+		}
+		else
+		{
+			PlayerUseArtifact(Arti);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  MorphPlayerThink
+//
+//==========================================================================
+
+void MorphPlayerThink()
+{
+	//FIXME this sucks
+	if (ftoi(32.0 * MorphTime) & 15)
+	{
+		return;
+	}
+	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
+	{
+		// Snout sniff
+		Weapon(ViewEnts[ps_weapon]).SnoutSniff();
+		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
+		return;
+	}
+	if (P_Random() < 48)
+	{
+		if (P_Random() < 128)
+		{
+			MO.PlaySound('PigActive1', CHAN_VOICE);
+		}
+		else
+		{
+			MO.PlaySound('PigActive2', CHAN_VOICE);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  UndoPlayerMorph
+//
+//==========================================================================
+
+bool UndoPlayerMorph()
+{
+	Actor fog;
+	Actor A;
+
+	MO.UnlinkFromWorld();
+	switch (BaseClass)
+	{
+	case PCLASS_FIGHTER:
+		A = Spawn(PlayerFighter, MO.Origin);
+		break;
+	case PCLASS_CLERIC:
+		A = Spawn(PlayerCleric, MO.Origin);
+		break;
+	case PCLASS_MAGE:
+		A = Spawn(PlayerMage, MO.Origin);
+		break;
+	default:
+		Error("UndoPlayerMorph: Unknown player class %d", BaseClass);
+	}
+	if (!A.TestLocation())
+	{
+		// Didn't fit
+		A.Remove();
+		MO.LinkToWorld();
+		MorphTime = 2.0;
+		return false;
+	}
+	MO.LinkToWorld();
+	A.Angles = MO.Angles;
+	A.Player = self;
+	A.bIsPlayer = true;
+	A.ReactionTime = 0.5;
+	if (MO.bFly)
+	{
+		A.bFly = true;
+		A.bNoGravity = true;
+	}
+	MorphTime = 0.0;
+	A.Health = MAXHEALTH;
+	Health = A.Health;
+	PClass = BaseClass;
+	SetPlayerColor(self);
+	PostMorphWeapon(self, MO._Special1);
+
+	fog = Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
+		20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
+	fog.PlaySound('Teleport', CHAN_VOICE);
+
+	MO.SetState(S_FREETARGMOBJ);
+	MO = A;
+	return true;
+}
+
+//==========================================================================
+//
+//  SetPlayerRunState
+//
+//==========================================================================
+
+void SetPlayerRunState()
+{
+	if (MO.StateNum == MO.IdleState)
+	{
+		MO.SetState(MO.SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  DeathPlayerTick
+//
+//  Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+void DeathPlayerTick(float deltaTime)
+{
+	int dir;
+	float delta;
+	int lookDelta;
+
+	MovePsprites(self);
+	if (MO.WaterLevel > 1)
+	{
+		MO.Velocity.z -= 60.0;	// drift towards bottom
+	}
+
+	onground = (MO.Origin.z <= MO.FloorZ);
+
+	if (MO.Class == BloodySkull || MO.Class == IceChunk)
+	{
+		// Flying bloody skull or flying ice chunk
+		ViewHeight = 6.0;
+		DeltaViewHeight = 0.0;
+		//player->damagecount = 20;
+		if (onground)
+		{
+#ifdef FIXME
+			if (lookdir < 60)
+			{
+				lookDelta = (60 - lookdir) / 8;
+				if (lookDelta < 1 && (level->tictime & 1))
+				{
+					lookDelta = 1;
+				}
+				else if (lookDelta > 6)
+				{
+					lookDelta = 6;
+				}
+				lookdir += lookDelta;
+			}
+#endif
+		}
+	}
+	else if (!MO.bIceDamage)
+	{
+		// Fall to ground (if not frozen)
+		DeltaViewHeight = 0.0;
+		if (ViewHeight > 6.0)
+		{
+			ViewHeight -= 35.0 * deltaTime;
+		}
+		if (ViewHeight < 6.0)
+		{
+			ViewHeight = 6.0;
+		}
+#ifdef FIXME
+		if (lookdir > 0)
+		{
+			lookdir -= 6;
+		}
+		else if (lookdir < 0)
+		{
+			lookdir += 6;
+		}
+		if (abs(lookdir) < 6)
+		{
+			lookdir = 0;
+		}
+#endif
+	}
+	CalcHeight(deltaTime);
+
+	if (Attacker && Attacker != MO)
+	{
+		// Watch killer
+		dir = MO.FaceActor(Attacker, &delta);
+		if (delta < 10.0)
+		{
+			// Looking at killer, so fade damage and poison counters
+			if (DamageFlash)
+			{
+				DamageFlash -= deltaTime;
+				if (DamageFlash <= 0.0)
+					DamageFlash = 0.0;
+			}
+			if (PoisonCount)
+			{
+				PoisonCount--;
+			}
+		}
+		delta = delta / 8.0;
+		if (delta > 5.0)
+		{
+			delta = 5.0;
+		}
+		if (dir)
+		{
+			// Turn clockwise
+			MO.Angles.yaw += delta;
+		}
+		else
+		{	// Turn counter clockwise
+			MO.Angles.yaw -= delta;
+		}
+	}
+	else if (DamageFlash || PoisonCount)
+	{
+		if (DamageFlash)
+		{
+			DamageFlash -= deltaTime;
+			if (DamageFlash <= 0.0)
+				DamageFlash = 0.0;
+		}
+		else
+		{
+			PoisonCount--;
+		}
+	}
+
+	if (Buttons & BT_USE)
+	{
+		Palette = 0;
+		WeaponPalette = 0;
+		InvPtr = 0;
+		InvCurPos = 0;
+		NewTorch = 0;
+		NewTorchDelta = 0;
+		PlayerState = PST_REBORN;
+		MO._Special1 = PClass;
+		if (MO._Special1 > 2)
+		{
+			MO._Special1 = 0;
+		}
+		// Let the mobj know the player has entered the reborn state.  Some
+		// mobjs need to know when it's ok to remove themselves.
+		MO._Special2 = 666;
+	}
+}
+
+//==========================================================================
+//
+//  PlayerTick
+//
+//==========================================================================
+
+void PlayerTick(float deltaTime)
+{
+	int floorType;
+	int newweapon;
+	Actor speedA;
+
+	if (bIsBot)
+	{
+		Bot.BotTick(deltaTime);
+	}
+
+	// Copy view angles
+	MO.Angles = ViewAngles;
+
+	// fixme: do this in the cheat code
+	if (Cheats & CF_NOCLIP)
+	{
+		MO.bColideWithThings = false;
+		MO.bColideWithWorld = false;
+	}
+	else
+	{
+		MO.bColideWithThings = true;
+		MO.bColideWithWorld = true;
+	}
+
+	if (MO.bJustAttacked)
+	{
+		ForwardMove = 100.0;
+		SideMove = 0.0;
+		MO.bJustAttacked = false;
+	}
+
+	WorldTimer++;
+	InventoryTick(deltaTime);
+
+	if (PlayerState == PST_DEAD)
+	{
+		DeathPlayerTick(deltaTime);
+		return;
+	}
+
+	if (JumpTime)
+	{
+		JumpTime -= deltaTime;
+		if (JumpTime <= 0.0)
+			JumpTime = 0.0;
+	}
+	if (MorphTime)
+	{
+		MorphPlayerThink();
+	}
+
+	//  Move around.
+	//  ReactionTime is used to prevent movement for a bit after a teleport.
+	if (MO.ReactionTime)
+	{
+		MO.ReactionTime -= deltaTime;
+		if (MO.ReactionTime <= 0.0)
+			MO.ReactionTime = 0.0;
+		if (MO.bWaterJump)
+			WaterJump();
+	}
+	else
+	{
+		if (MO.WaterLevel >= 2)
+			WaterMove(deltaTime);
+		else
+			MovePlayer(deltaTime);
+		if (Powers[pw_speed] && !(level->tictime & 1) &&
+			Length(MO.Velocity) > 12.0 * 35.0)
+		{
+			speedA = Spawn(PlayerSpeed, MO.Origin);
+			if (speedA)
+			{
+				speedA.Angles.yaw = MO.Angles.yaw;
+				speedA.Translation = MO.Translation;
+				speedA.Instigator = MO;
+				speedA._Special1 = PClass;
+				if (speedA._Special1 > 2)
+				{
+					speedA._Special1 = 0;
+				}
+				speedA.SpriteIndex = MO.SpriteIndex;
+				speedA.FloorClip = MO.FloorClip;
+#ifdef FIXME
+				if (self == GPlayers[consoleplayer])
+				{
+					speedA.bHidden = true;
+				}
+#endif
+			}
+		}
+	}
+
+	CalcHeight(deltaTime);
+
+	if (MO.Sector->special)
+	{
+		PlayerInSpecialSector(deltaTime);
+	}
+	floorType = MO.GetFloorType();
+	if (floorType != FLOOR_SOLID)
+	{
+		PlayerOnSpecialFlat(floorType);
+	}
+	PlayerInContents();
+
+	switch (PClass)
+	{
+	case PCLASS_FIGHTER:
+		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
+			!MorphTime && !GetSoundPlayingInfo(MO,
+				GetSoundID('PlayerFighterFallingScream')))
+		{
+			MO.PlaySound('PlayerFighterFallingScream', CHAN_VOICE);
+		}
+		break;
+	case PCLASS_CLERIC:
+		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
+			!MorphTime && !GetSoundPlayingInfo(MO,
+				GetSoundID('PlayerClericFallingScream')))
+		{
+			MO.PlaySound('PlayerClericFallingScream', CHAN_VOICE);
+		}
+		break;
+	case PCLASS_MAGE:
+		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
+			!MorphTime && !GetSoundPlayingInfo(MO,
+				GetSoundID('PlayerMageFallingScream')))
+		{
+			MO.PlaySound('PlayerMageFallingScream', CHAN_VOICE);
+		}
+		break;
+	default:
+		break;
+	}
+
+	// Check for weapon change.
+	if (Impulse)
+	{
+		PlayerImpulse();
+	}
+
+	// check for use
+	if (Buttons & BT_USE)
+	{
+		if (!bUseDown)
+		{
+			P_UseLines(self);
+			bUseDown = true;
+		}
+	}
+	else
+	{
+		bUseDown = false;
+	}
+
+	// Morph counter
+	if (MorphTime)
+	{
+		MorphTime -= deltaTime;
+		if (MorphTime <= 0.0)
+		{
+			// Attempt to undo the pig
+			MorphTime = 0.0;
+			UndoPlayerMorph();
+		}
+	}
+
+	// cycle psprites
+	MovePsprites(self);
+
+	// Counters, time dependend power ups.
+
+	if (Powers[pw_invulnerability])
+	{
+		if (PClass == PCLASS_CLERIC)
+		{
+			if (!(level->tictime & 7) && bShadow && !bDontDraw)
+			{
+				bShadow = false;
+				if (!bAltShadow)
+				{
+					bDontDraw = true;
+ 					MO.bNonShootable = true;
+				}
+			}
+			if (!(level->tictime & 31))
+			{
+				if (bDontDraw)
+				{
+					if (!bShadow)
+					{
+						bShadow = true;
+ 						bAltShadow = true;
+					}
+					else
+					{
+						bDontDraw = false;
+ 						MO.bNonShootable = false;
+					}
+				}
+				else
+				{
+					bShadow = true;
+					bAltShadow = false;
+				}
+			}
+			if (bDontDraw)
+			{
+				MO.Translucency = 100;
+			}
+			else if (bShadow)
+			{
+				MO.Translucency = 66;
+			}
+			else if (bAltShadow)
+			{
+				MO.Translucency = 33;
+			}
+			else
+			{
+				MO.Translucency = 0;
+			}
+		}
+		Powers[pw_invulnerability] -= deltaTime;
+		if (Powers[pw_invulnerability] <= 0.0)
+		{
+			Powers[pw_invulnerability] = 0.0;
+			MO.bInvulnerable = false;
+			MO.bReflective = false;
+			if (PClass == PCLASS_CLERIC)
+			{
+				MO.bNonShootable = false;
+				MO.Translucency = 0;
+			}
+		}
+	}
+
+	if (Powers[pw_minotaur])
+	{
+		Powers[pw_minotaur] -= deltaTime;
+		if (Powers[pw_minotaur] <= 0.0)
+			Powers[pw_minotaur] = 0.0;
+	}
+
+	if (Powers[pw_infrared])
+	{
+		Powers[pw_infrared] -= deltaTime;
+		if (Powers[pw_infrared] <= 0.0)
+			Powers[pw_infrared] = 0.0;
+	}
+
+	if (Powers[pw_speed])
+	{
+		Powers[pw_speed] -= deltaTime;
+		if (Powers[pw_speed] <= 0.0)
+			Powers[pw_speed] = 0.0;
+	}
+
+	if (Powers[pw_flight] && netgame)
+	{
+		Powers[pw_flight] -= deltaTime;
+		if (Powers[pw_flight] <= 0.0)
+		{
+			Powers[pw_flight] = 0.0;
+			if (MO.Origin.z != MO.FloorZ)
+			{
+//FIXME             centering = true;
+			}
+			MO.bFly = false;
+			MO.bNoGravity = false;
+		}
+	}
+
+	if (PoisonCount && level->time - LastPoisonTime >= 0.5)
+	{
+		PoisonCount -= 5;
+		if (PoisonCount < 0)
+		{
+			PoisonCount = 0;
+		}
+		LastPoisonTime = level->time;
+		MO.PoisonDamage(Poisoner, 1, true);
+	}
+
+	if (DamageFlash)
+	{
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+
+	if (BonusFlash)
+	{
+		BonusFlash -= deltaTime;
+		if (BonusFlash <= 0.0)
+			BonusFlash = 0.0;
+	}
+
+	// Handling colormaps.
+	if (Powers[pw_infrared])
+	{
+		if (Powers[pw_infrared] <= BLINKTHRESHOLD)
+		{
+			if (ftoi(Powers[pw_infrared] * 35.0) & 8)
+			{
+				FixedColormap = 0;
+			}
+			else
+			{
+				FixedColormap = 1;
+			}
+		}
+		else if (!(level->tictime & 16))
+		{
+			if (NewTorch)
+			{
+				if (FixedColormap + NewTorchDelta > 7 ||
+					FixedColormap + NewTorchDelta < 1 ||
+					FixedColormap == NewTorch)
+				{
+					NewTorch = 0;
+				}
+				else
+				{
+					FixedColormap += NewTorchDelta;
+				}
+			}
+			else
+			{
+				NewTorch = (P_Random() & 7) + 1;
+				NewTorchDelta = (NewTorch == FixedColormap) ? 0 :
+					((NewTorch > FixedColormap) ? 1 : -1);
+			}
+		}
+	}
+	else
+		FixedColormap = 0;
+}
+
+//==========================================================================
+//
+//  PaletteFlash
+//
+//  Sets the new palette based upon the current values of
+// Player.DamageFlash and Player.BonusFlash.
+//
+//==========================================================================
+
+void PaletteFlash()
+{
+	CShifts[CSHIFT_CONTENTS] = 0;
+	if (MO.WaterLevel == 3)
+	{
+		switch (MO.WaterType)
+		{
+		case CONTENTS_WATER:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			break;
+
+		case CONTENTS_SLUDGE:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			break;
+
+		case CONTENTS_LAVA:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			break;
+		}
+	}
+
+	if (PoisonCount)
+	{
+		Palette = 0;
+		Palette = (PoisonCount + 7) >> 3;
+		if (Palette >= NUMPOISONPALS)
+		{
+			Palette = NUMPOISONPALS - 1;
+		}
+		Palette += STARTPOISONPALS;
+	}
+	else if (DamageFlash)
+	{
+		Palette = (ftoi(32.0 * DamageFlash) + 7) >> 3;
+		if (Palette >= NUMREDPALS)
+		{
+			Palette = NUMREDPALS - 1;
+		}
+		Palette += STARTREDPALS;
+	}
+	else if (BonusFlash)
+	{
+		Palette = (ftoi(32.0 * BonusFlash) + 7) >> 3;
+		if (Palette >= NUMBONUSPALS)
+		{
+			Palette = NUMBONUSPALS - 1;
+		}
+		Palette += STARTBONUSPALS;
+	}
+	else if (MO.bIceDamage)
+	{
+		// Frozen player
+		Palette = STARTICEPAL;
+	}
+	else
+	{
+		Palette = WeaponPalette;
+	}
+}
+
+//==========================================================================
+//
+//  SetViewPos
+//
+//==========================================================================
+
+void SetViewPos()
+{
+	ViewOrg.x = MO.Origin.x;
+	ViewOrg.y = MO.Origin.y;
+
+	if (LocalQuakeHappening)
+	{
+		float intensity;
+
+		intensity = itof(LocalQuakeHappening);
+		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+	}
+
+	ViewAngles = MO.Angles;
+
+	PaletteFlash();
+
+	Stats.flags = Keys;
+	Stats.flags |= ReadyWeapon << SBF_WPN_SHIFT;
+	Stats.flags |= Pieces << SBF_PIECES_SHIFT;
+	if (Powers[pw_flight])
+	{
+		if (Powers[pw_flight] > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_flight] * 35.0) & 16))
+		{
+			Stats.flags |= SBF_POWER_FLIGHT;
+		}
+	}
+	if (Powers[pw_speed])
+	{
+		if (Powers[pw_speed] > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_speed] * 35.0) & 16))
+		{
+			Stats.flags |= SBF_POWER_SPEED;
+		}
+	}
+	if (Powers[pw_invulnerability])
+	{
+		if (Powers[pw_invulnerability] > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_invulnerability] * 35.0) & 16))
+		{
+			Stats.flags |= SBF_POWER_INVULN;
+		}
+	}
+	if (Powers[pw_minotaur])
+	{
+		if (Powers[pw_minotaur] > BLINKTHRESHOLD ||
+			!(ftoi(Powers[pw_minotaur] * 35.0) & 16))
+		{
+			Stats.flags |= SBF_POWER_MINOTAUR;
+		}
+	}
+	if (MO.bFly)
+	{
+		Stats.flags |= SBF_IN_FLIGHT;
+	}
+}
+
+//==========================================================================
+//
+//  PlayerUseArtifact
+//
+//==========================================================================
+
+void PlayerUseArtifact(int arti)
+{
+	int i;
+
+	for (i = 0; i < InventorySlotNum; i++)
+	{
+		if (Inventory[i].type == arti)
+		{
+			// Found match - try to use
+			if (UseArtifact(arti))
+			{
+				// Artifact was used - remove it from inventory
+				PlayerRemoveArtifact(i);
+				if (arti < arti_firstpuzzitem)
+				{
+					MO.PlaySound('UseArtifact', CHAN_ITEM);
+				}
+				else
+				{
+					MO.PlaySound('PuzzleSuccess', CHAN_ITEM);
+				}
+				ArtifactFlash = 4;
+			}
+			else if (arti < arti_firstpuzzitem)
+			{
+				// Unable to use artifact, advance pointer
+				PlayerNextArtifact();
+			}
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  PlayerNextArtifact
+//
+//==========================================================================
+
+void PlayerNextArtifact()
+{
+	InvPtr--;
+	if (InvPtr < 6)
+	{
+		InvCurPos--;
+		if (InvCurPos < 0)
+		{
+			InvCurPos = 0;
+		}
+	}
+	if (InvPtr < 0)
+	{
+		InvPtr = InventorySlotNum - 1;
+		if (InvPtr < 6)
+		{
+			InvCurPos = InvPtr;
+		}
+		else
+		{
+			InvCurPos = 6;
+		}
+	}
+	ReadyArtifact = Inventory[InvPtr].type;
+}
+
+//==========================================================================
+//
+//  PlayerRemoveArtifact
+//
+//==========================================================================
+
+void PlayerRemoveArtifact(int slot)
+{
+	int i;
+
+	ArtifactCount--;
+	if (!(--Inventory[slot].count))
+	{
+		// Used last of a type - compact the artifact list
+		ReadyArtifact = arti_none;
+		Inventory[slot].type = arti_none;
+		for (i = slot + 1; i < InventorySlotNum; i++)
+		{
+			Inventory[i - 1].type = Inventory[i].type;
+			Inventory[i - 1].count = Inventory[i].count;
+		}
+		InventorySlotNum--;
+		// Set position markers and get next ReadyArtifact
+		InvPtr--;
+		if (InvPtr < 6)
+		{
+			InvCurPos--;
+			if (InvCurPos < 0)
+			{
+				InvCurPos = 0;
+			}
+		}
+		if (InvPtr >= InventorySlotNum)
+		{
+			InvPtr = InventorySlotNum - 1;
+		}
+		if (InvPtr < 0)
+		{
+			InvPtr = 0;
+		}
+		ReadyArtifact = Inventory[InvPtr].type;
+	}
+}
+
+//==========================================================================
+//
+//  UseArtifact
+//
+//  Returns true if the artifact was used.
+//
+//==========================================================================
+
+bool UseArtifact(int arti)
+{
+	int i;
+	int count;
+
+	switch (arti)
+	{
+	case arti_health:
+		if (!GiveBody(25))
+		{
+			return false;
+		}
+		break;
+	case arti_superhealth:
+		if (!GiveBody(100))
+		{
+			return false;
+		}
+		break;
+	case arti_invulnerability:
+		if (!GivePower(pw_invulnerability))
+		{
+			return false;
+		}
+		break;
+	case arti_torch:
+		if (!GivePower(pw_infrared))
+		{
+			return false;
+		}
+		break;
+	case arti_fly:
+		if (!GivePower(pw_flight))
+		{
+			return false;
+		}
+		if (MO.Velocity.z <= -35.0 * 35.0)
+		{
+			// stop falling scream
+			MO.StopSound(CHAN_AUTO);
+		}
+		break;
+	case arti_teleport:
+		UseArtiTele();
+		break;
+	case arti_egg:
+		UseArtiPig();
+		break;
+	case arti_healingradius:
+		if (!UseArtiHealRadius())
+		{
+			return false;
+		}
+		break;
+	case arti_summon:
+		UseArtiSummon();
+		break;
+	case arti_blastradius:
+		UseArtiBlastRadius();
+		break;
+	case arti_poisonbag:
+		UseArtiPoisonBag();
+		break;
+	case arti_teleportother:
+		UseArtiTeleportOther();
+		break;
+	case arti_speed:
+		if (!GivePower(pw_speed))
+		{
+			return false;
+		}
+		break;
+	case arti_boostmana:
+		if (!GiveMana(MANA_BOTH, MAX_MANA))
+		{
+			return false;
+		}
+		break;
+	case arti_boostarmor:
+		count = 0;
+
+		for (i = 0; i < NUMARMOR; i++)
+		{
+			count += GiveArmor(i, 1);	// 1 point per armor type
+		}
+		if (!count)
+		{
+			return false;
+		}
+		break;
+
+	case arti_puzzskull:
+	case arti_puzzgembig:
+	case arti_puzzgemred:
+	case arti_puzzgemgreen1:
+	case arti_puzzgemgreen2:
+	case arti_puzzgemblue1:
+	case arti_puzzgemblue2:
+	case arti_puzzbook1:
+	case arti_puzzbook2:
+	case arti_puzzskull2:
+	case arti_puzzfweapon:
+	case arti_puzzcweapon:
+	case arti_puzzmweapon:
+	case arti_puzzgear1:
+	case arti_puzzgear2:
+	case arti_puzzgear3:
+	case arti_puzzgear4:
+		if (P_UsePuzzleItem(self, arti - arti_firstpuzzitem))
+		{
+			return true;
+		}
+		else
+		{
+			centerprint(self, TXT_USEPUZZLEFAILED);
+			return false;
+		}
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  UseArtiTele
+//
+//==========================================================================
+
+void UseArtiTele()
+{
+	int i;
+	float destX;
+	float destY;
+	float destAngle;
+
+	if (deathmatch)
+	{
+		i = P_Random() % level->numdeathmatchstarts;
+		destX = level->deathmatchstarts[i].x;
+		destY = level->deathmatchstarts[i].y;
+		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
+	}
+	else
+	{
+		destX = level->playerstarts[0].x;
+		destY = level->playerstarts[0].y;
+		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
+	}
+	MO.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true);
+	if (MorphTime)
+	{
+		// Teleporting away will undo any morph effects (pig)
+		UndoPlayerMorph();
+	}
+}
+
+//==========================================================================
+//
+//  UseArtiPig
+//
+//==========================================================================
+
+void UseArtiPig()
+{
+	SpawnPlayerMissile(EggMissile);
+	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw - 7.5));
+	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw + 7.5));
+	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw - 15.0));
+	SpawnPlayerMissileAngle(EggMissile, AngleMod360(MO.Angles.yaw + 15.0));
+}
+
+//==========================================================================
+//
+//  UseArtiHealRadius
+//
+//  Do class specific effect for everyone in radius
+//
+//==========================================================================
+
+bool UseArtiHealRadius()
+{
+	PlayerPawn P;
+	float dist;
+	int effective = false;
+	int amount;
+
+	FOREACH(PlayerPawn, P)
+	{
+		if (!P.bIsPlayer)
+			continue;
+		if (P.Health <= 0)
+			continue;
+		dist = MobjDist(MO, P);
+		if (dist > HEAL_RADIUS_DIST)
+		{
+			// Out of range
+			continue;
+		}
+
+		switch (PClass)
+		{
+		case PCLASS_FIGHTER:	// Radius armor boost
+			if ((P.Player.GiveArmor(ARMOR_ARMOR, 1)) ||
+				(P.Player.GiveArmor(ARMOR_SHIELD, 1)) ||
+				(P.Player.GiveArmor(ARMOR_HELMET, 1)) ||
+				(P.Player.GiveArmor(ARMOR_AMULET, 1)))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case PCLASS_CLERIC:	// Radius heal
+			amount = 50 + (P_Random() % 50);
+			if (P.Player.GiveBody(amount))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case PCLASS_MAGE:	// Radius mana boost
+			amount = 50 + (P_Random() % 50);
+			if ((P.Player.GiveMana(MANA_1, amount)) ||
+				(P.Player.GiveMana(MANA_2, amount)))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
+			break;
+		case PCLASS_PIG:
+		default:
+			break;
+		}
+	}
+	return effective;
+}
+
+//==========================================================================
+//
+//  UseArtiSummon
+//
+//==========================================================================
+
+void UseArtiSummon()
+{
+	Actor mo;
+
+	mo = SpawnPlayerMissile(SummonMissile);
+	if (mo)
+	{
+		mo.Instigator = MO;
+		mo.Velocity.z = 5.0 * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//  UseArtiBlastRadius
+//
+//  Blast all mobj things away
+//
+//==========================================================================
+
+void UseArtiBlastRadius()
+{
+	Actor mo;
+	float dist;
+
+	MO.PlaySound('BlastRadius', CHAN_ITEM);
+	NoiseAlert(MO, MO);
+
+	FOREACH(Actor, mo)
+	{
+		if ((mo == MO) || mo.bBoss)
+		{
+			// Not a valid monster
+			continue;
+		}
+		if ((mo.Class == PoisonCloud) ||	// poison cloud
+			(mo.Class == HolyFX) ||	// holy fx
+			mo.bIceCorpse)	// frozen corpse
+		{
+			// Let these special cases go
+		}
+		else if (mo.bCountKill && (mo.Health <= 0))
+		{
+			continue;
+		}
+		else if (!mo.bCountKill && !mo.bIsPlayer && !mo.bMissile)
+		{
+			// Must be monster, player, or missile
+			continue;
+		}
+		if (mo.bDormant)
+		{
+			continue;	// no dormant creatures
+		}
+		if ((mo.Class == WraithBuried) && mo.bHidden)
+		{
+			continue;	// no underground wraiths
+		}
+		if ((mo.Class == SplashBase) || (mo.Class == Splash))
+		{
+			continue;
+		}
+		if (mo.Class == Serpent || mo.Class == SerpentLeader)
+		{
+			continue;
+		}
+		dist = MobjDist(MO, mo);
+		if (dist > BLAST_RADIUS_DIST)
+		{
+			// Out of range
+			continue;
+		}
+		mo.Blast(MO, BLAST_FULLSTRENGTH);
+	}
+}
+
+//==========================================================================
+//
+//  UseArtiPoisonBag
+//
+//==========================================================================
+
+void UseArtiPoisonBag()
+{
+	float angle;
+	Actor bomb;
+
+	angle = MO.Angles.yaw;
+	if (PClass == PCLASS_CLERIC)
+	{
+		bomb = Spawn(PoisonBag, MO.Origin +
+			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
+		if (bomb)
+		{
+			bomb.Instigator = MO;
+		}
+	}
+	else if (PClass == PCLASS_MAGE)
+	{
+		bomb = Spawn(FireBomb, MO.Origin +
+			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
+		if (bomb)
+		{
+			bomb.Instigator = MO;
+		}
+	}
+	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
+	{
+		bomb = Spawn(ThrowingBomb, MO.Origin +
+			vector(0.0, 0.0, 35.0 - MO.FloorClip));
+		if (bomb)
+		{
+			bomb.Angles.yaw = AngleMod360(MO.Angles.yaw +
+				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
+			bomb.Velocity.z =
+				(4.0 + 173.0 * -tan(MO.Angles.pitch) / 16.0) * 35.0;
+			bomb.Origin.z += 173.0 * -tan(MO.Angles.pitch) / 16.0;
+			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * frametime);
+			bomb.Velocity.x += MO.Velocity.x / 2.0;
+			bomb.Velocity.y += MO.Velocity.y / 2.0;
+			bomb.Instigator = MO;
+			bomb.StateTime -= Random() * 0.1;
+			bomb.CheckMissileSpawn();
+		}
+	}
+}
+
+//==========================================================================
+//
+//  UseArtiTeleportOther
+//
+//==========================================================================
+
+void UseArtiTeleportOther()
+{
+	Actor mo;
+
+	mo = SpawnPlayerMissile(TeleportOtherFX1);
+	if (mo)
+	{
+		mo.Instigator = MO;
+	}
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+Actor SpawnPlayerMissile(classid type)
+{
+	Actor MissileMobj;
+	TAVec angles;
+	TVec vforward;
+	TVec org;
+
+	// Try to find a target
+	angles = MO.Angles;
+	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	if (!linetarget)
+	{
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
+		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
+			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			if (!linetarget)
+			{
+				angles.yaw = MO.Angles.yaw;
+			}
+		}
+	}
+	org = MO.Origin;
+	if (type == LightningFloor)
+	{
+		org.z = ONFLOORZ;
+		angles.pitch = 0.0;
+	}
+	else if (type == LightningCeiling)
+	{
+		org.z = ONCEILINGZ;
+		angles.pitch = 0.0;
+	}
+	else
+	{
+		org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
+		org.z -= MO.FloorClip;
+	}
+	MissileMobj = Spawn(type, org);
+	MissileMobj.Instigator = MO;
+	MissileMobj.Angles = angles;
+	AngleVector(&angles, &vforward);
+	MissileMobj.Velocity = vforward * MissileMobj.Speed;
+	if (MissileMobj.Class == MageWandMissile ||
+		MissileMobj.Class == ClericFlameMissile)
+	{
+		// Ultra-fast ripper spawning missile
+		MissileMobj.Origin += MissileMobj.Velocity * frametime / 8.0;
+	}
+	else
+	{
+		// Normal missile
+		MissileMobj.Origin += MissileMobj.Velocity * frametime / 2.0;
+	}
+	if (!MissileMobj.TryMove(MissileMobj.Origin))
+	{
+		// Exploded immediately
+		MissileMobj.ExplodeMissile();
+		return none;
+	}
+	return MissileMobj;
+}
+
+//===========================================================================
+//
+//  SpawnPlayerMissileAngle
+//
+//===========================================================================
+
+Actor SpawnPlayerMissileAngle(classid type, float angle)
+{
+	TAVec angles;
+	TVec vforward;
+	Actor th;
+	TVec org;
+
+	//
+	// see which target is to be aimed at
+	//
+	angles = MO.Angles;
+	angles.yaw = angle;
+	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	if (!linetarget)
+	{
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
+		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
+			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			if (!linetarget)
+			{
+				angles.yaw = angle;
+			}
+		}
+	}
+	org = MO.Origin;
+	org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
+	org.z -= MO.FloorClip;
+	th = Spawn(type, org);
+	th.Instigator = MO;
+	th.Angles = angles;
+	AngleVector(&angles, &vforward);
+	th.Velocity = vforward * th.Speed;
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//===========================================================================
+//
+//  SpawnPlayerMissileAngleXYZ
+//
+//===========================================================================
+
+Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
+{
+	Actor th;
+	TAVec angles;
+	TVec vforward;
+
+	//
+	// see which target is to be aimed at
+	//
+	angles = MO.Angles;
+	angles.yaw = angle;
+	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	if (!linetarget)
+	{
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
+		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
+			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			if (!linetarget)
+			{
+				angles.yaw = angle;
+			}
+		}
+	}
+	org.z += 4.0 * 8.0 - tan(MO.Angles.pitch);
+	org.z -= MO.FloorClip;
+	th = Spawn(type, org);
+	th.Instigator = MO;
+	th.Angles = angles;
+	AngleVector(&angles, &vforward);
+	th.Velocity = vforward * th.Speed;
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//============================================================================
+//
+//  AdjustPlayerAngle
+//
+//============================================================================
+
+void AdjustPlayerAngle()
+{
+	float angle;
+	float difference;
+
+	angle = atan2(linetarget.Origin.y - MO.Origin.y,
+		linetarget.Origin.x - MO.Origin.x);
+	difference = AngleMod180(angle - MO.Angles.yaw);
+	if (fabs(difference) > 5.0)
+	{
+		MO.Angles.yaw += difference > 0.0 ? 5.0 : -5.0;
+	}
+	else
+	{
+		MO.Angles.yaw = angle;
+	}
+	bFixAngle = true;
+}
 
 defaultproperties
 {
@@ -112,6 +2543,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

@@ -262,11 +262,11 @@ bool CheckChoice(RogueConChoice *Choice)
 		return false;
 	}
 	if (Item1 != -1)
-		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item1, Choice->NeedAmount1);
+		CurrentSpeakingTo.Player.RemoveInvItem(Item1, Choice->NeedAmount1);
 	if (Item2 != -1)
-		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item2, Choice->NeedAmount2);
+		CurrentSpeakingTo.Player.RemoveInvItem(Item2, Choice->NeedAmount2);
 	if (Item3 != -1)
-		PlayerPawn(CurrentSpeakingTo).RemoveInvItem(Item3, Choice->NeedAmount3);
+		CurrentSpeakingTo.Player.RemoveInvItem(Item3, Choice->NeedAmount3);
 	if (Choice->GiveItem > 0)
 	{
 		ItemType = GetClassFromID(Choice->GiveItem);
@@ -1163,6 +1163,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2004/08/22 19:23:27  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.32  2004/02/16 07:13:26  dj_jl
 //  Height check on using a thing
 //

@@ -45,7 +45,7 @@ void A_BFGsound(void)
 void A_FireBFG(void)
 {
 	Player.Ammo[Ammo] -= BFGCELLS;
-	PlayerPawn(Player.MO).SpawnPlayerMissile(BFGShot);
+	Player.SpawnPlayerMissile(BFGShot);
 }
 
 __states__
@@ -75,6 +75,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

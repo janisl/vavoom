@@ -34,8 +34,6 @@ class Pickup : Actor
 
 void TouchSpecial(Actor Toucher)
 {
-	PlayerPawn P;
-
 	if (!Toucher.bPickUp)
 	{
 		// Can't be picked up by toucher
@@ -46,26 +44,20 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
-	if (!P)
-	{
-		//	Shouldn't happen
-		return;
-	}
 	switch (Class)
 	{
 		// Items
 	case ItemHealingBottle:
-		if (!P.GiveBody(10))
+		if (!Toucher.Player.GiveBody(10))
 		{
 			return;
 		}
-		cprint(P.Player, TXT_ITEMHEALTH);
+		cprint(Toucher.Player, TXT_ITEMHEALTH);
 		break;
 	}
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, Toucher);
 		Special = 0;
 	}
 	if (deathmatch && !bDropped)
@@ -76,8 +68,8 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player.BonusFlash += BONUSADD;
-	P.PlaySound('PickupItem', CHAN_ITEM);
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -148,6 +140,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

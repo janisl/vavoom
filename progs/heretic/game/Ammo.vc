@@ -39,7 +39,6 @@ int StringIndex;	// FIXME
 void TouchSpecial(Actor Toucher)
 {
 	int i;
-	PlayerPawn P;
 
 	if (!Toucher.bPickUp)
 	{
@@ -51,15 +50,14 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
-	if (!P.GiveAmmo(AmmoType, AmmoCount))
+	if (!Toucher.Player.GiveAmmo(AmmoType, AmmoCount))
 	{
 		return;
 	}
-	cprint(P.Player, AmmoText[StringIndex]);
+	cprint(Toucher.Player, AmmoText[StringIndex]);
 	if (bCountItem)
 	{
-		P.Player.ItemCount++;
+		Toucher.Player.ItemCount++;
 	}
 	if (deathmatch && !bDropped)
 	{
@@ -69,8 +67,8 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player.BonusFlash += BONUSADD;
-	P.PlaySound('PickupItem', CHAN_ITEM);
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 defaultproperties
@@ -80,6 +78,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:49:43  dj_jl
 //  Changed player structure into a class
 //

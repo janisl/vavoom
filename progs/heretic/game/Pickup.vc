@@ -90,7 +90,6 @@ void TouchSpecial(Actor Toucher)
 {
 	int i;
 	name sound;
-	PlayerPawn P;
 
 	if (!Toucher.bPickUp)
 	{
@@ -102,52 +101,51 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
 	sound = 'PickupItem';
 	switch (Class)
 	{
 		// Items
 	case ItemHealthPotion:
-		if (!P.GiveBody(10))
+		if (!Toucher.Player.GiveBody(10))
 		{
 			return;
 		}
-		cprint(P.Player, TXT_ITEMHEALTH);
+		cprint(Toucher.Player, TXT_ITEMHEALTH);
 		break;
 	case ItemShield1:
-		if (!P.GiveArmor(1))
+		if (!Toucher.Player.GiveArmor(1))
 		{
 			return;
 		}
-		cprint(P.Player, TXT_ITEMSHIELD1);
+		cprint(Toucher.Player, TXT_ITEMSHIELD1);
 		break;
 	case ItemShield2:
-		if (!P.GiveArmor(2))
+		if (!Toucher.Player.GiveArmor(2))
 		{
 			return;
 		}
-		cprint(P.Player, TXT_ITEMSHIELD2);
+		cprint(Toucher.Player, TXT_ITEMSHIELD2);
 		break;
 	case ItemBagOfHolding:
-		P.Player.Backpack = true;
-		P.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
-		P.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
-		P.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
-		P.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
-		P.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
-		cprint(P.Player, TXT_ITEMBAGOFHOLDING);
+		Toucher.Player.Backpack = true;
+		Toucher.Player.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
+		Toucher.Player.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
+		Toucher.Player.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
+		Toucher.Player.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
+		Toucher.Player.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
+		cprint(Toucher.Player, TXT_ITEMBAGOFHOLDING);
 		break;
 	case ItemMap:
-		if (!P.GiveItem(IT_ALL_MAP))
+		if (!Toucher.Player.GiveItem(IT_ALL_MAP))
 		{
 			return;
 		}
-		cprint(P.Player, TXT_ITEMSUPERMAP);
+		cprint(Toucher.Player, TXT_ITEMSUPERMAP);
 		break;
 	}
 	if (bCountItem)
 	{
-		P.Player.ItemCount++;
+		Toucher.Player.ItemCount++;
 	}
 	if (deathmatch && !bDropped)
 	{
@@ -157,8 +155,8 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player.BonusFlash += BONUSADD;
-	P.PlaySound(sound, CHAN_ITEM);
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
 defaultproperties
@@ -174,6 +172,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:24  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

@@ -122,7 +122,7 @@ void Cheat_Gimme(void)
 		}
 		else
 		{
-			PlayerPawn(player.MO).UseArtifact(arti_tomeofpower);
+			player.UseArtifact(arti_tomeofpower);
 			cprint(player, "POWER ON");
 		}
 	}
@@ -159,7 +159,7 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				PlayerPawn(player.MO).GiveArtifact(i);
+				player.GiveArtifact(i);
 			}
 		}
 		cprint(player, "YOU GOT IT");
@@ -234,7 +234,7 @@ void Cheat_Morph(void)
 	player = svvars->Players[0];
 	if (player.ChickenTime)
 	{
-		if (PlayerPawn(player.MO).UndoPlayerChicken())
+		if (player.UndoPlayerChicken())
 		{
 			cprint(player, "CHICKEN OFF");
 		}
@@ -282,6 +282,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2004/08/22 19:23:25  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.19  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

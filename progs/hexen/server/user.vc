@@ -43,7 +43,7 @@ float pushTab[3] = {
 
 void PlayerThink(Player player)
 {
-	PlayerPawn(player.MO).PlayerTick(frametime);
+	player.PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -54,7 +54,7 @@ void PlayerThink(Player player)
 
 void SetViewPos(Player player)
 {
-	PlayerPawn(player.MO).SetViewPos();
+	player.SetViewPos();
 }
 
 //==========================================================================
@@ -83,10 +83,10 @@ bool EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A)
 		if (type == line->arg1)
 		{
 			// A puzzle item was found for the line
-			if (PlayerPawn(A).UseArtifact(arti))
+			if (A.Player.UseArtifact(arti))
 			{
 				// A puzzle item was found for the line
-				PlayerPawn(A).PlayerRemoveArtifact(i);
+				A.Player.PlayerRemoveArtifact(i);
 				if (arti < arti_firstpuzzitem)
 				{
 					A.PlaySound('UseArtifact', CHAN_ITEM);
@@ -141,7 +141,7 @@ void G_PlayerExitMap(int playerNumber, bool clusterChange)
 			for (i = 0; i < 25; i++)
 			{
 				player.Powers[pw_flight] = 0.0;
-				PlayerPawn(player.MO).PlayerUseArtifact(arti_fly);
+				player.PlayerUseArtifact(arti_fly);
 			}
 			player.Powers[pw_flight] = 0.0;
 		}
@@ -462,6 +462,9 @@ void UserinfoChanged(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.42  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

@@ -87,6 +87,1209 @@ TVec MoveDir;
 BotPlayer Bot;
 #endif
 
+//==========================================================================
+//
+//	GiveAmmo
+//
+//	Returns false if the ammo can't be picked up at all
+//
+//==========================================================================
+
+bool GiveAmmo(int ammo, int num)
+{
+	int oldammo;
+	int max;
+
+	if (ammo == am_noammo)
+		return false;
+
+	if (ammo < 0 || ammo > NUMAMMO)
+		Error("P_GiveAmmo: bad type %i", ammo);
+
+	max = MaxAmmo[ammo];
+	if (Ammo[ammo] == max)
+		return false;
+
+	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	{
+		// give double ammo in trainer mode,
+		// you'll need in nightmare
+		num <<= 1;
+	}
+
+	oldammo = Ammo[ammo];
+	Ammo[ammo] += num;
+
+	if (Ammo[ammo] > max)
+		Ammo[ammo] = max;
+
+	// If non zero ammo, 
+	// don't change up weapons,
+	// player was lower on purpose.
+	if (oldammo)
+		return true;
+
+	// We were down to zero,
+	// so select a new weapon.
+	// Preferences are not user selectable.
+	switch (ammo)
+	{
+	case am_clip:
+		if (ReadyWeapon == wp_fist)
+		{
+			if (WeaponOwned[wp_chaingun])
+				PendingWeapon = wp_chaingun;
+			else
+				PendingWeapon = wp_pistol;
+		}
+		break;
+
+	case am_shell:
+		if (ReadyWeapon == wp_fist || ReadyWeapon == wp_pistol)
+		{
+			if (WeaponOwned[wp_shotgun])
+				PendingWeapon = wp_shotgun;
+		}
+		break;
+
+	case am_cell:
+		if (ReadyWeapon == wp_fist || ReadyWeapon == wp_pistol)
+		{
+			if (WeaponOwned[wp_plasma])
+				PendingWeapon = wp_plasma;
+		}
+		break;
+
+	case am_misl:
+		if (ReadyWeapon == wp_fist)
+		{
+			if (WeaponOwned[wp_missile])
+				PendingWeapon = wp_missile;
+		}
+	default:
+		break;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveWeapon
+//
+//  The weapon name may have a MF_DROPPED flag ored in.
+//
+//==========================================================================
+
+bool GiveWeapon(int weapon, bool dropped)
+{
+#ifdef DDF
+	if (WeaponOwned[weapon])
+	{
+		return false;
+	}
+	WeaponOwned[weapon] = true;
+	PendingWeapon = weapon;
+	return true;
+#else
+	bool gaveammo;
+	bool gaveweapon;
+	int ammoCount;
+
+	ammoCount = clipammo[weapon_ammo_type[weapon]];
+	if (netgame && (deathmatch < 2) && !dropped)
+	{
+		// leave placed weapons forever on net games
+		if (WeaponOwned[weapon])
+			return false;
+
+		BonusFlash += BONUSADD;
+		WeaponOwned[weapon] = true;
+
+		if (deathmatch)
+			GiveAmmo(weapon_ammo_type[weapon], 5 * ammoCount);
+		else
+			GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
+		PendingWeapon = weapon;
+
+		MO.PlaySound('PickupWeapon', CHAN_ITEM);
+		return false;
+	}
+
+	gaveammo = false;
+	if (weapon_ammo_type[weapon] != am_noammo)
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (dropped)
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1 * ammoCount);
+		else
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
+	}
+
+	gaveweapon = false;
+	if (!WeaponOwned[weapon])
+	{
+		gaveweapon = true;
+		WeaponOwned[weapon] = true;
+		PendingWeapon = weapon;
+	}
+
+	return (gaveweapon || gaveammo);
+#endif
+}
+
+//==========================================================================
+//
+//	GiveBody
+//
+//	Returns false if the body isn't needed at all
+//
+//==========================================================================
+
+bool GiveBody(int num, int max)
+{
+	if (MO.Health >= max)
+	{
+		return false;
+	}
+
+	MO.Health += num;
+	if (MO.Health > max)
+	{
+		MO.Health = max;
+	}
+	Health = MO.Health;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	GiveArmor
+//
+//	Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool GiveArmor(int armortype)
+{
+	int hits;
+
+	hits = armortype * 100;
+	if (ArmorPoints >= hits)
+		return false;	// don't pick up
+
+	ArmorType = armortype;
+	ArmorPoints = hits;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	GiveArmor2
+//
+//	Returns false if the armor is worse than the current armor.
+//
+//==========================================================================
+
+bool GiveArmor2(int armortype, int num, int max)
+{
+	if (ArmorPoints >= max)
+	{
+		return false;	// don't pick up
+	}
+	ArmorPoints += num;
+	if (ArmorPoints > max)
+	{
+		ArmorPoints = max;
+	}
+	if (ArmorType < armortype)
+	{
+		ArmorType = armortype;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	GiveCard
+//
+//==========================================================================
+
+bool GiveCard(int card)
+{
+	if (Keys & (1 << card))
+		return false;
+
+	BonusFlash = BONUSADD;
+	Keys |= 1 << card;
+	return true;
+}
+
+//==========================================================================
+//
+//  GiveItem
+//
+//==========================================================================
+
+bool GiveItem(int item)
+{
+	if (Items & item)
+	{
+		return false;	// already got it
+	}
+
+	Items |= item;
+	return true;
+}
+
+//==========================================================================
+//
+//	GivePower
+//
+//==========================================================================
+
+bool GivePower(int power)
+{
+	if (power == pw_invulnerability)
+	{
+		Powers[power] = INVULNTIME;
+		return true;
+	}
+
+	if (power == pw_invisibility)
+	{
+		Powers[power] = INVISTIME;
+		MO.Translucency = 90;
+		return true;
+	}
+
+	if (power == pw_infrared)
+	{
+		Powers[power] = INFRATIME;
+		return true;
+	}
+
+	if (power == pw_ironfeet)
+	{
+		Powers[power] = IRONTIME;
+		return true;
+	}
+
+	if (power == pw_strength)
+	{
+		GiveBody(100, MAXHEALTH);
+		Powers[power] = 1.0;
+		if (ReadyWeapon != wp_fist)
+			PendingWeapon = wp_fist;
+		return true;
+	}
+
+	if (Powers[power])
+		return false;	// already got it
+
+	Powers[power] = 1.0;
+	return true;
+}
+
+//==========================================================================
+//
+//	GivePower2
+//
+//==========================================================================
+
+bool GivePower2(int power, float duration, float max)
+{
+	if (Powers[power] >= max)
+		return false;	// already got it
+
+	Powers[power] += duration;
+	if (Powers[power] >= max)
+	{
+		Powers[power] = max;
+	}
+
+	if (power == pw_invisibility)
+	{
+		MO.Translucency = 90;
+	}
+	if (power == pw_strength)
+	{
+		if (ReadyWeapon != wp_fist)
+			PendingWeapon = wp_fist;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  ThrustPlayer
+//
+//  Moves the given origin along a given angle.
+//
+//==========================================================================
+
+void ThrustPlayer(float angle, float move, float deltaTime)
+{
+	MO.Velocity.x += move * cos(angle) * deltaTime;
+	MO.Velocity.y += move * sin(angle) * deltaTime;
+}
+
+//==========================================================================
+//
+//  CalcHeight
+//
+//  Calculate the walking / running height adjustment
+//
+//==========================================================================
+
+void CalcHeight(float deltaTime)
+{
+	float angle;
+	float bob;
+
+	// Regular movement bobbing
+	// (needs to be calculated for gun swing even if not on ground)
+	Bob = MO.Velocity.x * MO.Velocity.x + MO.Velocity.y * MO.Velocity.y;
+	Bob /= 4.0 * 35.0 * 35.0;
+	if (Bob > MAXBOB)
+		Bob = MAXBOB;
+
+	angle = (180.0 * 35.0 / 10.0) * level->time;
+	bob = Bob / 2.0 * sin(angle);
+
+	// move viewheight
+	if (PlayerState == PST_LIVE)
+	{
+		ViewHeight += DeltaViewHeight * deltaTime;
+
+		if (ViewHeight > VIEWHEIGHT)
+		{
+			ViewHeight = VIEWHEIGHT;
+			DeltaViewHeight = 0.0;
+		}
+
+		if (ViewHeight < VIEWHEIGHT / 2.0)
+		{
+			ViewHeight = VIEWHEIGHT / 2.0;
+			if (DeltaViewHeight <= 0.0)
+				DeltaViewHeight = 0.00001;
+		}
+
+		if (DeltaViewHeight)
+		{
+			DeltaViewHeight += 256.0 * deltaTime;
+			if (!DeltaViewHeight)
+				DeltaViewHeight = 0.00001;
+		}
+	}
+	ViewOrg.z = MO.Origin.z + ViewHeight + bob;
+
+	if (ViewOrg.z > MO.CeilingZ - 4.0)
+		ViewOrg.z = MO.CeilingZ - 4.0;
+}
+
+//==========================================================================
+//
+//  MovePlayer
+//
+//==========================================================================
+
+void MovePlayer(float deltaTime)
+{
+	float forward;
+	float side;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
+
+	forward = ForwardMove * 5.0;
+	side = SideMove * 5.0;
+
+	if (!onground)
+	{
+		forward *= air_control;
+		side *= air_control;
+	}
+
+	if (forward)
+	{
+		ThrustPlayer(MO.Angles.yaw, forward, deltaTime);
+	}
+	if (side)
+	{
+		ThrustPlayer(MO.Angles.yaw - 90.0, side, deltaTime);
+	}
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if ((Buttons & BT_JUMP) && onground && !JumpTics)
+	{
+		//  Jump
+		MO.Velocity.z = 9.0 * 35.0;
+		JumpTics = 18;
+	}
+}
+
+//==========================================================================
+//
+//  CheckWaterJump
+//
+//==========================================================================
+
+void CheckWaterJump()
+{
+	TVec start;
+	TVec end;
+	TVec vforward;
+
+	// check for a jump-out-of-water
+	AngleVector(&MO.Angles, &vforward);
+	start = MO.Origin;
+	start.z += MO.Height * 0.5 + 8.0;
+	vforward.z = 0.0;
+	vforward = Normalize(vforward);
+	end = start + vforward * 24.0;
+	if (!TraceLine(start, end))
+	{
+		// solid at waist
+		start.z = MO.Origin.z + MO.Height;
+		end = start + vforward * 24.0;
+		MoveDir = trace_plane_normal * -50.0;
+		if (TraceLine(start, end))
+		{
+			// open at eye level
+			MO.bWaterJump = true;
+			MO.Velocity.z = 320.0;
+			MO.ReactionTime = 2.0;	// safety net
+		}
+	}
+}
+
+//==========================================================================
+//
+//  WaterMove
+//
+//==========================================================================
+
+void WaterMove(float deltaTime)
+{
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
+
+	// Do not let the player control movement
+	//  if not onground.
+	onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
+
+	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
+
+	forward = ForwardMove;
+	side = SideMove;
+
+	wishvel = forward * vforward + side * vright;
+	if (!forward && !side /* && !cmd.upmove */ )
+		wishvel.z -= 60.0;	// drift towards bottom
+//  else
+//      wishvel.z += cmd.upmove;
+
+	MO.Velocity += 3.5 * deltaTime * wishvel;
+
+	if (forward || side)
+	{
+		SetPlayerRunState();
+	}
+
+	if (Buttons & BT_JUMP)
+	{
+		if (MO.WaterType == CONTENTS_WATER)
+			MO.Velocity.z = 100.0;
+		else if (MO.WaterType == CONTENTS_NUKAGE || MO.WaterType == CONTENTS_SLIME)
+			MO.Velocity.z = 80.0;
+		else
+			MO.Velocity.z = 50.0;
+	}
+	CheckWaterJump();
+}
+
+//==========================================================================
+//
+//  WaterJump
+//
+//==========================================================================
+
+void WaterJump()
+{
+	if (!MO.ReactionTime || !MO.WaterLevel)
+	{
+		MO.bWaterJump = false;
+		MO.ReactionTime = 0.0;
+	}
+	MO.Velocity.x = MoveDir.x;
+	MO.Velocity.y = MoveDir.y;
+}
+
+//==========================================================================
+//
+//  PlayerInSpecialSector
+//
+//  Called every tic frame that the player origin is in a special sector
+//
+//==========================================================================
+
+void PlayerInSpecialSector()
+{
+	// Falling, not all the way down yet?
+	if (MO.Origin.z != MO.Sector->floorheight)
+		return;
+
+	if (MO.Sector->special & SECRET_MASK)
+	{
+		// SECRET SECTOR
+		SecretCount++;
+		centerprint(self, "You found a secret area");
+		MO.Sector->special &= ~SECRET_MASK;
+	}
+
+	// Has hitten ground.
+	switch (MO.Sector->special & 255)
+	{
+	case 64 + 5:
+		// HELLSLIME DAMAGE
+		if (!Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 10);
+		break;
+
+	case 64 + 7:
+		// NUKAGE DAMAGE
+		if (!Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 5);
+		break;
+
+	case 64 + 16:
+		// SUPER HELLSLIME DAMAGE
+	case 64 + 4:
+		// STROBE HURT
+		if (!Powers[pw_ironfeet] || (P_Random() < 5))
+		{
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 20);
+		}
+		break;
+
+	case 64 + 11:
+		// EXIT SUPER DAMAGE! (for E1M8 finale)
+		Cheats &= ~CF_GODMODE;
+
+		if (!(level->tictime & 0x1f))
+			MO.Damage(none, none, 20);
+
+		if (Health <= 10)
+			G_ExitLevel();
+		break;
+
+	default:
+		break;
+	};
+}
+
+//==========================================================================
+//
+//  PlayerInContents
+//
+//==========================================================================
+
+void PlayerInContents()
+{
+	if (!MO.WaterLevel)
+	{
+		return;
+	}
+	switch (MO.WaterType)
+	{
+	case CONTENTS_NUKAGE:
+		// NUKAGE DAMAGE
+		if (!Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 5);
+		break;
+
+	case CONTENTS_SLIME:
+		// HELLSLIME DAMAGE
+		if (!Powers[pw_ironfeet])
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 10);
+		break;
+
+	case CONTENTS_LAVA:
+		// SUPER HELLSLIME DAMAGE
+		if (!Powers[pw_ironfeet] || (P_Random() < 5))
+		{
+			if (!(level->tictime & 0x1f))
+				MO.Damage(none, none, 20);
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  DeathPlayerTick
+//
+//  Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+void DeathPlayerTick(float deltaTime)
+{
+	float angle;
+	float delta;
+
+	MovePsprites(self);
+
+	onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
+
+	if (MO.WaterLevel > 1)
+	{
+		MO.Velocity.z = -60.0;	// drift towards bottom
+	}
+
+	// fall to the ground
+	if (ViewHeight > 6.0)
+		ViewHeight -= 1.0;
+
+	if (ViewHeight < 6.0)
+		ViewHeight = 6.0;
+
+	DeltaViewHeight = 0.0;
+	CalcHeight(deltaTime);
+
+	if (Attacker && Attacker != MO)
+	{
+		angle = atan2(Attacker.Origin.y - MO.Origin.y,
+			Attacker.Origin.x - MO.Origin.x);
+
+		delta = AngleMod180(angle - ViewAngles.yaw);
+
+		if (delta < 5.0 || delta > -5.0)
+		{
+			// Looking at killer,
+			//  so fade damage flash down.
+			ViewAngles.yaw = angle;
+
+			if (DamageFlash)
+			{
+				DamageFlash -= deltaTime;
+				if (DamageFlash <= 0.0)
+					DamageFlash = 0.0;
+			}
+		}
+		else if (delta > 0.0)
+			ViewAngles.yaw += 5.0;
+		else
+			ViewAngles.yaw -= 5.0;
+	}
+	else if (DamageFlash)
+	{
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+
+	if (Buttons & BT_USE)
+		PlayerState = PST_REBORN;
+}
+
+//==========================================================================
+//
+//  PlayerImpulse
+//
+//==========================================================================
+
+void PlayerImpulse()
+{
+	int impulse;
+
+	impulse = Impulse;
+	Impulse = 0;
+
+#ifdef DDF
+	if (impulse <= 10)
+	{
+		ChangeWeapon(self, impulse - 1);
+	}
+#else
+	if (impulse <= 7)
+	{
+		ChangeWeapon(self, impulse - 1);
+	}
+#endif
+	else if (impulse == 16)
+	{
+		//  Suicide
+		MO.Damage(none, none, 10000);
+	}
+}
+
+//==========================================================================
+//
+//  PlayerTick
+//
+//==========================================================================
+
+void PlayerTick(float deltaTime)
+{
+#ifndef	NO_BOTS
+	if (bIsBot)
+	{
+		Bot.BotTick(deltaTime);
+	}
+#endif
+
+	// fixme: do this in the cheat code
+	if (Cheats & CF_NOCLIP)
+	{
+		MO.bColideWithThings = false;
+		MO.bColideWithWorld = false;
+	}
+	else
+	{
+		MO.bColideWithThings = true;
+		MO.bColideWithWorld = true;
+	}
+
+	if (MO.bJustAttacked)
+	{
+		ForwardMove = 100.0;
+		SideMove = 0.0;
+		MO.bJustAttacked = false;
+	}
+
+	if (PlayerState == PST_DEAD)
+	{
+		DeathPlayerTick(deltaTime);
+		return;
+	}
+
+	// Copy view angles
+	MO.Angles = ViewAngles;
+
+	if (JumpTics)
+	{
+		JumpTics--;
+	}
+
+	// Move around.
+	// Reactiontime is used to prevent movement
+	//  for a bit after a teleport.
+	if (MO.ReactionTime)
+	{
+		MO.ReactionTime -= deltaTime;
+		if (MO.ReactionTime <= 0.0)
+			MO.ReactionTime = 0.0;
+		if (MO.bWaterJump)
+			WaterJump();
+	}
+	else
+	{
+		if (MO.WaterLevel > 1)
+			WaterMove(deltaTime);
+		else
+			MovePlayer(deltaTime);
+	}
+
+	CalcHeight(deltaTime);
+
+	if (MO.Sector->special)
+		PlayerInSpecialSector();
+	PlayerInContents();
+
+	// Check for weapon change.
+	if (Impulse)
+	{
+		PlayerImpulse();
+	}
+
+	// check for use
+	if (Buttons & BT_USE)
+	{
+		if (!bUseDown)
+		{
+			P_UseLines(self);
+			bUseDown = true;
+		}
+	}
+	else
+	{
+		bUseDown = false;
+	}
+
+	//  cycle psprites
+	MovePsprites(self);
+
+	//  Counters, time dependend power ups.
+
+	//  Strength counts up to diminish fade.
+	if (Powers[pw_strength])
+		Powers[pw_strength] += deltaTime;
+
+	if (Powers[pw_invulnerability])
+	{
+		Powers[pw_invulnerability] -= deltaTime;
+		if (Powers[pw_invulnerability] <= 0.0)
+			Powers[pw_invulnerability] = 0.0;
+	}
+
+	if (Powers[pw_invisibility])
+	{
+		Powers[pw_invisibility] -= deltaTime;
+		if (Powers[pw_invisibility] <= 0.0)
+		{
+			Powers[pw_invisibility] = 0.0;
+			MO.Translucency = 0;
+		}
+	}
+
+	if (Powers[pw_infrared])
+	{
+		Powers[pw_infrared] -= deltaTime;
+		if (Powers[pw_infrared] <= 0.0)
+			Powers[pw_infrared] = 0.0;
+	}
+
+	if (Powers[pw_ironfeet])
+	{
+		Powers[pw_ironfeet] -= deltaTime;
+		if (Powers[pw_ironfeet] <= 0.0)
+			Powers[pw_ironfeet] = 0.0;
+	}
+
+	if (DamageFlash)
+	{
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+
+	if (BonusFlash)
+	{
+		BonusFlash -= deltaTime;
+		if (BonusFlash <= 0.0)
+			BonusFlash = 0.0;
+	}
+
+	// Handling colormaps.
+	if (Powers[pw_invulnerability])
+	{
+		if (Powers[pw_invulnerability] > 4.0 ||
+			(ftoi(4.0 * Powers[pw_invulnerability]) & 1))
+			FixedColormap = INVERSECOLORMAP;
+		else
+			FixedColormap = 0;
+	}
+	else if (Powers[pw_infrared])
+	{
+		if (Powers[pw_infrared] > 4.0 ||
+			(ftoi(4.0 * Powers[pw_infrared]) & 1))
+		{
+			// almost full bright
+			FixedColormap = 1;
+		}
+		else
+			FixedColormap = 0;
+	}
+	else
+		FixedColormap = 0;
+}
+
+//==========================================================================
+//
+//  PaletteFlash
+//
+//  Do red-/gold-shifts from damage/items
+//
+//==========================================================================
+
+void PaletteFlash()
+{
+	int cnt;
+	int bzc;
+
+	CShifts[CSHIFT_CONTENTS] = 0;
+	if (MO.WaterLevel == 3)
+	{
+		switch (MO.WaterType)
+		{
+		case CONTENTS_WATER:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			break;
+
+		case CONTENTS_BLOOD:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+			break;
+
+		case CONTENTS_NUKAGE:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+			break;
+
+		case CONTENTS_SLIME:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+			break;
+
+		case CONTENTS_LAVA:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			break;
+		}
+	}
+
+	cnt = ftoi(32.0 * DamageFlash);
+
+	if (Powers[pw_strength])
+	{
+		// slowly fade the berzerk out
+		bzc = 12 - ftoi(Powers[pw_strength] / 2.0);
+
+		if (bzc > cnt)
+			cnt = bzc;
+	}
+
+	if (cnt)
+	{
+		Palette = (cnt + 7) >> 3;
+
+		if (Palette >= NUMREDPALS)
+			Palette = NUMREDPALS - 1;
+
+		Palette += STARTREDPALS;
+	}
+	else if (BonusFlash)
+	{
+		Palette = (ftoi(32.0 * BonusFlash) + 7) >> 3;
+
+		if (Palette >= NUMBONUSPALS)
+			Palette = NUMBONUSPALS - 1;
+
+		Palette += STARTBONUSPALS;
+	}
+	else if (Powers[pw_ironfeet] > 4.0 ||
+		ftoi(4.0 * Powers[pw_ironfeet]) & 1)
+		Palette = RADIATIONPAL;
+	else
+		Palette = 0;
+}
+
+//==========================================================================
+//
+//  SetViewPos
+//
+//==========================================================================
+
+void SetViewPos()
+{
+	ViewOrg.x = MO.Origin.x;
+	ViewOrg.y = MO.Origin.y;
+
+	if (PlayerState != PST_DEAD)
+	{
+		ViewAngles = MO.Angles;
+	}
+
+	PaletteFlash();
+
+	Stats.flags = Keys;
+	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
+		Stats.flags |= SBF_GOD_MODE;
+
+	if (Weapon(ViewEnts[ps_weapon]).Ammo == am_noammo)
+		ReadyAmmo = 1994;	// means "n/a"
+	else
+		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
+}
+
+//==========================================================================
+//
+//  SetPlayerRunState
+//
+//==========================================================================
+
+void SetPlayerRunState()
+{
+	if (MO.StateNum == MO.IdleState)
+	{
+		MO.SetState(MO.SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+Actor SpawnPlayerMissile(classid type)
+{
+	Actor A;
+	TVec dir;
+
+	dir = Aim(MO, 16.0 * 64.0);
+
+	A = Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Instigator = MO;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+
+	A.CheckMissileSpawn();
+
+	return A;
+}
+
+#ifdef DDF
+//==========================================================================
+//
+//	ActPlayerAttack
+//
+//==========================================================================
+
+void ActPlayerAttack(AttackType *attack)
+{
+	int i;
+	float range;
+	int damage;
+	TAVec aimAngles;
+	TVec dir;
+	TVec aimDir;
+	Actor proj;
+
+	range = (attack->Range > 0.0) ? attack->Range : MISSILERANGE;
+
+	switch (attack->AttackStyle)
+	{
+	case ATK_CloseCombat:
+		if (attack->Sound)
+			MO.PlaySound(attack->Sound, CHAN_WEAPON);
+
+		DAMAGE_COMPUTE(damage, attack->Damage);
+
+		if (Powers[pw_strength])
+			damage *= 10;
+
+		aimAngles = MO.Angles;
+		aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
+			Random()) * 45.0 / 8.0);
+		dir = AimLineAttack(MO, aimAngles, attack->Range);
+		LineAttack(MO, dir, attack->Range, damage);
+
+		// turn to face target
+		if (linetarget && attack->bFaceTarget)
+		{
+			MO.Angles.yaw = atan2(
+				linetarget.Origin.y - MO.Origin.y,
+				linetarget.Origin.x - MO.Origin.x);
+			bFixAngle = true;
+		}
+		break;
+
+	case ATK_Projectile:
+		DAMAGE_COMPUTE(damage, attack->Damage);
+		proj = SpawnPlayerMissile(attack->AtkMobj);
+		proj.MissileDamage = damage;
+		break;
+
+	case ATK_Shot:
+		if (attack->Sound)
+			MO.PlaySound(attack->Sound, CHAN_WEAPON);
+
+		aimDir = Aim(MO, 16.0 * 64.0);
+		// -AJA- 1999/09/10: apply the attack's angle offsets.
+		//objangle -= attack->angle_offset;
+		//objslope += attack->slope_offset;
+		for (i = 0; i < attack->Count; i++)
+		{
+			//  Make a copy of angles because inacurate shoot will modify them
+			dir = aimDir;
+			if (!Refire)
+			{
+				TAVec angles;
+
+				VectorAngles(&dir, &angles);
+				if (attack->AccuracyAngle > 0.0)
+					angles.yaw += attack->AccuracyAngle * (Random() - Random());
+				//if (attack->accuracy_slope > 0)
+				//	slope += attack->accuracy_slope * (P_RandomNegPos() / 255.0);
+				AngleVector(&angles, &dir);
+			}
+			DAMAGE_COMPUTE(damage, attack->Damage);
+			LineAttack(MO, dir, MISSILERANGE, damage);
+		}
+		break;
+
+	case ATK_SmartProjectile:	// EXTRA
+		print("Smart proj");
+		//LaunchSmartProjectile(object, target, attack->atk_mobj);
+		break;
+
+	case ATK_RandomSpread:		// EXTRA
+		print("Random spread");
+		//P_ActLaunchRandomSpread(object);
+		break;
+
+	case ATK_ShootToSpot:		// EXTRA
+		print("Shoot to spot");
+		//ShootToSpot(object);
+		break;
+
+	case ATK_SkullFly:			// EXTRA
+		Error("Player can't skullfly");
+		break;
+
+	case ATK_Spawner:			// EXTRA
+		print("spawner");
+		//ObjectSpawning(object, object->angle);
+		break;
+
+	case ATK_Spreader:			// EXTRA
+		print("Spreader");
+		//P_ActLaunchOrderedSpread(object);
+		break;
+
+	case ATK_Tracker:			// EXTRA
+		print("Tracker");
+		//LaunchTracker(object);
+		break;
+
+	case ATK_TripleSpawner:		// EXTRA
+		print("Tripple spawner");
+		//ObjectTripleSpawn(object);
+		break;
+
+	case ATK_Spray:				// EXTRA
+		Error("Player spray");
+		break;
+
+	default:
+		print("Bad attack type %d", attack->AttackStyle);
+	}
+}
+#endif
+
 defaultproperties
 {
 }
@@ -94,6 +1297,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:04  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2003/11/12 16:49:08  dj_jl
 //  Changed player structure into a class
 //

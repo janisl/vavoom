@@ -37,7 +37,6 @@ int WeaponType;
 
 void TouchSpecial(Actor Toucher)
 {
-	PlayerPawn P;
 	bool remove;
 	bool gaveMana;
 	bool gaveWeapon;
@@ -52,14 +51,8 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	P = PlayerPawn(Toucher);
-	if (!P)
-	{
-		//	Shouldn't happen
-		return;
-	}
 	remove = true;
-	if (P.Player.PClass != WeaponClass)
+	if (Toucher.Player.PClass != WeaponClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -69,14 +62,14 @@ void TouchSpecial(Actor Toucher)
 		}
 		if (WeaponType == WP_SECOND)
 		{
-			if (!P.GiveMana(MANA_1, 25))
+			if (!Toucher.Player.GiveMana(MANA_1, 25))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (!P.GiveMana(MANA_2, 25))
+			if (!Toucher.Player.GiveMana(MANA_2, 25))
 			{
 				return;
 			}
@@ -85,20 +78,20 @@ void TouchSpecial(Actor Toucher)
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (P.Player.WeaponOwned[WeaponType])
+		if (Toucher.Player.WeaponOwned[WeaponType])
 		{
 			return;
 		}
-		P.Player.WeaponOwned[WeaponType] = true;
+		Toucher.Player.WeaponOwned[WeaponType] = true;
 		if (WeaponType == WP_SECOND)
 		{
-			P.GiveMana(MANA_1, 25);
+			Toucher.Player.GiveMana(MANA_1, 25);
 		}
 		else
 		{
-			P.GiveMana(MANA_2, 25);
+			Toucher.Player.GiveMana(MANA_2, 25);
 		}
-		P.Player.PendingWeapon = WeaponType;
+		Toucher.Player.PendingWeapon = WeaponType;
 		remove = false;
 	}
 	else
@@ -106,24 +99,24 @@ void TouchSpecial(Actor Toucher)
 		// Deathmatch or single player game
 		if (WeaponType == WP_SECOND)
 		{
-			gaveMana = P.GiveMana(MANA_1, 25);
+			gaveMana = Toucher.Player.GiveMana(MANA_1, 25);
 		}
 		else
 		{
-			gaveMana = P.GiveMana(MANA_2, 25);
+			gaveMana = Toucher.Player.GiveMana(MANA_2, 25);
 		}
-		if (P.Player.WeaponOwned[WeaponType])
+		if (Toucher.Player.WeaponOwned[WeaponType])
 		{
 			gaveWeapon = false;
 		}
 		else
 		{
 			gaveWeapon = true;
-			P.Player.WeaponOwned[WeaponType] = true;
-			if (WeaponType > P.Player.ReadyWeapon)
+			Toucher.Player.WeaponOwned[WeaponType] = true;
+			if (WeaponType > Toucher.Player.ReadyWeapon)
 			{
 				// Only switch to more powerful weapons
-				P.Player.PendingWeapon = WeaponType;
+				Toucher.Player.PendingWeapon = WeaponType;
 			}
 		}
 		if (!gaveWeapon && !gaveMana)
@@ -133,10 +126,10 @@ void TouchSpecial(Actor Toucher)
 		}
 	}
 
-	cprint(P.Player, weaponMessages[WeaponClass * 2 + WeaponType - 1]);
+	cprint(Toucher.Player, weaponMessages[WeaponClass * 2 + WeaponType - 1]);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, Toucher);
 		Special = 0;
 	}
 
@@ -152,8 +145,8 @@ void TouchSpecial(Actor Toucher)
 		}
 	}
 
-	P.Player.BonusFlash += BONUSADD;
-	P.PlaySound('PickupWeapon', CHAN_ITEM);
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
 defaultproperties
@@ -163,6 +156,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

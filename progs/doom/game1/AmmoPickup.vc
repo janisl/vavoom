@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmmoPickup:Pickup
+class AmmoPickup : Pickup
 	abstract;
 
 int AmmoType;
@@ -39,12 +39,12 @@ bool HandlePickup(Actor Toucher)
 {
 	if (bDropped)
 	{
-		if (!Toucher.GiveAmmo(AmmoType, AmmoCount / 2))
+		if (!Toucher.Player.GiveAmmo(AmmoType, AmmoCount / 2))
 			return false;
 	}
 	else
 	{
-		if (!Toucher.GiveAmmo(AmmoType, AmmoCount))
+		if (!Toucher.Player.GiveAmmo(AmmoType, AmmoCount))
 			return false;
 	}
 	cprint(Toucher.Player, PickupMessage);
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:23  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

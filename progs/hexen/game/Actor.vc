@@ -939,8 +939,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-//FIXME
-			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
+			Player.PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -950,8 +949,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-//FIXME
-			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
+			Player.PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((gameskill == sk_baby)
@@ -963,16 +961,14 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-//FIXME
-			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
+			Player.PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
 			// The same as in HERETIC
-//FIXME
-			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
+			Player.PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	Player.Health = Health;
@@ -3574,7 +3570,7 @@ void A_FreeTargMobj(void)
 	bCorpse = true;
 	bNoPassMobj = true;
 	Translucency = 100;
-//	Player = NULL;		//	Will do this later
+	Player = none;
 	bIsPlayer = false;
 	Health = -1000;	// Don't resurrect
 }
@@ -3935,6 +3931,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/08/22 19:23:26  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.5  2004/03/19 18:12:09  dj_jl
 //  Float bob thing heights on extrafloors
 //

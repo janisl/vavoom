@@ -57,7 +57,7 @@ float pushTab[5] = {
 
 void PlayerThink(Player player)
 {
-	PlayerPawn(player.MO).PlayerTick(frametime);
+	player.PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -68,7 +68,7 @@ void PlayerThink(Player player)
 
 void SetViewPos(Player player)
 {
-	PlayerPawn(player.MO).SetViewPos();
+	player.SetViewPos();
 }
 
 //==========================================================================
@@ -148,7 +148,7 @@ void G_PlayerExitMap(int player, bool clusterChange)
 	{
 		for (i = 0; i < 16; i++)
 		{
-			PlayerPawn(p.MO).PlayerUseArtifact(arti_fly);
+			p.PlayerUseArtifact(arti_fly);
 		}
 	}
 }
@@ -332,6 +332,9 @@ void UserinfoChanged(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2004/08/22 19:23:25  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.39  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

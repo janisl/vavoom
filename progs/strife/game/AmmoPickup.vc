@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmmoPickup:Pickup
+class AmmoPickup : Pickup
 	abstract;
 
 int AmmoType;
@@ -37,7 +37,7 @@ int NumClips;
 
 bool HandlePickup(Actor Toucher)
 {
-	return PlayerPawn(Toucher).GiveAmmo(AmmoType, bDropped ? 0 : NumClips);
+	return Toucher.Player.GiveAmmo(AmmoType, bDropped ? 0 : NumClips);
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/22 19:23:27  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -40,7 +40,7 @@ void A_FireElectricArrow()
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
 	Player.Ammo[Ammo]--;
 	Player.MO.SetState(Player.MO.MissileState);
-	PlayerPawn(Player.MO).SpawnPlayerMissile(ElectricArrow);
+	Player.SpawnPlayerMissile(ElectricArrow);
 	Player.MO.Angles.yaw = savedangle;
 	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
 }
@@ -60,7 +60,7 @@ void A_FirePoisonArrow()
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
 	Player.Ammo[Ammo]--;
 	Player.MO.SetState(Player.MO.MissileState);
-	PlayerPawn(Player.MO).SpawnPlayerMissile(PoisonArrow);
+	Player.SpawnPlayerMissile(PoisonArrow);
 	Player.MO.Angles.yaw = savedangle;
 	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
 }
@@ -127,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/08/22 19:23:27  dj_jl
+//  Moved many functions to player class.
+//
 //  Revision 1.3  2004/01/30 17:39:34  dj_jl
 //  Implemented many action functions.
 //
