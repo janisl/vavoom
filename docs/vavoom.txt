@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.13
+                                                    version 1.14
 
 Contents:
     0. Disclaimer
@@ -62,7 +62,7 @@ Systems that do not have an FPU installed will not run Vavoom -- at all.
      - Doom shareware
      - Registered Doom
      - Ultimate Doom
-     - Doom 2: Hell on Earyh
+     - Doom 2: Hell on Earth
      - Doom 2: TNT Evilution
      - Doom 2: The Plutonia experiment
      - Heretic shareware
@@ -101,6 +101,10 @@ Libraries:
     * SDL 1.2.2
     * OpenGL: OpenGL implementation from your video card's manufacturer
   or MESA (http://www.mesa3d.org) and X-Windows development libraries.
+Optional:
+    * OpenAL (http://www.openal.org), the source must be checked out from the
+  CVS repository. You will find info on this on OpenAL website or at Creative
+  developer center (http://developer.creative.com).
 
   And of course Vavoom sources.
 
@@ -127,6 +131,8 @@ you can disable it by editing Makefile configuration part.
   If you want to use SDL library, it must be enabled by editing Makefile
 configuration part (at the beginning).
 
+  In the same way OpenAL is enabled.
+
   5. Run make in the main directory.
 
         make
@@ -138,7 +144,7 @@ additional wad files.
 
         su -c "make install"
 
-  If you don't have dinstall programm, you most likely will have install
+  If you don't have ginstall programm, you most likely will have install
 programm. In that case use the following command:
 
         su -c "make INSTALL=install install"
@@ -185,7 +191,7 @@ For DOS you need
       * DJGPP (http://www.delorie.com/djgpp)
       * GNU make or RHIDE
   Libraries:
-      * Allegro 4.0 (http://alleg.sourceforge.net)
+      * Allegro 4.0 (http://alleg.sourceforge.net) and later.
       * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
     MESA (http://www.geocities.com/SiliconValley/7259/)
 
@@ -202,7 +208,9 @@ For Windows you need:
     in Builder but some headers needed by DirectMusic are missing. In Allogro
     website (http://alleg.sourceforge.net) you will find a minimal version of
     DirectX 7 SDK.
-      * EAX 2.0 SDK (http://developer.soundblaster.com/).
+      * EAX 2.0 SDK (http://developer.creative.com/).
+      * OpenAL SDK (http://developer.creative.com), you must create directory
+    AL in your compier's include directory and copy OpenAL include files here.
 
   The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
 with extension .mak. For DOS there's also RHIDE project files, for Windows
@@ -307,6 +315,9 @@ Sound
 
 -CDDEV specifies CD device file, default /dev/cdrom, LINUX version only
 -cddev <file>
+
+-OPENAL enabled OpenAL driver.
+-openal
 
 Input
 -----
@@ -809,6 +820,18 @@ Version 1.13
 * Slighty improved Strife support.
 * A working version of the DDF to VavoomC converter.
 
+==============================================================================
+Version 1.14
+==============================================================================
+
+* Fixed a bug in Doom that crashed with static light objects.
+* Some fixes in level loading code.
+* A slight improvement on flickering in single player.
+* Fixed join game menu.
+* Switched to floating-point time.
+* Added OpenAL driver.
+* Updated models.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -847,6 +870,9 @@ Version 1.13
 
   Raven games related page:
     http://www.ravengames.com/
+    http://www.ravenforums.com/
+    http://www.ravencomunity.com/
+    http://www.ravenclans.com/
     http://www.raven-games.com/
 
   Korax' Heritage:

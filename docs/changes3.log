@@ -74,4 +74,28 @@
   PilnØbÆ atbrØvojos no iostream.
 26-07-2002
   SÆku ieviest Strife sarunas.
-  
+29-07-2002
+  Strife sarunas jau strÆdÆ.
+  Konsolñ skrollings pa 5 lØnijÆm, ar SHIFT pa vienai.
+30-07-2002
+  PÆris dienas atpakaõ pateicu glBSP autoram par izmai·Æm. Vi·am paıam bija
+ vñl pÆris izmai·as, kuras tika atjauninÆtas.
+01-08-2002
+  Atjaunoju glBSP ar paıu jaunÆko versiju, kuru Endrjİ ir aploudojis CVS.
+  Atjaunoju vlaunch ar pÆris jaunÆm lietÆm.
+03-08-2002
+  Pievienoju Heretic Gold Wand modeli.
+05-08-2002
+  PiestrÆdÆju pie modeõiem.
+  Sla·u sekvences tiek pÆrsİtØtas ar droıo protokolu.
+06-08-2002
+  PÆris sØki labojumi. SakÆrtoju DDF un DeHackEd atbalstu.
+  Pielaboju OpenAL draiveri Linux vajadzØbÆm. Linux versijÆ ıis tas trİkst.
+  Poliobjektu grİzıanas kodÆ netika pareizi nodoti peldoıÆ komata skaitõi,
+ kas iespñjams radØja FPU kõİdas.
+  Endrjİ radÆs ideja kÆ glBSP atrisinÆt problñmu, kad tiek sadalØts sektors
+ ar poliobjektu pa virsotnñm. StrÆdÆ labi.
+
+******************************************************************************
+                            VERSIJA 1.14
+******************************************************************************
