@@ -44,6 +44,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 void R_InitParticles(void);
+void R_ClearParticles(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -107,6 +108,34 @@ void R_Init(void)
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
+}
+
+//==========================================================================
+//
+//  R_Start
+//
+//==========================================================================
+
+void R_Start(const mapInfo_t &info)
+{
+	r_oldviewleaf = NULL;
+
+	R_ClearLights();
+	R_ClearParticles();
+	R_InitSky(info);
+
+	r_use_fog = !stricmp(info.fadetable, "FOGMAP");
+
+	screenblocks = 0;
+
+	Drawer->NewMap();
+
+	// preload graphics
+	if (precache)
+	{
+		R_PrecacheLevel();
+	}
+	Drawer->SetPalette(0);
 }
 
 //==========================================================================
@@ -505,34 +534,6 @@ void R_RenderPlayerView(void)
 
 //==========================================================================
 //
-//  R_Start
-//
-//==========================================================================
-
-void R_Start(const mapInfo_t &info)
-{
-	r_oldviewleaf = NULL;
-
-	R_ClearLights();
-	R_ClearParticles();
-	R_InitSky(info);
-
-	r_use_fog = !stricmp(info.fadetable, "FOGMAP");
-
-	screenblocks = 0;
-
-	Drawer->NewMap();
-
-	// preload graphics
-	if (precache)
-	{
-		R_PrecacheLevel();
-	}
-	Drawer->SetPalette(0);
-}
-
-//==========================================================================
-//
 //	COMMAND TimeRefresh
 //
 //	For program optimization
@@ -568,9 +569,12 @@ COMMAND(TimeRefresh)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/15 17:29:05  dj_jl
+//	Beautification
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/04 17:28:26  dj_jl
 //	Removed game.h
 //	
