@@ -145,6 +145,7 @@ void PushMenuScreen(MenuScreen menu)
 				menu_stack[j].Destroy();
 			}
 			menu_sp = i;
+			CurrentMenuScreen = none;
 			break;
 		}
 	}
@@ -330,6 +331,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2004/02/16 07:10:36  dj_jl
+//  Multiple hotkey fix
+//
 //  Revision 1.29  2003/09/26 16:54:52  dj_jl
 //  Random speeches
 //

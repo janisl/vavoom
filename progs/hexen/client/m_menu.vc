@@ -117,6 +117,7 @@ void PushMenuScreen(MenuScreen menu)
 				menu_stack[j].Destroy();
 			}
 			menu_sp = i;
+			CurrentMenuScreen = none;
 			break;
 		}
 	}
@@ -290,6 +291,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2004/02/16 07:09:28  dj_jl
+//  Multiple hotkey fix
+//
 //  Revision 1.27  2003/09/24 16:38:30  dj_jl
 //  Increase max video mode
 //
