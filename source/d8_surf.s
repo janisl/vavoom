@@ -43,7 +43,7 @@ sb_v:		.long	0
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf8Start)
 C(D_Surf8Start):
 
@@ -51,7 +51,7 @@ C(D_Surf8Start):
 // Surface block drawer for mip level 0
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock8_mip0)
 C(D_DrawSurfaceBlock8_mip0):
 	pushl	%ebp				// preserve caller's stack frame
@@ -277,7 +277,7 @@ LSkip_mip0:
 // Surface block drawer for mip level 1
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock8_mip1)
 C(D_DrawSurfaceBlock8_mip1):
 	pushl	%ebp				// preserve caller's stack frame
@@ -447,7 +447,7 @@ LSkip_mip1:
 // Surface block drawer for mip level 2
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock8_mip2)
 C(D_DrawSurfaceBlock8_mip2):
 	pushl	%ebp				// preserve caller's stack frame
@@ -587,7 +587,7 @@ LSkip_mip2:
 // Surface block drawer for mip level 3
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock8_mip3)
 C(D_DrawSurfaceBlock8_mip3):
 	pushl	%ebp				// preserve caller's stack frame
@@ -1506,7 +1506,7 @@ C(D_Surf8End):
 //----------------------------------------------------------------------
 	.data
 
-	.align 4
+	Align4
 LPatchTable:
 	.long	LPatch0-4
 	.long	LPatch1-4
@@ -1541,7 +1541,7 @@ LPatchTable:
 	.long	LPatch30-4
 	.long	LPatch31-4
 
-	.align 4
+	Align4
 LTPatchTable:
 	.long	LTPatch0-4
 	.long	LTPatch1-4
@@ -1552,7 +1552,7 @@ LTPatchTable:
 	.long	LTPatch6-4
 	.long	LTPatch7-4
 
-	.align 4
+	Align4
 LRPatchTable:
 	.long	LRPatch0-4
 	.long	LRPatch1-4
@@ -1563,7 +1563,7 @@ LRPatchTable:
 	.long	LRPatch6-4
 	.long	LRPatch7-4
 
-	.align 4
+	Align4
 LGPatchTable:
 	.long	LGPatch0-4
 	.long	LGPatch1-4
@@ -1574,7 +1574,7 @@ LGPatchTable:
 	.long	LGPatch6-4
 	.long	LGPatch7-4
 
-	.align 4
+	Align4
 LBPatchTable:
 	.long	LBPatch0-4
 	.long	LBPatch1-4
@@ -1587,7 +1587,7 @@ LBPatchTable:
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf8Patch)
 C(D_Surf8Patch):
 	pushl	%ebx
@@ -1651,9 +1651,12 @@ LBPatchLoop:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

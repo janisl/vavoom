@@ -228,12 +228,13 @@ static const aliasspanfunc_t alias_span_drawers[4][2][3] =
 
 //==========================================================================
 //
-//	D_PolysetSetupDrawer
+//	VSoftwareDrawer::PolysetSetupDrawer
 //
 //==========================================================================
 
-void D_PolysetSetupDrawer(int translucency)
+void VSoftwareDrawer::PolysetSetupDrawer(int translucency)
 {
+	guardSlow(VSoftwareDrawer::PolysetSetupDrawer);
 	int fuzzfunc = 0;
 
 //translucency = 30;
@@ -263,15 +264,16 @@ void D_PolysetSetupDrawer(int translucency)
 
 	D_PolysetDrawSpans = alias_span_drawers[bppindex]
 		[d_affinetridesc.coloredlight][fuzzfunc];
+	unguardSlow;
 }
 
 //==========================================================================
 //
-//	D_PolysetDraw
+//	VSoftwareDrawer::PolysetDraw
 //
 //==========================================================================
 
-void D_PolysetDraw(void)
+void VSoftwareDrawer::PolysetDraw(void)
 {
 	spanpackage_t	spans[DPS_MAXSPANS + 1 +
 			((CACHE_SIZE - 1) / sizeof(spanpackage_t)) + 1];
@@ -2219,9 +2221,12 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

@@ -336,11 +336,11 @@ static int D_AliasClip(finalvert_t *in, finalvert_t *out, finalstvert_t *stin,
 
 //==========================================================================
 //
-//	D_AliasClipTriangle
+//	VSoftwareDrawer::AliasClipTriangle
 //
 //==========================================================================
 
-void D_AliasClipTriangle(mtriangle_t *ptri)
+void VSoftwareDrawer::AliasClipTriangle(mtriangle_t *ptri)
 {
 	int				i, k, pingpong;
 	mtriangle_t		mtri;
@@ -444,16 +444,19 @@ void D_AliasClipTriangle(mtriangle_t *ptri)
 		mtri.vertindex[2] = i+1;
 		mtri.stvertindex[1] = i;
 		mtri.stvertindex[2] = i+1;
-		D_PolysetDraw();
+		PolysetDraw();
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	

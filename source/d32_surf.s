@@ -37,7 +37,7 @@ sb_v:		.long	0
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf32Start)
 C(D_Surf32Start):
 
@@ -45,7 +45,7 @@ C(D_Surf32Start):
 // Surface block drawer for mip level 0
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock32_mip0)
 C(D_DrawSurfaceBlock32_mip0):
 	pushl	%ebp				// preserve caller's stack frame
@@ -287,7 +287,7 @@ LSkip_mip0:
 // Surface block drawer for mip level 1
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock32_mip1)
 C(D_DrawSurfaceBlock32_mip1):
 	pushl	%ebp				// preserve caller's stack frame
@@ -465,7 +465,7 @@ LSkip_mip1:
 // Surface block drawer for mip level 2
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock32_mip2)
 C(D_DrawSurfaceBlock32_mip2):
 	pushl	%ebp				// preserve caller's stack frame
@@ -609,7 +609,7 @@ LSkip_mip2:
 // Surface block drawer for mip level 3
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock32_mip3)
 C(D_DrawSurfaceBlock32_mip3):
 	pushl	%ebp				// preserve caller's stack frame
@@ -2209,7 +2209,7 @@ C(D_Surf32End):
 //----------------------------------------------------------------------
 	.data
 
-	.align 4
+	Align4
 LPatchTable:
 	.long	LPatch0-4
 	.long	LPatch1-4
@@ -2348,7 +2348,7 @@ LBPatchTable:
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf32Patch)
 C(D_Surf32Patch):
 	pushl	%ebx
@@ -2402,9 +2402,12 @@ LBPatchLoop:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.5  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/02 17:43:17  dj_jl
 //	Added new asm for 32-bits
 //	

@@ -43,7 +43,7 @@ sb_v:		.long	0
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf16Start)
 C(D_Surf16Start):
 
@@ -51,7 +51,7 @@ C(D_Surf16Start):
 // Surface block drawer for mip level 0
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock16_mip0)
 C(D_DrawSurfaceBlock16_mip0):
 	pushl	%ebp				// preserve caller's stack frame
@@ -293,7 +293,7 @@ LSkip_mip0:
 // Surface block drawer for mip level 1
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock16_mip1)
 C(D_DrawSurfaceBlock16_mip1):
 	pushl	%ebp				// preserve caller's stack frame
@@ -471,7 +471,7 @@ LSkip_mip1:
 // Surface block drawer for mip level 2
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock16_mip2)
 C(D_DrawSurfaceBlock16_mip2):
 	pushl	%ebp				// preserve caller's stack frame
@@ -615,7 +615,7 @@ LSkip_mip2:
 // Surface block drawer for mip level 3
 //----------------------------------------------------------------------
 
-	.align 4
+	Align4
 .globl C(D_DrawSurfaceBlock16_mip3)
 C(D_DrawSurfaceBlock16_mip3):
 	pushl	%ebp				// preserve caller's stack frame
@@ -2309,7 +2309,7 @@ LBPatchTable:
 
 	.text
 
-	.align 4
+	Align4
 .globl C(D_Surf16Patch)
 C(D_Surf16Patch):
 	pushl	%ebx
@@ -2363,9 +2363,12 @@ LBPatchLoop:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/11/16 17:11:14  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

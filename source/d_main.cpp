@@ -84,7 +84,7 @@ extern surfcache_t		*sc_base;
 IMPLEMENT_CLASS(VSoftwareDrawer);
 
 byte					*scrn;
-word					*scrn16;
+short					*zbuffer;
 
 word					pal8_to16[256];
 dword					pal2rgb[256];
@@ -116,8 +116,6 @@ float					xprojection;
 float					yprojection;
 
 int						ylookup[MAXSCREENHEIGHT];
-
-short					*zbuffer = NULL;
 
 spanfunc_t				D_DrawSpans;
 spritespanfunc_t		D_DrawSpriteSpans;
@@ -168,14 +166,14 @@ bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 		return false;
 	}
 
-	int size = D_SurfaceCacheForRes(width, height, bpp);
+	int size = SurfaceCacheForRes(width, height, bpp);
 	void *buffer = Z_Malloc(size, PU_VIDEO, 0);
 	if (!buffer)
 	{
 		GCon->Log(NAME_Init, "Not enough memory for cache");
 		return false;
 	}
-	D_InitCaches(buffer, size);
+	InitCaches(buffer, size);
 
 	return true;
 	unguard;
@@ -190,8 +188,8 @@ bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 void VSoftwareDrawer::FreeMemory(void)
 {
 	guard(VSoftwareDrawer::FreeMemory);
-	D_FlushCaches(true);
-	D_FlushTextureCaches();
+	FlushCaches(true);
+	FlushTextureCaches();
 //FIXME use Z_FreeTag(PU_VIDEO)
 	if (sc_base)
 	{
@@ -222,8 +220,6 @@ void VSoftwareDrawer::FreeMemory(void)
 void VSoftwareDrawer::InitResolution(void)
 {
 	guard(VSoftwareDrawer::InitResolution);
-	scrn16 = (word*)scrn;
-
 	if (ScreenBPP == 8)
 	{
 		bppindex = 0;
@@ -313,15 +309,15 @@ void VSoftwareDrawer::InitResolution(void)
 
 //==========================================================================
 //
-//	InitViewBorder
+//	VSoftwareDrawer::InitViewBorder
 //
 //	Called whenever the view size changes.
 //
 //==========================================================================
 
-static void InitViewBorder(const refdef_t *rd)
+void VSoftwareDrawer::InitViewBorder(const refdef_t *rd)
 {
-	guard(InitViewBorder);
+	guard(VSoftwareDrawer::InitViewBorder);
     if (r_backscreen)
     {
       	Z_Free(r_backscreen);
@@ -341,13 +337,13 @@ static void InitViewBorder(const refdef_t *rd)
 
 //==========================================================================
 //
-//	VideoErase
+//	VSoftwareDrawer::VideoErase
 //
 // 	Copy a screen buffer.
 //
 //==========================================================================
 
-static void VideoErase(unsigned ofs, int count)
+void VSoftwareDrawer::VideoErase(unsigned ofs, int count)
 {
 	ofs *= PixelBytes;
 	count *= PixelBytes;
@@ -356,15 +352,15 @@ static void VideoErase(unsigned ofs, int count)
 
 //==========================================================================
 //
-//	EraseViewBorder
+//	VSoftwareDrawer::EraseViewBorder
 //
 // 	Draws the border around the view for different size windows
 //
 //==========================================================================
 
-static void EraseViewBorder(const refdef_t *rd)
+void VSoftwareDrawer::EraseViewBorder(const refdef_t *rd)
 {
-	guard(EraseViewBorder);
+	guard(VSoftwareDrawer::EraseViewBorder);
 	int top;
 	int side;
 	int ofs;
@@ -557,7 +553,7 @@ void VSoftwareDrawer::SetupView(const refdef_t *rd)
 	Sys_LowFPPrecision();
 
 	UpdatePalette();
-	D_BeginEdgeFrame();
+	BeginEdgeFrame();
 	unguard;
 }
 
@@ -648,9 +644,12 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.16  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.15  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

@@ -67,7 +67,6 @@
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
- externdef _scrn16
  externdef _pal8_to16
  externdef _mmx_mask4
  externdef _mmx_mask8
@@ -872,7 +871,7 @@ Lp16:
  fstp st(0)
  pop ebx
 LNextSpan:
- add ebx,12 
+ add ebx,12
  mov ecx,dword ptr[8+ebx]
  cmp ecx,0
  jg LSpanLoop

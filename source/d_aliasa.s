@@ -33,6 +33,179 @@ Ltemp:		.long	0
 
 .text
 
+	Align4
+.globl C(D_ConcatTransforms)
+C(D_ConcatTransforms):
+	movl	4(%esp), %eax	//	In1
+	movl	8(%esp), %edx	//	In2
+	movl	12(%esp), %ecx	//	Out
+	flds	(%edx)		// 2_00
+	fmuls	(%eax)		// 1_00 * 2_00
+	flds	16(%edx)	// 2_10 | 1_00 * 2_00
+	fmuls	4(%eax)		// 1_01 * 2_10 | 1_00 * 2_00
+	flds	32(%edx)	// 2_20 | 1_01 * 2_10 | 1_00 * 2_00
+	fmuls	8(%eax)		// 1_02 * 2_20 | 1_01 * 2_10 | 1_00 * 2_00
+	fxch	%st(1)		// 1_01 * 2_10 | 1_02 * 2_20 | 1_00 * 2_00
+	faddp	%st, %st(2)	// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	flds	4(%edx)		// 2_01 | 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	(%eax)		// 1_00 * 2_01 | 1_02 * 2_20 |
+ 						// 1_00 * 2_00 + 1_01 * 2_10
+	flds	20(%edx)	// 2_11 | 1_00 * 2_01 | 1_02 * 2_20 |
+ 						// 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	4(%eax)		// 1_01 * 2_11 | 1_00 * 2_01 | 1_02 * 2_20 |
+ 						// 1_00 * 2_00 + 1_01 * 2_10
+	flds	36(%edx)	// 2_21 | 1_01 * 2_11 | 1_00 * 2_01 | 1_02 * 2_20 |
+ 						// 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	8(%eax)		// 1_02 * 2_21 | 1_01 * 2_11 | 1_00 * 2_01 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fxch	%st(1)		// 1_01 * 2_11 | 1_02 * 2_21 | 1_00 * 2_01 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	faddp	%st, %st(2)	// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	flds	8(%edx)		// 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	(%eax)		// 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	flds	24(%edx)	// 2_12 | 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	4(%eax)		// 1_01 * 2_12 | 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	flds	40(%edx)	// 2_22 | 1_01 * 2_12 | 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fmuls	8(%eax)		// 1_02 * 2_22 | 1_01 * 2_12 | 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fxch	%st(1)		// 1_01 * 2_12 | 1_02 * 2_22 | 1_00 * 2_02 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	faddp	%st, %st(1)	// 1_02 * 2_22 | 1_00 * 2_02 + 1_01 * 2_12 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_20 | 1_00 * 2_00 + 1_01 * 2_10
+	fxch	%st(4)		// 1_02 * 2_20 | 1_00 * 2_02 + 1_01 * 2_12 |
+						// 1_02 * 2_21 | 1_00 * 2_01 + 1_01 * 2_11 |
+ 						// 1_02 * 2_22 | 1_00 * 2_00 + 1_01 * 2_10
+	faddp	%st, %st(5)	// 1_00 * 2_02 + 1_01 * 2_12 | 1_02 * 2_21 |
+						// 1_00 * 2_01 + 1_01 * 2_11 | 1_02 * 2_22 | o_00
+	fxch	%st(1)		// 1_02 * 2_21 | 1_00 * 2_02 + 1_01 * 2_12 |
+						// 1_00 * 2_01 + 1_01 * 2_11 | 1_02 * 2_22 | o_00
+	faddp	%st, %st(2)	// 1_00 * 2_02 + 1_01 * 2_12 | o_01 | 1_02 * 2_22 |
+						// o_00
+	faddp	%st, %st(2)	// o_01 | o_02 | o_00
+	fxch	%st(2)		// o_00 | o_02 | o_01
+	fstps	(%ecx)		// o_02 | o_01
+	fxch	%st(1)		// o_01 | o_02
+	fstps	4(%ecx)		// o_02
+	fstps	8(%ecx)		//
+	
+	flds	12(%edx)
+	flds	28(%edx)
+	fxch	%st(1)
+	fmuls	(%eax)
+	fxch	%st(1)
+	fmuls	4(%eax)
+	faddp	%st, %st(1)
+	flds	44(%edx)
+	fmuls	8(%eax)
+	faddp	%st, %st(1)
+	fadds	12(%eax)
+	fstps	12(%ecx)
+	flds	(%edx)
+	flds	16(%edx)
+	fxch	%st(1)
+	fmuls	16(%eax)
+	fxch	%st(1)
+	fmuls	20(%eax)
+	faddp	%st, %st(1)
+	flds	32(%edx)
+	fmuls	24(%eax)
+	faddp	%st, %st(1)
+	fstps	16(%ecx)
+	flds	4(%edx)
+	flds	20(%edx)
+	fxch	%st(1)
+	fmuls	16(%eax)
+	fxch	%st(1)
+	fmuls	20(%eax)
+	faddp	%st, %st(1)
+	flds	36(%edx)
+	fmuls	24(%eax)
+	faddp	%st, %st(1)
+	fstps	20(%ecx)
+	flds	8(%edx)
+	flds	24(%edx)
+	fxch	%st(1)
+	fmuls	16(%eax)
+	fxch	%st(1)
+	fmuls	20(%eax)
+	faddp	%st, %st(1)
+	flds	40(%edx)
+	fmuls	24(%eax)
+	faddp	%st, %st(1)
+	fstps	24(%ecx)
+	flds	12(%edx)
+	flds	28(%edx)
+	fxch	%st(1)
+	fmuls	16(%eax)
+	fxch	%st(1)
+	fmuls	20(%eax)
+	faddp	%st, %st(1)
+	flds	44(%edx)
+	fmuls	24(%eax)
+	faddp	%st, %st(1)
+	fadds	28(%eax)
+	fstps	28(%ecx)
+	flds	(%edx)
+	flds	16(%edx)
+	fxch	%st(1)
+	fmuls	32(%eax)
+	fxch	%st(1)
+	fmuls	36(%eax)
+	faddp	%st, %st(1)
+	flds	32(%edx)
+	fmuls	40(%eax)
+	faddp	%st, %st(1)
+	fstps	32(%ecx)
+	flds	4(%edx)
+	flds	20(%edx)
+	fxch	%st(1)
+	fmuls	32(%eax)
+	fxch	%st(1)
+	fmuls	36(%eax)
+	faddp	%st, %st(1)
+	flds	36(%edx)
+	fmuls	40(%eax)
+	faddp	%st, %st(1)
+	fstps	36(%ecx)
+	flds	8(%edx)
+	flds	24(%edx)
+	fxch	%st(1)
+	fmuls	32(%eax)
+	fxch	%st(1)
+	fmuls	36(%eax)
+	faddp	%st, %st(1)
+	flds	40(%edx)
+	fmuls	40(%eax)
+	faddp	%st, %st(1)
+	fstps	40(%ecx)
+	flds	12(%edx)
+	flds	28(%edx)
+	fxch	%st(1)
+	fmuls	32(%eax)
+	fxch	%st(1)
+	fmuls	36(%eax)
+	faddp	%st, %st(1)
+	flds	44(%edx)
+	fmuls	40(%eax)
+	faddp	%st, %st(1)
+	fadds	44(%eax)
+	fstps	44(%ecx)
+	ret
+
 //==========================================================================
 //
 //	D_AliasTransformFinalVert
@@ -428,9 +601,12 @@ Lp3:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	

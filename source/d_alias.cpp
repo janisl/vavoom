@@ -38,8 +38,6 @@
 
 #define LIGHT_MIN			5	//	lowest light value we'll allow, to avoid
 								// the need for inner-loop light clamping
-#define	MAX_SKIN_CACHE		256
-
 #define NUMVERTEXNORMALS	162
 
 // TYPES -------------------------------------------------------------------
@@ -50,23 +48,14 @@ struct aedge_t
 	int			index1;
 };
 
-struct skincache_t
-{
-	char		name[64];
-	void		*data;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void D_LoadImage(const char *name, void **dataptr);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-void D_AliasSetUpTransform(const TAVec&, int, int);
-void D_AliasTransformVector(const TVec&, float*);
 extern "C" {
+void D_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
 void D_AliasTransformFinalVert(finalvert_t*, auxvert_t*, trivertx_t*);
 void D_AliasTransformAndProjectFinalVerts(finalvert_t*);
 void D_AliasProjectFinalVert(finalvert_t*, auxvert_t*);
@@ -118,8 +107,6 @@ static TVec				alias_forward, alias_right, alias_up;
 
 static int				d_amodels_drawn;
 
-static skincache_t		skincache[MAX_SKIN_CACHE];
-
 static aedge_t aedges[12] =
 {
 	{0, 1}, {1, 2}, {2, 3}, {3, 0},
@@ -131,45 +118,74 @@ static aedge_t aedges[12] =
 
 //==========================================================================
 //
-//	D_ConcatTransforms
+//	VSoftwareDrawer::DrawAliasModel
 //
 //==========================================================================
 
-void D_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4])
+void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
+	model_t *model, int frame, const char *skin, dword light, int translucency,
+	bool is_view_model)
 {
-	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
-				in1[0][2] * in2[2][0];
-	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
-				in1[0][2] * in2[2][1];
-	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
-				in1[0][2] * in2[2][2];
-	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
-				in1[0][2] * in2[2][3] + in1[0][3];
-	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
-				in1[1][2] * in2[2][0];
-	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
-				in1[1][2] * in2[2][1];
-	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
-				in1[1][2] * in2[2][2];
-	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
-				in1[1][2] * in2[2][3] + in1[1][3];
-	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
-				in1[2][2] * in2[2][0];
-	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
-				in1[2][2] * in2[2][1];
-	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
-				in1[2][2] * in2[2][2];
-	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
-				in1[2][2] * in2[2][3] + in1[2][3];
+	guard(VSoftwareDrawer::DrawAliasModel);
+	modelorg = vieworg - origin;
+
+	// see if the bounding box lets us trivially reject, also sets
+	// trivial accept status
+	if (!AliasCheckBBox(model, angles, frame))
+	{
+		return;
+	}
+
+	finalvert_t		finalverts[MAXALIASVERTS +
+						((CACHE_SIZE - 1) / sizeof(finalvert_t)) + 1];
+	finalstvert_t	finalstverts[MAXALIASSTVERTS +
+						((CACHE_SIZE - 1) / sizeof(finalstvert_t)) + 1];
+	auxvert_t		auxverts[MAXALIASVERTS];
+
+	d_amodels_drawn++;
+
+	// cache align
+	pfinalverts = (finalvert_t *)
+			(((long)&finalverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
+	pfinalstverts = (finalstvert_t *)
+			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
+	pauxverts = &auxverts[0];
+
+	pmdl = (mmdl_t *)Mod_Extradata(model);
+
+	// Hack to make sure that skin loading doesn't free model
+	Z_ChangeTag(pmdl, PU_STATIC);
+
+	AliasSetupSkin(skin);
+	AliasSetUpTransform(angles, frame, a_trivial_accept);
+	AliasSetupLighting(light);
+	AliasSetupFrame(frame);
+
+	PolysetSetupDrawer(translucency);
+
+	// hack the depth range to prevent view model from poking into walls
+	if (is_view_model)
+		ziscale = (float)0x8000 * (float)0x10000 * 3.0;
+	else
+		ziscale = (float)0x8000 * (float)0x10000;
+
+	if (a_trivial_accept)
+		AliasPrepareUnclippedPoints();
+	else
+		AliasPreparePoints();
+
+	// Make it cachable again
+	Z_ChangeTag(pmdl, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
 //
-//	D_AliasCheckBBox
+//	VSoftwareDrawer::AliasCheckBBox
 //
 //==========================================================================
 
-boolean D_AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
+bool VSoftwareDrawer::AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
 {
 	int					i, flags, numv;
 	float				zi, basepts[8][3], v0, v1, frac;
@@ -185,7 +201,7 @@ boolean D_AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
 // construct the base bounding box for this frame
-	D_AliasSetUpTransform(angles, frame, 0);
+	AliasSetUpTransform(angles, frame, 0);
 
 // x worldspace coordinates
 	basepts[0][0] = basepts[1][0] = basepts[2][0] = basepts[3][0] = 0;
@@ -205,7 +221,9 @@ boolean D_AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
 	minz = 9999;
 	for (i = 0; i < 8; i++)
 	{
-		D_AliasTransformVector(basepts[i], viewaux[i].fv);
+		viewaux[i].fv[0] = DotProduct(basepts[i], aliastransform[0]) + aliastransform[0][3];
+		viewaux[i].fv[1] = DotProduct(basepts[i], aliastransform[1]) + aliastransform[1][3];
+		viewaux[i].fv[2] = DotProduct(basepts[i], aliastransform[2]) + aliastransform[2][3];
 
 		if (viewaux[i].fv[2] < ALIAS_Z_CLIP_PLANE)
 		{
@@ -300,100 +318,11 @@ boolean D_AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
 
 //==========================================================================
 //
-//	D_AliasTransformVector
+//	VSoftwareDrawer::AliasSetUpTransform
 //
 //==========================================================================
 
-void D_AliasTransformVector(const TVec &in, float *out)
-{
-	out[0] = DotProduct(in, aliastransform[0]) + aliastransform[0][3];
-	out[1] = DotProduct(in, aliastransform[1]) + aliastransform[1][3];
-	out[2] = DotProduct(in, aliastransform[2]) + aliastransform[2][3];
-}
-
-//==========================================================================
-//
-//	D_AliasPreparePoints
-//
-//	General clipped case
-//
-//==========================================================================
-
-void D_AliasPreparePoints(void)
-{
-	int			i;
-	mstvert_t	*pstverts;
-	finalvert_t	*fv;
-	auxvert_t	*av;
-	mtriangle_t	*ptri;
-	finalvert_t	*pfv[3];
-
-	pstverts = (mstvert_t *)((byte *)pmdl + pmdl->ofsstverts);
-	for (i = 0; i < pmdl->numstverts; i++)
-	{
-		pfinalstverts[i].s = pstverts[i].s << 16;
-		pfinalstverts[i].t = pstverts[i].t << 16;
-	}
-	d_anumverts = pmdl->numverts;
- 	fv = pfinalverts;
-	av = pauxverts;
-
-	for (i=0 ; i<d_anumverts ; i++, fv++, av++, d_apverts++)
-	{
-		D_AliasTransformFinalVert (fv, av, d_apverts);
-		if (av->fv[2] < ALIAS_Z_CLIP_PLANE)
-			fv->flags |= ALIAS_Z_CLIP;
-		else
-		{
-			 D_AliasProjectFinalVert (fv, av);
-
-			if (fv->u < 0)
-				fv->flags |= ALIAS_LEFT_CLIP;
-			if (fv->v < 0)
-				fv->flags |= ALIAS_TOP_CLIP;
-			if (fv->u > viewwidth)
-				fv->flags |= ALIAS_RIGHT_CLIP;
-			if (fv->v > viewheight)
-				fv->flags |= ALIAS_BOTTOM_CLIP;
-		}
-	}
-
-//
-// clip and draw all triangles
-//
-	d_affinetridesc.numtriangles = 1;
-
-	ptri = (mtriangle_t *)((byte *)pmdl + pmdl->ofstris);
-	for (i=0 ; i<pmdl->numtris ; i++, ptri++)
-	{
-		pfv[0] = &pfinalverts[ptri->vertindex[0]];
-		pfv[1] = &pfinalverts[ptri->vertindex[1]];
-		pfv[2] = &pfinalverts[ptri->vertindex[2]];
-
-		if ( pfv[0]->flags & pfv[1]->flags & pfv[2]->flags )
-			continue;		// completely clipped
-		
-		if ( ! (pfv[0]->flags | pfv[1]->flags | pfv[2]->flags) )
-		{	// totally unclipped
-			d_affinetridesc.pfinalverts = pfinalverts;
-			d_affinetridesc.pstverts = pfinalstverts;
-			d_affinetridesc.ptriangles = ptri;
-			D_PolysetDraw ();
-		}
-		else		
-		{	// partially clipped
-			D_AliasClipTriangle(ptri);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	D_AliasSetUpTransform
-//
-//==========================================================================
-
-void D_AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
+void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
 {
 	int				i;
 	float			rotationmatrix[3][4], t2matrix[3][4];
@@ -439,7 +368,7 @@ void D_AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
 	t2matrix[2][3] = -modelorg[2];
 
 // FIXME: can do more efficiently than full concatenation
-	D_ConcatTransforms (t2matrix, tmatrix, rotationmatrix);
+	D_ConcatTransforms(t2matrix, tmatrix, rotationmatrix);
 
 // TODO: should be global, set when vright, etc., set
 	for (i = 0; i < 3; i++)
@@ -474,233 +403,24 @@ void D_AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
 	}
 }
 
-#ifndef USEASM
-
 //==========================================================================
 //
-//	D_AliasTransformFinalVert
+//	VSoftwareDrawer::AliasSetupSkin
 //
 //==========================================================================
 
-extern "C" void D_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
-	trivertx_t *pverts)
-{
-	float	lightcos, *plightnormal;
-
-	TVec v(pverts->v[0], pverts->v[1], pverts->v[2]);
-	av->fv[0] = DotProduct(v, aliastransform[0]) +
-			aliastransform[0][3];
-	av->fv[1] = DotProduct(v, aliastransform[1]) +
-			aliastransform[1][3];
-	av->fv[2] = DotProduct(v, aliastransform[2]) +
-			aliastransform[2][3];
-
-	fv->flags = 0;
-
-// lighting
-	plightnormal = d_avertexnormals[pverts->lightnormalindex];
-	lightcos = DotProduct(plightnormal, d_plightvec);
-	int r = d_ambientlightr;
-	int g = d_ambientlightg;
-	int b = d_ambientlightb;
-
-	if (lightcos < 0)
-	{
-		r += (int)(d_shadelightr * lightcos);
-		g += (int)(d_shadelightg * lightcos);
-		b += (int)(d_shadelightb * lightcos);
-
-		//	Clamp; because we limited the minimum ambient and shading light,
-		// we don't have to clamp low light, just bright
-		if (r < 0)
-			r = 0;
-		if (g < 0)
-			g = 0;
-		if (b < 0)
-			b = 0;
-	}
-
-	fv->r = r;
-	fv->g = g;
-	fv->b = b;
-}
-
-//==========================================================================
-//
-//	D_AliasTransformAndProjectFinalVerts
-//
-//==========================================================================
-
-extern "C" void D_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
-{
-	int			i;
-	float		lightcos, *plightnormal, zi;
-	trivertx_t	*pverts;
-
-	pverts = d_apverts;
-
-	for (i = 0; i < d_anumverts; i++, fv++, pverts++)
-	{
-		//	transform and project
-		TVec v(pverts->v[0], pverts->v[1], pverts->v[2]);
-		zi = 1.0 / (DotProduct(v, aliastransform[2]) +
-				aliastransform[2][3]);
-
-		//	x, y, and z are scaled down by 1/2**31 in the transform, so 1/z
-		// is scaled up by 1/2**31, and the scaling cancels out for x and y
-		// in the projection
-		fv->zi = (int)zi;
-
-		fv->u = (int)(((DotProduct(v, aliastransform[0]) +
-				aliastransform[0][3]) * zi) + aliasxcenter);
-		fv->v = (int)(((DotProduct(v, aliastransform[1]) +
-				aliastransform[1][3]) * zi) + aliasycenter);
-
-		fv->flags = 0;
-
-		//	lighting
-		plightnormal = d_avertexnormals[pverts->lightnormalindex];
-		lightcos = DotProduct(plightnormal, d_plightvec);
-		int r = d_ambientlightr;
-		int g = d_ambientlightg;
-		int b = d_ambientlightb;
-
-		if (lightcos < 0)
-		{
-			r += (int)(d_shadelightr * lightcos);
-			//	Clamp; because we limited the minimum ambient and shading
-			// light, we don't have to clamp low light, just bright
-			if (r < 0)
-				r = 0;
-			g += (int)(d_shadelightg * lightcos);
-			if (g < 0)
-				g = 0;
-			b += (int)(d_shadelightb * lightcos);
-			if (b < 0)
-				b = 0;
-		}
-
-		fv->r = r;
-		fv->g = g;
-		fv->b = b;
-	}
-}
-
-//==========================================================================
-//
-//	D_AliasProjectFinalVert
-//
-//==========================================================================
-
-extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
-{
-	float	zi;
-
-	// project points
-	zi = 1.0 / av->fv[2];
-
-	fv->zi = (int)(zi * ziscale);
-
-	fv->u = (int)((av->fv[0] * xprojection * zi) + aliasxcenter);
-	fv->v = (int)((av->fv[1] * yprojection * zi) + aliasycenter);
-}
-
-#endif
-
-//==========================================================================
-//
-//	D_AliasPrepareUnclippedPoints
-//
-//==========================================================================
-
-void D_AliasPrepareUnclippedPoints(void)
-{
-	mstvert_t	*pstverts;
-	finalvert_t	*fv;
-
-	pstverts = (mstvert_t *)((byte *)pmdl + pmdl->ofsstverts);
-	for (int i = 0; i < pmdl->numstverts; i++)
-	{
-		pfinalstverts[i].s = pstverts[i].s << 16;
-		pfinalstverts[i].t = pstverts[i].t << 16;
-	}
-	d_anumverts = pmdl->numverts;
-// FIXME: just use pfinalverts directly?
-	fv = pfinalverts;
-
-	D_AliasTransformAndProjectFinalVerts (fv);
-
-	d_affinetridesc.pfinalverts = pfinalverts;
-	d_affinetridesc.pstverts = pfinalstverts;
-	d_affinetridesc.ptriangles = (mtriangle_t *)
-		((byte *)pmdl + pmdl->ofstris);
-	d_affinetridesc.numtriangles = pmdl->numtris;
-
-	D_PolysetDraw ();
-}
-
-//==========================================================================
-//
-//	SetSkin
-//
-//==========================================================================
-
-void SetSkin(const char *name)
-{
-	int i;
-	int avail;
-
-	avail = -1;
-	for (i = 0; i < MAX_SKIN_CACHE; i++)
-	{
-		if (skincache[i].data)
-		{
-			if (!strcmp(skincache[i].name, name))
-			{
-				break;
-			}
-		}
-		else
-		{
-			if (avail < 0)
-				avail = i;
-		}
-	}
-
-	if (i == MAX_SKIN_CACHE)
-	{
-		// Not in cache, load it
-		if (avail < 0)
-		{
-			avail = 0;
-			Z_Free(skincache[avail].data);
-		}
-		i = avail;
-		strcpy(skincache[i].name, name);
-		D_LoadImage(name, &skincache[i].data);
-	}
-
-	d_affinetridesc.pskin = skincache[i].data;
-}
-
-//==========================================================================
-//
-//	D_AliasSetupSkin
-//
-//==========================================================================
-
-void D_AliasSetupSkin(const char *skin)
+void VSoftwareDrawer::AliasSetupSkin(const char *skin)
 {
 	mskin_t		*pskins;
 
 	if (skin && *skin)
 	{
-		SetSkin(skin);
+		d_affinetridesc.pskin = SetSkin(skin);
 	}
 	else
 	{
 		pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		SetSkin(pskins[0].name);
+		d_affinetridesc.pskin = SetSkin(pskins[0].name);
 	}
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
@@ -708,11 +428,11 @@ void D_AliasSetupSkin(const char *skin)
 
 //==========================================================================
 //
-//	D_AliasSetupLighting
+//	VSoftwareDrawer::AliasSetupLighting
 //
 //==========================================================================
 
-void D_AliasSetupLighting(dword light)
+void VSoftwareDrawer::AliasSetupLighting(dword light)
 {
 	//	Guarantee that no vertex will ever be lit below LIGHT_MIN, so we
 	// don't have to clamp off the bottom
@@ -784,13 +504,13 @@ void D_AliasSetupLighting(dword light)
 
 //==========================================================================
 //
-//	D_AliasSetupFrame
+//	VSoftwareDrawer::AliasSetupFrame
 //
 //	set	d_apverts
 //
 //==========================================================================
 
-void D_AliasSetupFrame(int frame)
+void VSoftwareDrawer::AliasSetupFrame(int frame)
 {
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
@@ -804,85 +524,288 @@ void D_AliasSetupFrame(int frame)
 
 //==========================================================================
 //
-//	D_AliasDrawModel
+//	VSoftwareDrawer::AliasPrepareUnclippedPoints
 //
 //==========================================================================
 
-void D_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
-	const char *skin, dword light, int translucency, bool is_view_model)
+void VSoftwareDrawer::AliasPrepareUnclippedPoints(void)
 {
-	finalvert_t		finalverts[MAXALIASVERTS +
-						((CACHE_SIZE - 1) / sizeof(finalvert_t)) + 1];
-	finalstvert_t	finalstverts[MAXALIASSTVERTS +
-						((CACHE_SIZE - 1) / sizeof(finalstvert_t)) + 1];
-	auxvert_t		auxverts[MAXALIASVERTS];
+	mstvert_t	*pstverts;
+	finalvert_t	*fv;
 
-	d_amodels_drawn++;
+	pstverts = (mstvert_t *)((byte *)pmdl + pmdl->ofsstverts);
+	for (int i = 0; i < pmdl->numstverts; i++)
+	{
+		pfinalstverts[i].s = pstverts[i].s << 16;
+		pfinalstverts[i].t = pstverts[i].t << 16;
+	}
+	d_anumverts = pmdl->numverts;
+// FIXME: just use pfinalverts directly?
+	fv = pfinalverts;
 
-// cache align
-	pfinalverts = (finalvert_t *)
-			(((long)&finalverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
-	pfinalstverts = (finalstvert_t *)
-			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
-	pauxverts = &auxverts[0];
+	D_AliasTransformAndProjectFinalVerts (fv);
 
-	pmdl = (mmdl_t *)Mod_Extradata(model);
+	d_affinetridesc.pfinalverts = pfinalverts;
+	d_affinetridesc.pstverts = pfinalstverts;
+	d_affinetridesc.ptriangles = (mtriangle_t *)
+		((byte *)pmdl + pmdl->ofstris);
+	d_affinetridesc.numtriangles = pmdl->numtris;
 
-	// Hack to make sure that skin loading doesn't free model
-	Z_ChangeTag(pmdl, PU_STATIC);
-
-	D_AliasSetupSkin(skin);
-	D_AliasSetUpTransform(angles, frame, a_trivial_accept);
-	D_AliasSetupLighting(light);
-	D_AliasSetupFrame(frame);
-
-	D_PolysetSetupDrawer(translucency);
-
-	// hack the depth range to prevent view model from poking into walls
-	if (is_view_model)
-		ziscale = (float)0x8000 * (float)0x10000 * 3.0;
-	else
-		ziscale = (float)0x8000 * (float)0x10000;
-
-	if (a_trivial_accept)
-		D_AliasPrepareUnclippedPoints();
-	else
-		D_AliasPreparePoints();
-
-	// Make it cachable again
-	Z_ChangeTag(pmdl, PU_CACHE);
+	PolysetDraw();
 }
 
 //==========================================================================
 //
-//	VSoftwareDrawer::DrawAliasModel
+//	VSoftwareDrawer::AliasPreparePoints
+//
+//	General clipped case
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, const char *skin, dword light, int translucency,
-	bool is_view_model)
+void VSoftwareDrawer::AliasPreparePoints(void)
 {
-	guard(VSoftwareDrawer::DrawAliasModel);
-	modelorg = vieworg - origin;
+	int			i;
+	mstvert_t	*pstverts;
+	finalvert_t	*fv;
+	auxvert_t	*av;
+	mtriangle_t	*ptri;
+	finalvert_t	*pfv[3];
 
-	// see if the bounding box lets us trivially reject, also sets
-	// trivial accept status
-	if (!D_AliasCheckBBox(model, angles, frame))
+	pstverts = (mstvert_t *)((byte *)pmdl + pmdl->ofsstverts);
+	for (i = 0; i < pmdl->numstverts; i++)
 	{
-		return;
+		pfinalstverts[i].s = pstverts[i].s << 16;
+		pfinalstverts[i].t = pstverts[i].t << 16;
+	}
+	d_anumverts = pmdl->numverts;
+ 	fv = pfinalverts;
+	av = pauxverts;
+
+	for (i = 0; i < d_anumverts; i++, fv++, av++, d_apverts++)
+	{
+		D_AliasTransformFinalVert (fv, av, d_apverts);
+		if (av->fv[2] < ALIAS_Z_CLIP_PLANE)
+			fv->flags |= ALIAS_Z_CLIP;
+		else
+		{
+			 D_AliasProjectFinalVert (fv, av);
+
+			if (fv->u < 0)
+				fv->flags |= ALIAS_LEFT_CLIP;
+			if (fv->v < 0)
+				fv->flags |= ALIAS_TOP_CLIP;
+			if (fv->u > viewwidth)
+				fv->flags |= ALIAS_RIGHT_CLIP;
+			if (fv->v > viewheight)
+				fv->flags |= ALIAS_BOTTOM_CLIP;
+		}
 	}
 
-	D_AliasDrawModel(angles, model, frame, skin, light, translucency, is_view_model);
-	unguard;
+//
+// clip and draw all triangles
+//
+	d_affinetridesc.numtriangles = 1;
+
+	ptri = (mtriangle_t*)((byte*)pmdl + pmdl->ofstris);
+	for (i = 0; i < pmdl->numtris; i++, ptri++)
+	{
+		pfv[0] = &pfinalverts[ptri->vertindex[0]];
+		pfv[1] = &pfinalverts[ptri->vertindex[1]];
+		pfv[2] = &pfinalverts[ptri->vertindex[2]];
+
+		if (pfv[0]->flags & pfv[1]->flags & pfv[2]->flags)
+			continue;		// completely clipped
+		
+		if (!(pfv[0]->flags | pfv[1]->flags | pfv[2]->flags))
+		{	// totally unclipped
+			d_affinetridesc.pfinalverts = pfinalverts;
+			d_affinetridesc.pstverts = pfinalstverts;
+			d_affinetridesc.ptriangles = ptri;
+			PolysetDraw();
+		}
+		else		
+		{	// partially clipped
+			AliasClipTriangle(ptri);
+		}
+	}
 }
+
+#ifndef USEASM
+
+//==========================================================================
+//
+//	D_ConcatTransforms
+//
+//==========================================================================
+
+extern "C" void D_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4])
+{
+	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
+				in1[0][2] * in2[2][0];
+	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
+				in1[0][2] * in2[2][1];
+	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
+				in1[0][2] * in2[2][2];
+	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
+				in1[0][2] * in2[2][3] + in1[0][3];
+	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
+				in1[1][2] * in2[2][0];
+	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
+				in1[1][2] * in2[2][1];
+	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
+				in1[1][2] * in2[2][2];
+	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
+				in1[1][2] * in2[2][3] + in1[1][3];
+	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
+				in1[2][2] * in2[2][0];
+	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
+				in1[2][2] * in2[2][1];
+	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
+				in1[2][2] * in2[2][2];
+	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
+				in1[2][2] * in2[2][3] + in1[2][3];
+}
+
+//==========================================================================
+//
+//	D_AliasTransformAndProjectFinalVerts
+//
+//==========================================================================
+
+extern "C" void D_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
+{
+	int			i;
+	float		lightcos, *plightnormal, zi;
+	trivertx_t	*pverts;
+
+	pverts = d_apverts;
+
+	for (i = 0; i < d_anumverts; i++, fv++, pverts++)
+	{
+		//	transform and project
+		TVec v(pverts->v[0], pverts->v[1], pverts->v[2]);
+		zi = 1.0 / (DotProduct(v, aliastransform[2]) +
+				aliastransform[2][3]);
+
+		//	x, y, and z are scaled down by 1/2**31 in the transform, so 1/z
+		// is scaled up by 1/2**31, and the scaling cancels out for x and y
+		// in the projection
+		fv->zi = (int)zi;
+
+		fv->u = (int)(((DotProduct(v, aliastransform[0]) +
+				aliastransform[0][3]) * zi) + aliasxcenter);
+		fv->v = (int)(((DotProduct(v, aliastransform[1]) +
+				aliastransform[1][3]) * zi) + aliasycenter);
+
+		fv->flags = 0;
+
+		//	lighting
+		plightnormal = d_avertexnormals[pverts->lightnormalindex];
+		lightcos = DotProduct(plightnormal, d_plightvec);
+		int r = d_ambientlightr;
+		int g = d_ambientlightg;
+		int b = d_ambientlightb;
+
+		if (lightcos < 0)
+		{
+			r += (int)(d_shadelightr * lightcos);
+			//	Clamp; because we limited the minimum ambient and shading
+			// light, we don't have to clamp low light, just bright
+			if (r < 0)
+				r = 0;
+			g += (int)(d_shadelightg * lightcos);
+			if (g < 0)
+				g = 0;
+			b += (int)(d_shadelightb * lightcos);
+			if (b < 0)
+				b = 0;
+		}
+
+		fv->r = r;
+		fv->g = g;
+		fv->b = b;
+	}
+}
+
+//==========================================================================
+//
+//	D_AliasTransformFinalVert
+//
+//==========================================================================
+
+extern "C" void D_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
+	trivertx_t *pverts)
+{
+	float	lightcos, *plightnormal;
+
+	TVec v(pverts->v[0], pverts->v[1], pverts->v[2]);
+	av->fv[0] = DotProduct(v, aliastransform[0]) +
+			aliastransform[0][3];
+	av->fv[1] = DotProduct(v, aliastransform[1]) +
+			aliastransform[1][3];
+	av->fv[2] = DotProduct(v, aliastransform[2]) +
+			aliastransform[2][3];
+
+	fv->flags = 0;
+
+// lighting
+	plightnormal = d_avertexnormals[pverts->lightnormalindex];
+	lightcos = DotProduct(plightnormal, d_plightvec);
+	int r = d_ambientlightr;
+	int g = d_ambientlightg;
+	int b = d_ambientlightb;
+
+	if (lightcos < 0)
+	{
+		r += (int)(d_shadelightr * lightcos);
+		g += (int)(d_shadelightg * lightcos);
+		b += (int)(d_shadelightb * lightcos);
+
+		//	Clamp; because we limited the minimum ambient and shading light,
+		// we don't have to clamp low light, just bright
+		if (r < 0)
+			r = 0;
+		if (g < 0)
+			g = 0;
+		if (b < 0)
+			b = 0;
+	}
+
+	fv->r = r;
+	fv->g = g;
+	fv->b = b;
+}
+
+//==========================================================================
+//
+//	D_AliasProjectFinalVert
+//
+//==========================================================================
+
+extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
+{
+	float	zi;
+
+	// project points
+	zi = 1.0 / av->fv[2];
+
+	fv->zi = (int)(zi * ziscale);
+
+	fv->u = (int)((av->fv[0] * xprojection * zi) + aliasxcenter);
+	fv->v = (int)((av->fv[1] * yprojection * zi) + aliasycenter);
+}
+
+#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.12  2002/03/20 19:11:20  dj_jl
 //	Added guarding.
 //	

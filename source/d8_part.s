@@ -51,7 +51,7 @@
 
 #define P	12+4
 
-	.align 4
+	Align4
 .globl C(D_DrawParticle_8)
 C(D_DrawParticle_8):
 	pushl	%ebp				// preserve caller's stack frame
@@ -499,9 +499,12 @@ LPop1AndDone:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

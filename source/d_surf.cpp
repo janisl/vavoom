@@ -161,13 +161,13 @@ static TCvarI d_colored_lights("d_colored_lights", "1", CVAR_ARCHIVE);
 
 //==========================================================================
 //
-//	D_CacheSurface
+//	VSoftwareDrawer::CacheSurface
 //
 //==========================================================================
 
-surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
+surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 {
-	guard(D_CacheSurface);
+	guard(VSoftwareDrawer::CacheSurface);
 	surfcache_t     *cache;
 	float           surfscale;
 	int				texture;
@@ -200,7 +200,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	//
 	if (!cache)     // if a texture just animated, don't reallocate it
 	{
-		cache = D_SCAlloc(surfwidth, surfheight);
+		cache = SCAlloc(surfwidth, surfheight);
 		surface->cachespots[miplevel] = cache;
 		cache->owner = &surface->cachespots[miplevel];
 		cache->mipscale = surfscale;
@@ -332,14 +332,14 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 
 //==========================================================================
 //
-//	D_CacheSkySurface
+//	VSoftwareDrawer::CacheSkySurface
 //
 //==========================================================================
 
-surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
+surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 	int texture2, float offs1, float offs2)
 {
-	guard(D_CacheSkySurface);
+	guard(VSoftwareDrawer::CacheSkySurface);
 	surfcache_t     *cache;
 
 	//
@@ -371,7 +371,7 @@ surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 	//
 	if (!cache)     // if a texture just animated, don't reallocate it
 	{
-		cache = D_SCAlloc(surfwidth, surfheight);
+		cache = SCAlloc(surfwidth, surfheight);
 		surface->cachespots[0] = cache;
 		cache->owner = &surface->cachespots[0];
 	}
@@ -2253,9 +2253,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.11  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

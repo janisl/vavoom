@@ -1384,11 +1384,11 @@ NextSpan:
 
 //==========================================================================
 //
-//	D_SpriteClipEdge
+//	VSoftwareDrawer::SpriteClipEdge
 //
 //==========================================================================
 
-void D_SpriteClipEdge(const TVec &v0, const TVec &v1,
+void VSoftwareDrawer::SpriteClipEdge(const TVec &v0, const TVec &v1,
 	TClipPlane *clip, int clipflags)
 {
 	if (clip)
@@ -1421,12 +1421,12 @@ void D_SpriteClipEdge(const TVec &v0, const TVec &v1,
 				clipvert.y = v0.y + f * (v1.y - v0.y);
 				clipvert.z = v0.z + f * (v1.z - v0.z);
 
-				D_SpriteClipEdge(v0, clipvert, clip->next, clipflags);
+				SpriteClipEdge(v0, clipvert, clip->next, clipflags);
 				if (clip->exited)
 				{
 					clip->entered = false;
 					clip->exited = false;
-					D_SpriteClipEdge(clipvert, clip->exit, view_clipplanes, clipflags ^ clip->clipflag);
+					SpriteClipEdge(clipvert, clip->exit, view_clipplanes, clipflags ^ clip->clipflag);
 				}
 				return;
 			}
@@ -1454,9 +1454,9 @@ void D_SpriteClipEdge(const TVec &v0, const TVec &v1,
 				{
 					clip->entered = false;
 					clip->exited = false;
-					D_SpriteClipEdge(clip->enter, clipvert, view_clipplanes, clipflags ^ clip->clipflag);
+					SpriteClipEdge(clip->enter, clipvert, view_clipplanes, clipflags ^ clip->clipflag);
 				}
-				D_SpriteClipEdge(clipvert, v1, clip->next, clipflags);
+				SpriteClipEdge(clipvert, v1, clip->next, clipflags);
 				return;
 			}
 		} while ((clip = clip->next) != NULL);
@@ -1495,11 +1495,11 @@ void D_SpriteClipEdge(const TVec &v0, const TVec &v1,
 
 //==========================================================================
 //
-//	D_SpriteScanLeftEdge
+//	VSoftwareDrawer::SpriteScanLeftEdge
 //
 //==========================================================================
 
-void D_SpriteScanLeftEdge(TVec *vb, int count)
+void VSoftwareDrawer::SpriteScanLeftEdge(TVec *vb, int count)
 {
 	int				i, v, itop, ibottom;
 	TVec			*pvert, *pnext;
@@ -1558,11 +1558,11 @@ void D_SpriteScanLeftEdge(TVec *vb, int count)
 
 //==========================================================================
 //
-//	D_SpriteScanRightEdge
+//	VSoftwareDrawer::SpriteScanRightEdge
 //
 //==========================================================================
 
-void D_SpriteScanRightEdge(TVec *vb, int count)
+void VSoftwareDrawer::SpriteScanRightEdge(TVec *vb, int count)
 {
 	int				i, v, itop, ibottom;
 	TVec			*pvert, *pnext;
@@ -1619,11 +1619,11 @@ void D_SpriteScanRightEdge(TVec *vb, int count)
 
 //==========================================================================
 //
-//	D_SpriteCaclulateGradients
+//	VSoftwareDrawer::SpriteCaclulateGradients
 //
 //==========================================================================
 
-void D_SpriteCaclulateGradients(int lump)
+void VSoftwareDrawer::SpriteCaclulateGradients(int lump)
 {
 	TVec		p_normal, p_saxis, p_taxis;
 	float		distinv;
@@ -1660,11 +1660,11 @@ void D_SpriteCaclulateGradients(int lump)
 
 //==========================================================================
 //
-//	D_MaskedSurfCaclulateGradients
+//	VSoftwareDrawer::MaskedSurfCaclulateGradients
 //
 //==========================================================================
 
-void D_MaskedSurfCaclulateGradients(surface_t *surf)
+void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 {
 	TVec		p_normal, p_saxis, p_taxis;
 	float		distinv, mipscale, t;
@@ -1712,18 +1712,18 @@ void D_MaskedSurfCaclulateGradients(surface_t *surf)
 	bbextents = ((surf->extents[0] << 16) >> miplevel) - 1;
 	bbextentt = ((surf->extents[1] << 16) >> miplevel) - 1;
 
-	cache = D_CacheSurface(surf, miplevel);
+	cache = CacheSurface(surf, miplevel);
 	cachewidth = cache->width;
 	cacheblock = cache->data;
 }
 
 //==========================================================================
 //
-//	D_SpriteDrawPolygon
+//	VSoftwareDrawer::SpriteDrawPolygon
 //
 //==========================================================================
 
-void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
+void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 	int translation, int translucency, dword light)
 {
 	int			i;
@@ -1749,7 +1749,7 @@ void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 
 	for (i = 0; i < count; i++)
 	{
-		D_SpriteClipEdge(cv[i ? i - 1 : count - 1], cv[i], view_clipplanes, 15);
+		SpriteClipEdge(cv[i ? i - 1 : count - 1], cv[i], view_clipplanes, 15);
 	}
 
 	if (r_emited < 3)
@@ -1817,16 +1817,15 @@ void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 
 	if (surf)
 	{
-		D_MaskedSurfCaclulateGradients(surf);
+		MaskedSurfCaclulateGradients(surf);
 	}
 	else
 	{
-		D_SpriteCaclulateGradients(lump);
-
+		SpriteCaclulateGradients(lump);
 		SetSpriteLump(lump, light, translation);
 	}
-	D_SpriteScanLeftEdge(verts, r_emited);
-	D_SpriteScanRightEdge(verts, r_emited);
+	SpriteScanLeftEdge(verts, r_emited);
+	SpriteScanRightEdge(verts, r_emited);
 	spritespanfunc(sprite_spans);
 }
 
@@ -1840,7 +1839,7 @@ void VSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 	int translucency)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	D_SpriteDrawPolygon(cv, count, r_surface, 0, 0, translucency, 0);
+	SpriteDrawPolygon(cv, count, r_surface, 0, 0, translucency, 0);
 	unguard;
 }
 
@@ -1854,16 +1853,19 @@ void VSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	D_SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);
+	SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.8  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.7  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

@@ -167,9 +167,6 @@ static void CalcFadetable16(rgb_t *pal)
 			}
 		}
 	}
-
-	D_FlushCaches(true);
-	D_FlushTextureCaches();
 	unguard;
 }
 
@@ -234,9 +231,6 @@ static void CalcFadetable32(rgb_t *pal)
 			}
 		}
 	}
-
-	D_FlushCaches(true);
-	D_FlushTextureCaches();
 	unguard;
 }
 
@@ -264,11 +258,15 @@ void VSoftwareDrawer::SetPalette(int num)
 	{
 		CalcCol16Table();
 		CalcFadetable16((rgb_t*)pal);
+		FlushCaches(true);
+		FlushTextureCaches();
 	}
 	else
 	{
 		CalcCol32Table();
 		CalcFadetable32((rgb_t*)pal);
+		FlushCaches(true);
+		FlushTextureCaches();
 	}
 
 	//	Save palette
@@ -408,11 +406,15 @@ void VSoftwareDrawer::UpdatePalette(void)
 	{
 		CalcCol16Table();
 		CalcFadetable16((rgb_t*)pal);
+		FlushCaches(true);
+		FlushTextureCaches();
 	}
 	else
 	{
 		CalcCol32Table();
 		CalcFadetable32((rgb_t*)pal);
+		FlushCaches(true);
+		FlushTextureCaches();
 	}
 	unguard;
 }
@@ -458,16 +460,19 @@ void VSoftwareDrawer::NewMap(void)
 		CalcRGBTable8();
 	}
 
-	D_FlushCaches(false);
+	FlushCaches(false);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.9  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

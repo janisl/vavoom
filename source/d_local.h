@@ -145,7 +145,7 @@ typedef void (*spanfunc_t)(espan_t*);
 typedef void (*spritespanfunc_t)(sspan_t*);
 typedef void (*particle_func_t)(particle_t *pparticle);
 
-typedef void (*picspanfunc_t)(int, int, fixed_t, fixed_t, fixed_t, int, byte*);
+typedef void (*picspanfunc_t)(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 
 class VSoftwareDrawer:public VDrawer
 {
@@ -158,7 +158,6 @@ class VSoftwareDrawer:public VDrawer
 	void InitResolution(void);
 	void NewMap(void);
 	void SetPalette(int);
-	void SetPalette8(byte*);
 	void StartUpdate(void);
 	void Update(void);
 	void BeginDirectUpdate(void);
@@ -177,7 +176,6 @@ class VSoftwareDrawer:public VDrawer
 	void SetTexture(int);
 	void SetSkyTexture(int, bool);
 	void SetFlat(int);
-	void SetSkin(const char*);
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
@@ -207,17 +205,127 @@ class VSoftwareDrawer:public VDrawer
 	void DrawLine(int, int, dword, int, int, dword);
 	void EndAutomap(void);
 
- private:
-	void UpdatePalette(void);
-
+private:
+	//	Main.
 	bool AllocMemory(int, int, int);
 	void FreeMemory(void);
+	void InitViewBorder(const refdef_t *rd);
+	void VideoErase(unsigned ofs, int count);
+	void EraseViewBorder(const refdef_t *rd);
+
+	//	Palette and color lookup table management.
+	void SetPalette8(byte*);
+	void UpdatePalette(void);
+
+	//	Textures.
+	void FlushTextureCaches(void);
+	static void	MakeMips(miptexture_t *mip);
+	static void DrawColumnInCache(column_t* column, byte* cache,
+		int originx, int originy, int cachewidth, int cacheheight, bool dsky);
+	void GenerateTexture(int texnum, bool double_sky);
+	void LoadSkyMap(const char *name, void **dataptr);
+	void GenerateFlat(int num);
+	void GenerateSprite(int lump, int slot, dword light, int translation);
+	void SetSpriteLump(int, dword, int);
+	void LoadImage(const char *name, void **dataptr);
+	void* SetSkin(const char *name);
+	void GeneratePicFromPatch(int handle);
+	void GeneratePicFromRaw(int handle);
+	byte* SetPic(int handle);
+
+	//	Edge drawing.
+	void BeginEdgeFrame(void);
+	void DrawSurfaces(void);
+
+	//	Surface cache memory management.
+	int SurfaceCacheForRes(int, int, int);
+	void CheckCacheGuard(void);
+	void ClearCacheGuard(void);
+	void InitCaches(void*, int);
+	void FlushCaches(bool);
+	surfcache_t *SCAlloc(int, int);
+	void SCDump(FOutputDevice& Ar);
+
+	//	Surface caching.
+	surfcache_t *CacheSurface(surface_t *surface, int miplevel);
+	surfcache_t *CacheSkySurface(surface_t *surface, int texture1,
+		int texture2, float offs1, float offs2);
+
+	//	Sprite drawing.
+	static void SpriteClipEdge(const TVec &v0, const TVec &v1,
+		TClipPlane *clip, int clipflags);
+	static void SpriteScanLeftEdge(TVec *vb, int count);
+	static void SpriteScanRightEdge(TVec *vb, int count);
+	void SpriteCaclulateGradients(int lump);
+	void MaskedSurfCaclulateGradients(surface_t *surf);
+	void SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
+		int translation, int translucency, dword light);
+
+	//	Drawing of the aliased models, i.e. md2
+	bool AliasCheckBBox(model_t *model, const TAVec &angles, int frame);
+	void AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept);
+	void AliasSetupSkin(const char *skin);
+	void AliasSetupLighting(dword light);
+	void AliasSetupFrame(int frame);
+	void AliasPrepareUnclippedPoints(void);
+	void AliasPreparePoints(void);
+	void AliasClipTriangle(mtriangle_t *ptri);
+	void PolysetSetupDrawer(int);
+	void PolysetDraw(void);
+
+	//	Drawing of onscreen graphics.
+	static void DrawPicSpan_8(fixed_t s, fixed_t t, 
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawPicSpanFuzz_8(fixed_t s, fixed_t t, 
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawPicSpanAltFuzz_8(fixed_t s, fixed_t t, 
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawPicSpanShadow_8(fixed_t s, fixed_t t, 
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawFlatSpan_8(fixed_t s, fixed_t t, 
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void FillRect_8(float x1, float y1, float x2, float y2, dword color);
+	static void ShadeRect_8(int xx, int yy, int ww, int hh, int darkening);
+	static void DrawConsoleBackground_8(int h);
+	static void PutDot_8(int x, int y, dword c);
+	static void DrawPicSpan_16(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawSpritePicSpan_16(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *_src, void* dst);
+	static void DrawPicSpanFuzz_16(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawPicSpanShadow_16(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawFlatSpan_16(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void FillRect_16(float x1, float y1, float x2, float y2, dword color);
+	static void ShadeRect_16(int xx, int yy, int ww, int hh, int darkening);
+	static void DrawConsoleBackground_16(int h);
+	static void PutDot_16(int x, int y, dword c);
+	static void DrawPicSpan_32(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawSpritePicSpan_32(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *_src, void* dst);
+	static void DrawPicSpanFuzz_32(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawPicSpanShadow_32(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void DrawFlatSpan_32(fixed_t s, fixed_t t,
+		fixed_t sstep, int count, byte *src, void* dst);
+	static void FillRect_32(float x1, float y1, float x2, float y2, dword color);
+	static void ShadeRect_32(int xx, int yy, int ww, int hh, int darkening);
+	static void DrawConsoleBackground_32(int h);
+	static void PutDot_32(int x, int y, dword c);
+	static void DrawPic(float x1, float y1, float x2, float y2,
+		float s1, float t1, float s2, float t2);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+//	Functions implemented in asm, if enabled.
 extern "C" {
 
+//	Span drawers.
 void D_DrawSpans8_8(espan_t*);
 void D_DrawSpans16_8(espan_t *pspan);
 void D_DrawSpans8_16(espan_t*);
@@ -226,6 +334,7 @@ void D_DrawSpans8_32(espan_t*);
 void D_DrawSpans16_32(espan_t *pspan);
 void D_DrawZSpans(espan_t*);
 
+//	Sprite drawers.
 void D_DrawSpriteSpans_8(sspan_t*);
 void D_DrawFuzzSpriteSpans_8(sspan_t*);
 void D_DrawAltFuzzSpriteSpans_8(sspan_t*);
@@ -235,37 +344,20 @@ void D_DrawFuzzSpriteSpans_16(sspan_t*);
 void D_DrawSpriteSpans_32(sspan_t*);
 void D_DrawFuzzSpriteSpans_32(sspan_t*);
 
+//	Particle drawers.
 void D_DrawParticle_8(particle_t *pparticle);
 void D_DrawParticle_15(particle_t *pparticle);
 void D_DrawParticle_16(particle_t *pparticle);
 void D_DrawParticle_32(particle_t *pparticle);
 
+//	For models.
+void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
+
 } // extern "C"
-
-void TransformVector(const TVec &in, TVec &out);
-
-void D_BeginEdgeFrame(void);
-
-void D_FlushTextureCaches(void);
-
-int D_SurfaceCacheForRes(int, int, int);
-void D_InitCaches(void*, int);
-void D_FlushCaches(bool);
-surfcache_t *D_SCAlloc(int, int);
-
-surfcache_t *D_CacheSurface(surface_t *surface, int miplevel);
-surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
-	int texture2, float offs1, float offs2);
-
-void SetSpriteLump(int, dword, int);
-
-extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
-void D_AliasClipTriangle(mtriangle_t *ptri);
-void D_PolysetSetupDrawer(int);
-void D_PolysetDraw(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+//	Variables used by asm code.
 extern "C" {
 
 extern float			d_zistepu;
@@ -315,8 +407,6 @@ extern byte				*fadetable32g;
 extern byte				*fadetable32b;
 
 extern byte				*scrn;
-extern word				*scrn16;
-
 extern short			*zbuffer;
 
 extern int				rshift;
@@ -364,6 +454,19 @@ extern miptexture_t		*miptexture;
 extern finalvert_t		*pfinalverts;
 extern finalstvert_t	*pfinalstverts;
 extern auxvert_t		*pauxverts;
+
+//==========================================================================
+//
+//	General inlines
+//
+//==========================================================================
+
+inline void TransformVector(const TVec &in, TVec &out)
+{
+	out.x = DotProduct(in, viewright);
+	out.y = DotProduct(in, viewup);
+	out.z = DotProduct(in, viewforward);
+}
 
 //==========================================================================
 //
@@ -544,9 +647,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.21  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.20  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

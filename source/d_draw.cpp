@@ -52,24 +52,21 @@ static byte				*picsource;
 
 static int				ds_shade;
 
-static byte				*picdata[MAX_PICS];
-static int				picwidth[MAX_PICS];
-
-static void (*D_PutDot)(int, int, dword);
+static void (*PutDot)(int, int, dword);
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	D_DrawPicSpan_8
+//	VSoftwareDrawer::DrawPicSpan_8
 //
 //==========================================================================
 
-static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, 
-							fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    byte *dest = (byte *)scrn + x + y * ScreenWidth;
+    byte* dest = (byte*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -84,15 +81,15 @@ static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t,
 
 //==========================================================================
 //
-//	D_DrawPicSpanFuzz_8
+//	VSoftwareDrawer::DrawPicSpanFuzz_8
 //
 //==========================================================================
 
-static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, 
-								fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanFuzz_8(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    byte *dest = scrn + x + y * ScreenWidth;
+    byte* dest = (byte*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -107,15 +104,15 @@ static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t,
 
 //==========================================================================
 //
-//	D_DrawPicSpanAltFuzz_8
+//	VSoftwareDrawer::DrawPicSpanAltFuzz_8
 //
 //==========================================================================
 
-static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, 
-								   fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanAltFuzz_8(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    byte *dest = scrn + x + y * ScreenWidth;
+    byte* dest = (byte*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -130,15 +127,15 @@ static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t,
 
 //==========================================================================
 //
-//	D_DrawPicSpanShadow_8
+//	VSoftwareDrawer::DrawPicSpanShadow_8
 //
 //==========================================================================
 
-static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, 
-								  fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanShadow_8(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    byte *dest = scrn + x + y * ScreenWidth;
+    byte* dest = (byte*)dst;
 	byte *cmap = colormaps + ((ds_shade >> 3) << 8);
 	while (count--)
     {
@@ -154,15 +151,15 @@ static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t,
 
 //==========================================================================
 //
-//	D_DrawFlatSpan_8
+//	VSoftwareDrawer::DrawFlatSpan_8
 //
 //==========================================================================
 
-static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, 
-							 fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawFlatSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> 10) & 0xfc0;
-    byte *dest = scrn + x + y * ScreenWidth;
+    byte* dest = (byte*)dst;
 	while (count--)
     {
 		byte color = src[(s >> FRACBITS) & 0x3f];
@@ -174,11 +171,12 @@ static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t,
 
 //==========================================================================
 //
-//	D_FillRect_8
+//	VSoftwareDrawer::FillRect_8
 //
 //==========================================================================
 
-static void D_FillRect_8(float x1, float y1, float x2, float y2, dword color)
+void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
+	dword color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -199,14 +197,14 @@ static void D_FillRect_8(float x1, float y1, float x2, float y2, dword color)
 
 //==========================================================================
 //
-//	D_ShadeRect_8
+//	VSoftwareDrawer::ShadeRect_8
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-static void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -228,11 +226,11 @@ static void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 
 //==========================================================================
 //
-//	D_DrawConsoleBackground_8
+//	VSoftwareDrawer::DrawConsoleBackground_8
 //
 //==========================================================================
 
-static void D_DrawConsoleBackground_8(int h)
+void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 {
 	static byte *consbgmap = NULL;
     if (!consbgmap)
@@ -258,25 +256,26 @@ static void D_DrawConsoleBackground_8(int h)
 
 //==========================================================================
 //
-//	D_PutDot_8
+//	VSoftwareDrawer::PutDot_8
 //
 //==========================================================================
 
-static void D_PutDot_8(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_8(int x, int y, dword c)
 {
 	((byte*)scrn)[y * ScreenWidth + x] = c;
 }
 
 //==========================================================================
 //
-//	D_DrawPicSpan_16
+//	VSoftwareDrawer::DrawPicSpan_16
 //
 //==========================================================================
 
-static void D_DrawPicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    word *dest = scrn16 + x + y * ScreenWidth;
+    word* dest = (word*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -291,15 +290,16 @@ static void D_DrawPicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, 
 
 //==========================================================================
 //
-//	D_DrawSpritePicSpan_16
+//	VSoftwareDrawer::DrawSpritePicSpan_16
 //
 //==========================================================================
 
-static void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
+void VSoftwareDrawer::DrawSpritePicSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *_src, void* dst)
 {
 	word *src = (word*)_src;
 	src += (t >> FRACBITS) * cachewidth;
-    word *dest = (word*)scrn + x + y * ScreenWidth;
+    word* dest = (word*)dst;
 	while (count--)
     {
 		word color = src[s >> FRACBITS];
@@ -314,14 +314,15 @@ static void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t s
 
 //==========================================================================
 //
-//	D_DrawPicSpanFuzz_16
+//	VSoftwareDrawer::DrawPicSpanFuzz_16
 //
 //==========================================================================
 
-static void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanFuzz_16(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    word *dest = scrn16 + x + y * ScreenWidth;
+    word* dest = (word*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -346,14 +347,15 @@ static void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sst
 
 //==========================================================================
 //
-//	D_DrawPicSpanShadow_16
+//	VSoftwareDrawer::DrawPicSpanShadow_16
 //
 //==========================================================================
 
-static void D_DrawPicSpanShadow_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanShadow_16(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    word *dest = scrn16 + x + y * ScreenWidth;
+    word* dest = (word*)dst;
 	int ishade = 255 - ds_shade;
 	while (count--)
     {
@@ -372,14 +374,15 @@ static void D_DrawPicSpanShadow_16(int x, int y, fixed_t s, fixed_t t, fixed_t s
 
 //==========================================================================
 //
-//	D_DrawFlatSpan_16
+//	VSoftwareDrawer::DrawFlatSpan_16
 //
 //==========================================================================
 
-static void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawFlatSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> 10) & 0xfc0;
-    word *dest = scrn16 + x + y * ScreenWidth;
+    word* dest = (word*)dst;
 	while (count--)
     {
 		byte color = src[(s >> FRACBITS) & 0x3f];
@@ -391,11 +394,12 @@ static void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep,
 
 //==========================================================================
 //
-//	D_FillRect_16
+//	VSoftwareDrawer::FillRect_16
 //
 //==========================================================================
 
-static void D_FillRect_16(float x1, float y1, float x2, float y2, dword color)
+void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
+	dword color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -428,14 +432,14 @@ static void D_FillRect_16(float x1, float y1, float x2, float y2, dword color)
 
 //==========================================================================
 //
-//	D_ShadeRect_16
+//	VSoftwareDrawer::ShadeRect_16
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-static void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -447,7 +451,7 @@ static void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
 	darkening = 32 - darkening;
 	for (int y = y1; y < y2; y++)
 	{
-		word *dest = scrn16 + x1 + ScreenWidth * y;
+		word *dest = (word*)scrn + x1 + ScreenWidth * y;
 		for (int x = x1; x < x2; x++)
 		{
 			byte r = GetColR(*dest);
@@ -461,15 +465,15 @@ static void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
 
 //==========================================================================
 //
-//	D_DrawConsoleBackground_16
+//	VSoftwareDrawer::DrawConsoleBackground_16
 //
 //==========================================================================
 
-static void D_DrawConsoleBackground_16(int h)
+void VSoftwareDrawer::DrawConsoleBackground_16(int h)
 {
 	for (int y = 0; y < h; y++)
 	{
-		word *dest = scrn16 + ScreenWidth * y;
+		word *dest = (word*)scrn + ScreenWidth * y;
 		for (int x = 0; x < ScreenWidth; x++)
 		{
 			byte r = GetColR(*dest);
@@ -484,25 +488,26 @@ static void D_DrawConsoleBackground_16(int h)
 
 //==========================================================================
 //
-//	D_PutDot_16
+//	VSoftwareDrawer::PutDot_16
 //
 //==========================================================================
 
-static void D_PutDot_16(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_16(int x, int y, dword c)
 {
 	((word*)scrn)[y * ScreenWidth + x] = c;
 }
 
 //==========================================================================
 //
-//	D_DrawPicSpan_32
+//	VSoftwareDrawer::DrawPicSpan_32
 //
 //==========================================================================
 
-static void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+    dword* dest = (dword*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -517,15 +522,16 @@ static void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, 
 
 //==========================================================================
 //
-//	D_DrawSpritePicSpan_32
+//	VSoftwareDrawer::DrawSpritePicSpan_32
 //
 //==========================================================================
 
-static void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
+void VSoftwareDrawer::DrawSpritePicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *_src, void* dst)
 {
 	dword *src = (dword*)_src;
 	src += (t >> FRACBITS) * cachewidth;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+    dword* dest = (dword*)dst;
 	while (count--)
     {
 		dword color = src[s >> FRACBITS];
@@ -540,14 +546,15 @@ static void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t s
 
 //==========================================================================
 //
-//	D_DrawPicSpanFuzz_32
+//	VSoftwareDrawer::DrawPicSpanFuzz_32
 //
 //==========================================================================
 
-static void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanFuzz_32(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+    dword* dest = (dword*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -572,14 +579,15 @@ static void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sst
 
 //==========================================================================
 //
-//	D_DrawPicSpanShadow_32
+//	VSoftwareDrawer::DrawPicSpanShadow_32
 //
 //==========================================================================
 
-static void D_DrawPicSpanShadow_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawPicSpanShadow_32(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+    dword* dest = (dword*)dst;
 	int ishade = 255 - ds_shade;
 	while (count--)
     {
@@ -598,14 +606,15 @@ static void D_DrawPicSpanShadow_32(int x, int y, fixed_t s, fixed_t t, fixed_t s
 
 //==========================================================================
 //
-//	D_DrawFlatSpan_32
+//	VSoftwareDrawer::DrawFlatSpan_32
 //
 //==========================================================================
 
-static void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+void VSoftwareDrawer::DrawFlatSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
+	int count, byte *src, void* dst)
 {
 	src += (t >> 10) & 0xfc0;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+    dword* dest = (dword*)dst;
 	while (count--)
     {
 		byte color = src[(s >> FRACBITS) & 0x3f];
@@ -617,11 +626,12 @@ static void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep,
 
 //==========================================================================
 //
-//	D_FillRect_32
+//	VSoftwareDrawer::FillRect_32
 //
 //==========================================================================
 
-static void D_FillRect_32(float x1, float y1, float x2, float y2, dword color)
+void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
+	dword color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -644,14 +654,14 @@ static void D_FillRect_32(float x1, float y1, float x2, float y2, dword color)
 
 //==========================================================================
 //
-//	D_ShadeRect_32
+//	VSoftwareDrawer::ShadeRect_32
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
 //
 //==========================================================================
 
-static void D_ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
+void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -677,11 +687,11 @@ static void D_ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
 
 //==========================================================================
 //
-//	D_DrawConsoleBackground_32
+//	VSoftwareDrawer::DrawConsoleBackground_32
 //
 //==========================================================================
 
-static void D_DrawConsoleBackground_32(int h)
+void VSoftwareDrawer::DrawConsoleBackground_32(int h)
 {
 	for (int y = 0; y < h; y++)
 	{
@@ -700,151 +710,22 @@ static void D_DrawConsoleBackground_32(int h)
 
 //==========================================================================
 //
-//	D_PutDot_32
+//	VSoftwareDrawer::PutDot_32
 //
 //==========================================================================
 
-static void D_PutDot_32(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_32(int x, int y, dword c)
 {
 	((dword*)scrn)[y * ScreenWidth + x] = c;
 }
 
 //==========================================================================
 //
-//	GeneratePicFromPatch
+//	VSoftwareDrawer::DrawPic
 //
 //==========================================================================
 
-static void GeneratePicFromPatch(int handle)
-{
-	guard(GeneratePicFromPatch);
-	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_TEMP);
-	int w = LittleShort(patch->width);
-	int h = LittleShort(patch->height);
-	byte *block = (byte*)Z_Calloc(w * h, PU_CACHE, (void**)&picdata[handle]);
-	picdata[handle] = block;
-	picwidth[handle] = w;
-	int black = r_black_color[pic_list[handle].palnum];
-
-	for (int x = 0; x < w; x++)
-	{
-    	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
-
-		// step through the posts in a column
-		int top = -1;	//	DeepSea tall patches support
-	    while (column->topdelta != 0xff)
-	    {
-			if (column->topdelta <= top)
-			{
-				top += column->topdelta;
-			}
-			else
-			{
-				top = column->topdelta;
-			}
-		    byte* source = (byte *)column + 3;
-		    byte* dest = block + x + top * w;
-			int count = column->length;
-
-	    	while (count--)
-	    	{
-				*dest = *source ? *source : black;
-				source++;
-				dest += w;
-	    	}
-			column = (column_t *)((byte *)column + column->length + 4);
-	    }
-	}
-
-	if (pic_list[handle].palnum)
-	{
-		byte remap[256];
-		rgba_t *pal = r_palette[pic_list[handle].palnum];
-
-		remap[0] = 0;
-		for (int pali = 1; pali < 256; pali++)
-		{
-			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
-		}
-		for (int i = 0; i < w * h; i++)
-		{
-			block[i] = remap[block[i]];
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	GeneratePicFromRaw
-//
-//==========================================================================
-
-static void GeneratePicFromRaw(int handle)
-{
-	guard(GeneratePicFromRaw);
-	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
-	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
-
-	byte remap[256];
-	if (pic_list[handle].palnum)
-	{
-		rgba_t *pal = r_palette[pic_list[handle].palnum];
-
-		for (int pali = 0; pali < 256; pali++)
-		{
-			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
-		}
-	}
-	else
-	{
-		remap[0] = r_black_color[pic_list[handle].palnum];
-		for (int pali = 1; pali < 256; pali++)
-		{
-			remap[pali] = pali;
-		}
-	}
-
-	for (int i = 0; i < 320 * 200; i++)
-	{
-		picdata[handle][i] = remap[picdata[handle][i]];
-	}
-	picwidth[handle] = 320;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SetPic
-//
-//==========================================================================
-
-static void SetPic(int handle)
-{
-	if (!picdata[handle])
-	{
-		switch (pic_list[handle].type)
- 		{
-	 	 case PIC_PATCH:
-			GeneratePicFromPatch(handle);
-			break;
-
-		 case PIC_RAW:
-			GeneratePicFromRaw(handle);
-			break;
-		}
-	}
-	picsource = picdata[handle];
-	cachewidth = picwidth[handle];
-}
-
-//==========================================================================
-//
-//	D_DrawPic
-//
-//==========================================================================
-
-static void D_DrawPic(float x1, float y1, float x2, float y2,
+void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2)
 {
 	if (x1 < 0)
@@ -890,12 +771,13 @@ static void D_DrawPic(float x1, float y1, float x2, float y2,
 	fixed_t s = FX(s1);
 	fixed_t t = FX(t1);
 
-	int iy = top;
+	byte* dst = (byte *)scrn + (left + top * ScreenWidth) * PixelBytes;
+	int DstStep = ScreenWidth * PixelBytes;
 
 	do
 	{
-		picspanfunc(left, iy, s, t, sstep, count, picsource);
-		iy++;
+		picspanfunc(s, t, sstep, count, picsource, dst);
+		dst += DstStep;
 		t += tstep;
 	}
 	while (--lines);
@@ -911,22 +793,22 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
 	guard(VSoftwareDrawer::DrawPic);
-	SetPic(handle);
+	picsource = SetPic(handle);
 	if (ScreenBPP == 8)
 	{
 		if (trans < 5)
 		{
-			picspanfunc = D_DrawPicSpan_8;
+			picspanfunc = DrawPicSpan_8;
 		}
 		else if (trans < 45)
 		{
 			d_transluc = tinttables[(trans - 5) / 10];
-			picspanfunc = D_DrawPicSpanFuzz_8;
+			picspanfunc = DrawPicSpanFuzz_8;
 		}
 		else if (trans < 95)
 		{
 			d_transluc = tinttables[(94 - trans) / 10];
-			picspanfunc = D_DrawPicSpanAltFuzz_8;
+			picspanfunc = DrawPicSpanAltFuzz_8;
 		}
 		else
 		{
@@ -937,14 +819,14 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	{
 		if (trans <= 0)
 		{
-			picspanfunc = D_DrawPicSpan_16;
+			picspanfunc = DrawPicSpan_16;
 		}
 		else if (trans < 100)
 		{
 			int trindex = trans * 31 / 100;
 			d_dsttranstab = scaletable[trindex];
 			d_srctranstab = scaletable[31 - trindex];
-			picspanfunc = D_DrawPicSpanFuzz_16;
+			picspanfunc = DrawPicSpanFuzz_16;
 		}
 		else
 		{
@@ -955,21 +837,21 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	{
 		if (trans <= 0)
 		{
-			picspanfunc = D_DrawPicSpan_32;
+			picspanfunc = DrawPicSpan_32;
 		}
 		else if (trans < 100)
 		{
 			int trindex = trans * 31 / 100;
 			d_dsttranstab = scaletable[trindex];
 			d_srctranstab = scaletable[31 - trindex];
-			picspanfunc = D_DrawPicSpanFuzz_32;
+			picspanfunc = DrawPicSpanFuzz_32;
 		}
 		else
 		{
 			return;
 		}
 	}
-	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 	unguard;
 }
 
@@ -983,21 +865,21 @@ void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
 	guard(VSoftwareDrawer::DrawPicShadow);
-	SetPic(handle);
+	picsource = SetPic(handle);
 	ds_shade = shade;
 	if (ScreenBPP == 8)
 	{
-		picspanfunc = D_DrawPicSpanShadow_8;
+		picspanfunc = DrawPicSpanShadow_8;
 	}
 	else if (PixelBytes == 2)
 	{
-		picspanfunc = D_DrawPicSpanShadow_16;
+		picspanfunc = DrawPicSpanShadow_16;
 	}
 	else
 	{
-		picspanfunc = D_DrawPicSpanShadow_32;
+		picspanfunc = DrawPicSpanShadow_32;
 	}
-	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 	unguard;
 }
 
@@ -1017,17 +899,17 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
 	{
-		picspanfunc = D_DrawFlatSpan_8;
+		picspanfunc = DrawFlatSpan_8;
 	}
 	else if (PixelBytes == 2)
 	{
-		picspanfunc = D_DrawFlatSpan_16;
+		picspanfunc = DrawFlatSpan_16;
 	}
 	else
 	{
-		picspanfunc = D_DrawFlatSpan_32;
+		picspanfunc = DrawFlatSpan_32;
 	}
-	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
+	DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 	unguard;
 }
 
@@ -1045,15 +927,15 @@ void VSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
 	guard(VSoftwareDrawer::FillRect);
 	if (ScreenBPP == 8)
 	{
-		D_FillRect_8(x1, y1, x2, y2, color);
+		FillRect_8(x1, y1, x2, y2, color);
 	}
 	else if (PixelBytes == 2)
 	{
-		D_FillRect_16(x1, y1, x2, y2, color);
+		FillRect_16(x1, y1, x2, y2, color);
 	}
 	else
 	{
-		D_FillRect_32(x1, y1, x2, y2, color);
+		FillRect_32(x1, y1, x2, y2, color);
 	}
 	unguard;
 }
@@ -1071,11 +953,11 @@ void VSoftwareDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
 	guard(VSoftwareDrawer::ShadeRect);
 	if (ScreenBPP == 8)
-		D_ShadeRect_8(x, y, w, h, darkening);
+		ShadeRect_8(x, y, w, h, darkening);
 	else if (PixelBytes == 2)
-		D_ShadeRect_16(x, y, w, h, darkening);
+		ShadeRect_16(x, y, w, h, darkening);
 	else
-		D_ShadeRect_32(x, y, w, h, darkening);
+		ShadeRect_32(x, y, w, h, darkening);
 	unguard;
 }
 
@@ -1089,11 +971,11 @@ void VSoftwareDrawer::DrawConsoleBackground(int h)
 {
 	guard(VSoftwareDrawer::DrawConsoleBackground);
 	if (ScreenBPP == 8)
-		D_DrawConsoleBackground_8(h);
+		DrawConsoleBackground_8(h);
 	else if (PixelBytes == 2)
-		D_DrawConsoleBackground_16(h);
+		DrawConsoleBackground_16(h);
 	else
-		D_DrawConsoleBackground_32(h);
+		DrawConsoleBackground_32(h);
 	unguard;
 }
 
@@ -1112,13 +994,13 @@ void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 	SetSpriteLump(lump, 0xffffffff, translation);
 	picsource = (byte*)cacheblock;
-	picspanfunc = ScreenBPP == 8 ? D_DrawPicSpan_8 :
-		PixelBytes == 2 ? D_DrawSpritePicSpan_16 : D_DrawSpritePicSpan_32;
+	picspanfunc = ScreenBPP == 8 ? DrawPicSpan_8 :
+		PixelBytes == 2 ? DrawSpritePicSpan_16 : DrawSpritePicSpan_32;
 
     if (flip)
-		D_DrawPic(x1, y1, x2, y2, w - 0.0001, 0, 0, h);
+		DrawPic(x1, y1, x2, y2, w - 0.0001, 0, 0, h);
     else
-		D_DrawPic(x1, y1, x2, y2, 0, 0, w, h);
+		DrawPic(x1, y1, x2, y2, 0, 0, w, h);
 	unguard;
 }
 
@@ -1132,11 +1014,11 @@ void VSoftwareDrawer::StartAutomap(void)
 {
 	guard(VSoftwareDrawer::StartAutomap);
 	if (PixelBytes == 1)
-		D_PutDot = D_PutDot_8;
+		PutDot = PutDot_8;
 	else if (PixelBytes == 2)
-		D_PutDot = D_PutDot_16;
+		PutDot = PutDot_16;
 	else
-		D_PutDot = D_PutDot_32;
+		PutDot = PutDot_32;
 	unguard;
 }
 
@@ -1386,7 +1268,7 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
        	e = x2;
 		while (1)
 		{
-			D_PutDot(x, y, color);
+			PutDot(x, y, color);
     		if (x == e) return;
 	    	if (d >= 0)
 		    {
@@ -1403,7 +1285,7 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
         e = y2;
 		while (1)
 		{
-			D_PutDot(x, y, color);
+			PutDot(x, y, color);
 	    	if (y == e) return;
 		    if (d >= 0)
 		    {
@@ -1430,9 +1312,12 @@ void VSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.12  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
 //	

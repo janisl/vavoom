@@ -90,7 +90,7 @@ LClampHigh5:
 
 #define pspans	4+16
 
-	.align 4
+	Align4
 .globl C(D_DrawSpriteSpans_8)
 C(D_DrawSpriteSpans_8):
 	pushl	%ebp				// preserve caller's stack frame
@@ -280,7 +280,7 @@ LCleanup1:
 	fistpl	t				// 1/z | t/z | s/z
 	jmp		LFDIVInFlight1
 
-	.align	4
+	Align4
 LSetupNotLast1:
 // finish up the s and t calcs
 	fxch	%st(1)			// z*64k | 1/z | t/z | s/z
@@ -525,7 +525,7 @@ Lp5:
 							//  overlap
 	jmp		LFDIVInFlight2
 
-	.align	4
+	Align4
 LSetupNotLast2:
 	fadds	zi8stepu
 	fxch	%st(2)
@@ -914,9 +914,12 @@ LNextSpan:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

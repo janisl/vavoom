@@ -32,7 +32,7 @@
 
 	.data
 
-	.align	4
+	Align4
 p00_minus_p20:	.single		0
 p10_minus_p20:	.single		0
 p01_minus_p21:	.single		0
@@ -771,9 +771,12 @@ LSkip2:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/18 18:54:44  dj_jl
 //	Found a workaround for calling a C++ function, progs code patching
 //	

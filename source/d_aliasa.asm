@@ -67,7 +67,6 @@
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
- externdef _scrn16
  externdef _pal8_to16
  externdef _mmx_mask4
  externdef _mmx_mask8
@@ -234,6 +233,149 @@ Lcoords dd 0, 0, 0
 Ltemp dd 0
 _DATA ENDS
 _TEXT SEGMENT
+ align 4
+ public _D_ConcatTransforms
+_D_ConcatTransforms:
+ mov eax,dword ptr[4+esp]
+ mov edx,dword ptr[8+esp]
+ mov ecx,dword ptr[12+esp]
+ fld dword ptr[edx]
+ fmul dword ptr[eax]
+ fld dword ptr[16+edx]
+ fmul dword ptr[4+eax]
+ fld dword ptr[32+edx]
+ fmul dword ptr[8+eax]
+ fxch st(1)
+ faddp st(2),st
+ fld dword ptr[4+edx]
+ fmul dword ptr[eax]
+ fld dword ptr[20+edx]
+ fmul dword ptr[4+eax]
+ fld dword ptr[36+edx]
+ fmul dword ptr[8+eax]
+ fxch st(1)
+ faddp st(2),st
+ fld dword ptr[8+edx]
+ fmul dword ptr[eax]
+ fld dword ptr[24+edx]
+ fmul dword ptr[4+eax]
+ fld dword ptr[40+edx]
+ fmul dword ptr[8+eax]
+ fxch st(1)
+ faddp st(1),st
+ fxch st(4)
+ faddp st(5),st
+ fxch st(1)
+ faddp st(2),st
+ faddp st(2),st
+ fxch st(2)
+ fstp dword ptr[ecx]
+ fxch st(1)
+ fstp dword ptr[4+ecx]
+ fstp dword ptr[8+ecx]
+ fld dword ptr[12+edx]
+ fld dword ptr[28+edx]
+ fxch st(1)
+ fmul dword ptr[eax]
+ fxch st(1)
+ fmul dword ptr[4+eax]
+ faddp st(1),st
+ fld dword ptr[44+edx]
+ fmul dword ptr[8+eax]
+ faddp st(1),st
+ fadd dword ptr[12+eax]
+ fstp dword ptr[12+ecx]
+ fld dword ptr[edx]
+ fld dword ptr[16+edx]
+ fxch st(1)
+ fmul dword ptr[16+eax]
+ fxch st(1)
+ fmul dword ptr[20+eax]
+ faddp st(1),st
+ fld dword ptr[32+edx]
+ fmul dword ptr[24+eax]
+ faddp st(1),st
+ fstp dword ptr[16+ecx]
+ fld dword ptr[4+edx]
+ fld dword ptr[20+edx]
+ fxch st(1)
+ fmul dword ptr[16+eax]
+ fxch st(1)
+ fmul dword ptr[20+eax]
+ faddp st(1),st
+ fld dword ptr[36+edx]
+ fmul dword ptr[24+eax]
+ faddp st(1),st
+ fstp dword ptr[20+ecx]
+ fld dword ptr[8+edx]
+ fld dword ptr[24+edx]
+ fxch st(1)
+ fmul dword ptr[16+eax]
+ fxch st(1)
+ fmul dword ptr[20+eax]
+ faddp st(1),st
+ fld dword ptr[40+edx]
+ fmul dword ptr[24+eax]
+ faddp st(1),st
+ fstp dword ptr[24+ecx]
+ fld dword ptr[12+edx]
+ fld dword ptr[28+edx]
+ fxch st(1)
+ fmul dword ptr[16+eax]
+ fxch st(1)
+ fmul dword ptr[20+eax]
+ faddp st(1),st
+ fld dword ptr[44+edx]
+ fmul dword ptr[24+eax]
+ faddp st(1),st
+ fadd dword ptr[28+eax]
+ fstp dword ptr[28+ecx]
+ fld dword ptr[edx]
+ fld dword ptr[16+edx]
+ fxch st(1)
+ fmul dword ptr[32+eax]
+ fxch st(1)
+ fmul dword ptr[36+eax]
+ faddp st(1),st
+ fld dword ptr[32+edx]
+ fmul dword ptr[40+eax]
+ faddp st(1),st
+ fstp dword ptr[32+ecx]
+ fld dword ptr[4+edx]
+ fld dword ptr[20+edx]
+ fxch st(1)
+ fmul dword ptr[32+eax]
+ fxch st(1)
+ fmul dword ptr[36+eax]
+ faddp st(1),st
+ fld dword ptr[36+edx]
+ fmul dword ptr[40+eax]
+ faddp st(1),st
+ fstp dword ptr[36+ecx]
+ fld dword ptr[8+edx]
+ fld dword ptr[24+edx]
+ fxch st(1)
+ fmul dword ptr[32+eax]
+ fxch st(1)
+ fmul dword ptr[36+eax]
+ faddp st(1),st
+ fld dword ptr[40+edx]
+ fmul dword ptr[40+eax]
+ faddp st(1),st
+ fstp dword ptr[40+ecx]
+ fld dword ptr[12+edx]
+ fld dword ptr[28+edx]
+ fxch st(1)
+ fmul dword ptr[32+eax]
+ fxch st(1)
+ fmul dword ptr[36+eax]
+ faddp st(1),st
+ fld dword ptr[44+edx]
+ fmul dword ptr[40+eax]
+ faddp st(1),st
+ fadd dword ptr[44+eax]
+ fstp dword ptr[44+ecx]
+ ret
  public _D_AliasTransformFinalVert
 _D_AliasTransformFinalVert:
  push ebx

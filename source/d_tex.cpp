@@ -29,7 +29,8 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define SPRITE_CACHE_SIZE			256
+#define SPRITE_CACHE_SIZE	256
+#define	MAX_SKIN_CACHE		256
 
 // TYPES -------------------------------------------------------------------
 
@@ -39,6 +40,12 @@ struct sprite_cache_t
 	dword		light;
 	int			lump;
 	int			tnum;
+};
+
+struct skincache_t
+{
+	char		name[64];
+	void		*data;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -61,6 +68,11 @@ static void**			skymapdata;
 
 static sprite_cache_t	sprite_cache[SPRITE_CACHE_SIZE];
 static int				sprite_cache_count;
+
+static skincache_t		skincache[MAX_SKIN_CACHE];
+
+static byte				*picdata[MAX_PICS];
+static int				picwidth[MAX_PICS];
 
 // CODE --------------------------------------------------------------------
 
@@ -87,13 +99,13 @@ void VSoftwareDrawer::InitTextures(void)
 
 //==========================================================================
 //
-//	D_FlushTextureCaches
+//	VSoftwareDrawer::FlushTextureCaches
 //
 //==========================================================================
 
-void D_FlushTextureCaches(void)
+void VSoftwareDrawer::FlushTextureCaches(void)
 {
-	guard(D_FlushTextureCaches);
+	guard(VSoftwareDrawer::FlushTextureCaches);
 	int		i;
 
 	for (i = 0; i < SPRITE_CACHE_SIZE; i++)
@@ -116,113 +128,99 @@ void D_FlushTextureCaches(void)
 
 //==========================================================================
 //
-//	D_LoadImage
+//	VSoftwareDrawer::MakeMips
 //
 //==========================================================================
 
-void D_LoadImage(const char *name, void **dataptr)
+void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 {
-	guard(D_LoadImage);
-	int j;
+	guard(VSoftwareDrawer::MakeMips);
+	//	Get palette.
+	rgb_t* pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 
-	Mod_LoadSkin(name, dataptr);
-	if (SkinBPP == 8)
-	{
-		// Remap to game palette
-		byte remap[256];
-		byte *tmp;
-
-		for (j = 0; j < 256; j++)
-		{
-			remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
-		}
-
-		tmp = (byte *)SkinData;
-		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++)
-		{
-			*tmp = remap[*tmp];
-		}
-	}
-	else
-	{
-		byte *tmp = (byte *)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC,
-			dataptr);
-		rgba_t *src = (rgba_t *)SkinData;
-		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++, src++)
-		{
-			*tmp = MakeCol8(src->r, src->g, src->b);
-		}
-		Z_Free(SkinData);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	MakeMips
-//
-//==========================================================================
-
-int			mip_r, mip_g, mip_b, mip_a;
-rgb_t		*mip_pal;
-
-void MipPixel(int pix)
-{
-	if (!pix)
-	{
-		mip_a++;
-	}
-	else
-	{
-		mip_r += mip_pal[pix].r;
-		mip_g += mip_pal[pix].g;
-		mip_b += mip_pal[pix].b;
-	}
-}
-
-byte MipColor(void)
-{
-	if (mip_a > 2)
-	{
-		return 0;
-	}
-	return d_rgbtable[((mip_r << 5) & 0x7c00) +
-		(mip_g & 0x3e0) + ((mip_b >> 5) & 0x1f)];
-}
-
-static void	MakeMips(miptexture_t *mip)
-{
-	guard(MakeMips);
-	byte		*psrc, *pdst;
-	int			i, j, miplevel, mipw, miph, srcrow;
-
-	mip_pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
-
+	//	Calc offsets.
 	mip->offsets[0] = sizeof(miptexture_t);
 	mip->offsets[1] = mip->offsets[0] + mip->width * mip->height;
 	mip->offsets[2] = mip->offsets[1] + mip->width * mip->height / 4;
 	mip->offsets[3] = mip->offsets[2] + mip->width * mip->height / 16;
 
-	for (miplevel = 1; miplevel < 4; miplevel++)
+	for (int miplevel = 1; miplevel < 4; miplevel++)
 	{
-		mipw = mip->width >> miplevel;
- 		miph = mip->height >> miplevel;
-		srcrow = mip->width >> (miplevel - 1);
-		psrc = (byte*)mip + mip->offsets[miplevel - 1];
-		pdst = (byte*)mip + mip->offsets[miplevel];
-		for (i = 0; i < miph; i++)
+		//	Setup data.
+		int mipw = mip->width >> miplevel;
+ 		int miph = mip->height >> miplevel;
+		int srcrow = mip->width >> (miplevel - 1);
+		byte* psrc = (byte*)mip + mip->offsets[miplevel - 1];
+		byte* pdst = (byte*)mip + mip->offsets[miplevel];
+		for (int i = 0; i < miph; i++)
 		{
-			for (j = 0; j < mipw; j++)
+			for (int j = 0; j < mipw; j++)
 			{
-				mip_a = 0;
-				mip_r = 0;
- 				mip_g = 0;
- 				mip_b = 0;
-				MipPixel(psrc[0]);
-				MipPixel(psrc[1]);
-				MipPixel(psrc[srcrow]);
-				MipPixel(psrc[srcrow + 1]);
-				*pdst = MipColor();
+				int a = 0;
+				int r = 0;
+ 				int g = 0;
+ 				int b = 0;
+
+				//	Pixel 1.
+				if (!psrc[0])
+				{
+					a++;
+				}
+				else
+				{
+					r += pal[psrc[0]].r;
+					g += pal[psrc[0]].g;
+					b += pal[psrc[0]].b;
+				}
+
+				//	Pixel 2.
+				if (!psrc[1])
+				{
+					a++;
+				}
+				else
+				{
+					r += pal[psrc[1]].r;
+					g += pal[psrc[1]].g;
+					b += pal[psrc[1]].b;
+				}
+
+				//	Pixel 3.
+				if (!psrc[srcrow])
+				{
+					a++;
+				}
+				else
+				{
+					r += pal[psrc[srcrow]].r;
+					g += pal[psrc[srcrow]].g;
+					b += pal[psrc[srcrow]].b;
+				}
+
+				//	Pixel 4.
+				if (!psrc[srcrow + 1])
+				{
+					a++;
+				}
+				else
+				{
+					r += pal[psrc[srcrow + 1]].r;
+					g += pal[psrc[srcrow + 1]].g;
+					b += pal[psrc[srcrow + 1]].b;
+				}
+
+				//	Get color.
+				if (a > 2)
+				{
+					*pdst = 0;
+				}
+				else
+				{
+					*pdst = d_rgbtable[((r << 5) & 0x7c00) +
+						(g & 0x3e0) + ((b >> 5) & 0x1f)];
+				}
+
+				//	Advance pointers.
 				psrc += 2;
 				pdst++;
 			}
@@ -234,7 +232,7 @@ static void	MakeMips(miptexture_t *mip)
 
 //==========================================================================
 //
-//	DrawColumnInCache
+//	VSoftwareDrawer::DrawColumnInCache
 //
 // 	Clip and draw a column from a patch into a flat buffer.
 //
@@ -245,10 +243,10 @@ static void	MakeMips(miptexture_t *mip)
 //
 //==========================================================================
 
-static void DrawColumnInCache(column_t* column, byte* cache,
+void VSoftwareDrawer::DrawColumnInCache(column_t* column, byte* cache,
 	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
-	guard(DrawColumnInCache);
+	guard(VSoftwareDrawer::DrawColumnInCache);
     int		count;
     int		position;
     byte*	source;
@@ -297,16 +295,16 @@ static void DrawColumnInCache(column_t* column, byte* cache,
 
 //==========================================================================
 //
-//	GenerateTexture
+//	VSoftwareDrawer::GenerateTexture
 //
 // 	Using the texture definition, the composite texture is created from the
 // patches, and each column is cached.
 //
 //==========================================================================
 
-static void GenerateTexture(int texnum, bool double_sky)
+void VSoftwareDrawer::GenerateTexture(int texnum, bool double_sky)
 {
-	guard(GenerateTexture);
+	guard(VSoftwareDrawer::GenerateTexture);
 	miptexture_t	*mip;
     byte*			block;
     texdef_t*		texture;
@@ -402,13 +400,13 @@ void VSoftwareDrawer::SetTexture(int tex)
 
 //==========================================================================
 //
-//	LoadSkyMap
+//	VSoftwareDrawer::LoadSkyMap
 //
 //==========================================================================
 
-static void LoadSkyMap(const char *name, void **dataptr)
+void VSoftwareDrawer::LoadSkyMap(const char *name, void **dataptr)
 {
-	guard(LoadSkyMap);
+	guard(VSoftwareDrawer::LoadSkyMap);
 	int j;
 
 	Mod_LoadSkin(name, NULL);
@@ -539,13 +537,13 @@ void VSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 
 //==========================================================================
 //
-//	GenerateFlat
+//	VSoftwareDrawer::GenerateFlat
 //
 //==========================================================================
 
-static void GenerateFlat(int num)
+void VSoftwareDrawer::GenerateFlat(int num)
 {
-	guard(GenerateFlat);
+	guard(VSoftwareDrawer::GenerateFlat);
 	miptexture_t	*mip;
 	byte			*block, *data;
 
@@ -594,13 +592,13 @@ void VSoftwareDrawer::SetFlat(int num)
 
 //==========================================================================
 //
-//	GenerateSprite
+//	VSoftwareDrawer::GenerateSprite
 //
 //==========================================================================
 
-static void	GenerateSprite(int lump, int slot, dword light, int translation)
+void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int translation)
 {
-	guard(GenerateSprite);
+	guard(VSoftwareDrawer::GenerateSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -743,13 +741,13 @@ static void	GenerateSprite(int lump, int slot, dword light, int translation)
 
 //==========================================================================
 //
-//	SetSpriteLump
+//	VSoftwareDrawer::SetSpriteLump
 //
 //==========================================================================
 
-void SetSpriteLump(int lump, dword light, int translation)
+void VSoftwareDrawer::SetSpriteLump(int lump, dword light, int translation)
 {
-	guard(SetSpriteLump);
+	guard(VSoftwareDrawer::SetSpriteLump);
 	light &= 0xf8f8f8f8;
 
 	int i;
@@ -786,12 +784,233 @@ void SetSpriteLump(int lump, dword light, int translation)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VSoftwareDrawer::LoadImage
+//
+//==========================================================================
+
+void VSoftwareDrawer::LoadImage(const char *name, void **dataptr)
+{
+	guard(D_LoadImage);
+	int j;
+
+	Mod_LoadSkin(name, dataptr);
+	if (SkinBPP == 8)
+	{
+		// Remap to game palette
+		byte remap[256];
+		byte *tmp;
+
+		for (j = 0; j < 256; j++)
+		{
+			remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+		}
+
+		tmp = (byte *)SkinData;
+		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++)
+		{
+			*tmp = remap[*tmp];
+		}
+	}
+	else
+	{
+		byte *tmp = (byte *)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC,
+			dataptr);
+		rgba_t *src = (rgba_t *)SkinData;
+		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++, src++)
+		{
+			*tmp = MakeCol8(src->r, src->g, src->b);
+		}
+		Z_Free(SkinData);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::SetSkin
+//
+//==========================================================================
+
+void* VSoftwareDrawer::SetSkin(const char *name)
+{
+	guard(SetSkin);
+	int i;
+	int avail;
+
+	avail = -1;
+	for (i = 0; i < MAX_SKIN_CACHE; i++)
+	{
+		if (skincache[i].data)
+		{
+			if (!strcmp(skincache[i].name, name))
+			{
+				break;
+			}
+		}
+		else
+		{
+			if (avail < 0)
+				avail = i;
+		}
+	}
+
+	if (i == MAX_SKIN_CACHE)
+	{
+		// Not in cache, load it
+		if (avail < 0)
+		{
+			avail = 0;
+			Z_Free(skincache[avail].data);
+		}
+		i = avail;
+		strcpy(skincache[i].name, name);
+		LoadImage(name, &skincache[i].data);
+	}
+
+	return skincache[i].data;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::GeneratePicFromPatch
+//
+//==========================================================================
+
+void VSoftwareDrawer::GeneratePicFromPatch(int handle)
+{
+	guard(GeneratePicFromPatch);
+	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_TEMP);
+	int w = LittleShort(patch->width);
+	int h = LittleShort(patch->height);
+	byte *block = (byte*)Z_Calloc(w * h, PU_CACHE, (void**)&picdata[handle]);
+	picdata[handle] = block;
+	picwidth[handle] = w;
+	int black = r_black_color[pic_list[handle].palnum];
+
+	for (int x = 0; x < w; x++)
+	{
+    	column_t *column = (column_t *)((byte *)patch + LittleLong(patch->columnofs[x]));
+
+		// step through the posts in a column
+		int top = -1;	//	DeepSea tall patches support
+	    while (column->topdelta != 0xff)
+	    {
+			if (column->topdelta <= top)
+			{
+				top += column->topdelta;
+			}
+			else
+			{
+				top = column->topdelta;
+			}
+		    byte* source = (byte *)column + 3;
+		    byte* dest = block + x + top * w;
+			int count = column->length;
+
+	    	while (count--)
+	    	{
+				*dest = *source ? *source : black;
+				source++;
+				dest += w;
+	    	}
+			column = (column_t *)((byte *)column + column->length + 4);
+	    }
+	}
+
+	if (pic_list[handle].palnum)
+	{
+		byte remap[256];
+		rgba_t *pal = r_palette[pic_list[handle].palnum];
+
+		remap[0] = 0;
+		for (int pali = 1; pali < 256; pali++)
+		{
+			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
+		}
+		for (int i = 0; i < w * h; i++)
+		{
+			block[i] = remap[block[i]];
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::GeneratePicFromRaw
+//
+//==========================================================================
+
+void VSoftwareDrawer::GeneratePicFromRaw(int handle)
+{
+	guard(GeneratePicFromRaw);
+	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
+	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
+
+	byte remap[256];
+	if (pic_list[handle].palnum)
+	{
+		rgba_t *pal = r_palette[pic_list[handle].palnum];
+
+		for (int pali = 0; pali < 256; pali++)
+		{
+			remap[pali] = MakeCol8(pal[pali].r, pal[pali].g, pal[pali].b);
+		}
+	}
+	else
+	{
+		remap[0] = r_black_color[pic_list[handle].palnum];
+		for (int pali = 1; pali < 256; pali++)
+		{
+			remap[pali] = pali;
+		}
+	}
+
+	for (int i = 0; i < 320 * 200; i++)
+	{
+		picdata[handle][i] = remap[picdata[handle][i]];
+	}
+	picwidth[handle] = 320;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::SetPic
+//
+//==========================================================================
+
+byte* VSoftwareDrawer::SetPic(int handle)
+{
+	if (!picdata[handle])
+	{
+		switch (pic_list[handle].type)
+ 		{
+	 	 case PIC_PATCH:
+			GeneratePicFromPatch(handle);
+			break;
+
+		 case PIC_RAW:
+			GeneratePicFromRaw(handle);
+			break;
+		}
+	}
+	cachewidth = picwidth[handle];
+	return picdata[handle];
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.9  2002/03/20 19:09:53  dj_jl
 //	DeepSea tall patches support.
 //	

@@ -62,13 +62,13 @@ surfcache_t		*sc_rover, *sc_base;
 
 //==========================================================================
 //
-//	D_SurfaceCacheForRes
+//	VSoftwareDrawer::SurfaceCacheForRes
 //
 //==========================================================================
 
-int D_SurfaceCacheForRes(int width, int height, int bpp)
+int VSoftwareDrawer::SurfaceCacheForRes(int width, int height, int bpp)
 {
-	guard(D_SurfaceCacheForRes);
+	guard(VSoftwareDrawer::SurfaceCacheForRes);
 	int             size, pix, pixbytes;
 
 	if (M_CheckParm("-surfcachesize"))
@@ -90,13 +90,13 @@ int D_SurfaceCacheForRes(int width, int height, int bpp)
 
 //==========================================================================
 //
-//	D_CheckCacheGuard
+//	VSoftwareDrawer::CheckCacheGuard
 //
 //==========================================================================
 
-static void D_CheckCacheGuard(void)
+void VSoftwareDrawer::CheckCacheGuard(void)
 {
-	guard(D_CheckCacheGuard);
+	guard(VSoftwareDrawer::CheckCacheGuard);
 	byte		*s;
 	int			i;
 
@@ -109,13 +109,13 @@ static void D_CheckCacheGuard(void)
 
 //==========================================================================
 //
-//	D_ClearCacheGuard
+//	VSoftwareDrawer::ClearCacheGuard
 //
 //==========================================================================
 
-static void D_ClearCacheGuard(void)
+void VSoftwareDrawer::ClearCacheGuard(void)
 {
-	guard(D_ClearCacheGuard);
+	guard(VSoftwareDrawer::ClearCacheGuard);
 	byte    *s;
 	int             i;
 	
@@ -127,13 +127,13 @@ static void D_ClearCacheGuard(void)
 
 //==========================================================================
 //
-//	D_InitCaches
+//	VSoftwareDrawer::InitCaches
 //
 //==========================================================================
 
-void D_InitCaches(void *buffer, int size)
+void VSoftwareDrawer::InitCaches(void *buffer, int size)
 {
-	guard(D_InitCaches);
+	guard(VSoftwareDrawer::InitCaches);
 //	if (!msg_suppress_1)
 		GCon->Logf(NAME_Init, "%dk surface cache", size / 1024);
 
@@ -145,19 +145,19 @@ void D_InitCaches(void *buffer, int size)
 	sc_base->owner = NULL;
 	sc_base->size = sc_size;
 	
-	D_ClearCacheGuard();
+	ClearCacheGuard();
 	unguard;
 }
 
 //==========================================================================
 //
-//	D_FlushCaches
+//	VSoftwareDrawer::FlushCaches
 //
 //==========================================================================
 
-void D_FlushCaches(bool free_blocks)
+void VSoftwareDrawer::FlushCaches(bool free_blocks)
 {
-	guard(D_FlushCaches);
+	guard(VSoftwareDrawer::FlushCaches);
 	surfcache_t     *c;
 	
 	if (!sc_base)
@@ -181,13 +181,13 @@ void D_FlushCaches(bool free_blocks)
 
 //==========================================================================
 //
-//	D_SCAlloc
+//	VSoftwareDrawer::SCAlloc
 //
 //==========================================================================
 
-surfcache_t *D_SCAlloc(int width, int height)
+surfcache_t *VSoftwareDrawer::SCAlloc(int width, int height)
 {
-	guard(D_SCAlloc);
+	guard(VSoftwareDrawer::SCAlloc);
 	surfcache_t		*newb;
 	bool			wrapped_this_time;
 
@@ -263,7 +263,7 @@ surfcache_t *D_SCAlloc(int width, int height)
 		d_roverwrapped = true;
 	}
 
-	D_CheckCacheGuard();   // DEBUG
+	CheckCacheGuard();   // DEBUG
 	return newb;
 	unguard;
 }
@@ -284,30 +284,31 @@ void VSoftwareDrawer::FreeSurfCache(surfcache_t* cache)
 
 //==========================================================================
 //
-//	D_SCDump
+//	VSoftwareDrawer::SCDump
 //
 //==========================================================================
 
-#if 0
-void D_SCDump(void)
+void VSoftwareDrawer::SCDump(FOutputDevice& Ar)
 {
-	surfcache_t             *test;
-
-	for (test = sc_base ; test ; test = test->next)
+	guard(VSoftwareDrawer::SCDump);
+	for (surfcache_t* test = sc_base ; test ; test = test->next)
 	{
 		if (test == sc_rover)
-			printf("ROVER:\n");
-		printf("%p : %i bytes     %i width\n",test, test->size, test->width);
+			Ar.Log("ROVER:");
+		Ar.Logf("%p : %i bytes     %i width",test, test->size, test->width);
 	}
+	unguard;
 }
-#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.6  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.5  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

@@ -67,7 +67,6 @@
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
- externdef _scrn16
  externdef _pal8_to16
  externdef _mmx_mask4
  externdef _mmx_mask8

@@ -67,7 +67,6 @@
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
- externdef _scrn16
  externdef _pal8_to16
  externdef _mmx_mask4
  externdef _mmx_mask8
@@ -620,7 +619,7 @@ LScanLoop:
  mov dword ptr[12+esi],ecx
  mov dword ptr[16+esi],edx
  mov al,byte ptr[32+esi]
- add esi,32 
+ add esi,32
  mov eax,dword ptr[_erroradjustup]
  mov dword ptr[_d_pedgespanpackage],esi
  mov esi,dword ptr[_errorterm]

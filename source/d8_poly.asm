@@ -67,7 +67,6 @@
  externdef _ylookup
  externdef _zbuffer
  externdef _scrn
- externdef _scrn16
  externdef _pal8_to16
  externdef _mmx_mask4
  externdef _mmx_mask8
@@ -445,7 +444,7 @@ Lp8:
  jnz LDrawLoop
  pop esi
 LNextSpan:
- add esi,32 
+ add esi,32
 LNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -465,7 +464,7 @@ LExactlyOneLong:
  xor eax,eax
  mov edi,dword ptr[0+esi]
  mov ah,byte ptr[26+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov word ptr[ecx],bp
  mov al,byte ptr[12345678h+eax]
@@ -705,7 +704,7 @@ LFuzzp8:
  jnz LFuzzDrawLoop
  pop esi
 LFuzzNextSpan:
- add esi,32 
+ add esi,32
 LFuzzNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -725,7 +724,7 @@ LFuzzExactlyOneLong:
  xor eax,eax
  mov edi,dword ptr[0+esi]
  mov ah,byte ptr[26+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov word ptr[ecx],bp
  mov ah,byte ptr[12345678h+eax]
@@ -968,7 +967,7 @@ LAltFuzzp8:
  jnz LAltFuzzDrawLoop
  pop esi
 LAltFuzzNextSpan:
- add esi,32 
+ add esi,32
 LAltFuzzNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -988,7 +987,7 @@ LAltFuzzExactlyOneLong:
  xor eax,eax
  mov edi,dword ptr[0+esi]
  mov ah,byte ptr[26+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov word ptr[ecx],bp
  mov al,byte ptr[12345678h+eax]
@@ -1333,7 +1332,7 @@ LRGBp8:
  jnz LRGBDrawLoop
  pop esi
 LRGBNextSpan:
- add esi,32 
+ add esi,32
 LRGBNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -1364,7 +1363,7 @@ LRPatch9:
 LGPatch9:
  or word ptr[Ltemp],ax
  mov ah,byte ptr[30+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov ax,word ptr[12345678h+eax*2]
 LBPatch9:
@@ -1732,7 +1731,7 @@ LRGBFuzzp8:
  jnz LRGBFuzzDrawLoop
  pop esi
 LRGBFuzzNextSpan:
- add esi,32 
+ add esi,32
 LRGBFuzzNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -1763,7 +1762,7 @@ LRFuzzPatch9:
 LGFuzzPatch9:
  or word ptr[Ltemp],ax
  mov ah,byte ptr[30+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov ax,word ptr[12345678h+eax*2]
 LBFuzzPatch9:
@@ -2134,7 +2133,7 @@ LRGBAltFuzzp8:
  jnz LRGBAltFuzzDrawLoop
  pop esi
 LRGBAltFuzzNextSpan:
- add esi,32 
+ add esi,32
 LRGBAltFuzzNextSpanESISet:
  movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
@@ -2165,7 +2164,7 @@ LRAltFuzzPatch9:
 LGAltFuzzPatch9:
  or word ptr[Ltemp],ax
  mov ah,byte ptr[30+1+esi]
- add esi,32 
+ add esi,32
  mov al,byte ptr[ebx]
  mov ax,word ptr[12345678h+eax*2]
 LBAltFuzzPatch9:

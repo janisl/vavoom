@@ -212,7 +212,6 @@
 .extern	C(ylookup)
 .extern	C(zbuffer)
 .extern	C(scrn)
-.extern	C(scrn16)
 .extern	C(pal8_to16)
 .extern	C(mmx_mask4)
 .extern	C(mmx_mask8)
@@ -385,9 +384,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/11/16 17:11:14  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.12  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.11  2001/12/18 18:54:43  dj_jl
 //	Found a workaround for calling a C++ function, progs code patching
 //	

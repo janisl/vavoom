@@ -169,7 +169,7 @@ static int		outofedges;
 //
 //==========================================================================
 
-void D_BeginEdgeFrame(void)
+void VSoftwareDrawer::BeginEdgeFrame(void)
 {
 	guard(D_BeginEdgeFrame);
 	edge_p = r_edges;
@@ -191,19 +191,6 @@ void D_BeginEdgeFrame(void)
 	outofsurfs = 0;
 	outofedges = 0;
 	unguard;
-}
-
-//==========================================================================
-//
-//	TransformVector
-//
-//==========================================================================
-
-void TransformVector(const TVec &in, TVec &out)
-{
-	out.x = DotProduct(in, viewright);
-	out.y = DotProduct(in, viewup);
-	out.z = DotProduct(in, viewforward);
 }
 
 #ifndef USEASM
@@ -945,11 +932,11 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 
 //==========================================================================
 //
-//	D_DrawSurfaces
+//	VSoftwareDrawer::DrawSurfaces
 //
 //==========================================================================
 
-static void D_DrawSurfaces(void)
+void VSoftwareDrawer::DrawSurfaces(void)
 {
 	surfcache_t		*cache;
 	int				miplevel;
@@ -965,7 +952,7 @@ static void D_DrawSurfaces(void)
 		{
 			miplevel = D_MipLevelForScale(surf->nearzi * scale_for_mip);
 			D_CalcGradients(surf->surf, miplevel, vieworg);
-			cache =	D_CacheSurface(surf->surf, miplevel);
+			cache =	CacheSurface(surf->surf, miplevel);
 			cachewidth = cache->width;
 			cacheblock = cache->data;
 			D_DrawSpans(surf->spans);
@@ -974,7 +961,7 @@ static void D_DrawSurfaces(void)
 		else if (surf->flags & SURF_SKY)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			cache =	D_CacheSkySurface(surf->surf, surf->texture1,
+			cache =	CacheSkySurface(surf->surf, surf->texture1,
 				surf->texture2, surf->offs1, surf->offs2);
 			cachewidth = cache->width;
 			cacheblock = cache->data;
@@ -987,7 +974,7 @@ static void D_DrawSurfaces(void)
 		else if (surf->flags & SURF_SKY_BOX)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			Drawer->SetSkyTexture(surf->texture1, false);
+			SetSkyTexture(surf->texture1, false);
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
@@ -1067,7 +1054,7 @@ void VSoftwareDrawer::WorldDrawing(void)
 		// left for the next scan
 		if (span_p >= max_span_p)
 		{
-			D_DrawSurfaces();
+			DrawSurfaces();
 
 			// clear the surface span pointers
 			for (s = &surfaces[1]; s < surface_p; s++)
@@ -1096,7 +1083,7 @@ void VSoftwareDrawer::WorldDrawing(void)
 	D_GenerateSpans();
 
 	// draw whatever's left in the span list
-	D_DrawSurfaces();
+	DrawSurfaces();
 
 	if (outofsurfs)
 		GCon->Logf(NAME_Dev, "Out of %d surfs", outofsurfs);
@@ -1108,9 +1095,12 @@ void VSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/11/16 17:11:15  dj_jl
+//	Improving software driver class.
+//
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.12  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	
