@@ -41,9 +41,9 @@ struct state_t
 	int model_index;
 	int model_frame;
 	float time;
-	int statenum;
 	int nextstate;
 	FFunction *function;
+	FName statename;
 };
 
 class VEntity:public VMapObject
@@ -188,6 +188,7 @@ boolean VEntity::SetState(int state)
 			return false;
 		}
 
+		StateNum = state;
 		st = &GStates[state];
 		StateTime = st->time;
 		SpriteIndex = st->sprite;
@@ -196,7 +197,6 @@ boolean VEntity::SetState(int state)
 		if (!bFixedModel)
 			ModelIndex = st->model_index;
 		ModelFrame = st->model_frame;
-		StateNum = st->statenum;
 		NextState = st->nextstate;
 
 		// Modified handling.
@@ -1271,13 +1271,13 @@ void VViewEntity::SetState(int stnum)
 			StateNum = 0;
 			break;
 		}
+		StateNum = stnum;
 		state = &GStates[stnum];
 		StateTime = state->time;	// could be 0
 		SpriteIndex = state->sprite;
 		SpriteFrame = state->frame;
 		ModelIndex = state->model_index;
 		ModelFrame = state->model_frame;
-		StateNum = state->statenum;
 		NextState = state->nextstate;
 		// Call action routine.
 		svpr.Exec(state->function, (int)this);
@@ -1339,9 +1339,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/06/14 15:40:09  dj_jl
+//	Added state name to the state.
+//
 //	Revision 1.4  2002/04/27 17:01:08  dj_jl
 //	Fixed clipping when walking over/under other things.
-//
+//	
 //	Revision 1.3  2002/04/11 16:46:06  dj_jl
 //	Made TryMove native.
 //	
