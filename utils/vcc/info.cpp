@@ -432,6 +432,7 @@ void ParseStates(TType *class_type)
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
 		s.function = ParseStateCode(class_type);
+		functions[s.function].Name = va("%s_func", *s.statename);
 	}
 }
 
@@ -453,9 +454,12 @@ void AddToMobjInfo(int Index, int ClassID)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2003/10/22 06:42:55  dj_jl
+//	Added function name
+//
 //	Revision 1.21  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.20  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	
