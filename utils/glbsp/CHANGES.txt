@@ -2,8 +2,8 @@
 CHANGELOG
 =========
 
-Changes in V2.00  (Unreleased)
-------------------------------
+Changes in V2.00  (25th September 2002)
+---------------------------------------
 
  - fixed compilation problems under Digital Unix 4.0 (thanks to André
    Majorel for the patch). 
@@ -33,6 +33,10 @@ Changes in V2.00  (Unreleased)
    through the sector via vertices (not hitting any linedefs).  Thanks
    to Janis Legzdinsh for spotting this bug.
 
+-  The "-forcenormal" option is now just "-normal", and has been
+   elevated to General Option status.  Backwards compatibility has
+   been kept.
+ 
 
 Changes in V1.96  (1st January 2002)
 ------------------------------------

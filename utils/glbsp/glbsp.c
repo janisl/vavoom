@@ -192,14 +192,17 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
     HANDLE_BOOLEAN("packsides",   pack_sides)
     HANDLE_BOOLEAN("v1",          v1_vert)
     HANDLE_BOOLEAN("fresh",       choose_fresh)
+    HANDLE_BOOLEAN("normal",      force_normal)
 
     HANDLE_BOOLEAN("loadall",     load_all)
     HANDLE_BOOLEAN("nogl",        no_gl)
     HANDLE_BOOLEAN("nonormal",    no_normal)
-    HANDLE_BOOLEAN("forcenormal", force_normal)
     HANDLE_BOOLEAN("forcegwa",    gwa_mode)
     HANDLE_BOOLEAN("keepsect",    keep_sect)
     HANDLE_BOOLEAN("noprune",     no_prune)
+
+    // backwards compatibility
+    HANDLE_BOOLEAN("forcenormal", force_normal)
 
     // The -hexen option is only kept for backwards compat.
     HANDLE_BOOLEAN("hexen",       force_hexen)
@@ -459,13 +462,15 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
 
   // writes all the lumps to the output wad
   if (ret == GLBSP_E_OK)
+  {
     ret = WriteWadFile(cur_info->output_file);
 
-  PrintMsg("\n");
-  PrintMsg("Total serious warnings: %d\n", total_big_warn);
-  PrintMsg("Total minor warnings: %d\n", total_small_warn);
+    PrintMsg("\n");
+    PrintMsg("Total serious warnings: %d\n", total_big_warn);
+    PrintMsg("Total minor warnings: %d\n", total_small_warn);
 
-  ReportFailedLevels();
+    ReportFailedLevels();
+  }
 
   // close wads and free memory
   CloseWads();

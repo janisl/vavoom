@@ -2,7 +2,7 @@
 USING glBSP
 ===========
 
-by Andrew Apted.  30th August 2002.
+by Andrew Apted.  9th August 2002.
 
 
 Running glBSP
@@ -75,6 +75,18 @@ The following options are recognised:
                trees.  See the section below for more info.  The
                default value is known to be a good compromise.
 
+  -fresh       Starting with version 2.00, glBSP can cheat a bit and
+               re-use the original node information to create the GL
+               nodes, doing it *much* faster.  When this happens, the
+               message "Using original nodes to speed things up" is
+               displayed.
+
+               This option forces glBSP to create "fresh" GL nodes.
+               The downside to reusing the original nodes is that they
+               may not be as good as the ones glBSP creates, e.g. the
+               special checks to minimise slime-trails don't kick in,
+               and the -factor value doesn't have much effect.
+  
   -noreject    Normally glBSP will create an simple REJECT map for
                each level.  This options prevents any existing
                REJECT map from being clobbered.
@@ -88,11 +100,18 @@ The following options are recognised:
                invalid sidedef), so they are worth checking now and
                then.
 
+  -normal      glBSP usually detects if the normal node info (i.e.
+               the non-GL variety) is present, and leave it untouched
+               when it is, otherwise create it.  This option forces
+               glBSP to recreate the normal node info.
+               
   -packsides   Pack sidedefs, by detecting which sidedefs are
                identical and removing the duplicates, producing a
-               smaller PWAD.  Note: this may make your level a lot
-               harder to edit !  Therefore this option is most useful
-               when producing a final WAD for public release.
+               smaller PWAD.
+               
+               NOTE: this may make your level a lot harder to edit !
+               Therefore this option is most useful when producing a
+               final WAD for public release.
  
   -v1          Backwards compatibility.  The current version of the
                "GL Nodes" spec (V2.0) introduces a new format for the
@@ -120,12 +139,6 @@ provided to allow complete control or for special circumstances:
   -nonormal    Forces glBSP to not create the normal node information
                when it detects that it is absent.
  
-  -forcenormal
-               glBSP will normally detect if the normal node info (i.e. 
-               the non-GL variety) is present, and leave it untouched
-               when it is, otherwise create it.  This option forces
-               glBSP to recreate the normal node info.
-               
   -forcegwa    Normally glBSP will automatically use GWA mode if the
                output filename is missing (i.e. no -o option) or if
                the output filename has the ".gwa" extension.  This
@@ -231,8 +244,8 @@ heap" size using the companion CWSPARAM program, bumping it up from
 a different one (e.g. QDPMI), then check its documentation.
 
 
-How glBSP works and stuff
--------------------------
+How glBSP works, and some tips
+------------------------------
 
 A node builder works like this: say you are looking at your level in
 the automap or in the level editor.  The node builder needs to pick a

@@ -2,7 +2,7 @@
 README for glBSP
 ================
 
-by Andrew Apted. 2nd August 2002.
+by Andrew Apted.  23rd September 2002.
 
 
 Introduction
@@ -26,12 +26,9 @@ The current version of glBSP is 2.00.  It has been tested and known to
 work on numerous large wads, including DOOM I shareware, DOOM II,
 TeamTNT's Eternal III, Fanatic's QDOOM, and many others.
 
-NOTE: Version 1.91 introduced support for "V2 GL Nodes".  This allows
-      the BSP information to be stored with greater precision,
-      preventing problems like "slime trails".  It may take a while
-      before all DOOM ports that understand GL Nodes are updated to
-      read the new format.  Until they do, use the -v1 option to
-      generate the old format (e.g. EDGE 1.24 needs this).
+NOTE: This version is the *final* one.  I've completely finished with
+      everything relating to DOOM.  You're on your own now !  Bug
+      reports or other comments will be ignored.
 
 
 Copyright
@@ -65,15 +62,6 @@ This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
-
-
-Contact
--------
-
-Questions, bug reports, suggestions, etc... about glBSP should be
-sent to the following email address:
-
-   glbsp-public@lists.sourceforge.net   
 
 
 Links

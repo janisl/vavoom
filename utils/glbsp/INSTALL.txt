@@ -2,7 +2,7 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  Last updated: 18th December 2001.
+by Andrew Apted.  10th August 2002.
 
 
 glBSP has been written with portability in mind.  It is purely ANSI C,
@@ -24,9 +24,13 @@ glBSP has been known to compile and work on the following platforms:
 
    +  Win32, with MinGW 1.0.
 
+   +  IRIX 6.5.
+   
+   +  Digital Unix 4.0.
 
-Linux
------
+
+Linux and other Unices
+----------------------
 
 CD into the cmdline directory.  The "makefile" makefile is the correct
 one for Linux and other UN*X type OSes.  Simply typing `make' should
@@ -73,15 +77,17 @@ Compiling glBSPX
 ================
 
 glBSPX is the GUI version of glBSP, written in C++ and requires the
-FLTK toolkit, version 1.1 (see http://www.fltk.org).  Assuming the
-FLTK static library has been built, first CD into the fltk directory
-(in glbsp sources).
+FLTK toolkit, version 1.1 (http://www.fltk.org).  Assuming the FLTK
+static library has been built and installed, first CD into the fltk
+directory (in glbsp sources).
 
 For Linux: 
+
     Just running "make" should do the trick.
 
 For Win32 with MinGW: 
-    First edit the "makeming.bat" file and set the the `FLTK' and
-    `MINGW' variables (at the top) to the correct directories.  Then
+
+    First edit the "makeming.bat" file and set the the FLTK and
+    MINGW variables (at the top) to the correct directories.  Then
     just run the "makeming.bat" batch file.
 
