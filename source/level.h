@@ -480,9 +480,6 @@ struct mobj_t : public thinker_t
 	// If == validcount, already checked.
 	int				validcount;
 
-	int				type;
-
-	int				damage;			// For missiles
 	int				flags;
 	int				flags2;			// Heretic flags
 	int				health;
@@ -490,10 +487,6 @@ struct mobj_t : public thinker_t
 	// For movement checking.
 	float			radius;
 	float			height;
-
-	// Thing being chased/attacked (or NULL),
-	// also the originator for missiles.
-	mobj_t*			target;
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
@@ -622,9 +615,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/09 17:29:47  dj_jl
+//	Removed some mobj fields not used by engine
+//
 //	Revision 1.8  2001/10/08 17:33:01  dj_jl
 //	Different client and server level structures
-//
+//	
 //	Revision 1.7  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
 //	
