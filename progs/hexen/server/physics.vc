@@ -74,7 +74,7 @@ float secondslidefrac;
 line_t *bestslideline;
 line_t *secondslideline;
 
-Entity *slidemo;
+Entity slidemo;
 TVec slideorg;
 TVec slidedir;
 
@@ -101,12 +101,12 @@ boolean PTR_SlideTraverse(intercept_t * in)
 		hit_point = slideorg + in->frac * slidedir;
 		open = LineOpenings(li, hit_point);
 		open =
-			FindOpening(open, slidemo->origin.z,
-			slidemo->origin.z + slidemo->height);
+			FindOpening(open, slidemo.origin.z,
+			slidemo.origin.z + slidemo.height);
 
-		if (open && (open->range >= slidemo->height) &&	//  fits
-			(open->top - slidemo->origin.z >= slidemo->height) &&	// mobj is not too high
-			(open->bottom - slidemo->origin.z <= 24.0))	// not too big a step up
+		if (open && (open->range >= slidemo.height) &&	//  fits
+			(open->top - slidemo.origin.z >= slidemo.height) &&	// mobj is not too high
+			(open->bottom - slidemo.origin.z <= 24.0))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
@@ -114,7 +114,7 @@ boolean PTR_SlideTraverse(intercept_t * in)
 	}
 	else
 	{
-		if (PointOnPlaneSide(slidemo->origin, li))
+		if (PointOnPlaneSide(slidemo.origin, li))
 		{
 			// don't hit the back side
 			return true;
@@ -142,8 +142,8 @@ boolean PTR_SlideTraverse(intercept_t * in)
 
 void SlidePathTraverse(float x, float y)
 {
-	slideorg = vector(x, y, slidemo->origin.z);
-	slidedir = slidemo->velocity * frametime;
+	slideorg = vector(x, y, slidemo.origin.z);
+	slidedir = slidemo.velocity * frametime;
 	P_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
 		PT_ADDLINES, PTR_SlideTraverse);
 }
@@ -168,7 +168,7 @@ void Entity::SlideMove(void)
 	float newy;
 	int hitcount;
 
-	slidemo = this;
+	slidemo = self;
 	hitcount = 0;
 
 	do
@@ -290,17 +290,17 @@ boolean PTR_BounceTraverse(intercept_t * in)
 		hit_point = slideorg + in->frac * slidedir;
 		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
 		open =
-			FindOpening(open, slidemo->origin.z,
-			slidemo->origin.z + slidemo->height);
-		if (open && open->range >= slidemo->height &&	// fits
-			open->top - slidemo->origin.z >= slidemo->height)	// mobj is not too high
+			FindOpening(open, slidemo.origin.z,
+			slidemo.origin.z + slidemo.height);
+		if (open && open->range >= slidemo.height &&	// fits
+			open->top - slidemo.origin.z >= slidemo.height)	// mobj is not too high
 		{
 			return true;	// this line doesn't block movement
 		}
 	}
 	else
 	{
-		if (PointOnPlaneSide(slidemo->origin, li))
+		if (PointOnPlaneSide(slidemo.origin, li))
 		{
 			return true;	// don't hit the back side
 		}
@@ -327,7 +327,7 @@ void Entity::BounceWall(void)
 {
 	float leadx, leady;
 
-	slidemo = this;
+	slidemo = self;
 
 	//
 	// trace along the three leading corners
@@ -806,12 +806,52 @@ boolean Entity::XYMovement(void)
 //
 //==========================================================================
 
-Entity *tzmthing;
-float tzmx;
-float tzmy;
-float tzmz;
+Entity tzmthing;
+TVec tzorg;
+Entity onmobj;	//generic global onmobj...used for landing on pods/players
 
-Entity *onmobj;	//generic global onmobj...used for landing on pods/players
+//==========================================================================
+//
+//  Entity::Iter_CheckOnmobjZ
+//
+//==========================================================================
+
+boolean Entity::Iter_CheckOnmobjZ(Entity thing)
+{
+	float blockdist;
+
+	if (!(thing.flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	{
+		// Can't hit thing
+		return true;
+	}
+	blockdist = thing.radius + radius;
+	if (fabs(thing.origin.x - tzorg.x) >= blockdist
+		|| fabs(thing.origin.y - tzorg.y) >= blockdist)
+	{
+		// Didn't hit thing
+		return true;
+	}
+	if (thing == self)
+	{
+		// Don't clip against self
+		return true;
+	}
+	if (tzorg.z > thing.origin.z + thing.height)
+	{
+		return true;
+	}
+	else if (tzorg.z + height < thing.origin.z)
+	{
+		// under thing
+		return true;
+	}
+	if (thing.flags & MF_SOLID)
+	{
+		onmobj = thing;
+	}
+	return (!(thing.flags & MF_SOLID));
+}
 
 //==========================================================================
 //
@@ -821,39 +861,7 @@ Entity *onmobj;	//generic global onmobj...used for landing on pods/players
 
 boolean PIT_CheckOnmobjZ(Entity * thing)
 {
-	float blockdist;
-
-	if (!(thing->flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
-	{
-		// Can't hit thing
-		return true;
-	}
-	blockdist = thing->radius + tzmthing->radius;
-	if (fabs(thing->origin.x - tzmx) >= blockdist
-		|| fabs(thing->origin.y - tzmy) >= blockdist)
-	{
-		// Didn't hit thing
-		return true;
-	}
-	if (thing == tzmthing)
-	{
-		// Don't clip against self
-		return true;
-	}
-	if (tzmz > thing->origin.z + thing->height)
-	{
-		return true;
-	}
-	else if (tzmz + tzmthing->height < thing->origin.z)
-	{
-		// under thing
-		return true;
-	}
-	if (thing->flags & MF_SOLID)
-	{
-		onmobj = thing;
-	}
-	return (!(thing->flags & MF_SOLID));
+	return tzmthing.Iter_CheckOnmobjZ(*thing);
 }
 
 //=============================================================================
@@ -872,43 +880,43 @@ void Entity::FakeZMovement(void)
 	//
 	//  adjust height
 	//
-	tzmz += velocity.z * frametime;
+	tzorg.z += velocity.z * frametime;
 	if (flags & MF_FLOAT && target)
 	{
 		// float down towards target if too close
 		if (!(flags & MF_SKULLFLY) && !(flags & MF_INFLOAT))
 		{
 			dist = MobjDist2(this, target);
-			delta = target->origin.z + height / 2.0 - tzmz;
+			delta = target->origin.z + height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
-				tzmz -= FLOATSPEED * frametime;
+				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
-				tzmz += FLOATSPEED * frametime;
+				tzorg.z += FLOATSPEED * frametime;
 		}
 	}
-	if (player && flags2 & MF2_FLY && !(tzmz <= floorz)
+	if (player && flags2 & MF2_FLY && !(tzorg.z <= floorz)
 		&& level->tictime & 2)
 	{
-		tzmz += sin(90.0 * 35.0 / 20.0 * level->time);
+		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
 	//  clip movement
 	//
-	if (tzmz <= floorz)
+	if (tzorg.z <= floorz)
 	{
 		// Hit the floor
-		tzmz = floorz;
+		tzorg.z = floorz;
 		if (crashstate && (flags & MF_CORPSE))
 		{
 			return;
 		}
 	}
 
-	if (tzmz + height > ceilingz)
+	if (tzorg.z + height > ceilingz)
 	{
 		// hit the ceiling
-		tzmz = ceilingz - height;
+		tzorg.z = ceilingz - height;
 	}
 }
 
@@ -920,18 +928,16 @@ void Entity::FakeZMovement(void)
 //
 //=============================================================================
 
-Entity *Entity::CheckOnmobj(void)
+Entity Entity::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	tzmthing = this;
-	tzmx = origin.x;
-	tzmy = origin.y;
-	tzmz = origin.z;
+	tzmthing = self;
+	tzorg = origin;
 	FakeZMovement();
 
 	if (flags & MF_NOCLIP)
-		return NULL;
+		return none;
 
 	//
 	// check things first, possibly picking things up
@@ -954,7 +960,7 @@ Entity *Entity::CheckOnmobj(void)
 			}
 		}
 	}
-	return NULL;
+	return none;
 }
 
 //==========================================================================
@@ -1222,41 +1228,41 @@ void Entity::ResetBlasted(void)
 
 //===========================================================================
 //
-//  PlayerLandedOnThing
+//  Entity::PlayerLandedOnThing
 //
 //===========================================================================
 
-void PlayerLandedOnThing(Entity * mo, Entity * onmobj)
+void Entity::PlayerLandedOnThing(void)
 {
-	mo->player->deltaviewheight = mo->velocity.z * frametime / 8.0;
-	if (mo->velocity.z < -23.0 * 35.0)
+	player->deltaviewheight = velocity.z * frametime / 8.0;
+	if (velocity.z < -23.0 * 35.0)
 	{
-		P_FallingDamage(mo->player);
-		P_NoiseAlert(mo, mo);
+		P_FallingDamage(player);
+		P_NoiseAlert(this, this);
 	}
-	else if (mo->velocity.z < -GRAVITY * 0.375 && !mo->player->morphTics)
+	else if (velocity.z < -GRAVITY * 0.375 && !player->morphTics)
 	{
-		StartSoundName(mo, "PlayerLand", CHAN_BODY);
-		switch (mo->player->pclass)
+		StartSoundName(this, "PlayerLand", CHAN_BODY);
+		switch (player->pclass)
 		{
 		case PCLASS_FIGHTER:
-			StartSoundName(mo, "PlayerFighterGrunt", CHAN_VOICE);
+			StartSoundName(this, "PlayerFighterGrunt", CHAN_VOICE);
 			break;
 		case PCLASS_CLERIC:
-			StartSoundName(mo, "PlayerClericGrunt", CHAN_VOICE);
+			StartSoundName(this, "PlayerClericGrunt", CHAN_VOICE);
 			break;
 		case PCLASS_MAGE:
-			StartSoundName(mo, "PlayerMageGrunt", CHAN_VOICE);
+			StartSoundName(this, "PlayerMageGrunt", CHAN_VOICE);
 			break;
 		default:
 			break;
 		}
 	}
-	else if (!mo->player->morphTics)
+	else if (!player->morphTics)
 	{
-		StartSoundName(mo, "PlayerLand", CHAN_BODY);
+		StartSoundName(this, "PlayerLand", CHAN_BODY);
 	}
-//FIXME mo->player->centering = true;
+//FIXME player->centering = true;
 }
 
 //==========================================================================
@@ -1345,7 +1351,7 @@ boolean Entity::BlasterPhysics(void)
 
 boolean Entity::Physics(void)
 {
-	Entity *onmo;
+	Entity onmo;
 
 	if (blaster)
 	{
@@ -1408,15 +1414,15 @@ boolean Entity::Physics(void)
 				{
 					if (velocity.z < -GRAVITY * 0.25 && !(flags2 & MF2_FLY))
 					{
-						PlayerLandedOnThing(this, onmo);
+						PlayerLandedOnThing();
 					}
-					if (onmo->origin.z + onmo->height - origin.z <= 24.0)
+					if (onmo.origin.z + onmo.height - origin.z <= 24.0)
 					{
 						player->viewheight -=
-							onmo->origin.z + onmo->height - origin.z;
+							onmo.origin.z + onmo.height - origin.z;
 						player->deltaviewheight =
 							(VIEWHEIGHT - player->viewheight) / 8.0;
-						origin.z = onmo->origin.z + onmo->height;
+						origin.z = onmo.origin.z + onmo.height;
 						flags2 |= MF2_ONMOBJ;
 						velocity.z = 0.0;
 					}
@@ -1474,6 +1480,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/12/01 18:08:53  dj_jl
+//  Physics functions as methods, started to use class references
+//
 //  Revision 1.11  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

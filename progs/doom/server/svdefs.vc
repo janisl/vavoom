@@ -258,6 +258,19 @@ class mobj_t:base_mobj_t
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Entity * inflictor, Entity * source, int damage);
+
+	// Physics
+	void SlideMove(void);
+	void BounceWall(float overbounce);
+	boolean CheckWater(void);
+	boolean XYMovement(void);
+	void ZMovement(void);
+	void UpdateVelocity(void);
+	void FakeZMovement(void);
+	boolean Iter_CheckOnmobjZ(Entity thing);
+	Entity CheckOnmobj(void);
+	void PlayerLandedOnThing(void);
+	boolean Physics(void);
 }
 
 class Actor:mobj_t
@@ -355,6 +368,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/01 18:08:52  dj_jl
+//  Physics functions as methods, started to use class references
+//
 //  Revision 1.4  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

@@ -349,10 +349,12 @@ class Entity:base_mobj_t
 	void UpdateVelocity(void);
 	void ResetBlasted(void);
 	boolean BlasterPhysics(void);
+	void PlayerLandedOnThing(void);
 	void SlideMove(void);
 	void BounceWall(void);
 	void FakeZMovement(void);
-	Entity *CheckOnmobj(void);
+	boolean Iter_CheckOnmobjZ(Entity thing);
+	Entity CheckOnmobj(void);
 
 	void Archive(void);
 	void Unarchive(void);
@@ -534,6 +536,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/01 18:08:53  dj_jl
+//  Physics functions as methods, started to use class references
+//
 //  Revision 1.5  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

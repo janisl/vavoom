@@ -83,9 +83,9 @@
 #define MF_SOLID		0x00000002	// Blocks.
 #define MF_SHOOTABLE	0x00000004	// Can be hit.
 #define MF_NOSECTOR		0x00000008	// don't use the sector links
-																		// (invisible but touchable)
+									// (invisible but touchable)
 #define MF_NOBLOCKMAP	0x00000010	// don't use the blocklinks
-																		// (inert but displayable)
+									// (inert but displayable)
 #define MF_AMBUSH		0x00000020
 #define MF_JUSTHIT		0x00000040	// try to attack right back
 #define MF_JUSTATTACKED	0x00000080	// take at least one step before attacking
@@ -105,7 +105,7 @@
 #define MF_NOBLOOD		0x00080000	// don't bleed when shot (use puff)
 #define MF_CORPSE		0x00100000	// don't stop moving halfway off a step
 #define MF_INFLOAT		0x00200000	// floating to a height for a move, don't
-																		// auto float to target's height
+									// auto float to target's height
 
 #define MF_COUNTKILL	0x00400000	// count towards intermission kill total
 #define MF_COUNTITEM	0x00800000	// count towards intermission item total
@@ -117,6 +117,8 @@
 #define MF_UNUSED4		0x80000000
 
 #define MF_WATERJUMP	0x40000000
+
+#define MF2_ONMOBJ		0x00000001
 
 #define INITIAL_HEALTH		100
 #define INITIAL_AMMO		50
@@ -340,6 +342,21 @@ class mobj_t:base_mobj_t
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Entity * inflictor, Entity * source, int damage);
+
+	// Physics
+	void SlideMove(void);
+#if 0
+	void BounceWall(float overbounce);
+#endif
+	boolean CheckWater(void);
+	boolean XYMovement(void);
+	void ZMovement(void);
+	void UpdateVelocity(void);
+	void FakeZMovement(void);
+	boolean Iter_CheckOnmobjZ(Entity thing);
+	Entity CheckOnmobj(void);
+	void PlayerLandedOnThing(void);
+	boolean Physics(void);
 };
 
 class Actor:mobj_t
@@ -420,6 +437,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/01 18:08:53  dj_jl
+//  Physics functions as methods, started to use class references
+//
 //  Revision 1.4  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //
