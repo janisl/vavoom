@@ -40,30 +40,36 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAXBUTTONS	(4 * MAXPLAYERS)	// 4 buttons each player at once, max.
-#define BUTTONTIME	35					// 1 second
+#define BUTTONTIME	1.0					// 1 second
 
 // TYPES -------------------------------------------------------------------
 
-typedef enum
+enum EBWhere
 {
-	SWTCH_TOP,
-	SWTCH_MIDDLE,
-	SWTCH_BOTTOM
-} bwhere_e;
+	SWITCH_TOP,
+	SWITCH_MIDDLE,
+	SWITCH_BOTTOM
+};
 
-typedef struct
+struct TSwitch
 {
-    line_t*		line;
-    bwhere_e	where;
-    int			btexture;
-    int			btimer;
-} button_t;
+	int Tex1;
+	int Tex2;
+	int Sound;
+};
 
-struct terrainType_t
+struct TButton
 {
-	int			pic;
-	int			type;
+    int		Side;
+    EBWhere	Where;
+    int		Texture;
+    float	Timer;
+};
+
+struct TTerrainType
+{
+	int		Pic;
+	int		Type;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -79,16 +85,13 @@ struct terrainType_t
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 //	Switches
-static int				numswitches;
-static int				*switchlist;
-//	Switch sounds
-static int				*switch_sound;
+static TArray<TSwitch>		Switches;
+
 //	Buttons
-static button_t			buttonlist[MAXBUTTONS];
+static TArray<TButton>		ButtonList;
 
 //	Terrain types, maby not right place for them
-static terrainType_t	*terrainTypes;
-static int				numTerrainTypes;
+static TArray<TTerrainType>	TerrainTypes;
 
 // CODE --------------------------------------------------------------------
 
@@ -102,35 +105,27 @@ static int				numTerrainTypes;
 
 void P_InitSwitchList(void)
 {
-    int			index;
-	int			t1;
-	int			t2;
+	int t1;
+	int t2;
 
-    index = 0;
-	switchlist = (int*)Z_StrMalloc(1);
-	switch_sound = (int*)Z_StrMalloc(1);
 	SC_Open("switches");
 	while (SC_GetString())
 	{
 		t1 = R_CheckTextureNumForName(sc_String);
-
 		SC_MustGetString();
 		t2 = R_CheckTextureNumForName(sc_String);
-
 		SC_MustGetString();
-
     	if ((t1 < 0) || (t2 < 0))
 		{
 			continue;
 		}
-		Z_Resize((void**)&switch_sound, (index + 2) * 2);
-		Z_Resize((void**)&switchlist, (index + 2) * 4);
-		switch_sound[index / 2] = S_GetSoundID(sc_String);
-    	switchlist[index++] = t1;
-    	switchlist[index++] = t2;
+		TSwitch *sw = new(Switches) TSwitch;
+		sw->Sound = S_GetSoundID(sc_String);
+    	sw->Tex1 = t1;
+    	sw->Tex2 = t2;
 	}
 	SC_Close();
-   	numswitches = index / 2;
+	Switches.Shrink();
 }
 
 //==========================================================================
@@ -141,10 +136,7 @@ void P_InitSwitchList(void)
 
 void P_ClearButtons(void)
 {
-	int		i;
-
-    for (i = 0;i < MAXBUTTONS;i++)
-		memset(&buttonlist[i], 0, sizeof(button_t));
+	ButtonList.Empty();
 }
 
 //==========================================================================
@@ -155,32 +147,22 @@ void P_ClearButtons(void)
 //
 //==========================================================================
 
-static void P_StartButton(line_t* line, bwhere_e w, int texture, int time)
+static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 {
-    int		i;
-    
     // See if button is already pressed
-    for (i = 0;i < MAXBUTTONS;i++)
+    for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
     {
-		if (buttonlist[i].btimer && buttonlist[i].line == line)
+		if (b->Side == sidenum)
 		{
 		    return;
 		}
     }
-    
-	for (i = 0;i < MAXBUTTONS;i++)
-	{
-		if (!buttonlist[i].btimer)
-		{
-			buttonlist[i].line = line;
-			buttonlist[i].where = w;
-			buttonlist[i].btexture = texture;
-			buttonlist[i].btimer = time;
-			return;
-		}
-	}
 
-	Sys_Error("P_StartButton: no button slots left!");
+    TButton *but = new(ButtonList) TButton;
+	but->Side = sidenum;
+	but->Where = w;
+	but->Texture = texture;
+	but->Timer = time;
 }
 
 //==========================================================================
@@ -194,53 +176,65 @@ static void P_StartButton(line_t* line, bwhere_e w, int texture, int time)
 
 void P_ChangeSwitchTexture(line_t* line, int useAgain)
 {
-    int     texTop;
-    int     texMid;
-    int     texBot;
-    int     i;
+	int sidenum = line->sidenum[0];
+    int texTop = level.sides[sidenum].toptexture;
+    int texMid = level.sides[sidenum].midtexture;
+    int texBot = level.sides[sidenum].bottomtexture;
 
-    texTop = level.sides[line->sidenum[0]].toptexture;
-    texMid = level.sides[line->sidenum[0]].midtexture;
-    texBot = level.sides[line->sidenum[0]].bottomtexture;
-
-    for (i = 0;i < numswitches*2;i++)
+    for (TArray<TSwitch>::TIterator sw(Switches); sw; ++sw)
     {
-		if (switchlist[i] == texTop)
-		{
-			SV_SectorStartSound(line->frontsector,
-				switch_sound[i / 2], 0, 127);
-			SV_SetLineTexture(line->sidenum[0], 0, switchlist[i ^ 1]);
+		int fromTex;
+		int toTex;
+		EBWhere where;
 
-		    if (useAgain)
-			{
-				P_StartButton(line, SWTCH_TOP, switchlist[i], BUTTONTIME);
-			}
-		    return;
+		if (sw->Tex1 == texTop)
+		{
+			fromTex = sw->Tex1;
+			toTex = sw->Tex2;
+			where = SWITCH_TOP;
 		}
-		else if (switchlist[i] == texMid)
+		else if (sw->Tex1 == texMid)
 	    {
-			SV_SectorStartSound(line->frontsector,
-				switch_sound[i / 2], 0, 127);
-			SV_SetLineTexture(line->sidenum[0], 1, switchlist[i ^ 1]);
-
-			if (useAgain)
-			{
-				P_StartButton(line, SWTCH_MIDDLE, switchlist[i], BUTTONTIME);
-			}
-			return;
+			fromTex = sw->Tex1;
+			toTex = sw->Tex2;
+			where = SWITCH_MIDDLE;
 	    }
-	    else if (switchlist[i] == texBot)
+	    else if (sw->Tex1 == texBot)
 		{
-			SV_SectorStartSound(line->frontsector,
-				switch_sound[i / 2], 0, 127);
-			SV_SetLineTexture(line->sidenum[0], 2, switchlist[i ^ 1]);
-
-		    if (useAgain)
-			{
-				P_StartButton(line, SWTCH_BOTTOM, switchlist[i], BUTTONTIME);
-			}
-		    return;
+			fromTex = sw->Tex1;
+			toTex = sw->Tex2;
+			where = SWITCH_BOTTOM;
 		}
+		else if (sw->Tex2 == texTop)
+		{
+			fromTex = sw->Tex2;
+			toTex = sw->Tex1;
+			where = SWITCH_TOP;
+		}
+		else if (sw->Tex2 == texMid)
+	    {
+			fromTex = sw->Tex2;
+			toTex = sw->Tex1;
+			where = SWITCH_MIDDLE;
+	    }
+	    else if (sw->Tex2 == texBot)
+		{
+			fromTex = sw->Tex2;
+			toTex = sw->Tex1;
+			where = SWITCH_BOTTOM;
+		}
+		else
+		{
+			continue;
+		}
+
+		SV_SectorStartSound(level.sides[sidenum].sector, sw->Sound, 0, 127);
+		SV_SetLineTexture(sidenum, where, toTex);
+	    if (useAgain)
+		{
+			P_StartButton(sidenum, where, fromTex, BUTTONTIME);
+		}
+	    return;
     }
 }
 
@@ -252,32 +246,14 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
 void P_UpdateButtons(void)
 {
-	int 	i;
-
-    //	DO BUTTONS
-    for (i = 0; i < MAXBUTTONS; i++)
+	//  DO BUTTONS
+	for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
 	{
-		if (buttonlist[i].btimer)
+		b->Timer -= host_frametime;
+		if (b->Timer <= 0.0)
 		{
-		    buttonlist[i].btimer--;
-		    if (!buttonlist[i].btimer)
-		    {
-				switch (buttonlist[i].where)
-				{
-				 case SWTCH_TOP:
-					SV_SetLineTexture(buttonlist[i].line->sidenum[0], 0, buttonlist[i].btexture);
-				    break;
-		    
-				 case SWTCH_MIDDLE:
-					SV_SetLineTexture(buttonlist[i].line->sidenum[0], 1, buttonlist[i].btexture);
-				    break;
-		    
-				 case SWTCH_BOTTOM:
-					SV_SetLineTexture(buttonlist[i].line->sidenum[0], 2, buttonlist[i].btexture);
-				    break;
-				}
-				memset(&buttonlist[i], 0, sizeof(button_t));
-		    }
+			SV_SetLineTexture(b->Side, b->Where, b->Texture);
+			b.RemoveCurrent();
 		}
 	}
 }
@@ -297,8 +273,6 @@ void P_UpdateButtons(void)
 void P_InitTerrainTypes(void)
 {
 	SC_Open("TERRAINS");
-	terrainTypes = (terrainType_t*)Z_Malloc(1);
-	numTerrainTypes = 0;
 	while (SC_GetString())
 	{
 		int		pic;
@@ -311,13 +285,13 @@ void P_InitTerrainTypes(void)
 		SC_MustGetNumber();
 		if (pic != -1)
 		{
-			numTerrainTypes++;
-			Z_Resize((void**)&terrainTypes, numTerrainTypes * sizeof(terrainType_t));
-			terrainTypes[numTerrainTypes - 1].pic = pic;
-			terrainTypes[numTerrainTypes - 1].type = sc_Number;
+			TTerrainType *tt = new(TerrainTypes) TTerrainType;
+			tt->Pic = pic;
+			tt->Type = sc_Number;
 		}
 	}
 	SC_Close();
+	TerrainTypes.Shrink();
 }
 
 //==========================================================================
@@ -328,11 +302,11 @@ void P_InitTerrainTypes(void)
 
 int SV_TerrainType(int pic)
 {
-	for (int i = 0; i < numTerrainTypes; i++)
+	for (TArray<TTerrainType>::TIterator tt(TerrainTypes); tt; ++tt)
 	{
-		if (terrainTypes[i].pic == pic)
+		if (tt->Pic == pic)
 		{
-			return terrainTypes[i].type;
+			return tt->Type;
 		}
 	}
 	return 0;
@@ -341,9 +315,12 @@ int SV_TerrainType(int pic)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/12 19:26:40  dj_jl
+//	Added dynamic arrays
+//
 //	Revision 1.5  2001/10/09 17:20:42  dj_jl
 //	Fixed switch sounds
-//
+//	
 //	Revision 1.4  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	

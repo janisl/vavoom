@@ -80,6 +80,7 @@
 #include "debug.h"		//	Debug file
 #include "system.h"		//	System specific routines
 #include "zone.h"		//	Zone memory allocation
+#include "array.h"		//	Dynamic arrays
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
@@ -115,9 +116,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/12 19:26:40  dj_jl
+//	Added dynamic arrays
+//
 //	Revision 1.11  2001/12/01 17:39:26  dj_jl
 //	Back to work
-//
+//	
 //	Revision 1.10  2001/11/09 14:36:57  dj_jl
 //	Switched to release
 //	

@@ -69,8 +69,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define ANIM_SCRIPT_NAME	"ANIMDEFS"
-#define MAX_ANIM_DEFS 		64
-#define MAX_FRAME_DEFS 		256
 #define ANIM_FLAT 			0
 #define ANIM_TEXTURE 		1
 #define SCI_FLAT 			"flat"
@@ -84,14 +82,15 @@
 struct frameDef_t
 {
 	int index;
-	int tics;
+	short baseTime;
+	short randomRange;
 };
 
 struct animDef_t
 {
 	int type;
 	int index;
-	int tics;
+	float time;
 	int currentFrameDef;
 	int startFrameDef;
 	int endFrameDef;
@@ -147,9 +146,8 @@ byte			r_black_color[MAX_PALETTES];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static animDef_t	AnimDefs[MAX_ANIM_DEFS];
-static frameDef_t	FrameDefs[MAX_FRAME_DEFS];
-static int			AnimDefCount;
+static TArray<animDef_t>	AnimDefs;
+static TArray<frameDef_t>	FrameDefs;
 
 static bool			inflats;
 static bool			insprites;
@@ -160,11 +158,11 @@ static float*		textureheight;		// needed for texture pegging
 
 //==========================================================================
 //
-//	IsStrifeTextures
+//	IsStrifeTexture
 //
 //==========================================================================
 
-static bool IsStrifeTextures(void)
+static bool IsStrifeTexture(void)
 {
 	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
 	int numtex = LittleLong(*plump);
@@ -553,28 +551,21 @@ static void InitFTAnims(void)
 {
 	int 		base;
 	int 		mod;
-	int 		fd;
-	animDef_t 	*ad;
-	boolean 	ignore;
-	boolean 	done;
+	animDef_t 	ad;
+	frameDef_t	fd;
+	bool 		ignore;
+	bool	 	done;
 
-	fd = 0;
-	ad = AnimDefs;
-	AnimDefCount = 0;
 	SC_Open(ANIM_SCRIPT_NAME);
 	while (SC_GetString())
 	{
-		if (AnimDefCount == MAX_ANIM_DEFS)
-		{
-			Sys_Error("P_InitFTAnims: too many AnimDefs.");
-		}
 		if (SC_Compare(SCI_FLAT))
 		{
-			ad->type = ANIM_FLAT;
+			ad.type = ANIM_FLAT;
 		}
 		else if (SC_Compare(SCI_TEXTURE))
 		{
-			ad->type = ANIM_TEXTURE;
+			ad.type = ANIM_TEXTURE;
 		}
 		else
 		{
@@ -582,7 +573,7 @@ static void InitFTAnims(void)
 		}
 		SC_MustGetString(); // Name
 		ignore = false;
-		if (ad->type == ANIM_FLAT)
+		if (ad.type == ANIM_FLAT)
 		{
 			if (R_CheckFlatNumForName(sc_String) == -1)
 			{
@@ -590,7 +581,7 @@ static void InitFTAnims(void)
 			}
 			else
 			{
-				ad->index = R_FlatNumForName(sc_String) & ~TEXF_FLAT;
+				ad.index = R_FlatNumForName(sc_String) & ~TEXF_FLAT;
 			}
 		}
 		else
@@ -601,10 +592,10 @@ static void InitFTAnims(void)
 			}
 			else
 			{
-				ad->index = R_TextureNumForName(sc_String);
+				ad.index = R_TextureNumForName(sc_String);
 			}
 		}
-		ad->startFrameDef = fd;
+		ad.startFrameDef = FrameDefs.Num();
 		done = false;
 		while (done == false)
 		{
@@ -612,23 +603,17 @@ static void InitFTAnims(void)
 			{
 				if (SC_Compare(SCI_PIC))
 				{
-					if (fd == MAX_FRAME_DEFS)
-					{
-						Sys_Error("P_InitFTAnims: too many FrameDefs.");
-					}
 					SC_MustGetNumber();
-					if (ignore == false)
-					{
-						FrameDefs[fd].index = ad->index + sc_Number - 1;
-					}
+					fd.index = ad.index + sc_Number - 1;
 					SC_MustGetString();
 					if (SC_Compare(SCI_TICS))
 					{
 						SC_MustGetNumber();
+						fd.baseTime = sc_Number;
+						fd.randomRange = 0;
 						if (ignore == false)
 						{
-							FrameDefs[fd].tics = sc_Number;
-							fd++;
+							FrameDefs.AddItem(fd);
 						}
 					}
 					else if (SC_Compare(SCI_RAND))
@@ -636,11 +621,12 @@ static void InitFTAnims(void)
 						SC_MustGetNumber();
 						base = sc_Number;
 						SC_MustGetNumber();
+						fd.baseTime = base;
+						mod = sc_Number - base + 1;
+						fd.randomRange = mod;
 						if (ignore == false)
 						{
-							mod = sc_Number - base + 1;
-							FrameDefs[fd].tics = (base << 16) + (mod << 8);
-							fd++;
+							FrameDefs.AddItem(fd);
 						}
 					}
 					else
@@ -659,20 +645,21 @@ static void InitFTAnims(void)
 				done = true;
 			}
 		}
-		if ((ignore == false) && (fd - ad->startFrameDef < 2))
+		if ((ignore == false) && (FrameDefs.Num() - ad.startFrameDef < 2))
 		{
 			Sys_Error("P_InitFTAnims: AnimDef has framecount < 2.");
 		}
 		if (ignore == false)
 		{
-			ad->endFrameDef = fd-1;
-			ad->currentFrameDef = ad->endFrameDef;
-			ad->tics = 1; // Force 1st game tic to animate
-			AnimDefCount++;
-			ad++;
+			ad.endFrameDef = FrameDefs.Num() - 1;
+			ad.currentFrameDef = ad.endFrameDef;
+			ad.time = 0.01; // Force 1st game tic to animate
+			AnimDefs.AddItem(ad);
 		}
 	}
 	SC_Close();
+	FrameDefs.Shrink();
+	AnimDefs.Shrink();
 }
 
 //==========================================================================
@@ -684,15 +671,11 @@ static void InitFTAnims(void)
 #ifdef CLIENT
 void R_AnimateSurfaces(void)
 {
-	int i;
-	animDef_t *ad;
-
 	//	Animate flats and textures
-	for(i = 0; i < AnimDefCount; i++)
+	for (TArray<animDef_t>::TIterator ad(AnimDefs); ad; ++ad)
 	{
-		ad = &AnimDefs[i];
-		ad->tics--;
-		if (ad->tics == 0)
+		ad->time -= host_frametime;
+		if (ad->time <= 0.0)
 		{
 			if (ad->currentFrameDef == ad->endFrameDef)
 			{
@@ -702,21 +685,21 @@ void R_AnimateSurfaces(void)
 			{
 				ad->currentFrameDef++;
 			}
-			ad->tics = FrameDefs[ad->currentFrameDef].tics;
-			if (ad->tics > 255)
-			{ // Random tics
-				ad->tics = (ad->tics>>16)
-					+ rand() % ((ad->tics & 0xff00) >> 8);
+			frameDef_t fd = FrameDefs[ad->currentFrameDef];
+			ad->time = fd.baseTime / 35.0;
+			if (fd.randomRange)
+			{ 
+				// Random tics
+				ad->time += Random() * (fd.randomRange / 35.0);
 			}
 			if (ad->type == ANIM_FLAT)
 			{
-				flattranslation[ad->index] =
-					FrameDefs[ad->currentFrameDef].index;
+				flattranslation[ad->index] = fd.index;
 			}
 			else
-			{ // Texture
-				texturetranslation[ad->index] =
-					FrameDefs[ad->currentFrameDef].index;
+			{ 
+				// Texture
+				texturetranslation[ad->index] = fd.index;
 			}
 		}
 	}
@@ -749,7 +732,7 @@ int R_TextureAnimation(int tex)
 
 void R_InitTexture(void)
 {
-	if (IsStrifeTextures())
+	if (IsStrifeTexture())
 		InitTextures<maptexture_strife_t>();
 	else
 		InitTextures<maptexture_t>();
@@ -1102,9 +1085,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/12 19:26:40  dj_jl
+//	Added dynamic arrays
+//
 //	Revision 1.12  2001/11/09 14:22:10  dj_jl
 //	R_InitTexture now called from Host_init
-//
+//	
 //	Revision 1.11  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
