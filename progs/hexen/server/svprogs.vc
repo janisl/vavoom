@@ -59,6 +59,10 @@
 #include "ai_subs.vc"
 #include "weapons.vc"
 #include "action.vc"
+
+#include "bot.vc"
+
+#include "miscobj.vc"
 #include "enemy.vc"
 
 #include "w_fightr.vc"
@@ -66,18 +70,21 @@
 #include "w_mage.vc"
 #include "w_pig.vc"
 
-#include "bot.vc"
-
-#include "thrust.vc"	// !!
-#include "pottery.vc"	// !!
-#include "tree.vc"
-#include "bell.vc"
+#include "miscproj.vc"
+#include "fragm.vc"
 #include "telo.vc"
 #include "fog.vc"
-#include "poison.vc"
 #include "bridge.vc"
 #include "quake.vc"
 #include "batspawn.vc"
+
+#include "decorat.vc"
+#include "lightsrc.vc"
+#include "thrust.vc"
+#include "pottery.vc"
+#include "tree.vc"
+#include "bell.vc"
+#include "poison.vc"
 
 #include "player.vc"
 #include "pig.vc"
@@ -100,6 +107,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.14  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

@@ -362,11 +362,11 @@ void Actor::A_Explode(void)
 //
 //==========================================================================
 
-void Pawn::DropItem(classid type, int amount, int chance)
+void Pawn::DropItem(classid type, int amount, float chance)
 {
 	Actor A;
 
-	if (P_Random() > chance)
+	if (Random() > chance)
 	{
 		return;
 	}
@@ -391,40 +391,7 @@ void Pawn::A_NoBlocking(void)
 {
 	bSolid = false;
 	// Check for monsters dropping things
-	switch (Class)
-	{
-	case Mummy:
-	case MummyLeader:
-	case MummyGhost:
-	case MummyLeaderGhost:
-		DropItem(ItemAmmoGoldWandWimpy, 3, 84);
-		break;
-	case Knight:
-	case KnightGhost:
-		DropItem(ItemAmmoCrossbowWimpy, 5, 84);
-		break;
-	case Wizard:
-		DropItem(ItemAmmoBlasterWimpy, 10, 84);
-		DropItem(ArtifactTomeOfPower, 0, 4);
-		break;
-	case Head:
-		DropItem(ItemAmmoBlasterWimpy, 10, 84);
-		DropItem(ArtifactEgg, 0, 51);
-		break;
-	case Beast:
-		DropItem(ItemAmmoCrossbowWimpy, 10, 84);
-		break;
-	case Clink:
-		DropItem(ItemAmmoSkullRodWimpy, 20, 84);
-		break;
-	case Snake:
-		DropItem(ItemAmmoPhoenixWimpy, 5, 84);
-		break;
-	case Minotaur:
-		DropItem(ArtifactSuperHeal, 0, 51);
-		DropItem(ItemAmmoPhoenixWimpy, 10, 84);
-		break;
-	}
+	DropStuff();
 }
 
 //==========================================================================
@@ -529,30 +496,12 @@ void Pawn::A_BossDeath(void)
 	EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOOR);
 }
 
-//==========================================================================
-//
-//  Actor::A_ContMobjSound
-//
-//==========================================================================
-
-void Actor::A_ContMobjSound(void)
-{
-	switch (Class)
-	{
-	case KnightAxe:
-		PlaySound('KnightAttack1', CHAN_VOICE);
-		break;
-	case MummyMissile:
-		PlaySound('MumyHeadExplode', CHAN_VOICE);
-		break;
-	default:
-		break;
-	}
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.26  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -105,6 +105,90 @@ defaultproperties
 
 //**************************************************************************
 //
+//	BishopPuff
+//
+//**************************************************************************
+
+class BishopPuff:Effect
+{
+
+__states__
+{
+	S_BISHOP_PUFF1('BISH', 16, 5.0 / 35.0, S_BISHOP_PUFF2) { }
+	S_BISHOP_PUFF2('BISH', 17, 5.0 / 35.0, S_BISHOP_PUFF3) { }
+	S_BISHOP_PUFF3('BISH', 18, 5.0 / 35.0, S_BISHOP_PUFF4) { }
+	S_BISHOP_PUFF4('BISH', 19, 5.0 / 35.0, S_BISHOP_PUFF5) { }
+	S_BISHOP_PUFF5('BISH', 20, 6.0 / 35.0, S_BISHOP_PUFF6) { }
+	S_BISHOP_PUFF6('BISH', 21, 6.0 / 35.0, S_BISHOP_PUFF7) { }
+	S_BISHOP_PUFF7('BISH', 22, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_BISHOP_PUFF1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BishopBlur
+//
+//**************************************************************************
+
+class BishopBlur:Effect
+{
+
+//==========================================================================
+//
+//	A_SetAltShadow
+//
+//==========================================================================
+
+void A_SetAltShadow(void)
+{
+	Translucency = 33;
+}
+
+__states__
+{
+	S_BISHOPBLUR1('BISH', 0, 16.0 / 35.0, S_BISHOPBLUR2) { }
+	S_BISHOPBLUR2('BISH', 0, 8.0 / 35.0, S_NULL) { A_SetAltShadow(); }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_BISHOPBLUR1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BishopPainBlur
+//
+//**************************************************************************
+
+class BishopPainBlur:Effect
+{
+
+__states__
+{
+	S_BISHOPPAINBLUR1('BISH', 2, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_BISHOPPAINBLUR1;
+}
+
+}
+
+//**************************************************************************
+//
 //	Bishop
 //
 //**************************************************************************
@@ -357,22 +441,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//	Actor::A_SetAltShadow
-//
-//==========================================================================
-
-void Actor::A_SetAltShadow(void)
-{
-	Translucency = 33;
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.25  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

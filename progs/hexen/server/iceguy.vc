@@ -25,6 +25,126 @@
 
 //**************************************************************************
 //
+//	IceGuyBit
+//
+//	UNUSED
+//
+//**************************************************************************
+
+class IceGuyBit:Effect
+{
+
+__states__
+{
+	S_ICEGUY_BIT1('ICPR', 16 | FF_FULLBRIGHT, 50.0 / 35.0, S_NULL) { }
+	S_ICEGUY_BIT2('ICPR', 17 | FF_FULLBRIGHT, 50.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 1.0;
+	Height = 1.0;
+	Mass = 12.5;
+	bDropOff = true;
+	bNoTeleport = true;
+	bNoGravity = false;
+	IdleState = S_ICEGUY_BIT1;
+}
+
+}
+
+//**************************************************************************
+//
+//	IceGuyWisp1
+//
+//**************************************************************************
+
+class IceGuyWisp1:Fragment
+{
+
+__states__
+{
+	S_ICEGUY_WISP1_1('ICWS', 0, 2.0 / 35.0, S_ICEGUY_WISP1_2) { }
+	S_ICEGUY_WISP1_2('ICWS', 1, 2.0 / 35.0, S_ICEGUY_WISP1_3) { }
+	S_ICEGUY_WISP1_3('ICWS', 2, 2.0 / 35.0, S_ICEGUY_WISP1_4) { }
+	S_ICEGUY_WISP1_4('ICWS', 3, 2.0 / 35.0, S_ICEGUY_WISP1_5) { }
+	S_ICEGUY_WISP1_5('ICWS', 4, 2.0 / 35.0, S_ICEGUY_WISP1_6) { }
+	S_ICEGUY_WISP1_6('ICWS', 5, 2.0 / 35.0, S_ICEGUY_WISP1_7) { }
+	S_ICEGUY_WISP1_7('ICWS', 6, 2.0 / 35.0, S_ICEGUY_WISP1_8) { }
+	S_ICEGUY_WISP1_8('ICWS', 7, 2.0 / 35.0, S_ICEGUY_WISP1_9) { }
+	S_ICEGUY_WISP1_9('ICWS', 8, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_ICEGUY_WISP1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	IceGuyWisp2
+//
+//**************************************************************************
+
+class IceGuyWisp2:Fragment
+{
+
+__states__
+{
+	S_ICEGUY_WISP2_1('ICWS', 9, 2.0 / 35.0, S_ICEGUY_WISP2_2) { }
+	S_ICEGUY_WISP2_2('ICWS', 10, 2.0 / 35.0, S_ICEGUY_WISP2_3) { }
+	S_ICEGUY_WISP2_3('ICWS', 11, 2.0 / 35.0, S_ICEGUY_WISP2_4) { }
+	S_ICEGUY_WISP2_4('ICWS', 12, 2.0 / 35.0, S_ICEGUY_WISP2_5) { }
+	S_ICEGUY_WISP2_5('ICWS', 13, 2.0 / 35.0, S_ICEGUY_WISP2_6) { }
+	S_ICEGUY_WISP2_6('ICWS', 14, 2.0 / 35.0, S_ICEGUY_WISP2_7) { }
+	S_ICEGUY_WISP2_7('ICWS', 15, 2.0 / 35.0, S_ICEGUY_WISP2_8) { }
+	S_ICEGUY_WISP2_8('ICWS', 16, 2.0 / 35.0, S_ICEGUY_WISP2_9) { }
+	S_ICEGUY_WISP2_9('ICWS', 17, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_ICEGUY_WISP2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	IceGuyMissilePuff
+//
+//**************************************************************************
+
+class IceGuyMissilePuff:Effect
+{
+
+__states__
+{
+	S_ICEFX_PUFF1('ICPR', 8, 3.0 / 35.0, S_ICEFX_PUFF2) { }
+	S_ICEFX_PUFF2('ICPR', 9, 3.0 / 35.0, S_ICEFX_PUFF3) { }
+	S_ICEFX_PUFF3('ICPR', 10, 3.0 / 35.0, S_ICEFX_PUFF4) { }
+	S_ICEFX_PUFF4('ICPR', 11, 2.0 / 35.0, S_ICEFX_PUFF5) { }
+	S_ICEFX_PUFF5('ICPR', 12, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 1.0;
+	Height = 1.0;
+	Translucency = 66;
+	bDropOff = true;
+	bNoTeleport = true;
+	IdleState = S_ICEFX_PUFF1;
+}
+
+}
+
+//**************************************************************************
+//
 //	IceGuyMissile2
 //
 //**************************************************************************
@@ -278,6 +398,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

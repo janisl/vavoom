@@ -25,6 +25,40 @@
 
 //**************************************************************************
 //
+//	WraithSparkDrip
+//
+//**************************************************************************
+
+class WraithSparkDrip:Effect
+{
+
+__states__
+{
+	S_WRTHFX_SIZZLE1('WRBL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE2) { }
+	S_WRTHFX_SIZZLE2('WRBL', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE3) { }
+	S_WRTHFX_SIZZLE3('WRBL', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE4) { }
+	S_WRTHFX_SIZZLE4('WRBL', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE5) { }
+	S_WRTHFX_SIZZLE5('WRBL', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE6) { }
+	S_WRTHFX_SIZZLE6('WRBL', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE7) { }
+	S_WRTHFX_SIZZLE7('WRBL', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 5.0;
+	Mass = 5.0;
+	bDropOff = true;
+	bFloorClip = true;
+	bNoTeleport = true;
+	bNoGravity = false;
+	IdleState = S_WRTHFX_SIZZLE1;
+}
+
+}
+
+//**************************************************************************
+//
 //	WraithMissile
 //
 //**************************************************************************
@@ -94,6 +128,98 @@ defaultproperties
 	DeathState = S_WRTHFX_BOOM1;
 	DeathSound = 'WraithMissileExplode';
 	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	WraithFX3
+//
+//**************************************************************************
+
+class WraithFX3:Fragment
+{
+
+__states__
+{
+	S_WRTHFX_DROP1('WRBL', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP2) { }
+	S_WRTHFX_DROP2('WRBL', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP3) { }
+	S_WRTHFX_DROP3('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP1) { }
+	S_WRTHFX_DEAD1('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 5.0;
+	Mass = 5.0;
+	bFloorClip = true;
+	bNoGravity = false;
+	IdleState = S_WRTHFX_DROP1;
+	DeathState = S_WRTHFX_DEAD1;
+	DeathSound = 'Drip';
+}
+
+}
+
+//**************************************************************************
+//
+//	WraithFleshDrip1
+//
+//**************************************************************************
+
+class WraithFleshDrip1:Fragment
+{
+
+__states__
+{
+	S_WRTHFX_ADROP1('WRBL', 19, 4.0 / 35.0, S_WRTHFX_ADROP2) { }
+	S_WRTHFX_ADROP2('WRBL', 20, 4.0 / 35.0, S_WRTHFX_ADROP3) { }
+	S_WRTHFX_ADROP3('WRBL', 21, 4.0 / 35.0, S_WRTHFX_ADROP4) { }
+	S_WRTHFX_ADROP4('WRBL', 22, 4.0 / 35.0, S_WRTHFX_ADROP1) { }
+	S_WRTHFX_ADEAD1('WRBL', 22, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 5.0;
+	Mass = 5.0;
+	bNoGravity = false;
+	IdleState = S_WRTHFX_ADROP1;
+	DeathState = S_WRTHFX_ADEAD1;
+	DeathSound = 'Drip';
+}
+
+}
+
+//**************************************************************************
+//
+//	WraithFleshDrip2
+//
+//**************************************************************************
+
+class WraithFleshDrip2:Fragment
+{
+
+__states__
+{
+	S_WRTHFX_BDROP1('WRBL', 23, 7.0 / 35.0, S_WRTHFX_BDROP2) { }
+	S_WRTHFX_BDROP2('WRBL', 24, 7.0 / 35.0, S_WRTHFX_BDROP3) { }
+	S_WRTHFX_BDROP3('WRBL', 25, 7.0 / 35.0, S_WRTHFX_BDROP1) { }
+	S_WRTHFX_BDEAD1('WRBL', 25, 35.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 5.0;
+	Mass = 5.0;
+	bNoGravity = false;
+	IdleState = S_WRTHFX_BDROP1;
+	DeathState = S_WRTHFX_BDEAD1;
+	DeathSound = 'Drip';
 }
 
 }
@@ -445,6 +571,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.24  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

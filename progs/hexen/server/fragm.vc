@@ -1,0 +1,531 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	Dirt1
+//
+//**************************************************************************
+
+class Dirt1:Fragment
+{
+
+__states__
+{
+	S_DIRT1_1('ROCK', 3, 20.0 / 35.0, S_DIRT1_1) { }
+	S_DIRT1_D('ROCK', 3, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_DIRT1_1;
+	DeathState = S_DIRT1_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Dirt2
+//
+//**************************************************************************
+
+class Dirt2:Fragment
+{
+
+__states__
+{
+	S_DIRT2_1('ROCK', 4, 20.0 / 35.0, S_DIRT2_1) { }
+	S_DIRT2_D('ROCK', 4, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_DIRT2_1;
+	DeathState = S_DIRT2_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Dirt3
+//
+//**************************************************************************
+
+class Dirt3:Fragment
+{
+
+__states__
+{
+	S_DIRT3_1('ROCK', 5, 20.0 / 35.0, S_DIRT3_1) { }
+	S_DIRT3_D('ROCK', 5, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_DIRT3_1;
+	DeathState = S_DIRT3_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Dirt4
+//
+//**************************************************************************
+
+class Dirt4:Fragment
+{
+
+__states__
+{
+	S_DIRT4_1('ROCK', 6, 20.0 / 35.0, S_DIRT4_1) { }
+	S_DIRT4_D('ROCK', 6, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_DIRT4_1;
+	DeathState = S_DIRT4_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Dirt5
+//
+//**************************************************************************
+
+class Dirt5:Fragment
+{
+
+__states__
+{
+	S_DIRT5_1('ROCK', 7, 20.0 / 35.0, S_DIRT5_1) { }
+	S_DIRT5_D('ROCK', 7, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_DIRT5_1;
+	DeathState = S_DIRT5_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Dirt6
+//
+//**************************************************************************
+
+class Dirt6:Fragment
+{
+
+__states__
+{
+	S_DIRT6_1('ROCK', 8, 20.0 / 35.0, S_DIRT6_1) { }
+	S_DIRT6_D('ROCK', 8, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_DIRT6_1;
+	DeathState = S_DIRT6_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Rock1
+//
+//**************************************************************************
+
+class Rock1:Fragment
+{
+
+__states__
+{
+	S_ROCK1_1('ROCK', 0, 20.0 / 35.0, S_ROCK1_1) { }
+	S_ROCK1_D('ROCK', 0, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_ROCK1_1;
+	DeathState = S_ROCK1_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Rock2
+//
+//**************************************************************************
+
+class Rock2:Fragment
+{
+
+__states__
+{
+	S_ROCK2_1('ROCK', 1, 20.0 / 35.0, S_ROCK2_1) { }
+	S_ROCK2_D('ROCK', 1, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_ROCK2_1;
+	DeathState = S_ROCK2_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	Rock3
+//
+//**************************************************************************
+
+class Rock3:Fragment
+{
+
+__states__
+{
+	S_ROCK3_1('ROCK', 2, 20.0 / 35.0, S_ROCK3_1) { }
+	S_ROCK3_D('ROCK', 2, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_ROCK3_1;
+	DeathState = S_ROCK3_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard1
+//
+//**************************************************************************
+
+class StainedGlassShard1:Fragment
+{
+
+__states__
+{
+	S_SGSHARD1_1('SGSA', 0, 4.0 / 35.0, S_SGSHARD1_2) { }
+	S_SGSHARD1_2('SGSA', 1, 4.0 / 35.0, S_SGSHARD1_3) { }
+	S_SGSHARD1_3('SGSA', 2, 4.0 / 35.0, S_SGSHARD1_4) { }
+	S_SGSHARD1_4('SGSA', 3, 4.0 / 35.0, S_SGSHARD1_5) { }
+	S_SGSHARD1_5('SGSA', 4, 4.0 / 35.0, S_SGSHARD1_1) { }
+	S_SGSHARD1_D('SGSA', 4, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 16.0;
+	Mass = 5.0;
+	bFloorBounce = true;
+	IdleState = S_SGSHARD1_1;
+	DeathState = S_SGSHARD1_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard2
+//
+//**************************************************************************
+
+class StainedGlassShard2:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD2_1('SGSA', 5, 4.0 / 35.0, S_SGSHARD2_2) { }
+	S_SGSHARD2_2('SGSA', 6, 4.0 / 35.0, S_SGSHARD2_3) { }
+	S_SGSHARD2_3('SGSA', 7, 4.0 / 35.0, S_SGSHARD2_4) { }
+	S_SGSHARD2_4('SGSA', 8, 4.0 / 35.0, S_SGSHARD2_5) { }
+	S_SGSHARD2_5('SGSA', 9, 4.0 / 35.0, S_SGSHARD2_1) { }
+	S_SGSHARD2_D('SGSA', 9, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD2_1;
+	DeathState = S_SGSHARD2_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard3
+//
+//**************************************************************************
+
+class StainedGlassShard3:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD3_1('SGSA', 10, 4.0 / 35.0, S_SGSHARD3_2) { }
+	S_SGSHARD3_2('SGSA', 11, 4.0 / 35.0, S_SGSHARD3_3) { }
+	S_SGSHARD3_3('SGSA', 12, 4.0 / 35.0, S_SGSHARD3_4) { }
+	S_SGSHARD3_4('SGSA', 13, 4.0 / 35.0, S_SGSHARD3_5) { }
+	S_SGSHARD3_5('SGSA', 14, 4.0 / 35.0, S_SGSHARD3_1) { }
+	S_SGSHARD3_D('SGSA', 14, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD3_1;
+	DeathState = S_SGSHARD3_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard4
+//
+//**************************************************************************
+
+class StainedGlassShard4:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD4_1('SGSA', 15, 4.0 / 35.0, S_SGSHARD4_2) { }
+	S_SGSHARD4_2('SGSA', 16, 4.0 / 35.0, S_SGSHARD4_3) { }
+	S_SGSHARD4_3('SGSA', 17, 4.0 / 35.0, S_SGSHARD4_4) { }
+	S_SGSHARD4_4('SGSA', 18, 4.0 / 35.0, S_SGSHARD4_5) { }
+	S_SGSHARD4_5('SGSA', 19, 4.0 / 35.0, S_SGSHARD4_1) { }
+	S_SGSHARD4_D('SGSA', 19, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD4_1;
+	DeathState = S_SGSHARD4_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard5
+//
+//**************************************************************************
+
+class StainedGlassShard5:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD5_1('SGSA', 20, 4.0 / 35.0, S_SGSHARD5_2) { }
+	S_SGSHARD5_2('SGSA', 21, 4.0 / 35.0, S_SGSHARD5_3) { }
+	S_SGSHARD5_3('SGSA', 22, 4.0 / 35.0, S_SGSHARD5_4) { }
+	S_SGSHARD5_4('SGSA', 23, 4.0 / 35.0, S_SGSHARD5_5) { }
+	S_SGSHARD5_5('SGSA', 24, 4.0 / 35.0, S_SGSHARD5_1) { }
+	S_SGSHARD5_D('SGSA', 24, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD5_1;
+	DeathState = S_SGSHARD5_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard6
+//
+//**************************************************************************
+
+class StainedGlassShard6:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD6_1('SGSB', 0, 4.0 / 35.0, S_SGSHARD6_1) { }
+	S_SGSHARD6_D('SGSB', 0, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD6_1;
+	DeathState = S_SGSHARD6_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard7
+//
+//**************************************************************************
+
+class StainedGlassShard7:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD7_1('SGSB', 1, 4.0 / 35.0, S_SGSHARD7_1) { }
+	S_SGSHARD7_D('SGSB', 1, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD7_1;
+	DeathState = S_SGSHARD7_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard8
+//
+//**************************************************************************
+
+class StainedGlassShard8:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD8_1('SGSB', 2, 4.0 / 35.0, S_SGSHARD8_1) { }
+	S_SGSHARD8_D('SGSB', 2, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD8_1;
+	DeathState = S_SGSHARD8_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard9
+//
+//**************************************************************************
+
+class StainedGlassShard9:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD9_1('SGSB', 3, 4.0 / 35.0, S_SGSHARD9_1) { }
+	S_SGSHARD9_D('SGSB', 3, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD9_1;
+	DeathState = S_SGSHARD9_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	StainedGlassShard0
+//
+//**************************************************************************
+
+class StainedGlassShard0:StainedGlassShard1
+{
+
+__states__
+{
+	S_SGSHARD0_1('SGSB', 4, 4.0 / 35.0, S_SGSHARD0_1) { }
+	S_SGSHARD0_D('SGSB', 4, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD0_1;
+	DeathState = S_SGSHARD0_D;
+}
+
+}
+
+//**************************************************************************
+//
+//	WaterDrip
+//
+//**************************************************************************
+
+class WaterDrip:Fragment
+{
+
+__states__
+{
+	S_WATERDRIP1('WATR', 0, 5.0 / 35.0, S_WATERDRIP1) { }
+}
+
+defaultproperties
+{
+	Mass = 1.0;
+	bNoBlockmap = false;
+	bDropOff = false;
+	bNoGravity = false;
+	IdleState = S_WATERDRIP1;
+	DeathSound = 'Drip';
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
+//**************************************************************************

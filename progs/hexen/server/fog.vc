@@ -23,7 +23,177 @@
 //**
 //**************************************************************************
 
+//**************************************************************************
+//
+//	FogPatch
+//
+//**************************************************************************
+
+class FogPatch:Effect
+	abstract
+{
+
 //==========================================================================
+//
+// Fog Variables:
+//
+//      args[0]     Speed (0..10) of fog
+//      args[3]     Lifetime countdown
+//      args[4]     Boolean: fog moving?
+//
+//==========================================================================
+
+int WeaveIndex;		// Index into floatbob table
+
+//==========================================================================
+//
+//	A_FogMove
+//
+//==========================================================================
+
+void A_FogMove(void)
+{
+	float speed;
+	float angle;
+	int weaveindex;
+
+	if (!Args[4])
+		return;
+
+	if (Args[3]-- <= 0)
+	{
+		SetState(DeathState);
+		return;
+	}
+
+	if ((Args[3] % 4) == 0)
+	{
+		Origin.z += FloatBobOffsets[WeaveIndex] / 2.0;
+		WeaveIndex = (WeaveIndex + 1) & 63;
+	}
+
+	speed = itof(Args[0]);
+	angle = Angles.yaw;
+	Velocity.x = speed * cos(angle) * 35.0;
+	Velocity.y = speed * sin(angle) * 35.0;
+}
+
+defaultproperties
+{
+	Speed = 35.0;
+	Translucency = 66;
+	bColideWithWorld = false;
+	bColideWithThings = false;
+	bFloat = true;
+	bNoTeleport = true;
+}
+
+}
+
+//**************************************************************************
+//
+//	FogPatchSmall
+//
+//**************************************************************************
+
+class FogPatchSmall:FogPatch
+	__mobjinfo__(10001)
+{
+
+__states__
+{
+	S_FOGPATCHS1('FOGS', 0, 7.0 / 35.0, S_FOGPATCHS2) { A_FogMove(); }
+	S_FOGPATCHS2('FOGS', 1, 7.0 / 35.0, S_FOGPATCHS3) { A_FogMove(); }
+	S_FOGPATCHS3('FOGS', 2, 7.0 / 35.0, S_FOGPATCHS4) { A_FogMove(); }
+	S_FOGPATCHS4('FOGS', 3, 7.0 / 35.0, S_FOGPATCHS5) { A_FogMove(); }
+	S_FOGPATCHS5('FOGS', 4, 7.0 / 35.0, S_FOGPATCHS1) { A_FogMove(); }
+	S_FOGPATCHS0('FOGS', 4, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FOGPATCHS1;
+	DeathState = S_FOGPATCHS0;
+}
+
+}
+
+//**************************************************************************
+//
+//	FogPatchMedium
+//
+//**************************************************************************
+
+class FogPatchMedium:FogPatch
+	__mobjinfo__(10002)
+{
+
+__states__
+{
+	S_FOGPATCHM1('FOGM', 0, 7.0 / 35.0, S_FOGPATCHM2) { A_FogMove(); }
+	S_FOGPATCHM2('FOGM', 1, 7.0 / 35.0, S_FOGPATCHM3) { A_FogMove(); }
+	S_FOGPATCHM3('FOGM', 2, 7.0 / 35.0, S_FOGPATCHM4) { A_FogMove(); }
+	S_FOGPATCHM4('FOGM', 3, 7.0 / 35.0, S_FOGPATCHM5) { A_FogMove(); }
+	S_FOGPATCHM5('FOGM', 4, 7.0 / 35.0, S_FOGPATCHM1) { A_FogMove(); }
+	S_FOGPATCHM0('FOGS', 0, 5.0 / 35.0, S_FOGPATCHMA) { }
+	S_FOGPATCHMA('FOGS', 1, 5.0 / 35.0, S_FOGPATCHMB) { }
+	S_FOGPATCHMB('FOGS', 2, 5.0 / 35.0, S_FOGPATCHMC) { }
+	S_FOGPATCHMC('FOGS', 3, 5.0 / 35.0, S_FOGPATCHMD) { }
+	S_FOGPATCHMD('FOGS', 4, 5.0 / 35.0, S_FOGPATCHS0) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FOGPATCHM1;
+	DeathState = S_FOGPATCHM0;
+}
+
+}
+
+//**************************************************************************
+//
+//	FogPatchLarge
+//
+//**************************************************************************
+
+class FogPatchLarge:FogPatch
+	__mobjinfo__(10003)
+{
+
+__states__
+{
+	S_FOGPATCHL1('FOGL', 0, 7.0 / 35.0, S_FOGPATCHL2) { A_FogMove(); }
+	S_FOGPATCHL2('FOGL', 1, 7.0 / 35.0, S_FOGPATCHL3) { A_FogMove(); }
+	S_FOGPATCHL3('FOGL', 2, 7.0 / 35.0, S_FOGPATCHL4) { A_FogMove(); }
+	S_FOGPATCHL4('FOGL', 3, 7.0 / 35.0, S_FOGPATCHL5) { A_FogMove(); }
+	S_FOGPATCHL5('FOGL', 4, 7.0 / 35.0, S_FOGPATCHL1) { A_FogMove(); }
+	S_FOGPATCHL0('FOGM', 0, 4.0 / 35.0, S_FOGPATCHLA) { }
+	S_FOGPATCHLA('FOGM', 1, 4.0 / 35.0, S_FOGPATCHLB) { }
+	S_FOGPATCHLB('FOGM', 2, 4.0 / 35.0, S_FOGPATCHLC) { }
+	S_FOGPATCHLC('FOGM', 3, 4.0 / 35.0, S_FOGPATCHLD) { }
+	S_FOGPATCHLD('FOGM', 4, 4.0 / 35.0, S_FOGPATCHM0) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FOGPATCHL1;
+	DeathState = S_FOGPATCHL0;
+}
+
+}
+
+//**************************************************************************
+//
+//	FogSpawner
+//
+//**************************************************************************
+
+class FogSpawner:Actor
+	__mobjinfo__(10000)
+{
+
+//==========================================================================
+//
 // Fog Variables:
 //
 //      args[0]     Speed (0..10) of fog
@@ -31,38 +201,26 @@
 //      args[2]     Frequency of spawn (1..10)
 //      args[3]     Lifetime countdown
 //      args[4]     Boolean: fog moving?
-//      special1        Internal:  Counter for spawn frequency
-//      special2        Internal:  Index into floatbob table
 //
 //==========================================================================
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+int SpawnFrequencyCount;	// Counter for spawn frequency
 
 //==========================================================================
 //
-//  Actor::A_FogSpawn
+//  A_FogSpawn
 //
 //==========================================================================
 
-void Actor::A_FogSpawn(void)
+void A_FogSpawn(void)
 {
 	Actor A;
 	float delta;
 
-	if (_Special1-- > 0)
+	if (SpawnFrequencyCount-- > 0)
 		return;
 
-	_Special1 = Args[2];	// Reset frequency count
+	SpawnFrequencyCount = Args[2];	// Reset frequency count
 
 	switch (P_Random() % 3)
 	{
@@ -90,46 +248,37 @@ void Actor::A_FogSpawn(void)
 		A.Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
 		A.Args[3] = Args[3];	// Set lifetime
 		A.Args[4] = 1;	// Set to moving
-		A._Special2 = P_Random() & 63;
+		FogPatch(A).WeaveIndex = P_Random() & 63;
 	}
 }
 
-//==========================================================================
-//
-//	Actor::A_FogMove
-//
-//==========================================================================
-
-void Actor::A_FogMove(void)
+__states__
 {
-	float speed = itof(Args[0]);
-	float angle;
-	int weaveindex;
+	S_SPAWNFOG1('', 0, 20.0 / 35.0, S_SPAWNFOG1) { A_FogSpawn(); }
+}
 
-	if (!Args[4])
-		return;
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	bFloatBob = true;
+	IdleState = S_SPAWNFOG1;
+}
 
-	if (Args[3]-- <= 0)
-	{
-		SetState(DeathState);
-		return;
-	}
-
-	if ((Args[3] % 4) == 0)
-	{
-		weaveindex = _Special2;
-		Origin.z += FloatBobOffsets[weaveindex] / 2.0;
-		_Special2 = (weaveindex + 1) & 63;
-	}
-
-	angle = Angles.yaw;
-	Velocity.x = speed * cos(angle) * 35.0;
-	Velocity.y = speed * sin(angle) * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.15  2002/03/28 18:20:11  dj_jl
 //  Got rid of SetStateNF.
 //

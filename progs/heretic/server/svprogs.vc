@@ -45,7 +45,6 @@ boolean respawnmonsters;
 #include "world.vc"
 
 #include "savegame.vc"
-#include "states.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 #include "inter.vc"
@@ -60,15 +59,20 @@ boolean respawnmonsters;
 #include "usersubs.vc"
 #include "cheat.vc"
 #include "ai_subs.vc"
-#include "weapon.vc"
-#include "action.vc"
+#include "wpnbase.vc"
 #include "enemy.vc"
+
+#include "weapons.vc"
+
+#include "items.vc"
+#include "miscobj.vc"
 
 #include "bot.vc"
 
 #include "pod.vc"
 #include "volcano.vc"
 #include "teleglit.vc"
+#include "decorat.vc"
 
 #include "player.vc"
 #include "chicken.vc"
@@ -88,6 +92,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.14  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

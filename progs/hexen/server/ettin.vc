@@ -25,6 +25,54 @@
 
 //**************************************************************************
 //
+//	EttinMace
+//
+//**************************************************************************
+
+class EttinMace:Carcas
+{
+
+//==========================================================================
+//
+//  A_CheckFloor
+//
+//  Checks if an object hit the floor
+//
+//==========================================================================
+
+void A_CheckFloor(void)
+{
+	if (Origin.z <= FloorZ)
+	{
+		Origin.z = FloorZ;
+		//bLowGravity = false;
+		SetState(DeathState);
+	}
+}
+
+__states__
+{
+	S_ETTIN_MACE1('ETTB', 12, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
+	S_ETTIN_MACE2('ETTB', 13, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
+	S_ETTIN_MACE3('ETTB', 14, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
+	S_ETTIN_MACE4('ETTB', 15, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
+	S_ETTIN_MACE5('ETTB', 16, 5.0 / 35.0, S_ETTIN_MACE6) { }
+	S_ETTIN_MACE6('ETTB', 17, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
+	S_ETTIN_MACE7('ETTB', 18, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	IdleState = S_ETTIN_MACE1;
+	DeathState = S_ETTIN_MACE5;
+}
+
+}
+
+//**************************************************************************
+//
 //	Ettin
 //
 //**************************************************************************
@@ -157,6 +205,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.17  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

@@ -23,64 +23,78 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
+//**************************************************************************
 //
-//  Actor::A_VolcanoSet
+//	VolcanoTBlast
 //
-//==========================================================================
+//**************************************************************************
 
-void Actor::A_VolcanoSet(void)
+class VolcanoTBlast:Projectile
 {
-	StateTime = 3.0 + Random() * 3.5;
+
+__states__
+{
+	S_VOLCANOTBALL1('VTFB', 0, 4.0 / 35.0, S_VOLCANOTBALL2) { }
+	S_VOLCANOTBALL2('VTFB', 1, 4.0 / 35.0, S_VOLCANOTBALL1) { }
+	S_VOLCANOTBALLX1('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX2) { }
+	S_VOLCANOTBALLX2('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX3) { }
+	S_VOLCANOTBALLX3('SFFI', 0, 4.0 / 35.0, S_VOLCANOTBALLX4) { }
+	S_VOLCANOTBALLX4('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX5) { }
+	S_VOLCANOTBALLX5('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX6) { }
+	S_VOLCANOTBALLX6('SFFI', 3, 4.0 / 35.0, S_VOLCANOTBALLX7) { }
+	S_VOLCANOTBALLX7('SFFI', 4, 4.0 / 35.0, S_NULL) { }
 }
 
-//==========================================================================
-//
-//  Actor::A_VolcanoBlast
-//
-//==========================================================================
-
-void Actor::A_VolcanoBlast(void)
+defaultproperties
 {
-	int i;
-	int count;
-	Actor blast;
-	float angle;
+	Radius = 8.0;
+	Height = 6.0;
+	Speed = 70.0;
+	MissileDamage = 1;
+	bFireDamage = true;
+	bNoGravity = false;
+	IdleState = S_VOLCANOTBALL1;
+	DeathState = S_VOLCANOTBALLX1;
+	Effects = EF_DL_RED;
+}
 
-	count = 1 + (P_Random() % 3);
-	for (i = 0; i < count; i++)
+}
+
+//**************************************************************************
+//
+//	VolcanoBlast
+//
+//**************************************************************************
+
+class VolcanoBlast:Projectile
+{
+
+//==========================================================================
+//
+//  A_BeastPuff
+//
+//==========================================================================
+
+void A_BeastPuff(void)
+{
+	TVec org;
+
+	if (P_Random() > 64)
 	{
-		blast = Spawn(VolcanoBlast, Origin + vector(0.0, 0.0, 44.0));
-		blast.Instigator = self;
-		angle = Random() * 360.0;
-		blast.Angles.yaw = angle;
-		blast.Velocity.x = cos(angle) * 35.0;
-		blast.Velocity.y = sin(angle) * 35.0;
-		blast.Velocity.z = (2.5 + Random() * 4.0) * 35.0;
-		blast.PlaySound('VolcanoBlast', CHAN_VOICE);
-		blast.CheckMissileSpawn();
+		org.x = Origin.x + (Random() - Random()) * 4.0;
+		org.y = Origin.y + (Random() - Random()) * 4.0;
+		org.z = Origin.z + (Random() - Random()) * 4.0;
+		Spawn(Puffy, org);
 	}
 }
 
 //==========================================================================
 //
-//  Actor::A_VolcBallImpact
+//  A_VolcBallImpact
 //
 //==========================================================================
 
-void Actor::A_VolcBallImpact(void)
+void A_VolcBallImpact(void)
 {
 	int i;
 	Actor tiny;
@@ -105,9 +119,112 @@ void Actor::A_VolcBallImpact(void)
 	}
 }
 
+__states__
+{
+	S_VOLCANOBALL1('VFBL', 0, 4.0 / 35.0, S_VOLCANOBALL2) { A_BeastPuff(); }
+	S_VOLCANOBALL2('VFBL', 1, 4.0 / 35.0, S_VOLCANOBALL1) { A_BeastPuff(); }
+	S_VOLCANOBALLX1('XPL1', 0, 4.0 / 35.0, S_VOLCANOBALLX2) { A_VolcBallImpact(); }
+	S_VOLCANOBALLX2('XPL1', 1, 4.0 / 35.0, S_VOLCANOBALLX3) { }
+	S_VOLCANOBALLX3('XPL1', 2, 4.0 / 35.0, S_VOLCANOBALLX4) { }
+	S_VOLCANOBALLX4('XPL1', 3, 4.0 / 35.0, S_VOLCANOBALLX5) { }
+	S_VOLCANOBALLX5('XPL1', 4, 4.0 / 35.0, S_VOLCANOBALLX6) { }
+	S_VOLCANOBALLX6('XPL1', 5, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 8.0;
+	Speed = 70.0;
+	MissileDamage = 2;
+	bFireDamage = true;
+	bNoGravity = false;
+	IdleState = S_VOLCANOBALL1;
+	DeathState = S_VOLCANOBALLX1;
+	DeathSound = 'VolcanoHit';
+	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	Volcano
+//
+//**************************************************************************
+
+class Volcano:Decoration
+	__mobjinfo__(87)
+{
+
+//==========================================================================
+//
+//  A_VolcanoSet
+//
+//==========================================================================
+
+void A_VolcanoSet(void)
+{
+	StateTime = 3.0 + Random() * 3.5;
+}
+
+//==========================================================================
+//
+//  A_VolcanoBlast
+//
+//==========================================================================
+
+void A_VolcanoBlast(void)
+{
+	int i;
+	int count;
+	Actor blast;
+	float angle;
+
+	count = 1 + (P_Random() % 3);
+	for (i = 0; i < count; i++)
+	{
+		blast = Spawn(VolcanoBlast, Origin + vector(0.0, 0.0, 44.0));
+		blast.Instigator = self;
+		angle = Random() * 360.0;
+		blast.Angles.yaw = angle;
+		blast.Velocity.x = cos(angle) * 35.0;
+		blast.Velocity.y = sin(angle) * 35.0;
+		blast.Velocity.z = (2.5 + Random() * 4.0) * 35.0;
+		blast.PlaySound('VolcanoBlast', CHAN_VOICE);
+		blast.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_VOLCANO1('VLCO', 0, 350.0 / 35.0, S_VOLCANO2) { }
+	S_VOLCANO2('VLCO', 0, 35.0 / 35.0, S_VOLCANO3) { A_VolcanoSet(); }
+	S_VOLCANO3('VLCO', 1, 3.0 / 35.0, S_VOLCANO4) { }
+	S_VOLCANO4('VLCO', 2, 3.0 / 35.0, S_VOLCANO5) { }
+	S_VOLCANO5('VLCO', 3, 3.0 / 35.0, S_VOLCANO6) { }
+	S_VOLCANO6('VLCO', 1, 3.0 / 35.0, S_VOLCANO7) { }
+	S_VOLCANO7('VLCO', 2, 3.0 / 35.0, S_VOLCANO8) { }
+	S_VOLCANO8('VLCO', 3, 3.0 / 35.0, S_VOLCANO9) { }
+	S_VOLCANO9('VLCO', 4, 10.0 / 35.0, S_VOLCANO2) { A_VolcanoBlast(); }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 20.0;
+	bSolid = true;
+	IdleState = S_VOLCANO1;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

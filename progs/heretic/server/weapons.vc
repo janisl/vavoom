@@ -1,0 +1,2526 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//
+//	UNUSED
+//
+__states__(Weapon)
+{
+	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
+}
+
+//**************************************************************************
+//
+//	StaffPuff
+//
+//**************************************************************************
+
+class StaffPuff:Effect
+{
+
+__states__
+{
+	S_STAFFPUFF1('PUF3', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2) { }
+	S_STAFFPUFF2('PUF3', 1, 4.0 / 35.0, S_STAFFPUFF3) { }
+	S_STAFFPUFF3('PUF3', 2, 4.0 / 35.0, S_STAFFPUFF4) { }
+	S_STAFFPUFF4('PUF3', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_STAFFPUFF1;
+	AttackSound = 'StaffHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	StaffPuff2
+//
+//**************************************************************************
+
+class StaffPuff2:Effect
+{
+
+__states__
+{
+	S_STAFFPUFF2_1('PUF4', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_2) { }
+	S_STAFFPUFF2_2('PUF4', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_3) { }
+	S_STAFFPUFF2_3('PUF4', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_4) { }
+	S_STAFFPUFF2_4('PUF4', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_5) { }
+	S_STAFFPUFF2_5('PUF4', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_6) { }
+	S_STAFFPUFF2_6('PUF4', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_STAFFPUFF2_1;
+	AttackSound = 'StaffHit2';
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponStaff
+//
+//**************************************************************************
+
+class WeaponStaff:Weapon
+{
+
+//==========================================================================
+//
+//	WeaponLevel2Init
+//
+//==========================================================================
+
+void WeaponLevel2Init(void)
+{
+	SetState(ReadyState2);
+}
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade(void)
+{
+	Player->PendingWeapon = Player->ReadyWeapon;
+}
+
+//===========================================================================
+//
+//  A_StaffAttackPL1
+//
+//===========================================================================
+
+void A_StaffAttackPL1(void)
+{
+	TAVec angles;
+	int damage;
+	TVec dir;
+
+	damage = 5 + (P_Random() & 15);
+	angles = Player->MO.Angles;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = StaffPuff;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		// turn to face target
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+}
+
+//===========================================================================
+//
+//  A_StaffAttackPL2
+//
+//===========================================================================
+
+void A_StaffAttackPL2(void)
+{
+	TAVec angles;
+	int damage;
+	TVec dir;
+
+	// P_inter.c:DamageMobj() handles target momentums
+	damage = 18 + (P_Random() & 63);
+
+	angles = Player->MO.Angles;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = StaffPuff2;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		// turn to face target
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+}
+
+__states__
+{
+	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) { A_WeaponReady(); }
+	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) { A_Lower(); }
+	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) { A_Raise(); }
+	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2)
+	{
+		// Check for staff PL2 active sound
+		if (Random() < 0.5)
+		{
+			Player->MO.PlaySound('StaffActive', CHAN_WEAPON);
+		}
+		A_WeaponReady();
+	}
+	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) { A_WeaponReady(); }
+	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) { A_WeaponReady(); }
+	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) { A_Lower(); }
+	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) { A_Raise(); }
+	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) { }
+	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) { A_StaffAttackPL1(); }
+	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) { A_ReFire(); }
+	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) { }
+	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) { A_StaffAttackPL2(); }
+	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_STAFFUP;
+	DownState = S_STAFFDOWN;
+	ReadyState = S_STAFFREADY;
+	AttackState = S_STAFFATK1_1;
+	HoldAttackState = S_STAFFATK1_1;
+	UpState2 = S_STAFFUP2;
+	DownState2 = S_STAFFDOWN2;
+	ReadyState2 = S_STAFFREADY2_1;
+	AttackState2 = S_STAFFATK2_1;
+	HoldAttackState2 = S_STAFFATK2_1;
+	PSpriteSY = 0.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	GauntletPuff1
+//
+//**************************************************************************
+
+class GauntletPuff1:Effect
+{
+
+__states__
+{
+	S_GAUNTLETPUFF1_1('PUF1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_2) { }
+	S_GAUNTLETPUFF1_2('PUF1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_3) { }
+	S_GAUNTLETPUFF1_3('PUF1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_4) { }
+	S_GAUNTLETPUFF1_4('PUF1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_GAUNTLETPUFF1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	GauntletPuff2
+//
+//**************************************************************************
+
+class GauntletPuff2:Effect
+{
+
+__states__
+{
+	S_GAUNTLETPUFF2_1('PUF1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_2) { }
+	S_GAUNTLETPUFF2_2('PUF1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_3) { }
+	S_GAUNTLETPUFF2_3('PUF1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_4) { }
+	S_GAUNTLETPUFF2_4('PUF1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_GAUNTLETPUFF2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponGauntlets
+//
+//**************************************************************************
+
+class WeaponGauntlets:Weapon
+{
+
+//==========================================================================
+//
+//	WeaponLevel2Init
+//
+//==========================================================================
+
+void WeaponLevel2Init(void)
+{
+	SetState(ReadyState2);
+}
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade(void)
+{
+	Player->PendingWeapon = Player->ReadyWeapon;
+}
+
+//===========================================================================
+//
+//  A_GauntletAttack
+//
+//===========================================================================
+
+void A_GauntletAttack(void)
+{
+	float angle;
+	int damage;
+	float slope;
+	int randVal;
+	float dist;
+	TAVec angles;
+	TVec dir;
+
+	SX = Random() * 4.0 - 2.0;
+	SY = WEAPONTOP + Random() * 4.0;
+	angles = Player->MO.Angles;
+	if (Player->Powers[pw_weaponlevel2])
+	{
+		damage = HITDICE(2);
+		dist = 4.0 * MELEERANGE;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 16.0);
+		PuffType = GauntletPuff2;
+	}
+	else
+	{
+		damage = HITDICE(2);
+		dist = MELEERANGE + 0.00001;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		PuffType = GauntletPuff1;
+	}
+	dir = AimLineAttack(Player->MO, angles, dist);
+	LineAttack(Player->MO, dir, dist, damage);
+	if (!linetarget)
+	{
+		if (P_Random() > 64)
+		{
+			Player->ExtraLight = !Player->ExtraLight;
+		}
+		Player->MO.PlaySound('GauntletFull', CHAN_WEAPON);
+		return;
+	}
+	randVal = P_Random();
+	if (randVal < 64)
+	{
+		Player->ExtraLight = 0;
+	}
+	else if (randVal < 160)
+	{
+		Player->ExtraLight = 1;
+	}
+	else
+	{
+		Player->ExtraLight = 2;
+	}
+	if (Player->Powers[pw_weaponlevel2])
+	{
+		PlayerPawn(Player->MO).GiveBody(damage >> 1);
+		Player->MO.PlaySound('GauntletHit2', CHAN_WEAPON);
+	}
+	else
+	{
+		Player->MO.PlaySound('GauntletHit', CHAN_WEAPON);
+	}
+	// turn to face target
+	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
+		linetarget.Origin.x - Player->MO.Origin.x);
+	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
+	{
+		if (AngleMod360(angle - Player->MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Player->MO.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		else
+			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw - 90.0 / 20.0);
+	}
+	else
+	{
+		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
+			Player->MO.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		else
+			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw + 90.0 / 20.0);
+	}
+	Player->MO.bJustAttacked = true;
+}
+
+__states__
+{
+	S_GAUNTLETREADY('GAUN', 0, 1.0 / 35.0, S_GAUNTLETREADY) { A_WeaponReady(); }
+	S_GAUNTLETDOWN('GAUN', 0, 1.0 / 35.0, S_GAUNTLETDOWN) { A_Lower(); }
+	S_GAUNTLETUP('GAUN', 0, 1.0 / 35.0, S_GAUNTLETUP) { A_Raise(); }
+	S_GAUNTLETREADY2_1('GAUN', 6, 4.0 / 35.0, S_GAUNTLETREADY2_2) { A_WeaponReady(); }
+	S_GAUNTLETREADY2_2('GAUN', 7, 4.0 / 35.0, S_GAUNTLETREADY2_3) { A_WeaponReady(); }
+	S_GAUNTLETREADY2_3('GAUN', 8, 4.0 / 35.0, S_GAUNTLETREADY2_1) { A_WeaponReady(); }
+	S_GAUNTLETDOWN2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETDOWN2) { A_Lower(); }
+	S_GAUNTLETUP2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETUP2) { A_Raise(); }
+	S_GAUNTLETATK1_1('GAUN', 1, 4.0 / 35.0, S_GAUNTLETATK1_2) { }
+	S_GAUNTLETATK1_2('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_3) { }
+	S_GAUNTLETATK1_3('GAUN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_4) { A_GauntletAttack(); }
+	S_GAUNTLETATK1_4('GAUN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_5) { A_GauntletAttack(); }
+	S_GAUNTLETATK1_5('GAUN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_6) { A_GauntletAttack(); }
+	S_GAUNTLETATK1_6('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_7) { A_ReFire(); }
+	S_GAUNTLETATK1_7('GAUN', 1, 4.0 / 35.0, S_GAUNTLETREADY) { A_Light0(); }
+	S_GAUNTLETATK2_1('GAUN', 9, 4.0 / 35.0, S_GAUNTLETATK2_2) { }
+	S_GAUNTLETATK2_2('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_3) { }
+	S_GAUNTLETATK2_3('GAUN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_4) { A_GauntletAttack(); }
+	S_GAUNTLETATK2_4('GAUN', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_5) { A_GauntletAttack(); }
+	S_GAUNTLETATK2_5('GAUN', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_6) { A_GauntletAttack(); }
+	S_GAUNTLETATK2_6('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_7) { A_ReFire(); }
+	S_GAUNTLETATK2_7('GAUN', 9, 4.0 / 35.0, S_GAUNTLETREADY2_1) { A_Light0(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_GAUNTLETUP;
+	DownState = S_GAUNTLETDOWN;
+	ReadyState = S_GAUNTLETREADY;
+	AttackState = S_GAUNTLETATK1_1;
+	HoldAttackState = S_GAUNTLETATK1_3;
+	UpState2 = S_GAUNTLETUP2;
+	DownState2 = S_GAUNTLETDOWN2;
+	ReadyState2 = S_GAUNTLETREADY2_1;
+	AttackState2 = S_GAUNTLETATK2_1;
+	HoldAttackState2 = S_GAUNTLETATK2_3;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	GoldWandPuff1
+//
+//**************************************************************************
+
+class GoldWandPuff1:Effect
+{
+
+__states__
+{
+	S_GWANDPUFF1_1('PUF2', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_2) { }
+	S_GWANDPUFF1_2('PUF2', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_3) { }
+	S_GWANDPUFF1_3('PUF2', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_4) { }
+	S_GWANDPUFF1_4('PUF2', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_5) { }
+	S_GWANDPUFF1_5('PUF2', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_GWANDPUFF1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	GoldWandPuff2
+//
+//**************************************************************************
+
+class GoldWandPuff2:Effect
+{
+
+__states__
+{
+	S_GWANDPUFF2_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF2_2) { }
+	S_GWANDPUFF2_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF2_3) { }
+	S_GWANDPUFF2_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF2_4) { }
+	S_GWANDPUFF2_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_GWANDPUFF2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	GoldWandMissile2
+//
+//**************************************************************************
+
+class GoldWandMissile2:Projectile
+{
+
+__states__
+{
+	S_GWANDFX2_1('FX01', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_2) { }
+	S_GWANDFX2_2('FX01', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX2_1) { }
+	S_GWANDFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_2) { }
+	S_GWANDFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_3) { }
+	S_GWANDFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_4) { }
+	S_GWANDFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 630.0;
+	MissileDamage = 1;
+	IdleState = S_GWANDFX2_1;
+	DeathState = S_GWANDFXI1_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	GoldWandMissile1
+//
+//	UNUSED
+//
+//**************************************************************************
+
+class GoldWandMissile1:GoldWandMissile2
+{
+
+__states__
+{
+	S_GWANDFX1_1('FX01', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_2) { }
+	S_GWANDFX1_2('FX01', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_1) { }
+}
+
+defaultproperties
+{
+	Speed = 770.0;
+	MissileDamage = 2;
+	IdleState = S_GWANDFX1_1;
+	DeathSound = 'GoldWandFire';
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponGoldWand
+//
+//**************************************************************************
+
+class WeaponGoldWand:Weapon
+{
+
+//===========================================================================
+//
+//  A_FireGoldWandPL1
+//
+//===========================================================================
+
+void A_FireGoldWandPL1(void)
+{
+	int damage;
+	TVec dir;
+
+	Player->Ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	damage = 7 + (P_Random() & 7);
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
+	if (Player->Refire)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
+	}
+	PuffType = GoldWandPuff1;
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireGoldWandPL2
+//
+//===========================================================================
+
+void A_FireGoldWandPL2(void)
+{
+	int i;
+	int damage;
+	float momz;
+	TAVec angles;
+	TVec dir;
+
+	Player->Ammo[am_goldwand] -=
+		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
+	PuffType = GoldWandPuff2;
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
+	VectorAngles(&dir, &angles);
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
+		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
+		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
+	VectorRotateAroundZ(&dir, -45.0 / 8.0);
+	for (i = 0; i < 5; i++)
+	{
+		damage = 1 + (P_Random() & 7);
+		LineAttack(Player->MO, dir, MISSILERANGE, damage);
+		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
+	}
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_GOLDWANDREADY('GWND', 0, 1.0 / 35.0, S_GOLDWANDREADY) { A_WeaponReady(); }
+	S_GOLDWANDDOWN('GWND', 0, 1.0 / 35.0, S_GOLDWANDDOWN) { A_Lower(); }
+	S_GOLDWANDUP('GWND', 0, 1.0 / 35.0, S_GOLDWANDUP) { A_Raise(); }
+	S_GOLDWANDATK1_1('GWND', 1, 3.0 / 35.0, S_GOLDWANDATK1_2) { }
+	S_GOLDWANDATK1_2('GWND', 2, 5.0 / 35.0, S_GOLDWANDATK1_3) { A_FireGoldWandPL1(); }
+	S_GOLDWANDATK1_3('GWND', 3, 3.0 / 35.0, S_GOLDWANDATK1_4) { }
+	S_GOLDWANDATK1_4('GWND', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+	S_GOLDWANDATK2_1('GWND', 1, 3.0 / 35.0, S_GOLDWANDATK2_2) { }
+	S_GOLDWANDATK2_2('GWND', 2, 4.0 / 35.0, S_GOLDWANDATK2_3) { A_FireGoldWandPL2(); }
+	S_GOLDWANDATK2_3('GWND', 3, 3.0 / 35.0, S_GOLDWANDATK2_4) { }
+	S_GOLDWANDATK2_4('GWND', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_goldwand;
+	UpState = S_GOLDWANDUP;
+	DownState = S_GOLDWANDDOWN;
+	ReadyState = S_GOLDWANDREADY;
+	AttackState = S_GOLDWANDATK1_1;
+	HoldAttackState = S_GOLDWANDATK1_1;
+	UpState2 = S_GOLDWANDUP;
+	DownState2 = S_GOLDWANDDOWN;
+	ReadyState2 = S_GOLDWANDREADY;
+	AttackState2 = S_GOLDWANDATK2_1;
+	HoldAttackState2 = S_GOLDWANDATK2_1;
+	PSpriteSY = 5.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	CrossbowFX1
+//
+//**************************************************************************
+
+class CrossbowFX1:Projectile
+{
+
+__states__
+{
+	S_CRBOWFX1('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX1) { }
+	S_CRBOWFXI1_1('FX03', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_2) { }
+	S_CRBOWFXI1_2('FX03', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_3) { }
+	S_CRBOWFXI1_3('FX03', 9 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 1050.0;
+	MissileDamage = 10;
+	IdleState = S_CRBOWFX1;
+	DeathState = S_CRBOWFXI1_1;
+	SightSound = 'BowFire';
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_GREEN;
+}
+
+}
+
+//**************************************************************************
+//
+//	CrossbowFX4
+//
+//**************************************************************************
+
+class CrossbowFX4:Effect
+{
+
+__states__
+{
+	S_CRBOWFX4_1('FX03', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFX4_2) { }
+	S_CRBOWFX4_2('FX03', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_CRBOWFX4_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	CrossbowFX2
+//
+//**************************************************************************
+
+class CrossbowFX2:CrossbowFX1
+{
+
+//===========================================================================
+//
+//  A_BoltSpark
+//
+//===========================================================================
+
+void A_BoltSpark(void)
+{
+	Actor spark;
+
+	if (P_Random() > 50)
+	{
+		spark = Spawn(CrossbowFX4, Origin);
+		spark.Origin.x += (Random() - Random()) * 4.0;
+		spark.Origin.y += (Random() - Random()) * 4.0;
+	}
+}
+
+__states__
+{
+	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
+}
+
+defaultproperties
+{
+	Speed = 1120.0;
+	MissileDamage = 6;
+	IdleState = S_CRBOWFX2;
+}
+
+}
+
+//**************************************************************************
+//
+//	CrossbowFX3
+//
+//**************************************************************************
+
+class CrossbowFX3:Projectile
+{
+
+__states__
+{
+	S_CRBOWFX3('FX03', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX3) { }
+	S_CRBOWFXI3_1('FX03', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_2) { }
+	S_CRBOWFXI3_2('FX03', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_3) { }
+	S_CRBOWFXI3_3('FX03', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 2;
+	bWindThrust = true;
+	bThruGhost = true;
+	IdleState = S_CRBOWFX3;
+	DeathState = S_CRBOWFXI3_1;
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_GREEN;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponCrossbow
+//
+//**************************************************************************
+
+class WeaponCrossbow:Weapon
+{
+
+//===========================================================================
+//
+//  A_FireCrossbowPL1
+//
+//===========================================================================
+
+void A_FireCrossbowPL1(void)
+{
+	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
+	Player->MO.SpawnPlayerMissile(CrossbowFX1);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+}
+
+//===========================================================================
+//
+//  A_FireCrossbowPL2
+//
+//===========================================================================
+
+void A_FireCrossbowPL2(void)
+{
+	Player->Ammo[am_crossbow] -=
+		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
+	Player->MO.SpawnPlayerMissile(CrossbowFX2);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 5.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 5.0)));
+}
+
+__states__
+{
+	S_CRBOW1('CRBW', 0, 1.0 / 35.0, S_CRBOW2) { A_WeaponReady(); }
+	S_CRBOW2('CRBW', 0, 1.0 / 35.0, S_CRBOW3) { A_WeaponReady(); }
+	S_CRBOW3('CRBW', 0, 1.0 / 35.0, S_CRBOW4) { A_WeaponReady(); }
+	S_CRBOW4('CRBW', 0, 1.0 / 35.0, S_CRBOW5) { A_WeaponReady(); }
+	S_CRBOW5('CRBW', 0, 1.0 / 35.0, S_CRBOW6) { A_WeaponReady(); }
+	S_CRBOW6('CRBW', 0, 1.0 / 35.0, S_CRBOW7) { A_WeaponReady(); }
+	S_CRBOW7('CRBW', 1, 1.0 / 35.0, S_CRBOW8) { A_WeaponReady(); }
+	S_CRBOW8('CRBW', 1, 1.0 / 35.0, S_CRBOW9) { A_WeaponReady(); }
+	S_CRBOW9('CRBW', 1, 1.0 / 35.0, S_CRBOW10) { A_WeaponReady(); }
+	S_CRBOW10('CRBW', 1, 1.0 / 35.0, S_CRBOW11) { A_WeaponReady(); }
+	S_CRBOW11('CRBW', 1, 1.0 / 35.0, S_CRBOW12) { A_WeaponReady(); }
+	S_CRBOW12('CRBW', 1, 1.0 / 35.0, S_CRBOW13) { A_WeaponReady(); }
+	S_CRBOW13('CRBW', 2, 1.0 / 35.0, S_CRBOW14) { A_WeaponReady(); }
+	S_CRBOW14('CRBW', 2, 1.0 / 35.0, S_CRBOW15) { A_WeaponReady(); }
+	S_CRBOW15('CRBW', 2, 1.0 / 35.0, S_CRBOW16) { A_WeaponReady(); }
+	S_CRBOW16('CRBW', 2, 1.0 / 35.0, S_CRBOW17) { A_WeaponReady(); }
+	S_CRBOW17('CRBW', 2, 1.0 / 35.0, S_CRBOW18) { A_WeaponReady(); }
+	S_CRBOW18('CRBW', 2, 1.0 / 35.0, S_CRBOW1) { A_WeaponReady(); }
+	S_CRBOWDOWN('CRBW', 0, 1.0 / 35.0, S_CRBOWDOWN) { A_Lower(); }
+	S_CRBOWUP('CRBW', 0, 1.0 / 35.0, S_CRBOWUP) { A_Raise(); }
+	S_CRBOWATK1_1('CRBW', 3, 6.0 / 35.0, S_CRBOWATK1_2) { A_FireCrossbowPL1(); }
+	S_CRBOWATK1_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK1_3) { }
+	S_CRBOWATK1_3('CRBW', 5, 3.0 / 35.0, S_CRBOWATK1_4) { }
+	S_CRBOWATK1_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK1_5) { }
+	S_CRBOWATK1_5('CRBW', 7, 3.0 / 35.0, S_CRBOWATK1_6) { }
+	S_CRBOWATK1_6('CRBW', 0, 4.0 / 35.0, S_CRBOWATK1_7) { }
+	S_CRBOWATK1_7('CRBW', 1, 4.0 / 35.0, S_CRBOWATK1_8) { }
+	S_CRBOWATK1_8('CRBW', 2, 5.0 / 35.0, S_CRBOW1) { A_ReFire(); }
+	S_CRBOWATK2_1('CRBW', 3, 5.0 / 35.0, S_CRBOWATK2_2) { A_FireCrossbowPL2(); }
+	S_CRBOWATK2_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK2_3) { }
+	S_CRBOWATK2_3('CRBW', 5, 2.0 / 35.0, S_CRBOWATK2_4) { }
+	S_CRBOWATK2_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK2_5) { }
+	S_CRBOWATK2_5('CRBW', 7, 2.0 / 35.0, S_CRBOWATK2_6) { }
+	S_CRBOWATK2_6('CRBW', 0, 3.0 / 35.0, S_CRBOWATK2_7) { }
+	S_CRBOWATK2_7('CRBW', 1, 3.0 / 35.0, S_CRBOWATK2_8) { }
+	S_CRBOWATK2_8('CRBW', 2, 4.0 / 35.0, S_CRBOW1) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_crossbow;
+	UpState = S_CRBOWUP;
+	DownState = S_CRBOWDOWN;
+	ReadyState = S_CRBOW1;
+	AttackState = S_CRBOWATK1_1;
+	HoldAttackState = S_CRBOWATK1_1;
+	UpState2 = S_CRBOWUP;
+	DownState2 = S_CRBOWDOWN;
+	ReadyState2 = S_CRBOW1;
+	AttackState2 = S_CRBOWATK2_1;
+	HoldAttackState2 = S_CRBOWATK2_1;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	BlasterPuff1
+//
+//**************************************************************************
+
+class BlasterPuff1:Effect
+{
+
+__states__
+{
+	S_BLASTERPUFF1_1('FX17', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_2) { }
+	S_BLASTERPUFF1_2('FX17', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_3) { }
+	S_BLASTERPUFF1_3('FX17', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_4) { }
+	S_BLASTERPUFF1_4('FX17', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF1_5) { }
+	S_BLASTERPUFF1_5('FX17', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_BLASTERPUFF1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BlasterPuff2
+//
+//**************************************************************************
+
+class BlasterPuff2:Effect
+{
+
+__states__
+{
+	S_BLASTERPUFF2_1('FX17', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_2) { }
+	S_BLASTERPUFF2_2('FX17', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_3) { }
+	S_BLASTERPUFF2_3('FX17', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_4) { }
+	S_BLASTERPUFF2_4('FX17', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_5) { }
+	S_BLASTERPUFF2_5('FX17', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_6) { }
+	S_BLASTERPUFF2_6('FX17', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_7) { }
+	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_BLASTERPUFF2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BlasterSmoke
+//
+//**************************************************************************
+
+class BlasterSmoke:Effect
+{
+
+__states__
+{
+	S_BLASTERSMOKE1('FX18', 7, 4.0 / 35.0, S_BLASTERSMOKE2) { }
+	S_BLASTERSMOKE2('FX18', 8, 4.0 / 35.0, S_BLASTERSMOKE3) { }
+	S_BLASTERSMOKE3('FX18', 9, 4.0 / 35.0, S_BLASTERSMOKE4) { }
+	S_BLASTERSMOKE4('FX18', 10, 4.0 / 35.0, S_BLASTERSMOKE5) { }
+	S_BLASTERSMOKE5('FX18', 11, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_BLASTERSMOKE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Ripper
+//
+//**************************************************************************
+
+class Ripper:Projectile
+{
+
+__states__
+{
+	S_RIPPER1('FX18', 12, 4.0 / 35.0, S_RIPPER2) { }
+	S_RIPPER2('FX18', 13, 5.0 / 35.0, S_RIPPER1) { }
+	S_RIPPERX1('FX18', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX2) { }
+	S_RIPPERX2('FX18', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX3) { }
+	S_RIPPERX3('FX18', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX4) { }
+	S_RIPPERX4('FX18', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_RIPPERX5) { }
+	S_RIPPERX5('FX18', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 6.0;
+	Speed = 490.0;
+	MissileDamage = 1;
+	bRip = true;
+	IdleState = S_RIPPER1;
+	DeathState = S_RIPPERX1;
+	DeathSound = 'SkullRodHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	BlasterFX1
+//
+//**************************************************************************
+
+class BlasterFX1:Projectile
+{
+
+//===========================================================================
+//
+//  A_SpawnRippers
+//
+//===========================================================================
+
+void A_SpawnRippers(void)
+{
+	int i;
+	float angle;
+	Actor ripper;
+
+	for (i = 0; i < 8; i++)
+	{
+		ripper = Spawn(Ripper, Origin);
+		angle = itof(i) * 45.0;
+		ripper.Instigator = Instigator;
+		ripper.Angles.yaw = angle;
+		ripper.Velocity.x = ripper.Speed * cos(angle);
+		ripper.Velocity.y = ripper.Speed * sin(angle);
+		ripper.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_BLASTERFX1_1('ACLO', 4, 200.0 / 35.0, S_BLASTERFX1_1) { }
+	S_BLASTERFXI1_1('FX18', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_2) { A_SpawnRippers(); }
+	S_BLASTERFXI1_2('FX18', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_3) { }
+	S_BLASTERFXI1_3('FX18', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_4) { }
+	S_BLASTERFXI1_4('FX18', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_5) { }
+	S_BLASTERFXI1_5('FX18', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_6) { }
+	S_BLASTERFXI1_6('FX18', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_7) { }
+	S_BLASTERFXI1_7('FX18', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 6440.0;
+	MissileDamage = 2;
+	IdleState = S_BLASTERFX1_1;
+	DeathState = S_BLASTERFXI1_1;
+	DeathSound = 'BlasterHit';
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponBlaster
+//
+//**************************************************************************
+
+class WeaponBlaster:Weapon
+{
+
+//===========================================================================
+//
+//  A_FireBlasterPL1
+//
+//===========================================================================
+
+void A_FireBlasterPL1(void)
+{
+	int damage;
+	float bulletslope;
+	TVec dir;
+
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player->Ammo[am_blaster] -= USE_BLSR_AMMO_1;
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
+	damage = HITDICE(4);
+	if (Player->Refire)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
+	}
+	PuffType = BlasterPuff1;
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	Player->MO.PlaySound('BlasterFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireBlasterPL2
+//
+//===========================================================================
+
+void A_FireBlasterPL2(void)
+{
+	Actor A;
+
+	Player->Ammo[am_blaster] -=
+		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
+	A = Player->MO.SpawnPlayerMissile(BlasterFX1);
+	if (A)
+	{
+		A.bBlaster = true;
+	}
+	Player->MO.PlaySound('BlasterFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_BLASTERREADY('BLSR', 0, 1.0 / 35.0, S_BLASTERREADY) { A_WeaponReady(); }
+	S_BLASTERDOWN('BLSR', 0, 1.0 / 35.0, S_BLASTERDOWN) { A_Lower(); }
+	S_BLASTERUP('BLSR', 0, 1.0 / 35.0, S_BLASTERUP) { A_Raise(); }
+	S_BLASTERATK1_1('BLSR', 1, 3.0 / 35.0, S_BLASTERATK1_2) { }
+	S_BLASTERATK1_2('BLSR', 2, 3.0 / 35.0, S_BLASTERATK1_3) { }
+	S_BLASTERATK1_3('BLSR', 3, 2.0 / 35.0, S_BLASTERATK1_4) { A_FireBlasterPL1(); }
+	S_BLASTERATK1_4('BLSR', 2, 2.0 / 35.0, S_BLASTERATK1_5) { }
+	S_BLASTERATK1_5('BLSR', 1, 2.0 / 35.0, S_BLASTERATK1_6) { }
+	S_BLASTERATK1_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
+	S_BLASTERATK2_1('BLSR', 1, 0.0 / 35.0, S_BLASTERATK2_2) { }
+	S_BLASTERATK2_2('BLSR', 2, 0.0 / 35.0, S_BLASTERATK2_3) { }
+	S_BLASTERATK2_3('BLSR', 3, 3.0 / 35.0, S_BLASTERATK2_4) { A_FireBlasterPL2(); }
+	S_BLASTERATK2_4('BLSR', 2, 4.0 / 35.0, S_BLASTERATK2_5) { }
+	S_BLASTERATK2_5('BLSR', 1, 4.0 / 35.0, S_BLASTERATK2_6) { }
+	S_BLASTERATK2_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_blaster;
+	UpState = S_BLASTERUP;
+	DownState = S_BLASTERDOWN;
+	ReadyState = S_BLASTERREADY;
+	AttackState = S_BLASTERATK1_1;
+	HoldAttackState = S_BLASTERATK1_3;
+	UpState2 = S_BLASTERUP;
+	DownState2 = S_BLASTERDOWN;
+	ReadyState2 = S_BLASTERREADY;
+	AttackState2 = S_BLASTERATK2_1;
+	HoldAttackState2 = S_BLASTERATK2_3;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	HornRodMissile1
+//
+//**************************************************************************
+
+class HornRodMissile1:Projectile
+{
+
+__states__
+{
+	S_HRODFX1_1('FX00', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_HRODFX1_2) { }
+	S_HRODFX1_2('FX00', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_HRODFX1_1) { }
+	S_HRODFXI1_1('FX00', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI1_2) { }
+	S_HRODFXI1_2('FX00', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI1_3) { }
+	S_HRODFXI1_3('FX00', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI1_4) { }
+	S_HRODFXI1_4('FX00', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI1_5) { }
+	S_HRODFXI1_5('FX00', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI1_6) { }
+	S_HRODFXI1_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 770.0;
+	MissileDamage = 3;
+	bWindThrust = true;
+	IdleState = S_HRODFX1_1;
+	DeathState = S_HRODFXI1_1;
+	SightSound = 'SkullRodFire';
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	RainPlayer1
+//
+//**************************************************************************
+
+class RainPlayer1:Projectile
+{
+
+int AirDeathState;
+
+//===========================================================================
+//
+//  A_RainImpact
+//
+//===========================================================================
+
+void A_RainImpact(void)
+{
+	if (Origin.z > FloorZ)
+	{
+		SetState(AirDeathState);
+	}
+	else if (P_Random() < 40)
+	{
+		HitFloorEffect();
+	}
+}
+
+__states__
+{
+	S_RAINPLR1_1('FX20', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR1X_1('FX20', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_2) { A_RainImpact(); }
+	S_RAINPLR1X_2('FX20', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_3) { }
+	S_RAINPLR1X_3('FX20', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_4) { }
+	S_RAINPLR1X_4('FX20', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_5) { }
+	S_RAINPLR1X_5('FX20', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR1_1('FX20', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_2) { }
+	S_RAINAIRXPLR1_2('FX20', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_3) { }
+	S_RAINAIRXPLR1_3('FX20', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 12.0;
+	Speed = 420.0;
+	MissileDamage = 5;
+	IdleState = S_RAINPLR1_1;
+	DeathState = S_RAINPLR1X_1;
+	AirDeathState = S_RAINAIRXPLR1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	RainPlayer2
+//
+//**************************************************************************
+
+class RainPlayer2:RainPlayer1
+{
+
+__states__
+{
+	S_RAINPLR2_1('FX21', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR2X_1('FX21', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_2) { A_RainImpact(); }
+	S_RAINPLR2X_2('FX21', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_3) { }
+	S_RAINPLR2X_3('FX21', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_4) { }
+	S_RAINPLR2X_4('FX21', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR2X_5) { }
+	S_RAINPLR2X_5('FX21', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR2_1('FX21', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_2) { }
+	S_RAINAIRXPLR2_2('FX21', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR2_3) { }
+	S_RAINAIRXPLR2_3('FX21', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_RAINPLR2_1;
+	DeathState = S_RAINPLR2X_1;
+	AirDeathState = S_RAINAIRXPLR2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	RainPlayer3
+//
+//**************************************************************************
+
+class RainPlayer3:RainPlayer1
+{
+
+__states__
+{
+	S_RAINPLR3_1('FX22', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR3X_1('FX22', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_2) { A_RainImpact(); }
+	S_RAINPLR3X_2('FX22', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_3) { }
+	S_RAINPLR3X_3('FX22', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_4) { }
+	S_RAINPLR3X_4('FX22', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_5) { }
+	S_RAINPLR3X_5('FX22', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR3_1('FX22', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR3_2) { }
+	S_RAINAIRXPLR3_2('FX22', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR3_3) { }
+	S_RAINAIRXPLR3_3('FX22', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_RAINPLR3_1;
+	DeathState = S_RAINPLR3X_1;
+	AirDeathState = S_RAINAIRXPLR3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	RainPlayer4
+//
+//**************************************************************************
+
+class RainPlayer4:RainPlayer1
+{
+
+__states__
+{
+	S_RAINPLR4_1('FX23', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR4X_1('FX23', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_2) { A_RainImpact(); }
+	S_RAINPLR4X_2('FX23', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_3) { }
+	S_RAINPLR4X_3('FX23', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_4) { }
+	S_RAINPLR4X_4('FX23', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR4X_5) { }
+	S_RAINPLR4X_5('FX23', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR4_1('FX23', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR4_2) { }
+	S_RAINAIRXPLR4_2('FX23', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR4_3) { }
+	S_RAINAIRXPLR4_3('FX23', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_RAINPLR4_1;
+	DeathState = S_RAINPLR4X_1;
+	AirDeathState = S_RAINAIRXPLR4_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	HornRodMissile2
+//
+//**************************************************************************
+
+class HornRodMissile2:Projectile
+{
+
+int RainColor;
+
+//===========================================================================
+//
+//  A_SkullRodPL2Seek
+//
+//===========================================================================
+
+void A_SkullRodPL2Seek(void)
+{
+	SeekerMissile(10.0, 30.0);
+}
+
+//===========================================================================
+//
+//  A_AddPlayerRain
+//
+//===========================================================================
+
+void A_AddPlayerRain(void)
+{
+	player_t *player;
+
+	player = Instigator.Player;
+	if (!player || !player->bActive)
+	{
+		// Player left the game
+		return;
+	}
+	if (player->Health <= 0)
+	{
+		// Player is dead
+		return;
+	}
+	if (player->Rain1 && player->Rain2)
+	{
+		// Terminate an active rain
+		if (player->Rain1->Health < player->Rain2->Health)
+		{
+			if (player->Rain1->Health > 16)
+			{
+				player->Rain1->Health = 16;
+			}
+			player->Rain1 = NULL;
+		}
+		else
+		{
+			if (player->Rain2->Health > 16)
+			{
+				player->Rain2->Health = 16;
+			}
+			player->Rain2 = NULL;
+		}
+	}
+	// Add rain mobj to list
+	if (player->Rain1)
+	{
+		player->Rain2 = this;
+	}
+	else
+	{
+		player->Rain1 = this;
+	}
+}
+
+//===========================================================================
+//
+//  A_HideInCeiling
+//
+//===========================================================================
+
+void A_HideInCeiling(void)
+{
+	Origin.z = CeilingZ + 4.0;
+}
+
+//===========================================================================
+//
+//  A_SkullRodStorm
+//
+//===========================================================================
+
+void A_SkullRodStorm(void)
+{
+	float x;
+	float y;
+	Actor A;
+	player_t *player;
+	classid rain_type;
+
+	if (Health-- == 0)
+	{
+		SetState(S_NULL);
+		player = Instigator.Player;
+		if (!player || !player->bActive)
+		{
+			// Player left the game
+			return;
+		}
+		if (player->Health <= 0)
+		{
+			// Player is dead
+			return;
+		}
+		if (player->Rain1 == this)
+		{
+			player->Rain1 = NULL;
+		}
+		else if (player->Rain2 == this)
+		{
+			player->Rain2 = NULL;
+		}
+		return;
+	}
+	if (Random() < 0.1)
+	{
+		// Fudge rain frequency
+		return;
+	}
+	x = Origin.x + Random() * 128.0 - 64.0;
+	y = Origin.y + Random() * 128.0 - 64.0;
+	switch (RainColor)
+	{
+	case 0: rain_type = RainPlayer1; break;
+	case 1: rain_type = RainPlayer2; break;
+	case 2: rain_type = RainPlayer3; break;
+	case 3: rain_type = RainPlayer4; break;
+	}
+	A = Spawn(rain_type, vector(x, y, ONCEILINGZ));
+	A.Instigator = Instigator;
+	A.Velocity.x = 0.00001;	// Force collision detection
+	A.Velocity.z = -A.Speed;
+	A.CheckMissileSpawn();
+	if (!(Special1 & 31))
+	{
+		PlaySound('SkullRodRain', CHAN_VOICE);
+	}
+	Special1++;
+}
+
+__states__
+{
+	S_HRODFX2_1('FX00', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_2) { }
+	S_HRODFX2_2('FX00', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_3) { A_SkullRodPL2Seek(); }
+	S_HRODFX2_3('FX00', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_4) { }
+	S_HRODFX2_4('FX00', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFX2_1) { A_SkullRodPL2Seek(); }
+	S_HRODFXI2_1('FX00', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_2) { A_AddPlayerRain(); }
+	S_HRODFXI2_2('FX00', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI2_3) { }
+	S_HRODFXI2_3('FX00', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI2_4) { }
+	S_HRODFXI2_4('FX00', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_5) { }
+	S_HRODFXI2_5('FX00', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_6) { }
+	S_HRODFXI2_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI2_7) { }
+	S_HRODFXI2_7('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) { A_HideInCeiling(); }
+	S_HRODFXI2_8('FX00', 6, 1.0 / 35.0, S_HRODFXI2_8) { A_SkullRodStorm(); }
+}
+
+defaultproperties
+{
+	Health = 140;
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 770.0;
+	MissileDamage = 10;
+	IdleState = S_HRODFX2_1;
+	DeathState = S_HRODFXI2_1;
+	SightSound = 'SkullRodFire';
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponSkullRod
+//
+//**************************************************************************
+
+class WeaponSkullRod:Weapon
+{
+
+//===========================================================================
+//
+//  A_FireSkullRodPL1
+//
+//===========================================================================
+
+void A_FireSkullRodPL1(void)
+{
+	Actor A;
+
+	if (Player->Ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	{
+		return;
+	}
+	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	A = Player->MO.SpawnPlayerMissile(HornRodMissile1);
+	// Randomize the first frame
+	if (A && P_Random() > 128)
+	{
+		A.SetState(S_HRODFX1_2);
+	}
+}
+
+//===========================================================================
+//
+//  A_FireSkullRodPL2
+//
+//  The special2 field holds the player number that shot the rain missile.
+// The specialmobj1 field is used for the seeking routines, special1 as a
+// counter for the sound looping.
+//
+//===========================================================================
+
+void A_FireSkullRodPL2(void)
+{
+	Player->Ammo[am_skullrod] -=
+		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
+	Player->MO.SpawnPlayerMissile(HornRodMissile2);
+	// Use MissileMobj instead of the return value from
+	// SpawnPlayerMissile because we need to give info to the mobj
+	// even if it exploded immediately.
+	if (netgame)
+	{
+		// Multi-player game
+		HornRodMissile2(MissileMobj).RainColor = P_GetPlayerNum(Player);
+	}
+	else
+	{
+		// Always use red missiles in single player games
+		HornRodMissile2(MissileMobj).RainColor = 2;
+	}
+	if (linetarget)
+	{
+		MissileMobj.Enemy = linetarget;
+	}
+	MissileMobj.PlaySound('SkullRodFire2', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_HORNRODREADY('HROD', 0, 1.0 / 35.0, S_HORNRODREADY) { A_WeaponReady(); }
+	S_HORNRODDOWN('HROD', 0, 1.0 / 35.0, S_HORNRODDOWN) { A_Lower(); }
+	S_HORNRODUP('HROD', 0, 1.0 / 35.0, S_HORNRODUP) { A_Raise(); }
+	S_HORNRODATK1_1('HROD', 0, 4.0 / 35.0, S_HORNRODATK1_2) { A_FireSkullRodPL1(); }
+	S_HORNRODATK1_2('HROD', 1, 4.0 / 35.0, S_HORNRODATK1_3) { A_FireSkullRodPL1(); }
+	S_HORNRODATK1_3('HROD', 1, 0.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
+	S_HORNRODATK2_1('HROD', 2, 2.0 / 35.0, S_HORNRODATK2_2) { }
+	S_HORNRODATK2_2('HROD', 3, 3.0 / 35.0, S_HORNRODATK2_3) { }
+	S_HORNRODATK2_3('HROD', 4, 2.0 / 35.0, S_HORNRODATK2_4) { }
+	S_HORNRODATK2_4('HROD', 5, 3.0 / 35.0, S_HORNRODATK2_5) { }
+	S_HORNRODATK2_5('HROD', 6, 4.0 / 35.0, S_HORNRODATK2_6) { A_FireSkullRodPL2(); }
+	S_HORNRODATK2_6('HROD', 5, 2.0 / 35.0, S_HORNRODATK2_7) { }
+	S_HORNRODATK2_7('HROD', 4, 3.0 / 35.0, S_HORNRODATK2_8) { }
+	S_HORNRODATK2_8('HROD', 3, 2.0 / 35.0, S_HORNRODATK2_9) { }
+	S_HORNRODATK2_9('HROD', 2, 2.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_skullrod;
+	UpState = S_HORNRODUP;
+	DownState = S_HORNRODDOWN;
+	ReadyState = S_HORNRODREADY;
+	AttackState = S_HORNRODATK1_1;
+	HoldAttackState = S_HORNRODATK1_1;
+	UpState2 = S_HORNRODUP;
+	DownState2 = S_HORNRODDOWN;
+	ReadyState2 = S_HORNRODREADY;
+	AttackState2 = S_HORNRODATK2_1;
+	HoldAttackState2 = S_HORNRODATK2_1;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	PhoenixPuff
+//
+//**************************************************************************
+
+class PhoenixPuff:Effect
+{
+
+__states__
+{
+	S_PHOENIXPUFF1('FX04', 1, 4.0 / 35.0, S_PHOENIXPUFF2) { }
+	S_PHOENIXPUFF2('FX04', 2, 4.0 / 35.0, S_PHOENIXPUFF3) { }
+	S_PHOENIXPUFF3('FX04', 3, 4.0 / 35.0, S_PHOENIXPUFF4) { }
+	S_PHOENIXPUFF4('FX04', 4, 4.0 / 35.0, S_PHOENIXPUFF5) { }
+	S_PHOENIXPUFF5('FX04', 5, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_PHOENIXPUFF1;
+}
+
+}
+
+//**************************************************************************
+//
+//	PhoenixFX1
+//
+//**************************************************************************
+
+class PhoenixFX1:Projectile
+{
+
+//===========================================================================
+//
+//  A_PhoenixPuff
+//
+//===========================================================================
+
+void A_PhoenixPuff(void)
+{
+	Actor puff;
+	float angle;
+
+	SeekerMissile(5.0, 10.0);
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw + 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw - 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+}
+
+__states__
+{
+	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) { A_PhoenixPuff(); }
+	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) { A_Explode(); }
+	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) { }
+	S_PHOENIXFXI1_3('FX08', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_4) { }
+	S_PHOENIXFXI1_4('FX08', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_5) { }
+	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) { }
+	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) { }
+	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) { }
+	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 20;
+	bThruGhost = true;
+	IdleState = S_PHOENIXFX1_1;
+	DeathState = S_PHOENIXFXI1_1;
+	SightSound = 'PhoenixFire';
+	DeathSound = 'PhoenixHit';
+	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	PhoenixFX2
+//
+//**************************************************************************
+
+class PhoenixFX2:Projectile
+{
+
+//===========================================================================
+//
+//  A_FlameEnd
+//
+//===========================================================================
+
+void A_FlameEnd(void)
+{
+	Velocity.z += 1.5 * 35.0;
+}
+
+//===========================================================================
+//
+//  A_FloatPuff
+//
+//===========================================================================
+
+void A_FloatPuff(void)
+{
+	Velocity.z += 1.8 * 35.0;
+}
+
+__states__
+{
+	S_PHOENIXFX2_1('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_2) { }
+	S_PHOENIXFX2_2('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_3) { }
+	S_PHOENIXFX2_3('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_4) { }
+	S_PHOENIXFX2_4('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_5) { }
+	S_PHOENIXFX2_5('FX09', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_6) { }
+	S_PHOENIXFX2_6('FX09', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_7) { A_FlameEnd(); }
+	S_PHOENIXFX2_7('FX09', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_8) { }
+	S_PHOENIXFX2_8('FX09', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_9) { }
+	S_PHOENIXFX2_9('FX09', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_10) { }
+	S_PHOENIXFX2_10('FX09', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_PHOENIXFXI2_1('FX09', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_2) { }
+	S_PHOENIXFXI2_2('FX09', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_3) { A_FloatPuff(); }
+	S_PHOENIXFXI2_3('FX09', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI2_4) { }
+	S_PHOENIXFXI2_4('FX09', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI2_5) { }
+	S_PHOENIXFXI2_5('FX09', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 2;
+	bFireDamage = true;
+	IdleState = S_PHOENIXFX2_1;
+	DeathState = S_PHOENIXFXI2_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponPhoenixRod
+//
+//**************************************************************************
+
+class WeaponPhoenixRod:Weapon
+{
+
+int FlameCount;	// for flame thrower duration
+
+int Attack2ShutdownState;
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade(void)
+{
+	if (StateNum != ReadyState2 && StateNum != UpState2)
+	{
+		SetState(ReadyState);
+		Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+		Player->Refire = 0;
+	}
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL1
+//
+//===========================================================================
+
+void A_FirePhoenixPL1(void)
+{
+	TVec vforward;
+
+	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
+	Player->MO.SpawnPlayerMissile(PhoenixFX1);
+	AngleVector(&Player->MO.Angles, &vforward);
+	Player->MO.Velocity -= vforward * 140.0;
+}
+
+//===========================================================================
+//
+//  A_InitPhoenixPL2
+//
+//===========================================================================
+
+void A_InitPhoenixPL2(void)
+{
+	FlameCount = 10 * 35;
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL2
+//
+//  Flame thrower effect.
+//
+//===========================================================================
+
+void A_FirePhoenixPL2(void)
+{
+	Actor A;
+	TVec dir;
+	TVec org;
+
+	if (--FlameCount == 0)
+	{
+		// Out of flame
+		SetState(Attack2ShutdownState);
+		Player->Refire = 0;
+		return;
+	}
+	org.x = Player->MO.Origin.x + (Random() - Random()) * 2.0;
+	org.y = Player->MO.Origin.y + (Random() - Random()) * 2.0;
+	org.z = Player->MO.Origin.z + 26.0 - sin(Player->MO.Angles.pitch);
+	org.z -= Player->MO.FloorClip;
+	A = Spawn(PhoenixFX2, org);
+	A.Instigator = Player->MO;
+	A.Angles.yaw = Player->MO.Angles.yaw;
+	A.Angles.pitch = Player->MO.Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Player->MO.Velocity + A.Speed * dir;
+	if (!Player->Refire || !(level->tictime % 38))
+	{
+		Player->MO.PlaySound('PhoenixHit2', CHAN_WEAPON);
+	}
+	A.CheckMissileSpawn();
+}
+
+//===========================================================================
+//
+//  A_ShutdownPhoenixPL2
+//
+//===========================================================================
+
+void A_ShutdownPhoenixPL2(void)
+{
+	Player->Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+}
+
+__states__
+{
+	S_PHOENIXREADY('PHNX', 0, 1.0 / 35.0, S_PHOENIXREADY) { A_WeaponReady(); }
+	S_PHOENIXDOWN('PHNX', 0, 1.0 / 35.0, S_PHOENIXDOWN) { A_Lower(); }
+	S_PHOENIXUP('PHNX', 0, 1.0 / 35.0, S_PHOENIXUP) { A_Raise(); }
+	S_PHOENIXATK1_1('PHNX', 1, 5.0 / 35.0, S_PHOENIXATK1_2) { }
+	S_PHOENIXATK1_2('PHNX', 2, 7.0 / 35.0, S_PHOENIXATK1_3) { A_FirePhoenixPL1(); }
+	S_PHOENIXATK1_3('PHNX', 3, 4.0 / 35.0, S_PHOENIXATK1_4) { }
+	S_PHOENIXATK1_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK1_5) { }
+	S_PHOENIXATK1_5('PHNX', 1, 0.0 / 35.0, S_PHOENIXREADY) { A_ReFire(); }
+	S_PHOENIXATK2_1('PHNX', 1, 3.0 / 35.0, S_PHOENIXATK2_2) { A_InitPhoenixPL2(); }
+	S_PHOENIXATK2_2('PHNX', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_PHOENIXATK2_3) { A_FirePhoenixPL2(); }
+	S_PHOENIXATK2_3('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK2_4) { A_ReFire(); }
+	S_PHOENIXATK2_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXREADY) { A_ShutdownPhoenixPL2(); }
+}
+
+defaultproperties
+{
+	Ammo = am_phoenixrod;
+	UpState = S_PHOENIXUP;
+	DownState = S_PHOENIXDOWN;
+	ReadyState = S_PHOENIXREADY;
+	AttackState = S_PHOENIXATK1_1;
+	HoldAttackState = S_PHOENIXATK1_1;
+	UpState2 = S_PHOENIXUP;
+	DownState2 = S_PHOENIXDOWN;
+	ReadyState2 = S_PHOENIXREADY;
+	AttackState2 = S_PHOENIXATK2_1;
+	HoldAttackState2 = S_PHOENIXATK2_2;
+	Attack2ShutdownState = S_PHOENIXATK2_4;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	MaceFX3
+//
+//**************************************************************************
+
+class MaceFX3:Projectile
+{
+
+//===========================================================================
+//
+//  A_MaceBallImpact
+//
+//===========================================================================
+
+void A_MaceBallImpact(void)
+{
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Health != 1234) && (Origin.z <= FloorZ) && Velocity.z)
+	{
+		// Bounce
+		Health = 1234;
+		Velocity.z = Velocity.z * 192.0 / 256.0;
+		bFloorBounce = false;
+		SetState(IdleState);
+		PlaySound('Bounce', CHAN_VOICE);
+	}
+	else
+	{
+		// Explode
+		bNoGravity = true;
+		PlaySound('MaceHit', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_MACEFX3_1('FX02', 0, 4.0 / 35.0, S_MACEFX3_2) { }
+	S_MACEFX3_2('FX02', 1, 4.0 / 35.0, S_MACEFX3_1) { }
+	S_MACEFXI1_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact(); }
+	S_MACEFXI1_2('FX02', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_3) { }
+	S_MACEFXI1_3('FX02', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_4) { }
+	S_MACEFXI1_4('FX02', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_5) { }
+	S_MACEFXI1_5('FX02', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 6.0;
+	Mass = 12.5;
+	Speed = 245.0;
+	MissileDamage = 4;
+	bFloorBounce = true;
+	bThruGhost = true;
+	bNoGravity = false;
+	IdleState = S_MACEFX3_1;
+	DeathState = S_MACEFXI1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	MaceFX1
+//
+//**************************************************************************
+
+class MaceFX1:MaceFX3
+{
+
+//===========================================================================
+//
+//  A_MacePL1Check
+//
+//===========================================================================
+
+void A_MacePL1Check(void)
+{
+	float angle;
+
+	if (Special1 == 0)
+	{
+		return;
+	}
+	Special1 -= 4;
+	if (Special1 > 0)
+	{
+		return;
+	}
+	Special1 = 0;
+	bNoGravity = false;
+	angle = Angles.yaw;
+	Velocity.x = 7.0 * cos(angle) * 35.0;
+	Velocity.y = 7.0 * sin(angle) * 35.0;
+	Velocity.z -= Velocity.z / 2.0;
+}
+
+__states__
+{
+	S_MACEFX1_1('FX02', 0, 4.0 / 35.0, S_MACEFX1_2) { A_MacePL1Check(); }
+	S_MACEFX1_2('FX02', 1, 4.0 / 35.0, S_MACEFX1_1) { A_MacePL1Check(); }
+}
+
+defaultproperties
+{
+	Speed = 700.0;
+	MissileDamage = 2;
+	bNoGravity = true;
+	IdleState = S_MACEFX1_1;
+	DeathState = S_MACEFXI1_1;
+	SightSound = 'MaceFire';
+}
+
+}
+
+//**************************************************************************
+//
+//	MaceFX2
+//
+//**************************************************************************
+
+class MaceFX2:MaceFX3
+{
+
+//===========================================================================
+//
+//  A_MaceBallImpact2
+//
+//===========================================================================
+
+void A_MaceBallImpact2(void)
+{
+	Actor tiny;
+	float angle;
+
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Origin.z != FloorZ) || (Velocity.z < 2.0 * 35.0))
+	{
+		// Explode
+		Velocity = vector(0.0, 0.0, 0.0);
+		bNoGravity = true;
+		bFloorBounce = false;
+	}
+	else
+	{
+		// Bounce
+		Velocity.z = Velocity.z * 192.0 / 256.0;
+		SetState(IdleState);
+
+		tiny = Spawn(MaceFX3, Origin);
+		angle = AngleMod360(Angles.yaw + 90.0);
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny.Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
+
+		tiny = Spawn(MaceFX3, Origin);
+		angle = AngleMod360(Angles.yaw - 90.0);
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny.Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_MACEFX2_1('FX02', 2, 4.0 / 35.0, S_MACEFX2_2) { }
+	S_MACEFX2_2('FX02', 3, 4.0 / 35.0, S_MACEFX2_1) { }
+	S_MACEFXI2_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact2(); }
+}
+
+defaultproperties
+{
+	Speed = 350.0;
+	MissileDamage = 6;
+	IdleState = S_MACEFX2_1;
+	DeathState = S_MACEFXI2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	MaceFX4
+//
+//**************************************************************************
+
+class MaceFX4:MaceFX3
+{
+
+//===========================================================================
+//
+//  A_DeathBallImpact
+//
+//===========================================================================
+
+void A_DeathBallImpact(void)
+{
+	int i;
+	float angle;
+	int newAngle;
+	TAVec angles;
+
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Origin.z <= FloorZ) && Velocity.z)
+	{
+		// Bounce
+		newAngle = false;
+		if (Enemy)
+		{
+			if (!Enemy.bShootable)
+			{
+				// Target died
+				Enemy = none;
+			}
+			else
+			{
+				// Seek
+				angle = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
+				newAngle = true;
+			}
+		}
+		else
+		{
+			// Find new target
+			angles.pitch = 0.0;
+			angles.yaw = 0.0;
+			angles.roll = 0.0;
+			for (i = 0; i < 16; i++)
+			{
+				AimLineAttack(self, angles, 10.0 * 64.0);
+				if (linetarget && Instigator != linetarget)
+				{
+					Enemy = linetarget;
+					angle = atan2(linetarget.Origin.y - Origin.y,
+						linetarget.Origin.x - Origin.x);
+					newAngle = true;
+					break;
+				}
+				angles.yaw = AngleMod360(angles.yaw + 45.0 / 2.0);
+			}
+		}
+		if (newAngle)
+		{
+			Angles.yaw = angle;
+			Velocity.x = Speed * cos(angle);
+			Velocity.y = Speed * sin(angle);
+		}
+		SetState(IdleState);
+		PlaySound('PlatformStop', CHAN_VOICE);
+	}
+	else
+	{
+		// Explode
+		bNoGravity = true;
+		PlaySound('PhoenixHit', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) { }
+	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_DeathBallImpact(); }
+}
+
+defaultproperties
+{
+	MissileDamage = 18;
+	bTelestomp = true;
+	bNoTeleport = false;
+	IdleState = S_MACEFX4_1;
+	DeathState = S_MACEFXI4_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponMace
+//
+//**************************************************************************
+
+class WeaponMace:Weapon
+{
+
+//===========================================================================
+//
+//	A_FireMacePL1B
+//
+//===========================================================================
+
+void A_FireMacePL1B(void)
+{
+	Actor ball;
+	float angle;
+
+	if (Player->Ammo[am_mace] < USE_MACE_AMMO_1)
+	{
+		return;
+	}
+	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
+	ball = Spawn(MaceFX2, Player->MO.Origin +
+		vector(0.0, 0.0, 28.0 - Player->MO.FloorClip));
+	ball.Velocity.z =
+		(2.0 + 173.0 * -tan(Player->MO.Angles.pitch) / 32.0) * 35.0;
+	angle = Player->MO.Angles.yaw;
+	ball.Instigator = Player->MO;
+	ball.Angles.yaw = angle;
+	ball.Origin.z += 173.0 * -tan(Player->MO.Angles.pitch) / 16.0;
+	ball.Velocity.x = Player->MO.Velocity.x / 2.0 + ball.Speed * cos(angle);
+	ball.Velocity.y = Player->MO.Velocity.y / 2.0 + ball.Speed * sin(angle);
+	ball.PlaySound('MaceFire', CHAN_WEAPON);
+	ball.CheckMissileSpawn();
+}
+
+//===========================================================================
+//
+//  A_FireMacePL1
+//
+//===========================================================================
+
+void A_FireMacePL1(void)
+{
+	Actor ball;
+
+	if (P_Random() < 28)
+	{
+		A_FireMacePL1B();
+		return;
+	}
+	if (Player->Ammo[am_mace] < USE_MACE_AMMO_1)
+	{
+		return;
+	}
+	Player->Ammo[am_mace] -= USE_MACE_AMMO_1;
+	SX = Random() * 4.0 - 2.0;
+	SY = WEAPONTOP + Random() * 4.0;
+	ball = Player->MO.SpawnPlayerMissileAngle(MaceFX1,
+		AngleMod360(Player->MO.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+	if (ball)
+	{
+		ball.Special1 = 16;	// tics till dropoff
+	}
+}
+
+//===========================================================================
+//
+//  A_FireMacePL2
+//
+//===========================================================================
+
+void A_FireMacePL2(void)
+{
+	Actor A;
+
+	Player->Ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	A = Player->MO.SpawnPlayerMissile(MaceFX4);
+	if (A)
+	{
+		A.Velocity.x += Player->MO.Velocity.x;
+		A.Velocity.y += Player->MO.Velocity.y;
+		A.Velocity.z =
+			(2.0 + 173.0 * -tan(Player->MO.Angles.pitch) / 32.0) * 35.0;
+		if (linetarget)
+		{
+			A.Enemy = linetarget;
+		}
+	}
+	Player->MO.PlaySound('MaceFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_MACEREADY('MACE', 0, 1.0 / 35.0, S_MACEREADY) { A_WeaponReady(); }
+	S_MACEDOWN('MACE', 0, 1.0 / 35.0, S_MACEDOWN) { A_Lower(); }
+	S_MACEUP('MACE', 0, 1.0 / 35.0, S_MACEUP) { A_Raise(); }
+	S_MACEATK1_1('MACE', 1, 4.0 / 35.0, S_MACEATK1_2) { }
+	S_MACEATK1_2('MACE', 2, 3.0 / 35.0, S_MACEATK1_3) { A_FireMacePL1(); }
+	S_MACEATK1_3('MACE', 3, 3.0 / 35.0, S_MACEATK1_4) { A_FireMacePL1(); }
+	S_MACEATK1_4('MACE', 4, 3.0 / 35.0, S_MACEATK1_5) { A_FireMacePL1(); }
+	S_MACEATK1_5('MACE', 5, 3.0 / 35.0, S_MACEATK1_6) { A_FireMacePL1(); }
+	S_MACEATK1_6('MACE', 2, 4.0 / 35.0, S_MACEATK1_7) { A_ReFire(); }
+	S_MACEATK1_7('MACE', 3, 4.0 / 35.0, S_MACEATK1_8) { }
+	S_MACEATK1_8('MACE', 4, 4.0 / 35.0, S_MACEATK1_9) { }
+	S_MACEATK1_9('MACE', 5, 4.0 / 35.0, S_MACEATK1_10) { }
+	S_MACEATK1_10('MACE', 1, 4.0 / 35.0, S_MACEREADY) { }
+	S_MACEATK2_1('MACE', 1, 4.0 / 35.0, S_MACEATK2_2) { }
+	S_MACEATK2_2('MACE', 3, 4.0 / 35.0, S_MACEATK2_3) { A_FireMacePL2(); }
+	S_MACEATK2_3('MACE', 1, 4.0 / 35.0, S_MACEATK2_4) { }
+	S_MACEATK2_4('MACE', 0, 8.0 / 35.0, S_MACEREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_mace;
+	UpState = S_MACEUP;
+	DownState = S_MACEDOWN;
+	ReadyState = S_MACEREADY;
+	AttackState = S_MACEATK1_1;
+	HoldAttackState = S_MACEATK1_2;
+	UpState2 = S_MACEUP;
+	DownState2 = S_MACEDOWN;
+	ReadyState2 = S_MACEREADY;
+	AttackState2 = S_MACEATK2_1;
+	HoldAttackState2 = S_MACEATK2_1;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	BeakPuff
+//
+//**************************************************************************
+
+class BeakPuff:StaffPuff
+{
+
+defaultproperties
+{
+	AttackSound = 'ChickenAttack';
+}
+
+}
+
+//**************************************************************************
+//
+//	WeaponBeak
+//
+//**************************************************************************
+
+class WeaponBeak:Weapon
+{
+
+//===========================================================================
+//
+//  A_BeakRaise
+//
+//===========================================================================
+
+void A_BeakRaise(void)
+{
+	SY = WEAPONTOP;
+	SetState(ReadyState);
+}
+
+//===========================================================================
+//
+//  A_BeakReady
+//
+//===========================================================================
+
+void A_BeakReady(void)
+{
+	if (Player->Buttons & BT_ATTACK)
+	{
+		// Chicken beak attack
+		Player->bAttackDown = true;
+		Player->MO.SetState(Player->MO.MissileState);
+		if (Player->Powers[pw_weaponlevel2])
+		{
+			SetState(AttackState2);
+		}
+		else
+		{
+			SetState(AttackState);
+		}
+		P_NoiseAlert(Player->MO, Player->MO);
+	}
+	else
+	{
+		if (Player->MO.StateNum == Player->MO.MissileState)
+		{
+			// Take out of attack state
+			Player->MO.SetState(Player->MO.IdleState);
+		}
+		Player->bAttackDown = false;
+	}
+}
+
+//===========================================================================
+//
+//  A_BeakAttackPL1
+//
+//===========================================================================
+
+void A_BeakAttackPL1(void)
+{
+	int damage;
+	TAVec angles;
+	TVec dir;
+	name SoundName;
+
+	damage = 1 + (P_Random() & 3);
+	avcpy(Player->MO.Angles, angles);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = BeakPuff;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+	switch (P_Random() % 3)
+	{
+	case 0:
+		SoundName = 'ChickenPeak1';
+		break;
+	case 1:
+		SoundName = 'ChickenPeak2';
+		break;
+	case 2:
+		SoundName = 'ChickenPeak3';
+		break;
+	}
+	Player->MO.PlaySound(SoundName, CHAN_VOICE);
+	Player->ChickenPeck = 12;
+	StateTime -= Random() * 0.25;
+}
+
+//===========================================================================
+//
+//  A_BeakAttackPL2
+//
+//===========================================================================
+
+void A_BeakAttackPL2(void)
+{
+	int damage;
+	TAVec angles;
+	TVec dir;
+	name SoundName;
+
+	damage = HITDICE(4);
+	avcpy(Player->MO.Angles, angles);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = BeakPuff;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+	switch (P_Random() % 3)
+	{
+	case 0:
+		SoundName = 'ChickenPeak1';
+		break;
+	case 1:
+		SoundName = 'ChickenPeak2';
+		break;
+	case 2:
+		SoundName = 'ChickenPeak3';
+		break;
+	}
+	Player->MO.PlaySound(SoundName, CHAN_VOICE);
+	Player->ChickenPeck = 12;
+	StateTime -= Random() * 0.125;
+}
+
+__states__
+{
+	S_BEAKREADY('BEAK', 0, 1.0 / 35.0, S_BEAKREADY) { A_BeakReady(); }
+	S_BEAKDOWN('BEAK', 0, 1.0 / 35.0, S_BEAKDOWN) { A_Lower(); }
+	S_BEAKUP('BEAK', 0, 1.0 / 35.0, S_BEAKUP) { A_BeakRaise(); }
+	S_BEAKATK1_1('BEAK', 0, 18.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL1(); }
+	S_BEAKATK2_1('BEAK', 0, 12.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL2(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_BEAKUP;
+	DownState = S_BEAKDOWN;
+	ReadyState = S_BEAKREADY;
+	AttackState = S_BEAKATK1_1;
+	HoldAttackState = S_BEAKATK1_1;
+	UpState2 = S_BEAKUP;
+	DownState2 = S_BEAKDOWN;
+	ReadyState2 = S_BEAKREADY;
+	AttackState2 = S_BEAKATK2_1;
+	HoldAttackState2 = S_BEAKATK2_1;
+	PSpriteSY = 15.0;
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
+//**************************************************************************

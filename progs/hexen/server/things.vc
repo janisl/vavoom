@@ -141,7 +141,7 @@ classid TranslateThingType[] = {
 
 //==========================================================================
 //
-// EV_ThingProjectile
+//	EV_ThingProjectile
 //
 //==========================================================================
 
@@ -193,7 +193,7 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 
 //==========================================================================
 //
-// EV_ThingSpawn
+//	EV_ThingSpawn
 //
 //==========================================================================
 
@@ -249,66 +249,6 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 
 //==========================================================================
 //
-//	Actor::Activate
-//
-//==========================================================================
-
-boolean Actor::Activate(void)
-{
-	switch (Class)
-	{
-	case ZTWinedTorch:
-	case ZTWinedTorchUnlit:
-		SetState(S_ZTWINEDTORCH_1);
-		PlaySound('Ignite', CHAN_VOICE);
-		break;
-	case ZWallTorch:
-	case ZWallTorchUnlit:
-		SetState(S_ZWALLTORCH1);
-		PlaySound('Ignite', CHAN_VOICE);
-		break;
-	case ZGemPedestal:
-		SetState(S_ZGEMPEDESTAL2);
-		break;
-	case ZWingedStatueNoSkull:
-		SetState(S_ZWINGEDSTATUENOSKULL2);
-		break;
-	case ZFireBull:
-	case ZFireBullUnlit:
-		SetState(S_ZFIREBULL_BIRTH);
-		PlaySound('Ignite', CHAN_VOICE);
-		break;
-	case ZBell:
-		if (Health > 0)
-		{
-			Damage(none, none, 10);	// 'ring' the bell
-		}
-		break;
-	case ZCauldron:
-	case ZCauldronUnlit:
-		SetState(S_ZCAULDRON1);
-		PlaySound('Ignite', CHAN_VOICE);
-		break;
-	case FlameSmall:
-		PlaySound('Ignite', CHAN_VOICE);
-		SetState(S_FLAME_SMALL1);
-		break;
-	case FlameLarge:
-		PlaySound('Ignite', CHAN_VOICE);
-		SetState(S_FLAME_LARGE1);
-		break;
-	case BatSpawner:
-		SetState(S_SPAWNBATS1);
-		break;
-	default:
-		return false;
-		break;
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	EV_ThingActivate
 //
 //==========================================================================
@@ -334,49 +274,7 @@ boolean EV_ThingActivate(int tid)
 
 //==========================================================================
 //
-//	Actor::Deactivate
-//
-//==========================================================================
-
-boolean Actor::Deactivate(void)
-{
-	switch (Class)
-	{
-	case ZTWinedTorch:
-	case ZTWinedTorchUnlit:
-		SetState(S_ZTWINEDTORCH_UNLIT);
-		break;
-	case ZWallTorch:
-	case ZWallTorchUnlit:
-		SetState(S_ZWALLTORCH_U);
-		break;
-	case ZFireBull:
-	case ZFireBullUnlit:
-		SetState(S_ZFIREBULL_DEATH);
-		break;
-	case ZCauldron:
-	case ZCauldronUnlit:
-		SetState(S_ZCAULDRON_U);
-		break;
-	case FlameSmall:
-		SetState(S_FLAME_SDORM1);
-		break;
-	case FlameLarge:
-		SetState(S_FLAME_LDORM1);
-		break;
-	case BatSpawner:
-		SetState(S_SPAWNBATS_OFF);
-		break;
-	default:
-		return false;
-		break;
-	}
-	return true;
-}
-
-//==========================================================================
-//
-// EV_ThingDeactivate
+//	EV_ThingDeactivate
 //
 //==========================================================================
 
@@ -401,7 +299,7 @@ boolean EV_ThingDeactivate(int tid)
 
 //==========================================================================
 //
-// EV_ThingRemove
+//	EV_ThingRemove
 //
 //==========================================================================
 
@@ -416,12 +314,7 @@ boolean EV_ThingRemove(int tid)
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (A.Class == Bridge)
-		{
-			A.A_BridgeRemove();
-			return true;
-		}
-		A.Remove();
+		A.RemoveThing();
 		success = true;
 	}
 	return success;
@@ -429,7 +322,7 @@ boolean EV_ThingRemove(int tid)
 
 //==========================================================================
 //
-// EV_ThingDestroy
+//	EV_ThingDestroy
 //
 //==========================================================================
 
@@ -520,6 +413,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.26  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

@@ -61,6 +61,136 @@ defaultproperties
 
 //**************************************************************************
 //
+//	DemonChunk1
+//
+//**************************************************************************
+
+class DemonChunk1:Fragment
+{
+
+__states__
+{
+	S_DEMONCHUNK1_1('DEMA', 0, 4.0 / 35.0, S_DEMONCHUNK1_2) { }
+	S_DEMONCHUNK1_2('DEMA', 0, 10.0 / 35.0, S_DEMONCHUNK1_3) { A_QueueCorpse(); }
+	S_DEMONCHUNK1_3('DEMA', 0, 20.0 / 35.0, S_DEMONCHUNK1_3) { }
+	S_DEMONCHUNK1_4('DEMA', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	bCorpse = true;
+	bFloorClip = true;
+	bNoGravity = false;
+	IdleState = S_DEMONCHUNK1_1;
+	DeathState = S_DEMONCHUNK1_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	DemonChunk2
+//
+//**************************************************************************
+
+class DemonChunk2:DemonChunk1
+{
+
+__states__
+{
+	S_DEMONCHUNK2_1('DEMB', 0, 4.0 / 35.0, S_DEMONCHUNK2_2) { }
+	S_DEMONCHUNK2_2('DEMB', 0, 10.0 / 35.0, S_DEMONCHUNK2_3) { A_QueueCorpse(); }
+	S_DEMONCHUNK2_3('DEMB', 0, 20.0 / 35.0, S_DEMONCHUNK2_3) { }
+	S_DEMONCHUNK2_4('DEMB', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMONCHUNK2_1;
+	DeathState = S_DEMONCHUNK2_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	DemonChunk3
+//
+//**************************************************************************
+
+class DemonChunk3:DemonChunk1
+{
+
+__states__
+{
+	S_DEMONCHUNK3_1('DEMC', 0, 4.0 / 35.0, S_DEMONCHUNK3_2) { }
+	S_DEMONCHUNK3_2('DEMC', 0, 10.0 / 35.0, S_DEMONCHUNK3_3) { A_QueueCorpse(); }
+	S_DEMONCHUNK3_3('DEMC', 0, 20.0 / 35.0, S_DEMONCHUNK3_3) { }
+	S_DEMONCHUNK3_4('DEMC', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMONCHUNK3_1;
+	DeathState = S_DEMONCHUNK3_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	DemonChunk4
+//
+//**************************************************************************
+
+class DemonChunk4:DemonChunk1
+{
+
+__states__
+{
+	S_DEMONCHUNK4_1('DEMD', 0, 4.0 / 35.0, S_DEMONCHUNK4_2) { }
+	S_DEMONCHUNK4_2('DEMD', 0, 10.0 / 35.0, S_DEMONCHUNK4_3) { A_QueueCorpse(); }
+	S_DEMONCHUNK4_3('DEMD', 0, 20.0 / 35.0, S_DEMONCHUNK4_3) { }
+	S_DEMONCHUNK4_4('DEMD', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMONCHUNK4_1;
+	DeathState = S_DEMONCHUNK4_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	DemonChunk5
+//
+//**************************************************************************
+
+class DemonChunk5:DemonChunk1
+{
+
+__states__
+{
+	S_DEMONCHUNK5_1('DEME', 0, 4.0 / 35.0, S_DEMONCHUNK5_2) { }
+	S_DEMONCHUNK5_2('DEME', 0, 10.0 / 35.0, S_DEMONCHUNK5_3) { A_QueueCorpse(); }
+	S_DEMONCHUNK5_3('DEME', 0, 20.0 / 35.0, S_DEMONCHUNK5_3) { }
+	S_DEMONCHUNK5_4('DEME', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMONCHUNK5_1;
+	DeathState = S_DEMONCHUNK5_4;
+}
+
+}
+
+//**************************************************************************
+//
 //	Demon
 //
 //**************************************************************************
@@ -269,6 +399,131 @@ defaultproperties
 
 //**************************************************************************
 //
+//	Demon2Chunk1
+//
+//**************************************************************************
+
+class Demon2Chunk1:DemonChunk1
+{
+
+__states__
+{
+	S_DEMON2CHUNK1_1('DMBA', 0, 4.0 / 35.0, S_DEMON2CHUNK1_2) { }
+	S_DEMON2CHUNK1_2('DMBA', 0, 10.0 / 35.0, S_DEMON2CHUNK1_3) { A_QueueCorpse(); }
+	S_DEMON2CHUNK1_3('DMBA', 0, 20.0 / 35.0, S_DEMON2CHUNK1_3) { }
+	S_DEMON2CHUNK1_4('DMBA', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMON2CHUNK1_1;
+	DeathState = S_DEMON2CHUNK1_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	Demon2Chunk2
+//
+//**************************************************************************
+
+class Demon2Chunk2:DemonChunk1
+{
+
+__states__
+{
+	S_DEMON2CHUNK2_1('DMBB', 0, 4.0 / 35.0, S_DEMON2CHUNK2_2) { }
+	S_DEMON2CHUNK2_2('DMBB', 0, 10.0 / 35.0, S_DEMON2CHUNK2_3) { A_QueueCorpse(); }
+	S_DEMON2CHUNK2_3('DMBB', 0, 20.0 / 35.0, S_DEMON2CHUNK2_3) { }
+	S_DEMON2CHUNK2_4('DMBB', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMON2CHUNK2_1;
+	DeathState = S_DEMON2CHUNK2_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	Demon2Chunk3
+//
+//**************************************************************************
+
+class Demon2Chunk3:DemonChunk1
+{
+
+__states__
+{
+	S_DEMON2CHUNK3_1('DMBC', 0, 4.0 / 35.0, S_DEMON2CHUNK3_2) { }
+	S_DEMON2CHUNK3_2('DMBC', 0, 10.0 / 35.0, S_DEMON2CHUNK3_3) { A_QueueCorpse(); }
+	S_DEMON2CHUNK3_3('DMBC', 0, 20.0 / 35.0, S_DEMON2CHUNK3_3) { }
+	S_DEMON2CHUNK3_4('DMBC', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMON2CHUNK3_1;
+	DeathState = S_DEMON2CHUNK3_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	Demon2Chunk4
+//
+//**************************************************************************
+
+class Demon2Chunk4:DemonChunk1
+{
+
+__states__
+{
+	S_DEMON2CHUNK4_1('DMBD', 0, 4.0 / 35.0, S_DEMON2CHUNK4_2) { }
+	S_DEMON2CHUNK4_2('DMBD', 0, 10.0 / 35.0, S_DEMON2CHUNK4_3) { A_QueueCorpse(); }
+	S_DEMON2CHUNK4_3('DMBD', 0, 20.0 / 35.0, S_DEMON2CHUNK4_3) { }
+	S_DEMON2CHUNK4_4('DMBD', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMON2CHUNK4_1;
+	DeathState = S_DEMON2CHUNK4_4;
+}
+
+}
+
+//**************************************************************************
+//
+//	Demon2Chunk5
+//
+//**************************************************************************
+
+class Demon2Chunk5:DemonChunk1
+{
+
+__states__
+{
+	S_DEMON2CHUNK5_1('DMBE', 0, 4.0 / 35.0, S_DEMON2CHUNK5_2) { }
+	S_DEMON2CHUNK5_2('DMBE', 0, 10.0 / 35.0, S_DEMON2CHUNK5_3) { A_QueueCorpse(); }
+	S_DEMON2CHUNK5_3('DMBE', 0, 20.0 / 35.0, S_DEMON2CHUNK5_3) { }
+	S_DEMON2CHUNK5_4('DMBE', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_DEMON2CHUNK5_1;
+	DeathState = S_DEMON2CHUNK5_4;
+}
+
+}
+
+//**************************************************************************
+//
 //	Demon2
 //
 //**************************************************************************
@@ -436,6 +691,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.21  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

@@ -743,6 +743,13 @@ boolean PTR_ShootTraverse(intercept_t * in)
 
 		A = Spawn(BlasterPuff2, hit_point);
 		A.PlaySound('BlasterFire', CHAN_VOICE);
+
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(EF_DL_BLUE);
+		MSG_WriteShort(ftoi(hit_point.x));
+		MSG_WriteShort(ftoi(hit_point.y));
+		MSG_WriteShort(ftoi(hit_point.z));
 	}
 	else
 	{
@@ -886,6 +893,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.26  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

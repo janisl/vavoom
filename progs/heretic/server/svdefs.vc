@@ -37,9 +37,6 @@
 #define FLIGHTTIME 		60.0
 #define CHICKENTIME 	40.0
 
-#define FLAME_THROWER_TIME	10.0
-#define MAGIC_JUNK			1234
-
 #define FOOTCLIPSIZE	10.0
 #define TELEFOGHEIGHT 	32.0
 
@@ -243,7 +240,7 @@ class Actor:Entity
 	//  Params
 	float Speed;
 	float StepSpeed;
-	int PainChance;
+	float PainChance;
 	int SpawnHealth;
 	int GibsHealth;
 
@@ -252,11 +249,7 @@ class Actor:Entity
 	// The originator for missiles.
 	Actor Instigator;
 
-	//	Generator for pods
-	Actor Generator;
-
 	int Special1;	// Special info
-	int Special2;	// Special info
 	classid SpecialCID;
 
 	int MissileDamage;	// For missiles
@@ -312,14 +305,11 @@ class Actor:Entity
 	void RadiusAttack(int damage, int distance, boolean damageSource);
 
 	// Physics
-	void SlideMove(void);
-#if 0
-	void BounceWall(void);
-#endif
 	void ApplyFriction(void);
 	void XYMovement(void);
 	void ZMovement(void);
 	boolean BlasterPhysics(void);
+	void PlayerLandedOnThing(void);
 	boolean Physics(void);
 
 	boolean CheckMissileSpawn(void);
@@ -344,46 +334,17 @@ class Actor:Entity
 	void A_FreeTargMobj(void);
 	void A_Scream(void);
 	void A_Explode(void);
-	void A_PodPain(void);
-	void A_RemovePod(void);
-	void A_MakePod(void);
-	void A_InitKeyGizmo(void);
-	void A_VolcanoSet(void);
-	void A_VolcanoBlast(void);
-	void A_BeastPuff(void);
-	void A_VolcBallImpact(void);
-	void A_SpawnTeleGlitter(void);
-	void A_SpawnTeleGlitter2(void);
-	void A_AccTeleGlitter(void);
-	void A_SpawnRippers(void);
-	void A_MacePL1Check(void);
-	void A_MaceBallImpact(void);
-	void A_MaceBallImpact2(void);
-	void A_DeathBallImpact(void);
-	void A_SkullRodPL2Seek(void);
-	void A_AddPlayerRain(void);
-	void A_HideInCeiling(void);
-	void A_SkullRodStorm(void);
-	void A_RainImpact(void);
-	void A_PhoenixPuff(void);
-	void A_FlameEnd(void);
-	void A_FloatPuff(void);
-	void A_BoltSpark(void);
-	void A_Feathers(void);
-	void A_ContMobjSound(void);
-	void A_MummyFX1Seek(void);
-	void A_HeadIceImpact(void);
-	void A_HeadFireGrow(void);
-	void A_WhirlwindSeek(void);
-	void A_DripBlood(void);
-	void A_BlueSpark(void);
-	void A_GenWizard(void);
-	void A_MntrFloorFire(void);
-	void A_ESound(void);
+
+	__states__
+	{
+		S_FREETARGMOBJ('ACLO', 4, 30.0, S_NULL) { A_FreeTargMobj(); }
+	}
 
 	defaultproperties
 	{
 		MaxStepHeight = 24.0;
+		bCheckLineBlocking = true;
+		bCheckLineBlockMonsters = false;
 	}
 }
 
@@ -394,7 +355,8 @@ class Pawn:Actor
 
 	void OnMapSpawn(mthing_t *mthing);
 
-	void DropItem(classid type, int special, int chance);
+	void DropItem(classid type, int special, float chance);
+	void DropStuff(void) { }
 
 	void A_Look(void);
 	void A_Chase(void);
@@ -402,6 +364,7 @@ class Pawn:Actor
 	void A_Pain(void);
 	void A_NoBlocking(void);
 	void A_BossDeath(void);
+	void A_Feathers(void);
 
 	defaultproperties
 	{
@@ -412,6 +375,7 @@ class Pawn:Actor
 		bFloorClip = true;
 		bActivateMCross = true;
 		bCheckNoMonsters = true;
+		bCheckLineBlockMonsters = true;
 	}
 }
 
@@ -420,6 +384,8 @@ class PlayerPawn:Pawn
 {
 	int Attack2State;
 	int FireDeathState;
+
+	bool bSafeToRemove;
 
 	boolean GiveAmmo(int ammo, int count);
 	boolean GiveWeapon(int weapon);
@@ -469,6 +435,7 @@ class PlayerPawn:Pawn
 		bCountKill = false;
 		bActivateMCross = false;
 		bCheckNoMonsters = false;
+		bCheckLineBlockMonsters = false;
 		bDropOff = true;
 	}
 }
@@ -483,6 +450,70 @@ class Sorcerer2Base:Pawn
 
 	defaultproperties
 	{
+	}
+}
+
+class Projectile:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bMissile = true;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
+		bCheckLineBlocking = false;
+	}
+}
+
+class Effect:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
+	}
+}
+
+class ProjEffect:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bMissile = true;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bDropOff = true;
+		bNoTeleport = true;
+		bActivatePCross = true;
+		bCheckLineBlocking = false;
+	}
+}
+
+class Decoration:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Mass = 100.0;
+		ReactionCount = 8;
+		bNoPassMobj = true;
 	}
 }
 
@@ -786,8 +817,6 @@ addfields player_t
 	int DamageCount;
 	int BonusCount;
 
-	int FlameCount;	// for flame thrower duration
-
 	int JumpTics;
 
 	// Armor type is 0-2.
@@ -841,6 +870,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.31  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

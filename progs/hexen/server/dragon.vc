@@ -25,6 +25,44 @@
 
 //**************************************************************************
 //
+//	DragonFX2
+//
+//**************************************************************************
+
+class DragonFX2:Effect
+{
+
+__states__
+{
+	S_DRAGON_FX2_1('CFCF', 16 | FF_FULLBRIGHT, 1.0 / 35.0, S_DRAGON_FX2_2) { }
+	S_DRAGON_FX2_2('CFCF', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_3) { A_UnHideThing(); }
+	S_DRAGON_FX2_3('CFCF', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX2_4) { A_Scream(); }
+	S_DRAGON_FX2_4('CFCF', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_5) { }
+	S_DRAGON_FX2_5('CFCF', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX2_6) { A_Explode(); }
+	S_DRAGON_FX2_6('CFCF', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_7) { }
+	S_DRAGON_FX2_7('CFCF', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX2_8) { }
+	S_DRAGON_FX2_8('CFCF', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_9) { }
+	S_DRAGON_FX2_9('CFCF', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX2_10) { }
+	S_DRAGON_FX2_10('CFCF', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_11) { }
+	S_DRAGON_FX2_11('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 8.0;
+	Translucency = 100;
+	bNoTeleport = true;
+	bFireDamage = true;
+	bNoGravity = false;
+	IdleState = S_DRAGON_FX2_1;
+	DeathSound = 'DragonFireballExplode';
+}
+
+}
+
+//**************************************************************************
+//
 //	DragonMissile
 //
 //**************************************************************************
@@ -419,6 +457,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.25  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

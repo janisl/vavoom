@@ -23,53 +23,27 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//============================================================================
+//**************************************************************************
 //
-//  Actor::A_LeafSpawn
+//	Leaf1
 //
-//============================================================================
+//**************************************************************************
 
-void Actor::A_LeafSpawn(void)
+class Leaf1:Fragment
 {
-	Actor A;
-	int i;
 
-	for (i = (P_Random() & 3) + 1; i; i--)
-	{
-		A = Spawn(P_Random() & 1 ? Leaf2 : Leaf1, Origin + vector(
-			(Random() - Random()) * 64.0,
-			(Random() - Random()) * 64.0,
-			Random() * 64.0));
-		if (A)
-		{
-			A.Thrust(Angles.yaw, Random() * 2.0 + 3.0);
-			A.Instigator = self;
-			A._Special1 = 0;
-		}
-	}
-}
+int RestartState;
+int RestartCount;
 
 //============================================================================
 //
-//  Actor::A_LeafThrust
+//  A_LeafThrust
 //
 //============================================================================
 
-void Actor::A_LeafThrust(void)
+void A_LeafThrust(void)
 {
-	if (P_Random() > 96)
+	if (Random() > 0.375)
 	{
 		return;
 	}
@@ -78,19 +52,19 @@ void Actor::A_LeafThrust(void)
 
 //============================================================================
 //
-//  Actor::A_LeafCheck
+//  A_LeafCheck
 //
 //============================================================================
 
-void Actor::A_LeafCheck(void)
+void A_LeafCheck(void)
 {
-	_Special1++;
-	if (_Special1 >= 20)
+	RestartCount++;
+	if (RestartCount >= 20)
 	{
 		SetState(S_NULL);
 		return;
 	}
-	if (P_Random() > 64)
+	if (Random() > 0.25)
 	{
 		if (!Velocity.x && !Velocity.y)
 		{
@@ -98,19 +72,462 @@ void Actor::A_LeafCheck(void)
 		}
 		return;
 	}
-	SetState(S_LEAF1_8);
+	SetState(RestartState);
 	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
 	Thrust(Instigator.Angles.yaw, Random() * 2.0 + 2.0);
 	bMissile = true;
 }
 
+__states__
+{
+	S_LEAF1_1('LEF1', 0, 4.0 / 35.0, S_LEAF1_2) { }
+	S_LEAF1_2('LEF1', 1, 4.0 / 35.0, S_LEAF1_3) { }
+	S_LEAF1_3('LEF1', 2, 4.0 / 35.0, S_LEAF1_4) { }
+	S_LEAF1_4('LEF1', 3, 4.0 / 35.0, S_LEAF1_5) { A_LeafThrust(); }
+	S_LEAF1_5('LEF1', 4, 4.0 / 35.0, S_LEAF1_6) { }
+	S_LEAF1_6('LEF1', 5, 4.0 / 35.0, S_LEAF1_7) { }
+	S_LEAF1_7('LEF1', 6, 4.0 / 35.0, S_LEAF1_8) { }
+	S_LEAF1_8('LEF1', 7, 4.0 / 35.0, S_LEAF1_9) { A_LeafThrust(); }
+	S_LEAF1_9('LEF1', 8, 4.0 / 35.0, S_LEAF1_10) { }
+	S_LEAF1_10('LEF1', 0, 4.0 / 35.0, S_LEAF1_11) { }
+	S_LEAF1_11('LEF1', 1, 4.0 / 35.0, S_LEAF1_12) { }
+	S_LEAF1_12('LEF1', 2, 4.0 / 35.0, S_LEAF1_13) { A_LeafThrust(); }
+	S_LEAF1_13('LEF1', 3, 4.0 / 35.0, S_LEAF1_14) { }
+	S_LEAF1_14('LEF1', 4, 4.0 / 35.0, S_LEAF1_15) { }
+	S_LEAF1_15('LEF1', 5, 4.0 / 35.0, S_LEAF1_16) { }
+	S_LEAF1_16('LEF1', 6, 4.0 / 35.0, S_LEAF1_17) { A_LeafThrust(); }
+	S_LEAF1_17('LEF1', 7, 4.0 / 35.0, S_LEAF1_18) { }
+	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, S_NULL) { }
+	S_LEAF_X1('LEF3', 3, 10.0 / 35.0, S_LEAF_X1) { A_LeafCheck(); }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	Mass = 12.5;
+	bDropOff = false;
+	bNoGravity = false;
+	IdleState = S_LEAF1_1;
+	RestartState = S_LEAF1_8;
+	DeathState = S_LEAF_X1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Leaf2
+//
+//**************************************************************************
+
+class Leaf2:Leaf1
+{
+
+__states__
+{
+	S_LEAF2_1('LEF2', 0, 4.0 / 35.0, S_LEAF2_2) { }
+	S_LEAF2_2('LEF2', 1, 4.0 / 35.0, S_LEAF2_3) { }
+	S_LEAF2_3('LEF2', 2, 4.0 / 35.0, S_LEAF2_4) { }
+	S_LEAF2_4('LEF2', 3, 4.0 / 35.0, S_LEAF2_5) { A_LeafThrust(); }
+	S_LEAF2_5('LEF2', 4, 4.0 / 35.0, S_LEAF2_6) { }
+	S_LEAF2_6('LEF2', 5, 4.0 / 35.0, S_LEAF2_7) { }
+	S_LEAF2_7('LEF2', 6, 4.0 / 35.0, S_LEAF2_8) { }
+	S_LEAF2_8('LEF2', 7, 4.0 / 35.0, S_LEAF2_9) { A_LeafThrust(); }
+	S_LEAF2_9('LEF2', 8, 4.0 / 35.0, S_LEAF2_10) { }
+	S_LEAF2_10('LEF2', 0, 4.0 / 35.0, S_LEAF2_11) { }
+	S_LEAF2_11('LEF2', 1, 4.0 / 35.0, S_LEAF2_12) { }
+	S_LEAF2_12('LEF2', 2, 4.0 / 35.0, S_LEAF2_13) { A_LeafThrust(); }
+	S_LEAF2_13('LEF2', 3, 4.0 / 35.0, S_LEAF2_14) { }
+	S_LEAF2_14('LEF2', 4, 4.0 / 35.0, S_LEAF2_15) { }
+	S_LEAF2_15('LEF2', 5, 4.0 / 35.0, S_LEAF2_16) { }
+	S_LEAF2_16('LEF2', 6, 4.0 / 35.0, S_LEAF2_17) { A_LeafThrust(); }
+	S_LEAF2_17('LEF2', 7, 4.0 / 35.0, S_LEAF2_18) { }
+	S_LEAF2_18('LEF2', 8, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_LEAF2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeDead
+//
+//**************************************************************************
+
+class ZTreeDead:Decoration
+	__mobjinfo__(24)
+{
+
+__states__
+{
+	S_ZTREEDEAD1('TRE1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 96.0;
+	bSolid = true;
+	IdleState = S_ZTREEDEAD1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTree
+//
+//**************************************************************************
+
+class ZTree:Decoration
+	__mobjinfo__(25)
+{
+
+__states__
+{
+	S_ZTREE('TRE1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 128.0;
+	bSolid = true;
+	IdleState = S_ZTREE;
+}
+
+}
+
+//**************************************************************************
+//
+//	TreeDestructible
+//
+//**************************************************************************
+
+class TreeDestructible:Decoration
+	__mobjinfo__(8062)
+{
+
+__states__
+{
+	S_ZTREEDESTRUCTIBLE1('TRDT', 0, -1.0, S_NULL) { }
+	S_ZTREEDES_D1('TRDT', 1, 5.0 / 35.0, S_ZTREEDES_D2) { }
+	S_ZTREEDES_D2('TRDT', 2, 5.0 / 35.0, S_ZTREEDES_D3) { A_Scream(); }
+	S_ZTREEDES_D3('TRDT', 3, 5.0 / 35.0, S_ZTREEDES_D4) { }
+	S_ZTREEDES_D4('TRDT', 4, 5.0 / 35.0, S_ZTREEDES_D5) { }
+	S_ZTREEDES_D5('TRDT', 5, 5.0 / 35.0, S_ZTREEDES_D6) { }
+	S_ZTREEDES_D6('TRDT', 6, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 70;
+	Radius = 15.0;
+	Height = 180.0;
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	IdleState = S_ZTREEDESTRUCTIBLE1;
+	DeathState = S_ZTREEDES_D1;
+	DeathSound = 'TreeBreak';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeSwamp1
+//
+//**************************************************************************
+
+class ZTreeSwamp1:Decoration
+	__mobjinfo__(26)
+{
+
+__states__
+{
+	S_ZTREESWAMP182_1('TRE2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 150.0;
+	bSolid = true;
+	IdleState = S_ZTREESWAMP182_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeSwamp2
+//
+//**************************************************************************
+
+class ZTreeSwamp2:Decoration
+	__mobjinfo__(27)
+{
+
+__states__
+{
+	S_ZTREESWAMP172_1('TRE3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 120.0;
+	bSolid = true;
+	IdleState = S_ZTREESWAMP172_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStumpBurned
+//
+//**************************************************************************
+
+class ZStumpBurned:Decoration
+	__mobjinfo__(28)
+{
+
+__states__
+{
+	S_ZSTUMPBURNED1('STM1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 20.0;
+	bSolid = true;
+	IdleState = S_ZSTUMPBURNED1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStumpBare
+//
+//**************************************************************************
+
+class ZStumpBare:Decoration
+	__mobjinfo__(29)
+{
+
+__states__
+{
+	S_ZSTUMPBARE1('STM2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 20.0;
+	bSolid = true;
+	IdleState = S_ZSTUMPBARE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStumpSwamp1
+//
+//**************************************************************************
+
+class ZStumpSwamp1:Decoration
+	__mobjinfo__(37)
+{
+
+__states__
+{
+	S_ZSTUMPSWAMP1_1('STM3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSTUMPSWAMP1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStumpSwamp2
+//
+//**************************************************************************
+
+class ZStumpSwamp2:Decoration
+	__mobjinfo__(38)
+{
+
+__states__
+{
+	S_ZSTUMPSWAMP2_1('STM4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSTUMPSWAMP2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeLarge1
+//
+//**************************************************************************
+
+class ZTreeLarge1:Decoration
+	__mobjinfo__(78)
+{
+
+__states__
+{
+	S_ZTREELARGE1('TRE4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 180.0;
+	bSolid = true;
+	IdleState = S_ZTREELARGE1;
+	DeathState = S_ZTREELARGE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeLarge2
+//
+//**************************************************************************
+
+class ZTreeLarge2:Decoration
+	__mobjinfo__(79)
+{
+
+__states__
+{
+	S_ZTREELARGE2('TRE5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 180.0;
+	bSolid = true;
+	IdleState = S_ZTREELARGE2;
+	DeathState = S_ZTREELARGE2;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeGnarled1
+//
+//**************************************************************************
+
+class ZTreeGnarled1:Decoration
+	__mobjinfo__(80)
+{
+
+__states__
+{
+	S_ZTREEGNARLED1('TRE6', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 22.0;
+	Height = 100.0;
+	bSolid = true;
+	IdleState = S_ZTREEGNARLED1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTreeGnarled2
+//
+//**************************************************************************
+
+class ZTreeGnarled2:Decoration
+	__mobjinfo__(87)
+{
+
+__states__
+{
+	S_ZTREEGNARLED2('TRE7', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 22.0;
+	Height = 100.0;
+	bSolid = true;
+	IdleState = S_ZTREEGNARLED2;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZLog
+//
+//**************************************************************************
+
+class ZLog:Decoration
+	__mobjinfo__(88)
+{
+
+__states__
+{
+	S_ZLOG('LOGG', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 25.0;
+	bSolid = true;
+	IdleState = S_ZLOG;
+}
+
+}
+
+//**************************************************************************
+//
+//	BurnableTree
+//
+//**************************************************************************
+
+class BurnableTree:Decoration
+	abstract
+{
+
 //===========================================================================
 //
-//  Actor::A_TreeDeath
+//  A_TreeDeath
 //
 //===========================================================================
 
-void Actor::A_TreeDeath(void)
+void A_TreeDeath(void)
 {
 	if (!bFireDamage)
 	{
@@ -127,9 +544,181 @@ void Actor::A_TreeDeath(void)
 	}
 }
 
+defaultproperties
+{
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShrub1
+//
+//**************************************************************************
+
+class ZShrub1:BurnableTree
+	__mobjinfo__(8101)
+{
+
+__states__
+{
+	S_ZSHRUB1('SHB1', 0, -1.0, S_NULL) { }
+	S_ZSHRUB1_DIE('SHB1', 0, 1.0 / 35.0, S_ZSHRUB1) { A_TreeDeath(); }
+	S_ZSHRUB1_X1('SHB1', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ZSHRUB1_X2) { }
+	S_ZSHRUB1_X2('SHB1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZSHRUB1_X3) { A_Scream(); }
+	S_ZSHRUB1_X3('SHB1', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 20;
+	Radius = 8.0;
+	Height = 24.0;
+	IdleState = S_ZSHRUB1;
+	MeleeState = S_ZSHRUB1_X1;
+	DeathState = S_ZSHRUB1_DIE;
+	DeathSound = 'TreeExplode';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShrub2
+//
+//**************************************************************************
+
+class ZShrub2:BurnableTree
+	__mobjinfo__(8102)
+{
+
+__states__
+{
+	S_ZSHRUB2('SHB2', 0, -1.0, S_NULL) { }
+	S_ZSHRUB2_DIE('SHB2', 0, 1.0 / 35.0, S_ZSHRUB2) { A_TreeDeath(); }
+	S_ZSHRUB2_X1('SHB2', 1 | FF_FULLBRIGHT, 7.0 / 35.0, S_ZSHRUB2_X2) { }
+	S_ZSHRUB2_X2('SHB2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZSHRUB2_X3) { A_Scream(); }
+	S_ZSHRUB2_X3('SHB2', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZSHRUB2_X4) { A_Explode(); }
+	S_ZSHRUB2_X4('SHB2', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 10;
+	Radius = 16.0;
+	Height = 40.0;
+	IdleState = S_ZSHRUB2;
+	MeleeState = S_ZSHRUB2_X1;
+	DeathState = S_ZSHRUB2_DIE;
+	DeathSound = 'TreeExplode';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZXmasTree
+//
+//**************************************************************************
+
+class ZXmasTree:BurnableTree
+	__mobjinfo__(8068)
+{
+
+__states__
+{
+	S_ZXMAS_TREE('XMAS', 0, -1.0, S_NULL) { }
+	S_ZXMAS_TREE_DIE('XMAS', 0, 4.0 / 35.0, S_ZXMAS_TREE) { A_TreeDeath(); }
+	S_ZXMAS_TREE_X1('XMAS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X2) { }
+	S_ZXMAS_TREE_X2('XMAS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X3) { A_Scream(); }
+	S_ZXMAS_TREE_X3('XMAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X4) { }
+	S_ZXMAS_TREE_X4('XMAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X5) { A_Explode(); }
+	S_ZXMAS_TREE_X5('XMAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X6) { }
+	S_ZXMAS_TREE_X6('XMAS', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZXMAS_TREE_X7) { }
+	S_ZXMAS_TREE_X7('XMAS', 7, 5.0 / 35.0, S_ZXMAS_TREE_X8) { }
+	S_ZXMAS_TREE_X8('XMAS', 8, 4.0 / 35.0, S_ZXMAS_TREE_X9) { A_NoBlocking(); }
+	S_ZXMAS_TREE_X9('XMAS', 9, 4.0 / 35.0, S_ZXMAS_TREE_X10) { }
+	S_ZXMAS_TREE_X10('XMAS', 10, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 20;
+	Radius = 11.0;
+	Height = 130.0;
+	IdleState = S_ZXMAS_TREE;
+	MeleeState = S_ZXMAS_TREE_X1;
+	DeathState = S_ZXMAS_TREE_DIE;
+	DeathSound = 'TreeExplode';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZLeafSpawner
+//
+//**************************************************************************
+
+class ZLeafSpawner:Actor
+	__mobjinfo__(113)
+{
+
+//==========================================================================
+//
+//  A_LeafSpawn
+//
+//==========================================================================
+
+void A_LeafSpawn(void)
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 1; i; i--)
+	{
+		A = Spawn(P_Random() & 1 ? Leaf2 : Leaf1, Origin + vector(
+			(Random() - Random()) * 64.0,
+			(Random() - Random()) * 64.0,
+			Random() * 64.0));
+		if (A)
+		{
+			A.Thrust(Angles.yaw, Random() * 2.0 + 3.0);
+			A.Instigator = self;
+		}
+	}
+}
+
+__states__
+{
+	S_ZLEAFSPAWNER('MAN1', 0, 20.0 / 35.0, S_ZLEAFSPAWNER) { A_LeafSpawn(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	IdleState = S_ZLEAFSPAWNER;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.17  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

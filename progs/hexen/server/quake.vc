@@ -23,81 +23,38 @@
 //**
 //**************************************************************************
 
-//===========================================================================
+//**************************************************************************
+//
+//	QuakeFocus
+//
+//**************************************************************************
+
+class QuakeFocus:Actor
+{
+
+//
 // Quake variables
 //
-//      args[0]     Intensity on richter scale (2..9)
-//      args[1]     Duration in tics
-//      args[2]     Radius for damage
-//      args[3]     Radius for tremor
-//      args[4]     TID of map thing for focus of quake
+int Richters;		// Intensity on richter scale (2..9)
+int QuakeDuration;	// Duration in tics
+float DamageRadius;	// Radius for damage
+float TremorRadius;	// Radius for tremor
+
+//==========================================================================
 //
-//===========================================================================
-
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//===========================================================================
+//	A_Quake
 //
-//	A_LocalQuake
-//
-//===========================================================================
+//==========================================================================
 
-boolean A_LocalQuake(int *args)
-{
-	Actor focus;
-	Actor target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = FindMobjFromTID(args[4], &lastfound);
-		if (target)
-		{
-			focus = Spawn(QuakeFocus, target.Origin);
-			if (focus)
-			{
-				focus.Args[0] = args[0];
-				focus.Args[1] = args[1] >> 1;	// decremented every 2 tics
-				focus.Args[2] = args[2];
-				focus.Args[3] = args[3];
-				focus.Args[4] = args[4];
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
-}
-
-//===========================================================================
-//
-//	Actor::A_Quake
-//
-//===========================================================================
-
-void Actor::A_Quake(void)
+void A_Quake(void)
 {
 	float an;
 	player_t *pl;
 	Actor victim;
-	int richters = Args[0];
 	int playnum;
-	int dist;
+	float dist;
 
-	if (Args[1]-- > 0)
+	if (QuakeDuration-- > 0)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
@@ -106,22 +63,21 @@ void Actor::A_Quake(void)
 				continue;
 
 			victim = pl->MO;
-			dist = ftoi(MobjDist(self, victim)) >> 6;
-			// Tested in tile units (64 pixels)
-			if (dist < Args[3])	// In tremor radius
+			dist = MobjDist(self, victim);
+			if (dist < TremorRadius)	// In tremor radius
 			{
-				pl->LocalQuakeHappening = richters;
+				pl->LocalQuakeHappening = Richters;
 			}
 			// Check if in damage radius
-			if ((dist < Args[2]) && (victim.Origin.z <= victim.FloorZ))
+			if (dist < DamageRadius && victim.Origin.z <= victim.FloorZ)
 			{
-				if (P_Random() < 50)
+				if (Random() < 0.1953125)
 				{
 					victim.Damage(none, none, HITDICE(1));
 				}
 				// Thrust player around
 				an = victim.Angles.yaw + Random() * 256.0;
-				victim.Thrust(an, itof(richters) / 2.0);
+				victim.Thrust(an, itof(Richters) / 2.0);
 			}
 		}
 	}
@@ -135,9 +91,136 @@ void Actor::A_Quake(void)
 	}
 }
 
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('Earthquake', CHAN_VOICE);
+}
+
+__states__
+{
+	S_QUAKE_ACTIVE1('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE2) { A_Quake(); }
+	S_QUAKE_ACTIVE2('', 0, 1.0 / 35.0, S_QUAKE_ACTIVE3) { A_ContMobjSound(); }
+	S_QUAKE_ACTIVE3('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE4) { A_Quake(); }
+	S_QUAKE_ACTIVE4('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE5) { A_Quake(); }
+	S_QUAKE_ACTIVE5('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE6) { A_Quake(); }
+	S_QUAKE_ACTIVE6('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE7) { A_Quake(); }
+	S_QUAKE_ACTIVE7('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE8) { A_Quake(); }
+	S_QUAKE_ACTIVE8('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE9) { A_Quake(); }
+	S_QUAKE_ACTIVE9('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE0) { A_Quake(); }
+	S_QUAKE_ACTIVE0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEA) { A_Quake(); }
+	S_QUAKE_ACTIVEA('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEB) { A_Quake(); }
+	S_QUAKE_ACTIVEB('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEC) { A_Quake(); }
+	S_QUAKE_ACTIVEC('', 0, 2.0 / 35.0, S_QUAKE_ACTIVED) { A_Quake(); }
+	S_QUAKE_ACTIVED('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEE) { A_Quake(); }
+	S_QUAKE_ACTIVEE('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEF) { A_Quake(); }
+	S_QUAKE_ACTIVEF('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEG) { A_Quake(); }
+	S_QUAKE_ACTIVEG('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEH) { A_Quake(); }
+	S_QUAKE_ACTIVEH('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEI) { A_Quake(); }
+	S_QUAKE_ACTIVEI('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEJ) { A_Quake(); }
+	S_QUAKE_ACTIVEJ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEK) { A_Quake(); }
+	S_QUAKE_ACTIVEK('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEL) { A_Quake(); }
+	S_QUAKE_ACTIVEL('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEM) { A_Quake(); }
+	S_QUAKE_ACTIVEM('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEN) { A_Quake(); }
+	S_QUAKE_ACTIVEN('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEO) { A_Quake(); }
+	S_QUAKE_ACTIVEO('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEP) { A_Quake(); }
+	S_QUAKE_ACTIVEP('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEQ) { A_Quake(); }
+	S_QUAKE_ACTIVEQ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVER) { A_Quake(); }
+	S_QUAKE_ACTIVER('', 0, 2.0 / 35.0, S_QUAKE_ACTIVES) { A_Quake(); }
+	S_QUAKE_ACTIVES('', 0, 2.0 / 35.0, S_QUAKE_ACTIVET) { A_Quake(); }
+	S_QUAKE_ACTIVET('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEU) { A_Quake(); }
+	S_QUAKE_ACTIVEU('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEV) { A_Quake(); }
+	S_QUAKE_ACTIVEV('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEW) { A_Quake(); }
+	S_QUAKE_ACTIVEW('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEX) { A_Quake(); }
+	S_QUAKE_ACTIVEX('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEY) { A_Quake(); }
+	S_QUAKE_ACTIVEY('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEZ) { A_Quake(); }
+	S_QUAKE_ACTIVEZ('', 0, 2.0 / 35.0, S_QUAKE_ACT1) { A_Quake(); }
+	S_QUAKE_ACT1('', 0, 2.0 / 35.0, S_QUAKE_ACT2) { A_Quake(); }
+	S_QUAKE_ACT2('', 0, 2.0 / 35.0, S_QUAKE_ACT3) { A_Quake(); }
+	S_QUAKE_ACT3('', 0, 2.0 / 35.0, S_QUAKE_ACT4) { A_Quake(); }
+	S_QUAKE_ACT4('', 0, 2.0 / 35.0, S_QUAKE_ACT5) { A_Quake(); }
+	S_QUAKE_ACT5('', 0, 2.0 / 35.0, S_QUAKE_ACT6) { A_Quake(); }
+	S_QUAKE_ACT6('', 0, 2.0 / 35.0, S_QUAKE_ACT7) { A_Quake(); }
+	S_QUAKE_ACT7('', 0, 2.0 / 35.0, S_QUAKE_ACT8) { A_Quake(); }
+	S_QUAKE_ACT8('', 0, 2.0 / 35.0, S_QUAKE_ACT9) { A_Quake(); }
+	S_QUAKE_ACT9('', 0, 2.0 / 35.0, S_QUAKE_ACT0) { A_Quake(); }
+	S_QUAKE_ACT0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE1) { A_Quake(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bHidden = true;
+	bNoBlockmap = true;
+	IdleState = S_QUAKE_ACTIVE1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
+//===========================================================================
+// Quake variables
+//
+//      args[0]     Intensity on richter scale (2..9)
+//      args[1]     Duration in tics
+//      args[2]     Radius for damage, in tile units (64 pixels)
+//      args[3]     Radius for tremor in tile units (64 pixels)
+//      args[4]     TID of map thing for focus of quake
+//
+//===========================================================================
+
+//===========================================================================
+//
+//	A_LocalQuake
+//
+//===========================================================================
+
+boolean A_LocalQuake(int *args)
+{
+	QuakeFocus focus;
+	Actor target;
+	int lastfound = 0;
+	int success = false;
+
+	// Find all quake foci
+	do
+	{
+		target = FindMobjFromTID(args[4], &lastfound);
+		if (target)
+		{
+			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
+			if (focus)
+			{
+				focus.Richters = args[0];
+				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
+				focus.DamageRadius = itof(args[2]) * 64.0;
+				focus.TremorRadius = itof(args[3]) * 64.0;
+				success = true;
+			}
+		}
+	}
+	while (target);
+
+	return success;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.17  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

@@ -133,17 +133,6 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	state_t *st;
 
 	SpawnHealth = Health;
-	bCheckLineBlocking = false;
-	bCheckLineBlockMonsters = false;
-	if (!bMissile)
-	{
-		bCheckLineBlocking = true;
-		if (Class != HereticPlayer && Class != Pod)
-		{
-			bCheckLineBlockMonsters = true;
-		}
-	}
-
 	if (gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
@@ -307,13 +296,6 @@ int Actor::FaceActor(Actor Other, float * delta)
 
 void Actor::ExplodeMissile(void)
 {
-	if (Class == WhirlWind)
-	{
-		if (++Special2 < 60)
-		{
-			return;
-		}
-	}
 	Velocity = vector(0.0, 0.0, 0.0);
 	SetState(DeathState);
 	//tics -= P_Random()&3;
@@ -910,7 +892,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		Kill(source);
 		return;
 	}
-	if ((P_Random() < PainChance) && !bSkullFly)
+	if ((Random() < PainChance) && !bSkullFly)
 	{
 		bJustHit = true;	// fight back!
 		SetState(PainState);
@@ -967,7 +949,7 @@ void SpawnPuff(TVec org)
 		MSG_WriteShort(ftoi(org.y));
 		MSG_WriteShort(ftoi(org.z));
 	}
-	if (PuffType == BlasterFX1)
+	if (PuffType == BlasterPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -1420,6 +1402,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.42  2002/06/14 15:47:53  dj_jl
 //  Added state names to the states.
 //

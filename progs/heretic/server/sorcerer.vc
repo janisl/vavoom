@@ -30,11 +30,44 @@ TVec BossSpot[MAX_BOSS_SPOTS];
 float BossSpot_angle[MAX_BOSS_SPOTS];
 
 //**************************************************************************
+//
+//	Sorcerer1Missile
+//
+//**************************************************************************
+
+class Sorcerer1Missile:Projectile
+{
+
+__states__
+{
+	S_SRCRFX1_1('FX14', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_2) { }
+	S_SRCRFX1_2('FX14', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_3) { }
+	S_SRCRFX1_3('FX14', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_1) { }
+	S_SRCRFXI1_1('FX14', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_2) { }
+	S_SRCRFXI1_2('FX14', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_3) { }
+	S_SRCRFXI1_3('FX14', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_4) { }
+	S_SRCRFXI1_4('FX14', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_5) { }
+	S_SRCRFXI1_5('FX14', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 700.0;
+	MissileDamage = 10;
+	bFireDamage = true;
+	IdleState = S_SRCRFX1_1;
+	DeathState = S_SRCRFXI1_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	Sorcerer1
 //
-//**************************************************************************
 //**************************************************************************
 
 class Sorcerer1:Pawn
@@ -201,7 +234,7 @@ defaultproperties
 	Height = 100.0;
 	Mass = 800.0;
 	StepSpeed = 16.0;
-	PainChance = 56;
+	PainChance = 0.21875;
 	bBoss = true;
 	IdleState = S_SRCR1_LOOK1;
 	SeeState = S_SRCR1_WALK1;
@@ -219,11 +252,176 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	Sorcerer2MissileSpark
+//
+//**************************************************************************
+
+class Sorcerer2MissileSpark:Effect
+{
+
+__states__
+{
+	S_SOR2FXSPARK1('FX16', 3 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK2) { }
+	S_SOR2FXSPARK2('FX16', 4 | FF_FULLBRIGHT, 12.0 / 35.0, S_SOR2FXSPARK3) { }
+	S_SOR2FXSPARK3('FX16', 5 | FF_FULLBRIGHT, 12.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_SOR2FXSPARK1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sorcerer2Missile1
+//
+//**************************************************************************
+
+class Sorcerer2Missile1:Projectile
+{
+
+//==========================================================================
+//
+//  A_BlueSpark
+//
+//==========================================================================
+
+void A_BlueSpark(void)
+{
+	int i;
+	Actor spark;
+
+	for (i = 0; i < 2; i++)
+	{
+		spark = Spawn(Sorcerer2MissileSpark, Origin);
+		spark.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		spark.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		spark.Velocity.z = (1.0 + Random()) * 35.0;
+	}
+}
+
+__states__
+{
+	S_SOR2FX1_1('FX16', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_2) { A_BlueSpark(); }
+	S_SOR2FX1_2('FX16', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_3) { A_BlueSpark(); }
+	S_SOR2FX1_3('FX16', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SOR2FX1_1) { A_BlueSpark(); }
+	S_SOR2FXI1_1('FX16', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_2) { A_Explode(); }
+	S_SOR2FXI1_2('FX16', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_3) { }
+	S_SOR2FXI1_3('FX16', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_4) { }
+	S_SOR2FXI1_4('FX16', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_5) { }
+	S_SOR2FXI1_5('FX16', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI1_6) { }
+	S_SOR2FXI1_6('FX16', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 700.0;
+	MissileDamage = 1;
+	IdleState = S_SOR2FX1_1;
+	DeathState = S_SOR2FXI1_1;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sorcerer2Missile2
+//
+//**************************************************************************
+
+class Sorcerer2Missile2:Projectile
+{
+
+//==========================================================================
+//
+//  A_GenWizard
+//
+//==========================================================================
+
+void A_GenWizard(void)
+{
+	Actor A;
+	Actor fog;
+
+	A = Spawn(Wizard, Origin);
+	A.Origin.z = Origin.z - A.Height / 2.0;
+	if (!A.TestLocation())
+	{
+		// Didn't fit
+		A.Remove();
+		return;
+	}
+	Velocity = vector(0.0, 0.0, 0.0);
+	SetState(DeathState);
+	bMissile = false;
+	fog = Spawn(TeleportFog, Origin);
+	fog.PlaySound('Teleport', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SOR2FX2_1('FX11', 0 | FF_FULLBRIGHT, 35.0 / 35.0, S_SOR2FX2_2) { }
+	S_SOR2FX2_2('FX11', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_3) { A_GenWizard(); }
+	S_SOR2FX2_3('FX11', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FX2_2) { }
+	S_SOR2FXI2_1('FX11', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_2) { }
+	S_SOR2FXI2_2('FX11', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_3) { }
+	S_SOR2FXI2_3('FX11', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_4) { }
+	S_SOR2FXI2_4('FX11', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_5) { }
+	S_SOR2FXI2_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 210.0;
+	MissileDamage = 10;
+	IdleState = S_SOR2FX2_1;
+	DeathState = S_SOR2FXI2_1;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	Sorcerer2TeleFade
+//
+//**************************************************************************
+
+class Sorcerer2TeleFade:Effect
+{
+
+__states__
+{
+	S_SOR2TELEFADE1('SOR2', 6, 8.0 / 35.0, S_SOR2TELEFADE2) { }
+	S_SOR2TELEFADE2('SOR2', 7, 6.0 / 35.0, S_SOR2TELEFADE3) { }
+	S_SOR2TELEFADE3('SOR2', 8, 6.0 / 35.0, S_SOR2TELEFADE4) { }
+	S_SOR2TELEFADE4('SOR2', 9, 6.0 / 35.0, S_SOR2TELEFADE5) { }
+	S_SOR2TELEFADE5('SOR2', 10, 6.0 / 35.0, S_SOR2TELEFADE6) { }
+	S_SOR2TELEFADE6('SOR2', 11, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_SOR2TELEFADE1;
+}
+
+}
+
 //**************************************************************************
 //
 //	Sorcerer2
 //
-//**************************************************************************
 //**************************************************************************
 
 class Sorcerer2:Sorcerer2Base
@@ -304,7 +502,7 @@ void DSparilTeleport(void)
 
 void A_Srcr2Decide(void)
 {
-	int chance;
+	float chance;
 
 	if (!BossSpotCount)
 	{
@@ -314,34 +512,34 @@ void A_Srcr2Decide(void)
 	switch (Health / (SpawnHealth / 8))
 	{
 	case 0:
-		chance = 192;
+		chance = 0.75;
 		break;
 	case 1:
-		chance = 120;
+		chance = 0.46875;
 		break;
 	case 2:
-		chance = 120;
+		chance = 0.46875;
 		break;
 	case 3:
-		chance = 120;
+		chance = 0.46875;
 		break;
 	case 4:
-		chance = 64;
+		chance = 0.25;
 		break;
 	case 5:
-		chance = 64;
+		chance = 0.25;
 		break;
 	case 6:
-		chance = 32;
+		chance = 0.125;
 		break;
 	case 7:
-		chance = 16;
+		chance = 0.0625;
 		break;
 	case 8:
-		chance = 0;
+		chance = 0.0;
 		break;
 	}
-	if (P_Random() < chance)
+	if (Random() < chance)
 	{
 		DSparilTeleport();
 	}
@@ -493,7 +691,7 @@ defaultproperties
 	Height = 70.0;
 	Mass = 300.0;
 	StepSpeed = 14.0;
-	PainChance = 32;
+	PainChance = 0.125;
 	bDropOff = true;
 	bBoss = true;
 	RiseState = S_SOR2_RISE1;
@@ -547,55 +745,12 @@ void AddBossSpot(float x, float y, float angle)
 	BossSpotCount++;
 }
 
-//==========================================================================
-//
-//  Actor::A_BlueSpark
-//
-//==========================================================================
-
-void Actor::A_BlueSpark(void)
-{
-	int i;
-	Actor spark;
-
-	for (i = 0; i < 2; i++)
-	{
-		spark = Spawn(Sorcerer2MissileSpark, Origin);
-		spark.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-		spark.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		spark.Velocity.z = (1.0 + Random()) * 35.0;
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_GenWizard
-//
-//==========================================================================
-
-void Actor::A_GenWizard(void)
-{
-	Actor A;
-	Actor fog;
-
-	A = Spawn(Wizard, Origin);
-	A.Origin.z = Origin.z - A.Height / 2.0;
-	if (!A.TestLocation())
-	{
-		// Didn't fit
-		A.Remove();
-		return;
-	}
-	Velocity = vector(0.0, 0.0, 0.0);
-	SetState(DeathState);
-	bMissile = false;
-	fog = Spawn(TeleportFog, Origin);
-	fog.PlaySound('Teleport', CHAN_VOICE);
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.25  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

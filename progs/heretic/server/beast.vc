@@ -24,16 +24,82 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	BeastBall
+//
+//**************************************************************************
+
+class BeastBall:Projectile
+{
+
+//==========================================================================
+//
+//  A_BeastPuff
+//
+//==========================================================================
+
+void A_BeastPuff(void)
+{
+	TVec org;
+
+	if (P_Random() > 64)
+	{
+		org.x = Origin.x + (Random() - Random()) * 4.0;
+		org.y = Origin.y + (Random() - Random()) * 4.0;
+		org.z = Origin.z + (Random() - Random()) * 4.0;
+		Spawn(Puffy, org);
+	}
+}
+
+__states__
+{
+	S_BEASTBALL1('FRB1', 0, 2.0 / 35.0, S_BEASTBALL2) { A_BeastPuff(); }
+	S_BEASTBALL2('FRB1', 0, 2.0 / 35.0, S_BEASTBALL3) { A_BeastPuff(); }
+	S_BEASTBALL3('FRB1', 1, 2.0 / 35.0, S_BEASTBALL4) { A_BeastPuff(); }
+	S_BEASTBALL4('FRB1', 1, 2.0 / 35.0, S_BEASTBALL5) { A_BeastPuff(); }
+	S_BEASTBALL5('FRB1', 2, 2.0 / 35.0, S_BEASTBALL6) { A_BeastPuff(); }
+	S_BEASTBALL6('FRB1', 2, 2.0 / 35.0, S_BEASTBALL1) { A_BeastPuff(); }
+	S_BEASTBALLX1('FRB1', 3, 4.0 / 35.0, S_BEASTBALLX2) { }
+	S_BEASTBALLX2('FRB1', 4, 4.0 / 35.0, S_BEASTBALLX3) { }
+	S_BEASTBALLX3('FRB1', 5, 4.0 / 35.0, S_BEASTBALLX4) { }
+	S_BEASTBALLX4('FRB1', 6, 4.0 / 35.0, S_BEASTBALLX5) { }
+	S_BEASTBALLX5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 9.0;
+	Height = 8.0;
+	Speed = 420.0;
+	MissileDamage = 4;
+	bWindThrust = true;
+	IdleState = S_BEASTBALL1;
+	DeathState = S_BEASTBALLX1;
+	Effects = EF_DL_RED;
+}
+
+}
+
 //**************************************************************************
 //
 //	Beast
 //
 //**************************************************************************
-//**************************************************************************
 
 class Beast:Pawn
 	__mobjinfo__(70)
 {
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoCrossbowWimpy, 10, 0.328125);
+}
 
 //==========================================================================
 //
@@ -97,7 +163,7 @@ defaultproperties
 	Height = 74.0;
 	Mass = 200.0;
 	StepSpeed = 14.0;
-	PainChance = 100;
+	PainChance = 0.390625;
 	IdleState = S_BEAST_LOOK1;
 	SeeState = S_BEAST_WALK1;
 	MissileState = S_BEAST_ATK1;
@@ -114,30 +180,81 @@ defaultproperties
 }
 
 //**************************************************************************
+//
+//	BurnBall
+//
+//	UNUSED
+//
 //**************************************************************************
 
-//==========================================================================
-//
-//  Actor::A_BeastPuff
-//
-//==========================================================================
-
-void Actor::A_BeastPuff(void)
+class BurnBall:BeastBall
 {
-	TVec org;
 
-	if (P_Random() > 64)
-	{
-		org.x = Origin.x + (Random() - Random()) * 4.0;
-		org.y = Origin.y + (Random() - Random()) * 4.0;
-		org.z = Origin.z + (Random() - Random()) * 4.0;
-		Spawn(Puffy, org);
-	}
+__states__
+{
+	S_BURNBALL1('FRB1', 0, 4.0 / 35.0, S_BURNBALL2) { }
+	S_BURNBALL2('FRB1', 1, 4.0 / 35.0, S_BURNBALL3) { }
+	S_BURNBALL3('FRB1', 2, 4.0 / 35.0, S_BURNBALL4) { }
+	S_BURNBALL4('FRB1', 3, 4.0 / 35.0, S_BURNBALL5) { }
+	S_BURNBALL5('FRB1', 4, 4.0 / 35.0, S_BURNBALL6) { }
+	S_BURNBALL6('FRB1', 5, 4.0 / 35.0, S_BURNBALL7) { }
+	S_BURNBALL7('FRB1', 6, 4.0 / 35.0, S_BURNBALL8) { }
+	S_BURNBALL8('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Speed = 350.0;
+	MissileDamage = 2;
+	bWindThrust = false;
+	bDropOff = false;
+	IdleState = S_BURNBALL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BurnBallFB
+//
+//	UNUSED
+//
+//**************************************************************************
+
+class BurnBallFB:BeastBall
+{
+
+__states__
+{
+	S_BURNBALLFB1('FRB1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB2) { }
+	S_BURNBALLFB2('FRB1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB3) { }
+	S_BURNBALLFB3('FRB1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB4) { }
+	S_BURNBALLFB4('FRB1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB5) { }
+	S_BURNBALLFB5('FRB1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB6) { }
+	S_BURNBALLFB6('FRB1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB7) { }
+	S_BURNBALLFB7('FRB1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_BURNBALLFB8) { }
+	S_BURNBALLFB8('FRB1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Speed = 350.0;
+	MissileDamage = 2;
+	bWindThrust = false;
+	bDropOff = false;
+	IdleState = S_BURNBALLFB1;
+}
+
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.19  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

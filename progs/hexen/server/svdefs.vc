@@ -314,23 +314,31 @@ class Actor:Entity
 	void SpawnRipperBlood(void);
 	void SpawnDirt(float radius);
 
-	boolean Activate(void);
-	boolean Deactivate(void);
+	boolean Activate(void)
+	{
+		return false;
+	}
+	boolean Deactivate(void)
+	{
+		return false;
+	}
+	void RemoveThing(void)
+	{
+		Remove();
+	}
 
 	//  Physics
 	boolean Physics(void);
-	boolean XYMovement(void);
+	void XYMovement(void);
 	boolean ZMovement(void);
-	boolean HitMobj(Entity Other);
-	boolean HitLine(void);
+	void HitMobj(Entity Other);
+	void HitLine(void);
 	boolean HitFloor(void);
 	boolean HitCeiling(void);
 	void ApplyFriction(void);
 	void ResetBlasted(void);
 	boolean BlasterPhysics(void);
 	void PlayerLandedOnThing(void);
-	void SlideMove(void);
-	void BounceWall(void);
 
 	void SetDormant(void)
 	{
@@ -358,80 +366,26 @@ class Actor:Entity
 	Actor RoughBlockCheck(int index);
 	Actor RoughMonsterSearch(int distance);
 
-	// Misc weapon functions
-	void CHolyTailFollow(float dist);
-	void CHolyTailRemove(void);
-
 	// Misc action functions
 	void A_SetInvulnerable(void);
-	void A_BridgeRemove(void);
 
 	// Misc enemy functions
 	void A_DeQueueCorpse(void);
-	void KSpiritInit(Actor korax);
-	void A_KSpiritSeeker(float thresh, float turnMax);
-	void A_KSpiritWeave(void);
 
 	// Action functions
 	void A_FreeTargMobj(void);
-	void A_FlameCheck(void);
 	void A_HideThing(void);
 	void A_UnHideThing(void);
-	void A_Summon(void);
-	void A_TeloSpawnC(void);
-	void A_TeloSpawnB(void);
-	void A_TeloSpawnA(void);
-	void A_TeloSpawnD(void);
-	void A_CheckTeleRing(void);
-	void A_FogSpawn(void);
-	void A_FogMove(void);
-	void A_Quake(void);
-	void A_ContMobjSound(void);
 	void A_Scream(void);
 	void A_Explode(void);
-	void A_PoisonBagInit(void);
-	void A_PoisonBagDamage(void);
-	void A_PoisonBagCheck(void);
-	void A_CheckThrowBomb(void);
 	void A_NoGravity(void);
-	void A_CorpseBloodDrip(void);
-	void A_CorpseExplode(void);
-	void A_LeafSpawn(void);
-	void A_LeafThrust(void);
-	void A_LeafCheck(void);
-	void A_BridgeInit(void);
-	void A_BridgeOrbit(void);
-	void A_TreeDeath(void);
-	void A_PoisonShroom(void);
 	void A_Pain(void);
-	void A_SoAExplode(void);
-	void A_BellReset1(void);
-	void A_BellReset2(void);
 	void A_NoBlocking(void);
-	void A_CHolyTail(void);
 	void A_AddPlayerCorpse(void);
 	void A_CheckBurnGone(void);
-	void A_SpeedFade(void);
-	void A_IceSetTics(void);
 	void A_PigPain(void);
 	void A_QueueCorpse(void);
-	void A_CheckFloor(void);
-	void A_SerpentHeadCheck(void);
-	void A_FloatGib(void);
-	void A_DelayGib(void);
-	void A_SinkGib(void);
-	void A_SetAltShadow(void);
-	void A_ESound(void);
 	void A_UnSetInvulnerable(void);
-	void A_SmBounce(void);
-	void A_SorcFX2Split(void);
-	void A_SorcFX2Orbit(void);
-	void A_KSpiritRoam(void);
-	void A_KBoltRaise(void);
-	void A_KBolt(void);
-	void A_BatSpawnInit(void);
-	void A_BatSpawn(void);
-	void A_BatMove(void);
 
 	defaultproperties
 	{
@@ -583,6 +537,63 @@ class Projectile:Actor
 		bNoTeleport = true;
 		bActivateImpact = true;
 		bActivatePCross = true;
+	}
+}
+
+class Fragment:Projectile
+	abstract
+{
+	defaultproperties
+	{
+		Radius = 20.0;
+		Height = 16.0;
+		bActivateImpact = false;
+		bActivatePCross = false;
+	}
+}
+
+class Effect:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		bNoBlockmap = true;
+		bNoGravity = true;
+		bNoPassMobj = true;
+	}
+}
+
+class Carcas:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		bCorpse = true;
+		bDropOff = true;
+		bNoTeleport = true;
+		bNoPassMobj = true;
+		bFloorClip = true;
+	}
+}
+
+class Decoration:Actor
+	abstract
+{
+	defaultproperties
+	{
+		Health = 1000;
+		Radius = 20.0;
+		Height = 16.0;
+		Mass = 100.0;
+		bNoPassMobj = true;
 	}
 }
 
@@ -981,6 +992,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.33  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

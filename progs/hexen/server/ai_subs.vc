@@ -285,7 +285,7 @@ boolean Pawn::LookForPlayers(boolean allaround)
 			return false;	// done looking
 
 		P = &players[LastLook];
-		if (!P->bSpawned || P->MO)
+		if (!P->bSpawned || !P->MO)
 			continue;	//  not spawned yet
 		if (P->Health <= 0)
 			continue;	// dead
@@ -790,6 +790,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.21  2002/04/11 16:52:15  dj_jl
 //  Made TryMove native.
 //

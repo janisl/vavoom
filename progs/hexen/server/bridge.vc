@@ -23,18 +23,6 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
 // New bridge stuff
@@ -43,8 +31,7 @@
 //      special1    true == removing from world
 //
 //  Child
-//      Owner       pointer to center mobj
-//      args[0]     angle of ball
+//      Instigator  pointer to center mobj
 //
 //==========================================================================
 
@@ -182,51 +169,86 @@ float orbitTableY[256] = {
 		-0.730133, -0.362320
 };
 
+//**************************************************************************
+//
+//	BridgeBall
+//
+//**************************************************************************
+
+class BridgeBall:Effect
+{
+
+int OrbitAngle;		// Angle of ball
+
 //==========================================================================
 //
-//  Actor::A_BridgeOrbit
+//  A_BridgeOrbit
 //
 //==========================================================================
 
-void Actor::A_BridgeOrbit(void)
+void A_BridgeOrbit(void)
 {
 	if (Instigator._Special1)
 	{
 		SetState(S_NULL);
 	}
-	Args[0] += 3;
-	Origin.x = Instigator.Origin.x + orbitTableX[Args[0] & 255];
-	Origin.y = Instigator.Origin.y + orbitTableY[Args[0] & 255];
+	OrbitAngle += 3;
+	Origin.x = Instigator.Origin.x + orbitTableX[OrbitAngle & 255];
+	Origin.y = Instigator.Origin.y + orbitTableY[OrbitAngle & 255];
 	Origin.z = Instigator.Origin.z;
 }
 
+__states__
+{
+	S_BBALL1('TLGL', 0, 2.0 / 35.0, S_BBALL2) { }
+	S_BBALL2('TLGL', 0, 5.0 / 35.0, S_BBALL2) { A_BridgeOrbit(); }
+}
+
+defaultproperties
+{
+	bNoTeleport = true;
+	IdleState = S_BBALL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Bridge
+//
+//**************************************************************************
+
+class Bridge:Actor
+	__mobjinfo__(118)
+{
+
 //==========================================================================
 //
-//  Actor::A_BridgeInit
+//  A_BridgeInit
 //
 //==========================================================================
 
-void Actor::A_BridgeInit(void)
+void A_BridgeInit(void)
 {
 	int startangle;
-	Actor ball1;
-	Actor ball2;
-	Actor ball3;
+	BridgeBall ball1;
+	BridgeBall ball2;
+	BridgeBall ball3;
 
 	startangle = P_Random();
 	_Special1 = 0;
 
 	// Spawn triad into world
-	ball1 = Spawn(BridgeBall, Origin);
-	ball1.Args[0] = startangle;
+	ball1 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball1.OrbitAngle = startangle;
 	ball1.Instigator = self;
 
-	ball2 = Spawn(BridgeBall, Origin);
-	ball2.Args[0] = (startangle + 85) & 255;
+	ball2 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball2.OrbitAngle = (startangle + 85) & 255;
 	ball2.Instigator = self;
 
-	ball3 = Spawn(BridgeBall, Origin);
-	ball3.Args[0] = (startangle + 170) & 255;
+	ball3 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball3.OrbitAngle = (startangle + 170) & 255;
 	ball3.Instigator = self;
 
 	ball1.A_BridgeOrbit();
@@ -234,22 +256,49 @@ void Actor::A_BridgeInit(void)
 	ball3.A_BridgeOrbit();
 }
 
+__states__
+{
+	S_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_BRIDGE2) { }
+	S_BRIDGE2('TLGL', 0, 2.0 / 35.0, S_BRIDGE3) { A_BridgeInit(); }
+	S_BRIDGE3('TLGL', 0, -1.0, S_NULL) { }
+	S_FREE_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_FREE_BRIDGE2) { }
+	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, S_NULL) { }
+}
+
 //==========================================================================
 //
-//  Actor::A_BridgeRemove
+//  RemoveThing
 //
 //==========================================================================
 
-void Actor::A_BridgeRemove(void)
+void RemoveThing(void)
 {
 	_Special1 = true;	// Removing the bridge
 	bSolid = false;
 	SetState(S_FREE_BRIDGE1);
 }
 
+defaultproperties
+{
+	Health = 1000;
+	Radius = 32.0;
+	Height = 2.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bSolid = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
+	IdleState = S_BRIDGE1;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

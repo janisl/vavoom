@@ -504,10 +504,6 @@ void Actor::A_Explode(void)
 		distance = 192.0;
 		damageSelf = false;
 		break;
-	case PoisonCloud:
-		damage = 4;
-		distance = 40.0;
-		break;
 	case ZXmasTree:
 	case ZShrub2:
 		damage = 30;
@@ -517,7 +513,7 @@ void Actor::A_Explode(void)
 		break;
 	}
 	P_RadiusAttack(self, Instigator, damage, distance, damageSelf);
-	if (Origin.z <= FloorZ + distance && Class != PoisonCloud)
+	if (Origin.z <= FloorZ + distance)
 	{
 		HitFloorType();
 	}
@@ -592,28 +588,6 @@ void Pawn::A_FreezeDeath(void)
 
 //============================================================================
 //
-//	Actor::A_IceSetTics
-//
-//============================================================================
-
-void Actor::A_IceSetTics(void)
-{
-	int floor;
-
-	StateTime = 2.0 + Random() * 2.0;
-	floor = GetFloorType();
-	if (floor == FLOOR_LAVA)
-	{
-		StateTime /= 4.0;
-	}
-	else if (floor == FLOOR_ICE)
-	{
-		StateTime *= 2.0;
-	}
-}
-
-//============================================================================
-//
 //  Pawn::A_FreezeDeathChunks
 //
 //============================================================================
@@ -642,7 +616,7 @@ void Pawn::A_FreezeDeathChunks(void)
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
 			A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-			A.A_IceSetTics();	// set a random tic wait
+			IceChunk(A).A_IceSetTics();	// set a random tic wait
 		}
 	}
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
@@ -657,7 +631,7 @@ void Pawn::A_FreezeDeathChunks(void)
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
 			A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-			A.A_IceSetTics();	// set a random tic wait
+			IceChunk(A).A_IceSetTics();	// set a random tic wait
 		}
 	}
 	if (bIsPlayer)
@@ -693,18 +667,6 @@ void Actor::A_CheckBurnGone(void)
 	{
 		SetState(S_PLAY_FDTH20);
 	}
-}
-
-//============================================================================
-//
-//	Actor::A_SpeedFade
-//
-//============================================================================
-
-void Actor::A_SpeedFade(void)
-{
-	Translucency = 66;
-	SpriteIndex = Instigator.SpriteIndex;
 }
 
 //============================================================================
@@ -828,6 +790,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.27  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

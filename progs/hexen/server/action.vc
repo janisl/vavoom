@@ -57,44 +57,6 @@ void Actor::A_UnHideThing(void)
 
 //===========================================================================
 //
-//  Actor::A_FlameCheck
-//
-//===========================================================================
-
-void Actor::A_FlameCheck(void)
-{
-	if (!Args[0]--)	// Called every 8 tics
-	{
-		SetState(S_NULL);
-	}
-}
-
-//===========================================================================
-//
-//  Actor::A_CheckThrowBomb
-//
-//===========================================================================
-
-void Actor::A_CheckThrowBomb(void)
-{
-	if (fabs(Velocity.x) < 1.5 * 35.0 &&
-		fabs(Velocity.y) < 1.5 * 35.0 &&
-		Velocity.z < 2.0 * 35.0 && StateNum == S_THROWINGBOMB6)
-	{
-		SetState(S_THROWINGBOMB7);
-		Origin.z = FloorZ;
-		Velocity.z = 0.0;
-		bFloorBounce = false;
-		bMissile = false;
-	}
-	if (!--Health)
-	{
-		SetState(DeathState);
-	}
-}
-
-//===========================================================================
-//
 //  Actor::A_NoGravity
 //
 //===========================================================================
@@ -102,130 +64,6 @@ void Actor::A_CheckThrowBomb(void)
 void Actor::A_NoGravity(void)
 {
 	bNoGravity = true;
-}
-
-//============================================================================
-//
-//  Actor::A_CorpseBloodDrip
-//
-//============================================================================
-
-void Actor::A_CorpseBloodDrip(void)
-{
-	if (P_Random() > 128)
-	{
-		return;
-	}
-	Spawn(CorpseBloodDrip, Origin + vector(0.0, 0.0, Height / 2.0));
-}
-
-//============================================================================
-//
-//  Actor::A_CorpseExplode
-//
-//============================================================================
-
-void Actor::A_CorpseExplode(void)
-{
-	Actor A;
-	int i;
-
-	for (i = (P_Random() & 3) + 3; i; i--)
-	{
-		A = Spawn(CorpseBit, Origin);
-		A.SetState(A.IdleState + (P_Random() % 3));
-		if (A)
-		{
-			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
-		}
-	}
-	// Spawn a skull
-	A = Spawn(CorpseBit, Origin);
-	A.SetState(S_CORPSEBIT_4);
-	if (A)
-	{
-		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-		A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
-		A.PlaySound('FireDemonDeath', CHAN_VOICE);
-	}
-	Remove();
-}
-
-//===========================================================================
-//
-//  Actor::A_SoAExplode
-//
-//  Suit of Armor Explode
-//
-//===========================================================================
-
-void Actor::A_SoAExplode(void)
-{
-	Actor A;
-	int i;
-
-	for (i = 0; i < 10; i++)
-	{
-		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
-			(Random() - 0.5) * 16.0, Random() * Height));
-		A.SetState(A.IdleState + i);
-		if (A)
-		{
-			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
-		}
-	}
-	if (Args[0])
-	{
-		// Spawn an item
-		Spawn(TranslateThingType[Args[0]], Origin);
-	}
-	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
-	Remove();
-}
-
-//==========================================================================
-//
-//  Actor::A_ContMobjSound
-//
-//==========================================================================
-
-void Actor::A_ContMobjSound(void)
-{
-	switch (Class)
-	{
-	case SerpentMissile:
-		PlaySound('SerpentFXContinuous', CHAN_VOICE);
-		break;
-	case HammerMissile:
-		PlaySound('FighterHammerContinuous', CHAN_VOICE);
-		break;
-	case QuakeFocus:
-		PlaySound('Earthquake', CHAN_VOICE);
-		break;
-	default:
-		break;
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_ESound
-//
-//==========================================================================
-
-void Actor::A_ESound(void)
-{
-	switch (Class)
-	{
-	case SoundWind:
-		PlaySound('Wind', CHAN_VOICE);
-		break;
-	}
 }
 
 //============================================================================
@@ -253,6 +91,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.19  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -1,0 +1,2446 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	ZWingedStatueNoSkull
+//
+//**************************************************************************
+
+class ZWingedStatueNoSkull:Decoration
+	__mobjinfo__(9011)
+{
+
+__states__
+{
+	S_ZWINGEDSTATUENOSKULL('STWN', 0, -1.0, S_NULL) { }
+	S_ZWINGEDSTATUENOSKULL2('STWN', 1, -1.0, S_NULL) { }
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+boolean Activate(void)
+{
+	SetState(S_ZWINGEDSTATUENOSKULL2);
+	return true;
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZWINGEDSTATUENOSKULL;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZGemPedestal
+//
+//**************************************************************************
+
+class ZGemPedestal:Decoration
+	__mobjinfo__(9012)
+{
+
+__states__
+{
+	S_ZGEMPEDESTAL1('GMPD', 0, -1.0, S_NULL) { }
+	S_ZGEMPEDESTAL2('GMPD', 1, -1.0, S_NULL) { }
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+boolean Activate(void)
+{
+	SetState(S_ZGEMPEDESTAL2);
+	return true;
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 40.0;
+	bSolid = true;
+	IdleState = S_ZGEMPEDESTAL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZWingedStatue
+//
+//**************************************************************************
+
+class ZWingedStatue:Decoration
+	__mobjinfo__(5)
+{
+
+__states__
+{
+	S_ZWINGEDSTATUE1('STTW', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZWINGEDSTATUE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRock1
+//
+//**************************************************************************
+
+class ZRock1:Decoration
+	__mobjinfo__(6)
+{
+
+__states__
+{
+	S_ZROCK1_1('RCK1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZROCK1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRock2
+//
+//**************************************************************************
+
+class ZRock2:Decoration
+	__mobjinfo__(7)
+{
+
+__states__
+{
+	S_ZROCK2_1('RCK2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZROCK2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRock3
+//
+//**************************************************************************
+
+class ZRock3:Decoration
+	__mobjinfo__(9)
+{
+
+__states__
+{
+	S_ZROCK3_1('RCK3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZROCK3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRock4
+//
+//**************************************************************************
+
+class ZRock4:Decoration
+	__mobjinfo__(15)
+{
+
+__states__
+{
+	S_ZROCK4_1('RCK4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 16.0;
+	bSolid = true;
+	IdleState = S_ZROCK4_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomLarge1
+//
+//**************************************************************************
+
+class ZShroomLarge1:Decoration
+	__mobjinfo__(39)
+{
+
+__states__
+{
+	S_ZSHROOMLARGE1_1('MSH1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMLARGE1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomLarge2
+//
+//**************************************************************************
+
+class ZShroomLarge2:Decoration
+	__mobjinfo__(40)
+{
+
+__states__
+{
+	S_ZSHROOMLARGE2_1('MSH2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMLARGE2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomLarge3
+//
+//**************************************************************************
+
+class ZShroomLarge3:Decoration
+	__mobjinfo__(41)
+{
+
+__states__
+{
+	S_ZSHROOMLARGE3_1('MSH3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMLARGE3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomSmall1
+//
+//**************************************************************************
+
+class ZShroomSmall1:Decoration
+	__mobjinfo__(42)
+{
+
+__states__
+{
+	S_ZSHROOMSMALL1_1('MSH4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMSMALL1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomSmall2
+//
+//**************************************************************************
+
+class ZShroomSmall2:Decoration
+	__mobjinfo__(44)
+{
+
+__states__
+{
+	S_ZSHROOMSMALL2_1('MSH5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMSMALL2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomSmall3
+//
+//**************************************************************************
+
+class ZShroomSmall3:Decoration
+	__mobjinfo__(45)
+{
+
+__states__
+{
+	S_ZSHROOMSMALL3_1('MSH6', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMSMALL3_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomSmall4
+//
+//**************************************************************************
+
+class ZShroomSmall4:Decoration
+	__mobjinfo__(46)
+{
+
+__states__
+{
+	S_ZSHROOMSMALL4_1('MSH7', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMSMALL4_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZShroomSmall5
+//
+//**************************************************************************
+
+class ZShroomSmall5:Decoration
+	__mobjinfo__(47)
+{
+
+__states__
+{
+	S_ZSHROOMSMALL5_1('MSH8', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZSHROOMSMALL5_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmitePillar
+//
+//**************************************************************************
+
+class ZStalagmitePillar:Decoration
+	__mobjinfo__(48)
+{
+
+__states__
+{
+	S_ZSTALAGMITEPILLAR1('SGMP', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 138.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEPILLAR1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteLarge
+//
+//**************************************************************************
+
+class ZStalagmiteLarge:Decoration
+	__mobjinfo__(49)
+{
+
+__states__
+{
+	S_ZSTALAGMITELARGE1('SGM1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 48.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITELARGE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteMedium
+//
+//**************************************************************************
+
+class ZStalagmiteMedium:Decoration
+	__mobjinfo__(50)
+{
+
+__states__
+{
+	S_ZSTALAGMITEMEDIUM1('SGM2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 40.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEMEDIUM1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteSmall
+//
+//**************************************************************************
+
+class ZStalagmiteSmall:Decoration
+	__mobjinfo__(51)
+{
+
+__states__
+{
+	S_ZSTALAGMITESMALL1('SGM3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 36.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITESMALL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteLarge
+//
+//**************************************************************************
+
+class ZStalactiteLarge:Decoration
+	__mobjinfo__(52)
+{
+
+__states__
+{
+	S_ZSTALACTITELARGE1('SLC1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 66.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITELARGE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteMedium
+//
+//**************************************************************************
+
+class ZStalactiteMedium:Decoration
+	__mobjinfo__(56)
+{
+
+__states__
+{
+	S_ZSTALACTITEMEDIUM1('SLC2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 50.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITEMEDIUM1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteSmall
+//
+//**************************************************************************
+
+class ZStalactiteSmall:Decoration
+	__mobjinfo__(57)
+{
+
+__states__
+{
+	S_ZSTALACTITESMALL1('SLC3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 40.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITESMALL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZMossCeiling1
+//
+//**************************************************************************
+
+class ZMossCeiling1:Decoration
+	__mobjinfo__(58)
+{
+
+__states__
+{
+	S_ZMOSSCEILING1_1('MSS1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 20.0;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZMOSSCEILING1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZMossCeiling2
+//
+//**************************************************************************
+
+class ZMossCeiling2:Decoration
+	__mobjinfo__(59)
+{
+
+__states__
+{
+	S_ZMOSSCEILING2_1('MSS2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 24.0;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZMOSSCEILING2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZSwampVine
+//
+//**************************************************************************
+
+class ZSwampVine:Decoration
+	__mobjinfo__(60)
+{
+
+__states__
+{
+	S_ZSWAMPVINE1('SWMV', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 52.0;
+	bSolid = true;
+	IdleState = S_ZSWAMPVINE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZCorpseKabob
+//
+//**************************************************************************
+
+class ZCorpseKabob:Decoration
+	__mobjinfo__(61)
+{
+
+__states__
+{
+	S_ZCORPSEKABOB1('CPS1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 92.0;
+	bSolid = true;
+	IdleState = S_ZCORPSEKABOB1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZCorpseSleeping
+//
+//**************************************************************************
+
+class ZCorpseSleeping:Decoration
+	__mobjinfo__(62)
+{
+
+__states__
+{
+	S_ZCORPSESLEEPING1('CPS2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 16.0;
+	IdleState = S_ZCORPSESLEEPING1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneRip
+//
+//**************************************************************************
+
+class ZTombStoneRip:Decoration
+	__mobjinfo__(63)
+{
+
+__states__
+{
+	S_ZTOMBSTONERIP1('TMS1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 46.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONERIP1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneShane
+//
+//**************************************************************************
+
+class ZTombStoneShane:Decoration
+	__mobjinfo__(64)
+{
+
+__states__
+{
+	S_ZTOMBSTONESHANE1('TMS2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 46.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONESHANE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneBigCross
+//
+//**************************************************************************
+
+class ZTombStoneBigCross:Decoration
+	__mobjinfo__(65)
+{
+
+__states__
+{
+	S_ZTOMBSTONEBIGCROSS1('TMS3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 46.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONEBIGCROSS1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneBrianR
+//
+//**************************************************************************
+
+class ZTombStoneBrianR:Decoration
+	__mobjinfo__(66)
+{
+
+__states__
+{
+	S_ZTOMBSTONEBRIANR1('TMS4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 52.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONEBRIANR1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneCrossCircle
+//
+//**************************************************************************
+
+class ZTombStoneCrossCircle:Decoration
+	__mobjinfo__(67)
+{
+
+__states__
+{
+	S_ZTOMBSTONECROSSCIRCLE1('TMS5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 52.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONECROSSCIRCLE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneSmallCross
+//
+//**************************************************************************
+
+class ZTombStoneSmallCross:Decoration
+	__mobjinfo__(68)
+{
+
+__states__
+{
+	S_ZTOMBSTONESMALLCROSS1('TMS6', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 46.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONESMALLCROSS1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZTombStoneBrianP
+//
+//**************************************************************************
+
+class ZTombStoneBrianP:Decoration
+	__mobjinfo__(69)
+{
+
+__states__
+{
+	S_ZTOMBSTONEBRIANP1('TMS7', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 46.0;
+	bSolid = true;
+	IdleState = S_ZTOMBSTONEBRIANP1;
+}
+
+}
+
+//**************************************************************************
+//
+//	CorpseHanging
+//
+//**************************************************************************
+
+class CorpseHanging:Decoration
+	__mobjinfo__(71)
+{
+
+__states__
+{
+	S_CORPSEHANGING_1('CPS3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 75.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_CORPSEHANGING_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleGreenTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleGreenTall:Decoration
+	__mobjinfo__(72)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEGREENTALL_1('STT2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEGREENTALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleBlueTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleBlueTall:Decoration
+	__mobjinfo__(73)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEBLUETALL_1('STT3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEBLUETALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleGreenShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleGreenShort:Decoration
+	__mobjinfo__(74)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEGREENSHORT_1('STT4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEGREENSHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleBlueShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleBlueShort:Decoration
+	__mobjinfo__(76)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEBLUESHORT_1('STT5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEBLUESHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleStripeTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleStripeTall:Decoration
+	__mobjinfo__(8044)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLESTRIPETALL_1('GAR1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLESTRIPETALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleDarkRedTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleDarkRedTall:Decoration
+	__mobjinfo__(8045)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEDARKREDTALL_1('GAR2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEDARKREDTALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleRedTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleRedTall:Decoration
+	__mobjinfo__(8046)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEREDTALL_1('GAR3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEREDTALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleTanTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleTanTall:Decoration
+	__mobjinfo__(8047)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLETANTALL_1('GAR4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLETANTALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleRustTall
+//
+//**************************************************************************
+
+class ZStatueGargoyleRustTall:Decoration
+	__mobjinfo__(8048)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLERUSTTALL_1('GAR5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 108.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLERUSTTALL_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleDarkRedShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleDarkRedShort:Decoration
+	__mobjinfo__(8049)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEDARKREDSHORT_1('GAR6', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEDARKREDSHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleRedShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleRedShort:Decoration
+	__mobjinfo__(8050)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLEREDSHORT_1('GAR7', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLEREDSHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleTanShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleTanShort:Decoration
+	__mobjinfo__(8051)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLETANSHORT_1('GAR8', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLETANSHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStatueGargoyleRustShort
+//
+//**************************************************************************
+
+class ZStatueGargoyleRustShort:Decoration
+	__mobjinfo__(8052)
+{
+
+__states__
+{
+	S_ZSTATUEGARGOYLERUSTSHORT_1('GAR9', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 62.0;
+	bSolid = true;
+	IdleState = S_ZSTATUEGARGOYLERUSTSHORT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZBannerTattered
+//
+//**************************************************************************
+
+class ZBannerTattered:Decoration
+	__mobjinfo__(77)
+{
+
+__states__
+{
+	S_ZBANNERTATTERED_1('BNR1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 120.0;
+	bSolid = true;
+	IdleState = S_ZBANNERTATTERED_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteIceLarge
+//
+//**************************************************************************
+
+class ZStalactiteIceLarge:Decoration
+	__mobjinfo__(89)
+{
+
+__states__
+{
+	S_ZSTALACTITEICELARGE('ICT1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 66.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITEICELARGE;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteIceMedium
+//
+//**************************************************************************
+
+class ZStalactiteIceMedium:Decoration
+	__mobjinfo__(90)
+{
+
+__states__
+{
+	S_ZSTALACTITEICEMEDIUM('ICT2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 50.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITEICEMEDIUM;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteIceSmall
+//
+//**************************************************************************
+
+class ZStalactiteIceSmall:Decoration
+	__mobjinfo__(91)
+{
+
+__states__
+{
+	S_ZSTALACTITEICESMALL('ICT3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITEICESMALL;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalactiteIceTiny
+//
+//**************************************************************************
+
+class ZStalactiteIceTiny:Decoration
+	__mobjinfo__(92)
+{
+
+__states__
+{
+	S_ZSTALACTITEICETINY('ICT4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 8.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZSTALACTITEICETINY;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteIceLarge
+//
+//**************************************************************************
+
+class ZStalagmiteIceLarge:Decoration
+	__mobjinfo__(93)
+{
+
+__states__
+{
+	S_ZSTALAGMITEICELARGE('ICM1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 66.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEICELARGE;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteIceMedium
+//
+//**************************************************************************
+
+class ZStalagmiteIceMedium:Decoration
+	__mobjinfo__(94)
+{
+
+__states__
+{
+	S_ZSTALAGMITEICEMEDIUM('ICM2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 50.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEICEMEDIUM;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteIceSmall
+//
+//**************************************************************************
+
+class ZStalagmiteIceSmall:Decoration
+	__mobjinfo__(95)
+{
+
+__states__
+{
+	S_ZSTALAGMITEICESMALL('ICM3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEICESMALL;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZStalagmiteIceTiny
+//
+//**************************************************************************
+
+class ZStalagmiteIceTiny:Decoration
+	__mobjinfo__(96)
+{
+
+__states__
+{
+	S_ZSTALAGMITEICETINY('ICM4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 8.0;
+	bSolid = true;
+	IdleState = S_ZSTALAGMITEICETINY;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRockBrown1
+//
+//**************************************************************************
+
+class ZRockBrown1:Decoration
+	__mobjinfo__(97)
+{
+
+__states__
+{
+	S_ZROCKBROWN1('RKBL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 17.0;
+	Height = 72.0;
+	bSolid = true;
+	IdleState = S_ZROCKBROWN1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRockBrown2
+//
+//**************************************************************************
+
+class ZRockBrown2:Decoration
+	__mobjinfo__(98)
+{
+
+__states__
+{
+	S_ZROCKBROWN2('RKBS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 50.0;
+	bSolid = true;
+	IdleState = S_ZROCKBROWN2;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRockBlack
+//
+//**************************************************************************
+
+class ZRockBlack:Decoration
+	__mobjinfo__(99)
+{
+
+__states__
+{
+	S_ZROCKBLACK('RKBK', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 40.0;
+	bSolid = true;
+	IdleState = S_ZROCKBLACK;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRubble1
+//
+//**************************************************************************
+
+class ZRubble1:Decoration
+	__mobjinfo__(100)
+{
+
+__states__
+{
+	S_ZRUBBLE1('RBL1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZRUBBLE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRubble2
+//
+//**************************************************************************
+
+class ZRubble2:Decoration
+	__mobjinfo__(101)
+{
+
+__states__
+{
+	S_ZRUBBLE2('RBL2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZRUBBLE2;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZRubble3
+//
+//**************************************************************************
+
+class ZRubble3:Decoration
+	__mobjinfo__(102)
+{
+
+__states__
+{
+	S_ZRUBBLE3('RBL3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ZRUBBLE3;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZVasePillar
+//
+//**************************************************************************
+
+class ZVasePillar:Decoration
+	__mobjinfo__(103)
+{
+
+__states__
+{
+	S_ZVASEPILLAR('VASE', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 54.0;
+	bSolid = true;
+	IdleState = S_ZVASEPILLAR;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZCorpseLynched
+//
+//**************************************************************************
+
+class ZCorpseLynched:Decoration
+	__mobjinfo__(108)
+{
+
+__states__
+{
+	S_ZCORPSELYNCHED1('CPS4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 95.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCORPSELYNCHED1;
+}
+
+}
+
+//**************************************************************************
+//
+//	CorpseBloodDrip
+//
+//**************************************************************************
+
+class CorpseBloodDrip:Fragment
+{
+
+__states__
+{
+	S_CORPSEBLOODDRIP('BDRP', 0, -1.0, S_NULL) { }
+	S_CORPSEBLOODDRIP_X1('BDSH', 0, 3.0 / 35.0, S_CORPSEBLOODDRIP_X2) { }
+	S_CORPSEBLOODDRIP_X2('BDSH', 1, 3.0 / 35.0, S_CORPSEBLOODDRIP_X3) { }
+	S_CORPSEBLOODDRIP_X3('BDSH', 2, 2.0 / 35.0, S_CORPSEBLOODDRIP_X4) { }
+	S_CORPSEBLOODDRIP_X4('BDSH', 3, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 1.0;
+	Height = 4.0;
+	Mass = 12.5;
+	bNoBlockmap = false;
+	bDropOff = false;
+	bNoGravity = false;
+	bNoTeleport = false;
+	IdleState = S_CORPSEBLOODDRIP;
+	DeathState = S_CORPSEBLOODDRIP_X1;
+	DeathSound = 'Drip';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZCorpseLynchedNoHeart
+//
+//**************************************************************************
+
+class ZCorpseLynchedNoHeart:Decoration
+	__mobjinfo__(109)
+{
+
+//============================================================================
+//
+//  A_CorpseBloodDrip
+//
+//============================================================================
+
+void A_CorpseBloodDrip(void)
+{
+	if (Random() > 0.5)
+	{
+		return;
+	}
+	Spawn(CorpseBloodDrip, Origin + vector(0.0, 0.0, Height / 2.0));
+}
+
+__states__
+{
+	S_ZCORPSELYNCHED2('CPS5', 0, 140.0 / 35.0, S_ZCORPSELYNCHED2) { A_CorpseBloodDrip(); }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 100.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCORPSELYNCHED2;
+}
+
+}
+
+//**************************************************************************
+//
+//	CorpseBit
+//
+//**************************************************************************
+
+class CorpseBit:Effect
+{
+
+__states__
+{
+	S_CORPSEBIT_1('CPB1', 0, -1.0, S_NULL) { }
+	S_CORPSEBIT_2('CPB2', 0, -1.0, S_NULL) { }
+	S_CORPSEBIT_3('CPB3', 0, -1.0, S_NULL) { }
+	S_CORPSEBIT_4('CPB4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	bNoGravity = false;
+	bTelestomp = true;
+	IdleState = S_CORPSEBIT_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZCorpseSitting
+//
+//**************************************************************************
+
+class ZCorpseSitting:Decoration
+	__mobjinfo__(110)
+{
+
+//============================================================================
+//
+//  A_CorpseExplode
+//
+//============================================================================
+
+void A_CorpseExplode(void)
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 3; i; i--)
+	{
+		A = Spawn(CorpseBit, Origin);
+		A.SetState(A.IdleState + (P_Random() % 3));
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		}
+	}
+	// Spawn a skull
+	A = Spawn(CorpseBit, Origin);
+	A.SetState(S_CORPSEBIT_4);
+	if (A)
+	{
+		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		A.PlaySound('FireDemonDeath', CHAN_VOICE);
+	}
+	Remove();
+}
+
+__states__
+{
+	S_ZCORPSESITTING('CPS6', 0, -1.0, S_NULL) { }
+	S_ZCORPSESITTING_X('CPS6', 0, 1.0 / 35.0, S_NULL) { A_CorpseExplode(); }
+}
+
+defaultproperties
+{
+	Health = 30;
+	Radius = 15.0;
+	Height = 35.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	IdleState = S_ZCORPSESITTING;
+	DeathState = S_ZCORPSESITTING_X;
+}
+
+}
+
+//**************************************************************************
+//
+//	BloodPool
+//
+//**************************************************************************
+
+class BloodPool:Decoration
+	__mobjinfo__(111)
+{
+
+__states__
+{
+	S_BLOODPOOL('BDPL', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_BLOODPOOL;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZBarrel
+//
+//**************************************************************************
+
+class ZBarrel:Decoration
+	__mobjinfo__(8100)
+{
+
+__states__
+{
+	S_ZBARREL1('BARL', 0, 'objects/barrel.md2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 32.0;
+	bSolid = true;
+	IdleState = S_ZBARREL1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZBucket
+//
+//**************************************************************************
+
+class ZBucket:Decoration
+	__mobjinfo__(8103)
+{
+
+__states__
+{
+	S_ZBUCKET1('BCKT', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 72.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZBUCKET1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZArmorChunk
+//
+//**************************************************************************
+
+class ZArmorChunk:Decoration
+{
+
+__states__
+{
+	S_ZARMORCHUNK1('SUIT', 1, -1.0, S_NULL) { }
+	S_ZARMORCHUNK2('SUIT', 2, -1.0, S_NULL) { }
+	S_ZARMORCHUNK3('SUIT', 3, -1.0, S_NULL) { }
+	S_ZARMORCHUNK4('SUIT', 4, -1.0, S_NULL) { }
+	S_ZARMORCHUNK5('SUIT', 5, -1.0, S_NULL) { }
+	S_ZARMORCHUNK6('SUIT', 6, -1.0, S_NULL) { }
+	S_ZARMORCHUNK7('SUIT', 7, -1.0, S_NULL) { }
+	S_ZARMORCHUNK8('SUIT', 8, -1.0, S_NULL) { }
+	S_ZARMORCHUNK9('SUIT', 9, -1.0, S_NULL) { }
+	S_ZARMORCHUNK10('SUIT', 10, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 8.0;
+	IdleState = S_ZARMORCHUNK1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZSuitOfArmor
+//
+//**************************************************************************
+
+class ZSuitOfArmor:Decoration
+	__mobjinfo__(8064)
+{
+
+//===========================================================================
+//
+//  A_SoAExplode
+//
+//  Suit of Armor Explode
+//
+//===========================================================================
+
+void A_SoAExplode(void)
+{
+	Actor A;
+	int i;
+
+	for (i = 0; i < 10; i++)
+	{
+		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
+			(Random() - 0.5) * 16.0, Random() * Height));
+		A.SetState(A.IdleState + i);
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
+		}
+	}
+	if (Args[0])
+	{
+		// Spawn an item
+		Spawn(TranslateThingType[Args[0]], Origin);
+	}
+	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
+	Remove();
+}
+
+__states__
+{
+	S_ZSUITOFARMOR('SUIT', 0, -1.0, S_NULL) { }
+	S_ZSUITOFARMOR_X1('SUIT', 0, 1.0 / 35.0, S_NULL) { A_SoAExplode(); }
+}
+
+defaultproperties
+{
+	Health = 60;
+	Radius = 16.0;
+	Height = 72.0;
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	IdleState = S_ZSUITOFARMOR;
+	DeathState = S_ZSUITOFARMOR_X1;
+	DeathSound = 'SuitofArmorBreak';
+}
+
+}
+
+//**************************************************************************
+//
+//	ZIronMaiden
+//
+//**************************************************************************
+
+class ZIronMaiden:Decoration
+	__mobjinfo__(8067)
+{
+
+__states__
+{
+	S_ZIRON_MAIDEN('IRON', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 60.0;
+	bSolid = true;
+	IdleState = S_ZIRON_MAIDEN;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainBit32
+//
+//**************************************************************************
+
+class ZChainBit32:Decoration
+	__mobjinfo__(8071)
+{
+
+__states__
+{
+	S_ZCHAINBIT32('CHNS', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINBIT32;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainBit64
+//
+//**************************************************************************
+
+class ZChainBit64:Decoration
+	__mobjinfo__(8072)
+{
+
+__states__
+{
+	S_ZCHAINBIT64('CHNS', 1, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 64.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINBIT64;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainEndHearth
+//
+//**************************************************************************
+
+class ZChainEndHearth:Decoration
+	__mobjinfo__(8073)
+{
+
+__states__
+{
+	S_ZCHAINEND_HEART('CHNS', 2, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINEND_HEART;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainEndHook1
+//
+//**************************************************************************
+
+class ZChainEndHook1:Decoration
+	__mobjinfo__(8074)
+{
+
+__states__
+{
+	S_ZCHAINEND_HOOK1('CHNS', 3, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINEND_HOOK1;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainEndHook2
+//
+//**************************************************************************
+
+class ZChainEndHook2:Decoration
+	__mobjinfo__(8075)
+{
+
+__states__
+{
+	S_ZCHAINEND_HOOK2('CHNS', 4, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINEND_HOOK2;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainEndSpike
+//
+//**************************************************************************
+
+class ZChainEndSpike:Decoration
+	__mobjinfo__(8076)
+{
+
+__states__
+{
+	S_ZCHAINEND_SPIKE('CHNS', 5, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINEND_SPIKE;
+}
+
+}
+
+//**************************************************************************
+//
+//	ZChainEndSkull
+//
+//**************************************************************************
+
+class ZChainEndSkull:Decoration
+	__mobjinfo__(8077)
+{
+
+__states__
+{
+	S_ZCHAINEND_SKULL('CHNS', 6, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 32.0;
+	bNoBlockmap = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_ZCHAINEND_SKULL;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit1
+//
+//**************************************************************************
+
+class TableShit1:Decoration
+	__mobjinfo__(8500)
+{
+
+__states__
+{
+	S_TABLE_SHIT1('TST1', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT1;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit2
+//
+//**************************************************************************
+
+class TableShit2:Decoration
+	__mobjinfo__(8501)
+{
+
+__states__
+{
+	S_TABLE_SHIT2('TST2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT2;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit3
+//
+//**************************************************************************
+
+class TableShit3:Decoration
+	__mobjinfo__(8502)
+{
+
+__states__
+{
+	S_TABLE_SHIT3('TST3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT3;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit4
+//
+//**************************************************************************
+
+class TableShit4:Decoration
+	__mobjinfo__(8503)
+{
+
+__states__
+{
+	S_TABLE_SHIT4('TST4', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT4;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit5
+//
+//**************************************************************************
+
+class TableShit5:Decoration
+	__mobjinfo__(8504)
+{
+
+__states__
+{
+	S_TABLE_SHIT5('TST5', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT5;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit6
+//
+//**************************************************************************
+
+class TableShit6:Decoration
+	__mobjinfo__(8505)
+{
+
+__states__
+{
+	S_TABLE_SHIT6('TST6', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT6;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit7
+//
+//**************************************************************************
+
+class TableShit7:Decoration
+	__mobjinfo__(8506)
+{
+
+__states__
+{
+	S_TABLE_SHIT7('TST7', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT7;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit8
+//
+//**************************************************************************
+
+class TableShit8:Decoration
+	__mobjinfo__(8507)
+{
+
+__states__
+{
+	S_TABLE_SHIT8('TST8', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT8;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit9
+//
+//**************************************************************************
+
+class TableShit9:Decoration
+	__mobjinfo__(8508)
+{
+
+__states__
+{
+	S_TABLE_SHIT9('TST9', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT9;
+}
+
+}
+
+//**************************************************************************
+//
+//	TableShit10
+//
+//**************************************************************************
+
+class TableShit10:Decoration
+	__mobjinfo__(8509)
+{
+
+__states__
+{
+	S_TABLE_SHIT10('TST0', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	IdleState = S_TABLE_SHIT10;
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
+//**************************************************************************

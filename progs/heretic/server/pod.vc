@@ -23,62 +23,53 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-#define MAX_GEN_PODS 16
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
+//**************************************************************************
 //
-//  Actor::A_MakePod
+//	PodGoo
 //
-//==========================================================================
+//**************************************************************************
 
-void Actor::A_MakePod(void)
+class PodGoo:ProjEffect
 {
-	Actor A;
-	float x;
-	float y;
-	float z;
 
-	if (Special1 == MAX_GEN_PODS)
-	{
-		// Too many generated pods
-		return;
-	}
-	x = Origin.x;
-	y = Origin.y;
-	z = Origin.z;
-	A = Spawn(Pod, vector(x, y, ONFLOORZ));
-	if (!A.CheckPosition(A.Origin))
-	{
-		// Didn't fit
-		A.Remove();
-		return;
-	}
-	A.SetState(S_POD_GROW1);
-	A.Thrust(Random() * 360.0, 4.5);
-	A.PlaySound('PodNew', CHAN_VOICE);
-	Special1++;	// Increment generated pod count
-	A.Generator = self;	// Link the generator to the pod
+__states__
+{
+	S_PODGOO1('PPOD', 6, 8.0 / 35.0, S_PODGOO2) { }
+	S_PODGOO2('PPOD', 7, 8.0 / 35.0, S_PODGOO1) { }
+	S_PODGOOX('PPOD', 6, 10.0 / 35.0, S_NULL) { }
 }
 
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bCannotPush = true;
+	bNoGravity = false;
+	IdleState = S_PODGOO1;
+	DeathState = S_PODGOOX;
+}
+
+}
+
+//**************************************************************************
+//
+//	Pod
+//
+//**************************************************************************
+
+class Pod:Decoration
+	__mobjinfo__(2035)
+{
+
+Actor Generator;
+
 //==========================================================================
 //
-//  Actor::A_PodPain
+//  A_PodPain
 //
 //==========================================================================
 
-void Actor::A_PodPain(void)
+void A_PodPain(void)
 {
 	int i;
 	int count;
@@ -103,11 +94,11 @@ void Actor::A_PodPain(void)
 
 //==========================================================================
 //
-//  Actor::A_RemovePod
+//  A_RemovePod
 //
 //==========================================================================
 
-void Actor::A_RemovePod(void)
+void A_RemovePod(void)
 {
 	if (Generator && Generator.Special1 > 0)
 	{
@@ -115,9 +106,118 @@ void Actor::A_RemovePod(void)
 	}
 }
 
+__states__
+{
+	S_POD_WAIT1('PPOD', 0, 10.0 / 35.0, S_POD_WAIT1) { }
+	S_POD_PAIN1('PPOD', 1, 14.0 / 35.0, S_POD_WAIT1) { A_PodPain(); }
+	S_POD_DIE1('PPOD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE2) { A_RemovePod(); }
+	S_POD_DIE2('PPOD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE3) { A_Scream(); }
+	S_POD_DIE3('PPOD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE4) { A_Explode(); }
+	S_POD_DIE4('PPOD', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FREETARGMOBJ) { }
+	S_POD_GROW1('PPOD', 8, 3.0 / 35.0, S_POD_GROW2) { }
+	S_POD_GROW2('PPOD', 9, 3.0 / 35.0, S_POD_GROW3) { }
+	S_POD_GROW3('PPOD', 10, 3.0 / 35.0, S_POD_GROW4) { }
+	S_POD_GROW4('PPOD', 11, 3.0 / 35.0, S_POD_GROW5) { }
+	S_POD_GROW5('PPOD', 12, 3.0 / 35.0, S_POD_GROW6) { }
+	S_POD_GROW6('PPOD', 13, 3.0 / 35.0, S_POD_GROW7) { }
+	S_POD_GROW7('PPOD', 14, 3.0 / 35.0, S_POD_GROW8) { }
+	S_POD_GROW8('PPOD', 15, 3.0 / 35.0, S_POD_WAIT1) { }
+}
+
+defaultproperties
+{
+	Health = 45;
+	Radius = 16.0;
+	Height = 54.0;
+	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	bDropOff = true;
+	bNoBlood = true;
+	bWindThrust = true;
+	bPushable = true;
+	bSlide = true;
+	bTelestomp = true;
+	bNoPassMobj = false;
+	IdleState = S_POD_WAIT1;
+	PainState = S_POD_PAIN1;
+	DeathState = S_POD_DIE1;
+	DeathSound = 'PodExplode';
+}
+
+}
+
+//**************************************************************************
+//
+//	PodGenerator
+//
+//**************************************************************************
+
+class PodGenerator:Actor
+	__mobjinfo__(43)
+{
+
+//==========================================================================
+//
+//  A_MakePod
+//
+//==========================================================================
+
+void A_MakePod(void)
+{
+	Actor A;
+	float x;
+	float y;
+	float z;
+
+	if (Special1 == 16)
+	{
+		// Too many generated pods
+		return;
+	}
+	x = Origin.x;
+	y = Origin.y;
+	z = Origin.z;
+	A = Spawn(Pod, vector(x, y, ONFLOORZ));
+	if (!A.CheckPosition(A.Origin))
+	{
+		// Didn't fit
+		A.Remove();
+		return;
+	}
+	A.SetState(S_POD_GROW1);
+	A.Thrust(Random() * 360.0, 4.5);
+	A.PlaySound('PodNew', CHAN_VOICE);
+	Special1++;	// Increment generated pod count
+	Pod(A).Generator = self;	// Link the generator to the pod
+}
+
+__states__
+{
+	S_PODGENERATOR('AMG1', 0, 35.0 / 35.0, S_PODGENERATOR) { A_MakePod(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	IdleState = S_PODGENERATOR;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

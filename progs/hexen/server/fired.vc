@@ -60,6 +60,201 @@ defaultproperties
 
 //**************************************************************************
 //
+//	FireDemonRock1
+//
+//**************************************************************************
+
+class FireDemonRock1:Fragment
+{
+
+//============================================================================
+//
+//  A_SmBounce
+//
+//============================================================================
+
+void A_SmBounce(void)
+{
+	// give some more momentum (x,y,&z)
+	Origin.z = FloorZ + 1.0;
+	Velocity.z = (2.0 + Random() * 4.0) * 35.0;
+	Velocity.x = Random() * 3.0 * 35.0;
+	Velocity.y = Random() * 3.0 * 35.0;
+}
+
+__states__
+{
+	S_FIRED_RDROP1('FDMN', 18, 4.0 / 35.0, S_FIRED_RDROP1) { }
+	S_FIRED_RDEAD1_1('FDMN', 18, 5.0 / 35.0, S_FIRED_RDEAD1_2) { A_SmBounce(); }
+	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	GibsHealth = -500;
+	Radius = 3.0;
+	Height = 5.0;
+	Mass = 16.0;
+	bNoGravity = false;
+	IdleState = S_FIRED_RDROP1;
+	DeathState = S_FIRED_RDEAD1_1;
+	GibsDeathState = S_FIRED_RDEAD1_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonRock2
+//
+//**************************************************************************
+
+class FireDemonRock2:FireDemonRock1
+{
+
+__states__
+{
+	S_FIRED_RDROP2('FDMN', 19, 4.0 / 35.0, S_FIRED_RDROP2) { }
+	S_FIRED_RDEAD2_1('FDMN', 19, 5.0 / 35.0, S_FIRED_RDEAD2_2) { A_SmBounce(); }
+	S_FIRED_RDEAD2_2('FDMN', 19, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FIRED_RDROP2;
+	DeathState = S_FIRED_RDEAD2_1;
+	GibsDeathState = S_FIRED_RDEAD2_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonRock3
+//
+//**************************************************************************
+
+class FireDemonRock3:FireDemonRock1
+{
+
+__states__
+{
+	S_FIRED_RDROP3('FDMN', 20, 4.0 / 35.0, S_FIRED_RDROP3) { }
+	S_FIRED_RDEAD3_1('FDMN', 20, 5.0 / 35.0, S_FIRED_RDEAD3_2) { A_SmBounce(); }
+	S_FIRED_RDEAD3_2('FDMN', 20, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FIRED_RDROP3;
+	DeathState = S_FIRED_RDEAD3_1;
+	GibsDeathState = S_FIRED_RDEAD3_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonRock4
+//
+//**************************************************************************
+
+class FireDemonRock4:FireDemonRock1
+{
+
+__states__
+{
+	S_FIRED_RDROP4('FDMN', 21, 4.0 / 35.0, S_FIRED_RDROP4) { }
+	S_FIRED_RDEAD4_1('FDMN', 21, 5.0 / 35.0, S_FIRED_RDEAD4_2) { A_SmBounce(); }
+	S_FIRED_RDEAD4_2('FDMN', 21, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FIRED_RDROP4;
+	DeathState = S_FIRED_RDEAD4_1;
+	GibsDeathState = S_FIRED_RDEAD4_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonRock5
+//
+//**************************************************************************
+
+class FireDemonRock5:FireDemonRock1
+{
+
+__states__
+{
+	S_FIRED_RDROP5('FDMN', 22, 4.0 / 35.0, S_FIRED_RDROP5) { }
+	S_FIRED_RDEAD5_1('FDMN', 22, 5.0 / 35.0, S_FIRED_RDEAD5_2) { A_SmBounce(); }
+	S_FIRED_RDEAD5_2('FDMN', 22, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FIRED_RDROP5;
+	DeathState = S_FIRED_RDEAD5_1;
+	GibsDeathState = S_FIRED_RDEAD5_2;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonSplotch1
+//
+//**************************************************************************
+
+class FireDemonSplotch1:Carcas
+{
+
+__states__
+{
+	S_FIRED_CORPSE1('FDMN', 15, 3.0 / 35.0, S_FIRED_CORPSE2) { }
+	S_FIRED_CORPSE2('FDMN', 15, 6.0 / 35.0, S_FIRED_CORPSE3) { A_QueueCorpse(); }
+	S_FIRED_CORPSE3('FDMN', 24, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 16.0;
+	IdleState = S_FIRED_CORPSE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireDemonSplotch2
+//
+//**************************************************************************
+
+class FireDemonSplotch2:Carcas
+{
+
+__states__
+{
+	S_FIRED_CORPSE4('FDMN', 16, 3.0 / 35.0, S_FIRED_CORPSE5) { }
+	S_FIRED_CORPSE5('FDMN', 16, 6.0 / 35.0, S_FIRED_CORPSE6) { A_QueueCorpse(); }
+	S_FIRED_CORPSE6('FDMN', 25, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 16.0;
+	IdleState = S_FIRED_CORPSE4;
+}
+
+}
+
+//**************************************************************************
+//
 //	FireDemon
 //
 //**************************************************************************
@@ -344,26 +539,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//============================================================================
-//
-//  Actor::A_SmBounce
-//
-//============================================================================
-
-void Actor::A_SmBounce(void)
-{
-	// give some more momentum (x,y,&z)
-	Origin.z = FloorZ + 1.0;
-	Velocity.z = (2.0 + Random() * 4.0) * 35.0;
-	Velocity.x = Random() * 3.0 * 35.0;
-	Velocity.y = Random() * 3.0 * 35.0;
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.24  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

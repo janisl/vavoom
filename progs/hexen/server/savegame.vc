@@ -81,20 +81,6 @@ void Actor::Archive(void)
 		MobjToNum(&SpecialMobj2);
 		break;
 
-		// Both SpecialMobj1 and SpecialMobj2
-	case HolyTail:
-		if (bCorpse)
-		{
-			_SpecialMobj1 = NULL;
-			SpecialMobj2 = NULL;
-		}
-		else
-		{
-			MobjToNum(&_SpecialMobj1);
-			MobjToNum(&SpecialMobj2);
-		}
-		break;
-
 		// Miscellaneous
 	case Korax:
 		_Special1 = 0;	// Searching index
@@ -124,14 +110,8 @@ void Actor::Unarchive(void)
 
 		// Just special2
 	case LightningFloor:
-	case LightningZap:
-		NumToMobj(&SpecialMobj2);
-		break;
-
-		// Both special1 and special2
-	case HolyTail:
 	case LightningCeiling:
-		NumToMobj(&_SpecialMobj1);
+	case LightningZap:
 		NumToMobj(&SpecialMobj2);
 		break;
 
@@ -143,6 +123,9 @@ void Actor::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

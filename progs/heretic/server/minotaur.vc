@@ -24,11 +24,137 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	MinotaurMissile
+//
+//**************************************************************************
+
+class MinotaurMissile:Projectile
+{
+
+__states__
+{
+	S_MNTRFX1_1('FX12', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_2) { }
+	S_MNTRFX1_2('FX12', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MNTRFX1_1) { }
+	S_MNTRFXI1_1('FX12', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_2) { }
+	S_MNTRFXI1_2('FX12', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_3) { }
+	S_MNTRFXI1_3('FX12', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_4) { }
+	S_MNTRFXI1_4('FX12', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_5) { }
+	S_MNTRFXI1_5('FX12', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFXI1_6) { }
+	S_MNTRFXI1_6('FX12', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 6.0;
+	Speed = 700.0;
+	MissileDamage = 3;
+	bFireDamage = true;
+	IdleState = S_MNTRFX1_1;
+	DeathState = S_MNTRFXI1_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	MinotaurFloorFire2
+//
+//**************************************************************************
+
+class MinotaurFloorFire2:Projectile
+{
+
+__states__
+{
+	S_MNTRFXI2_1('FX13', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_2) { A_Explode(); }
+	S_MNTRFXI2_2('FX13', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_3) { }
+	S_MNTRFXI2_3('FX13', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_4) { }
+	S_MNTRFXI2_4('FX13', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFXI2_5) { }
+	S_MNTRFXI2_5('FX13', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_MNTRFX3_1('FX13', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_2) { }
+	S_MNTRFX3_2('FX13', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_3) { }
+	S_MNTRFX3_3('FX13', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_4) { }
+	S_MNTRFX3_4('FX13', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_5) { }
+	S_MNTRFX3_5('FX13', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_6) { }
+	S_MNTRFX3_6('FX13', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_7) { }
+	S_MNTRFX3_7('FX13', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_8) { }
+	S_MNTRFX3_8('FX13', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_9) { }
+	S_MNTRFX3_9('FX13', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 16.0;
+	MissileDamage = 4;
+	bFireDamage = true;
+	IdleState = S_MNTRFX3_1;
+	DeathState = S_MNTRFXI2_1;
+	DeathSound = 'PhoenixHit';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	MinotaurFloorFire
+//
+//**************************************************************************
+
+class MinotaurFloorFire:Projectile
+{
+
+//==========================================================================
+//
+//  A_MntrFloorFire
+//
+//==========================================================================
+
+void A_MntrFloorFire(void)
+{
+	Actor mo;
+	float i1;
+	float i2;
+
+	Origin.z = FloorZ;
+	i1 = Origin.x + (Random() - Random()) * 4.0;
+	i2 = Origin.y + (Random() - Random()) * 4.0;
+	mo = Spawn(MinotaurFloorFire2, vector(i1, i2, ONFLOORZ));
+	mo.Instigator = Instigator;
+	mo.Velocity.x = 0.00001;	// Force block checking
+	mo.CheckMissileSpawn();
+}
+
+__states__
+{
+	S_MNTRFX2_1('FX13', 0, 2.0 / 35.0, S_MNTRFX2_1) { A_MntrFloorFire(); }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 12.0;
+	Speed = 490.0;
+	MissileDamage = 4;
+	bFireDamage = true;
+	IdleState = S_MNTRFX2_1;
+	DeathState = S_MNTRFXI2_1;
+	DeathSound = 'PhoenixHit';
+	Effects = EF_DL_WHITE;
+	// The Minotaur floor fire can step up any amount
+	MaxStepHeight = 99999.0;
+}
+
+}
+
 //**************************************************************************
 //
 //	Minotaur
 //
-//**************************************************************************
 //**************************************************************************
 
 class Minotaur:Pawn
@@ -37,9 +163,23 @@ class Minotaur:Pawn
 
 #define MNTR_CHARGE_SPEED	455.0
 
+bool bFloorFireRefired;
+
 int ChargeAttackState;
 int FloorFireAttackState;
 int FloorFireAttackState2;
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ArtifactSuperHeal, 0, 0.19921875);
+	DropItem(ItemAmmoPhoenixWimpy, 10, 0.328125);
+}
 
 //==========================================================================
 //
@@ -102,7 +242,7 @@ void A_MinotaurDecide(void)
 	{
 		// Floor fire attack
 		SetState(FloorFireAttackState);
-		Special2 = 0;
+		bFloorFireRefired = false;
 	}
 	else
 	{
@@ -187,10 +327,10 @@ void A_MinotaurAtk3(void)
 			A.PlaySound('MinotaurAttack1', CHAN_VOICE);
 		}
 	}
-	if (P_Random() < 192 && Special2 == 0)
+	if (Random() < 0.75 && !bFloorFireRefired)
 	{
 		SetState(FloorFireAttackState2);
-		Special2 = 1;
+		bFloorFireRefired = true;
 	}
 }
 
@@ -263,7 +403,7 @@ defaultproperties
 	Height = 100.0;
 	Mass = 800.0;
 	StepSpeed = 16.0;
-	PainChance = 25;
+	PainChance = 0.09765625;
 	MissileDamage = 7;
 	bDropOff = true;
 	bBoss = true;
@@ -286,32 +426,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//  Actor::A_MntrFloorFire
-//
-//==========================================================================
-
-void Actor::A_MntrFloorFire(void)
-{
-	Actor mo;
-	float i1;
-	float i2;
-
-	Origin.z = FloorZ;
-	i1 = Origin.x + (Random() - Random()) * 4.0;
-	i2 = Origin.y + (Random() - Random()) * 4.0;
-	mo = Spawn(MinotaurFloorFire2, vector(i1, i2, ONFLOORZ));
-	mo.Instigator = Instigator;
-	mo.Velocity.x = 0.00001;	// Force block checking
-	mo.CheckMissileSpawn();
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.25  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -184,7 +184,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (Class == ZLynchedNoHeart)
+		if (Class == ZCorpseLynchedNoHeart)
 		{
 			// Special stuff
 			Spawn(BloodPool, vector(x, y, ONFLOORZ));
@@ -2087,6 +2087,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.43  2002/06/14 15:47:53  dj_jl
 //  Added state names to the states.
 //

@@ -24,16 +24,259 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	HeadMissile2
+//
+//**************************************************************************
+
+class HeadMissile2:Projectile
+{
+
+__states__
+{
+	S_HEADFX2_1('FX05', 7, 6.0 / 35.0, S_HEADFX2_2) { }
+	S_HEADFX2_2('FX05', 8, 6.0 / 35.0, S_HEADFX2_3) { }
+	S_HEADFX2_3('FX05', 9, 6.0 / 35.0, S_HEADFX2_1) { }
+	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) { }
+	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) { }
+	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) { }
+	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 6.0;
+	Speed = 280.0;
+	MissileDamage = 3;
+	IdleState = S_HEADFX2_1;
+	DeathState = S_HEADFXI2_1;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	HeadMissile1
+//
+//**************************************************************************
+
+class HeadMissile1:Projectile
+{
+
+//==========================================================================
+//
+//  A_HeadIceImpact
+//
+//==========================================================================
+
+void A_HeadIceImpact(void)
+{
+	int i;
+	float angle;
+	Actor shard;
+
+	for (i = 0; i < 8; i++)
+	{
+		shard = Spawn(HeadMissile2, Origin);
+		angle = itof(i) * 45.0;
+		shard.Instigator = Instigator;
+		shard.Angles.yaw = angle;
+		shard.Velocity.x = shard.Speed * cos(angle);
+		shard.Velocity.y = shard.Speed * sin(angle);
+		shard.Velocity.z = -0.6 * 35.0;
+		shard.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) { }
+	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) { }
+	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) { }
+	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) { A_HeadIceImpact(); }
+	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) { }
+	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) { }
+	S_HEADFXI1_4('FX05', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 6.0;
+	Speed = 455.0;
+	MissileDamage = 1;
+	bThruGhost = true;
+	IdleState = S_HEADFX1_1;
+	DeathState = S_HEADFXI1_1;
+	Effects = EF_DL_BLUE;
+}
+
+}
+
+//**************************************************************************
+//
+//	HeadMissile3
+//
+//**************************************************************************
+
+class HeadMissile3:Projectile
+{
+
+int GrownState;
+
+//==========================================================================
+//
+//  A_HeadFireGrow
+//
+//==========================================================================
+
+void A_HeadFireGrow(void)
+{
+	Health--;
+	Origin.z += 9.0;
+	if (Health == 0)
+	{
+		SetState(GrownState);
+	}
+}
+
+__states__
+{
+	S_HEADFX3_1('FX06', 0, 4.0 / 35.0, S_HEADFX3_2) { A_HeadFireGrow(); }
+	S_HEADFX3_2('FX06', 1, 4.0 / 35.0, S_HEADFX3_3) { A_HeadFireGrow(); }
+	S_HEADFX3_3('FX06', 2, 4.0 / 35.0, S_HEADFX3_1) { A_HeadFireGrow(); }
+	S_HEADFX3_4('FX06', 0, 5.0 / 35.0, S_HEADFX3_5) { }
+	S_HEADFX3_5('FX06', 1, 5.0 / 35.0, S_HEADFX3_6) { }
+	S_HEADFX3_6('FX06', 2, 5.0 / 35.0, S_HEADFX3_4) { }
+	S_HEADFXI3_1('FX06', 3, 5.0 / 35.0, S_HEADFXI3_2) { }
+	S_HEADFXI3_2('FX06', 4, 5.0 / 35.0, S_HEADFXI3_3) { }
+	S_HEADFXI3_3('FX06', 5, 5.0 / 35.0, S_HEADFXI3_4) { }
+	S_HEADFXI3_4('FX06', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 12.0;
+	Speed = 350.0;
+	MissileDamage = 5;
+	bWindThrust = true;
+	IdleState = S_HEADFX3_1;
+	GrownState = S_HEADFX3_4;
+	DeathState = S_HEADFXI3_1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//
+//	WhirlWind
+//
+//**************************************************************************
+
+class WhirlWind:Projectile
+{
+
+float SoundTimer;		// Timer for active sound
+
+//===========================================================================
+//
+//  ExplodeMissile
+//
+//===========================================================================
+
+void ExplodeMissile(void)
+{
+	SoundTimer += 1.0 / 35.0;
+	if (SoundTimer < 60.0 / 35.0)
+	{
+		return;
+	}
+	::ExplodeMissile();
+}
+
+//==========================================================================
+//
+//  A_WhirlwindSeek
+//
+//==========================================================================
+
+void A_WhirlwindSeek(void)
+{
+	Health -= 3;
+	if (Health < 0)
+	{
+		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(DeathState);
+		bMissile = false;
+		return;
+	}
+	SoundTimer -= 3.0 / 35.0;
+	if (SoundTimer < 0.0)
+	{
+		SoundTimer = 58.0 / 35.0 + Random() * 31.0 / 35.0;
+		PlaySound('HeadAttack3', CHAN_WEAPON);
+	}
+	if (Enemy && Enemy.Translucency)
+	{
+		return;
+	}
+	SeekerMissile(10.0, 30.0);
+}
+
+__states__
+{
+	S_HEADFX4_1('FX07', 3, 3.0 / 35.0, S_HEADFX4_2) { }
+	S_HEADFX4_2('FX07', 4, 3.0 / 35.0, S_HEADFX4_3) { }
+	S_HEADFX4_3('FX07', 5, 3.0 / 35.0, S_HEADFX4_4) { }
+	S_HEADFX4_4('FX07', 6, 3.0 / 35.0, S_HEADFX4_5) { }
+	S_HEADFX4_5('FX07', 0, 3.0 / 35.0, S_HEADFX4_6) { A_WhirlwindSeek(); }
+	S_HEADFX4_6('FX07', 1, 3.0 / 35.0, S_HEADFX4_7) { A_WhirlwindSeek(); }
+	S_HEADFX4_7('FX07', 2, 3.0 / 35.0, S_HEADFX4_5) { A_WhirlwindSeek(); }
+	S_HEADFXI4_1('FX07', 6, 4.0 / 35.0, S_HEADFXI4_2) { }
+	S_HEADFXI4_2('FX07', 5, 4.0 / 35.0, S_HEADFXI4_3) { }
+	S_HEADFXI4_3('FX07', 4, 4.0 / 35.0, S_HEADFXI4_4) { }
+	S_HEADFXI4_4('FX07', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 74.0;
+	Speed = 350.0;
+	MissileDamage = 1;
+	Translucency = 33;
+	IdleState = S_HEADFX4_1;
+	DeathState = S_HEADFXI4_1;
+	SoundTimer = 50.0 / 35.0;
+}
+
+}
+
 //**************************************************************************
 //
 //	Head
 //
 //**************************************************************************
-//**************************************************************************
 
 class Head:Pawn
 	__mobjinfo__(6)
 {
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoBlasterWimpy, 10, 0.328125);
+	DropItem(ArtifactEgg, 0, 0.19921875);
+}
 
 //==========================================================================
 //
@@ -104,7 +347,6 @@ void A_HeadAttack(void)
 		{
 			A.Origin.z -= 32.0;
 			A.Enemy = Enemy;
-			A.Special2 = 50;	// Timer for active sound
 			A.Health = 20 * TICRATE;	// Duration
 			PlaySound('HeadAttack3', CHAN_WEAPON);
 		}
@@ -135,7 +377,7 @@ defaultproperties
 	Height = 72.0;
 	Mass = 325.0;
 	StepSpeed = 6.0;
-	PainChance = 32;
+	PainChance = 0.125;
 	bNoBlood = true;
 	bFloorClip = false;
 	IdleState = S_HEAD_LOOK;
@@ -153,80 +395,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//  Actor::A_HeadIceImpact
-//
-//==========================================================================
-
-void Actor::A_HeadIceImpact(void)
-{
-	int i;
-	float angle;
-	Actor shard;
-
-	for (i = 0; i < 8; i++)
-	{
-		shard = Spawn(HeadMissile2, Origin);
-		angle = itof(i) * 45.0;
-		shard.Instigator = Instigator;
-		shard.Angles.yaw = angle;
-		shard.Velocity.x = shard.Speed * cos(angle);
-		shard.Velocity.y = shard.Speed * sin(angle);
-		shard.Velocity.z = -0.6 * 35.0;
-		shard.CheckMissileSpawn();
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_HeadFireGrow
-//
-//==========================================================================
-
-void Actor::A_HeadFireGrow(void)
-{
-	Health--;
-	Origin.z += 9.0;
-	if (Health == 0)
-	{
-		SetState(S_HEADFX3_4);
-	}
-}
-
-//==========================================================================
-//
-//  Actor::A_WhirlwindSeek
-//
-//==========================================================================
-
-void Actor::A_WhirlwindSeek(void)
-{
-	Health -= 3;
-	if (Health < 0)
-	{
-		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(DeathState);
-		bMissile = false;
-		return;
-	}
-	if ((Special2 -= 3) < 0)
-	{
-		Special2 = 58 + (P_Random() & 31);
-		PlaySound('HeadAttack3', CHAN_WEAPON);
-	}
-	if (Enemy && Enemy.Translucency)
-	{
-		return;
-	}
-	SeekerMissile(10.0, 30.0);
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.24  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

@@ -25,6 +25,35 @@
 
 //**************************************************************************
 //
+//	PunchPuff
+//
+//**************************************************************************
+
+class PunchPuff:Effect
+{
+
+__states__
+{
+	S_PUNCHPUFF1('FHFX', 18, 4.0 / 35.0, S_PUNCHPUFF2) { }
+	S_PUNCHPUFF2('FHFX', 19, 4.0 / 35.0, S_PUNCHPUFF3) { }
+	S_PUNCHPUFF3('FHFX', 20, 4.0 / 35.0, S_PUNCHPUFF4) { }
+	S_PUNCHPUFF4('FHFX', 21, 4.0 / 35.0, S_PUNCHPUFF5) { }
+	S_PUNCHPUFF5('FHFX', 22, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	SpriteType = SPR_VP_PARALLEL;
+	Translucency = 66;
+	IdleState = S_PUNCHPUFF1;
+	SightSound = 'FighterPunchHitThing';
+	AttackSound = 'FighterPunchHitWall';
+}
+
+}
+
+//**************************************************************************
+//
 //	WeaponFighterPunch
 //
 //**************************************************************************
@@ -171,6 +200,95 @@ defaultproperties
 	Attack2State = S_PUNCHATK2_1;
 	HoldAttackState = S_PUNCHATK1_1;
 	PSpriteSY = 0.0;
+}
+
+}
+
+//**************************************************************************
+//
+//	AxePuff
+//
+//**************************************************************************
+
+class AxePuff:Effect
+{
+
+__states__
+{
+	S_HAMMERPUFF1('FHFX', 18, 4.0 / 35.0, S_HAMMERPUFF2) { }
+	S_HAMMERPUFF2('FHFX', 19, 4.0 / 35.0, S_HAMMERPUFF3) { }
+	S_HAMMERPUFF3('FHFX', 20, 4.0 / 35.0, S_HAMMERPUFF4) { }
+	S_HAMMERPUFF4('FHFX', 21, 4.0 / 35.0, S_HAMMERPUFF5) { }
+	S_HAMMERPUFF5('FHFX', 22, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_HAMMERPUFF1;
+	SightSound = 'FighterAxeHitThing';
+	AttackSound = 'FighterHammerHitWall';
+}
+
+}
+
+//**************************************************************************
+//
+//	AxePuffGlow
+//
+//**************************************************************************
+
+class AxePuffGlow:Effect
+{
+
+__states__
+{
+	S_AXEPUFF_GLOW1('FAXE', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW2) { }
+	S_AXEPUFF_GLOW2('FAXE', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW3) { }
+	S_AXEPUFF_GLOW3('FAXE', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW4) { }
+	S_AXEPUFF_GLOW4('FAXE', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW5) { }
+	S_AXEPUFF_GLOW5('FAXE', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW6) { }
+	S_AXEPUFF_GLOW6('FAXE', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW7) { }
+	S_AXEPUFF_GLOW7('FAXE', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_AXEPUFF_GLOW1;
+	SightSound = 'FighterAxeHitThing';
+	AttackSound = 'FighterHammerHitWall';
+}
+
+}
+
+//**************************************************************************
+//
+//	AxeBlood
+//
+//**************************************************************************
+
+class AxeBlood:Effect
+{
+
+__states__
+{
+	S_AXEBLOOD1('FAXE', 5, 3.0 / 35.0, S_AXEBLOOD2) { }
+	S_AXEBLOOD2('FAXE', 6, 3.0 / 35.0, S_AXEBLOOD3) { }
+	S_AXEBLOOD3('FAXE', 7, 3.0 / 35.0, S_AXEBLOOD4) { }
+	S_AXEBLOOD4('FAXE', 8, 3.0 / 35.0, S_AXEBLOOD5) { }
+	S_AXEBLOOD5('FAXE', 9, 3.0 / 35.0, S_AXEBLOOD6) { }
+	S_AXEBLOOD6('FAXE', 10, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bDropOff = true;
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_AXEBLOOD1;
+	DeathState = S_AXEBLOOD6;
 }
 
 }
@@ -431,6 +549,17 @@ defaultproperties
 class HammerMissile:Projectile
 {
 
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('FighterHammerContinuous', CHAN_VOICE);
+}
+
 __states__
 {
 	S_HAMMER_MISSILE_1('FHFX', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_2) { }
@@ -464,6 +593,23 @@ defaultproperties
 	DeathState = S_HAMMER_MISSILE_X1;
 	DeathSound = 'FighterHammerExplode';
 	Effects = EF_DL_RED;
+}
+
+}
+
+//**************************************************************************
+//
+//	HammerPuff
+//
+//**************************************************************************
+
+class HammerPuff:AxePuff
+{
+
+defaultproperties
+{
+	SightSound = 'FighterHammerHitThing';
+	AttackSound = 'FighterHammerHitWall';
 }
 
 }
@@ -619,6 +765,37 @@ defaultproperties
 
 //**************************************************************************
 //
+//	FighterSwordFlame
+//
+//**************************************************************************
+
+class FighterSwordFlame:Effect
+{
+
+__states__
+{
+	S_FSWORD_FLAME1('FSFX', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME2) { }
+	S_FSWORD_FLAME2('FSFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME3) { }
+	S_FSWORD_FLAME3('FSFX', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME4) { }
+	S_FSWORD_FLAME4('FSFX', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME5) { }
+	S_FSWORD_FLAME5('FSFX', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME6) { }
+	S_FSWORD_FLAME6('FSFX', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME7) { }
+	S_FSWORD_FLAME7('FSFX', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME8) { }
+	S_FSWORD_FLAME8('FSFX', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME9) { }
+	S_FSWORD_FLAME9('FSFX', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME10) { }
+	S_FSWORD_FLAME10('FSFX', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_FSWORD_FLAME1;
+}
+
+}
+
+//**************************************************************************
+//
 //	FighterSwordMissile
 //
 //**************************************************************************
@@ -756,6 +933,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.22  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

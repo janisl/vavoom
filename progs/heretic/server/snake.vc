@@ -24,16 +24,93 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	SnakeProjectileA
+//
+//**************************************************************************
+
+class SnakeProjectileA:Projectile
+{
+
+__states__
+{
+	S_SNAKEPRO_A1('SNFX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A2) { }
+	S_SNAKEPRO_A2('SNFX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A3) { }
+	S_SNAKEPRO_A3('SNFX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A4) { }
+	S_SNAKEPRO_A4('SNFX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_A1) { }
+	S_SNAKEPRO_AX1('SNFX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX2) { }
+	S_SNAKEPRO_AX2('SNFX', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_AX3) { }
+	S_SNAKEPRO_AX3('SNFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_AX4) { }
+	S_SNAKEPRO_AX4('SNFX', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_SNAKEPRO_AX5) { }
+	S_SNAKEPRO_AX5('SNFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 490.0;
+	MissileDamage = 1;
+	bWindThrust = true;
+	IdleState = S_SNAKEPRO_A1;
+	DeathState = S_SNAKEPRO_AX1;
+	Effects = EF_DL_MAGENTA;
+}
+
+}
+
+//**************************************************************************
+//
+//	SnakeProjectileB
+//
+//**************************************************************************
+
+class SnakeProjectileB:Projectile
+{
+
+__states__
+{
+	S_SNAKEPRO_B1('SNFX', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_SNAKEPRO_B2) { }
+	S_SNAKEPRO_B2('SNFX', 10 | FF_FULLBRIGHT, 6.0 / 35.0, S_SNAKEPRO_B1) { }
+	S_SNAKEPRO_BX1('SNFX', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_BX2) { }
+	S_SNAKEPRO_BX2('SNFX', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_BX3) { }
+	S_SNAKEPRO_BX3('SNFX', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_BX4) { }
+	S_SNAKEPRO_BX4('SNFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 490.0;
+	MissileDamage = 3;
+	IdleState = S_SNAKEPRO_B1;
+	DeathState = S_SNAKEPRO_BX1;
+	Effects = EF_DL_WHITE;
+}
+
+}
+
 //**************************************************************************
 //
 //	Snake
 //
 //**************************************************************************
-//**************************************************************************
 
 class Snake:Pawn
 	__mobjinfo__(92)
 {
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoPhoenixWimpy, 5, 0.328125);
+}
 
 //==========================================================================
 //
@@ -109,7 +186,7 @@ defaultproperties
 	Height = 70.0;
 	Mass = 100.0;
 	StepSpeed = 10.0;
-	PainChance = 48;
+	PainChance = 0.1875;
 	IdleState = S_SNAKE_LOOK1;
 	SeeState = S_SNAKE_WALK1;
 	MissileState = S_SNAKE_ATK1;
@@ -127,6 +204,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/06/22 07:16:01  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.16  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

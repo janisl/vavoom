@@ -1,0 +1,496 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//
+//	Splash
+//
+//**************************************************************************
+
+class Splash:ProjEffect
+{
+
+__states__
+{
+	S_SPLASH1('SPSH', 0, 8.0 / 35.0, S_SPLASH2) { }
+	S_SPLASH2('SPSH', 1, 8.0 / 35.0, S_SPLASH3) { }
+	S_SPLASH3('SPSH', 2, 8.0 / 35.0, S_SPLASH4) { }
+	S_SPLASH4('SPSH', 3, 16.0 / 35.0, S_NULL) { }
+	S_SPLASHX('SPSH', 3, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bCannotPush = true;
+	bNoGravity = false;
+	IdleState = S_SPLASH1;
+	DeathState = S_SPLASHX;
+}
+
+}
+
+//**************************************************************************
+//
+//	SplashBase
+//
+//**************************************************************************
+
+class SplashBase:Effect
+{
+
+__states__
+{
+	S_SPLASHBASE1('SPSH', 4, 5.0 / 35.0, S_SPLASHBASE2) { }
+	S_SPLASHBASE2('SPSH', 5, 5.0 / 35.0, S_SPLASHBASE3) { }
+	S_SPLASHBASE3('SPSH', 6, 5.0 / 35.0, S_SPLASHBASE4) { }
+	S_SPLASHBASE4('SPSH', 7, 5.0 / 35.0, S_SPLASHBASE5) { }
+	S_SPLASHBASE5('SPSH', 8, 5.0 / 35.0, S_SPLASHBASE6) { }
+	S_SPLASHBASE6('SPSH', 9, 5.0 / 35.0, S_SPLASHBASE7) { }
+	S_SPLASHBASE7('SPSH', 10, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_SPLASHBASE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	LavaSplash
+//
+//**************************************************************************
+
+class LavaSplash:Effect
+{
+
+__states__
+{
+	S_LAVASPLASH1('LVAS', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH2) { }
+	S_LAVASPLASH2('LVAS', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH3) { }
+	S_LAVASPLASH3('LVAS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH4) { }
+	S_LAVASPLASH4('LVAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH5) { }
+	S_LAVASPLASH5('LVAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH6) { }
+	S_LAVASPLASH6('LVAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_LAVASPLASH1;
+}
+
+}
+
+//**************************************************************************
+//
+//	LavaSmoke
+//
+//**************************************************************************
+
+class LavaSmoke:Effect
+{
+
+__states__
+{
+	S_LAVASMOKE1('LVAS', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE2) { }
+	S_LAVASMOKE2('LVAS', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE3) { }
+	S_LAVASMOKE3('LVAS', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE4) { }
+	S_LAVASMOKE4('LVAS', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE5) { }
+	S_LAVASMOKE5('LVAS', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_LAVASMOKE1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SludgeChunk
+//
+//**************************************************************************
+
+class SludgeChunk:ProjEffect
+{
+
+__states__
+{
+	S_SLUDGECHUNK1('SLDG', 0, 8.0 / 35.0, S_SLUDGECHUNK2) { }
+	S_SLUDGECHUNK2('SLDG', 1, 8.0 / 35.0, S_SLUDGECHUNK3) { }
+	S_SLUDGECHUNK3('SLDG', 2, 8.0 / 35.0, S_SLUDGECHUNK4) { }
+	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, S_NULL) { }
+	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bCannotPush = true;
+	bNoGravity = false;
+	IdleState = S_SLUDGECHUNK1;
+	DeathState = S_SLUDGECHUNKX;
+}
+
+}
+
+//**************************************************************************
+//
+//	SludgeSplash
+//
+//**************************************************************************
+
+class SludgeSplash:Effect
+{
+
+__states__
+{
+	S_SLUDGESPLASH1('SLDG', 4, 5.0 / 35.0, S_SLUDGESPLASH2) { }
+	S_SLUDGESPLASH2('SLDG', 5, 5.0 / 35.0, S_SLUDGESPLASH3) { }
+	S_SLUDGESPLASH3('SLDG', 6, 5.0 / 35.0, S_SLUDGESPLASH4) { }
+	S_SLUDGESPLASH4('SLDG', 7, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bNoGravity = false;
+	IdleState = S_SLUDGESPLASH1;
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportFog
+//
+//**************************************************************************
+
+class TeleportFog:Effect
+{
+
+__states__
+{
+	S_TFOG1('TELE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
+	S_TFOG2('TELE', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
+	S_TFOG3('TELE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
+	S_TFOG4('TELE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
+	S_TFOG5('TELE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
+	S_TFOG6('TELE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
+	S_TFOG7('TELE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
+	S_TFOG8('TELE', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
+	S_TFOG9('TELE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
+	S_TFOG10('TELE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG11) { }
+	S_TFOG11('TELE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG12) { }
+	S_TFOG12('TELE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG13) { }
+	S_TFOG13('TELE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_TFOG1;
+}
+
+}
+
+//**************************************************************************
+//
+//	Blood
+//
+//**************************************************************************
+
+class Blood:Effect
+{
+
+__states__
+{
+	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) { }
+	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) { }
+	S_BLOOD3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_BLOOD1;
+}
+
+}
+
+//**************************************************************************
+//
+//	BloodSplatter
+//
+//**************************************************************************
+
+class BloodSplatter:ProjEffect
+{
+
+__states__
+{
+	S_BLOODSPLATTER1('BLOD', 2, 8.0 / 35.0, S_BLOODSPLATTER2) { }
+	S_BLOODSPLATTER2('BLOD', 1, 8.0 / 35.0, S_BLOODSPLATTER3) { }
+	S_BLOODSPLATTER3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
+	S_BLOODSPLATTERX('BLOD', 0, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 2.0;
+	Height = 4.0;
+	bCannotPush = true;
+	bNoGravity = false;
+	IdleState = S_BLOODSPLATTER1;
+	DeathState = S_BLOODSPLATTERX;
+}
+
+}
+
+//**************************************************************************
+//
+//	Puffy
+//
+//**************************************************************************
+
+class Puffy:Projectile
+{
+
+__states__
+{
+	S_PUFFY1('FRB1', 3, 4.0 / 35.0, S_PUFFY2) { }
+	S_PUFFY2('FRB1', 4, 4.0 / 35.0, S_PUFFY3) { }
+	S_PUFFY3('FRB1', 5, 4.0 / 35.0, S_PUFFY4) { }
+	S_PUFFY4('FRB1', 6, 4.0 / 35.0, S_PUFFY5) { }
+	S_PUFFY5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 2;
+	bDropOff = false;
+	IdleState = S_PUFFY1;
+	DeathState = S_PUFFY1;
+}
+
+}
+
+//**************************************************************************
+//
+//	EggMissile
+//
+//**************************************************************************
+
+class EggMissile:Projectile
+{
+
+__states__
+{
+	S_EGGFX1('EGGM', 0, 4.0 / 35.0, S_EGGFX2) { }
+	S_EGGFX2('EGGM', 1, 4.0 / 35.0, S_EGGFX3) { }
+	S_EGGFX3('EGGM', 2, 4.0 / 35.0, S_EGGFX4) { }
+	S_EGGFX4('EGGM', 3, 4.0 / 35.0, S_EGGFX5) { }
+	S_EGGFX5('EGGM', 4, 4.0 / 35.0, S_EGGFX1) { }
+	S_EGGFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_2) { }
+	S_EGGFXI1_2('FX01', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_3) { }
+	S_EGGFXI1_3('FX01', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_EGGFXI1_4) { }
+	S_EGGFXI1_4('FX01', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 8.0;
+	Speed = 630.0;
+	MissileDamage = 1;
+	IdleState = S_EGGFX1;
+	DeathState = S_EGGFXI1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	FireBomb
+//
+//**************************************************************************
+
+class FireBomb:Actor
+{
+
+__states__
+{
+	S_FIREBOMB1('FBMB', 0, 10.0 / 35.0, S_FIREBOMB2) { }
+	S_FIREBOMB2('FBMB', 1, 10.0 / 35.0, S_FIREBOMB3) { }
+	S_FIREBOMB3('FBMB', 2, 10.0 / 35.0, S_FIREBOMB4) { }
+	S_FIREBOMB4('FBMB', 3, 10.0 / 35.0, S_FIREBOMB5) { }
+	S_FIREBOMB5('FBMB', 4, 6.0 / 35.0, S_FIREBOMB6) { A_Scream(); }
+	S_FIREBOMB6('XPL1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB7) { A_Explode(); }
+	S_FIREBOMB7('XPL1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB8) { }
+	S_FIREBOMB8('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB9) { }
+	S_FIREBOMB9('XPL1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB10) { }
+	S_FIREBOMB10('XPL1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBOMB11) { }
+	S_FIREBOMB11('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	Translucency = 33;
+	bNoGravity = true;
+	bNoPassMobj = true;
+	IdleState = S_FIREBOMB1;
+	DeathSound = 'PhoenixHit';
+}
+
+}
+
+//**************************************************************************
+//
+//	TeleportSpot
+//
+//**************************************************************************
+
+class TeleportSpot:Actor
+	__mobjinfo__(14)
+{
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+}
+
+}
+
+//**************************************************************************
+//
+//	SoundWind
+//
+//**************************************************************************
+
+class SoundWind:Actor
+	__mobjinfo__(42)
+{
+
+//==========================================================================
+//
+//  A_ESound
+//
+//==========================================================================
+
+void A_ESound(void)
+{
+	PlaySound('Wind', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SND_WIND('AMG1', 0, 100.0 / 35.0, S_SND_WIND) { A_ESound(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	IdleState = S_SND_WIND;
+}
+
+}
+
+//**************************************************************************
+//
+//	SoundWaterfall
+//
+//**************************************************************************
+
+class SoundWaterfall:Actor
+	__mobjinfo__(41)
+{
+
+//==========================================================================
+//
+//  A_ESound
+//
+//==========================================================================
+
+void A_ESound(void)
+{
+	PlaySound('Waterfall', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SND_WATERFALL('AMG1', 0, 85.0 / 35.0, S_SND_WATERFALL) { A_ESound(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	IdleState = S_SND_WATERFALL;
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
+//**************************************************************************

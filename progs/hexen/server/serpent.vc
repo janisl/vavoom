@@ -25,6 +25,193 @@
 
 //**************************************************************************
 //
+//	SerpentHead
+//
+//**************************************************************************
+
+class SerpentHead:Effect
+{
+
+//==========================================================================
+//
+//	A_SerpentHeadCheck
+//
+//==========================================================================
+
+void A_SerpentHeadCheck(void)
+{
+	if (Origin.z <= FloorZ)
+	{
+		if (GetFloorType() >= FLOOR_LIQUID)
+		{
+			HitFloorType();
+			SetState(S_NULL);
+		}
+		else
+		{
+			SetState(DeathState);
+		}
+	}
+}
+
+__states__
+{
+	S_SERPENT_HEAD1('SSXD', 8, 4.0 / 35.0, S_SERPENT_HEAD2) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD2('SSXD', 9, 4.0 / 35.0, S_SERPENT_HEAD3) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD3('SSXD', 10, 4.0 / 35.0, S_SERPENT_HEAD4) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD4('SSXD', 11, 4.0 / 35.0, S_SERPENT_HEAD5) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD5('SSXD', 12, 4.0 / 35.0, S_SERPENT_HEAD6) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD6('SSXD', 13, 4.0 / 35.0, S_SERPENT_HEAD7) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD7('SSXD', 14, 4.0 / 35.0, S_SERPENT_HEAD8) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD8('SSXD', 15, 4.0 / 35.0, S_SERPENT_HEAD1) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD_X1('SSXD', 18, -1.0, S_SERPENT_HEAD_X1) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 10.0;
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_SERPENT_HEAD1;
+	DeathState = S_SERPENT_HEAD_X1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SerpentGib1
+//
+//**************************************************************************
+
+class SerpentGib1:Effect
+{
+
+//==========================================================================
+//
+//	A_FloatGib
+//
+//==========================================================================
+
+void A_FloatGib(void)
+{
+	FloorClip -= 1.0;
+}
+
+//==========================================================================
+//
+//	A_SinkGib
+//
+//==========================================================================
+
+void A_SinkGib(void)
+{
+	FloorClip += 1.0;
+}
+
+//==========================================================================
+//
+//	A_DelayGib
+//
+//==========================================================================
+
+void A_DelayGib(void)
+{
+	StateTime -= Random() * 2.0;
+}
+
+__states__
+{
+	S_SERPENT_GIB1_1('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_2) { }
+	S_SERPENT_GIB1_2('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_3) { A_FloatGib(); }
+	S_SERPENT_GIB1_3('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_4) { A_FloatGib(); }
+	S_SERPENT_GIB1_4('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_5) { A_FloatGib(); }
+	S_SERPENT_GIB1_5('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_6) { A_FloatGib(); }
+	S_SERPENT_GIB1_6('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_7) { A_FloatGib(); }
+	S_SERPENT_GIB1_7('SSXD', 16, 232.0 / 35.0, S_SERPENT_GIB1_8) { A_DelayGib(); }
+	S_SERPENT_GIB1_8('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_9) { A_SinkGib(); }
+	S_SERPENT_GIB1_9('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_10) { A_SinkGib(); }
+	S_SERPENT_GIB1_10('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_11) { A_SinkGib(); }
+	S_SERPENT_GIB1_11('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_12) { A_SinkGib(); }
+	S_SERPENT_GIB1_12('SSXD', 16, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 3.0;
+	IdleState = S_SERPENT_GIB1_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SerpentGib2
+//
+//**************************************************************************
+
+class SerpentGib2:SerpentGib1
+{
+
+__states__
+{
+	S_SERPENT_GIB2_1('SSXD', 17, 6.0 / 35.0, S_SERPENT_GIB2_2) { }
+	S_SERPENT_GIB2_2('SSXD', 17, 6.0 / 35.0, S_SERPENT_GIB2_3) { A_FloatGib(); }
+	S_SERPENT_GIB2_3('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_4) { A_FloatGib(); }
+	S_SERPENT_GIB2_4('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_5) { A_FloatGib(); }
+	S_SERPENT_GIB2_5('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_6) { A_FloatGib(); }
+	S_SERPENT_GIB2_6('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_7) { A_FloatGib(); }
+	S_SERPENT_GIB2_7('SSXD', 17, 232.0 / 35.0, S_SERPENT_GIB2_8) { A_DelayGib(); }
+	S_SERPENT_GIB2_8('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_9) { A_SinkGib(); }
+	S_SERPENT_GIB2_9('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_10) { A_SinkGib(); }
+	S_SERPENT_GIB2_10('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_11) { A_SinkGib(); }
+	S_SERPENT_GIB2_11('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_12) { A_SinkGib(); }
+	S_SERPENT_GIB2_12('SSXD', 17, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+}
+
+defaultproperties
+{
+	IdleState = S_SERPENT_GIB2_1;
+}
+
+}
+
+//**************************************************************************
+//
+//	SerpentGib3
+//
+//**************************************************************************
+
+class SerpentGib3:SerpentGib1
+{
+
+__states__
+{
+	S_SERPENT_GIB3_1('SSXD', 19, 6.0 / 35.0, S_SERPENT_GIB3_2) { }
+	S_SERPENT_GIB3_2('SSXD', 19, 6.0 / 35.0, S_SERPENT_GIB3_3) { A_FloatGib(); }
+	S_SERPENT_GIB3_3('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_4) { A_FloatGib(); }
+	S_SERPENT_GIB3_4('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_5) { A_FloatGib(); }
+	S_SERPENT_GIB3_5('SSXD', 19, 12.0 / 35.0, S_SERPENT_GIB3_6) { A_FloatGib(); }
+	S_SERPENT_GIB3_6('SSXD', 19, 12.0 / 35.0, S_SERPENT_GIB3_7) { A_FloatGib(); }
+	S_SERPENT_GIB3_7('SSXD', 19, 232.0 / 35.0, S_SERPENT_GIB3_8) { A_DelayGib(); }
+	S_SERPENT_GIB3_8('SSXD', 19, 12.0 / 35.0, S_SERPENT_GIB3_9) { A_SinkGib(); }
+	S_SERPENT_GIB3_9('SSXD', 19, 12.0 / 35.0, S_SERPENT_GIB3_10) { A_SinkGib(); }
+	S_SERPENT_GIB3_10('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_11) { A_SinkGib(); }
+	S_SERPENT_GIB3_11('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_12) { A_SinkGib(); }
+	S_SERPENT_GIB3_12('SSXD', 19, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+}
+
+defaultproperties
+{
+	IdleState = S_SERPENT_GIB3_1;
+}
+
+}
+
+//**************************************************************************
+//
 //	Serpent
 //
 //**************************************************************************
@@ -609,6 +796,17 @@ defaultproperties
 class SerpentMissile:Projectile
 {
 
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('SerpentFXContinuous', CHAN_VOICE);
+}
+
 __states__
 {
 	S_SERPENT_FX1('SSFX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SERPENT_FX2) { A_ContMobjSound(); }
@@ -748,66 +946,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//	Actor::A_SerpentHeadCheck
-//
-//==========================================================================
-
-void Actor::A_SerpentHeadCheck(void)
-{
-	if (Origin.z <= FloorZ)
-	{
-		if (GetFloorType() >= FLOOR_LIQUID)
-		{
-			HitFloorType();
-			SetState(S_NULL);
-		}
-		else
-		{
-			SetState(S_SERPENT_HEAD_X1);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	Actor::A_FloatGib
-//
-//==========================================================================
-
-void Actor::A_FloatGib(void)
-{
-	FloorClip -= 1.0;
-}
-
-//==========================================================================
-//
-//	Actor::A_SinkGib
-//
-//==========================================================================
-
-void Actor::A_SinkGib(void)
-{
-	FloorClip += 1.0;
-}
-
-//==========================================================================
-//
-//	Actor::A_DelayGib
-//
-//==========================================================================
-
-void Actor::A_DelayGib(void)
-{
-	StateTime -= Random() * 2.0;
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.26  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

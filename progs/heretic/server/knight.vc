@@ -24,16 +24,121 @@
 //**************************************************************************
 
 //**************************************************************************
+//
+//	KnightAxe
+//
+//**************************************************************************
+
+class KnightAxe:Projectile
+{
+
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('KnightAttack1', CHAN_VOICE);
+}
+
+__states__
+{
+	S_SPINAXE1('SPAX', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE2) { A_ContMobjSound(); }
+	S_SPINAXE2('SPAX', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE3) { }
+	S_SPINAXE3('SPAX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SPINAXE1) { }
+	S_SPINAXEX1('SPAX', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPINAXEX2) { }
+	S_SPINAXEX2('SPAX', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SPINAXEX3) { }
+	S_SPINAXEX3('SPAX', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 8.0;
+	Speed = 315.0;
+	MissileDamage = 2;
+	bWindThrust = true;
+	bThruGhost = true;
+	IdleState = S_SPINAXE1;
+	DeathState = S_SPINAXEX1;
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_GREEN;
+}
+
+}
+
+//**************************************************************************
+//
+//	KnightRedAxe
+//
+//**************************************************************************
+
+class KnightRedAxe:Projectile
+{
+
+//==========================================================================
+//
+//  A_DripBlood
+//
+//==========================================================================
+
+void A_DripBlood(void)
+{
+	Actor mo;
+
+	mo = Spawn(Blood, Origin + vector((Random() - Random()) * 8.0,
+		(Random() - Random()) * 8.0, 0.0));
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.bNoGravity = false;
+}
+
+__states__
+{
+	S_REDAXE1('RAXE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE2) { A_DripBlood(); }
+	S_REDAXE2('RAXE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE1) { A_DripBlood(); }
+	S_REDAXEX1('RAXE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX2) { }
+	S_REDAXEX2('RAXE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX3) { }
+	S_REDAXEX3('RAXE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 8.0;
+	Speed = 315.0;
+	MissileDamage = 7;
+	bThruGhost = true;
+	IdleState = S_REDAXE1;
+	DeathState = S_REDAXEX1;
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_RED;
+}
+
+}
+
 //**************************************************************************
 //
 //	Knight
 //
 //**************************************************************************
-//**************************************************************************
 
 class Knight:Pawn
 	__mobjinfo__(64)
 {
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoCrossbowWimpy, 5, 0.328125);
+}
 
 //==========================================================================
 //
@@ -55,7 +160,7 @@ void A_KnightAttack(void)
 	}
 	// Throw axe
 	PlaySound(AttackSound, CHAN_WEAPON);
-	if (Class == KnightGhost || P_Random() < 40)
+	if (Random() < 0.15625)
 	{
 		// Red axe
 		SpawnMissile(Enemy, KnightRedAxe);
@@ -97,7 +202,7 @@ defaultproperties
 	Height = 78.0;
 	Mass = 150.0;
 	StepSpeed = 12.0;
-	PainChance = 100;
+	PainChance = 0.390625;
 	IdleState = S_KNIGHT_STND1;
 	SeeState = S_KNIGHT_WALK1;
 	MeleeState = S_KNIGHT_ATK1;
@@ -114,16 +219,37 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
 //
 //	KnightGhost
 //
-//**************************************************************************
 //**************************************************************************
 
 class KnightGhost:Knight
 	__mobjinfo__(65)
 {
+
+//==========================================================================
+//
+//  A_KnightAttack
+//
+//==========================================================================
+
+void A_KnightAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(3));
+		PlaySound('KnightAttack2', CHAN_WEAPON);
+		return;
+	}
+	// Throw axe
+	PlaySound(AttackSound, CHAN_WEAPON);
+	SpawnMissile(Enemy, KnightRedAxe);
+}
 
 defaultproperties
 {
@@ -133,28 +259,11 @@ defaultproperties
 }
 
 //**************************************************************************
-//**************************************************************************
-
-//==========================================================================
-//
-//  Actor::A_DripBlood
-//
-//==========================================================================
-
-void Actor::A_DripBlood(void)
-{
-	Actor mo;
-
-	mo = Spawn(Blood, Origin + vector((Random() - Random()) * 8.0,
-		(Random() - Random()) * 8.0, 0.0));
-	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo.bNoGravity = false;
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/06/22 07:16:00  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.24  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

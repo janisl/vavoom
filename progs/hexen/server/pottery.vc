@@ -25,123 +25,11 @@
 
 //**************************************************************************
 //
-//	Pottery1
-//
-//**************************************************************************
-
-class Pottery1:Actor
-	__mobjinfo__(104)
-{
-
-//==========================================================================
-//
-//  A_PotteryExplode
-//
-//==========================================================================
-
-void A_PotteryExplode(void)
-{
-	Actor A;
-	int i;
-
-	for (i = (P_Random() & 3) + 3; i; i--)
-	{
-		A = Spawn(PotteryBit, Origin);
-		A.SetState(A.IdleState + (P_Random() % 5));
-		if (A)
-		{
-			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
-		}
-	}
-	A.PlaySound('PotteryExplode', CHAN_VOICE);
-	if (Args[0])
-	{
-		// Spawn an item
-		Spawn(TranslateThingType[Args[0]], Origin);
-	}
-}
-
-__states__
-{
-	S_ZPOTTERY1('POT1', 0, -1.0, S_NULL) { }
-	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, S_NULL) { A_PotteryExplode(); }
-}
-
-defaultproperties
-{
-	Health = 15;
-	Radius = 10.0;
-	Height = 32.0;
-	Mass = 100.0;
-	bSolid = true;
-	bShootable = true;
-	bDropOff = true;
-	bNoBlood = true;
-	bPushable = true;
-	bSlide = true;
-	bTelestomp = true;
-	IdleState = S_ZPOTTERY1;
-	DeathState = S_ZPOTTERY_EXPLODE;
-}
-
-}
-
-//**************************************************************************
-//
-//	Pottery2
-//
-//**************************************************************************
-
-class Pottery2:Pottery1
-	__mobjinfo__(105)
-{
-
-__states__
-{
-	S_ZPOTTERY2('POT2', 0, -1.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Height = 25.0;
-	IdleState = S_ZPOTTERY2;
-}
-
-}
-
-//**************************************************************************
-//
-//	Pottery3
-//
-//**************************************************************************
-
-class Pottery3:Pottery1
-	__mobjinfo__(106)
-{
-
-__states__
-{
-	S_ZPOTTERY3('POT3', 0, -1.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Radius = 15.0;
-	Height = 25.0;
-	IdleState = S_ZPOTTERY3;
-}
-
-}
-
-//**************************************************************************
-//
 //	PotteryBit
 //
 //**************************************************************************
 
-class PotteryBit:Actor
+class PotteryBit:Fragment
 {
 
 //==========================================================================
@@ -207,12 +95,11 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
 	Radius = 5.0;
 	Height = 5.0;
-	Mass = 100.0;
-	bMissile = true;
-	bNoTeleport = true;
+	bNoBlockmap = false;
+	bDropOff = false;
+	bNoGravity = false;
 	IdleState = S_POTTERYBIT_1;
 	DeathState = S_POTTERYBIT_EX0;
 }
@@ -221,7 +108,122 @@ defaultproperties
 
 //**************************************************************************
 //
+//	Pottery1
+//
+//**************************************************************************
+
+class Pottery1:Decoration
+	__mobjinfo__(104)
+{
+
+//==========================================================================
+//
+//  A_PotteryExplode
+//
+//==========================================================================
+
+void A_PotteryExplode(void)
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 3; i; i--)
+	{
+		A = Spawn(PotteryBit, Origin);
+		A.SetState(A.IdleState + (P_Random() % 5));
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		}
+	}
+	A.PlaySound('PotteryExplode', CHAN_VOICE);
+	if (Args[0])
+	{
+		// Spawn an item
+		Spawn(TranslateThingType[Args[0]], Origin);
+	}
+}
+
+__states__
+{
+	S_ZPOTTERY1('POT1', 0, -1.0, S_NULL) { }
+	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, S_NULL) { A_PotteryExplode(); }
+}
+
+defaultproperties
+{
+	Health = 15;
+	Radius = 10.0;
+	Height = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bDropOff = true;
+	bNoBlood = true;
+	bPushable = true;
+	bSlide = true;
+	bTelestomp = true;
+	bNoPassMobj = false;
+	IdleState = S_ZPOTTERY1;
+	DeathState = S_ZPOTTERY_EXPLODE;
+}
+
+}
+
+//**************************************************************************
+//
+//	Pottery2
+//
+//**************************************************************************
+
+class Pottery2:Pottery1
+	__mobjinfo__(105)
+{
+
+__states__
+{
+	S_ZPOTTERY2('POT2', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Height = 25.0;
+	IdleState = S_ZPOTTERY2;
+}
+
+}
+
+//**************************************************************************
+//
+//	Pottery3
+//
+//**************************************************************************
+
+class Pottery3:Pottery1
+	__mobjinfo__(106)
+{
+
+__states__
+{
+	S_ZPOTTERY3('POT3', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 15.0;
+	Height = 25.0;
+	IdleState = S_ZPOTTERY3;
+}
+
+}
+
+//**************************************************************************
+//
 //  $Log$
+//  Revision 1.21  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.20  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

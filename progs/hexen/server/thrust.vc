@@ -25,11 +25,34 @@
 
 //**************************************************************************
 //
+//	DirtClump
+//
+//**************************************************************************
+
+class DirtClump:Decoration
+{
+
+__states__
+{
+	S_DIRTCLUMP1('TSPK', 2, 20.0 / 35.0, S_DIRTCLUMP1) { }
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoTeleport = true;
+	IdleState = S_DIRTCLUMP1;
+}
+
+}
+
+//**************************************************************************
+//
 //	ThrustFloorDown
 //
 //**************************************************************************
 
-class ThrustFloorDown:Actor
+class ThrustFloorDown:Decoration
 	__mobjinfo__(10090)
 {
 
@@ -232,13 +255,10 @@ boolean Deactivate(void)
 
 defaultproperties
 {
-	Health = 1000;
 	Radius = 20.0;
 	Height = 128.0;
-	Mass = 100.0;
 	bFloorClip = true;
 	bNoTeleport = true;
-	bNoPassMobj = true;
 	bHidden = true;
 	IdleState = S_THRUSTINIT1_1;
 	UpState = S_THRUSTINIT2_1;
@@ -271,6 +291,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/22 07:16:02  dj_jl
+//  Added base classes for objects, split them into corresponding files.
+//
 //  Revision 1.18  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //
