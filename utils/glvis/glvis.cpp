@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Potentially Visible Set
@@ -83,8 +79,10 @@ static char		specified_maps[100][16];
 //
 //==========================================================================
 
-static bool	IsLevelName(const char *name)
+static bool	IsLevelName(int lump)
 {
+	const char	*name = glwad->LumpName(lump);
+
 	if (name[0] != 'G' || name[1] != 'L' || name[2] != '_')
 	{
 		return false;
@@ -102,14 +100,10 @@ static bool	IsLevelName(const char *name)
 	}
 	else
 	{
-		if (name[3] == 'E' && name[4] >= '0' && name[4] <= '9' &&
-			name[5] == 'M' && name[6] >= '0' && name[6] <= '9')
-		{
-			return true;
-		}
-		if (name[3] == 'M' && name[4] == 'A' && name[5] == 'P' &&
-			name[6] >= '0' && name[6] <= '9' &&
-			name[7] >= '0' && name[7] <= '9')
+		if (!strcmp(glwad->LumpName(lump + 1), "GL_VERT") &&
+			!strcmp(glwad->LumpName(lump + 2), "GL_SEGS") &&
+			!strcmp(glwad->LumpName(lump + 3), "GL_SSECT") &&
+			!strcmp(glwad->LumpName(lump + 4), "GL_NODES"))
 		{
 			return true;
 		}
@@ -237,7 +231,7 @@ int main(int argc, char *argv[])
 		const char *name = glwad->LumpName(i);
 		outwad.AddLump(name, ptr, glwad->LumpSize(i));
 		Free(ptr);
-		if (IsLevelName(name))
+		if (IsLevelName(i))
 		{
 			LoadLevel(mainwad->LumpNumForName(name + 3), i);
 			i += 5;
@@ -277,3 +271,13 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:09:22  dj_jl
+//	Recognizes maps by checking GL lump names
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
