@@ -84,7 +84,7 @@
 #include "heavy.vc"
 #include "arach.vc"
 #include "painelem.vc"
-#include "ravenant.vc"
+#include "revenant.vc"
 #include "mancubus.vc"
 #include "archvile.vc"
 #include "brain.vc"
@@ -96,6 +96,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/03/28 18:33:47  dj_jl
+//  Fixed spelling.
+//
 //  Revision 1.6  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //
