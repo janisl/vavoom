@@ -54,13 +54,13 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-#define PARANOID
-#define DEVELOPER
+//#define PARANOID
+//#define DEVELOPER
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	9
+#define VERSION_MINOR	10
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.9"
+#define VERSION_TEXT	"1.10"
 
 //==========================================================================
 //
@@ -114,9 +114,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:36:57  dj_jl
+//	Switched to release
+//
 //	Revision 1.9  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.8  2001/10/04 17:25:42  dj_jl
 //	Added support for compiling with disabled asm
 //	
