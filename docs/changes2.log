@@ -477,4 +477,53 @@
  poliobjektu rotñıanas domÆtÆji, kuriem vispirms derñtu peldoıÆ komata le·ói.
   Miglas konsoles mainØgie ir kopØgi.
   Atradu kõİdu glBSP kuras dñõ tika sapists REJECT.
+18-10-2001
+  glVIS tagad arØ veido REJECT datus, ja GL-nodi ir wad failÆ.
+19-10-2001
+  ObjektÆ tipa nummurs aizvietots ar klases identifikÆtoru.
+  SÆku pilnu le·óu floatifikÆciju. PilnØbÆ pabeidzu dzini, rpog÷os visas
+ iebİvñtÆs funkcijas izmanto peldoıÆ kamata le·óus. Doom prog÷i jau strÆdÆ.
+20-10-2001
+  Pabeidzu ar le·óiem pÆrñjÆs spñlñs.
+22-10-2001
+  PilnØbÆ atbrØvojos no veco le·óu paliekÆm.
+23-10-2001
+  Pievienoju vñl pÆris Heretic un Hexen modeõus.
+  Pñc lİguma ieviesu gammu OpenGL un Direct3D draiveros.
+24-10-2001
+  Hexen nolñmu nedaudz savÆdÆk izmantot objekt-orientÆciju fizikÆ.
+  Vavoom C atbalsts konstruktoriem un destruktoriem.
+25-10-2001
+  Iespñja definñt papildus konsoles mainØgos.
+  Praktiski visas Hexen fizikas funkcijas ir metodes.
+  Dabİju Cammand & Conquer: Yuri's revenge - tas bİs uz kÆdu nedñõu.
+27-10-2001
+  Nelielas problñmas ar tekoıo glVIS versiju, kuras tika Ætri izlabotas.
+29-10-2001
+  DamageMobj ir metode.
+31-10-2001
+  PÆrstrÆdÆju debesu zØmñıanu.
+02-11-2001
+  Pabeidzu debesis.
+06-11-2001
+  Piebeidzu Yuri's revenge - labais!
+  Objektu lauki tiek inicializñti konstruktorÆ.
+  SÆku darbu pie referenÒu ievieıanas vcc.
+07-11-2001
+  Klasu references strÆdÆ normÆli.
+08-11-2001
+  PÆrnesu ievada lØnijas funkcijas uz prog÷iem.
+  Atradu kõudu kuras dñõ izmeta bojÆtu tØkla paketi.
+  Pievienoju "spekulÆrÆs" gaismas.
+  Pievienoju funkcijas failu saraksta iegİıanai. Seivgeimi tagad atrod visus
+ lØme·us, arØ tos ar nestandarta nosaukumiem.
+09-11-2001
+  Sagatavoju visu relØzei - testñju, pielaboju sØkas kõİdi·as, aploudoju to
+ visu iekı CVS un rakstu dokumentÆciju.
+10-11-2001
+  RelØze. GalvenokÆrt dokumentÆcijas rakstØıana.
+
+******************************************************************************
+                            VERSIJA 1.10
+******************************************************************************
   

@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                     version 1.9
+                                                     version 1.10
 
 Contents:
     0. Disclaimer
@@ -50,7 +50,7 @@ Contents:
 
 Vavoom System Requirements:
      - Pentium processor or better
-     - 8 MB RAM, 16 MB for Windows version
+     - 32 MB RAM
      - optional: Sound card
      - optional: CD-ROM
      - Windows version: DirectX 7 (http://www.microsoft.com/directx)
@@ -71,8 +71,8 @@ Systems that do not have an FPU installed will not run Vavoom -- at all.
      - Strife shareware
      - Strife
   If you have multiple IWADs, you can use command line params -doom, -doom2,
--heretic, -hexen or -strife to look for IWADs only for that game. Hexen
-requires wad file from version 1.1. Strife support is just a test.
+-tnt, -plutonia, -heretic, -hexen or -strife to look for IWADs only for that
+game. Hexen requires wad file from version 1.1. Strife support is just a test.
 
 *****************************************************************************
 3. Installation
@@ -114,9 +114,7 @@ and change into it:
 
   2. Unpack the Vavoom source package:
 
-        unzip v19_src.zip
-
-  Of course you have to replace '19' by the actual version!
+        unzip v110_src.zip
 
   3. Run fixunix.sh to convert text files to UNIX format:
 
@@ -136,8 +134,7 @@ additional wad files.
 
         su -c "make install"
 
-  This will install Vavoom into /usr/local/games/Vavoom and glbsp and glvis
-utilites into /usr/local/bin.
+  This will install Vavoom into /usr/local/games/Vavoom.
 
   7. Change to this directory and copy the main .wad file here or create
 a symbolic link to it:
@@ -378,13 +375,13 @@ slash.
 Debugging
 ---------
 
--DEBUG creates a debug file jl/debug.txt with all console messages.
+-DEBUG creates a debug file basev/debug.txt with all console messages.
 -debug
 
 -STARTTIME sets start time, not in LINUX version and dedicated servers
 -starttime <time>
 
--RHIDE prints debugfile to stderr, in DOS version I_Error exits with call
+-RHIDE prints debugfile to stderr, in DOS version Sys_Error exits with call
 frame traceback
 -rhide
 
@@ -410,6 +407,7 @@ Misc
     - Static light sources with sight checking (i.e. true shadows).
     - Dynamic lighting.
     - Colored lighting.
+    - Specular highlights.
     - Particles.
     - Mipmapping.
     - Skyboxes.
@@ -432,6 +430,8 @@ Misc
     - Sloped floors and ceilings.
     - 3D floors.
     - Possibility to use wall textures on floors/ceilings and flats on walls.
+    - glBSP plugin.
+    - glVIS plugin.
     - A lots more.
 
 *****************************************************************************
@@ -713,6 +713,27 @@ Version 1.9
 * Some client/server improvements.
 * Up to 8 sounds per entity.
 
+==============================================================================
+Version 1.10
+==============================================================================
+
+* glBSP plugin.
+* glVIS plugin.
+* Windowed mode for Windows OpenGL version.
+* vcc now haves a built-in preprocessor, no need for external compiler
+ anymore.
+* Made VavoomC language object-oriented. All the basic features: classes and
+ methods (currently all methods are virtual), as well as support for class
+ references (not yet used in actual code).
+* Support for all format TGA model skins.
+* Some new extensions to the MAPINFO script (see vavmref.txt).
+* Added skybox script.
+* Floatification of angles - now represented as floats and measured in
+ degrees.
+* glVIS now also builds REJECT data (if GL-nodes are in wad file, not in gwa).
+* Gamma controls for OpenGL and Direct3D.
+* Specular highlights.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -724,7 +745,7 @@ Version 1.9
 *****************************************************************************
 
   The Vavoom homepage:
-    http://www.raven-games.com/hosted/vavoom/
+    http://www.vavoom-engine.com/
 
   The Vavoom SourceForfe project page:
     http://sourceforge.net/projects/vavoom/
@@ -733,7 +754,7 @@ Version 1.9
     http://glbsp.sourceforge.net/
 
   The homepage for glVIS:
-    http://www.raven-games.com/hosted/vavoom/glvis.shtml
+    http://www.vavoom-engine.com/glvis.html
 
   The home of ID-Software:
     http://www.idsoftware.com/
@@ -750,10 +771,11 @@ Version 1.9
     http://www.doomcenter.com/
 
   Raven games related page:
+    http://www.ravengames.com/
     http://www.raven-games.com/
 
   All questions, bug reports, etc. should be sent to:
-    vavoom@raven-games.com
+    vavoom@vavoom-engine.com
 
 
 Have a lots of fun!

@@ -10,18 +10,18 @@
 
 !!! This document is far from completed.
 
-****************************************************************************
-Terminology.
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  1  ³ Terminology.
+ÀÄÄÄÄÄÙ
 
     VavoomC - scripting language used in progs.
 
     progs - code writed in VavoomC sripting language, which is compiled into
             virtual machine files that are executed by Vavoom.
 
-****************************************************************************
-Getting sources.
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  2  ³ Getting sources.
+ÀÄÄÄÄÄÙ
 
   Prog sources are included in following archives:
 
@@ -34,9 +34,9 @@ Getting sources.
 
   The latest prog sources can be found in Vavoom CVS repository.
 
-****************************************************************************
-Making a mod.
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  3  ³ Making a mod.
+ÀÄÄÄÄÄÙ
 
   Follow the followinf steps:
 
@@ -77,9 +77,9 @@ example:
 case you will have to edit clprogs.vc and svprogs.vc and fix path to files
 client.vc and server.vc.
 
-****************************************************************************
-Compiling PROGS.
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  4  ³ Compiling PROGS.
+ÀÄÄÄÄÄÙ
 
   Progs are compiled with vcc (Vavoom C Compiler). In progs source version
 it's located in utils/bin, in source distributive it's located in utils/vcc.
@@ -90,9 +90,9 @@ where you will use it (possibly will not work in Linux).
   For each PROGS there is a Makefile and bat file compile.bat. Simply run
 make or compile.bat.
 
-****************************************************************************
-Progs from DeHackEd
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  5  ³ Progs from DeHackEd
+ÀÄÄÄÄÄÙ
 
   To compile Doom2 PROGS with changes from dehacked patch go to directory
 progs/hack_d2. Here you will find an example dehacked patch hack.deh. It is a
@@ -104,9 +104,10 @@ Finally run makewad.bat to create hack.wad which I hope you know how to use.
   For Doom the directory is progs/hack_d1, the sample hack.deh is from Aliens
 Doom.
 
-****************************************************************************
-The VavoomC language.
-****************************************************************************
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  6  ³ The VavoomC language.
+ÀÄÄÄÄÄÙ
 
-  VavoomC language is based on C language. It features most of the C features
-and also haves some VavoomC specific features.
+  VavoomC language is based on C/C++ language. It features most of the C/C++
+features and also haves some VavoomC specific features. The best way how to
+learn it is by exploring progs source code.

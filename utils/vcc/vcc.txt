@@ -1,6 +1,6 @@
 
-                              VCC version 1.8
-                              ***************
+                              VCC version 1.10
+                              ****************
 
 ============================================================================
     Introduction
@@ -14,16 +14,16 @@
 
   VCC haves the following usage:
 
-    vcc [options] source[.c] [object[.dat]]
+    vcc [options] source[.vc] [object[.dat]]
 
-  To compile a source file (e.g. foo.c) simply type:
+  To compile a source file (e.g. foo.vc) simply type:
 
-    vcc foo.c
+    vcc foo.vc
 
   This will cretae a progs file named foo.dat. You can specify other output
 file name like this:
 
-    vcc foo.c output.dat
+    vcc foo.vc output.dat
 
 ============================================================================
     Option Descriptions
@@ -56,7 +56,7 @@ file name like this:
 
     * Windows 98 with Borland C++ 5.5.
 
-    * SuSE LINUX 6.2
+    * Linux Mandrake 8.0
 
 DOS and LINUX
 -------------
@@ -86,7 +86,7 @@ Code Compiler for Hexen scripts) and qcc (Quake C Compiler).
     License
 ============================================================================
 
-  VCC is under the GNU General Public License (GPL). See the file `COPYING'
+  VCC is under the GNU General Public License (GPL). See the file 'gnu.txt'
 for the full text.
 
 ============================================================================
@@ -94,14 +94,14 @@ for the full text.
 ============================================================================
 
   Questions, bug reports, suggestsions, etc... about VCC should be sent to:
-    dj_jl@navigators.lv
+    vavoom@vavoom-engine.com
 
 ============================================================================
     Links
 ============================================================================
 
   The Vavoom homepage can be found here:
-    http://www.raven-games.com/hosted/vavoom/
+    http://www.vavoom-engine.com/
 
 ============================================================================
     Acknowledgements

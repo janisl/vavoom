@@ -11,6 +11,8 @@ used with OpenGL ports of the DOOM game engine. It extends the "GL-Friendly
 Nodes" with a new lump named "GL_PVS". Basicly it's a subsector accept table
 designed for rendering engine to skip the subsectors that can't be visible
 from viewer's subsector. PVS is added to both versions of "GL Nodes".
+  If "GL Nodes" are in wad file, glVIS will also perform building of REJECT
+lump. You can disable this with -noreject option.
   Currently only Vavoom uses PVS. Other source ports will ignore it.
 
 ============================================================================
@@ -45,7 +47,7 @@ The following options are recognised:
                   This option can be used to specify non-standard map names.
 
     -noreject     don't build reject
-    
+
 ============================================================================
     Status
 ============================================================================
@@ -67,7 +69,7 @@ several hours.
 
     * Windows 98 with Borland C++ 5.5
 
-    * SuSE LINUX 6.2
+    * Linux Mandrake 8.0
 
   The "makefile" makefile is for DOS, Linux and other UN*X type OSes. Simply
 typing `make' should create the `glvis' executable. Currently there is no
@@ -93,14 +95,14 @@ for the full text.
 ============================================================================
 
   Questions, bug reports, suggestsions, etc... about glVIS should be sent to:
-    dj_jl@navigators.lv
+    vavoom@vavoom-engine.com
 
 ============================================================================
     Links
 ============================================================================
 
   The homepage for glVIS can be found here:
-    http://www.raven-games.com/hosted/vavoom/glvis.shtml
+    http://www.vavoom-engine.com/glvis.html
 
   The homepage for glBSP can be found here:
     http://glbsp.sourceforge.net/
@@ -109,7 +111,7 @@ for the full text.
     http://glbsp.sourceforge.net/glnodes.html
 
   The Vavoom homepage can be found here:
-    http://www.raven-games.com/hosted/vavoom/
+    http://www.vavoom-engine.com/
 
 ============================================================================
     Acknowledgements

@@ -10,9 +10,10 @@
 
 !!! Under construction, wanna help?
 
-******************************************************************************
-Filesystem
-******************************************************************************
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  1  ³ Filesystem
+ÀÄÄÄÄÄÙ
 
   Vavoom is now using a filesystem similar to the one of Quake.
 
@@ -25,6 +26,7 @@ files. In current version they are:
 
     levels     - maps/<level-name>.wad
     progs      - progs/<name>.dat
+    scripts    - scripts/<name>.txt
 
   For each game directory Vavoom searches for base.txt script file. It is
 used to setup game directory on which this game is based on. It consists of
@@ -57,11 +59,13 @@ over areas they shouldn't.
       until one is missing;
     - files specified with "-file" option.
 
-******************************************************************************
-New linedef special types
-******************************************************************************
 
-All additional linedef specials are available only for maps in Hexen format.
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  2  ³ New linedef special types
+ÀÄÄÄÄÄÙ
+
+  All additional linedef specials are available only for maps in Hexen format.
+
 
 3D-floor
 --------
@@ -75,7 +79,6 @@ region, ceiling - ceiling of bottom region, light level and contents - light
 level and contents of bottom region.
   WARNING: WadAuthor checks treats floor lower than ceiling as error, so for
 maps with 3D-floors you should never use "Fix all".
-
 
 
 Contents
@@ -107,9 +110,10 @@ to both - floor and ceiling and are combination of the following values:
   Translucency and flags have sense only if sector is used for 3D-floors.
 Usualy for solid 3D-floors you will have flags 0, for water surfaces - 7.
 
-******************************************************************************
-New thing types
-******************************************************************************
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  3  ³ New thing types
+ÀÄÄÄÄÄÙ
 
 Floor slope
 -----------
@@ -124,7 +128,6 @@ sector's floor height.
 doesn't use Arg1, Arg1 must be changed using "Edit raw data".
 
 
-
 Ceiling slope
 -----------
 
@@ -132,8 +135,7 @@ Editor #: 1501
 
   Used to describe ceiling slope. Alghorythm is similar to floor slopes.
 
-  
-  
+
 Static light
 ------------
 
@@ -142,7 +144,6 @@ Editor #: 1502
     Arg1: octradius (i.e. radius is Arg1 * 8)
 
   Adds a static light source at given position with given radius.
-
 
 
 Static colored light
@@ -158,3 +159,142 @@ Editor #: 1503
   Adds a static colored light source at given position with given radius
 and color. R is red, G - green and B - blue component of color.
 
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  4  ³ The MAPINFO script
+ÀÄÄÄÄÄÙ
+
+  Vavoom extends MAPINFO script with some new entries and adds some extra
+functionality to the existing entries.
+
+    map:        Number or lump name and name of map
+    warptrans:  Actual map number in case maps are not sequential
+    next:       Map to teleport to upon exit of timed deathmatch or with
+                normal exit action special
+    secret:     Map to teleport to with seret exit action special
+    music:      MUS or MIDI to play during level, replaces entries in
+                SNDINFO script
+    cdtrack:    CD track to play during level
+    cluster:    Defines what cluster level belongs to, 0 for no-cluster
+    sky1:       Default sky texture; followed by speed
+    sky2:       Alternate sky displayed in Sky2 sectors ; followed by speed
+    doublesky:  parallax sky: sky2 behind sky1
+    lightning:  Keyword indicating use of lightning on the level
+                flashes from sky1 to sky2 (see also: IndoorLightning special)
+    skybox:     A skybox used in this level, old sky will be ignored
+    fadetable:  When set to FOGMAP, level will have a fog, other values are
+                ignored
+    mapalias:   A list of map aliases enclosed by braces with number used in
+                MapTeleport and StartACS specials and actual lump name.
+
+  Example MapInfo entries:
+
+    map 1 "Winnowing Hall"
+    warptrans 1
+    next 2
+    cluster 1
+    sky1 SKY2 2             ; 2 is the sky scroll speed
+    sky2 SKY3 0             ; 0 means don't scroll sky
+    lightning
+    doublesky
+    cdtrack 13
+
+    map E1M1 "hangar"
+    next E1M2
+    secret E1M9
+    sky1 SKY1 0
+    music D_e1m1
+
+    map TOWN "Town of the Apidomb"
+    warptrans 1
+    next CAVE1
+    cluster 1
+    skybox town_sky_with_clouds
+    cdtrack 4
+    music MD_TOWN
+    mapalias
+    {
+        1 TOWN
+        2 CAVE1
+        3 DUNG4
+    }
+
+
+  Note on "next" integer (for timed deathmatches):
+
+  In normal gameplay, there is no linear fashion in which the game
+progresses from one level to another; you just go through a teleport
+somewhere on a level, and it takes you to somewhere on another level.
+For timed deathmatch, the game needs to know what level to proceed to
+because it isn't always just the next higher level.
+
+
+  A note about the WARPTRANS keyword:
+
+  Map with WARPTRANS 1 is map where Vavoom running Doom 2 and Hexen will
+start play (from menu). All other values are ignored (there's no more -warp
+option and console command MAP takes map lump name, not number).
+
+
+  Note on "cluster" integer:
+
+  The game maps are divided into clusters. When you enter a new cluster, you
+can never again visit any of the levels from the previous cluster. This
+makes it so each individual save game only needs to backup map archives for
+about 6-7 maps, and provides for a milestone marker of sorts for game play,
+like an episode -- a Hexen backdrop and some text are given at the end of
+each cluster.
+  If you don't enter a cluster, it defaults to 0. Cluster 0 is treated as
+no-cluster, all maps in cluster 0 are treated as in different clusters.
+
+
+  Note on MAPALIAS keyword:
+
+  This option haves to applications. First is usage of the non-standard map
+names. MapTeleport and StartACS specials takes map numbers and it was
+impossible to use maps with non standard names. Map aliases gives you this
+ability.
+  Other application is when multiple designers used the same map number and
+map must be renamed and this means that you must replace values in all
+MapTeleport and StartACS specials pointing to this map with new map number.
+With this option you define a map alias for all maps accesing this map and
+you can leave numbers in specials untouched.
+
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  5  ³ SKYBOXES script
+ÀÄÄÄÄÄÙ
+
+  This script describes skyboxes.
+
+ ... describe format ...
+
+Example:
+
+    rock_dawn
+    {
+        {
+            // Right
+            map textures/skies/rkdawnrt.tga
+        }
+        {
+            // Front
+            map textures/skies/rkdawnft.tga
+        }
+        {
+            // Left
+            map textures/skies/rkdawnlf.tga
+        }
+        {
+            // Back
+            map textures/skies/rkdawnbk.tga
+        }
+        {
+            // Up
+            map textures/skies/rkdawnup.tga
+        }
+        {
+            // Down
+            map textures/skies/rkdawndn.tga
+        }
+    }
