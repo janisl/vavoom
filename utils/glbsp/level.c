@@ -43,7 +43,7 @@
 #define DEBUG_BSP       0
 #define DEBUG_SORTER    0
 #define DEBUG_WALLTIPS  0
-#define DEBUG_POLYOBJ   1
+#define DEBUG_POLYOBJ   0
 
 #define ALLOC_BLKNUM  1024
 
@@ -500,86 +500,16 @@ void GetLinedefsHexen(void)
   }
 }
 
-static void MarkPolyobjSector(float_g x, float_g y)
+static void MarkPolyobjSector(sector_t *sector)
 {
   int i;
-  
-  float_g best_dist = 999999;
-  linedef_t *best_match = NULL;
-  sector_t *sector; // -JL- got rid of warning
-
-  // -AJA- Algorithm is just like in DEU: we cast a line horizontally
-  // from the given (x,y) position and find all linedefs that
-  // intersect it, choosing the one with the closest distance.
-  //
-  // We ignore linedefs that lie along the line, since we can't tell
-  // what side we're on.  Since we assume sectors are closed, there
-  // should exist at least one non-horizontal intersecting linedef.
-  // (If the sector ain't closed: tough cookies).
-
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = linedefs[i];
-
-    float_g x1 = L->start->x;
-    float_g y1 = L->start->y;
-    float_g x2 = L->end->x;
-    float_g y2 = L->end->y;
-
-    float_g x_cut;
-	float_g x_dist;  // -JL- distance
-
-    // check vertical range
-    if ((y > y1 && y > y2) || (y < y1 && y < y2))
-      continue;
-
-    if (fabs(y - y1) < DIST_EPSILON && fabs(y - y2) < DIST_EPSILON)
-      continue;
-
-    x_cut = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-	// -JL- calc distance and compare against distance, not cut position
-	x_dist = x_cut - x;
-
-	// -JL- Use -DIST_EPSILON because polyobj start points can be placed
-	// on lines
-    if (x_dist < -DIST_EPSILON)
-      continue;
-
-    if (x_dist < best_dist)
-    {
-      // found a closer linedef
-
-      best_match = L;
-      best_dist = x_dist;
-    }
-  }
-
-  #if DEBUG_POLYOBJ
-  PrintDebug("  Closest line was %d (dist=%1.1f)\n", best_match ?
-      best_match->index : -1, best_match ? best_dist : -1);
-  #endif
-
-  if (! best_match)
-  {
-    PrintWarn("Invalid polyobj thing at (%1.0f,%1.0f).\n", x, y);
-    return;
-  }
-
-  if (best_match->start->y > best_match->end->y)
-    sector = best_match->right ? best_match->right->sector : NULL;
-  else
-    sector = best_match->left ? best_match->left->sector : NULL;
-
-  #if DEBUG_POLYOBJ
-  PrintDebug("  Sector %d contains the polyobj.\n", 
-      sector ? sector->index : -1);
-  #endif
-
+    
   if (! sector)
-  {
-    PrintWarn("Invalid polyobj thing at (%1.0f,%1.0f).\n", x, y);
     return;
-  }
+
+  #if DEBUG_POLYOBJ
+  PrintDebug("  Marking SECTOR %d\n", sector->index);
+  #endif
 
   // mark all lines of this sector as precious, to prevent the sector
   // from being split.
@@ -596,6 +526,99 @@ static void MarkPolyobjSector(float_g x, float_g y)
       L->is_precious = TRUE;
     }
   }
+}
+
+static void MarkPolyobjPoint(float_g x, float_g y)
+{
+  int i;
+  
+  float_g best_dist = 999999;
+  linedef_t *best_match = NULL;
+  sector_t *sector = NULL;
+
+  float_g x1, y1;
+  float_g x2, y2;
+
+  // -AJA- Algorithm is just like in DEU: we cast a line horizontally
+  // from the given (x,y) position and find all linedefs that
+  // intersect it, choosing the one with the closest distance.  If the
+  // point is sitting directly on a (two-sided) line, then we mark the
+  // sectors on both sides.
+
+  for (i = 0; i < num_linedefs; i++)
+  {
+    linedef_t *L = linedefs[i];
+
+    float_g x_cut;
+
+    x1 = L->start->x;  y1 = L->start->y;
+    x2 = L->end->x;    y2 = L->end->y;
+
+    // check vertical range
+    if (fabs(y2 - y1) < DIST_EPSILON)
+      continue;
+
+    if ((y > (y1 + DIST_EPSILON) && y > (y2 + DIST_EPSILON)) || 
+        (y < (y1 - DIST_EPSILON) && y < (y2 - DIST_EPSILON)))
+      continue;
+
+    x_cut = x1 + (x2 - x1) * (y - y1) / (y2 - y1) - x;
+
+    if (fabs(x_cut) < fabs(best_dist))
+    {
+      // found a closer linedef
+
+      best_match = L;
+      best_dist = x_cut;
+    }
+  }
+
+  if (! best_match)
+  {
+    PrintWarn("Bad polyobj thing at (%1.0f,%1.0f).\n", x, y);
+    return;
+  }
+
+  y1 = best_match->start->y;
+  y2 = best_match->end->y;
+
+  #if DEBUG_POLYOBJ
+  PrintDebug("  Closest line was %d Y=%1.0f..%1.0f (dist=%1.1f)\n",
+      best_match->index, y1, y2, best_dist);
+  #endif
+
+  // directly on the line ?
+  if (fabs(best_dist) < DIST_EPSILON)
+  {
+    if (best_match->left)
+      MarkPolyobjSector(best_match->left->sector);
+
+    if (best_match->right)
+      MarkPolyobjSector(best_match->right->sector);
+
+    return;
+  }
+      
+  // check orientation of line, to determine which side the polyobj is
+  // actually on.
+
+  if ((y1 > y2) == (best_dist > 0))
+    sector = best_match->right ? best_match->right->sector : NULL;
+  else
+    sector = best_match->left ? best_match->left->sector : NULL;
+
+  #if DEBUG_POLYOBJ
+  PrintDebug("  Sector %d contains the polyobj.\n", 
+      sector ? sector->index : -1);
+  #endif
+
+  if (! sector)
+  {
+    PrintWarn("Invalid Polyobj thing at (%1.0f,%1.0f).\n", x, y);
+    return;
+  }
+
+  MarkPolyobjSector(sector);
 }
 
 //
@@ -636,7 +659,7 @@ void FindPolyobjSectors(void)
         i, x, y);
     #endif
     
-    MarkPolyobjSector(x, y);
+    MarkPolyobjPoint(x, y);
   }
 }
 

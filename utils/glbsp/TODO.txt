@@ -2,11 +2,12 @@
 TODO
 ====
 
-*  update GLNODE info with GWA-timestamp issue.
++  finish off FLTK version:
 
-+  proper INSTALL for UNIX.
+   +  Fix modal windows not having close buttons in Win32.
 
-+  improve file errors in wad.c, return GLBSP_E_{Read,Write}Error.
-
--  implement a Unix/GTK+ version.
-
+   N  Finish Manual.
+   N  Implement SaveLog menu.
+   N  Copy/paste from output box.
+   N  Implement better file chooser.
+ 

@@ -1,7 +1,0 @@
-default_buildinfo
-default_buildcomms
-GlbspParseArgs
-GlbspCheckInfo
-GlbspBuildNodes
-GlbspStrDup
-GlbspFree

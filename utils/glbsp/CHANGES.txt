@@ -2,8 +2,8 @@
 CHANGELOG
 =========
 
-Changes in V1.95  (unreleased)
-------------------------------
+Changes in V1.95  (24th September 2001)
+---------------------------------------
 
  - new GUI version using the FLTK toolkit.
  

@@ -2,16 +2,16 @@
 USING glBSP
 ===========
 
-by Andrew Apted.  20th July 2001.
+by Andrew Apted.  24th September 2001.
 
 
 Running glBSP
 -------------
 
-glBSP is a command line tool.  Under Windows this means it must be run
-from the DOS box.  There is also a fully-featured GUI version
-available called `glbspX' -- check the download page on the glBSP
-website.
+There are now two versions of glBSP: normal `glbsp' (the text
+version), and `glbspX' (offering a graphical interface).  This
+documentation applies to the text version only.  Under Windows, the
+text version must be run from the DOS box.
 
 There are two main ways of using glBSP:
 
@@ -298,6 +298,7 @@ changed or abandoned.  Features that are different:
 
   +  The GUI version, glbspX, is completely new.
  
+
 
 ---------------------------------------------------------------------------
 
