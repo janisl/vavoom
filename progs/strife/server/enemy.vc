@@ -45,7 +45,7 @@ void A_Look(mobj_t * actor)
 
 		if (actor->Flags & MF_AMBUSH)
 		{
-			if (!P_CheckSight(actor, actor->target))
+			if (!P_CheckSight(*actor, *actor->target))
 			{
 				if (!P_LookForPlayers(actor, false))
 					return;
@@ -61,7 +61,7 @@ void A_Look(mobj_t * actor)
 	// go into chase state
 	if (actor->sound_sight)
 	{
-		StartSound(actor, actor->sound_sight, CHAN_VOICE);
+		StartSound(*actor, actor->sound_sight, CHAN_VOICE);
 	}
 
 	actor->SetState(actor->SeeState);
@@ -149,7 +149,7 @@ void A_Chase(mobj_t * actor)
 	{
 		if (actor->sound_attack)
 		{
-			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(*actor, actor->sound_attack, CHAN_WEAPON);
 		}
 		actor->SetState(actor->MeleeState);
 		return;
@@ -172,7 +172,7 @@ void A_Chase(mobj_t * actor)
 	// possibly choose another target
 	if (netgame && !actor->threshold)
 	{
-		if (!P_CheckSight(actor, actor->target))
+		if (!P_CheckSight(*actor, *actor->target))
 		{
 			if (P_LookForPlayers(actor, true))
 				return;	// got a new target
@@ -188,7 +188,7 @@ void A_Chase(mobj_t * actor)
 	// make active sound
 	if (actor->sound_active && P_Random() < 3)
 	{
-		StartSound(actor, actor->sound_active, CHAN_VOICE);
+		StartSound(*actor, actor->sound_active, CHAN_VOICE);
 	}
 }
 
@@ -225,7 +225,7 @@ void Actor::A_Pain(void)
 {
 	if (sound_pain)
 	{
-		StartSound(this, sound_pain, CHAN_VOICE);
+		StartSound(self, sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -255,7 +255,7 @@ void Actor::A_Scream(void)
 {
 	if (sound_death)
 	{
-		StartSound(this, sound_death, CHAN_VOICE);
+		StartSound(self, sound_death, CHAN_VOICE);
 	}
 }
 
@@ -269,7 +269,7 @@ void Actor::A_Scream(void)
 
 void A_XScream(mobj_t * actor)
 {
-	StartSoundName(actor, 'Slop', CHAN_VOICE);
+	StartSoundName(*actor, 'Slop', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -309,12 +309,16 @@ void Actor::A_PlayerScream(void)
 		sound = 'PlayerExtremeDeath';
 	}
 
-	StartSoundName(this, sound, CHAN_VOICE);
+	StartSoundName(self, sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

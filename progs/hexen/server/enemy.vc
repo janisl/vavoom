@@ -44,7 +44,7 @@ void Actor::A_Look(void)
 
 		if (Flags & MF_AMBUSH)
 		{
-			if (!P_CheckSight(this, target))
+			if (!P_CheckSight(self, *target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -63,11 +63,11 @@ void Actor::A_Look(void)
 		if (Flags2 & MF2_BOSS)
 		{
 			// Full volume
-			StartSound(NULL, sound_sight, CHAN_VOICE);
+			StartSound(none, sound_sight, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound_sight, CHAN_VOICE);
+			StartSound(none, sound_sight, CHAN_VOICE);
 		}
 	}
 
@@ -157,7 +157,7 @@ void Actor::A_Chase(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -180,7 +180,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !threshold)
 	{
-		if (!P_CheckSight(this, target))
+		if (!P_CheckSight(self, *target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -198,20 +198,20 @@ void Actor::A_Chase(void)
 	{
 		if (Class == Bishop && P_Random() < 128)
 		{
-			StartSound(this, sound_sight, CHAN_VOICE);
+			StartSound(self, sound_sight, CHAN_VOICE);
 		}
 		else if (Class == Pig)
 		{
-			StartSound(this, GetSoundID('PigActive1') + (P_Random() & 1),
+			StartSound(self, GetSoundID('PigActive1') + (P_Random() & 1),
 				CHAN_VOICE);
 		}
 		else if (Flags2 & MF2_BOSS)
 		{
-			StartSound(NULL, sound_active, CHAN_VOICE);
+			StartSound(none, sound_active, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound_active, CHAN_VOICE);
+			StartSound(self, sound_active, CHAN_VOICE);
 		}
 	}
 }
@@ -248,7 +248,7 @@ void Actor::A_Pain(void)
 {
 	if (sound_pain)
 	{
-		StartSound(this, sound_pain, CHAN_VOICE);
+		StartSound(self, sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -280,12 +280,12 @@ void Actor::A_FreeTargMobj(void)
 
 void Actor::A_Scream(void)
 {
-	StopSound(this, CHAN_AUTO);
+	StopSound(self, CHAN_AUTO);
 	if (player)
 	{
 		if (player->morphTics)
 		{
-			StartSound(this, sound_death, CHAN_VOICE);
+			StartSound(self, sound_death, CHAN_VOICE);
 		}
 		else
 		{
@@ -293,7 +293,7 @@ void Actor::A_Scream(void)
 			if (velocity.z <= -39.0 * 35.0)
 			{
 				// Falling splat
-				StartSoundName(this, 'PlayerFallingSplat', CHAN_VOICE);
+				StartSoundName(self, 'PlayerFallingSplat', CHAN_VOICE);
 			}
 			else if (Health > -50)
 			{
@@ -301,15 +301,15 @@ void Actor::A_Scream(void)
 				switch (player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(this, 'PlayerFighterNormalDeath',
+					StartSoundName(self, 'PlayerFighterNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(this, 'PlayerClericNormalDeath',
+					StartSoundName(self, 'PlayerClericNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(this, 'PlayerMageNormalDeath',
+					StartSoundName(self, 'PlayerMageNormalDeath',
 						CHAN_VOICE);
 					break;
 				}
@@ -320,15 +320,15 @@ void Actor::A_Scream(void)
 				switch (player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(this, 'PlayerFighterCrazyDeath',
+					StartSoundName(self, 'PlayerFighterCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(this, 'PlayerClericCrazyDeath',
+					StartSoundName(self, 'PlayerClericCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(this, 'PlayerMageCrazyDeath', CHAN_VOICE);
+					StartSoundName(self, 'PlayerMageCrazyDeath', CHAN_VOICE);
 					break;
 				}
 			}
@@ -349,13 +349,13 @@ void Actor::A_Scream(void)
 					break;
 				}
 				sound += P_Random() % 3;	// Three different extreme deaths
-				StartSound(this, sound, CHAN_VOICE);
+				StartSound(self, sound, CHAN_VOICE);
 			}
 		}
 	}
 	else
 	{
-		StartSound(this, sound_death, CHAN_VOICE);
+		StartSound(self, sound_death, CHAN_VOICE);
 	}
 }
 
@@ -523,7 +523,7 @@ void Actor::A_FreezeDeath(void)
 	Flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_SLIDE;
 	Flags2 &= ~MF2_NOPASSMOBJ;
 	Height *= 4.0;
-	StartSoundName(this, 'FreezeDeath', CHAN_VOICE);
+	StartSoundName(self, 'FreezeDeath', CHAN_VOICE);
 
 	if (player)
 	{
@@ -579,7 +579,7 @@ void Actor::A_FreezeDeathChunks(void)
 		time = 3.0;
 		return;
 	}
-	StartSoundName(this, 'FreezeShatter', CHAN_VOICE);
+	StartSoundName(self, 'FreezeShatter', CHAN_VOICE);
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
@@ -656,7 +656,7 @@ void Actor::A_CheckSkullFloor(void)
 	if (origin.z <= floorz)
 	{
 		SetState(S_BLOODYSKULLX1);
-		StartSoundName(this, 'Drip', CHAN_VOICE);
+		StartSoundName(self, 'Drip', CHAN_VOICE);
 	}
 }
 
@@ -764,7 +764,7 @@ void Actor::A_DeQueueCorpse(void)
 
 void P_InitCreatureCorpseQueue(int corpseScan)
 {
-	mobj_t *mo;
+	Actor mo;
 	int i;
 
 	// Initialize queue
@@ -778,15 +778,14 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		return;
 
 	// Search mobj list for corpses and place them in this queue
-	mo = NULL;
-	while (mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if (!(mo->Flags & MF_CORPSE))
+		if (!(mo.Flags & MF_CORPSE))
 			continue;	// Must be a corpse
-		if (mo->Flags & MF_ICECORPSE)
+		if (mo.Flags & MF_ICECORPSE)
 			continue;	// Not ice corpses
 		// Only corpses that call A_QueueCorpse from death routine
-		switch (mo->Class)
+		switch (mo.Class)
 		{
 		case Centaur:
 		case CentaurLeader:
@@ -811,7 +810,7 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		case Demon2Chunk5:
 		case FireDemonSplotch1:
 		case FireDemonSplotch2:
-			mo->A_QueueCorpse();	// Add corpse to queue
+			mo.A_QueueCorpse();	// Add corpse to queue
 			break;
 		default:
 			break;
@@ -822,6 +821,10 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.15  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -153,7 +153,7 @@ boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
 			P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
 		player->pendingweapon = weapon;
 
-		StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
+		StartSoundName(*player->mo, 'PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 
@@ -605,12 +605,16 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.player->itemcount++;
 	P_RemoveMobj(this);
 	Toucher.player->bonuscount += BONUSADD;
-	StartSoundName(&Toucher, sound, CHAN_ITEM);
+	StartSoundName(Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

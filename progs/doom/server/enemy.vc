@@ -45,7 +45,7 @@ void Actor::A_Look(void)
 
 		if (Flags & MF_AMBUSH)
 		{
-			if (!P_CheckSight(this, target))
+			if (!P_CheckSight(self, *target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -77,11 +77,11 @@ void Actor::A_Look(void)
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// Full volume
-			StartSound(NULL, sound, CHAN_VOICE);
+			StartSound(none, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound, CHAN_VOICE);
+			StartSound(self, sound, CHAN_VOICE);
 		}
 	}
 
@@ -177,7 +177,7 @@ void Actor::A_Chase(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -200,7 +200,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !threshold)
 	{
-		if (!P_CheckSight(this, target))
+		if (!P_CheckSight(self, *target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -216,7 +216,7 @@ void Actor::A_Chase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		StartSound(this, sound_active, CHAN_VOICE);
+		StartSound(self, sound_active, CHAN_VOICE);
 	}
 }
 
@@ -258,7 +258,7 @@ void Actor::A_Pain(void)
 
 	if (sound_pain)
 	{
-		StartSound(this, sound_pain, CHAN_VOICE);
+		StartSound(self, sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -323,11 +323,11 @@ void Actor::A_Scream(void)
 		if (Class == SpiderMastermind || Class == Cyberdemon)
 		{
 			// full volume
-			StartSound(NULL, sound, CHAN_VOICE);
+			StartSound(none, sound, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound, CHAN_VOICE);
+			StartSound(self, sound, CHAN_VOICE);
 		}
 	}
 }
@@ -348,7 +348,7 @@ void Actor::A_XScream(void)
 		Effects &= ~EF_DLIGHT_MASK;
 	}
 
-	StartSoundName(this, 'Slop', CHAN_BODY);
+	StartSoundName(self, 'Slop', CHAN_BODY);
 }
 
 //==========================================================================
@@ -396,7 +396,7 @@ void Actor::A_PlayerScream(void)
 	}
 #endif
 
-	StartSoundName(this, sound, CHAN_VOICE);
+	StartSoundName(self, sound, CHAN_VOICE);
 }
 
 #ifndef DOOM2
@@ -414,7 +414,7 @@ void Actor::A_BossDeath(void)
 {
 	string mapname;
 	int i;
-	mobj_t *mo2;
+	Actor Other;
 	int args[5];
 
 	mapname = ARR2STR(level->mapname);
@@ -459,9 +459,9 @@ void Actor::A_BossDeath(void)
 		return;	// no one left alive, so do not end game
 
 	// scan the remaining thinkers to see if all bosses are dead
-	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
+	FOREACH(Actor, Other)
 	{
-		if (mo2 != this && mo2->Class == Class && mo2->Health > 0)
+		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
 			// other boss not dead
 			return;
@@ -510,7 +510,7 @@ void Actor::A_BossDeath(void)
 void Actor::A_BossDeath(void)
 {
 	int i;
-	mobj_t *mo2;
+	Actor Other;
 	int args[5];
 
 	if (strcmp(ARR2STR(level->mapname), "MAP07"))
@@ -531,9 +531,9 @@ void Actor::A_BossDeath(void)
 		return;	// no one left alive, so do not end game
 
 	// scan the remaining thinkers to see if all bosses are dead
-	for (mo2 = NextMobj(NULL); mo2; mo2 = NextMobj(mo2))
+	FOREACH(Actor, Other)
 	{
-		if (mo2 != this && mo2->Class == Class && mo2->Health > 0)
+		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
 			// other boss not dead
 			return;
@@ -560,6 +560,10 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

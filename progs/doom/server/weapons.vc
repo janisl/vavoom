@@ -89,7 +89,7 @@ void SetPsprite(player_t * player, int position, int stnum)
 void BringUpWeapon(player_t * player)
 {
 	if (player->readyweapon == wp_chainsaw)
-		StartSoundName(player->mo, 'ChainsawStart', CHAN_WEAPON);
+		StartSoundName(*player->mo, 'ChainsawStart', CHAN_WEAPON);
 
 	player->pendingweapon = wp_nochange;
 	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
@@ -384,7 +384,7 @@ void Weapon::A_WeaponReady(void)
 
 	if (player->readyweapon == wp_chainsaw && statenum == S_SAW)
 	{
-		StartSoundName(player->mo, 'ChainsawIdle', CHAN_WEAPON);
+		StartSoundName(*player->mo, 'ChainsawIdle', CHAN_WEAPON);
 	}
 
 	// check for change
@@ -599,7 +599,7 @@ void Weapon::A_Punch(void)
 	// turn to face target
 	if (linetarget)
 	{
-		StartSoundName(player->mo, 'Punch', CHAN_WEAPON);
+		StartSoundName(*player->mo, 'Punch', CHAN_WEAPON);
 		player->mo->angles.yaw = atan2(
 			linetarget->origin.y - player->mo->origin.y,
 			linetarget->origin.x - player->mo->origin.x);
@@ -631,10 +631,10 @@ void Weapon::A_Saw(void)
 
 	if (!linetarget)
 	{
-		StartSoundName(player->mo, 'ChainsawTriggered', CHAN_WEAPON);
+		StartSoundName(*player->mo, 'ChainsawTriggered', CHAN_WEAPON);
 		return;
 	}
-	StartSoundName(player->mo, 'ChainsawHit', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'ChainsawHit', CHAN_WEAPON);
 
 	// turn to face target
 	angle = atan2(linetarget->origin.y - player->mo->origin.y,
@@ -668,7 +668,7 @@ void Weapon::A_FirePistol(void)
 {
 	TVec dir;
 
-	StartSoundName(player->mo, 'PistolFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'PistolFire', CHAN_WEAPON);
 
 	player->mo->SetState(S_PLAY_ATK2);
 	player->ammo[player->w_ammo]--;
@@ -691,7 +691,7 @@ void Weapon::A_FireShotgun(void)
 	int i;
 	TVec dir;
 
-	StartSoundName(player->mo, 'ShotgunFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'ShotgunFire', CHAN_WEAPON);
 	player->mo->SetState(S_PLAY_ATK2);
 
 	player->ammo[player->w_ammo]--;
@@ -722,7 +722,7 @@ void Weapon::A_FireShotgun2(void)
 	TVec aimDir;
 	TVec dir;
 
-	StartSoundName(player->mo, 'SuperShotgunFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'SuperShotgunFire', CHAN_WEAPON);
 	player->mo->SetState(S_PLAY_ATK2);
 
 	player->ammo[player->w_ammo] -= 2;
@@ -735,7 +735,7 @@ void Weapon::A_FireShotgun2(void)
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
 		rot.yaw = (Random() - Random()) * 45.0 / 4.0;
 		rot.roll = 0.0;
-		dir = RotateVector(aimDir, rot);
+		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
 		LineAttack(player->mo, &dir, MISSILERANGE, damage);
 	}
@@ -750,7 +750,7 @@ void Weapon::A_FireShotgun2(void)
 
 void Weapon::A_OpenShotgun2(void)
 {
-	StartSoundName(player->mo, 'SuperShotgunOpen', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'SuperShotgunOpen', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -761,7 +761,7 @@ void Weapon::A_OpenShotgun2(void)
 
 void Weapon::A_LoadShotgun2(void)
 {
-	StartSoundName(player->mo, 'SuperShotgunLoad', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'SuperShotgunLoad', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -772,7 +772,7 @@ void Weapon::A_LoadShotgun2(void)
 
 void Weapon::A_CloseShotgun2(void)
 {
-	StartSoundName(player->mo, 'SuperShotgunClose', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'SuperShotgunClose', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -810,7 +810,7 @@ void Weapon::A_FireCGun(void)
 {
 	TVec dir;
 
-	StartSoundName(player->mo, 'PistolFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'PistolFire', CHAN_WEAPON);
 
 	if (!player->ammo[player->w_ammo])
 		return;
@@ -904,7 +904,7 @@ void Weapon::A_FirePlasma(void)
 
 void Weapon::A_BFGsound(void)
 {
-	StartSoundName(player->mo, 'BFGFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'BFGFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -970,6 +970,10 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.15  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

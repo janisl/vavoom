@@ -109,12 +109,12 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			if (CheckMeleeRange())
 			{
 				target->Damage(self, self, HITDICE(10));
-				StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
+				StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
 			{
 				SpawnMissile(this, tempTarget, DragonMissile);
-				StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
+				StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
 			}
 			target = oldTarget;
 		}
@@ -215,12 +215,12 @@ void Actor::A_DragonFlight(void)
 			&& CheckMeleeRange())
 		{
 			target->Damage(self, self, HITDICE(8));
-			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
+			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
 		{
 			SetState(MissileState);
-			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
+			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
 		}
 	}
 	else
@@ -240,11 +240,11 @@ void Actor::A_DragonFlap(void)
 	A_DragonFlight();
 	if (P_Random() < 240)
 	{
-		StartSoundName(this, 'DragonWingflap', CHAN_BODY);
+		StartSoundName(self, 'DragonWingflap', CHAN_BODY);
 	}
 	else
 	{
-		StartSound(this, sound_active, CHAN_VOICE);
+		StartSound(self, sound_active, CHAN_VOICE);
 	}
 }
 
@@ -318,6 +318,10 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.13  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -355,16 +355,16 @@ boolean Actor::Touch(Actor Other)
 					if (P_Random() < 128)
 					{
 						P_SpawnMobj(origin.x, origin.y, origin.z, HolyPuff);
-						StartSoundName(this, 'SpiritAttack', CHAN_VOICE);
+						StartSoundName(self, 'SpiritAttack', CHAN_VOICE);
 						if (Other.Flags & MF_COUNTKILL && P_Random() < 128
-							&& !GetSoundPlayingInfo(&Other,
+							&& !GetSoundPlayingInfo(Other,
 								GetSoundID('PuppyBeat')))
 						{
 							if ((Other.Class == Centaur) ||
 								(Other.Class == CentaurLeader) ||
 								(Other.Class == Ettin))
 							{
-								StartSoundName(&Other, 'PuppyBeat',
+								StartSoundName(Other, 'PuppyBeat',
 									CHAN_VOICE);
 							}
 						}
@@ -443,21 +443,21 @@ boolean Actor::Touch(Actor Other)
 					{
 						Other.Damage(self, *target, 3);
 					}
-					if (!(GetSoundPlayingInfo(this,
+					if (!(GetSoundPlayingInfo(self,
 								GetSoundID('MageLightningZap'))))
 					{
-						StartSoundName(this, 'MageLightningZap',
+						StartSoundName(self, 'MageLightningZap',
 							CHAN_VOICE);
 					}
 					if (Other.Flags & MF_COUNTKILL && P_Random() < 64
-						&& !GetSoundPlayingInfo(&Other,
+						&& !GetSoundPlayingInfo(Other,
 							GetSoundID('PuppyBeat')))
 					{
 						if ((Other.Class == Centaur) ||
 							(Other.Class == CentaurLeader) ||
 							(Other.Class == Ettin))
 						{
-							StartSoundName(&Other, 'PuppyBeat', CHAN_VOICE);
+							StartSoundName(Other, 'PuppyBeat', CHAN_VOICE);
 						}
 					}
 				}
@@ -1022,13 +1022,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(thing);
+	P_UnsetThingPosition(*thing);
 
 	oldorg = thing->origin;
 	thing->origin.x = x;
 	thing->origin.y = y;
 
-	P_SetThingPosition(thing);
+	P_SetThingPosition(*thing);
 	thing->floor = tmfloor;
 	thing->ceiling = tmceiling;
 	thing->floorz = tmfloorz;
@@ -1086,6 +1086,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

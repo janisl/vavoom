@@ -67,7 +67,7 @@ void Actor::A_MakePod(void)
 	}
 	mo->SetState(S_POD_GROW1);
 	P_ThrustMobj(mo, Random() * 360.0, 4.5);
-	StartSoundName(mo, 'PodNew', CHAN_VOICE);
+	StartSoundName(*mo, 'PodNew', CHAN_VOICE);
 	special1++;	// Increment generated pod count
 	mo->specialmobj2 = this;	// Link the generator to the pod
 }
@@ -124,6 +124,10 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -123,12 +123,12 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(thing);
+	P_UnsetThingPosition(*thing);
 
 	thing->origin.x = x;
 	thing->origin.y = y;
 
-	P_SetThingPosition(thing);
+	P_SetThingPosition(*thing);
 
 	return true;
 }
@@ -197,10 +197,10 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 	{
 		fogDelta = thing->Flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
 		fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
-		StartSoundName(fog, 'Teleport', CHAN_VOICE);
+		StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 		fog = P_SpawnMobj(x + 20.0 * cos(angle),
 			y + 20.0 * sin(angle), thing->origin.z + fogDelta, TeleportFog);
-		StartSoundName(fog, 'Teleport', CHAN_VOICE);
+		StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 		if (thing->player && !thing->player->powers[pw_speed])
 		{
 			// Freeze player for about .5 sec
@@ -279,6 +279,10 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.11  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

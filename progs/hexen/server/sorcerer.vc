@@ -311,7 +311,7 @@ void Actor::A_CastSorcererSpell(void)
 	float z;
 	mobj_t *parent = target;
 
-	StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
+	StartSoundName(none, 'SorcererSpellCast', CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
 	if (parent->Health > 0)
@@ -447,7 +447,7 @@ void Actor::A_SorcBallOrbit(void)
 
 			if (Class == SorcererBall1 && P_Random() < 200)
 			{
-				StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
+				StartSoundName(none, 'SorcererSpellCast', CHAN_VOICE);
 				special2 = SORCFX4_RAPIDFIRE_TIME;
 				args[4] = 128;
 				parent->args[3] = SORC_FIRING_SPELL;
@@ -486,7 +486,7 @@ void Actor::A_SorcBallOrbit(void)
 	{
 		parent->args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
-		StartSoundName(this, 'SorcererBallWoosh', CHAN_VOICE);
+		StartSoundName(none, 'SorcererBallWoosh', CHAN_VOICE);
 	}
 	special1f = angle;	// Set previous angle
 	x = parent->origin.x + dist * cos(angle);
@@ -553,7 +553,7 @@ void Actor::A_SpawnFizzle(void)
 
 void Actor::A_SorcBallPop(void)
 {
-	StartSoundName(NULL, 'SorcererBallPop', CHAN_VOICE);
+	StartSoundName(none, 'SorcererBallPop', CHAN_VOICE);
 	Flags &= ~MF_NOGRAVITY;
 	Flags2 |= MF2_LOGRAV;
 	velocity.x = (Random() * 10.0 - 5.0) * 35.0;
@@ -583,10 +583,10 @@ void Actor::A_BounceCheck(void)
 			case SorcererBall1:
 			case SorcererBall2:
 			case SorcererBall3:
-				StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_VOICE);
+				StartSoundName(none, 'SorcererBigBallExplode', CHAN_VOICE);
 				break;
 			case SorcererFX1:
-				StartSoundName(NULL, 'SorcererHeadScream', CHAN_VOICE);
+				StartSoundName(none, 'SorcererHeadScream', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -747,7 +747,7 @@ void Actor::A_SpawnBishop(void)
 void Actor::A_SorcererBishopEntry(void)
 {
 	P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX3Explosion);
-	StartSound(this, sound_sight, CHAN_VOICE);
+	StartSound(self, sound_sight, CHAN_VOICE);
 }
 
 //============================================================================
@@ -769,6 +769,10 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

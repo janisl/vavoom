@@ -585,7 +585,7 @@ void Actor::ZMovement(void)
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
 				player->deltaviewheight = vdot / 8.0 * frametime;
-				StartSoundName(this, 'PlayerLand', CHAN_VOICE);
+				StartSoundName(self, 'PlayerLand', CHAN_VOICE);
 			}
 		}
 		origin.z = floorz;
@@ -902,7 +902,7 @@ void Actor::PlayerLandedOnThing(void)
 	player->deltaviewheight = velocity.z * frametime / 8.0;
 	if (velocity.z < -GRAVITY * 0.375)
 	{
-		StartSoundName(this, 'PlayerLand', CHAN_VOICE);
+		StartSoundName(self, 'PlayerLand', CHAN_VOICE);
 	}
 }
 
@@ -1052,6 +1052,10 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.13  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

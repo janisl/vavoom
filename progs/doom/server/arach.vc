@@ -47,7 +47,7 @@
 
 void Actor::A_BabyMetal(void)
 {
-	StartSoundName(this, 'BabyWalk', CHAN_BODY);
+	StartSoundName(self, 'BabyWalk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -87,6 +87,10 @@ void Actor::A_BspiAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/28 18:50:17  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.8  2002/01/17 18:15:52  dj_jl
 //  Renamed all map object classes
 //

@@ -52,22 +52,21 @@ mobj_t *braintargets[32];
 
 void Actor::A_BrainAwake(void)
 {
-	mobj_t *m;
+	Actor m;
 
 	// find all the target spots
 	numbraintargets = 0;
-	m = NULL;
-	while ((m = NextMobj(m)))
+	FOREACH(Actor, m)
 	{
-		if (m->Class == BossTarget)
+		if (m.Class == BossTarget)
 		{
-			braintargets[numbraintargets] = m;
+			braintargets[numbraintargets] = &m;
 			numbraintargets++;
 		}
 	}
 	braintargeton = 0;
 
-	StartSoundName(NULL, 'BossSight', CHAN_VOICE);
+	StartSoundName(none, 'BossSight', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -97,7 +96,7 @@ void Actor::A_BrainSpit(void)
 	newmobj->ReactionCount = ftoi((targ->origin.y - origin.y) /
 		newmobj->velocity.y / newmobj->time);
 
-	StartSoundName(NULL, 'BossFire', CHAN_WEAPON);
+	StartSoundName(none, 'BossFire', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -110,7 +109,7 @@ void Actor::A_BrainSpit(void)
 
 void Actor::A_BrainPain(void)
 {
-	StartSoundName(NULL, 'BossPain', CHAN_VOICE);
+	StartSoundName(none, 'BossPain', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -142,7 +141,7 @@ void Actor::A_BrainScream(void)
 			th->time = 0.1;
 	}
 
-	StartSoundName(NULL, 'BossDeath', CHAN_VOICE);
+	StartSoundName(none, 'BossDeath', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -196,7 +195,7 @@ void Actor::A_BrainDie(void)
 
 void Actor::A_SpawnSound(void)
 {
-	StartSoundName(this, 'CubeFly', CHAN_VOICE);
+	StartSoundName(self, 'CubeFly', CHAN_VOICE);
 	A_SpawnFly();
 }
 
@@ -224,7 +223,7 @@ void Actor::A_SpawnFly(void)
 	// First spawn teleport fog.
 	fog = P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z,
 		SpawnFire);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 
 	// Randomly select monster to spawn.
 	r = P_Random();
@@ -256,7 +255,7 @@ void Actor::A_SpawnFly(void)
 
 	newmobj = P_SpawnMobj(targ->origin.x, targ->origin.y,
 		targ->origin.z, type);
-	if (P_LookForPlayers(newmobj, true))
+	if (newmobj->LookForPlayers(true))
 		newmobj->SetState(newmobj->SeeState);
 
 	// telefrag anything in this spot
@@ -313,6 +312,10 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

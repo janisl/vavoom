@@ -87,7 +87,7 @@ boolean Actor::UpdateChicken(int tics)
 	mo->angles.yaw = angle;
 	mo->target = targ;
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -188,12 +188,16 @@ void Actor::A_ChicPain(void)
 	{
 		return;
 	}
-	StartSound(this, sound_pain, CHAN_VOICE);
+	StartSound(self, sound_pain, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.11  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

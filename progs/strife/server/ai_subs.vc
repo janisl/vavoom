@@ -55,7 +55,7 @@ int P_CheckMeleeRange(mobj_t * actor)
 		return false;
 	}
 
-	if (!P_CheckSight(actor, actor->target))
+	if (!P_CheckSight(*actor, *actor->target))
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ int P_CheckMissileRange(mobj_t * actor)
 {
 	float dist;
 
-	if (!P_CheckSight(actor, actor->target))
+	if (!P_CheckSight(*actor, *actor->target))
 	{
 		return false;
 	}
@@ -138,12 +138,11 @@ int P_CheckMissileRange(mobj_t * actor)
 
 int P_FindOther(mobj_t * mo)
 {
-	mobj_t *mo2;
+	Actor mo2;
 
-	mo2 = NULL;
-	while ((mo2 = NextMobj(mo2)))
+	FOREACH(Actor, mo2)
 	{
-		if (mo2 != mo && mo2->Class == mo->Class && mo2->Health > 0)
+		if (mo2 != *mo && mo2.Class == mo->Class && mo2.Health > 0)
 		{
 			// other mobj of the same type not dead
 			return true;
@@ -160,76 +159,27 @@ int P_FindOther(mobj_t * mo)
 
 boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 {
-	mobj_t *mo;
+	Actor mo;
 	float an;
 	float dist;
 
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
-	{
-		if (mo->Health <= 0)
-			continue;	// dead
-
-		if (mo == actor)
-			continue;
-
-		if ((mo->Class != PlayerEntity) && !(mo->Flags & MF_COUNTKILL))
-			continue;
-
-		if (!P_CheckSight(actor, mo))
-			continue;	// out of sight
-
-		if (P_Random() > 128)
-			continue;
-
-		if (!allaround)
-		{
-			an = AngleMod360(atan2(mo->origin.y - actor->origin.y,
-				mo->origin.x - actor->origin.x) - actor->angles.yaw);
-
-			if (an > 90.0 && an < 270.0)
-			{
-				dist = MobjDist(mo, actor);
-				// if real close, react anyway
-				if (dist > MELEERANGE)
-					continue;	// behind back
-			}
-		}
-
-		actor->target = mo;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  P_LookForMonsters2
-//
-//==========================================================================
-
-boolean P_LookForMonsters2(mobj_t * actor, boolean allaround)
-{
-	mobj_t *mo;
-	float an;
-	float dist;
-
-	if (!P_CheckSight(actor, players[0].mo))
+	if (!P_CheckSight(*actor, *players[0].mo))
 	{
 		return false;	//  Not seen by player
 	}
 
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if (mo->Health <= 0)
+		if (mo.Health <= 0)
 			continue;	// dead
 
-		if (mo == actor)
+		if (mo == *actor)
 			continue;	// self
 
-		if (!(mo->Flags & MF_COUNTKILL))
+		if (!(mo.Flags & MF_COUNTKILL))
 			continue;	// not a monster
 
-		if (!P_CheckSight(actor, mo))
+		if (!P_CheckSight(*actor, mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -237,19 +187,19 @@ boolean P_LookForMonsters2(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo->origin.y - actor->origin.y,
-				mo->origin.x - actor->origin.x) - actor->angles.yaw);
+			an = AngleMod360(atan2(mo.origin.y - actor->origin.y,
+				mo.origin.x - actor->origin.x) - actor->angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, actor);
+				dist = MobjDist((&mo), actor);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		actor->target = mo;
+		actor->target = &mo;
 		return true;
 	}
 	return false;
@@ -272,14 +222,9 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 	float an;
 	float dist;
 
-	if (deathmatch == 3)
-	{
-		return P_LookForMonsters(actor, allaround);
-	}
-
 	if (!netgame && players[0].spawned && players[0].health <= 0)
 	{
-		return P_LookForMonsters2(actor, allaround);
+		return P_LookForMonsters(actor, allaround);
 	}
 
 	c = 0;
@@ -310,7 +255,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 		if (player->health <= 0)
 			continue;	// dead
 
-		if (!P_CheckSight(actor, player->mo))
+		if (!P_CheckSight(*actor, *player->mo))
 			continue;	//  out of sight
 
 		if (!allaround)
@@ -489,6 +434,10 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.8  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

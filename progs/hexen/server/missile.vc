@@ -101,7 +101,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	th = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (th->sound_sight)
 	{
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
@@ -134,7 +134,7 @@ mobj_t *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->sound_sight)
 	{
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
@@ -185,7 +185,7 @@ mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 	mo = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (mo->sound_sight)
 	{
-		StartSound(mo, mo->sound_sight, CHAN_VOICE);
+		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
 	}
 	mo->target = source;	// Originator
 	mo->angles.yaw = angle;
@@ -241,7 +241,7 @@ mobj_t *SpawnKoraxMissile(float x, float y, float z,
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->sound_sight)
 	{
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - vector(x, y, z);
@@ -520,15 +520,15 @@ boolean P_ExplodeMissile(mobj_t * mo)
 	case SorcererBall1:
 	case SorcererBall2:
 	case SorcererBall3:
-		StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_AUTO);
+		StartSoundName(none, 'SorcererBigBallExplode', CHAN_AUTO);
 		break;
 	case SorcererFX1:
-		StartSoundName(NULL, 'SorcererHeadScream', CHAN_AUTO);
+		StartSoundName(none, 'SorcererHeadScream', CHAN_AUTO);
 		break;
 	default:
 		if (mo->sound_death)
 		{
-			StartSound(mo, mo->sound_death, CHAN_VOICE);
+			StartSound(*mo, mo->sound_death, CHAN_VOICE);
 		}
 		break;
 	}
@@ -548,6 +548,10 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

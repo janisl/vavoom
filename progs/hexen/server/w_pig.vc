@@ -54,7 +54,7 @@ void Weapon::A_SnoutAttack(void)
 	PuffSpawned = NULL;
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
-	StartSound(player->mo, GetSoundID('PigActive1') + (P_Random() & 1),
+	StartSound(*player->mo, GetSoundID('PigActive1') + (P_Random() & 1),
 		CHAN_VOICE);
 	if (linetarget)
 	{
@@ -62,7 +62,7 @@ void Weapon::A_SnoutAttack(void)
 		if (PuffSpawned)
 		{
 			// Bit something
-			StartSoundName(player->mo, 'PigAttack', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -70,6 +70,10 @@ void Weapon::A_SnoutAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

@@ -274,7 +274,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		open = FindOpening(open, hit_point.z, hit_point.z + usething->Height);
 		if (!open)
 		{
-			StartSoundName(usething, 'Blocked', CHAN_VOICE);
+			StartSoundName(*usething, 'Blocked', CHAN_VOICE);
 
 			// can't use through a wall
 			return false;
@@ -814,7 +814,7 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 	if (dist >= bombdamage)
 		return true;	// out of range
 
-	if (P_CheckSight(thing, bombspot))
+	if (P_CheckSight(*thing, *bombspot))
 	{
 		// must be in direct path
 		thing->Damage(*bombspot, *bombsource, ftoi(bombdamage - dist));
@@ -861,6 +861,10 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.17  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

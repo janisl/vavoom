@@ -102,7 +102,7 @@ void SetOrigin(mobj_t * mobj, TVec origin)
 
 	mobj->origin = origin;
 	// Set subsector and/or block links.
-	P_SetThingPosition(mobj);
+	P_SetThingPosition(*mobj);
 	if (origin.z == ONFLOORZ)
 	{
 		mobj->origin.z = mobj->floorz;
@@ -236,7 +236,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			origin.z -= mthing->height;
 		}
-		P_SetThingPosition(this);
+		P_SetThingPosition(self);
 		tid = mthing->tid;
 		special = mthing->special;
 		args[0] = mthing->arg1;
@@ -294,7 +294,7 @@ Actor SpawnActor(TVec position, classid type)
 {
 	Actor A;
 
-	A = *NewMobjThinker(type);
+	A = Actor(NewMobjThinker(type));
 	A.origin = position;
 	A.OnMapSpawn(NULL);
 	return A;
@@ -310,7 +310,7 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker(type);
+	mobj = &Actor(NewMobjThinker(type));
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
 	return mobj;
@@ -337,7 +337,7 @@ void P_RemoveMobj(mobj_t * mobj)
 	}
 
 	// Free block
-	RemoveMobjThinker(mobj);
+	RemoveMobjThinker(*mobj);
 }
 
 //==========================================================================
@@ -384,7 +384,7 @@ int P_HitFloor(mobj_t * thing)
 				SplashBase);
 			if (mo)
 				mo->floorclip += SMALLSPLASHCLIP;
-			StartSoundName(mo, 'Ambient10', CHAN_VOICE);	// small drip
+			StartSoundName(*mo, 'Ambient10', CHAN_VOICE);	// small drip
 		}
 		else
 		{
@@ -398,7 +398,7 @@ int P_HitFloor(mobj_t * thing)
 				SplashBase);
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
-			StartSoundName(mo, 'WaterSplash', CHAN_VOICE);
+			StartSoundName(*mo, 'WaterSplash', CHAN_VOICE);
 		}
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
@@ -419,7 +419,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(mo, 'LavaSizzle', CHAN_VOICE);
+		StartSoundName(*mo, 'LavaSizzle', CHAN_VOICE);
 		if (thing->player && level->tictime & 31)
 		{
 			thing->Damage(*LavaInflictor, none, 5);
@@ -446,7 +446,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(mo, 'SludgeGloop', CHAN_VOICE);
+		StartSoundName(*mo, 'SludgeGloop', CHAN_VOICE);
 		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
@@ -510,10 +510,10 @@ void P_FloorBounceMissile(mobj_t * mo)
 		case SorcererBall2:
 		case SorcererBall3:
 			if (!mo->args[0])
-				StartSound(mo, mo->sound_sight, CHAN_VOICE);
+				StartSound(*mo, mo->sound_sight, CHAN_VOICE);
 			break;
 		default:
-			StartSound(mo, mo->sound_sight, CHAN_VOICE);
+			StartSound(*mo, mo->sound_sight, CHAN_VOICE);
 			break;
 		}
 //      StartSound(mo, mo->sound_sight);
@@ -617,26 +617,25 @@ void P_MonsterFallingDamage(mobj_t * mo)
 
 mobj_t *ActiveMinotaur(player_t * master)
 {
-	mobj_t *mo;
+	Actor mo;
 	player_t *plr;
 	int starttime;
 
-	mo = NULL;
-	while ((mo = NextMobj(mo)))
+	FOREACH(Actor, mo)
 	{
-		if (mo->Class != Minotaur)
+		if (mo.Class != Minotaur)
 			continue;
-		if (mo->Health <= 0)
+		if (mo.Health <= 0)
 			continue;
-		if (!(mo->Flags & MF_COUNTKILL))
+		if (!(mo.Flags & MF_COUNTKILL))
 			continue;	// for morphed minotaurs
-		if (mo->Flags & MF_CORPSE)
+		if (mo.Flags & MF_CORPSE)
 			continue;
-		if ((level->tictime - mo->args[0]) >= ftoi(MAULATORTIME * 35.0))
+		if ((level->tictime - mo.args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
-		plr = mo->specialmobj1->player;
+		plr = mo.specialmobj1->player;
 		if (plr == master)
-			return mo;
+			return &mo;
 	}
 	return NULL;
 }
@@ -663,7 +662,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		if (target->Class == Sorcerer)
 		{
 			dummy[0] = dummy[1] = dummy[2] = dummy[3] = dummy[4] = 0;
-			StartACS(target->special, 0, &dummy[0], target, NULL, 0);
+			StartACS(target->special, 0, &dummy[0], *target, NULL, 0);
 		}
 		else
 		{
@@ -701,15 +700,15 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			switch (target->player->pclass)
 			{
 			case PCLASS_FIGHTER:
-				StartSoundName(target, 'PlayerFighterBurnDeath', CHAN_VOICE);
+				StartSoundName(*target, 'PlayerFighterBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_F_FDTH1);
 				return;
 			case PCLASS_CLERIC:
-				StartSoundName(target, 'PlayerClericBurnDeath', CHAN_VOICE);
+				StartSoundName(*target, 'PlayerClericBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_C_FDTH1);
 				return;
 			case PCLASS_MAGE:
-				StartSoundName(target, 'PlayerMageBurnDeath', CHAN_VOICE);
+				StartSoundName(*target, 'PlayerMageBurnDeath', CHAN_VOICE);
 				target->SetState(S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -744,19 +743,19 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 	{
 		if (target->Class == FighterBoss)
  		{
-			StartSoundName(target, 'PlayerFighterBurnDeath', CHAN_VOICE);
+			StartSoundName(*target, 'PlayerFighterBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_F_FDTH1);
 			return;
  		}
  		if (target->Class == ClericBoss)
 		{
-			StartSoundName(target, 'PlayerClericBurnDeath', CHAN_VOICE);
+			StartSoundName(*target, 'PlayerClericBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_C_FDTH1);
 			return;
 		}
 		if (target->Class == MageBoss)
 		{
-			StartSoundName(target, 'PlayerMageBurnDeath', CHAN_VOICE);
+			StartSoundName(*target, 'PlayerMageBurnDeath', CHAN_VOICE);
 			target->SetState(S_PLAY_M_FDTH1);
 			return;
 		}
@@ -764,7 +763,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		{
 			target->SetState(S_ZTREEDES_X1);
 			target->Height = 24.0;
-			StartSoundName(target, 'TreeExplode', CHAN_VOICE);
+			StartSoundName(*target, 'TreeExplode', CHAN_VOICE);
 			return;
 		}
 	}
@@ -913,7 +912,7 @@ boolean P_MorphPlayer(player_t * player)
 	oldFlags2 = pmo->Flags2;
 	pmo->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	beastMo = P_SpawnMobj(x, y, z, PlayerPig);
 	beastMo->special1 = player->readyweapon;
 	beastMo->angles.yaw = angle;
@@ -992,7 +991,7 @@ boolean P_MorphMonster(mobj_t * actor)
 	P_RemoveMobjFromTIDList(actor);
 	actor->SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	monster = P_SpawnMobj(x, y, z, Pig);
 	monster->specialcid = moType;
 	monster->special1 = ftoi(MORPHTIME * 35.0) + P_Random();
@@ -1258,7 +1257,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 					P_PoisonDamage(player, &source,
 						15 + (P_Random() & 15), false);	// Don't play painsound
 					P_PoisonPlayer(player, &source, 50);
-					StartSoundName(this, 'PlayerPoisonCough', CHAN_VOICE);
+					StartSoundName(self, 'PlayerPoisonCough', CHAN_VOICE);
 				}
 				return;
 			}
@@ -1408,13 +1407,13 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 				// "electrocute" the target
 				frame |= FF_FULLBRIGHT;
 				if (Flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(this, GetSoundID('PuppyBeat')))
+					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == Centaur) ||
 						(Class == CentaurLeader) ||
 						(Class == Ettin))
 					{
-						StartSoundName(this, 'PuppyBeat', CHAN_VOICE);
+						StartSoundName(self, 'PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
@@ -1426,13 +1425,13 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			if (inflictor && inflictor.Class == PoisonCloud)
 			{
 				if (Flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(this, GetSoundID('PuppyBeat')))
+					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == Centaur) ||
 						(Class == CentaurLeader) ||
 						(Class == Ettin))
 					{
-						StartSoundName(this, 'PuppyBeat', CHAN_VOICE);
+						StartSoundName(self, 'PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
@@ -1487,7 +1486,7 @@ void P_FallingDamage(player_t * player)
 		// No-death threshold
 		damage = player->mo->Health - 1;
 	}
-	StartSoundName(player->mo, 'PlayerLand', CHAN_BODY);
+	StartSoundName(*player->mo, 'PlayerLand', CHAN_BODY);
 	player->mo->Damage(none, none, damage);
 }
 
@@ -1600,11 +1599,11 @@ void SpawnPuff(float x, float y, float z)
 	if (linetarget && puff->sound_sight)
 	{
 		// Hit thing sound
-		StartSound(puff, puff->sound_sight, CHAN_VOICE);
+		StartSound(*puff, puff->sound_sight, CHAN_VOICE);
 	}
 	else if (puff->sound_attack)
 	{
-		StartSound(puff, puff->sound_attack, CHAN_VOICE);
+		StartSound(*puff, puff->sound_attack, CHAN_VOICE);
 	}
 	switch (PuffType)
 	{
@@ -2092,7 +2091,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	{
 		if (mthing->type == mobjinfo[i].doomednum)
 		{
-			mobj = NewMobjThinker(mobjinfo[i].class_id);
+			mobj = &Actor(NewMobjThinker(mobjinfo[i].class_id));
 			mobj->OnMapSpawn(mthing);
 			return;
 		}
@@ -2111,20 +2110,20 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 void P_CreateTIDList(void)
 {
 	int i;
-	mobj_t *mobj;
+	Actor mobj;
 
 	i = 0;
-	for (mobj = NextMobj(NULL); mobj; mobj = NextMobj(mobj))
+	FOREACH(Actor, mobj)
 	{
-		if (mobj->tid != 0)
+		if (mobj.tid != 0)
 		{
 			// Add to list
 			if (i == MAX_TID_COUNT)
 			{
 				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
 			}
-			TIDList[i] = mobj->tid;
-			TIDMobj[i++] = mobj;
+			TIDList[i] = mobj.tid;
+			TIDMobj[i++] = &mobj;
 		}
 	}
 	// Add termination marker
@@ -2317,6 +2316,10 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.26  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

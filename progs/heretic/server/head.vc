@@ -71,7 +71,7 @@ void Actor::A_HeadAttack(void)
 	{
 		// Ice ball
 		SpawnMissile(this, target, HeadMissile1);
-		StartSoundName(this, 'HeadAttack2', CHAN_WEAPON);
+		StartSoundName(self, 'HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
@@ -86,7 +86,7 @@ void Actor::A_HeadAttack(void)
 					baseFire->origin.z, HeadMissile3);
 				if (i == 0)
 				{
-					StartSoundName(this, 'HeadAttack1', CHAN_WEAPON);
+					StartSoundName(self, 'HeadAttack1', CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
 				fire->angles.yaw = baseFire->angles.yaw;
@@ -107,7 +107,7 @@ void Actor::A_HeadAttack(void)
 			mo->specialmobj1 = target;
 			mo->special2 = 50;	// Timer for active sound
 			mo->Health = 20 * TICRATE;	// Duration
-			StartSoundName(this, 'HeadAttack3', CHAN_WEAPON);
+			StartSoundName(self, 'HeadAttack3', CHAN_WEAPON);
 		}
 	}
 }
@@ -172,7 +172,7 @@ void Actor::A_WhirlwindSeek(void)
 	if ((special2 -= 3) < 0)
 	{
 		special2 = 58 + (P_Random() & 31);
-		StartSoundName(this, 'HeadAttack3', CHAN_WEAPON);
+		StartSoundName(self, 'HeadAttack3', CHAN_WEAPON);
 	}
 	if (specialmobj1 && specialmobj1->Translucency)
 	{
@@ -184,6 +184,10 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.13  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

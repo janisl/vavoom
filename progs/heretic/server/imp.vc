@@ -47,7 +47,7 @@ void Actor::A_ImpMeAttack(void)
 	{
 		return;
 	}
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, 5 + (P_Random() & 7));
@@ -73,7 +73,7 @@ void Actor::A_ImpMsAttack(void)
 	}
 	dest = target;
 	Flags |= MF_SKULLFLY;
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	A_FaceTarget();
 	an = angles.yaw;
 	velocity.x = 12.0 * cos(an) * 35.0;
@@ -101,7 +101,7 @@ void Actor::A_ImpMsAttack2(void)
 	{
 		return;
 	}
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, 5 + (P_Random() & 7));
@@ -183,6 +183,10 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

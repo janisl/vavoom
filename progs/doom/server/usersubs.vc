@@ -92,7 +92,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, TeleportFog);
-	StartSoundName(mo, 'Teleport', CHAN_VOICE);
+	StartSoundName(*mo, 'Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -192,7 +192,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	th = P_SpawnMobj(x, y, z, type);
 
 	if (th->sound_sight)
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;
 	th->velocity = dir * th->Speed;
@@ -206,6 +206,10 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.16  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

@@ -67,7 +67,7 @@ int PStateAttackEnd[NUMCLASSES] = {
 
 void InitLava(void)
 {
-	LavaInflictor = NewMobjThinker(TLavaInflictor);
+	LavaInflictor = &Actor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_CIRCLEFLAME;
 	LavaInflictor->Flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->Flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
@@ -92,18 +92,18 @@ void MorphPlayerThink(player_t * player)
 	{
 		// Snout sniff
 		SetPspriteNF(player, ps_weapon, S_SNOUTATK2);
-		StartSoundName(pmo, 'PigActive1', CHAN_VOICE);	// snort
+		StartSoundName(*pmo, 'PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
 	if (P_Random() < 48)
 	{
 		if (P_Random() < 128)
 		{
-			StartSoundName(pmo, 'PigActive1', CHAN_VOICE);
+			StartSoundName(*pmo, 'PigActive1', CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(pmo, 'PigActive2', CHAN_VOICE);
+			StartSoundName(*pmo, 'PigActive2', CHAN_VOICE);
 		}
 	}
 }
@@ -182,7 +182,7 @@ boolean UndoPlayerMorph(player_t * player)
 	player->pclass = player->baseclass;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
 		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	PostMorphWeapon(player, weapon);
 	return true;
 }
@@ -565,60 +565,59 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 
 void ArtiBlastRadius(player_t * player)
 {
-	mobj_t *mo;
+	Actor mo;
 	mobj_t *pmo = player->mo;
 	float dist;
 
-	StartSoundName(pmo, 'BlastRadius', CHAN_ITEM);
+	StartSoundName(*pmo, 'BlastRadius', CHAN_ITEM);
 	P_NoiseAlert(player->mo, player->mo);
 
-	mo = NULL;
-	while ((mo = NextMobj(mo)))
+	FOREACH(Actor, mo)
 	{
-		if ((mo == pmo) || (mo->Flags2 & MF2_BOSS))
+		if ((mo == *pmo) || (mo.Flags2 & MF2_BOSS))
 		{
 			// Not a valid monster
 			continue;
 		}
-		if ((mo->Class == PoisonCloud) ||	// poison cloud
-			(mo->Class == HolyFX) ||	// holy fx
-			(mo->Flags & MF_ICECORPSE))	// frozen corpse
+		if ((mo.Class == PoisonCloud) ||	// poison cloud
+			(mo.Class == HolyFX) ||	// holy fx
+			(mo.Flags & MF_ICECORPSE))	// frozen corpse
 		{
 			// Let these special cases go
 		}
-		else if ((mo->Flags & MF_COUNTKILL) && (mo->Health <= 0))
+		else if ((mo.Flags & MF_COUNTKILL) && (mo.Health <= 0))
 		{
 			continue;
 		}
-		else if (!(mo->Flags & MF_COUNTKILL) && !(mo->player) &&
-			!(mo->Flags & MF_MISSILE))
+		else if (!(mo.Flags & MF_COUNTKILL) && !(mo.player) &&
+			!(mo.Flags & MF_MISSILE))
 		{
 			// Must be monster, player, or missile
 			continue;
 		}
-		if (mo->Flags2 & MF2_DORMANT)
+		if (mo.Flags2 & MF2_DORMANT)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo->Class == WraithBuried) && (mo->Translucency >= 100))
+		if ((mo.Class == WraithBuried) && (mo.Translucency >= 100))
 		{
 			continue;	// no underground wraiths
 		}
-		if ((mo->Class == SplashBase) || (mo->Class == Splash))
+		if ((mo.Class == SplashBase) || (mo.Class == Splash))
 		{
 			continue;
 		}
-		if (mo->Class == Serpent || mo->Class == SerpentLeader)
+		if (mo.Class == Serpent || mo.Class == SerpentLeader)
 		{
 			continue;
 		}
-		dist = MobjDist(pmo, mo);
+		dist = MobjDist(pmo, (&mo));
 		if (dist > BLAST_RADIUS_DIST)
 		{
 			// Out of range
 			continue;
 		}
-		BlastMobj(pmo, mo, BLAST_FULLSTRENGTH);
+		BlastMobj(pmo, &mo, BLAST_FULLSTRENGTH);
 	}
 }
 
@@ -667,7 +666,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(mo, 'Teleport', CHAN_VOICE);
+	StartSoundName(*mo, 'Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -675,6 +674,10 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

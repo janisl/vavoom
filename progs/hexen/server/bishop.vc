@@ -75,7 +75,7 @@ void Actor::A_BishopDoBlur(void)
 		// Thrust forward
 		P_ThrustMobj(this, angles.yaw, 11.0);
 	}
-	StartSoundName(this, 'BishopBlur', CHAN_VOICE);
+	StartSoundName(self, 'BishopBlur', CHAN_VOICE);
 }
 
 //============================================================================
@@ -133,7 +133,7 @@ void Actor::A_BishopAttack(void)
 	{
 		return;
 	}
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
@@ -262,6 +262,10 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

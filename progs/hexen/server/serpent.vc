@@ -115,7 +115,7 @@ void Actor::A_SerpentChase(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -124,7 +124,7 @@ void Actor::A_SerpentChase(void)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !threshold && !P_CheckSight(this, target))
+	if (netgame && !threshold && !P_CheckSight(self, *target))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new target
@@ -151,7 +151,7 @@ void Actor::A_SerpentChase(void)
 	//
 	if (sound_active && P_Random() < 3)
 	{
-		StartSound(this, sound_active, CHAN_VOICE);
+		StartSound(self, sound_active, CHAN_VOICE);
 	}
 }
 
@@ -193,7 +193,7 @@ void Actor::A_SerpentHumpDecide(void)
 		else
 		{
 			SetState(S_SERPENT_HUMP1);
-			StartSoundName(this, 'SerpentActive', CHAN_VOICE);
+			StartSoundName(self, 'SerpentActive', CHAN_VOICE);
 		}
 	}
 }
@@ -278,7 +278,7 @@ void Actor::A_UnSetShootable(void)
 
 void Actor::A_SerpentBirthScream(void)
 {
-	StartSoundName(this, 'SerpentBirth', CHAN_VOICE);
+	StartSoundName(self, 'SerpentBirth', CHAN_VOICE);
 }
 
 //============================================================================
@@ -326,7 +326,7 @@ void Actor::A_SerpentCheckForAttack(void)
 
 void Actor::A_SerpentDiveSound(void)
 {
-	StartSoundName(this, 'SerpentActive', CHAN_VOICE);
+	StartSoundName(self, 'SerpentActive', CHAN_VOICE);
 }
 
 //============================================================================
@@ -409,7 +409,7 @@ void Actor::A_SerpentWalk(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(S_SERPENT_ATK1);
 		return;
@@ -417,7 +417,7 @@ void Actor::A_SerpentWalk(void)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !threshold && !P_CheckSight(this, target))
+	if (netgame && !threshold && !P_CheckSight(self, *target))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new target
@@ -465,7 +465,7 @@ void Actor::A_SerpentMeleeAttack(void)
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
-		StartSoundName(this, 'SerpentMeleeHit', CHAN_WEAPON);
+		StartSoundName(self, 'SerpentMeleeHit', CHAN_WEAPON);
 	}
 	if (P_Random() < 96)
 	{
@@ -598,6 +598,10 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

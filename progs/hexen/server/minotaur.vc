@@ -91,7 +91,7 @@ void Actor::A_Summon(void)
 
 		// Make smoke puff
 		P_SpawnMobj(origin.x, origin.y, origin.z, MinotaurSmoke);
-		StartSoundName(this, 'MaulatorActive', CHAN_VOICE);
+		StartSoundName(self, 'MaulatorActive', CHAN_VOICE);
 	}
 }
 
@@ -105,10 +105,10 @@ void Actor::A_Summon(void)
 
 void Actor::A_MinotaurLook(void)
 {
-	mobj_t *mo = NULL;
+	Actor mo;
 	float dist;
 	int i;
-	mobj_t *master = specialmobj1;
+	Actor master = *specialmobj1;
 
 	target = NULL;
 
@@ -118,46 +118,45 @@ void Actor::A_MinotaurLook(void)
 		{
 			if (!players[i].spawned)
 				continue;
-			mo = players[i].mo;
+			mo = *players[i].mo;
 			if (mo == master)
 				continue;
-			if (mo->Health <= 0)
+			if (mo.Health <= 0)
 				continue;
-			dist = MobjDist(this, mo);
+			dist = MobjDist(this, (&mo));
 			if (dist > MINOTAUR_LOOK_DIST)
 				continue;
-			target = mo;
+			target = &mo;
 			break;
 		}
 	}
 
 	if (!target)	// Near player monster search
 	{
-		if (master && (master->Health > 0) && (master->player))
-			mo = &master->RoughMonsterSearch(20);
+		if (master && (master.Health > 0) && (master.player))
+			target = &master.RoughMonsterSearch(20);
 		else
-			mo = &RoughMonsterSearch(20);
-		target = mo;
+			target = &RoughMonsterSearch(20);
 	}
 
 	if (!target)	// Normal monster search
 	{
-		for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+		FOREACH(Actor, mo)
 		{
-			if (!(mo->Flags & MF_COUNTKILL))
+			if (!(mo.Flags & MF_COUNTKILL))
 				continue;
-			if (mo->Health <= 0)
+			if (mo.Health <= 0)
 				continue;
-			if (!(mo->Flags & MF_SHOOTABLE))
+			if (!(mo.Flags & MF_SHOOTABLE))
 				continue;
-			dist = MobjDist(this, mo);
+			dist = MobjDist(this, (&mo));
 			if (dist > MINOTAUR_LOOK_DIST)
 				continue;
-			if ((mo == master) || (mo == this))
+			if ((mo == master) || (mo == self))
 				continue;
-			if ((mo->Class == Minotaur) &&
-				(mo->specialmobj1 == specialmobj1)) continue;
-			target = mo;
+			if ((mo.Class == Minotaur) &&
+				(mo.specialmobj1 == specialmobj1)) continue;
+			target = &mo;
 			break;	// Found mobj to attack
 		}
 	}
@@ -208,7 +207,7 @@ void Actor::A_MinotaurChase(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -230,7 +229,7 @@ void Actor::A_MinotaurChase(void)
 	// Active sound
 	if (sound_active && P_Random() < 6)
 	{
-		StartSound(this, sound_active, CHAN_VOICE);
+		StartSound(self, sound_active, CHAN_VOICE);
 	}
 
 }
@@ -288,7 +287,7 @@ void Actor::A_MinotaurAtk1(void)
 		return;
 	}
 
-	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
+	StartSoundName(self, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
@@ -356,7 +355,7 @@ void Actor::A_MinotaurAtk2(void)
 	if (!target)
 		return;
 
-	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
+	StartSoundName(self, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
@@ -409,7 +408,7 @@ void Actor::A_MinotaurAtk3(void)
 		mo = SpawnMissile(this, target, MinotaurFloorFire1);
 		if (mo != NULL)
 		{
-			StartSoundName(mo, 'MaulatorHamHit', CHAN_VOICE);
+			StartSoundName(*mo, 'MaulatorHamHit', CHAN_VOICE);
 		}
 	}
 	if (P_Random() < 192 && special2 == 0)
@@ -512,6 +511,10 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.16  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -92,7 +92,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, TeleportFog);
-	StartSoundName(mo, 'Teleport', CHAN_VOICE);	// don't start sound on first frame
+	StartSoundName(*mo, 'Teleport', CHAN_VOICE);	// don't start sound on first frame
 
 	return true;
 }
@@ -202,7 +202,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	th = P_SpawnMobj(x, y, z, type);
 
 	if (th->sound_sight)
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;
 	avcpy(angles, th->angles);
@@ -217,6 +217,10 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

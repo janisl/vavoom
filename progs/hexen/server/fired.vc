@@ -199,7 +199,7 @@ void Actor::A_FiredChase(void)
 	// make active sound
 	if (sound_active && P_Random() < 3)
 	{
-		StartSound(this, sound_active, CHAN_VOICE);
+		StartSound(self, sound_active, CHAN_VOICE);
 	}
 }
 
@@ -215,7 +215,7 @@ void Actor::A_FiredAttack(void)
 
 	mo = SpawnMissile(this, target, FireDemonMissile);
 	if (mo)
-		StartSoundName(this, 'FireDemonAttack', CHAN_WEAPON);
+		StartSoundName(self, 'FireDemonAttack', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -262,6 +262,10 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

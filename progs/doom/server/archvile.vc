@@ -70,14 +70,14 @@ boolean PIT_VileCheck(mobj_t * thing)
 		fabs(thing->origin.y - viletryy) > maxdist)
 		return true;	// not actually touching
 
-	if (!P_CheckSight(&vileobj, thing))
+	if (!P_CheckSight(vileobj, *thing))
 		return true;	//  Con't see, possibly in other region
 
 	corpsehit = thing;
 	corpsehit->velocity.x = corpsehit->velocity.y = 0.0;
 	corpsehit->Height *= 4.0;
 	check = P_CheckPosition(corpsehit, corpsehit->origin.x,
-		corpsehit->origin.y);
+		corpsehit->origin.y, corpsehit->origin.z);
 	corpsehit->Height /= 4.0;
 
 	if (!check)
@@ -133,7 +133,7 @@ void Actor::A_VileChase(void)
 					target = temp;
 
 					SetState(S_VILE_HEAL1);
-					StartSoundName(corpsehit, 'Slop', CHAN_BODY);
+					StartSoundName(*corpsehit, 'Slop', CHAN_BODY);
 
 					corpsehit->SetState(corpsehit->RaiseState);
 					corpsehit->Height *= 4.0;
@@ -165,7 +165,7 @@ void Actor::A_VileChase(void)
 
 void Actor::A_VileStart(void)
 {
-	StartSoundName(this, 'ArchVileAttack', CHAN_WEAPON);
+	StartSoundName(self, 'ArchVileAttack', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -211,10 +211,10 @@ void Actor::A_VileAttack(void)
 
 	A_FaceTarget();
 
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 		return;
 
-	StartSoundName(this, 'BarrelExplode', CHAN_WEAPON);
+	StartSoundName(self, 'BarrelExplode', CHAN_WEAPON);
 	target->Damage(self, self, 20);
 	target->velocity.z = 1000.0 / target->Mass * 35.0;
 
@@ -239,7 +239,7 @@ void Actor::A_VileAttack(void)
 
 void Actor::A_StartFire(void)
 {
-	StartSoundName(this, 'FlameStart', CHAN_VOICE);
+	StartSoundName(self, 'FlameStart', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -260,14 +260,14 @@ void Actor::A_Fire(void)
 		return;
 
 	// don't move it if the vile lost sight
-	if (!P_CheckSight(target, dest))
+	if (!P_CheckSight(*target, *dest))
 		return;
 
-	P_UnsetThingPosition(this);
+	P_UnsetThingPosition(self);
 	origin.x = dest->origin.x + 24.0 * cos(dest->angles.yaw);
 	origin.y = dest->origin.y + 24.0 * sin(dest->angles.yaw);
 	origin.z = dest->origin.z;
-	P_SetThingPosition(this);
+	P_SetThingPosition(self);
 }
 
 //==========================================================================
@@ -280,7 +280,7 @@ void Actor::A_Fire(void)
 
 void Actor::A_FireCrackle(void)
 {
-	StartSoundName(this, 'Flame', CHAN_VOICE);
+	StartSoundName(self, 'Flame', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -326,6 +326,10 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:17  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -73,7 +73,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_bluecard)))
 		{
 			centerprint(player, "You need a blue keycard");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -82,7 +82,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_redcard)))
 		{
 			centerprint(player, "You need a red keycard");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -91,7 +91,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_yellowcard)))
 		{
 			centerprint(player, "You need a yellow keycard");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -100,7 +100,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_blueskull)))
 		{
 			centerprint(player, "You need a blue skullkey");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -109,7 +109,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_redskull)))
 		{
 			centerprint(player, "You need a red skullkey");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -118,7 +118,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_yellowskull)))
 		{
 			centerprint(player, "You need a yellow skullkey");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -128,7 +128,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!player->keys)
 		{
 			centerprint(player, "You need any key");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -137,7 +137,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (player->keys != 0x3f)
 		{
 			centerprint(player, "You need all keycards and skullkeys");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -146,7 +146,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(player, "You need a blue key");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -155,7 +155,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(player, "You need a red key");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -164,7 +164,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need a yellow key");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -175,7 +175,7 @@ boolean CheckLock(mobj_t * user, int lock)
 			!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need all keys");
-			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
+			StartSoundName(*player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -204,7 +204,7 @@ boolean StartLockedACS(line_t * line, int *args, mobj_t * mo, int side)
 		newArgs[i] = args[i];
 	}
 	newArgs[4] = 0;
-	return StartACS(newArgs[0], newArgs[1], &newArgs[2], mo, line, side);
+	return StartACS(newArgs[0], newArgs[1], &newArgs[2], *mo, line, side);
 }
 
 //==========================================================================
@@ -434,7 +434,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		}
 		break;
 	case 80:	// ACS_Execute
-		buttonSuccess = StartACS(args[0], args[1], &args[2], mo, line, side);
+		buttonSuccess = StartACS(args[0], args[1], &args[2], *mo, line, side);
 		break;
 	case 81:	// ACS_Suspend
 		buttonSuccess = SuspendACS(args[0], args[1]);
@@ -553,7 +553,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_BuildStairsOld(line, args);
 		break;
 	case 226:	// ACS_ExecuteAlways
-		buttonSuccess = StartACS(args[0], args[1], &args[2], mo, line, side);
+		buttonSuccess = StartACS(args[0], args[1], &args[2], *mo, line, side);
 		break;
 	case 228:	// Plat_RaiseAndStayTx0
 		buttonSuccess =
@@ -843,6 +843,10 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:20  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/15 18:27:01  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

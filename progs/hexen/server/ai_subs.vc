@@ -56,7 +56,7 @@ boolean Actor::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -92,7 +92,7 @@ boolean Actor::CheckMeleeRange2(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -119,7 +119,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -202,13 +202,13 @@ boolean Actor::LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!P_CheckSight(players[0].mo, this))
+	if (!P_CheckSight(*players[0].mo, self))
 	{
 		// Player can't see monster
 		return false;
 	}
 	count = 0;
-	for (mo = *NextMobj(NULL); mo; mo = *NextMobj(&mo))
+	FOREACH(Actor, mo)
 	{
 		if (!(mo.Flags & MF_COUNTKILL) || (mo == self) || (mo.Health <= 0))
 		{
@@ -230,7 +230,7 @@ boolean Actor::LookForMonsters(void)
 			// Stop searching
 			return false;
 		}
-		if (!P_CheckSight(this, &mo))
+		if (!P_CheckSight(self, mo))
 		{
 			// Out of sight
 			continue;
@@ -289,7 +289,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 			continue;	//  not spawned yet
 		if (P->health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(this, P->mo))
+		if (!P_CheckSight(self, *P->mo))
 			continue;	// out of sight
 
 		if (!allaround)
@@ -583,7 +583,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(this, &link))
+				if (P_CheckSight(self, link))
 				{
 					return link;
 				}
@@ -616,7 +616,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (P_CheckSight(this, &link))
+				if (P_CheckSight(self, link))
 				{
 					return link;
 				}
@@ -639,7 +639,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(this, &link))
+				else if (P_CheckSight(self, link))
 				{
 					angle = AngleMod360(atan2(
 						link.origin.y - target->origin.y,
@@ -675,7 +675,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				else if (P_CheckSight(this, &link))
+				else if (P_CheckSight(self, link))
 				{
 					return link;
 				}
@@ -812,6 +812,10 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

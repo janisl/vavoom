@@ -315,7 +315,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 	}
 
 	player->bonuscount += BONUSADD;
-	StartSoundName(this, 'PickupWeapon', CHAN_ITEM);
+	StartSoundName(self, 'PickupWeapon', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -416,12 +416,12 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	{
 		cprint(player, "%s\n", fourthWeaponText[matchClass]);
 		// Play the build-sound full volume for all players
-		StartSoundName(NULL, 'WeaponBuild', CHAN_ITEM);
+		StartSoundName(none, 'WeaponBuild', CHAN_ITEM);
 	}
 	else
 	{
 		cprint(player, "%s\n", weaponPieceText[matchClass]);
-		StartSoundName(this, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
+		StartSoundName(none, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
 	}
 }
 
@@ -688,13 +688,13 @@ void Actor::TryPickupArtifact(int artifactType, Actor artifact)
 		if (artifactType < arti_firstpuzzitem)
 		{
 			SetDormantArtifact(&artifact);
-			StartSoundName(&artifact, 'PickupArtifact', CHAN_ITEM);
+			StartSoundName(artifact, 'PickupArtifact', CHAN_ITEM);
 			cprint(player, "%s\n", artifactMessages[artifactType]);
 		}
 		else
 		{
 			// Puzzle item
-			StartSoundName(NULL, 'PickupItem', CHAN_ITEM);
+			StartSoundName(none, 'PickupItem', CHAN_ITEM);
 			cprint(player, "%s\n", artifactMessages[artifactType]);
 			if (!netgame || deathmatch)
 			{
@@ -800,7 +800,7 @@ void Actor::TouchSpecial(Actor Toucher)
 			break;
 		}
 		Toucher.player->bonuscount += BONUSADD;
-		StartSoundName(&Toucher, sound, CHAN_ITEM);
+		StartSoundName(Toucher, sound, CHAN_ITEM);
 		return;
 
 		// Artifacts
@@ -1009,12 +1009,16 @@ void Actor::TouchSpecial(Actor Toucher)
 		P_RemoveMobj(this);
 	}
 	Toucher.player->bonuscount += BONUSADD;
-	StartSoundName(&Toucher, sound, CHAN_ITEM);
+	StartSoundName(Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -52,7 +52,7 @@ void Actor::A_SkullAttack(void)
 
 	Flags |= MF_SKULLFLY;
 
-	StartSound(this, sound_attack, CHAN_VOICE);
+	StartSound(self, sound_attack, CHAN_VOICE);
 	A_FaceTarget();
 	velocity = Normalize(MobjCenter(target) - origin) * SKULLSPEED;
 }
@@ -60,6 +60,10 @@ void Actor::A_SkullAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.7  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

@@ -61,11 +61,11 @@ void mobj_t::Archive(void)
 	corpse = Flags & MF_CORPSE;
 	if (corpse)
 	{
-		target = MobjToNum(NULL);
+		target = &Actor(MobjToNum(none));
 	}
 	else
 	{
-		target = MobjToNum(target);
+		target = &Actor(MobjToNum(*target));
 	}
 
 	switch (Class)
@@ -81,11 +81,11 @@ void mobj_t::Archive(void)
 	case MageStaffFX2:
 		if (corpse)
 		{
-			specialmobj1 = MobjToNum(NULL);
+			specialmobj1 = &Actor(MobjToNum(none));
 		}
 		else
 		{
-			specialmobj1 = MobjToNum(specialmobj1);
+			specialmobj1 = &Actor(MobjToNum(*specialmobj1));
 		}
 		break;
 
@@ -94,11 +94,11 @@ void mobj_t::Archive(void)
 	case LightningZap:
 		if (corpse)
 		{
-			specialmobj2 = MobjToNum(NULL);
+			specialmobj2 = &Actor(MobjToNum(none));
 		}
 		else
 		{
-			specialmobj2 = MobjToNum(specialmobj2);
+			specialmobj2 = &Actor(MobjToNum(*specialmobj2));
 		}
 		break;
 
@@ -107,13 +107,13 @@ void mobj_t::Archive(void)
 	case LightningCeiling:
 		if (corpse)
 		{
-			specialmobj1 = MobjToNum(NULL);
-			specialmobj2 = MobjToNum(NULL);
+			specialmobj1 = &Actor(MobjToNum(none));
+			specialmobj2 = &Actor(MobjToNum(none));
 		}
 		else
 		{
-			specialmobj1 = MobjToNum(specialmobj1);
-			specialmobj2 = MobjToNum(specialmobj2);
+			specialmobj1 = &Actor(MobjToNum(*specialmobj1));
+			specialmobj2 = &Actor(MobjToNum(*specialmobj2));
 		}
 		break;
 
@@ -136,7 +136,7 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-	target = NumToMobj(target);
+	target = &Actor(NumToMobj(*target));
 	switch (Class)
 	{
 		// Just specialmobj1
@@ -147,20 +147,20 @@ void mobj_t::Unarchive(void)
 	case ThrustFloorDown:
 	case Minotaur:
 	case SorcererFX1:
-		specialmobj1 = NumToMobj(specialmobj1);
+		specialmobj1 = &Actor(NumToMobj(*specialmobj1));
 		break;
 
 		// Just special2
 	case LightningFloor:
 	case LightningZap:
-		specialmobj2 = NumToMobj(specialmobj2);
+		specialmobj2 = &Actor(NumToMobj(*specialmobj2));
 		break;
 
 		// Both special1 and special2
 	case HolyTail:
 	case LightningCeiling:
-		specialmobj1 = NumToMobj(specialmobj1);
-		specialmobj2 = NumToMobj(specialmobj2);
+		specialmobj1 = &Actor(NumToMobj(*specialmobj1));
+		specialmobj2 = &Actor(NumToMobj(*specialmobj2));
 		break;
 
 	default:
@@ -177,6 +177,10 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/17 18:15:55  dj_jl
 //  Renamed all map object classes
 //

@@ -175,7 +175,7 @@ void Actor::A_FastChase(void)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !threshold && !P_CheckSight(this, target))
+	if (netgame && !threshold && !P_CheckSight(self, *target))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new target
@@ -212,7 +212,7 @@ void Actor::A_FSwordAttack2(void)
 		AngleMod360(angle - 45.0 / 8.0), 0.0);
 	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle - 45.0 / 4.0), 0.0);
-	StartSoundName(this, 'FighterSwordFire', CHAN_WEAPON);
+	StartSoundName(self, 'FighterSwordFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -239,7 +239,7 @@ void Actor::A_FighterAttack(void)
 void Actor::A_CHolyAttack3(void)
 {
 	SpawnMissile(this, target, HolyMissile);
-	StartSoundName(this, 'HolySymbolFire', CHAN_WEAPON);
+	StartSoundName(self, 'HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -287,7 +287,7 @@ void Actor::A_MStaffAttack2(void)
 	MStaffSpawn2(angle);
 	MStaffSpawn2(AngleMod360(angle - 5.0));
 	MStaffSpawn2(AngleMod360(angle + 5.0));
-	StartSoundName(this, 'MageStaffFire', CHAN_WEAPON);
+	StartSoundName(self, 'MageStaffFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -306,6 +306,10 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

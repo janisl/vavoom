@@ -465,7 +465,7 @@ boolean Actor::XYMovement(void)
 							velocity.y = speed * sin(angle);
 							if (sound_pain)
 							{
-								StartSound(this, sound_pain, CHAN_VOICE);
+								StartSound(self, sound_pain, CHAN_VOICE);
 							}
 						}
 						else
@@ -480,7 +480,7 @@ boolean Actor::XYMovement(void)
 						BounceWall(BOUNCE_VAL);
 						if (sound_pain)
 						{
-							StartSound(this, sound_pain, CHAN_VOICE);
+							StartSound(self, sound_pain, CHAN_VOICE);
 						}
 					}
 					if (IsDestroyed())
@@ -581,7 +581,7 @@ void Actor::ZMovement(void)
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
 				player->deltaviewheight = vdot / 8.0 * frametime;
-				StartSoundName(this, 'PlayerLand', CHAN_VOICE);
+				StartSoundName(self, 'PlayerLand', CHAN_VOICE);
 			}
 		}
 		origin.z = floorz;
@@ -595,7 +595,7 @@ void Actor::ZMovement(void)
 			}
 			if (Flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
 			{
-				StartSound(this, sound_pain, CHAN_VOICE);
+				StartSound(self, sound_pain, CHAN_VOICE);
 			}
 		}
 	}
@@ -624,7 +624,7 @@ void Actor::ZMovement(void)
 			}
 			if (Flags & MF_BOUNCE && sound_pain && Length(velocity) > 256.0)
 			{
-				StartSound(this, sound_pain, CHAN_VOICE);
+				StartSound(self, sound_pain, CHAN_VOICE);
 			}
 		}
 	}
@@ -889,7 +889,7 @@ void Actor::PlayerLandedOnThing(void)
 	player->deltaviewheight = velocity.z * frametime / 8.0;
 	if (velocity.z < -GRAVITY * 0.375)
 	{
-		StartSoundName(this, 'PlayerLand', CHAN_VOICE);
+		StartSoundName(self, 'PlayerLand', CHAN_VOICE);
 	}
 }
 
@@ -1039,6 +1039,10 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.16  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

@@ -66,7 +66,7 @@ void Actor::A_CentaurAttack2(void)
 		return;
 	}
 	SpawnMissile(this, target, CentaurMissile);
-	StartSoundName(this, 'CentaurLeaderAttack', CHAN_WEAPON);
+	StartSoundName(self, 'CentaurLeaderAttack', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -171,6 +171,10 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

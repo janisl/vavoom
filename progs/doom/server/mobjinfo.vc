@@ -95,7 +95,7 @@ class Zombieman:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -139,7 +139,7 @@ class ShotgunGuy:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -180,7 +180,7 @@ class ArchVile:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -245,7 +245,7 @@ class Revenant:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -335,7 +335,7 @@ class Mancubus:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -406,7 +406,7 @@ class ChaingunGuy:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -451,7 +451,7 @@ class Imp:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -494,7 +494,7 @@ class Demon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -538,7 +538,7 @@ class Shadows:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -580,7 +580,7 @@ class Cacodemon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -623,7 +623,7 @@ class BaronOfHell:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -693,7 +693,7 @@ class HellKnight:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -737,7 +737,7 @@ class LostSoul:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -779,7 +779,7 @@ class SpiderMastermind:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -821,7 +821,7 @@ class Arachnotron:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -862,7 +862,7 @@ class Cyberdemon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -904,7 +904,7 @@ class PainElemental:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -948,7 +948,7 @@ class WolfSS:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -984,7 +984,7 @@ class CommanderKeen:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -3467,9 +3467,13 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/28 18:50:18  dj_jl
+//	Made some functions Actor members.
+//	Replaced some pointers with references.
+//
 //	Revision 1.17  2002/01/17 18:15:53  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.16  2002/01/15 18:26:59  dj_jl
 //	Some property names with logical words starting with capital letter.
 //	Moved everything from Entity class into Actor class.

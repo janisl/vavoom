@@ -6462,7 +6462,7 @@ class Pig:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -6507,7 +6507,7 @@ class Centaur:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -6553,7 +6553,7 @@ class CentaurLeader:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -6669,7 +6669,7 @@ class Demon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -6851,7 +6851,7 @@ class Demon2:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7035,7 +7035,7 @@ class WraithBuried:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7082,7 +7082,7 @@ class Wraith:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7244,7 +7244,7 @@ class Minotaur:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7407,7 +7407,7 @@ class Serpent:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7452,7 +7452,7 @@ class SerpentLeader:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7605,7 +7605,7 @@ class Bishop:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -7740,7 +7740,7 @@ class Dragon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8275,7 +8275,7 @@ class Ettin:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8344,7 +8344,7 @@ class FireDemon:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8573,7 +8573,7 @@ class IceGuy:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8752,7 +8752,7 @@ class FighterBoss:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8795,7 +8795,7 @@ class ClericBoss:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8838,7 +8838,7 @@ class MageBoss:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -8881,7 +8881,7 @@ class Sorcerer:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9209,7 +9209,7 @@ class Korax:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9390,7 +9390,7 @@ class DemonMash:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9433,7 +9433,7 @@ class Demon2Mash:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9476,7 +9476,7 @@ class EttinMash:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9518,7 +9518,7 @@ class CentaurMash:Actor
 	{
 		if (nomonsters)
 		{
-			RemoveMobjThinker(this);
+			RemoveMobjThinker(self);
 			return;
 		}
 		::OnMapSpawn(mthing);
@@ -9596,9 +9596,13 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/28 18:50:19  dj_jl
+//	Made some functions Actor members.
+//	Replaced some pointers with references.
+//
 //	Revision 1.18  2002/01/24 18:19:26  dj_jl
 //	Split common class Entity, made SetMobjState an Entity function
-//
+//	
 //	Revision 1.17  2002/01/17 18:15:54  dj_jl
 //	Renamed all map object classes
 //	

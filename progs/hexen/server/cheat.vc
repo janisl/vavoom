@@ -155,16 +155,16 @@ void Cheat_Gimme(void)
 int P_Massacre(void)
 {
 	int count;
-	mobj_t *mo;
+	Actor mo;
 
 	count = 0;
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if ((mo->Flags & MF_COUNTKILL) && (mo->Health > 0))
+		if ((mo.Flags & MF_COUNTKILL) && (mo.Health > 0))
 		{
-			mo->Flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
-			mo->Flags |= MF_SHOOTABLE;
-			mo->Damage(none, none, 10000);
+			mo.Flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
+			mo.Flags |= MF_SHOOTABLE;
+			mo.Damage(none, none, 10000);
 			count++;
 		}
 	}
@@ -263,6 +263,10 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

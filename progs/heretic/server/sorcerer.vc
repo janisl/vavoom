@@ -107,7 +107,7 @@ void Actor::A_Srcr1Attack(void)
 	{
 		return;
 	}
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(8));
@@ -169,7 +169,7 @@ void Actor::A_Sor1Pain(void)
 
 void Actor::A_SorZap(void)
 {
-	StartSoundName(NULL, 'SorcererZap', CHAN_BODY);
+	StartSoundName(none, 'SorcererZap', CHAN_BODY);
 }
 
 //==========================================================================
@@ -197,7 +197,7 @@ void Actor::A_SorcererRise(void)
 
 void Actor::A_SorRise(void)
 {
-	StartSoundName(NULL, 'SorcererRise', CHAN_VOICE);
+	StartSoundName(none, 'SorcererRise', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -208,7 +208,7 @@ void Actor::A_SorRise(void)
 
 void Actor::A_SorSightSnd(void)
 {
-	StartSoundName(NULL, 'SorcererSight', CHAN_VOICE);
+	StartSoundName(none, 'SorcererSight', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -247,9 +247,9 @@ void Actor::DSparilTeleport(void)
 	if (P_TeleportMove(this, x, y))
 	{
 		mo = P_SpawnMobj(prevX, prevY, prevZ, Sorcerer2TeleFade);
-		StartSoundName(mo, 'Teleport', CHAN_VOICE);
+		StartSoundName(*mo, 'Teleport', CHAN_VOICE);
 		SetState(S_SOR2_TELE1);
-		StartSoundName(this, 'Teleport', CHAN_VOICE);
+		StartSoundName(self, 'Teleport', CHAN_VOICE);
 		origin.z = floorz;
 		angles.yaw = BossSpot_angle[i % BossSpotCount];
 		velocity = vector(0.0, 0.0, 0.0);
@@ -321,7 +321,7 @@ void Actor::A_Srcr2Attack(void)
 	{
 		return;
 	}
-	StartSound(NULL, sound_attack, CHAN_AUTO);
+	StartSound(none, sound_attack, CHAN_AUTO);
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(20));
@@ -363,7 +363,7 @@ void Actor::A_Sor2DthInit(void)
 
 void Actor::A_SorDSph(void)
 {
-	StartSoundName(NULL, 'SorcererDeath', CHAN_VOICE);
+	StartSoundName(none, 'SorcererDeath', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -389,7 +389,7 @@ void Actor::A_Sor2DthLoop(void)
 
 void Actor::A_SorDExp(void)
 {
-	StartSoundName(NULL, 'SorcererExplodes', CHAN_BODY);
+	StartSoundName(none, 'SorcererExplodes', CHAN_BODY);
 }
 
 //==========================================================================
@@ -400,7 +400,7 @@ void Actor::A_SorDExp(void)
 
 void Actor::A_SorDBon(void)
 {
-	StartSoundName(NULL, 'SorcererBones', CHAN_BODY);
+	StartSoundName(none, 'SorcererBones', CHAN_BODY);
 }
 
 //==========================================================================
@@ -446,12 +446,16 @@ void Actor::A_GenWizard(void)
 	SetState(DeathState);
 	Flags &= ~MF_MISSILE;
 	fog = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

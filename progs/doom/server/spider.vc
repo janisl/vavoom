@@ -51,7 +51,7 @@ void Actor::A_SpidRefire(void)
 	if (P_Random() < 10)
 		return;
 
-	if (!target || target->Health <= 0 || !P_CheckSight(this, target))
+	if (!target || target->Health <= 0 || !P_CheckSight(self, *target))
 	{
 		SetState(SeeState);
 	}
@@ -60,6 +60,10 @@ void Actor::A_SpidRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.7  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

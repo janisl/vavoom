@@ -51,7 +51,7 @@ class TLavaInflictor:mobj_t
 
 void InitLava(void)
 {
-	LavaInflictor = NewMobjThinker(TLavaInflictor);
+	LavaInflictor = &TLavaInflictor(NewMobjThinker(TLavaInflictor));
 //	LavaInflictor->type = MT_PHOENIXFX2;
 	LavaInflictor->Flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->Flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
@@ -93,7 +93,7 @@ void ChickenPlayerThink(player_t * player)
 	if (P_Random() < 48)
 	{
 		// Just noise
-		StartSoundName(pmo, 'ChickenAttack', CHAN_VOICE);
+		StartSoundName(*pmo, 'ChickenAttack', CHAN_VOICE);
 	}
 }
 
@@ -157,7 +157,7 @@ boolean UndoPlayerChicken(player_t * player)
 	player->mo = mo;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
 		z + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(fog, 'Teleport', CHAN_VOICE);
+	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	PostChickenWeapon(player, weapon);
 	return true;
 }
@@ -333,7 +333,7 @@ boolean ArtiTomeOfPower(player_t * player)
 		{
 			// Succeeded
 			player->chickenTics = 0;
-			StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
+			StartSoundName(*player->mo, 'PickupWeapon', CHAN_ITEM);
 		}
 	}
 	else
@@ -392,7 +392,7 @@ void P_SetDormantArtifact(mobj_t * arti)
 		// Don't respawn
 		arti->SetState(S_DEADARTI1);
 	}
-	StartSoundName(arti, 'PickupArtifact', CHAN_ITEM);
+	StartSoundName(*arti, 'PickupArtifact', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -453,7 +453,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, TeleportFog);
-	StartSoundName(mo, 'Teleport', CHAN_VOICE);
+	StartSoundName(*mo, 'Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -461,6 +461,10 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.16  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

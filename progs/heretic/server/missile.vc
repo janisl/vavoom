@@ -95,7 +95,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	th = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (th->sound_sight)
 	{
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
@@ -145,7 +145,7 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 	mo = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (mo->sound_sight)
 	{
-		StartSound(mo, mo->sound_sight, CHAN_VOICE);
+		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
 	}
 	mo->target = source;	// Originator
 	mo->angles.yaw = yaw;
@@ -194,7 +194,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	MissileMobj = P_SpawnMobj(x, y, z, type);
 	if (MissileMobj->sound_sight)
 	{
-		StartSound(MissileMobj, MissileMobj->sound_sight, CHAN_VOICE);
+		StartSound(*MissileMobj, MissileMobj->sound_sight, CHAN_VOICE);
 	}
 	MissileMobj->target = source;
 	MissileMobj->angles = angles;
@@ -259,7 +259,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	th = P_SpawnMobj(x, y, z, type);
 	if (th->sound_sight)
 	{
-		StartSound(th, th->sound_sight, CHAN_VOICE);
+		StartSound(*th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;
 	th->angles = angles;
@@ -334,6 +334,10 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.11  2002/01/17 18:15:53  dj_jl
 //  Renamed all map object classes
 //

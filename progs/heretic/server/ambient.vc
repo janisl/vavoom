@@ -247,7 +247,7 @@ void P_AmbientSound(void)
 				sound += AmbientSoundStart;
 			else
 				sound = GetSoundID('BeastSight');
-			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			break;
 		case afxcmd_playabsvol:
@@ -259,7 +259,7 @@ void P_AmbientSound(void)
 				sound += AmbientSoundStart;
 			else
 				sound = GetSoundID('BeastSight');
-			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_playrelvol:
 			sound = *AmbSfxPtr;
@@ -278,7 +278,7 @@ void P_AmbientSound(void)
 				sound += AmbientSoundStart;
 			else
 				sound = GetSoundID('BeastSight');
-			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_delay:
 			AmbSfxTics = *AmbSfxPtr;
@@ -306,6 +306,10 @@ void P_AmbientSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.7  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

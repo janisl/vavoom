@@ -366,7 +366,7 @@ boolean	Actor::Touch(Actor Other)
 				// Ok to spawn some blood
 				P_RipperBlood(this);
 			}
-			StartSoundName(this, 'RipSlop', CHAN_VOICE);
+			StartSoundName(self, 'RipSlop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
 			Other.Damage(self, *target, damage);
 			if (Other.Flags2 & MF2_PUSHABLE && !(Flags2 & MF2_CANNOTPUSH))
@@ -782,13 +782,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(thing);
+	P_UnsetThingPosition(*thing);
 
 	oldorg = thing->origin;
 	thing->origin.x = x;
 	thing->origin.y = y;
 
-	P_SetThingPosition(thing);
+	P_SetThingPosition(*thing);
 	thing->floor = tmfloor;
 	thing->ceiling = tmceiling;
 	thing->floorz = tmfloorz;
@@ -843,6 +843,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.13  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

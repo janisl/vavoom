@@ -50,7 +50,7 @@ void Weapon::A_MWandAttack(void)
 	{
 		mo->blaster = true;
 	}
-	StartSoundName(player->mo, 'MageWandFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'MageWandFire', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -71,7 +71,7 @@ void Weapon::A_FireConePL1(void)
 	pmo = player->mo;
 	player->mana[MANA_1] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
-	StartSoundName(pmo, 'MageShardsFire', CHAN_WEAPON);
+	StartSoundName(*pmo, 'MageShardsFire', CHAN_WEAPON);
 
 	damage = 90 + (P_Random() & 15);
 	for (i = 0; i < 16; i++)
@@ -197,7 +197,7 @@ void Weapon::A_LightningReady(void)
 	A_WeaponReady();
 	if (P_Random() < 160)
 	{
-		StartSoundName(player->mo, 'MageLightningReady', CHAN_WEAPON);
+		StartSoundName(*player->mo, 'MageLightningReady', CHAN_WEAPON);
 	}
 }
 
@@ -226,7 +226,7 @@ void A_MLightningAttack2(mobj_t * actor)
 		cmo->specialmobj2 = fmo;
 		cmo->A_LightningZap();
 	}
-	StartSoundName(actor, 'MageLightningFire', CHAN_WEAPON);
+	StartSoundName(*actor, 'MageLightningFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -354,7 +354,7 @@ void Actor::A_LightningZap(void)
 	}
 	if (Class == LightningFloor && P_Random() < 160)
 	{
-		StartSoundName(this, 'MageLightningContinuous', CHAN_VOICE);
+		StartSoundName(self, 'MageLightningContinuous', CHAN_VOICE);
 	}
 }
 
@@ -458,7 +458,7 @@ void Weapon::A_MStaffAttack(void)
 	MStaffSpawn(pmo, angle);
 	MStaffSpawn(pmo, angle - 5.0);
 	MStaffSpawn(pmo, angle + 5.0);
-	StartSoundName(player->mo, 'MageStaffFire', CHAN_WEAPON);
+	StartSoundName(*player->mo, 'MageStaffFire', CHAN_WEAPON);
 	player->damagecount = 0;
 	player->bonuscount = 0;
 	player->weapon_palette = STARTSCOURGEPAL;
@@ -531,6 +531,10 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.16  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

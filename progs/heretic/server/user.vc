@@ -246,7 +246,7 @@ void MovePlayer(player_t * player)
 				if (player->mo->velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
-					StopSound(player->mo, CHAN_VOICE);
+					StopSound(*player->mo, CHAN_VOICE);
 				}
 			}
 		}
@@ -1011,7 +1011,7 @@ boolean UseArtifact(player_t * player, int arti)
 		if (player->mo->velocity.z <= -35.0 * 35.0)
 		{
 			// stop falling scream
-			StopSound(player->mo, CHAN_VOICE);
+			StopSound(*player->mo, CHAN_VOICE);
 		}
 		break;
 	case arti_teleport:
@@ -1060,7 +1060,7 @@ void PlayerUseArtifact(player_t * player, int arti)
 			{
 				// Artifact was used - remove it from inventory
 				PlayerRemoveArtifact(player, i);
-				StartSoundName(player->mo, 'UseArtifact', CHAN_ITEM);
+				StartSoundName(*player->mo, 'UseArtifact', CHAN_ITEM);
 				player->ArtifactFlash = 4;
 			}
 			else
@@ -1376,7 +1376,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	StartSoundName(NULL, 'Chat', CHAN_AUTO);
+	StartSoundName(none, 'Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1397,6 +1397,10 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.20  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

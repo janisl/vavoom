@@ -49,7 +49,7 @@ void Actor::A_ClinkAttack(void)
 	{
 		return;
 	}
-	StartSound(this, sound_attack, CHAN_WEAPON);
+	StartSound(self, sound_attack, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 7) + 3);
@@ -60,6 +60,10 @@ void Actor::A_ClinkAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -52,9 +52,9 @@ void UnarchivePlayer(player_t * player)
 
 void mobj_t::Archive(void)
 {
-	target = MobjToNum(target);
-	specialmobj1 = MobjToNum(specialmobj1);
-	specialmobj2 = MobjToNum(specialmobj2);
+	target = &Actor(MobjToNum(*target));
+	specialmobj1 = &Actor(MobjToNum(*specialmobj1));
+	specialmobj2 = &Actor(MobjToNum(*specialmobj2));
 	specialcid = ClassIDToNum(specialcid);
 }
 
@@ -66,9 +66,9 @@ void mobj_t::Archive(void)
 
 void mobj_t::Unarchive(void)
 {
-	target = NumToMobj(target);
-	specialmobj1 = NumToMobj(specialmobj1);
-	specialmobj2 = NumToMobj(specialmobj2);
+	target = &Actor(NumToMobj(*target));
+	specialmobj1 = &Actor(NumToMobj(*specialmobj1));
+	specialmobj2 = &Actor(NumToMobj(*specialmobj2));
 	specialcid = NumToClassID(specialcid);
 	SightSound = UnarchiveName(SightSound);
 	ActiveSound = UnarchiveName(ActiveSound);
@@ -80,6 +80,10 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.7  2002/01/12 18:01:33  dj_jl
 //  Sound names initialized as names
 //

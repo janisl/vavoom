@@ -107,7 +107,7 @@ void Actor::A_KoraxStep(void)
 
 void Actor::A_KoraxStep2(void)
 {
-	StartSoundName(NULL, 'KoraxStep', CHAN_BODY);
+	StartSoundName(none, 'KoraxStep', CHAN_BODY);
 	A_Chase();
 }
 
@@ -134,7 +134,7 @@ void Actor::A_KoraxChase(void)
 				spot->angles.yaw, true);
 		}
 
-		StartACS(249, 0, &args[0], this, NULL, 0);
+		StartACS(249, 0, &args[0], self, NULL, 0);
 		special2 = 1;	// Don't run again
 
 		return;
@@ -148,7 +148,7 @@ void Actor::A_KoraxChase(void)
 	}
 	else if (P_Random() < 30)
 	{
-		StartSoundName(NULL, 'KoraxActive', CHAN_VOICE);
+		StartSoundName(none, 'KoraxActive', CHAN_VOICE);
 	}
 
 	// Teleport away
@@ -297,7 +297,7 @@ void Actor::A_KoraxMissile(void)
 	classid mtype;
 	name sound;
 
-	StartSoundName(this, 'KoraxAttack', CHAN_VOICE);
+	StartSoundName(self, 'KoraxAttack', CHAN_VOICE);
 
 	switch (P_Random() % 6)
 	{
@@ -328,7 +328,7 @@ void Actor::A_KoraxMissile(void)
 	}
 
 	// Fire all 6 missiles at once
-	StartSoundName(NULL, sound, CHAN_VOICE);
+	StartSoundName(none, sound, CHAN_VOICE);
 	KoraxFire1(mtype);
 	KoraxFire2(mtype);
 	KoraxFire3(mtype);
@@ -349,7 +349,7 @@ void Actor::A_KoraxCommand(void)
 	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	StartSoundName(this, 'KoraxCommand', CHAN_VOICE);
+	StartSoundName(self, 'KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
 	ang = AngleMod360(angles.yaw - 90.0);
@@ -370,19 +370,19 @@ void Actor::A_KoraxCommand(void)
 	switch (P_Random() % numcommands)
 	{
 	case 0:
-		StartACS(250, 0, &args[0], this, NULL, 0);
+		StartACS(250, 0, &args[0], self, NULL, 0);
 		break;
 	case 1:
-		StartACS(251, 0, &args[0], this, NULL, 0);
+		StartACS(251, 0, &args[0], self, NULL, 0);
 		break;
 	case 2:
-		StartACS(252, 0, &args[0], this, NULL, 0);
+		StartACS(252, 0, &args[0], self, NULL, 0);
 		break;
 	case 3:
-		StartACS(253, 0, &args[0], this, NULL, 0);
+		StartACS(253, 0, &args[0], self, NULL, 0);
 		break;
 	case 4:
-		StartACS(254, 0, &args[0], this, NULL, 0);
+		StartACS(254, 0, &args[0], self, NULL, 0);
 		break;
 	}
 }
@@ -451,7 +451,7 @@ void Actor::A_KoraxBonePop(void)
 	if (mo)
 		mo->KSpiritInit(self);
 
-	StartACS(255, 0, &args[0], this, NULL, 0);	// Death script
+	StartACS(255, 0, &args[0], self, NULL, 0);	// Death script
 }
 
 //============================================================================
@@ -563,7 +563,7 @@ void Actor::A_KSpiritRoam(void)
 {
 	if (Health-- <= 0)
 	{
-		StartSoundName(this, 'SpiritDie', CHAN_VOICE);
+		StartSoundName(self, 'SpiritDie', CHAN_VOICE);
 		SetState(S_KSPIRIT_DEATH1);
 	}
 	else
@@ -575,7 +575,7 @@ void Actor::A_KSpiritRoam(void)
 		A_KSpiritWeave();
 		if (P_Random() < 50)
 		{
-			StartSoundName(NULL, 'SpiritActive', CHAN_VOICE);
+			StartSoundName(none, 'SpiritActive', CHAN_VOICE);
 		}
 	}
 }
@@ -626,6 +626,10 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

@@ -280,7 +280,7 @@ void BotPlayer::SetEnemy(void)
 #endif
 
 	if (enemy && enemy.Health > 0 && player->mo &&
-		P_CheckSight(player->mo, &enemy))
+		P_CheckSight(*player->mo, enemy))
 	{
 		return;
 	}
@@ -491,7 +491,7 @@ void BotPlayer::Scan(void)
 {
 	Actor actor;
 
-	for (actor = *NextMobj(NULL); actor; actor = *NextMobj(&actor))
+	FOREACH(Actor, actor)
 	{
 		if (!(actor.Flags & (MF_SPECIAL | MF_MISSILE)))
 		{
@@ -989,7 +989,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 
 boolean BotPlayer::Check_LOS(Actor to, float vangle)
 {
-	if (!P_CheckSight(&botmo, &to))
+	if (!P_CheckSight(botmo, to))
 		return false; // out of sight
 	if (vangle == 360.0)
 		return true;
@@ -1330,7 +1330,7 @@ Actor BotPlayer::FindEnemy(void)
 			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
 			if (Check_LOS(*players[i].mo, vangle))
 			{
-				if (P_CheckSight(&botmo, players[i].mo))
+				if (P_CheckSight(botmo, *players[i].mo))
 				{
 					temp = MobjDist(players[i].mo, &botmo);
 
@@ -2251,6 +2251,10 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/17 18:15:52  dj_jl
 //  Renamed all map object classes
 //

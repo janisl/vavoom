@@ -693,13 +693,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	// the move is ok,
 	// so link the thing into its new position
-	P_UnsetThingPosition(thing);
+	P_UnsetThingPosition(*thing);
 
 	oldorg = thing->origin;
 	thing->origin.x = x;
 	thing->origin.y = y;
 
-	P_SetThingPosition(thing);
+	P_SetThingPosition(*thing);
 	thing->floorz = tmfloorz;
 	thing->ceilingz = tmceilingz;
 	thing->floor = tmfloor;
@@ -744,6 +744,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.11  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //

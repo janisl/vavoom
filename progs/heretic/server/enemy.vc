@@ -44,7 +44,7 @@ void Actor::A_Look(void)
 
 		if (Flags & MF_AMBUSH)
 		{
-			if (!P_CheckSight(this, target))
+			if (!P_CheckSight(self, *target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -62,11 +62,11 @@ void Actor::A_Look(void)
 	{
 		if (Flags2 & MF2_BOSS)
 		{	// Full volume
-			StartSound(NULL, sound_sight, CHAN_VOICE);
+			StartSound(none, sound_sight, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound_sight, CHAN_VOICE);
+			StartSound(self, sound_sight, CHAN_VOICE);
 		}
 	}
 
@@ -156,7 +156,7 @@ void Actor::A_Chase(void)
 	{
 		if (sound_attack)
 		{
-			StartSound(this, sound_attack, CHAN_WEAPON);
+			StartSound(self, sound_attack, CHAN_WEAPON);
 		}
 		SetState(MeleeState);
 		return;
@@ -179,7 +179,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !threshold)
 	{
-		if (!P_CheckSight(this, target))
+		if (!P_CheckSight(self, *target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -197,15 +197,15 @@ void Actor::A_Chase(void)
 	{
 		if (Class == Wizard && P_Random() < 128)
 		{
-			StartSound(this, sound_sight, CHAN_VOICE);
+			StartSound(self, sound_sight, CHAN_VOICE);
 		}
 		else if (Class == Sorcerer2)
 		{
-			StartSound(NULL, sound_active, CHAN_VOICE);
+			StartSound(none, sound_active, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(this, sound_active, CHAN_VOICE);
+			StartSound(self, sound_active, CHAN_VOICE);
 		}
 	}
 }
@@ -242,7 +242,7 @@ void Actor::A_Pain(void)
 {
 	if (sound_pain)
 	{
-		StartSound(this, sound_pain, CHAN_VOICE);
+		StartSound(self, sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -277,29 +277,29 @@ void Actor::A_Scream(void)
 	case Sorcerer1:
 	case Minotaur:
 		// Make boss death sounds full volume
-		StartSound(NULL, sound_death, CHAN_VOICE);
+		StartSound(none, sound_death, CHAN_VOICE);
 		break;
 	case PlayerEntity:
 		// Handle the different player death screams
 		if (special1 < 10)
 		{	// Wimpy death sound
-			StartSoundName(this, 'PlayerWimpyDeath', CHAN_VOICE);
+			StartSoundName(self, 'PlayerWimpyDeath', CHAN_VOICE);
 		}
 		else if (Health > -50)
 		{	// Normal death sound
-			StartSound(this, sound_death, CHAN_VOICE);
+			StartSound(self, sound_death, CHAN_VOICE);
 		}
 		else if (Health > -100)
 		{	// Crazy death sound
-			StartSoundName(this, 'PlayerCrazyDeath', CHAN_VOICE);
+			StartSoundName(self, 'PlayerCrazyDeath', CHAN_VOICE);
 		}
 		else
 		{	// Extreme death sound
-			StartSoundName(this, 'PlayerExtremeDeath', CHAN_VOICE);
+			StartSoundName(self, 'PlayerExtremeDeath', CHAN_VOICE);
 		}
 		break;
 	default:
-		StartSound(this, sound_death, CHAN_VOICE);
+		StartSound(self, sound_death, CHAN_VOICE);
 		break;
 	}
 }
@@ -475,7 +475,7 @@ void Actor::A_SkullPop(void)
 
 void Actor::A_FlameSnd(void)
 {
-	StartSoundName(this, 'HeadAttack1', CHAN_WEAPON);	// Burn sound
+	StartSoundName(self, 'HeadAttack1', CHAN_WEAPON);	// Burn sound
 }
 
 //==========================================================================
@@ -531,7 +531,7 @@ void Actor::A_CheckSkullDone(void)
 void Actor::A_BossDeath(void)
 {
 	string mapname;
-	mobj_t *mo;
+	Actor mo;
 	int args[5];
 
 	mapname = ptrtos(&level->mapname[0]);
@@ -583,9 +583,9 @@ void Actor::A_BossDeath(void)
 	}
 
 	// Make sure all bosses are dead
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if ((mo != this) && (mo->Class == Class) && (mo->Health > 0))
+		if ((mo != self) && (mo.Class == Class) && (mo.Health > 0))
 		{
 			// Found a living boss
 			return;
@@ -612,10 +612,10 @@ void Actor::A_ContMobjSound(void)
 	switch (Class)
 	{
 	case KnightAxe:
-		StartSoundName(this, 'KnightAttack1', CHAN_VOICE);
+		StartSoundName(self, 'KnightAttack1', CHAN_VOICE);
 		break;
 	case MummyMissile:
-		StartSoundName(this, 'MumyHeadExplode', CHAN_VOICE);
+		StartSoundName(self, 'MumyHeadExplode', CHAN_VOICE);
 		break;
 	default:
 		break;
@@ -625,6 +625,10 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

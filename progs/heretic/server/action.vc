@@ -39,7 +39,7 @@ void Actor::A_RestoreSpecialThing1(void)
 		RepositionMace(this);
 	}
 	Translucency -= 100;
-	StartSoundName(this, 'Respawn', CHAN_VOICE);
+	StartSoundName(self, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -86,7 +86,7 @@ void Actor::A_RestoreArtifact(void)
 {
 	Flags |= MF_SPECIAL;
 	SetState(SpawnState);
-	StartSoundName(this, 'Respawn', CHAN_VOICE);
+	StartSoundName(self, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -129,10 +129,10 @@ void Actor::A_ESound(void)
 	switch (Class)
 	{
 	case SoundWaterfall:
-		StartSoundName(this, 'Waterfall', CHAN_VOICE);
+		StartSoundName(self, 'Waterfall', CHAN_VOICE);
 		break;
 	case SoundWind:
-		StartSoundName(this, 'Wind', CHAN_VOICE);
+		StartSoundName(self, 'Wind', CHAN_VOICE);
 		break;
 	}
 }
@@ -140,6 +140,10 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.11  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

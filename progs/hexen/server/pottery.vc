@@ -57,7 +57,7 @@ void Actor::A_PotteryExplode(void)
 			mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
-	StartSoundName(mo, 'PotteryExplode', CHAN_VOICE);
+	StartSoundName(*mo, 'PotteryExplode', CHAN_VOICE);
 	if (args[0])
 	{
 		// Spawn an item
@@ -97,7 +97,7 @@ void Actor::A_PotteryCheck(void)
 			continue;
 		}
 		pmo = players[i].mo;
-		if (P_CheckSight(this, pmo) &&
+		if (P_CheckSight(self, *pmo) &&
 			(fabs(AngleMod180(atan2(origin.y - pmo->origin.y,
 			origin.x - pmo->origin.x) - pmo->angles.yaw)) <= 45.0))
 		{
@@ -111,6 +111,10 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/28 18:50:19  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.12  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -53,7 +53,7 @@ void Actor::A_SPosAttack(void)
 	if (!target)
 		return;
 
-	StartSoundName(this, 'ShotgunFire', CHAN_WEAPON);
+	StartSoundName(self, 'ShotgunFire', CHAN_WEAPON);
 	A_FaceTarget();
 	aimDir = AimLineAttack(this, angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
@@ -70,6 +70,10 @@ void Actor::A_SPosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.10  2002/01/15 18:26:59  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.

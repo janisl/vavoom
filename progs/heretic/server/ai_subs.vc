@@ -56,7 +56,7 @@ boolean Actor::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -122,7 +122,7 @@ void P_Massacre(void)
 {
 	Actor mo;
 
-	for (mo = *NextMobj(NULL); mo; mo = *NextMobj(&mo))
+	FOREACH(Actor, mo)
 	{
 		if ((mo.Flags & MF_COUNTKILL) && (mo.Health > 0))
 		{
@@ -145,12 +145,12 @@ boolean Actor::LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!P_CheckSight(players[0].mo, this))
+	if (!P_CheckSight(*players[0].mo, self))
 	{	// Player can't see monster
 		return false;
 	}
 	count = 0;
-	for (mo = *NextMobj(NULL); mo; mo = *NextMobj(&mo))
+	FOREACH(Actor, mo)
 	{
 		if (!(mo.Flags & MF_COUNTKILL) || (mo == self) || (mo.Health <= 0))
 		{
@@ -172,7 +172,7 @@ boolean Actor::LookForMonsters(void)
 			// Stop searching
 			return (false);
 		}
-		if (!P_CheckSight(this, &mo))
+		if (!P_CheckSight(self, mo))
 		{
 			// Out of sight
 			continue;
@@ -223,7 +223,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 			continue;	// not spawned yet
 		if (P->health <= 0)
 			continue;	// dead
-		if (!P_CheckSight(this, P->mo))
+		if (!P_CheckSight(self, *P->mo))
 			continue;	// out of sight
 
 		if (!allaround)
@@ -471,6 +471,10 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/28 18:50:18  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.14  2002/01/25 18:04:34  dj_jl
 //  Many global functions made Actor functions
 //

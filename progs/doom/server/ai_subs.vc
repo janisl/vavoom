@@ -60,7 +60,7 @@ boolean Actor::CheckMeleeRange(void)
 		return false;
 	}
 
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(this, target))
+	if (!P_CheckSight(self, *target))
 	{
 		return false;
 	}
@@ -142,7 +142,7 @@ boolean Actor::FindOther(void)
 {
 	Actor Other;
 
-	for (Other = *NextMobj(NULL); Other; Other = *NextMobj(&Other))
+	FOREACH(Actor, Other)
 	{
 		if (Other != self && Other.Class == Class && Other.Health > 0)
 		{
@@ -161,23 +161,23 @@ boolean Actor::FindOther(void)
 
 boolean Actor::LookForMonsters(boolean allaround)
 {
-	mobj_t *mo;
+	Actor mo;
 	float an;
 	float dist;
 
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if (mo->Health <= 0)
+		if (mo.Health <= 0)
 			continue;	// dead
 
-		if (mo == this)
+		if (mo == self)
 			continue;
 
-		if ((mo->Class != LostSoul) && (mo->Class != PlayerEntity)
-			&& !(mo->Flags & MF_COUNTKILL))
+		if ((mo.Class != LostSoul) && (mo.Class != PlayerEntity)
+			&& !(mo.Flags & MF_COUNTKILL))
 			continue;
 
-		if (!P_CheckSight(this, mo))
+		if (!P_CheckSight(self, mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -185,19 +185,19 @@ boolean Actor::LookForMonsters(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo->origin.y - origin.y,
-				mo->origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(mo.origin.y - origin.y,
+				mo.origin.x - origin.x) - angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, this);
+				dist = MobjDist((&mo), this);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		target = mo;
+		target = &mo;
 		return true;
 	}
 	return false;
@@ -211,27 +211,27 @@ boolean Actor::LookForMonsters(boolean allaround)
 
 boolean Actor::LookForMonsters2(boolean allaround)
 {
-	mobj_t *mo;
+	Actor mo;
 	float an;
 	float dist;
 
-	if (!P_CheckSight(this, players[0].mo))
+	if (!P_CheckSight(self, *players[0].mo))
 	{
 		return false;	//  Not seen by player
 	}
 
-	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
+	FOREACH(Actor, mo)
 	{
-		if (mo->Health <= 0)
+		if (mo.Health <= 0)
 			continue;	// dead
 
-		if (mo == this)
+		if (mo == self)
 			continue;	// self
 
-		if ((mo->Class != LostSoul) && !(mo->Flags & MF_COUNTKILL))
+		if ((mo.Class != LostSoul) && !(mo.Flags & MF_COUNTKILL))
 			continue;	// not a monster
 
-		if (!P_CheckSight(this, mo))
+		if (!P_CheckSight(self, mo))
 			continue;	// out of sight
 
 		if (P_Random() > 128)
@@ -239,19 +239,19 @@ boolean Actor::LookForMonsters2(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo->origin.y - origin.y,
-				mo->origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(mo.origin.y - origin.y,
+				mo.origin.x - origin.x) - angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, this);
+				dist = MobjDist((&mo), this);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		target = mo;
+		target = &mo;
 		return true;
 	}
 	return false;
@@ -312,7 +312,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 		if (P->health <= 0)
 			continue;	// dead
 
-		if (!P_CheckSight(this, P->mo))
+		if (!P_CheckSight(self, *P->mo))
 			continue;	//  out of sight
 
 		if (!allaround)
@@ -563,6 +563,10 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/28 18:50:17  dj_jl
+//  Made some functions Actor members.
+//  Replaced some pointers with references.
+//
 //  Revision 1.9  2002/01/25 18:04:33  dj_jl
 //  Many global functions made Actor functions
 //
