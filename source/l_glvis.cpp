@@ -79,6 +79,7 @@ static float barborderw;
 static float barborderh;
 
 static TCvarI glvis_fast("glvis_fast", "1", CVAR_ARCHIVE);
+static TCvarI glvis_noreject("glvis_noreject", "1", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
@@ -113,14 +114,20 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vcenter);
-	T_DrawText(160, 16, MESSAGE1);
-	T_DrawText(160, 32, MESSAGE2);
+	T_DrawText(160, 8, MESSAGE1);
+	T_DrawText(160, 24, MESSAGE2);
 	T_SetAlign(hleft, vtop);
 	T_DrawText(BARTEXTX, BARTEXTY, va("Creating vis data for %s", name));
 
 	Drawer->FillRect(barx - barborderw, bary1 - barborderh,
 		barx + barw + barborderw, bary2 + barborderh, 0xffff0000);
 	Drawer->FillRect(barx, bary1, barx + barw, bary2, 0xff000000);
+
+	if (glvis_fast)
+	{
+		T_SetAlign(hcenter, vcenter);
+		T_DrawText(160, 160, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using standalone utility.");
+	}
 
 	Drawer->Update();
 }
@@ -215,6 +222,7 @@ void GLVis_BuildPVS(const char *srcfile)
 		GLVis.Malloc = GLVisMalloc;
 		GLVis.Free = GLVisFree;
 		GLVis.fastvis = !!glvis_fast;
+		GLVis.no_reject = !!glvis_noreject;
 		GLVis.Build(srcfile);
 	}
 	catch (GLVisError &e)
@@ -240,9 +248,12 @@ COMMAND(glVIS)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/27 07:47:21  dj_jl
+//	Noreject option, fast mode warning
+//
 //	Revision 1.3  2001/09/20 16:23:40  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/09/14 16:52:14  dj_jl
 //	Added dynamic build of GWA file
 //	
