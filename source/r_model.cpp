@@ -63,7 +63,6 @@ struct pcx_t
 	unsigned short	palette_type;
 
 	char			filler[58];
-	unsigned char	data;		// unbounded
 };
 
 struct tgaHeader_t
@@ -98,8 +97,9 @@ static model_t *Mod_LoadModel(model_t *mod);
 
 int				SkinWidth;
 int				SkinHeight;
+int				SkinBPP;
 byte			*SkinData;
-rgb_t			SkinPal[256];
+rgba_t			SkinPal[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -313,8 +313,10 @@ static void LoadPCX(const char *filename, void **bufptr)
 	char		ch;
 	pcx_t		*pcx;
 	byte		*data;
+	int			size;
 
-	if (FL_ReadFile(filename, (void**)&pcx, PU_STATIC) < 0)
+	size = FL_ReadFile(filename, (void**)&pcx, PU_HIGH);
+	if (size < 0)
 		Sys_Error("Couldn't find skin %s", filename);
 
 	if (pcx->bits_per_pixel != 8)
@@ -329,12 +331,13 @@ static void LoadPCX(const char *filename, void **bufptr)
 
 	SkinWidth = LittleShort(pcx->xmax) - LittleShort(pcx->xmin) + 1;
 	SkinHeight = LittleShort(pcx->ymax) - LittleShort(pcx->ymin) + 1;
+	SkinBPP = 8;
 
 	bytes_per_line = pcx->bytes_per_line;
 
 	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC, bufptr);
 
-	data = &pcx->data;
+	data = (byte *)(pcx + 1);
 
 	for (y = 0; y < SkinHeight; y++)
 	{
@@ -366,12 +369,18 @@ static void LoadPCX(const char *filename, void **bufptr)
 	if (*data == 12)
 	{
 		data++;
-		for (c = 0; c < 256; c++)
-		{
-			SkinPal[c].r = *data++;
-			SkinPal[c].g = *data++;
-			SkinPal[c].b = *data++;
-		}
+	}
+	else
+	{
+		data = (byte *)pcx + size - 768;
+	}
+
+	for (c = 0; c < 256; c++)
+	{
+		SkinPal[c].r = *data++;
+		SkinPal[c].g = *data++;
+		SkinPal[c].b = *data++;
+		SkinPal[c].a = 255;
 	}
 
 	Z_Free(pcx);
@@ -387,32 +396,421 @@ static void LoadTGA(const char *filename, void **bufptr)
 {
 	tgaHeader_t *hdr;
 	byte *data;
+	int col;
+	int count;
+	int c;
 
-	if (FL_ReadFile(filename, (void**)&hdr, PU_STATIC) < 0)
+	if (FL_ReadFile(filename, (void**)&hdr, PU_HIGH) < 0)
 		Sys_Error("Couldn't find skin %s", filename);
-
-	if (hdr->pal_type != 1 || hdr->img_type != 1 || hdr->bpp != 8)
-	{
-		Sys_Error("Not a 8 bit tga");
-	}
-
-	data = (byte*)(hdr + 1) + hdr->id_length +
-		hdr->pal_colors * (hdr->pal_entry_size >> 3);
 
 	SkinWidth = LittleShort(hdr->width);
 	SkinHeight = LittleShort(hdr->height);
-	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC, bufptr);
 
-	for (int y = SkinHeight; y; y--)
+	data = (byte*)(hdr + 1) + hdr->id_length;
+
+	for (int i = 0; i < hdr->pal_colors; i++)
 	{
-		int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
-		byte *dst = SkinData + yc * SkinWidth;
-
-		memcpy(dst, data, SkinWidth);
-		data += SkinWidth;
+		switch (hdr->pal_entry_size)
+		{
+		case 16:
+			col = *(word *)data;
+			SkinPal[i].r = (col & 0x1F) << 3;
+			SkinPal[i].g = ((col >> 5) & 0x1F) << 3;
+			SkinPal[i].b = ((col >> 10) & 0x1F) << 3;
+			SkinPal[i].a = 255;
+			break;
+		case 24:
+			SkinPal[i].b = data[0];
+			SkinPal[i].g = data[1];
+			SkinPal[i].r = data[2];
+			SkinPal[i].a = 255;
+			break;
+		case 32:
+			SkinPal[i].b = data[0];
+			SkinPal[i].g = data[1];
+			SkinPal[i].r = data[2];
+			SkinPal[i].a = data[3];
+			break;
+		}
+		data += (hdr->pal_entry_size >> 3);
 	}
 
+	/* Image type:
+	 *    0 = no image data
+	 *    1 = uncompressed color mapped
+	 *    2 = uncompressed true color
+	 *    3 = grayscale
+	 *    9 = RLE color mapped
+	 *   10 = RLE true color
+	 *   11 = RLE grayscale
+	 */
+
+	if (hdr->img_type == 1 || hdr->img_type == 3 ||
+		hdr->img_type == 9 || hdr->img_type == 11)
+	{
+		SkinBPP = 8;
+		SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC, bufptr);
+	}
+	else
+	{
+		SkinBPP = 32;
+		SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, NULL);
+	}
+
+	if (hdr->img_type == 1 && hdr->bpp == 8 && hdr->pal_type == 1)
+	{
+		// 8-bit, uncompressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			byte *dst = SkinData + yc * SkinWidth;
+
+			memcpy(dst, data, SkinWidth);
+			data += SkinWidth;
+		}
+	}
+	else if (hdr->img_type == 2 && hdr->pal_type == 0 && hdr->bpp == 16)
+	{
+		// 16-bit uncompressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+
+			for (int x = 0; x < SkinWidth; x++, dst++, data += 2)
+			{
+				col = *(word *)data;
+				dst->r = ((col >> 10) & 0x1F) << 3;
+				dst->g = ((col >> 5) & 0x1F) << 3;
+				dst->b = (col & 0x1F) << 3;
+				dst->a = 255;
+			}
+		}
+	}
+	else if (hdr->img_type == 2 && hdr->pal_type == 0 && hdr->bpp == 24)
+	{
+		// 24-bit uncompressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+
+			for (int x = 0; x < SkinWidth; x++, dst++, data += 3)
+			{
+				dst->b = data[0];
+				dst->g = data[1];
+				dst->r = data[2];
+				dst->a = 255;
+			}
+		}
+	}
+	else if (hdr->img_type == 2 && hdr->pal_type == 0 && hdr->bpp == 32)
+	{
+		// 32-bit uncompressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+
+			for (int x = 0; x < SkinWidth; x++, dst++, data += 4)
+			{
+				dst->b = data[0];
+				dst->g = data[1];
+				dst->r = data[2];
+				dst->a = data[3];
+			}
+		}
+	}
+	else if (hdr->img_type == 3 && hdr->bpp == 8 && hdr->pal_type == 1)
+	{
+		// Grayscale uncompressed
+		for (int i = 0; i < 256; i++)
+		{
+			SkinPal[i].r = i;
+			SkinPal[i].g = i;
+			SkinPal[i].b = i;
+			SkinPal[i].a = 255;
+		}
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			byte *dst = SkinData + yc * SkinWidth;
+
+			memcpy(dst, data, SkinWidth);
+			data += SkinWidth;
+		}
+	}
+	else if (hdr->img_type == 9 && hdr->bpp == 8 && hdr->pal_type == 1)
+	{
+		// 8-bit RLE compressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			byte *dst = SkinData + yc * SkinWidth;
+			c = 0;
+
+			do
+			{
+				count = *data++;
+				if (count & 0x80)
+				{
+					count = (count & 0x7F) + 1;
+					c += count;
+					while (count--)
+						*(dst++) = *data;
+					data++;
+				}
+				else
+				{
+					count++;
+					c += count;
+					memcpy(dst, data, count);
+					data += count;
+					dst += count;
+				}
+			}
+			while (c < SkinWidth);
+		}
+	}
+	else if (hdr->img_type == 10 && hdr->pal_type == 0 && hdr->bpp == 16)
+	{
+		// 16-bit RLE compressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+			c = 0;
+
+			do
+			{
+				count = *data++;
+				if (count & 0x80)
+				{
+					count = (count & 0x7F) + 1;
+					c += count;
+					col = *(word *)data;
+					while (count--)
+					{
+						dst->r = ((col >> 10) & 0x1F) << 3;
+						dst->g = ((col >> 5) & 0x1F) << 3;
+						dst->b = (col & 0x1F) << 3;
+						dst->a = 255;
+						dst++;
+					}
+					data += 2;
+				}
+				else
+				{
+					count++;
+					c += count;
+					while (count--)
+					{
+						col = *(word *)data;
+						dst->r = ((col >> 10) & 0x1F) << 3;
+						dst->g = ((col >> 5) & 0x1F) << 3;
+						dst->b = (col & 0x1F) << 3;
+						dst->a = 255;
+						data += 2;
+						dst++;
+					}
+				}
+			}
+			while (c < SkinWidth);
+		}
+	}
+	else if (hdr->img_type == 10 && hdr->pal_type == 0 && hdr->bpp == 24)
+	{
+		// 24-bit REL compressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+			c = 0;
+
+			do
+			{
+				count = *data++;
+				if (count & 0x80)
+				{
+					count = (count & 0x7F) + 1;
+					c += count;
+					while (count--)
+					{
+						dst->r = data[2];
+						dst->g = data[1];
+						dst->b = data[0];
+						dst->a = 255;
+						dst++;
+					}
+					data += 3;
+				}
+				else
+				{
+					count++;
+					c += count;
+					while (count--)
+					{
+						dst->r = data[2];
+						dst->g = data[1];
+						dst->b = data[0];
+						dst->a = 255;
+						data += 3;
+						dst++;
+					}
+				}
+			}
+			while (c < SkinWidth);
+		}
+	}
+	else if (hdr->img_type == 10 && hdr->pal_type == 0 && hdr->bpp == 32)
+	{
+		// 32-bit RLE compressed
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			rgba_t *dst = (rgba_t*)(SkinData + yc * SkinWidth * 4);
+			c = 0;
+
+			do
+			{
+				count = *data++;
+				if (count & 0x80)
+				{
+					count = (count & 0x7F) + 1;
+					c += count;
+					while (count--)
+					{
+						dst->r = data[2];
+						dst->g = data[1];
+						dst->b = data[0];
+						dst->a = data[3];
+						dst++;
+					}
+					data += 4;
+				}
+				else
+				{
+					count++;
+					c += count;
+					while (count--)
+					{
+						dst->r = data[2];
+						dst->g = data[1];
+						dst->b = data[0];
+						dst->a = data[3];
+						data += 4;
+						dst++;
+					}
+				}
+			}
+			while (c < SkinWidth);
+		}
+	}
+	else if (hdr->img_type == 11 && hdr->bpp == 8 && hdr->pal_type == 1)
+	{
+		// Grayscale RLE compressed
+		for (int i = 0; i < 256; i++)
+		{
+			SkinPal[i].r = i;
+			SkinPal[i].g = i;
+			SkinPal[i].b = i;
+			SkinPal[i].a = 255;
+		}
+		for (int y = SkinHeight; y; y--)
+		{
+			int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+			byte *dst = SkinData + yc * SkinWidth;
+			c = 0;
+
+			do
+			{
+				count = *data++;
+				if (count & 0x80)
+				{
+					count = (count & 0x7F) + 1;
+					c += count;
+					while (count--)
+						*(dst++) = *data;
+					data++;
+				}
+				else
+				{
+					count++;
+					c += count;
+					memcpy(dst, data, count);
+					data += count;
+					dst += count;
+				}
+			}
+			while (c < SkinWidth);
+		}
+	}
+	else
+	{
+		Sys_Error("Nonsupported tga format");
+	}
+
+
 	Z_Free(hdr);
+}
+
+//==========================================================================
+//
+//	WriteTGA
+//
+//==========================================================================
+
+void WriteTGA(char* filename, void* data, int width, int height, int bpp,
+	byte* palette, bool bot2top)
+{
+	ofstream s(filename, ios::out | ios::binary);
+	if (!s)
+	{
+		con << "Couldn't write tga\n";
+		return;
+	}
+
+	tgaHeader_t hdr;
+	hdr.id_length = 0;
+	hdr.pal_type = (bpp == 8) ? 1 : 0;
+	hdr.img_type = (bpp == 8) ? 1 : 2;
+	hdr.first_color = 0;
+	hdr.pal_colors = (bpp == 8) ? 256 : 0;
+	hdr.pal_entry_size = (bpp == 8) ? 24 : 0;
+	hdr.left = 0;
+	hdr.top = 0;
+	hdr.width = width;
+	hdr.height = height;
+	hdr.bpp = bpp;
+	hdr.descriptor_bits = bot2top ? 0 : 0x20;
+	s.write((char *)&hdr, sizeof(hdr));
+
+	if (bpp == 8)
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			s.put(palette[i * 3 + 2]);
+			s.put(palette[i * 3 + 1]);
+			s.put(palette[i * 3]);
+		}
+	}
+
+	if (bpp == 8)
+	{
+		s.write((char *)data, width * height);
+	}
+	else if (bpp == 24)
+	{
+		rgb_t *src = (rgb_t *)data;
+		for (int i = 0; i < width * height; i++, src++)
+		{
+			s.put(src->b);
+			s.put(src->g);
+			s.put(src->r);
+		}
+	}
+
+	s.close();
 }
 
 //==========================================================================
@@ -470,16 +868,19 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 	wpent.origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
 	TAVec wangles;
 	VectorAngles(p[1] - p[0], wangles);
-	wpent.angles.yaw += wangles.yaw;
-	wpent.angles.pitch += wangles.pitch;
+	wpent.angles.yaw = AngleMod(wpent.angles.yaw + wangles.yaw);
+	wpent.angles.pitch = AngleMod(wpent.angles.pitch + wangles.pitch);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.2  2001/09/20 16:24:16  dj_jl
 //	Added support for tga skins
-//
+//	
 //	Revision 1.1  2001/09/06 17:46:37  dj_jl
 //	no message
 //	

@@ -54,13 +54,13 @@ class TFloor:Thinker
 	int direction;
 	int crush;
 	float floordestheight;
-	int delayCount;
-	int delayTotal;
+	float delayTime;
+	float delayTotal;
 	float stairsDelayHeight;
 	float stairsDelayHeightDelta;
 	float resetHeight;
-	int resetDelay;
-	int resetDelayCount;
+	float resetDelay;
+	float resetDelayTime;
 	int textureChange;
 
 	void Think(void);
@@ -86,29 +86,34 @@ void TFloor::Think(void)
 {
 	int res;
 
-	if (resetDelayCount)
+	if (resetDelayTime)
 	{
-		resetDelayCount--;
-		if (!resetDelayCount)
+		resetDelayTime -= frametime;
+		if (resetDelayTime <= 0.0)
 		{
+			resetDelayTime = 0.0;
 			floordestheight = resetHeight;
 			direction = -direction;
-			resetDelay = 0;
-			delayCount = 0;
-			delayTotal = 0;
+			resetDelay = 0.0;
+			delayTime = 0.0;
+			delayTotal = 0.0;
 		}
 	}
-	if (delayCount)
+	if (delayTime)
 	{
-		delayCount--;
-		if (!delayCount && textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic + textureChange);
+		delayTime -= frametime;
+		if (delayTime <= 0.0)
+ 		{
+ 			delayTime = 0.0;
+ 			if (textureChange)
+			{
+				SetFloorPic(sector, sector->floor.pic + textureChange);
+			}
 		}
 		return;
 	}
 
-	res = T_MovePlane(sector, speed,
+	res = T_MovePlane(sector, speed * frametime,
 		floordestheight, crush, 0, direction);
 
 	if (type == FLEV_RAISEBUILDSTEP)
@@ -117,7 +122,7 @@ void TFloor::Think(void)
 				stairsDelayHeight) || (direction == -1 &&
 				sector->floorheight <= stairsDelayHeight))
 		{
-			delayCount = delayTotal;
+			delayTime = delayTotal;
 			stairsDelayHeight += stairsDelayHeightDelta;
 		}
 	}
@@ -126,12 +131,12 @@ void TFloor::Think(void)
 		SectorStopSequence(sector);
 		if (delayTotal)
 		{
-			delayTotal = 0;
+			delayTotal = 0.0;
 		}
 		if (resetDelay)
 		{
-//          resetDelayCount = resetDelay;
-//          resetDelay = 0;
+//          resetDelayTime = resetDelay;
+//          resetDelay = 0.0;
 			return;
 		}
 		sector->specialdata = NULL;
@@ -205,11 +210,11 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 		floor->sector = sec;
 		floor->type = floortype;
 		floor->crush = 0;
-		floor->speed = itof(args[1]) / 8.0;
+		floor->speed = itof(args[1]) * 4.0;
 		if (floortype == FLEV_LOWERTIMES8INSTANT ||
 			floortype == FLEV_RAISETIMES8INSTANT)
 		{
-			floor->speed = 2000.0;
+			floor->speed = 32.0 * 2000.0;
 		}
 		switch (floortype)
 		{
@@ -385,17 +390,17 @@ struct stairqueue_t
 };
 
 stairqueue_t StairQueue[STAIR_QUEUE_SIZE];
-int QueueHead;
-int QueueTail;
+int StairQueueHead;
+int StairQueueTail;
 
-float StepDelta;
-int Direction;
-float Speed;
-int Texture;
-int StartDelay;
-int StartDelayDelta;
-int TextureChange;
-float StartHeight;
+float StairStepDelta;
+int StairDirection;
+float StairSpeed;
+int StairTexture;
+float StairStartDelay;
+float StairStartDelayDelta;
+int StairTextureChange;
+float StairStartHeight;
 
 //==========================================================================
 //
@@ -405,15 +410,15 @@ float StartHeight;
 
 void QueueStairSector(sector_t * sec, int type, float height)
 {
-	if ((QueueTail + 1) % STAIR_QUEUE_SIZE == QueueHead)
+	if ((StairQueueTail + 1) % STAIR_QUEUE_SIZE == StairQueueHead)
 	{
 		Error("BuildStairs:  Too many branches located.");
 	}
-	StairQueue[QueueTail].sector = sec;
-	StairQueue[QueueTail].type = type;
-	StairQueue[QueueTail].height = height;
+	StairQueue[StairQueueTail].sector = sec;
+	StairQueue[StairQueueTail].type = type;
+	StairQueue[StairQueueTail].height = height;
 
-	QueueTail = (QueueTail + 1) % STAIR_QUEUE_SIZE;
+	StairQueueTail = (StairQueueTail + 1) % STAIR_QUEUE_SIZE;
 }
 
 //==========================================================================
@@ -426,15 +431,15 @@ sector_t *DequeueStairSector(int *type, float *height)
 {
 	sector_t *sec;
 
-	if (QueueHead == QueueTail)
+	if (StairQueueHead == StairQueueTail)
 	{
 		// queue is empty
 		return NULL;
 	}
-	*type = StairQueue[QueueHead].type;
-	*height = StairQueue[QueueHead].height;
-	sec = StairQueue[QueueHead].sector;
-	QueueHead = (QueueHead + 1) % STAIR_QUEUE_SIZE;
+	*type = StairQueue[StairQueueHead].type;
+	*height = StairQueue[StairQueueHead].height;
+	sec = StairQueue[StairQueueHead].sector;
+	StairQueueHead = (StairQueueHead + 1) % STAIR_QUEUE_SIZE;
 
 	return sec;
 }
@@ -446,7 +451,7 @@ sector_t *DequeueStairSector(int *type, float *height)
 //==========================================================================
 
 void ProcessStairSector(sector_t * sec, int type, float height,
-	int stairsType, int delay, int resetDelay)
+	int stairsType, float delay, float resetDelay)
 {
 	int i;
 	sector_t *tsec;
@@ -455,42 +460,42 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 	//
 	// new floor thinker
 	//
-	height += StepDelta;
+	height += StairStepDelta;
 	floor = NewSpecialThinker(TFloor);
 	sec->specialdata = floor;
 	floor->type = FLEV_RAISEBUILDSTEP;
-	floor->direction = Direction;
+	floor->direction = StairDirection;
 	floor->sector = sec;
 	floor->floordestheight = height;
 	switch (stairsType)
 	{
 	case STAIRS_NORMAL:
-		floor->speed = Speed;
+		floor->speed = StairSpeed;
 		if (delay)
 		{
 			floor->delayTotal = delay;
-			floor->stairsDelayHeight = sec->floorheight + StepDelta;
-			floor->stairsDelayHeightDelta = StepDelta;
+			floor->stairsDelayHeight = sec->floorheight + StairStepDelta;
+			floor->stairsDelayHeightDelta = StairStepDelta;
 		}
 		floor->resetDelay = resetDelay;
-		floor->resetDelayCount = resetDelay;
+		floor->resetDelayTime = resetDelay;
 		floor->resetHeight = sec->floorheight;
 		break;
 	case STAIRS_SYNC:
-		floor->speed = Speed * (height - StartHeight) / StepDelta;
+		floor->speed = StairSpeed * (height - StairStartHeight) / StairStepDelta;
 		floor->resetDelay = delay;	//arg4
-		floor->resetDelayCount = delay;
+		floor->resetDelayTime = delay;
 		floor->resetHeight = sec->floorheight;
 		break;
 /*
-		case STAIRS_PHASED:
-			floor->floordestheight = sec->floorheight + StepDelta;
-			floor->speed = Speed;
-			floor->delayCount = StartDelay;
-			StartDelay += StartDelayDelta;
-			floor->textureChange = TextureChange;
-			floor->resetDelayCount = StartDelay;
-			break;
+	case STAIRS_PHASED:
+		floor->floordestheight = sec->floorheight + StairStepDelta;
+		floor->speed = StairSpeed;
+		floor->delayTime = StairStartDelay;
+		StairStartDelay += StairStartDelayDelta;
+		floor->textureChange = StairTextureChange;
+		floor->resetDelayCount = StairStartDelay;
+		break;
 */
 	default:
 		break;
@@ -511,7 +516,7 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 		}
 		tsec = line->frontsector;
 		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->specialdata
-			&& tsec->floor.pic == Texture && tsec->validcount != *validcount)
+			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
@@ -519,7 +524,7 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 		}
 		tsec = line->backsector;
 		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->specialdata
-			&& tsec->floor.pic == Texture && tsec->validcount != *validcount)
+			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
@@ -534,7 +539,7 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 //
 //  BUILD A STAIRCASE!
 //
-//  Direction is either positive or negative, denoting build stairs
+//  StairDirection is either positive or negative, denoting build stairs
 // up or down.
 //
 //==========================================================================
@@ -543,26 +548,26 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 {
 	int secnum;
 	float height;
-	int delay;
-	int resetDelay;
+	float delay;
+	float resetDelay;
 	sector_t *sec;
 	sector_t *qSec;
 	int type;
 
 	// Set global stairs variables
-	TextureChange = 0;
-	Direction = direction;
-	StepDelta = itof(Direction * args[2]);
-	Speed = itof(args[1]) / 8.0;
-	resetDelay = args[4];
-	delay = args[3];
+	StairTextureChange = 0;
+	StairDirection = direction;
+	StairStepDelta = itof(StairDirection * args[2]);
+	StairSpeed = itof(args[1]) * 4.0;
+	resetDelay = itof(args[4]) / 32.0;
+	delay = itof(args[3]) / 32.0;
 	if (stairsType == STAIRS_PHASED)
 	{
-		StartDelayDelta = args[3];
-		StartDelay = StartDelayDelta;
-		resetDelay = StartDelayDelta;
-		delay = 0;
-		TextureChange = args[4];
+		StairStartDelayDelta = itof(args[3]) / 32.0;
+		StairStartDelay = StairStartDelayDelta;
+		resetDelay = StairStartDelayDelta;
+		delay = 0.0;
+		StairTextureChange = args[4];
 	}
 
 	secnum = -1;
@@ -572,8 +577,8 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 	{
 		sec = &level->sectors[secnum];
 
-		Texture = sec->floor.pic;
-		StartHeight = sec->floorheight;
+		StairTexture = sec->floor.pic;
+		StairStartHeight = sec->floorheight;
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (sec->specialdata)
@@ -940,6 +945,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/09/25 17:13:50  dj_jl
 //  Beautification
 //

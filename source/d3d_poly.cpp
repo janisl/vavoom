@@ -587,7 +587,7 @@ void TDirect3DDrawer::BeginSky(void)
 #endif
     RenderDevice->SetViewport(&viewData);
 
-	if (r_use_fog)
+	if (r_fog)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
 	}
@@ -649,7 +649,7 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 void TDirect3DDrawer::EndSky(void)
 {
-	if (r_use_fog)
+	if (r_fog)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
 	}
@@ -818,7 +818,8 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	shadelightr = ((light >> 16) & 0xff) / 512.0;
 	shadelightg = ((light >> 8) & 0xff) / 512.0;
 	shadelightb = (light & 0xff) / 512.0;
-	shadedots = r_avertexnormal_dots[((int)(BAM2DEG(angles.yaw) * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
+	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
+	light *= 0x00ffffff;
 	alpha = ((100 - translucency) * 255 / 100) << 24;
 	
 	//
@@ -911,11 +912,18 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 			// normals and vertexes come from the frame list
 			index = *order++;
-			l = shadedots[verts[index].lightnormalindex];
-			out[i].color = alpha |
-				(((int)(l * shadelightr * 0xff) << 16) & 0x00ff0000) |
-				(((int)(l * shadelightg * 0xff) <<  8) & 0x0000ff00) |
-				(((int)(l * shadelightb * 0xff)      ) & 0x000000ff);
+			if (model_lighting)
+			{
+				l = shadedots[verts[index].lightnormalindex];
+				out[i].color = alpha |
+					(((int)(l * shadelightr * 0xff) << 16) & 0x00ff0000) |
+					(((int)(l * shadelightg * 0xff) <<  8) & 0x0000ff00) |
+					(((int)(l * shadelightb * 0xff)      ) & 0x000000ff);
+			}
+			else
+			{
+				out[i].color = alpha | light;
+			}
 
 			out[i].x = verts[index].v[0];
 			out[i].y = verts[index].v[1];
@@ -1021,9 +1029,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.14  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.13  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

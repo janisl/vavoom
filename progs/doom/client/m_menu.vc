@@ -570,7 +570,7 @@ void MenuSpriteAnim_Init(menuspriteanim_t * self, int x, int y, int sprdef,
 struct menumodel_t:menucommon_t
 {
 	TVec origin;
-	angle_t angle;
+	float angle;
 	model_t *model;
 	int frame;
 	string skin;
@@ -596,7 +596,7 @@ void MenuModel_Draw(menucommon_t * aitem)
 //
 //==========================================================================
 
-void MenuModel_Init(menumodel_t * self, TVec origin, angle_t angle,
+void MenuModel_Init(menumodel_t * self, TVec origin, float angle,
 	model_t * model, int frame)
 {
 	MenuCommon_Init(self, 0, 0, MNF_INACTIVE);
@@ -1625,6 +1625,9 @@ void MenuSlist_Init(menuslist_t * self)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.7  2001/10/08 17:22:11  dj_jl
 //  Changed slist to be returned by engine
 //

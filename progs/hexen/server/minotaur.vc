@@ -62,8 +62,7 @@ void A_Summon(mobj_t * actor)
 	mobj_t *mo;
 	mobj_t *master;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 		MT_MINOTAUR);
 	if (mo)
 	{
@@ -491,10 +490,10 @@ void A_MinotaurFade2(mobj_t * actor)
 
 void A_MntrFloorFire(mobj_t * actor)
 {
-	mobj_t *mo;
+	Missile *mo;
 
 	actor->origin.z = actor->floorz;
-	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
+	mo = (Missile *)P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
 		actor->origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MT_MNTRFX3);
 	mo->target = actor->target;
 	mo->velocity.x = 0.00001;	// Force block checking
@@ -516,6 +515,9 @@ void A_SmokePuffExit(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

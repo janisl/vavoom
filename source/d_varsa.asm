@@ -15,6 +15,8 @@
  externdef _bbextentt
  externdef _cacheblock
  externdef _cachewidth
+ externdef _d_skysmask
+ externdef _d_skytmask
  externdef _d_transluc
  externdef _d_srctranstab
  externdef _d_dsttranstab
@@ -268,11 +270,15 @@ _bbextents dd 0
 _bbextentt dd 0
  public _cacheblock
  public _cachewidth
+ public _d_skysmask
+ public _d_skytmask
  public _d_transluc
  public _d_srctranstab
  public _d_dsttranstab
 _cacheblock dd 0
 _cachewidth dd 0
+_d_skysmask dd 0
+_d_skytmask dd 0
 _d_transluc dd 0
 _d_srctranstab dd 0
 _d_dsttranstab dd 0

@@ -159,22 +159,22 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 //
 //==========================================================================
 
-void generic_mobj_start(mobj_t * self, mthing_t * mthing)
+void mobj_t::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	self->lastlook = P_Random() % MAXPLAYERS;
+	lastlook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
-	st = &states[self->spawnstate];
+	st = &states[spawnstate];
 
-	self->time = st->time;
-	self->sprite = st->sprite;
-	self->frame = st->frame;
-	self->model_index = st->model_index;
-	self->alias_frame = st->model_frame;
-	self->statenum = st->statenum;
-	self->nextstate = st->nextstate;
+	time = st->time;
+	sprite = st->sprite;
+	frame = st->frame;
+	model_index = st->model_index;
+	alias_frame = st->model_frame;
+	statenum = st->statenum;
+	nextstate = st->nextstate;
 
 	if (mthing)
 	{
@@ -182,46 +182,46 @@ void generic_mobj_start(mobj_t * self, mthing_t * mthing)
 		float y;
 		float z;
 
-		CopyMThing(mthing, &self->spawnpoint);
+		CopyMThing(mthing, &spawnpoint);
 
 		x = mthing->x;
 		y = mthing->y;
-		if (self->flags & MF_SPAWNCEILING)
+		if (flags & MF_SPAWNCEILING)
 			z = ONCEILINGZ;
 		else
 			z = ONFLOORZ;
-		SetOrigin(self, vector(x, y, z));
+		SetOrigin(this, vector(x, y, z));
 		if (z == ONFLOORZ)
 		{
-			self->origin.z += mthing->height;
+			origin.z += mthing->height;
 		}
 		else if (z == ONCEILINGZ)
 		{
-			self->origin.z -= mthing->height;
+			origin.z -= mthing->height;
 		}
-		P_SetThingPosition(self);
+		P_SetThingPosition(this);
 
-		self->tid = mthing->tid;
-		self->special = mthing->special;
-		self->args[0] = mthing->arg1;
-		self->args[1] = mthing->arg2;
-		self->args[2] = mthing->arg3;
-		self->args[3] = mthing->arg4;
-		self->args[4] = mthing->arg5;
-		if (self->time > 0.0)
-			self->time = 0.1 + Random() * self->time;
-		if (self->flags & MF_COUNTKILL)
+		tid = mthing->tid;
+		special = mthing->special;
+		args[0] = mthing->arg1;
+		args[1] = mthing->arg2;
+		args[2] = mthing->arg3;
+		args[3] = mthing->arg4;
+		args[4] = mthing->arg5;
+		if (time > 0.0)
+			time = 0.1 + Random() * time;
+		if (flags & MF_COUNTKILL)
 			level->totalkills++;
-		if (self->flags & MF_COUNTITEM)
+		if (flags & MF_COUNTITEM)
 			level->totalitems++;
 
-		self->angles.yaw = ANG45 * (mthing->angle / 45);
+		angles.yaw = ANG45 * (mthing->angle / 45);
 		if (mthing->options & MTF_AMBUSH)
-			self->flags |= MF_AMBUSH;
+			flags |= MF_AMBUSH;
 	}
 	else
 	{
-		SetOrigin(self, self->origin);
+		SetOrigin(this, origin);
 	}
 }
 
@@ -971,6 +971,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.9  2001/10/09 17:41:16  dj_jl
 //  Beautification
 //

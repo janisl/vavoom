@@ -446,7 +446,7 @@ struct mobj_t : public thinker_t
 	TVec			velocity;
 
 	//More drawing info: to determine current sprite.
-	TAVec			angles;	// orientation
+	TBAMVec			angles;	// orientation
 	int				spritetype;
 	int				sprite;	// used to find patch_t and flip value
 	int				frame;	// might be ORed with FF_FULLBRIGHT
@@ -615,9 +615,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.9  2001/10/09 17:29:47  dj_jl
 //	Removed some mobj fields not used by engine
-//
+//	
 //	Revision 1.8  2001/10/08 17:33:01  dj_jl
 //	Different client and server level structures
 //	

@@ -207,17 +207,14 @@ extern "C" {
 void D_DrawSpans8_8(espan_t*);
 void D_DrawSpans16_8(espan_t *pspan);
 void D_DrawSkySpans_8(espan_t*);
-void D_DrawDoubleSkySpans_8(espan_t*);
 
 void D_DrawSpans8_16(espan_t*);
 void D_DrawSpans16_16(espan_t *pspan);
 void D_DrawSkySpans_16(espan_t*);
-void D_DrawDoubleSkySpans_16(espan_t*);
 
 void D_DrawSpans8_32(espan_t*);
 void D_DrawSpans16_32(espan_t *pspan);
 void D_DrawSkySpans_32(espan_t*);
-void D_DrawDoubleSkySpans_32(espan_t*);
 
 void D_DrawZSpans(espan_t*);
 
@@ -254,7 +251,7 @@ void SetSpriteLump(int, dword, int);
 extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
 void D_AliasClipTriangle(mtriangle_t *ptri);
 void D_PolysetSetupDrawer(int);
-extern "C" void D_PolysetDraw(void);
+void D_PolysetDraw(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -273,6 +270,8 @@ extern fixed_t			bbextents;
 extern fixed_t			bbextentt;
 extern void*			cacheblock;
 extern int				cachewidth;
+extern int				d_skysmask;
+extern int				d_skytmask;
 extern byte*			d_transluc;
 extern word*			d_srctranstab;
 extern word*			d_dsttranstab;
@@ -284,7 +283,6 @@ extern spritespanfunc_t	spritespanfunc;
 
 extern spanfunc_t		D_DrawSpans;
 extern spanfunc_t		D_DrawSkySpans;
-extern spanfunc_t		D_DrawDoubleSkySpans;
 extern spritespanfunc_t	D_DrawSpriteSpans;
 extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
 extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;
@@ -362,8 +360,8 @@ extern auxvert_t		*pauxverts;
 
 inline dword MakeCol8(byte r, byte g, byte b)
 {
-	return d_rgbtable[((r << 5) & 0x7c00) +
-		(g & 0x3e0) + ((b >> 5) & 0x1f)];
+	return d_rgbtable[((r << 7) & 0x7c00) +
+		((g << 2) & 0x3e0) + ((b >> 3) & 0x1f)];
 }
 
 //==========================================================================
@@ -533,9 +531,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.12  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.11  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

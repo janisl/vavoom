@@ -173,6 +173,9 @@ class TOpenGLDrawer : public TDrawer
 	GLuint		*flat_id;
 	bool		*flat_sent;
 
+	GLuint		*skymap_id;
+	bool		*skymap_sent;
+
 	GLuint		*sprite_id;
 	bool		*sprite_sent;
 	float		*spriteiw;
@@ -210,6 +213,8 @@ class TOpenGLDrawer : public TDrawer
 	TCvarI		ext_multitexture;
 	TCvarI		ext_point_parameters;
 	TCvarI		ext_anisotropy;
+	TCvarF		maxdist;
+	TCvarI		model_lighting;
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
@@ -277,9 +282,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.15  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.14  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

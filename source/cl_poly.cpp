@@ -122,7 +122,7 @@ static void MovePolyobj(int num, float x, float y)
 //
 //==========================================================================
 
-static void RotatePt(angle_t an, TVec &point, const TVec &startSpot)
+static void RotatePt(float an, TVec &point, const TVec &startSpot)
 {
 	float	tr_x;
 	float	tr_y;
@@ -142,7 +142,7 @@ static void RotatePt(angle_t an, TVec &point, const TVec &startSpot)
 //
 //==========================================================================
 
-static void RotatePolyobj(int num, angle_t angle)
+static void RotatePolyobj(int num, float angle)
 {
 	int count;
 	seg_t **segList;
@@ -150,7 +150,7 @@ static void RotatePolyobj(int num, angle_t angle)
 	polyobj_t *po;
 
 	po = &cl_level.polyobjs[num];
-	if (po->angle == angle)
+	if (po->angle == DEG2BAM(angle))
 		return;
 
 	segList = po->segs;
@@ -161,7 +161,7 @@ static void RotatePolyobj(int num, angle_t angle)
 		RotatePt(angle, *(*segList)->v1, po->startSpot);
 	}
 
-	po->angle = angle;
+	po->angle = DEG2BAM(angle);
 	UpdatePolySegs(po);
 }
 
@@ -429,7 +429,7 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 //
 //==========================================================================
 
-void CL_PO_Update(int i, float x, float y, angle_t angle)
+void CL_PO_Update(int i, float x, float y, float angle)
 {
 	if (!cl_level.numpolyobjs)
 		return;
@@ -441,9 +441,12 @@ void CL_PO_Update(int i, float x, float y, angle_t angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.4  2001/09/20 16:27:02  dj_jl
 //	Removed degenmobj
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

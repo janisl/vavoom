@@ -29,15 +29,13 @@
 //**
 //**************************************************************************
 
-void generic_mobj_start(mobj_t *self, mthing_t *mthing);
-
 //==========================================================================
 //
 //	misc_0
 //
 //==========================================================================
 
-class misc_0:mobj_t
+class misc_0:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -51,7 +49,7 @@ class misc_0:mobj_t
 		flags = MF_SHOOTABLE|MF_NOSECTOR;
 		spawnstate = S_1295;
 		deathstate = S_239;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -61,7 +59,7 @@ class misc_0:mobj_t
 //
 //==========================================================================
 
-class misc_player:mobj_t
+class misc_player:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -81,7 +79,7 @@ class misc_player:mobj_t
 		xdeathstate = S_PLAY_XDIE1;
 		sound_pain = GetSoundID("Sound10");
 		sound_death = GetSoundID("Sound17");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -91,7 +89,7 @@ class misc_player:mobj_t
 //
 //==========================================================================
 
-class npc_merchander1:mobj_t
+class npc_merchander1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -114,7 +112,7 @@ class npc_merchander1:mobj_t
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -124,7 +122,7 @@ class npc_merchander1:mobj_t
 //
 //==========================================================================
 
-class npc_merchander2:mobj_t
+class npc_merchander2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -149,7 +147,7 @@ class npc_merchander2:mobj_t
 		painstate = S_MERCHANDER_PAIN1;
 		sound_active = GetSoundID("Sound52");
 		sound_pain = GetSoundID("Sound53");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -159,7 +157,7 @@ class npc_merchander2:mobj_t
 //
 //==========================================================================
 
-class npc_merchander3:mobj_t
+class npc_merchander3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -183,7 +181,7 @@ class npc_merchander3:mobj_t
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -193,7 +191,7 @@ class npc_merchander3:mobj_t
 //
 //==========================================================================
 
-class npc_merchander4:mobj_t
+class npc_merchander4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -217,7 +215,7 @@ class npc_merchander4:mobj_t
 		seestate = S_MERCHANDER_PAIN1;
 		painstate = S_MERCHANDER_PAIN1;
 		sound_pain = GetSoundID("Sound12");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -227,7 +225,7 @@ class npc_merchander4:mobj_t
 //
 //==========================================================================
 
-class misc_6:mobj_t
+class misc_6:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -259,7 +257,7 @@ class misc_6:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -269,7 +267,7 @@ class misc_6:mobj_t
 //
 //==========================================================================
 
-class misc_7:mobj_t
+class misc_7:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -301,7 +299,7 @@ class misc_7:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -311,7 +309,7 @@ class misc_7:mobj_t
 //
 //==========================================================================
 
-class misc_8:mobj_t
+class misc_8:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -343,7 +341,7 @@ class misc_8:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -353,7 +351,7 @@ class misc_8:mobj_t
 //
 //==========================================================================
 
-class misc_9:mobj_t
+class misc_9:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -386,7 +384,7 @@ class misc_9:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -396,7 +394,7 @@ class misc_9:mobj_t
 //
 //==========================================================================
 
-class misc_10:mobj_t
+class misc_10:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -429,7 +427,7 @@ class misc_10:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -439,7 +437,7 @@ class misc_10:mobj_t
 //
 //==========================================================================
 
-class misc_11:mobj_t
+class misc_11:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -472,7 +470,7 @@ class misc_11:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -482,7 +480,7 @@ class misc_11:mobj_t
 //
 //==========================================================================
 
-class misc_12:mobj_t
+class misc_12:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -515,7 +513,7 @@ class misc_12:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -525,7 +523,7 @@ class misc_12:mobj_t
 //
 //==========================================================================
 
-class misc_13:mobj_t
+class misc_13:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -558,7 +556,7 @@ class misc_13:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -568,7 +566,7 @@ class misc_13:mobj_t
 //
 //==========================================================================
 
-class misc_14:mobj_t
+class misc_14:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -601,7 +599,7 @@ class misc_14:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -611,7 +609,7 @@ class misc_14:mobj_t
 //
 //==========================================================================
 
-class misc_15:mobj_t
+class misc_15:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -644,7 +642,7 @@ class misc_15:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -654,7 +652,7 @@ class misc_15:mobj_t
 //
 //==========================================================================
 
-class misc_16:mobj_t
+class misc_16:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -687,7 +685,7 @@ class misc_16:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -697,7 +695,7 @@ class misc_16:mobj_t
 //
 //==========================================================================
 
-class misc_17:mobj_t
+class misc_17:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -730,7 +728,7 @@ class misc_17:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -740,7 +738,7 @@ class misc_17:mobj_t
 //
 //==========================================================================
 
-class misc_18:mobj_t
+class misc_18:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -773,7 +771,7 @@ class misc_18:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -783,7 +781,7 @@ class misc_18:mobj_t
 //
 //==========================================================================
 
-class misc_19:mobj_t
+class misc_19:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -816,7 +814,7 @@ class misc_19:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -826,7 +824,7 @@ class misc_19:mobj_t
 //
 //==========================================================================
 
-class misc_20:mobj_t
+class misc_20:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -859,7 +857,7 @@ class misc_20:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -869,7 +867,7 @@ class misc_20:mobj_t
 //
 //==========================================================================
 
-class misc_21:mobj_t
+class misc_21:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -902,7 +900,7 @@ class misc_21:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -912,7 +910,7 @@ class misc_21:mobj_t
 //
 //==========================================================================
 
-class misc_22:mobj_t
+class misc_22:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -945,7 +943,7 @@ class misc_22:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -955,7 +953,7 @@ class misc_22:mobj_t
 //
 //==========================================================================
 
-class misc_23:mobj_t
+class misc_23:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -988,7 +986,7 @@ class misc_23:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -998,7 +996,7 @@ class misc_23:mobj_t
 //
 //==========================================================================
 
-class misc_24:mobj_t
+class misc_24:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1031,7 +1029,7 @@ class misc_24:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1041,7 +1039,7 @@ class misc_24:mobj_t
 //
 //==========================================================================
 
-class misc_25:mobj_t
+class misc_25:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1074,7 +1072,7 @@ class misc_25:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1084,7 +1082,7 @@ class misc_25:mobj_t
 //
 //==========================================================================
 
-class misc_26:mobj_t
+class misc_26:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1117,7 +1115,7 @@ class misc_26:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1127,7 +1125,7 @@ class misc_26:mobj_t
 //
 //==========================================================================
 
-class misc_27:mobj_t
+class misc_27:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1160,7 +1158,7 @@ class misc_27:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1170,7 +1168,7 @@ class misc_27:mobj_t
 //
 //==========================================================================
 
-class misc_28:mobj_t
+class misc_28:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1192,7 +1190,7 @@ class misc_28:mobj_t
 		painstate = S_421;
 		deathstate = S_410;
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1202,7 +1200,7 @@ class misc_28:mobj_t
 //
 //==========================================================================
 
-class misc_29:mobj_t
+class misc_29:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1224,7 +1222,7 @@ class misc_29:mobj_t
 		painstate = S_423;
 		deathstate = S_633;
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1234,7 +1232,7 @@ class misc_29:mobj_t
 //
 //==========================================================================
 
-class misc_30:mobj_t
+class misc_30:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1248,7 +1246,7 @@ class misc_30:mobj_t
 		flags = MF_SHOOTABLE|MF_NOSECTOR;
 		spawnstate = S_424;
 		sound_active = GetSoundID("Sound54");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1258,7 +1256,7 @@ class misc_30:mobj_t
 //
 //==========================================================================
 
-class misc_31:mobj_t
+class misc_31:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1271,7 +1269,7 @@ class misc_31:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_426;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1281,7 +1279,7 @@ class misc_31:mobj_t
 //
 //==========================================================================
 
-class misc_32:mobj_t
+class misc_32:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1294,7 +1292,7 @@ class misc_32:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_429;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1304,7 +1302,7 @@ class misc_32:mobj_t
 //
 //==========================================================================
 
-class misc_33:mobj_t
+class misc_33:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1317,7 +1315,7 @@ class misc_33:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_432;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1327,7 +1325,7 @@ class misc_33:mobj_t
 //
 //==========================================================================
 
-class misc_34:mobj_t
+class misc_34:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1340,7 +1338,7 @@ class misc_34:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_435;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1350,7 +1348,7 @@ class misc_34:mobj_t
 //
 //==========================================================================
 
-class misc_35:mobj_t
+class misc_35:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1363,7 +1361,7 @@ class misc_35:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_438;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1373,7 +1371,7 @@ class misc_35:mobj_t
 //
 //==========================================================================
 
-class misc_36:mobj_t
+class misc_36:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1386,7 +1384,7 @@ class misc_36:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_441;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1396,7 +1394,7 @@ class misc_36:mobj_t
 //
 //==========================================================================
 
-class misc_37:mobj_t
+class misc_37:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1422,7 +1420,7 @@ class misc_37:mobj_t
 		sound_active = GetSoundID("Sound99");
 		sound_pain = GetSoundID("Sound100");
 		sound_death = GetSoundID("Sound100");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1432,7 +1430,7 @@ class misc_37:mobj_t
 //
 //==========================================================================
 
-class misc_38:mobj_t
+class misc_38:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1462,7 +1460,7 @@ class misc_38:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1472,7 +1470,7 @@ class misc_38:mobj_t
 //
 //==========================================================================
 
-class misc_39:mobj_t
+class misc_39:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1502,7 +1500,7 @@ class misc_39:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1512,7 +1510,7 @@ class misc_39:mobj_t
 //
 //==========================================================================
 
-class misc_40:mobj_t
+class misc_40:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1542,7 +1540,7 @@ class misc_40:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1552,7 +1550,7 @@ class misc_40:mobj_t
 //
 //==========================================================================
 
-class misc_41:mobj_t
+class misc_41:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1582,7 +1580,7 @@ class misc_41:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1592,7 +1590,7 @@ class misc_41:mobj_t
 //
 //==========================================================================
 
-class misc_42:mobj_t
+class misc_42:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1622,7 +1620,7 @@ class misc_42:mobj_t
 		sound_attack = GetSoundID("Sound2");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound61");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1632,7 +1630,7 @@ class misc_42:mobj_t
 //
 //==========================================================================
 
-class misc_43:mobj_t
+class misc_43:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1663,7 +1661,7 @@ class misc_43:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1673,7 +1671,7 @@ class misc_43:mobj_t
 //
 //==========================================================================
 
-class misc_44:mobj_t
+class misc_44:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1704,7 +1702,7 @@ class misc_44:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1714,7 +1712,7 @@ class misc_44:mobj_t
 //
 //==========================================================================
 
-class misc_45:mobj_t
+class misc_45:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1745,7 +1743,7 @@ class misc_45:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1755,7 +1753,7 @@ class misc_45:mobj_t
 //
 //==========================================================================
 
-class misc_46:mobj_t
+class misc_46:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1786,7 +1784,7 @@ class misc_46:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1796,7 +1794,7 @@ class misc_46:mobj_t
 //
 //==========================================================================
 
-class misc_47:mobj_t
+class misc_47:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1827,7 +1825,7 @@ class misc_47:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1837,7 +1835,7 @@ class misc_47:mobj_t
 //
 //==========================================================================
 
-class misc_48:mobj_t
+class misc_48:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1868,7 +1866,7 @@ class misc_48:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound20");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1878,7 +1876,7 @@ class misc_48:mobj_t
 //
 //==========================================================================
 
-class misc_49:mobj_t
+class misc_49:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1911,7 +1909,7 @@ class misc_49:mobj_t
 		sound_sight = GetSoundID("Sound9");
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1921,7 +1919,7 @@ class misc_49:mobj_t
 //
 //==========================================================================
 
-class misc_50:mobj_t
+class misc_50:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1952,7 +1950,7 @@ class misc_50:mobj_t
 		sound_active = GetSoundID("Sound47");
 		sound_pain = GetSoundID("Sound12");
 		sound_death = GetSoundID("Sound19");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1962,7 +1960,7 @@ class misc_50:mobj_t
 //
 //==========================================================================
 
-class misc_51:mobj_t
+class misc_51:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1977,7 +1975,7 @@ class misc_51:mobj_t
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_562;
 		sound_sight = GetSoundID("Sound72");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1987,7 +1985,7 @@ class misc_51:mobj_t
 //
 //==========================================================================
 
-class misc_52:mobj_t
+class misc_52:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2018,7 +2016,7 @@ class misc_52:mobj_t
 		sound_active = GetSoundID("Sound94");
 		sound_pain = GetSoundID("Sound92");
 		sound_death = GetSoundID("Sound93");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2028,7 +2026,7 @@ class misc_52:mobj_t
 //
 //==========================================================================
 
-class misc_53:mobj_t
+class misc_53:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2060,7 +2058,7 @@ class misc_53:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2070,7 +2068,7 @@ class misc_53:mobj_t
 //
 //==========================================================================
 
-class misc_54:mobj_t
+class misc_54:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2103,7 +2101,7 @@ class misc_54:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2113,7 +2111,7 @@ class misc_54:mobj_t
 //
 //==========================================================================
 
-class misc_55:mobj_t
+class misc_55:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2146,7 +2144,7 @@ class misc_55:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2156,7 +2154,7 @@ class misc_55:mobj_t
 //
 //==========================================================================
 
-class misc_56:mobj_t
+class misc_56:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2189,7 +2187,7 @@ class misc_56:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2199,7 +2197,7 @@ class misc_56:mobj_t
 //
 //==========================================================================
 
-class misc_57:mobj_t
+class misc_57:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2232,7 +2230,7 @@ class misc_57:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2242,7 +2240,7 @@ class misc_57:mobj_t
 //
 //==========================================================================
 
-class misc_58:mobj_t
+class misc_58:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2275,7 +2273,7 @@ class misc_58:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2285,7 +2283,7 @@ class misc_58:mobj_t
 //
 //==========================================================================
 
-class misc_59:mobj_t
+class misc_59:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2317,7 +2315,7 @@ class misc_59:mobj_t
 		sound_attack = GetSoundID("Sound5");
 		sound_pain = GetSoundID("Sound16");
 		sound_death = GetSoundID("Sound21");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2327,7 +2325,7 @@ class misc_59:mobj_t
 //
 //==========================================================================
 
-class misc_60:mobj_t
+class misc_60:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2355,7 +2353,7 @@ class misc_60:mobj_t
 		sound_active = GetSoundID("Sound67");
 		sound_pain = GetSoundID("Sound64");
 		sound_death = GetSoundID("Sound65");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2365,7 +2363,7 @@ class misc_60:mobj_t
 //
 //==========================================================================
 
-class misc_61:mobj_t
+class misc_61:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2393,7 +2391,7 @@ class misc_61:mobj_t
 		sound_active = GetSoundID("Sound67");
 		sound_pain = GetSoundID("Sound64");
 		sound_death = GetSoundID("Sound84");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2403,7 +2401,7 @@ class misc_61:mobj_t
 //
 //==========================================================================
 
-class misc_62:mobj_t
+class misc_62:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2433,7 +2431,7 @@ class misc_62:mobj_t
 		sound_active = GetSoundID("Sound85");
 		sound_pain = GetSoundID("Sound83");
 		sound_death = GetSoundID("Sound84");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2443,7 +2441,7 @@ class misc_62:mobj_t
 //
 //==========================================================================
 
-class misc_63:mobj_t
+class misc_63:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2466,7 +2464,7 @@ class misc_63:mobj_t
 		painstate = S_741;
 		crashstate = S_741;
 		deathstate = S_748;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2476,7 +2474,7 @@ class misc_63:mobj_t
 //
 //==========================================================================
 
-class misc_64:mobj_t
+class misc_64:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2505,7 +2503,7 @@ class misc_64:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound111");
 		sound_death = GetSoundID("Sound19");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2515,7 +2513,7 @@ class misc_64:mobj_t
 //
 //==========================================================================
 
-class misc_65:mobj_t
+class misc_65:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2546,7 +2544,7 @@ class misc_65:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2556,7 +2554,7 @@ class misc_65:mobj_t
 //
 //==========================================================================
 
-class misc_66:mobj_t
+class misc_66:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2570,7 +2568,7 @@ class misc_66:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLATION2;
 		spawnstate = S_834;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2580,7 +2578,7 @@ class misc_66:mobj_t
 //
 //==========================================================================
 
-class misc_67:mobj_t
+class misc_67:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2593,7 +2591,7 @@ class misc_67:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_843;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2603,7 +2601,7 @@ class misc_67:mobj_t
 //
 //==========================================================================
 
-class misc_68:mobj_t
+class misc_68:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2616,7 +2614,7 @@ class misc_68:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_850;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2626,7 +2624,7 @@ class misc_68:mobj_t
 //
 //==========================================================================
 
-class misc_69:mobj_t
+class misc_69:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2657,7 +2655,7 @@ class misc_69:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2667,7 +2665,7 @@ class misc_69:mobj_t
 //
 //==========================================================================
 
-class misc_70:mobj_t
+class misc_70:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2698,7 +2696,7 @@ class misc_70:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2708,7 +2706,7 @@ class misc_70:mobj_t
 //
 //==========================================================================
 
-class misc_71:mobj_t
+class misc_71:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2739,7 +2737,7 @@ class misc_71:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2749,7 +2747,7 @@ class misc_71:mobj_t
 //
 //==========================================================================
 
-class misc_72:mobj_t
+class misc_72:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2780,7 +2778,7 @@ class misc_72:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2790,7 +2788,7 @@ class misc_72:mobj_t
 //
 //==========================================================================
 
-class misc_73:mobj_t
+class misc_73:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2821,7 +2819,7 @@ class misc_73:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound129");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2831,7 +2829,7 @@ class misc_73:mobj_t
 //
 //==========================================================================
 
-class misc_74:mobj_t
+class misc_74:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2862,7 +2860,7 @@ class misc_74:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound126");
 		sound_death = GetSoundID("Sound128");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2872,7 +2870,7 @@ class misc_74:mobj_t
 //
 //==========================================================================
 
-class misc_75:mobj_t
+class misc_75:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2885,7 +2883,7 @@ class misc_75:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1017;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2895,7 +2893,7 @@ class misc_75:mobj_t
 //
 //==========================================================================
 
-class misc_76:mobj_t
+class misc_76:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2910,7 +2908,7 @@ class misc_76:mobj_t
 		spawnstate = S_1018;
 		seestate = S_1019;
 		sound_sight = GetSoundID("Sound19");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2920,7 +2918,7 @@ class misc_76:mobj_t
 //
 //==========================================================================
 
-class misc_77:mobj_t
+class misc_77:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2938,7 +2936,7 @@ class misc_77:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2948,7 +2946,7 @@ class misc_77:mobj_t
 //
 //==========================================================================
 
-class misc_78:mobj_t
+class misc_78:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2966,7 +2964,7 @@ class misc_78:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2976,7 +2974,7 @@ class misc_78:mobj_t
 //
 //==========================================================================
 
-class misc_79:mobj_t
+class misc_79:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2994,7 +2992,7 @@ class misc_79:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3004,7 +3002,7 @@ class misc_79:mobj_t
 //
 //==========================================================================
 
-class misc_80:mobj_t
+class misc_80:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3022,7 +3020,7 @@ class misc_80:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3032,7 +3030,7 @@ class misc_80:mobj_t
 //
 //==========================================================================
 
-class misc_81:mobj_t
+class misc_81:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3050,7 +3048,7 @@ class misc_81:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3060,7 +3058,7 @@ class misc_81:mobj_t
 //
 //==========================================================================
 
-class misc_82:mobj_t
+class misc_82:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3073,7 +3071,7 @@ class misc_82:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF;
 		spawnstate = S_1032;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3083,7 +3081,7 @@ class misc_82:mobj_t
 //
 //==========================================================================
 
-class misc_83:mobj_t
+class misc_83:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3101,7 +3099,7 @@ class misc_83:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3111,7 +3109,7 @@ class misc_83:mobj_t
 //
 //==========================================================================
 
-class misc_84:mobj_t
+class misc_84:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3129,7 +3127,7 @@ class misc_84:mobj_t
 		deathstate = S_149;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3139,7 +3137,7 @@ class misc_84:mobj_t
 //
 //==========================================================================
 
-class misc_85:mobj_t
+class misc_85:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3157,7 +3155,7 @@ class misc_85:mobj_t
 		deathstate = S_153;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3167,7 +3165,7 @@ class misc_85:mobj_t
 //
 //==========================================================================
 
-class misc_86:mobj_t
+class misc_86:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3183,7 +3181,7 @@ class misc_86:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1045;
 		deathstate = S_148;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3193,7 +3191,7 @@ class misc_86:mobj_t
 //
 //==========================================================================
 
-class misc_87:mobj_t
+class misc_87:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3211,7 +3209,7 @@ class misc_87:mobj_t
 		deathstate = S_148;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3221,7 +3219,7 @@ class misc_87:mobj_t
 //
 //==========================================================================
 
-class misc_88:mobj_t
+class misc_88:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3239,7 +3237,7 @@ class misc_88:mobj_t
 		deathstate = S_148;
 		sound_sight = GetSoundID("Sound106");
 		sound_death = GetSoundID("Sound107");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3249,7 +3247,7 @@ class misc_88:mobj_t
 //
 //==========================================================================
 
-class misc_89:mobj_t
+class misc_89:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3276,7 +3274,7 @@ class misc_89:mobj_t
 		sound_sight = GetSoundID("Sound78");
 		sound_active = GetSoundID("Sound80");
 		sound_death = GetSoundID("Sound79");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3286,7 +3284,7 @@ class misc_89:mobj_t
 //
 //==========================================================================
 
-class misc_90:mobj_t
+class misc_90:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3315,7 +3313,7 @@ class misc_90:mobj_t
 		sound_attack = GetSoundID("Sound98");
 		sound_pain = GetSoundID("Sound98");
 		sound_death = GetSoundID("Sound97");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3325,7 +3323,7 @@ class misc_90:mobj_t
 //
 //==========================================================================
 
-class misc_91:mobj_t
+class misc_91:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3350,7 +3348,7 @@ class misc_91:mobj_t
 		sound_sight = GetSoundID("Sound116");
 		sound_active = GetSoundID("Sound115");
 		sound_death = GetSoundID("Sound114");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3360,7 +3358,7 @@ class misc_91:mobj_t
 //
 //==========================================================================
 
-class misc_92:mobj_t
+class misc_92:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3390,7 +3388,7 @@ class misc_92:mobj_t
 		sound_attack = GetSoundID("Sound90");
 		sound_pain = GetSoundID("Sound109");
 		sound_death = GetSoundID("Sound65");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3400,7 +3398,7 @@ class misc_92:mobj_t
 //
 //==========================================================================
 
-class misc_93:mobj_t
+class misc_93:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3413,7 +3411,7 @@ class misc_93:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOBLOOD;
 		spawnstate = S_1180;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3423,7 +3421,7 @@ class misc_93:mobj_t
 //
 //==========================================================================
 
-class misc_94:mobj_t
+class misc_94:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3441,7 +3439,7 @@ class misc_94:mobj_t
 		deathstate = S_241;
 		sound_sight = GetSoundID("Sound101");
 		sound_active = GetSoundID("Sound1");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3451,7 +3449,7 @@ class misc_94:mobj_t
 //
 //==========================================================================
 
-class misc_95:mobj_t
+class misc_95:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3465,7 +3463,7 @@ class misc_95:mobj_t
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_242;
 		sound_sight = GetSoundID("Sound102");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3475,7 +3473,7 @@ class misc_95:mobj_t
 //
 //==========================================================================
 
-class misc_96:mobj_t
+class misc_96:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3493,7 +3491,7 @@ class misc_96:mobj_t
 		deathstate = S_262;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3503,7 +3501,7 @@ class misc_96:mobj_t
 //
 //==========================================================================
 
-class misc_97:mobj_t
+class misc_97:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3521,7 +3519,7 @@ class misc_97:mobj_t
 		deathstate = S_261;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3531,7 +3529,7 @@ class misc_97:mobj_t
 //
 //==========================================================================
 
-class misc_98:mobj_t
+class misc_98:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3549,7 +3547,7 @@ class misc_98:mobj_t
 		deathstate = S_262;
 		sound_sight = GetSoundID("Sound71");
 		sound_death = GetSoundID("Sound6");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3559,7 +3557,7 @@ class misc_98:mobj_t
 //
 //==========================================================================
 
-class misc_99:mobj_t
+class misc_99:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3578,7 +3576,7 @@ class misc_99:mobj_t
 		sound_sight = GetSoundID("Sound1");
 		sound_active = GetSoundID("Sound1");
 		sound_death = GetSoundID("Sound68");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3588,7 +3586,7 @@ class misc_99:mobj_t
 //
 //==========================================================================
 
-class misc_100:mobj_t
+class misc_100:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3606,7 +3604,7 @@ class misc_100:mobj_t
 		deathstate = S_248;
 		sound_sight = GetSoundID("Sound1");
 		sound_active = GetSoundID("Sound1");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3616,7 +3614,7 @@ class misc_100:mobj_t
 //
 //==========================================================================
 
-class misc_101:mobj_t
+class misc_101:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3631,7 +3629,7 @@ class misc_101:mobj_t
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_173;
 		deathstate = S_135;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3641,7 +3639,7 @@ class misc_101:mobj_t
 //
 //==========================================================================
 
-class misc_102:mobj_t
+class misc_102:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3658,7 +3656,7 @@ class misc_102:mobj_t
 		spawnstate = S_173;
 		deathstate = S_131;
 		sound_sight = GetSoundID("Sound88");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3668,7 +3666,7 @@ class misc_102:mobj_t
 //
 //==========================================================================
 
-class misc_103:mobj_t
+class misc_103:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3686,7 +3684,7 @@ class misc_103:mobj_t
 		deathstate = S_194;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3696,7 +3694,7 @@ class misc_103:mobj_t
 //
 //==========================================================================
 
-class misc_104:mobj_t
+class misc_104:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3714,7 +3712,7 @@ class misc_104:mobj_t
 		deathstate = S_216;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3724,7 +3722,7 @@ class misc_104:mobj_t
 //
 //==========================================================================
 
-class misc_105:mobj_t
+class misc_105:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3742,7 +3740,7 @@ class misc_105:mobj_t
 		deathstate = S_230;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3752,7 +3750,7 @@ class misc_105:mobj_t
 //
 //==========================================================================
 
-class misc_106:mobj_t
+class misc_106:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3769,7 +3767,7 @@ class misc_106:mobj_t
 		deathstate = S_185;
 		sound_sight = GetSoundID("Sound103");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3779,7 +3777,7 @@ class misc_106:mobj_t
 //
 //==========================================================================
 
-class misc_107:mobj_t
+class misc_107:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3793,7 +3791,7 @@ class misc_107:mobj_t
 			reactiontime = 80;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_TRANSLATION2;
 		spawnstate = S_231;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3803,7 +3801,7 @@ class misc_107:mobj_t
 //
 //==========================================================================
 
-class misc_108:mobj_t
+class misc_108:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3817,7 +3815,7 @@ class misc_108:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_217;
 		deathstate = S_226;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3827,7 +3825,7 @@ class misc_108:mobj_t
 //
 //==========================================================================
 
-class misc_109:mobj_t
+class misc_109:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3845,7 +3843,7 @@ class misc_109:mobj_t
 		deathstate = S_253;
 		sound_sight = GetSoundID("Sound87");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3855,7 +3853,7 @@ class misc_109:mobj_t
 //
 //==========================================================================
 
-class misc_110:mobj_t
+class misc_110:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3871,7 +3869,7 @@ class misc_110:mobj_t
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_258;
 		deathstate = S_260;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3881,7 +3879,7 @@ class misc_110:mobj_t
 //
 //==========================================================================
 
-class misc_111:mobj_t
+class misc_111:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3898,7 +3896,7 @@ class misc_111:mobj_t
 		spawnstate = S_1188;
 		deathstate = S_1190;
 		sound_sight = GetSoundID("Sound7");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3908,7 +3906,7 @@ class misc_111:mobj_t
 //
 //==========================================================================
 
-class misc_112:mobj_t
+class misc_112:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3925,7 +3923,7 @@ class misc_112:mobj_t
 		spawnstate = S_1188;
 		deathstate = S_1190;
 		sound_sight = GetSoundID("Sound7");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3935,7 +3933,7 @@ class misc_112:mobj_t
 //
 //==========================================================================
 
-class misc_113:mobj_t
+class misc_113:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3948,7 +3946,7 @@ class misc_113:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_175;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3958,7 +3956,7 @@ class misc_113:mobj_t
 //
 //==========================================================================
 
-class misc_114:mobj_t
+class misc_114:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3972,7 +3970,7 @@ class misc_114:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_PUFF1;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3982,7 +3980,7 @@ class misc_114:mobj_t
 //
 //==========================================================================
 
-class misc_115:mobj_t
+class misc_115:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3995,7 +3993,7 @@ class misc_115:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_140;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4005,7 +4003,7 @@ class misc_115:mobj_t
 //
 //==========================================================================
 
-class misc_116:mobj_t
+class misc_116:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4018,7 +4016,7 @@ class misc_116:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_159;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4028,7 +4026,7 @@ class misc_116:mobj_t
 //
 //==========================================================================
 
-class misc_teleport_fog:mobj_t
+class misc_teleport_fog:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4042,7 +4040,7 @@ class misc_teleport_fog:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_TFOG1;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4052,7 +4050,7 @@ class misc_teleport_fog:mobj_t
 //
 //==========================================================================
 
-class misc_item_respawn_fog:mobj_t
+class misc_item_respawn_fog:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4066,7 +4064,7 @@ class misc_item_respawn_fog:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_IFOG1;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4076,7 +4074,7 @@ class misc_item_respawn_fog:mobj_t
 //
 //==========================================================================
 
-class misc_teleport_spot:mobj_t
+class misc_teleport_spot:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4088,7 +4086,7 @@ class misc_teleport_spot:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		flags = MF_NOSECTOR|MF_NOBLOCKMAP;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4098,7 +4096,7 @@ class misc_teleport_spot:mobj_t
 //
 //==========================================================================
 
-class misc_120:mobj_t
+class misc_120:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4112,7 +4110,7 @@ class misc_120:mobj_t
 		flags = MF_NOBLOCKMAP|MF_AMBUSH|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1196;
 		seestate = S_1197;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4122,7 +4120,7 @@ class misc_120:mobj_t
 //
 //==========================================================================
 
-class misc_121:mobj_t
+class misc_121:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4145,7 +4143,7 @@ class misc_121:mobj_t
 		painstate = S_1201;
 		deathstate = S_1204;
 		sound_death = GetSoundID("Sound6");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4155,7 +4153,7 @@ class misc_121:mobj_t
 //
 //==========================================================================
 
-class misc_122:mobj_t
+class misc_122:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4170,7 +4168,7 @@ class misc_122:mobj_t
 		spawnstate = S_1210;
 		deathstate = S_1212;
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4180,7 +4178,7 @@ class misc_122:mobj_t
 //
 //==========================================================================
 
-class misc_123:mobj_t
+class misc_123:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4195,7 +4193,7 @@ class misc_123:mobj_t
 		spawnstate = S_1221;
 		deathstate = S_1225;
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4205,7 +4203,7 @@ class misc_123:mobj_t
 //
 //==========================================================================
 
-class misc_124:mobj_t
+class misc_124:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4219,7 +4217,7 @@ class misc_124:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1429;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4229,7 +4227,7 @@ class misc_124:mobj_t
 //
 //==========================================================================
 
-class misc_125:mobj_t
+class misc_125:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4243,7 +4241,7 @@ class misc_125:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1430;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4253,7 +4251,7 @@ class misc_125:mobj_t
 //
 //==========================================================================
 
-class misc_126:mobj_t
+class misc_126:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4267,7 +4265,7 @@ class misc_126:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1298;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4277,7 +4275,7 @@ class misc_126:mobj_t
 //
 //==========================================================================
 
-class misc_127:mobj_t
+class misc_127:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4293,7 +4291,7 @@ class misc_127:mobj_t
 		spawnstate = S_1239;
 		deathstate = S_1240;
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4303,7 +4301,7 @@ class misc_127:mobj_t
 //
 //==========================================================================
 
-class misc_128:mobj_t
+class misc_128:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4317,7 +4315,7 @@ class misc_128:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1348;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4327,7 +4325,7 @@ class misc_128:mobj_t
 //
 //==========================================================================
 
-class misc_129:mobj_t
+class misc_129:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4341,7 +4339,7 @@ class misc_129:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1349;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4351,7 +4349,7 @@ class misc_129:mobj_t
 //
 //==========================================================================
 
-class misc_130:mobj_t
+class misc_130:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4363,7 +4361,7 @@ class misc_130:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1401;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4373,7 +4371,7 @@ class misc_130:mobj_t
 //
 //==========================================================================
 
-class misc_131:mobj_t
+class misc_131:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4385,7 +4383,7 @@ class misc_131:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1402;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4395,7 +4393,7 @@ class misc_131:mobj_t
 //
 //==========================================================================
 
-class misc_132:mobj_t
+class misc_132:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4409,7 +4407,7 @@ class misc_132:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4419,7 +4417,7 @@ class misc_132:mobj_t
 //
 //==========================================================================
 
-class misc_133:mobj_t
+class misc_133:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4433,7 +4431,7 @@ class misc_133:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4443,7 +4441,7 @@ class misc_133:mobj_t
 //
 //==========================================================================
 
-class misc_134:mobj_t
+class misc_134:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4462,7 +4460,7 @@ class misc_134:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1405;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4472,7 +4470,7 @@ class misc_134:mobj_t
 //
 //==========================================================================
 
-class misc_135:mobj_t
+class misc_135:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4491,7 +4489,7 @@ class misc_135:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1403;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4501,7 +4499,7 @@ class misc_135:mobj_t
 //
 //==========================================================================
 
-class misc_136:mobj_t
+class misc_136:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4515,7 +4513,7 @@ class misc_136:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1416;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4525,7 +4523,7 @@ class misc_136:mobj_t
 //
 //==========================================================================
 
-class misc_137:mobj_t
+class misc_137:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4544,7 +4542,7 @@ class misc_137:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1409;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4554,7 +4552,7 @@ class misc_137:mobj_t
 //
 //==========================================================================
 
-class misc_138:mobj_t
+class misc_138:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4568,7 +4566,7 @@ class misc_138:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1417;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4578,7 +4576,7 @@ class misc_138:mobj_t
 //
 //==========================================================================
 
-class misc_139:mobj_t
+class misc_139:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4592,7 +4590,7 @@ class misc_139:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1418;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4602,7 +4600,7 @@ class misc_139:mobj_t
 //
 //==========================================================================
 
-class misc_140:mobj_t
+class misc_140:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4616,7 +4614,7 @@ class misc_140:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1419;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4626,7 +4624,7 @@ class misc_140:mobj_t
 //
 //==========================================================================
 
-class misc_141:mobj_t
+class misc_141:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4645,7 +4643,7 @@ class misc_141:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1406;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4655,7 +4653,7 @@ class misc_141:mobj_t
 //
 //==========================================================================
 
-class misc_142:mobj_t
+class misc_142:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4674,7 +4672,7 @@ class misc_142:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1404;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4684,7 +4682,7 @@ class misc_142:mobj_t
 //
 //==========================================================================
 
-class misc_143:mobj_t
+class misc_143:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4703,7 +4701,7 @@ class misc_143:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1407;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4713,7 +4711,7 @@ class misc_143:mobj_t
 //
 //==========================================================================
 
-class misc_144:mobj_t
+class misc_144:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4732,7 +4730,7 @@ class misc_144:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1420;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4742,7 +4740,7 @@ class misc_144:mobj_t
 //
 //==========================================================================
 
-class misc_145:mobj_t
+class misc_145:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4756,7 +4754,7 @@ class misc_145:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1421;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4766,7 +4764,7 @@ class misc_145:mobj_t
 //
 //==========================================================================
 
-class misc_146:mobj_t
+class misc_146:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4785,7 +4783,7 @@ class misc_146:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1422;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4795,7 +4793,7 @@ class misc_146:mobj_t
 //
 //==========================================================================
 
-class misc_147:mobj_t
+class misc_147:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4814,7 +4812,7 @@ class misc_147:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1423;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4824,7 +4822,7 @@ class misc_147:mobj_t
 //
 //==========================================================================
 
-class misc_148:mobj_t
+class misc_148:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4843,7 +4841,7 @@ class misc_148:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1408;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4853,7 +4851,7 @@ class misc_148:mobj_t
 //
 //==========================================================================
 
-class misc_149:mobj_t
+class misc_149:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4872,7 +4870,7 @@ class misc_149:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1424;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4882,7 +4880,7 @@ class misc_149:mobj_t
 //
 //==========================================================================
 
-class misc_150:mobj_t
+class misc_150:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4901,7 +4899,7 @@ class misc_150:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1425;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4911,7 +4909,7 @@ class misc_150:mobj_t
 //
 //==========================================================================
 
-class misc_151:mobj_t
+class misc_151:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4930,7 +4928,7 @@ class misc_151:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1426;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4940,7 +4938,7 @@ class misc_151:mobj_t
 //
 //==========================================================================
 
-class misc_152:mobj_t
+class misc_152:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4954,7 +4952,7 @@ class misc_152:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1427;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4964,7 +4962,7 @@ class misc_152:mobj_t
 //
 //==========================================================================
 
-class misc_153:mobj_t
+class misc_153:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4978,7 +4976,7 @@ class misc_153:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4988,7 +4986,7 @@ class misc_153:mobj_t
 //
 //==========================================================================
 
-class misc_154:mobj_t
+class misc_154:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5002,7 +5000,7 @@ class misc_154:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5012,7 +5010,7 @@ class misc_154:mobj_t
 //
 //==========================================================================
 
-class misc_155:mobj_t
+class misc_155:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5026,7 +5024,7 @@ class misc_155:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5036,7 +5034,7 @@ class misc_155:mobj_t
 //
 //==========================================================================
 
-class misc_156:mobj_t
+class misc_156:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5050,7 +5048,7 @@ class misc_156:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5060,7 +5058,7 @@ class misc_156:mobj_t
 //
 //==========================================================================
 
-class misc_157:mobj_t
+class misc_157:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5074,7 +5072,7 @@ class misc_157:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5084,7 +5082,7 @@ class misc_157:mobj_t
 //
 //==========================================================================
 
-class misc_158:mobj_t
+class misc_158:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5098,7 +5096,7 @@ class misc_158:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1428;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5108,7 +5106,7 @@ class misc_158:mobj_t
 //
 //==========================================================================
 
-class misc_159:mobj_t
+class misc_159:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5122,7 +5120,7 @@ class misc_159:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1435;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5132,7 +5130,7 @@ class misc_159:mobj_t
 //
 //==========================================================================
 
-class misc_160:mobj_t
+class misc_160:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5146,7 +5144,7 @@ class misc_160:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1439;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5156,7 +5154,7 @@ class misc_160:mobj_t
 //
 //==========================================================================
 
-class misc_161:mobj_t
+class misc_161:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5170,7 +5168,7 @@ class misc_161:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1440;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5180,7 +5178,7 @@ class misc_161:mobj_t
 //
 //==========================================================================
 
-class misc_162:mobj_t
+class misc_162:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5199,7 +5197,7 @@ class misc_162:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1441;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5209,7 +5207,7 @@ class misc_162:mobj_t
 //
 //==========================================================================
 
-class misc_163:mobj_t
+class misc_163:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5223,7 +5221,7 @@ class misc_163:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1442;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5233,7 +5231,7 @@ class misc_163:mobj_t
 //
 //==========================================================================
 
-class misc_164:mobj_t
+class misc_164:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5247,7 +5245,7 @@ class misc_164:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1444;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5257,7 +5255,7 @@ class misc_164:mobj_t
 //
 //==========================================================================
 
-class misc_165:mobj_t
+class misc_165:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5271,7 +5269,7 @@ class misc_165:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1431;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5281,7 +5279,7 @@ class misc_165:mobj_t
 //
 //==========================================================================
 
-class misc_166:mobj_t
+class misc_166:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5295,7 +5293,7 @@ class misc_166:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1432;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5305,7 +5303,7 @@ class misc_166:mobj_t
 //
 //==========================================================================
 
-class misc_167:mobj_t
+class misc_167:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5319,7 +5317,7 @@ class misc_167:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1433;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5329,7 +5327,7 @@ class misc_167:mobj_t
 //
 //==========================================================================
 
-class misc_168:mobj_t
+class misc_168:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5343,7 +5341,7 @@ class misc_168:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1434;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5353,7 +5351,7 @@ class misc_168:mobj_t
 //
 //==========================================================================
 
-class misc_169:mobj_t
+class misc_169:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5367,7 +5365,7 @@ class misc_169:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1241;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5377,7 +5375,7 @@ class misc_169:mobj_t
 //
 //==========================================================================
 
-class misc_170:mobj_t
+class misc_170:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5391,7 +5389,7 @@ class misc_170:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1460;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5401,7 +5399,7 @@ class misc_170:mobj_t
 //
 //==========================================================================
 
-class misc_171:mobj_t
+class misc_171:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5415,7 +5413,7 @@ class misc_171:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1242;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5425,7 +5423,7 @@ class misc_171:mobj_t
 //
 //==========================================================================
 
-class misc_172:mobj_t
+class misc_172:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5444,7 +5442,7 @@ class misc_172:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1243;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5454,7 +5452,7 @@ class misc_172:mobj_t
 //
 //==========================================================================
 
-class misc_173:mobj_t
+class misc_173:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5468,7 +5466,7 @@ class misc_173:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1244;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5478,7 +5476,7 @@ class misc_173:mobj_t
 //
 //==========================================================================
 
-class misc_174:mobj_t
+class misc_174:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5492,7 +5490,7 @@ class misc_174:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1456;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5502,7 +5500,7 @@ class misc_174:mobj_t
 //
 //==========================================================================
 
-class misc_175:mobj_t
+class misc_175:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5516,7 +5514,7 @@ class misc_175:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1457;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5526,7 +5524,7 @@ class misc_175:mobj_t
 //
 //==========================================================================
 
-class misc_176:mobj_t
+class misc_176:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5540,7 +5538,7 @@ class misc_176:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1458;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5550,7 +5548,7 @@ class misc_176:mobj_t
 //
 //==========================================================================
 
-class misc_177:mobj_t
+class misc_177:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5564,7 +5562,7 @@ class misc_177:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1446;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5574,7 +5572,7 @@ class misc_177:mobj_t
 //
 //==========================================================================
 
-class misc_178:mobj_t
+class misc_178:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5588,7 +5586,7 @@ class misc_178:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1447;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5598,7 +5596,7 @@ class misc_178:mobj_t
 //
 //==========================================================================
 
-class misc_179:mobj_t
+class misc_179:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5612,7 +5610,7 @@ class misc_179:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1448;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5622,7 +5620,7 @@ class misc_179:mobj_t
 //
 //==========================================================================
 
-class misc_180:mobj_t
+class misc_180:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5636,7 +5634,7 @@ class misc_180:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1449;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5646,7 +5644,7 @@ class misc_180:mobj_t
 //
 //==========================================================================
 
-class misc_181:mobj_t
+class misc_181:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5660,7 +5658,7 @@ class misc_181:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1450;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5670,7 +5668,7 @@ class misc_181:mobj_t
 //
 //==========================================================================
 
-class misc_182:mobj_t
+class misc_182:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5684,7 +5682,7 @@ class misc_182:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1452;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5694,7 +5692,7 @@ class misc_182:mobj_t
 //
 //==========================================================================
 
-class misc_183:mobj_t
+class misc_183:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5708,7 +5706,7 @@ class misc_183:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1454;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5718,7 +5716,7 @@ class misc_183:mobj_t
 //
 //==========================================================================
 
-class misc_184:mobj_t
+class misc_184:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5732,7 +5730,7 @@ class misc_184:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1455;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5742,7 +5740,7 @@ class misc_184:mobj_t
 //
 //==========================================================================
 
-class misc_185:mobj_t
+class misc_185:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5756,7 +5754,7 @@ class misc_185:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1459;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5766,7 +5764,7 @@ class misc_185:mobj_t
 //
 //==========================================================================
 
-class misc_186:mobj_t
+class misc_186:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5780,7 +5778,7 @@ class misc_186:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1461;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5790,7 +5788,7 @@ class misc_186:mobj_t
 //
 //==========================================================================
 
-class misc_187:mobj_t
+class misc_187:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5804,7 +5802,7 @@ class misc_187:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1462;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5814,7 +5812,7 @@ class misc_187:mobj_t
 //
 //==========================================================================
 
-class misc_188:mobj_t
+class misc_188:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5828,7 +5826,7 @@ class misc_188:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1463;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5838,7 +5836,7 @@ class misc_188:mobj_t
 //
 //==========================================================================
 
-class misc_189:mobj_t
+class misc_189:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5852,7 +5850,7 @@ class misc_189:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1464;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5862,7 +5860,7 @@ class misc_189:mobj_t
 //
 //==========================================================================
 
-class misc_190:mobj_t
+class misc_190:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5876,7 +5874,7 @@ class misc_190:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1465;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5886,7 +5884,7 @@ class misc_190:mobj_t
 //
 //==========================================================================
 
-class misc_191:mobj_t
+class misc_191:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5900,7 +5898,7 @@ class misc_191:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1466;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5910,7 +5908,7 @@ class misc_191:mobj_t
 //
 //==========================================================================
 
-class misc_192:mobj_t
+class misc_192:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5924,7 +5922,7 @@ class misc_192:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1468;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5934,7 +5932,7 @@ class misc_192:mobj_t
 //
 //==========================================================================
 
-class misc_193:mobj_t
+class misc_193:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5948,7 +5946,7 @@ class misc_193:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1467;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5958,7 +5956,7 @@ class misc_193:mobj_t
 //
 //==========================================================================
 
-class misc_194:mobj_t
+class misc_194:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5972,7 +5970,7 @@ class misc_194:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1469;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -5982,7 +5980,7 @@ class misc_194:mobj_t
 //
 //==========================================================================
 
-class misc_195:mobj_t
+class misc_195:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5996,7 +5994,7 @@ class misc_195:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1470;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6006,7 +6004,7 @@ class misc_195:mobj_t
 //
 //==========================================================================
 
-class misc_196:mobj_t
+class misc_196:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6020,7 +6018,7 @@ class misc_196:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1471;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6030,7 +6028,7 @@ class misc_196:mobj_t
 //
 //==========================================================================
 
-class misc_197:mobj_t
+class misc_197:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6044,7 +6042,7 @@ class misc_197:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1472;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6054,7 +6052,7 @@ class misc_197:mobj_t
 //
 //==========================================================================
 
-class misc_198:mobj_t
+class misc_198:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6068,7 +6066,7 @@ class misc_198:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1473;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6078,7 +6076,7 @@ class misc_198:mobj_t
 //
 //==========================================================================
 
-class misc_199:mobj_t
+class misc_199:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6094,7 +6092,7 @@ class misc_199:mobj_t
 		deathstate = S_1245;
 		sound_active = GetSoundID("Sound130");
 		sound_death = GetSoundID("Sound104");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6104,7 +6102,7 @@ class misc_199:mobj_t
 //
 //==========================================================================
 
-class misc_200:mobj_t
+class misc_200:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6130,7 +6128,7 @@ class misc_200:mobj_t
 		sound_sight = GetSoundID("Sound55");
 		sound_active = GetSoundID("Sound55");
 		sound_death = GetSoundID("Sound55");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6140,7 +6138,7 @@ class misc_200:mobj_t
 //
 //==========================================================================
 
-class misc_201:mobj_t
+class misc_201:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6155,7 +6153,7 @@ class misc_201:mobj_t
 		spawnstate = S_1350;
 		deathstate = S_1351;
 		sound_death = GetSoundID("Sound60");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6165,7 +6163,7 @@ class misc_201:mobj_t
 //
 //==========================================================================
 
-class misc_202:mobj_t
+class misc_202:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6180,7 +6178,7 @@ class misc_202:mobj_t
 		spawnstate = S_1358;
 		deathstate = S_1359;
 		sound_death = GetSoundID("Sound105");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6190,7 +6188,7 @@ class misc_202:mobj_t
 //
 //==========================================================================
 
-class misc_203:mobj_t
+class misc_203:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6206,7 +6204,7 @@ class misc_203:mobj_t
 		spawnstate = S_1277;
 		painstate = S_1278;
 		sound_pain = GetSoundID("Sound3");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6216,7 +6214,7 @@ class misc_203:mobj_t
 //
 //==========================================================================
 
-class misc_204:mobj_t
+class misc_204:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6229,7 +6227,7 @@ class misc_204:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1477;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6239,7 +6237,7 @@ class misc_204:mobj_t
 //
 //==========================================================================
 
-class misc_205:mobj_t
+class misc_205:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6252,7 +6250,7 @@ class misc_205:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1478;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6262,7 +6260,7 @@ class misc_205:mobj_t
 //
 //==========================================================================
 
-class misc_206:mobj_t
+class misc_206:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6275,7 +6273,7 @@ class misc_206:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1479;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6285,7 +6283,7 @@ class misc_206:mobj_t
 //
 //==========================================================================
 
-class misc_207:mobj_t
+class misc_207:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6298,7 +6296,7 @@ class misc_207:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1474;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6308,7 +6306,7 @@ class misc_207:mobj_t
 //
 //==========================================================================
 
-class misc_208:mobj_t
+class misc_208:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6321,7 +6319,7 @@ class misc_208:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1551;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6331,7 +6329,7 @@ class misc_208:mobj_t
 //
 //==========================================================================
 
-class misc_209:mobj_t
+class misc_209:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6344,7 +6342,7 @@ class misc_209:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1552;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6354,7 +6352,7 @@ class misc_209:mobj_t
 //
 //==========================================================================
 
-class misc_210:mobj_t
+class misc_210:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6367,7 +6365,7 @@ class misc_210:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1553;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6377,7 +6375,7 @@ class misc_210:mobj_t
 //
 //==========================================================================
 
-class misc_211:mobj_t
+class misc_211:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6390,7 +6388,7 @@ class misc_211:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1554;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6400,7 +6398,7 @@ class misc_211:mobj_t
 //
 //==========================================================================
 
-class misc_212:mobj_t
+class misc_212:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6413,7 +6411,7 @@ class misc_212:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1555;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6423,7 +6421,7 @@ class misc_212:mobj_t
 //
 //==========================================================================
 
-class misc_213:mobj_t
+class misc_213:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6437,7 +6435,7 @@ class misc_213:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1518;
 		sound_active = GetSoundID("Sound119");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6447,7 +6445,7 @@ class misc_213:mobj_t
 //
 //==========================================================================
 
-class misc_214:mobj_t
+class misc_214:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6460,7 +6458,7 @@ class misc_214:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1561;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6470,7 +6468,7 @@ class misc_214:mobj_t
 //
 //==========================================================================
 
-class misc_215:mobj_t
+class misc_215:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6483,7 +6481,7 @@ class misc_215:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1559;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6493,7 +6491,7 @@ class misc_215:mobj_t
 //
 //==========================================================================
 
-class misc_216:mobj_t
+class misc_216:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6506,7 +6504,7 @@ class misc_216:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1560;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6516,7 +6514,7 @@ class misc_216:mobj_t
 //
 //==========================================================================
 
-class misc_217:mobj_t
+class misc_217:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6529,7 +6527,7 @@ class misc_217:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1562;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6539,7 +6537,7 @@ class misc_217:mobj_t
 //
 //==========================================================================
 
-class misc_218:mobj_t
+class misc_218:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6552,7 +6550,7 @@ class misc_218:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1563;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6562,7 +6560,7 @@ class misc_218:mobj_t
 //
 //==========================================================================
 
-class misc_219:mobj_t
+class misc_219:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6575,7 +6573,7 @@ class misc_219:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1564;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6585,7 +6583,7 @@ class misc_219:mobj_t
 //
 //==========================================================================
 
-class misc_220:mobj_t
+class misc_220:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6597,7 +6595,7 @@ class misc_220:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1475;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6607,7 +6605,7 @@ class misc_220:mobj_t
 //
 //==========================================================================
 
-class misc_221:mobj_t
+class misc_221:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6620,7 +6618,7 @@ class misc_221:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1476;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6630,7 +6628,7 @@ class misc_221:mobj_t
 //
 //==========================================================================
 
-class misc_222:mobj_t
+class misc_222:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6644,7 +6642,7 @@ class misc_222:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1520;
 		sound_active = GetSoundID("Sound45");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6654,7 +6652,7 @@ class misc_222:mobj_t
 //
 //==========================================================================
 
-class misc_223:mobj_t
+class misc_223:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6668,7 +6666,7 @@ class misc_223:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1532;
 		sound_active = GetSoundID("Sound44");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6678,7 +6676,7 @@ class misc_223:mobj_t
 //
 //==========================================================================
 
-class misc_224:mobj_t
+class misc_224:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6691,7 +6689,7 @@ class misc_224:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1528;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6701,7 +6699,7 @@ class misc_224:mobj_t
 //
 //==========================================================================
 
-class misc_225:mobj_t
+class misc_225:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6715,7 +6713,7 @@ class misc_225:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1540;
 		sound_active = GetSoundID("Sound46");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6725,7 +6723,7 @@ class misc_225:mobj_t
 //
 //==========================================================================
 
-class misc_226:mobj_t
+class misc_226:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6738,7 +6736,7 @@ class misc_226:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1544;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6748,7 +6746,7 @@ class misc_226:mobj_t
 //
 //==========================================================================
 
-class misc_227:mobj_t
+class misc_227:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6762,7 +6760,7 @@ class misc_227:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1547;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6772,7 +6770,7 @@ class misc_227:mobj_t
 //
 //==========================================================================
 
-class misc_228:mobj_t
+class misc_228:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6784,7 +6782,7 @@ class misc_228:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_673;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6794,7 +6792,7 @@ class misc_228:mobj_t
 //
 //==========================================================================
 
-class misc_229:mobj_t
+class misc_229:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6806,7 +6804,7 @@ class misc_229:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_PLAY_DIE10;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6816,7 +6814,7 @@ class misc_229:mobj_t
 //
 //==========================================================================
 
-class misc_230:mobj_t
+class misc_230:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6828,7 +6826,7 @@ class misc_230:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_409;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6838,7 +6836,7 @@ class misc_230:mobj_t
 //
 //==========================================================================
 
-class misc_231:mobj_t
+class misc_231:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6850,7 +6848,7 @@ class misc_231:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_632;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6860,7 +6858,7 @@ class misc_231:mobj_t
 //
 //==========================================================================
 
-class misc_232:mobj_t
+class misc_232:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6872,7 +6870,7 @@ class misc_232:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_594;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6882,7 +6880,7 @@ class misc_232:mobj_t
 //
 //==========================================================================
 
-class misc_233:mobj_t
+class misc_233:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6894,7 +6892,7 @@ class misc_233:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_512;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6904,7 +6902,7 @@ class misc_233:mobj_t
 //
 //==========================================================================
 
-class misc_234:mobj_t
+class misc_234:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6916,7 +6914,7 @@ class misc_234:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_425;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6926,7 +6924,7 @@ class misc_234:mobj_t
 //
 //==========================================================================
 
-class misc_235:mobj_t
+class misc_235:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6938,7 +6936,7 @@ class misc_235:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1280;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6948,7 +6946,7 @@ class misc_235:mobj_t
 //
 //==========================================================================
 
-class misc_236:mobj_t
+class misc_236:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6961,7 +6959,7 @@ class misc_236:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1372;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6971,7 +6969,7 @@ class misc_236:mobj_t
 //
 //==========================================================================
 
-class misc_237:mobj_t
+class misc_237:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6985,7 +6983,7 @@ class misc_237:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1376;
 		sound_active = GetSoundID("Sound23");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6995,7 +6993,7 @@ class misc_237:mobj_t
 //
 //==========================================================================
 
-class misc_238:mobj_t
+class misc_238:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7009,7 +7007,7 @@ class misc_238:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1380;
 		sound_active = GetSoundID("Sound23");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7019,7 +7017,7 @@ class misc_238:mobj_t
 //
 //==========================================================================
 
-class misc_239:mobj_t
+class misc_239:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7033,7 +7031,7 @@ class misc_239:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1384;
 		sound_active = GetSoundID("Sound23");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7043,7 +7041,7 @@ class misc_239:mobj_t
 //
 //==========================================================================
 
-class misc_240:mobj_t
+class misc_240:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7056,7 +7054,7 @@ class misc_240:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1400;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7066,7 +7064,7 @@ class misc_240:mobj_t
 //
 //==========================================================================
 
-class misc_241:mobj_t
+class misc_241:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7079,7 +7077,7 @@ class misc_241:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1496;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7089,7 +7087,7 @@ class misc_241:mobj_t
 //
 //==========================================================================
 
-class misc_242:mobj_t
+class misc_242:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7102,7 +7100,7 @@ class misc_242:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1500;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7112,7 +7110,7 @@ class misc_242:mobj_t
 //
 //==========================================================================
 
-class misc_243:mobj_t
+class misc_243:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7125,7 +7123,7 @@ class misc_243:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1497;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7135,7 +7133,7 @@ class misc_243:mobj_t
 //
 //==========================================================================
 
-class misc_244:mobj_t
+class misc_244:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7148,7 +7146,7 @@ class misc_244:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1498;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7158,7 +7156,7 @@ class misc_244:mobj_t
 //
 //==========================================================================
 
-class misc_245:mobj_t
+class misc_245:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7171,7 +7169,7 @@ class misc_245:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1388;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7181,7 +7179,7 @@ class misc_245:mobj_t
 //
 //==========================================================================
 
-class misc_246:mobj_t
+class misc_246:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7194,7 +7192,7 @@ class misc_246:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1370;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7204,7 +7202,7 @@ class misc_246:mobj_t
 //
 //==========================================================================
 
-class misc_247:mobj_t
+class misc_247:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7217,7 +7215,7 @@ class misc_247:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1371;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7227,7 +7225,7 @@ class misc_247:mobj_t
 //
 //==========================================================================
 
-class misc_248:mobj_t
+class misc_248:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7240,7 +7238,7 @@ class misc_248:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1480;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7250,7 +7248,7 @@ class misc_248:mobj_t
 //
 //==========================================================================
 
-class misc_249:mobj_t
+class misc_249:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7263,7 +7261,7 @@ class misc_249:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1481;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7273,7 +7271,7 @@ class misc_249:mobj_t
 //
 //==========================================================================
 
-class misc_250:mobj_t
+class misc_250:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7286,7 +7284,7 @@ class misc_250:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1482;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7296,7 +7294,7 @@ class misc_250:mobj_t
 //
 //==========================================================================
 
-class misc_251:mobj_t
+class misc_251:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7309,7 +7307,7 @@ class misc_251:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1483;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7319,7 +7317,7 @@ class misc_251:mobj_t
 //
 //==========================================================================
 
-class misc_252:mobj_t
+class misc_252:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7333,7 +7331,7 @@ class misc_252:mobj_t
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1484;
 		sound_active = GetSoundID("Sound43");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7343,7 +7341,7 @@ class misc_252:mobj_t
 //
 //==========================================================================
 
-class misc_253:mobj_t
+class misc_253:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7356,7 +7354,7 @@ class misc_253:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1488;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7366,7 +7364,7 @@ class misc_253:mobj_t
 //
 //==========================================================================
 
-class misc_254:mobj_t
+class misc_254:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7379,7 +7377,7 @@ class misc_254:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1489;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7389,7 +7387,7 @@ class misc_254:mobj_t
 //
 //==========================================================================
 
-class misc_255:mobj_t
+class misc_255:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7402,7 +7400,7 @@ class misc_255:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1490;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7412,7 +7410,7 @@ class misc_255:mobj_t
 //
 //==========================================================================
 
-class misc_256:mobj_t
+class misc_256:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7425,7 +7423,7 @@ class misc_256:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1491;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7435,7 +7433,7 @@ class misc_256:mobj_t
 //
 //==========================================================================
 
-class misc_257:mobj_t
+class misc_257:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7448,7 +7446,7 @@ class misc_257:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1492;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7458,7 +7456,7 @@ class misc_257:mobj_t
 //
 //==========================================================================
 
-class misc_258:mobj_t
+class misc_258:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7471,7 +7469,7 @@ class misc_258:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1493;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7481,7 +7479,7 @@ class misc_258:mobj_t
 //
 //==========================================================================
 
-class misc_259:mobj_t
+class misc_259:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7494,7 +7492,7 @@ class misc_259:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1494;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7504,7 +7502,7 @@ class misc_259:mobj_t
 //
 //==========================================================================
 
-class misc_260:mobj_t
+class misc_260:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7517,7 +7515,7 @@ class misc_260:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1495;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7527,7 +7525,7 @@ class misc_260:mobj_t
 //
 //==========================================================================
 
-class misc_261:mobj_t
+class misc_261:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7540,7 +7538,7 @@ class misc_261:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1499;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7550,7 +7548,7 @@ class misc_261:mobj_t
 //
 //==========================================================================
 
-class misc_262:mobj_t
+class misc_262:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7564,7 +7562,7 @@ class misc_262:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1392;
 		sound_active = GetSoundID("Sound23");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7574,7 +7572,7 @@ class misc_262:mobj_t
 //
 //==========================================================================
 
-class misc_263:mobj_t
+class misc_263:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7588,7 +7586,7 @@ class misc_263:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1396;
 		sound_active = GetSoundID("Sound23");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7598,7 +7596,7 @@ class misc_263:mobj_t
 //
 //==========================================================================
 
-class misc_264:mobj_t
+class misc_264:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7611,7 +7609,7 @@ class misc_264:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1501;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7621,7 +7619,7 @@ class misc_264:mobj_t
 //
 //==========================================================================
 
-class misc_265:mobj_t
+class misc_265:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7634,7 +7632,7 @@ class misc_265:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1502;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7644,7 +7642,7 @@ class misc_265:mobj_t
 //
 //==========================================================================
 
-class misc_266:mobj_t
+class misc_266:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7657,7 +7655,7 @@ class misc_266:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1503;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7667,7 +7665,7 @@ class misc_266:mobj_t
 //
 //==========================================================================
 
-class misc_267:mobj_t
+class misc_267:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7680,7 +7678,7 @@ class misc_267:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1504;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7690,7 +7688,7 @@ class misc_267:mobj_t
 //
 //==========================================================================
 
-class misc_268:mobj_t
+class misc_268:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7703,7 +7701,7 @@ class misc_268:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1505;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7713,7 +7711,7 @@ class misc_268:mobj_t
 //
 //==========================================================================
 
-class misc_269:mobj_t
+class misc_269:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7726,7 +7724,7 @@ class misc_269:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1506;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7736,7 +7734,7 @@ class misc_269:mobj_t
 //
 //==========================================================================
 
-class misc_270:mobj_t
+class misc_270:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7749,7 +7747,7 @@ class misc_270:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1507;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7759,7 +7757,7 @@ class misc_270:mobj_t
 //
 //==========================================================================
 
-class misc_271:mobj_t
+class misc_271:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7772,7 +7770,7 @@ class misc_271:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1508;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7782,7 +7780,7 @@ class misc_271:mobj_t
 //
 //==========================================================================
 
-class misc_272:mobj_t
+class misc_272:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7795,7 +7793,7 @@ class misc_272:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1509;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7805,7 +7803,7 @@ class misc_272:mobj_t
 //
 //==========================================================================
 
-class misc_273:mobj_t
+class misc_273:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7818,7 +7816,7 @@ class misc_273:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1510;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7828,7 +7826,7 @@ class misc_273:mobj_t
 //
 //==========================================================================
 
-class misc_274:mobj_t
+class misc_274:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7841,7 +7839,7 @@ class misc_274:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1511;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7851,7 +7849,7 @@ class misc_274:mobj_t
 //
 //==========================================================================
 
-class misc_275:mobj_t
+class misc_275:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7864,7 +7862,7 @@ class misc_275:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1512;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7874,7 +7872,7 @@ class misc_275:mobj_t
 //
 //==========================================================================
 
-class misc_276:mobj_t
+class misc_276:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7887,7 +7885,7 @@ class misc_276:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1513;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7897,7 +7895,7 @@ class misc_276:mobj_t
 //
 //==========================================================================
 
-class misc_277:mobj_t
+class misc_277:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7910,7 +7908,7 @@ class misc_277:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1514;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7920,7 +7918,7 @@ class misc_277:mobj_t
 //
 //==========================================================================
 
-class misc_278:mobj_t
+class misc_278:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7933,7 +7931,7 @@ class misc_278:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1515;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7943,7 +7941,7 @@ class misc_278:mobj_t
 //
 //==========================================================================
 
-class misc_279:mobj_t
+class misc_279:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7956,7 +7954,7 @@ class misc_279:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1516;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7966,7 +7964,7 @@ class misc_279:mobj_t
 //
 //==========================================================================
 
-class misc_280:mobj_t
+class misc_280:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7979,7 +7977,7 @@ class misc_280:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1517;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7989,7 +7987,7 @@ class misc_280:mobj_t
 //
 //==========================================================================
 
-class misc_281:mobj_t
+class misc_281:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8002,7 +8000,7 @@ class misc_281:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID;
 		spawnstate = S_1519;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8012,7 +8010,7 @@ class misc_281:mobj_t
 //
 //==========================================================================
 
-class misc_282:mobj_t
+class misc_282:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8025,7 +8023,7 @@ class misc_282:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1281;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8035,7 +8033,7 @@ class misc_282:mobj_t
 //
 //==========================================================================
 
-class misc_283:mobj_t
+class misc_283:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8048,7 +8046,7 @@ class misc_283:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1282;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8058,7 +8056,7 @@ class misc_283:mobj_t
 //
 //==========================================================================
 
-class misc_284:mobj_t
+class misc_284:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8071,7 +8069,7 @@ class misc_284:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1283;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8081,7 +8079,7 @@ class misc_284:mobj_t
 //
 //==========================================================================
 
-class misc_285:mobj_t
+class misc_285:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8094,7 +8092,7 @@ class misc_285:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP;
 		spawnstate = S_1284;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8104,7 +8102,7 @@ class misc_285:mobj_t
 //
 //==========================================================================
 
-class misc_286:mobj_t
+class misc_286:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8117,7 +8115,7 @@ class misc_286:mobj_t
 			reactiontime = 8;
 		flags = MF_SOLID|MF_SHOOTABLE|MF_TELEPORT|MF_DROPPED|MF_NOBLOOD;
 		spawnstate = S_1285;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8127,7 +8125,7 @@ class misc_286:mobj_t
 //
 //==========================================================================
 
-class misc_287:mobj_t
+class misc_287:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8141,7 +8139,7 @@ class misc_287:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1287;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8151,7 +8149,7 @@ class misc_287:mobj_t
 //
 //==========================================================================
 
-class misc_288:mobj_t
+class misc_288:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8165,7 +8163,7 @@ class misc_288:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1288;
 		sound_active = GetSoundID("Sound122");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8175,7 +8173,7 @@ class misc_288:mobj_t
 //
 //==========================================================================
 
-class misc_289:mobj_t
+class misc_289:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8189,7 +8187,7 @@ class misc_289:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1289;
 		sound_active = GetSoundID("Sound123");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8199,7 +8197,7 @@ class misc_289:mobj_t
 //
 //==========================================================================
 
-class misc_290:mobj_t
+class misc_290:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8213,7 +8211,7 @@ class misc_290:mobj_t
 		flags = MF_SOLID|MF_SPAWNCEILING|MF_NOGRAVITY;
 		spawnstate = S_1289;
 		sound_active = GetSoundID("Sound121");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8223,7 +8221,7 @@ class misc_290:mobj_t
 //
 //==========================================================================
 
-class misc_291:mobj_t
+class misc_291:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8237,7 +8235,7 @@ class misc_291:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1291;
 		sound_active = GetSoundID("Sound120");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8247,7 +8245,7 @@ class misc_291:mobj_t
 //
 //==========================================================================
 
-class misc_292:mobj_t
+class misc_292:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8261,7 +8259,7 @@ class misc_292:mobj_t
 		flags = MF_SOLID;
 		spawnstate = S_1292;
 		sound_active = GetSoundID("Sound118");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8271,7 +8269,7 @@ class misc_292:mobj_t
 //
 //==========================================================================
 
-class misc_293:mobj_t
+class misc_293:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8286,7 +8284,7 @@ class misc_293:mobj_t
 		flags = MF_SPECIAL|MF_DROPPED;
 		spawnstate = S_1345;
 		seestate = S_1346;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8296,7 +8294,7 @@ class misc_293:mobj_t
 //
 //==========================================================================
 
-class misc_294:mobj_t
+class misc_294:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8309,7 +8307,7 @@ class misc_294:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1300;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8319,7 +8317,7 @@ class misc_294:mobj_t
 //
 //==========================================================================
 
-class misc_295:mobj_t
+class misc_295:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8332,7 +8330,7 @@ class misc_295:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1320;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8342,7 +8340,7 @@ class misc_295:mobj_t
 //
 //==========================================================================
 
-class misc_296:mobj_t
+class misc_296:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8355,7 +8353,7 @@ class misc_296:mobj_t
 			reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOCLIP;
 		spawnstate = S_1340;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8365,7 +8363,7 @@ class misc_296:mobj_t
 //
 //==========================================================================
 
-class misc_297:mobj_t
+class misc_297:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8379,7 +8377,7 @@ class misc_297:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8389,7 +8387,7 @@ class misc_297:mobj_t
 //
 //==========================================================================
 
-class misc_298:mobj_t
+class misc_298:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8403,7 +8401,7 @@ class misc_298:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8413,7 +8411,7 @@ class misc_298:mobj_t
 //
 //==========================================================================
 
-class misc_299:mobj_t
+class misc_299:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8427,7 +8425,7 @@ class misc_299:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8437,7 +8435,7 @@ class misc_299:mobj_t
 //
 //==========================================================================
 
-class misc_300:mobj_t
+class misc_300:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8451,7 +8449,7 @@ class misc_300:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8461,7 +8459,7 @@ class misc_300:mobj_t
 //
 //==========================================================================
 
-class misc_301:mobj_t
+class misc_301:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8474,7 +8472,7 @@ class misc_301:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8484,7 +8482,7 @@ class misc_301:mobj_t
 //
 //==========================================================================
 
-class misc_302:mobj_t
+class misc_302:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8497,7 +8495,7 @@ class misc_302:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8507,7 +8505,7 @@ class misc_302:mobj_t
 //
 //==========================================================================
 
-class misc_303:mobj_t
+class misc_303:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8521,7 +8519,7 @@ class misc_303:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8531,7 +8529,7 @@ class misc_303:mobj_t
 //
 //==========================================================================
 
-class misc_304:mobj_t
+class misc_304:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8544,7 +8542,7 @@ class misc_304:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8554,7 +8552,7 @@ class misc_304:mobj_t
 //
 //==========================================================================
 
-class misc_305:mobj_t
+class misc_305:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8567,7 +8565,7 @@ class misc_305:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8577,7 +8575,7 @@ class misc_305:mobj_t
 //
 //==========================================================================
 
-class misc_306:mobj_t
+class misc_306:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8591,7 +8589,7 @@ class misc_306:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8601,7 +8599,7 @@ class misc_306:mobj_t
 //
 //==========================================================================
 
-class misc_307:mobj_t
+class misc_307:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8615,7 +8613,7 @@ class misc_307:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1296;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8625,7 +8623,7 @@ class misc_307:mobj_t
 //
 //==========================================================================
 
-class misc_308:mobj_t
+class misc_308:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8639,7 +8637,7 @@ class misc_308:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1297;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8649,7 +8647,7 @@ class misc_308:mobj_t
 //
 //==========================================================================
 
-class misc_309:mobj_t
+class misc_309:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8663,7 +8661,7 @@ class misc_309:mobj_t
 			reactiontime = 8;
 		flags = MF_SPECIAL;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8673,7 +8671,7 @@ class misc_309:mobj_t
 //
 //==========================================================================
 
-class misc_310:mobj_t
+class misc_310:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8685,7 +8683,7 @@ class misc_310:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8695,7 +8693,7 @@ class misc_310:mobj_t
 //
 //==========================================================================
 
-class misc_311:mobj_t
+class misc_311:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8708,7 +8706,7 @@ class misc_311:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8718,7 +8716,7 @@ class misc_311:mobj_t
 //
 //==========================================================================
 
-class misc_312:mobj_t
+class misc_312:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8731,7 +8729,7 @@ class misc_312:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8741,7 +8739,7 @@ class misc_312:mobj_t
 //
 //==========================================================================
 
-class misc_313:mobj_t
+class misc_313:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8754,7 +8752,7 @@ class misc_313:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8764,7 +8762,7 @@ class misc_313:mobj_t
 //
 //==========================================================================
 
-class misc_314:mobj_t
+class misc_314:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8777,7 +8775,7 @@ class misc_314:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8787,7 +8785,7 @@ class misc_314:mobj_t
 //
 //==========================================================================
 
-class misc_315:mobj_t
+class misc_315:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8800,7 +8798,7 @@ class misc_315:mobj_t
 		if (gameskill != sk_nightmare)
 			reactiontime = 8;
 		spawnstate = S_1295;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
@@ -9127,9 +9125,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:39:34  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/10/02 17:42:38  dj_jl
 //	Possibility to declare function's code inside class declaration
-//
+//	
 //	Revision 1.4  2001/09/27 17:08:20  dj_jl
 //	Removed spawn functions, added mobj classes
 //	

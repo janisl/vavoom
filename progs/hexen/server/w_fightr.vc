@@ -48,7 +48,7 @@ void A_FPunchAttack(mobj_t * actor)
 	mobj_t *pmo = player->mo;
 	float power;
 	int i;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = 40 + (P_Random() & 15);
@@ -157,7 +157,7 @@ void A_FAxeAttack(mobj_t * actor)
 	int damage;
 	int i;
 	int useMana;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
@@ -253,7 +253,7 @@ void A_FHammerAttack(mobj_t * actor)
 	int damage;
 	float power;
 	int i;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = 60 + (P_Random() & 63);
@@ -401,6 +401,9 @@ void A_FSwordFlames(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

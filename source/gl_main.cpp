@@ -61,9 +61,11 @@ TOpenGLDrawer::TOpenGLDrawer(void) :
 	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
 	clear("gl_clear", "0", CVAR_ARCHIVE),
 	blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE),
-	ext_multitexture("ext_multitexture", "1", CVAR_ARCHIVE),
-	ext_point_parameters("ext_point_parameters", "1", CVAR_ARCHIVE),
-	ext_anisotropy("ext_anisotropy", "1", CVAR_ARCHIVE)
+	ext_multitexture("gl_ext_multitexture", "1", CVAR_ARCHIVE),
+	ext_point_parameters("gl_ext_point_parameters", "1", CVAR_ARCHIVE),
+	ext_anisotropy("gl_ext_anisotropy", "1", CVAR_ARCHIVE),
+	maxdist("gl_maxdist", "8192.0", CVAR_ARCHIVE),
+	model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE)
 {
 	_OpenGLDrawer = this;
 }
@@ -162,14 +164,6 @@ void TOpenGLDrawer::InitResolution(void)
 
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0, 1.0);
-
-	float fogColor[4] = { 0.5, 0.5, 0.5, 1.0 };
-	glFogi(GL_FOG_MODE, GL_LINEAR);		// Fog Mode
-	glFogfv(GL_FOG_COLOR, fogColor);	// Set Fog Color
-	glFogf(GL_FOG_DENSITY, 0.5f);		// How Dense Will The Fog Be
-	glHint(GL_FOG_HINT, GL_DONT_CARE);	// Fog Hint Value
-	glFogf(GL_FOG_START, 1.0f);			// Fog Start Depth
-	glFogf(GL_FOG_END, 2048.0f);		// Fog End Depth
 }
 
 //==========================================================================
@@ -317,7 +311,7 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 	glLoadIdentity();					// Reset The Projection Matrix
 
 	GLdouble zNear = 1.0;
-	GLdouble zFar =	8192.0;
+	GLdouble zFar =	maxdist;
 
 	GLdouble xmax = zNear * rd->fovx;
 	GLdouble xmin = -xmax;
@@ -332,9 +326,9 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 	glLoadIdentity();
 	glRotatef(-90, 1, 0, 0);
 	glRotatef(90, 0, 0, 1);
-	glRotatef(-BAM2DEG(viewangles.roll), 1, 0, 0);
-	glRotatef(-BAM2DEG(viewangles.pitch), 0, 1, 0);
-	glRotatef(-BAM2DEG(viewangles.yaw), 0, 0, 1);
+	glRotatef(-viewangles.roll, 1, 0, 0);
+	glRotatef(-viewangles.pitch, 0, 1, 0);
+	glRotatef(-viewangles.yaw, 0, 0, 1);
 	glTranslatef(-vieworg.x, -vieworg.y, -vieworg.z);
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -345,8 +339,19 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
-	if (r_use_fog)
+	if (r_fog)
+	{
+		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };
+		float fogColor[4] = { r_fog_r, r_fog_g, r_fog_b, 1.0 };
+
+		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
+		glFogfv(GL_FOG_COLOR, fogColor);
+		glFogf(GL_FOG_DENSITY, r_fog_density);
+		glHint(GL_FOG_HINT, r_fog < 4 ? GL_DONT_CARE : GL_NICEST);
+		glFogf(GL_FOG_START, r_fog_start);
+		glFogf(GL_FOG_END, r_fog_end);
 		glEnable(GL_FOG);
+	}
 
 	if (pointparmsable)
 	{
@@ -441,9 +446,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.12  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.11  2001/09/14 16:53:17  dj_jl
 //	Added glFinish to direct update
 //	

@@ -44,6 +44,7 @@
 //	Flag in texture number indicating that this texture is a flat. This
 // allows to use wall textures on floors / ceilings and flats on walls
 #define TEXF_FLAT		0x8000
+#define TEXF_SKY_MAP	0x10000		// External sky graphic
 
 // TYPES -------------------------------------------------------------------
 
@@ -70,6 +71,13 @@ struct texdef_t
     //are drawn back to front into the cached texture.
     short		patchcount;
     texpatch_t	patches[1];
+};
+
+struct skymap_t
+{
+	char name[128];
+	int width;
+	int height;
 };
 
 class TClipPlane : public TPlane
@@ -115,6 +123,8 @@ extern int*				spriteoffset;
 extern int*				spritetopoffset;
 extern byte*			translationtables;
 extern pic_info_t		pic_list[MAX_PICS];
+extern skymap_t			*skymaps;
+extern int				numskymaps;
 
 //
 // POV related.
@@ -125,7 +135,13 @@ extern TVec				viewright;
 extern TVec				viewup;
 extern TAVec			viewangles;
 
-extern bool				r_use_fog;
+extern TCvarI			r_fog;
+extern TCvarF			r_fog_r;
+extern TCvarF			r_fog_g;
+extern TCvarF			r_fog_b;
+extern TCvarF			r_fog_start;
+extern TCvarF			r_fog_end;
+extern TCvarF			r_fog_density;
 
 extern int				extralight;
 extern int				fixedlight;
@@ -152,17 +168,21 @@ extern byte				r_black_color[MAX_PALETTES];
 
 extern int				SkinWidth;
 extern int				SkinHeight;
+extern int				SkinBPP;
 extern byte				*SkinData;
-extern rgb_t			SkinPal[256];
+extern rgba_t			SkinPal[256];
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

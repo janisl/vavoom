@@ -369,31 +369,32 @@ static void AdjustAngles(void)
 	//	YAW
 	if (!(KeyStrafe.state & 1))
     { 
-    	cl.viewangles.yaw -= DEG2BAM(KeyRight.KeyState() * cl_yawspeed * speed);
-    	cl.viewangles.yaw += DEG2BAM(KeyLeft.KeyState() * cl_yawspeed * speed);
+    	cl.viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
+    	cl.viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
 		if (joyxmove > 0)
-	    	cl.viewangles.yaw -= DEG2BAM(joy_yaw * speed);
+	    	cl.viewangles.yaw -= joy_yaw * speed;
 		if (joyxmove < 0)
-	    	cl.viewangles.yaw += DEG2BAM(joy_yaw * speed);
+	    	cl.viewangles.yaw += joy_yaw * speed;
     }
 	if (!(KeyStrafe.state & 1) &&
 		(!lookstrafe || (!mouse_look && !(KeyMouseLook.state & 1))))
 	{
-		cl.viewangles.yaw -= DEG2BAM(mousex * m_yaw);
+		cl.viewangles.yaw -= mousex * m_yaw;
 	}
+	cl.viewangles.yaw = AngleMod(cl.viewangles.yaw);
 
 	//	PITCH
 	float up = KeyLookUp.KeyState();
 	float down = KeyLookDown.KeyState();
-	cl.viewangles.pitch -= DEG2BAM(cl_pitchspeed * up * speed);
-	cl.viewangles.pitch += DEG2BAM(cl_pitchspeed * down * speed);
+	cl.viewangles.pitch -= cl_pitchspeed * up * speed;
+	cl.viewangles.pitch += cl_pitchspeed * down * speed;
 	if (up || down || (KeyMouseLook.state & 1))
 	{
 		V_StopPitchDrift();
 	}
 	if ((mouse_look || (KeyMouseLook.state & 1)) && !(KeyStrafe.state & 1))
 	{
-		cl.viewangles.pitch -= DEG2BAM(mousey * m_pitch);
+		cl.viewangles.pitch -= mousey * m_pitch;
 	}
 
 	//	Center look
@@ -403,19 +404,19 @@ static void AdjustAngles(void)
 	}
 	if (cl.centering)
 	{
-		angle_t adelta = DEG2BAM(cl_pitchdriftspeed * host_frametime);
-		if (abs(cl.viewangles.pitch) < (int)adelta)
+		float adelta = cl_pitchdriftspeed * host_frametime;
+		if (fabs(cl.viewangles.pitch) < adelta)
 		{
 			cl.viewangles.pitch = 0;
 			cl.centering = false;
 		}
 		else
 		{
-			if (cl.viewangles.pitch < ANG180)
+			if (cl.viewangles.pitch > 0.0)
 			{
 				cl.viewangles.pitch -= adelta;
 			}
-			else if (cl.viewangles.pitch > ANG180)
+			else if (cl.viewangles.pitch < 0.0)
 			{
 				cl.viewangles.pitch += adelta;
 			}
@@ -425,58 +426,58 @@ static void AdjustAngles(void)
 	//	ROLL
 	if (cl.health <= 0)
  	{
- 		if (cl.viewangles.roll < 75 * ANG1)
+ 		if (cl.viewangles.roll >= 0 && cl.viewangles.roll < 75)
 		{
-			cl.viewangles.roll += DEG2BAM(80 * host_frametime);
+			cl.viewangles.roll += 80 * host_frametime;
 		}
- 		if (cl.viewangles.roll > (angle_t)285 * ANG1)
+ 		if (cl.viewangles.roll < 0 && cl.viewangles.roll > -75)
 		{
-			cl.viewangles.roll -= DEG2BAM(80 * host_frametime);
+			cl.viewangles.roll -= 80 * host_frametime;
 		}
 		roll_centering = false;
 	}
 	else
 	{
-    	cl.viewangles.roll += DEG2BAM(KeyTiltRight.KeyState() * cl_rollspeed * speed);
-    	cl.viewangles.roll -= DEG2BAM(KeyTiltLeft.KeyState() * cl_rollspeed * speed);
+    	cl.viewangles.roll += KeyTiltRight.KeyState() * cl_rollspeed * speed;
+    	cl.viewangles.roll -= KeyTiltLeft.KeyState() * cl_rollspeed * speed;
 		if (roll_centering)
 		{
-			if (abs(cl.viewangles.roll) < (int)DEG2BAM(cl_rollspeed * host_frametime))
+			if (fabs(cl.viewangles.roll) < cl_rollspeed * host_frametime)
 			{
 				cl.viewangles.roll = 0;
 				roll_centering = false;
 			}
 			else
 			{
-				if (cl.viewangles.roll < ANG180)
+				if (cl.viewangles.roll > 0)
 				{
-					cl.viewangles.roll -= DEG2BAM(cl_rollspeed * host_frametime);
+					cl.viewangles.roll -= cl_rollspeed * host_frametime;
 				}
-				else if (cl.viewangles.roll > ANG180)
+				else if (cl.viewangles.roll < 0)
 				{
-					cl.viewangles.roll += DEG2BAM(cl_rollspeed * host_frametime);
+					cl.viewangles.roll += cl_rollspeed * host_frametime;
 				}
 			}
 		}
 	}
 
 	//	Check angles
-	if ((int)cl.viewangles.pitch > (int)(80 * ANG1))
+	if (cl.viewangles.pitch > 80.0)
 	{
-		cl.viewangles.pitch = (angle_t)(80 * ANG1);
+		cl.viewangles.pitch = 80.0;
 	}
-	if ((int)cl.viewangles.pitch < (int)(-70 * ANG1))
+	if (cl.viewangles.pitch < -70.0)
 	{
-		cl.viewangles.pitch = (angle_t)(-70 * ANG1);
+		cl.viewangles.pitch = -70.0;
 	}
 
-	if ((int)cl.viewangles.roll > (int)(80 * ANG1))
+	if (cl.viewangles.roll > 80.0)
 	{
-		cl.viewangles.roll = (angle_t)(80 * ANG1);
+		cl.viewangles.roll = 80.0;
 	}
-	if ((int)cl.viewangles.roll < (int)(-80 * ANG1))
+	if (cl.viewangles.roll < -80.0)
 	{
-		cl.viewangles.roll = (angle_t)(-80 * ANG1);
+		cl.viewangles.roll = -80.0;
 	}
 }
 
@@ -643,9 +644,9 @@ void CL_SendMove(void)
 	    mousex = mousey = 0;
 		msg.Clear();
 		msg << (byte)clc_move
-			<< (byte)(cl.viewangles.yaw >> 24)
-			<< (byte)(cl.viewangles.pitch >> 24)
-			<< (byte)(cl.viewangles.roll >> 24)
+			<< (byte)(DEG2BAM(cl.viewangles.yaw) >> 24)
+			<< (byte)(DEG2BAM(cl.viewangles.pitch) >> 24)
+			<< (byte)(DEG2BAM(cl.viewangles.roll) >> 24)
 			<< cmd.forwardmove
 			<< cmd.sidemove
 			<< cmd.flymove
@@ -723,9 +724,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

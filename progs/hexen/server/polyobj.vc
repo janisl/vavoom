@@ -54,12 +54,10 @@ class TRotatePoly:PolyobjThinker
 
 class TMovePoly:PolyobjThinker
 {
-	float speed;
 	int polyobj;
+	float speed;
 	float dist;
 	angle_t angle;
-	float xSpeed;	// for sliding walls
-	float ySpeed;
 
 	void Think(void);
 };
@@ -67,8 +65,8 @@ class TMovePoly:PolyobjThinker
 class TPolyDoor:PolyobjThinker
 {
 	int type;
-	float speed;
 	int polyobj;
+	float speed;
 	float dist;
 	int rot_dist;
 	angle_t rot_speed;
@@ -76,8 +74,8 @@ class TPolyDoor:PolyobjThinker
 	float ySpeed;
 	float totalDist;
 	int rot_totalDist;
-	int tics;
-	int waitTics;
+	float time;
+	float waitTime;
 	boolean close;
 
 	void Think(void);
@@ -184,7 +182,7 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	pe->rot_speed = (args[1] * direction * (ANG90 / 64)) >> 3;
 
 	//THRUST
-	pe->thrust_force = itof(pe->rot_speed) / 256.0 / 65536.0;
+	pe->thrust_force = itof(pe->rot_speed) / 8.0 / 65536.0;
 
 	poly->specialdata = pe;
 	PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
@@ -226,7 +224,7 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 		pe->rot_speed = (args[1] * direction * (ANG90 / 64)) >> 3;
 
 		//THRUST
-		pe->thrust_force = itof(pe->rot_speed) / 256.0 / 65536.0;
+		pe->thrust_force = itof(pe->rot_speed) / 8.0 / 65536.0;
 
 		polyNum = mirror;
 		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
@@ -242,13 +240,23 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 
 void TMovePoly::Think(void)
 {
-	float absSpeed;
+	float move;
+	float absMove;
+	float xMove;
+	float yMove;
 	polyobj_t *poly;
 
-	if (PO_MovePolyobj(polyobj, xSpeed, ySpeed))
+	move = speed * frametime;
+	absMove = fabs(move);
+	if (dist < absMove)
 	{
-		absSpeed = fabs(speed);
-		dist -= absSpeed;
+		move = dist * (move < 0.0 ? -1.0 : 1.0);
+	}
+	xMove = move * cos(angle);
+	yMove = move * sin(angle);
+	if (PO_MovePolyobj(polyobj, xMove, yMove))
+	{
+		dist -= absMove;
 		if (dist <= 0.0)
 		{
 			poly = GetPolyobj(polyobj);
@@ -260,12 +268,6 @@ void TMovePoly::Think(void)
 			PolyobjFinished(poly->tag);
 			RemoveSpecialThinker(this);
 			return;
-		}
-		if (dist < absSpeed)
-		{
-			speed = dist * (speed < 0.0 ? -1.0 : 1.0);
-			xSpeed = speed * cos(angle);
-			ySpeed = speed * sin(angle);
 		}
 	}
 }
@@ -307,7 +309,7 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	{
 		pe->dist = itof(args[3]);	// Distance
 	}
-	pe->speed = itof(args[1]) / 8.0;
+	pe->speed = itof(args[1]) * 4.0;
 
 	//THRUST
 	pe->thrust_force = pe->speed / 8.0;
@@ -317,8 +319,6 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	an = args[2] * (ANG90 / 64);
 
 	pe->angle = an;
-	pe->xSpeed = pe->speed * cos(pe->angle);
-	pe->ySpeed = pe->speed * sin(pe->angle);
 	PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
@@ -339,15 +339,13 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 		{
 			pe->dist = itof(args[3]);	// Distance
 		}
-		pe->speed = itof(args[1]) / 8.0;
+		pe->speed = itof(args[1]) * 4.0;
 
 		//THRUST
 		pe->thrust_force = pe->speed / 8.0;
 
 		an = an + ANG180;	// reverse the angle
 		pe->angle = an;
-		pe->xSpeed = pe->speed * cos(pe->angle);
-		pe->ySpeed = pe->speed * sin(pe->angle);
 		polyNum = mirror;
 		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
 	}
@@ -363,13 +361,15 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 void TPolyDoor::Think(void)
 {
 	int absSpeed;
-	float fabsSpeed;
 	polyobj_t *poly;
+	float move;
 
-	if (tics)
+	if (time)
 	{
-		if (!--tics)
+		time -= frametime;
+		if (time <= 0.0)
 		{
+			time = 0.0;
 			poly = GetPolyobj(polyobj);
 			PolyobjStartSequence(poly,
 				seq_name[SEQ_DOOR_STONE + poly->seqType]);
@@ -379,10 +379,10 @@ void TPolyDoor::Think(void)
 	switch (type)
 	{
 	case PODOOR_SLIDE:
-		if (PO_MovePolyobj(polyobj, xSpeed, ySpeed))
+		move = speed * frametime;
+		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
 		{
-			fabsSpeed = fabs(speed);
-			dist -= fabsSpeed;
+			dist -= fabs(move);
 			if (dist <= 0.0)
 			{
 				poly = GetPolyobj(polyobj);
@@ -391,7 +391,7 @@ void TPolyDoor::Think(void)
 				{
 					dist = totalDist;
 					close = true;
-					tics = waitTics;
+					time = waitTime;
 					xSpeed = -xSpeed;
 					ySpeed = -ySpeed;
 				}
@@ -442,7 +442,7 @@ void TPolyDoor::Think(void)
 				{
 					rot_dist = rot_totalDist;
 					close = true;
-					tics = waitTics;
+					time = waitTime;
 					rot_speed = -rot_speed;
 				}
 				else
@@ -510,13 +510,13 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 	pd->polyobj = polyNum;
 	if (type == PODOOR_SLIDE)
 	{
-		pd->waitTics = args[4];
-		pd->speed = itof(args[1]) / 8.0;
+		pd->waitTime = itof(args[4]) / 35.0;
+		pd->speed = itof(args[1]) * 4.0;
 		pd->totalDist = itof(args[3]);	// Distance
 		pd->dist = pd->totalDist;
 		an = args[2] * (ANG90 / 64);
-		pd->xSpeed = pd->speed * cos(an);
-		pd->ySpeed = pd->speed * sin(an);
+		pd->xSpeed = cos(an);
+		pd->ySpeed = sin(an);
 
 		//THRUST
 		pd->thrust_force = pd->speed / 8.0;
@@ -525,13 +525,13 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 	}
 	else if (type == PODOOR_SWING)
 	{
-		pd->waitTics = args[3];
+		pd->waitTime = itof(args[3]) / 35.0;
 		pd->rot_speed = (args[1] * (ANG90 / 64)) >> 3;
 		pd->rot_totalDist = args[2] * (ANG90 / 64);
 		pd->rot_dist = pd->rot_totalDist;
 
 		//THRUST
-		pd->thrust_force = itof(pd->rot_speed) / 8.0 / 65536.0;
+		pd->thrust_force = 32.0 * itof(pd->rot_speed) / 8.0 / 65536.0;
 
 		PolyobjStartSequence(poly, seq_name[SEQ_DOOR_STONE + poly->seqType]);
 	}
@@ -551,13 +551,13 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 		poly->specialdata = pd;
 		if (type == PODOOR_SLIDE)
 		{
-			pd->waitTics = args[4];
-			pd->speed = itof(args[1]) / 8.0;
+			pd->waitTime = itof(args[4]) / 35.0;
+			pd->speed = itof(args[1]) * 4.0;
 			pd->totalDist = itof(args[3]);	// Distance
 			pd->dist = pd->totalDist;
 			an = an + ANG180;	// reverse the angle
-			pd->xSpeed = pd->speed * cos(an);
-			pd->ySpeed = pd->speed * sin(an);
+			pd->xSpeed = cos(an);
+			pd->ySpeed = sin(an);
 
 			//THRUST
 			pd->thrust_force = pd->speed / 8.0;
@@ -567,13 +567,13 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 		}
 		else if (type == PODOOR_SWING)
 		{
-			pd->waitTics = args[3];
+			pd->waitTime = itof(args[3]) / 35.0;
 			pd->rot_speed = (-args[1] * (ANG90 / 64)) >> 3;
 			pd->rot_totalDist = args[2] * (ANG90 / 64);
 			pd->rot_dist = pd->rot_totalDist;
 
 			//THRUST
-			pd->thrust_force = itof(pd->rot_speed) / 8.0 / 65536.0;
+			pd->thrust_force = 32.0 * itof(pd->rot_speed) / 8.0 / 65536.0;
 
 			PolyobjStartSequence(poly,
 				seq_name[SEQ_DOOR_STONE + poly->seqType]);
@@ -589,10 +589,8 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-void PolyThrustMobj(mobj_t * mobj, angle_t angle, polyobj_t * po)
+void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 {
-	float thrustX;
-	float thrustY;
 	float force;
 	PolyobjThinker *pe;
 
@@ -609,9 +607,9 @@ void PolyThrustMobj(mobj_t * mobj, angle_t angle, polyobj_t * po)
 		{
 			force = 1.0;
 		}
-		else if (force > 4.0)
+		else if (force > 128.0)
 		{
-			force = 4.0;
+			force = 128.0;
 		}
 	}
 	else
@@ -619,14 +617,13 @@ void PolyThrustMobj(mobj_t * mobj, angle_t angle, polyobj_t * po)
 		force = 1.0;
 	}
 
-	thrustX = force * cos(angle);
-	thrustY = force * sin(angle);
-	mobj->velocity.x += thrustX * 35.0;
-	mobj->velocity.y += thrustY * 35.0;
+	mobj->velocity += force * thrustDir;
 	if (po->crush)
 	{
-		if (!P_CheckPosition(mobj, mobj->origin.x + thrustX,
-				mobj->origin.y + thrustY))
+		TVec testPos;
+
+		testPos = mobj->origin + force * thrustDir * frametime;
+		if (!P_CheckPosition(mobj, testPos.x, testPos.y))
 		{
 			DamageMobj(mobj, NULL, NULL, 3);
 		}
@@ -657,6 +654,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

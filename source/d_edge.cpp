@@ -118,6 +118,8 @@ fixed_t			bbextentt;
 
 void*			cacheblock;
 int				cachewidth;
+int				d_skysmask;
+int				d_skytmask;
 byte*			d_transluc;// For translucent spans
 word			*d_srctranstab;
 word			*d_dsttranstab;
@@ -970,7 +972,7 @@ static void D_DrawSurfaces(void)
 			{
 				sadjust = base_sadjust - (int)(surf->offs2 * 0x10000);
 				Drawer->SetSkyTexture(surf->texture2, true);
-				D_DrawDoubleSkySpans(surf->spans);
+				D_DrawSkySpans(surf->spans);
 			}
 			d_ziorigin = 0;
 			d_zistepv = 0;
@@ -1087,9 +1089,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.6  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.5  2001/08/21 17:22:28  dj_jl
 //	Optimized rendering with some asm
 //	

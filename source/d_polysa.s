@@ -30,8 +30,6 @@
 .extern	C(D_PolysetSetEdgeTable)
 .extern	C(D_RasterizeAliasPolySmooth)
 
-#define SPAN_SIZE	(1024 + 1 + 1 + 1) * spanpackage_t_size
-
 	.data
 
 	.align	4
@@ -52,15 +50,8 @@ Ltemp:	.long	0
 
 #ifndef GAS2TASM
 
-.globl C(D_PolysetDraw)
-C(D_PolysetDraw):
-	subl	$(SPAN_SIZE),%esp
-
-	movl	%esp,%eax
-	addl	$(CACHE_SIZE - 1),%eax
-	andl	$(~(CACHE_SIZE - 1)),%eax
-	movl	%eax,C(a_spans)
-
+.globl C(D_DrawNonSubdiv)
+C(D_DrawNonSubdiv):
 	pushl	%ebp
 	pushl	%edi
 	pushl	%esi
@@ -180,7 +171,6 @@ LNextTriangle:
 	popl	%esi
 	popl	%edi
 	popl	%ebp
-	addl	$(SPAN_SIZE),%esp
 	ret
 
 #endif
@@ -781,9 +771,12 @@ LSkip2:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.3  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.2  2001/08/15 17:44:41  dj_jl
 //	Added missing externs
 //	

@@ -227,7 +227,7 @@ int PO_GetPolyobjMirror(int poly);
 struct mobj_base_t
 {
 	TVec		origin;			// position
-	TAVec		angles;			// orientation
+	TBAMVec		angles;			// orientation
 	int			spritetype;		// sprite orientation type
     int			sprite;			// used to find patch_t and flip value
     int			frame;			// might be ORed with FF_FULLBRIGHT
@@ -316,9 +316,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.9  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.8  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	

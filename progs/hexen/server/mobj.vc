@@ -51,7 +51,6 @@ mobj_t *P_SpawnMobj(float x, float y, float z, int type);
 
 int PuffType;
 mobj_t *PuffSpawned;
-mobj_t *MissileMobj;
 mobj_t *BlockingMobj;
 mobj_t *linetarget;	// who got hit (or NULL)
 
@@ -244,23 +243,23 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 //
 //==========================================================================
 
-void generic_mobj_start(mobj_t * self, mthing_t * mthing)
+void mobj_t::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
-	self->lastlook = P_Random() % MAXPLAYERS;
+	lastlook = P_Random() % MAXPLAYERS;
 
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
 	// routine, it will not be called.
-	st = &states[self->spawnstate];
-	self->time = st->time;
-	self->sprite = st->sprite;
-	self->frame = st->frame;
-	self->model_index = st->model_index;
-	self->alias_frame = st->model_frame;
-	self->statenum = st->statenum;
-	self->nextstate = st->nextstate;
+	st = &states[spawnstate];
+	time = st->time;
+	sprite = st->sprite;
+	frame = st->frame;
+	model_index = st->model_index;
+	alias_frame = st->model_frame;
+	statenum = st->statenum;
+	nextstate = st->nextstate;
 
 	if (mthing)
 	{
@@ -268,21 +267,21 @@ void generic_mobj_start(mobj_t * self, mthing_t * mthing)
 
 		x = mthing->x;
 		y = mthing->y;
-		if (self->type == MT_ZLYNCHED_NOHEART)
+		if (type == MT_ZLYNCHED_NOHEART)
 		{
 			// Special stuff
 			P_SpawnMobj(x, y, ONFLOORZ, MT_BLOODPOOL);
 		}
 
-		if (self->flags & MF_SPAWNCEILING)
+		if (flags & MF_SPAWNCEILING)
 		{
 			z = ONCEILINGZ;
 		}
-		else if (self->flags2 & MF2_SPAWNFLOAT)
+		else if (flags2 & MF2_SPAWNFLOAT)
 		{
 			z = FLOATRANDZ;
 		}
-		else if (self->flags2 & MF2_FLOATBOB)
+		else if (flags2 & MF2_FLOATBOB)
 		{
 			z = mthing->height;
 		}
@@ -290,60 +289,60 @@ void generic_mobj_start(mobj_t * self, mthing_t * mthing)
 		{
 			z = ONFLOORZ;
 		}
-		SetOrigin(self, vector(x, y, z));
+		SetOrigin(this, vector(x, y, z));
 		if (z == ONFLOORZ)
 		{
-			self->origin.z += mthing->height;
+			origin.z += mthing->height;
 		}
 		else if (z == ONCEILINGZ)
 		{
-			self->origin.z -= mthing->height;
+			origin.z -= mthing->height;
 		}
-		P_SetThingPosition(self);
-		self->tid = mthing->tid;
-		self->special = mthing->special;
-		self->args[0] = mthing->arg1;
-		self->args[1] = mthing->arg2;
-		self->args[2] = mthing->arg3;
-		self->args[3] = mthing->arg4;
-		self->args[4] = mthing->arg5;
-		if (self->flags2 & MF2_FLOATBOB)
+		P_SetThingPosition(this);
+		tid = mthing->tid;
+		special = mthing->special;
+		args[0] = mthing->arg1;
+		args[1] = mthing->arg2;
+		args[2] = mthing->arg3;
+		args[3] = mthing->arg4;
+		args[4] = mthing->arg5;
+		if (flags2 & MF2_FLOATBOB)
 		{
 			// Seed random starting index for bobbing motion
-			self->health = P_Random();
-			self->special1f = mthing->height;
+			health = P_Random();
+			special1f = mthing->height;
 		}
-		if (self->time > 0.0)
+		if (time > 0.0)
 		{
-			self->time = 0.1 + Random() * self->time;
+			time = 0.1 + Random() * time;
 		}
-		if (self->flags & MF_COUNTKILL)
+		if (flags & MF_COUNTKILL)
 		{
 			// Quantize angle to 45 degree increments
-			self->angles.yaw = ANG45 * (mthing->angle / 45);
+			angles.yaw = ANG45 * (mthing->angle / 45);
 		}
 		else
 		{
 			// Scale angle correctly (source is 0..359)
-			self->angles.yaw = ((mthing->angle << 8) / 360) << 24;
+			angles.yaw = ((mthing->angle << 8) / 360) << 24;
 		}
 		if (mthing->options & MTF_AMBUSH)
 		{
-			self->flags |= MF_AMBUSH;
+			flags |= MF_AMBUSH;
 		}
 		if (mthing->options & MTF_DORMANT)
 		{
-			self->flags2 |= MF2_DORMANT;
-			if (self->type == MT_ICEGUY)
+			flags2 |= MF2_DORMANT;
+			if (type == MT_ICEGUY)
 			{
-				SetMobjState(self, S_ICEGUY_DORMANT);
+				SetMobjState(this, S_ICEGUY_DORMANT);
 			}
-			self->time = -1.0;
+			time = -1.0;
 		}
 	}
 	else
 	{
-		SetOrigin(self, self->origin);
+		SetOrigin(this, origin);
 	}
 }
 
@@ -507,48 +506,6 @@ int P_HitFloor(mobj_t * thing)
 		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
-}
-
-//==========================================================================
-//
-//  P_ExplodeMissile
-//
-//==========================================================================
-
-void P_ExplodeMissile(mobj_t * mo)
-{
-	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
-	SetMobjState(mo, mo->deathstate);
-	//mo->tics -= P_Random()&3;
-	mo->flags &= ~MF_MISSILE;
-
-	switch (mo->type)
-	{
-	case MT_SORCBALL1:
-	case MT_SORCBALL2:
-	case MT_SORCBALL3:
-		StartSoundName(NULL, "SorcererBigBallExplode", CHAN_AUTO);
-		break;
-	case MT_SORCFX1:
-		StartSoundName(NULL, "SorcererHeadScream", CHAN_AUTO);
-		break;
-	default:
-		if (mo->sound_death)
-		{
-			StartSound(mo, mo->sound_death, CHAN_VOICE);
-		}
-		break;
-	}
-	if (mo->effects & EF_DLIGHT_MASK)
-	{
-		MSG_Select(MSG_SV_DATAGRAM, NULL);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(mo->effects & EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(mo->origin.x));
-		MSG_WriteShort(ftoi(mo->origin.y));
-		MSG_WriteShort(ftoi(mo->origin.z));
-		mo->effects &= ~EF_DLIGHT_MASK;
-	}
 }
 
 //==========================================================================
@@ -2426,6 +2383,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.11  2001/10/09 17:41:17  dj_jl
 //  Beautification
 //

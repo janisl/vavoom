@@ -42,6 +42,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct skyboxinfo_t
+{
+	struct skyboxsurf_t
+	{
+		int texture;
+	};
+
+	char name[128];
+	bool autoscale;
+	skyboxsurf_t surfs[6];
+};
+
 struct skysurface_t : surface_t
 {
 	TVec			__verts[3];
@@ -74,7 +86,13 @@ static void R_LightningFlash(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+skymap_t			*skymaps;
+int					numskymaps;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static skyboxinfo_t	*skyboxinfo;
+static int			numskyboxes;
 
 static boolean		LevelHasLightning;
 static int			NextLightningFlash;
@@ -87,6 +105,27 @@ static sky_t		sky[6];
 
 //==========================================================================
 //
+//	FindSkyMap
+//
+//==========================================================================
+
+static int FindSkyMap(const char *name)
+{
+	for (int i = 0; i < numskymaps; i++)
+	{
+		if (!strcmp(skymaps[i].name, name))
+		{
+			return i | TEXF_SKY_MAP;
+		}
+	}
+	numskymaps++;
+	Z_Resize((void **)&skymaps, numskymaps * sizeof(skymap_t));
+	strcpy(skymaps[numskymaps - 1].name, name);
+	return (numskymaps - 1) | TEXF_SKY_MAP;
+}
+
+//==========================================================================
+//
 //	R_InitSkyBoxes
 //
 //==========================================================================
@@ -94,6 +133,43 @@ static sky_t		sky[6];
 void R_InitSkyBoxes(void)
 {
 	SC_Open("skyboxes");
+
+	skymaps = (skymap_t *)Z_StrMalloc(1);
+	numskymaps = 0;
+	skyboxinfo = (skyboxinfo_t *)Z_StrMalloc(1);
+	numskyboxes = 0;
+	while (SC_GetString())
+	{
+		numskyboxes++;
+		Z_Resize((void **)&skyboxinfo, numskyboxes * sizeof(skyboxinfo_t));
+		skyboxinfo_t &info = skyboxinfo[numskyboxes - 1];
+		memset(&info, 0, sizeof(info));
+
+		strcpy(info.name, sc_String);
+		SC_MustGetStringName("{");
+		SC_MustGetString();
+		while (!SC_Compare("{"))
+		{
+			if (SC_Compare("autoscale"))
+			{
+				info.autoscale = true;
+			}
+			else
+			{
+				SC_ScriptError(NULL);
+			}
+		}
+		SC_UnGet();
+		for (int i = 0; i < 6; i++)
+		{
+			SC_MustGetStringName("{");
+			SC_MustGetStringName("map");
+			SC_MustGetString();
+			info.surfs[i].texture = FindSkyMap(sc_String);
+			SC_MustGetStringName("}");
+		}
+		SC_MustGetStringName("}");
+	}
 
 	SC_Close();
 }
@@ -237,6 +313,113 @@ static void R_InitOldSky(const mapInfo_t &info)
 
 //==========================================================================
 //
+//	R_InitSkyBox
+//
+//==========================================================================
+
+static void R_InitSkyBox(const mapInfo_t &info)
+{
+	int num;
+
+	for (num = 0; num < numskyboxes; num++)
+	{
+		if (!strcmp(info.skybox, skyboxinfo[num].name))
+		{
+			break;
+		}
+	}
+	if (num == numskyboxes)
+	{
+		Host_Error("No such skybox %s", info.skybox);
+	}
+	skyboxinfo_t &sinfo = skyboxinfo[num];
+
+	memset(sky, 0, sizeof(sky));
+
+	LevelHasLightning = false;
+	LightningFlash = 0;
+
+	sky[0].surf.verts[0] = TVec(128, 128, -128);
+	sky[0].surf.verts[1] = TVec(128, 128, 128);
+	sky[0].surf.verts[2] = TVec(128, -128, 128);
+	sky[0].surf.verts[3] = TVec(128, -128, -128);
+
+	sky[1].surf.verts[0] = TVec(128, -128, -128);
+	sky[1].surf.verts[1] = TVec(128, -128, 128);
+	sky[1].surf.verts[2] = TVec(-128, -128, 128);
+	sky[1].surf.verts[3] = TVec(-128, -128, -128);
+
+	sky[2].surf.verts[0] = TVec(-128, -128, -128);
+	sky[2].surf.verts[1] = TVec(-128, -128, 128);
+	sky[2].surf.verts[2] = TVec(-128, 128, 128);
+	sky[2].surf.verts[3] = TVec(-128, 128, -128);
+
+	sky[3].surf.verts[0] = TVec(-128, 128, -128);
+	sky[3].surf.verts[1] = TVec(-128, 128, 128);
+	sky[3].surf.verts[2] = TVec(128, 128, 128);
+	sky[3].surf.verts[3] = TVec(128, 128, -128);
+
+	sky[4].surf.verts[0] = TVec(128.0, 128.0, 128);
+	sky[4].surf.verts[1] = TVec(-128.0, 128.0, 128);
+	sky[4].surf.verts[2] = TVec(-128.0, -128.0, 128);
+	sky[4].surf.verts[3] = TVec(128.0, -128.0, 128);
+
+	sky[5].surf.verts[0] = TVec(128, 128, -128);
+	sky[5].surf.verts[1] = TVec(128, -128, -128);
+	sky[5].surf.verts[2] = TVec(-128, -128, -128);
+	sky[5].surf.verts[3] = TVec(-128, 128, -128);
+
+	sky[0].plane.Set(TVec(-1, 0, 0), -128);
+	sky[0].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[0].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[0].texinfo.texorg = TVec(128, 128, 128);
+
+	sky[1].plane.Set(TVec(0, 1, 0), -128);
+	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
+	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[1].texinfo.texorg = TVec(128, -128, 128);
+
+	sky[2].plane.Set(TVec(1, 0, 0), -128);
+	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
+	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[2].texinfo.texorg = TVec(-128, -128, 128);
+
+	sky[3].plane.Set(TVec(0, -1, 0), -128);
+	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
+	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
+	sky[3].texinfo.texorg = TVec(-128, 128, 128);
+
+	sky[4].plane.Set(TVec(0, 0, -1), -128);
+	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[4].texinfo.taxis = TVec(1.0, 0, 0);
+	sky[4].texinfo.texorg = TVec(-128, 128, 128);
+
+	sky[5].plane.Set(TVec(0, 0, 1), -128);
+	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
+	sky[5].texinfo.taxis = TVec(-1.0, 0, 0);
+	sky[5].texinfo.texorg = TVec(128, 128, -128);
+
+	for (int j = 0; j < 6; j++)
+	{
+		sky[j].texture1 = sinfo.surfs[j].texture;
+		sky[j].surf.plane = &sky[j].plane;
+		sky[j].surf.texinfo = &sky[j].texinfo;
+		sky[j].surf.count = 4;
+
+		//	Precache texture
+		Drawer->SetSkyTexture(sky[j].texture1, false);
+
+		if (sinfo.autoscale)
+		{
+			int smap = sky[j].texture1 & ~TEXF_SKY_MAP;
+			sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
+			sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	R_InitSky
 //
 //	Called at level load.
@@ -247,6 +430,7 @@ void R_InitSky(const mapInfo_t &info)
 {
 	if (info.skybox[0])
 	{
+		R_InitSkyBox(info);
 	}
 	else
 	{
@@ -453,9 +637,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.4  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

@@ -62,6 +62,8 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 	tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE),
 	dither("d3d_dither", "0", CVAR_ARCHIVE),
 	blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE),
+	maxdist("d3d_maxdist", "8192.0", CVAR_ARCHIVE),
+	model_lighting("d3d_model_lighting", "0", CVAR_ARCHIVE),
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -552,12 +554,6 @@ void TDirect3DDrawer::InitResolution(void)
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
-
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, D3DFOG_LINEAR);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR, 0x007f7f7f);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(0.5));
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(1.0));
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(2048.0));
 }
 
 //==========================================================================
@@ -763,11 +759,10 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	memset(&matProj, 0, sizeof(D3DMATRIX));
 	matProj(0, 0) = 1 / rd->fovx;
 	matProj(1, 1) = 1 / rd->fovy;
-	float zFar = 8192.0;
-	float zNear = 1.0;
-	float Q = zFar / (zFar - zNear);
+	float mindist = 1.0;
+	float Q = maxdist / (maxdist - mindist);
 	matProj(2, 2) = Q;
-	matProj(3, 2) = -Q * zNear;
+	matProj(3, 2) = -Q * mindist;
 	matProj(2, 3) = 1;
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
 
@@ -796,7 +791,19 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, r_use_fog ? TRUE : FALSE);
+	if (r_fog)
+	{
+		static const D3DFOGMODE fog_mode[4] = {
+			D3DFOG_NONE, D3DFOG_LINEAR, D3DFOG_EXP, D3DFOG_EXP2 };
+
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, fog_mode[r_fog & 3]);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR,
+			((int)(r_fog_r * 255) << 16) | ((int)(r_fog_g * 255) << 8) | (int)(r_fog_b * 255));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(r_fog_density));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(r_fog_start));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(r_fog_end));
+		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
+	}
 
 	memset(light_chain, 0, sizeof(light_chain));
 
@@ -1089,9 +1096,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.14  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.13  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
 //	

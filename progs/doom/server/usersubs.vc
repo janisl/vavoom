@@ -169,7 +169,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 {
 	mobj_t *th;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 	float x;
 	float y;
@@ -215,6 +215,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

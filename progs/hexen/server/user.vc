@@ -143,7 +143,10 @@ void MovePlayer(player_t * player)
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
 	wishvel = forward * vforward + side * vright;
-	wishvel.z = 0.0;
+	if (onground && !(player->mo->flags2 & MF2_FLY))
+	{
+		wishvel.z = 0.0;
+	}
 
 	player->mo->velocity += 5.0 * frametime * wishvel;
 
@@ -185,7 +188,7 @@ void MovePlayer(player_t * player)
 	}
 	if (player->mo->flags2 & MF2_FLY)
 	{
-		player->mo->velocity.z = itof(player->flyheight) * 35.0;
+		player->mo->velocity.z = itof(player->flyheight) * 35.0 + wishvel.z;
 		if (player->flyheight)
 		{
 			player->flyheight /= 2;
@@ -706,6 +709,9 @@ void PlayerThink(player_t * player)
 	mobj_t *pmo;
 	mobj_t *speedMo;
 
+	// Copy view angles
+	avcpy(player->viewangles, player->mo->angles);
+
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
 		player->mo->flags |= MF_NOCLIP;
@@ -1090,6 +1096,8 @@ void SetViewPos(player_t * player)
 		player->vieworg.x += (Random() - 0.5) * (intensity * 4.0);
 		player->vieworg.y += (Random() - 0.5) * (intensity * 4.0);
 	}
+
+	avcpy(player->mo->angles, player->viewangles);
 
 	SB_PaletteFlash(player);
 
@@ -1947,6 +1955,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.11  2001/10/09 17:36:57  dj_jl
 //  Added flags for status bar
 //

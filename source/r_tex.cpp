@@ -732,6 +732,8 @@ void R_AnimateSurfaces(void)
 
 int R_TextureAnimation(int tex)
 {
+	if (tex & TEXF_SKY_MAP)
+		return tex;
 	if (tex & TEXF_FLAT)
 		return TEXF_FLAT | flattranslation[tex & ~TEXF_FLAT];
 	else
@@ -1113,9 +1115,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.10  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.9  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

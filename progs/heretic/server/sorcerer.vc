@@ -62,7 +62,7 @@ void A_Sor1Chase(mobj_t * actor)
 void A_Srcr1Attack(mobj_t * actor)
 {
 	mobj_t *mo;
-	TAVec angles;
+	TBAMVec angles;
 	angle_t angle;
 
 	if (!actor->target)
@@ -377,6 +377,9 @@ void A_GenWizard(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -390,7 +390,7 @@ boolean CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TAVec * angles)
+void BulletSlope(mobj_t * mo, TBAMVec * angles)
 {
 	//
 	// see which target is to be aimed at
@@ -766,7 +766,7 @@ void A_Light0(mobj_t * actor)
 void A_StaffAttackPL1(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TAVec angles;
+	TBAMVec angles;
 	int damage;
 	TVec vforward;
 
@@ -796,7 +796,7 @@ void A_StaffAttackPL1(mobj_t * actor)
 void A_StaffAttackPL2(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TAVec angles;
+	TBAMVec angles;
 	int damage;
 	TVec vforward;
 
@@ -835,7 +835,7 @@ void A_GauntletAttack(mobj_t * actor)
 	float slope;
 	int randVal;
 	float dist;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	psp->sx = Random() * 4.0 - 2.0;
@@ -920,7 +920,7 @@ void A_FireGoldWandPL1(mobj_t * actor)
 	player_t *player = actor->player;
 	mobj_t *mo;
 	int damage;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -950,7 +950,7 @@ void A_FireGoldWandPL2(mobj_t * actor)
 	mobj_t *mo;
 	int damage;
 	float momz;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -1024,7 +1024,7 @@ void A_FireBlasterPL1(mobj_t * actor)
 	mobj_t *mo;
 	int damage;
 	float bulletslope;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -1312,7 +1312,7 @@ void A_BeakAttackPL1(mobj_t * actor)
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
 	int damage;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = 1 + (P_Random() & 3);
@@ -1345,7 +1345,7 @@ void A_BeakAttackPL2(mobj_t * actor)
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
 	int damage;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = HITDICE(4);
@@ -1752,7 +1752,7 @@ void A_DeathBallImpact(mobj_t * ball)
 	mobj_t *target;
 	angle_t angle;
 	int newAngle;
-	TAVec angles;
+	TBAMVec angles;
 
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1820,6 +1820,9 @@ void A_DeathBallImpact(mobj_t * ball)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.6  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

@@ -33,7 +33,7 @@
 	dst.roll = src.roll;\
 }
 
-void P_RemoveMobj(mobj_t * mobj);
+void P_RemoveMobj(Entity * mobj);
 
 //==========================================================================
 //
@@ -397,6 +397,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.9  2001/10/09 17:38:36  dj_jl
 //  Got rid of mobj addfields
 //

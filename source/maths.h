@@ -77,12 +77,28 @@ typedef int fixed_t;
 
 typedef unsigned angle_t;
 
-class TAVec
+class TBAMVec
 {
  public:
 	angle_t		pitch;
 	angle_t		yaw;
 	angle_t		roll;
+};
+
+class TAVec
+{
+ public:
+	float pitch;
+	float yaw;
+	float roll;
+
+	TAVec(void) { }
+	TAVec(const TBAMVec &ba)
+	{
+		pitch = BAM2DEG(ba.pitch);
+		yaw = BAM2DEG(ba.yaw);
+		roll = BAM2DEG(ba.roll);
+	}
 };
 
 // HEADER FILES ------------------------------------------------------------
@@ -95,6 +111,12 @@ class TAVec
 
 int mlog2(int val);
 
+void AngleVectors(const TBAMVec &angles, TVec &forward, TVec &right, TVec &up);
+void AngleVector(const TBAMVec &angles, TVec &forward);
+void VectorAngles(const TVec &vec, TBAMVec &angles);
+
+float AngleMod(float angle);
+float AngleMod180(float angle);
 void AngleVectors(const TAVec &angles, TVec &forward, TVec &right, TVec &up);
 void AngleVector(const TAVec &angles, TVec &forward);
 void VectorAngles(const TVec &vec, TAVec &angles);
@@ -116,9 +138,31 @@ inline float mtan(angle_t angle)
 	return tan(BAM2RAD(angle));
 }
 
-inline angle_t matan(float y, float x)
+inline angle_t bam_matan(float y, float x)
 {
 	return RAD2BAM(atan2(y, x));
+}
+
+//----
+
+inline float msin(float angle)
+{
+	return sin(DEG2RAD(angle));
+}
+
+inline float mcos(float angle)
+{
+	return cos(DEG2RAD(angle));
+}
+
+inline float mtan(float angle)
+{
+	return tan(DEG2RAD(angle));
+}
+
+inline float matan(float y, float x)
+{
+	return RAD2DEG(atan2(y, x));
 }
 
 //==========================================================================
@@ -174,9 +218,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -113,7 +113,6 @@ short					*zbuffer = NULL;
 
 spanfunc_t				D_DrawSpans;
 spanfunc_t				D_DrawSkySpans;
-spanfunc_t				D_DrawDoubleSkySpans;
 spritespanfunc_t		D_DrawSpriteSpans;
 spritespanfunc_t		D_DrawFuzzSpriteSpans;
 spritespanfunc_t		D_DrawAltFuzzSpriteSpans;
@@ -232,7 +231,6 @@ void TSoftwareDrawer::InitResolution(void)
 
 		D_DrawSpans = D_DrawSpans8_8;
 		D_DrawSkySpans = D_DrawSkySpans_8;
-		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_8;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_8;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawAltFuzzSpriteSpans = D_DrawAltFuzzSpriteSpans_8;
@@ -252,7 +250,6 @@ void TSoftwareDrawer::InitResolution(void)
 
 		D_DrawSpans = D_DrawSpans8_16;
 		D_DrawSkySpans = D_DrawSkySpans_16;
-		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
@@ -272,7 +269,6 @@ void TSoftwareDrawer::InitResolution(void)
 
 		D_DrawSpans = D_DrawSpans8_16;
 		D_DrawSkySpans = D_DrawSkySpans_16;
-		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
@@ -295,7 +291,6 @@ void TSoftwareDrawer::InitResolution(void)
 
 		D_DrawSpans = D_DrawSpans8_32;
 		D_DrawSkySpans = D_DrawSkySpans_32;
-		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_32;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_32;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
@@ -645,9 +640,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.7  2001/08/21 17:50:55  dj_jl
 //	Beautification
 //	

@@ -50,10 +50,11 @@ class TLight:Thinker
 	int type;
 	int value1;
 	int value2;
-	int tics1;
-	int tics2;
-	int count;
-	int delta;
+	float time1;
+	float time2;
+	int direction;
+	float time;
+	float delta;
 
 	void Think(void);
 	void Archive(void);
@@ -63,7 +64,7 @@ class TLight:Thinker
 class TPhase:Thinker
 {
 	sector_t *sector;
-	int index;
+	float index;
 	int base;
 
 	void Think(void);
@@ -96,16 +97,20 @@ int PhaseTable[64] = {
 
 void TLight::Think(void)
 {
-	if (count)
+	if (time)
 	{
-		count--;
+		time -= frametime;
+		if (time <= 0.0)
+		{
+			time = 0.0;
+		}
 		return;
 	}
 	switch (type)
 	{
 	case LITE_FADE:
-		sector->params.lightlevel += delta;
-		if (tics2 == 1)
+		sector->params.lightlevel += ftoi(delta * frametime);
+		if (direction == 1)
 		{
 			if (sector->params.lightlevel >= value1)
 			{
@@ -121,21 +126,21 @@ void TLight::Think(void)
 		break;
 
 	case LITE_GLOW:
-		sector->params.lightlevel += delta;
-		if (tics2 == 1)
+		sector->params.lightlevel += ftoi(delta * frametime);
+		if (direction == 1)
 		{
 			if (sector->params.lightlevel >= value1)
 			{
 				sector->params.lightlevel = value1;
 				delta = -delta;
-				tics2 = -1;	// reverse direction
+				direction = -1;	// reverse direction
 			}
 		}
 		else if (sector->params.lightlevel <= value2)
 		{
 			sector->params.lightlevel = value2;
 			delta = -delta;
-			tics2 = 1;	// reverse direction
+			direction = 1;	// reverse direction
 		}
 		break;
 
@@ -143,12 +148,12 @@ void TLight::Think(void)
 		if (sector->params.lightlevel == value1)
 		{
 			sector->params.lightlevel = value2;
-			count = (P_Random() & 7) + 1;
+			time = itof((P_Random() & 7) + 1) / 32.0;
 		}
 		else
 		{
 			sector->params.lightlevel = value1;
-			count = (P_Random() & 31) + 1;
+			time = itof((P_Random() & 31) + 1) / 32.0;
 		}
 		break;
 
@@ -156,12 +161,12 @@ void TLight::Think(void)
 		if (sector->params.lightlevel == value1)
 		{
 			sector->params.lightlevel = value2;
-			count = tics2;
+			time = time2;
 		}
 		else
 		{
 			sector->params.lightlevel = value1;
-			count = tics1;
+			time = time1;
 		}
 		break;
 
@@ -228,7 +233,7 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		light = NewSpecialThinker(TLight);
 		light->type = type;
 		light->sector = sec;
-		light->count = 0;
+		light->time = 0.0;
 		rtn = true;
 		switch (type)
 		{
@@ -260,28 +265,28 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		case LITE_FADE:
 			think = true;
 			light->value1 = arg1;	// destination lightlevel
-			light->delta = (arg1 - sec->params.lightlevel) / arg2;	// delta lightlevel
+			light->delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->tics2 = 1;	// get brighter
+				light->direction = 1;	// get brighter
 			}
 			else
 			{
-				light->tics2 = -1;
+				light->direction = -1;
 			}
 			break;
 		case LITE_GLOW:
 			think = true;
 			light->value1 = arg1;	// upper lightlevel
 			light->value2 = arg2;	// lower lightlevel
-			light->delta = (arg1 - sec->params.lightlevel) / arg3;	// lightlevel delta
+			light->delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->tics2 = 1;	// get brighter
+				light->direction = 1;	// get brighter
 			}
 			else
 			{
-				light->tics2 = -1;
+				light->direction = -1;
 			}
 			break;
 		case LITE_FLICKER:
@@ -289,15 +294,15 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 			light->value1 = arg1;	// upper lightlevel
 			light->value2 = arg2;	// lower lightlevel
 			sec->params.lightlevel = light->value1;
-			light->count = (P_Random() & 64) + 1;
+			light->time = itof((P_Random() & 64) + 1) / 32.0;
 			break;
 		case LITE_STROBE:
 			think = true;
 			light->value1 = arg1;	// upper lightlevel
 			light->value2 = arg2;	// lower lightlevel
-			light->tics1 = arg3;	// upper tics
-			light->tics2 = arg4;	// lower tics
-			light->count = arg3;
+			light->time1 = itof(arg3) / 35.0;	// upper tics
+			light->time2 = itof(arg4) / 35.0;	// lower tics
+			light->time = itof(arg3) / 35.0;
 			sec->params.lightlevel = light->value1;
 			break;
 		default:
@@ -320,8 +325,8 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 
 void TPhase::Think(void)
 {
-	index = (index + 1) & 63;
-	sector->params.lightlevel = base + PhaseTable[index];
+	index += frametime;
+	sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
 }
 
 //==========================================================================
@@ -362,14 +367,14 @@ void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 	if (index == -1)
 	{
 		// sector->lightlevel as the index
-		phase->index = sector->params.lightlevel & 63;
+		phase->index = itof(sector->params.lightlevel) / 32.0;
 	}
 	else
 	{
-		phase->index = index & 63;
+		phase->index = itof(index) / 32.0;
 	}
 	phase->base = base & 255;
-	sector->params.lightlevel = phase->base + PhaseTable[phase->index];
+	sector->params.lightlevel = phase->base + PhaseTable[ftoi(phase->index * 32.0) & 63];
 
 	sector->special = 0;
 }
@@ -507,6 +512,9 @@ __mobjinfo__
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/10/09 17:33:29  dj_jl
 //  Moved static light sources into games
 //

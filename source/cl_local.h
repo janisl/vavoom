@@ -64,16 +64,16 @@ struct clmobj_t
 	TAVec		angles;	// orientation
 
 	int			spritetype;
-    int			sprite;	// used to find patch_t and flip value
-    int			frame;	// might be ORed with FF_FULLBRIGHT
+	int			sprite;	// used to find patch_t and flip value
+	int			frame;	// might be ORed with FF_FULLBRIGHT
 
 	int			model_index;
 	model_t		*alias_model;
 	int			alias_frame;
 	char		skin[64];
 
-    int			translucency;
-    int			translation;
+	int			translucency;
+	int			translation;
 
 	int			effects;
 };
@@ -91,7 +91,7 @@ particle_t *R_NewParticle(void);
 void R_AddStaticLight(const TVec &origin, float radius, dword color);
 
 void R_InstallSprite(const char *name, int index);
-void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
+void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 	int frame, const char *skin);
 
 model_t *Mod_FindName(char *name);
@@ -125,9 +125,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.6  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

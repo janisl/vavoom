@@ -58,6 +58,8 @@ struct skincache_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void D_LoadImage(const char *name, void **dataptr);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -641,8 +643,8 @@ void D_AliasPrepareUnclippedPoints(void)
 
 void SetSkin(const char *name)
 {
-	int			i;
-	int			avail;
+	int i;
+	int avail;
 
 	avail = -1;
 	for (i = 0; i < MAX_SKIN_CACHE; i++)
@@ -671,7 +673,7 @@ void SetSkin(const char *name)
 		}
 		i = avail;
 		strcpy(skincache[i].name, name);
-		Mod_LoadSkin(name, &skincache[i].data);
+		D_LoadImage(name, &skincache[i].data);
 	}
 
 	d_affinetridesc.pskin = skincache[i].data;
@@ -872,9 +874,12 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.7  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	

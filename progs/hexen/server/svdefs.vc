@@ -269,7 +269,7 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class mobj_t:base_mobj_t
+class Entity:base_mobj_t
 {
 	//  States
 	int spawnstate;
@@ -302,14 +302,14 @@ class mobj_t:base_mobj_t
 
 	// Thing being chased/attacked (or NULL),
 	// also the originator for missiles.
-	mobj_t *target;
+	Entity *target;
 
 	int special1;	// Special info
 	int special2;	// Special info
 	float special1f;
 	float special2f;
-	mobj_t *specialmobj1;
-	mobj_t *specialmobj2;
+	Entity *specialmobj1;
+	Entity *specialmobj2;
 
 	int type;
 
@@ -337,13 +337,30 @@ class mobj_t:base_mobj_t
 	int watertype;
 
 	void Think(void);
+	boolean Physics(void);
+	boolean XYMovement(void);
+	boolean ZMovement(void);
+	boolean CheckWater(void);
+	void UpdateVelocity(void);
+	void ResetBlasted(void);
+
 	void Archive(void);
 	void Unarchive(void);
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-	}
+	void OnMapSpawn(mthing_t *mthing);
 };
+
+class Actor:Entity
+{
+}
+
+class Missile:Entity
+{
+	boolean Physics(void);
+	boolean XYMovement(void);
+	boolean ZMovement(void);
+	void UpdateVelocity(void);
+	boolean BlasterPhysics(void);
+}
 
 addfields player_t
 {
@@ -412,14 +429,14 @@ addfields player_t
 	boolean weaponowned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
-	mobj_t *attacker;
+	Entity *attacker;
 
 	// For screen flashing (red or bright).
 	int damagecount;
 	int bonuscount;
 
 	int poisoncount;	// screen flash for poison damage
-	mobj_t *poisoner;	// NULL for non-player mobjs
+	Entity *poisoner;	// NULL for non-player mobjs
 
 	int jumpTics;
 	int localQuakeHappening;
@@ -512,6 +529,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.1  2001/10/09 17:35:46  dj_jl
 //  Split server defines into seperate file
 //

@@ -93,14 +93,17 @@ extern float DotProduct(TVec v1, TVec v2);
 extern TVec CrossProduct(TVec v1, TVec v2);
 
 //  Creates vectors for given angle vector
-extern void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
+extern void AngleVectors(TBAMVec * angles, TVec * forward, TVec * right,
 	TVec * up);
 
 //  Simplified version of AngleVectors, creates only forward vector
-extern void AngleVector(TAVec * angles, TVec * forward);
+extern void AngleVector(TBAMVec * angles, TVec * forward);
+
+//  Simplified version of AngleVectors, creates only forward vector
+extern void fAngleVector(TAVec * angles, TVec * forward);
 
 //  Create angle vector for a vector
-extern void VectorAngles(TVec * vec, TAVec * angles);
+extern void VectorAngles(TVec * vec, TBAMVec * angles);
 
 //
 //  Random numbers
@@ -249,7 +252,7 @@ extern void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 extern model_t *InstallModel(string name);
 
 //  Draws a model
-extern void R_DrawModelFrame(TVec origin, angle_t angle, model_t * model,
+extern void R_DrawModelFrame(TVec origin, float angle, model_t * model,
 	int frame, string skin);
 
 //  Draws a rectangle filled with a flat
@@ -383,12 +386,12 @@ extern sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
 //  Mobj utilites
 //
 
-extern mobj_t *NewMobjThinker(classid cid);
-extern void RemoveMobjThinker(mobj_t * mobj);
-extern void P_SetThingPosition(mobj_t * thing);
-extern void P_UnsetThingPosition(mobj_t * thing);
-extern mobj_t *NextMobj(mobj_t * mo);
-extern boolean P_CheckSight(mobj_t * mobj1, mobj_t * mobj2);
+extern Entity *NewMobjThinker(classid cid);
+extern void RemoveMobjThinker(Entity * mobj);
+extern void P_SetThingPosition(Entity * thing);
+extern void P_UnsetThingPosition(Entity * thing);
+extern Entity *NextMobj(Entity * mo);
+extern boolean P_CheckSight(Entity * mobj1, Entity * mobj2);
 
 //
 //  Special thinker utilites
@@ -414,7 +417,7 @@ extern boolean PO_MovePolyobj(int num, float x, float y);
 //  ACS functions
 //
 
-extern boolean StartACS(int number, int map, int *args, mobj_t * activator,
+extern boolean StartACS(int number, int map, int *args, Entity * activator,
 	line_t * line, int side);
 extern boolean SuspendACS(int number, int map);
 extern boolean TerminateACS(int number, int map);
@@ -428,13 +431,13 @@ extern void ACS::Unarchive(void);
 //  Sound functions
 //
 
-extern void StartSound(mobj_t * mobj, int sound, int channel);
-extern void StartSoundAtVolume(mobj_t * mobj, int sound, int channel,
+extern void StartSound(Entity * mobj, int sound, int channel);
+extern void StartSoundAtVolume(Entity * mobj, int sound, int channel,
 	int volume);
-extern void StopSound(mobj_t * mobj, int channel);
+extern void StopSound(Entity * mobj, int channel);
 extern void SectorStartSound(sector_t * sec, int sound, int channel);
 extern void SectorStopSound(sector_t * sec, int channel);
-extern boolean GetSoundPlayingInfo(mobj_t * mobj, int sound_id);
+extern boolean GetSoundPlayingInfo(Entity * mobj, int sound_id);
 extern int GetSoundID(string name);
 extern void SectorStartSequence(sector_t * sector, string sequence);
 extern void SectorStopSequence(sector_t * sector);
@@ -450,8 +453,8 @@ extern void PolyobjStopSequence(polyobj_t * mobj);
 
 extern sector_t *SectorToNum(sector_t * sector);
 extern sector_t *NumToSector(sector_t * sector);
-extern mobj_t *MobjToNum(mobj_t * mobj);
-extern mobj_t *NumToMobj(mobj_t * mobj);
+extern Entity *MobjToNum(Entity * mobj);
+extern Entity *NumToMobj(Entity * mobj);
 
 extern void G_ExitLevel(void);
 extern void G_SecretExitLevel(void);
@@ -477,6 +480,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.13  2001/10/12 17:23:33  dj_jl
 //  Start on first map in MAPINFO script
 //

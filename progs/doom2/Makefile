@@ -14,8 +14,8 @@ del:
 	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
 $(OUTDIR)/clprogs.dat: clprogs.vc ../doom/*.vc ../doom/client/*.vc ../common/*.vc
-	$(VCC) clprogs.vc $@
+	$(VCC) -I../common -Icommon clprogs.vc $@
 
 $(OUTDIR)/svprogs.dat: svprogs.vc ../doom/*.vc ../doom/server/*.vc ../common/*.vc
-	$(VCC) svprogs.vc $@
+	$(VCC) -I../common -Icommon svprogs.vc $@
 

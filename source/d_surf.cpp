@@ -138,6 +138,8 @@ static void	(*surfmiptable32RGB[4])(void) =
 
 int					c_surf;
 
+static TCvarI d_colored_lights("d_colored_lights", "1", CVAR_ARCHIVE);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -212,6 +214,10 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 
 	// calculate the lightings
 	colored = R_BuildLightMap(surface, 3);
+	if (!d_colored_lights)
+	{
+		colored = false;
+	}
 	
 	surfrowbytes = surfwidth * PixelBytes;
 
@@ -1860,9 +1866,12 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.4  2001/08/02 17:41:19  dj_jl
 //	Added new asm for 32-bits
 //	

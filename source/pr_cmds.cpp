@@ -455,7 +455,7 @@ static void PF_atan2(void)
 
 	x = Popf();
 	y = Popf();
-    Push(matan(y, x));
+    Push(bam_matan(y, x));
 }
 
 //==========================================================================
@@ -526,7 +526,7 @@ static void PF_CrossProduct(void)
 
 static void PF_AngleVectors(void)
 {
-	TAVec		*angles;
+	TBAMVec		*angles;
 	TVec		*vforward;
 	TVec		*vright;
 	TVec		*vup;
@@ -534,7 +534,7 @@ static void PF_AngleVectors(void)
 	vup = (TVec*)Pop();
 	vright = (TVec*)Pop();
 	vforward = (TVec*)Pop();
-	angles = (TAVec*)Pop();
+	angles = (TBAMVec*)Pop();
 	AngleVectors(*angles, *vforward, *vright, *vup);
 }
 
@@ -544,7 +544,23 @@ static void PF_AngleVectors(void)
 //
 //==========================================================================
 
-static void PF_AngleVector(void)
+PF(AngleVector)
+{
+	TBAMVec		*angles;
+	TVec		*vec;
+
+	vec = (TVec*)Pop();
+	angles = (TBAMVec*)Pop();
+	AngleVector(*angles, *vec);
+}
+
+//==========================================================================
+//
+//	PF_fAngleVector
+//
+//==========================================================================
+
+PF(fAngleVector)
 {
 	TAVec		*angles;
 	TVec		*vec;
@@ -563,9 +579,9 @@ static void PF_AngleVector(void)
 static void PF_VectorAngles(void)
 {
 	TVec		*vec;
-	TAVec		*angles;
+	TBAMVec		*angles;
 
-	angles = (TAVec*)Pop();
+	angles = (TBAMVec*)Pop();
 	vec = (TVec*)Pop();
 	VectorAngles(*vec, *angles);
 }
@@ -2356,7 +2372,7 @@ PF(InstallModel)
 PF(R_DrawModelFrame)
 {
 	TVec		origin;
-	angle_t		angle;
+	float		angle;
 	model_t		*model;
 	int			frame;
 	int			skin;
@@ -2879,6 +2895,7 @@ builtin_info_t BuiltinInfo[] =
 	{"CrossProduct", PF_CrossProduct},
 	{"AngleVectors", PF_AngleVectors},
 	{"AngleVector", PF_AngleVector},
+	_(fAngleVector),
 	{"VectorAngles", PF_VectorAngles},
 
 	//	String functions
@@ -3066,9 +3083,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.16  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.15  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

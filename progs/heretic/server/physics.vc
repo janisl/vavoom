@@ -409,26 +409,37 @@ void UpdateVelocity(mobj_t * mo)
 {
 	player_t *player;
 
-	if (mo->waterlevel < 2)
+	if (mo->origin.z <= mo->floorz && !mo->velocity.x && !mo->velocity.y &&
+		!mo->velocity.z && !(mo->flags & MF_COUNTKILL) && !mo->player)
 	{
-		if (mo->flags2 & MF2_LOGRAV)
-		{
-			mo->velocity.z -= GRAVITY / 8.0 * frametime;
-		}
-		else if (!(mo->flags & MF_NOGRAVITY))
-		{
-			mo->velocity.z -= GRAVITY * frametime;
-		}
+		//  No gravity for non-moving things on ground to prevent
+		// static objects from sliding on slopes
+		return;
 	}
-	else if (!mo->player)
+
+	if (mo->origin.z > mo->floorz || mo->floor->normal.z < 0.7)
 	{
-		if (mo->flags2 & MF2_LOGRAV)
+		if (mo->waterlevel < 2)
 		{
-			mo->velocity.z = -10.0;
+			if (mo->flags2 & MF2_LOGRAV)
+			{
+				mo->velocity.z -= GRAVITY / 8.0 * frametime;
+			}
+			else if (!(mo->flags & MF_NOGRAVITY))
+			{
+				mo->velocity.z -= GRAVITY * frametime;
+			}
 		}
-		else if (!(mo->flags & MF_NOGRAVITY))
+		else if (!mo->player)
 		{
-			mo->velocity.z = -60.0;
+			if (mo->flags2 & MF2_LOGRAV)
+			{
+				mo->velocity.z = -10.0;
+			}
+			else if (!(mo->flags & MF_NOGRAVITY))
+			{
+				mo->velocity.z = -60.0;
+			}
 		}
 	}
 
@@ -822,6 +833,7 @@ void P_ZMovement(mobj_t * mo)
 {
 	float dist;
 	float delta;
+	float vdot;
 
 	//
 	// check for smooth step up
@@ -858,9 +870,10 @@ void P_ZMovement(mobj_t * mo)
 	//
 	// clip movement
 	//
-	if (mo->origin.z <= mo->floorz)
+	if (mo->origin.z <= mo->floorz + 0.1)
 	{
 		// Hit the floor
+		vdot = DotProduct(mo->velocity, mo->floor->normal);
 		if (mo->flags & MF_MISSILE)
 		{
 			mo->origin.z = mo->floorz;
@@ -886,21 +899,20 @@ void P_ZMovement(mobj_t * mo)
 			P_HitFloor(mo);
 		}
 		mo->origin.z = mo->floorz;
-		if (mo->velocity.z < 0.0)
+		if (vdot < -0.1)
 		{
-			if (mo->player && mo->velocity.z < -GRAVITY * 0.25
+			if (mo->player && vdot < -GRAVITY * 0.25
 				&& !(mo->flags2 & MF2_FLY))	// squat down
 			{
-				mo->player->deltaviewheight =
-					mo->velocity.z * frametime / 8.0;
+				mo->player->deltaviewheight = vdot * frametime / 8.0;
 				StartSoundName(mo, "PlayerLand", CHAN_BODY);
 //FIXME             mo->player->centering = true;
 			}
-			mo->velocity.z = 0.0;
+			mo->velocity -= vdot * mo->floor->normal;
 		}
 		if (mo->flags & MF_SKULLFLY)
 		{	// The skull slammed into something
-			mo->velocity.z = -mo->velocity.z;
+			mo->velocity -= vdot * mo->floor->normal * 2.0;
 		}
 		if (mo->crashstate && (mo->flags & MF_CORPSE))
 		{
@@ -910,9 +922,11 @@ void P_ZMovement(mobj_t * mo)
 	}
 
 	if (mo->origin.z + mo->height > mo->ceilingz)
-	{	// hit the ceiling
-		if (mo->velocity.z > 0.0)
-			mo->velocity.z = 0.0;
+	{
+		// hit the ceiling
+		vdot = DotProduct(mo->velocity, mo->ceiling->normal);
+		if (vdot < 0.0)
+			mo->velocity -= vdot * mo->ceiling->normal;
 		mo->origin.z = mo->ceilingz - mo->height;
 		if (mo->flags & MF_SKULLFLY)
 		{	// the skull slammed into something
@@ -1208,6 +1222,9 @@ void mobj_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.7  2001/10/04 17:27:52  dj_jl
 //  Beautification
 //

@@ -608,7 +608,7 @@ void A_BounceCheck(mobj_t * actor)
 void A_SorcFX1Seek(mobj_t * actor)
 {
 	A_BounceCheck(actor);
-	SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 6);
+	SeekerMissile((Missile *)actor, ANGLE_1 * 2, ANGLE_1 * 6);
 }
 
 //============================================================================
@@ -774,6 +774,9 @@ void A_SorcFX4Check(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

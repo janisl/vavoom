@@ -732,9 +732,9 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 	{
 		player.fixangle = false;
 		msg << (byte)svc_set_angles
-			<< (byte)(player.mo->angles.pitch >> 24)
-			<< (byte)(player.mo->angles.yaw >> 24)
-			<< (byte)(player.mo->angles.roll >> 24);
+			<< (byte)(player.viewangles.pitch >> 24)
+			<< (byte)(player.viewangles.yaw >> 24)
+			<< (byte)(player.viewangles.roll >> 24);
 	}
 }
 
@@ -2485,9 +2485,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.16  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.15  2001/10/09 17:30:45  dj_jl
 //	Improved stats updates
 //	

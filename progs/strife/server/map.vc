@@ -444,7 +444,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 //
 //==========================================================================
 
-void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
+void AimLineAttack(mobj_t * t1, TBAMVec * angles, float distance)
 {
 	float x2;
 	float y2;
@@ -823,6 +823,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.6  2001/09/25 17:12:09  dj_jl
 //  Switched to Hexen map format, special thinker classes
 //

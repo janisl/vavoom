@@ -533,7 +533,7 @@ void TOpenGLDrawer::BeginSky(void)
 	glPushMatrix();
 	glTranslatef(vieworg.x, vieworg.y, vieworg.z);
 
-	if (r_use_fog)
+	if (r_fog)
 	{
 		glDisable(GL_FOG);
 	}
@@ -588,7 +588,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 void TOpenGLDrawer::EndSky(void)
 {
-	if (r_use_fog)
+	if (r_fog)
 	{
 		glEnable(GL_FOG);
 	}
@@ -715,8 +715,8 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, const char *skin, dword light, int translucency,
-	bool is_view_model)
+	model_t *model, int frame, const char *skin, dword light,
+	int translucency, bool is_view_model)
 {
 	mmdl_t		*pmdl;
 	mframe_t	*framedesc;
@@ -741,11 +741,15 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	// get lighting information
 	//
-	shadelightr = ((light >> 16) & 0xff) / 512.0;
-	shadelightg = ((light >> 8) & 0xff) / 512.0;
-	shadelightb = (light & 0xff) / 512.0;
-	shadedots = r_avertexnormal_dots[((int)(BAM2DEG(angles.yaw) * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
+	shadelightr = ((light >> 16) & 0xff) / 510.0;
+	shadelightg = ((light >> 8) & 0xff) / 510.0;
+	shadelightb = (light & 0xff) / 510.0;
+	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 	alpha = (100.0 - translucency) / 100.0;
+	if (!model_lighting)
+	{
+		SetColor((light & 0x00ffffff) | ((255 * (100 - translucency) / 100) << 24));
+	}
 	
 	//
 	// locate the proper data
@@ -762,9 +766,9 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glPushMatrix();
 	glTranslatef(origin.x,  origin.y,  origin.z);
 
-	glRotatef(BAM2DEG(angles.yaw),  0, 0, 1);
-	glRotatef(BAM2DEG(angles.pitch),  0, 1, 0);
-	glRotatef(BAM2DEG(angles.roll),  1, 0, 0);
+	glRotatef(angles.yaw,  0, 0, 1);
+	glRotatef(angles.pitch,  0, 1, 0);
+	glRotatef(angles.roll,  1, 0, 0);
 
 	if ((frame >= pmdl->numframes) || (frame < 0))
 	{
@@ -817,8 +821,11 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 			// normals and vertexes come from the frame list
 			index = *order++;
-			l = shadedots[verts[index].lightnormalindex];
-			glColor4f(l * shadelightr, l * shadelightg, l * shadelightb, alpha);
+			if (model_lighting)
+			{
+				l = shadedots[verts[index].lightnormalindex];
+				glColor4f(l * shadelightr, l * shadelightg, l * shadelightb, alpha);
+			}
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);
 
@@ -914,9 +921,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.12  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.11  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

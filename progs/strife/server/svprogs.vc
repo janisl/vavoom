@@ -27,8 +27,9 @@
 //**
 //**************************************************************************
 
-#include "../../common/server.vc"
+#include <server.vc>
 
+#define mobj_t Entity
 #include "../strfdefs.vc"
 #include "svdefs.vc"
 
@@ -70,6 +71,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.6  2001/10/09 17:35:46  dj_jl
 //  Split server defines into seperate file
 //

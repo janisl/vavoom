@@ -83,6 +83,7 @@ typedef void (*aliasspanfunc_t)(spanpackage_t*);
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 extern "C" {
+void D_DrawNonSubdiv(void);
 void D_PolysetSetEdgeTable(void);
 void D_RasterizeAliasPolySmooth(void);
 void D_PolysetCalcGradients(int);
@@ -260,28 +261,39 @@ void D_PolysetSetupDrawer(int translucency)
 		[d_affinetridesc.coloredlight][fuzzfunc];
 }
 
-#if !defined USEASM || defined _WIN32
-
 //==========================================================================
 //
 //	D_PolysetDraw
 //
 //==========================================================================
 
-extern "C" void D_PolysetDraw(void)
+void D_PolysetDraw(void)
 {
-	mtriangle_t		*ptri;
-	finalvert_t		*pfv, *index0, *index1, *index2;
-	finalstvert_t	*pstv, *stindex0, *stindex1, *stindex2;
-	int				i;
-	int				lnumtriangles;
-
 	spanpackage_t	spans[DPS_MAXSPANS + 1 +
 			((CACHE_SIZE - 1) / sizeof(spanpackage_t)) + 1];
 						// one extra because of cache line pretouching
 
 	a_spans = (spanpackage_t *)
 			(((long)&spans[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
+
+	D_DrawNonSubdiv();
+}
+
+//==========================================================================
+//
+//	D_DrawNonSubdiv
+//
+//==========================================================================
+
+#if !defined USEASM || defined _WIN32
+
+extern "C" void D_DrawNonSubdiv(void)
+{
+	mtriangle_t		*ptri;
+	finalvert_t		*pfv, *index0, *index1, *index2;
+	finalstvert_t	*pstv, *stindex0, *stindex1, *stindex2;
+	int				i;
+	int				lnumtriangles;
 
 	pfv = d_affinetridesc.pfinalverts;
 	pstv = d_affinetridesc.pstverts;
@@ -2206,9 +2218,12 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.7  2001/09/05 12:56:24  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.6  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

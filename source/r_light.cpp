@@ -64,6 +64,7 @@ TCvarI				r_darken("r_darken", "0", CVAR_ARCHIVE);
 TCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
 TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
+TCvarI				r_dynamic("r_dynamic", "1", CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -667,8 +668,13 @@ void R_PushDlights(void)
 	dlight_t	*l;
 
 	r_dlightframecount++;
-	l = cl_dlights;
 
+	if (!r_dynamic)
+	{
+		return;
+	}
+
+	l = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
 		if (l->die < cl.time || !l->radius)
@@ -966,9 +972,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.7  2001/08/30 17:36:21  dj_jl
 //	Fixed memory allocation bug
 //	

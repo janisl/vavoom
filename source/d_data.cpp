@@ -84,7 +84,7 @@ static void CalcRGBTable8(void)
 	for (int tn = 0; tn < 32; tn++)
 	{
 		float frac = 1.0 - tn / 32.0;
-		int fog = r_use_fog ? 128 * tn / 32 : 0;
+		int fog = r_fog ? 128 * tn / 32 : 0;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -133,7 +133,7 @@ static void CalcFadetable16(rgb_t *pal)
 	for (int tn = 0; tn < 32; tn++)
 	{
 		int colm = 32 - tn;
-		int fog = r_use_fog ? 128 * tn / 32 : 0;
+		int fog = r_fog ? 128 * tn / 32 : 0;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -196,7 +196,7 @@ static void CalcFadetable32(rgb_t *pal)
 	for (int tn = 0; tn < 32; tn++)
 	{
 		int colm = 32 - tn;
-		int fog = r_use_fog ? 128 * tn / 32 : 0;
+		int fog = r_fog ? 128 * tn / 32 : 0;
 		for (int ci = 0; ci < 256; ci++, i++)
 		{
 			if (!(i & 0xff))
@@ -410,7 +410,7 @@ void TSoftwareDrawer::NewMap(void)
 		Z_ChangeTag(fadetable, PU_CACHE);
 	}
 
-	if (r_use_fog)
+	if (r_fog)
 	{
 		fadetable = (byte*)W_CacheLumpName("FOGMAP", PU_STATIC);
 	}
@@ -443,9 +443,12 @@ void TSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.4  2001/08/15 17:27:17  dj_jl
 //	Truecolor translucency with lookup table
 //	

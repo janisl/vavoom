@@ -117,9 +117,8 @@ int PO_GetPolyobjMirror(int poly)
 
 static void ThrustMobj(mobj_t *mobj, seg_t *seg, polyobj_t *po)
 {
-	TAVec	angles;
-	VectorAngles(seg->normal, angles);
-	svpr.Exec("PolyThrustMobj", (int)mobj, angles.yaw, (int)po);
+	svpr.Exec("PolyThrustMobj", (int)mobj,
+		seg->normal.x, seg->normal.y, seg->normal.z, (int)po);
 }
 
 
@@ -882,9 +881,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.6  2001/10/04 17:16:54  dj_jl
 //	Removed some unused code
-//
+//	
 //	Revision 1.5  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
 //	

@@ -351,7 +351,7 @@ void CL_UpdateMobj(clmobj_t * mobj, int key)
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->origin.z += 48.0;
-		AngleVector(&mobj->angles, &fv);
+		fAngleVector(&mobj->angles, &fv);
 
 		dl->origin = dl->origin + 18.0 * fv;
 		dl->radius = 200.0 + Random() * 31.0;
@@ -389,6 +389,9 @@ void CL_UpdateMobj(clmobj_t * mobj, int key)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.4  2001/10/09 17:40:02  dj_jl
 //  Explosions with translucent particles
 //

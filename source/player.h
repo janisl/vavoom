@@ -113,6 +113,7 @@ struct player_t
     // Focal origin above r.z
 	TVec			vieworg;
 
+	TBAMVec			viewangles;
 	boolean			fixangle;
 
     // This is only used between levels,
@@ -157,8 +158,8 @@ struct player_t
 
 	int				old_stats[96];
 
-	//	128 integers for user defined fields in PROGS
-	int				user_fields[128];
+	//	256 integers for user defined fields in PROGS
+	int				user_fields[256];
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -168,9 +169,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/08/30 17:46:52  dj_jl
 //	Changes for better updates
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

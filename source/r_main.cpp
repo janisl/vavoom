@@ -68,7 +68,13 @@ TClipPlane				view_clipplanes[4];
 
 int						r_visframecount;
 
-bool					r_use_fog;
+TCvarI					r_fog("r_fog", "0");
+TCvarF					r_fog_r("r_fog_r", "0.5");
+TCvarF					r_fog_g("r_fog_g", "0.5");
+TCvarF					r_fog_b("r_fog_b", "0.5");
+TCvarF					r_fog_start("r_fog_start", "1.0");
+TCvarF					r_fog_end("r_fog_end", "2048.0");
+TCvarF					r_fog_density("r_fog_density", "0.5");
 
 TDrawer					*Drawer;
 TDrawer					*_SoftwareDrawer = NULL;
@@ -134,7 +140,7 @@ void R_Start(const mapInfo_t &info)
 	R_ClearParticles();
 	R_InitSky(info);
 
-	r_use_fog = !stricmp(info.fadetable, "FOGMAP");
+	r_fog = !stricmp(info.fadetable, "FOGMAP");
 
 	screenblocks = 0;
 
@@ -313,7 +319,7 @@ static void R_SetupFrame(void)
 	if (r_chasecam && r_chase_front)
 	{
 		//	This is used to see how weapon looks in player's hands
-		viewangles.yaw += ANG180;
+		viewangles.yaw = AngleMod(viewangles.yaw + 180);
 		viewangles.pitch = -viewangles.pitch;
 	}
 	AngleVectors(viewangles, viewforward, viewright, viewup);
@@ -567,14 +573,14 @@ COMMAND(TimeRefresh)
 {
 	int			i;
 	double		start, stop, time;
-	angle_t		startangle;
+	float		startangle;
 
 	startangle = cl.viewangles.yaw;
 	
 	start = Sys_Time();
 	for (i = 0; i < 128; i++)
 	{
-		cl.viewangles.yaw = i << 25;
+		cl.viewangles.yaw = BAM2DEG(i << 25);
 
 		Drawer->StartUpdate();
 
@@ -645,9 +651,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.11  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.10  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

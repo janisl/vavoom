@@ -215,7 +215,6 @@ void InitMapInfo(void)
 					strcpy(info->secretMap, sc_String);
 					break;
 				case MCMD_MAPALIAS:
-con << "Map alias\n";
 					SC_MustGetStringName("{");
 					SC_MustGetString();
 					while (!SC_Compare("}"))
@@ -463,9 +462,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.2  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.1  2001/10/08 17:30:23  dj_jl
 //	Renamed to mapinfo.*
 //	

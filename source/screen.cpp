@@ -32,31 +32,30 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct
+struct pcx_t
 {
-    char			manufacturer;
-    char			version;
-    char			encoding;
-    char			bits_per_pixel;
+	char			manufacturer;
+	char			version;
+	char			encoding;
+	char			bits_per_pixel;
 
-    unsigned short	xmin;
-    unsigned short	ymin;
-    unsigned short	xmax;
-    unsigned short	ymax;
-    
-    unsigned short	hres;
-    unsigned short	vres;
+	unsigned short	xmin;
+	unsigned short	ymin;
+	unsigned short	xmax;
+	unsigned short	ymax;
 
-    unsigned char	palette[48];
-    
-    char			reserved;
-    char			color_planes;
-    unsigned short	bytes_per_line;
-    unsigned short	palette_type;
-    
-    char			filler[58];
-    unsigned char	data;		// unbounded
-} pcx_t;
+	unsigned short	hres;
+	unsigned short	vres;
+
+	unsigned char	palette[48];
+
+	char			reserved;
+	char			color_planes;
+	unsigned short	bytes_per_line;
+	unsigned short	palette_type;
+
+	char			filler[58];
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -210,6 +209,11 @@ static int		scr_cur_pal;
 //
 //**************************************************************************
 
+static TCvarS screenshot_type("screenshot_type", "pcx", CVAR_ARCHIVE);
+
+void WriteTGA(char* filename, void* data, int width, int height, int bpp,
+	byte* palette, bool bot2top);
+
 //==========================================================================
 //
 //  WritePCXfile
@@ -219,33 +223,35 @@ static int		scr_cur_pal;
 void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top)
 {
-    int		i;
-	int		j;
-    int		length;
-    pcx_t*	pcx;
-    byte*	pack;
-	
-    pcx = (pcx_t*)Z_Malloc(width * height * (bpp == 8 ? 2 : 6) + 1000, PU_STATIC, NULL);
+	int i;
+	int j;
 
-    pcx->manufacturer = 0x0a;	// PCX id
-    pcx->version = 5;			// 256 color
-    pcx->encoding = 1;			// uncompressed
-    pcx->bits_per_pixel = 8;	// 256 color
-    pcx->xmin = 0;
-    pcx->ymin = 0;
-    pcx->xmax = LittleShort(width - 1);
-    pcx->ymax = LittleShort(height - 1);
-    pcx->hres = LittleShort(width);
-    pcx->vres = LittleShort(height);
-    memset(pcx->palette, 0, sizeof(pcx->palette));
-    pcx->color_planes = bpp == 8 ? 1 : 3;
-    pcx->bytes_per_line = LittleShort(width);
-    pcx->palette_type = LittleShort(1);	// not a grey scale
-    memset(pcx->filler, 0, sizeof(pcx->filler));
+	ofstream s(filename, ios::out | ios::binary);
+	if (!s)
+	{
+		con << "Couldn't write pcx\n";
+		return;
+	}
+	
+	pcx_t pcx;
+    pcx.manufacturer = 0x0a;	// PCX id
+    pcx.version = 5;			// 256 color
+    pcx.encoding = 1;			// uncompressed
+    pcx.bits_per_pixel = 8;		// 256 color
+    pcx.xmin = 0;
+    pcx.ymin = 0;
+    pcx.xmax = LittleShort(width - 1);
+    pcx.ymax = LittleShort(height - 1);
+    pcx.hres = LittleShort(width);
+    pcx.vres = LittleShort(height);
+    memset(pcx.palette, 0, sizeof(pcx.palette));
+    pcx.color_planes = bpp == 8 ? 1 : 3;
+    pcx.bytes_per_line = LittleShort(width);
+    pcx.palette_type = LittleShort(1);	// not a grey scale
+    memset(pcx.filler, 0, sizeof(pcx.filler));
+	s.write((char *)&pcx, sizeof(pcx));
 
     // pack the image
-    pack = &pcx->data;
-
 	if (bpp == 8)
 	{
 		for (j = 0; j < height; j++)
@@ -255,18 +261,15 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i] & 0xc0) == 0xc0)
 				{
-					*pack++ = 0xc1;
+					s.put(0xc1);
 				}
-				*pack++ = src[i];
+				s.put(src[i]);
 			}
 		}
 
 		// write the palette
-		*pack++ = 0x0c;	// palette ID byte
-		for (i = 0; i < 768; i++)
-		{
-			*pack++ = *palette++;
-		}
+		s.put(0x0c);	// palette ID byte
+		s.write((char *)palette, 768);
 	}
 	else if	(bpp == 24)
 	{
@@ -277,34 +280,30 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i].r & 0xc0) == 0xc0)
 				{
-					*pack++ = 0xc1;
+					s.put(0xc1);
 				}
-				*pack++ = src[i].r;
+				s.put(src[i].r);
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].g & 0xc0) == 0xc0)
 				{
-					*pack++ = 0xc1;
+					s.put(0xc1);
 				}
-				*pack++ = src[i].g;
+				s.put(src[i].g);
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].b & 0xc0) == 0xc0)
 				{
-					*pack++ = 0xc1;
+					s.put(0xc1);
 				}
-				*pack++ = src[i].b;
+				s.put(src[i].b);
 			}
 		}
 	}
     
-    // write output file
-    length = pack - (byte *)pcx;
-    M_WriteFile(filename, pcx, length);
-
-    Z_Free(pcx);
+	s.close();
 }
 
 //==========================================================================
@@ -325,9 +324,9 @@ COMMAND(ScreenShot)
 	for (i = 0; i <= 9999; i++)
 	{
 #ifdef DEVELOPER
-		sprintf(filename, "basev/shot%04d.pcx", i);
+		sprintf(filename, "basev/shot%04d.%s", i, (char *)screenshot_type);
 #else
-		sprintf(filename, "%s/shot%04d.pcx", fl_gamedir, i);
+		sprintf(filename, "%s/shot%04d.%s", fl_gamedir, i, (char *)screenshot_type);
 #endif
 		if (!Sys_FileExists(filename))
 			break;	//	File doesn't exist
@@ -342,8 +341,20 @@ COMMAND(ScreenShot)
 	data = Drawer->ReadScreen(&bpp, &bot2top);
 	if (data)
 	{
-	    WritePCXfile(filename, data, ScreenWidth, ScreenHeight, bpp,
-			(byte*)W_CacheLumpName("PLAYPAL", PU_CACHE), bot2top);
+		if (!strcmp(screenshot_type, "pcx"))
+		{
+		    WritePCXfile(filename, data, ScreenWidth, ScreenHeight, bpp,
+				(byte*)W_CacheLumpName("PLAYPAL", PU_CACHE), bot2top);
+		}
+		else if (!strcmp(screenshot_type, "tga"))
+		{
+		    WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp,
+				(byte*)W_CacheLumpName("PLAYPAL", PU_CACHE), bot2top);
+		}
+		else
+		{
+			con << "Bad screenshot type\n";
+		}
 		Z_Free(data);
 	}
 }
@@ -680,9 +691,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.12  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.11  2001/10/04 17:19:32  dj_jl
 //	Seperated drawing of notify and center messages
 //	

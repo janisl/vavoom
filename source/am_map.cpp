@@ -1141,7 +1141,7 @@ static void AM_drawWalls(void)
 //
 //==========================================================================
 
-static void AM_rotate(float* x, float* y, angle_t a)
+static void AM_rotate(float* x, float* y, float a)
 {
 	float	tmpx;
 
@@ -1157,7 +1157,7 @@ static void AM_rotate(float* x, float* y, angle_t a)
 //==========================================================================
 
 static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
-	float scale, angle_t angle, dword color, float x, float y)
+	float scale, float angle, dword color, float x, float y)
 {
     int		i;
     mline_t	l;
@@ -1537,9 +1537,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.6  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.5  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
 //	

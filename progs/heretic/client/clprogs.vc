@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#include "../../common/client.vc"
+#include <client.vc>
 
 #include "../herdefs.vc"
 
@@ -70,6 +70,9 @@ boolean ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.9  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //

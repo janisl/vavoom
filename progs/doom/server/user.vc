@@ -479,6 +479,9 @@ void PlayerImpulse(player_t * player)
 
 void PlayerThink(player_t * player)
 {
+	// Copy view angles
+	avcpy(player->viewangles, player->mo->angles);
+
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
 		player->mo->flags |= MF_NOCLIP;
@@ -684,6 +687,9 @@ void SetViewPos(player_t * player)
 {
 	player->vieworg.x = player->mo->origin.x;
 	player->vieworg.y = player->mo->origin.y;
+
+	avcpy(player->mo->angles, player->viewangles);
+
 	SB_PaletteFlash(player);
 
 	player->stats.flags = player->keys;
@@ -895,6 +901,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.6  2001/10/09 17:36:57  dj_jl
 //  Added flags for status bar
 //

@@ -69,7 +69,7 @@ void A_WizAtk3(mobj_t * actor)
 {
 	mobj_t *mo;
 	angle_t angle;
-	TAVec angles;
+	TBAMVec angles;
 
 	actor->translucency = 0;
 	if (!actor->target)
@@ -108,6 +108,9 @@ void A_GhostOff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

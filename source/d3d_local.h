@@ -345,9 +345,11 @@ class TDirect3DDrawer : public TDrawer
 	float						*textureih;
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*flatdata;
+	LPDIRECT3DTEXTURE8			*skymapdata;
 	LPDIRECT3DTEXTURE8			*spritedata;
 #else
 	LPDIRECTDRAWSURFACE7		*flatdata;
+	LPDIRECTDRAWSURFACE7		*skymapdata;
 	LPDIRECTDRAWSURFACE7		*spritedata;
 #endif
 	float						*spriteiw;
@@ -393,11 +395,13 @@ class TDirect3DDrawer : public TDrawer
 	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
 
-	TCvarI						device;
-	TCvarI						clear;
-	TCvarI						tex_linear;
-	TCvarI						dither;
-	TCvarI						blend_sprites;
+	TCvarI device;
+	TCvarI clear;
+	TCvarI tex_linear;
+	TCvarI dither;
+	TCvarI blend_sprites;
+	TCvarF maxdist;
+	TCvarI model_lighting;
 
 #if DIRECT3D_VERSION >= 0x0800
 	friend ostream &operator << (ostream &str, const D3DCAPS8 *dd);
@@ -416,9 +420,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.15  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
-//
+//	
 //	Revision 1.14  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

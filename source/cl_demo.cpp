@@ -127,27 +127,27 @@ void CL_StopPlayback(void)
 
 void CL_WriteDemoMessage(void)
 {
-	int			len;
-	angle_t		a;
+	int len;
+	float a;
 
 #ifdef USEZLIB
 	len = LittleLong(net_msg.CurSize);
 	gzwrite(gzdemofile, &len, 4);
-	a = LittleLong(cl.viewangles.pitch);
+	a = LittleFloat(cl.viewangles.pitch);
 	gzwrite(gzdemofile, &a, 4);
-	a = LittleLong(cl.viewangles.yaw);
+	a = LittleFloat(cl.viewangles.yaw);
 	gzwrite(gzdemofile, &a, 4);
-	a = LittleLong(cl.viewangles.roll);
+	a = LittleFloat(cl.viewangles.roll);
 	gzwrite(gzdemofile, &a, 4);
 	gzwrite(gzdemofile, net_msg.Data, net_msg.CurSize);
 #else
 	len = LittleLong(net_msg.CurSize);
 	fwrite(&len, 4, 1, cls.demofile);
-	a = LittleLong(cl.viewangles.pitch);
+	a = LittleFloat(cl.viewangles.pitch);
 	fwrite(&a, 4, 1, cls.demofile);
-	a = LittleLong(cl.viewangles.yaw);
+	a = LittleFloat(cl.viewangles.yaw);
 	fwrite(&a, 4, 1, cls.demofile);
-	a = LittleLong(cl.viewangles.roll);
+	a = LittleFloat(cl.viewangles.roll);
 	fwrite(&a, 4, 1, cls.demofile);
 	fwrite(net_msg.Data, net_msg.CurSize, 1, cls.demofile);
 	fflush(cls.demofile);
@@ -164,8 +164,8 @@ void CL_WriteDemoMessage(void)
 
 int CL_GetMessage(void)
 {
-	int			r;
-	angle_t		a;
+	int r;
+	float a;
 
 	if (cls.demoplayback)
 	{
@@ -197,20 +197,20 @@ int CL_GetMessage(void)
 		gzread(gzdemofile, &net_msg.CurSize, 4);
 //		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
 		gzread(gzdemofile, &a, 4);
-		cl.viewangles.pitch = LittleLong(a);
+		cl.viewangles.pitch = LittleFloat(a);
 		gzread(gzdemofile, &a, 4);
-		cl.viewangles.yaw = LittleLong(a);
+		cl.viewangles.yaw = LittleFloat(a);
 		gzread(gzdemofile, &a, 4);
-		cl.viewangles.roll = LittleLong(a);
+		cl.viewangles.roll = LittleFloat(a);
 #else
 		fread(&net_msg.CurSize, 4, 1, cls.demofile);
 //		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
 		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.pitch = LittleLong(a);
+		cl.viewangles.pitch = LittleFloat(a);
 		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.yaw = LittleLong(a);
+		cl.viewangles.yaw = LittleFloat(a);
 		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.roll = LittleLong(a);
+		cl.viewangles.roll = LittleFloat(a);
 #endif
 
 		net_msg.CurSize = LittleLong(net_msg.CurSize);
@@ -492,9 +492,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

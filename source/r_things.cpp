@@ -389,7 +389,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		r_surface = spr.surf;
 		if (spr.type == 2)
 		{
-			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 				(model_t*)spr.surf, spr.lump, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
@@ -599,8 +599,8 @@ static void RenderSprite(clmobj_t *thing)
 	{
 		// choose a different rotation based on player view
 		//FIXME must use sprforward here?
-		angle_t ang = matan(thing->origin.y - vieworg.y, thing->origin.x - vieworg.x);
-		dword rot = (ang - thing->angles.yaw + (unsigned)(ANG45 / 2) * 9) >> 29;
+		angle_t ang = bam_matan(thing->origin.y - vieworg.y, thing->origin.x - vieworg.x);
+		dword rot = (ang - DEG2BAM(thing->angles.yaw) + (unsigned)(ANG45 / 2) * 9) >> 29;
 		lump = sprframe->lump[rot];
 		flip = (boolean)sprframe->flip[rot];
 	}
@@ -686,7 +686,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 		{
 			spr.dv = trans_sprite_verts + 4 * i;
 			spr.dv[0] = mobj->origin;
-			((TAVec*)spr.dv)[1] = mobj->angles;
+			((TAVec *)spr.dv)[1] = mobj->angles;
 			spr.surf = (surface_t*)model;
 			spr.lump = mobj->alias_frame;
 			spr.light = light;
@@ -714,7 +714,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 		r_surface = spr.surf;
 		if (spr.type == 2)
 		{
-			Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 				(model_t*)spr.surf, spr.lump, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
@@ -732,7 +732,7 @@ void RenderTranslucentAliasModel(model_t *model, char *skin, dword light, clmobj
 		}
 		spr.dv = trans_sprite_verts + 4 * i;
 		spr.dv[0] = mobj->origin;
-		((TAVec*)spr.dv)[1] = mobj->angles;
+		((TAVec *)spr.dv)[1] = mobj->angles;
 		spr.surf = (surface_t*)model;
 		spr.lump = mobj->alias_frame;
 		spr.light = light;
@@ -869,7 +869,7 @@ void R_DrawTranslucentPolys(void)
 			r_surface = spr.surf;
 			if (spr.type == 2)
 			{
-				Drawer->DrawAliasModel(spr.dv[0], ((TAVec*)spr.dv)[1],
+				Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
 					(model_t*)spr.surf, spr.lump, spr.skin,
 					spr.light, spr.translucency - 1, false);
 			}
@@ -995,7 +995,6 @@ static void RenderViewModel(cl_pspdef_t *psp)
 {
 	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
 		(psp->sy - 32.0) * viewup / 6.0;
-	TAVec angles = cl.viewangles;
 
 	dword light;
 	if (psp->frame & FF_FULLBRIGHT)
@@ -1007,7 +1006,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 		light = R_LightPoint(origin);
 	}
 
-	Drawer->DrawAliasModel(origin, angles, psp->alias_model,
+	Drawer->DrawAliasModel(origin, cl.viewangles, psp->alias_model,
 		psp->alias_frame, NULL, light, cl.translucency, true);
 }
 
@@ -1106,10 +1105,10 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 //
 //==========================================================================
 
-void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
+void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 	int frame, const char *skin)
 {
-	viewangles.yaw = ANG180;
+	viewangles.yaw = 180;
 	viewangles.pitch = 0;
 	viewangles.roll = 0;
 	AngleVectors(viewangles, viewforward, viewright, viewup);
@@ -1140,9 +1139,12 @@ void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/08/31 17:28:47  dj_jl
 //	Tried to fix weapon model position when dead
-//
+//	
 //	Revision 1.7  2001/08/15 17:21:47  dj_jl
 //	Added model drawing for menu
 //	

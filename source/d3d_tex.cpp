@@ -141,7 +141,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 
 void TDirect3DDrawer::InitTextures(void)
 {
-	numsurfaces = numtextures + numflats + numspritelumps +
+	numsurfaces = numtextures + numflats + numskymaps + numspritelumps +
 		MAX_TRANSLATED_SPRITES + MAX_PICS + MAX_SKIN_CACHE;
 #if DIRECT3D_VERSION >= 0x0800
 	texturesurfaces = (LPDIRECT3DTEXTURE8*)Z_Calloc(numsurfaces * 4);
@@ -152,8 +152,10 @@ void TDirect3DDrawer::InitTextures(void)
 	texturedata = texturesurfaces;
 	//	Flats
 	flatdata = texturedata + numtextures;
+	//  Sky maps
+	skymapdata = flatdata + numflats;
 	//	Sprite lumps
-	spritedata = flatdata + numflats;
+	spritedata = skymapdata + numskymaps;
 	trsprdata = spritedata + numspritelumps;
 	//	2D graphics
 	picdata = trsprdata + MAX_TRANSLATED_SPRITES;
@@ -347,16 +349,50 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 		return;
 	}
 
-	tex = R_TextureAnimation(tex);
-
-	if (!texturedata[tex])
+	if (tex & TEXF_SKY_MAP)
 	{
-		GenerateTexture(tex, double_sky);
+		tex &= ~TEXF_SKY_MAP;
+		if (!skymapdata[tex])
+		{
+			Mod_LoadSkin(skymaps[tex].name, 0);
+			if (SkinBPP == 8)
+			{
+				rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+				byte *src = SkinData;
+				rgba_t *dst = buf;
+				for (int x = 0; x < SkinWidth * SkinHeight; x++, src++, dst++)
+				{
+					*dst = SkinPal[*src];
+				}
+				skymapdata[tex] = UploadTexture(SkinWidth, SkinHeight, buf);
+				Z_Free(buf);
+			}
+			else
+			{
+				skymapdata[tex] = UploadTexture(SkinWidth, SkinHeight,
+					(rgba_t *)SkinData);
+			}
+			Z_Free(SkinData);
+			skymaps[tex].width = SkinWidth;
+			skymaps[tex].height = SkinHeight;
+		}
+		RenderDevice->SetTexture(0, skymapdata[tex]);
+		tex_iw = 1.0 / skymaps[tex].width;
+		tex_ih = 1.0 / skymaps[tex].height;
 	}
+	else
+	{
+		tex = R_TextureAnimation(tex);
 
-	RenderDevice->SetTexture(0, texturedata[tex]);
-	tex_iw = textureiw[tex];
-	tex_ih = textureih[tex];
+		if (!texturedata[tex])
+		{
+			GenerateTexture(tex, double_sky);
+		}
+
+		RenderDevice->SetTexture(0, texturedata[tex]);
+		tex_iw = textureiw[tex];
+		tex_ih = textureih[tex];
+	}
 }
 
 //==========================================================================
@@ -697,16 +733,22 @@ void TDirect3DDrawer::SetSkin(const char *name)
 		}
 		strcpy(skin_name[avail], name);
 		Mod_LoadSkin(name, 0);
-
-		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, 0);
-		byte *src = SkinData;
-		rgba_t *dst = buf;
-		for (int x = 0; x < SkinWidth * SkinHeight; x++, src++, dst++)
+		if (SkinBPP == 8)
 		{
-			*dst = r_palette[0][*src ? *src : r_black_color[0]];
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_HIGH, 0);
+			byte *src = SkinData;
+			rgba_t *dst = buf;
+			for (int x = 0; x < SkinWidth * SkinHeight; x++, src++, dst++)
+			{
+				*dst = SkinPal[*src];
+			}
+			skin_data[avail] = UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
 		}
-		skin_data[avail] = UploadTexture(SkinWidth, SkinHeight, buf);
-		Z_Free(buf);
+		else
+		{
+			skin_data[avail] = UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
 		Z_Free(SkinData);
 	}
 
@@ -1137,9 +1179,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.11  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
-//
+//	
 //	Revision 1.10  2001/09/20 15:59:43  dj_jl
 //	Fixed resampling when one dimansion doesn't change
 //	

@@ -14,8 +14,8 @@ del:
 	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
 $(OUTDIR)/clprogs.dat: *.vc client/*.vc ../common/*.vc
-	$(VCC) client/clprogs.vc $@
+	$(VCC) -I../common client/clprogs.vc $@
 
 $(OUTDIR)/svprogs.dat: *.vc server/*.vc ../common/*.vc
-	$(VCC) server/svprogs.vc $@
+	$(VCC) -I../common server/svprogs.vc $@
 

@@ -262,7 +262,7 @@ int CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TAVec * angles)
+void BulletSlope(mobj_t * mo, TBAMVec * angles)
 {
 	// see which target is to be aimed at
 	angles->pitch = mo->angles.pitch;
@@ -310,9 +310,9 @@ void FireWeapon(player_t * player)
 //
 //===========================================================================
 
-void GunShot(mobj_t * mo, int accurate, TAVec * bangles)
+void GunShot(mobj_t * mo, int accurate, TBAMVec * bangles)
 {
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 	int damage;
 
@@ -573,7 +573,7 @@ void A_Punch(mobj_t * actor)
 	angle_t angle;
 	int damage;
 	float slope;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = (P_Random() % 10 + 1) << 1;
@@ -601,6 +601,9 @@ void A_Punch(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

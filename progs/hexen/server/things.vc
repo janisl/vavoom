@@ -155,7 +155,7 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	float vspeed;
 	int moType;
 	mobj_t *mobj;
-	mobj_t *newMobj;
+	Missile *newMobj;
 	int searcher;
 	boolean success;
 
@@ -168,9 +168,8 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	vspeed = itof(args[4]) / 8.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		newMobj =
-			P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
-			moType);
+		newMobj = (Missile *)P_SpawnMobj(mobj->origin.x, mobj->origin.y,
+			mobj->origin.z, moType);
 		if (newMobj->sound_sight)
 		{
 			StartSound(newMobj, newMobj->sound_sight, CHAN_VOICE);
@@ -557,6 +556,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/10/09 17:40:38  dj_jl
 //  Moved thing counting to progs
 //

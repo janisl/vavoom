@@ -60,19 +60,9 @@ void SV_ReadMove(void)
 {
     ticcmd_t	cmd;
 
-	if (sv_player->mo)
-	{
-		sv_player->mo->angles.yaw = net_msg.ReadByte() << 24;
-		sv_player->mo->angles.pitch = net_msg.ReadByte() << 24;
-		sv_player->mo->angles.roll = net_msg.ReadByte() << 24;
-	}
-	else
-	{
-		cond << "Move with no body\n";
-		net_msg.ReadByte();
-		net_msg.ReadByte();
-		net_msg.ReadByte();
-	}
+	sv_player->viewangles.yaw = net_msg.ReadByte() << 24;
+	sv_player->viewangles.pitch = net_msg.ReadByte() << 24;
+	sv_player->viewangles.roll = net_msg.ReadByte() << 24;
 	net_msg >> cmd.forwardmove
 			>> cmd.sidemove
 			>> cmd.flymove
@@ -238,9 +228,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

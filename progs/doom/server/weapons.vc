@@ -321,7 +321,7 @@ int CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TAVec * angles)
+void BulletSlope(mobj_t * mo, TBAMVec * angles)
 {
 	// see which target is to be aimed at
 	angles->pitch = mo->angles.pitch;
@@ -369,9 +369,9 @@ void FireWeapon(player_t * player)
 //
 //===========================================================================
 
-void GunShot(mobj_t * mo, int accurate, TAVec * bangles)
+void GunShot(mobj_t * mo, int accurate, TBAMVec * bangles)
 {
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 	int damage;
 
@@ -635,7 +635,7 @@ void A_Punch(mobj_t * actor)
 	angle_t angle;
 	int damage;
 	float slope;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = (P_Random() % 10 + 1) << 1;
@@ -672,7 +672,7 @@ void A_Saw(mobj_t * actor)
 	angle_t angle;
 	int damage;
 	float slope;
-	TAVec angles;
+	TBAMVec angles;
 	TVec vforward;
 
 	damage = 2 * (P_Random() % 10 + 1);
@@ -721,7 +721,7 @@ void A_Saw(mobj_t * actor)
 void A_FirePistol(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TAVec angles;
+	TBAMVec angles;
 	float slope;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
@@ -746,7 +746,7 @@ void A_FireShotgun(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	int i;
-	TAVec angles;
+	TBAMVec angles;
 
 	StartSoundName(player->mo, "ShotgunFire", CHAN_WEAPON);
 	SetMobjState(player->mo, S_PLAY_ATK2);
@@ -776,8 +776,8 @@ void A_FireShotgun2(mobj_t * actor)
 	player_t *player = actor->player;
 	int i;
 	int damage;
-	TAVec bangles;
-	TAVec angles;
+	TBAMVec bangles;
+	TBAMVec angles;
 	TVec vforward;
 
 	StartSoundName(player->mo, "SuperShotgunFire", CHAN_WEAPON);
@@ -875,7 +875,7 @@ void A_FireCGun(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	TAVec angles;
+	TBAMVec angles;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
@@ -919,7 +919,7 @@ void A_FireGrenade(mobj_t * actor)
 	player_t *player = actor->player;
 	mobj_t *mo;
 	TVec vforward;
-	TAVec angles;
+	TBAMVec angles;
 
 	player->ammo[player->w_ammo]--;
 
@@ -1019,7 +1019,7 @@ void A_BFGSpray(mobj_t * mo)
 	int i;
 	int j;
 	int damage;
-	TAVec angles;
+	TBAMVec angles;
 	mobj_t *emo;
 
 	// offset angles from its attack angle
@@ -1057,6 +1057,9 @@ void A_BFGSpray(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/10/02 17:42:37  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

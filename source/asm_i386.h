@@ -127,8 +127,6 @@
 
 #define DPS_SPAN_LIST_END	-9999
 
-#define CACHE_SIZE			32
-
 //	Global rasterizer variables
 .extern	C(d_sdivzstepu)
 .extern	C(d_tdivzstepu)
@@ -147,6 +145,8 @@
 
 .extern	C(cacheblock)
 .extern	C(cachewidth)
+.extern	C(d_skysmask)
+.extern	C(d_skytmask)
 .extern	C(d_transluc)
 .extern	C(d_srctranstab)
 .extern	C(d_dsttranstab)
@@ -398,9 +398,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.8  2001/08/21 17:22:28  dj_jl
 //	Optimized rendering with some asm
-//
+//	
 //	Revision 1.7  2001/08/15 17:44:41  dj_jl
 //	Added missing externs
 //	

@@ -388,6 +388,7 @@ void ArtiPoisonBag(player_t * player)
 {
 	angle_t angle;
 	mobj_t *mo;
+	Missile *bomb;
 
 	angle = player->mo->angles.yaw;
 	if (player->pclass == PCLASS_CLERIC)
@@ -412,22 +413,22 @@ void ArtiPoisonBag(player_t * player)
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
 	{
-		mo = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
+		bomb = (Missile *)P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
 			player->mo->origin.z - player->mo->floorclip + 35.0,
 			MT_THROWINGBOMB);
-		if (mo)
+		if (bomb)
 		{
-			mo->angles.yaw =
+			bomb->angles.yaw =
 				player->mo->angles.yaw + (((P_Random() & 7) - 4) << 24);
-			mo->velocity.z =
+			bomb->velocity.z =
 				(4.0 + 173.0 * -tan(player->mo->angles.pitch) / 16.0) * 35.0;
-			mo->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
-			P_ThrustMobj(mo, mo->angles.yaw, mo->speed * frametime);
-			mo->velocity.x += player->mo->velocity.x / 2.0;
-			mo->velocity.y += player->mo->velocity.y / 2.0;
-			mo->target = player->mo;
-			mo->time -= Random() * 0.1;
-			CheckMissileSpawn(mo);
+			bomb->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
+			P_ThrustMobj(bomb, bomb->angles.yaw, bomb->speed * frametime);
+			bomb->velocity.x += player->mo->velocity.x / 2.0;
+			bomb->velocity.y += player->mo->velocity.y / 2.0;
+			bomb->target = player->mo;
+			bomb->time -= Random() * 0.1;
+			CheckMissileSpawn(bomb);
 		}
 	}
 }
@@ -664,6 +665,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/18 17:39:34  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.6  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

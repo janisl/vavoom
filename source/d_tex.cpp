@@ -56,8 +56,8 @@ miptexture_t		*miptexture;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static miptexture_t**	texturedata;
-static byte**			skytexturedata;	//FIXME this is a waste of memory
 static miptexture_t**	flatdata;
+static void**			skymapdata;
 
 static sprite_cache_t	sprite_cache[SPRITE_CACHE_SIZE];
 static int				sprite_cache_count;
@@ -73,10 +73,14 @@ static int				sprite_cache_count;
 void TSoftwareDrawer::InitTextures(void)
 {
 	//	Textures
-    texturedata = (miptexture_t**)Z_Calloc(numtextures * 4);
-    skytexturedata = (byte**)Z_Calloc(numtextures * 4);
+	texturedata = Z_CNew<miptexture_t*>(numtextures);
 	//	Flats
-    flatdata = (miptexture_t**)Z_Calloc((numflats) * 4, PU_STATIC, 0);
+	flatdata = Z_CNew<miptexture_t*>(numflats);
+	//	Skyboxes
+	if (numskymaps)
+	{
+		skymapdata = Z_CNew<void *>(numskymaps);
+	}
 }
 
 //==========================================================================
@@ -97,6 +101,53 @@ void D_FlushSpriteCache(void)
 		}
 	}
 }
+
+//==========================================================================
+//
+//	D_LoadImage
+//
+//==========================================================================
+
+void D_LoadImage(const char *name, void **dataptr)
+{
+	int j;
+
+	Mod_LoadSkin(name, dataptr);
+	if (SkinBPP == 8)
+	{
+		// Remap to game palette
+		byte remap[256];
+		byte *tmp;
+
+		for (j = 0; j < 256; j++)
+		{
+			remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+		}
+
+		tmp = (byte *)SkinData;
+		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++)
+		{
+			*tmp = remap[*tmp];
+		}
+	}
+	else
+	{
+		byte *tmp = (byte *)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC,
+			dataptr);
+		rgba_t *src = (rgba_t *)SkinData;
+		for (j = 0; j < SkinWidth * SkinHeight; j++, tmp++, src++)
+		{
+			*tmp = MakeCol8(src->r, src->g, src->b);
+		}
+		Z_Free(SkinData);
+	}
+}
+
+//==========================================================================
+//
+//	MakeMips
+//
+//==========================================================================
 
 int			mip_r, mip_g, mip_b, mip_a;
 rgb_t		*mip_pal;
@@ -124,12 +175,6 @@ byte MipColor(void)
 	return d_rgbtable[((mip_r << 5) & 0x7c00) +
 		(mip_g & 0x3e0) + ((mip_b >> 5) & 0x1f)];
 }
-
-//==========================================================================
-//
-//	MakeMips
-//
-//==========================================================================
 
 static void	MakeMips(miptexture_t *mip)
 {
@@ -232,7 +277,7 @@ static void DrawColumnInCache(column_t* column, byte* cache,
 //
 //==========================================================================
 
-static void GenerateTexture(int texnum)
+static void GenerateTexture(int texnum, bool double_sky)
 {
 	miptexture_t	*mip;
     byte*			block;
@@ -287,7 +332,7 @@ static void GenerateTexture(int texnum)
 				{
 		    		DrawColumnInCache(patchcol, block + wt * texture->width +
 		    			ht * mipw * texture->height,
-			    		x, patch->originy, mipw, texture->height, false);
+			    		x, patch->originy, mipw, texture->height, double_sky);
 				}
 			}
 		}
@@ -317,76 +362,11 @@ void TSoftwareDrawer::SetTexture(int tex)
 	if ((dword)tex >= (dword)numtextures)
 		Sys_Error("Invalid texture num %d\n", tex);
 
-    if (!texturedata[tex])
-		GenerateTexture(tex);
+	if (!texturedata[tex])
+		GenerateTexture(tex, false);
 
-    miptexture = texturedata[tex];
-    cacheblock = (byte*)miptexture + miptexture->offsets[0];
-}
-
-//==========================================================================
-//
-//	GenerateSkyTexture
-//
-//==========================================================================
-
-static void GenerateSkyTexture(int texnum, bool double_sky)
-{
-    byte*			block;
-    texdef_t*		texture;
-    texpatch_t*		patch;	
-    patch_t*		realpatch;
-    int				x;
-    int				x1;
-    int				x2;
-    int				i;
-    column_t*		patchcol;
-	int				wtimes;
-	int				htimes;
-
-    texture = textures[texnum];
-
-    block = (byte*)Z_Calloc(1024 * 256, PU_STATIC, (void**)&skytexturedata[texnum]);
-
-    // Composite the columns together.
-    patch = texture->patches;
-
-	wtimes = 1024 / texture->width;
-	htimes = 256 / texture->height;
-
-    for (i = 0; i < texture->patchcount; i++, patch++)
-    {
-		realpatch = (patch_t*)W_CacheLumpNum(patch->patch, PU_TEMP);
-		x1 = patch->originx;
-		x2 = x1 + LittleShort(realpatch->width);
-
-		if (x1 < 0)
-	    	x = 0;
-		else
-	    	x = x1;
-	
-		if (x2 > texture->width)
-	    	x2 = texture->width;
-
-		for ( ; x < x2; x++)
-		{
-	    	patchcol = (column_t *)((byte *)realpatch
-				    + LittleLong(realpatch->columnofs[x - x1]));
-			for (int ht = 0; ht < htimes; ht++)
-			{
-				for (int wt = 0; wt < wtimes; wt++)
-				{
-			    	DrawColumnInCache(patchcol, block + wt * texture->width +
-			    		ht * texture->height * 1024, x, patch->originy,
-			    		1024, texture->height, double_sky);
-				}
-			}
-		}
-    }
-
-    // Now that the texture has been built in column cache,
-    //  it is purgable from zone memory.
-    Z_ChangeTag(block, PU_CACHE);
+	miptexture = texturedata[tex];
+	cacheblock = (byte*)miptexture + miptexture->offsets[0];
 }
 
 //==========================================================================
@@ -397,12 +377,40 @@ static void GenerateSkyTexture(int texnum, bool double_sky)
 
 void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 {
+	if (tex & TEXF_SKY_MAP)
+	{
+		tex &= ~TEXF_SKY_MAP;
+		if (!skymapdata[tex])
+		{
+			D_LoadImage(skymaps[tex].name, &skymapdata[tex]);
+			skymaps[tex].width = SkinWidth;
+			skymaps[tex].height = SkinHeight;
+		}
+		cacheblock = (byte *)skymapdata[tex];
+		cachewidth = skymaps[tex].width;
+		d_skysmask = skymaps[tex].width - 1;
+		d_skytmask = skymaps[tex].height - 1;
+		return;
+	}
+
 	tex = R_TextureAnimation(tex);
 
-    if (!skytexturedata[tex])
-		GenerateSkyTexture(tex, double_sky);
+	if (tex & TEXF_FLAT)
+	{
+		SetFlat(tex);
+	}
+	else
+	{
+		if (!texturedata[tex])
+			GenerateTexture(tex, double_sky);
 
-    cacheblock = skytexturedata[tex];
+		miptexture = texturedata[tex];
+	}
+
+	cacheblock = (byte*)miptexture + miptexture->offsets[0];
+	cachewidth = miptexture->width;
+	d_skysmask = miptexture->width - 1;
+	d_skytmask = miptexture->height - 1;
 }
 
 //==========================================================================
@@ -640,9 +648,12 @@ void SetSpriteLump(int lump, dword light, int translation)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.5  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.4  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

@@ -126,7 +126,7 @@ void A_MinotaurAtk2(mobj_t * actor)
 {
 	mobj_t *mo;
 	angle_t angle;
-	TAVec angles;
+	TBAMVec angles;
 
 	if (!actor->target)
 	{
@@ -245,6 +245,9 @@ void A_MntrFloorFire(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/18 17:39:33  dj_jl
+//  A lots of changes for Alpha 2
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -91,6 +91,12 @@ void TOpenGLDrawer::InitTextures(void)
 	// 	Flats
 	flat_id = (GLuint*)Z_Calloc(numflats * 4);
 	flat_sent = (bool*)Z_Calloc(numflats);
+	// 	Sky maps
+	if (skymaps)
+	{
+		skymap_id = (GLuint*)Z_Calloc(numskymaps * 4);
+		skymap_sent = (bool*)Z_Calloc(numskymaps);
+	}
 	// 	Sprite lumps
 	sprite_id = (GLuint*)Z_Calloc(numspritelumps * 4);
 	sprite_sent = (bool*)Z_Calloc(numspritelumps);
@@ -111,6 +117,10 @@ void TOpenGLDrawer::GenerateTextures(void)
 
 	glGenTextures(numtextures, texture_id);
 	glGenTextures(numflats, flat_id);
+	if (numskymaps)
+	{
+		glGenTextures(numskymaps, skymap_id);
+	}
 	glGenTextures(numspritelumps, sprite_id);
 	glGenTextures(MAX_TRANSLATED_SPRITES, trspr_id);
 	glGenTextures(MAX_PICS, pic_id);
@@ -119,6 +129,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 	glGenTextures(1, &particle_texture);
 	memset(texture_sent, 0, numtextures);
 	memset(flat_sent, 0, numflats);
+	memset(skymap_sent, 0, numskymaps);
 	memset(sprite_sent, 0, numspritelumps);
 	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
 	memset(pic_sent, 0, MAX_PICS);
@@ -152,6 +163,10 @@ void TOpenGLDrawer::DeleteTextures(void)
 	{
 		glDeleteTextures(numtextures, texture_id);
 		glDeleteTextures(numflats, flat_id);
+		if (numskymaps)
+		{
+			glDeleteTextures(numskymaps, skymap_id);
+		}
 		glDeleteTextures(numspritelumps, sprite_id);
 		glDeleteTextures(MAX_TRANSLATED_SPRITES, trspr_id);
 		glDeleteTextures(MAX_PICS, pic_id);
@@ -323,16 +338,50 @@ void TOpenGLDrawer::SetTexture(int tex)
 
 void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 {
-	rgba_t saved;
-	if (double_sky)
+	if (tex & TEXF_SKY_MAP)
 	{
-		saved = pal8_to24[0];
-		pal8_to24[0].a = 0;
+		tex &= ~TEXF_SKY_MAP;
+		glBindTexture(GL_TEXTURE_2D, skymap_id[tex]);
+		if (!skymap_sent[tex])
+		{
+			Mod_LoadSkin(skymaps[tex].name, 0);
+			if (SkinBPP == 8)
+			{
+				rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+				for (int i = 0; i < SkinWidth * SkinHeight; i++)
+				{
+					buf[i] = SkinPal[SkinData[i]];
+				}
+				UploadTexture(SkinWidth, SkinHeight, buf);
+				Z_Free(buf);
+			}
+			else
+			{
+				UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+			}
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			Z_Free(SkinData);
+			skymap_sent[tex] = true;
+			skymaps[tex].width = SkinWidth;
+			skymaps[tex].height = SkinHeight;
+		}
+		tex_iw = 1.0 / skymaps[tex].width;
+		tex_ih = 1.0 / skymaps[tex].height;
 	}
-	SetTexture(tex);
-	if (double_sky)
+	else
 	{
-		pal8_to24[0] = saved;
+		rgba_t saved;
+		if (double_sky)
+		{
+			saved = pal8_to24[0];
+			pal8_to24[0].a = 0;
+		}
+		SetTexture(tex);
+		if (double_sky)
+		{
+			pal8_to24[0] = saved;
+		}
 	}
 	// No mipmaping for sky
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
@@ -705,15 +754,22 @@ void TOpenGLDrawer::SetSkin(const char *name)
 		glBindTexture(GL_TEXTURE_2D, skin_id[i]);
 		strcpy(skin_name[i], name);
 		Mod_LoadSkin(name, 0);
-		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
-		for (i = 0; i < SkinWidth * SkinHeight; i++)
+		if (SkinBPP == 8)
 		{
-			buf[i] = pal8_to24[SkinData[i]];
+			rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+			for (i = 0; i < SkinWidth * SkinHeight; i++)
+			{
+				buf[i] = SkinPal[SkinData[i]];
+			}
+			UploadTexture(SkinWidth, SkinHeight, buf);
+			Z_Free(buf);
 		}
-		UploadTexture(SkinWidth, SkinHeight, buf);
+		else
+		{
+			UploadTexture(SkinWidth, SkinHeight, (rgba_t *)SkinData);
+		}
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		Z_Free(buf);
 		Z_Free(SkinData);
 	}
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
@@ -996,9 +1052,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/18 17:36:31  dj_jl
+//	A lots of changes for Alpha 2
+//
 //	Revision 1.11  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.10  2001/09/24 17:36:21  dj_jl
 //	Added clamping
 //	
