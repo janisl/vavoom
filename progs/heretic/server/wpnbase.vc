@@ -451,7 +451,7 @@ void Weapon::A_WeaponReady(void)
 {
 	float angle;
 
-	if (Player->ChickenTics)
+	if (Player->ChickenTime)
 	{
 		// Change to the chicken beak
 		ActivateBeak(Player);
@@ -511,13 +511,17 @@ void Weapon::A_WeaponReady(void)
 
 void Weapon::A_Lower(void)
 {
-	if (Player->ChickenTics)
+	if (Player->ChickenTime)
 	{
 		SY = WEAPONBOTTOM;
 	}
 	else
 	{
-		SY += LOWERSPEED;
+		// FIXME!!
+		if (frametime < 1.0 / 35.0)
+			SY += LOWERSPEED;
+		else
+			SY += LOWERSPEED * 35.0 * frametime;
 	}
 	if (SY < WEAPONBOTTOM)
 	{
@@ -548,7 +552,11 @@ void Weapon::A_Lower(void)
 
 void Weapon::A_Raise(void)
 {
-	SY -= RAISESPEED;
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY -= RAISESPEED;
+	else
+		SY -= RAISESPEED * 35.0 * frametime;
 	if (SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
@@ -602,6 +610,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.1  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

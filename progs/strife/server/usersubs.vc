@@ -140,8 +140,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->MO = A;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
-	p->DamageCount = 0;
-	p->BonusCount = 0;
+	p->DamageFlash = 0.0;
+	p->BonusFlash = 0.0;
 	p->ExtraLight = 0;
 	p->FixedColormap = 0;
 	p->ViewHeight = VIEWHEIGHT;
@@ -194,6 +194,9 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/07/23 13:07:32  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.26  2002/05/18 17:00:05  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

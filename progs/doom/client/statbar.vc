@@ -248,7 +248,7 @@ void SB_StartMap(void)
 	st_faceindex = 0;
 	st_oldhealth = -1;
 	for (i = 0; i < NUMWEAPONS; i++)
-		oldweaponsowned[i] = cl->weaponowned[i];
+		oldweaponsowned[i] = cl->WeaponOwned[i];
 }
 
 //==========================================================================
@@ -352,7 +352,7 @@ void SB_DrawMainBar(void)
 	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
 
 	// ready weapon ammo
-	SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl->ready_ammo, 0, false);
+	SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl->ReadyAmmo, 0, false);
 
 	// health percentage
 	SB_DrawTallNum(ST_HEALTHX, ST_HEALTHY, cl->health, 0, true);
@@ -368,7 +368,7 @@ void SB_DrawMainBar(void)
 		R_DrawPic(ST_ARMSBGX, ST_ARMSBGY, pic_arms);
 		for (i = 0; i < 6; i++)
 		{
-			if (cl->weaponowned[i + 1])
+			if (cl->WeaponOwned[i + 1])
 			{
 				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
 					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_yellownum[i + 2]);
@@ -389,47 +389,47 @@ void SB_DrawMainBar(void)
 	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[st_faceindex]);
 
 	// armor percentage
-	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl->armorpoints, 0, true);
+	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl->ArmorPoints, 0, true);
 
 	// keyboxes 0-2
-	if (cl->stats.flags & SBF_BLUE_SKULL)
+	if (cl->Stats.flags & SBF_BLUE_SKULL)
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
 	}
-	else if (cl->stats.flags & SBF_BLUE_CARD)
+	else if (cl->Stats.flags & SBF_BLUE_CARD)
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
-	if (cl->stats.flags & SBF_YELLOW_SKULL)
+	if (cl->Stats.flags & SBF_YELLOW_SKULL)
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
 	}
-	else if (cl->stats.flags & SBF_YELLOW_CARD)
+	else if (cl->Stats.flags & SBF_YELLOW_CARD)
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
 	}
 
-	if (cl->stats.flags & SBF_RED_SKULL)
+	if (cl->Stats.flags & SBF_RED_SKULL)
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
 	}
-	else if (cl->stats.flags & SBF_RED_CARD)
+	else if (cl->Stats.flags & SBF_RED_CARD)
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
 	}
 
 	// ammo count (all four kinds)
-	SB_DrawSmallNum(ST_AMMO0X, ST_AMMO0Y, cl->ammo[0]);
-	SB_DrawSmallNum(ST_AMMO1X, ST_AMMO1Y, cl->ammo[1]);
-	SB_DrawSmallNum(ST_AMMO2X, ST_AMMO2Y, cl->ammo[2]);
-	SB_DrawSmallNum(ST_AMMO3X, ST_AMMO3Y, cl->ammo[3]);
+	SB_DrawSmallNum(ST_AMMO0X, ST_AMMO0Y, cl->Ammo[0]);
+	SB_DrawSmallNum(ST_AMMO1X, ST_AMMO1Y, cl->Ammo[1]);
+	SB_DrawSmallNum(ST_AMMO2X, ST_AMMO2Y, cl->Ammo[2]);
+	SB_DrawSmallNum(ST_AMMO3X, ST_AMMO3Y, cl->Ammo[3]);
 
 	// max ammo count (all four kinds)
-	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, cl->maxammo[0]);
-	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, cl->maxammo[1]);
-	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, cl->maxammo[2]);
-	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, cl->maxammo[3]);
+	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, cl->MaxAmmo[0]);
+	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, cl->MaxAmmo[1]);
+	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, cl->MaxAmmo[2]);
+	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, cl->MaxAmmo[3]);
 }
 
 //==========================================================================
@@ -444,10 +444,10 @@ void SB_DrawFullscreenStats(void)
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl->health, 40, false);
 
 	// armor
-	SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->armorpoints, 40, false);
+	SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->ArmorPoints, 40, false);
 
 	// ready weapon ammo
-	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl->ready_ammo, 40, false);
+	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl->ReadyAmmo, 40, false);
 
 	if (deathmatch)
 	{
@@ -546,17 +546,17 @@ void UpdateFaceWidget(void)
 
 	if (sb_face_priority < 9)
 	{
-		if (cl->bonuscount)
+		if (cl->BonusFlash)
 		{
 			// picking up bonus
 			doevilgrin = false;
 
 			for (i = 0; i < NUMWEAPONS; i++)
 			{
-				if (oldweaponsowned[i] != cl->weaponowned[i])
+				if (oldweaponsowned[i] != cl->WeaponOwned[i])
 				{
 					doevilgrin = true;
-					oldweaponsowned[i] = cl->weaponowned[i];
+					oldweaponsowned[i] = cl->WeaponOwned[i];
 				}
 			}
 			if (doevilgrin)
@@ -572,7 +572,7 @@ void UpdateFaceWidget(void)
 #ifdef FIXME
 	if (sb_face_priority < 8)
 	{
-		if (cl->damagecount && cl->attacker && cl->attacker != cl->mo)
+		if (cl->DamageFlash && cl->attacker && cl->attacker != cl->mo)
 		{
 			// being attacked
 			sb_face_priority = 7;
@@ -626,7 +626,7 @@ void UpdateFaceWidget(void)
 	if (sb_face_priority < 7)
 	{
 		// getting hurt because of your own damn stupidity
-		if (cl->damagecount)
+		if (cl->DamageFlash)
 		{
 			if (cl->health - st_oldhealth > ST_MUCHPAIN)
 			{
@@ -667,7 +667,7 @@ void UpdateFaceWidget(void)
 	if (sb_face_priority < 5)
 	{
 		// invulnerability
-		if (cl->stats.flags & SBF_GOD_MODE)
+		if (cl->Stats.flags & SBF_GOD_MODE)
 		{
 			sb_face_priority = 4;
 
@@ -703,6 +703,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.11  2002/06/29 15:58:14  dj_jl
 //  Added total frags count.
 //

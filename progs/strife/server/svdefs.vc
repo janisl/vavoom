@@ -558,15 +558,15 @@ addfields player_t
 	int ReadyWeapon;
 
 	// For screen flashing (red or bright).
-	int DamageCount;
-	int BonusCount;
+	float DamageFlash;
+	float BonusFlash;
 
 	// Bit flags, for cheats and debug.
 	// See cheat_t, above.
 	int Cheats;
 
-	// Power ups. invinc and invis are tic counters.
-	int Powers[NUMPOWERS];
+	// Power ups. invinc and invis are timers.
+	float Powers[NUMPOWERS];
 
 	// Base height above floor for viewz.
 	float ViewHeight;
@@ -584,7 +584,7 @@ addfields player_t
 	// Who did damage (NULL for floors/ceilings).
 	Actor *Attacker;
 
-	int JumpTics;
+	float JumpTime;
 
 	// Armor type is 0-2.
 	int ArmorType;
@@ -623,6 +623,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/07/23 13:07:32  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.37  2002/07/15 17:54:19  dj_jl
 //  Removed all data from teaser exe.
 //

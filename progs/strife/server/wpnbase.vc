@@ -326,7 +326,11 @@ void Weapon::A_WeaponReady(void)
 
 void Weapon::A_Lower(void)
 {
-	SY += LOWERSPEED;
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY += LOWERSPEED;
+	else
+		SY += LOWERSPEED * 35.0 * frametime;
 
 	// Is already down.
 	if (SY < WEAPONBOTTOM)
@@ -363,7 +367,11 @@ void Weapon::A_Lower(void)
 
 void Weapon::A_Raise(void)
 {
-	SY -= RAISESPEED;
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY -= RAISESPEED;
+	else
+		SY -= RAISESPEED * 35.0 * frametime;
 
 	if (SY > WEAPONTOP)
 	{
@@ -465,6 +473,9 @@ void Weapon::A_7(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/23 13:07:32  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.1  2002/06/29 15:59:28  dj_jl
 //  Split out items, projectiles and decorations.
 //

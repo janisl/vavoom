@@ -85,7 +85,7 @@ void PlayerPawn::MovePlayer(float deltaTime)
 		break;
 	}
 
-	if (Player->Powers[pw_speed] && !Player->MorphTics)
+	if (Player->Powers[pw_speed] && !Player->MorphTime)
 	{
 		// Adjust for a player with a speed artifact
 		forward *= 1.5;
@@ -158,9 +158,9 @@ void PlayerPawn::MovePlayer(float deltaTime)
 			Player->FlyHeight /= 2.0;
 		}
 	}
-	if ((Player->Buttons & BT_JUMP) && onground && !Player->JumpTics)
+	if ((Player->Buttons & BT_JUMP) && onground && !Player->JumpTime)
 	{
-		if (Player->MorphTics)
+		if (Player->MorphTime)
 		{
 			Velocity.z = 6.0 * 35.0;
 		}
@@ -169,7 +169,7 @@ void PlayerPawn::MovePlayer(float deltaTime)
 			Velocity.z = 9.0 * 35.0;
 		}
 		bOnMobj = false;
-		Player->JumpTics = 18;
+		Player->JumpTime = 0.5;
 	}
 }
 
@@ -257,7 +257,7 @@ void PlayerPawn::WaterMove(float deltaTime)
 		break;
 	}
 
-	if (Player->Powers[pw_speed] && !Player->MorphTics)
+	if (Player->Powers[pw_speed] && !Player->MorphTime)
 	{
 		// Adjust for a player with a speed artifact
 		forward *= 1.5;
@@ -344,9 +344,8 @@ void PlayerPawn::CalcHeight(float deltaTime)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	Player->Bob = (Velocity.x * Velocity.x + Velocity.y * Velocity.y) *
-		deltaTime * deltaTime;
-	Player->Bob /= 4.0;
+	Player->Bob = Velocity.x * Velocity.x + Velocity.y * Velocity.y;
+	Player->Bob /= 4.0 * 35.0 * 35.0;
 	if (Player->Bob > MAXBOB)
 		Player->Bob = MAXBOB;
 
@@ -361,7 +360,7 @@ void PlayerPawn::CalcHeight(float deltaTime)
 	// move viewheight
 	if (Player->PlayerState == PST_LIVE)
 	{
-		Player->ViewHeight += Player->DeltaViewHeight;
+		Player->ViewHeight += Player->DeltaViewHeight * deltaTime;
 
 		if (Player->ViewHeight > VIEWHEIGHT)
 		{
@@ -378,12 +377,12 @@ void PlayerPawn::CalcHeight(float deltaTime)
 
 		if (Player->DeltaViewHeight)
 		{
-			Player->DeltaViewHeight += 0.25;
+			Player->DeltaViewHeight += 256.0 * deltaTime;
 			if (!Player->DeltaViewHeight)
 				Player->DeltaViewHeight = 0.00001;
 		}
 	}
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
 		Player->ViewOrg.z = Origin.z + Player->ViewHeight - 20.0;
 	}
@@ -575,7 +574,7 @@ void PlayerPawn::PlayerImpulse(void)
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
 		if (Player->WeaponOwned[impulse - 1] &&
-			impulse - 1 != Player->ReadyWeapon && !Player->MorphTics)
+			impulse - 1 != Player->ReadyWeapon && !Player->MorphTime)
 		{
 			Player->PendingWeapon = impulse - 1;
 		}
@@ -699,11 +698,13 @@ void PlayerPawn::PlayerTick(float deltaTime)
 		return;
 	}
 
-	if (Player->JumpTics)
+	if (Player->JumpTime)
 	{
-		Player->JumpTics--;
+		Player->JumpTime -= deltaTime;
+		if (Player->JumpTime <= 0.0)
+			Player->JumpTime = 0.0;
 	}
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
 		MorphPlayerThink();
 	}
@@ -767,7 +768,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 	{
 	case PCLASS_FIGHTER:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTics && !GetSoundPlayingInfo(self,
+			!Player->MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerFighterFallingScream')))
 		{
 			PlaySound('PlayerFighterFallingScream', CHAN_VOICE);
@@ -775,7 +776,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 		break;
 	case PCLASS_CLERIC:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTics && !GetSoundPlayingInfo(self,
+			!Player->MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerClericFallingScream')))
 		{
 			PlaySound('PlayerClericFallingScream', CHAN_VOICE);
@@ -783,7 +784,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 		break;
 	case PCLASS_MAGE:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTics && !GetSoundPlayingInfo(self,
+			!Player->MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerMageFallingScream')))
 		{
 			PlaySound('PlayerMageFallingScream', CHAN_VOICE);
@@ -814,11 +815,13 @@ void PlayerPawn::PlayerTick(float deltaTime)
 	}
 
 	// Morph counter
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
-		if (!--Player->MorphTics)
+		Player->MorphTime -= deltaTime;
+		if (Player->MorphTime <= 0.0)
 		{
 			// Attempt to undo the pig
+			Player->MorphTime = 0.0;
 			UndoPlayerMorph();
 		}
 	}
@@ -929,21 +932,30 @@ void PlayerPawn::PlayerTick(float deltaTime)
 		}
 	}
 
-	if (Player->PoisonCount && !(level->tictime & 15))
+	if (Player->PoisonCount && level->time - Player->LastPoisonTime >= 0.5)
 	{
 		Player->PoisonCount -= 5;
 		if (Player->PoisonCount < 0)
 		{
 			Player->PoisonCount = 0;
 		}
+		Player->LastPoisonTime = level->time;
 		PoisonDamage(*Player->Poisoner, 1, true);
 	}
 
-	if (Player->DamageCount)
-		Player->DamageCount--;
+	if (Player->DamageFlash)
+	{
+		Player->DamageFlash -= deltaTime;
+		if (Player->DamageFlash <= 0.0)
+			Player->DamageFlash = 0.0;
+	}
 
-	if (Player->BonusCount)
-		Player->BonusCount--;
+	if (Player->BonusFlash)
+	{
+		Player->BonusFlash -= deltaTime;
+		if (Player->BonusFlash <= 0.0)
+			Player->BonusFlash = 0.0;
+	}
 
 	// Handling colormaps.
 	if (Player->Powers[pw_infrared])
@@ -1010,7 +1022,7 @@ void PlayerThink(player_t * player)
 //  PlayerPawn::PaletteFlash
 //
 //  Sets the new palette based upon the current values of
-// Player->DamageCount and Player->BonusCount.
+// Player->DamageFlash and Player->BonusFlash.
 //
 //==========================================================================
 
@@ -1045,18 +1057,18 @@ void PlayerPawn::PaletteFlash(void)
 		}
 		Player->Palette += STARTPOISONPALS;
 	}
-	else if (Player->DamageCount)
+	else if (Player->DamageFlash)
 	{
-		Player->Palette = (Player->DamageCount + 7) >> 3;
+		Player->Palette = (ftoi(32.0 * Player->DamageFlash) + 7) >> 3;
 		if (Player->Palette >= NUMREDPALS)
 		{
 			Player->Palette = NUMREDPALS - 1;
 		}
 		Player->Palette += STARTREDPALS;
 	}
-	else if (Player->BonusCount)
+	else if (Player->BonusFlash)
 	{
-		Player->Palette = (Player->BonusCount + 7) >> 3;
+		Player->Palette = (ftoi(32.0 * Player->BonusFlash) + 7) >> 3;
 		if (Player->Palette >= NUMBONUSPALS)
 		{
 			Player->Palette = NUMBONUSPALS - 1;
@@ -1242,7 +1254,7 @@ void PlayerPawn::UseArtiTele(void)
 		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
 	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true);
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
 		// Teleporting away will undo any morph effects (pig)
 		UndoPlayerMorph();
@@ -1670,17 +1682,17 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 		}
 	}
 
-	if (player->MorphTics)
+	if (player->MorphTime)
 	{
 		SetWeapon(player, player->MO._Special1);	// Restore weapon
-		player->MorphTics = 0;
+		player->MorphTime = 0.0;
 	}
 	player->MO.Angles.pitch = 0.0;
 	player->MO.Translucency = 0;	// Remove invisibility
 	player->ExtraLight = 0;	// Remove weapon flashes
 	player->FixedColormap = 0;	// Remove torch
-	player->DamageCount = 0;	// No palette changes
-	player->BonusCount = 0;
+	player->DamageFlash = 0.0;	// No palette changes
+	player->BonusFlash = 0.0;
 	player->PoisonCount = 0;
 }
 
@@ -1979,6 +1991,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.36  2002/07/13 08:01:50  dj_jl
 //  Moved some functions to the Entity class.
 //

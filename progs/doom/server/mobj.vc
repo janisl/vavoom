@@ -706,10 +706,10 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			Player->Health = 0;
 
 		Player->Attacker = &source;
-		Player->DamageCount += damage;	// add damage after armor / invuln
+		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
-		if (Player->DamageCount > 100)
-			Player->DamageCount = 100;	// teleport stomp does 10k points...
+		if (Player->DamageFlash > 3.0)
+			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -881,6 +881,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.45  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

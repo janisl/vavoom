@@ -739,18 +739,17 @@ struct intercept_t
 class ACS:Thinker
 	native
 {
-	MapObject activator;
-	line_t *line;
-	int side;
-	int number;
-	int infoIndex;
-	int delayCount;
-	int stack[ACS_STACK_DEPTH];
-	int stackPtr;
-	int vars[MAX_ACS_SCRIPT_VARS];
-	int *ip;
+	MapObject Activator;
+	line_t *Line;
+	int Side;
+	int Number;
+	int InfoIndex;
+	int DelayTime;
+	int Stack[ACS_STACK_DEPTH];
+	int StackPtr;
+	int Vars[MAX_ACS_SCRIPT_VARS];
+	int *IP;
 
-	native void Tick(float deltaTime);
 	native void Archive(void);
 	native void Unarchive(void);
 
@@ -979,6 +978,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2002/07/23 13:07:28  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.39  2002/06/29 15:58:14  dj_jl
 //  Added total frags count.
 //

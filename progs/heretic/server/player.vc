@@ -91,7 +91,7 @@ void A_SkullPop(void)
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
 	A.Player->MO = A;
-	A.Player->DamageCount = 32;
+	A.Player->DamageFlash = 1.0;
 }
 
 //==========================================================================
@@ -320,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.4  2002/07/20 14:46:08  dj_jl
 //  Some network fixes.
 //

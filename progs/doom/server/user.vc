@@ -80,15 +80,9 @@ void PlayerPawn::CalcHeight(float deltaTime)
 	float bob;
 
 	// Regular movement bobbing
-	// (needs to be calculated for gun swing
-	// even if not on ground)
-	// OPTIMIZE: tablify angle
-	// Note: a LUT allows for effects
-	//  like a ramp with low health.
-	Player->Bob = (Velocity.x * Velocity.x + Velocity.y * Velocity.y)
-		* deltaTime * deltaTime;
-
-	Player->Bob /= 4.0;
+	// (needs to be calculated for gun swing even if not on ground)
+	Player->Bob = Velocity.x * Velocity.x + Velocity.y * Velocity.y;
+	Player->Bob /= 4.0 * 35.0 * 35.0;
 	if (Player->Bob > MAXBOB)
 		Player->Bob = MAXBOB;
 
@@ -98,7 +92,7 @@ void PlayerPawn::CalcHeight(float deltaTime)
 	// move viewheight
 	if (Player->PlayerState == PST_LIVE)
 	{
-		Player->ViewHeight += Player->DeltaViewHeight;
+		Player->ViewHeight += Player->DeltaViewHeight * deltaTime;
 
 		if (Player->ViewHeight > VIEWHEIGHT)
 		{
@@ -115,7 +109,7 @@ void PlayerPawn::CalcHeight(float deltaTime)
 
 		if (Player->DeltaViewHeight)
 		{
-			Player->DeltaViewHeight += 0.25;
+			Player->DeltaViewHeight += 256.0 * deltaTime;
 			if (!Player->DeltaViewHeight)
 				Player->DeltaViewHeight = 0.00001;
 		}
@@ -423,16 +417,24 @@ void PlayerPawn::DeathPlayerTick(float deltaTime)
 			//  so fade damage flash down.
 			Player->ViewAngles.yaw = angle;
 
-			if (Player->DamageCount)
-				Player->DamageCount--;
+			if (Player->DamageFlash)
+			{
+				Player->DamageFlash -= deltaTime;
+				if (Player->DamageFlash <= 0.0)
+					Player->DamageFlash = 0.0;
+			}
 		}
 		else if (delta > 0.0)
 			Player->ViewAngles.yaw += 5.0;
 		else
 			Player->ViewAngles.yaw -= 5.0;
 	}
-	else if (Player->DamageCount)
-		Player->DamageCount--;
+	else if (Player->DamageFlash)
+	{
+		Player->DamageFlash -= deltaTime;
+		if (Player->DamageFlash <= 0.0)
+			Player->DamageFlash = 0.0;
+	}
 
 	if (Player->Buttons & BT_USE)
 		Player->PlayerState = PST_REBORN;
@@ -569,40 +571,66 @@ void PlayerPawn::PlayerTick(float deltaTime)
 
 	//  Strength counts up to diminish fade.
 	if (Player->Powers[pw_strength])
-		Player->Powers[pw_strength]++;
+		Player->Powers[pw_strength] += deltaTime;
 
 	if (Player->Powers[pw_invulnerability])
-		Player->Powers[pw_invulnerability]--;
+	{
+		Player->Powers[pw_invulnerability] -= deltaTime;
+		if (Player->Powers[pw_invulnerability] <= 0.0)
+			Player->Powers[pw_invulnerability] = 0.0;
+	}
 
 	if (Player->Powers[pw_invisibility])
-		if (!--Player->Powers[pw_invisibility])
+	{
+		Player->Powers[pw_invisibility] -= deltaTime;
+		if (Player->Powers[pw_invisibility] <= 0.0)
+		{
+			Player->Powers[pw_invisibility] = 0.0;
 			Translucency = 0;
+		}
+	}
 
 	if (Player->Powers[pw_infrared])
-		Player->Powers[pw_infrared]--;
+	{
+		Player->Powers[pw_infrared] -= deltaTime;
+		if (Player->Powers[pw_infrared] <= 0.0)
+			Player->Powers[pw_infrared] = 0.0;
+	}
 
 	if (Player->Powers[pw_ironfeet])
-		Player->Powers[pw_ironfeet]--;
+	{
+		Player->Powers[pw_ironfeet] -= deltaTime;
+		if (Player->Powers[pw_ironfeet] <= 0.0)
+			Player->Powers[pw_ironfeet] = 0.0;
+	}
 
-	if (Player->DamageCount)
-		Player->DamageCount--;
+	if (Player->DamageFlash)
+	{
+		Player->DamageFlash -= deltaTime;
+		if (Player->DamageFlash <= 0.0)
+			Player->DamageFlash = 0.0;
+	}
 
-	if (Player->BonusCount)
-		Player->BonusCount--;
+	if (Player->BonusFlash)
+	{
+		Player->BonusFlash -= deltaTime;
+		if (Player->BonusFlash <= 0.0)
+			Player->BonusFlash = 0.0;
+	}
 
 	// Handling colormaps.
 	if (Player->Powers[pw_invulnerability])
 	{
-		if (Player->Powers[pw_invulnerability] > 4 * 32 ||
-			(Player->Powers[pw_invulnerability] & 8))
+		if (Player->Powers[pw_invulnerability] > 4.0 ||
+			(ftoi(4.0 * Player->Powers[pw_invulnerability]) & 1))
 			Player->FixedColormap = INVERSECOLORMAP;
 		else
 			Player->FixedColormap = 0;
 	}
 	else if (Player->Powers[pw_infrared])
 	{
-		if (Player->Powers[pw_infrared] > 4 * 32 ||
-			(Player->Powers[pw_infrared] & 8))
+		if (Player->Powers[pw_infrared] > 4.0 ||
+			(ftoi(4.0 * Player->Powers[pw_infrared]) & 1))
 		{
 			// almost full bright
 			Player->FixedColormap = 1;
@@ -665,12 +693,12 @@ void PlayerPawn::PaletteFlash(void)
 		}
 	}
 
-	cnt = Player->DamageCount;
+	cnt = ftoi(32.0 * Player->DamageFlash);
 
 	if (Player->Powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		bzc = 12 - (Player->Powers[pw_strength] >> 6);
+		bzc = 12 - ftoi(Player->Powers[pw_strength] / 2.0);
 
 		if (bzc > cnt)
 			cnt = bzc;
@@ -685,17 +713,17 @@ void PlayerPawn::PaletteFlash(void)
 
 		Player->Palette += STARTREDPALS;
 	}
-	else if (Player->BonusCount)
+	else if (Player->BonusFlash)
 	{
-		Player->Palette = (Player->BonusCount + 7) >> 3;
+		Player->Palette = (ftoi(32.0 * Player->BonusFlash) + 7) >> 3;
 
 		if (Player->Palette >= NUMBONUSPALS)
 			Player->Palette = NUMBONUSPALS - 1;
 
 		Player->Palette += STARTBONUSPALS;
 	}
-	else if (Player->Powers[pw_ironfeet] > 4 * 32 ||
-		Player->Powers[pw_ironfeet] & 8)
+	else if (Player->Powers[pw_ironfeet] > 4.0 ||
+		ftoi(4.0 * Player->Powers[pw_ironfeet]) & 1)
 		Player->Palette = RADIATIONPAL;
 	else
 		Player->Palette = 0;
@@ -807,15 +835,15 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		p->Powers[i] = 0;
+		p->Powers[i] = 0.0;
 	}
 	p->Items = 0;
 	p->MO.Angles.pitch = 0.0;
 	p->MO.Translucency = 0;	// cancel invisibility
 	p->ExtraLight = 0;	// cancel gun flashes
 	p->FixedColormap = 0;	// cancel ir gogles
-	p->DamageCount = 0;	// no palette changes 
-	p->BonusCount = 0;
+	p->DamageFlash = 0.0;	// no palette changes
+	p->BonusFlash = 0.0;
 }
 
 //==========================================================================
@@ -1031,6 +1059,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.28  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

@@ -108,7 +108,7 @@ void Cheat_Gimme(void)
 	{
 		if (players[0].Powers[pw_weaponlevel2])
 		{
-			players[0].Powers[pw_weaponlevel2] = 0;
+			players[0].Powers[pw_weaponlevel2] = 0.0;
 			cprint(&players[0], "POWER OFF");
 		}
 		else
@@ -119,7 +119,7 @@ void Cheat_Gimme(void)
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (players[0].ChickenTics)
+		if (players[0].ChickenTime)
 		{
 			players[0].MO.Health = MAXCHICKENHEALTH;
 			players[0].Health = players[0].MO.Health;
@@ -219,7 +219,7 @@ void Cheat_KillAll(void)
 
 void Cheat_Morph(void)
 {
-	if (players[0].ChickenTics)
+	if (players[0].ChickenTime)
 	{
 		if (PlayerPawn(players[0].MO).UndoPlayerChicken())
 		{
@@ -242,7 +242,7 @@ void Cheat_NoWeapons(void)
 {
 	int i;
 
-	if (players[0].ChickenTics)
+	if (players[0].ChickenTime)
 	{
 		return;
 	}
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.15  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

@@ -202,7 +202,7 @@ void A_MinotaurAtk1(void)
 		if (Enemy.bIsPlayer)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -512.0;
 		}
 	}
 }
@@ -316,7 +316,7 @@ void A_MinotaurAtk3(void)
 		if (Enemy.Player)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -16.0;
+			Enemy.Player->DeltaViewHeight = -512.0;
 		}
 	}
 	else
@@ -464,6 +464,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.27  2002/07/13 07:58:51  dj_jl
 //  Added new models, updated existing ones.
 //

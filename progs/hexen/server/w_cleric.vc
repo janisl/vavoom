@@ -1343,8 +1343,8 @@ void A_CHolyAttack(void)
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	PlayerPawn(Player->MO).SpawnPlayerMissile(HolyMissile);
-	Player->DamageCount = 0;
-	Player->BonusCount = 0;
+	Player->DamageFlash = 0.0;
+	Player->BonusFlash = 0.0;
 	Player->WeaponPalette = STARTHOLYPAL;
 	Player->MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
@@ -1415,6 +1415,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.29  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

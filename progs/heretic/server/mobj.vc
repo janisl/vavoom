@@ -363,7 +363,7 @@ void Actor::Kill(Actor source)
 				source.Player->FragsStats[P_GetPlayerNum(Player)]++;
 				source.Player->Frags++;
 				source.PlaySound('Frag', CHAN_ITEM);
-				if (source.Player->ChickenTics)
+				if (source.Player->ChickenTime)
 				{
 					// Make a super chicken
 					PlayerPawn(source).GivePower(pw_weaponlevel2);
@@ -386,8 +386,8 @@ void Actor::Kill(Actor source)
 		}
 		bSolid = false;
 		bFly = false;
-		Player->Powers[pw_flight] = 0;
-		Player->Powers[pw_weaponlevel2] = 0;
+		Player->Powers[pw_flight] = 0.0;
+		Player->Powers[pw_weaponlevel2] = 0.0;
 		Player->PlayerState = PST_DEAD;
 		DropWeapon(Player);
 		if (bFireDamage)
@@ -478,9 +478,9 @@ boolean Actor::ChickenMorphPlayer(void)
 	Actor fog;
 	Actor chicken;
 
-	if (Player->ChickenTics)
+	if (Player->ChickenTime)
 	{
-		if ((Player->ChickenTics < ftoi(CHICKENTIME * 35.0) - TICRATE) &&
+		if ((Player->ChickenTime < CHICKENTIME - 1.0) &&
 			!Player->Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
@@ -507,10 +507,10 @@ boolean Actor::ChickenMorphPlayer(void)
 	Player->MO = chicken;
 	Player->ArmorPoints = 0;
 	Player->ArmorType = 0;
-	Player->Powers[pw_invisibility] = 0;
-	Player->Powers[pw_weaponlevel2] = 0;
+	Player->Powers[pw_invisibility] = 0.0;
+	Player->Powers[pw_weaponlevel2] = 0.0;
 	chicken.bFly = bFly;
-	Player->ChickenTics = ftoi(CHICKENTIME * 35.0);
+	Player->ChickenTime = CHICKENTIME;
 	ActivateBeak(Player);
 
 	SetState(S_FREETARGMOBJ);
@@ -851,7 +851,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			damage -= saved;
 		}
 		if (damage >= Player->Health
-			&& ((gameskill == sk_baby) || deathmatch) && !Player->ChickenTics)
+			&& ((gameskill == sk_baby) || deathmatch) && !Player->ChickenTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
@@ -862,10 +862,10 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			Player->Health = 0;
 		}
 		Player->Attacker = &source;
-		Player->DamageCount += damage;	// add damage after armor / invuln
-		if (Player->DamageCount > 100)
+		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (Player->DamageFlash > 3.0)
 		{
-			Player->DamageCount = 100;	// teleport stomp does 10k points...
+			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -882,7 +882,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			// Make sure players get frags for chain-reaction kills
 			Instigator = source;
 		}
-		if (bIsPlayer && inflictor && !Player->ChickenTics)
+		if (bIsPlayer && inflictor && !Player->ChickenTime)
 		{
 			// Check for flame death
 			if (inflictor.bFireDamage
@@ -1040,9 +1040,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->MO = A;
 	p->PlayerState = PST_LIVE;
 	p->Refire = 0;
-	p->DamageCount = 0;
-	p->BonusCount = 0;
-	p->ChickenTics = 0;
+	p->DamageFlash = 0.0;
+	p->BonusFlash = 0.0;
+	p->ChickenTime = 0.0;
 	p->Rain1 = NULL;
 	p->Rain2 = NULL;
 	p->ExtraLight = 0;
@@ -1405,6 +1405,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.45  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

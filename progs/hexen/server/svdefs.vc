@@ -891,20 +891,21 @@ addfields player_t
 	Actor *Attacker;
 
 	// For screen flashing (red or bright).
-	int DamageCount;
-	int BonusCount;
+	float DamageFlash;
+	float BonusFlash;
 
 	int PoisonCount;	// screen flash for poison damage
+	float LastPoisonTime;
 	Actor *Poisoner;	// NULL for non-player mobjs
 
-	int JumpTics;
+	float JumpTime;
 	int LocalQuakeHappening;
 
 	int NewTorch;	// used in the torch flicker effect.
 	int NewTorchDelta;
 
 	int WeaponPalette;
-	int MorphTics;	// player is a pig if > 0
+	float MorphTime;	// player is a pig if > 0
 
 	TVec MoveDir;
 
@@ -992,6 +993,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.35  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

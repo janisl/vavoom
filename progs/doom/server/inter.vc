@@ -27,7 +27,7 @@
 //**
 //**************************************************************************
 
-#define BONUSADD	6
+#define BONUSADD	0.2
 
 Actor Spawn(classid type, TVec AOrigin);
 
@@ -149,7 +149,7 @@ boolean Actor::GiveWeapon(int weapon, boolean dropped)
 		if (Player->WeaponOwned[weapon])
 			return false;
 
-		Player->BonusCount += BONUSADD;
+		Player->BonusFlash += BONUSADD;
 		Player->WeaponOwned[weapon] = true;
 
 		if (deathmatch)
@@ -269,7 +269,7 @@ boolean Actor::GiveCard(int card)
 	if (Player->Keys & (1 << card))
 		return false;
 
-	Player->BonusCount = BONUSADD;
+	Player->BonusFlash = BONUSADD;
 	Player->Keys |= 1 << card;
 	return true;
 }
@@ -301,33 +301,33 @@ boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = INVULNTIME;
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Player->Powers[power] = ftoi(INVISTIME * 35.0);
+		Player->Powers[power] = INVISTIME;
 		Translucency = 90;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Player->Powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Player->Powers[power] = ftoi(IRONTIME * 35.0);
+		Player->Powers[power] = IRONTIME;
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100, MAXHEALTH);
-		Player->Powers[power] = 1;
+		Player->Powers[power] = 1.0;
 		if (Player->ReadyWeapon != wp_fist)
 			Player->PendingWeapon = wp_fist;
 		return true;
@@ -336,7 +336,7 @@ boolean Actor::GivePower(int power)
 	if (Player->Powers[power])
 		return false;	// already got it
 
-	Player->Powers[power] = 1;
+	Player->Powers[power] = 1.0;
 	return true;
 }
 
@@ -348,13 +348,13 @@ boolean Actor::GivePower(int power)
 
 boolean Actor::GivePower2(int power, float duration, float max)
 {
-	if (Player->Powers[power] >= ftoi(max * 35.0))
+	if (Player->Powers[power] >= max)
 		return false;	// already got it
 
-	Player->Powers[power] += ftoi(duration * 35.0);
-	if (Player->Powers[power] >= ftoi(max * 35.0))
+	Player->Powers[power] += duration;
+	if (Player->Powers[power] >= max)
 	{
-		Player->Powers[power] = ftoi(max * 35.0);
+		Player->Powers[power] = max;
 	}
 
 	if (power == pw_invisibility)
@@ -450,12 +450,15 @@ void Actor::TouchSpecial(Actor Toucher)
 	if (bCountItem)
 		Toucher.Player->ItemCount++;
 	HideSpecial();
-	Toucher.Player->BonusCount += BONUSADD;
+	Toucher.Player->BonusFlash += BONUSADD;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.19  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

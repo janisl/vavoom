@@ -27,7 +27,7 @@
 //**
 //**************************************************************************
 
-#define BONUSADD	6
+#define BONUSADD	0.2
 
 int maxammo[] = { 250, 25, 50, 30, 16, 100, 400 };
 int clipammo[] = { 10, 10, 10, 10, 10, 10, 10 };
@@ -138,7 +138,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 
 	cprint(Toucher.Player, "You picked up the %s.", PickupString);
 	HideSpecial();
-	Toucher.Player->BonusCount += BONUSADD;
+	Toucher.Player->BonusFlash += BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }
 
@@ -255,7 +255,7 @@ boolean PlayerPawn::GiveWeapon(int weapon, boolean dropped)
 		if (Player->WeaponOwned[weapon])
 			return false;
 
-		Player->BonusCount += BONUSADD;
+		Player->BonusFlash += BONUSADD;
 		Player->WeaponOwned[weapon] = true;
 
 		if (deathmatch)
@@ -346,7 +346,7 @@ boolean PlayerPawn::GiveKey(int key)
 	if (Player->Keys & (1 << key))
 		return false;
 
-	Player->BonusCount = BONUSADD;
+	Player->BonusFlash = BONUSADD;
 	Player->Keys |= 1 << key;
 	return true;
 }
@@ -378,40 +378,40 @@ boolean PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = INVULNTIME;
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Player->Powers[power] = ftoi(INVISTIME * 35.0);
+		Player->Powers[power] = INVISTIME;
 		Translucency = 90;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Player->Powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Player->Powers[power] = ftoi(IRONTIME * 35.0);
+		Player->Powers[power] = IRONTIME;
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100);
-		Player->Powers[power] = 1;
+		Player->Powers[power] = 1.0;
 		return true;
 	}
 
 	if (Player->Powers[power])
 		return false;	// already got it
 
-	Player->Powers[power] = 1;
+	Player->Powers[power] = 1.0;
 	return true;
 }
 
@@ -741,6 +741,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.18  2002/06/29 15:59:26  dj_jl
 //  Split out items, projectiles and decorations.
 //

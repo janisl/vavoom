@@ -775,10 +775,10 @@ addfields player_t
 
 	int Ammo[NUMAMMO];
 
-	int ChickenTics;	// player is a chicken if > 0
+	float ChickenTime;	// player is a chicken if > 0
 
-	// Power ups. invinc and invis are tic counters.
-	int Powers[NUMPOWERS];
+	// Power ups. invinc and invis are timers.
+	float Powers[NUMPOWERS];
 
 	int Keys;
 
@@ -814,10 +814,10 @@ addfields player_t
 	Actor *Attacker;
 
 	// For screen flashing (red or bright).
-	int DamageCount;
-	int BonusCount;
+	float DamageFlash;
+	float BonusFlash;
 
-	int JumpTics;
+	float JumpTime;
 
 	// Armor type is 0-2.
 	int ArmorType;
@@ -870,6 +870,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.32  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

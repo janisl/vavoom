@@ -488,18 +488,18 @@ boolean Actor::HitFloor(void)
 		}
 		if (bIsPlayer)
 		{
-			Player->JumpTics = 7;	// delay any jumping for a short time
+			Player->JumpTime = 0.2;	// delay any jumping for a short time
 			if (vdot < -GRAVITY * 0.25 && !bFly)
 			{
 				// squat down
-				Player->DeltaViewHeight = vdot * frametime / 8.0;
+				Player->DeltaViewHeight = vdot / 8.0;
 				if (vdot < -23.0 * 35.0)
 				{
 					FallingDamage();
 					NoiseAlert(self, self);
 				}
 				else if (vdot < -GRAVITY * 0.375
-					&& !Player->MorphTics)
+					&& !Player->MorphTime)
 				{
 					PlaySound('PlayerLand', CHAN_BODY);
 					switch (Player->PClass)
@@ -517,7 +517,7 @@ boolean Actor::HitFloor(void)
 						break;
 					}
 				}
-				else if (GetFloorType() < FLOOR_LIQUID && !Player->MorphTics)
+				else if (GetFloorType() < FLOOR_LIQUID && !Player->MorphTime)
 				{
 					PlaySound('PlayerLand', CHAN_BODY);
 				}
@@ -626,7 +626,7 @@ boolean Actor::ZMovement(void)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player->ViewHeight -= FloorZ - Origin.z;
-		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) / 8.0;
+		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
 	}
 	//
 	// adjust height
@@ -690,13 +690,13 @@ void Actor::ResetBlasted(void)
 
 void Actor::PlayerLandedOnThing(void)
 {
-	Player->DeltaViewHeight = Velocity.z * frametime / 8.0;
+	Player->DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		FallingDamage();
 		NoiseAlert(self, self);
 	}
-	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTics)
+	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTime)
 	{
 		PlaySound('PlayerLand', CHAN_BODY);
 		switch (Player->PClass)
@@ -714,7 +714,7 @@ void Actor::PlayerLandedOnThing(void)
 			break;
 		}
 	}
-	else if (!Player->MorphTics)
+	else if (!Player->MorphTime)
 	{
 		PlaySound('PlayerLand', CHAN_BODY);
 	}
@@ -879,7 +879,7 @@ boolean Actor::Physics(void)
 						Player->ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
 						Player->DeltaViewHeight =
-							(VIEWHEIGHT - Player->ViewHeight) / 8.0;
+							(VIEWHEIGHT - Player->ViewHeight) * 4.0;
 						Origin.z = onmo.Origin.z + onmo.Height;
 						bOnMobj = true;
 						Velocity.z = 0.0;
@@ -938,6 +938,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.34  2002/06/22 07:09:58  dj_jl
 //  Made sliding and bouncing functions native.
 //

@@ -1128,8 +1128,8 @@ addfields player_t
 	int ReadyWeapon;
 
 	// For screen flashing (red or bright).
-	int DamageCount;
-	int BonusCount;
+	float DamageFlash;
+	float BonusFlash;
 
 	//
 	//  ----------
@@ -1142,7 +1142,7 @@ addfields player_t
 	int Cheats;
 
 	// Power ups. invinc and invis are tic counters.
-	int Powers[NUMPOWERS];
+	float Powers[NUMPOWERS];
 
 	int Keys;
 
@@ -1212,6 +1212,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.36  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

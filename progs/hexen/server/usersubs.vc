@@ -72,7 +72,8 @@ void InitLava(void)
 
 void PlayerPawn::MorphPlayerThink(void)
 {
-	if (Player->MorphTics & 15)
+	//FIXME this sucks
+	if (ftoi(32.0 * Player->MorphTime) & 15)
 	{
 		return;
 	}
@@ -127,7 +128,7 @@ boolean PlayerPawn::UndoPlayerMorph(void)
 		// Didn't fit
 		A.Remove();
 		LinkToWorld();
-		Player->MorphTics = 2 * 35;
+		Player->MorphTime = 2.0;
 		return false;
 	}
 	LinkToWorld();
@@ -140,7 +141,7 @@ boolean PlayerPawn::UndoPlayerMorph(void)
 		A.bFly = true;
 		A.bNoGravity = true;
 	}
-	Player->MorphTics = 0;
+	Player->MorphTime = 0.0;
 	A.Health = MAXHEALTH;
 	Player->Health = A.Health;
 	Player->MO = A;
@@ -253,9 +254,11 @@ void PlayerPawn::DeathPlayerTick(float deltaTime)
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
-			if (Player->DamageCount)
+			if (Player->DamageFlash)
 			{
-				Player->DamageCount--;
+				Player->DamageFlash -= deltaTime;
+				if (Player->DamageFlash <= 0.0)
+					Player->DamageFlash = 0.0;
 			}
 			if (Player->PoisonCount)
 			{
@@ -277,11 +280,13 @@ void PlayerPawn::DeathPlayerTick(float deltaTime)
 			Angles.yaw -= delta;
 		}
 	}
-	else if (Player->DamageCount || Player->PoisonCount)
+	else if (Player->DamageFlash || Player->PoisonCount)
 	{
-		if (Player->DamageCount)
+		if (Player->DamageFlash)
 		{
-			Player->DamageCount--;
+			Player->DamageFlash -= deltaTime;
+			if (Player->DamageFlash <= 0.0)
+				Player->DamageFlash = 0.0;
 		}
 		else
 		{
@@ -625,6 +630,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.29  2002/07/13 08:01:50  dj_jl
 //  Moved some functions to the Entity class.
 //

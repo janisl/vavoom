@@ -324,7 +324,7 @@ void Actor::A_Scream(void)
 	StopSound(CHAN_AUTO);
 	if (bIsPlayer)
 	{
-		if (Player->MorphTics)
+		if (Player->MorphTime)
 		{
 			PlaySound(DeathSound, CHAN_VOICE);
 		}
@@ -572,9 +572,9 @@ void Pawn::A_FreezeDeath(void)
 
 	if (bIsPlayer)
 	{
-		Player->DamageCount = 0;
+		Player->DamageFlash = 0.0;
 		Player->PoisonCount = 0;
-		Player->BonusCount = 0;
+		Player->BonusFlash = 0.0;
 	}
 	else
 	{
@@ -790,6 +790,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.29  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

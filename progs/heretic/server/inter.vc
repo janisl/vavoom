@@ -302,7 +302,7 @@ defaultproperties
 //**************************************************************************
 //**************************************************************************
 
-#define BONUSADD				6
+#define BONUSADD				0.2
 
 // Keys
 
@@ -529,7 +529,7 @@ boolean PlayerPawn::GiveWeapon(int weapon)
 		{
 			return false;
 		}
-		Player->BonusCount += BONUSADD;
+		Player->BonusFlash += BONUSADD;
 		Player->WeaponOwned[weapon] = true;
 		GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
 		Player->PendingWeapon = weapon;
@@ -567,7 +567,7 @@ boolean PlayerPawn::GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (Player->ChickenTics)
+	if (Player->ChickenTime)
 	{
 		max = MAXCHICKENHEALTH;
 	}
@@ -618,7 +618,7 @@ boolean PlayerPawn::GiveKey(int key)
 	{
 		return false;
 	}
-	Player->BonusCount = BONUSADD;
+	Player->BonusFlash = BONUSADD;
 	Player->Keys |= 1 << key;
 	return true;
 }
@@ -635,43 +635,43 @@ boolean PlayerPawn::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->Powers[power] = INVULNTIME;
 		return true;
 	}
 	if (power == pw_weaponlevel2)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(WPNLEV2TIME * 35.0);
+		Player->Powers[power] = WPNLEV2TIME;
 		return true;
 	}
 	if (power == pw_invisibility)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(INVISTIME * 35.0);
+		Player->Powers[power] = INVISTIME;
 		Translucency = 33;
 		return true;
 	}
 	if (power == pw_flight)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(FLIGHTTIME * 35.0);
+		Player->Powers[power] = FLIGHTTIME;
 		bFly = true;
 		bNoGravity = true;
 		if (Origin.z <= FloorZ)
@@ -682,19 +682,19 @@ boolean PlayerPawn::GivePower(int power)
 	}
 	if (power == pw_infrared)
 	{
-		if (Player->Powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = ftoi(INFRATIME * 35.0);
+		Player->Powers[power] = INFRATIME;
 		return true;
 	}
 	if (Player->Powers[power])
 	{
 		return false;	// already got it
 	}
-	Player->Powers[power] = 1;
+	Player->Powers[power] = 1.0;
 	return true;
 }
 
@@ -831,7 +831,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound(sound, CHAN_ITEM);
 }
 
@@ -905,7 +905,7 @@ void WeaponPickup::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
@@ -943,7 +943,7 @@ void Key::TouchSpecial(Actor Toucher)
 		P.Player->ItemCount++;
 	}
 	Remove();
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupKey', CHAN_ITEM);
 }
 
@@ -986,13 +986,16 @@ void Ammo::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.19  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

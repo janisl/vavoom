@@ -185,9 +185,7 @@ void Actor::ZMovement(void)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player->ViewHeight -= FloorZ - Origin.z;
-
-		Player->DeltaViewHeight
-			= (VIEWHEIGHT - Player->ViewHeight) / 8.0;
+		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -232,7 +230,7 @@ void Actor::ZMovement(void)
 				// Decrease ViewHeight for a moment
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
-				Player->DeltaViewHeight = vdot / 8.0 * frametime;
+				Player->DeltaViewHeight = vdot / 8.0;
 				PlaySound('PlayerLand', CHAN_VOICE);
 			}
 		}
@@ -358,7 +356,7 @@ void Actor::ApplyFriction(void)
 
 void Actor::PlayerLandedOnThing(void)
 {
-	Player->DeltaViewHeight = Velocity.z * frametime / 8.0;
+	Player->DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('PlayerLand', CHAN_VOICE);
@@ -422,7 +420,7 @@ boolean Actor::Physics(void)
 					Player->ViewHeight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
 					Player->DeltaViewHeight =
-						(VIEWHEIGHT - Player->ViewHeight) / 8.0;
+						(VIEWHEIGHT - Player->ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -523,6 +521,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/07/23 13:07:29  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.31  2002/06/22 07:09:58  dj_jl
 //  Made sliding and bouncing functions native.
 //

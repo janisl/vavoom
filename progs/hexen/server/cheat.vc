@@ -103,7 +103,7 @@ void Cheat_Gimme(void)
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (players[0].MorphTics)
+		if (players[0].MorphTime)
 		{
 			players[0].MO.Health = MAXMORPHHEALTH;
 			players[0].Health = players[0].MO.Health;
@@ -193,7 +193,7 @@ void Cheat_KillAll(void)
 
 void Cheat_Morph(void)
 {
-	if (players[0].MorphTics)
+	if (players[0].MorphTime)
 	{
 		PlayerPawn(players[0].MO).UndoPlayerMorph();
 	}
@@ -214,7 +214,7 @@ void Cheat_NoWeapons(void)
 {
 	int i;
 
-	if (players[0].MorphTics)
+	if (players[0].MorphTime)
 	{
 		return;
 	}
@@ -238,7 +238,7 @@ void Cheat_Class(void)
 	int i;
 	int pclass;
 
-	if (players[0].MorphTics)
+	if (players[0].MorphTime)
 	{	// don't change class if the player is morphed
 		return;
 	}
@@ -267,6 +267,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.16  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

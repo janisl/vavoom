@@ -2295,7 +2295,7 @@ defaultproperties
 #define TXT_WRAITHVERGE_PIECE	"SEGMENT OF WRAITHVERGE"
 #define TXT_BLOODSCOURGE_PIECE	"SEGMENT OF BLOODSCOURGE"
 
-#define BONUSADD 	6
+#define BONUSADD	0.2
 
 float ArmorMax[NUMCLASSES] = { 20.0, 18.0, 16.0, 1.0 };
 
@@ -2440,7 +2440,7 @@ boolean PlayerPawn::GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
 		max = MAXMORPHHEALTH;
 	}
@@ -2514,7 +2514,7 @@ boolean PlayerPawn::GiveKey(int key)
 	{
 		return false;
 	}
-	Player->BonusCount += BONUSADD;
+	Player->BonusFlash += BONUSADD;
 	Player->Keys |= 1 << key;
 	return true;
 }
@@ -2720,7 +2720,7 @@ void Pickup::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
@@ -2757,7 +2757,7 @@ void Artifact::TouchSpecial(Actor Toucher)
 			ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 			Special = 0;
 		}
-		P.Player->BonusCount += BONUSADD;
+		P.Player->BonusFlash += BONUSADD;
 		if (ArtifactType < arti_firstpuzzitem)
 		{
 			SetDormantArtifact();
@@ -2901,7 +2901,7 @@ void WeaponPickup::TouchSpecial(Actor Toucher)
 		}
 	}
 
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
@@ -2999,7 +2999,7 @@ void WeaponPiece::TouchSpecial(Actor Toucher)
 			Remove();
 		}
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
@@ -3070,7 +3070,7 @@ void Armor::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
@@ -3118,7 +3118,7 @@ void Mana::TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
@@ -3170,13 +3170,16 @@ void Key::TouchSpecial(Actor Toucher)
 			Remove();
 		}
 	}
-	P.Player->BonusCount += BONUSADD;
+	P.Player->BonusFlash += BONUSADD;
 	P.PlaySound('PickupKey', CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/07/23 13:07:30  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.22  2002/07/13 07:58:51  dj_jl
 //  Added new models, updated existing ones.
 //

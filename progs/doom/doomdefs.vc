@@ -97,21 +97,21 @@ addfields client_state_t
 	//  STATS FOR STATUS BAR
 	//
 
-	sb_stats_t stats;
+	sb_stats_t Stats;
 
-	int ammo[NUMAMMO];
-	int maxammo[NUMAMMO];
-	int ready_ammo;
+	int Ammo[NUMAMMO];
+	int MaxAmmo[NUMAMMO];
+	int ReadyAmmo;
 
-	boolean weaponowned[NUMWEAPONS];
+	boolean WeaponOwned[NUMWEAPONS];
 
-	int armorpoints;
+	int ArmorPoints;
 
-	int readyweapon;
+	int ReadyWeapon;
 
 	// For screen flashing (red or bright).
-	int damagecount;
-	int bonuscount;
+	float DamageFlash;
+	float BonusFlash;
 };
 
 #endif
@@ -142,6 +142,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/07/23 13:07:28  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.12  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

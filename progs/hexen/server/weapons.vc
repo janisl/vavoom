@@ -352,7 +352,7 @@ void Weapon::A_WeaponReady(void)
 		Player->bAttackDown = false;
 	}
 
-	if (!Player->MorphTics)
+	if (!Player->MorphTime)
 	{
 		// Bob the weapon based on movement speed.
 		angle = AngleMod360(180.0 * level->time);
@@ -373,13 +373,17 @@ void Weapon::A_WeaponReady(void)
 
 void Weapon::A_Lower(void)
 {
-	if (Player->MorphTics)
+	if (Player->MorphTime)
 	{
 		SY = WEAPONBOTTOM;
 	}
 	else
 	{
-		SY += LOWERSPEED;
+		//	FIXME!!
+		if (frametime < 1.0 / 35.0)
+			SY += LOWERSPEED;
+		else
+			SY += LOWERSPEED * 35.0 * frametime;
 	}
 	if (SY < WEAPONBOTTOM)
 	{
@@ -410,7 +414,11 @@ void Weapon::A_Lower(void)
 
 void Weapon::A_Raise(void)
 {
-	SY -= RAISESPEED;
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY -= RAISESPEED;
+	else
+		SY -= RAISESPEED * 35.0 * frametime;
 	if (SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
@@ -457,6 +465,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/07/23 13:07:31  dj_jl
+//  Final touches for switching to floating-point time, beautification.
+//
 //  Revision 1.16  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //
