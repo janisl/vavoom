@@ -295,6 +295,19 @@ bool VObject::IsIn(VObject *SomeOuter) const
 
 //==========================================================================
 //
+//	VObject::GetVFunction
+//
+//==========================================================================
+
+FFunction *VObject::GetVFunction(FName FuncName) const
+{
+	guardSlow(VObject::GetVFunction);
+	return vtable[Class->GetFunctionIndex(FuncName)];
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //	VObject::CollectGarbage
 //
 //==========================================================================
@@ -394,9 +407,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/29 16:53:52  dj_jl
+//	Added GetVFunction.
+//
 //	Revision 1.6  2002/03/28 18:02:11  dj_jl
 //	Changed native IsA to take name as argument.
-//
+//	
 //	Revision 1.5  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

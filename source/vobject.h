@@ -230,10 +230,11 @@ public:
 	{
 		return Index;
 	}
-	FFunction *GetVFunction(int InIndex)
+	FFunction *GetVFunction(int InIndex) const
 	{
 		return vtable[InIndex];
 	}
+	FFunction *GetVFunction(FName FuncName) const;
 
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(IsA)
@@ -313,9 +314,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/05/29 16:53:52  dj_jl
+//	Added GetVFunction.
+//
 //	Revision 1.9  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.8  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	
