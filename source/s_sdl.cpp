@@ -101,17 +101,19 @@ static int frequencies[] = { 11025, 22050, 44100, 0 };
 static int chunksizes[] = {  512,  1024,  2048, 4096, 8192, 0};
 static int voices[] = {        4,     8,    16,   32,   64, 0};
 
-channel_t *channels;
+static channel_t *channels;
 
 static TVec listener_forward;
 static TVec listener_right;
 static TVec listener_up;
 
+static Uint16 mix_format;
+
 // CODE --------------------------------------------------------------------
 
 ////// PRIVATE /////////////////////////////////////////////////////////////
 
-int know_value(int val, int *vals)
+static int know_value(int val, int *vals)
 {
 	int i;
 
@@ -271,6 +273,35 @@ static int CalcPitch(int freq, int sound_id)
 	}
 }
 
+/* Load raw data -- this is a hacked version of Mix_LoadWAV_RW (gl) */
+static Mix_Chunk * LoadRaw(Uint8 *data, int len, int freq)
+{
+	Mix_Chunk *chunk;
+	SDL_AudioCVT cvt;
+
+	if ( SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, freq,
+			mix_format, mix_channels, mix_frequency) < 0 ) {
+		return(NULL);
+	}
+
+	cvt.len = len;
+	cvt.buf = (Uint8 *)malloc(len * cvt.len_mult);
+	memcpy(cvt.buf, data, len);
+
+	/* Run the audio converter */
+	if ( SDL_ConvertAudio(&cvt) < 0 ) {
+		free(cvt.buf);
+		return(NULL);
+	}
+
+	chunk = (Mix_Chunk *)malloc(sizeof(Mix_Chunk));
+	chunk->allocated = 1;
+	chunk->abuf = cvt.buf;
+	chunk->alen = cvt.len_cvt;
+	chunk->volume = MIX_MAX_VOLUME;
+	return(chunk);
+}
+
 ////// PUBLIC //////////////////////////////////////////////////////////////
 
 //==========================================================================
@@ -290,51 +321,80 @@ void VSDLSoundDevice::Init(void)
 	int    ch;  /* audio */
 	int    mch; /* mixer */
 	int    cksz;
+	char   dname[32];
+
+	if (M_CheckParm("-nosound") ||
+		(M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
+	{
+		return;
+	}
+
+	if ( (i = M_CheckParm("-mix_frequency")) )
+		mix_frequency = atoi(myargv[i+1]);
 
 	if (know_value(mix_frequency,frequencies))
 		freq = mix_frequency;
 	else
 		freq = MIX_DEFAULT_FREQUENCY;
 
+	if ( (i = M_CheckParm("-mix_bits")) )
+		mix_bits = atoi(myargv[i+1]);
+
 	if (mix_bits == 8)
-		fmt = AUDIO_S8;
+		fmt = AUDIO_U8;
 	else
 		fmt = MIX_DEFAULT_FORMAT;
 
-	if (mix_channels == 1)
-		ch = 1;
+	if ( (i = M_CheckParm("-mix_channels")) )
+		mix_channels = atoi(myargv[i+1]);
+			
+	if (mix_channels == 1 || mix_channels == 2 || mix_channels == 4 || mix_channels == 6)
+		ch = mix_channels;
 	else
 		ch = MIX_DEFAULT_CHANNELS;
+
+	if ( (i = M_CheckParm("-mix_chunksize")) )
+		mix_chunksize = atoi(myargv[i+1]);
 
 	if (know_value(mix_chunksize, chunksizes))
 		cksz = mix_chunksize;
 	else
 		cksz = 4096;
 
+	if ( (i = M_CheckParm("-mix_voices")) )
+		mix_voices = atoi(myargv[i+1]);
+
 	if (know_value(mix_voices, voices))
 		mch = mix_voices;
 	else
 		mch = MIX_CHANNELS;
 
-	if (mix_swapstereo)
+	if ( (i = M_CheckParm("-mix_swapstereo")) )
 		mix_swapstereo = 1;
-	else
-		mix_swapstereo = 0;
 
 	if (Mix_OpenAudio(freq,fmt,ch,cksz) < 0)
 	{
-		if (!Mix_QuerySpec(&freq, &fmt, &ch))
-		{
 			sound = 0;
 			return;
-		}
 	}
+
 	sound = 1;
 
-	mix_voices = Mix_AllocateChannels(mch);
+	Mix_QuerySpec(&freq, &fmt, &ch);
+
+	if (!M_CheckParm("-nosfx"))
+	{
+		mix_voices = Mix_AllocateChannels(mch);
+	}
+	else
+	{
+		mix_voices = 0;
+	}
+
 	mix_frequency = freq;
 	mix_bits = fmt & 0xFF;
 	mix_channels = ch;
+	mix_format = fmt;
 
 	channels = Z_CNew<channel_t>(mix_voices);
 	for (i = 0; i < mix_voices; i++)
@@ -347,6 +407,10 @@ void VSDLSoundDevice::Init(void)
 
 	sndcount = 0;
 	snd_MaxVolume = -1;
+
+	GCon->Logf(NAME_Init, "Configured audio device for %d channels, format %04X.", (int)mix_channels, mix_format);
+	GCon->Logf(NAME_Init, "Driver   : %s", SDL_AudioDriverName(dname, 32));
+
 	unguard;
 }
 
@@ -362,7 +426,7 @@ void VSDLSoundDevice::Shutdown(void)
 	if (sound)
 	{
 		Mix_CloseAudio();
-		Z_Free(channels);
+		if (mix_voices) Z_Free(channels);
 		sound = 0;
 	}
 	unguard;
@@ -424,12 +488,17 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return;
 	}
 
+	pitch = CalcPitch(S_sfx[sound_id].freq, sound_id);
+
 	// copy the lump to a SDL_Mixer chunk...
-	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_sfx[sound_id].data, 
-		S_sfx[sound_id].len), 0, S_sfx[sound_id].freq, AUDIO_U8, 1);
+	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].data, S_sfx[sound_id].len, pitch);
+
 	if (chunk == NULL)
-		Sys_Error("Mix_LoadRAW_RW() failed!\n");
-	voice = Mix_LoadChannel(-1, chunk, 0);
+		Sys_Error("LoadRaw() failed!\n");
+
+	vol = CalcVol(volume, dist);
+
+	voice = Mix_PlayChannelTimed(-1, chunk, 0, -1);
 
 	if (voice < 0)
 	{
@@ -437,18 +506,16 @@ void VSDLSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return;
 	}
 
-	vol = CalcVol(volume, dist);
-	Mix_Volume(voice, vol);
 	if (dist)
 	{
 		sep = CalcSep(origin);
-		Mix_SetPanning(voice, 255 - sep, sep);
-    }
-	pitch = CalcPitch(S_sfx[sound_id].freq, sound_id);
-#warning how to set the pitch? (CS)
+//JL		Mix_SetPanning(voice, 255 - sep, sep);
+	}
+//	pitch = CalcPitch(S_sfx[sound_id].freq, sound_id);
+//#warning how to set the pitch? (CS)
 
 	// ready to go...
-	Mix_Play(voice);
+	//Mix_Play(voice);
 
 	channels[chan].origin_id = origin_id;
 	channels[chan].origin    = origin;
@@ -500,21 +567,20 @@ void VSDLSoundDevice::PlayVoice(const char *Name)
 		return;
 	}
 
+
 	// copy the lump to a SDL_Mixer chunk...
-	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_VoiceInfo.data, 
-		S_VoiceInfo.len), 0, S_VoiceInfo.freq, AUDIO_U8, 1);
+	chunk = LoadRaw((Uint8 *)S_VoiceInfo.data, S_VoiceInfo.len, S_VoiceInfo.freq);
+
 	if (chunk == NULL)
 		Sys_Error("Mix_LoadRAW_RW() failed!\n");
-	voice = Mix_LoadChannel(-1, chunk, 0);
+
+	voice = Mix_PlayChannelTimed(-1, chunk, 0, -1);
 
 	if (voice < 0)
 	{
 		S_DoneWithLump(VOICE_SOUND_ID);
 		return;
 	}
-
-	// ready to go...
-	Mix_Play(voice);
 
 	channels[chan].origin_id = 0;
 	channels[chan].origin    = TVec(0, 0, 0);
@@ -542,8 +608,14 @@ void VSDLSoundDevice::PlaySoundTillDone(char *sound)
 	int    voice;
 	Mix_Chunk *chunk;
 
+	if (!mix_voices || !snd_MaxVolume)
+	{
+		return;
+	}
+
 	sound_id = S_GetSoundID(sound);
-	if (!mix_voices || !sound_id || !snd_MaxVolume)
+
+	if (!sound_id)
 	{
 		return;
 	}
@@ -557,19 +629,17 @@ void VSDLSoundDevice::PlaySoundTillDone(char *sound)
 		return;
 	}
 
-	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_sfx[sound_id].data,
-		S_sfx[sound_id].len), 0, S_sfx[sound_id].freq, AUDIO_U8, 1);
+	chunk = LoadRaw((Uint8 *)S_sfx[sound_id].data, S_sfx[sound_id].len, S_sfx[sound_id].freq);
+
 	if (chunk == NULL)
 		Sys_Error("Mix_LoadRAW_RW() failed!\n");
 
-	voice = Mix_LoadChannel(-1, chunk, 0);
+	voice = Mix_PlayChannelTimed(-1, chunk, 0, -1);
 
 	if (voice < 0)
 	{
 		return;
 	}
-
-	Mix_Play(voice);
 
 	start = Sys_Time();
 	while (1)
@@ -607,6 +677,11 @@ void VSDLSoundDevice::Tick(float DeltaTime)
 	int		dist;
 	int		vol;
 	int		sep;
+
+	if (!mix_voices || !snd_MaxVolume)
+	{
+		return;
+	}
 
 	if (sfx_volume < 0)
 	{
@@ -678,7 +753,7 @@ void VSDLSoundDevice::Tick(float DeltaTime)
 		sep = CalcSep(channels[i].origin);
 
 		Mix_Volume(channels[i].voice, vol);
-		Mix_SetPanning(channels[i].voice, 255 - sep, sep);
+//JLK		Mix_SetPanning(channels[i].voice, 255 - sep, sep);
 
 		channels[i].priority = CalcPriority(channels[i].sound_id, dist);
 	}
@@ -695,6 +770,11 @@ void VSDLSoundDevice::StopSound(int origin_id, int channel)
 {
 	guard(VSDLSoundDevice::StopSound);
 	int i;
+
+	if (!mix_voices || !snd_MaxVolume)
+	{
+		return;
+	}
 
 	for (i = 0; i < mix_voices; i++)
 	{
@@ -718,6 +798,11 @@ void VSDLSoundDevice::StopAllSound(void)
 	guard(VSDLSoundDevice::StopAllSound);
 	int i;
 
+	if (!mix_voices || !snd_MaxVolume)
+	{
+		return;
+	}
+
 	//	stop all sounds
 	for (i = 0; i < mix_voices; i++)
 	{
@@ -736,6 +821,11 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
 	guard(VSDLSoundDevice::IsSoundPlaying);
 	int i;
+
+	if (!mix_voices || !snd_MaxVolume)
+	{
+		return false;
+	}
 
 	for (i = 0; i < mix_voices; i++)
 	{
@@ -756,9 +846,12 @@ bool VSDLSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/10/11 06:49:57  dj_jl
+//	SDL patches.
+//
 //	Revision 1.9  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.8  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

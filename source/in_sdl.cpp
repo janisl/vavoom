@@ -47,10 +47,23 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int mouse;
-static int joy;
 
 static int mouse_oldx;
 static int mouse_oldy;
+
+#ifndef MAX_JOYSTICK_BUTTONS
+#define MAX_JOYSTICK_BUTTONS 100
+#endif
+
+static SDL_Joystick		*joystick;
+static boolean			joystick_started = false;
+static int				joy_num_buttons = 0;
+static int				joy_x = 0;
+static int				joy_y = 0;
+static int				joy_newb[MAX_JOYSTICK_BUTTONS];
+static int				joy_oldx = 0;
+static int				joy_oldy = 0;
+static int				joy_oldb[MAX_JOYSTICK_BUTTONS];
 
 // tested with SDL 1.2.2
 static int sym2key[SDLK_LAST] = {
@@ -110,6 +123,85 @@ static int sym2key[SDLK_LAST] = {
 
 //**************************************************************************
 //**
+//**	JOYSTICK
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//	StartupJoystick
+//
+// 	Initializes joystick
+//
+//==========================================================================
+
+static void StartupJoystick()
+{
+	guard(StartupJoystick);
+	if (M_CheckParm("-nojoy"))
+    	return;
+
+	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
+	{
+		GCon->Log(NAME_Init, "sdl init joystick failed.");
+		return;
+	}
+//	else
+//	{
+//		SDL_JoystickEventState(SDL_IGNORE);
+//		// we are on our own now...
+//	}
+	joystick = SDL_JoystickOpen(0);
+	if (!joystick)
+		return;
+
+	joy_num_buttons = 3;
+	joystick_started = true;
+	memset(joy_oldb, 0, sizeof(joy_oldb));
+	memset(joy_newb, 0, sizeof(joy_newb));
+	unguard;
+}
+
+//==========================================================================
+//
+//  PostJoystick
+//
+//==========================================================================
+
+static void PostJoystick()
+{
+	guard(PostJoystick);
+	int		i;
+	event_t event;
+
+	if (!joystick_started)
+		return;
+
+	if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
+	{
+		event.type = ev_joystick;
+		event.data1 = 0;
+		event.data2 = joy_x;
+		event.data3 = joy_y;
+		IN_PostEvent(&event);
+
+		joy_oldx = joy_x;
+		joy_oldy = joy_y;
+	}
+
+	for (i = 0; i < joy_num_buttons; i++)
+	{
+		if (joy_newb[i] != joy_oldb[i])
+		{
+			IN_KeyEvent(K_JOY1 + i, joy_newb[i]);
+			joy_oldb[i] = joy_newb[i];
+		}
+	}
+	unguard;
+}
+
+//**************************************************************************
+//**
 //**    INPUT
 //**
 //**************************************************************************
@@ -120,7 +212,7 @@ static int sym2key[SDLK_LAST] = {
 //
 //==========================================================================
 
-void IN_Init(void)
+void IN_Init()
 {
 	guard(IN_Init);
 	// always off
@@ -144,20 +236,8 @@ void IN_Init(void)
 	}
 
 	// initialize joystick
-	joy = 1;
-	if (M_CheckParm("-nojoy"))
-	{
-		joy = 0;
-	}
-	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0 && joy)
-	{
-		joy = 0;
-	}
-	else
-	{
-		SDL_JoystickEventState(SDL_IGNORE);
-		// we are on our own now...
-	}
+	StartupJoystick();
+
 	unguard;
 }
 
@@ -172,15 +252,16 @@ void IN_Init(void)
 //
 //==========================================================================
 
-void IN_ReadInput(void)
+void IN_ReadInput()
 {
 	guard(IN_ReadInput);
 	SDL_Event ev;
 	event_t vev;
-	int rel_x;
-	int rel_y;
+	//int rel_x;
+	//int rel_y;
 	int mouse_x;
 	int mouse_y;
+	int normal_value;
 
 	SDL_PumpEvents();
 	while (SDL_PollEvent(&ev))
@@ -210,25 +291,52 @@ void IN_ReadInput(void)
 				vev.data1 = K_MOUSE2;
 			else if (ev.button.button == SDL_BUTTON_MIDDLE)
 				vev.data1 = K_MOUSE3;
+//			else if (ev.button.button == SDL_BUTTON_WHEELUP)
+//				vev.data1 = K_MWHEELUP;
+//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+//				vev.data1 = K_MWHEELDOWN;
+//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 1)
+//				vev.data1 = K_MOUSED1;
+//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 2)
+//				vev.data1 = K_MOUSED2;
+//			else if (ev.button.button == SDL_BUTTON_WHEELDOWN + 3)
+//				vev.data1 = K_MOUSED3;
 			else
 				break;
 			vev.data2 = 0;
 			vev.data3 = 0;
 			IN_PostEvent(&vev);
 			break;
+		case SDL_JOYAXISMOTION:
+			normal_value = ev.jaxis.value * 127 / 32767;
+			if (ev.jaxis.axis == 0)
+				joy_x = normal_value;
+			else if (ev.jaxis.axis == 1)
+				joy_y = normal_value;
+			break;
+		case SDL_JOYBALLMOTION:
+			break;
+		case SDL_JOYHATMOTION:
+			break;
+		case SDL_JOYBUTTONDOWN:
+			joy_newb[ev.jbutton.button] = 1;
+			break;
+		case SDL_JOYBUTTONUP:
+			joy_newb[ev.jbutton.button] = 0;
+			break;
 		default:
 			break;
 		}
 	}
 
-	// read mouse separately
+	//	Read mouse separately
 	if (mouse)
 	{
 		SDL_GetMouseState(&mouse_x, &mouse_y);
 		vev.type = ev_mouse;
 		vev.data1 = 0;
 		vev.data2 = mouse_x - ScreenWidth / 2;
-		vev.data3 = mouse_y - ScreenHeight / 2;
+		vev.data3 = ScreenHeight / 2 - mouse_y;
 		IN_PostEvent(&vev);
 		SDL_WarpMouse(ScreenWidth / 2, ScreenHeight / 2);
 #if 0
@@ -238,14 +346,11 @@ void IN_ReadInput(void)
 		vev.data2 = rel_x;
 		vev.data3 = rel_y;
 		IN_PostEvent(&vev);
-#endif /* 0 */
+#endif
 	}
 
-	// read joystick separately
-/*
-	if (joy)
-		ReadJoystick();
-*/
+	PostJoystick();
+
 	unguard;
 }
 
@@ -259,17 +364,22 @@ void IN_Shutdown(void)
 {
 	// on
 	SDL_ShowCursor(1);
-
-	if (joy)
+	if (joystick_started)
+	{
+		SDL_JoystickClose(joystick);
 		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2004/10/11 06:49:57  dj_jl
+//	SDL patches.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2002/01/03 18:39:42  dj_jl
 //	Added SDL port
 //	
