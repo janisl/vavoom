@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -556,6 +552,51 @@ void MenuSpriteAnim_Init(menuspriteanim_t *self, int x, int y, int sprdef, int s
 	self->speed = speed;
 	self->frames = frames;
 	self->translation = 0;
+}
+
+//**************************************************************************
+//**
+//**	Model
+//**
+//**************************************************************************
+
+struct menumodel_t : menucommon_t
+{
+	TVec		origin;
+	angle_t		angle;
+	model_t		*model;
+	int			frame;
+	string		skin;
+};
+
+//==========================================================================
+//
+//	MenuModel_Draw
+//
+//==========================================================================
+
+void MenuModel_Draw(menucommon_t *aitem)
+{
+	menumodel_t		*item = (menumodel_t*)aitem;
+
+	R_DrawModelFrame(item->origin, item->angle, item->model, item->frame, item->skin);
+}
+
+//==========================================================================
+//
+//	MenuModel_Init
+//
+//==========================================================================
+
+void MenuModel_Init(menumodel_t *self, TVec origin, angle_t angle, model_t *model, int frame)
+{
+	MenuCommon_Init(self, 0, 0, MNF_INACTIVE);
+	self->drawer = MenuModel_Draw;
+	self->origin = origin;
+	self->angle = angle;
+	self->model = model;
+	self->frame = frame;
+	self->skin = "";
 }
 
 //**************************************************************************
@@ -1593,3 +1634,14 @@ boolean MN_Active(void)
 {
 	return CurrentMenu != NULL;
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/15 17:04:47  dj_jl
+//	Model setup
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
