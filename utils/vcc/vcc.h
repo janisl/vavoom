@@ -215,12 +215,12 @@ enum Keyword
 	KW_DO,
 	KW_ELSE,
 	KW_ENUM,
-	KW_EXTERN,
 	KW_FLOAT,
 	KW_FOR,
 	KW_FUNCTION,
 	KW_IF,
    	KW_INT,
+	KW_NATIVE,
 	KW_NONE,
 	KW_NULL,
 	KW_RETURN,
@@ -293,6 +293,7 @@ class TFunction
 	int			s_name;
 	int			first_statement;	//	Negatÿvi skaitıi ir ieb›vÒt∆s funkcijas
 	int			num_locals;
+	int			flags;
 	TType		*type;
 };
 
@@ -505,10 +506,13 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.13  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties

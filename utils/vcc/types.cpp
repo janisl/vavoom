@@ -31,7 +31,6 @@
 
 #define VTOFFS_CID				0
 #define VTOFFS_SIZE				4
-#define VTOFFS_PARENTVT			8
 #define VTOFFS_CTOR				16
 #define VTOFFS_DTOR				20
 #define BASE_NUM_METHODS		6
@@ -779,6 +778,10 @@ void ParseClass(void)
 			ParseError("Class definition already completed");
 			return;
 		}
+		if (!class_type->s_name)
+		{
+			class_type->s_name = FindString(class_type->name);
+		}
 	}
 	else
 	{
@@ -1266,6 +1269,7 @@ static void AddVTable(TType *t)
 	classtypes[t->classid] = t;
 	t->vtable = numglobals;
 	int *vtable = globals + numglobals;
+	memset(globalinfo + numglobals + 4, 2, t->num_methods - 4);
 	numglobals += t->num_methods;
 	if (t->aux_type)
 	{
@@ -1320,10 +1324,13 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.13  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties

@@ -375,6 +375,10 @@ class TOpConst : public	TTree
 	{
 		if (type->type == ev_string)
 			AddStatement(OPC_PUSHSTRING, vInt);
+		else if (type->type == ev_function)
+			AddStatement(OPC_PUSHFUNCTION, vInt);
+		else if (type->type == ev_classid)
+			AddStatement(OPC_PUSHCLASSID, vInt);
 		else
 			AddStatement(OPC_PUSHNUMBER, vInt);
 	}
@@ -1780,10 +1784,13 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.13  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties

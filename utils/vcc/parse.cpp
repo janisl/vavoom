@@ -436,6 +436,10 @@ static void ParseStatement(void)
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TType *etype = ParseExpression();
 				TypeCheck1(etype);
+				if (etype->type != ev_int && etype->type != ev_uint)
+				{
+					ParseWarning("Int expression expected");
+				}
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 				switcherAddrPtr = AddStatement(OPC_GOTO, 0);
@@ -476,8 +480,12 @@ static void ParseStatement(void)
 				*switcherAddrPtr = CodeBufferSize;
 				for (i = 0; i < numcases; i++)
 				{
-					AddStatement(OPC_CASEGOTO, CaseInfo[i].value,
-									CaseInfo[i].address);
+					if (etype->type == ev_classid)
+						AddStatement(OPC_CASE_GOTO_CLASSID,
+							CaseInfo[i].value, CaseInfo[i].address);
+					else
+						AddStatement(OPC_CASEGOTO, CaseInfo[i].value,
+										CaseInfo[i].address);
 				}
 				AddDrop(&type_int);
 
@@ -695,14 +703,6 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		}
 		break;
 
-	 case ev_class: // FIXME allowed?
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		if (ParseFields(type, dst))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		}
-		break;
-
 	 case ev_vector:
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		if (ParseFields(type, dst))
@@ -716,6 +716,14 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		if (type->type == ev_string)
 		{
 			globalinfo[dst - globals] = 1;
+		}
+		else if (type->type == ev_function)
+		{
+			globalinfo[dst - globals] = 2;
+		}
+		else if (type->type == ev_classid)
+		{
+			globalinfo[dst - globals] = 3;
 		}
 	}
 	return type;
@@ -758,7 +766,7 @@ static TType *ParseArrayDimensions(TType *type)
 //
 //==========================================================================
 
-static void ParseDef(TType *type, boolean builtin)
+static void ParseDef(TType *type, bool IsNative)
 {
 	int			s_name = 0;
 	int			num;
@@ -821,7 +829,7 @@ static void ParseDef(TType *type, boolean builtin)
 	}
 	else if (!TK_Check(PU_LPAREN))
 	{
-		if (builtin)
+		if (IsNative)
 		{
 			ERR_Exit(ERR_MISSING_LPAREN, true, NULL);
 		}
@@ -975,10 +983,10 @@ static void ParseDef(TType *type, boolean builtin)
 	num = CheckForFunction(s_name);
 	if (num)
 	{
-		if (builtin && functions[num].first_statement > 0)
+		if (IsNative && functions[num].first_statement > 0)
 		{
 	   		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-	   				 "Declared function defined as builtin.");
+	   				 "Declared function defined as native.");
 		}
 		if (functions[num].type != FindType(&functype))
 		{
@@ -993,9 +1001,10 @@ static void ParseDef(TType *type, boolean builtin)
 		functions[num].type = FindType(&functype);
 		numfunctions++;
 	}
-	if (builtin)
+	if (IsNative)
 	{
 		functions[num].first_statement = -numbuiltins;
+		functions[num].flags |= FUNC_Native;
 		numbuiltins++;
 	}
 	if (method)
@@ -1361,7 +1370,7 @@ void PA_Parse(void)
 				{
 					ParseDef(type, false);
 				}
-				else if (TK_Check(KW_EXTERN))
+				else if (TK_Check(KW_NATIVE))
 				{
 					type = CheckForType();
 					if (type)
@@ -1476,10 +1485,13 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.14  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.13  2001/12/04 18:19:55  dj_jl
 //	Fixed vector assignement in declaration
 //	

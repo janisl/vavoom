@@ -400,6 +400,8 @@ static void AddInfoData(int globaldef, void *data, int size, bool strings)
 
 void AddInfoTables(void)
 {
+	int i;
+
 	CheckStates();
 
 	//  Pievieno spraitu v∆rdus
@@ -410,9 +412,20 @@ void AddInfoTables(void)
 	AddInfoData(gv_models, models, 4 * num_models, true);
 	//	Pievieno st∆vokıu tabulu
 	AddInfoData(gv_num_states, &num_states, 4, false);
+	for (i = 0; i < num_states; i++)
+	{
+		if (states[i].function)
+		{
+			globalinfo[numglobals + i * sizeof(*states) / 4 + 9] = 2;
+		}
+	}
 	AddInfoData(gv_states, states, num_states * sizeof(*states), false);
 	//	Pievieno objektu aprakstu tabulu
 	AddInfoData(gv_num_mobj_info, &num_mobj_types, 4, false);
+	for (i = 0; i < num_mobj_types; i++)
+	{
+		globalinfo[numglobals + i * sizeof(*mobj_info) / 4 + 1] = 3;
+	}
 	AddInfoData(gv_mobj_info, mobj_info, num_mobj_types * sizeof(*mobj_info), false);
 
 	dprintf("Num sprite names: %d, num states: %d\n",
@@ -423,10 +436,13 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.9  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.8  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

@@ -84,141 +84,9 @@ static struct
 	int		usecount;
 } StatementInfo[NUM_OPCODES] =
 {
-	{"DONE", 0, 0},
-	{"RETURN", 0, 0},
-	{"PUSHNUMBER", 1, 0},
-	{"PUSHPOINTED", 0, 0},
-	{"LOCALADDRESS", 1, 0},
-	{"GLOBALADDRESS", 1, 0},
-	{"ADD", 0, 0},
-	{"SUBTRACT", 0, 0},
-	{"MULTIPLY", 0, 0},
-	{"DIVIDE", 0, 0},
-
-	{"MODULUS", 0, 0},
-	{"UDIVIDE", 0, 0},
-	{"UMODULUS", 0, 0},
-	{"EQ", 0, 0},
-	{"NE", 0, 0},
-	{"LT", 0, 0},
-	{"GT", 0, 0},
-	{"LE", 0, 0},
-	{"GE", 0, 0},
-	{"ULT", 0, 0},
-
-	{"UGT", 0, 0},
-	{"ULE", 0, 0},
-	{"UGE", 0, 0},
-	{"ANDLOGICAL", 0, 0},
-	{"ORLOGICAL", 0, 0},
-	{"NEGATELOGICAL", 0, 0},
-	{"ANDBITWISE", 0, 0},
-	{"ORBITWISE", 0, 0},
-	{"XORBITWISE", 0, 0},
-	{"LSHIFT", 0, 0},
-
-	{"RSHIFT", 0, 0},
-	{"URSHIFT", 0, 0},
-	{"UNARYMINUS", 0, 0},
-	{"BITINVERSE", 0, 0},
-	{"CALL", 1, 0},
-	{"GOTO", 1, 0},
-	{"IFGOTO", 1, 0},
-	{"IFNOTGOTO", 1, 0},
-	{"CASEGOTO", 2, 0},
-	{"DROP", 0, 0},
-
-	{"ASSIGN", 0, 0},
-	{"ADDVAR", 0, 0},
-	{"SUBVAR", 0, 0},
-	{"MULVAR", 0, 0},
-	{"DIVVAR", 0, 0},
-	{"MODVAR", 0, 0},
-	{"UDIVVAR", 0, 0},
-	{"UMODVAR", 0, 0},
-	{"ANDVAR", 0, 0},
-	{"ORVAR", 0, 0},
-
-	{"XORVAR", 0, 0},
-	{"LSHIFTVAR", 0, 0},
-	{"RSHIFTVAR", 0, 0},
-	{"URSHIFTVAR", 0, 0},
-	{"PREINC", 0, 0},
-	{"PREDEC", 0, 0},
-	{"POSTINC", 0, 0},
-	{"POSTDEC", 0, 0},
-	{"IFTOPGOTO", 1, 0},
-	{"IFNOTTOPGOTO", 1, 0},
-
-	{"ASSIGN_DROP", 0, 0},
-	{"ADDVAR_DROP", 0, 0},
-	{"SUBVAR_DROP", 0, 0},
-	{"MULVAR_DROP", 0, 0},
-	{"DIVVAR_DROP", 0, 0},
-	{"MODVAR_DROP", 0, 0},
-	{"UDIVVAR_DROP", 0, 0},
-	{"UMODVAR_DROP", 0, 0},
-	{"ANDVAR_DROP", 0, 0},
-	{"ORVAR_DROP", 0, 0},
-
-	{"XORVAR_DROP", 0, 0},
-	{"LSHIFTVAR_DROP", 0, 0},
-	{"RSHIFTVAR_DROP", 0, 0},
-	{"URSHIFTVAR_DROP", 0, 0},
-	{"INC_DROP", 0, 0},
-	{"DEC_DROP", 0, 0},
-	{"FADD", 0, 0},
-	{"FSUBTRACT", 0, 0},
-	{"FMULTIPLY", 0, 0},
-	{"FDIVIDE", 0, 0},
-
-	{"FEQ", 0, 0},
-	{"FNE", 0, 0},
-	{"FLT", 0, 0},
-	{"FGT", 0, 0},
-	{"FLE", 0, 0},
-	{"FGE", 0, 0},
-	{"FUNARYMINUS", 0, 0},
-	{"FADDVAR", 0, 0},
-	{"FSUBVAR", 0, 0},
-	{"FMULVAR", 0, 0},
-
-	{"FDIVVAR", 0, 0},
-	{"FADDVAR_DROP", 0, 0},
-	{"FSUBVAR_DROP", 0, 0},
-	{"FMULVAR_DROP", 0, 0},
-	{"FDIVVAR_DROP", 0, 0},
-	{"SWAP", 0, 0},
-	{"ICALL", 0, 0},
-	{"VPUSHPOINTED", 0, 0},
-	{"VADD", 0, 0},
-	{"VSUBTRACT", 0, 0},
-
-	{"VPRESCALE", 0, 0},
-	{"VPOSTSCALE", 0, 0},
-	{"VISCALE", 0, 0},
-	{"VEQ", 0, 0},
-	{"VNE", 0, 0},
-	{"VUNARYMINUS", 0, 0},
-	{"VDROP", 0, 0},
-	{"VASSIGN", 0, 0},
-	{"VADDVAR", 0, 0},
-	{"VSUBVAR", 0, 0},
-
-	{"VSCALEVAR", 0, 0},
-	{"VISCALEVAR", 0, 0},
-	{"VASSIGN_DROP", 0, 0},
-	{"VADDVAR_DROP", 0, 0},
-	{"VSUBVAR_DROP", 0, 0},
-	{"VSCALEVAR_DROP", 0, 0},
-	{"VISCALEVAR_DROP", 0, 0},
-	{"RETURNL", 0, 0},
-	{"RETURNV", 0, 0},
-	{"PUSHSTRING", 1, 0},
-
-	{"COPY", 0, 0},
-	{"SWAP3", 0, 0},
-	{"DYNAMIC_CAST", 1, 0},
+#define DECLARE_OPC(name, argcount)		{ #name, argcount, 0}
+#define OPCODE_INFO
+#include "../../source/progdefs.h"
 };
 
 // CODE --------------------------------------------------------------------
@@ -614,7 +482,6 @@ void PC_WriteObject(char *name)
 
 	progs.ofs_functions = ftell(f);
 	progs.num_functions = numfunctions;
-	progs.num_builtins = numbuiltins;
 	for (i = 0; i < numfunctions; i++)
 	{
 		dfunction_t func;
@@ -622,7 +489,8 @@ void PC_WriteObject(char *name)
 		func.first_statement = LittleLong(functions[i].first_statement);
 		func.num_parms = LittleShort(functions[i].type->params_size);
 		func.num_locals = LittleShort(functions[i].num_locals);
-		func.type = LittleLong(functions[i].type->aux_type->type);
+		func.type = LittleShort(functions[i].type->aux_type->type);
+		func.flags = LittleShort(functions[i].flags);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
 
@@ -771,10 +639,13 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.11  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.10  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties

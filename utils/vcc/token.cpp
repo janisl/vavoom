@@ -96,12 +96,14 @@ static char* Keywords[] =
 	"do",
 	"else",
 	"enum",
-	"extern",
 	"float",
 	"for",
 	"function_t",
 	"if",
    	"int",
+	"native",
+	"none",
+	"NULL",
 	"return",
 	"self",
 	"string",
@@ -504,11 +506,6 @@ static void ProcessLetterToken(void)
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ENUM;
 		}
-		else if (!strcmp(tk_String, "extern"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_EXTERN;
-		}
 		break;
 
 	case 'f':
@@ -548,6 +545,11 @@ static void ProcessLetterToken(void)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_NONE;
+		}
+		else if (!strcmp(tk_String, "native"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_NATIVE;
 		}
 		break;
 
@@ -1092,10 +1094,13 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/18 19:09:41  dj_jl
+//	Some extra info in progs and other small changes
+//
 //	Revision 1.10  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.9  2001/12/04 18:19:03  dj_jl
 //	Escape character for \ symbol
 //	
