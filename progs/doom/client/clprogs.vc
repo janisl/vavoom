@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/07/31 16:57:52  dj_jl
+//**	Checking for shareware/extended wad by the presence of wad lump
+//**
 //**	Revision 1.2  2001/07/27 14:27:51  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 //**
 //**	DOOM and DOOM II client progs
@@ -35,6 +38,10 @@
 
 #include "../doomdefs.vc"
 #include "../gendefs.vc"
+
+#ifndef DOOM2
+boolean			ExtendedWAD;
+#endif
 
 #include "effects.vc"
 
