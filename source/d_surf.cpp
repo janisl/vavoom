@@ -1541,7 +1541,6 @@ void D_DrawSurfaceBlock16RGB_mip3(void)
 			psource -= r_stepback;
 	}
 }
-#endif
 
 //==========================================================================
 //
@@ -1863,12 +1862,17 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 	}
 }
 
+#endif // USEASM
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:41:19  dj_jl
+//	Added new asm for 32-bits
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

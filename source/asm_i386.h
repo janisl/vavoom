@@ -207,12 +207,18 @@
 .extern	C(rshift)
 .extern	C(gshift)
 .extern	C(bshift)
+.extern C(roffs)
+.extern C(goffs)
+.extern C(boffs)
 .extern	C(fadetable)
 .extern	C(fadetable16)
 .extern	C(fadetable16r)
 .extern	C(fadetable16g)
 .extern	C(fadetable16b)
 .extern	C(fadetable32)
+.extern	C(fadetable32r)
+.extern	C(fadetable32g)
+.extern	C(fadetable32b)
 
 //	External variables for progs
 .extern	C(pr_globals)
@@ -231,9 +237,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:41:19  dj_jl
+//	Added new asm for 32-bits
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
