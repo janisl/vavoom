@@ -52,6 +52,12 @@ struct mode_t
 	int height;
 };
 
+struct RandomConversation
+{
+	string		Name;
+	string		Texts[10];
+};
+
 // DATA DECLARATIONS -------------------------------------------------------
 
 MenuScreen menu_stack[MAX_MENU_STACK];
@@ -324,6 +330,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2003/09/26 16:54:52  dj_jl
+//  Random speeches
+//
 //  Revision 1.28  2003/09/24 16:38:58  dj_jl
 //  Increase max video mode
 //
