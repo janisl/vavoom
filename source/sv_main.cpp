@@ -185,6 +185,7 @@ void SV_Init(void)
 
 void SV_Clear(void)
 {
+	guard(SV_Clear);
 	SV_DestroyAllThinkers();
 	memset(&sv, 0, sizeof(sv));
 	memset(&level, 0, sizeof(level));
@@ -200,6 +201,7 @@ void SV_Clear(void)
 #endif
 	Z_FreeTag(PU_LEVEL);
 	Z_FreeTag(PU_LEVSPEC);
+	unguard;
 }
 
 //==========================================================================
@@ -210,7 +212,9 @@ void SV_Clear(void)
 
 void SV_ClearDatagram(void)
 {
+	guard(SV_ClearDatagram);
 	sv_datagram.Clear();
+	unguard;
 }
 
 //==========================================================================
@@ -241,6 +245,7 @@ VMapObject::~VMapObject(void)
 
 VMapObject *SV_SpawnMobj(VClass *Class)
 {
+	guard(SV_SpawnMobj);
 	int			i;
     VMapObject*		mobj;
 
@@ -265,6 +270,7 @@ VMapObject *SV_SpawnMobj(VClass *Class)
 	mobj->NetID = i;
 
 	return mobj;
+	unguard;
 }
 
 //==========================================================================
@@ -275,6 +281,7 @@ VMapObject *SV_SpawnMobj(VClass *Class)
 
 int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 {
+	guard(SV_GetMobjBits);
 	int		bits = 0;
 
 	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
@@ -310,6 +317,7 @@ int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 		bits |= MOB_FRAME;
 
 	return bits;
+	unguard;
 }
 
 //==========================================================================
@@ -320,6 +328,7 @@ int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 
 void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 {
+	guard(SV_WriteMobj);
 	if (bits & MOB_X)
 		msg << (word)mobj.Origin.x;
 	if (bits & MOB_Y)
@@ -350,6 +359,7 @@ void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 		msg << (byte)mobj.ModelFrame;
 	if (bits & MOB_WEAPON)
 		msg << (word)mobj.Player->WeaponModel;
+	unguard;
 }
 
 //==========================================================================
@@ -360,6 +370,7 @@ void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 
 void SV_RemoveMobj(VMapObject *mobj)
 {
+	guard(SV_RemoveMobj);
 	if (mobj->GetFlags() & OF_Destroyed)
 	{
 		cond << "Mobj already destroyed\n";
@@ -379,6 +390,7 @@ void SV_RemoveMobj(VMapObject *mobj)
 	mobj->Destroy();
 
 	sv_mo_free_time[mobj->NetID] = level.time;
+	unguard;
 }
 
 //==========================================================================
@@ -389,6 +401,7 @@ void SV_RemoveMobj(VMapObject *mobj)
 
 void SV_CreateBaseline(void)
 {
+	guard(SV_CreateBaseline);
 	int		i;
 
 	for (i = 0; i < level.numsectors; i++)
@@ -409,7 +422,7 @@ void SV_CreateBaseline(void)
 		if (sv_mobjs[i]->bHidden)
 			continue;
 
-		if (sv_signon.CurSize > sv_signon.MaxSize - 32)
+		if (!sv_signon.CheckSpace(32))
 		{
 			con << "SV_CreateBaseline: Overflow\n";
 			return;
@@ -449,6 +462,7 @@ void SV_CreateBaseline(void)
 					<< (word)mobj.ModelIndex
 					<< (byte)mobj.ModelFrame;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -481,7 +495,8 @@ int GetOriginNum(const VMapObject *mobj)
 void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 	int channel, int volume)
 {
-	if (sv_datagram.CurSize + 12 > MAX_DATAGRAM)
+	guard(SV_StartSound);
+	if (!sv_datagram.CheckSpace(12))
 		return;
 
 	sv_datagram << (byte)svc_start_sound
@@ -494,6 +509,7 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 					<< (word)origin.z;
 	}
 	sv_datagram << (byte)volume;
+	unguard;
 }
 
 //==========================================================================
@@ -504,11 +520,13 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 
 void SV_StopSound(int origin_id, int channel)
 {
-	if (sv_datagram.CurSize + 3 > MAX_DATAGRAM)
+	guard(SV_StopSound);
+	if (!sv_datagram.CheckSpace(3))
 		return;
 
 	sv_datagram << (byte)svc_stop_sound
 				<< (word)(origin_id | (channel << 13));
+	unguard;
 }
 
 //==========================================================================
@@ -520,6 +538,7 @@ void SV_StopSound(int origin_id, int channel)
 void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 	int volume)
 {
+	guard(SV_StartSound);
 	if (origin)
 	{
 		SV_StartSound(origin->Origin, GetOriginNum(origin), sound_id,
@@ -529,6 +548,7 @@ void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 	{
 		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -539,7 +559,9 @@ void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 
 void SV_StopSound(const VMapObject *origin, int channel)
 {
+	guard(SV_StopSound);
 	SV_StopSound(GetOriginNum(origin), channel);
+	unguard;
 }
 
 //==========================================================================
@@ -551,6 +573,7 @@ void SV_StopSound(const VMapObject *origin, int channel)
 void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 	int volume)
 {
+	guard(SV_SectorStartSound);
 	if (sector)
 	{
 		SV_StartSound(sector->soundorg,
@@ -561,6 +584,7 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 	{
 		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -571,7 +595,9 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 
 void SV_SectorStopSound(const sector_t *sector, int channel)
 {
+	guard(SV_SectorStopSound);
 	SV_StopSound((sector - level.sectors) + MAX_MOBJS, channel);
+	unguard;
 }
 
 //==========================================================================
@@ -582,7 +608,8 @@ void SV_SectorStopSound(const sector_t *sector, int channel)
 
 void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 {
-	if (sv_datagram.CurSize + 32 > MAX_DATAGRAM)
+	guard(SV_StartSequence);
+	if (!sv_datagram.CheckSpace(32))
 		return;
 
 	sv_datagram << (byte)svc_start_seq
@@ -591,6 +618,7 @@ void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 				<< (word)origin.y
 				<< (word)origin.z
 				<< name;
+	unguard;
 }
 
 //==========================================================================
@@ -601,11 +629,13 @@ void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 
 void SV_StopSequence(int origin_id)
 {
-	if (sv_datagram.CurSize + 3 > MAX_DATAGRAM)
+	guard(SV_StopSequence);
+	if (sv_datagram.CheckSpace(3))
 		return;
 
 	sv_datagram << (byte)svc_stop_seq
 				<< (word)origin_id;
+	unguard;
 }
 
 //==========================================================================
@@ -616,6 +646,7 @@ void SV_StopSequence(int origin_id)
 
 void SV_SectorStartSequence(const sector_t *sector, const char *name)
 {
+	guard(SV_SectorStartSequence);
 	if (sector)
 	{
 		SV_StartSequence(sector->soundorg,
@@ -625,6 +656,7 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 	{
 		SV_StartSequence(TVec(0, 0, 0), 0, name);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -635,7 +667,9 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 
 void SV_SectorStopSequence(const sector_t *sector)
 {
+	guard(SV_SectorStopSequence);
 	SV_StopSequence((sector - level.sectors) + MAX_MOBJS);
+	unguard;
 }
 
 //==========================================================================
@@ -646,8 +680,10 @@ void SV_SectorStopSequence(const sector_t *sector)
 
 void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 {
+	guard(SV_PolyobjStartSequence);
 	SV_StartSequence(poly->startSpot,
 		(poly - level.polyobjs) + MAX_MOBJS + level.numsectors, name);
+	unguard;
 }
 
 //==========================================================================
@@ -658,7 +694,9 @@ void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 
 void SV_PolyobjStopSequence(const polyobj_t *poly)
 {
+	guard(SV_PolyobjStopSequence);
 	SV_StopSequence((poly - level.polyobjs) + MAX_MOBJS + level.numsectors);
+	unguard;
 }
 
 //==========================================================================
@@ -669,6 +707,7 @@ void SV_PolyobjStopSequence(const polyobj_t *poly)
 
 void SV_ClientPrintf(player_t *player, const char *s, ...)
 {
+	guard(SV_ClientPrintf);
 	va_list	v;
 	char	buf[1024];
 
@@ -677,6 +716,7 @@ void SV_ClientPrintf(player_t *player, const char *s, ...)
 	va_end(v);
 
 	player->Message << (byte)svc_print << buf;
+	unguard;
 }
 
 //==========================================================================
@@ -687,6 +727,7 @@ void SV_ClientPrintf(player_t *player, const char *s, ...)
 
 void SV_ClientCenterPrintf(player_t *player, const char *s, ...)
 {
+	guard(SV_ClientCenterPrintf);
 	va_list	v;
 	char	buf[1024];
 
@@ -695,6 +736,7 @@ void SV_ClientCenterPrintf(player_t *player, const char *s, ...)
 	va_end(v);
 
 	player->Message << (byte)svc_center_print << buf;
+	unguard;
 }
 
 //==========================================================================
@@ -705,6 +747,7 @@ void SV_ClientCenterPrintf(player_t *player, const char *s, ...)
 
 void SV_BroadcastPrintf(const char *s, ...)
 {
+	guard(SV_BroadcastPrintf);
 	va_list	v;
 	char	buf[1024];
 
@@ -715,6 +758,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 	for (int i = 0; i < svs.max_clients; i++)
 		if (players[i].bActive)
 			players[i].Message << (byte)svc_print << buf;
+	unguard;
 }
 
 //==========================================================================
@@ -725,6 +769,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 
 void SV_WriteViewData(player_t &player, TMessage &msg)
 {
+	guard(SV_WriteViewData);
 	int		i;
 
 	msg << (byte)svc_view_data
@@ -785,6 +830,7 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 			<< (byte)(AngleToByte(player.ViewAngles.yaw))
 			<< (byte)(AngleToByte(player.ViewAngles.roll));
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -795,6 +841,7 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 
 void SV_UpdateMobj(int i, TMessage &msg)
 {
+	guard(SV_UpdateMobj);
 	int bits;
 	int sendnum;
 
@@ -835,6 +882,7 @@ void SV_UpdateMobj(int i, TMessage &msg)
 
 	SV_WriteMobj(bits, *sv_mobjs[i], msg);
 	return;
+	unguard;
 }
 
 //==========================================================================
@@ -875,6 +923,7 @@ bool SV_SecCheckFatPVS(sector_t *sec)
 
 void SV_UpdateLevel(TMessage &msg)
 {
+	guard(SV_UpdateLevel);
 	int		i;
 	int		bits;
 
@@ -908,7 +957,7 @@ void SV_UpdateLevel(TMessage &msg)
 		if (!bits)
 			continue;
 
-		if (msg.CurSize + 14 > MAX_DATAGRAM)
+		if (!msg.CheckSpace(14))
 		{
 			cond << "UpdateLevel: secs overflow\n";
 			return;
@@ -949,7 +998,7 @@ void SV_UpdateLevel(TMessage &msg)
 			side->base_rowoffset == side->rowoffset)
 			continue;
 
-		if (msg.CurSize + 7 > MAX_DATAGRAM)
+		if (!msg.CheckSpace(7))
 		{
 			cond << "UpdateLevel: sides overflow\n";
 			return;
@@ -977,7 +1026,7 @@ void SV_UpdateLevel(TMessage &msg)
 		if (!po->changed)
 			continue;
 
-		if (msg.CurSize + 7 > MAX_DATAGRAM)
+		if (!msg.CheckSpace(7))
 		{
 			cond << "UpdateLevel: poly overflow\n";
 			return;
@@ -999,7 +1048,7 @@ void SV_UpdateLevel(TMessage &msg)
 			continue;
 		if (!sv_mobjs[i]->bIsPlayer)
 			continue;
-		if (msg.CurSize > 1000)
+		if (!msg.CheckSpace(25))
 		{
 			cond << "UpdateLevel: player overflow\n";
 			return;
@@ -1020,7 +1069,7 @@ void SV_UpdateLevel(TMessage &msg)
 			continue;
 		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
 			continue;
-		if (msg.CurSize > 1000)
+		if (!msg.CheckSpace(25))
 		{
 			if (sv_player->MobjUpdateStart && show_mobj_overflow)
 			{
@@ -1037,6 +1086,7 @@ void SV_UpdateLevel(TMessage &msg)
 		SV_UpdateMobj(index, msg);
 	}
 	sv_player->MobjUpdateStart = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -1050,6 +1100,7 @@ void SV_UpdateLevel(TMessage &msg)
 
 void SV_SendNop(player_t *client)
 {
+	guard(SV_SendNop);
 	TMessage	msg;
 	byte		buf[4];
 	
@@ -1062,6 +1113,7 @@ void SV_SendNop(player_t *client)
 	if (NET_SendUnreliableMessage(client->NetCon, &msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
 	client->LastMessage = realtime;
+	unguard;
 }
 
 //==========================================================================
@@ -1072,6 +1124,7 @@ void SV_SendNop(player_t *client)
 
 void SV_SendClientDatagram(void)
 {
+	guard(SV_SendClientDatagram);
 	byte		buf[4096];
 	TMessage	msg(buf, MAX_DATAGRAM);
 
@@ -1111,7 +1164,7 @@ void SV_SendClientDatagram(void)
 
 		SV_WriteViewData(players[i], msg);
 
-		if (msg.CurSize + sv_datagram.CurSize <= MAX_DATAGRAM)
+		if (msg.CheckSpace(sv_datagram.CurSize))
 			msg << sv_datagram;
 
 		SV_UpdateLevel(msg);
@@ -1121,6 +1174,7 @@ void SV_SendClientDatagram(void)
 			SV_DropClient(true);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1131,6 +1185,7 @@ void SV_SendClientDatagram(void)
 
 void SV_SendReliable(void)
 {
+	guard(SV_SendReliable);
 	int		i, j;
 
 	for (i = 0; i < svs.max_clients; i++)
@@ -1203,6 +1258,7 @@ void SV_SendReliable(void)
 		players[i].Message.Clear();
 		players[i].LastMessage = realtime;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1295,6 +1351,7 @@ static void CheckForSkip(void)
 
 void SV_RunClients(void)
 {
+	guard(SV_RunClients);
 	int			i;
 
     // get commands
@@ -1334,6 +1391,7 @@ void SV_RunClients(void)
 		CheckForSkip();
 		sv.intertime++;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1344,6 +1402,7 @@ void SV_RunClients(void)
 
 void SV_Ticker(void)
 {
+	guard(SV_Ticker);
 	float	saved_frametime;
 
 	saved_frametime = host_frametime;
@@ -1391,6 +1450,7 @@ void SV_Ticker(void)
 	{
 		host_frametime = saved_frametime;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1412,6 +1472,7 @@ void SV_ForceLightning(void)
 
 void SV_SetLineTexture(int side, int position, int texture)
 {
+	guard(SV_SetLineTexture);
 	if (position == TEXTURE_MIDDLE)
 	{
 		level.sides[side].midtexture = texture;
@@ -1433,6 +1494,7 @@ void SV_SetLineTexture(int side, int position, int texture)
 					<< (word)side
 					<< (word)level.sides[side].toptexture;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1443,10 +1505,12 @@ void SV_SetLineTexture(int side, int position, int texture)
 
 void SV_SetLineTransluc(line_t *line, int trans)
 {
+	guard(SV_SetLineTransluc);
 	line->translucency = trans;
 	sv_signon	<< (byte)svc_line_transluc
 				<< (short)(line - level.lines)
 				<< (byte)trans;
+	unguard;
 }
 
 //==========================================================================
@@ -1457,10 +1521,12 @@ void SV_SetLineTransluc(line_t *line, int trans)
 
 void SV_SetFloorPic(int i, int texture)
 {
+	guard(SV_SetFloorPic);
 	level.sectors[i].floor.pic = texture;
 	sv_reliable << (byte)svc_sec_floor
 				<< (word)i
 				<< (word)level.sectors[i].floor.pic;
+	unguard;
 }
 
 //==========================================================================
@@ -1471,10 +1537,12 @@ void SV_SetFloorPic(int i, int texture)
 
 void SV_SetCeilPic(int i, int texture)
 {
+	guard(SV_SetCeilPic);
 	level.sectors[i].ceiling.pic = texture;
 	sv_reliable << (byte)svc_sec_ceil
 				<< (word)i
 				<< (word)level.sectors[i].ceiling.pic;
+	unguard;
 }
 
 //==========================================================================
@@ -1543,6 +1611,7 @@ static void G_DoCompleted(void)
 
 void G_ExitLevel(void)
 { 
+	guard(G_ExitLevel);
 	completed = true;
 	if (!deathmatch)
 	{
@@ -1563,6 +1632,7 @@ void G_ExitLevel(void)
 		strcpy(sv_next_map, mapaftersecret);
 	}
 	in_secret = false;
+	unguard;
 }
 
 //==========================================================================
@@ -1573,6 +1643,7 @@ void G_ExitLevel(void)
 
 void G_SecretExitLevel(void)
 {
+	guard(G_SecretExitLevel);
 	if (!sv_secret_map[0])
 	{
 		// No secret map, use normal exit
@@ -1596,6 +1667,7 @@ void G_SecretExitLevel(void)
 			players[i].bDidSecret = true;
 		}
 	}
+	unguard;
 } 
  
 //==========================================================================
@@ -1609,6 +1681,7 @@ void G_SecretExitLevel(void)
 
 void G_Completed(int map, int position)
 {
+	guard(G_Completed);
     if (map == -1 && position == -1)
 	{
 		if (!deathmatch)
@@ -1624,6 +1697,7 @@ void G_Completed(int map, int position)
 
 	LeavePosition = position;
 	completed = true;
+	unguard;
 }
 
 //==========================================================================
@@ -1634,6 +1708,7 @@ void G_Completed(int map, int position)
 
 COMMAND(TeleportNewMap)
 {
+	guard(COMMAND TeleportNewMap);
 	if (cmd_source == src_command)
 	{
 #ifdef CLIENT
@@ -1663,6 +1738,7 @@ COMMAND(TeleportNewMap)
 	RebornPosition = LeavePosition;
     svpr.SetGlobal("RebornPosition", RebornPosition);
 	mapteleport_issued = true;
+	unguard;
 }
 
 //==========================================================================
@@ -1694,6 +1770,7 @@ static void G_DoReborn(int playernum)
 
 int NET_SendToAll(TSizeBuf *data, int blocktime)
 {
+	guard(NET_SendToAll);
 	double		start;
 	int			i;
 	int			count = 0;
@@ -1763,6 +1840,7 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 			break;
 	}
 	return count;
+	unguard;
 }
 
 //==========================================================================
@@ -1801,6 +1879,7 @@ static void SV_InitModelLists(void)
 
 int SV_FindModel(const char *name)
 {
+	guard(SV_FindModel);
 	int i;
 
 	if (!name || !*name)
@@ -1820,6 +1899,7 @@ int SV_FindModel(const char *name)
 				<< (short)i
 				<< name;
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -1830,6 +1910,7 @@ int SV_FindModel(const char *name)
 
 int SV_GetModelIndex(const FName &Name)
 {
+	guard(SV_GetModelIndex);
 	int i;
 
 	if (Name == NAME_None)
@@ -1849,6 +1930,7 @@ int SV_GetModelIndex(const FName &Name)
 				<< (short)i
 				<< *Name;
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -1859,6 +1941,7 @@ int SV_GetModelIndex(const FName &Name)
 
 int SV_FindSkin(const char *name)
 {
+	guard(SV_FindSkin);
 	int i;
 
 	if (!name || !*name)
@@ -1878,6 +1961,7 @@ int SV_FindSkin(const char *name)
 				<< (byte)i
 				<< name;
 	return i;
+	unguard;
 }
 
 //==========================================================================
@@ -1888,6 +1972,7 @@ int SV_FindSkin(const char *name)
 
 void SV_SendServerInfo(player_t *player)
 {
+	guard(SV_SendServerInfo);
 	int			i;
 	TMessage	&msg = player->Message;
 
@@ -1932,6 +2017,7 @@ void SV_SendServerInfo(player_t *player)
 
 	msg << (byte)svc_signonnum
 		<< (byte)1;
+	unguard;
 }
 
 //==========================================================================
@@ -1942,6 +2028,7 @@ void SV_SendServerInfo(player_t *player)
 
 void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 {
+	guard(SV_SpawnServer);
     int			i;
 	mapInfo_t	info;
 
@@ -2071,6 +2158,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	SV_CreateBaseline();
 
 	cond << "Server spawned\n";
+	unguard;
 }
 
 //==========================================================================
@@ -2081,6 +2169,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 const char *SV_GetMapName(int num)
 {
+	guard(SV_GetMapName);
 	//  Check map aliases
 	for (int i = 0; i < MAX_MAP_ALIAS; i++)
 	{
@@ -2095,6 +2184,7 @@ const char *SV_GetMapName(int num)
 
 	sprintf(namebuf, "MAP%02d", num);
 	return namebuf;
+	unguard;
 }
 
 //==========================================================================
@@ -2158,6 +2248,7 @@ static void SV_WriteChangedTextures(TMessage &msg)
 
 COMMAND(PreSpawn)
 {
+	guard(COMMAND PreSpawn);
 	if (cmd_source == src_command)
 	{
 		con << "PreSpawn is not valid from console\n";
@@ -2166,6 +2257,7 @@ COMMAND(PreSpawn)
 
 	sv_player->Message << sv_signon;
 	sv_player->Message << (byte)svc_signonnum << (byte)2;
+	unguard;
 }
 
 //==========================================================================
@@ -2176,6 +2268,7 @@ COMMAND(PreSpawn)
 
 COMMAND(Spawn)
 {
+	guard(COMMAND Spawn);
 	if (cmd_source == src_command)
 	{
 		con << "Spawn is not valid from console\n";
@@ -2209,6 +2302,7 @@ COMMAND(Spawn)
 	sv_player->Message << (byte)svc_signonnum << (byte)3;
 	sv_player->bFixAngle = false;
 	memset(sv_player->OldStats, 0, sizeof(sv_player->OldStats));
+	unguard;
 }
 
 //==========================================================================
@@ -2219,6 +2313,7 @@ COMMAND(Spawn)
 
 COMMAND(Begin)
 {
+	guard(COMMAND Begin);
 	if (cmd_source == src_command)
 	{
 		con << "Begin is not valid from console\n";
@@ -2234,6 +2329,7 @@ COMMAND(Begin)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -2244,6 +2340,7 @@ COMMAND(Begin)
 
 void SV_DropClient(boolean)
 {
+	guard(SV_DropClient);
 	if (sv_player->bSpawned)
 	{
 		svpr.Exec("DisconnectClient", (int)sv_player);
@@ -2257,6 +2354,7 @@ void SV_DropClient(boolean)
 	sv_reliable << (byte)svc_userinfo
 				<< (byte)(sv_player - players)
 				<< "";
+	unguard;
 }
 
 //==========================================================================
@@ -2269,6 +2367,7 @@ void SV_DropClient(boolean)
 
 void SV_ShutdownServer(boolean crash)
 {
+	guard(SV_ShutdownServer);
 	byte		buf[128];
 	TMessage	msg(buf, 128);
 	int			i;
@@ -2331,6 +2430,7 @@ void SV_ShutdownServer(boolean crash)
 	SV_DestroyAllThinkers();
 	memset(players, 0, sizeof(players));
 	memset(&sv, 0, sizeof(sv));
+	unguard;
 }
 
 #ifdef CLIENT
@@ -2346,6 +2446,7 @@ void SV_ShutdownServer(boolean crash)
 
 COMMAND(Restart)
 {
+	guard(COMMAND Restart);
 	if (netgame || !sv.active)
 		return;
 
@@ -2361,6 +2462,7 @@ COMMAND(Restart)
 		strcpy(mapname, level.mapname);
 		SV_SpawnServer(mapname, true);
 	}
+	unguard;
 }
 
 #endif
@@ -2373,6 +2475,7 @@ COMMAND(Restart)
 
 COMMAND(Pause)
 {
+	guard(COMMAND Pause);
 	if (cmd_source == src_command)
 	{
 #ifdef CLIENT
@@ -2383,6 +2486,7 @@ COMMAND(Pause)
 
 	paused ^= 1;
 	sv_reliable << (byte)svc_pause << (byte)paused;
+	unguard;
 }
 
 //==========================================================================
@@ -2393,6 +2497,7 @@ COMMAND(Pause)
 
 COMMAND(Stats)
 {
+	guard(COMMAND Stats);
 	if (cmd_source == src_command)
 	{
 #ifdef CLIENT
@@ -2404,6 +2509,7 @@ COMMAND(Stats)
 	SV_ClientPrintf(sv_player, "Kills: %d of %d", sv_player->KillCount, level.totalkills);
 	SV_ClientPrintf(sv_player, "Items: %d of %d", sv_player->ItemCount, level.totalitems);
 	SV_ClientPrintf(sv_player, "Secrets: %d of %d", sv_player->SecretCount, level.totalsecret);
+	unguard;
 }
 
 //==========================================================================
@@ -2417,6 +2523,7 @@ COMMAND(Stats)
 
 void SV_ConnectClient(player_t *player)
 {
+	guard(SV_ConnectClient);
 	cond << "Client " << player->NetCon->address << " connected\n";
 
 	player->bActive = true;
@@ -2436,6 +2543,7 @@ void SV_ConnectClient(player_t *player)
 	memset(player->FragsStats, 0, sizeof(player->FragsStats));
 
 	SV_SendServerInfo(player);
+	unguard;
 }
 
 //==========================================================================
@@ -2446,6 +2554,7 @@ void SV_ConnectClient(player_t *player)
 
 void SV_CheckForNewClients(void)
 {
+	guard(SV_CheckForNewClients);
 	qsocket_t	*sock;
 	int			i;
 		
@@ -2471,6 +2580,7 @@ void SV_CheckForNewClients(void)
 		SV_ConnectClient(&players[i]);
 		svs.num_connected++;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -2484,6 +2594,7 @@ void SV_SetUserInfo(const char *info);
 
 void SV_ConnectBot(const char *name)
 {
+	guard(SV_ConnectBot);
 	qsocket_t	*sock;
 	int			i;
 		
@@ -2512,6 +2623,7 @@ void SV_ConnectBot(const char *name)
 	SV_RunClientCommand("Spawn\n");
 	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Begin\n");
+	unguard;
 }
 
 //==========================================================================
@@ -2533,6 +2645,7 @@ COMMAND(AddBot)
 
 COMMAND(Map)
 {
+	guard(COMMAND Map);
 	char	mapname[12];
 
 	if (Argc() != 2)
@@ -2568,6 +2681,7 @@ COMMAND(Map)
 	if (cls.state != ca_dedicated)
 		CmdBuf << "Connect local\n";
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -2578,6 +2692,7 @@ COMMAND(Map)
 
 COMMAND(MaxPlayers)
 {
+	guard(COMMAND MaxPlayers);
 	int 	n;
 
 	if (Argc () != 2)
@@ -2618,6 +2733,7 @@ COMMAND(MaxPlayers)
 		DeathMatch = 2;
 		NoMonsters = 1;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -2663,6 +2779,7 @@ void ServerFrame(int realtics)
 
 COMMAND(Say)
 {
+	guard(COMMAND Say);
 	if (cmd_source == src_command)
 	{
 #ifdef CLIENT
@@ -2675,6 +2792,7 @@ COMMAND(Say)
 
    	SV_BroadcastPrintf("%s: %s", sv_player->Name, Args());
 	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
+	unguard;
 }
 
 //**************************************************************************
@@ -2789,9 +2907,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2002/07/13 07:43:31  dj_jl
+//	Fixed net buffer hack.
+//
 //	Revision 1.43  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
-//
+//	
 //	Revision 1.42  2002/06/14 15:37:47  dj_jl
 //	Added FOutputDevice code for dedicated server.
 //	
