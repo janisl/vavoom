@@ -2101,6 +2101,24 @@ PF(SetCeilPic)
 
 //==========================================================================
 //
+//	PF_SetLineTexture
+//
+//==========================================================================
+
+PF(SetLineTexture)
+{
+	int side;
+	int position;
+	int texture;
+
+	texture = Pop();
+	position = Pop();
+	side = Pop();
+	SV_SetLineTexture(side, position, texture);
+}
+
+//==========================================================================
+//
 //	PF_SetLineTransluc
 //
 //==========================================================================
@@ -3108,6 +3126,7 @@ builtin_info_t BuiltinInfo[] =
     _(P_ForceLightning),
 	_(SetFloorPic),
 	_(SetCeilPic),
+	_(SetLineTexture),
 	_(SetLineTransluc),
 	_(SendFloorSlope),
 	_(SendCeilingSlope),
@@ -3123,9 +3142,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2003/10/31 07:50:44  dj_jl
+//	Line texture setting function
+//
 //	Revision 1.47  2003/09/26 16:58:42  dj_jl
 //	Wrapped text printing
-//
+//	
 //	Revision 1.46  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	
