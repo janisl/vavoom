@@ -38,6 +38,8 @@ int sb_height = 32;
 int pic_invback;
 int pic_invtop;
 int pic_pause;
+int pic_yellownum[11];
+int pic_graynum[11];
 
 // CODE --------------------------------------------------------------------
 
@@ -49,10 +51,58 @@ int pic_pause;
 
 void SB_StartMap(void)
 {
+	int namebuf[3];
+	string Name = ARR2STR(namebuf);
+	int i;
+
 	pic_invback = R_RegisterPic("INVBACK", PIC_PATCH);
 	pic_invtop = R_RegisterPic("INVTOP", PIC_PATCH);
 
+	for (i = 0; i < 10; i++)
+	{
+		sprint(Name, "INVFONY%d", i);
+		pic_yellownum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "INVFONG%d", i);
+		pic_graynum[i] = R_RegisterPic(Name, PIC_PATCH);
+	}
+	pic_yellownum[10] = R_RegisterPic("INVFONY%", PIC_PATCH);
+	pic_graynum[10] = R_RegisterPic("INVFONG%", PIC_PATCH);
+
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
+}
+
+//==========================================================================
+//
+//	SB_DrawSmallNum
+//
+//==========================================================================
+
+void SB_DrawSmallNum(int x, int y, int num)
+{
+	int w;
+	picinfo_t info;
+
+	if (num < 0)
+	{
+		num = -num;
+	}
+
+	R_GetPicInfo(pic_yellownum[0], &info);
+	w = info.width;
+
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawPic(x - w, y, pic_yellownum[0]);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= w;
+		R_DrawPic(x, y, pic_yellownum[num % 10]);
+		num /= 10;
+	}
 }
 
 //==========================================================================
@@ -66,6 +116,9 @@ void SB_DrawMainBar(void)
 	//  background
 	R_DrawPic(0, 168, pic_invback);
 	R_DrawPic(0, 160, pic_invtop);
+
+	// health percentage
+	SB_DrawSmallNum(76, 162, cl->health);
 }
 
 //==========================================================================
@@ -111,6 +164,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2003/09/15 16:42:25  dj_jl
+//  Health indicator
+//
 //  Revision 1.8  2002/09/07 16:28:26  dj_jl
 //  Added Level class.
 //
