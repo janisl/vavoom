@@ -43,6 +43,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static bool			Windowed;
 static HDC			DeviceContext;
 static HGLRC		RenderContext;
 static HWND			RenderWindow;
@@ -59,6 +60,7 @@ static HWND			RenderWindow;
 
 void TOpenGLDrawer::Init(void)
 {
+	Windowed = !!M_CheckParm("-window");
 }
 
 //==========================================================================
@@ -93,22 +95,26 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	//	Sut down current mode
 	Shutdown();
 
-	//	Try to switch to the new mode
-	DEVMODE dmScreenSettings;
-	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-	dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-	dmScreenSettings.dmPelsWidth = Width;
-	dmScreenSettings.dmPelsHeight = Height;
-	dmScreenSettings.dmBitsPerPel = BPP;
-	dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-	if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+	if (!Windowed)
 	{
-		return false;
+		//	Try to switch to the new mode
+		DEVMODE dmScreenSettings;
+		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
+		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
+		dmScreenSettings.dmPelsWidth = Width;
+		dmScreenSettings.dmPelsHeight = Height;
+		dmScreenSettings.dmBitsPerPel = BPP;
+		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+		if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+		{
+			return false;
+		}
 	}
 
 	//	Create window
-	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
+	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows'95",
+		Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP,
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)
 	{
@@ -139,7 +145,23 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 
 	Sleep(100);
 
-	SetWindowPos(RenderWindow, HWND_TOP, 0, 0, Width, Height, SWP_NOMOVE);
+	if (Windowed)
+	{
+		RECT WindowRect;
+		WindowRect.left=(long)0;
+		WindowRect.right=(long)Width;
+		WindowRect.top=(long)0;
+		WindowRect.bottom=(long)Height;
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
+			WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		SetWindowPos(RenderWindow, HWND_TOP, 0, 0,
+			WindowRect.right-WindowRect.left,
+			WindowRect.bottom-WindowRect.top, SWP_NOMOVE);
+	}
+	else
+	{
+		SetWindowPos(RenderWindow, HWND_TOP, 0, 0, Width, Height, SWP_NOMOVE);
+	}
 
 	SetForegroundWindow(RenderWindow);
 
@@ -265,19 +287,26 @@ void TOpenGLDrawer::Shutdown(void)
 	if (RenderWindow)
 	{
 		IN_SetActiveWindow(hwnd);
+		SetForegroundWindow(hwnd);
 		DestroyWindow(RenderWindow);
 		RenderWindow = NULL;
 	}
 
-	ChangeDisplaySettings(NULL, 0);
+	if (!Windowed)
+	{
+		ChangeDisplaySettings(NULL, 0);
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/12 17:35:40  dj_jl
+//	Added windowed mode
+//
 //	Revision 1.6  2001/08/29 17:47:21  dj_jl
 //	Fixed resolution change to different color depth
-//
+//	
 //	Revision 1.5  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
 //	
