@@ -61,6 +61,12 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
+struct FMapSongInfo
+{
+	char	MapName[16];
+	char	SongName[16];
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -102,6 +108,8 @@ static const char *MapCmdNames[] =
 
 static int cd_NonLevelTracks[6]; // Non-level specific song cd track numbers 
 
+static TArray<FMapSongInfo>		MapSongList;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -114,7 +122,6 @@ void InitMapInfo(void)
 {
 	int 		mcmdValue;
 	mapInfo_t 	*info;
-	char 		songMulch[10];
 	int			NumMapAlias;
 
 	MapCount = 1;
@@ -146,14 +153,8 @@ void InitMapInfo(void)
 
 		info = &MapInfo[MapCount];
 
-		// Save song lump name
-		strcpy(songMulch, info->songLump);
-
 		// Copy defaults to current map definition
 		memcpy(info, &MapInfo[0], sizeof(*info));
-
-		// Restore song lump name
-		strcpy(info->songLump, songMulch);
 
 		// The warp translation defaults to the map	index
 		info->warpTrans = MapCount;
@@ -186,6 +187,15 @@ void InitMapInfo(void)
 		// Map name must follow the number
 		SC_MustGetString();
 		strcpy(info->name, sc_String);
+
+		//	Set song lump name from SNDINFO script
+		for (TArray<FMapSongInfo>::TIterator SongIt(MapSongList); SongIt; ++SongIt)
+		{
+			if (!stricmp(SongIt->MapName, info->lumpname))
+			{
+				strcpy(info->songLump, SongIt->SongName);
+			}
+		}
 
 		// Process optional tokens
 		while (SC_GetString())
@@ -378,10 +388,9 @@ char *P_TranslateMap(int map)
 
 void P_PutMapSongLump(int map, const char *lumpName)
 {
-	if (map >= 1 && map <= MapCount)
-	{
-		strcpy(MapInfo[map].songLump, lumpName);
-	}
+	int i = MapSongList.Add();
+	sprintf(MapSongList[i].MapName, "MAP%02d", map);
+	strcpy(MapSongList[i].SongName, lumpName);
 }
 
 //==========================================================================
@@ -462,9 +471,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/28 18:41:43  dj_jl
+//	Fixed Hexen music
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
