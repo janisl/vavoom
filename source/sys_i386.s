@@ -49,11 +49,14 @@ C(MaskExceptions):
 	.data
 
 	Align4
-.globl	ceil_cw
+.globl	full_cw
 .globl	single_cw
-ceil_cw:	.long	0
-single_cw:	.long	0
+.globl	floor_cw
+.globl	ceil_cw
 full_cw:	.long	0
+single_cw:	.long	0
+floor_cw:	.long	0
+ceil_cw:	.long	0
 cw:			.long	0
 pushed_cw:	.long	0
 
@@ -74,6 +77,11 @@ C(Sys_SetFPCW):
 	andb	$0xF0,%ah
 	orb		$0x0C,%ah
 	movl	%eax,single_cw
+
+	// floor mode, single precision
+	andb	$0xF0,%ah
+	orb		$0x04,%ah
+	movl	%eax,floor_cw
 
 	// ceil mode, single precision
 	andb	$0xF0,%ah
@@ -112,9 +120,12 @@ C(Sys_PopFPCW):
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/08/15 17:17:24  dj_jl
+//	Added floor_cw
+//
 //	Revision 1.2  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.1  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
