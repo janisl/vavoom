@@ -105,6 +105,7 @@ static TArray<TTerrainType>	TerrainTypes;
 
 void P_InitSwitchList(void)
 {
+	guard(P_InitSwitchList);
 	int t1;
 	int t2;
 
@@ -126,6 +127,7 @@ void P_InitSwitchList(void)
 	}
 	SC_Close();
 	Switches.Shrink();
+	unguard;
 }
 
 //==========================================================================
@@ -136,7 +138,9 @@ void P_InitSwitchList(void)
 
 void P_ClearButtons(void)
 {
+	guard(P_ClearButtons);
 	ButtonList.Empty();
+	unguard;
 }
 
 //==========================================================================
@@ -149,6 +153,7 @@ void P_ClearButtons(void)
 
 static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 {
+	guard(P_StartButton);
     // See if button is already pressed
     for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
     {
@@ -163,6 +168,7 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 	but->Where = w;
 	but->Texture = texture;
 	but->Timer = time;
+	unguard;
 }
 
 //==========================================================================
@@ -176,6 +182,7 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 
 void P_ChangeSwitchTexture(line_t* line, int useAgain)
 {
+	guard(P_ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
     int texTop = level.sides[sidenum].toptexture;
     int texMid = level.sides[sidenum].midtexture;
@@ -236,6 +243,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 		}
 	    return;
     }
+	unguard;
 }
 
 //==========================================================================
@@ -246,6 +254,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
 void P_UpdateButtons(void)
 {
+	guard(P_UpdateButtons);
 	//  DO BUTTONS
 	for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
 	{
@@ -256,6 +265,7 @@ void P_UpdateButtons(void)
 			b.RemoveCurrent();
 		}
 	}
+	unguard;
 }
 
 //**************************************************************************
@@ -272,6 +282,7 @@ void P_UpdateButtons(void)
 
 void P_InitTerrainTypes(void)
 {
+	guard(P_InitTerrainTypes);
 	SC_Open("TERRAINS");
 	while (SC_GetString())
 	{
@@ -292,6 +303,7 @@ void P_InitTerrainTypes(void)
 	}
 	SC_Close();
 	TerrainTypes.Shrink();
+	unguard;
 }
 
 //==========================================================================
@@ -302,6 +314,7 @@ void P_InitTerrainTypes(void)
 
 int SV_TerrainType(int pic)
 {
+	guard(SV_TerrainType);
 	for (TArray<TTerrainType>::TIterator tt(TerrainTypes); tt; ++tt)
 	{
 		if (tt->Pic == pic)
@@ -310,14 +323,18 @@ int SV_TerrainType(int pic)
 		}
 	}
 	return 0;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/12 19:26:40  dj_jl
 //	Added dynamic arrays
 //	

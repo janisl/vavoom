@@ -106,6 +106,7 @@ static TMemZone*	minizone;
 
 void TMemZone::Init(void)
 {
+	guard(TMemZone::Init);
     memblock_t*	block;
 
     // set the entire zone to one free block
@@ -121,6 +122,7 @@ void TMemZone::Init(void)
     block->user = NULL;
 	block->tag = 0; // 0 indicates a free block.
     block->size = Size - sizeof(TMemZone);
+	unguard;
 }
 
 //==========================================================================
@@ -133,6 +135,7 @@ void TMemZone::Init(void)
 
 void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 {
+	guard(TMemZone::Malloc);
     int			extra;
     memblock_t*	start;
     memblock_t* rover;
@@ -244,6 +247,7 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 	base->zone = this;
     
     return (void *)((char*)base + sizeof(memblock_t));
+	unguard;
 }
 
 //==========================================================================
@@ -256,6 +260,7 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 void *TMemZone::MallocHigh(int size, int tag, void** user)
 {
+	guard(TMemZone::MallocHigh);
     int			extra;
     memblock_t* rover;
     memblock_t* newblock;
@@ -350,6 +355,7 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 	base->zone = this;
     
     return (void *)((char*)base + sizeof(memblock_t));
+	unguard;
 }
 
 //==========================================================================
@@ -362,6 +368,7 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 
 void TMemZone::Resize(void** ptr, int size)
 {
+	guard(TMemZone::Resize);
     memblock_t	*block;
     memblock_t	*other;
     void*		p;
@@ -472,6 +479,7 @@ void TMemZone::Resize(void** ptr, int size)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -482,6 +490,7 @@ void TMemZone::Resize(void** ptr, int size)
 
 void TMemZone::Free(void* ptr)
 {
+	guard(TMemZone::Free);
     memblock_t*		block;
     memblock_t*		other;
 	
@@ -524,6 +533,7 @@ void TMemZone::Free(void* ptr)
 		if (block == Rover)
 			Rover = other;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -534,6 +544,7 @@ void TMemZone::Free(void* ptr)
 
 void TMemZone::FreeTag(int tag)
 {
+	guard(TMemZone::FreeTag);
 	memblock_t*	block;
 	memblock_t*	next;
 	
@@ -549,6 +560,7 @@ void TMemZone::FreeTag(int tag)
 
 	//	Reset rover to start of the heap
 	Rover = BlockList.next;
+	unguard;
 }
 
 //==========================================================================
@@ -559,6 +571,7 @@ void TMemZone::FreeTag(int tag)
 
 void TMemZone::CheckHeap(void)
 {
+	guard(TMemZone::CheckHeap);
     memblock_t*	block;
 	
     for (block = BlockList.next; block->next != &BlockList; block = block->next)
@@ -572,6 +585,7 @@ void TMemZone::CheckHeap(void)
 		if (!block->tag && !block->next->tag)
 	    	Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
     }
+	unguard;
 }
 
 //==========================================================================
@@ -582,6 +596,7 @@ void TMemZone::CheckHeap(void)
 
 int TMemZone::FreeMemory(void)
 {
+	guard(TMemZone::FreeMemory);
     memblock_t*		block;
     int				free = 0;
 	int				largest = 0;
@@ -616,6 +631,7 @@ int TMemZone::FreeMemory(void)
 	cond << "Purgable memory " << purgable << ", largest block "
 		<< largestpurgable << ", total blocks " << purgableblocks << endl;		
     return free;
+	unguard;
 }
 
 //==========================================================================
@@ -626,6 +642,7 @@ int TMemZone::FreeMemory(void)
 
 void TMemZone::DumpHeap(ostream &str)
 {
+	guard(TMemZone::DumpHeap);
 	memblock_t*	block;
 	
 	str << "zone size: " << Size << "  location: " << (void*)this << endl;
@@ -657,6 +674,7 @@ void TMemZone::DumpHeap(ostream &str)
 		}
 	}
 	return;
+	unguard;
 }
 
 //==========================================================================
@@ -667,6 +685,7 @@ void TMemZone::DumpHeap(ostream &str)
 
 void Z_Init(void* base, int size)
 {
+	guard(Z_Init);
 	int			minsize = 256 * 1024;
 
 	int p = M_CheckParm("-minzone");
@@ -676,6 +695,7 @@ void Z_Init(void* base, int size)
 	}
 	mainzone = new(base) TMemZone(size);
 	minizone = new(Z_Malloc(minsize)) TMemZone(minsize);
+	unguard;
 }
 
 //==========================================================================
@@ -688,6 +708,7 @@ void Z_Init(void* base, int size)
 
 void *Z_Malloc(int size, int tag, void** user)
 {
+	guard(Z_Malloc);
 	void *ptr;
 	if (tag == PU_STRING)
 	{
@@ -719,6 +740,7 @@ void *Z_Malloc(int size, int tag, void** user)
 		}
 	}
 	return ptr;
+	unguard;
 }
 
 //==========================================================================
@@ -729,7 +751,9 @@ void *Z_Malloc(int size, int tag, void** user)
 
 void *Z_Calloc(int size, int tag, void **user)
 {
+	guard(Z_Calloc);
  	return memset(Z_Malloc(size, tag, user), 0, size);
+	unguard;
 }
 
 //==========================================================================
@@ -742,6 +766,7 @@ void *Z_Calloc(int size, int tag, void **user)
 
 void Z_Resize(void** ptr, int size)
 {
+	guard(Z_Resize);
     memblock_t	*block;
 
     block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
@@ -749,6 +774,7 @@ void Z_Resize(void** ptr, int size)
     if (block->id != ZONEID)
 		Sys_Error("Z_Resize: resize a pointer without ZONEID");
 	block->zone->Resize(ptr, size);
+	unguard;
 }
 
 //==========================================================================
@@ -759,6 +785,7 @@ void Z_Resize(void** ptr, int size)
 
 void Z_ChangeTag(void* ptr,int tag)
 {
+	guard(Z_ChangeTag);
     memblock_t*	block;
 	
     block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
@@ -770,6 +797,7 @@ void Z_ChangeTag(void* ptr,int tag)
 		Sys_Error("Z_ChangeTag: an owner is required for purgable blocks");
 
     block->tag = tag;
+	unguard;
 }
 
 //==========================================================================
@@ -780,6 +808,7 @@ void Z_ChangeTag(void* ptr,int tag)
 
 void Z_Free(void* ptr)
 {
+	guard(Z_Free);
     memblock_t*		block;
 	
     block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
@@ -787,6 +816,7 @@ void Z_Free(void* ptr)
     if (block->id != ZONEID)
 		Sys_Error("Z_Free: freed a pointer without ZONEID");
 	block->zone->Free(ptr);
+	unguard;
 }
 
 //==========================================================================
@@ -797,7 +827,9 @@ void Z_Free(void* ptr)
 
 void Z_FreeTag(int tag)
 {
+	guard(Z_FreeTag);
 	mainzone->FreeTag(tag);
+	unguard;
 }
 
 //==========================================================================
@@ -808,7 +840,9 @@ void Z_FreeTag(int tag)
 
 void Z_CheckHeap(void)
 {
+	guard(Z_CheckHeap);
 	mainzone->CheckHeap();
+	unguard;
 }
 
 //==========================================================================
@@ -819,7 +853,9 @@ void Z_CheckHeap(void)
 
 int Z_FreeMemory(void)
 {
+	guard(Z_FreeMemory);
 	return mainzone->FreeMemory();
+	unguard;
 }
 
 //==========================================================================
@@ -830,6 +866,7 @@ int Z_FreeMemory(void)
 
 COMMAND(DumpHeap)
 {
+	guard(COMMAND DumpHeap);
 	if (Argc() == 1)
 	{
 		mainzone->DumpHeap(con);
@@ -842,14 +879,18 @@ COMMAND(DumpHeap)
 	f << endl;
 	minizone->DumpHeap(f);
 	f.close();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:46:21  dj_jl
+//	Added guarding.
+//
 //	Revision 1.9  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -113,6 +113,7 @@ static FName		*NameRemap;
 
 boolean	SV_GetSaveString(int slot, char* buf)
 {
+	guard(SV_GetSaveString);
 	char		fileName[MAX_OSPATH];
 	FILE*		f;
 
@@ -129,6 +130,7 @@ boolean	SV_GetSaveString(int slot, char* buf)
 		strcpy(buf, EMPTYSTRING);
 		return false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -230,6 +232,7 @@ void CreateSavePath(void)
 
 static void ClearSaveSlot(int slot)
 {
+	guard(ClearSaveSlot);
 	char slotExt[4];
 	const char *curName;
 	char fileName[MAX_OSPATH];
@@ -252,6 +255,7 @@ static void ClearSaveSlot(int slot)
 		}
 	}
 	Sys_CloseDir();
+	unguard;
 }
 
 //==========================================================================
@@ -264,6 +268,7 @@ static void ClearSaveSlot(int slot)
 
 static void CopySaveSlot(int sourceSlot, int destSlot)
 {
+	guard(CopySaveSlot);
 	char srcExt[4];
 	char dstExt[4];
 	const char *curName;
@@ -299,6 +304,7 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 		}
 	}
 	Sys_CloseDir();
+	unguard;
 }
 
 //==========================================================================
@@ -309,11 +315,13 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 
 static void AssertSegment(gameArchiveSegment_t segType)
 {
+	guard(AssertSegment);
 	if (GET_LONG != (int)segType)
 	{
 		Host_Error("Corrupt save game: Segment [%d] failed alignment check",
 			segType);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -324,19 +332,13 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 int GetMobjNum(VMapObject *mobj)
 {
-	try
+	guard(GetMobjNum);
+	if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
 	{
-		if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
-		{
-			return MOBJ_NULL;
-		}
-		return mobj->NetID;
+		return MOBJ_NULL;
 	}
-	catch (...)
-	{
-		dprintf("- GetMobjNum %p\n", mobj);
-		throw;
-	}
+	return mobj->NetID;
+	unguard;
 }
 
 //==========================================================================
@@ -347,11 +349,13 @@ int GetMobjNum(VMapObject *mobj)
 
 VMapObject* SetMobjPtr(int id)
 {
+	guard(SetMobjPtr);
 	if (id == MOBJ_NULL)
 	{
 		return NULL;
 	}
 	return sv_mobjs[id];
+	unguard;
 }
 
 //==========================================================================
@@ -434,26 +438,20 @@ void WriteVObject(VObject *Obj)
 
 VObject *ReadVObject(int tag)
 {
-	try
+	guard(ReadVObject);
+	//  Get params
+	int NameIndex = GET_LONG;
+	VClass *Class = SV_GetClass(NameIndex);
+	if (!Class)
 	{
-		//  Get params
-		int NameIndex = GET_LONG;
-		VClass *Class = SV_GetClass(NameIndex);
-		if (!Class)
-		{
-			Sys_Error("No such class %s", *NameRemap[NameIndex]);
-		}
+		Sys_Error("No such class %s", *NameRemap[NameIndex]);
+	}
 
-		//  Allocate object and copy data
-		VObject *o = VObject::StaticSpawnObject(Class, NULL, tag);
-		Loader->Serialize((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
-		return o;
-	}
-	catch (...)
-	{
-		dprintf("- ReadVObject\n");
-		throw;
-	}
+	//  Allocate object and copy data
+	VObject *o = VObject::StaticSpawnObject(Class, NULL, tag);
+	Loader->Serialize((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
+	return o;
+	unguard;
 }
 
 //==========================================================================
@@ -464,6 +462,7 @@ VObject *ReadVObject(int tag)
 
 static void ArchivePlayers(void)
 {
+	guard(ArchivePlayers);
 	int			i;
 	player_t 	tempPlayer;
 	FFunction *pf_archive_player;
@@ -494,6 +493,7 @@ static void ArchivePlayers(void)
 			WriteVObject(tempPlayer.ViewEnts[pi]);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -504,6 +504,7 @@ static void ArchivePlayers(void)
 
 static void UnarchivePlayers(void)
 {
+	guard(UnarchivePlayers);
 	int		i;
 	FFunction *pf_unarchive_player;
 
@@ -534,6 +535,7 @@ static void UnarchivePlayers(void)
 			players[i].ViewEnts[pi]->Player = &players[i];
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -544,6 +546,7 @@ static void UnarchivePlayers(void)
 
 static void CalcSecMinMaxs(sector_t *sector)
 {
+	guard(CalcSecMinMaxs);
 	float	minz;
 	float	maxz;
 	int		i;
@@ -598,6 +601,7 @@ static void CalcSecMinMaxs(sector_t *sector)
 
 	sector->floorheight = sector->floor.minz;
 	sector->ceilingheight = sector->ceiling.maxz;
+	unguard;
 }
 
 //==========================================================================
@@ -608,6 +612,7 @@ static void CalcSecMinMaxs(sector_t *sector)
 
 static void Level__Serialize(FArchive &Ar)
 {
+	guard(Level__Serialize);
 	int i;
 	int j;
 	sector_t* sec;
@@ -684,6 +689,7 @@ static void Level__Serialize(FArchive &Ar)
 				polyY - level.polyobjs[i].startSpot.y);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -720,6 +726,7 @@ static void UnarchiveWorld(void)
 
 void MangleVObject(VObject *Obj, VClass *InClass)
 {
+	guard(MangleVObject);
 	if (InClass->GetFlags() & OF_Native)
 	{
 		return;
@@ -759,6 +766,7 @@ void MangleVObject(VObject *Obj, VClass *InClass)
 			break;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -769,6 +777,7 @@ void MangleVObject(VObject *Obj, VClass *InClass)
 
 void UnMangleVObject(VObject *Obj, VClass *InClass)
 {
+	guard(UnMangleVObject);
 	if (InClass->GetFlags() & OF_Native)
 	{
 		return;
@@ -809,6 +818,7 @@ void UnMangleVObject(VObject *Obj, VClass *InClass)
 			break;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -819,6 +829,7 @@ void UnMangleVObject(VObject *Obj, VClass *InClass)
 
 static void ArchiveThinkers(void)
 {
+	guard(ArchiveThinkers);
 	FFunction *pf_archive_thinker = svpr.FuncForName("ArchiveThinker");
 
 	StreamOutLong(ASEG_THINKERS);
@@ -857,6 +868,7 @@ static void ArchiveThinkers(void)
 	//  End marker
 	//
 	StreamOutByte(0);
+	unguard;
 }
 
 //==========================================================================
@@ -867,6 +879,7 @@ static void ArchiveThinkers(void)
 
 static void UnarchiveThinkers(void)
 {
+	guard(UnarchiveThinkers);
 	VThinker	*thinker;
 
 	AssertSegment(ASEG_THINKERS);
@@ -900,6 +913,7 @@ static void UnarchiveThinkers(void)
 	}
 
 	svpr.Exec("AfterUnarchiveThinkers");
+	unguard;
 }
 
 //==========================================================================
@@ -1021,6 +1035,7 @@ static void UnarchiveSounds(void)
 
 static void SV_SaveMap(int slot, boolean savePlayers)
 {
+	guard(SV_SaveMap);
 	char fileName[100];
 
 	// Make sure we don't have any garbage
@@ -1065,6 +1080,7 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 
 	// Close the output file
 	CloseStreamOut();
+	unguard;
 }
 
 //==========================================================================
@@ -1075,6 +1091,7 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 
 static void SV_LoadMap(char *mapname, int slot)
 {
+	guard(SV_LoadMap);
 	char fileName[100];
 
 	// Load a base level
@@ -1119,6 +1136,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	delete Loader;
 
 	Z_Free(NameRemap);
+	unguard;
 }
 
 //==========================================================================
@@ -1129,6 +1147,7 @@ static void SV_LoadMap(char *mapname, int slot)
 
 void SV_SaveGame(int slot, char* description)
 {
+	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 	char fileName[100];
 
@@ -1180,6 +1199,7 @@ void SV_SaveGame(int slot, char* description)
 		// Copy base slot to destination slot
 		CopySaveSlot(BASE_SLOT, slot);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1190,6 +1210,7 @@ void SV_SaveGame(int slot, char* description)
 
 void SV_LoadGame(int slot)
 {
+	guard(SV_LoadGame);
 	char		fileName[100];
 	char		mapname[12];
 
@@ -1263,6 +1284,7 @@ void SV_LoadGame(int slot)
 	if (cls.state != ca_dedicated)
 		CmdBuf << "Connect local\n";
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -1336,6 +1358,7 @@ void SV_ClearRebornSlot(void)
 
 void SV_MapTeleport(char *map)
 {
+	guard(SV_MapTeleport);
 	char		mapname[12];
 	char		fileName[100];
 
@@ -1378,6 +1401,7 @@ void SV_MapTeleport(char *map)
 	{
 		P_CheckACSStore();
 	}
+	unguard;
 }
 
 #ifdef CLIENT
@@ -1395,6 +1419,7 @@ void Draw_LoadIcon(void);
 
 COMMAND(Save)
 {
+	guard(COMMAND Save)
 	if (Argc() != 3)
 	{
 		return;
@@ -1428,6 +1453,7 @@ COMMAND(Save)
 	SV_SaveGame(atoi(Argv(1)), Argv(2));
 
 	con << "GAME SAVED\n";
+	unguard;
 } 
  
 //==========================================================================
@@ -1438,6 +1464,7 @@ COMMAND(Save)
 
 COMMAND(Load)
 {
+	guard(COMMAND Load);
 	if (Argc() != 2)
 	{
 		return;
@@ -1464,6 +1491,7 @@ COMMAND(Load)
 		// Copy the base slot to the reborn slot
 		SV_UpdateRebornSlot();
 	}
+	unguard;
 }
 
 #endif
@@ -1471,9 +1499,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.26  2002/06/14 15:36:35  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.25  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

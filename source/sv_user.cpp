@@ -58,6 +58,7 @@ static TCvarI		sv_maxmove("sv_maxmove", "400", CVAR_ARCHIVE);
 
 void SV_ReadMove(void)
 {
+	guard(SV_ReadMove);
     ticcmd_t	cmd;
 
 	sv_player->ViewAngles.yaw = ByteToAngle(net_msg.ReadByte());
@@ -95,6 +96,7 @@ void SV_ReadMove(void)
 	{
 		sv_player->Impulse = cmd.impulse;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -105,7 +107,9 @@ void SV_ReadMove(void)
 
 void SV_RunClientCommand(const char *cmd)
 {
+	guard(SV_RunClientCommand);
 	Cmd_ExecuteString(cmd, src_client);
+	unguard;
 }
 
 //==========================================================================
@@ -116,6 +120,7 @@ void SV_RunClientCommand(const char *cmd)
 
 void SV_ReadFromUserInfo(void)
 {
+	guard(SV_ReadFromUserInfo);
 	if (!sv_loading)
 	{
 		sv_player->BaseClass = atoi(Info_ValueForKey(sv_player->UserInfo, "class"));
@@ -123,6 +128,7 @@ void SV_ReadFromUserInfo(void)
 	strcpy(sv_player->Name, Info_ValueForKey(sv_player->UserInfo, "name"));
 	sv_player->Color = atoi(Info_ValueForKey(sv_player->UserInfo, "color"));
 	svpr.Exec("UserinfoChanged", (int)sv_player);
+	unguard;
 }
 
 //==========================================================================
@@ -133,6 +139,7 @@ void SV_ReadFromUserInfo(void)
 
 void SV_SetUserInfo(const char *info)
 {
+	guard(SV_SetUserInfo);
 	if (!sv_loading)
 	{
 		strcpy(sv_player->UserInfo, info);
@@ -141,6 +148,7 @@ void SV_SetUserInfo(const char *info)
 					<< (byte)(sv_player - players)
 					<< sv_player->UserInfo;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -151,6 +159,7 @@ void SV_SetUserInfo(const char *info)
 
 bool SV_ReadClientMessages(int clientnum)
 {
+	guard(SV_ReadClientMessages);
 	int			ret;
 	byte		cmd_type;
 
@@ -210,6 +219,7 @@ bool SV_ReadClientMessages(int clientnum)
 	} while (ret == 1);
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -220,6 +230,7 @@ bool SV_ReadClientMessages(int clientnum)
 
 COMMAND(SetInfo)
 {
+	guard(COMMAND SetInfo);
 	if (cmd_source != src_client)
 	{
 		con << "SetInfo is not valid from console\n";
@@ -237,14 +248,18 @@ COMMAND(SetInfo)
 				<< Argv(1)
 				<< Argv(2);
 	SV_ReadFromUserInfo();
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.9  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.8  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
 //	

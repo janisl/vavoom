@@ -78,6 +78,7 @@ static opening_t	openings[32];
 
 opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point)
 {
+	guard(SV_LineOpenings);
 	opening_t		*op;
 	int				opsused;
 	sec_region_t	*frontreg;
@@ -166,6 +167,7 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point)
 		op->range = op->top - op->bottom;
 	}
 	return op;
+	unguard;
 }
 
 //==========================================================================
@@ -179,6 +181,7 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point)
 
 int P_BoxOnLineSide(float* tmbox, line_t* ld)
 {
+	guard(P_BoxOnLineSide);
     int		p1 = 0;
     int		p2 = 0;
 	
@@ -218,6 +221,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
     if (p1 == p2)
 		return p1;
     return -1;
+	unguard;
 }
 
 //**************************************************************************
@@ -238,6 +242,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 
 void SV_UnlinkFromWorld(VMapObject* thing)
 {
+	guard(SV_UnlinkFromWorld);
     int		blockx;
     int		blocky;
 
@@ -270,6 +275,7 @@ void SV_UnlinkFromWorld(VMapObject* thing)
     }
 	thing->SubSector = NULL;
 	thing->Sector = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -283,6 +289,7 @@ void SV_UnlinkFromWorld(VMapObject* thing)
 
 void SV_LinkToWorld(VMapObject* thing)
 {
+	guard(SV_LinkToWorld);
     subsector_t*	ss;
 	sec_region_t*	reg;
 	sec_region_t*	r;
@@ -338,6 +345,7 @@ void SV_LinkToWorld(VMapObject* thing)
 		    thing->BlockMapNext = thing->BlockMapPrev = NULL;
 		}
     }
+	unguard;
 }
 
 //**************************************************************************
@@ -362,6 +370,7 @@ void SV_LinkToWorld(VMapObject* thing)
 
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 {
+	guard(SV_BlockLinesIterator);
     int			offset;
     short*		list;
     line_t*		ld;
@@ -407,6 +416,8 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 
     for (list = level.blockmaplump + offset; *list != -1; list++)
     {
+		if (*list < 0 || *list >= level.numlines)
+			Host_Error("Broken blockmap - line %d", *list);
 		ld = &level.lines[*list];
 
 		if (ld->validcount == validcount)
@@ -418,6 +429,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 	    	return false;
     }
     return true;	// everything was checked
+	unguard;
 }
 
 //==========================================================================
@@ -429,6 +441,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
 	FFunction *prfunc)
 {
+	guard(SV_BlockThingsIterator);
     VMapObject*		mobj;
 	
     if (x < 0 || y < 0 || x >= level.bmapwidth || y >= level.bmapheight)
@@ -446,6 +459,7 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
 		    return false;
     }
     return true;
+	unguard;
 }
 
 //**************************************************************************
@@ -480,6 +494,7 @@ static float		trace_len;
 
 static boolean PIT_AddLineIntercepts(line_t* ld)
 {
+	guard(PIT_AddLineIntercepts);
 	float dot1 = DotProduct(*ld->v1, trace_plane.normal) - trace_plane.dist;
 	float dot2 = DotProduct(*ld->v2, trace_plane.normal) - trace_plane.dist;
     
@@ -528,6 +543,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 	}
 
 	return true;	// continue
+	unguard;
 }
 
 //==========================================================================
@@ -538,6 +554,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 
 static boolean PIT_AddThingIntercepts(VMapObject* thing)
 {
+	guard(PIT_AddThingIntercepts);
 	float dot = DotProduct(thing->Origin, trace_plane.normal) - trace_plane.dist;
 	if (dot >= thing->Radius || dot <= -thing->Radius)
 	{
@@ -565,6 +582,7 @@ static boolean PIT_AddThingIntercepts(VMapObject* thing)
 	}
 
     return true;		// keep going
+	unguard;
 }
 
 //==========================================================================
@@ -579,6 +597,7 @@ static boolean PIT_AddThingIntercepts(VMapObject* thing)
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 		int flags, boolean(*trav)(intercept_t *), FFunction *prtrav)
 {
+	guard(SV_PathTraverse);
 	int			xt1;
 	int			yt1;
 	int			xt2;
@@ -750,6 +769,7 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
     }
 	
     return true;		// everything was traversed
+	unguard;
 }
 
 //==========================================================================
@@ -777,6 +797,7 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 
 sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2)
 {
+	guard(SV_FindThingGap);
 	float dist;
 
 	int fit_num = 0;
@@ -852,6 +873,7 @@ sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, f
 	if (fit_num > 1)
 		return fit_closest;
 	return nofit_closest;
+	unguard;
 }
 
 //==========================================================================
@@ -879,6 +901,7 @@ sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, f
 
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2)
 {
+	guard(SV_FindOpening);
 	float dist;
 
 	int fit_num = 0;
@@ -942,6 +965,7 @@ opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2)
 	if (fit_num > 1)
 		return fit_closest;
 	return nofit_closest;
+	unguard;
 }
 
 //==========================================================================
@@ -952,6 +976,7 @@ opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2)
 
 sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p)
 {
+	guard(SV_PointInRegion);
 	sec_region_t *reg;
 
 	// logic: find matching region, otherwise return highest one.
@@ -962,6 +987,7 @@ sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p)
 	}
 
 	return reg;
+	unguard;
 }
 
 //==========================================================================
@@ -972,6 +998,7 @@ sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p)
 
 int SV_PointContents(const sector_t *sector, const TVec &p)
 {
+	guard(SV_PointContents);
 	sec_region_t	*reg;
 
 	for (reg = sector->botregion; reg; reg = reg->next)
@@ -983,14 +1010,18 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 		}
 	}
 	return -1;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.13  2002/03/09 18:07:10  dj_jl
 //	SV_BlockLinesIterator not used by progs anymore
-//
+//	
 //	Revision 1.12  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

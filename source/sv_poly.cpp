@@ -76,6 +76,7 @@ static struct AnchorPoint_t
 
 polyobj_t *PO_GetPolyobj(int polyNum)
 {
+	guard(PO_GetPolyobj);
 	int i;
 
 	for (i = 0; i < level.numpolyobjs; i++)
@@ -86,6 +87,7 @@ polyobj_t *PO_GetPolyobj(int polyNum)
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -96,6 +98,7 @@ polyobj_t *PO_GetPolyobj(int polyNum)
 
 int PO_GetPolyobjMirror(int poly)
 {
+	guard(PO_GetPolyobjMirror);
 	int i;
 
 	for(i = 0; i < level.numpolyobjs; i++)
@@ -106,6 +109,7 @@ int PO_GetPolyobjMirror(int poly)
 		}
 	}
 	return 0;
+	unguard;
 }
 
 //==========================================================================
@@ -129,6 +133,7 @@ static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po)
 
 static void	UpdatePolySegs(polyobj_t *po)
 {
+	guard(UpdatePolySegs);
 	seg_t **segList;
 	int count;
 
@@ -144,6 +149,7 @@ static void	UpdatePolySegs(polyobj_t *po)
 		//	Recalc seg's normal and dist
 		CalcSeg(*segList);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -154,6 +160,7 @@ static void	UpdatePolySegs(polyobj_t *po)
 
 boolean PO_MovePolyobj(int num, float x, float y)
 {
+	guard(PO_MovePolyobj);
 	int count;
 	seg_t **segList;
 	seg_t **veryTempSeg;
@@ -233,6 +240,7 @@ boolean PO_MovePolyobj(int num, float x, float y)
 	po->startSpot.y += y;
 	LinkPolyobj(po);
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -243,6 +251,7 @@ boolean PO_MovePolyobj(int num, float x, float y)
 
 boolean PO_RotatePolyobj(int num, float angle)
 {
+	guard(PO_RotatePolyobj);
 	int count;
 
 	// Get the polyobject.
@@ -307,6 +316,7 @@ boolean PO_RotatePolyobj(int num, float angle)
 	po->angle = AngleMod(po->angle + angle);
 	LinkPolyobj(po);
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -317,6 +327,7 @@ boolean PO_RotatePolyobj(int num, float angle)
 
 static void UnLinkPolyobj(polyobj_t *po)
 {
+	guard(UnLinkPolyobj);
 	polyblock_t *link;
 	int i, j;
 	int index;
@@ -342,6 +353,7 @@ static void UnLinkPolyobj(polyobj_t *po)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -352,6 +364,7 @@ static void UnLinkPolyobj(polyobj_t *po)
 
 static void LinkPolyobj(polyobj_t *po)
 {
+	guard(LinkPolyobj);
 	float leftX, rightX;
 	float topY, bottomY;
 	seg_t **tempSeg;
@@ -429,6 +442,7 @@ static void LinkPolyobj(polyobj_t *po)
 			// else, don't link the polyobj, since it's off the map
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -439,6 +453,7 @@ static void LinkPolyobj(polyobj_t *po)
 
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 {
+	guard(CheckMobjBlocking);
 	VMapObject *mobj;
 	int i, j;
 	int left, right, top, bottom;
@@ -496,6 +511,7 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 		}
 	}
 	return blocked;
+	unguard;
 }
 
 //==========================================================================
@@ -506,6 +522,7 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 
 static void InitBlockMap(void)
 {
+	guard(InitBlockMap);
 	int		i;
 
 	level.PolyBlockMap = (polyblock_t**)Z_Malloc(level.bmapwidth *
@@ -517,6 +534,7 @@ static void InitBlockMap(void)
 	{
 		LinkPolyobj(&level.polyobjs[i]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -566,6 +584,7 @@ static void IterFindPolySegs(float x, float y, seg_t **segList)
 
 void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 {
+	guard(PO_SpawnPolyobj);
 	int i;
 	int j;
 	int psIndex;
@@ -708,6 +727,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 		(*level.polyobjs[index].segs)->linedef->arg2 =
 			(*level.polyobjs[index].segs)->linedef->arg3;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -718,6 +738,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 
 void PO_AddAnchorPoint(float x, float y, int tag)
 {
+	guard(PO_AddAnchorPoint);
 	int		index;
 
     index = NumAnchorPoints++;
@@ -732,6 +753,7 @@ void PO_AddAnchorPoint(float x, float y, int tag)
 	AnchorPoints[index].x = x;
     AnchorPoints[index].y = y;
     AnchorPoints[index].tag = tag;
+	unguard;
 }
 
 //==========================================================================
@@ -742,6 +764,7 @@ void PO_AddAnchorPoint(float x, float y, int tag)
 
 static void TranslateToStartSpot(float originX, float originY, int tag)
 {
+	guard(TranslateToStartSpot);
 	seg_t **tempSeg;
 	seg_t **veryTempSeg;
 	vertex_t *tempPt;
@@ -821,6 +844,7 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 	po->base_x = po->startSpot.x;
 	po->base_y = po->startSpot.y;
 	po->base_angle = po->angle;
+	unguard;
 }
 
 //==========================================================================
@@ -831,6 +855,7 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 
 void PO_Init(void)
 {
+	guard(PO_Init);
 	int				i;
 
 	for (i=0; i<NumAnchorPoints; i++)
@@ -851,6 +876,7 @@ void PO_Init(void)
 		}
 	}
 	InitBlockMap();
+	unguard;
 }
 
 //==========================================================================
@@ -861,15 +887,20 @@ void PO_Init(void)
 
 boolean PO_Busy(int polyobj)
 {
+	guard(PO_Busy);
 	return svpr.Exec("PolyBusy", polyobj);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.13  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.12  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

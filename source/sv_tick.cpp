@@ -81,11 +81,13 @@ void P_InitThinkers(void)
 
 void SV_DestroyAllThinkers(void)
 {
+	guard(SV_DestroyAllThinkers);
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
 		It->Destroy();
 	}
 	VObject::CollectGarbage();
+	unguard;
 }
 
 //==========================================================================
@@ -136,9 +138,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.12  2002/04/11 16:42:10  dj_jl
 //	Renamed Think to Tick.
-//
+//	
 //	Revision 1.11  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

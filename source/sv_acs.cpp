@@ -351,6 +351,7 @@ static VMapObject *P_FindMobjFromTID(int tid, int *searchPosition)
 
 void P_LoadACScripts(boolean spawn_thinkers)
 {
+	guard(P_LoadACScripts);
 	int i;
 	int *buffer;
 	acsHeader_t *header;
@@ -400,6 +401,7 @@ void P_LoadACScripts(boolean spawn_thinkers)
 		ACStrings[i] += (int)ActionCodeBase;
 	}
 	memset(MapVars, 0, sizeof(MapVars));
+	unguard;
 }
 
 //==========================================================================
@@ -433,6 +435,7 @@ static void StartOpenACS(int number, int infoIndex, int *address)
 
 void P_CheckACSStore(void)
 {
+	guard(P_CheckACSStore);
 	acsstore_t *store;
 
 	for (store = ACSStore; store->map[0] != 0; store++)
@@ -447,6 +450,7 @@ void P_CheckACSStore(void)
 			strcpy(store->map, "-");
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -458,6 +462,7 @@ void P_CheckACSStore(void)
 boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 	line_t *line, int side)
 {
+	guard(P_StartACS);
 	int i;
 	VACS *script;
 	int infoIndex;
@@ -505,6 +510,7 @@ boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 	*statePtr = ASTE_RUNNING;
 	NewScript = script;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -556,6 +562,7 @@ static boolean AddToACSStore(const char *map, int number, int *args)
 
 boolean P_TerminateACS(int number, int)
 {
+	guard(P_TerminateACS);
 	int infoIndex;
 
 	infoIndex = GetACSIndex(number);
@@ -570,6 +577,7 @@ boolean P_TerminateACS(int number, int)
 	}
 	ACSInfo[infoIndex].state = ASTE_TERMINATING;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -580,6 +588,7 @@ boolean P_TerminateACS(int number, int)
 
 boolean P_SuspendACS(int number, int)
 {
+	guard(P_SuspendACS);
 	int infoIndex;
 
 	infoIndex = GetACSIndex(number);
@@ -595,6 +604,7 @@ boolean P_SuspendACS(int number, int)
 	}
 	ACSInfo[infoIndex].state = ASTE_SUSPENDED;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -605,8 +615,10 @@ boolean P_SuspendACS(int number, int)
 
 void P_ACSInitNewGame(void)
 {
+	guard(P_ACSInitNewGame);
 	memset(WorldVars, 0, sizeof(WorldVars));
 	memset(ACSStore, 0, sizeof(ACSStore));
+	unguard;
 }
 
 //==========================================================================
@@ -660,12 +672,14 @@ static void SV_InterpretACS(VACS *script)
 
 IMPLEMENT_FUNCTION(VACS, Tick)
 {
+	guard(VACS.Tick);
 	VACS	*script;
 	float	deltaTime;
 
 	deltaTime = PR_Popf();
 	script = (VACS *)PR_Pop();
 	SV_InterpretACS(script);
+	unguard;
 }
 
 //==========================================================================
@@ -676,12 +690,14 @@ IMPLEMENT_FUNCTION(VACS, Tick)
 
 IMPLEMENT_FUNCTION(VACS, Archive)
 {
+	guard(VACS.Archive);
 	VACS	*acs;
 
 	acs = (VACS *)PR_Pop();
 	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
 	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
 	acs->activator = (VMapObject *)GetMobjNum(acs->activator);
+	unguard;
 }
 
 //==========================================================================
@@ -692,6 +708,7 @@ IMPLEMENT_FUNCTION(VACS, Archive)
 
 IMPLEMENT_FUNCTION(VACS, Unarchive)
 {
+	guard(VACS.Unarchive);
 	VACS	*acs;
 
 	acs = (VACS *)PR_Pop();
@@ -705,6 +722,7 @@ IMPLEMENT_FUNCTION(VACS, Unarchive)
 		acs->line = &level.lines[(int)acs->line];
 	}
 	acs->activator = SetMobjPtr((int)acs->activator);
+	unguard;
 }
 
 //==========================================================================
@@ -715,6 +733,7 @@ IMPLEMENT_FUNCTION(VACS, Unarchive)
 
 void P_TagFinished(int tag)
 {
+	guard(P_TagFinished);
 	int i;
 
 	if (TagBusy(tag))
@@ -729,6 +748,7 @@ void P_TagFinished(int tag)
 			ACSInfo[i].state = ASTE_RUNNING;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -739,6 +759,7 @@ void P_TagFinished(int tag)
 
 void P_PolyobjFinished(int po)
 {
+	guard(P_PolyobjFinished);
 	int i;
 
 	if (PO_Busy(po))
@@ -753,6 +774,7 @@ void P_PolyobjFinished(int po)
 			ACSInfo[i].state = ASTE_RUNNING;
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1807,9 +1829,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/07/13 07:50:58  dj_jl
+//	Added guarding.
+//
 //	Revision 1.17  2002/04/11 16:42:09  dj_jl
 //	Renamed Think to Tick.
-//
+//	
 //	Revision 1.16  2002/03/16 17:55:11  dj_jl
 //	Some small changes.
 //	
