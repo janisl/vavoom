@@ -65,17 +65,17 @@ void T_VerticalDoor(special_t* door)
 		    {
 		      case blazeRaise:
 				door->direction = -1; // time to go back down
-				StartSoundName(&door->sector->soundorg, "BlazeDoorClose", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "BlazeDoorClose", CHAN_VOICE);
 				break;
 		
 		      case door_normal:
 				door->direction = -1; // time to go back down
-				StartSoundName(&door->sector->soundorg, "DoorClose", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
 				break;
 		
 		      case close30ThenOpen:
 				door->direction = 1;
-				StartSoundName(&door->sector->soundorg, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
 				break;
 		      default:
 				break;
@@ -92,7 +92,7 @@ void T_VerticalDoor(special_t* door)
 		      case raiseIn5Mins:
 				door->direction = 1;
 				door->type = door_normal;
-				StartSoundName(&door->sector->soundorg, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
 				break;
 		
 		      default:
@@ -115,7 +115,7 @@ void T_VerticalDoor(special_t* door)
 		      case blazeClose:
 				door->sector->specialdata = NULL;
 				RemoveSpecialThinker(door);  // unlink and free
-				StartSoundName(&door->sector->soundorg, "BlazeDoorClose", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "BlazeDoorClose", CHAN_VOICE);
 				break;
 		
 		      case door_normal:
@@ -142,7 +142,7 @@ void T_VerticalDoor(special_t* door)
 		
 		      default:
 				door->direction = 1;
-				StartSoundName(&door->sector->soundorg, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
 				break;
 		    }
 		}
@@ -199,7 +199,8 @@ int EV_DoDoor(line_t* line, int type)
 	
 		// new door thinker
 		rtn = 1;
-		door = NewSpecialThinker(T_VerticalDoor);
+		door = NewSpecialThinker(special_t);
+		door->function = T_VerticalDoor;
 		sec->specialdata = door;
 
 		door->sector = sec;
@@ -214,20 +215,20 @@ int EV_DoDoor(line_t* line, int type)
 			    door->topheight -= 4.0;
 			    door->direction = -1;
 			    door->tic_speed = VDOORSPEED * 4.0;
-			    StartSoundName(&door->sector->soundorg, "BlazeDoorClose", CHAN_VOICE);
+			    SectorStartSoundName(door->sector, "BlazeDoorClose", CHAN_VOICE);
 			    break;
 	    
 		  case close:
 			    door->topheight = FindLowestCeilingSurrounding(sec);
 			    door->topheight -= 4.0;
 			    door->direction = -1;
-			    StartSoundName(&door->sector->soundorg, "DoorClose", CHAN_VOICE);
+			    SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
 			    break;
 	    
 		  case close30ThenOpen:
 			    door->topheight = sec->ceilingheight;
 			    door->direction = -1;
-			    StartSoundName(&door->sector->soundorg, "DoorClose", CHAN_VOICE);
+			    SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
 			    break;
 	    
 		  case blazeRaise:
@@ -237,7 +238,7 @@ int EV_DoDoor(line_t* line, int type)
 			    door->topheight -= 4.0;
 			    door->tic_speed = VDOORSPEED * 4.0;
 			    if (door->topheight != sec->ceilingheight)
-					StartSoundName(&door->sector->soundorg, "BlazeDoorOpen", CHAN_VOICE);
+					SectorStartSoundName(door->sector, "BlazeDoorOpen", CHAN_VOICE);
 			    break;
 	    
 		  case door_normal:
@@ -246,7 +247,7 @@ int EV_DoDoor(line_t* line, int type)
 			    door->topheight = FindLowestCeilingSurrounding(sec);
 		    	door->topheight -= 4.0;
 			    if (door->topheight != sec->ceilingheight)
-					StartSoundName(&door->sector->soundorg, "DoorOpen", CHAN_VOICE);
+					SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
 			    break;
 	    
 		  default:
@@ -398,22 +399,23 @@ int EV_VerticalDoor(line_t* line,mobj_t* thing)
     {
       case 117:	// BLAZING DOOR RAISE
       case 118:	// BLAZING DOOR OPEN
-		StartSoundName(&sec->soundorg, "BlazeDoorOpen", CHAN_VOICE);
+		SectorStartSoundName(sec, "BlazeDoorOpen", CHAN_VOICE);
 		break;
 	
       case 1:	// NORMAL DOOR SOUND
       case 31:
-		StartSoundName(&sec->soundorg, "DoorOpen", CHAN_VOICE);
+		SectorStartSoundName(sec, "DoorOpen", CHAN_VOICE);
 		break;
 	
       default:	// LOCKED DOOR SOUND
-		StartSoundName(&sec->soundorg, "DoorOpen", CHAN_VOICE);
+		SectorStartSoundName(sec, "DoorOpen", CHAN_VOICE);
 		break;
     }
 	
     
     // new door thinker
-    door = NewSpecialThinker(T_VerticalDoor);
+    door = NewSpecialThinker(special_t);
+    door->function = T_VerticalDoor;
     sec->specialdata = door;
     door->sector = sec;
     door->direction = 1;
@@ -462,7 +464,8 @@ void P_SpawnDoorCloseIn30(sector_t* sec)
 {
     special_t*	door;
 	
-    door = NewSpecialThinker(T_VerticalDoor);
+    door = NewSpecialThinker(special_t);
+    door->function = T_VerticalDoor;
 
     sec->specialdata = door;
     sec->special = 0;
@@ -481,7 +484,8 @@ void P_SpawnDoorRaiseIn5Mins(sector_t* sec, int secnum)
 {
     special_t*	door;
 	
-    door = NewSpecialThinker(T_VerticalDoor);
+    door = NewSpecialThinker(special_t);
+    door->function = T_VerticalDoor;
 
     sec->specialdata = door;
     sec->special = 0;
@@ -499,9 +503,12 @@ void P_SpawnDoorRaiseIn5Mins(sector_t* sec, int secnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:20:00  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.3  2001/08/30 17:33:18  dj_jl
 //	Added sound channels
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:53  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

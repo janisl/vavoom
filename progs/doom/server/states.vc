@@ -21,13 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.5  2001/08/07 16:40:21  dj_jl
-//**	Changed player model path
-//**
-//**	Revision 1.4  2001/08/01 17:47:01  dj_jl
-//**	Fixed plasma model
-//**	
 //**************************************************************************
 //**
 //**	States table
@@ -1081,3 +1074,17 @@ __states__
 	S_TECH2LAMP3 {"TLP2", 2 | FF_FULLBRIGHT, "lights/techlmp2.md2", 2, 4.0 / 35.0, NULL, S_TECH2LAMP4}
 	S_TECH2LAMP4 {"TLP2", 3 | FF_FULLBRIGHT, "lights/techlmp2.md2", 3, 4.0 / 35.0, NULL, S_TECH2LAMP}
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.6  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
+//	Revision 1.5  2001/08/07 16:40:21  dj_jl
+//	Changed player model path
+//
+//	Revision 1.4  2001/08/01 17:47:01  dj_jl
+//	Fixed plasma model
+//
+//**************************************************************************

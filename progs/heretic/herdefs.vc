@@ -186,6 +186,8 @@ struct inventory_t
 	int 	count;
 };
 
+#ifdef SERVER
+
 addfields mobj_t
 {
 	//	States
@@ -358,6 +360,10 @@ int		long_stats = 0;
 int		short_stats = NUMAMMO + NUMPOWERS + 2;
 int		byte_stats = 10 + 2 * NUMARTIFACTS;
 
+#endif
+
+#ifdef CLIENT
+
 addfields client_state_t
 {
 	//
@@ -404,6 +410,10 @@ addfields client_state_t
 	int				readyammo;
 };
 
+#endif
+
+#ifdef SERVER
+
 addfields special_t
 {
 	sector_t	*sector;
@@ -442,6 +452,8 @@ addfields special_t
 	int			darktime;
 	int			brighttime;
 };
+
+#endif
 
 // --- mobj.flags ---
 
@@ -536,9 +548,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.3  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:52  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

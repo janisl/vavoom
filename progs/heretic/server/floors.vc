@@ -98,9 +98,9 @@ void T_MoveFloor(special_t *floor)
 	{
 		if (floor->type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
 			floor->type == FLEV_RAISEFLOORTONEARESTCHANGE)
-			StartSoundName(&floor->sector->soundorg, "PlatformMove", CHAN_VOICE);
+			SectorStartSoundName(floor->sector, "PlatformMove", CHAN_VOICE);
 		else
-			StartSoundName(&floor->sector->soundorg, "DoorMove", CHAN_VOICE);
+			SectorStartSoundName(floor->sector, "DoorMove", CHAN_VOICE);
 	}
 
 	if (res == RES_PASTDEST)
@@ -110,7 +110,7 @@ void T_MoveFloor(special_t *floor)
 			floor->type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
 			floor->type == FLEV_RAISEFLOORTONEARESTCHANGE)
 		{
-			StartSoundName(&floor->sector->soundorg, "PlatformStop", CHAN_VOICE);
+			SectorStartSoundName(floor->sector, "PlatformStop", CHAN_VOICE);
 		}
 		if (floor->direction == 1)
 			switch(floor->type)
@@ -167,7 +167,8 @@ int EV_DoFloor(line_t *line, int *args, int floortype)
 		//	new floor thinker
 		//
 		rtn = 1;
-		floor = NewSpecialThinker(T_MoveFloor);
+		floor = NewSpecialThinker(special_t);
+		floor->function = T_MoveFloor;
 		sec->specialdata = floor;
 		floor->sector = sec;
 		floor->type = floortype;
@@ -278,14 +279,14 @@ int EV_DoFloor(line_t *line, int *args, int floortype)
 				floor->floordestheight = FindNextHighestFloor(sec, sec->floorheight);
 				SetFloorPic(sec, level->sides[line->sidenum[0]].sector->floor.pic);
 				sec->special = 0;		// NO MORE DAMAGE, IF APPLICABLE
-				StartSoundName(&sec->soundorg, "PlatformMove", CHAN_VOICE);
+				SectorStartSoundName(sec, "PlatformMove", CHAN_VOICE);
 				break;
 
 			case FLEV_RAISEFLOORBYVALUECHANGE2:
 				floor->direction = 1;
 				floor->floordestheight = sec->floorheight + itof(args[2]) * 8.0;
 				SetFloorPic(sec, level->sides[line->sidenum[0]].sector->floor.pic);
-				StartSoundName(&sec->soundorg, "PlatformMove", CHAN_VOICE);
+				SectorStartSoundName(sec, "PlatformMove", CHAN_VOICE);
 				break;
 
 /*
@@ -371,7 +372,8 @@ int EV_BuildStairs(line_t *line, int *args)
 		//
 		rtn = 1;
 		height = sec->floorheight + stepDelta;
-		floor = NewSpecialThinker(T_MoveFloor);
+		floor = NewSpecialThinker(special_t);
+		floor->function = T_MoveFloor;
 		sec->specialdata = floor;
 		floor->type = raiseBuildStep;
 		floor->direction = 1;
@@ -415,7 +417,8 @@ int EV_BuildStairs(line_t *line, int *args)
                     	secnum = j;
                         break;
                     }
-				floor = NewSpecialThinker(T_MoveFloor);
+				floor = NewSpecialThinker(special_t);
+				floor->function = T_MoveFloor;
 				sec->specialdata = floor;
 				floor->type = raiseBuildStep;
 				floor->direction = 1;
@@ -472,7 +475,8 @@ int EV_DoDonut(line_t *line, int *args)
 			//
 			//	Spawn rising slime
 			//
-			floor = NewSpecialThinker(T_MoveFloor);
+			floor = NewSpecialThinker(special_t);
+			floor->function = T_MoveFloor;
 			s2->specialdata = floor;
 			floor->type = FLEV_DONUT;
 			floor->crush = false;
@@ -486,7 +490,8 @@ int EV_DoDonut(line_t *line, int *args)
 			//
 			//	Spawn lowering donut-hole
 			//
-			floor = NewSpecialThinker(T_MoveFloor);
+			floor = NewSpecialThinker(special_t);
+			floor->function = T_MoveFloor;
 			s1->specialdata = floor;
 			floor->type = FLEV_LOWERFLOOR;
 			floor->crush = false;
@@ -503,9 +508,12 @@ int EV_DoDonut(line_t *line, int *args)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.3  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:52  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

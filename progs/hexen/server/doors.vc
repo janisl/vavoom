@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //==================================================================
@@ -60,7 +56,7 @@ void T_VerticalDoor(special_t *door)
 				{
 					case DREV_NORMAL:
 						door->direction = -1; // time to go back down
-						StartSequence(&door->sector->soundorg,
+						SectorStartSequence(door->sector,
 							seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
 						break;
 					default:
@@ -72,7 +68,7 @@ void T_VerticalDoor(special_t *door)
 				door->sector->floorheight, false, 1, door->direction);
 			if (res == RES_PASTDEST)
 			{
-				StopSequence(&door->sector->soundorg);
+				SectorStopSequence(door->sector);
 				switch(door->type)
 				{
 					case DREV_NORMAL:
@@ -102,7 +98,7 @@ void T_VerticalDoor(special_t *door)
 				door->topheight, false, 1, door->direction);
 			if (res == RES_PASTDEST)
 			{
-				StopSequence(&door->sector->soundorg);
+				SectorStopSequence(door->sector);
 				switch (door->type)
 				{
 					case DREV_NORMAL:
@@ -150,7 +146,8 @@ int EV_DoDoor(line_t *line, int *args, int type)
 		}
 		// Add new door thinker
 		retcode = 1;
-		door = NewSpecialThinker(T_VerticalDoor);
+		door = NewSpecialThinker(special_t);
+		door->function = T_VerticalDoor;
 		sec->specialdata = door;
 		door->sector = sec;
 		switch (type)
@@ -172,7 +169,7 @@ int EV_DoDoor(line_t *line, int *args, int type)
 		door->type = type;
 		door->speed = speed;
 		door->topwait = args[2]; // line->arg3
-		StartSequence(&door->sector->soundorg,
+		SectorStartSequence(door->sector,
 			seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
 	}
 	return retcode;
@@ -203,7 +200,8 @@ boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
 	//
 	// new door thinker
 	//
-	door = NewSpecialThinker(T_VerticalDoor);
+	door = NewSpecialThinker(special_t);
+	door->function = T_VerticalDoor;
 	sec->specialdata = door;
 	door->sector = sec;
 	door->direction = 1;
@@ -229,8 +227,18 @@ boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
 	//
 	door->topheight = FindLowestCeilingSurrounding(sec);
 	door->topheight -= 4.0;
-	StartSequence(&door->sector->soundorg,
+	SectorStartSequence(door->sector,
 		seq_name[SEQ_DOOR_STONE + door->sector->seqType]);
 	return true;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:20:00  dj_jl
+//	Start using object-oriented stuff, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

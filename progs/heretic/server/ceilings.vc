@@ -103,7 +103,7 @@ void T_MoveCeiling(special_t *ceiling)
 			res = T_MovePlane(ceiling->sector, ceiling->speed,
 					ceiling->topheight, false, 1, ceiling->direction);
 			if(!(level->tictime&7))
-				StartSoundName(&ceiling->sector->soundorg, "DoorMove", CHAN_VOICE);
+				SectorStartSoundName(ceiling->sector, "DoorMove", CHAN_VOICE);
 			if (res == RES_PASTDEST)
 				switch(ceiling->type)
 				{
@@ -121,7 +121,7 @@ void T_MoveCeiling(special_t *ceiling)
 			res = T_MovePlane(ceiling->sector, ceiling->speed,
 				ceiling->bottomheight, ceiling->crush, 1, ceiling->direction);
 			if (!(level->tictime&7))
-				StartSoundName(&ceiling->sector->soundorg, "DoorMove", CHAN_VOICE);
+				SectorStartSoundName(ceiling->sector, "DoorMove", CHAN_VOICE);
 			if (res == RES_PASTDEST)
 				switch(ceiling->type)
 				{
@@ -213,7 +213,8 @@ int EV_DoCeiling(line_t *line, int *args, int type)
 		// new door thinker
 		//
 		rtn = 1;
-		ceiling = NewSpecialThinker(T_MoveCeiling);
+		ceiling = NewSpecialThinker(special_t);
+		ceiling->function = T_MoveCeiling;
 		sec->specialdata = ceiling;
 		ceiling->sector = sec;
 		ceiling->crush = false;
@@ -314,9 +315,12 @@ int	EV_CeilingCrushStop(line_t* line, int *args)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.3  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:52  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

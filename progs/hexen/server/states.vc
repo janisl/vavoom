@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	States table
@@ -352,9 +348,9 @@ __states__
 	S_FLAME_LARGE16 {"FFLG", 13 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_FLAME_LARGE17}
 	S_FLAME_LARGE17 {"FFLG", 14 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_FLAME_LARGE18}
 	S_FLAME_LARGE18 {"FFLG", 15 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_FLAME_LARGE7}
-	S_ITEM_PTN1_1 {"PTN1", 0, 3.0 / 35.0, NULL, S_ITEM_PTN1_2}
-	S_ITEM_PTN1_2 {"PTN1", 1, 3.0 / 35.0, NULL, S_ITEM_PTN1_3}
-	S_ITEM_PTN1_3 {"PTN1", 2, 3.0 / 35.0, NULL, S_ITEM_PTN1_1}
+	S_ITEM_PTN1_1 {"PTN1", 0, "items/hboost.md2", 0, 3.0 / 35.0, NULL, S_ITEM_PTN1_2}
+	S_ITEM_PTN1_2 {"PTN1", 1, "items/hboost.md2", 0, 3.0 / 35.0, NULL, S_ITEM_PTN1_3}
+	S_ITEM_PTN1_3 {"PTN1", 2, "items/hboost.md2", 0, 3.0 / 35.0, NULL, S_ITEM_PTN1_1}
 	S_HIDESPECIAL1 {"ACLO", 4, 1400.0 / 35.0, NULL, S_HIDESPECIAL2}
 	S_HIDESPECIAL2 {"ACLO", 0, 4.0 / 35.0, A_RestoreSpecialThing1, S_HIDESPECIAL3}
 	S_HIDESPECIAL3 {"ACLO", 1, 4.0 / 35.0, NULL, S_HIDESPECIAL4}
@@ -439,9 +435,9 @@ __states__
 	S_DEADARTI8 {"ACLO", 0, 3.0 / 35.0, NULL, S_DEADARTI9}
 	S_DEADARTI9 {"ACLO", 1, 3.0 / 35.0, NULL, S_DEADARTI10}
 	S_DEADARTI10 {"ACLO", 0, 3.0 / 35.0, NULL, S_NULL}
-	S_ARTI_PTN2_1 {"PTN2", 0, 4.0 / 35.0, NULL, S_ARTI_PTN2_2}
-	S_ARTI_PTN2_2 {"PTN2", 1, 4.0 / 35.0, NULL, S_ARTI_PTN2_3}
-	S_ARTI_PTN2_3 {"PTN2", 2, 4.0 / 35.0, NULL, S_ARTI_PTN2_1}
+	S_ARTI_PTN2_1 {"PTN2", 0, "artifact/hboost.md2", 0, 4.0 / 35.0, NULL, S_ARTI_PTN2_2}
+	S_ARTI_PTN2_2 {"PTN2", 1, "artifact/hboost.md2", 0, 4.0 / 35.0, NULL, S_ARTI_PTN2_3}
+	S_ARTI_PTN2_3 {"PTN2", 2, "artifact/hboost.md2", 0, 4.0 / 35.0, NULL, S_ARTI_PTN2_1}
 	S_ARTI_SOAR1 {"SOAR", 0, 5.0 / 35.0, NULL, S_ARTI_SOAR2}
 	S_ARTI_SOAR2 {"SOAR", 1, 5.0 / 35.0, NULL, S_ARTI_SOAR3}
 	S_ARTI_SOAR3 {"SOAR", 2, 5.0 / 35.0, NULL, S_ARTI_SOAR4}
@@ -860,9 +856,9 @@ __states__
 	S_ZROCK2_1 {"RCK2", 0, -1.0, NULL, S_NULL}
 	S_ZROCK3_1 {"RCK3", 0, -1.0, NULL, S_NULL}
 	S_ZROCK4_1 {"RCK4", 0, -1.0, NULL, S_NULL}
-	S_ZCHANDELIER1 {"CDLR", 0, 4.0 / 35.0, NULL, S_ZCHANDELIER2}
-	S_ZCHANDELIER2 {"CDLR", 1, 4.0 / 35.0, NULL, S_ZCHANDELIER3}
-	S_ZCHANDELIER3 {"CDLR", 2, 4.0 / 35.0, NULL, S_ZCHANDELIER1}
+	S_ZCHANDELIER1 {"CDLR", 0, "objects/chandelr.md2", 0, 4.0 / 35.0, NULL, S_ZCHANDELIER2}
+	S_ZCHANDELIER2 {"CDLR", 1, "objects/chandelr.md2", 0, 4.0 / 35.0, NULL, S_ZCHANDELIER3}
+	S_ZCHANDELIER3 {"CDLR", 2, "objects/chandelr.md2", 0, 4.0 / 35.0, NULL, S_ZCHANDELIER1}
 	S_ZCHANDELIER_U {"CDLR", 3, -1.0, NULL, S_NULL}
 	S_ZTREEDEAD1 {"TRE1", 0, -1.0, NULL, S_NULL}
 	S_ZTREE {"TRE1", 0, -1.0, NULL, S_NULL}
@@ -1051,7 +1047,7 @@ __states__
 	S_ZWALLTORCH7 {"WLTR", 6 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ZWALLTORCH8}
 	S_ZWALLTORCH8 {"WLTR", 7 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ZWALLTORCH1}
 	S_ZWALLTORCH_U {"WLTR", 8, -1.0, NULL, S_NULL}
-	S_ZBARREL1 {"BARL", 0, -1.0, NULL, S_NULL}
+	S_ZBARREL1 {"BARL", 0, "objects/barrel.md2", 0, -1.0, NULL, S_NULL}
 	S_ZSHRUB1 {"SHB1", 0, -1.0, NULL, S_NULL}
 	S_ZSHRUB1_DIE {"SHB1", 0, 1.0 / 35.0, A_TreeDeath, S_ZSHRUB1}
 	S_ZSHRUB1_X1 {"SHB1", 1 | FF_FULLBRIGHT, 7.0 / 35.0, NULL, S_ZSHRUB1_X2}
@@ -1429,7 +1425,7 @@ __states__
 	S_CMACEATK_15 {"CMCE", 0, 1.0 / 35.0, NULL, S_CMACEATK_16, 8.0, 55.0}
 	S_CMACEATK_16 {"CMCE", 0, 2.0 / 35.0, NULL, S_CMACEATK_17, 8.0, 50.0}
 	S_CMACEATK_17 {"CMCE", 0, 1.0 / 35.0, NULL, S_CMACEREADY, 8.0, 45.0}
-	S_CSTAFF {"WCSS", 0, -1.0, NULL, S_NULL}
+	S_CSTAFF {"WCSS", 0, "weapons/g_staff.md2", 0, -1.0, NULL, S_NULL}
 	S_CSTAFFREADY {"CSSF", 2, 4.0 / 35.0, NULL, S_CSTAFFREADY1}
 	S_CSTAFFREADY1 {"CSSF", 1, 3.0 / 35.0, A_CStaffInitBlink, S_CSTAFFREADY2}
 	S_CSTAFFREADY2 {"CSSF", 0, 1.0 / 35.0, A_WeaponReady, S_CSTAFFREADY3}
@@ -2579,47 +2575,47 @@ __states__
 	S_ARMOR_2 {"ARM2", 0, -1.0, NULL, S_NULL}
 	S_ARMOR_3 {"ARM3", 0, -1.0, NULL, S_NULL}
 	S_ARMOR_4 {"ARM4", 0, -1.0, NULL, S_NULL}
-	S_MANA1_1 {"MAN1", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_2}
-	S_MANA1_2 {"MAN1", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_3}
-	S_MANA1_3 {"MAN1", 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_4}
-	S_MANA1_4 {"MAN1", 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_5}
-	S_MANA1_5 {"MAN1", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_6}
-	S_MANA1_6 {"MAN1", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_7}
-	S_MANA1_7 {"MAN1", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_8}
-	S_MANA1_8 {"MAN1", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_9}
-	S_MANA1_9 {"MAN1", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA1_1}
-	S_MANA2_1 {"MAN2", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_2}
-	S_MANA2_2 {"MAN2", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_3}
-	S_MANA2_3 {"MAN2", 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_4}
-	S_MANA2_4 {"MAN2", 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_5}
-	S_MANA2_5 {"MAN2", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_6}
-	S_MANA2_6 {"MAN2", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_7}
-	S_MANA2_7 {"MAN2", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_8}
-	S_MANA2_8 {"MAN2", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_9}
-	S_MANA2_9 {"MAN2", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_10}
-	S_MANA2_10 {"MAN2", 9 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_11}
-	S_MANA2_11 {"MAN2", 10 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_12}
-	S_MANA2_12 {"MAN2", 11 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_13}
-	S_MANA2_13 {"MAN2", 12 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_14}
-	S_MANA2_14 {"MAN2", 13 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_15}
-	S_MANA2_15 {"MAN2", 14 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_16}
-	S_MANA2_16 {"MAN2", 15 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA2_1}
-	S_MANA3_1 {"MAN3", 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_2}
-	S_MANA3_2 {"MAN3", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_3}
-	S_MANA3_3 {"MAN3", 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_4}
-	S_MANA3_4 {"MAN3", 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_5}
-	S_MANA3_5 {"MAN3", 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_6}
-	S_MANA3_6 {"MAN3", 5 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_7}
-	S_MANA3_7 {"MAN3", 6 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_8}
-	S_MANA3_8 {"MAN3", 7 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_9}
-	S_MANA3_9 {"MAN3", 8 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_10}
-	S_MANA3_10 {"MAN3", 9 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_11}
-	S_MANA3_11 {"MAN3", 10 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_12}
-	S_MANA3_12 {"MAN3", 11 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_13}
-	S_MANA3_13 {"MAN3", 12 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_14}
-	S_MANA3_14 {"MAN3", 13 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_15}
-	S_MANA3_15 {"MAN3", 14 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_16}
-	S_MANA3_16 {"MAN3", 15 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MANA3_1}
+	S_MANA1_1 {"MAN1", 0 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_2}
+	S_MANA1_2 {"MAN1", 1 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_3}
+	S_MANA1_3 {"MAN1", 2 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_4}
+	S_MANA1_4 {"MAN1", 3 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_5}
+	S_MANA1_5 {"MAN1", 4 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_6}
+	S_MANA1_6 {"MAN1", 5 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_7}
+	S_MANA1_7 {"MAN1", 6 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_8}
+	S_MANA1_8 {"MAN1", 7 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_9}
+	S_MANA1_9 {"MAN1", 8 | FF_FULLBRIGHT, "mana/blue.md2", 0, 4.0 / 35.0, NULL, S_MANA1_1}
+	S_MANA2_1 {"MAN2", 0 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_2}
+	S_MANA2_2 {"MAN2", 1 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_3}
+	S_MANA2_3 {"MAN2", 2 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_4}
+	S_MANA2_4 {"MAN2", 3 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_5}
+	S_MANA2_5 {"MAN2", 4 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_6}
+	S_MANA2_6 {"MAN2", 5 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_7}
+	S_MANA2_7 {"MAN2", 6 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_8}
+	S_MANA2_8 {"MAN2", 7 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_9}
+	S_MANA2_9 {"MAN2", 8 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_10}
+	S_MANA2_10 {"MAN2", 9 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_11}
+	S_MANA2_11 {"MAN2", 10 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_12}
+	S_MANA2_12 {"MAN2", 11 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_13}
+	S_MANA2_13 {"MAN2", 12 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_14}
+	S_MANA2_14 {"MAN2", 13 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_15}
+	S_MANA2_15 {"MAN2", 14 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_16}
+	S_MANA2_16 {"MAN2", 15 | FF_FULLBRIGHT, "mana/green.md2", 0, 4.0 / 35.0, NULL, S_MANA2_1}
+	S_MANA3_1 {"MAN3", 0 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_2}
+	S_MANA3_2 {"MAN3", 1 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_3}
+	S_MANA3_3 {"MAN3", 2 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_4}
+	S_MANA3_4 {"MAN3", 3 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_5}
+	S_MANA3_5 {"MAN3", 4 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_6}
+	S_MANA3_6 {"MAN3", 5 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_7}
+	S_MANA3_7 {"MAN3", 6 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_8}
+	S_MANA3_8 {"MAN3", 7 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_9}
+	S_MANA3_9 {"MAN3", 8 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_10}
+	S_MANA3_10 {"MAN3", 9 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_11}
+	S_MANA3_11 {"MAN3", 10 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_12}
+	S_MANA3_12 {"MAN3", 11 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_13}
+	S_MANA3_13 {"MAN3", 12 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_14}
+	S_MANA3_14 {"MAN3", 13 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_15}
+	S_MANA3_15 {"MAN3", 14 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_16}
+	S_MANA3_16 {"MAN3", 15 | FF_FULLBRIGHT, "mana/combined.md2", 0, 4.0 / 35.0, NULL, S_MANA3_1}
 	S_KEY1 {"KEY1", 0, -1.0, NULL, S_NULL}
 	S_KEY2 {"KEY2", 0, -1.0, NULL, S_NULL}
 	S_KEY3 {"KEY3", 0, -1.0, NULL, S_NULL}
@@ -3109,3 +3105,14 @@ __states__
 	S_BAT3 {"ABAT", 2, 2.0 / 35.0, A_BatMove, S_BAT1}
 	S_BAT_DEATH {"ABAT", 0, 2.0 / 35.0, NULL, S_NULL}
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:20:00  dj_jl
+//	Start using object-oriented stuff, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

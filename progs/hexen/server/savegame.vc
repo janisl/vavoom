@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 void G_DeathMatchSpawnPlayer(int playernum);
@@ -54,25 +50,25 @@ void UnarchivePlayer(player_t *player)
 
 //==========================================================================
 //
-//	ArchiveMobj
+//	mobj_t::Archive
 //
 //==========================================================================
 
-void ArchiveMobj(mobj_t *mobj)
+void mobj_t::Archive(void)
 {
 	boolean corpse;
 
-	corpse = mobj->flags & MF_CORPSE;
+	corpse = flags & MF_CORPSE;
 	if (corpse)
 	{
-		mobj->target = MobjToNum(NULL);
+		target = MobjToNum(NULL);
 	}
 	else
 	{
-		mobj->target = MobjToNum(mobj->target);
+		target = MobjToNum(target);
 	}
 
-	switch (mobj->type)
+	switch (type)
 	{
 		// Just specialmobj1
 		case MT_BISH_FX:
@@ -85,11 +81,11 @@ void ArchiveMobj(mobj_t *mobj)
 		case MT_MSTAFF_FX2:
 			if (corpse)
 			{
-				mobj->specialmobj1 = MobjToNum(NULL);
+				specialmobj1 = MobjToNum(NULL);
 			}
 			else
 			{
-				mobj->specialmobj1 = MobjToNum(mobj->specialmobj1);
+				specialmobj1 = MobjToNum(specialmobj1);
 			}
 			break;
 
@@ -98,11 +94,11 @@ void ArchiveMobj(mobj_t *mobj)
 		case MT_LIGHTNING_ZAP:
 			if (corpse)
 			{
-				mobj->specialmobj2 = MobjToNum(NULL);
+				specialmobj2 = MobjToNum(NULL);
 			}
 			else
 			{
-				mobj->specialmobj2 = MobjToNum(mobj->specialmobj2);
+				specialmobj2 = MobjToNum(specialmobj2);
 			}
 			break;
 
@@ -111,19 +107,19 @@ void ArchiveMobj(mobj_t *mobj)
 		case MT_LIGHTNING_CEILING:
 			if (corpse)
 			{
-				mobj->specialmobj1 = MobjToNum(NULL);
-				mobj->specialmobj2 = MobjToNum(NULL);
+				specialmobj1 = MobjToNum(NULL);
+				specialmobj2 = MobjToNum(NULL);
 			}
 			else
 			{
-				mobj->specialmobj1 = MobjToNum(mobj->specialmobj1);
-				mobj->specialmobj2 = MobjToNum(mobj->specialmobj2);
+				specialmobj1 = MobjToNum(specialmobj1);
+				specialmobj2 = MobjToNum(specialmobj2);
 			}
 			break;
 
 		// Miscellaneous
 		case MT_KORAX:
-			mobj->special1 = 0; // Searching index
+			special1 = 0; // Searching index
 			break;
 
 		default:
@@ -133,14 +129,14 @@ void ArchiveMobj(mobj_t *mobj)
 
 //==========================================================================
 //
-//	UnarchiveMobj
+//	mobj_t::Unarchive
 //
 //==========================================================================
 
-void UnarchiveMobj(mobj_t *mobj)
+void mobj_t::Unarchive(void)
 {
-	mobj->target = NumToMobj(mobj->target);
-	switch (mobj->type)
+	target = NumToMobj(target);
+	switch (type)
 	{
 		// Just specialmobj1
 		case MT_BISH_FX:
@@ -150,20 +146,20 @@ void UnarchiveMobj(mobj_t *mobj)
 		case MT_THRUSTFLOOR_DOWN:
 		case MT_MINOTAUR:
 		case MT_SORCFX1:
-			mobj->specialmobj1 = NumToMobj(mobj->specialmobj1);
+			specialmobj1 = NumToMobj(specialmobj1);
 			break;
 
 		// Just special2
 		case MT_LIGHTNING_FLOOR:
 		case MT_LIGHTNING_ZAP:
-			mobj->specialmobj2 = NumToMobj(mobj->specialmobj2);
+			specialmobj2 = NumToMobj(specialmobj2);
 			break;
 
 		// Both special1 and special2
 		case MT_HOLY_TAIL:
 		case MT_LIGHTNING_CEILING:
-			mobj->specialmobj1 = NumToMobj(mobj->specialmobj1);
-			mobj->specialmobj2 = NumToMobj(mobj->specialmobj2);
+			specialmobj1 = NumToMobj(specialmobj1);
+			specialmobj2 = NumToMobj(specialmobj2);
 			break;
 
 		default:
@@ -173,54 +169,64 @@ void UnarchiveMobj(mobj_t *mobj)
 
 //==========================================================================
 //
-//  ArchiveSpecial
+//  special_t::Archive
 //
 //==========================================================================
 
-void ArchiveSpecial(special_t *spec)
+void special_t::Archive(void)
 {
-	spec->sector = SectorToNum(spec->sector);
+	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//  UnarchiveSpecial
+//  special_t::Unarchive
 //
 //==========================================================================
 
-void UnarchiveSpecial(special_t *spec)
+void special_t::Unarchive(void)
 {
 	//	Restore sector pointer
-	spec->sector = NumToSector(spec->sector);
+	sector = NumToSector(sector);
 
 	//	Set sector's specialdata
-	if (spec->function == T_MoveCeiling ||
-		spec->function == T_VerticalDoor ||
-		spec->function == T_MoveFloor ||
-    	spec->function == T_PlatRaise ||
-        spec->function == T_BuildPillar ||
-        //spec->function == T_FloorWaggle ||
+	if (function == T_MoveCeiling ||
+		function == T_VerticalDoor ||
+		function == T_MoveFloor ||
+    	function == T_PlatRaise ||
+        function == T_BuildPillar ||
+        //function == T_FloorWaggle ||
 		false)
 	{
-		spec->sector->specialdata = spec;
+		sector->specialdata = this;
 	}
 
 	//	Add to active ceilings
-	if (spec->function == T_MoveCeiling)
+	if (function == T_MoveCeiling)
 	{
-		P_AddActiveCeiling(spec);
+		P_AddActiveCeiling(this);
 	}
 
 	//	Add to active floors
-	if (spec->function == T_MoveFloor)
+	if (function == T_MoveFloor)
 	{
-		AddActiveFloor(spec);
+		AddActiveFloor(this);
 	}
 
 	//	Add to active plats
-	if (spec->function == T_PlatRaise)
+	if (function == T_PlatRaise)
     {
-		P_AddActivePlat(spec);
+		P_AddActivePlat(this);
     }
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:20:00  dj_jl
+//	Start using object-oriented stuff, beautification
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -167,7 +167,7 @@ void MovePlayer(player_t* player)
 				if (player->mo->velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
-					S_StopSound(player->mo, CHAN_AUTO);
+					StopSound(player->mo, CHAN_AUTO);
 				}
 			}
 		}
@@ -768,7 +768,7 @@ void PlayerThink(player_t* player)
 	{
 		case PCLASS_FIGHTER:
 			if (player->mo->velocity.z <= -35.0 * 35.0 && player->mo->velocity.z >= -40.0 * 35.0 &&
-				!player->morphTics && !S_GetSoundPlayingInfo(player->mo,
+				!player->morphTics && !GetSoundPlayingInfo(player->mo,
 				GetSoundID("PlayerFighterFallingScream")))
 			{
 				StartSoundName(player->mo, "PlayerFighterFallingScream", CHAN_VOICE);
@@ -776,7 +776,7 @@ void PlayerThink(player_t* player)
 			break;
 		case PCLASS_CLERIC:
 			if (player->mo->velocity.z <= -35.0 * 35.0 && player->mo->velocity.z >= -40.0 * 35.0 &&
-				!player->morphTics && !S_GetSoundPlayingInfo(player->mo,
+				!player->morphTics && !GetSoundPlayingInfo(player->mo,
 				GetSoundID("PlayerClericFallingScream")))
 			{
 				StartSoundName(player->mo, "PlayerClericFallingScream", CHAN_VOICE);
@@ -784,7 +784,7 @@ void PlayerThink(player_t* player)
 			break;
 		case PCLASS_MAGE:
 			if (player->mo->velocity.z <= -35.0 * 35.0 && player->mo->velocity.z >= -40.0 * 35.0 &&
-				!player->morphTics && !S_GetSoundPlayingInfo(player->mo,
+				!player->morphTics && !GetSoundPlayingInfo(player->mo,
 				GetSoundID("PlayerMageFallingScream")))
 			{
 				StartSoundName(player->mo, "PlayerMageFallingScream", CHAN_VOICE);
@@ -1208,7 +1208,7 @@ boolean UseArtifact(player_t *player, int arti)
 			}
 			if (player->mo->velocity.z <= -35.0 * 35.0)
 			{ // stop falling scream
-				S_StopSound(player->mo, CHAN_AUTO);
+				StopSound(player->mo, CHAN_AUTO);
 			}
 			break;
 		case arti_teleport:
@@ -1859,9 +1859,12 @@ void UserinfoChanged(player_t *player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/20 16:20:00  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.5  2001/08/31 17:17:23  dj_jl
 //	Removed vector macros
-//
+//	
 //	Revision 1.4  2001/08/30 17:33:17  dj_jl
 //	Added sound channels
 //	

@@ -142,7 +142,11 @@ extern float TextureHeight(int pic);
 //	Message IO functions
 //
 
+#ifdef SERVER
 extern void MSG_Select(int msgtype, player_t *client);
+#else
+extern void MSG_Select(int msgtype, void *client);
+#endif
 extern void MSG_WriteByte(int data);
 extern void MSG_WriteShort(int data);
 extern void MSG_WriteLong(int data);
@@ -322,7 +326,7 @@ extern boolean P_CheckSight(mobj_t *mobj1, mobj_t *mobj2);
 //	Special thinker utilites
 //
 
-extern special_t *NewSpecialThinker(special_func_t function);
+extern void *NewSpecialThinker(classid);
 extern void RemoveSpecialThinker(special_t *spec);
 extern void P_ChangeSwitchTexture(line_t* line, int useAgain);
 
@@ -347,20 +351,26 @@ extern boolean SuspendACS(int number, int map);
 extern boolean TerminateACS(int number, int map);
 extern void TagFinished(int tag);
 extern void PolyobjFinished(int po);
+extern void ACS::Think(void);
 
 //
 //	Sound functions
 //
 
-extern void StartSound(degenmobj_t *mobj, int sound, int channel);
+extern void StartSound(mobj_t *mobj, int sound, int channel);
 extern void StartSoundAtVolume(mobj_t *mobj, int sound, int channel, int volume);
-extern void StopSound(degenmobj_t *mobj, int channel);
+extern void StopSound(mobj_t *mobj, int channel);
+extern void SectorStartSound(sector_t *sec, int sound, int channel);
+extern void SectorStopSound(sector_t *sec, int channel);
 extern boolean GetSoundPlayingInfo(mobj_t *mobj, int sound_id);
 extern int GetSoundID(string name);
-extern void StartSequence(degenmobj_t *mobj, string sequence);
-extern void StopSequence(degenmobj_t *mobj);
+extern void SectorStartSequence(sector_t *sector, string sequence);
+extern void SectorStopSequence(sector_t *sector);
+extern void PolyobjStartSequence(polyobj_t *mobj, string sequence);
+extern void PolyobjStopSequence(polyobj_t *mobj);
 
 #define StartSoundName(origin, name, channel)	StartSound(origin, GetSoundID(name), channel)
+#define SectorStartSoundName(sec, name, channel)	SectorStartSound(sec, GetSoundID(name), channel)
 
 //
 //  Savegame archieve / unarchieve utilite functions
@@ -370,11 +380,6 @@ extern sector_t *SectorToNum(sector_t *sector);
 extern sector_t *NumToSector(sector_t *sector);
 extern mobj_t *MobjToNum(mobj_t *mobj);
 extern mobj_t *NumToMobj(mobj_t *mobj);
-
-#define S_StartSound			StartSound
-#define S_StopSound         	StopSound
-#define S_GetSoundPlayingInfo   GetSoundPlayingInfo
-#define S_GetSoundID            GetSoundID
 
 extern void G_ExitLevel(void);
 extern void G_SecretExitLevel(void);
@@ -392,14 +397,20 @@ extern void SetLineTransluc(line_t *line, int trans);
 extern void SendFloorSlope(sector_t *sector);
 extern void SendCeilingSlope(sector_t *sector);
 
+extern void *Spawn(classid cid);
+extern void Destroy(void *ptr);
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.6  2001/08/29 17:42:11  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.5  2001/08/23 17:38:55  dj_jl
 //	Fixed Heretic episode 2 finale
 //	

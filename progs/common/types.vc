@@ -26,21 +26,13 @@
 typedef int boolean;
 typedef uint angle_t;
 
-struct special_t;
 struct sector_t;
 struct line_t;
-struct mobj_t;
 struct subsector_t;
-struct player_t;
-struct mthing_t;
-
-typedef void (*special_func_t)(special_t *);
-typedef void (*mobj_func_t)(mobj_t *);
-typedef void (*spawnfunc_t)(mobj_t *, mthing_t*);
-typedef boolean (*thing_iter_func_t)(mobj_t *);
-typedef boolean (*line_iter_func_t)(line_t *);
-// Weapon info: sprite frames, ammunition use.
-typedef void (*weapon_func_t)(player_t *);
+#ifdef SERVER
+class special_t;
+class mobj_t;
+#endif
 
 //==========================================================================
 //
@@ -73,31 +65,6 @@ struct TPlane
 //	Level
 //
 //==========================================================================
-
-struct thinker_t
-{
-	void		*__prev;
-    void		*__next;
-	void		*real_function;
-};
-
-//
-//	Level special
-//
-struct special_t : thinker_t
-{
-	special_func_t	function;
-	addfields 128;
-};
-
-//
-//	Each sector has a degenmobj_t in its center for sound origin purposes.
-//
-struct degenmobj_t : thinker_t
-{
-    // Info for drawing: position.
-	TVec		origin;
-};
 
 //
 // LineDef
@@ -133,8 +100,12 @@ struct line_t : TPlane
     // if == validcount, already checked
     int         validcount;
 
-    // thinker_t for reversable actions
-    special_t	*__specialdata;
+	// thinker_t for reversable actions
+#ifdef SERVER
+	special_t	*__specialdata;
+#else
+	void		*__specialdata;
+#endif
 
 	int			translucency;
 
@@ -236,8 +207,12 @@ struct sector_t
     // 0 = untraversed, 1,2 = sndlines -1
     int         soundtraversed;
 
-    // thing that made a sound (or null)
-    mobj_t		*soundtarget;
+	// thing that made a sound (or null)
+#ifdef SERVER
+	mobj_t		*soundtarget;
+#else
+	void		*__soundtarget;
+#endif
 
     // stone, metal, heavy, etc...
 	int			seqType;
@@ -245,14 +220,18 @@ struct sector_t
     // mapblock bounding box for height changes
     int         blockbox[4];
 
-    // origin for any sounds played by the sector
-    degenmobj_t soundorg;
+	// origin for any sounds played by the sector
+	TVec		soundorg;
 
     // if == validcount, already checked
     int         validcount;
 
-    // thinker_t for reversable actions
-    special_t	*specialdata;
+	// thinker_t for reversable actions
+#ifdef SERVER
+	special_t	*specialdata;
+#else
+	void		*__specialdata;
+#endif
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
@@ -269,7 +248,7 @@ struct polyobj_t
 {
 	int 		__numsegs;
 	void 		*__segs;
-	degenmobj_t startSpot;
+	TVec		startSpot;
 	void	 	*__originalPts; 	// used as the base for the rotations
 	void	 	*__prevPts; 		// use to restore the old point values
 	angle_t 	angle;
@@ -278,12 +257,36 @@ struct polyobj_t
 	int 		validcount;
 	boolean 	crush; 			// should the polyobj attempt to crush mobjs?
 	int 		seqType;
+#ifdef SERVER
 	special_t	*specialdata; 	// pointer a thinker, if the poly is moving
+#else
+	void		*__specialdata; 	// pointer a thinker, if the poly is moving
+#endif
 	subsector_t	*__subsector;
 	float		__base_x;
 	float		__base_y;
 	angle_t		__base_angle;
 	boolean		__changed;
+};
+
+//
+// Map thing definition with initialised fields for global use.
+//
+struct mthing_t
+{
+	int 		tid;
+	float		x;
+	float		y;
+	float		height;
+	int 		angle;
+	int			type;
+	int			options;
+	int 		special;
+	int 		arg1;
+	int 		arg2;
+	int 		arg3;
+	int 		arg4;
+	int 		arg5;
 };
 
 //
@@ -303,6 +306,163 @@ struct subsector_t
 	int			__visframe;
 	void		*__regions;
 };
+
+struct level_t
+{
+	//
+	// MAP related Lookup tables.
+	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
+	//
+	// Lookup tables for map data.
+	int			__numvertexes;
+	void		*__vertexes;
+
+	int			__numsegs;
+	void		*__segs;
+
+	int			numsectors;
+	sector_t	*sectors;
+
+	int			__numsubsectors;
+	void		*__subsectors;
+
+	int			__numnodes;
+	void		*__nodes;
+
+	int			numlines;
+	line_t		*lines;
+
+	int			numsides;
+	side_t		*sides;
+
+	int 		__numpolyobjs;
+	void		*__polyobjs; // list of all poly-objects on the level
+
+	// !!! Valid only during level loading
+	int			numthings;
+	mthing_t	*things;
+	int			*behavior;
+
+    //
+	//	BLOCKMAP
+	//	Created from axis aligned bounding box of the map, a rectangular
+	// array of blocks of size ...
+	// Used to speed up collision detection by spatial subdivision in 2D.
+	//
+	void		*__blockmaplump;	// offsets in blockmap are from here
+	void		*__blockmap;		// int for larger maps
+	int			bmapwidth;      // Blockmap size.
+	int			bmapheight;     // size in mapblocks
+	float		bmaporgx;       // origin of block map
+	float		bmaporgy;
+#ifdef SERVER
+	mobj_t		**blocklinks;	// for thing chains
+#define BlockLink(num)	level->blocklinks[num]
+#else
+	void		**__blocklinks;	// for thing chains
+#endif
+	void		*__PolyBlockMap;
+
+	//
+	//	REJECT
+	//	For fast sight rejection.
+	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+	// 	Without special effect, this could be used as a PVS lookup as well.
+	//
+	void		*__rejectmatrix;
+
+	// Maintain single and multi player starting spots.
+	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
+	int			numdeathmatchstarts;
+	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
+
+	float		time;
+	int			tictime;
+
+	int			totalkills;
+	int			totalitems;
+	int			totalsecret;    // for intermission
+ 
+	int			__thinkers[3];// both the head and tail of the thinker list
+
+	int			mapname[3];
+	int			__nextmap[3];
+	int			__level_name[8];
+
+	void		*__vis_data;
+};
+
+//**************************************************************************
+//
+//  Server types
+//
+//**************************************************************************
+
+#ifdef SERVER
+
+struct player_t;
+
+typedef void (*mobj_func_t)(mobj_t *);
+typedef void (*spawnfunc_t)(mobj_t *, mthing_t*);
+typedef boolean (*thing_iter_func_t)(mobj_t *);
+typedef boolean (*line_iter_func_t)(line_t *);
+// Weapon info: sprite frames, ammunition use.
+typedef void (*weapon_func_t)(player_t *);
+
+//==========================================================================
+//
+//	Thinkers
+//
+//==========================================================================
+
+class thinker_t
+{
+	void		*__prev;
+    void		*__next;
+	boolean		destroyed;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+void thinker_t::Think(void)
+{
+}
+
+void thinker_t::Archive(void)
+{
+}
+
+void thinker_t::Unarchive(void)
+{
+}
+
+//==========================================================================
+//
+//	Level special
+//
+//==========================================================================
+
+class special_t;
+
+typedef void (*special_func_t)(special_t *);
+
+class special_t : thinker_t
+{
+	special_func_t	function;
+
+	addfields 127;//HACK
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+void special_t::Think(void)
+{
+	function(this);
+}
 
 //==========================================================================
 //
@@ -358,26 +518,6 @@ struct subsector_t
 //
 //==========================================================================
 
-//
-// Map thing definition with initialised fields for global use.
-//
-struct mthing_t
-{
-	int 		tid;
-	float		x;
-	float		y;
-	float		height;
-	int 		angle;
-	int			type;
-	int			options;
-	int 		special;
-	int 		arg1;
-	int 		arg2;
-	int 		arg3;
-	int 		arg4;
-	int 		arg5;
-};
-
 struct state_t
 {
 	int			sprite;
@@ -399,8 +539,11 @@ struct mobjinfo_t
 };
 
 // Map Object definition.
-struct mobj_t : degenmobj_t
+class mobj_t : thinker_t
 {
+    // Info for drawing: position.
+	TVec			origin;
+
     // Momentums, used to update position.
 	TVec			velocity;
 
@@ -467,94 +610,24 @@ struct mobj_t : degenmobj_t
 
 	//	128 integers for user defined fields in PROGS
 	addfields 128;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
 };
+
+void P_MobjThinker(mobj_t *mobj);
+
+void mobj_t::Think(void)
+{
+	P_MobjThinker(this);
+}
 
 addfields mobj_t
 {
     float			time;	// state tic counter
 	int				statenum;
 	int				nextstate;
-};
-
-struct level_t
-{
-	//
-	// MAP related Lookup tables.
-	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
-	//
-	// Lookup tables for map data.
-	int			__numvertexes;
-	void		*__vertexes;
-
-	int			__numsegs;
-	void		*__segs;
-
-	int			numsectors;
-	sector_t	*sectors;
-
-	int			__numsubsectors;
-	void		*__subsectors;
-
-	int			__numnodes;
-	void		*__nodes;
-
-	int			numlines;
-	line_t		*lines;
-
-	int			numsides;
-	side_t		*sides;
-
-	int 		__numpolyobjs;
-	void		*__polyobjs; // list of all poly-objects on the level
-
-	// !!! Valid only during level loading
-	int			numthings;
-	mthing_t	*things;
-	int			*behavior;
-
-    //
-	//	BLOCKMAP
-	//	Created from axis aligned bounding box of the map, a rectangular
-	// array of blocks of size ...
-	// Used to speed up collision detection by spatial subdivision in 2D.
-	//
-	void		*__blockmaplump;	// offsets in blockmap are from here
-	void		*__blockmap;		// int for larger maps
-	int			bmapwidth;      // Blockmap size.
-	int			bmapheight;     // size in mapblocks
-	float		bmaporgx;       // origin of block map
-	float		bmaporgy;
-	mobj_t		**blocklinks;	// for thing chains
-#define BlockLink(num)	level->blocklinks[num]
-	void		*__PolyBlockMap;
-
-	//
-	//	REJECT
-	//	For fast sight rejection.
-	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-	// 	Without special effect, this could be used as a PVS lookup as well.
-	//
-	void		*__rejectmatrix;
-
-	// Maintain single and multi player starting spots.
-	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
-	int			numdeathmatchstarts;
-	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
-
-	float		time;
-	int			tictime;
-
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;    // for intermission
- 
-	int			__thinkers[3];// both the head and tail of the thinker list
-
-	int			mapname[3];
-	int			__nextmap[3];
-	int			__level_name[8];
-
-	void		*__vis_data;
 };
 
 //==========================================================================
@@ -697,11 +770,40 @@ struct intercept_t
 
 typedef boolean (*trav_func_t)(intercept_t*);
 
+//==========================================================================
+//
+//	ACS
+//
+//==========================================================================
+
+#define MAX_ACS_SCRIPT_VARS	10
+#define ACS_STACK_DEPTH 	32
+
+class ACS : thinker_t
+{
+	mobj_t 		*activator;
+	line_t 		*line;
+	int 		side;
+	int 		number;
+	int 		infoIndex;
+	int 		delayCount;
+	int 		stack[ACS_STACK_DEPTH];
+	int			stackPtr;
+	int 		vars[MAX_ACS_SCRIPT_VARS];
+	int 		*ip;
+
+	void Think(void);
+};
+
+#endif
+
 //**************************************************************************
-//**
-//**	Client side stuff
-//**
+//
+//  Client types
+//
 //**************************************************************************
+
+#ifdef CLIENT
 
 struct sb_widget_t
 {
@@ -907,12 +1009,17 @@ struct clmobj_t
 	int			effects;
 };
 
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/20 16:19:59  dj_jl
+//	Start using object-oriented stuff, beautification
+//
 //	Revision 1.6  2001/08/29 17:42:12  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.5  2001/08/15 17:07:10  dj_jl
 //	Fixed finale
 //
