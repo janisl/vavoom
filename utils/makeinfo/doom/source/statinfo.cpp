@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.4  2001/08/01 17:48:14  dj_jl
+//**	Fixed plasma model
+//**
 //**	Revision 1.3  2001/07/31 17:05:04  dj_jl
 //**	Added all available Doom models
-//**
+//**	
 //**	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //**	Update with Id-s and Log-s, some fixes
 //**	
@@ -148,7 +151,7 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_PLSE,32769,4,SA1_NULL,S1_PLASEXP3,0,0},	// S1_PLASEXP2
     {SPR1_PLSE,32770,4,SA1_NULL,S1_PLASEXP4,0,0},	// S1_PLASEXP3
     {SPR1_PLSE,32771,4,SA1_NULL,S1_PLASEXP5,0,0},	// S1_PLASEXP4
-    {SPR1_PLSE,32772,4,SA1_NULL,S1_NULL,0,0,"missiles/plasma.md2",6},	// S1_PLASEXP5
+    {SPR1_PLSE,32772,4,SA1_NULL,S1_NULL,0,0},	// S1_PLASEXP5
     {SPR1_MISL,32768,1,SA1_NULL,S1_ROCKET,0,0,"missiles/rocket.md2",0},	// S1_ROCKET
     {SPR1_BFS1,32768,4,SA1_NULL,S1_BFGSHOT2,0,0},	// S1_BFGSHOT
     {SPR1_BFS1,32769,4,SA1_NULL,S1_BFGSHOT,0,0},	// S1_BFGSHOT2
