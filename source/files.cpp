@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -48,7 +44,8 @@ struct version_t
 	Game_t		game;
     boolean		shareware;
     const char	*mainwad;
-	const char	*wadfiles[MAXWADFILES];
+	const char	*basegame;
+	const char	*gamedir;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -70,143 +67,117 @@ char	fl_gamedir[MAX_OSPATH];
 
 static search_path_t	*searchpaths;
 
-const char	**wadfiles;
-static version_t	games[] =
+const char				*wadfiles[MAXWADFILES];
+static version_t		games[] =
 {
 	{
 		Doom,
         true,
         "doom1.wad",
-		{
-			"doom1.wad",
-			"basev/doomdat.wad",
-			"basev/jldoom.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/doom1",
 	},
 	{
 		Doom,
         false,
         "doom.wad",
-		{
-			"doom.wad",
-			"basev/doomdat.wad",
-			"basev/jldoom.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/doom1",
 	},
 	{
 		Doom,
         false,
         "doomu.wad",
-		{
-			"doomu.wad",
-			"basev/doomdat.wad",
-			"basev/jldoom.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/doom1",
 	},
 	{
 		Doom2,
         false,
         "doom2.wad",
-		{
-			"doom2.wad",
-			"basev/doom2dat.wad",
-			"basev/jldoom.wad",
-		    "basev/d2progs.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/doom2",
 	},
 	{
 		Doom2,
         false,
         "doom2f.wad",
-		{
-			"doom2f.wad",
-			"basev/doom2dat.wad",
-			"basev/jldoom.wad",
-		    "basev/d2progs.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/doom2",
 	},
 	{
 		Doom2,
         false,
         "tnt.wad",
-		{
-			"tnt.wad",
-			"basev/tntdat.wad",
-			"basev/jldoom.wad",
-		    "basev/d2progs.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/tnt",
 	},
 	{
 		Doom2,
         false,
         "plutonia.wad",
-		{
-			"plutonia.wad",
-			"basev/plutdat.wad",
-			"basev/jldoom.wad",
-		    "basev/d2progs.wad",
-			NULL
-		}
+		"basev/doom",
+		"basev/plutonia",
 	},
 	{
 		Heretic,
         true,
         "heretic1.wad",
-		{
-		    "heretic1.wad",
-		    "basev/hticdat.wad",
-			NULL
-		}
+		NULL,
+		"basev/heretic",
 	},
 	{
 		Heretic,
         false,
         "heretic.wad",
-		{
-			"heretic.wad",
-		    "basev/hticdat.wad",
-			NULL
-		}
+		NULL,
+		"basev/heretic",
 	},
 	{
 		Hexen,
         false,
         "hexen.wad",
-		{
-			"hexen.wad",
-		    "basev/hexendat.wad",
-		    NULL
-		}
+		NULL,
+		"basev/hexen",
 	},
 	{
 		Strife,
         true,
         "strife0.wad",
-		{
-			"strife0.wad",
-			"basev/strifdat.wad",
-		    NULL
-		}
+		NULL,
+		"basev/strife",
 	},
 	{
 		Strife,
         false,
         "strife1.wad",
-		{
-			"strife1.wad",
-			"basev/strifdat.wad",
-		    NULL
-		}
+		NULL,
+		"basev/strife",
 	}
 };
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	FL_AddFile
+//
+//==========================================================================
+
+void FL_AddFile(const char *file)
+{
+    int     i;
+    char    *newfile;
+
+    i = 0;
+    while (wadfiles[i])
+	{
+    	i++;
+	}
+    newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
+    strcpy(newfile, file);
+    wadfiles[i] = newfile;
+}
 
 //==========================================================================
 //
@@ -222,6 +193,16 @@ static void AddGameDir(const char *dir)
 	strcpy(info->path, dir);
 	info->next = searchpaths;
 	searchpaths = info;
+
+	for (int i = 0; i < 1024; i++)
+	{
+		char	buf[128];
+
+		sprintf(buf, "%s/wad%d.wad", dir, i);
+		if (!Sys_FileExists(buf))
+			break;
+		FL_AddFile(buf);
+	}
 
 	strcpy(fl_gamedir, dir);
 }
@@ -271,7 +252,10 @@ static void IdentifyVersion (void)
 	    {
 	        Game = games[i].game;
 	      	shareware = games[i].shareware;
-			wadfiles = games[i].wadfiles;
+			FL_AddFile(games[i].mainwad);
+			if (games[i].basegame)
+				AddGameDir(games[i].basegame);
+			AddGameDir(games[i].gamedir);
 	      	return;
 	    }
     }
@@ -291,13 +275,23 @@ static void IdentifyVersion (void)
 void FL_Init(void)
 {
 	AddGameDir("basev");
+
+	IdentifyVersion();
+
 	int p =	M_CheckParm("-game");
 	if (p && p < myargc - 1)
 	{
 		AddGameDir(myargv[p + 1]);
 	}
 
-	IdentifyVersion();
+	p = M_CheckParm("-file");
+	if (p)
+	{
+		while (++p != myargc && myargv[p][0] != '-' && myargv[p][0] != '+')
+		{
+			FL_AddFile(myargv[p]);
+		}
+	}
 }
 
 //==========================================================================
@@ -591,4 +585,13 @@ int TFile::Close(void)
 	return Sys_FileClose(handle);
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:08:37  dj_jl
+//	Reworking filesystem
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
