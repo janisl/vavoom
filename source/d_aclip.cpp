@@ -30,7 +30,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "d_local.h"
-#include "alias.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -41,6 +40,17 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+extern "C" {
+void D_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout);
+void D_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout);
+void D_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout);
+void D_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout);
+}
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -56,13 +66,13 @@ static auxvert_t		av[8];
 
 //==========================================================================
 //
-//	R_Alias_clip_z
+//	D_Alias_clip_z
 //
 //	pfv0 is the unclipped vertex, pfv1 is the z-clipped vertex
 //
 //==========================================================================
 
-static void R_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+static void D_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout)
 {
 	float		scale;
@@ -102,7 +112,7 @@ static void R_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *ou
 		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b) * scale);
 	}
 
-	R_AliasProjectFinalVert(out, &avout);
+	D_AliasProjectFinalVert(out, &avout);
 
 	if (out->u < 0)
 		out->flags |= ALIAS_LEFT_CLIP;
@@ -114,13 +124,15 @@ static void R_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *ou
 		out->flags |= ALIAS_BOTTOM_CLIP;
 }
 
+#ifndef USEASM
+
 //==========================================================================
 //
-//	R_Alias_clip_left
+//	D_Alias_clip_left
 //
 //==========================================================================
 
-static void R_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+extern "C" void D_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout)
 {
 	float		scale;
@@ -155,11 +167,11 @@ static void R_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t 
 
 //==========================================================================
 //
-//	R_Alias_clip_right
+//	D_Alias_clip_right
 //
 //==========================================================================
 
-static void R_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+extern "C" void D_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout)
 {
 	float		scale;
@@ -194,11 +206,11 @@ static void R_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t
 
 //==========================================================================
 //
-//	R_Alias_clip_top
+//	D_Alias_clip_top
 //
 //==========================================================================
 
-static void R_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+extern "C" void D_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout)
 {
 	float		scale;
@@ -233,11 +245,11 @@ static void R_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *
 
 //==========================================================================
 //
-//	R_Alias_clip_bottom
+//	D_Alias_clip_bottom
 //
 //==========================================================================
 
-static void R_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
+extern "C" void D_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout)
 {
 	float		scale;
@@ -272,13 +284,15 @@ static void R_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_
 	}
 }
 
+#endif
+
 //==========================================================================
 //
-//	R_AliasClip
+//	D_AliasClip
 //
 //==========================================================================
 
-static int R_AliasClip(finalvert_t *in, finalvert_t *out, finalstvert_t *stin,
+static int D_AliasClip(finalvert_t *in, finalvert_t *out, finalstvert_t *stin,
 	finalstvert_t *stout, int flag, int count,
 	void(*clip)(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *out,
 	finalstvert_t *pst0, finalstvert_t *pst1, finalstvert_t *stout) )
@@ -322,11 +336,11 @@ static int R_AliasClip(finalvert_t *in, finalvert_t *out, finalstvert_t *stin,
 
 //==========================================================================
 //
-//	R_AliasClipTriangle
+//	D_AliasClipTriangle
 //
 //==========================================================================
 
-void R_AliasClipTriangle(mtriangle_t *ptri)
+void D_AliasClipTriangle(mtriangle_t *ptri)
 {
 	int				i, k, pingpong;
 	mtriangle_t		mtri;
@@ -348,7 +362,7 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 		for (i=0 ; i<3 ; i++)
 			av[i] = pauxverts[ptri->vertindex[i]];
 
-		k = R_AliasClip(fv[0], fv[1], stv[0], stv[1], ALIAS_Z_CLIP, 3, R_Alias_clip_z);
+		k = D_AliasClip(fv[0], fv[1], stv[0], stv[1], ALIAS_Z_CLIP, 3, D_Alias_clip_z);
 		if (k == 0)
 			return;
 
@@ -363,8 +377,8 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 
 	if (clipflags & ALIAS_LEFT_CLIP)
 	{
-		k = R_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
-			stv[pingpong ^ 1], ALIAS_LEFT_CLIP, k, R_Alias_clip_left);
+		k = D_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
+			stv[pingpong ^ 1], ALIAS_LEFT_CLIP, k, D_Alias_clip_left);
 		if (k == 0)
 			return;
 
@@ -373,8 +387,8 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 
 	if (clipflags & ALIAS_RIGHT_CLIP)
 	{
-		k = R_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
-			stv[pingpong ^ 1], ALIAS_RIGHT_CLIP, k, R_Alias_clip_right);
+		k = D_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
+			stv[pingpong ^ 1], ALIAS_RIGHT_CLIP, k, D_Alias_clip_right);
 		if (k == 0)
 			return;
 
@@ -383,8 +397,8 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 
 	if (clipflags & ALIAS_BOTTOM_CLIP)
 	{
-		k = R_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
-			stv[pingpong ^ 1], ALIAS_BOTTOM_CLIP, k, R_Alias_clip_bottom);
+		k = D_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
+			stv[pingpong ^ 1], ALIAS_BOTTOM_CLIP, k, D_Alias_clip_bottom);
 		if (k == 0)
 			return;
 
@@ -393,8 +407,8 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 
 	if (clipflags & ALIAS_TOP_CLIP)
 	{
-		k = R_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
-			stv[pingpong ^ 1], ALIAS_TOP_CLIP, k, R_Alias_clip_top);
+		k = D_AliasClip(fv[pingpong], fv[pingpong ^ 1], stv[pingpong],
+			stv[pingpong ^ 1], ALIAS_TOP_CLIP, k, D_Alias_clip_top);
 		if (k == 0)
 			return;
 
@@ -417,9 +431,9 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 	}
 
 	// draw triangles
-	r_affinetridesc.ptriangles = &mtri;
-	r_affinetridesc.pfinalverts = fv[pingpong];
-	r_affinetridesc.pstverts = stv[pingpong];
+	d_affinetridesc.ptriangles = &mtri;
+	d_affinetridesc.pfinalverts = fv[pingpong];
+	d_affinetridesc.pstverts = stv[pingpong];
 
 	// FIXME: do all at once as trifan?
 	mtri.vertindex[0] = 0;
@@ -437,9 +451,12 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:12:23  dj_jl
+//	Optimized model drawing
+//
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

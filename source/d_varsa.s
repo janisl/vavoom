@@ -66,12 +66,14 @@ C(bbextentt):		.long	0
 
 .globl	C(cacheblock)
 .globl	C(cachewidth)
-.globl	C(ds_transluc)
-.globl	C(ds_transluc16)
+.globl	C(d_transluc)
+.globl	C(d_srctranstab)
+.globl	C(d_dsttranstab)
 C(cacheblock):		.long	0
 C(cachewidth):		.long	0
-C(ds_transluc):		.long	0
-C(ds_transluc16):	.long	0
+C(d_transluc):		.long	0
+C(d_srctranstab):	.long	0
+C(d_dsttranstab):	.long	0
 
 .globl	C(d_rowbytes)
 .globl	C(d_zrowbytes)
@@ -181,14 +183,25 @@ DP_32768:		.single	32768.0
 DP_Color:		.long	0
 DP_Pix:			.long	0
 
+.globl	lzistepx
+lzistepx:		.long	0
+
+.globl	gb
+.globl	gbstep
+gb:				.long	0
+gbstep:			.long	0
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:12:23  dj_jl
+//	Optimized model drawing
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
