@@ -137,12 +137,12 @@ U_LONG MS_LittleULONG(U_LONG val)
 //
 //==========================================================================
 
-int MS_LoadFile(char *name, void **buffer)
+int MS_LoadFile(char *name, char **buffer)
 {
 	int handle;
 	int size;
 	int count;
-	void *addr;
+	char *addr;
 	struct stat fileInfo;
 
 	if(strlen(name) >= MAX_FILE_NAME_LENGTH)

@@ -101,8 +101,9 @@ typedef enum
 	TK_DEATH,			// 'death'			[BC]
 	TK_ENTER,			// 'enter'			[BC]
 	TK_PICKUP,			// 'pickup'			[BC]
-	TK_T1RETURN,		// 'team1return'	[BC]
-	TK_T2RETURN,		// 'team2return'	[BC]
+	TK_BLUERETURN,		// 'bluereturn'		[BC]
+	TK_REDRETURN,		// 'redreturn'		[BC]
+	TK_WHITERETURN,		// 'whitereturn'	[BC]
 	TK_LOCALIZEDSTRINGS,// 'localizedstrings'
 	TK_NOCOMPACT,		// 'nocompact'
 	TK_LIGHTNING,		// 'ligtning'

@@ -27,6 +27,7 @@ typedef struct scriptInfo_s
 	U_WORD number;
 	U_BYTE type;
 	U_BYTE argCount;
+	U_WORD varCount;
 	U_WORD flags;
 	int address;
 	int srcLine;
@@ -75,6 +76,7 @@ byte *pc_BufferPtr;
 int pc_ScriptCount;
 int pc_FunctionCount;
 boolean pc_NoShrink;
+boolean pc_HexenCase;
 boolean pc_WadAuthor = TRUE;
 boolean pc_EncryptStrings;
 int pc_LastAppendedCommand;
@@ -221,22 +223,22 @@ static char *PCDNames[PCODE_COMMAND_COUNT] =
 	"PCD_PLAYERGOLDSKULL",
 	"PCD_PLAYERBLACKCARD",
 	"PCD_PLAYERSILVERCARD",
-	"PCD_PLAYERGOLDCARD",
-	"PCD_PLAYERTEAM1",
+	"PCD_PLAYERONTEAM",
+	"PCD_PLAYERTEAM",
 	"PCD_PLAYERHEALTH",
 	"PCD_PLAYERARMORPOINTS",
 	"PCD_PLAYERFRAGS",
 	"PCD_PLAYEREXPERT",
-	"PCD_TEAM1COUNT",
-	"PCD_TEAM2COUNT",
-	"PCD_TEAM1SCORE",
-	"PCD_TEAM2SCORE",
-	"PCD_TEAM1FRAGPOINTS",
+	"PCD_BLUETEAMCOUNT",
+	"PCD_REDTEAMCOUNT",
+	"PCD_BLUETEAMSCORE",
+	"PCD_REDTEAMSCORE",
+	"PCD_ISONEFLAGCTF",
 	"PCD_LSPEC6",
 	"PCD_LSPEC6DIRECT",
 	"PCD_PRINTNAME",
 	"PCD_MUSICCHANGE",
-	"PCD_TEAM2FRAGPOINTS",
+	"PCD_CONSOLECOMMANDDIRECT",
 	"PCD_CONSOLECOMMAND",
 	"PCD_SINGLEPLAYER",
 // [RH] End of Skull Tag p-codes
@@ -360,6 +362,16 @@ static char *PCDNames[PCODE_COMMAND_COUNT] =
 	"PCD_STRLEN",
 	"PCD_SETHUDSIZE",
 	"PCD_GETCVAR",
+	"PCD_CASEGOTOSORTED",
+	"PCD_SETRESULTVALUE",
+	"PCD_GETLINEROWOFFSET",
+	"PCD_GETACTORFLOORZ",
+	"PCD_GETACTORANGLE",
+	"PCD_GETSECTORFLOORZ",
+	"PCD_GETSECTORCEILINGZ",
+	"PCD_LSPEC5RESULT",
+	"PCD_GETSIGILPIECES",
+	"PCD_GELEVELINFO"
 };
 
 // CODE --------------------------------------------------------------------
@@ -475,7 +487,7 @@ static void CloseNew(void)
 	// Only write out those scripts that this acs file actually provides.
 	for(i = j = 0; i < pc_ScriptCount; ++i)
 	{
-		if (!ScriptInfo[i].imported)
+		if(!ScriptInfo[i].imported)
 		{
 			++j;
 		}
@@ -495,6 +507,31 @@ static void CloseNew(void)
 				PC_AppendByte(info->type);
 				PC_AppendByte(info->argCount);
 				PC_AppendLong((U_LONG)info->address);
+			}
+		}
+	}
+
+	// If any scripts have more than the maximum number of arguments, output them.
+	for(i = j = 0; i < pc_ScriptCount; ++i)
+	{
+		if(!ScriptInfo[i].imported && ScriptInfo[i].varCount > MAX_SCRIPT_VARIABLES)
+		{
+			++j;
+		}
+	}
+	if(j > 0)
+	{
+		PC_Append("SVCT", 4);
+		PC_AppendLong(j * 4);
+		for(i = 0; i < pc_ScriptCount; ++i)
+		{
+			scriptInfo_t *info = &ScriptInfo[i];
+			if(!info->imported && info->varCount > MAX_SCRIPT_VARIABLES)
+			{
+				MS_Message(MSG_DEBUG, "Script %d, var count = %d\n",
+					info->number, info->varCount);
+				PC_AppendWord(info->number);
+				PC_AppendWord(info->varCount);
 			}
 		}
 	}
@@ -534,7 +571,7 @@ static void CloseNew(void)
 				info->address, info->argCount, info->localCount);
 			PC_AppendByte(info->argCount);
 			PC_AppendByte(info->localCount);
-			PC_AppendByte(info->hasReturnValue?1:0);
+			PC_AppendByte((U_BYTE)(info->hasReturnValue?1:0));
 			PC_AppendByte(0);
 			PC_AppendLong((U_LONG)info->address);
 		}
@@ -1258,6 +1295,34 @@ void PC_AddScript(int inNumber, int argCount)
 		script->srcLine = tk_Line;
 		script->imported = (ImportMode == IMPORT_Importing) ? YES : NO;
 		pc_ScriptCount++;
+	}
+}
+
+//==========================================================================
+//
+// PC_SetScriptVarCount
+//
+// Sets the number of local variables used by a script, including
+// arguments.
+//
+//==========================================================================
+
+void PC_SetScriptVarCount(int inNumber, int varCount)
+{
+	int i;
+	U_BYTE type;
+	U_WORD number;
+
+	type = (inNumber & 65535) / 1000;
+	number = (inNumber & 65535) % 1000;
+
+	for(i = 0; i < pc_ScriptCount; i++)
+	{
+		if(ScriptInfo[i].number == number)
+		{
+			ScriptInfo[i].varCount = varCount;
+			break;
+		}
 	}
 }
 

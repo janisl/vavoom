@@ -22,7 +22,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define VERSION_TEXT "1.31"
+#define VERSION_TEXT "1.32"
 #define COPYRIGHT_YEARS_TEXT "1995"
 
 // TYPES -------------------------------------------------------------------
@@ -189,6 +189,7 @@ static void ProcessArgs(void)
 					break;
 				case 'H':
 					pc_NoShrink = TRUE;
+					pc_HexenCase = TRUE;
 					break;
 				default:
 					DisplayUsage();

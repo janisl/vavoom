@@ -153,12 +153,15 @@ static struct keyword_s
 	{ "while", TK_WHILE },
 	{ "world", TK_WORLD },
 	{ "global", TK_GLOBAL },
-	{ "respawn", TK_RESPAWN },	// [BC]
-	{ "death", TK_DEATH },	// [BC]
-	{ "enter", TK_ENTER },	// [BC]
-	{ "pickup", TK_PICKUP },	// [BC]
-	{ "team1return", TK_T1RETURN },	// [BC]
-	{ "team2return", TK_T2RETURN },	// [BC]
+	// [BC] Start Skulltag tokens.
+	{ "respawn", TK_RESPAWN },
+	{ "death", TK_DEATH },
+	{ "enter", TK_ENTER },
+	{ "pickup", TK_PICKUP },
+	{ "bluereturn", TK_BLUERETURN },
+	{ "redreturn", TK_REDRETURN },
+	{ "whitereturn", TK_WHITERETURN },
+	// [BC] End Skulltag tokens.
 	{ "localizedstrings", TK_LOCALIZEDSTRINGS },
 	{ "nocompact", TK_NOCOMPACT },
 	{ "lightning", TK_LIGHTNING },
@@ -255,7 +258,7 @@ void TK_OpenSource(char *fileName)
 	int size;
 
 	TK_CloseSource();
-	size = MS_LoadFile(fileName, (void **)&FileStart);
+	size = MS_LoadFile(fileName, &FileStart);
 	tk_SourceName = AddFileName(fileName);
 	MakeIncludePath(fileName);
 	SourceOpen = TRUE;
@@ -338,7 +341,7 @@ void TK_Include(char *fileName)
 	strcpy(sourceName, IncludePath);
 	strcat(sourceName, fileName);
 	tk_SourceName = AddFileName(sourceName);
-	size = MS_LoadFile(tk_SourceName, (void **)&FileStart);
+	size = MS_LoadFile(tk_SourceName, &FileStart);
 	FileEnd = FileStart+size;
 	FilePtr = FileStart;
 	tk_Line = 1;

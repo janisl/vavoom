@@ -18,14 +18,15 @@
 // Values added to script number to indicate its type
 enum
 {
-	OPEN_SCRIPTS_BASE		= 1000,
-	RESPAWN_SCRIPTS_BASE	= 2000,	// [BC]
-	DEATH_SCRIPTS_BASE		= 3000,	// [BC]
-	ENTER_SCRIPTS_BASE		= 4000,	// [BC]
-	PICKUP_SCRIPTS_BASE		= 5000,	// [BC]
-	T1RETURN_SCRIPTS_BASE	= 6000,	// [BC]
-	T2RETURN_SCRIPTS_BASE	= 7000,	// [BC]
-	LIGHTNING_SCRIPTS_BASE	= 12000,
+	OPEN_SCRIPTS_BASE			= 1000,
+	RESPAWN_SCRIPTS_BASE		= 2000,	// [BC]
+	DEATH_SCRIPTS_BASE			= 3000,	// [BC]
+	ENTER_SCRIPTS_BASE			= 4000,	// [BC]
+	PICKUP_SCRIPTS_BASE			= 5000,	// [BC]
+	BLUE_RETURN_SCRIPTS_BASE	= 6000,	// [BC]
+	RED_RETURN_SCRIPTS_BASE		= 7000,	// [BC]
+	WHITE_RETURN_SCRIPTS_BASE	= 8000,	// [BC]
+	LIGHTNING_SCRIPTS_BASE		= 12000,
 };
 
 // Values added to script number to indicate flags (requires new-style .o)
@@ -170,22 +171,22 @@ typedef enum
 	PCD_PLAYERGOLDSKULL,
 	PCD_PLAYERBLACKCARD,
 	PCD_PLAYERSILVERCARD,
-	PCD_PLAYERGOLDCARD,
-	PCD_PLAYERTEAM1,
+	PCD_PLAYERONTEAM,
+	PCD_PLAYERTEAM,
 	PCD_PLAYERHEALTH,
 	PCD_PLAYERARMORPOINTS,
 	PCD_PLAYERFRAGS,
 	PCD_PLAYEREXPERT,
-	PCD_TEAM1COUNT,
-	PCD_TEAM2COUNT,
-	PCD_TEAM1SCORE,
-	PCD_TEAM2SCORE,
-	PCD_TEAM1FRAGPOINTS,
+	PCD_BLUETEAMCOUNT,
+	PCD_REDTEAMCOUNT,
+	PCD_BLUETEAMSCORE,
+	PCD_REDTEAMSCORE,
+	PCD_ISONEFLAGCTF,
 	PCD_LSPEC6,				// [RH] LSPEC6 is never actually used.
 	PCD_LSPEC6DIRECT,		// Should these be removed?
 	PCD_PRINTNAME,
 	PCD_MUSICCHANGE,
-	PCD_TEAM2FRAGPOINTS,
+	PCD_CONSOLECOMMANDDIRECT,
 	PCD_CONSOLECOMMAND,
 	PCD_SINGLEPLAYER,
 // [RH] End of Skull Tag p-codes
@@ -309,6 +310,16 @@ typedef enum
 	PCD_STRLEN,
 	PCD_SETHUDSIZE,
 	PCD_GETCVAR,
+	PCD_CASEGOTOSORTED,
+	PCD_SETRESULTVALUE,
+	PCD_GETLINEROWOFFSET,
+	PCD_GETACTORFLOORZ,
+	PCD_GETACTORANGLE,
+	PCD_GETSECTORFLOORZ,
+	PCD_GETSECTORCEILINGZ,
+	PCD_LSPEC5RESULT,
+	PCD_GETSIGILPIECES,
+	PCD_GETLEVELINFO,
 
 	PCODE_COMMAND_COUNT
 } pcd_t;
@@ -336,6 +347,7 @@ void PC_Skip(size_t size);
 //void PC_SkipWord(void);
 void PC_SkipLong(void);
 void PC_AddScript(int number, int argCount);
+void PC_SetScriptVarCount(int number, int varCount);
 void PC_AddFunction(struct symbolNode_s *sym);
 void PC_PutMapVariable(int index, int value);
 void PC_NameMapVariable(int index, struct symbolNode_s *sym);
@@ -351,6 +363,7 @@ extern byte *pc_BufferPtr;
 extern int pc_ScriptCount;
 extern int pc_FunctionCount;
 extern boolean pc_NoShrink;
+extern boolean pc_HexenCase;
 extern boolean pc_WadAuthor;
 extern boolean pc_EncryptStrings;
 extern int pc_LastAppendedCommand;

@@ -119,6 +119,7 @@ static void LeadingCreateTranslation(void);
 static void LeadingIncDec(int token);
 static void PushCase(int value, boolean isDefault);
 static caseInfo_t *GetCaseInfo(void);
+static int CaseInfoCmp(const void *a, const void *b);
 static boolean DefaultInCurrent(void);
 static void PushBreak(void);
 static void WriteBreaks(void);
@@ -277,16 +278,17 @@ static tokenType_t AssignOps[] =
 
 static struct ScriptTypes ScriptCounts[] =
 {
-	{ "closed",		0 },
-	{ "open",		OPEN_SCRIPTS_BASE },
-	{ "respawn",	RESPAWN_SCRIPTS_BASE },
-	{ "death",		DEATH_SCRIPTS_BASE },
-	{ "enter",		ENTER_SCRIPTS_BASE },
-	{ "pickup",		PICKUP_SCRIPTS_BASE },
-	{ "t1return",	T1RETURN_SCRIPTS_BASE },
-	{ "t2return",	T2RETURN_SCRIPTS_BASE },
-	{ "lightning",	LIGHTNING_SCRIPTS_BASE },
-	{ NULL, -1 }
+	{ "closed",			0,							0 },
+	{ "open",			OPEN_SCRIPTS_BASE,			0 },
+	{ "respawn",		RESPAWN_SCRIPTS_BASE,		0 },
+	{ "death",			DEATH_SCRIPTS_BASE,			0 },
+	{ "enter",			ENTER_SCRIPTS_BASE,			0 },
+	{ "pickup",			PICKUP_SCRIPTS_BASE,		0 },
+	{ "bluereturn",		BLUE_RETURN_SCRIPTS_BASE,	0 },
+	{ "redreturn",		RED_RETURN_SCRIPTS_BASE,	0 },
+	{ "whitereturn",	WHITE_RETURN_SCRIPTS_BASE,	0 },
+	{ "lightning",		LIGHTNING_SCRIPTS_BASE,		0 },
+	{ NULL,				-1,							0 }
 };
 
 // CODE --------------------------------------------------------------------
@@ -496,14 +498,32 @@ static void OuterScript(void)
 		return;
 	}
 
-	scriptNumber = EvalConstExpression();
-	if(scriptNumber < 1 || scriptNumber > 999)
+	// [RH] If you want to use script 0, it must be written as <<0>>.
+	// This is to avoid using it accidentally, since ZDoom uses script
+	// 0 to implement many of the Strife-specific line specials.
+
+	if(tk_Token == TK_LSHIFT)
 	{
-		TK_Undo();
-		ERR_Error(ERR_SCRIPT_OUT_OF_RANGE, YES, NULL);
-		SkipBraceBlock(0);
+		TK_NextTokenMustBe(TK_NUMBER, ERR_SCRIPT_OUT_OF_RANGE);
+		if(tk_Number != 0)
+		{
+			ERR_Exit(ERR_SCRIPT_OUT_OF_RANGE, YES, NULL);
+		}
+		TK_NextTokenMustBe(TK_RSHIFT, ERR_SCRIPT_OUT_OF_RANGE);
 		TK_NextToken();
-		return;
+		scriptNumber = 0;
+	}
+	else
+	{
+		scriptNumber = EvalConstExpression();
+		if(scriptNumber < 1 || scriptNumber > 999)
+		{
+			TK_Undo();
+			ERR_Error(ERR_SCRIPT_OUT_OF_RANGE, YES, NULL);
+			SkipBraceBlock(0);
+			TK_NextToken();
+			return;
+		}
 	}
 	MS_Message(MSG_DEBUG, "Script number: %d\n", scriptNumber);
 	scriptType = 0;
@@ -563,12 +583,16 @@ static void OuterScript(void)
 		scriptType = PICKUP_SCRIPTS_BASE;
 		break;
 
-	case TK_T1RETURN:	// [BC]
-		scriptType = T1RETURN_SCRIPTS_BASE;
+	case TK_BLUERETURN:	// [BC]
+		scriptType = BLUE_RETURN_SCRIPTS_BASE;
 		break;
 
-	case TK_T2RETURN:	// [BC]
-		scriptType = T2RETURN_SCRIPTS_BASE;
+	case TK_REDRETURN:	// [BC]
+		scriptType = RED_RETURN_SCRIPTS_BASE;
+		break;
+
+	case TK_WHITERETURN:	// [BC]
+		scriptType = WHITE_RETURN_SCRIPTS_BASE;
 		break;
 
 	case TK_LIGHTNING:
@@ -598,6 +622,7 @@ static void OuterScript(void)
 	{
 		PC_AppendCmd(PCD_TERMINATE);
 	}
+	PC_SetScriptVarCount(scriptNumber + scriptType, ScriptVarCount);
 	pa_ScriptCount++;
 }
 
@@ -1335,6 +1360,7 @@ static void LeadingVarDeclare(void)
 	do
 	{
 		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+#if 0
 		if(ScriptVarCount == MAX_SCRIPT_VARIABLES)
 		{
 			ERR_Error(InsideFunction
@@ -1343,7 +1369,9 @@ static void LeadingVarDeclare(void)
 				YES, NULL);
 			ScriptVarCount++;
 		}
-		else if(SY_FindLocal(tk_String) != NULL)
+		else
+#endif 
+		if(SY_FindLocal(tk_String) != NULL)
 		{ // Redefined
 			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
 		}
@@ -2323,16 +2351,53 @@ static void LeadingSwitch(void)
 
 	PC_WriteLong(pc_Address, switcherAddrPtr);
 	defaultAddress = 0;
-	while((cInfo = GetCaseInfo()) != NULL)
+
+	if(pc_HexenCase)
 	{
-		if(cInfo->isDefault == YES)
+		while((cInfo = GetCaseInfo()) != NULL)
 		{
-			defaultAddress = cInfo->address;
-			continue;
+			if(cInfo->isDefault == YES)
+			{
+				defaultAddress = cInfo->address;
+				continue;
+			}
+			PC_AppendCmd(PCD_CASEGOTO);
+			PC_AppendLong(cInfo->value);
+			PC_AppendLong(cInfo->address);
 		}
-		PC_AppendCmd(PCD_CASEGOTO);
-		PC_AppendLong(cInfo->value);
-		PC_AppendLong(cInfo->address);
+	}
+	else if(CaseIndex != 0)
+	{
+		caseInfo_t *maxCase = &CaseInfo[CaseIndex];
+		caseInfo_t *minCase = maxCase;
+
+		// [RH] Sort cases so that the VM can handle them with
+		// a quick binary search.
+		while((cInfo = GetCaseInfo()) != NULL)
+		{
+			minCase = cInfo;
+		}
+		qsort(minCase, maxCase - minCase, sizeof(caseInfo_t), CaseInfoCmp);
+		if(minCase->isDefault == YES)
+		{
+			defaultAddress = minCase->address;
+			minCase++;
+		}
+		if (minCase < maxCase)
+		{
+			PC_AppendCmd(PCD_CASEGOTOSORTED);
+			if(pc_Address%4 != 0)
+			{ // Align to a 4-byte boundary
+				U_LONG pad = 0;
+				PC_Append((void *)&pad, 4-(pc_Address%4));
+			}
+			PC_AppendLong(maxCase - minCase);
+			for(; minCase < maxCase; ++minCase)
+			{
+				PC_AppendLong(minCase->value);
+				PC_AppendLong(minCase->address);
+			}
+		}
 	}
 	PC_AppendCmd(PCD_DROP);
 
@@ -2412,6 +2477,29 @@ static caseInfo_t *GetCaseInfo(void)
 		return &CaseInfo[--CaseIndex];
 	}
 	return NULL;
+}
+
+//==========================================================================
+//
+// CaseInfoCmp
+//
+//==========================================================================
+
+static int CaseInfoCmp (const void *a, const void *b)
+{
+	const caseInfo_t *ca = (const caseInfo_t *)a;
+	const caseInfo_t *cb = (const caseInfo_t *)b;
+
+	// The default case always gets moved to the front.
+	if(ca->isDefault)
+	{
+		return -1;
+	}
+	if(cb->isDefault)
+	{
+		return 1;
+	}
+	return ca->value - cb->value;
 }
 
 //==========================================================================
@@ -2597,7 +2685,6 @@ static void LeadingIncDec(int token)
 		|| sym->type == SY_GLOBALARRAY)
 	{
 		ParseArrayIndices(sym);
-		PC_AppendCmd(PCD_DUP);
 	}
 	else if(tk_Token == TK_LBRACKET)
 	{
@@ -2706,7 +2793,7 @@ static void LeadingVarAssign(symbolNode_t *sym)
 
 static pcd_t GetAssignPCD(tokenType_t token, symbolType_t symbol)
 {
-	int i, j;
+	size_t i, j;
 	static tokenType_t tokenLookup[] =
 	{
 		TK_ASSIGN, TK_ADDASSIGN, TK_SUBASSIGN,
@@ -3034,6 +3121,58 @@ static void ExprLevJ(void)
 	}
 }
 
+static void ExprLineSpecial(void)
+{
+	U_BYTE specialValue = tk_SpecialValue;
+	int argCountMin = tk_SpecialArgCount & 0xffff;
+	int argCountMax = tk_SpecialArgCount >> 16;
+
+	// There are two ways to use a special in an expression:
+	// 1. The special name by itself returns the special's number.
+	// 2. The special followed by parameters actually executes the special.
+	TK_NextToken();
+	if(tk_Token != TK_LPAREN)
+	{
+		PC_AppendPushVal(tk_SpecialValue);
+	}
+	else
+	{
+		int argCount = 0;
+
+		TK_NextToken();
+		if(tk_Token != TK_RPAREN)
+		{
+			TK_Undo();
+			do
+			{
+				TK_NextToken();
+				EvalExpression();
+				argCount++;
+			} while(tk_Token == TK_COMMA);
+		}
+		if(argCount < argCountMin || argCount > argCountMax)
+		{
+			ERR_Error(ERR_BAD_LSPEC_ARG_COUNT, YES);
+			return;
+		}
+		for(; argCount < 5; ++argCount)
+		{
+			PC_AppendPushVal(0);
+		}
+		TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+		TK_NextToken();
+		PC_AppendCmd(PCD_LSPEC5RESULT);
+		if(pc_NoShrink)
+		{
+			PC_AppendLong(specialValue);
+		}
+		else
+		{
+			PC_AppendByte(specialValue);
+		}
+	}
+}
+
 static void ExprFactor(void)
 {
 	symbolNode_t *sym;
@@ -3205,8 +3344,7 @@ static void ExprFactor(void)
 		}
 		break;
 	case TK_LINESPECIAL:
-		PC_AppendPushVal(tk_SpecialValue);
-		TK_NextToken();
+		ExprLineSpecial();
 		break;
 	default:
 		ERR_Error(ERR_BAD_EXPR, YES);
@@ -3405,20 +3543,20 @@ static pcd_t TokenToPCD(tokenType_t token)
 		pcd_t pcd;
 	}  operatorLookup[] =
 	{
-		{ TK_EQ, PCD_EQ },
-		{ TK_NE, PCD_NE },
-		{ TK_LT, PCD_LT },
-		{ TK_LE, PCD_LE },
-		{ TK_GT, PCD_GT },
-		{ TK_GE, PCD_GE },
-		{ TK_LSHIFT, PCD_LSHIFT },
-		{ TK_RSHIFT, PCD_RSHIFT },
-		{ TK_PLUS, PCD_ADD },
-		{ TK_MINUS, PCD_SUBTRACT },
-		{ TK_ASTERISK, PCD_MULTIPLY },
-		{ TK_SLASH, PCD_DIVIDE },
-		{ TK_PERCENT, PCD_MODULUS },
-		{ TK_NONE }
+		{ TK_EQ,		PCD_EQ },
+		{ TK_NE,		PCD_NE },
+		{ TK_LT,		PCD_LT },
+		{ TK_LE,		PCD_LE },
+		{ TK_GT,		PCD_GT },
+		{ TK_GE,		PCD_GE },
+		{ TK_LSHIFT,	PCD_LSHIFT },
+		{ TK_RSHIFT,	PCD_RSHIFT },
+		{ TK_PLUS,		PCD_ADD },
+		{ TK_MINUS,		PCD_SUBTRACT },
+		{ TK_ASTERISK,	PCD_MULTIPLY },
+		{ TK_SLASH,		PCD_DIVIDE },
+		{ TK_PERCENT,	PCD_MODULUS },
+		{ TK_NONE,		PCD_NOP }
 	};
 
 	for(i = 0; operatorLookup[i].token != TK_NONE; i++)
@@ -3493,7 +3631,7 @@ static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol)
 		{ TK_DEC, SY_WORLDARRAY, PCD_DECWORLDARRAY },
 		{ TK_DEC, SY_GLOBALARRAY, PCD_DECGLOBALARRAY },
 
-		{ TK_NONE }
+		{ TK_NONE, SY_DUMMY, PCD_NOP }
 	};
 
 	for(i = 0; incDecLookup[i].token != TK_NONE; i++)
