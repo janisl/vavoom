@@ -24,7 +24,7 @@
 //**************************************************************************
 
 #define MobjCenter(mobj)\
-	(mobj->origin + vector(0.0, 0.0, mobj->Height * 0.5 - mobj->floorclip))
+	(mobj.origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.floorclip))
 
 #define avcpy(src, dst)\
 {\
@@ -76,7 +76,7 @@ int HITDICE(int a)
 //
 //==========================================================================
 
-float MobjDist(MapObject * mo1, MapObject * mo2)
+float MobjDist(MapObject mo1, MapObject mo2)
 {
 	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
@@ -87,11 +87,11 @@ float MobjDist(MapObject * mo1, MapObject * mo2)
 //
 //==========================================================================
 
-float MobjDist2(MapObject * mo1, MapObject * mo2)
+float MobjDist2(MapObject mo1, MapObject mo2)
 {
 	TVec dir;
 
-	dir = mo2->origin - mo1->origin;
+	dir = mo2.origin - mo1.origin;
 	dir.z = 0.0;
 	return Length(dir);
 }
@@ -443,9 +443,13 @@ class SectorThinker:Thinker
 		sector->SpecialData = self;
 	}
 }
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.20  2002/01/28 18:50:17  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

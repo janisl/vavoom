@@ -344,7 +344,7 @@ void BotPlayer::CheckStuff(void)
 	if (node)
 	{
 		if (!CheckTo(node.origin) ||
-			(MobjDist2(&botmo, &node) < botmo.Radius))
+			(MobjDist2(botmo, node) < botmo.Radius))
 		{
 			prev = node;
 			node = none;
@@ -511,7 +511,7 @@ void BotPlayer::Scan(void)
 				}
 			}
 			else if (!missile && actor.Flags & MF_MISSILE &&
-				(MobjDist(&botmo, &actor) < AVOID_DIST))
+				(MobjDist(botmo, actor) < AVOID_DIST))
 			{
 				missile = actor;
 			}
@@ -915,7 +915,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 		return true;
 	}
 
-	th = *in->thing;
+	th = Actor(in->Thing);
 
 	if (th == botmo)
 		return true;
@@ -1169,7 +1169,7 @@ void BotPlayer::BotAim(void)
 		return;
 
 	// Distance to enemy.
-	dist = MobjDist2(&botmo, &enemy);
+	dist = MobjDist2(botmo, enemy);
 
 	right = !!(P_Random() & 1);
 	an = AngleTo(enemy.origin);
@@ -1332,7 +1332,7 @@ Actor BotPlayer::FindEnemy(void)
 			{
 				if (P_CheckSight(botmo, *players[i].mo))
 				{
-					temp = MobjDist(players[i].mo, &botmo);
+					temp = MobjDist(*players[i].mo, botmo);
 
 #if 0
 					//Too dark?
@@ -1622,7 +1622,7 @@ void BotPlayer::Move(void)
 			}
 		}
 
-		dist = MobjDist(&botmo, &enemy);
+		dist = MobjDist(botmo, enemy);
 
 		// Remember where we saw him last in case he gets away
 		lastpos = enemy.origin;
@@ -2251,6 +2251,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.10  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

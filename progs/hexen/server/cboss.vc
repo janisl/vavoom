@@ -138,7 +138,7 @@ void Actor::A_FastChase(void)
 		special2 = 0;
 		velocity.x = 0.0;
 		velocity.y = 0.0;
-		dist = MobjDist(this, target);
+		dist = MobjDist(self, *target);
 		if (dist < CLASS_BOSS_STRAFE_RANGE)
 		{
 			if (P_Random() < 100)
@@ -306,6 +306,9 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.13  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -320,7 +320,7 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 		target->origin.z + target->Height < actor->origin.z)
 	{
 		// Need to seek vertically
-		dist = MobjDist2(target, actor);
+		dist = MobjDist2(*target, *actor);
 		dist = dist / actor->Speed;
 		if (dist < 1.0)
 		{
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.12  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

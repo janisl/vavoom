@@ -54,12 +54,15 @@ void Actor::A_SkullAttack(void)
 
 	StartSound(self, sound_attack, CHAN_VOICE);
 	A_FaceTarget();
-	velocity = Normalize(MobjCenter(target) - origin) * SKULLSPEED;
+	velocity = Normalize(MobjCenter((*target)) - origin) * SKULLSPEED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.8  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

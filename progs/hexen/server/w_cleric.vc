@@ -543,7 +543,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(targ, this);
+		dist = MobjDist2(*targ, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -646,11 +646,11 @@ void Actor::CHolyTailFollow(float dist)
 	{
 		an = atan2(child->origin.y - origin.y,
 			origin.x - child->origin.x);
-		oldDistance = MobjDist(child, this);
+		oldDistance = MobjDist(*child, self);
 		if (P_TryMove(child, origin.x + dist * cos(an),
 				origin.y + dist * sin(an)))
 		{
-			newDistance = MobjDist2(child, this) - 1.0;
+			newDistance = MobjDist2(*child, self) - 1.0;
 			if (oldDistance < 1.0)
 			{
 				if (child->origin.z < origin.z)
@@ -734,6 +734,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.14  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

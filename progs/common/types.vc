@@ -40,9 +40,9 @@ class Object
 	int ObjectInternal[7];
 	classid Class;
 
-	void Destroy(void);
-	boolean IsA(classid cid);
-	boolean IsDestroyed(void);
+	native void Destroy(void);
+	native boolean IsA(classid cid);
+	native boolean IsDestroyed(void);
 
 	defaultproperties
 	{
@@ -440,7 +440,6 @@ struct player_t;
 class Actor;
 
 typedef void (*state_func_t) (Object);
-typedef boolean(*thing_iter_func_t) (Actor *);
 
 struct state_t
 {
@@ -524,6 +523,8 @@ class MapObject:Thinker
 
 	int netID;
 }
+
+typedef boolean(*thing_iter_func_t) (MapObject);
 
 //==========================================================================
 //
@@ -645,7 +646,7 @@ typedef void (*weapon_func_t) (player_t *);
 //
 //==========================================================================
 
-#define BlockLink(num)	level->blocklinks[num]
+#define BlockLink(num)	(*level->BlockLinks[num])
 
 struct sv_level_t:base_level_t
 {
@@ -667,7 +668,7 @@ struct sv_level_t:base_level_t
 	int bmapheight;	// size in mapblocks
 	float bmaporgx;	// origin of block map
 	float bmaporgy;
-	Actor **blocklinks;	// for thing chains
+	MapObject **BlockLinks;	// for thing chains
 	void *__PolyBlockMap;
 
 	//
@@ -709,7 +710,7 @@ struct intercept_t
 {
 	float frac;	// along trace line
 	boolean isaline;
-	Actor *thing;
+	MapObject Thing;
 	line_t *line;
 };
 
@@ -726,7 +727,7 @@ typedef boolean(*trav_func_t) (intercept_t *);
 
 class ACS:Thinker
 {
-	Actor *activator;
+	MapObject activator;
 	line_t *line;
 	int side;
 	int number;
@@ -737,10 +738,14 @@ class ACS:Thinker
 	int vars[MAX_ACS_SCRIPT_VARS];
 	int *ip;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
+	native void Think(void);
+	native void Archive(void);
+	native void Unarchive(void);
+
+	defaultproperties
+	{
+	}
+}
 
 addfields sector_t
 {
@@ -748,7 +753,7 @@ addfields sector_t
 	int soundtraversed;
 
 	// thing that made a sound (or null)
-	Actor *soundtarget;
+	MapObject SoundTarget;
 
 	// Thinker for reversable actions
 	Thinker SpecialData;
@@ -964,6 +969,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.27  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

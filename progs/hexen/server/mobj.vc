@@ -1284,7 +1284,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		float thrust;
 
 		thrust = itof(damage) / Mass * 656.25;
-		dir = Normalize(MobjCenter(this) - MobjCenter((&inflictor)));
+		dir = Normalize(MobjCenter(self) - MobjCenter(inflictor));
 		velocity += dir * thrust;
 	}
 
@@ -2268,7 +2268,7 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 
 	sec->validcount = *validcount;
 	sec->soundtraversed = soundblocks + 1;
-	sec->soundtarget = soundtarget;
+	sec->SoundTarget = *soundtarget;
 
 	for (i = 0; i < sec->linecount; i++)
 	{
@@ -2316,6 +2316,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.27  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

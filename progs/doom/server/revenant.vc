@@ -142,7 +142,7 @@ void Actor::A_Tracer(void)
 	if (!dest || dest->Health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter(dest) - origin);
+	wishdir = Normalize(MobjCenter((*dest)) - origin);
 	currdir = Normalize(velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
@@ -180,6 +180,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.4  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -80,7 +80,7 @@ void Actor::A_MinotaurDecide(void)
 		return;
 	}
 	StartSoundName(self, 'MinotaurSight', CHAN_VOICE);
-	dist = MobjDist(this, target);
+	dist = MobjDist(self, *target);
 	if (target->origin.z + target->Height > origin.z &&
 		target->origin.z + target->Height < origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.16  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

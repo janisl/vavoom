@@ -864,9 +864,9 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 //
 //==========================================================================
 
-boolean PIT_CheckOnmobjZ(Actor * thing)
+boolean PIT_CheckOnmobjZ(MapObject Other)
 {
-	return tzmthing.Iter_CheckOnmobjZ(*thing);
+	return tzmthing.Iter_CheckOnmobjZ(Actor(Other));
 }
 
 //=============================================================================
@@ -891,7 +891,7 @@ void Actor::FakeZMovement(void)
 		// float down towards target if too close
 		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
 		{
-			dist = MobjDist2(this, target);
+			dist = MobjDist2(self, *target);
 			delta = target->origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
@@ -1185,7 +1185,7 @@ boolean Actor::ZMovement(void)
 		// float down towards target if too close
 		if (!(Flags & MF_SKULLFLY) && !(Flags & MF_INFLOAT))
 		{
-			dist = MobjDist2(this, target);
+			dist = MobjDist2(self, *target);
 			delta = target->origin.z + Height / 2.0 - origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
 				origin.z -= FLOATSPEED * frametime;
@@ -1485,6 +1485,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.20  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

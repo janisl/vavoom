@@ -51,7 +51,7 @@ boolean Actor::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	dist = MobjDist(target, this);
+	dist = MobjDist(*target, self);
 	if (dist >= MELEERANGE)
 	{
 		return false;
@@ -87,7 +87,7 @@ boolean Actor::CheckMeleeRange2(void)
 	{
 		return false;
 	}
-	dist = MobjDist(target, this);
+	dist = MobjDist(*target, self);
 	if (dist >= MELEERANGE * 2.0 || dist < MELEERANGE)
 	{
 		return false;
@@ -134,7 +134,7 @@ boolean Actor::CheckMissileRange(void)
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(this, target) - 64.0;
+	dist = MobjDist(self, *target) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -215,7 +215,7 @@ boolean Actor::LookForMonsters(void)
 			// Not a valid monster
 			continue;
 		}
-		if (MobjDist(this, (&mo)) > MONS_LOOK_RANGE)
+		if (MobjDist(self, mo) > MONS_LOOK_RANGE)
 		{
 			// Out of range
 			continue;
@@ -298,7 +298,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 				P->mo->origin.x - origin.x) - angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(P->mo, this);
+				dist = MobjDist(*P->mo, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -307,7 +307,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 		if (P->mo->Translucency)
 		{
 			// Player is invisible
-			if (MobjDist(P->mo, this) > 2.0 * MELEERANGE &&
+			if (MobjDist(*P->mo, self) > 2.0 * MELEERANGE &&
 				Length(P->mo->velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
@@ -554,7 +554,7 @@ Actor Actor::RoughBlockCheck(int index)
 	Actor link;
 	float angle;
 
-	link = *BlockLink(index);
+	link = Actor(BlockLink(index));
 	while (link)
 	{
 		if (player)	// Minotaur looking around player
@@ -812,6 +812,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.11  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -699,7 +699,7 @@ addfields player_t
 	// bounded/scaled total momentum.
 	float bob;
 
-	int flyheight;
+	float flyheight;
 
 	int artifactCount;
 
@@ -829,6 +829,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.15  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

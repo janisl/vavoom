@@ -172,10 +172,12 @@ boolean P_ThingHeightClip(mobj_t * thing)
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(mobj_t * thing)
+boolean PIT_ChangeSector(MapObject Other)
 {
 	mobj_t *mo;
+	mobj_t *thing;
 
+	thing = &Actor(Other);
 	if (P_ThingHeightClip(thing))
 	{
 		// keep checking
@@ -400,7 +402,7 @@ TVec PuzzleUseDir;
 
 boolean PTR_PuzzleItemTraverse(intercept_t * in)
 {
-	mobj_t *mobj;
+	Actor mobj;
 	TVec hit_point;
 	opening_t *open;
 
@@ -454,19 +456,19 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 		return false;	// Stop searching
 	}
 	// Check thing
-	mobj = in->thing;
-	if (mobj->special != USE_PUZZLE_ITEM_SPECIAL)
+	mobj = Actor(in->Thing);
+	if (mobj.special != USE_PUZZLE_ITEM_SPECIAL)
 	{
 		// Wrong special
 		return true;
 	}
-	if (PuzzleItemType != mobj->args[0])
+	if (PuzzleItemType != mobj.args[0])
 	{
 		// Item type doesn't match
 		return true;
 	}
-	StartACS(mobj->args[1], 0, &mobj->args[2], *PuzzleItemUser, NULL, 0);
-	mobj->special = 0;
+	StartACS(mobj.args[1], 0, &mobj.args[2], *PuzzleItemUser, NULL, 0);
+	mobj.special = 0;
 	PuzzleActivated = true;
 	return false;	// Stop searching
 }
@@ -525,7 +527,7 @@ float aim_range2d;
 boolean PTR_AimTraverse(intercept_t * in)
 {
 	line_t *li;
-	mobj_t *th;
+	Actor th;
 	float thingtopslope;
 	float thingbottomslope;
 	float dist;
@@ -574,14 +576,14 @@ boolean PTR_AimTraverse(intercept_t * in)
 	}
 
 	// shoot a thing
-	th = in->thing;
-	if (th == aim_thing)
+	th = Actor(in->Thing);
+	if (th == *aim_thing)
 		return true;	// can't shoot self
 
-	if (!(th->Flags & MF_SHOOTABLE))
+	if (!(th.Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
-	if (th->player && netgame && !deathmatch)
+	if (th.player && netgame && !deathmatch)
 	{
 		// don't aim at fellow co-op players
 		return true;
@@ -589,12 +591,12 @@ boolean PTR_AimTraverse(intercept_t * in)
 
 	// check angles to see if the thing can be aimed at
 	dist = aim_range2d * in->frac;
-	thingtopslope = (th->origin.z + th->Height - aim_z) / dist;
+	thingtopslope = (th.origin.z + th.Height - aim_z) / dist;
 
 	if (thingtopslope < aim_bottomslope)
 		return true;	// shot over the thing
 
-	thingbottomslope = (th->origin.z - aim_z) / dist;
+	thingbottomslope = (th.origin.z - aim_z) / dist;
 
 	if (thingbottomslope > aim_topslope)
 		return true;	// shot under the thing
@@ -607,7 +609,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 		thingbottomslope = aim_bottomslope;
 
 	aim_slope = (thingtopslope + thingbottomslope) / 2.0;
-	linetarget = th;
+	linetarget = &th;
 
 	return false;	// don't go any farther
 }
@@ -769,7 +771,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 {
 	TVec hit_point;
 	line_t *li;
-	mobj_t *th;
+	Actor th;
 
 	if (in->isaline)
 	{
@@ -845,21 +847,21 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	}
 
 	// shoot a thing
-	th = in->thing;
+	th = Actor(in->Thing);
 
-	if (th == shoot_thing)
+	if (th == *shoot_thing)
 		return true;	// can't shoot self
 
-	if (!(th->Flags & MF_SHOOTABLE))
+	if (!(th.Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
 	// check angles to see if the thing can be aimed at
 	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
 
-	if (th->origin.z + th->Height < hit_point.z)
+	if (th.origin.z + th.Height < hit_point.z)
 		return true;	// shot over the thing
 
-	if (th->origin.z > hit_point.z)
+	if (th.origin.z > hit_point.z)
 		return true;	// shot under the thing
 
 	// hit thing
@@ -869,11 +871,11 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
 	if (la_damage)
 	{
-		if (!(th->Flags & MF_NOBLOOD) && !(th->Flags2 & MF2_INVULNERABLE))
+		if (!(th.Flags & MF_NOBLOOD) && !(th.Flags2 & MF2_INVULNERABLE))
 		{
 			if (PuffType == AxePuff || PuffType == AxePuffGlow)
 			{
-				P_BloodSplatter2(hit_point.x, hit_point.y, hit_point.z, th);
+				P_BloodSplatter2(hit_point.x, hit_point.y, hit_point.z, &th);
 			}
 			if (P_Random() < 192)
 			{
@@ -884,17 +886,17 @@ boolean PTR_ShootTraverse(intercept_t * in)
 				MSG_WriteShort(ftoi(hit_point.z));
 				MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
 
-				P_BloodSplatter(hit_point.x, hit_point.y, hit_point.z, th);
+				P_BloodSplatter(hit_point.x, hit_point.y, hit_point.z, &th);
 			}
 		}
 		if (PuffType == FlamePuff2)
 		{
 			// Cleric FlameStrike does fire damage
-			th->Damage(*LavaInflictor, *shoot_thing, la_damage);
+			th.Damage(*LavaInflictor, *shoot_thing, la_damage);
 		}
 		else
 		{
-			th->Damage(*shoot_thing, *shoot_thing, la_damage);
+			th.Damage(*shoot_thing, *shoot_thing, la_damage);
 		}
 	}
 
@@ -954,47 +956,52 @@ boolean DamageSource;
 //
 //==========================================================================
 
-boolean PIT_RadiusAttack(mobj_t * thing)
+boolean PIT_RadiusAttack(MapObject Other)
 {
 	float dist;
 	int damage;
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!(Other.Flags & MF_SHOOTABLE))
 	{
 		return true;
 	}
-//  if (thing->Flags2 & MF2_BOSS)
-//  {   // Bosses take no damage from PIT_RadiusAttack
+//  if (Other.Flags2 & MF2_BOSS)
+//  {
+//		// Bosses take no damage from PIT_RadiusAttack
 //      return true;
 //  }
-	if (!DamageSource && thing == bombsource)
-	{	// don't damage the source of the explosion
+	if (!DamageSource && Other == *bombsource)
+	{
+		// don't damage the source of the explosion
 		return true;
 	}
 #if 0
-	if (abs(ftoi(thing->origin.z - bombspot->origin.z)) > 2 * bombdistance)
-	{	// too high/low
+	if (abs(ftoi(Other.origin.z - bombspot->origin.z)) > 2 * bombdistance)
+	{
+		// too high/low
 		return true;
 	}
 #endif
-	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->Radius;
+	dist = Length(MobjCenter(Other) - MobjCenter((*bombspot))) - Other.Radius;
 	if (dist < 0.0)
 	{
 		dist = 0.0;
 	}
 	if (dist >= bombdistance)
-	{	// Out of range
+	{
+		// Out of range
 		return true;
 	}
-	if (P_CheckSight(*thing, *bombspot))
-	{	// OK to damage, target is in direct path
-		damage =
-			(bombdamage * ftoi(bombdistance - dist) / ftoi(bombdistance)) + 1;
-		if (thing->player)
+	if (P_CheckSight(Other, *bombspot))
+	{
+		// OK to damage, target is in direct path
+		damage = (bombdamage * ftoi(bombdistance - dist) /
+			ftoi(bombdistance)) + 1;
+		if (Other.player)
 		{
 			damage >>= 2;
 		}
-		thing->Damage(*bombspot, *bombsource, damage);
+		Actor(Other).Damage(*bombspot, *bombsource, damage);
 	}
 	return true;
 }
@@ -1044,25 +1051,25 @@ mobj_t *tsthing;
 //
 //==========================================================================
 
-boolean PIT_ThrustStompThing(mobj_t * thing)
+boolean PIT_ThrustStompThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!(Other.Flags & MF_SHOOTABLE))
 		return true;
 
-	blockdist = thing->Radius + tsthing->Radius;
-	if (fabs(thing->origin.x - tsthing->origin.x) >= blockdist ||
-		fabs(thing->origin.y - tsthing->origin.y) >= blockdist ||
-		(thing->origin.z > tsthing->origin.z + tsthing->Height))
+	blockdist = Other.Radius + tsthing->Radius;
+	if (fabs(Other.origin.x - tsthing->origin.x) >= blockdist ||
+		fabs(Other.origin.y - tsthing->origin.y) >= blockdist ||
+		(Other.origin.z > tsthing->origin.z + tsthing->Height))
 	{
 		return true;	// didn't hit it
 	}
 
-	if (thing == tsthing)
+	if (Other == *tsthing)
 		return true;	// don't clip against self
 
-	thing->Damage(*tsthing, *tsthing, 10001);
+	Actor(Other).Damage(*tsthing, *tsthing, 10001);
 	tsthing->args[1] = 1;	// Mark thrust thing as bloody
 
 	return true;
@@ -1100,6 +1107,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.17  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -611,7 +611,7 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;
 		}
-		dist = MobjDist(pmo, (&mo));
+		dist = MobjDist(*pmo, mo);
 		if (dist > BLAST_RADIUS_DIST)
 		{
 			// Out of range
@@ -674,6 +674,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.15  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

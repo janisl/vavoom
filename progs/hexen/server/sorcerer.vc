@@ -287,7 +287,7 @@ void Actor::A_SorcOffense2(void)
 	if (mo)
 	{
 		mo->special2 = 35 * 5 / 2;	// 5 seconds
-		dist = MobjDist2(dest, mo);
+		dist = MobjDist2(*dest, *mo);
 		dist = dist / mo->Speed;
 		if (dist < 1.0)
 			dist = 1.0;
@@ -769,6 +769,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.15  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

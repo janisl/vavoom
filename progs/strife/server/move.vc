@@ -87,34 +87,34 @@ mobj_t *BlockingMobj;
 //
 //==========================================================================
 
-boolean PIT_CheckThing(mobj_t * thing)
+boolean PIT_CheckThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(thing->Flags & MF_SOLID))
+	if (!(Other.Flags & MF_SOLID))
 		return true;
 
-	blockdist = thing->Radius + tmthing->Radius;
+	blockdist = Other.Radius + tmthing->Radius;
 
-	if (fabs(thing->origin.x - tmx) >= blockdist
-		|| fabs(thing->origin.y - tmy) >= blockdist)
+	if (fabs(Other.origin.x - tmx) >= blockdist
+		|| fabs(Other.origin.y - tmy) >= blockdist)
 	{
 		// didn't hit it
 		return true;
 	}
 
 	// don't clip against self
-	if (thing == tmthing)
+	if (Other == *tmthing)
 		return true;
 
-	BlockingMobj = thing;
+	BlockingMobj = &Actor(Other);
 	// see if it went over / under
-	if (tmthing->origin.z >= thing->origin.z + thing->Height)
+	if (tmthing->origin.z >= Other.origin.z + Other.Height)
 		return true;	// overhead
-	if (tmthing->origin.z + tmthing->Height < thing->origin.z)
+	if (tmthing->origin.z + tmthing->Height < Other.origin.z)
 		return true;	// underneath
 
-	return (thing->Flags & MF_NOCLIP);
+	return (Other.Flags & MF_NOCLIP);
 }
 
 //==========================================================================
@@ -305,6 +305,9 @@ boolean Actor::Touch(Actor Other)
 	boolean solid;
 	int damage;
 
+	if (!(Other.Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+		return true;
+
 	// check for skulls slamming into things
 	if (Flags & MF_SKULLFLY)
 	{
@@ -363,40 +366,37 @@ boolean Actor::Touch(Actor Other)
 //
 //==========================================================================
 
-boolean PIT_CheckRelThing(mobj_t * thing)
+boolean PIT_CheckRelThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(thing->Flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
-		return true;
+	blockdist = Other.Radius + tmthing->Radius;
 
-	blockdist = thing->Radius + tmthing->Radius;
-
-	if (fabs(thing->origin.x - tmx) >= blockdist
-		|| fabs(thing->origin.y - tmy) >= blockdist)
+	if (fabs(Other.origin.x - tmx) >= blockdist
+		|| fabs(Other.origin.y - tmy) >= blockdist)
 	{
 		// didn't hit it
 		return true;
 	}
 
 	// don't clip against self
-	if (thing == tmthing)
+	if (Other == *tmthing)
 		return true;
 
 	// see if it went over / under
-	if (tmthing->origin.z >= thing->origin.z + thing->Height)
+	if (tmthing->origin.z >= Other.origin.z + Other.Height)
 	{
 		// overhead
 		return true;
 	}
-	if (tmthing->origin.z + tmthing->Height < thing->origin.z)
+	if (tmthing->origin.z + tmthing->Height < Other.origin.z)
 	{
 		// underneath
 		return true;
 	}
 
-	BlockingMobj = thing;
-	return tmthing->Touch(*thing);
+	BlockingMobj = &Actor(Other);
+	return tmthing->Touch(Actor(Other));
 }
 
 //==========================================================================
@@ -805,6 +805,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.14  2002/01/29 18:10:32  dj_jl
 //  Added MCROSS and PCROSS flags
 //

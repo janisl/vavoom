@@ -35,6 +35,9 @@
 
 int sb_height = 39;
 
+int sb_pclass;
+int sb_color;
+
 int HealthMarker;
 int sb_frags;
 int sb_health;
@@ -132,15 +135,15 @@ void SB_StartMap(void)
 	int namebuf[3];
 	string Name = ARR2STR(namebuf);
 	picinfo_t info;
-	int pclass;
 
-	pclass = GetCvar("class");
+	sb_pclass = GetCvar("class");
+	sb_color = GetCvar("color");
 
 	//
 	//  COMMON BAR
 	//
 	pic_bar = R_RegisterPic("H2BAR", PIC_PATCH);
-	switch (pclass)
+	switch (sb_pclass)
 	{
 	case PCLASS_FIGHTER:
 		pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
@@ -149,13 +152,13 @@ void SB_StartMap(void)
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMF2", PIC_PATCH);
 		}
-		else if (!pclass)
+		else if (!sb_color)
 		{
 			pic_lifegem = R_RegisterPic("LIFEGEM", PIC_PATCH);
 		}
 		else
 		{
-			sprint(Name, "LIFEGMF%d", cl->clientnum);
+			sprint(Name, "LIFEGMF%d", sb_color + 1);
 			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
@@ -168,7 +171,7 @@ void SB_StartMap(void)
 		}
 		else
 		{
-			sprint(Name, "LIFEGMC%d", cl->clientnum);
+			sprint(Name, "LIFEGMC%d", sb_color + 1);
 			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
@@ -181,7 +184,7 @@ void SB_StartMap(void)
 		}
 		else
 		{
-			sprint(Name, "LIFEGMM%d", cl->clientnum);
+			sprint(Name, "LIFEGMM%d", sb_color + 1);
 			pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 		}
 		break;
@@ -226,7 +229,7 @@ void SB_StartMap(void)
 	pic_artiflash[2] = R_RegisterPic("USEARTIC", PIC_PATCH);
 	pic_artiflash[3] = R_RegisterPic("USEARTID", PIC_PATCH);
 	pic_artiflash[4] = R_RegisterPic("USEARTIE", PIC_PATCH);
-	switch (pclass)
+	switch (sb_pclass)
 	{
 	case PCLASS_FIGHTER:
 		pic_wpslot = R_RegisterPic("WPSLOT0", PIC_PATCH);
@@ -561,7 +564,7 @@ void SB_DrawMainBar(void)
 	}
 
 	// Armor
-	SB_DrawNumber9(250, 176, ftoi((AutoArmorSave[cl->pclass]
+	SB_DrawNumber9(250, 176, ftoi((AutoArmorSave[sb_pclass]
 			+ cl->armorpoints[ARMOR_ARMOR]
 			+ cl->armorpoints[ARMOR_SHIELD]
 			+ cl->armorpoints[ARMOR_HELMET]
@@ -600,12 +603,12 @@ void SB_DrawKeyBar(void)
 			num = 100;
 		}
 		else if (cl->armorpoints[i] <=
-			(ArmorIncrement[cl->pclass * NUMARMOR + i] / 4.0))
+			(ArmorIncrement[sb_pclass * NUMARMOR + i] / 4.0))
 		{
 			num = 66;
 		}
 		else if (cl->armorpoints[i] <=
-			(ArmorIncrement[cl->pclass * NUMARMOR + i] / 2.0))
+			(ArmorIncrement[sb_pclass * NUMARMOR + i] / 2.0))
 		{
 			num = 33;
 		}
@@ -867,6 +870,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.10  2002/01/28 18:47:02  dj_jl
 //  Fixed blue fighter ligegem
 //

@@ -310,11 +310,11 @@ void IM_DrawSingleStats(void)
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-//FIXME T_SetDist(1, 1);
+	T_SetDist(1, 1);
 	T_DrawText(202, 65, va("%d", scores[0].killcount));
 	T_DrawText(237, 65, "/");
 	T_DrawText(250, 65, va("%d", im->totalkills));
-//FIXME T_SetDist(-1, 1);
+	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
 	{
@@ -328,11 +328,11 @@ void IM_DrawSingleStats(void)
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-//FIXME T_SetDist(1, 1);
+	T_SetDist(1, 1);
 	T_DrawText(202, 90, va("%d", scores[0].itemcount));
 	T_DrawText(237, 90, "/");
 	T_DrawText(250, 90, va("%d", im->totalitems));
-//FIXME T_SetDist(-1, 1);
+	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
 	{
@@ -346,11 +346,11 @@ void IM_DrawSingleStats(void)
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-//FIXME T_SetDist(1, 1);
+	T_SetDist(1, 1);
 	T_DrawText(202, 115, va("%d", scores[0].secretcount));
 	T_DrawText(237, 115, "/");
 	T_DrawText(250, 115, va("%d", im->totalsecret));
-//FIXME T_SetDist(-1, 1);
+	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
 	{
@@ -368,10 +368,10 @@ void IM_DrawSingleStats(void)
 		T_SetFont(font_big);
 		T_SetAlign(hleft, vtop);
 		T_DrawText(85, 160, "TIME");
-//FIXME     T_SetDist(1, 1);
+		T_SetDist(1, 1);
 		T_DrawText(155, 160, va("%d%d:%d%d:%d%d", hours / 10, hours % 10,
 				minutes / 10, minutes % 10, seconds / 10, seconds % 10));
-//FIXME     T_SetDist(-1, 1);
+		T_SetDist(-1, 1);
 		T_SetShadow(false);
 	}
 	else
@@ -414,7 +414,7 @@ void IM_DrawCoopStats(void)
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-//FIXME    T_SetDist(1, 1);
+	T_SetDist(1, 1);
 	ypos = 50;
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
@@ -441,7 +441,7 @@ void IM_DrawCoopStats(void)
 			ypos += 37;
 		}
 	}
-//FIXME T_SetDist(-1, 1);
+	T_SetDist(-1, 1);
 	T_SetShadow(false);
 }
 
@@ -499,7 +499,7 @@ void IM_DrawDMStats(void)
 	T_SetShadow(true);
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
-//FIXME T_SetDist(1, 1);
+	T_SetDist(1, 1);
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
@@ -540,7 +540,7 @@ void IM_DrawDMStats(void)
 			xpos += 43;
 		}
 	}
-//FIXME T_SetDist(-1, 1);
+	T_SetDist(-1, 1);
 	T_SetShadow(false);
 }
 
@@ -821,6 +821,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.7  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

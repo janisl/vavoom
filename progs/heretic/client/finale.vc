@@ -85,7 +85,9 @@ void F_TextWrite(void)
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
+	T_SetDist(-1, 0);
 	T_DrawNText(20, 5, ARR2STR(FinaleText), count);
+	T_SetDist(-1, 1);
 }
 
 //==========================================================================
@@ -263,6 +265,9 @@ boolean F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.6  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

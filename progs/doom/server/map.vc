@@ -166,10 +166,12 @@ boolean P_ThingHeightClip(mobj_t * thing)
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(mobj_t * thing)
+boolean PIT_ChangeSector(MapObject Other)
 {
 	mobj_t *mo;
+	mobj_t *thing;
 
+	thing = &Actor(Other);
 	if (P_ThingHeightClip(thing))
 	{
 		// keep checking
@@ -347,7 +349,7 @@ float aim_range2d;
 boolean PTR_AimTraverse(intercept_t * in)
 {
 	line_t *li;
-	mobj_t *th;
+	Actor Th;
 	float thingtopslope;
 	float thingbottomslope;
 	float dist;
@@ -396,16 +398,16 @@ boolean PTR_AimTraverse(intercept_t * in)
 	}
 
 	// shoot a thing
-	th = in->thing;
-	if (th == aim_thing)
+	Th = Actor(in->Thing);
+	if (Th == *aim_thing)
 		return true;	// can't shoot self
 
-	if (!(th->Flags & MF_SHOOTABLE))
+	if (!(Th.Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
 #ifdef FIXME
 	//  Hexen does this. There's no reason why we can't enable it in Doom.
-	if (th->player && netgame && !deathmatch)
+	if (Th.player && netgame && !deathmatch)
 	{
 		// don't aim at fellow co-op players
 		return true;
@@ -414,12 +416,12 @@ boolean PTR_AimTraverse(intercept_t * in)
 
 	// check angles to see if the thing can be aimed at
 	dist = aim_range2d * in->frac;
-	thingtopslope = (th->origin.z + th->Height - aim_z) / dist;
+	thingtopslope = (Th.origin.z + Th.Height - aim_z) / dist;
 
 	if (thingtopslope < aim_bottomslope)
 		return true;	// shot over the thing
 
-	thingbottomslope = (th->origin.z - aim_z) / dist;
+	thingbottomslope = (Th.origin.z - aim_z) / dist;
 
 	if (thingbottomslope > aim_topslope)
 		return true;	// shot under the thing
@@ -432,7 +434,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 		thingbottomslope = aim_bottomslope;
 
 	aim_slope = (thingtopslope + thingbottomslope) / 2.0;
-	linetarget = th;
+	linetarget = &Th;
 
 	return false;	// don't go any farther
 }
@@ -633,7 +635,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 {
 	TVec hit_point;
 	line_t *li;
-	mobj_t *th;
+	Actor th;
 
 	if (in->isaline)
 	{
@@ -709,21 +711,21 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	}
 
 	// shoot a thing
-	th = in->thing;
+	th = Actor(in->Thing);
 
-	if (th == shoot_thing)
+	if (th == *shoot_thing)
 		return true;	// can't shoot self
 
-	if (!(th->Flags & MF_SHOOTABLE))
+	if (!(th.Flags & MF_SHOOTABLE))
 		return true;	// corpse or something
 
 	// check angles to see if the thing can be aimed at
 	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
 
-	if (th->origin.z + th->Height < hit_point.z)
+	if (th.origin.z + th.Height < hit_point.z)
 		return true;	// shot over the thing
 
-	if (th->origin.z > hit_point.z)
+	if (th.origin.z > hit_point.z)
 		return true;	// shot under the thing
 
 	// hit thing
@@ -732,13 +734,13 @@ boolean PTR_ShootTraverse(intercept_t * in)
 
 	// Spawn bullet puffs or blod spots,
 	// depending on target type.
-	if (th->Flags & MF_NOBLOOD)
+	if (th.Flags & MF_NOBLOOD)
 		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
 	else
 		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
 
 	if (la_damage)
-		th->Damage(*shoot_thing, *shoot_thing, la_damage);
+		th.Damage(*shoot_thing, *shoot_thing, la_damage);
 
 	// don't go any farther
 	return false;
@@ -794,19 +796,19 @@ float bombdamage;
 //
 //==========================================================================
 
-boolean PIT_RadiusAttack(mobj_t * thing)
+boolean PIT_RadiusAttack(MapObject Other)
 {
 	float dist;
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!(Other.Flags & MF_SHOOTABLE))
 		return true;
 
 	// Boss spider and cyborg
 	// take no damage from concussion.
-	if (thing->Class == Cyberdemon || thing->Class == SpiderMastermind)
+	if (Other.Class == Cyberdemon || Other.Class == SpiderMastermind)
 		return true;
 
-	dist = Length(MobjCenter(thing) - MobjCenter(bombspot)) - thing->Radius;
+	dist = Length(MobjCenter(Other) - MobjCenter((*bombspot))) - Other.Radius;
 
 	if (dist < 0.0)
 		dist = 0.0;
@@ -814,10 +816,10 @@ boolean PIT_RadiusAttack(mobj_t * thing)
 	if (dist >= bombdamage)
 		return true;	// out of range
 
-	if (P_CheckSight(*thing, *bombspot))
+	if (P_CheckSight(Other, *bombspot))
 	{
 		// must be in direct path
-		thing->Damage(*bombspot, *bombsource, ftoi(bombdamage - dist));
+		Actor(Other).Damage(*bombspot, *bombsource, ftoi(bombdamage - dist));
 	}
 
 	return true;
@@ -861,6 +863,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.18  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -220,9 +220,6 @@ native string Info_ValueForKey(string info, string key);
 native boolean WadLumpPresent(string Name);
 
 native Object Spawn(classid cid, Object owner);
-native void Object::Destroy(void);
-native boolean Object::IsA(classid cid);
-native boolean Object::IsDestroyed(void);
 
 //==========================================================================
 //
@@ -284,6 +281,9 @@ native void T_SetFont(int font);
 
 //  Changes text alignement
 native void T_SetAlign(int halign, int valign);
+
+//  Changes text spacing
+native void T_SetDist(int hdist, int vdist);
 
 //  Enable/disable text shadow
 native void T_SetShadow(boolean on);
@@ -430,9 +430,6 @@ native boolean SuspendACS(int number, int map);
 native boolean TerminateACS(int number, int map);
 native void TagFinished(int tag);
 native void PolyobjFinished(int po);
-native void ACS::Think(void);
-native void ACS::Archive(void);
-native void ACS::Unarchive(void);
 
 //
 //  Sound functions
@@ -491,6 +488,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.29  2002/01/29 18:08:54  dj_jl
 //  Fixed saving
 //

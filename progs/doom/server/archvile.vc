@@ -45,40 +45,41 @@
 //
 //==========================================================================
 
-mobj_t *corpsehit;
+Actor CorpseHit;
 Actor vileobj;
 float viletryx;
 float viletryy;
 
-boolean PIT_VileCheck(mobj_t * thing)
+boolean PIT_VileCheck(MapObject Other)
 {
 	float maxdist;
 	boolean check;
 
-	if (!(thing->Flags & MF_CORPSE))
+	if (!(Other.Flags & MF_CORPSE))
 		return true;	// not a monster
 
-	if (thing->time != -1.0)
+	if (Actor(Other).time != -1.0)
 		return true;	// not lying still yet
 
-	if (thing->RaiseState == S_NULL)
+	if (Actor(Other).RaiseState == S_NULL)
 		return true;	// monster doesn't have a raise state
 
-	maxdist = thing->Radius + vileobj.Radius;
+	maxdist = Other.Radius + vileobj.Radius;
 
-	if (fabs(thing->origin.x - viletryx) > maxdist ||
-		fabs(thing->origin.y - viletryy) > maxdist)
+	if (fabs(Other.origin.x - viletryx) > maxdist ||
+		fabs(Other.origin.y - viletryy) > maxdist)
 		return true;	// not actually touching
 
-	if (!P_CheckSight(vileobj, *thing))
+	if (!P_CheckSight(vileobj, Other))
 		return true;	//  Con't see, possibly in other region
 
-	corpsehit = thing;
-	corpsehit->velocity.x = corpsehit->velocity.y = 0.0;
-	corpsehit->Height *= 4.0;
-	check = P_CheckPosition(corpsehit, corpsehit->origin.x,
-		corpsehit->origin.y, corpsehit->origin.z);
-	corpsehit->Height /= 4.0;
+	CorpseHit = Actor(Other);
+	CorpseHit.velocity.x = 0.0;
+	CorpseHit.velocity.y = 0.0;
+	CorpseHit.Height *= 4.0;
+	check = P_CheckPosition(&CorpseHit, CorpseHit.origin.x,
+		CorpseHit.origin.y, CorpseHit.origin.z);
+	CorpseHit.Height /= 4.0;
 
 	if (!check)
 		return true;	// doesn't fit here
@@ -128,23 +129,23 @@ void Actor::A_VileChase(void)
 				{
 					// got one!
 					temp = target;
-					target = corpsehit;
+					target = &CorpseHit;
 					A_FaceTarget();
 					target = temp;
 
 					SetState(S_VILE_HEAL1);
-					StartSoundName(*corpsehit, 'Slop', CHAN_BODY);
+					StartSoundName(CorpseHit, 'Slop', CHAN_BODY);
 
-					corpsehit->SetState(corpsehit->RaiseState);
-					corpsehit->Height *= 4.0;
+					CorpseHit.SetState(CorpseHit.RaiseState);
+					CorpseHit.Height *= 4.0;
 #ifdef FIXME
-					corpsehit->Flags = info->Flags;
+					CorpseHit.Flags = info->Flags;
 #else
-					corpsehit->Flags |= MF_SOLID;
-					corpsehit->Flags &= ~(MF_CORPSE);
+					CorpseHit.Flags |= MF_SOLID;
+					CorpseHit.Flags &= ~(MF_CORPSE);
 #endif
-					corpsehit->Health = corpsehit->spawnhealth;
-					corpsehit->target = NULL;
+					CorpseHit.Health = CorpseHit.spawnhealth;
+					CorpseHit.target = NULL;
 
 					return;
 				}
@@ -326,6 +327,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.13  2002/01/28 18:50:17  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

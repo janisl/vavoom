@@ -877,7 +877,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			thrust = itof(damage) / Mass * 656.25;
 		}
 
-		dir = MobjCenter(this) - MobjCenter((&inflictor));
+		dir = MobjCenter(self) - MobjCenter(inflictor);
 		if (Flags & MF_NOGRAVITY)
 		{
 			dir.z = 0.0;
@@ -1377,7 +1377,7 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 
 	sec->validcount = *validcount;
 	sec->soundtraversed = soundblocks + 1;
-	sec->soundtarget = soundtarget;
+	sec->SoundTarget = *soundtarget;
 
 	for (i = 0; i < sec->linecount; i++)
 	{
@@ -1473,6 +1473,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.27  2002/01/29 18:11:23  dj_jl
 //  Added dormant things
 //

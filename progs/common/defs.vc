@@ -126,7 +126,7 @@ enum
 	PST_REBORN
 };
 
-#define TOCENTER		-128
+#define TOCENTER		-128.0
 
 //
 //  Bounding box
@@ -280,6 +280,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.11  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

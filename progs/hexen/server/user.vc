@@ -79,7 +79,7 @@ float sv_accelerate = 10.0;
 
 void MovePlayer(player_t * player)
 {
-	int fly;
+	float fly;
 	float forward;
 	float side;
 	TVec vforward;
@@ -155,16 +155,12 @@ void MovePlayer(player_t * player)
 		SetPlayerRunState(player);
 	}
 
-	fly = ftoi(player->flymove) >> 4;
-	if (fly > 7)
-	{
-		fly -= 16;
-	}
+	fly = player->flymove / 16.0;
 	if (fly && player->powers[pw_flight])
 	{
-		if (fly != TOCENTER)
+		if (player->flymove != TOCENTER)
 		{
-			player->flyheight = fly * 2;
+			player->flyheight = fly * 2.0;
 			if (!(player->mo->Flags2 & MF2_FLY))
 			{
 				player->mo->Flags2 |= MF2_FLY;
@@ -182,16 +178,16 @@ void MovePlayer(player_t * player)
 			player->mo->Flags &= ~MF_NOGRAVITY;
 		}
 	}
-	else if (fly > 0)
+	else if (fly > 0.0)
 	{
 		PlayerUseArtifact(player, arti_fly);
 	}
 	if (player->mo->Flags2 & MF2_FLY)
 	{
-		player->mo->velocity.z = itof(player->flyheight) * 35.0 + wishvel.z;
+		player->mo->velocity.z = player->flyheight * 35.0 + wishvel.z;
 		if (player->flyheight)
 		{
-			player->flyheight /= 2;
+			player->flyheight /= 2.0;
 		}
 	}
 	if ((player->buttons & BT_JUMP) && onground && !player->jumpTics)
@@ -1165,7 +1161,7 @@ boolean ArtiHealRadius(player_t * player)
 			continue;
 		if (mo.Health <= 0)
 			continue;
-		dist = MobjDist(player->mo, (&mo));
+		dist = MobjDist(*player->mo, mo);
 		if (dist > HEAL_RADIUS_DIST)
 		{
 			// Out of range
@@ -1969,6 +1965,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.23  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

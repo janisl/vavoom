@@ -594,7 +594,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	if (inflictor && !(Flags & MF_NOCLIP))
 	{
 		velocity += (500.0 * itof(damage) / Mass) *
-			Normalize(MobjCenter(this) - MobjCenter((&inflictor)));
+			Normalize(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
 	// player specific
@@ -867,7 +867,7 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 
 	sec->validcount = *validcount;
 	sec->soundtraversed = soundblocks + 1;
-	sec->soundtarget = soundtarget;
+	sec->SoundTarget = *soundtarget;
 
 	for (i = 0; i < sec->linecount; i++)
 	{
@@ -927,6 +927,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.25  2002/01/29 18:15:06  dj_jl
 //  Added some thing specials
 //

@@ -38,24 +38,24 @@ float teleport_y;
 //
 //==========================================================================
 
-boolean PIT_StompThing(mobj_t * thing)
+boolean PIT_StompThing(MapObject Other)
 {
 	float blockdist;
 
-	if (!(thing->Flags & MF_SHOOTABLE))
+	if (!(Other.Flags & MF_SHOOTABLE))
 		return true;
 
-	blockdist = thing->Radius + teleport_thing->Radius;
+	blockdist = Other.Radius + teleport_thing->Radius;
 
-	if (fabs(thing->origin.x - teleport_x) >= blockdist
-		|| fabs(thing->origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.origin.x - teleport_x) >= blockdist ||
+		fabs(Other.origin.y - teleport_y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
 	}
 
 	// don't clip against self
-	if (thing == teleport_thing)
+	if (Other == *teleport_thing)
 		return true;
 
 #ifdef DOOM2
@@ -69,7 +69,7 @@ boolean PIT_StompThing(mobj_t * thing)
 		return false;
 	}
 
-	thing->Damage(*teleport_thing, *teleport_thing, 10000);
+	Actor(Other).Damage(*teleport_thing, *teleport_thing, 10000);
 
 	return true;
 }
@@ -199,6 +199,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.14  2002/01/28 18:50:20  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

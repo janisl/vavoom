@@ -33,15 +33,15 @@
 
 void A_Look(mobj_t * actor)
 {
-	mobj_t *targ;
+	Actor targ;
 	int sound;
 
 	actor->threshold = 0;	// any shot will wake up
-	targ = actor->subsector->sector->soundtarget;
+	targ = Actor(actor->subsector->sector->SoundTarget);
 
-	if (targ && targ->Flags & MF_SHOOTABLE)
+	if (targ && targ.Flags & MF_SHOOTABLE)
 	{
-		actor->target = targ;
+		actor->target = &targ;
 
 		if (actor->Flags & MF_AMBUSH)
 		{
@@ -315,6 +315,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.11  2002/01/28 18:50:20  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -48,7 +48,7 @@ int P_CheckMeleeRange(mobj_t * actor)
 	}
 
 	pl = actor->target;
-	dist = MobjDist(pl, actor);
+	dist = MobjDist(*pl, *actor);
 
 	if (dist >= MELEERANGE - 20.0 + pl->Radius)
 	{
@@ -92,7 +92,7 @@ int P_CheckMissileRange(mobj_t * actor)
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(actor, actor->target) - 64.0;
+	dist = MobjDist(*actor, *actor->target) - 64.0;
 
 	if (!actor->MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -192,7 +192,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist((&mo), actor);
+				dist = MobjDist(mo, *actor);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -265,7 +265,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(player->mo, actor);
+				dist = MobjDist(*player->mo, *actor);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -434,6 +434,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.9  2002/01/28 18:50:20  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

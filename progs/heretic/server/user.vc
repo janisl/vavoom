@@ -197,7 +197,7 @@ void MovePlayer(player_t * player)
 {
 	float forward;
 	float side;
-	int fly;
+	float fly;
 
 	// Do not let the player control movement
 	//  if not onground.
@@ -233,12 +233,12 @@ void MovePlayer(player_t * player)
 		SetPlayerRunState(player);
 	}
 
-	fly = ftoi(player->flymove / 16.0);
+	fly = player->flymove / 16.0;
 	if (fly && player->powers[pw_flight])
 	{
-		if (fly != TOCENTER)
+		if (player->flymove != TOCENTER)
 		{
-			player->flyheight = itof(fly * 2);
+			player->flyheight = fly * 2.0;
 			if (!(player->mo->Flags2 & MF2_FLY))
 			{
 				player->mo->Flags2 |= MF2_FLY;
@@ -256,7 +256,7 @@ void MovePlayer(player_t * player)
 			player->mo->Flags &= ~MF_NOGRAVITY;
 		}
 	}
-	else if (fly > 0)
+	else if (fly > 0.0)
 	{
 		PlayerUseArtifact(player, arti_fly);
 	}
@@ -1397,6 +1397,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/02 19:17:25  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.21  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

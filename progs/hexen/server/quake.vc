@@ -107,7 +107,7 @@ void Actor::A_Quake(void)
 				continue;
 
 			victim = pl->mo;
-			dist = ftoi(MobjDist(this, victim)) >> 6;
+			dist = ftoi(MobjDist(self, *victim)) >> 6;
 			// Tested in tile units (64 pixels)
 			if (dist < args[3])	// In tremor radius
 			{
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/02 19:17:26  dj_jl
+//  Replacing pointers with references, beautification.
+//
 //  Revision 1.11  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //
