@@ -42,6 +42,7 @@ typedef enum
 void C_Init(void);
 boolean	C_Responder(event_t*);
 void C_Drawer(void);
+bool C_Active(void);
 void C_Start(void);
 void C_StartFull(void);
 void C_Stop(void);
@@ -53,14 +54,15 @@ void C_CenterMessage(const char *msg);
 extern ostream			con;
 extern ostream			cond;
 
-extern cons_state_t		consolestate;
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:49:26  dj_jl
+//	Added C_Active
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
