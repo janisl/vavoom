@@ -88,6 +88,16 @@ class PlayerEntity:Actor
 class Weapon_Smith:Actor
 	__mobjinfo__(116)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Weapon_Smith';
@@ -114,6 +124,16 @@ class Weapon_Smith:Actor
 class Bar_Keep:Actor
 	__mobjinfo__(72)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Bar_Keep';
@@ -142,6 +162,16 @@ class Bar_Keep:Actor
 class Amorer:Actor
 	__mobjinfo__(73)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Amorer';
@@ -169,6 +199,16 @@ class Amorer:Actor
 class Medic:Actor
 	__mobjinfo__(74)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Medic';
@@ -196,6 +236,16 @@ class Medic:Actor
 class Thing6:Actor
 	__mobjinfo__(3004)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -221,16 +271,6 @@ class Thing6:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -242,6 +282,16 @@ class Thing6:Actor
 class Thing7:Actor
 	__mobjinfo__(130)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -266,16 +316,6 @@ class Thing7:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -288,6 +328,16 @@ class Thing7:Actor
 class Thing8:Actor
 	__mobjinfo__(131)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -313,16 +363,6 @@ class Thing8:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -334,6 +374,16 @@ class Thing8:Actor
 class Thing9:Actor
 	__mobjinfo__(65)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -359,16 +409,6 @@ class Thing9:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -381,6 +421,16 @@ class Thing9:Actor
 class Thing10:Actor
 	__mobjinfo__(132)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -406,16 +456,6 @@ class Thing10:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -428,6 +468,16 @@ class Thing10:Actor
 class Thing11:Actor
 	__mobjinfo__(133)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -454,16 +504,6 @@ class Thing11:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -475,6 +515,16 @@ class Thing11:Actor
 class Thing12:Actor
 	__mobjinfo__(66)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -500,16 +550,6 @@ class Thing12:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -522,6 +562,16 @@ class Thing12:Actor
 class Thing13:Actor
 	__mobjinfo__(134)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -547,16 +597,6 @@ class Thing13:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -569,6 +609,16 @@ class Thing13:Actor
 class Thing14:Actor
 	__mobjinfo__(135)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -595,16 +645,6 @@ class Thing14:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -616,6 +656,16 @@ class Thing14:Actor
 class Thing15:Actor
 	__mobjinfo__(67)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -642,16 +692,6 @@ class Thing15:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -663,6 +703,16 @@ class Thing15:Actor
 class Thing16:Actor
 	__mobjinfo__(136)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -689,16 +739,6 @@ class Thing16:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -710,6 +750,16 @@ class Thing16:Actor
 class Thing17:Actor
 	__mobjinfo__(137)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -736,16 +786,6 @@ class Thing17:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -757,6 +797,16 @@ class Thing17:Actor
 class Thing18:Actor
 	__mobjinfo__(172)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -782,16 +832,6 @@ class Thing18:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -804,6 +844,16 @@ class Thing18:Actor
 class Thing19:Actor
 	__mobjinfo__(173)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -829,16 +879,6 @@ class Thing19:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -851,6 +891,16 @@ class Thing19:Actor
 class Thing20:Actor
 	__mobjinfo__(174)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -877,16 +927,6 @@ class Thing20:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -898,6 +938,16 @@ class Thing20:Actor
 class Thing21:Actor
 	__mobjinfo__(175)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -923,16 +973,6 @@ class Thing21:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -945,6 +985,16 @@ class Thing21:Actor
 class Thing22:Actor
 	__mobjinfo__(176)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -970,16 +1020,6 @@ class Thing22:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -992,6 +1032,16 @@ class Thing22:Actor
 class Thing23:Actor
 	__mobjinfo__(177)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1018,16 +1068,6 @@ class Thing23:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1039,6 +1079,16 @@ class Thing23:Actor
 class Thing24:Actor
 	__mobjinfo__(178)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1064,16 +1114,6 @@ class Thing24:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1086,6 +1126,16 @@ class Thing24:Actor
 class Thing25:Actor
 	__mobjinfo__(179)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1111,16 +1161,6 @@ class Thing25:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1133,6 +1173,16 @@ class Thing25:Actor
 class Thing26:Actor
 	__mobjinfo__(180)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1159,16 +1209,6 @@ class Thing26:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1180,6 +1220,16 @@ class Thing26:Actor
 class Thing27:Actor
 	__mobjinfo__(181)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1206,16 +1256,6 @@ class Thing27:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1227,6 +1267,16 @@ class Thing27:Actor
 class Thing28:Actor
 	__mobjinfo__(169)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 31;
@@ -1242,16 +1292,6 @@ class Thing28:Actor
 		DeathState = S_410;
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1263,6 +1303,16 @@ class Thing28:Actor
 class Thing29:Actor
 	__mobjinfo__(201)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 61;
@@ -1277,16 +1327,6 @@ class Thing29:Actor
 		PainState = S_423;
 		DeathState = S_633;
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1447,6 +1487,16 @@ class Thing36:Actor
 class Thing37:Actor
 	__mobjinfo__(204)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 51;
@@ -1466,16 +1516,6 @@ class Thing37:Actor
 		PainSound = 'Sound100';
 		DeathSound = 'Sound100';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1487,6 +1527,16 @@ class Thing37:Actor
 class Beggar1:Actor
 	__mobjinfo__(141)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Beggar';
@@ -1509,16 +1559,6 @@ class Beggar1:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1531,6 +1571,16 @@ class Beggar1:Actor
 class Beggar2:Actor
 	__mobjinfo__(155)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Beggar';
@@ -1553,16 +1603,6 @@ class Beggar2:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1575,6 +1615,16 @@ class Beggar2:Actor
 class Beggar3:Actor
 	__mobjinfo__(156)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Beggar';
@@ -1597,16 +1647,6 @@ class Beggar3:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1619,6 +1659,16 @@ class Beggar3:Actor
 class Beggar4:Actor
 	__mobjinfo__(157)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Beggar';
@@ -1641,16 +1691,6 @@ class Beggar4:Actor
 		AttackSound = 'Sound2';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1663,6 +1703,16 @@ class Beggar4:Actor
 class Beggar5:Actor
 	__mobjinfo__(158)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Beggar';
@@ -1686,16 +1736,6 @@ class Beggar5:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound61';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1707,6 +1747,16 @@ class Beggar5:Actor
 class Rebel1:Actor
 	__mobjinfo__(9)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1730,16 +1780,6 @@ class Rebel1:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1752,6 +1792,16 @@ class Rebel1:Actor
 class Rebel2:Actor
 	__mobjinfo__(144)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1775,16 +1825,6 @@ class Rebel2:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1797,6 +1837,16 @@ class Rebel2:Actor
 class Rebel3:Actor
 	__mobjinfo__(145)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1820,16 +1870,6 @@ class Rebel3:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1842,6 +1882,16 @@ class Rebel3:Actor
 class Rebel4:Actor
 	__mobjinfo__(149)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1865,16 +1915,6 @@ class Rebel4:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1887,6 +1927,16 @@ class Rebel4:Actor
 class Rebel5:Actor
 	__mobjinfo__(150)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1910,16 +1960,6 @@ class Rebel5:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -1932,6 +1972,16 @@ class Rebel5:Actor
 class Rebel6:Actor
 	__mobjinfo__(151)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Rebel';
@@ -1956,16 +2006,6 @@ class Rebel6:Actor
 		PainSound = 'Sound12';
 		DeathSound = 'Sound20';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -1977,6 +2017,21 @@ class Rebel6:Actor
 class Macil1:Actor
 	__mobjinfo__(64)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'MACIL';
@@ -1998,16 +2053,6 @@ class Macil1:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2019,6 +2064,16 @@ class Macil1:Actor
 class Macil2:Actor
 	__mobjinfo__(200)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'MACIL';
@@ -2042,16 +2097,6 @@ class Macil2:Actor
 		ActiveSound = 'Sound47';
 		PainSound = 'Sound12';
 		DeathSound = 'Sound19';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2086,6 +2131,16 @@ class Thing51:Actor
 class Thing52:Actor
 	__mobjinfo__(3001)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 150;
@@ -2110,16 +2165,6 @@ class Thing52:Actor
 		PainSound = 'Sound92';
 		DeathSound = 'Sound93';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2131,6 +2176,16 @@ class Thing52:Actor
 class Acolyte1:Actor
 	__mobjinfo__(3002)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2156,16 +2211,6 @@ class Acolyte1:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2177,6 +2222,16 @@ class Acolyte1:Actor
 class Acolyte2:Actor
 	__mobjinfo__(142)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2203,16 +2258,6 @@ class Acolyte2:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2224,6 +2269,16 @@ class Acolyte2:Actor
 class Acolyte3:Actor
 	__mobjinfo__(143)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2250,16 +2305,6 @@ class Acolyte3:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2271,6 +2316,16 @@ class Acolyte3:Actor
 class Acolyte4:Actor
 	__mobjinfo__(146)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2297,16 +2352,6 @@ class Acolyte4:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2318,6 +2363,16 @@ class Acolyte4:Actor
 class Acolyte5:Actor
 	__mobjinfo__(147)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2344,16 +2399,6 @@ class Acolyte5:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2365,6 +2410,16 @@ class Acolyte5:Actor
 class Acolyte6:Actor
 	__mobjinfo__(148)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2391,16 +2446,6 @@ class Acolyte6:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2412,6 +2457,16 @@ class Acolyte6:Actor
 class Acolyte7:Actor
 	__mobjinfo__(58)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ACOLYTE';
@@ -2437,16 +2492,6 @@ class Acolyte7:Actor
 		PainSound = 'Sound16';
 		DeathSound = 'Sound21';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2458,6 +2503,16 @@ class Acolyte7:Actor
 class Thing60:Actor
 	__mobjinfo__(3005)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 400;
@@ -2479,16 +2534,6 @@ class Thing60:Actor
 		PainSound = 'Sound64';
 		DeathSound = 'Sound65';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2500,6 +2545,16 @@ class Thing60:Actor
 class Thing61:Actor
 	__mobjinfo__(187)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2521,16 +2576,6 @@ class Thing61:Actor
 		PainSound = 'Sound64';
 		DeathSound = 'Sound84';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2542,6 +2587,16 @@ class Thing61:Actor
 class Enforcer:Actor
 	__mobjinfo__(3003)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Enforcer';
@@ -2565,16 +2620,6 @@ class Enforcer:Actor
 		PainSound = 'Sound83';
 		DeathSound = 'Sound84';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2586,6 +2631,16 @@ class Enforcer:Actor
 class Oracle:Actor
 	__mobjinfo__(199)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ORACLE';
@@ -2602,16 +2657,6 @@ class Oracle:Actor
 		CrashState = S_741;
 		DeathState = S_748;
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2623,6 +2668,16 @@ class Oracle:Actor
 class Priest:Actor
 	__mobjinfo__(12)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'PRIEST';
@@ -2645,16 +2700,6 @@ class Priest:Actor
 		PainSound = 'Sound111';
 		DeathSound = 'Sound19';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2666,6 +2711,16 @@ class Priest:Actor
 class Thing65:Actor
 	__mobjinfo__(129)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2689,16 +2744,6 @@ class Thing65:Actor
 		AttackSound = 'Sound90';
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -2772,6 +2817,16 @@ class Thing68:Actor
 class Thing69:Actor
 	__mobjinfo__(75)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2796,16 +2851,6 @@ class Thing69:Actor
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2817,6 +2862,16 @@ class Thing69:Actor
 class Thing70:Actor
 	__mobjinfo__(76)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2841,16 +2896,6 @@ class Thing70:Actor
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2862,6 +2907,16 @@ class Thing70:Actor
 class Thing71:Actor
 	__mobjinfo__(167)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2886,16 +2941,6 @@ class Thing71:Actor
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2907,6 +2952,16 @@ class Thing71:Actor
 class Thing72:Actor
 	__mobjinfo__(168)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 500;
@@ -2931,16 +2986,6 @@ class Thing72:Actor
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2952,6 +2997,16 @@ class Thing72:Actor
 class Thing73:Actor
 	__mobjinfo__(128)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 1500;
@@ -2976,16 +3031,6 @@ class Thing73:Actor
 		PainSound = 'Sound126';
 		DeathSound = 'Sound129';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -2996,6 +3041,16 @@ class Thing73:Actor
 
 class Thing74:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 100;
@@ -3019,16 +3074,6 @@ class Thing74:Actor
 		AttackSound = 'Sound90';
 		PainSound = 'Sound126';
 		DeathSound = 'Sound128';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -3388,6 +3433,16 @@ class Thing88:Actor
 class Thing89:Actor
 	__mobjinfo__(3006)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 100;
@@ -3408,16 +3463,6 @@ class Thing89:Actor
 		ActiveSound = 'Sound80';
 		DeathSound = 'Sound79';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -3429,6 +3474,16 @@ class Thing89:Actor
 class Thing90:Actor
 	__mobjinfo__(186)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 80;
@@ -3451,16 +3506,6 @@ class Thing90:Actor
 		PainSound = 'Sound98';
 		DeathSound = 'Sound97';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -3472,6 +3517,16 @@ class Thing90:Actor
 class Thing91:Actor
 	__mobjinfo__(16)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -3490,16 +3545,6 @@ class Thing91:Actor
 		ActiveSound = 'Sound115';
 		DeathSound = 'Sound114';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -3511,6 +3556,16 @@ class Thing91:Actor
 class Thing92:Actor
 	__mobjinfo__(71)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 1100;
@@ -3533,16 +3588,6 @@ class Thing92:Actor
 		AttackSound = 'Sound90';
 		PainSound = 'Sound109';
 		DeathSound = 'Sound65';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4211,6 +4256,16 @@ class Thing120:Actor
 class Thing121:Actor
 	__mobjinfo__(27)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 125;
@@ -4226,16 +4281,6 @@ class Thing121:Actor
 		PainState = S_1201;
 		DeathState = S_1204;
 		DeathSound = 'Sound6';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -4510,6 +4555,16 @@ class Rebel_Key:Actor
 class Passcard:Actor
 	__mobjinfo__(185)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Passcard';
@@ -4532,6 +4587,16 @@ class Passcard:Actor
 class ID_Badge:Actor
 	__mobjinfo__(184)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ID_Badge';
@@ -4575,6 +4640,16 @@ class Prison_Key:Actor
 class Severed_Hand:Actor
 	__mobjinfo__(91)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Severed_Hand';
@@ -4660,6 +4735,16 @@ class Power3_Key:Actor
 class Gold_Key:Actor
 	__mobjinfo__(40)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Gold_Key';
@@ -4682,6 +4767,16 @@ class Gold_Key:Actor
 class ID_Card:Actor
 	__mobjinfo__(13)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'ID_Card';
@@ -4704,6 +4799,16 @@ class ID_Card:Actor
 class Silver_Key:Actor
 	__mobjinfo__(38)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Silver_Key';
@@ -4726,6 +4831,16 @@ class Silver_Key:Actor
 class Oracle_Key:Actor
 	__mobjinfo__(61)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Oracle_Key';
@@ -4769,6 +4884,16 @@ class Military_ID:Actor
 class Order_Key:Actor
 	__mobjinfo__(86)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Order_Key';
@@ -4791,6 +4916,16 @@ class Order_Key:Actor
 class Warehouse_Key:Actor
 	__mobjinfo__(166)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Warehouse_Key';
@@ -4813,6 +4948,16 @@ class Warehouse_Key:Actor
 class Brass_Key:Actor
 	__mobjinfo__(39)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Brass_Key';
@@ -4835,6 +4980,16 @@ class Brass_Key:Actor
 class Red_Crystal_Key:Actor
 	__mobjinfo__(192)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Red_Crystal_Key';
@@ -4857,6 +5012,16 @@ class Red_Crystal_Key:Actor
 class Blue_Crystal_Key:Actor
 	__mobjinfo__(193)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Blue_Crystal_Key';
@@ -4879,6 +5044,16 @@ class Blue_Crystal_Key:Actor
 class Chapel_Key:Actor
 	__mobjinfo__(195)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Chapel_Key';
@@ -5114,6 +5289,16 @@ class Guard_Uniform:Actor
 class Officers_Uniform:Actor
 	__mobjinfo__(52)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Officer\'s_Uniform';
@@ -5332,6 +5517,16 @@ class Ear:Actor
 class Communicator:Actor
 	__mobjinfo__(206)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (deathmatch)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'Communicator';
@@ -5949,6 +6144,16 @@ class Thing199:Actor
 class Rat_buddy:Actor
 	__mobjinfo__(85)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		ClassName = 'rat_buddy';
@@ -5967,16 +6172,6 @@ class Rat_buddy:Actor
 		SightSound = 'Sound55';
 		ActiveSound = 'Sound55';
 		DeathSound = 'Sound55';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8401,9 +8596,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/02/02 19:14:08  dj_jl
+//	Fixed things not spawned in deathmatch.
+//
 //	Revision 1.18  2002/01/29 18:10:31  dj_jl
 //	Added MCROSS and PCROSS flags
-//
+//	
 //	Revision 1.17  2002/01/28 18:50:20  dj_jl
 //	Made some functions Actor members.
 //	Replaced some pointers with references.

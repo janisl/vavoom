@@ -303,6 +303,35 @@ void WriteMobjInfo(void)
 		}
 		fprintf(f, "{\n");
 
+        //  ------------ OnMapSpawn method -----------
+		bool no_deathmatch = flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1;
+#ifdef NODEH
+		bool no_monsters = flags & MF_COUNTKILL;
+#else
+		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
+#endif
+		if (no_deathmatch || no_monsters || mobjinfo[i].extra)
+		{
+    	    fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
+        	fprintf(f, "\t{\n");
+
+			if (no_deathmatch)
+    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
+			if (no_monsters)
+        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
+
+			//	Calling of start function
+			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
+
+			//	Static lights
+			if (mobjinfo[i].extra)
+				fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
+
+	        //	End of function
+    	    fprintf(f, "\t}\n");
+			fprintf(f, "\n");
+		}
+
 		//  ------------ DefaultProperties -------------
 		fprintf(f, "\tdefaultproperties\n");
 		fprintf(f, "\t{\n");
@@ -345,7 +374,7 @@ void WriteMobjInfo(void)
 		if (mobjinfo[i].damage)
 			fprintf(f, "\t\tMissileDamage = %d;\n", mobjinfo[i].damage);
 
-        //	Flag replacements
+        //	Translucency
 		if (flags2 & MF2_DONTDRAW)
 			fprintf(f, "\t\tTranslucency = 100;\n");
 		else if (flags & MF_SHADOW)
@@ -356,6 +385,8 @@ void WriteMobjInfo(void)
 		else if (flags & MF_TRANSLUCENT)
 			fprintf(f, "\t\tTranslucency = 33;\n");
 #endif
+
+		//	Translation
 #ifdef STRIFE
         if (flags & 0x70000000)
 			fprintf(f, "\t\tTranslation = %d;\n", (flags >> 28) & 7);
@@ -464,35 +495,6 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tEffects = %s;\n", mobjinfo[i].effects);
 
 		fprintf(f, "\t}\n");
-
-        //  ------------ OnMapSpawn method -----------
-		bool no_deathmatch = flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1;
-#ifdef NODEH
-		bool no_monsters = flags & MF_COUNTKILL;
-#else
-		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
-#endif
-		if (no_deathmatch || no_monsters || mobjinfo[i].extra)
-		{
-			fprintf(f, "\n");
-    	    fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
-        	fprintf(f, "\t{\n");
-
-			if (no_deathmatch)
-    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
-			if (no_monsters)
-        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
-
-			//	Calling of start function
-			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
-
-			//	Static lights
-			if (mobjinfo[i].extra)
-				fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
-
-	        //	End of function
-    	    fprintf(f, "\t}\n");
-		}
 
 		//  End of class
 		fprintf(f, "};\n");
@@ -769,9 +771,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/02/02 19:13:06  dj_jl
+//	Fixed things not spawned in deathmatch.
+//
 //	Revision 1.19  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
-//
+//	
 //	Revision 1.18  2002/01/28 18:51:59  dj_jl
 //	Replaced some pointers with references.
 //	

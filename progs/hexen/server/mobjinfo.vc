@@ -296,6 +296,13 @@ class FlameLargeTemp:Actor
 class FlameSmall:Actor
 	__mobjinfo__(10501)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin, 64.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -306,13 +313,6 @@ class FlameSmall:Actor
 		Translucency = 100;
 		Flags2 = MF2_NOTELEPORT|MF2_NOPASSMOBJ;
 		SpawnState = S_FLAME_SMALL1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 64.0);
 	}
 };
 
@@ -325,6 +325,13 @@ class FlameSmall:Actor
 class FlameLarge:Actor
 	__mobjinfo__(10503)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin, 128.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -335,13 +342,6 @@ class FlameLarge:Actor
 		Translucency = 100;
 		Flags2 = MF2_NOTELEPORT|MF2_NOPASSMOBJ;
 		SpawnState = S_FLAME_LARGE1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -2222,6 +2222,13 @@ class ZRock4:Actor
 class ZChandelier:Actor
 	__mobjinfo__(17)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin, 128.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -2232,13 +2239,6 @@ class ZChandelier:Actor
 		Flags = MF_SPAWNCEILING|MF_NOGRAVITY;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZCHANDELIER1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -4049,6 +4049,12 @@ class BloodPool:Actor
 class ZCandle:Actor
 	__mobjinfo__(119)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		AddStaticLight(origin, 128.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4059,12 +4065,6 @@ class ZCandle:Actor
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZCANDLE1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -4144,6 +4144,12 @@ class Leaf2:Actor
 class ZTWinedTorch:Actor
 	__mobjinfo__(116)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		AddStaticLight(origin + vector(0.0, 0.0, 64.0), 200.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4154,12 +4160,6 @@ class ZTWinedTorch:Actor
 		Flags = MF_SOLID;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZTWINEDTORCH_1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 64.0), 200.0);
 	}
 };
 
@@ -4238,6 +4238,14 @@ class BridgeBall:Actor
 class ZWallTorch:Actor
 	__mobjinfo__(54)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 
+				mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4248,14 +4256,6 @@ class ZWallTorch:Actor
 		Flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZWALLTORCH1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 
-				mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 };
 
@@ -4411,6 +4411,13 @@ class ZPoisonShroom:Actor
 class ZFireBull:Actor
 	__mobjinfo__(8042)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4421,13 +4428,6 @@ class ZFireBull:Actor
 		Flags = MF_SOLID;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZFIREBULL1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);
 	}
 };
 
@@ -4462,6 +4462,13 @@ class ZFireBullUnlit:Actor
 class FireThing:Actor
 	__mobjinfo__(8060)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4472,13 +4479,6 @@ class FireThing:Actor
 		Flags = MF_SOLID;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZFIRETHING1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);
 	}
 };
 
@@ -4491,6 +4491,13 @@ class FireThing:Actor
 class BrassTorch:Actor
 	__mobjinfo__(8061)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4501,13 +4508,6 @@ class BrassTorch:Actor
 		Flags = MF_SOLID;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZBRASSTORCH1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);
 	}
 };
 
@@ -4588,6 +4588,13 @@ class ZBell:Actor
 class ZBlueCandle:Actor
 	__mobjinfo__(8066)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4598,13 +4605,6 @@ class ZBlueCandle:Actor
 		Flags = MF_NOBLOCKMAP;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZBLUE_CANDLE1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));
 	}
 };
 
@@ -4664,6 +4664,13 @@ class ZXmasTree:Actor
 class ZCauldron:Actor
 	__mobjinfo__(8069)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		::OnMapSpawn(mthing);
+		if (!tid)
+			AddStaticLight(origin, 128.0);
+	}
+
 	defaultproperties
 	{
 		Health = 1000;
@@ -4674,13 +4681,6 @@ class ZCauldron:Actor
 		Flags = MF_SOLID;
 		Flags2 = MF2_NOPASSMOBJ;
 		SpawnState = S_ZCAULDRON1;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -6436,6 +6436,16 @@ class PlayerPig:Actor
 
 class Pig:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 25;
@@ -6457,16 +6467,6 @@ class Pig:Actor
 		PainSound = 'PigPain';
 		DeathSound = 'PigDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -6478,6 +6478,16 @@ class Pig:Actor
 class Centaur:Actor
 	__mobjinfo__(107)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 200;
@@ -6502,16 +6512,6 @@ class Centaur:Actor
 		PainSound = 'CentaurPain';
 		DeathSound = 'CentaurDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -6523,6 +6523,16 @@ class Centaur:Actor
 class CentaurLeader:Actor
 	__mobjinfo__(115)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 250;
@@ -6547,16 +6557,6 @@ class CentaurLeader:Actor
 		AttackSound = 'CentaurAttack';
 		PainSound = 'CentaurPain';
 		DeathSound = 'CentaurDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6639,6 +6639,16 @@ class CentaurSword:Actor
 class Demon:Actor
 	__mobjinfo__(31)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 250;
@@ -6663,16 +6673,6 @@ class Demon:Actor
 		AttackSound = 'DemonAttack';
 		PainSound = 'DemonPain';
 		DeathSound = 'DemonDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -6821,6 +6821,16 @@ class DemonMissile:Actor
 class Demon2:Actor
 	__mobjinfo__(8080)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 250;
@@ -6845,16 +6855,6 @@ class Demon2:Actor
 		AttackSound = 'DemonAttack';
 		PainSound = 'DemonPain';
 		DeathSound = 'DemonDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7003,6 +7003,16 @@ class Demon2Missile:Actor
 class WraithBuried:Actor
 	__mobjinfo__(10011)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 150;
@@ -7030,16 +7040,6 @@ class WraithBuried:Actor
 		PainSound = 'WraithPain';
 		DeathSound = 'WraithDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -7051,6 +7051,16 @@ class WraithBuried:Actor
 class Wraith:Actor
 	__mobjinfo__(34)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 150;
@@ -7076,16 +7086,6 @@ class Wraith:Actor
 		AttackSound = 'WraithAttack';
 		PainSound = 'WraithPain';
 		DeathSound = 'WraithDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7214,6 +7214,16 @@ class WraithFleshDrip2:Actor
 class Minotaur:Actor
 	__mobjinfo__(9)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 2500;
@@ -7238,16 +7248,6 @@ class Minotaur:Actor
 		AttackSound = 'MaulatorHamSwing';
 		PainSound = 'MaulatorPain';
 		DeathSound = 'MaulatorDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7378,6 +7378,16 @@ class MinotaurSmokeExit:Actor
 class Serpent:Actor
 	__mobjinfo__(121)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 90;
@@ -7402,16 +7412,6 @@ class Serpent:Actor
 		PainSound = 'SerpentPain';
 		DeathSound = 'SerpentDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -7423,6 +7423,16 @@ class Serpent:Actor
 class SerpentLeader:Actor
 	__mobjinfo__(120)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 90;
@@ -7446,16 +7456,6 @@ class SerpentLeader:Actor
 		AttackSound = 'SerpentAttack';
 		PainSound = 'SerpentPain';
 		DeathSound = 'SerpentDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7578,6 +7578,16 @@ class SerpentGib3:Actor
 class Bishop:Actor
 	__mobjinfo__(114)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 130;
@@ -7599,16 +7609,6 @@ class Bishop:Actor
 		AttackSound = 'BishopAttack';
 		PainSound = 'BishopPain';
 		DeathSound = 'BishopDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -7713,6 +7713,16 @@ class BishopMissile:Actor
 class Dragon:Actor
 	__mobjinfo__(254)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 640;
@@ -7734,16 +7744,6 @@ class Dragon:Actor
 		AttackSound = 'DragonAttack';
 		PainSound = 'DragonPain';
 		DeathSound = 'DragonDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8245,6 +8245,16 @@ class SoundWaterfall:Actor
 class Ettin:Actor
 	__mobjinfo__(10030)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 175;
@@ -8269,16 +8279,6 @@ class Ettin:Actor
 		AttackSound = 'EttinAttack';
 		PainSound = 'EttinPain';
 		DeathSound = 'EttinDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8313,6 +8313,16 @@ class EttinMace:Actor
 class FireDemon:Actor
 	__mobjinfo__(10060)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 80;
@@ -8338,16 +8348,6 @@ class FireDemon:Actor
 		PainSound = 'FireDemonPain';
 		DeathSound = 'FireDemonDeath';
 		Effects = EF_DL_WHITE;
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8548,6 +8548,16 @@ class FireDemonMissile:Actor
 class IceGuy:Actor
 	__mobjinfo__(8020)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 120;
@@ -8567,16 +8577,6 @@ class IceGuy:Actor
 		SightSound = 'IceGuySight';
 		ActiveSound = 'IceGuyActive';
 		AttackSound = 'IceGuyAttack';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -8725,6 +8725,16 @@ class IceGuyWisp2:Actor
 class FighterBoss:Actor
 	__mobjinfo__(10100)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 800;
@@ -8747,16 +8757,6 @@ class FighterBoss:Actor
 		PainSound = 'PlayerFighterPain';
 		DeathSound = 'PlayerFighterCrazyDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -8768,6 +8768,16 @@ class FighterBoss:Actor
 class ClericBoss:Actor
 	__mobjinfo__(10101)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 800;
@@ -8790,16 +8800,6 @@ class ClericBoss:Actor
 		PainSound = 'PlayerClericPain';
 		DeathSound = 'PlayerClericCrazyDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -8811,6 +8811,16 @@ class ClericBoss:Actor
 class MageBoss:Actor
 	__mobjinfo__(10102)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 800;
@@ -8833,16 +8843,6 @@ class MageBoss:Actor
 		PainSound = 'PlayerMagePain';
 		DeathSound = 'PlayerMageCrazyDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -8854,6 +8854,16 @@ class MageBoss:Actor
 class Sorcerer:Actor
 	__mobjinfo__(10080)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 5000;
@@ -8875,16 +8885,6 @@ class Sorcerer:Actor
 		ActiveSound = 'SorcererActive';
 		PainSound = 'SorcererPain';
 		DeathSound = 'SorcererDeathScream';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -9181,6 +9181,16 @@ class WaterDrip:Actor
 class Korax:Actor
 	__mobjinfo__(10200)
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 5000;
@@ -9203,16 +9213,6 @@ class Korax:Actor
 		AttackSound = 'KoraxAttack';
 		PainSound = 'KoraxPain';
 		DeathSound = 'KoraxDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -9362,6 +9362,16 @@ class KoraxSpirit6:Actor
 
 class DemonMash:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 250;
@@ -9385,16 +9395,6 @@ class DemonMash:Actor
 		PainSound = 'DemonPain';
 		DeathSound = 'DemonDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -9405,6 +9405,16 @@ class DemonMash:Actor
 
 class Demon2Mash:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 250;
@@ -9428,16 +9438,6 @@ class Demon2Mash:Actor
 		PainSound = 'DemonPain';
 		DeathSound = 'DemonDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -9448,6 +9448,16 @@ class Demon2Mash:Actor
 
 class EttinMash:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 175;
@@ -9471,16 +9481,6 @@ class EttinMash:Actor
 		PainSound = 'EttinPain';
 		DeathSound = 'EttinDeath';
 	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
-	}
 };
 
 //==========================================================================
@@ -9491,6 +9491,16 @@ class EttinMash:Actor
 
 class CentaurMash:Actor
 {
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
 	defaultproperties
 	{
 		Health = 200;
@@ -9512,16 +9522,6 @@ class CentaurMash:Actor
 		AttackSound = 'CentaurAttack';
 		PainSound = 'CentaurPain';
 		DeathSound = 'CentaurDeath';
-	}
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-		if (nomonsters)
-		{
-			RemoveMobjThinker(self);
-			return;
-		}
-		::OnMapSpawn(mthing);
 	}
 };
 
@@ -9596,10 +9596,13 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/02/02 19:14:08  dj_jl
+//	Fixed things not spawned in deathmatch.
+//
 //	Revision 1.19  2002/01/28 18:50:19  dj_jl
 //	Made some functions Actor members.
 //	Replaced some pointers with references.
-//
+//	
 //	Revision 1.18  2002/01/24 18:19:26  dj_jl
 //	Split common class Entity, made SetMobjState an Entity function
 //	
