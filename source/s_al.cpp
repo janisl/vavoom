@@ -61,6 +61,7 @@ private:
 	ALCdevice*	Device;
 	ALCcontext*	Context;
 	ALuint*		Buffers;
+	ALuint		VoiceBuffer;
 
 	int			snd_MaxVolume;	// maximum volume for sound
 
@@ -93,6 +94,7 @@ public:
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
+	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -217,6 +219,11 @@ void VOpenALDevice::Shutdown(void)
 		Z_Free(Buffers);
 		Buffers = NULL;
 	}
+	if (VoiceBuffer)
+	{
+		alDeleteBuffers(1, &VoiceBuffer);
+		VoiceBuffer = 0;
+	}
 	//	Destroy context.
 	if (Context)
 	{
@@ -247,8 +254,9 @@ int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int prio
 	int			lp; //least priority
 	int			found;
 	int			prior;
+	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
 
-	if (S_sfx[sound_id].numchannels != -1)
+	if (numchannels != -1)
 	{
 		lp = -1; //denote the argument sound_id
 		found = 0;
@@ -267,7 +275,7 @@ int VOpenALDevice::GetChannel(int sound_id, int origin_id, int channel, int prio
 			}
 		}
 
-		if (found >= S_sfx[sound_id].numchannels)
+		if (found >= numchannels)
 		{
 			if (lp == -1)
 			{// other sounds have greater priority
@@ -436,6 +444,81 @@ void VOpenALDevice::PlaySound(int sound_id, const TVec &origin,
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
+	Channel[chan].source = src;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenALDevice::PlayVoice
+//
+//==========================================================================
+
+void VOpenALDevice::PlayVoice(const char *Name)
+{
+	guard(VOpenALDevice::PlayVoice);
+	if (!snd_Channels || !*Name || !snd_MaxVolume)
+	{
+		return;
+	}
+
+	int priority = 255 * PRIORITY_MAX_ADJUST;
+
+	int chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
+	if (chan == -1)
+	{
+		return; //no free channels.
+	}
+
+	//	Check, that sound lump is loaded
+	if (!S_LoadSound(VOICE_SOUND_ID, Name))
+	{
+		//	Missing sound.
+		return;
+	}
+
+	alGetError();	//	Clear error code.
+	if (!VoiceBuffer)
+	{
+		alGenBuffers(1, &VoiceBuffer);
+		if (alGetError() != AL_NO_ERROR)
+		{
+			GCon->Log(NAME_Dev, "Failed to gen buffer");
+			S_DoneWithLump(VOICE_SOUND_ID);
+			return;
+		}
+	}
+	alBufferData(VoiceBuffer, AL_FORMAT_MONO8,
+		S_VoiceInfo.data, S_VoiceInfo.len, S_VoiceInfo.freq);
+	if (alGetError() != AL_NO_ERROR)
+	{
+		GCon->Log(NAME_Dev, "Failed to load buffer data");
+		S_DoneWithLump(VOICE_SOUND_ID);
+		return;
+	}
+
+	//	We don't need to keep lump static
+	S_DoneWithLump(VOICE_SOUND_ID);
+
+	ALuint src;
+	alGenSources(1, &src);
+	if (alGetError() != AL_NO_ERROR)
+	{
+		GCon->Log(NAME_Dev, "Failed to gen source");
+		return;
+	}
+
+	alSourcei(src, AL_BUFFER, VoiceBuffer);
+	alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+	alSourcePlay(src);
+
+	Channel[chan].origin_id = 0;
+	Channel[chan].channel = 1;
+	Channel[chan].origin = TVec(0, 0, 0);
+	Channel[chan].velocity = TVec(0, 0, 0);
+	Channel[chan].sound_id = VOICE_SOUND_ID;
+	Channel[chan].priority = priority;
+	Channel[chan].volume = 1.0;
 	Channel[chan].source = src;
 	unguard;
 }
@@ -740,9 +823,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.2  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.1  2002/07/20 14:50:47  dj_jl
 //	Added OpenAL driver.
 //	

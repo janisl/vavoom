@@ -312,6 +312,9 @@ native void T_DrawCursor(void);
 //  Plays a sound
 native void LocalSound(name Name);
 
+//	Play Strife's voice
+native void PlayVoice(string Name);
+
 //  Plays a sound and waits untill it finishes
 native void LocalSoundTillDone(name Name);
 
@@ -479,6 +482,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.37  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

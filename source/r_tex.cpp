@@ -1080,16 +1080,25 @@ else\
 int R_RegisterPic(const char *name, int type)
 {
 	guard(R_RegisterPic);
+	char tmpName[MAX_VPATH];
+	if (type == PIC_PATCH || type == PIC_RAW)
+	{
+		W_CleanupName(name, tmpName);
+	}
+	else
+	{
+		strcpy(tmpName, name);
+	}
 	for (int i = 0; i < MAX_PICS; i++)
 	{
 		if (!pic_list[i].name[0])
 		{
-			strcpy(pic_list[i].name, name);
+			strcpy(pic_list[i].name, tmpName);
 			pic_list[i].type = type;
 			pic_list[i].palnum = 0;
 			return i;
 		}
-		if (!stricmp(pic_list[i].name, name))
+		if (!stricmp(pic_list[i].name, tmpName))
 		{
 			return i;
 		}
@@ -1108,17 +1117,26 @@ int R_RegisterPic(const char *name, int type)
 int R_RegisterPicPal(const char *name, int type, const char *palname)
 {
 	guard(R_RegisterPicPal);
+	char tmpName[MAX_VPATH];
+	if (type == PIC_PATCH || type == PIC_RAW)
+	{
+		W_CleanupName(name, tmpName);
+	}
+	else
+	{
+		strcpy(tmpName, name);
+	}
 	for (int i = 0; i < MAX_PICS; i++)
 	{
 		if (!pic_list[i].name[0])
 		{
-			strcpy(pic_list[i].name, name);
+			strcpy(pic_list[i].name, tmpName);
 			pic_list[i].type = type;
 			pic_list[i].palnum = 1;
 			R_SetupPalette(1, palname);
 			return i;
 		}
-		if (!stricmp(pic_list[i].name, name))
+		if (!stricmp(pic_list[i].name, tmpName))
 		{
 			return i;
 		}
@@ -1304,9 +1322,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.19  2002/07/13 07:51:49  dj_jl
 //	Replacing console's iostream with output device.
-//
+//	
 //	Revision 1.18  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

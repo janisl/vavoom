@@ -65,37 +65,37 @@ void AdvanceDemo(void)
 	case 1:
 		pagetime = 7.0;
 		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
-		LocalSound('Prologue1');
+		PlayVoice("PRO1");
 		break;
 
 	case 2:
 		pagetime = 9.0;
 		page_pic = R_RegisterPic("PANEL2", PIC_PATCH);
-		LocalSound('Prologue2');
+		PlayVoice("PRO2");
 		break;
 
 	case 3:
 		pagetime = 12.0;
 		page_pic = R_RegisterPic("PANEL3", PIC_PATCH);
-		LocalSound('Prologue3');
+		PlayVoice("PRO3");
 		break;
 
 	case 4:
 		pagetime = 11.0;
 		page_pic = R_RegisterPic("PANEL4", PIC_PATCH);
-		LocalSound('Prologue4');
+		PlayVoice("PRO4");
 		break;
 
 	case 5:
 		pagetime = 10.0;
 		page_pic = R_RegisterPic("PANEL5", PIC_PATCH);
-		LocalSound('Prologue5');
+		PlayVoice("PRO5");
 		break;
 
 	case 6:
 		pagetime = 16.0;
 		page_pic = R_RegisterPic("PANEL6", PIC_PATCH);
-		LocalSound('Prologue6');
+		PlayVoice("PRO6");
 		break;
 
 	case 7:
@@ -177,6 +177,9 @@ void StopDemoLoop(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.5  2002/07/15 17:54:56  dj_jl
 //  Implemented intro sequence.
 //

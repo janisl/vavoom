@@ -367,6 +367,44 @@ struct mthing_t
 
 #define MAX_MOBJS	4096	//	Temporary limit required by client/server
 
+//
+//	Strife conversation scripts
+//
+
+struct FRogueConChoice
+{
+	int			Unknown1;
+	int			Unknown2;
+	int			Unknown3;
+	int			Unknown4;
+	int			Unknown5;
+	int			Unknown6;
+	int			Unknown7;
+	char		Text[32];	//	Text of the answer
+	char		TextOK[80];	//	Message displayed on success
+	int			Next;		//	Dialog to go on success, negative values to go
+							// here immediately
+	int			Objectives;	//	Mission objectives, LOGxxxx lump
+	char		TextNo[80];	//	Message displayed on failure (player doesn't
+							// have needed thing, it haves enough health/ammo,
+							// item is not ready, quest is not completed)
+};
+
+struct FRogueConSpeech
+{
+	int			SpeakerID;	//	Type of the object (MT_xxx)
+	int			Unknown1;
+	int			Unknown2;
+	int			Unknown3;
+	int			Unknown4;
+	int			Unknown5;
+	char		Name[16];	//	Name of the character
+	char		Voice[8];	//	Voice to play
+	char		BackPic[8];	//	Picture of the speaker
+	char		Text[320];	//	Message
+	FRogueConChoice	Choices[5];	//	Choices
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -419,6 +457,12 @@ struct base_level_t
 	char		level_name[32];
 
 	byte		*vis_data;
+
+	FRogueConSpeech		*GenericSpeeches;
+	int					NumGenericSpeeches;
+
+	FRogueConSpeech		*LevelSpeeches;
+	int					NumLevelSpeeches;
 };
 
 struct sv_level_t:base_level_t
@@ -481,9 +525,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.20  2002/03/28 17:59:54  dj_jl
 //	Increased maximal object count.
-//
+//	
 //	Revision 1.19  2002/01/25 18:08:19  dj_jl
 //	Beautification
 //	

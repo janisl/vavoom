@@ -32,6 +32,8 @@
 
 #define MAX_CHANNELS		8
 
+enum { VOICE_SOUND_ID = -1 };
+
 // TYPES -------------------------------------------------------------------
 
 //
@@ -69,6 +71,8 @@ class VSoundDevice:public VSubsystem
 	{}
 	virtual void PlaySound(int, const TVec &, const TVec &, int, int, float)
 	{}
+	virtual void PlayVoice(const char *)
+	{}
 	virtual void PlaySoundTillDone(char *)
 	{}
 	virtual void StopSound(int, int)
@@ -85,7 +89,7 @@ class VSoundDevice:public VSubsystem
 //	Data
 //
 void S_InitScript(void);
-bool S_LoadSound(int sound_id);
+bool S_LoadSound(int sound_id, const char *VoiceName = NULL);
 void S_DoneWithLump(int sound_id);
 
 //
@@ -114,6 +118,7 @@ extern char			ArchivePath[128];
 
 // the complete set of sound effects
 extern TArray<sfxinfo_t>	S_sfx;
+extern sfxinfo_t			S_VoiceInfo;
 
 extern TCvarI		sfx_volume;
 extern TCvarI		music_volume;
@@ -124,9 +129,12 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.8  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.7  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
 //	

@@ -61,6 +61,8 @@
 #include "m_quit.vc"
 #include "m_api.vc"
 
+#include "condlg.vc"
+
 #include "statbar.vc"
 
 #include "title.vc"
@@ -70,6 +72,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.10  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

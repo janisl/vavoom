@@ -249,14 +249,242 @@ boolean P_ChangeSector(sector_t * sector, int crunch)
 
 //**************************************************************************
 //
+//	CONVERSATION STUFF
+//
+//**************************************************************************
+
+Actor CurrentSpeaker;
+Actor CurrentSpeakingTo;
+float OldSpeakerAngle;
+int CurrentSpeechIndex;
+
+//==========================================================================
+//
+//	GetSpeechIndex
+//
+//==========================================================================
+
+int GetSpeechIndex(FRogueConSpeech *List, int Count, int ID, int Num)
+{
+	int Found;
+	int i;
+
+	Found = 0;
+	for (i = 0; i < Count; i++)
+	{
+		if (List[i].SpeakerID == ID)
+		{
+			Found++;
+			if (Found == Num)
+			{
+				return i + 1;
+			}
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	GetSpeech
+//
+//==========================================================================
+
+int GetSpeech(Actor A)
+{
+	int Index;
+
+	if (!A.CurrentSpeech)
+	{
+		A.CurrentSpeech = 1;
+	}
+	Index = GetSpeechIndex(level->LevelSpeeches, level->NumLevelSpeeches,
+		A.ConversationID, A.CurrentSpeech);
+	if (Index)
+	{
+		return Index;
+	}
+	return -GetSpeechIndex(level->GenericSpeeches, level->NumGenericSpeeches,
+		A.ConversationID, A.CurrentSpeech);
+}
+
+//==========================================================================
+//
+//	StartConversation
+//
+//==========================================================================
+
+boolean StartConversation(Actor User, Actor UseOn)
+{
+	int SpeechNum;
+
+	if (netgame)
+	{
+		return false;
+	}
+	if (!User || !User.bIsPlayer || User.Health <= 0)
+	{
+		return false;
+	}
+	if (!UseOn || UseOn.Health <= 0)
+	{
+		return false;
+	}
+	if (!UseOn.ConversationID)
+	{
+		return false;
+	}
+	SpeechNum = GetSpeech(UseOn);
+	if (SpeechNum)
+	{
+		CurrentSpeaker = UseOn;
+		CurrentSpeakingTo = User;
+		CurrentSpeechIndex = SpeechNum;
+		OldSpeakerAngle = UseOn.Angles.yaw;
+		UseOn.Angles.yaw = atan2(User.Origin.y - UseOn.Origin.y,
+			User.Origin.x - UseOn.Origin.x);
+
+		MSG_Select(MSG_SV_RELIABLE);
+		MSG_WriteByte(svc_speech);
+		MSG_WriteShort(SpeechNum);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	CheckChoice
+//
+//==========================================================================
+
+boolean CheckChoice(FRogueConChoice *Choice)
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	StopSpeech
+//
+//==========================================================================
+
+void StopSpeech(void)
+{
+	CurrentSpeaker.Angles.yaw = OldSpeakerAngle;
+	CurrentSpeaker = none;
+	CurrentSpeakingTo = none;
+	CurrentSpeechIndex = 0;
+}
+
+//==========================================================================
+//
+//	ConChoiceImpulse
+//
+//==========================================================================
+
+void ConChoiceImpulse(int ChoiceNum)
+{
+	FRogueConSpeech *Speech;
+	FRogueConChoice *Choice;
+	int SpeechNum;
+
+	if (!CurrentSpeaker || !CurrentSpeechIndex)
+	{
+		return;
+	}
+	if (!ChoiceNum)
+	{
+		StopSpeech();
+		return;
+	}
+	if (CurrentSpeechIndex < 0)
+	{
+		Speech = &level->GenericSpeeches[-CurrentSpeechIndex - 1];
+	}
+	else
+	{
+		Speech = &level->LevelSpeeches[CurrentSpeechIndex - 1];
+	}
+	Choice = &Speech->Choices[ChoiceNum - 1];
+	if (!CheckChoice(Choice))
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextNo));
+		StopSpeech();
+		return;
+	}
+	cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextOK));
+	if (Choice->Next < 0)
+	{
+		CurrentSpeaker.CurrentSpeech = -Choice->Next;
+		SpeechNum = GetSpeech(CurrentSpeaker);
+		if (SpeechNum)
+		{
+			CurrentSpeechIndex = SpeechNum;
+
+			MSG_Select(MSG_SV_RELIABLE);
+			MSG_WriteByte(svc_speech);
+			MSG_WriteShort(SpeechNum);
+		}
+		else
+		{
+			StopSpeech();
+		}
+	}
+	else
+	{
+		if (Choice->Next)
+		{
+			CurrentSpeaker.CurrentSpeech = Choice->Next;
+		}
+		StopSpeech();
+	}
+}
+
+//**************************************************************************
+//
 //  USE LINES
 //
 //**************************************************************************
 
-#define USERANGE	64.0
+#define USERANGE		64.0
+#define USETHINGRANGE	96.0
 
 Actor usething;
 TVec useDir;
+
+//==========================================================================
+//
+//  PTR_UseThingTraverse
+//
+//==========================================================================
+
+boolean PTR_UseThingTraverse(intercept_t * in)
+{
+	TVec hit_point;
+	opening_t *open;
+
+	if (!in->isaline)
+	{
+		if (StartConversation(usething, Actor(in->Thing)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	if (!(in->line->flags & ML_TWOSIDED))
+		return false;	// stop
+
+	hit_point = usething.Origin + (USETHINGRANGE * in->frac) * useDir;
+	open = LineOpenings(in->line, hit_point);
+	open = FindOpening(open, hit_point.z, hit_point.z + usething.Height);
+	if (!open)
+	{
+		// can't use through a wall
+		return false;
+	}
+	return true;
+}
 
 //==========================================================================
 //
@@ -314,6 +542,12 @@ void P_UseLines(player_t * player)
 	AngleVector(&player->MO.Angles, &useDir);
 	x1 = player->MO.Origin.x;
 	y1 = player->MO.Origin.y;
+
+	x2 = x1 + USETHINGRANGE * useDir.x;
+	y2 = y1 + USETHINGRANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
+		'PTR_UseThingTraverse');
+
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
 	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_UseTraverse');
@@ -862,6 +1096,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.25  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

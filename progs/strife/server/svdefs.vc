@@ -295,6 +295,7 @@ class Actor:Entity
 
 	// Identifier in conversation scripts, originaly index into mobjinfo.
 	int ConversationID;
+	int CurrentSpeech;	// Current speech index.
 
 	void HideSpecial(void);
 	void TouchSpecial(Actor Toucher);
@@ -623,6 +624,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.38  2002/07/23 13:07:32  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

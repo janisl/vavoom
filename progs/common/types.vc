@@ -308,6 +308,44 @@ struct subsector_t
 	void *__regions;
 };
 
+//
+//	Strife conversation scripts
+//
+
+struct FRogueConChoice
+{
+	int			Unknown1;
+	int			Unknown2;
+	int			Unknown3;
+	int			Unknown4;
+	int			Unknown5;
+	int			Unknown6;
+	int			Unknown7;
+	int			Text[32/4];	//	Text of the answer
+	int			TextOK[80/4];	//	Message displayed on success
+	int			Next;		//	Dialog to go on success, negative values to go
+							// here immediately
+	int			Objectives;	//	Mission objectives, LOGxxxx lump
+	int			TextNo[80/4];	//	Message displayed on failure (player doesn't
+							// have needed thing, it haves enough health/ammo,
+							// item is not ready, quest is not completed)
+};
+
+struct FRogueConSpeech
+{
+	int			SpeakerID;	//	Type of the object (MT_xxx)
+	int			Unknown1;
+	int			Unknown2;
+	int			Unknown3;
+	int			Unknown4;
+	int			Unknown5;
+	int			Name[16/4];	//	Name of the character
+	int			Voice[8/4];	//	Voice to play
+	int			BackPic[8/4];	//	Picture of the speaker
+	int			Text[320/4];	//	Message
+	FRogueConChoice	Choices[5];	//	Choices
+};
+
 struct base_level_t
 {
 	//
@@ -351,6 +389,12 @@ struct base_level_t
 	int __level_name[8];
 
 	void *__vis_data;
+
+	FRogueConSpeech		*GenericSpeeches;
+	int					NumGenericSpeeches;
+
+	FRogueConSpeech		*LevelSpeeches;
+	int					NumLevelSpeeches;
 };
 
 //**************************************************************************
@@ -978,6 +1022,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.40  2002/07/23 13:07:28  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

@@ -131,19 +131,23 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	Fonts[FontNr]->SpaceHeight = SpaceH;
 	for (i = 0; i < 96; i++)
 	{
+		Fonts[FontNr]->Pics[i] = -1;
+	}
+	for (i = 0; i < 96; i++)
+	{
 		sprintf(buffer, "%s%02d", Name, i);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
 			Fonts[FontNr]->Pics[i] = R_RegisterPic(buffer, PIC_PATCH);
 			R_GetPicInfo(Fonts[FontNr]->Pics[i], &Fonts[FontNr]->PicInfo[i]);
-			if ((i + 32 >= 'a') && (i + 32 <= 'z')
-				&& !Fonts[FontNr]->Pics[i + 'A' - 'a'])
+			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
+				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
 			{
 				Fonts[FontNr]->Pics[i + 'A' - 'a'] = Fonts[FontNr]->Pics[i];
 				Fonts[FontNr]->PicInfo[i + 'A' - 'a'] = Fonts[FontNr]->PicInfo[i];
 			}
-			if ((i + 32 >= 'A') && (i + 32 <= 'Z')
-				&& !Fonts[FontNr]->Pics[i + 'a' - 'A'])
+			if ((i + 32 >= 'A') && (i + 32 <= 'Z') &&
+				Fonts[FontNr]->Pics[i + 'a' - 'A'] < 0)
 			{
 				Fonts[FontNr]->Pics[i + 'a' - 'A'] = Fonts[FontNr]->Pics[i];
 				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
@@ -168,6 +172,10 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	memset(Fonts[FontNr], 0, sizeof(font_t));
 	Fonts[FontNr]->SpaceWidth = SpaceW;
 	Fonts[FontNr]->SpaceHeight = SpaceH;
+	for (i = 0; i < 96; i++)
+	{
+		Fonts[FontNr]->Pics[i] = -1;
+	}
 	for (i = 0; i < 64; i++)
 	{
 		sprintf(buffer, "%s%03d", Name, i + 32);
@@ -175,14 +183,14 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 		{
 			Fonts[FontNr]->Pics[i] = R_RegisterPic(buffer, PIC_PATCH);
 			R_GetPicInfo(Fonts[FontNr]->Pics[i], &Fonts[FontNr]->PicInfo[i]);
-			if ((i + 32 >= 'a') && (i + 32 <= 'z')
-				&& !Fonts[FontNr]->Pics[i + 'A' - 'a'])
+			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
+				Fonts[FontNr]->Pics[i + 'A' - 'a'] < 0)
 			{
 				Fonts[FontNr]->Pics[i + 'A' - 'a'] = Fonts[FontNr]->Pics[i];
 				Fonts[FontNr]->PicInfo[i + 'A' - 'a'] = Fonts[FontNr]->PicInfo[i];
 			}
-			if ((i + 32 >= 'A') && (i + 32 <= 'Z')
-				&& !Fonts[FontNr]->Pics[i + 'a' - 'A'])
+			if ((i + 32 >= 'A') && (i + 32 <= 'Z') &&
+				Fonts[FontNr]->Pics[i + 'a' - 'A'] < 0)
 			{
 				Fonts[FontNr]->Pics[i + 'a' - 'A'] = Fonts[FontNr]->Pics[i];
 				Fonts[FontNr]->PicInfo[i + 'a' - 'A'] = Fonts[FontNr]->PicInfo[i];
@@ -254,7 +262,7 @@ int T_StringWidth(const char* String)
 	{
 		c = String[i] - 32;
 
-		if (c < 0 || c >= 96 || !Font->Pics[c])
+		if (c < 0 || c >= 96 || Font->Pics[c] < 0)
 			w += Font->SpaceWidth + HDistance;
 		else
 			w += Font->PicInfo[c].width + HDistance;
@@ -280,7 +288,7 @@ int T_StringHeight(const char* String)
 	{
 		c = String[i] - 32;
 
-		if (c >= 0 && c < 96 && Font->Pics[c]
+		if (c >= 0 && c < 96 && Font->Pics[c] >= 0
 			&& (h < Font->PicInfo[c].height))
 		  		h = Font->PicInfo[c].height;
 	}
@@ -384,15 +392,20 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 		{
 			continue;
 		}
-		if (c >= 96 || !Font->Pics[c])
+		if (c >= 96 || Font->Pics[c] < 0)
 		{
 			cx += Font->SpaceWidth + HDistance;
 			continue;
 		}
 		
 		w = Font->PicInfo[c].width;
-		if (cx + w > ScreenWidth)
-			break;
+		if (cx + w > 320)
+		{
+			if (HAlign != hleft)
+				break;
+			cx = x;
+			cy += T_StringHeight(String) + VDistance;
+		}
 		if (t_shadowed)
 			R_DrawShadowedPic(cx, cy, Font->Pics[c]);
 		else
@@ -551,7 +564,7 @@ void T_DrawString8(int x, int y, const char* String)
 		{
 			continue;
 		}
-		if (c >= 96 || !Font->Pics[c])
+		if (c >= 96 || Font->Pics[c] < 0)
 		{
 			cx += 8;
 			continue;
@@ -610,7 +623,7 @@ void T_DrawString640(int x, int y, const char* String)
 		{
 			continue;
 		}
-		if (c >= 96 || !Font->Pics[c])
+		if (c >= 96 || Font->Pics[c] < 0)
 		{
 			cx += 8;
 			continue;
@@ -627,9 +640,12 @@ void T_DrawString640(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

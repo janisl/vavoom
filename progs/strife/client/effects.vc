@@ -31,6 +31,8 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
+void StartSpeech(int SpeechNum);
+
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -131,6 +133,10 @@ boolean ParseServerCommand(int cmd_type)
 		ParseBlood();
 		break;
 
+	case svc_speech:
+		StartSpeech(MSG_ReadShort());
+		break;
+
 	default:
 		return false;
 	}
@@ -157,6 +163,9 @@ void CL_UpdateMobj(clmobj_t * mobj, int i)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.4  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

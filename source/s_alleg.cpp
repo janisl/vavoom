@@ -66,6 +66,7 @@ class VDefaultSoundDevice:public VSoundDevice
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
+	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -178,8 +179,9 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
+	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
 
-	if (S_sfx[sound_id].numchannels != -1)
+	if (numchannels != -1)
 	{
 		lp = -1; //denote the argument sound_id
 		found = 0;
@@ -198,7 +200,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 			}
 		}
 
-		if (found >= S_sfx[sound_id].numchannels)
+		if (found >= numchannels)
         {
 			if (lp == -1)
 			{// other sounds have greater priority
@@ -427,6 +429,81 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
+	Channel[chan].voice = voice;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDefaultSoundDevice::PlayVoice
+//
+//==========================================================================
+
+void VDefaultSoundDevice::PlayVoice(const char *Name)
+{
+	guard(VDefaultSoundDevice::PlayVoice);
+	SAMPLE*		spl;
+	int 		priority;
+    int			chan;
+	int			voice;
+
+	if (!snd_Channels || !*Name || !snd_MaxVolume)
+	{
+		return;
+	}
+
+	priority = 255 * PRIORITY_MAX_ADJUST;
+
+	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
+	if (chan == -1)
+	{
+		return; //no free channels.
+	}
+
+    if (Channel[chan].voice >= 0)
+    {
+		Sys_Error("I_StartSound: Previous sound not stoped");
+    }
+
+	if (!S_LoadSound(VOICE_SOUND_ID, Name))
+	{
+		//	Missing sound.
+		return;
+	}
+
+	//	Converts raw 11khz, 8-bit data to a SAMPLE* that allegro uses.
+	spl = &Channel[chan].spl;
+
+	spl->bits 		= 8;
+	spl->stereo 	= 0;
+	spl->freq 		= S_VoiceInfo.freq;
+	spl->priority 	= 255;
+	spl->len 		= S_VoiceInfo.len;
+	spl->loop_start = 0;
+	spl->loop_end 	= S_VoiceInfo.len;
+	spl->param 		= 0xffffffff;
+	spl->data 		= S_VoiceInfo.data;
+
+	// Start the sound
+	voice = allocate_voice(spl);
+
+	if (voice < 0)
+	{
+		S_DoneWithLump(VOICE_SOUND_ID);
+    	return;
+	}
+
+	voice_set_playmode(voice, PLAYMODE_PLAY);
+	voice_start(voice);
+	release_voice(voice);
+
+	Channel[chan].origin_id = 0;
+	Channel[chan].origin = TVec(0 , 0, 0);
+	Channel[chan].channel = channel;
+	Channel[chan].velocity = TVec(0, 0, 0);
+	Channel[chan].sound_id = VOICE_SOUND_ID;
+	Channel[chan].priority = priority;
+	Channel[chan].volume = 1.0;
 	Channel[chan].voice = voice;
 	unguard;
 }
@@ -690,9 +767,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.9  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
 //	

@@ -141,6 +141,17 @@ void S_StartSound(int sound_id, const TVec &origin, const TVec &velocity,
 
 //==========================================================================
 //
+//	S_PlayVoice
+//
+//==========================================================================
+
+void S_PlayVoice(const char *Name)
+{
+	GSoundDevice->PlayVoice(Name);
+}
+
+//==========================================================================
+//
 //	S_PlayTillDone
 //
 //==========================================================================
@@ -318,9 +329,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.7  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.6  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
 //	

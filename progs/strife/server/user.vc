@@ -46,6 +46,7 @@ void ChangeWeapon(player_t * player, int newweapon);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
+void ConChoiceImpulse(int ChoiceNum);
 
 boolean onground;
 
@@ -446,6 +447,10 @@ void PlayerPawn::PlayerImpulse(void)
 	{
 		//  Suicide
 		Damage(none, none, 10000);
+	}
+	else if (impulse >= 200 && impulse <= 205)
+	{
+		ConChoiceImpulse(impulse - 200);
 	}
 }
 
@@ -938,6 +943,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/07/27 18:08:12  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.24  2002/07/23 13:07:32  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

@@ -841,6 +841,35 @@ static void LoadThings2(int lump)
 
 //==========================================================================
 //
+//	LoadRogueConScript
+//
+//==========================================================================
+
+static void LoadRogueConScript(const char *LumpName,
+	FRogueConSpeech *&SpeechList, int &NumSpeeches)
+{
+	//	Clear variables.
+	SpeechList = NULL;
+	NumSpeeches = 0;
+
+	//	Check for empty name.
+	if (!LumpName || !*LumpName)
+		return;
+
+	//	Get lump num.
+	int LumpNum = W_CheckNumForName(LumpName);
+	if (LumpNum < 0)
+		return;	//	Not here.
+
+	//	Load them.
+	SpeechList = (FRogueConSpeech *)W_CacheLumpNum(LumpNum, PU_LEVEL);
+	NumSpeeches = W_LumpLength(LumpNum) / sizeof(FRogueConSpeech);
+
+	//FIXME byte-swap, extend text strings with ending chars.
+}
+
+//==========================================================================
+//
 //  ClearBox
 //
 //==========================================================================
@@ -1131,6 +1160,11 @@ static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
    	LoadNodes(gl_lumpnum + ML_GL_NODES, lev);
 	LoadPVS(gl_lumpnum + ML_GL_PVS, lev);
 
+	mapInfo_t info;
+	P_GetMapInfo(mapname, info);
+	LoadRogueConScript("SCRIPT00", lev.GenericSpeeches, lev.NumGenericSpeeches);
+	LoadRogueConScript(info.speechLump, lev.LevelSpeeches, lev.NumLevelSpeeches);
+
 	return extended;
 	unguard;
 }
@@ -1362,6 +1396,9 @@ void SwapPlanes(sector_t *s)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/07/27 18:10:11  dj_jl
+//  Implementing Strife conversations.
+//
 //  Revision 1.18  2002/07/23 16:29:56  dj_jl
 //  Replaced console streams with output device class.
 //

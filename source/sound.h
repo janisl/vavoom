@@ -68,6 +68,7 @@ inline void S_StartSound(int sound_id)
 {
 	S_StartSound(sound_id, TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 127);
 }
+void S_PlayVoice(const char *);
 void S_PlayTillDone(char *);
 void S_StopSound(int, int);
 void S_StopAllSound(void);
@@ -94,9 +95,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.6  2002/01/11 08:15:06  dj_jl
 //	Sound index retrieval by FName
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

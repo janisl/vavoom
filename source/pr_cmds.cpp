@@ -275,7 +275,7 @@ static char *PF_FormatString(void)
 //
 //==========================================================================
 
-static void PF_Error(void)
+PF(Error)
 {
     Host_Error(PF_FormatString());
 }
@@ -286,7 +286,7 @@ static void PF_Error(void)
 //
 //==========================================================================
 
-static void PF_FatalError(void)
+PF(FatalError)
 {
     Sys_Error(PF_FormatString());
 }
@@ -321,7 +321,7 @@ PF(CreateCvar)
 //
 //==========================================================================
 
-static void PF_GetCvar(void)
+PF(GetCvar)
 {
 	int		name;
 
@@ -335,7 +335,7 @@ static void PF_GetCvar(void)
 //
 //==========================================================================
 
-static void PF_SetCvar(void)
+PF(SetCvar)
 {
 	int		name;
 	int		value;
@@ -351,7 +351,7 @@ static void PF_SetCvar(void)
 //
 //==========================================================================
 
-static void PF_GetCvarF(void)
+PF(GetCvarF)
 {
 	int		name;
 
@@ -365,7 +365,7 @@ static void PF_GetCvarF(void)
 //
 //==========================================================================
 
-static void PF_SetCvarF(void)
+PF(SetCvarF)
 {
 	int		name;
 	float	value;
@@ -381,7 +381,7 @@ static void PF_SetCvarF(void)
 //
 //==========================================================================
 
-static void PF_GetCvarS(void)
+PF(GetCvarS)
 {
 	int		name;
 
@@ -395,7 +395,7 @@ static void PF_GetCvarS(void)
 //
 //==========================================================================
 
-static void PF_SetCvarS(void)
+PF(SetCvarS)
 {
 	int		name;
 	int		value;
@@ -635,7 +635,7 @@ PF(VectorAngles)
 //
 //==========================================================================
 
-static void PF_ptrtos(void)
+PF(ptrtos)
 {
 	//	Nothing to do
 }
@@ -680,7 +680,7 @@ PF(strsetchar)
 //
 //==========================================================================
 
-static void PF_strlen(void)
+PF(strlen)
 {
 	int		s;
 
@@ -694,7 +694,7 @@ static void PF_strlen(void)
 //
 //==========================================================================
 
-static void PF_strcmp(void)
+PF(strcmp)
 {
 	int		s1;
 	int		s2;
@@ -710,7 +710,7 @@ static void PF_strcmp(void)
 //
 //==========================================================================
 
-static void PF_stricmp(void)
+PF(stricmp)
 {
 	int		s1;
 	int		s2;
@@ -726,7 +726,7 @@ static void PF_stricmp(void)
 //
 //==========================================================================
 
-static void PF_strcpy(void)
+PF(strcpy)
 {
 	int		s1;
 	int		s2;
@@ -742,7 +742,7 @@ static void PF_strcpy(void)
 //
 //==========================================================================
 
-static void PF_strclr(void)
+PF(strclr)
 {
 	char*	s;
 
@@ -756,7 +756,7 @@ static void PF_strclr(void)
 //
 //==========================================================================
 
-static void PF_strcat(void)
+PF(strcat)
 {
 	int		s1;
 	int		s2;
@@ -772,7 +772,7 @@ static void PF_strcat(void)
 //
 //==========================================================================
 
-static void PF_sprint(void)
+PF(sprint)
 {
 	int		dst;
 
@@ -787,7 +787,7 @@ static void PF_sprint(void)
 //
 //==========================================================================
 
-static void PF_va(void)
+PF(va)
 {
 	Push((int)PF_FormatString());
 }
@@ -798,7 +798,7 @@ static void PF_va(void)
 //
 //==========================================================================
 
-static void PF_atoi(void)
+PF(atoi)
 {
 	int		str;
 
@@ -812,7 +812,7 @@ static void PF_atoi(void)
 //
 //==========================================================================
 
-static void PF_atof(void)
+PF(atof)
 {
 	int		str;
 
@@ -832,7 +832,7 @@ static void PF_atof(void)
 //
 //==========================================================================
 
-static void PF_Random(void)
+PF(Random)
 {
 	Pushf(Random());
 }
@@ -843,7 +843,7 @@ static void PF_Random(void)
 //
 //==========================================================================
 
-static void PF_P_Random(void)
+PF(P_Random)
 {
 	Push(rand() & 0xff);
 }
@@ -860,7 +860,7 @@ static void PF_P_Random(void)
 //
 //==========================================================================
 
-static void	PF_CheckTextureNumForName(void)
+PF(CheckTextureNumForName)
 {
 	int		name;
 
@@ -874,7 +874,7 @@ static void	PF_CheckTextureNumForName(void)
 //
 //==========================================================================
 
-static void	PF_TextureNumForName(void)
+PF(TextureNumForName)
 {
 	int		name;
 
@@ -888,7 +888,7 @@ static void	PF_TextureNumForName(void)
 //
 //==========================================================================
 
-static void	PF_CheckFlatNumForName(void)
+PF(CheckFlatNumForName)
 {
 	int		name;
 
@@ -902,7 +902,7 @@ static void	PF_CheckFlatNumForName(void)
 //
 //==========================================================================
 
-static void	PF_FlatNumForName(void)
+PF(FlatNumForName)
 {
 	int		name;
 
@@ -1130,7 +1130,7 @@ PF(FindClass)
 //
 //==========================================================================
 
-static void PF_bprint(void)
+PF(bprint)
 {
 	SV_BroadcastPrintf(PF_FormatString());
 }
@@ -1141,7 +1141,7 @@ static void PF_bprint(void)
 //
 //==========================================================================
 
-static void PF_cprint(void)
+PF(cprint)
 {
 	player_t*	player;
 
@@ -1156,7 +1156,7 @@ static void PF_cprint(void)
 //
 //==========================================================================
 
-static void PF_centerprint(void)
+PF(centerprint)
 {
 	player_t*	player;
 
@@ -1177,7 +1177,7 @@ static void PF_centerprint(void)
 //
 //==========================================================================
 
-static void PF_LineOpenings(void)
+PF(LineOpenings)
 {
 	line_t	*linedef;
 	TVec	point;
@@ -1193,7 +1193,7 @@ static void PF_LineOpenings(void)
 //
 //==========================================================================
 
-static void PF_P_BoxOnLineSide(void)
+PF(P_BoxOnLineSide)
 {
 	float	*tmbox;
 	line_t	*ld;
@@ -1209,7 +1209,7 @@ static void PF_P_BoxOnLineSide(void)
 //
 //==========================================================================
 
-static void PF_P_BlockThingsIterator(void)
+PF(P_BlockThingsIterator)
 {
 	int		x;
     int		y;
@@ -1252,7 +1252,7 @@ static void PF_P_BlockThingsIterator(void)
 //
 //==========================================================================
 
-static void PF_P_PathTraverse(void)
+PF(P_PathTraverse)
 {
 	float	x1;
 	float	y1;
@@ -1301,7 +1301,7 @@ static void PF_P_PathTraverse(void)
 //
 //==========================================================================
 
-static void PF_FindThingGap(void)
+PF(FindThingGap)
 {
 	sec_region_t	*gaps;
 	TVec			point;
@@ -1321,7 +1321,7 @@ static void PF_FindThingGap(void)
 //
 //==========================================================================
 
-static void PF_FindOpening(void)
+PF(FindOpening)
 {
 	opening_t	*gaps;
 	float		z1;
@@ -1339,7 +1339,7 @@ static void PF_FindOpening(void)
 //
 //==========================================================================
 
-static void PF_PointInRegion(void)
+PF(PointInRegion)
 {
 	sector_t	*sector;
 	TVec		p;
@@ -1389,7 +1389,7 @@ PF(SwapPlanes)
 //
 //==========================================================================
 
-static void PF_MapBlock(void)
+PF(MapBlock)
 {
 	float x;
 
@@ -1423,7 +1423,7 @@ PF(NewMobjThinker)
 //
 //==========================================================================
 
-static void PF_RemoveMobjThinker(void)
+PF(RemoveMobjThinker)
 {
 	VMapObject		*mobj;
 
@@ -1437,7 +1437,7 @@ static void PF_RemoveMobjThinker(void)
 //
 //==========================================================================
 
-static void PF_NextMobj(void)
+PF(NextMobj)
 {
     VObject *th;
 	int i;
@@ -1492,7 +1492,7 @@ PF(NewSpecialThinker)
 //
 //==========================================================================
 
-static void PF_RemoveSpecialThinker(void)
+PF(RemoveSpecialThinker)
 {
 	VThinker	*spec;
 
@@ -1506,7 +1506,7 @@ static void PF_RemoveSpecialThinker(void)
 //
 //==========================================================================
 
-static void PF_P_ChangeSwitchTexture(void)
+PF(P_ChangeSwitchTexture)
 {
 	line_t* 	line;
 	int 		useAgain;
@@ -1563,7 +1563,7 @@ PF(NextThinker)
 //
 //==========================================================================
 
-static void PF_SpawnPolyobj(void)
+PF(SpawnPolyobj)
 {
 	float 	x;
 	float 	y;
@@ -1583,7 +1583,7 @@ static void PF_SpawnPolyobj(void)
 //
 //==========================================================================
 
-static void PF_AddAnchorPoint(void)
+PF(AddAnchorPoint)
 {
 	float 	x;
 	float 	y;
@@ -1601,7 +1601,7 @@ static void PF_AddAnchorPoint(void)
 //
 //==========================================================================
 
-static void PF_GetPolyobj(void)
+PF(GetPolyobj)
 {
 	int 	polyNum;
 
@@ -1615,7 +1615,7 @@ static void PF_GetPolyobj(void)
 //
 //==========================================================================
 
-static void PF_GetPolyobjMirror(void)
+PF(GetPolyobjMirror)
 {
 	int 	polyNum;
 
@@ -1629,7 +1629,7 @@ static void PF_GetPolyobjMirror(void)
 //
 //==========================================================================
 
-static void PF_PO_MovePolyobj(void)
+PF(PO_MovePolyobj)
 {
 	int 	num;
 	float 	x;
@@ -1669,7 +1669,7 @@ PF(PO_RotatePolyobj)
 //
 //==========================================================================
 
-static void PF_StartACS(void)
+PF(StartACS)
 {
 	int		num;
     int		map;
@@ -1693,7 +1693,7 @@ static void PF_StartACS(void)
 //
 //==========================================================================
 
-static void PF_SuspendACS(void)
+PF(SuspendACS)
 {
 	int 	number;
 	int 	map;
@@ -1709,7 +1709,7 @@ static void PF_SuspendACS(void)
 //
 //==========================================================================
 
-static void PF_TerminateACS(void)
+PF(TerminateACS)
 {
 	int 	number;
 	int 	map;
@@ -1725,7 +1725,7 @@ static void PF_TerminateACS(void)
 //
 //==========================================================================
 
-static void PF_TagFinished(void)
+PF(TagFinished)
 {
 	int		tag;
 
@@ -1739,7 +1739,7 @@ static void PF_TagFinished(void)
 //
 //==========================================================================
 
-static void PF_PolyobjFinished(void)
+PF(PolyobjFinished)
 {
 	int		tag;
 
@@ -1813,7 +1813,7 @@ PF(SectorStopSound)
 //
 //==========================================================================
 
-static void PF_GetSoundPlayingInfo(void)
+PF(GetSoundPlayingInfo)
 {
 	int			mobj;
     int			id;
@@ -1913,7 +1913,7 @@ PF(PolyobjStopSequence)
 //
 //==========================================================================
 
-static void PF_SectorToNum(void)
+PF(SectorToNum)
 {
 	sector_t*	sector;
 
@@ -1930,7 +1930,7 @@ static void PF_SectorToNum(void)
 //
 //==========================================================================
 
-static void PF_NumToSector(void)
+PF(NumToSector)
 {
 	int		num;
 
@@ -1961,7 +1961,7 @@ PF(MobjToNum)
 //
 //==========================================================================
 
-static void PF_NumToMobj(void)
+PF(NumToMobj)
 {
 	VMapObject**	mobj;
 
@@ -1975,7 +1975,7 @@ static void PF_NumToMobj(void)
 //
 //==========================================================================
 
-static void PF_ClearPlayer(void)
+PF(ClearPlayer)
 {
 	player_t	*pl;
 
@@ -2009,7 +2009,7 @@ static void PF_ClearPlayer(void)
 //
 //==========================================================================
 
-static void PF_G_ExitLevel(void)
+PF(G_ExitLevel)
 {
     G_ExitLevel();
 }
@@ -2020,7 +2020,7 @@ static void PF_G_ExitLevel(void)
 //
 //==========================================================================
 
-static void PF_G_SecretExitLevel(void)
+PF(G_SecretExitLevel)
 {
     G_SecretExitLevel();
 }
@@ -2031,7 +2031,7 @@ static void PF_G_SecretExitLevel(void)
 //
 //==========================================================================
 
-static void PF_G_Completed(void)
+PF(G_Completed)
 {
 	int		map;
     int		pos;
@@ -2047,7 +2047,7 @@ static void PF_G_Completed(void)
 //
 //==========================================================================
 
-static void PF_TerrainType(void)
+PF(TerrainType)
 {
 	int			pic;
 
@@ -2061,7 +2061,7 @@ static void PF_TerrainType(void)
 //
 //==========================================================================
 
-static void PF_P_GetPlayerNum(void)
+PF(P_GetPlayerNum)
 {
 	player_t*	player;
 	int 		i;
@@ -2084,7 +2084,7 @@ static void PF_P_GetPlayerNum(void)
 //
 //==========================================================================
 
-static void PF_PointInSubsector(void)
+PF(PointInSubsector)
 {
 	float		x;
     float		y;
@@ -2100,7 +2100,7 @@ static void PF_PointInSubsector(void)
 //
 //==========================================================================
 
-static void PF_SB_Start(void)
+PF(SB_Start)
 {
 #ifdef CLIENT
 //	SB_Start();
@@ -2113,7 +2113,7 @@ static void PF_SB_Start(void)
 //
 //==========================================================================
 
-static void PF_P_ForceLightning(void)
+PF(P_ForceLightning)
 {
 	SV_ForceLightning();
 }
@@ -2124,7 +2124,7 @@ static void PF_P_ForceLightning(void)
 //
 //==========================================================================
 
-static void	PF_SetFloorPic(void)
+PF(SetFloorPic)
 {
 	sector_t	*sec;
  	int 		texture;
@@ -2140,7 +2140,7 @@ static void	PF_SetFloorPic(void)
 //
 //==========================================================================
 
-static void	PF_SetCeilPic(void)
+PF(SetCeilPic)
 {
 	sector_t	*sec;
  	int 		texture;
@@ -2156,7 +2156,7 @@ static void	PF_SetCeilPic(void)
 //
 //==========================================================================
 
-static void PF_SetLineTransluc(void)
+PF(SetLineTransluc)
 {
 	line_t	*line;
 	int		trans;
@@ -2172,7 +2172,7 @@ static void PF_SetLineTransluc(void)
 //
 //==========================================================================
 
-static void	PF_SendFloorSlope(void)
+PF(SendFloorSlope)
 {
 	sector_t	*sector;
 
@@ -2192,7 +2192,7 @@ static void	PF_SendFloorSlope(void)
 //
 //==========================================================================
 
-static void	PF_SendCeilingSlope(void)
+PF(SendCeilingSlope)
 {
 	sector_t	*sector;
 
@@ -2645,6 +2645,20 @@ PF(LocalSound)
 
 //==========================================================================
 //
+//	PF_PlayVoice
+//
+//==========================================================================
+
+PF(PlayVoice)
+{
+	char*	name;
+
+	name = (char *)Pop();
+	S_PlayVoice(name);
+}
+
+//==========================================================================
+//
 //	PF_LocalSoundTillDone
 //
 //==========================================================================
@@ -2679,7 +2693,7 @@ PF(TranslateKey)
 //
 //==========================================================================
 
-static void PF_print(void)
+PF(print)
 {
 	GCon->Log(PF_FormatString());
 }
@@ -2690,7 +2704,7 @@ static void PF_print(void)
 //
 //==========================================================================
 
-static void PF_dprint(void)
+PF(dprint)
 {
 	GCon->Log(NAME_Dev, PF_FormatString());
 }
@@ -2701,7 +2715,7 @@ static void PF_dprint(void)
 //
 //==========================================================================
 
-static void PF_Cmd_CheckParm(void)
+PF(Cmd_CheckParm)
 {
 	int		str;
 
@@ -2715,7 +2729,7 @@ static void PF_Cmd_CheckParm(void)
 //
 //==========================================================================
 
-static void PF_CmdBuf_AddText(void)
+PF(CmdBuf_AddText)
 {
 	CmdBuf << PF_FormatString();
 }
@@ -2726,7 +2740,7 @@ static void PF_CmdBuf_AddText(void)
 //
 //==========================================================================
 
-static void	PF_Info_ValueForKey(void)
+PF(Info_ValueForKey)
 {
 	int		info;
 	int		key;
@@ -2742,7 +2756,7 @@ static void	PF_Info_ValueForKey(void)
 //
 //==========================================================================
 
-static void PF_itof(void)
+PF(itof)
 {
 	int			x;
 
@@ -2756,7 +2770,7 @@ static void PF_itof(void)
 //
 //==========================================================================
 
-static void PF_ftoi(void)
+PF(ftoi)
 {
 	float		x;
 
@@ -3029,6 +3043,7 @@ builtin_info_t BuiltinInfo[] =
 
 	//	Client side sound
 	_(LocalSound),
+	_(PlayVoice),
 	_(LocalSoundTillDone),
 
 	_(TranslateKey),
@@ -3119,9 +3134,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.41  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.40  2002/07/13 07:48:08  dj_jl
 //	Moved some global functions to Entity class.
 //	

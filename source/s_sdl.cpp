@@ -63,6 +63,7 @@ class VDefaultSoundDevice:public VSoundDevice
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
+	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -160,8 +161,9 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int lp; // least priority
 	int found;
 	int prior;
+	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
 
-	if (S_sfx[sound_id].numchannels != -1)
+	if (numchannels != -1)
 	{
 		lp = -1; // denote the argument sound_id
 		found = 0;
@@ -180,7 +182,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 			}
 		}
 
-		if (found >= S_sfx[sound_id].numchannels)
+		if (found >= numchannels)
 		{
 			if (lp == -1)
 			{
@@ -463,6 +465,72 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 
 //==========================================================================
 //
+//	VDefaultSoundDevice::PlayVoice
+//
+//==========================================================================
+
+void VDefaultSoundDevice::PlayVoice(const char *Name)
+{
+	guard(VDefaultSoundDevice::PlayVoice);
+	Mix_Chunk *chunk;
+	int priority;
+	int chan;
+	int voice;
+
+	if (!mix_voices || !*Name || !snd_MaxVolume)
+	{
+		return;
+	}
+
+	priority = 255 * PRIORITY_MAX_ADJUST;
+
+	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
+	if (chan == -1)
+	{
+		return; //no free channels.
+	}
+
+	if (channels[chan].voice >= 0)
+	{
+		Sys_Error("I_StartSound: Previous sound not stoped");
+	}
+
+	if (!S_LoadSound(VOICE_SOUND_ID, Name))
+	{
+		//	Missing sound.
+		return;
+	}
+
+	// copy the lump to a SDL_Mixer chunk...
+	chunk = Mix_LoadRAW_RW(SDL_RWFromMem((void*)S_VoiceInfo.data, 
+		S_VoiceInfo.len), 0, S_VoiceInfo.freq, AUDIO_U8, 1);
+	if (chunk == NULL)
+		Sys_Error("Mix_LoadRAW_RW() failed!\n");
+	voice = Mix_LoadChannel(-1, chunk, 0);
+
+	if (voice < 0)
+	{
+		S_DoneWithLump(VOICE_SOUND_ID);
+		return;
+	}
+
+	// ready to go...
+	Mix_Play(voice);
+
+	channels[chan].origin_id = 0;
+	channels[chan].origin    = TVec(0, 0, 0);
+	channels[chan].channel   = channel;
+	channels[chan].velocity  = TVec(0, 0, 0);
+	channels[chan].sound_id  = VOICE_SOUND_ID;
+	channels[chan].priority  = priority;
+	channels[chan].volume    = 1.0;
+	channels[chan].voice     = voice;
+	channels[chan].chunk     = chunk;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDefaultSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
@@ -689,9 +757,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.4  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
-//
+//	
 //	Revision 1.3  2002/01/21 18:27:48  dj_jl
 //	Fixed volume
 //	

@@ -51,6 +51,7 @@ enum
 	MCMD_MAPALIAS,
 	MCMD_MUSIC,
 	MCMD_CDTRACK,
+	MCMD_ROGUECONSCRIPT,
 	MCMD_CD_STARTTRACK,
 	MCMD_CD_END1TRACK,
 	MCMD_CD_END2TRACK,
@@ -99,6 +100,7 @@ static const char *MapCmdNames[] =
 	"MAPALIAS",
     "MUSIC",
 	"CDTRACK",
+	"ROGUECONSCRIPT",
 	"CD_START_TRACK",
 	"CD_END1_TRACK",
 	"CD_END2_TRACK",
@@ -273,6 +275,14 @@ void InitMapInfo(void)
 					SC_MustGetString();
 					strcpy(info->fadetable, sc_String);
 					break;
+				case MCMD_MUSIC:
+					SC_MustGetString();
+					strcpy(info->songLump, sc_String);
+					break;
+				case MCMD_ROGUECONSCRIPT:
+					SC_MustGetString();
+					strcpy(info->speechLump, sc_String);
+					break;
 				case MCMD_CD_STARTTRACK:
 				case MCMD_CD_END1TRACK:
 				case MCMD_CD_END2TRACK:
@@ -281,10 +291,6 @@ void InitMapInfo(void)
 				case MCMD_CD_TITLETRACK:
 					SC_MustGetNumber();
 					cd_NonLevelTracks[mcmdValue-MCMD_CD_STARTTRACK] = sc_Number;
-					break;
-				case MCMD_MUSIC:
-					SC_MustGetString();
-					strcpy(info->songLump, sc_String);
 					break;
 			}
 		}
@@ -509,9 +515,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/03/12 19:22:22  dj_jl
 //	Fixed next maps in Hexen.
 //	

@@ -73,6 +73,7 @@ class VDefaultSoundDevice:public VSoundDevice
 	void Shutdown(void);
 	void PlaySound(int sound_id, const TVec &origin, const TVec &velocity,
 		int origin_id, int channel, float volume);
+	void PlayVoice(const char *Name);
 	void PlaySoundTillDone(char *sound);
 	void StopSound(int origin_id, int channel);
 	void StopAllSound(void);
@@ -417,8 +418,9 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
+	int numchannels = sound_id == VOICE_SOUND_ID ? 1 : S_sfx[sound_id].numchannels;
 
-	if (S_sfx[sound_id].numchannels != -1)
+	if (numchannels != -1)
 	{
 		lp = -1; //denote the argument sound_id
 		found = 0;
@@ -437,7 +439,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 			}
 		}
 
-		if (found >= S_sfx[sound_id].numchannels)
+		if (found >= numchannels)
 		{
 			if (lp == -1)
 			{// other sounds have greater priority
@@ -549,7 +551,7 @@ static int CalcSep(const TVec &origin)
 //
 //==========================================================================
 
-static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
+static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 {
     HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
@@ -584,17 +586,18 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 	}
 
 	//	Check, that sound lump is loaded
-	if (!S_LoadSound(sound_id))
+	if (!S_LoadSound(sound_id, VoiceName))
 	{
 		//	Missing sound.
 		return NULL;
 	}
+	sfxinfo_t &sfx = VoiceName ? S_VoiceInfo : S_sfx[sound_id];
 
     // Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
     pcmwf.wf.wFormatTag         = WAVE_FORMAT_PCM;      
     pcmwf.wf.nChannels          = 1;
-	pcmwf.wf.nSamplesPerSec     = S_sfx[sound_id].freq;
+	pcmwf.wf.nSamplesPerSec     = sfx.freq;
     pcmwf.wBitsPerSample        = WORD(8);
     pcmwf.wf.nBlockAlign        = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.wf.nChannels);
     pcmwf.wf.nAvgBytesPerSec    = pcmwf.wf.nSamplesPerSec * pcmwf.wf.nBlockAlign;
@@ -606,7 +609,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 		DSBCAPS_CTRLVOLUME | 
 		DSBCAPS_CTRLFREQUENCY |
 		DSBCAPS_STATIC;
-    dsbdesc.dwBufferBytes       = S_sfx[sound_id].len;
+    dsbdesc.dwBufferBytes       = sfx.len;
     dsbdesc.lpwfxFormat         = (LPWAVEFORMATEX)&pcmwf;
 	if (sound3D)
 	{
@@ -651,14 +654,14 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 		return NULL;
 	}
 
-    dsbuffer->Lock(0, S_sfx[sound_id].len,
+    dsbuffer->Lock(0, sfx.len,
 		&buffer, &size1, &buff2, &size2, DSBLOCK_ENTIREBUFFER);
-	memcpy(buffer, S_sfx[sound_id].data, S_sfx[sound_id].len);
-	dsbuffer->Unlock(buffer, S_sfx[sound_id].len, buff2, size2);
+	memcpy(buffer, sfx.data, sfx.len);
+	dsbuffer->Unlock(buffer, sfx.len, buff2, size2);
 
-	if (S_sfx[sound_id].changePitch)
+	if (sfx.changePitch)
 	{
-		dsbuffer->SetFrequency(S_sfx[sound_id].freq +
+		dsbuffer->SetFrequency(sfx.freq +
 			S_sfx[sound_id].freq * (rand() & 7 - rand() & 7) / 128);
 	}
 
@@ -712,7 +715,7 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 		return; //no free channels.
 	}
 
-	dsbuffer = CreateBuffer(sound_id);
+	dsbuffer = CreateBuffer(sound_id, NULL);
 	if (!dsbuffer)
 	{
 		return;
@@ -795,6 +798,72 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 
 //==========================================================================
 //
+//	VDefaultSoundDevice::PlayVoice
+//
+//==========================================================================
+
+void VDefaultSoundDevice::PlayVoice(const char *Name)
+{
+	guard(VDefaultSoundDevice::PlayVoice);
+	int 					priority;
+	int						chan;
+	HRESULT					result;
+	LPDIRECTSOUNDBUFFER		dsbuffer;
+
+	if (!snd_Channels || !*Name || !snd_MaxVolume)
+	{
+		return;
+	}
+
+	priority = 255 * PRIORITY_MAX_ADJUST;
+
+	chan = GetChannel(VOICE_SOUND_ID, 0, 1, priority);
+	if (chan == -1)
+	{
+		return; //no free channels.
+	}
+
+	dsbuffer = CreateBuffer(VOICE_SOUND_ID, Name);
+	if (!dsbuffer)
+	{
+		return;
+	}
+
+	Channel[chan].origin_id = 0;
+	Channel[chan].channel = 1;
+	Channel[chan].origin = TVec(0, 0, 0);
+	Channel[chan].velocity = TVec(0, 0, 0);
+	Channel[chan].sound_id = VOICE_SOUND_ID;
+	Channel[chan].priority = priority;
+	Channel[chan].volume = 1.0;
+	Channel[chan].buf = dsbuffer;
+
+	if (sound3D)
+	{
+		LPDIRECTSOUND3DBUFFER	Buf3D; 
+
+		result = Channel[chan].buf->QueryInterface(
+			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
+		if FAILED(result)
+		{
+			Sys_Error("Failed to get 3D buffer");
+		}
+		Buf3D->SetMode(DS3DMODE_DISABLE, DS3D_IMMEDIATE);
+		Buf3D->Release();
+	}
+
+	result = dsbuffer->Play(0, 0, 0);
+	if (result != DS_OK)
+	{
+		GCon->Log(NAME_Dev, "Failed to play channel");
+		GCon->Log(NAME_Dev, DS_Error(result));
+		StopChannel(chan);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDefaultSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
@@ -820,7 +889,7 @@ void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 	S_StopAllSound();
 
 	//	Create buffer
-	dsbuffer = CreateBuffer(sound_id);
+	dsbuffer = CreateBuffer(sound_id, NULL);
 	if (!dsbuffer)
 	{
 		return;
@@ -1136,9 +1205,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.17  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.16  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	

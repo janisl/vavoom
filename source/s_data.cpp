@@ -56,6 +56,7 @@ boolean				UseSndScript;
 char				ArchivePath[128];
 
 TArray<sfxinfo_t>	S_sfx;
+sfxinfo_t			S_VoiceInfo;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -190,7 +191,6 @@ void S_InitScript(void)
 	//
     //	Set "default" sound for empty sounds
     //
-
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
 		if (!It->lumpname[0])
@@ -200,6 +200,13 @@ void S_InitScript(void)
         It->snd_ptr = NULL;
         It->lumpnum = -1;
 	}
+
+	//
+	//	Prepare slot for voices
+	//
+	S_VoiceInfo.priority = 255;
+	S_VoiceInfo.numchannels = -1;
+	S_VoiceInfo.changePitch = false;
 	unguard;
 }
 
@@ -254,9 +261,46 @@ int S_GetSoundID(char *name)
 //
 //==========================================================================
 
-bool S_LoadSound(int sound_id)
+bool S_LoadSound(int sound_id, const char *VoiceName)
 {
 	guard(S_LoadSound);
+	if (VoiceName)
+	{
+		//	Load voice.
+		if (S_VoiceInfo.snd_ptr)
+		{
+			GCon->Log(NAME_Dev, "WARNING! Voice is still used");
+		}
+
+		if (UseSndScript)
+		{
+			char *FName = va("%s%s.lmp", ArchivePath, VoiceName);
+			if (!Sys_FileExists(FName))
+			{
+				GCon->Logf(NAME_Dev, "Voice %s not found", FName);
+				return false;
+			}
+			M_ReadFile(FName, (byte **)&S_VoiceInfo.snd_ptr);
+		}
+		else
+		{
+			S_VoiceInfo.lumpnum = W_CheckNumForName(VoiceName);
+			if (S_VoiceInfo.lumpnum < 0)
+			{
+				GCon->Logf(NAME_Dev, "Voice %s not found", VoiceName);
+				return false;
+			}
+			S_VoiceInfo.snd_ptr = W_CacheLumpNum(S_VoiceInfo.lumpnum, PU_SOUND);
+		}
+
+		raw_sound_t *rawdata = (raw_sound_t *)S_VoiceInfo.snd_ptr;
+	    S_VoiceInfo.freq = LittleShort(rawdata->freq);
+		S_VoiceInfo.len = LittleLong(rawdata->len);
+		S_VoiceInfo.data = rawdata->data;
+		S_VoiceInfo.usecount++;
+		return true;
+	}
+
 	if (!S_sfx[sound_id].snd_ptr)
 	{
 		if (UseSndScript)
@@ -307,21 +351,22 @@ void S_DoneWithLump(int sound_id)
 	guard(S_DoneWithLump);
 	void *ptr;
 
-	if (!S_sfx[sound_id].snd_ptr || !S_sfx[sound_id].usecount)
+	sfxinfo_t &sfx = sound_id == VOICE_SOUND_ID ? S_VoiceInfo : S_sfx[sound_id];
+	if (!sfx.snd_ptr || !sfx.usecount)
 	{
 		Sys_Error("S_DoneWithLump: Empty lump");
 	}
 
-	S_sfx[sound_id].usecount--;
-	if (S_sfx[sound_id].usecount)
+	sfx.usecount--;
+	if (sfx.usecount)
 	{
 		//	still used
 		return;
 	}
 
 	//	Mark as not loaded
-	ptr = S_sfx[sound_id].snd_ptr;
-	S_sfx[sound_id].snd_ptr = NULL;
+	ptr = sfx.snd_ptr;
+	sfx.snd_ptr = NULL;
 
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
@@ -354,9 +399,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/07/20 14:50:24  dj_jl
 //	Missing sound data will not crash game anymore.
 //	

@@ -55,6 +55,7 @@ struct mapInfo_t
 	char fadetable[12];	// Fade table {fogmap}
 	char songLump[12];	// Background music (MUS or MIDI)
 	char skybox[32];	// Sky box
+	char speechLump[12];// Strife conversations lump for this level
 	mapalias_t mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
@@ -75,9 +76,12 @@ int P_GetCDTitleTrack(void);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/07/27 18:10:11  dj_jl
+//	Implementing Strife conversations.
+//
 //	Revision 1.3  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.2  2001/10/12 17:31:13  dj_jl
 //	no message
 //	
