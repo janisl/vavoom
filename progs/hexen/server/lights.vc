@@ -44,34 +44,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TLight:Thinker
-{
-	sector_t *sector;
-	int type;
-	int value1;
-	int value2;
-	float time1;
-	float time2;
-	int direction;
-	float time;
-	float delta;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
-class TPhase:Thinker
-{
-	sector_t *sector;
-	float index;
-	int base;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -89,13 +61,25 @@ int PhaseTable[64] = {
 
 // CODE --------------------------------------------------------------------
 
+class LightEffect:Thinker
+{
+	sector_t *sector;
+	int type;
+	int value1;
+	int value2;
+	float time1;
+	float time2;
+	int direction;
+	float time;
+	float delta;
+
 //============================================================================
 //
-//	TLight::Think
+//	Think
 //
 //============================================================================
 
-void TLight::Think(void)
+void Think(void)
 {
 	if (time)
 	{
@@ -115,13 +99,13 @@ void TLight::Think(void)
 			if (sector->params.lightlevel >= value1)
 			{
 				sector->params.lightlevel = value1;
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 			}
 		}
 		else if (sector->params.lightlevel <= value1)
 		{
 			sector->params.lightlevel = value1;
-			RemoveSpecialThinker(this);
+			RemoveSpecialThinker(self);
 		}
 		break;
 
@@ -177,25 +161,27 @@ void TLight::Think(void)
 
 //==========================================================================
 //
-//  TLight::Archive
+//  Archive
 //
 //==========================================================================
 
-void TLight::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//  TLight::Unarchive
+//  Unarchive
 //
 //==========================================================================
 
-void TLight::Unarchive(void)
+void Unarchive(void)
 {
 	//  Restore sector pointer
 	sector = NumToSector(sector);
+}
+
 }
 
 //============================================================================
@@ -206,21 +192,17 @@ void TLight::Unarchive(void)
 
 boolean EV_SpawnLight(line_t * line, int *arg, int type)
 {
-	TLight *light;
+	LightEffect Light;
 	sector_t *sec;
 	int secNum;
 	int arg1, arg2, arg3, arg4;
 	boolean think;
 	boolean rtn;
 
-	arg1 = arg[1] > 255 ? 255 : arg[1];
-	arg1 = arg1 < 0 ? 0 : arg1;
-	arg2 = arg[2] > 255 ? 255 : arg[2];
-	arg2 = arg2 < 0 ? 0 : arg2;
-	arg3 = arg[3] > 255 ? 255 : arg[3];
-	arg3 = arg3 < 0 ? 0 : arg3;
-	arg4 = arg[4] > 255 ? 255 : arg[4];
-	arg4 = arg4 < 0 ? 0 : arg4;
+	arg1 = arg[1];
+	arg2 = arg[2];
+	arg3 = arg[3];
+	arg4 = arg[4];
 
 	secNum = -1;
 	rtn = false;
@@ -230,10 +212,10 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		think = false;
 		sec = &level->sectors[secNum];
 
-		light = NewSpecialThinker(TLight);
-		light->type = type;
-		light->sector = sec;
-		light->time = 0.0;
+		Light = NewSpecialThinker(LightEffect);
+		Light.type = type;
+		Light.sector = sec;
+		Light.time = 0.0;
 		rtn = true;
 		switch (type)
 		{
@@ -264,46 +246,46 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 			break;
 		case LITE_FADE:
 			think = true;
-			light->value1 = arg1;	// destination lightlevel
-			light->delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
+			Light.value1 = arg1;	// destination lightlevel
+			Light.delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->direction = 1;	// get brighter
+				Light.direction = 1;	// get brighter
 			}
 			else
 			{
-				light->direction = -1;
+				Light.direction = -1;
 			}
 			break;
 		case LITE_GLOW:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			light->delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			Light.delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->direction = 1;	// get brighter
+				Light.direction = 1;	// get brighter
 			}
 			else
 			{
-				light->direction = -1;
+				Light.direction = -1;
 			}
 			break;
 		case LITE_FLICKER:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			sec->params.lightlevel = light->value1;
-			light->time = itof((P_Random() & 64) + 1) / 32.0;
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			sec->params.lightlevel = Light.value1;
+			Light.time = itof((P_Random() & 64) + 1) / 32.0;
 			break;
 		case LITE_STROBE:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			light->time1 = itof(arg3) / 35.0;	// upper tics
-			light->time2 = itof(arg4) / 35.0;	// lower tics
-			light->time = itof(arg3) / 35.0;
-			sec->params.lightlevel = light->value1;
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			Light.time1 = itof(arg3) / 35.0;	// upper tics
+			Light.time2 = itof(arg4) / 35.0;	// lower tics
+			Light.time = itof(arg3) / 35.0;
+			sec->params.lightlevel = Light.value1;
 			break;
 		default:
 			rtn = false;
@@ -311,19 +293,25 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		}
 		if (!think)
 		{
-			RemoveSpecialThinker(light);
+			RemoveSpecialThinker(Light);
 		}
 	}
 	return rtn;
 }
 
+class PhasedLight:Thinker
+{
+	sector_t *sector;
+	float index;
+	int base;
+
 //============================================================================
 //
-//	TPhase::Think
+//	Think
 //
 //============================================================================
 
-void TPhase::Think(void)
+void Think(void)
 {
 	index += frametime;
 	sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
@@ -331,25 +319,27 @@ void TPhase::Think(void)
 
 //==========================================================================
 //
-//  TPhase::Archive
+//  Archive
 //
 //==========================================================================
 
-void TPhase::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//  TPhase::Unarchive
+//  Unarchive
 //
 //==========================================================================
 
-void TPhase::Unarchive(void)
+void Unarchive(void)
 {
 	//  Restore sector pointer
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -360,21 +350,22 @@ void TPhase::Unarchive(void)
 
 void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 {
-	TPhase *phase;
+	PhasedLight Phase;
 
-	phase = NewSpecialThinker(TPhase);
-	phase->sector = sector;
+	Phase = NewSpecialThinker(PhasedLight);
+	Phase.sector = sector;
 	if (index == -1)
 	{
 		// sector->lightlevel as the index
-		phase->index = itof(sector->params.lightlevel) / 32.0;
+		Phase.index = itof(sector->params.lightlevel) / 32.0;
 	}
 	else
 	{
-		phase->index = itof(index) / 32.0;
+		Phase.index = itof(index) / 32.0;
 	}
-	phase->base = base & 255;
-	sector->params.lightlevel = phase->base + PhaseTable[ftoi(phase->index * 32.0) & 63];
+	Phase.base = base & 255;
+	sector->params.lightlevel = Phase.base +
+		PhaseTable[ftoi(Phase.index * 32.0) & 63];
 
 	sector->special = 0;
 }
@@ -512,6 +503,9 @@ __mobjinfo__
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.8  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

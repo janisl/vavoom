@@ -45,6 +45,12 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
 class CeilingMover:SectorThinker
 {
 	int type;
@@ -55,22 +61,13 @@ class CeilingMover:SectorThinker
 	int crush;
 	int tag;	// ID
 
-	void Think(void);
-};
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//	CeilingMover::Think
+//	Think
 //
 //==========================================================================
 
-void CeilingMover::Think(void)
+void Think(void)
 {
 	int res;
 
@@ -89,9 +86,9 @@ void CeilingMover::Think(void)
 				speed = speed * 2.0;
 				break;
 			default:
-				sector->specialdata = NULL;
+				sector->SpecialData = none;
 				TagFinished(sector->tag);
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 				break;
 			}
 		}
@@ -110,14 +107,16 @@ void CeilingMover::Think(void)
 				speed = speed / 2.0;
 				break;
 			default:
-				sector->specialdata = NULL;
+				sector->SpecialData = none;
 				TagFinished(sector->tag);
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 				break;
 			}
 		}
 		break;
 	}
+}
+
 }
 
 //==================================================================
@@ -131,8 +130,9 @@ void CeilingMover::Think(void)
 int EV_DoCeiling(line_t * line, int *arg, int type)
 {
 	int secnum, rtn;
+	float destHeight;
 	sector_t *sec;
-	CeilingMover *ceiling;
+	CeilingMover Ceiling;
 
 	secnum = -1;
 	rtn = 0;
@@ -140,84 +140,81 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 	while ((secnum = FindSectorFromTag(arg[0], secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if (sec->specialdata)
+		if (sec->SpecialData)
 			continue;
 
 		//
 		// new door thinker
 		//
 		rtn = 1;
-		ceiling = NewSpecialThinker(CeilingMover);
-		sec->specialdata = ceiling;
-		ceiling->sector = sec;
-		ceiling->crush = 0;
-		ceiling->speed = itof(arg[1]) * 4.0;
+		Ceiling = NewSpecialThinker(CeilingMover);
+		sec->SpecialData = Ceiling;
+		Ceiling.sector = sec;
+		Ceiling.crush = 0;
+		Ceiling.speed = itof(arg[1]) * 4.0;
 		switch (type)
 		{
 		case CLEV_CRUSHRAISEANDSTAY:
-			ceiling->crush = arg[2];	// arg[2] = crushing value
-			ceiling->topheight = sec->ceilingheight;
-			ceiling->bottomheight = sec->floorheight + 8.0;
-			ceiling->direction = -1;
+			Ceiling.crush = arg[2];	// arg[2] = crushing value
+			Ceiling.topheight = sec->ceilingheight;
+			Ceiling.bottomheight = sec->floorheight + 8.0;
+			Ceiling.direction = -1;
 			break;
 		case CLEV_CRUSHANDRAISE:
-			ceiling->topheight = sec->ceilingheight;
+			Ceiling.topheight = sec->ceilingheight;
 		case CLEV_LOWERANDCRUSH:
-			ceiling->crush = arg[2];	// arg[2] = crushing value
+			Ceiling.crush = arg[2];	// arg[2] = crushing value
 		case CLEV_LOWERTOFLOOR:
-			ceiling->bottomheight = sec->floorheight;
+			Ceiling.bottomheight = sec->floorheight;
 			if (type != CLEV_LOWERTOFLOOR)
 			{
-				ceiling->bottomheight += 8.0;
+				Ceiling.bottomheight += 8.0;
 			}
-			ceiling->direction = -1;
+			Ceiling.direction = -1;
 			break;
 		case CLEV_RAISETOHIGHEST:
-			ceiling->topheight = FindHighestCeilingSurrounding(sec);
-			ceiling->direction = 1;
+			Ceiling.topheight = FindHighestCeilingSurrounding(sec);
+			Ceiling.direction = 1;
 			break;
 		case CLEV_LOWERBYVALUE:
-			ceiling->bottomheight = sec->ceilingheight - itof(arg[2]);
-			ceiling->direction = -1;
+			Ceiling.bottomheight = sec->ceilingheight - itof(arg[2]);
+			Ceiling.direction = -1;
 			break;
 		case CLEV_RAISEBYVALUE:
-			ceiling->topheight = sec->ceilingheight + itof(arg[2]);
-			ceiling->direction = 1;
+			Ceiling.topheight = sec->ceilingheight + itof(arg[2]);
+			Ceiling.direction = 1;
 			break;
 		case CLEV_MOVETOVALUETIMES8:
+			destHeight = itof(arg[2]) * 8.0;
+			if (arg[3])
 			{
-				float destHeight = itof(arg[2]) * 8.0;
-
-				if (arg[3])
-				{
-					destHeight = -destHeight;
-				}
-				if (sec->ceilingheight <= destHeight)
-				{
-					ceiling->direction = 1;
-					ceiling->topheight = destHeight;
-					if (sec->ceilingheight == destHeight)
-					{
-						rtn = 0;
-					}
-				}
-				else if (sec->ceilingheight > destHeight)
-				{
-					ceiling->direction = -1;
-					ceiling->bottomheight = destHeight;
-				}
-				break;
+				destHeight = -destHeight;
 			}
+			if (sec->ceilingheight <= destHeight)
+			{
+				Ceiling.direction = 1;
+				Ceiling.topheight = destHeight;
+				if (sec->ceilingheight == destHeight)
+				{
+					rtn = 0;
+				}
+			}
+			else if (sec->ceilingheight > destHeight)
+			{
+				Ceiling.direction = -1;
+				Ceiling.bottomheight = destHeight;
+			}
+			break;
 		default:
 			rtn = 0;
 			break;
 		}
-		ceiling->tag = sec->tag;
-		ceiling->type = type;
+		Ceiling.tag = sec->tag;
+		Ceiling.type = type;
 		if (rtn)
 		{
-			SectorStartSequence(ceiling->sector,
-				seq_name[SEQ_PLATFORM + ceiling->sector->seqType]);
+			SectorStartSequence(Ceiling.sector,
+				seq_name[SEQ_PLATFORM + Ceiling.sector->seqType]);
 		}
 	}
 	return rtn;
@@ -233,16 +230,16 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 
 int EV_CeilingCrushStop(line_t * line, int *args)
 {
-	CeilingMover c;
+	CeilingMover C;
 
-	FOREACH(CeilingMover, c)
+	FOREACH(CeilingMover, C)
 	{
-		if (c.tag == args[0])
+		if (C.tag == args[0])
 		{
-			SectorStopSequence(c.sector);
-			c.sector->specialdata = NULL;
-			TagFinished(c.sector->tag);
-			RemoveSpecialThinker(&c);
+			SectorStopSequence(C.sector);
+			C.sector->SpecialData = none;
+			TagFinished(C.sector->tag);
+			RemoveSpecialThinker(C);
 			return 1;
 		}
 	}
@@ -252,6 +249,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.8  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //

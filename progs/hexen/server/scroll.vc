@@ -29,39 +29,25 @@
 
 // TYPES -------------------------------------------------------------------
 
-class TFloorScroll:Thinker
-{
-	sector_t *sector;
-	float xspeed;
-	float yspeed;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
-class TWallScroll:Thinker
-{
-	int index;
-	float xspeed;
-	float yspeed;
-
-	void Think(void);
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
+class FloorScroll:Thinker
+{
+	sector_t *sector;
+	float xspeed;
+	float yspeed;
+
 //==========================================================================
 //
-//	TFloorScroll::Think
+//	Think
 //
 //==========================================================================
 
-void TFloorScroll::Think(void)
+void Think(void)
 {
 	sector->floor.xoffs += xspeed * frametime;
 	sector->floor.yoffs += yspeed * frametime;
@@ -69,25 +55,27 @@ void TFloorScroll::Think(void)
 
 //==========================================================================
 //
-//  TFloorScroll::Archive
+//  Archive
 //
 //==========================================================================
 
-void TFloorScroll::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//  TFloorScroll::Unarchive
+//  Unarchive
 //
 //==========================================================================
 
-void TFloorScroll::Unarchive(void)
+void Unarchive(void)
 {
 	//  Restore sector pointer
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -98,24 +86,32 @@ void TFloorScroll::Unarchive(void)
 
 void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
 {
-	TFloorScroll *scroll;
+	FloorScroll Scroll;
 
-	scroll = NewSpecialThinker(TFloorScroll);
-	scroll->sector = sector;
-	scroll->xspeed = itof(xdir) * itof(1 << speed) * 16.0;
-	scroll->yspeed = itof(ydir) * itof(1 << speed) * 16.0;
+	Scroll = NewSpecialThinker(FloorScroll);
+	Scroll.sector = sector;
+	Scroll.xspeed = itof(xdir) * itof(1 << speed) * 16.0;
+	Scroll.yspeed = itof(ydir) * itof(1 << speed) * 16.0;
 }
 
+class WallScroll:Thinker
+{
+	int index;
+	float xspeed;
+	float yspeed;
+
 //==========================================================================
 //
-//	TWallScroll::Think
+//	Think
 //
 //==========================================================================
 
-void TWallScroll::Think(void)
+void Think(void)
 {
 	level->sides[index].textureoffset += xspeed * frametime;
 	level->sides[index].rowoffset += yspeed * frametime;
+}
+
 }
 
 //==========================================================================
@@ -126,17 +122,20 @@ void TWallScroll::Think(void)
 
 void SpawnWallScroller(line_t * line, int xdir, int ydir)
 {
-	TWallScroll *scroll;
+	WallScroll Scroll;
 
-	scroll = NewSpecialThinker(TWallScroll);
-	scroll->index = line->sidenum[0];
-	scroll->xspeed = itof(xdir * line->arg1) / 2.0;
-	scroll->yspeed = itof(ydir * line->arg1) / 2.0;
+	Scroll = NewSpecialThinker(WallScroll);
+	Scroll.index = line->sidenum[0];
+	Scroll.xspeed = itof(xdir * line->arg1) / 2.0;
+	Scroll.yspeed = itof(ydir * line->arg1) / 2.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.5  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

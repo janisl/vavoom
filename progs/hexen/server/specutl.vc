@@ -452,7 +452,7 @@ boolean TagBusy(int tag)
 	sectorIndex = -1;
 	while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 	{
-		if (level->sectors[sectorIndex].specialdata)
+		if (level->sectors[sectorIndex].SpecialData)
 		{
 			return true;
 		}
@@ -463,6 +463,9 @@ boolean TagBusy(int tag)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.6  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

@@ -42,19 +42,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TDoor:SectorThinker
-{
-	int type;
-	float topheight;
-	float speed;
-	int direction;	// 1 = up, 0 = waiting, -1 = down
-	float topwait;	// tics to wait at the top
-					// (keep in case a door going down is reset)
-	float toptime;	// when it reaches 0, start going down
-
-	void Think(void);
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -67,13 +54,23 @@ string keymsg[] = {
 
 // CODE --------------------------------------------------------------------
 
+class VerticalDoor:SectorThinker
+{
+	int type;
+	float topheight;
+	float speed;
+	int direction;	// 1 = up, 0 = waiting, -1 = down
+	float topwait;	// tics to wait at the top
+					// (keep in case a door going down is reset)
+	float toptime;	// when it reaches 0, start going down
+
 //==========================================================================
 //
-//	TDoor::Think
+//	Think
 //
 //==========================================================================
 
-void TDoor::Think(void)
+void Think(void)
 {
 	int res;
 
@@ -125,8 +122,8 @@ void TDoor::Think(void)
 			{
 			case vd_normal:
 			case vd_close:
-				sector->specialdata = NULL;
-				RemoveSpecialThinker(this);	// unlink and free
+				sector->SpecialData = none;
+				RemoveSpecialThinker(self);	// unlink and free
 				SectorStartSoundName(sector, 'DoorClose', CHAN_VOICE);
 				break;
 			case DREV_CLOSEWAITOPEN:
@@ -163,8 +160,8 @@ void TDoor::Think(void)
 				break;
 			case DREV_CLOSEWAITOPEN:
 			case vd_open:
-				sector->specialdata = NULL;
-				RemoveSpecialThinker(this);	// unlink and free
+				sector->SpecialData = none;
+				RemoveSpecialThinker(self);	// unlink and free
 				SectorStopSound(sector, CHAN_AUTO);
 				break;
 			default:
@@ -173,6 +170,8 @@ void TDoor::Think(void)
 		}
 		break;
 	}
+}
+
 }
 
 //==========================================================================
@@ -188,47 +187,47 @@ int EV_DoDoor(line_t * line, int *args, int type)
 	int secnum;
 	int retcode;
 	sector_t *sec;
-	TDoor *door;
+	VerticalDoor Door;
 
 	secnum = -1;
 	retcode = 0;
 	while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if (sec->specialdata)
+		if (sec->SpecialData)
 		{
 			continue;
 		}
 		// Add new door thinker
 		retcode = 1;
-		door = NewSpecialThinker(TDoor);
-		sec->specialdata = door;
-		door->sector = sec;
-		door->type = type;
-		door->speed = itof(args[1]) * 4.0;
-		door->topwait = itof(args[2]) / 35.0;
+		Door = NewSpecialThinker(VerticalDoor);
+		sec->SpecialData = Door;
+		Door.sector = sec;
+		Door.type = type;
+		Door.speed = itof(args[1]) * 4.0;
+		Door.topwait = itof(args[2]) / 35.0;
 		switch (type)
 		{
 		case vd_close:
-			door->topheight = FindLowestCeilingSurrounding(sec);
-			door->topheight -= 4.0;
-			door->direction = -1;
-			SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
+			Door.topheight = FindLowestCeilingSurrounding(sec);
+			Door.topheight -= 4.0;
+			Door.direction = -1;
+			SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
 			break;
 		case DREV_CLOSEWAITOPEN:
-			door->topheight = sec->ceilingheight;
-			door->topwait *= 4.0;
-			door->direction = -1;
-			SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
+			Door.topheight = sec->ceilingheight;
+			Door.topwait *= 4.0;
+			Door.direction = -1;
+			SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
 			break;
 		case vd_normal:
 		case vd_open:
-			door->direction = 1;
-			door->topheight = FindLowestCeilingSurrounding(sec);
-			door->topheight -= 4.0;
-			if (door->topheight != sec->ceilingheight)
+			Door.direction = 1;
+			Door.topheight = FindLowestCeilingSurrounding(sec);
+			Door.topheight -= 4.0;
+			if (Door.topheight != sec->ceilingheight)
 			{
-				SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
 			}
 			break;
 		default:
@@ -275,23 +274,23 @@ boolean CheckLockedDoor(mobj_t * user, int lock)
 boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 {
 	sector_t *sec;
-	TDoor *door;
+	VerticalDoor Door;
 	int side;
 
 	side = 0;	// only front sides can be used
 
 	// if the sector has an active thinker, use it
 	sec = level->sides[line->sidenum[side ^ 1]].sector;
-	if (sec->specialdata)
+	if (sec->SpecialData)
 	{
-		door = (TDoor *)sec->specialdata;
+		Door = VerticalDoor(sec->SpecialData);
 		switch (line->special)
 		{
 		case 12:	// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
 		case 13:
-			if (door->direction == -1)
+			if (Door.direction == -1)
 			{
-				door->direction = 1;	// go back up
+				Door.direction = 1;	// go back up
 			}
 			else
 			{
@@ -299,7 +298,7 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 				{	// Monsters don't close doors
 					return false;
 				}
-				door->direction = -1;	// start going down immediately
+				Door.direction = -1;	// start going down immediately
 			}
 			return true;
 		}
@@ -310,30 +309,30 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 	//
 	// new door thinker
 	//
-	door = NewSpecialThinker(TDoor);
-	sec->specialdata = door;
-	door->sector = sec;
-	door->direction = 1;
+	Door = NewSpecialThinker(VerticalDoor);
+	sec->SpecialData = Door;
+	Door.sector = sec;
+	Door.direction = 1;
 	switch (line->special)
 	{
 	case 12:
-		door->type = vd_normal;
+		Door.type = vd_normal;
 		break;
 	case 11:
-		door->type = vd_open;
+		Door.type = vd_open;
 		break;
 	case 13:
-		door->type = line->arg3 ? vd_normal : vd_open;
+		Door.type = line->arg3 ? vd_normal : vd_open;
 		break;
 	}
-	door->speed = itof(line->arg2) * 4.0;
-	door->topwait = itof(line->arg3) / 35.0;
+	Door.speed = itof(line->arg2) * 4.0;
+	Door.topwait = itof(line->arg3) / 35.0;
 
 	//
 	// find the top and bottom of the movement range
 	//
-	door->topheight = FindLowestCeilingSurrounding(sec);
-	door->topheight -= 4.0;
+	Door.topheight = FindLowestCeilingSurrounding(sec);
+	Door.topheight -= 4.0;
 	return true;
 }
 
@@ -345,16 +344,16 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 
 void P_SpawnDoorCloseIn30(sector_t * sec)
 {
-	TDoor *door;
+	VerticalDoor Door;
 
-	door = NewSpecialThinker(TDoor);
-	sec->specialdata = door;
+	Door = NewSpecialThinker(VerticalDoor);
+	sec->SpecialData = Door;
 	sec->special = 0;
-	door->sector = sec;
-	door->direction = 0;
-	door->type = vd_normal;
-	door->speed = 2.0 * 35.0;
-	door->toptime = 30.0;
+	Door.sector = sec;
+	Door.direction = 0;
+	Door.type = vd_normal;
+	Door.speed = 2.0 * 35.0;
+	Door.toptime = 30.0;
 }
 
 //==========================================================================
@@ -365,24 +364,27 @@ void P_SpawnDoorCloseIn30(sector_t * sec)
 
 void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 {
-	TDoor *door;
+	VerticalDoor Door;
 
-	door = NewSpecialThinker(TDoor);
-	sec->specialdata = door;
+	Door = NewSpecialThinker(VerticalDoor);
+	sec->SpecialData = Door;
 	sec->special = 0;
-	door->sector = sec;
-	door->direction = 2;
-	door->type = raiseIn5Mins;
-	door->speed = 2.0 * 35.0;
-	door->topheight = FindLowestCeilingSurrounding(sec);
-	door->topheight -= 4.0;
-	door->topwait = 150.0 / 35.0;
-	door->toptime = 5.0 * 60.0;
+	Door.sector = sec;
+	Door.direction = 2;
+	Door.type = raiseIn5Mins;
+	Door.speed = 2.0 * 35.0;
+	Door.topheight = FindLowestCeilingSurrounding(sec);
+	Door.topheight -= 4.0;
+	Door.topwait = 150.0 / 35.0;
+	Door.toptime = 5.0 * 60.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

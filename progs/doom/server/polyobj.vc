@@ -44,41 +44,9 @@ class PolyobjThinker:Thinker
 	float thrust_force;
 };
 
-class TRotatePoly:PolyobjThinker
-{
-	float dist;
-	float speed;
-
-	void Think(void);
-};
-
-class TMovePoly:PolyobjThinker
-{
-	float speed;
-	float dist;
-	float angle;
-
-	void Think(void);
-};
-
-class TPolyDoor:PolyobjThinker
-{
-	int type;
-	float speed;
-	float dist;
-	float xSpeed;	// for sliding walls
-	float ySpeed;
-	float totalDist;
-	float time;
-	float waitTime;
-	boolean close;
-
-	void Think(void);
-};
-
 addfields polyobj_t
 {
-	PolyobjThinker *specialdata;	// pointer a thinker, if the poly is moving
+	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -89,13 +57,18 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y);
 
 // CODE --------------------------------------------------------------------
 
+class PolyobjRotator:PolyobjThinker
+{
+	float dist;
+	float speed;
+
 //==========================================================================
 //
-//	TRotatePoly::Think
+//	Think
 //
 //==========================================================================
 
-void TRotatePoly::Think(void)
+void Think(void)
 {
 	float move;
 	float absMove;
@@ -118,16 +91,18 @@ void TRotatePoly::Think(void)
 		if (dist <= 0.0)
 		{
 			poly = GetPolyobj(polyobj);
-			if (poly->specialdata == this)
+			if (poly->SpecialData == self)
 			{
-				poly->specialdata = NULL;
+				poly->SpecialData = none;
 			}
 			PolyobjStopSequence(poly);
 			PolyobjFinished(poly->tag);
-			RemoveSpecialThinker(this);
+			RemoveSpecialThinker(self);
 			return;
 		}
 	}
+}
+
 }
 
 //==========================================================================
@@ -141,13 +116,13 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 {
 	int mirror;
 	int polyNum;
-	TRotatePoly *pe;
+	PolyobjRotator pe;
 	polyobj_t *poly;
 
 	polyNum = args[0];
 	if ((poly = GetPolyobj(polyNum)))
 	{
-		if (poly->specialdata && !overRide)
+		if (poly->SpecialData && !overRide)
 		{	// poly is already moving
 			return false;
 		}
@@ -156,69 +131,69 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	{
 		Error("EV_RotatePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pe = NewSpecialThinker(TRotatePoly);
-	pe->polyobj = polyNum;
+	pe = NewSpecialThinker(PolyobjRotator);
+	pe.polyobj = polyNum;
 	if (args[2])
 	{
 		if (args[2] == 255)
 		{
-			pe->dist = -1.0;
+			pe.dist = -1.0;
 		}
 		else
 		{
-			pe->dist = itof(args[2]) * (90.0 / 64.0);	// Angle
+			pe.dist = itof(args[2]) * (90.0 / 64.0);	// Angle
 		}
 	}
 	else
 	{
-		pe->dist = 360.0;
+		pe.dist = 360.0;
 	}
-	pe->speed = AngleMod180(32.0 * itof(args[1]) * itof(direction) * 90.0 / 64.0 / 8.0);
+	pe.speed = AngleMod180(32.0 * itof(args[1]) * itof(direction) * 90.0 / 64.0 / 8.0);
 
 	//THRUST
-	pe->thrust_force = pe->speed / 32.0 * itof(0x800) / 90.0;
+	pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
-	poly->specialdata = pe;
+	poly->SpecialData = pe;
 	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
 	{
 		poly = GetPolyobj(mirror);
-		if (poly && poly->specialdata && !overRide)
+		if (poly && poly->SpecialData && !overRide)
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pe = NewSpecialThinker(TRotatePoly);
-		poly->specialdata = pe;
-		pe->polyobj = mirror;
+		pe = NewSpecialThinker(PolyobjRotator);
+		poly->SpecialData = pe;
+		pe.polyobj = mirror;
 		if (args[2])
 		{
 			if (args[2] == 255)
 			{
-				pe->dist = -1.0;
+				pe.dist = -1.0;
 			}
 			else
 			{
-				pe->dist = itof(args[2]) * (90.0 / 64.0);	// Angle
+				pe.dist = itof(args[2]) * (90.0 / 64.0);	// Angle
 			}
 		}
 		else
 		{
-			pe->dist = 360.0;
+			pe.dist = 360.0;
 		}
 		if ((poly = GetPolyobj(polyNum)))
 		{
-			poly->specialdata = pe;
+			poly->SpecialData = pe;
 		}
 		else
 		{
 			Error("EV_RotatePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 		}
 		direction = -direction;
-		pe->speed = AngleMod180(32.0 * itof(args[1]) * itof(direction) * 90.0 / 64.0 / 8.0);
+		pe.speed = AngleMod180(32.0 * itof(args[1]) * itof(direction) * 90.0 / 64.0 / 8.0);
 
 		//THRUST
-		pe->thrust_force = pe->speed / 32.0 * itof(0x800) / 90.0;
+		pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
 		polyNum = mirror;
 		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
@@ -226,13 +201,19 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	return true;
 }
 
+class PolyobjMover:PolyobjThinker
+{
+	float speed;
+	float dist;
+	float angle;
+
 //==========================================================================
 //
-//	TMovePoly::Think
+//	Think
 //
 //==========================================================================
 
-void TMovePoly::Think(void)
+void Think(void)
 {
 	float move;
 	float absMove;
@@ -254,16 +235,18 @@ void TMovePoly::Think(void)
 		if (dist <= 0.0)
 		{
 			poly = GetPolyobj(polyobj);
-			if (poly->specialdata == this)
+			if (poly->SpecialData == self)
 			{
-				poly->specialdata = NULL;
+				poly->SpecialData = none;
 			}
 			PolyobjStopSequence(poly);
 			PolyobjFinished(poly->tag);
-			RemoveSpecialThinker(this);
+			RemoveSpecialThinker(self);
 			return;
 		}
 	}
+}
+
 }
 
 //==========================================================================
@@ -277,14 +260,14 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 {
 	int mirror;
 	int polyNum;
-	TMovePoly *pe;
+	PolyobjMover pe;
 	polyobj_t *poly;
 	float an;
 
 	polyNum = args[0];
 	if ((poly = GetPolyobj(polyNum)))
 	{
-		if (poly->specialdata && !overRide)
+		if (poly->SpecialData && !overRide)
 		{	// poly is already moving
 			return false;
 		}
@@ -293,66 +276,78 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	{
 		Error("EV_MovePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pe = NewSpecialThinker(TMovePoly);
-	pe->polyobj = polyNum;
+	pe = NewSpecialThinker(PolyobjMover);
+	pe.polyobj = polyNum;
 	if (timesEight)
 	{
-		pe->dist = itof(args[3]) * 8.0;
+		pe.dist = itof(args[3]) * 8.0;
 	}
 	else
 	{
-		pe->dist = itof(args[3]);	// Distance
+		pe.dist = itof(args[3]);	// Distance
 	}
-	pe->speed = itof(args[1]) * 4.0;
+	pe.speed = itof(args[1]) * 4.0;
 
 	//THRUST
-	pe->thrust_force = pe->speed / 8.0;
+	pe.thrust_force = pe.speed / 8.0;
 
-	poly->specialdata = pe;
+	poly->SpecialData = pe;
 
 	an = itof(args[2]) * (90.0 / 64.0);
 
-	pe->angle = an;
+	pe.angle = an;
 	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
 	{
 		poly = GetPolyobj(mirror);
-		if (poly && poly->specialdata && !overRide)
+		if (poly && poly->SpecialData && !overRide)
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pe = NewSpecialThinker(TMovePoly);
-		pe->polyobj = mirror;
-		poly->specialdata = pe;
+		pe = NewSpecialThinker(PolyobjMover);
+		pe.polyobj = mirror;
+		poly->SpecialData = pe;
 		if (timesEight)
 		{
-			pe->dist = itof(args[3]) * 8.0;
+			pe.dist = itof(args[3]) * 8.0;
 		}
 		else
 		{
-			pe->dist = itof(args[3]);	// Distance
+			pe.dist = itof(args[3]);	// Distance
 		}
-		pe->speed = itof(args[1]) * 4.0;
+		pe.speed = itof(args[1]) * 4.0;
 
 		//THRUST
-		pe->thrust_force = pe->speed / 8.0;
+		pe.thrust_force = pe.speed / 8.0;
 
 		an = AngleMod360(an + 180.0);	// reverse the angle
-		pe->angle = an;
+		pe.angle = an;
 		polyNum = mirror;
 		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	return true;
 }
 
+class PolyobjDoor:PolyobjThinker
+{
+	int type;
+	float speed;
+	float dist;
+	float xSpeed;	// for sliding walls
+	float ySpeed;
+	float totalDist;
+	float time;
+	float waitTime;
+	boolean close;
+
 //==========================================================================
 //
-//  TPolyDoor::Think
+//  Think
 //
 //==========================================================================
 
-void TPolyDoor::Think(void)
+void Think(void)
 {
 	polyobj_t *poly;
 	float move;
@@ -389,12 +384,12 @@ void TPolyDoor::Think(void)
 				}
 				else
 				{
-					if (poly->specialdata == this)
+					if (poly->SpecialData == self)
 					{
-						poly->specialdata = NULL;
+						poly->SpecialData = none;
 					}
 					PolyobjFinished(poly->tag);
-					RemoveSpecialThinker(this);
+					RemoveSpecialThinker(self);
 				}
 			}
 		}
@@ -436,12 +431,12 @@ void TPolyDoor::Think(void)
 				}
 				else
 				{
-					if (poly->specialdata == this)
+					if (poly->SpecialData == self)
 					{
-						poly->specialdata = NULL;
+						poly->SpecialData = none;
 					}
 					PolyobjFinished(poly->tag);
-					RemoveSpecialThinker(this);
+					RemoveSpecialThinker(self);
 				}
 			}
 		}
@@ -469,6 +464,8 @@ void TPolyDoor::Think(void)
 	}
 }
 
+}
+
 //==========================================================================
 //
 // EV_OpenPolyDoor
@@ -479,14 +476,14 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 {
 	int mirror;
 	int polyNum;
-	TPolyDoor *pd;
+	PolyobjDoor pd;
 	polyobj_t *poly;
 	float an = 0.0;
 
 	polyNum = args[0];
 	if ((poly = GetPolyobj(polyNum)))
 	{
-		if (poly->specialdata)
+		if (poly->SpecialData)
 		{	// poly is already moving
 			return false;
 		}
@@ -495,74 +492,74 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 	{
 		Error("EV_OpenPolyDoor:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pd = NewSpecialThinker(TPolyDoor);
-	pd->type = type;
-	pd->polyobj = polyNum;
+	pd = NewSpecialThinker(PolyobjDoor);
+	pd.type = type;
+	pd.polyobj = polyNum;
 	if (type == PODOOR_SLIDE)
 	{
-		pd->waitTime = itof(args[4]) / 35.0;
-		pd->speed = itof(args[1]) * 4.0;
-		pd->totalDist = itof(args[3]);	// Distance
-		pd->dist = pd->totalDist;
+		pd.waitTime = itof(args[4]) / 35.0;
+		pd.speed = itof(args[1]) * 4.0;
+		pd.totalDist = itof(args[3]);	// Distance
+		pd.dist = pd.totalDist;
 		an = itof(args[2]) * (90.0 / 64.0);
-		pd->xSpeed = cos(an);
-		pd->ySpeed = sin(an);
+		pd.xSpeed = cos(an);
+		pd.ySpeed = sin(an);
 
 		//THRUST
-		pd->thrust_force = pd->speed / 8.0;
+		pd.thrust_force = pd.speed / 8.0;
 
 		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 	else if (type == PODOOR_SWING)
 	{
-		pd->waitTime = itof(args[3]) / 35.0;
-		pd->speed = AngleMod180(4.0 * itof(args[1]) * (90.0 / 64.0));
-		pd->totalDist = itof(args[2]) * (90.0 / 64.0);
-		pd->dist = pd->totalDist;
+		pd.waitTime = itof(args[3]) / 35.0;
+		pd.speed = AngleMod180(4.0 * itof(args[1]) * (90.0 / 64.0));
+		pd.totalDist = itof(args[2]) * (90.0 / 64.0);
+		pd.dist = pd.totalDist;
 
 		//THRUST
-		pd->thrust_force = pd->speed * itof(0x1000) / 180.0;
+		pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
 		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 	}
 
-	poly->specialdata = pd;
+	poly->SpecialData = pd;
 
 	while ((mirror = GetPolyobjMirror(polyNum)))
 	{
 		poly = GetPolyobj(mirror);
-		if (poly && poly->specialdata)
+		if (poly && poly->SpecialData)
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pd = NewSpecialThinker(TPolyDoor);
-		pd->polyobj = mirror;
-		pd->type = type;
-		poly->specialdata = pd;
+		pd = NewSpecialThinker(PolyobjDoor);
+		pd.polyobj = mirror;
+		pd.type = type;
+		poly->SpecialData = pd;
 		if (type == PODOOR_SLIDE)
 		{
-			pd->waitTime = itof(args[4]) / 35.0;
-			pd->speed = itof(args[1]) * 4.0;
-			pd->totalDist = itof(args[3]);	// Distance
-			pd->dist = pd->totalDist;
+			pd.waitTime = itof(args[4]) / 35.0;
+			pd.speed = itof(args[1]) * 4.0;
+			pd.totalDist = itof(args[3]);	// Distance
+			pd.dist = pd.totalDist;
 			an = AngleMod360(an + 180.0);	// reverse the angle
-			pd->xSpeed = cos(an);
-			pd->ySpeed = sin(an);
+			pd.xSpeed = cos(an);
+			pd.ySpeed = sin(an);
 
 			//THRUST
-			pd->thrust_force = pd->speed / 8.0;
+			pd.thrust_force = pd.speed / 8.0;
 
 			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 		}
 		else if (type == PODOOR_SWING)
 		{
-			pd->waitTime = itof(args[3]) / 35.0;
-			pd->speed = AngleMod180(4.0 * itof(-args[1]) * (90.0 / 64.0));
-			pd->totalDist = itof(args[2]) * (90.0 / 64.0);
-			pd->dist = pd->totalDist;
+			pd.waitTime = itof(args[3]) / 35.0;
+			pd.speed = AngleMod180(4.0 * itof(-args[1]) * (90.0 / 64.0));
+			pd.totalDist = itof(args[2]) * (90.0 / 64.0);
+			pd.dist = pd.totalDist;
 
 			//THRUST
-			pd->thrust_force = pd->speed * itof(0x1000) / 180.0;
+			pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
 			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 		}
@@ -580,17 +577,17 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 {
 	float force;
-	PolyobjThinker *pe;
+	PolyobjThinker pe;
 
 	if (!(mobj->flags & MF_SHOOTABLE) && !mobj->player)
 	{
 		return;
 	}
 
-	pe = po->specialdata;
+	pe = po->SpecialData;
 	if (pe)
 	{
-		force = pe->thrust_force;
+		force = pe.thrust_force;
 		if (force < 1.0)
 		{
 			force = 1.0;
@@ -629,7 +626,7 @@ boolean PolyBusy(int polyobj)
 	polyobj_t *poly;
 
 	poly = GetPolyobj(polyobj);
-	if (!poly->specialdata)
+	if (!poly->SpecialData)
 	{
 		return false;
 	}
@@ -642,6 +639,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/01/15 08:12:25  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.2  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

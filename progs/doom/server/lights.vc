@@ -45,25 +45,20 @@
 //
 //**************************************************************************
 
-class TFireFlicker:Thinker
+class FireFlicker:Thinker
 {
 	sector_t *sector;
 	float time;
 	int maxlight;
 	int minlight;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 //==========================================================================
 //
-//	TFireFlicker::Think
+//	Think
 //
 //==========================================================================
 
-void TFireFlicker::Think(void)
+void Think(void)
 {
 	int amount;
 
@@ -85,24 +80,26 @@ void TFireFlicker::Think(void)
 
 //==========================================================================
 //
-//	TFireFlicker::Archive
+//	Archive
 //
 //==========================================================================
 
-void TFireFlicker::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//	TFireFlicker::Unarchive
+//	Unarchive
 //
 //==========================================================================
 
-void TFireFlicker::Unarchive(void)
+void Unarchive(void)
 {
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -113,18 +110,18 @@ void TFireFlicker::Unarchive(void)
 
 void P_SpawnFireFlicker(sector_t * sector)
 {
-	TFireFlicker *flick;
+	FireFlicker Flick;
 
 	// Note that we are resetting sector attributes.
 	// Nothing special about it during gameplay.
 	sector->special = 0;
 
-	flick = NewSpecialThinker(TFireFlicker);
+	Flick = NewSpecialThinker(FireFlicker);
 
-	flick->sector = sector;
-	flick->time = 4.0 / 35.0;
-	flick->maxlight = sector->params.lightlevel;
-	flick->minlight =
+	Flick.sector = sector;
+	Flick.time = 4.0 / 35.0;
+	Flick.maxlight = sector->params.lightlevel;
+	Flick.minlight =
 		FindMinSurroundingLight(sector, sector->params.lightlevel) + 16;
 }
 
@@ -136,25 +133,20 @@ void P_SpawnFireFlicker(sector_t * sector)
 
 #define GLOWSPEED			256.0
 
-class TGlow:Thinker
+class GlowingLight:Thinker
 {
 	sector_t *sector;
 	int direction;
 	int maxlight;
 	int minlight;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 //==========================================================================
 //
-//  T_Glow
+//  Think
 //
 //==========================================================================
 
-void TGlow::Think(void)
+void Think(void)
 {
 	switch (direction)
 	{
@@ -182,24 +174,26 @@ void TGlow::Think(void)
 
 //==========================================================================
 //
-//	TGlow::Archive
+//	Archive
 //
 //==========================================================================
 
-void TGlow::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//	TGlow::Unarchive
+//	Unarchive
 //
 //==========================================================================
 
-void TGlow::Unarchive(void)
+void Unarchive(void)
 {
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -212,14 +206,14 @@ void TGlow::Unarchive(void)
 
 void P_SpawnGlowingLight(sector_t * sector)
 {
-	TGlow *g;
+	GlowingLight G;
 
-	g = NewSpecialThinker(TGlow);
+	G = NewSpecialThinker(GlowingLight);
 
-	g->sector = sector;
-	g->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
-	g->maxlight = sector->params.lightlevel;
-	g->direction = -1;
+	G.sector = sector;
+	G.minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
+	G.maxlight = sector->params.lightlevel;
+	G.direction = -1;
 
 	sector->special = 0;
 }
@@ -230,7 +224,7 @@ void P_SpawnGlowingLight(sector_t * sector)
 //
 //**************************************************************************
 
-class TLightFlash:Thinker
+class LightFlash:Thinker
 {
 	sector_t *sector;
 	float time;
@@ -239,20 +233,15 @@ class TLightFlash:Thinker
 	int maxtime;
 	int mintime;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 //==========================================================================
 //
-//  T_LightFlash
+//  Think
 //
 //  Do flashing lights.
 //
 //==========================================================================
 
-void TLightFlash::Think(void)
+void Think(void)
 {
 	time -= frametime;
 	if (time >= 0.0)
@@ -275,24 +264,26 @@ void TLightFlash::Think(void)
 
 //==========================================================================
 //
-//  TLightFlash::Archive
+//  Archive
 //
 //==========================================================================
 
-void TLightFlash::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//	TLightFlash::Unarchive
+//	Unarchive
 //
 //==========================================================================
 
-void TLightFlash::Unarchive(void)
+void Unarchive(void)
 {
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -306,20 +297,20 @@ void TLightFlash::Unarchive(void)
 
 void P_SpawnLightFlash(sector_t * sector)
 {
-	TLightFlash *flash;
+	LightFlash Flash;
 
 	// nothing special about it during gameplay
 	sector->special = 0;
 
-	flash = NewSpecialThinker(TLightFlash);
+	Flash = NewSpecialThinker(LightFlash);
 
-	flash->sector = sector;
-	flash->maxlight = sector->params.lightlevel;
-	flash->minlight =
+	Flash.sector = sector;
+	Flash.maxlight = sector->params.lightlevel;
+	Flash.minlight =
 		FindMinSurroundingLight(sector, sector->params.lightlevel);
-	flash->maxtime = 64;
-	flash->mintime = 7;
-	flash->time = itof((P_Random() & flash->maxtime) + 1) / 35.0;
+	Flash.maxtime = 64;
+	Flash.mintime = 7;
+	Flash.time = itof((P_Random() & Flash.maxtime) + 1) / 35.0;
 }
 
 //**************************************************************************
@@ -332,7 +323,7 @@ void P_SpawnLightFlash(sector_t * sector)
 #define FASTDARK			15
 #define SLOWDARK			35
 
-class TStrobe:Thinker
+class Strobe:Thinker
 {
 	sector_t *sector;
 	float time;
@@ -341,18 +332,13 @@ class TStrobe:Thinker
 	float maxtime;
 	float mintime;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 //==========================================================================
 //
-//  T_StrobeFlash
+//  Think
 //
 //==========================================================================
 
-void TStrobe::Think(void)
+void Think(void)
 {
 	time -= frametime;
 	if (time > 0.0)
@@ -374,24 +360,26 @@ void TStrobe::Think(void)
 
 //==========================================================================
 //
-//	TStrobe::Archive
+//	Archive
 //
 //==========================================================================
 
-void TStrobe::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//	TStrobe::Unarchive
+//	Unarchive
 //
 //==========================================================================
 
-void TStrobe::Unarchive(void)
+void Unarchive(void)
 {
 	sector = NumToSector(sector);
+}
+
 }
 
 //==========================================================================
@@ -406,27 +394,27 @@ void TStrobe::Unarchive(void)
 void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
 	int inSync)
 {
-	TStrobe *flash;
+	Strobe Flash;
 
-	flash = NewSpecialThinker(TStrobe);
+	Flash = NewSpecialThinker(Strobe);
 
-	flash->sector = sector;
-	flash->mintime = itof(fastOrSlow) / 35.0;
-	flash->maxtime = itof(maxtime) / 35.0;
-	flash->maxlight = sector->params.lightlevel;
-	flash->minlight =
+	Flash.sector = sector;
+	Flash.mintime = itof(fastOrSlow) / 35.0;
+	Flash.maxtime = itof(maxtime) / 35.0;
+	Flash.maxlight = sector->params.lightlevel;
+	Flash.minlight =
 		FindMinSurroundingLight(sector, sector->params.lightlevel);
 
-	if (flash->minlight == flash->maxlight)
-		flash->minlight = 0;
+	if (Flash.minlight == Flash.maxlight)
+		Flash.minlight = 0;
 
 	// nothing special about it during gameplay
 	sector->special = 0;
 
 	if (!inSync)
-		flash->time = (Random() * 8.0 + 1.0) / 35.0;
+		Flash.time = (Random() * 8.0 + 1.0) / 35.0;
 	else
-		flash->time = 1.0 / 35.0;
+		Flash.time = 1.0 / 35.0;
 }
 
 //==========================================================================
@@ -446,7 +434,7 @@ int EV_StartLightStrobing(line_t * line, int *args)
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if (sec->specialdata)
+		if (sec->SpecialData)
 			continue;
 
 		P_SpawnStrobeFlash(sec, args[2], args[1], 0);
@@ -551,7 +539,7 @@ enum
 	LITE_STROBE
 };
 
-class TLight:Thinker
+class LightEffect:Thinker
 {
 	sector_t *sector;
 	int type;
@@ -563,18 +551,13 @@ class TLight:Thinker
 	float time;
 	float delta;
 
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 //============================================================================
 //
-//	TLight::Think
+//	Think
 //
 //============================================================================
 
-void TLight::Think(void)
+void Think(void)
 {
 	if (time)
 	{
@@ -594,13 +577,13 @@ void TLight::Think(void)
 			if (sector->params.lightlevel >= value1)
 			{
 				sector->params.lightlevel = value1;
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 			}
 		}
 		else if (sector->params.lightlevel <= value1)
 		{
 			sector->params.lightlevel = value1;
-			RemoveSpecialThinker(this);
+			RemoveSpecialThinker(self);
 		}
 		break;
 
@@ -656,25 +639,27 @@ void TLight::Think(void)
 
 //==========================================================================
 //
-//  TLight::Archive
+//  Archive
 //
 //==========================================================================
 
-void TLight::Archive(void)
+void Archive(void)
 {
 	sector = SectorToNum(sector);
 }
 
 //==========================================================================
 //
-//  TLight::Unarchive
+//  Unarchive
 //
 //==========================================================================
 
-void TLight::Unarchive(void)
+void Unarchive(void)
 {
 	//  Restore sector pointer
 	sector = NumToSector(sector);
+}
+
 }
 
 //============================================================================
@@ -685,7 +670,7 @@ void TLight::Unarchive(void)
 
 boolean EV_SpawnLight(line_t * line, int *arg, int type)
 {
-	TLight *light;
+	LightEffect Light;
 	sector_t *sec;
 	int secNum;
 	int arg1, arg2, arg3, arg4;
@@ -709,10 +694,10 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		think = false;
 		sec = &level->sectors[secNum];
 
-		light = NewSpecialThinker(TLight);
-		light->type = type;
-		light->sector = sec;
-		light->time = 0.0;
+		Light = NewSpecialThinker(LightEffect);
+		Light.type = type;
+		Light.sector = sec;
+		Light.time = 0.0;
 		rtn = true;
 		switch (type)
 		{
@@ -743,46 +728,46 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 			break;
 		case LITE_FADE:
 			think = true;
-			light->value1 = arg1;	// destination lightlevel
-			light->delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
+			Light.value1 = arg1;	// destination lightlevel
+			Light.delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->direction = 1;	// get brighter
+				Light.direction = 1;	// get brighter
 			}
 			else
 			{
-				light->direction = -1;
+				Light.direction = -1;
 			}
 			break;
 		case LITE_GLOW:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			light->delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			Light.delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
 			if (sec->params.lightlevel <= arg1)
 			{
-				light->direction = 1;	// get brighter
+				Light.direction = 1;	// get brighter
 			}
 			else
 			{
-				light->direction = -1;
+				Light.direction = -1;
 			}
 			break;
 		case LITE_FLICKER:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			sec->params.lightlevel = light->value1;
-			light->time = itof((P_Random() & 64) + 1) / 32.0;
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			sec->params.lightlevel = Light.value1;
+			Light.time = itof((P_Random() & 64) + 1) / 32.0;
 			break;
 		case LITE_STROBE:
 			think = true;
-			light->value1 = arg1;	// upper lightlevel
-			light->value2 = arg2;	// lower lightlevel
-			light->time1 = itof(arg3) / 35.0;	// upper tics
-			light->time2 = itof(arg4) / 35.0;	// lower tics
-			light->time = itof(arg3) / 35.0;
-			sec->params.lightlevel = light->value1;
+			Light.value1 = arg1;	// upper lightlevel
+			Light.value2 = arg2;	// lower lightlevel
+			Light.time1 = itof(arg3) / 35.0;	// upper tics
+			Light.time2 = itof(arg4) / 35.0;	// lower tics
+			Light.time = itof(arg3) / 35.0;
+			sec->params.lightlevel = Light.value1;
 			break;
 		default:
 			rtn = false;
@@ -790,7 +775,7 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 		}
 		if (!think)
 		{
-			RemoveSpecialThinker(light);
+			RemoveSpecialThinker(Light);
 		}
 	}
 	return rtn;
@@ -1031,6 +1016,9 @@ __mobjinfo__
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 08:12:25  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.8  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

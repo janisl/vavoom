@@ -743,7 +743,7 @@ addfields sector_t
 	Entity *soundtarget;
 
 	// Thinker for reversable actions
-	Thinker *specialdata;
+	Thinker SpecialData;
 };
 
 #endif
@@ -956,6 +956,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/01/15 08:12:25  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.23  2002/01/11 08:03:09  dj_jl
 //  Renamed 'name' to "Name'
 //

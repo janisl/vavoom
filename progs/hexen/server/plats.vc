@@ -46,7 +46,13 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class TPlat:SectorThinker
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+class Platform:SectorThinker
 {
 	float speed;
 	float low;
@@ -58,24 +64,15 @@ class TPlat:SectorThinker
 	float time;
 	float wait;
 
-	void Think(void);
-};
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//	TPlat::Think
+//	Think
 //
 //  Move a plat up and down
 //
 //==========================================================================
 
-void TPlat::Think(void)
+void Think(void)
 {
 	int res;
 
@@ -99,9 +96,9 @@ void TPlat::Think(void)
 			{
 			case PLAT_DOWNWAITUPSTAY:
 			case PLAT_DOWNBYVALUEWAITUPSTAY:
-				sector->specialdata = NULL;
+				sector->SpecialData = none;
 				TagFinished(sector->tag);
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 				break;
 			default:
 				break;
@@ -119,9 +116,9 @@ void TPlat::Think(void)
 			{
 			case PLAT_UPWAITDOWNSTAY:
 			case PLAT_UPBYVALUEWAITDOWNSTAY:
-				sector->specialdata = NULL;
+				sector->SpecialData = none;
 				TagFinished(sector->tag);
-				RemoveSpecialThinker(this);
+				RemoveSpecialThinker(self);
 				break;
 			default:
 				break;
@@ -142,6 +139,8 @@ void TPlat::Think(void)
 	}
 }
 
+}
+
 //==========================================================================
 //
 //  EV_DoPlat
@@ -152,7 +151,7 @@ void TPlat::Think(void)
 
 int EV_DoPlat(line_t * line, int *args, int type)
 {
-	TPlat *plat;
+	Platform Plat;
 	int secnum;
 	int rtn;
 	sector_t *sec;
@@ -163,64 +162,64 @@ int EV_DoPlat(line_t * line, int *args, int type)
 	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if (sec->specialdata)
+		if (sec->SpecialData)
 			continue;
 
 		//
 		// Find lowest & highest floors around sector
 		//
 		rtn = 1;
-		plat = NewSpecialThinker(TPlat);
+		Plat = NewSpecialThinker(Platform);
 
-		plat->type = type;
-		plat->sector = sec;
-		plat->sector->specialdata = plat;
-		plat->crush = false;
-		plat->tag = args[0];
-		plat->speed = itof(args[1]) * 4.0;
+		Plat.type = type;
+		Plat.sector = sec;
+		Plat.sector->SpecialData = Plat;
+		Plat.crush = false;
+		Plat.tag = args[0];
+		Plat.speed = itof(args[1]) * 4.0;
 		switch (type)
 		{
 		case PLAT_DOWNWAITUPSTAY:
-			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
-			if (plat->low > sec->floorheight)
-				plat->low = sec->floorheight;
-			plat->high = sec->floorheight;
-			plat->wait = itof(args[2]) / 35.0;
-			plat->status = PLAT_DOWN;
+			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (Plat.low > sec->floorheight)
+				Plat.low = sec->floorheight;
+			Plat.high = sec->floorheight;
+			Plat.wait = itof(args[2]) / 35.0;
+			Plat.status = PLAT_DOWN;
 			break;
 		case PLAT_DOWNBYVALUEWAITUPSTAY:
-			plat->low = sec->floorheight - itof(args[3]) * 8.0;
-			if (plat->low > sec->floorheight)
-				plat->low = sec->floorheight;
-			plat->high = sec->floorheight;
-			plat->wait = itof(args[2]) / 35.0;
-			plat->status = PLAT_DOWN;
+			Plat.low = sec->floorheight - itof(args[3]) * 8.0;
+			if (Plat.low > sec->floorheight)
+				Plat.low = sec->floorheight;
+			Plat.high = sec->floorheight;
+			Plat.wait = itof(args[2]) / 35.0;
+			Plat.status = PLAT_DOWN;
 			break;
 		case PLAT_UPWAITDOWNSTAY:
-			plat->high = FindHighestFloorSurrounding(sec);
-			if (plat->high < sec->floorheight)
-				plat->high = sec->floorheight;
-			plat->low = sec->floorheight;
-			plat->wait = itof(args[2]) / 35.0;
-			plat->status = PLAT_UP;
+			Plat.high = FindHighestFloorSurrounding(sec);
+			if (Plat.high < sec->floorheight)
+				Plat.high = sec->floorheight;
+			Plat.low = sec->floorheight;
+			Plat.wait = itof(args[2]) / 35.0;
+			Plat.status = PLAT_UP;
 			break;
 		case PLAT_UPBYVALUEWAITDOWNSTAY:
-			plat->high = sec->floorheight + itof(args[3]) * 8.0;
-			if (plat->high < sec->floorheight)
-				plat->high = sec->floorheight;
-			plat->low = sec->floorheight;
-			plat->wait = itof(args[2]) / 35.0;
-			plat->status = PLAT_UP;
+			Plat.high = sec->floorheight + itof(args[3]) * 8.0;
+			if (Plat.high < sec->floorheight)
+				Plat.high = sec->floorheight;
+			Plat.low = sec->floorheight;
+			Plat.wait = itof(args[2]) / 35.0;
+			Plat.status = PLAT_UP;
 			break;
 		case PLAT_PERPETUALRAISE:
-			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
-			if (plat->low > sec->floorheight)
-				plat->low = sec->floorheight;
-			plat->high = FindHighestFloorSurrounding(sec);
-			if (plat->high < sec->floorheight)
-				plat->high = sec->floorheight;
-			plat->wait = itof(args[2]) / 35.0;
-			plat->status = P_Random() & 1;
+			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (Plat.low > sec->floorheight)
+				Plat.low = sec->floorheight;
+			Plat.high = FindHighestFloorSurrounding(sec);
+			if (Plat.high < sec->floorheight)
+				Plat.high = sec->floorheight;
+			Plat.wait = itof(args[2]) / 35.0;
+			Plat.status = P_Random() & 1;
 			break;
 		}
 		SectorStartSequence(sec, seq_name[SEQ_PLATFORM + sec->seqType]);
@@ -236,15 +235,15 @@ int EV_DoPlat(line_t * line, int *args, int type)
 
 void EV_StopPlat(line_t * line, int *args)
 {
-	TPlat plat;
+	Platform Plat;
 
-	FOREACH(TPlat, plat)
+	FOREACH(Platform, Plat)
 	{
-		if (plat.tag = args[0])
+		if (Plat.tag = args[0])
 		{
-			plat.sector->specialdata = NULL;
-			TagFinished(plat.sector->tag);
-			RemoveSpecialThinker(&plat);
+			Plat.sector->SpecialData = none;
+			TagFinished(Plat.sector->tag);
+			RemoveSpecialThinker(Plat);
 			return;
 		}
 	}
@@ -253,6 +252,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/15 08:12:26  dj_jl
+//  Replaced some pointers with references
+//
 //  Revision 1.8  2002/01/12 18:02:48  dj_jl
 //  Replaced some C style casts with dynamic casts
 //
