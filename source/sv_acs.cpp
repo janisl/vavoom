@@ -67,7 +67,7 @@ class VACS:public VThinker
 	int 		vars[MAX_ACS_SCRIPT_VARS];
 	int 		*ip;
 
-	DECLARE_FUNCTION(Think)
+	DECLARE_FUNCTION(Tick)
 	DECLARE_FUNCTION(Archive)
 	DECLARE_FUNCTION(Unarchive)
 };
@@ -654,14 +654,16 @@ static void SV_InterpretACS(VACS *script)
 
 //==========================================================================
 //
-//	ACS.Think
+//	ACS.Tick
 //
 //==========================================================================
 
-IMPLEMENT_FUNCTION(VACS, Think)
+IMPLEMENT_FUNCTION(VACS, Tick)
 {
 	VACS	*script;
+	float	deltaTime;
 
+	deltaTime = PR_Popf();
 	script = (VACS *)PR_Pop();
 	SV_InterpretACS(script);
 }
@@ -1805,9 +1807,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/04/11 16:42:09  dj_jl
+//	Renamed Think to Tick.
+//
 //	Revision 1.16  2002/03/16 17:55:11  dj_jl
 //	Some small changes.
-//
+//	
 //	Revision 1.15  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

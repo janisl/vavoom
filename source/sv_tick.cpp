@@ -56,7 +56,7 @@ IMPLEMENT_CLASS(VThinker)
 
 static FFunction *pf_UpdateSpecials;
 static FFunction *pf_SetViewPos;
-static FFunction *pf_RunThink;
+static int FIndex_Tick;
 
 // CODE --------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ void P_InitThinkers(void)
 {
 	pf_UpdateSpecials = svpr.FuncForName("P_UpdateSpecials");
     pf_SetViewPos = svpr.FuncForName("SetViewPos");
-	pf_RunThink = svpr.FuncForName("RunThink");
+	FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
 }
 
 //==========================================================================
@@ -100,7 +100,7 @@ static void RunThinkers(void)
 	{
 		if (!(It->GetFlags() & OF_Destroyed))
 		{
-			svpr.Exec(pf_RunThink, (int)*It);
+			svpr.Exec(It->GetVFunction(FIndex_Tick), (int)*It, PassFloat(host_frametime));
 		}
 	}
 }
@@ -136,9 +136,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/04/11 16:42:10  dj_jl
+//	Renamed Think to Tick.
+//
 //	Revision 1.11  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	
