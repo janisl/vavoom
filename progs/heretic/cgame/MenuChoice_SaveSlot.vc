@@ -28,12 +28,11 @@ class MenuChoice_SaveSlot:MenuSaveSlot;
 void ActivateSlot(void)
 {
 	// we are going to be intercepting all chars
-	enteringText = true;
-	InputLine_Init(&slot_enter_text);
-
+	bEnteringText = true;
+    strsetchar(ARR2STR(EnterText), 0, 0);
 	if (Status)
 	{
-		InputLine_SetValue(&slot_enter_text, ARR2STR(Text));
+		strcpy(ARR2STR(EnterText), ARR2STR(Text));
 	}
 	LocalSound('MenuSelect');
 }
@@ -45,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

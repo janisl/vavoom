@@ -638,19 +638,6 @@ struct client_state_t
 };
 
 //
-//  Input Text Line widget
-//
-
-#define MAX_ILINE_LENGTH	79
-
-struct TILine
-{
-	int Data[(MAX_ILINE_LENGTH + 1) / 4];	// line of text
-	int len;	// current line length
-	int lm;	// left margin past which I am not to delete characters
-};
-
-//
 //  Server list
 //
 
@@ -770,6 +757,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2003/03/08 12:15:40  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.45  2002/10/26 16:32:14  dj_jl
 //  New style of defining classes.
 //

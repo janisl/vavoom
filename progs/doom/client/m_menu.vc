@@ -29,11 +29,37 @@
 
 #define MAX_MENU_STACK		32
 
+#define NUM_END_MESSAGES	15
+
+#define SLOTTEXTLEN 		24
+
+#define MAX_ILINE_LENGTH	79
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	DRV_SOFTWARE,
+	DRV_OPENGL,
+	DRV_DIRECT3D
+};
+
 class MenuScreen;
+class MenuControlKey;
+
+struct mode_t
+{
+	int width;
+	int height;
+};
+
+struct TILine
+{
+	int Data[(MAX_ILINE_LENGTH + 1) / 4];	// line of text
+	int len;	// current line length
+};
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -44,75 +70,71 @@ int menu_sp;
 
 MenuScreen CurrentMenuScreen;
 
+int pic_M_LSLEFT;
+int pic_M_LSCNTR;
+int pic_M_LSRGHT;
+
+#ifndef DOOM2
+int MenuEpisode;
+#endif
+
+MenuControlKey CurrentCtl;
+int ControlColumn;	// menu column for controls
+
+mode_t modes[8] = {
+	{320, 200},
+	{320, 240},
+	{640, 400},
+	{640, 480},
+	{800, 600},
+	{1024, 768},
+	{1152, 864},
+	{1280, 1024}
+};
+int depths[4] = { 8, 16, 24, 32 };
+
+name quitsounds[8] = {
+#ifndef DOOM2
+	'PlayerDeath',
+	'DemonPain',
+	'ZombiePain',
+	'Slop',
+	'Teleport',
+	'ZombieSight1',
+	'ZombieSight3',
+	'DemonAttack'
+#else
+	'ArchVileActive',
+	'PickupPower',
+	'CubeFly',
+	'Slop',
+	'RavenantSwing',
+	'KnightDeath',
+	'BabyActive',
+	'DemonAttack'
+#endif
+};
+
+string endmsg[NUM_END_MESSAGES] = {
+	"are you sure you want to\nquit this great game?",
+	"please don't leave, there's more\ndemons to toast!",
+	"let's beat it -- this is turning\ninto a bloodbath!",
+	"i wouldn't leave if i were you.\ndos is much worse.",
+	"you're trying to say you like dos\nbetter than me, right?",
+	"don't leave yet -- there's a\ndemon around that corner!",
+	"ya know, next time you come in here\ni'm gonna toast ya.",
+	"go ahead and leave. see if i care.",
+
+	"you want to quit?\nthen, thou hast lost an eighth!",
+	"don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!",
+	"get outta here and go back\nto your boring programs.",
+	"if i were your boss, i'd \n deathmatch ya in a minute!",
+	"look, bud. you leave now\nand you forfeit your body count!",
+	"just leave. when you come\nback, i'll be waiting with a bat.",
+	"you're lucky i don't smack\nyou for thinking about leaving."
+};
+
 // CODE --------------------------------------------------------------------
-
-//**************************************************************************
-//**
-//**
-//**
-//**************************************************************************
-
-//==========================================================================
-//
-//	InputLine_Init
-//
-//  Initializes input line
-//
-//==========================================================================
-
-void InputLine_Init(TILine * iline)
-{
-    iline->len = 0;
-    strsetchar(ARR2STR(iline->Data), 0, 0);
-}
-
-//==========================================================================
-//
-//	InputLine_Key
-//
-// 	Wrapper function for handling general keyed input.
-//	Returns true if it ate the key
-//
-//==========================================================================
-
-bool InputLine_Key(TILine * iline, int ch)
-{
-    if (ch >= 32 && ch < 128)
-	{
-  		ch = TranslateKey(ch);
-	    if (iline->len < MAX_ILINE_LENGTH)
-    	{
-			strsetchar(ARR2STR(iline->Data), iline->len++, ch);
-			strsetchar(ARR2STR(iline->Data), iline->len, 0);
-    	}
-	}
-    else if (ch == K_BACKSPACE)
-	{
-	    if (iline->len)
-		{
-			strsetchar(ARR2STR(iline->Data), --iline->len, 0);
-		}
-	}
-	else if (ch != K_ENTER && ch != K_PADENTER)
-	{
-		return false; // did not eat key
-	}
-    return true; // ate the key
-}
-
-//==========================================================================
-//
-//	InputLine_SetValue
-//
-//  Sets input line value
-//
-//==========================================================================
-
-void InputLine_SetValue(TILine * iline, string text)
-{
-	strcpy(ARR2STR(iline->Data), text);
-	iline->len = strlen(text);
-}
 
 //==========================================================================
 //
@@ -232,10 +254,6 @@ void ForceMenuOff(void)
 //**
 //**************************************************************************
 
-int pic_M_LSLEFT;
-int pic_M_LSCNTR;
-int pic_M_LSRGHT;
-
 //==========================================================================
 //
 //  DrawSlot
@@ -277,14 +295,125 @@ void InitSlot(void)
 	pic_M_LSRGHT = R_RegisterPic("M_LSRGHT", PIC_PATCH);
 }
 
-#define SLOTTEXTLEN 		24
+#ifndef DOOM2
 
-bool enteringText;
-TILine slot_enter_text;
+//==========================================================================
+//
+//  SharewareResponse
+//
+//==========================================================================
+
+void SharewareResponse(int key)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
+}
+
+#endif
+
+//==========================================================================
+//
+//  NewGame
+//
+//==========================================================================
+
+void NewGame(int skill)
+{
+	SetCvar("Skill", skill);
+
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers 1\n");
+
+#ifdef DOOM2
+	CmdBuf_AddText("Map %s\n", P_TranslateMap(1));
+#else
+	CmdBuf_AddText("Map E%dM1\n", MenuEpisode);
+#endif
+
+	ForceMenuOff();
+}
+
+//==========================================================================
+//
+//  VerifyNightmare
+//
+//  Realy mightmare skill?
+//
+//==========================================================================
+
+void VerifyNightmare(int ch)
+{
+	if (ch != K_y)
+		return;
+
+	NewGame(sk_nightmare);
+}
+
+//==========================================================================
+//
+//  ControlResponse
+//
+//==========================================================================
+
+void ControlResponse(int key)
+{
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
+
+	if (key != K_ESCAPE)
+	{
+		kb_down = CurrentCtl.CommandOn;
+		kb_up = CurrentCtl.CommandOff;
+		IN_GetBindingKeys(kb_down, &key1, &key2);
+		if (ControlColumn == 0)
+		{
+			IN_SetBinding(key1, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+		if (ControlColumn == 1)
+		{
+			IN_SetBinding(key2, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  QuitResponse
+//
+//==========================================================================
+
+void QuitResponse(int ch)
+{
+	if (ch != K_y)
+		return;
+
+	LocalSoundTillDone(quitsounds[P_Random() & 7]);
+
+	CmdBuf_AddText("Quit\n");
+}
+
+//==========================================================================
+//
+//  menu_quit
+//
+//==========================================================================
+
+void menu_quit(void)
+{
+	LocalSound('Chat');
+	MB_StartMessage(va("%s\n\n(press y to quit)",
+			endmsg[P_Random() % NUM_END_MESSAGES]), MB_Quit, true);
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.27  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

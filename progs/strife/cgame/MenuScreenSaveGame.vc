@@ -30,8 +30,6 @@ void CreateChoices(void)
 	MenuChoice_SaveSlot newChoice;
 	int i;
 
-	enteringText = false;
-
 	for (i = 0; i < 8; i++)
 	{
 		newChoice = MenuChoice_SaveSlot(NewChild(MenuChoice_SaveSlot));
@@ -64,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:13:52  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

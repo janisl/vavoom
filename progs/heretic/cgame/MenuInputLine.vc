@@ -25,8 +25,10 @@
 
 class MenuInputLine:MenuChoice;
 
+bool bEnteringText;
 string Text;
 int Value[32 / 4];
+int EnterText[32 / 4];
 
 void InitWindow(void)
 {
@@ -43,36 +45,51 @@ void DrawWindow(GC gc)
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	gc.DrawText(0, 0, Text);
-	if (enteringText)
-		DrawSlot(gc, 12, ARR2STR(slot_enter_text.Data), true);
+	if (bEnteringText)
+		DrawSlot(gc, 12, ARR2STR(EnterText), true);
 	else
 		DrawSlot(gc, 12, ARR2STR(Value), false);
 }
 
 bool Key(int key)
 {
-	if (enteringText)
+	int Len;
+	
+	if (bEnteringText)
 	{
 		switch (key)
 		{
 		case K_ESCAPE:
 		case K_MOUSE2:
-			enteringText = false;
+			bEnteringText = false;
 			break;
 
 		case K_ENTER:
 		case K_PADENTER:
 		case K_MOUSE1:
-			enteringText = false;
-			strcpy(ARR2STR(Value), ARR2STR(slot_enter_text.Data));
+			bEnteringText = false;
+			strcpy(ARR2STR(Value), ARR2STR(EnterText));
 			ValueChanged();
 			break;
 
-		default:
-			InputLine_Key(&slot_enter_text, key);
-			if (slot_enter_text.len >= 30)
+    	case K_BACKSPACE:
+		    if (strlen(ARR2STR(EnterText)))
 			{
-				InputLine_Key(&slot_enter_text, K_BACKSPACE);
+				strsetchar(ARR2STR(EnterText),
+ 					strlen(ARR2STR(EnterText)) - 1, 0);
+			}
+			break;
+			
+		default:
+		    if (key >= 32 && key < 128)
+			{
+  				key = TranslateKey(key);
+				Len = strlen(ARR2STR(EnterText));
+			    if (Len < 30)
+    			{
+					strsetchar(ARR2STR(EnterText), Len++, key);
+					strsetchar(ARR2STR(EnterText), Len, 0);
+		    	}
 			}
 			break;
 		}
@@ -83,10 +100,9 @@ bool Key(int key)
 		key == K_MOUSE1 || key == K_JOY1)
 	{
 		// we are going to be intercepting all chars
-		enteringText = true;
-		InputLine_Init(&slot_enter_text);
+		bEnteringText = true;
+		strcpy(ARR2STR(EnterText), ARR2STR(Value));
 		LocalSound('MenuSelect');
-		InputLine_SetValue(&slot_enter_text, ARR2STR(Value));
 		return true;
 	}
 	return false;
@@ -100,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

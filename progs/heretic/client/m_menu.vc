@@ -29,11 +29,35 @@
 
 #define MAX_MENU_STACK		32
 
+#define SLOTTEXTLEN 		24
+
+#define MAX_ILINE_LENGTH	79
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	DRV_SOFTWARE,
+	DRV_OPENGL,
+	DRV_DIRECT3D
+};
+
 class MenuScreen;
+class MenuControlKey;
+
+struct mode_t
+{
+	int width;
+	int height;
+};
+
+struct TILine
+{
+	int Data[(MAX_ILINE_LENGTH + 1) / 4];	// line of text
+	int len;	// current line length
+};
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -44,6 +68,25 @@ int menu_sp;
 
 MenuScreen CurrentMenuScreen;
 
+int pic_M_FSLOT;
+
+int MenuEpisode;
+
+MenuControlKey CurrentCtl;
+int ControlColumn;	// menu column for controls
+
+mode_t modes[8] = {
+	{320, 200},
+	{320, 240},
+	{640, 400},
+	{640, 480},
+	{800, 600},
+	{1024, 768},
+	{1152, 864},
+	{1280, 1024}
+};
+int depths[4] = { 8, 16, 24, 32 };
+
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -51,54 +94,6 @@ MenuScreen CurrentMenuScreen;
 //**
 //**
 //**************************************************************************
-
-//==========================================================================
-//
-//	InputLine_Init
-//
-//  Initializes input line
-//
-//==========================================================================
-
-void InputLine_Init(TILine * iline)
-{
-    iline->len = 0;
-    strsetchar(ARR2STR(iline->Data), 0, 0);
-}
-
-//==========================================================================
-//
-//	InputLine_Key
-//
-// 	Wrapper function for handling general keyed input.
-//	Returns true if it ate the key
-//
-//==========================================================================
-
-bool InputLine_Key(TILine * iline, int ch)
-{
-    if (ch >= 32 && ch < 128)
-	{
-  		ch = TranslateKey(ch);
-	    if (iline->len < MAX_ILINE_LENGTH)
-    	{
-			strsetchar(ARR2STR(iline->Data), iline->len++, ch);
-			strsetchar(ARR2STR(iline->Data), iline->len, 0);
-    	}
-	}
-    else if (ch == K_BACKSPACE)
-	{
-	    if (iline->len)
-		{
-			strsetchar(ARR2STR(iline->Data), --iline->len, 0);
-		}
-	}
-	else if (ch != K_ENTER && ch != K_PADENTER)
-	{
-		return false; // did not eat key
-	}
-    return true; // ate the key
-}
 
 //==========================================================================
 //
@@ -232,8 +227,6 @@ void ForceMenuOff(void)
 //**
 //**************************************************************************
 
-int pic_M_FSLOT;
-
 //==========================================================================
 //
 //  DrawSlot
@@ -268,14 +261,80 @@ void InitSlot(void)
 	pic_M_FSLOT = R_RegisterPic("M_FSLOT", PIC_PATCH);
 }
 
-#define SLOTTEXTLEN 		24
+//==========================================================================
+//
+//  SharewareResponse
+//
+//==========================================================================
 
-bool enteringText;
-TILine slot_enter_text;
+void SharewareResponse(int key)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
+}
+
+//==========================================================================
+//
+//  ControlResponse
+//
+//==========================================================================
+
+void ControlResponse(int key)
+{
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
+
+	if (key != K_ESCAPE)
+	{
+		kb_down = CurrentCtl.CommandOn;
+		kb_up = CurrentCtl.CommandOff;
+		IN_GetBindingKeys(kb_down, &key1, &key2);
+		if (ControlColumn == 0)
+		{
+			IN_SetBinding(key1, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+		if (ControlColumn == 1)
+		{
+			IN_SetBinding(key2, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  QuitResponse
+//
+//==========================================================================
+
+void QuitResponse(int ch)
+{
+	if (ch != K_y)
+		return;
+
+	CmdBuf_AddText("Quit\n");
+}
+
+//==========================================================================
+//
+//  menu_quit
+//
+//==========================================================================
+
+void menu_quit(void)
+{
+	LocalSound('Chat');
+	MB_StartMessage("ARE YOU SURE YOU WANT TO QUIT?", MB_Quit, true);
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.27  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

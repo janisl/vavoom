@@ -26,8 +26,10 @@
 class MenuSaveSlot:MenuChoice;
 
 int Status;
-int Text[(SLOTTEXTLEN + 4) / 4];
+bool bEnteringText;
 int SlotNum;
+int Text[(SLOTTEXTLEN + 4) / 4];
+int EnterText[(SLOTTEXTLEN + 4) / 4];
 
 void InitWindow(void)
 {
@@ -37,9 +39,9 @@ void InitWindow(void)
 
 void DrawWindow(GC gc)
 {
-	if (enteringText && bSelected)
+	if (bEnteringText && bSelected)
 	{
-		DrawSlot(gc, 0, ARR2STR(slot_enter_text.Data), true);
+		DrawSlot(gc, 0, ARR2STR(EnterText), true);
 	}
 	else
 	{
@@ -53,34 +55,49 @@ void ActivateSlot(void)
 
 bool Key(int key)
 {
-	if (enteringText)
+	int Len;
+	
+	if (bEnteringText)
 	{
 		// Save Game string input
 		switch (key)
 		{
 		case K_ESCAPE:
 		case K_MOUSE2:
-			enteringText = false;
+			bEnteringText = false;
 			break;
 
 		case K_ENTER:
 		case K_PADENTER:
 		case K_MOUSE1:
-			enteringText = false;
-			if (slot_enter_text.Data[0])
+			bEnteringText = false;
+			if (strlen(ARR2STR(EnterText)))
 			{
-				strcpy(ARR2STR(Text), ARR2STR(slot_enter_text.Data));
+				strcpy(ARR2STR(Text), ARR2STR(EnterText));
 				CmdBuf_AddText("Save %d \"%s\"\n", SlotNum,
 					ARR2STR(Text));
 				ForceMenuOff();
 			}
 			break;
 
-		default:
-			InputLine_Key(&slot_enter_text, key);
-			if (slot_enter_text.len >= SLOTTEXTLEN - 1)
+    	case K_BACKSPACE:
+		    if (strlen(ARR2STR(EnterText)))
 			{
-				InputLine_Key(&slot_enter_text, K_BACKSPACE);
+				strsetchar(ARR2STR(EnterText),
+ 					strlen(ARR2STR(EnterText)) - 1, 0);
+			}
+			break;
+			
+		default:
+		    if (key >= 32 && key < 128)
+			{
+  				key = TranslateKey(key);
+				Len = strlen(ARR2STR(EnterText));
+			    if (Len < SLOTTEXTLEN - 1)
+    			{
+					strsetchar(ARR2STR(EnterText), Len++, key);
+					strsetchar(ARR2STR(EnterText), Len, 0);
+		    	}
 			}
 			break;
 		}
@@ -103,6 +120,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

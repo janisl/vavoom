@@ -46,12 +46,6 @@ bool ExtendedWAD;
 #include "msgbox.vc"
 
 #include "m_menu.vc"
-#include "m_epi.vc"
-#include "m_skill.vc"
-#include "m_ctrl.vc"
-#include "m_resol.vc"
-#include "m_video.vc"
-#include "m_quit.vc"
 
 #include "../cgame/classes.vc"
 
@@ -66,6 +60,9 @@ bool ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2003/03/08 12:13:51  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.14  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

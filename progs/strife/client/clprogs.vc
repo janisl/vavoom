@@ -42,10 +42,6 @@
 #include "msgbox.vc"
 
 #include "m_menu.vc"
-#include "m_ctrl.vc"
-#include "m_resol.vc"
-#include "m_video.vc"
-#include "m_quit.vc"
 
 #include "../cgame/classes.vc"
 
@@ -62,6 +58,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2003/03/08 12:13:52  dj_jl
+//  Menu code cleanup.
+//
 //  Revision 1.12  2002/11/02 08:20:55  dj_jl
 //  New style classes.
 //
