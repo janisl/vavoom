@@ -320,8 +320,8 @@ data: progs $(WAD_FILES)
 basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXE)
 	utils/bin/vlumpy$(EXE) $<
 
-basev/strife/strfhelp.o: basev/strife/*.acs utils/bin/acc$(EXE)
-	utils/bin/acc$(EXE) basev/strife/strfhelp.acs
+basev/strife/strfhelp.o: utils/editing/acs/*.acs utils/bin/acc$(EXE)
+	utils/bin/acc$(EXE) utils/editing/acs/strfhelp.acs basev/strife/strfhelp.o
 
 utils/bin/acc$(EXE):
 	$(MAKE) -C utils/acc -f Makefile.mgw

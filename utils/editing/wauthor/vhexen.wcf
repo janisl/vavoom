@@ -1,0 +1,514 @@
+
+; Defines general parameters of the game for which wadfiles are intended.
+;
+;       Name            textual name for internal use
+;       IWAD            standard 8.3 base name and extension of main wadfile
+;       NewMap          default name for new map -- dictates format for all maps
+;       Directory       directory in which main wadfile (and game files) reside
+;       Run             command to execute (from the directory) for running a map
+
+[WadGame]
+Name=Hexen
+IWAD=hexen.wad
+NewMap=MAP01
+Directory=d:\Vavoom
+Run=vavoom.exe -hexen -file $_Wadfile +map MAP$_Wadmap
+
+; Defines parameters of the default sector motif created when no motif
+; file can be located at startup.
+
+[Default.Sector]
+Above=FOREST01
+Main=FOREST01
+Below=FOREST01
+Ceiling=F_022
+Floor=F_022
+CeilingHeight=128
+FloorHeight=0
+Lighting=128
+
+; Defines parameters of the default door motif created when no motif
+; file can be located at startup.
+
+[Default.Door]
+Base=F_024
+Door=D_WD07
+Track=FOREST01
+Type=12
+
+; Defines parameters of the default stair motif created when no motif
+; file can be located at startup.
+
+[Default.Stair]
+FloorRunner=WINN01
+CeilingRunner=WINN01
+Stairwell=WINN01
+FloorInc=8
+CeilingInc=0
+LightingInc=0
+
+;       ID                              used to classify things
+;       Flags                   supplies some additional information:
+;                                               0x0001 - indicate thing facing angle
+;       Red                             red value for drawing things of said class
+;       Green                   green value for drawing things of said class
+;       Blue                    blue value for drawing things of said class
+;       Name                    textual description of class
+
+[Things.Classes]
+0x001   0x0001  255     255     255     Start
+0x002   0x0001  255     0       0       Enemy
+0x003   0x0000  255     255     0       Key
+0x004   0x0000  0       192     0       Armor
+0x005   0x0000  128     128     0       Weapon
+0x006   0x0000  128     128     000     Ammo
+0x007   0x0000  0       255     255     Powerup
+0x008   0x0000  192     192     192     Scenery
+0x009   0x0000  96      96      96      Sounds
+0x00a   0x0001  255     0       255     Teleport
+0x00b   0x0000  0       0       255     Healing
+0x00c   0x0000  192     0       0       Hazard
+0x00d   0x0000  0       128     128     Special
+0x00e   0x0000  128     0       128     Puzzle piece
+
+;       ID                              used to uniquely identify things in a map
+;       Class                   classification (defined above)
+;       Size                    approximate thing size (in map units)
+;       Sprite                  name of the sprite to use for display purposes
+;       Name                    textual description of thing
+
+[Things.Types]
+0x001   1       32      playa1          Player 1 *( number, -, -, -, - )
+0x002   1       32      playa1          Player 2 *( number, -, -, -, - )
+0x003   1       32      playa1          Player 3 *( number, -, -, -, - )
+0x004   1       32      playa1          Player 4 *( number, -, -, -, - )
+0x005   8       20      sttwa0          Gargoyle statue w/skull
+0x006   8       20      rck1a0          Rock w/moss (tiny)
+0x007   8       20      rck2a0          Rock w/moss (small)
+0x009   8       20      rck3a0          Rock w/moss (medium)
+0x00a   5       20      wcssa0          Serpent staff
+0x00b   1       32      playf1          Deathmatch *( number, -, -, -, - )
+0x00c   5       20      wfr1a0          Quietus blade
+0x00d   5       20      wfr2a0          Quietus guard
+0x00e   10      20      teleg0          Destination
+0x00f   8       20      rck4a0          Rock w/moss (large)
+0x010   5       20      wfr3a0          Quietus hilt
+0x011   8       20      cdlra0          Chandelier w/flame
+0x012   5       20      wch1a0          Wraithverge head
+0x013   5       20      wch2a0          Wraithverge centerpiece
+0x014   5       20      wch3a0          Wraithverge grip
+0x015   5       20      wms1a0          Bloodscourge head
+0x016   5       20      wms2a0          Bloodscourge centerpiece
+0x017   5       20      wms3a0          Bloodscourge grip
+0x018   8       20      tre1a0          Tree trunk (brown)
+0x019   8       20      tre1a0          Tree trunk (brown, destructable)
+0x01a   8       20      tre2a0          Tree (tall)
+0x01b   8       20      tre3a0          Tree (cypress)
+0x01c   8       20      stm1a0          Tree stump (splintered)
+0x01d   8       20      stm2a0          Tree stump
+0x01e   7       20      artipork        Porkalator
+0x01f   2       64      demna1          Chaos serpent (fire)
+0x020   7       20      artisphl        Mystic urn
+0x021   7       20      artitrch        Torch
+0x022   2       40      wrtha1          Reiver
+0x024   7       20      artiatlp        Chaos device
+0x025   8       20      stm3a0          Stump w/moss (short)
+0x026   8       20      stm4a0          Stump w/moss (tall)
+0x027   8       20      msh1a0          Mushroom (large, left)
+0x028   8       20      msh2a0          Mushroom (large, right)
+0x029   8       20      msh3a0          Mushroom (medium, left)
+0x02a   8       20      msh4a0          Mushroom (small, right)
+0x02c   8       20      msh5a0          Mushroom (small, light)
+0x02d   8       20      msh6a0          Mushroom (small, forward)
+0x02e   8       20      msh7a0          Mushroom (small, backward)
+0x02f   8       20      msh8a0          Mushroom (small, morel)
+0x030   8       20      sgmpa0          Stalagmite/stalactite combo
+0x031   8       20      sgm1a0          Stalagmite (large)
+0x032   8       20      sgm2a0          Stalagmite (medium)
+0x033   8       20      sgm3a0          Stalagmite (small)
+0x034   8       20      slc1a0          Stalactite (large)
+0x035   5       20      wmcsa0          Frost shards
+0x036   8       20      wltra0          Wall torch w/flame *( radius, -, -, -, - )
+0x037   8       20      wltri0          Wall torch
+0x038   8       20      slc2a0          Stalactite (medium)
+0x039   8       20      slc3a0          Stalactite (small)
+0x03a   8       20      mss1a0          Moss (three strands)
+0x03b   8       20      mss2a0          Moss (one strand)
+0x03c   8       20      tre3a0          Vine
+0x03d   8       20      cps1a0          Corpse (impaled)
+0x03e   8       20      cps2a0          Corpse (sleeping)
+0x03f   8       20      tms1a0          Tombstone (R.I.P.)
+0x040   8       20      tms2a0          Tombstone (Shane)
+0x041   8       20      tms3a0          Tombstone (large cross)
+0x042   8       20      tms4a0          Tombstone (Brian R.)
+0x043   8       20      tms5a0          Tombstone (circular cross)
+0x044   8       20      tms6a0          Tombstone (small cross on pedestal)
+0x045   8       20      tms7a0          Tombstone (Brian P.)
+0x047   8       20      cps3a0          Corpse (hung upside-down)
+0x048   8       20      stt2a0          Stone gargoyle (tall)
+0x049   8       20      stt3a0          Stone gargoyle (tall, frozen)
+0x04a   8       20      stt4a0          Stone gargoyle (short)
+0x04c   8       20      stt5a0          Stone gargoyle (short, frozen)
+0x04d   8       20      bnr1a0          Banner
+0x04e   8       20      tre4a0          Tree w/leaves (brown, right)
+0x04f   8       20      tre5a0          Tree w/leaves (brown, left)
+0x050   8       20      tre6a0          Tree (gnarled)
+0x051   11      20      ptn1a0          Crystal vial (10)
+0x052   11      20      ptn2a0          Quartz flask (25)
+0x053   7       20      soara0          Wings of wrath
+0x054   7       20      invua0          Icon of the defender
+0x056   7       15      artisumn        Dark servant
+0x057   8       20      tre7a0          Tree (gnarled, w/vine)
+0x058   8       20      logga0          Log
+0x059   8       20      ict1a0          Ice stalactite (large)
+0x05a   8       20      ict2a0          Ice stalactite (medium)
+0x05b   8       20      ict3a0          Ice stalactite (small)
+0x05c   8       20      ict4a0          Ice stalactite (tiny)
+0x05d   8       20      icm1a0          Ice stalagmite (large)
+0x05e   8       20      icm2a0          Ice stalagmite (medium)
+0x05f   8       20      icm3a0          Ice stalagmite (small)
+0x060   8       20      icm4a0          Ice stalagmite (tiny)
+0x061   8       20      rkbla0          Rock formation (large, brown)
+0x062   8       20      rkbsa0          Rock formation (small, brown)
+0x063   8       20      rkbka0          Rock formation (small, gray)
+0x064   8       20      rbl1a0          Rubble (large)
+0x065   8       20      rbl2a0          Rubble (small)
+0x066   8       20      rbl3a0          Rubble (medium)
+0x067   8       20      vasea0          Vase on pedestal
+0x068   8       20      pot1a0          Pot (tall, skinny) *( spawntype, -, -, -, - )
+0x069   8       20      pot2a0          Pot (medium, skinny) *( spawntype, -, -, -, - )
+0x06a   8       20      pot3a0          Pot (short, chipped) *( spawntype, -, -, -, - )
+0x06b   2       40      centc1          Centaur
+0x06c   8       20      cps4a0          Corpse (hung by neck)
+0x06d   8       20      cps5a0          Corpse (bleeding, hung by neck)
+0x06e   8       20      cps6a0          Corpse (chained to floor)
+0x06f   8       10      bdpla0          Pool of blood
+0x071   8       10      lef1a0          Blowing leaves
+0x072   2       44      bisha1          Dark bishop
+0x073   2       40      centf1          Centaur leader
+0x074   8       10      twtra0          Brazier w/flame
+0x075   8       10      twtri0          Brazier
+0x076   13      10      tlgla0          Magic step (sparkling)
+0x077   8       20      cndla0          Candles
+0x078   2       64      ssptd0          Stalker leader
+0x079   2       64      ssdva0          Stalker
+0x07a   6       20      man1a0          Blue mana
+0x07b   5       10      wfhma0          Hammer of retribution
+0x07c   6       20      man2a0          Green mana
+0x08c   8       20      tsmka0          Sparkling red smoke
+0x0fe   2       40      draga1          Death wyvern *( tag, tag, tag, tag, tag )
+0x578   9       20      telea0          Stone
+0x579   9       20      telea0          Heavy
+0x57a   9       20      telea0          Metal
+0x57b   9       20      telea0          Creak
+0x57c   9       20      telea0          Silent
+0x57d   9       20      telea0          Lava
+0x57e   9       20      telea0          Water
+0x57f   9       20      telea0          Ice
+0x580   9       20      telea0          Earth crack
+0x581   9       20      telea0          Metal2
+0x582   9       20      telea0          Wind blowing
+0x5dc   13      20      icprd0          Floor slope
+0x5dd   13      20      icprd0          Ceiling slope
+0x5de   13      20      icprd0          Static light *( radius, -, -, -, - )
+0x5df   13      20      icprd0          Static colored light *( radius, r, g, b, - )
+0x5e0   13      20      icprd0          Vertex floor height
+0x5e1   13      20      icprd0          Vertex ceiling height
+0xbb8   13      20      icprd0          Polyobject anchor
+0xbb9   13      20      sbfxh0          Start spot
+0xbba   13      20      sbfxc0          Start spot w/crush
+0x1f40  7       20      artipsbg        Flechette
+0x1f42  7       20      artisped        Boots of speed
+0x1f43  7       20      artibman        Krater of might
+0x1f44  6       20      man3a0          Combined mana
+0x1f45  4       10      arm1a0          Mesh armor
+0x1f46  4       20      arm2a0          Falcon shield
+0x1f47  4       20      arm3a0          Platinum helmet
+0x1f48  4       20      arm4a0          Amulet of warding
+0x1f49  5       10      wcfma0          Firestorm
+0x1f4a  5       20      wfaxa0          Timon's axe
+0x1f54  2       44      iceya1          Wendigo
+0x1f5e  3       10      key1a0          Steel key
+0x1f5f  3       10      key2a0          Cave key
+0x1f60  3       10      key3a0          Axe key
+0x1f61  3       10      key4a0          Fire key
+0x1f62  3       10      key5a0          Emerald key
+0x1f63  3       10      key6a0          Dungeon key
+0x1f64  3       10      key7a0          Silver key
+0x1f65  3       10      key8a0          Rusted key
+0x1f66  3       10      key9a0          Horn key
+0x1f67  3       10      keyaa0          Swamp key
+0x1f68  5       20      wmlgf0          Arc of death
+0x1f69  7       20      artibrac        Dragonskin bracers
+0x1f6a  8       20      fbula0          Minotaur statue w/flame
+0x1f6b  8       20      fbulh0          Minotaur statue
+0x1f6c  8       20      gar1a0          Wooden gargoyle on rocks (tall)
+0x1f6d  8       20      gar2a0          Black/red gargoyle on rocks (tall)
+0x1f6e  8       20      gar3a0          Red gargoyle on rocks (tall)
+0x1f6f  8       20      gar4a0          Wooden gargoyle on pedestal (tall)
+0x1f70  8       20      gar5a0          Metal gargoyle on pedestal (tall)
+0x1f71  8       20      gar6a0          Black/red gargoyle (short)
+0x1f72  8       20      gar7a0          Red gargoyle (short)
+0x1f73  8       20      gar8a0          Wooden gargoyle (short)
+0x1f74  8       20      gar9a0          Metal gargoyle (short)
+0x1f7c  8       20      fskla0          Fire skull
+0x1f7d  8       10      brtra0          Brazier w/flame (small)
+0x1f7e  8       20      tre1a0          Tree (gray, destructable)
+0x1f7f  8       20      cdlrd0          Chandelier
+0x1f80  8       20      suita0          Suit of armor (destructable) *( spawntype, -, -, -, - )
+0x1f81  8       40      bblla0          Bell
+0x1f82  8       20      canda0          Candle (blue)
+0x1f83  8       20      irona0          Iron maiden
+0x1f84  8       20      xmasa0          Tree (fir)
+0x1f85  8       20      cdrnb0          Cauldron (w/flame)
+0x1f86  8       20      cdrna0          Cauldron
+0x1f87  8       20      chnsa0          Chain (short)
+0x1f88  8       20      chnsb0          Chain (long)
+0x1f89  8       20      chnsc0          Chain w/heart on hook
+0x1f8a  8       20      chnsd0          Chain w/large hook
+0x1f8b  8       20      chnse0          Chain w/small hook
+0x1f8c  8       20      chnsf0          Chain w/spiked ball
+0x1f8d  8       20      chnsg0          Chain w/skull on hook
+0x1f90  2       64      dem2a1          Chaos serpent (gas)
+0x1fa4  8       20      barla0          Barrel
+0x1fa5  8       20      shb1a0          Shrub (small)
+0x1fa6  8       20      shb2a0          Shrub (large)
+0x1fa7  8       20      bckta0          Bucket (hanging)
+0x1fa8  12      20      shrma0          Mushroom (exploding)
+0x2008  3       10      keyba0          Castle key
+0x2134  8       20      tst1a0          Stein (tall)
+0x2135  8       20      tst2a0          Stein (short)
+0x2136  8       20      tst3a0          Candle w/spider's web
+0x2137  8       20      tst4a0          Candle (short)
+0x2138  8       20      tst5a0          Candle (tall)
+0x2139  8       20      tst6a0          Goblet (spilled)
+0x213a  8       20      tst7a0          Goblet (tall)
+0x213b  8       20      tst8a0          Goblet (short)
+0x213c  8       20      tst9a0          Goblet w/silver bands
+0x213d  8       20      tst0a0          Meat cleaver
+0x2329  13      10      telec0          Map spot *( tag, tag, tag, tag, tag )
+0x232a  14      20      artiskll        Yorick's skull
+0x232b  14      20      artibgem        Heart of D'Sparil
+0x232c  14      20      artigemr        Ruby planet
+0x232d  14      20      artigemg        Emerald planet 1
+0x232e  14      20      artigemb        Sapphire planet 1
+0x232f  14      20      abk1a0          Daemon codex
+0x2330  14      20      abk2a0          Liber oscura
+0x2331  14      20      artigmg2        Emerald planet 2
+0x2332  14      20      artigmb2        Sapphire planet 2
+0x2333  8       20      stwna0          Gargoyle statue
+0x2334  8       20      gmpda0          Pedestal
+0x2335  13      10      teled0          Map spot w/gravity
+0x2336  14      20      artiskl2        Flame mask
+0x2337  14      20      artifwep        Glaive seal
+0x2338  14      20      articwep        Holy relic
+0x2339  14      20      artimwep        Sigil of the Magus
+0x233a  14      20      artigear        Clock gear
+0x233b  14      20      artiger2        Clock gear (bronze)
+0x233c  14      20      artiger3        Clock gear (bronze hub)
+0x233d  14      20      artiger4        Clock gear (bronze ring)
+0x2710  13      20      spirk0          Spawn fog *( speed, angle, freq., duration, - )
+0x2711  8       20      fogsa0          Fog (small) *( speed, -, -, duration, move )
+0x2712  8       20      fogma0          Fog (medium) *( speed, -, -, duration, move )
+0x2713  8       20      fogla0          Fog (large) *( speed, -, -, duration, move )
+0x271b  2       40      wrthe1          Reiver leader
+0x272e  2       40      ettna1          Ettin
+0x2738  7       20      artitelo        Banishment device
+0x274c  2       20      fdmna1          Fire gargoyle
+0x2760  2       80      sorca1          Heresiarch
+0x276a  8       20      tspkc0          Spike (down)
+0x276b  8       20      tspka0          Spike (up)
+0x2774  2       32      playa8          Zedek (fighter boss)
+0x2775  2       32      clera8          Traductus (cleric boss)
+0x2776  2       32      magea8          Menelkir (mage boss)
+0x277e  7       20      artiblst        Disc of repulsion
+0x2788  7       20      artihrad        Mystic ambient incant
+0x27d8  2       20      korxa1          Korax
+0x27f1  13      20      abatc3c7        Spawn bat *( freq., angle, -, duration, turn )
+0x2904  8       20      ffsma0          Flame (small, timed) *( duration, -, -, -, - )
+0x2905  8       20      ffsmc0          Flame (small, continuous)
+0x2906  8       20      fflga0          Flame (large, timed) *( duration, -, -, -, - )
+0x2907  8       20      fflgf0          Flame (large, continuous)
+
+;       ID                      used to classify specials
+;       Name                    textual description of class
+;
+;       Note:   When converting a sector to a door, the special types
+;                       available are those in class number two.
+
+[Specials.Classes]
+0x001   Special
+0x002   Door
+0x003   Ceiling
+0x004   Lift
+0x005   Floor
+0x006   Pillar
+0x007   Stairs
+0x008   ACS
+0x009   Scroll
+0x00a   Thing
+0x00b   Teleport
+0x00c   Lighting
+0x00d   Polyobject
+0x00e   Exit
+0x00f   Elevator
+
+;       ID
+;       class
+;       Name( arg0, arg1, arg2, arg3, arg4 )
+
+[Specials.Types]
+
+; Special
+0x081   1       UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
+0x08c   1       Sector_ChangeSound( tag, sound, -, -, - )
+0x078   1       Earthquake( intensity, duration, damrad, tremrad, tag )
+0x079   1       Line_SetIdentification( line, -, -, -, - )
+0x0a0   1       3d floor( tag, -, -, -, - )
+0x0a1   1       Contents( type, trans, flags, -, - )
+0x0b5   1       Plane_Align( floor, ceiling, line_id, -, - )
+0x0d0   1       TranslucentLine( line, amount, -, -, - )
+
+; Door
+0x00a   2       Door_Close( tag, speed, -, -, - )
+0x00b   2       Door_Open( tag, speed, -, -, - )
+0x00c   2       Door_Raise( tag, speed, delay, -, - )
+0x00d   2       Door_LockedRaise( tag, speed, delay, lock, - )
+
+; Ceiling
+0x028   3       Ceiling_LowerByValue( tag, speed, height, -, - )
+0x029   3       Ceiling_RaiseByValue( tag, speed, height, -, - )
+0x02a   3       Ceiling_CrushAndRaise( tag, speed, crush, -, - )
+0x02b   3       Ceiling_LowerAndCrush( tag, speed, crush, -, - )
+0x02c   3       Ceiling_CrushStop( tag, -, -, -, - )
+0x02d   3       Ceiling_CrushRaiseAndStay( tag, speed, crush, -, - )
+0x045   3       Ceiling_MoveToValueTimes8( tag, speed, height, negative, - )
+
+; Lift
+0x03c   4       Plat_PerpetualRaise( tag, speed, delay, -, - )
+0x03d   4       Plat_Stop( tag, -, -, -, - )
+0x03e   4       Plat_DownWaitUpStay( tag, speed, delay, -, - )
+0x03f   4       Plat_DownByValue( tag, speed, delay, height, - )
+0x040   4       Plat_UpWaitDownStay( tag, speed, delay, -, - )
+0x041   4       Plat_UpByValue( tag, speed, delay, height, - )
+
+; Floor
+0x014   5       Floor_LowerByValue( tag, speed, height, -, - )
+0x015   5       Floor_LowerToLowest( tag, speed, -, -, - )
+0x016   5       Floor_LowerToNearest( tag, speed, -, -, - )
+0x017   5       Floor_RaiseByValue( tag, speed, height, -, - )
+0x018   5       Floor_RaiseToHighest( tag, speed, -, -, - )
+0x019   5       Floor_RaiseToNearest( tag, speed, -, -, - )
+0x01c   5       Floor_RaiseAndCrush( tag, speed, crush, -, - )
+0x023   5       Floor_RaiseByValueTimes8( tag, speed, height, -, - )
+0x024   5       Floor_LowerByValueTimes8( tag, speed, height, -, - )
+0x02e   5       Floor_CrushStop( tag, -, -, -, - )
+0x042   5       Floor_LowerInstant( tag, -, height, -, - )
+0x043   5       Floor_RaiseInstant( tag, -, height, -, - )
+0x044   5       Floor_MoveToValueTimes8( tag, speed, height, negative, - )
+0x08a   5       Floor_Waggle( tag, height, freq., offset, duration )
+
+; Pillar
+0x01d   6       Pillar_Build( tag, speed, height, -, - )
+0x01e   6       Pillar_Open( tag, speed, f_height, c_height, - )
+0x05e   6       Pillar_BuildAndCrush( tag, speed, height, crush, - )
+
+; Stairs
+0x01a   7       Stairs_BuildDown( tag, speed, height, delay, reset )
+0x01b   7       Stairs_BuildUp( tag, speed, height, delay, reset )
+0x01f   7       Stairs_BuildDownSync( tag, speed, height, reset, - )
+0x020   7       Stairs_BuildUpSync( tag, speed, height, reset, - )
+
+; ACS
+0x050   8       ACS_Execute( script, map, sArg0, sArg1, sArg2 )
+0x051   8       ACS_Suspend( script, map, -, -, - )
+0x052   8       ACS_Terminate( script, map, -, -, - )
+0x053   8       ACS_LockedExecute( script, map, sArg0, sArg1, lock )
+
+; Scroll
+0x064   9       Scroll_Texture_Left( speed, -, -, -, - )
+0x065   9       Scroll_Texture_Right( speed, -, -, -, - )
+0x066   9       Scroll_Texture_Up( speed, -, -, -, - )
+0x067   9       Scroll_Texture_Down( speed, -, -, -, - )
+
+; Thing
+0x048   10      ThrustThing( angle, distance, -, -, - )
+0x049   10      DamageThing( damage, -, -, -, - )
+0x082   10      Thing_Activate( tag, -, -, -, - )
+0x083   10      Thing_Deactivate( tag, -, -, -, - )
+0x084   10      Thing_Remove( tag, -, -, -, - )
+0x085   10      Thing_Destroy( tag, -, -, -, - )
+0x086   10      Thing_Projectile( tag, type, angle, speed, vspeed )
+0x088   10      Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
+0x087   10      Thing_Spawn( tag, spawntype, angle, -, - )
+0x089   10      Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+
+; Teleport
+0x046   11      Teleport( tag, -, -, -, - )
+0x047   11      Teleport_NoFog( tag, -, -, -, - )
+0x04a   11      Teleport_NewMap( map, position, -, -, - )
+0x04b   11      Teleport_EndGame( -, -, -, -, - )
+0x0d7   11      Teleport_Line( thisline, destline, reverse, -, - )
+
+; Lighting
+0x06d   12      Light_ForceLightning( tag, -, -, -, - )
+0x06e   12      Light_RaiseByValue( tag, value, -, -, - )
+0x06f   12      Light_LowerByValue( tag, value, -, -, - )
+0x070   12      Light_ChangeToValue( tag, value, -, -, - )
+0x071   12      Light_Fade( tag, value, tics, -, - )
+0x072   12      Light_Glow( tag, upper, lower, tics, - )
+0x073   12      Light_Flicker( tag, upper, lower, -, - )
+0x074   12      Light_Strobe( tag, upper, lower, u-tics, l-tics )
+
+; Polyobject
+0x001   13      Polyobj_StartLine( po, mirror, sound, -, - )
+0x002   13      Polyobj_RotateLeft( po, speed, angle, -, - )
+0x003   13      Polyobj_RotateRight( po, speed, angle, -, - )
+0x004   13      Polyobj_Move( po, speed, angle, distance, - )
+0x005   13      Polyobj_ExplicitLine( po, order, mirror, sound, - )
+0x006   13      Polyobj_MoveTimes8( po, speed, angle, distance, - )
+0x007   13      Polyobj_DoorSwing( po, speed, angle, delay, - )
+0x008   13      Polyobj_DoorSlide( po, speed, angle, distance, delay )
+0x05a   13      Polyobj_OR_RotateLeft( po, speed, angle, -, - )
+0x05b   13      Polyobj_OR_RotateRight( po, speed, angle, -, - )
+0x05c   13      Polyobj_OR_Move( po, speed, angle, distance, - )
+0x05d   13      Polyobj_OR_MoveTimes8( po, speed, angle, distance, - )
+
+; Elevator
+0x05f   15      FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
+0x060   15      FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
+
+[Sectors.Types]
+0x001 Phased light (manual)
+0x002 Phased light sequence start
+0x003 Phased light sequence 1
+0x004 Phased light sequence 2
+0x01a Stairs 1
+0x01b Stairs 2
+0x0c7 Indoor lightning (bright)
+0x0c6 Indoor lightning (dim)
+0x0c8 Use second sky image
+0x0c9 Scroll north (slow)
+0x0ca Scroll north (normal)
+0x0cb Scroll north (fast)
+0x0cc Scroll east (slow)
+0x0cd Scroll east (normal)
+0x0ce Scroll east (fast)
+0x0cf Scroll south (slow)
+0x0d0 Scroll south (normal)
+0x0d1 Scroll south (fast)
+0x0d2 Scroll west (slow)
+0x0d3 Scroll west (normal)
+0x0d4 Scroll west (fast)
+0x0d5 Scroll northwest (slow)
+0x0d6 Scroll northwest (normal)
+0x0d7 Scroll northwest (fast)
+0x0d8 Scroll northeast (slow)
+0x0d9 Scroll northeast (normal)
+0x0da Scroll northeast (fast)
+0x0db Scroll southeast (slow)
+0x0dc Scroll southeast (normal)
+0x0dd Scroll southeast (fast)
+0x0de Scroll southwest (slow)
+0x0df Scroll southwest (normal)
+0x0e0 Scroll southwest (fast)

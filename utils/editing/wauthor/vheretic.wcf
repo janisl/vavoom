@@ -1,0 +1,431 @@
+
+; Defines general parameters of the game for which wadfiles are intended.
+;
+;       Name            textual name for internal use
+;       IWAD            standard 8.3 base name and extension of main wadfile
+;       NewMap          default name for new map -- dictates format for all maps
+;       Directory       directory in which main wadfile (and game files) reside
+;       Run                     command to execute (from the directory) for running a map
+
+[WadGame]
+Name=Heretic
+;IWAD=doom2x.wad
+IWAD=xheretic.wad
+NewMap=E1M1
+Directory=d:\Vavoom
+Run=vavoom.exe -heretic -progs progs/heretic/ -file $_Wadfile +map E1M1
+;Run=vavoom.exe -heretic -file $_Wadfile
+
+; Defines parameters of the default sector motif created when no motif
+; file can be located at startup.
+
+[Default.Sector]
+Above=GRSTNPB
+Main=GRSTNPB
+Below=GRSTNPB
+Ceiling=FLOOR03
+Floor=FLOOR03
+CeilingHeight=128
+FloorHeight=0
+Lighting=128
+
+; Defines parameters of the default door motif created when no motif
+; file can be located at startup.
+
+[Default.Door]
+Base=FLOOR10
+Door=DOORSTON
+Track=METL2
+Type=12
+
+; Defines parameters of the default stair motif created when no motif
+; file can be located at startup.
+
+[Default.Stair]
+FloorRunner=GRSTNPB
+CeilingRunner=GRSTNPB
+Stairwell=GRSTNPB
+FloorInc=8
+CeilingInc=0
+LightingInc=0
+
+;       ID                              used to classify things
+;       Flags                   supplies some additional information:
+;                                               0x0001 - indicate thing facing angle
+;       Red                             red value for drawing things of said class
+;       Green                   green value for drawing things of said class
+;       Blue                    blue value for drawing things of said class
+;       Name                    textual description of class
+
+[Things.Classes]
+0x001   0x0001  255     255     255     Start
+0x002   0x0001  255     0       0       Enemy
+0x003   0x0000  255     255     0       Key
+0x004   0x0000  0       192     0       Armor
+0x005   0x0000  128     128     0       Weapon
+0x006   0x0000  128     128     000     Ammo
+0x007   0x0000  0       255     255     Powerup
+0x008   0x0000  192     192     192     Scenery
+0x009   0x0000  96      96      96      Sounds
+0x00a   0x0001  255     0       255     Teleport
+0x00b   0x0000  0       0       255     Healing
+0x00c   0x0000  192     0       0       Hazard
+0x00d   0x0001  255     0       255     Special
+
+;       ID                              used to uniquely identify things in a map
+;       Class                   classification (defined above)
+;       Size                    approximate thing size (in map units)
+;       Sprite                  name of the sprite to use for display purposes
+;       Name                    textual description of thing
+
+[Things.Types]
+0x001   1       32      playa1          Player 1 *( number, -, -, -, - )
+0x002   1       32      playa1          Player 2 *( number, -, -, -, - )
+0x003   1       32      playa1          Player 3 *( number, -, -, -, - )
+0x004   1       32      playa1          Player 4 *( number, -, -, -, - )
+0x005   2       40      impxa1      Gargoyle leader
+0x006   2       64      heada1      Ironlich
+0x007   2       40      srcra1      D'Sparil
+0x008   6       20      bagha0      Bag of holding
+0x009   2       80      mntrv1      Maulotaur
+0x00a   6       20      amg1a0      Wand crystal (10)
+0x00b   1       32      playf1      Deathmatch
+0x00c   6       20      amg2a0      Wand crystal (50)
+0x00d   6       20      amm1a0      Mace spheres (20)
+0x00e   10      20      teleg0      Destination
+0x00f   2       40      wzrda1      Disciple of D'Sparil
+0x010   6       20      amm2a0      Mace spheres (100)
+0x011   8       20      skh1a0      Skull hang (70)
+0x012   6       20      amc1a0      Crossbow bolts (5)
+0x013   6       20      amc2a0      Crossbow quiver (20)
+0x014   6       20      ams1a0      Hellstaff lesser runes (20)
+0x015   6       20      ams2a0      Hellstaff greater runes (100)
+0x016   6       20      amp1a0      Phoenix orb (1)
+0x017   6       20      amp2a0      Phoenix orb (10)
+0x018   8       20      skh2a0      Skull hang (60)
+0x019   8       20      skh3a0      Skull hang (45)
+0x01a   8       20      skh4a0      Skull hang (35)
+0x01b   8       20      srtca0      Serpent torch
+0x01c   8       20      chdlb0      Chandelier
+0x01d   8       20      smpla0      Small pillar
+0x01e   7       20      eggca0      Morph ovum
+0x01f   4       20      shd2a0      Enchanted shield
+0x020   7       20      artisphl        Mystic urn
+0x021   7       20      artitrch        Torch
+0x022   7       20      artifbmb        Time bomb of the ancients
+0x023   7       20      spmpa0      Map scroll
+0x024   7       20      artiatlp        Chaos device
+0x025   8       20      stgsa0      Stalagmite (small)
+0x026   8       20      stgla0      Stalagmite (large)
+0x027   8       20      stcsa0      Stalactite (small)
+0x028   8       20      stcla0      Stalactite (large)
+0x029   9       20      telea0      Waterfall (continuous)
+0x02a   9       20      telea0      Wind (continuous)
+0x02b   12      20      ppodk0      Pod spawner
+0x02c   12      20      barla0      Barrel
+0x02d   2       40      mummy1      Nitrogolem
+0x02e   2       40      mummy5      Nitrogolem ghost
+0x02f   8       20      brpla0      Brown pillar
+0x030   8       20      mos1a0      Moss (three)
+0x031   8       20      mos2a0      Moss (one)
+0x032   8       20      wtrhc0      Wall torch
+0x033   8       20      hcora0      Hanging corpse
+0x034   8       20      tgltg0      Blue glitter
+0x035   5       20      wblsa0      Dragon claw
+0x036   6       20      amb1a0      Energy orb (10)
+0x037   6       20      amb2a0      Energy orb (25)
+0x038   2       20      sor2i0      D'Sparil teleport spot
+0x040   2       32      kniga1      Undead warrior
+0x041   2       32      kniga5      Undead warrior ghost
+0x042   2       40  impxb1          Gargoyle
+0x044   2       40      mumme1      Golem
+0x045   2       40      mumme5      Golem ghost
+0x046   2       50      beasa1      Weredragon
+0x049   3       20      akyya0      Green key
+0x04a   8       20      tgltb0      Red glitter
+0x04b   7       20      artiinvs        Invisibility
+0x04c   8       20      kfr1a0      Fire brazier
+0x04f   3       20      bkyya0      Blue key
+0x050   3       20      ckyya0      Yellow key
+0x051   11      20      ptn1a0      Crystal vial (10)
+0x052   11      20      artiptn2        Quartz flask (25)
+0x053   7       20      artisoar        Wings of wrath
+0x054   7       20      artiinvu        Ring of invulnerability
+0x055   4       20      shlda0      Silver shield
+0x056   7       20      artipwbk        Tome of power
+0x057   8       20      vlcoe0      Volcano
+0x05a   2       20      clnka1      Sabreclaw
+0x05c   2       40      snkea1      Ophidian
+0x05e   8       20      kgzba0      Blue orb
+0x05f   8       20      kgzga0      Green orb
+0x060   8       20      kgzya0      Yellow orb
+0x4b0   9       20      telea0      Scream
+0x4b1   9       20      telea0      Squish
+0x4b2   9       20      telea0      Water drops
+0x4b3   9       20      telea0      Slow footsteps
+0x4b4   9       20      telea0      Heartbeat
+0x4b5   9       20      telea0      Bells
+0x4b6   9       20      telea0      Growl
+0x4b7   9       20      telea0      Magic
+0x4b8   9       20      telea0      Laughter
+0x4b9   9       20      telea0      Running footsteps
+0x5dc   13      20      puf2a0      Floor slope
+0x5dd   13      20      puf2a0      Ceiling slope
+0x5de   13      20      puf2a0      Static light *( radius, -, -, -, - )
+0x5df   13      20      puf2a0      Static colored light *( radius, r, g, b, - )
+0x5e0   13      20      puf2a0      Vertex floor height
+0x5e1   13      20      puf2a0      Vertex ceiling height
+0x7d1   5       20      wbowa0      Crossbow
+0x7d2   5       20      wmcea0      Mace
+0x7d3   5       20      wphxa0      Phoenix rod
+0x7d4   5       20      wskla0      Hellstaff
+0x7d5   5       20      wgnta0      Gauntlets
+0x7f3   12      20      ppoda0      Pod
+0xbb8   13      20      telea0      Polyobject anchor
+0xbb9   13      20      telea0      Start spot
+0xbba   13      20      telea0      Start spot w/crush
+
+;       ID                              used to classify linedefs
+;       Name                    textual description of class
+;
+;       Note:   When converting a sector to a door, the linedef types
+;                       available are those in class number two.
+
+[Specials.Classes]
+0x001   Special
+0x002   Door
+0x003   Ceiling
+0x004   Lift
+0x005   Floor
+0x006   Pillar
+0x007   Stairs
+0x008   ACS
+0x009   Scroll
+0x00a   Thing
+0x00b   Teleport
+0x00c   Lighting
+0x00d   Polyobject
+0x00e   Exit
+0x00f   Elevator
+
+;       ID
+;       class
+;       description
+
+[Specials.Types]
+
+; Special
+0x064   1       Scroll_Texture_Left( speed, -, -, -, - )
+0x065   1       Scroll_Texture_Right( speed, -, -, -, - )
+0x079   1       Line_SetIdentification( line, -, -, -, - )
+0x0a0   1       3d floor( tag, -, -, -, - )
+0x0a1   1       Contents( type, trans, flags, -, - )
+0x0b5   1       Plane_Align( floor, ceiling, line_id, -, - )
+0x0d0   1       TranslucentLine( line, amount, -, -, - )
+0x0fb   1       FloorAndCeiling_LowerRaise( tag, speed, -, -, - )
+;0x066   1       Scroll_Texture_Up( speed, -, -, -, - )
+;0x067   1       Scroll_Texture_Down( speed, -, -, -, - )
+;0x081   1       UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
+;0x08c   1       Sector_ChangeSound( tag, sound, -, -, - )
+;0x078   1       Earthquake( intensity, duration, damrad, tremrad, tag )
+
+; Door
+0x00a   2       Door_Close( tag, speed, -, -, - )
+0x00b   2       Door_Open( tag, speed, -, -, - )
+0x00c   2       Door_Raise( tag, speed, delay, -, - )
+0x00d   2       Door_LockedRaise( tag, speed, delay, lock, - )
+0x0f9   2       Door_CloseWaitOpen( tag, speed, delay, -, - )
+;0x0ca   2       Generic_Door( tag, speed, kind, delay, lock )
+
+; Ceiling
+0x02b   3       Ceiling_LowerAndCrush( tag, speed, crush, -, - )
+0x02c   3       Ceiling_CrushStop( tag, -, -, -, - )
+0x0c4   3       Ceiling_CrushAndRaiseA( tag, dnspeed, upspeed, damage, - )
+0x0fe   3       Ceiling_LowerToFloor( tag, speed, -, -, - )
+
+; Ceiling
+0x028   3       Ceiling_LowerByValue( tag, speed, height, -, - )
+0x029   3       Ceiling_RaiseByValue( tag, speed, height, -, - )
+0x02a   3       Ceiling_CrushAndRaise( tag, speed, crush, -, - )
+0x02b   3       Ceiling_LowerAndCrush( tag, speed, crush, -, - )
+0x02c   3       Ceiling_CrushStop( tag, -, -, -, - )
+0x02d   3       Ceiling_CrushRaiseAndStay( tag, speed, crush, -, - )
+0x045   3       Ceiling_MoveToValueTimes8( tag, speed, height, negative, - )
+0x0c4   3       Ceiling_CrushAndRaiseA( tag, dnspeed, upspeed, damage, - )
+;0x0c0   3       Ceiling_LowerToHighestFloor( tag, speed, -, -, - )
+;0x0c1   3       Ceiling_LowerInstant( tag, -, height, -, - )
+;0x0c2   3       Ceiling_RaiseInstant( tag, -, height, -, - )
+;0x0c3   3       Ceiling_CrushRaiseAndStayA( tag, dnspeed, upspeed, damage, - )
+;0x0c5   3       Ceiling_CrushAndRaiseSilentA( tag, dnspeed, upspeed, damage, - )
+;0x0c6   3       Ceiling_RaiseByValueTimes8( tag, speed, height, -, - )
+;0x0c7   3       Ceiling_LowerByValueTimes8( tag, speed, height, -, - )
+;0x0c9   3       Generic_Ceiling( tag, speed, height, target, chg/mdl/dir/crsh )
+;0x0cd   3       Generic_Crusher( tag, dnspeed, upspeed, silent, damage )
+;0x0fb   3       FloorAndCeiling_LowerRaise( tag, floorspeed, ceilingspeed, -, - )
+;0x0fc   3       Ceiling_RaiseToNearest( tag, speed, -, -, - )
+;0x0fd   3       Ceiling_LowerToLowest( tag, speed, -, -, - )
+;0x0fe   3       Ceiling_LowerToFloor( tag, speed, -, -, - )
+;0x0ff   3       Ceiling_CrushRaiseAndStaySilentA( tag, dnspeed, upspeed, damage, - )
+
+; Lift
+0x03c   4       Plat_PerpetualRaise( tag, speed, delay, -, - )
+0x03d   4       Plat_Stop( tag, -, -, -, - )
+0x03e   4       Plat_DownWaitUpStay( tag, speed, delay, -, - )
+0x03f   4       Plat_DownByValue( tag, speed, delay, height, - )
+0x040   4       Plat_UpWaitDownStay( tag, speed, delay, -, - )
+0x041   4       Plat_UpByValue( tag, speed, delay, height, - )
+0x0ce   4       Plat_DownWaitUpStayLip( tag, speed, delay, lip, - )
+0x0cf   4       Plat_PerpetualRaiseLip( tag, speed, delay, lip, - )
+0x0e4   4       Plat_RaiseAndStayTx0( tag, speed, -, -, - )
+0x0e6   4       Plat_UpByValueStayTx( tag, speed, height, -, - )
+;0x0cb   4       Generic_Lift( tag, speed, delay, target, height )
+;0x0e7   4       Plat_ToggleCeiling( tag, -, -, -, - )
+
+; Floor
+0x014   5       Floor_LowerByValue( tag, speed, height, -, - )
+0x015   5       Floor_LowerToLowest( tag, speed, -, -, - )
+0x016   5       Floor_LowerToNearest( tag, speed, -, -, - )
+0x017   5       Floor_RaiseByValue( tag, speed, height, -, - )
+0x018   5       Floor_RaiseToHighest( tag, speed, -, -, - )
+0x019   5       Floor_RaiseToNearest( tag, speed, -, -, - )
+0x01c   5       Floor_RaiseAndCrush( tag, speed, crush, -, - )
+0x023   5       Floor_RaiseByValueTimes8( tag, speed, height, -, - )
+0x024   5       Floor_LowerByValueTimes8( tag, speed, height, -, - )
+0x02e   5       Floor_CrushStop( tag, -, -, -, - )
+0x042   5       Floor_LowerInstant( tag, -, height, -, - )
+0x043   5       Floor_RaiseInstant( tag, -, height, -, - )
+0x044   5       Floor_MoveToValueTimes8( tag, speed, height, negative, - )
+0x08a   5       Floor_Waggle( tag, height, freq, offset, duration )
+0x0ee   5       Floor_RaiseToLowestCeiling( tag, speed, -, -, - )
+0x0ef   5       Floor_RaiseByValueTxTy( tag, speed, height, -, - )
+0x0f0   5       Floor_RaiseByTexture( tag, speed, -, -, - )
+0x0f1   5       Floor_LowerToLowestTxTy( tag, speed, -, -, - )
+0x0f2   5       Floor_LowerToHighest( tag, speed, adjust, -, - )
+0x0fa   5       Floor_Donut( tag, pillarspeed, slimespeed, -, - )
+;0x0c8   5       Generic_Floor( tag, speed, height, target, chg/mdl/dir/crsh )
+;0x0eb   5       Floor_TransferTrigger( tag, -, -, -, - )
+;0x0ec   5       Floor_TransferNumeric( tag, -, -, -, - )
+
+; Pillar
+0x01d   6       Pillar_Build( tag, speed, height, -, - )
+0x01e   6       Pillar_Open( tag, speed, f_height, c_height, - )
+0x05e   6       Pillar_BuildAndCrush( tag, speed, height, crush, - )
+
+; Stair
+0x01a   7       Stairs_BuildDown( tag, speed, height, delay, reset )
+0x01b   7       Stairs_BuildUp( tag, speed, height, delay, reset )
+0x01f   7       Stairs_BuildDownSync( tag, speed, height, reset, - )
+0x020   7       Stairs_BuildUpSync( tag, speed, height, reset, - )
+0x0d9   7       Stairs_BuildUpOld( tag, speed, height, delay, reset )
+;0x0cc   7       Generic_Stairs (tag, speed, step, dir/idntext, reset )
+
+; ACS
+0x050   8       ACS_Execute( script, map, sArg0, sArg1, sArg2 )
+0x051   8       ACS_Suspend( script, map, -, -, - )
+0x052   8       ACS_Terminate( script, map, -, -, - )
+0x053   8       ACS_LockedExecute( script, map, sArg0, sArg1, lock )
+0x0e2   8       ACS_ExecuteAlways( script, map, sArg0, sArg1, sArg2 )
+
+; Thing
+0x048   10      ThrustThing( angle, distance, -, -, - )
+0x049   10      DamageThing( damage, -, -, -, - )
+;0x082   10      Thing_Activate( tag, -, -, -, - )
+;0x083   10      Thing_Deactivate( tag, -, -, -, - )
+;0x084   10      Thing_Remove( tag, -, -, -, - )
+;0x085   10      Thing_Destroy( tag, -, -, -, - )
+;0x086   10      Thing_Projectile( tag, type, angle, speed, vspeed )
+;0x088   10      Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
+;0x087   10      Thing_Spawn( tag, spawntype, angle, -, - )
+;0x089   10      Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+;ZDoom
+;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
+;0x0f8   10      HealThing( amount, -, -, -, - )
+
+; Teleport
+0x046   11      Teleport( tag, -, -, -, - )
+0x04a   11      Teleport_NewMap( map, position, -, -, - )
+0x04b   11      Teleport_EndGame( -, -, -, -, - )
+0x0d7   11      Teleport_Line( thisline, destline, reverse, -, - )
+;0x047   11      Teleport_NoFog( tag, -, -, -, - )
+
+; Lighting
+0x06d   12      Light_ForceLightning( tag, -, -, -, - )
+0x06e   12      Light_RaiseByValue( tag, value, -, -, - )
+0x06f   12      Light_LowerByValue( tag, value, -, -, - )
+0x070   12      Light_ChangeToValue( tag, value, -, -, - )
+0x071   12      Light_Fade( tag, value, tics, -, - )
+0x072   12      Light_Glow( tag, upper, lower, tics, - )
+0x073   12      Light_Flicker( tag, upper, lower, -, - )
+0x074   12      Light_Strobe( tag, upper, lower, u-tics, l-tics )
+0x0e8   12      Light_StrobeDoom( tag, u-tics, l-tics, -, - )
+0x0e9   12      Light_MinNeighbor( tag, -, -, -, - )
+0x0ea   12      Light_MaxNeighbor( tag, -, -, -, - )
+
+; Polyobject
+0x001   13      Polyobj_StartLine( po, mirror, sound, -, - )
+0x002   13      Polyobj_RotateLeft( po, speed, angle, -, - )
+0x003   13      Polyobj_RotateRight( po, speed, angle, -, - )
+0x004   13      Polyobj_Move( po, speed, angle, distance, - )
+0x005   13      Polyobj_ExplicitLine( po, order, mirror, sound, - )
+0x006   13      Polyobj_MoveTimes8( po, speed, angle, distance, - )
+0x007   13      Polyobj_DoorSwing( po, speed, angle, delay, - )
+0x008   13      Polyobj_DoorSlide( po, speed, angle, distance, delay )
+0x05a   13      Polyobj_OR_RotateLeft( po, speed, angle, -, - )
+0x05b   13      Polyobj_OR_RotateRight( po, speed, angle, -, - )
+0x05c   13      Polyobj_OR_Move( po, speed, angle, distance, - )
+0x05d   13      Polyobj_OR_MoveTimes8( po, speed, angle, distance, - )
+
+; Exit
+0x0f3   14      Exit_Normal( position, -, -, -, - )
+0x0f4   14      Exit_Secret( position, -, -, -, - )
+
+; Elevator
+0x05f   15      FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
+0x060   15      FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
+
+[Sectors.Types]
+0x0028  Wind east (weak)
+0x0029  Wind east (normal)
+0x002a  Wind east (strong)
+0x002b  Wind north (weak)
+0x002c  Wind north (normal)
+0x002d  Wind north (strong)
+0x002e  Wind south (weak)
+0x002f  Wind south (normal)
+0x0030  Wind south (strong)
+0x0031  Wind west (weak)
+0x0032  Wind west (normal)
+0x0033  Wind west (strong)
+0x0041  Blink (random)
+0x0042  Blink (1/2 second)
+0x0043  Blink (1 second)
+0x0047  -2/5% health
+0x004a  Ceiling drops (after 30 seconds)
+0x004c  Blink (1 second sync.)
+0x004d  Blink (1/2 second sync.)
+0x004e  Ceiling rises (after 300 seconds)
+0x004f  Reduced floor friction
+0x0052  -5/10% health
+0x0053  -10/20% health
+0x0054  -10/20% health
+0x00e1  Scroll east (very slow)
+0x00e2  Scroll east (slow)
+0x00e3  Scroll east (normal)
+0x00e4  Scroll east (fast)
+0x00e5  Scroll east (very fast)
+0x00e6  Scroll north (very slow)
+0x00e7  Scroll north (slow)
+0x00e8  Scroll north (normal)
+0x00e9  Scroll north (fast)
+0x00ea  Scroll north (very fast)
+0x00eb  Scroll south (very slow)
+0x00ec  Scroll south (slow)
+0x00ed  Scroll south (normal)
+0x00ee  Scroll south (fast)
+0x00ef  Scroll south (very fast)
+0x00f0  Scroll west (very slow)
+0x00f1  Scroll west (slow)
+0x00f2  Scroll west (normal)
+0x00f3  Scroll west (fast)
+0x00f4  Scroll west (very fast)
+0x0400  Secret

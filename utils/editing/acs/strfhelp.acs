@@ -1,0 +1,506 @@
+#include "stcommon.acs"
+
+#library "strfhelp"
+
+#define VDOORSPEED	16
+#define VDOORWAIT	150
+
+str QuestItems[32] =
+{
+	"QuestItemThatDoesNotExist",
+	"QuestItem1", "QuestItem2", "QuestItem3",
+	"QuestItem4", "QuestItem5", "QuestItem6", "QuestItem7",
+	"QuestItem8", "QuestItem9", "QuestItem10", "QuestItem11",
+	"QuestItem12", "QuestItem13", "QuestItem14", "QuestItem15",
+	"QuestItem16", "QuestItem17", "QuestItem18", "QuestItem19",
+	"QuestItem20", "QuestItem21", "QuestItem22", "QuestItem23",
+	"QuestItem24", "QuestItem25", "QuestItem26", "QuestItem27",
+	"QuestItem28", "QuestItem29", "QuestItem30", "QuestItem31"
+};
+
+str MusicNames[34] =
+{
+	"",
+	"d_action",
+	"d_tavern",
+	"d_danger",
+	"d_fast",
+	"d_intro",
+	"d_darker",
+	"d_strike",
+	"d_slide",
+	"d_tribal",
+	"d_march",
+	"d_danger",
+	"d_mood",
+	"d_castle",
+	"d_darker",
+	"d_action",
+	"d_fight",
+	"d_spense",
+	"d_slide",
+	"d_strike",
+	"d_dark",
+	"d_tech",
+	"d_slide",
+	"d_drone",
+	"d_panthr",
+	"d_sad",
+	"d_instry",
+	"d_tech",
+	"d_action",
+	"d_instry",
+	"d_drone",
+	"d_fight",
+	"d_happy",
+	"d_end"
+};
+
+script << 0 >> (int type, int tag)
+{
+	switch (type)
+	{
+	case 40:
+		//	Lower floor, raise ceiling.
+//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
+		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		break;
+
+	case 52:
+		//	Map teleport.
+		//UNUSED Probably because as once-trigger it makes no use in Strife.
+//		Teleport_NewMap(tag / 100, 0, FALSE);
+		Teleport_NewMap(tag / 100, 0);
+		break;
+
+	case 145:
+		//	Teleport to new map.
+		if (gametype() == GAME_NET_DEATHMATCH)
+		{
+			Floor_RaiseByValue(tag, 128, 64);
+		}
+		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
+		{
+			//	Abandoned front base.
+//			Teleport_NewMap(30, tag % 100, TRUE);
+			Teleport_NewMap(30, tag % 100);
+		}
+		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
+		{
+			//	New front base.
+//			Teleport_NewMap(10, tag % 100, TRUE);
+			Teleport_NewMap(10, tag % 100);
+		}
+		else
+		{
+//			Teleport_NewMap(tag / 100, tag % 100, TRUE);
+			Teleport_NewMap(tag / 100, tag % 100);
+		}
+		break;
+
+	case 154:
+		//	Lower platform, lock gold key.
+		SetResultValue(Plat_DownWaitUpStayLip(tag, 32, 105, 0));
+		break;
+
+	case 174:
+		//	Lower floor, raise ceiling.
+//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
+		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		break;
+
+	case 175:
+		//	Raise alert if touched laser.
+		if (GetActorFloorZ(0) + 16.0 > GetActorZ(0))
+		{
+			NoiseAlert(0, 0);
+		}
+		break;
+
+	case 177:
+		//	Lower platform, lock power 3 key.
+		SetResultValue(Plat_DownWaitUpStayLip(tag, 32, 105, 0));
+		break;
+
+	case 181:
+		//	Raise floor by 512, change texture and special.
+		SetResultValue(Floor_RaiseByValueTxTy(tag, 8, 512));
+		break;
+
+	case 183:
+		//	Lower floor, raise ceiling.
+//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToHighest(tag, VDOORSPEED / 2, 128));
+		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		break;
+
+	case 184:
+		//	Platform up.
+		// What needs to be fixed?
+//		if (Plat_UpNearestWaitDownStay(tag, 16, 35))
+		if (Plat_UpWaitDownStay(tag, 16, 35))
+		{
+			// FIXME
+		}
+		break;
+
+	case 186:
+		//	Teleport to new map, only if front side crossed.
+		if (lineside() != LINE_FRONT)
+			break;
+		if (gametype() == GAME_NET_DEATHMATCH)
+		{
+			Floor_RaiseByValue(tag, 128, 64);
+		}
+		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
+		{
+			//	Abandoned front base.
+//			Teleport_NewMap(30, tag % 100, TRUE);
+			Teleport_NewMap(30, tag % 100);
+		}
+		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
+		{
+			//	New front base.
+//			Teleport_NewMap(10, tag % 100, TRUE);
+			Teleport_NewMap(10, tag % 100);
+		}
+		else
+		{
+//			Teleport_NewMap(tag / 100, tag % 100, TRUE);
+			Teleport_NewMap(tag / 100, tag % 100);
+		}
+		break;
+
+	case 187:
+		//	Remove force field when have required item.
+		if (CheckInventory(QuestItems[GetLineRowOffset() & 31]))
+		{
+			ClearForceField(tag);
+			clearlinespecial();
+		}
+		break;
+
+	case 188:
+		//	This one is prety fucked up one. I hope I'm doing it right.
+		if (tag == 223)
+		{
+			//	Open door to  the prison if have pass.
+			if (CheckInventory("QuestItem10"))
+			{
+				Door_Open(tag, VDOORSPEED);
+				clearlinespecial();
+			}
+		}
+		else
+		{
+			//	Open door when blown up gates.
+			if (CheckInventory("QuestItem16"))
+			{
+				Door_Open(tag, VDOORSPEED);
+				clearlinespecial();
+			}
+		}
+		break;
+		
+	case 189:
+		//	Lower floor, raise ceiling.
+//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
+		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		break;
+
+	case 193:
+		//	Lower floor when got a quest item.
+		if (CheckInventory(QuestItems[GetLineRowOffset() & 31]))
+		{
+			Floor_LowerToLowest(tag, 8);
+			clearlinespecial();
+		}
+		break;
+
+	case 194:
+		//	Open door and give "Freed prisoners" quest item.
+		if (Door_Open(tag, VDOORSPEED))
+		{
+			print(s:"You've freed the prisoners!");
+			GiveInventory("QuestItem13", 1);
+		}
+		else
+		{
+			SetResultValue(0);
+		}
+		break;
+
+	case 196:
+		//	Lower floor if killed Bishop.
+		//UNUSED Probably because 197 does the same thing.
+		if (GetSigilPieces() > 1)
+		{
+			Floor_LowerToLowest(tag, 8);
+			clearlinespecial();
+		}
+		break;
+
+	case 197:
+		//	Close door if killed Bishop. Funny that this is also used in
+		// final boss level, since it's clear that player has 2 pieces so
+		// normal Door_Close could be used.
+		if (GetSigilPieces() > 1)
+		{
+			Door_Close(tag, VDOORSPEED * 4);
+			clearlinespecial();
+		}
+		break;
+
+	case 198:
+		//	Raise alert if not wearing officers uniform.
+		if (!CheckInventory("OfficersUniform"))
+		{
+			NoiseAlert(0, 0);
+		}
+		break;
+
+	case 199:
+		//	Destroys the converter in factory.
+		if (Ceiling_LowerAndCrush(tag, 8, 10))
+		{
+			print(s:"You've destroyed the Converter!");
+			GiveInventory("QuestItem25", 1);
+			GiveInventory("UpgradeStamina", 1);
+			GiveInventory("UpgradeAccuracy", 1);
+		}
+		else
+		{
+			SetResultValue(0);
+		}
+		break;
+
+	case 200:
+		//	Open door if got sigil (killed Programmer).
+		//UNUSED Probably replaced with quest-requiring specials.
+		if (CheckInventory("Sigil"))
+		{
+			Door_Open(tag, VDOORSPEED);
+			clearlinespecial();
+		}
+		break;
+
+	case 203:
+	case 204:
+		//	Change music.
+		//UNUSED
+		if (tag >= 0 && tag <= 33)
+		{
+			SetMusic(MusicNames[tag]);
+		}
+		break;
+
+	case 206:
+		//	Raise alert if have chalice.
+		if (CheckInventory("OfferingChalice"))
+		{
+			NoiseAlert(0, 0);
+		}
+		break;
+
+	case 208:
+		//	Riase alert if got flamethrower.
+		//UNUSED
+		if (CheckInventory("FlameThrower"))
+		{
+			NoiseAlert(0, 0);
+		}
+		break;
+
+	case 209:
+		//	Raise stairs if have Chalice.
+		//UNUSED
+		if (CheckInventory("OfferingChalice"))
+		{
+//			SetResultValue(Generic_Stairs(tag, 16, 16, 0, 0));
+			SetResultValue(Stair_BuildUpOld(tag, 16, 16));
+		}
+		else
+		{
+			print(s:"You need the chalice!");
+//			activatorsound("*usefail", 127);
+			activatorsound("PlayerLand", 127);
+			SetResultValue(0);
+		}
+		break;
+
+	case 212:
+		//	Lower floor when got flamethrower. Used only in teaser version.
+		if (CheckInventory("FlameThrower"))
+		{
+			Floor_LowerToLowest(tag, 8);
+			clearlinespecial();
+		}
+		break;
+
+	case 213:
+		//	Open door if have chalice. Used only in teaser version.
+		if (!CheckInventory("OfferingChalice"))
+		{
+			print(s:"You need the chalice !");
+//			activatorsound("*usefail", 127);
+			activatorsound("PlayerLand", 127);
+			SetResultValue(0);
+		}
+		else
+		{
+//			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
+			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT));
+		}
+		break;
+
+	case 214:
+		//	Platform lower for 30 secs.
+		// This only needs to be ACS for the long delay
+//		SetResultValue(Plat_DownWaitUpStayLip(tag, 8, 1050, 0, 1));
+		SetResultValue(Plat_DownWaitUpStayLip(tag, 8, 1050, 0));
+		break;
+
+	case 215:
+		//	Play Blackbird voice if got a quest item.
+		if (CheckInventory(QuestItems[(tag % 100) & 31]))
+		{
+			SendToCommunicator(tag / 100, 0, 1, 0);
+			clearlinespecial();
+		}
+		break;
+
+	case 216:
+		//	Raise door if got a quest item.
+		if (CheckInventory(QuestItems[GetLineRowOffset() & 31]))
+		{
+			Door_Raise(tag, VDOORSPEED, VDOORWAIT);
+		}
+		break;
+
+	case 219:
+	case 220:
+		//	Lower floor, locked.
+		SetResultValue(Floor_LowerToHighest(tag, 8, 128));
+		break;
+
+	case 226:
+		//	Lower floor, give stats upgrade.
+		if (Floor_LowerToHighest(tag, 8, 128))
+		{
+			GiveInventory("UpgradeStamina", 1);
+			GiveInventory("UpgradeAccuracy", 1);
+			print(s:"Congratulations! You have completed the training area");
+		}
+		else
+		{
+			SetResultValue(0);
+		}
+		break;
+
+	case 227:
+		//	Close door when have a quest item.
+		if (CheckInventory(QuestItems[GetLineRowOffset() & 31]))
+		{
+			Door_Close(tag, VDOORSPEED);
+			clearlinespecial();
+		}
+		break;
+
+	case 228:
+		//	Play Entity boss voice.
+		if (CheckInventory("QuestItem24"))
+		{
+			if (CheckInventory("QuestItem28"))
+			{
+				SendToCommunicator(130, 0, 2, 1);
+			}
+			else
+			{
+				SendToCommunicator(128, 0, 2, 1);
+			}
+			clearlinespecial();
+		}
+		break;
+
+	case 229:
+		//	Open animated door if have all sigil pieces.
+		SetResultValue(0);
+		if (GetSigilPieces() == 5)
+		{
+			SetResultValue(Door_Animated(tag, 4, 105));
+		}
+		break;
+
+	case 230:
+		//	Open door when have a quest item.
+		if (CheckInventory(QuestItems[GetLineRowOffset() & 31]))
+		{
+			Door_Open(tag, VDOORSPEED);
+			clearlinespecial();
+		}
+		break;
+
+	case 232:
+		//	Open door if have Oracle pass.
+		if (!CheckInventory("QuestItem18"))
+		{
+			print(s:"You need the Oracle Pass!");
+//			activatorsound("*usefail", 127);
+			activatorsound("PlayerLand", 127);
+			SetResultValue(0);
+		}
+		else
+		{
+//			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
+			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT));
+		}
+		break;
+
+	case 233:
+		//	Lower floor, raise ceiling, play voice.
+//		if (Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToLowest(tag, VDOORSPEED / 2))
+		if (FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2))
+		{
+			SendToCommunicator(70, 0, 0, 0);
+			SetResultValue(1);
+		}
+		else
+		{
+			SetResultValue(0);
+		}
+		break;
+
+	case 234:
+		//	Open door when got quest to go to prison.
+		if (CheckInventory("QuestItem3"))
+		{
+			SetResultValue(Door_Raise(tag, VDOORSPEED, VDOORWAIT));
+		}
+		else
+		{
+			SetResultValue(Door_LockedRaise(0, 0, 0, 102));
+		}
+		break;
+
+	case 235:
+		//	Lower floor, raise ceiling when have all 5 sigil pieces.
+		if (GetSigilPieces() < 5)
+		{
+			SetResultValue(0);
+			break;
+		}
+//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
+		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		break;
+	}
+}
+
+script 240 (void)
+{
+	Teleport_NewMap(10, 0);
+}

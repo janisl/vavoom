@@ -8,7 +8,7 @@
 #DEBUG = 1
 
 # Uncomment to compile using SDL
-#USE_SDL = 1
+USE_SDL = 1
 
 # Uncomment to compile without OpenGL driver
 #NOGL = 1
@@ -17,7 +17,7 @@
 #MESAGL = 1
 
 # Uncoment to compile with OpenAL library
-#USE_AL = 1
+USE_AL = 1
 
 # Uncomment to compile with external libglbsp
 #USE_EXT_GLBSP = 1
@@ -412,8 +412,8 @@ data: progs $(WAD_FILES)
 basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXE)
 	utils/bin/vlumpy$(EXE) $<
 
-basev/strife/strfhelp.o: basev/strife/*.acs utils/bin/acc$(EXE)
-	utils/bin/acc$(EXE) basev/strife/strfhelp.acs
+basev/strife/strfhelp.o: utils/editing/acs/*.acs utils/bin/acc$(EXE)
+	utils/bin/acc$(EXE) utils/editing/acs/strfhelp.acs basev/strife/strfhelp.o
 
 utils/bin/acc$(EXE):
 	$(MAKE) -C utils/acc
@@ -433,7 +433,7 @@ basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprog
 # ---------------------------------------
 
 ifndef INSTALL
-INSTALL = ginstall
+INSTALL = install -c
 endif
 
 ifndef INSTALL_DIR
