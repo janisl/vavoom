@@ -1063,6 +1063,7 @@ class MenuChoiceSlider:MenuChoice
 		ValueDelta = 1.0;
 		MinValue = 0.0;
 		MaxValue = 1.0;
+		Height = 20;
 	}
 }
 
@@ -1428,6 +1429,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/09 18:09:57  dj_jl
+//  Fixed sliders
+//
 //  Revision 1.17  2002/02/06 17:22:17  dj_jl
 //  Some fixes for the menus.
 //
