@@ -141,14 +141,19 @@ extern TCvarI			r_darken;
 
 extern refdef_t			refdef;
 
+extern TCvarI			old_aspect;
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.9  2002/07/13 07:39:08  dj_jl
 //	Removed back to front drawing.
-//
+//	
 //	Revision 1.8  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

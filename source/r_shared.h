@@ -125,7 +125,7 @@ struct surface_t
 	surface_t		*next;
 	texinfo_t		*texinfo;
 	TPlane			*plane;
-	int				lightlevel;
+	dword			Light;		//	Light level and color.
 	byte			*lightmap;
 	rgb_t			*lightmap_rgb;
 	int				dlightframe;
@@ -222,14 +222,19 @@ extern rgba_t			SkinPal[256];
 extern int				usegamma;
 extern byte				gammatable[5][256];
 
+extern float			PixelAspect;
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.16  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.15  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

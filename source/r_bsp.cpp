@@ -113,18 +113,13 @@ static void DrawSurfaces(surface_t *surfs, texinfo_t *texinfo, int clipflags)
 
 	do
 	{
-		if (fixedlight)
-		{
-			surfs->lightlevel = fixedlight;
-		}
-		else
-		{
-			surfs->lightlevel = MIN(255, r_region->params->lightlevel);
-		}
+		int lLev = fixedlight ? fixedlight :
+			MIN(255, r_region->params->lightlevel);
 		if (r_darken)
 		{
-			surfs->lightlevel = light_remap[surfs->lightlevel];
+			lLev = light_remap[lLev];
 		}
+		surfs->Light = (lLev << 24) | r_region->params->LightColor;
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 
@@ -426,9 +421,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.10  2002/07/13 07:39:08  dj_jl
 //	Removed back to front drawing.
-//
+//	
 //	Revision 1.9  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

@@ -50,6 +50,8 @@ void BuildPVS(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+int			GMaxEntities = 4096;
+
 #ifdef CLIENT
 cl_level_t cl_level;
 #endif
@@ -173,7 +175,7 @@ static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 
 	// clear out mobj chains
 	count = loadlevel.bmapwidth * loadlevel.bmapheight;
-	loadlevel.blocklinks = Z_CNew<VMapObject*>(count, PU_LEVEL, 0);
+	loadlevel.blocklinks = Z_CNew<VEntity*>(count, PU_LEVEL, 0);
 	unguard;
 }
 
@@ -300,6 +302,7 @@ static void LoadSectors(int lump, base_level_t &loadlevel)
 
 		//	Params
 		ss->params.lightlevel = LittleShort(ms->lightlevel);
+		ss->params.LightColor = 0x00ffffff;
 
 		//	Region
 		region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
@@ -1402,6 +1405,9 @@ void SwapPlanes(sector_t *s)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/08/28 16:39:19  dj_jl
+//  Implemented sector light color.
+//
 //  Revision 1.20  2002/08/24 14:51:50  dj_jl
 //  Fixes for large blockmaps.
 //

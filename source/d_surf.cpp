@@ -185,7 +185,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	if (cache && ((!cache->dlight && surface->dlightframe != r_dlightframecount)
 			|| cache->dlight == r_dlightframecount)
 			&& cache->texture == texture
-			&& cache->lightlevel == (int)surface->lightlevel)
+			&& cache->Light == surface->Light)
 		return cache;
 
 	//
@@ -212,7 +212,7 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 		cache->dlight = 0;
 
 	cache->texture = texture;
-	cache->lightlevel = (int)surface->lightlevel;
+	cache->Light = surface->Light;
 
 	//
 	// draw and light the surface texture
@@ -355,7 +355,7 @@ surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 
 	if (cache && cache->texture == texture1 &&
 		*(float *)&cache->dlight == offs1 &&
-		cache->lightlevel == texture2 && cache->mipscale == offs2)
+		cache->Light == texture2 && cache->mipscale == offs2)
 	{
 		return cache;
 	}
@@ -378,7 +378,7 @@ surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
 	
 	cache->texture = texture1;
 	*(float *)&cache->dlight = offs1;
-	cache->lightlevel = texture2;
+	cache->Light = texture2;
 	cache->mipscale = offs2;
 
 	//
@@ -2253,9 +2253,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.10  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

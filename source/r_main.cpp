@@ -57,11 +57,11 @@ int						screenblocks = 0;
 TVec					vieworg;
 TVec					viewforward;
 TVec					viewright;
-TVec					viewup;
+TVec					viewup;	
 TAVec					viewangles;
 
 // bumped light from gun blasts
-int                     extralight;
+int						extralight;
 int						fixedlight;
 
 TClipPlane				view_clipplanes[4];
@@ -76,9 +76,13 @@ TCvarF					r_fog_start("r_fog_start", "1.0");
 TCvarF					r_fog_end("r_fog_end", "2048.0");
 TCvarF					r_fog_density("r_fog_density", "0.5");
 
+TCvarI					old_aspect("r_old_aspect_ratio", "0", CVAR_ARCHIVE);
+
 VDrawer					*Drawer;
 
 refdef_t				refdef;
+
+float					PixelAspect;
 
 IMPLEMENT_CLASS(VDrawer);
 
@@ -90,6 +94,8 @@ static boolean			set_resolutioon_needed = true;
 // Angles in the SCREENWIDTH wide window.
 static TCvarF			fov("fov", "90");
 static float			old_fov = 90.0;
+
+static int				prev_old_aspect;
 
 static TVec				clip_base[4];
 
@@ -245,6 +251,12 @@ static void R_ExecuteSetViewSize(void)
     }
     refdef.x = (ScreenWidth - refdef.width) >> 1;
 
+	if (old_aspect)
+		PixelAspect = ((float)ScreenHeight * 320.0) / ((float)ScreenWidth * 200.0);
+	else
+		PixelAspect = ((float)ScreenHeight * 4.0) / ((float)ScreenWidth * 3.0);
+	prev_old_aspect = old_aspect;
+
 	refdef.fovx = tan(DEG2RAD(fov) / 2);
 	refdef.fovy = refdef.fovx * refdef.height / refdef.width / PixelAspect;
 
@@ -322,7 +334,8 @@ static void R_SetupFrame(void)
 	guard(R_SetupFrame);
     // change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
-		set_resolutioon_needed || old_fov != fov)
+		set_resolutioon_needed || old_fov != fov ||
+		old_aspect != prev_old_aspect)
     {
 		R_ExecuteSetViewSize();
     }
@@ -686,9 +699,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.21  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
-//
+//	
 //	Revision 1.20  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

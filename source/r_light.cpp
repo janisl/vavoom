@@ -748,7 +748,10 @@ dword R_LightPoint(const TVec &p)
 	{
 		l = light_remap[MIN(255, (int)l)];
 	}
-	lr = lg = lb = l;
+	int SecLightColor = reg->secregion->params->LightColor;
+	lr = ((SecLightColor >> 16) & 255) * l / 255.0;
+	lg = ((SecLightColor >> 8) & 255) * l / 255.0;
+	lb = (SecLightColor & 255) * l / 255.0;
 
 	//	Light from floor's lightmap
 	s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
@@ -929,14 +932,20 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	lightmap_rgb = surf->lightmap_rgb;
 
 	// clear to ambient
-	t =	MAX(surf->lightlevel, r_ambient);
+	t = surf->Light >> 24;
+	t =	MAX(t, r_ambient);
  	t <<= 8;
+	int tR = ((surf->Light >> 16) & 255) * t / 255;
+	int tG = ((surf->Light >> 8) & 255) * t / 255;
+	int tB = (surf->Light & 255) * t / 255;
+	if (tR != tG || tR != tB)
+		is_colored = true;
 	for (i = 0; i < size; i++)
 	{
 		blocklights[i] = t;
-		blocklightsr[i] = t;
-		blocklightsg[i] = t;
-		blocklightsb[i] = t;
+		blocklightsr[i] = tR;
+		blocklightsg[i] = tG;
+		blocklightsb[i] = tB;
 		blockaddlightsr[i] = 0;
 		blockaddlightsg[i] = 0;
 		blockaddlightsb[i] = 0;
@@ -1062,9 +1071,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.15  2002/07/13 07:51:48  dj_jl
 //	Replacing console's iostream with output device.
-//
+//	
 //	Revision 1.14  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

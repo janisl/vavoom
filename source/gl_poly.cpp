@@ -292,7 +292,7 @@ void VOpenGLDrawer::CacheSurface(surface_t *surface)
 	cache = surface->cachespots[0];
 
 	if (cache && !cache->dlight && surface->dlightframe != r_dlightframecount
-			&& cache->lightlevel == surface->lightlevel)
+			&& cache->Light == surface->Light)
 	{
 		bnum = cache->blocknum;
 		cache->chain = light_chain[bnum];
@@ -321,7 +321,7 @@ void VOpenGLDrawer::CacheSurface(surface_t *surface)
 		cache->dlight = 1;
 	else
 		cache->dlight = 0;
-	cache->lightlevel = surface->lightlevel;
+	cache->Light = surface->Light;
 
 	// calculate the lightings
 	R_BuildLightMap(surface, 0);
@@ -409,8 +409,10 @@ void VOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	}
 	else
 	{
-		float lev = float(surf->lightlevel) / 255.0;
-		glColor4f(lev, lev, lev, 1.0);
+		float lev = float(surf->Light >> 24) / 255.0;
+		glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+			((surf->Light >> 8) & 255) * lev / 255.0,
+			(surf->Light & 255) * lev / 255.0, 1.0);
 	}
 
 	texinfo_t *tex = r_surface->texinfo;
@@ -1054,9 +1056,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.21  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.20  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

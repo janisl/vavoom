@@ -70,7 +70,7 @@ struct surfcache_t
 	surfcache_t	*addchain;	// list of specular surfaces
 	int			blocknum;	// light surface index
 	surfcache_t	**owner;
-	int			lightlevel;	// checked for strobe flush
+	dword		Light;		// checked for strobe flash
 	int			dlight;
 	surface_t	*surf;
 };
@@ -444,9 +444,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.21  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.20  2002/03/28 17:56:52  dj_jl
 //	Increased lightmap texture count.
 //	

@@ -95,6 +95,7 @@ enum
 
 	svc_static_light,
 	svc_static_light_rgb,
+	svc_sec_light_color,
 
 	USER_PROTOCOL_START = 128
 };
@@ -144,9 +145,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.8  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

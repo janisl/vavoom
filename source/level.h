@@ -51,7 +51,7 @@
 
 struct sector_t;
 class VThinker;
-class VMapObject;
+class VEntity;
 
 //
 //	Your plain vanilla vertex.
@@ -209,6 +209,7 @@ struct sec_plane_t : public TPlane
 struct sec_params_t
 {
 	int			lightlevel;
+	int			LightColor;
 	int			contents;
 };
 
@@ -269,7 +270,7 @@ struct sector_t
 	int			linecount;
 	line_t		**lines;  // [linecount] size
 
-	int			user_fields[8];
+	int			user_fields[7];
 };
 
 //
@@ -364,8 +365,6 @@ struct mthing_t
 	int 		arg4;
 	int 		arg5;
 };
-
-#define MAX_MOBJS	4096	//	Temporary limit required by client/server
 
 //
 //	Strife conversation scripts
@@ -485,7 +484,7 @@ struct sv_level_t:base_level_t
 	int			bmapheight;     // size in mapblocks
 	float		bmaporgx;       // origin of block map
 	float		bmaporgy;
-	VMapObject	**blocklinks;	// for thing chains
+	VEntity		**blocklinks;	// for thing chains
 	polyblock_t **PolyBlockMap;
 
 	//
@@ -519,15 +518,20 @@ void SwapPlanes(sector_t *);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+extern int				GMaxEntities;
+
 extern sv_level_t		level;
 extern cl_level_t		cl_level;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.22  2002/08/24 14:51:50  dj_jl
 //	Fixes for large blockmaps.
-//
+//	
 //	Revision 1.21  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

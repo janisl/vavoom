@@ -599,7 +599,8 @@ static void RenderSprite(clmobj_t *thing)
 #ifdef PARANOID
 	if ((thing->frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
-		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",thing->sprite, thing->frame);
+		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
+			thing->sprite, thing->frame);
 		return;
 	}
 #endif
@@ -826,7 +827,7 @@ void R_RenderMobjs(void)
 		return;
 	}
 
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (cl_mobjs[i].in_use)
 		{
@@ -931,26 +932,27 @@ static void RenderPSprite(cl_pspdef_t* psp)
 	int					lump;
 	boolean				flip;
 
-    // decide which patch to use
+	// decide which patch to use
 #ifdef PARANOID
-    if ((unsigned)psp->sprite >= MAX_SPRITE_MODELS)
+	if ((unsigned)psp->sprite >= MAX_SPRITE_MODELS)
 	{
 		GCon->Logf("R_ProjectSprite: invalid sprite number %d", psp->sprite);
 		return;
 	}
 #endif
-    sprdef = &sprites[psp->sprite];
+	sprdef = &sprites[psp->sprite];
 #ifdef PARANOID
-    if ((psp->frame & FF_FRAMEMASK)  >= sprdef->numframes)
+	if ((psp->frame & FF_FRAMEMASK)  >= sprdef->numframes)
 	{
-        GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d", psp->sprite, psp->frame);
+		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
+			psp->sprite, psp->frame);
 		return;
 	}
 #endif
-    sprframe = &sprdef->spriteframes[psp->frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[psp->frame & FF_FRAMEMASK];
 
-    lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+	lump = sprframe->lump[0];
+	flip = (boolean)sprframe->flip[0];
 
 	if (spritewidth[lump] == -1.0)
 	{
@@ -975,6 +977,11 @@ static void RenderPSprite(cl_pspdef_t* psp)
 	//	1 / 160.0 * 120 / 100 =	0.0075
 	TVec topdelta = (spry * PSP_DIST * 0.0075) * viewup;
 	TVec botdelta = topdelta - (spriteheight[lump] * PSP_DIST * 0.0075) * viewup;
+	if (old_aspect)
+	{
+		topdelta *= 100.0 / 120.0;
+		botdelta *= 100.0 / 120.0;
+	}
 
 	dv[0] = start + botdelta;
 	dv[1] = start + topdelta;
@@ -994,7 +1001,10 @@ static void RenderPSprite(cl_pspdef_t* psp)
 		r_saxis = viewright * 160 * PSP_DISTI;
 		r_texorg = dv[1];
 	}
-	r_taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
+	if (old_aspect)
+		r_taxis = -(viewup * 160 * PSP_DISTI);
+	else
+		r_taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	dword light;
 	if (psp->frame & FF_FULLBRIGHT)
@@ -1174,9 +1184,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.15  2002/07/13 07:51:49  dj_jl
 //	Replacing console's iostream with output device.
-//
+//	
 //	Revision 1.14  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

@@ -96,7 +96,7 @@ struct surfcache_t
 {
 	surfcache_t	*next;
 	surfcache_t	**owner;	// NULL is an empty chunk of memory
-	int			lightlevel;	// checked for strobe flush
+	dword		Light;		// checked for strobe flash
 	int			dlight;
 	int			size;		// including header
 	unsigned	width;
@@ -544,9 +544,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.20  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.19  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

@@ -32,25 +32,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-// Client side Map Object definition.
-struct clmobjbase_t
-{
-	TVec		origin;	// position
-	TAVec		angles;	// orientation
-
-	int			spritetype;
-    int			sprite;	// used to find patch_t and flip value
-    int			frame;	// might be ORed with FF_FULLBRIGHT
-
-	int			model_index;
-	int			alias_frame;
-
-    int			translucency;
-    int			translation;
-
-	int			effects;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_ClearInput(void);
@@ -65,14 +46,14 @@ void CL_SignonReply(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-clmobj_t		cl_mobjs[MAX_MOBJS];
+clmobj_t		*cl_mobjs;
+clmobjbase_t	*cl_mo_base;
 clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static clmobjbase_t		cl_mo_base[MAX_MOBJS];
 static model_t			*model_precache[1024];
 static model_t			*weapon_model_precache[1024];
 static char				skin_list[256][MAX_VPATH];
@@ -86,8 +67,8 @@ void CL_Clear(void)
 	guard(CL_Clear);
 	memset(&cl, 0, sizeof(cl));
 	memset(&cl_level, 0, sizeof(cl_level));
-	memset(cl_mobjs, 0, sizeof(cl_mobjs));
-	memset(cl_mo_base, 0, sizeof(cl_mo_base));
+	memset(cl_mobjs, 0, sizeof(clmobj_t) * GMaxEntities);
+	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
 	memset(cl_dlights, 0, sizeof(cl_dlights));
 	memset(scores, 0, sizeof(scores));
@@ -474,7 +455,7 @@ static void CL_ParseTime()
 		cl_level.sides[i].rowoffset = cl_level.sides[i].base_rowoffset;
 	}
 
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (cl_mobjs[i].in_use)
 		{
@@ -1010,6 +991,12 @@ void CL_ParseServerMessage(void)
 			R_AddStaticLight(origin, radius, color);
 			break;
 
+		 case svc_sec_light_color:
+			sec = &cl_level.sectors[net_msg.ReadShort()];
+			sec->params.LightColor = (net_msg.ReadByte() << 16) |
+				(net_msg.ReadByte() << 8) | net_msg.ReadByte();
+			break;
+
 		 default:
 			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
 			{
@@ -1031,9 +1018,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/08/28 16:39:19  dj_jl
+//	Implemented sector light color.
+//
 //	Revision 1.28  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.27  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	
