@@ -86,7 +86,7 @@ void TSoftwareDrawer::Init(void)
 //
 //==========================================================================
 
-BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
+static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 {
 	GFX_VTABLE *vtable;
 	BITMAP *bitmap;
@@ -315,9 +315,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/12 17:32:10  dj_jl
+//	Made my_create_bitmap static
+//
 //	Revision 1.4  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
