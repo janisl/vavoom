@@ -105,9 +105,9 @@ static void CL_ReadMobjBase(clmobjbase_t &mobj)
 	mobj.origin.x = net_msg.ReadShort();
 	mobj.origin.y = net_msg.ReadShort();
 	mobj.origin.z = net_msg.ReadShort();
-	mobj.angles.yaw = BAM2DEG(net_msg.ReadByte() << 24);
-	mobj.angles.pitch = BAM2DEG(net_msg.ReadByte() << 24);
-	mobj.angles.roll = BAM2DEG(net_msg.ReadByte() << 24);
+	mobj.angles.yaw = ByteToAngle(net_msg.ReadByte());
+	mobj.angles.pitch = ByteToAngle(net_msg.ReadByte());
+	mobj.angles.roll = ByteToAngle(net_msg.ReadByte());
 	mobj.sprite = (word)net_msg.ReadShort();
 	mobj.frame = (word)net_msg.ReadShort();
 	mobj.translucency = net_msg.ReadByte();
@@ -143,15 +143,15 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base, int 
 	else
 		mobj.origin.z = base.origin.z;
 	if (bits & MOB_ANGLE)
-		mobj.angles.yaw = BAM2DEG(net_msg.ReadByte() << 24);
+		mobj.angles.yaw = ByteToAngle(net_msg.ReadByte());
 	else
 		mobj.angles.yaw = base.angles.yaw;
 	if (bits & MOB_ANGLEP)
-		mobj.angles.pitch = BAM2DEG(net_msg.ReadByte() << 24);
+		mobj.angles.pitch = ByteToAngle(net_msg.ReadByte());
 	else
 		mobj.angles.pitch = base.angles.pitch;
 	if (bits & MOB_ANGLER)
-		mobj.angles.roll = BAM2DEG(net_msg.ReadByte() << 24);
+		mobj.angles.roll = ByteToAngle(net_msg.ReadByte());
 	else
 		mobj.angles.roll = base.angles.roll;
 	if (bits & MOB_SPRITE)
@@ -812,9 +812,9 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_set_angles:
-			cl.viewangles.pitch = BAM2DEG(net_msg.ReadByte() << 24);
-			cl.viewangles.yaw = BAM2DEG(net_msg.ReadByte() << 24);
-			cl.viewangles.roll = BAM2DEG(net_msg.ReadByte() << 24);
+			cl.viewangles.pitch = ByteToAngle(net_msg.ReadByte());
+			cl.viewangles.yaw = ByteToAngle(net_msg.ReadByte());
+			cl.viewangles.roll = ByteToAngle(net_msg.ReadByte());
 			break;
 
 		 case svc_center_look:
@@ -871,7 +871,7 @@ void CL_ParseServerMessage(void)
 			i = net_msg.ReadByte();
 			x = net_msg.ReadShort();
 			y =	net_msg.ReadShort();
-			angle = BAM2DEG(net_msg.ReadByte() << 24);
+			angle = ByteToAngle(net_msg.ReadByte());
 			CL_PO_Update(i, x, y, angle);
 			break;
 
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.11  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.10  2001/10/09 17:24:05  dj_jl
 //	Changes after bug chatching
 //	

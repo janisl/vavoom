@@ -56,7 +56,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float x;
 	float y;
 	subsector_t *ss;
-	angle_t an;
+	float an;
 	mobj_t *mo;
 	int mtnum;
 	int sfxnum;
@@ -88,7 +88,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
-	an = ANG45 * (mthing->angle / 45);
+	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, MT_TFOG);
@@ -132,7 +132,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// set color translations for player sprites
 	mobj->translation = p->color;
 
-	mobj->angles.yaw = ANG45 * (mthing->angle / 45);
+	mobj->angles.yaw = itof(mthing->angle);
 	mobj->player = p;
 	mobj->health = p->health;
 
@@ -166,29 +166,29 @@ void P_SpawnPlayer(mthing_t * mthing)
 //
 //==========================================================================
 
-mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
+mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 {
 	mobj_t *th;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 	float x;
 	float y;
 	float z;
 
 	// see which target is to be aimed at
-	avcpy(source->angles, angles);
+	angles = source->angles;
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles.yaw += 1 << 26;
+				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 			}
 		}
 	}
@@ -215,6 +215,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

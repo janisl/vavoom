@@ -560,7 +560,7 @@ int EV_TurnTagLightsOff(line_t * line, int *args)
 //
 //==========================================================================
 
-class misc_static_light:mobj_t
+class misc_static_light:Entity
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -581,7 +581,7 @@ class misc_static_light:mobj_t
 //
 //==========================================================================
 
-class misc_static_rgb_light:mobj_t
+class misc_static_rgb_light:Entity
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -599,13 +599,16 @@ class misc_static_rgb_light:mobj_t
 
 __mobjinfo__
 {
-	MT_STATIC_LIGHT { 1502, misc_static_light }
-	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
+	{ 1502, misc_static_light }
+	{ 1503, misc_static_rgb_light }
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/09 17:33:29  dj_jl
 //  Moved static light sources into games
 //

@@ -124,7 +124,7 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 //
 //==========================================================================
 
-int P_Teleport(mobj_t * thing, float x, float y, angle_t angle)
+int P_Teleport(mobj_t * thing, float x, float y, float angle)
 {
 	float oldx;
 	float oldy;
@@ -199,6 +199,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

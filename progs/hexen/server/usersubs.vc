@@ -33,6 +33,9 @@ class TLavaInflictor:mobj_t
 	{
 	}
 
+	void Archive(void)
+	{
+	}
 	void Unarchive(void)
 	{
 		LavaInflictor = this;
@@ -64,8 +67,9 @@ int PStateAttackEnd[NUMCLASSES] = {
 
 void InitLava(void)
 {
-	LavaInflictor = NewSpecialThinker(TLavaInflictor);
+	LavaInflictor = NewMobjThinker(TLavaInflictor);
 	LavaInflictor->type = MT_CIRCLEFLAME;
+	LavaInflictor->flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
@@ -118,11 +122,11 @@ boolean UndoPlayerMorph(player_t * player)
 	float x;
 	float y;
 	float z;
-	angle_t angle;
+	float angle;
 	int weapon;
 	int oldFlags;
 	int oldFlags2;
-	int oldBeast;
+	classid oldBeast;
 
 	pmo = player->mo;
 	x = pmo->origin.x;
@@ -208,7 +212,7 @@ void SetPlayerRunState(player_t * player)
 void DeathPlayerThink(player_t * player)
 {
 	int dir;
-	angle_t delta;
+	float delta;
 	int lookDelta;
 
 	MovePsprites(player);
@@ -275,8 +279,9 @@ void DeathPlayerThink(player_t * player)
 	if (player->attacker && player->attacker != player->mo)
 	{	// Watch killer
 		dir = P_FaceMobj(player->mo, player->attacker, &delta);
-		if (delta < ANGLE_1 * 10)
-		{	// Looking at killer, so fade damage and poison counters
+		if (delta < 10.0)
+		{
+			// Looking at killer, so fade damage and poison counters
 			if (player->damagecount)
 			{
 				player->damagecount--;
@@ -286,13 +291,14 @@ void DeathPlayerThink(player_t * player)
 				player->poisoncount--;
 			}
 		}
-		delta = delta / 8;
-		if (delta > ANGLE_1 * 5)
+		delta = delta / 8.0;
+		if (delta > 5.0)
 		{
-			delta = ANGLE_1 * 5;
+			delta = 5.0;
 		}
 		if (dir)
-		{	// Turn clockwise
+		{
+			// Turn clockwise
 			player->mo->angles.yaw += delta;
 		}
 		else
@@ -353,10 +359,14 @@ mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 void ArtiPig(mobj_t * mo)
 {
 	SpawnPlayerMissile(mo, MT_EGGFX);
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 6));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 6));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 3));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 3));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+		AngleMod360(mo->angles.yaw - 45.0 / 6.0));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+		AngleMod360(mo->angles.yaw + 45.0 / 6.0));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+		AngleMod360(mo->angles.yaw - 45.0 / 3.0));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX,
+		AngleMod360(mo->angles.yaw + 45.0 / 3.0));
 }
 
 //==========================================================================
@@ -386,9 +396,9 @@ void ArtiSummon(player_t * player)
 
 void ArtiPoisonBag(player_t * player)
 {
-	angle_t angle;
+	float angle;
 	mobj_t *mo;
-	Missile *bomb;
+	mobj_t *bomb;
 
 	angle = player->mo->angles.yaw;
 	if (player->pclass == PCLASS_CLERIC)
@@ -413,13 +423,13 @@ void ArtiPoisonBag(player_t * player)
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
 	{
-		bomb = (Missile *)P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
+		bomb = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
 			player->mo->origin.z - player->mo->floorclip + 35.0,
 			MT_THROWINGBOMB);
 		if (bomb)
 		{
-			bomb->angles.yaw =
-				player->mo->angles.yaw + (((P_Random() & 7) - 4) << 24);
+			bomb->angles.yaw = AngleMod360(player->mo->angles.yaw +
+				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
 			bomb->velocity.z =
 				(4.0 + 173.0 * -tan(player->mo->angles.pitch) / 16.0) * 35.0;
 			bomb->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
@@ -458,8 +468,8 @@ void ArtiTeleportOther(player_t * player)
 
 void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 {
-	angle_t angle;
-	angle_t ang;
+	float angle;
+	float ang;
 	mobj_t *mo;
 	float x;
 	float y;
@@ -626,7 +636,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float x;
 	float y;
 	subsector_t *ss;
-	angle_t an;
+	float an;
 	mobj_t *mo;
 	int i;
 
@@ -653,7 +663,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
-	an = ANG45 * (mthing->angle / 45);
+	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
@@ -665,6 +675,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.7  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

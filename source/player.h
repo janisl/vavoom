@@ -113,7 +113,7 @@ struct player_t
     // Focal origin above r.z
 	TVec			vieworg;
 
-	TBAMVec			viewangles;
+	TAVec			viewangles;
 	boolean			fixangle;
 
     // This is only used between levels,
@@ -169,9 +169,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/08/30 17:46:52  dj_jl
 //	Changes for better updates
 //	

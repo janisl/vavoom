@@ -35,14 +35,14 @@ void DropWeapon(player_t * player);
 void ActivateBeak(player_t * player);
 void DSparilTeleport(mobj_t * actor);
 void SetupPsprites(player_t * player);
-void AddBossSpot(float x, float y, angle_t angle);
+void AddBossSpot(float x, float y, float angle);
 void AddMaceSpot(float x, float y);
 boolean P_CheckPosition(mobj_t * thing, float x, float y);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
 mobj_t *MissileMobj;
-int PuffType;
+classid PuffType;
 
 float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
@@ -294,7 +294,7 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 		{
 			level->totalitems++;
 		}
-		angles.yaw = ANG45 * (mthing->angle / 45);
+		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 		{
 			flags |= MF_AMBUSH;
@@ -312,11 +312,11 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 //
 //===========================================================================
 
-mobj_t *P_SpawnMobj(float x, float y, float z, int type)
+mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker(mobjinfo[type].class_id);
+	mobj = NewMobjThinker(type);
 
 	mobj->type = type;
 	mobj->origin = vector(x, y, z);
@@ -346,21 +346,21 @@ void P_RemoveMobj(mobj_t * mobj)
 //
 //===========================================================================
 
-int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
+int P_FaceMobj(mobj_t * source, mobj_t * target, float * delta)
 {
-	angle_t diff;
-	angle_t angle1;
-	angle_t angle2;
+	float diff;
+	float angle1;
+	float angle2;
 
 	angle1 = source->angles.yaw;
 	angle2 = atan2(target->origin.y - source->origin.y,
 		target->origin.x - source->origin.x);
 	if (angle2 > angle1)
 	{
-		diff = angle2 - angle1;
-		if (diff > ANG180)
+		diff = AngleMod360(angle2 - angle1);
+		if (diff > 180.0)
 		{
-			*delta = ANGLE_MAX - diff;
+			*delta = 360.0 - diff;
 			return 0;
 		}
 		else
@@ -371,10 +371,10 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
 	}
 	else
 	{
-		diff = angle1 - angle2;
-		if (diff > ANG180)
+		diff = AngleMod360(angle1 - angle2);
+		if (diff > 180.0)
 		{
-			*delta = ANGLE_MAX - diff;
+			*delta = 360.0 - diff;
 			return 1;
 		}
 		else
@@ -537,7 +537,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 
 void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 {
-	angle_t angle;
+	float angle;
 	float thrust;
 
 	angle = atan2(target->origin.y - source->origin.y,
@@ -562,7 +562,8 @@ void P_TouchWhirlwind(mobj_t * target)
 {
 	float randVal;
 
-	target->angles.yaw += (P_Random() - P_Random()) << 20;
+	target->angles.yaw = AngleMod360(target->angles.yaw +
+		(Random() - Random()) * 45.0 / 2.0);
 	target->velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	target->velocity.y += (Random() - Random()) * 4.0 * 35.0;
 	if (level->tictime & 16 && !(target->flags2 & MF2_BOSS))
@@ -600,7 +601,7 @@ boolean ChickenMorphPlayer(player_t * player)
 	float x;
 	float y;
 	float z;
-	angle_t angle;
+	float angle;
 	int oldFlags2;
 
 	if (player->chickenTics)
@@ -656,11 +657,11 @@ boolean P_ChickenMorph(mobj_t * actor)
 	mobj_t *fog;
 	mobj_t *chicken;
 	mobj_t *target;
-	int moType;
+	classid moType;
 	float x;
 	float y;
 	float z;
-	angle_t angle;
+	float angle;
 	int ghost;
 
 	if (actor->player)
@@ -690,7 +691,7 @@ boolean P_ChickenMorph(mobj_t * actor)
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
 	chicken = P_SpawnMobj(x, y, z, MT_CHICKEN);
-	chicken->special2 = moType;
+	chicken->specialcid = moType;
 	chicken->special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
 	chicken->translucency = ghost;
 	chicken->target = target;
@@ -1167,7 +1168,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// set color translations for player sprites
 	mobj->translation = p->color;
 
-	mobj->angles.yaw = ANG45 * (mthing->angle / 45);
+	mobj->angles.yaw = itof(45 * (mthing->angle / 45));
 	mobj->player = p;
 	mobj->health = p->health;
 	p->mo = mobj;
@@ -1239,7 +1240,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	// Check for boss spots
 	if (mthing->type == 56)	// Monster_BossSpot
 	{
-		AddBossSpot(mthing->x, mthing->y, ANG45 * (mthing->angle / 45));
+		AddBossSpot(mthing->x, mthing->y, itof(45 * (mthing->angle / 45)));
 		return;
 	}
 
@@ -1284,7 +1285,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	}
 
 	// spawn it
-	switch (i)
+	switch (mobjinfo[i].class_id)
 	{
 		// Special stuff
 	case MT_WSKULLROD:
@@ -1321,7 +1322,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 	}
 
 	mobj = NewMobjThinker(mobjinfo[i].class_id);
-	mobj->type = i;
+	mobj->type = mobjinfo[i].class_id;
 	mobj->OnMapSpawn(mthing);
 }
 
@@ -1396,7 +1397,7 @@ void P_FloorBounceMissile(mobj_t * mo)
 //
 //===========================================================================
 
-void P_ThrustMobj(mobj_t * mo, angle_t angle, float move)
+void P_ThrustMobj(mobj_t * mo, float angle, float move)
 {
 	mo->velocity.x += move * cos(angle) * 35.0;
 	mo->velocity.y += move * sin(angle) * 35.0;
@@ -1482,6 +1483,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.10  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

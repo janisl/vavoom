@@ -108,23 +108,22 @@ void A_WraithLook(mobj_t * actor)
 void A_WraithFX2(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 	int i;
 
 	for (i = 0; i < 2; i++)
 	{
-		mo =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 			MT_WRAITHFX2);
 		if (mo)
 		{
-			if (P_Random() < 128)
+			if (Random() < 0.5)
 			{
-				angle = actor->angles.yaw + (P_Random() << 22);
+				angle = AngleMod360(actor->angles.yaw + Random() * 90.0);
 			}
 			else
 			{
-				angle = actor->angles.yaw - (P_Random() << 22);
+				angle = AngleMod360(actor->angles.yaw - Random() * 90.0);
 			}
 			mo->velocity.z = 0.0;
 			mo->velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
@@ -287,6 +286,9 @@ void A_WraithMissile(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -57,7 +57,7 @@
 void A_FogSpawn(mobj_t * actor)
 {
 	mobj_t *mo = NULL;
-	angle_t delta;
+	float delta;
 
 	if (actor->special1-- > 0)
 		return;
@@ -85,11 +85,11 @@ void A_FogSpawn(mobj_t * actor)
 
 	if (mo)
 	{
-		delta = actor->args[1];
-		if (delta == 0)
-			delta = 1;
-		mo->angles.yaw =
-			actor->angles.yaw + (((P_Random() % delta) - (delta >> 1)) << 24);
+		delta = itof(actor->args[1]);
+		if (delta == 0.0)
+			delta = 1.0;
+		mo->angles.yaw = AngleMod360(actor->angles.yaw +
+			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
 		mo->target = actor;
 		if (actor->args[0] < 1)
 			actor->args[0] = 1;
@@ -109,7 +109,7 @@ void A_FogSpawn(mobj_t * actor)
 void A_FogMove(mobj_t * actor)
 {
 	float speed = itof(actor->args[0]);
-	angle_t angle;
+	float angle;
 	int weaveindex;
 
 	if (!(actor->args[4]))
@@ -136,6 +136,9 @@ void A_FogMove(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -83,7 +83,7 @@ void A_Look(mobj_t * actor)
 
 void A_Chase(mobj_t * actor)
 {
-	int delta;
+	float delta;
 
 	if (actor->reactiontime)
 	{
@@ -116,16 +116,16 @@ void A_Chase(mobj_t * actor)
 	// turn towards movement direction if not there yet
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7 << 29);
-		delta = actor->angles.yaw - (actor->movedir << 29);
+		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
 
-		if (delta > 0)
+		if (delta > 0.0)
 		{
-			actor->angles.yaw -= ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
 		}
-		else if (delta < 0)
+		else if (delta < 0.0)
 		{
-			actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
 		}
 	}
 
@@ -228,7 +228,8 @@ void A_FaceTarget(mobj_t * actor)
 
 	if (actor->target->translucency)
 	{
-		actor->angles.yaw += (P_Random() - P_Random()) << 21;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw +
+			(Random() - Random()) * 45.0);
 	}
 }
 
@@ -359,7 +360,7 @@ void A_Explode(mobj_t * actor)
 //
 //==========================================================================
 
-void P_DropItem(mobj_t * source, int type, int special, int chance)
+void P_DropItem(mobj_t * source, classid type, int special, int chance)
 {
 	mobj_t *mo;
 
@@ -632,6 +633,9 @@ void A_ContMobjSound(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

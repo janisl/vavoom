@@ -214,7 +214,7 @@ void A_SpawnFly(mobj_t * mo)
 	mobj_t *fog;
 	mobj_t *targ;
 	int r;
-	int type;
+	classid type;
 
 	if (--mo->reactiontime)
 		return;	// still flying
@@ -314,6 +314,9 @@ void A_SpawnFly(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

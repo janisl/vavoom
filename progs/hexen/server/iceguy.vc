@@ -44,17 +44,17 @@
 void A_IceGuyLook(mobj_t * actor)
 {
 	float dist;
-	angle_t an;
+	float an;
 
 	A_Look(actor);
 	if (P_Random() < 64)
 	{
 		dist = actor->radius * itof(P_Random() - 128) / 128.0;
-		an = actor->angles.yaw + ANG90;
+		an = AngleMod360(actor->angles.yaw + 90.0);
 
 		P_SpawnMobj(actor->origin.x + dist * cos(an),
 			actor->origin.y + dist * sin(an), actor->origin.z + 60.0,
-			MT_ICEGUY_WISP1 + (P_Random() & 1));
+			P_Random() & 1 ? MT_ICEGUY_WISP2 : MT_ICEGUY_WISP1);
 	}
 }
 
@@ -67,18 +67,18 @@ void A_IceGuyLook(mobj_t * actor)
 void A_IceGuyChase(mobj_t * actor)
 {
 	float dist;
-	angle_t an;
+	float an;
 	mobj_t *mo;
 
 	A_Chase(actor);
 	if (P_Random() < 128)
 	{
 		dist = actor->radius * itof(P_Random() - 128) / 128.0;
-		an = actor->angles.yaw + ANG90;
+		an = AngleMod360(actor->angles.yaw + 90.0);
 
 		mo = P_SpawnMobj(actor->origin.x + dist * cos(an),
 			actor->origin.y + dist * sin(an), actor->origin.z + 60.0,
-			MT_ICEGUY_WISP1 + (P_Random() & 1));
+			P_Random() & 1 ? MT_ICEGUY_WISP2 : MT_ICEGUY_WISP1);
 		if (mo)
 		{
 			mo->velocity.x = actor->velocity.x;
@@ -97,18 +97,18 @@ void A_IceGuyChase(mobj_t * actor)
 
 void A_IceGuyAttack(mobj_t * actor)
 {
-	int an;
+	float an;
 
 	if (!actor->target)
 	{
 		return;
 	}
-	an = actor->angles.yaw + ANG90;
+	an = AngleMod360(actor->angles.yaw + 90.0);
 	SpawnMissileXYZ(actor->origin.x + actor->radius / 2.0 * cos(an),
 		actor->origin.y + actor->radius / 2.0 * sin(an),
 		actor->origin.z + 40.0, actor, actor->target, MT_ICEGUY_FX);
 
-	an = actor->angles.yaw - ANG90;
+	an = AngleMod360(actor->angles.yaw - 90.0);
 	SpawnMissileXYZ(actor->origin.x + actor->radius / 2.0 * cos(an),
 		actor->origin.y + actor->radius / 2.0 * sin(an),
 		actor->origin.z + 40.0, actor, actor->target, MT_ICEGUY_FX);
@@ -126,8 +126,7 @@ void A_IceGuyMissilePuff(mobj_t * actor)
 {
 	mobj_t *mo;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 2.0,
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 2.0,
 		MT_ICEFX_PUFF);
 }
 
@@ -144,7 +143,7 @@ void A_IceGuyMissileExplode(mobj_t * actor)
 
 	for (i = 0; i < 8; i++)
 	{
-		mo = SpawnMissileAngle(actor, MT_ICEGUY_FX2, i * ANG45, -0.3);
+		mo = SpawnMissileAngle(actor, MT_ICEGUY_FX2, itof(i) * 45.0, -0.3);
 		if (mo)
 		{
 			mo->target = actor->target;
@@ -170,6 +169,9 @@ void A_IceGuyDie(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

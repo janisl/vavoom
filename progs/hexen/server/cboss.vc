@@ -63,9 +63,9 @@ void A_ClassBossHealth(mobj_t * actor)
 
 void A_FastChase(mobj_t * actor)
 {
-	int delta;
+	float delta;
 	float dist;
-	angle_t ang;
+	float ang;
 	mobj_t *target;
 
 	if (actor->reactiontime)
@@ -94,15 +94,15 @@ void A_FastChase(mobj_t * actor)
 	//
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7 << 29);
-		delta = actor->angles.yaw - (actor->movedir << 29);
-		if (delta > 0)
+		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		if (delta > 0.0)
 		{
-			actor->angles.yaw -= ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
 		}
-		else if (delta < 0)
+		else if (delta < 0.0)
 		{
-			actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
 		}
 	}
 
@@ -145,9 +145,9 @@ void A_FastChase(mobj_t * actor)
 				ang = atan2(target->origin.y - actor->origin.y,
 					target->origin.x - actor->origin.x);
 				if (P_Random() < 128)
-					ang += ANG90;
+					ang = AngleMod360(ang + 90.0);
 				else
-					ang -= ANG90;
+					ang = AngleMod360(ang - 90.0);
 				actor->velocity.x = 13.0 * cos(ang) * 35.0;
 				actor->velocity.y = 13.0 * sin(ang) * 35.0;
 				actor->special2 = 3;	// strafe time
@@ -200,13 +200,13 @@ void A_FastChase(mobj_t * actor)
 
 void A_FSwordAttack2(mobj_t * actor)
 {
-	angle_t angle = actor->angles.yaw;
+	float angle = actor->angles.yaw;
 
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle + ANG45 / 4, 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle + ANG45 / 8, 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle + 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle + 45.0 / 8.0), 0.0);
 	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle, 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle - ANG45 / 8, 0.0);
-	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, angle - ANG45 / 4, 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle - 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(actor, MT_FSWORD_MISSILE, AngleMod360(angle - 45.0 / 4.0), 0.0);
 	StartSoundName(actor, "FighterSwordFire", CHAN_WEAPON);
 }
 
@@ -255,7 +255,7 @@ void A_ClericAttack(mobj_t * actor)
 //
 //============================================================================
 
-void MStaffSpawn2(mobj_t * actor, angle_t angle)
+void MStaffSpawn2(mobj_t * actor, float angle)
 {
 	mobj_t *mo;
 
@@ -275,12 +275,12 @@ void MStaffSpawn2(mobj_t * actor, angle_t angle)
 
 void A_MStaffAttack2(mobj_t * actor)
 {
-	angle_t angle;
+	float angle;
 
 	angle = actor->angles.yaw;
 	MStaffSpawn2(actor, angle);
-	MStaffSpawn2(actor, angle - ANGLE_1 * 5);
-	MStaffSpawn2(actor, angle + ANGLE_1 * 5);
+	MStaffSpawn2(actor, AngleMod360(angle - 5.0));
+	MStaffSpawn2(actor, AngleMod360(angle + 5.0));
 	StartSoundName(actor, "MageStaffFire", CHAN_WEAPON);
 }
 
@@ -300,6 +300,9 @@ void A_MageAttack(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -390,7 +390,7 @@ boolean CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TBAMVec * angles)
+void BulletSlope(mobj_t * mo, TAVec * angles)
 {
 	//
 	// see which target is to be aimed at
@@ -402,15 +402,15 @@ void BulletSlope(mobj_t * mo, TBAMVec * angles)
 	AimLineAttack(mo, angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles->yaw += 1 << 26;
+		angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 		AimLineAttack(mo, angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles->yaw -= 2 << 26;
+			angles->yaw = AngleMod360(angles->yaw - 45.0 / 4.0);
 			AimLineAttack(mo, angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles->yaw += 1 << 26;
+				angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 			}
 		}
 	}
@@ -538,7 +538,7 @@ void A_WeaponReady(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	int angle;
+	float angle;
 
 	if (player->chickenTics)
 	{
@@ -589,9 +589,12 @@ void A_WeaponReady(mobj_t * actor)
 	}
 
 	// Bob the weapon based on movement speed.
-	angle = (ANG90 >> 4) * level->tictime;
+	angle = AngleMod360(180.0 * level->time);
 	psp->sx = 1.0 + player->bob * cos(angle);
-	angle &= 0x7fffffff;
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
 	psp->sy = WEAPONTOP + player->bob * sin(angle);
 }
 
@@ -766,13 +769,14 @@ void A_Light0(mobj_t * actor)
 void A_StaffAttackPL1(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TBAMVec angles;
+	TAVec angles;
 	int damage;
 	TVec vforward;
 
 	damage = 5 + (P_Random() & 15);
 	avcpy(player->mo->angles, angles);
-	angles.yaw += (P_Random() - P_Random()) << 18;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	PuffType = MT_STAFFPUFF;
@@ -796,7 +800,7 @@ void A_StaffAttackPL1(mobj_t * actor)
 void A_StaffAttackPL2(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TBAMVec angles;
+	TAVec angles;
 	int damage;
 	TVec vforward;
 
@@ -804,7 +808,8 @@ void A_StaffAttackPL2(mobj_t * actor)
 	damage = 18 + (P_Random() & 63);
 
 	avcpy(player->mo->angles, angles);
-	angles.yaw += (P_Random() - P_Random()) << 18;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	PuffType = MT_STAFFPUFF2;
@@ -830,29 +835,31 @@ void A_GauntletAttack(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	angle_t angle;
+	float angle;
 	int damage;
 	float slope;
 	int randVal;
 	float dist;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	psp->sx = Random() * 4.0 - 2.0;
 	psp->sy = WEAPONTOP + Random() * 4.0;
-	avcpy(player->mo->angles, angles);
+	angles = player->mo->angles;
 	if (player->powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
-		angles.yaw += (P_Random() - P_Random()) << 17;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 16.0);
 		PuffType = MT_GAUNTLETPUFF2;
 	}
 	else
 	{
 		damage = HITDICE(2);
 		dist = MELEERANGE + 0.00001;
-		angles.yaw += (P_Random() - P_Random()) << 18;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = MT_GAUNTLETPUFF1;
 	}
 	AimLineAttack(player->mo, &angles, dist);
@@ -892,19 +899,19 @@ void A_GauntletAttack(mobj_t * actor)
 	// turn to face target
 	angle = atan2(linetarget->origin.y - player->mo->origin.y,
 		linetarget->origin.x - player->mo->origin.x);
-	if (angle - player->mo->angles.yaw > ANG180)
+	if (AngleMod360(angle - player->mo->angles.yaw) > 180.0)
 	{
-		if (angle - player->mo->angles.yaw < -ANG90 / 20)
-			player->mo->angles.yaw = angle + ANG90 / 21;
+		if (AngleMod360(angle - player->mo->angles.yaw) < 360.0 - 90.0 / 20.0)
+			player->mo->angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			player->mo->angles.yaw -= ANG90 / 20;
+			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (angle - player->mo->angles.yaw > ANG90 / 20)
-			player->mo->angles.yaw = angle - ANG90 / 21;
+		if (AngleMod360(angle - player->mo->angles.yaw) > 90.0 / 20.0)
+			player->mo->angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			player->mo->angles.yaw += ANG90 / 20;
+			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw + 90.0 / 20.0);
 	}
 	player->mo->flags |= MF_JUSTATTACKED;
 }
@@ -920,7 +927,7 @@ void A_FireGoldWandPL1(mobj_t * actor)
 	player_t *player = actor->player;
 	mobj_t *mo;
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -929,7 +936,8 @@ void A_FireGoldWandPL1(mobj_t * actor)
 	BulletSlope(mo, &angles);
 	if (player->refire)
 	{
-		angles.yaw += (P_Random() - P_Random()) << 18;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
 	}
 	AngleVector(&angles, &vforward);
 	PuffType = MT_GOLDWANDPUFF1;
@@ -950,7 +958,7 @@ void A_FireGoldWandPL2(mobj_t * actor)
 	mobj_t *mo;
 	int damage;
 	float momz;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -958,17 +966,17 @@ void A_FireGoldWandPL2(mobj_t * actor)
 		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	PuffType = MT_GOLDWANDPUFF2;
 	BulletSlope(mo, &angles);
-	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw - (ANG45 / 8),
-		angles.pitch);
-	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw + (ANG45 / 8),
-		angles.pitch);
-	angles.yaw -= (ANG45 / 8);
+	SpawnMissileAngles(mo, MT_GOLDWANDFX2,
+		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
+	SpawnMissileAngles(mo, MT_GOLDWANDFX2,
+		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
+	angles.yaw = AngleMod360(angles.yaw - (45.0 / 8.0));
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
 		AngleVector(&angles, &vforward);
 		LineAttack(mo, &vforward, MISSILERANGE, damage);
-		angles.yaw += ((ANG45 / 8) * 2) / 4;
+		angles.yaw = AngleMod360(angles.yaw + (((45.0 / 8.0) * 2.0) / 4.0));
 	}
 	StartSoundName(player->mo, "GoldWandFire", CHAN_WEAPON);
 }
@@ -987,8 +995,10 @@ void A_FireCrossbowPL1(mobj_t * actor)
 	pmo = player->mo;
 	player->ammo[am_crossbow] -= USE_CBOW_AMMO_1;
 	SpawnPlayerMissile(pmo, MT_CRBOWFX1);
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw - (ANG45 / 10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw + (ANG45 / 10));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3,
+		AngleMod360(pmo->angles.yaw - (45.0 / 10.0)));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3,
+		AngleMod360(pmo->angles.yaw + (45.0 / 10.0)));
 }
 
 //===========================================================================
@@ -1006,10 +1016,14 @@ void A_FireCrossbowPL2(mobj_t * actor)
 	player->ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
 	SpawnPlayerMissile(pmo, MT_CRBOWFX2);
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw - (ANG45 / 10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw + (ANG45 / 10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw - (ANG45 / 5));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw + (ANG45 / 5));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2,
+		AngleMod360(pmo->angles.yaw - (45.0 / 10.0)));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2,
+		AngleMod360(pmo->angles.yaw + (45.0 / 10.0)));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3,
+		AngleMod360(pmo->angles.yaw - (45.0 / 5.0)));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3,
+		AngleMod360(pmo->angles.yaw + (45.0 / 5.0)));
 }
 
 //===========================================================================
@@ -1024,7 +1038,7 @@ void A_FireBlasterPL1(mobj_t * actor)
 	mobj_t *mo;
 	int damage;
 	float bulletslope;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	mo = player->mo;
@@ -1034,7 +1048,8 @@ void A_FireBlasterPL1(mobj_t * actor)
 	damage = HITDICE(4);
 	if (player->refire)
 	{
-		angles.yaw += (P_Random() - P_Random()) << 18;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = MT_BLASTERPUFF1;
 	AngleVector(&angles, &vforward);
@@ -1219,7 +1234,7 @@ void A_FireMacePL1B(mobj_t * actor)
 	player_t *player = actor->player;
 	mobj_t *pmo;
 	mobj_t *ball;
-	angle_t angle;
+	float angle;
 
 	if (player->ammo[am_mace] < USE_MACE_AMMO_1)
 	{
@@ -1265,9 +1280,8 @@ void A_FireMacePL1(mobj_t * actor)
 	player->ammo[am_mace] -= USE_MACE_AMMO_1;
 	psp->sx = Random() * 4.0 - 2.0;
 	psp->sy = WEAPONTOP + Random() * 4.0;
-	ball =
-		SpawnPlayerMissileAngle(player->mo, MT_MACEFX1,
-		player->mo->angles.yaw + (((P_Random() & 7) - 4) << 24));
+	ball = SpawnPlayerMissileAngle(player->mo, MT_MACEFX1,
+		AngleMod360(player->mo->angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
 		ball->special1 = 16;	// tics till dropoff
@@ -1312,7 +1326,7 @@ void A_BeakAttackPL1(mobj_t * actor)
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 1 + (P_Random() & 3);
@@ -1345,7 +1359,7 @@ void A_BeakAttackPL2(mobj_t * actor)
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = HITDICE(4);
@@ -1385,8 +1399,7 @@ void A_BoltSpark(mobj_t * bolt)
 
 	if (P_Random() > 50)
 	{
-		spark =
-			P_SpawnMobj(bolt->origin.x, bolt->origin.y, bolt->origin.z,
+		spark = P_SpawnMobj(bolt->origin.x, bolt->origin.y, bolt->origin.z,
 			MT_CRBOWFX4);
 		spark->origin.x += (Random() - Random()) * 4.0;
 		spark->origin.y += (Random() - Random()) * 4.0;
@@ -1402,15 +1415,14 @@ void A_BoltSpark(mobj_t * bolt)
 void A_SpawnRippers(mobj_t * actor)
 {
 	int i;
-	angle_t angle;
+	float angle;
 	mobj_t *ripper;
 
 	for (i = 0; i < 8; i++)
 	{
-		ripper =
-			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
-			MT_RIPPER);
-		angle = i * ANG45;
+		ripper = P_SpawnMobj(actor->origin.x, actor->origin.y,
+			actor->origin.z, MT_RIPPER);
+		angle = itof(i) * 45.0;
 		ripper->target = actor->target;
 		ripper->angles.yaw = angle;
 		ripper->velocity.x = ripper->speed * cos(angle);
@@ -1427,7 +1439,7 @@ void A_SpawnRippers(mobj_t * actor)
 
 void A_SkullRodPL2Seek(mobj_t * actor)
 {
-	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 30);
+	P_SeekerMissile(actor, 10.0, 30.0);
 }
 
 //===========================================================================
@@ -1497,6 +1509,7 @@ void A_SkullRodStorm(mobj_t * actor)
 	mobj_t *mo;
 	int playerNum;
 	player_t *player;
+	classid rain_type;
 
 	if (actor->health-- == 0)
 	{
@@ -1530,7 +1543,14 @@ void A_SkullRodStorm(mobj_t * actor)
 	}
 	x = actor->origin.x + Random() * 128.0 - 64.0;
 	y = actor->origin.y + Random() * 128.0 - 64.0;
-	mo = P_SpawnMobj(x, y, ONCEILINGZ, MT_RAINPLR1 + actor->special2);
+	switch (actor->special2)
+	{
+	case 0: rain_type = MT_RAINPLR1; break;
+	case 1: rain_type = MT_RAINPLR2; break;
+	case 2: rain_type = MT_RAINPLR3; break;
+	case 3: rain_type = MT_RAINPLR4; break;
+	}
+	mo = P_SpawnMobj(x, y, ONCEILINGZ, rain_type);
 	mo->target = actor->target;
 	mo->velocity.x = 0.00001;	// Force collision detection
 	mo->velocity.z = -mo->speed;
@@ -1581,20 +1601,18 @@ void A_HideInCeiling(mobj_t * actor)
 void A_PhoenixPuff(mobj_t * actor)
 {
 	mobj_t *puff;
-	angle_t angle;
+	float angle;
 
-	P_SeekerMissile(actor, ANGLE_1 * 5, ANGLE_1 * 10);
-	puff =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+	P_SeekerMissile(actor, 5.0, 10.0);
+	puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 		MT_PHOENIXPUFF);
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	puff->velocity.x = 1.3 * cos(angle) * 35.0;
 	puff->velocity.y = 1.3 * sin(angle) * 35.0;
 	puff->velocity.z = 0.0;
-	puff =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+	puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 		MT_PHOENIXPUFF);
-	angle = actor->angles.yaw - ANG90;
+	angle = AngleMod360(actor->angles.yaw - 90.0);
 	puff->velocity.x = 1.3 * cos(angle) * 35.0;
 	puff->velocity.y = 1.3 * sin(angle) * 35.0;
 	puff->velocity.z = 0.0;
@@ -1630,7 +1648,7 @@ void A_FloatPuff(mobj_t * puff)
 
 void A_MacePL1Check(mobj_t * ball)
 {
-	int angle;
+	float angle;
 
 	if (ball->special1 == 0)
 	{
@@ -1691,7 +1709,7 @@ void A_MaceBallImpact(mobj_t * ball)
 void A_MaceBallImpact2(mobj_t * ball)
 {
 	mobj_t *tiny;
-	angle_t angle;
+	float angle;
 
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1712,10 +1730,9 @@ void A_MaceBallImpact2(mobj_t * ball)
 		ball->velocity.z = ball->velocity.z * 192.0 / 256.0;
 		SetMobjState(ball, ball->spawnstate);
 
-		tiny =
-			P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
+		tiny = P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
 			MT_MACEFX3);
-		angle = ball->angles.yaw + ANG90;
+		angle = AngleMod360(ball->angles.yaw + 90.0);
 		tiny->target = ball->target;
 		tiny->angles.yaw = angle;
 		tiny->velocity.x =
@@ -1725,10 +1742,9 @@ void A_MaceBallImpact2(mobj_t * ball)
 		tiny->velocity.z = ball->velocity.z;
 		CheckMissileSpawn(tiny);
 
-		tiny =
-			P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
+		tiny = P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
 			MT_MACEFX3);
-		angle = ball->angles.yaw - ANG90;
+		angle = AngleMod360(ball->angles.yaw - 90.0);
 		tiny->target = ball->target;
 		tiny->angles.yaw = angle;
 		tiny->velocity.x =
@@ -1750,9 +1766,9 @@ void A_DeathBallImpact(mobj_t * ball)
 {
 	int i;
 	mobj_t *target;
-	angle_t angle;
+	float angle;
 	int newAngle;
-	TBAMVec angles;
+	TAVec angles;
 
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1783,9 +1799,9 @@ void A_DeathBallImpact(mobj_t * ball)
 		else
 		{
 			// Find new target
-			angles.pitch = 0;
-			angles.yaw = 0;
-			angles.roll = 0;
+			angles.pitch = 0.0;
+			angles.yaw = 0.0;
+			angles.roll = 0.0;
 			for (i = 0; i < 16; i++)
 			{
 				AimLineAttack(ball, &angles, 10.0 * 64.0);
@@ -1797,7 +1813,7 @@ void A_DeathBallImpact(mobj_t * ball)
 					newAngle = true;
 					break;
 				}
-				angles.yaw += ANG45 / 2;
+				angles.yaw = AngleMod360(angles.yaw + 45.0 / 2.0);
 			}
 		}
 		if (newAngle)
@@ -1820,6 +1836,9 @@ void A_DeathBallImpact(mobj_t * ball)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.7  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

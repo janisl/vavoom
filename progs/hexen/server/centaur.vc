@@ -150,25 +150,23 @@ void A_CentaurDefend(mobj_t * actor)
 void A_CentaurDropStuff(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
 		MT_CENTAUR_SHIELD);
 	if (mo)
 	{
-		angle = actor->angles.yaw + ANG90;
+		angle = AngleMod360(actor->angles.yaw + 90.0);
 		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
 		mo->target = actor;
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
 		MT_CENTAUR_SWORD);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
@@ -197,6 +195,9 @@ void A_CheckFloor(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

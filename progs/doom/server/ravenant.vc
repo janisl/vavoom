@@ -110,13 +110,16 @@ void A_SkelMissile(mobj_t * actor)
 //
 //==========================================================================
 
-#define TRACEANGLE	0xc000000
 #define TRACEADJUST	0.2865921825
 
 void A_Tracer(mobj_t * actor)
 {
 	mobj_t *dest;
 	mobj_t *th;
+	TVec wishdir;
+	TVec currdir;
+	TVec delta;
+	float adjustlen;
 
 	if (level->tictime & 3)
 		return;
@@ -139,69 +142,15 @@ void A_Tracer(mobj_t * actor)
 	if (!dest || dest->health <= 0)
 		return;
 
-#if 0
-	{
-		angle_t exact;
-		float dist;
-		float slope;
-
-		// change angle 
-		exact =
-			PointToAngle(actor->origin.x, actor->origin.y, dest->origin.x,
-			dest->origin.y);
-
-		if (exact != actor->angles.yaw)
-		{
-			if (exact - actor->angles.yaw > ANG180)
-			{
-				actor->angles.yaw -= TRACEANGLE;
-				if (exact - actor->angles.yaw < ANG180)
-					actor->angles.yaw = exact;
-			}
-			else
-			{
-				actor->angles.yaw += TRACEANGLE;
-				if (exact - actor->angles.yaw > ANG180)
-					actor->angles.yaw = exact;
-			}
-		}
-
-		exact = actor->angles.yaw;
-		actor->velocity.x = actor->info->speed * cos(exact);
-		actor->velocity.y = actor->info->speed * sin(exact);
-
-		// change slope
-		dist = MobjDist2(dest, actor);
-
-		dist = dist / actor->info->speed;
-
-		if (dist < 1.0)
-			dist = 1.0;
-		slope = (dest->origin.z + 40.0 - actor->origin.z) / dist;
-
-		if (slope < actor->velocity.z)
-			actor->velocity.z -= 0.125 * 35.0;
-		else
-			actor->velocity.z += 0.125 * 35.0;
-	}
-#else
-	{
-		TVec wishdir;
-		TVec currdir;
-		TVec delta;
-		float adjustlen;
-
-		wishdir = Normalize(MobjCenter(dest) - actor->origin);
-		currdir = Normalize(actor->velocity);
-		delta = wishdir - currdir;
-		adjustlen = Length(delta);
-		if (adjustlen > TRACEADJUST)
-			adjustlen = TRACEADJUST;
-		wishdir = currdir + delta * adjustlen;
-		actor->velocity = wishdir * actor->speed;
-		VectorAngles(&wishdir, &actor->angles);
-	}
-#endif
+	wishdir = Normalize(MobjCenter(dest) - actor->origin);
+	currdir = Normalize(actor->velocity);
+	delta = wishdir - currdir;
+	adjustlen = Length(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	wishdir = currdir + delta * adjustlen;
+	actor->velocity = wishdir * actor->speed;
+	VectorAngles(&wishdir, &actor->angles);
 }
 
 #else
@@ -231,6 +180,9 @@ void A_Tracer(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

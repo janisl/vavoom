@@ -599,8 +599,10 @@ static void RenderSprite(clmobj_t *thing)
 	{
 		// choose a different rotation based on player view
 		//FIXME must use sprforward here?
-		angle_t ang = bam_matan(thing->origin.y - vieworg.y, thing->origin.x - vieworg.x);
-		dword rot = (ang - DEG2BAM(thing->angles.yaw) + (unsigned)(ANG45 / 2) * 9) >> 29;
+		float ang = matan(thing->origin.y - vieworg.y,
+			thing->origin.x - vieworg.x);
+		dword rot = (dword)((ang - thing->angles.yaw + 180.0 + 45.0 / 2.0)
+			* 8 / 360.0) & 7;
 		lump = sprframe->lump[rot];
 		flip = (boolean)sprframe->flip[rot];
 	}
@@ -1139,9 +1141,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.8  2001/08/31 17:28:47  dj_jl
 //	Tried to fix weapon model position when dead
 //	

@@ -388,15 +388,43 @@ static void PF_SetCvarS(void)
 
 //==========================================================================
 //
+//	PF_AngleMod360
+//
+//==========================================================================
+
+PF(AngleMod360)
+{
+	float an;
+
+	an = Popf();
+	Pushf(AngleMod(an));
+}
+
+//==========================================================================
+//
+//	PF_AngleMod180
+//
+//==========================================================================
+
+PF(AngleMod180)
+{
+	float an;
+
+	an = Popf();
+	Pushf(AngleMod180(an));
+}
+
+//==========================================================================
+//
 //	PF_sin
 //
 //==========================================================================
 
-static void PF_sin(void)
+PF(sin)
 {
-	angle_t		an;
+	float an;
 
-    an = Pop();
+    an = Popf();
     Pushf(msin(an));
 }
 
@@ -406,11 +434,11 @@ static void PF_sin(void)
 //
 //==========================================================================
 
-static void PF_cos(void)
+PF(cos)
 {
-	angle_t		an;
+	float an;
 
-	an = Pop();
+	an = Popf();
     Pushf(mcos(an));
 }
 
@@ -420,11 +448,11 @@ static void PF_cos(void)
 //
 //==========================================================================
 
-static void PF_tan(void)
+PF(tan)
 {
-	angle_t		an;
+	float an;
 
-	an = Pop();
+	an = Popf();
     Pushf(mtan(an));
 }
 
@@ -434,12 +462,12 @@ static void PF_tan(void)
 //
 //==========================================================================
 
-static void PF_atan(void)
+PF(atan)
 {
 	float	slope;
 
 	slope = Popf();
-    Push(RAD2BAM(atan(slope)));
+    Pushf(RAD2DEG(atan(slope)));
 }
 
 //==========================================================================
@@ -448,14 +476,14 @@ static void PF_atan(void)
 //
 //==========================================================================
 
-static void PF_atan2(void)
+PF(atan2)
 {
 	float	y;
 	float	x;
 
 	x = Popf();
 	y = Popf();
-    Push(bam_matan(y, x));
+    Pushf(matan(y, x));
 }
 
 //==========================================================================
@@ -464,7 +492,7 @@ static void PF_atan2(void)
 //
 //==========================================================================
 
-static void PF_Length(void)
+PF(Length)
 {
 	TVec		vec;
 
@@ -478,7 +506,7 @@ static void PF_Length(void)
 //
 //==========================================================================
 
-static void PF_Normalize(void)
+PF(Normalize)
 {
 	TVec		vec;
 
@@ -492,7 +520,7 @@ static void PF_Normalize(void)
 //
 //==========================================================================
 
-static void PF_DotProduct(void)
+PF(DotProduct)
 {
 	TVec	v1;
 	TVec	v2;
@@ -508,7 +536,7 @@ static void PF_DotProduct(void)
 //
 //==========================================================================
 
-static void PF_CrossProduct(void)
+PF(CrossProduct)
 {
 	TVec	v1;
 	TVec	v2;
@@ -524,9 +552,9 @@ static void PF_CrossProduct(void)
 //
 //==========================================================================
 
-static void PF_AngleVectors(void)
+PF(AngleVectors)
 {
-	TBAMVec		*angles;
+	TAVec		*angles;
 	TVec		*vforward;
 	TVec		*vright;
 	TVec		*vup;
@@ -534,7 +562,7 @@ static void PF_AngleVectors(void)
 	vup = (TVec*)Pop();
 	vright = (TVec*)Pop();
 	vforward = (TVec*)Pop();
-	angles = (TBAMVec*)Pop();
+	angles = (TAVec*)Pop();
 	AngleVectors(*angles, *vforward, *vright, *vup);
 }
 
@@ -545,22 +573,6 @@ static void PF_AngleVectors(void)
 //==========================================================================
 
 PF(AngleVector)
-{
-	TBAMVec		*angles;
-	TVec		*vec;
-
-	vec = (TVec*)Pop();
-	angles = (TBAMVec*)Pop();
-	AngleVector(*angles, *vec);
-}
-
-//==========================================================================
-//
-//	PF_fAngleVector
-//
-//==========================================================================
-
-PF(fAngleVector)
 {
 	TAVec		*angles;
 	TVec		*vec;
@@ -576,12 +588,12 @@ PF(fAngleVector)
 //
 //==========================================================================
 
-static void PF_VectorAngles(void)
+PF(VectorAngles)
 {
 	TVec		*vec;
-	TBAMVec		*angles;
+	TAVec		*angles;
 
-	angles = (TBAMVec*)Pop();
+	angles = (TAVec*)Pop();
 	vec = (TVec*)Pop();
 	VectorAngles(*vec, *angles);
 }
@@ -997,6 +1009,34 @@ PF(MSG_ReadLong)
 
 	net_msg >> l;
 	Push(l);
+}
+
+//==========================================================================
+//
+//	PF_Spawn
+//
+//==========================================================================
+
+PF(Spawn)
+{
+	int cid;
+
+	cid = Pop();
+	Push((int)svpr.Spawn(cid, PU_LEVSPEC));
+}
+
+//==========================================================================
+//
+//	PF_Destroy
+//
+//==========================================================================
+
+PF(Destroy)
+{
+	ClassBase *ptr;
+
+	ptr = (ClassBase *)Pop();
+	svpr.Destroy(ptr);
 }
 
 #ifdef SERVER
@@ -1515,12 +1555,12 @@ static void PF_PO_MovePolyobj(void)
 //
 //==========================================================================
 
-static void PF_PO_RotatePolyobj(void)
+PF(PO_RotatePolyobj)
 {
-	int 	num;
-	angle_t angle;
+	int num;
+	float angle;
 
-	angle = Pop();
+	angle = Popf();
     num = Pop();
 	Push(PO_RotatePolyobj(num, angle));
 }
@@ -2158,34 +2198,6 @@ static void	PF_SendCeilingSlope(void)
 			<< sector->ceiling.normal.y
 			<< sector->ceiling.normal.z
 			<< sector->ceiling.dist;
-}
-
-//==========================================================================
-//
-//	PF_Spawn
-//
-//==========================================================================
-
-PF(Spawn)
-{
-	int cid;
-
-	cid = Pop();
-	Push((int)svpr.Spawn(cid, PU_LEVSPEC));
-}
-
-//==========================================================================
-//
-//	PF_Destroy
-//
-//==========================================================================
-
-PF(Destroy)
-{
-	ClassBase *ptr;
-
-	ptr = (ClassBase *)Pop();
-	svpr.Destroy(ptr);
 }
 #endif
 #ifdef CLIENT
@@ -2884,19 +2896,20 @@ builtin_info_t BuiltinInfo[] =
     {"SetCvarS", PF_SetCvarS},
 
 	//	Math functions
-	{"sin", PF_sin},
-	{"cos", PF_cos},
-	{"tan", PF_tan},
-	{"atan", PF_atan},
-	{"atan2", PF_atan2},
-	{"Normalize", PF_Normalize},
-	{"Length", PF_Length},
-	{"DotProduct", PF_DotProduct},
-	{"CrossProduct", PF_CrossProduct},
-	{"AngleVectors", PF_AngleVectors},
-	{"AngleVector", PF_AngleVector},
-	_(fAngleVector),
-	{"VectorAngles", PF_VectorAngles},
+	_(AngleMod360),
+	_(AngleMod180),
+	_(sin),
+	_(cos),
+	_(tan),
+	_(atan),
+	_(atan2),
+	_(Normalize),
+	_(Length),
+	_(DotProduct),
+	_(CrossProduct),
+	_(AngleVectors),
+	_(AngleVector),
+	_(VectorAngles),
 
 	//	String functions
 	{"ptrtos", PF_ptrtos},
@@ -2943,6 +2956,8 @@ builtin_info_t BuiltinInfo[] =
 	{"CmdBuf_AddText", PF_CmdBuf_AddText},
 	{"Info_ValueForKey", PF_Info_ValueForKey},
 	_(WadLumpPresent),
+	_(Spawn),
+	_(Destroy),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3074,8 +3089,6 @@ builtin_info_t BuiltinInfo[] =
 	{"SetLineTransluc", PF_SetLineTransluc},
 	{"SendFloorSlope", PF_SendFloorSlope},
 	{"SendCeilingSlope", PF_SendCeilingSlope},
-	_(Spawn),
-	_(Destroy),
 #endif
     {NULL, NULL}
 };
@@ -3083,9 +3096,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.17  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.16  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

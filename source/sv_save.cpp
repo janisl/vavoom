@@ -174,17 +174,6 @@ static void StreamOutWord(word val)
 //
 //==========================================================================
 
-static void StreamOutLong(unsigned int val)
-{
-	Sys_FileWrite(SavingFP, &val, sizeof(int));
-}
-
-//==========================================================================
-//
-//	StreamOutLong
-//
-//==========================================================================
-
 static void StreamOutLong(int val)
 {
 	Sys_FileWrite(SavingFP, &val, sizeof(int));
@@ -340,11 +329,19 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 int GetMobjNum(mobj_t *mobj)
 {
-	if (!mobj || mobj->destroyed || (mobj->player && !SavingPlayers))
+	try
 	{
-		return MOBJ_NULL;
+		if (!mobj || mobj->destroyed || (mobj->player && !SavingPlayers))
+		{
+			return MOBJ_NULL;
+		}
+		return mobj->netID;
 	}
-	return mobj->netID;
+	catch (...)
+	{
+		dprintf("- GetMobjNum %p\n", mobj);
+		throw;
+	}
 }
 
 //==========================================================================
@@ -487,7 +484,7 @@ static void ArchiveWorld(void)
 	//
 	for (i = 0; i < level.numpolyobjs; i++)
 	{
-		StreamOutLong(level.polyobjs[i].angle);
+		StreamOutFloat(level.polyobjs[i].angle);
 		StreamOutFloat(level.polyobjs[i].startSpot.x);
 		StreamOutFloat(level.polyobjs[i].startSpot.y);
   	}
@@ -623,7 +620,7 @@ static void UnarchiveWorld(void)
 	//
 	for(i = 0; i < level.numpolyobjs; i++)
 	{
-		PO_RotatePolyobj(level.polyobjs[i].tag, (angle_t)GET_LONG);
+		PO_RotatePolyobj(level.polyobjs[i].tag, GET_FLOAT);
 		deltaX = GET_FLOAT - level.polyobjs[i].startSpot.x;
 		deltaY = GET_FLOAT - level.polyobjs[i].startSpot.y;
 		PO_MovePolyobj(level.polyobjs[i].tag, deltaX, deltaY);
@@ -1299,9 +1296,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.10  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
-//
+//	
 //	Revision 1.9  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	

@@ -27,7 +27,7 @@
 
 int BossSpotCount;
 TVec BossSpot[MAX_BOSS_SPOTS];
-angle_t BossSpot_angle[MAX_BOSS_SPOTS];
+float BossSpot_angle[MAX_BOSS_SPOTS];
 
 int opposite[] = {
 	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST, DI_EAST, DI_NORTHEAST,
@@ -55,7 +55,7 @@ void InitMonsters(void)
 //
 //==========================================================================
 
-void AddBossSpot(float x, float y, angle_t angle)
+void AddBossSpot(float x, float y, float angle)
 {
 	if (BossSpotCount == MAX_BOSS_SPOTS)
 	{
@@ -202,8 +202,8 @@ int UpdateChicken(mobj_t * actor, int tics)
 	float x;
 	float y;
 	float z;
-	int moType;
-	angle_t angle;
+	classid moType;
+	float angle;
 	int flags;
 	int health;
 	mobj_t *target;
@@ -214,7 +214,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 	{
 		return false;
 	}
-	moType = actor->special2;
+	moType = actor->specialcid;
 	x = actor->origin.x;
 	y = actor->origin.y;
 	z = actor->origin.z;
@@ -234,7 +234,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 		mo->health = health;
 		mo->target = target;
 		mo->special1 = 5 * 35;	// Next try in 5 seconds
-		mo->special2 = moType;
+		mo->specialcid = moType;
 		return false;
 	}
 	mo->angles.yaw = angle;
@@ -328,7 +328,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 	int stop;
 	player_t *player;
 	sector_t *sector;
-	angle_t an;
+	float an;
 	float dist;
 
 	if (!netgame && players[0].spawned && players[0].health <= 0)
@@ -359,9 +359,9 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = atan2(player->mo->origin.y - actor->origin.y,
-				player->mo->origin.x - actor->origin.x) - actor->angles.yaw;
-			if (an > ANG90 && an < ANG270)
+			an = AngleMod360(atan2(player->mo->origin.y - actor->origin.y,
+				player->mo->origin.x - actor->origin.x) - actor->angles.yaw);
+			if (an > 90.0 && an < 270.0)
 			{
 				dist = MobjDist(player->mo, actor);
 				// if real close, react anyway
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

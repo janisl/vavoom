@@ -50,7 +50,8 @@ void A_LeafSpawn(mobj_t * actor)
 	{
 		mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 64.0,
 			actor->origin.y + (Random() - Random()) * 64.0,
-			actor->origin.z + Random() * 64.0, MT_LEAF1 + (P_Random() & 1));
+			actor->origin.z + Random() * 64.0,
+			P_Random() & 1 ? MT_LEAF2 : MT_LEAF1);
 		if (mo)
 		{
 			P_ThrustMobj(mo, actor->angles.yaw, Random() * 2.0 + 3.0);
@@ -129,6 +130,9 @@ void A_TreeDeath(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

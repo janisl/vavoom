@@ -644,9 +644,9 @@ void CL_SendMove(void)
 	    mousex = mousey = 0;
 		msg.Clear();
 		msg << (byte)clc_move
-			<< (byte)(DEG2BAM(cl.viewangles.yaw) >> 24)
-			<< (byte)(DEG2BAM(cl.viewangles.pitch) >> 24)
-			<< (byte)(DEG2BAM(cl.viewangles.roll) >> 24)
+			<< (byte)(AngleToByte(cl.viewangles.yaw))
+			<< (byte)(AngleToByte(cl.viewangles.pitch))
+			<< (byte)(AngleToByte(cl.viewangles.roll))
 			<< cmd.forwardmove
 			<< cmd.sidemove
 			<< cmd.flymove
@@ -724,9 +724,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.4  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

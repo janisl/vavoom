@@ -83,7 +83,7 @@ void A_Look(mobj_t * actor)
 
 void A_Chase(mobj_t * actor)
 {
-	int delta;
+	float delta;
 
 	if (actor->reactiontime)
 	{
@@ -116,16 +116,16 @@ void A_Chase(mobj_t * actor)
 	// turn towards movement direction if not there yet
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7 << 29);
-		delta = actor->angles.yaw - (actor->movedir << 29);
+		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
 
-		if (delta > 0)
+		if (delta > 0.0)
 		{
-			actor->angles.yaw -= ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
 		}
-		else if (delta < 0)
+		else if (delta < 0.0)
 		{
-			actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
 		}
 	}
 
@@ -233,7 +233,8 @@ void A_FaceTarget(mobj_t * actor)
 
 	if (actor->target->translucency)
 	{
-		actor->angles.yaw += (P_Random() - P_Random()) << 21;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw +
+			(Random() - Random()) * 45.0);
 	}
 }
 
@@ -633,7 +634,7 @@ void A_FreezeDeathChunks(mobj_t * actor)
 		mo->health = actor->health;
 		mo->angles.yaw = actor->angles.yaw;
 		mo->player->mo = mo;
-		mo->angles.pitch = 0;
+		mo->angles.pitch = 0.0;
 	}
 	P_RemoveMobjFromTIDList(actor);
 	SetMobjState(actor, S_FREETARGMOBJ);
@@ -830,6 +831,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -54,7 +54,7 @@ __states__
 //
 //==========================================================================
 
-class weapon_grenade_launcher:mobj_t
+class weapon_grenade_launcher:Actor
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -62,17 +62,17 @@ class weapon_grenade_launcher:mobj_t
 		height = 16.0;
 		flags = MF_SPECIAL;
 		spawnstate = S_GLAUNCH;
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
 //==========================================================================
 //
-//  missile_grenade
+//	missile_grenade
 //
 //==========================================================================
 
-class missile_grenade:mobj_t
+class missile_grenade:Missile
 {
 	void OnMapSpawn(mthing_t * mthing)
 	{
@@ -87,14 +87,14 @@ class missile_grenade:mobj_t
 		sound_sight = GetSoundID("LauncherFire");
 		sound_pain = GetSoundID("GrenadeBounce");
 		sound_death = GetSoundID("BarrelExplode");
-		generic_mobj_start(this, mthing);
+		::OnMapSpawn(mthing);
 	}
 };
 
 __mobjinfo__
 {
-	MT_GLAUNCH { 90, weapon_grenade_launcher }
-	MT_GRENADE { -1, missile_grenade }
+	{ 90, weapon_grenade_launcher }
+	{ -1, missile_grenade }
 }
 
 //==========================================================================
@@ -118,6 +118,9 @@ void set_weapon_grenade(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/02 17:42:37  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

@@ -47,14 +47,6 @@ enum
 #define NUM_CSHIFTS			8
 #define CSHIFT(r, g, b, a)	(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
-// Binary Angle Measument, BAM.
-#define ANG1				(ANG45 / 45)
-#define ANG45				0x20000000
-#define ANG90				0x40000000
-#define ANG180				0x80000000
-#define ANG60				(ANG180 / 3)
-#define ANG270				0xc0000000
-
 // Difficulty/skill settings/filters.
 enum
 {
@@ -211,7 +203,7 @@ enum
 };
 
 #define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
-#define RGBA(r, g, b, a)	((a) + ((r) << 16) + ((g) << 8) + (b))
+#define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
 //**************************************************************************
 //**
@@ -278,6 +270,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:08  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/02 17:37:19  dj_jl
 //  Removed status bar widgets
 //

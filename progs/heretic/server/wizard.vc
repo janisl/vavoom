@@ -68,8 +68,8 @@ void A_WizAtk2(mobj_t * actor)
 void A_WizAtk3(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
-	TBAMVec angles;
+	float angle;
+	TAVec angles;
 
 	actor->translucency = 0;
 	if (!actor->target)
@@ -87,10 +87,10 @@ void A_WizAtk3(mobj_t * actor)
 	{
 		VectorAngles(&mo->velocity, &angles);
 		angle = mo->angles.yaw;
-		SpawnMissileAngles(actor, MT_WIZFX1, angle - (ANG45 / 8),
-			angles.pitch);
-		SpawnMissileAngles(actor, MT_WIZFX1, angle + (ANG45 / 8),
-			angles.pitch);
+		SpawnMissileAngles(actor, MT_WIZFX1,
+			AngleMod360(angle - (45.0 / 8.0)), angles.pitch);
+		SpawnMissileAngles(actor, MT_WIZFX1,
+			AngleMod360(angle + (45.0 / 8.0)), angles.pitch);
 	}
 }
 
@@ -108,6 +108,9 @@ void A_GhostOff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

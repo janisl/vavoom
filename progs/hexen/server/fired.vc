@@ -52,7 +52,7 @@ void A_FiredSpawnRock(mobj_t * actor)
 {
 	mobj_t *mo;
 	float x, y, z;
-	int rtype;
+	classid rtype;
 
 	switch (P_Random() % 5)
 	{
@@ -118,7 +118,7 @@ void A_FiredChase(mobj_t * actor)
 {
 	int weaveindex = actor->special1;
 	mobj_t *target = actor->target;
-	angle_t ang;
+	float ang;
 	float dist;
 
 	if (actor->reactiontime)
@@ -159,9 +159,9 @@ void A_FiredChase(mobj_t * actor)
 				ang = atan2(target->origin.y - actor->origin.y,
 					target->origin.x - actor->origin.x);
 				if (P_Random() < 128)
-					ang += ANG90;
+					ang = AngleMod360(ang + 90.0);
 				else
-					ang -= ANG90;
+					ang = AngleMod360(ang - 90.0);
 				actor->velocity.x = 8.0 * cos(ang) * 35.0;
 				actor->velocity.y = 8.0 * sin(ang) * 35.0;
 				actor->special2 = 3;	// strafe time
@@ -265,6 +265,9 @@ void A_SmBounce(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -354,7 +354,7 @@ void A_MinotaurDecide(mobj_t * actor)
 void A_MinotaurAtk2(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 	float momz;
 
 	if (!actor->target)
@@ -372,10 +372,10 @@ void A_MinotaurAtk2(mobj_t * actor)
 		//StartSoundName(mo, sfx_minat2);
 		momz = mo->velocity.z * frametime;
 		angle = mo->angles.yaw;
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle - (ANG45 / 8), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle + (ANG45 / 8), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle - (ANG45 / 16), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle + (ANG45 / 16), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, AngleMod360(angle - (45.0 / 8.0)), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, AngleMod360(angle + (45.0 / 8.0)), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, AngleMod360(angle - (45.0 / 16.0)), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, AngleMod360(angle + (45.0 / 16.0)), momz);
 	}
 }
 
@@ -490,10 +490,10 @@ void A_MinotaurFade2(mobj_t * actor)
 
 void A_MntrFloorFire(mobj_t * actor)
 {
-	Missile *mo;
+	mobj_t *mo;
 
 	actor->origin.z = actor->floorz;
-	mo = (Missile *)P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
+	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
 		actor->origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MT_MNTRFX3);
 	mo->target = actor->target;
 	mo->velocity.x = 0.00001;	// Force block checking
@@ -515,6 +515,9 @@ void A_SmokePuffExit(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

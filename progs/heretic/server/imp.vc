@@ -63,7 +63,7 @@ void A_ImpMeAttack(mobj_t * actor)
 void A_ImpMsAttack(mobj_t * actor)
 {
 	mobj_t *dest;
-	angle_t an;
+	float an;
 	float dist;
 
 	if (!actor->target || P_Random() > 64)
@@ -187,6 +187,9 @@ void A_ImpExplode(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

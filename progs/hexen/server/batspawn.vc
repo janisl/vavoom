@@ -70,18 +70,19 @@ void A_BatSpawnInit(mobj_t * actor)
 void A_BatSpawn(mobj_t * actor)
 {
 	mobj_t *mo;
-	int delta;
-	int angle;
+	float delta;
+	float angle;
 
 	// Countdown until next spawn
 	if (actor->special1-- > 0)
 		return;
 	actor->special1 = actor->args[0];	// Reset frequency count
 
-	delta = actor->args[1];
-	if (delta == 0)
-		delta = 1;
-	angle = actor->angles.yaw + (((P_Random() % delta) - (delta >> 1)) << 24);
+	delta = itof(actor->args[1]);
+	if (delta == 0.0)
+		delta = 1.0;
+	angle = AngleMod360(actor->angles.yaw +
+		delta * (Random() - 0.5) * 360.0 / 256.0);
 	mo = SpawnMissileAngle(actor, MT_BAT, angle, 0.0);
 	if (mo)
 	{
@@ -100,7 +101,7 @@ void A_BatSpawn(mobj_t * actor)
 
 void A_BatMove(mobj_t * actor)
 {
-	int newangle;
+	float newangle;
 	float speed;
 
 	if (actor->special2 < 0)
@@ -111,11 +112,11 @@ void A_BatMove(mobj_t * actor)
 
 	if (P_Random() < 128)
 	{
-		newangle = actor->angles.yaw + ANGLE_1 * actor->args[4];
+		newangle = AngleMod360(actor->angles.yaw + itof(actor->args[4]));
 	}
 	else
 	{
-		newangle = actor->angles.yaw - ANGLE_1 * actor->args[4];
+		newangle = AngleMod360(actor->angles.yaw - itof(actor->args[4]));
 	}
 
 	// Adjust momentum vector to new direction
@@ -135,6 +136,9 @@ void A_BatMove(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

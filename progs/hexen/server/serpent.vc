@@ -43,7 +43,7 @@
 
 void A_SerpentChase(mobj_t * actor)
 {
-	int delta;
+	float delta;
 	float oldX, oldY;
 	int oldFloor;
 
@@ -73,15 +73,15 @@ void A_SerpentChase(mobj_t * actor)
 	//
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7 << 29);
-		delta = actor->angles.yaw - (actor->movedir << 29);
-		if (delta > 0)
+		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		if (delta > 0.0)
 		{
-			actor->angles.yaw -= ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
 		}
-		else if (delta < 0)
+		else if (delta < 0.0)
 		{
-			actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
 		}
 	}
 
@@ -333,7 +333,7 @@ void A_SerpentDiveSound(mobj_t * actor)
 
 void A_SerpentWalk(mobj_t * actor)
 {
-	int delta;
+	float delta;
 
 	if (actor->reactiontime)
 	{
@@ -360,15 +360,15 @@ void A_SerpentWalk(mobj_t * actor)
 	//
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7 << 29);
-		delta = actor->angles.yaw - (actor->movedir << 29);
-		if (delta > 0)
+		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		if (delta > 0.0)
 		{
-			actor->angles.yaw -= ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
 		}
-		else if (delta < 0)
+		else if (delta < 0.0)
 		{
-			actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
 		}
 	}
 
@@ -590,6 +590,9 @@ void A_DelayGib(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

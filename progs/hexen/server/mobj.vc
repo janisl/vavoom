@@ -45,11 +45,11 @@ void SetupPsprites(player_t * player);
 void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid);
 void A_DeQueueCorpse(mobj_t * actor);
 void P_NoiseAlert(mobj_t * target, mobj_t * emmiter);
-mobj_t *P_SpawnMobj(float x, float y, float z, int type);
+mobj_t *P_SpawnMobj(float x, float y, float z, classid type);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int PuffType;
+classid PuffType;
 mobj_t *PuffSpawned;
 mobj_t *BlockingMobj;
 mobj_t *linetarget;	// who got hit (or NULL)
@@ -319,12 +319,12 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 		if (flags & MF_COUNTKILL)
 		{
 			// Quantize angle to 45 degree increments
-			angles.yaw = ANG45 * (mthing->angle / 45);
+			angles.yaw = itof(45 * (mthing->angle / 45));
 		}
 		else
 		{
 			// Scale angle correctly (source is 0..359)
-			angles.yaw = ((mthing->angle << 8) / 360) << 24;
+			angles.yaw = itof(mthing->angle);
 		}
 		if (mthing->options & MTF_AMBUSH)
 		{
@@ -352,11 +352,11 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-mobj_t *P_SpawnMobj(float x, float y, float z, int type)
+mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker(mobjinfo[type].class_id);
+	mobj = NewMobjThinker(type);
 	mobj->type = type;
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
@@ -583,7 +583,7 @@ void P_FloorBounceMissile(mobj_t * mo)
 //
 //==========================================================================
 
-void P_ThrustMobj(mobj_t * mo, angle_t angle, float move)
+void P_ThrustMobj(mobj_t * mo, float angle, float move)
 {
 	mo->velocity.x += move * cos(angle) * 35.0;
 	mo->velocity.y += move * sin(angle) * 35.0;
@@ -599,41 +599,41 @@ void P_ThrustMobj(mobj_t * mo, angle_t angle, float move)
 //
 //==========================================================================
 
-int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
+int P_FaceMobj(mobj_t * source, mobj_t * target, float *delta)
 {
-	angle_t diff;
-	angle_t angle1;
-	angle_t angle2;
+	float diff;
+	float angle1;
+	float angle2;
 
 	angle1 = source->angles.yaw;
 	angle2 = atan2(target->origin.y - source->origin.y,
 		target->origin.x - source->origin.x);
 	if (angle2 > angle1)
 	{
-		diff = angle2 - angle1;
-		if (diff > ANG180)
+		diff = AngleMod360(angle2 - angle1);
+		if (diff > 180.0)
 		{
-			*delta = ANGLE_MAX - diff;
-			return (0);
+			*delta = 360.0 - diff;
+			return 0;
 		}
 		else
 		{
 			*delta = diff;
-			return (1);
+			return 1;
 		}
 	}
 	else
 	{
-		diff = angle1 - angle2;
-		if (diff > ANG180)
+		diff = AngleMod360(angle1 - angle2);
+		if (diff > 180.0)
 		{
-			*delta = ANGLE_MAX - diff;
-			return (1);
+			*delta = 360.0 - diff;
+			return 1;
 		}
 		else
 		{
 			*delta = diff;
-			return (0);
+			return 0;
 		}
 	}
 }
@@ -920,7 +920,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 
 void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 {
-	angle_t angle;
+	float angle;
 	float thrust;
 
 	angle = atan2(target->origin.y - source->origin.y,
@@ -952,7 +952,7 @@ boolean P_MorphPlayer(player_t * player)
 	float x;
 	float y;
 	float z;
-	angle_t angle;
+	float angle;
 	int oldFlags2;
 	int i;
 
@@ -1004,14 +1004,14 @@ boolean P_MorphMonster(mobj_t * actor)
 	mobj_t *master;
 	mobj_t *monster;
 	mobj_t *fog;
-	int moType;
+	classid moType;
 	float x;
 	float y;
 	float z;
 	int ghost;
 	int tid;
 	mobj_t *target;
-	angle_t angle;
+	float angle;
 	int special;
 	int args[5];
 	int i;
@@ -1053,7 +1053,7 @@ boolean P_MorphMonster(mobj_t * actor)
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
 	monster = P_SpawnMobj(x, y, z, MT_PIG);
-	monster->special2 = moType;
+	monster->specialcid = moType;
 	monster->special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster->translucency = ghost;
 	monster->target = target;
@@ -1456,8 +1456,8 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 	}
 	if ((P_Random() < target->painchance) && !(target->flags & MF_SKULLFLY))
 	{
-		if (inflictor && (inflictor->type >= MT_LIGHTNING_FLOOR
-				&& inflictor->type <= MT_LIGHTNING_ZAP))
+		if (inflictor && (inflictor->type == MT_LIGHTNING_FLOOR
+				|| inflictor->type == MT_LIGHTNING_ZAP))
 		{
 			if (P_Random() < 96)
 			{
@@ -1814,11 +1814,11 @@ int RaiseMobj(mobj_t * actor)
 void SpawnDirt(mobj_t * actor, float radius)
 {
 	float x, y, z;
-	int dtype = 0;
+	classid dtype;
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 
-	angle = P_Random() << 24;
+	angle = 360.0 * Random();
 	x = actor->origin.x + radius * cos(angle);
 	y = actor->origin.y + radius * sin(angle);
 	z = actor->origin.z + Random() * 2.0 + 1.0;
@@ -1986,7 +1986,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 		break;
 	}
 
-	mobj->angles.yaw = ANG45 * (mthing->angle / 45);
+	mobj->angles.yaw = itof(45 * (mthing->angle / 45));
 	mobj->player = p;
 	mobj->health = p->health;
 	p->mo = mobj;
@@ -2154,7 +2154,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		if (mthing->type == mobjinfo[i].doomednum)
 		{
 			mobj = NewMobjThinker(mobjinfo[i].class_id);
-			mobj->type = i;
+			mobj->type = mobjinfo[i].class_id;
 			mobj->OnMapSpawn(mthing);
 			return;
 		}
@@ -2383,6 +2383,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.12  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

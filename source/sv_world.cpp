@@ -244,8 +244,8 @@ void SV_UnlinkFromWorld(mobj_t* thing)
 		    thing->bprev->bnext = thing->bnext;
 		else
 		{
-		    blockx = (FX(thing->origin.x - level.bmaporgx)) >> MAPBLOCKSHIFT;
-		    blocky = (FX(thing->origin.y - level.bmaporgy)) >> MAPBLOCKSHIFT;
+		    blockx = MapBlock(thing->origin.x - level.bmaporgx);
+		    blocky = MapBlock(thing->origin.y - level.bmaporgy);
 
 		    if (blockx >= 0 && blockx < level.bmapwidth &&
 		    	blocky >= 0 && blocky < level.bmapheight)
@@ -302,8 +302,8 @@ void SV_LinkToWorld(mobj_t* thing)
     if (!(thing->flags & MF_NOBLOCKMAP))
     {
 		// inert things don't need to be in blockmap
-		blockx = (FX(thing->origin.x - level.bmaporgx)) >> MAPBLOCKSHIFT;
-		blocky = (FX(thing->origin.y - level.bmaporgy)) >> MAPBLOCKSHIFT;
+		blockx = MapBlock(thing->origin.x - level.bmaporgx);
+		blocky = MapBlock(thing->origin.y - level.bmaporgy);
 
 		if (blockx >= 0 && blockx < level.bmapwidth &&
 			blocky >= 0 && blocky < level.bmapheight)
@@ -567,12 +567,6 @@ static boolean PIT_AddThingIntercepts(mobj_t* thing)
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 		int flags, boolean(*trav)(intercept_t *), int prtrav)
 {
-	trace_org = TVec(x1, y1, 0);
-	trace_dest = TVec(x2, y2, 0);
-	trace_delta = trace_dest - trace_org;
-	trace_dir = Normalize(trace_delta);
-	trace_len = Length(trace_delta);
-
 	int			xt1;
 	int			yt1;
 	int			xt2;
@@ -599,65 +593,70 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
     validcount++;
     intercept_p = intercepts;
 	memset(intercepts, 0, sizeof(intercepts));
-	
-    if (((FX(x1 - level.bmaporgx)) & (MAPBLOCKSIZE - 1)) == 0)
+
+    if (fmod(x1 - level.bmaporgx, MAPBLOCKSIZE) == 0.0)
 		x1 += 1.0;	// don't side exactly on a line
     
-    if (((FX(y1 - level.bmaporgy)) & (MAPBLOCKSIZE - 1)) == 0)
+    if (fmod(y1 - level.bmaporgy, MAPBLOCKSIZE) == 0.0)
 		y1 += 1.0;	// don't side exactly on a line
+
+	trace_org = TVec(x1, y1, 0);
+	trace_dest = TVec(x2, y2, 0);
+	trace_delta = trace_dest - trace_org;
+	trace_dir = Normalize(trace_delta);
+	trace_len = Length(trace_delta);
 
 	trace_plane.SetPointDir(trace_org, trace_delta);
 
-    x1 -= level.bmaporgx;
-    y1 -= level.bmaporgy;
-    xt1 = FX(x1) >> MAPBLOCKSHIFT;
-    yt1 = FX(y1) >> MAPBLOCKSHIFT;
+	x1 -= level.bmaporgx;
+	y1 -= level.bmaporgy;
+	xt1 = MapBlock(x1);
+	yt1 = MapBlock(y1);
 
-    x2 -= level.bmaporgx;
-    y2 -= level.bmaporgy;
-    xt2 = FX(x2) >> MAPBLOCKSHIFT;
-    yt2 = FX(y2) >> MAPBLOCKSHIFT;
+	x2 -= level.bmaporgx;
+	y2 -= level.bmaporgy;
+	xt2 = MapBlock(x2);
+	yt2 = MapBlock(y2);
 
-    if (xt2 > xt1)
-    {
+	if (xt2 > xt1)
+	{
 		mapxstep = 1;
-		partial = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partial = 1.0 - (x1 / MAPBLOCKSIZE - xt1);
 		ystep = (y2 - y1) / fabs(x2 - x1);
-    }
-    else if (xt2 < xt1)
-    {
+	}
+	else if (xt2 < xt1)
+	{
 		mapxstep = -1;
-		partial = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partial = x1 / MAPBLOCKSIZE - xt1;
 		ystep = (y2 - y1) / fabs(x2 - x1);
-    }
-    else
-    {
+	}
+	else
+	{
 		mapxstep = 0;
 		partial = 1.0;
 		ystep = 256.0;
     }	
-    yintercept = FL(FX(y1) >> MAPBTOFRAC) + partial * ystep;
+	yintercept = y1 / MAPBLOCKSIZE + partial * ystep;
 
-	
-    if (yt2 > yt1)
-    {
+	if (yt2 > yt1)
+	{
 		mapystep = 1;
-		partial = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partial = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
 		xstep = (x2 - x1) / fabs(y2 - y1);
-    }
-    else if (yt2 < yt1)
-    {
+	}
+	else if (yt2 < yt1)
+	{
 		mapystep = -1;
-		partial = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partial = y1 / MAPBLOCKSIZE - yt1;
 		xstep = (x2 - x1) / fabs(y2 - y1);
-    }
-    else
-    {
+	}
+	else
+	{
 		mapystep = 0;
 		partial = 1.0;
 		xstep = 256.0;
-    }	
-    xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
+	}
+	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
     
     // Step through map blocks.
     // Count is present to prevent a round off error
@@ -969,9 +968,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.4  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -241,7 +241,7 @@ boolean PO_MovePolyobj(int num, float x, float y)
 //
 //==========================================================================
 
-static void RotatePt(angle_t an, float *x, float *y, float startSpotX, float startSpotY)
+static void RotatePt(float an, float *x, float *y, float startSpotX, float startSpotY)
 {
 	float	tr_x, tr_y;
 	float 	gxt, gyt;
@@ -264,13 +264,13 @@ static void RotatePt(angle_t an, float *x, float *y, float startSpotX, float sta
 //
 //==========================================================================
 
-boolean PO_RotatePolyobj(int num, angle_t angle)
+boolean PO_RotatePolyobj(int num, float angle)
 {
 	int count;
 	seg_t **segList;
 	vertex_t *originalPts;
 	vertex_t *prevPts;
-	angle_t an;
+	float an;
 	polyobj_t *po;
 	boolean blocked;
 
@@ -319,7 +319,7 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
 		LinkPolyobj(po);
 		return false;
 	}
-	po->angle += angle;
+	po->angle = AngleMod(po->angle + angle);
 	LinkPolyobj(po);
 	return true;
 }
@@ -398,10 +398,10 @@ static void LinkPolyobj(polyobj_t *po)
 			bottomY = (*tempSeg)->v1->y;
 		}
 	}
-	po->bbox[BOXRIGHT] = (FX(rightX - level.bmaporgx)) >> MAPBLOCKSHIFT;
-	po->bbox[BOXLEFT] = (FX(leftX - level.bmaporgx)) >> MAPBLOCKSHIFT;
-	po->bbox[BOXTOP] = (FX(topY - level.bmaporgy)) >> MAPBLOCKSHIFT;
-	po->bbox[BOXBOTTOM] = (FX(bottomY - level.bmaporgy)) >> MAPBLOCKSHIFT;
+	po->bbox[BOXRIGHT] = MapBlock(rightX - level.bmaporgx);
+	po->bbox[BOXLEFT] = MapBlock(leftX - level.bmaporgx);
+	po->bbox[BOXTOP] = MapBlock(topY - level.bmaporgy);
+	po->bbox[BOXBOTTOM] = MapBlock(bottomY - level.bmaporgy);
 	// add the polyobj to each blockmap section
 	for(j = po->bbox[BOXBOTTOM]*level.bmapwidth; j <= po->bbox[BOXTOP]*level.bmapwidth;
 		j += level.bmapwidth)
@@ -463,10 +463,10 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 
 	ld = seg->linedef;
 
-	top = (FX(ld->bbox[BOXTOP] - level.bmaporgy + MAXRADIUS)) >> MAPBLOCKSHIFT;
-	bottom = (FX(ld->bbox[BOXBOTTOM] - level.bmaporgy - MAXRADIUS)) >> MAPBLOCKSHIFT;
-	left = (FX(ld->bbox[BOXLEFT] - level.bmaporgx - MAXRADIUS)) >> MAPBLOCKSHIFT;
-	right = (FX(ld->bbox[BOXRIGHT] - level.bmaporgx + MAXRADIUS)) >> MAPBLOCKSHIFT;
+	top = MapBlock(ld->bbox[BOXTOP] - level.bmaporgy + MAXRADIUS);
+	bottom = MapBlock(ld->bbox[BOXBOTTOM] - level.bmaporgy - MAXRADIUS);
+	left = MapBlock(ld->bbox[BOXLEFT] - level.bmaporgx - MAXRADIUS);
+	right = MapBlock(ld->bbox[BOXRIGHT] - level.bmaporgx + MAXRADIUS);
 
 	blocked = false;
 
@@ -588,8 +588,8 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
     int index;
 
 	sv_signon << (byte)svc_poly_spawn
-				<< (word)(FX(x) >> 16)
-				<< (word)(FX(y) >> 16)
+				<< (word)x
+				<< (word)y
 				<< (byte)tag;
 
 	index = level.numpolyobjs++;
@@ -767,8 +767,8 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 	int i;
 
 	sv_signon << (byte)svc_poly_translate
-				<< (word)(FX(originX) >> 16)
-				<< (word)(FX(originY) >> 16)
+				<< (word)originX
+				<< (word)originY
 				<< (byte)tag;
 
 	po = NULL;
@@ -881,9 +881,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.7  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.6  2001/10/04 17:16:54  dj_jl
 //	Removed some unused code
 //	

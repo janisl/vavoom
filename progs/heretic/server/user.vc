@@ -48,7 +48,7 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 
 	int damage);
 int P_HitFloor(mobj_t * thing);
-boolean P_Teleport(mobj_t * thing, float x, float y, angle_t angle);
+boolean P_Teleport(mobj_t * thing, float x, float y, float angle);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
@@ -89,7 +89,7 @@ float PSpriteSY[NUMWEAPONS] = {
 //
 //==========================================================================
 
-void ThrustPlayer(player_t * player, angle_t angle, float move)
+void ThrustPlayer(player_t * player, float angle, float move)
 {
 	if (player->powers[pw_flight]
 		&& !(player->mo->origin.z <= player->mo->floorz))
@@ -119,7 +119,7 @@ void ThrustPlayer(player_t * player, angle_t angle, float move)
 
 void CalcHeight(player_t * player)
 {
-	int angle;
+	float angle;
 	float bob;
 
 	// Regular movement bobbing
@@ -141,7 +141,7 @@ void CalcHeight(player_t * player)
 		player->bob = 0.5;
 	}
 
-	angle = ANG180 / 10 * level->tictime;
+	angle = 180.0 * 35.0 / 10.0 * level->time;
 	bob = player->bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -227,7 +227,7 @@ void MovePlayer(player_t * player)
 	}
 	if (side)
 	{
-		ThrustPlayer(player, player->mo->angles.yaw - ANG90, side);
+		ThrustPlayer(player, AngleMod360(player->mo->angles.yaw - 90.0), side);
 	}
 
 	if (forward || side)
@@ -444,7 +444,7 @@ void PlayerInSpecialSector(player_t * player)
 		}
 		break;
 	case 4:	// Scroll_EastLavaDamage
-		ThrustPlayer(player, 0, 1024.0);
+		ThrustPlayer(player, 0.0, 1024.0);
 		if (!(level->tictime & 15))
 		{
 			DamageMobj(player->mo, LavaInflictor, NULL, 5);
@@ -475,28 +475,28 @@ void PlayerInSpecialSector(player_t * player)
 	case 22:
 	case 23:
 	case 24:	// Scroll_East
-		ThrustPlayer(player, 0, pushTab[sector->special - 20]);
+		ThrustPlayer(player, 0.0, pushTab[sector->special - 20]);
 		break;
 	case 25:
 	case 26:
 	case 27:
 	case 28:
 	case 29:	// Scroll_North
-		ThrustPlayer(player, ANG90, pushTab[sector->special - 25]);
+		ThrustPlayer(player, 90.0, pushTab[sector->special - 25]);
 		break;
 	case 30:
 	case 31:
 	case 32:
 	case 33:
 	case 34:	// Scroll_South
-		ThrustPlayer(player, ANG270, pushTab[sector->special - 30]);
+		ThrustPlayer(player, 270.0, pushTab[sector->special - 30]);
 		break;
 	case 35:
 	case 36:
 	case 37:
 	case 38:
 	case 39:	// Scroll_West
-		ThrustPlayer(player, ANG180, pushTab[sector->special - 35]);
+		ThrustPlayer(player, 180.0, pushTab[sector->special - 35]);
 		break;
 
 	case 40:
@@ -633,7 +633,7 @@ void PlayerThink(player_t * player)
 	int i;
 
 	// Copy view angles
-	avcpy(player->viewangles, player->mo->angles);
+	player->mo->angles = player->viewangles;
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
@@ -882,7 +882,7 @@ void SetViewPos(player_t * player)
 	player->vieworg.x = player->mo->origin.x;
 	player->vieworg.y = player->mo->origin.y;
 
-	avcpy(player->mo->angles, player->viewangles);
+	player->viewangles = player->mo->angles;
 
 	if (player->chickenTics && player->chickenPeck)
 	{
@@ -937,7 +937,7 @@ void ArtiTele(player_t * player)
 	int selections;
 	float destX;
 	float destY;
-	angle_t destAngle;
+	float destAngle;
 
 	if (deathmatch)
 	{
@@ -945,13 +945,13 @@ void ArtiTele(player_t * player)
 		i = P_Random() % selections;
 		destX = level->deathmatchstarts[i].x;
 		destY = level->deathmatchstarts[i].y;
-		destAngle = ANG45 * (level->deathmatchstarts[i].angle / 45);
+		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
 	}
 	else
 	{
 		destX = level->playerstarts[0].x;
 		destY = level->playerstarts[0].y;
-		destAngle = ANG45 * (level->playerstarts[0].angle / 45);
+		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
 	P_Teleport(player->mo, destX, destY, destAngle);
 	if (player->chickenTics)
@@ -972,11 +972,6 @@ void ArtiTele(player_t * player)
 
 boolean UseArtifact(player_t * player, int arti)
 {
-	mobj_t *mo;
-	angle_t angle;
-	int i;
-	int count;
-
 	switch (arti)
 	{
 	case arti_health:
@@ -1209,7 +1204,7 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 		p->pspriteSY = PSpriteSY[p->readyweapon];
 		p->chickenTics = 0;
 	}
-	p->mo->angles.pitch = 0;
+	p->mo->angles.pitch = 0.0;
 	p->mo->translucency = 0;	// cancel invisibility
 	p->extralight = 0;	// cancel gun flashes 
 	p->fixedcolormap = 0;	// cancel ir gogles 
@@ -1369,6 +1364,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.9  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

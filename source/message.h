@@ -78,6 +78,16 @@ class TMessage : public TSizeBuf
 	boolean		badread;
 };
 
+inline float ByteToAngle(byte angle)
+{
+	return (float)angle * 360.0 / 256.0;
+}
+
+inline byte AngleToByte(float angle)
+{
+	return (byte)(angle * 256.0 / 360.0);
+}
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -85,9 +95,12 @@ class TMessage : public TSizeBuf
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

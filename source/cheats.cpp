@@ -222,8 +222,8 @@ COMMAND(MyPos)
 			<< "  X:" << players[0].mo->origin.x
 			<< "  Y:" << players[0].mo->origin.y
 			<< "  Z:" << players[0].mo->origin.z
-			<< "  Ang:" << BAM2DEG(players[0].mo->angles.yaw)
-			<< " Look:" << BAM2DEG(players[0].mo->angles.pitch)
+			<< "  Ang:" << players[0].mo->angles.yaw
+			<< " Look:" << players[0].mo->angles.pitch
 			<< endl;
 	}
 }
@@ -231,9 +231,12 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.4  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

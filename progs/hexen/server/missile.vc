@@ -31,11 +31,11 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-boolean P_ExplodeMissile(Missile * mo);
+boolean P_ExplodeMissile(mobj_t * mo);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-Missile *MissileMobj;
+mobj_t *MissileMobj;
 
 // CODE --------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ Missile *MissileMobj;
 //
 //==========================================================================
 
-int CheckMissileSpawn(Missile * missile)
+int CheckMissileSpawn(mobj_t * missile)
 {
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
@@ -66,14 +66,14 @@ int CheckMissileSpawn(Missile * missile)
 //  SpawnMissile
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a Missile pointer to the missile.
+// a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Missile *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
+mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 {
 	float z;
-	Missile *th;
+	mobj_t *th;
 	TVec dir;
 
 	switch (type)
@@ -98,7 +98,7 @@ Missile *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 		break;
 	}
 	z -= source->floorclip;
-	th = (Missile *)P_SpawnMobj(source->origin.x, source->origin.y, z, type);
+	th = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (th->sound_sight)
 	{
 		StartSound(th, th->sound_sight, CHAN_VOICE);
@@ -107,7 +107,7 @@ Missile *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 	dir = dest->origin - source->origin;
 	if (dest->translucency)
 	{	// Invisible target
-		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 21);
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
 	th->velocity = dir * th->speed;
@@ -120,18 +120,18 @@ Missile *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 //  SpawnMissileXYZ
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a Missile pointer to the missile.
+// a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Missile *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
-	mobj_t * dest, int type)
+mobj_t *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
+	mobj_t * dest, classid type)
 {
 	TVec dir;
-	Missile *th;
+	mobj_t *th;
 
 	z -= source->floorclip;
-	th = (Missile *)P_SpawnMobj(x, y, z, type);
+	th = P_SpawnMobj(x, y, z, type);
 	if (th->sound_sight)
 	{
 		StartSound(th, th->sound_sight, CHAN_VOICE);
@@ -140,7 +140,7 @@ Missile *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 	dir = dest->origin - source->origin;
 	if (dest->translucency)
 	{	// Invisible target
-		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 21);
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
 	th->velocity = dir * th->speed;
@@ -153,15 +153,15 @@ Missile *SpawnMissileXYZ(float x, float y, float z, mobj_t * source,
 //  SpawnMissileAngle
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a Missile pointer to the missile.
+// a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Missile *SpawnMissileAngle(mobj_t * source, int type, angle_t angle,
+mobj_t *SpawnMissileAngle(mobj_t * source, classid type, float angle,
 	float momz)
 {
 	float z;
-	Missile *mo;
+	mobj_t *mo;
 
 	switch (type)
 	{
@@ -182,7 +182,7 @@ Missile *SpawnMissileAngle(mobj_t * source, int type, angle_t angle,
 		break;
 	}
 	z -= source->floorclip;
-	mo = (Missile *)P_SpawnMobj(source->origin.x, source->origin.y, z, type);
+	mo = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (mo->sound_sight)
 	{
 		StartSound(mo, mo->sound_sight, CHAN_VOICE);
@@ -200,19 +200,19 @@ Missile *SpawnMissileAngle(mobj_t * source, int type, angle_t angle,
 //  SpawnMissileAngleSpeed
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
-// a Missile pointer to the missile.
+// a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Missile *SpawnMissileAngleSpeed(mobj_t * source, int type, angle_t angle,
+mobj_t *SpawnMissileAngleSpeed(mobj_t * source, classid type, float angle,
 	float momz, float ticspeed)
 {
 	float z;
-	Missile *mo;
+	mobj_t *mo;
 
 	z = source->origin.z;
 	z -= source->floorclip;
-	mo = (Missile *)P_SpawnMobj(source->origin.x, source->origin.y, z, type);
+	mo = P_SpawnMobj(source->origin.x, source->origin.y, z, type);
 	if (mo->sound_sight)
 	{
 		//StartSound(mo, mo->info->seesound);
@@ -231,14 +231,14 @@ Missile *SpawnMissileAngleSpeed(mobj_t * source, int type, angle_t angle,
 //
 //============================================================================
 
-Missile *SpawnKoraxMissile(float x, float y, float z,
-	mobj_t * source, mobj_t * dest, int type)
+mobj_t *SpawnKoraxMissile(float x, float y, float z,
+	mobj_t * source, mobj_t * dest, classid type)
 {
 	TVec dir;
-	Missile *th;
+	mobj_t *th;
 
 	z -= source->floorclip;
-	th = (Missile *)P_SpawnMobj(x, y, z, type);
+	th = P_SpawnMobj(x, y, z, type);
 	if (th->sound_sight)
 	{
 		StartSound(th, th->sound_sight, CHAN_VOICE);
@@ -247,7 +247,7 @@ Missile *SpawnKoraxMissile(float x, float y, float z,
 	dir = dest->origin - vector(x, y, z);
 	if (dest->translucency)
 	{	// Invisible target
-		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 21);
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
 	th->velocity = dir * th->speed;
@@ -259,20 +259,20 @@ Missile *SpawnKoraxMissile(float x, float y, float z,
 //
 //  SeekerMissile
 //
-//  The missile specialmobj1 field must be Missile *target.  Returns true if
+//  The missile specialmobj1 field must be mobj_t *target.  Returns true if
 // target was tracked, false if not.
 //
 //==========================================================================
 
-boolean SeekerMissile(Missile * actor, angle_t thresh, angle_t turnMax)
+boolean SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 {
 	int dir;
 	float dist;
-	angle_t delta;
-	angle_t angle;
-	Missile *target;
+	float delta;
+	float angle;
+	mobj_t *target;
 
-	target = (Missile *)actor->specialmobj1;
+	target = actor->specialmobj1;
 	if (!target)
 	{
 		return false;
@@ -286,7 +286,7 @@ boolean SeekerMissile(Missile * actor, angle_t thresh, angle_t turnMax)
 	dir = P_FaceMobj(actor, target, &delta);
 	if (delta > thresh)
 	{
-		delta >>= 1;
+		delta /= 2.0;
 		if (delta > turnMax)
 		{
 			delta = turnMax;
@@ -302,6 +302,7 @@ boolean SeekerMissile(Missile * actor, angle_t thresh, angle_t turnMax)
 		// Turn counter clockwise
 		actor->angles.yaw -= delta;
 	}
+	actor->angles.yaw = AngleMod360(actor->angles.yaw);
 	angle = actor->angles.yaw;
 	actor->velocity.x = actor->speed * cos(angle);
 	actor->velocity.y = actor->speed * sin(angle);
@@ -329,9 +330,9 @@ boolean SeekerMissile(Missile * actor, angle_t thresh, angle_t turnMax)
 //
 //==========================================================================
 
-Missile *SpawnPlayerMissile(mobj_t * source, int type)
+mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 {
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 	float x, y, z;
 
@@ -340,11 +341,11 @@ Missile *SpawnPlayerMissile(mobj_t * source, int type)
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
@@ -357,19 +358,19 @@ Missile *SpawnPlayerMissile(mobj_t * source, int type)
 	if (type == MT_LIGHTNING_FLOOR)
 	{
 		z = ONFLOORZ;
-		angles.pitch = 0;
+		angles.pitch = 0.0;
 	}
 	else if (type == MT_LIGHTNING_CEILING)
 	{
 		z = ONCEILINGZ;
-		angles.pitch = 0;
+		angles.pitch = 0.0;
 	}
 	else
 	{
 		z = source->origin.z + 4.0 * 8.0 - tan(source->angles.pitch);
 		z -= source->floorclip;
 	}
-	MissileMobj = (Missile *)P_SpawnMobj(x, y, z, type);
+	MissileMobj = P_SpawnMobj(x, y, z, type);
 	if (MissileMobj->sound_sight)
 	{
 		//StartSound(MissileMobj, MissileMobj->info->seesound);
@@ -408,11 +409,11 @@ Missile *SpawnPlayerMissile(mobj_t * source, int type)
 //
 //===========================================================================
 
-Missile *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
+mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 {
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
-	Missile *th;
+	mobj_t *th;
 	float x, y, z;
 
 	//
@@ -423,11 +424,11 @@ Missile *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
@@ -439,7 +440,7 @@ Missile *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
 	y = source->origin.y;
 	z = source->origin.z + 4.0 * 8.0 - tan(source->angles.pitch);
 	z -= source->floorclip;
-	th = (Missile *)P_SpawnMobj(x, y, z, type);
+	th = P_SpawnMobj(x, y, z, type);
 //  if(th->info->seesound)
 //  {
 //      StartSound(th, th->info->seesound);
@@ -457,11 +458,11 @@ Missile *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
 //
 //===========================================================================
 
-Missile *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y, float z,
-	int type, angle_t angle)
+mobj_t *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y,
+	float z, classid type, float angle)
 {
-	Missile *th;
-	TBAMVec angles;
+	mobj_t *th;
+	TAVec angles;
 	TVec vforward;
 
 	//
@@ -472,11 +473,11 @@ Missile *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y, float z,
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
@@ -486,7 +487,7 @@ Missile *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y, float z,
 	}
 	z += 4.0 * 8.0 - tan(source->angles.pitch);
 	z -= source->floorclip;
-	th = (Missile *)P_SpawnMobj(x, y, z, type);
+	th = P_SpawnMobj(x, y, z, type);
 //  if(th->info->seesound)
 //  {
 //      StartSound(th, th->info->seesound);
@@ -504,14 +505,8 @@ Missile *SpawnPlayerMissileAngleXYZ(mobj_t * source, float x, float y, float z,
 //
 //==========================================================================
 
-boolean P_ExplodeMissile(Missile * mo)
+boolean P_ExplodeMissile(mobj_t * mo)
 {
-	if (!(mo->flags & MF_MISSILE))
-	{
-		//	Already exploded
-		return true;
-	}
-
 	mo->velocity = vector(0.0, 0.0, 0.0);
 	if (!SetMobjState(mo, mo->deathstate))
 	{
@@ -552,553 +547,10 @@ boolean P_ExplodeMissile(Missile * mo)
 
 //**************************************************************************
 //
-//  BOUNCING
-//
-//  Bounce missile against walls
-//
-//**************************************************************************
-
-//============================================================================
-//
-//  PTR_BounceTraverse
-//
-//============================================================================
-
-boolean PTR_BounceTraverse(intercept_t * in)
-{
-	line_t *li;
-	TVec hit_point;
-	opening_t *open;
-
-	if (!in->isaline)
-		Error("PTR_BounceTraverse: not a line?");
-
-	li = in->line;
-	if (li->flags & ML_TWOSIDED)
-	{
-		hit_point = slideorg + in->frac * slidedir;
-		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
-		open =
-			FindOpening(open, slidemo->origin.z,
-			slidemo->origin.z + slidemo->height);
-		if (open && open->range >= slidemo->height &&	// fits
-			open->top - slidemo->origin.z >= slidemo->height)	// mobj is not too high
-		{
-			return true;	// this line doesn't block movement
-		}
-	}
-	else
-	{
-		if (PointOnPlaneSide(slidemo->origin, li))
-		{
-			return true;	// don't hit the back side
-		}
-	}
-
-	// the line does block movement, see if it is closer than best so far
-	if (in->frac < bestslidefrac)
-	{
-		secondslidefrac = bestslidefrac;
-		secondslideline = bestslideline;
-		bestslidefrac = in->frac;
-		bestslideline = li;
-	}
-	return false;	// stop
-}
-
-//============================================================================
-//
-//  P_BounceWall
-//
-//============================================================================
-
-void P_BounceWall(Missile * mo)
-{
-	float leadx, leady;
-
-	slidemo = mo;
-
-	//
-	// trace along the three leading corners
-	//
-	if (mo->velocity.x > 0.0)
-	{
-		leadx = mo->origin.x + mo->radius;
-	}
-	else
-	{
-		leadx = mo->origin.x - mo->radius;
-	}
-	if (mo->velocity.y > 0.0)
-	{
-		leady = mo->origin.y + mo->radius;
-	}
-	else
-	{
-		leady = mo->origin.y - mo->radius;
-	}
-	bestslidefrac = 1.00001;
-	slideorg = vector(leadx, leady, slidemo->origin.z);
-	slidedir = mo->velocity * frametime;
-	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
-		PT_ADDLINES, PTR_BounceTraverse);
-	mo->velocity =
-		ClipVelocity(mo->velocity * 0.75, bestslideline->normal, 2.0);
-}
-
-//==========================================================================
-//
-//	Missile::BlasterPhysics
-//
-//==========================================================================
-
-boolean Missile::BlasterPhysics(void)
-{
-	int i;
-	float xfrac;
-	float yfrac;
-	float zfrac;
-	float z;
-	boolean changexy;
-	mobj_t *mo;
-
-	// Handle movement
-	if (velocity.x || velocity.y || (origin.z != floorz) || velocity.z)
-	{
-		xfrac = velocity.x * frametime / 8.0;
-		yfrac = velocity.y * frametime / 8.0;
-		zfrac = velocity.z * frametime / 8.0;
-		changexy = xfrac || yfrac;
-		for (i = 0; i < 8; i++)
-		{
-			if (changexy)
-			{
-				if (!P_TryMove(this, origin.x + xfrac, origin.y + yfrac))
-				{
-					// Blocked move
-					return P_ExplodeMissile(this);
-				}
-			}
-			origin.z += zfrac;
-			if (origin.z <= floorz)
-			{
-				// Hit the floor
-				origin.z = floorz;
-				P_HitFloor(this);
-				return P_ExplodeMissile(this);
-			}
-			if (origin.z + height > ceilingz)
-			{
-				// Hit the ceiling
-				origin.z = ceilingz - height;
-				return P_ExplodeMissile(this);
-			}
-			if (changexy)
-			{
-				if (type == MT_MWAND_MISSILE && (P_Random() < 128))
-				{
-					z = origin.z - 8.0;
-					if (z < floorz)
-					{
-						z = floorz;
-					}
-					P_SpawnMobj(origin.x, origin.y, z, MT_MWANDSMOKE);
-				}
-				else if (type != MT_MWAND_MISSILE && !--special1)
-				{
-					special1 = 4;
-					z = origin.z - 12.0;
-					if (z < floorz)
-					{
-						z = floorz;
-					}
-					mo = P_SpawnMobj(origin.x, origin.y, z, MT_CFLAMEFLOOR);
-					if (mo)
-					{
-						mo->angles.yaw = angles.yaw;
-					}
-				}
-			}
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//	Missile::XYMovement
-//
-//==========================================================================
-
-boolean Missile::XYMovement(void)
-{
-	float ptryx, ptryy;
-	float xmove, ymove;
-	angle_t angle;
-
-	if (!velocity.x && !velocity.y)
-	{
-		return true;
-	}
-	if (velocity.x > MAXMOVE)
-	{
-		velocity.x = MAXMOVE;
-	}
-	else if (velocity.x < -MAXMOVE)
-	{
-		velocity.x = -MAXMOVE;
-	}
-	if (velocity.y > MAXMOVE)
-	{
-		velocity.y = MAXMOVE;
-	}
-	else if (velocity.y < -MAXMOVE)
-	{
-		velocity.y = -MAXMOVE;
-	}
-	xmove = velocity.x * frametime;
-	ymove = velocity.y * frametime;
-	do
-	{
-		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
-		{
-			ptryx = origin.x + xmove / 2.0;
-			ptryy = origin.y + ymove / 2.0;
-			xmove /= 2.0;
-			ymove /= 2.0;
-		}
-		else
-		{
-			ptryx = origin.x + xmove;
-			ptryy = origin.y + ymove;
-			xmove = ymove = 0.0;
-		}
-		if (!P_TryMove(this, ptryx, ptryy))
-		{
-			// Blocked move
-			if (flags2 & MF2_FLOORBOUNCE)
-			{
-				if (BlockingMobj)
-				{
-					if ((BlockingMobj->flags2 & MF2_REFLECTIVE) ||
-						((!BlockingMobj->player) &&
-							(!(BlockingMobj->flags & MF_COUNTKILL))))
-					{
-						float speed;
-
-						angle = atan2(origin.y - BlockingMobj->origin.y,
-							origin.x - BlockingMobj->origin.x) +
-							ANGLE_1 * ((P_Random() % 16) - 8);
-						speed = Length(velocity);
-						speed = speed * 0.75;
-						angles.yaw = angle;
-						velocity.x = speed * cos(angle);
-						velocity.y = speed * sin(angle);
-						if (sound_sight)
-						{
-							StartSound(this, sound_sight, CHAN_VOICE);
-						}
-						return true;
-					}
-					else
-					{
-						// Struck a player/creature
-						return P_ExplodeMissile(this);
-					}
-				}
-				else
-				{
-					// Struck a wall
-					P_BounceWall(this);
-					switch (type)
-					{
-					case MT_SORCBALL1:
-					case MT_SORCBALL2:
-					case MT_SORCBALL3:
-					case MT_SORCFX1:
-						break;
-					default:
-						if (sound_sight)
-						{
-							StartSound(this, sound_sight, CHAN_VOICE);
-						}
-						break;
-					}
-					return true;
-				}
-			}
-			if (BlockingMobj && (BlockingMobj->flags2 & MF2_REFLECTIVE))
-			{
-				int explode = false;
-
-				angle = atan2(origin.y - BlockingMobj->origin.y,
-					origin.x - BlockingMobj->origin.x);
-
-				// Change angle for delflection/reflection
-				switch (BlockingMobj->type)
-				{
-				case MT_CENTAUR:
-				case MT_CENTAURLEADER:
-					if (abs(angle - BlockingMobj->angles.yaw) >> 24 > 45)
-					{
-						explode = true;
-						break;
-					}
-					if (type == MT_HOLY_FX)
-					{
-						explode = true;
-						break;
-					}
-					// Drop through to sorcerer full reflection
-				case MT_SORCBOSS:
-					// Deflection
-					if (P_Random() < 128)
-						angle += ANG45;
-					else
-						angle -= ANG45;
-					break;
-				default:
-					// Reflection
-					angle += ANGLE_1 * ((P_Random() % 16) - 8);
-					break;
-				}
-
-				if (!explode)
-				{
-					// Reflect the missile along angle
-					angles.yaw = angle;
-					velocity.x = (speed / 2.0) * cos(angle);
-					velocity.y = (speed / 2.0) * sin(angle);
-//					velocity.z = -velocity.z;
-					if (flags2 & MF2_SEEKERMISSILE)
-					{
-						specialmobj1 = target;
-					}
-					target = BlockingMobj;
-					return true;
-				}
-			}
-			// Explode a missile
-			if (ceilingline && ceilingline->backsector
-				&& ceilingline->backsector->ceiling.pic == skyflatnum)
-			{
-				// Hack to prevent missiles exploding against the sky
-				if (type == MT_BLOODYSKULL)
-				{
-					velocity.x = velocity.y = 0.0;
-					velocity.z = -1.0 * 35.0;
-				}
-				else if (type == MT_HOLY_FX)
-				{
-					if (!P_ExplodeMissile(this))
-					{
-						return false;
-					}
-				}
-				else
-				{
-					P_RemoveMobj(this);
-					return false;
-				}
-				return true;
-			}
-			if (!P_ExplodeMissile(this))
-			{
-				return false;
-			}
-		}
-	}
-	while (xmove || ymove);
-
-	return true;
-}
-
-//==========================================================================
-//
-//	Missile::ZMovement
-//
-//==========================================================================
-
-boolean Missile::ZMovement(void)
-{
-	float dist;
-	float delta;
-
-	//
-	// adjust height
-	//
-	origin.z += velocity.z * frametime;
-
-	//
-	// clip movement
-	//
-	if (origin.z <= floorz)
-	{
-		// Hit the floor
-		origin.z = floorz;
-		if (!(flags & MF_MISSILE))
-		{
-			//	Already exploded
-			return true;
-		}
-		if (flags2 & MF2_FLOORBOUNCE)
-		{
-			P_FloorBounceMissile(this);
-			return true;
-		}
-		else if (type == MT_HOLY_FX)
-		{
-			// The spirit struck the ground
-			velocity.z = 0.0;
-			P_HitFloor(this);
-			return true;
-		}
-		else if (type == MT_MNTRFX2 || type == MT_LIGHTNING_FLOOR)
-		{
-			// Minotaur floor fire can go up steps
-			return true;
-		}
-		else
-		{
-			P_HitFloor(this);
-			return P_ExplodeMissile(this);
-		}
-	}
-
-	if (origin.z + height > ceilingz)
-	{
-		// hit the ceiling
-		if (velocity.z > 0.0)
-			velocity.z = 0.0;
-		origin.z = ceilingz - height;
-		if (!(flags & MF_MISSILE))
-		{
-			//	Already exploded
-			return true;
-		}
-		if (flags2 & MF2_FLOORBOUNCE)
-		{
-			// Maybe reverse momentum here for ceiling bounce
-			// Currently won't happen
-
-			if (sound_sight)
-			{
-				StartSound(this, sound_sight, CHAN_VOICE);
-			}
-			return true;
-		}
-		if (type == MT_LIGHTNING_CEILING)
-		{
-			return true;
-		}
-		if (ceiling->pic == skyflatnum)
-		{
-			if (type == MT_BLOODYSKULL)
-			{
-				velocity.x = velocity.y = 0.0;
-				velocity.z = -1.0 * 35.0;
-			}
-			else if (type == MT_HOLY_FX)
-			{
-				return P_ExplodeMissile(this);
-			}
-			else
-			{
-				P_RemoveMobj(this);
-				return false;
-			}
-			return true;
-		}
-		return P_ExplodeMissile(this);
-	}
-	return true;
-}
-
-//==========================================================================
-//
-//  Missile::UpdateVelocity
-//
-//==========================================================================
-
-void Missile::UpdateVelocity(void)
-{
-//	if (waterlevel < 2)
-//	{
-		if (flags2 & MF2_LOGRAV)
-		{
-			velocity.z -= GRAVITY / 8.0 * frametime;
-		}
-		else if (!(flags & MF_NOGRAVITY))
-		{
-			velocity.z -= GRAVITY * frametime;
-		}
-//	}
-//	else
-//	{
-//		velocity.z = -60.0;
-//	}
-}
-
-//==========================================================================
-//
-//	Missile::Physics
-//
-//==========================================================================
-
-boolean Missile::Physics(void)
-{
-	Entity *onmo;
-
-	if (blaster)
-	{
-		return BlasterPhysics();
-	}
-
-	CheckWater();
-	UpdateVelocity();
-
-	// Handle X and Y momentums
-	BlockingMobj = NULL;
-	if (velocity.x || velocity.y)
-	{
-		if (!XYMovement())
-		{
-			return false;
-		}
-	}
-	else if (flags2 & MF2_BLASTED)
-	{
-		// Reset to not blasted when momentums are gone
-		ResetBlasted();
-	}
-
-	if ((origin.z != floorz) || velocity.z || BlockingMobj)
-	{
-		// Handle Z momentum and gravity
-		if (flags2 & MF2_PASSMOBJ)
-		{
-			if (!(onmo = P_CheckOnmobj(this)))
-			{
-				if (!ZMovement())
-				{
-					return false;
-				}
-			}
-		}
-		else
-		{
-			if (!ZMovement())
-			{
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-//**************************************************************************
-//
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

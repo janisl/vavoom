@@ -262,7 +262,7 @@ int CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TBAMVec * angles)
+void BulletSlope(mobj_t * mo, TAVec * angles)
 {
 	// see which target is to be aimed at
 	angles->pitch = mo->angles.pitch;
@@ -272,15 +272,15 @@ void BulletSlope(mobj_t * mo, TBAMVec * angles)
 	AimLineAttack(mo, angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles->yaw += 1 << 26;
+		angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 		AimLineAttack(mo, angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles->yaw -= 2 << 26;
+			angles->yaw = AngleMod360(angles->yaw - 45.0 / 4.0);
 			AimLineAttack(mo, angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles->yaw += 1 << 26;
+				angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 			}
 		}
 	}
@@ -304,33 +304,6 @@ void FireWeapon(player_t * player)
 	P_NoiseAlert(player->mo, player->mo);
 }
 
-//===========================================================================
-//
-//  GunShot
-//
-//===========================================================================
-
-void GunShot(mobj_t * mo, int accurate, TBAMVec * bangles)
-{
-	TBAMVec angles;
-	TVec vforward;
-	int damage;
-
-	//  Make a copy of angles because inacurate shoot will modify them
-	angles.pitch = bangles->pitch;
-	angles.yaw = bangles->yaw;
-	angles.roll = bangles->roll;
-	if (!accurate)
-	{
-		angles.yaw += (P_Random() - P_Random()) << 18;
-	}
-	AngleVector(&angles, &vforward);
-
-	damage = 5 * (P_Random() % 3 + 1);
-
-	LineAttack(mo, &vforward, MISSILERANGE, damage);
-}
-
 //***************************************************************************
 //
 //  WEAPON ACTIONS
@@ -350,7 +323,7 @@ void A_WeaponReady(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	angle_t angle;
+	float angle;
 
 	// get out of attack state
 	if (player->mo->statenum == S_PLAY_ATK1
@@ -389,9 +362,12 @@ void A_WeaponReady(mobj_t * actor)
 		player->attackdown = false;
 
 	// bob the weapon based on movement speed
-	angle = (ANG90 >> 4) * level->tictime;
+	angle = AngleMod360(180.0 * level->time);
 	psp->sx = 1.0 + player->bob * cos(angle);
-	angle &= 0x7fffffff;
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
 	psp->sy = WEAPONTOP + player->bob * sin(angle);
 }
 
@@ -570,10 +546,8 @@ void A_Light2(mobj_t * actor)
 void A_Punch(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	angle_t angle;
 	int damage;
-	float slope;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = (P_Random() % 10 + 1) << 1;
@@ -582,7 +556,8 @@ void A_Punch(mobj_t * actor)
 		damage *= 10;
 
 	avcpy(player->mo->angles, angles);
-	angles.yaw += (P_Random() - P_Random()) << 18;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
@@ -601,6 +576,9 @@ void A_Punch(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

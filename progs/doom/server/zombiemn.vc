@@ -46,7 +46,7 @@
 void A_PosAttack(mobj_t * actor)
 {
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	if (!actor->target)
@@ -56,7 +56,7 @@ void A_PosAttack(mobj_t * actor)
 
 	avcpy(actor->angles, angles);
 	AimLineAttack(actor, &angles, MISSILERANGE);
-	angles.yaw += (P_Random() - P_Random()) << 20;
+	angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0 / 2.0);
 	AngleVector(&angles, &vforward);
 
 	StartSoundName(actor, "PistolFire", CHAN_WEAPON);
@@ -71,6 +71,9 @@ void A_PosAttack(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

@@ -49,15 +49,15 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	float x;
 	float y;
 	float z;
-	int moType;
-	angle_t angle;
+	classid moType;
+	float angle;
 	int flags;
 	int health;
 	mobj_t *target;
 	int special;
 	int tid;
 	int args[5];
-	int pig_type;
+	classid pig_type;
 	mobj_t *mo;
 
 	actor->special1 -= tics;
@@ -65,7 +65,7 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 	{
 		return false;
 	}
-	moType = actor->special2;
+	moType = actor->specialcid;
 	switch (moType)
 	{
 	case MT_WRAITHB:	// These must remain morphed
@@ -107,7 +107,7 @@ int UpdateMorphedMonster(mobj_t * actor, int tics)
 		mo->target = target;
 		mo->special = special;
 		mo->special1 = 5 * 35;	// Next try in 5 seconds
-		mo->special2 = moType;
+		mo->specialcid = moType;
 		mo->tid = tid;
 		mo->args[0] = args[0];
 		mo->args[1] = args[1];
@@ -203,6 +203,9 @@ void A_PigPain(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

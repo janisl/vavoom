@@ -38,6 +38,20 @@
 
 // MACROS ------------------------------------------------------------------
 
+//==========================================================================
+//
+//	Fixed point, 32bit as 16.16.
+//
+//==========================================================================
+
+#define FRACBITS		16
+#define FRACUNIT		(1<<FRACBITS)
+
+typedef int fixed_t;
+
+#define FL(x)	((float)(x) / (float)FRACUNIT)
+#define FX(x)	(fixed_t)((x) * FRACUNIT)
+
 #define DS_SPAN_LIST_END	-128
 
 #define PARTICLE_Z_CLIP		8.0
@@ -531,9 +545,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.12  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

@@ -33,6 +33,10 @@ class TLavaInflictor:mobj_t
 	{
 	}
 
+	void Archive(void)
+	{
+	}
+
 	void Unarchive(void)
 	{
 		LavaInflictor = this;
@@ -47,8 +51,9 @@ class TLavaInflictor:mobj_t
 
 void InitLava(void)
 {
-	LavaInflictor = NewSpecialThinker(TLavaInflictor);//HACK
+	LavaInflictor = NewMobjThinker(TLavaInflictor);
 	LavaInflictor->type = MT_PHOENIXFX2;
+	LavaInflictor->flags = MF_NOSECTOR | MF_NOBLOCKMAP;
 	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
@@ -75,7 +80,8 @@ void ChickenPlayerThink(player_t * player)
 	if (!(pmo->velocity.x + pmo->velocity.y) && P_Random() < 160)
 	{
 		// Twitch view angle
-		pmo->angles.yaw += (P_Random() - P_Random()) << 19;
+		pmo->angles.yaw = AngleMod360(pmo->angles.yaw +
+			(Random() - Random()) * 45.0 / 4.0);
 	}
 	if ((pmo->origin.z <= pmo->floorz) && (P_Random() < 32))
 	{
@@ -105,7 +111,7 @@ boolean UndoPlayerChicken(player_t * player)
 	float x;
 	float y;
 	float z;
-	angle_t angle;
+	float angle;
 	int weapon;
 	int oldFlags;
 	int oldFlags2;
@@ -190,8 +196,8 @@ void SetPlayerRunState(player_t * player)
 
 void DeathPlayerThink(player_t * player)
 {
-	angle_t angle;
-	angle_t delta;
+	float angle;
+	float delta;
 	int lookDelta;
 
 	MovePsprites(player);
@@ -251,8 +257,8 @@ void DeathPlayerThink(player_t * player)
 	{
 		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
 			player->attacker->origin.x - player->mo->origin.x);
-		delta = angle - player->mo->angles.yaw;
-		if (delta < ANG5 || delta > -ANG5)
+		delta = AngleMod180(angle - player->mo->angles.yaw);
+		if (delta < 5.0 && delta > -5.0)
 		{
 			// Looking at killer, so fade damage flash down
 			player->mo->angles.yaw = angle;
@@ -261,10 +267,10 @@ void DeathPlayerThink(player_t * player)
 				player->damagecount--;
 			}
 		}
-		else if (delta < ANG180)
-			player->mo->angles.yaw += ANG5;
+		else if (delta > 0.0)
+			player->mo->angles.yaw += 5.0;
 		else
-			player->mo->angles.yaw -= ANG5;
+			player->mo->angles.yaw -= 5.0;
 	}
 	else if (player->damagecount)
 	{
@@ -297,10 +303,10 @@ void DeathPlayerThink(player_t * player)
 void ArtiEgg(mobj_t * mo)
 {
 	SpawnPlayerMissile(mo, MT_EGGFX);
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 6));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 6));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw - (ANG45 / 3));
-	SpawnPlayerMissileAngle(mo, MT_EGGFX, mo->angles.yaw + (ANG45 / 3));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw - (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw + (45.0 / 6.0)));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw - (45.0 / 3.0)));
+	SpawnPlayerMissileAngle(mo, MT_EGGFX, AngleMod360(mo->angles.yaw + (45.0 / 3.0)));
 }
 
 //==========================================================================
@@ -352,7 +358,7 @@ boolean ArtiTomeOfPower(player_t * player)
 
 void ArtiFireBomb(player_t * player)
 {
-	angle_t angle = player->mo->angles.yaw;
+	float angle = player->mo->angles.yaw;
 	mobj_t *mo = P_SpawnMobj(player->mo->origin.x + 24.0 * cos(angle),
 		player->mo->origin.y + 24.0 * sin(angle),
 		player->mo->origin.z - player->mo->floorclip,
@@ -412,7 +418,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	float x;
 	float y;
 	subsector_t *ss;
-	angle_t an;
+	float an;
 	mobj_t *mo;
 	int i;
 
@@ -439,7 +445,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	// spawn a teleport fog 
 	ss = PointInSubsector(x, y);
-	an = ANG45 * (mthing->angle / 45);
+	an = itof(45 * (mthing->angle / 45));
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
@@ -451,6 +457,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

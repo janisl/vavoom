@@ -98,9 +98,9 @@ void A_PotteryCheck(mobj_t * actor)
 			continue;
 		}
 		pmo = players[i].mo;
-		if (P_CheckSight(actor, pmo)
-			&& (abs(atan2(actor->origin.y - pmo->origin.y,
-			actor->origin.x - pmo->origin.x) - pmo->angles.yaw) <= ANG45))
+		if (P_CheckSight(actor, pmo) &&
+			(fabs(AngleMod180(atan2(actor->origin.y - pmo->origin.y,
+			actor->origin.x - pmo->origin.x) - pmo->angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
 			SetMobjState(actor, actor->statenum - 1);
@@ -112,6 +112,9 @@ void A_PotteryCheck(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

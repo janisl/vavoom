@@ -31,11 +31,11 @@
 
 //==========================================================================
 //
-//	misc_MAPSPOT
+//	MT_MAPSPOT
 //
 //==========================================================================
 
-class misc_MAPSPOT:Actor
+class MT_MAPSPOT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -54,11 +54,11 @@ class misc_MAPSPOT:Actor
 
 //==========================================================================
 //
-//	misc_MAPSPOTGRAVITY
+//	MT_MAPSPOTGRAVITY
 //
 //==========================================================================
 
-class misc_MAPSPOTGRAVITY:Actor
+class MT_MAPSPOTGRAVITY:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -77,11 +77,11 @@ class misc_MAPSPOTGRAVITY:Actor
 
 //==========================================================================
 //
-//	misc_FIREBALL1
+//	MT_FIREBALL1
 //
 //==========================================================================
 
-class misc_FIREBALL1:Missile
+class MT_FIREBALL1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -106,11 +106,11 @@ class misc_FIREBALL1:Missile
 
 //==========================================================================
 //
-//	misc_ARROW
+//	MT_ARROW
 //
 //==========================================================================
 
-class misc_ARROW:Missile
+class MT_ARROW:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -133,11 +133,11 @@ class misc_ARROW:Missile
 
 //==========================================================================
 //
-//	misc_DART
+//	MT_DART
 //
 //==========================================================================
 
-class misc_DART:Missile
+class MT_DART:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -160,11 +160,11 @@ class misc_DART:Missile
 
 //==========================================================================
 //
-//	misc_POISONDART
+//	MT_POISONDART
 //
 //==========================================================================
 
-class misc_POISONDART:Missile
+class MT_POISONDART:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -187,11 +187,11 @@ class misc_POISONDART:Missile
 
 //==========================================================================
 //
-//	misc_RIPPERBALL
+//	MT_RIPPERBALL
 //
 //==========================================================================
 
-class misc_RIPPERBALL:Missile
+class MT_RIPPERBALL:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -214,11 +214,11 @@ class misc_RIPPERBALL:Missile
 
 //==========================================================================
 //
-//	misc_PROJECTILE_BLADE
+//	MT_PROJECTILE_BLADE
 //
 //==========================================================================
 
-class misc_PROJECTILE_BLADE:Missile
+class MT_PROJECTILE_BLADE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -241,11 +241,11 @@ class misc_PROJECTILE_BLADE:Missile
 
 //==========================================================================
 //
-//	misc_ICESHARD
+//	MT_ICESHARD
 //
 //==========================================================================
 
-class misc_ICESHARD:Missile
+class MT_ICESHARD:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -270,11 +270,11 @@ class misc_ICESHARD:Missile
 
 //==========================================================================
 //
-//	misc_FLAME_SMALL_TEMP
+//	MT_FLAME_SMALL_TEMP
 //
 //==========================================================================
 
-class misc_FLAME_SMALL_TEMP:Actor
+class MT_FLAME_SMALL_TEMP:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -293,11 +293,11 @@ class misc_FLAME_SMALL_TEMP:Actor
 
 //==========================================================================
 //
-//	misc_FLAME_LARGE_TEMP
+//	MT_FLAME_LARGE_TEMP
 //
 //==========================================================================
 
-class misc_FLAME_LARGE_TEMP:Actor
+class MT_FLAME_LARGE_TEMP:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -316,11 +316,11 @@ class misc_FLAME_LARGE_TEMP:Actor
 
 //==========================================================================
 //
-//	misc_FLAME_SMALL
+//	MT_FLAME_SMALL
 //
 //==========================================================================
 
-class misc_FLAME_SMALL:Actor
+class MT_FLAME_SMALL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -342,11 +342,11 @@ class misc_FLAME_SMALL:Actor
 
 //==========================================================================
 //
-//	misc_FLAME_LARGE
+//	MT_FLAME_LARGE
 //
 //==========================================================================
 
-class misc_FLAME_LARGE:Actor
+class MT_FLAME_LARGE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -368,11 +368,11 @@ class misc_FLAME_LARGE:Actor
 
 //==========================================================================
 //
-//	misc_HEALINGBOTTLE
+//	MT_HEALINGBOTTLE
 //
 //==========================================================================
 
-class misc_HEALINGBOTTLE:Actor
+class MT_HEALINGBOTTLE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -392,11 +392,11 @@ class misc_HEALINGBOTTLE:Actor
 
 //==========================================================================
 //
-//	misc_HEALTHFLASK
+//	MT_HEALTHFLASK
 //
 //==========================================================================
 
-class misc_HEALTHFLASK:Actor
+class MT_HEALTHFLASK:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -416,11 +416,11 @@ class misc_HEALTHFLASK:Actor
 
 //==========================================================================
 //
-//	misc_ARTIFLY
+//	MT_ARTIFLY
 //
 //==========================================================================
 
-class misc_ARTIFLY:Actor
+class MT_ARTIFLY:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -440,11 +440,11 @@ class misc_ARTIFLY:Actor
 
 //==========================================================================
 //
-//	misc_ARTIINVULNERABILITY
+//	MT_ARTIINVULNERABILITY
 //
 //==========================================================================
 
-class misc_ARTIINVULNERABILITY:Actor
+class MT_ARTIINVULNERABILITY:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -464,11 +464,11 @@ class misc_ARTIINVULNERABILITY:Actor
 
 //==========================================================================
 //
-//	misc_SUMMONMAULATOR
+//	MT_SUMMONMAULATOR
 //
 //==========================================================================
 
-class misc_SUMMONMAULATOR:Actor
+class MT_SUMMONMAULATOR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -488,11 +488,11 @@ class misc_SUMMONMAULATOR:Actor
 
 //==========================================================================
 //
-//	misc_SUMMON_FX
+//	MT_SUMMON_FX
 //
 //==========================================================================
 
-class misc_SUMMON_FX:Missile
+class MT_SUMMON_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -514,11 +514,11 @@ class misc_SUMMON_FX:Missile
 
 //==========================================================================
 //
-//	misc_THRUSTFLOOR_UP
+//	MT_THRUSTFLOOR_UP
 //
 //==========================================================================
 
-class misc_THRUSTFLOOR_UP:Actor
+class MT_THRUSTFLOOR_UP:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -538,11 +538,11 @@ class misc_THRUSTFLOOR_UP:Actor
 
 //==========================================================================
 //
-//	misc_THRUSTFLOOR_DOWN
+//	MT_THRUSTFLOOR_DOWN
 //
 //==========================================================================
 
-class misc_THRUSTFLOOR_DOWN:Actor
+class MT_THRUSTFLOOR_DOWN:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -562,11 +562,11 @@ class misc_THRUSTFLOOR_DOWN:Actor
 
 //==========================================================================
 //
-//	misc_TELEPORTOTHER
+//	MT_TELEPORTOTHER
 //
 //==========================================================================
 
-class misc_TELEPORTOTHER:Actor
+class MT_TELEPORTOTHER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -586,11 +586,11 @@ class misc_TELEPORTOTHER:Actor
 
 //==========================================================================
 //
-//	misc_TELOTHER_FX1
+//	MT_TELOTHER_FX1
 //
 //==========================================================================
 
-class misc_TELOTHER_FX1:Missile
+class MT_TELOTHER_FX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -613,11 +613,11 @@ class misc_TELOTHER_FX1:Missile
 
 //==========================================================================
 //
-//	misc_TELOTHER_FX2
+//	MT_TELOTHER_FX2
 //
 //==========================================================================
 
-class misc_TELOTHER_FX2:Missile
+class MT_TELOTHER_FX2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -640,11 +640,11 @@ class misc_TELOTHER_FX2:Missile
 
 //==========================================================================
 //
-//	misc_TELOTHER_FX3
+//	MT_TELOTHER_FX3
 //
 //==========================================================================
 
-class misc_TELOTHER_FX3:Missile
+class MT_TELOTHER_FX3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -667,11 +667,11 @@ class misc_TELOTHER_FX3:Missile
 
 //==========================================================================
 //
-//	misc_TELOTHER_FX4
+//	MT_TELOTHER_FX4
 //
 //==========================================================================
 
-class misc_TELOTHER_FX4:Missile
+class MT_TELOTHER_FX4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -694,11 +694,11 @@ class misc_TELOTHER_FX4:Missile
 
 //==========================================================================
 //
-//	misc_TELOTHER_FX5
+//	MT_TELOTHER_FX5
 //
 //==========================================================================
 
-class misc_TELOTHER_FX5:Missile
+class MT_TELOTHER_FX5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -721,11 +721,11 @@ class misc_TELOTHER_FX5:Missile
 
 //==========================================================================
 //
-//	misc_DIRT1
+//	MT_DIRT1
 //
 //==========================================================================
 
-class misc_DIRT1:Missile
+class MT_DIRT1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -746,11 +746,11 @@ class misc_DIRT1:Missile
 
 //==========================================================================
 //
-//	misc_DIRT2
+//	MT_DIRT2
 //
 //==========================================================================
 
-class misc_DIRT2:Missile
+class MT_DIRT2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -771,11 +771,11 @@ class misc_DIRT2:Missile
 
 //==========================================================================
 //
-//	misc_DIRT3
+//	MT_DIRT3
 //
 //==========================================================================
 
-class misc_DIRT3:Missile
+class MT_DIRT3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -796,11 +796,11 @@ class misc_DIRT3:Missile
 
 //==========================================================================
 //
-//	misc_DIRT4
+//	MT_DIRT4
 //
 //==========================================================================
 
-class misc_DIRT4:Missile
+class MT_DIRT4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -821,11 +821,11 @@ class misc_DIRT4:Missile
 
 //==========================================================================
 //
-//	misc_DIRT5
+//	MT_DIRT5
 //
 //==========================================================================
 
-class misc_DIRT5:Missile
+class MT_DIRT5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -846,11 +846,11 @@ class misc_DIRT5:Missile
 
 //==========================================================================
 //
-//	misc_DIRT6
+//	MT_DIRT6
 //
 //==========================================================================
 
-class misc_DIRT6:Missile
+class MT_DIRT6:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -871,11 +871,11 @@ class misc_DIRT6:Missile
 
 //==========================================================================
 //
-//	misc_DIRTCLUMP
+//	MT_DIRTCLUMP
 //
 //==========================================================================
 
-class misc_DIRTCLUMP:Actor
+class MT_DIRTCLUMP:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -895,11 +895,11 @@ class misc_DIRTCLUMP:Actor
 
 //==========================================================================
 //
-//	misc_ROCK1
+//	MT_ROCK1
 //
 //==========================================================================
 
-class misc_ROCK1:Missile
+class MT_ROCK1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -920,11 +920,11 @@ class misc_ROCK1:Missile
 
 //==========================================================================
 //
-//	misc_ROCK2
+//	MT_ROCK2
 //
 //==========================================================================
 
-class misc_ROCK2:Missile
+class MT_ROCK2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -945,11 +945,11 @@ class misc_ROCK2:Missile
 
 //==========================================================================
 //
-//	misc_ROCK3
+//	MT_ROCK3
 //
 //==========================================================================
 
-class misc_ROCK3:Missile
+class MT_ROCK3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -970,11 +970,11 @@ class misc_ROCK3:Missile
 
 //==========================================================================
 //
-//	misc_FOGSPAWNER
+//	MT_FOGSPAWNER
 //
 //==========================================================================
 
-class misc_FOGSPAWNER:Actor
+class MT_FOGSPAWNER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -995,11 +995,11 @@ class misc_FOGSPAWNER:Actor
 
 //==========================================================================
 //
-//	misc_FOGPATCHS
+//	MT_FOGPATCHS
 //
 //==========================================================================
 
-class misc_FOGPATCHS:Actor
+class MT_FOGPATCHS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1022,11 +1022,11 @@ class misc_FOGPATCHS:Actor
 
 //==========================================================================
 //
-//	misc_FOGPATCHM
+//	MT_FOGPATCHM
 //
 //==========================================================================
 
-class misc_FOGPATCHM:Actor
+class MT_FOGPATCHM:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1049,11 +1049,11 @@ class misc_FOGPATCHM:Actor
 
 //==========================================================================
 //
-//	misc_FOGPATCHL
+//	MT_FOGPATCHL
 //
 //==========================================================================
 
-class misc_FOGPATCHL:Actor
+class MT_FOGPATCHL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1076,11 +1076,11 @@ class misc_FOGPATCHL:Actor
 
 //==========================================================================
 //
-//	misc_QUAKE_FOCUS
+//	MT_QUAKE_FOCUS
 //
 //==========================================================================
 
-class misc_QUAKE_FOCUS:Actor
+class MT_QUAKE_FOCUS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1100,11 +1100,11 @@ class misc_QUAKE_FOCUS:Actor
 
 //==========================================================================
 //
-//	misc_SGSHARD1
+//	MT_SGSHARD1
 //
 //==========================================================================
 
-class misc_SGSHARD1:Missile
+class MT_SGSHARD1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1125,11 +1125,11 @@ class misc_SGSHARD1:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD2
+//	MT_SGSHARD2
 //
 //==========================================================================
 
-class misc_SGSHARD2:Missile
+class MT_SGSHARD2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1150,11 +1150,11 @@ class misc_SGSHARD2:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD3
+//	MT_SGSHARD3
 //
 //==========================================================================
 
-class misc_SGSHARD3:Missile
+class MT_SGSHARD3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1175,11 +1175,11 @@ class misc_SGSHARD3:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD4
+//	MT_SGSHARD4
 //
 //==========================================================================
 
-class misc_SGSHARD4:Missile
+class MT_SGSHARD4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1200,11 +1200,11 @@ class misc_SGSHARD4:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD5
+//	MT_SGSHARD5
 //
 //==========================================================================
 
-class misc_SGSHARD5:Missile
+class MT_SGSHARD5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1225,11 +1225,11 @@ class misc_SGSHARD5:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD6
+//	MT_SGSHARD6
 //
 //==========================================================================
 
-class misc_SGSHARD6:Missile
+class MT_SGSHARD6:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1250,11 +1250,11 @@ class misc_SGSHARD6:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD7
+//	MT_SGSHARD7
 //
 //==========================================================================
 
-class misc_SGSHARD7:Missile
+class MT_SGSHARD7:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1275,11 +1275,11 @@ class misc_SGSHARD7:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD8
+//	MT_SGSHARD8
 //
 //==========================================================================
 
-class misc_SGSHARD8:Missile
+class MT_SGSHARD8:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1300,11 +1300,11 @@ class misc_SGSHARD8:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD9
+//	MT_SGSHARD9
 //
 //==========================================================================
 
-class misc_SGSHARD9:Missile
+class MT_SGSHARD9:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1325,11 +1325,11 @@ class misc_SGSHARD9:Missile
 
 //==========================================================================
 //
-//	misc_SGSHARD0
+//	MT_SGSHARD0
 //
 //==========================================================================
 
-class misc_SGSHARD0:Missile
+class MT_SGSHARD0:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1350,11 +1350,11 @@ class misc_SGSHARD0:Missile
 
 //==========================================================================
 //
-//	misc_ARTIEGG
+//	MT_ARTIEGG
 //
 //==========================================================================
 
-class misc_ARTIEGG:Actor
+class MT_ARTIEGG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1374,11 +1374,11 @@ class misc_ARTIEGG:Actor
 
 //==========================================================================
 //
-//	misc_EGGFX
+//	MT_EGGFX
 //
 //==========================================================================
 
-class misc_EGGFX:Missile
+class MT_EGGFX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1401,11 +1401,11 @@ class misc_EGGFX:Missile
 
 //==========================================================================
 //
-//	misc_ARTISUPERHEAL
+//	MT_ARTISUPERHEAL
 //
 //==========================================================================
 
-class misc_ARTISUPERHEAL:Actor
+class MT_ARTISUPERHEAL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1425,11 +1425,11 @@ class misc_ARTISUPERHEAL:Actor
 
 //==========================================================================
 //
-//	misc_ZWINGEDSTATUENOSKULL
+//	MT_ZWINGEDSTATUENOSKULL
 //
 //==========================================================================
 
-class misc_ZWINGEDSTATUENOSKULL:Actor
+class MT_ZWINGEDSTATUENOSKULL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1448,11 +1448,11 @@ class misc_ZWINGEDSTATUENOSKULL:Actor
 
 //==========================================================================
 //
-//	misc_ZGEMPEDESTAL
+//	MT_ZGEMPEDESTAL
 //
 //==========================================================================
 
-class misc_ZGEMPEDESTAL:Actor
+class MT_ZGEMPEDESTAL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1471,11 +1471,11 @@ class misc_ZGEMPEDESTAL:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZSKULL
+//	MT_ARTIPUZZSKULL
 //
 //==========================================================================
 
-class misc_ARTIPUZZSKULL:Actor
+class MT_ARTIPUZZSKULL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1494,11 +1494,11 @@ class misc_ARTIPUZZSKULL:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMBIG
+//	MT_ARTIPUZZGEMBIG
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMBIG:Actor
+class MT_ARTIPUZZGEMBIG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1517,11 +1517,11 @@ class misc_ARTIPUZZGEMBIG:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMRED
+//	MT_ARTIPUZZGEMRED
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMRED:Actor
+class MT_ARTIPUZZGEMRED:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1540,11 +1540,11 @@ class misc_ARTIPUZZGEMRED:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMGREEN1
+//	MT_ARTIPUZZGEMGREEN1
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMGREEN1:Actor
+class MT_ARTIPUZZGEMGREEN1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1563,11 +1563,11 @@ class misc_ARTIPUZZGEMGREEN1:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMGREEN2
+//	MT_ARTIPUZZGEMGREEN2
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMGREEN2:Actor
+class MT_ARTIPUZZGEMGREEN2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1586,11 +1586,11 @@ class misc_ARTIPUZZGEMGREEN2:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMBLUE1
+//	MT_ARTIPUZZGEMBLUE1
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMBLUE1:Actor
+class MT_ARTIPUZZGEMBLUE1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1609,11 +1609,11 @@ class misc_ARTIPUZZGEMBLUE1:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEMBLUE2
+//	MT_ARTIPUZZGEMBLUE2
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEMBLUE2:Actor
+class MT_ARTIPUZZGEMBLUE2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1632,11 +1632,11 @@ class misc_ARTIPUZZGEMBLUE2:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZBOOK1
+//	MT_ARTIPUZZBOOK1
 //
 //==========================================================================
 
-class misc_ARTIPUZZBOOK1:Actor
+class MT_ARTIPUZZBOOK1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1655,11 +1655,11 @@ class misc_ARTIPUZZBOOK1:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZBOOK2
+//	MT_ARTIPUZZBOOK2
 //
 //==========================================================================
 
-class misc_ARTIPUZZBOOK2:Actor
+class MT_ARTIPUZZBOOK2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1678,11 +1678,11 @@ class misc_ARTIPUZZBOOK2:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZSKULL2
+//	MT_ARTIPUZZSKULL2
 //
 //==========================================================================
 
-class misc_ARTIPUZZSKULL2:Actor
+class MT_ARTIPUZZSKULL2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1701,11 +1701,11 @@ class misc_ARTIPUZZSKULL2:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZFWEAPON
+//	MT_ARTIPUZZFWEAPON
 //
 //==========================================================================
 
-class misc_ARTIPUZZFWEAPON:Actor
+class MT_ARTIPUZZFWEAPON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1724,11 +1724,11 @@ class misc_ARTIPUZZFWEAPON:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZCWEAPON
+//	MT_ARTIPUZZCWEAPON
 //
 //==========================================================================
 
-class misc_ARTIPUZZCWEAPON:Actor
+class MT_ARTIPUZZCWEAPON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1747,11 +1747,11 @@ class misc_ARTIPUZZCWEAPON:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZMWEAPON
+//	MT_ARTIPUZZMWEAPON
 //
 //==========================================================================
 
-class misc_ARTIPUZZMWEAPON:Actor
+class MT_ARTIPUZZMWEAPON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1770,11 +1770,11 @@ class misc_ARTIPUZZMWEAPON:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEAR
+//	MT_ARTIPUZZGEAR
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEAR:Actor
+class MT_ARTIPUZZGEAR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1793,11 +1793,11 @@ class misc_ARTIPUZZGEAR:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEAR2
+//	MT_ARTIPUZZGEAR2
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEAR2:Actor
+class MT_ARTIPUZZGEAR2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1816,11 +1816,11 @@ class misc_ARTIPUZZGEAR2:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEAR3
+//	MT_ARTIPUZZGEAR3
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEAR3:Actor
+class MT_ARTIPUZZGEAR3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1839,11 +1839,11 @@ class misc_ARTIPUZZGEAR3:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPUZZGEAR4
+//	MT_ARTIPUZZGEAR4
 //
 //==========================================================================
 
-class misc_ARTIPUZZGEAR4:Actor
+class MT_ARTIPUZZGEAR4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1862,11 +1862,11 @@ class misc_ARTIPUZZGEAR4:Actor
 
 //==========================================================================
 //
-//	misc_ARTITORCH
+//	MT_ARTITORCH
 //
 //==========================================================================
 
-class misc_ARTITORCH:Actor
+class MT_ARTITORCH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1886,11 +1886,11 @@ class misc_ARTITORCH:Actor
 
 //==========================================================================
 //
-//	misc_FIREBOMB
+//	MT_FIREBOMB
 //
 //==========================================================================
 
-class misc_FIREBOMB:Actor
+class MT_FIREBOMB:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1912,11 +1912,11 @@ class misc_FIREBOMB:Actor
 
 //==========================================================================
 //
-//	misc_ARTITELEPORT
+//	MT_ARTITELEPORT
 //
 //==========================================================================
 
-class misc_ARTITELEPORT:Actor
+class MT_ARTITELEPORT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1936,11 +1936,11 @@ class misc_ARTITELEPORT:Actor
 
 //==========================================================================
 //
-//	misc_ARTIPOISONBAG
+//	MT_ARTIPOISONBAG
 //
 //==========================================================================
 
-class misc_ARTIPOISONBAG:Actor
+class MT_ARTIPOISONBAG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1960,11 +1960,11 @@ class misc_ARTIPOISONBAG:Actor
 
 //==========================================================================
 //
-//	misc_POISONBAG
+//	MT_POISONBAG
 //
 //==========================================================================
 
-class misc_POISONBAG:Actor
+class MT_POISONBAG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -1983,11 +1983,11 @@ class misc_POISONBAG:Actor
 
 //==========================================================================
 //
-//	misc_POISONCLOUD
+//	MT_POISONCLOUD
 //
 //==========================================================================
 
-class misc_POISONCLOUD:Actor
+class MT_POISONCLOUD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2009,11 +2009,11 @@ class misc_POISONCLOUD:Actor
 
 //==========================================================================
 //
-//	misc_THROWINGBOMB
+//	MT_THROWINGBOMB
 //
 //==========================================================================
 
-class misc_THROWINGBOMB:Missile
+class MT_THROWINGBOMB:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2037,11 +2037,11 @@ class misc_THROWINGBOMB:Missile
 
 //==========================================================================
 //
-//	misc_SPEEDBOOTS
+//	MT_SPEEDBOOTS
 //
 //==========================================================================
 
-class misc_SPEEDBOOTS:Actor
+class MT_SPEEDBOOTS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2061,11 +2061,11 @@ class misc_SPEEDBOOTS:Actor
 
 //==========================================================================
 //
-//	misc_BOOSTMANA
+//	MT_BOOSTMANA
 //
 //==========================================================================
 
-class misc_BOOSTMANA:Actor
+class MT_BOOSTMANA:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2085,11 +2085,11 @@ class misc_BOOSTMANA:Actor
 
 //==========================================================================
 //
-//	misc_BOOSTARMOR
+//	MT_BOOSTARMOR
 //
 //==========================================================================
 
-class misc_BOOSTARMOR:Actor
+class MT_BOOSTARMOR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2109,11 +2109,11 @@ class misc_BOOSTARMOR:Actor
 
 //==========================================================================
 //
-//	misc_BLASTRADIUS
+//	MT_BLASTRADIUS
 //
 //==========================================================================
 
-class misc_BLASTRADIUS:Actor
+class MT_BLASTRADIUS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2133,11 +2133,11 @@ class misc_BLASTRADIUS:Actor
 
 //==========================================================================
 //
-//	misc_HEALRADIUS
+//	MT_HEALRADIUS
 //
 //==========================================================================
 
-class misc_HEALRADIUS:Actor
+class MT_HEALRADIUS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2157,11 +2157,11 @@ class misc_HEALRADIUS:Actor
 
 //==========================================================================
 //
-//	misc_SPLASH
+//	MT_SPLASH
 //
 //==========================================================================
 
-class misc_SPLASH:Missile
+class MT_SPLASH:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2182,11 +2182,11 @@ class misc_SPLASH:Missile
 
 //==========================================================================
 //
-//	misc_SPLASHBASE
+//	MT_SPLASHBASE
 //
 //==========================================================================
 
-class misc_SPLASHBASE:Actor
+class MT_SPLASHBASE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2205,11 +2205,11 @@ class misc_SPLASHBASE:Actor
 
 //==========================================================================
 //
-//	misc_LAVASPLASH
+//	MT_LAVASPLASH
 //
 //==========================================================================
 
-class misc_LAVASPLASH:Actor
+class MT_LAVASPLASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2228,11 +2228,11 @@ class misc_LAVASPLASH:Actor
 
 //==========================================================================
 //
-//	misc_LAVASMOKE
+//	MT_LAVASMOKE
 //
 //==========================================================================
 
-class misc_LAVASMOKE:Actor
+class MT_LAVASMOKE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2252,11 +2252,11 @@ class misc_LAVASMOKE:Actor
 
 //==========================================================================
 //
-//	misc_SLUDGECHUNK
+//	MT_SLUDGECHUNK
 //
 //==========================================================================
 
-class misc_SLUDGECHUNK:Missile
+class MT_SLUDGECHUNK:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2277,11 +2277,11 @@ class misc_SLUDGECHUNK:Missile
 
 //==========================================================================
 //
-//	misc_SLUDGESPLASH
+//	MT_SLUDGESPLASH
 //
 //==========================================================================
 
-class misc_SLUDGESPLASH:Actor
+class MT_SLUDGESPLASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2300,11 +2300,11 @@ class misc_SLUDGESPLASH:Actor
 
 //==========================================================================
 //
-//	misc_MISC0
+//	MT_MISC0
 //
 //==========================================================================
 
-class misc_MISC0:Actor
+class MT_MISC0:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2323,11 +2323,11 @@ class misc_MISC0:Actor
 
 //==========================================================================
 //
-//	misc_MISC1
+//	MT_MISC1
 //
 //==========================================================================
 
-class misc_MISC1:Actor
+class MT_MISC1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2345,11 +2345,11 @@ class misc_MISC1:Actor
 
 //==========================================================================
 //
-//	misc_MISC2
+//	MT_MISC2
 //
 //==========================================================================
 
-class misc_MISC2:Actor
+class MT_MISC2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2367,11 +2367,11 @@ class misc_MISC2:Actor
 
 //==========================================================================
 //
-//	misc_MISC3
+//	MT_MISC3
 //
 //==========================================================================
 
-class misc_MISC3:Actor
+class MT_MISC3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2389,11 +2389,11 @@ class misc_MISC3:Actor
 
 //==========================================================================
 //
-//	misc_MISC4
+//	MT_MISC4
 //
 //==========================================================================
 
-class misc_MISC4:Actor
+class MT_MISC4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2412,11 +2412,11 @@ class misc_MISC4:Actor
 
 //==========================================================================
 //
-//	misc_MISC5
+//	MT_MISC5
 //
 //==========================================================================
 
-class misc_MISC5:Actor
+class MT_MISC5:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2437,11 +2437,11 @@ class misc_MISC5:Actor
 
 //==========================================================================
 //
-//	misc_MISC6
+//	MT_MISC6
 //
 //==========================================================================
 
-class misc_MISC6:Actor
+class MT_MISC6:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2460,11 +2460,11 @@ class misc_MISC6:Actor
 
 //==========================================================================
 //
-//	misc_MISC7
+//	MT_MISC7
 //
 //==========================================================================
 
-class misc_MISC7:Actor
+class MT_MISC7:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2483,11 +2483,11 @@ class misc_MISC7:Actor
 
 //==========================================================================
 //
-//	misc_MISC8
+//	MT_MISC8
 //
 //==========================================================================
 
-class misc_MISC8:Actor
+class MT_MISC8:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2506,11 +2506,11 @@ class misc_MISC8:Actor
 
 //==========================================================================
 //
-//	misc_TREEDESTRUCTIBLE
+//	MT_TREEDESTRUCTIBLE
 //
 //==========================================================================
 
-class misc_TREEDESTRUCTIBLE:Actor
+class MT_TREEDESTRUCTIBLE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2531,11 +2531,11 @@ class misc_TREEDESTRUCTIBLE:Actor
 
 //==========================================================================
 //
-//	misc_MISC9
+//	MT_MISC9
 //
 //==========================================================================
 
-class misc_MISC9:Actor
+class MT_MISC9:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2554,11 +2554,11 @@ class misc_MISC9:Actor
 
 //==========================================================================
 //
-//	misc_MISC10
+//	MT_MISC10
 //
 //==========================================================================
 
-class misc_MISC10:Actor
+class MT_MISC10:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2577,11 +2577,11 @@ class misc_MISC10:Actor
 
 //==========================================================================
 //
-//	misc_MISC11
+//	MT_MISC11
 //
 //==========================================================================
 
-class misc_MISC11:Actor
+class MT_MISC11:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2600,11 +2600,11 @@ class misc_MISC11:Actor
 
 //==========================================================================
 //
-//	misc_MISC12
+//	MT_MISC12
 //
 //==========================================================================
 
-class misc_MISC12:Actor
+class MT_MISC12:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2623,11 +2623,11 @@ class misc_MISC12:Actor
 
 //==========================================================================
 //
-//	misc_MISC13
+//	MT_MISC13
 //
 //==========================================================================
 
-class misc_MISC13:Actor
+class MT_MISC13:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2645,11 +2645,11 @@ class misc_MISC13:Actor
 
 //==========================================================================
 //
-//	misc_MISC14
+//	MT_MISC14
 //
 //==========================================================================
 
-class misc_MISC14:Actor
+class MT_MISC14:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2667,11 +2667,11 @@ class misc_MISC14:Actor
 
 //==========================================================================
 //
-//	misc_MISC15
+//	MT_MISC15
 //
 //==========================================================================
 
-class misc_MISC15:Actor
+class MT_MISC15:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2689,11 +2689,11 @@ class misc_MISC15:Actor
 
 //==========================================================================
 //
-//	misc_MISC16
+//	MT_MISC16
 //
 //==========================================================================
 
-class misc_MISC16:Actor
+class MT_MISC16:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2711,11 +2711,11 @@ class misc_MISC16:Actor
 
 //==========================================================================
 //
-//	misc_MISC17
+//	MT_MISC17
 //
 //==========================================================================
 
-class misc_MISC17:Actor
+class MT_MISC17:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2733,11 +2733,11 @@ class misc_MISC17:Actor
 
 //==========================================================================
 //
-//	misc_MISC18
+//	MT_MISC18
 //
 //==========================================================================
 
-class misc_MISC18:Actor
+class MT_MISC18:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2755,11 +2755,11 @@ class misc_MISC18:Actor
 
 //==========================================================================
 //
-//	misc_MISC19
+//	MT_MISC19
 //
 //==========================================================================
 
-class misc_MISC19:Actor
+class MT_MISC19:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2777,11 +2777,11 @@ class misc_MISC19:Actor
 
 //==========================================================================
 //
-//	misc_MISC20
+//	MT_MISC20
 //
 //==========================================================================
 
-class misc_MISC20:Actor
+class MT_MISC20:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2799,11 +2799,11 @@ class misc_MISC20:Actor
 
 //==========================================================================
 //
-//	misc_MISC21
+//	MT_MISC21
 //
 //==========================================================================
 
-class misc_MISC21:Actor
+class MT_MISC21:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2821,11 +2821,11 @@ class misc_MISC21:Actor
 
 //==========================================================================
 //
-//	misc_MISC22
+//	MT_MISC22
 //
 //==========================================================================
 
-class misc_MISC22:Actor
+class MT_MISC22:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2843,11 +2843,11 @@ class misc_MISC22:Actor
 
 //==========================================================================
 //
-//	misc_MISC23
+//	MT_MISC23
 //
 //==========================================================================
 
-class misc_MISC23:Actor
+class MT_MISC23:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2866,11 +2866,11 @@ class misc_MISC23:Actor
 
 //==========================================================================
 //
-//	misc_MISC24
+//	MT_MISC24
 //
 //==========================================================================
 
-class misc_MISC24:Actor
+class MT_MISC24:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2889,11 +2889,11 @@ class misc_MISC24:Actor
 
 //==========================================================================
 //
-//	misc_MISC25
+//	MT_MISC25
 //
 //==========================================================================
 
-class misc_MISC25:Actor
+class MT_MISC25:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2912,11 +2912,11 @@ class misc_MISC25:Actor
 
 //==========================================================================
 //
-//	misc_MISC26
+//	MT_MISC26
 //
 //==========================================================================
 
-class misc_MISC26:Actor
+class MT_MISC26:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2935,11 +2935,11 @@ class misc_MISC26:Actor
 
 //==========================================================================
 //
-//	misc_MISC27
+//	MT_MISC27
 //
 //==========================================================================
 
-class misc_MISC27:Actor
+class MT_MISC27:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2958,11 +2958,11 @@ class misc_MISC27:Actor
 
 //==========================================================================
 //
-//	misc_MISC28
+//	MT_MISC28
 //
 //==========================================================================
 
-class misc_MISC28:Actor
+class MT_MISC28:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -2981,11 +2981,11 @@ class misc_MISC28:Actor
 
 //==========================================================================
 //
-//	misc_MISC29
+//	MT_MISC29
 //
 //==========================================================================
 
-class misc_MISC29:Actor
+class MT_MISC29:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3004,11 +3004,11 @@ class misc_MISC29:Actor
 
 //==========================================================================
 //
-//	misc_MISC30
+//	MT_MISC30
 //
 //==========================================================================
 
-class misc_MISC30:Actor
+class MT_MISC30:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3027,11 +3027,11 @@ class misc_MISC30:Actor
 
 //==========================================================================
 //
-//	misc_MISC31
+//	MT_MISC31
 //
 //==========================================================================
 
-class misc_MISC31:Actor
+class MT_MISC31:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3050,11 +3050,11 @@ class misc_MISC31:Actor
 
 //==========================================================================
 //
-//	misc_MISC32
+//	MT_MISC32
 //
 //==========================================================================
 
-class misc_MISC32:Actor
+class MT_MISC32:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3073,11 +3073,11 @@ class misc_MISC32:Actor
 
 //==========================================================================
 //
-//	misc_MISC33
+//	MT_MISC33
 //
 //==========================================================================
 
-class misc_MISC33:Actor
+class MT_MISC33:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3096,11 +3096,11 @@ class misc_MISC33:Actor
 
 //==========================================================================
 //
-//	misc_MISC34
+//	MT_MISC34
 //
 //==========================================================================
 
-class misc_MISC34:Actor
+class MT_MISC34:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3118,11 +3118,11 @@ class misc_MISC34:Actor
 
 //==========================================================================
 //
-//	misc_MISC35
+//	MT_MISC35
 //
 //==========================================================================
 
-class misc_MISC35:Actor
+class MT_MISC35:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3141,11 +3141,11 @@ class misc_MISC35:Actor
 
 //==========================================================================
 //
-//	misc_MISC36
+//	MT_MISC36
 //
 //==========================================================================
 
-class misc_MISC36:Actor
+class MT_MISC36:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3164,11 +3164,11 @@ class misc_MISC36:Actor
 
 //==========================================================================
 //
-//	misc_MISC37
+//	MT_MISC37
 //
 //==========================================================================
 
-class misc_MISC37:Actor
+class MT_MISC37:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3187,11 +3187,11 @@ class misc_MISC37:Actor
 
 //==========================================================================
 //
-//	misc_MISC38
+//	MT_MISC38
 //
 //==========================================================================
 
-class misc_MISC38:Actor
+class MT_MISC38:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3210,11 +3210,11 @@ class misc_MISC38:Actor
 
 //==========================================================================
 //
-//	misc_MISC39
+//	MT_MISC39
 //
 //==========================================================================
 
-class misc_MISC39:Actor
+class MT_MISC39:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3233,11 +3233,11 @@ class misc_MISC39:Actor
 
 //==========================================================================
 //
-//	misc_MISC40
+//	MT_MISC40
 //
 //==========================================================================
 
-class misc_MISC40:Actor
+class MT_MISC40:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3256,11 +3256,11 @@ class misc_MISC40:Actor
 
 //==========================================================================
 //
-//	misc_MISC41
+//	MT_MISC41
 //
 //==========================================================================
 
-class misc_MISC41:Actor
+class MT_MISC41:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3279,11 +3279,11 @@ class misc_MISC41:Actor
 
 //==========================================================================
 //
-//	misc_MISC42
+//	MT_MISC42
 //
 //==========================================================================
 
-class misc_MISC42:Actor
+class MT_MISC42:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3302,11 +3302,11 @@ class misc_MISC42:Actor
 
 //==========================================================================
 //
-//	misc_MISC43
+//	MT_MISC43
 //
 //==========================================================================
 
-class misc_MISC43:Actor
+class MT_MISC43:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3325,11 +3325,11 @@ class misc_MISC43:Actor
 
 //==========================================================================
 //
-//	misc_MISC44
+//	MT_MISC44
 //
 //==========================================================================
 
-class misc_MISC44:Actor
+class MT_MISC44:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3348,11 +3348,11 @@ class misc_MISC44:Actor
 
 //==========================================================================
 //
-//	misc_MISC45
+//	MT_MISC45
 //
 //==========================================================================
 
-class misc_MISC45:Actor
+class MT_MISC45:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3371,11 +3371,11 @@ class misc_MISC45:Actor
 
 //==========================================================================
 //
-//	misc_MISC46
+//	MT_MISC46
 //
 //==========================================================================
 
-class misc_MISC46:Actor
+class MT_MISC46:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3394,11 +3394,11 @@ class misc_MISC46:Actor
 
 //==========================================================================
 //
-//	misc_MISC47
+//	MT_MISC47
 //
 //==========================================================================
 
-class misc_MISC47:Actor
+class MT_MISC47:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3417,11 +3417,11 @@ class misc_MISC47:Actor
 
 //==========================================================================
 //
-//	misc_MISC48
+//	MT_MISC48
 //
 //==========================================================================
 
-class misc_MISC48:Actor
+class MT_MISC48:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3440,11 +3440,11 @@ class misc_MISC48:Actor
 
 //==========================================================================
 //
-//	misc_MISC49
+//	MT_MISC49
 //
 //==========================================================================
 
-class misc_MISC49:Actor
+class MT_MISC49:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3463,11 +3463,11 @@ class misc_MISC49:Actor
 
 //==========================================================================
 //
-//	misc_MISC50
+//	MT_MISC50
 //
 //==========================================================================
 
-class misc_MISC50:Actor
+class MT_MISC50:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3486,11 +3486,11 @@ class misc_MISC50:Actor
 
 //==========================================================================
 //
-//	misc_MISC51
+//	MT_MISC51
 //
 //==========================================================================
 
-class misc_MISC51:Actor
+class MT_MISC51:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3509,11 +3509,11 @@ class misc_MISC51:Actor
 
 //==========================================================================
 //
-//	misc_MISC52
+//	MT_MISC52
 //
 //==========================================================================
 
-class misc_MISC52:Actor
+class MT_MISC52:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3532,11 +3532,11 @@ class misc_MISC52:Actor
 
 //==========================================================================
 //
-//	misc_MISC53
+//	MT_MISC53
 //
 //==========================================================================
 
-class misc_MISC53:Actor
+class MT_MISC53:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3555,11 +3555,11 @@ class misc_MISC53:Actor
 
 //==========================================================================
 //
-//	misc_MISC54
+//	MT_MISC54
 //
 //==========================================================================
 
-class misc_MISC54:Actor
+class MT_MISC54:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3578,11 +3578,11 @@ class misc_MISC54:Actor
 
 //==========================================================================
 //
-//	misc_MISC55
+//	MT_MISC55
 //
 //==========================================================================
 
-class misc_MISC55:Actor
+class MT_MISC55:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3601,11 +3601,11 @@ class misc_MISC55:Actor
 
 //==========================================================================
 //
-//	misc_MISC56
+//	MT_MISC56
 //
 //==========================================================================
 
-class misc_MISC56:Actor
+class MT_MISC56:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3624,11 +3624,11 @@ class misc_MISC56:Actor
 
 //==========================================================================
 //
-//	misc_MISC57
+//	MT_MISC57
 //
 //==========================================================================
 
-class misc_MISC57:Actor
+class MT_MISC57:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3648,11 +3648,11 @@ class misc_MISC57:Actor
 
 //==========================================================================
 //
-//	misc_MISC58
+//	MT_MISC58
 //
 //==========================================================================
 
-class misc_MISC58:Actor
+class MT_MISC58:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3672,11 +3672,11 @@ class misc_MISC58:Actor
 
 //==========================================================================
 //
-//	misc_MISC59
+//	MT_MISC59
 //
 //==========================================================================
 
-class misc_MISC59:Actor
+class MT_MISC59:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3695,11 +3695,11 @@ class misc_MISC59:Actor
 
 //==========================================================================
 //
-//	misc_MISC60
+//	MT_MISC60
 //
 //==========================================================================
 
-class misc_MISC60:Actor
+class MT_MISC60:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3718,11 +3718,11 @@ class misc_MISC60:Actor
 
 //==========================================================================
 //
-//	misc_MISC61
+//	MT_MISC61
 //
 //==========================================================================
 
-class misc_MISC61:Actor
+class MT_MISC61:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3741,11 +3741,11 @@ class misc_MISC61:Actor
 
 //==========================================================================
 //
-//	misc_MISC62
+//	MT_MISC62
 //
 //==========================================================================
 
-class misc_MISC62:Actor
+class MT_MISC62:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3764,11 +3764,11 @@ class misc_MISC62:Actor
 
 //==========================================================================
 //
-//	misc_MISC63
+//	MT_MISC63
 //
 //==========================================================================
 
-class misc_MISC63:Actor
+class MT_MISC63:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3787,11 +3787,11 @@ class misc_MISC63:Actor
 
 //==========================================================================
 //
-//	misc_MISC64
+//	MT_MISC64
 //
 //==========================================================================
 
-class misc_MISC64:Actor
+class MT_MISC64:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3810,11 +3810,11 @@ class misc_MISC64:Actor
 
 //==========================================================================
 //
-//	misc_MISC65
+//	MT_MISC65
 //
 //==========================================================================
 
-class misc_MISC65:Actor
+class MT_MISC65:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3833,11 +3833,11 @@ class misc_MISC65:Actor
 
 //==========================================================================
 //
-//	misc_MISC66
+//	MT_MISC66
 //
 //==========================================================================
 
-class misc_MISC66:Actor
+class MT_MISC66:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3856,11 +3856,11 @@ class misc_MISC66:Actor
 
 //==========================================================================
 //
-//	misc_MISC67
+//	MT_MISC67
 //
 //==========================================================================
 
-class misc_MISC67:Actor
+class MT_MISC67:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3879,11 +3879,11 @@ class misc_MISC67:Actor
 
 //==========================================================================
 //
-//	misc_MISC68
+//	MT_MISC68
 //
 //==========================================================================
 
-class misc_MISC68:Actor
+class MT_MISC68:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3902,11 +3902,11 @@ class misc_MISC68:Actor
 
 //==========================================================================
 //
-//	misc_MISC69
+//	MT_MISC69
 //
 //==========================================================================
 
-class misc_MISC69:Actor
+class MT_MISC69:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3925,11 +3925,11 @@ class misc_MISC69:Actor
 
 //==========================================================================
 //
-//	misc_MISC70
+//	MT_MISC70
 //
 //==========================================================================
 
-class misc_MISC70:Actor
+class MT_MISC70:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3948,11 +3948,11 @@ class misc_MISC70:Actor
 
 //==========================================================================
 //
-//	misc_MISC71
+//	MT_MISC71
 //
 //==========================================================================
 
-class misc_MISC71:Actor
+class MT_MISC71:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3971,11 +3971,11 @@ class misc_MISC71:Actor
 
 //==========================================================================
 //
-//	misc_MISC72
+//	MT_MISC72
 //
 //==========================================================================
 
-class misc_MISC72:Actor
+class MT_MISC72:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -3994,11 +3994,11 @@ class misc_MISC72:Actor
 
 //==========================================================================
 //
-//	misc_MISC73
+//	MT_MISC73
 //
 //==========================================================================
 
-class misc_MISC73:Actor
+class MT_MISC73:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4016,11 +4016,11 @@ class misc_MISC73:Actor
 
 //==========================================================================
 //
-//	misc_MISC74
+//	MT_MISC74
 //
 //==========================================================================
 
-class misc_MISC74:Actor
+class MT_MISC74:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4038,11 +4038,11 @@ class misc_MISC74:Actor
 
 //==========================================================================
 //
-//	misc_MISC75
+//	MT_MISC75
 //
 //==========================================================================
 
-class misc_MISC75:Actor
+class MT_MISC75:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4060,11 +4060,11 @@ class misc_MISC75:Actor
 
 //==========================================================================
 //
-//	misc_MISC76
+//	MT_MISC76
 //
 //==========================================================================
 
-class misc_MISC76:Actor
+class MT_MISC76:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4083,11 +4083,11 @@ class misc_MISC76:Actor
 
 //==========================================================================
 //
-//	misc_POTTERY1
+//	MT_POTTERY1
 //
 //==========================================================================
 
-class misc_POTTERY1:Actor
+class MT_POTTERY1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4108,11 +4108,11 @@ class misc_POTTERY1:Actor
 
 //==========================================================================
 //
-//	misc_POTTERY2
+//	MT_POTTERY2
 //
 //==========================================================================
 
-class misc_POTTERY2:Actor
+class MT_POTTERY2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4133,11 +4133,11 @@ class misc_POTTERY2:Actor
 
 //==========================================================================
 //
-//	misc_POTTERY3
+//	MT_POTTERY3
 //
 //==========================================================================
 
-class misc_POTTERY3:Actor
+class MT_POTTERY3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4158,11 +4158,11 @@ class misc_POTTERY3:Actor
 
 //==========================================================================
 //
-//	misc_POTTERYBIT1
+//	MT_POTTERYBIT1
 //
 //==========================================================================
 
-class misc_POTTERYBIT1:Missile
+class MT_POTTERYBIT1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4183,11 +4183,11 @@ class misc_POTTERYBIT1:Missile
 
 //==========================================================================
 //
-//	misc_MISC77
+//	MT_MISC77
 //
 //==========================================================================
 
-class misc_MISC77:Actor
+class MT_MISC77:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4206,11 +4206,11 @@ class misc_MISC77:Actor
 
 //==========================================================================
 //
-//	misc_ZLYNCHED_NOHEART
+//	MT_ZLYNCHED_NOHEART
 //
 //==========================================================================
 
-class misc_ZLYNCHED_NOHEART:Actor
+class MT_ZLYNCHED_NOHEART:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4229,11 +4229,11 @@ class misc_ZLYNCHED_NOHEART:Actor
 
 //==========================================================================
 //
-//	misc_MISC78
+//	MT_MISC78
 //
 //==========================================================================
 
-class misc_MISC78:Actor
+class MT_MISC78:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4253,11 +4253,11 @@ class misc_MISC78:Actor
 
 //==========================================================================
 //
-//	misc_CORPSEBIT
+//	MT_CORPSEBIT
 //
 //==========================================================================
 
-class misc_CORPSEBIT:Actor
+class MT_CORPSEBIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4277,11 +4277,11 @@ class misc_CORPSEBIT:Actor
 
 //==========================================================================
 //
-//	misc_CORPSEBLOODDRIP
+//	MT_CORPSEBLOODDRIP
 //
 //==========================================================================
 
-class misc_CORPSEBLOODDRIP:Missile
+class MT_CORPSEBLOODDRIP:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4303,11 +4303,11 @@ class misc_CORPSEBLOODDRIP:Missile
 
 //==========================================================================
 //
-//	misc_BLOODPOOL
+//	MT_BLOODPOOL
 //
 //==========================================================================
 
-class misc_BLOODPOOL:Actor
+class MT_BLOODPOOL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4326,11 +4326,11 @@ class misc_BLOODPOOL:Actor
 
 //==========================================================================
 //
-//	misc_MISC79
+//	MT_MISC79
 //
 //==========================================================================
 
-class misc_MISC79:Actor
+class MT_MISC79:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4350,11 +4350,11 @@ class misc_MISC79:Actor
 
 //==========================================================================
 //
-//	misc_MISC80
+//	MT_MISC80
 //
 //==========================================================================
 
-class misc_MISC80:Actor
+class MT_MISC80:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4374,11 +4374,11 @@ class misc_MISC80:Actor
 
 //==========================================================================
 //
-//	misc_LEAF1
+//	MT_LEAF1
 //
 //==========================================================================
 
-class misc_LEAF1:Missile
+class MT_LEAF1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4399,11 +4399,11 @@ class misc_LEAF1:Missile
 
 //==========================================================================
 //
-//	misc_LEAF2
+//	MT_LEAF2
 //
 //==========================================================================
 
-class misc_LEAF2:Missile
+class MT_LEAF2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4424,11 +4424,11 @@ class misc_LEAF2:Missile
 
 //==========================================================================
 //
-//	misc_ZTWINEDTORCH
+//	MT_ZTWINEDTORCH
 //
 //==========================================================================
 
-class misc_ZTWINEDTORCH:Actor
+class MT_ZTWINEDTORCH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4448,11 +4448,11 @@ class misc_ZTWINEDTORCH:Actor
 
 //==========================================================================
 //
-//	misc_ZTWINEDTORCH_UNLIT
+//	MT_ZTWINEDTORCH_UNLIT
 //
 //==========================================================================
 
-class misc_ZTWINEDTORCH_UNLIT:Actor
+class MT_ZTWINEDTORCH_UNLIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4471,11 +4471,11 @@ class misc_ZTWINEDTORCH_UNLIT:Actor
 
 //==========================================================================
 //
-//	misc_BRIDGE
+//	MT_BRIDGE
 //
 //==========================================================================
 
-class misc_BRIDGE:Actor
+class MT_BRIDGE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4495,11 +4495,11 @@ class misc_BRIDGE:Actor
 
 //==========================================================================
 //
-//	misc_BRIDGEBALL
+//	MT_BRIDGEBALL
 //
 //==========================================================================
 
-class misc_BRIDGEBALL:Actor
+class MT_BRIDGEBALL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4519,11 +4519,11 @@ class misc_BRIDGEBALL:Actor
 
 //==========================================================================
 //
-//	misc_ZWALLTORCH
+//	MT_ZWALLTORCH
 //
 //==========================================================================
 
-class misc_ZWALLTORCH:Actor
+class MT_ZWALLTORCH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4544,11 +4544,11 @@ class misc_ZWALLTORCH:Actor
 
 //==========================================================================
 //
-//	misc_ZWALLTORCH_UNLIT
+//	MT_ZWALLTORCH_UNLIT
 //
 //==========================================================================
 
-class misc_ZWALLTORCH_UNLIT:Actor
+class MT_ZWALLTORCH_UNLIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4567,11 +4567,11 @@ class misc_ZWALLTORCH_UNLIT:Actor
 
 //==========================================================================
 //
-//	misc_ZBARREL
+//	MT_ZBARREL
 //
 //==========================================================================
 
-class misc_ZBARREL:Actor
+class MT_ZBARREL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4590,11 +4590,11 @@ class misc_ZBARREL:Actor
 
 //==========================================================================
 //
-//	misc_ZSHRUB1
+//	MT_ZSHRUB1
 //
 //==========================================================================
 
-class misc_ZSHRUB1:Actor
+class MT_ZSHRUB1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4616,11 +4616,11 @@ class misc_ZSHRUB1:Actor
 
 //==========================================================================
 //
-//	misc_ZSHRUB2
+//	MT_ZSHRUB2
 //
 //==========================================================================
 
-class misc_ZSHRUB2:Actor
+class MT_ZSHRUB2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4642,11 +4642,11 @@ class misc_ZSHRUB2:Actor
 
 //==========================================================================
 //
-//	misc_ZBUCKET
+//	MT_ZBUCKET
 //
 //==========================================================================
 
-class misc_ZBUCKET:Actor
+class MT_ZBUCKET:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4665,11 +4665,11 @@ class misc_ZBUCKET:Actor
 
 //==========================================================================
 //
-//	misc_ZPOISONSHROOM
+//	MT_ZPOISONSHROOM
 //
 //==========================================================================
 
-class misc_ZPOISONSHROOM:Actor
+class MT_ZPOISONSHROOM:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4693,11 +4693,11 @@ class misc_ZPOISONSHROOM:Actor
 
 //==========================================================================
 //
-//	misc_ZFIREBULL
+//	MT_ZFIREBULL
 //
 //==========================================================================
 
-class misc_ZFIREBULL:Actor
+class MT_ZFIREBULL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4718,11 +4718,11 @@ class misc_ZFIREBULL:Actor
 
 //==========================================================================
 //
-//	misc_ZFIREBULL_UNLIT
+//	MT_ZFIREBULL_UNLIT
 //
 //==========================================================================
 
-class misc_ZFIREBULL_UNLIT:Actor
+class MT_ZFIREBULL_UNLIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4741,11 +4741,11 @@ class misc_ZFIREBULL_UNLIT:Actor
 
 //==========================================================================
 //
-//	misc_FIRETHING
+//	MT_FIRETHING
 //
 //==========================================================================
 
-class misc_FIRETHING:Actor
+class MT_FIRETHING:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4766,11 +4766,11 @@ class misc_FIRETHING:Actor
 
 //==========================================================================
 //
-//	misc_BRASSTORCH
+//	MT_BRASSTORCH
 //
 //==========================================================================
 
-class misc_BRASSTORCH:Actor
+class MT_BRASSTORCH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4791,11 +4791,11 @@ class misc_BRASSTORCH:Actor
 
 //==========================================================================
 //
-//	misc_ZSUITOFARMOR
+//	MT_ZSUITOFARMOR
 //
 //==========================================================================
 
-class misc_ZSUITOFARMOR:Actor
+class MT_ZSUITOFARMOR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4816,11 +4816,11 @@ class misc_ZSUITOFARMOR:Actor
 
 //==========================================================================
 //
-//	misc_ZARMORCHUNK
+//	MT_ZARMORCHUNK
 //
 //==========================================================================
 
-class misc_ZARMORCHUNK:Actor
+class MT_ZARMORCHUNK:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4838,11 +4838,11 @@ class misc_ZARMORCHUNK:Actor
 
 //==========================================================================
 //
-//	misc_ZBELL
+//	MT_ZBELL
 //
 //==========================================================================
 
-class misc_ZBELL:Actor
+class MT_ZBELL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4863,11 +4863,11 @@ class misc_ZBELL:Actor
 
 //==========================================================================
 //
-//	misc_ZBLUE_CANDLE
+//	MT_ZBLUE_CANDLE
 //
 //==========================================================================
 
-class misc_ZBLUE_CANDLE:Actor
+class MT_ZBLUE_CANDLE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4888,11 +4888,11 @@ class misc_ZBLUE_CANDLE:Actor
 
 //==========================================================================
 //
-//	misc_ZIRON_MAIDEN
+//	MT_ZIRON_MAIDEN
 //
 //==========================================================================
 
-class misc_ZIRON_MAIDEN:Actor
+class MT_ZIRON_MAIDEN:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4911,11 +4911,11 @@ class misc_ZIRON_MAIDEN:Actor
 
 //==========================================================================
 //
-//	misc_ZXMAS_TREE
+//	MT_ZXMAS_TREE
 //
 //==========================================================================
 
-class misc_ZXMAS_TREE:Actor
+class MT_ZXMAS_TREE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4937,11 +4937,11 @@ class misc_ZXMAS_TREE:Actor
 
 //==========================================================================
 //
-//	misc_ZCAULDRON
+//	MT_ZCAULDRON
 //
 //==========================================================================
 
-class misc_ZCAULDRON:Actor
+class MT_ZCAULDRON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4962,11 +4962,11 @@ class misc_ZCAULDRON:Actor
 
 //==========================================================================
 //
-//	misc_ZCAULDRON_UNLIT
+//	MT_ZCAULDRON_UNLIT
 //
 //==========================================================================
 
-class misc_ZCAULDRON_UNLIT:Actor
+class MT_ZCAULDRON_UNLIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -4985,11 +4985,11 @@ class misc_ZCAULDRON_UNLIT:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINBIT32
+//	MT_ZCHAINBIT32
 //
 //==========================================================================
 
-class misc_ZCHAINBIT32:Actor
+class MT_ZCHAINBIT32:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5008,11 +5008,11 @@ class misc_ZCHAINBIT32:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINBIT64
+//	MT_ZCHAINBIT64
 //
 //==========================================================================
 
-class misc_ZCHAINBIT64:Actor
+class MT_ZCHAINBIT64:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5031,11 +5031,11 @@ class misc_ZCHAINBIT64:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINEND_HEART
+//	MT_ZCHAINEND_HEART
 //
 //==========================================================================
 
-class misc_ZCHAINEND_HEART:Actor
+class MT_ZCHAINEND_HEART:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5054,11 +5054,11 @@ class misc_ZCHAINEND_HEART:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINEND_HOOK1
+//	MT_ZCHAINEND_HOOK1
 //
 //==========================================================================
 
-class misc_ZCHAINEND_HOOK1:Actor
+class MT_ZCHAINEND_HOOK1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5077,11 +5077,11 @@ class misc_ZCHAINEND_HOOK1:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINEND_HOOK2
+//	MT_ZCHAINEND_HOOK2
 //
 //==========================================================================
 
-class misc_ZCHAINEND_HOOK2:Actor
+class MT_ZCHAINEND_HOOK2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5100,11 +5100,11 @@ class misc_ZCHAINEND_HOOK2:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINEND_SPIKE
+//	MT_ZCHAINEND_SPIKE
 //
 //==========================================================================
 
-class misc_ZCHAINEND_SPIKE:Actor
+class MT_ZCHAINEND_SPIKE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5123,11 +5123,11 @@ class misc_ZCHAINEND_SPIKE:Actor
 
 //==========================================================================
 //
-//	misc_ZCHAINEND_SKULL
+//	MT_ZCHAINEND_SKULL
 //
 //==========================================================================
 
-class misc_ZCHAINEND_SKULL:Actor
+class MT_ZCHAINEND_SKULL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5146,11 +5146,11 @@ class misc_ZCHAINEND_SKULL:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT1
+//	MT_TABLE_SHIT1
 //
 //==========================================================================
 
-class misc_TABLE_SHIT1:Actor
+class MT_TABLE_SHIT1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5169,11 +5169,11 @@ class misc_TABLE_SHIT1:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT2
+//	MT_TABLE_SHIT2
 //
 //==========================================================================
 
-class misc_TABLE_SHIT2:Actor
+class MT_TABLE_SHIT2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5192,11 +5192,11 @@ class misc_TABLE_SHIT2:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT3
+//	MT_TABLE_SHIT3
 //
 //==========================================================================
 
-class misc_TABLE_SHIT3:Actor
+class MT_TABLE_SHIT3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5215,11 +5215,11 @@ class misc_TABLE_SHIT3:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT4
+//	MT_TABLE_SHIT4
 //
 //==========================================================================
 
-class misc_TABLE_SHIT4:Actor
+class MT_TABLE_SHIT4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5238,11 +5238,11 @@ class misc_TABLE_SHIT4:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT5
+//	MT_TABLE_SHIT5
 //
 //==========================================================================
 
-class misc_TABLE_SHIT5:Actor
+class MT_TABLE_SHIT5:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5261,11 +5261,11 @@ class misc_TABLE_SHIT5:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT6
+//	MT_TABLE_SHIT6
 //
 //==========================================================================
 
-class misc_TABLE_SHIT6:Actor
+class MT_TABLE_SHIT6:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5284,11 +5284,11 @@ class misc_TABLE_SHIT6:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT7
+//	MT_TABLE_SHIT7
 //
 //==========================================================================
 
-class misc_TABLE_SHIT7:Actor
+class MT_TABLE_SHIT7:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5307,11 +5307,11 @@ class misc_TABLE_SHIT7:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT8
+//	MT_TABLE_SHIT8
 //
 //==========================================================================
 
-class misc_TABLE_SHIT8:Actor
+class MT_TABLE_SHIT8:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5330,11 +5330,11 @@ class misc_TABLE_SHIT8:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT9
+//	MT_TABLE_SHIT9
 //
 //==========================================================================
 
-class misc_TABLE_SHIT9:Actor
+class MT_TABLE_SHIT9:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5353,11 +5353,11 @@ class misc_TABLE_SHIT9:Actor
 
 //==========================================================================
 //
-//	misc_TABLE_SHIT10
+//	MT_TABLE_SHIT10
 //
 //==========================================================================
 
-class misc_TABLE_SHIT10:Actor
+class MT_TABLE_SHIT10:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5376,11 +5376,11 @@ class misc_TABLE_SHIT10:Actor
 
 //==========================================================================
 //
-//	misc_TFOG
+//	MT_TFOG
 //
 //==========================================================================
 
-class misc_TFOG:Actor
+class MT_TFOG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5399,11 +5399,11 @@ class misc_TFOG:Actor
 
 //==========================================================================
 //
-//	misc_MISC81
+//	MT_MISC81
 //
 //==========================================================================
 
-class misc_MISC81:Actor
+class MT_MISC81:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5422,11 +5422,11 @@ class misc_MISC81:Actor
 
 //==========================================================================
 //
-//	misc_TELEPORTMAN
+//	MT_TELEPORTMAN
 //
 //==========================================================================
 
-class misc_TELEPORTMAN:Actor
+class MT_TELEPORTMAN:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5444,11 +5444,11 @@ class misc_TELEPORTMAN:Actor
 
 //==========================================================================
 //
-//	misc_PUNCHPUFF
+//	MT_PUNCHPUFF
 //
 //==========================================================================
 
-class misc_PUNCHPUFF:Actor
+class MT_PUNCHPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5470,11 +5470,11 @@ class misc_PUNCHPUFF:Actor
 
 //==========================================================================
 //
-//	misc_FW_AXE
+//	MT_FW_AXE
 //
 //==========================================================================
 
-class misc_FW_AXE:Actor
+class MT_FW_AXE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5493,11 +5493,11 @@ class misc_FW_AXE:Actor
 
 //==========================================================================
 //
-//	misc_AXEPUFF
+//	MT_AXEPUFF
 //
 //==========================================================================
 
-class misc_AXEPUFF:Actor
+class MT_AXEPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5519,11 +5519,11 @@ class misc_AXEPUFF:Actor
 
 //==========================================================================
 //
-//	misc_AXEPUFF_GLOW
+//	MT_AXEPUFF_GLOW
 //
 //==========================================================================
 
-class misc_AXEPUFF_GLOW:Actor
+class MT_AXEPUFF_GLOW:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5544,11 +5544,11 @@ class misc_AXEPUFF_GLOW:Actor
 
 //==========================================================================
 //
-//	misc_AXEBLOOD
+//	MT_AXEBLOOD
 //
 //==========================================================================
 
-class misc_AXEBLOOD:Actor
+class MT_AXEBLOOD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5569,11 +5569,11 @@ class misc_AXEBLOOD:Actor
 
 //==========================================================================
 //
-//	misc_FW_HAMMER
+//	MT_FW_HAMMER
 //
 //==========================================================================
 
-class misc_FW_HAMMER:Actor
+class MT_FW_HAMMER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5592,11 +5592,11 @@ class misc_FW_HAMMER:Actor
 
 //==========================================================================
 //
-//	misc_HAMMER_MISSILE
+//	MT_HAMMER_MISSILE
 //
 //==========================================================================
 
-class misc_HAMMER_MISSILE:Missile
+class MT_HAMMER_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5621,11 +5621,11 @@ class misc_HAMMER_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_HAMMERPUFF
+//	MT_HAMMERPUFF
 //
 //==========================================================================
 
-class misc_HAMMERPUFF:Actor
+class MT_HAMMERPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5647,11 +5647,11 @@ class misc_HAMMERPUFF:Actor
 
 //==========================================================================
 //
-//	misc_FSWORD_MISSILE
+//	MT_FSWORD_MISSILE
 //
 //==========================================================================
 
-class misc_FSWORD_MISSILE:Missile
+class MT_FSWORD_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5676,11 +5676,11 @@ class misc_FSWORD_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_FSWORD_FLAME
+//	MT_FSWORD_FLAME
 //
 //==========================================================================
 
-class misc_FSWORD_FLAME:Actor
+class MT_FSWORD_FLAME:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5700,11 +5700,11 @@ class misc_FSWORD_FLAME:Actor
 
 //==========================================================================
 //
-//	misc_CW_SERPSTAFF
+//	MT_CW_SERPSTAFF
 //
 //==========================================================================
 
-class misc_CW_SERPSTAFF:Actor
+class MT_CW_SERPSTAFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5723,11 +5723,11 @@ class misc_CW_SERPSTAFF:Actor
 
 //==========================================================================
 //
-//	misc_CSTAFF_MISSILE
+//	MT_CSTAFF_MISSILE
 //
 //==========================================================================
 
-class misc_CSTAFF_MISSILE:Missile
+class MT_CSTAFF_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5752,11 +5752,11 @@ class misc_CSTAFF_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_CSTAFFPUFF
+//	MT_CSTAFFPUFF
 //
 //==========================================================================
 
-class misc_CSTAFFPUFF:Actor
+class MT_CSTAFFPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5777,11 +5777,11 @@ class misc_CSTAFFPUFF:Actor
 
 //==========================================================================
 //
-//	misc_CW_FLAME
+//	MT_CW_FLAME
 //
 //==========================================================================
 
-class misc_CW_FLAME:Actor
+class MT_CW_FLAME:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5800,11 +5800,11 @@ class misc_CW_FLAME:Actor
 
 //==========================================================================
 //
-//	misc_CFLAMEFLOOR
+//	MT_CFLAMEFLOOR
 //
 //==========================================================================
 
-class misc_CFLAMEFLOOR:Actor
+class MT_CFLAMEFLOOR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5823,11 +5823,11 @@ class misc_CFLAMEFLOOR:Actor
 
 //==========================================================================
 //
-//	misc_FLAMEPUFF
+//	MT_FLAMEPUFF
 //
 //==========================================================================
 
-class misc_FLAMEPUFF:Actor
+class MT_FLAMEPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5848,11 +5848,11 @@ class misc_FLAMEPUFF:Actor
 
 //==========================================================================
 //
-//	misc_FLAMEPUFF2
+//	MT_FLAMEPUFF2
 //
 //==========================================================================
 
-class misc_FLAMEPUFF2:Actor
+class MT_FLAMEPUFF2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5873,11 +5873,11 @@ class misc_FLAMEPUFF2:Actor
 
 //==========================================================================
 //
-//	misc_CIRCLEFLAME
+//	MT_CIRCLEFLAME
 //
 //==========================================================================
 
-class misc_CIRCLEFLAME:Missile
+class MT_CIRCLEFLAME:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5901,11 +5901,11 @@ class misc_CIRCLEFLAME:Missile
 
 //==========================================================================
 //
-//	misc_CFLAME_MISSILE
+//	MT_CFLAME_MISSILE
 //
 //==========================================================================
 
-class misc_CFLAME_MISSILE:Missile
+class MT_CFLAME_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5930,11 +5930,11 @@ class misc_CFLAME_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_HOLY_FX
+//	MT_HOLY_FX
 //
 //==========================================================================
 
-class misc_HOLY_FX:Missile
+class MT_HOLY_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5959,11 +5959,11 @@ class misc_HOLY_FX:Missile
 
 //==========================================================================
 //
-//	misc_HOLY_TAIL
+//	MT_HOLY_TAIL
 //
 //==========================================================================
 
-class misc_HOLY_TAIL:Actor
+class MT_HOLY_TAIL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -5984,11 +5984,11 @@ class misc_HOLY_TAIL:Actor
 
 //==========================================================================
 //
-//	misc_HOLY_PUFF
+//	MT_HOLY_PUFF
 //
 //==========================================================================
 
-class misc_HOLY_PUFF:Actor
+class MT_HOLY_PUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6008,11 +6008,11 @@ class misc_HOLY_PUFF:Actor
 
 //==========================================================================
 //
-//	misc_HOLY_MISSILE
+//	MT_HOLY_MISSILE
 //
 //==========================================================================
 
-class misc_HOLY_MISSILE:Missile
+class MT_HOLY_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6036,11 +6036,11 @@ class misc_HOLY_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_HOLY_MISSILE_PUFF
+//	MT_HOLY_MISSILE_PUFF
 //
 //==========================================================================
 
-class misc_HOLY_MISSILE_PUFF:Actor
+class MT_HOLY_MISSILE_PUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6061,11 +6061,11 @@ class misc_HOLY_MISSILE_PUFF:Actor
 
 //==========================================================================
 //
-//	misc_MWANDPUFF
+//	MT_MWANDPUFF
 //
 //==========================================================================
 
-class misc_MWANDPUFF:Actor
+class MT_MWANDPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6085,11 +6085,11 @@ class misc_MWANDPUFF:Actor
 
 //==========================================================================
 //
-//	misc_MWANDSMOKE
+//	MT_MWANDSMOKE
 //
 //==========================================================================
 
-class misc_MWANDSMOKE:Actor
+class MT_MWANDSMOKE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6110,11 +6110,11 @@ class misc_MWANDSMOKE:Actor
 
 //==========================================================================
 //
-//	misc_MWAND_MISSILE
+//	MT_MWAND_MISSILE
 //
 //==========================================================================
 
-class misc_MWAND_MISSILE:Missile
+class MT_MWAND_MISSILE:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6138,11 +6138,11 @@ class misc_MWAND_MISSILE:Missile
 
 //==========================================================================
 //
-//	misc_MW_LIGHTNING
+//	MT_MW_LIGHTNING
 //
 //==========================================================================
 
-class misc_MW_LIGHTNING:Actor
+class MT_MW_LIGHTNING:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6161,11 +6161,11 @@ class misc_MW_LIGHTNING:Actor
 
 //==========================================================================
 //
-//	misc_LIGHTNING_CEILING
+//	MT_LIGHTNING_CEILING
 //
 //==========================================================================
 
-class misc_LIGHTNING_CEILING:Missile
+class MT_LIGHTNING_CEILING:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6189,11 +6189,11 @@ class misc_LIGHTNING_CEILING:Missile
 
 //==========================================================================
 //
-//	misc_LIGHTNING_FLOOR
+//	MT_LIGHTNING_FLOOR
 //
 //==========================================================================
 
-class misc_LIGHTNING_FLOOR:Missile
+class MT_LIGHTNING_FLOOR:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6217,11 +6217,11 @@ class misc_LIGHTNING_FLOOR:Missile
 
 //==========================================================================
 //
-//	misc_LIGHTNING_ZAP
+//	MT_LIGHTNING_ZAP
 //
 //==========================================================================
 
-class misc_LIGHTNING_ZAP:Missile
+class MT_LIGHTNING_ZAP:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6243,11 +6243,11 @@ class misc_LIGHTNING_ZAP:Missile
 
 //==========================================================================
 //
-//	misc_MSTAFF_FX
+//	MT_MSTAFF_FX
 //
 //==========================================================================
 
-class misc_MSTAFF_FX:Missile
+class MT_MSTAFF_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6272,11 +6272,11 @@ class misc_MSTAFF_FX:Missile
 
 //==========================================================================
 //
-//	misc_MSTAFF_FX2
+//	MT_MSTAFF_FX2
 //
 //==========================================================================
 
-class misc_MSTAFF_FX2:Missile
+class MT_MSTAFF_FX2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6301,11 +6301,11 @@ class misc_MSTAFF_FX2:Missile
 
 //==========================================================================
 //
-//	misc_FW_SWORD1
+//	MT_FW_SWORD1
 //
 //==========================================================================
 
-class misc_FW_SWORD1:Actor
+class MT_FW_SWORD1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6325,11 +6325,11 @@ class misc_FW_SWORD1:Actor
 
 //==========================================================================
 //
-//	misc_FW_SWORD2
+//	MT_FW_SWORD2
 //
 //==========================================================================
 
-class misc_FW_SWORD2:Actor
+class MT_FW_SWORD2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6349,11 +6349,11 @@ class misc_FW_SWORD2:Actor
 
 //==========================================================================
 //
-//	misc_FW_SWORD3
+//	MT_FW_SWORD3
 //
 //==========================================================================
 
-class misc_FW_SWORD3:Actor
+class MT_FW_SWORD3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6373,11 +6373,11 @@ class misc_FW_SWORD3:Actor
 
 //==========================================================================
 //
-//	misc_CW_HOLY1
+//	MT_CW_HOLY1
 //
 //==========================================================================
 
-class misc_CW_HOLY1:Actor
+class MT_CW_HOLY1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6397,11 +6397,11 @@ class misc_CW_HOLY1:Actor
 
 //==========================================================================
 //
-//	misc_CW_HOLY2
+//	MT_CW_HOLY2
 //
 //==========================================================================
 
-class misc_CW_HOLY2:Actor
+class MT_CW_HOLY2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6421,11 +6421,11 @@ class misc_CW_HOLY2:Actor
 
 //==========================================================================
 //
-//	misc_CW_HOLY3
+//	MT_CW_HOLY3
 //
 //==========================================================================
 
-class misc_CW_HOLY3:Actor
+class MT_CW_HOLY3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6445,11 +6445,11 @@ class misc_CW_HOLY3:Actor
 
 //==========================================================================
 //
-//	misc_MW_STAFF1
+//	MT_MW_STAFF1
 //
 //==========================================================================
 
-class misc_MW_STAFF1:Actor
+class MT_MW_STAFF1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6469,11 +6469,11 @@ class misc_MW_STAFF1:Actor
 
 //==========================================================================
 //
-//	misc_MW_STAFF2
+//	MT_MW_STAFF2
 //
 //==========================================================================
 
-class misc_MW_STAFF2:Actor
+class MT_MW_STAFF2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6493,11 +6493,11 @@ class misc_MW_STAFF2:Actor
 
 //==========================================================================
 //
-//	misc_MW_STAFF3
+//	MT_MW_STAFF3
 //
 //==========================================================================
 
-class misc_MW_STAFF3:Actor
+class MT_MW_STAFF3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6517,11 +6517,11 @@ class misc_MW_STAFF3:Actor
 
 //==========================================================================
 //
-//	misc_SNOUTPUFF
+//	MT_SNOUTPUFF
 //
 //==========================================================================
 
-class misc_SNOUTPUFF:Actor
+class MT_SNOUTPUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6541,11 +6541,11 @@ class misc_SNOUTPUFF:Actor
 
 //==========================================================================
 //
-//	misc_MW_CONE
+//	MT_MW_CONE
 //
 //==========================================================================
 
-class misc_MW_CONE:Actor
+class MT_MW_CONE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6564,11 +6564,11 @@ class misc_MW_CONE:Actor
 
 //==========================================================================
 //
-//	misc_SHARDFX1
+//	MT_SHARDFX1
 //
 //==========================================================================
 
-class misc_SHARDFX1:Missile
+class MT_SHARDFX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6592,11 +6592,11 @@ class misc_SHARDFX1:Missile
 
 //==========================================================================
 //
-//	misc_BLOOD
+//	MT_BLOOD
 //
 //==========================================================================
 
-class misc_BLOOD:Actor
+class MT_BLOOD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6615,11 +6615,11 @@ class misc_BLOOD:Actor
 
 //==========================================================================
 //
-//	misc_BLOODSPLATTER
+//	MT_BLOODSPLATTER
 //
 //==========================================================================
 
-class misc_BLOODSPLATTER:Missile
+class MT_BLOODSPLATTER:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6640,11 +6640,11 @@ class misc_BLOODSPLATTER:Missile
 
 //==========================================================================
 //
-//	misc_GIBS
+//	MT_GIBS
 //
 //==========================================================================
 
-class misc_GIBS:Actor
+class MT_GIBS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6664,11 +6664,11 @@ class misc_GIBS:Actor
 
 //==========================================================================
 //
-//	misc_PLAYER_FIGHTER
+//	MT_PLAYER_FIGHTER
 //
 //==========================================================================
 
-class misc_PLAYER_FIGHTER:Actor
+class MT_PLAYER_FIGHTER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6694,11 +6694,11 @@ class misc_PLAYER_FIGHTER:Actor
 
 //==========================================================================
 //
-//	misc_BLOODYSKULL
+//	MT_BLOODYSKULL
 //
 //==========================================================================
 
-class misc_BLOODYSKULL:Actor
+class MT_BLOODYSKULL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6718,11 +6718,11 @@ class misc_BLOODYSKULL:Actor
 
 //==========================================================================
 //
-//	misc_PLAYER_SPEED
+//	MT_PLAYER_SPEED
 //
 //==========================================================================
 
-class misc_PLAYER_SPEED:Actor
+class MT_PLAYER_SPEED:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6742,11 +6742,11 @@ class misc_PLAYER_SPEED:Actor
 
 //==========================================================================
 //
-//	misc_ICECHUNK
+//	MT_ICECHUNK
 //
 //==========================================================================
 
-class misc_ICECHUNK:Actor
+class MT_ICECHUNK:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6766,11 +6766,11 @@ class misc_ICECHUNK:Actor
 
 //==========================================================================
 //
-//	misc_PLAYER_CLERIC
+//	MT_PLAYER_CLERIC
 //
 //==========================================================================
 
-class misc_PLAYER_CLERIC:Actor
+class MT_PLAYER_CLERIC:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6796,11 +6796,11 @@ class misc_PLAYER_CLERIC:Actor
 
 //==========================================================================
 //
-//	misc_PLAYER_MAGE
+//	MT_PLAYER_MAGE
 //
 //==========================================================================
 
-class misc_PLAYER_MAGE:Actor
+class MT_PLAYER_MAGE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6826,11 +6826,11 @@ class misc_PLAYER_MAGE:Actor
 
 //==========================================================================
 //
-//	misc_PIGPLAYER
+//	MT_PIGPLAYER
 //
 //==========================================================================
 
-class misc_PIGPLAYER:Actor
+class MT_PIGPLAYER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6855,11 +6855,11 @@ class misc_PIGPLAYER:Actor
 
 //==========================================================================
 //
-//	misc_PIG
+//	MT_PIG
 //
 //==========================================================================
 
-class misc_PIG:Actor
+class MT_PIG:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6894,11 +6894,11 @@ class misc_PIG:Actor
 
 //==========================================================================
 //
-//	misc_CENTAUR
+//	MT_CENTAUR
 //
 //==========================================================================
 
-class misc_CENTAUR:Actor
+class MT_CENTAUR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6936,11 +6936,11 @@ class misc_CENTAUR:Actor
 
 //==========================================================================
 //
-//	misc_CENTAURLEADER
+//	MT_CENTAURLEADER
 //
 //==========================================================================
 
-class misc_CENTAURLEADER:Actor
+class MT_CENTAURLEADER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -6979,11 +6979,11 @@ class misc_CENTAURLEADER:Actor
 
 //==========================================================================
 //
-//	misc_CENTAUR_FX
+//	MT_CENTAUR_FX
 //
 //==========================================================================
 
-class misc_CENTAUR_FX:Missile
+class MT_CENTAUR_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7008,11 +7008,11 @@ class misc_CENTAUR_FX:Missile
 
 //==========================================================================
 //
-//	misc_CENTAUR_SHIELD
+//	MT_CENTAUR_SHIELD
 //
 //==========================================================================
 
-class misc_CENTAUR_SHIELD:Actor
+class MT_CENTAUR_SHIELD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7033,11 +7033,11 @@ class misc_CENTAUR_SHIELD:Actor
 
 //==========================================================================
 //
-//	misc_CENTAUR_SWORD
+//	MT_CENTAUR_SWORD
 //
 //==========================================================================
 
-class misc_CENTAUR_SWORD:Actor
+class MT_CENTAUR_SWORD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7058,11 +7058,11 @@ class misc_CENTAUR_SWORD:Actor
 
 //==========================================================================
 //
-//	misc_DEMON
+//	MT_DEMON
 //
 //==========================================================================
 
-class misc_DEMON:Actor
+class MT_DEMON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7101,11 +7101,11 @@ class misc_DEMON:Actor
 
 //==========================================================================
 //
-//	misc_DEMONCHUNK1
+//	MT_DEMONCHUNK1
 //
 //==========================================================================
 
-class misc_DEMONCHUNK1:Missile
+class MT_DEMONCHUNK1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7126,11 +7126,11 @@ class misc_DEMONCHUNK1:Missile
 
 //==========================================================================
 //
-//	misc_DEMONCHUNK2
+//	MT_DEMONCHUNK2
 //
 //==========================================================================
 
-class misc_DEMONCHUNK2:Missile
+class MT_DEMONCHUNK2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7151,11 +7151,11 @@ class misc_DEMONCHUNK2:Missile
 
 //==========================================================================
 //
-//	misc_DEMONCHUNK3
+//	MT_DEMONCHUNK3
 //
 //==========================================================================
 
-class misc_DEMONCHUNK3:Missile
+class MT_DEMONCHUNK3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7176,11 +7176,11 @@ class misc_DEMONCHUNK3:Missile
 
 //==========================================================================
 //
-//	misc_DEMONCHUNK4
+//	MT_DEMONCHUNK4
 //
 //==========================================================================
 
-class misc_DEMONCHUNK4:Missile
+class MT_DEMONCHUNK4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7201,11 +7201,11 @@ class misc_DEMONCHUNK4:Missile
 
 //==========================================================================
 //
-//	misc_DEMONCHUNK5
+//	MT_DEMONCHUNK5
 //
 //==========================================================================
 
-class misc_DEMONCHUNK5:Missile
+class MT_DEMONCHUNK5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7226,11 +7226,11 @@ class misc_DEMONCHUNK5:Missile
 
 //==========================================================================
 //
-//	misc_DEMONFX1
+//	MT_DEMONFX1
 //
 //==========================================================================
 
-class misc_DEMONFX1:Missile
+class MT_DEMONFX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7255,11 +7255,11 @@ class misc_DEMONFX1:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2
+//	MT_DEMON2
 //
 //==========================================================================
 
-class misc_DEMON2:Actor
+class MT_DEMON2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7298,11 +7298,11 @@ class misc_DEMON2:Actor
 
 //==========================================================================
 //
-//	misc_DEMON2CHUNK1
+//	MT_DEMON2CHUNK1
 //
 //==========================================================================
 
-class misc_DEMON2CHUNK1:Missile
+class MT_DEMON2CHUNK1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7323,11 +7323,11 @@ class misc_DEMON2CHUNK1:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2CHUNK2
+//	MT_DEMON2CHUNK2
 //
 //==========================================================================
 
-class misc_DEMON2CHUNK2:Missile
+class MT_DEMON2CHUNK2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7348,11 +7348,11 @@ class misc_DEMON2CHUNK2:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2CHUNK3
+//	MT_DEMON2CHUNK3
 //
 //==========================================================================
 
-class misc_DEMON2CHUNK3:Missile
+class MT_DEMON2CHUNK3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7373,11 +7373,11 @@ class misc_DEMON2CHUNK3:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2CHUNK4
+//	MT_DEMON2CHUNK4
 //
 //==========================================================================
 
-class misc_DEMON2CHUNK4:Missile
+class MT_DEMON2CHUNK4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7398,11 +7398,11 @@ class misc_DEMON2CHUNK4:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2CHUNK5
+//	MT_DEMON2CHUNK5
 //
 //==========================================================================
 
-class misc_DEMON2CHUNK5:Missile
+class MT_DEMON2CHUNK5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7423,11 +7423,11 @@ class misc_DEMON2CHUNK5:Missile
 
 //==========================================================================
 //
-//	misc_DEMON2FX1
+//	MT_DEMON2FX1
 //
 //==========================================================================
 
-class misc_DEMON2FX1:Missile
+class MT_DEMON2FX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7452,11 +7452,11 @@ class misc_DEMON2FX1:Missile
 
 //==========================================================================
 //
-//	misc_WRAITHB
+//	MT_WRAITHB
 //
 //==========================================================================
 
-class misc_WRAITHB:Actor
+class MT_WRAITHB:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7497,11 +7497,11 @@ class misc_WRAITHB:Actor
 
 //==========================================================================
 //
-//	misc_WRAITH
+//	MT_WRAITH
 //
 //==========================================================================
 
-class misc_WRAITH:Actor
+class MT_WRAITH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7541,11 +7541,11 @@ class misc_WRAITH:Actor
 
 //==========================================================================
 //
-//	misc_WRAITHFX1
+//	MT_WRAITHFX1
 //
 //==========================================================================
 
-class misc_WRAITHFX1:Missile
+class MT_WRAITHFX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7570,11 +7570,11 @@ class misc_WRAITHFX1:Missile
 
 //==========================================================================
 //
-//	misc_WRAITHFX2
+//	MT_WRAITHFX2
 //
 //==========================================================================
 
-class misc_WRAITHFX2:Actor
+class MT_WRAITHFX2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7594,11 +7594,11 @@ class misc_WRAITHFX2:Actor
 
 //==========================================================================
 //
-//	misc_WRAITHFX3
+//	MT_WRAITHFX3
 //
 //==========================================================================
 
-class misc_WRAITHFX3:Missile
+class MT_WRAITHFX3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7620,11 +7620,11 @@ class misc_WRAITHFX3:Missile
 
 //==========================================================================
 //
-//	misc_WRAITHFX4
+//	MT_WRAITHFX4
 //
 //==========================================================================
 
-class misc_WRAITHFX4:Missile
+class MT_WRAITHFX4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7646,11 +7646,11 @@ class misc_WRAITHFX4:Missile
 
 //==========================================================================
 //
-//	misc_WRAITHFX5
+//	MT_WRAITHFX5
 //
 //==========================================================================
 
-class misc_WRAITHFX5:Missile
+class MT_WRAITHFX5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7672,11 +7672,11 @@ class misc_WRAITHFX5:Missile
 
 //==========================================================================
 //
-//	misc_MINOTAUR
+//	MT_MINOTAUR
 //
 //==========================================================================
 
-class misc_MINOTAUR:Actor
+class MT_MINOTAUR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7715,11 +7715,11 @@ class misc_MINOTAUR:Actor
 
 //==========================================================================
 //
-//	misc_MNTRFX1
+//	MT_MNTRFX1
 //
 //==========================================================================
 
-class misc_MNTRFX1:Missile
+class MT_MNTRFX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7743,11 +7743,11 @@ class misc_MNTRFX1:Missile
 
 //==========================================================================
 //
-//	misc_MNTRFX2
+//	MT_MNTRFX2
 //
 //==========================================================================
 
-class misc_MNTRFX2:Missile
+class MT_MNTRFX2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7771,11 +7771,11 @@ class misc_MNTRFX2:Missile
 
 //==========================================================================
 //
-//	misc_MNTRFX3
+//	MT_MNTRFX3
 //
 //==========================================================================
 
-class misc_MNTRFX3:Missile
+class MT_MNTRFX3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7798,11 +7798,11 @@ class misc_MNTRFX3:Missile
 
 //==========================================================================
 //
-//	misc_MNTRSMOKE
+//	MT_MNTRSMOKE
 //
 //==========================================================================
 
-class misc_MNTRSMOKE:Actor
+class MT_MNTRSMOKE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7823,11 +7823,11 @@ class misc_MNTRSMOKE:Actor
 
 //==========================================================================
 //
-//	misc_MNTRSMOKEEXIT
+//	MT_MNTRSMOKEEXIT
 //
 //==========================================================================
 
-class misc_MNTRSMOKEEXIT:Actor
+class MT_MNTRSMOKEEXIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7848,11 +7848,11 @@ class misc_MNTRSMOKEEXIT:Actor
 
 //==========================================================================
 //
-//	misc_SERPENT
+//	MT_SERPENT
 //
 //==========================================================================
 
-class misc_SERPENT:Actor
+class MT_SERPENT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7890,11 +7890,11 @@ class misc_SERPENT:Actor
 
 //==========================================================================
 //
-//	misc_SERPENTLEADER
+//	MT_SERPENTLEADER
 //
 //==========================================================================
 
-class misc_SERPENTLEADER:Actor
+class MT_SERPENTLEADER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7932,11 +7932,11 @@ class misc_SERPENTLEADER:Actor
 
 //==========================================================================
 //
-//	misc_SERPENTFX
+//	MT_SERPENTFX
 //
 //==========================================================================
 
-class misc_SERPENTFX:Missile
+class MT_SERPENTFX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7961,11 +7961,11 @@ class misc_SERPENTFX:Missile
 
 //==========================================================================
 //
-//	misc_SERPENT_HEAD
+//	MT_SERPENT_HEAD
 //
 //==========================================================================
 
-class misc_SERPENT_HEAD:Actor
+class MT_SERPENT_HEAD:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -7985,11 +7985,11 @@ class misc_SERPENT_HEAD:Actor
 
 //==========================================================================
 //
-//	misc_SERPENT_GIB1
+//	MT_SERPENT_GIB1
 //
 //==========================================================================
 
-class misc_SERPENT_GIB1:Actor
+class MT_SERPENT_GIB1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8008,11 +8008,11 @@ class misc_SERPENT_GIB1:Actor
 
 //==========================================================================
 //
-//	misc_SERPENT_GIB2
+//	MT_SERPENT_GIB2
 //
 //==========================================================================
 
-class misc_SERPENT_GIB2:Actor
+class MT_SERPENT_GIB2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8031,11 +8031,11 @@ class misc_SERPENT_GIB2:Actor
 
 //==========================================================================
 //
-//	misc_SERPENT_GIB3
+//	MT_SERPENT_GIB3
 //
 //==========================================================================
 
-class misc_SERPENT_GIB3:Actor
+class MT_SERPENT_GIB3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8054,11 +8054,11 @@ class misc_SERPENT_GIB3:Actor
 
 //==========================================================================
 //
-//	misc_BISHOP
+//	MT_BISHOP
 //
 //==========================================================================
 
-class misc_BISHOP:Actor
+class MT_BISHOP:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8094,11 +8094,11 @@ class misc_BISHOP:Actor
 
 //==========================================================================
 //
-//	misc_BISHOP_PUFF
+//	MT_BISHOP_PUFF
 //
 //==========================================================================
 
-class misc_BISHOP_PUFF:Actor
+class MT_BISHOP_PUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8118,11 +8118,11 @@ class misc_BISHOP_PUFF:Actor
 
 //==========================================================================
 //
-//	misc_BISHOPBLUR
+//	MT_BISHOPBLUR
 //
 //==========================================================================
 
-class misc_BISHOPBLUR:Actor
+class MT_BISHOPBLUR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8142,11 +8142,11 @@ class misc_BISHOPBLUR:Actor
 
 //==========================================================================
 //
-//	misc_BISHOPPAINBLUR
+//	MT_BISHOPPAINBLUR
 //
 //==========================================================================
 
-class misc_BISHOPPAINBLUR:Actor
+class MT_BISHOPPAINBLUR:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8166,11 +8166,11 @@ class misc_BISHOPPAINBLUR:Actor
 
 //==========================================================================
 //
-//	misc_BISH_FX
+//	MT_BISH_FX
 //
 //==========================================================================
 
-class misc_BISH_FX:Missile
+class MT_BISH_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8195,11 +8195,11 @@ class misc_BISH_FX:Missile
 
 //==========================================================================
 //
-//	misc_DRAGON
+//	MT_DRAGON
 //
 //==========================================================================
 
-class misc_DRAGON:Actor
+class MT_DRAGON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8235,11 +8235,11 @@ class misc_DRAGON:Actor
 
 //==========================================================================
 //
-//	misc_DRAGON_FX
+//	MT_DRAGON_FX
 //
 //==========================================================================
 
-class misc_DRAGON_FX:Missile
+class MT_DRAGON_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8264,11 +8264,11 @@ class misc_DRAGON_FX:Missile
 
 //==========================================================================
 //
-//	misc_DRAGON_FX2
+//	MT_DRAGON_FX2
 //
 //==========================================================================
 
-class misc_DRAGON_FX2:Actor
+class MT_DRAGON_FX2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8290,11 +8290,11 @@ class misc_DRAGON_FX2:Actor
 
 //==========================================================================
 //
-//	misc_ARMOR_1
+//	MT_ARMOR_1
 //
 //==========================================================================
 
-class misc_ARMOR_1:Actor
+class MT_ARMOR_1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8313,11 +8313,11 @@ class misc_ARMOR_1:Actor
 
 //==========================================================================
 //
-//	misc_ARMOR_2
+//	MT_ARMOR_2
 //
 //==========================================================================
 
-class misc_ARMOR_2:Actor
+class MT_ARMOR_2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8336,11 +8336,11 @@ class misc_ARMOR_2:Actor
 
 //==========================================================================
 //
-//	misc_ARMOR_3
+//	MT_ARMOR_3
 //
 //==========================================================================
 
-class misc_ARMOR_3:Actor
+class MT_ARMOR_3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8359,11 +8359,11 @@ class misc_ARMOR_3:Actor
 
 //==========================================================================
 //
-//	misc_ARMOR_4
+//	MT_ARMOR_4
 //
 //==========================================================================
 
-class misc_ARMOR_4:Actor
+class MT_ARMOR_4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8382,11 +8382,11 @@ class misc_ARMOR_4:Actor
 
 //==========================================================================
 //
-//	misc_MANA1
+//	MT_MANA1
 //
 //==========================================================================
 
-class misc_MANA1:Actor
+class MT_MANA1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8406,11 +8406,11 @@ class misc_MANA1:Actor
 
 //==========================================================================
 //
-//	misc_MANA2
+//	MT_MANA2
 //
 //==========================================================================
 
-class misc_MANA2:Actor
+class MT_MANA2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8430,11 +8430,11 @@ class misc_MANA2:Actor
 
 //==========================================================================
 //
-//	misc_MANA3
+//	MT_MANA3
 //
 //==========================================================================
 
-class misc_MANA3:Actor
+class MT_MANA3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8454,11 +8454,11 @@ class misc_MANA3:Actor
 
 //==========================================================================
 //
-//	misc_KEY1
+//	MT_KEY1
 //
 //==========================================================================
 
-class misc_KEY1:Actor
+class MT_KEY1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8477,11 +8477,11 @@ class misc_KEY1:Actor
 
 //==========================================================================
 //
-//	misc_KEY2
+//	MT_KEY2
 //
 //==========================================================================
 
-class misc_KEY2:Actor
+class MT_KEY2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8500,11 +8500,11 @@ class misc_KEY2:Actor
 
 //==========================================================================
 //
-//	misc_KEY3
+//	MT_KEY3
 //
 //==========================================================================
 
-class misc_KEY3:Actor
+class MT_KEY3:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8523,11 +8523,11 @@ class misc_KEY3:Actor
 
 //==========================================================================
 //
-//	misc_KEY4
+//	MT_KEY4
 //
 //==========================================================================
 
-class misc_KEY4:Actor
+class MT_KEY4:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8546,11 +8546,11 @@ class misc_KEY4:Actor
 
 //==========================================================================
 //
-//	misc_KEY5
+//	MT_KEY5
 //
 //==========================================================================
 
-class misc_KEY5:Actor
+class MT_KEY5:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8569,11 +8569,11 @@ class misc_KEY5:Actor
 
 //==========================================================================
 //
-//	misc_KEY6
+//	MT_KEY6
 //
 //==========================================================================
 
-class misc_KEY6:Actor
+class MT_KEY6:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8592,11 +8592,11 @@ class misc_KEY6:Actor
 
 //==========================================================================
 //
-//	misc_KEY7
+//	MT_KEY7
 //
 //==========================================================================
 
-class misc_KEY7:Actor
+class MT_KEY7:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8615,11 +8615,11 @@ class misc_KEY7:Actor
 
 //==========================================================================
 //
-//	misc_KEY8
+//	MT_KEY8
 //
 //==========================================================================
 
-class misc_KEY8:Actor
+class MT_KEY8:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8638,11 +8638,11 @@ class misc_KEY8:Actor
 
 //==========================================================================
 //
-//	misc_KEY9
+//	MT_KEY9
 //
 //==========================================================================
 
-class misc_KEY9:Actor
+class MT_KEY9:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8661,11 +8661,11 @@ class misc_KEY9:Actor
 
 //==========================================================================
 //
-//	misc_KEYA
+//	MT_KEYA
 //
 //==========================================================================
 
-class misc_KEYA:Actor
+class MT_KEYA:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8684,11 +8684,11 @@ class misc_KEYA:Actor
 
 //==========================================================================
 //
-//	misc_KEYB
+//	MT_KEYB
 //
 //==========================================================================
 
-class misc_KEYB:Actor
+class MT_KEYB:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8707,11 +8707,11 @@ class misc_KEYB:Actor
 
 //==========================================================================
 //
-//	misc_SOUNDWIND
+//	MT_SOUNDWIND
 //
 //==========================================================================
 
-class misc_SOUNDWIND:Actor
+class MT_SOUNDWIND:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8730,11 +8730,11 @@ class misc_SOUNDWIND:Actor
 
 //==========================================================================
 //
-//	misc_SOUNDWATERFALL
+//	MT_SOUNDWATERFALL
 //
 //==========================================================================
 
-class misc_SOUNDWATERFALL:Actor
+class MT_SOUNDWATERFALL:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8753,11 +8753,11 @@ class misc_SOUNDWATERFALL:Actor
 
 //==========================================================================
 //
-//	misc_ETTIN
+//	MT_ETTIN
 //
 //==========================================================================
 
-class misc_ETTIN:Actor
+class MT_ETTIN:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8796,11 +8796,11 @@ class misc_ETTIN:Actor
 
 //==========================================================================
 //
-//	misc_ETTIN_MACE
+//	MT_ETTIN_MACE
 //
 //==========================================================================
 
-class misc_ETTIN_MACE:Actor
+class MT_ETTIN_MACE:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8821,11 +8821,11 @@ class misc_ETTIN_MACE:Actor
 
 //==========================================================================
 //
-//	misc_FIREDEMON
+//	MT_FIREDEMON
 //
 //==========================================================================
 
-class misc_FIREDEMON:Actor
+class MT_FIREDEMON:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8865,11 +8865,11 @@ class misc_FIREDEMON:Actor
 
 //==========================================================================
 //
-//	misc_FIREDEMON_SPLOTCH1
+//	MT_FIREDEMON_SPLOTCH1
 //
 //==========================================================================
 
-class misc_FIREDEMON_SPLOTCH1:Actor
+class MT_FIREDEMON_SPLOTCH1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8889,11 +8889,11 @@ class misc_FIREDEMON_SPLOTCH1:Actor
 
 //==========================================================================
 //
-//	misc_FIREDEMON_SPLOTCH2
+//	MT_FIREDEMON_SPLOTCH2
 //
 //==========================================================================
 
-class misc_FIREDEMON_SPLOTCH2:Actor
+class MT_FIREDEMON_SPLOTCH2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8913,11 +8913,11 @@ class misc_FIREDEMON_SPLOTCH2:Actor
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX1
+//	MT_FIREDEMON_FX1
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX1:Missile
+class MT_FIREDEMON_FX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8940,11 +8940,11 @@ class misc_FIREDEMON_FX1:Missile
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX2
+//	MT_FIREDEMON_FX2
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX2:Missile
+class MT_FIREDEMON_FX2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8967,11 +8967,11 @@ class misc_FIREDEMON_FX2:Missile
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX3
+//	MT_FIREDEMON_FX3
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX3:Missile
+class MT_FIREDEMON_FX3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -8994,11 +8994,11 @@ class misc_FIREDEMON_FX3:Missile
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX4
+//	MT_FIREDEMON_FX4
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX4:Missile
+class MT_FIREDEMON_FX4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9021,11 +9021,11 @@ class misc_FIREDEMON_FX4:Missile
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX5
+//	MT_FIREDEMON_FX5
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX5:Missile
+class MT_FIREDEMON_FX5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9048,11 +9048,11 @@ class misc_FIREDEMON_FX5:Missile
 
 //==========================================================================
 //
-//	misc_FIREDEMON_FX6
+//	MT_FIREDEMON_FX6
 //
 //==========================================================================
 
-class misc_FIREDEMON_FX6:Missile
+class MT_FIREDEMON_FX6:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9077,11 +9077,11 @@ class misc_FIREDEMON_FX6:Missile
 
 //==========================================================================
 //
-//	misc_ICEGUY
+//	MT_ICEGUY
 //
 //==========================================================================
 
-class misc_ICEGUY:Actor
+class MT_ICEGUY:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9115,11 +9115,11 @@ class misc_ICEGUY:Actor
 
 //==========================================================================
 //
-//	misc_ICEGUY_FX
+//	MT_ICEGUY_FX
 //
 //==========================================================================
 
-class misc_ICEGUY_FX:Missile
+class MT_ICEGUY_FX:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9144,11 +9144,11 @@ class misc_ICEGUY_FX:Missile
 
 //==========================================================================
 //
-//	misc_ICEFX_PUFF
+//	MT_ICEFX_PUFF
 //
 //==========================================================================
 
-class misc_ICEFX_PUFF:Actor
+class MT_ICEFX_PUFF:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9169,11 +9169,11 @@ class misc_ICEFX_PUFF:Actor
 
 //==========================================================================
 //
-//	misc_ICEGUY_FX2
+//	MT_ICEGUY_FX2
 //
 //==========================================================================
 
-class misc_ICEGUY_FX2:Missile
+class MT_ICEGUY_FX2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9195,11 +9195,11 @@ class misc_ICEGUY_FX2:Missile
 
 //==========================================================================
 //
-//	misc_ICEGUY_BIT
+//	MT_ICEGUY_BIT
 //
 //==========================================================================
 
-class misc_ICEGUY_BIT:Actor
+class MT_ICEGUY_BIT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9219,11 +9219,11 @@ class misc_ICEGUY_BIT:Actor
 
 //==========================================================================
 //
-//	misc_ICEGUY_WISP1
+//	MT_ICEGUY_WISP1
 //
 //==========================================================================
 
-class misc_ICEGUY_WISP1:Missile
+class MT_ICEGUY_WISP1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9244,11 +9244,11 @@ class misc_ICEGUY_WISP1:Missile
 
 //==========================================================================
 //
-//	misc_ICEGUY_WISP2
+//	MT_ICEGUY_WISP2
 //
 //==========================================================================
 
-class misc_ICEGUY_WISP2:Missile
+class MT_ICEGUY_WISP2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9269,11 +9269,11 @@ class misc_ICEGUY_WISP2:Missile
 
 //==========================================================================
 //
-//	misc_FIGHTER_BOSS
+//	MT_FIGHTER_BOSS
 //
 //==========================================================================
 
-class misc_FIGHTER_BOSS:Actor
+class MT_FIGHTER_BOSS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9309,11 +9309,11 @@ class misc_FIGHTER_BOSS:Actor
 
 //==========================================================================
 //
-//	misc_CLERIC_BOSS
+//	MT_CLERIC_BOSS
 //
 //==========================================================================
 
-class misc_CLERIC_BOSS:Actor
+class MT_CLERIC_BOSS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9349,11 +9349,11 @@ class misc_CLERIC_BOSS:Actor
 
 //==========================================================================
 //
-//	misc_MAGE_BOSS
+//	MT_MAGE_BOSS
 //
 //==========================================================================
 
-class misc_MAGE_BOSS:Actor
+class MT_MAGE_BOSS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9389,11 +9389,11 @@ class misc_MAGE_BOSS:Actor
 
 //==========================================================================
 //
-//	misc_SORCBOSS
+//	MT_SORCBOSS
 //
 //==========================================================================
 
-class misc_SORCBOSS:Actor
+class MT_SORCBOSS:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9429,11 +9429,11 @@ class misc_SORCBOSS:Actor
 
 //==========================================================================
 //
-//	misc_SORCBALL1
+//	MT_SORCBALL1
 //
 //==========================================================================
 
-class misc_SORCBALL1:Missile
+class MT_SORCBALL1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9457,11 +9457,11 @@ class misc_SORCBALL1:Missile
 
 //==========================================================================
 //
-//	misc_SORCBALL2
+//	MT_SORCBALL2
 //
 //==========================================================================
 
-class misc_SORCBALL2:Missile
+class MT_SORCBALL2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9485,11 +9485,11 @@ class misc_SORCBALL2:Missile
 
 //==========================================================================
 //
-//	misc_SORCBALL3
+//	MT_SORCBALL3
 //
 //==========================================================================
 
-class misc_SORCBALL3:Missile
+class MT_SORCBALL3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9513,11 +9513,11 @@ class misc_SORCBALL3:Missile
 
 //==========================================================================
 //
-//	misc_SORCFX1
+//	MT_SORCFX1
 //
 //==========================================================================
 
-class misc_SORCFX1:Missile
+class MT_SORCFX1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9543,11 +9543,11 @@ class misc_SORCFX1:Missile
 
 //==========================================================================
 //
-//	misc_SORCFX2
+//	MT_SORCFX2
 //
 //==========================================================================
 
-class misc_SORCFX2:Actor
+class MT_SORCFX2:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9569,11 +9569,11 @@ class misc_SORCFX2:Actor
 
 //==========================================================================
 //
-//	misc_SORCFX2_T1
+//	MT_SORCFX2_T1
 //
 //==========================================================================
 
-class misc_SORCFX2_T1:Actor
+class MT_SORCFX2_T1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9594,11 +9594,11 @@ class misc_SORCFX2_T1:Actor
 
 //==========================================================================
 //
-//	misc_SORCFX3
+//	MT_SORCFX3
 //
 //==========================================================================
 
-class misc_SORCFX3:Missile
+class MT_SORCFX3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9622,11 +9622,11 @@ class misc_SORCFX3:Missile
 
 //==========================================================================
 //
-//	misc_SORCFX3_EXPLOSION
+//	MT_SORCFX3_EXPLOSION
 //
 //==========================================================================
 
-class misc_SORCFX3_EXPLOSION:Actor
+class MT_SORCFX3_EXPLOSION:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9647,11 +9647,11 @@ class misc_SORCFX3_EXPLOSION:Actor
 
 //==========================================================================
 //
-//	misc_SORCFX4
+//	MT_SORCFX4
 //
 //==========================================================================
 
-class misc_SORCFX4:Missile
+class MT_SORCFX4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9675,11 +9675,11 @@ class misc_SORCFX4:Missile
 
 //==========================================================================
 //
-//	misc_SORCSPARK1
+//	MT_SORCSPARK1
 //
 //==========================================================================
 
-class misc_SORCSPARK1:Actor
+class MT_SORCSPARK1:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9699,11 +9699,11 @@ class misc_SORCSPARK1:Actor
 
 //==========================================================================
 //
-//	misc_BLASTEFFECT
+//	MT_BLASTEFFECT
 //
 //==========================================================================
 
-class misc_BLASTEFFECT:Actor
+class MT_BLASTEFFECT:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9724,11 +9724,11 @@ class misc_BLASTEFFECT:Actor
 
 //==========================================================================
 //
-//	misc_WATER_DRIP
+//	MT_WATER_DRIP
 //
 //==========================================================================
 
-class misc_WATER_DRIP:Missile
+class MT_WATER_DRIP:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9749,11 +9749,11 @@ class misc_WATER_DRIP:Missile
 
 //==========================================================================
 //
-//	misc_KORAX
+//	MT_KORAX
 //
 //==========================================================================
 
-class misc_KORAX:Actor
+class MT_KORAX:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9790,11 +9790,11 @@ class misc_KORAX:Actor
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT1
+//	MT_KORAX_SPIRIT1
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT1:Missile
+class MT_KORAX_SPIRIT1:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9816,11 +9816,11 @@ class misc_KORAX_SPIRIT1:Missile
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT2
+//	MT_KORAX_SPIRIT2
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT2:Missile
+class MT_KORAX_SPIRIT2:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9842,11 +9842,11 @@ class misc_KORAX_SPIRIT2:Missile
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT3
+//	MT_KORAX_SPIRIT3
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT3:Missile
+class MT_KORAX_SPIRIT3:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9868,11 +9868,11 @@ class misc_KORAX_SPIRIT3:Missile
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT4
+//	MT_KORAX_SPIRIT4
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT4:Missile
+class MT_KORAX_SPIRIT4:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9894,11 +9894,11 @@ class misc_KORAX_SPIRIT4:Missile
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT5
+//	MT_KORAX_SPIRIT5
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT5:Missile
+class MT_KORAX_SPIRIT5:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9920,11 +9920,11 @@ class misc_KORAX_SPIRIT5:Missile
 
 //==========================================================================
 //
-//	misc_KORAX_SPIRIT6
+//	MT_KORAX_SPIRIT6
 //
 //==========================================================================
 
-class misc_KORAX_SPIRIT6:Missile
+class MT_KORAX_SPIRIT6:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9946,11 +9946,11 @@ class misc_KORAX_SPIRIT6:Missile
 
 //==========================================================================
 //
-//	misc_DEMON_MASH
+//	MT_DEMON_MASH
 //
 //==========================================================================
 
-class misc_DEMON_MASH:Actor
+class MT_DEMON_MASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -9987,11 +9987,11 @@ class misc_DEMON_MASH:Actor
 
 //==========================================================================
 //
-//	misc_DEMON2_MASH
+//	MT_DEMON2_MASH
 //
 //==========================================================================
 
-class misc_DEMON2_MASH:Actor
+class MT_DEMON2_MASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10028,11 +10028,11 @@ class misc_DEMON2_MASH:Actor
 
 //==========================================================================
 //
-//	misc_ETTIN_MASH
+//	MT_ETTIN_MASH
 //
 //==========================================================================
 
-class misc_ETTIN_MASH:Actor
+class MT_ETTIN_MASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10069,11 +10069,11 @@ class misc_ETTIN_MASH:Actor
 
 //==========================================================================
 //
-//	misc_CENTAUR_MASH
+//	MT_CENTAUR_MASH
 //
 //==========================================================================
 
-class misc_CENTAUR_MASH:Actor
+class MT_CENTAUR_MASH:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10109,11 +10109,11 @@ class misc_CENTAUR_MASH:Actor
 
 //==========================================================================
 //
-//	misc_KORAX_BOLT
+//	MT_KORAX_BOLT
 //
 //==========================================================================
 
-class misc_KORAX_BOLT:Missile
+class MT_KORAX_BOLT:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10134,11 +10134,11 @@ class misc_KORAX_BOLT:Missile
 
 //==========================================================================
 //
-//	misc_BAT_SPAWNER
+//	MT_BAT_SPAWNER
 //
 //==========================================================================
 
-class misc_BAT_SPAWNER:Actor
+class MT_BAT_SPAWNER:Actor
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10158,11 +10158,11 @@ class misc_BAT_SPAWNER:Actor
 
 //==========================================================================
 //
-//	misc_BAT
+//	MT_BAT
 //
 //==========================================================================
 
-class misc_BAT:Missile
+class MT_BAT:Missile
 {
 	void OnMapSpawn(mthing_t *mthing)
 	{
@@ -10184,412 +10184,246 @@ class misc_BAT:Missile
 
 __mobjinfo__
 {
-	MT_MAPSPOT { 9001, misc_MAPSPOT }
-	MT_MAPSPOTGRAVITY { 9013, misc_MAPSPOTGRAVITY }
-	MT_FIREBALL1 { -1, misc_FIREBALL1 }
-	MT_ARROW { -1, misc_ARROW }
-	MT_DART { -1, misc_DART }
-	MT_POISONDART { -1, misc_POISONDART }
-	MT_RIPPERBALL { -1, misc_RIPPERBALL }
-	MT_PROJECTILE_BLADE { -1, misc_PROJECTILE_BLADE }
-	MT_ICESHARD { -1, misc_ICESHARD }
-	MT_FLAME_SMALL_TEMP { 10500, misc_FLAME_SMALL_TEMP }
-	MT_FLAME_LARGE_TEMP { 10502, misc_FLAME_LARGE_TEMP }
-	MT_FLAME_SMALL { 10501, misc_FLAME_SMALL }
-	MT_FLAME_LARGE { 10503, misc_FLAME_LARGE }
-	MT_HEALINGBOTTLE { 81, misc_HEALINGBOTTLE }
-	MT_HEALTHFLASK { 82, misc_HEALTHFLASK }
-	MT_ARTIFLY { 83, misc_ARTIFLY }
-	MT_ARTIINVULNERABILITY { 84, misc_ARTIINVULNERABILITY }
-	MT_SUMMONMAULATOR { 86, misc_SUMMONMAULATOR }
-	MT_SUMMON_FX { -1, misc_SUMMON_FX }
-	MT_THRUSTFLOOR_UP { 10091, misc_THRUSTFLOOR_UP }
-	MT_THRUSTFLOOR_DOWN { 10090, misc_THRUSTFLOOR_DOWN }
-	MT_TELEPORTOTHER { 10040, misc_TELEPORTOTHER }
-	MT_TELOTHER_FX1 { -1, misc_TELOTHER_FX1 }
-	MT_TELOTHER_FX2 { -1, misc_TELOTHER_FX2 }
-	MT_TELOTHER_FX3 { -1, misc_TELOTHER_FX3 }
-	MT_TELOTHER_FX4 { -1, misc_TELOTHER_FX4 }
-	MT_TELOTHER_FX5 { -1, misc_TELOTHER_FX5 }
-	MT_DIRT1 { -1, misc_DIRT1 }
-	MT_DIRT2 { -1, misc_DIRT2 }
-	MT_DIRT3 { -1, misc_DIRT3 }
-	MT_DIRT4 { -1, misc_DIRT4 }
-	MT_DIRT5 { -1, misc_DIRT5 }
-	MT_DIRT6 { -1, misc_DIRT6 }
-	MT_DIRTCLUMP { -1, misc_DIRTCLUMP }
-	MT_ROCK1 { -1, misc_ROCK1 }
-	MT_ROCK2 { -1, misc_ROCK2 }
-	MT_ROCK3 { -1, misc_ROCK3 }
-	MT_FOGSPAWNER { 10000, misc_FOGSPAWNER }
-	MT_FOGPATCHS { 10001, misc_FOGPATCHS }
-	MT_FOGPATCHM { 10002, misc_FOGPATCHM }
-	MT_FOGPATCHL { 10003, misc_FOGPATCHL }
-	MT_QUAKE_FOCUS { -1, misc_QUAKE_FOCUS }
-	MT_SGSHARD1 { -1, misc_SGSHARD1 }
-	MT_SGSHARD2 { -1, misc_SGSHARD2 }
-	MT_SGSHARD3 { -1, misc_SGSHARD3 }
-	MT_SGSHARD4 { -1, misc_SGSHARD4 }
-	MT_SGSHARD5 { -1, misc_SGSHARD5 }
-	MT_SGSHARD6 { -1, misc_SGSHARD6 }
-	MT_SGSHARD7 { -1, misc_SGSHARD7 }
-	MT_SGSHARD8 { -1, misc_SGSHARD8 }
-	MT_SGSHARD9 { -1, misc_SGSHARD9 }
-	MT_SGSHARD0 { -1, misc_SGSHARD0 }
-	MT_ARTIEGG { 30, misc_ARTIEGG }
-	MT_EGGFX { -1, misc_EGGFX }
-	MT_ARTISUPERHEAL { 32, misc_ARTISUPERHEAL }
-	MT_ZWINGEDSTATUENOSKULL { 9011, misc_ZWINGEDSTATUENOSKULL }
-	MT_ZGEMPEDESTAL { 9012, misc_ZGEMPEDESTAL }
-	MT_ARTIPUZZSKULL { 9002, misc_ARTIPUZZSKULL }
-	MT_ARTIPUZZGEMBIG { 9003, misc_ARTIPUZZGEMBIG }
-	MT_ARTIPUZZGEMRED { 9004, misc_ARTIPUZZGEMRED }
-	MT_ARTIPUZZGEMGREEN1 { 9005, misc_ARTIPUZZGEMGREEN1 }
-	MT_ARTIPUZZGEMGREEN2 { 9009, misc_ARTIPUZZGEMGREEN2 }
-	MT_ARTIPUZZGEMBLUE1 { 9006, misc_ARTIPUZZGEMBLUE1 }
-	MT_ARTIPUZZGEMBLUE2 { 9010, misc_ARTIPUZZGEMBLUE2 }
-	MT_ARTIPUZZBOOK1 { 9007, misc_ARTIPUZZBOOK1 }
-	MT_ARTIPUZZBOOK2 { 9008, misc_ARTIPUZZBOOK2 }
-	MT_ARTIPUZZSKULL2 { 9014, misc_ARTIPUZZSKULL2 }
-	MT_ARTIPUZZFWEAPON { 9015, misc_ARTIPUZZFWEAPON }
-	MT_ARTIPUZZCWEAPON { 9016, misc_ARTIPUZZCWEAPON }
-	MT_ARTIPUZZMWEAPON { 9017, misc_ARTIPUZZMWEAPON }
-	MT_ARTIPUZZGEAR { 9018, misc_ARTIPUZZGEAR }
-	MT_ARTIPUZZGEAR2 { 9019, misc_ARTIPUZZGEAR2 }
-	MT_ARTIPUZZGEAR3 { 9020, misc_ARTIPUZZGEAR3 }
-	MT_ARTIPUZZGEAR4 { 9021, misc_ARTIPUZZGEAR4 }
-	MT_ARTITORCH { 33, misc_ARTITORCH }
-	MT_FIREBOMB { -1, misc_FIREBOMB }
-	MT_ARTITELEPORT { 36, misc_ARTITELEPORT }
-	MT_ARTIPOISONBAG { 8000, misc_ARTIPOISONBAG }
-	MT_POISONBAG { -1, misc_POISONBAG }
-	MT_POISONCLOUD { -1, misc_POISONCLOUD }
-	MT_THROWINGBOMB { -1, misc_THROWINGBOMB }
-	MT_SPEEDBOOTS { 8002, misc_SPEEDBOOTS }
-	MT_BOOSTMANA { 8003, misc_BOOSTMANA }
-	MT_BOOSTARMOR { 8041, misc_BOOSTARMOR }
-	MT_BLASTRADIUS { 10110, misc_BLASTRADIUS }
-	MT_HEALRADIUS { 10120, misc_HEALRADIUS }
-	MT_SPLASH { -1, misc_SPLASH }
-	MT_SPLASHBASE { -1, misc_SPLASHBASE }
-	MT_LAVASPLASH { -1, misc_LAVASPLASH }
-	MT_LAVASMOKE { -1, misc_LAVASMOKE }
-	MT_SLUDGECHUNK { -1, misc_SLUDGECHUNK }
-	MT_SLUDGESPLASH { -1, misc_SLUDGESPLASH }
-	MT_MISC0 { 5, misc_MISC0 }
-	MT_MISC1 { 6, misc_MISC1 }
-	MT_MISC2 { 7, misc_MISC2 }
-	MT_MISC3 { 9, misc_MISC3 }
-	MT_MISC4 { 15, misc_MISC4 }
-	MT_MISC5 { 17, misc_MISC5 }
-	MT_MISC6 { 8063, misc_MISC6 }
-	MT_MISC7 { 24, misc_MISC7 }
-	MT_MISC8 { 25, misc_MISC8 }
-	MT_TREEDESTRUCTIBLE { 8062, misc_TREEDESTRUCTIBLE }
-	MT_MISC9 { 26, misc_MISC9 }
-	MT_MISC10 { 27, misc_MISC10 }
-	MT_MISC11 { 28, misc_MISC11 }
-	MT_MISC12 { 29, misc_MISC12 }
-	MT_MISC13 { 37, misc_MISC13 }
-	MT_MISC14 { 38, misc_MISC14 }
-	MT_MISC15 { 39, misc_MISC15 }
-	MT_MISC16 { 40, misc_MISC16 }
-	MT_MISC17 { 41, misc_MISC17 }
-	MT_MISC18 { 42, misc_MISC18 }
-	MT_MISC19 { 44, misc_MISC19 }
-	MT_MISC20 { 45, misc_MISC20 }
-	MT_MISC21 { 46, misc_MISC21 }
-	MT_MISC22 { 47, misc_MISC22 }
-	MT_MISC23 { 48, misc_MISC23 }
-	MT_MISC24 { 49, misc_MISC24 }
-	MT_MISC25 { 50, misc_MISC25 }
-	MT_MISC26 { 51, misc_MISC26 }
-	MT_MISC27 { 52, misc_MISC27 }
-	MT_MISC28 { 56, misc_MISC28 }
-	MT_MISC29 { 57, misc_MISC29 }
-	MT_MISC30 { 58, misc_MISC30 }
-	MT_MISC31 { 59, misc_MISC31 }
-	MT_MISC32 { 60, misc_MISC32 }
-	MT_MISC33 { 61, misc_MISC33 }
-	MT_MISC34 { 62, misc_MISC34 }
-	MT_MISC35 { 63, misc_MISC35 }
-	MT_MISC36 { 64, misc_MISC36 }
-	MT_MISC37 { 65, misc_MISC37 }
-	MT_MISC38 { 66, misc_MISC38 }
-	MT_MISC39 { 67, misc_MISC39 }
-	MT_MISC40 { 68, misc_MISC40 }
-	MT_MISC41 { 69, misc_MISC41 }
-	MT_MISC42 { 71, misc_MISC42 }
-	MT_MISC43 { 72, misc_MISC43 }
-	MT_MISC44 { 73, misc_MISC44 }
-	MT_MISC45 { 74, misc_MISC45 }
-	MT_MISC46 { 76, misc_MISC46 }
-	MT_MISC47 { 8044, misc_MISC47 }
-	MT_MISC48 { 8045, misc_MISC48 }
-	MT_MISC49 { 8046, misc_MISC49 }
-	MT_MISC50 { 8047, misc_MISC50 }
-	MT_MISC51 { 8048, misc_MISC51 }
-	MT_MISC52 { 8049, misc_MISC52 }
-	MT_MISC53 { 8050, misc_MISC53 }
-	MT_MISC54 { 8051, misc_MISC54 }
-	MT_MISC55 { 8052, misc_MISC55 }
-	MT_MISC56 { 77, misc_MISC56 }
-	MT_MISC57 { 78, misc_MISC57 }
-	MT_MISC58 { 79, misc_MISC58 }
-	MT_MISC59 { 80, misc_MISC59 }
-	MT_MISC60 { 87, misc_MISC60 }
-	MT_MISC61 { 88, misc_MISC61 }
-	MT_MISC62 { 89, misc_MISC62 }
-	MT_MISC63 { 90, misc_MISC63 }
-	MT_MISC64 { 91, misc_MISC64 }
-	MT_MISC65 { 92, misc_MISC65 }
-	MT_MISC66 { 93, misc_MISC66 }
-	MT_MISC67 { 94, misc_MISC67 }
-	MT_MISC68 { 95, misc_MISC68 }
-	MT_MISC69 { 96, misc_MISC69 }
-	MT_MISC70 { 97, misc_MISC70 }
-	MT_MISC71 { 98, misc_MISC71 }
-	MT_MISC72 { 99, misc_MISC72 }
-	MT_MISC73 { 100, misc_MISC73 }
-	MT_MISC74 { 101, misc_MISC74 }
-	MT_MISC75 { 102, misc_MISC75 }
-	MT_MISC76 { 103, misc_MISC76 }
-	MT_POTTERY1 { 104, misc_POTTERY1 }
-	MT_POTTERY2 { 105, misc_POTTERY2 }
-	MT_POTTERY3 { 106, misc_POTTERY3 }
-	MT_POTTERYBIT1 { -1, misc_POTTERYBIT1 }
-	MT_MISC77 { 108, misc_MISC77 }
-	MT_ZLYNCHED_NOHEART { 109, misc_ZLYNCHED_NOHEART }
-	MT_MISC78 { 110, misc_MISC78 }
-	MT_CORPSEBIT { -1, misc_CORPSEBIT }
-	MT_CORPSEBLOODDRIP { -1, misc_CORPSEBLOODDRIP }
-	MT_BLOODPOOL { 111, misc_BLOODPOOL }
-	MT_MISC79 { 119, misc_MISC79 }
-	MT_MISC80 { 113, misc_MISC80 }
-	MT_LEAF1 { -1, misc_LEAF1 }
-	MT_LEAF2 { -1, misc_LEAF2 }
-	MT_ZTWINEDTORCH { 116, misc_ZTWINEDTORCH }
-	MT_ZTWINEDTORCH_UNLIT { 117, misc_ZTWINEDTORCH_UNLIT }
-	MT_BRIDGE { 118, misc_BRIDGE }
-	MT_BRIDGEBALL { -1, misc_BRIDGEBALL }
-	MT_ZWALLTORCH { 54, misc_ZWALLTORCH }
-	MT_ZWALLTORCH_UNLIT { 55, misc_ZWALLTORCH_UNLIT }
-	MT_ZBARREL { 8100, misc_ZBARREL }
-	MT_ZSHRUB1 { 8101, misc_ZSHRUB1 }
-	MT_ZSHRUB2 { 8102, misc_ZSHRUB2 }
-	MT_ZBUCKET { 8103, misc_ZBUCKET }
-	MT_ZPOISONSHROOM { 8104, misc_ZPOISONSHROOM }
-	MT_ZFIREBULL { 8042, misc_ZFIREBULL }
-	MT_ZFIREBULL_UNLIT { 8043, misc_ZFIREBULL_UNLIT }
-	MT_FIRETHING { 8060, misc_FIRETHING }
-	MT_BRASSTORCH { 8061, misc_BRASSTORCH }
-	MT_ZSUITOFARMOR { 8064, misc_ZSUITOFARMOR }
-	MT_ZARMORCHUNK { -1, misc_ZARMORCHUNK }
-	MT_ZBELL { 8065, misc_ZBELL }
-	MT_ZBLUE_CANDLE { 8066, misc_ZBLUE_CANDLE }
-	MT_ZIRON_MAIDEN { 8067, misc_ZIRON_MAIDEN }
-	MT_ZXMAS_TREE { 8068, misc_ZXMAS_TREE }
-	MT_ZCAULDRON { 8069, misc_ZCAULDRON }
-	MT_ZCAULDRON_UNLIT { 8070, misc_ZCAULDRON_UNLIT }
-	MT_ZCHAINBIT32 { 8071, misc_ZCHAINBIT32 }
-	MT_ZCHAINBIT64 { 8072, misc_ZCHAINBIT64 }
-	MT_ZCHAINEND_HEART { 8073, misc_ZCHAINEND_HEART }
-	MT_ZCHAINEND_HOOK1 { 8074, misc_ZCHAINEND_HOOK1 }
-	MT_ZCHAINEND_HOOK2 { 8075, misc_ZCHAINEND_HOOK2 }
-	MT_ZCHAINEND_SPIKE { 8076, misc_ZCHAINEND_SPIKE }
-	MT_ZCHAINEND_SKULL { 8077, misc_ZCHAINEND_SKULL }
-	MT_TABLE_SHIT1 { 8500, misc_TABLE_SHIT1 }
-	MT_TABLE_SHIT2 { 8501, misc_TABLE_SHIT2 }
-	MT_TABLE_SHIT3 { 8502, misc_TABLE_SHIT3 }
-	MT_TABLE_SHIT4 { 8503, misc_TABLE_SHIT4 }
-	MT_TABLE_SHIT5 { 8504, misc_TABLE_SHIT5 }
-	MT_TABLE_SHIT6 { 8505, misc_TABLE_SHIT6 }
-	MT_TABLE_SHIT7 { 8506, misc_TABLE_SHIT7 }
-	MT_TABLE_SHIT8 { 8507, misc_TABLE_SHIT8 }
-	MT_TABLE_SHIT9 { 8508, misc_TABLE_SHIT9 }
-	MT_TABLE_SHIT10 { 8509, misc_TABLE_SHIT10 }
-	MT_TFOG { -1, misc_TFOG }
-	MT_MISC81 { 140, misc_MISC81 }
-	MT_TELEPORTMAN { 14, misc_TELEPORTMAN }
-	MT_PUNCHPUFF { -1, misc_PUNCHPUFF }
-	MT_FW_AXE { 8010, misc_FW_AXE }
-	MT_AXEPUFF { -1, misc_AXEPUFF }
-	MT_AXEPUFF_GLOW { -1, misc_AXEPUFF_GLOW }
-	MT_AXEBLOOD { -1, misc_AXEBLOOD }
-	MT_FW_HAMMER { 123, misc_FW_HAMMER }
-	MT_HAMMER_MISSILE { -1, misc_HAMMER_MISSILE }
-	MT_HAMMERPUFF { -1, misc_HAMMERPUFF }
-	MT_FSWORD_MISSILE { -1, misc_FSWORD_MISSILE }
-	MT_FSWORD_FLAME { -1, misc_FSWORD_FLAME }
-	MT_CW_SERPSTAFF { 10, misc_CW_SERPSTAFF }
-	MT_CSTAFF_MISSILE { -1, misc_CSTAFF_MISSILE }
-	MT_CSTAFFPUFF { -1, misc_CSTAFFPUFF }
-	MT_CW_FLAME { 8009, misc_CW_FLAME }
-	MT_CFLAMEFLOOR { -1, misc_CFLAMEFLOOR }
-	MT_FLAMEPUFF { -1, misc_FLAMEPUFF }
-	MT_FLAMEPUFF2 { -1, misc_FLAMEPUFF2 }
-	MT_CIRCLEFLAME { -1, misc_CIRCLEFLAME }
-	MT_CFLAME_MISSILE { -1, misc_CFLAME_MISSILE }
-	MT_HOLY_FX { -1, misc_HOLY_FX }
-	MT_HOLY_TAIL { -1, misc_HOLY_TAIL }
-	MT_HOLY_PUFF { -1, misc_HOLY_PUFF }
-	MT_HOLY_MISSILE { -1, misc_HOLY_MISSILE }
-	MT_HOLY_MISSILE_PUFF { -1, misc_HOLY_MISSILE_PUFF }
-	MT_MWANDPUFF { -1, misc_MWANDPUFF }
-	MT_MWANDSMOKE { -1, misc_MWANDSMOKE }
-	MT_MWAND_MISSILE { -1, misc_MWAND_MISSILE }
-	MT_MW_LIGHTNING { 8040, misc_MW_LIGHTNING }
-	MT_LIGHTNING_CEILING { -1, misc_LIGHTNING_CEILING }
-	MT_LIGHTNING_FLOOR { -1, misc_LIGHTNING_FLOOR }
-	MT_LIGHTNING_ZAP { -1, misc_LIGHTNING_ZAP }
-	MT_MSTAFF_FX { -1, misc_MSTAFF_FX }
-	MT_MSTAFF_FX2 { -1, misc_MSTAFF_FX2 }
-	MT_FW_SWORD1 { 12, misc_FW_SWORD1 }
-	MT_FW_SWORD2 { 13, misc_FW_SWORD2 }
-	MT_FW_SWORD3 { 16, misc_FW_SWORD3 }
-	MT_CW_HOLY1 { 18, misc_CW_HOLY1 }
-	MT_CW_HOLY2 { 19, misc_CW_HOLY2 }
-	MT_CW_HOLY3 { 20, misc_CW_HOLY3 }
-	MT_MW_STAFF1 { 21, misc_MW_STAFF1 }
-	MT_MW_STAFF2 { 22, misc_MW_STAFF2 }
-	MT_MW_STAFF3 { 23, misc_MW_STAFF3 }
-	MT_SNOUTPUFF { -1, misc_SNOUTPUFF }
-	MT_MW_CONE { 53, misc_MW_CONE }
-	MT_SHARDFX1 { -1, misc_SHARDFX1 }
-	MT_BLOOD { -1, misc_BLOOD }
-	MT_BLOODSPLATTER { -1, misc_BLOODSPLATTER }
-	MT_GIBS { -1, misc_GIBS }
-	MT_PLAYER_FIGHTER { -1, misc_PLAYER_FIGHTER }
-	MT_BLOODYSKULL { -1, misc_BLOODYSKULL }
-	MT_PLAYER_SPEED { -1, misc_PLAYER_SPEED }
-	MT_ICECHUNK { -1, misc_ICECHUNK }
-	MT_PLAYER_CLERIC { -1, misc_PLAYER_CLERIC }
-	MT_PLAYER_MAGE { -1, misc_PLAYER_MAGE }
-	MT_PIGPLAYER { -1, misc_PIGPLAYER }
-	MT_PIG { -1, misc_PIG }
-	MT_CENTAUR { 107, misc_CENTAUR }
-	MT_CENTAURLEADER { 115, misc_CENTAURLEADER }
-	MT_CENTAUR_FX { -1, misc_CENTAUR_FX }
-	MT_CENTAUR_SHIELD { -1, misc_CENTAUR_SHIELD }
-	MT_CENTAUR_SWORD { -1, misc_CENTAUR_SWORD }
-	MT_DEMON { 31, misc_DEMON }
-	MT_DEMONCHUNK1 { -1, misc_DEMONCHUNK1 }
-	MT_DEMONCHUNK2 { -1, misc_DEMONCHUNK2 }
-	MT_DEMONCHUNK3 { -1, misc_DEMONCHUNK3 }
-	MT_DEMONCHUNK4 { -1, misc_DEMONCHUNK4 }
-	MT_DEMONCHUNK5 { -1, misc_DEMONCHUNK5 }
-	MT_DEMONFX1 { -1, misc_DEMONFX1 }
-	MT_DEMON2 { 8080, misc_DEMON2 }
-	MT_DEMON2CHUNK1 { -1, misc_DEMON2CHUNK1 }
-	MT_DEMON2CHUNK2 { -1, misc_DEMON2CHUNK2 }
-	MT_DEMON2CHUNK3 { -1, misc_DEMON2CHUNK3 }
-	MT_DEMON2CHUNK4 { -1, misc_DEMON2CHUNK4 }
-	MT_DEMON2CHUNK5 { -1, misc_DEMON2CHUNK5 }
-	MT_DEMON2FX1 { -1, misc_DEMON2FX1 }
-	MT_WRAITHB { 10011, misc_WRAITHB }
-	MT_WRAITH { 34, misc_WRAITH }
-	MT_WRAITHFX1 { -1, misc_WRAITHFX1 }
-	MT_WRAITHFX2 { -1, misc_WRAITHFX2 }
-	MT_WRAITHFX3 { -1, misc_WRAITHFX3 }
-	MT_WRAITHFX4 { -1, misc_WRAITHFX4 }
-	MT_WRAITHFX5 { -1, misc_WRAITHFX5 }
-	MT_MINOTAUR { 9, misc_MINOTAUR }
-	MT_MNTRFX1 { -1, misc_MNTRFX1 }
-	MT_MNTRFX2 { -1, misc_MNTRFX2 }
-	MT_MNTRFX3 { -1, misc_MNTRFX3 }
-	MT_MNTRSMOKE { -1, misc_MNTRSMOKE }
-	MT_MNTRSMOKEEXIT { -1, misc_MNTRSMOKEEXIT }
-	MT_SERPENT { 121, misc_SERPENT }
-	MT_SERPENTLEADER { 120, misc_SERPENTLEADER }
-	MT_SERPENTFX { -1, misc_SERPENTFX }
-	MT_SERPENT_HEAD { -1, misc_SERPENT_HEAD }
-	MT_SERPENT_GIB1 { -1, misc_SERPENT_GIB1 }
-	MT_SERPENT_GIB2 { -1, misc_SERPENT_GIB2 }
-	MT_SERPENT_GIB3 { -1, misc_SERPENT_GIB3 }
-	MT_BISHOP { 114, misc_BISHOP }
-	MT_BISHOP_PUFF { -1, misc_BISHOP_PUFF }
-	MT_BISHOPBLUR { -1, misc_BISHOPBLUR }
-	MT_BISHOPPAINBLUR { -1, misc_BISHOPPAINBLUR }
-	MT_BISH_FX { -1, misc_BISH_FX }
-	MT_DRAGON { 254, misc_DRAGON }
-	MT_DRAGON_FX { -1, misc_DRAGON_FX }
-	MT_DRAGON_FX2 { -1, misc_DRAGON_FX2 }
-	MT_ARMOR_1 { 8005, misc_ARMOR_1 }
-	MT_ARMOR_2 { 8006, misc_ARMOR_2 }
-	MT_ARMOR_3 { 8007, misc_ARMOR_3 }
-	MT_ARMOR_4 { 8008, misc_ARMOR_4 }
-	MT_MANA1 { 122, misc_MANA1 }
-	MT_MANA2 { 124, misc_MANA2 }
-	MT_MANA3 { 8004, misc_MANA3 }
-	MT_KEY1 { 8030, misc_KEY1 }
-	MT_KEY2 { 8031, misc_KEY2 }
-	MT_KEY3 { 8032, misc_KEY3 }
-	MT_KEY4 { 8033, misc_KEY4 }
-	MT_KEY5 { 8034, misc_KEY5 }
-	MT_KEY6 { 8035, misc_KEY6 }
-	MT_KEY7 { 8036, misc_KEY7 }
-	MT_KEY8 { 8037, misc_KEY8 }
-	MT_KEY9 { 8038, misc_KEY9 }
-	MT_KEYA { 8039, misc_KEYA }
-	MT_KEYB { 8200, misc_KEYB }
-	MT_SOUNDWIND { 1410, misc_SOUNDWIND }
-	MT_SOUNDWATERFALL { 41, misc_SOUNDWATERFALL }
-	MT_ETTIN { 10030, misc_ETTIN }
-	MT_ETTIN_MACE { -1, misc_ETTIN_MACE }
-	MT_FIREDEMON { 10060, misc_FIREDEMON }
-	MT_FIREDEMON_SPLOTCH1 { -1, misc_FIREDEMON_SPLOTCH1 }
-	MT_FIREDEMON_SPLOTCH2 { -1, misc_FIREDEMON_SPLOTCH2 }
-	MT_FIREDEMON_FX1 { -1, misc_FIREDEMON_FX1 }
-	MT_FIREDEMON_FX2 { -1, misc_FIREDEMON_FX2 }
-	MT_FIREDEMON_FX3 { -1, misc_FIREDEMON_FX3 }
-	MT_FIREDEMON_FX4 { -1, misc_FIREDEMON_FX4 }
-	MT_FIREDEMON_FX5 { -1, misc_FIREDEMON_FX5 }
-	MT_FIREDEMON_FX6 { -1, misc_FIREDEMON_FX6 }
-	MT_ICEGUY { 8020, misc_ICEGUY }
-	MT_ICEGUY_FX { -1, misc_ICEGUY_FX }
-	MT_ICEFX_PUFF { -1, misc_ICEFX_PUFF }
-	MT_ICEGUY_FX2 { -1, misc_ICEGUY_FX2 }
-	MT_ICEGUY_BIT { -1, misc_ICEGUY_BIT }
-	MT_ICEGUY_WISP1 { -1, misc_ICEGUY_WISP1 }
-	MT_ICEGUY_WISP2 { -1, misc_ICEGUY_WISP2 }
-	MT_FIGHTER_BOSS { 10100, misc_FIGHTER_BOSS }
-	MT_CLERIC_BOSS { 10101, misc_CLERIC_BOSS }
-	MT_MAGE_BOSS { 10102, misc_MAGE_BOSS }
-	MT_SORCBOSS { 10080, misc_SORCBOSS }
-	MT_SORCBALL1 { -1, misc_SORCBALL1 }
-	MT_SORCBALL2 { -1, misc_SORCBALL2 }
-	MT_SORCBALL3 { -1, misc_SORCBALL3 }
-	MT_SORCFX1 { -1, misc_SORCFX1 }
-	MT_SORCFX2 { -1, misc_SORCFX2 }
-	MT_SORCFX2_T1 { -1, misc_SORCFX2_T1 }
-	MT_SORCFX3 { -1, misc_SORCFX3 }
-	MT_SORCFX3_EXPLOSION { -1, misc_SORCFX3_EXPLOSION }
-	MT_SORCFX4 { -1, misc_SORCFX4 }
-	MT_SORCSPARK1 { -1, misc_SORCSPARK1 }
-	MT_BLASTEFFECT { -1, misc_BLASTEFFECT }
-	MT_WATER_DRIP { -1, misc_WATER_DRIP }
-	MT_KORAX { 10200, misc_KORAX }
-	MT_KORAX_SPIRIT1 { -1, misc_KORAX_SPIRIT1 }
-	MT_KORAX_SPIRIT2 { -1, misc_KORAX_SPIRIT2 }
-	MT_KORAX_SPIRIT3 { -1, misc_KORAX_SPIRIT3 }
-	MT_KORAX_SPIRIT4 { -1, misc_KORAX_SPIRIT4 }
-	MT_KORAX_SPIRIT5 { -1, misc_KORAX_SPIRIT5 }
-	MT_KORAX_SPIRIT6 { -1, misc_KORAX_SPIRIT6 }
-	MT_DEMON_MASH { -1, misc_DEMON_MASH }
-	MT_DEMON2_MASH { -1, misc_DEMON2_MASH }
-	MT_ETTIN_MASH { -1, misc_ETTIN_MASH }
-	MT_CENTAUR_MASH { -1, misc_CENTAUR_MASH }
-	MT_KORAX_BOLT { -1, misc_KORAX_BOLT }
-	MT_BAT_SPAWNER { 10225, misc_BAT_SPAWNER }
-	MT_BAT { -1, misc_BAT }
+	{ 9001, MT_MAPSPOT }
+	{ 9013, MT_MAPSPOTGRAVITY }
+	{ 10500, MT_FLAME_SMALL_TEMP }
+	{ 10502, MT_FLAME_LARGE_TEMP }
+	{ 10501, MT_FLAME_SMALL }
+	{ 10503, MT_FLAME_LARGE }
+	{ 81, MT_HEALINGBOTTLE }
+	{ 82, MT_HEALTHFLASK }
+	{ 83, MT_ARTIFLY }
+	{ 84, MT_ARTIINVULNERABILITY }
+	{ 86, MT_SUMMONMAULATOR }
+	{ 10091, MT_THRUSTFLOOR_UP }
+	{ 10090, MT_THRUSTFLOOR_DOWN }
+	{ 10040, MT_TELEPORTOTHER }
+	{ 10000, MT_FOGSPAWNER }
+	{ 10001, MT_FOGPATCHS }
+	{ 10002, MT_FOGPATCHM }
+	{ 10003, MT_FOGPATCHL }
+	{ 30, MT_ARTIEGG }
+	{ 32, MT_ARTISUPERHEAL }
+	{ 9011, MT_ZWINGEDSTATUENOSKULL }
+	{ 9012, MT_ZGEMPEDESTAL }
+	{ 9002, MT_ARTIPUZZSKULL }
+	{ 9003, MT_ARTIPUZZGEMBIG }
+	{ 9004, MT_ARTIPUZZGEMRED }
+	{ 9005, MT_ARTIPUZZGEMGREEN1 }
+	{ 9009, MT_ARTIPUZZGEMGREEN2 }
+	{ 9006, MT_ARTIPUZZGEMBLUE1 }
+	{ 9010, MT_ARTIPUZZGEMBLUE2 }
+	{ 9007, MT_ARTIPUZZBOOK1 }
+	{ 9008, MT_ARTIPUZZBOOK2 }
+	{ 9014, MT_ARTIPUZZSKULL2 }
+	{ 9015, MT_ARTIPUZZFWEAPON }
+	{ 9016, MT_ARTIPUZZCWEAPON }
+	{ 9017, MT_ARTIPUZZMWEAPON }
+	{ 9018, MT_ARTIPUZZGEAR }
+	{ 9019, MT_ARTIPUZZGEAR2 }
+	{ 9020, MT_ARTIPUZZGEAR3 }
+	{ 9021, MT_ARTIPUZZGEAR4 }
+	{ 33, MT_ARTITORCH }
+	{ 36, MT_ARTITELEPORT }
+	{ 8000, MT_ARTIPOISONBAG }
+	{ 8002, MT_SPEEDBOOTS }
+	{ 8003, MT_BOOSTMANA }
+	{ 8041, MT_BOOSTARMOR }
+	{ 10110, MT_BLASTRADIUS }
+	{ 10120, MT_HEALRADIUS }
+	{ 5, MT_MISC0 }
+	{ 6, MT_MISC1 }
+	{ 7, MT_MISC2 }
+	{ 9, MT_MISC3 }
+	{ 15, MT_MISC4 }
+	{ 17, MT_MISC5 }
+	{ 8063, MT_MISC6 }
+	{ 24, MT_MISC7 }
+	{ 25, MT_MISC8 }
+	{ 8062, MT_TREEDESTRUCTIBLE }
+	{ 26, MT_MISC9 }
+	{ 27, MT_MISC10 }
+	{ 28, MT_MISC11 }
+	{ 29, MT_MISC12 }
+	{ 37, MT_MISC13 }
+	{ 38, MT_MISC14 }
+	{ 39, MT_MISC15 }
+	{ 40, MT_MISC16 }
+	{ 41, MT_MISC17 }
+	{ 42, MT_MISC18 }
+	{ 44, MT_MISC19 }
+	{ 45, MT_MISC20 }
+	{ 46, MT_MISC21 }
+	{ 47, MT_MISC22 }
+	{ 48, MT_MISC23 }
+	{ 49, MT_MISC24 }
+	{ 50, MT_MISC25 }
+	{ 51, MT_MISC26 }
+	{ 52, MT_MISC27 }
+	{ 56, MT_MISC28 }
+	{ 57, MT_MISC29 }
+	{ 58, MT_MISC30 }
+	{ 59, MT_MISC31 }
+	{ 60, MT_MISC32 }
+	{ 61, MT_MISC33 }
+	{ 62, MT_MISC34 }
+	{ 63, MT_MISC35 }
+	{ 64, MT_MISC36 }
+	{ 65, MT_MISC37 }
+	{ 66, MT_MISC38 }
+	{ 67, MT_MISC39 }
+	{ 68, MT_MISC40 }
+	{ 69, MT_MISC41 }
+	{ 71, MT_MISC42 }
+	{ 72, MT_MISC43 }
+	{ 73, MT_MISC44 }
+	{ 74, MT_MISC45 }
+	{ 76, MT_MISC46 }
+	{ 8044, MT_MISC47 }
+	{ 8045, MT_MISC48 }
+	{ 8046, MT_MISC49 }
+	{ 8047, MT_MISC50 }
+	{ 8048, MT_MISC51 }
+	{ 8049, MT_MISC52 }
+	{ 8050, MT_MISC53 }
+	{ 8051, MT_MISC54 }
+	{ 8052, MT_MISC55 }
+	{ 77, MT_MISC56 }
+	{ 78, MT_MISC57 }
+	{ 79, MT_MISC58 }
+	{ 80, MT_MISC59 }
+	{ 87, MT_MISC60 }
+	{ 88, MT_MISC61 }
+	{ 89, MT_MISC62 }
+	{ 90, MT_MISC63 }
+	{ 91, MT_MISC64 }
+	{ 92, MT_MISC65 }
+	{ 93, MT_MISC66 }
+	{ 94, MT_MISC67 }
+	{ 95, MT_MISC68 }
+	{ 96, MT_MISC69 }
+	{ 97, MT_MISC70 }
+	{ 98, MT_MISC71 }
+	{ 99, MT_MISC72 }
+	{ 100, MT_MISC73 }
+	{ 101, MT_MISC74 }
+	{ 102, MT_MISC75 }
+	{ 103, MT_MISC76 }
+	{ 104, MT_POTTERY1 }
+	{ 105, MT_POTTERY2 }
+	{ 106, MT_POTTERY3 }
+	{ 108, MT_MISC77 }
+	{ 109, MT_ZLYNCHED_NOHEART }
+	{ 110, MT_MISC78 }
+	{ 111, MT_BLOODPOOL }
+	{ 119, MT_MISC79 }
+	{ 113, MT_MISC80 }
+	{ 116, MT_ZTWINEDTORCH }
+	{ 117, MT_ZTWINEDTORCH_UNLIT }
+	{ 118, MT_BRIDGE }
+	{ 54, MT_ZWALLTORCH }
+	{ 55, MT_ZWALLTORCH_UNLIT }
+	{ 8100, MT_ZBARREL }
+	{ 8101, MT_ZSHRUB1 }
+	{ 8102, MT_ZSHRUB2 }
+	{ 8103, MT_ZBUCKET }
+	{ 8104, MT_ZPOISONSHROOM }
+	{ 8042, MT_ZFIREBULL }
+	{ 8043, MT_ZFIREBULL_UNLIT }
+	{ 8060, MT_FIRETHING }
+	{ 8061, MT_BRASSTORCH }
+	{ 8064, MT_ZSUITOFARMOR }
+	{ 8065, MT_ZBELL }
+	{ 8066, MT_ZBLUE_CANDLE }
+	{ 8067, MT_ZIRON_MAIDEN }
+	{ 8068, MT_ZXMAS_TREE }
+	{ 8069, MT_ZCAULDRON }
+	{ 8070, MT_ZCAULDRON_UNLIT }
+	{ 8071, MT_ZCHAINBIT32 }
+	{ 8072, MT_ZCHAINBIT64 }
+	{ 8073, MT_ZCHAINEND_HEART }
+	{ 8074, MT_ZCHAINEND_HOOK1 }
+	{ 8075, MT_ZCHAINEND_HOOK2 }
+	{ 8076, MT_ZCHAINEND_SPIKE }
+	{ 8077, MT_ZCHAINEND_SKULL }
+	{ 8500, MT_TABLE_SHIT1 }
+	{ 8501, MT_TABLE_SHIT2 }
+	{ 8502, MT_TABLE_SHIT3 }
+	{ 8503, MT_TABLE_SHIT4 }
+	{ 8504, MT_TABLE_SHIT5 }
+	{ 8505, MT_TABLE_SHIT6 }
+	{ 8506, MT_TABLE_SHIT7 }
+	{ 8507, MT_TABLE_SHIT8 }
+	{ 8508, MT_TABLE_SHIT9 }
+	{ 8509, MT_TABLE_SHIT10 }
+	{ 140, MT_MISC81 }
+	{ 14, MT_TELEPORTMAN }
+	{ 8010, MT_FW_AXE }
+	{ 123, MT_FW_HAMMER }
+	{ 10, MT_CW_SERPSTAFF }
+	{ 8009, MT_CW_FLAME }
+	{ 8040, MT_MW_LIGHTNING }
+	{ 12, MT_FW_SWORD1 }
+	{ 13, MT_FW_SWORD2 }
+	{ 16, MT_FW_SWORD3 }
+	{ 18, MT_CW_HOLY1 }
+	{ 19, MT_CW_HOLY2 }
+	{ 20, MT_CW_HOLY3 }
+	{ 21, MT_MW_STAFF1 }
+	{ 22, MT_MW_STAFF2 }
+	{ 23, MT_MW_STAFF3 }
+	{ 53, MT_MW_CONE }
+	{ 107, MT_CENTAUR }
+	{ 115, MT_CENTAURLEADER }
+	{ 31, MT_DEMON }
+	{ 8080, MT_DEMON2 }
+	{ 10011, MT_WRAITHB }
+	{ 34, MT_WRAITH }
+	{ 9, MT_MINOTAUR }
+	{ 121, MT_SERPENT }
+	{ 120, MT_SERPENTLEADER }
+	{ 114, MT_BISHOP }
+	{ 254, MT_DRAGON }
+	{ 8005, MT_ARMOR_1 }
+	{ 8006, MT_ARMOR_2 }
+	{ 8007, MT_ARMOR_3 }
+	{ 8008, MT_ARMOR_4 }
+	{ 122, MT_MANA1 }
+	{ 124, MT_MANA2 }
+	{ 8004, MT_MANA3 }
+	{ 8030, MT_KEY1 }
+	{ 8031, MT_KEY2 }
+	{ 8032, MT_KEY3 }
+	{ 8033, MT_KEY4 }
+	{ 8034, MT_KEY5 }
+	{ 8035, MT_KEY6 }
+	{ 8036, MT_KEY7 }
+	{ 8037, MT_KEY8 }
+	{ 8038, MT_KEY9 }
+	{ 8039, MT_KEYA }
+	{ 8200, MT_KEYB }
+	{ 1410, MT_SOUNDWIND }
+	{ 41, MT_SOUNDWATERFALL }
+	{ 10030, MT_ETTIN }
+	{ 10060, MT_FIREDEMON }
+	{ 8020, MT_ICEGUY }
+	{ 10100, MT_FIGHTER_BOSS }
+	{ 10101, MT_CLERIC_BOSS }
+	{ 10102, MT_MAGE_BOSS }
+	{ 10080, MT_SORCBOSS }
+	{ 10200, MT_KORAX }
+	{ 10225, MT_BAT_SPAWNER }
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/22 17:23:13  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.6  2001/10/18 17:39:34  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/10/02 17:42:38  dj_jl
 //	Possibility to declare function's code inside class declaration
 //	

@@ -141,7 +141,7 @@ int PointOnPlaneSide(TVec point, TPlane * plane)
 //
 //==========================================================================
 
-void VectorRotateAroundZ(TVec * vec, angle_t angle)
+void VectorRotateAroundZ(TVec * vec, float angle)
 {
 	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
 	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
@@ -397,6 +397,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/10/22 17:23:08  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.10  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

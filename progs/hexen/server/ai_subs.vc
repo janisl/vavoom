@@ -159,28 +159,28 @@ void FaceMovementDirection(mobj_t * actor)
 	switch (actor->movedir)
 	{
 	case DI_EAST:
-		actor->angles.yaw = 0 << 24;
+		actor->angles.yaw = 0.0;
 		break;
 	case DI_NORTHEAST:
-		actor->angles.yaw = 32 << 24;
+		actor->angles.yaw = 45.0;
 		break;
 	case DI_NORTH:
-		actor->angles.yaw = 64 << 24;
+		actor->angles.yaw = 90.0;
 		break;
 	case DI_NORTHWEST:
-		actor->angles.yaw = 96 << 24;
+		actor->angles.yaw = 135.0;
 		break;
 	case DI_WEST:
-		actor->angles.yaw = 128 << 24;
+		actor->angles.yaw = 180.0;
 		break;
 	case DI_SOUTHWEST:
-		actor->angles.yaw = 160 << 24;
+		actor->angles.yaw = 225.0;
 		break;
 	case DI_SOUTH:
-		actor->angles.yaw = 192 << 24;
+		actor->angles.yaw = 270.0;
 		break;
 	case DI_SOUTHEAST:
-		actor->angles.yaw = 224 << 24;
+		actor->angles.yaw = 315.0;
 		break;
 	}
 }
@@ -256,7 +256,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 	int stop;
 	player_t *player;
 	sector_t *sector;
-	angle_t an;
+	float an;
 	float dist;
 
 	if (!netgame && players[0].spawned && players[0].health <= 0)
@@ -287,9 +287,9 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = atan2(player->mo->origin.y - actor->origin.y,
-				player->mo->origin.x - actor->origin.x) - actor->angles.yaw;
-			if (an > ANG90 && an < ANG270)
+			an = AngleMod360(atan2(player->mo->origin.y - actor->origin.y,
+				player->mo->origin.x - actor->origin.x) - actor->angles.yaw);
+			if (an > 90.0 && an < 270.0)
 			{
 				dist = MobjDist(player->mo, actor);
 				// if real close, react anyway
@@ -466,7 +466,7 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 {
 	mobj_t *link;
 	mobj_t *master;
-	angle_t angle;
+	float angle;
 
 	link = BlockLink(index);
 	while (link)
@@ -557,11 +557,12 @@ mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 				else if (P_CheckSight(mo, link))
 				{
 					master = mo->target;
-					angle = atan2(link->origin.y - master->origin.y,
+					angle = AngleMod360(atan2(
+						link->origin.y - master->origin.y,
 						link->origin.x - master->origin.x) -
-						master->angles.yaw;
-					angle >>= 24;
-					if (angle > 226 || angle < 30)
+						master->angles.yaw);
+					if (angle > 226.0 * 360.0 / 256.0 ||
+						angle < 30.0 * 360.0 / 256.0)
 					{
 						return link;
 					}
@@ -721,6 +722,9 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -48,7 +48,7 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
 	boolean playPainSound);
 void P_RemoveMobjFromTIDList(mobj_t * mobj);
 boolean P_TeleportMove(mobj_t * thing, float x, float y);
-boolean P_Teleport(mobj_t * thing, float x, float y, angle_t angle,
+boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 
 	boolean useFog);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
@@ -351,7 +351,7 @@ void WaterJump(player_t * player)
 //
 //==========================================================================
 
-void ThrustPlayer(player_t * player, angle_t angle, float move)
+void ThrustPlayer(player_t * player, float angle, float move)
 {
 	if (!(player->powers[pw_flight]
 			&& !(player->mo->origin.z <= player->mo->floorz))
@@ -373,7 +373,7 @@ void ThrustPlayer(player_t * player, angle_t angle, float move)
 
 void CalcHeight(player_t * player)
 {
-	int angle;
+	float angle;
 	float bob;
 
 	// Regular movement bobbing
@@ -395,7 +395,7 @@ void CalcHeight(player_t * player)
 		player->bob = 0.5;
 	}
 
-	angle = ANG180 / 10 * level->tictime;
+	angle = 180.0 * 35.0 / 10.0 * level->time;
 	bob = player->bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -479,42 +479,42 @@ void PlayerInSpecialSector(player_t * player)
 	case 201:
 	case 202:
 	case 203:	// Scroll_North_xxx
-		ThrustPlayer(player, ANG90, pushTab[sector->special - 201]);
+		ThrustPlayer(player, 90.0, pushTab[sector->special - 201]);
 		break;
 	case 204:
 	case 205:
 	case 206:	// Scroll_East_xxx
-		ThrustPlayer(player, 0, pushTab[sector->special - 204]);
+		ThrustPlayer(player, 0.0, pushTab[sector->special - 204]);
 		break;
 	case 207:
 	case 208:
 	case 209:	// Scroll_South_xxx
-		ThrustPlayer(player, ANG270, pushTab[sector->special - 207]);
+		ThrustPlayer(player, 270.0, pushTab[sector->special - 207]);
 		break;
 	case 210:
 	case 211:
 	case 212:	// Scroll_West_xxx
-		ThrustPlayer(player, ANG180, pushTab[sector->special - 210]);
+		ThrustPlayer(player, 180.0, pushTab[sector->special - 210]);
 		break;
 	case 213:
 	case 214:
 	case 215:	// Scroll_NorthWest_xxx
-		ThrustPlayer(player, ANG90 + ANG45, pushTab[sector->special - 213]);
+		ThrustPlayer(player, 90.0 + 45.0, pushTab[sector->special - 213]);
 		break;
 	case 216:
 	case 217:
 	case 218:	// Scroll_NorthEast_xxx
-		ThrustPlayer(player, ANG45, pushTab[sector->special - 216]);
+		ThrustPlayer(player, 45.0, pushTab[sector->special - 216]);
 		break;
 	case 219:
 	case 220:
 	case 221:	// Scroll_SouthEast_xxx
-		ThrustPlayer(player, ANG270 + ANG45, pushTab[sector->special - 219]);
+		ThrustPlayer(player, 270.0 + 45.0, pushTab[sector->special - 219]);
 		break;
 	case 222:
 	case 223:
 	case 224:	// Scroll_SouthWest_xxx
-		ThrustPlayer(player, ANG180 + ANG45, pushTab[sector->special - 222]);
+		ThrustPlayer(player, 180.0 + 45.0, pushTab[sector->special - 222]);
 		break;
 
 	case 40:
@@ -710,7 +710,7 @@ void PlayerThink(player_t * player)
 	mobj_t *speedMo;
 
 	// Copy view angles
-	avcpy(player->viewangles, player->mo->angles);
+	player->mo->angles = player->viewangles;
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
@@ -1097,7 +1097,7 @@ void SetViewPos(player_t * player)
 		player->vieworg.y += (Random() - 0.5) * (intensity * 4.0);
 	}
 
-	avcpy(player->mo->angles, player->viewangles);
+	player->viewangles = player->mo->angles;
 
 	SB_PaletteFlash(player);
 
@@ -1220,20 +1220,20 @@ void ArtiTele(player_t * player)
 	int i;
 	float destX;
 	float destY;
-	angle_t destAngle;
+	float destAngle;
 
 	if (deathmatch)
 	{
 		i = P_Random() % level->numdeathmatchstarts;
 		destX = level->deathmatchstarts[i].x;
 		destY = level->deathmatchstarts[i].y;
-		destAngle = ANG45 * (level->deathmatchstarts[i].angle / 45);
+		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
 	}
 	else
 	{
 		destX = level->playerstarts[0].x;
 		destY = level->playerstarts[0].y;
-		destAngle = ANG45 * (level->playerstarts[0].angle / 45);
+		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
 	P_Teleport(player->mo, destX, destY, destAngle, true);
 	if (player->morphTics)
@@ -1255,7 +1255,6 @@ void ArtiTele(player_t * player)
 boolean UseArtifact(player_t * player, int arti)
 {
 	mobj_t *mo;
-	angle_t angle;
 	int i;
 	int count;
 
@@ -1512,7 +1511,7 @@ void TeleportToPlayerStarts(mobj_t * victim)
 	int selections = 0;
 	float destX;
 	float destY;
-	angle_t destAngle;
+	float destAngle;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1523,7 +1522,7 @@ void TeleportToPlayerStarts(mobj_t * victim)
 	i = P_Random() % selections;
 	destX = level->playerstarts[i].x;
 	destY = level->playerstarts[i].y;
-	destAngle = ANG45 * (level->playerstarts[i].angle / 45);
+	destAngle = itof(45 * (level->playerstarts[i].angle / 45));
 	P_Teleport(victim, destX, destY, destAngle, true);
 	//StartSoundName(NULL, sfx2_wpnup); // Full volume laugh
 }
@@ -1539,14 +1538,14 @@ void TeleportToDeathmatchStarts(mobj_t * victim)
 	int i;
 	float destX;
 	float destY;
-	angle_t destAngle;
+	float destAngle;
 
 	if (level->numdeathmatchstarts)
 	{
 		i = P_Random() % level->numdeathmatchstarts;
 		destX = level->deathmatchstarts[i].x;
 		destY = level->deathmatchstarts[i].y;
-		destAngle = ANG45 * (level->deathmatchstarts[i].angle / 45);
+		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
 		P_Teleport(victim, destX, destY, destAngle, true);
 		//StartSoundName(NULL, sfx2_wpnup); // Full volume laugh
 	}
@@ -1688,7 +1687,7 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 			PSpriteSY[player->pclass * NUMWEAPONS + player->readyweapon];
 		player->morphTics = 0;
 	}
-	player->mo->angles.pitch = 0;
+	player->mo->angles.pitch = 0.0;
 	player->mo->translucency = 0;	// Remove invisibility
 	player->extralight = 0;	// Remove weapon flashes
 	player->fixedcolormap = 0;	// Remove torch
@@ -1955,6 +1954,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.12  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

@@ -345,20 +345,20 @@ void P_FireWeapon(player_t * player)
 //
 //============================================================================
 
-#define MAX_ANGLE_ADJUST (5*ANGLE_1)
+#define MAX_ANGLE_ADJUST	5.0
 
 void AdjustPlayerAngle(mobj_t * pmo)
 {
-	angle_t angle;
-	int difference;
+	float angle;
+	float difference;
 
 	angle = atan2(linetarget->origin.y - pmo->origin.y,
 		linetarget->origin.x - pmo->origin.x);
-	difference = angle - pmo->angles.yaw;
-	if (abs(difference) > MAX_ANGLE_ADJUST)
+	difference = AngleMod180(angle - pmo->angles.yaw);
+	if (fabs(difference) > MAX_ANGLE_ADJUST)
 	{
 		pmo->angles.yaw +=
-			difference > 0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
+			difference > 0.0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
 	}
 	else
 	{
@@ -419,7 +419,7 @@ void A_WeaponReady(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	angle_t angle;
+	float angle;
 
 	// Change player from attack state
 	if (player->mo->statenum >= PStateAttack[player->pclass] &&
@@ -450,9 +450,12 @@ void A_WeaponReady(mobj_t * actor)
 	if (!player->morphTics)
 	{
 		// Bob the weapon based on movement speed.
-		angle = (ANG90 >> 4) * level->tictime;
+		angle = AngleMod360(180.0 * level->time);
 		psp->sx = 1.0 + player->bob * cos(angle);
-		angle &= 0x7fffffff;
+		if (angle >= 180.0)
+		{
+			angle -= 180.0;
+		}
 		psp->sy = WEAPONTOP + player->bob * sin(angle);
 	}
 }
@@ -570,6 +573,9 @@ void A_Light0(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

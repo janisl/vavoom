@@ -150,7 +150,7 @@ static void RotatePolyobj(int num, float angle)
 	polyobj_t *po;
 
 	po = &cl_level.polyobjs[num];
-	if (po->angle == DEG2BAM(angle))
+	if (po->angle == angle)
 		return;
 
 	segList = po->segs;
@@ -161,7 +161,7 @@ static void RotatePolyobj(int num, float angle)
 		RotatePt(angle, *(*segList)->v1, po->startSpot);
 	}
 
-	po->angle = DEG2BAM(angle);
+	po->angle = angle;
 	UpdatePolySegs(po);
 }
 
@@ -441,9 +441,12 @@ void CL_PO_Update(int i, float x, float y, float angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.5  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.4  2001/09/20 16:27:02  dj_jl
 //	Removed degenmobj
 //	

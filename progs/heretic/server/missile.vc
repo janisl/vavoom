@@ -66,7 +66,7 @@ int CheckMissileSpawn(mobj_t * missile)
 //
 //==========================================================================
 
-mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
+mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 {
 	float z;
 	mobj_t *th;
@@ -100,8 +100,9 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 	th->target = source;	// Originator
 	dir = dest->origin - source->origin;
 	if (dest->translucency)
-	{	// Invisible target
-		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 21);
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
 	}
 	dir = Normalize(dir);
 	th->velocity = dir * th->speed;
@@ -118,8 +119,8 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 //
 //==========================================================================
 
-mobj_t *SpawnMissileAngles(mobj_t * source, int type, angle_t yaw,
-	angle_t pitch)
+mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
+	float pitch)
 {
 	float z;
 	mobj_t *mo;
@@ -162,9 +163,9 @@ mobj_t *SpawnMissileAngles(mobj_t * source, int type, angle_t yaw,
 //
 //==========================================================================
 
-mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
+mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 {
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 	float x, y, z;
 
@@ -173,15 +174,15 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles.yaw += 1 << 26;
+				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 			}
 		}
 	}
@@ -196,7 +197,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 		StartSound(MissileMobj, MissileMobj->sound_sight, CHAN_VOICE);
 	}
 	MissileMobj->target = source;
-	avcpy(angles, MissileMobj->angles);
+	MissileMobj->angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj->velocity = vforward * MissileMobj->speed;
 	if (MissileMobj->type == MT_BLASTERFX1)
@@ -224,26 +225,26 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 //
 //==========================================================================
 
-mobj_t *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
+mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 {
 	mobj_t *th;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 	float x, y, z;
 
 	//
 	// see which target is to be aimed at
 	//
-	avcpy(source->angles, angles);
+	angles = source->angles;
 	angles.yaw = angle;
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles.yaw += 1 << 26;
+		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw -= 2 << 26;
+			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
@@ -261,7 +262,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
 		StartSound(th, th->sound_sight, CHAN_VOICE);
 	}
 	th->target = source;
-	avcpy(angles, th->angles);
+	th->angles = angles;
 	AngleVector(&angles, &vforward);
 	th->velocity = vforward * th->speed;
 	return (CheckMissileSpawn(th) ? th : NULL);
@@ -276,12 +277,12 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, int type, angle_t angle)
 //
 //==========================================================================
 
-boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
+boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 {
 	int dir;
 	float dist;
-	angle_t delta;
-	angle_t angle;
+	float delta;
+	float angle;
 	mobj_t *target;
 
 	target = actor->specialmobj1;
@@ -298,7 +299,7 @@ boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	dir = P_FaceMobj(actor, target, &delta);
 	if (delta > thresh)
 	{
-		delta >>= 1;
+		delta /= 2.0;
 		if (delta > turnMax)
 		{
 			delta = turnMax;
@@ -306,11 +307,11 @@ boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	}
 	if (dir)
 	{	// Turn clockwise
-		actor->angles.yaw += delta;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw + delta);
 	}
 	else
 	{	// Turn counter clockwise
-		actor->angles.yaw -= delta;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
 	angle = actor->angles.yaw;
 	actor->velocity.x = actor->speed * cos(angle);
@@ -333,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

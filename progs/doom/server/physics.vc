@@ -456,12 +456,12 @@ boolean P_XYMovement(mobj_t * mo)
 							(!(BlockingMobj->flags & MF_COUNTKILL)))
 						{
 							float speed;
-							angle_t angle;
+							float angle;
 
-							angle =
+							angle = AngleMod360(
 								atan2(mo->origin.y - BlockingMobj->origin.y,
 								mo->origin.x - BlockingMobj->origin.x) +
-								ANG90 / 90 * ((P_Random() % 16) - 8);
+								(Random() * 16.0 - 8.0));
 							speed = Length(mo->velocity);
 							speed = speed * 0.75;
 							mo->angles.yaw = angle;
@@ -1052,6 +1052,9 @@ void mobj_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.8  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

@@ -24,7 +24,6 @@
 //**************************************************************************
 
 typedef int boolean;
-typedef uint angle_t;
 
 struct sector_t;
 struct line_t;
@@ -48,13 +47,6 @@ vector TAVec
 	float pitch;
 	float yaw;
 	float roll;
-};
-
-struct TBAMVec
-{
-	angle_t pitch;
-	angle_t yaw;
-	angle_t roll;
 };
 
 struct TPlane
@@ -234,7 +226,7 @@ struct polyobj_t
 	TVec startSpot;
 	void *__originalPts;	// used as the base for the rotations
 	void *__prevPts;	// use to restore the old point values
-	angle_t angle;
+	float angle;
 	int tag;	// reference tag assigned in HereticEd
 	int __bbox[4];
 	int validcount;
@@ -243,7 +235,7 @@ struct polyobj_t
 	subsector_t *__subsector;
 	float __base_x;
 	float __base_y;
-	angle_t __base_angle;
+	float __base_angle;
 	boolean __changed;
 	addfields 3;
 };
@@ -456,7 +448,7 @@ class base_mobj_t:Thinker
 	TVec velocity;
 
 	//More drawing info: to determine current sprite.
-	TBAMVec angles;	// orientation
+	TAVec angles;	// orientation
 	int spritetype;	//  How to draw sprite
 	int sprite;	// used to find patch_t and flip value
 	int frame;	// might be ORed with FF_FULLBRIGHT
@@ -570,7 +562,7 @@ struct player_t
 	// Focal origin above r.z
 	TVec vieworg;
 
-	TBAMVec viewangles;
+	TAVec viewangles;
 	boolean fixangle;
 
 	// This is only used between levels,
@@ -948,6 +940,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2001/10/22 17:23:08  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.16  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

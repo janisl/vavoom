@@ -63,7 +63,7 @@ void A_MWandAttack(mobj_t * actor)
 void A_FireConePL1(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TBAMVec angles;
+	TAVec angles;
 	int damage;
 	int i;
 	mobj_t *pmo;
@@ -79,7 +79,7 @@ void A_FireConePL1(mobj_t * actor)
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
-		angles.yaw += i * (ANG45 / 16);
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		if (linetarget)
 		{
@@ -126,9 +126,8 @@ void A_ShedShard(mobj_t * actor)
 	// every so many calls, spawn a new missile in it's set directions
 	if (spawndir & SHARDSPAWN_LEFT)
 	{
-		mo =
-			SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
-			actor->angles.yaw + (ANG45 / 9), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
+			actor->angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_LEFT;
@@ -140,9 +139,8 @@ void A_ShedShard(mobj_t * actor)
 	}
 	if (spawndir & SHARDSPAWN_RIGHT)
 	{
-		mo =
-			SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
-			actor->angles.yaw - (ANG45 / 9), 0.0, itof(20 + 2 * spermcount));
+		mo = SpawnMissileAngleSpeed(actor, MT_SHARDFX1,
+			actor->angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_RIGHT;
@@ -283,19 +281,19 @@ void A_LightningClip(mobj_t * actor)
 		zigZag = P_Random();
 		if ((zigZag > 128 && actor->special1 < 2) || actor->special1 < -2)
 		{
-			P_ThrustMobj(actor, actor->angles.yaw + ANG90, ZAGSPEED);
+			P_ThrustMobj(actor, actor->angles.yaw + 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, actor->angles.yaw + ANG90, ZAGSPEED);
+				P_ThrustMobj(cMo, actor->angles.yaw + 90.0, ZAGSPEED);
 			}
 			actor->special1++;
 		}
 		else
 		{
-			P_ThrustMobj(actor, actor->angles.yaw - ANG90, ZAGSPEED);
+			P_ThrustMobj(actor, actor->angles.yaw - 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, cMo->angles.yaw - ANG90, ZAGSPEED);
+				P_ThrustMobj(cMo, cMo->angles.yaw - 90.0, ZAGSPEED);
 			}
 			actor->special1--;
 		}
@@ -304,7 +302,7 @@ void A_LightningClip(mobj_t * actor)
 	{
 		if (target->health <= 0)
 		{
-			P_ExplodeMissile((Missile *)actor);
+			P_ExplodeMissile(actor);
 		}
 		else
 		{
@@ -384,7 +382,7 @@ void A_ZapMimic(mobj_t * actor)
 	{
 		if (mo->statenum >= mo->deathstate || mo->statenum == S_FREETARGMOBJ)
 		{
-			P_ExplodeMissile((Missile *)actor);
+			P_ExplodeMissile(actor);
 		}
 		else
 		{
@@ -428,7 +426,7 @@ void A_LightningRemove(mobj_t * actor)
 	if (mo)
 	{
 		mo->specialmobj2 = NULL;
-		P_ExplodeMissile((Missile *)mo);
+		P_ExplodeMissile(mo);
 	}
 }
 
@@ -438,7 +436,7 @@ void A_LightningRemove(mobj_t * actor)
 //
 //============================================================================
 
-void MStaffSpawn(mobj_t * pmo, angle_t angle)
+void MStaffSpawn(mobj_t * pmo, float angle)
 {
 	mobj_t *mo;
 
@@ -459,7 +457,7 @@ void MStaffSpawn(mobj_t * pmo, angle_t angle)
 void A_MStaffAttack(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	angle_t angle;
+	float angle;
 	mobj_t *pmo;
 
 	player->mana[MANA_1] -=
@@ -470,8 +468,8 @@ void A_MStaffAttack(mobj_t * actor)
 	angle = pmo->angles.yaw;
 
 	MStaffSpawn(pmo, angle);
-	MStaffSpawn(pmo, angle - ANGLE_1 * 5);
-	MStaffSpawn(pmo, angle + ANGLE_1 * 5);
+	MStaffSpawn(pmo, angle - 5.0);
+	MStaffSpawn(pmo, angle + 5.0);
 	StartSoundName(player->mo, "MageStaffFire", CHAN_WEAPON);
 	player->damagecount = 0;
 	player->bonuscount = 0;
@@ -508,11 +506,11 @@ void A_MStaffWeave(mobj_t * actor)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
-	angle_t angle;
+	float angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + 6) & 63;
@@ -541,12 +539,15 @@ void A_MStaffTrack(mobj_t * actor)
 	{
 		actor->specialmobj1 = P_RoughMonsterSearch(actor, 10);
 	}
-	SeekerMissile((Missile *)actor, ANGLE_1 * 2, ANGLE_1 * 10);
+	SeekerMissile(actor, 2.0, 10.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

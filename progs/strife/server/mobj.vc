@@ -201,7 +201,7 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 		if (flags & MF_COUNTITEM)
 			level->totalitems++;
 
-		angles.yaw = ANG45 * (mthing->angle / 45);
+		angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 			flags |= MF_AMBUSH;
 	}
@@ -217,11 +217,11 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-mobj_t *P_SpawnMobj(float x, float y, float z, int type)
+mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 {
 	mobj_t *mobj;
 
-	mobj = NewMobjThinker(mobjinfo[type].class_id);
+	mobj = NewMobjThinker(type);
 	mobj->type = type;
 	mobj->origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
@@ -291,7 +291,7 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		{
 			// spawn it
 			mobj = NewMobjThinker(mobjinfo[i].class_id);
-			mobj->type = i;
+			mobj->type = mobjinfo[i].class_id;
 			mobj->OnMapSpawn(mthing);
 			return;
 		}
@@ -408,7 +408,7 @@ void CheckMissileSpawn(mobj_t * th)
 //
 //==========================================================================
 
-mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
+mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 {
 	mobj_t *th;
 	TVec dir;
@@ -426,7 +426,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 	// fuzzy player
 	if (dest->translucency)
 	{
-		VectorRotateAroundZ(&dir, (P_Random() - P_Random()) << 20);
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
 	dir = Normalize(dir);
 	th->velocity = dir * th->speed;
@@ -446,7 +446,7 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, int type)
 
 void KillMobj(mobj_t * source, mobj_t * target)
 {
-	int item;
+	classid item;
 	mobj_t *mo;
 
 	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY);
@@ -727,9 +727,9 @@ void P_RespawnSpecials(void)
 #endif
 		z = ONFLOORZ;
 
-	mo = P_SpawnMobj(x, y, z, i);
+	mo = P_SpawnMobj(x, y, z, mobjinfo[i].class_id);
 	CopyMThing(mthing, &mo->spawnpoint);
-	mo->angles.yaw = ANG45 * (mthing->angle / 45);
+	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
 	// pull it from the que
 	iquetail = (iquetail + 1) & (ITEMQUESIZE - 1);
@@ -782,7 +782,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	// inherit attributes from deceased one
 	mo = P_SpawnMobj(x, y, z, mobj->type);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
-	mo->angles.yaw = ANG45 * (mthing->angle / 45);
+	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
 		mo->flags |= MF_AMBUSH;
@@ -894,6 +894,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.9  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

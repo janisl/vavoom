@@ -567,22 +567,22 @@ void P_XYMovement(mobj_t * mo)
 		case 40:
 		case 41:
 		case 42:	// Wind_East
-			P_ThrustMobj(mo, 0, windTab[special - 40]);
+			P_ThrustMobj(mo, 0.0, windTab[special - 40]);
 			break;
 		case 43:
 		case 44:
 		case 45:	// Wind_North
-			P_ThrustMobj(mo, ANG90, windTab[special - 43]);
+			P_ThrustMobj(mo, 90.0, windTab[special - 43]);
 			break;
 		case 46:
 		case 47:
 		case 48:	// Wind_South
-			P_ThrustMobj(mo, ANG270, windTab[special - 46]);
+			P_ThrustMobj(mo, 270.0, windTab[special - 46]);
 			break;
 		case 49:
 		case 50:
 		case 51:	// Wind_West
-			P_ThrustMobj(mo, ANG180, windTab[special - 49]);
+			P_ThrustMobj(mo, 180.0, windTab[special - 49]);
 			break;
 		}
 	}
@@ -751,7 +751,7 @@ void P_FakeZMovement(mobj_t * mo)
 	if (mo->player && mo->flags2 & MF2_FLY && !(tzmz <= mo->floorz)
 		&& level->tictime & 2)
 	{
-		tzmz += sin(ANG90 / 20 * level->tictime);
+		tzmz += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
@@ -864,7 +864,7 @@ void P_ZMovement(mobj_t * mo)
 	if (mo->player && mo->flags2 & MF2_FLY && !(mo->origin.z <= mo->floorz)
 		&& level->tictime & 2)
 	{
-		mo->origin.z += sin(ANG90 / 20 * level->tictime);
+		mo->origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
@@ -991,7 +991,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 		z = ONFLOORZ;
 	mo = P_SpawnMobj(x, y, z, mobj->type);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
-	mo->angles.yaw = ANG45 * (mthing->angle / 45);
+	mo->angles.yaw = itof(45 * (mthing->angle / 45));
 	if (mthing->options & MTF_AMBUSH)
 		mo->flags |= MF_AMBUSH;
 
@@ -1222,6 +1222,9 @@ void mobj_t::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.8  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

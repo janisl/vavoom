@@ -49,12 +49,12 @@
 #include "savegame.vc"
 #include "states.vc"
 #include "mobjinfo.vc"
+#include "wpninfo.vc"
 
 #ifdef GRENADE_LAUNCHER
 #include "grlaunch.vc"
 #endif
 
-#include "wpninfo.vc"
 #include "inter.vc"
 #include "user.vc"
 #include "mobj.vc"
@@ -93,6 +93,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.8  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

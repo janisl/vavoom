@@ -41,17 +41,17 @@
 //
 //============================================================================
 
-void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
+void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 {
 	int dir;
 	float dist;
-	angle_t delta;
+	float delta;
 	mobj_t *target;
 	int search;
 	int i;
 	int bestArg;
-	angle_t bestAngle;
-	angle_t angleToSpot, angleToTarget;
+	float bestAngle;
+	float angleToSpot, angleToTarget;
 	mobj_t *mo;
 	mobj_t *oldTarget;
 
@@ -63,7 +63,7 @@ void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	dir = P_FaceMobj(actor, target, &delta);
 	if (delta > thresh)
 	{
-		delta >>= 1;
+		delta /= 2.0;
 		if (delta > turnMax)
 		{
 			delta = turnMax;
@@ -72,12 +72,12 @@ void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		actor->angles.yaw += delta;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw + delta);
 	}
 	else
 	{
 		// Turn counter clockwise
-		actor->angles.yaw -= delta;
+		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
 	actor->velocity.x = actor->speed * cos(actor->angles.yaw);
 	actor->velocity.y = actor->speed * sin(actor->angles.yaw);
@@ -98,9 +98,11 @@ void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 		dist = dist / actor->speed;
 	}
 	if (target->flags & MF_SHOOTABLE && P_Random() < 64)
-	{	// attack the destination mobj if it's attackable
-		if (abs(actor->angles.yaw - atan2(target->origin.y - actor->origin.y,
-					target->origin.x - actor->origin.x)) < ANG45 / 2)
+	{
+		// attack the destination mobj if it's attackable
+		if (fabs(AngleMod180(actor->angles.yaw -
+			atan2(target->origin.y - actor->origin.y,
+			target->origin.x - actor->origin.x))) < 45.0 / 2.0)
 		{
 			oldTarget = actor->target;
 			actor->target = target;
@@ -122,7 +124,7 @@ void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 		if (actor->target && P_Random() < 200)
 		{
 			bestArg = -1;
-			bestAngle = ANGLE_MAX;
+			bestAngle = 360.0;
 			angleToTarget = atan2(actor->target->origin.y - actor->origin.y,
 				actor->target->origin.x - actor->origin.x);
 			for (i = 0; i < 5; i++)
@@ -135,9 +137,10 @@ void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 				mo = P_FindMobjFromTID(target->args[i], &search);
 				angleToSpot = atan2(mo->origin.y - actor->origin.y,
 					mo->origin.x - actor->origin.x);
-				if (abs(angleToSpot - angleToTarget) < bestAngle)
+				delta = fabs(AngleMod180(angleToSpot - angleToTarget));
+				if (delta < bestAngle)
 				{
-					bestAngle = abs(angleToSpot - angleToTarget);
+					bestAngle = delta;
 					bestArg = i;
 				}
 			}
@@ -194,25 +197,26 @@ void A_DragonInitFlight(mobj_t * actor)
 
 void A_DragonFlight(mobj_t * actor)
 {
-	angle_t angle;
+	float angle;
 
-	DragonSeek(actor, 4 * ANGLE_1, 8 * ANGLE_1);
+	DragonSeek(actor, 4.0, 8.0);
 	if (actor->target)
 	{
 		if (!(actor->target->flags & MF_SHOOTABLE))
-		{	// target died
+		{
+			// target died
 			actor->target = NULL;
 			return;
 		}
 		angle = atan2(actor->target->origin.y - actor->origin.y,
 			actor->target->origin.x - actor->origin.x);
-		if (abs(actor->angles.yaw - angle) < ANG45 / 2
+		if (fabs(AngleMod180(actor->angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange(actor))
 		{
 			DamageMobj(actor->target, actor, actor, HITDICE(8));
 			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
 		}
-		else if (abs(actor->angles.yaw - angle) <= ANGLE_1 * 20)
+		else if (fabs(AngleMod180(actor->angles.yaw - angle)) <= 20.0)
 		{
 			SetMobjState(actor, actor->missilestate);
 			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
@@ -314,6 +318,9 @@ void A_DragonFX2(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-//#define GRENADE_LAUNCHER
+#define GRENADE_LAUNCHER
 
 #ifndef DOOM2
 boolean shareware;
@@ -137,6 +137,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.7  2001/10/09 17:35:46  dj_jl
 //  Split server defines into seperate file
 //

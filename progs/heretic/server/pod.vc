@@ -66,7 +66,7 @@ void A_MakePod(mobj_t * actor)
 		return;
 	}
 	SetMobjState(mo, S_POD_GROW1);
-	P_ThrustMobj(mo, P_Random() << 24, 4.5);
+	P_ThrustMobj(mo, Random() * 360.0, 4.5);
 	StartSoundName(mo, "PodNew", CHAN_VOICE);
 	actor->special1++;	// Increment generated pod count
 	mo->specialmobj2 = actor;	// Link the generator to the pod
@@ -126,6 +126,9 @@ void A_RemovePod(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

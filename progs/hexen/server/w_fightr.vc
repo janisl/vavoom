@@ -48,7 +48,7 @@ void A_FPunchAttack(mobj_t * actor)
 	mobj_t *pmo = player->mo;
 	float power;
 	int i;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 40 + (P_Random() & 15);
@@ -57,7 +57,7 @@ void A_FPunchAttack(mobj_t * actor)
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
-		angles.yaw += i * (ANG45 / 16);
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
@@ -88,7 +88,7 @@ void A_FPunchAttack(mobj_t * actor)
 			break;
 		}
 		avcpy(pmo->angles, angles);
-		angles.yaw -= i * (ANG45 / 16);
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
@@ -157,7 +157,7 @@ void A_FAxeAttack(mobj_t * actor)
 	int damage;
 	int i;
 	int useMana;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
@@ -177,7 +177,7 @@ void A_FAxeAttack(mobj_t * actor)
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
-		angles.yaw += i * (ANG45 / 16);
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, AXERANGE);
 		if (linetarget)
 		{
@@ -195,7 +195,7 @@ void A_FAxeAttack(mobj_t * actor)
 			break;
 		}
 		avcpy(pmo->angles, angles);
-		angles.yaw -= i * (ANG45 / 16);
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, AXERANGE);
 		if (linetarget)
 		{
@@ -253,7 +253,7 @@ void A_FHammerAttack(mobj_t * actor)
 	int damage;
 	float power;
 	int i;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 60 + (P_Random() & 63);
@@ -262,7 +262,7 @@ void A_FHammerAttack(mobj_t * actor)
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
-		angles.yaw += i * (ANG45 / 32);
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		if (linetarget)
 		{
@@ -280,7 +280,7 @@ void A_FHammerAttack(mobj_t * actor)
 			break;
 		}
 		avcpy(pmo->angles, angles);
-		angles.yaw -= i * (ANG45 / 32);
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		if (linetarget)
 		{
@@ -321,7 +321,8 @@ void A_FHammerAttack(mobj_t * actor)
 
 	if (player->mana[MANA_2] <
 		WeaponManaUse(player->pclass, player->readyweapon))
-	{	// Don't spawn a hammer if the player doesn't have enough mana
+	{
+		// Don't spawn a hammer if the player doesn't have enough mana
 		pmo->special1 = false;
 	}
 	return;
@@ -368,15 +369,19 @@ void A_FSwordAttack(mobj_t * actor)
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 10.0, MT_FSWORD_MISSILE, pmo->angles.yaw + ANG45 / 4);
+		pmo->origin.z - 10.0, MT_FSWORD_MISSILE,
+		AngleMod360(pmo->angles.yaw + 45.0 / 4.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 5.0, MT_FSWORD_MISSILE, pmo->angles.yaw + ANG45 / 8);
+		pmo->origin.z - 5.0, MT_FSWORD_MISSILE,
+		AngleMod360(pmo->angles.yaw + 45.0 / 8.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
 		pmo->origin.z, MT_FSWORD_MISSILE, pmo->angles.yaw);
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 5.0, MT_FSWORD_MISSILE, pmo->angles.yaw - ANG45 / 8);
+		pmo->origin.z + 5.0, MT_FSWORD_MISSILE,
+		AngleMod360(pmo->angles.yaw - 45.0 / 8.0));
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 10.0, MT_FSWORD_MISSILE, pmo->angles.yaw - ANG45 / 4);
+		pmo->origin.z + 10.0, MT_FSWORD_MISSILE,
+		AngleMod360(pmo->angles.yaw - 45.0 / 4.0));
 	StartSoundName(pmo, "FighterSwordFire", CHAN_WEAPON);
 }
 
@@ -401,6 +406,9 @@ void A_FSwordFlames(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

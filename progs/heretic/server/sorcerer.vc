@@ -62,8 +62,8 @@ void A_Sor1Chase(mobj_t * actor)
 void A_Srcr1Attack(mobj_t * actor)
 {
 	mobj_t *mo;
-	TBAMVec angles;
-	angle_t angle;
+	TAVec angles;
+	float angle;
 
 	if (!actor->target)
 	{
@@ -88,10 +88,10 @@ void A_Srcr1Attack(mobj_t * actor)
 		{
 			VectorAngles(&mo->velocity, &angles);
 			angle = mo->angles.yaw;
-			SpawnMissileAngles(actor, MT_SRCRFX1, angle - ANGLE_1 * 3,
-				angles.pitch);
-			SpawnMissileAngles(actor, MT_SRCRFX1, angle + ANGLE_1 * 3,
-				angles.pitch);
+			SpawnMissileAngles(actor, MT_SRCRFX1,
+				AngleMod360(angle - 3.0), angles.pitch);
+			SpawnMissileAngles(actor, MT_SRCRFX1,
+				AngleMod360(angle + 3.0), angles.pitch);
 		}
 		if (actor->health < actor->spawnhealth / 3)
 		{
@@ -250,10 +250,10 @@ void A_Srcr2Attack(mobj_t * actor)
 	if (P_Random() < chance)
 	{
 		// Wizard spawners
-		SpawnMissileAngles(actor, MT_SOR2FX2, actor->angles.yaw - ANG45,
-			ANG90 / 3);
-		SpawnMissileAngles(actor, MT_SOR2FX2, actor->angles.yaw + ANG45,
-			ANG90 / 3);
+		SpawnMissileAngles(actor, MT_SOR2FX2,
+			AngleMod360(actor->angles.yaw - 45.0), 30.0);
+		SpawnMissileAngles(actor, MT_SOR2FX2,
+			AngleMod360(actor->angles.yaw + 45.0), 30.0);
 	}
 	else
 	{
@@ -377,6 +377,9 @@ void A_GenWizard(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

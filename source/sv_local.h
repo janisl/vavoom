@@ -111,13 +111,12 @@ extern acsstore_t 	ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 // MAXRADIUS is for precalculated sector block boxes
 // the spider demon is larger, but we do not have any moving sectors nearby
-#define MAXRADIUS	32.0
+#define MAXRADIUS		32.0
 
 // mapblocks are used to check movement against lines and things
-#define MAPBLOCKUNITS	128
-#define MAPBLOCKSIZE	(MAPBLOCKUNITS*FRACUNIT)
-#define MAPBLOCKSHIFT	(FRACBITS+7)
-#define MAPBTOFRAC		(MAPBLOCKSHIFT-FRACBITS)
+#define MAPBLOCKSIZE	128.0
+
+#define MapBlock(x)		(int)(x / MAPBLOCKSIZE)
 
 #define PT_ADDLINES		1
 #define PT_ADDTHINGS	2
@@ -211,7 +210,7 @@ extern int 			TimerGame; // tic countdown for deathmatch
 void PO_SpawnPolyobj(float x, float y, int tag, int crush);
 void PO_AddAnchorPoint(float x, float y, int tag);
 boolean PO_MovePolyobj(int num, float x, float y);
-boolean PO_RotatePolyobj(int num, angle_t angle);
+boolean PO_RotatePolyobj(int num, float angle);
 void PO_Init(void);
 boolean PO_Busy(int polyobj);
 polyobj_t *PO_GetPolyobj(int polyNum);
@@ -227,14 +226,14 @@ int PO_GetPolyobjMirror(int poly);
 struct mobj_base_t
 {
 	TVec		origin;			// position
-	TBAMVec		angles;			// orientation
+	TAVec		angles;			// orientation
 	int			spritetype;		// sprite orientation type
-    int			sprite;			// used to find patch_t and flip value
-    int			frame;			// might be ORed with FF_FULLBRIGHT
+	int			sprite;			// used to find patch_t and flip value
+	int			frame;			// might be ORed with FF_FULLBRIGHT
 	int			model_index;
 	int			alias_frame;
-    int			translucency;	// translucency, in percents
-    int			translation;	// player color translation
+	int			translucency;	// translucency, in percents
+	int			translation;	// player color translation
 	int			effects;		// dynamic lights, trails
 };
 
@@ -316,9 +315,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.10  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.9  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

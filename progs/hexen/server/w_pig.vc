@@ -45,7 +45,7 @@ void A_SnoutAttack(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
@@ -71,6 +71,9 @@ void A_SnoutAttack(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

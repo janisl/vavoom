@@ -321,7 +321,7 @@ int CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void BulletSlope(mobj_t * mo, TBAMVec * angles)
+void BulletSlope(mobj_t * mo, TAVec * angles)
 {
 	// see which target is to be aimed at
 	angles->pitch = mo->angles.pitch;
@@ -331,15 +331,15 @@ void BulletSlope(mobj_t * mo, TBAMVec * angles)
 	AimLineAttack(mo, angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
-		angles->yaw += 1 << 26;
+		angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 		AimLineAttack(mo, angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles->yaw -= 2 << 26;
+			angles->yaw = AngleMod360(angles->yaw - 45.0 / 4.0);
 			AimLineAttack(mo, angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles->yaw += 1 << 26;
+				angles->yaw = AngleMod360(angles->yaw + 45.0 / 8.0);
 			}
 		}
 	}
@@ -369,9 +369,9 @@ void FireWeapon(player_t * player)
 //
 //===========================================================================
 
-void GunShot(mobj_t * mo, int accurate, TBAMVec * bangles)
+void GunShot(mobj_t * mo, int accurate, TAVec * bangles)
 {
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 	int damage;
 
@@ -381,7 +381,8 @@ void GunShot(mobj_t * mo, int accurate, TBAMVec * bangles)
 	angles.roll = bangles->roll;
 	if (!accurate)
 	{
-		angles.yaw += (P_Random() - P_Random()) << 18;
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
 	}
 	AngleVector(&angles, &vforward);
 
@@ -409,7 +410,7 @@ void A_WeaponReady(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	angle_t angle;
+	float angle;
 
 	// get out of attack state
 	if (player->mo->statenum == S_PLAY_ATK1
@@ -439,7 +440,7 @@ void A_WeaponReady(mobj_t * actor)
 	{
 		if (!player->attackdown
 			|| (player->readyweapon != wp_missile
-&& player->readyweapon != wp_bfg))
+			&& player->readyweapon != wp_bfg))
 		{
 			player->attackdown = true;
 			FireWeapon(player);
@@ -450,9 +451,12 @@ void A_WeaponReady(mobj_t * actor)
 		player->attackdown = false;
 
 	// bob the weapon based on movement speed
-	angle = (ANG90 >> 4) * level->tictime;
+	angle = AngleMod360(180.0 * level->time);
 	psp->sx = 1.0 + player->bob * cos(angle);
-	angle &= 0x7fffffff;
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
 	psp->sy = WEAPONTOP + player->bob * sin(angle);
 }
 
@@ -632,10 +636,8 @@ void A_Light2(mobj_t * actor)
 void A_Punch(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	angle_t angle;
 	int damage;
-	float slope;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = (P_Random() % 10 + 1) << 1;
@@ -644,7 +646,8 @@ void A_Punch(mobj_t * actor)
 		damage *= 10;
 
 	avcpy(player->mo->angles, angles);
-	angles.yaw += (P_Random() - P_Random()) << 18;
+	angles.yaw = AngleMod360(angles.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
@@ -655,7 +658,7 @@ void A_Punch(mobj_t * actor)
 		StartSoundName(player->mo, "Punch", CHAN_WEAPON);
 		player->mo->angles.yaw =
 			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+				linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
 }
@@ -669,15 +672,15 @@ void A_Punch(mobj_t * actor)
 void A_Saw(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	angle_t angle;
+	float angle;
 	int damage;
-	float slope;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 2 * (P_Random() % 10 + 1);
 	avcpy(player->mo->angles, angles);
-	angles.yaw += (P_Random() - P_Random()) << 18;
+	angles.yaw = AngleMod360(angles.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
 	AimLineAttack(player->mo, &angles, MELEERANGE + 0.00001);
@@ -694,20 +697,21 @@ void A_Saw(mobj_t * actor)
 	// turn to face target
 	angle = atan2(linetarget->origin.y - player->mo->origin.y,
 		linetarget->origin.x - player->mo->origin.x);
-	if (angle - player->mo->angles.yaw > ANG180)
+	if (AngleMod360(angle - player->mo->angles.yaw) > 180.0)
 	{
-		if (angle - player->mo->angles.yaw < -ANG90 / 20)
-			player->mo->angles.yaw = angle + ANG90 / 21;
+		if (AngleMod360(angle - player->mo->angles.yaw) < -90.0 / 20.0)
+			player->mo->angles.yaw = angle + 90.0 / 21.0;
 		else
-			player->mo->angles.yaw -= ANG90 / 20;
+			player->mo->angles.yaw = player->mo->angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (angle - player->mo->angles.yaw > ANG90 / 20)
-			player->mo->angles.yaw = angle - ANG90 / 21;
+		if (AngleMod360(angle - player->mo->angles.yaw) > 90.0 / 20.0)
+			player->mo->angles.yaw = angle - 90.0 / 21.0;
 		else
-			player->mo->angles.yaw += ANG90 / 20;
+			player->mo->angles.yaw += 90.0 / 20.0;
 	}
+	player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw);
 	player->mo->flags |= MF_JUSTATTACKED;
 	player->fixangle = 1;
 }
@@ -721,8 +725,7 @@ void A_Saw(mobj_t * actor)
 void A_FirePistol(mobj_t * actor)
 {
 	player_t *player = actor->player;
-	TBAMVec angles;
-	float slope;
+	TAVec angles;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
@@ -746,7 +749,7 @@ void A_FireShotgun(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	int i;
-	TBAMVec angles;
+	TAVec angles;
 
 	StartSoundName(player->mo, "ShotgunFire", CHAN_WEAPON);
 	SetMobjState(player->mo, S_PLAY_ATK2);
@@ -776,8 +779,8 @@ void A_FireShotgun2(mobj_t * actor)
 	player_t *player = actor->player;
 	int i;
 	int damage;
-	TBAMVec bangles;
-	TBAMVec angles;
+	TAVec bangles;
+	TAVec angles;
 	TVec vforward;
 
 	StartSoundName(player->mo, "SuperShotgunFire", CHAN_WEAPON);
@@ -792,8 +795,10 @@ void A_FireShotgun2(mobj_t * actor)
 	for (i = 0; i < 20; i++)
 	{
 		avcpy(bangles, angles);
-		angles.pitch += (P_Random() - P_Random()) << 18;
-		angles.yaw += (P_Random() - P_Random()) << 19;
+		angles.pitch = AngleMod360(angles.pitch +
+			(Random() - Random()) * 45.0 / 8.0);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 4.0);
 		AngleVector(&angles, &vforward);
 		damage = 5 * (P_Random() % 3 + 1);
 		LineAttack(player->mo, &vforward, MISSILERANGE, damage);
@@ -875,7 +880,7 @@ void A_FireCGun(mobj_t * actor)
 {
 	player_t *player = actor->player;
 	pspdef_t *psp = &player->psprites[ps_weapon];
-	TBAMVec angles;
+	TAVec angles;
 
 	StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
@@ -919,11 +924,11 @@ void A_FireGrenade(mobj_t * actor)
 	player_t *player = actor->player;
 	mobj_t *mo;
 	TVec vforward;
-	TBAMVec angles;
+	TAVec angles;
 
 	player->ammo[player->w_ammo]--;
 
-	avcpy(actor->angles, angles);
+	angles = actor->angles;
 
 	if (!angles.pitch)
 	{
@@ -932,29 +937,29 @@ void A_FireGrenade(mobj_t * actor)
 		AimLineAttack(actor, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-			angles.yaw += 1 << 26;
+			angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 			AimLineAttack(actor, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
-				angles.yaw -= 2 << 26;
+				angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 				AimLineAttack(actor, &angles, 16.0 * 64.0);
 				if (!linetarget)
 				{
-					angles.yaw += 1 << 26;
+					angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 				}
 			}
 		}
 	}
-	angles.pitch -= ANG90 / 3;
+	angles.pitch = AngleMod180(angles.pitch - 30.0);
 
 	mo = P_SpawnMobj(actor->origin.x, actor->origin.y,
-		actor->origin.z + 32.0, MT_GRENADE);
+		actor->origin.z + 32.0, missile_grenade);
 
 	if (mo->sound_sight)
-		StartSound(mo, mo->sound_sight);
+		StartSound(mo, mo->sound_sight, CHAN_VOICE);
 
 	mo->target = actor;
-	avcpy(angles, mo->angles);
+	mo->angles = angles;
 	AngleVector(&angles, &vforward);
 	mo->velocity = vforward * mo->speed;
 
@@ -1019,14 +1024,14 @@ void A_BFGSpray(mobj_t * mo)
 	int i;
 	int j;
 	int damage;
-	TBAMVec angles;
+	TAVec angles;
 	mobj_t *emo;
 
 	// offset angles from its attack angle
 	for (i = 0; i < 40; i++)
 	{
 		avcpy(mo->angles, angles);
-		angles.yaw += -ANG90 / 2 + ANG90 / 40 * i;
+		angles.yaw = AngleMod360(angles.yaw - 45.0 + 90.0 / 40.0 * itof(i));
 
 		// mo->target is the originator (player)
 		//  of the missile
@@ -1057,6 +1062,9 @@ void A_BFGSpray(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

@@ -139,7 +139,7 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 //
 //==========================================================================
 
-boolean P_Teleport(mobj_t * thing, float x, float y, angle_t angle,
+boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 	boolean useFog)
 {
 	float oldx;
@@ -176,7 +176,7 @@ boolean P_Teleport(mobj_t * thing, float x, float y, angle_t angle,
 			player->vieworg.z = thing->origin.z + player->viewheight;
 			if (useFog)
 			{
-				thing->angles.pitch = 0;
+				thing->angles.pitch = 0.0;
 			}
 		}
 	}
@@ -278,6 +278,9 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -29,7 +29,7 @@
 
 void A_BridgeRemove(mobj_t * actor);
 
-int TranslateThingType[] = {
+classid TranslateThingType[] = {
 	MT_MAPSPOT,	// T_NONE
 	MT_CENTAUR,	// T_CENTAUR
 	MT_CENTAURLEADER,	// T_CENTAURLEADER
@@ -150,12 +150,12 @@ int TranslateThingType[] = {
 boolean EV_ThingProjectile(int *args, boolean gravity)
 {
 	int tid;
-	angle_t angle;
+	float angle;
 	float speed;
 	float vspeed;
-	int moType;
+	classid moType;
 	mobj_t *mobj;
-	Missile *newMobj;
+	mobj_t *newMobj;
 	int searcher;
 	boolean success;
 
@@ -163,12 +163,12 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	searcher = -1;
 	tid = args[0];
 	moType = TranslateThingType[args[1]];
-	angle = args[2] << 24;
+	angle = itof(args[2]) * (360.0 / 256.0);
 	speed = itof(args[3]) / 8.0;
 	vspeed = itof(args[4]) / 8.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		newMobj = (Missile *)P_SpawnMobj(mobj->origin.x, mobj->origin.y,
+		newMobj = P_SpawnMobj(mobj->origin.x, mobj->origin.y,
 			mobj->origin.z, moType);
 		if (newMobj->sound_sight)
 		{
@@ -202,11 +202,11 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 boolean EV_ThingSpawn(int *args, boolean fog)
 {
 	int tid;
-	angle_t angle;
+	float angle;
 	mobj_t *mobj;
 	mobj_t *newMobj;
 	mobj_t *fogMobj;
-	int moType;
+	classid moType;
 	int searcher;
 	boolean success;
 
@@ -214,7 +214,7 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 	searcher = -1;
 	tid = args[0];
 	moType = TranslateThingType[args[1]];
-	angle = args[2] << 24;
+	angle = itof(args[2]) * 360.0 / 256.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
 		newMobj =
@@ -496,12 +496,18 @@ boolean EV_ThingDestroy(int tid)
 	return success;
 }
 
+//==========================================================================
+//
+//	ThingCount
+//
+//==========================================================================
+
 int ThingCount(int type, int tid)
 {
 	int count;
 	int searcher;
 	mobj_t *mobj;
-	int moType;
+	classid moType;
 
 	if (!(type + tid))
 	{
@@ -556,6 +562,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

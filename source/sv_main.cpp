@@ -246,11 +246,11 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 		bits |=	MOB_Y;
 	if (fabs(base.origin.z - (mobj.origin.z - mobj.floorclip)) >= 1.0)
 		bits |=	MOB_Z;
-	if ((base.angles.yaw & 0xff000000) != (mobj.angles.yaw & 0xff000000))
+	if (fabs(base.angles.yaw - mobj.angles.yaw) >= 1.0)
 		bits |=	MOB_ANGLE;
-	if ((base.angles.pitch & 0xff000000) != (mobj.angles.pitch & 0xff000000))
+	if (fabs(base.angles.pitch - mobj.angles.pitch) >= 1.0)
 		bits |=	MOB_ANGLEP;
-	if ((base.angles.roll & 0xff000000) != (mobj.angles.roll & 0xff000000))
+	if (fabs(base.angles.roll - mobj.angles.roll) >= 1.0)
 		bits |=	MOB_ANGLER;
 	if (base.sprite != mobj.sprite || base.spritetype != mobj.spritetype)
 		bits |=	MOB_SPRITE;
@@ -285,11 +285,11 @@ void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
 	if (bits & MOB_Z)
 		msg << (word)(mobj.origin.z - mobj.floorclip);
 	if (bits & MOB_ANGLE)
-		msg << (byte)(mobj.angles.yaw >> 24);
+		msg << (byte)(AngleToByte(mobj.angles.yaw));
 	if (bits & MOB_ANGLEP)
-		msg << (byte)(mobj.angles.pitch >> 24);
+		msg << (byte)(AngleToByte(mobj.angles.pitch));
 	if (bits & MOB_ANGLER)
-		msg << (byte)(mobj.angles.roll >> 24);
+		msg << (byte)(AngleToByte(mobj.angles.roll));
 	if (bits & MOB_SPRITE)
 		msg << (word)(mobj.sprite | (mobj.spritetype << 10));
 	if (bits & MOB_FRAME)
@@ -388,9 +388,9 @@ void SV_CreateBaseline(void)
 					<< (word)mobj.origin.x
 					<< (word)mobj.origin.y
 					<< (word)(mobj.origin.z - mobj.floorclip)
-					<< (byte)(mobj.angles.yaw >> 24)
-					<< (byte)(mobj.angles.pitch >> 24)
-					<< (byte)(mobj.angles.roll >> 24)
+					<< (byte)(AngleToByte(mobj.angles.yaw))
+					<< (byte)(AngleToByte(mobj.angles.pitch))
+					<< (byte)(AngleToByte(mobj.angles.roll))
 					<< (word)(mobj.sprite | (mobj.spritetype << 10))
 					<< (word)mobj.frame
 					<< (byte)mobj.translucency
@@ -727,14 +727,14 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 		if (player.cshifts[i] & 0xff000000)
 			msg << player.cshifts[i];
 
-	//	Update angles (after teleportation)
+	//	Update bam_angles (after teleportation)
 	if (player.fixangle)
 	{
 		player.fixangle = false;
 		msg << (byte)svc_set_angles
-			<< (byte)(player.viewangles.pitch >> 24)
-			<< (byte)(player.viewangles.yaw >> 24)
-			<< (byte)(player.viewangles.roll >> 24);
+			<< (byte)(AngleToByte(player.viewangles.pitch))
+			<< (byte)(AngleToByte(player.viewangles.yaw))
+			<< (byte)(AngleToByte(player.viewangles.roll));
 	}
 }
 
@@ -754,7 +754,7 @@ void SV_UpdateMobj(int i, TMessage &msg)
 	if (sv_mobjs[i]->player)
 	{
 		sendnum = (sv_mobjs[i]->player - players) + 1;
-		//	Clear look angles, because they must not affect model orientation
+		//	Clear look bam_angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
 		if (sv_mobjs[i]->player->weapon_model)
 		{
@@ -934,7 +934,7 @@ void SV_UpdateLevel(TMessage &msg)
 			<< (byte)i
 			<< (word)po->startSpot.x
 			<< (word)po->startSpot.y
-			<< (byte)(po->angle >> 24);
+			<< (byte)(AngleToByte(po->angle));
   	}
 
 	//	First update players
@@ -2006,8 +2006,8 @@ COMMAND(Spawn)
 	}
 	SV_WriteChangedTextures(sv_player->message);
 	sv_player->message << (byte)svc_set_angles
-						<< (byte)(sv_player->mo->angles.pitch >> 24)
-						<< (byte)(sv_player->mo->angles.yaw >> 24)
+						<< (byte)(AngleToByte(sv_player->mo->angles.pitch))
+						<< (byte)(AngleToByte(sv_player->mo->angles.yaw))
 						<< (byte)0;
 	sv_player->message << (byte)svc_signonnum << (byte)3;
 	memset(sv_player->old_stats, 0, sizeof(sv_player->old_stats));
@@ -2485,9 +2485,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.17  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.16  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

@@ -91,7 +91,7 @@ boolean A_LocalQuake(int *args, mobj_t * actor)
 
 void A_Quake(mobj_t * actor)
 {
-	angle_t an;
+	float an;
 	player_t *player;
 	mobj_t *victim;
 	int richters = actor->args[0];
@@ -122,7 +122,7 @@ void A_Quake(mobj_t * actor)
 					DamageMobj(victim, NULL, NULL, HITDICE(1));
 				}
 				// Thrust player around
-				an = victim->angles.yaw + ANGLE_1 * P_Random();
+				an = victim->angles.yaw + Random() * 256.0;
 				P_ThrustMobj(victim, an, itof(richters) / 2.0);
 			}
 		}
@@ -140,6 +140,9 @@ void A_Quake(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

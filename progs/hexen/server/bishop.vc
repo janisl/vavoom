@@ -64,14 +64,15 @@ void A_BishopDoBlur(mobj_t * actor)
 	actor->special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
-		P_ThrustMobj(actor, actor->angles.yaw + ANG90, 11.0);
+		P_ThrustMobj(actor, AngleMod360(actor->angles.yaw + 90.0), 11.0);
 	}
 	else if (P_Random() > 125)
 	{
-		P_ThrustMobj(actor, actor->angles.yaw - ANG90, 11.0);
+		P_ThrustMobj(actor, AngleMod360(actor->angles.yaw - 90.0), 11.0);
 	}
 	else
-	{	// Thrust forward
+	{
+		// Thrust forward
 		P_ThrustMobj(actor, actor->angles.yaw, 11.0);
 	}
 	StartSoundName(actor, "BishopBlur", CHAN_VOICE);
@@ -100,8 +101,7 @@ void A_BishopSpawnBlur(mobj_t * actor)
 			SetMobjState(actor, S_BISHOP_ATK1);
 		}
 	}
-	mo =
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 		MT_BISHOPBLUR);
 	if (mo)
 	{
@@ -234,11 +234,11 @@ void A_BishopMissileWeave(mobj_t * actor)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
-	angle_t angle;
+	float angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	weaveXY = (weaveXY + 2) & 63;
@@ -259,12 +259,15 @@ void A_BishopMissileWeave(mobj_t * actor)
 
 void A_BishopMissileSeek(mobj_t * actor)
 {
-	SeekerMissile((Missile *)actor, ANGLE_1 * 2, ANGLE_1 * 3);
+	SeekerMissile(actor, 2.0, 3.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

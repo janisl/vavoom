@@ -209,7 +209,8 @@ static void LoadVertexes(int lump, int gl_lump, base_level_t &loadlevel)
 		// Copy and convert vertex, internal representation as vector.
 		for (i = 0; i < gl_verts; i++, li++, glml++)
 		{
-			*li = TVec(FL(LittleLong(glml->x)), FL(LittleLong(glml->y)), 0);
+			*li = TVec(LittleLong(glml->x) / 65536.0,
+				LittleLong(glml->y) / 65536.0, 0);
 		}
 	}
 	else
@@ -877,19 +878,19 @@ static void GroupLines(sv_level_t &loadlevel)
 			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
 
 		// adjust bounding box to map blocks
-		block = (FX(bbox[BOXTOP] - loadlevel.bmaporgy + MAXRADIUS)) >> MAPBLOCKSHIFT;
+		block = MapBlock(bbox[BOXTOP] - loadlevel.bmaporgy + MAXRADIUS);
 		block = block >= loadlevel.bmapheight ? loadlevel.bmapheight - 1 : block;
 		sector->blockbox[BOXTOP] = block;
 
-		block = (FX(bbox[BOXBOTTOM] - loadlevel.bmaporgy - MAXRADIUS)) >> MAPBLOCKSHIFT;
+		block = MapBlock(bbox[BOXBOTTOM] - loadlevel.bmaporgy - MAXRADIUS);
 		block = block < 0 ? 0 : block;
 		sector->blockbox[BOXBOTTOM] = block;
 
-		block = (FX(bbox[BOXRIGHT] - loadlevel.bmaporgx + MAXRADIUS)) >> MAPBLOCKSHIFT;
+		block = MapBlock(bbox[BOXRIGHT] - loadlevel.bmaporgx + MAXRADIUS);
 		block = block >= loadlevel.bmapwidth ? loadlevel.bmapwidth - 1 : block;
 		sector->blockbox[BOXRIGHT] = block;
 
-		block = (FX(bbox[BOXLEFT] - loadlevel.bmaporgx - MAXRADIUS)) >> MAPBLOCKSHIFT;
+		block = MapBlock(bbox[BOXLEFT] - loadlevel.bmaporgx - MAXRADIUS);
 		block = block < 0 ? 0 : block;
 		sector->blockbox[BOXLEFT] = block;
 	}
@@ -1219,6 +1220,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/10/22 17:25:55  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.11  2001/10/09 17:25:36  dj_jl
 //  Fixed auxiliary maps
 //

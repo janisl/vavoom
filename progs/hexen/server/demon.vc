@@ -58,7 +58,7 @@ void A_DemonAttack1(mobj_t * actor)
 void A_DemonAttack2(mobj_t * actor)
 {
 	mobj_t *mo;
-	int fireBall;
+	classid fireBall;
 
 	if (actor->type == MT_DEMON)
 	{
@@ -85,14 +85,14 @@ void A_DemonAttack2(mobj_t * actor)
 void A_DemonDeath(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 
 	mo =
 		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
 		MT_DEMONCHUNK1);
 	if (mo)
 	{
-		angle = actor->angles.yaw + ANG90;
+		angle = AngleMod360(actor->angles.yaw + 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -103,7 +103,7 @@ void A_DemonDeath(mobj_t * actor)
 		MT_DEMONCHUNK2);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -114,7 +114,7 @@ void A_DemonDeath(mobj_t * actor)
 		MT_DEMONCHUNK3);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -125,7 +125,7 @@ void A_DemonDeath(mobj_t * actor)
 		MT_DEMONCHUNK4);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -136,7 +136,7 @@ void A_DemonDeath(mobj_t * actor)
 		MT_DEMONCHUNK5);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -153,14 +153,14 @@ void A_DemonDeath(mobj_t * actor)
 void A_Demon2Death(mobj_t * actor)
 {
 	mobj_t *mo;
-	angle_t angle;
+	float angle;
 
 	mo =
 		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
 		MT_DEMON2CHUNK1);
 	if (mo)
 	{
-		angle = actor->angles.yaw + ANG90;
+		angle = AngleMod360(actor->angles.yaw + 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -171,7 +171,7 @@ void A_Demon2Death(mobj_t * actor)
 		MT_DEMON2CHUNK2);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -182,7 +182,7 @@ void A_Demon2Death(mobj_t * actor)
 		MT_DEMON2CHUNK3);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -193,7 +193,7 @@ void A_Demon2Death(mobj_t * actor)
 		MT_DEMON2CHUNK4);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -204,7 +204,7 @@ void A_Demon2Death(mobj_t * actor)
 		MT_DEMON2CHUNK5);
 	if (mo)
 	{
-		angle = actor->angles.yaw - ANG90;
+		angle = AngleMod360(actor->angles.yaw - 90.0);
 		mo->velocity.x = (Random() * 4.0 + 1.0) * cos(angle) * 35.0;
 		mo->velocity.y = (Random() * 4.0 + 1.0) * sin(angle) * 35.0;
 		mo->velocity.z = 8.0 * 35.0;
@@ -215,6 +215,9 @@ void A_Demon2Death(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

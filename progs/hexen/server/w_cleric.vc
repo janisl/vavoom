@@ -46,15 +46,15 @@ void A_CMaceAttack(mobj_t * actor)
 	player_t *player = actor->player;
 	int damage;
 	int i;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	damage = 25 + (P_Random() & 15);
 	PuffType = MT_HAMMERPUFF;
 	for (i = 0; i < 16; i++)
 	{
-		avcpy(player->mo->angles, angles);
-		angles.yaw += i * (ANG45 / 16);
+		angles = player->mo->angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
@@ -66,8 +66,8 @@ void A_CMaceAttack(mobj_t * actor)
 			AdjustPlayerAngle(player->mo);
 			return;
 		}
-		avcpy(player->mo->angles, angles);
-		angles.yaw -= i * (ANG45 / 16);
+		angles = player->mo->angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
 		{
@@ -135,7 +135,7 @@ void A_CStaffCheck(mobj_t * actor)
 	int damage;
 	int newLife;
 	int i;
-	TBAMVec angles;
+	TAVec angles;
 	TVec vforward;
 
 	pmo = player->mo;
@@ -143,8 +143,8 @@ void A_CStaffCheck(mobj_t * actor)
 	PuffType = MT_CSTAFFPUFF;
 	for (i = 0; i < 3; i++)
 	{
-		avcpy(pmo->angles, angles);
-		angles.yaw += i * (ANG45 / 16);
+		angles = pmo->angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
@@ -164,8 +164,8 @@ void A_CStaffCheck(mobj_t * actor)
 				WeaponManaUse(player->pclass, player->readyweapon);
 			break;
 		}
-		avcpy(pmo->angles, angles);
-		angles.yaw -= i * (ANG45 / 16);
+		angles = pmo->angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
@@ -202,16 +202,14 @@ void A_CStaffAttack(mobj_t * actor)
 	player->mana[MANA_1] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
-	mo =
-		SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
-		pmo->angles.yaw - (ANG45 / 15));
+	mo = SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
+		pmo->angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		mo->special2 = 32;
 	}
-	mo =
-		SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
-		pmo->angles.yaw + (ANG45 / 15));
+	mo = SpawnPlayerMissileAngle(pmo, MT_CSTAFF_MISSILE,
+		pmo->angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
 		mo->special2 = 0;
@@ -229,10 +227,10 @@ void A_CStaffMissileSlither(mobj_t * actor)
 {
 	float newX, newY;
 	int weaveXY;
-	angle_t angle;
+	float angle;
 
 	weaveXY = actor->special2;
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY];
 	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY];
 	weaveXY = (weaveXY + 3) & 63;
@@ -271,14 +269,14 @@ void A_CFlameAttack(mobj_t * actor)
 //
 //============================================================================
 
-#define FLAMESPEED		(9.0 / 20.0)
+#define FLAMESPEED		(9.0 / 20.0 * 35.0)
 
 void A_UnHideThing(mobj_t * actor);
 
 void A_CFlameMissile(mobj_t * actor)
 {
 	int i;
-	angle_t an;
+	float an;
 	float dist;
 	mobj_t *mo;
 	mobj_t *bmo;
@@ -292,7 +290,7 @@ void A_CFlameMissile(mobj_t * actor)
 		dist = bmo->radius + 18.0;
 		for (i = 0; i < 4; i++)
 		{
-			an = i * ANG45;
+			an = itof(i) * 45.0;
 			mo = P_SpawnMobj(bmo->origin.x + dist * cos(an),
 				bmo->origin.y + dist * sin(an),
 				bmo->origin.z + 5.0, MT_CIRCLEFLAME);
@@ -300,8 +298,8 @@ void A_CFlameMissile(mobj_t * actor)
 			{
 				mo->angles.yaw = an;
 				mo->target = actor->target;
-				mo->velocity.x = mo->special1f = FLAMESPEED * cos(an) * 35.0;
-				mo->velocity.y = mo->special2f = FLAMESPEED * sin(an) * 35.0;
+				mo->velocity.x = mo->special1f = FLAMESPEED * cos(an);
+				mo->velocity.y = mo->special2f = FLAMESPEED * sin(an);
 				mo->time -= Random() * 0.1;
 			}
 			mo = P_SpawnMobj(bmo->origin.x - dist * cos(an),
@@ -309,10 +307,10 @@ void A_CFlameMissile(mobj_t * actor)
 				bmo->origin.z + 5.0, MT_CIRCLEFLAME);
 			if (mo)
 			{
-				mo->angles.yaw = ANG180 + an;
+				mo->angles.yaw = AngleMod360(180.0 + an);
 				mo->target = actor->target;
-				mo->velocity.x = mo->special1f = -FLAMESPEED * cos(an) * 35.0;
-				mo->velocity.y = mo->special2f = -FLAMESPEED * sin(an) * 35.0;
+				mo->velocity.x = mo->special1f = -FLAMESPEED * cos(an);
+				mo->velocity.y = mo->special2f = -FLAMESPEED * sin(an);
 				mo->time -= Random() * 0.1;
 			}
 		}
@@ -326,16 +324,16 @@ void A_CFlameMissile(mobj_t * actor)
 //
 //============================================================================
 
-#define FLAMEROTSPEED	2.0
+#define FLAMEROTSPEED	2.0 * 35.0
 
 void A_CFlameRotate(mobj_t * actor)
 {
-	angle_t an;
+	float an;
 
-	an = actor->angles.yaw + ANG90;
-	actor->velocity.x = actor->special1f + FLAMEROTSPEED * cos(an) * 35.0;
-	actor->velocity.y = actor->special2f + FLAMEROTSPEED * sin(an) * 35.0;
-	actor->angles.yaw += ANG90 / 15;
+	an = AngleMod360(actor->angles.yaw + 90.0);
+	actor->velocity.x = actor->special1f + FLAMEROTSPEED * cos(an);
+	actor->velocity.y = actor->special2f + FLAMEROTSPEED * sin(an);
+	actor->angles.yaw = AngleMod360(actor->angles.yaw + 90.0 / 15.0);
 }
 
 //============================================================================
@@ -347,9 +345,7 @@ void A_CFlameRotate(mobj_t * actor)
 void A_CFlamePuff(mobj_t * actor)
 {
 	A_UnHideThing(actor);
-	actor->velocity.x = 0.0;
-	actor->velocity.y = 0.0;
-	actor->velocity.z = 0.0;
+	actor->velocity = vector(0.0, 0.0, 0.0);
 	StartSoundName(actor, "ClericFlameExplode", CHAN_VOICE);
 }
 
@@ -438,7 +434,8 @@ void A_CHolyAttack2(mobj_t * actor)
 			break;
 		}
 		mo->origin.z = actor->origin.z;
-		mo->angles.yaw = actor->angles.yaw + (ANG45 + ANG45 / 2) - ANG45 * j;
+		mo->angles.yaw = AngleMod360(actor->angles.yaw +
+			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
 		P_ThrustMobj(mo, mo->angles.yaw, mo->speed * frametime);
 		mo->target = actor->target;
 		mo->args[0] = 10;	// initial turn value
@@ -454,14 +451,12 @@ void A_CHolyAttack2(mobj_t * actor)
 			mo->flags |= MF_NOCLIP | MF_SKULLFLY;
 			mo->flags &= ~MF_MISSILE;
 		}
-		tail =
-			P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
+		tail = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 			MT_HOLY_TAIL);
 		tail->specialmobj2 = mo;	// parent
 		for (i = 1; i < 3; i++)
 		{
-			next =
-				P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
+			next = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
 				MT_HOLY_TAIL);
 			SetMobjState(next, next->spawnstate + 1);
 			tail->specialmobj1 = next;
@@ -497,12 +492,12 @@ void CHolyFindTarget(mobj_t * actor)
 //
 //============================================================================
 
-void CHolySeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
+void CHolySeekerMissile(mobj_t * actor, float thresh, float turnMax)
 {
 	int dir;
 	float dist;
-	angle_t delta;
-	angle_t angle;
+	float delta;
+	float angle;
 	mobj_t *target;
 	float newZ;
 	float deltaZ;
@@ -525,20 +520,23 @@ void CHolySeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	dir = P_FaceMobj(actor, target, &delta);
 	if (delta > thresh)
 	{
-		delta >>= 1;
+		delta /= 2.0;
 		if (delta > turnMax)
 		{
 			delta = turnMax;
 		}
 	}
 	if (dir)
-	{	// Turn clockwise
+	{
+		// Turn clockwise
 		actor->angles.yaw += delta;
 	}
 	else
-	{	// Turn counter clockwise
+	{
+		// Turn counter clockwise
 		actor->angles.yaw -= delta;
 	}
+	actor->angles.yaw = AngleMod360(actor->angles.yaw);
 	angle = actor->angles.yaw;
 	actor->velocity.x = actor->speed * cos(angle);
 	actor->velocity.y = actor->speed * sin(angle);
@@ -580,11 +578,11 @@ void CHolyWeave(mobj_t * actor)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
-	angle_t angle;
+	float angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
@@ -617,8 +615,8 @@ void A_CHolySeek(mobj_t * actor)
 	}
 	if (actor->specialmobj1)
 	{
-		CHolySeekerMissile(actor, actor->args[0] * ANGLE_1,
-			actor->args[0] * ANGLE_1 * 2);
+		CHolySeekerMissile(actor, itof(actor->args[0]),
+			itof(actor->args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
 		{
 			actor->args[0] = 5 + (P_Random() / 20);
@@ -655,7 +653,7 @@ void A_CHolyCheckScream(mobj_t * actor)
 void CHolyTailFollow(mobj_t * actor, float dist)
 {
 	mobj_t *child;
-	int an;
+	float an;
 	float oldDistance, newDistance;
 
 	child = actor->specialmobj1;
@@ -681,8 +679,7 @@ void CHolyTailFollow(mobj_t * actor, float dist)
 			}
 			else
 			{
-				child->origin.z =
-					actor->origin.z +
+				child->origin.z = actor->origin.z +
 					newDistance / oldDistance * (child->origin.z -
 					actor->origin.z);
 			}
@@ -754,6 +751,9 @@ void A_CHolySpawnPuff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.5  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

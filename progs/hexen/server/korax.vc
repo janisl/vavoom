@@ -59,7 +59,7 @@
 #define KORAX_FIRST_TELEPORT_TID	(248)
 #define KORAX_TELEPORT_TID			(249)
 
-#define KORAX_DELTAANGLE			(85*ANGLE_1)
+#define KORAX_DELTAANGLE			85.0
 #define KORAX_ARM_EXTENSION_SHORT	40.0
 #define KORAX_ARM_EXTENSION_LONG	55.0
 
@@ -188,13 +188,13 @@ void A_KoraxDecide(mobj_t * actor)
 // Arm 1 projectile
 //============================================================================
 
-void KoraxFire1(mobj_t * actor, int type)
+void KoraxFire1(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw - KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM1_HEIGHT;
@@ -205,13 +205,13 @@ void KoraxFire1(mobj_t * actor, int type)
 // Arm 2 projectile
 //============================================================================
 
-void KoraxFire2(mobj_t * actor, int type)
+void KoraxFire2(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw - KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM2_HEIGHT;
@@ -222,13 +222,13 @@ void KoraxFire2(mobj_t * actor, int type)
 // Arm 3 projectile
 //============================================================================
 
-void KoraxFire3(mobj_t * actor, int type)
+void KoraxFire3(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw - KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw - KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM3_HEIGHT;
@@ -239,13 +239,13 @@ void KoraxFire3(mobj_t * actor, int type)
 // Arm 4 projectile
 //============================================================================
 
-void KoraxFire4(mobj_t * actor, int type)
+void KoraxFire4(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw + KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM4_HEIGHT;
@@ -256,13 +256,13 @@ void KoraxFire4(mobj_t * actor, int type)
 // Arm 5 projectile
 //============================================================================
 
-void KoraxFire5(mobj_t * actor, int type)
+void KoraxFire5(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw + KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM5_HEIGHT;
@@ -273,13 +273,13 @@ void KoraxFire5(mobj_t * actor, int type)
 // Arm 6 projectile
 //============================================================================
 
-void KoraxFire6(mobj_t * actor, int type)
+void KoraxFire6(mobj_t * actor, classid type)
 {
 	mobj_t *mo;
-	angle_t ang;
+	float ang;
 	float x, y, z;
 
-	ang = actor->angles.yaw + KORAX_DELTAANGLE;
+	ang = AngleMod360(actor->angles.yaw + KORAX_DELTAANGLE);
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = actor->origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = actor->origin.z - actor->floorclip + KORAX_ARM6_HEIGHT;
@@ -294,12 +294,12 @@ void KoraxFire6(mobj_t * actor, int type)
 
 void A_KoraxMissile(mobj_t * actor)
 {
-	int type = P_Random() % 6;
+	classid type;
 	string sound;
 
 	StartSoundName(actor, "KoraxAttack", CHAN_VOICE);
 
-	switch (type)
+	switch (P_Random() % 6)
 	{
 	case 0:
 		type = MT_WRAITHFX1;
@@ -344,7 +344,7 @@ void A_KoraxMissile(mobj_t * actor)
 void A_KoraxCommand(mobj_t * actor)
 {
 	float x, y, z;
-	angle_t ang;
+	float ang;
 	int numcommands;
 	int args[3];
 
@@ -352,7 +352,7 @@ void A_KoraxCommand(mobj_t * actor)
 	StartSoundName(actor, "KoraxCommand", CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
-	ang = actor->angles.yaw - ANG90;
+	ang = AngleMod360(actor->angles.yaw - 90.0);
 	x = actor->origin.x + KORAX_COMMAND_OFFSET * cos(ang);
 	y = actor->origin.y + KORAX_COMMAND_OFFSET * sin(ang);
 	z = actor->origin.z + KORAX_COMMAND_HEIGHT;
@@ -436,22 +436,22 @@ void A_KoraxBonePop(mobj_t * actor)
 
 	args[0] = args[1] = args[2] = 0;
 	// Spawn 6 spirits equalangularly
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, ANG60 * 0, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, 60.0 * 0.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT2, ANG60 * 1, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT2, 60.0 * 1.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT3, ANG60 * 2, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT3, 60.0 * 2.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT4, ANG60 * 3, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT4, 60.0 * 3.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT5, ANG60 * 4, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT5, 60.0 * 4.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
-	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT6, ANG60 * 5, 5.0);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT6, 60.0 * 5.0, 5.0);
 	if (mo)
 		KSpiritInit(mo, actor);
 
@@ -464,12 +464,12 @@ void A_KoraxBonePop(mobj_t * actor)
 //
 //============================================================================
 
-void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
+void A_KSpiritSeeker(mobj_t * actor, float thresh, float turnMax)
 {
 	int dir;
 	float dist;
-	angle_t delta;
-	angle_t angle;
+	float delta;
+	float angle;
 	mobj_t *target;
 	float newZ;
 	float deltaZ;
@@ -482,19 +482,21 @@ void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
 	dir = P_FaceMobj(actor, target, &delta);
 	if (delta > thresh)
 	{
-		delta >>= 1;
+		delta /= 2.0;
 		if (delta > turnMax)
 		{
 			delta = turnMax;
 		}
 	}
 	if (dir)
-	{	// Turn clockwise
-		actor->angles.yaw += delta;
+	{
+		// Turn clockwise
+		actor->angles.yaw = AngleMod360(actor->angles.yaw + delta);
 	}
 	else
-	{	// Turn counter clockwise
-		actor->angles.yaw -= delta;
+	{
+		// Turn counter clockwise
+		actor->angles.yaw = AngleMod360(actor->angles.yaw - delta);
 	}
 	angle = actor->angles.yaw;
 	actor->velocity.x = actor->speed * cos(angle);
@@ -538,11 +540,11 @@ void A_KSpiritWeave(mobj_t * actor)
 {
 	float newX, newY;
 	int weaveXY, weaveZ;
-	angle_t angle;
+	float angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
-	angle = actor->angles.yaw + ANG90;
+	angle = AngleMod360(actor->angles.yaw + 90.0);
 	newX = actor->origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = actor->origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
@@ -572,8 +574,8 @@ void A_KSpiritRoam(mobj_t * actor)
 	{
 		if (actor->specialmobj1)
 		{
-			A_KSpiritSeeker(actor, actor->args[0] * ANGLE_1,
-				actor->args[0] * ANGLE_1 * 2);
+			A_KSpiritSeeker(actor, itof(actor->args[0]),
+				itof(actor->args[0]) * 2.0);
 		}
 		A_KSpiritWeave(actor);
 		if (P_Random() < 50)
@@ -629,6 +631,9 @@ void A_KBolt(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

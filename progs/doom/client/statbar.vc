@@ -529,8 +529,8 @@ int CalcPainOffset(void)
 void UpdateFaceWidget(void)
 {
 	int i;
-	angle_t badguyangle;
-	angle_t diffang;
+//	float badguyangle;
+//	float diffang;
 	boolean doevilgrin;
 
 	// a random number per tick
@@ -722,6 +722,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/22 17:23:11  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.6  2001/10/09 17:36:57  dj_jl
 //  Added flags for status bar
 //

@@ -580,7 +580,7 @@ COMMAND(TimeRefresh)
 	start = Sys_Time();
 	for (i = 0; i < 128; i++)
 	{
-		cl.viewangles.yaw = BAM2DEG(i << 25);
+		cl.viewangles.yaw = (float)(i) * 360.0 / 128.0;
 
 		Drawer->StartUpdate();
 
@@ -651,9 +651,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/22 17:25:55  dj_jl
+//	Floatification of angles
+//
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.11  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

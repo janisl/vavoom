@@ -109,12 +109,15 @@ void A_MummySoul(mobj_t * mummy)
 
 void A_MummyFX1Seek(mobj_t * actor)
 {
-	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 20);
+	P_SeekerMissile(actor, 10.0, 20.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

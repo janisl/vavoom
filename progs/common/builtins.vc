@@ -65,20 +65,26 @@ extern void SetCvarS(string name, string value);
 //  Math functions
 //
 
+//  Normalizes angle in range 0..360
+extern float AngleMod360(float angle);
+
+//  Normalizes angle in range -180..180
+extern float AngleMod180(float angle);
+
 //  Sine
-extern float sin(angle_t angle);
+extern float sin(float angle);
 
 //  Cosine
-extern float cos(angle_t angle);
+extern float cos(float angle);
 
 //  Tangent
-extern float tan(angle_t angle);
+extern float tan(float angle);
 
 //  Arctangent
-extern angle_t atan(float slope);
+extern float atan(float slope);
 
 //  Arctangent
-extern angle_t atan2(float y, float x);
+extern float atan2(float y, float x);
 
 //  Vector length
 extern float Length(TVec vec);
@@ -93,17 +99,14 @@ extern float DotProduct(TVec v1, TVec v2);
 extern TVec CrossProduct(TVec v1, TVec v2);
 
 //  Creates vectors for given angle vector
-extern void AngleVectors(TBAMVec * angles, TVec * forward, TVec * right,
+extern void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
 	TVec * up);
 
 //  Simplified version of AngleVectors, creates only forward vector
-extern void AngleVector(TBAMVec * angles, TVec * forward);
-
-//  Simplified version of AngleVectors, creates only forward vector
-extern void fAngleVector(TAVec * angles, TVec * forward);
+extern void AngleVector(TAVec * angles, TVec * forward);
 
 //  Create angle vector for a vector
-extern void VectorAngles(TVec * vec, TBAMVec * angles);
+extern void VectorAngles(TVec * vec, TAVec * angles);
 
 //
 //  Random numbers
@@ -210,6 +213,9 @@ extern string Info_ValueForKey(string info, string key);
 
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 extern boolean WadLumpPresent(string name);
+
+extern void *Spawn(classid cid);
+extern void Destroy(void *ptr);
 
 //==========================================================================
 //
@@ -410,7 +416,7 @@ extern void SpawnPolyobj(float x, float y, int tag, int flags);
 extern void AddAnchorPoint(float x, float y, int tag);
 extern polyobj_t *GetPolyobj(int polyNum);
 extern int GetPolyobjMirror(int poly);
-extern boolean PO_RotatePolyobj(int num, angle_t angle);
+extern boolean PO_RotatePolyobj(int num, float angle);
 extern boolean PO_MovePolyobj(int num, float x, float y);
 
 //
@@ -472,14 +478,14 @@ extern void SetLineTransluc(line_t * line, int trans);
 extern void SendFloorSlope(sector_t * sector);
 extern void SendCeilingSlope(sector_t * sector);
 
-extern void *Spawn(classid cid);
-extern void Destroy(void *ptr);
-
 #endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/10/22 17:23:08  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.14  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

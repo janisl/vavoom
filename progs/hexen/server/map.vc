@@ -619,12 +619,12 @@ boolean PTR_AimTraverse(intercept_t * in)
 //
 //==========================================================================
 
-void AimLineAttack(mobj_t * t1, TBAMVec * angles, float distance)
+void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 {
 	float x2;
 	float y2;
-	angle_t topangle;
-	angle_t botangle;
+	float topangle;
+	float botangle;
 
 	aim_thing = t1;
 
@@ -636,12 +636,12 @@ void AimLineAttack(mobj_t * t1, TBAMVec * angles, float distance)
 		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
 
 	// can't shoot outside view angles
-	topangle = -angles->pitch + ANG90 / 3;
-	botangle = -angles->pitch - ANG90 / 3;
-	if (topangle > ANG90 - ANG1)
-		topangle = ANG90 - ANG1;
-	if (botangle < ANG270 + ANG1)
-		botangle = ANG270 + ANG1;
+	topangle = AngleMod180(-angles->pitch + 30.0);
+	botangle = AngleMod180(-angles->pitch - 30.0);
+	if (topangle > 89.0)
+		topangle = 89.0;
+	if (botangle < -89.0)
+		botangle = -89.0;
 	aim_topslope = tan(topangle);
 	aim_bottomslope = tan(botangle);
 
@@ -1101,6 +1101,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.7  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //

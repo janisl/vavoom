@@ -60,7 +60,7 @@ boolean onground;
 //
 //==========================================================================
 
-void ThrustPlayer(player_t * player, angle_t angle, float move)
+void ThrustPlayer(player_t * player, float angle, float move)
 {
 	player->mo->velocity.x += move * cos(angle) * frametime;
 	player->mo->velocity.y += move * sin(angle) * frametime;
@@ -76,7 +76,7 @@ void ThrustPlayer(player_t * player, angle_t angle, float move)
 
 void CalcHeight(player_t * player)
 {
-	int angle;
+	float angle;
 	float bob;
 
 	// Regular movement bobbing
@@ -93,7 +93,7 @@ void CalcHeight(player_t * player)
 	if (player->bob > MAXBOB)
 		player->bob = MAXBOB;
 
-	angle = ANG180 / 10 * level->tictime;
+	angle = (180.0 * 35.0 / 10.0) * level->time;
 	bob = player->bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -158,7 +158,7 @@ void MovePlayer(player_t * player)
 	}
 	if (side)
 	{
-		ThrustPlayer(player, player->mo->angles.yaw - ANG90, side);
+		ThrustPlayer(player, player->mo->angles.yaw - 90.0, side);
 	}
 
 	if (forward || side)
@@ -396,8 +396,8 @@ void PlayerInContents(player_t * player)
 
 void DeathPlayerThink(player_t * player)
 {
-	angle_t angle;
-	angle_t delta;
+	float angle;
+	float delta;
 
 	MovePsprites(player);
 
@@ -424,9 +424,9 @@ void DeathPlayerThink(player_t * player)
 		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
 			player->attacker->origin.x - player->mo->origin.x);
 
-		delta = angle - player->mo->angles.yaw;
+		delta = AngleMod180(angle - player->mo->angles.yaw);
 
-		if (delta < ANG5 || delta > -ANG5)
+		if (delta < 5.0 || delta > -5.0)
 		{
 			// Looking at killer,
 			//  so fade damage flash down.
@@ -435,10 +435,10 @@ void DeathPlayerThink(player_t * player)
 			if (player->damagecount)
 				player->damagecount--;
 		}
-		else if (delta < ANG180)
-			player->mo->angles.yaw += ANG5;
+		else if (delta > 0.0)
+			player->mo->angles.yaw += 5.0;
 		else
-			player->mo->angles.yaw -= ANG5;
+			player->mo->angles.yaw -= 5.0;
 	}
 	else if (player->damagecount)
 		player->damagecount--;
@@ -480,7 +480,7 @@ void PlayerImpulse(player_t * player)
 void PlayerThink(player_t * player)
 {
 	// Copy view angles
-	avcpy(player->viewangles, player->mo->angles);
+	player->mo->angles = player->viewangles;
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
@@ -688,7 +688,7 @@ void SetViewPos(player_t * player)
 	player->vieworg.x = player->mo->origin.x;
 	player->vieworg.y = player->mo->origin.y;
 
-	avcpy(player->mo->angles, player->viewangles);
+	player->viewangles = player->mo->angles;
 
 	SB_PaletteFlash(player);
 
@@ -754,7 +754,7 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	{
 		p->powers[i] = 0;
 	}
-	p->mo->angles.pitch = 0;
+	p->mo->angles.pitch = 0.0;
 	p->mo->translucency = 0;	// cancel invisibility
 	p->extralight = 0;	// cancel gun flashes 
 	p->fixedcolormap = 0;	// cancel ir gogles 
@@ -808,8 +808,8 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// remove pitch and roll angles from corpse
-	players[playernum].mo->angles.pitch = 0;
-	players[playernum].mo->angles.roll = 0;
+	players[playernum].mo->angles.pitch = 0.0;
+	players[playernum].mo->angles.roll = 0.0;
 
 	// first dissasociate the corpse
 	players[playernum].mo->player = NULL;
@@ -901,6 +901,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/22 17:23:12  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.7  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

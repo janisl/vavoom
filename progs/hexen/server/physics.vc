@@ -40,6 +40,8 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
+boolean P_ExplodeMissile(mobj_t * mo);
+
 // DATA DECLARATIONS -------------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -259,6 +261,102 @@ void P_SlideMove(mobj_t * mo)
 
 //**************************************************************************
 //
+//  BOUNCING
+//
+//  Bounce missile against walls
+//
+//**************************************************************************
+
+//============================================================================
+//
+//  PTR_BounceTraverse
+//
+//============================================================================
+
+boolean PTR_BounceTraverse(intercept_t * in)
+{
+	line_t *li;
+	TVec hit_point;
+	opening_t *open;
+
+	if (!in->isaline)
+		Error("PTR_BounceTraverse: not a line?");
+
+	li = in->line;
+	if (li->flags & ML_TWOSIDED)
+	{
+		hit_point = slideorg + in->frac * slidedir;
+		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
+		open =
+			FindOpening(open, slidemo->origin.z,
+			slidemo->origin.z + slidemo->height);
+		if (open && open->range >= slidemo->height &&	// fits
+			open->top - slidemo->origin.z >= slidemo->height)	// mobj is not too high
+		{
+			return true;	// this line doesn't block movement
+		}
+	}
+	else
+	{
+		if (PointOnPlaneSide(slidemo->origin, li))
+		{
+			return true;	// don't hit the back side
+		}
+	}
+
+	// the line does block movement, see if it is closer than best so far
+	if (in->frac < bestslidefrac)
+	{
+		secondslidefrac = bestslidefrac;
+		secondslideline = bestslideline;
+		bestslidefrac = in->frac;
+		bestslideline = li;
+	}
+	return false;	// stop
+}
+
+//============================================================================
+//
+//  P_BounceWall
+//
+//============================================================================
+
+void P_BounceWall(mobj_t * mo)
+{
+	float leadx, leady;
+
+	slidemo = mo;
+
+	//
+	// trace along the three leading corners
+	//
+	if (mo->velocity.x > 0.0)
+	{
+		leadx = mo->origin.x + mo->radius;
+	}
+	else
+	{
+		leadx = mo->origin.x - mo->radius;
+	}
+	if (mo->velocity.y > 0.0)
+	{
+		leady = mo->origin.y + mo->radius;
+	}
+	else
+	{
+		leady = mo->origin.y - mo->radius;
+	}
+	bestslidefrac = 1.00001;
+	slideorg = vector(leadx, leady, slidemo->origin.z);
+	slidedir = mo->velocity * frametime;
+	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
+		PT_ADDLINES, PTR_BounceTraverse);
+	mo->velocity =
+		ClipVelocity(mo->velocity * 0.75, bestslideline->normal, 2.0);
+}
+
+//**************************************************************************
+//
 //  OBJECT MOVEMENT
 //
 //**************************************************************************
@@ -332,7 +430,7 @@ void Entity::UpdateVelocity(void)
 
 	// Friction
 
-	if (flags & MF_SKULLFLY)
+	if (flags & (MF_SKULLFLY | MF_MISSILE))
 	{
 		return;
 	}
@@ -419,7 +517,7 @@ boolean Entity::XYMovement(void)
 	float ptryx, ptryy;
 	float xmove, ymove;
 	int special;
-	angle_t angle;
+	float angle;
 
 	if (!velocity.x && !velocity.y)
 	{
@@ -443,22 +541,22 @@ boolean Entity::XYMovement(void)
 		case 40:
 		case 41:
 		case 42:	// Wind_East
-			P_ThrustMobj(this, 0, windTab[special - 40]);
+			P_ThrustMobj(this, 0.0, windTab[special - 40]);
 			break;
 		case 43:
 		case 44:
 		case 45:	// Wind_North
-			P_ThrustMobj(this, ANG90, windTab[special - 43]);
+			P_ThrustMobj(this, 90.0, windTab[special - 43]);
 			break;
 		case 46:
 		case 47:
 		case 48:	// Wind_South
-			P_ThrustMobj(this, ANG270, windTab[special - 46]);
+			P_ThrustMobj(this, 270.0, windTab[special - 46]);
 			break;
 		case 49:
 		case 50:
 		case 51:	// Wind_West
-			P_ThrustMobj(this, ANG180, windTab[special - 49]);
+			P_ThrustMobj(this, 180.0, windTab[special - 49]);
 			break;
 		}
 	}
@@ -498,34 +596,172 @@ boolean Entity::XYMovement(void)
 		if (!P_TryMove(this, ptryx, ptryy))
 		{
 			// Blocked move
-			if (flags2 & MF2_SLIDE)
+			if (flags & MF_MISSILE)
 			{
-				// Try to slide along it
-				if (!BlockingMobj)
+				if (flags2 & MF2_FLOORBOUNCE)
 				{
-					// Slide against wall
-					P_SlideMove(this);
-				}
-				else
-				{
-					// Slide against mobj
-					if (P_TryMove(this, origin.x, ptryy))
+					if (BlockingMobj)
 					{
-						velocity.x = 0.0;
-					}
-					else if (P_TryMove(this, ptryx, origin.y))
-					{
-						velocity.y = 0.0;
+						if ((BlockingMobj->flags2 & MF2_REFLECTIVE) ||
+							((!BlockingMobj->player) &&
+								(!(BlockingMobj->flags & MF_COUNTKILL))))
+						{
+							float speed;
+
+							angle = AngleMod360(
+								atan2(origin.y - BlockingMobj->origin.y,
+									origin.x - BlockingMobj->origin.x) +
+									Random() * 16.0 - 8.0);
+							speed = Length(velocity);
+							speed = speed * 0.75;
+							angles.yaw = angle;
+							velocity.x = speed * cos(angle);
+							velocity.y = speed * sin(angle);
+							if (sound_sight)
+							{
+								StartSound(this, sound_sight, CHAN_VOICE);
+							}
+							return true;
+						}
+						else
+						{
+							// Struck a player/creature
+							return P_ExplodeMissile(this);
+						}
 					}
 					else
 					{
-						velocity.x = velocity.y = 0.0;
+						// Struck a wall
+						P_BounceWall(this);
+						switch (type)
+						{
+						case MT_SORCBALL1:
+						case MT_SORCBALL2:
+						case MT_SORCBALL3:
+						case MT_SORCFX1:
+							break;
+						default:
+							if (sound_sight)
+							{
+								StartSound(this, sound_sight, CHAN_VOICE);
+							}
+							break;
+						}
+						return true;
 					}
+				}
+				if (BlockingMobj && (BlockingMobj->flags2 & MF2_REFLECTIVE))
+				{
+					int explode = false;
+
+					angle = atan2(origin.y - BlockingMobj->origin.y,
+						origin.x - BlockingMobj->origin.x);
+
+					// Change angle for delflection/reflection
+					switch (BlockingMobj->type)
+					{
+					case MT_CENTAUR:
+					case MT_CENTAURLEADER:
+						if (fabs(AngleMod180(angle -
+							BlockingMobj->angles.yaw)) > 45.0 * 45.0 / 32.0)
+						{
+							explode = true;
+							break;
+						}
+						if (type == MT_HOLY_FX)
+						{
+							explode = true;
+							break;
+						}
+						// Drop through to sorcerer full reflection
+					case MT_SORCBOSS:
+						// Deflection
+						if (P_Random() < 128)
+							angle = AngleMod360(angle + 45.0);
+						else
+							angle = AngleMod360(angle - 45.0);
+						break;
+					default:
+						// Reflection
+						angle = AngleMod360(angle + itof((P_Random() % 16) - 8));
+						break;
+					}
+
+					if (!explode)
+					{
+						// Reflect the missile along angle
+						angles.yaw = angle;
+						velocity.x = (speed / 2.0) * cos(angle);
+						velocity.y = (speed / 2.0) * sin(angle);
+//						velocity.z = -velocity.z;
+						if (flags2 & MF2_SEEKERMISSILE)
+						{
+							specialmobj1 = target;
+						}
+						target = BlockingMobj;
+						return true;
+					}
+				}
+				// Explode a missile
+				if (ceilingline && ceilingline->backsector
+					&& ceilingline->backsector->ceiling.pic == skyflatnum)
+				{
+					// Hack to prevent missiles exploding against the sky
+					if (type == MT_BLOODYSKULL)
+					{
+						velocity.x = velocity.y = 0.0;
+						velocity.z = -1.0 * 35.0;
+					}
+					else if (type == MT_HOLY_FX)
+					{
+						if (!P_ExplodeMissile(this))
+						{
+							return false;
+						}
+					}
+					else
+					{
+						P_RemoveMobj(this);
+						return false;
+					}
+					return true;
+				}
+				if (!P_ExplodeMissile(this))
+				{
+					return false;
 				}
 			}
 			else
 			{
-				velocity.x = velocity.y = 0.0;
+				if (flags2 & MF2_SLIDE)
+				{
+					// Try to slide along it
+					if (!BlockingMobj)
+					{
+						// Slide against wall
+						P_SlideMove(this);
+					}
+					else
+					{
+						// Slide against mobj
+						if (P_TryMove(this, origin.x, ptryy))
+						{
+							velocity.x = 0.0;
+						}
+						else if (P_TryMove(this, ptryx, origin.y))
+						{
+							velocity.y = 0.0;
+						}
+						else
+						{
+							velocity.x = velocity.y = 0.0;
+						}
+					}
+				}
+				else
+				{
+					velocity.x = velocity.y = 0.0;
+				}
 			}
 		}
 	}
@@ -623,7 +859,7 @@ void P_FakeZMovement(mobj_t * mo)
 	if (mo->player && mo->flags2 & MF2_FLY && !(tzmz <= mo->floorz)
 		&& level->tictime & 2)
 	{
-		tzmz += sin(ANG90 / 20 * level->tictime);
+		tzmz += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
@@ -735,7 +971,7 @@ boolean Entity::ZMovement(void)
 	if (player && flags2 & MF2_FLY && !(origin.z <= floorz)
 		&& level->tictime & 2)
 	{
-		origin.z += sin(ANG90 / 20 * level->tictime);
+		origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
@@ -744,6 +980,33 @@ boolean Entity::ZMovement(void)
 	if (origin.z <= floorz + 0.1)
 	{
 		// Hit the floor
+		if (flags & MF_MISSILE)
+		{
+			origin.z = floorz;
+			if (flags2 & MF2_FLOORBOUNCE)
+			{
+				P_FloorBounceMissile(this);
+				return true;
+			}
+			else if (type == MT_HOLY_FX)
+			{
+				// The spirit struck the ground
+				velocity.z = 0.0;
+				P_HitFloor(this);
+				return true;
+			}
+			else if (type == MT_MNTRFX2 || type == MT_LIGHTNING_FLOOR)
+			{
+				// Minotaur floor fire can go up steps
+				return true;
+			}
+			else
+			{
+				P_HitFloor(this);
+				return P_ExplodeMissile(this);
+			}
+		}
+
 		vdot = DotProduct(velocity, floor->normal);
 		if (flags & MF_COUNTKILL)	// Blasted mobj falling
 		{
@@ -810,7 +1073,7 @@ boolean Entity::ZMovement(void)
 //FIXME					player->centering = true;
 				}
 			}
-			else if (type >= MT_POTTERY1 && type <= MT_POTTERY3)
+			else if (type == MT_POTTERY1 || type == MT_POTTERY2 || type == MT_POTTERY3)
 			{
 				DamageMobj(this, NULL, NULL, 25);
 			}
@@ -842,6 +1105,43 @@ boolean Entity::ZMovement(void)
 		if (vdot < 0.0)
 			velocity -= vdot * ceiling->normal;
 		origin.z = ceilingz - height;
+		if (flags & MF_MISSILE)
+		{
+			if (flags2 & MF2_FLOORBOUNCE)
+			{
+				// Maybe reverse momentum here for ceiling bounce
+				// Currently won't happen
+
+				if (sound_sight)
+				{
+					StartSound(this, sound_sight, CHAN_VOICE);
+				}
+				return true;
+			}
+			if (type == MT_LIGHTNING_CEILING)
+			{
+				return true;
+			}
+			if (ceiling->pic == skyflatnum)
+			{
+				if (type == MT_BLOODYSKULL)
+				{
+					velocity.x = velocity.y = 0.0;
+					velocity.z = -1.0 * 35.0;
+				}
+				else if (type == MT_HOLY_FX)
+				{
+					return P_ExplodeMissile(this);
+				}
+				else
+				{
+					P_RemoveMobj(this);
+					return false;
+				}
+				return true;
+			}
+			return P_ExplodeMissile(this);
+		}
 		if (flags & MF_SKULLFLY)
 		{	// the skull slammed into something
 			velocity.z = -velocity.z;
@@ -906,6 +1206,84 @@ void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj)
 
 //==========================================================================
 //
+//	Entity::BlasterPhysics
+//
+//==========================================================================
+
+boolean Entity::BlasterPhysics(void)
+{
+	int i;
+	float xfrac;
+	float yfrac;
+	float zfrac;
+	float z;
+	boolean changexy;
+	mobj_t *mo;
+
+	// Handle movement
+	if (velocity.x || velocity.y || (origin.z != floorz) || velocity.z)
+	{
+		xfrac = velocity.x * frametime / 8.0;
+		yfrac = velocity.y * frametime / 8.0;
+		zfrac = velocity.z * frametime / 8.0;
+		changexy = xfrac || yfrac;
+		for (i = 0; i < 8; i++)
+		{
+			if (changexy)
+			{
+				if (!P_TryMove(this, origin.x + xfrac, origin.y + yfrac))
+				{
+					// Blocked move
+					return P_ExplodeMissile(this);
+				}
+			}
+			origin.z += zfrac;
+			if (origin.z <= floorz)
+			{
+				// Hit the floor
+				origin.z = floorz;
+				P_HitFloor(this);
+				return P_ExplodeMissile(this);
+			}
+			if (origin.z + height > ceilingz)
+			{
+				// Hit the ceiling
+				origin.z = ceilingz - height;
+				return P_ExplodeMissile(this);
+			}
+			if (changexy)
+			{
+				if (type == MT_MWAND_MISSILE && (P_Random() < 128))
+				{
+					z = origin.z - 8.0;
+					if (z < floorz)
+					{
+						z = floorz;
+					}
+					P_SpawnMobj(origin.x, origin.y, z, MT_MWANDSMOKE);
+				}
+				else if (type != MT_MWAND_MISSILE && !--special1)
+				{
+					special1 = 4;
+					z = origin.z - 12.0;
+					if (z < floorz)
+					{
+						z = floorz;
+					}
+					mo = P_SpawnMobj(origin.x, origin.y, z, MT_CFLAMEFLOOR);
+					if (mo)
+					{
+						mo->angles.yaw = angles.yaw;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	Entity::Physics
 //
 //==========================================================================
@@ -913,6 +1291,11 @@ void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj)
 boolean Entity::Physics(void)
 {
 	Entity *onmo;
+
+	if (blaster)
+	{
+		return BlasterPhysics();
+	}
 
 	CheckWater();
 	if (!(flags2 & MF2_FLOATBOB))
@@ -1026,6 +1409,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/22 17:23:13  dj_jl
+//  Floatification of angles
+//
 //  Revision 1.8  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //
