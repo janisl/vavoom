@@ -52,6 +52,16 @@ void CL_Disconnect(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static int pf_MN_SetMenu;
+static int pf_MN_DeactivateMenu;
+static int pf_MB_Responder;
+static int pf_MN_Responder;
+static int pf_MN_Drawer;
+static int pf_MB_Drawer;
+static int pf_MN_Active;
+static int pf_MB_Active;
+static int pg_frametime;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -62,7 +72,7 @@ void CL_Disconnect(void);
 
 COMMAND(SetMenu)
 {
-	clpr.Exec("MN_SetMenu", (int)Argv(1));
+	clpr.Exec(pf_MN_SetMenu, (int)Argv(1));
 }
 
 //==========================================================================
@@ -78,6 +88,15 @@ void MN_Init(void)
 #else
 	clpr.SetGlobal("local_server", 0);
 #endif
+	pf_MN_SetMenu = clpr.FuncNumForName("MN_SetMenu");
+	pf_MN_DeactivateMenu = clpr.FuncNumForName("MN_DeactivateMenu");
+	pf_MB_Responder = clpr.FuncNumForName("MB_Responder");
+	pf_MN_Responder = clpr.FuncNumForName("MN_Responder");
+	pf_MN_Drawer = clpr.FuncNumForName("MN_Drawer");
+	pf_MB_Drawer = clpr.FuncNumForName("MB_Drawer");
+	pf_MN_Active = clpr.FuncNumForName("MN_Active");
+	pf_MB_Active = clpr.FuncNumForName("MB_Active");
+	pg_frametime = clpr.GlobalNumForName("frametime");
 }
 
 //==========================================================================
@@ -91,7 +110,7 @@ void MN_ActivateMenu(void)
     // intro might call this repeatedly
     if (!MN_Active())
 	{
-		clpr.Exec("MN_SetMenu", (int)"Main");
+		clpr.Exec(pf_MN_SetMenu, (int)"Main");
 	}
 }
 
@@ -103,7 +122,7 @@ void MN_ActivateMenu(void)
 
 void MN_DeactivateMenu(void)
 {
-	clpr.Exec("MN_DeactivateMenu");
+	clpr.Exec(pf_MN_DeactivateMenu);
 }
 
 //==========================================================================
@@ -114,7 +133,7 @@ void MN_DeactivateMenu(void)
 
 boolean MN_Responder(event_t* event)
 {
-	if (clpr.Exec("MB_Responder", (int)event))
+	if (clpr.Exec(pf_MB_Responder, (int)event))
 	{
 		return true;
 	}
@@ -128,7 +147,7 @@ boolean MN_Responder(event_t* event)
 		return true;
 	}
 
-	return clpr.Exec("MN_Responder", (int)event);
+	return clpr.Exec(pf_MN_Responder, (int)event);
 }
 
 //==========================================================================
@@ -139,9 +158,9 @@ boolean MN_Responder(event_t* event)
 
 void MN_Drawer(void)
 {
-	clpr.SetGlobal("frametime", PassFloat(host_frametime));
-	clpr.Exec("MN_Drawer");
-	clpr.Exec("MB_Drawer");
+	clpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
+	clpr.Exec(pf_MN_Drawer);
+	clpr.Exec(pf_MB_Drawer);
 }
 
 //==========================================================================
@@ -152,15 +171,18 @@ void MN_Drawer(void)
 
 boolean MN_Active(void)
 {
-	return clpr.Exec("MN_Active") || clpr.Exec("MB_Active");
+	return clpr.Exec(pf_MN_Active) || clpr.Exec(pf_MB_Active);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.8  2001/10/09 17:25:02  dj_jl
 //	Finished slist moving stuff
-//
+//	
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

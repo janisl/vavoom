@@ -64,6 +64,8 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static int pf_CL_UpdateMobj;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -77,6 +79,8 @@ void CL_Init(void)
 	clpr.Load("clprogs");
 	clpr.SetGlobal("cl", (int)&cl);
 	clpr.SetGlobal("level", (int)&cl_level);
+
+	pf_CL_UpdateMobj = clpr.FuncNumForName("CL_UpdateMobj");
 
 	cls.message.Alloc(NET_MAXMESSAGE);
 }
@@ -201,12 +205,11 @@ void CL_DecayLights(void)
 
 void CL_UpdateMobjs(void)
 {
-	int pfunc = clpr.FuncNumForName("CL_UpdateMobj");
 	for (int i = 0; i < MAX_MOBJS; i++)
 	{
 		if (cl_mobjs[i].in_use)
 		{
-			clpr.Exec(pfunc, (int)&cl_mobjs[i], i);
+			clpr.Exec(pf_CL_UpdateMobj, (int)&cl_mobjs[i], i);
 		}
 	}
 }
@@ -505,9 +508,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.6  2001/08/21 17:43:49  dj_jl
 //	Moved precache to r_main.cpp
 //	

@@ -103,6 +103,8 @@ subsector_t				*r_oldviewleaf;
 static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
 static int				pf_DrawViewBorder;
+static int				pf_UpdateParticle;
+static int				pg_frametime;
 
 static TCvarI			_driver("_driver", "0", CVAR_ROM);
 
@@ -123,6 +125,8 @@ void R_Init(void)
 	Drawer->InitData();
 	R_InitParticles();
 	pf_DrawViewBorder = clpr.FuncNumForName("DrawViewBorder");
+	pf_UpdateParticle = clpr.FuncNumForName("UpdateParticle");
+	pg_frametime = clpr.GlobalNumForName("frametime");
 }
 
 //==========================================================================
@@ -492,7 +496,7 @@ void R_DrawParticles(void)
 
 //	frametime = cl.time - cl.oldtime;
 	frametime = host_frametime;
-	clpr.SetGlobal("frametime", PassFloat(frametime));
+	clpr.SetGlobal(pg_frametime, PassFloat(frametime));
 	
 	kill = active_particles;
 	while (kill && kill->die < cl.time)
@@ -518,7 +522,7 @@ void R_DrawParticles(void)
 
 		p->org += p->vel * frametime;
 
-		clpr.Exec("UpdateParticle", (int)p);
+		clpr.Exec(pf_UpdateParticle, (int)p);
 	}
 
 	Drawer->EndParticles();
@@ -650,9 +654,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.14  2001/11/09 14:22:09  dj_jl
 //	R_InitTexture now called from Host_init
-//
+//	
 //	Revision 1.13  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

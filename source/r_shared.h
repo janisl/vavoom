@@ -97,6 +97,10 @@ struct pic_info_t
 	char	name[MAX_VPATH];
 	int		type;
 	int		palnum;
+	int		width;
+	int		height;
+	int		xoffset;
+	int		yoffset;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -189,9 +193,12 @@ extern byte				gammatable[5][256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.12  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
-//
+//	
 //	Revision 1.11  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

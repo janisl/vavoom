@@ -59,6 +59,10 @@ int 					sb_height = 32;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static int pf_SB_UpdateWidgets;
+static int pf_SB_Drawer;
+static int pf_SB_StartMap;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -69,6 +73,9 @@ int 					sb_height = 32;
 
 void SB_Init(void)
 {
+	pf_SB_UpdateWidgets = clpr.FuncNumForName("SB_UpdateWidgets");
+	pf_SB_Drawer = clpr.FuncNumForName("SB_Drawer");
+	pf_SB_StartMap = clpr.FuncNumForName("SB_StartMap");
 	sb_height = clpr.GetGlobal("sb_height");
 }
 
@@ -82,7 +89,7 @@ void SB_Ticker(void)
 {
 	if (cls.signon == SIGNONS)
 	{
-	    clpr.Exec("SB_UpdateWidgets");
+	    clpr.Exec(pf_SB_UpdateWidgets);
 	}
 }
 
@@ -106,7 +113,7 @@ boolean SB_Responder(event_t *)
 void SB_Drawer(void)
 {
 	//	Update widget visibility
-	clpr.Exec("SB_Drawer", automapactive ? SB_VIEW_AUTOMAP :
+	clpr.Exec(pf_SB_Drawer, automapactive ? SB_VIEW_AUTOMAP :
 		refdef.height == ScreenHeight ? SB_VIEW_FULLSCREEN : SB_VIEW_NORMAL);
 }
 
@@ -118,15 +125,18 @@ void SB_Drawer(void)
 
 void SB_Start(void)
 {
-	clpr.Exec("SB_StartMap");
+	clpr.Exec(pf_SB_StartMap);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.7  2001/10/02 17:36:08  dj_jl
 //	Removed status bar widgets
-//
+//	
 //	Revision 1.6  2001/08/30 17:44:07  dj_jl
 //	Removed memory leaks after startup
 //	

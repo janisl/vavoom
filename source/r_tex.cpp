@@ -944,25 +944,32 @@ void R_GetPicInfo(int handle, picinfo_t *info)
 	}
 	else
 	{
-		patch_t *patch;
+		if (!pic_list[handle].width)
+		{
+			patch_t *patch;
 
-		switch (pic_list[handle].type)
-	 	{
- 		 case PIC_PATCH:
-			patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_CACHE);
-			info->width = LittleShort(patch->width);
-			info->height = LittleShort(patch->height);
-			info->xoffset = LittleShort(patch->leftoffset);
-			info->yoffset = LittleShort(patch->topoffset);
-			break;
+			switch (pic_list[handle].type)
+	 		{
+	 		 case PIC_PATCH:
+				patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_CACHE);
+				pic_list[handle].width = LittleShort(patch->width);
+				pic_list[handle].height = LittleShort(patch->height);
+				pic_list[handle].xoffset = LittleShort(patch->leftoffset);
+				pic_list[handle].yoffset = LittleShort(patch->topoffset);
+				break;
 
-		 case PIC_RAW:
-			info->width = 320;
-			info->height = 200;
-			info->xoffset = 0;
-			info->yoffset = 0;
-			break;
+			 case PIC_RAW:
+				pic_list[handle].width = 320;
+				pic_list[handle].height = 200;
+				pic_list[handle].xoffset = 0;
+				pic_list[handle].yoffset = 0;
+				break;
+			}
 		}
+		info->width = pic_list[handle].width;
+		info->height = pic_list[handle].height;
+		info->xoffset = pic_list[handle].xoffset;
+		info->yoffset = pic_list[handle].yoffset;
 	}
 }
 
@@ -1085,9 +1092,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.13  2001/12/12 19:26:40  dj_jl
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.12  2001/11/09 14:22:10  dj_jl
 //	R_InitTexture now called from Host_init
 //	

@@ -77,6 +77,8 @@ static model_t			*model_precache[1024];
 static model_t			*weapon_model_precache[1024];
 static char				skin_list[256][MAX_VPATH];
 
+static int				pf_ParseServerCommand;
+
 // CODE --------------------------------------------------------------------
 
 void CL_Clear(void)
@@ -99,6 +101,8 @@ void CL_Clear(void)
 		Z_FreeTag(PU_LEVSPEC);
 	}
 	cls.signon = 0;
+
+	pf_ParseServerCommand = clpr.FuncNumForName("ParseServerCommand");
 }
 
 static void CL_ReadMobjBase(clmobjbase_t &mobj)
@@ -1001,7 +1005,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 default:
-			if (clpr.Exec("ParseServerCommand", cmd_type))
+			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
 			{
 				break;
 			}
@@ -1021,9 +1025,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.18  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
-//
+//	
 //	Revision 1.17  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	

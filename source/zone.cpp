@@ -138,10 +138,6 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
     memblock_t* newblock;
     memblock_t*	base;
 
-#ifdef PARANOID
-	CheckHeap();
-#endif
-
 //	if (!size) Sys_Error("Z_Malloc: Size = 0");
 	if (!tag) Sys_Error("Z_Malloc: Tried to use tag 0");
 
@@ -850,9 +846,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/27 17:36:47  dj_jl
+//	Some speedup
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/10/12 17:31:13  dj_jl
 //	no message
 //	
