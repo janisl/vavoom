@@ -118,7 +118,6 @@ static void KeyboardHandler(void)
 	//	Acknowledge the interrupt
 	outportb(0x20, 0x20);
 }
-END_OF_FUNCTION(KeyboardHandler)
 
 //==========================================================================
 //
@@ -172,22 +171,35 @@ static void ReadKeyboard(void)
 
 static void StartupKeyboard(void)
 {
-	LOCK_FUNCTION(KeyboardHandler);
-    LOCK_DATA(keyboardque, sizeof(keyboardque));
-    LOCK_VARIABLE(kbdhead);
-
-    nextkeyextended = false;
+	nextkeyextended = false;
 	pause_garbage = 0;
 
-    asm("cli");
-    _go32_dpmi_get_protected_mode_interrupt_vector(9, &oldkeyinfo);
-    newkeyinfo.pm_offset = (int)KeyboardHandler;
-    newkeyinfo.pm_selector = _go32_my_cs();
-    _go32_dpmi_allocate_iret_wrapper(&newkeyinfo);
-    _go32_dpmi_set_protected_mode_interrupt_vector(9, &newkeyinfo);
-    asm("sti");
+	newkeyinfo.pm_offset = (int)KeyboardHandler;
+	newkeyinfo.pm_selector = _go32_my_cs();
 
-    keyboard_started = true;
+	asm("cli");
+	if (_go32_dpmi_get_protected_mode_interrupt_vector(9, &oldkeyinfo))
+	{
+		asm("sti");
+		Sys_Error("Couldn't get old keyboard handler");
+	}
+	if (_go32_dpmi_allocate_iret_wrapper(&newkeyinfo))
+	{
+		asm("sti");
+		Sys_Error("Couldn't alloc keyboard interrupt wrapper");
+	}
+	if (_go32_dpmi_set_protected_mode_interrupt_vector(9, &newkeyinfo))
+	{
+		asm("sti");
+		Sys_Error("Couldn't set keyboard handler");
+	}
+	asm("sti");
+
+	_go32_dpmi_lock_code(KeyboardHandler, (long)ReadKeyboard - (long)KeyboardHandler);
+	_go32_dpmi_lock_data(keyboardque, sizeof(keyboardque));
+	_go32_dpmi_lock_data(&kbdhead, sizeof(kbdhead));
+
+	keyboard_started = true;
 }
 
 //==========================================================================
@@ -207,6 +219,8 @@ static void ShutdownKeyboard(void)
 	    _go32_dpmi_set_protected_mode_interrupt_vector(9, &oldkeyinfo);
 	    _go32_dpmi_free_iret_wrapper(&newkeyinfo);
 	    asm("sti");
+		_unlock_dpmi_data(keyboardque, sizeof(keyboardque));
+		_unlock_dpmi_data(&kbdhead, sizeof(kbdhead));
 	}
 }
 
@@ -507,9 +521,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:24:49  dj_jl
+//	Added keyboard init error checking
+//
 //	Revision 1.4  2001/08/07 16:48:54  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
