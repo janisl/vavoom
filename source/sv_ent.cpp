@@ -557,11 +557,11 @@ boolean PIT_CheckRelThing(VMapObject *Other)
 			// don't let bishops fly over other bishops
 			return false;
 		}*/
-		if (tmtrace.End.z > Other->Origin.z + Other->Height)
+		if (tmtrace.End.z >= Other->Origin.z + Other->Height)
 		{
 			return true;	// overhead
 		}
-		if (tmtrace.End.z + tmtrace.Thing->Height < Other->Origin.z)
+		if (tmtrace.End.z + tmtrace.Thing->Height <= Other->Origin.z)
 		{
 			return true;	// underneath
 		}
@@ -1339,9 +1339,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/04/27 17:01:08  dj_jl
+//	Fixed clipping when walking over/under other things.
+//
 //	Revision 1.3  2002/04/11 16:46:06  dj_jl
 //	Made TryMove native.
-//
+//	
 //	Revision 1.2  2002/03/16 17:55:12  dj_jl
 //	Some small changes.
 //	
