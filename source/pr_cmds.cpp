@@ -59,6 +59,7 @@ enum
 
 int GetMobjNum(VMapObject *mobj);
 VMapObject* SetMobjPtr(int archiveNum);
+FName UnarchiveName(int Index);
 
 VMapObject *SV_SpawnMobj(VClass *Class);
 void SV_RemoveMobj(VMapObject *mobj);
@@ -2187,6 +2188,20 @@ PF(NumToClassID)
 
 //==========================================================================
 //
+//	UnarchiveName
+//
+//==========================================================================
+
+PF(UnarchiveName)
+{
+	int Index;
+
+	Index = Pop();
+	PushName(UnarchiveName(Index));
+}
+
+//==========================================================================
+//
 //	PF_ClearPlayer
 //
 //==========================================================================
@@ -3289,6 +3304,7 @@ builtin_info_t BuiltinInfo[] =
     _(MobjToNum),
 	_(ClassIDToNum),
 	_(NumToClassID),
+	_(UnarchiveName),
 
     _(G_ExitLevel),
     _(G_SecretExitLevel),
@@ -3314,9 +3330,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/01/12 18:04:01  dj_jl
+//	Added unarchieving of names
+//
 //	Revision 1.28  2002/01/11 18:22:41  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.27  2002/01/11 08:08:26  dj_jl
 //	Added names to progs
 //	Added sector plane swapping
