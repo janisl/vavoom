@@ -601,8 +601,8 @@ static void RenderSprite(clmobj_t *thing)
 		//FIXME must use sprforward here?
 		float ang = matan(thing->origin.y - vieworg.y,
 			thing->origin.x - vieworg.x);
-		dword rot = (dword)((ang - thing->angles.yaw + 180.0 + 45.0 / 2.0)
-			* 8 / 360.0) & 7;
+		ang = AngleMod(ang - thing->angles.yaw + 180.0 + 45.0 / 2.0);
+		dword rot = (dword)(ang * 8 / 360.0) & 7;
 		lump = sprframe->lump[rot];
 		flip = (boolean)sprframe->flip[rot];
 	}
@@ -1141,9 +1141,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/27 07:46:14  dj_jl
+//	Fixed sprite rotations
+//
 //	Revision 1.10  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
