@@ -35,10 +35,8 @@ class BossTarget:Actor
 
 defaultproperties
 {
-	Health = 1000;
 	Radius = 20.0;
 	Height = 32.0;
-	Mass = 100.0;
 	ReactionCount = 8;
 	bHidden = true;
 	bNoBlockmap = true;
@@ -409,10 +407,8 @@ __states__
 
 defaultproperties
 {
-	Health = 1000;
 	Radius = 20.0;
 	Height = 32.0;
-	Mass = 100.0;
 	ReactionCount = 8;
 	bHidden = true;
 	bNoBlockmap = true;
@@ -425,6 +421,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/06/22 07:22:16  dj_jl
+//  Added default values to Actor.
+//
 //  Revision 1.22  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //
