@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                     version 1.10
+                                                     version 1.11
 
 Contents:
     0. Disclaimer
@@ -96,8 +96,7 @@ In order to compile and run Vavoom under Linux, you need the following:
 Compiler and tools:
     * GNU C++ Compiler, GNU make (every LINUX user must have them)
 Libraries:
-    * Allegro game programming library - latest Work In Progress version
-  (http://www.talula.demon.co.uk/allegro)
+    * Allegro 4.0 (http://alleg.sourceforge.net)
     * OpenGL: OpenGL implementation from your video card's manufacturer
   or MESA (http://www.mesa3d.org) and X-Windows development libraries.
 
@@ -114,7 +113,7 @@ and change into it:
 
   2. Unpack the Vavoom source package:
 
-        unzip v110_src.zip
+        unzip v111_src.zip
 
   3. Run fixunix.sh to convert text files to UNIX format:
 
@@ -173,8 +172,7 @@ For DOS you need
       * DJGPP (http://www.delorie.com/djgpp)
       * GNU make or RHIDE
   Libraries:
-      * Allegro game programming library - latest Work In Progress version
-    (http://www.talula.demon.co.uk/allegro)
+      * Allegro 4.0 (http://alleg.sourceforge.net)
       * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
     MESA (http://www.geocities.com/SiliconValley/7259/)
 
@@ -186,18 +184,14 @@ For Windows you need:
   Libraries:
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
     in Builder but some headers needed by DirectMusic are missing. In Allogro
-    website (http://www.talula.demon.co.uk/allegro) section Work In Progress
-    you will find a minimal version of DirectX 7 SDK.
+    website (http://alleg.sourceforge.net) you will find a minimal version of
+    DirectX 7 SDK.
 
   The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
 with extension .mak. For DOS there's also RHIDE project files, for Windows
 there's also Builder project files.
-
-  You can also compile main executable with MSVC, but it will abort with
-Segmentation violation during startup. I don't know, how MSVC is fucking
-with arrays of classes, but in the result chat macros are not constructed
-like it is expected. That's why I don't use it anymore. All project files
-are removed, so if you wanna try it, you will have to create a new ones.
+  You can also compile with MSVC, you will find workspace and project files
+in subdirectory 'msvc'.
 
 *****************************************************************************
 4. Starting a net game
@@ -733,6 +727,19 @@ Version 1.10
 * glVIS now also builds REJECT data (if GL-nodes are in wad file, not in gwa).
 * Gamma controls for OpenGL and Direct3D.
 * Specular highlights.
+
+==============================================================================
+Version 1.11
+==============================================================================
+
+* A lots of work on progs - references, defaultproperties (replaces C++ style
+ constructors in previous version), dynamic type casting, fixed some bugs and
+ more.
+* Script code patching - somewhat faster.
+* Some fixes for net games.
+* Added Skulltag bots.
+* Removed some limitations.
+* Most of the Hexen action specials are now available in all games.
 
 *****************************************************************************
 8. Licencing

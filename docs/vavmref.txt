@@ -11,6 +11,20 @@
 !!! Under construction, wanna help?
 
 
+Contents:
+    1. Filesystem
+    2. New linedef special types
+    3. New thing types
+    4. Scripts
+        4.1 The MAPINFO script
+        4.2 SKYBOXES script
+    5. Progs
+        5.1 Terminology.
+        5.2 Getting sources.
+        5.3 Compiling PROGS.
+        5.4 Progs from DeHackEd
+    6. Making a mod.
+
 ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 ³  1  ³ Filesystem
 ÀÄÄÄÄÄÙ
@@ -161,8 +175,14 @@ and color. R is red, G - green and B - blue component of color.
 
 
 ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-³  4  ³ The MAPINFO script
+³  4  ³ Scripts
 ÀÄÄÄÄÄÙ
+
+  Vavoom uses all Hexen scripts, extends them and adds some new ones.
+
+  
+4.1 The MAPINFO script
+======================
 
   Vavoom extends MAPINFO script with some new entries and adds some extra
 functionality to the existing entries.
@@ -261,9 +281,8 @@ With this option you define a map alias for all maps accesing this map and
 you can leave numbers in specials untouched.
 
 
-ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-³  5  ³ SKYBOXES script
-ÀÄÄÄÄÄÙ
+4.2 SKYBOXES script
+===================
 
   This script describes skyboxes.
 
@@ -298,3 +317,96 @@ Example:
             map textures/skies/rkdawndn.tga
         }
     }
+
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  5  ³ Progs
+ÀÄÄÄÄÄÙ
+
+
+5.1 Terminology.
+================
+
+    VavoomC - scripting language used in progs.
+
+    progs - code writed in VavoomC sripting language, which is compiled into
+            virtual machine files that are executed by Vavoom.
+
+5.2 Getting sources.
+====================
+
+  Prog sources are included in following archives:
+
+    v111_prog.zip - This archive contains prog sources and compiler binaries.
+                   Mod makers working in DOS or Windows most likely will
+                   choose this package.
+
+    v111_src.zip  - Full Vavoom source code with progs as part of it. In LINUX
+                   progs are compiled as part of the build process.
+
+  The latest prog sources can be found in Vavoom CVS repository.
+
+
+5.3 Compiling PROGS.
+====================
+
+  Progs are compiled with vcc (Vavoom C Compiler). It's located in utils/bin.
+vcc must be available on path. Add directory utils/bin to the path or put vcc
+in any other directory which is included in path or put it in the directory,
+where you will use it (possibly will not work in Linux).
+
+  For each PROGS there is a Makefile and bat file compile.bat. Simply run
+make or compile.bat.
+
+
+5.4 Progs from DeHackEd
+=======================
+
+  To compile Doom2 PROGS with changes from dehacked patch go to directory
+progs/hack_d2. Here you will find an example dehacked patch hack.deh. It is a
+dehacked patch from Batman Doom with fixed some bugs that progs don't like.
+Replace it with patch that you want to use. Then run hack.bat to create hacked
+source files and scripts. Then you must compile progs with compile.bat.
+Finally run makewad.bat to create hack.wad which I hope you know how to use.
+
+  For Doom the directory is progs/hack_d1, the sample hack.deh is from Aliens
+Doom.
+
+
+ÚÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+³  6  ³ Making a mod.
+ÀÄÄÄÄÄÙ
+
+  Follow the following steps:
+
+  1) Create a subdirectory in Vavoom directory. This will be your game
+directory. For example:
+
+    md mygame
+
+  2) From directory basev copy games.txt into your game directory and rename
+it to base.txt. For example:
+
+    cp basev/games.txt mygame/base.txt
+
+  3) Edit base.txt and remove detection of the games with which your mod will
+not work.
+
+  4) In your game directory create directory progs. For example:
+
+    md mygame/progs
+
+  5) For all games but Doom2 copy sources of that game's rpogs into this
+directory. For example:
+
+    cp -r progs/heretic/* mygame/progs
+
+  For Doom2 copy soyrces of Doom progs, then edit doomdefs.vc and at the top
+of the file add the following line:
+
+    #define DOOM2
+
+  You also need to copy directory common into <gamedir>/progs:
+
+    cp -r progs/common mygame/progs
+

@@ -526,4 +526,122 @@
 ******************************************************************************
                             VERSIJA 1.10
 ******************************************************************************
-  
+
+26-11-2001
+  Tikko pabeidzu Deus Ex - baigi labais.
+  Nedaudz paÆtrinÆju kompilÆtoru.
+  Windows versijÆ konsoles mainØgie sistñmas tausti·u un augstÆs prioritÆtes
+ atslñgıanai.
+  Iespñja ielÆdñt skripta testa pakotni.
+  Nolñmu skriptÆ ieviest atslñgvÆrdu self, kas bİs reference uz objektu.
+27-11-2001
+  MSG_Select vietÆ tagad ir divas funkcijas.
+  Nolñmu ieviest bÆzes klasi visiem skripta objektiem.
+  SÆku praktiski izmantot objektu references, atslñgvÆrds self arØ strÆdÆ.
+  SÆku visos skriptos pÆrveidot fizikas funkcijas par metodñm.
+  Ieviesu speciÆlu tØkla draiveri botiem. NormÆli tika radØts bots. Tikai
+ paılaik vi·ı neko nedara.
+  NokaÒÆju DeusEx SDK, rØt bİs jÆpamñÖina.
+28-11-2001
+  Atkal uzinstalñju MSVC. PamñÖinÆju kompilñt, atradÆs pÆris kõİdas.
+  Ieviesu none kÆ tukıo referenci.
+  Turpinu pÆrveidot Doom fizikas funkcijas par metodñm.
+  NormÆli noinstalñju DeusEx SDK, ekstraktñju skriptu kodus. Bİs kur smelties
+ informÆciju AI veidoıanÆ.
+29-11-2001
+  PapildinÆju plakni ar papildus laikiem.
+  SÆku pÆrstrÆdÆt menu.
+  ArØ Heretic un Strife fizikas funkcijas ir metodes.
+30-11-2001
+  AtklÆju nopietnu problñmu ar mantotÆs funkcijas izsaukıanu. VecÆka virtuÆlÆ
+ funkcija neko nedod - glu÷i pretñji, izsaucot vecÆka funkciju kura savukÆrt
+ izsauc tÆs vecÆka funkciju ØstenØbÆ izsauc sevi, kÆ rezultÆtÆ tur viss ·em un
+ ieciklojas. Tas arØ bija iemesls kÆpñc mani pÆrveidojumi Hexen neizdevÆs.
+ RadÆs ideja konstruktorÆ un destruktorÆ iedot virtuÆlo tabulu kÆ parametru,
+ bet citÆm metodñm tas nederñs.
+  MñÖinÆju tÆlÆk pÆrveidot menu, bet augıminñtÆ iemesla dñõ tas neizdevÆs.
+01-12-2001
+  AtrisinÆju vakar atrasto problñmu õoti vienkÆrıÆ veidÆ - izsaucot pa tieıo.
+  Ieviesu VObject, veidoıu struktİru lØdzØgi Unreal dzinim.
+  TØkla spñlñ atdzimstot bija ıóØbs ekrÆns - atrisinÆts.
+03-12-2001
+  Bija vajadzØgs vñl viens operÆciju kods, kad netieıas izsaukıanas funkcijas
+ parametrs ir vektors.
+  Skriptos konstruktors vietÆ tiek izmantots defaultproperties.
+  SÆku pievienot SkullTag botus.
+04-12-2001
+  Salaboju spñlñtÆju modeõus, tagad lØóiem saglabÆjas modelis un Æda.
+  Boti strÆdÆ. Tas ir cool! Kaut gan Øpaıi sajİsmÆ par vi·u intelektu es
+ neesmu.
+  Salaboju MSVC savietojamØbu, ar MSVC normÆli kompilñjas un strÆdÆ.
+05-12-2001
+  Skatos kautko priekı VObject.
+  Nedaudz piestrÆdÆju pie kompilatora.
+06-12-2001
+  Pievienoju dinamisko masØvu sagataves klasi. TÆ ir õoti laba lieta. Ar kuru
+ õoti viegli var atbrØvoties no ierobe÷ojumiem.
+07-12-2001
+  Pateicoties dinamiskajiem masØviem atbrØvojos no animÆciju un slñd÷u skaita
+ ierobe÷ojumie.
+  SÆku pÆrveidot stÆvokõu funkcijas par metodñm. Izmantojot tieıo funkcijas
+ numuru nav atıóirØibas.
+08-12-2001
+  Turpinu darbu pie stÆvokõu funkciju pÆrveidoıanas par metodñm. Ar Doom
+ tÆkÆ bİtu pabeights.
+10-12-2001
+  StÆvokõu funkciju pÆrveidoıana par metodñm turoinÆs pie citÆm spñlñm.
+11-12-2001
+  AtdalØju atsevoıói ieroÒu stÆvokõus, funkcijas ir ieroÒa objekta metodes.
+13-12-2001
+  SkriptÆ nomainØju atslñgvÆrdu extern pret native.
+  Skriptos atbalsts dinamiskajai tipu mai·ai. Windows-Æ negrib strÆdÆt.
+  PÆrveidoju CVar_ funkcijas par statiskÆm TCvar metodñm.
+  Salaboju kÆrıanos pñc plak·u struktİras paplaıinÆıanas.
+  DomÆtÆju saraksts bez VThinker objekta izmantoıanas.
+  Skripta koda patÒoıana.
+  VObject kods tiek ieviests praksñ.
+14-12-2001
+  Viss ko skriptu kodÆ var nopatÒot ir nopatÒots.
+  MSVC pievienoju asemblera failu kompilñıanu.
+  SÆku lietot praksñ VClass objektus, tipu identifikÆcija izmantojot klases.
+15-12-2001
+  Man nedeva mieru viena lieta - Windows normÆli izsauc iebİvñtÆs funkcijas,
+ tÆdñjÆdi es pamñÖinÆju atrisinÆt C++ funkcijas tieıÆs izsaukıanas problñmu
+ izmantojot netieıo izsaukıanu. RezultÆts - veiksmØgs.
+  Visas skripta izpildes metodes ir statiskas, objektu spaunoıana nav TProgs
+ sastÆvdaLa. Korekti tiek reÖistrñtas un izmantotas iebİvñtÆs klases.
+17-12-2001
+  VisÆm spñlñm pievienoju poliobjektus.
+  Pievienoju FArchive, nedaudz pÆrveidoju seivoıanu.
+  Izmantoju savas vecÆs AngleMod metodes, jo tÆs ir precØzÆkas.
+18-12-2001
+  LielÆkÆ daõa Hexen lØniju speciÆlo funkciju ir visÆs spñlñs.
+  Pievienoju globÆlu nosaukumu apakısistñmu.
+20-12-2001
+  AtbrØvojos no thinker-u saraksta.
+  No Entity izmetu ÆrÆ type, jo tÆ vietÆ var izmantot lauku Class vai metodi
+ IsA.
+  Pievienoju miskastes savÆkıanas sÆkuma variantu. Metode Destroy neiznØcina
+ uzreiz, bet gan maróñ objektu kÆ iznØcinÆtu un reÆlÆ iznØcinÆıana notiek
+ miskastes savÆkıÆnas laikÆ.
+  Izmetu no skriptiem destruktorus un C++ stila konstruktorus, kÆ arØ visu
+ lieko no virtuÆlo funkciju tabulas.
+21-12-2001
+  Pabeidzu lauka type izmeıanu. AtdalØju VClass atseviıóÆ failÆ. Salaboju
+ seivoıanu, classid lauki tiek korekti apstrÆdÆti.
+22-12-2001
+  Visi spñles laikÆ izmantotie funkciju numuri un globÆlo mainØgo indeksi
+ tiek atrasti ielÆdes laikÆ.
+27-12-2001
+  SkriptÆ spawnhealth tagad tiek inicializñts funkcijÆ OnMapSpawn.
+  Atradu kÆpñc tik daudz tiek lietots strcmp - 2D zØmñjumu informÆcijas
+ iegİıanÆ, pÆrveidoju tÆ, lai informÆcija tiktu lasØta tikai vienreiz. ArØ
+ CheckHeap prasa daudz.
+28-12-2001
+  SpñlñtÆja informÆcija tiek sİtØta tikai savienojuma sÆkumÆ.
+  PÆris sØki labojumi pñdñjÆ brØdØ.
+  PÆrsteidzoıi ir tas, ka relØzes versijÆ lØme·u ielÆde ir daudz ÆtrÆka.
+
+******************************************************************************
+                            VERSIJA 1.11
+******************************************************************************
