@@ -278,12 +278,19 @@ void WriteMobjInfo(void)
         flags2 = mobjinfo[i].flags2;
 
 		//  ------------- Class declaration ------------
+		parent = "Actor";
 #if 0
 		if (flags & MF_MISSILE)
 			parent = "Missile";
-		else
 #endif
-			parent = "Actor";
+#if defined DOOM || defined DOOM2
+		if (i == 0)
+			parent = "PlayerPawn";
+#endif
+#ifdef STRIFE
+		if (i == 1)
+			parent = "PlayerPawn";
+#endif
 		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		if (mobjinfo[i].doomednum > 0)
 		{
@@ -418,7 +425,13 @@ void WriteMobjInfo(void)
        	{
        		if (flags & (1 << j))
 			{
-				fprintf(f, "\t\t%s = true;\n", flagnames1[j]);
+				if ((1 << j) == MF_NOCLIP)
+				{
+					fprintf(f, "\t\tbColideWithThings = false;\n");
+					fprintf(f, "\t\tbColideWithWorld = false;\n");
+				}
+				else
+					fprintf(f, "\t\t%s = true;\n", flagnames1[j]);
 			}
 		}
    	    for (j = 0; j < 32; j++)
@@ -514,11 +527,11 @@ void WriteWeaponInfo(void)
 
 	for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
     {
-        fprintf(f, "void %s(player_t *player);\n", weapon_names[i]);
+        fprintf(f, "class %s;\n", weapon_names[i]);
 	}
     fprintf(f, "\n");
 
-	fprintf(f, "weapon_func_t\tweaponinfo[] =\n{\n");
+	fprintf(f, "classid WeaponClasses[] = {\n");
 	for (i=0; i<(numweapons == 18 ? 9 : numweapons); i++)
     {
         fprintf(f, "\t%s,\n", weapon_names[i]);
@@ -546,19 +559,21 @@ void WriteWeaponInfo(void)
 		fprintf(f, "\n");
 
         //	Start of function
-        fprintf(f, "void %s(player_t *player)\n", weapon_names[i]);
+        fprintf(f, "class %s:Weapon\n", weapon_names[i]);
         fprintf(f, "{\n");
+        fprintf(f, "\tdefaultproperties\n");
+        fprintf(f, "\t{\n");
 
         if (altshadow)
-	        fprintf(f, "\tplayer->w_mana = %s;\n", ammo_names[weaponinfo[i].ammo]);
+	        fprintf(f, "\t\tMana = %s;\n", ammo_names[weaponinfo[i].ammo]);
 		else
-	        fprintf(f, "\tplayer->w_ammo = %s;\n", ammo_names[weaponinfo[i].ammo]);
-		fprintf(f, "\tplayer->w_upstate = %s;\n", statename[weaponinfo[i].upstate]);
-		fprintf(f, "\tplayer->w_downstate = %s;\n", statename[weaponinfo[i].downstate]);
-		fprintf(f, "\tplayer->w_readystate = %s;\n", statename[weaponinfo[i].readystate]);
-		fprintf(f, "\tplayer->w_atkstate = %s;\n", statename[weaponinfo[i].atkstate]);
-		fprintf(f, "\tplayer->w_holdatkstate = %s;\n", statename[weaponinfo[i].holdatkstate]);
-		fprintf(f, "\tplayer->w_flashstate = %s;\n", statename[weaponinfo[i].flashstate]);
+	        fprintf(f, "\t\tAmmo = %s;\n", ammo_names[weaponinfo[i].ammo]);
+		fprintf(f, "\t\tUpState = %s;\n", statename[weaponinfo[i].upstate]);
+		fprintf(f, "\t\tDownState = %s;\n", statename[weaponinfo[i].downstate]);
+		fprintf(f, "\t\tReadyState = %s;\n", statename[weaponinfo[i].readystate]);
+		fprintf(f, "\t\tAttackState = %s;\n", statename[weaponinfo[i].atkstate]);
+		fprintf(f, "\t\tHoldAttackState = %s;\n", statename[weaponinfo[i].holdatkstate]);
+		fprintf(f, "\t\tFlashState = %s;\n", statename[weaponinfo[i].flashstate]);
 
         if (numweapons == 18)
         {
@@ -572,6 +587,7 @@ void WriteWeaponInfo(void)
         }
 
         //	End of function
+        fprintf(f, "\t}\n");
         fprintf(f, "}\n");
         fprintf(f, "\n");
 	}
@@ -742,9 +758,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/20 19:12:22  dj_jl
+//	Updated to current state.
+//
 //	Revision 1.23  2002/02/22 18:11:01  dj_jl
 //	Some renaming.
-//
+//	
 //	Revision 1.22  2002/02/14 19:23:07  dj_jl
 //	Renamed Entity properties to new naming style
 //	

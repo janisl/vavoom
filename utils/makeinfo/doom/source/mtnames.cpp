@@ -29,7 +29,7 @@
 
 char* mt_names[] =
 {
-    "PlayerPawn",
+    "DoomPlayer",
     "Zombieman",
     "ShotgunGuy",
     "ArchVile",
@@ -171,9 +171,12 @@ char* mt_names[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/03/20 19:12:23  dj_jl
+//	Updated to current state.
+//
 //	Revision 1.6  2002/02/22 18:11:01  dj_jl
 //	Some renaming.
-//
+//	
 //	Revision 1.5  2002/01/17 18:18:12  dj_jl
 //	Renamed all map object classes
 //	

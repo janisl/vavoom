@@ -38,15 +38,15 @@ char* ammo_names[] =
 
 char* weapon_names[] =
 {
-    "set_weapon_fist",
-    "set_weapon_pistol",
-    "set_weapon_shotgun",
-    "set_weapon_chaingun",
-    "set_weapon_missile",
-    "set_weapon_plasma",
-    "set_weapon_bfg",
-    "set_weapon_chainsaw",
-    "set_weapon_supershotgun",
+    "WeaponFist",
+    "WeaponPistol",
+    "WeaponShotgun",
+    "WeaponChaingun",
+    "WeaponMissile",
+    "WeaponPlasma",
+    "WeaponBFG",
+    "WeaponChainsaw",
+    "WeaponSuperShotgun",
 };
 
 // Ammunition types defined.
@@ -171,9 +171,12 @@ weaponinfo_t	weaponinfo[9] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/03/20 19:12:23  dj_jl
+//	Updated to current state.
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:36:47  dj_jl
 //	Beautification
 //	

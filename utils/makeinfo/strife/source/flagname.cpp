@@ -41,7 +41,7 @@ char* flagnames1[32] =
     "bNoClip",
     "bSlide",
     "bFloat",
-    "bTeleport",
+    "bUnknown4",
 
     "bMissile",
     "bDropped",
@@ -103,9 +103,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/03/20 19:12:23  dj_jl
+//	Updated to current state.
+//
 //	Revision 1.7  2002/02/22 18:11:01  dj_jl
 //	Some renaming.
-//
+//	
 //	Revision 1.6  2002/02/06 17:31:46  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	
