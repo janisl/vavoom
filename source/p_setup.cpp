@@ -202,9 +202,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	sec_region_t *inregion;
 	sector_t *src;
 
+	src = line->frontsector;
 	src->bExtrafloorSource = true;
 	dst->bHasExtrafloors = true;
-	src = line->frontsector;
 	float floorz = src->floor.GetPointZ(dst->soundorg);
 	float ceilz = src->ceiling.GetPointZ(dst->soundorg);
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
@@ -343,6 +343,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2003/07/04 15:00:28  dj_jl
+//  Moving floors fix
+//
 //  Revision 1.24  2003/07/03 18:11:13  dj_jl
 //  Moving extrafloors
 //
