@@ -280,6 +280,8 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 	}
 
 	UploadTexture(texture->width, texture->height, block);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	Z_Free(block);
 	texture_iw[texnum] = 1.0 / float(texture->width);
 	texture_ih[texnum] = 1.0 / float(texture->height);
@@ -352,6 +354,8 @@ void TOpenGLDrawer::GenerateFlat(int num)
 		block[i] = pal8_to24[data[i]];
 	}
 	UploadTexture(64, 64, block);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	Z_Free(block);
 	flat_sent[num] = true;
 }
@@ -423,6 +427,8 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 	// Generate The Texture
 	UploadTexture(p2w, p2h, block);
 	sprite_sent[lump] = true;
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -476,6 +482,8 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	// Generate The Texture
 	UploadTexture(p2w, p2h, block);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -611,6 +619,9 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
 	pic_iw[handle] = 1.0 / float(w);
 	pic_ih[handle] = 1.0 / float(h);
 	pic_sent[handle] = true;
@@ -642,6 +653,17 @@ void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 	UploadTextureNoMip(320, h, block);
 	Z_Free(block);
 	Z_ChangeTag(raw, PU_CACHE);
+
+	if (h < 200)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
 
 	pic_iw[handle] = 1.0 / float(320);
 	pic_ih[handle] = 1.0 / float(h);
@@ -693,6 +715,8 @@ void TOpenGLDrawer::SetSkin(const char *name)
 			buf[i] = pal8_to24[SkinData[i]];
 		}
 		UploadTexture(SkinWidth, SkinHeight, buf);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		Z_Free(buf);
 		Z_Free(SkinData);
 	}
@@ -976,9 +1000,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/24 17:36:21  dj_jl
+//	Added clamping
+//
 //	Revision 1.9  2001/09/20 15:59:43  dj_jl
 //	Fixed resampling when one dimansion doesn't change
-//
+//	
 //	Revision 1.8  2001/08/30 17:37:39  dj_jl
 //	Using linear texture resampling
 //	
