@@ -124,7 +124,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 		Floor.sector = sec;
 		Floor.type = floortype;
 		Floor.crush = 0;
-		Floor.speed = itof(args[1]) * 4.0;
+		Floor.speed = itof(args[1]) * 35.0 / 8.0;//4.0;
 		if (floortype == FLEV_LOWERTIMES8INSTANT ||
 			floortype == FLEV_RAISETIMES8INSTANT)
 		{
@@ -887,6 +887,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/29 18:16:19  dj_jl
+//  Adjusted speed to fix timing
+//
 //  Revision 1.10  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //
