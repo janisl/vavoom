@@ -120,7 +120,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 	memset(texture_sent, 0, numtextures);
 	memset(flat_sent, 0, numflats);
 	memset(sprite_sent, 0, numspritelumps);
-	memset(trspr_id, 0, MAX_TRANSLATED_SPRITES);
+	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
 	memset(pic_sent, 0, MAX_PICS);
 	memset(skin_name, 0, sizeof(skin_name));
 
@@ -481,8 +481,8 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 	int h = LittleShort(patch->height);
 	int p2w = ToPowerOf2(w);
 	int p2h = ToPowerOf2(h);
-	trspriw[lump] = 1.0 / (float)p2w;
-	trsprih[lump] = 1.0 / (float)p2h;
+	trspriw[slot] = 1.0 / (float)p2w;
+	trsprih[slot] = 1.0 / (float)p2h;
 
     rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
 	trspr_lump[slot] = lump;
@@ -861,9 +861,12 @@ void TOpenGLDrawer::SetSkin(const char *name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:30:31  dj_jl
+//	Fixed translated sprites
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
