@@ -55,6 +55,8 @@ static int				ds_shade;
 static byte				*picdata[MAX_PICS];
 static int				picwidth[MAX_PICS];
 
+static void (*D_PutDot)(int, int, dword);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -63,10 +65,11 @@ static int				picwidth[MAX_PICS];
 //
 //==========================================================================
 
-static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, 
+							fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    byte *dest = scrn + x + y * ScreenWidth;
+    byte *dest = (byte *)scrn + x + y * ScreenWidth;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -85,7 +88,8 @@ static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, 
+								fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -107,7 +111,8 @@ static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sste
 //
 //==========================================================================
 
-static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, 
+								   fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -129,7 +134,8 @@ static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t s
 //
 //==========================================================================
 
-static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, 
+								  fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -152,7 +158,8 @@ static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, fixed_t ss
 //
 //==========================================================================
 
-static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, 
+							 fixed_t sstep, int count, byte *src)
 {
 	src += (t >> 10) & 0xfc0;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -178,16 +185,15 @@ static void D_FillRect_8(float x1, float y1, float x2, float y2, dword color)
 	int ix2 = int(x2);
 	int iy2 = int(y2);
 
-	color = d_rgbtable[((color >> 9) & 0x7c00) | ((color >> 6) & 0x03e0) |
-		((color >> 3) & 0x1f)];
+	int iWid = ix2 - ix1;
 
-	for (int y = iy1; y < iy2; y++)
+	byte bColor = color = d_rgbtable[((color >> 9) & 0x7c00) | 
+		((color >> 6) & 0x03e0) | ((color >> 3) & 0x1f)];
+
+	byte *dest = (byte*)scrn + ix1 + ScreenWidth * iy1;
+	for (int y = iy1; y < iy2; y++, dest += ScreenWidth)
 	{
-		byte *dest = (byte*)scrn + ix1 + ScreenWidth * y;
-		for (int x = ix1; x < ix2; x++)
-		{
-			*dest++ = color;
-		}
+		memset(dest, bColor, iWid);
 	}
 }
 
@@ -213,10 +219,9 @@ static void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 	for (int y = y1; y < y2; y++)
 	{
 		byte *dest = scrn + x1 + ScreenWidth * y;
-		for (int x = x1; x < x2; x++)
+		for (int x = x1; x < x2; x++, dest++)
 		{
 			*dest = shades[*dest];
-			dest++;
 		}
 	}
 }
@@ -253,6 +258,17 @@ static void D_DrawConsoleBackground_8(int h)
 
 //==========================================================================
 //
+//	D_PutDot_8
+//
+//==========================================================================
+
+static void D_PutDot_8(int x, int y, dword c)
+{
+	((byte*)scrn)[y * ScreenWidth + x] = c;
+}
+
+//==========================================================================
+//
 //	D_DrawPicSpan_16
 //
 //==========================================================================
@@ -284,29 +300,6 @@ static void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t s
 	word *src = (word*)_src;
 	src += (t >> FRACBITS) * cachewidth;
     word *dest = (word*)scrn + x + y * ScreenWidth;
-	while (count--)
-    {
-		word color = src[s >> FRACBITS];
-		if (color)
-		{
-			*dest = color;
-		}
-		s += sstep;
-		dest++;
-	}
-}
-
-//==========================================================================
-//
-//	D_DrawSpritePicSpan_32
-//
-//==========================================================================
-
-static void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
-{
-	dword *src = (dword*)_src;
-	src += (t >> FRACBITS) * cachewidth;
-    dword *dest = (dword*)scrn + x + y * ScreenWidth;
 	while (count--)
     {
 		word color = src[s >> FRACBITS];
@@ -409,19 +402,26 @@ static void D_FillRect_16(float x1, float y1, float x2, float y2, dword color)
 	int ix2 = int(x2);
 	int iy2 = int(y2);
 
+	int wid = ix2 - ix1;
+
+	word wColor;
 	if (ScreenBPP == 15)
-		color = MakeCol15((color >> 16) & 0xff, (color >> 8) & 0xff,
-			color & 0xff);
-	else if (ScreenBPP == 16)
-		color = MakeCol16((color >> 16) & 0xff, (color >> 8) & 0xff,
-			color & 0xff);
+	{
+		wColor = (word)MakeCol15((byte)(color >> 16), (byte)(color >> 8),
+			(byte)color);
+	}
+	else
+	{
+		wColor = (word)MakeCol16((byte)(color >> 16), (byte)(color >> 8),
+			(byte)color);
+	}
 
 	for (int y = iy1; y < iy2; y++)
 	{
 		word *dest = (word*)scrn + ix1 + ScreenWidth * y;
-		for (int x = ix1; x < ix2; x++)
+		for (int i = wid; i; i--)
 		{
-			*dest++ = color;
+			*dest++ = wColor;
 		}
 	}
 }
@@ -484,6 +484,17 @@ static void D_DrawConsoleBackground_16(int h)
 
 //==========================================================================
 //
+//	D_PutDot_16
+//
+//==========================================================================
+
+static void D_PutDot_16(int x, int y, dword c)
+{
+	((word*)scrn)[y * ScreenWidth + x] = c;
+}
+
+//==========================================================================
+//
 //	D_DrawPicSpan_32
 //
 //==========================================================================
@@ -498,6 +509,29 @@ static void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, 
 		if (color)
 		{
 			*dest = pal2rgb[color];
+		}
+		s += sstep;
+		dest++;
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawSpritePicSpan_32
+//
+//==========================================================================
+
+static void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
+{
+	dword *src = (dword*)_src;
+	src += (t >> FRACBITS) * cachewidth;
+    dword *dest = (dword*)scrn + x + y * ScreenWidth;
+	while (count--)
+    {
+		dword color = src[s >> FRACBITS];
+		if (color)
+		{
+			*dest = color;
 		}
 		s += sstep;
 		dest++;
@@ -594,13 +628,14 @@ static void D_FillRect_32(float x1, float y1, float x2, float y2, dword color)
 	int ix2 = int(x2);
 	int iy2 = int(y2);
 
-	color = MakeCol32((color >> 16) & 0xff, (color >> 8) & 0xff,
-		color & 0xff);
+	int wid = ix2 - ix1;
+
+	color = MakeCol32((byte)(color >> 16), (byte)(color >> 8), (byte)color);
 
 	for (int y = iy1; y < iy2; y++)
 	{
 		dword *dest = (dword*)scrn + ix1 + ScreenWidth * y;
-		for (int x = ix1; x < ix2; x++)
+		for (int i = wid; i; i--)
 		{
 			*dest++ = color;
 		}
@@ -661,6 +696,17 @@ static void D_DrawConsoleBackground_32(int h)
 			dest++;
 		}
 	}
+}
+
+//==========================================================================
+//
+//	D_PutDot_32
+//
+//==========================================================================
+
+static void D_PutDot_32(int x, int y, dword c)
+{
+	((dword*)scrn)[y * ScreenWidth + x] = c;
 }
 
 //==========================================================================
@@ -1057,22 +1103,12 @@ void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 void TSoftwareDrawer::StartAutomap(void)
 {
-}
-
-//==========================================================================
-//
-//	TSoftwareDrawer::PutDot
-//
-//==========================================================================
-
-void TSoftwareDrawer::PutDot(int x, int y, dword c)
-{
 	if (PixelBytes == 1)
-		((byte*)scrn)[y * ScreenWidth + x] = c;
+		D_PutDot = D_PutDot_8;
 	else if (PixelBytes == 2)
-		((word*)scrn)[y * ScreenWidth + x] = c;
+		D_PutDot = D_PutDot_16;
 	else
-		((dword*)scrn)[y * ScreenWidth + x] = c;
+		D_PutDot = D_PutDot_32;
 }
 
 #if 0
@@ -1320,7 +1356,7 @@ void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
        	e = x2;
 		while (1)
 		{
-			PutDot(x, y, color);
+			D_PutDot(x, y, color);
     		if (x == e) return;
 	    	if (d >= 0)
 		    {
@@ -1337,7 +1373,7 @@ void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
         e = y2;
 		while (1)
 		{
-			PutDot(x, y, color);
+			D_PutDot(x, y, color);
 	    	if (y == e) return;
 		    if (d >= 0)
 		    {
@@ -1363,9 +1399,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/11/09 14:20:48  dj_jl
 //	Drawing of images with different palettes
 //	

@@ -237,29 +237,6 @@ boolean PO_MovePolyobj(int num, float x, float y)
 
 //==========================================================================
 //
-//	RotatePt
-//
-//==========================================================================
-
-static void RotatePt(float an, float *x, float *y, float startSpotX, float startSpotY)
-{
-	float	tr_x, tr_y;
-	float 	gxt, gyt;
-
-	tr_x = *x;
-	tr_y = *y;
-
-	gxt = tr_x * mcos(an);
-	gyt = tr_y * msin(an);
-	*x = (gxt - gyt) + startSpotX;
-
-	gxt = tr_x * msin(an);
-	gyt = tr_y * mcos(an);
-	*y = (gyt + gxt) + startSpotY;
-}
-
-//==========================================================================
-//
 // PO_RotatePolyobj
 //
 //==========================================================================
@@ -267,38 +244,43 @@ static void RotatePt(float an, float *x, float *y, float startSpotX, float start
 boolean PO_RotatePolyobj(int num, float angle)
 {
 	int count;
-	seg_t **segList;
-	vertex_t *originalPts;
-	vertex_t *prevPts;
-	float an;
-	polyobj_t *po;
-	boolean blocked;
 
-	if (!(po = PO_GetPolyobj(num)))
+	// Get the polyobject.
+	polyobj_t *po = PO_GetPolyobj(num);
+	if (!po)
 	{
 		Sys_Error("PO_RotatePolyobj:  Invalid polyobj number: %d\n", num);
 	}
-	an = po->angle + angle;
+
+	// Calculate the angle.
+	float an = po->angle + angle;
+	float msinAn = msin(an);
+	float mcosAn = mcos(an);
 
 	UnLinkPolyobj(po);
 
-	segList = po->segs;
-	originalPts = po->originalPts;
-	prevPts = po->prevPts;
+	seg_t **segList = po->segs;
+	vertex_t *originalPts = po->originalPts;
+	vertex_t *prevPts = po->prevPts;
 
 	for (count = po->numsegs; count; count--, segList++, originalPts++,
 		prevPts++)
 	{
+		// Save the previous points.
 		prevPts->x = (*segList)->v1->x;
 		prevPts->y = (*segList)->v1->y;
-		(*segList)->v1->x = originalPts->x;
-		(*segList)->v1->y = originalPts->y;
-		RotatePt(an, &(*segList)->v1->x, &(*segList)->v1->y,
-			po->startSpot.x, po->startSpot.y);
+
+		// Get the original X and Y values.
+		float tr_x = originalPts->x;
+		float tr_y = originalPts->y;
+
+		// Calculate the new X and Y values.
+		(*segList)->v1->x = (tr_x * mcosAn - tr_y * msinAn) + po->startSpot.x;
+		(*segList)->v1->y = (tr_y * mcosAn + tr_x * msinAn) + po->startSpot.y;
 	}
 	UpdatePolySegs(po);
 	segList = po->segs;
-	blocked = false;
+	bool blocked = false;
 	for (count = po->numsegs; count; count--, segList++)
 	{
 		if (CheckMobjBlocking(*segList, po))
@@ -306,6 +288,8 @@ boolean PO_RotatePolyobj(int num, float angle)
 			blocked = true;
 		}
 	}
+
+	// If we are blocked then restore the previous points.
 	if (blocked)
 	{
 		segList = po->segs;
@@ -319,6 +303,7 @@ boolean PO_RotatePolyobj(int num, float angle)
 		LinkPolyobj(po);
 		return false;
 	}
+
 	po->angle = AngleMod(po->angle + angle);
 	LinkPolyobj(po);
 	return true;
@@ -881,9 +866,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	

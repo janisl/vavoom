@@ -501,31 +501,39 @@ static void StartupKeyboard(void)
 static void ReadKeyboard(void)
 {
 	guard(ReadKeyboard);
-	HRESULT				Result;
-	event_t	  			event;
-	size_t				i;
-	DIDEVICEOBJECTDATA	DevData[32];
-	DWORD				NumItems = 32;
 
-	Result = lpKeyboard->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),
+	// Attempt to get the device data.
+	DIDEVICEOBJECTDATA DevData[32];
+	DWORD NumItems = 32;
+	HRESULT Result = lpKeyboard->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),
 		DevData, &NumItems, 0);
-	if (Result == DIERR_INPUTLOST)
-	{
-		Result = lpKeyboard->Acquire();
-		if (Result == DI_OK)
-			return;
-	}
-	if (Result != DI_OK && Result != DI_BUFFEROVERFLOW)
-		Sys_Error("Failed to read keyboard state");
 
-	if (Result == DI_BUFFEROVERFLOW)
+	// Check the return code.
+	switch (Result)
+	{
+	case DI_OK:
+		break;
+
+	case DI_BUFFEROVERFLOW:
 		cond << "Keyboard buffer overflowed.\n";
+		break;
 
-	for (i = 0; i < NumItems; i++)
+	case DIERR_INPUTLOST:
+	case DIERR_NOTACQUIRED:
+		Result = lpKeyboard->Acquire();
+		return;
+
+	case E_ACCESSDENIED:
+		return;
+
+	default:
+		Sys_Error("Failed to read keyboard state");
+	}
+
+	// Process the data.
+	for (size_t i = 0; i < NumItems; i++)
 	{
-		event.type = (DevData[i].dwData & 0x80)? ev_keydown : ev_keyup;
-		event.data1 = scan2key[DevData[i].dwOfs];
-		IN_PostEvent(&event);
+		IN_KeyEvent(scan2key[DevData[i].dwOfs], DevData[i].dwData & 0x80);
 	}
 	unguard;
 }
@@ -601,32 +609,40 @@ static void StartupMouse(void)
 static void ReadMouse(void)
 {
 	guard(ReadMouse);
-	HRESULT			Result;
-	DIMOUSESTATE	MouseState;
-	event_t 		event;
-	int 			xmickeys;
-	int				ymickeys;
-	int				mouse_x;
-	int				mouse_y;
-	static byte		lastbuttons[4] = {0, 0, 0, 0};
 
+	// Static mouse last button state.
+	static byte lastbuttons[4] = {0, 0, 0, 0};
+
+	// If we don't have a mouse then skip.
 	if (!mousepresent)
+	{
+		return;
+	}
+
+	// Read the mouse state.
+	DIMOUSESTATE MouseState;
+	HRESULT Result = lpMouse->GetDeviceState(sizeof(DIMOUSESTATE), &MouseState);
+
+	// Check the return code.
+	switch (Result)
+	{
+	case DI_OK:
+		break;
+
+	case DIERR_INPUTLOST:
+	case DIERR_NOTACQUIRED:
+		Result = lpMouse->Acquire();
 		return;
 
-	Result = lpMouse->GetDeviceState(sizeof(DIMOUSESTATE), &MouseState);
-
-	if (Result == DIERR_INPUTLOST)
-	{
-		Result = lpMouse->Acquire();
-		if (Result == DI_OK)
-			return;
-	}
-	if (Result != DI_OK)
+	default:
 		Sys_Error("Failed to read mouse state");
+	}
 
-	xmickeys = MouseState.lX;
-	ymickeys = MouseState.lY;
-
+	// Update the mouse x and y positions.
+	int xmickeys = MouseState.lX;
+	int ymickeys = MouseState.lY;
+	int mouse_x;
+	int mouse_y;
 	if (m_filter == 2)
 	{
 		mouse_x = (xmickeys + old_mouse_x) / 2;
@@ -649,47 +665,27 @@ static void ReadMouse(void)
 		old_mouse_y = mouse_y;
 	}
 
+	// Handle mouse move.
 	if (mouse_x || mouse_y)
 	{
+		// Build and post mouse event.
+		event_t event;
 		event.type  = ev_mouse;
 	  	event.data1 = 0;
 	  	event.data2 = mouse_x;
 	  	event.data3 = -mouse_y;
+	  	IN_PostEvent(&event);
+	}
 
-	  	IN_PostEvent(&event);
-	}
-	if ((MouseState.rgbButtons[0] ^ lastbuttons[0]) & 0x80)
+	// Handle mouse buttons.
+	for (int i = 0; i < 3; i++)
 	{
-	  	event.type  = (MouseState.rgbButtons[0] & 0x80)? 
-						ev_keydown : ev_keyup;
-	  	event.data1 = K_MOUSE1;
-	  	event.data2 = 0;
-	  	event.data3 = 0;
-	  	IN_PostEvent(&event);
+		if ((MouseState.rgbButtons[i] ^ lastbuttons[i]) & 0x80)
+		{
+			IN_KeyEvent(K_MOUSE1 + i, MouseState.rgbButtons[i] & 0x80);
+		}
+		lastbuttons[i] = MouseState.rgbButtons[i];
 	}
-	lastbuttons[0] = MouseState.rgbButtons[0];
-
-	if ((MouseState.rgbButtons[1] ^ lastbuttons[1]) & 0x80)
-	{
-	  	event.type  = (MouseState.rgbButtons[1] & 0x80)? 
-						ev_keydown : ev_keyup;
-	  	event.data1 = K_MOUSE2;
-	  	event.data2 = 0;
-	  	event.data3 = 0;
-	  	IN_PostEvent(&event);
-	}
-	lastbuttons[1] = MouseState.rgbButtons[1];
-
-	if ((MouseState.rgbButtons[2] ^ lastbuttons[2]) & 0x80)
-	{
-	  	event.type  = (MouseState.rgbButtons[2] & 0x80)? 
-						ev_keydown : ev_keyup;
-	  	event.data1 = K_MOUSE3;
-	  	event.data2 = 0;
-	  	event.data3 = 0;
-	  	IN_PostEvent(&event);
-	}
-	lastbuttons[2] = MouseState.rgbButtons[2];
 	unguard;
 }
 
@@ -815,31 +811,43 @@ static void StartupJoystick(void)
 static void ReadJoystick(void)
 {
 	guard(StartupJoystick);
-	DIJOYSTATE	JoyState;
-	HRESULT		Result;
-	event_t 	event;
-	static int	oldx = 0;
-	static int	oldy = 0;
-	static byte	oldb[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	int			i;
 
+	// Static previous joystick state.
+	static int oldx = 0;
+	static int oldy = 0;
+	static byte oldb[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+	// If we don't have a jpystick then skip.
 	if (!joystick_started)
+	{
 		return;
+	}
 
+	// Poll joystick.
 	lpJoystick->Poll();
 
-	Result = lpJoystick->GetDeviceState(sizeof(DIJOYSTATE), &JoyState);
-	if (Result == DIERR_INPUTLOST)
-	{
-		Result = lpJoystick->Acquire();
-		if (Result == DI_OK)
-			return;
-	}
-	if (Result != DI_OK)
-		Sys_Error("Failed to read joystick state");
+	// Try to read joystick state.
+	DIJOYSTATE JoyState;
+	HRESULT Result = lpJoystick->GetDeviceState(sizeof(DIJOYSTATE), &JoyState);
 
+	// Check the result code.
+	switch (Result)
+	{
+	case DI_OK:
+		break;
+
+	case DIERR_INPUTLOST:
+		Result = lpJoystick->Acquire();
+		return;
+
+	default:
+		Sys_Error("Failed to read joystick state");
+	}
+
+	// Handle joystick move.
 	if ((oldx != JoyState.lX) || (oldy != JoyState.lY))
 	{
+		event_t event;
 		event.type = ev_joystick;
 		event.data1 = 0;
 		event.data2 = JoyState.lX;
@@ -849,15 +857,12 @@ static void ReadJoystick(void)
 	oldx = JoyState.lX;
 	oldy = JoyState.lY;
 
-	for (i = 0; i < 16; i++)
+	// Handle joystick buttons.
+	for (int i = 0; i < 16; i++)
 	{
 		if ((JoyState.rgbButtons[i] ^ oldb[i]) & 0x80)
 		{
-			event.type = (JoyState.rgbButtons[i] & 0x80)? ev_keydown : ev_keyup;
-			event.data1 = K_JOY1 + i;
-			event.data2 = 0;
-			event.data3 = 0;
-			IN_PostEvent(&event);
+			IN_KeyEvent(K_JOY1 + i, JoyState.rgbButtons[i] & 0x80);
 		}
 		oldb[i] = JoyState.rgbButtons[i];
 	}
@@ -989,9 +994,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.7  2002/01/11 18:23:34  dj_jl
 //	Added support for 16 joystick buttons
-//
+//	
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

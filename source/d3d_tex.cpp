@@ -859,7 +859,7 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	int width, int height, rgba_t *data)
 {
 	guard(TDirect3DDrawer::UploadTextureImage);
-	DDSURFACEDESC2			ddsd;
+	DDSURFACEDESC2 ddsd;
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_LPSURFACE;
@@ -871,18 +871,24 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	rgba_t *in = data;
 	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
 	{
-		word *out = (word*)ddsd.lpSurface;
-		for (int i = 0; i < width * height; i++, in++, out++)
+		for (int y = 0; y < height; y++)
 		{
-			*out = MakeCol16(in->r, in->g, in->b, in->a);
+			word *out = (word*)((byte *)ddsd.lpSurface + y * ddsd.lPitch);
+			for (int x = 0; x < width; x++, in++, out++)
+			{
+				*out = MakeCol16(in->r, in->g, in->b, in->a);
+			}
 		}
 	}
 	else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32)
 	{
-		dword *out = (dword*)ddsd.lpSurface;
-		for (int i = 0; i < width * height; i++, in++, out++)
+		for (int y = 0; y < height; y++)
 		{
-			*out = MakeCol32(in->r, in->g, in->b, in->a);
+			dword *out = (dword*)((byte *)ddsd.lpSurface + y * ddsd.lPitch);
+			for (int x = 0; x < width; x++, in++, out++)
+			{
+				*out = MakeCol32(in->r, in->g, in->b, in->a);
+			}
 		}
 	}
 	surf->Unlock(NULL);
@@ -1268,9 +1274,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.17  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.16  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

@@ -244,35 +244,19 @@ void TKButton::KeyUp(char *c)
 
 float TKButton::KeyState(void)
 {
-	float		val;
-	bool		impulsedown, impulseup, down;
-	
-	impulsedown = state & 2;
-	impulseup = state & 4;
-	down = state & 1;
-	val = 0;
-	
-	if (impulsedown && !impulseup)
-		if (down)
-			val = 0.5;	// pressed and held this frame
-		else
-			val = 0;	//	I_Error ();
-	if (impulseup && !impulsedown)
-		if (down)
-			val = 0;	//	I_Error ();
-		else
-			val = 0;	// released this frame
-	if (!impulsedown && !impulseup)
-		if (down)
-			val = 1.0;	// held the entire frame
-		else
-			val = 0;	// up the entire frame
-	if (impulsedown && impulseup)
-		if (down)
-			val = 0.75;	// released and re-pressed this frame
-		else
-			val = 0.25;	// pressed and released this frame
+	static const float newVal[8] =
+	{
+		0.0f,	// up the entire frame
+		1.0f,	// held the entire frame
+		0.0f,	// Sys_Error();
+		0.5f,	// pressed and held this frame
+		0.0f,	// released this frame
+		0.0f,	// Sys_Error();
+		0.25f,	// pressed and released this frame
+		0.75f	// released and re-pressed this frame
+	};
 
+	float val = newVal[state & 7];
 	state &= 1;		// clear impulses
 	
 	return val;
@@ -696,9 +680,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2002/01/04 18:21:16  dj_jl
 //	Fixed tilted death view
 //	

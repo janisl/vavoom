@@ -203,7 +203,6 @@ class TSoftwareDrawer : public TDrawer
 
 	//	Automap
 	void StartAutomap(void);
-	void PutDot(int, int, dword);
 	void DrawLine(int, int, dword, int, int, dword);
 	void EndAutomap(void);
 
@@ -544,9 +543,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.18  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.17  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

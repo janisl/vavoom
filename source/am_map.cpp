@@ -1159,38 +1159,36 @@ static void AM_rotate(float* x, float* y, float a)
 static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
 	float scale, float angle, dword color, float x, float y)
 {
-    int		i;
-    mline_t	l;
+	float msinAngle = msin(angle);
+	float mcosAngle = mcos(angle);
 
-    for (i=0;i<lineguylines;i++)
+    for (int i = 0; i < lineguylines; i++)
     {
-		l.a.x = lineguy[i].a.x;
-		l.a.y = lineguy[i].a.y;
+		mline_t l = lineguy[i];
 
 		if (scale)
 		{
 	    	l.a.x = scale * l.a.x;
 		    l.a.y = scale * l.a.y;
-		}
-
-		if (angle)
-		    AM_rotate(&l.a.x, &l.a.y, angle);
-
-		l.a.x += x;
-		l.a.y += y;
-
-		l.b.x = lineguy[i].b.x;
-		l.b.y = lineguy[i].b.y;
-
-		if (scale)
-		{
 	    	l.b.x = scale * l.b.x;
 		    l.b.y = scale * l.b.y;
 		}
 
 		if (angle)
-		    AM_rotate(&l.b.x, &l.b.y, angle);
-	
+		{
+			float oldax = l.a.x;
+			float olday = l.a.y;
+			float oldbx = l.b.x;
+			float oldby = l.b.y;
+
+		    l.a.x = oldax * mcosAngle - olday * msinAngle;
+			l.a.y = oldax * msinAngle + olday * mcosAngle;
+		    l.b.x = oldbx * mcosAngle - oldby * msinAngle;
+		    l.b.y = oldbx * msinAngle + oldby * mcosAngle;
+		}
+
+		l.a.x += x;
+		l.a.y += y;
 		l.b.x += x;
 		l.b.y += y;
 
@@ -1537,9 +1535,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.8  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

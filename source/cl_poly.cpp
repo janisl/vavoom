@@ -118,49 +118,43 @@ static void MovePolyobj(int num, float x, float y)
 
 //==========================================================================
 //
-//	RotatePt
-//
-//==========================================================================
-
-static void RotatePt(float an, TVec &point, const TVec &startSpot)
-{
-	float	tr_x;
-	float	tr_y;
-
-	tr_x = point.x;
-	tr_y = point.y;
-
-	point.x = tr_x * mcos(an) - tr_y * msin(an);
-	point.y = tr_x * msin(an) + tr_y * mcos(an);
-
-	point += startSpot;
-}
-
-//==========================================================================
-//
 //	RotatePolyobj
 //
 //==========================================================================
 
 static void RotatePolyobj(int num, float angle)
 {
-	int count;
-	seg_t **segList;
-	vertex_t *originalPts;
-	polyobj_t *po;
+	// Get a pointer to the polyobject.
+	polyobj_t *po = &cl_level.polyobjs[num];
 
-	po = &cl_level.polyobjs[num];
+	// If the angle is the same then we don't need to rotate.
 	if (po->angle == angle)
-		return;
-
-	segList = po->segs;
-	originalPts = po->originalPts;
-	for (count = po->numsegs; count; count--, segList++, originalPts++)
 	{
-		*(*segList)->v1 = *originalPts;
-		RotatePt(angle, *(*segList)->v1, po->startSpot);
+		return;
 	}
 
+	// Calculate the rotation sin and cos scalars.
+	float msinAngle = msin(angle);
+	float mcosAngle = mcos(angle);
+
+	// Loop for the number of segments in the polyobject.
+	seg_t **segList = po->segs;
+	vertex_t *originalPts = po->originalPts;
+	for (int count = po->numsegs; count; count--, segList++, originalPts++)
+	{
+		// Save off originalPts x and y.
+		float tr_x = originalPts->x;
+		float tr_y = originalPts->y;
+
+		// Calculate the rotated x and y into (*segList)->v1.
+		(*segList)->v1->x = tr_x * mcosAngle - tr_y * msinAngle;
+		(*segList)->v1->y = tr_x * msinAngle + tr_y * mcosAngle;
+
+		// Translate (*segList)->v1 to the startSpot
+		*(*segList)->v1 += po->startSpot;
+	}
+
+	// Update the angle and segments.
 	po->angle = angle;
 	UpdatePolySegs(po);
 }
@@ -441,9 +435,12 @@ void CL_PO_Update(int i, float x, float y, float angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/15 18:30:43  dj_jl
+//	Some fixes and improvements suggested by Malcolm Nixon
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
