@@ -126,6 +126,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/menu.o \
 	obj/message.o \
 	obj/misc.o \
+	obj/name.o \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
 	obj/net_main.o \
@@ -161,6 +162,8 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/sv_user.o \
 	obj/sv_world.o \
 	obj/text.o \
+	obj/vclass.o \
+	obj/vobject.o \
 	obj/wad.o \
 	obj/zone.o
 
@@ -216,6 +219,7 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/maths.o \
 	obj/sv/message.o \
 	obj/sv/misc.o \
+	obj/sv/name.o \
 	obj/sv/net_dgrm.o \
 	obj/sv/net_loop.o \
 	obj/sv/net_main.o \
@@ -239,6 +243,8 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/sv_user.o \
 	obj/sv/sv_world.o \
 	obj/sv/sys_bsd.o \
+	obj/sv/vclass.o \
+	obj/sv/vobject.o \
 	obj/sv/wad.o \
 	obj/sv/zone.o
 

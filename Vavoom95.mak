@@ -16,8 +16,10 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\host.obj obj\sys_win.obj \
     obj\misc.obj obj\mapinfo.obj obj\p_setup.obj \
     obj\pr_cmds.obj obj\pr_exec.obj \
-    obj\sc_man.obj obj\maths.obj obj\sizebuf.obj \
+    obj\sc_man.obj obj\maths.obj obj\sizebuf.obj obj\name.obj \
     obj\wad.obj obj\zone.obj obj\message.obj obj\infostr.obj obj\files.obj \
+    \
+    obj\vobject.obj obj\vclass.obj \
     \
     obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_null.obj \
     obj\net_win.obj obj\net_wins.obj obj\net_wipx.obj \
@@ -76,6 +78,7 @@ LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib
 .PATH.CPP = source
 .PATH.ASM = source
 .PATH.RC  = source
+.PATH.S   = source
 # ---------------------------------------------------------------------------
 $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
     ilink32 @&&!
@@ -91,5 +94,10 @@ $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
 
 .rc.res:
     brcc32 $(RFLAGS) -fo$@ $<
-# ---------------------------------------------------------------------------
 
+.s.asm:
+    gcc -x assembler-with-cpp -E -P -DGAS2TASM $< -o obj\temp.i
+    source\gas2tasm.exe < obj\temp.i > $@
+    del obj\temp.i > nul
+
+# ---------------------------------------------------------------------------
