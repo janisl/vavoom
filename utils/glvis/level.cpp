@@ -67,7 +67,7 @@ static void *GLVisMalloc(size_t size)
 	void *ptr = malloc(size);
 	if (!ptr)
 	{
-		throw GLVisError("Couldn't alloc %ld bytes", size);
+		throw GLVisError("Couldn't alloc %d bytes", size);
 	}
 	memset(ptr, 0, size);
 	return ptr;
@@ -124,7 +124,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	base_verts = mainwad->LumpSize(lump) / sizeof(mapvertex_t);
 
 	gldata = glwad->GetLump(gl_lump);
-	if (!strncmp((char*)gldata, GL_V2_VERTEX_MAGIC, 4))
+	if (!strncmp((char*)gldata, GL_V2_MAGIC, 4))
 	{
 		gl_verts = (glwad->LumpSize(gl_lump) - 4) / sizeof(gl_mapvertex_t);
 	}
@@ -153,7 +153,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	//	Save pointer to GL vertexes for seg loading
 	gl_vertexes = li;
 
-	if (!strncmp((char*)gldata, GL_V2_VERTEX_MAGIC, 4))
+	if (!strncmp((char*)gldata, GL_V2_MAGIC, 4))
 	{
 		gl_mapvertex_t*		glml;
 
@@ -303,60 +303,117 @@ void TVisBuilder::LoadSegs(int lump)
 {
 	void*		data;
 	int			i;
-	mapglseg_t*	ml;
 	seg_t*		li;
 
-	numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
-	segs = New<seg_t>(numsegs);
 	data = glwad->GetLump(lump);
-
-	ml = (mapglseg_t *)data;
-	li = segs;
-	numportals = 0;
-
-	for (i = 0; i < numsegs; i++, li++, ml++)
+	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		word	v1num =	LittleShort(ml->v1);
-		word	v2num =	LittleShort(ml->v2);
-
-		if (v1num & GL_VERTEX)
+		numsegs = (glwad->LumpSize(lump) - 4) / sizeof(mapglseg_v3_t);
+		segs = New<seg_t>(numsegs);
+	
+		mapglseg_v3_t* ml = (mapglseg_v3_t*)((byte*)data + 4);
+		li = segs;
+		numportals = 0;
+	
+		for (i = 0; i < numsegs; i++, li++, ml++)
 		{
-			v1num ^= GL_VERTEX;
-			li->v1 = &gl_vertexes[v1num];
+			dword	v1num =	LittleLong(ml->v1);
+			dword	v2num =	LittleLong(ml->v2);
+	
+			if (v1num & GL_VERTEX_V3)
+			{
+				v1num ^= GL_VERTEX_V3;
+				li->v1 = &gl_vertexes[v1num];
+			}
+			else
+			{
+				li->v1 = &vertexes[v1num];
+			}
+			if (v2num & GL_VERTEX_V3)
+			{
+				v2num ^= GL_VERTEX_V3;
+				li->v2 = &gl_vertexes[v2num];
+			}
+			else
+			{
+				li->v2 = &vertexes[v2num];
+			}
+	
+			int partner = LittleLong(ml->partner);
+			if (partner >= 0)
+			{
+				li->partner = &segs[partner];
+				numportals++;
+			}
+	
+			int linenum = LittleShort(ml->linedef);
+			if (linenum >= 0)
+			{
+				li->secnum = lines[linenum].secnum[LittleShort(ml->flags) &
+					GL_SEG_FLAG_SIDE];
+			}
+			else
+			{
+				li->secnum = -1;
+			}
+	
+			//	Calc seg's plane params
+			li->Set2Points(*li->v1, *li->v2);
 		}
-		else
+	}
+	else
+	{
+		numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
+		segs = New<seg_t>(numsegs);
+	
+		mapglseg_t* ml = (mapglseg_t *)data;
+		li = segs;
+		numportals = 0;
+	
+		for (i = 0; i < numsegs; i++, li++, ml++)
 		{
-			li->v1 = &vertexes[v1num];
+			word	v1num =	LittleShort(ml->v1);
+			word	v2num =	LittleShort(ml->v2);
+	
+			if (v1num & GL_VERTEX)
+			{
+				v1num ^= GL_VERTEX;
+				li->v1 = &gl_vertexes[v1num];
+			}
+			else
+			{
+				li->v1 = &vertexes[v1num];
+			}
+			if (v2num & GL_VERTEX)
+			{
+				v2num ^= GL_VERTEX;
+				li->v2 = &gl_vertexes[v2num];
+			}
+			else
+			{
+				li->v2 = &vertexes[v2num];
+			}
+	
+			int partner = LittleShort(ml->partner);
+			if (partner >= 0)
+			{
+				li->partner = &segs[partner];
+				numportals++;
+			}
+	
+			int linenum = LittleShort(ml->linedef);
+			if (linenum >= 0)
+			{
+				li->secnum = lines[linenum].secnum[LittleShort(ml->side)];
+			}
+			else
+			{
+				li->secnum = -1;
+			}
+	
+			//	Calc seg's plane params
+			li->Set2Points(*li->v1, *li->v2);
 		}
-		if (v2num & GL_VERTEX)
-		{
-			v2num ^= GL_VERTEX;
-			li->v2 = &gl_vertexes[v2num];
-		}
-		else
-		{
-			li->v2 = &vertexes[v2num];
-		}
-
-		int partner = LittleShort(ml->partner);
-		if (partner >= 0)
-		{
-			li->partner = &segs[partner];
-			numportals++;
-		}
-
-		int linenum = LittleShort(ml->linedef);
-		if (linenum >= 0)
-		{
-			li->secnum = lines[linenum].secnum[LittleShort(ml->side)];
-		}
-		else
-		{
-			li->secnum = -1;
-		}
-
-		//	Calc seg's plane params
-		li->Set2Points(*li->v1, *li->v2);
 	}
 
 	Free(data);
@@ -374,39 +431,76 @@ void TVisBuilder::LoadSubsectors(int lump)
 {
 	void*				data;
 	int					i;
-	mapsubsector_t*		ms;
 	subsector_t*		ss;
 
-	numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
-	subsectors = New<subsector_t>(numsubsectors);
 	data = glwad->GetLump(lump);
-
-	ms = (mapsubsector_t *)data;
-	ss = subsectors;
-
-	for (i = 0; i < numsubsectors; i++, ss++, ms++)
+	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		//	Set seg subsector links
-		int count = (word)LittleShort(ms->numsegs);
-		seg_t *line = &segs[(word)LittleShort(ms->firstseg)];
-		ss->secnum = -1;
-		while (count--)
+		numsubsectors = (glwad->LumpSize(lump) - 4) / 
+			sizeof(mapglsubsector_v3_t);
+		subsectors = New<subsector_t>(numsubsectors);
+	
+		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data + 4);
+		ss = subsectors;
+	
+		for (i = 0; i < numsubsectors; i++, ss++, ms++)
 		{
-			line->leaf = i;
-			if (ss->secnum == -1 && line->secnum >= 0)
+			//	Set seg subsector links
+			int count = LittleLong(ms->numsegs);
+			seg_t *line = &segs[LittleLong(ms->firstseg)];
+			ss->secnum = -1;
+			while (count--)
 			{
-				ss->secnum = line->secnum;
+				line->leaf = i;
+				if (ss->secnum == -1 && line->secnum >= 0)
+				{
+					ss->secnum = line->secnum;
+				}
+				else if (ss->secnum != -1 && line->secnum >= 0 &&
+					ss->secnum != line->secnum)
+				{
+					Owner.DisplayMessage("Segs from different sectors\n");
+				}
+				line++;
 			}
-			else if (ss->secnum != -1 && line->secnum >= 0 &&
-				ss->secnum != line->secnum)
+			if (ss->secnum == -1)
 			{
-				Owner.DisplayMessage("Segs from different sectors\n");
+				throw GLVisError("Subsector without sector");
 			}
-			line++;
 		}
-		if (ss->secnum == -1)
+	}
+	else
+	{
+		numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
+		subsectors = New<subsector_t>(numsubsectors);
+	
+		mapsubsector_t* ms = (mapsubsector_t *)data;
+		ss = subsectors;
+	
+		for (i = 0; i < numsubsectors; i++, ss++, ms++)
 		{
-			throw GLVisError("Subsector without sector");
+			//	Set seg subsector links
+			int count = (word)LittleShort(ms->numsegs);
+			seg_t *line = &segs[(word)LittleShort(ms->firstseg)];
+			ss->secnum = -1;
+			while (count--)
+			{
+				line->leaf = i;
+				if (ss->secnum == -1 && line->secnum >= 0)
+				{
+					ss->secnum = line->secnum;
+				}
+				else if (ss->secnum != -1 && line->secnum >= 0 &&
+					ss->secnum != line->secnum)
+				{
+					Owner.DisplayMessage("Segs from different sectors\n");
+				}
+				line++;
+			}
+			if (ss->secnum == -1)
+			{
+				throw GLVisError("Subsector without sector");
+			}
 		}
 	}
 
@@ -800,9 +894,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/10/11 06:49:04  dj_jl
+//	Added support for version 3.0 GL nodes.
+//
 //	Revision 1.9  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2002/01/03 18:35:14  dj_jl
 //	Switched to doubles, some fixes
 //	

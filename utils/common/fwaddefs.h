@@ -22,11 +22,14 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+
 //==========================================================================
 //
 //	WAD file types
 //
 //==========================================================================
+
+#pragma pack(push, 1)
 
 typedef struct
 {
@@ -45,12 +48,17 @@ typedef struct
     
 } filelump_t;
 
+#pragma pack(pop)
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/10/11 06:49:04  dj_jl
+//	Added support for version 3.0 GL nodes.
+//
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/24 17:28:45  dj_jl
 //	Beautification
 //	

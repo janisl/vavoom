@@ -37,6 +37,8 @@
 
 // TYPES -------------------------------------------------------------------
 
+#pragma pack(push, 1)
+
 struct mmdl_t
 {
 	int			ident;
@@ -88,6 +90,8 @@ struct trivertx_t
 	byte		lightnormalindex;
 };
 
+#pragma pack(pop)
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -95,9 +99,12 @@ struct trivertx_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2004/10/11 06:49:04  dj_jl
+//	Added support for version 3.0 GL nodes.
+//
 //	Revision 1.2  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/09/24 17:29:18  dj_jl
 //	Beautification
 //	

@@ -51,7 +51,7 @@ class TGLVis
 {
  public:
 	TGLVis(void) : Malloc(NULL), Free(NULL), fastvis(false), verbose(false),
-		testlevel(2), num_specified_maps(0)
+		no_reject(false), testlevel(2), num_specified_maps(0)
 	{
 	}
 
@@ -85,9 +85,12 @@ class TGLVis
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/10/11 06:49:04  dj_jl
+//	Added support for version 3.0 GL nodes.
+//
 //	Revision 1.7  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/10/18 17:41:47  dj_jl
 //	Added reject building
 //	
