@@ -365,7 +365,7 @@ struct mthing_t
 	int 		arg5;
 };
 
-#define MAX_MOBJS	2048	//	Temporary limit required by client/server
+#define MAX_MOBJS	4096	//	Temporary limit required by client/server
 
 //==========================================================================
 //
@@ -481,9 +481,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/28 17:59:54  dj_jl
+//	Increased maximal object count.
+//
 //	Revision 1.19  2002/01/25 18:08:19  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.18  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
 //	
