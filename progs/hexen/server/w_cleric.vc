@@ -23,25 +23,24 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponClericMace
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class WeaponClericMace:Weapon
+{
 
 //===========================================================================
 //
-//  Weapon::A_CMaceAttack
+//  A_CMaceAttack
 //
 //===========================================================================
 
-void Weapon::A_CMaceAttack(void)
+void A_CMaceAttack(void)
 {
 	int damage;
 	int i;
@@ -80,8 +79,6 @@ void Weapon::A_CMaceAttack(void)
 		}
 	}
 	// didn't find any creatures, so try to strike any walls
-	Player->mo->Special1 = 0;
-
 	avcpy(Player->mo->Angles, angles);
 	AimLineAttack(Player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
@@ -91,39 +88,91 @@ void Weapon::A_CMaceAttack(void)
 	}
 }
 
+__states__
+{
+	S_CMACEREADY('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) { A_WeaponReady(); }
+	S_CMACEDOWN('CMCE', 0, 1.0 / 35.0, S_CMACEDOWN) { A_Lower(); }
+	S_CMACEUP('CMCE', 0, 1.0 / 35.0, S_CMACEUP) { A_Raise(); }
+	S_CMACEATK_1('CMCE', 1, 2.0 / 35.0, S_CMACEATK_2) { SX = 60.0; SY = 20.0; }
+	S_CMACEATK_2('CMCE', 1, 1.0 / 35.0, S_CMACEATK_3) { SX = 30.0; SY = 33.0; }
+	S_CMACEATK_3('CMCE', 1, 2.0 / 35.0, S_CMACEATK_4) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_4('CMCE', 2, 1.0 / 35.0, S_CMACEATK_5) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_5('CMCE', 3, 1.0 / 35.0, S_CMACEATK_6) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_6('CMCE', 4, 1.0 / 35.0, S_CMACEATK_7) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_7('CMCE', 4, 1.0 / 35.0, S_CMACEATK_8) { SX = -11.0; SY = 58.0; A_CMaceAttack(); }
+	S_CMACEATK_8('CMCE', 5, 1.0 / 35.0, S_CMACEATK_9) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_9('CMCE', 5, 2.0 / 35.0, S_CMACEATK_10) { SX = -8.0; SY = 74.0; }
+	S_CMACEATK_10('CMCE', 5, 1.0 / 35.0, S_CMACEATK_11) { SX = -20.0; SY = 96.0; }
+	S_CMACEATK_11('CMCE', 5, 8.0 / 35.0, S_CMACEATK_12) { SX = -33.0; SY = 160.0; }
+	S_CMACEATK_12('CMCE', 0, 2.0 / 35.0, S_CMACEATK_13) { SX = 8.0; SY = 75.0; A_ReFire(); }
+	S_CMACEATK_13('CMCE', 0, 1.0 / 35.0, S_CMACEATK_14) { SX = 8.0; SY = 65.0; }
+	S_CMACEATK_14('CMCE', 0, 2.0 / 35.0, S_CMACEATK_15) { SX = 8.0; SY = 60.0; }
+	S_CMACEATK_15('CMCE', 0, 1.0 / 35.0, S_CMACEATK_16) { SX = 8.0; SY = 55.0; }
+	S_CMACEATK_16('CMCE', 0, 2.0 / 35.0, S_CMACEATK_17) { SX = 8.0; SY = 50.0; }
+	S_CMACEATK_17('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) { SX = 8.0; SY = 45.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_CMACEUP;
+	DownState = S_CMACEDOWN;
+	ReadyState = S_CMACEREADY;
+	AttackState = S_CMACEATK_1;
+	HoldAttackState = S_CMACEATK_1;
+	PSpriteSY = -8.0;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponClericStaff
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponClericStaff:Weapon
+{
+
+int BlinkCount;
+int BlinkState;
+int Attack2State;
+
 //============================================================================
 //
-//  Weapon::A_CStaffInitBlink
+//  A_CStaffInitBlink
 //
 //============================================================================
 
-void Weapon::A_CStaffInitBlink(void)
+void A_CStaffInitBlink(void)
 {
-	Player->mo->Special1 = (P_Random() >> 1) + 20;
+	BlinkCount = (P_Random() >> 1) + 20;
 }
 
 //============================================================================
 //
-//  Weapon::A_CStaffCheckBlink
+//  A_CStaffCheckBlink
 //
 //============================================================================
 
-void Weapon::A_CStaffCheckBlink(void)
+void A_CStaffCheckBlink(void)
 {
-	if (!--Player->mo->Special1)
+	if (!--BlinkCount)
 	{
-		SetPsprite(Player, ps_weapon, S_CSTAFFBLINK1);
-		Player->mo->Special1 = (P_Random() + 50) >> 2;
+		SetState(BlinkState);
+		BlinkCount = (P_Random() + 50) >> 2;
 	}
 }
 
 //============================================================================
 //
-//  Weapon::A_CStaffCheck
+//  A_CStaffCheck
 //
 //============================================================================
 
-void Weapon::A_CStaffCheck(void)
+void A_CStaffCheck(void)
 {
 	mobj_t *pmo;
 	int damage;
@@ -153,7 +202,7 @@ void Weapon::A_CStaffCheck(void)
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo->Health = newLife;
 				Player->Health = newLife;
-				SetPsprite(Player, ps_weapon, S_CSTAFFATK2_1);
+				SetState(Attack2State);
 			}
 			Player->Mana[MANA_1] -=
 				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
@@ -174,7 +223,7 @@ void Weapon::A_CStaffCheck(void)
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo->Health = newLife;
 				Player->Health = pmo->Health;
-				SetPsprite(Player, ps_weapon, S_CSTAFFATK2_1);
+				SetState(Attack2State);
 			}
 			Player->Mana[MANA_1] -=
 				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
@@ -185,11 +234,11 @@ void Weapon::A_CStaffCheck(void)
 
 //============================================================================
 //
-//  Weapon::A_CStaffAttack
+//  A_CStaffAttack
 //
 //============================================================================
 
-void Weapon::A_CStaffAttack(void)
+void A_CStaffAttack(void)
 {
 	Actor mo;
 	mobj_t *pmo;
@@ -201,16 +250,235 @@ void Weapon::A_CStaffAttack(void)
 		pmo->Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		mo.Special2 = 32;
+		mo._Special2 = 32;
 	}
 	mo = pmo->SpawnPlayerMissileAngle(ClericStaffMissile,
 		pmo->Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		mo.Special2 = 0;
+		mo._Special2 = 0;
 	}
 	Player->mo->PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
+
+__states__
+{
+	S_CSTAFFREADY('CSSF', 2, 4.0 / 35.0, S_CSTAFFREADY1) { }
+	S_CSTAFFREADY1('CSSF', 1, 3.0 / 35.0, S_CSTAFFREADY2) { A_CStaffInitBlink(); }
+	S_CSTAFFREADY2('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY3) { A_WeaponReady(); }
+	S_CSTAFFREADY3('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY4) { A_WeaponReady(); }
+	S_CSTAFFREADY4('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY5) { A_WeaponReady(); }
+	S_CSTAFFREADY5('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY6) { A_WeaponReady(); }
+	S_CSTAFFREADY6('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY7) { A_WeaponReady(); }
+	S_CSTAFFREADY7('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY8) { A_WeaponReady(); }
+	S_CSTAFFREADY8('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY9) { A_WeaponReady(); }
+	S_CSTAFFREADY9('CSSF', 0, 1.0 / 35.0, S_CSTAFFREADY2) { A_CStaffCheckBlink(); }
+	S_CSTAFFBLINK1('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK2) { A_WeaponReady(); }
+	S_CSTAFFBLINK2('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK3) { A_WeaponReady(); }
+	S_CSTAFFBLINK3('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK4) { A_WeaponReady(); }
+	S_CSTAFFBLINK4('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK5) { A_WeaponReady(); }
+	S_CSTAFFBLINK5('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK6) { A_WeaponReady(); }
+	S_CSTAFFBLINK6('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK7) { A_WeaponReady(); }
+	S_CSTAFFBLINK7('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK8) { A_WeaponReady(); }
+	S_CSTAFFBLINK8('CSSF', 2, 1.0 / 35.0, S_CSTAFFBLINK9) { A_WeaponReady(); }
+	S_CSTAFFBLINK9('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK10) { A_WeaponReady(); }
+	S_CSTAFFBLINK10('CSSF', 1, 1.0 / 35.0, S_CSTAFFBLINK11) { A_WeaponReady(); }
+	S_CSTAFFBLINK11('CSSF', 1, 1.0 / 35.0, S_CSTAFFREADY2) { A_WeaponReady(); }
+	S_CSTAFFDOWN('CSSF', 1, 3.0 / 35.0, S_CSTAFFDOWN2) { }
+	S_CSTAFFDOWN2('CSSF', 2, 4.0 / 35.0, S_CSTAFFDOWN3) { }
+	S_CSTAFFDOWN3('CSSF', 2, 1.0 / 35.0, S_CSTAFFDOWN3) { A_Lower(); }
+	S_CSTAFFUP('CSSF', 2, 1.0 / 35.0, S_CSTAFFUP) { A_Raise(); }
+	S_CSTAFFATK_1('CSSF', 0, 1.0 / 35.0, S_CSTAFFATK_2) { SY = 45.0; A_CStaffCheck(); }
+	S_CSTAFFATK_2('CSSF', 9, 1.0 / 35.0, S_CSTAFFATK_3) { SY = 50.0; A_CStaffAttack(); }
+	S_CSTAFFATK_3('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_4) { SY = 50.0; }
+	S_CSTAFFATK_4('CSSF', 9, 2.0 / 35.0, S_CSTAFFATK_5) { SY = 45.0; }
+	S_CSTAFFATK_5('CSSF', 0, 2.0 / 35.0, S_CSTAFFATK_6) { SY = 40.0; }
+	S_CSTAFFATK_6('CSSF', 0, 2.0 / 35.0, S_CSTAFFREADY2) { SY = 36.0; }
+	S_CSTAFFATK2_1('CSSF', 10, 10.0 / 35.0, S_CSTAFFREADY2) { SY = 36.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_1;
+	UpState = S_CSTAFFUP;
+	DownState = S_CSTAFFDOWN;
+	ReadyState = S_CSTAFFREADY;
+	BlinkState = S_CSTAFFBLINK1;
+	AttackState = S_CSTAFFATK_1;
+	HoldAttackState = S_CSTAFFATK_1;
+	Attack2State = S_CSTAFFATK2_1;
+	PSpriteSY = 10.0;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponClericFire
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponClericFire:Weapon
+{
+
+//============================================================================
+//
+//  A_CFlameAttack
+//
+//============================================================================
+
+void A_CFlameAttack(void)
+{
+	Actor mo;
+
+	mo = Player->mo->SpawnPlayerMissile(ClericFlameMissile);
+	if (mo)
+	{
+		mo.bBlaster = true;
+		mo._Special1 = 2;
+	}
+
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->mo->PlaySound('ClericFlameFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_CFLAMEREADY1('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY2) { A_WeaponReady(); }
+	S_CFLAMEREADY2('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY3) { A_WeaponReady(); }
+	S_CFLAMEREADY3('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY4) { A_WeaponReady(); }
+	S_CFLAMEREADY4('CFLM', 0, 1.0 / 35.0, S_CFLAMEREADY5) { A_WeaponReady(); }
+	S_CFLAMEREADY5('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY6) { A_WeaponReady(); }
+	S_CFLAMEREADY6('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY7) { A_WeaponReady(); }
+	S_CFLAMEREADY7('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY8) { A_WeaponReady(); }
+	S_CFLAMEREADY8('CFLM', 1, 1.0 / 35.0, S_CFLAMEREADY9) { A_WeaponReady(); }
+	S_CFLAMEREADY9('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY10) { A_WeaponReady(); }
+	S_CFLAMEREADY10('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY11) { A_WeaponReady(); }
+	S_CFLAMEREADY11('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY12) { A_WeaponReady(); }
+	S_CFLAMEREADY12('CFLM', 2, 1.0 / 35.0, S_CFLAMEREADY1) { A_WeaponReady(); }
+	S_CFLAMEDOWN('CFLM', 0, 1.0 / 35.0, S_CFLAMEDOWN) { A_Lower(); }
+	S_CFLAMEUP('CFLM', 0, 1.0 / 35.0, S_CFLAMEUP) { A_Raise(); }
+	S_CFLAMEATK_1('CFLM', 0, 2.0 / 35.0, S_CFLAMEATK_2) { SY = 40.0; }
+	S_CFLAMEATK_2('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_3) { SY = 50.0; }
+	S_CFLAMEATK_3('CFLM', 3, 2.0 / 35.0, S_CFLAMEATK_4) { SY = 36.0; }
+	S_CFLAMEATK_4('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_5) { }
+	S_CFLAMEATK_5('CFLM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_6) { A_CFlameAttack(); }
+	S_CFLAMEATK_6('CFLM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAMEATK_7) { }
+	S_CFLAMEATK_7('CFLM', 6, 2.0 / 35.0, S_CFLAMEATK_8) { SY = 40.0; }
+	S_CFLAMEATK_8('CFLM', 6, 2.0 / 35.0, S_CFLAMEREADY1) { }
+}
+
+defaultproperties
+{
+	Mana = MANA_2;
+	UpState = S_CFLAMEUP;
+	DownState = S_CFLAMEDOWN;
+	ReadyState = S_CFLAMEREADY1;
+	AttackState = S_CFLAMEATK_1;
+	HoldAttackState = S_CFLAMEATK_1;
+	PSpriteSY = 10.0;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponClericHoly
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponClericHoly:Weapon
+{
+
+//============================================================================
+//
+//  A_CHolyAttack
+//
+//============================================================================
+
+void A_CHolyAttack(void)
+{
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->mo->SpawnPlayerMissile(HolyMissile);
+	Player->DamageCount = 0;
+	Player->BonusCount = 0;
+	Player->WeaponPalette = STARTHOLYPAL;
+	Player->mo->PlaySound('HolySymbolFire', CHAN_WEAPON);
+}
+
+//============================================================================
+//
+//  A_CHolyPalette1
+//
+//============================================================================
+
+void A_CHolyPalette1(void)
+{
+	Player->WeaponPalette = STARTHOLYPAL + 1;
+}
+
+//============================================================================
+//
+//  A_CHolyPalette2
+//
+//============================================================================
+
+void A_CHolyPalette2(void)
+{
+	Player->WeaponPalette = STARTHOLYPAL + 2;
+}
+
+//============================================================================
+//
+//  A_CHolyPalette3
+//
+//============================================================================
+
+void A_CHolyPalette3(void)
+{
+	// reset back to original playpal
+	Player->WeaponPalette = 0;
+}
+
+__states__
+{
+	S_CHOLYREADY('CHLY', 0, 1.0 / 35.0, S_CHOLYREADY) { A_WeaponReady(); }
+	S_CHOLYDOWN('CHLY', 0, 1.0 / 35.0, S_CHOLYDOWN) { A_Lower(); }
+	S_CHOLYUP('CHLY', 0, 1.0 / 35.0, S_CHOLYUP) { A_Raise(); }
+	S_CHOLYATK_1('CHLY', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_2) { SY = 40.0; }
+	S_CHOLYATK_2('CHLY', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_3) { SY = 40.0; }
+	S_CHOLYATK_3('CHLY', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_4) { SY = 43.0; }
+	S_CHOLYATK_4('CHLY', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_5) { SY = 43.0; }
+	S_CHOLYATK_5('CHLY', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_6) { SY = 45.0; }
+	S_CHOLYATK_6('CHLY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_CHOLYATK_7) { SY = 48.0; A_CHolyAttack(); }
+	S_CHOLYATK_7('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_8) { SY = 40.0; A_CHolyPalette1(); }
+	S_CHOLYATK_8('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_9) { SY = 40.0; A_CHolyPalette2(); }
+	S_CHOLYATK_9('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYREADY) { SY = 36.0; A_CHolyPalette3(); }
+}
+
+defaultproperties
+{
+	Mana = MANA_BOTH;
+	UpState = S_CHOLYUP;
+	DownState = S_CHOLYDOWN;
+	ReadyState = S_CHOLYREADY;
+	AttackState = S_CHOLYATK_1;
+	HoldAttackState = S_CHOLYATK_1;
+	PSpriteSY = 0.0;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //============================================================================
 //
@@ -224,7 +492,7 @@ void Actor::A_CStaffMissileSlither(void)
 	int weaveXY;
 	float angle;
 
-	weaveXY = Special2;
+	weaveXY = _Special2;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY];
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY];
@@ -232,29 +500,7 @@ void Actor::A_CStaffMissileSlither(void)
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
 	P_TryMove(this, newX, newY);
-	Special2 = weaveXY;
-}
-
-//============================================================================
-//
-//  Weapon::A_CFlameAttack
-//
-//============================================================================
-
-void Weapon::A_CFlameAttack(void)
-{
-	Actor mo;
-
-	mo = Player->mo->SpawnPlayerMissile(ClericFlameMissile);
-	if (mo)
-	{
-		mo.bBlaster = true;
-		mo.Special1 = 2;
-	}
-
-	Player->Mana[MANA_2] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->mo->PlaySound('ClericFlameFire', CHAN_WEAPON);
+	_Special2 = weaveXY;
 }
 
 //============================================================================
@@ -347,44 +593,6 @@ void Actor::A_CFlamePuff(void)
 
 //============================================================================
 //
-//  Weapon::A_CHolyAttack
-//
-//============================================================================
-
-void Weapon::A_CHolyAttack(void)
-{
-	Player->Mana[MANA_1] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->Mana[MANA_2] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->mo->SpawnPlayerMissile(HolyMissile);
-	Player->DamageCount = 0;
-	Player->BonusCount = 0;
-	Player->WeaponPalette = STARTHOLYPAL;
-	Player->mo->PlaySound('HolySymbolFire', CHAN_WEAPON);
-}
-
-//============================================================================
-//
-//  Weapon::A_CHolyPalette
-//
-//============================================================================
-
-void Weapon::A_CHolyPalette(void)
-{
-	int pal;
-
-	pal = STARTHOLYPAL + StateNum - S_CHOLYATK_6;
-	if (pal == STARTHOLYPAL + 3)
-	{
-		// reset back to original playpal
-		pal = 0;
-	}
-	Player->WeaponPalette = pal;
-}
-
-//============================================================================
-//
 //  Actor::A_CHolyAttack2
 //
 //  Spawns the spirits
@@ -409,16 +617,16 @@ void Actor::A_CHolyAttack2(void)
 		switch (j)
 		{	// float bob index
 		case 0:
-			mo->Special2 = P_Random() & 7;	// upper-left
+			mo->_Special2 = P_Random() & 7;	// upper-left
 			break;
 		case 1:
-			mo->Special2 = 32 + (P_Random() & 7);	// upper-right
+			mo->_Special2 = 32 + (P_Random() & 7);	// upper-right
 			break;
 		case 2:
-			mo->Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
+			mo->_Special2 = (32 + (P_Random() & 7)) << 16;	// lower-left
 			break;
 		case 3:
-			mo->Special2 =
+			mo->_Special2 =
 				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
 			break;
 		}
@@ -436,7 +644,7 @@ void Actor::A_CHolyAttack2(void)
 		}
 		if (linetarget)
 		{
-			mo->SpecialMobj1 = linetarget;
+			mo->Target = *linetarget;
 			mo->bNoClip = true;
 			mo->bSkullFly = true;
 			mo->bMissile = false;
@@ -449,10 +657,10 @@ void Actor::A_CHolyAttack2(void)
 			next = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
 				HolyTail);
 			next->SetState(next->SpawnState + 1);
-			tail->SpecialMobj1 = next;
+			tail->_SpecialMobj1 = next;
 			tail = next;
 		}
-		tail->SpecialMobj1 = NULL;	// last tail bit
+		tail->_SpecialMobj1 = NULL;	// last tail bit
 	}
 }
 
@@ -469,7 +677,7 @@ void Actor::CHolyFindTarget(void)
 	targ = RoughMonsterSearch(6);
 	if (targ)
 	{
-		SpecialMobj1 = &targ;
+		Target = targ;
 		bNoClip = true;
 		bSkullFly = true;
 		bMissile = false;
@@ -490,26 +698,24 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	float dist;
 	float delta;
 	float angle;
-	mobj_t *targ;
 	float newZ;
 	float deltaZ;
 
-	targ = SpecialMobj1;
-	if (!targ)
+	if (!Target)
 	{
 		return;
 	}
-	if (!targ->bShootable || (!targ->bCountKill && !targ->bIsPlayer))
+	if (!Target.bShootable || (!Target.bCountKill && !Target.bIsPlayer))
 	{
 		// Target died/target isn't a player or creature
-		SpecialMobj1 = NULL;
+		Target = none;
 		bNoClip = false;
 		bSkullFly = false;
 		bMissile = true;
 		CHolyFindTarget();
 		return;
 	}
-	dir = FaceActor(*targ, &delta);
+	dir = FaceActor(Target, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -533,10 +739,10 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
 	if (!(level->tictime & 15) ||
-		Origin.z > targ->Origin.z + targ->Height ||
-		Origin.z + Height < targ->Origin.z)
+		Origin.z > Target.Origin.z + Target.Height ||
+		Origin.z + Height < Target.Origin.z)
 	{
-		newZ = targ->Origin.z + Random() * targ->Height;
+		newZ = Target.Origin.z + Random() * Target.Height;
 		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -549,7 +755,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(*targ, self);
+		dist = MobjDist2(Target, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -572,8 +778,8 @@ void Actor::CHolyWeave(void)
 	int weaveXY, weaveZ;
 	float angle;
 
-	weaveXY = Special2 >> 16;
-	weaveZ = Special2 & 0xFFFF;
+	weaveXY = _Special2 >> 16;
+	weaveZ = _Special2 & 0xFFFF;
 	angle = AngleMod360(Angles.yaw + 90.0);
 	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
@@ -584,7 +790,7 @@ void Actor::CHolyWeave(void)
 	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
 	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	Special2 = weaveZ + (weaveXY << 16);
+	_Special2 = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -605,7 +811,7 @@ void Actor::A_CHolySeek(void)
 		StateTime -= Random() * 0.1;
 		return;
 	}
-	if (SpecialMobj1)
+	if (Target)
 	{
 		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
@@ -629,7 +835,7 @@ void Actor::A_CHolyCheckScream(void)
 	{
 		PlaySound('SpiritActive', CHAN_VOICE);
 	}
-	if (!SpecialMobj1)
+	if (!Target)
 	{
 		CHolyFindTarget();
 	}
@@ -647,7 +853,7 @@ void Actor::CHolyTailFollow(float dist)
 	float an;
 	float oldDistance, newDistance;
 
-	child = SpecialMobj1;
+	child = _SpecialMobj1;
 	if (child)
 	{
 		an = atan2(child->Origin.y - Origin.y,
@@ -688,7 +894,7 @@ void Actor::CHolyTailRemove(void)
 {
 	mobj_t *child;
 
-	child = SpecialMobj1;
+	child = _SpecialMobj1;
 	if (child)
 	{
 		child->CHolyTailRemove();
@@ -740,6 +946,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:35:55  dj_jl
+//  Weapon classes
+//
 //  Revision 1.19  2002/02/26 17:49:49  dj_jl
 //  no message
 //

@@ -29,24 +29,24 @@
 //**
 //**************************************************************************
 
-void set_weapon_fist(player_t * player);
-void set_weapon_crossbow(player_t * player);
-void set_weapon_riffle(player_t * player);
-void set_weapon_missile(player_t * player);
-void set_weapon_grenade(player_t * player);
-void set_weapon_flame(player_t * player);
-void set_weapon_blaster(player_t * player);
-void set_weapon_sigil(player_t * player);
+class WeaponFist;
+class WeaponCrossbow;
+class WeaponRiffle;
+class WeaponMissile;
+class WeaponGrenade;
+class WeaponFlamethrower;
+class WeaponBlaster;
+class WeaponSigil;
 
-weapon_func_t weaponinfo[] = {
-	set_weapon_fist,
-	set_weapon_crossbow,
-	set_weapon_riffle,
-	set_weapon_missile,
-	set_weapon_grenade,
-	set_weapon_flame,
-	set_weapon_blaster,
-	set_weapon_sigil,
+classid WeaponClasses[] = {
+	WeaponFist,
+	WeaponCrossbow,
+	WeaponRiffle,
+	WeaponMissile,
+	WeaponGrenade,
+	WeaponFlamethrower,
+	WeaponBlaster,
+	WeaponSigil,
 };
 
 int weapon_ammo_type[] = {
@@ -60,145 +60,12 @@ int weapon_ammo_type[] = {
 	am_noammo,
 };
 
-//==========================================================================
-//
-//  set_weapon_fist
-//
-//==========================================================================
-
-void set_weapon_fist(player_t * player)
-{
-	player->w_Ammo = am_noammo;
-	player->w_UpState = S_PUNCHUP;
-	player->w_DownState = S_PUNCHDOWN;
-	player->w_ReadyState = S_PUNCH;
-	player->w_AttackState = S_PUNCH1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_LIGHTDONE;
-}
-
-//==========================================================================
-//
-//  set_weapon_crossbow
-//
-//==========================================================================
-
-void set_weapon_crossbow(player_t * player)
-{
-	player->w_Ammo = am_electric_arrow;
-	player->w_UpState = S_XBOWUP;
-	player->w_DownState = S_XBOWDOWN;
-	player->w_ReadyState = S_XBOW;
-	player->w_AttackState = S_XBOW1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_LIGHTDONE;
-}
-
-//==========================================================================
-//
-//  set_weapon_riffle
-//
-//==========================================================================
-
-void set_weapon_riffle(player_t * player)
-{
-	player->w_Ammo = am_clip;
-	player->w_UpState = S_RIFFLEUP;
-	player->w_DownState = S_RIFFLEDOWN;
-	player->w_ReadyState = S_RIFFLE;
-	player->w_AttackState = S_RIFFLE1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_LIGHTDONE;
-}
-
-//==========================================================================
-//
-//  set_weapon_missile
-//
-//==========================================================================
-
-void set_weapon_missile(player_t * player)
-{
-	player->w_Ammo = am_misl;
-	player->w_UpState = S_MISSILEUP;
-	player->w_DownState = S_MISSILEDOWN;
-	player->w_ReadyState = S_MISSILE;
-	player->w_AttackState = S_MISSILE1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_grenade
-//
-//==========================================================================
-
-void set_weapon_grenade(player_t * player)
-{
-	player->w_Ammo = am_grenade1;
-	player->w_UpState = S_GRENADEUP;
-	player->w_DownState = S_GRENADEDOWN;
-	player->w_ReadyState = S_GRENADE;
-	player->w_AttackState = S_GRENADE1;
-	player->w_HoldAttackState = S_GRENADEFLASH1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_flame
-//
-//==========================================================================
-
-void set_weapon_flame(player_t * player)
-{
-	player->w_Ammo = am_cell;
-	player->w_UpState = S_FLAMEUP;
-	player->w_DownState = S_FLAMEDOWN;
-	player->w_ReadyState = S_FLAME;
-	player->w_AttackState = S_FLAME1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_LIGHTDONE;
-}
-
-//==========================================================================
-//
-//  set_weapon_blaster
-//
-//==========================================================================
-
-void set_weapon_blaster(player_t * player)
-{
-	player->w_Ammo = am_cell;
-	player->w_UpState = S_BLASTERUP;
-	player->w_DownState = S_BLASTERDOWN;
-	player->w_ReadyState = S_BLASTER;
-	player->w_AttackState = S_BLASTER1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_sigil
-//
-//==========================================================================
-
-void set_weapon_sigil(player_t * player)
-{
-	player->w_Ammo = am_noammo;
-	player->w_UpState = S_SIGILUP;
-	player->w_DownState = S_SIGILDOWN;
-	player->w_ReadyState = S_SIGIL;
-	player->w_AttackState = S_SIGIL1;
-	player->w_HoldAttackState = S_SIGILFLASH1;
-	player->w_FlashState = S_NULL;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/03/02 17:35:56  dj_jl
+//  Weapon classes
+//
 //  Revision 1.5  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

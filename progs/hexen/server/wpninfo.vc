@@ -29,317 +29,45 @@
 //**
 //**************************************************************************
 
-void set_weapon_fighter_first(player_t * player);
-void set_weapon_cleric_first(player_t * player);
-void set_weapon_mage_first(player_t * player);
-void set_weapon_pig_first(player_t * player);
-void set_weapon_fighter_second(player_t * player);
-void set_weapon_cleric_second(player_t * player);
-void set_weapon_mage_second(player_t * player);
-void set_weapon_pig_second(player_t * player);
-void set_weapon_fighter_third(player_t * player);
-void set_weapon_cleric_third(player_t * player);
-void set_weapon_mage_third(player_t * player);
-void set_weapon_pig_third(player_t * player);
-void set_weapon_fighter_fourth(player_t * player);
-void set_weapon_cleric_fourth(player_t * player);
-void set_weapon_mage_fourth(player_t * player);
-void set_weapon_pig_fourth(player_t * player);
+class WeaponFighterPunch;
+class WeaponFighterAxe;
+class WeaponFighterHammer;
+class WeaponFighterSword;
+class WeaponClericMace;
+class WeaponClericStaff;
+class WeaponClericFire;
+class WeaponClericHoly;
+class WeaponMageWand;
+class WeaponMageCone;
+class WeaponMageLightning;
+class WeaponMageStaff;
+class WeaponPigSnout;
 
-weapon_func_t weaponinfo[] = {
-	set_weapon_fighter_first,
-	set_weapon_cleric_first,
-	set_weapon_mage_first,
-	set_weapon_pig_first,
-	set_weapon_fighter_second,
-	set_weapon_cleric_second,
-	set_weapon_mage_second,
-	set_weapon_pig_second,
-	set_weapon_fighter_third,
-	set_weapon_cleric_third,
-	set_weapon_mage_third,
-	set_weapon_pig_third,
-	set_weapon_fighter_fourth,
-	set_weapon_cleric_fourth,
-	set_weapon_mage_fourth,
-	set_weapon_pig_fourth,
+classid WeaponClasses[] = {
+	WeaponFighterPunch,
+	WeaponClericMace,
+	WeaponMageWand,
+	WeaponPigSnout,
+	WeaponFighterAxe,
+	WeaponClericStaff,
+	WeaponMageCone,
+	WeaponPigSnout,
+	WeaponFighterHammer,
+	WeaponClericFire,
+	WeaponMageLightning,
+	WeaponPigSnout,
+	WeaponFighterSword,
+	WeaponClericHoly,
+	WeaponMageStaff,
+	WeaponPigSnout,
 };
-
-//==========================================================================
-//
-//  set_weapon_fighter_first
-//
-//==========================================================================
-
-void set_weapon_fighter_first(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_PUNCHUP;
-	player->w_DownState = S_PUNCHDOWN;
-	player->w_ReadyState = S_PUNCHREADY;
-	player->w_AttackState = S_PUNCHATK1_1;
-	player->w_HoldAttackState = S_PUNCHATK1_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_cleric_first
-//
-//==========================================================================
-
-void set_weapon_cleric_first(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_CMACEUP;
-	player->w_DownState = S_CMACEDOWN;
-	player->w_ReadyState = S_CMACEREADY;
-	player->w_AttackState = S_CMACEATK_1;
-	player->w_HoldAttackState = S_CMACEATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_mage_first
-//
-//==========================================================================
-
-void set_weapon_mage_first(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_MWANDUP;
-	player->w_DownState = S_MWANDDOWN;
-	player->w_ReadyState = S_MWANDREADY;
-	player->w_AttackState = S_MWANDATK_1;
-	player->w_HoldAttackState = S_MWANDATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_pig_first
-//
-//==========================================================================
-
-void set_weapon_pig_first(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_SNOUTUP;
-	player->w_DownState = S_SNOUTDOWN;
-	player->w_ReadyState = S_SNOUTREADY;
-	player->w_AttackState = S_SNOUTATK1;
-	player->w_HoldAttackState = S_SNOUTATK1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_fighter_second
-//
-//==========================================================================
-
-void set_weapon_fighter_second(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_FAXEUP;
-	player->w_DownState = S_FAXEDOWN;
-	player->w_ReadyState = S_FAXEREADY;
-	player->w_AttackState = S_FAXEATK_1;
-	player->w_HoldAttackState = S_FAXEATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_cleric_second
-//
-//==========================================================================
-
-void set_weapon_cleric_second(player_t * player)
-{
-	player->w_Mana = MANA_1;
-	player->w_UpState = S_CSTAFFUP;
-	player->w_DownState = S_CSTAFFDOWN;
-	player->w_ReadyState = S_CSTAFFREADY;
-	player->w_AttackState = S_CSTAFFATK_1;
-	player->w_HoldAttackState = S_CSTAFFATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_mage_second
-//
-//==========================================================================
-
-void set_weapon_mage_second(player_t * player)
-{
-	player->w_Mana = MANA_1;
-	player->w_UpState = S_CONEUP;
-	player->w_DownState = S_CONEDOWN;
-	player->w_ReadyState = S_CONEREADY;
-	player->w_AttackState = S_CONEATK1_1;
-	player->w_HoldAttackState = S_CONEATK1_3;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_pig_second
-//
-//==========================================================================
-
-void set_weapon_pig_second(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_SNOUTUP;
-	player->w_DownState = S_SNOUTDOWN;
-	player->w_ReadyState = S_SNOUTREADY;
-	player->w_AttackState = S_SNOUTATK1;
-	player->w_HoldAttackState = S_SNOUTATK1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_fighter_third
-//
-//==========================================================================
-
-void set_weapon_fighter_third(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_FHAMMERUP;
-	player->w_DownState = S_FHAMMERDOWN;
-	player->w_ReadyState = S_FHAMMERREADY;
-	player->w_AttackState = S_FHAMMERATK_1;
-	player->w_HoldAttackState = S_FHAMMERATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_cleric_third
-//
-//==========================================================================
-
-void set_weapon_cleric_third(player_t * player)
-{
-	player->w_Mana = MANA_2;
-	player->w_UpState = S_CFLAMEUP;
-	player->w_DownState = S_CFLAMEDOWN;
-	player->w_ReadyState = S_CFLAMEREADY1;
-	player->w_AttackState = S_CFLAMEATK_1;
-	player->w_HoldAttackState = S_CFLAMEATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_mage_third
-//
-//==========================================================================
-
-void set_weapon_mage_third(player_t * player)
-{
-	player->w_Mana = MANA_2;
-	player->w_UpState = S_MLIGHTNINGUP;
-	player->w_DownState = S_MLIGHTNINGDOWN;
-	player->w_ReadyState = S_MLIGHTNINGREADY;
-	player->w_AttackState = S_MLIGHTNINGATK_1;
-	player->w_HoldAttackState = S_MLIGHTNINGATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_pig_third
-//
-//==========================================================================
-
-void set_weapon_pig_third(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_SNOUTUP;
-	player->w_DownState = S_SNOUTDOWN;
-	player->w_ReadyState = S_SNOUTREADY;
-	player->w_AttackState = S_SNOUTATK1;
-	player->w_HoldAttackState = S_SNOUTATK1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_fighter_fourth
-//
-//==========================================================================
-
-void set_weapon_fighter_fourth(player_t * player)
-{
-	player->w_Mana = MANA_BOTH;
-	player->w_UpState = S_FSWORDUP;
-	player->w_DownState = S_FSWORDDOWN;
-	player->w_ReadyState = S_FSWORDREADY;
-	player->w_AttackState = S_FSWORDATK_1;
-	player->w_HoldAttackState = S_FSWORDATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_cleric_fourth
-//
-//==========================================================================
-
-void set_weapon_cleric_fourth(player_t * player)
-{
-	player->w_Mana = MANA_BOTH;
-	player->w_UpState = S_CHOLYUP;
-	player->w_DownState = S_CHOLYDOWN;
-	player->w_ReadyState = S_CHOLYREADY;
-	player->w_AttackState = S_CHOLYATK_1;
-	player->w_HoldAttackState = S_CHOLYATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_mage_fourth
-//
-//==========================================================================
-
-void set_weapon_mage_fourth(player_t * player)
-{
-	player->w_Mana = MANA_BOTH;
-	player->w_UpState = S_MSTAFFUP;
-	player->w_DownState = S_MSTAFFDOWN;
-	player->w_ReadyState = S_MSTAFFREADY;
-	player->w_AttackState = S_MSTAFFATK_1;
-	player->w_HoldAttackState = S_MSTAFFATK_1;
-	player->w_FlashState = S_NULL;
-}
-
-//==========================================================================
-//
-//  set_weapon_pig_fourth
-//
-//==========================================================================
-
-void set_weapon_pig_fourth(player_t * player)
-{
-	player->w_Mana = MANA_NONE;
-	player->w_UpState = S_SNOUTUP;
-	player->w_DownState = S_SNOUTDOWN;
-	player->w_ReadyState = S_SNOUTREADY;
-	player->w_AttackState = S_SNOUTATK1;
-	player->w_HoldAttackState = S_SNOUTATK1;
-	player->w_FlashState = S_NULL;
-}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/03/02 17:35:56  dj_jl
+//  Weapon classes
+//
 //  Revision 1.6  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

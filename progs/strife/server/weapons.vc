@@ -39,7 +39,12 @@ void SetWeapon(player_t * player, int NewWeapon)
 {
 	player->ReadyWeapon = NewWeapon;
 	player->PendingWeapon = wp_nochange;
-	weaponinfo[NewWeapon] (player);
+	if (player->ViewEnts[ps_weapon])
+	{
+		player->ViewEnts[ps_weapon].Destroy();
+	}
+	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	player->ViewEnts[ps_weapon].Player = player;
 }
 
 //===========================================================================
@@ -67,7 +72,7 @@ void BringUpWeapon(player_t * player)
 	player->PendingWeapon = wp_nochange;
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 
-	SetPsprite(player, ps_weapon, player->w_UpState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
 }
 
 //==========================================================================
@@ -101,7 +106,7 @@ void ChangeWeapon(player_t * player, int newweapon)
 
 void DropWeapon(player_t * player)
 {
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
 }
 
 //===========================================================================
@@ -178,7 +183,7 @@ int CheckAmmo(player_t * player)
 	int ammo;
 	int count;
 
-	ammo = player->w_Ammo;
+	ammo = Weapon(player->ViewEnts[ps_weapon]).Ammo;
 
 	// Minimal amount for one shot varies.
 #ifdef FIXME
@@ -223,7 +228,7 @@ int CheckAmmo(player_t * player)
 	while (player->PendingWeapon == wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
 
 	return false;
 }
@@ -275,7 +280,7 @@ void FireWeapon(player_t * player)
 	}
 
 	player->mo->SetState(S_PLAY_ATK1);
-	SetPsprite(player, ps_weapon, player->w_AttackState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
 	P_NoiseAlert(player->mo, player->mo);
 }
 
@@ -316,7 +321,7 @@ void Weapon::A_WeaponReady(void)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		SetPsprite(Player, ps_weapon, Player->w_DownState);
+		SetPsprite(Player, ps_weapon, DownState);
 		return;
 	}
 
@@ -402,7 +407,7 @@ void Weapon::A_Raise(void)
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	SetPsprite(Player, ps_weapon, Player->w_ReadyState);
+	SetPsprite(Player, ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -454,7 +459,7 @@ void A_GunFlash(mobj_t * actor)
 	player_t *Player = actor->Player;
 
 	Player->mo->SetState(S_PLAY_ATK2);
-	SetPsprite(Player, ps_flash, Player->w_FlashState);
+	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
 }
 
 //===========================================================================
@@ -494,19 +499,40 @@ void A_Light2(mobj_t * actor)
 	Player->ExtraLight = 2;
 }
 
-//***************************************************************************
+void Weapon::A_7(void)
+{
+}
+
+void Weapon::A_9(void)
+{
+}
+
+void Weapon::A_12(void)
+{
+}
+
+void Weapon::A_13(void)
+{
+}
+
+//**************************************************************************
+//**************************************************************************
 //
-//  WEAPON ATTACKS
+//	WeaponFist
 //
-//***************************************************************************
+//**************************************************************************
+//**************************************************************************
+
+class WeaponFist:Weapon
+{
 
 //===========================================================================
 //
-//  Weapon::A_Punch
+//  A_Punch
 //
 //===========================================================================
 
-void Weapon::A_Punch(void)
+void A_Punch(void)
 {
 	int damage;
 	TAVec angles;
@@ -535,9 +561,395 @@ void Weapon::A_Punch(void)
 	}
 }
 
+__states__
+{
+	S_PUNCH('PNCH', 0, 1.0 / 35.0, S_PUNCH) { A_WeaponReady(); }
+	S_PUNCHDOWN('PNCH', 0, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
+	S_PUNCHUP('PNCH', 0, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
+	S_PUNCH1('PNCH', 1, 4.0 / 35.0, S_PUNCH2) { }
+	S_PUNCH2('PNCH', 2, 4.0 / 35.0, S_PUNCH3) { A_Punch(); }
+	S_PUNCH3('PNCH', 3, 5.0 / 35.0, S_PUNCH4) { }
+	S_PUNCH4('PNCH', 2, 4.0 / 35.0, S_PUNCH5) { }
+	S_PUNCH5('PNCH', 1, 5.0 / 35.0, S_PUNCH) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_PUNCHUP;
+	DownState = S_PUNCHDOWN;
+	ReadyState = S_PUNCH;
+	AttackState = S_PUNCH1;
+	HoldAttackState = S_NULL;
+	FlashState = S_LIGHTDONE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponCrossbow
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponCrossbow:Weapon
+{
+
+void A_8(void)
+{
+}
+
+void A_10(void)
+{
+}
+
+__states__
+{
+	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW) { A_WeaponReady(); }
+	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN) { A_Lower(); }
+	S_XBOWUP('XBOW', 0, 1.0 / 35.0, S_XBOWUP) { A_Raise(); }
+	S_XBOW1('XBOW', 0, 3.0 / 35.0, S_XBOW2) { A_7(); }
+	S_XBOW2('XBOW', 1, 6.0 / 35.0, S_XBOW3) { A_8(); }
+	S_XBOW3('XBOW', 2, 4.0 / 35.0, S_XBOW4) { }
+	S_XBOW4('XBOW', 3, 6.0 / 35.0, S_XBOW5) { }
+	S_XBOW5('XBOW', 4, 3.0 / 35.0, S_XBOW6) { }
+	S_XBOW6('XBOW', 5, 5.0 / 35.0, S_XBOW7) { }
+	S_XBOW7('XBOW', 6, 5.0 / 35.0, S_XBOW) { A_9(); }
+	S_XBOWFLASH1('XBOW', 10, 5.0 / 35.0, S_XBOWFLASH2) { }
+	S_XBOWFLASH2('XBOW', 11, 5.0 / 35.0, S_XBOWFLASH3) { }
+	S_XBOWFLASH3('XBOW', 12, 5.0 / 35.0, S_XBOWFLASH1) { }
+	S_XBOWPOISON('XBOW', 7, 1.0 / 35.0, S_XBOWPOISON) { A_WeaponReady(); }
+	S_XBOWPOISONDOWN('XBOW', 7, 1.0 / 35.0, S_XBOWPOISONDOWN) { A_Lower(); }
+	S_XBOWPOISONUP('XBOW', 7, 1.0 / 35.0, S_XBOWPOISONUP) { A_Raise(); }
+	S_XBOWPOISON1('XBOW', 7, 3.0 / 35.0, S_XBOWPOISON2) { }
+	S_XBOWPOISON2('XBOW', 1, 6.0 / 35.0, S_XBOWPOISON3) { A_10(); }
+	S_XBOWPOISON3('XBOW', 2, 4.0 / 35.0, S_XBOWPOISON4) { }
+	S_XBOWPOISON4('XBOW', 3, 6.0 / 35.0, S_XBOWPOISON5) { }
+	S_XBOWPOISON5('XBOW', 4, 3.0 / 35.0, S_XBOWPOISON6) { }
+	S_XBOWPOISON6('XBOW', 8, 5.0 / 35.0, S_XBOWPOISON7) { }
+	S_XBOWPOISON7('XBOW', 9, 5.0 / 35.0, S_XBOWPOISON) { A_9(); }
+}
+
+defaultproperties
+{
+	Ammo = am_electric_arrow;
+	UpState = S_XBOWUP;
+	DownState = S_XBOWDOWN;
+	ReadyState = S_XBOW;
+	AttackState = S_XBOW1;
+	HoldAttackState = S_NULL;
+	FlashState = S_LIGHTDONE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponRiffle
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponRiffle:Weapon
+{
+
+void A_14(void)
+{
+}
+
+__states__
+{
+	S_RIFFLE('RIFG', 0, 1.0 / 35.0, S_RIFFLE) { A_WeaponReady(); }
+	S_RIFFLEDOWN('RIFG', 1, 1.0 / 35.0, S_RIFFLEDOWN) { A_Lower(); }
+	S_RIFFLEUP('RIFG', 0, 1.0 / 35.0, S_RIFFLEUP) { A_Raise(); }
+	S_RIFFLE1('RIFF', 0, 3.0 / 35.0, S_RIFFLE2) { A_14(); }
+	S_RIFFLE2('RIFF', 1, 3.0 / 35.0, S_RIFFLE3) { A_14(); }
+	S_RIFFLE3('RIFG', 3, 3.0 / 35.0, S_RIFFLE4) { A_14(); }
+	S_RIFFLE4('RIFG', 2, 0.0 / 35.0, S_RIFFLE5) { A_ReFire(); }
+	S_RIFFLE5('RIFG', 1, 2.0 / 35.0, S_RIFFLE) { }
+}
+
+defaultproperties
+{
+	Ammo = am_clip;
+	UpState = S_RIFFLEUP;
+	DownState = S_RIFFLEDOWN;
+	ReadyState = S_RIFFLE;
+	AttackState = S_RIFFLE1;
+	HoldAttackState = S_NULL;
+	FlashState = S_LIGHTDONE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponMissile
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponMissile:Weapon
+{
+
+void A_11(void)
+{
+}
+
+__states__
+{
+	S_MISSILE('MMIS', 0, 1.0 / 35.0, S_MISSILE) { A_WeaponReady(); }
+	S_MISSILEDOWN('MMIS', 0, 1.0 / 35.0, S_MISSILEDOWN) { A_Lower(); }
+	S_MISSILEUP('MMIS', 0, 1.0 / 35.0, S_MISSILEUP) { A_Raise(); }
+	S_MISSILE1('MMIS', 0, 4.0 / 35.0, S_MISSILE2) { A_11(); }
+	S_MISSILE2('MMIS', 1, 4.0 / 35.0, S_MISSILE3) { A_12(); }
+	S_MISSILE3('MMIS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_MISSILE4) { }
+	S_MISSILE4('MMIS', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE5) { A_13(); }
+	S_MISSILE5('MMIS', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE6) { }
+	S_MISSILE6('MMIS', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE7) { A_Light0(); }
+	S_MISSILE7('MMIS', 5, 0.0 / 35.0, S_MISSILE) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_misl;
+	UpState = S_MISSILEUP;
+	DownState = S_MISSILEDOWN;
+	ReadyState = S_MISSILE;
+	AttackState = S_MISSILE1;
+	HoldAttackState = S_NULL;
+	FlashState = S_NULL;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponGrenade
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponGrenade:Weapon
+{
+
+void A_19(void)
+{
+}
+
+__states__
+{
+	S_GRENADE('GREN', 0, 1.0 / 35.0, S_GRENADE) { A_WeaponReady(); }
+	S_GRENADEDOWN('GREN', 0, 1.0 / 35.0, S_GRENADEDOWN) { A_Lower(); }
+	S_GRENADEUP('GREN', 0, 1.0 / 35.0, S_GRENADEUP) { A_Raise(); }
+	S_GRENADE1('GREN', 0, 5.0 / 35.0, S_GRENADE2) { A_19(); }
+	S_GRENADE2('GREN', 1, 10.0 / 35.0, S_GRENADE3) { }
+	S_GRENADE3('GREN', 0, 5.0 / 35.0, S_GRENADE4) { A_19(); }
+	S_GRENADE4('GREN', 2, 10.0 / 35.0, S_GRENADE5) { }
+	S_GRENADE5('GREN', 0, 0.0 / 35.0, S_GRENADE) { A_ReFire(); }
+	S_GRENADEFLASH1('GREF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_12(); }
+	S_GRENADEFLASH2('GREF', 0, 10.0 / 35.0, S_LIGHTDONE) { A_Light0(); }
+	S_GRENADEFLASH3('GREF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_13(); }
+	S_GRENADEHIGH('GREN', 3, 1.0 / 35.0, S_GRENADEHIGH) { A_WeaponReady(); }
+	S_GRENADEHIGHDOWN('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHDOWN) { A_Lower(); }
+	S_GRENADEHIGHUP('GREN', 3, 1.0 / 35.0, S_GRENADEHIGHUP) { A_Raise(); }
+	S_GRENADEHIGH1('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH2) { A_19(); }
+	S_GRENADEHIGH2('GREN', 4, 10.0 / 35.0, S_GRENADEHIGH3) { }
+	S_GRENADEHIGH3('GREN', 3, 5.0 / 35.0, S_GRENADEHIGH4) { A_19(); }
+	S_GRENADEHIGH4('GREN', 5, 10.0 / 35.0, S_GRENADEHIGH5) { }
+	S_GRENADEHIGH5('GREN', 0, 0.0 / 35.0, S_GRENADEHIGH) { A_ReFire(); }
+	S_GRENADEHIGHFLASH1('GREF', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_12(); }
+	S_GRENADEHIGHFLASH2('GREF', 2, 10.0 / 35.0, S_LIGHTDONE) { A_Light0(); }
+	S_GRENADEHIGHFLASH3('GREF', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_13(); }
+}
+
+defaultproperties
+{
+	Ammo = am_grenade1;
+	UpState = S_GRENADEUP;
+	DownState = S_GRENADEDOWN;
+	ReadyState = S_GRENADE;
+	AttackState = S_GRENADE1;
+	HoldAttackState = S_GRENADEFLASH1;
+	FlashState = S_NULL;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponFlamethrower
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponFlamethrower:Weapon
+{
+
+void A_15(void)
+{
+}
+
+__states__
+{
+	S_FLAME('FLMT', 0, 3.0 / 35.0, S_FLAME01) { A_WeaponReady(); }
+	S_FLAME01('FLMT', 1, 3.0 / 35.0, S_FLAME) { A_WeaponReady(); }
+	S_FLAMEDOWN('FLMT', 0, 1.0 / 35.0, S_FLAMEDOWN) { A_Lower(); }
+	S_FLAMEUP('FLMT', 0, 1.0 / 35.0, S_FLAMEUP) { A_Raise(); }
+	S_FLAME1('FLMF', 0, 2.0 / 35.0, S_FLAME2) { A_15(); }
+	S_FLAME2('FLMF', 1, 3.0 / 35.0, S_FLAME) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_cell;
+	UpState = S_FLAMEUP;
+	DownState = S_FLAMEDOWN;
+	ReadyState = S_FLAME;
+	AttackState = S_FLAME1;
+	HoldAttackState = S_NULL;
+	FlashState = S_LIGHTDONE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponBlaster
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponBlaster:Weapon
+{
+
+void A_16(void)
+{
+}
+
+void A_17(void)
+{
+}
+
+void A_18(void)
+{
+}
+
+__states__
+{
+	S_BLASTER('BLST', 5, 6.0 / 35.0, S_BLASTER01) { A_WeaponReady(); }
+	S_BLASTER01('BLST', 6, 6.0 / 35.0, S_BLASTER02) { A_WeaponReady(); }
+	S_BLASTER02('BLST', 7, 6.0 / 35.0, S_BLASTER03) { A_WeaponReady(); }
+	S_BLASTER03('BLST', 0, 6.0 / 35.0, S_BLASTER) { A_WeaponReady(); }
+	S_BLASTERDOWN('BLST', 0, 1.0 / 35.0, S_BLASTERDOWN) { A_Lower(); }
+	S_BLASTERUP('BLST', 0, 1.0 / 35.0, S_BLASTERUP) { A_Raise(); }
+	S_BLASTER1('BLSF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_BLASTER2) { A_16(); }
+	S_BLASTER2('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTER3) { A_12(); }
+	S_BLASTER3('BLST', 2, 2.0 / 35.0, S_BLASTER4) { A_13(); }
+	S_BLASTER4('BLST', 3, 2.0 / 35.0, S_BLASTER5) { }
+	S_BLASTER5('BLST', 4, 2.0 / 35.0, S_BLASTER6) { }
+	S_BLASTER6('BLST', 0, 7.0 / 35.0, S_BLASTER7) { A_Light0(); }
+	S_BLASTER7('BLST', 7, 7.0 / 35.0, S_BLASTER8) { }
+	S_BLASTER8('BLST', 6, 7.0 / 35.0, S_BLASTER) { A_9(); }
+	S_BLASTERTORPEDO('BLST', 8, 7.0 / 35.0, S_BLASTERTORPEDO01) { A_WeaponReady(); }
+	S_BLASTERTORPEDO01('BLST', 9, 7.0 / 35.0, S_BLASTERTORPEDO02) { A_WeaponReady(); }
+	S_BLASTERTORPEDO02('BLST', 10, 7.0 / 35.0, S_BLASTERTORPEDO03) { A_WeaponReady(); }
+	S_BLASTERTORPEDO03('BLST', 11, 7.0 / 35.0, S_BLASTERTORPEDO) { A_WeaponReady(); }
+	S_BLASTERTORPEDODOWN('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDODOWN) { A_Lower(); }
+	S_BLASTERTORPEDOUP('BLST', 8, 1.0 / 35.0, S_BLASTERTORPEDOUP) { A_Raise(); }
+	S_BLASTERTORPEDO1('BLST', 8, 20.0 / 35.0, S_BLASTERTORPEDO2) { A_17(); }
+	S_BLASTERTORPEDO2('BLST', 9, 10.0 / 35.0, S_BLASTERTORPEDO3) { A_12(); }
+	S_BLASTERTORPEDO3('BLSF', 0 | FF_FULLBRIGHT, 10.0 / 35.0, S_BLASTERTORPEDO4) { A_18(); }
+	S_BLASTERTORPEDO4('BLST', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERTORPEDO5) { A_13(); }
+	S_BLASTERTORPEDO5('BLST', 2, 2.0 / 35.0, S_BLASTERTORPEDO6) { }
+	S_BLASTERTORPEDO6('BLST', 3, 2.0 / 35.0, S_BLASTERTORPEDO7) { A_Light0(); }
+	S_BLASTERTORPEDO7('BLST', 4, 2.0 / 35.0, S_BLASTERTORPEDO) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_cell;
+	UpState = S_BLASTERUP;
+	DownState = S_BLASTERDOWN;
+	ReadyState = S_BLASTER;
+	AttackState = S_BLASTER1;
+	HoldAttackState = S_NULL;
+	FlashState = S_NULL;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponSigil
+//
+//**************************************************************************
+//**************************************************************************
+
+class WeaponSigil:Weapon
+{
+
+void A_20(void)
+{
+}
+
+void A_21(void)
+{
+}
+
+void A_22(void)
+{
+}
+
+void A_23(void)
+{
+}
+
+__states__
+{
+	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL) { A_WeaponReady(); }
+	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN) { A_Lower(); }
+	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP) { A_Raise(); }
+	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_20(); }
+	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_21(); }
+	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_22(); }
+	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_7(); }
+	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_13(); }
+	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_23(); }
+	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_12(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_SIGILUP;
+	DownState = S_SIGILDOWN;
+	ReadyState = S_SIGIL;
+	AttackState = S_SIGIL1;
+	HoldAttackState = S_SIGILFLASH1;
+	FlashState = S_NULL;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/02 17:35:56  dj_jl
+//  Weapon classes
+//
 //  Revision 1.14  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -29,32 +29,31 @@
 //**
 //**************************************************************************
 
-void set_weapon_fist(player_t *player);
-void set_weapon_pistol(player_t *player);
-void set_weapon_shotgun(player_t *player);
-void set_weapon_chaingun(player_t *player);
-void set_weapon_missile(player_t *player);
-void set_weapon_plasma(player_t *player);
-void set_weapon_bfg(player_t *player);
-void set_weapon_chainsaw(player_t *player);
-void set_weapon_supershotgun(player_t *player);
+class WeaponFist;
+class WeaponPistol;
+class WeaponShotgun;
+class WeaponChaingun;
+class WeaponMissile;
+class WeaponPlasma;
+class WeaponBFG;
+class WeaponChainsaw;
+class WeaponSuperShotgun;
 #ifdef GRENADE_LAUNCHER
-void set_weapon_grenade(player_t *player);
+class WeaponGrenade;
 #endif
 
-weapon_func_t weaponinfo[] =
-{
-	set_weapon_fist,
-	set_weapon_pistol,
-	set_weapon_shotgun,
-	set_weapon_chaingun,
-	set_weapon_missile,
-	set_weapon_plasma,
-	set_weapon_bfg,
-	set_weapon_chainsaw,
-	set_weapon_supershotgun,
+classid WeaponClasses[] = {
+	WeaponFist,
+	WeaponPistol,
+	WeaponShotgun,
+	WeaponChaingun,
+	WeaponMissile,
+	WeaponPlasma,
+	WeaponBFG,
+	WeaponChainsaw,
+	WeaponSuperShotgun,
 #ifdef GRENADE_LAUNCHER
-	set_weapon_grenade,
+	WeaponGrenade,
 #endif
 };
 
@@ -74,179 +73,203 @@ int weapon_ammo_type[] =
 #endif
 };
 
-__states__
+//==========================================================================
+//
+//	WeaponFist
+//
+//==========================================================================
+
+class WeaponFist:Weapon
 {
-	S_WEAPON('TROO', 0, 'weapons/g_pistol.md2', 0, 0.0, S_NULL) { }
+	defaultproperties
+	{
+		Ammo = am_noammo;
+		UpState = S_PUNCHUP;
+		DownState = S_PUNCHDOWN;
+		ReadyState = S_PUNCH;
+		AttackState = S_PUNCH1;
+		HoldAttackState = S_NULL;
+		FlashState = S_NULL;
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_fist
+//	WeaponPistol
 //
 //==========================================================================
 
-void set_weapon_fist(player_t *player)
+class WeaponPistol:Weapon
 {
-	player->w_Ammo = am_noammo;
-	player->w_UpState = S_PUNCHUP;
-	player->w_DownState = S_PUNCHDOWN;
-	player->w_ReadyState = S_PUNCH;
-	player->w_AttackState = S_PUNCH1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_NULL;
-	player->WeaponModel = 0;
+	defaultproperties
+	{
+		Ammo = am_clip;
+		UpState = S_PISTOLUP;
+		DownState = S_PISTOLDOWN;
+		ReadyState = S_PISTOL;
+		AttackState = S_PISTOL1;
+		HoldAttackState = S_NULL;
+		FlashState = S_PISTOLFLASH;
+		ThirdPersonModel = "weapons/g_pistol.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_pistol
+//	WeaponShotgun
 //
 //==========================================================================
 
-void set_weapon_pistol(player_t *player)
+class WeaponShotgun:Weapon
 {
-	player->w_Ammo = am_clip;
-	player->w_UpState = S_PISTOLUP;
-	player->w_DownState = S_PISTOLDOWN;
-	player->w_ReadyState = S_PISTOL;
-	player->w_AttackState = S_PISTOL1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_PISTOLFLASH;
-	player->WeaponModel = states[S_WEAPON].model_index;
+	defaultproperties
+	{
+		Ammo = am_shell;
+		UpState = S_SGUNUP;
+		DownState = S_SGUNDOWN;
+		ReadyState = S_SGUN;
+		AttackState = S_SGUN1;
+		HoldAttackState = S_NULL;
+		FlashState = S_SGUNFLASH1;
+		ThirdPersonModel = "weapons/g_shotg.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_shotgun
+//	WeaponChaingun
 //
 //==========================================================================
 
-void set_weapon_shotgun(player_t *player)
+class WeaponChaingun:Weapon
 {
-	player->w_Ammo = am_shell;
-	player->w_UpState = S_SGUNUP;
-	player->w_DownState = S_SGUNDOWN;
-	player->w_ReadyState = S_SGUN;
-	player->w_AttackState = S_SGUN1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_SGUNFLASH1;
-	player->WeaponModel = states[S_SHOT].model_index;
+	defaultproperties
+	{
+		Ammo = am_clip;
+		UpState = S_CHAINUP;
+		DownState = S_CHAINDOWN;
+		ReadyState = S_CHAIN;
+		AttackState = S_CHAIN1;
+		HoldAttackState = S_NULL;
+		FlashState = S_CHAINFLASH1;
+		ThirdPersonModel = "weapons/g_chain.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_chaingun
+//	WeaponMissile
 //
 //==========================================================================
 
-void set_weapon_chaingun(player_t *player)
+class WeaponMissile:Weapon
 {
-	player->w_Ammo = am_clip;
-	player->w_UpState = S_CHAINUP;
-	player->w_DownState = S_CHAINDOWN;
-	player->w_ReadyState = S_CHAIN;
-	player->w_AttackState = S_CHAIN1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_CHAINFLASH1;
-	player->WeaponModel = states[S_MGUN].model_index;
+	defaultproperties
+	{
+		Ammo = am_misl;
+		UpState = S_MISSILEUP;
+		DownState = S_MISSILEDOWN;
+		ReadyState = S_MISSILE;
+		AttackState = S_MISSILE1;
+		HoldAttackState = S_NULL;
+		FlashState = S_MISSILEFLASH1;
+		ThirdPersonModel = "weapons/g_launch.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_missile
+//	WeaponPlasma
 //
 //==========================================================================
 
-void set_weapon_missile(player_t *player)
+class WeaponPlasma:Weapon
 {
-	player->w_Ammo = am_misl;
-	player->w_UpState = S_MISSILEUP;
-	player->w_DownState = S_MISSILEDOWN;
-	player->w_ReadyState = S_MISSILE;
-	player->w_AttackState = S_MISSILE1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_MISSILEFLASH1;
-	player->WeaponModel = states[S_LAUN].model_index;
+	defaultproperties
+	{
+		Ammo = am_cell;
+		UpState = S_PLASMAUP;
+		DownState = S_PLASMADOWN;
+		ReadyState = S_PLASMA;
+		AttackState = S_PLASMA1;
+		HoldAttackState = S_NULL;
+		FlashState = S_PLASMAFLASH1;
+		ThirdPersonModel = "weapons/g_plasma.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_plasma
+//	WeaponBFG
 //
 //==========================================================================
 
-void set_weapon_plasma(player_t *player)
+class WeaponBFG:Weapon
 {
-	player->w_Ammo = am_cell;
-	player->w_UpState = S_PLASMAUP;
-	player->w_DownState = S_PLASMADOWN;
-	player->w_ReadyState = S_PLASMA;
-	player->w_AttackState = S_PLASMA1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_PLASMAFLASH1;
-	player->WeaponModel = states[S_PLAS].model_index;
+	defaultproperties
+	{
+		Ammo = am_cell;
+		UpState = S_BFGUP;
+		DownState = S_BFGDOWN;
+		ReadyState = S_BFG;
+		AttackState = S_BFG1;
+		HoldAttackState = S_NULL;
+		FlashState = S_BFGFLASH1;
+		ThirdPersonModel = "weapons/g_bfg.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_bfg
+//	WeaponChainsaw
 //
 //==========================================================================
 
-void set_weapon_bfg(player_t *player)
+class WeaponChainsaw:Weapon
 {
-	player->w_Ammo = am_cell;
-	player->w_UpState = S_BFGUP;
-	player->w_DownState = S_BFGDOWN;
-	player->w_ReadyState = S_BFG;
-	player->w_AttackState = S_BFG1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_BFGFLASH1;
-	player->WeaponModel = states[S_BFUG].model_index;
+	defaultproperties
+	{
+		Ammo = am_noammo;
+		UpState = S_SAWUP;
+		DownState = S_SAWDOWN;
+		ReadyState = S_SAW;
+		AttackState = S_SAW1;
+		HoldAttackState = S_NULL;
+		FlashState = S_NULL;
+		ThirdPersonModel = "weapons/g_saw.md2";
+	}
 }
 
 //==========================================================================
 //
-//	set_weapon_chainsaw
+//	WeaponSuperShotgun
 //
 //==========================================================================
 
-void set_weapon_chainsaw(player_t *player)
+class WeaponSuperShotgun:Weapon
 {
-	player->w_Ammo = am_noammo;
-	player->w_UpState = S_SAWUP;
-	player->w_DownState = S_SAWDOWN;
-	player->w_ReadyState = S_SAW;
-	player->w_AttackState = S_SAW1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_NULL;
-	player->WeaponModel = states[S_CSAW].model_index;
-}
-
-//==========================================================================
-//
-//	set_weapon_supershotgun
-//
-//==========================================================================
-
-void set_weapon_supershotgun(player_t *player)
-{
-	player->w_Ammo = am_shell;
-	player->w_UpState = S_DSGUNUP;
-	player->w_DownState = S_DSGUNDOWN;
-	player->w_ReadyState = S_DSGUN;
-	player->w_AttackState = S_DSGUN1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_DSGUNFLASH1;
-	player->WeaponModel = states[S_SHOT2].model_index;
+	defaultproperties
+	{
+		Ammo = am_shell;
+		UpState = S_DSGUNUP;
+		DownState = S_DSGUNDOWN;
+		ReadyState = S_DSGUN;
+		AttackState = S_DSGUN1;
+		HoldAttackState = S_NULL;
+		FlashState = S_DSGUNFLASH1;
+		ThirdPersonModel = "weapons/g_super.md2";
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/03/02 17:35:55  dj_jl
+//	Weapon classes
+//
 //	Revision 1.9  2002/02/22 18:00:15  dj_jl
 //	A lots of the renaming, beautification.
-//
+//	
 //	Revision 1.8  2002/01/12 17:58:03  dj_jl
 //	New style state functions
 //	

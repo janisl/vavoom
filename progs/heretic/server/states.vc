@@ -271,20 +271,6 @@ __states__(Actor)
 __states__(Weapon)
 {
 	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
-	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) { A_WeaponReady(); }
-	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) { A_Lower(); }
-	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) { A_Raise(); }
-	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2) { A_WeaponReady(); }
-	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) { A_WeaponReady(); }
-	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) { A_WeaponReady(); }
-	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) { A_Lower(); }
-	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) { A_Raise(); }
-	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) { }
-	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) { A_StaffAttackPL1(); }
-	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) { A_ReFire(); }
-	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) { }
-	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) { A_StaffAttackPL2(); }
-	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) { A_ReFire(); }
 }
 __states__(Actor)
 {
@@ -298,46 +284,7 @@ __states__(Actor)
 	S_STAFFPUFF2_4('PUF4', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_5) { }
 	S_STAFFPUFF2_5('PUF4', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_STAFFPUFF2_6) { }
 	S_STAFFPUFF2_6('PUF4', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_BEAKREADY('BEAK', 0, 1.0 / 35.0, S_BEAKREADY) { A_BeakReady(); }
-	S_BEAKDOWN('BEAK', 0, 1.0 / 35.0, S_BEAKDOWN) { A_Lower(); }
-	S_BEAKUP('BEAK', 0, 1.0 / 35.0, S_BEAKUP) { A_BeakRaise(); }
-	S_BEAKATK1_1('BEAK', 0, 18.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL1(); }
-	S_BEAKATK2_1('BEAK', 0, 12.0 / 35.0, S_BEAKREADY) { A_BeakAttackPL2(); }
-}
-__states__(Actor)
-{
 	S_WGNT('WGNT', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_GAUNTLETREADY('GAUN', 0, 1.0 / 35.0, S_GAUNTLETREADY) { A_WeaponReady(); }
-	S_GAUNTLETDOWN('GAUN', 0, 1.0 / 35.0, S_GAUNTLETDOWN) { A_Lower(); }
-	S_GAUNTLETUP('GAUN', 0, 1.0 / 35.0, S_GAUNTLETUP) { A_Raise(); }
-	S_GAUNTLETREADY2_1('GAUN', 6, 4.0 / 35.0, S_GAUNTLETREADY2_2) { A_WeaponReady(); }
-	S_GAUNTLETREADY2_2('GAUN', 7, 4.0 / 35.0, S_GAUNTLETREADY2_3) { A_WeaponReady(); }
-	S_GAUNTLETREADY2_3('GAUN', 8, 4.0 / 35.0, S_GAUNTLETREADY2_1) { A_WeaponReady(); }
-	S_GAUNTLETDOWN2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETDOWN2) { A_Lower(); }
-	S_GAUNTLETUP2('GAUN', 6, 1.0 / 35.0, S_GAUNTLETUP2) { A_Raise(); }
-	S_GAUNTLETATK1_1('GAUN', 1, 4.0 / 35.0, S_GAUNTLETATK1_2) { }
-	S_GAUNTLETATK1_2('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_3) { }
-	S_GAUNTLETATK1_3('GAUN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_4) { A_GauntletAttack(); }
-	S_GAUNTLETATK1_4('GAUN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_5) { A_GauntletAttack(); }
-	S_GAUNTLETATK1_5('GAUN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK1_6) { A_GauntletAttack(); }
-	S_GAUNTLETATK1_6('GAUN', 2, 4.0 / 35.0, S_GAUNTLETATK1_7) { A_ReFire(); }
-	S_GAUNTLETATK1_7('GAUN', 1, 4.0 / 35.0, S_GAUNTLETREADY) { A_Light0(); }
-	S_GAUNTLETATK2_1('GAUN', 9, 4.0 / 35.0, S_GAUNTLETATK2_2) { }
-	S_GAUNTLETATK2_2('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_3) { }
-	S_GAUNTLETATK2_3('GAUN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_4) { A_GauntletAttack(); }
-	S_GAUNTLETATK2_4('GAUN', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_5) { A_GauntletAttack(); }
-	S_GAUNTLETATK2_5('GAUN', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETATK2_6) { A_GauntletAttack(); }
-	S_GAUNTLETATK2_6('GAUN', 10, 4.0 / 35.0, S_GAUNTLETATK2_7) { A_ReFire(); }
-	S_GAUNTLETATK2_7('GAUN', 9, 4.0 / 35.0, S_GAUNTLETREADY2_1) { A_Light0(); }
-}
-__states__(Actor)
-{
 	S_GAUNTLETPUFF1_1('PUF1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_2) { }
 	S_GAUNTLETPUFF1_2('PUF1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_3) { }
 	S_GAUNTLETPUFF1_3('PUF1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF1_4) { }
@@ -347,27 +294,6 @@ __states__(Actor)
 	S_GAUNTLETPUFF2_3('PUF1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_4) { }
 	S_GAUNTLETPUFF2_4('PUF1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 	S_BLSR('WBLS', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_BLASTERREADY('BLSR', 0, 1.0 / 35.0, S_BLASTERREADY) { A_WeaponReady(); }
-	S_BLASTERDOWN('BLSR', 0, 1.0 / 35.0, S_BLASTERDOWN) { A_Lower(); }
-	S_BLASTERUP('BLSR', 0, 1.0 / 35.0, S_BLASTERUP) { A_Raise(); }
-	S_BLASTERATK1_1('BLSR', 1, 3.0 / 35.0, S_BLASTERATK1_2) { }
-	S_BLASTERATK1_2('BLSR', 2, 3.0 / 35.0, S_BLASTERATK1_3) { }
-	S_BLASTERATK1_3('BLSR', 3, 2.0 / 35.0, S_BLASTERATK1_4) { A_FireBlasterPL1(); }
-	S_BLASTERATK1_4('BLSR', 2, 2.0 / 35.0, S_BLASTERATK1_5) { }
-	S_BLASTERATK1_5('BLSR', 1, 2.0 / 35.0, S_BLASTERATK1_6) { }
-	S_BLASTERATK1_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
-	S_BLASTERATK2_1('BLSR', 1, 0.0 / 35.0, S_BLASTERATK2_2) { }
-	S_BLASTERATK2_2('BLSR', 2, 0.0 / 35.0, S_BLASTERATK2_3) { }
-	S_BLASTERATK2_3('BLSR', 3, 3.0 / 35.0, S_BLASTERATK2_4) { A_FireBlasterPL2(); }
-	S_BLASTERATK2_4('BLSR', 2, 4.0 / 35.0, S_BLASTERATK2_5) { }
-	S_BLASTERATK2_5('BLSR', 1, 4.0 / 35.0, S_BLASTERATK2_6) { }
-	S_BLASTERATK2_6('BLSR', 0, 0.0 / 35.0, S_BLASTERREADY) { A_ReFire(); }
-}
-__states__(Actor)
-{
 	S_BLASTERFX1_1('ACLO', 4, 200.0 / 35.0, S_BLASTERFX1_1) { }
 	S_BLASTERFXI1_1('FX18', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_2) { A_SpawnRippers(); }
 	S_BLASTERFXI1_2('FX18', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_3) { }
@@ -401,29 +327,6 @@ __states__(Actor)
 	S_BLASTERPUFF2_6('FX17', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_7) { }
 	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 	S_WMCE('WMCE', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_MACEREADY('MACE', 0, 1.0 / 35.0, S_MACEREADY) { A_WeaponReady(); }
-	S_MACEDOWN('MACE', 0, 1.0 / 35.0, S_MACEDOWN) { A_Lower(); }
-	S_MACEUP('MACE', 0, 1.0 / 35.0, S_MACEUP) { A_Raise(); }
-	S_MACEATK1_1('MACE', 1, 4.0 / 35.0, S_MACEATK1_2) { }
-	S_MACEATK1_2('MACE', 2, 3.0 / 35.0, S_MACEATK1_3) { A_FireMacePL1(); }
-	S_MACEATK1_3('MACE', 3, 3.0 / 35.0, S_MACEATK1_4) { A_FireMacePL1(); }
-	S_MACEATK1_4('MACE', 4, 3.0 / 35.0, S_MACEATK1_5) { A_FireMacePL1(); }
-	S_MACEATK1_5('MACE', 5, 3.0 / 35.0, S_MACEATK1_6) { A_FireMacePL1(); }
-	S_MACEATK1_6('MACE', 2, 4.0 / 35.0, S_MACEATK1_7) { A_ReFire(); }
-	S_MACEATK1_7('MACE', 3, 4.0 / 35.0, S_MACEATK1_8) { }
-	S_MACEATK1_8('MACE', 4, 4.0 / 35.0, S_MACEATK1_9) { }
-	S_MACEATK1_9('MACE', 5, 4.0 / 35.0, S_MACEATK1_10) { }
-	S_MACEATK1_10('MACE', 1, 4.0 / 35.0, S_MACEREADY) { }
-	S_MACEATK2_1('MACE', 1, 4.0 / 35.0, S_MACEATK2_2) { }
-	S_MACEATK2_2('MACE', 3, 4.0 / 35.0, S_MACEATK2_3) { A_FireMacePL2(); }
-	S_MACEATK2_3('MACE', 1, 4.0 / 35.0, S_MACEATK2_4) { }
-	S_MACEATK2_4('MACE', 0, 8.0 / 35.0, S_MACEREADY) { A_ReFire(); }
-}
-__states__(Actor)
-{
 	S_MACEFX1_1('FX02', 0, 4.0 / 35.0, S_MACEFX1_2) { A_MacePL1Check(); }
 	S_MACEFX1_2('FX02', 1, 4.0 / 35.0, S_MACEFX1_1) { A_MacePL1Check(); }
 	S_MACEFXI1_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact(); }
@@ -439,27 +342,6 @@ __states__(Actor)
 	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) { }
 	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_DeathBallImpact(); }
 	S_WSKL('WSKL', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_HORNRODREADY('HROD', 0, 1.0 / 35.0, S_HORNRODREADY) { A_WeaponReady(); }
-	S_HORNRODDOWN('HROD', 0, 1.0 / 35.0, S_HORNRODDOWN) { A_Lower(); }
-	S_HORNRODUP('HROD', 0, 1.0 / 35.0, S_HORNRODUP) { A_Raise(); }
-	S_HORNRODATK1_1('HROD', 0, 4.0 / 35.0, S_HORNRODATK1_2) { A_FireSkullRodPL1(); }
-	S_HORNRODATK1_2('HROD', 1, 4.0 / 35.0, S_HORNRODATK1_3) { A_FireSkullRodPL1(); }
-	S_HORNRODATK1_3('HROD', 1, 0.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
-	S_HORNRODATK2_1('HROD', 2, 2.0 / 35.0, S_HORNRODATK2_2) { }
-	S_HORNRODATK2_2('HROD', 3, 3.0 / 35.0, S_HORNRODATK2_3) { }
-	S_HORNRODATK2_3('HROD', 4, 2.0 / 35.0, S_HORNRODATK2_4) { }
-	S_HORNRODATK2_4('HROD', 5, 3.0 / 35.0, S_HORNRODATK2_5) { }
-	S_HORNRODATK2_5('HROD', 6, 4.0 / 35.0, S_HORNRODATK2_6) { A_FireSkullRodPL2(); }
-	S_HORNRODATK2_6('HROD', 5, 2.0 / 35.0, S_HORNRODATK2_7) { }
-	S_HORNRODATK2_7('HROD', 4, 3.0 / 35.0, S_HORNRODATK2_8) { }
-	S_HORNRODATK2_8('HROD', 3, 2.0 / 35.0, S_HORNRODATK2_9) { }
-	S_HORNRODATK2_9('HROD', 2, 2.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
-}
-__states__(Actor)
-{
 	S_HRODFX1_1('FX00', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_HRODFX1_2) { }
 	S_HRODFX1_2('FX00', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_HRODFX1_1) { }
 	S_HRODFXI1_1('FX00', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_HRODFXI1_2) { }
@@ -516,23 +398,6 @@ __states__(Actor)
 	S_RAINAIRXPLR2_3('FX21', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 	S_RAINAIRXPLR3_3('FX22', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
 	S_RAINAIRXPLR4_3('FX23', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_GOLDWANDREADY('GWND', 0, 1.0 / 35.0, S_GOLDWANDREADY) { A_WeaponReady(); }
-	S_GOLDWANDDOWN('GWND', 0, 1.0 / 35.0, S_GOLDWANDDOWN) { A_Lower(); }
-	S_GOLDWANDUP('GWND', 0, 1.0 / 35.0, S_GOLDWANDUP) { A_Raise(); }
-	S_GOLDWANDATK1_1('GWND', 1, 3.0 / 35.0, S_GOLDWANDATK1_2) { }
-	S_GOLDWANDATK1_2('GWND', 2, 5.0 / 35.0, S_GOLDWANDATK1_3) { A_FireGoldWandPL1(); }
-	S_GOLDWANDATK1_3('GWND', 3, 3.0 / 35.0, S_GOLDWANDATK1_4) { }
-	S_GOLDWANDATK1_4('GWND', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
-	S_GOLDWANDATK2_1('GWND', 1, 3.0 / 35.0, S_GOLDWANDATK2_2) { }
-	S_GOLDWANDATK2_2('GWND', 2, 4.0 / 35.0, S_GOLDWANDATK2_3) { A_FireGoldWandPL2(); }
-	S_GOLDWANDATK2_3('GWND', 3, 3.0 / 35.0, S_GOLDWANDATK2_4) { }
-	S_GOLDWANDATK2_4('GWND', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
-}
-__states__(Actor)
-{
 	S_GWANDFX1_1('FX01', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_2) { }
 	S_GWANDFX1_2('FX01', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GWANDFX1_1) { }
 	S_GWANDFXI1_1('FX01', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDFXI1_2) { }
@@ -547,24 +412,6 @@ __states__(Actor)
 	S_GWANDPUFF1_4('PUF2', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_GWANDPUFF1_5) { }
 	S_GWANDPUFF1_5('PUF2', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
 	S_WPHX('WPHX', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_PHOENIXREADY('PHNX', 0, 1.0 / 35.0, S_PHOENIXREADY) { A_WeaponReady(); }
-	S_PHOENIXDOWN('PHNX', 0, 1.0 / 35.0, S_PHOENIXDOWN) { A_Lower(); }
-	S_PHOENIXUP('PHNX', 0, 1.0 / 35.0, S_PHOENIXUP) { A_Raise(); }
-	S_PHOENIXATK1_1('PHNX', 1, 5.0 / 35.0, S_PHOENIXATK1_2) { }
-	S_PHOENIXATK1_2('PHNX', 2, 7.0 / 35.0, S_PHOENIXATK1_3) { A_FirePhoenixPL1(); }
-	S_PHOENIXATK1_3('PHNX', 3, 4.0 / 35.0, S_PHOENIXATK1_4) { }
-	S_PHOENIXATK1_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK1_5) { }
-	S_PHOENIXATK1_5('PHNX', 1, 0.0 / 35.0, S_PHOENIXREADY) { A_ReFire(); }
-	S_PHOENIXATK2_1('PHNX', 1, 3.0 / 35.0, S_PHOENIXATK2_2) { A_InitPhoenixPL2(); }
-	S_PHOENIXATK2_2('PHNX', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_PHOENIXATK2_3) { A_FirePhoenixPL2(); }
-	S_PHOENIXATK2_3('PHNX', 1, 4.0 / 35.0, S_PHOENIXATK2_4) { A_ReFire(); }
-	S_PHOENIXATK2_4('PHNX', 1, 4.0 / 35.0, S_PHOENIXREADY) { A_ShutdownPhoenixPL2(); }
-}
-__states__(Actor)
-{
 	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) { A_PhoenixPuff(); }
 	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) { A_Explode(); }
 	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) { }
@@ -595,48 +442,6 @@ __states__(Actor)
 	S_PHOENIXFXI2_4('FX09', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI2_5) { }
 	S_PHOENIXFXI2_5('FX09', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
 	S_WBOW('WBOW', 0, -1.0, S_NULL) { }
-}
-__states__(Weapon)
-{
-	S_CRBOW1('CRBW', 0, 1.0 / 35.0, S_CRBOW2) { A_WeaponReady(); }
-	S_CRBOW2('CRBW', 0, 1.0 / 35.0, S_CRBOW3) { A_WeaponReady(); }
-	S_CRBOW3('CRBW', 0, 1.0 / 35.0, S_CRBOW4) { A_WeaponReady(); }
-	S_CRBOW4('CRBW', 0, 1.0 / 35.0, S_CRBOW5) { A_WeaponReady(); }
-	S_CRBOW5('CRBW', 0, 1.0 / 35.0, S_CRBOW6) { A_WeaponReady(); }
-	S_CRBOW6('CRBW', 0, 1.0 / 35.0, S_CRBOW7) { A_WeaponReady(); }
-	S_CRBOW7('CRBW', 1, 1.0 / 35.0, S_CRBOW8) { A_WeaponReady(); }
-	S_CRBOW8('CRBW', 1, 1.0 / 35.0, S_CRBOW9) { A_WeaponReady(); }
-	S_CRBOW9('CRBW', 1, 1.0 / 35.0, S_CRBOW10) { A_WeaponReady(); }
-	S_CRBOW10('CRBW', 1, 1.0 / 35.0, S_CRBOW11) { A_WeaponReady(); }
-	S_CRBOW11('CRBW', 1, 1.0 / 35.0, S_CRBOW12) { A_WeaponReady(); }
-	S_CRBOW12('CRBW', 1, 1.0 / 35.0, S_CRBOW13) { A_WeaponReady(); }
-	S_CRBOW13('CRBW', 2, 1.0 / 35.0, S_CRBOW14) { A_WeaponReady(); }
-	S_CRBOW14('CRBW', 2, 1.0 / 35.0, S_CRBOW15) { A_WeaponReady(); }
-	S_CRBOW15('CRBW', 2, 1.0 / 35.0, S_CRBOW16) { A_WeaponReady(); }
-	S_CRBOW16('CRBW', 2, 1.0 / 35.0, S_CRBOW17) { A_WeaponReady(); }
-	S_CRBOW17('CRBW', 2, 1.0 / 35.0, S_CRBOW18) { A_WeaponReady(); }
-	S_CRBOW18('CRBW', 2, 1.0 / 35.0, S_CRBOW1) { A_WeaponReady(); }
-	S_CRBOWDOWN('CRBW', 0, 1.0 / 35.0, S_CRBOWDOWN) { A_Lower(); }
-	S_CRBOWUP('CRBW', 0, 1.0 / 35.0, S_CRBOWUP) { A_Raise(); }
-	S_CRBOWATK1_1('CRBW', 3, 6.0 / 35.0, S_CRBOWATK1_2) { A_FireCrossbowPL1(); }
-	S_CRBOWATK1_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK1_3) { }
-	S_CRBOWATK1_3('CRBW', 5, 3.0 / 35.0, S_CRBOWATK1_4) { }
-	S_CRBOWATK1_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK1_5) { }
-	S_CRBOWATK1_5('CRBW', 7, 3.0 / 35.0, S_CRBOWATK1_6) { }
-	S_CRBOWATK1_6('CRBW', 0, 4.0 / 35.0, S_CRBOWATK1_7) { }
-	S_CRBOWATK1_7('CRBW', 1, 4.0 / 35.0, S_CRBOWATK1_8) { }
-	S_CRBOWATK1_8('CRBW', 2, 5.0 / 35.0, S_CRBOW1) { A_ReFire(); }
-	S_CRBOWATK2_1('CRBW', 3, 5.0 / 35.0, S_CRBOWATK2_2) { A_FireCrossbowPL2(); }
-	S_CRBOWATK2_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK2_3) { }
-	S_CRBOWATK2_3('CRBW', 5, 2.0 / 35.0, S_CRBOWATK2_4) { }
-	S_CRBOWATK2_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK2_5) { }
-	S_CRBOWATK2_5('CRBW', 7, 2.0 / 35.0, S_CRBOWATK2_6) { }
-	S_CRBOWATK2_6('CRBW', 0, 3.0 / 35.0, S_CRBOWATK2_7) { }
-	S_CRBOWATK2_7('CRBW', 1, 3.0 / 35.0, S_CRBOWATK2_8) { }
-	S_CRBOWATK2_8('CRBW', 2, 4.0 / 35.0, S_CRBOW1) { A_ReFire(); }
-}
-__states__(Actor)
-{
 	S_CRBOWFX1('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX1) { }
 	S_CRBOWFXI1_1('FX03', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_2) { }
 	S_CRBOWFXI1_2('FX03', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_3) { }
@@ -1295,9 +1100,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/03/02 17:37:22  dj_jl
+//	Weapon classes
+//
 //	Revision 1.11  2002/02/22 18:00:19  dj_jl
 //	A lots of the renaming, beautification.
-//
+//	
 //	Revision 1.10  2002/01/12 17:58:05  dj_jl
 //	New style state functions
 //	

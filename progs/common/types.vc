@@ -595,38 +595,6 @@ void SetState(int stnum)
 	while (!StateTime);	// An initial state of 0 could cycle through.
 }
 
-//==========================================================================
-//
-//  SetStateNF
-//
-//  Identical to SetState, without calling the action function
-//
-//==========================================================================
-
-void SetStateNF(int stnum)
-{
-	state_t *state;
-
-	do
-	{
-		if (!stnum)
-		{	// Object removed itself.
-			StateNum = 0;
-			break;
-		}
-		state = &states[stnum];
-		StateTime = state->time;	// could be 0
-		SpriteIndex = state->sprite;
-		SpriteFrame = state->frame;
-		ModelIndex = state->model_index;
-		ModelFrame = state->model_frame;
-		StateNum = state->statenum;
-		NextState = state->nextstate;
-		stnum = NextState;
-	}
-	while (!StateTime);	// An initial state of 0 could cycle through.
-}
-
 defaultproperties
 {
 }
@@ -719,9 +687,6 @@ struct player_t
 	//  256 integers for user defined fields in PROGS
 	addfields 256;
 };
-
-// Weapon info: sprite frames, ammunition use.
-typedef void (*weapon_func_t) (player_t *);
 
 //==========================================================================
 //
@@ -1052,6 +1017,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/03/02 17:35:55  dj_jl
+//  Weapon classes
+//
 //  Revision 1.32  2002/02/22 18:00:05  dj_jl
 //  A lots of the renaming, beautification.
 //

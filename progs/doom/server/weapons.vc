@@ -39,7 +39,14 @@ void SetWeapon(player_t * player, int NewWeapon)
 {
 	player->ReadyWeapon = NewWeapon;
 	player->PendingWeapon = wp_nochange;
-	weaponinfo[NewWeapon] (player);
+	if (player->ViewEnts[ps_weapon])
+	{
+		player->ViewEnts[ps_weapon].Destroy();
+	}
+	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	player->ViewEnts[ps_weapon].Player = player;
+	player->WeaponModel =
+		FindModel(Weapon(player->ViewEnts[ps_weapon]).ThirdPersonModel);
 }
 
 //===========================================================================
@@ -70,7 +77,7 @@ void BringUpWeapon(player_t * player)
 	player->PendingWeapon = wp_nochange;
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 
-	SetPsprite(player, ps_weapon, player->w_UpState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
 }
 
 //==========================================================================
@@ -131,7 +138,7 @@ void ChangeWeapon(player_t * player, int newweapon)
 
 void DropWeapon(player_t * player)
 {
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
 }
 
 //===========================================================================
@@ -208,7 +215,7 @@ int CheckAmmo(player_t * player)
 	int ammo;
 	int count;
 
-	ammo = player->w_Ammo;
+	ammo = Weapon(player->ViewEnts[ps_weapon]).Ammo;
 
 	// Minimal amount for one shot varies.
 	if (player->ReadyWeapon == wp_bfg)
@@ -283,7 +290,7 @@ int CheckAmmo(player_t * player)
 	while (player->PendingWeapon == wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
 
 	return false;
 }
@@ -302,7 +309,7 @@ void FireWeapon(player_t * player)
 	}
 
 	player->mo->SetState(S_PLAY_ATK1);
-	SetPsprite(player, ps_weapon, player->w_AttackState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
 	P_NoiseAlert(player->mo, player->mo);
 }
 
@@ -369,7 +376,7 @@ void Weapon::A_WeaponReady(void)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		SetPsprite(Player, ps_weapon, Player->w_DownState);
+		SetPsprite(Player, ps_weapon, DownState);
 		return;
 	}
 
@@ -457,7 +464,7 @@ void Weapon::A_Raise(void)
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	SetPsprite(Player, ps_weapon, Player->w_ReadyState);
+	SetPsprite(Player, ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -505,7 +512,7 @@ void Weapon::A_CheckReload(void)
 void Weapon::A_GunFlash(void)
 {
 	Player->mo->SetState(S_PLAY_ATK2);
-	SetPsprite(Player, ps_flash, Player->w_FlashState);
+	SetPsprite(Player, ps_flash, FlashState);
 }
 
 //===========================================================================
@@ -646,9 +653,9 @@ void Weapon::A_FirePistol(void)
 	Player->mo->PlaySound('PistolFire', CHAN_WEAPON);
 
 	Player->mo->SetState(S_PLAY_ATK2);
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 
-	SetPsprite(Player, ps_flash, Player->w_FlashState);
+	SetPsprite(Player, ps_flash, FlashState);
 
 	dir = Aim(Player->mo, 16.0 * 64.0);
 	GunShot(Player->mo, !Player->Refire, dir);
@@ -669,9 +676,9 @@ void Weapon::A_FireShotgun(void)
 	Player->mo->PlaySound('ShotgunFire', CHAN_WEAPON);
 	Player->mo->SetState(S_PLAY_ATK2);
 
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 
-	SetPsprite(Player, ps_flash, Player->w_FlashState);
+	SetPsprite(Player, ps_flash, FlashState);
 
 	dir = Aim(Player->mo, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
@@ -700,9 +707,9 @@ void Weapon::A_FireShotgun2(void)
 	Player->mo->PlaySound('SuperShotgunFire', CHAN_WEAPON);
 	Player->mo->SetState(S_PLAY_ATK2);
 
-	Player->Ammo[Player->w_Ammo] -= 2;
+	Player->Ammo[Ammo] -= 2;
 
-	SetPsprite(Player, ps_flash, Player->w_FlashState);
+	SetPsprite(Player, ps_flash, FlashState);
 
 	aimDir = Aim(Player->mo, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
@@ -787,13 +794,13 @@ void Weapon::A_FireCGun(void)
 
 	Player->mo->PlaySound('PistolFire', CHAN_WEAPON);
 
-	if (!Player->Ammo[Player->w_Ammo])
+	if (!Player->Ammo[Ammo])
 		return;
 
 	Player->mo->SetState(S_PLAY_ATK2);
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 
-	SetPsprite(Player, ps_flash, Player->w_FlashState + StateNum - S_CHAIN1);
+	SetPsprite(Player, ps_flash, FlashState + StateNum - S_CHAIN1);
 
 	dir = Aim(Player->mo, 16.0 * 64.0);
 	GunShot(Player->mo, !Player->Refire, dir);
@@ -808,22 +815,22 @@ void Weapon::A_FireCGun(void)
 
 void Weapon::A_FireMissile(void)
 {
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 	SpawnPlayerMissile(Player->mo, Rocket);
 }
 
 //===========================================================================
 //
-//  Weapon::A_FireGrenade
+//  WeaponGrenade::A_FireGrenade
 //
 //===========================================================================
 
 #ifdef GRENADE_LAUNCHER
-void Weapon::A_FireGrenade(void)
+void WeaponGrenade::A_FireGrenade(void)
 {
 	mobj_t *mo;
 
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 
 	mo = P_SpawnMobj(Player->mo->Origin.x, Player->mo->Origin.y,
 		Player->mo->Origin.z + 32.0, missile_grenade);
@@ -831,7 +838,7 @@ void Weapon::A_FireGrenade(void)
 	if (mo->SightSound)
 		mo->PlaySound(mo->SightSound, CHAN_VOICE);
 
-	mo->_target = Player->mo;
+	mo->Owner = *Player->mo;
 
 	//  See which target is to be aimed at
 	if (Player->mo->Angles.pitch)
@@ -864,9 +871,9 @@ void Weapon::A_FireGrenade(void)
 
 void Weapon::A_FirePlasma(void)
 {
-	Player->Ammo[Player->w_Ammo]--;
+	Player->Ammo[Ammo]--;
 
-	SetPsprite(Player, ps_flash, Player->w_FlashState + (P_Random() & 1));
+	SetPsprite(Player, ps_flash, FlashState + (P_Random() & 1));
 
 	SpawnPlayerMissile(Player->mo, PlasmaShot);
 }
@@ -890,7 +897,7 @@ void Weapon::A_BFGsound(void)
 
 void Weapon::A_FireBFG(void)
 {
-	Player->Ammo[Player->w_Ammo] -= BFGCELLS;
+	Player->Ammo[Ammo] -= BFGCELLS;
 	SpawnPlayerMissile(Player->mo, BFGShot);
 }
 
@@ -945,6 +952,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/02 17:35:55  dj_jl
+//  Weapon classes
+//
 //  Revision 1.20  2002/02/26 17:49:47  dj_jl
 //  no message
 //

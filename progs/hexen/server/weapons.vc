@@ -23,11 +23,6 @@
 //**
 //**************************************************************************
 
-#define SHARDSPAWN_LEFT		1
-#define SHARDSPAWN_RIGHT	2
-#define SHARDSPAWN_UP		4
-#define SHARDSPAWN_DOWN		8
-
 int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS] = {
 	0, 2, 3, 14,	//  Fighter
 	0, 1, 4, 18,	//  Priest
@@ -51,8 +46,15 @@ void SetWeapon(player_t *player, int NewWeapon)
 {
 	player->ReadyWeapon = NewWeapon;
 	player->PendingWeapon = wp_nochange;
-	weaponinfo[NewWeapon * NUMCLASSES + player->PClass] (player);
-	player->PSpriteSY = PSpriteSY[player->PClass * NUMWEAPONS + NewWeapon];
+
+	if (player->ViewEnts[ps_weapon])
+	{
+		player->ViewEnts[ps_weapon].Destroy();
+	}
+	player->ViewEnts[ps_weapon] =
+		SpawnObject(WeaponClasses[NewWeapon * NUMCLASSES + player->PClass], none);
+	player->ViewEnts[ps_weapon].Player = player;
+	player->PSpriteSY = Weapon(player->ViewEnts[ps_weapon]).PSpriteSY;
 }
 
 //===========================================================================
@@ -68,17 +70,6 @@ void SetPsprite(player_t * player, int position, int stnum)
 
 //==========================================================================
 //
-//  SetPspriteNF
-//
-//==========================================================================
-
-void SetPspriteNF(player_t * player, int position, int stnum)
-{
-	player->ViewEnts[position].SetStateNF(stnum);
-}
-
-//==========================================================================
-//
 //  WeaponManaUse
 //
 //==========================================================================
@@ -86,17 +77,6 @@ void SetPspriteNF(player_t * player, int position, int stnum)
 int WeaponManaUse(int pclass, int num)
 {
 	return WeaponManaUseTable[(pclass << 2) + num];
-}
-
-//==========================================================================
-//
-//  SetFighterAxe
-//
-//==========================================================================
-
-void SetFighterAxe(player_t * player)
-{
-	SetPsprite(player, ps_weapon, S_FAXEREADY_G);
 }
 
 //==========================================================================
@@ -109,20 +89,10 @@ void SetFighterAxe(player_t * player)
 
 void BringUpWeapon(player_t * player)
 {
-	int newstate;
-
-	if (player->PClass == PCLASS_FIGHTER &&
-		player->ReadyWeapon == WP_SECOND && player->Mana[MANA_1])
-	{
-		newstate = S_FAXEUP_G;
-	}
-	else
-	{
-		newstate = player->w_UpState;
-	}
 	player->PendingWeapon = wp_nochange;
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
-	SetPsprite(player, ps_weapon, newstate);
+	player->ViewEnts[ps_weapon].SetState(
+		Weapon(player->ViewEnts[ps_weapon]).GetUpState());
 }
 
 //==========================================================================
@@ -135,7 +105,8 @@ void BringUpWeapon(player_t * player)
 
 void DropWeapon(player_t * player)
 {
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	player->ViewEnts[ps_weapon].SetState(
+		Weapon(player->ViewEnts[ps_weapon]).GetDownState());
 }
 
 //==========================================================================
@@ -184,7 +155,7 @@ void MovePsprites(player_t * player)
 				if (e.StateTime <= 0.0)
 				{
 					e.StateTime = 0.0;
-					SetPsprite(player, i, e.NextState);
+					e.SetState(e.NextState);
 				}
 			}
 		}
@@ -207,7 +178,7 @@ boolean P_CheckMana(player_t * player)
 	int mana;
 	int count;
 
-	mana = player->w_Mana;
+	mana = Weapon(player->ViewEnts[ps_weapon]).Mana;
 	count = WeaponManaUse(player->PClass, player->ReadyWeapon);
 	if (mana == MANA_BOTH)
 	{
@@ -249,8 +220,20 @@ boolean P_CheckMana(player_t * player)
 		}
 	}
 	while (player->PendingWeapon == wp_nochange);
-	SetPsprite(player, ps_weapon, player->w_DownState);
+	SetPsprite(player, ps_weapon,
+		Weapon(player->ViewEnts[ps_weapon]).GetDownState());
 	return false;
+}
+
+//==========================================================================
+//
+//	Weapon::GetAttackState
+//
+//==========================================================================
+
+int Weapon::GetAttackState(void)
+{
+	return Player->Refire ? HoldAttackState : AttackState;
 }
 
 //==========================================================================
@@ -261,24 +244,13 @@ boolean P_CheckMana(player_t * player)
 
 void P_FireWeapon(player_t * player)
 {
-	int attackState;
-
 	if (!P_CheckMana(player))
 	{
 		return;
 	}
 	player->mo->SetState(PStateAttack[player->PClass]);
-	if (player->PClass == PCLASS_FIGHTER && player->ReadyWeapon == WP_SECOND
-		&& player->Mana[MANA_1] > 0)
-	{	// Glowing axe
-		attackState = S_FAXEATK_G1;
-	}
-	else
-	{
-		attackState = player->Refire ?
-			player->w_HoldAttackState : player->w_AttackState;
-	}
-	SetPsprite(player, ps_weapon, attackState);
+	player->ViewEnts[ps_weapon].SetState(
+		Weapon(player->ViewEnts[ps_weapon]).GetAttackState());
 	P_NoiseAlert(player->mo, player->mo);
 }
 
@@ -320,7 +292,8 @@ void ActivateMorphWeapon(player_t * player)
 {
 	player->ViewEnts[ps_weapon].SY = WEAPONTOP;
 	SetWeapon(player, WP_FIRST);	// Snout is the first weapon
-	SetPsprite(player, ps_weapon, S_SNOUTREADY);
+	SetPsprite(player, ps_weapon,
+		Weapon(player->ViewEnts[ps_weapon]).ReadyState);
 }
 
 //==========================================================================
@@ -333,7 +306,7 @@ void PostMorphWeapon(player_t * player, int weapon)
 {
 	SetWeapon(player, weapon);
 	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
-	SetPsprite(player, ps_weapon, player->w_UpState);
+	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
 }
 
 //****************************************************************************
@@ -360,11 +333,10 @@ void Weapon::A_WeaponReady(void)
 	{
 		Player->mo->SetState(PStateNormal[Player->PClass]);
 	}
-	// Put the weapon away if the player has a pending weapon or has
-	// died.
+	// Put the weapon away if the player has a pending weapon or has died.
 	if (Player->PendingWeapon != wp_nochange || !Player->Health)
 	{
-		SetPsprite(Player, ps_weapon, Player->w_DownState);
+		SetPsprite(Player, ps_weapon, GetDownState());
 		return;
 	}
 
@@ -445,15 +417,7 @@ void Weapon::A_Raise(void)
 		return;
 	}
 	SY = WEAPONTOP;
-	if (Player->PClass == PCLASS_FIGHTER && Player->ReadyWeapon == WP_SECOND
-		&& Player->Mana[MANA_1])
-	{
-		SetPsprite(Player, ps_weapon, S_FAXEREADY_G);
-	}
-	else
-	{
-		SetPsprite(Player, ps_weapon, Player->w_ReadyState);
-	}
+	SetPsprite(Player, ps_weapon, GetReadyState());
 }
 
 //==========================================================================
@@ -493,6 +457,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/02 17:35:56  dj_jl
+//  Weapon classes
+//
 //  Revision 1.11  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //

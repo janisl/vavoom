@@ -23,25 +23,26 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	WeaponPigSnout
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
+class WeaponPigSnout:Weapon
+{
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+int SniffState;
 
 //============================================================================
 //
-//  Weapon::A_SnoutAttack
+//  A_SnoutAttack
 //
 //============================================================================
 
-void Weapon::A_SnoutAttack(void)
+void A_SnoutAttack(void)
 {
 	int damage;
 	TAVec angles;
@@ -67,9 +68,47 @@ void Weapon::A_SnoutAttack(void)
 	}
 }
 
+//==========================================================================
+//
+//	SnoutSniff
+//
+//==========================================================================
+
+void SnoutSniff(void)
+{
+	SetState(SniffState);
+}
+
+__states__
+{
+	S_SNOUTREADY('WPIG', 0, 1.0 / 35.0, S_SNOUTREADY) { A_WeaponReady(); }
+	S_SNOUTDOWN('WPIG', 0, 1.0 / 35.0, S_SNOUTDOWN) { A_Lower(); }
+	S_SNOUTUP('WPIG', 0, 1.0 / 35.0, S_SNOUTUP) { A_Raise(); }
+	S_SNOUTATK1('WPIG', 0, 4.0 / 35.0, S_SNOUTATK2) { A_SnoutAttack(); }
+	S_SNOUTATK2('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) { A_SnoutAttack(); }
+	S_SNOUTSNIFF('WPIG', 1, 8.0 / 35.0, S_SNOUTREADY) { }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_SNOUTUP;
+	DownState = S_SNOUTDOWN;
+	ReadyState = S_SNOUTREADY;
+	AttackState = S_SNOUTATK1;
+	HoldAttackState = S_SNOUTATK1;
+	SniffState = S_SNOUTSNIFF;
+	PSpriteSY = 10.0;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/02 17:35:56  dj_jl
+//  Weapon classes
+//
 //  Revision 1.13  2002/02/22 18:00:25  dj_jl
 //  A lots of the renaming, beautification.
 //
