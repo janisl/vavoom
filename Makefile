@@ -240,19 +240,14 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 #---------------------------------------
 
 WAD_FILES = \
-	basev/doomx/palette.wad \
-	basev/heretic/palette.wad \
-	basev/hexen/palette.wad \
-	basev/strife/palette.wad \
-	basev/jldoom.wad \
-	basev/doomdat.wad \
-	basev/doom2dat.wad \
-	basev/tntdat.wad \
-	basev/plutdat.wad \
-	basev/d2progs.wad \
-	basev/hticdat.wad \
-	basev/hexendat.wad \
-	basev/strifdat.wad
+	basev/doom/wad0.wad \
+	basev/doom1/wad0.wad \
+	basev/doom2/wad0.wad \
+	basev/tnt/wad0.wad \
+	basev/plutonia/wad0.wad \
+	basev/heretic/wad0.wad \
+	basev/hexen/wad0.wad \
+	basev/strife/wad0.wad
 
 # ---------------------------------------
 
@@ -338,10 +333,7 @@ progs: utils/vcc/vcc$(EXE)
 
 data: progs $(WAD_FILES)
 
-basev/%/palette.wad: basev/%/palette.ls utils/vlumpy/vlumpy$(EXE)
-	utils/vlumpy/vlumpy$(EXE) $<
-
-basev/%.wad: basev/%.ls utils/vlumpy/vlumpy$(EXE)
+basev/%/wad0.wad: basev/%/wad0.ls utils/vlumpy/vlumpy$(EXE)
 	utils/vlumpy/vlumpy$(EXE) $<
 
 utils/vcc/vcc$(EXE):
@@ -350,11 +342,11 @@ utils/vcc/vcc$(EXE):
 utils/vlumpy/vlumpy$(EXE):
 	$(MAKE) -C utils/vlumpy
 
-basev/doomdat.wad : progs/doom/clprogs.dat progs/doom/svprogs.dat
-basev/d2progs.wad : progs/doom2/clprogs.dat progs/doom2/svprogs.dat
-basev/hticdat.wad : progs/heretic/clprogs.dat progs/heretic/svprogs.dat
-basev/hexendat.wad : progs/hexen/clprogs.dat progs/hexen/svprogs.dat
-basev/strifdat.wad : progs/strife/clprogs.dat progs/strife/svprogs.dat
+basev/doom1/wad0.wad : progs/doom/clprogs.dat progs/doom/svprogs.dat
+basev/doom/wad0.wad : progs/doom2/clprogs.dat progs/doom2/svprogs.dat
+basev/heretic/wad0.wad : progs/heretic/clprogs.dat progs/heretic/svprogs.dat
+basev/hexen/wad0.wad : progs/hexen/clprogs.dat progs/hexen/svprogs.dat
+basev/strife/wad0.wad : progs/strife/clprogs.dat progs/strife/svprogs.dat
 
 # ---------------------------------------
 
