@@ -177,6 +177,10 @@ class TOpenGLDrawer : public TDrawer
 	float		tex_iw;
 	float		tex_ih;
 
+	GLenum		maxfilter;
+	GLenum		minfilter;
+	GLenum		mipfilter;
+
 	rgba_t		pal8_to24[256];
 
 	TCvarI		tex_linear;
@@ -210,7 +214,10 @@ class TOpenGLDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
-	void BuildMipmaps(int, int, rgba_t*);
+	void ResampleTexture(int, int, const byte*, int, int, byte*);
+	void MipMap(int, int, byte*);
+	void UploadTexture(int, int, rgba_t*);
+	void UploadTextureNoMip(int, int, rgba_t*);
 
 	bool				mtexable;
 	MultiTexCoord2f_t	p_MultiTexCoord2f;
@@ -235,9 +242,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/23 17:51:12  dj_jl
+//	My own mipmap creation code, glu not used anymore
+//
 //	Revision 1.8  2001/08/21 17:47:51  dj_jl
 //	Localized GL/glu.h
-//
+//	
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

@@ -26,7 +26,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gl_local.h"
-#include <GL/glu.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -93,10 +92,10 @@ void TOpenGLDrawer::InitTextures(void)
 	flat_id = (GLuint*)Z_Calloc(numflats * 4);
 	flat_sent = (bool*)Z_Calloc(numflats);
 	// 	Sprite lumps
-    sprite_id = (GLuint*)Z_Calloc(numspritelumps * 4);
-    sprite_sent = (bool*)Z_Calloc(numspritelumps);
-    spriteiw = (float*)Z_Calloc(numspritelumps * 4);
-    spriteih = (float*)Z_Calloc(numspritelumps * 4);
+	sprite_id = (GLuint*)Z_Calloc(numspritelumps * 4);
+	sprite_sent = (bool*)Z_Calloc(numspritelumps);
+	spriteiw = (float*)Z_Calloc(numspritelumps * 4);
+	spriteih = (float*)Z_Calloc(numspritelumps * 4);
 }
 
 //==========================================================================
@@ -280,12 +279,11 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 		}
 	}
 
-	BuildMipmaps(texture->width, texture->height, block);
-
+	UploadTexture(texture->width, texture->height, block);
 	Z_Free(block);
+	texture_iw[texnum] = 1.0 / float(texture->width);
+	texture_ih[texnum] = 1.0 / float(texture->height);
 	texture_sent[texnum] = true;
-	texture_iw[texnum] = 1.0 / (float)texture->width;
-	texture_ih[texnum] = 1.0 / (float)texture->height;
 }
 
 //==========================================================================
@@ -309,26 +307,8 @@ void TOpenGLDrawer::SetTexture(int tex)
 	{
 		GenerateTexture(tex);
 	}
-	if (tex_linear == 3)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (tex_linear == 2)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	tex_iw = texture_iw[tex];
 	tex_ih = texture_ih[tex];
 }
@@ -353,16 +333,8 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 		pal8_to24[0] = saved;
 	}
 	// No mipmaping for sky
-	if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
 }
 
 //==========================================================================
@@ -379,7 +351,7 @@ void TOpenGLDrawer::GenerateFlat(int num)
 	{
 		block[i] = pal8_to24[data[i]];
 	}
-	BuildMipmaps(64, 64, block);
+	UploadTexture(64, 64, block);
 	Z_Free(block);
 	flat_sent[num] = true;
 }
@@ -401,26 +373,8 @@ void TOpenGLDrawer::SetFlat(int num)
 	{
 		GenerateFlat(num);
 	}
-	if (tex_linear == 3)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (tex_linear == 2)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	tex_iw = 1.0 / 64.0;
 	tex_ih = 1.0 / 64.0;
 }
@@ -433,7 +387,7 @@ void TOpenGLDrawer::SetFlat(int num)
 
 void TOpenGLDrawer::GenerateSprite(int lump)
 {
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
+	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -442,32 +396,32 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 	spriteiw[lump] = 1.0 / (float)p2w;
 	spriteih[lump] = 1.0 / (float)p2h;
 
-    rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
 
 	for (int x = 0; x < w; x++)
 	{
-    	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[x]));
+		column_t *column = (column_t *)((byte *)patch +
+			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
-	    while (column->topdelta != 0xff)
-	    {
-		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		while (column->topdelta != 0xff)
+		{
+			byte* source = (byte *)column + 3;
+			rgba_t* dest = block + x + column->topdelta * p2w;
 			int count = column->length;
 
-	    	while (count--)
-	    	{
+			while (count--)
+			{
 				*dest = pal8_to24[*source];
 				source++;
 				dest += p2w;
-	    	}
+			}
 			column = (column_t *)((byte *)column + column->length + 4);
-	    }
+		}
 	}
 
 	// Generate The Texture
-	BuildMipmaps(p2w, p2h, block);
+	UploadTexture(p2w, p2h, block);
 	sprite_sent[lump] = true;
 
 	Z_Free(block);
@@ -482,7 +436,7 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 
 void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
-    patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
+	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -491,7 +445,7 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 	trspriw[slot] = 1.0 / (float)p2w;
 	trsprih[slot] = 1.0 / (float)p2h;
 
-    rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
 	trspr_lump[slot] = lump;
 	trspr_tnum[slot] = translation;
 	trspr_sent[slot] = true;
@@ -500,28 +454,28 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	for (int x = 0; x < w; x++)
 	{
-    	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[x]));
+		column_t *column = (column_t *)((byte *)patch +
+			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
-	    while (column->topdelta != 0xff)
-	    {
-		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		while (column->topdelta != 0xff)
+		{
+			byte* source = (byte *)column + 3;
+			rgba_t* dest = block + x + column->topdelta * p2w;
 			int count = column->length;
 
-	    	while (count--)
-	    	{
+			while (count--)
+			{
 				*dest = pal8_to24[trtab[*source]];
 				source++;
 				dest += p2w;
-	    	}
+			}
 			column = (column_t *)((byte *)column + column->length + 4);
-	    }
+		}
 	}
 
 	// Generate The Texture
-	BuildMipmaps(p2w, p2h, block);
+	UploadTexture(p2w, p2h, block);
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
@@ -546,26 +500,8 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 				if (trspr_lump[i] == lump && trspr_tnum[i] == translation)
 				{
 					glBindTexture(GL_TEXTURE_2D, trspr_id[i]);
-					if (tex_linear == 3)
-					{
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					}
-					else if (tex_linear == 2)
-					{
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					}
-					else if (tex_linear)
-					{
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					}
-					else
-					{
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-						glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					}
+					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 					tex_iw = trspriw[i];
 					tex_ih = trsprih[i];
 					return;
@@ -583,26 +519,8 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		}
 		glBindTexture(GL_TEXTURE_2D, trspr_id[avail]);
 		GenerateTranslatedSprite(lump, avail, translation);
-		if (tex_linear == 3)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else if (tex_linear == 2)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else if (tex_linear)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 		tex_iw = trspriw[avail];
 		tex_ih = trsprih[avail];
 	}
@@ -613,26 +531,8 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		{
 			GenerateSprite(lump);
 		}
-		if (tex_linear == 3)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else if (tex_linear == 2)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else if (tex_linear)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 		tex_iw = spriteiw[lump];
 		tex_ih = spriteih[lump];
 	}
@@ -665,16 +565,8 @@ void TOpenGLDrawer::SetPic(int handle)
 	tex_iw = pic_iw[handle];
 	tex_ih = pic_ih[handle];
 
-	if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
 }
 
 //==========================================================================
@@ -688,51 +580,50 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	fixed_t xscale;
-	if (p2w > maxTexSize)
+	int outw;
+	int outh;
+	if (w == 320 && h == 200)
 	{
-		xscale = FRACUNIT * w / maxTexSize;
-		p2w = maxTexSize;
-		pic_iw[handle] = 1.0 / (float)w;
+		outw = w;
+		outh = h;
 	}
 	else
 	{
-		xscale = FRACUNIT;
-		pic_iw[handle] = 1.0 / (float)p2w;
+		outw = ToPowerOf2(w);
+		outh = ToPowerOf2(h);
 	}
-	pic_ih[handle] = 1.0 / (float)p2h;
-	int workw = MIN(w, p2w);
 
-    rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * outw * outh);
 
-	for (int x = 0; x < workw; x++)
+	for (int x = 0; x < w; x++)
 	{
-    	column_t *column = (column_t *)((byte *)patch +
-    		LittleLong(patch->columnofs[(x * xscale) >> FRACBITS]));
+		column_t *column = (column_t *)((byte *)patch +
+			LittleLong(patch->columnofs[x]));
 
 		// step through the posts in a column
-	    while (column->topdelta != 0xff)
-	    {
-		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		while (column->topdelta != 0xff)
+		{
+			byte* source = (byte *)column + 3;
+			rgba_t* dest = block + x + column->topdelta * outw;
 			int count = column->length;
 
-	    	while (count--)
-	    	{
+			while (count--)
+			{
 				*dest = pal8_to24[*source];
 				source++;
-				dest += p2w;
-	    	}
+				dest += outw;
+			}
 			column = (column_t *)((byte *)column + column->length + 4);
-	    }
+		}
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, p2w, p2h, 0, GL_RGBA, GL_UNSIGNED_BYTE, block);
-	pic_sent[handle] = true;
+	UploadTextureNoMip(outw, outh, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+
+	pic_iw[handle] = 1.0 / float(outw);
+	pic_ih[handle] = 1.0 / float(outh);
+	pic_sent[handle] = true;
 }
 
 //==========================================================================
@@ -743,55 +634,27 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 
 void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 {
-	int p2w = 512;
-	int p2h = 256;
-	fixed_t xscale;
-	if (p2w > maxTexSize)
-	{
-		p2w = maxTexSize;
-		xscale = FRACUNIT * 320 / maxTexSize;
-		pic_iw[handle] = 1.0 / 320.0;
-	}
-	else
-	{
-		xscale = FRACUNIT;
-		pic_iw[handle] = 1.0 / 512.0;
-	}
-	pic_ih[handle] = 1.0 / 256.0;
-	int workw = MIN(320, p2w);
-
 	int lump = W_GetNumForName(pic_list[handle].name);
+	int len = W_LumpLength(lump);
 	byte *raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
-	int realh = W_LumpLength(lump) / 320;
-    rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	int h = len / 320;
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * len);
+	rgba_t *pal = r_palette[pic_list[handle].palnum];
+	int black = r_black_color[pic_list[handle].palnum];
 
-	for (int y = 0; y < realh; y++)
+	byte *src = raw;
+	rgba_t *dst = block;
+	for (int i = 0; i < len; i++, src++, dst++)
 	{
-		byte *src = raw + 320 * y;
-		rgba_t *dst = block + p2w * y;
-		for (int x = 0; x < workw; x++)
-		{
-			dst[x] = pal8_to24[src[(x * xscale) >> FRACBITS]];
-		}
-		if (workw == 320)
-		{
-			//	For automap warping
-			dst[320] = pal8_to24[src[0]];
-			dst[511] = pal8_to24[src[319]];
-		}
-	}
-	if (realh != 200)
-	{
-		//	Automap background, copy top and bottom so wrapping in
-		// bilinear filtering looks good
-		memcpy(block + p2w * realh, block, p2w * 4);
-		memcpy(block + p2w * (p2h - 1), block + p2w * (realh - 1), p2w * 4);
+		*dst = pal[*src ? *src : black];
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, p2w, p2h, 0, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	UploadTextureNoMip(320, h, block);
 	Z_Free(block);
 	Z_ChangeTag(raw, PU_CACHE);
 
+	pic_iw[handle] = 1.0 / float(320);
+	pic_ih[handle] = 1.0 / float(h);
 	pic_sent[handle] = true;
 }
 
@@ -839,49 +702,297 @@ void TOpenGLDrawer::SetSkin(const char *name)
 		{
 			buf[i] = pal8_to24[SkinData[i]];
 		}
-		BuildMipmaps(SkinWidth, SkinHeight, buf);
+		UploadTexture(SkinWidth, SkinHeight, buf);
 		Z_Free(buf);
 		Z_Free(SkinData);
 	}
-	if (tex_linear == 3)
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::ResampleTexture
+//
+//	Resizes	texture.
+//	This is a simplified version of gluScaleImage from sources of MESA 3.0
+//
+//==========================================================================
+
+void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
+	const byte *datain, int widthout, int heightout, byte *dataout)
+{
+	int i, j, k;
+
+//#define POINT_SAMPLE
+#ifdef POINT_SAMPLE
+	for (i = 0; i < heightout; i++)
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		int ii = int(i * sy);
+		for (j = 0; j < widthout; j++)
+		{
+			int jj = int(j * sx);
+
+			const byte *src = datain + (ii * widthin + jj) * 4;
+			byte *dst = dataout + (i * widthout + j) * 4;
+
+			for (k = 0; k < 4; k++)
+			{
+				*dst++ = *src++;
+			}
+		}
 	}
-	else if (tex_linear == 2)
+#else
+	float sx, sy;
+
+	if (widthout > 1)
+		sx = float(widthin - 1) / float(widthout - 1);
+	else
+		sx = float(widthin - 1);
+	if (heightout > 1)
+		sy = float(heightin - 1) / float(heightout - 1);
+	else
+		sy = float(heightin - 1);
+
+	if (sx < 1.0 && sy < 1.0)
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else if (tex_linear)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		/* magnify both width and height:  use weighted sample of 4 pixels */
+		int i0, i1, j0, j1;
+		float alpha, beta;
+		const byte *src00, *src01, *src10, *src11;
+		float s1, s2;
+		byte *dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			alpha = i * sy - i0;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+				beta = j * sx - j0;
+
+				/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
+				src00 = datain + (i0 * widthin + j0) * 4;
+				src01 = datain + (i0 * widthin + j1) * 4;
+				src10 = datain + (i1 * widthin + j0) * 4;
+				src11 = datain + (i1 * widthin + j1) * 4;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				for (k = 0; k < 4; k++)
+				{
+					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
+					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
+					*dst++ = byte(s1 * (1.0-alpha) + s2 * alpha);
+				}
+			}
+		}
 	}
 	else
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		/* shrink width and/or height:  use an unweighted box filter */
+		int i0, i1;
+		int j0, j1;
+		int ii, jj;
+		int sum;
+		byte *dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
+				for (k = 0; k < 4; k++)
+				{
+					sum = 0;
+					for (ii = i0; ii <= i1; ii++)
+					{
+						for (jj = j0; jj <= j1; jj++)
+						{
+							sum += *(datain + (ii * widthin + jj) * 4 + k);
+						}
+					}
+					sum /= (j1-j0+1) * (i1-i0+1);
+					*dst++ = sum;
+				}
+			}
+		}
+	}
+#endif
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::MipMap
+//
+//	Scales image down for next mipmap level, operates in place
+//
+//==========================================================================
+
+void TOpenGLDrawer::MipMap(int width, int height, byte *in)
+{
+	int		i, j;
+	byte	*out = in;
+
+	if (width == 1 || height == 1)
+	{
+		//	Special case when only one dimension is scaled
+		int total = width * height / 2;
+		for (i = 0; i < total; i++, in += 8, out += 4)
+		{
+			out[0] = (in[0] + in[4]) >> 1;
+			out[1] = (in[1] + in[5]) >> 1;
+			out[2] = (in[2] + in[6]) >> 1;
+			out[3] = (in[3] + in[7]) >> 1;
+		}
+		return;
+	}
+
+	//	Scale down in both dimensions
+	width <<= 2;
+	height >>= 1;
+	for (i = 0; i < height; i++, in += width)
+	{
+		for (j = 0; j < width; j += 8, in += 8, out += 4)
+		{
+			out[0] = (in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2;
+			out[1] = (in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2;
+			out[2] = (in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2;
+			out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
+		}
 	}
 }
 
 //==========================================================================
 //
-//	TOpenGLDrawer::BuildMipmaps
+//	TOpenGLDrawer::UploadTexture
 //
 //==========================================================================
 
-void TOpenGLDrawer::BuildMipmaps(int w, int h, rgba_t *block)
+void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 {
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 4, w, h, GL_RGBA, GL_UNSIGNED_BYTE, block);
+	int		w, h;
+	byte	*image;
+	int		level;
+	byte	stackbuf[256 * 128 * 4];
+
+	w = ToPowerOf2(width);
+	if (w > maxTexSize)
+	{
+		w = maxTexSize;
+	}
+	h = ToPowerOf2(height);
+	if (h > maxTexSize)
+	{
+		h = maxTexSize;
+	}
+
+	if (w * h * 4 <= int(sizeof(stackbuf)))
+	{
+		image = stackbuf;
+	}
+	else
+	{
+		image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+	}
+	if (w != width || h != height)
+	{
+		/* must rescale image to get "top" mipmap texture image */
+		ResampleTexture(width, height, (byte*)data, w, h, image);
+	}
+	else
+	{
+		memcpy(image, data, w * h * 4);
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+	for (level = 1; w > 1 || h > 1; level++)
+	{
+		MipMap(w, h, image);
+		if (w > 1)
+			w >>= 1;
+		if (h > 1)
+			h >>= 1;
+		glTexImage2D(GL_TEXTURE_2D, level, 4, w, h, 0, GL_RGBA,
+			GL_UNSIGNED_BYTE, image);
+	}
+
+	if (image != stackbuf)
+	{
+		Z_Free(image);
+	}
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::UploadTextureNoMip
+//
+//==========================================================================
+
+void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+{
+	int		w, h;
+	byte	*image;
+	byte	stackbuf[64 * 1024];
+
+	w = ToPowerOf2(width);
+	if (w > maxTexSize)
+	{
+		w = maxTexSize;
+	}
+	h = ToPowerOf2(height);
+	if (h > maxTexSize)
+	{
+		h = maxTexSize;
+	}
+
+	if (w != width || h != height)
+	{
+		/* must rescale image to get "top" mipmap texture image */
+		if (w * h * 4 <= int(sizeof(stackbuf)))
+		{
+			image = stackbuf;
+		}
+		else
+		{
+			image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+		}
+		ResampleTexture(width, height, (byte*)data, w, h, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		if (image != stackbuf)
+		{
+			Z_Free(image);
+		}
+	}
+	else
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:51:12  dj_jl
+//	My own mipmap creation code, glu not used anymore
+//
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
-//
+//	
 //	Revision 1.4  2001/08/01 17:30:31  dj_jl
 //	Fixed translated sprites
 //	
