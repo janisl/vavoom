@@ -62,7 +62,7 @@ static BITMAP		*gamebitmap = NULL;
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init(void)
+void VSoftwareDrawer::Init()
 {
 }
 
@@ -77,9 +77,9 @@ void VSoftwareDrawer::Init(void)
 static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 {
 	guard(my_create_bitmap_ex);
-	GFX_VTABLE *vtable;
-	BITMAP *bitmap;
-	int i;
+	GFX_VTABLE*		vtable;
+	BITMAP*			bitmap;
+	int				i;
 
 	vtable = _get_vtable(color_depth);
 	if (!vtable)
@@ -104,8 +104,8 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 	bitmap->seg = _default_ds();
 
 	bitmap->line[0] = (byte*)bitmap->dat;
-	for (i=1; i<height; i++)
-		bitmap->line[i] = bitmap->line[i-1] + width * BYTES_PER_PIXEL(color_depth);
+	for (i = 1; i < height; i++)
+		bitmap->line[i] = bitmap->line[i - 1] + width * BYTES_PER_PIXEL(color_depth);
 
 	if (system_driver->created_bitmap)
 		system_driver->created_bitmap(bitmap);
@@ -134,25 +134,26 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 	}
 
 	if (gamebitmap)
-    {
+	{
 		Z_Free(gamebitmap);
-        gamebitmap = NULL;
-    }
+		gamebitmap = NULL;
+	}
 	FreeMemory();
 
-    set_color_depth(bpp);
-    if (set_gfx_mode(GFX_AUTODETECT, Width, Height, 0, 0))
-    {
+	set_color_depth(bpp);
+	if (set_gfx_mode(M_CheckParm("-window") ? GFX_AUTODETECT_WINDOWED :
+		GFX_AUTODETECT, Width, Height, 0, 0))
+	{
 		GCon->Log(NAME_Init, "Failed to set video mode:");
 		GCon->Log(NAME_Init, allegro_error);
-    	return false;
-    }
+		return false;
+	}
 
 	if (!AllocMemory(SCREEN_W, SCREEN_H, bpp))
 	{
 		return false;
 	}
-    gamebitmap = my_create_bitmap_ex(bpp, SCREEN_W, SCREEN_H);
+	gamebitmap = my_create_bitmap_ex(bpp, SCREEN_W, SCREEN_H);
 	if (!gamebitmap)
 	{
 		GCon->Log(NAME_Init, "Failed to create game bitmap:");
@@ -160,10 +161,10 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 	}
 
 	ScreenWidth = SCREEN_W;
-    ScreenHeight = SCREEN_H;
+	ScreenHeight = SCREEN_H;
 	ScreenBPP = bpp;
 
-    memset(scrn, 0, SCREEN_W * SCREEN_H * ((bpp + 7) >> 3));
+	memset(scrn, 0, SCREEN_W * SCREEN_H * ((bpp + 7) >> 3));
 
 	if (ScreenBPP == 15)
 	{
@@ -199,7 +200,7 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int bpp)
 void VSoftwareDrawer::SetPalette8(byte *palette)
 {
 	guard(VSoftwareDrawer::SetPalette8);
-  	int 	i;
+	int		i;
 	byte	*table;
 
 	if (ScreenBPP != 8)
@@ -213,9 +214,9 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 	while ((inportb(0x3da) & 8) != 8);
 	while ((inportb(0x3da) & 8) == 8);
 
-  	outportb(0x3c8, 0);
-  	for (i = 0; i < 768; i++)
-    	outportb(0x3c9, table[*palette++] >> 2);
+	outportb(0x3c8, 0);
+	for (i = 0; i < 768; i++)
+		outportb(0x3c9, table[*palette++] >> 2);
 
 #else
 
@@ -243,34 +244,35 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 #ifdef DJGPP
 static TCvarI d_blt_func("d_blt_func", "0", CVAR_ARCHIVE);
 
-static void Blit_LBL(void)
+static void Blit_LBL()
 {
-  int i;
-  unsigned int temppointer;
-  int pitch = ScreenWidth * PixelBytes;
-  int mcnt = pitch >> 2;
+	int				i;
+	unsigned int	temppointer;
+	int				pitch = ScreenWidth * PixelBytes;
+	int				mcnt = pitch >> 2;
 
-  temppointer = (unsigned int)scrn;
-  for (i = 0; i < ScreenHeight; i++, temppointer += pitch)
-  {
-    _movedatal(_my_ds(), temppointer, screen->seg, (unsigned int)screen->line[i], mcnt);
-  }
+	temppointer = (unsigned int)scrn;
+	for (i = 0; i < ScreenHeight; i++, temppointer += pitch)
+	{
+		_movedatal(_my_ds(), temppointer, screen->seg,
+			(unsigned int)screen->line[i], mcnt);
+	}
 }
 
-static void Blit_Banked(void)
+static void Blit_Banked()
 {
-  int i;
-  unsigned long temppointer, destpointer;
-  int pitch = ScreenWidth * PixelBytes;
-  int mcnt = pitch >> 2;
+	int				i;
+	unsigned long	temppointer, destpointer;
+	int				pitch = ScreenWidth * PixelBytes;
+	int				mcnt = pitch >> 2;
 
-  temppointer = (unsigned long)scrn;
-  for (i = 0; i < ScreenHeight; i++)
-  {
-    destpointer = bmp_write_line(screen, i);
-    _movedatal(_my_ds(), temppointer, screen->seg, destpointer, mcnt);
-    temppointer += pitch;
-  }
+	temppointer = (unsigned long)scrn;
+	for (i = 0; i < ScreenHeight; i++)
+	{
+		destpointer = bmp_write_line(screen, i);
+		_movedatal(_my_ds(), temppointer, screen->seg, destpointer, mcnt);
+		temppointer += pitch;
+	}
 }
 #endif
 
@@ -304,17 +306,20 @@ void VSoftwareDrawer::Update(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown()
 {
-    set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
+	set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/03/01 15:56:54  dj_jl
+//	Windowed mode, beautification.
+//
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
