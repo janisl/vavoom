@@ -128,7 +128,7 @@ class MenuObject:Object
 
 	boolean IsDisabled(void)
 	{
-		return true;
+		return false;
 	}
 
 	menucommon_t *GetOldItem(void)
@@ -1838,6 +1838,9 @@ class MenuBigTextButton:MenuTextButton
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/03 18:32:28  dj_jl
+//  Fixed menu
+//
 //  Revision 1.10  2001/12/12 19:14:11  dj_jl
 //  Removed support for ASCII character constants
 //
