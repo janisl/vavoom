@@ -50,17 +50,18 @@ class TCvar
 
 	const char	*name;				//	Variable's name
 	const char	*default_string;	//	Default value
-	char		*latched_string;	//	For CVAR_LATCH variables
 	char		*string;			//	Current value
 	int			flags;				//	CVAR_ flags
 	int			value;				//	atoi(string)
 	float		fvalue;				//	atof(string)
 	TCvar		*next;				//	For linked list if variables
+	char		*latched_string;	//	For CVAR_LATCH variables
 
  private:
 	void DoSet(const char *value);
 
 	friend void Cvar_Unlatch(void);
+	friend void Cvar_SetCheating(bool);
 };
 
 //	Cvar, that can be used as int variable
@@ -129,7 +130,6 @@ class TCvarS : public TCvar
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Cvar_Init(void);
-void Cvar_Unlatch(void);
 
 int Cvar_Value(const char *var_name);
 float Cvar_Float(const char *var_name);
@@ -140,16 +140,34 @@ void Cvar_Set(const char *var_name, float value);
 void Cvar_Set(const char *var_name, char *value);
 
 boolean Cvar_Command(int argc, char **argv);
-void Cvar_Write(FILE *f);
+void Cvar_Write(ostream &strm);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+inline ostream &operator << (ostream &strm, const TCvarI &var)
+{
+	return strm << (int)var;
+}
+
+inline ostream &operator << (ostream &strm, const TCvarF &var)
+{
+	return strm << (float)var;
+}
+
+inline ostream &operator << (ostream &strm, const TCvarS &var)
+{
+	return strm << (char*)var;
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.5  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.4  2001/08/29 17:50:42  dj_jl
 //	Implemented CVAR_LATCH
 //	

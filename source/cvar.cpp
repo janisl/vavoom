@@ -27,17 +27,6 @@
 
 #include "gamedefs.h"
 
-/*
-FIXME implement these flags
-
-#define	CVAR_INIT			8	//	Don't allow change from console at all,
-								// but can be set from the command line
-#define	CVAR_LATCH			16	//	Save changes until server restart
-#define	CVAR_ROM			32	//	Display only, cannot be set by user at all
-#define CVAR_CHEAT			64	//	Can not be changed if cheats are disabled
-#define CVAR_MODIFIED		128	//	Set each time the cvar is changed
-*/
-
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -61,6 +50,7 @@ void C_AddToAutoComplete(const char* string);
 static TCvar	*cvars = NULL;
 static char		*cvar_null_string = "";
 static bool		cvar_initialized = false;
+static bool		cvar_cheating;
 
 // CODE --------------------------------------------------------------------
 
@@ -154,7 +144,16 @@ void TCvar::Set(const char *AValue)
 		latched_string = Z_StrDup(AValue);
 		return;
 	}
+
+	if (flags & CVAR_CHEAT && !cvar_cheating)
+	{
+		con << name << "cannot be changed while cheating is disabled\n";
+		return;
+	}
+
 	DoSet(AValue);
+
+	flags |= CVAR_MODIFIED;
 }
 
 //==========================================================================
@@ -252,6 +251,27 @@ void Cvar_Unlatch(void)
 			cvar->latched_string = NULL;
 		}
     }
+}
+
+//==========================================================================
+//
+//	Cvar_SetCheating
+//
+//==========================================================================
+
+void Cvar_SetCheating(bool new_state)
+{
+	cvar_cheating = new_state;
+	if (!cvar_cheating)
+	{
+		for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
+		{
+			if (cvar->flags & CVAR_CHEAT)
+			{
+				cvar->DoSet(cvar->default_string);
+			}
+		}
+	}
 }
 
 //==========================================================================
@@ -398,7 +418,18 @@ boolean Cvar_Command(int argc, char **argv)
 		}
         else
         {
-			cvar->Set(argv[1]);
+			if (cvar->flags & CVAR_ROM)
+			{
+				con << cvar->name << " is read-only\n";
+			}
+			else if (cvar->flags & CVAR_INIT && host_initialized)
+			{
+				con << cvar->name << " can be set only from command-line\n";
+			}
+			else
+			{
+				cvar->Set(argv[1]);
+			}
 		}
     	return true;
     }
@@ -411,15 +442,13 @@ boolean Cvar_Command(int argc, char **argv)
 //
 //==========================================================================
 
-void Cvar_Write(FILE *f)
+void Cvar_Write(ostream &strm)
 {
-	TCvar*	cvar;
-
-	for (cvar = cvars; cvar; cvar = cvar->next)
+	for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
     {
     	if (cvar->flags & CVAR_ARCHIVE)
         {
-        	fprintf(f, "%s\t\t\"%s\"\n", cvar->name, cvar->string);
+        	strm << cvar->name << "\t\t\"" << cvar->string << "\"\n";
         }
     }
 }
@@ -427,9 +456,12 @@ void Cvar_Write(FILE *f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.4  2001/08/29 17:50:42  dj_jl
 //	Implemented CVAR_LATCH
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -129,8 +129,6 @@ struct mline_t
 
 boolean    		automapactive = false;
 
-int 			am_cheating = 0;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // Automap colors
@@ -153,6 +151,12 @@ static TCvarS	am_color_power("am_color_power", "7d 83 79", CVAR_ARCHIVE);
 static TCvarS	am_color_grid("am_color_grid", "4d 9d 42", CVAR_ARCHIVE);
 static TCvarS	am_color_thing("am_color_thing", "2d 2d 2d", CVAR_ARCHIVE);
 static TCvarS	am_color_player("am_color_player", "e6 e6 e6", CVAR_ARCHIVE);
+
+static TCvarI	am_player_arrow("am_player_arrow", "1", CVAR_ARCHIVE);
+static TCvarI	followplayer("followplayer", "1", CVAR_ARCHIVE); // specifies whether to follow the player around
+static TCvarI	ShowKills("ShowKills", "0");
+
+static TCvarI	am_cheating("am_cheating", "0", CVAR_CHEAT);
 
 static int 		grid = 0;
 
@@ -219,8 +223,6 @@ static int		marknums[10]; // numbers used for marking by the automap
 static mpoint_t	markpoints[AM_NUMMARKPOINTS]; // where the points are
 static int 		markpointnum = 0; // next point to be assigned
 
-static TCvarI	followplayer("followplayer", "1", CVAR_ARCHIVE); // specifies whether to follow the player around
-
 static int		mappic;
 static int		mapheight;
 static short	mapystart=0; // y-value for the start of the map bitmap...used in the paralax stuff.
@@ -265,8 +267,6 @@ static mline_t player_arrow2[] =
 
 #undef R
 
-static TCvarI	am_player_arrow("am_player_arrow", "1", CVAR_ARCHIVE);
-
 #define R	1.0
 static mline_t thintriangle_guy[] =
 {
@@ -276,8 +276,6 @@ static mline_t thintriangle_guy[] =
 };
 #undef R
 #define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy) / sizeof(mline_t))
-
-static TCvar	ShowKills("ShowKills", "0");
 
 // CODE --------------------------------------------------------------------
 
@@ -1530,7 +1528,7 @@ void AM_Drawer(void)
 	T_SetFont(font_small);
     T_SetAlign(hleft, vbottom);
 	T_DrawText(20, 200 - sb_height - 7, cl_level.level_name);
-	if (ShowKills.value && cl.maxclients > 1 && cl.deathmatch)
+	if (ShowKills && cl.maxclients > 1 && cl.deathmatch)
 	{
 		AM_DrawDeathmatchStats();
 	}
@@ -1539,9 +1537,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.4  2001/08/29 17:51:20  dj_jl
 //	RGB colors, no game dependency
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

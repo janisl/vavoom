@@ -497,6 +497,7 @@ static void CL_ParseTime()
 
 static void	CL_ReadFromServerInfo(void)
 {
+	Cvar_SetCheating(!!atoi(Info_ValueForKey(cl.serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -1029,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.6  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	

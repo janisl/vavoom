@@ -123,6 +123,8 @@ static TCvarI	DeathMatch("DeathMatch", "0", CVAR_SERVERINFO);
 static TCvarI  	NoMonsters("NoMonsters", "0");
 static TCvarI	Skill("Skill", "2");
 
+static TCvarI	sv_cheats("sv_cheats", "0", CVAR_SERVERINFO | CVAR_LATCH);
+
 static byte		*fatpvs;
 static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
 
@@ -2492,9 +2494,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.12  2001/09/27 17:03:20  dj_jl
 //	Support for multiple mobj classes
-//
+//	
 //	Revision 1.11  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	

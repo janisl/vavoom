@@ -48,7 +48,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarI		_driver("_driver", "0");
+static TCvarI		_driver("_driver", "0", CVAR_ROM);
 
 // CODE --------------------------------------------------------------------
 
@@ -150,9 +150,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/04 17:18:23  dj_jl
+//	Implemented the rest of cvar flags
+//
 //	Revision 1.6  2001/10/02 17:36:08  dj_jl
 //	Removed status bar widgets
-//
+//	
 //	Revision 1.5  2001/08/21 17:23:28  dj_jl
 //	Added _driver variable
 //	
