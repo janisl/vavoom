@@ -438,6 +438,10 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 	if (lenght > (int)strlen(String))
 		lenght = (int)strlen(String);
 
+	//	Need this for correct cursor position with empty strings.
+	LastX = cx;
+	LastY = cy;
+
 	for (i=0; i<lenght; i++)
 	{
 		if (String[i] == '\n')
@@ -453,9 +457,6 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 			T_DrawNString(cx, cy, String + start, lenght - start);
 		}
 	}
-	//	Need this for correct cursor position with empty strings.
-	LastX = cx;
-	LastY = cy;
 }
 
 //==========================================================================
@@ -557,9 +558,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/27 17:34:22  dj_jl
+//	Fixed bug with input line
+//
 //	Revision 1.5  2001/09/12 17:34:09  dj_jl
 //	Added consts
-//
+//	
 //	Revision 1.4  2001/08/30 17:44:07  dj_jl
 //	Removed memory leaks after startup
 //	

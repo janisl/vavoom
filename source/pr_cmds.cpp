@@ -2601,7 +2601,7 @@ PF(InputLine_SetValue)
 	char *ch = PROG_TO_STR(text);
 	while (*ch)
 	{
-		iline->AddChar(*ch);
+		iline->AddChar(*ch++);
 	}
 }
 
@@ -3092,9 +3092,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/09/27 17:34:22  dj_jl
+//	Fixed bug with input line
+//
 //	Revision 1.12  2001/09/27 17:03:20  dj_jl
 //	Support for multiple mobj classes
-//
+//	
 //	Revision 1.11  2001/09/25 17:05:34  dj_jl
 //	Added stricmp
 //	
