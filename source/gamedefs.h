@@ -49,7 +49,7 @@
 #define SERVER
 #endif
 
-#if defined __i386__ || defined _M_IX86
+#if (defined __i386__ || defined _M_IX86) && !defined NOASM
 #define USEASM
 #endif
 
@@ -115,9 +115,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/04 17:25:42  dj_jl
+//	Added support for compiling with disabled asm
+//
 //	Revision 1.7  2001/09/12 17:33:01  dj_jl
 //	Back to development mode
-//
+//	
 //	Revision 1.6  2001/08/31 17:29:45  dj_jl
 //	Changes for release
 //	
