@@ -1,21 +1,8 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.78 [en] (Win98; U) [Netscape]">
-   <meta name="Template" content="F:\Office\Office\html.dot">
-   <title>UnrealScript Language Reference</title>
-<style>
-
-<!--
-
-@import URL(UnrealTech.css);
-
-@import URL(http://unreal.epicgames.com/UnrealTech.css);
-
--->
-
-</style>
+   <title>VavoomC Language Reference</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
@@ -56,10 +43,20 @@ executes.
 int: A 32-bit integer value.</li>
 
 <li>
+bool: A boolean value: either "true" or "false".</li>
+
+<li>
 float: A 32-bit floating point number.</li>
 
 <li>
 string: A string of characters.</li>
+
+<li>
+name: The name of an item in Vavoom (such as the name of a function, state,
+class, etc). Names are stored as a 16-bit index into the global name table.
+Names correspond to simple strings of 1-31 characters. Names are not like
+strings: strings can be modified dynamically, but names can only take on
+predefined name values.</li>
 
 <li>
 classid: Represents a class. The actual value is a reference to an object
@@ -202,6 +199,8 @@ Classes</h3>
 A class is declared like this:
 <pre>class MyClass:MyParentClass</pre>
 
+<pre>&nbsp;&nbsp;&nbsp; // Class specifiers.</pre>
+
 <pre>{</pre>
 
 <pre>&nbsp;&nbsp;&nbsp; // Declaration of class variables and functions goes here</pre>
@@ -214,6 +213,22 @@ base class, in that it doesn’t do anything useful.
 <p>Each class inherets all of the variables and functions&nbsp; from its
 parent class. It can then add new variable declarations, add new functions
 (or override the existing functions).
+<p>The class declaration can take several optional specifiers that affect
+the class:
+<ul>
+<li>
+native: Says "this class uses behind-the-scenes C++ support". Vavoom expects
+native classes to contain a C++ implementation in the EXE file.</li>
+
+<li>
+abstract: Declares the class as an "abstract base class". This prevents
+the user from spawning actors of this class, because the class isn’t meaningful
+on its own.</li>
+
+<li>
+__mobjinfo__(a): Adds this class to the mobjinfo table.</li>
+</ul>
+
 <h3>
 Structure and class prototypes</h3>
 VavoomC Compiler is one-pass compiler, that means that if you want to create
@@ -242,6 +257,9 @@ Floating point constants are specified with decimal numbers like: 456.789</li>
 
 <li>
 String constants must be enclosed in double quotes, for example: "MyString"</li>
+
+<li>
+Name constants must be enclosed in single quotes, for example 'MyName'</li>
 
 <li>
 Vector constants contain X, Y, and Z values like this: vector(1.0,2.0,4.0)</li>

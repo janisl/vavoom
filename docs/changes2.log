@@ -656,3 +656,261 @@
 04-01-2002
   Salaboju ıóØbo ekrÆnu pñc nÆves.
   P_CheckSight pievienota aizsardzØba kas atrisina problñmas ar botiem.
+07-01-2002
+  IzmainØju autortiesØbu gadu.
+  glBSP izmai·as poliobjektu kodÆ.
+08-01-2002
+  Pievienoju vcc nosaukumu apakısistñmu.
+09-01-2002
+  Pievienoju atbalstu EDGE 3D grØdÆm.
+  SÆku izmantot nosaukumus progs failÆ un kompilÆtorÆ.
+10-01-2002
+  PamñÖinÆju nokompilñt ar MinGW. Diem÷ñl nav ska·as, Direct3D nemñÖinÆju. Bet
+ galvenÆ problñma ir tÆ, ka ir vajadzØgs -fvtable-thunks, kas nozØmñ ka ir
+ jÆpÆrkompilñ libstdc++.a, tÆdñõ atbalsts MinGW pagaidÆm nebİs.
+  SkriptÆ pievienoju vÆrdu tipu "name", izmetu ÆrÆ atbalstu skaitõiem bez
+ zØmes.
+  Ska·u saraksts kÆ dinamisks masØvs, izmanto vÆrdu sistñmu.
+11-01-2002
+  Pievienoju dinamisko simbola virk·u klasi.
+  SÆku izmantot nosaukumus skriptÆ. Visi spraitu, modeõu, ska·u un sekvenÒu
+ vÆrdi ir ar nosaukuma tipu.
+12-01-2002
+  Objektu ska·as tiek inicializñtas ar nosaukumu palØdzØbu.
+  StÆvokõu tabulÆs aizvietoju funkcijas pointeri ar stÆvokõa kodu.
+  Aizvietoju pÆris C stila tipa pÆrveidoıanas ar diamisko tipu pÆrveidoıanu.
+14-01-2002
+  LØme·a speciÆlu kodÆ aizvietoti daudzi pointeri ar referencñm.
+  Ieviesu relatØvo un absolİto pozØcijas pÆrbaudi.
+15-01-2002
+  PÆrnesu visu no Entity uz Actor, sÆkıu veidot Entity kÆ kopñju klasi.
+  PÆrdñvñju objektu laukus uz vÆrdiem ar lielo sÆkuma burtu.
+  Viens puisis ieteica pÆris uzlabojumus. Nav slikti.
+16-01-2002
+  PÆris uzlabojumu sakarÆ ar P_TouchSpecialThing. Augstums tiek pÆrbaudØts
+ iepriekı un atbilst priekımeta augstumam.
+  Hexen pÆrdñvñju objektu klases. Baigais darbs.
+17-01-2002
+  PÆrdñvñju objektu klases pÆrñjÆs spñlñs. AtıóirØba no Hexen ir õoti jİtama.
+  Objekta nummurs lØme·a redaktorÆ tagad tiek norÆdØts klases definØcijÆ.
+  Izlaboju kõİdas ar Hexen klasñm un Heretic un Hexen statusbÆriem.
+18-01-2002
+  SÆku darbu pie atbrØvoıanÆs no C stila tipu mai·Æm, citiem vÆrdiem sakot
+ pie menu.
+19-01-2002
+  Turpinu darbu pie menu. LielÆkÆ daõa menu ir mantotas no MenuScreen.
+ Ieviesu izvñles bÆzes klasi un izvñõu sarakstu.
+  Windows versijÆ salaboju 32 bitu re÷Ømu.
+21-01-2002
+  PilnØbÆ visi menu ir mantoti no MenuScreen.
+  Menu kursors kÆ atseviıós objekts.
+  Klasu konstruktori bez nosaukumiem.
+  MSVC nevajadzØgie warning-i tiek aizliegti.
+22-01-2002
+  Menu nosaukuma objekts. LielÆkÆ daõa izvñõ·u tipu kÆ objekti.
+23-01-2002
+  Pabeidzu darbu pie menu. PareizÆk sakot - pagaidÆ. Visi izvñõ·u lauki ir kÆ
+ objekti. Bet pats galvenais kÆdñõ es to darØju bija atbrØvoıanÆs no C stila
+ tipu pÆrveidoıanas. Nu tas ir izdarØts un kompilÆtors to vairs neatbalsta.
+24-01-2002
+  AtdalØju Entity klasi atseviıóÆ kopñjÆ failÆ, pievienoju stÆvokõa mai·as
+ funkcijas.
+  Pievienoju Touch funkciju Actor klasei.
+  MF2_PASSMOBJ aizvietoju ar inversu flagu MF2_NOPASSMOBJ.
+  JohaidØ! 35 kadru imitÆcija serverØ tieıÆm radØja "lñnÆs kustñıanÆs" efektu.
+ Nomainot kadra laiku uz drusci· palielinÆtu laiku atrisinÆja ıo problñmu.
+25-01-2002
+  Kaudze funkciju pÆrveidotas par Actor funkcijÆm.
+  Vismaz viens cilvñks bija õoti ieinteresñts dzirdot par "lñnÆs kustØbas"
+ baga izlaboıanu. Un tas patieıÆm ir labs iemesls izlaist jaunu versiju kurÆ
+ visi atrastie bagi ir izlaboti. DomÆju to izdarØt rØt.
+26-01-2002
+  Pievienoju konsoles mainØgos DirectSound3D parametriem.
+  Tika laista klajÆ versija 1.11.2.
+  Salaboju dinamisko tipu pÆrveidoıanu.
+29-01-2002
+  Salaboju superıotgana vertikÆlo rotÆciju.
+  Kaudze funkciju ir Actor funkcijas, aizvietoti kaudze pointeru ar klasu
+ referencñm.
+  VisÆm spñlñm ir MCROSS un PCOSS flagi.
+  Heretic salaboju podu teleportÆciju.
+  Salabiju Hexen lØme·u mİziku.
+  Uzlaboju response failus.
+  Pievienoju DirectSound3D minimÆlo distanci un problñma tika atrisinÆta.
+  Salaboju spñlñtÆju objektu apdeitu.
+30-01-2002
+  IebİvñtÆs funkcijas var tikt definñtÆs klases definØcijÆ.
+  UtilØtos aizvietoju pointerus ar referencñm.
+  Salaboju Hexen statusbÆra tØkla spñles gemus.
+  DzinØ FFunction pointeri visur tieıÆm ir FFunction pointeri un nevis int
+ mainØgie.
+01-02-2002
+  Salaboju pÆrÆk garos Heretic finÆla mesid÷us.
+  Salaboju lidoıanas pÆrtraukıanu.
+  TeleportNewMap bez argumentiem nestrÆdÆ, ja nav starp lØme·iem. Tam bİtu
+ jÆatrisina problñma tØkla spñlñ kad pÆrlec lØme·iem.
+  Iespñjams ka iemesls kÆpñc atseviıóajam klientam ir jÆpieslñdzas no jauna
+ ir tas ka sİtot servera informÆciju tØkla sokets ir aiz·emts.
+  SÆkuma versija ddf2vc konverterim var tikt nokompilñta.
+02-02-2002
+  IterÆtoru funkcijÆs klasu pointeri aizvietoti ar referencñm.
+04-02-2002
+  SÆku sadalØt flagus boolean mainØgajos. PagaidÆm tie ir 4 baitu mainØgie un
+ ıØ darbØba õoti palielinÆs struktİru izmñrus, bet brØzumÆ tiks ieviesti bool
+ mainØgie.
+05-02-2002
+  Turpinu ar flagiem.
+  Pievienoju Hexen botus.
+06-02-2002
+  Pabeidzu ar flagiem.
+  Salaboju vadØbas tausti·u menu kursoru kÆ arØ noklusñto kursora pozØciju
+ grİtØbas pakÆpes menu.
+07-02-2002
+  PÆrnesu CheckPosition un Entity failu.
+08-02-2002
+  AtbrØvojos no spraitu vÆrdu konstantñm. PiestrÆdÆju pie P_CheckRelPosition.
+  ForumÆ viens iedeva linku kur var nokaÒÆt pilnu Strife.
+09-02-2002
+  NokaÒÆju Strife, bİs nekavñjoties jÆiziet.
+13-02-2002
+  Pabeidzu Strife, vienkÆrıi super spñle, tas nekas ka grafika ir novecojusi
+ un ievads nav Øpaıi ñrts neskatoties uz to ka vecie Doom laiki tika pavadØti
+ ar ıÆdu ievadu.
+  PÆrdñvñju parametru origin uz Origin.
+  Strife versijÆ 1.2 ir izmainØts sarunu skriptu formÆts. TajÆ ir iekõauts
+ bildes un ska·as vÆrds.
+14-02-2002
+  VÆrdu pÆrdñvñıana visiem pÆrñjiem Entity laukiem. Pievienoju lauku Sector
+ un flagu bIsPlayer. Pievienoju StepSpeed, jo tas nav glu÷i Ætrums bet gan
+ soõa izmñrs.
+  Salaboju Hexen minotauru.
+  Salaboju botus pñc lØme·a mai·as.
+15-02-2002
+  Izmetu ÆrÆ iepriekı atrastos ska·u indeksus.
+  PÆris uzlabojumi Strife.
+  PÆrdEvñju laukus dzinØ.
+16-02-2002
+  Ieviesu bool mainØgos.
+  Pievienoju lØniju teleportus un caurredzamas lØnijas.
+  Ceru ka salaboju problñmu kad ne-lokÆlie klienti nemainØja lØmeni.
+18-02-2002
+  player_t un ViewEntity lauku pÆrdñvñıana, ska·as funkcijas pieder Entity.
+ AizvÆcu no stÆvokõu tabulas misc1 un misc2 laukus, bet beigÆs vairs nekas
+ neiet.
+19-02-2002
+  Atradu kõİdu kÆpñc kÆrÆs.
+20-02-2002
+  Strife tagad pievieno arØ voices.wad.
+21-02-2002
+  P_CheckRelPosition ir kopØgs.
+22-02-2002
+  PÆrñjo Actor un player_t lauku pÆrdñvñıana.
+23-02-2002
+  Kaudze funkciju tagad ir Actor funkcijas.
+25-02-2002
+  KompilÆtorÆ pievienoju speciÆlo lauku tipu informÆcijas eksportu. AtklÆju
+ ka Hexen virtuÆlÆs tabulas aiz·em pusmegabaitu. SadalØıana klasñs ıo skaitli
+ noteikti samazinÆs.
+26-02-2002
+  Salaboju Hexen tØkla spñles menu un citas menu problñmas.
+  Spñõu seivoıana izmanto lauku tipu informÆciju, vÆrdi, references un klasu
+ pointeri tiek apstrÆdÆti automÆtiski.
+  Aizvietoju target ar Enemy un Owner, meklñtÆjraóetes tagad var izmantot
+ Target kÆ mñróa pointeri.
+27-02-2002
+  Ieviesu ieroÒu klases. Hexen tÆs ir smuki sakÆrtotas.
+  Pievienojot spekulÆrÆs gaismas tiek atslñgta migla.
+28-02-2002
+  LietotÆja interfeisÆ pievienoju Pad-Enter atbalstu.
+  PÆrdñvñju Enemy atpakaõ uz Tatget.
+  SakÆrtoju ieroÒu klases Heretic un Strife.
+  Pievienoju komandu MapList.
+01-03-2002
+  SÆku sakÆrot Hexen monstru klases savos failos.
+  Uzlaboju redzamØbas pÆrbaudi ar trØs stariem.
+02-03-2002
+  PrincipÆ esmu beidzis ar Hexem monstru klasñm.
+04-03-2002
+  Ieviesu flagus bColideWithWorld un bColideWithThings.
+  Mainot lØmeni pazuda ierocis. Iemesls izrÆdÆs bija tas, ka mainot lØmeni
+ tiek pa jaunu inicializñti ieroÒu spraiti un boti. Pievienoju jaunu funkciju
+ PutClientIntoServer kurÆ tiek inicializñti ieroÒu spraiti un boti, un tas
+ notiks tikai vienu reizi.
+  Hexen atdalØju atseviıói spñlñtÆju objektu definØcijas.
+05-03-2002
+  Pievienoju visu nepiecieıamo atbalstu iebİvñto funkciju definñıanai Ærpus
+ pr_cmds.cpp.
+  Entity tagad ir iebİvñta klase, tÆs funkcijas ir iebİvñtas.
+06-03-2002
+  GravitÆte ir atkarØga no masas. GravitÆtes funkcija ir iebİvñta.
+07-03-2002
+  AtbrØvojos no funkciju pointeriem. SetState ir iebİvñtas, pÆrñjÆs izmanto
+ funkcijas vÆrdu.
+  Salabiju "Tome of power"
+08-03-2002
+  CheckOnMobj ir iebİvñts.
+09-03-2002
+  Hexen pÆris mainØgie pÆrnesti no Actor us Pawn. ThrustFloor klases pÆrnestas
+ uz savu failu. Izveidoju klasi Pickup.
+11-03-2002
+  Klasñm var lietot atslñgvArdus abstract un native.
+  cprint nav vajadzØgs \n beigÆs.
+  Nodarbojos ar Hexen paceõano objektu sakÆrtoıanu. PagaidÆm viss ir pÆrnests
+ uz inter.vc kurÆ arØ tiek veidotas kopñjÆs bÆzes klases.
+12-03-2002
+  Pabeidzu ar Hexen paceõamÆjiem priekımetiem.
+14-03-2002
+  PamatØgs darbs pie Hexen. PilnØbÆ atbrØvojos no mobj_t.
+15-03-2002
+  Heretic ieviesu Pawn klasi.
+16-03-2002
+  Pievienoju speciÆlu operÆcijas kodu virtuÆlÆs funkcijas ielikıanai stekÆ.
+  Kaudze funkciju no user.vc un usersubs.vc is PlayerPawn funkcijas.
+  UzskaistinÆjumi Doom.
+  Izlaidu treıo beta versiju.
+18-03-2002
+  Izveidoju utilØtu tekstİru pÆrdñvñıanai priekı Korax' Heritage.
+19-03-2002
+  Darbs ar Heretic pa·emamajiem priekımetiem.
+  Pievienoju atbalstu DeepSea augstajiem patÒiem.
+  MñÖinÆju ieviest atbalstu tekstİru izmñru koeficientiem. Kautkas sadalØıanÆ
+ nestrÆdÆ.
+20-03-2002
+  VisÆs spñlñs atbrØvojos no mobj_t, cik iespñjams funkcijas pieder klasñm.
+ ArØ klasu pointeri tiek aizvietoti ar referencñm. ArØ nolñmu tomñr pÆrdñvñt
+ Target par Enemy un Owner par Instigator.
+  Pa jaunu nohakoju Strife, ıoreiz no reÖstrñtÆs versijas exe faila un atradu
+ ka ir pÆris izmai·as. Bİs ko darØt pñc relØzes.
+21-03-2002
+  Salaboju Archvile bagu.
+  Salaboju Heretic menu slaiderus.
+  Salaboju negatØvos fragus.
+  VienspñlñtÆja re÷ØmÆ izmantoju Òetrreiz lielÆku tØkla paketes buferi.
+  Daõñji atbrØvojos no texorg.
+  Atradu kõİdu poligonu sadalØıanÆ. Tekstİru izmñru koeficienti strÆdÆ.
+22-03-2002
+  Salaboju minotaurus tØkla spñlñs - vienkÆrıi vi·ı tika uzreiz iznØcinÆts jo
+ bija atkarØgs no nomonsters.
+  Nolñmu tomñr kautko padarØt ar DDF konverteri. SÆku eksportñt objektu
+ klases.
+23-03-2002
+  Izlaidu ceturto beta versiju.
+25-03-2002
+  Doom un Strife pÆrveidoju itemu respaunu lØdzØgi tam kÆ to dara Heretic un
+ Hexen.
+  SakÆrtoju tekstİru palielinÆıanu. PilnØbÆ atbrØvojos no texorg.
+26-03-2002
+  AtbrØvojos no SetStateNF.
+  PÆrveidoju Heretic sektoru speciÆlus ZDoom stilÆ.
+27-03-2002
+  NovÆcu pÆrbaudi uz objekta raóetñm.
+  Salaboju D'Sparil-a burvju izsaukıanu.
+  Salaboju Hexen nepareizos ieroÒu vÆrdus.
+  Uzlaboju Hexen gaismas speciÆlo funkciju.
+  PalielinÆju gaismas karıu tekstİru skaitu.
+  PÆrbaudØju palielinÆtÆs tekstİras, strÆdÆ lieliski.
+28-03-2002
+  Pñdñjais kas bija palicis no pÆrdñvñjamajiem laukiem - mo player_t struktİrÆ
+ tika pÆrdñvñts.
+  Tika izlabotas vñl pÆris kõİdas.
+  

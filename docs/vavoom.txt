@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  version 1.11.1
+                                                    version 1.12
 
 Contents:
     0. Disclaimer
@@ -138,6 +138,11 @@ additional wad files.
 
         su -c "make install"
 
+  If you don't have dinstall programm, you most likely will have install
+programm. In that case use the following command:
+
+        su -c "make INSTALL=install install"
+
   This will install Vavoom into /usr/local/games/Vavoom.
 
   7. Change to this directory and copy the main .wad file here or create
@@ -148,6 +153,9 @@ a symbolic link to it:
    or:
         cd /usr/local/games/Vavoom
         ln -s <where-your-wad-file-is> .
+
+  8. Run Allegro setup utility, setup your sound and music card, save changes
+and then copy allegro.cfg into Vavoom directory.
 
 ==============================================================================
 3.3 Compiling LINUX / UNIX dedicated server
@@ -186,6 +194,9 @@ For Windows you need:
       * Borland C Compiler with Borland Turbo Assembler or Borland C++
     Builder 5.0 (http://www.borland.com) Compiler itself is freeware, but I
     don't know how about TASM.
+  or:
+      * Microsoft Visual C++ 6.0.
+      * DJGPP (http://www.delorie.com/djgpp) - used to compile asm files.
   Libraries:
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
     in Builder but some headers needed by DirectMusic are missing. In Allogro
@@ -429,6 +440,7 @@ Misc
     - Sloped floors and ceilings.
     - 3D floors.
     - Possibility to use wall textures on floors/ceilings and flats on walls.
+    - Support for tall patches and scaled textures.
     - glBSP plugin.
     - glVIS plugin.
     - A lots more.
@@ -704,10 +716,10 @@ Version 1.9
 * Some renaming, game data directory now is called basev and VavoomC files
  now haves extension vc.
 * Translucent 3D floors.
-* Mipmaping for OpenGL and Direct3D
+* Mipmapping for OpenGL and Direct3D
 * Multitexture support in OpenGL.
 * Automap works in OpenGL and Direct3D
-* Confiurable automap colors.
+* Configurable automap colors.
 * Reworked filesystem. Now Vavoom uses a filesystem similar to Quake.
 * Some client/server improvements.
 * Up to 8 sounds per entity.
@@ -753,6 +765,41 @@ Version 1.11.1
 * Fixed some serious bugs.
 * SDL port for Linux.
 
+==============================================================================
+Version 1.11.2
+==============================================================================
+
+* Fixed "slow motion" bug.
+* Fixed a bug in Direct3D driver that caused system to lock up.
+* Fixed a bug that allowed you to play Hexen only with fighter.
+* Fixed some small bugs in Heretic and Hexen status bars.
+* Fixed 32-bit software rendering in Windows version.
+* In Windows version added support for 16 joystick buttons.
+* Improved DirectSound3D settings.
+* Some other little bug fixes and improvements.
+
+==============================================================================
+Version 1.12
+==============================================================================
+
+* Support for DeepSea tall patches.
+* Support for scaled textures (like in ZDoom).
+* Support for EDGE 3D floors.
+* Line-to-line teleporters.
+* Linedef special for translucent lines.
+
+VavoomC:
+* Removed support for uint type.
+* Removed support for C-style type casting, use dynamic cast instead.
+* New type - name: The name of an item in Vavoom (such as the name of a
+ function, state, class, etc). Names are stored as a 16-bit index into the
+ global name table.
+* New type - bool. It's implemented as a bitfield. That means that in structs
+ and classes a list of sequential bool properties will be merged into a single
+ 32 bit integer so it's a good idea to group them together.
+* Changed states syntax. Function pointer replaced with state code.
+* Some other changes.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -793,7 +840,12 @@ Version 1.11.1
     http://www.ravengames.com/
     http://www.raven-games.com/
 
-  All questions, bug reports, etc. should be sent to:
+  Korax' Heritage:
+    http://www.korax-heritage.com/
+
+  All questions, bug reports, etc. should be posted on Vavoom forums:
+    http://forums.vavoom-engine.com/
+  or sent to:
     vavoom@vavoom-engine.com
 
 
