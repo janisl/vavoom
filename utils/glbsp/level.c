@@ -465,6 +465,9 @@ void GetLinedefsHexen(void)
     for (j=0; j < 5; j++)
       line->specials[j] = UINT8(raw->specials[j]);
 
+    // -JL- Added missing twosided flag handling that caused a broken reject
+    line->two_sided = (line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
+
     line->right = (SINT16(raw->sidedef1) < 0) ? NULL :
         LookupSidedef(SINT16(raw->sidedef1));
 
@@ -1855,10 +1858,8 @@ void SaveLevel(node_t *root_node)
     PutSegs();
     PutSubsecs("SSECTORS", FALSE);
     PutNodes("NODES", FALSE, root_node);
-  }
 
-  if (!cur_info->gwa_mode)
-  {
+    // -JL- Don't touch blockmap and reject if not doing normal nodes
     PutBlockmap();
 
     if (!cur_info->no_reject || !FindLevelLump("REJECT"))
