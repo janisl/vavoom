@@ -210,12 +210,12 @@ void SV_ClearDatagram(void)
 //
 //==========================================================================
 
-mobj_t *SV_SpawnMobj(void)
+mobj_t *SV_SpawnMobj(int cid)
 {
 	int			i;
     mobj_t*		mobj;
 
-    mobj = (mobj_t*)svpr.Spawn(cid_mobj, PU_LEVSPEC);
+    mobj = (mobj_t*)svpr.Spawn(cid, PU_LEVSPEC);
     P_AddThinker(mobj);
 
 	//	Client treats first objects as player objects and will use
@@ -2492,9 +2492,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/09/27 17:03:20  dj_jl
+//	Support for multiple mobj classes
+//
 //	Revision 1.11  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
-//
+//	
 //	Revision 1.10  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

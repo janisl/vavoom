@@ -58,7 +58,7 @@ enum
 int GetMobjNum(mobj_t *mobj);
 mobj_t* SetMobjPtr(int archiveNum);
 
-mobj_t *SV_SpawnMobj(void);
+mobj_t *SV_SpawnMobj(int cid);
 void SV_RemoveMobj(mobj_t *mobj);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
@@ -1230,9 +1230,12 @@ static void PF_AddExtraFloor(void)
 //
 //==========================================================================
 
-static void PF_NewMobjThinker(void)
+PF(NewMobjThinker)
 {
-	Push((int)SV_SpawnMobj());
+	int cid;
+
+	cid = Pop();
+	Push((int)SV_SpawnMobj(cid));
 }
 
 //==========================================================================
@@ -3089,9 +3092,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/09/27 17:03:20  dj_jl
+//	Support for multiple mobj classes
+//
 //	Revision 1.11  2001/09/25 17:05:34  dj_jl
 //	Added stricmp
-//
+//	
 //	Revision 1.10  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	
