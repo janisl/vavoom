@@ -216,12 +216,10 @@ class Actor:Entity
 	bool bJustAttacked;		// take at least one step before attacking
 	bool bSpawnCeiling;		// hang from ceiling instead of floor
 	// movement flags
-	bool bDropOff;			// allow jumps from high places
 	bool bPickUp;			// for players to pick up items
 	bool bSlide;			// keep info about sliding along walls
-	bool bFloat;			// allow moves to any height, no gravity
 	bool bUnknown4;
-	bool bMissile;			// don't hit same species, explode on block
+	bool bMissile;		// don't hit same species, explode on block
 	bool bDropped;			// dropped by a demon, not level spawned
 	bool bNoBlood;			// don't bleed when shot (use puff)
 	bool bCorpse;			// don't stop moving halfway off a step
@@ -277,9 +275,9 @@ class Actor:Entity
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
-	boolean TryMove(float x, float y);
+	void CrossSpecialLine(line_t *ld, int side);
 
-	void Think(void);
+	void Tick(float deltaTime);
 	void OnMapSpawn(mthing_t *mthing);
 
 	void SetOrigin2(TVec origin);
@@ -416,6 +414,7 @@ class Actor:Entity
 
 	defaultproperties
 	{
+		MaxStepHeight = 16.0;
 	}
 }
 
@@ -563,6 +562,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/04/11 16:50:54  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.28  2002/03/28 18:11:24  dj_jl
 //  Changed hiding of specials like in Raven games.
 //

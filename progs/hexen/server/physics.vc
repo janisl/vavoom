@@ -105,7 +105,7 @@ boolean PTR_SlideTraverse(intercept_t * in)
 
 		if (open && (open->range >= slidemo.Height) &&	//  fits
 			(open->top - slidemo.Origin.z >= slidemo.Height) &&	// mobj is not too high
-			(open->bottom - slidemo.Origin.z <= 24.0))	// not too big a step up
+			(open->bottom - slidemo.Origin.z <= slidemo.MaxStepHeight))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
@@ -175,9 +175,9 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
 			{
-				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
+				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
 			}
 			return;
 		}
@@ -215,9 +215,9 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
 			{
-				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
+				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
 			}
 			return;
 		}
@@ -229,11 +229,11 @@ void Actor::SlideMove(void)
 			newx = Velocity.x * frametime * bestslidefrac;
 			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!TryMove(Origin.x + newx, Origin.y + newy))
+			if (!TryMove(vector(Origin.x + newx, Origin.y + newy, Origin.z)))
 			{
-				if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+				if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
 				{
-					TryMove(Origin.x + Velocity.x * frametime, Origin.y);
+					TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
 				}
 				return;
 			}
@@ -254,8 +254,8 @@ void Actor::SlideMove(void)
 			bestslideline->normal, 1.0);
 
 	}
-	while (!TryMove(Origin.x + Velocity.x * frametime,
-			Origin.y + Velocity.y * frametime));
+	while (!TryMove(vector(Origin.x + Velocity.x * frametime,
+			Origin.y + Velocity.y * frametime, Origin.z)));
 }
 
 //**************************************************************************
@@ -542,13 +542,13 @@ boolean Actor::HitMobj(Entity Other)
 		{
 			// Try to slide along it
 			// Slide against mobj
-//			if (TryMove(Origin.x, ptryy))
-			if (TryMove(Origin.x, Origin.y + Velocity.y * frametime))
+//			if (TryMove(vector(Origin.x, ptryy, Origin.z)))
+			if (TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
 			{
 				Velocity.x = 0.0;
 			}
-//			else if (TryMove(ptryx, Origin.y))
-			else if (TryMove(Origin.x + Velocity.x * frametime, Origin.y))
+//			else if (TryMove(vector(ptryx, Origin.y, Origin.z)))
+			else if (TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z)))
 			{
 				Velocity.y = 0.0;
 			}
@@ -716,7 +716,7 @@ boolean Actor::XYMovement(void)
 			xmove = 0.0;
 			ymove = 0.0;
 		}
-		if (!TryMove(ptryx, ptryy))
+		if (!TryMove(vector(ptryx, ptryy, Origin.z)))
 		{
 			// Blocked move
 			if (tmtrace->BlockingMobj)
@@ -1055,7 +1055,7 @@ boolean Actor::BlasterPhysics(void)
 		{
 			if (changexy)
 			{
-				if (!TryMove(Origin.x + xfrac, Origin.y + yfrac))
+				if (!TryMove(vector(Origin.x + xfrac, Origin.y + yfrac, Origin.z)))
 				{
 					// Blocked move
 					return ExplodeMissile();
@@ -1180,7 +1180,7 @@ boolean Actor::Physics(void)
 					{
 						PlayerLandedOnThing();
 					}
-					if (onmo.Origin.z + onmo.Height - Origin.z <= 24.0)
+					if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 					{
 						Player->ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
@@ -1211,11 +1211,11 @@ boolean Actor::Physics(void)
 
 //==========================================================================
 //
-//	Actor::Think
+//	Actor::Tick
 //
 //==========================================================================
 
-void Actor::Think(void)
+void Actor::Tick(float deltaTime)
 {
 	if (!Physics())
 	{
@@ -1224,7 +1224,7 @@ void Actor::Think(void)
 	// Cycle through states, calling action functions at transitions
 	if (StateTime != -1.0)
 	{
-		StateTime -= frametime;
+		StateTime -= deltaTime;
 		if (StateTime <= 0.0)
 		{
 			// you can cycle through multiple states in a tic
@@ -1244,6 +1244,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/04/11 16:50:53  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.31  2002/03/28 18:28:26  dj_jl
 //  No checking for on-mobj for missiles.
 //

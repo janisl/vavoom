@@ -210,10 +210,8 @@ class Actor:Entity
 	bool bJustAttacked;		// take at least one step before attacking
 	bool bSpawnCeiling;		// hang from ceiling instead of floor
 	// movement flags
-	bool bDropOff;			// allow jumps from high places
 	bool bPickUp;			// for players to pick up items
-	bool bFloat;			// allow moves to any height, no gravity
-	bool bMissile;			// don't hit same species, explode on block
+	bool bMissile;		// don't hit same species, explode on block
 	bool bNoBlood;			// don't bleed when shot (use puff)
 	bool bCorpse;			// don't stop moving halfway off a step
 	bool bInFloat;			// floating to a height for a move, don't
@@ -223,9 +221,6 @@ class Actor:Entity
 	bool bIceCorpse;		// a frozen corpse (for blasting)
 	bool bWindThrust;		// gets pushed around by the wind specials
 	bool bFloorBounce;		// bounces off the floor
-	bool bBlasted;			// missile will pass through ghosts
-	bool bFly;				// fly mode is active
-	bool bFloorClip;		// if feet are allowed to be clipped
 	bool bSpawnFloat;		// spawn random float z
 	bool bNoTeleport;		// does not teleport
 	bool bRip;				// missile rips through solid targets
@@ -244,7 +239,6 @@ class Actor:Entity
 	bool bActivatePushWall;	// mobj can push walls
 	bool bActivateMCross;	// can activate monster cross lines
 	bool bActivatePCross;	// can activate projectile cross lines
-	bool bCantLeaveFloorpic;	// stay within a certain floor type
 	bool bNonShootable;		// mobj is totally non-shootable,
 							// but still considered solid
 	bool bInvulnerable;		// mobj is invulnerable
@@ -284,9 +278,10 @@ class Actor:Entity
 	void BlockedByLine(line_t * ld);
 	boolean TestLocation(void);
 	void PushLine(void);
-	boolean TryMove(float x, float y);
+	void CrossSpecialLine(line_t *ld, int side);
+	void HandleFloorclip(void);
 
-	void Think(void);
+	void Tick(float deltaTime);
 
 	void TeleportToPlayerStarts(void);
 	void TeleportToDeathmatchStarts(void);
@@ -480,6 +475,7 @@ class Actor:Entity
 
 	defaultproperties
 	{
+		MaxStepHeight = 24.0;
 	}
 }
 
@@ -819,7 +815,7 @@ class BotPlayer:Object
 
 	void OnBeginPlay(void);
 	void OnSpawn(void);
-	void Think(void);
+	void BotTick(float deltaTime);
 	boolean CheckTo(TVec pos);
 	void CheckStuff(void);
 	float GetAngle(void);
@@ -832,7 +828,7 @@ class BotPlayer:Object
 	int WeapFromItem(Actor item);
 	int WeapPieceFromItem(Actor item);
 	int ManaFromItem(Actor item);
-	void Move(void);
+	void Move(float deltaTime);
 	void SetAngle(float an);
 	void Roam(void);
 	float AngleTo(TVec dest);
@@ -1008,6 +1004,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/04/11 16:50:54  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.29  2002/03/28 18:32:51  dj_jl
 //  Little renaming, some bug fixes.
 //

@@ -183,10 +183,8 @@ class Actor:Entity
 	bool bJustAttacked;	// take at least one step before attacking
 	bool bSpawnCeiling;	// hang from ceiling instead of floor
 	// movement flags
-	bool bDropOff;		// allow jumps from high places
 	bool bPickUp;		// for players to pick up items
 	bool bSlide;		// keep info about sliding along walls
-	bool bFloat;		// allow moves to any height, no gravity
 	bool bTeleport;		// don't cross lines or look at heights
 	bool bMissile;		// don't hit same species, explode on block
 	bool bDropped;		// dropped by a demon, not level spawned
@@ -248,10 +246,10 @@ class Actor:Entity
 	void TouchSpecial(Actor Toucher);
 
 	boolean Touch(MapObject Other);
-	boolean TryMove(float x, float y);
 	void Thrust(float angle, float move);
 	boolean TeleportMove(TVec org);
 	int Teleport(float x, float y, float angle);
+	void CrossSpecialLine(line_t *ld, int side);
 
 	void SetOrigin2(TVec origin);
 	void CheckMissileSpawn(void);
@@ -263,7 +261,7 @@ class Actor:Entity
 	boolean HeightClip(void);
 	void RadiusAttack(int damage, int distance, boolean damageSource);
 
-	void Think(void);
+	void Tick(float deltaTime);
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Actor inflictor, Actor source, int damage);
@@ -346,6 +344,7 @@ class Actor:Entity
 
 	defaultproperties
 	{
+		MaxStepHeight = 24.0;
 	}
 }
 
@@ -590,7 +589,7 @@ class BotPlayer:Object
 
 	void OnBeginPlay(void);
 	void OnSpawn(void);
-	void Think(void);
+	void BotTick(float deltaTime);
 	boolean CheckTo(TVec pos);
 	void CheckStuff(void);
 	float GetAngle(void);
@@ -602,7 +601,7 @@ class BotPlayer:Object
 	void Scan(void);
 	int WeapFromItem(Actor item);
 	int AmmoFromItem(Actor item);
-	void Move(void);
+	void Move(float deltaTime);
 	void SetAngle(float an);
 	void Roam(void);
 	float AngleTo(TVec dest);
@@ -715,6 +714,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/04/11 16:50:53  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.29  2002/03/28 18:11:24  dj_jl
 //  Changed hiding of specials like in Raven games.
 //

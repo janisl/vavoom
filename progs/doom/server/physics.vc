@@ -101,7 +101,7 @@ boolean PTR_SlideTraverse(intercept_t * in)
 
 		if (open && (open->range >= slidemo.Height) &&	//  fits
 			(open->top - slidemo.Origin.z >= slidemo.Height) &&	// mobj is not too high
-			(open->bottom - slidemo.Origin.z <= 24.0))	// not too big a step up
+			(open->bottom - slidemo.Origin.z <= slidemo.MaxStepHeight))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
@@ -169,8 +169,8 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
-				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
+				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
 			return;
 		}
 
@@ -207,8 +207,8 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
-				TryMove(Origin.x + Velocity.x * frametime, Origin.y);
+			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
+				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
 			return;
 		}
 
@@ -219,11 +219,11 @@ void Actor::SlideMove(void)
 			newx = Velocity.x * frametime * bestslidefrac;
 			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!TryMove(Origin.x + newx, Origin.y + newy))
+			if (!TryMove(vector(Origin.x + newx, Origin.y + newy, Origin.z)))
 			{
-				if (!TryMove(Origin.x, Origin.y + Velocity.y * frametime))
-					TryMove(Origin.x + Velocity.x * frametime,
-						Origin.y);
+				if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
+					TryMove(vector(Origin.x + Velocity.x * frametime,
+						Origin.y, Origin.z));
 				return;
 			}
 		}
@@ -243,8 +243,8 @@ void Actor::SlideMove(void)
 			bestslideline->normal, 1.0);
 
 	}
-	while (!TryMove(Origin.x + Velocity.x * frametime,
-			Origin.y + Velocity.y * frametime));
+	while (!TryMove(vector(Origin.x + Velocity.x * frametime,
+			Origin.y + Velocity.y * frametime, Origin.z)));
 }
 
 //**************************************************************************
@@ -394,7 +394,7 @@ boolean Actor::XYMovement(void)
 			ymove = 0.0;
 		}
 
-		if (!TryMove(ptryx, ptryy))
+		if (!TryMove(vector(ptryx, ptryy, Origin.z)))
 		{
 			// blocked move
 			if (bIsPlayer)
@@ -716,7 +716,7 @@ boolean Actor::Physics(void)
 				{
 					PlayerLandedOnThing();
 				}
-				if (onmo.Origin.z + onmo.Height - Origin.z <= 24.0)
+				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
 					Player->ViewHeight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
@@ -743,11 +743,11 @@ boolean Actor::Physics(void)
 
 //==========================================================================
 //
-//	Actor::Think
+//	Actor::Tick
 //
 //==========================================================================
 
-void Actor::Think(void)
+void Actor::Tick(float deltaTime)
 {
 	//  In my deathmatch mode remove dropped weapons after 30 seconds
 	// because otherwise they are spawned fastar than player(s) can pick 
@@ -771,7 +771,7 @@ void Actor::Think(void)
 	// calling action functions at transitions
 	if (StateTime != -1.0)
 	{
-		StateTime -= frametime;
+		StateTime -= deltaTime;
 
 		// you can cycle through multiple states in a tic
 		if (StateTime <= 0.0)
@@ -822,6 +822,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/04/11 16:50:53  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.27  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

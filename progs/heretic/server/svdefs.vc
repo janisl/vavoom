@@ -209,9 +209,7 @@ class Actor:Entity
 	bool bJustAttacked;	// take at least one step before attacking
 	bool bSpawnCeiling;	// hang from ceiling instead of floor
 	// movement flags
-	bool bDropOff;		// allow jumps from high places
 	bool bPickUp;		// for players to pick up items
-	bool bFloat;		// allow moves to any height, no gravity
 	bool bMissile;		// don't hit same species, explode on block
 	bool bDropped;		// dropped by a demon, not level spawned
 	bool bNoBlood;		// don't bleed when shot (use puff)
@@ -224,8 +222,6 @@ class Actor:Entity
 	bool bWindThrust;	// gets pushed around by the wind specials
 	bool bFloorBounce;	// bounces off the floor
 	bool bThruGhost;	// missile will pass through ghosts
-	bool bFly;			// fly mode is active
-	bool bFootClip;		// if feet are allowed to be clipped
 	bool bSpawnFloat;	// spawn random float z
 	bool bNoTeleport;	// does not teleport
 	bool bRip;			// missile rips through solid targets
@@ -287,9 +283,10 @@ class Actor:Entity
 	boolean TestLocation(void);
 	boolean	Touch(MapObject Other);
 	void PushLine(void);
-	boolean TryMove(float x, float y);
+	void CrossSpecialLine(line_t *ld, int side);
+	void HandleFloorclip(void);
 
-	void Think(void);
+	void Tick(float deltaTime);
 
 	int GetFloorType(void);
 	void SetOrigin2(TVec origin);
@@ -383,6 +380,11 @@ class Actor:Entity
 	void A_GenWizard(void);
 	void A_MntrFloorFire(void);
 	void A_ESound(void);
+
+	defaultproperties
+	{
+		MaxStepHeight = 24.0;
+	}
 }
 
 class Pawn:Actor
@@ -407,7 +409,7 @@ class Pawn:Actor
 		bSolid = true;
 		bShootable = true;
 		bCountKill = true;
-		bFootClip = true;
+		bFloorClip = true;
 		bActivateMCross = true;
 		bCheckNoMonsters = true;
 	}
@@ -464,12 +466,10 @@ class PlayerPawn:Pawn
 	defaultproperties
 	{
 		ReactionCount = 0;
-		bSolid = false;
-		bShootable = false;
 		bCountKill = false;
-		bFootClip = false;
 		bActivateMCross = false;
 		bCheckNoMonsters = false;
+		bDropOff = true;
 	}
 }
 
@@ -693,7 +693,7 @@ class BotPlayer:Object
 
 	void OnBeginPlay(void);
 	void OnSpawn(void);
-	void Think(void);
+	void BotTick(float deltaTime);
 	boolean CheckTo(TVec pos);
 	void CheckStuff(void);
 	float GetAngle(void);
@@ -705,7 +705,7 @@ class BotPlayer:Object
 	void Scan(void);
 	int WeapFromItem(Actor item);
 	int AmmoFromItem(Actor item);
-	void Move(void);
+	void Move(float deltaTime);
 	void SetAngle(float an);
 	void Roam(void);
 	float AngleTo(TVec dest);
@@ -841,6 +841,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/04/11 16:50:53  dj_jl
+//  Made TryMove native, Tick function.
+//
 //  Revision 1.29  2002/03/28 18:31:13  dj_jl
 //  Translated sector specials.
 //
