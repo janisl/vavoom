@@ -153,8 +153,14 @@ static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 	int i;
 	int count;
 
-   	loadlevel.blockmaplump = (short*)W_CacheLumpNum(lump, PU_LEVEL);
-   	loadlevel.blockmap = loadlevel.blockmaplump + 4;
+	if (W_LumpLength(lump) <= 8)
+	{
+		//	This is fatal.
+		Host_Error("Missing a blockmap");
+	}
+
+   	loadlevel.blockmaplump = (short *)W_CacheLumpNum(lump, PU_LEVEL);
+   	loadlevel.blockmap = (word *)loadlevel.blockmaplump + 4;
    	count = W_LumpLength(lump) / 2;
 
    	for (i=0 ; i<count ; i++)
@@ -1396,6 +1402,9 @@ void SwapPlanes(sector_t *s)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/08/24 14:51:50  dj_jl
+//  Fixes for large blockmaps.
+//
 //  Revision 1.19  2002/07/27 18:10:11  dj_jl
 //  Implementing Strife conversations.
 //

@@ -480,7 +480,7 @@ struct sv_level_t:base_level_t
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
 	short		*blockmaplump;	// offsets in blockmap are from here
-	short		*blockmap;		// int for larger maps
+	word		*blockmap;		// int for larger maps
 	int			bmapwidth;      // Blockmap size.
 	int			bmapheight;     // size in mapblocks
 	float		bmaporgx;       // origin of block map
@@ -525,9 +525,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/08/24 14:51:50  dj_jl
+//	Fixes for large blockmaps.
+//
 //	Revision 1.21  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.20  2002/03/28 17:59:54  dj_jl
 //	Increased maximal object count.
 //	
