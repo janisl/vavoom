@@ -1,0 +1,138 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuChoiceSlider:MenuChoice;
+
+string Text;
+
+float Value;
+float ValueDelta;
+float MinValue;
+float MaxValue;
+
+int pic_M_THERML;
+int pic_M_THERMM;
+int pic_M_THERMR;
+int pic_M_THERMO;
+
+float GetInitialValue(void)
+{
+	return 0.0;
+}
+
+bool SetNewValue(float newValue)
+{
+	return true;
+}
+
+void InitWindow(void)
+{
+	::InitWindow();
+
+	Value = GetInitialValue();
+	if (Value < MinValue)
+		Value = MinValue;
+	if (Value > MaxValue)
+		Value = MaxValue;
+
+	pic_M_THERML = R_RegisterPic("M_THERML", PIC_PATCH);
+	pic_M_THERMM = R_RegisterPic("M_THERMM", PIC_PATCH);
+	pic_M_THERMR = R_RegisterPic("M_THERMR", PIC_PATCH);
+	pic_M_THERMO = R_RegisterPic("M_THERMO", PIC_PATCH);
+}
+
+void DrawWindow(GC gc)
+{
+	int i;
+	int xx;
+
+	T_SetFont(font_small);
+	T_SetAlign(hright, vtop);
+	gc.DrawText(0, 0, Text);
+
+	xx =  8;
+	gc.DrawIcon(xx, 0, pic_M_THERML);
+	xx += 8;
+	for (i = 0; i < 13; i++)
+	{
+		gc.DrawIcon(xx, 0, pic_M_THERMM);
+		xx += 8;
+	}
+	gc.DrawIcon(xx, 0, pic_M_THERMR);
+	xx = 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+	gc.DrawIcon(xx, 0, pic_M_THERMO);
+}
+
+bool Key(int key)
+{
+	float newValue;
+
+	switch (key)
+	{
+	case K_LEFTARROW:
+		newValue = Value - ValueDelta;
+		if (newValue < MinValue)
+		{
+			newValue = MinValue;
+		}
+		if (SetNewValue(newValue))
+		{
+			Value = newValue;
+			LocalSound('MenuSwitch');
+		}
+		return true;
+
+	case K_RIGHTARROW:
+		newValue = Value + ValueDelta;
+		if (newValue > MaxValue)
+		{
+			newValue = MaxValue;
+		}
+		if (SetNewValue(newValue))
+		{
+			Value = newValue;
+			LocalSound('MenuSwitch');
+		}
+		return true;
+	}
+	return ::Key(key);
+}
+
+defaultproperties
+{
+	Height = 20;
+	Value = 0.0;
+	ValueDelta = 1.0;
+	MinValue = 0.0;
+	MaxValue = 1.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

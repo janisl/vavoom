@@ -27,28 +27,6 @@ struct sector_t;
 struct line_t;
 struct subsector_t;
 
-//==========================================================================
-//
-//	Base class for all classes
-//
-//==========================================================================
-
-class Object
-	native
-	abstract
-{
-	int ObjectInternal[7];
-	classid Class;
-
-	native void Destroy(void);
-	native bool IsA(name CheckName);
-	native bool IsDestroyed(void);
-
-	defaultproperties
-	{
-	}
-}
-
 //FIXME
 #define classidNone		Object
 
@@ -345,102 +323,6 @@ struct RogueConSpeech
 	RogueConChoice Choices[5];	//	Choices
 };
 
-//**************************************************************************
-//
-//	Level
-//
-//**************************************************************************
-
-class Level:Object
-	native
-{
-
-//	Flags.
-bool bForServer;	//	True if this level belongs to the server.
-bool bExtended;		//	True if level was in Hexen format.
-
-//
-//	MAP related Lookup tables.
-//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
-//
-
-int NumVertexes;
-TVec *Vertexes;
-
-int NumSectors;
-sector_t *Sectors;
-
-int NumSides;
-side_t *Sides;
-
-int NumLines;
-line_t *Lines;
-
-int __NumSegs;
-void *__Segs;
-
-int __NumSubsectors;
-void *__Subsectors;
-
-int __NumNodes;
-void *__Nodes;
-
-void *__VisData;
-void *__NoVis;
-
-// !!! Used only during level loading
-int NumThings;
-mthing_t *Things;
-
-int BehaviorSize;
-int *Behavior;
-
-//
-//  BLOCKMAP
-//  Created from axis aligned bounding box of the map, a rectangular
-// array of blocks of size ...
-// Used to speed up collision detection by spatial subdivision in 2D.
-//
-void *__BlockMapLump;	// offsets in blockmap are from here
-void *__BlockMap;	// int for larger maps
-int __BlockMapWidth;	// Blockmap size.
-int __BlockMapHeight;	// size in mapblocks
-float BlockMapOrgX;	// origin of block map
-float BlockMapOrgY;
-void *__BlockLinks;
-void *__PolyBlockMap;
-
-//
-//  REJECT
-//  For fast sight rejection.
-//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-//  Without special effect, this could be used as a PVS lookup as well.
-//
-void *__RejectMatrix;
-
-//	Strife conversations.
-int NumGenericSpeeches;
-RogueConSpeech *GenericSpeeches;
-
-int NumLevelSpeeches;
-RogueConSpeech *LevelSpeeches;
-
-//	List of all poly-objects on the level.
-int __NumPolyObjs;
-void *__PolyObjs;
-
-//
-//	Natives
-//
-
-native sector_t *PointInSector(TVec Point);
-
-defaultproperties
-{
-}
-
-}
-
 struct base_level_t
 {
 	float time;
@@ -463,34 +345,10 @@ struct base_level_t
 
 #ifdef SERVER
 
-//==========================================================================
-//
-//  Thinkers
-//
-//==========================================================================
-
-class Thinker:Object
-	native
-	abstract
-{
-	Level XLevel;		//	Level object.
-
-	void Tick(float deltaTime)
-	{
-	}
-
-	void Archive(void)
-	{
-	}
-
-	void Unarchive(void)
-	{
-	}
-};
-
-struct player_t;
+class Thinker;
 class Entity;
 class Actor;
+class ViewEntity;
 
 struct state_t
 {
@@ -515,30 +373,6 @@ struct mobjinfo_t
 //  Player
 //
 //==========================================================================
-
-class ViewEntity:Object
-	native
-	abstract
-{
-	int SpriteIndex;
-	int SpriteFrame;
-	int ModelIndex;
-	int ModelFrame;
-	int ModelSkinNum;
-	float SX;
-	float SY;
-	int StateNum;	// a 0 state means not active
-	int NextState;
-	float StateTime;
-	player_t *Player;
-
-native void SetState(int stnum);
-
-defaultproperties
-{
-}
-
-}
 
 //
 // Extended player object info: player_t
@@ -671,37 +505,6 @@ struct intercept_t
 	line_t *line;
 };
 
-//==========================================================================
-//
-//  ACS
-//
-//==========================================================================
-
-#define MAX_ACS_SCRIPT_VARS	10
-#define ACS_STACK_DEPTH 	32
-
-class ACS:Thinker
-	native
-{
-	Entity Activator;
-	line_t *Line;
-	int Side;
-	int Number;
-	int InfoIndex;
-	int DelayTime;
-	int Stack[ACS_STACK_DEPTH];
-	int StackPtr;
-	int Vars[MAX_ACS_SCRIPT_VARS];
-	int *IP;
-
-	native void Archive(void);
-	native void Unarchive(void);
-
-	defaultproperties
-	{
-	}
-}
-
 addfields sector_t
 {
 	// 0 = untraversed, 1,2 = sndlines -1
@@ -712,6 +515,35 @@ addfields sector_t
 
 	// Thinker for reversable actions
 	Thinker SpecialData;
+};
+
+#define GRAVITY			1225.0
+
+struct tmtrace_t
+{
+	Entity Thing;
+	TVec End;
+	float BBox[4];
+	float FloorZ;
+	float CeilingZ;
+	float DropOffZ;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
+
+	bool bFloatOk;	// if true, move would be ok if
+					// within tmtrace.FloorZ - tmtrace.CeilingZ
+
+	// keep track of the line that lowers the ceiling,
+	// so missiles don't explode against sky hack walls
+	line_t *CeilingLine;
+
+	// keep track of special lines as they are hit,
+	// but don't process them until the move is proven valid
+	#define MAXSPECIALCROSS	32
+	line_t *SpecHit[MAXSPECIALCROSS];
+	int NumSpecHit;
+
+	Entity BlockingMobj;
 };
 
 #endif
@@ -919,11 +751,28 @@ struct clmobj_t
 	int effects;
 };
 
+class ModalWindow;
+class RootWindow;
+
+struct ClipRect
+{
+	float OriginX;		// X origin of rectangle, in absolute coordinates
+	float OriginY;		// Y origin of rectangle, in absolute coordinates
+
+	float ClipX;		// Leftmost edge of rectangle relative to origin
+	float ClipY;		// Topmost edge of rectangle relative to origin
+	float ClipWidth;	// Width of rectangle
+	float ClipHeight;	// Height of rectangle
+};
+
 #endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2002/10/26 16:32:14  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.44  2002/09/07 16:28:22  dj_jl
 //  Added Level class.
 //

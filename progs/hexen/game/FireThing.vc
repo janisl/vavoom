@@ -1,0 +1,63 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FireThing:Decoration
+	__mobjinfo__(8060);
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	::OnMapSpawn(mthing);
+	if (!TID)
+		AddStaticLight(Origin + vector(0.0, 0.0, 16.0), 160.0);
+}
+
+__states__
+{
+	S_ZFIRETHING1('FSKL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING2) { }
+	S_ZFIRETHING2('FSKL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING3) { }
+	S_ZFIRETHING3('FSKL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING4) { }
+	S_ZFIRETHING4('FSKL', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING5) { }
+	S_ZFIRETHING5('FSKL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING6) { }
+	S_ZFIRETHING6('FSKL', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING7) { }
+	S_ZFIRETHING7('FSKL', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING8) { }
+	S_ZFIRETHING8('FSKL', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_ZFIRETHING9) { }
+	S_ZFIRETHING9('FSKL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIRETHING1) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 10.0;
+	bSolid = true;
+	IdleState = S_ZFIRETHING1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,78 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RainPlayer1:Projectile;
+
+int AirDeathState;
+
+//===========================================================================
+//
+//  A_RainImpact
+//
+//===========================================================================
+
+void A_RainImpact(void)
+{
+	if (Origin.z > FloorZ)
+	{
+		SetState(AirDeathState);
+	}
+	else if (P_Random() < 40)
+	{
+		HitFloorEffect();
+	}
+}
+
+__states__
+{
+	S_RAINPLR1_1('FX20', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR1X_1('FX20', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_2) { A_RainImpact(); }
+	S_RAINPLR1X_2('FX20', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_3) { }
+	S_RAINPLR1X_3('FX20', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_4) { }
+	S_RAINPLR1X_4('FX20', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_5) { }
+	S_RAINPLR1X_5('FX20', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR1_1('FX20', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_2) { }
+	S_RAINAIRXPLR1_2('FX20', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_3) { }
+	S_RAINAIRXPLR1_3('FX20', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 12.0;
+	Speed = 420.0;
+	MissileDamage = 5;
+	IdleState = S_RAINPLR1_1;
+	DeathState = S_RAINPLR1X_1;
+	AirDeathState = S_RAINAIRXPLR1_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

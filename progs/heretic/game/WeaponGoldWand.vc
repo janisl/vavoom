@@ -1,0 +1,121 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponGoldWand:Weapon;
+
+//===========================================================================
+//
+//  A_FireGoldWandPL1
+//
+//===========================================================================
+
+void A_FireGoldWandPL1(void)
+{
+	int damage;
+	TVec dir;
+
+	Player->Ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	damage = 7 + (P_Random() & 7);
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
+	if (Player->Refire)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
+	}
+	PuffType = GoldWandPuff1;
+	LineAttack(Player->MO, dir, MISSILERANGE, damage);
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_FireGoldWandPL2
+//
+//===========================================================================
+
+void A_FireGoldWandPL2(void)
+{
+	int i;
+	int damage;
+	float momz;
+	TAVec angles;
+	TVec dir;
+
+	Player->Ammo[am_goldwand] -=
+		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
+	PuffType = GoldWandPuff2;
+	dir = Aim(Player->MO, Player->MO.Angles.yaw, 16.0 * 64.0);
+	VectorAngles(&dir, &angles);
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
+		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
+	Player->MO.SpawnMissileAngles(GoldWandMissile2,
+		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
+	VectorRotateAroundZ(&dir, -45.0 / 8.0);
+	for (i = 0; i < 5; i++)
+	{
+		damage = 1 + (P_Random() & 7);
+		LineAttack(Player->MO, dir, MISSILERANGE, damage);
+		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
+	}
+	Player->MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_GOLDWANDREADY('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDREADY) { A_WeaponReady(); }
+	S_GOLDWANDDOWN('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDDOWN) { A_Lower(); }
+	S_GOLDWANDUP('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDUP) { A_Raise(); }
+	S_GOLDWANDATK1_1('GWND', 1, 'weapons/v_wand.md2', 1, 3.0 / 35.0, S_GOLDWANDATK1_2) { }
+	S_GOLDWANDATK1_2('GWND', 2, 'weapons/v_wand.md2', 2, 5.0 / 35.0, S_GOLDWANDATK1_3) { A_FireGoldWandPL1(); }
+	S_GOLDWANDATK1_3('GWND', 3, 'weapons/v_wand.md2', 3, 3.0 / 35.0, S_GOLDWANDATK1_4) { }
+	S_GOLDWANDATK1_4('GWND', 3, 'weapons/v_wand.md2', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+	S_GOLDWANDATK2_1('GWND', 1, 'weapons/v_wand.md2', 1, 3.0 / 35.0, S_GOLDWANDATK2_2) { }
+	S_GOLDWANDATK2_2('GWND', 2, 'weapons/v_wand.md2', 2, 4.0 / 35.0, S_GOLDWANDATK2_3) { A_FireGoldWandPL2(); }
+	S_GOLDWANDATK2_3('GWND', 3, 'weapons/v_wand.md2', 3, 3.0 / 35.0, S_GOLDWANDATK2_4) { }
+	S_GOLDWANDATK2_4('GWND', 3, 'weapons/v_wand.md2', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_goldwand;
+	UpState = S_GOLDWANDUP;
+	DownState = S_GOLDWANDDOWN;
+	ReadyState = S_GOLDWANDREADY;
+	AttackState = S_GOLDWANDATK1_1;
+	HoldAttackState = S_GOLDWANDATK1_1;
+	UpState2 = S_GOLDWANDUP;
+	DownState2 = S_GOLDWANDDOWN;
+	ReadyState2 = S_GOLDWANDREADY;
+	AttackState2 = S_GOLDWANDATK2_1;
+	HoldAttackState2 = S_GOLDWANDATK2_1;
+	PSpriteSY = 5.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

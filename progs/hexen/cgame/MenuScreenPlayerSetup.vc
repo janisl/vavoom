@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenPlayerSetup:MenuScreen;
+
+MenuSpriteAnim Anim;
+int Color;
+int PClass;
+
+void SetColor(void)
+{
+	Anim.SprDef = 500 + PClass;
+	Anim.Translation = 0;
+	if (PClass == PCLASS_FIGHTER)
+	{
+		if (Color == 0)
+			Anim.Translation = 2;
+	else if (Color != 2)
+			Anim.Translation = Color;
+	}
+	else
+	{
+		if (Color)
+			Anim.Translation = PClass * (MAXPLAYERS - 1) + Color;
+	}
+}
+
+void SetSpriteColor(int newColor)
+{
+	Color = newColor;
+	SetColor();
+}
+
+void SetPClass(int newPClass)
+{
+	PClass = newPClass;
+	SetColor();
+}
+
+void CreateChoices(void)
+{
+	R_InstallSprite("PLAY", 500);
+	R_InstallSprite("CLER", 501);
+	R_InstallSprite("MAGE", 502);
+
+	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
+	Anim.SetPos(260, 120);
+	Anim.SprDef = 500;
+	Anim.Speed = 8;
+	Anim.NumFrames = 4;
+
+	::CreateChoices();
+}
+
+defaultproperties
+{
+	Choices[0] = MenuChoice_PlayerName;
+	Choices[1] = MenuChoice_Color;
+	Choices[2] = MenuChoice_PClass;
+	ChoicesStartX = 16;
+	ChoicesStartY = 40;
+	SelectorType = MenuSelector_SmallLeft;
+	Title = "PLAYER SETUP";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

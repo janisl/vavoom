@@ -1,0 +1,112 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuControlKey:MenuChoice;
+
+string Text;
+string CommandOn;
+string CommandOff;
+
+void DrawWindow(GC gc)
+{
+	int key1;
+	int key2;
+	int name_buf[32 / 4];
+	string Name = ARR2STR(name_buf);
+
+	T_SetFont(font_small);
+	T_SetAlign(hright, vtop);
+	gc.DrawText(0, 0, Text);
+
+	IN_GetBindingKeys(CommandOn, &key1, &key2);
+
+	T_SetAlign(hleft, vtop);
+	if (key1 >= 0)
+	{
+		KeyNameForNum(key1, Name);
+		gc.DrawText(10, 0, Name);
+	}
+	else
+	{
+		gc.DrawText(10, 0, "---");
+	}
+	if (key2 >= 0)
+	{
+		KeyNameForNum(key2, Name);
+		gc.DrawText(100, 0, Name);
+	}
+	else
+	{
+		gc.DrawText(100, 0, "---");
+	}
+}
+
+bool Key(int key)
+{
+	int key1;
+	int key2;
+
+	switch (key)
+	{
+	case K_LEFTARROW:
+		ControlColumn = 0;
+		MenuScreen(Parent).CursorMoved();
+		return true;
+
+	case K_RIGHTARROW:
+		ControlColumn = 1;
+		MenuScreen(Parent).CursorMoved();
+		return true;
+
+	case K_ENTER:
+	case K_PADENTER:
+	case K_MOUSE1:
+		CurrentCtl = self;
+		MB_StartMessage("Press new key\n\nESC to cancel",
+			MB_Control, false);
+		return true;
+
+	case K_BACKSPACE:
+		IN_GetBindingKeys(CommandOn, &key1, &key2);
+		if (ControlColumn == 0)
+			IN_SetBinding(key1, "", "");
+		if (ControlColumn == 1)
+			IN_SetBinding(key2, "", "");
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

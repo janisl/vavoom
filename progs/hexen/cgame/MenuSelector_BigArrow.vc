@@ -1,0 +1,60 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuSelector_BigArrow:MenuObject;
+
+int selector_pics[2];
+float Time;
+
+void InitWindow(void)
+{
+	::InitWindow();
+	bTickEnabled = true;
+	Disable();
+	selector_pics[0] = R_RegisterPic("M_SLCTR1", PIC_PATCH);
+	selector_pics[1] = R_RegisterPic("M_SLCTR2", PIC_PATCH);
+}
+
+void Tick(float DeltaTime)
+{
+	Time += DeltaTime;
+}
+
+void DrawWindow(GC gc)
+{
+	gc.DrawIcon(-28, -1, selector_pics[ftoi(Time * 2.0) & 1]);
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:25  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,279 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class LightningMissile:Projectile
+	abstract;
+
+int ZigZagCount;	// Only for floor
+float ZagSpeed;
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	int damage;
+	Actor Other;
+
+	if (!bMissile)
+	{
+		return false;
+	}
+
+	Other = Actor(InOther);
+	// Check for a non-shootable mobj
+	if (!Other.bShootable || Other.bNonShootable)
+	{
+		return true;
+	}
+
+	// Check for blasted thing running into another
+	if (bBlasted && Other.bShootable)
+	{
+		if (!Other.bBoss && Other.bCountKill)
+		{
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
+			{
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
+			}
+			return false;
+		}
+	}
+
+	if (Other == Instigator)
+	{
+		return true;
+	}
+
+	if (Other.Mass != 99999.0)
+	{
+		Other.Velocity.x += Velocity.x / 16.0;
+		Other.Velocity.y += Velocity.y / 16.0;
+	}
+	if ((!Other.bIsPlayer && !Other.bBoss) || !(level->tictime & 1))
+	{
+		if (Other.Class == Centaur ||
+			Other.Class == CentaurLeader)
+		{
+			// Lightning does more damage to centaurs
+			Other.Damage(self, Instigator, 9);
+		}
+		else
+		{
+			Other.Damage(self, Instigator, 3);
+		}
+		if (!(GetSoundPlayingInfo(self,
+					GetSoundID('MageLightningZap'))))
+		{
+			PlaySound('MageLightningZap', CHAN_VOICE);
+		}
+		if (Other.bCountKill && P_Random() < 64
+			&& !GetSoundPlayingInfo(Other,
+				GetSoundID('PuppyBeat')))
+		{
+			if ((Other.Class == Centaur) ||
+				(Other.Class == CentaurLeader) ||
+				(Other.Class == Ettin))
+			{
+				Other.PlaySound('PuppyBeat', CHAN_VOICE);
+			}
+		}
+	}
+	Health--;
+	if (Health <= 0 || Other.Health <= 0)
+	{
+		return false;
+	}
+	if (Class == LightningFloor)
+	{
+		if (SpecialMobj2 && !SpecialMobj2->Enemy)
+		{
+			SpecialMobj2->Enemy = Other;
+		}
+	}
+	else if (!Enemy)
+	{
+		Enemy = Other;
+	}
+	return true;	// lightning zaps through all sprites
+}
+
+//==========================================================================
+//
+//  A_LightningClip
+//
+//==========================================================================
+
+void A_LightningClip(void)
+{
+	Actor cMo;
+	Actor targ;
+	int zigZag;
+
+	if (Class == LightningFloor)
+	{
+		Origin.z = FloorZ;
+		if (SpecialMobj2)
+			targ = SpecialMobj2->Enemy;
+		else
+			targ = none;
+	}
+	else if (Class == LightningCeiling)
+	{
+		Origin.z = CeilingZ - Height;
+		targ = Enemy;
+	}
+	if (Class == LightningFloor)
+	{
+		// floor lightning zig-zags, and forces the ceiling lightning to mimic
+		cMo = *SpecialMobj2;
+		zigZag = P_Random();
+		if ((zigZag > 128 && ZigZagCount < 2) || ZigZagCount < -2)
+		{
+			Thrust(Angles.yaw + 90.0, ZagSpeed);
+			if (cMo)
+			{
+				cMo.Thrust(Angles.yaw + 90.0, ZagSpeed);
+			}
+			ZigZagCount++;
+		}
+		else
+		{
+			Thrust(Angles.yaw - 90.0, ZagSpeed);
+			if (cMo)
+			{
+				cMo.Thrust(cMo.Angles.yaw - 90.0, ZagSpeed);
+			}
+			ZigZagCount--;
+		}
+	}
+	if (targ)
+	{
+		if (targ.Health <= 0)
+		{
+			ExplodeMissile();
+		}
+		else
+		{
+			Angles.yaw = atan2(targ.Origin.y - Origin.y,
+				targ.Origin.x - Origin.x);
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+			Thrust(Angles.yaw, Speed * frametime / 2.0);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_LightningZap
+//
+//==========================================================================
+
+void A_LightningZap(void)
+{
+	Actor A;
+	float deltaZ;
+
+	A_LightningClip();
+
+	Health -= 8;
+	if (Health <= 0)
+	{
+		SetState(DeathState);
+		return;
+	}
+	if (Class == LightningFloor)
+	{
+		deltaZ = 10.0;
+	}
+	else
+	{
+		deltaZ = -10.0;
+	}
+	A = Spawn(LightningZap, Origin + vector((Random() - 0.5) * Radius,
+		(Random() - 0.5) * Radius, deltaZ));
+	if (A)
+	{
+		A.SpecialMobj2 = this;
+		A.Velocity.x = Velocity.x;
+		A.Velocity.y = Velocity.y;
+		A.Instigator = Instigator;
+		if (Class == LightningFloor)
+		{
+			A.Velocity.z = 20.0 * 35.0;
+		}
+		else
+		{
+			A.Velocity.z = -20.0 * 35.0;
+		}
+	}
+	if (Class == LightningFloor && P_Random() < 160)
+	{
+		PlaySound('MageLightningContinuous', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_LightningRemove
+//
+//==========================================================================
+
+void A_LightningRemove(void)
+{
+	if (SpecialMobj2)
+	{
+		SpecialMobj2->SpecialMobj2 = NULL;
+		SpecialMobj2->ExplodeMissile();
+	}
+}
+
+defaultproperties
+{
+	Health = 144;
+	Radius = 16.0;
+	Height = 40.0;
+	Speed = 875.0;
+	MissileDamage = 8;
+	Effects = EF_DL_BLUE;
+	ZagSpeed = 1.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,97 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SorcererBall2:SorcererBall;
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//	Defensive
+//
+//============================================================================
+
+void A_CastSorcererSpell(void)
+{
+	Actor mo;
+	float z;
+
+	// Put sorcerer into throw spell animation
+	if (Instigator.Health > 0)
+		Instigator.SetState(S_SORC_ATTACK4);
+
+	z = Instigator.Origin.z - Instigator.FloorClip + SORC_DEFENSE_HEIGHT;
+	mo = Spawn(SorcererFX2, vector(Origin.x, Origin.y, z));
+	Instigator.bInvulnerable = true;
+	Instigator.bReflective = true;
+	Instigator.Args[0] = SORC_DEFENSE_TIME;
+	if (mo)
+		mo.Instigator = Instigator;
+
+	Instigator.Args[3] = SORC_STOPPED;
+}
+
+__states__
+{
+	S_SORCBALL2_1('SBMB', 0, 2.0 / 35.0, S_SORCBALL2_2) { A_SorcBallOrbit(); }
+	S_SORCBALL2_2('SBMB', 1, 2.0 / 35.0, S_SORCBALL2_3) { A_SorcBallOrbit(); }
+	S_SORCBALL2_3('SBMB', 2, 2.0 / 35.0, S_SORCBALL2_4) { A_SorcBallOrbit(); }
+	S_SORCBALL2_4('SBMB', 3, 2.0 / 35.0, S_SORCBALL2_5) { A_SorcBallOrbit(); }
+	S_SORCBALL2_5('SBMB', 4, 2.0 / 35.0, S_SORCBALL2_6) { A_SorcBallOrbit(); }
+	S_SORCBALL2_6('SBMB', 5, 2.0 / 35.0, S_SORCBALL2_7) { A_SorcBallOrbit(); }
+	S_SORCBALL2_7('SBMB', 6, 2.0 / 35.0, S_SORCBALL2_8) { A_SorcBallOrbit(); }
+	S_SORCBALL2_8('SBMB', 7, 2.0 / 35.0, S_SORCBALL2_9) { A_SorcBallOrbit(); }
+	S_SORCBALL2_9('SBMB', 8, 2.0 / 35.0, S_SORCBALL2_0) { A_SorcBallOrbit(); }
+	S_SORCBALL2_0('SBMB', 9, 2.0 / 35.0, S_SORCBALL2_A) { A_SorcBallOrbit(); }
+	S_SORCBALL2_A('SBMB', 10, 2.0 / 35.0, S_SORCBALL2_B) { A_SorcBallOrbit(); }
+	S_SORCBALL2_B('SBMB', 11, 2.0 / 35.0, S_SORCBALL2_C) { A_SorcBallOrbit(); }
+	S_SORCBALL2_C('SBMB', 12, 2.0 / 35.0, S_SORCBALL2_D) { A_SorcBallOrbit(); }
+	S_SORCBALL2_D('SBMB', 13, 2.0 / 35.0, S_SORCBALL2_E) { A_SorcBallOrbit(); }
+	S_SORCBALL2_E('SBMB', 14, 2.0 / 35.0, S_SORCBALL2_F) { A_SorcBallOrbit(); }
+	S_SORCBALL2_F('SBMB', 15, 2.0 / 35.0, S_SORCBALL2_1) { A_SorcBallOrbit(); }
+	S_SORCBALL2_D1('SBMB', 0, 5.0 / 35.0, S_SORCBALL2_D2) { A_SorcBallPop(); }
+	S_SORCBALL2_D2('SBMB', 1, 2.0 / 35.0, S_SORCBALL2_D2) { A_BounceCheck(); }
+	S_SORCBALL2_D5('SBS3', 3, 5.0 / 35.0, S_SORCBALL2_D6) { A_Explode(); }
+	S_SORCBALL2_D6('SBS3', 4, 5.0 / 35.0, S_SORCBALL2_D7) { }
+	S_SORCBALL2_D7('SBS3', 5, 6.0 / 35.0, S_SORCBALL2_D8) { }
+	S_SORCBALL2_D8('SBS3', 6, 6.0 / 35.0, S_SORCBALL2_D9) { }
+	S_SORCBALL2_D9('SBS3', 7, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SORCBALL2_1;
+	PainState = S_SORCBALL2_D1;
+	DeathState = S_SORCBALL2_D5;
+	BallAngleOffset = 120.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,230 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Wizard:Pawn
+	__mobjinfo__(15);
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoBlasterWimpy, 10, 0.328125);
+	DropItem(ArtifactTomeOfPower, 0, 0.015625);
+}
+
+//==========================================================================
+//
+//  A_WizAtk1
+//
+//==========================================================================
+
+void A_WizAtk1(void)
+{
+	A_FaceTarget();
+	Translucency = 0;
+}
+
+//==========================================================================
+//
+//  A_WizAtk2
+//
+//==========================================================================
+
+void A_WizAtk2(void)
+{
+	A_FaceTarget();
+	Translucency = 33;
+}
+
+//==========================================================================
+//
+//  A_WizAtk3
+//
+//==========================================================================
+
+void A_WizAtk3(void)
+{
+	Actor A;
+	float angle;
+	TAVec ang;
+
+	Translucency = 0;
+	if (!Enemy)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(4));
+		return;
+	}
+	A = SpawnMissile(Enemy, WizardMissile);
+	if (A)
+	{
+		VectorAngles(&A.Velocity, &ang);
+		angle = A.Angles.yaw;
+		SpawnMissileAngles(WizardMissile,
+			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
+		SpawnMissileAngles(WizardMissile,
+			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
+	}
+}
+
+//==========================================================================
+//
+//  A_GhostOff
+//
+//==========================================================================
+
+void A_GhostOff(void)
+{
+	Translucency = 0;
+}
+
+__states__
+{
+	//	Idle
+	S_WIZARD_LOOK1('WZRD', 0, 'monsters/wizard/base.md2', 0, 0.1, S_WIZARD_LOOK2) { A_Look(); }
+	S_WIZARD_LOOK2('WZRD', 0, 'monsters/wizard/base.md2', 1, 0.1, S_WIZARD_LOOK3) { }
+	S_WIZARD_LOOK3('WZRD', 0, 'monsters/wizard/base.md2', 2, 0.1, S_WIZARD_LOOK4) { }
+	S_WIZARD_LOOK4('WZRD', 1, 'monsters/wizard/base.md2', 3, 0.1, S_WIZARD_LOOK5) { A_Look(); }
+	S_WIZARD_LOOK5('WZRD', 1, 'monsters/wizard/base.md2', 4, 0.1, S_WIZARD_LOOK6) { }
+	S_WIZARD_LOOK6('WZRD', 1, 'monsters/wizard/base.md2', 5, 0.1, S_WIZARD_LOOK7) { }
+	S_WIZARD_LOOK7('WZRD', 0, 'monsters/wizard/base.md2', 6, 0.1, S_WIZARD_LOOK8) { A_Look(); }
+	S_WIZARD_LOOK8('WZRD', 0, 'monsters/wizard/base.md2', 7, 0.1, S_WIZARD_LOOK9) { }
+	S_WIZARD_LOOK9('WZRD', 0, 'monsters/wizard/base.md2', 8, 0.1, S_WIZARD_LOOK10) { }
+	S_WIZARD_LOOK10('WZRD', 1, 'monsters/wizard/base.md2', 9, 0.1, S_WIZARD_LOOK11) { A_Look(); }
+	S_WIZARD_LOOK11('WZRD', 1, 'monsters/wizard/base.md2', 10, 0.1, S_WIZARD_LOOK12) { }
+	S_WIZARD_LOOK12('WZRD', 1, 'monsters/wizard/base.md2', 11, 0.1, S_WIZARD_LOOK13) { }
+	S_WIZARD_LOOK13('WZRD', 0, 'monsters/wizard/base.md2', 12, 0.1, S_WIZARD_LOOK14) { A_Look(); }
+	S_WIZARD_LOOK14('WZRD', 0, 'monsters/wizard/base.md2', 13, 0.1, S_WIZARD_LOOK15) { }
+	S_WIZARD_LOOK15('WZRD', 0, 'monsters/wizard/base.md2', 14, 0.1, S_WIZARD_LOOK16) { }
+	S_WIZARD_LOOK16('WZRD', 1, 'monsters/wizard/base.md2', 15, 0.1, S_WIZARD_LOOK17) { A_Look(); }
+	S_WIZARD_LOOK17('WZRD', 1, 'monsters/wizard/base.md2', 16, 0.1, S_WIZARD_LOOK18) { }
+	S_WIZARD_LOOK18('WZRD', 1, 'monsters/wizard/base.md2', 17, 0.1, S_WIZARD_LOOK19) { }
+	S_WIZARD_LOOK19('WZRD', 0, 'monsters/wizard/base.md2', 18, 0.1, S_WIZARD_LOOK20) { A_Look(); }
+	S_WIZARD_LOOK20('WZRD', 0, 'monsters/wizard/base.md2', 19, 0.1, S_WIZARD_LOOK21) { }
+	S_WIZARD_LOOK21('WZRD', 0, 'monsters/wizard/base.md2', 20, 0.1, S_WIZARD_LOOK22) { }
+	S_WIZARD_LOOK22('WZRD', 1, 'monsters/wizard/base.md2', 21, 0.1, S_WIZARD_LOOK23) { A_Look(); }
+	S_WIZARD_LOOK23('WZRD', 1, 'monsters/wizard/base.md2', 22, 0.1, S_WIZARD_LOOK24) { }
+	S_WIZARD_LOOK24('WZRD', 1, 'monsters/wizard/base.md2', 23, 0.1, S_WIZARD_LOOK25) { }
+	S_WIZARD_LOOK25('WZRD', 0, 'monsters/wizard/base.md2', 24, 0.1, S_WIZARD_LOOK26) { A_Look(); }
+	S_WIZARD_LOOK26('WZRD', 0, 'monsters/wizard/base.md2', 25, 0.1, S_WIZARD_LOOK27) { }
+	S_WIZARD_LOOK27('WZRD', 0, 'monsters/wizard/base.md2', 26, 0.1, S_WIZARD_LOOK28) { }
+	S_WIZARD_LOOK28('WZRD', 1, 'monsters/wizard/base.md2', 27, 0.1, S_WIZARD_LOOK29) { A_Look(); }
+	S_WIZARD_LOOK29('WZRD', 1, 'monsters/wizard/base.md2', 28, 0.1, S_WIZARD_LOOK30) { }
+	S_WIZARD_LOOK30('WZRD', 1, 'monsters/wizard/base.md2', 29, 0.1, S_WIZARD_LOOK31) { }
+	S_WIZARD_LOOK31('WZRD', 0, 'monsters/wizard/base.md2', 30, 0.1, S_WIZARD_LOOK32) { A_Look(); }
+	S_WIZARD_LOOK32('WZRD', 0, 'monsters/wizard/base.md2', 31, 0.1, S_WIZARD_LOOK33) { }
+	S_WIZARD_LOOK33('WZRD', 0, 'monsters/wizard/base.md2', 32, 0.1, S_WIZARD_LOOK34) { }
+	S_WIZARD_LOOK34('WZRD', 1, 'monsters/wizard/base.md2', 33, 0.1, S_WIZARD_LOOK35) { A_Look(); }
+	S_WIZARD_LOOK35('WZRD', 1, 'monsters/wizard/base.md2', 34, 0.1, S_WIZARD_LOOK36) { }
+	S_WIZARD_LOOK36('WZRD', 1, 'monsters/wizard/base.md2', 35, 0.1, S_WIZARD_LOOK37) { }
+	S_WIZARD_LOOK37('WZRD', 0, 'monsters/wizard/base.md2', 36, 0.1, S_WIZARD_LOOK38) { A_Look(); }
+	S_WIZARD_LOOK38('WZRD', 0, 'monsters/wizard/base.md2', 37, 0.1, S_WIZARD_LOOK39) { }
+	S_WIZARD_LOOK39('WZRD', 1, 'monsters/wizard/base.md2', 38, 0.1, S_WIZARD_LOOK40) { A_Look(); }
+	S_WIZARD_LOOK40('WZRD', 1, 'monsters/wizard/base.md2', 39, 0.1, S_WIZARD_LOOK1) { }
+	//	Flying
+	S_WIZARD_WALK1('WZRD', 0, 'monsters/wizard/base.md2', 40, 0.1, S_WIZARD_WALK2) { A_Chase(); }
+	S_WIZARD_WALK2('WZRD', 0, 'monsters/wizard/base.md2', 41, 0.1, S_WIZARD_WALK3) { A_Chase(); }
+	S_WIZARD_WALK3('WZRD', 0, 'monsters/wizard/base.md2', 42, 0.1, S_WIZARD_WALK4) { A_Chase(); }
+	S_WIZARD_WALK4('WZRD', 0, 'monsters/wizard/base.md2', 43, 0.1, S_WIZARD_WALK5) { A_Chase(); }
+	S_WIZARD_WALK5('WZRD', 0, 'monsters/wizard/base.md2', 44, 0.1, S_WIZARD_WALK6) { A_Chase(); }
+	S_WIZARD_WALK6('WZRD', 1, 'monsters/wizard/base.md2', 45, 0.1, S_WIZARD_WALK7) { A_Chase(); }
+	S_WIZARD_WALK7('WZRD', 1, 'monsters/wizard/base.md2', 46, 0.1, S_WIZARD_WALK8) { A_Chase(); }
+	S_WIZARD_WALK8('WZRD', 1, 'monsters/wizard/base.md2', 47, 0.1, S_WIZARD_WALK9) { A_Chase(); }
+	S_WIZARD_WALK9('WZRD', 1, 'monsters/wizard/base.md2', 48, 0.1, S_WIZARD_WALK10) { A_Chase(); }
+	S_WIZARD_WALK10('WZRD', 1, 'monsters/wizard/base.md2', 49, 0.1, S_WIZARD_WALK1) { A_Chase(); }
+	//	Attack
+	S_WIZARD_ATK1('WZRD', 2, 'monsters/wizard/base.md2', 50, 0.1, S_WIZARD_ATK2) { A_WizAtk1(); }
+	S_WIZARD_ATK2('WZRD', 2, 'monsters/wizard/base.md2', 51, 0.1, S_WIZARD_ATK3) { A_WizAtk2(); }
+	S_WIZARD_ATK3('WZRD', 2, 'monsters/wizard/base.md2', 52, 0.1, S_WIZARD_ATK4) { A_WizAtk1(); }
+	S_WIZARD_ATK4('WZRD', 2, 'monsters/wizard/base.md2', 53, 0.1, S_WIZARD_ATK5) { A_WizAtk2(); }
+	S_WIZARD_ATK5('WZRD', 2, 'monsters/wizard/base.md2', 54, 0.1, S_WIZARD_ATK6) { A_WizAtk1(); }
+	S_WIZARD_ATK6('WZRD', 2, 'monsters/wizard/base.md2', 55, 0.1, S_WIZARD_ATK7) { A_WizAtk2(); }
+	S_WIZARD_ATK7('WZRD', 2, 'monsters/wizard/base.md2', 56, 0.1, S_WIZARD_ATK8) { A_WizAtk1(); }
+	S_WIZARD_ATK8('WZRD', 2, 'monsters/wizard/base.md2', 57, 0.1, S_WIZARD_ATK9) { A_WizAtk2(); }
+	S_WIZARD_ATK9('WZRD', 3, 'monsters/wizard/base.md2', 58, 0.1, S_WIZARD_ATK10) { A_WizAtk3(); }
+	S_WIZARD_ATK10('WZRD', 3, 'monsters/wizard/base.md2', 59, 0.1, S_WIZARD_ATK11) { }
+	S_WIZARD_ATK11('WZRD', 3, 'monsters/wizard/base.md2', 60, 0.1, S_WIZARD_ATK12) { }
+	S_WIZARD_ATK12('WZRD', 3, 'monsters/wizard/base.md2', 61, 0.1, S_WIZARD_WALK1) { }
+	//	Pain
+	S_WIZARD_PAIN1('WZRD', 4, 'monsters/wizard/base.md2', 62, 0.1, S_WIZARD_PAIN2) { A_GhostOff(); }
+	S_WIZARD_PAIN2('WZRD', 4, 'monsters/wizard/base.md2', 63, 0.1, S_WIZARD_PAIN3) { A_Pain(); }
+	//	Start chase, but model continues playing pain animation
+	S_WIZARD_PAIN3('WZRD', 0, 'monsters/wizard/base.md2', 64, 0.1, S_WIZARD_PAIN4) { A_Chase(); }
+	S_WIZARD_PAIN4('WZRD', 0, 'monsters/wizard/base.md2', 65, 0.1, S_WIZARD_PAIN5) { A_Chase(); }
+	S_WIZARD_PAIN5('WZRD', 0, 'monsters/wizard/base.md2', 66, 0.1, S_WIZARD_PAIN6) { A_Chase(); }
+	S_WIZARD_PAIN6('WZRD', 0, 'monsters/wizard/base.md2', 67, 0.1, S_WIZARD_PAIN7) { A_Chase(); }
+	S_WIZARD_PAIN7('WZRD', 1, 'monsters/wizard/base.md2', 68, 0.1, S_WIZARD_PAIN8) { A_Chase(); }
+	S_WIZARD_PAIN8('WZRD', 1, 'monsters/wizard/base.md2', 69, 0.1, S_WIZARD_PAIN9) { A_Chase(); }
+	S_WIZARD_PAIN9('WZRD', 1, 'monsters/wizard/base.md2', 70, 0.1, S_WIZARD_PAIN10) { A_Chase(); }
+	S_WIZARD_PAIN10('WZRD', 1, 'monsters/wizard/base.md2', 71, 0.1, S_WIZARD_WALK1) { A_Chase(); }
+	//	Death
+	S_WIZARD_DIE1('WZRD', 5, 'monsters/wizard/base.md2', 72, 0.2, S_WIZARD_DIE2) { A_GhostOff(); }
+	S_WIZARD_DIE2('WZRD', 6, 'monsters/wizard/base.md2', 73, 0.2, S_WIZARD_DIE3) { A_Scream(); }
+	S_WIZARD_DIE3('WZRD', 7, 'monsters/wizard/base.md2', 74, 0.2, S_WIZARD_DIE4) { }
+	S_WIZARD_DIE4('WZRD', 8, 'monsters/wizard/base.md2', 75, 0.2, S_WIZARD_DIE5) { }
+	S_WIZARD_DIE5('WZRD', 9, 'monsters/wizard/base.md2', 76, 0.2, S_WIZARD_DIE6) { A_NoBlocking(); }
+	S_WIZARD_DIE6('WZRD', 10, 'monsters/wizard/base.md2', 77, 0.2, S_WIZARD_DIE7) { }
+	S_WIZARD_DIE7('WZRD', 11, 'monsters/wizard/base.md2', 78, 0.2, S_WIZARD_DIE8) { }
+	S_WIZARD_DIE8('WZRD', 12, 'monsters/wizard/base.md2', 79, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 180;
+	Radius = 16.0;
+	Height = 68.0;
+	Mass = 100.0;
+	StepSpeed = 12.0;
+	PainChance = 0.25;
+	bNoGravity = true;
+	bFloat = true;
+	bFloorClip = false;
+	IdleState = S_WIZARD_LOOK1;
+	SeeState = S_WIZARD_WALK1;
+	MissileState = S_WIZARD_ATK1;
+	PainState = S_WIZARD_PAIN1;
+	DeathState = S_WIZARD_DIE1;
+	SightSound = 'WizardSight';
+	ActiveSound = 'WizardActive';
+	AttackSound = 'WizardAttack';
+	PainSound = 'WizardPain';
+	DeathSound = 'WizardDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,59 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ZBlueCandle:Decoration
+	__mobjinfo__(8066);
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	::OnMapSpawn(mthing);
+	if (!TID)
+		AddStaticLightRGB(Origin, 128.0, RGB(0, 0, 255));
+}
+
+__states__
+{
+	S_ZBLUE_CANDLE1('CAND', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZBLUE_CANDLE2) { }
+	S_ZBLUE_CANDLE2('CAND', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZBLUE_CANDLE3) { }
+	S_ZBLUE_CANDLE3('CAND', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZBLUE_CANDLE4) { }
+	S_ZBLUE_CANDLE4('CAND', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZBLUE_CANDLE5) { }
+	S_ZBLUE_CANDLE5('CAND', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZBLUE_CANDLE1) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 16.0;
+	bNoBlockmap = true;
+	IdleState = S_ZBLUE_CANDLE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

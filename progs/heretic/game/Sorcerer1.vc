@@ -1,0 +1,210 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sorcerer1:Pawn
+	__mobjinfo__(7);
+
+int ReAttackState;
+
+//==========================================================================
+//
+//  A_Sor1Chase
+//
+//==========================================================================
+
+void A_Sor1Chase(void)
+{
+	if (Special1)
+	{
+		Special1--;
+		StateTime -= 0.1;
+	}
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_Srcr1Attack
+//
+//  Sorcerer demon attack.
+//
+//==========================================================================
+
+void A_Srcr1Attack(void)
+{
+	Actor A;
+	TAVec ang;
+	float angle;
+
+	if (!Enemy)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(8));
+		return;
+	}
+	if (Health > (SpawnHealth / 3) * 2)
+	{
+		// Spit one fireball
+		SpawnMissile(Enemy, Sorcerer1Missile);
+	}
+	else
+	{
+		// Spit three fireballs
+		A = SpawnMissile(Enemy, Sorcerer1Missile);
+		if (A)
+		{
+			VectorAngles(&A.Velocity, &ang);
+			angle = A.Angles.yaw;
+			SpawnMissileAngles(Sorcerer1Missile,
+				AngleMod360(angle - 3.0), ang.pitch);
+			SpawnMissileAngles(Sorcerer1Missile,
+				AngleMod360(angle + 3.0), ang.pitch);
+		}
+		if (Health < SpawnHealth / 3)
+		{
+			// Maybe attack again
+			if (Special1)
+			{
+				// Just attacked, so don't attack again
+				Special1 = 0;
+			}
+			else
+			{
+				// Set state to attack again
+				Special1 = 1;
+				SetState(ReAttackState);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_Sor1Pain
+//
+//==========================================================================
+
+void A_Sor1Pain(void)
+{
+	Special1 = 20;	// Number of steps to walk fast
+	A_Pain();
+}
+
+//==========================================================================
+//
+//  A_SorZap
+//
+//==========================================================================
+
+void A_SorZap(void)
+{
+	PlayFullVolumeSound('SorcererZap', CHAN_BODY);
+}
+
+//==========================================================================
+//
+//  A_SorcererRise
+//
+//==========================================================================
+
+void A_SorcererRise(void)
+{
+	Sorcerer2 S2;
+
+	bSolid = false;
+	S2 = Sorcerer2(Spawn(Sorcerer2, Origin));
+	S2.SetState(S2.RiseState);
+	S2.Angles.yaw = Angles.yaw;
+	S2.Enemy = Enemy;
+}
+
+__states__
+{
+	S_SRCR1_LOOK1('SRCR', 0, 10.0 / 35.0, S_SRCR1_LOOK2) { A_Look(); }
+	S_SRCR1_LOOK2('SRCR', 1, 10.0 / 35.0, S_SRCR1_LOOK1) { A_Look(); }
+	S_SRCR1_WALK1('SRCR', 0, 5.0 / 35.0, S_SRCR1_WALK2) { A_Sor1Chase(); }
+	S_SRCR1_WALK2('SRCR', 1, 5.0 / 35.0, S_SRCR1_WALK3) { A_Sor1Chase(); }
+	S_SRCR1_WALK3('SRCR', 2, 5.0 / 35.0, S_SRCR1_WALK4) { A_Sor1Chase(); }
+	S_SRCR1_WALK4('SRCR', 3, 5.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Chase(); }
+	S_SRCR1_PAIN1('SRCR', 16, 6.0 / 35.0, S_SRCR1_WALK1) { A_Sor1Pain(); }
+	S_SRCR1_ATK1('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK2) { A_FaceTarget(); }
+	S_SRCR1_ATK2('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK3) { A_FaceTarget(); }
+	S_SRCR1_ATK3('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_ATK4('SRCR', 18, 10.0 / 35.0, S_SRCR1_ATK5) { A_FaceTarget(); }
+	S_SRCR1_ATK5('SRCR', 16, 7.0 / 35.0, S_SRCR1_ATK6) { A_FaceTarget(); }
+	S_SRCR1_ATK6('SRCR', 17, 6.0 / 35.0, S_SRCR1_ATK7) { A_FaceTarget(); }
+	S_SRCR1_ATK7('SRCR', 18, 10.0 / 35.0, S_SRCR1_WALK1) { A_Srcr1Attack(); }
+	S_SRCR1_DIE1('SRCR', 4, 7.0 / 35.0, S_SRCR1_DIE2) { }
+	S_SRCR1_DIE2('SRCR', 5, 7.0 / 35.0, S_SRCR1_DIE3) { A_Scream(); }
+	S_SRCR1_DIE3('SRCR', 6, 7.0 / 35.0, S_SRCR1_DIE4) { }
+	S_SRCR1_DIE4('SRCR', 7, 6.0 / 35.0, S_SRCR1_DIE5) { }
+	S_SRCR1_DIE5('SRCR', 8, 6.0 / 35.0, S_SRCR1_DIE6) { }
+	S_SRCR1_DIE6('SRCR', 9, 6.0 / 35.0, S_SRCR1_DIE7) { }
+	S_SRCR1_DIE7('SRCR', 10, 6.0 / 35.0, S_SRCR1_DIE8) { }
+	S_SRCR1_DIE8('SRCR', 11, 25.0 / 35.0, S_SRCR1_DIE9) { A_SorZap(); }
+	S_SRCR1_DIE9('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE10) { }
+	S_SRCR1_DIE10('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE11) { }
+	S_SRCR1_DIE11('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE12) { }
+	S_SRCR1_DIE12('SRCR', 11, 20.0 / 35.0, S_SRCR1_DIE13) { A_SorZap(); }
+	S_SRCR1_DIE13('SRCR', 12, 5.0 / 35.0, S_SRCR1_DIE14) { }
+	S_SRCR1_DIE14('SRCR', 13, 5.0 / 35.0, S_SRCR1_DIE15) { }
+	S_SRCR1_DIE15('SRCR', 14, 4.0 / 35.0, S_SRCR1_DIE16) { }
+	S_SRCR1_DIE16('SRCR', 11, 12.0 / 35.0, S_SRCR1_DIE17) { }
+	S_SRCR1_DIE17('SRCR', 15, -1.0, S_NULL) { A_SorcererRise(); }
+}
+
+defaultproperties
+{
+	Health = 2000;
+	Radius = 28.0;
+	Height = 100.0;
+	Mass = 800.0;
+	StepSpeed = 16.0;
+	PainChance = 0.21875;
+	bBoss = true;
+	IdleState = S_SRCR1_LOOK1;
+	SeeState = S_SRCR1_WALK1;
+	MissileState = S_SRCR1_ATK1;
+	ReAttackState = S_SRCR1_ATK4;
+	PainState = S_SRCR1_PAIN1;
+	DeathState = S_SRCR1_DIE1;
+	SightSound = 'SorcererDemonSight';
+	ActiveSound = 'SorcererDemonActive';
+	AttackSound = 'SorcererDemonAttack';
+	PainSound = 'SorcererDemonPain';
+	DeathSound = 'SorcererDemonDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

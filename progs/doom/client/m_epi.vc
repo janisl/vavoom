@@ -29,8 +29,6 @@
 
 #ifndef DOOM2
 
-void menu_skill(void);
-
 int MenuEpisode;
 
 //==========================================================================
@@ -41,116 +39,7 @@ int MenuEpisode;
 
 void SharewareResponse(int key)
 {
-	menu_help();
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode1
-//
-//==========================================================================
-
-class MenuChoice_Episode1:MenuBigTextButton
-{
-	int EpisodeNum;
-
-	void ActivateEvent(void)
-	{
-		if (shareware && EpisodeNum > 1)
-		{
-			MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-				MB_Shareware, false);
-			return;
-		}
-		MenuEpisode = EpisodeNum;
-		menu_skill();
-	}
-
-	defaultproperties
-	{
-		Text = "Knee - Deep in the Dead";
-		EpisodeNum = 1;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode2
-//
-//==========================================================================
-
-class MenuChoice_Episode2:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "The Shores of Hell";
-		EpisodeNum = 2;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode3
-//
-//==========================================================================
-
-class MenuChoice_Episode3:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "Inferno";
-		EpisodeNum = 3;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode4
-//
-//==========================================================================
-
-class MenuChoice_Episode4:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "Thy Flesh Consumed";
-		EpisodeNum = 4;
-	}
-}
-
-//==========================================================================
-//
-//	MenuScreenEpisode
-//
-//==========================================================================
-
-class MenuScreenEpisode:MenuScreen
-{
-	void InitWindow(void)
-	{
-		if (!ExtendedWAD)
-		{
-			Choices[3] = classidNone;
-		}
-		::InitWindow();
-	}
-
-	defaultproperties
-	{
-		Choices[0] = MenuChoice_Episode1;
-		Choices[1] = MenuChoice_Episode2;
-		Choices[2] = MenuChoice_Episode3;
-		Choices[3] = MenuChoice_Episode4;
-		ChoicesStartX = 48;
-		ChoicesStartY = 40;
-		SelectorType = MenuSelector_Skull;
-		Title = "WHICH EPISODE?";
-	}
-};
-
-void menu_episode(void)
-{
-	PushMenuScreen(SpawnMenu(MenuScreenEpisode));
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
 }
 
 #endif
@@ -158,6 +47,9 @@ void menu_episode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.8  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

@@ -1,0 +1,147 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ShardMissile:Projectile;
+
+bool bShardSpawnLeft;
+bool bShardSpawnRight;
+bool bShardSpawnUp;
+bool bShardSpawnDown;
+
+//==========================================================================
+//
+//  A_ShedShard
+//
+//==========================================================================
+
+void A_ShedShard(void)
+{
+	ShardMissile mo;
+	int spermcount = _Special2;
+
+	if (spermcount <= 0)
+		return;	// No sperm left
+	_Special2 = 0;
+	spermcount--;
+
+	// every so many calls, spawn a new missile in it's set directions
+	if (bShardSpawnLeft)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.bShardSpawnLeft = true;
+			mo._Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnRight)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile,
+			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.bShardSpawnRight = true;
+			mo._Special2 = spermcount;
+			mo.Velocity.z = Velocity.z;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnUp)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z += 8.0;
+			if (spermcount & 1)	// Every other reproduction
+			{
+				mo.bShardSpawnLeft = true;
+				mo.bShardSpawnRight = true;
+			}
+			mo.bShardSpawnUp = true;
+			mo._Special2 = spermcount;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+	if (bShardSpawnDown)
+	{
+		mo = ShardMissile(SpawnMissileAngleSpeed(ShardMissile, Angles.yaw,
+			0.0, itof(15 + 2 * spermcount) * 35.0));
+		if (mo)
+		{
+			mo.Velocity.z = Velocity.z;
+			mo.Origin.z -= 4.0;
+			if (spermcount & 1)	// Every other reproduction
+			{
+				mo.bShardSpawnLeft = true;
+				mo.bShardSpawnRight = true;
+			}
+			mo.bShardSpawnDown = true;
+			mo._Special2 = spermcount;
+			mo.Instigator = Instigator;
+			mo.Args[0] = (spermcount == 3) ? 2 : 0;
+		}
+	}
+}
+
+__states__
+{
+	S_SHARDFX1_1('SHRD', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_SHARDFX1_2) { }
+	S_SHARDFX1_2('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_3) { A_ShedShard(); }
+	S_SHARDFX1_3('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_4) { }
+	S_SHARDFX1_4('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_SHARDFX1_1) { }
+	S_SHARDFXE1_1('SHEX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_2) { }
+	S_SHARDFXE1_2('SHEX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_3) { }
+	S_SHARDFXE1_3('SHEX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_4) { }
+	S_SHARDFXE1_4('SHEX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_5) { }
+	S_SHARDFXE1_5('SHEX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 8.0;
+	Speed = 875.0;
+	MissileDamage = 1;
+	bIceDamage = true;
+	IdleState = S_SHARDFX1_1;
+	DeathState = S_SHARDFXE1_1;
+	DeathSound = 'MageShardsExplode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

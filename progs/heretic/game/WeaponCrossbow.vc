@@ -1,0 +1,127 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponCrossbow:Weapon;
+
+//===========================================================================
+//
+//  A_FireCrossbowPL1
+//
+//===========================================================================
+
+void A_FireCrossbowPL1(void)
+{
+	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
+	Player->MO.SpawnPlayerMissile(CrossbowFX1);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+}
+
+//===========================================================================
+//
+//  A_FireCrossbowPL2
+//
+//===========================================================================
+
+void A_FireCrossbowPL2(void)
+{
+	Player->Ammo[am_crossbow] -=
+		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
+	Player->MO.SpawnPlayerMissile(CrossbowFX2);
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw - (45.0 / 5.0)));
+	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player->MO.Angles.yaw + (45.0 / 5.0)));
+}
+
+__states__
+{
+	S_CRBOW1('CRBW', 0, 1.0 / 35.0, S_CRBOW2) { A_WeaponReady(); }
+	S_CRBOW2('CRBW', 0, 1.0 / 35.0, S_CRBOW3) { A_WeaponReady(); }
+	S_CRBOW3('CRBW', 0, 1.0 / 35.0, S_CRBOW4) { A_WeaponReady(); }
+	S_CRBOW4('CRBW', 0, 1.0 / 35.0, S_CRBOW5) { A_WeaponReady(); }
+	S_CRBOW5('CRBW', 0, 1.0 / 35.0, S_CRBOW6) { A_WeaponReady(); }
+	S_CRBOW6('CRBW', 0, 1.0 / 35.0, S_CRBOW7) { A_WeaponReady(); }
+	S_CRBOW7('CRBW', 1, 1.0 / 35.0, S_CRBOW8) { A_WeaponReady(); }
+	S_CRBOW8('CRBW', 1, 1.0 / 35.0, S_CRBOW9) { A_WeaponReady(); }
+	S_CRBOW9('CRBW', 1, 1.0 / 35.0, S_CRBOW10) { A_WeaponReady(); }
+	S_CRBOW10('CRBW', 1, 1.0 / 35.0, S_CRBOW11) { A_WeaponReady(); }
+	S_CRBOW11('CRBW', 1, 1.0 / 35.0, S_CRBOW12) { A_WeaponReady(); }
+	S_CRBOW12('CRBW', 1, 1.0 / 35.0, S_CRBOW13) { A_WeaponReady(); }
+	S_CRBOW13('CRBW', 2, 1.0 / 35.0, S_CRBOW14) { A_WeaponReady(); }
+	S_CRBOW14('CRBW', 2, 1.0 / 35.0, S_CRBOW15) { A_WeaponReady(); }
+	S_CRBOW15('CRBW', 2, 1.0 / 35.0, S_CRBOW16) { A_WeaponReady(); }
+	S_CRBOW16('CRBW', 2, 1.0 / 35.0, S_CRBOW17) { A_WeaponReady(); }
+	S_CRBOW17('CRBW', 2, 1.0 / 35.0, S_CRBOW18) { A_WeaponReady(); }
+	S_CRBOW18('CRBW', 2, 1.0 / 35.0, S_CRBOW1) { A_WeaponReady(); }
+	S_CRBOWDOWN('CRBW', 0, 1.0 / 35.0, S_CRBOWDOWN) { A_Lower(); }
+	S_CRBOWUP('CRBW', 0, 1.0 / 35.0, S_CRBOWUP) { A_Raise(); }
+	S_CRBOWATK1_1('CRBW', 3, 6.0 / 35.0, S_CRBOWATK1_2) { A_FireCrossbowPL1(); }
+	S_CRBOWATK1_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK1_3) { }
+	S_CRBOWATK1_3('CRBW', 5, 3.0 / 35.0, S_CRBOWATK1_4) { }
+	S_CRBOWATK1_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK1_5) { }
+	S_CRBOWATK1_5('CRBW', 7, 3.0 / 35.0, S_CRBOWATK1_6) { }
+	S_CRBOWATK1_6('CRBW', 0, 4.0 / 35.0, S_CRBOWATK1_7) { }
+	S_CRBOWATK1_7('CRBW', 1, 4.0 / 35.0, S_CRBOWATK1_8) { }
+	S_CRBOWATK1_8('CRBW', 2, 5.0 / 35.0, S_CRBOW1) { A_ReFire(); }
+	S_CRBOWATK2_1('CRBW', 3, 5.0 / 35.0, S_CRBOWATK2_2) { A_FireCrossbowPL2(); }
+	S_CRBOWATK2_2('CRBW', 4, 3.0 / 35.0, S_CRBOWATK2_3) { }
+	S_CRBOWATK2_3('CRBW', 5, 2.0 / 35.0, S_CRBOWATK2_4) { }
+	S_CRBOWATK2_4('CRBW', 6, 3.0 / 35.0, S_CRBOWATK2_5) { }
+	S_CRBOWATK2_5('CRBW', 7, 2.0 / 35.0, S_CRBOWATK2_6) { }
+	S_CRBOWATK2_6('CRBW', 0, 3.0 / 35.0, S_CRBOWATK2_7) { }
+	S_CRBOWATK2_7('CRBW', 1, 3.0 / 35.0, S_CRBOWATK2_8) { }
+	S_CRBOWATK2_8('CRBW', 2, 4.0 / 35.0, S_CRBOW1) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_crossbow;
+	UpState = S_CRBOWUP;
+	DownState = S_CRBOWDOWN;
+	ReadyState = S_CRBOW1;
+	AttackState = S_CRBOWATK1_1;
+	HoldAttackState = S_CRBOWATK1_1;
+	UpState2 = S_CRBOWUP;
+	DownState2 = S_CRBOWDOWN;
+	ReadyState2 = S_CRBOW1;
+	AttackState2 = S_CRBOWATK2_1;
+	HoldAttackState2 = S_CRBOWATK2_1;
+	PSpriteSY = 15.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

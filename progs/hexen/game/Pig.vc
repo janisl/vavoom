@@ -1,0 +1,207 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pig:Pawn;
+
+//==========================================================================
+//
+//  UpdateMorphedMonster
+//
+//  Returns true if the pig morphs.
+//
+//==========================================================================
+
+int UpdateMorphedMonster(int tics)
+{
+	Actor fog;
+	TVec oldOrigin;
+	classid originalClass;
+	float oldAngle;
+	Actor oldEnemy;
+	int oldSpecial;
+	int oldTID;
+	int oldArgs[5];
+	Actor mo;
+
+	_Special1 -= tics;
+	if (_Special1 > 0)
+	{
+		return false;
+	}
+	originalClass = SpecialCID;
+	switch (originalClass)
+	{
+	case WraithBuried:	// These must remain morphed
+	case Serpent:
+	case SerpentLeader:
+	case Minotaur:
+		return false;
+	default:
+		break;
+	}
+	oldOrigin = Origin;
+	oldAngle = Angles.yaw;
+	oldEnemy = Enemy;
+	oldSpecial = Special;
+	oldTID = TID;
+	oldArgs[0] = Args[0];
+	oldArgs[1] = Args[1];
+	oldArgs[2] = Args[2];
+	oldArgs[3] = Args[3];
+	oldArgs[4] = Args[4];
+
+	UnlinkFromWorld();
+	mo = Spawn(originalClass, oldOrigin);
+
+	if (!mo.TestLocation())
+	{
+		// Didn't fit
+		mo.Remove();
+		LinkToWorld();
+		mo._Special1 = 5 * 35;	// Next try in 5 seconds
+		return false;
+	}
+	LinkToWorld();
+	RemoveFromTIDList();
+	SetState(S_FREETARGMOBJ);
+	mo.Angles.yaw = oldAngle;
+	mo.Enemy = oldEnemy;
+	mo.TID = oldTID;
+	mo.Special = oldSpecial;
+	mo.Args[0] = oldArgs[0];
+	mo.Args[1] = oldArgs[1];
+	mo.Args[2] = oldArgs[2];
+	mo.Args[3] = oldArgs[3];
+	mo.Args[4] = oldArgs[4];
+	mo.InsertIntoTIDList(oldTID);
+	fog = Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT));
+	fog.PlaySound('Teleport', CHAN_VOICE);
+	return true;
+}
+
+//============================================================================
+//
+//  A_PigLook
+//
+//============================================================================
+
+void A_PigLook(void)
+{
+	if (UpdateMorphedMonster(10))
+	{
+		return;
+	}
+	A_Look();
+}
+
+//============================================================================
+//
+//  A_PigChase
+//
+//============================================================================
+
+void A_PigChase(void)
+{
+	if (UpdateMorphedMonster(3))
+	{
+		return;
+	}
+	A_Chase();
+}
+
+//============================================================================
+//
+//	A_PigAttack
+//
+//============================================================================
+
+void A_PigAttack(void)
+{
+	if (UpdateMorphedMonster(18))
+	{
+		return;
+	}
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, 2 + (P_Random() & 1));
+		PlaySound('PigAttack', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_PIG_LOOK1('PIGY', 1, 10.0 / 35.0, S_PIG_LOOK1) { A_PigLook(); }
+	S_PIG_WALK1('PIGY', 0, 3.0 / 35.0, S_PIG_WALK2) { A_PigChase(); }
+	S_PIG_WALK2('PIGY', 1, 3.0 / 35.0, S_PIG_WALK3) { A_PigChase(); }
+	S_PIG_WALK3('PIGY', 2, 3.0 / 35.0, S_PIG_WALK4) { A_PigChase(); }
+	S_PIG_WALK4('PIGY', 3, 3.0 / 35.0, S_PIG_WALK1) { A_PigChase(); }
+	S_PIG_PAIN('PIGY', 3, 4.0 / 35.0, S_PIG_WALK1) { A_PigPain(); }
+	S_PIG_ATK1('PIGY', 0, 5.0 / 35.0, S_PIG_ATK2) { A_FaceTarget(); }
+	S_PIG_ATK2('PIGY', 0, 10.0 / 35.0, S_PIG_WALK1) { A_PigAttack(); }
+	S_PIG_DIE1('PIGY', 4, 4.0 / 35.0, S_PIG_DIE2) { A_Scream(); }
+	S_PIG_DIE2('PIGY', 5, 3.0 / 35.0, S_PIG_DIE3) { A_NoBlocking(); }
+	S_PIG_DIE3('PIGY', 6, 4.0 / 35.0, S_PIG_DIE4) { A_QueueCorpse(); }
+	S_PIG_DIE4('PIGY', 7, 3.0 / 35.0, S_PIG_DIE5) { }
+	S_PIG_DIE5('PIGY', 8, 4.0 / 35.0, S_PIG_DIE6) { }
+	S_PIG_DIE6('PIGY', 9, 4.0 / 35.0, S_PIG_DIE7) { }
+	S_PIG_DIE7('PIGY', 10, 4.0 / 35.0, S_PIG_DIE8) { }
+	S_PIG_DIE8('PIGY', 11, -1.0, S_NULL) { }
+	S_PIG_ICE('PIGY', 12, 5.0 / 35.0, S_PIG_ICE2) { A_FreezeDeath(); }
+	S_PIG_ICE2('PIGY', 12, 1.0 / 35.0, S_PIG_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 25;
+	Radius = 12.0;
+	Height = 22.0;
+	Mass = 60.0;
+	StepSpeed = 10.0;
+	PainChance = 0.5;
+	bWindThrust = true;
+	bActivateMCross = false;
+	IdleState = S_PIG_LOOK1;
+	SeeState = S_PIG_WALK1;
+	MeleeState = S_PIG_ATK1;
+	PainState = S_PIG_PAIN;
+	DeathState = S_PIG_DIE1;
+	IceDeathState = S_PIG_ICE;
+	SightSound = 'PigActive1';
+	ActiveSound = 'PigActive1';
+	PainSound = 'PigPain';
+	DeathSound = 'PigDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

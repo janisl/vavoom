@@ -1,0 +1,51 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BlasterSmoke:Effect;
+
+__states__
+{
+	S_BLASTERSMOKE1('FX18', 7, 4.0 / 35.0, S_BLASTERSMOKE2) { }
+	S_BLASTERSMOKE2('FX18', 8, 4.0 / 35.0, S_BLASTERSMOKE3) { }
+	S_BLASTERSMOKE3('FX18', 9, 4.0 / 35.0, S_BLASTERSMOKE4) { }
+	S_BLASTERSMOKE4('FX18', 10, 4.0 / 35.0, S_BLASTERSMOKE5) { }
+	S_BLASTERSMOKE5('FX18', 11, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bNoTeleport = true;
+	bCannotPush = true;
+	IdleState = S_BLASTERSMOKE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

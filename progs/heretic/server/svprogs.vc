@@ -47,11 +47,12 @@ bool respawnmonsters;
 #include "savegame.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
+
+#include "../game/classes.vc"
+
 #include "inter.vc"
-#include "invent.vc"
 #include "user.vc"
 #include "mobj.vc"
-#include "move.vc"
 #include "physics.vc"
 #include "map.vc"
 #include "missile.vc"
@@ -62,29 +63,8 @@ bool respawnmonsters;
 #include "wpnbase.vc"
 #include "enemy.vc"
 
-#include "weapons.vc"
-
-#include "items.vc"
-#include "miscobj.vc"
-
 #include "bot.vc"
 
-#include "pod.vc"
-#include "volcano.vc"
-#include "teleglit.vc"
-#include "decorat.vc"
-
-#include "player.vc"
-#include "chicken.vc"
-#include "imp.vc"
-#include "mummy.vc"
-#include "knight.vc"
-#include "wizard.vc"
-#include "head.vc"
-#include "clink.vc"
-#include "beast.vc"
-#include "snake.vc"
-#include "minotaur.vc"
 #include "sorcerer.vc"
 
 #include "svmain.vc"
@@ -92,6 +72,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.16  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

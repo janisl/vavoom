@@ -1,0 +1,78 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuChoice_Fighter:MenuBigTextButton;
+
+MenuObject Box;
+MenuObject Walk;
+classid BoxType;
+classid WalkType;
+
+void InitWindow(void)
+{
+	::InitWindow();
+
+	Box = MenuObject(MenuScreen(Parent).NewChild(BoxType));
+	Box.SetPos(174, 8);
+	Box.Hide();
+
+	Walk = MenuObject(MenuScreen(Parent).NewChild(WalkType));
+	Walk.SetPos(174 + 24, 8 + 12);
+	Walk.Hide();
+}
+
+void FocusLost(void)
+{
+	::FocusLost();
+	Box.Hide();
+	Walk.Hide();
+}
+
+void FocusReceived(void)
+{
+	::FocusReceived();
+	Box.Show();
+	Walk.Show();
+}
+
+void ActivateEvent(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenFighterSkill));
+}
+
+defaultproperties
+{
+	Text = "FIGHTER";
+	BoxType = MenuFighterBox;
+	WalkType = MenuFighterWalk;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

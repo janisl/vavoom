@@ -1,0 +1,104 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Bridge:Actor
+	__mobjinfo__(118);
+
+//==========================================================================
+//
+//  A_BridgeInit
+//
+//==========================================================================
+
+void A_BridgeInit(void)
+{
+	float StartAngle;
+	BridgeBall ball1;
+	BridgeBall ball2;
+	BridgeBall ball3;
+
+	StartAngle = Random() * 360.0;
+	_Special1 = 0;
+
+	// Spawn triad into world
+	ball1 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball1.OrbitAngle = StartAngle;
+	ball1.Instigator = self;
+
+	ball2 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball2.OrbitAngle = AngleMod360(StartAngle + 120.0);
+	ball2.Instigator = self;
+
+	ball3 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball3.OrbitAngle = AngleMod360(StartAngle + 240.0);
+	ball3.Instigator = self;
+
+	ball1.A_BridgeOrbit();
+	ball2.A_BridgeOrbit();
+	ball3.A_BridgeOrbit();
+}
+
+__states__
+{
+	S_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_BRIDGE2) { }
+	S_BRIDGE2('TLGL', 0, 2.0 / 35.0, S_BRIDGE3) { A_BridgeInit(); }
+	S_BRIDGE3('TLGL', 0, -1.0, S_NULL) { }
+	S_FREE_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_FREE_BRIDGE2) { }
+	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, S_NULL) { }
+}
+
+//==========================================================================
+//
+//  RemoveThing
+//
+//==========================================================================
+
+void RemoveThing(void)
+{
+	_Special1 = true;	// Removing the bridge
+	bSolid = false;
+	SetState(S_FREE_BRIDGE1);
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 32.0;
+	Height = 2.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bSolid = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
+	IdleState = S_BRIDGE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

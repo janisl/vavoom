@@ -1,0 +1,64 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CrossbowFX2:CrossbowFX1;
+
+//===========================================================================
+//
+//  A_BoltSpark
+//
+//===========================================================================
+
+void A_BoltSpark(void)
+{
+	Actor spark;
+
+	if (P_Random() > 50)
+	{
+		spark = Spawn(CrossbowFX4, Origin);
+		spark.Origin.x += (Random() - Random()) * 4.0;
+		spark.Origin.y += (Random() - Random()) * 4.0;
+	}
+}
+
+__states__
+{
+	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
+}
+
+defaultproperties
+{
+	Speed = 1120.0;
+	MissileDamage = 6;
+	IdleState = S_CRBOWFX2;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,79 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HeadMissile3:Projectile;
+
+int GrownState;
+
+//==========================================================================
+//
+//  A_HeadFireGrow
+//
+//==========================================================================
+
+void A_HeadFireGrow(void)
+{
+	Health--;
+	Origin.z += 9.0;
+	if (Health == 0)
+	{
+		SetState(GrownState);
+	}
+}
+
+__states__
+{
+	S_HEADFX3_1('FX06', 0, 4.0 / 35.0, S_HEADFX3_2) { A_HeadFireGrow(); }
+	S_HEADFX3_2('FX06', 1, 4.0 / 35.0, S_HEADFX3_3) { A_HeadFireGrow(); }
+	S_HEADFX3_3('FX06', 2, 4.0 / 35.0, S_HEADFX3_1) { A_HeadFireGrow(); }
+	S_HEADFX3_4('FX06', 0, 5.0 / 35.0, S_HEADFX3_5) { }
+	S_HEADFX3_5('FX06', 1, 5.0 / 35.0, S_HEADFX3_6) { }
+	S_HEADFX3_6('FX06', 2, 5.0 / 35.0, S_HEADFX3_4) { }
+	S_HEADFXI3_1('FX06', 3, 5.0 / 35.0, S_HEADFXI3_2) { }
+	S_HEADFXI3_2('FX06', 4, 5.0 / 35.0, S_HEADFXI3_3) { }
+	S_HEADFXI3_3('FX06', 5, 5.0 / 35.0, S_HEADFXI3_4) { }
+	S_HEADFXI3_4('FX06', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 12.0;
+	Speed = 350.0;
+	MissileDamage = 5;
+	bWindThrust = true;
+	IdleState = S_HEADFX3_1;
+	GrownState = S_HEADFX3_4;
+	DeathState = S_HEADFXI3_1;
+	Effects = EF_DL_WHITE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -126,18 +126,6 @@ struct anim_t
 
 #endif
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-#ifndef DOOM2
-void IM_InitNextLoc(void);
-#endif
-void IM_InitNoState(void);
-
-#ifdef DOOM2
-void IM_InitText(void);
-void F_StartFinale(void);
-#endif
-
 // DATA DECLARATIONS -------------------------------------------------------
 
 // background (map of levels).
@@ -1739,6 +1727,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.9  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

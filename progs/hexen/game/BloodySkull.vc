@@ -1,0 +1,101 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BloodySkull:PlayerPawn;
+
+int FloorState;
+int RemoveState;
+
+//============================================================================
+//
+//  A_CheckSkullFloor
+//
+//============================================================================
+
+void A_CheckSkullFloor(void)
+{
+	if (Origin.z <= FloorZ)
+	{
+		SetState(FloorState);
+		PlaySound('Drip', CHAN_VOICE);
+	}
+}
+
+//============================================================================
+//
+//  A_CheckSkullDone
+//
+//============================================================================
+
+void A_CheckSkullDone(void)
+{
+	if (_Special2 == 666)
+	{
+		SetState(RemoveState);
+	}
+}
+
+__states__
+{
+	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL5('BSKL', 5, 5.0 / 35.0, S_BLOODYSKULL6) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL6('BSKL', 6, 5.0 / 35.0, S_BLOODYSKULL7) { A_CheckSkullFloor(); }
+	S_BLOODYSKULL7('BSKL', 7, 5.0 / 35.0, S_BLOODYSKULL1) { A_CheckSkullFloor(); }
+	S_BLOODYSKULLX1('BSKL', 8, 16.0 / 35.0, S_BLOODYSKULLX1) { A_CheckSkullDone(); }
+	S_BLOODYSKULLX2('BSKL', 8, 1050.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 4.0;
+	Height = 4.0;
+	Mass = 12.5;
+	ReactionCount = 8;
+	bSolid = false;
+	bShootable = false;
+	bFloorClip = false;
+	bTelestomp = false;
+	bActivatePushWall = false;
+	bWindThrust = false;
+	bSlide = false;
+	bNoBlockmap = true;
+	bNoPassMobj = true;
+	bCannotPush = true;
+	IdleState = S_BLOODYSKULL1;
+	FloorState = S_BLOODYSKULLX1;
+	RemoveState = S_BLOODYSKULLX2;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

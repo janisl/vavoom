@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FogPatchMedium:FogPatch
+	__mobjinfo__(10002);
+
+__states__
+{
+	S_FOGPATCHM1('FOGM', 0, 7.0 / 35.0, S_FOGPATCHM2) { A_FogMove(); }
+	S_FOGPATCHM2('FOGM', 1, 7.0 / 35.0, S_FOGPATCHM3) { A_FogMove(); }
+	S_FOGPATCHM3('FOGM', 2, 7.0 / 35.0, S_FOGPATCHM4) { A_FogMove(); }
+	S_FOGPATCHM4('FOGM', 3, 7.0 / 35.0, S_FOGPATCHM5) { A_FogMove(); }
+	S_FOGPATCHM5('FOGM', 4, 7.0 / 35.0, S_FOGPATCHM1) { A_FogMove(); }
+	S_FOGPATCHM0('FOGS', 0, 5.0 / 35.0, S_FOGPATCHMA) { }
+	S_FOGPATCHMA('FOGS', 1, 5.0 / 35.0, S_FOGPATCHMB) { }
+	S_FOGPATCHMB('FOGS', 2, 5.0 / 35.0, S_FOGPATCHMC) { }
+	S_FOGPATCHMC('FOGS', 3, 5.0 / 35.0, S_FOGPATCHMD) { }
+	S_FOGPATCHMD('FOGS', 4, 5.0 / 35.0, S_FOGPATCHS0) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FOGPATCHM1;
+	DeathState = S_FOGPATCHM0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

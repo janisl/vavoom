@@ -1,0 +1,80 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BeastBall:Projectile;
+
+//==========================================================================
+//
+//  A_BeastPuff
+//
+//==========================================================================
+
+void A_BeastPuff(void)
+{
+	TVec org;
+
+	if (P_Random() > 64)
+	{
+		org.x = Origin.x + (Random() - Random()) * 4.0;
+		org.y = Origin.y + (Random() - Random()) * 4.0;
+		org.z = Origin.z + (Random() - Random()) * 4.0;
+		Spawn(Puffy, org);
+	}
+}
+
+__states__
+{
+	S_BEASTBALL1('FRB1', 0, 2.0 / 35.0, S_BEASTBALL2) { A_BeastPuff(); }
+	S_BEASTBALL2('FRB1', 0, 2.0 / 35.0, S_BEASTBALL3) { A_BeastPuff(); }
+	S_BEASTBALL3('FRB1', 1, 2.0 / 35.0, S_BEASTBALL4) { A_BeastPuff(); }
+	S_BEASTBALL4('FRB1', 1, 2.0 / 35.0, S_BEASTBALL5) { A_BeastPuff(); }
+	S_BEASTBALL5('FRB1', 2, 2.0 / 35.0, S_BEASTBALL6) { A_BeastPuff(); }
+	S_BEASTBALL6('FRB1', 2, 2.0 / 35.0, S_BEASTBALL1) { A_BeastPuff(); }
+	S_BEASTBALLX1('FRB1', 3, 4.0 / 35.0, S_BEASTBALLX2) { }
+	S_BEASTBALLX2('FRB1', 4, 4.0 / 35.0, S_BEASTBALLX3) { }
+	S_BEASTBALLX3('FRB1', 5, 4.0 / 35.0, S_BEASTBALLX4) { }
+	S_BEASTBALLX4('FRB1', 6, 4.0 / 35.0, S_BEASTBALLX5) { }
+	S_BEASTBALLX5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 9.0;
+	Height = 8.0;
+	Speed = 420.0;
+	MissileDamage = 4;
+	bWindThrust = true;
+	IdleState = S_BEASTBALL1;
+	DeathState = S_BEASTBALLX1;
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,50 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class StainedGlassShard3:StainedGlassShard1;
+
+__states__
+{
+	S_SGSHARD3_1('SGSA', 10, 4.0 / 35.0, S_SGSHARD3_2) { }
+	S_SGSHARD3_2('SGSA', 11, 4.0 / 35.0, S_SGSHARD3_3) { }
+	S_SGSHARD3_3('SGSA', 12, 4.0 / 35.0, S_SGSHARD3_4) { }
+	S_SGSHARD3_4('SGSA', 13, 4.0 / 35.0, S_SGSHARD3_5) { }
+	S_SGSHARD3_5('SGSA', 14, 4.0 / 35.0, S_SGSHARD3_1) { }
+	S_SGSHARD3_D('SGSA', 14, 30.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_SGSHARD3_1;
+	DeathState = S_SGSHARD3_D;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

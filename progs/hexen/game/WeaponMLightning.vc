@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponMLightning:WeaponPickup
+	__mobjinfo__(8040);
+
+__states__
+{
+	S_MW_LIGHTNING1('WMLG', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING2) { }
+	S_MW_LIGHTNING2('WMLG', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING3) { }
+	S_MW_LIGHTNING3('WMLG', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING4) { }
+	S_MW_LIGHTNING4('WMLG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING5) { }
+	S_MW_LIGHTNING5('WMLG', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING6) { }
+	S_MW_LIGHTNING6('WMLG', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING7) { }
+	S_MW_LIGHTNING7('WMLG', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING8) { }
+	S_MW_LIGHTNING8('WMLG', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MW_LIGHTNING1) { }
+}
+
+defaultproperties
+{
+	bNoGravity = true;
+	WeaponClass = PCLASS_MAGE;
+	WeaponType = WP_THIRD;
+	IdleState = S_MW_LIGHTNING1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

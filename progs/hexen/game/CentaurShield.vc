@@ -1,0 +1,73 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CentaurShield:Carcas;
+
+//==========================================================================
+//
+//  A_CheckFloor
+//
+//  Checks if an object hit the floor
+//
+//==========================================================================
+
+void A_CheckFloor(void)
+{
+	if (Origin.z <= FloorZ)
+	{
+		Origin.z = FloorZ;
+		//bLowGravity = false;
+		SetState(DeathState);
+	}
+}
+
+__states__
+{
+	S_CENTAUR_SHIELD1('CTDP', 0, 3.0 / 35.0, S_CENTAUR_SHIELD2) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD2('CTDP', 1, 3.0 / 35.0, S_CENTAUR_SHIELD3) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD3('CTDP', 2, 3.0 / 35.0, S_CENTAUR_SHIELD4) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD4('CTDP', 3, 3.0 / 35.0, S_CENTAUR_SHIELD5) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD5('CTDP', 4, 3.0 / 35.0, S_CENTAUR_SHIELD6) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD6('CTDP', 5, 3.0 / 35.0, S_CENTAUR_SHIELD3) { A_CheckFloor(); }
+	S_CENTAUR_SHIELD_X1('CTDP', 6, 4.0 / 35.0, S_CENTAUR_SHIELD_X2) { }
+	S_CENTAUR_SHIELD_X2('CTDP', 7, 4.0 / 35.0, S_CENTAUR_SHIELD_X3) { A_QueueCorpse(); }
+	S_CENTAUR_SHIELD_X3('CTDP', 8, 4.0 / 35.0, S_CENTAUR_SHIELD_X4) { }
+	S_CENTAUR_SHIELD_X4('CTDP', 9, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	bFloorClip = false;
+	IdleState = S_CENTAUR_SHIELD1;
+	DeathState = S_CENTAUR_SHIELD_X1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

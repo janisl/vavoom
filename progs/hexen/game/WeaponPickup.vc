@@ -1,0 +1,169 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponPickup:Pickup
+	abstract;
+
+int WeaponClass;
+int WeaponType;
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+	bool remove;
+	bool gaveMana;
+	bool gaveWeapon;
+
+	if (!Toucher.bPickUp)
+	{
+		// Can't be picked up by toucher
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (!P)
+	{
+		//	Shouldn't happen
+		return;
+	}
+	remove = true;
+	if (P.Player->PClass != WeaponClass)
+	{
+		// Wrong class, but try to pick up for mana
+		if (netgame && !deathmatch)
+		{
+			// Can't pick up weapons for other classes in coop netplay
+			return;
+		}
+		if (WeaponType == WP_SECOND)
+		{
+			if (!P.GiveMana(MANA_1, 25))
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (!P.GiveMana(MANA_2, 25))
+			{
+				return;
+			}
+		}
+	}
+	else if (netgame && !deathmatch)
+	{
+		// Cooperative net-game
+		if (P.Player->WeaponOwned[WeaponType])
+		{
+			return;
+		}
+		P.Player->WeaponOwned[WeaponType] = true;
+		if (WeaponType == WP_SECOND)
+		{
+			P.GiveMana(MANA_1, 25);
+		}
+		else
+		{
+			P.GiveMana(MANA_2, 25);
+		}
+		P.Player->PendingWeapon = WeaponType;
+		remove = false;
+	}
+	else
+	{
+		// Deathmatch or single player game
+		if (WeaponType == WP_SECOND)
+		{
+			gaveMana = P.GiveMana(MANA_1, 25);
+		}
+		else
+		{
+			gaveMana = P.GiveMana(MANA_2, 25);
+		}
+		if (P.Player->WeaponOwned[WeaponType])
+		{
+			gaveWeapon = false;
+		}
+		else
+		{
+			gaveWeapon = true;
+			P.Player->WeaponOwned[WeaponType] = true;
+			if (WeaponType > P.Player->ReadyWeapon)
+			{
+				// Only switch to more powerful weapons
+				P.Player->PendingWeapon = WeaponType;
+			}
+		}
+		if (!gaveWeapon && !gaveMana)
+		{
+			// Player didn't need the weapon or any mana
+			return;
+		}
+	}
+
+	cprint(P.Player, weaponMessages[WeaponClass * 2 + WeaponType - 1]);
+	if (Special)
+	{
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		Special = 0;
+	}
+
+	if (remove)
+	{
+		if (deathmatch && !bDropped)
+		{
+			HideSpecial();
+		}
+		else
+		{
+			Remove();
+		}
+	}
+
+	P.Player->BonusFlash += BONUSADD;
+	P.PlaySound('PickupWeapon', CHAN_ITEM);
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

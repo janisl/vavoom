@@ -1,0 +1,48 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ItemArmor1:ArmorPickup
+	__mobjinfo__(2018);
+
+__states__
+{
+	S_ARM1('ARM1', 0, 'items/grnarmor.md2', 0, 6.0 / 35.0, S_ARM1A) { }
+	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 'items/grnarmor.md2', 1, 7.0 / 35.0, S_ARM1) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ARM1;
+	ArmorClass = 1;
+	PickupMessage = "Picked up the armor.";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

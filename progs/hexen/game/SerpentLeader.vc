@@ -1,0 +1,131 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ı
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SerpentLeader:Serpent
+	__mobjinfo__(120);
+
+//==========================================================================
+//
+//  A_SerpentHumpDecide
+//
+//  Decided whether to hump up or to missile attack
+//
+//==========================================================================
+
+void A_SerpentHumpDecide(void)
+{
+	if (P_Random() > 30)
+	{
+		return;
+	}
+	if (P_Random() < 40)
+	{
+		// Missile attack
+		SetState(MeleeState);
+		return;
+	}
+	if (!CheckMeleeRange())
+	{
+		// The hump shouldn't occur when within melee range
+		if (P_Random() < 128)
+		{
+			SetState(MeleeState);
+		}
+		else
+		{
+			SetState(HumpState);
+			PlaySound('SerpentActive', CHAN_VOICE);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_SerpentCheckForAttack
+//
+//==========================================================================
+
+void A_SerpentCheckForAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	if (!CheckMeleeRange())
+	{
+		SetState(AttackState);
+		return;
+	}
+	::A_SerpentCheckForAttack();
+}
+
+//==========================================================================
+//
+//  A_SerpentChooseAttack
+//
+//==========================================================================
+
+void A_SerpentChooseAttack(void)
+{
+	if (!Enemy || CheckMeleeRange())
+	{
+		return;
+	}
+	SetState(MissileState);
+}
+
+//==========================================================================
+//
+//	A_SerpentMissileAttack
+//
+//==========================================================================
+
+void A_SerpentMissileAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	SpawnMissile(Enemy, SerpentMissile);
+}
+
+__states__
+{
+	S_SERPENT_MISSILE1('SSPT', 13, 5.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentMissileAttack(); }
+}
+
+defaultproperties
+{
+	Mass = 200.0;
+	MissileState = S_SERPENT_MISSILE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

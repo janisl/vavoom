@@ -1,0 +1,60 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TreeDestructible:Decoration
+	__mobjinfo__(8062);
+
+__states__
+{
+	S_ZTREEDESTRUCTIBLE1('TRDT', 0, -1.0, S_NULL) { }
+	S_ZTREEDES_D1('TRDT', 1, 5.0 / 35.0, S_ZTREEDES_D2) { }
+	S_ZTREEDES_D2('TRDT', 2, 5.0 / 35.0, S_ZTREEDES_D3) { A_Scream(); }
+	S_ZTREEDES_D3('TRDT', 3, 5.0 / 35.0, S_ZTREEDES_D4) { }
+	S_ZTREEDES_D4('TRDT', 4, 5.0 / 35.0, S_ZTREEDES_D5) { }
+	S_ZTREEDES_D5('TRDT', 5, 5.0 / 35.0, S_ZTREEDES_D6) { }
+	S_ZTREEDES_D6('TRDT', 6, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 70;
+	Radius = 15.0;
+	Height = 180.0;
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	IdleState = S_ZTREEDESTRUCTIBLE1;
+	DeathState = S_ZTREEDES_D1;
+	DeathSound = 'TreeBreak';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

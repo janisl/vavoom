@@ -1,0 +1,145 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Knight:Pawn
+	__mobjinfo__(64);
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoCrossbowWimpy, 5, 0.328125);
+}
+
+//==========================================================================
+//
+//  A_KnightAttack
+//
+//==========================================================================
+
+void A_KnightAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(3));
+		PlaySound('KnightAttack2', CHAN_WEAPON);
+		return;
+	}
+	// Throw axe
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (Random() < 0.15625)
+	{
+		// Red axe
+		SpawnMissile(Enemy, KnightRedAxe);
+		return;
+	}
+	// Green axe
+	SpawnMissile(Enemy, KnightAxe);
+}
+
+__states__
+{
+	S_KNIGHT_STND1('KNIG', 0, 'monsters/knight/base.md2', 0, 2.5 / 35.0, S_KNIGHT_STND2) { A_Look(); }
+	S_KNIGHT_STND2('KNIG', 0, 'monsters/knight/base.md2', 1, 2.5 / 35.0, S_KNIGHT_STND3) { }
+	S_KNIGHT_STND3('KNIG', 0, 'monsters/knight/base.md2', 2, 2.5 / 35.0, S_KNIGHT_STND4) { }
+	S_KNIGHT_STND4('KNIG', 0, 'monsters/knight/base.md2', 3, 2.5 / 35.0, S_KNIGHT_STND5) { }
+	S_KNIGHT_STND5('KNIG', 1, 'monsters/knight/base.md2', 4, 2.5 / 35.0, S_KNIGHT_STND6) { A_Look(); }
+	S_KNIGHT_STND6('KNIG', 1, 'monsters/knight/base.md2', 5, 2.5 / 35.0, S_KNIGHT_STND7) { }
+	S_KNIGHT_STND7('KNIG', 1, 'monsters/knight/base.md2', 6, 2.5 / 35.0, S_KNIGHT_STND8) { }
+	S_KNIGHT_STND8('KNIG', 1, 'monsters/knight/base.md2', 7, 2.5 / 35.0, S_KNIGHT_STND1) { }
+	S_KNIGHT_WALK1('KNIG', 0, 'monsters/knight/base.md2', 8, 2.0 / 35.0, S_KNIGHT_WALK2) { A_Chase(); }
+	S_KNIGHT_WALK2('KNIG', 0, 'monsters/knight/base.md2', 9, 2.0 / 35.0, S_KNIGHT_WALK3) { }
+	S_KNIGHT_WALK3('KNIG', 1, 'monsters/knight/base.md2', 10, 2.0 / 35.0, S_KNIGHT_WALK4) { A_Chase(); }
+	S_KNIGHT_WALK4('KNIG', 1, 'monsters/knight/base.md2', 11, 2.0 / 35.0, S_KNIGHT_WALK5) { }
+	S_KNIGHT_WALK5('KNIG', 2, 'monsters/knight/base.md2', 12, 2.0 / 35.0, S_KNIGHT_WALK6) { A_Chase(); }
+	S_KNIGHT_WALK6('KNIG', 2, 'monsters/knight/base.md2', 13, 2.0 / 35.0, S_KNIGHT_WALK7) { }
+	S_KNIGHT_WALK7('KNIG', 3, 'monsters/knight/base.md2', 14, 2.0 / 35.0, S_KNIGHT_WALK8) { A_Chase(); }
+	S_KNIGHT_WALK8('KNIG', 3, 'monsters/knight/base.md2', 15, 2.0 / 35.0, S_KNIGHT_WALK1) { }
+	S_KNIGHT_ATK1('KNIG', 4, 'monsters/knight/base.md2', 16, 1.0 / 35.0, S_KNIGHT_ATK2) { A_FaceTarget(); }
+	S_KNIGHT_ATK2('KNIG', 4, 'monsters/knight/base.md2', 17, 3.0 / 35.0, S_KNIGHT_ATK3) { }
+	S_KNIGHT_ATK3('KNIG', 4, 'monsters/knight/base.md2', 18, 3.0 / 35.0, S_KNIGHT_ATK4) { }
+	S_KNIGHT_ATK4('KNIG', 4, 'monsters/knight/base.md2', 19, 3.0 / 35.0, S_KNIGHT_ATK5) { }
+	S_KNIGHT_ATK5('KNIG', 5, 'monsters/knight/base.md2', 20, 4.0 / 35.0, S_KNIGHT_ATK6) { A_FaceTarget(); }
+	S_KNIGHT_ATK6('KNIG', 5, 'monsters/knight/base.md2', 21, 4.0 / 35.0, S_KNIGHT_ATK7) { }
+	S_KNIGHT_ATK7('KNIG', 6, 'monsters/knight/base.md2', 22, 4.0 / 35.0, S_KNIGHT_ATK8) { A_KnightAttack(); }
+	S_KNIGHT_ATK8('KNIG', 6, 'monsters/knight/base.md2', 23, 4.0 / 35.0, S_KNIGHT_ATK9) { }
+	S_KNIGHT_ATK9('KNIG', 4, 'monsters/knight/base.md2', 17, 4.0 / 35.0, S_KNIGHT_ATK10) { A_FaceTarget(); }
+	S_KNIGHT_ATK10('KNIG', 4, 'monsters/knight/base.md2', 18, 3.0 / 35.0, S_KNIGHT_ATK11) { }
+	S_KNIGHT_ATK11('KNIG', 4, 'monsters/knight/base.md2', 19, 3.0 / 35.0, S_KNIGHT_ATK12) { }
+	S_KNIGHT_ATK12('KNIG', 5, 'monsters/knight/base.md2', 20, 4.0 / 35.0, S_KNIGHT_ATK13) { A_FaceTarget(); }
+	S_KNIGHT_ATK13('KNIG', 5, 'monsters/knight/base.md2', 21, 4.0 / 35.0, S_KNIGHT_ATK14) { }
+	S_KNIGHT_ATK14('KNIG', 6, 'monsters/knight/base.md2', 22, 4.0 / 35.0, S_KNIGHT_ATK15) { A_KnightAttack(); }
+	S_KNIGHT_ATK15('KNIG', 6, 'monsters/knight/base.md2', 23, 4.0 / 35.0, S_KNIGHT_WALK1) { }
+	S_KNIGHT_PAIN1('KNIG', 7, 'monsters/knight/base.md2', 24, 3.0 / 35.0, S_KNIGHT_PAIN2) { }
+	S_KNIGHT_PAIN2('KNIG', 7, 'monsters/knight/base.md2', 25, 3.0 / 35.0, S_KNIGHT_WALK1) { A_Pain(); }
+	S_KNIGHT_DIE1('KNIG', 8, 'monsters/knight/base.md2', 26, 6.0 / 35.0, S_KNIGHT_DIE2) { }
+	S_KNIGHT_DIE2('KNIG', 9, 'monsters/knight/base.md2', 27, 6.0 / 35.0, S_KNIGHT_DIE3) { A_Scream(); }
+	S_KNIGHT_DIE3('KNIG', 10, 'monsters/knight/base.md2', 28, 3.0 / 35.0, S_KNIGHT_DIE4) { }
+	S_KNIGHT_DIE4('KNIG', 10, 'monsters/knight/base.md2', 29, 3.0 / 35.0, S_KNIGHT_DIE5) { }
+	S_KNIGHT_DIE5('KNIG', 11, 'monsters/knight/base.md2', 30, 3.0 / 35.0, S_KNIGHT_DIE6) { A_NoBlocking(); }
+	S_KNIGHT_DIE6('KNIG', 11, 'monsters/knight/base.md2', 31, 3.0 / 35.0, S_KNIGHT_DIE7) { }
+	S_KNIGHT_DIE7('KNIG', 12, 'monsters/knight/base.md2', 32, 3.0 / 35.0, S_KNIGHT_DIE8) { }
+	S_KNIGHT_DIE8('KNIG', 12, 'monsters/knight/base.md2', 33, 3.0 / 35.0, S_KNIGHT_DIE9) { }
+	S_KNIGHT_DIE9('KNIG', 13, 'monsters/knight/base.md2', 34, 3.0 / 35.0, S_KNIGHT_DIE10) { }
+	S_KNIGHT_DIE10('KNIG', 13, 'monsters/knight/base.md2', 35, 3.0 / 35.0, S_KNIGHT_DIE11) { }
+	S_KNIGHT_DIE11('KNIG', 14, 'monsters/knight/base.md2', 36, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 200;
+	Radius = 24.0;
+	Height = 78.0;
+	Mass = 150.0;
+	StepSpeed = 12.0;
+	PainChance = 0.390625;
+	IdleState = S_KNIGHT_STND1;
+	SeeState = S_KNIGHT_WALK1;
+	MeleeState = S_KNIGHT_ATK1;
+	MissileState = S_KNIGHT_ATK1;
+	PainState = S_KNIGHT_PAIN1;
+	DeathState = S_KNIGHT_DIE1;
+	SightSound = 'KnightSight';
+	ActiveSound = 'KnightActive';
+	AttackSound = 'KnightAttack1';
+	PainSound = 'KnightPain';
+	DeathSound = 'KnightDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

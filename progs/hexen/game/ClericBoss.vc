@@ -1,0 +1,109 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ClericBoss:ClassBoss
+	__mobjinfo__(10101);
+
+//============================================================================
+//
+//  A_ClericAttack
+//
+//  Spawns the spirits
+//
+//============================================================================
+
+void A_ClericAttack(void)
+{
+	if (!Enemy)
+		return;
+	SpawnMissile(Enemy, HolyMissile);
+	PlaySound('HolySymbolFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_CLERIC('CLER', 0, 2.0 / 35.0, S_CLERIC2) { }
+	S_CLERIC2('CLER', 0, 3.0 / 35.0, S_CLERICLOOK) { A_ClassBossHealth(); }
+	S_CLERICLOOK('CLER', 0, 5.0 / 35.0, S_CLERICLOOK) { A_Look(); }
+	S_CLERIC_RUN1('CLER', 0, 4.0 / 35.0, S_CLERIC_RUN2) { A_FastChase(); }
+	S_CLERIC_RUN2('CLER', 1, 4.0 / 35.0, S_CLERIC_RUN3) { A_FastChase(); }
+	S_CLERIC_RUN3('CLER', 2, 4.0 / 35.0, S_CLERIC_RUN4) { A_FastChase(); }
+	S_CLERIC_RUN4('CLER', 3, 4.0 / 35.0, S_CLERIC_RUN1) { A_FastChase(); }
+	S_CLERIC_ATK1('CLER', 4, 8.0 / 35.0, S_CLERIC_ATK2) { A_FaceTarget(); }
+	S_CLERIC_ATK2('CLER', 5, 8.0 / 35.0, S_CLERIC_ATK3) { A_FaceTarget(); }
+	S_CLERIC_ATK3('CLER', 6, 10.0 / 35.0, S_CLERIC_RUN1) { A_ClericAttack(); }
+	S_CLERIC_PAIN('CLER', 7, 4.0 / 35.0, S_CLERIC_PAIN2) { }
+	S_CLERIC_PAIN2('CLER', 7, 4.0 / 35.0, S_CLERIC_RUN1) { A_Pain(); }
+	S_CLERIC_DIE1('CLER', 8, 6.0 / 35.0, S_CLERIC_DIE2) { }
+	S_CLERIC_DIE2('CLER', 10, 6.0 / 35.0, S_CLERIC_DIE3) { A_Scream(); }
+	S_CLERIC_DIE3('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE4) { }
+	S_CLERIC_DIE4('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE5) { }
+	S_CLERIC_DIE5('CLER', 12, 6.0 / 35.0, S_CLERIC_DIE6) { A_NoBlocking(); }
+	S_CLERIC_DIE6('CLER', 13, 6.0 / 35.0, S_CLERIC_DIE7) { }
+	S_CLERIC_DIE7('CLER', 14, 6.0 / 35.0, S_CLERIC_DIE8) { }
+	S_CLERIC_DIE8('CLER', 15, 6.0 / 35.0, S_CLERIC_DIE9) { }
+	S_CLERIC_DIE9('CLER', 16, -1.0, S_NULL) { }
+	S_CLERIC_XDIE1('CLER', 17, 5.0 / 35.0, S_CLERIC_XDIE2) { A_Scream(); }
+	S_CLERIC_XDIE2('CLER', 18, 5.0 / 35.0, S_CLERIC_XDIE3) { }
+	S_CLERIC_XDIE3('CLER', 19, 5.0 / 35.0, S_CLERIC_XDIE4) { A_NoBlocking(); }
+	S_CLERIC_XDIE4('CLER', 20, 5.0 / 35.0, S_CLERIC_XDIE5) { }
+	S_CLERIC_XDIE5('CLER', 21, 5.0 / 35.0, S_CLERIC_XDIE6) { }
+	S_CLERIC_XDIE6('CLER', 22, 5.0 / 35.0, S_CLERIC_XDIE7) { }
+	S_CLERIC_XDIE7('CLER', 23, 5.0 / 35.0, S_CLERIC_XDIE8) { }
+	S_CLERIC_XDIE8('CLER', 24, 5.0 / 35.0, S_CLERIC_XDIE9) { }
+	S_CLERIC_XDIE9('CLER', 25, 5.0 / 35.0, S_CLERIC_XDIE10) { }
+	S_CLERIC_XDIE10('CLER', 26, -1.0, S_NULL) { }
+	S_CLERIC_ICE('CLER', 27, 5.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeath(); }
+	S_CLERIC_ICE2('CLER', 27, 1.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 800;
+	GibsHealth = -400;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	StepSpeed = 25.0;
+	PainChance = 0.1953125;
+	IdleState = S_CLERIC;
+	SeeState = S_CLERIC_RUN1;
+	MeleeState = S_CLERIC_ATK1;
+	MissileState = S_CLERIC_ATK1;
+	PainState = S_CLERIC_PAIN;
+	DeathState = S_CLERIC_DIE1;
+	GibsDeathState = S_CLERIC_XDIE1;
+	IceDeathState = S_CLERIC_ICE;
+	PainSound = 'PlayerClericPain';
+	DeathSound = 'PlayerClericCrazyDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

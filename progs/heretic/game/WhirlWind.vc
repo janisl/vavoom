@@ -1,0 +1,108 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WhirlWind:Projectile;
+
+float SoundTimer;		// Timer for active sound
+
+//===========================================================================
+//
+//  ExplodeMissile
+//
+//===========================================================================
+
+void ExplodeMissile(void)
+{
+	SoundTimer += 1.0 / 35.0;
+	if (SoundTimer < 60.0 / 35.0)
+	{
+		return;
+	}
+	::ExplodeMissile();
+}
+
+//==========================================================================
+//
+//  A_WhirlwindSeek
+//
+//==========================================================================
+
+void A_WhirlwindSeek(void)
+{
+	Health -= 3;
+	if (Health < 0)
+	{
+		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(DeathState);
+		bMissile = false;
+		return;
+	}
+	SoundTimer -= 3.0 / 35.0;
+	if (SoundTimer < 0.0)
+	{
+		SoundTimer = 58.0 / 35.0 + Random() * 31.0 / 35.0;
+		PlaySound('HeadAttack3', CHAN_WEAPON);
+	}
+	if (Enemy && Enemy.Translucency)
+	{
+		return;
+	}
+	SeekerMissile(10.0, 30.0);
+}
+
+__states__
+{
+	S_HEADFX4_1('FX07', 3, 3.0 / 35.0, S_HEADFX4_2) { }
+	S_HEADFX4_2('FX07', 4, 3.0 / 35.0, S_HEADFX4_3) { }
+	S_HEADFX4_3('FX07', 5, 3.0 / 35.0, S_HEADFX4_4) { }
+	S_HEADFX4_4('FX07', 6, 3.0 / 35.0, S_HEADFX4_5) { }
+	S_HEADFX4_5('FX07', 0, 3.0 / 35.0, S_HEADFX4_6) { A_WhirlwindSeek(); }
+	S_HEADFX4_6('FX07', 1, 3.0 / 35.0, S_HEADFX4_7) { A_WhirlwindSeek(); }
+	S_HEADFX4_7('FX07', 2, 3.0 / 35.0, S_HEADFX4_5) { A_WhirlwindSeek(); }
+	S_HEADFXI4_1('FX07', 6, 4.0 / 35.0, S_HEADFXI4_2) { }
+	S_HEADFXI4_2('FX07', 5, 4.0 / 35.0, S_HEADFXI4_3) { }
+	S_HEADFXI4_3('FX07', 4, 4.0 / 35.0, S_HEADFXI4_4) { }
+	S_HEADFXI4_4('FX07', 3, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 74.0;
+	Speed = 350.0;
+	MissileDamage = 1;
+	Translucency = 33;
+	IdleState = S_HEADFX4_1;
+	DeathState = S_HEADFXI4_1;
+	SoundTimer = 50.0 / 35.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

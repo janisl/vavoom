@@ -1,0 +1,109 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuSaveSlot:MenuChoice;
+
+int Status;
+int Text[(SLOTTEXTLEN + 4) / 4];
+int SlotNum;
+
+void InitWindow(void)
+{
+	::InitWindow();
+	InitSlot();
+}
+
+void DrawWindow(GC gc)
+{
+	if (enteringText && bSelected)
+	{
+		DrawSlot(gc, 0, ARR2STR(slot_enter_text.Data), true);
+	}
+	else
+	{
+		DrawSlot(gc, 0, ARR2STR(Text), false);
+	}
+}
+
+void ActivateSlot(void)
+{
+}
+
+bool Key(int key)
+{
+	if (enteringText)
+	{
+		// Save Game string input
+		switch (key)
+		{
+		case K_ESCAPE:
+		case K_MOUSE2:
+			enteringText = false;
+			break;
+
+		case K_ENTER:
+		case K_PADENTER:
+		case K_MOUSE1:
+			enteringText = false;
+			if (slot_enter_text.Data[0])
+			{
+				strcpy(ARR2STR(Text), ARR2STR(slot_enter_text.Data));
+				CmdBuf_AddText("Save %d \"%s\"\n", SlotNum,
+					ARR2STR(Text));
+				ForceMenuOff();
+			}
+			break;
+
+		default:
+			InputLine_Key(&slot_enter_text, key);
+			if (slot_enter_text.len >= SLOTTEXTLEN - 1)
+			{
+				InputLine_Key(&slot_enter_text, K_BACKSPACE);
+			}
+			break;
+		}
+		return true;
+	}
+
+	if (key == K_ENTER || key == K_PADENTER ||
+		key == K_MOUSE1 || key == K_JOY1)
+	{
+		ActivateSlot();
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

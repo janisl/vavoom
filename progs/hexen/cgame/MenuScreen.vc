@@ -1,0 +1,216 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreen:MenuObject;
+
+MenuObject Items[MAX_MENU_ITEMS];
+int NumItems;
+int CursorPos;
+int CursorPrev;
+
+classid Choices[MAX_MENU_ITEMS];
+int ChoicesStartX;
+int ChoicesStartY;
+
+classid SelectorType;
+MenuObject Selector;
+
+string Title;
+int TitleX;
+int TitleY;
+
+void ChildAdded(Window Child)
+{
+	if (MenuObject(Child))
+	{
+		if (NumItems >= MAX_MENU_ITEMS)
+		{
+			FatalError("Too many menu items");
+		}
+		Items[NumItems++] = MenuObject(Child);
+	}
+	::ChildAdded(Child);
+}
+
+void CreateTitle(void)
+{
+	MenuTitleText newTitle;
+
+	if (Title && Title != "")
+	{
+		newTitle = MenuTitleText(NewChild(MenuTitleText));
+		newTitle.SetPos(TitleX, TitleY);
+		newTitle.Text = Title;
+	}
+}
+
+void CreateChoices(void)
+{
+	MenuChoice newChoice;
+	int currentY;
+	int i;
+
+	currentY = ChoicesStartY;
+	for (i = 0; i < MAX_MENU_ITEMS; i++)
+	{
+		if (Choices[i] && Choices[i] != classidNone)
+		{
+			newChoice = MenuChoice(NewChild(Choices[i]));
+			newChoice.SetPos(ChoicesStartX, currentY);
+			currentY += newChoice.Height;
+		}
+	}
+}
+
+void CreateSelector(void)
+{
+	if (SelectorType && SelectorType != classidNone)
+	{
+		Selector = MenuObject(NewChild(SelectorType));
+	}
+}
+
+void CursorMoved(void)
+{
+	if (CursorPrev == CursorPos)
+		return;
+
+	if (CursorPrev >= 0 && CursorPrev < NumItems)
+	{
+		Items[CursorPrev].FocusLost();
+		Items[CursorPrev].bSelected = false;
+	}
+
+	if (CursorPos >= 0 && CursorPos < NumItems)
+	{
+		Items[CursorPos].FocusReceived();
+		Items[CursorPos].bSelected = true;
+	}
+
+	if (Selector)
+	{
+		Selector.SetPos(Items[CursorPos].X, Items[CursorPos].Y);
+	}
+}
+
+void SetDefaultChoice(void)
+{
+	int i;
+
+	// default cursor position
+	CursorPos = 0;
+	CursorPrev = 0;
+
+	// force first available item to have focus
+	for (i = 0; i < NumItems; i++)
+	{
+		if (Items[i].IsSensitive())
+		{
+			CursorPrev = -1;
+			CursorPos = i;
+			CursorMoved();
+			break;
+		}
+	}
+}
+
+void InitWindow(void)
+{
+	::InitWindow();
+	CreateTitle();
+	CreateChoices();
+	CreateSelector();
+	SetDefaultChoice();
+}
+
+void CyclePrevChoice(void)
+{
+	CursorPrev = CursorPos;
+	do
+	{
+		if (!CursorPos)
+			CursorPos = NumItems - 1;
+		else
+			CursorPos--;
+	}
+	while (!Items[CursorPos].IsSensitive() && CursorPrev != CursorPos);
+	CursorMoved();
+}
+
+void CycleNextChoice(void)
+{
+	CursorPrev = CursorPos;
+	do
+	{
+		if (CursorPos == NumItems - 1)
+			CursorPos = 0;
+		else
+			CursorPos++;
+	}
+	while (!Items[CursorPos].IsSensitive() && CursorPrev != CursorPos);
+	CursorMoved();
+}
+
+bool Key(int key)
+{
+	if (Items[CursorPos].Key(key))
+	{
+		return true;
+	}
+
+	switch (key)
+	{
+	case K_DOWNARROW:
+		CycleNextChoice();
+		LocalSound('MenuMove');
+		return true;
+
+	case K_UPARROW:
+		CyclePrevChoice();
+		LocalSound('MenuMove');
+		return true;
+
+	case K_ESCAPE:
+	case K_MOUSE2:
+		PopMenu();
+		return true;
+	}
+
+	return false;
+}
+
+defaultproperties
+{
+	TitleX = 160;
+	TitleY = 24;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,116 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PlayerFighter:PlayerPawn;
+
+//============================================================================
+//
+//  A_SkullPop
+//
+//============================================================================
+
+void A_SkullPop(void)
+{
+	Actor A;
+
+	if (!bIsPlayer)
+	{
+		//	Not a player anymore, i.e. already respawned or disconnected.
+		return;
+	}
+	bSolid = false;
+	A = Spawn(BloodySkull, Origin + vector(0.0, 0.0, 48.0));
+	A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+	A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+	A.Velocity.z = (2.0 + Random() / 4.0) * 35.0;
+	// Attach player mobj to bloody skull
+	A.Player = Player;
+	A.bIsPlayer = true;
+	Player = NULL;
+	bIsPlayer = false;
+	_Special1 = A.Player->PClass;
+	A.Health = Health;
+	A.Angles.yaw = Angles.yaw;
+	A.Player->MO = A;
+	A.Player->DamageFlash = 1.0;
+}
+
+__states__
+{
+	S_FPLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_FPLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_FPLAY_RUN2) { }
+	S_FPLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_FPLAY_RUN3) { }
+	S_FPLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_FPLAY_RUN4) { }
+	S_FPLAY_RUN4('PLAY', 3, 4.0 / 35.0, S_FPLAY_RUN1) { }
+	S_FPLAY_ATK1('PLAY', 4, 8.0 / 35.0, S_FPLAY_ATK2) { }
+	S_FPLAY_ATK2('PLAY', 5, 8.0 / 35.0, S_FPLAY) { }
+	S_FPLAY_PAIN('PLAY', 6, 4.0 / 35.0, S_FPLAY_PAIN2) { }
+	S_FPLAY_PAIN2('PLAY', 6, 4.0 / 35.0, S_FPLAY) { A_Pain(); }
+	S_FPLAY_DIE1('PLAY', 7, 6.0 / 35.0, S_FPLAY_DIE2) { }
+	S_FPLAY_DIE2('PLAY', 8, 6.0 / 35.0, S_FPLAY_DIE3) { A_Scream(); }
+	S_FPLAY_DIE3('PLAY', 9, 6.0 / 35.0, S_FPLAY_DIE4) { }
+	S_FPLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_FPLAY_DIE5) { }
+	S_FPLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_FPLAY_DIE6) { A_NoBlocking(); }
+	S_FPLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_FPLAY_DIE7) { }
+	S_FPLAY_DIE7('PLAY', 13, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_XDIE1('PLAY', 14, 5.0 / 35.0, S_FPLAY_XDIE2) { A_Scream(); }
+	S_FPLAY_XDIE2('PLAY', 15, 5.0 / 35.0, S_FPLAY_XDIE3) { A_SkullPop(); }
+	S_FPLAY_XDIE3('PLAY', 17, 5.0 / 35.0, S_FPLAY_XDIE4) { A_NoBlocking(); }
+	S_FPLAY_XDIE4('PLAY', 18, 5.0 / 35.0, S_FPLAY_XDIE5) { }
+	S_FPLAY_XDIE5('PLAY', 19, 5.0 / 35.0, S_FPLAY_XDIE6) { }
+	S_FPLAY_XDIE6('PLAY', 20, 5.0 / 35.0, S_FPLAY_XDIE7) { }
+	S_FPLAY_XDIE7('PLAY', 21, 5.0 / 35.0, S_FPLAY_XDIE8) { }
+	S_FPLAY_XDIE8('PLAY', 22, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_ICE('PLAY', 23, 5.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeath(); }
+	S_FPLAY_ICE2('PLAY', 23, 1.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 100;
+	GibsHealth = -50;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	PainChance = 1.0;
+	bPickUp = true;
+	IdleState = S_FPLAY;
+	SeeState = S_FPLAY_RUN1;
+	MissileState = S_FPLAY_ATK1;
+	AttackEndState = S_FPLAY_ATK2;
+	PainState = S_FPLAY_PAIN;
+	DeathState = S_FPLAY_DIE1;
+	GibsDeathState = S_FPLAY_XDIE1;
+	IceDeathState = S_FPLAY_ICE;
+	PainSound = 'PlayerFighterPain';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

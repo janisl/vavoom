@@ -1,0 +1,48 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class GauntletPuff2:Effect;
+
+__states__
+{
+	S_GAUNTLETPUFF2_1('PUF1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_2) { }
+	S_GAUNTLETPUFF2_2('PUF1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_3) { }
+	S_GAUNTLETPUFF2_3('PUF1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_4) { }
+	S_GAUNTLETPUFF2_4('PUF1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	IdleState = S_GAUNTLETPUFF2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

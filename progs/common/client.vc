@@ -29,13 +29,17 @@
 #include "protocol.vc"
 #include "keys.vc"
 #include "types.vc"
+#include "shared/classes.vc"
+#include "client/classes.vc"
 #include "builtins.vc"
 #include "clvars.vc"
-#include "uitypes.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/10/26 16:32:14  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.6  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

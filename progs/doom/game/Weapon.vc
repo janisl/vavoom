@@ -1,0 +1,613 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Weapon:ViewEntity;
+
+int Ammo;
+int UpState;
+int DownState;
+int ReadyState;
+int AttackState;
+int HoldAttackState;
+int FlashState;
+name ThirdPersonModel;
+#ifdef DDF
+AttackType Attack;
+int AmmoPerShot;	// Ammo used per shot.
+int Clip;			// Amount of shots in a clip
+bool bAutoFire;		// If true, this is an automatic weapon.  If false it is semiautomatic.
+float Kick;			// Amount of kick this weapon gives
+AttackType SAAttack;// Second attack type.
+int SAAmmo;			// Type of ammo for second attack.
+int SAAmmoPerShot;	// Ammo used per second attack shot.
+int SAClip;			// Amount of shots in a second attack clip
+bool bSAAutoFire;	// Second attack is automatic ?
+int ReloadState;	// State showing the weapon being reloaded
+int SAAttackState;	// State showing the second attack firing
+int SAReloadState;	// State showing the second attack reloading
+int SAFlashState;	// State showing the second attack muzzle flash
+int Crosshair;		// Crosshair states
+int ZoomState;		// State showing viewfinder when zoomed.  Can be zero
+bool bFeedBack;		// This weapon gives feedback on hit (chainsaw)
+int UpgradedWeap;	// This weapon upgrades a previous one. (Berserk -> Fist)
+// This affects how it will be selected if out of ammo.  Also
+// determines the cycling order when on the same key.  Dangerous
+// weapons are not auto-selected when out of ammo.
+int Priority;
+bool bDangerous;
+AttackType EjectAttack;	// Attack type for the WEAPON_EJECT code pointer.
+// Sounds.
+name IdleSound;		// Played at the start of every readystate
+name EngagedSound;	// Played while the trigger is held (chainsaw)
+name HitSound;		// Played while the trigger is held and it is pointed at a target.
+name StartSound;	// Played when the weapon is selected
+name Sound1;		// Misc sounds
+name Sound2;
+name Sound3;
+bool bNoThrust;		// This close combat weapon should not push the target away (chainsaw)
+int BindKey;		// which number key this weapon is bound to, or -1 for none
+bool bSilentToMonsters;	// monsters cannot hear this weapon (doesn't wake them up)
+float ZoomFov;		// -AJA- 2000/03/18: when > 0, this weapon can zoom
+bool bRefireInacc;	// -AJA- 2000/05/23: weapon loses accuracy when refired.
+bool bShowClip;		// -AJA- 2000/10/20: show current clip in status bar (not total)
+// controls for weapon bob (up & down) and sway (left & right).
+// Given as percentages in DDF.
+float Bobbing;
+float Swaying;
+
+// Temporary for reloading.
+int AmmoFired;
+int AmmoFiredSA;
+#endif
+
+//===========================================================================
+//
+//  A_WeaponReady
+//
+//  The player can fire the weapon or change to another weapon at this time.
+// Follows after getting weapon up, or after previous attack/fire sequence.
+//
+//===========================================================================
+
+void A_WeaponReady(void)
+{
+	float angle;
+
+	// get out of attack state
+	if (Player->MO.StateNum == Player->MO.MeleeState ||
+		Player->MO.StateNum == Player->MO.MissileState)
+	{
+		Player->MO.SetState(Player->MO.IdleState);
+	}
+
+#ifdef DDF
+	if (IdleSound && StateNum == ReadyState)
+	{
+		Player->MO.PlaySound(IdleSound, CHAN_WEAPON);
+	}
+#else
+	if (Player->ReadyWeapon == wp_chainsaw && StateNum == ReadyState)
+	{
+		Player->MO.PlaySound('ChainsawIdle', CHAN_WEAPON);
+	}
+#endif
+
+	// check for change
+	//  if player is dead, put the weapon away
+	if (Player->PendingWeapon != wp_nochange || !Player->Health)
+	{
+		// change weapon
+		//  (pending weapon should allready be validated)
+		SetPsprite(Player, ps_weapon, DownState);
+		return;
+	}
+
+	// check for fire
+	//  the missile launcher and bfg do not auto fire
+	if (Player->Buttons & BT_ATTACK)
+	{
+#ifdef DDF
+		if (!Player->bAttackDown || bAutoFire)
+#else
+		if (!Player->bAttackDown || (Player->ReadyWeapon != wp_missile &&
+			Player->ReadyWeapon != wp_bfg))
+#endif
+		{
+			Player->bAttackDown = true;
+			FireWeapon(Player);
+			return;
+		}
+	}
+	else
+		Player->bAttackDown = false;
+
+#ifdef DDF
+	if (Player->Buttons & 0x08)
+	{
+		if (!Player->bAttackDown || bSAAutoFire)
+		{
+			Player->bAttackDown = true;
+			FireWeaponSA(Player);
+			return;
+		}
+	}
+	else
+		Player->bAttackDown = false;
+#endif
+
+	// bob the weapon based on movement speed
+	angle = AngleMod360(180.0 * level->time);
+	SX = 1.0 + Player->Bob * cos(angle);
+	if (angle >= 180.0)
+	{
+		angle -= 180.0;
+	}
+	SY = WEAPONTOP + Player->Bob * sin(angle);
+}
+
+//===========================================================================
+//
+//  A_Lower
+//
+//  Lowers current weapon, and changes weapon at bottom.
+//
+//===========================================================================
+
+void A_Lower(void)
+{
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY += LOWERSPEED;
+	else
+		SY += LOWERSPEED * 35.0 * frametime;
+
+	// Is already down.
+	if (SY < WEAPONBOTTOM)
+		return;
+
+	// Player is dead.
+	if (Player->PlayerState == PST_DEAD)
+	{
+		SY = WEAPONBOTTOM;
+
+		// don't bring weapon back up
+		return;
+	}
+
+	// The old weapon has been lowered off the screen,
+	// so change the weapon and start raising it
+	if (!Player->Health)
+	{
+		// Player is dead, so keep the weapon off screen.
+		SetPsprite(Player, ps_weapon, S_NULL);
+		return;
+	}
+
+	SetWeapon(Player, Player->PendingWeapon);
+
+	BringUpWeapon(Player);
+}
+
+//===========================================================================
+//
+//  A_Raise
+//
+//===========================================================================
+
+void A_Raise(void)
+{
+	//	FIXME!!
+	if (frametime < 1.0 / 35.0)
+		SY -= RAISESPEED;
+	else
+		SY -= RAISESPEED * 35.0 * frametime;
+
+	if (SY > WEAPONTOP)
+	{
+		return;
+	}
+
+	SY = WEAPONTOP;
+
+	// The weapon has been raised all the way,
+	//  so change to the ready state.
+	SetPsprite(Player, ps_weapon, ReadyState);
+}
+
+//===========================================================================
+//
+//  A_ReFire
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+void A_ReFire(void)
+{
+	// check for fire
+	//  (if a weaponchange is pending, let it go through instead)
+	if ((Player->Buttons & BT_ATTACK)
+		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	{
+		Player->Refire++;
+		FireWeapon(Player);
+	}
+	else
+	{
+		Player->Refire = 0;
+		CheckAmmo(Player);
+	}
+}
+
+//===========================================================================
+//
+//  A_CheckReload
+//
+//===========================================================================
+
+void A_CheckReload(void)
+{
+	CheckAmmo(Player);
+
+#ifdef DDF
+	if (ReloadState && AmmoFired >= Clip)
+	{
+		AmmoFired = 0;
+		SetState(ReloadState);
+	}
+#endif
+}
+
+//===========================================================================
+//
+//  A_GunFlash
+//
+//===========================================================================
+
+void A_GunFlash(void)
+{
+	Player->MO.SetState(Player->MO.MissileState);
+	SetPsprite(Player, ps_flash, FlashState);
+}
+
+//===========================================================================
+//
+//  A_Light0
+//
+//===========================================================================
+
+void A_Light0(void)
+{
+	Player->ExtraLight = 0;
+	Player->MO.Effects &= ~EF_DLIGHT_MASK;
+}
+
+//===========================================================================
+//
+//  A_Light1
+//
+//===========================================================================
+
+void A_Light1(void)
+{
+	Player->ExtraLight = 1;
+}
+
+//===========================================================================
+//
+//  A_Light2
+//
+//===========================================================================
+
+void A_Light2(void)
+{
+	Player->ExtraLight = 2;
+}
+
+#ifdef DDF	//--------------------------------------------------------------
+
+//==========================================================================
+//
+//	A_WeaponShoot
+//
+//==========================================================================
+
+void A_WeaponShoot(AttackType *custom_attack)
+{
+	AttackType *attack = &Attack;
+
+	// -AJA- 1999/08/10: Multiple attack support.
+	if (custom_attack)
+		attack = custom_attack;
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!(Ammo == am_noammo || Player->Ammo[Ammo] >= AmmoPerShot))
+		return;
+
+	// -AJA- 1999/08/11: Increase fire count.
+	//p->weapons[p->ready_wp].clip_size--;
+
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
+
+	Player->DeltaViewHeight -= Kick;
+	//p->kick_offset = w->kick;
+
+	if (linetarget /*&& !DDFActor(Player->MO.Enemy).bDummyMobj*/)
+	{
+		if (HitSound)
+			Player->MO.PlaySound(HitSound, CHAN_WEAPON);
+
+		if (bFeedBack)
+			Player->MO.bJustAttacked = true;
+	}
+	else
+	{
+		if (EngagedSound)
+			Player->MO.PlaySound(EngagedSound, CHAN_WEAPON);
+	}
+
+	// show the player making the shot/attack...
+	if (attack->AttackStyle == ATK_CloseCombat && Player->MO.MeleeState)
+	{
+		Player->MO.SetState(Player->MO.MeleeState);
+	}
+	else if (Player->MO.MissileState)
+	{
+		Player->MO.SetState(Player->MO.MissileState);
+	}
+
+	if (Ammo != am_noammo)
+	{
+		Player->Ammo[Ammo] -= AmmoPerShot;
+		AmmoFired += AmmoPerShot;
+	}
+
+	if (FlashState/* && !p->flash*/)
+	{
+		Player->ViewEnts[ps_flash].SetState(FlashState);
+		//p->flash = true;
+	}
+}
+
+//==========================================================================
+//
+//	A_WeaponEject
+//
+//	Used for ejecting shells (or other effects).
+//
+//==========================================================================
+
+void A_WeaponEject(AttackType *custom_attack)
+{
+	AttackType *attack = &EjectAttack;
+
+	if (custom_attack)
+		attack = custom_attack;
+
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
+}
+
+//==========================================================================
+//
+//	A_WeaponJump
+//
+//==========================================================================
+
+void A_WeaponJump(float chance, name jumpState)
+{
+	if (Random() < chance)
+	{
+		NextState = FindState(jumpState);
+	}
+}
+
+void A_NoFire(void) { }					// EXTRA
+void A_NoFireReturn(void) { }			// EXTRA
+
+void A_SFXWeapon1(void)
+{
+	Player->MO.PlaySound(Sound1, CHAN_WEAPON);
+}
+void A_SFXWeapon2(void)
+{
+	Player->MO.PlaySound(Sound2, CHAN_WEAPON);
+}
+void A_SFXWeapon3(void)
+{
+	Player->MO.PlaySound(Sound3, CHAN_WEAPON);
+}
+void A_WeaponPlaySound(name snd)
+{
+	Player->MO.PlaySound(snd, CHAN_WEAPON);
+}
+void A_WeaponKillSound(void)
+{
+	Player->MO.StopSound(CHAN_WEAPON);
+}
+
+void A_WeaponTransSet(void) { }
+void A_WeaponTransFade(void) { }		// EXTRA
+void A_WeaponEnableRadTrig(void) { }	// EXTRA
+void A_WeaponDisableRadTrig(void) { }	// EXTRA
+
+void A_SetCrosshair(void) { }			// EXTRA
+void A_GotTarget(void) { }				// EXTRA
+void A_WeaponKick(void) { }				// EXTRA
+
+//==========================================================================
+//
+//	A_WeaponShootSA
+//
+//==========================================================================
+
+void A_WeaponShootSA(AttackType *custom_attack)
+{
+	AttackType *attack = &SAAttack;
+
+	// -AJA- 1999/08/10: Multiple attack support.
+	if (custom_attack)
+		attack = custom_attack;
+
+	// Some do not need ammunition anyway.
+	// Return if current ammunition sufficient.
+	if (!(SAAmmo == am_noammo || Player->Ammo[SAAmmo] >= SAAmmoPerShot))
+		return;
+
+	// -AJA- 1999/08/11: Increase fire count.
+	//p->weapons[p->ready_wp].clip_size--;
+
+	PlayerPawn(Player->MO).ActPlayerAttack(attack);
+
+	Player->DeltaViewHeight -= Kick;
+	//p->kick_offset = w->kick;
+
+	if (linetarget /*&& !DDFActor(Player->MO.Enemy).bDummyMobj*/)
+	{
+		if (HitSound)
+			Player->MO.PlaySound(HitSound, CHAN_WEAPON);
+
+		if (bFeedBack)
+			Player->MO.bJustAttacked = true;
+	}
+	else
+	{
+		if (EngagedSound)
+			Player->MO.PlaySound(EngagedSound, CHAN_WEAPON);
+	}
+
+	// show the player making the shot/attack...
+	if (attack->AttackStyle == ATK_CloseCombat && Player->MO.MeleeState)
+	{
+		Player->MO.SetState(Player->MO.MeleeState);
+	}
+	else if (Player->MO.MissileState)
+	{
+		Player->MO.SetState(Player->MO.MissileState);
+	}
+
+	if (SAAmmo != am_noammo)
+	{
+		Player->Ammo[SAAmmo] -= SAAmmoPerShot;
+		AmmoFiredSA += AmmoPerShot;
+	}
+
+	if (SAFlashState/* && !p->flash*/)
+	{
+		Player->ViewEnts[ps_flash].SetState(SAFlashState);
+		//p->flash = true;
+	}
+}
+
+//===========================================================================
+//
+//  A_ReFireSA
+//
+//  The player can re-fire the weapon without lowering it entirely.
+//
+//===========================================================================
+
+void A_ReFireSA(void)
+{
+	// check for fire
+	//  (if a weaponchange is pending, let it go through instead)
+	if ((Player->Buttons & 0x08)
+		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	{
+		Player->Refire++;
+		FireWeaponSA(Player);
+	}
+	else
+	{
+		Player->Refire = 0;
+		CheckAmmoSA(Player);
+	}
+}
+
+void A_NoFireSA(void) { }				// EXTRA
+void A_NoFireReturnSA(void) { }			// EXTRA
+
+//===========================================================================
+//
+//  A_CheckReloadSA
+//
+//===========================================================================
+
+void A_CheckReloadSA(void)
+{
+	CheckAmmoSA(Player);
+	if (SAReloadState && AmmoFiredSA >= SAClip)
+	{
+		AmmoFiredSA = 0;
+		SetState(SAReloadState);
+	}
+}
+
+//===========================================================================
+//
+//  A_GunFlashSA
+//
+//===========================================================================
+
+void A_GunFlashSA(void)
+{
+	Player->MO.SetState(Player->MO.MissileState);
+	SetPsprite(Player, ps_flash, SAFlashState);
+}
+
+#endif
+
+__states__
+{
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, S_NULL) { A_Light0(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+#ifdef DDF
+	Attack.DamageMax = -1;
+	Attack.DamageError = -1;
+	SAAttack.DamageMax = -1;
+	SAAttack.DamageError = -1;
+	EjectAttack.DamageMax = -1;
+	EjectAttack.DamageError = -1;
+	SAAmmo = am_noammo;
+	Clip = 1;
+	SAClip = 1;
+	UpgradedWeap = -1;
+	BindKey = -1;
+	Bobbing = 1.0;
+	Swaying = 1.0;
+#endif
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,88 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ZCorpseSitting:Decoration
+	__mobjinfo__(110);
+
+//============================================================================
+//
+//  A_CorpseExplode
+//
+//============================================================================
+
+void A_CorpseExplode(void)
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 3; i; i--)
+	{
+		A = Spawn(CorpseBit, Origin);
+		A.SetState(A.IdleState + (P_Random() % 3));
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		}
+	}
+	// Spawn a skull
+	A = Spawn(CorpseBit, Origin);
+	A.SetState(S_CORPSEBIT_4);
+	if (A)
+	{
+		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		A.PlaySound('FireDemonDeath', CHAN_VOICE);
+	}
+	Remove();
+}
+
+__states__
+{
+	S_ZCORPSESITTING('CPS6', 0, -1.0, S_NULL) { }
+	S_ZCORPSESITTING_X('CPS6', 0, 1.0 / 35.0, S_NULL) { A_CorpseExplode(); }
+}
+
+defaultproperties
+{
+	Health = 30;
+	Radius = 15.0;
+	Height = 35.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	IdleState = S_ZCORPSESITTING;
+	DeathState = S_ZCORPSESITTING_X;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

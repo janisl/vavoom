@@ -1,0 +1,124 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MaceFX4:MaceFX3;
+
+//===========================================================================
+//
+//  A_DeathBallImpact
+//
+//===========================================================================
+
+void A_DeathBallImpact(void)
+{
+	int i;
+	float angle;
+	int newAngle;
+	TAVec angles;
+
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Origin.z <= FloorZ) && Velocity.z)
+	{
+		// Bounce
+		newAngle = false;
+		if (Enemy)
+		{
+			if (!Enemy.bShootable)
+			{
+				// Target died
+				Enemy = none;
+			}
+			else
+			{
+				// Seek
+				angle = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
+				newAngle = true;
+			}
+		}
+		else
+		{
+			// Find new target
+			angles.pitch = 0.0;
+			angles.yaw = 0.0;
+			angles.roll = 0.0;
+			for (i = 0; i < 16; i++)
+			{
+				AimLineAttack(self, angles, 10.0 * 64.0);
+				if (linetarget && Instigator != linetarget)
+				{
+					Enemy = linetarget;
+					angle = atan2(linetarget.Origin.y - Origin.y,
+						linetarget.Origin.x - Origin.x);
+					newAngle = true;
+					break;
+				}
+				angles.yaw = AngleMod360(angles.yaw + 45.0 / 2.0);
+			}
+		}
+		if (newAngle)
+		{
+			Angles.yaw = angle;
+			Velocity.x = Speed * cos(angle);
+			Velocity.y = Speed * sin(angle);
+		}
+		SetState(IdleState);
+		PlaySound('PlatformStop', CHAN_VOICE);
+	}
+	else
+	{
+		// Explode
+		bNoGravity = true;
+		PlaySound('PhoenixHit', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_MACEFX4_1('FX02', 4, 99.0 / 35.0, S_MACEFX4_1) { }
+	S_MACEFXI4_1('FX02', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_DeathBallImpact(); }
+}
+
+defaultproperties
+{
+	MissileDamage = 18;
+	bTelestomp = true;
+	bNoTeleport = false;
+	IdleState = S_MACEFX4_1;
+	DeathState = S_MACEFXI4_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,67 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ItemMegaSphere:Pickup
+	__mobjinfo__(83);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Health = MEGASPHERE_HEALTH;
+	Toucher.Health = Toucher.Player->Health;
+	Toucher.GiveArmor(2);
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupPower', CHAN_ITEM);
+	return true;
+}
+
+__states__
+{
+	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 'items/mega.md2', 0, 6.0 / 35.0, S_MEGA2) { }
+	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 'items/mega.md2', 1, 6.0 / 35.0, S_MEGA3) { }
+	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 'items/mega.md2', 2, 6.0 / 35.0, S_MEGA4) { }
+	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 'items/mega.md2', 3, 6.0 / 35.0, S_MEGA) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bCountItem = true;
+	IdleState = S_MEGA;
+	PickupMessage = "MegaSphere!";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

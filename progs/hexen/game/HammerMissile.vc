@@ -1,0 +1,80 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HammerMissile:Projectile;
+
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('FighterHammerContinuous', CHAN_VOICE);
+}
+
+__states__
+{
+	S_HAMMER_MISSILE_1('FHFX', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_2) { }
+	S_HAMMER_MISSILE_2('FHFX', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_3) { A_ContMobjSound(); }
+	S_HAMMER_MISSILE_3('FHFX', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_4) { }
+	S_HAMMER_MISSILE_4('FHFX', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_5) { }
+	S_HAMMER_MISSILE_5('FHFX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_6) { }
+	S_HAMMER_MISSILE_6('FHFX', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_7) { }
+	S_HAMMER_MISSILE_7('FHFX', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_8) { }
+	S_HAMMER_MISSILE_8('FHFX', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_HAMMER_MISSILE_1) { }
+	S_HAMMER_MISSILE_X1('FHFX', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X2) { }
+	S_HAMMER_MISSILE_X2('FHFX', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X3) { }
+	S_HAMMER_MISSILE_X3('FHFX', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X4) { A_Explode(); }
+	S_HAMMER_MISSILE_X4('FHFX', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X5) { }
+	S_HAMMER_MISSILE_X5('FHFX', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X6) { }
+	S_HAMMER_MISSILE_X6('FHFX', 13, 3.0 / 35.0, S_HAMMER_MISSILE_X7) { }
+	S_HAMMER_MISSILE_X7('FHFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X8) { }
+	S_HAMMER_MISSILE_X8('FHFX', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X9) { }
+	S_HAMMER_MISSILE_X9('FHFX', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_HAMMER_MISSILE_X10) { }
+	S_HAMMER_MISSILE_X10('FHFX', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 20.0;
+	Speed = 875.0;
+	MissileDamage = 10;
+	bFireDamage = true;
+	IdleState = S_HAMMER_MISSILE_1;
+	DeathState = S_HAMMER_MISSILE_X1;
+	DeathSound = 'FighterHammerExplode';
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

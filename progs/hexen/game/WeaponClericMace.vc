@@ -1,0 +1,123 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponClericMace:Weapon;
+
+//===========================================================================
+//
+//  A_CMaceAttack
+//
+//===========================================================================
+
+void A_CMaceAttack(void)
+{
+	int damage;
+	int i;
+	TAVec angles;
+	TVec vforward;
+
+	damage = 25 + (P_Random() & 15);
+	PuffType = HammerPuff;
+	for (i = 0; i < 16; i++)
+	{
+		angles = Player->MO.Angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
+		AimLineAttack(Player->MO, &angles, 2.0 * MELEERANGE);
+		if (linetarget)
+		{
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Player->MO, vforward, 2.0 * MELEERANGE, damage))
+			{
+				Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			}
+			PlayerPawn(Player->MO).AdjustPlayerAngle();
+			return;
+		}
+		angles = Player->MO.Angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
+		AimLineAttack(Player->MO, &angles, 2.0 * MELEERANGE);
+		if (linetarget)
+		{
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Player->MO, vforward, 2.0 * MELEERANGE, damage))
+			{
+				Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			}
+			PlayerPawn(Player->MO).AdjustPlayerAngle();
+			return;
+		}
+	}
+	// didn't find any creatures, so try to strike any walls
+	avcpy(Player->MO.Angles, angles);
+	AimLineAttack(Player->MO, &angles, MELEERANGE);
+	AngleVector(&angles, &vforward);
+	if (LineAttack(Player->MO, vforward, MELEERANGE, damage))
+	{
+		Player->MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+	}
+}
+
+__states__
+{
+	S_CMACEREADY('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) { A_WeaponReady(); }
+	S_CMACEDOWN('CMCE', 0, 1.0 / 35.0, S_CMACEDOWN) { A_Lower(); }
+	S_CMACEUP('CMCE', 0, 1.0 / 35.0, S_CMACEUP) { A_Raise(); }
+	S_CMACEATK_1('CMCE', 1, 2.0 / 35.0, S_CMACEATK_2) { SX = 60.0; SY = 20.0; }
+	S_CMACEATK_2('CMCE', 1, 1.0 / 35.0, S_CMACEATK_3) { SX = 30.0; SY = 33.0; }
+	S_CMACEATK_3('CMCE', 1, 2.0 / 35.0, S_CMACEATK_4) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_4('CMCE', 2, 1.0 / 35.0, S_CMACEATK_5) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_5('CMCE', 3, 1.0 / 35.0, S_CMACEATK_6) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_6('CMCE', 4, 1.0 / 35.0, S_CMACEATK_7) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_7('CMCE', 4, 1.0 / 35.0, S_CMACEATK_8) { SX = -11.0; SY = 58.0; A_CMaceAttack(); }
+	S_CMACEATK_8('CMCE', 5, 1.0 / 35.0, S_CMACEATK_9) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_9('CMCE', 5, 2.0 / 35.0, S_CMACEATK_10) { SX = -8.0; SY = 74.0; }
+	S_CMACEATK_10('CMCE', 5, 1.0 / 35.0, S_CMACEATK_11) { SX = -20.0; SY = 96.0; }
+	S_CMACEATK_11('CMCE', 5, 8.0 / 35.0, S_CMACEATK_12) { SX = -33.0; SY = 160.0; }
+	S_CMACEATK_12('CMCE', 0, 2.0 / 35.0, S_CMACEATK_13) { SX = 8.0; SY = 75.0; A_ReFire(); }
+	S_CMACEATK_13('CMCE', 0, 1.0 / 35.0, S_CMACEATK_14) { SX = 8.0; SY = 65.0; }
+	S_CMACEATK_14('CMCE', 0, 2.0 / 35.0, S_CMACEATK_15) { SX = 8.0; SY = 60.0; }
+	S_CMACEATK_15('CMCE', 0, 1.0 / 35.0, S_CMACEATK_16) { SX = 8.0; SY = 55.0; }
+	S_CMACEATK_16('CMCE', 0, 2.0 / 35.0, S_CMACEATK_17) { SX = 8.0; SY = 50.0; }
+	S_CMACEATK_17('CMCE', 0, 1.0 / 35.0, S_CMACEREADY) { SX = 8.0; SY = 45.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_CMACEUP;
+	DownState = S_CMACEDOWN;
+	ReadyState = S_CMACEREADY;
+	AttackState = S_CMACEATK_1;
+	HoldAttackState = S_CMACEATK_1;
+	PSpriteSY = -8.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

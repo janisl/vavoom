@@ -28,14 +28,18 @@
 #include "defs.vc"
 #include "protocol.vc"
 #include "types.vc"
+#include "shared/classes.vc"
+#include "server/classes.vc"
 #include "builtins.vc"
 #include "svvars.vc"
 #include "utils.vc"
-#include "entity.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/10/26 16:32:14  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.6  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -1,0 +1,79 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SerpentHead:Effect;
+
+//==========================================================================
+//
+//	A_SerpentHeadCheck
+//
+//==========================================================================
+
+void A_SerpentHeadCheck(void)
+{
+	if (Origin.z <= FloorZ)
+	{
+		if (GetFloorType() >= FLOOR_LIQUID)
+		{
+			HitFloorType();
+			SetState(S_NULL);
+		}
+		else
+		{
+			SetState(DeathState);
+		}
+	}
+}
+
+__states__
+{
+	S_SERPENT_HEAD1('SSXD', 8, 4.0 / 35.0, S_SERPENT_HEAD2) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD2('SSXD', 9, 4.0 / 35.0, S_SERPENT_HEAD3) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD3('SSXD', 10, 4.0 / 35.0, S_SERPENT_HEAD4) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD4('SSXD', 11, 4.0 / 35.0, S_SERPENT_HEAD5) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD5('SSXD', 12, 4.0 / 35.0, S_SERPENT_HEAD6) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD6('SSXD', 13, 4.0 / 35.0, S_SERPENT_HEAD7) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD7('SSXD', 14, 4.0 / 35.0, S_SERPENT_HEAD8) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD8('SSXD', 15, 4.0 / 35.0, S_SERPENT_HEAD1) { A_SerpentHeadCheck(); }
+	S_SERPENT_HEAD_X1('SSXD', 18, -1.0, S_SERPENT_HEAD_X1) { }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 10.0;
+	Mass = 12.5;
+	bNoGravity = false;
+	IdleState = S_SERPENT_HEAD1;
+	DeathState = S_SERPENT_HEAD_X1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

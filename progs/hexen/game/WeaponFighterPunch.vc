@@ -1,0 +1,175 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponFighterPunch:Weapon;
+
+int Attack2State;
+int PunchCount;
+
+//==========================================================================
+//
+//  A_FPunchAttack
+//
+//==========================================================================
+
+void A_FPunchAttack(void)
+{
+	Actor Owner = Player->MO;
+	int damage;
+	float power;
+	int i;
+	TAVec angles;
+	TVec vforward;
+
+	damage = 40 + (P_Random() & 15);
+	power = 2.0;
+	PuffType = PunchPuff;
+	for (i = 0; i < 16; i++)
+	{
+		angles = Owner.Angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
+		AimLineAttack(Owner, &angles, 2.0 * MELEERANGE);
+		if (linetarget)
+		{
+			PunchCount++;
+			if (PunchCount == 3)
+			{
+				damage <<= 1;
+				power = 6.0;
+				PuffType = HammerPuff;
+			}
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Owner, vforward, 2.0 * MELEERANGE, damage))
+			{
+				if (PuffType == HammerPuff)
+				{
+					Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				}
+				else
+				{
+					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
+				}
+			}
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
+			{
+				linetarget.Thrust(angles.yaw, power);
+			}
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			break;
+		}
+		angles = Owner.Angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
+		AimLineAttack(Owner, &angles, 2.0 * MELEERANGE);
+		if (linetarget)
+		{
+			PunchCount++;
+			if (PunchCount == 3)
+			{
+				damage <<= 1;
+				power = 6.0;
+				PuffType = HammerPuff;
+			}
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Owner, vforward, 2.0 * MELEERANGE, damage))
+			{
+				if (PuffType == HammerPuff)
+				{
+					Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				}
+				else
+				{
+					Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
+				}
+			}
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
+			{
+				linetarget.Thrust(angles.yaw, power);
+			}
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			break;
+		}
+	}
+	if (i == 16)
+	{
+		// didn't find any creatures, so try to strike any walls
+		PunchCount = 0;
+
+		angles = Owner.Angles;
+		AimLineAttack(Owner, &angles, MELEERANGE);
+		AngleVector(&angles, &vforward);
+		if (LineAttack(Owner, vforward, MELEERANGE, damage))
+		{
+			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
+		}
+	}
+
+	if (PunchCount == 3)
+	{
+		PunchCount = 0;
+		SetState(Attack2State);
+		Owner.PlaySound('FighterGrunt', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_PUNCHREADY('FPCH', 0, 1.0 / 35.0, S_PUNCHREADY) { A_WeaponReady(); }
+	S_PUNCHDOWN('FPCH', 0, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
+	S_PUNCHUP('FPCH', 0, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
+	S_PUNCHATK1_1('FPCH', 1, 5.0 / 35.0, S_PUNCHATK1_2) { SX = 5.0; SY = 40.0; }
+	S_PUNCHATK1_2('FPCH', 2, 4.0 / 35.0, S_PUNCHATK1_3) { SX = 5.0; SY = 40.0; }
+	S_PUNCHATK1_3('FPCH', 3, 4.0 / 35.0, S_PUNCHATK1_4) { SX = 5.0; SY = 40.0; A_FPunchAttack(); }
+	S_PUNCHATK1_4('FPCH', 2, 4.0 / 35.0, S_PUNCHATK1_5) { SX = 5.0; SY = 40.0; }
+	S_PUNCHATK1_5('FPCH', 1, 5.0 / 35.0, S_PUNCHREADY) { SX = 5.0; SY = 40.0; A_ReFire(); }
+	S_PUNCHATK2_1('FPCH', 3, 4.0 / 35.0, S_PUNCHATK2_2) { SX = 5.0; SY = 40.0; }
+	S_PUNCHATK2_2('FPCH', 4, 4.0 / 35.0, S_PUNCHATK2_3) { SX = 5.0; SY = 40.0; }
+	S_PUNCHATK2_3('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_4) { SX = 15.0; SY = 50.0; }
+	S_PUNCHATK2_4('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_5) { SX = 25.0; SY = 60.0; }
+	S_PUNCHATK2_5('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_6) { SX = 35.0; SY = 70.0; }
+	S_PUNCHATK2_6('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_7) { SX = 45.0; SY = 80.0; }
+	S_PUNCHATK2_7('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_8) { SX = 55.0; SY = 90.0; }
+	S_PUNCHATK2_8('FPCH', 4, 1.0 / 35.0, S_PUNCHATK2_9) { SX = 65.0; SY = 100.0; }
+	S_PUNCHATK2_9('FPCH', 4, 10.0 / 35.0, S_PUNCHREADY) { SY = 150.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_PUNCHUP;
+	DownState = S_PUNCHDOWN;
+	ReadyState = S_PUNCHREADY;
+	AttackState = S_PUNCHATK1_1;
+	Attack2State = S_PUNCHATK2_1;
+	HoldAttackState = S_PUNCHATK1_1;
+	PSpriteSY = 0.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,180 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pickup:Actor
+	abstract;
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing1
+//
+//  Make a special thing visible again.
+//
+//==========================================================================
+
+void A_RestoreSpecialThing1(void)
+{
+	bHidden = false;
+	PlaySound('Respawn', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing2
+//
+//==========================================================================
+
+void A_RestoreSpecialThing2(void)
+{
+	bSpecial = true;
+	SetState(IdleState);
+}
+
+__states__
+{
+	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) { }
+	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) { A_RestoreSpecialThing1(); }
+	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) { }
+	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) { }
+	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) { }
+	S_HIDESPECIAL6('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL7) { }
+	S_HIDESPECIAL7('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL8) { }
+	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) { }
+	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) { }
+	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) { }
+	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, S_NULL) { A_RestoreSpecialThing2(); }
+}
+
+//==========================================================================
+//
+//  HideSpecialThing
+//
+//==========================================================================
+
+void HideSpecialThing(void)
+{
+	bSpecial = false;
+	bHidden = true;
+	SetState(S_HIDESPECIAL1);
+}
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	int i;
+	name sound;
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	sound = 'PickupItem';
+	switch (Class)
+	{
+		// Items
+	case ItemHealthPotion:
+		if (!P.GiveBody(10))
+		{
+			return;
+		}
+		cprint(P.Player, TXT_ITEMHEALTH);
+		break;
+	case ItemShield1:
+		if (!P.GiveArmor(1))
+		{
+			return;
+		}
+		cprint(P.Player, TXT_ITEMSHIELD1);
+		break;
+	case ItemShield2:
+		if (!P.GiveArmor(2))
+		{
+			return;
+		}
+		cprint(P.Player, TXT_ITEMSHIELD2);
+		break;
+	case ItemBagOfHolding:
+		P.Player->Backpack = true;
+		P.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
+		P.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
+		P.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
+		P.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
+		P.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
+		cprint(P.Player, TXT_ITEMBAGOFHOLDING);
+		break;
+	case ItemMap:
+		if (!P.GiveItem(IT_ALL_MAP))
+		{
+			return;
+		}
+		cprint(P.Player, TXT_ITEMSUPERMAP);
+		break;
+	}
+	if (bCountItem)
+	{
+		P.Player->ItemCount++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	P.Player->BonusFlash += BONUSADD;
+	P.PlaySound(sound, CHAN_ITEM);
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 32.0;
+	Mass = 100.0;
+	bSpecial = true;
+	bNoPassMobj = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

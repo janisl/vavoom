@@ -1,0 +1,301 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SorcererBall:Projectile
+	abstract;
+
+//  Sorcerer Ball Variables
+//      Special1f       Previous angle of ball (for woosh)
+//      Special2        Countdown of rapid fire (FX4)
+//      Args[0]         If set, don't play the bounce sound when bouncing
+float BallAngleOffset;
+
+//============================================================================
+//
+//  A_AccelBalls
+//
+//  Increase ball orbit speed - actor is ball
+//
+//============================================================================
+
+void A_AccelBalls(void)
+{
+	Actor sorc = Instigator;
+
+	if (sorc.Args[4] < sorc.Args[2])
+	{
+		sorc.Args[4]++;
+	}
+	else
+	{
+		sorc.Args[3] = SORC_NORMAL;
+		if (sorc.Args[4] >= SORCBALL_TERMINAL_SPEED)
+		{
+			// Reached terminal velocity - stop balls
+			Sorcerer(sorc).A_StopBalls();
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_DecelBalls
+//
+//  Decrease ball orbit speed - actor is ball
+//
+//============================================================================
+
+void A_DecelBalls(void)
+{
+	Actor sorc = Instigator;
+
+	if (sorc.Args[4] > sorc.Args[2])
+	{
+		sorc.Args[4]--;
+	}
+	else
+	{
+		sorc.Args[3] = SORC_NORMAL;
+	}
+}
+
+//============================================================================
+//
+//  A_SorcUpdateBallAngle
+//
+//  Update angle if first ball - actor is ball
+//
+//============================================================================
+
+void A_SorcUpdateBallAngle(void)
+{
+	if (Class == SorcererBall1)
+	{
+		Instigator.Special1f = AngleMod360(Instigator.Special1f + itof(Instigator.Args[4]));
+	}
+}
+
+//============================================================================
+//
+//  A_SorcOffense2
+//
+//  Actor is ball
+//
+//============================================================================
+
+void A_SorcOffense2(void)
+{
+	float ang1;
+	Actor mo;
+	float delta, index;
+	float dist;
+
+	index = itof(Args[4]) * 360.0 / 256.0;
+	Args[4] = (Args[4] + 15) & 0xff;
+	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
+	ang1 = AngleMod360(Angles.yaw + delta);
+	mo = Instigator.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
+	if (mo)
+	{
+		mo._Special2 = 35 * 5 / 2;	// 5 seconds
+		dist = MobjDist2(Instigator.Enemy, mo);
+		dist = dist / mo.Speed;
+		if (dist < 1.0)
+			dist = 1.0;
+		mo.Velocity.z = (Instigator.Enemy.Origin.z - mo.Origin.z) / dist;
+	}
+}
+
+//============================================================================
+//
+//  A_CastSorcererSpell
+//
+//  Actor is ball.
+//
+//============================================================================
+
+void A_CastSorcererSpell(void)
+{
+}
+
+//============================================================================
+//
+//  A_SorcBallOrbit
+//
+//============================================================================
+
+void A_SorcBallOrbit(void)
+{
+	float angle, baseangle;
+	int mode = Instigator.Args[3];
+	float dist = Instigator.Radius - (Radius * 2.0);
+	float prevangle = Special1f;
+
+	if (Instigator.Health <= 0)
+		SetState(PainState);
+
+	baseangle = Instigator.Special1f;
+	angle = AngleMod360(baseangle + BallAngleOffset);
+	Angles.yaw = angle;
+
+	switch (mode)
+	{
+	case SORC_NORMAL:	// Balls rotating normally
+		A_SorcUpdateBallAngle();
+		break;
+	case SORC_DECELERATE:	// Balls decelerating
+		A_DecelBalls();
+		A_SorcUpdateBallAngle();
+		break;
+	case SORC_ACCELERATE:	// Balls accelerating
+		A_AccelBalls();
+		A_SorcUpdateBallAngle();
+		break;
+	case SORC_STOPPING:	// Balls stopping
+		if ((Instigator.SpecialCID == Class) &&
+			(Instigator.Args[1] > SORCBALL_SPEED_ROTATIONS) &&
+			(fabs(AngleMod180(angle - Instigator.Angles.yaw)) <
+			15.0 * 45.0 / 16.0))
+		{
+			// Can stop now
+			Instigator.Args[3] = SORC_FIRESPELL;
+			Instigator.Args[4] = 0;
+			// Set angle so ball angle == sorcerer angle
+			Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
+				BallAngleOffset);
+		}
+		else
+		{
+			A_SorcUpdateBallAngle();
+		}
+		break;
+	case SORC_FIRESPELL:	// Casting spell
+		if (Instigator.SpecialCID == Class)
+		{
+			// Put sorcerer into special throw spell anim
+			if (Instigator.Health > 0)
+				Instigator.SetState(S_SORC_ATTACK1);
+
+			PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
+
+			A_CastSorcererSpell();
+		}
+		break;
+	case SORC_FIRING_SPELL:
+		if (Instigator.SpecialCID == Class)
+		{
+			if (_Special2-- <= 0)
+			{
+				// Done rapid firing 
+				Instigator.Args[3] = SORC_STOPPED;
+				// Back to orbit balls
+				if (Instigator.Health > 0)
+					Instigator.SetState(S_SORC_ATTACK4);
+			}
+			else
+			{
+				// Do rapid fire spell
+				A_SorcOffense2();
+			}
+		}
+		break;
+	case SORC_STOPPED:	// Balls stopped
+	default:
+		break;
+	}
+
+	if ((angle < prevangle) && (Instigator.Args[4] == SORCBALL_TERMINAL_SPEED))
+	{
+		Instigator.Args[1]++;	// Bump rotation counter
+		// Completed full rotation - make woosh sound
+		PlayFullVolumeSound('SorcererBallWoosh', CHAN_VOICE);
+	}
+	Special1f = angle;	// Set previous angle
+	Origin.x = Instigator.Origin.x + dist * cos(angle);
+	Origin.y = Instigator.Origin.y + dist * sin(angle);
+	Origin.z = Instigator.Origin.z - Instigator.FloorClip + Instigator.Height;
+}
+
+//============================================================================
+//
+//  A_SorcBallPop
+//
+//  Ball death - spawn stuff.
+//
+//============================================================================
+
+void A_SorcBallPop(void)
+{
+	PlayFullVolumeSound('SorcererBallPop', CHAN_VOICE);
+	bNoGravity = false;
+	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
+	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
+	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
+	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
+	Args[3] = 5;	// Bounce time in seconds
+}
+
+//============================================================================
+//
+//  A_BounceCheck
+//
+//============================================================================
+
+void A_BounceCheck(void)
+{
+	if (Args[4]-- <= 0)
+	{
+		if (Args[3]-- <= 0)
+		{
+			SetState(DeathState);
+			PlayFullVolumeSound('SorcererBigBallExplode', CHAN_VOICE);
+		}
+		else
+		{
+			Args[4] = BOUNCE_TIME_UNIT;
+		}
+	}
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	Mass = 12.5;
+	Speed = 350.0;
+	bFloorBounce = true;
+	bDropOff = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	SightSound = 'SorcererBallBounce';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

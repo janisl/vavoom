@@ -1,0 +1,114 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponClericHoly:Weapon;
+
+//============================================================================
+//
+//  A_CHolyAttack
+//
+//============================================================================
+
+void A_CHolyAttack(void)
+{
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HolyMissile);
+	Player->DamageFlash = 0.0;
+	Player->BonusFlash = 0.0;
+	Player->WeaponPalette = STARTHOLYPAL;
+	Player->MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
+}
+
+//============================================================================
+//
+//  A_CHolyPalette1
+//
+//============================================================================
+
+void A_CHolyPalette1(void)
+{
+	Player->WeaponPalette = STARTHOLYPAL + 1;
+}
+
+//============================================================================
+//
+//  A_CHolyPalette2
+//
+//============================================================================
+
+void A_CHolyPalette2(void)
+{
+	Player->WeaponPalette = STARTHOLYPAL + 2;
+}
+
+//============================================================================
+//
+//  A_CHolyPalette3
+//
+//============================================================================
+
+void A_CHolyPalette3(void)
+{
+	// reset back to original playpal
+	Player->WeaponPalette = 0;
+}
+
+__states__
+{
+	S_CHOLYREADY('CHLY', 0, 1.0 / 35.0, S_CHOLYREADY) { A_WeaponReady(); }
+	S_CHOLYDOWN('CHLY', 0, 1.0 / 35.0, S_CHOLYDOWN) { A_Lower(); }
+	S_CHOLYUP('CHLY', 0, 1.0 / 35.0, S_CHOLYUP) { A_Raise(); }
+	S_CHOLYATK_1('CHLY', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_2) { SY = 40.0; }
+	S_CHOLYATK_2('CHLY', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CHOLYATK_3) { SY = 40.0; }
+	S_CHOLYATK_3('CHLY', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_4) { SY = 43.0; }
+	S_CHOLYATK_4('CHLY', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_5) { SY = 43.0; }
+	S_CHOLYATK_5('CHLY', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_6) { SY = 45.0; }
+	S_CHOLYATK_6('CHLY', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_CHOLYATK_7) { SY = 48.0; A_CHolyAttack(); }
+	S_CHOLYATK_7('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_8) { SY = 40.0; A_CHolyPalette1(); }
+	S_CHOLYATK_8('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYATK_9) { SY = 40.0; A_CHolyPalette2(); }
+	S_CHOLYATK_9('CHLY', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_CHOLYREADY) { SY = 36.0; A_CHolyPalette3(); }
+}
+
+defaultproperties
+{
+	Mana = MANA_BOTH;
+	UpState = S_CHOLYUP;
+	DownState = S_CHOLYDOWN;
+	ReadyState = S_CHOLYREADY;
+	AttackState = S_CHOLYATK_1;
+	HoldAttackState = S_CHOLYATK_1;
+	PSpriteSY = 0.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

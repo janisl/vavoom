@@ -203,8 +203,6 @@ void Cheat_Gimme(void)
 //
 //==========================================================================
 
-void P_Massacre(void);
-
 void Cheat_KillAll(void)
 {
 	P_Massacre();
@@ -267,6 +265,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.16  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

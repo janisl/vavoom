@@ -1,0 +1,85 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PhoenixFX1:Projectile;
+
+//===========================================================================
+//
+//  A_PhoenixPuff
+//
+//===========================================================================
+
+void A_PhoenixPuff(void)
+{
+	Actor puff;
+	float angle;
+
+	SeekerMissile(5.0, 10.0);
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw + 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw - 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+}
+
+__states__
+{
+	S_PHOENIXFX1_1('FX04', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFX1_1) { A_PhoenixPuff(); }
+	S_PHOENIXFXI1_1('FX08', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_PHOENIXFXI1_2) { A_Explode(); }
+	S_PHOENIXFXI1_2('FX08', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_3) { }
+	S_PHOENIXFXI1_3('FX08', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI1_4) { }
+	S_PHOENIXFXI1_4('FX08', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_5) { }
+	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) { }
+	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) { }
+	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) { }
+	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 700.0;
+	MissileDamage = 20;
+	bThruGhost = true;
+	IdleState = S_PHOENIXFX1_1;
+	DeathState = S_PHOENIXFXI1_1;
+	SightSound = 'PhoenixFire';
+	DeathSound = 'PhoenixHit';
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

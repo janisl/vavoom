@@ -1,0 +1,309 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FireDemon:Pawn
+	__mobjinfo__(10060);
+
+//
+// Fire Demon AI
+//
+
+float AttackRange;
+
+int WeaveIndex;		//	Index into floatbob
+int StrafeCount;	//	Whether strafing or not
+
+//============================================================================
+//
+//  A_FiredSpawnRock
+//
+//============================================================================
+
+void A_FiredSpawnRock(void)
+{
+	Actor mo;
+	TVec rockOrg;
+	classid rtype;
+
+	switch (P_Random() % 5)
+	{
+	case 0:
+		rtype = FireDemonRock1;
+		break;
+	case 1:
+		rtype = FireDemonRock2;
+		break;
+	case 2:
+		rtype = FireDemonRock3;
+		break;
+	case 3:
+		rtype = FireDemonRock4;
+		break;
+	case 4:
+		rtype = FireDemonRock5;
+		break;
+	}
+
+	rockOrg.x = Origin.x + (Random() - 0.5) * 16.0;
+	rockOrg.y = Origin.y + (Random() - 0.5) * 16.0;
+	rockOrg.z = Origin.z + Random() * 8.0;
+	mo = Spawn(rtype, rockOrg);
+	if (mo)
+	{
+		mo.Instigator = self;
+		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.z = Random() * 4.0 * 35.0;
+		mo._Special1 = 2;	// Number bounces
+	}
+
+	// Initialize fire demon
+	StrafeCount = 0;
+	bJustAttacked = false;
+}
+
+//============================================================================
+//
+//  A_FiredRocks
+//
+//============================================================================
+
+void A_FiredRocks(void)
+{
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+}
+
+//============================================================================
+//
+//  A_FiredChase
+//
+//============================================================================
+
+void A_FiredChase(void)
+{
+	float ang;
+	float dist;
+
+	if (ReactionCount)
+		ReactionCount--;
+	if (Threshold)
+		Threshold--;
+
+	// Float up and down
+	Origin.z += FloatBobOffsets[WeaveIndex];
+	WeaveIndex = (WeaveIndex + 2) & 63;
+
+	// Insure it stays above certain height
+	if (Origin.z < FloorZ + 64.0)
+	{
+		Origin.z += 2.0;
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// Invalid enemy
+		LookForPlayers(true);
+		return;
+	}
+
+	// Strafe
+	if (StrafeCount > 0)
+	{
+		StrafeCount--;
+	}
+	else
+	{
+		StrafeCount = 0;
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
+		dist = MobjDist(self, Enemy);
+		if (dist < AttackRange)
+		{
+			if (P_Random() < 30)
+			{
+				ang = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
+				if (P_Random() < 128)
+					ang = AngleMod360(ang + 90.0);
+				else
+					ang = AngleMod360(ang - 90.0);
+				Velocity.x = 8.0 * cos(ang) * 35.0;
+				Velocity.y = 8.0 * sin(ang) * 35.0;
+				StrafeCount = 3;	// strafe time
+			}
+		}
+	}
+
+	FaceMovementDirection();
+
+	// Normal movement
+	if (!StrafeCount)
+	{
+		if (--MoveCount < 0 || !StepMove())
+		{
+			NewChaseDir();
+		}
+	}
+
+	// Do missile attack
+	if (!bJustAttacked)
+	{
+		if (CheckMissileRange() && (P_Random() < 20))
+		{
+			SetState(MissileState);
+			bJustAttacked = true;
+			return;
+		}
+	}
+	else
+	{
+		bJustAttacked = false;
+	}
+
+	// make active sound
+	if (ActiveSound && P_Random() < 3)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//============================================================================
+//
+//  A_FiredAttack
+//
+//============================================================================
+
+void A_FiredAttack(void)
+{
+	Actor mo;
+
+	mo = SpawnMissile(Enemy, FireDemonMissile);
+	if (mo)
+	{
+		PlaySound('FireDemonAttack', CHAN_WEAPON);
+	}
+}
+
+//============================================================================
+//
+//  A_FiredSplotch
+//
+//============================================================================
+
+void A_FiredSplotch(void)
+{
+	Actor A;
+
+	A = Spawn(FireDemonSplotch1, Origin);
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+	A = Spawn(FireDemonSplotch2, Origin);
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+}
+
+__states__
+{
+	S_FIRED_SPAWN1('FDMN', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK1) { }
+	S_FIRED_LOOK1('FDMN', 4 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK2) { A_Look(); }
+	S_FIRED_LOOK2('FDMN', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK3) { A_Look(); }
+	S_FIRED_LOOK3('FDMN', 6 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK1) { A_Look(); }
+	S_FIRED_LOOK4('FDMN', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK5) { }
+	S_FIRED_LOOK5('FDMN', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK6) { }
+	S_FIRED_LOOK6('FDMN', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK7) { }
+	S_FIRED_LOOK7('FDMN', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK8) { }
+	S_FIRED_LOOK8('FDMN', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK9) { }
+	S_FIRED_LOOK9('FDMN', 5 | FF_FULLBRIGHT, 7.0 / 35.0, S_FIRED_LOOK0) { A_FiredRocks(); }
+	S_FIRED_LOOK0('FDMN', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKA) { }
+	S_FIRED_LOOKA('FDMN', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKB) { }
+	S_FIRED_LOOKB('FDMN', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_UnSetInvulnerable(); }
+	S_FIRED_WALK1('FDMN', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK2) { A_FiredChase(); }
+	S_FIRED_WALK2('FDMN', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK3) { A_FiredChase(); }
+	S_FIRED_WALK3('FDMN', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredChase(); }
+	S_FIRED_PAIN1('FDMN', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_WALK1) { A_Pain(); }
+	S_FIRED_ATTACK1('FDMN', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FIRED_ATTACK2) { A_FaceTarget(); }
+	S_FIRED_ATTACK2('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK3) { A_FiredAttack(); }
+	S_FIRED_ATTACK3('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK4) { A_FiredAttack(); }
+	S_FIRED_ATTACK4('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredAttack(); }
+	S_FIRED_DEATH1('FDMN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH2) { A_FaceTarget(); }
+	S_FIRED_DEATH2('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH3) { A_Scream(); }
+	S_FIRED_DEATH3('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH4) { A_NoBlocking(); }
+	S_FIRED_DEATH4('FDMN', 11 | FF_FULLBRIGHT, 200.0 / 35.0, S_NULL) { }
+	S_FIRED_XDEATH1('FDMN', 12, 5.0 / 35.0, S_FIRED_XDEATH2) { A_FaceTarget(); }
+	S_FIRED_XDEATH2('FDMN', 13, 5.0 / 35.0, S_FIRED_XDEATH3) { A_NoBlocking(); }
+	S_FIRED_XDEATH3('FDMN', 14, 5.0 / 35.0, S_NULL) { A_FiredSplotch(); }
+	S_FIRED_ICE1('FDMN', 17, 5.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeath(); }
+	S_FIRED_ICE2('FDMN', 17, 1.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 80;
+	GibsHealth = -40;
+	Radius = 20.0;
+	Height = 68.0;
+	Mass = 75.0;
+	StepSpeed = 13.0;
+	PainChance = 0.00390625;
+	AttackRange	 = 512.0;
+	MissileDamage = 1;
+	bNoGravity = true;
+	bDropOff = true;
+	bFloat = true;
+	bInvulnerable = true;
+	IdleState = S_FIRED_SPAWN1;
+	SeeState = S_FIRED_LOOK4;
+	MissileState = S_FIRED_ATTACK1;
+	PainState = S_FIRED_PAIN1;
+	CrashState = S_FIRED_XDEATH1;
+	DeathState = S_FIRED_DEATH1;
+	GibsDeathState = S_FIRED_XDEATH1;
+	IceDeathState = S_FIRED_ICE1;
+	SightSound = 'FireDemonSpawn';
+	ActiveSound = 'FireDemonActive';
+	PainSound = 'FireDemonPain';
+	DeathSound = 'FireDemonDeath';
+	Effects = EF_DL_WHITE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

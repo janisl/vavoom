@@ -428,47 +428,12 @@ int FindState(name StateName)
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
 
-//==========================================================================
-//
-//	SectorThinker
-//
-//==========================================================================
-
-class SectorThinker:Thinker
-{
-	sector_t	*sector;
-
-	void Archive(void)
-	{
-		sector = SectorToNum(sector);
-	}
-
-	void Unarchive(void)
-	{
-		sector = NumToSector(sector);
-	}
-}
-
-//==========================================================================
-//
-//	SectorMover
-//
-//==========================================================================
-
-class SectorMover:SectorThinker
-{
-	void Unarchive(void)
-	{
-		::Unarchive();
-
-		//  Set sector's specialdata
-		sector->SpecialData = self;
-	}
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/10/26 16:32:15  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.28  2002/09/07 16:28:22  dj_jl
 //  Added Level class.
 //

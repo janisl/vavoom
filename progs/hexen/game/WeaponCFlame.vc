@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponCFlame:WeaponPickup
+	__mobjinfo__(8009);
+
+__states__
+{
+	S_CFLAME1('WCFM', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME2) { }
+	S_CFLAME2('WCFM', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME3) { }
+	S_CFLAME3('WCFM', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME4) { }
+	S_CFLAME4('WCFM', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME5) { }
+	S_CFLAME5('WCFM', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME6) { }
+	S_CFLAME6('WCFM', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME7) { }
+	S_CFLAME7('WCFM', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME8) { }
+	S_CFLAME8('WCFM', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME1) { }
+}
+
+defaultproperties
+{
+	bNoGravity = true;
+	WeaponClass = PCLASS_CLERIC;
+	WeaponType = WP_THIRD;
+	IdleState = S_CFLAME1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,50 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BlasterPuff2:Effect;
+
+__states__
+{
+	S_BLASTERPUFF2_1('FX17', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_2) { }
+	S_BLASTERPUFF2_2('FX17', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERPUFF2_3) { }
+	S_BLASTERPUFF2_3('FX17', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_4) { }
+	S_BLASTERPUFF2_4('FX17', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_5) { }
+	S_BLASTERPUFF2_5('FX17', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_6) { }
+	S_BLASTERPUFF2_6('FX17', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_7) { }
+	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_BLASTERPUFF2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

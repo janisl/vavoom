@@ -1,0 +1,97 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SummonMissile:Projectile;
+
+//==========================================================================
+//
+//  A_Summon
+//
+//  Summon Minotaur
+//
+//==========================================================================
+
+void A_Summon(void)
+{
+	Actor A;
+
+	A = Spawn(Minotaur, Origin);
+	if (A)
+	{
+		if (!A.TestLocation() || !_SpecialMobj1)
+		{
+			// Didn't fit - change back to artifact
+			A.SetState(S_NULL);
+			A = Spawn(ArtifactSummonMaulator, Origin);
+			if (A)
+				A.bDropped = true;
+			return;
+		}
+
+		A.Args[0] = level->tictime;
+		if (_SpecialMobj1->bCorpse)
+		{
+			// Master dead
+			A._SpecialMobj1 = NULL;	// No master
+		}
+		else
+		{
+			A._SpecialMobj1 = _SpecialMobj1;	// Pointer to master
+			PlayerPawn(*_SpecialMobj1).GivePower(pw_minotaur);
+		}
+
+		// Make smoke puff
+		Spawn(MinotaurSmoke, Origin);
+		PlaySound('MaulatorActive', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_SUMMON_FX1_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX1_1) { }
+	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) { }
+	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) { }
+	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, S_NULL) { A_Summon(); }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 16.0;
+	Speed = 700.0;
+	bNoGravity = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_SUMMON_FX1_1;
+	DeathState = S_SUMMON_FX2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

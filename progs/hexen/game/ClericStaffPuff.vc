@@ -1,0 +1,50 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ClericStaffPuff:Effect;
+
+__states__
+{
+	S_CSTAFFPUFF1('FHFX', 18, 4.0 / 35.0, S_CSTAFFPUFF2) { }
+	S_CSTAFFPUFF2('FHFX', 19, 4.0 / 35.0, S_CSTAFFPUFF3) { }
+	S_CSTAFFPUFF3('FHFX', 20, 4.0 / 35.0, S_CSTAFFPUFF4) { }
+	S_CSTAFFPUFF4('FHFX', 21, 4.0 / 35.0, S_CSTAFFPUFF5) { }
+	S_CSTAFFPUFF5('FHFX', 22, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_CSTAFFPUFF1;
+	SightSound = 'ClericCStaffHitThing';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,58 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenLoadGame:MenuScreen;
+
+void CreateChoices(void)
+{
+	MenuChoice_LoadSlot newChoice;
+	int i;
+
+	enteringText = false;
+
+	for (i = 0; i < 8; i++)
+	{
+		newChoice = MenuChoice_LoadSlot(NewChild(MenuChoice_LoadSlot));
+		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+		newChoice.SlotNum = i;
+		newChoice.Status = SV_GetSaveString(i, ARR2STR(newChoice.Text));
+	}
+}
+
+defaultproperties
+{
+	ChoicesStartX = 80;
+	ChoicesStartY = 40;
+	SelectorType = MenuSelector_Skull;
+	Title = "LOAD GAME";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

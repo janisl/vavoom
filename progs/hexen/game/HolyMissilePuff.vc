@@ -1,0 +1,53 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HolyMissilePuff:Effect;
+
+__states__
+{
+	S_HOLY_MISSILE_P1('SPIR', 16, 3.0 / 35.0, S_HOLY_MISSILE_P2) { }
+	S_HOLY_MISSILE_P2('SPIR', 17, 3.0 / 35.0, S_HOLY_MISSILE_P3) { }
+	S_HOLY_MISSILE_P3('SPIR', 18, 3.0 / 35.0, S_HOLY_MISSILE_P4) { }
+	S_HOLY_MISSILE_P4('SPIR', 19, 3.0 / 35.0, S_HOLY_MISSILE_P5) { }
+	S_HOLY_MISSILE_P5('SPIR', 20, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 4.0;
+	Height = 8.0;
+	Translucency = 33;
+	bDropOff = true;
+	bNoTeleport = true;
+	IdleState = S_HOLY_MISSILE_P1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,140 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Mummy:Pawn
+	__mobjinfo__(68);
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+	DropItem(ItemAmmoGoldWandWimpy, 3, 0.328125);
+}
+
+//==========================================================================
+//
+//  A_MummyAttack
+//
+//==========================================================================
+
+void A_MummyAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(2));
+		PlaySound('MumyAttack2', CHAN_WEAPON);
+		return;
+	}
+	PlaySound('MumyAttack1', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_MummySoul
+//
+//==========================================================================
+
+void A_MummySoul(void)
+{
+	Actor mo;
+
+	mo = Spawn(MummySoul, Origin + vector(0.0, 0.0, 10.0));
+	mo.Velocity.z = 1.0 * 35.0;
+}
+
+__states__
+{
+	S_MUMMY_LOOK1('MUMM', 0, 'monsters/mummy/base.md2', 0, 2.5 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
+	S_MUMMY_LOOK2('MUMM', 0, 'monsters/mummy/base.md2', 1, 2.5 / 35.0, S_MUMMY_LOOK3) { }
+	S_MUMMY_LOOK3('MUMM', 0, 'monsters/mummy/base.md2', 2, 2.5 / 35.0, S_MUMMY_LOOK4) { }
+	S_MUMMY_LOOK4('MUMM', 0, 'monsters/mummy/base.md2', 3, 2.5 / 35.0, S_MUMMY_LOOK5) { }
+	S_MUMMY_LOOK5('MUMM', 1, 'monsters/mummy/base.md2', 4, 2.5 / 35.0, S_MUMMY_LOOK6) { A_Look(); }
+	S_MUMMY_LOOK6('MUMM', 1, 'monsters/mummy/base.md2', 5, 2.5 / 35.0, S_MUMMY_LOOK7) { }
+	S_MUMMY_LOOK7('MUMM', 1, 'monsters/mummy/base.md2', 6, 2.5 / 35.0, S_MUMMY_LOOK8) { }
+	S_MUMMY_LOOK8('MUMM', 1, 'monsters/mummy/base.md2', 7, 2.5 / 35.0, S_MUMMY_LOOK1) { }
+	S_MUMMY_WALK1('MUMM', 0, 'monsters/mummy/base.md2', 8, 2.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
+	S_MUMMY_WALK2('MUMM', 0, 'monsters/mummy/base.md2', 9, 2.0 / 35.0, S_MUMMY_WALK3) { }
+	S_MUMMY_WALK3('MUMM', 1, 'monsters/mummy/base.md2', 10, 2.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
+	S_MUMMY_WALK4('MUMM', 1, 'monsters/mummy/base.md2', 11, 2.0 / 35.0, S_MUMMY_WALK5) { }
+	S_MUMMY_WALK5('MUMM', 2, 'monsters/mummy/base.md2', 12, 2.0 / 35.0, S_MUMMY_WALK6) { A_Chase(); }
+	S_MUMMY_WALK6('MUMM', 2, 'monsters/mummy/base.md2', 13, 2.0 / 35.0, S_MUMMY_WALK7) { }
+	S_MUMMY_WALK7('MUMM', 3, 'monsters/mummy/base.md2', 14, 2.0 / 35.0, S_MUMMY_WALK8) { A_Chase(); }
+	S_MUMMY_WALK8('MUMM', 3, 'monsters/mummy/base.md2', 15, 2.0 / 35.0, S_MUMMY_WALK1) { }
+	S_MUMMY_ATK1('MUMM', 4, 'monsters/mummy/base.md2', 16, 2.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
+	S_MUMMY_ATK2('MUMM', 4, 'monsters/mummy/base.md2', 17, 2.0 / 35.0, S_MUMMY_ATK3) { }
+	S_MUMMY_ATK3('MUMM', 4, 'monsters/mummy/base.md2', 18, 2.0 / 35.0, S_MUMMY_ATK4) { }
+	S_MUMMY_ATK4('MUMM', 5, 'monsters/mummy/base.md2', 19, 2.0 / 35.0, S_MUMMY_ATK5) { A_MummyAttack(); }
+	S_MUMMY_ATK5('MUMM', 5, 'monsters/mummy/base.md2', 20, 2.0 / 35.0, S_MUMMY_ATK6) { }
+	S_MUMMY_ATK6('MUMM', 5, 'monsters/mummy/base.md2', 21, 2.0 / 35.0, S_MUMMY_ATK7) { }
+	S_MUMMY_ATK7('MUMM', 6, 'monsters/mummy/base.md2', 22, 3.0 / 35.0, S_MUMMY_ATK8) { A_FaceTarget(); }
+	S_MUMMY_ATK8('MUMM', 6, 'monsters/mummy/base.md2', 23, 3.0 / 35.0, S_MUMMY_WALK1) { }
+	S_MUMMY_PAIN1('MUMM', 7, 'monsters/mummy/base.md2', 32, 4.0 / 35.0, S_MUMMY_PAIN2) { }
+	S_MUMMY_PAIN2('MUMM', 7, 'monsters/mummy/base.md2', 33, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
+	S_MUMMY_DIE1('MUMM', 8, 'monsters/mummy/death.md2', 0, 5.0 / 35.0, S_MUMMY_DIE2) { }
+	S_MUMMY_DIE2('MUMM', 9, 'monsters/mummy/death.md2', 1, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
+	S_MUMMY_DIE3('MUMM', 10, 'monsters/mummy/death.md2', 2, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
+	S_MUMMY_DIE4('MUMM', 11, 'monsters/mummy/death.md2', 3, 5.0 / 35.0, S_MUMMY_DIE5) { }
+	S_MUMMY_DIE5('MUMM', 12, 'monsters/mummy/death.md2', 4, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
+	S_MUMMY_DIE6('MUMM', 13, 'monsters/mummy/death.md2', 5, 5.0 / 35.0, S_MUMMY_DIE7) { }
+	S_MUMMY_DIE7('MUMM', 14, 'monsters/mummy/death.md2', 6, 5.0 / 35.0, S_MUMMY_DIE8) { }
+	S_MUMMY_DIE8('MUMM', 15, 'monsters/mummy/death.md2', 7, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 80;
+	Radius = 22.0;
+	Height = 62.0;
+	Mass = 75.0;
+	StepSpeed = 12.0;
+	PainChance = 0.5;
+	IdleState = S_MUMMY_LOOK1;
+	SeeState = S_MUMMY_WALK1;
+	MeleeState = S_MUMMY_ATK1;
+	PainState = S_MUMMY_PAIN1;
+	DeathState = S_MUMMY_DIE1;
+	SightSound = 'MumySight';
+	ActiveSound = 'MumyActive';
+	AttackSound = 'MumyAttack1';
+	PainSound = 'MumyPain';
+	DeathSound = 'MumyDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

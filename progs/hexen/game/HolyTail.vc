@@ -1,0 +1,143 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HolyTail:Effect;
+
+Actor ParentSpirit;
+HolyTail NextTail;
+
+//============================================================================
+//
+//	CHolyTailFollow
+//
+//============================================================================
+
+void CHolyTailFollow(float dist)
+{
+	Actor child;
+	float an;
+	float oldDistance, newDistance;
+
+	child = NextTail;
+	if (child)
+	{
+		an = atan2(child.Origin.y - Origin.y,
+			Origin.x - child.Origin.x);
+		oldDistance = MobjDist(child, self);
+		if (child.TryMove(vector(Origin.x + dist * cos(an),
+				Origin.y + dist * sin(an), child.Origin.z)))
+		{
+			newDistance = MobjDist2(child, self) - 1.0;
+			if (oldDistance < 1.0)
+			{
+				if (child.Origin.z < Origin.z)
+				{
+					child.Origin.z = Origin.z - dist;
+				}
+				else
+				{
+					child.Origin.z = Origin.z + dist;
+				}
+			}
+			else
+			{
+				child.Origin.z = Origin.z + newDistance / oldDistance *
+					(child.Origin.z - Origin.z);
+			}
+		}
+		HolyTail(child).CHolyTailFollow(dist - 1.0);
+	}
+}
+
+//============================================================================
+//
+//	CHolyTailRemove
+//
+//============================================================================
+
+void CHolyTailRemove(void)
+{
+	if (NextTail)
+	{
+		NextTail.CHolyTailRemove();
+	}
+	Remove();
+}
+
+//============================================================================
+//
+//	A_CHolyTail
+//
+//============================================================================
+
+void A_CHolyTail(void)
+{
+	Actor parent;
+
+	parent = ParentSpirit;
+
+	if (parent)
+	{
+		if (parent.StateNum >= parent.DeathState)
+		{
+			// Ghost removed, so remove all tail parts
+			CHolyTailRemove();
+			return;
+		}
+		else if (TryMove(vector(
+				parent.Origin.x - 14.0 * cos(parent.Angles.yaw),
+				parent.Origin.y - 14.0 * sin(parent.Angles.yaw), Origin.z)))
+		{
+			Origin.z = parent.Origin.z - 5.0;
+		}
+		CHolyTailFollow(10.0);
+	}
+}
+
+__states__
+{
+	S_HOLY_TAIL1('SPIR', 2, 1.0 / 35.0, S_HOLY_TAIL1) { A_CHolyTail(); }
+	S_HOLY_TAIL2('SPIR', 3, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 1.0;
+	Height = 1.0;
+	Translucency = 33;
+	bDropOff = true;
+	bColideWithWorld = false;
+	bColideWithThings = false;
+	bNoTeleport = true;
+	IdleState = S_HOLY_TAIL1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,94 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Key:Pickup
+	abstract;
+
+int KeyType;
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// Can't be picked up by toucher
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (!P)
+	{
+		//	Shouldn't happen
+		return;
+	}
+	if (!P.GiveKey(KeyType))
+	{
+		return;
+	}
+	cprint(P.Player, TextKeyMessages[KeyType]);
+	if (Special)
+	{
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		Special = 0;
+	}
+	if (!netgame)
+	{
+		// Only remove keys in single player game
+		if (deathmatch && !bDropped)
+		{
+			HideSpecial();
+		}
+		else
+		{
+			Remove();
+		}
+	}
+	P.Player->BonusFlash += BONUSADD;
+	P.PlaySound('PickupKey', CHAN_ITEM);
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

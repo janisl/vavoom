@@ -1,0 +1,246 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ThrustFloorDown:Decoration
+	__mobjinfo__(10090);
+
+//
+// Thrust Spike Variables
+//
+
+int UpState;
+int BloodyUpState;
+int DownState;
+int BloodyDownState;
+
+Actor SpawnedDirt;	//	pointer to dirt clump mobj
+float RaiseSpeed;	//	speed of raise
+//      args[0]     0 = lowered,  1 = raised
+//      args[1]     0 = normal,   1 = bloody
+
+//==========================================================================
+//
+//  A_ThrustInitUp
+//
+//==========================================================================
+
+void A_ThrustInitUp(void)
+{
+	RaiseSpeed = 5.0;	// Raise speed
+	Args[0] = 1;		// Mark as up
+	FloorClip = 0.0;
+	bSolid = true;
+	SpawnedDirt = none;
+}
+
+//==========================================================================
+//
+//  A_ThrustInitDn
+//
+//==========================================================================
+
+void A_ThrustInitDn(void)
+{
+	RaiseSpeed = 5.0;	// Raise speed
+	Args[0] = 0;		// Mark as down
+	FloorClip = Height;
+	bSolid = false;
+	bHidden = true;
+	SpawnedDirt = Spawn(DirtClump, Origin);
+}
+
+//==========================================================================
+//
+//  A_ThrustRaise
+//
+//  Raise incrementally from the floor
+// 
+//==========================================================================
+
+void A_ThrustRaise(void)
+{
+	// Raise spike from the ground
+	FloorClip -= RaiseSpeed;
+	if (FloorClip <= 0.0)
+	{
+		// Reached it's target height
+		FloorClip = 0.0;
+		Args[0] = 1;
+		if (Args[1])
+			SetState(BloodyUpState);
+		else
+			SetState(UpState);
+	}
+
+	// Lose the dirt clump
+	if ((FloorClip < Height) && SpawnedDirt)
+	{
+		SpawnedDirt.Remove();
+		SpawnedDirt = none;
+	}
+
+	// Spawn some dirt
+	if (P_Random() < 40)
+		SpawnDirt(Radius);
+	RaiseSpeed += 1.0;	// Increase raise speed
+}
+
+//==========================================================================
+//
+//  A_ThrustLower
+//
+//  Sink incrementally into the floor
+//
+//==========================================================================
+
+void A_ThrustLower(void)
+{
+	if (FloorClip < Height)
+	{
+		FloorClip += 6.0;
+	}
+	else
+	{
+		Args[0] = 0;
+		if (Args[1])
+			SetState(BloodyDownState);
+		else
+			SetState(DownState);
+	}
+}
+
+//==========================================================================
+//
+//  A_ThrustBlock
+//
+//==========================================================================
+
+void A_ThrustBlock(void)
+{
+	bSolid = true;
+}
+
+//==========================================================================
+//
+//  A_ThrustImpale
+//
+//==========================================================================
+
+void A_ThrustImpale(void)
+{
+	// Impale all shootables in radius
+	PIT_ThrustSpike(self);
+}
+
+__states__
+{
+	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) { }
+	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) { A_ThrustInitUp(); }
+	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) { }
+	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) { A_ThrustInitUp(); }
+	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) { }
+	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) { A_ThrustInitDn(); }
+	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) { }
+	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) { A_ThrustInitDn(); }
+	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) { A_ThrustRaise(); }
+	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) { A_ThrustRaise(); }
+	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) { A_ThrustRaise(); }
+	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) { A_ThrustBlock(); }
+	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) { A_ThrustBlock(); }
+	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustImpale(); }
+	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustImpale(); }
+	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustRaise(); }
+	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) { }
+	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) { }
+	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) { A_ThrustLower(); }
+	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) { A_ThrustLower(); }
+	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) { }
+	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) { }
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate(void)
+{
+	if (Args[0] == 0)
+	{
+		PlaySound('ThrustSpikeLower', CHAN_VOICE);
+		bHidden = false;
+		if (Args[1])
+			SetState(S_BTHRUSTRAISE1);
+		else
+			SetState(S_THRUSTRAISE1);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate(void)
+{
+	if (Args[0] == 1)
+	{
+		PlaySound('ThrustSpikeRaise', CHAN_VOICE);
+		if (Args[1])
+			SetState(S_BTHRUSTLOWER);
+		else
+			SetState(S_THRUSTLOWER);
+	}
+	return true;
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 128.0;
+	bFloorClip = true;
+	bNoTeleport = true;
+	bHidden = true;
+	IdleState = S_THRUSTINIT1_1;
+	UpState = S_THRUSTINIT2_1;
+	BloodyUpState = S_BTHRUSTINIT2_1;
+	DownState = S_THRUSTINIT1_1;
+	BloodyDownState = S_BTHRUSTINIT1_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,48 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ItemArmor2:ArmorPickup
+	__mobjinfo__(2019);
+
+__states__
+{
+	S_ARM2('ARM2', 0, 'items/bluarmor.md2', 0, 6.0 / 35.0, S_ARM2A) { }
+	S_ARM2A('ARM2', 1 | FF_FULLBRIGHT, 'items/bluarmor.md2', 1, 6.0 / 35.0, S_ARM2) { }
+}
+
+defaultproperties
+{
+	IdleState = S_ARM2;
+	ArmorClass = 2;
+	PickupMessage = "Picked up the MegaArmor!";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,90 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FogPatch:Effect
+	abstract;
+
+//==========================================================================
+//
+// Fog Variables:
+//
+//      args[0]     Speed (0..10) of fog
+//      args[3]     Lifetime countdown
+//      args[4]     Boolean: fog moving?
+//
+//==========================================================================
+
+int WeaveIndex;		// Index into floatbob table
+
+//==========================================================================
+//
+//	A_FogMove
+//
+//==========================================================================
+
+void A_FogMove(void)
+{
+	float speed;
+	float angle;
+	int weaveindex;
+
+	if (!Args[4])
+		return;
+
+	if (Args[3]-- <= 0)
+	{
+		SetState(DeathState);
+		return;
+	}
+
+	if ((Args[3] % 4) == 0)
+	{
+		Origin.z += FloatBobOffsets[WeaveIndex] / 2.0;
+		WeaveIndex = (WeaveIndex + 1) & 63;
+	}
+
+	speed = itof(Args[0]);
+	angle = Angles.yaw;
+	Velocity.x = speed * cos(angle) * 35.0;
+	Velocity.y = speed * sin(angle) * 35.0;
+}
+
+defaultproperties
+{
+	Speed = 35.0;
+	Translucency = 66;
+	bColideWithWorld = false;
+	bColideWithThings = false;
+	bFloat = true;
+	bNoTeleport = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

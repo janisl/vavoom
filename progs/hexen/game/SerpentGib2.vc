@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SerpentGib2:SerpentGib1;
+
+__states__
+{
+	S_SERPENT_GIB2_1('SSXD', 17, 6.0 / 35.0, S_SERPENT_GIB2_2) { }
+	S_SERPENT_GIB2_2('SSXD', 17, 6.0 / 35.0, S_SERPENT_GIB2_3) { A_FloatGib(); }
+	S_SERPENT_GIB2_3('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_4) { A_FloatGib(); }
+	S_SERPENT_GIB2_4('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_5) { A_FloatGib(); }
+	S_SERPENT_GIB2_5('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_6) { A_FloatGib(); }
+	S_SERPENT_GIB2_6('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_7) { A_FloatGib(); }
+	S_SERPENT_GIB2_7('SSXD', 17, 232.0 / 35.0, S_SERPENT_GIB2_8) { A_DelayGib(); }
+	S_SERPENT_GIB2_8('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_9) { A_SinkGib(); }
+	S_SERPENT_GIB2_9('SSXD', 17, 12.0 / 35.0, S_SERPENT_GIB2_10) { A_SinkGib(); }
+	S_SERPENT_GIB2_10('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_11) { A_SinkGib(); }
+	S_SERPENT_GIB2_11('SSXD', 17, 8.0 / 35.0, S_SERPENT_GIB2_12) { A_SinkGib(); }
+	S_SERPENT_GIB2_12('SSXD', 17, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+}
+
+defaultproperties
+{
+	IdleState = S_SERPENT_GIB2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,82 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HeadMissile1:Projectile;
+
+//==========================================================================
+//
+//  A_HeadIceImpact
+//
+//==========================================================================
+
+void A_HeadIceImpact(void)
+{
+	int i;
+	float angle;
+	Actor shard;
+
+	for (i = 0; i < 8; i++)
+	{
+		shard = Spawn(HeadMissile2, Origin);
+		angle = itof(i) * 45.0;
+		shard.Instigator = Instigator;
+		shard.Angles.yaw = angle;
+		shard.Velocity.x = shard.Speed * cos(angle);
+		shard.Velocity.y = shard.Speed * sin(angle);
+		shard.Velocity.z = -0.6 * 35.0;
+		shard.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_HEADFX1_1('FX05', 0, 6.0 / 35.0, S_HEADFX1_2) { }
+	S_HEADFX1_2('FX05', 1, 6.0 / 35.0, S_HEADFX1_3) { }
+	S_HEADFX1_3('FX05', 2, 6.0 / 35.0, S_HEADFX1_1) { }
+	S_HEADFXI1_1('FX05', 3, 5.0 / 35.0, S_HEADFXI1_2) { A_HeadIceImpact(); }
+	S_HEADFXI1_2('FX05', 4, 5.0 / 35.0, S_HEADFXI1_3) { }
+	S_HEADFXI1_3('FX05', 5, 5.0 / 35.0, S_HEADFXI1_4) { }
+	S_HEADFXI1_4('FX05', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 6.0;
+	Speed = 455.0;
+	MissileDamage = 1;
+	bThruGhost = true;
+	IdleState = S_HEADFX1_1;
+	DeathState = S_HEADFXI1_1;
+	Effects = EF_DL_BLUE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

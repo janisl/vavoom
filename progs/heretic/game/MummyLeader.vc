@@ -1,0 +1,82 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MummyLeader:Mummy
+	__mobjinfo__(45);
+
+//==========================================================================
+//
+//  A_MummyAttack2
+//
+//  Mummy leader missile attack.
+//
+//==========================================================================
+
+void A_MummyAttack2(void)
+{
+	Actor A;
+
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(2));
+		return;
+	}
+	A = SpawnMissile(Enemy, MummyMissile);
+	if (A)
+	{
+		A.Enemy = Enemy;
+	}
+}
+
+__states__
+{
+	S_MUMMYL_ATK1('MUMM', 23, 'monsters/mummy/base.md2', 24, 5.0 / 35.0, S_MUMMYL_ATK2) { A_FaceTarget(); }
+	S_MUMMYL_ATK2('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/base.md2', 25, 5.0 / 35.0, S_MUMMYL_ATK3) { A_FaceTarget(); }
+	S_MUMMYL_ATK3('MUMM', 23, 'monsters/mummy/base.md2', 26, 5.0 / 35.0, S_MUMMYL_ATK4) { A_FaceTarget(); }
+	S_MUMMYL_ATK4('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/base.md2', 27, 5.0 / 35.0, S_MUMMYL_ATK5) { A_FaceTarget(); }
+	S_MUMMYL_ATK5('MUMM', 23, 'monsters/mummy/base.md2', 28, 5.0 / 35.0, S_MUMMYL_ATK6) { A_FaceTarget(); }
+	S_MUMMYL_ATK6('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/base.md2', 29, 5.0 / 35.0, S_MUMMY_ATK7) { A_MummyAttack2(); }
+	S_MUMMYL_ATK7('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/base.md2', 30, 5.0 / 35.0, S_MUMMY_ATK8) { }
+	S_MUMMYL_ATK8('MUMM', 24 | FF_FULLBRIGHT, 'monsters/mummy/base.md2', 31, 5.0 / 35.0, S_MUMMY_WALK1) { }
+}
+
+defaultproperties
+{
+	Health = 100;
+	PainChance = 0.25;
+	MissileState = S_MUMMYL_ATK1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,73 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenFighterSkill:MenuScreen;
+
+string SkillNames[5];
+int PClass;
+
+void CreateChoices(void)
+{
+	int i;
+	MenuChoice_Skill newChoice;
+
+	for (i = 0; i < 5; i++)
+	{
+		newChoice = MenuChoice_Skill(NewChild(MenuChoice_Skill));
+		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+		newChoice.Text = SkillNames[i];
+		newChoice.PClass = PClass;
+		newChoice.SkillLevel = i;
+	}
+}
+
+void SetDefaultChoice(void)
+{
+	::SetDefaultChoice();
+	CycleNextChoice();
+	CycleNextChoice();
+}
+
+defaultproperties
+{
+	SkillNames[0] = "SQUIRE";
+	SkillNames[1] = "KNIGHT";
+	SkillNames[2] = "WARRIOR";
+	SkillNames[3] = "BERSERKER";
+	SkillNames[4] = "TITAN";
+	ChoicesStartX = 120;
+	ChoicesStartY = 44;
+	PClass = PCLASS_FIGHTER;
+	SelectorType = MenuSelector_BigArrow;
+	Title = "CHOOSE SKILL LEVEL:";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

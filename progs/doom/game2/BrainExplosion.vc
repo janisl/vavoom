@@ -1,0 +1,72 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BrainExplosion:Rocket;
+
+//==========================================================================
+//
+//  A_BrainExplode
+//
+//  Brain explosions.
+//
+//==========================================================================
+
+void A_BrainExplode(void)
+{
+	TVec org;
+	Actor A;
+
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(BrainExplosion, org);
+	A.Velocity.z = Random() * 2.0 * 35.0;
+
+	A.SetState(A.IdleState);
+
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+}
+
+__states__
+{
+	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) { }
+	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) { }
+	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, S_NULL) { A_BrainExplode(); }
+}
+
+defaultproperties
+{
+	IdleState = S_BRAINEXPLODE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

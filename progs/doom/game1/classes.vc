@@ -1,0 +1,172 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+#include "Puff.vc"
+#include "Blood.vc"
+#include "TeleportFog.vc"
+#include "ItemRespawnFog.vc"
+#include "TeleportSpot.vc"
+
+#include "ArmorPickup.vc"
+#include "ItemArmor1.vc"
+#include "ItemArmor2.vc"
+#include "ItemHealthBonus.vc"
+#include "ItemArmorBonus.vc"
+#include "KeyPickup.vc"
+#include "ItemKeyBlueCard.vc"
+#include "ItemKeyRedCard.vc"
+#include "ItemKeyYellowCard.vc"
+#include "ItemKeyYellowSkull.vc"
+#include "ItemKeyRedSkull.vc"
+#include "ItemKeyBlueSkull.vc"
+#include "HealthPickup.vc"
+#include "ItemStimPack.vc"
+#include "ItemMedikit.vc"
+#include "ItemSoulSphere.vc"
+#include "PowerupPickup.vc"
+#include "ItemInvulnerability.vc"
+#include "ItemBerserk.vc"
+#include "ItemInvisibility.vc"
+#include "ItemRadiationSuit.vc"
+#include "ItemInfrared.vc"
+#include "ItemComputerMap.vc"
+#include "AmmoPickup.vc"
+#include "ItemAmmoBulletClip.vc"
+#include "ItemAmmoBulletBox.vc"
+#include "ItemAmmoRocket.vc"
+#include "ItemAmmoRocketBox.vc"
+#include "ItemAmmoCells.vc"
+#include "ItemAmmoCellsPack.vc"
+#include "ItemAmmoShells.vc"
+#include "ItemAmmoShellsBox.vc"
+#include "ItemBackpack.vc"
+#include "WeaponPickup.vc"
+#include "ItemWeaponBFG.vc"
+#include "ItemWeaponChaingun.vc"
+#include "ItemWeaponChainsaw.vc"
+#include "ItemWeaponRocketLauncher.vc"
+#include "ItemWeaponPlasmaGun.vc"
+#include "ItemWeaponShotgun.vc"
+
+#include "Barrel.vc"
+#include "TechLamp.vc"
+#include "TechLamp2.vc"
+#include "ColumnLamp.vc"
+#include "ColumnGreenTall.vc"
+#include "ColumnGreenShort.vc"
+#include "ColumnRedTall.vc"
+#include "ColumnRedShort.vc"
+#include "ColumnWithSkull.vc"
+#include "ColumnWithHearth.vc"
+#include "EvilEye.vc"
+#include "FloatingSkull.vc"
+#include "BurnedTree.vc"
+#include "TorchBlue.vc"
+#include "TorchGreen.vc"
+#include "TorchRed.vc"
+#include "TorchBlueShort.vc"
+#include "TorchGreenShort.vc"
+#include "TorchRedShort.vc"
+#include "Stalagtite.vc"
+#include "TechPillar.vc"
+#include "CandleStick.vc"
+#include "Candelabra.vc"
+#include "BloodyTwitch.vc"
+#include "Meat2.vc"
+#include "Meat3.vc"
+#include "Meat4.vc"
+#include "Meat5.vc"
+#include "Meat2NoBlock.vc"
+#include "Meat4NoBlock.vc"
+#include "Meat3NoBlock.vc"
+#include "Meat5NoBlock.vc"
+#include "BloodyTwitchNoBlock.vc"
+#include "DeadCacodemon.vc"
+#include "DeadPlayer.vc"
+#include "DeadZombieman.vc"
+#include "DeadDemon.vc"
+#include "DeadLostSoul.vc"
+#include "DeadImp.vc"
+#include "DeadShotgunGuy.vc"
+#include "DeadPlayerGibs.vc"
+#include "DeadPlayerGibs2.vc"
+#include "HeadsOnStick.vc"
+#include "Gibs.vc"
+#include "HeadOnAStick.vc"
+#include "HeadCandles.vc"
+#include "DeadStick.vc"
+#include "LiveStick.vc"
+#include "BigTree.vc"
+#include "BurningBarrel.vc"
+#include "HangingNoGuts.vc"
+#include "HangingNoBrain.vc"
+#include "HangingTorsoLookDown.vc"
+#include "HangingTorsoSkull.vc"
+#include "HangingTorsoLookUp.vc"
+#include "HangingTorsoNoBrain.vc"
+#include "ColonGibs.vc"
+#include "SmallPool.vc"
+#include "BrainStem.vc"
+
+#include "WeaponFist.vc"
+#include "WeaponPistol.vc"
+#include "WeaponShotgun.vc"
+#include "WeaponChaingun.vc"
+#include "Rocket.vc"
+#include "WeaponMissile.vc"
+#include "PlasmaShot.vc"
+#include "WeaponPlasma.vc"
+#include "ExtraBFG.vc"
+#include "BFGShot.vc"
+#include "WeaponBFG.vc"
+#include "WeaponChainsaw.vc"
+#ifdef GRENADE_LAUNCHER
+#include "ItemWeaponGrenadeLauncher.vc"
+#include "Grenade.vc"
+#include "WeaponGrenade.vc"
+#endif
+
+#include "DoomPlayer.vc"
+#include "Zombieman.vc"
+#include "ShotgunGuy.vc"
+#include "ImpMissile.vc"
+#include "Imp.vc"
+#include "Demon.vc"
+#include "Shadows.vc"
+#include "CacodemonMissile.vc"
+#include "Cacodemon.vc"
+#include "BruiserShot.vc"
+#include "BaronOfHell.vc"
+#include "LostSoul.vc"
+#include "Cyberdemon.vc"
+#include "SpiderMastermind.vc"
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,90 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SerpentGib1:Effect;
+
+//==========================================================================
+//
+//	A_FloatGib
+//
+//==========================================================================
+
+void A_FloatGib(void)
+{
+	FloorClip -= 1.0;
+}
+
+//==========================================================================
+//
+//	A_SinkGib
+//
+//==========================================================================
+
+void A_SinkGib(void)
+{
+	FloorClip += 1.0;
+}
+
+//==========================================================================
+//
+//	A_DelayGib
+//
+//==========================================================================
+
+void A_DelayGib(void)
+{
+	StateTime -= Random() * 2.0;
+}
+
+__states__
+{
+	S_SERPENT_GIB1_1('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_2) { }
+	S_SERPENT_GIB1_2('SSXD', 16, 6.0 / 35.0, S_SERPENT_GIB1_3) { A_FloatGib(); }
+	S_SERPENT_GIB1_3('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_4) { A_FloatGib(); }
+	S_SERPENT_GIB1_4('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_5) { A_FloatGib(); }
+	S_SERPENT_GIB1_5('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_6) { A_FloatGib(); }
+	S_SERPENT_GIB1_6('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_7) { A_FloatGib(); }
+	S_SERPENT_GIB1_7('SSXD', 16, 232.0 / 35.0, S_SERPENT_GIB1_8) { A_DelayGib(); }
+	S_SERPENT_GIB1_8('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_9) { A_SinkGib(); }
+	S_SERPENT_GIB1_9('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_10) { A_SinkGib(); }
+	S_SERPENT_GIB1_10('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_11) { A_SinkGib(); }
+	S_SERPENT_GIB1_11('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_12) { A_SinkGib(); }
+	S_SERPENT_GIB1_12('SSXD', 16, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 3.0;
+	IdleState = S_SERPENT_GIB1_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,62 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ZXmasTree:BurnableTree
+	__mobjinfo__(8068);
+
+__states__
+{
+	S_ZXMAS_TREE('XMAS', 0, -1.0, S_NULL) { }
+	S_ZXMAS_TREE_DIE('XMAS', 0, 4.0 / 35.0, S_ZXMAS_TREE) { A_TreeDeath(); }
+	S_ZXMAS_TREE_X1('XMAS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X2) { }
+	S_ZXMAS_TREE_X2('XMAS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X3) { A_Scream(); }
+	S_ZXMAS_TREE_X3('XMAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X4) { }
+	S_ZXMAS_TREE_X4('XMAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X5) { A_Explode(); }
+	S_ZXMAS_TREE_X5('XMAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZXMAS_TREE_X6) { }
+	S_ZXMAS_TREE_X6('XMAS', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZXMAS_TREE_X7) { }
+	S_ZXMAS_TREE_X7('XMAS', 7, 5.0 / 35.0, S_ZXMAS_TREE_X8) { }
+	S_ZXMAS_TREE_X8('XMAS', 8, 4.0 / 35.0, S_ZXMAS_TREE_X9) { A_NoBlocking(); }
+	S_ZXMAS_TREE_X9('XMAS', 9, 4.0 / 35.0, S_ZXMAS_TREE_X10) { }
+	S_ZXMAS_TREE_X10('XMAS', 10, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 20;
+	Radius = 11.0;
+	Height = 130.0;
+	IdleState = S_ZXMAS_TREE;
+	MeleeState = S_ZXMAS_TREE_X1;
+	DeathState = S_ZXMAS_TREE_DIE;
+	DeathSound = 'TreeExplode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

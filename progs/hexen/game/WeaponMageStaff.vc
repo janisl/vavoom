@@ -1,0 +1,170 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponMageStaff:Weapon;
+
+//==========================================================================
+//
+//	MStaffSpawn
+//
+//==========================================================================
+
+void MStaffSpawn(float angle)
+{
+	Actor mo;
+
+	mo = PlayerPawn(Player->MO).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	if (mo)
+	{
+		mo.Instigator = Player->MO;
+		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
+	}
+}
+
+//==========================================================================
+//
+//  A_MStaffAttack
+//
+//==========================================================================
+
+void A_MStaffAttack(void)
+{
+	float angle;
+
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	angle = Player->MO.Angles.yaw;
+
+	MStaffSpawn(angle);
+	MStaffSpawn(angle - 5.0);
+	MStaffSpawn(angle + 5.0);
+	Player->MO.PlaySound('MageStaffFire', CHAN_WEAPON);
+	Player->DamageFlash = 0.0;
+	Player->BonusFlash = 0.0;
+	Player->WeaponPalette = STARTSCOURGEPAL;
+}
+
+//==========================================================================
+//
+//  A_MStaffPalette1
+//
+//==========================================================================
+
+void A_MStaffPalette1(void)
+{
+	Player->WeaponPalette = STARTSCOURGEPAL + 1;
+}
+
+//==========================================================================
+//
+//  A_MStaffPalette2
+//
+//==========================================================================
+
+void A_MStaffPalette2(void)
+{
+	Player->WeaponPalette = STARTSCOURGEPAL + 2;
+}
+
+//==========================================================================
+//
+//  A_MStaffPalette3
+//
+//==========================================================================
+
+void A_MStaffPalette3(void)
+{
+	// reset back to original playpal
+	Player->WeaponPalette = 0;
+}
+
+__states__
+{
+	S_MSTAFFREADY('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY2) { A_WeaponReady(); }
+	S_MSTAFFREADY2('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY3) { A_WeaponReady(); }
+	S_MSTAFFREADY3('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY4) { A_WeaponReady(); }
+	S_MSTAFFREADY4('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY5) { A_WeaponReady(); }
+	S_MSTAFFREADY5('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY6) { A_WeaponReady(); }
+	S_MSTAFFREADY6('MSTF', 0, 1.0 / 35.0, S_MSTAFFREADY7) { A_WeaponReady(); }
+	S_MSTAFFREADY7('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY8) { A_WeaponReady(); }
+	S_MSTAFFREADY8('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY9) { A_WeaponReady(); }
+	S_MSTAFFREADY9('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY10) { A_WeaponReady(); }
+	S_MSTAFFREADY10('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY11) { A_WeaponReady(); }
+	S_MSTAFFREADY11('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY12) { A_WeaponReady(); }
+	S_MSTAFFREADY12('MSTF', 1, 1.0 / 35.0, S_MSTAFFREADY13) { A_WeaponReady(); }
+	S_MSTAFFREADY13('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY14) { A_WeaponReady(); }
+	S_MSTAFFREADY14('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY15) { A_WeaponReady(); }
+	S_MSTAFFREADY15('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY16) { A_WeaponReady(); }
+	S_MSTAFFREADY16('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY17) { A_WeaponReady(); }
+	S_MSTAFFREADY17('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY18) { A_WeaponReady(); }
+	S_MSTAFFREADY18('MSTF', 2, 1.0 / 35.0, S_MSTAFFREADY19) { A_WeaponReady(); }
+	S_MSTAFFREADY19('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY20) { A_WeaponReady(); }
+	S_MSTAFFREADY20('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY21) { A_WeaponReady(); }
+	S_MSTAFFREADY21('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY22) { A_WeaponReady(); }
+	S_MSTAFFREADY22('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY23) { A_WeaponReady(); }
+	S_MSTAFFREADY23('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY24) { A_WeaponReady(); }
+	S_MSTAFFREADY24('MSTF', 3, 1.0 / 35.0, S_MSTAFFREADY25) { A_WeaponReady(); }
+	S_MSTAFFREADY25('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY26) { A_WeaponReady(); }
+	S_MSTAFFREADY26('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY27) { A_WeaponReady(); }
+	S_MSTAFFREADY27('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY28) { A_WeaponReady(); }
+	S_MSTAFFREADY28('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY29) { A_WeaponReady(); }
+	S_MSTAFFREADY29('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY30) { A_WeaponReady(); }
+	S_MSTAFFREADY30('MSTF', 4, 1.0 / 35.0, S_MSTAFFREADY31) { A_WeaponReady(); }
+	S_MSTAFFREADY31('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY32) { A_WeaponReady(); }
+	S_MSTAFFREADY32('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY33) { A_WeaponReady(); }
+	S_MSTAFFREADY33('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY34) { A_WeaponReady(); }
+	S_MSTAFFREADY34('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY35) { A_WeaponReady(); }
+	S_MSTAFFREADY35('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY) { A_WeaponReady(); }
+	S_MSTAFFDOWN('MSTF', 0, 1.0 / 35.0, S_MSTAFFDOWN) { A_Lower(); }
+	S_MSTAFFUP('MSTF', 0, 1.0 / 35.0, S_MSTAFFUP) { A_Raise(); }
+	S_MSTAFFATK_1('MSTF', 6, 4.0 / 35.0, S_MSTAFFATK_2) { SY = 40.0; }
+	S_MSTAFFATK_2('MSTF', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFFATK_3) { SY = 48.0; A_MStaffAttack(); }
+	S_MSTAFFATK_3('MSTF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFFATK_4) { SY = 48.0; A_MStaffPalette1(); }
+	S_MSTAFFATK_4('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_5) { SY = 48.0; A_MStaffPalette2(); }
+	S_MSTAFFATK_5('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_6) { SY = 48.0; A_MStaffPalette3(); }
+	S_MSTAFFATK_6('MSTF', 8, 1.0 / 35.0, S_MSTAFFATK_7) { SY = 40.0; }
+	S_MSTAFFATK_7('MSTF', 9, 5.0 / 35.0, S_MSTAFFREADY) { SY = 36.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_BOTH;
+	UpState = S_MSTAFFUP;
+	DownState = S_MSTAFFDOWN;
+	ReadyState = S_MSTAFFREADY;
+	AttackState = S_MSTAFFATK_1;
+	HoldAttackState = S_MSTAFFATK_1;
+	PSpriteSY = 20.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,105 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RevenantTracer:Projectile;
+
+//==========================================================================
+//
+//  A_Tracer
+//
+//  Ravenant missile tracer.
+//
+//==========================================================================
+
+#define TRACEADJUST	0.2865921825
+
+void A_Tracer(void)
+{
+	Actor A;
+	TVec wishdir;
+	TVec currdir;
+	TVec delta;
+	float adjustlen;
+
+	if (level->tictime & 3)
+		return;
+
+	// spawn a puff of smoke behind the rocket      
+	SpawnPuff(Origin.x, Origin.y, Origin.z);
+
+	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
+
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	// adjust direction
+	if (!Enemy || Enemy.Health <= 0)
+		return;
+
+	wishdir = Normalize(MobjCenter(Enemy) - Origin);
+	currdir = Normalize(Velocity);
+	delta = wishdir - currdir;
+	adjustlen = Length(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	wishdir = currdir + delta * adjustlen;
+	Velocity = wishdir * Speed;
+	VectorAngles(&wishdir, &Angles);
+}
+
+__states__
+{
+	S_TRACER('FATB', 0 | FF_FULLBRIGHT, 'missiles/revball.md2', 0, 1.0 / 35.0, S_TRACER2) { A_Tracer(); }
+	S_TRACER2('FATB', 0 | FF_FULLBRIGHT, 'missiles/revball.md2', 1, 1.0 / 35.0, S_TRACER3) { }
+	S_TRACER3('FATB', 1 | FF_FULLBRIGHT, 'missiles/revball.md2', 2, 1.0 / 35.0, S_TRACER4) { A_Tracer(); }
+	S_TRACER4('FATB', 1 | FF_FULLBRIGHT, 'missiles/revball.md2', 3, 1.0 / 35.0, S_TRACER) { }
+	S_TRACEEXP1('FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TRACEEXP2) { }
+	S_TRACEEXP2('FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TRACEEXP3) { }
+	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 10;
+	Translucency = 33;
+	IdleState = S_TRACER;
+	DeathState = S_TRACEEXP1;
+	SightSound = 'RavenantAttack';
+	DeathSound = 'BarrelExplode';
+	Effects = EF_DL_RBALL;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

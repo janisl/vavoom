@@ -48,151 +48,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class VerticalDoor:SectorMover
-{
-	int type;
-	float topheight;
-	float speed;
-	int direction;		// 1 = up, 0 = waiting, -1 = down
-	float topwait;		// time to wait at the top
-	float toptime;		// (keep in case a door going down is reset)
-						// when it reaches 0, start going down
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (direction)
-	{
-	case 0:
-		// WAITING
-		toptime -= deltaTime;
-		if (toptime <= 0.0)
-		{
-			toptime = 0.0;
-			switch (type)
-			{
-			case doorRaise:
-				direction = -1;	// time to go back down
-				if (speed >= 256.0)
-				{
-					SectorStartSoundName(sector, 'BlazeDoorClose',
-						CHAN_VOICE);
-				}
-				else
-				{
-					SectorStartSoundName(sector, 'DoorClose', CHAN_VOICE);
-				}
-				break;
-
-			case DREV_CLOSEWAITOPEN:
-				direction = 1;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-
-	case 2:
-		//  INITIAL WAIT
-		toptime -= deltaTime;
-		if (toptime <= 0.0)
-		{
-			toptime = 0.0;
-			switch (type)
-			{
-			case raiseIn5Mins:
-				direction = 1;
-				type = doorRaise;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-
-	case -1:
-		// DOWN
-		res = T_MovePlane(sector, speed * deltaTime,
-			sector->floorheight, false, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			switch (type)
-			{
-			case doorRaise:
-			case doorClose:
-				sector->SpecialData = none;
-				if (speed >= 256.0)
-				{
-					SectorStartSoundName(sector, 'BlazeDoorClose',
-						CHAN_VOICE);
-				}
-				RemoveSpecialThinker(self);	// unlink and free
-				break;
-
-			case DREV_CLOSEWAITOPEN:
-				direction = 0;
-				toptime = topwait;
-				break;
-			default:
-				break;
-			}
-		}
-		else if (res == RES_CRUSHED)
-		{
-			switch (type)
-			{
-			case doorClose:	// DO NOT GO BACK UP!
-				break;
-
-			default:
-				direction = 1;
-				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
-				break;
-			}
-		}
-		break;
-
-	case 1:
-		// UP
-		res = T_MovePlane(sector, speed * deltaTime, topheight,
-			false, 1, direction);
-
-		if (res == RES_PASTDEST)
-		{
-			switch (type)
-			{
-			case doorRaise:
-				direction = 0;	// wait at top
-				toptime = topwait;
-				break;
-
-			case DREV_CLOSEWAITOPEN:
-			case doorOpen:
-				sector->SpecialData = none;
-				RemoveSpecialThinker(self);	// unlink and free
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-	}
-}
-
-} // class
-
 //==========================================================================
 //
 //  EV_DoDoor
@@ -429,6 +284,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.13  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

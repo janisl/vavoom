@@ -1,0 +1,173 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class IceGuy:Pawn
+	__mobjinfo__(8020);
+
+//==========================================================================
+//
+//  A_IceGuyLook
+//
+//==========================================================================
+
+void A_IceGuyLook(void)
+{
+	float dist;
+	float an;
+
+	A_Look();
+	if (Random() < 0.25)
+	{
+		dist = Radius * (Random() * 2.0 - 1.0);
+		an = AngleMod360(Angles.yaw + 90.0);
+
+		Spawn(Random() < 0.5 ? IceGuyWisp2 : IceGuyWisp1,
+			Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+	}
+}
+
+//==========================================================================
+//
+//  A_IceGuyChase
+//
+//==========================================================================
+
+void A_IceGuyChase(void)
+{
+	float dist;
+	float an;
+	Actor A;
+
+	A_Chase();
+	if (Random() < 0.5)
+	{
+		dist = Radius * (Random() * 2.0 - 1.0);
+		an = AngleMod360(Angles.yaw + 90.0);
+
+		A = Spawn(Random() < 0.5 ? IceGuyWisp2 : IceGuyWisp1,
+			Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+		if (A)
+		{
+			A.Velocity = Velocity;
+			A.Instigator = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_IceGuyAttack
+//
+//==========================================================================
+
+void A_IceGuyAttack(void)
+{
+	float an;
+
+	if (!Enemy)
+	{
+		return;
+	}
+	an = AngleMod360(Angles.yaw + 90.0);
+	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
+		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
+
+	an = AngleMod360(Angles.yaw - 90.0);
+	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
+		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
+
+	PlaySound(AttackSound, CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//	A_IceGuyDie
+//
+//==========================================================================
+
+void A_IceGuyDie(void)
+{
+	Velocity = vector(0.0, 0.0, 0.0);
+	Height *= 4.0;
+	A_FreezeDeathChunks();
+}
+
+__states__
+{
+	S_ICEGUY_LOOK('ICEY', 0, 10.0 / 35.0, S_ICEGUY_LOOK) { A_IceGuyLook(); }
+	S_ICEGUY_DORMANT('ICEY', 0, -1.0, S_ICEGUY_LOOK) { }
+	S_ICEGUY_WALK1('ICEY', 0, 4.0 / 35.0, S_ICEGUY_WALK2) { A_Chase(); }
+	S_ICEGUY_WALK2('ICEY', 1, 4.0 / 35.0, S_ICEGUY_WALK3) { A_IceGuyChase(); }
+	S_ICEGUY_WALK3('ICEY', 2, 4.0 / 35.0, S_ICEGUY_WALK4) { A_Chase(); }
+	S_ICEGUY_WALK4('ICEY', 3, 4.0 / 35.0, S_ICEGUY_WALK1) { A_Chase(); }
+	S_ICEGUY_ATK1('ICEY', 4, 3.0 / 35.0, S_ICEGUY_ATK2) { A_FaceTarget(); }
+	S_ICEGUY_ATK2('ICEY', 5, 3.0 / 35.0, S_ICEGUY_ATK3) { A_FaceTarget(); }
+	S_ICEGUY_ATK3('ICEY', 6 | FF_FULLBRIGHT, 8.0 / 35.0, S_ICEGUY_ATK4) { A_IceGuyAttack(); }
+	S_ICEGUY_ATK4('ICEY', 5, 4.0 / 35.0, S_ICEGUY_WALK1) { A_FaceTarget(); }
+	S_ICEGUY_PAIN1('ICEY', 0, 1.0 / 35.0, S_ICEGUY_WALK1) { A_Pain(); }
+	S_ICEGUY_DEATH('ICEY', 0, 1.0 / 35.0, S_NULL) { A_IceGuyDie(); }
+}
+
+//==========================================================================
+//
+//	SetDormant
+//
+//==========================================================================
+
+void SetDormant(void)
+{
+	bDormant = true;
+	SetState(S_ICEGUY_DORMANT);
+	StateTime = -1.0;
+}
+
+defaultproperties
+{
+	Health = 120;
+	Radius = 22.0;
+	Height = 75.0;
+	Mass = 150.0;
+	StepSpeed = 14.0;
+	PainChance = 0.5625;
+	bNoBlood = true;
+	bIceDamage = true;
+	bFloorClip = false;
+	IdleState = S_ICEGUY_LOOK;
+	SeeState = S_ICEGUY_WALK1;
+	MissileState = S_ICEGUY_ATK1;
+	PainState = S_ICEGUY_PAIN1;
+	DeathState = S_ICEGUY_DEATH;
+	SightSound = 'IceGuySight';
+	ActiveSound = 'IceGuyActive';
+	AttackSound = 'IceGuyAttack';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

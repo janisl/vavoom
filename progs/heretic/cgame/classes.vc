@@ -1,0 +1,141 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+#include "MenuObject.vc"
+#include "MenuChoice.vc"
+#include "MenuTitleText.vc"
+#include "MenuScreen.vc"
+#include "MenuStaticBitmap.vc"
+#include "MenuStaticAnim.vc"
+#include "MenuSpriteAnim.vc"
+#include "MenuSelector_BigArrow.vc"
+#include "MenuSelector_SmallLeft.vc"
+#include "MenuSelector_SmallRight.vc"
+#include "MenuTextButton.vc"
+#include "MenuBigTextButton.vc"
+#include "MenuSmallTextButton.vc"
+#include "MenuChoiceEnum.vc"
+#include "MenuChoice_OnOff.vc"
+#include "MenuChoiceSlider.vc"
+#include "MenuSaveSlot.vc"
+#include "MenuInputLine.vc"
+#include "MenuSList.vc"
+
+#include "MenuMainTitleImage.vc"
+#include "MenuSpinningSkull.vc"
+#include "MenuSpinningSkull2.vc"
+#include "MenuChoice_SinglePlayer.vc"
+#include "MenuChoice_Multiplayer.vc"
+#include "MenuChoice_Options.vc"
+#include "MenuChoice_Help.vc"
+#include "MenuChoice_QuitGame.vc"
+#include "MenuScreenMain.vc"
+#include "MenuChoice_NewGame.vc"
+#include "MenuChoice_LoadGame.vc"
+#include "MenuChoice_SaveGame.vc"
+#include "MenuChoice_EndGame.vc"
+#include "MenuScreenSinglePlayer.vc"
+#include "MenuChoice_Episode1.vc"
+#include "MenuChoice_Episode2.vc"
+#include "MenuChoice_Episode3.vc"
+#include "MenuChoice_Episode4.vc"
+#include "MenuChoice_Episode5.vc"
+#include "MenuScreenEpisode.vc"
+#include "MenuChoice_Skill.vc"
+#include "MenuScreenSkill.vc"
+#include "MenuChoice_LoadSlot.vc"
+#include "MenuScreenLoadGame.vc"
+#include "MenuChoice_SaveSlot.vc"
+#include "MenuScreenSaveGame.vc"
+#include "MenuChoice_NewNetGame.vc"
+#include "MenuChoice_JoinGame.vc"
+#include "MenuChoice_PlayerSetup.vc"
+#include "MenuScreenMultiplayer.vc"
+#include "MenuChoice_StartGame.vc"
+#include "MenuChoice_Players.vc"
+#include "MenuChoice_Monsters.vc"
+#include "MenuChoice_DeathMatch.vc"
+#include "MenuChoice_MPSkill.vc"
+#include "MenuChoice_TimeLimit.vc"
+#include "MenuChoice_Level.vc"
+#include "MenuChoice_MPEpisode.vc"
+#include "MenuScreenNewNetGame.vc"
+#include "MenuChoice_Search.vc"
+#include "MenuChoice_JoinAt.vc"
+#include "MenuScreenJoinGame.vc"
+#include "MenuScreenSList.vc"
+#include "MenuChoice_PlayerName.vc"
+#include "MenuChoice_Color.vc"
+#include "MenuScreenPlayerSetup.vc"
+#include "MenuChoice_Controls.vc"
+#include "MenuChoice_Controls2.vc"
+#include "MenuChoice_MouseOptions.vc"
+#include "MenuChoice_ScreenResolution.vc"
+#include "MenuChoice_VideoOptions.vc"
+#include "MenuChoice_SoundSettings.vc"
+#include "MenuChoice_GoToConsole.vc"
+#include "MenuScreenOptions.vc"
+#include "MenuControlKey.vc"
+#include "MenuScreenControls.vc"
+#include "MenuScreenControls2.vc"
+#include "MenuChoice_MouseXSensitivity.vc"
+#include "MenuChoice_MouseYSensitivity.vc"
+#include "MenuChoice_MouseLook.vc"
+#include "MenuChoice_InvertMouse.vc"
+#include "MenuChoice_Lookspring.vc"
+#include "MenuChoice_LookStrafe.vc"
+#include "MenuScreenMouseOptions.vc"
+#include "MenuChoice_VideoMode.vc"
+#include "MenuChoice_BitDepth.vc"
+#include "MenuChoice_ApplyVidMode.vc"
+#include "MenuScreenScreenResolution.vc"
+#include "MenuChoice_ScreenSize.vc"
+#include "MenuChoice_Brightness.vc"
+#include "MenuChoice_Darkening.vc"
+#include "MenuChoice_Croshair.vc"
+#include "MenuChoice_DarkenLights.vc"
+#include "MenuChoice_ExtraSamples.vc"
+#include "MenuChoice_DynamicLights.vc"
+#include "MenuChoice_ColoredLights.vc"
+#include "MenuChoice_SpanDrawing.vc"
+#include "MenuChoice_GLBlendSprites.vc"
+#include "MenuChoice_D3DBlendSprites.vc"
+#include "MenuScreenVideoOptions.vc"
+#include "MenuChoice_SoundVolume.vc"
+#include "MenuChoice_MusicVolume.vc"
+#include "MenuChoice_SwapStereo.vc"
+#include "MenuChoice_CDMusic.vc"
+#include "MenuScreenSoundOptions.vc"
+
+#include "MenuHelpPage.vc"
+#include "MenuScreenHelp.vc"
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:21  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

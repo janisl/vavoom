@@ -1,0 +1,68 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CentaurLeader:Centaur
+	__mobjinfo__(115);
+
+//==========================================================================
+//
+//  A_CentaurAttack2
+//
+//==========================================================================
+
+void A_CentaurAttack2(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	SpawnMissile(Enemy, CentaurMissile);
+	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_CENTAUR_MISSILE1('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE2) { A_FaceTarget(); }
+	S_CENTAUR_MISSILE2('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_MISSILE3) { A_CentaurAttack2(); }
+	S_CENTAUR_MISSILE3('CENT', 4, 10.0 / 35.0, S_CENTAUR_MISSILE4) { A_FaceTarget(); }
+	S_CENTAUR_MISSILE4('CENT', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_CENTAUR_WALK1) { A_CentaurAttack2(); }
+}
+
+defaultproperties
+{
+	Health = 250;
+	GibsHealth = -125;
+	StepSpeed = 10.0;
+	PainChance = 0.375;
+	MissileState = S_CENTAUR_MISSILE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

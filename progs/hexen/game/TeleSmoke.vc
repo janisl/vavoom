@@ -1,0 +1,70 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TeleSmoke:Effect
+	__mobjinfo__(140);
+
+__states__
+{
+	S_TELESMOKE1('TSMK', 0, 4.0 / 35.0, S_TELESMOKE2) { }
+	S_TELESMOKE2('TSMK', 1, 3.0 / 35.0, S_TELESMOKE3) { }
+	S_TELESMOKE3('TSMK', 2, 4.0 / 35.0, S_TELESMOKE4) { }
+	S_TELESMOKE4('TSMK', 3, 3.0 / 35.0, S_TELESMOKE5) { }
+	S_TELESMOKE5('TSMK', 4, 4.0 / 35.0, S_TELESMOKE6) { }
+	S_TELESMOKE6('TSMK', 5, 3.0 / 35.0, S_TELESMOKE7) { }
+	S_TELESMOKE7('TSMK', 6, 4.0 / 35.0, S_TELESMOKE8) { }
+	S_TELESMOKE8('TSMK', 7, 3.0 / 35.0, S_TELESMOKE9) { }
+	S_TELESMOKE9('TSMK', 8, 4.0 / 35.0, S_TELESMOKE10) { }
+	S_TELESMOKE10('TSMK', 9, 3.0 / 35.0, S_TELESMOKE11) { }
+	S_TELESMOKE11('TSMK', 10, 4.0 / 35.0, S_TELESMOKE12) { }
+	S_TELESMOKE12('TSMK', 11, 3.0 / 35.0, S_TELESMOKE13) { }
+	S_TELESMOKE13('TSMK', 12, 4.0 / 35.0, S_TELESMOKE14) { }
+	S_TELESMOKE14('TSMK', 13, 3.0 / 35.0, S_TELESMOKE15) { }
+	S_TELESMOKE15('TSMK', 14, 4.0 / 35.0, S_TELESMOKE16) { }
+	S_TELESMOKE16('TSMK', 15, 3.0 / 35.0, S_TELESMOKE17) { }
+	S_TELESMOKE17('TSMK', 16, 4.0 / 35.0, S_TELESMOKE18) { }
+	S_TELESMOKE18('TSMK', 17, 3.0 / 35.0, S_TELESMOKE19) { }
+	S_TELESMOKE19('TSMK', 18, 4.0 / 35.0, S_TELESMOKE20) { }
+	S_TELESMOKE20('TSMK', 19, 3.0 / 35.0, S_TELESMOKE21) { }
+	S_TELESMOKE21('TSMK', 20, 4.0 / 35.0, S_TELESMOKE22) { }
+	S_TELESMOKE22('TSMK', 21, 3.0 / 35.0, S_TELESMOKE23) { }
+	S_TELESMOKE23('TSMK', 22, 4.0 / 35.0, S_TELESMOKE24) { }
+	S_TELESMOKE24('TSMK', 23, 3.0 / 35.0, S_TELESMOKE25) { }
+	S_TELESMOKE25('TSMK', 24, 4.0 / 35.0, S_TELESMOKE26) { }
+	S_TELESMOKE26('TSMK', 25, 3.0 / 35.0, S_TELESMOKE1) { }
+}
+
+defaultproperties
+{
+	IdleState = S_TELESMOKE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

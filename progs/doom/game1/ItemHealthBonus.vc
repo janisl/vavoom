@@ -1,0 +1,70 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ItemHealthBonus:Pickup
+	__mobjinfo__(2014);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Health++;	// can go over 100%
+	if (Toucher.Player->Health > 200)
+		Toucher.Player->Health = 200;
+	Toucher.Health = Toucher.Player->Health;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+__states__
+{
+	S_BON1('BON1', 0, 'items/bottle.md2', 0, 6.0 / 35.0, S_BON1A) { }
+	S_BON1A('BON1', 1, 'items/bottle.md2', 1, 6.0 / 35.0, S_BON1B) { }
+	S_BON1B('BON1', 2, 'items/bottle.md2', 2, 6.0 / 35.0, S_BON1C) { }
+	S_BON1C('BON1', 3, 'items/bottle.md2', 3, 6.0 / 35.0, S_BON1D) { }
+	S_BON1D('BON1', 2, 'items/bottle.md2', 4, 6.0 / 35.0, S_BON1E) { }
+	S_BON1E('BON1', 1, 'items/bottle.md2', 5, 6.0 / 35.0, S_BON1) { }
+}
+
+defaultproperties
+{
+	Translucency = 33;
+	bCountItem = true;
+	IdleState = S_BON1;
+	PickupMessage = "Picked up a health bonus.";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,102 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponFighterSword:Weapon;
+
+//============================================================================
+//
+//  A_FSwordAttack
+//
+//============================================================================
+
+void A_FSwordAttack(void)
+{
+	PlayerPawn Owner = PlayerPawn(Player->MO);
+
+	Player->Mana[MANA_1] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
+		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
+	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
+		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 8.0));
+	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin, FighterSwordMissile,
+		Owner.Angles.yaw);
+	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
+		FighterSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 8.0));
+	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
+		FighterSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 4.0));
+	Owner.PlaySound('FighterSwordFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_FSWORDREADY('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY1) { A_WeaponReady(); }
+	S_FSWORDREADY1('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY2) { A_WeaponReady(); }
+	S_FSWORDREADY2('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY3) { A_WeaponReady(); }
+	S_FSWORDREADY3('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY4) { A_WeaponReady(); }
+	S_FSWORDREADY4('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY5) { A_WeaponReady(); }
+	S_FSWORDREADY5('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY6) { A_WeaponReady(); }
+	S_FSWORDREADY6('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY7) { A_WeaponReady(); }
+	S_FSWORDREADY7('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY8) { A_WeaponReady(); }
+	S_FSWORDREADY8('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY9) { A_WeaponReady(); }
+	S_FSWORDREADY9('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY10) { A_WeaponReady(); }
+	S_FSWORDREADY10('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY11) { A_WeaponReady(); }
+	S_FSWORDREADY11('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY) { A_WeaponReady(); }
+	S_FSWORDDOWN('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDDOWN) { A_Lower(); }
+	S_FSWORDUP('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDUP) { A_Raise(); }
+	S_FSWORDATK_1('FSRD', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_2) { SX = 5.0; SY = 36.0; }
+	S_FSWORDATK_2('FSRD', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_3) { SX = 5.0; SY = 36.0; }
+	S_FSWORDATK_3('FSRD', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_4) { SX = 5.0; SY = 36.0; }
+	S_FSWORDATK_4('FSRD', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORDATK_5) { SX = 5.0; SY = 36.0; A_FSwordAttack(); }
+	S_FSWORDATK_5('FSRD', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_6) { SX = 5.0; SY = 36.0; }
+	S_FSWORDATK_6('FSRD', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_FSWORDATK_7) { SX = 5.0; SY = 36.0; }
+	S_FSWORDATK_7('FSRD', 8 | FF_FULLBRIGHT, 10.0 / 35.0, S_FSWORDATK_8) { SX = 5.0; SY = 150.0; }
+	S_FSWORDATK_8('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_9) { SX = 5.0; SY = 60.0; }
+	S_FSWORDATK_9('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_10) { SX = 5.0; SY = 55.0; }
+	S_FSWORDATK_10('FSRD', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_11) { SX = 5.0; SY = 50.0; }
+	S_FSWORDATK_11('FSRD', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDATK_12) { SX = 5.0; SY = 45.0; }
+	S_FSWORDATK_12('FSRD', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_FSWORDREADY) { SX = 5.0; SY = 40.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_BOTH;
+	UpState = S_FSWORDUP;
+	DownState = S_FSWORDDOWN;
+	ReadyState = S_FSWORDREADY;
+	AttackState = S_FSWORDATK_1;
+	HoldAttackState = S_FSWORDATK_1;
+	PSpriteSY = 10.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

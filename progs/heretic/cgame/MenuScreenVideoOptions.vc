@@ -1,0 +1,69 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenVideoOptions:MenuScreen;
+
+void InitWindow(void)
+{
+	switch (GetCvar("_driver"))
+	{
+	case DRV_SOFTWARE:
+		Choices[7] = MenuChoice_ColoredLights;
+		Choices[8] = MenuChoice_SpanDrawing;
+		break;
+
+	case DRV_OPENGL:
+		Choices[7] = MenuChoice_GLBlendSprites;
+		break;
+
+	case DRV_DIRECT3D:
+		Choices[7] = MenuChoice_D3DBlendSprites;
+		break;
+	}
+	::InitWindow();
+}
+
+defaultproperties
+{
+	Choices[0] = MenuChoice_ScreenSize;
+	Choices[1] = MenuChoice_Brightness;
+	Choices[2] = MenuChoice_Darkening;
+	Choices[3] = MenuChoice_Croshair;
+	Choices[4] = MenuChoice_DarkenLights;
+	Choices[5] = MenuChoice_ExtraSamples;
+	Choices[6] = MenuChoice_DynamicLights;
+	ChoicesStartX = 160;
+	ChoicesStartY = 26;
+	SelectorType = MenuSelector_SmallRight;
+	Title = "VIDEO OPTIONS";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

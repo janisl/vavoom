@@ -1,0 +1,115 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MageStaffFX2:Projectile;
+
+//===========================================================================
+//
+//  RoughCheckThing
+//
+//===========================================================================
+
+bool RoughCheckThing(Entity Other)
+{
+	float angle;
+	Actor link = Actor(Other);
+	
+	if (!(link.bCountKill || link.bIsPlayer) || link == Instigator ||
+		link.bDormant)
+	{
+		return false;
+	}
+	if (!link.bShootable)
+	{
+		return false;
+	}
+	if (netgame && !deathmatch && link.bIsPlayer)
+	{
+		return false;
+	}
+	if (CanSee(link))
+	{
+		angle = AngleMod360(atan2(
+			link.Origin.y - Instigator.Origin.y,
+			link.Origin.x - Instigator.Origin.x) -
+			Instigator.Angles.yaw);
+		if (angle > 226.0 * 360.0 / 256.0 ||
+			angle < 30.0 * 360.0 / 256.0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  A_MStaffTrack
+//
+//==========================================================================
+
+void A_MStaffTrack(void)
+{
+	if (!Enemy && (P_Random() < 50))
+	{
+		Enemy = Actor(RoughMonsterSearch(10));
+	}
+	SeekerMissile(2.0, 10.0);
+}
+
+__states__
+{
+	S_MSTAFF_FX2_1('MSP2', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_2) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_2('MSP2', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_3) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_3('MSP2', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_4) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_4('MSP2', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFF_FX2_1) { A_MStaffTrack(); }
+	S_MSTAFF_FX2_X1('MSP2', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX2_X2) { }
+	S_MSTAFF_FX2_X2('MSP2', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X3) { A_Explode(); }
+	S_MSTAFF_FX2_X3('MSP2', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X4) { }
+	S_MSTAFF_FX2_X4('MSP2', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX2_X5) { }
+	S_MSTAFF_FX2_X5('MSP2', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 8.0;
+	Speed = 595.0;
+	MissileDamage = 4;
+	bFireDamage = true;
+	bSeekerMissile = true;
+	IdleState = S_MSTAFF_FX2_1;
+	DeathState = S_MSTAFF_FX2_X1;
+	DeathSound = 'MageStaffExplode';
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

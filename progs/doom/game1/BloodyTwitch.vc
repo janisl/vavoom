@@ -1,0 +1,53 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BloodyTwitch:Decoration
+	__mobjinfo__(49);
+
+__states__
+{
+	S_BLOODYTWITCH('GOR1', 0, 'bodies/twitch.md2', 0, 10.0 / 35.0, S_BLOODYTWITCH2) { }
+	S_BLOODYTWITCH2('GOR1', 1, 'bodies/twitch.md2', 1, 15.0 / 35.0, S_BLOODYTWITCH3) { }
+	S_BLOODYTWITCH3('GOR1', 2, 'bodies/twitch.md2', 2, 8.0 / 35.0, S_BLOODYTWITCH4) { }
+	S_BLOODYTWITCH4('GOR1', 1, 'bodies/twitch.md2', 3, 6.0 / 35.0, S_BLOODYTWITCH) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 68.0;
+	bSolid = true;
+	bSpawnCeiling = true;
+	bNoGravity = true;
+	IdleState = S_BLOODYTWITCH;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,68 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponMageWand:Weapon;
+
+//==========================================================================
+//
+//  A_MWandAttack
+//
+//==========================================================================
+
+void A_MWandAttack(void)
+{
+	PlayerPawn(Player->MO).SpawnPlayerMissile(MageWandMissile);
+	Player->MO.PlaySound('MageWandFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_MWANDREADY('MWND', 0, 1.0 / 35.0, S_MWANDREADY) { A_WeaponReady(); }
+	S_MWANDDOWN('MWND', 0, 1.0 / 35.0, S_MWANDDOWN) { A_Lower(); }
+	S_MWANDUP('MWND', 0, 1.0 / 35.0, S_MWANDUP) { A_Raise(); }
+	S_MWANDATK_1('MWND', 0, 6.0 / 35.0, S_MWANDATK_2) { }
+	S_MWANDATK_2('MWND', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_MWANDATK_3) { SY = 48.0; A_MWandAttack(); }
+	S_MWANDATK_3('MWND', 0, 3.0 / 35.0, S_MWANDATK_4) { SY = 40.0; }
+	S_MWANDATK_4('MWND', 0, 3.0 / 35.0, S_MWANDREADY) { SY = 36.0; A_ReFire(); }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_MWANDUP;
+	DownState = S_MWANDDOWN;
+	ReadyState = S_MWANDREADY;
+	AttackState = S_MWANDATK_1;
+	HoldAttackState = S_MWANDATK_1;
+	PSpriteSY = 9.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,105 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PotteryBit:Fragment;
+
+//==========================================================================
+//
+//  A_PotteryChooseBit
+//
+//==========================================================================
+
+void A_PotteryChooseBit(void)
+{
+	SetState(DeathState + (P_Random() % 5) * 2 + 1);
+	StateTime = 8.0 + Random() * 16.0;
+}
+
+//==========================================================================
+//
+//  A_PotteryCheck
+//
+//==========================================================================
+
+void A_PotteryCheck(void)
+{
+	int i;
+	Actor pmo;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!players[i].bActive || !players[i].bSpawned)
+		{
+			continue;
+		}
+		pmo = players[i].MO;
+		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
+			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
+		{
+			// Previous state (pottery bit waiting state)
+			SetState(StateNum - 1);
+			return;
+		}
+	}
+}
+
+__states__
+{
+	S_POTTERYBIT_1('PBIT', 0, -1.0, S_NULL) { }
+	S_POTTERYBIT_2('PBIT', 1, -1.0, S_NULL) { }
+	S_POTTERYBIT_3('PBIT', 2, -1.0, S_NULL) { }
+	S_POTTERYBIT_4('PBIT', 3, -1.0, S_NULL) { }
+	S_POTTERYBIT_5('PBIT', 4, -1.0, S_NULL) { }
+	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, S_NULL) { A_PotteryChooseBit(); }
+	S_POTTERYBIT_EX1('PBIT', 5, 140.0 / 35.0, S_POTTERYBIT_EX1_2) { }
+	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX2('PBIT', 6, 140.0 / 35.0, S_POTTERYBIT_EX2_2) { }
+	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX3('PBIT', 7, 140.0 / 35.0, S_POTTERYBIT_EX3_2) { }
+	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX4('PBIT', 8, 140.0 / 35.0, S_POTTERYBIT_EX4_2) { }
+	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX5('PBIT', 9, 140.0 / 35.0, S_POTTERYBIT_EX5_2) { }
+	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+}
+
+defaultproperties
+{
+	Radius = 5.0;
+	Height = 5.0;
+	bNoBlockmap = false;
+	bDropOff = false;
+	bNoGravity = false;
+	IdleState = S_POTTERYBIT_1;
+	DeathState = S_POTTERYBIT_EX0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

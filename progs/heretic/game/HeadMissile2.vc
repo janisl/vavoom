@@ -1,0 +1,56 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HeadMissile2:Projectile;
+
+__states__
+{
+	S_HEADFX2_1('FX05', 7, 6.0 / 35.0, S_HEADFX2_2) { }
+	S_HEADFX2_2('FX05', 8, 6.0 / 35.0, S_HEADFX2_3) { }
+	S_HEADFX2_3('FX05', 9, 6.0 / 35.0, S_HEADFX2_1) { }
+	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) { }
+	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) { }
+	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) { }
+	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 6.0;
+	Speed = 280.0;
+	MissileDamage = 3;
+	IdleState = S_HEADFX2_1;
+	DeathState = S_HEADFXI2_1;
+	Effects = EF_DL_BLUE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

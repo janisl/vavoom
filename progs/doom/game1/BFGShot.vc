@@ -1,0 +1,107 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BFGShot:Projectile;
+
+//===========================================================================
+//
+//  A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+void A_BFGSpray(void)
+{
+	int i;
+	int j;
+	int damage;
+	TAVec aimAng;
+	Actor emo;
+
+	// offset angles from its attack angle
+	for (i = 0; i < 40; i++)
+	{
+		aimAng = Angles;
+		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / 40.0 * itof(i));
+
+		// target is the originator (player)
+		//  of the missile
+		AimLineAttack(Instigator, aimAng, 16.0 * 64.0);
+		if (!linetarget)
+		{
+			continue;
+		}
+
+		emo = Spawn(ExtraBFG, linetarget.Origin +
+			vector(0.0, 0.0, linetarget.Height / 4.0));
+
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(svc_explosion2);
+		MSG_WriteByte(EF_DL_GBALL);
+		MSG_WriteShort(ftoi(emo.Origin.x));
+		MSG_WriteShort(ftoi(emo.Origin.y));
+		MSG_WriteShort(ftoi(emo.Origin.z));
+
+		damage = 0;
+		for (j = 0; j < 15; j++)
+			damage += (P_Random() & 7) + 1;
+
+		linetarget.Damage(Instigator, Instigator, damage);
+	}
+}
+
+__states__
+{
+	S_BFGSHOT('BFS1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BFGSHOT2) { }
+	S_BFGSHOT2('BFS1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BFGSHOT) { }
+	S_BFGLAND('BFE1', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND2) { }
+	S_BFGLAND2('BFE1', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND3) { }
+	S_BFGLAND3('BFE1', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND4) { A_BFGSpray(); }
+	S_BFGLAND4('BFE1', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND5) { }
+	S_BFGLAND5('BFE1', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND6) { }
+	S_BFGLAND6('BFE1', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 13.0;
+	Height = 8.0;
+	Speed = 875.0;
+	MissileDamage = 100;
+	Translucency = 33;
+	IdleState = S_BFGSHOT;
+	DeathState = S_BFGLAND;
+	DeathSound = 'RocketExplode';
+	Effects = EF_DL_GBALL;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

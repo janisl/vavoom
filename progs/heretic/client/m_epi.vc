@@ -27,8 +27,6 @@
 //**
 //**************************************************************************
 
-void menu_skill(void);
-
 int MenuEpisode;
 
 //==========================================================================
@@ -39,136 +37,15 @@ int MenuEpisode;
 
 void SharewareResponse(int key)
 {
-	menu_help();
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode1
-//
-//==========================================================================
-
-class MenuChoice_Episode1:MenuBigTextButton
-{
-	int EpisodeNum;
-
-	void ActivateEvent(void)
-	{
-		if (shareware && EpisodeNum > 1)
-		{
-			MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-				MB_Shareware, false);
-			return;
-		}
-		MenuEpisode = EpisodeNum;
-		menu_skill();
-	}
-
-	defaultproperties
-	{
-		Text = "CITY OF THE DAMNED";
-		EpisodeNum = 1;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode2
-//
-//==========================================================================
-
-class MenuChoice_Episode2:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "HELL'S MAW";
-		EpisodeNum = 2;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode3
-//
-//==========================================================================
-
-class MenuChoice_Episode3:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "THE DOME OF D'SPARIL";
-		EpisodeNum = 3;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode4
-//
-//==========================================================================
-
-class MenuChoice_Episode4:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "THE OSSUARY";
-		EpisodeNum = 4;
-	}
-}
-
-//==========================================================================
-//
-//	MenuChoice_Episode5
-//
-//==========================================================================
-
-class MenuChoice_Episode5:MenuChoice_Episode1
-{
-	defaultproperties
-	{
-		Text = "THE STAGNANT DEMESNE";
-		EpisodeNum = 5;
-	}
-}
-
-//==========================================================================
-//
-//	MenuScreenEpisode
-//
-//==========================================================================
-
-class MenuScreenEpisode:MenuScreen
-{
-	void CreateChoices(void)
-	{
-		if (ExtendedWAD)
-		{
-			Choices[3] = MenuChoice_Episode4;
-			Choices[4] = MenuChoice_Episode5;
-		}
-		::CreateChoices();
-	}
-
-	defaultproperties
-	{
-		Choices[0] = MenuChoice_Episode1;
-		Choices[1] = MenuChoice_Episode2;
-		Choices[2] = MenuChoice_Episode3;
-		ChoicesStartX = 48;
-		ChoicesStartY = 40;
-		SelectorType = MenuSelector_BigArrow;
-		Title = "WHICH EPISODE?";
-	}
-}
-
-void menu_episode(void)
-{
-	PushMenuScreen(SpawnMenu(MenuScreenEpisode));
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.8  2002/03/09 17:52:52  dj_jl
 //  Got rid of function pointers
 //

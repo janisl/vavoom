@@ -1,0 +1,130 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponMageLightning:Weapon;
+
+//==========================================================================
+//
+//  A_LightningReady
+//
+//==========================================================================
+
+void A_LightningReady(void)
+{
+	A_WeaponReady();
+	if (P_Random() < 160)
+	{
+		Player->MO.PlaySound('MageLightningReady', CHAN_WEAPON);
+	}
+}
+
+//==========================================================================
+//
+//  A_MLightningAttack
+//
+//==========================================================================
+
+void A_MLightningAttack(void)
+{
+	LightningFloor fmo;
+	LightningCeiling cmo;
+
+	fmo = LightningFloor(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling));
+	if (fmo)
+	{
+		fmo.SpecialMobj2 = &cmo;
+		fmo.A_LightningZap();
+	}
+	if (cmo)
+	{
+		cmo.Enemy = none;	// mobj that it will track
+		cmo.SpecialMobj2 = &fmo;
+		cmo.A_LightningZap();
+	}
+	Player->MO.PlaySound('MageLightningFire', CHAN_WEAPON);
+	Player->Mana[MANA_2] -= WeaponManaUse(Player->PClass,
+		Player->ReadyWeapon);
+}
+
+__states__
+{
+	S_MLIGHTNINGREADY('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY2) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY2('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY3) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY3('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY4) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY4('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY5) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY5('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY6) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY6('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY7) { A_LightningReady(); }
+	S_MLIGHTNINGREADY7('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY8) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY8('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY9) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY9('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY10) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY10('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY11) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY11('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY12) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY12('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY13) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY13('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY14) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY14('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY15) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY15('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY16) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY16('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY17) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY17('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY18) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY18('MLNG', 2 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY19) { A_LightningReady(); }
+	S_MLIGHTNINGREADY19('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY20) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY20('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY21) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY21('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY22) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY22('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY23) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY23('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY24) { A_WeaponReady(); }
+	S_MLIGHTNINGREADY24('MLNG', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGREADY) { A_WeaponReady(); }
+	S_MLIGHTNINGDOWN('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGDOWN) { A_Lower(); }
+	S_MLIGHTNINGUP('MLNG', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_MLIGHTNINGUP) { A_Raise(); }
+	S_MLIGHTNINGATK_1('MLNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_MLIGHTNINGATK_2) { }
+	S_MLIGHTNINGATK_2('MLNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_MLIGHTNINGATK_3) { }
+	S_MLIGHTNINGATK_3('MLNG', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MLIGHTNINGATK_4) { A_MLightningAttack(); }
+	S_MLIGHTNINGATK_4('MLNG', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MLIGHTNINGATK_5) { }
+	S_MLIGHTNINGATK_5('MLNG', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_MLIGHTNINGATK_6) { }
+	S_MLIGHTNINGATK_6('MLNG', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_MLIGHTNINGATK_7) { }
+	S_MLIGHTNINGATK_7('MLNG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_MLIGHTNINGATK_8) { SY = 199.0; }
+	S_MLIGHTNINGATK_8('MLNG', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_MLIGHTNINGATK_9) { SY = 55.0; }
+	S_MLIGHTNINGATK_9('MLNG', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MLIGHTNINGATK_10) { SY = 50.0; }
+	S_MLIGHTNINGATK_10('MLNG', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MLIGHTNINGATK_11) { SY = 45.0; }
+	S_MLIGHTNINGATK_11('MLNG', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_MLIGHTNINGREADY) { SY = 40.0; }
+}
+
+defaultproperties
+{
+	Mana = MANA_2;
+	UpState = S_MLIGHTNINGUP;
+	DownState = S_MLIGHTNINGDOWN;
+	ReadyState = S_MLIGHTNINGREADY;
+	AttackState = S_MLIGHTNINGATK_1;
+	HoldAttackState = S_MLIGHTNINGATK_1;
+	PSpriteSY = 20.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

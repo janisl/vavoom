@@ -45,57 +45,27 @@
 
 #include "world.vc"
 
-#include "savegame.vc"
-#include "states.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 
-#include "inter.vc"
+#include "../game/classes.vc"
+
+#include "savegame.vc"
 #include "user.vc"
 #include "mobj.vc"
-#include "move.vc"
-#include "physics.vc"
 #include "map.vc"
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
 #include "wpnbase.vc"
-#include "enemy.vc"
 #include "cheat.vc"
-
-#include "miscobj.vc"
-#include "items.vc"
-#include "decorat.vc"
-
-#include "weapons.vc"
-#ifdef GRENADE_LAUNCHER
-#include "grlaunch.vc"
-#endif
 
 #include "bot.vc"
 
-#include "player.vc"
-#include "zombiemn.vc"
-#include "shotguy.vc"
-#include "imp.vc"
-#include "demon.vc"
-#include "caco.vc"
-#include "baron.vc"
-#include "lostsoul.vc"
-#include "cyber.vc"
-#include "spider.vc"
+#include "../game1/classes.vc"
 
 #ifdef DOOM2
-#include "heavy.vc"
-#include "knight.vc"
-#include "arach.vc"
-#include "painelem.vc"
-#include "revenant.vc"
-#include "mancubus.vc"
-#include "archvile.vc"
-#include "brain.vc"
-
-#include "keen.vc"
+#include "../game2/classes.vc"
 
 //	Test only with Doom2 because attack functions need Doom2 types.
 //#include "strings.vc"
@@ -103,14 +73,14 @@
 //#include "deh_act.vc"
 #endif
 
-//#include "ddf_wpn.vc"
-//#include "ddf_act.vc"
-
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/10/26 16:32:21  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.19  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

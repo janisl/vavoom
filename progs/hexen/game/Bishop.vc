@@ -1,0 +1,276 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Bishop:Pawn
+	__mobjinfo__(114);
+
+int BlurState;
+int NumToSpawn;		//	Number of blurs/missiles to spawn
+int WeaveIndex;		//	Index into floatbob
+
+//==========================================================================
+//
+//  A_BishopDecide
+//
+//==========================================================================
+
+void A_BishopDecide(void)
+{
+	if (P_Random() < 220)
+	{
+		return;
+	}
+	else
+	{
+		SetState(BlurState);
+	}
+}
+
+//==========================================================================
+//
+//  A_BishopDoBlur
+//
+//==========================================================================
+
+void A_BishopDoBlur(void)
+{
+	NumToSpawn = (P_Random() & 3) + 3;	// P_Random number of blurs
+	if (P_Random() < 120)
+	{
+		Thrust(AngleMod360(Angles.yaw + 90.0), 11.0);
+	}
+	else if (P_Random() > 125)
+	{
+		Thrust(AngleMod360(Angles.yaw - 90.0), 11.0);
+	}
+	else
+	{
+		// Thrust forward
+		Thrust(Angles.yaw, 11.0);
+	}
+	PlaySound('BishopBlur', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_BishopSpawnBlur
+//
+//==========================================================================
+
+void A_BishopSpawnBlur(void)
+{
+	Actor blur;
+
+	if (!--NumToSpawn)
+	{
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
+		if (P_Random() > 96)
+		{
+			SetState(SeeState);
+		}
+		else
+		{
+			SetState(MissileState);
+		}
+	}
+	blur = Spawn(BishopBlur, Origin);
+	if (blur)
+	{
+		blur.Angles = Angles;
+	}
+}
+
+//==========================================================================
+//
+//	A_BishopChase
+//
+//==========================================================================
+
+void A_BishopChase(void)
+{
+	Origin.z -= FloatBobOffsets[WeaveIndex] / 2.0;
+	WeaveIndex = (WeaveIndex + 4) & 63;
+	Origin.z += FloatBobOffsets[WeaveIndex] / 2.0;
+}
+
+//==========================================================================
+//
+//	A_BishopAttack
+//
+//==========================================================================
+
+void A_BishopAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(4));
+		return;
+	}
+	NumToSpawn = (P_Random() & 3) + 5;
+}
+
+//==========================================================================
+//
+//  A_BishopAttack2
+//
+//  Spawns one of a string of bishop missiles
+//
+//==========================================================================
+
+void A_BishopAttack2(void)
+{
+	Actor mo;
+
+	if (!Enemy || !NumToSpawn)
+	{
+		NumToSpawn = 0;
+		SetState(SeeState);
+		return;
+	}
+	mo = SpawnMissile(Enemy, BishopMissile);
+	if (mo)
+	{
+		mo.Enemy = Enemy;
+	}
+	NumToSpawn--;
+}
+
+//==========================================================================
+//
+//  A_BishopPainBlur
+//
+//==========================================================================
+
+void A_BishopPainBlur(void)
+{
+	Actor blur;
+
+	if (P_Random() < 64)
+	{
+		SetState(BlurState);
+		return;
+	}
+	blur = Spawn(BishopPainBlur,
+		Origin + vector((Random() - Random()) * 16.0,
+		(Random() - Random()) * 16.0, (Random() - Random()) * 8.0));
+	if (blur)
+	{
+		blur.Angles = Angles;
+	}
+}
+
+//==========================================================================
+//
+//	A_BishopPuff
+//
+//==========================================================================
+
+void A_BishopPuff(void)
+{
+	Actor puff;
+
+	puff = Spawn(BishopPuff, Origin + vector(0.0, 0.0, 40.0));
+	if (puff)
+	{
+		puff.Velocity.z = 0.5 * 35.0;
+	}
+}
+
+__states__
+{
+	S_BISHOP_LOOK1('BISH', 0, 10.0 / 35.0, S_BISHOP_LOOK1) { A_Look(); }
+	S_BISHOP_DECIDE('BISH', 0, 1.0 / 35.0, S_BISHOP_WALK1) { A_BishopDecide(); }
+	S_BISHOP_BLUR1('BISH', 0, 2.0 / 35.0, S_BISHOP_BLUR2) { A_BishopDoBlur(); }
+	S_BISHOP_BLUR2('BISH', 0, 4.0 / 35.0, S_BISHOP_BLUR2) { A_BishopSpawnBlur(); }
+	S_BISHOP_WALK1('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK2) { A_Chase(); }
+	S_BISHOP_WALK2('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK3) { A_BishopChase(); }
+	S_BISHOP_WALK3('BISH', 0, 2.0 / 35.0, S_BISHOP_WALK4) { }
+	S_BISHOP_WALK4('BISH', 1, 2.0 / 35.0, S_BISHOP_WALK5) { A_BishopChase(); }
+	S_BISHOP_WALK5('BISH', 1, 2.0 / 35.0, S_BISHOP_WALK6) { A_Chase(); }
+	S_BISHOP_WALK6('BISH', 1, 2.0 / 35.0, S_BISHOP_DECIDE) { A_BishopChase(); }
+	S_BISHOP_ATK1('BISH', 0, 3.0 / 35.0, S_BISHOP_ATK2) { A_FaceTarget(); }
+	S_BISHOP_ATK2('BISH', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK3) { A_FaceTarget(); }
+	S_BISHOP_ATK3('BISH', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK4) { A_FaceTarget(); }
+	S_BISHOP_ATK4('BISH', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_BISHOP_ATK5) { A_BishopAttack(); }
+	S_BISHOP_ATK5('BISH', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_ATK5) { A_BishopAttack2(); }
+	S_BISHOP_PAIN1('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN2) { A_Pain(); }
+	S_BISHOP_PAIN2('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN3) { A_BishopPainBlur(); }
+	S_BISHOP_PAIN3('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN4) { A_BishopPainBlur(); }
+	S_BISHOP_PAIN4('BISH', 2, 6.0 / 35.0, S_BISHOP_PAIN5) { A_BishopPainBlur(); }
+	S_BISHOP_PAIN5('BISH', 2, 0.0 / 35.0, S_BISHOP_WALK1) { }
+	S_BISHOP_DEATH1('BISH', 6, 6.0 / 35.0, S_BISHOP_DEATH2) { }
+	S_BISHOP_DEATH2('BISH', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_BISHOP_DEATH3) { A_Scream(); }
+	S_BISHOP_DEATH3('BISH', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH4) { A_NoBlocking(); }
+	S_BISHOP_DEATH4('BISH', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH5) { A_Explode(); }
+	S_BISHOP_DEATH5('BISH', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_BISHOP_DEATH6) { }
+	S_BISHOP_DEATH6('BISH', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DEATH7) { }
+	S_BISHOP_DEATH7('BISH', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DEATH8) { }
+	S_BISHOP_DEATH8('BISH', 13, 4.0 / 35.0, S_BISHOP_DEATH9) { A_BishopPuff(); }
+	S_BISHOP_DEATH9('BISH', 14, 4.0 / 35.0, S_BISHOP_DEATH10) { A_QueueCorpse(); }
+	S_BISHOP_DEATH10('BISH', 15, -1.0, S_NULL) { }
+	S_BISHOP_ICE('BISH', 23, 5.0 / 35.0, S_BISHOP_ICE2) { A_FreezeDeath(); }
+	S_BISHOP_ICE2('BISH', 23, 1.0 / 35.0, S_BISHOP_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 130;
+	Radius = 22.0;
+	Height = 65.0;
+	Mass = 100.0;
+	StepSpeed = 10.0;
+	PainChance = 0.4296875;
+	bNoGravity = true;
+	bFloat = true;
+	bNoBlood = true;
+	bFloorClip = false;
+	bActivateMCross = false;
+	IdleState = S_BISHOP_LOOK1;
+	BlurState = S_BISHOP_BLUR1;
+	SeeState = S_BISHOP_WALK1;
+	MissileState = S_BISHOP_ATK1;
+	PainState = S_BISHOP_PAIN1;
+	DeathState = S_BISHOP_DEATH1;
+	IceDeathState = S_BISHOP_ICE;
+	SightSound = 'BishopSight';
+	ActiveSound = 'BishopActive';
+	AttackSound = 'BishopAttack';
+	PainSound = 'BishopPain';
+	DeathSound = 'BishopDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,246 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ArchVile:Pawn
+	__mobjinfo__(64);
+
+int HealState;
+
+//==========================================================================
+//
+//  A_VileChase
+//
+//  Arch-vile check for ressurecting a body.
+//
+//==========================================================================
+
+void A_VileChase(void)
+{
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+
+	int bx;
+	int by;
+
+	Actor temp;
+
+	if (MoveDir != DI_NODIR)
+	{
+		// check for corpses to raise
+		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
+		vileobj = self;
+
+		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
+		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
+		yl = MapBlock(viletryy - XLevel.BlockMapOrgY - MAXRADIUS * 2.0);
+		yh = MapBlock(viletryy - XLevel.BlockMapOrgY + MAXRADIUS * 2.0);
+
+		for (bx = xl; bx <= xh; bx++)
+		{
+			for (by = yl; by <= yh; by++)
+			{
+				// Call PIT_VileCheck to check whether object is a corpse
+				// that canbe raised.
+				if (!P_BlockThingsIterator(bx, by, 'PIT_VileCheck'))
+				{
+					// got one!
+					temp = Enemy;
+					Enemy = CorpseHit;
+					A_FaceTarget();
+					Enemy = temp;
+
+					SetState(HealState);
+					CorpseHit.PlaySound('Slop', CHAN_BODY);
+
+					CorpseHit.SetState(CorpseHit.RaiseState);
+					CorpseHit.Height *= 4.0;
+					CorpseHit.bShootable = true;
+					CorpseHit.bFloat = CorpseHit.bDefaultFloat;
+					CorpseHit.bNoGravity = CorpseHit.bDefaultNoGravity;
+					CorpseHit.bDropOff = false;
+					CorpseHit.bSolid = true;
+					CorpseHit.bCorpse = false;
+					CorpseHit.Health = CorpseHit.SpawnHealth;
+					CorpseHit.Enemy = none;
+				}
+			}
+		}
+	}
+
+
+	// Return to normal attack.
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_VileStart
+//
+//  Arch-vile attack start sound.
+//
+//==========================================================================
+
+void A_VileStart(void)
+{
+	PlaySound('ArchVileAttack', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_VileTarget
+//
+//  Spawn the hellfire.
+//
+//==========================================================================
+
+void A_VileTarget(void)
+{
+	Actor fog;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	fog = Spawn(ArchvileFire, Enemy.Origin);
+
+	Instigator = fog;//FIXME!!!!!!!
+	fog.Instigator = self;
+	fog.Enemy = Enemy;
+	fog.SetState(fog.IdleState);
+}
+
+//==========================================================================
+//
+//  A_VileAttack
+//
+//  Arch-vile attack.
+//
+//==========================================================================
+
+void A_VileAttack(void)
+{
+	Actor fire;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (!CanSee(Enemy))
+		return;
+
+	PlaySound('BarrelExplode', CHAN_WEAPON);
+	Enemy.Damage(self, self, 20);
+	Enemy.Velocity.z = 1000.0 / Enemy.Mass * 35.0;
+
+	fire = Instigator;//FIXME!!!!!!
+
+	if (!fire)
+		return;
+
+	// move the fire between the vile and the player
+	fire.Origin.x = Enemy.Origin.x - 24.0 * cos(Angles.yaw);
+	fire.Origin.y = Enemy.Origin.y - 24.0 * sin(Angles.yaw);
+	fire.RadiusAttack(70, 0, 0);
+}
+
+__states__
+{
+	S_VILE_STND('VILE', 0, 'monsters/vile/base.md2', 0, 10.0 / 35.0, S_VILE_STND2) { A_Look(); }
+	S_VILE_STND2('VILE', 1, 'monsters/vile/base.md2', 1, 10.0 / 35.0, S_VILE_STND) { A_Look(); }
+	S_VILE_RUN1('VILE', 0, 'monsters/vile/base.md2', 2, 2.0 / 35.0, S_VILE_RUN2) { A_VileChase(); }
+	S_VILE_RUN2('VILE', 0, 'monsters/vile/base.md2', 3, 2.0 / 35.0, S_VILE_RUN3) { A_VileChase(); }
+	S_VILE_RUN3('VILE', 1, 'monsters/vile/base.md2', 4, 2.0 / 35.0, S_VILE_RUN4) { A_VileChase(); }
+	S_VILE_RUN4('VILE', 1, 'monsters/vile/base.md2', 5, 2.0 / 35.0, S_VILE_RUN5) { A_VileChase(); }
+	S_VILE_RUN5('VILE', 2, 'monsters/vile/base.md2', 6, 2.0 / 35.0, S_VILE_RUN6) { A_VileChase(); }
+	S_VILE_RUN6('VILE', 2, 'monsters/vile/base.md2', 7, 2.0 / 35.0, S_VILE_RUN7) { A_VileChase(); }
+	S_VILE_RUN7('VILE', 3, 'monsters/vile/base.md2', 8, 2.0 / 35.0, S_VILE_RUN8) { A_VileChase(); }
+	S_VILE_RUN8('VILE', 3, 'monsters/vile/base.md2', 9, 2.0 / 35.0, S_VILE_RUN9) { A_VileChase(); }
+	S_VILE_RUN9('VILE', 4, 'monsters/vile/base.md2', 10, 2.0 / 35.0, S_VILE_RUN10) { A_VileChase(); }
+	S_VILE_RUN10('VILE', 4, 'monsters/vile/base.md2', 11, 2.0 / 35.0, S_VILE_RUN11) { A_VileChase(); }
+	S_VILE_RUN11('VILE', 5, 'monsters/vile/base.md2', 12, 2.0 / 35.0, S_VILE_RUN12) { A_VileChase(); }
+	S_VILE_RUN12('VILE', 5, 'monsters/vile/base.md2', 13, 2.0 / 35.0, S_VILE_RUN1) { A_VileChase(); }
+	S_VILE_ATK1('VILE', 6 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 0, 0.0 / 35.0, S_VILE_ATK2) { A_VileStart(); }
+	S_VILE_ATK2('VILE', 6 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 0, 10.0 / 35.0, S_VILE_ATK3) { A_FaceTarget(); }
+	S_VILE_ATK3('VILE', 7 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 1, 8.0 / 35.0, S_VILE_ATK4) { A_VileTarget(); }
+	S_VILE_ATK4('VILE', 8 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 2, 8.0 / 35.0, S_VILE_ATK5) { A_FaceTarget(); }
+	S_VILE_ATK5('VILE', 9 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 3, 8.0 / 35.0, S_VILE_ATK6) { A_FaceTarget(); }
+	S_VILE_ATK6('VILE', 10 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 4, 8.0 / 35.0, S_VILE_ATK7) { A_FaceTarget(); }
+	S_VILE_ATK7('VILE', 11 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 5, 8.0 / 35.0, S_VILE_ATK8) { A_FaceTarget(); }
+	S_VILE_ATK8('VILE', 12 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 6, 8.0 / 35.0, S_VILE_ATK9) { A_FaceTarget(); }
+	S_VILE_ATK9('VILE', 13 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 7, 8.0 / 35.0, S_VILE_ATK10) { A_FaceTarget(); }
+	S_VILE_ATK10('VILE', 14 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 8, 8.0 / 35.0, S_VILE_ATK11) { A_VileAttack(); }
+	S_VILE_ATK11('VILE', 15 | FF_FULLBRIGHT, 'monsters/vile/attack.md2', 9, 20.0 / 35.0, S_VILE_RUN1) { }
+	S_VILE_PAIN('VILE', 16, 'monsters/vile/base.md2', 17, 5.0 / 35.0, S_VILE_PAIN2) { }
+	S_VILE_PAIN2('VILE', 16, 'monsters/vile/base.md2', 18, 5.0 / 35.0, S_VILE_RUN1) { A_Pain(); }
+	S_VILE_DIE1('VILE', 16, 'monsters/vile/death.md2', 0, 7.0 / 35.0, S_VILE_DIE2) { }
+	S_VILE_DIE2('VILE', 17, 'monsters/vile/death.md2', 1, 7.0 / 35.0, S_VILE_DIE3) { A_Scream(); }
+	S_VILE_DIE3('VILE', 18, 'monsters/vile/death.md2', 2, 7.0 / 35.0, S_VILE_DIE4) { A_Fall(); }
+	S_VILE_DIE4('VILE', 19, 'monsters/vile/death.md2', 3, 7.0 / 35.0, S_VILE_DIE5) { }
+	S_VILE_DIE5('VILE', 20, 'monsters/vile/death.md2', 4, 7.0 / 35.0, S_VILE_DIE6) { }
+	S_VILE_DIE6('VILE', 21, 'monsters/vile/death.md2', 5, 7.0 / 35.0, S_VILE_DIE7) { }
+	S_VILE_DIE7('VILE', 22, 'monsters/vile/death.md2', 6, 7.0 / 35.0, S_VILE_DIE8) { }
+	S_VILE_DIE8('VILE', 23, 'monsters/vile/death.md2', 7, 5.0 / 35.0, S_VILE_DIE9) { }
+	S_VILE_DIE9('VILE', 24, 'monsters/vile/death.md2', 8, 5.0 / 35.0, S_VILE_DIE10) { }
+	S_VILE_DIE10('VILE', 25, 'monsters/vile/death.md2', 9, -1.0, S_NULL) { }
+	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 14, 10.0 / 35.0, S_VILE_HEAL2) { }
+	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 15, 10.0 / 35.0, S_VILE_HEAL3) { }
+	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 'monsters/vile/base.md2', 16, 10.0 / 35.0, S_VILE_RUN1) { }
+}
+
+defaultproperties
+{
+	Health = 700;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 500.0;
+	StepSpeed = 15.0;
+	PainChance = 0.0390625;
+	MissileMaxRange = 14.0 * 64.0;
+	bNoGrudge = true;
+	bNeverTarget = true;
+	IdleState = S_VILE_STND;
+	SeeState = S_VILE_RUN1;
+	MissileState = S_VILE_ATK1;
+	PainState = S_VILE_PAIN;
+	DeathState = S_VILE_DIE1;
+	HealState = S_VILE_HEAL1;
+	SightSound = 'ArchVileSight';
+	ActiveSound = 'ArchVileActive';
+	PainSound = 'ArchVilePain';
+	DeathSound = 'ArchVileDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

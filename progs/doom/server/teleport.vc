@@ -70,95 +70,6 @@ bool PIT_StompThing(Entity Other)
 
 //==========================================================================
 //
-//  Actor::TeleportMove
-//
-//==========================================================================
-
-bool Actor::TeleportMove(TVec org)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-
-	// kill anything occupying the position
-	teleport_thing = self;
-
-	teleport_x = org.x;
-	teleport_y = org.y;
-
-	// stomp on any things contacted
-	xl = MapBlock(org.x - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(org.x + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(org.y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(org.y + Radius - XLevel.BlockMapOrgY + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, 'PIT_StompThing'))
-				return false;
-
-	// the move is ok,
-	// so link the thing into its new position
-	UnlinkFromWorld();
-	Origin = org;
-	LinkToWorld();
-
-	return true;
-}
-
-//==========================================================================
-//
-//  Actor::Teleport
-//
-//==========================================================================
-
-int Actor::Teleport(float x, float y, float angle)
-{
-	TVec oldOrg;
-	Actor fog;
-
-	oldOrg = Origin;
-
-	if (!TeleportMove(vector(x, y, Origin.z)))
-		return 0;
-
-	Origin.z = FloorZ;	//fixme: not needed?
-	if (bIsPlayer)
-		Player->ViewOrg.z = Origin.z + Player->ViewHeight;
-
-	// spawn teleport fog at source and destination
-	fog = Spawn(TeleportFog, oldOrg);
-#ifdef DDF
-	fog.SetState(fog.SeeState);
-#else
-	fog.PlaySound('Teleport', CHAN_VOICE);
-#endif
-
-	fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), Origin.z));
-#ifdef DDF
-	fog.SetState(fog.SeeState);
-#else
-	fog.PlaySound('Teleport', CHAN_VOICE);
-#endif
-
-	// don't move for a bit
-	if (bIsPlayer)
-	{
-		ReactionTime = 0.5;
-		Player->bFixAngle = true;
-	}
-
-	Angles.yaw = angle;
-	Velocity = vector(0.0, 0.0, 0.0);
-	return 1;
-}
-
-//==========================================================================
-//
 //  EV_Teleport
 //
 //==========================================================================
@@ -298,6 +209,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/10/26 16:32:21  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.26  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

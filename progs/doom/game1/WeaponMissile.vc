@@ -1,0 +1,71 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponMissile:Weapon;
+
+//===========================================================================
+//
+//  A_FireMissile
+//
+//===========================================================================
+
+void A_FireMissile(void)
+{
+	Player->Ammo[Ammo]--;
+	PlayerPawn(Player->MO).SpawnPlayerMissile(Rocket);
+}
+
+__states__
+{
+	S_MISSILE('MISG', 0, 'weapons/v_launch.md2', 0, 1.0 / 35.0, S_MISSILE) { A_WeaponReady(); }
+	S_MISSILEDOWN('MISG', 0, 'weapons/v_launch.md2', 1, 1.0 / 35.0, S_MISSILEDOWN) { A_Lower(); }
+	S_MISSILEUP('MISG', 0, 'weapons/v_launch.md2', 2, 1.0 / 35.0, S_MISSILEUP) { A_Raise(); }
+	S_MISSILE1('MISG', 1, 'weapons/v_launch.md2', 3, 8.0 / 35.0, S_MISSILE2) { A_GunFlash(); }
+	S_MISSILE2('MISG', 1, 'weapons/v_launch.md2', 4, 12.0 / 35.0, S_MISSILE3) { A_FireMissile(); }
+	S_MISSILE3('MISG', 1, 'weapons/v_launch.md2', 5, 0.0 / 35.0, S_MISSILE) { A_ReFire(); }
+	S_MISSILEFLASH1('MISF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_MISSILEFLASH2) { A_Light1(); }
+	S_MISSILEFLASH2('MISF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH3) { }
+	S_MISSILEFLASH3('MISF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH4) { A_Light2(); }
+	S_MISSILEFLASH4('MISF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+}
+
+defaultproperties
+{
+	Ammo = am_misl;
+	UpState = S_MISSILEUP;
+	DownState = S_MISSILEDOWN;
+	ReadyState = S_MISSILE;
+	AttackState = S_MISSILE1;
+	FlashState = S_MISSILEFLASH1;
+	ThirdPersonModel = 'weapons/g_launch.md2';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

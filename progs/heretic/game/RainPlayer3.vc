@@ -1,0 +1,54 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RainPlayer3:RainPlayer1;
+
+__states__
+{
+	S_RAINPLR3_1('FX22', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR3X_1('FX22', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_2) { A_RainImpact(); }
+	S_RAINPLR3X_2('FX22', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_3) { }
+	S_RAINPLR3X_3('FX22', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_4) { }
+	S_RAINPLR3X_4('FX22', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR3X_5) { }
+	S_RAINPLR3X_5('FX22', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR3_1('FX22', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR3_2) { }
+	S_RAINAIRXPLR3_2('FX22', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR3_3) { }
+	S_RAINAIRXPLR3_3('FX22', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_RAINPLR3_1;
+	DeathState = S_RAINPLR3X_1;
+	AirDeathState = S_RAINAIRXPLR3_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

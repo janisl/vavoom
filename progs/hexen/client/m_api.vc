@@ -87,7 +87,7 @@ bool MN_Responder(event_t * event)
 		// Pop-up menu?
 		if (event->type == ev_keydown && event->data1 == K_ESCAPE)
 		{
-			menu_main();
+			PushMenuScreen(SpawnMenu(MenuScreenMain));
 			return true;
 		}
 		return false;
@@ -134,12 +134,15 @@ void MN_SetMenu(string Name)
 		menu_quit();
 		return;
 	}
-	menu_main();
+	PushMenuScreen(SpawnMenu(MenuScreenMain));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/10/26 16:32:25  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.8  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,450 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pawn:Actor
+	abstract;
+
+bool bCheckNoMonsters;
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	if (bCheckNoMonsters && nomonsters)
+	{
+		Remove();
+		return;
+	}
+	::OnMapSpawn(mthing);
+}
+
+//==========================================================================
+//
+//  A_Look
+//
+//  Stay in state until a player is sighted
+//
+//==========================================================================
+
+void A_Look(void)
+{
+	Actor targ;
+
+	Threshold = 0;	// any shot will wake up
+	targ = Actor(Sector->SoundTarget);
+
+	if (targ && targ.bShootable)
+	{
+		Enemy = targ;
+
+		if (bAmbush)
+		{
+			if (!CanSee(Enemy))
+			{
+				if (!LookForPlayers(false))
+					return;
+			}
+		}
+	}
+	else
+	{
+		if (!LookForPlayers(false))
+			return;
+	}
+
+	// go into chase state
+	if (SightSound)
+	{
+		if (bBoss)
+		{
+			// Full volume
+			PlayFullVolumeSound(SightSound, CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+	}
+
+	SetState(SeeState);
+}
+
+//==========================================================================
+//
+//  A_Chase
+//
+//  Actor has a melee attack, so it tries to close as fast as possible
+//
+//==========================================================================
+
+void A_Chase(void)
+{
+	float delta;
+
+	if (ReactionCount)
+	{
+		ReactionCount--;
+	}
+
+	// modify target threshold
+	if (Threshold)
+	{
+		if (!Enemy || Enemy.Health <= 0)
+		{
+			Threshold = 0;
+		}
+		else
+		{
+			Threshold--;
+		}
+	}
+
+	if (fastparm)
+	{
+		// Monsters move faster in nightmare mode
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
+		{
+			StateTime = 0.1;
+		}
+	}
+
+	// turn towards movement direction if not there yet
+	if (MoveDir < 8)
+	{
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+
+		if (delta > 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+		}
+		else if (delta < 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+		}
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// look for a new target
+		if (LookForPlayers(true))
+		{
+			return;	// got a new target
+		}
+		SetState(IdleState);
+		return;
+	}
+
+	// do not attack twice in a row
+	if (bJustAttacked)
+	{
+		bJustAttacked = false;
+		if (!fastparm)
+		{
+			NewChaseDir();
+		}
+		return;
+	}
+
+	// check for melee attack
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(MeleeState);
+		return;
+	}
+
+	// check for missile attack
+	if (MissileState)
+	{
+		if (fastparm || !MoveCount)
+		{
+			if (CheckMissileRange())
+			{
+				SetState(MissileState);
+				bJustAttacked = true;
+				return;
+			}
+		}
+	}
+
+	// possibly choose another target
+	if (netgame && !Threshold)
+	{
+		if (!CanSee(Enemy))
+		{
+			if (LookForPlayers(true))
+				return;	// got a new target
+		}
+	}
+
+	// chase towards player
+	if (--MoveCount < 0 || !StepMove())
+	{
+		NewChaseDir();
+	}
+
+	// make active sound
+	if (ActiveSound && P_Random() < 3)
+	{
+		if (Class == Wizard && P_Random() < 128)
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+		else if (Class == Sorcerer2)
+		{
+			PlayFullVolumeSound(ActiveSound, CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound(ActiveSound, CHAN_VOICE);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_FaceTarget
+//
+//==========================================================================
+
+void A_FaceTarget(void)
+{
+	if (!Enemy)
+		return;
+
+	bAmbush = false;
+
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
+
+	if (Enemy.Translucency)
+	{
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
+	}
+}
+
+//==========================================================================
+//
+//  A_Pain
+//
+//==========================================================================
+
+void A_Pain(void)
+{
+	if (PainSound)
+	{
+		PlaySound(PainSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	DropStuff
+//
+//==========================================================================
+
+void DropStuff(void)
+{
+}
+
+//==========================================================================
+//
+//  DropItem
+//
+//==========================================================================
+
+void DropItem(classid type, int amount, float chance)
+{
+	Actor A;
+
+	if (Random() > chance)
+	{
+		return;
+	}
+	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
+	A.Velocity.x = (Random() - Random()) * 35.0;
+	A.Velocity.y = (Random() - Random()) * 35.0;
+	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
+	A.bDropped = true;
+	if (Ammo(A))
+	{
+		Ammo(A).AmmoCount = amount;
+	}
+}
+
+//==========================================================================
+//
+//  A_NoBlocking
+//
+//==========================================================================
+
+void A_NoBlocking(void)
+{
+	bSolid = false;
+	// Check for monsters dropping things
+	DropStuff();
+}
+
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Trigger special effects if all bosses are dead.
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	string mapname;
+	Actor mo;
+	int args[5];
+
+	mapname = ptrtos(&level->mapname[0]);
+
+	if (!strcmp(mapname, "E1M8"))
+	{
+		if (Class != Head)
+		{
+			// Not considered a boss in this episode
+			return;
+		}
+	}
+	else if (!strcmp(mapname, "E2M8"))
+	{
+		if (Class != Minotaur)
+		{
+			// Not considered a boss in this episode
+			return;
+		}
+	}
+	else if (!strcmp(mapname, "E3M8"))
+	{
+		if (Class != Sorcerer2)
+		{
+			// Not considered a boss in this episode
+			return;
+		}
+	}
+	else if (!strcmp(mapname, "E4M8"))
+	{
+		if (Class != Head)
+		{
+			// Not considered a boss in this episode
+			return;
+		}
+	}
+	else if (!strcmp(mapname, "E5M8"))
+	{
+		if (Class != Minotaur)
+		{
+			// Not considered a boss in this episode
+			return;
+		}
+	}
+	else
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// Make sure all bosses are dead
+	FOREACH(Actor, mo)
+	{
+		if ((mo != self) && (mo.Class == Class) && (mo.Health > 0))
+		{
+			// Found a living boss
+			return;
+		}
+	}
+	if (strcmp(mapname, "E1M8"))
+	{
+		// Kill any remaining monsters
+		P_Massacre();
+	}
+	args[0] = 666;
+	args[1] = 8;
+	EV_DoFloor(NULL, &args[0], FLEV_LOWERFLOOR);
+}
+
+//==========================================================================
+//
+//  A_Feathers
+//
+//==========================================================================
+
+void A_Feathers(void)
+{
+	int i;
+	int count;
+	Actor mo;
+
+	if (Health > 0)
+	{
+		// Pain
+		count = P_Random() < 32 ? 2 : 1;
+	}
+	else
+	{
+		// Death
+		count = 5 + (P_Random() & 3);
+	}
+	for (i = 0; i < count; i++)
+	{
+		mo = Spawn(Feather, Origin + vector(0.0, 0.0, 20.0));
+		mo.Instigator = self;
+		mo.Velocity.x = (Random() - Random()) * 35.0;
+		mo.Velocity.y = (Random() - Random()) * 35.0;
+		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		mo.SetState(S_FEATHER1 + (P_Random() & 7));
+	}
+}
+
+defaultproperties
+{
+	ReactionCount = 8;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bCheckNoMonsters = true;
+	bCheckLineBlockMonsters = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

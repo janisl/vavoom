@@ -1,0 +1,67 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TeleportOtherFX2:TeleportOtherFX1;
+
+int LifeCount;
+
+//==========================================================================
+//
+//  A_CheckTeleRing
+//
+//==========================================================================
+
+void A_CheckTeleRing(void)
+{
+	if (LifeCount-- <= 0)
+	{
+		SetState(DeathState);
+	}
+}
+
+__states__
+{
+	S_TELO_FX2_1('TRNG', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_2) { }
+	S_TELO_FX2_2('TRNG', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_3) { }
+	S_TELO_FX2_3('TRNG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_4) { }
+	S_TELO_FX2_4('TRNG', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_5) { }
+	S_TELO_FX2_5('TRNG', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_6) { }
+	S_TELO_FX2_6('TRNG', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX2_1) { A_CheckTeleRing(); }
+}
+
+defaultproperties
+{
+	LifeCount = 1;	// Lifetime countdown
+	Speed = 560.0;
+	IdleState = S_TELO_FX2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,119 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Level:Object
+	native;
+
+//	Flags.
+bool bForServer;	//	True if this level belongs to the server.
+bool bExtended;		//	True if level was in Hexen format.
+
+//
+//	MAP related Lookup tables.
+//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
+//
+
+int NumVertexes;
+TVec *Vertexes;
+
+int NumSectors;
+sector_t *Sectors;
+
+int NumSides;
+side_t *Sides;
+
+int NumLines;
+line_t *Lines;
+
+int __NumSegs;
+void *__Segs;
+
+int __NumSubsectors;
+void *__Subsectors;
+
+int __NumNodes;
+void *__Nodes;
+
+void *__VisData;
+void *__NoVis;
+
+// !!! Used only during level loading
+int NumThings;
+mthing_t *Things;
+
+int BehaviorSize;
+int *Behavior;
+
+//
+//  BLOCKMAP
+//  Created from axis aligned bounding box of the map, a rectangular
+// array of blocks of size ...
+// Used to speed up collision detection by spatial subdivision in 2D.
+//
+void *__BlockMapLump;	// offsets in blockmap are from here
+void *__BlockMap;	// int for larger maps
+int __BlockMapWidth;	// Blockmap size.
+int __BlockMapHeight;	// size in mapblocks
+float BlockMapOrgX;	// origin of block map
+float BlockMapOrgY;
+void *__BlockLinks;
+void *__PolyBlockMap;
+
+//
+//  REJECT
+//  For fast sight rejection.
+//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+//  Without special effect, this could be used as a PVS lookup as well.
+//
+void *__RejectMatrix;
+
+//	Strife conversations.
+int NumGenericSpeeches;
+RogueConSpeech *GenericSpeeches;
+
+int NumLevelSpeeches;
+RogueConSpeech *LevelSpeeches;
+
+//	List of all poly-objects on the level.
+int __NumPolyObjs;
+void *__PolyObjs;
+
+//
+//	Natives
+//
+
+native sector_t *PointInSector(TVec Point);
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:17  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

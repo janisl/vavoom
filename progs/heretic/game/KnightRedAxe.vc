@@ -1,0 +1,73 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class KnightRedAxe:Projectile;
+
+//==========================================================================
+//
+//  A_DripBlood
+//
+//==========================================================================
+
+void A_DripBlood(void)
+{
+	Actor mo;
+
+	mo = Spawn(Blood, Origin + vector((Random() - Random()) * 8.0,
+		(Random() - Random()) * 8.0, 0.0));
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.bNoGravity = false;
+}
+
+__states__
+{
+	S_REDAXE1('RAXE', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE2) { A_DripBlood(); }
+	S_REDAXE2('RAXE', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_REDAXE1) { A_DripBlood(); }
+	S_REDAXEX1('RAXE', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX2) { }
+	S_REDAXEX2('RAXE', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_REDAXEX3) { }
+	S_REDAXEX3('RAXE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 8.0;
+	Speed = 315.0;
+	MissileDamage = 7;
+	bThruGhost = true;
+	IdleState = S_REDAXE1;
+	DeathState = S_REDAXEX1;
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

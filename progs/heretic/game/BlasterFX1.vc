@@ -1,0 +1,82 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BlasterFX1:Projectile;
+
+//===========================================================================
+//
+//  A_SpawnRippers
+//
+//===========================================================================
+
+void A_SpawnRippers(void)
+{
+	int i;
+	float angle;
+	Actor ripper;
+
+	for (i = 0; i < 8; i++)
+	{
+		ripper = Spawn(Ripper, Origin);
+		angle = itof(i) * 45.0;
+		ripper.Instigator = Instigator;
+		ripper.Angles.yaw = angle;
+		ripper.Velocity.x = ripper.Speed * cos(angle);
+		ripper.Velocity.y = ripper.Speed * sin(angle);
+		ripper.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_BLASTERFX1_1('ACLO', 4, 200.0 / 35.0, S_BLASTERFX1_1) { }
+	S_BLASTERFXI1_1('FX18', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_2) { A_SpawnRippers(); }
+	S_BLASTERFXI1_2('FX18', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_BLASTERFXI1_3) { }
+	S_BLASTERFXI1_3('FX18', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_4) { }
+	S_BLASTERFXI1_4('FX18', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_5) { }
+	S_BLASTERFXI1_5('FX18', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_6) { }
+	S_BLASTERFXI1_6('FX18', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERFXI1_7) { }
+	S_BLASTERFXI1_7('FX18', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 6440.0;
+	MissileDamage = 2;
+	IdleState = S_BLASTERFX1_1;
+	DeathState = S_BLASTERFXI1_1;
+	DeathSound = 'BlasterHit';
+	Effects = EF_DL_BLUE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

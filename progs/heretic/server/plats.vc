@@ -55,109 +55,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class Platform:SectorMover
-{
-	int type;
-	float speed;
-	int tag;	// ID
-	float low;
-	float high;
-	float wait;
-	float time;
-	int status;
-	int oldstatus;
-
-//==========================================================================
-//
-//	Tick
-//
-//  Move a plat up and down
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (status)
-	{
-	case PLAT_UP:
-		res = T_MovePlane(sector, speed * deltaTime, high, false, 0, 1);
-		if (!(level->tictime & 31))
-		{
-			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
-		}
-		if (res == RES_CRUSHED)
-		{
-			time = wait;
-			status = PLAT_DOWN;
-			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
-		}
-		else if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-			switch (type)
-			{
-			case PLAT_DOWNWAITUPSTAY:
-			case PLAT_DOWNWAITUPSTAYLIP:
-			case PLAT_DOWNBYVALUEWAITUPSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case PLAT_DOWN:
-		res = T_MovePlane(sector, speed * deltaTime, low, false, 0, -1);
-		if (res == RES_PASTDEST)
-		{
-			time = wait;
-			status = PLAT_WAITING;
-			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-			switch (type)
-			{
-			case PLAT_UPWAITDOWNSTAY:
-			case PLAT_UPBYVALUEWAITDOWNSTAY:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			if (!(level->tictime & 31))
-			{
-				SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
-			}
-		}
-		break;
-	case PLAT_WAITING:
-		time -= deltaTime;
-		if (time <= 0.0)
-		{
-			time = 0.0;
-			if (sector->floorheight == low)
-				status = PLAT_UP;
-			else
-				status = PLAT_DOWN;
-			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
-		}
-		break;
-	case PLAT_IN_STASIS:
-		break;
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  P_ActivateInStasis
@@ -322,6 +219,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.13  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

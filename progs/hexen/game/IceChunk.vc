@@ -1,0 +1,76 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class IceChunk:Effect;
+
+//============================================================================
+//
+//	A_IceSetTics
+//
+//============================================================================
+
+void A_IceSetTics(void)
+{
+	int floor;
+
+	StateTime = 2.0 + Random() * 2.0;
+	floor = GetFloorType();
+	if (floor == FLOOR_LAVA)
+	{
+		StateTime /= 4.0;
+	}
+	else if (floor == FLOOR_ICE)
+	{
+		StateTime *= 2.0;
+	}
+}
+
+__states__
+{
+	S_ICECHUNK1('ICEC', 0, 10.0 / 35.0, S_ICECHUNK2) { }
+	S_ICECHUNK2('ICEC', 1, 10.0 / 35.0, S_ICECHUNK3) { A_IceSetTics(); }
+	S_ICECHUNK3('ICEC', 2, 10.0 / 35.0, S_ICECHUNK4) { A_IceSetTics(); }
+	S_ICECHUNK4('ICEC', 3, 10.0 / 35.0, S_NULL) { A_IceSetTics(); }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 4.0;
+	Mass = 12.5;
+	bDropOff = true;
+	bFloorClip = true;
+	bCannotPush = true;
+	bNoGravity = false;
+	IdleState = S_ICECHUNK1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

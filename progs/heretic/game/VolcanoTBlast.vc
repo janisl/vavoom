@@ -1,0 +1,60 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class VolcanoTBlast:Projectile;
+
+__states__
+{
+	S_VOLCANOTBALL1('VTFB', 0, 4.0 / 35.0, S_VOLCANOTBALL2) { }
+	S_VOLCANOTBALL2('VTFB', 1, 4.0 / 35.0, S_VOLCANOTBALL1) { }
+	S_VOLCANOTBALLX1('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX2) { }
+	S_VOLCANOTBALLX2('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX3) { }
+	S_VOLCANOTBALLX3('SFFI', 0, 4.0 / 35.0, S_VOLCANOTBALLX4) { }
+	S_VOLCANOTBALLX4('SFFI', 1, 4.0 / 35.0, S_VOLCANOTBALLX5) { }
+	S_VOLCANOTBALLX5('SFFI', 2, 4.0 / 35.0, S_VOLCANOTBALLX6) { }
+	S_VOLCANOTBALLX6('SFFI', 3, 4.0 / 35.0, S_VOLCANOTBALLX7) { }
+	S_VOLCANOTBALLX7('SFFI', 4, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 6.0;
+	Speed = 70.0;
+	MissileDamage = 1;
+	bFireDamage = true;
+	bNoGravity = false;
+	IdleState = S_VOLCANOTBALL1;
+	DeathState = S_VOLCANOTBALLX1;
+	Effects = EF_DL_RED;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

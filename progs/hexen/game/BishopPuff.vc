@@ -1,0 +1,51 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BishopPuff:Effect;
+
+__states__
+{
+	S_BISHOP_PUFF1('BISH', 16, 5.0 / 35.0, S_BISHOP_PUFF2) { }
+	S_BISHOP_PUFF2('BISH', 17, 5.0 / 35.0, S_BISHOP_PUFF3) { }
+	S_BISHOP_PUFF3('BISH', 18, 5.0 / 35.0, S_BISHOP_PUFF4) { }
+	S_BISHOP_PUFF4('BISH', 19, 5.0 / 35.0, S_BISHOP_PUFF5) { }
+	S_BISHOP_PUFF5('BISH', 20, 6.0 / 35.0, S_BISHOP_PUFF6) { }
+	S_BISHOP_PUFF6('BISH', 21, 6.0 / 35.0, S_BISHOP_PUFF7) { }
+	S_BISHOP_PUFF7('BISH', 22, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_BISHOP_PUFF1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

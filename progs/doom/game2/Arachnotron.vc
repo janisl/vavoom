@@ -1,0 +1,196 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Arachnotron:Pawn
+	__mobjinfo__(68);
+
+//==========================================================================
+//
+//  A_BabyMetal
+//
+//  Arachnotron move with metal sound.
+//
+//==========================================================================
+
+void A_BabyMetal(void)
+{
+	PlaySound('BabyWalk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_BspiAttack
+//
+//  Arachnotron attack.
+//
+//==========================================================================
+
+void A_BspiAttack(void)
+{
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	// launch a missile
+	SpawnMissile(Enemy, ArachnotronPlasma);
+}
+
+//==========================================================================
+//
+//  A_SpidRefire
+//
+//  Spider mastermind refire.
+//
+//==========================================================================
+
+void A_SpidRefire(void)
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < 10)
+		return;
+
+	if (!Enemy || Enemy.Health <= 0 || !CanSee(Enemy))
+	{
+		SetState(SeeState);
+	}
+}
+
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Possibly trigger special effects if on first boss level
+//
+//==========================================================================
+
+void A_BossDeath(void)
+{
+	int i;
+	Actor Other;
+	int args[5];
+
+	if (strcmp(ARR2STR(level->mapname), "MAP07"))
+	{
+		//  Not a boss level
+		return;
+	}
+
+	// make sure there is a player alive for victory
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (players[i].bSpawned && players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	FOREACH(Arachnotron, Other)
+	{
+		if (Other != self && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	args[0] = 667;
+	args[1] = 8;
+	args[2] = 0;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoFloor(NULL, &args[0], FLEV_RAISETOTEXTURE);
+}
+
+__states__
+{
+	S_BSPI_STND('BSPI', 0, 'monsters/arach/base.md2', 0, 10.0 / 35.0, S_BSPI_STND2) { A_Look(); }
+	S_BSPI_STND2('BSPI', 1, 'monsters/arach/base.md2', 1, 10.0 / 35.0, S_BSPI_STND) { A_Look(); }
+	S_BSPI_SIGHT('BSPI', 0, 'monsters/arach/base.md2', 2, 20.0 / 35.0, S_BSPI_RUN1) { }
+	S_BSPI_RUN1('BSPI', 0, 'monsters/arach/base.md2', 3, 3.0 / 35.0, S_BSPI_RUN2) { A_BabyMetal(); }
+	S_BSPI_RUN2('BSPI', 0, 'monsters/arach/base.md2', 4, 3.0 / 35.0, S_BSPI_RUN3) { A_Chase(); }
+	S_BSPI_RUN3('BSPI', 1, 'monsters/arach/base.md2', 5, 3.0 / 35.0, S_BSPI_RUN4) { A_Chase(); }
+	S_BSPI_RUN4('BSPI', 1, 'monsters/arach/base.md2', 6, 3.0 / 35.0, S_BSPI_RUN5) { A_Chase(); }
+	S_BSPI_RUN5('BSPI', 2, 'monsters/arach/base.md2', 7, 3.0 / 35.0, S_BSPI_RUN6) { A_Chase(); }
+	S_BSPI_RUN6('BSPI', 2, 'monsters/arach/base.md2', 8, 3.0 / 35.0, S_BSPI_RUN7) { A_Chase(); }
+	S_BSPI_RUN7('BSPI', 3, 'monsters/arach/base.md2', 9, 3.0 / 35.0, S_BSPI_RUN8) { A_BabyMetal(); }
+	S_BSPI_RUN8('BSPI', 3, 'monsters/arach/base.md2', 10, 3.0 / 35.0, S_BSPI_RUN9) { A_Chase(); }
+	S_BSPI_RUN9('BSPI', 4, 'monsters/arach/base.md2', 11, 3.0 / 35.0, S_BSPI_RUN10) { A_Chase(); }
+	S_BSPI_RUN10('BSPI', 4, 'monsters/arach/base.md2', 12, 3.0 / 35.0, S_BSPI_RUN11) { A_Chase(); }
+	S_BSPI_RUN11('BSPI', 5, 'monsters/arach/base.md2', 13, 3.0 / 35.0, S_BSPI_RUN12) { A_Chase(); }
+	S_BSPI_RUN12('BSPI', 5, 'monsters/arach/base.md2', 14, 3.0 / 35.0, S_BSPI_RUN1) { A_Chase(); }
+	S_BSPI_ATK1('BSPI', 0 | FF_FULLBRIGHT, 'monsters/arach/base.md2', 15, 20.0 / 35.0, S_BSPI_ATK2) { A_FaceTarget(); }
+	S_BSPI_ATK2('BSPI', 6 | FF_FULLBRIGHT, 'monsters/arach/base.md2', 16, 4.0 / 35.0, S_BSPI_ATK3) { A_BspiAttack(); }
+	S_BSPI_ATK3('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arach/attack.md2', 0, 4.0 / 35.0, S_BSPI_ATK4) { }
+	S_BSPI_ATK4('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arach/attack.md2', 0, 1.0 / 35.0, S_BSPI_ATK2) { A_SpidRefire(); }
+	S_BSPI_PAIN('BSPI', 8, 'monsters/arach/base.md2', 17, 3.0 / 35.0, S_BSPI_PAIN2) { }
+	S_BSPI_PAIN2('BSPI', 8, 'monsters/arach/base.md2', 18, 3.0 / 35.0, S_BSPI_RUN1) { A_Pain(); }
+	S_BSPI_DIE1('BSPI', 9, 'monsters/arach/death.md2', 0, 20.0 / 35.0, S_BSPI_DIE2) { A_Scream(); }
+	S_BSPI_DIE2('BSPI', 10, 'monsters/arach/death.md2', 1, 7.0 / 35.0, S_BSPI_DIE3) { A_Fall(); }
+	S_BSPI_DIE3('BSPI', 11, 'monsters/arach/death.md2', 2, 7.0 / 35.0, S_BSPI_DIE4) { }
+	S_BSPI_DIE4('BSPI', 12, 'monsters/arach/death.md2', 3, 7.0 / 35.0, S_BSPI_DIE5) { }
+	S_BSPI_DIE5('BSPI', 13, 'monsters/arach/death.md2', 4, 7.0 / 35.0, S_BSPI_DIE6) { }
+	S_BSPI_DIE6('BSPI', 14, 'monsters/arach/death.md2', 5, 7.0 / 35.0, S_BSPI_DIE7) { }
+	S_BSPI_DIE7('BSPI', 15, 'monsters/arach/death.md2', 6, -1.0, S_NULL) { A_BossDeath(); }
+	S_BSPI_RAISE1('BSPI', 15, 'monsters/arach/death.md2', 7, 5.0 / 35.0, S_BSPI_RAISE2) { }
+	S_BSPI_RAISE2('BSPI', 14, 'monsters/arach/death.md2', 8, 5.0 / 35.0, S_BSPI_RAISE3) { }
+	S_BSPI_RAISE3('BSPI', 13, 'monsters/arach/death.md2', 9, 5.0 / 35.0, S_BSPI_RAISE4) { }
+	S_BSPI_RAISE4('BSPI', 12, 'monsters/arach/death.md2', 10, 5.0 / 35.0, S_BSPI_RAISE5) { }
+	S_BSPI_RAISE5('BSPI', 11, 'monsters/arach/death.md2', 11, 5.0 / 35.0, S_BSPI_RAISE6) { }
+	S_BSPI_RAISE6('BSPI', 10, 'monsters/arach/death.md2', 12, 5.0 / 35.0, S_BSPI_RAISE7) { }
+	S_BSPI_RAISE7('BSPI', 9, 'monsters/arach/death.md2', 13, 5.0 / 35.0, S_BSPI_RUN1) { }
+}
+
+defaultproperties
+{
+	Health = 500;
+	Radius = 64.0;
+	Height = 64.0;
+	Mass = 600.0;
+	StepSpeed = 12.0;
+	PainChance = 0.5;
+	IdleState = S_BSPI_STND;
+	SeeState = S_BSPI_SIGHT;
+	MissileState = S_BSPI_ATK1;
+	PainState = S_BSPI_PAIN;
+	DeathState = S_BSPI_DIE1;
+	RaiseState = S_BSPI_RAISE1;
+	SightSound = 'BabySight';
+	ActiveSound = 'BabyActive';
+	PainSound = 'DemonPain';
+	DeathSound = 'BabyDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

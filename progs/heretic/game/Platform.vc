@@ -1,0 +1,137 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Platform:SectorMover;
+
+int type;
+float speed;
+int tag;	// ID
+float low;
+float high;
+float wait;
+float time;
+int status;
+int oldstatus;
+
+//==========================================================================
+//
+//	Tick
+//
+//  Move a plat up and down
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	int res;
+
+	switch (status)
+	{
+	case PLAT_UP:
+		res = T_MovePlane(sector, speed * deltaTime, high, false, 0, 1);
+		if (!(level->tictime & 31))
+		{
+			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
+		}
+		if (res == RES_CRUSHED)
+		{
+			time = wait;
+			status = PLAT_DOWN;
+			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
+		}
+		else if (res == RES_PASTDEST)
+		{
+			time = wait;
+			status = PLAT_WAITING;
+			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
+			switch (type)
+			{
+			case PLAT_DOWNWAITUPSTAY:
+			case PLAT_DOWNWAITUPSTAYLIP:
+			case PLAT_DOWNBYVALUEWAITUPSTAY:
+				sector->SpecialData = none;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(self);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+	case PLAT_DOWN:
+		res = T_MovePlane(sector, speed * deltaTime, low, false, 0, -1);
+		if (res == RES_PASTDEST)
+		{
+			time = wait;
+			status = PLAT_WAITING;
+			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
+			switch (type)
+			{
+			case PLAT_UPWAITDOWNSTAY:
+			case PLAT_UPBYVALUEWAITDOWNSTAY:
+				sector->SpecialData = none;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(self);
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			if (!(level->tictime & 31))
+			{
+				SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
+			}
+		}
+		break;
+	case PLAT_WAITING:
+		time -= deltaTime;
+		if (time <= 0.0)
+		{
+			time = 0.0;
+			if (sector->floorheight == low)
+				status = PLAT_UP;
+			else
+				status = PLAT_DOWN;
+			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
+		}
+		break;
+	case PLAT_IN_STASIS:
+		break;
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

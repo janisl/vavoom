@@ -1,0 +1,125 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CeilingMover:SectorMover;
+
+int type;
+float bottomheight;
+float topheight;
+float speed;
+int crush;
+int direction;	// 1 = up, 0 = waiting, -1 = down
+int tag;	// ID
+int olddirection;
+float dnspeed;
+float upspeed;
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	int res;
+
+	switch (direction)
+	{
+	case 0:	// IN STASIS
+		break;
+
+	case 1:	// UP
+		res = T_MovePlane(sector, speed * deltaTime,
+			topheight, false, 1, direction);
+		if (!(level->tictime & 7))
+			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
+		if (res == RES_PASTDEST)
+			switch (type)
+			{
+			case CLEV_CRUSHANDRAISE:
+				direction = -1;
+				speed = speed * 2.0;
+				break;
+			case CLEV_CRUSHANDRAISEA:
+				speed = dnspeed;
+				direction = -1;
+				break;
+			default:
+				sector->SpecialData = none;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(self);
+				break;
+			}
+		break;
+
+	case -1:	// DOWN
+		res = T_MovePlane(sector, speed * deltaTime,
+			bottomheight, crush, 1, direction);
+		if (!(level->tictime & 7))
+			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
+		if (res == RES_PASTDEST)
+			switch (type)
+			{
+			case CLEV_CRUSHANDRAISE:
+			case CLEV_CRUSHRAISEANDSTAY:
+				speed = speed / 2.0;
+				direction = 1;
+				break;
+			case CLEV_CRUSHANDRAISEA:
+				speed = upspeed;
+				direction = 1;
+				break;
+			default:
+				sector->SpecialData = none;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(self);
+				break;
+			}
+		else if (res == RES_CRUSHED)
+			switch (type)
+			{
+			case CLEV_CRUSHANDRAISEA:
+			case CLEV_LOWERANDCRUSH:
+				speed = 4.0;
+				break;
+			default:
+				break;
+			}
+		break;
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

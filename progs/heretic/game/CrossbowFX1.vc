@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CrossbowFX1:Projectile;
+
+__states__
+{
+	S_CRBOWFX1('FX03', 1 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRBOWFX1) { }
+	S_CRBOWFXI1_1('FX03', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_2) { }
+	S_CRBOWFXI1_2('FX03', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI1_3) { }
+	S_CRBOWFXI1_3('FX03', 9 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 11.0;
+	Height = 8.0;
+	Speed = 1050.0;
+	MissileDamage = 10;
+	IdleState = S_CRBOWFX1;
+	DeathState = S_CRBOWFXI1_1;
+	SightSound = 'BowFire';
+	DeathSound = 'SkullRodHit';
+	Effects = EF_DL_GREEN;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

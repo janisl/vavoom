@@ -1,0 +1,106 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuInputLine:MenuChoice;
+
+string Text;
+int Value[32 / 4];
+
+void InitWindow(void)
+{
+	::InitWindow();
+	InitSlot();
+}
+
+void ValueChanged(void)
+{
+}
+
+void DrawWindow(GC gc)
+{
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	gc.DrawText(0, 0, Text);
+	if (enteringText)
+		DrawSlot(gc, 12, ARR2STR(slot_enter_text.Data), true);
+	else
+		DrawSlot(gc, 12, ARR2STR(Value), false);
+}
+
+bool Key(int key)
+{
+	if (enteringText)
+	{
+		switch (key)
+		{
+		case K_ESCAPE:
+		case K_MOUSE2:
+			enteringText = false;
+			break;
+
+		case K_ENTER:
+		case K_PADENTER:
+		case K_MOUSE1:
+			enteringText = false;
+			strcpy(ARR2STR(Value), ARR2STR(slot_enter_text.Data));
+			ValueChanged();
+			break;
+
+		default:
+			InputLine_Key(&slot_enter_text, key);
+			if (slot_enter_text.len >= 30)
+			{
+				InputLine_Key(&slot_enter_text, K_BACKSPACE);
+			}
+			break;
+		}
+		return true;
+	}
+
+	if (key == K_ENTER || key == K_PADENTER ||
+		key == K_MOUSE1 || key == K_JOY1)
+	{
+		// we are going to be intercepting all chars
+		enteringText = true;
+		InputLine_Init(&slot_enter_text);
+		LocalSound('MenuSelect');
+		InputLine_SetValue(&slot_enter_text, ARR2STR(Value));
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+	Height = 30;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

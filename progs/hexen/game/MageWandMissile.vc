@@ -1,0 +1,55 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MageWandMissile:Projectile;
+
+__states__
+{
+	S_MWAND_MISSILE1('MWND', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE2) { }
+	S_MWAND_MISSILE2('MWND', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWAND_MISSILE1) { }
+}
+
+defaultproperties
+{
+	Radius = 12.0;
+	Height = 8.0;
+	Speed = 6440.0;
+	MissileDamage = 2;
+	bRip = true;
+	bCannotPush = true;
+	bNoDamageThrust = true;
+	bBlaster = true;
+	IdleState = S_MWAND_MISSILE1;
+	DeathState = S_MWANDPUFF1;
+	Effects = EF_DL_WHITE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

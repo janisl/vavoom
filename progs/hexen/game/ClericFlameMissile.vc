@@ -1,0 +1,124 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ClericFlameMissile:Projectile;
+
+float FlameSpeed;
+
+//============================================================================
+//
+//	A_CFlamePuff
+//
+//============================================================================
+
+void A_CFlamePuff(void)
+{
+	A_UnHideThing();
+	Velocity = vector(0.0, 0.0, 0.0);
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_CFlameMissile
+//
+//============================================================================
+
+void A_CFlameMissile(void)
+{
+	int i;
+	float an;
+	float dist;
+	Actor A;
+	Actor bmo;
+
+	A_UnHideThing();
+	PlaySound('ClericFlameExplode', CHAN_VOICE);
+	bmo = Actor(tmtrace->BlockingMobj);
+	if (bmo && bmo.bShootable)
+	{
+		// Hit something, so spawn the flame circle around the thing
+		dist = bmo.Radius + 18.0;
+		for (i = 0; i < 4; i++)
+		{
+			an = itof(i) * 45.0;
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(dist * cos(an), dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = an;
+				A.Instigator = Instigator;
+				A.Velocity.x = FlameSpeed * cos(an);
+				A.Velocity.y = FlameSpeed * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+			A = Spawn(CircleFlame, bmo.Origin +
+				vector(-dist * cos(an), -dist * sin(an), 5.0));
+			if (A)
+			{
+				A.Angles.yaw = AngleMod360(180.0 + an);
+				A.Instigator = Instigator;
+				A.Velocity.x = -FlameSpeed * cos(an);
+				A.Velocity.y = -FlameSpeed * sin(an);
+				A.Special1f = A.Velocity.x;
+				A.Special2f = A.Velocity.y;
+				A.StateTime -= Random() * 0.1;
+			}
+		}
+		SetState(S_FLAMEPUFF2_1);
+	}
+}
+
+__states__
+{
+	S_CFLAME_MISSILE1('CFFX', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CFLAME_MISSILE2) { }
+	S_CFLAME_MISSILE2('CFFX', 0, 1.0 / 35.0, S_FLAMEPUFF1) { A_CFlamePuff(); }
+	S_CFLAME_MISSILE_X('CFFX', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_FLAMEPUFF1) { A_CFlameMissile(); }
+}
+
+defaultproperties
+{
+	Radius = 14.0;
+	Height = 8.0;
+	Speed = 7000.0;
+	MissileDamage = 8;
+	Translucency = 100;
+	bFireDamage = true;
+	bBlaster = true;
+	IdleState = S_CFLAME_MISSILE1;
+	DeathState = S_CFLAME_MISSILE_X;
+	Effects = EF_DL_WHITE;
+	FlameSpeed = 9.0 / 20.0 * 35.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,212 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class KoraxSpirit1:Projectile;
+
+int LifeTime;
+int WeaveXY;
+int WeaveZ;
+
+//==========================================================================
+//
+//  KSpiritInit
+//
+//==========================================================================
+
+void KSpiritInit(Actor korax)
+{
+	int i;
+	Actor tail;
+	Actor next;
+
+	Enemy = korax;	// Swarm around korax
+	WeaveZ = 32 + (P_Random() & 7);	// Float bob index
+
+	// Spawn a tail for spirit
+	tail = Spawn(HolyTail, Origin);
+	HolyTail(tail).ParentSpirit = self;	// parent
+	for (i = 1; i < 3; i++)
+	{
+		next = Spawn(HolyTail, Origin);
+		next.SetState(next.IdleState + 1);
+		HolyTail(tail).NextTail = HolyTail(next);
+		tail = next;
+	}
+}
+
+//============================================================================
+//
+//  A_KSpiritSeeker
+//
+//============================================================================
+
+void A_KSpiritSeeker(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	float angle;
+	float newZ;
+	float deltaZ;
+
+	if (Enemy == none)
+	{
+		return;
+	}
+	dir = FaceActor(Enemy, &delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
+	}
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
+
+	if (!(level->tictime & 15) ||
+		Origin.z > Enemy.Origin.z + Enemy.Height ||
+		Origin.z + Height < Enemy.Origin.z)
+	{
+		newZ = Enemy.Origin.z + Random() * Enemy.Height;
+		deltaZ = newZ - Origin.z;
+		if (fabs(deltaZ) > 15.0)
+		{
+			if (deltaZ > 0.0)
+			{
+				deltaZ = 15.0;
+			}
+			else
+			{
+				deltaZ = -15.0;
+			}
+		}
+		dist = MobjDist2(Enemy, self);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = deltaZ / dist;
+	}
+	return;
+}
+
+//============================================================================
+//
+//  A_KSpiritWeave
+//
+//============================================================================
+
+void A_KSpiritWeave(void)
+{
+	float newX, newY;
+	float angle;
+
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	WeaveXY = (WeaveXY + (P_Random() % 5)) & 63;
+	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	TryMove(vector(newX, newY, Origin.z));
+	Origin.z -= FloatBobOffsets[WeaveZ] * 2.0;
+	WeaveZ = (WeaveZ + (P_Random() % 5)) & 63;
+	Origin.z += FloatBobOffsets[WeaveZ] * 2.0;
+}
+
+//============================================================================
+//
+//  A_KSpiritRoam
+//
+//============================================================================
+
+void A_KSpiritRoam(void)
+{
+	if (LifeTime-- <= 0)
+	{
+		PlaySound('SpiritDie', CHAN_VOICE);
+		SetState(DeathState);
+	}
+	else
+	{
+		if (Enemy)
+		{
+			A_KSpiritSeeker(10.0, 20.0);
+		}
+		A_KSpiritWeave();
+		if (Random() < 0.1953125)
+		{
+			PlayFullVolumeSound('SpiritActive', CHAN_VOICE);
+		}
+	}
+}
+
+__states__
+{
+	S_KSPIRIT_ROAM1('SPIR', 0, 5.0 / 35.0, S_KSPIRIT_ROAM2) { A_KSpiritRoam(); }
+	S_KSPIRIT_ROAM2('SPIR', 1, 5.0 / 35.0, S_KSPIRIT_ROAM1) { A_KSpiritRoam(); }
+	S_KSPIRIT_DEATH1('SPIR', 3, 5.0 / 35.0, S_KSPIRIT_DEATH2) { }
+	S_KSPIRIT_DEATH2('SPIR', 4, 5.0 / 35.0, S_KSPIRIT_DEATH3) { }
+	S_KSPIRIT_DEATH3('SPIR', 5, 5.0 / 35.0, S_KSPIRIT_DEATH4) { }
+	S_KSPIRIT_DEATH4('SPIR', 6, 5.0 / 35.0, S_KSPIRIT_DEATH5) { }
+	S_KSPIRIT_DEATH5('SPIR', 7, 5.0 / 35.0, S_KSPIRIT_DEATH6) { }
+	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	LifeTime = 5 * 35 / 5;	// 5 seconds
+	Radius = 20.0;
+	Height = 16.0;
+	Speed = 280.0;
+	Translucency = 33;
+	bColideWithWorld = false;
+	bColideWithThings = false;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_KSPIRIT_ROAM1;
+	DeathState = S_KSPIRIT_DEATH1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

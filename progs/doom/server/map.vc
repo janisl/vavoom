@@ -23,115 +23,6 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  Actor::HeightClip
-//
-//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
-// possibly thing->z. This is called for all nearby monsters whenever a
-// sector changes height. If the thing doesn't fit, the z will be set to the
-// lowest value and false will be returned.
-//
-//==========================================================================
-
-bool Actor::HeightClip(void)
-{
-	bool onfloor;
-
-	onfloor = (Origin.z == FloorZ);
-
-	CheckRelPosition(Origin);
-	// what about stranding a monster partially off an edge?
-
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
-
-	if (onfloor)
-	{
-		// walking monsters rise and fall with the floor
-		Origin.z = FloorZ;
-	}
-	else
-	{
-		// don't adjust a floating monster unless forced to
-		if (Origin.z + Height > CeilingZ)
-			Origin.z = CeilingZ - Height;
-	}
-
-	if (CeilingZ - FloorZ < Height)
-		return false;
-
-	return true;
-}
-
-//==========================================================================
-//
-//	Actor::SectorChanged
-//
-//==========================================================================
-
-bool Actor::SectorChanged(int CrushChange)
-{
-	Actor A;
-
-	if (HeightClip())
-	{
-		return true;
-	}
-
-	//	Crunch bodies to giblets
-	if (Health <= 0)
-	{
-#ifdef DDF
-		SetState(thing.GibState);
-#else
-		SetState(S_GIBS);
-#endif
-		bSolid;
-		Height = 0.0;
-		Radius = 0.0;
-		return true;
-	}
-
-	//	Crunch dropped items
-	if (bDropped)
-	{
-		Remove();
-		return true;
-	}
-
-	if (!bShootable)
-	{
-		//	Assume it is bloody gibs or something
-		return true;
-	}
-
-	if (CrushChange && !(level->tictime & 3))
-	{
-		Damage(none, none, CrushChange);
-
-		//	Spray blood in a random direction
-		A = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
-		A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
-		A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
-	}
-	return false;	//	Don't fit
-}
-
 //**************************************************************************
 //
 //  USE LINES
@@ -712,40 +603,6 @@ bool PIT_RadiusAttack(Entity Other)
 
 //==========================================================================
 //
-//  Actor::RadiusAttack
-//
-//  Source is the creature that caused the explosion at spot.
-//
-//==========================================================================
-
-void Actor::RadiusAttack(int damage, int distance, bool damageSource)
-{
-	int x;
-	int y;
-
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-
-	float dist;
-
-	dist = itof(damage);
-	yh = MapBlock(Origin.y + dist - XLevel.BlockMapOrgY);
-	yl = MapBlock(Origin.y - dist - XLevel.BlockMapOrgY);
-	xh = MapBlock(Origin.x + dist - XLevel.BlockMapOrgX);
-	xl = MapBlock(Origin.x - dist - XLevel.BlockMapOrgX);
-	bombspot = self;
-	bombsource = Instigator;
-	bombdamage = itof(damage);
-
-	for (y = yl; y <= yh; y++)
-		for (x = xl; x <= xh; x++)
-			P_BlockThingsIterator(x, y, 'PIT_RadiusAttack');
-}
-
-//==========================================================================
-//
 //  PIT_VileCheck
 //
 //  Detect a corpse that could be raised.
@@ -796,6 +653,9 @@ bool PIT_VileCheck(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2002/10/26 16:32:21  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.32  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

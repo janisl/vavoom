@@ -1,0 +1,172 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponFighterHammer:Weapon;
+
+bool bThrowHammer;
+float HammerRange;
+
+//============================================================================
+//
+//  A_FHammerAttack
+//
+//============================================================================
+
+void A_FHammerAttack(void)
+{
+	Actor Owner = Player->MO;
+	int damage;
+	float power;
+	int i;
+	TAVec angles;
+	TVec vforward;
+
+	damage = 60 + (P_Random() & 63);
+	power = 10.0;
+	PuffType = HammerPuff;
+	for (i = 0; i < 16; i++)
+	{
+		angles = Owner.Angles;
+		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
+		AimLineAttack(Owner, &angles, HammerRange);
+		if (linetarget)
+		{
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Owner, vforward, HammerRange, damage))
+			{
+				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			}
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
+			{
+				linetarget.Thrust(angles.yaw, power);
+			}
+			bThrowHammer = false;	// Don't throw a hammer
+			break;
+		}
+		angles = Owner.Angles;
+		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
+		AimLineAttack(Owner, &angles, HammerRange);
+		if (linetarget)
+		{
+			AngleVector(&angles, &vforward);
+			if (LineAttack(Owner, vforward, HammerRange, damage))
+			{
+				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			}
+			PlayerPawn(Owner).AdjustPlayerAngle();
+			if (linetarget.bCountKill || linetarget.bIsPlayer)
+			{
+				linetarget.Thrust(angles.yaw, power);
+			}
+			bThrowHammer = false;	// Don't throw a hammer
+			break;
+		}
+	}
+	if (i == 16)
+	{
+		// didn't find any targets in meleerange, so set to throw out a hammer
+		PuffSpawned = none;
+		angles = Owner.Angles;
+		AimLineAttack(Owner, &angles, HammerRange);
+		AngleVector(&angles, &vforward);
+		if (LineAttack(Owner, vforward, HammerRange, damage))
+		{
+			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		}
+		if (PuffSpawned)
+		{
+			bThrowHammer = false;
+		}
+		else
+		{
+			bThrowHammer = true;
+		}
+	}
+
+	if (Player->Mana[MANA_2] <
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon))
+	{
+		// Don't spawn a hammer if the player doesn't have enough mana
+		bThrowHammer = false;
+	}
+	return;
+}
+
+//============================================================================
+//
+//  A_FHammerThrow
+//
+//============================================================================
+
+void A_FHammerThrow(void)
+{
+	if (!bThrowHammer)
+	{
+		return;
+	}
+	Player->Mana[MANA_2] -=
+		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	PlayerPawn(Player->MO).SpawnPlayerMissile(HammerMissile);
+}
+
+__states__
+{
+	S_FHAMMERREADY('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) { A_WeaponReady(); }
+	S_FHAMMERDOWN('FHMR', 0, 1.0 / 35.0, S_FHAMMERDOWN) { A_Lower(); }
+	S_FHAMMERUP('FHMR', 0, 1.0 / 35.0, S_FHAMMERUP) { A_Raise(); }
+	S_FHAMMERATK_1('FHMR', 1, 6.0 / 35.0, S_FHAMMERATK_2) { SX = 5.0; }
+	S_FHAMMERATK_2('FHMR', 2, 3.0 / 35.0, S_FHAMMERATK_3) { SX = 5.0; A_FHammerAttack(); }
+	S_FHAMMERATK_3('FHMR', 3, 3.0 / 35.0, S_FHAMMERATK_4) { SX = 5.0; }
+	S_FHAMMERATK_4('FHMR', 4, 2.0 / 35.0, S_FHAMMERATK_5) { SX = 5.0; }
+	S_FHAMMERATK_5('FHMR', 4, 10.0 / 35.0, S_FHAMMERATK_6) { SX = 5.0; SY = 150.0; A_FHammerThrow(); }
+	S_FHAMMERATK_6('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_7) { SY = 60.0; }
+	S_FHAMMERATK_7('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_8) { SY = 55.0; }
+	S_FHAMMERATK_8('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_9) { SY = 50.0; }
+	S_FHAMMERATK_9('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_10) { SY = 45.0; }
+	S_FHAMMERATK_10('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_11) { SY = 40.0; }
+	S_FHAMMERATK_11('FHMR', 0, 1.0 / 35.0, S_FHAMMERATK_12) { SY = 35.0; }
+	S_FHAMMERATK_12('FHMR', 0, 1.0 / 35.0, S_FHAMMERREADY) { }
+}
+
+defaultproperties
+{
+	Mana = MANA_NONE;
+	UpState = S_FHAMMERUP;
+	DownState = S_FHAMMERDOWN;
+	ReadyState = S_FHAMMERREADY;
+	AttackState = S_FHAMMERATK_1;
+	HoldAttackState = S_FHAMMERATK_1;
+	PSpriteSY = -10.0;
+	HammerRange = MELEERANGE + MELEERANGE / 2.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,68 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FireDemonRock1:Fragment;
+
+//============================================================================
+//
+//  A_SmBounce
+//
+//============================================================================
+
+void A_SmBounce(void)
+{
+	// give some more momentum (x,y,&z)
+	Origin.z = FloorZ + 1.0;
+	Velocity.z = (2.0 + Random() * 4.0) * 35.0;
+	Velocity.x = Random() * 3.0 * 35.0;
+	Velocity.y = Random() * 3.0 * 35.0;
+}
+
+__states__
+{
+	S_FIRED_RDROP1('FDMN', 18, 4.0 / 35.0, S_FIRED_RDROP1) { }
+	S_FIRED_RDEAD1_1('FDMN', 18, 5.0 / 35.0, S_FIRED_RDEAD1_2) { A_SmBounce(); }
+	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	GibsHealth = -500;
+	Radius = 3.0;
+	Height = 5.0;
+	Mass = 16.0;
+	bNoGravity = false;
+	IdleState = S_FIRED_RDROP1;
+	DeathState = S_FIRED_RDEAD1_1;
+	GibsDeathState = S_FIRED_RDEAD1_2;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

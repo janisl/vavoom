@@ -27,97 +27,10 @@
 //**
 //**************************************************************************
 
-//**************************************************************************
-//**
-//**	MenuControlKey
-//**
-//**************************************************************************
-
 class MenuControlKey;
 
 MenuControlKey CurrentCtl;
 int ControlColumn;	// menu column for controls
-
-class MenuControlKey:MenuChoice
-{
-	string Text;
-	string CommandOn;
-	string CommandOff;
-
-	void DrawWindow(GC gc)
-	{
-		int key1;
-		int key2;
-		int name_buf[32 / 4];
-		string Name = ARR2STR(name_buf);
-
-		T_SetFont(font_small);
-		T_SetAlign(hright, vtop);
-		gc.DrawText(0, 0, Text);
-
-		IN_GetBindingKeys(CommandOn, &key1, &key2);
-
-		T_SetAlign(hleft, vtop);
-		if (key1 >= 0)
-		{
-			KeyNameForNum(key1, Name);
-			gc.DrawText(10, 0, Name);
-		}
-		else
-		{
-			gc.DrawText(10, 0, "---");
-		}
-		if (key2 >= 0)
-		{
-			KeyNameForNum(key2, Name);
-			gc.DrawText(100, 0, Name);
-		}
-		else
-		{
-			gc.DrawText(100, 0, "---");
-		}
-	}
-
-	bool Key(int key)
-	{
-		int key1;
-		int key2;
-
-		switch (key)
-		{
-		case K_LEFTARROW:
-			ControlColumn = 0;
-			MenuScreen(Parent).CursorMoved();
-			return true;
-
-		case K_RIGHTARROW:
-			ControlColumn = 1;
-			MenuScreen(Parent).CursorMoved();
-			return true;
-
-		case K_ENTER:
-		case K_PADENTER:
-		case K_MOUSE1:
-			CurrentCtl = self;
-			MB_StartMessage("Press new key\n\nESC to cancel",
-				MB_Control, false);
-			return true;
-
-		case K_BACKSPACE:
-			IN_GetBindingKeys(CommandOn, &key1, &key2);
-			if (ControlColumn == 0)
-				IN_SetBinding(key1, "", "");
-			if (ControlColumn == 1)
-				IN_SetBinding(key2, "", "");
-			return true;
-		}
-		return false;
-	}
-
-	defaultproperties
-	{
-	}
-}
 
 //==========================================================================
 //
@@ -150,110 +63,12 @@ void ControlResponse(int key)
 	}
 }
 
-//==========================================================================
-//
-//	MenuScreenControls
-//
-//==========================================================================
-
-class MenuScreenControls:MenuScreen
-{
-	MenuControlKey Controls[15];
-	int NumControls;
-
-	void AddControl(string Text, string CommandOn, string CommandOff)
-	{
-		MenuControlKey newCtl;
-
-		newCtl = MenuControlKey(NewChild(MenuControlKey));
-		newCtl.SetPos(ChoicesStartX, ChoicesStartY + NumControls * 10);
-		newCtl.Text = Text;
-		newCtl.CommandOn = CommandOn;
-		newCtl.CommandOff = CommandOff;
-		Controls[NumControls] = newCtl;
-		NumControls++;
-	}
-
-	void CreateControlKeyChoices(void)
-	{
-		AddControl("Move foward", "+Forward", "-Forward");
-		AddControl("Move backward", "+Backward", "-Backward");
-		AddControl("Turn left", "+Left", "-Left");
-		AddControl("Turn right", "+Right", "-Right");
-		AddControl("Move left", "+MoveLeft", "-MoveLeft");
-		AddControl("Move right", "+MoveRight", "-MoveRight");
-		AddControl("Look up", "+LookUp", "-LookUp");
-		AddControl("Look down", "+LookDown", "-LookDown");
-		AddControl("Center look", "+LookCenter", "-LookCenter");
-		AddControl("Jump", "+Jump", "-Jump");
-		AddControl("Fire", "+Attack", "-Attack");
-		AddControl("Use", "+Use", "-Use");
-		AddControl("Strafe", "+Strafe", "-Strafe");
-		AddControl("Run", "+Speed", "-Speed");
-		AddControl("Mouse look", "+MouseLook", "-MouseLook");
-	}
-
-	void CreateChoices(void)
-	{
-		CreateControlKeyChoices();
-	}
-
-	void CursorMoved(void)
-	{
-		::CursorMoved();
-		if (Selector)
-		{
-			Selector.SetPos(Items[CursorPos].X + ControlColumn * 90,
-				Items[CursorPos].Y);
-		}
-	}
-
-	defaultproperties
-	{
-		ChoicesStartX = 120;
-		ChoicesStartY = 26;
-		SelectorType = MenuSelector_SmallRight;
-		Title = "SETUP CONTROLS";
-	}
-}
-
-//==========================================================================
-//
-//	MenuScreenControls2
-//
-//==========================================================================
-
-class MenuScreenControls2:MenuScreenControls
-{
-	void CreateControlKeyChoices(void)
-	{
-		AddControl("Fly up", "+FlyUp", "-FlyUp");
-		AddControl("Fly down", "+FlyDown", "-FlyDown");
-		AddControl("Center flight", "+FlyCenter", "-FlyCenter");
-		AddControl("Inventory left", "Impulse 13", "");
-		AddControl("Inventory right", "Impulse 14", "");
-		AddControl("Inventory use", "Impulse 15", "");
-		AddControl("Talk key", "ChatMode", "");
-	}
-
-	defaultproperties
-	{
-	}
-}
-
-void menu_controls(void)
-{
-	PushMenuScreen(SpawnMenu(MenuScreenControls));
-}
-
-void menu_controls2(void)
-{
-	PushMenuScreen(SpawnMenu(MenuScreenControls2));
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.12  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

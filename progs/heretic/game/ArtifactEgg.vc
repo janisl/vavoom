@@ -1,0 +1,49 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ArtifactEgg:Artifact
+	__mobjinfo__(30);
+
+__states__
+{
+	S_ARTI_EGGC1('EGGC', 0, 6.0 / 35.0, S_ARTI_EGGC2) { }
+	S_ARTI_EGGC2('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC3) { }
+	S_ARTI_EGGC3('EGGC', 2, 6.0 / 35.0, S_ARTI_EGGC4) { }
+	S_ARTI_EGGC4('EGGC', 1, 6.0 / 35.0, S_ARTI_EGGC1) { }
+}
+
+defaultproperties
+{
+	ArtifactType = arti_egg;
+	IdleState = S_ARTI_EGGC1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,103 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MaceFX2:MaceFX3;
+
+//===========================================================================
+//
+//  A_MaceBallImpact2
+//
+//===========================================================================
+
+void A_MaceBallImpact2(void)
+{
+	Actor tiny;
+	float angle;
+
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Origin.z != FloorZ) || (Velocity.z < 2.0 * 35.0))
+	{
+		// Explode
+		Velocity = vector(0.0, 0.0, 0.0);
+		bNoGravity = true;
+		bFloorBounce = false;
+	}
+	else
+	{
+		// Bounce
+		Velocity.z = Velocity.z * 192.0 / 256.0;
+		SetState(IdleState);
+
+		tiny = Spawn(MaceFX3, Origin);
+		angle = AngleMod360(Angles.yaw + 90.0);
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny.Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
+
+		tiny = Spawn(MaceFX3, Origin);
+		angle = AngleMod360(Angles.yaw - 90.0);
+		tiny.Instigator = Instigator;
+		tiny.Angles.yaw = angle;
+		tiny.Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny.Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny.Velocity.z = Velocity.z;
+		tiny.CheckMissileSpawn();
+	}
+}
+
+__states__
+{
+	S_MACEFX2_1('FX02', 2, 4.0 / 35.0, S_MACEFX2_2) { }
+	S_MACEFX2_2('FX02', 3, 4.0 / 35.0, S_MACEFX2_1) { }
+	S_MACEFXI2_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact2(); }
+}
+
+defaultproperties
+{
+	Speed = 350.0;
+	MissileDamage = 6;
+	IdleState = S_MACEFX2_1;
+	DeathState = S_MACEFXI2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,316 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sorcerer2:Pawn;
+
+int RiseState;
+int TeleportState;
+int DeathLoopState;
+
+//==========================================================================
+//
+//  A_SorRise
+//
+//==========================================================================
+
+void A_SorRise(void)
+{
+	PlayFullVolumeSound('SorcererRise', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_SorSightSnd
+//
+//==========================================================================
+
+void A_SorSightSnd(void)
+{
+	PlayFullVolumeSound('SorcererSight', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  DSparilTeleport
+//
+//==========================================================================
+
+void DSparilTeleport(void)
+{
+	int i;
+	float x;
+	float y;
+	TVec PrevOrg;
+	TVec dir;
+	Actor fog;
+
+	if (!BossSpotCount)
+	{
+		// No spots
+		return;
+	}
+	i = P_Random();
+	do
+	{
+		i++;
+		x = BossSpot[i % BossSpotCount].x;
+		y = BossSpot[i % BossSpotCount].y;
+		dir = BossSpot[i % BossSpotCount] - Origin;
+	}
+	while (Length(dir) < 128.0);
+	PrevOrg = Origin;
+	if (TeleportMove(vector(x, y, Origin.z)))
+	{
+		fog = Spawn(Sorcerer2TeleFade, PrevOrg);
+		fog.PlaySound('Teleport', CHAN_VOICE);
+		SetState(TeleportState);
+		PlaySound('Teleport', CHAN_VOICE);
+		Origin.z = FloorZ;
+		Angles.yaw = BossSpot_angle[i % BossSpotCount];
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+}
+
+//==========================================================================
+//
+//  A_Srcr2Decide
+//
+//==========================================================================
+
+void A_Srcr2Decide(void)
+{
+	float chance;
+
+	if (!BossSpotCount)
+	{
+		// No spots
+		return;
+	}
+	switch (Health / (SpawnHealth / 8))
+	{
+	case 0:
+		chance = 0.75;
+		break;
+	case 1:
+		chance = 0.46875;
+		break;
+	case 2:
+		chance = 0.46875;
+		break;
+	case 3:
+		chance = 0.46875;
+		break;
+	case 4:
+		chance = 0.25;
+		break;
+	case 5:
+		chance = 0.25;
+		break;
+	case 6:
+		chance = 0.125;
+		break;
+	case 7:
+		chance = 0.0625;
+		break;
+	case 8:
+		chance = 0.0;
+		break;
+	}
+	if (Random() < chance)
+	{
+		DSparilTeleport();
+	}
+}
+
+//==========================================================================
+//
+//  A_Srcr2Attack
+//
+//==========================================================================
+
+void A_Srcr2Attack(void)
+{
+	int chance;
+
+	if (!Enemy)
+	{
+		return;
+	}
+	PlayFullVolumeSound(AttackSound, CHAN_AUTO);
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(20));
+		return;
+	}
+	chance = Health < SpawnHealth / 2 ? 96 : 48;
+	if (P_Random() < chance)
+	{
+		// Wizard spawners
+		SpawnMissileAngles(Sorcerer2Missile2,
+			AngleMod360(Angles.yaw - 45.0), -30.0);
+		SpawnMissileAngles(Sorcerer2Missile2,
+			AngleMod360(Angles.yaw + 45.0), -30.0);
+	}
+	else
+	{
+		// Blue bolt
+		SpawnMissile(Enemy, Sorcerer2Missile1);
+	}
+}
+
+//==========================================================================
+//
+//  A_Sor2DthInit
+//
+//==========================================================================
+
+void A_Sor2DthInit(void)
+{
+	Special1 = 7;	// Animation loop counter
+	P_Massacre();	// Kill monsters early
+}
+
+//==========================================================================
+//
+//  A_SorDSph
+//
+//==========================================================================
+
+void A_SorDSph(void)
+{
+	PlayFullVolumeSound('SorcererDeath', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_Sor2DthLoop
+//
+//==========================================================================
+
+void A_Sor2DthLoop(void)
+{
+	if (--Special1)
+	{
+		// Need to loop
+		SetState(DeathLoopState);
+	}
+}
+
+//==========================================================================
+//
+//  A_SorDExp
+//
+//==========================================================================
+
+void A_SorDExp(void)
+{
+	PlayFullVolumeSound('SorcererExplodes', CHAN_BODY);
+}
+
+//==========================================================================
+//
+//  A_SorDBon
+//
+//==========================================================================
+
+void A_SorDBon(void)
+{
+	PlayFullVolumeSound('SorcererBones', CHAN_BODY);
+}
+
+__states__
+{
+	S_SOR2_RISE1('SOR2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
+	S_SOR2_RISE2('SOR2', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
+	S_SOR2_RISE3('SOR2', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
+	S_SOR2_RISE4('SOR2', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
+	S_SOR2_RISE5('SOR2', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
+	S_SOR2_RISE6('SOR2', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
+	S_SOR2_RISE7('SOR2', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
+	S_SOR2_LOOK1('SOR2', 12, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
+	S_SOR2_LOOK2('SOR2', 13, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
+	S_SOR2_WALK1('SOR2', 12, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
+	S_SOR2_WALK2('SOR2', 13, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
+	S_SOR2_WALK3('SOR2', 14, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
+	S_SOR2_WALK4('SOR2', 15, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
+	S_SOR2_PAIN1('SOR2', 16, 3.0 / 35.0, S_SOR2_PAIN2) { }
+	S_SOR2_PAIN2('SOR2', 16, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
+	S_SOR2_ATK1('SOR2', 17, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
+	S_SOR2_ATK2('SOR2', 18, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
+	S_SOR2_ATK3('SOR2', 19, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
+	S_SOR2_TELE1('SOR2', 11, 6.0 / 35.0, S_SOR2_TELE2) { }
+	S_SOR2_TELE2('SOR2', 10, 6.0 / 35.0, S_SOR2_TELE3) { }
+	S_SOR2_TELE3('SOR2', 9, 6.0 / 35.0, S_SOR2_TELE4) { }
+	S_SOR2_TELE4('SOR2', 8, 6.0 / 35.0, S_SOR2_TELE5) { }
+	S_SOR2_TELE5('SOR2', 7, 6.0 / 35.0, S_SOR2_TELE6) { }
+	S_SOR2_TELE6('SOR2', 6, 6.0 / 35.0, S_SOR2_WALK1) { }
+	S_SOR2_DIE1('SDTH', 0, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
+	S_SOR2_DIE2('SDTH', 1, 8.0 / 35.0, S_SOR2_DIE3) { }
+	S_SOR2_DIE3('SDTH', 2, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
+	S_SOR2_DIE4('SDTH', 3, 7.0 / 35.0, S_SOR2_DIE5) { }
+	S_SOR2_DIE5('SDTH', 4, 7.0 / 35.0, S_SOR2_DIE6) { }
+	S_SOR2_DIE6('SDTH', 5, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
+	S_SOR2_DIE7('SDTH', 6, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
+	S_SOR2_DIE8('SDTH', 7, 6.0 / 35.0, S_SOR2_DIE9) { }
+	S_SOR2_DIE9('SDTH', 8, 18.0 / 35.0, S_SOR2_DIE10) { }
+	S_SOR2_DIE10('SDTH', 9, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
+	S_SOR2_DIE11('SDTH', 10, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
+	S_SOR2_DIE12('SDTH', 11, 6.0 / 35.0, S_SOR2_DIE13) { }
+	S_SOR2_DIE13('SDTH', 12, 6.0 / 35.0, S_SOR2_DIE14) { }
+	S_SOR2_DIE14('SDTH', 13, 6.0 / 35.0, S_SOR2_DIE15) { }
+	S_SOR2_DIE15('SDTH', 14, -1.0, S_NULL) { A_BossDeath(); }
+}
+
+defaultproperties
+{
+	Health = 3500;
+	Radius = 16.0;
+	Height = 70.0;
+	Mass = 300.0;
+	StepSpeed = 14.0;
+	PainChance = 0.125;
+	bDropOff = true;
+	bBoss = true;
+	RiseState = S_SOR2_RISE1;
+	IdleState = S_SOR2_LOOK1;
+	SeeState = S_SOR2_WALK1;
+	TeleportState = S_SOR2_TELE1;
+	MissileState = S_SOR2_ATK1;
+	PainState = S_SOR2_PAIN1;
+	DeathState = S_SOR2_DIE1;
+	DeathLoopState = S_SOR2_DIE4;
+	SightSound = 'SorcererSight';
+	ActiveSound = 'SorcererActive';
+	AttackSound = 'SorcererAttack';
+	PainSound = 'SorcererPain';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,1036 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pawn:Actor
+	abstract;
+
+bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
+
+float StepSpeed;
+
+// Reaction time: if non 0, don't attack yet.
+int ReactionCount;
+
+// If >0, the target will be chased
+// no matter what (even if shot)
+int Threshold;
+
+// Player number last looked for.
+int LastLook;
+
+// Movement direction, movement generation (zig-zagging).
+int MoveDir;	// 0-7
+int MoveCount;	// when 0, select a new dir
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t * mthing)
+{
+	if (bCheckNoMonsters && nomonsters)
+	{
+		Remove();
+		return;
+	}
+	if (gameskill == sk_nightmare)
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+
+	::OnMapSpawn(mthing);
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate(void)
+{
+	// Monster
+	if (bDormant)
+	{
+		bDormant = false;
+		StateTime = 0.1;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate(void)
+{
+	// Monster
+	if (!bDormant)
+	{
+		bDormant = true;
+		StateTime = -1.0;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  SpawnMissile
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+Actor SpawnMissile(Actor dest, classid type)
+{
+	Actor th;
+	TVec org;
+	TVec dir;
+
+	org = Origin;
+	switch (type)
+	{
+	case MinotaurMissile:	// Minotaur swing attack missile
+		org.z = Origin.z + 40.0;
+		break;
+	case MinotaurFloorFire1:	// Minotaur floor fire missile
+		org.z = ONFLOORZ + FloorClip;
+		break;
+	case CentaurMissile:
+		org.z = Origin.z + 45.0;
+		break;
+	case IceGuyMissile:
+		org.z = Origin.z + 40.0;
+		break;
+	case HolyMissile:
+		org.z = Origin.z + 40.0;
+		break;
+	default:
+		org.z = Origin.z + 32.0;
+		break;
+	}
+	org.z -= FloorClip;
+	th = Spawn(type, org);
+	if (th.SightSound)
+	{
+		th.PlaySound(th.SightSound, CHAN_VOICE);
+	}
+	th.Instigator = self;	// Originator
+	dir = dest.Origin - Origin;
+	if (dest.Translucency)
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
+	}
+	dir = Normalize(dir);
+	th.Velocity = dir * th.Speed;
+	VectorAngles(&dir, &th.Angles);
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileXYZ
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+Actor SpawnMissileXYZ(TVec org, Actor dest, classid type)
+{
+	TVec dir;
+	Actor th;
+
+	org.z -= FloorClip;
+	th = Spawn(type, org);
+	if (th.SightSound)
+	{
+		th.PlaySound(th.SightSound, CHAN_VOICE);
+	}
+	th.Instigator = self;	// Originator
+	dir = dest.Origin - Origin;
+	if (dest.Translucency)
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
+	}
+	dir = Normalize(dir);
+	th.Velocity = dir * th.Speed;
+	VectorAngles(&dir, &th.Angles);
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//==========================================================================
+//
+//  CheckMeleeRange
+//
+//==========================================================================
+
+bool CheckMeleeRange(void)
+{
+	float dist;
+
+	if (!Enemy)
+	{
+		return false;
+	}
+	dist = MobjDist(Enemy, self);
+	if (dist >= MELEERANGE)
+	{
+		return false;
+	}
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+	if (Enemy.Origin.z > Origin.z + Height)
+	{
+		// Enemy is higher than the attacker
+		return false;
+	}
+	else if (Origin.z > Enemy.Origin.z + Enemy.Height)
+	{
+		// Attacker is higher
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  CheckMeleeRange2
+//
+//==========================================================================
+
+bool CheckMeleeRange2(void)
+{
+	float dist;
+
+	if (!Enemy)
+	{
+		return false;
+	}
+	dist = MobjDist(Enemy, self);
+	if (dist >= MELEERANGE * 2.0 || dist < MELEERANGE)
+	{
+		return false;
+	}
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+	if (Enemy.Origin.z > Origin.z + Height)
+	{
+		// Enemy is higher than the attacker
+		return false;
+	}
+	else if (Origin.z > Enemy.Origin.z + Enemy.Height)
+	{
+		// Attacker is higher
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  CheckMissileRange
+//
+//==========================================================================
+
+bool CheckMissileRange(void)
+{
+	float dist;
+
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+	if (bJustHit)
+	{
+		// The target just hit the enemy, so fight back!
+		bJustHit = false;
+		return true;
+	}
+	if (ReactionCount)
+	{
+		// Don't attack yet
+		return false;
+	}
+	dist = MobjDist(self, Enemy) - 64.0;
+	if (!MeleeState)
+	{
+		// No melee attack, so fire more frequently
+		dist -= 128.0;
+	}
+	if (dist > 200.0)
+	{
+		dist = 200.0;
+	}
+	if (Random() * 256.0 < dist)
+	{
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  FaceMovementDirection
+//
+//==========================================================================
+
+void FaceMovementDirection(void)
+{
+	switch (MoveDir)
+	{
+	case DI_EAST:
+		Angles.yaw = 0.0;
+		break;
+	case DI_NORTHEAST:
+		Angles.yaw = 45.0;
+		break;
+	case DI_NORTH:
+		Angles.yaw = 90.0;
+		break;
+	case DI_NORTHWEST:
+		Angles.yaw = 135.0;
+		break;
+	case DI_WEST:
+		Angles.yaw = 180.0;
+		break;
+	case DI_SOUTHWEST:
+		Angles.yaw = 225.0;
+		break;
+	case DI_SOUTH:
+		Angles.yaw = 270.0;
+		break;
+	case DI_SOUTHEAST:
+		Angles.yaw = 315.0;
+		break;
+	}
+}
+
+//============================================================================
+//
+//  LookForMonsters
+//
+//============================================================================
+
+bool LookForMonsters(void)
+{
+	int count;
+	Actor mo;
+
+	if (!players[0].MO.CanSee(self))
+	{
+		// Player can't see monster
+		return false;
+	}
+	count = 0;
+	FOREACH(Actor, mo)
+	{
+		if (!mo.bCountKill || (mo == self) || (mo.Health <= 0))
+		{
+			// Not a valid monster
+			continue;
+		}
+		if (MobjDist(self, mo) > MONS_LOOK_RANGE)
+		{
+			// Out of range
+			continue;
+		}
+		if (P_Random() < 16)
+		{
+			// Skip
+			continue;
+		}
+		if (count++ > MONS_LOOK_LIMIT)
+		{
+			// Stop searching
+			return false;
+		}
+		if (!CanSee(mo))
+		{
+			// Out of sight
+			continue;
+		}
+		if (Class == Minotaur)
+		{
+			if ((mo.Class == Minotaur) && (mo.Enemy != *_SpecialMobj1))
+			{
+				continue;
+			}
+		}
+		// Found a target monster
+		Enemy = mo;
+		return true;
+	}
+	return false;
+}
+
+//============================================================================
+//
+//  LookForPlayers
+//
+//  If allaround is false, only look 180 degrees in front
+//  returns true if a player is targeted
+//
+//============================================================================
+
+bool LookForPlayers(bool allaround)
+{
+	int c;
+	int stop;
+	player_t *P;
+	float an;
+	float dist;
+
+	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
+	{
+		// Single player game and player is dead, look for monsters
+		return LookForMonsters();
+	}
+	c = 0;
+	stop = (LastLook - 1) & (MAXPLAYERS - 1);
+	for (;; LastLook = (LastLook + 1) & (MAXPLAYERS - 1))
+	{
+		if (LastLook == stop)
+			return false;	// done looking
+
+		if (!players[LastLook].bActive)
+			continue;
+
+		if (c++ == 2)
+			return false;	// done looking
+
+		P = &players[LastLook];
+		if (!P->bSpawned || !P->MO)
+			continue;	//  not spawned yet
+		if (P->Health <= 0)
+			continue;	// dead
+		if (!CanSee(P->MO))
+			continue;	// out of sight
+
+		if (!allaround)
+		{
+			an = AngleMod360(atan2(P->MO.Origin.y - Origin.y,
+				P->MO.Origin.x - Origin.x) - Angles.yaw);
+			if (an > 90.0 && an < 270.0)
+			{
+				dist = MobjDist(P->MO, self);
+				// if real close, react anyway
+				if (dist > MELEERANGE)
+					continue;	// behind back
+			}
+		}
+		if (P->MO.Translucency)
+		{
+			// Player is invisible
+			if (MobjDist(P->MO, self) > 2.0 * MELEERANGE &&
+				Length(P->MO.Velocity) < 5.0 * 35.0)
+			{
+				// Player is sneaking - can't detect
+				return false;
+			}
+			if (P_Random() < 225)
+			{
+				// Player isn't sneaking, but still didn't detect
+				return false;
+			}
+		}
+		if (Class == Minotaur)
+		{
+			if (*_SpecialMobj1 == P->MO)
+			{
+				continue;	// Don't target master
+			}
+		}
+		Enemy = P->MO;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  StepMove
+//
+//  Move in the current direction, returns false if the move is blocked.
+//
+//==========================================================================
+
+bool StepMove(void)
+{
+	float tryx;
+	float tryy;
+
+	line_t *ld;
+	bool good;
+
+	if (bBlasted)
+		return true;
+	if (MoveDir == DI_NODIR)
+		return false;
+
+#ifdef RANGECHECK
+	if (MoveDir >= 8 || MoveDir < 0)
+		Error("Weird actor->MoveDir!");
+#endif
+
+	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
+
+	if (!TryMove(vector(tryx, tryy, Origin.z)))
+	{
+		// open any specials
+		if (bFloat && tmtrace->bFloatOk)
+		{
+			// must adjust height
+			if (Origin.z < tmtrace->FloorZ)
+				Origin.z += FLOATSPEED * frametime;
+			else
+				Origin.z -= FLOATSPEED * frametime;
+
+			bInFloat = true;
+			return true;
+		}
+
+		if (!tmtrace->NumSpecHit)
+			return false;
+
+		MoveDir = DI_NODIR;
+		good = false;
+		while (tmtrace->NumSpecHit--)
+		{
+			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
+			// if the special is not a door
+			// that can be opened,
+			// return false
+			if (P_ActivateLine(ld, self, 0, SPAC_USE))
+			{
+				good = true;
+			}
+		}
+		return good;
+	}
+	else
+	{
+		bInFloat = false;
+	}
+
+	if (!bFloat)
+	{
+		if (Origin.z > FloorZ)
+		{
+			HitFloorType();
+		}
+		Origin.z = FloorZ;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  TryWalk
+//
+//  Attempts to move actor in its current (ob->moveangle) direction.
+//  If blocked by either a wall or an actor returns FALSE.
+//  If move is either clear of block only by a door, returns TRUE and sets.
+//  If a door is in the way, an OpenDoor call is made to start it opening.
+//
+//==========================================================================
+
+bool TryWalk(void)
+{
+	if (!StepMove())
+	{
+		return false;
+	}
+	MoveCount = P_Random() & 15;
+	return true;
+}
+
+//============================================================================
+//
+//  NewChaseDir
+//
+//============================================================================
+
+void NewChaseDir(void)
+{
+	float deltax, deltay;
+	int d[3];
+	int tdir, olddir, turnaround;
+
+	if (!Enemy)
+		Error("NewChaseDir: called with no target");
+
+	olddir = MoveDir;
+	turnaround = opposite[olddir];
+
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
+	if (deltax > 10.0)
+		d[1] = DI_EAST;
+	else if (deltax < -10.0)
+		d[1] = DI_WEST;
+	else
+		d[1] = DI_NODIR;
+	if (deltay < -10.0)
+		d[2] = DI_SOUTH;
+	else if (deltay > 10.0)
+		d[2] = DI_NORTH;
+	else
+		d[2] = DI_NODIR;
+
+	// try direct route
+	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
+	{
+		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		if (MoveDir != turnaround && TryWalk())
+			return;
+	}
+
+	// try other directions
+	if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
+	{
+		tdir = d[1];
+		d[1] = d[2];
+		d[2] = tdir;
+	}
+
+	if (d[1] == turnaround)
+		d[1] = DI_NODIR;
+	if (d[2] == turnaround)
+		d[2] = DI_NODIR;
+
+	if (d[1] != DI_NODIR)
+	{
+		MoveDir = d[1];
+		if (TryWalk())
+			return;	/*either moved forward or attacked */
+	}
+
+	if (d[2] != DI_NODIR)
+	{
+		MoveDir = d[2];
+		if (TryWalk())
+			return;
+	}
+
+	/* there is no direct path to the player, so pick another direction */
+
+	if (olddir != DI_NODIR)
+	{
+		MoveDir = olddir;
+		if (TryWalk())
+			return;
+	}
+
+	if (P_Random() & 1)	/*randomly determine direction of search */
+	{
+		for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
+		{
+			if (tdir != turnaround)
+			{
+				MoveDir = tdir;
+				if (TryWalk())
+					return;
+			}
+		}
+	}
+	else
+	{
+		for (tdir = DI_SOUTHEAST; tdir >= DI_EAST; tdir--)
+		{
+			if (tdir != turnaround)
+			{
+				MoveDir = tdir;
+				if (TryWalk())
+					return;
+			}
+		}
+	}
+
+	if (turnaround != DI_NODIR)
+	{
+		MoveDir = turnaround;
+		if (TryWalk())
+			return;
+	}
+
+	MoveDir = DI_NODIR;	// can't move
+}
+
+//==========================================================================
+//
+//  A_Look
+//
+//  Stay in state until a player is sighted
+//
+//==========================================================================
+
+void A_Look(void)
+{
+	Actor targ;
+
+	Threshold = 0;	// any shot will wake up
+	targ = Actor(Sector->SoundTarget);
+
+	if (targ && targ.bShootable)
+	{
+		Enemy = targ;
+
+		if (bAmbush)
+		{
+			if (!CanSee(Enemy))
+			{
+				if (!LookForPlayers(false))
+					return;
+			}
+		}
+	}
+	else
+	{
+		if (!LookForPlayers(false))
+			return;
+	}
+
+	// go into chase state
+	if (SightSound)
+	{
+		if (bBoss)
+		{
+			// Full volume
+			PlayFullVolumeSound(SightSound, CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+	}
+
+	SetState(SeeState);
+}
+
+//==========================================================================
+//
+//  A_Chase
+//
+//  Actor has a melee attack, so it tries to close as fast as possible
+//
+//==========================================================================
+
+void A_Chase(void)
+{
+	float delta;
+
+	if (ReactionCount)
+	{
+		ReactionCount--;
+	}
+
+	// modify target threshold
+	if (Threshold)
+	{
+		if (!Enemy || Enemy.Health <= 0)
+		{
+			Threshold = 0;
+		}
+		else
+		{
+			Threshold--;
+		}
+	}
+
+	if (fastparm)
+	{
+		// Monsters move faster in nightmare mode
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
+		{
+			StateTime = 0.1;
+		}
+	}
+
+	// turn towards movement direction if not there yet
+	if (MoveDir < 8)
+	{
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+
+		if (delta > 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+		}
+		else if (delta < 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+		}
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// look for a new target
+		if (LookForPlayers(true))
+		{
+			return;	// got a new target
+		}
+		SetState(IdleState);
+		return;
+	}
+
+	// do not attack twice in a row
+	if (bJustAttacked)
+	{
+		bJustAttacked = false;
+		if (!fastparm)
+		{
+			NewChaseDir();
+		}
+		return;
+	}
+
+	// check for melee attack
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(MeleeState);
+		return;
+	}
+
+	// check for missile attack
+	if (MissileState)
+	{
+		if (fastparm || !MoveCount)
+		{
+			if (CheckMissileRange())
+			{
+				SetState(MissileState);
+				bJustAttacked = true;
+				return;
+			}
+		}
+	}
+
+	// possibly choose another target
+	if (netgame && !Threshold)
+	{
+		if (!CanSee(Enemy))
+		{
+			if (LookForPlayers(true))
+				return;	// got a new target
+		}
+	}
+
+	// chase towards player
+	if (--MoveCount < 0 || !StepMove())
+	{
+		NewChaseDir();
+	}
+
+	// make active sound
+	if (ActiveSound && P_Random() < 3)
+	{
+		if (Class == Bishop && P_Random() < 128)
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+		else if (Class == Pig)
+		{
+			PlaySound((P_Random() & 1) ? 'PigActive2' :
+				'PigActive1', CHAN_VOICE);
+		}
+		else if (bBoss)
+		{
+			PlayFullVolumeSound(ActiveSound, CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound(ActiveSound, CHAN_VOICE);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_FaceTarget
+//
+//==========================================================================
+
+void A_FaceTarget(void)
+{
+	if (!Enemy)
+		return;
+
+	bAmbush = false;
+
+	Angles.yaw = atan2(Enemy.Origin.y - Origin.y,
+		Enemy.Origin.x - Origin.x);
+
+	if (Enemy.Translucency)
+	{
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
+	}
+}
+
+//============================================================================
+//
+//	A_FreezeDeath
+//
+//============================================================================
+
+void A_FreezeDeath(void)
+{
+	StateTime = 2.0 + Random() * 8.0 + Random() * 8.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
+	bPushable = true;
+	bTelestomp = true;
+	bSlide = true;
+	bNoPassMobj = false;
+	Height *= 4.0;
+	PlaySound('FreezeDeath', CHAN_VOICE);
+
+	if (bIsPlayer)
+	{
+		Player->DamageFlash = 0.0;
+		Player->PoisonCount = 0;
+		Player->BonusFlash = 0.0;
+	}
+	else
+	{
+		if (bCountKill && Special)
+		{
+			// Initiate monster death actions
+			ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_FreezeDeathChunks
+//
+//============================================================================
+
+void A_FreezeDeathChunks(void)
+{
+	int i;
+	Actor A;
+
+	if (Length(Velocity) > 1.0)
+	{
+		StateTime = 3.0;
+		return;
+	}
+	PlaySound('FreezeShatter', CHAN_VOICE);
+
+	for (i = 12 + (P_Random() & 15); i >= 0; i--)
+	{
+		A = Spawn(IceChunk, Origin + vector(
+			(Random() - 0.5) * 2.0 * Radius,
+			(Random() - 0.5) * 2.0 * Radius,
+			Random() * Height));
+		A.SetState(A.IdleState + (P_Random() % 3));
+		if (A)
+		{
+			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
+			A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+			IceChunk(A).A_IceSetTics();	// set a random tic wait
+		}
+	}
+	for (i = 12 + (P_Random() & 15); i >= 0; i--)
+	{
+		A = Spawn(IceChunk, Origin + vector(
+			(Random() - 0.5) * 2.0 * Radius,
+			(Random() - 0.5) * 2.0 * Radius,
+			Random() * Height));
+		A.SetState(A.IdleState + (P_Random() % 3));
+		if (A)
+		{
+			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
+			A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+			IceChunk(A).A_IceSetTics();	// set a random tic wait
+		}
+	}
+	if (bIsPlayer)
+	{
+		// attach the player's view to a chunk of ice
+		A = Spawn(IceChunkHead, Origin + vector(0.0, 0.0, VIEWHEIGHT));
+		A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
+		A.Player = Player;
+		A.bIsPlayer = true;
+		Player = NULL;
+		bIsPlayer = false;
+		A.Health = Health;
+		A.Angles.yaw = Angles.yaw;
+		A.Player->MO = A;
+		A.Angles.pitch = 0.0;
+	}
+	RemoveFromTIDList();
+	SetState(S_FREETARGMOBJ);
+	bHidden = true;
+}
+
+defaultproperties
+{
+	ReactionCount = 8;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bCheckNoMonsters = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

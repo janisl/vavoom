@@ -1,0 +1,49 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class HolyPuff:Effect;
+
+__states__
+{
+	S_HOLY_PUFF1('SPIR', 10, 3.0 / 35.0, S_HOLY_PUFF2) { }
+	S_HOLY_PUFF2('SPIR', 11, 3.0 / 35.0, S_HOLY_PUFF3) { }
+	S_HOLY_PUFF3('SPIR', 12, 3.0 / 35.0, S_HOLY_PUFF4) { }
+	S_HOLY_PUFF4('SPIR', 13, 3.0 / 35.0, S_HOLY_PUFF5) { }
+	S_HOLY_PUFF5('SPIR', 14, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Translucency = 66;
+	IdleState = S_HOLY_PUFF1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

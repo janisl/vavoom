@@ -1,0 +1,115 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BossEye:Actor
+	__mobjinfo__(89);
+
+int NumBrainTargets;
+int BrainTargetOn;
+bool bBrainEasy;
+Actor BrainTargets[32];
+
+//==========================================================================
+//
+//  A_BrainAwake
+//
+//  Init boss spawner.
+//
+//==========================================================================
+
+void A_BrainAwake(void)
+{
+	Actor m;
+
+	// find all the target spots
+	NumBrainTargets = 0;
+	FOREACH(Actor, m)
+	{
+		if (m.Class == BossTarget)
+		{
+			BrainTargets[NumBrainTargets] = m;
+			NumBrainTargets++;
+		}
+	}
+	BrainTargetOn = 0;
+
+	PlayFullVolumeSound('BossSight', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_BrainSpit
+//
+//  Spawn a cube.
+//
+//==========================================================================
+
+void A_BrainSpit(void)
+{
+	Actor targ;
+	Actor A;
+
+	bBrainEasy = !bBrainEasy;
+	if (gameskill <= sk_easy && !bBrainEasy)
+		return;
+
+	// shoot a cube at current target
+	targ = BrainTargets[BrainTargetOn];
+	BrainTargetOn = (BrainTargetOn + 1) % NumBrainTargets;
+
+	// spawn brain missile
+	A = SpawnMissile(targ, SpawnShot);
+	A.Enemy = targ;
+	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
+		A.Velocity.y / A.StateTime);
+
+	PlayFullVolumeSound('BossFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_BRAINEYE('SSWV', 0, 10.0 / 35.0, S_BRAINEYE) { A_Look(); }
+	S_BRAINEYESEE('SSWV', 0, 181.0 / 35.0, S_BRAINEYE1) { A_BrainAwake(); }
+	S_BRAINEYE1('SSWV', 0, 150.0 / 35.0, S_BRAINEYE1) { A_BrainSpit(); }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 32.0;
+	ReactionCount = 8;
+	bHidden = true;
+	bNoBlockmap = true;
+	IdleState = S_BRAINEYE;
+	SeeState = S_BRAINEYESEE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,114 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Demon:Pawn
+	__mobjinfo__(3002);
+
+//==========================================================================
+//
+//  A_SargAttack
+//
+//  Demon, Spectre attack.
+//
+//==========================================================================
+
+void A_SargAttack(void)
+{
+	int damage;
+
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+	if (CheckMeleeRange())
+	{
+		damage = ((P_Random() % 10) + 1) * 4;
+		Enemy.Damage(self, self, damage);
+	}
+}
+
+__states__
+{
+	S_SARG_STND('SARG', 0, 'monsters/demon/base.md2', 0, 10.0 / 35.0, S_SARG_STND2) { A_Look(); }
+	S_SARG_STND2('SARG', 1, 'monsters/demon/base.md2', 1, 10.0 / 35.0, S_SARG_STND) { A_Look(); }
+	S_SARG_RUN1('SARG', 0, 'monsters/demon/base.md2', 2, 2.0 / 35.0, S_SARG_RUN2) { A_Chase(); }
+	S_SARG_RUN2('SARG', 0, 'monsters/demon/base.md2', 3, 2.0 / 35.0, S_SARG_RUN3) { A_Chase(); }
+	S_SARG_RUN3('SARG', 1, 'monsters/demon/base.md2', 4, 2.0 / 35.0, S_SARG_RUN4) { A_Chase(); }
+	S_SARG_RUN4('SARG', 1, 'monsters/demon/base.md2', 5, 1.0 / 35.0, S_SARG_RUN45) { A_Chase(); }
+	S_SARG_RUN45('SARG', 1, 'monsters/demon/base.md2', 6, 1.0 / 35.0, S_SARG_RUN5) { }
+	S_SARG_RUN5('SARG', 2, 'monsters/demon/base.md2', 7, 2.0 / 35.0, S_SARG_RUN6) { A_Chase(); }
+	S_SARG_RUN6('SARG', 2, 'monsters/demon/base.md2', 8, 2.0 / 35.0, S_SARG_RUN7) { A_Chase(); }
+	S_SARG_RUN7('SARG', 3, 'monsters/demon/base.md2', 9, 1.0 / 35.0, S_SARG_RUN78) { A_Chase(); }
+	S_SARG_RUN78('SARG', 3, 'monsters/demon/base.md2', 10, 1.0 / 35.0, S_SARG_RUN8) { }
+	S_SARG_RUN8('SARG', 3, 'monsters/demon/base.md2', 11, 2.0 / 35.0, S_SARG_RUN1) { A_Chase(); }
+	S_SARG_ATK1('SARG', 4, 'monsters/demon/base.md2', 12, 8.0 / 35.0, S_SARG_ATK2) { A_FaceTarget(); }
+	S_SARG_ATK2('SARG', 5, 'monsters/demon/base.md2', 13, 4.0 / 35.0, S_SARG_ATK3) { A_FaceTarget(); }
+	S_SARG_ATK3('SARG', 5, 'monsters/demon/base.md2', 14, 4.0 / 35.0, S_SARG_ATK4) { }
+	S_SARG_ATK4('SARG', 6, 'monsters/demon/base.md2', 15, 4.0 / 35.0, S_SARG_ATK5) { A_SargAttack(); }
+	S_SARG_ATK5('SARG', 6, 'monsters/demon/base.md2', 16, 4.0 / 35.0, S_SARG_RUN1) { }
+	S_SARG_PAIN('SARG', 7, 'monsters/demon/base.md2', 17, 2.0 / 35.0, S_SARG_PAIN2) { }
+	S_SARG_PAIN2('SARG', 7, 'monsters/demon/base.md2', 18, 2.0 / 35.0, S_SARG_RUN1) { A_Pain(); }
+	S_SARG_DIE1('SARG', 8, 'monsters/demon/death.md2', 0, 8.0 / 35.0, S_SARG_DIE2) { }
+	S_SARG_DIE2('SARG', 9, 'monsters/demon/death.md2', 1, 8.0 / 35.0, S_SARG_DIE3) { A_Scream(); }
+	S_SARG_DIE3('SARG', 10, 'monsters/demon/death.md2', 2, 4.0 / 35.0, S_SARG_DIE4) { }
+	S_SARG_DIE4('SARG', 11, 'monsters/demon/death.md2', 3, 4.0 / 35.0, S_SARG_DIE5) { A_Fall(); }
+	S_SARG_DIE5('SARG', 12, 'monsters/demon/death.md2', 4, 4.0 / 35.0, S_SARG_DIE6) { }
+	S_SARG_DIE6('SARG', 13, 'monsters/demon/death.md2', 5, -1.0, S_NULL) { }
+	S_SARG_RAISE1('SARG', 13, 'monsters/demon/death.md2', 6, 5.0 / 35.0, S_SARG_RAISE2) { }
+	S_SARG_RAISE2('SARG', 12, 'monsters/demon/death.md2', 7, 5.0 / 35.0, S_SARG_RAISE3) { }
+	S_SARG_RAISE3('SARG', 11, 'monsters/demon/death.md2', 8, 5.0 / 35.0, S_SARG_RAISE4) { }
+	S_SARG_RAISE4('SARG', 10, 'monsters/demon/death.md2', 9, 5.0 / 35.0, S_SARG_RAISE5) { }
+	S_SARG_RAISE5('SARG', 9, 'monsters/demon/death.md2', 10, 5.0 / 35.0, S_SARG_RAISE6) { }
+	S_SARG_RAISE6('SARG', 8, 'monsters/demon/death.md2', 11, 5.0 / 35.0, S_SARG_RUN1) { }
+}
+
+defaultproperties
+{
+	Health = 150;
+	Radius = 30.0;
+	Height = 56.0;
+	Mass = 400.0;
+	StepSpeed = 10.0;
+	PainChance = 0.703125;
+	IdleState = S_SARG_STND;
+	SeeState = S_SARG_RUN1;
+	MeleeState = S_SARG_ATK1;
+	PainState = S_SARG_PAIN;
+	DeathState = S_SARG_DIE1;
+	RaiseState = S_SARG_RAISE1;
+	SightSound = 'DemonSight';
+	ActiveSound = 'DemonActive';
+	AttackSound = 'DemonAttack';
+	PainSound = 'DemonPain';
+	DeathSound = 'DemonDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

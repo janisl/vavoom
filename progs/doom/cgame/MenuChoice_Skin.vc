@@ -1,0 +1,107 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuChoice_Skin:MenuChoiceEnum;
+
+int SkinBuf[64 / 4];
+
+void SetSkin(int skinNum)
+{
+	sprint(ARR2STR(SkinBuf), "models/players/%s/%s", GetCvarS("model"),
+		EnumNames[skinNum]);
+}
+
+int GetInitialValue(void)
+{
+	int i;
+	string curskin;
+
+	curskin = GetCvarS("skin");
+	for (i = 0; i < MaxValue; i++)
+	{
+		if (!strcmp(curskin, EnumNames[i]))
+		{
+			break;
+		}
+	}
+	if (i == MaxValue)
+	{
+		i = 0;
+		SetCvarS("skin", EnumNames[0]);
+	}
+	return i;
+}
+
+bool SetNewValue(int newValue)
+{
+	SetCvarS("skin", EnumNames[newValue]);
+	SetSkin(newValue);
+	return true;
+}
+
+defaultproperties
+{
+	Text = "Skin";
+	bLeftAlign = true;
+	//  FIXME FIXME FIXME
+	EnumNames[0] = "black.pcx";
+	EnumNames[1] = "blackf.pcx";
+	EnumNames[2] = "blue.pcx";
+	EnumNames[3] = "bluef.pcx";
+	EnumNames[4] = "brown.pcx";
+	EnumNames[5] = "brownf.pcx";
+	EnumNames[6] = "camo.pcx";
+	EnumNames[7] = "camof.pcx";
+	EnumNames[8] = "green.pcx";
+	EnumNames[9] = "greenf.pcx";
+	EnumNames[10] = "indigo.pcx";
+	EnumNames[11] = "indigof.pcx";
+	EnumNames[12] = "lgtblue.pcx";
+	EnumNames[13] = "lgtbluef.pcx";
+	EnumNames[14] = "navy.pcx";
+	EnumNames[15] = "navyf.pcx";
+	EnumNames[16] = "orange.pcx";
+	EnumNames[17] = "orangef.pcx";
+	EnumNames[18] = "pink.pcx";
+	EnumNames[19] = "pinkf.pcx";
+	EnumNames[20] = "purple.pcx";
+	EnumNames[21] = "purplef.pcx";
+	EnumNames[22] = "red.pcx";
+	EnumNames[23] = "redf.pcx";
+	EnumNames[24] = "violet.pcx";
+	EnumNames[25] = "violetf.pcx";
+	EnumNames[26] = "white.pcx";
+	EnumNames[27] = "whitef.pcx";
+	EnumNames[28] = "yellow.pcx";
+	EnumNames[29] = "yellowf.pcx";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

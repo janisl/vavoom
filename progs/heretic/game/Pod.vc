@@ -1,0 +1,119 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pod:Decoration
+	__mobjinfo__(2035);
+
+Actor Generator;
+
+//==========================================================================
+//
+//  A_PodPain
+//
+//==========================================================================
+
+void A_PodPain(void)
+{
+	int i;
+	int count;
+	int chance;
+	Actor goo;
+
+	chance = P_Random();
+	if (chance < 128)
+	{
+		return;
+	}
+	count = chance > 240 ? 2 : 1;
+	for (i = 0; i < count; i++)
+	{
+		goo = Spawn(PodGoo, Origin + vector(0.0, 0.0, 48.0));
+		goo.Instigator = self;
+		goo.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		goo.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		goo.Velocity.z = (0.5 + Random() * 2.0) * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//  A_RemovePod
+//
+//==========================================================================
+
+void A_RemovePod(void)
+{
+	if (Generator && Generator.Special1 > 0)
+	{
+		Generator.Special1--;
+	}
+}
+
+__states__
+{
+	S_POD_WAIT1('PPOD', 0, 10.0 / 35.0, S_POD_WAIT1) { }
+	S_POD_PAIN1('PPOD', 1, 14.0 / 35.0, S_POD_WAIT1) { A_PodPain(); }
+	S_POD_DIE1('PPOD', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE2) { A_RemovePod(); }
+	S_POD_DIE2('PPOD', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE3) { A_Scream(); }
+	S_POD_DIE3('PPOD', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_POD_DIE4) { A_Explode(); }
+	S_POD_DIE4('PPOD', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FREETARGMOBJ) { }
+	S_POD_GROW1('PPOD', 8, 3.0 / 35.0, S_POD_GROW2) { }
+	S_POD_GROW2('PPOD', 9, 3.0 / 35.0, S_POD_GROW3) { }
+	S_POD_GROW3('PPOD', 10, 3.0 / 35.0, S_POD_GROW4) { }
+	S_POD_GROW4('PPOD', 11, 3.0 / 35.0, S_POD_GROW5) { }
+	S_POD_GROW5('PPOD', 12, 3.0 / 35.0, S_POD_GROW6) { }
+	S_POD_GROW6('PPOD', 13, 3.0 / 35.0, S_POD_GROW7) { }
+	S_POD_GROW7('PPOD', 14, 3.0 / 35.0, S_POD_GROW8) { }
+	S_POD_GROW8('PPOD', 15, 3.0 / 35.0, S_POD_WAIT1) { }
+}
+
+defaultproperties
+{
+	Health = 45;
+	Radius = 16.0;
+	Height = 54.0;
+	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	bDropOff = true;
+	bNoBlood = true;
+	bWindThrust = true;
+	bPushable = true;
+	bSlide = true;
+	bTelestomp = true;
+	bNoPassMobj = false;
+	IdleState = S_POD_WAIT1;
+	PainState = S_POD_PAIN1;
+	DeathState = S_POD_DIE1;
+	DeathSound = 'PodExplode';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,533 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//
+//	Korax
+//
+// Korax Scripts (reserved)
+//  249     Tell scripts that we are below half health
+//  250-254 Control scripts
+//  255     Death script
+//
+// Korax TIDs (reserved)
+//  245     Reserved for Korax himself
+//  248     Initial teleport destination
+//  249     Teleport destination
+//  250-254 For use in respective control scripts
+//  255     For use in death script (spawn spots)
+//
+// Arm projectiles
+//      arm positions numbered:
+//          1   top left
+//          2   middle left
+//          3   lower left
+//          4   top right
+//          5   middle right
+//          6   lower right
+//
+//**************************************************************************
+
+class Korax:Pawn
+	__mobjinfo__(10200);
+
+//
+// Korax Variables
+//
+int FirstTeleportTID;
+int TeleportTID;
+
+float MissileDeltaAngle;
+float ArmExtensionShort;
+float ArmExtensionLong;
+
+float Arm1Height;
+float Arm2Height;
+float Arm3Height;
+float Arm4Height;
+float Arm5Height;
+float Arm6Height;
+
+float CommandHeight;
+float CommandOffset;
+
+//  Special1    last teleport destination
+bool bDidBelowHalfHealth;	//  set if "below half" script not yet run
+
+int KoraxMissileState;
+int KoraxCommandState;
+
+//============================================================================
+//
+//  A_KoraxStep
+//
+//============================================================================
+
+void A_KoraxStep(void)
+{
+	A_Chase();
+}
+
+//============================================================================
+//
+//  A_KoraxStep2
+//
+//============================================================================
+
+void A_KoraxStep2(void)
+{
+	PlayFullVolumeSound('KoraxStep', CHAN_BODY);
+	A_Chase();
+}
+
+//============================================================================
+//
+//  A_KoraxChase
+//
+//============================================================================
+
+void A_KoraxChase(void)
+{
+	Actor spot;
+	int search;
+	int args[3];
+
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
+	if (!bDidBelowHalfHealth && (Health <= (SpawnHealth / 2)))
+	{
+		search = 0;
+		spot = FindMobjFromTID(FirstTeleportTID, &search);
+		if (spot)
+		{
+			Teleport(spot.Origin, spot.Angles.yaw, true);
+		}
+
+		StartACS(249, 0, &args[0], self, NULL, 0);
+		bDidBelowHalfHealth = true;	// Don't run again
+
+		return;
+	}
+
+	if (!Enemy)
+		return;
+	if (Random() < 0.1171875)
+	{
+		SetState(MissileState);
+	}
+	else if (Random() < 0.1171875)
+	{
+		PlayFullVolumeSound('KoraxActive', CHAN_VOICE);
+	}
+
+	// Teleport away
+	if (Health < (SpawnHealth >> 1))
+	{
+		if (Random() < 0.0390625)
+		{
+			spot = FindMobjFromTID(TeleportTID, &_Special1);
+			if (spot)
+			{
+				Teleport(spot.Origin, spot.Angles.yaw, true);
+			}
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_KoraxDecide
+//
+//============================================================================
+
+void A_KoraxDecide(void)
+{
+	if (Random() < 0.859375)
+	{
+		SetState(KoraxMissileState);
+	}
+	else
+	{
+		SetState(KoraxCommandState);
+	}
+}
+
+//============================================================================
+//
+//  SpawnKoraxMissile
+//
+//============================================================================
+
+Actor SpawnKoraxMissile(TVec org, Actor dest, classid type)
+{
+	TVec dir;
+	Actor th;
+
+	org.z -= FloorClip;
+	th = Spawn(type, org);
+	if (th.SightSound)
+	{
+		th.PlaySound(th.SightSound, CHAN_VOICE);
+	}
+	th.Instigator = self;	// Originator
+	dir = dest.Origin - org;
+	if (dest.Translucency)
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
+	}
+	dir = Normalize(dir);
+	th.Velocity = dir * th.Speed;
+	VectorAngles(&dir, &th.Angles);
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//============================================================================
+// Arm 1 projectile
+//============================================================================
+
+void KoraxFire1(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - MissileDeltaAngle);
+	x = Origin.x + ArmExtensionShort * cos(ang);
+	y = Origin.y + ArmExtensionShort * sin(ang);
+	z = Origin.z - FloorClip + Arm1Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+// Arm 2 projectile
+//============================================================================
+
+void KoraxFire2(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - MissileDeltaAngle);
+	x = Origin.x + ArmExtensionLong * cos(ang);
+	y = Origin.y + ArmExtensionLong * sin(ang);
+	z = Origin.z - FloorClip + Arm2Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+// Arm 3 projectile
+//============================================================================
+
+void KoraxFire3(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - MissileDeltaAngle);
+	x = Origin.x + ArmExtensionLong * cos(ang);
+	y = Origin.y + ArmExtensionLong * sin(ang);
+	z = Origin.z - FloorClip + Arm3Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+// Arm 4 projectile
+//============================================================================
+
+void KoraxFire4(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + MissileDeltaAngle);
+	x = Origin.x + ArmExtensionShort * cos(ang);
+	y = Origin.y + ArmExtensionShort * sin(ang);
+	z = Origin.z - FloorClip + Arm4Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+// Arm 5 projectile
+//============================================================================
+
+void KoraxFire5(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + MissileDeltaAngle);
+	x = Origin.x + ArmExtensionLong * cos(ang);
+	y = Origin.y + ArmExtensionLong * sin(ang);
+	z = Origin.z - FloorClip + Arm5Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+// Arm 6 projectile
+//============================================================================
+
+void KoraxFire6(classid type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + MissileDeltaAngle);
+	x = Origin.x + ArmExtensionLong * cos(ang);
+	y = Origin.y + ArmExtensionLong * sin(ang);
+	z = Origin.z - FloorClip + Arm6Height;
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
+}
+
+//============================================================================
+//
+//  A_KoraxMissile
+//
+//============================================================================
+
+void A_KoraxMissile(void)
+{
+	classid mtype;
+	name sound;
+
+	PlaySound('KoraxAttack', CHAN_VOICE);
+
+	switch (P_Random() % 6)
+	{
+	case 0:
+		mtype = WraithMissile;
+		sound = 'WraithMissileFire';
+		break;
+	case 1:
+		mtype = DemonMissile;
+		sound = 'DemonMissileFire';
+		break;
+	case 2:
+		mtype = Demon2Missile;
+		sound = 'DemonMissileFire';
+		break;
+	case 3:
+		mtype = FireDemonMissile;
+		sound = 'FireDemonAttack';
+		break;
+	case 4:
+		mtype = CentaurMissile;
+		sound = 'CentaurLeaderAttack';
+		break;
+	case 5:
+		mtype = SerpentMissile;
+		sound = 'CentaurLeaderAttack';
+		break;
+	}
+
+	// Fire all 6 missiles at once
+	PlayFullVolumeSound(sound, CHAN_VOICE);
+	KoraxFire1(mtype);
+	KoraxFire2(mtype);
+	KoraxFire3(mtype);
+	KoraxFire4(mtype);
+	KoraxFire5(mtype);
+	KoraxFire6(mtype);
+}
+
+//============================================================================
+// Call action code scripts (250-254)
+//============================================================================
+
+void A_KoraxCommand(void)
+{
+	float x, y, z;
+	float ang;
+	int numcommands;
+	int args[3];
+
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
+	PlaySound('KoraxCommand', CHAN_VOICE);
+
+	// Shoot stream of lightning to ceiling
+	ang = AngleMod360(Angles.yaw - 90.0);
+	x = Origin.x + CommandOffset * cos(ang);
+	y = Origin.y + CommandOffset * sin(ang);
+	z = Origin.z + CommandHeight;
+	Spawn(KoraxBolt, vector(x, y, z));
+
+	if (Health <= (SpawnHealth >> 1))
+	{
+		numcommands = 5;
+	}
+	else
+	{
+		numcommands = 4;
+	}
+
+	switch (P_Random() % numcommands)
+	{
+	case 0:
+		StartACS(250, 0, &args[0], self, NULL, 0);
+		break;
+	case 1:
+		StartACS(251, 0, &args[0], self, NULL, 0);
+		break;
+	case 2:
+		StartACS(252, 0, &args[0], self, NULL, 0);
+		break;
+	case 3:
+		StartACS(253, 0, &args[0], self, NULL, 0);
+		break;
+	case 4:
+		StartACS(254, 0, &args[0], self, NULL, 0);
+		break;
+	}
+}
+
+//============================================================================
+//
+//  A_KoraxBonePop
+//
+//============================================================================
+
+void A_KoraxBonePop(void)
+{
+	Actor mo;
+	int args[3];
+
+	args[0] = 0;
+	args[1] = 0;
+	args[2] = 0;
+	// Spawn 6 spirits equalangularly
+	mo = SpawnMissileAngle(KoraxSpirit1, 60.0 * 0.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit1(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit2, 60.0 * 1.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit2(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit3, 60.0 * 2.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit3(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit4, 60.0 * 3.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit4(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit5, 60.0 * 4.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit5(mo).KSpiritInit(self);
+	mo = SpawnMissileAngle(KoraxSpirit6, 60.0 * 5.0, 5.0 * 35.0);
+	if (mo)
+		KoraxSpirit6(mo).KSpiritInit(self);
+
+	StartACS(255, 0, &args[0], self, NULL, 0);	// Death script
+}
+
+__states__
+{
+	S_KORAX_LOOK1('KORX', 0, 5.0 / 35.0, S_KORAX_LOOK1) { A_Look(); }
+	S_KORAX_CHASE1('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE2) { A_KoraxStep2(); }
+	S_KORAX_CHASE2('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE3) { A_KoraxChase(); }
+	S_KORAX_CHASE3('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE4) { A_KoraxChase(); }
+	S_KORAX_CHASE4('KORX', 0, 3.0 / 35.0, S_KORAX_CHASE5) { A_KoraxChase(); }
+	S_KORAX_CHASE5('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE6) { A_KoraxStep(); }
+	S_KORAX_CHASE6('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE7) { A_KoraxChase(); }
+	S_KORAX_CHASE7('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE8) { A_KoraxChase(); }
+	S_KORAX_CHASE8('KORX', 1, 3.0 / 35.0, S_KORAX_CHASE9) { A_KoraxChase(); }
+	S_KORAX_CHASE9('KORX', 2, 3.0 / 35.0, S_KORAX_CHASE0) { A_KoraxStep2(); }
+	S_KORAX_CHASE0('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEA) { A_KoraxChase(); }
+	S_KORAX_CHASEA('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEB) { A_KoraxChase(); }
+	S_KORAX_CHASEB('KORX', 2, 3.0 / 35.0, S_KORAX_CHASEC) { A_KoraxChase(); }
+	S_KORAX_CHASEC('KORX', 3, 3.0 / 35.0, S_KORAX_CHASED) { A_KoraxStep(); }
+	S_KORAX_CHASED('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEE) { A_KoraxChase(); }
+	S_KORAX_CHASEE('KORX', 3, 3.0 / 35.0, S_KORAX_CHASEF) { A_KoraxChase(); }
+	S_KORAX_CHASEF('KORX', 3, 3.0 / 35.0, S_KORAX_CHASE1) { A_KoraxChase(); }
+	S_KORAX_PAIN1('KORX', 7, 5.0 / 35.0, S_KORAX_PAIN2) { A_Pain(); }
+	S_KORAX_PAIN2('KORX', 7, 5.0 / 35.0, S_KORAX_CHASE2) { }
+	S_KORAX_ATTACK1('KORX', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_KORAX_ATTACK2) { A_FaceTarget(); }
+	S_KORAX_ATTACK2('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_ATTACK2) { A_KoraxDecide(); }
+	S_KORAX_MISSILE1('KORX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_KORAX_MISSILE2) { A_FaceTarget(); }
+	S_KORAX_MISSILE2('KORX', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_MISSILE3) { A_KoraxMissile(); }
+	S_KORAX_MISSILE3('KORX', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_KORAX_CHASE2) { }
+	S_KORAX_COMMAND1('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_COMMAND2) { A_FaceTarget(); }
+	S_KORAX_COMMAND2('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND3) { A_FaceTarget(); }
+	S_KORAX_COMMAND3('KORX', 6 | FF_FULLBRIGHT, 15.0 / 35.0, S_KORAX_COMMAND4) { A_KoraxCommand(); }
+	S_KORAX_COMMAND4('KORX', 22 | FF_FULLBRIGHT, 10.0 / 35.0, S_KORAX_COMMAND5) { }
+	S_KORAX_COMMAND5('KORX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_KORAX_CHASE2) { }
+	S_KORAX_DEATH1('KORX', 8, 5.0 / 35.0, S_KORAX_DEATH2) { }
+	S_KORAX_DEATH2('KORX', 9, 5.0 / 35.0, S_KORAX_DEATH3) { A_FaceTarget(); }
+	S_KORAX_DEATH3('KORX', 10, 5.0 / 35.0, S_KORAX_DEATH4) { A_Scream(); }
+	S_KORAX_DEATH4('KORX', 11, 5.0 / 35.0, S_KORAX_DEATH5) { }
+	S_KORAX_DEATH5('KORX', 12, 5.0 / 35.0, S_KORAX_DEATH6) { }
+	S_KORAX_DEATH6('KORX', 13, 5.0 / 35.0, S_KORAX_DEATH7) { }
+	S_KORAX_DEATH7('KORX', 14, 5.0 / 35.0, S_KORAX_DEATH8) { }
+	S_KORAX_DEATH8('KORX', 15, 5.0 / 35.0, S_KORAX_DEATH9) { }
+	S_KORAX_DEATH9('KORX', 16, 10.0 / 35.0, S_KORAX_DEATH0) { }
+	S_KORAX_DEATH0('KORX', 17, 5.0 / 35.0, S_KORAX_DEATHA) { A_KoraxBonePop(); }
+	S_KORAX_DEATHA('KORX', 18, 5.0 / 35.0, S_KORAX_DEATHB) { A_NoBlocking(); }
+	S_KORAX_DEATHB('KORX', 19, 5.0 / 35.0, S_KORAX_DEATHC) { }
+	S_KORAX_DEATHC('KORX', 20, 5.0 / 35.0, S_KORAX_DEATHD) { }
+	S_KORAX_DEATHD('KORX', 21, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 5000;
+	Radius = 65.0;
+	Height = 115.0;
+	Mass = 2000.0;
+	StepSpeed = 10.0;
+	PainChance = 0.078125;
+	MissileDamage = 15;
+	FirstTeleportTID = 248;
+	TeleportTID = 249;
+	MissileDeltaAngle = 85.0;
+	ArmExtensionShort = 40.0;
+	ArmExtensionLong = 55.0;
+	Arm1Height = 108.0;
+	Arm2Height = 82.0;
+	Arm3Height = 54.0;
+	Arm4Height = 104.0;
+	Arm5Height = 86.0;
+	Arm6Height = 53.0;
+	CommandHeight = 120.0;
+	CommandOffset = 27.0;
+	bNoPassMobj = true;
+	bBoss = true;
+	IdleState = S_KORAX_LOOK1;
+	SeeState = S_KORAX_CHASE2;
+	MissileState = S_KORAX_ATTACK1;
+	KoraxMissileState = S_KORAX_MISSILE1;
+	KoraxCommandState = S_KORAX_COMMAND1;
+	PainState = S_KORAX_PAIN1;
+	DeathState = S_KORAX_DEATH1;
+	SightSound = 'KoraxSight';
+	ActiveSound = 'KoraxActive';
+	AttackSound = 'KoraxAttack';
+	PainSound = 'KoraxPain';
+	DeathSound = 'KoraxDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,127 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponSkullRod:Weapon;
+
+//===========================================================================
+//
+//  A_FireSkullRodPL1
+//
+//===========================================================================
+
+void A_FireSkullRodPL1(void)
+{
+	Actor A;
+
+	if (Player->Ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	{
+		return;
+	}
+	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	A = Player->MO.SpawnPlayerMissile(HornRodMissile1);
+	// Randomize the first frame
+	if (A && P_Random() > 128)
+	{
+		A.SetState(S_HRODFX1_2);
+	}
+}
+
+//===========================================================================
+//
+//  A_FireSkullRodPL2
+//
+//  The special2 field holds the player number that shot the rain missile.
+// The specialmobj1 field is used for the seeking routines, special1 as a
+// counter for the sound looping.
+//
+//===========================================================================
+
+void A_FireSkullRodPL2(void)
+{
+	Player->Ammo[am_skullrod] -=
+		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
+	Player->MO.SpawnPlayerMissile(HornRodMissile2);
+	// Use MissileMobj instead of the return value from
+	// SpawnPlayerMissile because we need to give info to the mobj
+	// even if it exploded immediately.
+	if (netgame)
+	{
+		// Multi-player game
+		HornRodMissile2(MissileMobj).RainColor = P_GetPlayerNum(Player);
+	}
+	else
+	{
+		// Always use red missiles in single player games
+		HornRodMissile2(MissileMobj).RainColor = 2;
+	}
+	if (linetarget)
+	{
+		MissileMobj.Enemy = linetarget;
+	}
+	MissileMobj.PlaySound('SkullRodFire2', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_HORNRODREADY('HROD', 0, 1.0 / 35.0, S_HORNRODREADY) { A_WeaponReady(); }
+	S_HORNRODDOWN('HROD', 0, 1.0 / 35.0, S_HORNRODDOWN) { A_Lower(); }
+	S_HORNRODUP('HROD', 0, 1.0 / 35.0, S_HORNRODUP) { A_Raise(); }
+	S_HORNRODATK1_1('HROD', 0, 4.0 / 35.0, S_HORNRODATK1_2) { A_FireSkullRodPL1(); }
+	S_HORNRODATK1_2('HROD', 1, 4.0 / 35.0, S_HORNRODATK1_3) { A_FireSkullRodPL1(); }
+	S_HORNRODATK1_3('HROD', 1, 0.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
+	S_HORNRODATK2_1('HROD', 2, 2.0 / 35.0, S_HORNRODATK2_2) { }
+	S_HORNRODATK2_2('HROD', 3, 3.0 / 35.0, S_HORNRODATK2_3) { }
+	S_HORNRODATK2_3('HROD', 4, 2.0 / 35.0, S_HORNRODATK2_4) { }
+	S_HORNRODATK2_4('HROD', 5, 3.0 / 35.0, S_HORNRODATK2_5) { }
+	S_HORNRODATK2_5('HROD', 6, 4.0 / 35.0, S_HORNRODATK2_6) { A_FireSkullRodPL2(); }
+	S_HORNRODATK2_6('HROD', 5, 2.0 / 35.0, S_HORNRODATK2_7) { }
+	S_HORNRODATK2_7('HROD', 4, 3.0 / 35.0, S_HORNRODATK2_8) { }
+	S_HORNRODATK2_8('HROD', 3, 2.0 / 35.0, S_HORNRODATK2_9) { }
+	S_HORNRODATK2_9('HROD', 2, 2.0 / 35.0, S_HORNRODREADY) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_skullrod;
+	UpState = S_HORNRODUP;
+	DownState = S_HORNRODDOWN;
+	ReadyState = S_HORNRODREADY;
+	AttackState = S_HORNRODATK1_1;
+	HoldAttackState = S_HORNRODATK1_1;
+	UpState2 = S_HORNRODUP;
+	DownState2 = S_HORNRODDOWN;
+	ReadyState2 = S_HORNRODREADY;
+	AttackState2 = S_HORNRODATK2_1;
+	HoldAttackState2 = S_HORNRODATK2_1;
+	PSpriteSY = 15.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,50 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BurningBarrel:Decoration
+	__mobjinfo__(70);
+
+__states__
+{
+	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 0, 4.0 / 35.0, S_BBAR2) { }
+	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 1, 4.0 / 35.0, S_BBAR3) { }
+	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 2, 4.0 / 35.0, S_BBAR1) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 32.0;
+	bSolid = true;
+	IdleState = S_BBAR1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

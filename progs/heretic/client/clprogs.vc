@@ -41,24 +41,14 @@ bool ExtendedWAD;
 #include "msgbox.vc"
 
 #include "m_menu.vc"
-#include "m_main.vc"
-#include "m_single.vc"
 #include "m_epi.vc"
-#include "m_skill.vc"
-#include "m_load.vc"
-#include "m_save.vc"
-#include "m_multi.vc"
-#include "m_new.vc"
-#include "m_join.vc"
-#include "m_psetup.vc"
-#include "m_option.vc"
 #include "m_ctrl.vc"
-#include "m_mouse.vc"
 #include "m_resol.vc"
 #include "m_video.vc"
-#include "m_sound.vc"
-#include "m_help.vc"
 #include "m_quit.vc"
+
+#include "../cgame/classes.vc"
+
 #include "m_api.vc"
 
 #include "statbar.vc"
@@ -70,6 +60,9 @@ bool ExtendedWAD;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.12  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

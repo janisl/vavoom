@@ -1,0 +1,135 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TeleportOtherFX1:Projectile;
+
+//==========================================================================
+//
+//  A_TeloSpawnA
+//
+//==========================================================================
+
+void A_TeloSpawnA(void)
+{
+	Actor A;
+
+	A = Spawn(TeleportOtherFX2, Origin);
+	if (A)
+	{
+		A.Angles.yaw = Angles.yaw;
+		A.Instigator = Instigator;
+		A.Velocity = Velocity / 2.0;
+	}
+}
+
+//==========================================================================
+//
+//  A_TeloSpawnB
+//
+//==========================================================================
+
+void A_TeloSpawnB(void)
+{
+	Actor A;
+
+	A = Spawn(TeleportOtherFX3, Origin);
+	if (A)
+	{
+		A.Angles.yaw = Angles.yaw;
+		A.Instigator = Instigator;
+		A.Velocity = Velocity / 2.0;
+	}
+}
+
+//==========================================================================
+//
+//  A_TeloSpawnC
+//
+//==========================================================================
+
+void A_TeloSpawnC(void)
+{
+	Actor A;
+
+	A = Spawn(TeleportOtherFX4, Origin);
+	if (A)
+	{
+		A.Angles.yaw = Angles.yaw;
+		A.Instigator = Instigator;
+		A.Velocity = Velocity / 2.0;
+	}
+}
+
+//==========================================================================
+//
+//  A_TeloSpawnD
+//
+//==========================================================================
+
+void A_TeloSpawnD(void)
+{
+	Actor A;
+
+	A = Spawn(TeleportOtherFX5, Origin);
+	if (A)
+	{
+		A.Angles.yaw = Angles.yaw;
+		A.Instigator = Instigator;
+		A.Velocity = Velocity / 2.0;
+	}
+}
+
+__states__
+{
+	S_TELO_FX1('TRNG', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_TELO_FX2) { }
+	S_TELO_FX2('TRNG', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TELO_FX3) { }
+	S_TELO_FX3('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX4) { A_TeloSpawnC(); }
+	S_TELO_FX4('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX5) { A_TeloSpawnB(); }
+	S_TELO_FX5('TRNG', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX6) { A_TeloSpawnA(); }
+	S_TELO_FX6('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX7) { A_TeloSpawnB(); }
+	S_TELO_FX7('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX8) { A_TeloSpawnC(); }
+	S_TELO_FX8('TRNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX3) { A_TeloSpawnD(); }
+	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 16.0;
+	Speed = 700.0;
+	MissileDamage = 10001;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_TELO_FX1;
+	DeathState = S_TELO_FX9;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

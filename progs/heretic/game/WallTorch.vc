@@ -1,0 +1,57 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WallTorch:Decoration
+	__mobjinfo__(50);
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	::OnMapSpawn(mthing);
+	AddStaticLight(Origin + vector(0.0, 0.0, 80.0),
+		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
+}
+
+__states__
+{
+	S_WALLTORCH1('WTRH', 0 | FF_FULLBRIGHT, 'lights/torch.md2', 0, 6.0 / 35.0, S_WALLTORCH2) { }
+	S_WALLTORCH2('WTRH', 1 | FF_FULLBRIGHT, 'lights/torch.md2', 1, 6.0 / 35.0, S_WALLTORCH3) { }
+	S_WALLTORCH3('WTRH', 2 | FF_FULLBRIGHT, 'lights/torch.md2', 2, 6.0 / 35.0, S_WALLTORCH1) { }
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 16.0;
+	bNoGravity = true;
+	IdleState = S_WALLTORCH1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

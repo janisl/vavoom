@@ -54,97 +54,6 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class CeilingMover:SectorMover
-{
-	int type;
-	float bottomheight;
-	float topheight;
-	float speed;
-	int crush;
-	int direction;	// 1 = up, 0 = waiting, -1 = down
-	int tag;	// ID
-	int olddirection;
-	float dnspeed;
-	float upspeed;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	int res;
-
-	switch (direction)
-	{
-	case 0:	// IN STASIS
-		break;
-
-	case 1:	// UP
-		res = T_MovePlane(sector, speed * deltaTime,
-			topheight, false, 1, direction);
-		if (!(level->tictime & 7))
-			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
-		if (res == RES_PASTDEST)
-			switch (type)
-			{
-			case CLEV_CRUSHANDRAISE:
-				direction = -1;
-				speed = speed * 2.0;
-				break;
-			case CLEV_CRUSHANDRAISEA:
-				speed = dnspeed;
-				direction = -1;
-				break;
-			default:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			}
-		break;
-
-	case -1:	// DOWN
-		res = T_MovePlane(sector, speed * deltaTime,
-			bottomheight, crush, 1, direction);
-		if (!(level->tictime & 7))
-			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
-		if (res == RES_PASTDEST)
-			switch (type)
-			{
-			case CLEV_CRUSHANDRAISE:
-			case CLEV_CRUSHRAISEANDSTAY:
-				speed = speed / 2.0;
-				direction = 1;
-				break;
-			case CLEV_CRUSHANDRAISEA:
-				speed = upspeed;
-				direction = 1;
-				break;
-			default:
-				sector->SpecialData = none;
-				TagFinished(sector->tag);
-				RemoveSpecialThinker(self);
-				break;
-			}
-		else if (res == RES_CRUSHED)
-			switch (type)
-			{
-			case CLEV_CRUSHANDRAISEA:
-			case CLEV_LOWERANDCRUSH:
-				speed = 4.0;
-				break;
-			default:
-				break;
-			}
-		break;
-	}
-}
-
-}
-
 //==========================================================================
 //
 //  P_ActivateInStasisCeiling
@@ -322,6 +231,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.13  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

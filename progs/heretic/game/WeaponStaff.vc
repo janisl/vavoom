@@ -1,0 +1,158 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WeaponStaff:Weapon;
+
+//==========================================================================
+//
+//	WeaponLevel2Init
+//
+//==========================================================================
+
+void WeaponLevel2Init(void)
+{
+	SetState(ReadyState2);
+}
+
+//==========================================================================
+//
+//	WeaponLevel2Fade
+//
+//==========================================================================
+
+void WeaponLevel2Fade(void)
+{
+	Player->PendingWeapon = Player->ReadyWeapon;
+}
+
+//===========================================================================
+//
+//  A_StaffAttackPL1
+//
+//===========================================================================
+
+void A_StaffAttackPL1(void)
+{
+	TAVec angles;
+	int damage;
+	TVec dir;
+
+	damage = 5 + (P_Random() & 15);
+	angles = Player->MO.Angles;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = StaffPuff;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		// turn to face target
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+}
+
+//===========================================================================
+//
+//  A_StaffAttackPL2
+//
+//===========================================================================
+
+void A_StaffAttackPL2(void)
+{
+	TAVec angles;
+	int damage;
+	TVec dir;
+
+	// P_inter.c:DamageMobj() handles target momentums
+	damage = 18 + (P_Random() & 63);
+
+	angles = Player->MO.Angles;
+	angles.yaw = AngleMod360(angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0);
+	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	PuffType = StaffPuff2;
+	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	if (linetarget)
+	{
+		// turn to face target
+		Player->MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player->MO.Origin.y,
+			linetarget.Origin.x - Player->MO.Origin.x);
+		Player->bFixAngle = true;
+	}
+}
+
+__states__
+{
+	S_STAFFREADY('STFF', 0, 1.0 / 35.0, S_STAFFREADY) { A_WeaponReady(); }
+	S_STAFFDOWN('STFF', 0, 1.0 / 35.0, S_STAFFDOWN) { A_Lower(); }
+	S_STAFFUP('STFF', 0, 1.0 / 35.0, S_STAFFUP) { A_Raise(); }
+	S_STAFFREADY2_1('STFF', 3, 4.0 / 35.0, S_STAFFREADY2_2)
+	{
+		// Check for staff PL2 active sound
+		if (Random() < 0.5)
+		{
+			Player->MO.PlaySound('StaffActive', CHAN_WEAPON);
+		}
+		A_WeaponReady();
+	}
+	S_STAFFREADY2_2('STFF', 4, 4.0 / 35.0, S_STAFFREADY2_3) { A_WeaponReady(); }
+	S_STAFFREADY2_3('STFF', 5, 4.0 / 35.0, S_STAFFREADY2_1) { A_WeaponReady(); }
+	S_STAFFDOWN2('STFF', 3, 1.0 / 35.0, S_STAFFDOWN2) { A_Lower(); }
+	S_STAFFUP2('STFF', 3, 1.0 / 35.0, S_STAFFUP2) { A_Raise(); }
+	S_STAFFATK1_1('STFF', 1, 6.0 / 35.0, S_STAFFATK1_2) { }
+	S_STAFFATK1_2('STFF', 2, 8.0 / 35.0, S_STAFFATK1_3) { A_StaffAttackPL1(); }
+	S_STAFFATK1_3('STFF', 1, 8.0 / 35.0, S_STAFFREADY) { A_ReFire(); }
+	S_STAFFATK2_1('STFF', 6, 6.0 / 35.0, S_STAFFATK2_2) { }
+	S_STAFFATK2_2('STFF', 7, 8.0 / 35.0, S_STAFFATK2_3) { A_StaffAttackPL2(); }
+	S_STAFFATK2_3('STFF', 6, 8.0 / 35.0, S_STAFFREADY2_1) { A_ReFire(); }
+}
+
+defaultproperties
+{
+	Ammo = am_noammo;
+	UpState = S_STAFFUP;
+	DownState = S_STAFFDOWN;
+	ReadyState = S_STAFFREADY;
+	AttackState = S_STAFFATK1_1;
+	HoldAttackState = S_STAFFATK1_1;
+	UpState2 = S_STAFFUP2;
+	DownState2 = S_STAFFDOWN2;
+	ReadyState2 = S_STAFFREADY2_1;
+	AttackState2 = S_STAFFATK2_1;
+	HoldAttackState2 = S_STAFFATK2_1;
+	PSpriteSY = 0.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

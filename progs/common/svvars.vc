@@ -42,9 +42,14 @@ int RebornPosition;
 
 float frametime = 1.0 / 35.0;
 
+tmtrace_t *tmtrace;
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/10/26 16:32:14  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.7  2002/09/07 16:28:22  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,118 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BossBrain:Actor
+	__mobjinfo__(88);
+
+//==========================================================================
+//
+//  A_BrainPain
+//
+//  Brain pain sound.
+//
+//==========================================================================
+
+void A_BrainPain(void)
+{
+	PlayFullVolumeSound('BossPain', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_BrainScream
+//
+//  Brain death sound, make explosions.
+//
+//==========================================================================
+
+void A_BrainScream(void)
+{
+	TVec org;
+	Actor A;
+
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
+	{
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(BrainExplosion, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
+
+		A.SetState(A.IdleState);
+
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	PlayFullVolumeSound('BossDeath', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_BrainDie
+//
+//  Killed brain, exit level.
+//
+//==========================================================================
+
+void A_BrainDie(void)
+{
+	G_ExitLevel();
+}
+
+__states__
+{
+	S_BRAIN('BBRN', 0, -1.0, S_NULL) { }
+	S_BRAIN_PAIN('BBRN', 1, 36.0 / 35.0, S_BRAIN) { A_BrainPain(); }
+	S_BRAIN_DIE1('BBRN', 0, 100.0 / 35.0, S_BRAIN_DIE2) { A_BrainScream(); }
+	S_BRAIN_DIE2('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE3) { }
+	S_BRAIN_DIE3('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE4) { }
+	S_BRAIN_DIE4('BBRN', 0, -1.0, S_NULL) { A_BrainDie(); }
+}
+
+defaultproperties
+{
+	Health = 250;
+	Radius = 16.0;
+	Height = 16.0;
+	Mass = 10000000.0;
+	ReactionCount = 8;
+	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	IdleState = S_BRAIN;
+	PainState = S_BRAIN_PAIN;
+	DeathState = S_BRAIN_DIE1;
+	PainSound = 'BossPain';
+	DeathSound = 'BossDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,58 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TechLamp2:Decoration
+	__mobjinfo__(86);
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	::OnMapSpawn(mthing);
+	AddStaticLight(Origin + vector(0.0, 0.0, 48.0),
+		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
+}
+
+__states__
+{
+	S_TECH2LAMP('TLP2', 0 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 0, 4.0 / 35.0, S_TECH2LAMP2) { }
+	S_TECH2LAMP2('TLP2', 1 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 1, 4.0 / 35.0, S_TECH2LAMP3) { }
+	S_TECH2LAMP3('TLP2', 2 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 2, 4.0 / 35.0, S_TECH2LAMP4) { }
+	S_TECH2LAMP4('TLP2', 3 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 3, 4.0 / 35.0, S_TECH2LAMP) { }
+}
+
+defaultproperties
+{
+	Radius = 16.0;
+	Height = 56.0;
+	bSolid = true;
+	IdleState = S_TECH2LAMP;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,70 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ItemArmorBonus:Pickup
+	__mobjinfo__(2015);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	Toucher.Player->ArmorPoints++;	// can go over 100%
+	if (Toucher.Player->ArmorPoints > 200)
+		Toucher.Player->ArmorPoints = 200;
+	if (!Toucher.Player->ArmorType)
+		Toucher.Player->ArmorType = 1;
+	cprint(Toucher.Player, PickupMessage);
+	Toucher.PlaySound('PickupItem', CHAN_ITEM);
+	return true;
+}
+
+__states__
+{
+	S_BON2('BON2', 0, 'items/helmet.md2', 0, 6.0 / 35.0, S_BON2A) { }
+	S_BON2A('BON2', 1, 'items/helmet.md2', 1, 6.0 / 35.0, S_BON2B) { }
+	S_BON2B('BON2', 2, 'items/helmet.md2', 2, 6.0 / 35.0, S_BON2C) { }
+	S_BON2C('BON2', 3, 'items/helmet.md2', 3, 6.0 / 35.0, S_BON2D) { }
+	S_BON2D('BON2', 2, 'items/helmet.md2', 4, 6.0 / 35.0, S_BON2E) { }
+	S_BON2E('BON2', 1, 'items/helmet.md2', 5, 6.0 / 35.0, S_BON2) { }
+}
+
+defaultproperties
+{
+	bCountItem = true;
+	IdleState = S_BON2;
+	PickupMessage = "Picked up an armor bonus.";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

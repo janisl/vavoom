@@ -1,0 +1,275 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Wraith:Pawn
+	__mobjinfo__(34);
+
+//
+// Wraith Variables
+//
+
+int WeaveIndex;		//	Internal index into floatbob
+
+//==========================================================================
+//
+//  A_WraithInit
+//
+//==========================================================================
+
+void A_WraithInit(void)
+{
+	Origin.z += 48.0;
+	WeaveIndex = 0;	// index into floatbob
+}
+
+//==========================================================================
+//
+//  A_WraithFX3
+//
+//  Spawn an FX3 around the actor during attacks.
+//
+//==========================================================================
+
+void A_WraithFX3(void)
+{
+	Actor A;
+	int numdropped = P_Random() % 15;
+	int i;
+
+	for (i = 0; i < numdropped; i++)
+	{
+		A = Spawn(WraithFX3, Origin);
+		if (A)
+		{
+			A.Origin.x += (Random() - 0.5) * 8.0;
+			A.Origin.y += (Random() - 0.5) * 8.0;
+			A.Origin.z += Random() * 4.0;
+			A.Instigator = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithFX4
+//
+//  Spawn an FX4 during movement.
+//
+//==========================================================================
+
+void A_WraithFX4(void)
+{
+	Actor mo;
+	int chance = P_Random();
+	int spawn4, spawn5;
+
+	if (chance < 10)
+	{
+		spawn4 = true;
+		spawn5 = false;
+	}
+	else if (chance < 20)
+	{
+		spawn4 = false;
+		spawn5 = true;
+	}
+	else if (chance < 25)
+	{
+		spawn4 = true;
+		spawn5 = true;
+	}
+	else
+	{
+		spawn4 = false;
+		spawn5 = false;
+	}
+
+	if (spawn4)
+	{
+		mo = Spawn(WraithFleshDrip1, Origin);
+		if (mo)
+		{
+			mo.Origin.x += (Random() - 0.5) * 16.0;
+			mo.Origin.y += (Random() - 0.5) * 16.0;
+			mo.Origin.z += Random() * 4.0;
+			mo.Instigator = self;
+		}
+	}
+	if (spawn5)
+	{
+		mo = Spawn(WraithFleshDrip2, Origin);
+		if (mo)
+		{
+			mo.Origin.x += (Random() - 0.5) * 8.0;
+			mo.Origin.y += (Random() - 0.5) * 8.0;
+			mo.Origin.z += Random() * 4.0;
+			mo.Instigator = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithLook
+//
+//==========================================================================
+
+void A_WraithLook(void)
+{
+//	A_WraithFX4();             // too expensive
+	A_Look();
+}
+
+//==========================================================================
+//
+//  A_WraithChase
+//
+//==========================================================================
+
+void A_WraithChase(void)
+{
+	Origin.z += FloatBobOffsets[WeaveIndex];
+	WeaveIndex = (WeaveIndex + 2) & 63;
+//  if (actor->FloorClip > 0)
+//  {
+//      SetState(S_WRAITH_RAISE2);
+//      return;
+//  }
+	A_Chase();
+	A_WraithFX4();
+}
+
+//==========================================================================
+//
+//  A_WraithMelee
+//
+//==========================================================================
+
+void A_WraithMelee(void)
+{
+	int amount;
+
+	// Steal health from enemy and give to player
+	if (CheckMeleeRange() && (P_Random() < 220))
+	{
+		amount = HITDICE(2);
+		Enemy.Damage(self, self, amount);
+		Health += amount;
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithMissile
+//
+//==========================================================================
+
+void A_WraithMissile(void)
+{
+	Actor mo;
+
+	mo = SpawnMissile(Enemy, WraithMissile);
+	if (mo)
+	{
+		PlaySound('WraithMissileFire', CHAN_WEAPON);
+	}
+}
+
+__states__
+{
+	S_WRAITH_INIT1('WRTH', 0, 10.0 / 35.0, S_WRAITH_INIT2) { }
+	S_WRAITH_INIT2('WRTH', 1, 5.0 / 35.0, S_WRAITH_LOOK1) { A_WraithInit(); }
+	S_WRAITH_LOOK1('WRTH', 0, 15.0 / 35.0, S_WRAITH_LOOK2) { A_WraithLook(); }
+	S_WRAITH_LOOK2('WRTH', 1, 15.0 / 35.0, S_WRAITH_LOOK1) { A_WraithLook(); }
+	S_WRAITH_CHASE1('WRTH', 0, 4.0 / 35.0, S_WRAITH_CHASE2) { A_WraithChase(); }
+	S_WRAITH_CHASE2('WRTH', 1, 4.0 / 35.0, S_WRAITH_CHASE3) { A_WraithChase(); }
+	S_WRAITH_CHASE3('WRTH', 2, 4.0 / 35.0, S_WRAITH_CHASE4) { A_WraithChase(); }
+	S_WRAITH_CHASE4('WRTH', 3, 4.0 / 35.0, S_WRAITH_CHASE1) { A_WraithChase(); }
+	S_WRAITH_ATK1_1('WRTH', 4, 6.0 / 35.0, S_WRAITH_ATK1_2) { A_FaceTarget(); }
+	S_WRAITH_ATK1_2('WRTH', 5, 6.0 / 35.0, S_WRAITH_ATK1_3) { A_WraithFX3(); }
+	S_WRAITH_ATK1_3('WRTH', 6, 6.0 / 35.0, S_WRAITH_CHASE1) { A_WraithMelee(); }
+	S_WRAITH_ATK2_1('WRTH', 4, 6.0 / 35.0, S_WRAITH_ATK2_2) { A_FaceTarget(); }
+	S_WRAITH_ATK2_2('WRTH', 5, 6.0 / 35.0, S_WRAITH_ATK2_3) { }
+	S_WRAITH_ATK2_3('WRTH', 6, 6.0 / 35.0, S_WRAITH_CHASE1) { A_WraithMissile(); }
+	S_WRAITH_PAIN1('WRTH', 0, 2.0 / 35.0, S_WRAITH_PAIN2) { }
+	S_WRAITH_PAIN2('WRTH', 7, 6.0 / 35.0, S_WRAITH_CHASE1) { A_Pain(); }
+	S_WRAITH_DEATH1_1('WRTH', 8, 4.0 / 35.0, S_WRAITH_DEATH1_2) { }
+	S_WRAITH_DEATH1_2('WRTH', 9, 4.0 / 35.0, S_WRAITH_DEATH1_3) { A_Scream(); }
+	S_WRAITH_DEATH1_3('WRTH', 10, 4.0 / 35.0, S_WRAITH_DEATH1_4) { }
+	S_WRAITH_DEATH1_4('WRTH', 11, 4.0 / 35.0, S_WRAITH_DEATH1_5) { }
+	S_WRAITH_DEATH1_5('WRTH', 12, 4.0 / 35.0, S_WRAITH_DEATH1_6) { A_NoBlocking(); }
+	S_WRAITH_DEATH1_6('WRTH', 13, 4.0 / 35.0, S_WRAITH_DEATH1_7) { A_QueueCorpse(); }
+	S_WRAITH_DEATH1_7('WRTH', 14, 4.0 / 35.0, S_WRAITH_DEATH1_8) { }
+	S_WRAITH_DEATH1_8('WRTH', 15, 5.0 / 35.0, S_WRAITH_DEATH1_9) { }
+	S_WRAITH_DEATH1_9('WRTH', 16, 5.0 / 35.0, S_WRAITH_DEATH1_0) { }
+	S_WRAITH_DEATH1_0('WRTH', 17, -1.0, S_NULL) { }
+	S_WRAITH_DEATH2_1('WRT2', 0, 5.0 / 35.0, S_WRAITH_DEATH2_2) { }
+	S_WRAITH_DEATH2_2('WRT2', 1, 5.0 / 35.0, S_WRAITH_DEATH2_3) { A_Scream(); }
+	S_WRAITH_DEATH2_3('WRT2', 2, 5.0 / 35.0, S_WRAITH_DEATH2_4) { }
+	S_WRAITH_DEATH2_4('WRT2', 3, 5.0 / 35.0, S_WRAITH_DEATH2_5) { }
+	S_WRAITH_DEATH2_5('WRT2', 4, 5.0 / 35.0, S_WRAITH_DEATH2_6) { A_NoBlocking(); }
+	S_WRAITH_DEATH2_6('WRT2', 5, 5.0 / 35.0, S_WRAITH_DEATH2_7) { A_QueueCorpse(); }
+	S_WRAITH_DEATH2_7('WRT2', 6, 5.0 / 35.0, S_WRAITH_DEATH2_8) { }
+	S_WRAITH_DEATH2_8('WRT2', 7, -1.0, S_NULL) { }
+	S_WRAITH_ICE('WRT2', 8, 5.0 / 35.0, S_WRAITH_ICE2) { A_FreezeDeath(); }
+	S_WRAITH_ICE2('WRT2', 8, 1.0 / 35.0, S_WRAITH_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 150;
+	GibsHealth = -75;
+	Radius = 20.0;
+	Height = 55.0;
+	Mass = 75.0;
+	StepSpeed = 11.0;
+	PainChance = 0.09765625;
+	MissileDamage = 10;
+	bNoGravity = true;
+	bDropOff = true;
+	bFloat = true;
+	bActivateMCross = false;
+	IdleState = S_WRAITH_INIT1;
+	SeeState = S_WRAITH_CHASE1;
+	MeleeState = S_WRAITH_ATK1_1;
+	MissileState = S_WRAITH_ATK2_1;
+	PainState = S_WRAITH_PAIN1;
+	DeathState = S_WRAITH_DEATH1_1;
+	GibsDeathState = S_WRAITH_DEATH2_1;
+	IceDeathState = S_WRAITH_ICE;
+	SightSound = 'WraithSight';
+	ActiveSound = 'WraithActive';
+	AttackSound = 'WraithAttack';
+	PainSound = 'WraithPain';
+	DeathSound = 'WraithDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

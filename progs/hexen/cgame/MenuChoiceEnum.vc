@@ -1,0 +1,142 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuChoiceEnum:MenuChoice;
+
+string Text;
+bool bLeftAlign;
+
+int Value;
+int MaxValue;
+string EnumNames[32];
+
+int GetInitialValue(void)
+{
+	return 0;
+}
+
+bool SetNewValue(int newValue)
+{
+	return true;
+}
+
+void InitWindow(void)
+{
+	int i;
+
+	MaxValue = 0;
+	for (i = 0; i < 32; i++)
+	{
+		if (EnumNames[i] && EnumNames[i] != "")
+		{
+			MaxValue++;
+		}
+	}
+
+	Value = GetInitialValue();
+	if (Value < 0)
+		Value = 0;
+	if (Value >= MaxValue)
+		Value = MaxValue - 1;
+}
+
+void DrawWindow(GC gc)
+{
+	int xx;
+
+	T_SetFont(font_small);
+	if (bSelected)
+	{
+		T_SetFont(font_yellow);
+	}
+	if (bLeftAlign)
+	{
+		T_SetAlign(hleft, vtop);
+	}
+	else
+	{
+		T_SetAlign(hright, vtop);
+	}
+	gc.DrawText(0, 0, Text);
+
+	if (bLeftAlign)
+	{
+		xx = T_TextWidth(Text) + 8;
+	}
+	else
+	{
+		xx = 10;
+	}
+	T_SetAlign(hleft, vtop);
+	gc.DrawText(xx, 0, EnumNames[Value]);
+}
+
+bool Key(int key)
+{
+	int newValue;
+
+	switch (key)
+	{
+	case K_LEFTARROW:
+		if (Value > 0)
+			newValue = Value - 1;
+		else
+			newValue = MaxValue - 1;
+		if (SetNewValue(newValue))
+		{
+			Value = newValue;
+			LocalSound('MenuSwitch');
+		}
+		return true;
+	case K_RIGHTARROW:
+	case K_ENTER:
+	case K_PADENTER:
+	case K_MOUSE1:
+		if (Value < MaxValue - 1)
+			newValue = Value + 1;
+		else
+			newValue = 0;
+		if (SetNewValue(newValue))
+		{
+			Value = newValue;
+			LocalSound('MenuSwitch');
+		}
+		return true;
+	}
+	return false;
+}
+
+defaultproperties
+{
+	Height = 10;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

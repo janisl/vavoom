@@ -1,0 +1,89 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Key:Pickup
+	abstract;
+
+int KeyType;
+
+void OnMapSpawn(mthing_t *mthing)
+{
+	if (deathmatch)
+	{
+		Remove();
+		return;
+	}
+	::OnMapSpawn(mthing);
+}
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (P.GiveKey(KeyType))
+	{
+		cprint(P.Player, KeyText[KeyType]);
+	}
+	if (netgame)
+	{
+		return;
+	}
+	if (bCountItem)
+	{
+		P.Player->ItemCount++;
+	}
+	Remove();
+	P.Player->BonusFlash += BONUSADD;
+	P.PlaySound('PickupKey', CHAN_ITEM);
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,112 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenNewNetGame:MenuScreen;
+
+MenuChoiceEnum Players;
+MenuChoiceEnum Monsters;
+MenuChoiceEnum DeathMatch;
+MenuChoiceEnum Skill;
+MenuChoiceEnum TimeLimit;
+#ifndef DOOM2
+MenuChoice_MPEpisode Episode;
+#endif
+MenuChoice_MPLevel Level;
+
+void CreateChoices(void)
+{
+	MenuChoice startGame;
+
+	startGame = MenuChoice(NewChild(MenuChoice_StartGame));
+	startGame.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += startGame.Height;
+
+	Players = MenuChoice_Players(NewChild(MenuChoice_Players));
+	Players.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Players.Height;
+
+	Monsters = MenuChoice_Monsters(NewChild(MenuChoice_Monsters));
+	Monsters.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Monsters.Height;
+
+	DeathMatch = MenuChoice_DeathMatch(NewChild(MenuChoice_DeathMatch));
+	DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += DeathMatch.Height;
+
+	Skill = MenuChoice_MPSkill(NewChild(MenuChoice_MPSkill));
+	Skill.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Skill.Height;
+
+	TimeLimit = MenuChoice_TimeLimit(NewChild(MenuChoice_TimeLimit));
+	TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += TimeLimit.Height;
+
+#ifndef DOOM2
+	Episode = MenuChoice_MPEpisode(NewChild(MenuChoice_MPEpisode));
+	Episode.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Episode.Height;
+#endif
+
+	Level = MenuChoice_MPLevel(NewChild(MenuChoice_MPLevel));
+	Level.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Level.Height;
+#ifndef DOOM2
+	Episode.Levels = Level;
+#endif
+}
+
+void StartNewGame(void)
+{
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);
+	CmdBuf_AddText("NoMonsters %d\n", !Monsters.Value);
+	CmdBuf_AddText("DeathMatch %d\n", DeathMatch.Value);
+	CmdBuf_AddText("TimeLimit %d\n", TimeLimit.Value * 5);
+	CmdBuf_AddText("Skill %d\n", Skill.Value);
+#ifdef DOOM2
+	if (Level.Value + 1 < 10)
+		CmdBuf_AddText("Map MAP0%d\n", Level.Value + 1);
+	else
+		CmdBuf_AddText("Map MAP%d\n", Level.Value + 1);
+#else
+	CmdBuf_AddText("Map E%dM%d\n", Episode.Value + 1, Level.Value + 1);
+#endif
+}
+
+defaultproperties
+{
+	ChoicesStartX = 128;
+	ChoicesStartY = 40;
+	SelectorType = MenuSelector_SmallRight;
+	Title = "NEW GAME";
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,96 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Bat:Fragment;
+
+// Bat Variables
+int LifeTime;		// lifetime counter
+int FloatBobIndex;
+float TurnAngle;	// turn amount per move (in degrees)
+
+//===========================================================================
+//
+//  A_BatMove
+//
+//===========================================================================
+
+void A_BatMove(void)
+{
+	float newangle;
+	float newSpeed;
+
+	if (LifeTime < 0)
+	{
+		SetState(DeathState);
+	}
+	LifeTime -= 2;	// Called every 2 tics
+
+	if (Random() < 0.5)
+	{
+		newangle = AngleMod360(Angles.yaw + TurnAngle);
+	}
+	else
+	{
+		newangle = AngleMod360(Angles.yaw - TurnAngle);
+	}
+
+	// Adjust momentum vector to new direction
+	newSpeed = Speed * Random() * 4.0;
+	Velocity.x = newSpeed * cos(newangle);
+	Velocity.y = newSpeed * sin(newangle);
+
+	if (Random() < 0.05859375)
+		PlaySound('BatScream', CHAN_VOICE);
+
+	// Handle Z movement
+	Origin.z = Instigator.Origin.z + 2.0 * FloatBobOffsets[FloatBobIndex];
+	FloatBobIndex = (FloatBobIndex + 3) & 63;
+}
+
+__states__
+{
+	S_BAT1('ABAT', 0, 2.0 / 35.0, S_BAT2) { A_BatMove(); }
+	S_BAT2('ABAT', 1, 2.0 / 35.0, S_BAT3) { A_BatMove(); }
+	S_BAT3('ABAT', 2, 2.0 / 35.0, S_BAT1) { A_BatMove(); }
+	S_BAT_DEATH('ABAT', 0, 2.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 3.0;
+	Height = 3.0;
+	Speed = 175.0;
+	bDropOff = false;
+	IdleState = S_BAT1;
+	DeathState = S_BAT_DEATH;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

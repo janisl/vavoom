@@ -1,0 +1,57 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ImpMissile:Projectile;
+
+__states__
+{
+	S_TBALL1('BAL1', 0 | FF_FULLBRIGHT, 'missiles/impball.md2', 0, 4.0 / 35.0, S_TBALL2) { }
+	S_TBALL2('BAL1', 1 | FF_FULLBRIGHT, 'missiles/impball.md2', 1, 4.0 / 35.0, S_TBALL1) { }
+	S_TBALLX1('BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX2) { }
+	S_TBALLX2('BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX3) { }
+	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 8.0;
+	Speed = 350.0;
+	MissileDamage = 3;
+	Translucency = 33;
+	IdleState = S_TBALL1;
+	DeathState = S_TBALLX1;
+	SightSound = 'FireballShoot';
+	DeathSound = 'FireballExplode';
+	Effects = EF_DL_RBALL;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:20  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

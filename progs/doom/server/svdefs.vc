@@ -42,10 +42,6 @@ enum
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
 //
 // Map things flags
 //
@@ -95,6 +91,58 @@ enum
 #define MAXBOB			16.0
 
 #define MAXHEALTH		100
+
+//
+// --------- Inter --------
+//
+
+#define BONUSADD	0.2
+
+//
+// --------- User ---------
+//
+
+#define INVERSECOLORMAP		32
+
+//
+//  PALETTE MACROS
+//
+
+// Palette indices.
+// For damage/bonus red-/gold-shifts
+#define STARTREDPALS		1
+#define STARTBONUSPALS		9
+#define NUMREDPALS			8
+#define NUMBONUSPALS		4
+// Radiation suit, green shift.
+#define RADIATIONPAL		13
+
+//
+// ------ Mobj -------
+//
+
+#define ITEMQUESIZE		128
+
+//
+// ------- Physics -------
+//
+
+#define FLOATSPEED		140.0
+
+#define MAXMOVE			1050.0
+#define STOPSPEED		2.1875
+#define FRICTION		3.28125
+#define FRICTION_WATER	3.0
+
+#define BOUNCE_VAL		1.5
+
+//
+// ------ Usersubs ---------
+//
+
+#define	BODYQUESIZE				32
+
+// CONSTANTS ---------------------------------------------------------------
 
 enum
 {
@@ -182,6 +230,8 @@ enum
 	NUMATKCLASS
 };
 
+// TYPES -------------------------------------------------------------------
+
 struct AttackType
 {
 	int AttackStyle;
@@ -233,674 +283,6 @@ struct AttackType
 	classid Puff;
 };
 #endif
-
-class Actor:Entity
-	abstract
-{
-	//  States
-	int IdleState;
-	int SeeState;
-	int PainState;
-	int MeleeState;
-	int MissileState;
-	int DeathState;
-	int GibsDeathState;
-	int RaiseState;
-
-	//	Sounds
-	name SightSound;
-	name ActiveSound;
-	name AttackSound;
-	name PainSound;
-	name DeathSound;
-
-	//	Flags
-	bool bSpecial;		// call P_SpecialThing when touched
-	bool bShootable;	// Can be hit.
-	bool bAmbush;
-	bool bJustHit;		// try to attack right back
-	bool bJustAttacked;	// take at least one step before attacking
-	bool bSpawnCeiling;	// hang from ceiling instead of floor
-	// movement flags
-	bool bPickUp;		// for players to pick up items
-	bool bSlide;		// keep info about sliding along walls
-	bool bTeleport;		// don't cross lines or look at heights
-	bool bMissile;		// don't hit same species, explode on block
-	bool bDropped;		// dropped by a demon, not level spawned
-	bool bNoBlood;		// don't bleed when shot (use puff)
-	bool bCorpse;		// don't stop moving halfway off a step
-	bool bInFloat;		// floating to a height for a move, don't
-						// auto float to target's height
-	bool bCountKill;	// count towards intermission kill total
-	bool bCountItem;	// count towards intermission item total
-	bool bOnMobj;		// mobj is resting on top of another mobj
-	bool bActivateMCross;	// can activate monster cross lines
-	bool bActivatePCross;	// can activate projectile cross lines
-	bool bDormant;		// thing is dormant
-	bool bBounce;
-	bool bWaterJump;
-	bool bSkullFly;		// skull in flight
-	bool bNoDeathmatch;
-	bool bMonster;
-	bool bTelestomp;
-	bool bDefaultFloat;
-	bool bDefaultNoGravity;
-	bool bTriggerHappy;
-	bool bNeverTarget;
-	bool bNoGrudge;
-	bool bNoGravKill;
-	bool bBoss;
-	bool bNoRespawn;
-#ifdef DDF
-	// Extra flags.
-	bool bStealth;
-	bool bJustPickedUp;
-	bool bTouchy;
-	bool bLessVis;
-	bool bDisloyalType;
-	bool bOwnAttackHurts;
-	bool bFirstCheck;
-	bool bNoTrace;
-	bool bDummyMobj;
-	bool bNoResurect;
-	bool bEdgeWalker;
-	bool bGravFall;
-	bool bClimbable;
-	bool bWaterWalker;
-	bool bCrossLines;
-	bool bNoFriction;
-	bool bExtra;
-	bool bJustBounced;
-	bool bUsable;
-	bool bBlockShots;
-	bool bCrouching;
-	bool bTunnel;
-	bool bDLight;
-	bool bGibbed;
-#endif
-
-	//  Params
-	float Speed;
-	float StepSpeed;
-	float PainChance;
-	int SpawnHealth;
-	int GibsHealth;
-
-	// Thing being chased/attacked (or NULL).
-	Actor Enemy;
-	// The originator for missiles.
-	Actor Instigator;
-
-	// Player number last looked for.
-	int LastLook;
-
-	// For nightmare respawn.
-	mthing_t SpawnPoint;
-
-	int MissileDamage;	// For missiles
-
-	// Reaction time: if non 0, don't attack yet.
-	int ReactionCount;
-	// Used by player to freeze a bit after teleporting.
-	float ReactionTime;
-
-	// If >0, the target will be chased
-	// no matter what (even if shot)
-	int Threshold;
-
-	// Movement direction, movement generation (zig-zagging).
-	int MoveDir;	// 0-7
-	int MoveCount;	// when 0, select a new dir
-
-	float MissileChance;
-	float MissileMinRange;
-	float MissileMaxRange;
-	classid ImuneMissileType;
-
-	string PickupMessage;
-
-#ifdef DDF
-	// New states.
-	int SpawnState;
-	int ResState;
-	int MeanderState;
-	int BounceState;
-	int TouchState;
-	int JumpState;
-	int GibState;
-
-	// Float move speed
-	float FloatSpeed;
-
-	int ExplodeDamage;
-	int ExplodeDamageMax;
-	int ExplodeDamageError;
-	float ExplodeDamageDelay;
-	int ExplodeDamageNoArmour;
-
-	int CastOrder;
-	float RespawnTime;
-
-	float JumpDelay;
-	float JumpHeight;
-	float CrouchHeight;
-	float ViewHeight;
-	float ShotHeight;
-	float MaxFall;
-	float Fast;
-	float XScale;
-	float YScale;
-	float BounceSpeed;
-	float BounceUp;
-	float SightSlope;
-	float SightAngle;
-	float RideFriction;
-	float ShadowTrans;
-
-	// Sounds.
-	name OverkillSound;
-	name WalkSound;
-	name JumpSound;
-	name NoWaySound;
-	name OofSound;
-	name GaspSound;
-
-	int Fuse;
-	int Side;
-	int PlayerNum;
-
-	float LungCapacity;
-	float GaspStart;
-	int ChokeDamage;
-	int ChokeDamageMax;
-	int ChokeDamageError;
-	float ChokeDamageDelay;
-	int ChokeDamageNoArmour;
-
-	float Bobbing;
-	int Immunity;
-
-	AttackType CloseCombat;
-	AttackType RangeAttack;
-	AttackType SpareAttack;
-
-	float HaloHeight;
-	float HaloSize;
-	float HaloMinSize;
-	float HaloMaxSize;
-	float HaloTranslucency;
-	int HaloColor;
-	string HaloGraphic;
-
-	int DLightType;
-	int DLightIntensity;
-	int DLightColor;
-	float DLightHeight;
-
-	classid DropItem;
-	classid BloodType;
-	classid RespawnEffect;
-	classid SpitSpot;
-
-	AttackType *CurrentAttack;
-
-	int NumBrainTargets;
-	int BrainTargetOn;
-	int BrainEasy;
-	Actor BrainTargets[32];
-
-	int SpreadCount;
-#endif
-
-	bool GiveAmmo(int ammo, int num);
-	bool GiveWeapon(int weapon, bool dropped);
-	bool GiveBody(int num, int max);
-	bool GiveArmor(int armortype);
-	bool GiveArmor2(int armortype, int num, int max);
-	bool GiveCard(int card);
-	bool GiveItem(int item);
-	bool GivePower(int power);
-	bool GivePower2(int power, float duration, float max);
-	void HideSpecial(void);
-	void TouchSpecial(Actor Toucher);
-	bool HandlePickup(Actor Toucher);
-
-	bool Touch(Entity Other);
-	void Thrust(float angle, float move);
-	bool TeleportMove(TVec org);
-	int Teleport(float x, float y, float angle);
-	void CrossSpecialLine(line_t *ld, int side);
-
-	void SetOrigin2(TVec origin);
-	void CheckMissileSpawn(void);
-	Actor SpawnMissile(Actor dest, classid type);
-	void ExplodeMissile(void);
-	void Died(Actor source);
-	void DropStuff(void);
-	void NightmareRespawn(void);
-
-	bool HeightClip(void);
-	bool SectorChanged(int CrushChange);
-	void RadiusAttack(int damage, int distance, bool damageSource);
-
-	void Tick(float deltaTime);
-	void OnMapSpawn(mthing_t *mthing);
-
-	void Damage(Actor inflictor, Actor source, int damage);
-
-	// Physics
-	void XYMovement(void);
-	void ZMovement(void);
-	void ApplyFriction(void);
-	void PlayerLandedOnThing(void);
-	bool Physics(void);
-
-	bool CheckMeleeRange(void);
-	bool CheckMissileRange(void);
-	bool FindOther(void);
-	bool LookForMonsters(bool allaround);
-	bool LookForMonsters2(bool allaround);
-	bool LookForPlayers(bool allaround);
-	bool StepMove(void);
-	bool TryWalk(void);
-	void NewChaseDir(void);
-
-	void A_Explode(void);
-	void A_Pain(void);
-	void A_PlayerScream(void);
-	void A_Fall(void);
-	void A_XScream(void);
-	void A_Look(void);
-	void A_Chase(void);
-	void A_FaceTarget(void);
-	void A_Scream(void);
-
-#ifdef DDF
-	#define FUNC(name)		void name(void) { }
-
-	// Needed for the bossbrain.
-	void A_BrainScream(void);
-	void A_BrainDie(void);
-	void A_BrainSpit(void);
-	void A_CubeSpawn(void);
-	void A_BrainMissileExplode(void);
-
-	// Visibility Actions
-	void P_ActTransSet(int value);
-	FUNC(P_ActTransFade)
-	FUNC(P_ActTransMore)				// EXTRA
-	FUNC(P_ActTransLess)				// EXTRA
-	FUNC(P_ActTransAlternate)			// EXTRA
-
-	// Sound Actions
-	void P_ActPlaySound(name sound);
-	void P_ActKillSound(void);
-	void P_ActMakeAmbientSound(void);
-	void P_ActMakeAmbientSoundRandom(void);
-	void P_ActMakeCloseAttemptSound(void);
-	void P_ActMakeDyingSound(void);
-	void P_ActMakeOverKillSound(void);
-	void P_ActMakePainSound(void);
-	void P_ActMakeRangeAttemptSound(void);
-	void P_ActMakeActiveSound(void);
-
-	// Explosion Damage Actions
-	void P_ActDamageExplosion(void);
-	FUNC(P_ActThrust)					// EXTRA
-
-	// Stand-by / Looking Actions
-	FUNC(P_ActPlayerSupportLook)		// EXTRA
-
-	// Meander, aimless movement actions.
-	FUNC(P_ActStandardMeander)			// EXTRA
-	FUNC(P_ActPlayerSupportMeander)		// EXTRA
-
-	// Chasing Actions
-	void P_ActResurrectChase(void);
-	void P_ActWalkSoundChase(void);
-
-	// Attacking Actions
-	void P_ActComboAttack(void);
-	void P_ActMeleeAttack(AttackType *custom_attack);
-	void P_ActRangeAttack(AttackType *custom_attack);
-	void P_ActSpareAttack(AttackType *custom_attack);
-	void P_ActRefireCheck(void);
-
-	// Miscellanous
-	void P_ActResetSpreadCount(void)
-	{
-		SpreadCount = 0;
-	}
-	FUNC(P_ActExplode)					// EXTRA
-	FUNC(P_ActActivateLineType)			// EXTRA
-	FUNC(P_ActEnableRadTrig)			// EXTRA
-	FUNC(P_ActDisableRadTrig)			// EXTRA
-	FUNC(P_ActTouchyRearm)				// EXTRA
-	FUNC(P_ActTouchyDisarm)				// EXTRA
-	FUNC(P_ActBounceRearm)				// EXTRA
-	FUNC(P_ActBounceDisarm)				// EXTRA
-	FUNC(P_ActPathCheck)				// EXTRA
-	FUNC(P_ActPathFollow)				// EXTRA
-	FUNC(P_ActDropItem)					// EXTRA
-	FUNC(P_ActDLightSet)
-	FUNC(P_ActDLightFade)
-	FUNC(P_ActDLightRandom)				// EXTRA
-
-	// Movement actions
-	FUNC(P_ActFaceDir)					// EXTRA
-	FUNC(P_ActTurnDir)					// EXTRA
-	FUNC(P_ActTurnRandom)				// EXTRA
-	FUNC(P_ActMlookFace)				// EXTRA
-	FUNC(P_ActMlookTurn)				// EXTRA
-	FUNC(P_ActMoveFwd)					// EXTRA
-	FUNC(P_ActMoveRight)				// EXTRA
-	FUNC(P_ActMoveUp)					// EXTRA
-	FUNC(P_ActStopMoving)				// EXTRA
-
-	// Projectiles
-	void P_ActFixedHomingProjectile(void);
-	void P_ActRandomHomingProjectile(void);
-	FUNC(P_ActLaunchOrderedSpread)		// EXTRA
-	FUNC(P_ActLaunchRandomSpread)		// EXTRA
-	FUNC(P_ActCreateSmokeTrail)			// EXTRA
-	void P_ActHomeToSpot(void);
-	//boolean_t P_ActLookForTargets)
-
-	// Trackers
-	void P_ActEffectTracker(void);
-	void P_ActTrackerActive(void);
-	void P_ActTrackerFollow(void);
-	void P_ActTrackerStart(void);
-
-	// Blood and bullet puffs
-	FUNC(P_ActCheckBlood)
-	FUNC(P_ActCheckMoving)
-
-	void P_ActJump(float chance, name jumpState);
-
-	void DoAttack(AttackType *attack);
-	void LookForShootSpots(void);
-	void ObjectSpawning(AttackType *attack, float angle);
-#endif
-
-	defaultproperties
-	{
-		MaxStepHeight = 24.0;
-		MissileChance = 200.0;
-		Health = 1000;
-		GibsHealth = -1000;
-		Mass = 100.0;
-#ifdef DDF
-		FloatSpeed = 2.0;
-		ExplodeDamageMax = -1;
-		ExplodeDamageError = -1;
-		RespawnTime = 30.0;
-		JumpDelay = 1.0;
-		ViewHeight = 0.75;
-		ShotHeight = 0.64;
-		Fast = 1.0;
-		XScale = 1.0;
-		YScale = 1.0;
-		BounceSpeed = 0.5;
-		BounceUp = 0.5;
-		SightSlope = 16.0;
-		SightAngle = 90.0;
-		RideFriction = 0.7;
-		ShadowTrans = 0.5;
-		LungCapacity = 20.0;
-		GaspStart = 2.0;
-		ChokeDamage = 6;
-		ChokeDamageMax = 14;
-		ChokeDamageError = -1;
-		ChokeDamageDelay = 2.0;
-		ChokeDamageNoArmour = true;
-		Bobbing = 1.0;
-		CloseCombat.DamageMax = -1;
-		CloseCombat.DamageError = -1;
-		RangeAttack.DamageMax = -1;
-		RangeAttack.DamageError = -1;
-		SpareAttack.DamageMax = -1;
-		SpareAttack.DamageError = -1;
-		HaloHeight = -1.0;
-		HaloSize = 32.0;
-		HaloMinSize = -1.0;
-		HaloMaxSize = -1.0;
-		HaloTranslucency = 0.5;
-		HaloColor = 0x00ffffff;
-		DLightIntensity = 32;
-		DLightColor = 0x00ffffff;
-		DLightHeight = 0.5;
-#endif
-	}
-}
-
-class Pawn:Actor
-	abstract
-{
-	defaultproperties
-	{
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bMonster = true;
-		bActivateMCross = true;
-	}
-}
-
-class PlayerPawn:Pawn
-	abstract
-{
-	void ThrustPlayer(float angle, float move, float deltaTime);
-	void CalcHeight(float deltaTime);
-	void MovePlayer(float deltaTime);
-	void CheckWaterJump(void);
-	void WaterMove(float deltaTime);
-	void WaterJump(void);
-	void PlayerInSpecialSector(void);
-	void PlayerInContents(void);
-	void DeathPlayerTick(float deltaTime);
-	void PlayerImpulse(void);
-	void PlayerTick(float deltaTime);
-	void PaletteFlash(void);
-	void SetViewPos(void);
-
-	void SetPlayerRunState(void);
-	Actor SpawnPlayerMissile(classid type);
-
-#ifdef DDF
-	void ActPlayerAttack(AttackType *attack);
-#endif
-
-	defaultproperties
-	{
-		ReactionCount = 0;
-		bCountKill = false;
-		bMonster = false;
-		bActivateMCross = false;
-		bTelestomp = true;
-	}
-}
-
-class Projectile:Actor
-{
-	defaultproperties
-	{
-		ReactionCount = 8;
-		bMissile = true;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bActivatePCross = true;
-	}
-}
-
-class Effect:Actor
-{
-	defaultproperties
-	{
-		Radius = 20.0;
-		Height = 16.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bNoGravity = true;
-	}
-}
-
-class Pickup:Actor
-{
-	defaultproperties
-	{
-		Radius = 20.0;
-		Height = 8.0;
-		ReactionCount = 8;
-		bSpecial = true;
-	}
-}
-
-class Decoration:Actor
-{
-	defaultproperties
-	{
-		Radius = 20.0;
-		Height = 16.0;
-		ReactionCount = 8;
-	}
-}
-
-class Weapon:ViewEntity
-{
-	int Ammo;
-	int UpState;
-	int DownState;
-	int ReadyState;
-	int AttackState;
-	int HoldAttackState;
-	int FlashState;
-	name ThirdPersonModel;
-#ifdef DDF
-	AttackType Attack;
-	int AmmoPerShot;	// Ammo used per shot.
-	int Clip;			// Amount of shots in a clip
-	bool bAutoFire;		// If true, this is an automatic weapon.  If false it is semiautomatic.
-	float Kick;			// Amount of kick this weapon gives
-	AttackType SAAttack;// Second attack type.
-	int SAAmmo;			// Type of ammo for second attack.
-	int SAAmmoPerShot;	// Ammo used per second attack shot.
-	int SAClip;			// Amount of shots in a second attack clip
-	bool bSAAutoFire;	// Second attack is automatic ?
-	int ReloadState;	// State showing the weapon being reloaded
-	int SAAttackState;	// State showing the second attack firing
-	int SAReloadState;	// State showing the second attack reloading
-	int SAFlashState;	// State showing the second attack muzzle flash
-	int Crosshair;		// Crosshair states
-	int ZoomState;		// State showing viewfinder when zoomed.  Can be zero
-	bool bFeedBack;		// This weapon gives feedback on hit (chainsaw)
-	int UpgradedWeap;	// This weapon upgrades a previous one. (Berserk -> Fist)
-	// This affects how it will be selected if out of ammo.  Also
-	// determines the cycling order when on the same key.  Dangerous
-	// weapons are not auto-selected when out of ammo.
-	int Priority;
-	bool bDangerous;
-	AttackType EjectAttack;	// Attack type for the WEAPON_EJECT code pointer.
-	// Sounds.
-	name IdleSound;		// Played at the start of every readystate
-	name EngagedSound;	// Played while the trigger is held (chainsaw)
-	name HitSound;		// Played while the trigger is held and it is pointed at a target.
-	name StartSound;	// Played when the weapon is selected
-	name Sound1;		// Misc sounds
-	name Sound2;
-	name Sound3;
-	bool bNoThrust;		// This close combat weapon should not push the target away (chainsaw)
-	int BindKey;		// which number key this weapon is bound to, or -1 for none
-	bool bSilentToMonsters;	// monsters cannot hear this weapon (doesn't wake them up)
-	float ZoomFov;		// -AJA- 2000/03/18: when > 0, this weapon can zoom
-	bool bRefireInacc;	// -AJA- 2000/05/23: weapon loses accuracy when refired.
-	bool bShowClip;		// -AJA- 2000/10/20: show current clip in status bar (not total)
-	// controls for weapon bob (up & down) and sway (left & right).
-	// Given as percentages in DDF.
-	float Bobbing;
-	float Swaying;
-
-	// Temporary for reloading.
-	int AmmoFired;
-	int AmmoFiredSA;
-#endif
-
-	void A_Light0(void);
-	void A_WeaponReady(void);
-	void A_Lower(void);
-	void A_Raise(void);
-	void A_ReFire(void);
-	void A_Light1(void);
-	void A_Light2(void);
-	void A_CheckReload(void);
-	void A_GunFlash(void);
-
-#ifdef DDF
-	// Weapon Action Routine pointers
-	void A_WeaponShoot(AttackType *custom_attack);
-	void A_WeaponEject(AttackType *custom_attack);
-	void A_WeaponJump(float chance, name jumpState);
-	FUNC(A_NoFire)					// EXTRA
-	FUNC(A_NoFireReturn)			// EXTRA
-	void A_SFXWeapon1(void)
-	{
-		Player->MO.PlaySound(Sound1, CHAN_WEAPON);
-	}
-	void A_SFXWeapon2(void)
-	{
-		Player->MO.PlaySound(Sound2, CHAN_WEAPON);
-	}
-	void A_SFXWeapon3(void)
-	{
-		Player->MO.PlaySound(Sound3, CHAN_WEAPON);
-	}
-	void A_WeaponPlaySound(name snd)
-	{
-		Player->MO.PlaySound(snd, CHAN_WEAPON);
-	}
-	void A_WeaponKillSound(void)
-	{
-		Player->MO.StopSound(CHAN_WEAPON);
-	}
-	FUNC(A_WeaponTransSet)
-	FUNC(A_WeaponTransFade)			// EXTRA
-	FUNC(A_WeaponEnableRadTrig)		// EXTRA
-	FUNC(A_WeaponDisableRadTrig)	// EXTRA
-
-	FUNC(A_SetCrosshair)			// EXTRA
-	FUNC(A_GotTarget)				// EXTRA
-	FUNC(A_WeaponKick)				// EXTRA
-
-	void A_WeaponShootSA(AttackType *custom_attack);
-	void A_ReFireSA(void);
-	FUNC(A_NoFireSA)				// EXTRA
-	FUNC(A_NoFireReturnSA)			// EXTRA
-	void A_CheckReloadSA(void);
-	void A_GunFlashSA(void);
-#endif
-
-	defaultproperties
-	{
-		Ammo = am_noammo;
-#ifdef DDF
-		Attack.DamageMax = -1;
-		Attack.DamageError = -1;
-		SAAttack.DamageMax = -1;
-		SAAttack.DamageError = -1;
-		EjectAttack.DamageMax = -1;
-		EjectAttack.DamageError = -1;
-		SAAmmo = am_noammo;
-		Clip = 1;
-		SAClip = 1;
-		UpgradedWeap = -1;
-		BindKey = -1;
-		Bobbing = 1.0;
-		Swaying = 1.0;
-#endif
-	}
-}
 
 #ifndef	NO_BOTS
 /*
@@ -1009,105 +391,11 @@ enum
 	BST_RETURN
 };
 
-// Main bot class
-class BotPlayer:Object
-{
-	player_t *player;		// Points to reference player
-	Actor botmo;
+class BotPlayer;
 
-	// Destinations
-	Actor item;			// Item (roam towards weapon, etc)
-	bool bItemIsWeapon;
-	bool bItemIsPowerup;
-	Actor goal;			// Teamgame goal spot
-	Actor node;			// Node we're heading towards
-	Actor prev;			// Previous node we were at
-	TVec posdest;			// Position of our destination (doesn't have to be an actor)
-	bool posdest_valid;
-	Actor enemy;			// The dead meat.
-	TVec lastpos;			// Last place we saw our enemy
-	bool lastpos_valid;
-	Actor missile;			// A threathing missile that got to be avoided.
+#define NUMTOTALBOTS	30
+#define	NUMBOTTYPES		30
 
-	Actor ally;			// Ally to tag along with
-/*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
-							// pointed to by this. Allows bot to roam to it if
-							// necessary.
-
-	enemyinfo_t	enemyinfo;	// Things we know about our enemy
-
-	botstate_t	state;		// What we're doing in teamgame mode
-
-	fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
-	fixed_t		lasty;		// Last known y location of bot's enemy
-
-	// Tickers
-
-	float t_respawn;*/
-	float t_strafe;
-	float t_react;
-/*	float t_fight;
-	float t_rocket;
-	float t_turn;
-	float t_pissed;
-	float t_frust;*/
-	float t_fire;			// Tics left until our gun will actually fire again
-	float t_anticip;
-/*	float t_chat;			// Tics left until bots completes "typing" in what he's saying.
-							// Bot also doesn't do anything during this time.*/
-
-	float forwardmove;	// For building ucmd
-	float sidemove;
-
-	// Misc booleans
-	bool bAllRound;
-	bool bNewItemIsWeapon;
-	bool bNewItemIsPowerup;
-
-/*	chatline_t	*chatline;	// For when t_chat expires
-
-	bottype_t	bottype;	// Bot type*/
-	botinfo_t info;			// Aiming, name, perfection, yadda yadda
-
-/*	fixed_t		oldx;
-	fixed_t		oldy;
-
-	int			thingnum;*/
-	int angerlevel;
-
-/*	AActor		*things[NUMMOBJTYPES];*/
-	float combatdist[NUMWEAPONS + 1]; //different for each weapon.
-
-	float angle;			// The wanted angle that the bot tries to get every tic.
-
-/*	void LinkToPlayer (int playernum);*/
-
-	void OnBeginPlay(void);
-	void OnSpawn(void);
-	void BotTick(float deltaTime);
-	bool CheckTo(TVec pos);
-	void CheckStuff(void);
-	float GetAngle(void);
-	bool CheckPath(float ang, float dist);
-	void SetEnemy(void);
-	Actor FindEnemy(void);
-	bool Check_LOS(Actor to, float vangle);
-	bool CheckItem(Actor item);
-	void Scan(void);
-	int WeapFromItem(Actor item);
-	int AmmoFromItem(Actor item);
-	void Move(float deltaTime);
-	void SetAngle(float an);
-	void Roam(void);
-	float AngleTo(TVec dest);
-	void Attack(void);
-	void Turn(void);
-	void BotAim(void);
-	void Pitch(void);
-	int SkillLower(int skill, int num);
-	void Killed(Actor victim);
-	void Died(Actor killer);
-}
 #endif
 
 addfields player_t
@@ -1213,6 +501,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2002/10/26 16:32:21  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.40  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

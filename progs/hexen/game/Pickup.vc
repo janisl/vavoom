@@ -1,0 +1,154 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Pickup:Actor
+	abstract;
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	PlayerPawn P;
+
+	if (!Toucher.bPickUp)
+	{
+		// Can't be picked up by toucher
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	P = PlayerPawn(Toucher);
+	if (!P)
+	{
+		//	Shouldn't happen
+		return;
+	}
+	switch (Class)
+	{
+		// Items
+	case ItemHealingBottle:
+		if (!P.GiveBody(10))
+		{
+			return;
+		}
+		cprint(P.Player, TXT_ITEMHEALTH);
+		break;
+	}
+	if (Special)
+	{
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
+		Special = 0;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecial();
+	}
+	else
+	{
+		Remove();
+	}
+	P.Player->BonusFlash += BONUSADD;
+	P.PlaySound('PickupItem', CHAN_ITEM);
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing1
+//
+//  Make a special thing visible again.
+//
+//==========================================================================
+
+void A_RestoreSpecialThing1(void)
+{
+	bHidden = false;
+	PlaySound('Respawn', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_RestoreSpecialThing2
+//
+//==========================================================================
+
+void A_RestoreSpecialThing2(void)
+{
+	bSpecial = true;
+	SetState(IdleState);
+}
+
+__states__
+{
+	//	Hide for 40 secs
+	S_HIDESPECIAL1('ACLO', 4, 1400.0 / 35.0, S_HIDESPECIAL2) { }
+	S_HIDESPECIAL2('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL3) { A_RestoreSpecialThing1(); }
+	S_HIDESPECIAL3('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL4) { }
+	S_HIDESPECIAL4('ACLO', 0, 4.0 / 35.0, S_HIDESPECIAL5) { }
+	S_HIDESPECIAL5('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL6) { }
+	S_HIDESPECIAL6('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL7) { }
+	S_HIDESPECIAL7('ACLO', 1, 4.0 / 35.0, S_HIDESPECIAL8) { }
+	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) { }
+	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) { }
+	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) { }
+	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, S_NULL) { A_RestoreSpecialThing2(); }
+}
+
+//==========================================================================
+//
+//  HideSpecial
+//
+//==========================================================================
+
+void HideSpecial(void)
+{
+	bSpecial = false;
+	bHidden = true;
+	SetState(S_HIDESPECIAL1);
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 32.0;
+	Mass = 100.0;
+	bSpecial = true;
+	bNoPassMobj = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,137 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class BatSpawner:Actor
+	__mobjinfo__(10225);
+
+//===========================================================================
+//
+// Bat Spawner Variables
+//  args[0]     frequency of spawn (1=fastest, 10=slowest)
+//  args[1]     spread angle (0..255)
+//  args[2]     
+//  args[3]     duration of bats (in octics)
+//  args[4]     turn amount per move (in degrees)
+//
+//===========================================================================
+
+int FrequencyCount;		// frequency counter
+
+//===========================================================================
+//
+//  A_BatSpawnInit
+//
+//===========================================================================
+
+void A_BatSpawnInit(void)
+{
+	FrequencyCount = 0;	// Frequency count
+}
+
+//===========================================================================
+//
+//  A_BatSpawn
+//
+//===========================================================================
+
+void A_BatSpawn(void)
+{
+	Bat mo;
+	float delta;
+	float angle;
+
+	// Countdown until next spawn
+	if (FrequencyCount-- > 0)
+		return;
+	FrequencyCount = Args[0];	// Reset frequency count
+
+	delta = itof(Args[1]);
+	if (delta == 0.0)
+		delta = 1.0;
+	angle = AngleMod360(Angles.yaw +
+		delta * (Random() - 0.5) * 360.0 / 256.0);
+	mo = Bat(SpawnMissileAngle(Bat, angle, 0.0));
+	if (mo)
+	{
+		mo.FloatBobIndex = P_Random() & 63;	// floatbob index
+		mo.TurnAngle = itof(Args[4]);	// turn degrees
+		mo.LifeTime = Args[3] << 3;	// Set lifetime
+		mo.Instigator = self;
+	}
+}
+
+__states__
+{
+	S_SPAWNBATS1('', 0, 2.0 / 35.0, S_SPAWNBATS2) { }
+	S_SPAWNBATS2('', 0, 2.0 / 35.0, S_SPAWNBATS3) { A_BatSpawnInit(); }
+	S_SPAWNBATS3('', 0, 2.0 / 35.0, S_SPAWNBATS3) { A_BatSpawn(); }
+	S_SPAWNBATS_OFF('', 0, -1.0, S_NULL) { }
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate(void)
+{
+	SetState(S_SPAWNBATS1);
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate(void)
+{
+	SetState(S_SPAWNBATS_OFF);
+	return true;
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bHidden = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoPassMobj = true;
+	IdleState = S_SPAWNBATS1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

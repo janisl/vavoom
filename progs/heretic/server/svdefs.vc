@@ -90,6 +90,129 @@ enum
 
 #define SECRET_MASK		0x0400
 
+//
+// -------- Inter -----------------
+//
+
+#define BONUSADD				0.2
+
+// Keys
+
+#define TXT_GOTBLUEKEY			"BLUE KEY"
+#define TXT_GOTYELLOWKEY		"YELLOW KEY"
+#define TXT_GOTGREENKEY			"GREEN KEY"
+
+// Artifacts
+
+#define TXT_ARTIHEALTH			"QUARTZ FLASK"
+#define TXT_ARTIFLY				"WINGS OF WRATH"
+#define TXT_ARTIINVULNERABILITY	"RING OF INVINCIBILITY"
+#define TXT_ARTITOMEOFPOWER		"TOME OF POWER"
+#define TXT_ARTIINVISIBILITY	"SHADOWSPHERE"
+#define TXT_ARTIEGG				"MORPH OVUM"
+#define TXT_ARTISUPERHEALTH		"MYSTIC URN"
+#define TXT_ARTITORCH			"TORCH"
+#define TXT_ARTIFIREBOMB		"TIME BOMB OF THE ANCIENTS"
+#define TXT_ARTITELEPORT		"CHAOS DEVICE"
+
+// Items
+
+#define TXT_ITEMHEALTH			"CRYSTAL VIAL"
+#define TXT_ITEMBAGOFHOLDING	"BAG OF HOLDING"
+#define TXT_ITEMSHIELD1			"SILVER SHIELD"
+#define TXT_ITEMSHIELD2			"ENCHANTED SHIELD"
+#define TXT_ITEMSUPERMAP		"MAP SCROLL"
+
+// Ammo
+
+#define TXT_AMMOGOLDWAND1		"WAND CRYSTAL"
+#define TXT_AMMOGOLDWAND2		"CRYSTAL GEODE"
+#define TXT_AMMOMACE1			"MACE SPHERES"
+#define TXT_AMMOMACE2			"PILE OF MACE SPHERES"
+#define TXT_AMMOCROSSBOW1		"ETHEREAL ARROWS"
+#define TXT_AMMOCROSSBOW2		"QUIVER OF ETHEREAL ARROWS"
+#define TXT_AMMOBLASTER1		"CLAW ORB"
+#define TXT_AMMOBLASTER2		"ENERGY ORB"
+#define TXT_AMMOSKULLROD1		"LESSER RUNES"
+#define TXT_AMMOSKULLROD2		"GREATER RUNES"
+#define TXT_AMMOPHOENIXROD1		"FLAME ORB"
+#define TXT_AMMOPHOENIXROD2		"INFERNO ORB"
+
+// Weapons
+
+#define TXT_WPNMACE				"FIREMACE"
+#define TXT_WPNCROSSBOW			"ETHEREAL CROSSBOW"
+#define TXT_WPNBLASTER			"DRAGON CLAW"
+#define TXT_WPNSKULLROD			"HELLSTAFF"
+#define TXT_WPNPHOENIXROD		"PHOENIX ROD"
+#define TXT_WPNGAUNTLETS		"GAUNTLETS OF THE NECROMANCER"
+
+#define AMMO_GWND_WIMPY 		10
+#define AMMO_GWND_HEFTY 		50
+#define AMMO_CBOW_WIMPY 		5
+#define AMMO_CBOW_HEFTY 		20
+#define AMMO_BLSR_WIMPY 		10
+#define AMMO_BLSR_HEFTY 		25
+#define AMMO_SKRD_WIMPY 		20
+#define AMMO_SKRD_HEFTY 		100
+#define AMMO_PHRD_WIMPY 		1
+#define AMMO_PHRD_HEFTY 		10
+#define AMMO_MACE_WIMPY 		20
+#define AMMO_MACE_HEFTY 		100
+
+//
+// ------------ User ------------------
+//
+
+#define INVERSECOLORMAP		32
+
+#define STARTREDPALS	1
+#define STARTBONUSPALS	9
+#define NUMREDPALS		8
+#define NUMBONUSPALS	4
+
+//
+// ----------- Physics ----------------
+//
+
+#define	FLOATSPEED		140.0
+
+#define	MAXMOVE			1050.0
+#define STOPSPEED		2.1875
+
+#define FRICTION_NORMAL	3.28125
+#define FRICTION_LOW	0.95703125
+#define FRICTION_FLY	2.87109375
+#define FRICTION_WATER	3.0
+
+//
+// -------------- Weapons --------------
+//
+
+#define USE_GWND_AMMO_1	1
+#define USE_GWND_AMMO_2 1
+#define USE_CBOW_AMMO_1 1
+#define USE_CBOW_AMMO_2 1
+#define USE_BLSR_AMMO_1 1
+#define USE_BLSR_AMMO_2 5
+#define USE_SKRD_AMMO_1 1
+#define USE_SKRD_AMMO_2 5
+#define USE_PHRD_AMMO_1 1
+#define USE_PHRD_AMMO_2 1
+#define USE_MACE_AMMO_1 1
+#define USE_MACE_AMMO_2 5
+
+#define MAX_MACE_SPOTS	8
+
+//
+// -------------- Enemy ---------------
+//
+
+#define BODYQUESIZE		32
+
+#define MONS_LOOK_RANGE (20.0 * 64.0)
+#define MONS_LOOK_LIMIT 64
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -177,372 +300,6 @@ enum
 };
 
 // TYPES -------------------------------------------------------------------
-
-class Actor:Entity
-	abstract
-{
-	//  States
-	int IdleState;
-	int SeeState;
-	int PainState;
-	int MeleeState;
-	int MissileState;
-	int CrashState;
-	int DeathState;
-	int GibsDeathState;
-
-	//  Sounds
-	name SightSound;
-	name ActiveSound;
-	name AttackSound;
-	name PainSound;
-	name DeathSound;
-
-	//	Flags
-	bool bSpecial;		// call P_SpecialThing when touched
-	bool bShootable;	// Can be hit.
-	bool bAmbush;		// Ambush
-	bool bJustHit;		// try to attack right back
-	bool bJustAttacked;	// take at least one step before attacking
-	bool bSpawnCeiling;	// hang from ceiling instead of floor
-	// movement flags
-	bool bPickUp;		// for players to pick up items
-	bool bMissile;		// don't hit same species, explode on block
-	bool bDropped;		// dropped by a demon, not level spawned
-	bool bNoBlood;		// don't bleed when shot (use puff)
-	bool bCorpse;		// don't stop moving halfway off a step
-	bool bInFloat;		// floating to a height for a move, don't
-						// auto float to target's height
-	bool bSkullFly;		// skull in flight
-	bool bCountKill;	// count towards intermission kill total
-	bool bCountItem;	// count towards intermission item total
-	bool bWindThrust;	// gets pushed around by the wind specials
-	bool bFloorBounce;	// bounces off the floor
-	bool bThruGhost;	// missile will pass through ghosts
-	bool bSpawnFloat;	// spawn random float z
-	bool bNoTeleport;	// does not teleport
-	bool bRip;			// missile rips through solid targets
-	bool bPushable;		// can be pushed by other moving mobjs
-	bool bSlide;		// slides against walls
-	bool bOnMobj;		// mobj is resting on top of another mobj
-	bool bCannotPush;	// cannot push other pushable mobjs
-	bool bBoss;			// mobj is a major boss
-	bool bFireDamage;	// does fire damage
-	bool bNoDamageThrust;	// does not thrust target when damaging
-	bool bTelestomp;	// mobj can stomp another
-	bool bFloatBob;		// use float bobbing z movement
-	bool bActivateMCross;	// can activate monster cross lines
-	bool bActivatePCross;	// can activate projectile cross lines
-	bool bDormant;		// thing is dormant
-	bool bWaterJump;
-	bool bBlaster;
-
-	//  Params
-	float Speed;
-	float StepSpeed;
-	float PainChance;
-	int SpawnHealth;
-	int GibsHealth;
-
-	// Thing being chased/attacked (or NULL).
-	Actor Enemy;
-	// The originator for missiles.
-	Actor Instigator;
-
-	int Special1;	// Special info
-	classid SpecialCID;
-
-	int MissileDamage;	// For missiles
-
-	// Player number last looked for.
-	int LastLook;
-
-	// For nightmare respawn.
-	mthing_t SpawnSpot;
-
-	// Reaction time: if non 0, don't attack yet.
-	int ReactionCount;
-	// Used by player to freeze a bit after teleporting.
-	float ReactionTime;
-
-	// If >0, the target will be chased
-	// no matter what (even if shot)
-	int Threshold;
-
-	// Movement direction, movement generation (zig-zagging).
-	int MoveDir;	// 0-7
-	int MoveCount;	// when 0, select a new dir
-
-	bool TestLocation(void);
-	bool Touch(Entity Other);
-	void PushLine(void);
-	void CrossSpecialLine(line_t *ld, int side);
-	void HandleFloorclip(void);
-
-	void Tick(float deltaTime);
-
-	int GetFloorType(void);
-	void SetOrigin2(TVec origin);
-	void OnMapSpawn(mthing_t *mthing);
-	int FaceActor(Actor target, float * delta);
-	void ExplodeMissile(void);
-	void Kill(Actor source);
-	void MinotaurSlam(Actor Other);
-	void TouchWhirlwind(Actor Other);
-	bool ChickenMorphPlayer(void);
-	bool ChickenMorph(void);
-	bool AutoUseChaosDevice(void);
-	void AutoUseHealth(int saveHealth);
-	void Damage(Actor inflictor, Actor source, int damage);
-	void SpawnBloodSplatter(TVec org);
-	void SpawnRipperBlood(void);
-	int HitFloorEffect(void);
-	void FloorBounceMissile(void);
-	void Thrust(float angle, float move);
-	void NightmareRespawn(void);
-
-	bool HeightClip(void);
-	bool SectorChanged(int CrushChange);
-	void RadiusAttack(int damage, int distance, bool damageSource);
-
-	// Physics
-	void ApplyFriction(void);
-	void XYMovement(void);
-	void ZMovement(void);
-	bool BlasterPhysics(void);
-	void PlayerLandedOnThing(void);
-	bool Physics(void);
-
-	bool CheckMissileSpawn(void);
-	Actor SpawnMissile(Actor dest, classid type);
-	Actor SpawnMissileAngles(classid type, float yaw, float pitch);
-	Actor SpawnPlayerMissile(classid type);
-	Actor SpawnPlayerMissileAngle(classid type, float angle);
-	bool SeekerMissile(float thresh, float turnMax);
-
-	bool TeleportMove(TVec newOrg);
-	bool Teleport(float x, float y, float angle);
-
-	bool CheckMeleeRange(void);
-	bool CheckMissileRange(void);
-	bool LookForMonsters(void);
-	bool LookForPlayers(bool allaround);
-	bool StepMove(void);
-	bool TryWalk(void);
-	void NewChaseDir(void);
-
-	// Action functions
-	void A_FreeTargMobj(void);
-	void A_Scream(void);
-	void A_Explode(void);
-
-	__states__
-	{
-		S_FREETARGMOBJ('ACLO', 4, 30.0, S_NULL) { A_FreeTargMobj(); }
-	}
-
-	defaultproperties
-	{
-		MaxStepHeight = 24.0;
-		bCheckLineBlocking = true;
-		bCheckLineBlockMonsters = false;
-	}
-}
-
-class Pawn:Actor
-	abstract
-{
-	bool bCheckNoMonsters;
-
-	void OnMapSpawn(mthing_t *mthing);
-
-	void DropItem(classid type, int special, float chance);
-	void DropStuff(void) { }
-
-	void A_Look(void);
-	void A_Chase(void);
-	void A_FaceTarget(void);
-	void A_Pain(void);
-	void A_NoBlocking(void);
-	void A_BossDeath(void);
-	void A_Feathers(void);
-
-	defaultproperties
-	{
-		ReactionCount = 8;
-		bSolid = true;
-		bShootable = true;
-		bCountKill = true;
-		bFloorClip = true;
-		bActivateMCross = true;
-		bCheckNoMonsters = true;
-		bCheckLineBlockMonsters = true;
-	}
-}
-
-class PlayerPawn:Pawn
-	abstract
-{
-	int Attack2State;
-	int FireDeathState;
-
-	bool bSafeToRemove;
-
-	bool GiveAmmo(int ammo, int count);
-	bool GiveWeapon(int weapon);
-	bool GiveBody(int num);
-	bool GiveArmor(int armortype);
-	bool GiveKey(int key);
-	bool GivePower(int power);
-	bool GiveItem(int item);
-	bool GiveArtifact(int arti);
-
-	void InventoryLeft(void);
-	void InventoryRight(void);
-	void InventoryUse(void);
-	void InventoryTick(float deltaTime);
-
-	void ThrustPlayer(float angle, float move, float deltaTime);
-	void CalcHeight(float deltaTime);
-	void MovePlayer(float deltaTime);
-	void CheckWaterJump(void);
-	void WaterMove(float deltaTime);
-	void WaterJump(void);
-	void PlayerInSpecialSector(float deltaTime);
-	void PlayerInContents(void);
-	void PlayerImpulse(void);
-	void PlayerTick(float deltaTime);
-	void PaletteFlash(void);
-	void SetViewPos(void);
-	void UseArtiTele(void);
-	bool UseArtifact(int arti);
-	void PlayerUseArtifact(int arti);
-	void PlayerNextArtifact(void);
-	void PlayerRemoveArtifact(int slot);
-
-	void ChickenPlayerThink(void);
-	bool UndoPlayerChicken(void);
-	void SetPlayerRunState(void);
-	void DeathPlayerTick(float deltaTime);
-	void UseArtiEgg(void);
-	bool UseArtiTomeOfPower(void);
-	void UseArtiFireBomb(void);
-
-	void A_AddPlayerCorpse(void);
-
-	defaultproperties
-	{
-		ReactionCount = 0;
-		bCountKill = false;
-		bActivateMCross = false;
-		bCheckNoMonsters = false;
-		bCheckLineBlockMonsters = false;
-		bDropOff = true;
-	}
-}
-
-//FIXME
-class Sorcerer2Base:Pawn
-	abstract
-{
-	int RiseState;
-
-	void DSparilTeleport(void) { }
-
-	defaultproperties
-	{
-	}
-}
-
-class Projectile:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bMissile = true;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bNoTeleport = true;
-		bActivatePCross = true;
-		bCheckLineBlocking = false;
-	}
-}
-
-class Effect:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bNoPassMobj = true;
-	}
-}
-
-class ProjEffect:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bMissile = true;
-		bNoBlockmap = true;
-		bNoGravity = true;
-		bDropOff = true;
-		bNoTeleport = true;
-		bActivatePCross = true;
-		bCheckLineBlocking = false;
-	}
-}
-
-class Decoration:Actor
-	abstract
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoPassMobj = true;
-	}
-}
-
-class Weapon:ViewEntity
-	abstract
-{
-	int Ammo;
-	int UpState;
-	int DownState;
-	int ReadyState;
-	int AttackState;
-	int HoldAttackState;
-	int UpState2;
-	int DownState2;
-	int ReadyState2;
-	int AttackState2;
-	int HoldAttackState2;
-	float PSpriteSY;
-
-	void WeaponLevel2Init(void) { }
-	void WeaponLevel2Fade(void) { }
-
-	void A_Light0(void);
-	void A_WeaponReady(void);
-	void A_Lower(void);
-	void A_Raise(void);
-	void A_ReFire(void);
-}
 
 /*
 
@@ -650,105 +407,10 @@ enum
 	BST_RETURN
 };
 
-// Main bot class
-class BotPlayer:Object
-{
-	player_t *player;		// Points to reference player
-	Actor botmo;
+class BotPlayer;
 
-	// Destinations
-	Actor item;			// Item (roam towards weapon, etc)
-	bool bItemIsWeapon;
-	bool bItemIsPowerup;
-	Actor goal;			// Teamgame goal spot
-	Actor node;			// Node we're heading towards
-	Actor prev;			// Previous node we were at
-	TVec posdest;			// Position of our destination (doesn't have to be an actor)
-	bool posdest_valid;
-	Actor enemy;			// The dead meat.
-	TVec lastpos;			// Last place we saw our enemy
-	bool lastpos_valid;
-	Actor missile;			// A threathing missile that got to be avoided.
-
-	Actor ally;			// Ally to tag along with
-/*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
-							// pointed to by this. Allows bot to roam to it if
-							// necessary.
-
-	enemyinfo_t	enemyinfo;	// Things we know about our enemy
-
-	botstate_t	state;		// What we're doing in teamgame mode
-
-	fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
-	fixed_t		lasty;		// Last known y location of bot's enemy
-
-	// Tickers
-
-	float t_respawn;*/
-	float t_strafe;
-	float t_react;
-/*	float t_fight;
-	float t_rocket;
-	float t_turn;
-	float t_pissed;
-	float t_frust;*/
-	float t_fire;			// Tics left until our gun will actually fire again
-	float t_anticip;
-/*	float t_chat;			// Tics left until bots completes "typing" in what he's saying.
-							// Bot also doesn't do anything during this time.*/
-
-	float forwardmove;	// For building ucmd
-	float sidemove;
-
-	// Misc booleans
-	bool bAllRound;
-	bool bNewItemIsWeapon;
-	bool bNewItemIsPowerup;
-
-/*	chatline_t	*chatline;	// For when t_chat expires
-
-	bottype_t	bottype;	// Bot type*/
-	botinfo_t info;			// Aiming, name, perfection, yadda yadda
-
-/*	fixed_t		oldx;
-	fixed_t		oldy;
-
-	int			thingnum;*/
-	int angerlevel;
-
-/*	AActor		*things[NUMMOBJTYPES];*/
-	float combatdist[NUMWEAPONS + 1]; //different for each weapon.
-
-	float angle;			// The wanted angle that the bot tries to get every tic.
-
-/*	void LinkToPlayer (int playernum);*/
-
-	void OnBeginPlay(void);
-	void OnSpawn(void);
-	void BotTick(float deltaTime);
-	bool CheckTo(TVec pos);
-	void CheckStuff(void);
-	float GetAngle(void);
-	bool CheckPath(float ang, float dist);
-	void SetEnemy(void);
-	Actor FindEnemy(void);
-	bool Check_LOS(Actor to, float vangle);
-	bool CheckItem(Actor item);
-	void Scan(void);
-	int WeapFromItem(Actor item);
-	int AmmoFromItem(Actor item);
-	void Move(float deltaTime);
-	void SetAngle(float an);
-	void Roam(void);
-	float AngleTo(TVec dest);
-	void Attack(void);
-	void Turn(void);
-	void BotAim(void);
-	void Pitch(void);
-	int SkillLower(int skill, int num);
-	void Killed(Actor victim);
-	void Died(Actor killer);
-}
+#define NUMTOTALBOTS	8
+#define	NUMBOTTYPES		8
 
 addfields player_t
 {
@@ -871,6 +533,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/10/26 16:32:24  dj_jl
+//  New style of defining classes.
+//
 //  Revision 1.35  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

@@ -1,0 +1,95 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FloorWaggle:SectorMover;
+
+float originalHeight;
+float accumulator;
+float accSpeed;
+float targetScale;
+float scale;
+float scaleSpeed;
+float timer;
+int state;
+
+//==========================================================================
+//
+//  Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	switch (state)
+	{
+	case WGLSTATE_EXPAND:
+		scale += scaleSpeed * deltaTime;
+		if (scale >= targetScale)
+		{
+			scale = targetScale;
+			state = WGLSTATE_STABLE;
+		}
+		break;
+	case WGLSTATE_REDUCE:
+		scale -= scaleSpeed * deltaTime;
+		if (scale <= 0.0)
+		{
+			// Remove
+			sector->floor.dist = originalHeight;
+			P_ChangeSector(sector, true);
+			sector->SpecialData = none;
+			TagFinished(sector->tag);
+			RemoveSpecialThinker(self);
+			return;
+		}
+		break;
+	case WGLSTATE_STABLE:
+		if (timer >= 0.0)
+		{
+			timer -= deltaTime;
+			if (timer <= 0.0)
+			{
+				state = WGLSTATE_REDUCE;
+			}
+		}
+		break;
+	}
+	accumulator += accSpeed * deltaTime;
+	sector->floor.dist = originalHeight +
+		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
+	P_ChangeSector(sector, true);
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

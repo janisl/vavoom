@@ -1,0 +1,92 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenHelp:MenuScreen;
+
+MenuHelpPage Pic;
+#ifndef DOOM2
+int NumPages;
+int CurPage;
+#endif
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices(void)
+{
+#ifndef DOOM2
+	if (ExtendedWAD)
+	{
+		NumPages = 1;
+	}
+	else
+	{
+		NumPages = 2;
+	}
+	CurPage = 0;
+#endif
+
+	Pic = MenuHelpPage(NewChild(MenuHelpPage));
+}
+
+//==========================================================================
+//
+//	Key
+//
+//==========================================================================
+
+bool Key(int key)
+{
+	LocalSound('MenuClose');
+#ifdef DOOM2
+	ForceMenuOff();
+#else
+	CurPage++;
+	if (key == K_ESCAPE || CurPage >= NumPages)
+	{
+		ForceMenuOff();
+	}
+	else
+	{
+		Pic.SetPage("HELP2");
+	}
+#endif
+	return true;
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:19  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

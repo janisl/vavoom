@@ -1,0 +1,61 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Leaf2:Leaf1;
+
+__states__
+{
+	S_LEAF2_1('LEF2', 0, 4.0 / 35.0, S_LEAF2_2) { }
+	S_LEAF2_2('LEF2', 1, 4.0 / 35.0, S_LEAF2_3) { }
+	S_LEAF2_3('LEF2', 2, 4.0 / 35.0, S_LEAF2_4) { }
+	S_LEAF2_4('LEF2', 3, 4.0 / 35.0, S_LEAF2_5) { A_LeafThrust(); }
+	S_LEAF2_5('LEF2', 4, 4.0 / 35.0, S_LEAF2_6) { }
+	S_LEAF2_6('LEF2', 5, 4.0 / 35.0, S_LEAF2_7) { }
+	S_LEAF2_7('LEF2', 6, 4.0 / 35.0, S_LEAF2_8) { }
+	S_LEAF2_8('LEF2', 7, 4.0 / 35.0, S_LEAF2_9) { A_LeafThrust(); }
+	S_LEAF2_9('LEF2', 8, 4.0 / 35.0, S_LEAF2_10) { }
+	S_LEAF2_10('LEF2', 0, 4.0 / 35.0, S_LEAF2_11) { }
+	S_LEAF2_11('LEF2', 1, 4.0 / 35.0, S_LEAF2_12) { }
+	S_LEAF2_12('LEF2', 2, 4.0 / 35.0, S_LEAF2_13) { A_LeafThrust(); }
+	S_LEAF2_13('LEF2', 3, 4.0 / 35.0, S_LEAF2_14) { }
+	S_LEAF2_14('LEF2', 4, 4.0 / 35.0, S_LEAF2_15) { }
+	S_LEAF2_15('LEF2', 5, 4.0 / 35.0, S_LEAF2_16) { }
+	S_LEAF2_16('LEF2', 6, 4.0 / 35.0, S_LEAF2_17) { A_LeafThrust(); }
+	S_LEAF2_17('LEF2', 7, 4.0 / 35.0, S_LEAF2_18) { }
+	S_LEAF2_18('LEF2', 8, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_LEAF2_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

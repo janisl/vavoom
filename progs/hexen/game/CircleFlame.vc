@@ -1,0 +1,97 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CircleFlame:Projectile;
+
+float FlameRotSpeed;
+
+//============================================================================
+//
+//	A_CFlameRotate
+//
+//============================================================================
+
+void A_CFlameRotate(void)
+{
+	float an;
+
+	an = AngleMod360(Angles.yaw + 90.0);
+	Velocity.x = Special1f + FlameRotSpeed * cos(an);
+	Velocity.y = Special2f + FlameRotSpeed * sin(an);
+	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
+}
+
+__states__
+{
+	S_CIRCLE_FLAME1('CFCF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_CIRCLE_FLAME2) { }
+	S_CIRCLE_FLAME2('CFCF', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME3) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME3('CFCF', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME4) { }
+	S_CIRCLE_FLAME4('CFCF', 3 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME5) { }
+	S_CIRCLE_FLAME5('CFCF', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME6) { }
+	S_CIRCLE_FLAME6('CFCF', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME7) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME7('CFCF', 6 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME8) { }
+	S_CIRCLE_FLAME8('CFCF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME9) { }
+	S_CIRCLE_FLAME9('CFCF', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME10) { }
+	S_CIRCLE_FLAME10('CFCF', 9 | FF_FULLBRIGHT, 1.0 / 35.0, S_CIRCLE_FLAME11) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME11('CFCF', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME12) { }
+	S_CIRCLE_FLAME12('CFCF', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME13) { }
+	S_CIRCLE_FLAME13('CFCF', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME14) { }
+	S_CIRCLE_FLAME14('CFCF', 13 | FF_FULLBRIGHT, 2.0 / 35.0, S_CIRCLE_FLAME15) { A_CFlameRotate(); }
+	S_CIRCLE_FLAME15('CFCF', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME16) { }
+	S_CIRCLE_FLAME16('CFCF', 15 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_CIRCLE_FLAME_X1('CFCF', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X2) { }
+	S_CIRCLE_FLAME_X2('CFCF', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X3) { }
+	S_CIRCLE_FLAME_X3('CFCF', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X4) { A_Explode(); }
+	S_CIRCLE_FLAME_X4('CFCF', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X5) { }
+	S_CIRCLE_FLAME_X5('CFCF', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X6) { }
+	S_CIRCLE_FLAME_X6('CFCF', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X7) { }
+	S_CIRCLE_FLAME_X7('CFCF', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X8) { }
+	S_CIRCLE_FLAME_X8('CFCF', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X9) { }
+	S_CIRCLE_FLAME_X9('CFCF', 24 | FF_FULLBRIGHT, 3.0 / 35.0, S_CIRCLE_FLAME_X10) { }
+	S_CIRCLE_FLAME_X10('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 6.0;
+	Height = 16.0;
+	MissileDamage = 2;
+	bFireDamage = true;
+	bActivateImpact = false;
+	bActivatePCross = false;
+	IdleState = S_CIRCLE_FLAME1;
+	DeathState = S_CIRCLE_FLAME_X1;
+	DeathSound = 'ClericFlameCircle';
+	Effects = EF_DL_WHITE;
+	FlameRotSpeed = 2.0 * 35.0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

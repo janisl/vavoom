@@ -1,0 +1,90 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MaceFX3:Projectile;
+
+//===========================================================================
+//
+//  A_MaceBallImpact
+//
+//===========================================================================
+
+void A_MaceBallImpact(void)
+{
+	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
+	{
+		// Landed in some sort of liquid
+		Remove();
+		return;
+	}
+	if ((Health != 1234) && (Origin.z <= FloorZ) && Velocity.z)
+	{
+		// Bounce
+		Health = 1234;
+		Velocity.z = Velocity.z * 192.0 / 256.0;
+		bFloorBounce = false;
+		SetState(IdleState);
+		PlaySound('Bounce', CHAN_VOICE);
+	}
+	else
+	{
+		// Explode
+		bNoGravity = true;
+		PlaySound('MaceHit', CHAN_VOICE);
+	}
+}
+
+__states__
+{
+	S_MACEFX3_1('FX02', 0, 4.0 / 35.0, S_MACEFX3_2) { }
+	S_MACEFX3_2('FX02', 1, 4.0 / 35.0, S_MACEFX3_1) { }
+	S_MACEFXI1_1('FX02', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_2) { A_MaceBallImpact(); }
+	S_MACEFXI1_2('FX02', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_3) { }
+	S_MACEFXI1_3('FX02', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_4) { }
+	S_MACEFXI1_4('FX02', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_5) { }
+	S_MACEFXI1_5('FX02', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 8.0;
+	Height = 6.0;
+	Mass = 12.5;
+	Speed = 245.0;
+	MissileDamage = 4;
+	bFloorBounce = true;
+	bThruGhost = true;
+	bNoGravity = false;
+	IdleState = S_MACEFX3_1;
+	DeathState = S_MACEFXI1_1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:22  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

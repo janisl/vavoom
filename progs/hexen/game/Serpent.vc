@@ -1,0 +1,600 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Serpent:Pawn
+	__mobjinfo__(121);
+
+int HumpState;
+int WalkState;
+int AttackState;
+
+//==========================================================================
+//
+//	A_SerpentChase
+//
+//==========================================================================
+
+void A_SerpentChase(void)
+{
+	float delta;
+	float oldX, oldY;
+	int oldFloor;
+
+	if (ReactionCount)
+	{
+		ReactionCount--;
+	}
+
+	// Modify target threshold
+	if (Threshold)
+	{
+		Threshold--;
+	}
+
+	if (gameskill == sk_nightmare)
+	{
+		// Monsters move faster in nightmare mode
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
+		{
+			StateTime = 0.1;
+		}
+	}
+
+	//
+	// turn towards movement direction if not there yet
+	//
+	if (MoveDir < 8)
+	{
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+		if (delta > 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+		}
+		else if (delta < 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+		}
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// look for a new enemy
+		if (LookForPlayers(true))
+		{
+			// got a new enemy
+			return;
+		}
+		SetState(IdleState);
+		return;
+	}
+
+	//
+	// don't attack twice in a row
+	//
+	if (bJustAttacked)
+	{
+		bJustAttacked = false;
+		if (gameskill != sk_nightmare)
+			NewChaseDir();
+		return;
+	}
+
+	//
+	// check for melee attack
+	//
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(MeleeState);
+		return;
+	}
+
+	//
+	// possibly choose another enemy
+	//
+	if (netgame && !Threshold && !CanSee(Enemy))
+	{
+		if (LookForPlayers(true))
+			return;	// got a new enemy
+	}
+
+	//
+	// chase towards player
+	//
+	oldX = Origin.x;
+	oldY = Origin.y;
+	oldFloor = Sector->floor.pic;
+	if (--MoveCount < 0 || !StepMove())
+	{
+		NewChaseDir();
+	}
+	if (Sector->floor.pic != oldFloor)
+	{
+		TryMove(vector(oldX, oldY, Origin.z));
+		NewChaseDir();
+	}
+
+	//
+	// make active sound
+	//
+	if (ActiveSound && P_Random() < 3)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_SerpentHumpDecide
+//
+//  Decided whether to hump up
+//
+//==========================================================================
+
+void A_SerpentHumpDecide(void)
+{
+	if (P_Random() > 3)
+	{
+		return;
+	}
+	if (!CheckMeleeRange())
+	{
+		// The hump shouldn't occur when within melee range
+		SetState(HumpState);
+		PlaySound('SerpentActive', CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_SerpentUnHide
+//
+//==========================================================================
+
+void A_SerpentUnHide(void)
+{
+	bHidden = false;
+	FloorClip = 24.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentRaiseHump
+// 
+//	Raises the hump above the surface by raising the FloorClip level
+//
+//==========================================================================
+
+void A_SerpentRaiseHump(void)
+{
+	FloorClip -= 4.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentLowerHump
+// 
+//==========================================================================
+
+void A_SerpentLowerHump(void)
+{
+	FloorClip += 4.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentHide
+//
+//==========================================================================
+
+void A_SerpentHide(void)
+{
+	bHidden = true;
+	FloorClip = 0.0;
+}
+
+//==========================================================================
+//
+//  A_UnHideThing
+//
+//==========================================================================
+
+void A_UnHideThing(void)
+{
+	bHidden = false;
+}
+
+//==========================================================================
+//
+//	A_SerpentBirthScream
+//
+//==========================================================================
+
+void A_SerpentBirthScream(void)
+{
+	PlaySound('SerpentBirth', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_SetShootable
+//
+//==========================================================================
+
+void A_SetShootable(void)
+{
+	bNonShootable = false;
+	bShootable = true;
+}
+
+//==========================================================================
+//
+//  A_SerpentCheckForAttack
+//
+//==========================================================================
+
+void A_SerpentCheckForAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange2())
+	{
+		SetState(WalkState);
+	}
+	else if (CheckMeleeRange())
+	{
+		if (P_Random() < 32)
+		{
+			SetState(WalkState);
+		}
+		else
+		{
+			SetState(AttackState);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_UnSetShootable
+//
+//==========================================================================
+
+void A_UnSetShootable(void)
+{
+	bNonShootable = true;
+	bShootable = false;
+}
+
+//==========================================================================
+//
+//	A_SerpentDiveSound
+//
+//==========================================================================
+
+void A_SerpentDiveSound(void)
+{
+	PlaySound('SerpentActive', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  A_SerpentWalk
+//
+//  Similar to A_Chase, only has a hardcoded entering of meleestate.
+//
+//==========================================================================
+
+void A_SerpentWalk(void)
+{
+	float delta;
+
+	if (ReactionCount)
+	{
+		ReactionCount--;
+	}
+
+	// Modify target threshold
+	if (Threshold)
+	{
+		Threshold--;
+	}
+
+	if (gameskill == sk_nightmare)
+	{
+		// Monsters move faster in nightmare mode
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
+		{
+			StateTime = 0.1;
+		}
+	}
+
+	//
+	// turn towards movement direction if not there yet
+	//
+	if (MoveDir < 8)
+	{
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(MoveDir) * 45.0);
+		if (delta > 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
+		}
+		else if (delta < 0.0)
+		{
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
+		}
+	}
+
+	if (!Enemy || !Enemy.bShootable)
+	{
+		// look for a new target
+		if (LookForPlayers(true))
+		{
+			// got a new target
+			return;
+		}
+		SetState(IdleState);
+		return;
+	}
+
+	//
+	// don't attack twice in a row
+	//
+	if (bJustAttacked)
+	{
+		bJustAttacked = false;
+		if (gameskill != sk_nightmare)
+			NewChaseDir();
+		return;
+	}
+
+	//
+	// check for melee attack
+	//
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(AttackState);
+		return;
+	}
+	//
+	// possibly choose another target
+	//
+	if (netgame && !Threshold && !CanSee(Enemy))
+	{
+		if (LookForPlayers(true))
+			return;	// got a new target
+	}
+
+	//
+	// chase towards player
+	//
+	if (--MoveCount < 0 || !StepMove())
+	{
+		NewChaseDir();
+	}
+}
+
+//==========================================================================
+//
+//  A_SerpentChooseAttack
+//
+//==========================================================================
+
+void A_SerpentChooseAttack(void)
+{
+}
+
+//==========================================================================
+//
+//	A_SerpentMeleeAttack
+//
+//==========================================================================
+
+void A_SerpentMeleeAttack(void)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, HITDICE(5));
+		PlaySound('SerpentMeleeHit', CHAN_WEAPON);
+	}
+	if (P_Random() < 96)
+	{
+		A_SerpentCheckForAttack();
+	}
+}
+
+//==========================================================================
+//
+//	A_SerpentHeadPop
+//
+//==========================================================================
+
+void A_SerpentHeadPop(void)
+{
+	Spawn(SerpentHead, Origin + vector(0.0, 0.0, 45.0));
+}
+
+//==========================================================================
+//
+//	A_SerpentSpawnGibs
+//
+//==========================================================================
+
+void A_SerpentSpawnGibs(void)
+{
+	Actor A;
+
+	A = Spawn(SerpentGib1, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+	}
+	A = Spawn(SerpentGib2, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+	}
+	A = Spawn(SerpentGib3, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+	}
+}
+
+__states__
+{
+	S_SERPENT_LOOK1('SSPT', 7, 10.0 / 35.0, S_SERPENT_LOOK1) { A_Look(); }
+	S_SERPENT_SWIM1('SSPT', 7, 1.0 / 35.0, S_SERPENT_SWIM2) { A_SerpentChase(); }
+	S_SERPENT_SWIM2('SSPT', 7, 1.0 / 35.0, S_SERPENT_SWIM3) { A_SerpentChase(); }
+	S_SERPENT_SWIM3('SSPT', 7, 2.0 / 35.0, S_SERPENT_SWIM1) { A_SerpentHumpDecide(); }
+	S_SERPENT_HUMP1('SSPT', 7, 3.0 / 35.0, S_SERPENT_HUMP2) { A_SerpentUnHide(); }
+	S_SERPENT_HUMP2('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP3) { A_SerpentRaiseHump(); }
+	S_SERPENT_HUMP3('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP4) { A_SerpentRaiseHump(); }
+	S_SERPENT_HUMP4('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP5) { A_SerpentRaiseHump(); }
+	S_SERPENT_HUMP5('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP6) { A_SerpentRaiseHump(); }
+	S_SERPENT_HUMP6('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP7) { A_SerpentRaiseHump(); }
+	S_SERPENT_HUMP7('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP8) { }
+	S_SERPENT_HUMP8('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP9) { }
+	S_SERPENT_HUMP9('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP10) { }
+	S_SERPENT_HUMP10('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP11) { A_SerpentLowerHump(); }
+	S_SERPENT_HUMP11('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP12) { A_SerpentLowerHump(); }
+	S_SERPENT_HUMP12('SSPT', 5, 3.0 / 35.0, S_SERPENT_HUMP13) { A_SerpentLowerHump(); }
+	S_SERPENT_HUMP13('SSPT', 6, 3.0 / 35.0, S_SERPENT_HUMP14) { A_SerpentLowerHump(); }
+	S_SERPENT_HUMP14('SSPT', 4, 3.0 / 35.0, S_SERPENT_HUMP15) { A_SerpentLowerHump(); }
+	S_SERPENT_HUMP15('SSPT', 5, 3.0 / 35.0, S_SERPENT_SWIM1) { A_SerpentHide(); }
+	S_SERPENT_SURFACE1('SSPT', 0, 1.0 / 35.0, S_SERPENT_SURFACE2) { A_UnHideThing(); }
+	S_SERPENT_SURFACE2('SSPT', 0, 1.0 / 35.0, S_SERPENT_SURFACE3) { A_SerpentBirthScream(); }
+	S_SERPENT_SURFACE3('SSPT', 1, 3.0 / 35.0, S_SERPENT_SURFACE4) { A_SetShootable(); }
+	S_SERPENT_SURFACE4('SSPT', 2, 3.0 / 35.0, S_SERPENT_SURFACE5) { }
+	S_SERPENT_SURFACE5('SSPT', 3, 4.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentCheckForAttack(); }
+	S_SERPENT_DIVE1('SSDV', 0, 4.0 / 35.0, S_SERPENT_DIVE2) { }
+	S_SERPENT_DIVE2('SSDV', 1, 4.0 / 35.0, S_SERPENT_DIVE3) { }
+	S_SERPENT_DIVE3('SSDV', 2, 4.0 / 35.0, S_SERPENT_DIVE4) { }
+	S_SERPENT_DIVE4('SSDV', 3, 4.0 / 35.0, S_SERPENT_DIVE5) { A_UnSetShootable(); }
+	S_SERPENT_DIVE5('SSDV', 4, 3.0 / 35.0, S_SERPENT_DIVE6) { A_SerpentDiveSound(); }
+	S_SERPENT_DIVE6('SSDV', 5, 3.0 / 35.0, S_SERPENT_DIVE7) { }
+	S_SERPENT_DIVE7('SSDV', 6, 4.0 / 35.0, S_SERPENT_DIVE8) { }
+	S_SERPENT_DIVE8('SSDV', 7, 4.0 / 35.0, S_SERPENT_DIVE9) { }
+	S_SERPENT_DIVE9('SSDV', 8, 3.0 / 35.0, S_SERPENT_DIVE10) { }
+	S_SERPENT_DIVE10('SSDV', 9, 3.0 / 35.0, S_SERPENT_SWIM1) { A_SerpentHide(); }
+	S_SERPENT_WALK1('SSPT', 8, 5.0 / 35.0, S_SERPENT_WALK2) { A_SerpentWalk(); }
+	S_SERPENT_WALK2('SSPT', 9, 5.0 / 35.0, S_SERPENT_WALK3) { A_SerpentWalk(); }
+	S_SERPENT_WALK3('SSPT', 8, 5.0 / 35.0, S_SERPENT_WALK4) { A_SerpentWalk(); }
+	S_SERPENT_WALK4('SSPT', 9, 5.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentCheckForAttack(); }
+	S_SERPENT_PAIN1('SSPT', 11, 5.0 / 35.0, S_SERPENT_PAIN2) { }
+	S_SERPENT_PAIN2('SSPT', 11, 5.0 / 35.0, S_SERPENT_DIVE1) { A_Pain(); }
+	S_SERPENT_ATK1('SSPT', 10, 6.0 / 35.0, S_SERPENT_ATK2) { A_FaceTarget(); }
+	S_SERPENT_ATK2('SSPT', 11, 5.0 / 35.0, S_SERPENT_MELEE1) { A_SerpentChooseAttack(); }
+	S_SERPENT_MELEE1('SSPT', 13, 5.0 / 35.0, S_SERPENT_DIVE1) { A_SerpentMeleeAttack(); }
+	S_SERPENT_DIE1('SSPT', 14, 4.0 / 35.0, S_SERPENT_DIE2) { }
+	S_SERPENT_DIE2('SSPT', 15, 4.0 / 35.0, S_SERPENT_DIE3) { A_Scream(); }
+	S_SERPENT_DIE3('SSPT', 16, 4.0 / 35.0, S_SERPENT_DIE4) { A_NoBlocking(); }
+	S_SERPENT_DIE4('SSPT', 17, 4.0 / 35.0, S_SERPENT_DIE5) { }
+	S_SERPENT_DIE5('SSPT', 18, 4.0 / 35.0, S_SERPENT_DIE6) { }
+	S_SERPENT_DIE6('SSPT', 19, 4.0 / 35.0, S_SERPENT_DIE7) { }
+	S_SERPENT_DIE7('SSPT', 20, 4.0 / 35.0, S_SERPENT_DIE8) { }
+	S_SERPENT_DIE8('SSPT', 21, 4.0 / 35.0, S_SERPENT_DIE9) { }
+	S_SERPENT_DIE9('SSPT', 22, 4.0 / 35.0, S_SERPENT_DIE10) { }
+	S_SERPENT_DIE10('SSPT', 23, 4.0 / 35.0, S_SERPENT_DIE11) { }
+	S_SERPENT_DIE11('SSPT', 24, 4.0 / 35.0, S_SERPENT_DIE12) { }
+	S_SERPENT_DIE12('SSPT', 25, 4.0 / 35.0, S_NULL) { }
+	S_SERPENT_XDIE1('SSXD', 0, 4.0 / 35.0, S_SERPENT_XDIE2) { }
+	S_SERPENT_XDIE2('SSXD', 1, 4.0 / 35.0, S_SERPENT_XDIE3) { A_SerpentHeadPop(); }
+	S_SERPENT_XDIE3('SSXD', 2, 4.0 / 35.0, S_SERPENT_XDIE4) { A_NoBlocking(); }
+	S_SERPENT_XDIE4('SSXD', 3, 4.0 / 35.0, S_SERPENT_XDIE5) { }
+	S_SERPENT_XDIE5('SSXD', 4, 4.0 / 35.0, S_SERPENT_XDIE6) { }
+	S_SERPENT_XDIE6('SSXD', 5, 3.0 / 35.0, S_SERPENT_XDIE7) { }
+	S_SERPENT_XDIE7('SSXD', 6, 3.0 / 35.0, S_SERPENT_XDIE8) { }
+	S_SERPENT_XDIE8('SSXD', 7, 3.0 / 35.0, S_NULL) { A_SerpentSpawnGibs(); }
+	S_SERPENT_ICE('SSPT', 26, 5.0 / 35.0, S_SERPENT_ICE2) { A_FreezeDeath(); }
+	S_SERPENT_ICE2('SSPT', 26, 1.0 / 35.0, S_SERPENT_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 90;
+	GibsHealth = -45;
+	Radius = 32.0;
+	Height = 70.0;
+	Mass = 99999.0;
+	StepSpeed = 12.0;
+	PainChance = 0.375;
+	bHidden = true;
+	bNoBlood = true;
+	bShootable = false;
+	bFloorClip = false;
+	bTelestomp = false;
+	bActivatePushWall = false;
+	bCantLeaveFloorpic = true;
+	bNonShootable = true;
+	IdleState = S_SERPENT_LOOK1;
+	SeeState = S_SERPENT_SWIM1;
+	HumpState = S_SERPENT_HUMP1;
+	MeleeState = S_SERPENT_SURFACE1;
+	WalkState = S_SERPENT_WALK1;
+	AttackState = S_SERPENT_ATK1;
+	PainState = S_SERPENT_PAIN1;
+	DeathState = S_SERPENT_DIE1;
+	GibsDeathState = S_SERPENT_XDIE1;
+	IceDeathState = S_SERPENT_ICE;
+	SightSound = 'SerpentSight';
+	AttackSound = 'SerpentAttack';
+	PainSound = 'SerpentPain';
+	DeathSound = 'SerpentDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:27  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

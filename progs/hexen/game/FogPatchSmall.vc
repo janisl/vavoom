@@ -1,0 +1,51 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FogPatchSmall:FogPatch
+	__mobjinfo__(10001);
+
+__states__
+{
+	S_FOGPATCHS1('FOGS', 0, 7.0 / 35.0, S_FOGPATCHS2) { A_FogMove(); }
+	S_FOGPATCHS2('FOGS', 1, 7.0 / 35.0, S_FOGPATCHS3) { A_FogMove(); }
+	S_FOGPATCHS3('FOGS', 2, 7.0 / 35.0, S_FOGPATCHS4) { A_FogMove(); }
+	S_FOGPATCHS4('FOGS', 3, 7.0 / 35.0, S_FOGPATCHS5) { A_FogMove(); }
+	S_FOGPATCHS5('FOGS', 4, 7.0 / 35.0, S_FOGPATCHS1) { A_FogMove(); }
+	S_FOGPATCHS0('FOGS', 4, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	IdleState = S_FOGPATCHS1;
+	DeathState = S_FOGPATCHS0;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,79 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//
+//	BridgeBall
+//
+// New bridge stuff
+//
+//  Parent
+//      _Special1    true == removing from world
+//
+//  Child
+//      Instigator  pointer to center mobj
+//
+//**************************************************************************
+
+class BridgeBall:Effect;
+
+float OrbitAngle;		// Angle of ball
+
+//==========================================================================
+//
+//  A_BridgeOrbit
+//
+//==========================================================================
+
+void A_BridgeOrbit(void)
+{
+	if (Instigator._Special1)
+	{
+		SetState(S_NULL);
+	}
+	//	3.0 * 360.0 / 256.0 = 4.21875
+	OrbitAngle = AngleMod360(OrbitAngle + 4.21875);
+	Origin.x = Instigator.Origin.x + 15.0 * cos(OrbitAngle);
+	Origin.y = Instigator.Origin.y + 15.0 * sin(OrbitAngle);
+	Origin.z = Instigator.Origin.z;
+}
+
+__states__
+{
+	S_BBALL1('TLGL', 0, 2.0 / 35.0, S_BBALL2) { }
+	S_BBALL2('TLGL', 0, 5.0 / 35.0, S_BBALL2) { A_BridgeOrbit(); }
+}
+
+defaultproperties
+{
+	bNoTeleport = true;
+	IdleState = S_BBALL1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

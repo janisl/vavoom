@@ -1,0 +1,58 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Sorcerer1Missile:Projectile;
+
+__states__
+{
+	S_SRCRFX1_1('FX14', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_2) { }
+	S_SRCRFX1_2('FX14', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_3) { }
+	S_SRCRFX1_3('FX14', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_SRCRFX1_1) { }
+	S_SRCRFXI1_1('FX14', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_2) { }
+	S_SRCRFXI1_2('FX14', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_3) { }
+	S_SRCRFXI1_3('FX14', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_4) { }
+	S_SRCRFXI1_4('FX14', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_SRCRFXI1_5) { }
+	S_SRCRFXI1_5('FX14', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 10.0;
+	Height = 10.0;
+	Speed = 700.0;
+	MissileDamage = 10;
+	bFireDamage = true;
+	IdleState = S_SRCRFX1_1;
+	DeathState = S_SRCRFXI1_1;
+	Effects = EF_DL_WHITE;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:23  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************

@@ -1,0 +1,124 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MageBoss:ClassBoss
+	__mobjinfo__(10102);
+
+//============================================================================
+//
+//  MStaffSpawn2
+//
+//============================================================================
+
+void MStaffSpawn2(float angle)
+{
+	Actor mo;
+
+	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0);
+	if (mo)
+	{
+		mo.Instigator = self;
+		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
+	}
+}
+
+//============================================================================
+//
+//  A_MageAttack
+//
+//============================================================================
+
+void A_MageAttack(void)
+{
+	if (!Enemy)
+		return;
+
+	MStaffSpawn2(Angles.yaw);
+	MStaffSpawn2(AngleMod360(Angles.yaw - 5.0));
+	MStaffSpawn2(AngleMod360(Angles.yaw + 5.0));
+	PlaySound('MageStaffFire', CHAN_WEAPON);
+}
+
+__states__
+{
+	S_MAGE('MAGE', 0, 2.0 / 35.0, S_MAGE2) { }
+	S_MAGE2('MAGE', 0, 3.0 / 35.0, S_MAGELOOK) { A_ClassBossHealth(); }
+	S_MAGELOOK('MAGE', 0, 5.0 / 35.0, S_MAGELOOK) { A_Look(); }
+	S_MAGE_RUN1('MAGE', 0, 4.0 / 35.0, S_MAGE_RUN2) { A_FastChase(); }
+	S_MAGE_RUN2('MAGE', 1, 4.0 / 35.0, S_MAGE_RUN3) { A_FastChase(); }
+	S_MAGE_RUN3('MAGE', 2, 4.0 / 35.0, S_MAGE_RUN4) { A_FastChase(); }
+	S_MAGE_RUN4('MAGE', 3, 4.0 / 35.0, S_MAGE_RUN1) { A_FastChase(); }
+	S_MAGE_ATK1('MAGE', 4, 8.0 / 35.0, S_MAGE_ATK2) { A_FaceTarget(); }
+	S_MAGE_ATK2('MAGE', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_MAGE_RUN1) { A_MageAttack(); }
+	S_MAGE_PAIN('MAGE', 6, 4.0 / 35.0, S_MAGE_PAIN2) { }
+	S_MAGE_PAIN2('MAGE', 6, 4.0 / 35.0, S_MAGE_RUN1) { A_Pain(); }
+	S_MAGE_DIE1('MAGE', 7, 6.0 / 35.0, S_MAGE_DIE2) { }
+	S_MAGE_DIE2('MAGE', 8, 6.0 / 35.0, S_MAGE_DIE3) { A_Scream(); }
+	S_MAGE_DIE3('MAGE', 9, 6.0 / 35.0, S_MAGE_DIE4) { }
+	S_MAGE_DIE4('MAGE', 10, 6.0 / 35.0, S_MAGE_DIE5) { }
+	S_MAGE_DIE5('MAGE', 11, 6.0 / 35.0, S_MAGE_DIE6) { A_NoBlocking(); }
+	S_MAGE_DIE6('MAGE', 12, 6.0 / 35.0, S_MAGE_DIE7) { }
+	S_MAGE_DIE7('MAGE', 13, -1.0, S_NULL) { }
+	S_MAGE_XDIE1('MAGE', 14, 5.0 / 35.0, S_MAGE_XDIE2) { A_Scream(); }
+	S_MAGE_XDIE2('MAGE', 15, 5.0 / 35.0, S_MAGE_XDIE3) { }
+	S_MAGE_XDIE3('MAGE', 17, 5.0 / 35.0, S_MAGE_XDIE4) { A_NoBlocking(); }
+	S_MAGE_XDIE4('MAGE', 18, 5.0 / 35.0, S_MAGE_XDIE5) { }
+	S_MAGE_XDIE5('MAGE', 19, 5.0 / 35.0, S_MAGE_XDIE6) { }
+	S_MAGE_XDIE6('MAGE', 20, 5.0 / 35.0, S_MAGE_XDIE7) { }
+	S_MAGE_XDIE7('MAGE', 21, 5.0 / 35.0, S_MAGE_XDIE8) { }
+	S_MAGE_XDIE8('MAGE', 22, 5.0 / 35.0, S_MAGE_XDIE9) { }
+	S_MAGE_XDIE9('MAGE', 23, -1.0, S_NULL) { }
+	S_MAGE_ICE('MAGE', 24, 5.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeath(); }
+	S_MAGE_ICE2('MAGE', 24, 1.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 800;
+	GibsHealth = -400;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	StepSpeed = 25.0;
+	PainChance = 0.1953125;
+	IdleState = S_MAGE;
+	SeeState = S_MAGE_RUN1;
+	MeleeState = S_MAGE_ATK1;
+	MissileState = S_MAGE_ATK1;
+	PainState = S_MAGE_PAIN;
+	DeathState = S_MAGE_DIE1;
+	GibsDeathState = S_MAGE_XDIE1;
+	IceDeathState = S_MAGE_ICE;
+	PainSound = 'PlayerMagePain';
+	DeathSound = 'PlayerMageCrazyDeath';
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/10/26 16:32:26  dj_jl
+//  New style of defining classes.
+//
+//**************************************************************************
