@@ -4,7 +4,7 @@ BCB = $(MAKEDIR)\..
 !endif
 
 # ---------------------------------------------------------------------------
-CFLAGS = -O2 -Vx -Ve -X- -a8 -4 -b -k- -vi -tWC -tWM- -c -w -DSERVER;_NO_VCL
+CFLAGS = -O2 -Vx -Ve -X- -a8 -4 -b -k- -vi -tWC -tWM- -c -w -DSERVER;_NO_VCL -I$(BCB)\include
 AFLAGS = /ml /zn
 LFLAGS = -Iobj\sv -ap -Tpe -x -Gn
 

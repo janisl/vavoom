@@ -4,7 +4,7 @@ BCB = $(MAKEDIR)\..
 !endif
 
 # ---------------------------------------------------------------------------
-CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -Ic:\mssdk\include -D_NO_VCL
+CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -I$(BCB)\include -Ic:\mssdk\include -D_NO_VCL
 RFLAGS = /l 0x426
 AFLAGS = /ml /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
@@ -71,7 +71,7 @@ CFLAGS = $(CFLAGS) -DNOASM
 !endif
 
 RESFILES = obj\vavoom.res
-LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib \
+LIBRARIES = utils\glbsp\libglbsp.lib utils\glvis\glvis.lib \
         $(BCB)\lib\openal32.lib
 # ---------------------------------------------------------------------------
 .autodepend

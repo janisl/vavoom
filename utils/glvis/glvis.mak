@@ -16,5 +16,5 @@ glvis.lib: $(LIB_OBJS)
     tlib $@ /a $(LIB_OBJS)
 
 .cpp.obj:
-    bcc32 -c -O2 -q -I../common {$< }
+    bcc32 -c -O2 -q -I../common -I$(BCB)/include {$< }
 
