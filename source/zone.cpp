@@ -34,7 +34,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <new>
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -43,6 +42,8 @@
 #define MINFRAGMENT			64
 
 // TYPES -------------------------------------------------------------------
+
+inline void* operator new(size_t size, void* p) { return p; }
 
 class TMemZone;
 
@@ -873,9 +874,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2003/12/19 17:37:33  dj_jl
+//	Got rid of new header
+//
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.10  2002/07/13 07:46:21  dj_jl
 //	Added guarding.
 //	
