@@ -1,5 +1,5 @@
                             *********************
-                              glVIS version 1.3
+                              glVIS version 1.4
                             *********************
 
 ============================================================================
@@ -52,7 +52,7 @@ The following options are recognised:
     Status
 ============================================================================
 
-  The current version of glVIS is 1.3. It has been tested and known to work
+  The current version of glVIS is 1.4. It has been tested and known to work
 on numerous large wads, including Ultimate DOOM, DOOM II, Heretic, Hexen,
 Batman Doom, Hacx.
   NOTE: glVIS is very expensive, complete vis data for a large wad can take

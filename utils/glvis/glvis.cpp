@@ -158,7 +158,7 @@ void TConsoleGLVis::DisplayMapDone(int accepts, int total)
 
 static void ShowUsage(void)
 {
-	cerr << "\nGLVIS version 1.3, Copyright (c)2000 JÆnis Legzdi·ý      ("__DATE__" "__TIME__")\n";
+	cerr << "\nGLVIS version 1.4, Copyright (c)2000-2002 JÆnis Legzdi·ý ("__DATE__" "__TIME__")\n";
 	cerr << "Usage: glvis [options] file[.wad]\n";
 	cerr << "    -s            silent mode\n";
 	cerr << "    -f            fast mode\n";
@@ -264,9 +264,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/04 18:24:13  dj_jl
+//	Changed version number
+//
 //	Revision 1.9  2002/01/03 18:35:14  dj_jl
 //	Switched to doubles, some fixes
-//
+//	
 //	Revision 1.8  2001/11/09 18:15:02  dj_jl
 //	Added missing include
 //	
