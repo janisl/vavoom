@@ -273,6 +273,28 @@ void TOpenGLDrawer::StartUpdate(void)
 
 //==========================================================================
 //
+//	TOpenGLDrawer::BeginDirectUpdate
+//
+//==========================================================================
+
+void TOpenGLDrawer::BeginDirectUpdate(void)
+{
+	glDrawBuffer(GL_FRONT);
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::EndDirectUpdate
+//
+//==========================================================================
+
+void TOpenGLDrawer::EndDirectUpdate(void)
+{
+	glDrawBuffer(GL_BACK);
+}
+
+//==========================================================================
+//
 //	TOpenGLDrawer::SetupView
 //
 //==========================================================================
@@ -417,9 +439,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.9  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.8  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
 //	

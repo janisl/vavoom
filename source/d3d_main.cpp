@@ -693,6 +693,36 @@ void TDirect3DDrawer::Update(void)
 
 //==========================================================================
 //
+//	TDirect3DDrawer::BeginDirectUpdate
+//
+//==========================================================================
+
+void TDirect3DDrawer::BeginDirectUpdate(void)
+{
+	// Check for lost surface
+	if (RenderSurface->IsLost() != DD_OK)
+	{
+		RenderSurface->Restore();
+	}
+
+	// Begin the scene.
+	RenderDevice->BeginScene();
+}
+
+//==========================================================================
+//
+//	TDirect3DDrawer::EndDirectUpdate
+//
+//==========================================================================
+
+void TDirect3DDrawer::EndDirectUpdate(void)
+{
+	//FIXME
+	Update();
+}
+
+//==========================================================================
+//
 // 	TDirect3DDrawer::Shutdown
 //
 //	Close the graphics
@@ -790,9 +820,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.10  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
-//
+//	
 //	Revision 1.9  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
 //	

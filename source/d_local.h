@@ -146,6 +146,8 @@ class TSoftwareDrawer : public TDrawer
 	void SetPalette8(byte*);
 	void StartUpdate(void);
 	void Update(void);
+	void BeginDirectUpdate(void);
+	void EndDirectUpdate(void);
 	void Shutdown(void);
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
@@ -178,6 +180,7 @@ class TSoftwareDrawer : public TDrawer
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
+	void FillRect(float, float, float, float, dword);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
@@ -504,9 +507,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.9  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.8  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

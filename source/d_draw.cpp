@@ -167,6 +167,32 @@ static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, 
 
 //==========================================================================
 //
+//	D_FillRect_8
+//
+//==========================================================================
+
+static void D_FillRect_8(float x1, float y1, float x2, float y2, dword color)
+{
+	int ix1 = int(x1);
+	int iy1 = int(y1);
+	int ix2 = int(x2);
+	int iy2 = int(y2);
+
+	color = d_rgbtable[((color >> 9) & 0x7c00) | ((color >> 6) & 0x03e0) |
+		((color >> 3) & 0x1f)];
+
+	for (int y = iy1; y < iy2; y++)
+	{
+		byte *dest = (byte*)scrn + ix1 + ScreenWidth * y;
+		for (int x = ix1; x < ix2; x++)
+		{
+			*dest++ = color;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	D_ShadeRect_8
 //
 //  Fade all the screen buffer, so that the menu is more readable,
@@ -372,6 +398,36 @@ static void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep,
 
 //==========================================================================
 //
+//	D_FillRect_16
+//
+//==========================================================================
+
+static void D_FillRect_16(float x1, float y1, float x2, float y2, dword color)
+{
+	int ix1 = int(x1);
+	int iy1 = int(y1);
+	int ix2 = int(x2);
+	int iy2 = int(y2);
+
+	if (ScreenBPP == 15)
+		color = MakeCol15((color >> 16) & 0xff, (color >> 8) & 0xff,
+			color & 0xff);
+	else if (ScreenBPP == 16)
+		color = MakeCol16((color >> 16) & 0xff, (color >> 8) & 0xff,
+			color & 0xff);
+
+	for (int y = iy1; y < iy2; y++)
+	{
+		word *dest = (word*)scrn + ix1 + ScreenWidth * y;
+		for (int x = ix1; x < ix2; x++)
+		{
+			*dest++ = color;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	D_ShadeRect_16
 //
 //  Fade all the screen buffer, so that the menu is more readable,
@@ -522,6 +578,32 @@ static void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep,
 		*dest = pal2rgb[color];
 		s += sstep;
 		dest++;
+	}
+}
+
+//==========================================================================
+//
+//	D_FillRect_32
+//
+//==========================================================================
+
+static void D_FillRect_32(float x1, float y1, float x2, float y2, dword color)
+{
+	int ix1 = int(x1);
+	int iy1 = int(y1);
+	int ix2 = int(x2);
+	int iy2 = int(y2);
+
+	color = MakeCol32((color >> 16) & 0xff, (color >> 8) & 0xff,
+		color & 0xff);
+
+	for (int y = iy1; y < iy2; y++)
+	{
+		dword *dest = (dword*)scrn + ix1 + ScreenWidth * y;
+		for (int x = ix1; x < ix2; x++)
+		{
+			*dest++ = color;
+		}
 	}
 }
 
@@ -852,7 +934,32 @@ void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
-//	TSoftwareDrawer::DarkenScreen
+//  TSoftwareDrawer::FillRect
+//
+// 	Fills rectangle with color.
+//
+//==========================================================================
+
+void TSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
+	dword color)
+{
+	if (ScreenBPP == 8)
+	{
+		D_FillRect_8(x1, y1, x2, y2, color);
+	}
+	else if (PixelBytes == 2)
+	{
+		D_FillRect_16(x1, y1, x2, y2, color);
+	}
+	else
+	{
+		D_FillRect_32(x1, y1, x2, y2, color);
+	}
+}
+
+//==========================================================================
+//
+//	TSoftwareDrawer::ShadeRect
 //
 //  Fade all the screen buffer, so that the menu is more readable,
 // especially now that we use the small hufont in the menus...
@@ -1222,9 +1329,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.7  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
-//
+//	
 //	Revision 1.6  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

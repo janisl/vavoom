@@ -116,6 +116,8 @@ class TDrawer
 	virtual void SetPalette(int) = 0;
 	virtual void StartUpdate(void) = 0;
 	virtual void Update(void) = 0;
+	virtual void BeginDirectUpdate(void) = 0;
+	virtual void EndDirectUpdate(void) = 0;
 	virtual void Shutdown(void) = 0;
 	virtual void* ReadScreen(int*, bool*) = 0;
 	virtual void FreeSurfCache(surfcache_t*) = 0;
@@ -147,6 +149,7 @@ class TDrawer
 	virtual void DrawPic(float, float, float, float, float, float, float, float, int, int) = 0;
 	virtual void DrawPicShadow(float, float, float, float, float, float, float, float, int, int) = 0;
 	virtual void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*) = 0;
+	virtual void FillRect(float, float, float, float, dword) = 0;
 	virtual void ShadeRect(int, int, int, int, int) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
 	virtual void DrawSpriteLump(float, float, float, float, int, int, boolean) = 0;
@@ -169,9 +172,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.7  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

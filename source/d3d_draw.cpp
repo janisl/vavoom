@@ -137,6 +137,29 @@ void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
+//  TDirect3DDrawer::FillRect
+//
+//==========================================================================
+
+void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
+	dword color)
+{
+	D3DLVERTEX	dv[4];
+
+	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), color, 0, 0, 0);
+	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), color, 0, 0, 0);
+	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), color, 0, 0, 0);
+	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), color, 0, 0, 0);
+
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+}
+
+//==========================================================================
+//
 //	TDirect3DDrawer::DarkenScreen
 //
 //  Fade all the screen buffer, so that the menu is more readable,
@@ -275,9 +298,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.6  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
-//
+//	
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

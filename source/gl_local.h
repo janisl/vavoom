@@ -114,6 +114,8 @@ class TOpenGLDrawer : public TDrawer
 	void StartUpdate(void);
 	void Setup2D(void);
 	void Update(void);
+	void BeginDirectUpdate(void);
+	void EndDirectUpdate(void);
 	void Shutdown(void);
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
@@ -146,6 +148,7 @@ class TOpenGLDrawer : public TDrawer
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
+	void FillRect(float, float, float, float, dword);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
@@ -265,9 +268,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.11  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.10  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
 //	

@@ -141,6 +141,29 @@ void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 
 //==========================================================================
 //
+//  TOpenGLDrawer::FillRect
+//
+//==========================================================================
+
+void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
+	dword color)
+{
+	glColor4ub((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff,
+		color >> 24);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_ALPHA_TEST);
+	glBegin(GL_QUADS);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y1);
+	glVertex2f(x2, y2);
+	glVertex2f(x1, y2);
+	glEnd();
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_TEXTURE_2D);
+}
+
+//==========================================================================
+//
 //	TOpenGLDrawer::ShadeRect
 //
 //  Fade all the screen buffer, so that the menu is more readable,
@@ -279,9 +302,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.7  2001/08/31 17:27:15  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.6  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
 //	

@@ -88,6 +88,8 @@ class TDirect3DDrawer : public TDrawer
 	void SetPalette(int);
 	void StartUpdate(void);
 	void Update(void);
+	void BeginDirectUpdate(void);
+	void EndDirectUpdate(void);
 	void Shutdown(void);
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
@@ -120,6 +122,7 @@ class TDirect3DDrawer : public TDrawer
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
+	void FillRect(float, float, float, float, dword);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
@@ -260,9 +263,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.10  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
-//
+//	
 //	Revision 1.9  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
 //	

@@ -412,6 +412,27 @@ void TSoftwareDrawer::StartUpdate(void)
 
 //==========================================================================
 //
+//	TSoftwareDrawer::BeginDirectUpdate
+//
+//==========================================================================
+
+void TSoftwareDrawer::BeginDirectUpdate(void)
+{
+}
+
+//==========================================================================
+//
+//	TSoftwareDrawer::EndDirectUpdate
+//
+//==========================================================================
+
+void TSoftwareDrawer::EndDirectUpdate(void)
+{
+	Update();
+}
+
+//==========================================================================
+//
 //	TSoftwareDrawer::SetupView
 //
 //==========================================================================
@@ -624,9 +645,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/12 17:31:27  dj_jl
+//	Rectangle drawing and direct update for plugins
+//
 //	Revision 1.7  2001/08/21 17:50:55  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	
