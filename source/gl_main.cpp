@@ -208,6 +208,30 @@ void TOpenGLDrawer::StartUpdate(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
+	if (tex_linear == 3)
+	{
+		maxfilter = GL_LINEAR;
+		minfilter = GL_LINEAR;
+		mipfilter = GL_LINEAR_MIPMAP_LINEAR;
+	}
+	else if (tex_linear == 2)
+	{
+		maxfilter = GL_LINEAR;
+		minfilter = GL_LINEAR;
+		mipfilter = GL_LINEAR_MIPMAP_NEAREST;
+	}
+	else if (tex_linear)
+	{
+		maxfilter = GL_LINEAR;
+		minfilter = GL_LINEAR;
+		mipfilter = GL_LINEAR;
+	}
+	else
+	{
+		maxfilter = GL_NEAREST;
+		minfilter = GL_NEAREST;
+		mipfilter = GL_NEAREST;
+	}
 	Setup2D();
 }
 
@@ -351,9 +375,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/23 17:50:15  dj_jl
+//	Texture filtering mode set in globals
+//
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
