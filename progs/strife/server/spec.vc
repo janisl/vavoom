@@ -36,6 +36,8 @@ void P_RespawnSpecials(void);
 
 int EV_Teleport(int tag, mobj_t * thing, boolean usefog);
 
+void P_ThrustMobj(mobj_t *mo, float an, float force);
+
 // DATA DECLARATIONS -------------------------------------------------------
 
 //
@@ -378,7 +380,8 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case 70:	// Teleport
 		if (side == 0)
-		{	// Only teleport when crossing the front side of a line
+		{
+			// Only teleport when crossing the front side of a line
 			buttonSuccess = EV_Teleport(args[0], mo, true);
 		}
 		break;
@@ -387,25 +390,26 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 			{ // Only teleport when crossing the front side of a line
 				buttonSuccess = EV_Teleport(args[0], mo, false);
 			}
-			break;
-		case 72: // Thrust Mobj
-			if (!side) // Only thrust on side 0
-			{
-				P_ThrustMobj(mo, args[0] * (ANG90 / 64), itof(args[1]));
-				buttonSuccess = 1;
-			}
-			break;
-		case 73: // Damage Mobj
-			if(args[0])
-			{
-				DamageMobj(mo, NULL, NULL, args[0]);
-			}
-			else
-			{ // If arg1 is zero, then guarantee a kill
-				DamageMobj(mo, NULL, NULL, 10000);
-			}
-			buttonSuccess = 1;
 			break;*/
+	case 72: // Thrust Mobj
+		if (!side) // Only thrust on side 0
+		{
+			P_ThrustMobj(mo, itof(args[0]) * (90.0 / 64.0), itof(args[1]));
+			buttonSuccess = 1;
+		}
+		break;
+	case 73: // Damage Mobj
+		if (args[0])
+		{
+			mo->Damage(none, none, args[0]);
+		}
+		else
+		{
+			// If arg1 is zero, then guarantee a kill
+			mo->Damage(none, none, 10000);
+		}
+		buttonSuccess = 1;
+		break;
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
@@ -843,6 +847,9 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/29 18:15:06  dj_jl
+//  Added some thing specials
+//
 //  Revision 1.11  2002/01/28 18:50:20  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.
