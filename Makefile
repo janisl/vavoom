@@ -16,6 +16,9 @@
 # Uncomment if for OpenGL you must link to libMesaGL.a and not to libGL.a
 #MESAGL = 1
 
+# Uncoment to compile with OpenAL library
+#USE_AL = 1
+
 #---------------------------------------
 #
 #	Executable extension
@@ -212,6 +215,13 @@ LIBS := -lMesaGL $(LIBS)
 else
 LIBS := -lGL $(LIBS)
 endif
+endif
+
+ifdef USE_AL
+OBJ_FILES += \
+	obj\s_al.o \
+	obj\s_eaxutl.o
+LIBS := -lopenal $(LIBS)
 endif
 
 #---------------------------------------
