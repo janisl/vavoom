@@ -86,7 +86,7 @@ string endmsg[NUM_END_MESSAGES] = {
 
 void QuitResponse(int ch)
 {
-	if (ch != 'y')
+	if (ch != K_y)
 		return;
 
 	LocalSoundTillDone(quitsounds[P_Random() & 7]);
@@ -110,6 +110,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 19:14:11  dj_jl
+//  Removed support for ASCII character constants
+//
 //  Revision 1.4  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //

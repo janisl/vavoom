@@ -223,7 +223,7 @@ void InputLine_Init(TILine * iline)
 
 boolean InputLine_Key(TILine * iline, int ch)
 {
-    if (ch >= ' ' && ch < 128)
+    if (ch >= 32 && ch < 128)
 	{
   		ch = TranslateKey(ch);
 	    if (iline->len < MAX_ILINE_LENGTH)
@@ -1734,7 +1734,7 @@ boolean MenuSlist_Use(menucommon_t * aitem, int key)
 		}
 		return true;
 
-	case ' ':
+	case K_SPACE:
 		item->cursor = 0;
 		StartSearch();
 		return true;
@@ -1832,6 +1832,9 @@ class MenuBigTextButton:MenuTextButton
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/12 19:14:11  dj_jl
+//  Removed support for ASCII character constants
+//
 //  Revision 1.9  2001/12/04 18:22:08  dj_jl
 //  Reworking menus
 //

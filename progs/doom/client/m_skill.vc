@@ -95,7 +95,7 @@ void NewGame(int skill)
 
 void VerifyNightmare(int ch)
 {
-	if (ch != 'y')
+	if (ch != K_y)
 		return;
 
 	NewGame(sk_nightmare);
@@ -182,6 +182,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/12/12 19:14:11  dj_jl
+//  Removed support for ASCII character constants
+//
 //  Revision 1.6  2001/12/01 18:04:21  dj_jl
 //  Started reworking menus
 //

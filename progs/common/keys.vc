@@ -28,6 +28,35 @@
 //  Keys and buttons
 enum
 {
+	K_SPACE = 32,
+
+	K_a = 97,
+	K_b,
+	K_c,
+	K_d,
+	K_e,
+	K_f,
+	K_g,
+	K_h,
+	K_i,
+	K_j,
+	K_k,
+	K_l,
+	K_m,
+	K_n,
+	K_o,
+	K_p,
+	K_q,
+	K_r,
+	K_s,
+	K_t,
+	K_u,
+	K_v,
+	K_w,
+	K_x,
+	K_y,
+	K_z,
+
 	K_UPARROW = 0x80,
 	K_LEFTARROW,
 	K_RIGHTARROW,
@@ -151,6 +180,9 @@ struct event_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/12 19:14:11  dj_jl
+//  Removed support for ASCII character constants
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

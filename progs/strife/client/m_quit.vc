@@ -51,7 +51,7 @@ string quitsounds[5] = {
 
 void QuitResponse(int ch)
 {
-	if (ch != 'y')
+	if (ch != K_y)
 		return;
 
 	LocalSoundTillDone(quitsounds[P_Random() % 5]);
@@ -74,6 +74,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2001/12/12 19:14:11  dj_jl
+//  Removed support for ASCII character constants
+//
 //  Revision 1.3  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
