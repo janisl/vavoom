@@ -622,6 +622,22 @@ static void PF_strcmp(void)
 
 //==========================================================================
 //
+//	PF_stricmp
+//
+//==========================================================================
+
+static void PF_stricmp(void)
+{
+	int		s1;
+	int		s2;
+
+	s2 = Pop();
+	s1 = Pop();
+	Push(stricmp(PROG_TO_STR(s1), PROG_TO_STR(s2)));
+}
+
+//==========================================================================
+//
 //	PF_strcpy
 //
 //==========================================================================
@@ -2903,6 +2919,7 @@ builtin_info_t BuiltinInfo[] =
 	{"ptrtos", PF_ptrtos},
 	{"strlen", PF_strlen},
 	{"strcmp", PF_strcmp},
+	{"stricmp", PF_stricmp},
 	{"strcpy", PF_strcpy},
 	{"strclr", PF_strclr},
 	{"strcat", PF_strcat},
@@ -3072,9 +3089,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/25 17:05:34  dj_jl
+//	Added stricmp
+//
 //	Revision 1.10  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
-//
+//	
 //	Revision 1.9  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	
