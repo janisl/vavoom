@@ -52,7 +52,8 @@ char**	myargv;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char		va_buffer[1024];
+static char va_buffer[4][1024];
+static int va_bufnum;
 
 // CODE --------------------------------------------------------------------
 
@@ -358,13 +359,14 @@ int superatoi(const char *s)
 
 char *va(const char *text, ...)
 {
-	va_list		args;
+	va_list args;
 
+	va_bufnum = (va_bufnum + 1) & 3;
 	va_start(args, text);
-	vsprintf(va_buffer, text, args);
+	vsprintf(va_buffer[va_bufnum], text, args);
 	va_end(args);
 
-	return va_buffer;
+	return va_buffer[va_bufnum];
 }
 
 //==========================================================================
@@ -388,9 +390,12 @@ int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:33:40  dj_jl
+//	Four va buffers
+//
 //	Revision 1.6  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.5  2001/08/30 17:42:04  dj_jl
 //	Cleanup
 //	
