@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/08/04 17:20:28  dj_jl
+//**	Changes to inform new clients about changed textures
+//**
 //**	Revision 1.2  2001/07/27 14:27:51  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 
 typedef int boolean;
@@ -155,23 +158,27 @@ struct line_t : TPlane
 //
 struct side_t
 {
-    // add this to the calculated texture column
+	// add this to the calculated texture column
 	float		textureoffset;
 
-    // add this to the calculated texture top
+	// add this to the calculated texture top
 	float		rowoffset;
 
 	float		__base_textureoffset;
 	float		__base_rowoffset;
 
-    // Texture indices.
-    // We do not maintain names here.
-    int			toptexture;
-    int			bottomtexture;
-    int			midtexture;
+	// Texture indices.
+	// We do not maintain names here.
+	int			toptexture;
+	int			bottomtexture;
+	int			midtexture;
 
-    // Sector the SideDef is facing.
-    sector_t	*sector;
+	int			__base_toptexture;
+	int			__base_bottomtexture;
+	int			__base_midtexture;
+
+	// Sector the SideDef is facing.
+	sector_t	*sector;
 };
 
 struct sec_plane_t : TPlane
@@ -180,15 +187,11 @@ struct sec_plane_t : TPlane
 	float		maxz;
 
 	int			pic;
-	angle_t		angle;
+	int			__base_pic;
 
 	float		xoffs;
 	float		yoffs;
 
-	float		xscale;
-	float		yscale;
-
-	float		light;
 	int			flags;
 	int			translucency;
 };
