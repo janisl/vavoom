@@ -1003,6 +1003,7 @@ static void ParseDef(TType *type, bool IsNative)
 			globaldefs[numglobaldefs].ofs = numglobals;
 			numglobals += TypeSize(t) / 4;
 			numglobaldefs++;
+			dprintf("Added global %s, %d bytes\n", *Name, TypeSize(t));
 			Name = NAME_None;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -1476,10 +1477,6 @@ void PA_Parse(void)
 				{
 					ParseVector();
 				}
-				else if (TK_Check(KW_TYPEDEF))
-				{
-					ParseTypeDef();
-				}
 				else if (TK_Check(KW_STATES))
 				{
 				   	ParseStates(NULL);
@@ -1521,7 +1518,11 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.1  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //**************************************************************************

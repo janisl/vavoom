@@ -41,13 +41,6 @@ enum
 	PROPTYPE_String,
 };
 
-struct typedef_t
-{
-	FName		Name;
-	TType		*type;
-	typedef_t	*next;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -79,8 +72,6 @@ TType		*types = &type_bool;
 
 TType		**classtypes;
 int			numclasses = 1;
-
-typedef_t	*typedefs;
 
 // CODE --------------------------------------------------------------------
 
@@ -242,19 +233,10 @@ static TType *CheckForTypeKeyword(void)
 TType *CheckForType(void)
 {
 	TType		*check;
-	typedef_t	*tdef;
 
 	if (tk_Token == TK_KEYWORD)
 	{
 		return CheckForTypeKeyword();
-	}
-
-	for (tdef = typedefs; tdef; tdef = tdef->next)
-	{
-		if (TK_Check(tdef->Name))
-		{
-			return tdef->type;
-		}
 	}
 
 	for (check = types; check; check = check->next)
@@ -279,19 +261,10 @@ TType *CheckForType(void)
 TType *CheckForType(FName Name)
 {
 	TType		*check;
-	typedef_t	*tdef;
 
 	if (Name == NAME_None)
 	{
 		return NULL;
-	}
-
-	for (tdef = typedefs; tdef; tdef = tdef->next)
-	{
-		if (Name == tdef->Name)
-		{
-			return tdef->type;
-		}
 	}
 
 	for (check = types; check; check = check->next)
@@ -423,10 +396,9 @@ void TypeCheck3(TType *t1, TType *t2)
 		if ((t1->type == ev_struct && t2->type == ev_struct) ||
 			(t1->type == ev_class && t2->type == ev_class))
 		{
-			while (t1->aux_type)
+			for (TType *st1 = t1->aux_type; st1; st1 = st1->aux_type)
 			{
-				t1 = t1->aux_type;
-				if (t1 == t2)
+				if (st1 == t2)
 				{
 					return;
 				}
@@ -448,15 +420,18 @@ void TypeCheck3(TType *t1, TType *t2)
 		if ((t1->type == ev_struct && t2->type == ev_struct) ||
 			(t1->type == ev_class && t2->type == ev_class))
 		{
-			while (t1->aux_type)
+			for (TType *st1 = t1->aux_type; st1; st1 = st1->aux_type)
 			{
-				t1 = t1->aux_type;
-				if (t1 == t2)
+				if (st1 == t2)
 				{
 					return;
 				}
 			}
 		}
+	}
+	if ((t1->type == ev_int && t2->type == ev_bool))
+	{
+		return;
 	}
 	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible %d %d",
 		*t1->Name, *t2->Name, t1->type, t2->type);
@@ -1558,192 +1533,6 @@ field_t* FindConstructor(TType *t)
 
 //==========================================================================
 //
-//	ParseTypeDef
-//
-//==========================================================================
-
-void ParseTypeDef(void)
-{
-#ifdef USE_2_PASSES
-	//	Return type
-	CheckForType();
-	while (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-	while (TK_Check(PU_AND));
-#endif
-
-	if (TK_Check(PU_LPAREN))
-	{
-		//	Function pointer type
-		if (!TK_Check(PU_ASTERISK))
-		{
-			ParseError("Missing *");
-			return;
-		}
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("New type name expected");
-			return;
-		}
-		TK_NextToken();
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-		//	Args
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		do
-		{
-			CheckForType();
-			while (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-			while (TK_Check(PU_AND));
-#endif
-	   		if (tk_Token == TK_IDENTIFIER)
-			{
-				TK_NextToken();
-			}
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
-	}
-
-	//	Ordinary typedef
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError("New type name expected");
-		return;
-	}
-	TK_NextToken();
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-#else
-	TType		*type;
-	typedef_t	*tdef;
-
-	//	Return type
-	type = CheckForType();
-	if (!type)
-	{
-		ParseError("Type name expected, found %s", tk_String);
-		return;
-	}
-	while (TK_Check(PU_ASTERISK))
-	{
-		type = MakePointerType(type);
-	}
-#ifdef REF_CPP
-	while (TK_Check(PU_AND))
-	{
-		type = MakeReferenceType(type);
-	}
-#endif
-
-	if (TK_Check(PU_LPAREN))
-	{
-		//	Function pointer type
-		TType	functype;
-		FName	Name;
-
-		memset(&functype, 0, sizeof(TType));
-		functype.type = ev_function;
-		functype.size = 4;
-		functype.aux_type = type;
-
-		if (!TK_Check(PU_ASTERISK))
-		{
-			ParseError("Missing *");
-			return;
-		}
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("New type name expected");
-			return;
-		}
-		Name = tk_Name;
-		TK_NextToken();
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-		//	Args
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		do
-		{
-			type = CheckForType();
-
-			if (!type)
-			{
-				if (functype.num_params == 0)
-				{
-					break;
-				}
-				ParseError(ERR_BAD_VAR_TYPE);
-				continue;
-			}
-
-			while (TK_Check(PU_ASTERISK))
-			{
-		   		type = MakePointerType(type);
-			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-		   		type = MakeReferenceType(type);
-			}
-#endif
-			if (type->type == ev_class)
-			{
-				type = MakeReferenceType(type);
-			}
-			if (functype.num_params == 0 && type == &type_void)
-			{
-				break;
-			}
-			TypeCheckPassable(type);
-
-			if (functype.num_params == MAX_PARAMS)
-			{
-				ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-			}
-	   		if (tk_Token == TK_IDENTIFIER)
-			{
-				TK_NextToken();
-			}
-
-			functype.param_types[functype.num_params] = type;
-			functype.num_params++;
-			functype.params_size += TypeSize(type) / 4;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-		//	Add to typedefs
-		tdef = new typedef_t;
-		tdef->Name = Name;
-		tdef->type = FindType(&functype);
-		tdef->next = typedefs;
-		typedefs = tdef;
-		return;
-	}
-
-	//	Ordinary typedef
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError("New type name expected");
-		return;
-	}
-
-	//	Add to typedefs
-	tdef = new typedef_t;
-	tdef->Name = tk_Name;
-	tdef->type = type;
-	tdef->next = typedefs;
-	typedefs = tdef;
-
-	TK_NextToken();
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-#endif
-}
-
-//==========================================================================
-//
 //	AddVTable
 //
 //==========================================================================
@@ -1899,26 +1688,7 @@ void AddVirtualTables(void)
 
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
-//**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
-//**
-//**	This program is free software; you can redistribute it and/or
-//**  modify it under the terms of the GNU General Public License
-//**  as published by the Free Software Foundation; either version 2
-//**  of the License, or (at your option) any later version.
-//**
-//**	This program is distributed in the hope that it will be useful,
-//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//**  GNU General Public License for more details.
 //**
 //**************************************************************************
 
@@ -2719,139 +2489,6 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 	return NULL;
 }
 
-//==========================================================================
-//
-//	ParseTypeDef
-//
-//==========================================================================
-
-void ParseTypeDef(void)
-{
-	TType		*type;
-	typedef_t	*tdef;
-
-	//	Return type
-	type = CheckForType();
-	if (!type)
-	{
-		ParseError("Type name expected, found %s", tk_String);
-		return;
-	}
-	while (TK_Check(PU_ASTERISK))
-	{
-		type = MakePointerType(type);
-	}
-#ifdef REF_CPP
-	while (TK_Check(PU_AND))
-	{
-		type = MakeReferenceType(type);
-	}
-#endif
-
-	if (TK_Check(PU_LPAREN))
-	{
-		//	Function pointer type
-		TType	functype;
-		FName	Name;
-
-		memset(&functype, 0, sizeof(TType));
-		functype.type = ev_function;
-		functype.size = 4;
-		functype.aux_type = type;
-
-		if (!TK_Check(PU_ASTERISK))
-		{
-			ParseError("Missing *");
-			return;
-		}
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("New type name expected");
-			return;
-		}
-		Name = tk_Name;
-		TK_NextToken();
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-		//	Args
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		do
-		{
-			type = CheckForType();
-
-			if (!type)
-			{
-				if (functype.num_params == 0)
-				{
-					break;
-				}
-				ParseError(ERR_BAD_VAR_TYPE);
-				continue;
-			}
-
-			while (TK_Check(PU_ASTERISK))
-			{
-		   		type = MakePointerType(type);
-			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-		   		type = MakeReferenceType(type);
-			}
-#endif
-			if (type->type == ev_class)
-			{
-				type = MakeReferenceType(type);
-			}
-			if (functype.num_params == 0 && type == &type_void)
-			{
-				break;
-			}
-			TypeCheckPassable(type);
-
-			if (functype.num_params == MAX_PARAMS)
-			{
-				ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-			}
-	   		if (tk_Token == TK_IDENTIFIER)
-			{
-				TK_NextToken();
-			}
-
-			functype.param_types[functype.num_params] = type;
-			functype.num_params++;
-			functype.params_size += TypeSize(type) / 4;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-		//	Add to typedefs
-		tdef = new typedef_t;
-		tdef->Name = Name;
-		tdef->type = FindType(&functype);
-		tdef->next = typedefs;
-		typedefs = tdef;
-		return;
-	}
-
-	//	Ordinary typedef
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError("New type name expected");
-		return;
-	}
-
-	//	Add to typedefs
-	tdef = new typedef_t;
-	tdef->Name = tk_Name;
-	tdef->type = type;
-	tdef->next = typedefs;
-	typedefs = tdef;
-
-	TK_NextToken();
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-}
-
 } // namespace Pass1
 
 #endif
@@ -2859,9 +2496,13 @@ void ParseTypeDef(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.27  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.26  2002/06/14 15:33:45  dj_jl
 //	Some fixes.
 //	

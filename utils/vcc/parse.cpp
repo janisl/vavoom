@@ -1654,10 +1654,6 @@ void PA_Parse(void)
 				{
 					ParseVector();
 				}
-				else if (TK_Check(KW_TYPEDEF))
-				{
-					ParseTypeDef();
-				}
 				else if (TK_Check(KW_STATES))
 				{
 				   	ParseStates(NULL);
@@ -1716,9 +1712,13 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.23  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.22  2002/02/02 19:23:02  dj_jl
 //	Natives declared inside class declarations.
 //	

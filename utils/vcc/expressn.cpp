@@ -450,6 +450,8 @@ class TOpFuncCall : public TTree
 	{
 		vOffs = Afnum;
 		type = functions[Afnum].type->aux_type;
+		if (type->type == ev_bool)
+			type = &type_int;
 	}
 	void Code(void)
 	{
@@ -465,6 +467,8 @@ class TOpIndirectFuncCall : public   TTree
 	{
 		child1 = Afnumop;
 		type = Aftype->aux_type;
+		if (type->type == ev_bool)
+			type = &type_int;
 	}
 	void Code(void)
 	{
@@ -704,6 +708,7 @@ static TOperator	ModVar_int_int(TOperator::ID_MODVAR, &type_int, &type_int, &typ
 static TOperator	AndVar_int_int(TOperator::ID_ANDVAR, &type_int, &type_int, &type_int, OPC_ANDVAR);
 
 static TOperator	OrVar_int_int(TOperator::ID_ORVAR, &type_int, &type_int, &type_int, OPC_ORVAR);
+static TOperator	OrVar_bool_int(TOperator::ID_ORVAR, &type_bool, &type_bool, &type_int, OPC_ORVAR);
 
 static TOperator	XorVar_int_int(TOperator::ID_XORVAR, &type_int, &type_int, &type_int, OPC_XORVAR);
 
@@ -1051,20 +1056,6 @@ static TTree *ParseExpressionPriority0(void)
 				return new TOpDynamicCast(op, type);
 			}
 
-			num = CheckForLocalVar(Name);
-			if (num)
-			{
-				op = new TOpLocal(localdefs[num].ofs, MakePointerType(localdefs[num].type));
-				op = new TOpPushPointed(op,	localdefs[num].type);
-			}
-
-			num = CheckForGlobalVar(Name);
-			if (!op && num)
-			{
-				op = new TOpGlobal(num, MakePointerType(globaldefs[num].type));
-				op = new TOpPushPointed(op,	globaldefs[num].type);
-			}
-
 			num = CheckForFunction(NULL, Name);
 			if (!op && num)
 			{
@@ -1081,11 +1072,6 @@ static TTree *ParseExpressionPriority0(void)
 					{
 						op = new TOpPushSelfMethod(op, field->ofs, field->type);
 					}
-					else
-					{
-						op = new TOpField(op, field->ofs, field->type);
-						op = new TOpPushPointed(op,	field->type);
-					}
 				}
 			}
 
@@ -1095,7 +1081,7 @@ static TTree *ParseExpressionPriority0(void)
 				return ParseIFunctionCall(op);
 			}
 
-			ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
+			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", *Name);
 			break;
 		}
 		if (bLocals && (tk_Token == TK_IDENTIFIER ||
@@ -1779,7 +1765,7 @@ static TTree* ParseExpressionPriority14(void)
 			op1 = op1->GetAddress();
 			op2 = ParseExpressionPriority14();
 			oper = FindOperator(AssignOps[i].opid, type, op2->type);
-//			TypeCheck3(op2->type, type);
+			TypeCheck3(op2->type, type);
 		   	op1 = new TOp2(op1, op2, oper);
 			op1->type = type;
 			return op1;
@@ -1813,9 +1799,13 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.25  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.24  2002/06/14 15:33:45  dj_jl
 //	Some fixes.
 //	

@@ -663,11 +663,6 @@ static void ProcessLetterToken(void)
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_THIS;
 		}
-		else if (!strcmp(tk_String, "typedef"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_TYPEDEF;
-		}
 		break;
 
 	case 'v':
@@ -1182,9 +1177,13 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.17  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
-//
+//	
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
 //	

@@ -461,6 +461,9 @@ int EvalConstExpression(int type)
 			ERR_Exit(ERR_NONE, true, "Bad classid");
 		}
 
+	 case ev_bool:
+		return !!CExprLevA();
+
 	 default:
 	 	ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
 	}
@@ -482,9 +485,13 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.10  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.9  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

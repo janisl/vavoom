@@ -198,7 +198,6 @@ enum Keyword
 	KW_STRUCT,
 	KW_SWITCH,
 	KW_THIS,
-	KW_TYPEDEF,
 	KW_VECTOR,
    	KW_VOID,
 	KW_WHILE,
@@ -524,7 +523,6 @@ void ParseVector(void);
 void ParseField(void);
 field_t* CheckForField(TType *, bool = true);
 field_t* CheckForField(FName, TType *, bool = true);
-void ParseTypeDef(void);
 void AddVirtualTables(void);
 
 void ParseStates(TType *class_type);
@@ -570,7 +568,6 @@ field_t* ParseField(TType *t);
 field_t* CheckForField(TType *, bool = true);
 field_t* CheckForField(FName, TType *, bool = true);
 field_t* FindConstructor(TType *t);
-void ParseTypeDef(void);
 void AddVirtualTables(void);
 
 void ParseStates(TType *class_type);
@@ -706,9 +703,13 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/09/07 16:36:38  dj_jl
+//	Support bool in function args and return type.
+//	Removed support for typedefs.
+//
 //	Revision 1.25  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.24  2002/03/16 17:54:25  dj_jl
 //	Added opcode for pushing virtual function.
 //	
