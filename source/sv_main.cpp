@@ -112,9 +112,7 @@ static int		RebornPosition;	// Position indicator for cooperative net-play rebor
 
 static bool		completed;
 
-static int		long_stats;
-static int		short_stats;
-static int		byte_stats;
+static int		num_stats;
 
 static int		pf_PlayerThink;
 
@@ -149,14 +147,12 @@ void SV_Init(void)
 	svpr.SetGlobal("level", (int)&level);
 	svpr.SetGlobal("skyflatnum", skyflatnum);
 
-	cid_mobj = svpr.GetClassID("mobj_t");
+	cid_mobj = svpr.GetClassID("base_mobj_t");
 	cid_acs = svpr.GetClassID("ACS");
 
-	long_stats = svpr.GetGlobal("long_stats");
-	short_stats = svpr.GetGlobal("short_stats");
-	byte_stats = svpr.GetGlobal("byte_stats");
-	if (long_stats + short_stats + byte_stats > 96)
-		Sys_Error("Too meny stats %d + %d + %d", long_stats, short_stats, byte_stats);
+	num_stats = svpr.GetGlobal("num_stats");
+	if (num_stats > 96)
+		Sys_Error("Too many stats %d", num_stats);
     pf_PlayerThink = svpr.FuncNumForName("PlayerThink");
 
 	P_InitSwitchList();
@@ -1085,35 +1081,29 @@ void SV_SendReliable(void)
 		if (!players[i].spawned)
 			continue;
 
-		for (j = 0; j < long_stats; j++)
+		for (j = 0; j < num_stats; j++)
 		{
-			if (players[i].user_fields[j] != players[i].old_stats[j])
+			if (players[i].user_fields[j] == players[i].old_stats[j])
 			{
-				players[i].message << (byte)svc_stats_long
-							<< (byte)j
-							<< players[i].user_fields[j];
-				players[i].old_stats[j] = players[i].user_fields[j];
+				continue;
 			}
-		}
-		for (; j < long_stats + short_stats; j++)
-		{
-			if (players[i].user_fields[j] != players[i].old_stats[j])
-			{
-				players[i].message << (byte)svc_stats_short
-							<< (byte)j
-							<< (short)players[i].user_fields[j];
-				players[i].old_stats[j] = players[i].user_fields[j];
-			}
-		}
-		for (; j < long_stats + short_stats + byte_stats; j++)
-		{
-			if (players[i].user_fields[j] != players[i].old_stats[j])
+			int sval = players[i].user_fields[j];
+			if (sval >= 0 && sval < 256)
 			{
 				players[i].message << (byte)svc_stats_byte
-							<< (byte)j
-							<< (byte)players[i].user_fields[j];
-				players[i].old_stats[j] = players[i].user_fields[j];
+					<< (byte)j << (byte)sval;
 			}
+			else if (sval >= MINSHORT && sval <= MAXSHORT)
+			{
+				players[i].message << (byte)svc_stats_short
+					<< (byte)j << (short)sval;
+			}
+			else
+			{
+				players[i].message << (byte)svc_stats_long
+					<< (byte)j << sval;
+			}
+			players[i].old_stats[j] = players[i].user_fields[j];
 		}
 	}
 
@@ -2470,9 +2460,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/09 17:30:45  dj_jl
+//	Improved stats updates
+//
 //	Revision 1.14  2001/10/08 17:33:01  dj_jl
 //	Different client and server level structures
-//
+//	
 //	Revision 1.13  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
 //	
