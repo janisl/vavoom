@@ -361,6 +361,10 @@ COMMAND(ScreenShot)
 		}
 		Z_Free(data);
 	}
+	else
+	{
+		GCon->Log("Not enough memory to take a screenshot");
+	}
 	unguard;
 }
 
@@ -709,9 +713,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2003/11/03 07:16:55  dj_jl
+//	No memory message
+//
 //	Revision 1.20  2002/08/28 16:42:45  dj_jl
 //	Moved PixelAspect to the rendering modules.
-//
+//	
 //	Revision 1.19  2002/08/24 14:52:16  dj_jl
 //	Fixed screenshots.
 //	
