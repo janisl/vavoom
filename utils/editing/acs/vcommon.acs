@@ -1,11 +1,15 @@
 
 //**************************************************************************
 //**
-//** hrcommon.acs
+//** vcommon.acs
 //**
 //**************************************************************************
 
+// If you are not using the -h command line switch and do not want to use
+// WadAuthor's error checker, you can uncomment the following line to shave
+// a few bytes off the size of compiled scripts.
+//#nowadauthor
+
 #include "vspecial.acs"
-#include "hrspec.acs"
 #include "vdefs.acs"
 #include "vwvars.acs"

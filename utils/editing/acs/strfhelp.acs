@@ -1,4 +1,12 @@
-#include "stcommon.acs"
+
+//**************************************************************************
+//**
+//** strfhelp.acs
+//**
+//**************************************************************************
+
+#include "vcommon.acs"
+#include "stspec.acs"
 
 #library "strfhelp"
 
@@ -176,27 +184,14 @@ script << 0 >> (int type, int tag)
 		break;
 
 	case 188:
-		//	This one is prety fucked up one. I hope I'm doing it right.
-		if (tag == 223)
+		//	Open door when blown up gates.
+		if (CheckInventory("QuestItem16"))
 		{
-			//	Open door to  the prison if have pass.
-			if (CheckInventory("QuestItem10"))
-			{
-				Door_Open(tag, VDOORSPEED);
-				clearlinespecial();
-			}
-		}
-		else
-		{
-			//	Open door when blown up gates.
-			if (CheckInventory("QuestItem16"))
-			{
-				Door_Open(tag, VDOORSPEED);
-				clearlinespecial();
-			}
+			Door_Open(tag, VDOORSPEED);
+			clearlinespecial();
 		}
 		break;
-		
+
 	case 189:
 		//	Lower floor, raise ceiling.
 		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
@@ -311,8 +306,7 @@ script << 0 >> (int type, int tag)
 		//UNUSED
 		if (CheckInventory("OfferingChalice"))
 		{
-//			SetResultValue(Generic_Stairs(tag, 16, 16, 0, 0));
-			SetResultValue(Stair_BuildUpOld(tag, 16, 16));
+			SetResultValue(Generic_Stairs(tag, 16, 16, 0, 0));
 		}
 		else
 		{

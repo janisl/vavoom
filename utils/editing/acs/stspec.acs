@@ -7,9 +7,5 @@
 special
 // New specials
 	14:Door_Animated(3),
-	33:ForceField(0),
-	34:ClearForceField(1),
 	49:BreakGlass(2),
-	173:NoiseAlert(2),
-	174:SendToCommunicator(4),
-	217:Stair_BuildUpOld(3);
+	174:SendToCommunicator(4);
