@@ -1351,22 +1351,6 @@ static void PF_PointInRegion(void)
 
 //==========================================================================
 //
-//	PF_PointContents
-//
-//==========================================================================
-
-static void PF_PointContents(void)
-{
-	sector_t	*sector;
-	TVec		p;
-
-	p = Popv();
-	sector = (sector_t*)Pop();
-	Push(SV_PointContents(sector, p));
-}
-
-//==========================================================================
-//
 //	PF_AddExtraFloor
 //
 //==========================================================================
@@ -1449,34 +1433,6 @@ static void PF_RemoveMobjThinker(void)
 
 //==========================================================================
 //
-//	PF_P_SetThingPosition
-//
-//==========================================================================
-
-static void PF_P_SetThingPosition(void)
-{
-	VMapObject*		thing;
-
-    thing = (VMapObject*)Pop();
-    SV_LinkToWorld(thing);
-}
-
-//==========================================================================
-//
-//	PF_P_UnsetThingPosition
-//
-//==========================================================================
-
-static void PF_P_UnsetThingPosition(void)
-{
-	VMapObject*		thing;
-
-    thing = (VMapObject*)Pop();
-    SV_UnlinkFromWorld(thing);
-}
-
-//==========================================================================
-//
 //	PF_NextMobj
 //
 //==========================================================================
@@ -1506,22 +1462,6 @@ static void PF_NextMobj(void)
 		i++;
     }
 	Push(0);
-}
-
-//==========================================================================
-//
-//	PF_P_CheckSight
-//
-//==========================================================================
-
-static void PF_P_CheckSight(void)
-{
-	VMapObject*		mobj1;
-    VMapObject*		mobj2;
-
-	mobj2 = (VMapObject*)Pop();
-    mobj1 = (VMapObject*)Pop();
-    Push(P_CheckSight(mobj1, mobj2));
 }
 
 //**************************************************************************
@@ -1831,22 +1771,6 @@ PF(StartSoundAtVolume)
     sound = Pop();
     mobj = (VMapObject*)Pop();
     SV_StartSound(mobj, sound, channel, vol);
-}
-
-//==========================================================================
-//
-//	PF_StopSound
-//
-//==========================================================================
-
-PF(StopSound)
-{
-	VMapObject*		mobj;
-	int			channel;
-
-	channel = Pop();
-    mobj = (VMapObject*)Pop();
-    SV_StopSound(mobj, channel);
 }
 
 //==========================================================================
@@ -3123,7 +3047,6 @@ builtin_info_t BuiltinInfo[] =
 	_(FindThingGap),
 	_(FindOpening),
 	_(PointInRegion),
-	_(PointContents),
 	_(AddExtraFloor),
 	_(SwapPlanes),
 	_(MapBlock),
@@ -3131,10 +3054,7 @@ builtin_info_t BuiltinInfo[] =
 	//	Mobj utilites
     _(NewMobjThinker),
     _(RemoveMobjThinker),
-    _(P_SetThingPosition),
-    _(P_UnsetThingPosition),
     _(NextMobj),
-    _(P_CheckSight),
 
     //	Special thinker utilites
     _(NewSpecialThinker),
@@ -3158,8 +3078,7 @@ builtin_info_t BuiltinInfo[] =
     _(PolyobjFinished),
 
 	//	Sound functions
-    _(StartSoundAtVolume),
-    _(StopSound),
+	_(StartSoundAtVolume),
     _(SectorStartSound),
     _(SectorStopSound),
     _(GetSoundPlayingInfo),
@@ -3200,9 +3119,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2002/07/13 07:48:08  dj_jl
+//	Moved some global functions to Entity class.
+//
 //	Revision 1.39  2002/06/22 07:10:42  dj_jl
 //	Added FindClass.
-//
+//	
 //	Revision 1.38  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
 //	

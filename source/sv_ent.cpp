@@ -88,6 +88,8 @@ class VEntity:public VMapObject
 	static int FIndex_HandleFloorclip;
 	static int FIndex_CrossSpecialLine;
 
+	static void InitFuncIndexes(void);
+
 	void eventRemove(void)
 	{
 		svpr.Exec(GetVFunction(FIndex_Remove), (int)this);
@@ -132,6 +134,7 @@ class VEntity:public VMapObject
 	DECLARE_FUNCTION(SetState)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(PlayFullVolumeSound)
+	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(CheckWater)
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
@@ -140,6 +143,9 @@ class VEntity:public VMapObject
 	DECLARE_FUNCTION(BounceWall)
 	DECLARE_FUNCTION(UpdateVelocity)
 	DECLARE_FUNCTION(CheckOnmobj)
+	DECLARE_FUNCTION(LinkToWorld)
+	DECLARE_FUNCTION(UnlinkFromWorld)
+	DECLARE_FUNCTION(CanSee)
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -282,6 +288,7 @@ static cptrace_t cptrace;
 
 static boolean PIT_CheckThing(VMapObject *Other)
 {
+	guardSlow(PIT_CheckThing);
 	float blockdist;
 
 	if (!Other->bSolid)
@@ -326,6 +333,7 @@ static boolean PIT_CheckThing(VMapObject *Other)
 	}
 
 	return false;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -338,6 +346,7 @@ static boolean PIT_CheckThing(VMapObject *Other)
 
 static boolean PIT_CheckLine(line_t * ld)
 {
+	guardSlow(PIT_CheckLine);
 	TVec hit_point;
 	opening_t *open;
 
@@ -401,6 +410,7 @@ static boolean PIT_CheckLine(line_t * ld)
 	}
 
 	return true;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -531,6 +541,7 @@ static tmtrace_t tmtrace;
 
 static boolean PIT_CheckRelThing(VMapObject *Other)
 {
+	guardSlow(PIT_CheckRelThing);
 	float blockdist;
 
 	blockdist = Other->Radius + tmtrace.Thing->Radius;
@@ -573,6 +584,7 @@ static boolean PIT_CheckRelThing(VMapObject *Other)
 
 	tmtrace.BlockingMobj = Other;
 	return tmtrace.Thing->eventTouch(Other);
+	unguardSlow;
 }
 
 //==========================================================================
@@ -585,6 +597,7 @@ static boolean PIT_CheckRelThing(VMapObject *Other)
 
 static boolean PIT_CheckRelLine(line_t * ld)
 {
+	guardSlow(PIT_CheckRelLine);
 	TVec hit_point;
 	opening_t *open;
 
@@ -677,6 +690,7 @@ static boolean PIT_CheckRelLine(line_t * ld)
 	}
 
 	return true;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -1438,6 +1452,19 @@ IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 
 //==========================================================================
 //
+//	Entity.StopSound
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, StopSound)
+{
+	int Channel = PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
+	SV_StopSound(Self, Channel);
+}
+
+//==========================================================================
+//
 //	Entity.CheckWater
 //
 //==========================================================================
@@ -1538,6 +1565,43 @@ IMPLEMENT_FUNCTION(VEntity, CheckOnmobj)
 
 //===========================================================================
 //
+//	VEntity.LinkToWorld
+//
+//===========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, LinkToWorld)
+{
+	VEntity *Self = (VEntity *)PR_Pop();
+	SV_LinkToWorld(Self);
+}
+
+//===========================================================================
+//
+//	VEntity.UnlinkFromWorld
+//
+//===========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, UnlinkFromWorld)
+{
+	VEntity *Self = (VEntity *)PR_Pop();
+	SV_UnlinkFromWorld(Self);
+}
+
+//===========================================================================
+//
+//	VEntity.CanSee
+//
+//===========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, CanSee)
+{
+	VEntity *Other = (VEntity *)PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
+	PR_Push(P_CheckSight(Self, Other));
+}
+
+//===========================================================================
+//
 //  VViewEntity::SetState
 //
 //===========================================================================
@@ -1586,6 +1650,23 @@ IMPLEMENT_FUNCTION(VViewEntity, SetState)
 
 //==========================================================================
 //
+//	VEntity::InitFuncIndexes
+//
+//==========================================================================
+
+void VEntity::InitFuncIndexes(void)
+{
+	FIndex_Remove = StaticClass()->GetFunctionIndex("Remove");
+	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
+	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex("BlockedByLine");
+	FIndex_ApplyFriction = StaticClass()->GetFunctionIndex("ApplyFriction");
+	FIndex_PushLine = StaticClass()->GetFunctionIndex("PushLine");
+	FIndex_HandleFloorclip = StaticClass()->GetFunctionIndex("HandleFloorclip");
+	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex("CrossSpecialLine");
+}
+
+//==========================================================================
+//
 //	EntInit
 //
 //==========================================================================
@@ -1595,20 +1676,7 @@ void EntInit(void)
 	svpr.SetGlobal("tmtrace", (int)&tmtrace);
 	GStates = (state_t *)svpr.GlobalAddr("states");
 	GSpriteNames = (FName *)svpr.GlobalAddr("sprite_names");
-	VEntity::FIndex_Remove =
-		VEntity::StaticClass()->GetFunctionIndex("Remove");
-	VEntity::FIndex_Touch = 
-		VEntity::StaticClass()->GetFunctionIndex("Touch");
-	VEntity::FIndex_BlockedByLine = 
-		VEntity::StaticClass()->GetFunctionIndex("BlockedByLine");
-	VEntity::FIndex_ApplyFriction = 
-		VEntity::StaticClass()->GetFunctionIndex("ApplyFriction");
-	VEntity::FIndex_PushLine =
-		VEntity::StaticClass()->GetFunctionIndex("PushLine");
-	VEntity::FIndex_HandleFloorclip =
-		VEntity::StaticClass()->GetFunctionIndex("HandleFloorclip");
-	VEntity::FIndex_CrossSpecialLine =
-		VEntity::StaticClass()->GetFunctionIndex("CrossSpecialLine");
+	VEntity::InitFuncIndexes();
 }
 
 //==========================================================================
@@ -1620,9 +1688,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/13 07:48:08  dj_jl
+//	Moved some global functions to Entity class.
+//
 //	Revision 1.6  2002/06/22 07:08:45  dj_jl
 //	Made sliding and bouncing functions native.
-//
+//	
 //	Revision 1.5  2002/06/14 15:40:09  dj_jl
 //	Added state name to the state.
 //	
