@@ -282,7 +282,7 @@ void SB_DrawMainBar(void)
 	//  Background
 	R_DrawPic(0, 158, pic_barback);
 
-	if (cl->cheats & CF_GODMODE)
+	if (cl->stats.flags & SBF_GOD_MODE)
 	{
 		//  God mode
 		R_DrawPic(16, 167, pic_god1);
@@ -332,11 +332,10 @@ void SB_DrawMainBar(void)
 			SB_DrawNumber9(61, 170, health);
 		}
 
-		if (cl->readyweapon > 0 && cl->readyweapon < 7 &&
-			cl->ammo[cl->readyammo])
+		if (cl->stats.readyammo)
 		{
 			//  Ammo
-			SB_DrawNumber9(109, 162, cl->ammo[cl->readyammo]);
+			SB_DrawNumber9(109, 162, cl->stats.readyammo);
 			R_DrawPic(111, 172, pic_ammoicon[cl->readyweapon - 1]);
 		}
 
@@ -352,15 +351,15 @@ void SB_DrawMainBar(void)
 		}
 
 		//  Keys
-		if (cl->keys & (1 << key_yellow))
+		if (cl->stats.flags & SBF_KEY_YELLOW)
 		{
 			R_DrawPic(153, 164, pic_ykey);
 		}
-		if (cl->keys & (1 << key_green))
+		if (cl->stats.flags & SBF_KEY_GREEN)
 		{
 			R_DrawPic(153, 172, pic_gkey);
 		}
-		if (cl->keys & (1 << key_blue))
+		if (cl->stats.flags & SBF_KEY_BLUE)
 		{
 			R_DrawPic(153, 180, pic_bkey);
 		}
@@ -418,10 +417,9 @@ void SB_DrawFullscreenStats(void)
 	}
 
 	//  Ammo
-	if (cl->readyweapon > 0 && cl->readyweapon < 7 &&
-		cl->ammo[cl->readyammo])
+	if (cl->stats.readyammo)
 	{
-		SB_DrawNumber9(290, 186, cl->ammo[cl->readyammo]);
+		SB_DrawNumber9(290, 186, cl->stats.readyammo);
 		R_DrawPic(270, 184, pic_ammoicon[cl->readyweapon - 1]);
 	}
 
@@ -470,47 +468,34 @@ void SB_DrawIcons(void)
 	int frame;
 
 	//  Artifact rotating icons
-	if (cl->powers[pw_flight])
+	if (cl->stats.flags & SBF_POWER_FLIGHT)
 	{
-		if (cl->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_flight] & 16))
+		frame = (level->tictime / 3) & 15;
+		if (cl->stats.flags & SBF_IN_FLIGHT)
 		{
-			frame = (level->tictime / 3) & 15;
-#ifdef FIXME
-			if (!cl->mo || cl->mo->flags2 & MF2_FLY)
-#endif
+			if (hitCenterFrame && frame != 15 && frame != 0)
 			{
-				if (hitCenterFrame && frame != 15 && frame != 0)
-				{
-					frame = 15;
-				}
-				else
-				{
-					hitCenterFrame = false;
-				}
+				frame = 15;
 			}
-#ifdef FIXME
 			else
 			{
-				if (hitCenterFrame || frame == 15 || frame == 0)
-				{
-					frame = 15;
-					hitCenterFrame = true;
-				}
+				hitCenterFrame = false;
 			}
-#endif
-			R_DrawPic(20, 17, pic_flight[frame]);
 		}
+		else
+		{
+			if (hitCenterFrame || frame == 15 || frame == 0)
+			{
+				frame = 15;
+				hitCenterFrame = true;
+			}
+		}
+		R_DrawPic(20, 17, pic_flight[frame]);
 	}
 
-	if (cl->powers[pw_weaponlevel2] && !cl->chickenTics)
+	if (cl->stats.flags & SBF_POWER_BOOK)
 	{
-		if (cl->powers[pw_weaponlevel2] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_weaponlevel2] & 16))
-		{
-			frame = (level->tictime / 3) & 15;
-			R_DrawPic(300, 17, pic_book[frame]);
-		}
+		R_DrawPic(300, 17, pic_book[(level->tictime / 3) & 15]);
 	}
 }
 
@@ -606,6 +591,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/09 17:36:57  dj_jl
+//  Added flags for status bar
+//
 //  Revision 1.5  2001/10/02 17:37:19  dj_jl
 //  Removed status bar widgets
 //

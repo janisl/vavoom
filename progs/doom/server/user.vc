@@ -304,7 +304,7 @@ void PlayerInSpecialSector(player_t * player)
 	}
 
 	// Has hitten ground.
-	switch (sector->special)
+	switch (sector->special & 255)
 	{
 	case 64 + 5:
 		// HELLSLIME DAMAGE
@@ -686,6 +686,10 @@ void SetViewPos(player_t * player)
 	player->vieworg.y = player->mo->origin.y;
 	SB_PaletteFlash(player);
 
+	player->stats.flags = player->keys;
+	if ((player->cheats & CF_GODMODE) || player->powers[pw_invulnerability])
+		player->stats.flags |= SBF_GOD_MODE;
+
 	if (player->w_ammo == am_noammo)
 		player->ready_ammo = 1994;	// means "n/a"
 	else
@@ -891,6 +895,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/09 17:36:57  dj_jl
+//  Added flags for status bar
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

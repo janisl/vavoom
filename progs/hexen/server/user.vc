@@ -1092,6 +1092,46 @@ void SetViewPos(player_t * player)
 	}
 
 	SB_PaletteFlash(player);
+
+	player->stats.flags = player->keys;
+	player->stats.flags |= player->readyweapon << SBF_WPN_SHIFT;
+	player->stats.flags |= player->pieces << SBF_PIECES_SHIFT;
+	if (player->powers[pw_flight])
+	{
+		if (player->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_flight] & 16))
+		{
+			player->stats.flags |= SBF_POWER_FLIGHT;
+		}
+	}
+	if (player->powers[pw_speed])
+	{
+		if (player->powers[pw_speed] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_speed] & 16))
+		{
+			player->stats.flags |= SBF_POWER_SPEED;
+		}
+	}
+	if (player->powers[pw_invulnerability])
+	{
+		if (player->powers[pw_invulnerability] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_invulnerability] & 16))
+		{
+			player->stats.flags |= SBF_POWER_INVULN;
+		}
+	}
+	if (player->powers[pw_minotaur])
+	{
+		if (player->powers[pw_minotaur] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_minotaur] & 16))
+		{
+			player->stats.flags |= SBF_POWER_MINOTAUR;
+		}
+	}
+	if (!player->mo || player->mo->flags2 & MF2_FLY)
+	{
+		player->stats.flags |= SBF_IN_FLIGHT;
+	}
 }
 
 //==========================================================================
@@ -1907,6 +1947,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/10/09 17:36:57  dj_jl
+//  Added flags for status bar
+//
 //  Revision 1.10  2001/10/04 17:27:20  dj_jl
 //  Fixed air movement bug
 //

@@ -889,7 +889,35 @@ void SetViewPos(player_t * player)
 	}
 
 	SB_PaletteFlash(player);
-	player->readyammo = player->w_ammo;
+
+	player->stats.flags = player->keys;
+	if (player->cheats & CF_GODMODE)
+		player->stats.flags |= SBF_GOD_MODE;
+	if (player->powers[pw_flight])
+	{
+		if (player->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_flight] & 16))
+		{
+			player->stats.flags |= SBF_POWER_FLIGHT;
+		}
+	}
+	if (player->powers[pw_weaponlevel2] && !player->chickenTics)
+	{
+		if (player->powers[pw_weaponlevel2] > ftoi(BLINKTHRESHOLD * 35.0)
+			|| !(player->powers[pw_weaponlevel2] & 16))
+		{
+			player->stats.flags |= SBF_POWER_BOOK;
+		}
+	}
+	if (!player->mo || player->mo->flags2 & MF2_FLY)
+	{
+		player->stats.flags |= SBF_IN_FLIGHT;
+	}
+
+	if (player->readyweapon > 0 && player->readyweapon < 7)
+		player->stats.readyammo = player->ammo[player->w_ammo];
+	else
+		player->stats.readyammo = 0;
 }
 
 //==========================================================================
@@ -1336,6 +1364,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/09 17:36:57  dj_jl
+//  Added flags for status bar
+//
 //  Revision 1.7  2001/10/02 17:42:38  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

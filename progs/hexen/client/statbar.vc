@@ -271,7 +271,7 @@ void SB_StartMap(void)
 	}
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		sprint(name, "ARMSLOT1", i + 1);
+		sprint(name, "ARMSLOT%d", i + 1);
 		pic_armor[i] = R_RegisterPic(name, PIC_PATCH);
 	}
 
@@ -449,6 +449,7 @@ void SB_DrawMainBar(void)
 	int sb_mana2;
 	int sb_manaVial1;
 	int sb_manaVial2;
+	int readyweapon;
 
 	SB_DrawBackground();
 	R_DrawPic(38, 162, pic_statbar);
@@ -492,20 +493,21 @@ void SB_DrawMainBar(void)
 	}
 
 	// Update mana graphics based upon mana count/weapon type
-	if (cl->readyweapon == WP_FIRST)
+	readyweapon = (cl->stats.flags & SBF_WPN_MASK) >> SBF_WPN_SHIFT;
+	if (readyweapon == WP_FIRST)
 	{
 		sb_mana1 = 0;
 		sb_mana2 = 0;
 		sb_manaVial1 = 0;
 		sb_manaVial2 = 0;
 	}
-	else if (cl->readyweapon == WP_SECOND)
+	else if (readyweapon == WP_SECOND)
 	{
 		sb_manaVial1 = 1;
 		sb_mana2 = 0;
 		sb_manaVial2 = 0;
 	}
-	else if (cl->readyweapon == WP_THIRD)
+	else if (readyweapon == WP_THIRD)
 	{
 		sb_mana1 = 0;
 		sb_manaVial1 = 0;
@@ -537,18 +539,18 @@ void SB_DrawMainBar(void)
 	}
 
 	// Weapon Pieces
-	if (cl->pieces != 7)
+	if (cl->stats.flags & SBF_PIECES_MASK != SBF_PIECES_MASK)
 	{
 		R_DrawPic(190, 162, pic_wpslot);
-		if (cl->pieces & WPIECE1)
+		if (cl->stats.flags & SBF_PIECE1)
 		{
 			R_DrawPic(wppiecex[0], 162, pic_wppiece[0]);
 		}
-		if (cl->pieces & WPIECE2)
+		if (cl->stats.flags & SBF_PIECE2)
 		{
 			R_DrawPic(wppiecex[1], 162, pic_wppiece[1]);
 		}
-		if (cl->pieces & WPIECE3)
+		if (cl->stats.flags & SBF_PIECE3)
 		{
 			R_DrawPic(wppiecex[2], 162, pic_wppiece[2]);
 		}
@@ -583,7 +585,7 @@ void SB_DrawKeyBar(void)
 	//  Keys
 	for (i = 0, num = 0; i < NUMKEYS && num < 5; i++)
 	{
-		if (cl->keys & (1 << i))
+		if (cl->stats.flags & (1 << i))
 		{
 			R_DrawPic(46 + num * 20, 164, pic_key[i]);
 			num++;
@@ -717,67 +719,47 @@ void SB_DrawIcons(void)
 	int frame;
 
 	// Wings of wrath
-	if (cl->powers[pw_flight])
+	if (cl->stats.flags & SBF_POWER_FLIGHT)
 	{
-		if (cl->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_flight] & 16))
+		frame = (level->tictime / 3) & 15;
+		if (cl->stats.flags & SBF_IN_FLIGHT)
 		{
-			frame = (level->tictime / 3) & 15;
-#ifdef FIXME
-			if (!cl->mo || cl->mo->flags2 & MF2_FLY)
-#endif
+			if (hitCenterFrame && frame != 15 && frame != 0)
 			{
-				if (hitCenterFrame && frame != 15 && frame != 0)
-				{
-					frame = 15;
-				}
-				else
-				{
-					hitCenterFrame = false;
-				}
+				frame = 15;
 			}
-#ifdef FIXME
 			else
 			{
-				if (hitCenterFrame || frame == 15 || frame == 0)
-				{
-					frame = 15;
-					hitCenterFrame = true;
-				}
+				hitCenterFrame = false;
 			}
-#endif
-			R_DrawPic(20, 19, pic_fly[frame]);
 		}
+		else
+		{
+			if (hitCenterFrame || frame == 15 || frame == 0)
+			{
+				frame = 15;
+				hitCenterFrame = true;
+			}
+		}
+		R_DrawPic(20, 19, pic_fly[frame]);
 	}
 
 	// Speed Boots
-	if (cl->powers[pw_speed])
+	if (cl->stats.flags & SBF_POWER_SPEED)
 	{
-		if (cl->powers[pw_speed] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_speed] & 16))
-		{
-			R_DrawPic(60, 19, pic_boot[(level->tictime / 3) & 15]);
-		}
+		R_DrawPic(60, 19, pic_boot[(level->tictime / 3) & 15]);
 	}
 
 	// Defensive power
-	if (cl->powers[pw_invulnerability])
+	if (cl->stats.flags & SBF_POWER_INVULN)
 	{
-		if (cl->powers[pw_invulnerability] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_invulnerability] & 16))
-		{
-			R_DrawPic(260, 19, pic_shld[(level->tictime / 3) & 15]);
-		}
+		R_DrawPic(260, 19, pic_shld[(level->tictime / 3) & 15]);
 	}
 
 	// Minotaur Active
-	if (cl->powers[pw_minotaur])
+	if (cl->stats.flags & SBF_POWER_MINOTAUR)
 	{
-		if (cl->powers[pw_minotaur] > ftoi(BLINKTHRESHOLD * 35.0)
-			|| !(cl->powers[pw_minotaur] & 16))
-		{
-			R_DrawPic(300, 19, pic_mino[(level->tictime / 3) & 15]);
-		}
+		R_DrawPic(300, 19, pic_mino[(level->tictime / 3) & 15]);
 	}
 }
 
@@ -885,6 +867,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/09 17:36:57  dj_jl
+//  Added flags for status bar
+//
 //  Revision 1.5  2001/10/02 17:37:19  dj_jl
 //  Removed status bar widgets
 //
