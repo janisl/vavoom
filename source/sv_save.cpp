@@ -124,16 +124,16 @@ boolean	SV_GetSaveString(int slot, char* buf)
 	SAVE_NAME(fileName, slot);
 	f = fopen(fileName, "rb");
 	if (f)
-    {
+	{
 		fread(buf, 1, SAVE_DESCRIPTION_LENGTH, f);
 		fclose(f);
 		return true;
 	}
 	else
-    {
-    	strcpy(buf, EMPTYSTRING);
+	{
+		strcpy(buf, EMPTYSTRING);
 		return false;
-    }
+	}
 }
 
 //==========================================================================
@@ -360,7 +360,7 @@ mobj_t* SetMobjPtr(int archiveNum)
 
 static void ArchivePlayers(void)
 {
-    int			i;
+	int			i;
 	player_t 	tempPlayer;
 	int			pf_archive_player;
 
@@ -370,8 +370,8 @@ static void ArchivePlayers(void)
 	{
 		StreamOutByte((byte)players[i].active);
 	}
-    for (i=0 ; i<MAXPLAYERS ; i++)
-    {
+	for (i=0 ; i<MAXPLAYERS ; i++)
+	{
 		if (!players[i].active)
 		{
 			continue;
@@ -391,7 +391,7 @@ static void ArchivePlayers(void)
 
 static void UnarchivePlayers(void)
 {
-    int		i;
+	int		i;
 	int		pf_unarchive_player;
 
 	pf_unarchive_player = svpr.FuncNumForName("UnarchivePlayer");
@@ -400,8 +400,8 @@ static void UnarchivePlayers(void)
 	{
 		players[i].active = GET_BYTE;
 	}
-    for (i=0 ; i<MAXPLAYERS ; i++)
-    {
+	for (i=0 ; i<MAXPLAYERS ; i++)
+	{
 		if (!players[i].active)
 		{
 			continue;
@@ -409,7 +409,7 @@ static void UnarchivePlayers(void)
 		memcpy(&players[i], SavePtr.b, sizeof(player_t));
 		SavePtr.b += sizeof(player_t);
 		players[i].mo = NULL; // Will be set when unarc thinker
-        svpr.Exec(pf_unarchive_player, (int)&players[i]);
+		svpr.Exec(pf_unarchive_player, (int)&players[i]);
 		players[i].active = false;
 	}
 }
@@ -422,17 +422,17 @@ static void UnarchivePlayers(void)
 
 static void ArchiveWorld(void)
 {
-    int			i;
-    int			j;
-    sector_t*	sec;
-    line_t*		li;
-    side_t*		si;
+	int			i;
+	int			j;
+	sector_t*	sec;
+	line_t*		li;
+	side_t*		si;
 
 	StreamOutLong(ASEG_WORLD);
 
-    //
+	//
 	//	Sectors
-    //
+	//
 	for (i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
 	{
 		StreamOutFloat(sec->floor.dist);
@@ -443,11 +443,11 @@ static void ArchiveWorld(void)
 		StreamOutWord((word)sec->special);
 		StreamOutWord((word)sec->tag);
 		StreamOutWord((word)sec->seqType);
-    }
+	}
 
-    //
+	//
 	//	Lines
-    //
+	//
 	for (i = 0, li = level.lines; i < level.numlines; i++, li++)
 	{
 		StreamOutWord((word)li->flags);
@@ -472,9 +472,9 @@ static void ArchiveWorld(void)
 		}
 	}
 
-    //
-    //	Polyobjs
-    //
+	//
+	//	Polyobjs
+	//
 	for (i = 0; i < level.numpolyobjs; i++)
 	{
 		StreamOutLong(level.polyobjs[i].angle);
@@ -565,9 +565,9 @@ static void UnarchiveWorld(void)
 
 	AssertSegment(ASEG_WORLD);
 
-    //
-    //	Sectors
-    //
+	//
+	//	Sectors
+	//
 	for(i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
 	{
 		sec->floor.dist = GET_FLOAT;
@@ -583,9 +583,9 @@ static void UnarchiveWorld(void)
 		CalcSecMinMaxs(sec);
 	}
 
-    //
-    //	Lines
-    //
+	//
+	//	Lines
+	//
 	for(i = 0, li = level.lines; i < level.numlines; i++, li++)
 	{
 		li->flags = GET_WORD;
@@ -610,9 +610,9 @@ static void UnarchiveWorld(void)
 		}
 	}
 
-    //
-    //	Polyobjs
-    //
+	//
+	//	Polyobjs
+	//
 	for(i = 0; i < level.numpolyobjs; i++)
 	{
 		PO_RotatePolyobj(level.polyobjs[i].tag, (angle_t)GET_LONG);
@@ -634,11 +634,11 @@ static void ArchiveThinkers(void)
 	int			pf_archive_mobj;
 	int			pf_archive_special;
 	int 		MobjCount;
-    int			SpecialsCount;
+	int			SpecialsCount;
 	int			ACSThinkerCount;
 	mobj_t 		tempMobj;
 	special_t	spec;
-    acs_t		acs;
+	acs_t		acs;
 
 	pf_archive_mobj = svpr.FuncNumForName("ArchiveMobj");
 	pf_archive_special = svpr.FuncNumForName("ArchiveSpecial");
@@ -647,8 +647,8 @@ static void ArchiveThinkers(void)
 	// global.  Ignores player mobjs if SavingPlayers is false.
 
 	MobjCount = 0;
-    SpecialsCount = 0;
-    ACSThinkerCount = 0;
+	SpecialsCount = 0;
+	ACSThinkerCount = 0;
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
 	{
@@ -661,14 +661,14 @@ static void ArchiveThinkers(void)
 			}
 			((mobj_t *)thinker)->archiveNum = MobjCount++;
 		}
-        else if (thinker->function == (think_t)P_SpecialThinker)
-        {
-        	SpecialsCount++;
-        }
-        else if (thinker->function == (think_t)T_InterpretACS)
-        {
-        	ACSThinkerCount++;
-        }
+		else if (thinker->function == (think_t)P_SpecialThinker)
+		{
+			SpecialsCount++;
+		}
+		else if (thinker->function == (think_t)T_InterpretACS)
+		{
+			ACSThinkerCount++;
+		}
 		else if (thinker->function)
 		{
 			cond << "Invalid thinker function " << thinker->function << endl;
@@ -677,14 +677,14 @@ static void ArchiveThinkers(void)
 
 	StreamOutLong(ASEG_THINKERS);
 
-    //
-    //	Mobjs
-    //
+	//
+	//	Mobjs
+	//
 	StreamOutLong(MobjCount);
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
 	{
-        if (thinker->function != (think_t)P_MobjThinker)
+		if (thinker->function != (think_t)P_MobjThinker)
 		{
 			// Not a mobj thinker
 			continue;
@@ -703,13 +703,13 @@ static void ArchiveThinkers(void)
 		StreamOutBuffer(&tempMobj, sizeof(mobj_t));
 	}
 
-    //
-    //	Specials
-    //
+	//
+	//	Specials
+	//
 	StreamOutLong(SpecialsCount);
-    for (thinker = level.thinkers.next; thinker != &level.thinkers ;thinker=thinker->next)
-    {
-    	if (thinker->function == (think_t)P_SpecialThinker)
+	for (thinker = level.thinkers.next; thinker != &level.thinkers ;thinker=thinker->next)
+	{
+		if (thinker->function == (think_t)P_SpecialThinker)
 		{
 			memcpy(&spec, thinker, sizeof(special_t));
 			svpr.Exec(pf_archive_special, (int)&spec);
@@ -717,9 +717,9 @@ static void ArchiveThinkers(void)
 		}
 	}
 
-    //
-    //	Scripts
-    //
+	//
+	//	Scripts
+	//
 	StreamOutLong(ACSThinkerCount);
 	for (thinker = level.thinkers.next; thinker != &level.thinkers;
 		thinker = thinker->next)
@@ -747,7 +747,7 @@ static void UnarchiveThinkers(void)
 	int			pf_unarchive_mobj;
 	int			pf_unarchive_special;
 	int 		MobjCount;
-    int			SpecialsCount;
+	int			SpecialsCount;
 	int			ACSThinkerCount;
 	mobj_t 		*mobj;
 	special_t	*spec;
@@ -758,9 +758,9 @@ static void UnarchiveThinkers(void)
 
 	AssertSegment(ASEG_THINKERS);
 
-    //
-    //	Mobjs
-    //
+	//
+	//	Mobjs
+	//
 	MobjCount = GET_LONG;
 	MobjList = (mobj_t**)Z_Malloc(MobjCount * sizeof(mobj_t*), PU_STATIC, NULL);
 	for (i = 0; i < MobjCount; i++)
@@ -772,7 +772,7 @@ static void UnarchiveThinkers(void)
 		mobj = MobjList[i];
 		memcpy(mobj, SavePtr.b, sizeof(mobj_t));
 		SavePtr.b += sizeof(mobj_t);
-    	mobj->function = (think_t)P_MobjThinker;
+		mobj->function = (think_t)P_MobjThinker;
 		if(mobj->player)
 		{
 			mobj->player = &players[(int)mobj->player-1];
@@ -780,29 +780,29 @@ static void UnarchiveThinkers(void)
 		}
 		mobj->subsector = NULL;	//	Must mark as not linked
 		SV_LinkToWorld(mobj);
-        svpr.Exec(pf_unarchive_mobj, (int)mobj);
+		svpr.Exec(pf_unarchive_mobj, (int)mobj);
 		P_AddThinker(mobj);
 		sv_mobjs[mobj->netID] = mobj;
 	}
 
 	//
-    //	Specials
-    //
-    SpecialsCount = GET_LONG;
-    for (i=0; i<SpecialsCount; i++)
-    {
-       	spec = (special_t*)Z_Malloc(sizeof(special_t), PU_LEVSPEC, NULL);
-	    memcpy(spec, SavePtr.b, sizeof(special_t));
+	//	Specials
+	//
+	SpecialsCount = GET_LONG;
+	for (i=0; i<SpecialsCount; i++)
+	{
+	   	spec = (special_t*)Z_Malloc(sizeof(special_t), PU_LEVSPEC, NULL);
+		memcpy(spec, SavePtr.b, sizeof(special_t));
 		SavePtr.b += sizeof(special_t);
 		spec->function = (think_t)P_SpecialThinker;
 		svpr.Exec(pf_unarchive_special, (int)spec);
-	    P_AddThinker(spec);
-    }
+		P_AddThinker(spec);
+	}
 
-    //
-    //	Scripts
-    //
-    ACSThinkerCount = GET_LONG;
+	//
+	//	Scripts
+	//
+	ACSThinkerCount = GET_LONG;
 	for (i=0; i<ACSThinkerCount; i++)
 	{
 		acs = (acs_t*)Z_Malloc(sizeof(acs_t), PU_LEVEL, NULL);
@@ -961,8 +961,8 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	// Write the level timer
 	StreamOutLong(level.tictime);
 
-    //	Write totals, because when thinkers are not spawned, they are not
-    // counted
+	//	Write totals, because when thinkers are not spawned, they are not
+	// counted
 	StreamOutLong(level.totalkills);
 	StreamOutLong(level.totalitems);
 	StreamOutLong(level.totalsecret);
@@ -1010,9 +1010,9 @@ static void SV_LoadMap(char *mapname, int slot)
 	// Read the level timer
 	level.tictime = GET_LONG;
 
-    level.totalkills = GET_LONG;
-    level.totalitems = GET_LONG;
-    level.totalsecret = GET_LONG;
+	level.totalkills = GET_LONG;
+	level.totalitems = GET_LONG;
+	level.totalsecret = GET_LONG;
 
 	AssertSegment(ASEG_BASELINE);
 	int len = GET_LONG;
@@ -1063,7 +1063,7 @@ void SV_SaveGame(int slot, char* description)
 	StreamOutLong(ASEG_GAME_HEADER);
 
 	// Write current map and difficulty
-    StreamOutByte((byte)gameskill);
+	StreamOutByte((byte)gameskill);
 	StreamOutBuffer(level.mapname, 8);
  
 	// Write global script info
@@ -1081,8 +1081,8 @@ void SV_SaveGame(int slot, char* description)
 	// Save out the current map
 	SV_SaveMap(BASE_SLOT, true); // true = save player info
 
-    if (slot != BASE_SLOT)
-    {
+	if (slot != BASE_SLOT)
+	{
 		// Clear all save files at destination slot
 		ClearSaveSlot(slot);
 
@@ -1308,35 +1308,34 @@ void Draw_LoadIcon(void);
 COMMAND(Save)
 {
 	if (Argc() != 3)
-    {
-    	return;
-    }
-
-	if (netgame)
-    {
-    	con << "Can't save in net game\n";
-        return;
-    }
-
-    if (!sv.active)
 	{
-		MB_StartMessage("you can't save if you aren't playing!", NULL, false);
 		return;
 	}
 
-    if (sv.intermission)
+	if (netgame)
+	{
+		con << "Can't save in net game\n";
+		return;
+	}
+
+	if (!sv.active)
+	{
+		con << "you can't save if you aren't playing!";
+		return;
+	}
+
+	if (sv.intermission)
 	{
 		return;
 	}
 
 	if (strlen(Argv(2)) >= 32)
-    {
-    	con << "Description too long\n";
-        return;
-    }
+	{
+		con << "Description too long\n";
+		return;
+	}
 
-	if (Game == Hexen)
-		Draw_SaveIcon();
+	Draw_SaveIcon();
 
 	SV_SaveGame(atoi(Argv(1)), Argv(2));
 
@@ -1352,26 +1351,25 @@ COMMAND(Save)
 COMMAND(Load)
 {
 	if (Argc() != 2)
-    {
-    	return;
-    }
+	{
+		return;
+	}
 	if (netgame)
-    {
-    	con << "Can't load in net game\n";
-        return;
-    }
+	{
+		con << "Can't load in net game\n";
+		return;
+	}
 
 	int slot = atoi(Argv(1));
 	char	desc[32];
-    if (!SV_GetSaveString(slot, desc))
-    {
-    	con << "Empty slot\n";
-        return;
-    }
-    con << "Loading \"" << desc << "\"\n";
+	if (!SV_GetSaveString(slot, desc))
+	{
+		con << "Empty slot\n";
+		return;
+	}
+	con << "Loading \"" << desc << "\"\n";
 
-	if (Game == Hexen)
-		Draw_LoadIcon();
+	Draw_LoadIcon();
 	SV_LoadGame(slot);
 	if (!netgame)
 	{
@@ -1385,9 +1383,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.6  2001/08/23 17:48:43  dj_jl
 //	NULL pointer is valid thinker, so no warnings
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

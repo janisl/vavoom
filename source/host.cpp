@@ -76,8 +76,6 @@ double			realtime;
 double			oldrealtime;
 int				host_framecount;
 
-Game_t			Game;
-
 boolean			host_initialized = false;
 
 jmp_buf			host_abort;
@@ -109,33 +107,33 @@ static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
 #ifdef CLIENT
 void Cmd_SaveConfiguration(void)
 {
-    FILE*	f;
+	FILE*	f;
 	char	path[MAX_OSPATH];
 
-    if (!host_initialized)
-    	return;
+	if (!host_initialized)
+		return;
 
 	sprintf(path, "%s/%s", fl_gamedir, configfile.string);
-    f = fopen(path, "w");
-    if (!f && strcmp(configfile, "config.cfg"))
+	f = fopen(path, "w");
+	if (!f && strcmp(configfile, "config.cfg"))
 	{
 		configfile = "config.cfg";
 		sprintf(path, "%s/%s", fl_gamedir, configfile.string);
-	    f = fopen(path, "w");
+		f = fopen(path, "w");
 	}
-    if (!f)
-    {
-    	con << "Cmd_SaveConfiguration: Failed to open config file \"" <<
-	    	path << "\"\n";
+	if (!f)
+	{
+		con << "Cmd_SaveConfiguration: Failed to open config file \"" <<
+			path << "\"\n";
 		return; // can't write the file, but don't complain
 	}
 
-    fprintf(f, "//Vavoom configuration file\n");
+	fprintf(f, "//Vavoom configuration file\n");
 	Cvar_Write(f);
 	Cmd_WriteAlias(f);
 	IN_WriteBindings(f);
 
-    fclose(f);
+	fclose(f);
 }
 #endif
 
@@ -168,15 +166,15 @@ void Host_Shutdown(void)
 	static boolean		shutting_down = false;
 
 	if (shutting_down)
-    {
-    	con << "Recursive shutdown\n";
-    	return;
-    }
-    shutting_down = true;
+	{
+		con << "Recursive shutdown\n";
+		return;
+	}
+	shutting_down = true;
 
 	NET_Shutdown();
 #ifdef CLIENT
-    IN_Shutdown();
+	IN_Shutdown();
 	V_Shutdown();
 	S_Shutdown();
 #endif
@@ -207,7 +205,7 @@ void Host_Init(void)
 
 	OpenDebugFile(DEBUGFILENAME);
 
-    // init subsystems
+	// init subsystems
 
 	M_InitByteOrder();
 
@@ -217,7 +215,7 @@ void Host_Init(void)
 
 	//  Memory must be initialised before anything else
 	void*	base;
-    int		size;
+	int		size;
 	base = Sys_ZoneBase(&size);
 	Z_Init(base, size);
 
@@ -225,10 +223,10 @@ void Host_Init(void)
 
 	FL_Init();
 
-    HandleArgs();
+	HandleArgs();
 
 #ifdef CLIENT
-    C_Init();
+	C_Init();
 	V_Init();
 #endif
 
@@ -238,10 +236,10 @@ void Host_Init(void)
 	IN_Init();
 #endif
 
-    S_Init();
+	S_Init();
 #ifdef CLIENT
 	SCR_Init();
-    T_Init();
+	T_Init();
 	CT_Init();
 #endif
 
@@ -256,15 +254,15 @@ void Host_Init(void)
 
 #ifdef CLIENT
 	MN_Init();
-    AM_Init();
+	AM_Init();
 	SB_Init();
 #endif
 
-    R_Init();
+	R_Init();
 
 	InitMapInfo();
 #ifdef SERVER
-    P_Init();
+	P_Init();
 #endif
 
 	NET_Init();
@@ -277,7 +275,7 @@ void Host_Init(void)
 	if (!sv.active)
 	{
 		CmdBuf << "MaxPlayers 4\n";
-		if (Game == Doom || Game == Heretic)
+		if (W_CheckNumForName("E1M1") >= 0)
 			CmdBuf << "Map E1M1\n";
 		else
 			CmdBuf << "Map MAP01\n";
@@ -345,11 +343,11 @@ static bool FilterTime(void)
 			host_frametime = 0.001;
 	}
 	
-    int			thistime;
-    static int	lasttime;
+	int			thistime;
+	static int	lasttime;
 
 	thistime = (int)(realtime * TICRATE);
-    host_frametics = thistime - lasttime;
+	host_frametics = thistime - lasttime;
 	if (host_frametics < 1)
 		return false;		//	No tics to run
 	if (host_frametics > 3)
@@ -383,6 +381,10 @@ void Host_Frame(void)
 
 	//	Keep the random time dependent
 	rand();
+
+#ifdef RANGECHECK
+	Z_CheckHeap();
+#endif
 
 	//	Decide the simulation time
 	if (!FilterTime())
@@ -424,13 +426,13 @@ void Host_Frame(void)
 	CL_ReadFromServer();
 
 	//	Update video
-    if (show_time)
-	    time1 = Sys_Time();
+	if (show_time)
+		time1 = Sys_Time();
 
 	SCR_Update();
 
-    if (show_time)
-	    time2 = Sys_Time();
+	if (show_time)
+		time2 = Sys_Time();
 
 	if (cls.signon == SIGNONS)
 	{
@@ -441,8 +443,8 @@ void Host_Frame(void)
 	S_UpdateSounds();
 #endif
 
-    if (show_time)
-    {
+	if (show_time)
+	{
 		pass1 = (int)((time1 - time3) * 1000);
 		time3 = Sys_Time();
 		pass2 = (int)((time2 - time1) * 1000);
@@ -587,7 +589,7 @@ COMMAND(Quit)
 #endif
 #ifdef CLIENT
 	// Save game configyration
-    Cmd_SaveConfiguration();
+	Cmd_SaveConfiguration();
 #endif
 	Sys_Quit();
 }
@@ -595,9 +597,12 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.5  2001/08/21 17:41:33  dj_jl
 //	Removed -devmaps option
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

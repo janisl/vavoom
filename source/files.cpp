@@ -41,10 +41,10 @@ struct search_path_t
 
 struct version_t
 {
-	Game_t		game;
     const char	*mainwad;
 	const char	*gamedir;
 	const char	*checkparm;
+	int			parmfound;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -66,6 +66,7 @@ bool	fl_devmode = false;
 #endif
 char	fl_basedir[MAX_OSPATH];
 char	fl_gamedir[MAX_OSPATH];
+char	fl_mainwad[MAX_OSPATH];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -75,76 +76,76 @@ const char				*wadfiles[MAXWADFILES];
 static version_t		games[] =
 {
 	{
-		Doom,
         "doom1.wad",
 		"basev/doom1",
-		"-doom"
+		"-doom",
+		0
 	},
 	{
-		Doom,
         "doom.wad",
 		"basev/doom1",
-		"-doom"
+		"-doom",
+		0
 	},
 	{
-		Doom,
         "doomu.wad",
 		"basev/doom1",
-		"-doom"
+		"-doom",
+		0
 	},
 	{
-		Doom2,
         "doom2.wad",
 		"basev/doom2",
-		"-doom2"
+		"-doom2",
+		0
 	},
 	{
-		Doom2,
         "doom2f.wad",
 		"basev/doom2",
-		"-doom2"
+		"-doom2",
+		0
 	},
 	{
-		Doom2,
         "tnt.wad",
 		"basev/tnt",
-		"-tnt"
+		"-tnt",
+		0
 	},
 	{
-		Doom2,
         "plutonia.wad",
 		"basev/plutonia",
-		"-plutonia"
+		"-plutonia",
+		0
 	},
 	{
-		Heretic,
         "heretic1.wad",
 		"basev/heretic",
-		"-heretic"
+		"-heretic",
+		0
 	},
 	{
-		Heretic,
         "heretic.wad",
 		"basev/heretic",
-		"-heretic"
+		"-heretic",
+		0
 	},
 	{
-		Hexen,
         "hexen.wad",
 		"basev/hexen",
-		"-hexen"
+		"-hexen",
+		0
 	},
 	{
-		Strife,
         "strife0.wad",
 		"basev/strife",
-		"-strife"
+		"-strife",
+		0
 	},
 	{
-		Strife,
         "strife1.wad",
 		"basev/strife",
-		"-strife"
+		"-strife",
+		0
 	}
 };
 
@@ -246,49 +247,41 @@ static void SetupGameDir(const char *dirname)
 //
 //==========================================================================
 
+#define NUM_GAMES		(sizeof(games) / sizeof(games[0]))
+
 static void IdentifyVersion (void)
 {
 	int		i;
-	int		select_game;
+	bool	select_game = false;
 
-    select_game = -1;
-	if (M_CheckParm("-doom"))
-    {
-    	select_game = Doom;
-    }
-	if (M_CheckParm("-doom2"))
-    {
-    	select_game = Doom2;
-    }
-	if (M_CheckParm("-heretic"))
-    {
-    	select_game = Heretic;
-    }
-	if (M_CheckParm("-hexen"))
-    {
-    	select_game = Hexen;
-    }
-	if (M_CheckParm("-strife"))
-    {
-    	select_game = Strife;
-    }
+	for (i = 0; i < int(NUM_GAMES); i++)
+	{
+		games[i].parmfound = M_CheckParm(games[i].checkparm);
+		if (games[i].parmfound)
+		{
+			select_game = true;
+		}
+	}
 
-    for (i = (sizeof(games) / sizeof(games[0])) - 1; i >= 0; i--)
+    for (i = NUM_GAMES - 1; i >= 0; i--)
     {
-    	if (select_game != -1 && games[i].game != select_game)
+    	if (select_game && !games[i].parmfound)
         {
         	continue;
 		}
 	    if (Sys_FileExists(games[i].mainwad))
 	    {
-	        Game = games[i].game;
-			FL_AddFile(games[i].mainwad);
+			if (!fl_mainwad[0])
+			{
+				strcpy(fl_mainwad, games[i].mainwad);
+				FL_AddFile(fl_mainwad);
+			}
 			SetupGameDir(games[i].gamedir);
 	      	return;
 	    }
     }
 
-	if (select_game != -1)
+	if (select_game)
 		Sys_Error("Main wad file not found.");
 	else
 	    Sys_Error("Game mode indeterminate.");
@@ -302,11 +295,20 @@ static void IdentifyVersion (void)
 
 void FL_Init(void)
 {
+	int p;
+
 	AddGameDir("basev");
+
+	p = M_CheckParm("-iwad");
+	if (p && p < myargc - 1)
+	{
+		strcpy(fl_mainwad, myargv[p + 1]);
+		FL_AddFile(fl_mainwad);
+	}
 
 	IdentifyVersion();
 
-	int p =	M_CheckParm("-game");
+	p =	M_CheckParm("-game");
 	if (p && p < myargc - 1)
 	{
 		SetupGameDir(myargv[p + 1]);
@@ -623,9 +625,12 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.5  2001/08/21 17:40:54  dj_jl
 //	Added devgame mode
-//
+//	
 //	Revision 1.4  2001/08/04 17:26:59  dj_jl
 //	Removed shareware / ExtendedWAD from engine
 //	Added support for script base.txt in game directory

@@ -100,7 +100,6 @@ int 		TimerGame;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean	secretexit;
 static int 		LeavePosition;
 
 static boolean	in_secret;
@@ -122,7 +121,6 @@ static TCvarI  	NoMonsters("NoMonsters", "0");
 static TCvarI	Skill("Skill", "2");
 
 static byte		*fatpvs;
-static int		mobj_update_start;
 static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
 
 static bool		mapteleport_issued;
@@ -354,7 +352,7 @@ void SV_RemoveMobj(mobj_t *mobj)
 	SV_UnlinkFromWorld(mobj);
 
 	// stop any playing sound
-	SV_StopSound(mobj);
+	SV_StopSound(mobj, 0);
     
 	sv_mobjs[mobj->netID] = NULL;
 	P_RemoveThinker(mobj);
@@ -484,7 +482,7 @@ int GetOriginNum(degenmobj_t *origin)
 //
 //==========================================================================
 
-void SV_StartSound(mobj_t * origin, int sound_id, int volume)
+void SV_StartSound(mobj_t * origin, int sound_id, int channel, int volume)
 {
 	int		i;
 
@@ -492,6 +490,7 @@ void SV_StartSound(mobj_t * origin, int sound_id, int volume)
 		return;
 
 	i = GetOriginNum(origin);
+	i |= channel << 13;
 	sv_datagram << (byte)svc_start_sound
 				<< (word)sound_id
 				<< (word)i;
@@ -510,7 +509,7 @@ void SV_StartSound(mobj_t * origin, int sound_id, int volume)
 //
 //==========================================================================
 
-void SV_StopSound(mobj_t *origin)
+void SV_StopSound(mobj_t *origin, int channel)
 {
 	int		i;
 
@@ -518,6 +517,7 @@ void SV_StopSound(mobj_t *origin)
 		return;
 
 	i = GetOriginNum(origin);
+	i |= channel << 13;
 	sv_datagram << (byte)svc_stop_sound
 				<< (word)i;
 }
@@ -898,9 +898,10 @@ void SV_UpdateLevel(TMessage &msg)
 	}
 
 	//	Then update non-player mobjs in sight
+	int starti = sv_player->mobj_update_start;
 	for (i = 0; i < MAX_MOBJS; i++)
 	{
-		int index = (i + mobj_update_start) % MAX_MOBJS;
+		int index = (i + starti) % MAX_MOBJS;
 		if (!sv_mobjs[index])
 			continue;
 		if (sv_mobjs[index]->flags & MF_NOSECTOR)
@@ -911,7 +912,7 @@ void SV_UpdateLevel(TMessage &msg)
 			continue;
 		if (msg.CurSize > 1000)
 		{
-			if (mobj_update_start && show_mobj_overflow)
+			if (sv_player->mobj_update_start && show_mobj_overflow)
 			{
 				con << "UpdateLevel: mobj overflow 2\n";
 			}
@@ -920,12 +921,12 @@ void SV_UpdateLevel(TMessage &msg)
 				con << "UpdateLevel: mobj overflow\n";
 			}
 			//	Next update starts here
-			mobj_update_start = index;
+			sv_player->mobj_update_start = index;
 			return;
 		}
 		SV_UpdateMobj(index, msg);
 	}
-	mobj_update_start = 0;
+	sv_player->mobj_update_start = 0;
 }
 
 //==========================================================================
@@ -950,9 +951,7 @@ void SV_SendNop(player_t *client)
 
 	if (NET_SendUnreliableMessage(client->netcon, &msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
-//FIXME
-//	client->last_message = realtime;
-	client->netcon->lastSendTime = realtime;
+	client->last_message = realtime;
 }
 
 //==========================================================================
@@ -982,9 +981,10 @@ void SV_SendClientDatagram(void)
 			// send a full message when the next signon stage has been requested
 			// some other message data (name changes, etc) may accumulate
 			// between signon stages
-//			if (realtime - sv_player->last_message > 5)
-			if (realtime - sv_player->netcon->lastSendTime > 5.0)
+			if (realtime - sv_player->last_message > 5)
+			{
 				SV_SendNop(sv_player);
+			}
 			continue;
 		}
 
@@ -1091,6 +1091,7 @@ void SV_SendReliable(void)
 			continue;
 		}
 		players[i].message.Clear();
+		players[i].last_message = realtime;
 	}
 }
 
@@ -1209,7 +1210,7 @@ void SV_RunClients(void)
     	// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
 		if (players[i].spawned && !sv.intermission && !paused &&
-			(netgame || !(MN_Active() || C_Active() || messageToPrint)))
+			(netgame || !(MN_Active() || C_Active() || MB_Active())))
 #else
 		if (players[i].spawned && !sv.intermission && !paused)
 #endif
@@ -1249,7 +1250,7 @@ void SV_Ticker(void)
 	{
 	    // pause if in menu or console
 #ifdef CLIENT
-		if (!paused && (netgame || !(MN_Active() || C_Active() || messageToPrint)))
+		if (!paused && (netgame || !(MN_Active() || C_Active() || MB_Active())))
 #else
 		if (!paused)
 #endif
@@ -1259,14 +1260,7 @@ void SV_Ticker(void)
 		    {
 				if (!--TimerGame)
 				{
-   	    			if (Game == Hexen)
-					{
-						LeavePosition = 0;
-					}
-					else
-					{
-					    secretexit = false;
-					}
+					LeavePosition = 0;
 					completed = true;
 				}
 			}
@@ -1465,24 +1459,17 @@ void G_SecretExitLevel(void)
 	}
 	completed = true;
 
-	switch (Game)
-    {
-     case Doom:
-	 case Heretic:
-    	sv_next_map[3] = '9'; 	// go to secret level
-        break;
-
-	 case Doom2:
-       	if (!in_secret)
-		{
-			strcpy(sv_next_map, "MAP31");
-		}
-        break;
-
-	 case Hexen:
-	 case Strife:
-		break;
+	if (sv_next_map[0] == 'E' && sv_next_map[2] == 'M')
+	{
+		//	Doom or Heretic
+		sv_next_map[3] = '9'; 	// go to secret level
 	}
+	else if (!in_secret)
+	{
+		//	Doom2
+		strcpy(sv_next_map, "MAP31");
+	}
+
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1549,8 +1536,7 @@ COMMAND(TeleportNewMap)
 	}
 
 #ifdef CLIENT
-	if (Game == Hexen)
-		Draw_TeleportIcon();
+	Draw_TeleportIcon();
 #endif
 	RebornPosition = LeavePosition;
     svpr.SetGlobal("RebornPosition", RebornPosition);
@@ -1781,6 +1767,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	}
 
 	SV_Clear();
+	Cvar_Unlatch();
 
 	sv.active = true;
 
@@ -2378,7 +2365,7 @@ COMMAND(Say)
 		return;
 
    	SV_BroadcastPrintf("%s: %s\n", sv_player->name, Args());
-	SV_StartSound(NULL, S_GetSoundID("Chat"), 127);
+	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
 }
 
 //**************************************************************************
@@ -2441,9 +2428,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.8  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
-//
+//	
 //	Revision 1.7  2001/08/15 17:08:59  dj_jl
 //	Fixed finale
 //	

@@ -29,15 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-enum Game_t
-{
- 	Doom,
-    Doom2,
-    Heretic,
-    Hexen,
-	Strife	//	Just a test, not a true support
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Host_Init(void);
@@ -52,8 +43,6 @@ void Host_Error(const char *error, ...)
 
 extern TCvarI		developer;
 
-extern Game_t		Game;
-
 extern boolean		host_initialized;
 
 extern int			host_frametics;
@@ -65,9 +54,12 @@ extern int			host_framecount;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.5  2001/08/21 17:41:33  dj_jl
 //	Removed -devmaps option
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

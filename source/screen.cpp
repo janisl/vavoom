@@ -350,34 +350,6 @@ COMMAND(ScreenShot)
 
 //==========================================================================
 //
-//	DrawPausePic
-//
-//==========================================================================
-
-static void DrawPausePic(void)
-{
-    if (cl.paused && draw_pause)
-	{
-    	if (Game < Heretic)
-        {
-			R_DrawPic(126, 4, R_RegisterPic("M_PAUSE", PIC_PATCH));
-		}
-        else
-        {
-			if (cl.maxclients == 1)
-			{
-				R_DrawPic(160, 20, R_RegisterPic("PAUSED", PIC_PATCH));
-			}
-			else
-			{
-				R_DrawPic(160, 70, R_RegisterPic("PAUSED", PIC_PATCH));
-			}
-		}
-	}
-}
-
-//==========================================================================
-//
 //	DrawFPS
 //
 //==========================================================================
@@ -618,9 +590,6 @@ void SCR_Update(void)
 		}
 	}
 
-	// draw pause pic
-	DrawPausePic();
-
 	if (MN_Active())
 		V_DarkenScreen(menu_darkening);
 
@@ -645,9 +614,12 @@ void SCR_Update(void)
 
 void Draw_TeleportIcon(void)
 {
-	Drawer->StartUpdate();
-	R_DrawPic(100, 68, R_RegisterPic("teleicon", PIC_PATCH));
-	Drawer->Update();
+	if (W_CheckNumForName("teleicon") >= 0)
+	{
+		Drawer->StartUpdate();
+		R_DrawPic(100, 68, R_RegisterPic("teleicon", PIC_PATCH));
+		Drawer->Update();
+	}
 }
 
 //==========================================================================
@@ -658,9 +630,12 @@ void Draw_TeleportIcon(void)
 
 void Draw_SaveIcon(void)
 {
-	Drawer->StartUpdate();
-	R_DrawPic(100, 68, R_RegisterPic("saveicon", PIC_PATCH));
-	Drawer->Update();
+	if (W_CheckNumForName("saveicon") >= 0)
+	{
+		Drawer->StartUpdate();
+		R_DrawPic(100, 68, R_RegisterPic("saveicon", PIC_PATCH));
+		Drawer->Update();
+	}
 }
 
 //==========================================================================
@@ -671,17 +646,23 @@ void Draw_SaveIcon(void)
 
 void Draw_LoadIcon(void)
 {
-	Drawer->StartUpdate();
-	R_DrawPic(100, 68, R_RegisterPic("loadicon", PIC_PATCH));
-	Drawer->Update();
+	if (W_CheckNumForName("loadicon") >= 0)
+	{
+		Drawer->StartUpdate();
+		R_DrawPic(100, 68, R_RegisterPic("loadicon", PIC_PATCH));
+		Drawer->Update();
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.7  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
-//
+//	
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

@@ -31,16 +31,13 @@
 // servers, get info about them, and connect to them. Once connected, the
 // Vavoom game protocol (documented elsewhere) is used.
 //
-//	Game name is "DOOM", "DOOM2", "HERETIC" or "HEXEN". This means that
-// for example Doom2 server will ignore requests from Heretic clients.
-//
 //
 // CCREQ_CONNECT
-//		string		game_name
+//		string		"VAVOOM"
 //		byte		net_protocol_version	NET_PROTOCOL_VERSION
 //
 // CCREQ_SERVER_INFO
-//		string		game_name
+//		string		"VAVOOM"
 //		byte		net_protocol_version	NET_PROTOCOL_VERSION
 //
 //
@@ -138,8 +135,6 @@ static int		shortPacketCount = 0;
 static int		droppedDatagrams;
 
 static int		net_landriverlevel = 0;
-
-static char		*game_name[4] = { "DOOM", "DOOM2", "HERETIC", "HEXEN"};
 
 // CODE --------------------------------------------------------------------
 
@@ -246,7 +241,7 @@ static void _Datagram_SearchForHosts(boolean xmit)
 		// save space for the header, filled in later
         net_msg << 0
         		<< (byte)CCREQ_SERVER_INFO
-				<< game_name[Game]
+				<< "VAVOOM"
 				<< (byte)NET_PROTOCOL_VERSION;
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
 		dfunc.Broadcast(dfunc.controlSock, net_msg.Data, net_msg.CurSize);
@@ -408,7 +403,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 		// save space for the header, filled in later
         net_msg << 0
 				<< (byte)CCREQ_CONNECT
-				<< game_name[Game]
+				<< "VAVOOM"
 				<< (byte)NET_PROTOCOL_VERSION;
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
 		dfunc.Write(newsock, net_msg.Data, net_msg.CurSize, &sendaddr);
@@ -609,7 +604,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 	if (command == CCREQ_SERVER_INFO)
 	{
 		net_msg >> gamename;
-		if (strcmp(gamename, game_name[Game]) != 0)
+		if (strcmp(gamename, "VAVOOM") != 0)
 			return NULL;
 
 		net_msg.Clear();
@@ -635,7 +630,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 		return NULL;
 
 	net_msg >> gamename;
-	if (strcmp(gamename, game_name[Game]) != 0)
+	if (strcmp(gamename, "VAVOOM") != 0)
 		return NULL;
 
 /*	if (MSG_ReadByte() != NET_PROTOCOL_VERSION)
@@ -1228,9 +1223,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:46:21  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
