@@ -2830,6 +2830,12 @@ bool Physics(void)
 	if (bFloatBob)
 	{
 		// Floating item bobbing motion (special1 is height)
+		if (Sector->bHasExtrafloors)
+		{
+			//	Make sure FloorZ is from bottom region.
+			Origin.z = ONFLOORZ;
+			LinkToWorld();
+		}
 		Origin.z = FloorZ + Special1f + FloatBobOffsets[(Health++) & 63];
 	}
 	else if ((Origin.z != FloorZ) || Velocity.z || tmtrace->BlockingMobj)
@@ -3929,6 +3935,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/03/19 18:12:09  dj_jl
+//  Float bob thing heights on extrafloors
+//
 //  Revision 1.4  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //
