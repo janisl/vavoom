@@ -31,9 +31,9 @@ int		numstates = NUMHERETICSTATES;
 state_t	states[] = {
 {SPR2_IMPX,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_NULL
 {SPR2_ACLO,4,1050,SA2_FreeTargMobj,S2_NULL,0,0},	// S2_FREETARGMOBJ
-{SPR2_PTN1,0,3,SA2_NULL,S2_ITEM_PTN1_2,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_1
-{SPR2_PTN1,1,3,SA2_NULL,S2_ITEM_PTN1_3,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_2
-{SPR2_PTN1,2,3,SA2_NULL,S2_ITEM_PTN1_1,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_3
+{SPR2_PTN1,0,3,SA2_NULL,S2_ITEM_PTN1_2,0,0,"items/vial.md2",0},	// S2_ITEM_PTN1_1
+{SPR2_PTN1,1,3,SA2_NULL,S2_ITEM_PTN1_3,0,0,"items/vial.md2",0},	// S2_ITEM_PTN1_2
+{SPR2_PTN1,2,3,SA2_NULL,S2_ITEM_PTN1_1,0,0,"items/vial.md2",0},	// S2_ITEM_PTN1_3
 {SPR2_SHLD,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_SHLD1
 {SPR2_SHD2,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_SHD2_1
 {SPR2_BAGH,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_BAGH1
@@ -81,9 +81,9 @@ state_t	states[] = {
 {SPR2_ACLO,1,3,SA2_NULL,S2_DEADARTI10,0,0},	// S2_DEADARTI9
 {SPR2_ACLO,0,3,SA2_NULL,S2_NULL,0,0},	// S2_DEADARTI10
 {SPR2_INVS,32768,350,SA2_NULL,S2_ARTI_INVS1,0,0},	// S2_ARTI_INVS1
-{SPR2_PTN2,0,4,SA2_NULL,S2_ARTI_PTN2_2,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_1
-{SPR2_PTN2,1,4,SA2_NULL,S2_ARTI_PTN2_3,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_2
-{SPR2_PTN2,2,4,SA2_NULL,S2_ARTI_PTN2_1,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_3
+{SPR2_PTN2,0,4,SA2_NULL,S2_ARTI_PTN2_2,0,0,"artifact/flask.md2",0},	// S2_ARTI_PTN2_1
+{SPR2_PTN2,1,4,SA2_NULL,S2_ARTI_PTN2_3,0,0,"artifact/flask.md2",0},	// S2_ARTI_PTN2_2
+{SPR2_PTN2,2,4,SA2_NULL,S2_ARTI_PTN2_1,0,0,"artifact/flask.md2",0},	// S2_ARTI_PTN2_3
 {SPR2_SOAR,0,5,SA2_NULL,S2_ARTI_SOAR2,0,0},	// S2_ARTI_SOAR1
 {SPR2_SOAR,1,5,SA2_NULL,S2_ARTI_SOAR3,0,0},	// S2_ARTI_SOAR2
 {SPR2_SOAR,2,5,SA2_NULL,S2_ARTI_SOAR4,0,0},	// S2_ARTI_SOAR3
@@ -1239,9 +1239,12 @@ state_t	states[] = {
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/25 17:02:52  dj_jl
+//	Renamed some models
+//
 //	Revision 1.4  2001/09/20 16:32:18  dj_jl
 //	Added some models
-//
+//	
 //	Revision 1.3  2001/08/07 16:38:52  dj_jl
 //	Added models
 //
