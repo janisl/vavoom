@@ -75,21 +75,6 @@ struct model_t
 	void		*data;		// only access through Mod_Extradata
 };
 
-//
-//	VSubsystem
-//
-//	FIXME Make this global.
-//
-class VSubsystem:public VObject
-{
-	DECLARE_ABSTRACT_CLASS(VSubsystem, VObject, CLASS_Transient)
-	NO_DEFAULT_CONSTRUCTOR(VSubsystem)
-
-	//	VSubsystem interface.
-	virtual void Tick(float)
-	{}
-};
-
 class VDrawer:public VSubsystem
 {
 	DECLARE_ABSTRACT_CLASS(VDrawer, VSubsystem, 0)
@@ -158,9 +143,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/15 17:51:09  dj_jl
+//	Made VSubsystem global.
+//
 //	Revision 1.13  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.12  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
 //	

@@ -65,6 +65,22 @@
 #include "progs.h"		//	Progs
 #include "vobject.h"
 #include "vclass.h"
+
+//
+//	VSubsystem
+//
+//	FIXME Make a file for this.
+//
+class VSubsystem:public VObject
+{
+	DECLARE_ABSTRACT_CLASS(VSubsystem, VObject, CLASS_Transient)
+	NO_DEFAULT_CONSTRUCTOR(VSubsystem)
+
+	//	VSubsystem interface.
+	virtual void Tick(float)
+	{}
+};
+
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
 #include "waddefs.h"    // 	External data types
@@ -94,9 +110,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/07/15 17:51:09  dj_jl
+//	Made VSubsystem global.
+//
 //	Revision 1.21  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.20  2002/04/11 16:39:21  dj_jl
 //	Seperated build setings.
 //	

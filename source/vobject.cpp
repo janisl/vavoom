@@ -55,6 +55,8 @@ TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjAutoRegister;
 VObject*			VObject::GObjHash[4096];
 
+IMPLEMENT_CLASS(VSubsystem);	// FIXME
+
 //==========================================================================
 //
 //	VObject::VObject
@@ -407,9 +409,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/15 17:51:09  dj_jl
+//	Made VSubsystem global.
+//
 //	Revision 1.7  2002/05/29 16:53:52  dj_jl
 //	Added GetVFunction.
-//
+//	
 //	Revision 1.6  2002/03/28 18:02:11  dj_jl
 //	Changed native IsA to take name as argument.
 //	
