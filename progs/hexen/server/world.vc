@@ -167,8 +167,8 @@ int terrain_contents[] = {
 	CONTENTS_EMPTY,
 	CONTENTS_WATER,
 	CONTENTS_WATER,
+	CONTENTS_LAVA,
 	CONTENTS_SLUDGE,
-	CONTENTS_LAVA
 };
 int contents_transluc[] = { 0, 50, 20, 30 };
 
@@ -253,6 +253,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/05/03 17:13:35  dj_jl
+//  Fixed content types.
+//
 //  Revision 1.5  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //
