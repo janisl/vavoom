@@ -124,17 +124,18 @@ void TouchSpecial(Actor Toucher)
 //
 //==========================================================================
 
-void GiveItemTo(Actor Toucher)
+bool GiveItemTo(Actor Toucher)
 {
 	if (!HandlePickup(Toucher))
 	{
-		return;
+		return false;
 	}
 
 	if (bGiveQuest)
 	{
 		Toucher.Player.GiveQuest(QuestID);
 	}
+	return true;
 }
 
 __states__
@@ -169,6 +170,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.4  2004/10/13 06:36:30  dj_jl
 //  Implemented items also giving quests.
 //

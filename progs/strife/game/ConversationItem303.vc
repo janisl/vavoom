@@ -33,8 +33,14 @@ class ConversationItem303 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	cprint(Toucher.Player, "You killed Haris in teaser version of Strife");
-	return true;
+	int Args[5];
+
+	Args[0] = 222;
+	Args[1] = 16;
+	Args[2] = 0;
+	Args[3] = 0;
+	Args[4] = 0;
+	return ExecuteLineSpecial(LNSPEC_DoorClose, &Args[0], NULL, 0, Toucher);
 }
 
 defaultproperties
@@ -47,6 +53,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2003/10/02 18:00:34  dj_jl
 //  Special items for conversations
 //

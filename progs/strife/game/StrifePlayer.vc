@@ -65,7 +65,7 @@ defaultproperties
 	Mass = 100.0;
 	PainChance = 1.0;
 	bDropOff = true;
-	bUnknown1 = true;
+	bFriendly = true;
 	IdleState = S_PLAY;
 	SeeState = S_PLAY_RUN1;
 	MeleeState = S_PLAY_ATK1;
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

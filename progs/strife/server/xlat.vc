@@ -55,8 +55,8 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false},	//  4
 	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  5
 	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, false},	//  6
-	{217, -1, 2, 8, 0, 0, SPAC_USE, false},	//  7
-	{217, -1, 2, 8, 0, 0, SPAC_CROSS, false},	//  8
+	{LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_USE, false},	//  7
+	{LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_CROSS, false},	//  8
 	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
 
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
@@ -158,7 +158,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true},	//  98
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 4, 0, SPAC_USE, true},	//  99
 
-	{217, -1, 32, 16, 0, 0, SPAC_CROSS, false},	//  100
+	{LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_CROSS, false},	//  100
 	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false},	//  101
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false},	//  102
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false},	//  103
@@ -187,7 +187,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124 W1 EndLevelSecret UNUSED
 	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, false},	//  125
 	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, true},	//  126
-	{217, -1, 32, 16, 0, 0, SPAC_USE, false},	//  127
+	{LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_USE, false},	//  127
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  128
 	{LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true},	//  129
 
@@ -208,12 +208,12 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_ScrollTextureDown, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  143
 	{14, -1, 4, 105, 0, 0, SPAC_USE, true},	//  144
 	{LNSPEC_ACSExecuteWithResult, 0, 145, -1, 0, 0, SPAC_CROSS, true},	//  145
-	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
-	{34, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
-	{33, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
+	{LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_USE, false},	//  146
+	{LNSPEC_ClearForceField, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
+	{LNSPEC_ForceField, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
 	{0, 0, 0, 0, 0, 0, 0, 0},	//  149 UNUSED
 
-	{173, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  150
+	{LNSPEC_NoiseAlert, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  150
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 9, 0, SPAC_USE, true},	//  151
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 17, 0, SPAC_USE, true},	//  152
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 12, 0, SPAC_USE, true},	//  153
@@ -243,12 +243,12 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_ACSExecuteWithResult, 0, 175, -1, 0, 0, SPAC_CROSS, true},	//  175
 	{LNSPEC_DoorLockedRaise, -1, 16, 0, 10, 0, SPAC_USE, true},	//  176
 	{LNSPEC_ACSLockedExecute, 0, 0, 177, -1, 1 + KEY_Power3Key, SPAC_USE, true},	//  177
-	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
+	{LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_CROSS, false},	//  178
 	{LNSPEC_CeilingLowerAndCrush, -1, 8, 1, 0, 0, SPAC_CROSS, false},	//  179
 
 	{LNSPEC_ACSExecuteWithResult, 0, 180, -1, 0, 0, SPAC_IMPACT, false},	//  180
 	{LNSPEC_ACSExecuteWithResult, 0, 181, -1, 0, 0, SPAC_USE, false},	//  181
-	{49, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
+	{49, -1, 255, 0, 0, 0, SPAC_PTOUCH, false},	//  182
 	{LNSPEC_ACSExecuteWithResult, 0, 183, -1, 0, 0, SPAC_CROSS, false},	//  183
 	{LNSPEC_ACSExecuteWithResult, 0, 184, -1, 0, 0, SPAC_CROSS, true},	//  184 SR?
 	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, true},	//  185
@@ -510,29 +510,32 @@ void TranslateThing(mthing_t* mthing)
 //
 //==========================================================================
 
-void TranslateLevel()
+void TranslateLevel(Level InLevel)
 {
 	int i;
 
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < InLevel.NumLines; i++)
 	{
-		TranslateLine(&GLevel.Lines[i]);
+		TranslateLine(&InLevel.Lines[i]);
 	}
 
-	for (i = 0; i < GLevel.NumSectors; i++)
+	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		TranslateSector(&GLevel.Sectors[i]);
+		TranslateSector(&InLevel.Sectors[i]);
 	}
 
-	for (i = 0; i < GLevel.NumThings; i++)
+	for (i = 0; i < InLevel.NumThings; i++)
 	{
-		TranslateThing(&GLevel.Things[i]);
+		TranslateThing(&InLevel.Things[i]);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/03/28 07:45:30  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.17  2005/03/16 15:04:43  dj_jl
 //  More work on line specials.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Projectile:Actor
+class Projectile : Actor
 	abstract;
 
 defaultproperties
@@ -32,13 +32,16 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bDropOff = true;
-	bActivateMCross = true;
+	bActivatePCross = true;
 	bNoTeleport = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2005/03/16 15:04:43  dj_jl
 //  More work on line specials.
 //

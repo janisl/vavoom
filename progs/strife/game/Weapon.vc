@@ -32,6 +32,7 @@ int ReadyState;
 int AttackState;
 int HoldAttackState;
 int FlashState;
+int FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
@@ -274,11 +275,15 @@ __states__
 defaultproperties
 {
 	bRaiseNoiseAlert = true;
+	FireDeathWaveState = S_WAVE1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.5  2004/08/23 19:24:01  dj_jl
 //  Moved weapon utilites to player class.
 //

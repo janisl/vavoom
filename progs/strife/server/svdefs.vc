@@ -195,7 +195,7 @@ enum
 	QUEST_Prison,
 	QUEST_GovPowerCoupling,
 	QUEST_GovDerwin,
-	QUEST_6,
+	QUEST_BrokePowerCoupling,
 	QUEST_7,
 	QUEST_8,
 	QUEST_GotDerwinsEar,
@@ -258,6 +258,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.51  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.50  2004/12/22 07:56:48  dj_jl
 //  Fully working Strife support.
 //

@@ -27,6 +27,19 @@ class LoremasterChain : Projectile;
 
 //==========================================================================
 //
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(Actor Victim, int damage)
+{
+	Victim.Velocity += Normalise(Instigator.Origin - Victim.Origin) *
+		((255.0 * 50.0 * 35.0) / (Victim.Mass ? Victim.Mass : 1.0));
+	return damage;
+}
+
+//==========================================================================
+//
 //	A_ChainTend
 //
 //==========================================================================
@@ -66,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.3  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

@@ -23,7 +23,26 @@
 //**
 //**************************************************************************
 
-class Ammo2:Pickup;
+class Ammo2 : Pickup;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	if (Toucher.Player.Ammo[am_clip] < 50)
+	{
+		Toucher.Player.Ammo[am_clip] = 50;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 defaultproperties
 {
@@ -35,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

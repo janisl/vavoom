@@ -40,7 +40,7 @@ defaultproperties
 	Height = 24.0;
 	Speed = 770.0;
 	MissileDamage = 100;
-	bUnknown3 = true;
+	bSpectral = true;
 	IdleState = S_SIGIL_FX4_1;
 	DeathState = S_ZAP1_6;
 	SightSound = 'SigilFire';
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

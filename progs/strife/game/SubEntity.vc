@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SubEntity:Pawn;
+class SubEntity : Pawn;
 
 __states__
 {
@@ -69,11 +69,11 @@ defaultproperties
 	Translucency = 66;
 	bSpecial = true;
 	bNoGravity = true;
-	bUnknown5 = true;
+	bLookAllAround = true;
 	bFloat = true;
-	bUnknown4 = true;
+	bInCombat = true;
 	bUnknown2 = true;
-	bUnknown3 = true;
+	bSpectral = true;
 	IdleState = S_SUBENT_LOOK;
 	SeeState = S_SUBENT_RUN1;
 	MeleeState = S_SUBENT_MELEE1;
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

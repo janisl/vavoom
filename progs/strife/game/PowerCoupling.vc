@@ -24,8 +24,45 @@
 //**************************************************************************
 // 289 287
 
-class PowerCoupling:Decoration
+class PowerCoupling : Decoration
 	__mobjinfo__(220);
+
+//==========================================================================
+//
+//	GetClassFromID
+//
+//==========================================================================
+
+void Died(Actor source)
+{
+	int i;
+
+	Died(source);
+
+	for (i = 0; i < MAXPLAYERS; ++i)
+	{
+		if (svvars->Players[i] && svvars->Players[i].bSpawned &&
+			svvars->Players[i].Health > 0)
+		{
+			break;
+		}
+	}
+
+	if (i == MAXPLAYERS)
+	{
+		return;
+	}
+
+	P_NoiseAlert(source, self);
+	EV_DoDoor(225, 16, 0, 0, 0, DOOREV_Close, NULL, svvars->Players[i].MO);
+	EV_DoFloor(44, 8, 0, 0, 0, FLOOREV_LowerToHighest, NULL);
+	svvars->Players[i].GiveQuest(QUEST_BrokePowerCoupling);
+	MSG_Select(MSG_SV_RELIABLE);
+	MSG_WriteByte(svc_voice);
+	MSG_WriteShort(13);
+	Enemy.Player.SetObjectives(13);
+	Spawn(BrokenPowerCoupling, Origin);
+}
 
 __states__
 {
@@ -42,8 +79,8 @@ defaultproperties
 	StepSpeed = 6.0;
 	bSolid = true;
 	bShootable = true;
-	bUnknown5 = true;
-	bUnknown4 = true;
+//	bUnknown5 = true;
+	bInCombat = true;
 	bDropped = true;
 	bNoBlood = true;
 	bNoDeathmatch = true;
@@ -53,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -789,7 +789,8 @@ void InvLeft()
 
 void InvUse()
 {
-	bool itemUsed;
+	bool	itemUsed;
+	Actor	A;
 
 	if (!Inventory[InvCursor])
 	{
@@ -825,9 +826,25 @@ void InvUse()
 	case ITEM_EnvironmentalSuit:
 		itemUsed = GivePower(pw_ironfeet);
 		break;
+
+	case ITEM_TeleporterBeacon:
+		//	Increase item count because ItemThrow also decreases it.
+		Inventory[ITEM_TeleporterBeacon]++;
+		A = InvThrow();
+		if (A)
+		{
+			A.SetState(A.SeeState);
+			A.Instigator = MO;
+			itemUsed = true;
+		}
+		else
+		{
+			Inventory[ITEM_TeleporterBeacon]--;
+		}
+		break;
+
 /*	ITEM_Map,
 	ITEM_Scanner,
-	ITEM_TeleporterBeacon,
 	ITEM_Targeter,*/
 	}
 	//	Remove item if it was used.
@@ -896,7 +913,7 @@ void AdjustInvFirst()
 //
 //==========================================================================
 
-void InvThrow()
+Actor InvThrow()
 {
 	classid	ItemType;
 	int		Amount;
@@ -905,7 +922,7 @@ void InvThrow()
 
 	if (!Inventory[InvCursor])
 	{
-		return;
+		return none;
 	}
 
 	ItemType = InvItemCID[InvCursor];
@@ -935,6 +952,7 @@ void InvThrow()
 	Item.Velocity = Dir * 64.0;
 	//	Remove item.
 	RemoveInvItem(InvCursor, Amount);
+	return Item;
 }
 
 //==========================================================================
@@ -1391,6 +1409,34 @@ void PlayerInSpecialSector(float deltaTime)
 				MO.Damage(none, none, 20);
 			}
 			break;
+		}
+	}
+
+	//	Apply any customizable damage
+	if (MO.Sector->Damage)
+	{
+		if (MO.Sector->Damage < 20)
+		{
+			if (!Powers[pw_ironfeet] &&
+				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (MO.Sector->Damage < 50)
+		{
+			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
+				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (level->time - LastSectorDamageTime >= 1.0 / 35.0)
+		{
+			LastSectorDamageTime = level->time;
+			MO.Damage(none, none, MO.Sector->Damage);
 		}
 	}
 
@@ -2337,6 +2383,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.13  2005/03/16 15:04:43  dj_jl
 //  More work on line specials.
 //

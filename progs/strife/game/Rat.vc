@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Rat:Pawn
+class Rat : Pawn
 	__mobjinfo__(85);
 
 __states__
@@ -48,7 +48,7 @@ defaultproperties
 	StepSpeed = 13.0;
 	bSolid = false;
 	bShootable = false;
-	bUnknown4 = true;
+	bInCombat = true;
 	bNoBlood = true;
 	IdleState = S_RAT_LOOK;
 	SeeState = S_RAT_RUN1;
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

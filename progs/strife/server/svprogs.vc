@@ -33,7 +33,6 @@
 #include "svdefs.vc"
 
 #include "xlat.vc"
-#include "specutl.vc"
 #include "ceilings.vc"
 #include "doors.vc"
 #include "floors.vc"
@@ -60,6 +59,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.24  2004/12/27 12:23:15  dj_jl
 //  Multiple small changes for version 1.16
 //

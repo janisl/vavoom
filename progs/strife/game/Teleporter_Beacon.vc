@@ -26,6 +26,24 @@
 class Teleporter_Beacon : InventoryItem
 	__mobjinfo__(10);
 
+bool			bRebelSpawned;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	//	Can't pick it up if already started to spawn rebels.
+	if (bRebelSpawned)
+	{
+		return false;
+	}
+	return ::HandlePickup(Toucher);
+}
+
 //==========================================================================
 //
 //	A_SummonRebel
@@ -34,13 +52,61 @@ class Teleporter_Beacon : InventoryItem
 
 void A_SummonRebel()
 {
-	Actor A;
-	Actor TFog;
+	Actor	A;
+	Actor	TFog;
 
 	A = Spawn(Rebel, Origin + vector((Random() - 0.5) * 64.0,
 		(Random() - 0.5) * 64.0, 0.0));
+	if (!A.TryMove(A.Origin))
+	{
+		A.Remove();
+		return;
+	}
+	//	Once the rebels start teleporting in, you can't pick up the beacon
+	// anymore.
+	bRebelSpawned = true;
+/*	AActor *owner = self->target;
+	ARebel *rebel;
+	int friendNum;
+	angle_t an;
+
+	// Set up the new rebel.
+	friendNum = owner->player != NULL ? owner->player - players + 1 : 0;
+	rebel->FriendPlayer = friendNum;
+	rebel->threshold = 100;
+	rebel->target = NULL;*/
+	A.bInCombat = true;
+/*	rebel->LastHeard = owner;	// Make sure the rebels look for targets
+	if (deathmatch)
+	{
+		rebel->health *= 2;
+	}
+	if (owner != NULL)
+	{
+		// Rebels are the same color as their owner
+		rebel->Translation = owner->Translation;
+		// Set the rebel's target to whatever last hurt the player, so long as it's not
+		// one of the player's other rebels.
+		if (owner->target != NULL &&
+			(!(owner->target->flags & MF_FRIENDLY) ||
+			 owner->target->FriendPlayer == 0 ||
+			 owner->target->FriendPlayer != friendNum))
+		{
+			rebel->target = owner->target;
+		}
+	}
+	rebel->SetState (rebel->SeeState);
+*/
+	A.Angles = Angles;
+
 	TFog = Spawn(TeleportFog, A.Origin);
 	TFog.PlaySound('Teleport', CHAN_BODY);
+
+	Health--;
+	if (Health < 0)
+	{
+		Remove();
+	}
 }
 
 __states__
@@ -67,6 +133,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.4  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

@@ -23,7 +23,42 @@
 //**
 //**************************************************************************
 
-class Health1:Pickup;
+class Health1 : Pickup;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	int			Amount;
+	int			Max;
+
+	switch (gameskill)
+	{
+	case sk_baby:
+	case sk_nightmare:
+		Amount = 100;
+		break;
+	case sk_easy:
+		Amount = 75;
+		break;
+	case sk_medium:
+	case sk_hard:
+		Amount = 50;
+		break;
+	}
+	Max = MAXHEALTH + Toucher.Player.Stamina;
+	Amount = Max * Amount / 100;
+	if (Toucher.Player.Health >= Amount)
+	{
+		return false;
+	}
+	Toucher.Player.GiveBody(Amount - Toucher.Player.Health);
+	return true;
+}
 
 defaultproperties
 {
@@ -35,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

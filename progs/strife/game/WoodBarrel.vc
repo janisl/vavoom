@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WoodBarrel:Decoration
+class WoodBarrel : Decoration
 	__mobjinfo__(82);
 
 __states__
@@ -45,7 +45,7 @@ defaultproperties
 	Height = 32.0;
 	bSolid = true;
 	bShootable = true;
-	bUnknown4 = true;
+	bInCombat = true;
 	bNoBlood = true;
 	IdleState = S_WOOD_BARREL;
 	DeathState = S_WOOD_BARREL_X1;
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

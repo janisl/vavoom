@@ -72,7 +72,7 @@ defaultproperties
 	Mass = 500.0;
 	StepSpeed = 12.0;
 	PainChance = 0.5;
-	bUnknown4 = true;
+	bInCombat = true;
 	bNoBlood = true;
 	IdleState = S_REAVER_LOOK1;
 	SeeState = S_REAVER_RUN1;
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

@@ -25,6 +25,19 @@
 
 class Prison_pass : InventoryItem;
 
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	::HandlePickup(Toucher);
+	EV_DoDoor(223, 16, 0, 0, 0, DOOREV_Open, NULL, Toucher);
+	return true;
+}
+
 defaultproperties
 {
 	ConversationID = 304;
@@ -38,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.3  2004/10/13 06:36:30  dj_jl
 //  Implemented items also giving quests.
 //

@@ -25,14 +25,50 @@
 
 class TextureChangeDoor : SectorMover;
 
-float topheight;
-float speed;
-int direction;		// 1 = up, 0 = waiting, -1 = down
-float topwait;		// time to wait at the top
-float toptime;		// (keep in case a door going down is reset)
-					// when it reaches 0, start going down
-name closesound;
-line_t* line;
+float		TopDist;
+float		BotDist;
+int			Direction;		// 1 = up, 0 = waiting, -1 = down
+float		TopWait;		// time to wait at the top
+float		TopTime;		// (keep in case a door going down is reset)
+							// when it reaches 0, start going down
+name		CloseSound;
+line_t*		Line;
+
+int			NumFrames;		//	Total number of animation frames.
+float		CurrentFrame;
+float		AnimSpeed;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, line_t* InLine)
+{
+	float		Height;
+	TVec		Spot;
+
+	Sector = InSector;
+	Sector->CeilingData = self;
+
+	Height = FindLowestCeilingSurrounding(Sector, &Spot);
+	Spot.z = Height;
+	TopDist = DotProduct(Sector->ceiling.normal, Spot);
+	Height = FindHighestFloorPoint(Sector, &Spot);
+	Spot.z = Height;
+	BotDist = DotProduct(Sector->ceiling.normal, Spot);
+
+	NumFrames = 8;
+	CurrentFrame = 0.0;
+	AnimSpeed = itof(Arg2) * 35.0 / 8.0;
+
+	Line = InLine;
+	Direction = 1;
+	TopWait = itof(Arg3) / 35.0;
+	StartAnim();
+}
 
 //==========================================================================
 //
@@ -45,45 +81,45 @@ void StartAnim()
 	int		texTop;
 	name	opensound;
 
-	texTop = XLevel.Sides[line->sidenum[0]].toptexture;	
+	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
 	if (texTop == TextureNumForName("DORALN01"))
 	{
 		opensound = 'DoorOpen';
-		closesound = 'DoorClose';
+		CloseSound = 'DoorClose';
 	}
 	else if (texTop == TextureNumForName("DORCHN01"))
 	{
 		opensound = 'DoorChainedOpen';
-		closesound = 'DoorChainedClose';
+		CloseSound = 'DoorChainedClose';
 	}
 	else if (texTop == TextureNumForName("DORCRG01"))
 	{
 		opensound = 'DoorLongWood';
-		closesound = 'DoorShortWood';
+		CloseSound = 'DoorShortWood';
 	}
 	else if (texTop == TextureNumForName("DORIRS01"))
 	{
 		opensound = 'Airlock';
-		closesound = 'Airlock';
+		CloseSound = 'Airlock';
 	}
 	else if (texTop == TextureNumForName("DORQTR01"))
 	{
 		opensound = 'Airlock';
-		closesound = 'Airlock';
+		CloseSound = 'Airlock';
 	}
 	else if (texTop == TextureNumForName("DORSTN01"))
 	{
 		opensound = 'DoorLongWood';
-		closesound = 'DoorShortWood';
+		CloseSound = 'DoorShortWood';
 	}
 	else
 	{
 		opensound = 'BlazeDoorOpen';
-		closesound = 'BlazeDoorClose';
+		CloseSound = 'BlazeDoorClose';
 	}
 	SectorStartSoundName(Sector, opensound, CHAN_VOICE);
-	SetLineTexture(line->sidenum[0], 1, texTop);
-	SetLineTexture(line->sidenum[1], 1, texTop);
+	SetLineTexture(Line->sidenum[0], 1, texTop);
+	SetLineTexture(Line->sidenum[1], 1, texTop);
 }
 
 //==========================================================================
@@ -99,98 +135,66 @@ void Tick(float deltaTime)
 	int		texTop;
 	int		NewMidTexture;
 
-	texTop = XLevel.Sides[line->sidenum[0]].toptexture;	
-	switch (direction)
+	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
+	switch (Direction)
 	{
+	case 1:
+		//	Open door.
+		Sector->ceiling.dist = TopDist;
+		P_ChangeSector(Sector, false);
+		CurrentFrame += AnimSpeed * deltaTime;
+		if (CurrentFrame >= itof(NumFrames))
+		{
+			CurrentFrame = itof(NumFrames) - 0.001;
+			Direction = 0;	// wait at top
+			TopTime = TopWait;
+			for (i = 0; i < Sector->linecount; i++)
+			{
+				if (Sector->lines[i]->backsector)
+				{
+					Sector->lines[i]->flags &= ~ML_BLOCKING;
+				}
+			}
+		}
+		NewMidTexture = texTop + ftoi(CurrentFrame);
+		SetLineTexture(Line->sidenum[0], 1, NewMidTexture);
+		SetLineTexture(Line->sidenum[1], 1, NewMidTexture);
+		break;
+
 	case 0:
-		// WAITING
-		NewMidTexture = 0;
-		switch (ftoi(toptime * 7.0))
+		//	Waiting
+		TopTime -= deltaTime;
+		if (TopTime <= 0.0)
 		{
-		case 32:
-			NewMidTexture = texTop;
-			NewMidTexture = texTop;
-			break;
-		case 31:
-			NewMidTexture = texTop + 1;
-			NewMidTexture = texTop + 1;
-			break;
-		case 30:
-			NewMidTexture = texTop + 2;
-			NewMidTexture = texTop + 2;
-			break;
-		case 29:
-			NewMidTexture = texTop + 3;
-			NewMidTexture = texTop + 3;
-			break;
-		case 28:
-			NewMidTexture = texTop + 4;
-			NewMidTexture = texTop + 4;
-			break;
-		case 27:
-			NewMidTexture = texTop + 5;
-			NewMidTexture = texTop + 5;
-			break;
-		case 26:
-			NewMidTexture = texTop + 6;
-			NewMidTexture = texTop + 6;
-			break;
-		case 25:
-			NewMidTexture = texTop + 7;
-			NewMidTexture = texTop + 7;
-			break;
-		case 8:
-			NewMidTexture = texTop + 6;
-			NewMidTexture = texTop + 6;
-			SectorStartSoundName(Sector, closesound, CHAN_VOICE);
-			break;
-		case 7:
-			NewMidTexture = texTop + 5;
-			NewMidTexture = texTop + 5;
-			break;
-		case 6:
-			NewMidTexture = texTop + 4;
-			NewMidTexture = texTop + 4;
-			break;
-		case 5:
-			NewMidTexture = texTop + 3;
-			NewMidTexture = texTop + 3;
-			break;
-		case 4:
-			NewMidTexture = texTop + 2;
-			NewMidTexture = texTop + 2;
-			break;
-		case 3:
-			NewMidTexture = texTop + 1;
-			NewMidTexture = texTop + 1;
-			break;
-		case 2:
-			NewMidTexture = texTop;
-			NewMidTexture = texTop;
-			break;
-		}
-		if (NewMidTexture)
-		{
-			SetLineTexture(line->sidenum[0], 1, NewMidTexture);
-			SetLineTexture(line->sidenum[1], 1, NewMidTexture);
-		}
-		toptime -= deltaTime;
-		if (toptime <= 0.0)
-		{
-			toptime = 0.0;
-			direction = -1;	// time to go back down
+			TopTime = 0.0;
+			Direction = -1;	// time to go back down
+			SectorStartSoundName(Sector, CloseSound, CHAN_VOICE);
 		}
 		break;
 
 	case -1:
-		// DOWN
-		res = T_MovePlane(Sector, speed * deltaTime,
-			Sector->floorheight, false, 1, direction);
-		if (res == RES_PASTDEST)
+		//	Close door.
+		CurrentFrame -= AnimSpeed * deltaTime;
+		if (CurrentFrame <= 0.0)
+		{
+			CurrentFrame = 0.0;
+		}
+		NewMidTexture = texTop + ftoi(CurrentFrame);
+		SetLineTexture(Line->sidenum[0], 1, NewMidTexture);
+		SetLineTexture(Line->sidenum[1], 1, NewMidTexture);
+
+		//	Try to close door. If it crushes it means that there's something
+		// inside the door so go back.
+		Sector->ceiling.dist = BotDist;
+		if (P_ChangeSector(Sector, false))
+		{
+			Direction = 1;
+		}
+		else if (CurrentFrame == 0.0)
 		{
 			//	Clear mid texture in a case door will be open from other side.
-			SetLineTexture(line->sidenum[0], 1, 0);
-			SetLineTexture(line->sidenum[1], 1, 0);
+			SetLineTexture(Line->sidenum[0], 1, 0);
+			SetLineTexture(Line->sidenum[1], 1, 0);
 			for (i = 0; i < Sector->linecount; i++)
 			{
 				if (Sector->lines[i]->backsector)
@@ -200,28 +204,10 @@ void Tick(float deltaTime)
 			}
 			Finished();	// unlink and free
 		}
-		else if (res == RES_CRUSHED)
+		else
 		{
-			direction = 0;
-			toptime = 4.0;
-		}
-		break;
-
-	case 1:
-		// UP
-		res = T_MovePlane(Sector, speed * deltaTime, topheight,
-			false, 1, direction);
-		if (res == RES_PASTDEST)
-		{
-			direction = 0;	// wait at top
-			toptime = topwait;
-			for (i = 0; i < Sector->linecount; i++)
-			{
-				if (Sector->lines[i]->backsector)
-				{
-					Sector->lines[i]->flags &= ~ML_BLOCKING;
-				}
-			}
+			Sector->ceiling.dist = TopDist;
+			P_ChangeSector(Sector, false);
 		}
 		break;
 	}
@@ -234,6 +220,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.4  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

@@ -33,7 +33,11 @@ class Alarm1 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	P_NoiseAlert(Toucher, Toucher);
+	if (Toucher)
+	{
+		P_NoiseAlert(Toucher, Toucher);
+		cprint(Toucher.Player, "You Fool!  You've set off the alarm.\n");
+	}
 	return true;
 }
 
@@ -48,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2003/10/02 18:00:34  dj_jl
 //  Special items for conversations
 //

@@ -41,7 +41,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 1.0;
 	Speed = 17920.0;
-	bUnknown5 = true;
+//	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
 	ItemType = ITEM_BrokenPowerCoupling;
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2003/10/02 17:09:19  dj_jl
 //  Inventory items.
 //

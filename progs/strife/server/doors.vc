@@ -168,80 +168,51 @@ int EV_GenericDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 //
 //==========================================================================
 
-int EV_TextureChangeDoor(line_t* line, int* args)
+int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	line_t* Line)
 {
-	int secnum;
-	int rtn;
-	sector_t* sec;
-	TextureChangeDoor Door;
+	int					SecNum;
+	int					Rtn;
+	sector_t*			Sec;
+	TextureChangeDoor	Door;
 
-	secnum = -1;
-	rtn = 0;
+	Rtn = false;
 
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	if (!Arg1)
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->CeilingData)
-			continue;
+		if (!Line || !Line->backsector)
+		{
+			return false;
+		}
 
+		// if the sector has an active thinker, use it
+		if (Line->backsector->CeilingData)
+		{
+			return true;
+		}
+	
 		// new door thinker
-		rtn = 1;
 		Door = NewSpecialThinker(TextureChangeDoor);
-		sec->CeilingData = Door;
-
-		Door.Sector = sec;
-		Door.topwait = itof(args[2]) / 35.0;
-		Door.speed = 99999.0;//itof(args[1]) * 4.0
-		Door.line = line;
-
-		Door.direction = 1;
-		Door.topheight = FindLowestCeilingSurrounding(sec, NULL);
-		Door.StartAnim();
+		Door.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Line);
+		Rtn = true;
 	}
-	return rtn;
-}
-
-//==========================================================================
-//
-//  EV_ManualTextureChangeDoor : open a door manually, no tag value
-//
-//  int return value?
-//
-//==========================================================================
-
-int EV_ManualTextureChangeDoor(line_t * line, int* args, Actor thing)
-{
-	sector_t *sec;
-	TextureChangeDoor Door;
-	int side;
-	float speed;
-	int type;
-
-	side = 0;	// only front sides can be used
-
-	speed = itof(args[1]) * 4.0;
-
-	// if the sector has an active thinker, use it
-	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
-
-	if (sec->CeilingData)
+	else
 	{
-		return 1;
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &GLevel.Sectors[SecNum];
+			if (Sec->CeilingData)
+			{
+				continue;
+			}
+			//	New door thinker
+			Rtn = true;
+			Door = NewSpecialThinker(TextureChangeDoor);
+			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Line);
+		}
 	}
-
-	// new door thinker
-	Door = NewSpecialThinker(TextureChangeDoor);
-	sec->CeilingData = Door;
-	Door.Sector = sec;
-	Door.line = line;
-	Door.direction = 1;
-	Door.speed = 99999.0;//speed;
-	Door.topwait = itof(args[2]) / 35.0;
-
-	// find the top and bottom of the movement range
-	Door.topheight = FindLowestCeilingSurrounding(sec, NULL);
-	Door.StartAnim();
-	return 1;
+	return Rtn;
 }
 
 //==========================================================================
@@ -282,15 +253,65 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //
 //  EV_LightTurnOnPartway
 //
+//	killough 10/98
+//
+//	Turn sectors tagged to line lights on to specified or max neighbor level
+//
+//	Passed the tag of sector(s) to light and a light level fraction between
+// 0 and 1. Sets the light to min on 0, max on 1, and interpolates
+// in-between. Used for doors with gradual lighting effects.
+//
 //==========================================================================
 
-void EV_LightTurnOnPartway(int LightTag, float Delta)
+void EV_LightTurnOnPartway(int Tag, float Frac)
 {
+	sector_t*	temp;
+	sector_t*	sector;
+	int			i;
+	int			j;
+	int			bright;
+	int			min;
+
+	if (Frac < 0.0)
+		Frac = 0.0;
+	else if (Frac > 1.0)
+		Frac = 1.0;
+
+	//	Search all sectors for ones with same tag as activating line
+	i = -1;
+	for (i = FindSectorFromTag(Tag, i); i >= 0;
+		i = FindSectorFromTag(Tag, i))
+	{
+		sector = &GLevel.Sectors[i];
+		bright = 0;
+		min = sector->params.lightlevel;
+
+		for (j = 0; j < sector->linecount; j++)
+		{
+			temp = getNextSector(sector->lines[j], sector);
+			if (temp)
+			{
+				if (temp->params.lightlevel > bright)
+				{
+					bright = temp->params.lightlevel;
+				}
+				if (temp->params.lightlevel < min)
+				{
+					min = temp->params.lightlevel;
+				}
+			}
+		}
+		sector->params.lightlevel = ftoi(Frac * itof(bright) +
+			(1.0 - Frac) * itof(min));
+	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.19  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

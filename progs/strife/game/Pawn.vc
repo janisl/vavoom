@@ -532,7 +532,7 @@ void RandomChaseDir()
 
 bool CheckRobotRange()
 {
-	return Enemy && !(bUnknown1 && Enemy.bUnknown1) &&
+	return Enemy && !(bFriendly && Enemy.bFriendly) &&
 		(MobjDist2(Enemy, self) < ROBOTRANGE - 20.0 + Enemy.Radius) &&
     	CanSee(Enemy);
 }
@@ -550,9 +550,9 @@ void A_Stand()
 	Threshold = 0;	// any shot will wake up
 	targ = Actor(Sector->SoundTarget);
 
-	if (targ && targ.bShootable)
+	if (!bNeutral && targ && targ.bShootable)
 	{
-		if (bUnknown1 != targ.bUnknown1 ||
+		if (bFriendly != targ.bFriendly ||
 			!strcmp(ARR2STR(level->mapname), "MAP03") ||
 			!strcmp(ARR2STR(level->mapname), "MAP34"))
 		{
@@ -566,10 +566,10 @@ void A_Stand()
 		}
 		else
 		{
-			if (LookForPlayers(bUnknown5))
+			if (LookForPlayers(bLookAllAround))
 			{
 				SetState(SeeState);
-				bUnknown4 = true;
+				bInCombat = true;
 				return;
 			}
 		}
@@ -832,7 +832,7 @@ void A_CheckRefire()
 
 void A_Dying()
 {
-	bUnknown4 = true;
+	bInCombat = true;
 	if ((P_Random() % 5) == 0)
 	{
 		PlaySound(PainSound, CHAN_VOICE);
@@ -1165,7 +1165,7 @@ void A_Specter2Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Enemy, SigilFX1);
-	A.bUnknown3 = false;
+	A.bSpectral = false;
 }
 
 //==========================================================================
@@ -1187,7 +1187,7 @@ void A_Specter3Attack()
 	for (i = 0; i < 20; i++)
 	{
 		spread = SpawnMissile(Enemy, SpecterFX2);
-		spread.bUnknown3 = false;
+		spread.bSpectral = false;
 		spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 		spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
 		spread.Velocity.y = spread.Speed * sin(spread.Angles.yaw);
@@ -1195,7 +1195,7 @@ void A_Specter3Attack()
 
 	spread = Spawn(SigilFX4, Origin + vector(0.0, 0.0, -Height));
 	spread.bNoGravity = false;
-	spread.bUnknown3 = false;
+	spread.bSpectral = false;
 	spread.Instigator = self;
 	spread.Velocity.x = 0.001;
 	spread.Velocity.y = 0.001;
@@ -1218,7 +1218,7 @@ void A_Specter4Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Enemy, SpecterFX5);
-	A.bUnknown3 = false;
+	A.bSpectral = false;
 }
 
 //==========================================================================
@@ -1237,7 +1237,7 @@ void A_Specter5Attack()
 	A_FaceTarget();
 
 	A = SpawnMissile(Enemy, SpecterFX3);
-	A.bUnknown3 = false;
+	A.bSpectral = false;
 }
 
 //==========================================================================
@@ -1313,11 +1313,15 @@ defaultproperties
 	bCountKill = true;
 	bCkeckNoMonsters = true;
 	bActivateMCross = true;
+	bActivatePushWall = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.10  2005/03/16 15:04:42  dj_jl
 //  More work on line specials.
 //

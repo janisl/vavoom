@@ -307,13 +307,7 @@ void QuitResponse(int ch)
 {
 	if (ch != K_y)
 		return;
-
-	if (shareware)
-		LocalSoundTillDone(TeaserQuitSounds[P_Random() % 5]);
-	else
-		LocalSoundTillDone(QuitSounds[P_Random() % 8]);
-
-	CmdBuf_AddText("Quit\n");
+	SpawnMenu(MenuScreenQuit);
 }
 
 //==========================================================================
@@ -331,6 +325,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.30  2004/02/16 07:10:36  dj_jl
 //  Multiple hotkey fix
 //

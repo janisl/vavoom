@@ -65,7 +65,7 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 4.0;
 	PainChance = 0.78125;
-	bUnknown6 = true;
+	bNeutral = true;
 	IdleState = S_PEASANT_STAND;
 	SeeState = S_PEASANT_WALK1;
 	MeleeState = S_PEASANT_ATK1;
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.2  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

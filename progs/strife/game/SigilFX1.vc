@@ -52,7 +52,7 @@ defaultproperties
 	Height = 16.0;
 	Speed = 1050.0;
 	MissileDamage = 70;
-	bUnknown3 = true;
+	bSpectral = true;
 	IdleState = S_SIGIL_FX1_1;
 	DeathState = S_ZAP1_1;
 	SightSound = 'SigilFire';
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.3  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

@@ -343,6 +343,9 @@ void P_RecursiveSound(sector_t * sec, int soundblocks)
 
 void P_NoiseAlert(Actor target, Actor emmiter)
 {
+	if (!emmiter)
+		return;
+
 	soundtarget = target;
 	(*validcount)++;
 	P_RecursiveSound(emmiter.Sector, 0);
@@ -422,6 +425,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.56  2005/03/28 07:45:29  dj_jl
+//  Some Boom line specials, fixed multiple bugs.
+//
 //  Revision 1.55  2004/12/27 12:23:15  dj_jl
 //  Multiple small changes for version 1.16
 //
