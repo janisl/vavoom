@@ -506,15 +506,14 @@ static void ParseStatement(void)
 
 				WriteBreaks();
 			}
-			else if (tk_Keyword == KW_THIS || tk_Keyword == KW_SELF)
-			{
-				t = ParseExpression();
-				AddDrop(t);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
 			else
 			{
-				ERR_Exit(ERR_INVALID_STATEMENT, true, "Symbol: %s", tk_String);
+				t = ParseExpression(true);
+				if (t)
+				{
+					AddDrop(t);
+				}
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			}
 			break;
 		case TK_PUNCT:
@@ -528,10 +527,97 @@ static void ParseStatement(void)
 			if (t)
 			{
 				AddDrop(t);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			}
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			break;
 	}
+}
+
+//==========================================================================
+//
+//	ParseLocalVar
+//
+//==========================================================================
+
+void ParseLocalVar(TType *type)
+{
+	TType	*t;
+	int		size;
+
+	if (!type)
+	{
+		ERR_Exit(ERR_INVALID_IDENTIFIER, true, "Bad type");
+	}
+	do
+	{
+		t = type;
+		while (TK_Check(PU_ASTERISK))
+		{
+			t = MakePointerType(t);
+		}
+#ifdef REF_CPP
+		while (TK_Check(PU_AND))
+		{
+			t = MakeReferenceType(t);
+		}
+#endif
+		if (t == &type_void)
+		{
+			ParseError(ERR_BAD_VAR_TYPE);
+		}
+		if (t->type == ev_class)
+		{
+			t = MakeReferenceType(t);
+		}
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ParseError(ERR_INVALID_IDENTIFIER, "variable name expected");
+			continue;
+		}
+		if (numlocaldefs == MAX_LOCAL_DEFS)
+		{
+			ParseError(ERR_LOCALS_OVERFLOW);
+			continue;
+		}
+		localdefs[numlocaldefs].Name = tk_Name;
+
+		if (CheckForLocalVar(tk_Name))
+		{
+			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
+		}
+		TK_NextToken();
+
+		size = 1;
+		if (TK_Check(PU_LINDEX))
+		{
+			size = EvalConstExpression(ev_int);
+			t = MakeArrayType(t, size);
+			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+		}
+		//  inicializÆcija
+		else if (TK_Check(PU_ASSIGN))
+		{
+			AddStatement(OPC_LOCALADDRESS, localsofs);
+			TType *t1 = ParseExpression();
+			TypeCheck3(t, t1);
+			if (t1->type == ev_vector)
+				AddStatement(OPC_VASSIGN);
+			else
+				AddStatement(OPC_ASSIGN);
+			AddDrop(t1);
+		}
+		localdefs[numlocaldefs].type = t;
+		localdefs[numlocaldefs].ofs = localsofs;
+		//  MainØgo skaitu palielina pñc izteiksmes, lai ýo mainØgo
+		// nebÝtu iespñjams izmantot izteiksmñ
+		numlocaldefs++;
+		localsofs += TypeSize(t) / 4;
+		if (localsofs > 1024)
+		{
+			ParseWarning("Local vars > 1k");
+		}
+	} while (TK_Check(PU_COMMA));
+//	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 }
 
 //==========================================================================
@@ -542,91 +628,19 @@ static void ParseStatement(void)
 
 static void ParseCompoundStatement(void)
 {
-	TType	*type;
-	TType	*t;
-	int		size;
 	int		num_local_defs_on_start;
 	int		num_locals_ofs_on_start;
 
 	num_local_defs_on_start = numlocaldefs;
 	num_locals_ofs_on_start = localsofs;
-	do
+	/*do
 	{
-		type = CheckForType();
+		TType *type = CheckForType();
 		if (type)
 		{
-			do
-			{
-				t = type;
-				while (TK_Check(PU_ASTERISK))
-				{
-					t = MakePointerType(t);
-				}
-#ifdef REF_CPP
-				while (TK_Check(PU_AND))
-				{
-					t = MakeReferenceType(t);
-				}
-#endif
-				if (t == &type_void)
-				{
-					ParseError(ERR_BAD_VAR_TYPE);
-				}
-				if (t->type == ev_class)
-				{
-					t = MakeReferenceType(t);
-				}
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ParseError(ERR_INVALID_IDENTIFIER, "variable name expected");
-					continue;
-				}
-				if (numlocaldefs == MAX_LOCAL_DEFS)
-				{
-					ParseError(ERR_LOCALS_OVERFLOW);
-					continue;
-				}
-				localdefs[numlocaldefs].Name = tk_Name;
-
-				if (CheckForLocalVar(tk_Name))
-				{
-					ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
-				}
-				TK_NextToken();
-
-				size = 1;
-				if (TK_Check(PU_LINDEX))
-				{
-					size = EvalConstExpression(ev_int);
-					t = MakeArrayType(t, size);
-					TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				}
-				//  inicializÆcija
-				else if (TK_Check(PU_ASSIGN))
-				{
-					AddStatement(OPC_LOCALADDRESS, localsofs);
-					TType *t1 = ParseExpression();
-					TypeCheck3(t, t1);
-					if (t1->type == ev_vector)
-						AddStatement(OPC_VASSIGN);
-					else
-						AddStatement(OPC_ASSIGN);
-					AddDrop(t1);
-				}
-				localdefs[numlocaldefs].type = t;
-				localdefs[numlocaldefs].ofs = localsofs;
-				//  MainØgo skaitu palielina pñc izteiksmes, lai ýo mainØgo
-				// nebÝtu iespñjams izmantot izteiksmñ
-				numlocaldefs++;
-				localsofs += TypeSize(t) / 4;
-				if (localsofs > 1024)
-				{
-					ParseWarning("Local vars > 1k");
-				}
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			ParseLocalVar(type);
 		}
-	} while (type);
+	} while (type);*/
 
 	while (!TK_Check(PU_RBRACE))
 	{
@@ -1211,6 +1225,51 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 //==========================================================================
 //
+//	ParseStateCode
+//
+//==========================================================================
+
+int ParseStateCode(TType *class_type)
+{
+	numlocaldefs = 1;
+	localsofs = 1;
+
+	TType functype;
+	memset(&functype, 0, sizeof(TType));
+	functype.type = ev_function;
+	functype.size = 4;
+	functype.aux_type = &type_void;
+	functype.params_size = 1;
+	maxlocalsofs = 1;
+
+	int num = numfunctions;
+	numfunctions++;
+	functions[num].Name = NAME_None;
+	functions[num].OuterClass = class_type;
+	functions[num].type = FindType(&functype);
+	functions[num].first_statement = CodeBufferSize;
+
+	ThisType = MakePointerType(class_type);
+	SelfType = MakeReferenceType(class_type);
+	BreakLevel = 0;
+	ContinueLevel = 0;
+	FuncRetType = &type_void;
+
+	if (TK_Check(PU_LBRACE))
+	{
+	   	ParseCompoundStatement();
+		AddStatement(OPC_RETURN);
+	}
+	else
+	{
+		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	}
+	functions[num].num_locals = maxlocalsofs;
+	return num;
+}
+
+//==========================================================================
+//
 //	ParseDefaultProperties
 //
 //==========================================================================
@@ -1465,9 +1524,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/12 18:06:34  dj_jl
+//	New style of state functions, some other changes
+//
 //	Revision 1.18  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.17  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

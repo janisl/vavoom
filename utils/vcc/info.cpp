@@ -203,7 +203,7 @@ void ParseStates(TType *class_type)
 		cs.Name = tk_Name;
 		AddConstant(tk_Name, num_states);
 		TK_NextToken();
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Nummurs
 		s.statenum = num_states;
 		//	Spraita vÆrds
@@ -271,6 +271,7 @@ void ParseStates(TType *class_type)
 		//  Taktis
 		s.time = ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
+#if 0
 		//	Funkcija
 		if (TK_Check(KW_NULL))
 		{
@@ -286,6 +287,7 @@ void ParseStates(TType *class_type)
 			s.function = field->func_num;
 		}
 		TK_Expect(PU_COMMA, ERR_NONE);
+#endif
 		//  NÆkoýais stÆvoklis
 		if (tk_Token != TK_IDENTIFIER)
 		{
@@ -306,7 +308,9 @@ void ParseStates(TType *class_type)
 			s.misc1 = 0.0;
 			s.misc2 = 0.0;
 		}
-		TK_Expect(PU_RBRACE, ERR_NONE);
+		TK_Expect(PU_RPAREN, ERR_NONE);
+		//	Code
+		s.function = ParseStateCode(class_type);
 
 		num_states++;
 	}
@@ -430,9 +434,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/12 18:06:34  dj_jl
+//	New style of state functions, some other changes
+//
 //	Revision 1.13  2002/01/11 18:21:49  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.12  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

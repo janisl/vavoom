@@ -563,6 +563,8 @@ static TTree* ParseExpressionPriority14(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static bool			CheckForLocal;
+
 static TOperator	*operators[TOperator::NUM_OPERATORS];
 
 static TOperator	UnaryPlus_int(TOperator::ID_UNARYPLUS, &type_int, &type_int, &type_void, OPC_DONE);
@@ -889,7 +891,10 @@ static TTree *ParseExpressionPriority0(void)
 	int			num;
 	field_t		*field;
 	FName		Name;
+	bool		bLocals;
 
+	bLocals = CheckForLocal;
+	CheckForLocal = false;
    	switch (tk_Token)
 	{
 	 case TK_INTEGER:
@@ -925,6 +930,7 @@ static TTree *ParseExpressionPriority0(void)
 				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
 				op = ParseExpressionPriority2();
 				op->type = type;
+				ParseWarning("C style type cast");
 				return op;
 			}
 
@@ -1000,6 +1006,15 @@ static TTree *ParseExpressionPriority0(void)
 		{
 		   	return new TOpConst(0, &type_void_ptr);
 		}
+		if (bLocals)
+		{
+			type = CheckForType();
+			if (type)
+			{
+				ParseLocalVar(type);
+				return NULL;
+			}
+		}
 		break;
 
 	 case TK_IDENTIFIER:
@@ -1072,6 +1087,16 @@ static TTree *ParseExpressionPriority0(void)
 
 			ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
 			break;
+		}
+		if (bLocals && (tk_Token == TK_IDENTIFIER ||
+			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
+		{
+			type = CheckForType(Name);
+			if (type)
+			{
+				ParseLocalVar(type);
+				return NULL;
+			}
 		}
 
 		num = CheckForLocalVar(Name);
@@ -1759,9 +1784,14 @@ static TTree* ParseExpressionPriority14(void)
 //
 //==========================================================================
 
-TType *ParseExpression(bool)
+TType *ParseExpression(bool bLocals)
 {
+	CheckForLocal = bLocals;
 	TTree *op = ParseExpressionPriority14();
+	if (!op)
+	{
+		return NULL;
+	}
 	op->Code();
 	TType *t = op->type;
 	delete op;
@@ -1771,9 +1801,12 @@ TType *ParseExpression(bool)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/12 18:06:34  dj_jl
+//	New style of state functions, some other changes
+//
 //	Revision 1.16  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.15  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

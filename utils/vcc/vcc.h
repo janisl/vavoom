@@ -362,8 +362,10 @@ int EvalConstExpression(int type);
 float ConstFloatExpression(void);
 
 void PA_Parse(void);
+void ParseLocalVar(TType *type);
 void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
 	TType *class_type);
+int ParseStateCode(TType *class_type);
 void ParseDefaultProperties(field_t *method, TType *class_type);
 
 int CheckForFunction(TType *InClass, FName Name);
@@ -529,9 +531,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/12 18:06:34  dj_jl
+//	New style of state functions, some other changes
+//
 //	Revision 1.17  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.16  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

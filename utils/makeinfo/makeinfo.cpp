@@ -212,7 +212,7 @@ void WriteStates(void)
 			in_weapon = true;
 		}
 
-		fprintf(f, "\t%s {\'%s\', %d",
+		fprintf(f, "\t%s(\'%s\', %d",
 			statename[i], sprnames[states[i].sprite],
 			states[i].frame & 0x7fff);
 		if (states[i].frame & 0x8000)
@@ -223,21 +223,20 @@ void WriteStates(void)
 		{
 			fprintf(f, ", \'%s\', %d", states[i].model_name, states[i].model_frame);
 		}
-#if 1
 		if (states[i].tics == -1)
 			fprintf(f, ", -1.0");
 		else
 			fprintf(f, ", %d.0 / 35.0", states[i].tics);
-#else
-			fprintf(f, ", %d", states[i].tics);
-#endif
-		fprintf(f, ", %s, %s", states[i].action_num ?
-			StateActionInfo[states[i].action_num].fname : "NULL",
-			statename[states[i].nextstate]);
+//		fprintf(f, ", %s", states[i].action_num ?
+//			StateActionInfo[states[i].action_num].fname : "NULL");
+		fprintf(f, ", %s", statename[states[i].nextstate]);
 		if (states[i].misc1 || states[i].misc2)
         {
 			fprintf(f, ", %.1f, %.1f", (float)states[i].misc1, (float)states[i].misc2);
 		}
+		fprintf(f, ") { ");
+		if (states[i].action_num)
+			fprintf(f, "%s(); ", StateActionInfo[states[i].action_num].fname);
 		fprintf(f, "}\n");
     }
 	fprintf(f, "}\n\n");
@@ -422,15 +421,15 @@ void WriteMobjInfo(void)
 
 		//	Sounds
         if (mobjinfo[i].seesound)
-			fprintf(f, "\t\tsound_sight = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].seesound].tagName);
+			fprintf(f, "\t\tSightSound = \'%s\';\n", sfx[mobjinfo[i].seesound].tagName);
 		if (mobjinfo[i].activesound)
-			fprintf(f, "\t\tsound_active = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].activesound].tagName);
+			fprintf(f, "\t\tActiveSound = \'%s\';\n", sfx[mobjinfo[i].activesound].tagName);
 		if (mobjinfo[i].attacksound)
-			fprintf(f, "\t\tsound_attack = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].attacksound].tagName);
+			fprintf(f, "\t\tAttackSound = \'%s\';\n", sfx[mobjinfo[i].attacksound].tagName);
 		if (mobjinfo[i].painsound)
-			fprintf(f, "\t\tsound_pain = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].painsound].tagName);
+			fprintf(f, "\t\tPainSound = \'%s\';\n", sfx[mobjinfo[i].painsound].tagName);
 		if (mobjinfo[i].deathsound)
-			fprintf(f, "\t\tsound_death = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].deathsound].tagName);
+			fprintf(f, "\t\tDeathSound = \'%s\';\n", sfx[mobjinfo[i].deathsound].tagName);
 
 		//  Effects
 		if (mobjinfo[i].effects)
@@ -742,9 +741,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/12 18:06:34  dj_jl
+//	New style of state functions, some other changes
+//
 //	Revision 1.13  2002/01/11 18:21:49  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.12  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	
