@@ -374,6 +374,10 @@ static void CL_ParseStartSound(void)
 
 	net_msg	>> sound_id
 			>> origin_id;
+
+	channel = origin_id >> 13;
+	origin_id &= 0x1fff;
+
 	if (origin_id)
 	{
 		x = net_msg.ReadShort();
@@ -381,9 +385,6 @@ static void CL_ParseStartSound(void)
 		z = net_msg.ReadShort();
 	}
 	net_msg	>> volume;
-
-	channel = origin_id >> 13;
-	origin_id &= 0x1fff;
 
 	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, channel, volume);
 }
@@ -496,7 +497,7 @@ static void CL_ParseTime()
 //
 //==========================================================================
 
-static void	CL_ReadFromServerInfo(void)
+static void CL_ReadFromServerInfo(void)
 {
 	Cvar_SetCheating(!!atoi(Info_ValueForKey(cl.serverinfo, "sv_cheats")));
 }
@@ -560,7 +561,7 @@ static void CL_ParseServerInfo(void)
 //
 //==========================================================================
 
-static void	CL_ParseIntermission(void)
+static void CL_ParseIntermission(void)
 {
 	int			i;
 	int			j;
@@ -600,7 +601,7 @@ static void	CL_ParseIntermission(void)
 //
 //==========================================================================
 
-static void	CL_ParseSpriteList(void)
+static void CL_ParseSpriteList(void)
 {
 	int count = net_msg.ReadShort();
 	for (int i = 0; i < count; i++)
@@ -615,7 +616,7 @@ static void	CL_ParseSpriteList(void)
 //
 //==========================================================================
 
-static void	CL_ParseModelList(void)
+static void CL_ParseModelList(void)
 {
 	int count = net_msg.ReadShort();
 	for (int i = 1; i < count; i++)
@@ -1019,7 +1020,10 @@ void CL_ParseServerMessage(void)
 			}
 			cond <<	net_msg.CurSize << " [ ";
 			for (i = 0; i < net_msg.CurSize; i++)
+			{
+				if (!(i % 10)) cond << endl;
 				cond << (int)net_msg.Data[i] << ' ';
+			}
 			cond << "] " << net_msg.readcount << endl;
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
@@ -1030,9 +1034,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/11/09 14:28:23  dj_jl
+//	Fixed parsing of sound starting
+//
 //	Revision 1.13  2001/10/27 07:51:27  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.12  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
