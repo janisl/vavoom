@@ -259,9 +259,6 @@ void IN_ProcessEvents(void)
 			if (ev->type == ev_keydown) altdown |= 2;;
 	    }
 
-		if (MB_Responder(ev))
-			continue;
-
 		if (C_Responder(ev))
 			continue;
 
@@ -609,9 +606,12 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/09 17:22:44  dj_jl
+//	Removed message box responder
+//
 //	Revision 1.6  2001/10/04 17:20:25  dj_jl
 //	Saving config using streams
-//
+//	
 //	Revision 1.5  2001/08/31 17:24:52  dj_jl
 //	Added some new keys
 //	
