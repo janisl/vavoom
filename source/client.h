@@ -119,47 +119,48 @@ struct client_state_t
 
 	int				pclass;			// player class type
 
-    // Determine POV,
-    //  including viewpoint bobbing during movement.
-    // Focal origin above r.z
+	// Determine POV,
+	//  including viewpoint bobbing during movement.
+	// Focal origin above r.z
 	TVec			vieworg;
 	TAVec			viewangles;
 	int				centering;
 
-    // This is only used between levels,
-    // mo->health is used during levels.
-    int				health;
+	// This is only used between levels,
+	// mo->health is used during levels.
+	int				health;
 
 	int				items;
 
-    // Frags, kills of other players.
-    int				Frags;
+	// Frags, kills of other players.
+	int				Frags;
 
-    // So gun flashes light up areas.
-    int				extralight;
+	// So gun flashes light up areas.
+	int				extralight;
 
 	// For lite-amp and invulnarability powers
-    int				fixedcolormap;
+	int				fixedcolormap;
 
-    // Current PLAYPAL index
-    //  can be set to REDCOLORMAP for pain, etc.
-    int				palette;
+	// Current PLAYPAL index
+	//  can be set to REDCOLORMAP for pain, etc.
+	int				palette;
+	int				prev_palette;
 
 	dword			cshifts[NUM_CSHIFTS];		//	color shifts for damage,
 	dword			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
-    // Overlay view sprites (gun, etc).
+	// Overlay view sprites (gun, etc).
 	cl_pspdef_t		psprites[NUMPSPRITES];
 	float			pspriteSY;
 
-    // True if secret level has been done.
-    dword			bDidSecret:1;
+	// True if secret level has been done.
+	dword			bDidSecret:1;
 
 	dword			bPaused:1;
 
 	dword 			worldTimer;				// total time the player's been playing
 
-    // Overlay view sprites (gun, etc).
+	// Overlay view sprites (gun, etc).
 	int				translucency;
 
 	int				maxclients;
@@ -190,9 +191,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/04/04 07:45:45  dj_jl
+//	Palette flash state fix.
+//
 //	Revision 1.10  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.9  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
 //	

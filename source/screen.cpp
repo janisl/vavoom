@@ -198,8 +198,6 @@ static double	fps_start = 0.0;
 static int		fps_frames = 0;
 static int		show_fps = 0;
 
-static int		scr_cur_pal;
-
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -507,7 +505,7 @@ static void CheckResolutionChange(void)
 
 	if (must_set_pal)
 	{
-		Drawer->SetPalette(scr_cur_pal);
+		Drawer->SetPalette(cl.prev_palette);
 	}
 
 	if (res_changed)
@@ -597,10 +595,10 @@ void SCR_Update(void)
 
 	Drawer->StartUpdate();
 
-	if (scr_cur_pal != cl.palette)
+	if (cl.prev_palette != cl.palette)
 	{
 		Drawer->SetPalette(cl.palette);
-		scr_cur_pal = cl.palette;
+		cl.prev_palette = cl.palette;
 	}
 
 	// do buffered drawing
@@ -728,9 +726,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/04/04 07:45:45  dj_jl
+//	Palette flash state fix.
+//
 //	Revision 1.23  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.22  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
 //	
