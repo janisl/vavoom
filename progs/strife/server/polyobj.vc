@@ -62,17 +62,17 @@ class PolyobjRotator:PolyobjThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	float move;
 	float absMove;
 	polyobj_t *poly;
 
-	move = speed * frametime;
+	move = speed * deltaTime;
 	absMove = fabs(move);
 	if (dist >= 0.0 && dist < absMove)
 	{
@@ -207,11 +207,11 @@ class PolyobjMover:PolyobjThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	float move;
 	float absMove;
@@ -219,7 +219,7 @@ void Think(void)
 	float yMove;
 	polyobj_t *poly;
 
-	move = speed * frametime;
+	move = speed * deltaTime;
 	absMove = fabs(move);
 	if (dist < absMove)
 	{
@@ -341,18 +341,18 @@ class PolyobjDoor:PolyobjThinker
 
 //==========================================================================
 //
-//  Think
+//  Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	polyobj_t *poly;
 	float move;
 
 	if (time)
 	{
-		time -= frametime;
+		time -= deltaTime;
 		if (time <= 0.0)
 		{
 			time = 0.0;
@@ -364,7 +364,7 @@ void Think(void)
 	switch (type)
 	{
 	case PODOOR_SLIDE:
-		move = speed * frametime;
+		move = speed * deltaTime;
 		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
 		{
 			dist -= fabs(move);
@@ -412,7 +412,7 @@ void Think(void)
 		break;
 
 	case PODOOR_SWING:
-		move = speed * frametime;
+		move = speed * deltaTime;
 		if (PO_RotatePolyobj(polyobj, move))
 		{
 			dist -= fabs(move);
@@ -637,6 +637,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.12  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

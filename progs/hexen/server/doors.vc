@@ -46,7 +46,7 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class VerticalDoor:SectorThinker
+class VerticalDoor:SectorMover
 {
 	int type;
 	float topheight;
@@ -57,18 +57,18 @@ class VerticalDoor:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
 	switch (direction)
 	{
 	case 0:	// WAITING
-		toptime -= frametime;
+		toptime -= deltaTime;
 		if (toptime <= 0.0)
 			switch (type)
 			{
@@ -82,7 +82,7 @@ void Think(void)
 			}
 		break;
 	case -1:	// DOWN
-		res = T_MovePlane(sector, speed * frametime,
+		res = T_MovePlane(sector, speed * deltaTime,
 			sector->floorheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
@@ -112,7 +112,7 @@ void Think(void)
 		}
 		break;
 	case 1:	// UP
-		res = T_MovePlane(sector, speed * frametime,
+		res = T_MovePlane(sector, speed * deltaTime,
 			topheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
@@ -257,6 +257,9 @@ boolean EV_VerticalDoor(line_t * line)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.9  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

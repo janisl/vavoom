@@ -35,45 +35,21 @@
 
 // CODE --------------------------------------------------------------------
 
-class FloorScroll:Thinker
+class FloorScroll:SectorThinker
 {
-	sector_t *sector;
 	float xspeed;
 	float yspeed;
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
-	sector->floor.xoffs += xspeed * frametime;
-	sector->floor.yoffs += yspeed * frametime;
-}
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
+	sector->floor.xoffs += xspeed * deltaTime;
+	sector->floor.yoffs += yspeed * deltaTime;
 }
 
 }
@@ -102,14 +78,14 @@ class WallScroll:Thinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
-	level->sides[index].textureoffset += xspeed * frametime;
-	level->sides[index].rowoffset += yspeed * frametime;
+	level->sides[index].textureoffset += xspeed * deltaTime;
+	level->sides[index].rowoffset += yspeed * deltaTime;
 }
 
 }
@@ -133,6 +109,9 @@ void SpawnWallScroller(line_t * line, int xdir, int ydir)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.6  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

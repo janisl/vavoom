@@ -383,17 +383,6 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 
 //==========================================================================
 //
-//  RunThink
-//
-//==========================================================================
-
-void RunThink(Thinker * th)
-{
-	th->Think();
-}
-
-//==========================================================================
-//
 //  ArchiveThinker
 //
 //==========================================================================
@@ -436,6 +425,20 @@ class SectorThinker:Thinker
 	void Unarchive(void)
 	{
 		sector = NumToSector(sector);
+	}
+}
+
+//==========================================================================
+//
+//	SectorMover
+//
+//==========================================================================
+
+class SectorMover:SectorThinker
+{
+	void Unarchive(void)
+	{
+		::Unarchive();
 
 		//  Set sector's specialdata
 		sector->SpecialData = self;
@@ -445,6 +448,9 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.24  2002/03/16 17:51:16  dj_jl
 //  Added function Remove to the Entity class.
 //

@@ -55,7 +55,7 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class Platform:SectorThinker
+class Platform:SectorMover
 {
 	int type;
 	float speed;
@@ -70,20 +70,20 @@ class Platform:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //  Move a plat up and down
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
 	switch (status)
 	{
 	case PLAT_UP:
-		res = T_MovePlane(sector, speed * frametime, high, crush, 0, 1);
+		res = T_MovePlane(sector, speed * deltaTime, high, crush, 0, 1);
 		if (!(level->tictime & 31))
 		{
 			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
@@ -114,7 +114,7 @@ void Think(void)
 		}
 		break;
 	case PLAT_DOWN:
-		res = T_MovePlane(sector, speed * frametime, low, false, 0, -1);
+		res = T_MovePlane(sector, speed * deltaTime, low, false, 0, -1);
 		if (res == RES_PASTDEST)
 		{
 			time = wait;
@@ -141,7 +141,7 @@ void Think(void)
 		}
 		break;
 	case PLAT_WAITING:
-		time -= frametime;
+		time -= deltaTime;
 		if (time <= 0.0)
 		{
 			time = 0.0;
@@ -324,6 +324,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.11  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

@@ -57,7 +57,7 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class CeilingMover:SectorThinker
+class CeilingMover:SectorMover
 {
 	int type;
 	float bottomheight;
@@ -72,11 +72,11 @@ class CeilingMover:SectorThinker
 
 //==========================================================================
 //
-//  Think
+//  Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
@@ -88,7 +88,7 @@ void Think(void)
 
 	case 1:
 		// UP
-		res = T_MovePlane(sector, speed * frametime, topheight,
+		res = T_MovePlane(sector, speed * deltaTime, topheight,
 			false, 1, direction);
 
 		//FIXME sound sequences
@@ -132,7 +132,7 @@ void Think(void)
 
 	case -1:
 		// DOWN
-		res = T_MovePlane(sector, speed * frametime, bottomheight,
+		res = T_MovePlane(sector, speed * deltaTime, bottomheight,
 			crush, 1, direction);
 
 		//FIXME use sequences
@@ -366,6 +366,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.11  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

@@ -46,9 +46,8 @@
 //
 //**************************************************************************
 
-class LightFlash:Thinker
+class LightFlash:SectorThinker
 {
-	sector_t *sector;
 	float time;
 	int maxlight;
 	int minlight;
@@ -57,16 +56,16 @@ class LightFlash:Thinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //  After the map has been loaded, scan each sector for specials
 // that spawn thinkers
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
-	time -= frametime;
+	time -= deltaTime;
 	if (time > 0.0)
 		return;
 
@@ -81,28 +80,6 @@ void Think(void)
 		time = itof((P_Random() & maxtime) + 1) / 35.0;
 	}
 
-}
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	sector = NumToSector(sector);
 }
 
 }
@@ -139,62 +116,39 @@ void P_SpawnLightFlash(sector_t * sector)
 //
 //**************************************************************************
 
-class GlowingLight:Thinker
+class GlowingLight:SectorThinker
 {
-	sector_t *sector;
 	int direction;	// 1 = up, 0 = waiting, -1 = down
 	int maxlight;
 	int minlight;
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	switch (direction)
 	{
 	case -1:	// DOWN
-		sector->params.lightlevel -= ftoi(GLOWSPEED * frametime);
+		sector->params.lightlevel -= ftoi(GLOWSPEED * deltaTime);
 		if (sector->params.lightlevel <= minlight)
 		{
-			sector->params.lightlevel += ftoi(GLOWSPEED * frametime);
+			sector->params.lightlevel += ftoi(GLOWSPEED * deltaTime);
 			direction = 1;
 		}
 		break;
 	case 1:	// UP
-		sector->params.lightlevel += ftoi(GLOWSPEED * frametime);
+		sector->params.lightlevel += ftoi(GLOWSPEED * deltaTime);
 		if (sector->params.lightlevel >= maxlight)
 		{
-			sector->params.lightlevel -= ftoi(GLOWSPEED * frametime);
+			sector->params.lightlevel -= ftoi(GLOWSPEED * deltaTime);
 			direction = -1;
 		}
 		break;
 	}
-}
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	sector = NumToSector(sector);
 }
 
 }
@@ -224,9 +178,8 @@ void P_SpawnGlowingLight(sector_t * sector)
 //
 //**************************************************************************
 
-class Strobe:Thinker
+class Strobe:SectorThinker
 {
-	sector_t *sector;
 	float time;
 	int maxlight;
 	int minlight;
@@ -235,13 +188,13 @@ class Strobe:Thinker
 
 //==========================================================================
 //
-//  Think
+//  Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
-	time -= frametime;
+	time -= deltaTime;
 	if (time >= 0.0)
 		return;
 
@@ -255,28 +208,6 @@ void Think(void)
 		sector->params.lightlevel = minlight;
 		time = darktime;
 	}
-}
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	sector = NumToSector(sector);
 }
 
 }
@@ -422,9 +353,8 @@ enum
 	LITE_STROBE
 };
 
-class LightEffect:Thinker
+class LightEffect:SectorThinker
 {
-	sector_t *sector;
 	int type;
 	int value1;
 	int value2;
@@ -436,15 +366,15 @@ class LightEffect:Thinker
 
 //============================================================================
 //
-//	Think
+//	Tick
 //
 //============================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	if (time)
 	{
-		time -= frametime;
+		time -= deltaTime;
 		if (time <= 0.0)
 		{
 			time = 0.0;
@@ -454,7 +384,7 @@ void Think(void)
 	switch (type)
 	{
 	case LITE_FADE:
-		sector->params.lightlevel += ftoi(delta * frametime);
+		sector->params.lightlevel += ftoi(delta * deltaTime);
 		if (direction == 1)
 		{
 			if (sector->params.lightlevel >= value1)
@@ -471,7 +401,7 @@ void Think(void)
 		break;
 
 	case LITE_GLOW:
-		sector->params.lightlevel += ftoi(delta * frametime);
+		sector->params.lightlevel += ftoi(delta * deltaTime);
 		if (direction == 1)
 		{
 			if (sector->params.lightlevel >= value1)
@@ -518,29 +448,6 @@ void Think(void)
 	default:
 		break;
 	}
-}
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  Unarchive
-//
-//==========================================================================
-
-void Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
 }
 
 }
@@ -671,17 +578,6 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 #define LIGHT_SEQUENCE          3
 #define LIGHT_SEQUENCE_ALT      4
 
-class TPhase:Thinker
-{
-	sector_t *sector;
-	float index;
-	int base;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
 int PhaseTable[64] = {
 	128, 112, 96, 80, 64, 48, 32, 32,
 	16, 16, 16, 0, 0, 0, 0, 0,
@@ -693,39 +589,23 @@ int PhaseTable[64] = {
 	32, 32, 48, 64, 80, 96, 112, 128
 };
 
+class TPhase:SectorThinker
+{
+	float index;
+	int base;
+
 //============================================================================
 //
-//	TPhase::Think
+//	Tick
 //
 //============================================================================
 
-void TPhase::Think(void)
+void Tick(float deltaTime)
 {
-	index += frametime;
+	index += deltaTime;
 	sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
 }
 
-//==========================================================================
-//
-//  TPhase::Archive
-//
-//==========================================================================
-
-void TPhase::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  TPhase::Unarchive
-//
-//==========================================================================
-
-void TPhase::Unarchive(void)
-{
-	//  Restore sector pointer
-	sector = NumToSector(sector);
 }
 
 //==========================================================================
@@ -892,6 +772,9 @@ class misc_static_rgb_light:Actor
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.12  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

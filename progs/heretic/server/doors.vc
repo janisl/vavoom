@@ -54,7 +54,7 @@ string keymsg[] = {
 
 // CODE --------------------------------------------------------------------
 
-class VerticalDoor:SectorThinker
+class VerticalDoor:SectorMover
 {
 	int type;
 	float topheight;
@@ -66,18 +66,18 @@ class VerticalDoor:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
 	switch (direction)
 	{
 	case 0:	// WAITING
-		toptime -= frametime;
+		toptime -= deltaTime;
 		if (toptime <= 0.0)
 		{
 			toptime = 0.0;
@@ -97,7 +97,7 @@ void Think(void)
 		}
 		break;
 	case 2:	// INITIAL WAIT
-		toptime -= frametime;
+		toptime -= deltaTime;
 		if (toptime <= 0.0)
 		{
 			toptime = 0.0;
@@ -114,7 +114,7 @@ void Think(void)
 		}
 		break;
 	case -1:	// DOWN
-		res = T_MovePlane(sector, speed * frametime,
+		res = T_MovePlane(sector, speed * deltaTime,
 			sector->floorheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
@@ -148,7 +148,7 @@ void Think(void)
 		}
 		break;
 	case 1:	// UP
-		res = T_MovePlane(sector, speed * frametime,
+		res = T_MovePlane(sector, speed * deltaTime,
 			topheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
@@ -380,6 +380,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.13  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

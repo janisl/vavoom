@@ -371,7 +371,7 @@ class Thinker:Object
 	native
 	abstract
 {
-	void Think(void)
+	void Tick(float deltaTime)
 	{
 	}
 
@@ -749,7 +749,7 @@ class ACS:Thinker
 	int vars[MAX_ACS_SCRIPT_VARS];
 	int *ip;
 
-	native void Think(void);
+	native void Tick(float deltaTime);
 	native void Archive(void);
 	native void Unarchive(void);
 
@@ -978,6 +978,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.36  2002/03/28 18:18:14  dj_jl
 //  Renamed mo in player_t to MO.
 //

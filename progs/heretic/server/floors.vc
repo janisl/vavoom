@@ -71,7 +71,7 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class FloorMover:SectorThinker
+class FloorMover:SectorMover
 {
 	int type;
 	float speed;
@@ -84,17 +84,17 @@ class FloorMover:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
-	res = T_MovePlane(sector, speed * frametime,
+	res = T_MovePlane(sector, speed * deltaTime,
 		floordestheight, crush, 0, direction);
 
 	//FIXME sound sequence
@@ -637,7 +637,7 @@ float StairStartDelayDelta;
 int StairTextureChange;
 float StairStartHeight;
 
-class StairStepMover:SectorThinker
+class StairStepMover:SectorMover
 {
 	float speed;
 	int direction;
@@ -654,19 +654,19 @@ class StairStepMover:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
 	if (resetDelayTime)
 	{
-		resetDelayTime -= frametime;
+		resetDelayTime -= deltaTime;
 		if (resetDelayTime <= 0.0)
 		{
 			resetDelayTime = 0.0;
@@ -679,7 +679,7 @@ void Think(void)
 	}
 	if (delayTime)
 	{
-		delayTime -= frametime;
+		delayTime -= deltaTime;
 		if (delayTime <= 0.0)
  		{
  			delayTime = 0.0;
@@ -691,7 +691,7 @@ void Think(void)
 		return;
 	}
 
-	res = T_MovePlane(sector, speed * frametime,
+	res = T_MovePlane(sector, speed * deltaTime,
 		floordestheight, crush, 0, direction);
 
 	if ((direction == 1 && sector->floorheight >=
@@ -924,7 +924,7 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 //
 //**************************************************************************
 
-class TPillar:SectorThinker
+class TPillar:SectorMover
 {
 	int direction;
 	int crush;
@@ -935,20 +935,20 @@ class TPillar:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res1;
 	int res2;
 
 	// First, raise the floor
-	res1 = T_MovePlane(sector, floorSpeed * frametime, floordest,
+	res1 = T_MovePlane(sector, floorSpeed * deltaTime, floordest,
 		crush, 0, direction);	// floorOrCeiling, direction
 	// Then, lower the ceiling
-	res2 = T_MovePlane(sector, ceilingSpeed * frametime,
+	res2 = T_MovePlane(sector, ceilingSpeed * deltaTime,
 		ceilingdest, crush, 1, -direction);
 	if (res1 == RES_PASTDEST && res2 == RES_PASTDEST)
 	{
@@ -1105,7 +1105,7 @@ int EV_OpenPillar(line_t * line, int *args)
 #define WGLSTATE_STABLE 2
 #define WGLSTATE_REDUCE 3
 
-class FloorWaggle:SectorThinker
+class FloorWaggle:SectorMover
 {
 	float originalHeight;
 	float accumulator;
@@ -1118,16 +1118,16 @@ class FloorWaggle:SectorThinker
 
 //==========================================================================
 //
-//  Think
+//  Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	switch (state)
 	{
 	case WGLSTATE_EXPAND:
-		scale += scaleSpeed * frametime;
+		scale += scaleSpeed * deltaTime;
 		if (scale >= targetScale)
 		{
 			scale = targetScale;
@@ -1135,7 +1135,7 @@ void Think(void)
 		}
 		break;
 	case WGLSTATE_REDUCE:
-		scale -= scaleSpeed * frametime;
+		scale -= scaleSpeed * deltaTime;
 		if (scale <= 0.0)
 		{
 			// Remove
@@ -1150,7 +1150,7 @@ void Think(void)
 	case WGLSTATE_STABLE:
 		if (timer >= 0.0)
 		{
-			timer -= frametime;
+			timer -= deltaTime;
 			if (timer <= 0.0)
 			{
 				state = WGLSTATE_REDUCE;
@@ -1158,7 +1158,7 @@ void Think(void)
 		}
 		break;
 	}
-	accumulator += accSpeed * frametime;
+	accumulator += accSpeed * deltaTime;
 	sector->floor.dist = originalHeight +
 		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
 	P_ChangeSector(sector, true);
@@ -1210,6 +1210,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/04/11 16:48:10  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.11  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -48,7 +48,7 @@ enum
 
 // CODE --------------------------------------------------------------------
 
-class VerticalDoor:SectorThinker
+class VerticalDoor:SectorMover
 {
 	int type;
 	float topheight;
@@ -60,11 +60,11 @@ class VerticalDoor:SectorThinker
 
 //==========================================================================
 //
-//	Think
+//	Tick
 //
 //==========================================================================
 
-void Think(void)
+void Tick(float deltaTime)
 {
 	int res;
 
@@ -72,7 +72,7 @@ void Think(void)
 	{
 	case 0:
 		// WAITING
-		toptime -= frametime;
+		toptime -= deltaTime;
 		if (toptime <= 0.0)
 		{
 			toptime = 0.0;
@@ -103,7 +103,7 @@ void Think(void)
 
 	case 2:
 		//  INITIAL WAIT
-		toptime -= frametime;
+		toptime -= deltaTime;
 		if (toptime <= 0.0)
 		{
 			toptime = 0.0;
@@ -123,7 +123,7 @@ void Think(void)
 
 	case -1:
 		// DOWN
-		res = T_MovePlane(sector, speed * frametime,
+		res = T_MovePlane(sector, speed * deltaTime,
 			sector->floorheight, false, 1, direction);
 		if (res == RES_PASTDEST)
 		{
@@ -165,7 +165,7 @@ void Think(void)
 
 	case 1:
 		// UP
-		res = T_MovePlane(sector, speed * frametime, topheight,
+		res = T_MovePlane(sector, speed * deltaTime, topheight,
 			false, 1, direction);
 
 		if (res == RES_PASTDEST)
@@ -429,6 +429,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/04/11 16:48:09  dj_jl
+//  New base classes for sector thinkers, Tick function.
+//
 //  Revision 1.11  2002/03/20 19:07:43  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
