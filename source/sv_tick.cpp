@@ -96,20 +96,12 @@ void SV_DestroyAllThinkers(void)
 
 static void RunThinkers(void)
 {
-	try
+	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		for (TObjectIterator<VThinker> It; It; ++It)
+		if (!(It->GetFlags() & OF_Destroyed))
 		{
-			if (!(It->GetFlags() & OF_Destroyed))
-			{
-				svpr.Exec(pf_RunThink, (int)*It);
-			}
+			svpr.Exec(pf_RunThink, (int)*It);
 		}
-	}
-	catch (...)
-	{
-		dprintf("- RunThinkers\n");
-		throw;
 	}
 }
 
@@ -121,6 +113,7 @@ static void RunThinkers(void)
 
 void P_Ticker(void)
 {
+	guard(P_Ticker);
 	int 	i;
 
 	RunThinkers();
@@ -137,14 +130,18 @@ void P_Ticker(void)
 
 	level.time += host_frametime;
     level.tictime++;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/21 18:25:09  dj_jl
+//	Changed guarding
+//
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	
