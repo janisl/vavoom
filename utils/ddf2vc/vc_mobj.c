@@ -3,12 +3,14 @@
 #include "ddf_main.h"
 #include "vc.h"
 
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 //	Not included in headers.
 extern int num_disabled_mobjinfo;
 
 FILE *cur_file;
-
-float float_0_64 = 0.64;
 
 static const char *dlight_types[] =
 {
@@ -179,7 +181,7 @@ void PrintAttack(FILE *f, const attacktype_t *a, const char *Name)
 		"ATK_CloseCombat",
 		"ATK_ShootToSpot",
 		"ATK_SkullFly",
-		"ATK_SmartPpojectile",
+		"ATK_SmartProjectile",
 		"ATK_Spray",
 	};
 	char tmp[128];
@@ -241,7 +243,7 @@ void PrintAttack(FILE *f, const attacktype_t *a, const char *Name)
 	if (a->attack_class)
 		fprintf(f, "\t%s.AttackClass = 0x%08x;\n", Name, a->attack_class);
 	if (a->objinitstate)
-		fprintf(f, "\t%s.ObjInitState = S_%d;\t// %s\n", Name, a->objinitstate, a->objinitstate_ref);
+		fprintf(f, "\t%s.ObjInitState = \'S_%d\';\t// %s\n", Name, a->objinitstate, a->objinitstate_ref);
 	if (a->notracechance)
 		fprintf(f, "\t%s.NoTraceChance = %1.2f;\n", Name, a->notracechance);
 	if (a->keepfirechance)
@@ -379,6 +381,7 @@ void VC_WriteMobjs(void)
 	char fname[256];
 
 	sprintf(fname, "%s/things.vc", progsdir);
+	I_Printf("Writing %s\n", fname);
 	f = fopen(fname, "w");
 	cur_file = f;
 	fprintf(f, "// Forward declarations.\n");
@@ -417,33 +420,36 @@ void VC_WriteMobjs(void)
 			fprintf(f, "\n");
 		}
 
-		fprintf(f, "__states__\n");
-		fprintf(f, "{\n");
-		for (j = m->first_state; j <= m->last_state; j++)
+		if (m->first_state || m->last_state)
 		{
-			state_t *s = &states[j];
+			fprintf(f, "__states__\n");
+			fprintf(f, "{\n");
+			for (j = m->first_state; j <= m->last_state; j++)
+			{
+				state_t *s = &states[j];
 
-			if (s->label)
-				fprintf(f, "\t// %s\n", s->label);
-			fprintf(f, "\tS_%d('%s', %d", j, (char *)s->sprite, s->frame);
-			if (s->bright)
-				fprintf(f, " | FF_FULLBRIGHT");
-			if (s->tics < 0)
-				fprintf(f, ", -1.0, ");
-			else
-				fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
-			if (s->nextstate)
-				fprintf(f, "S_%d)", s->nextstate);
-			else
-				fprintf(f, "S_NULL)");
-			if (s->action)
-				s->action((mobj_t *)s);
-			else
-				fprintf(f, " { ");
+				if (s->label)
+					fprintf(f, "\t// %s\n", s->label);
+				fprintf(f, "\tS_%d('%s', %d", j, (char *)s->sprite, s->frame);
+				if (s->bright)
+					fprintf(f, " | FF_FULLBRIGHT");
+				if (s->tics < 0)
+					fprintf(f, ", -1.0, ");
+				else
+					fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
+				if (s->nextstate)
+					fprintf(f, "S_%d)", s->nextstate);
+				else
+					fprintf(f, "S_NULL)");
+				if (s->action)
+					s->action((mobj_t *)s);
+				else
+					fprintf(f, " { ");
+				fprintf(f, "}\n");
+			}
 			fprintf(f, "}\n");
+			fprintf(f, "\n");
 		}
-		fprintf(f, "}\n");
-		fprintf(f, "\n");
 
 		fprintf(f, "defaultproperties\n");
 		fprintf(f, "{\n");

@@ -32,6 +32,7 @@ void VC_WriteWeapons(void)
 	char fname[256];
 
 	sprintf(fname, "%s/wpninfo.vc", progsdir);
+	I_Printf("Writing %s\n", fname);
 	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
@@ -52,6 +53,7 @@ void VC_WriteWeapons(void)
 	fclose(f);
 
 	sprintf(fname, "%s/weapons.vc", progsdir);
+	I_Printf("Writing %s\n", fname);
 	f = fopen(fname, "w");
 	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
@@ -65,33 +67,36 @@ void VC_WriteWeapons(void)
 		fprintf(f, "//**************************************************************************\n");
 		fprintf(f, "\nclass Weapon%d:Weapon\n{\n\n", i);
 
-		fprintf(f, "__states__\n");
-		fprintf(f, "{\n");
-		for (j = w->first_state; j <= w->last_state; j++)
+		if (w->first_state || w->last_state)
 		{
-			state_t *s = &states[j];
+			fprintf(f, "__states__\n");
+			fprintf(f, "{\n");
+			for (j = w->first_state; j <= w->last_state; j++)
+			{
+				state_t *s = &states[j];
 
-			if (s->label)
-				fprintf(f, "\t// %s\n", s->label);
-			fprintf(f, "\tS_%d('%s', %d", j, (char *)s->sprite, s->frame);
-			if (s->bright)
-				fprintf(f, " | FF_FULLBRIGHT");
-			if (s->tics < 0)
-				fprintf(f, ", -1.0, ");
-			else
-				fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
-			if (s->nextstate)
-				fprintf(f, "S_%d)", s->nextstate);
-			else
-				fprintf(f, "S_NULL)");
-			if (s->action)
-				s->action((mobj_t *)s);
-			else
-				fprintf(f, " { ");
+				if (s->label)
+					fprintf(f, "\t// %s\n", s->label);
+				fprintf(f, "\tS_%d('%s', %d", j, (char *)s->sprite, s->frame);
+				if (s->bright)
+					fprintf(f, " | FF_FULLBRIGHT");
+				if (s->tics < 0)
+					fprintf(f, ", -1.0, ");
+				else
+					fprintf(f, ", %d.0 / 35.0, ", (int)s->tics);
+				if (s->nextstate)
+					fprintf(f, "S_%d)", s->nextstate);
+				else
+					fprintf(f, "S_NULL)");
+				if (s->action)
+					s->action((mobj_t *)s);
+				else
+					fprintf(f, " { ");
+				fprintf(f, "}\n");
+			}
 			fprintf(f, "}\n");
+			fprintf(f, "\n");
 		}
-		fprintf(f, "}\n");
-		fprintf(f, "\n");
 
 		fprintf(f, "defaultproperties\n");
 		fprintf(f, "{\n");

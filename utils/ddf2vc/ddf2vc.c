@@ -89,6 +89,8 @@ void I_Error(const char *error,...)
 	printf("ERROR: ");
 	vprintf(error, args);
 	va_end(args);
+
+	exit(1);
 }
 
 void I_Warning(const char *warning,...)
@@ -195,6 +197,17 @@ char *I_PreparePath(const char *path)
   return Z_StrDup(path);
 }
 
+#ifdef _WIN32
+int strcasecmp(const char *s1, const char *s2)
+{
+	return stricmp(s1, s2);
+}
+int strncasecmp(const char *s1, const char *s2, int n)
+{
+	return strnicmp(s1, s2, n);
+}
+#endif
+
 int main(int argc, const char *argv[])
 {
 	M_InitArguments(argc, argv);
@@ -275,6 +288,7 @@ int main(int argc, const char *argv[])
 
 	DDF_MainCleanUp();
 
+	I_Printf("\nWriting files.\n");
 	VC_WriteMobjs();
 	VC_WriteWeapons();
 	WriteSoundScript();

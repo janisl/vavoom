@@ -12,6 +12,7 @@ void WriteSoundScript(void)
 	int i;
 
 	sprintf(tmp, "%s/sndinfo.txt", scriptsdir);
+	I_Printf("Writing %s\n", tmp);
 	f = fopen(tmp, "w");
 	if (!f)
 	{

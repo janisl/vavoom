@@ -394,7 +394,8 @@ static void *DDF_MainCacheFile(readinfo_t * readinfo)
 
   if (file == NULL)
   {
-    I_Error("DDF_MainReadFile: Unable to open: '%s'\n", filename);
+    // -JL- Changed to I_Printf
+    I_Printf("DDF_MainReadFile: Unable to open: '%s'\n", filename);
 
     I_TmpFree(filename);
     return NULL;
