@@ -47,7 +47,7 @@
 // will not be compiled
 //#define PARANOID		1
 
-//#define DEVELOPER		1
+#define DEVELOPER		1
 
 #define DO_GUARD		1
 
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/06/22 07:07:21  dj_jl
+//	Back to work.
+//
 //	Revision 1.2  2002/06/14 15:36:35  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.1  2002/04/11 16:39:21  dj_jl
 //	Seperated build setings.
 //	
