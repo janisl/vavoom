@@ -359,6 +359,240 @@ class Entity:MapObject
 	void OnMapSpawn(mthing_t *mthing);
 };
 
+class Actor:Entity
+{
+	void A_FreeTargMobj(void);
+	void A_FlameCheck(void);
+	void A_HideThing(void);
+	void A_UnHideThing(void);
+	void A_RestoreSpecialThing1(void);
+	void A_RestoreSpecialThing2(void);
+	void A_RestoreArtifact(void);
+	void A_Summon(void);
+	void A_ThrustInitUp(void);
+	void A_ThrustInitDn(void);
+	void A_ThrustRaise(void);
+	void A_ThrustBlock(void);
+	void A_ThrustImpale(void);
+	void A_ThrustLower(void);
+	void A_TeloSpawnC(void);
+	void A_TeloSpawnB(void);
+	void A_TeloSpawnA(void);
+	void A_TeloSpawnD(void);
+	void A_CheckTeleRing(void);
+	void A_FogSpawn(void);
+	void A_FogMove(void);
+	void A_Quake(void);
+	void A_ContMobjSound(void);
+	void A_Scream(void);
+	void A_Explode(void);
+	void A_PoisonBagInit(void);
+	void A_PoisonBagDamage(void);
+	void A_PoisonBagCheck(void);
+	void A_CheckThrowBomb(void);
+	void A_NoGravity(void);
+	void A_PotteryExplode(void);
+	void A_PotteryChooseBit(void);
+	void A_PotteryCheck(void);
+	void A_CorpseBloodDrip(void);
+	void A_CorpseExplode(void);
+	void A_LeafSpawn(void);
+	void A_LeafThrust(void);
+	void A_LeafCheck(void);
+	void A_BridgeInit(void);
+	void A_BridgeOrbit(void);
+	void A_TreeDeath(void);
+	void A_PoisonShroom(void);
+	void A_Pain(void);
+	void A_SoAExplode(void);
+	void A_BellReset1(void);
+	void A_BellReset2(void);
+	void A_NoBlocking(void);
+	void A_FSwordFlames(void);
+	void A_CStaffMissileSlither(void);
+	void A_CFlameRotate(void);
+	void A_CFlamePuff(void);
+	void A_CFlameMissile(void);
+	void A_CHolySeek(void);
+	void A_CHolyCheckScream(void);
+	void A_CHolyTail(void);
+	void A_CHolySpawnPuff(void);
+	void A_CHolyAttack2(void);
+	void A_LightningZap(void);
+	void A_LightningClip(void);
+	void A_LightningRemove(void);
+	void A_LastZap(void);
+	void A_ZapMimic(void);
+	void A_MStaffWeave(void);
+	void A_MStaffTrack(void);
+	void A_ShedShard(void);
+	void A_AddPlayerCorpse(void);
+	void A_SkullPop(void);
+	void A_FreezeDeath(void);
+	void A_FreezeDeathChunks(void);
+	void A_CheckBurnGone(void);
+	void A_CheckSkullFloor(void);
+	void A_CheckSkullDone(void);
+	void A_SpeedFade(void);
+	void A_IceSetTics(void);
+	void A_IceCheckHeadDone(void);
+	void A_PigPain(void);
+	void A_PigLook(void);
+	void A_PigChase(void);
+	void A_FaceTarget(void);
+	void A_PigAttack(void);
+	void A_QueueCorpse(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_CentaurAttack(void);
+	void A_CentaurAttack2(void);
+	void A_SetReflective(void);
+	void A_CentaurDefend(void);
+	void A_UnSetReflective(void);
+	void A_CentaurDropStuff(void);
+	void A_CheckFloor(void);
+	void A_DemonAttack1(void);
+	void A_DemonAttack2(void);
+	void A_DemonDeath(void);
+	void A_Demon2Death(void);
+	void A_WraithRaiseInit(void);
+	void A_WraithRaise(void);
+	void A_WraithInit(void);
+	void A_WraithLook(void);
+	void A_WraithChase(void);
+	void A_WraithFX3(void);
+	void A_WraithMelee(void);
+	void A_WraithMissile(void);
+	void A_WraithFX2(void);
+	void A_MinotaurFade1(void);
+	void A_MinotaurFade2(void);
+	void A_MinotaurLook(void);
+	void A_MinotaurChase(void);
+	void A_MinotaurRoam(void);
+	void A_MinotaurAtk1(void);
+	void A_MinotaurDecide(void);
+	void A_MinotaurAtk2(void);
+	void A_MinotaurAtk3(void);
+	void A_MinotaurCharge(void);
+	void A_SmokePuffExit(void);
+	void A_MinotaurFade0(void);
+	void A_MntrFloorFire(void);
+	void A_SerpentChase(void);
+	void A_SerpentHumpDecide(void);
+	void A_SerpentUnHide(void);
+	void A_SerpentRaiseHump(void);
+	void A_SerpentLowerHump(void);
+	void A_SerpentHide(void);
+	void A_SerpentBirthScream(void);
+	void A_SetShootable(void);
+	void A_SerpentCheckForAttack(void);
+	void A_UnSetShootable(void);
+	void A_SerpentDiveSound(void);
+	void A_SerpentWalk(void);
+	void A_SerpentChooseAttack(void);
+	void A_SerpentMeleeAttack(void);
+	void A_SerpentMissileAttack(void);
+	void A_SerpentHeadPop(void);
+	void A_SerpentSpawnGibs(void);
+	void A_SerpentHeadCheck(void);
+	void A_FloatGib(void);
+	void A_DelayGib(void);
+	void A_SinkGib(void);
+	void A_BishopDecide(void);
+	void A_BishopDoBlur(void);
+	void A_BishopSpawnBlur(void);
+	void A_BishopChase(void);
+	void A_BishopAttack(void);
+	void A_BishopAttack2(void);
+	void A_BishopPainBlur(void);
+	void A_BishopPuff(void);
+	void A_SetAltShadow(void);
+	void A_BishopMissileWeave(void);
+	void A_BishopMissileSeek(void);
+	void A_DragonInitFlight(void);
+	void A_DragonFlap(void);
+	void A_DragonFlight(void);
+	void A_DragonAttack(void);
+	void A_DragonPain(void);
+	void A_DragonCheckCrash(void);
+	void A_DragonFX2(void);
+	void A_ESound(void);
+	void A_EttinAttack(void);
+	void A_DropMace(void);
+	void A_FiredRocks(void);
+	void A_UnSetInvulnerable(void);
+	void A_FiredChase(void);
+	void A_FiredAttack(void);
+	void A_FiredSplotch(void);
+	void A_SmBounce(void);
+	void A_IceGuyLook(void);
+	void A_IceGuyChase(void);
+	void A_IceGuyAttack(void);
+	void A_IceGuyDie(void);
+	void A_IceGuyMissilePuff(void);
+	void A_IceGuyMissileExplode(void);
+	void A_ClassBossHealth(void);
+	void A_FastChase(void);
+	void A_FighterAttack(void);
+	void A_ClericAttack(void);
+	void A_MageAttack(void);
+	void A_SorcSpinBalls(void);
+	void A_SpeedBalls(void);
+	void A_SpawnFizzle(void);
+	void A_SorcBossAttack(void);
+	void A_SorcBallOrbit(void);
+	void A_SorcBallPop(void);
+	void A_BounceCheck(void);
+	void A_SorcFX1Seek(void);
+	void A_SorcFX2Split(void);
+	void A_SorcFX2Orbit(void);
+	void A_SorcererBishopEntry(void);
+	void A_SpawnBishop(void);
+	void A_SorcFX4Check(void);
+	void A_KoraxStep2(void);
+	void A_KoraxChase(void);
+	void A_KoraxStep(void);
+	void A_KoraxDecide(void);
+	void A_KoraxMissile(void);
+	void A_KoraxCommand(void);
+	void A_KoraxBonePop(void);
+	void A_KSpiritRoam(void);
+	void A_KBoltRaise(void);
+	void A_KBolt(void);
+	void A_BatSpawnInit(void);
+	void A_BatSpawn(void);
+	void A_BatMove(void);
+}
+
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_FPunchAttack(void);
+	void A_ReFire(void);
+	void A_FAxeAttack(void);
+	void A_FHammerAttack(void);
+	void A_FHammerThrow(void);
+	void A_FSwordAttack(void);
+	void A_CMaceAttack(void);
+	void A_CStaffInitBlink(void);
+	void A_CStaffCheckBlink(void);
+	void A_CStaffCheck(void);
+	void A_CStaffAttack(void);
+	void A_CFlameAttack(void);
+	void A_CHolyAttack(void);
+	void A_CHolyPalette(void);
+	void A_MWandAttack(void);
+	void A_LightningReady(void);
+	void A_MLightningAttack(void);
+	void A_MStaffAttack(void);
+	void A_MStaffPalette(void);
+	void A_SnoutAttack(void);
+	void A_FireConePL1(void);
+}
+
 addfields player_t
 {
 	//
@@ -476,43 +710,43 @@ float FloatBobOffsets[64] = {
 	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
 };
 
-string seq_name[] = {
-	"Platform",
-	"Platform",	// a 'heavy' platform is just a platform
-	"PlatformMetal",
-	"Platform",	// same with a 'creak' platform
-	"Silence",
-	"Lava",
-	"Water",
-	"Ice",
-	"Earth",
-	"PlatformMetal2",
+name seq_name[] = {
+	'Platform',
+	'Platform',	// a 'heavy' platform is just a platform
+	'PlatformMetal',
+	'Platform',	// same with a 'creak' platform
+	'Silence',
+	'Lava',
+	'Water',
+	'Ice',
+	'Earth',
+	'PlatformMetal2',
 
-	"DoorNormal",
-	"DoorHeavy",
-	"DoorMetal",
-	"DoorCreak",
-	"Silence",
-	"Lava",
-	"Water",
-	"Ice",
-	"Earth",
-	"DoorMetal2",
+	'DoorNormal',
+	'DoorHeavy',
+	'DoorMetal',
+	'DoorCreak',
+	'Silence',
+	'Lava',
+	'Water',
+	'Ice',
+	'Earth',
+	'DoorMetal2',
 
-	"Wind"
+	'Wind'
 };
 
-string door_seq_name[] = {
-	"DoorNormal",
-	"DoorHeavy",
-	"DoorMetal",
-	"DoorCreak",
-	"Silence",
-	"Lava",
-	"Water",
-	"Ice",
-	"Earth",
-	"DoorMetal2"
+name door_seq_name[] = {
+	'DoorNormal',
+	'DoorHeavy',
+	'DoorMetal',
+	'DoorCreak',
+	'Silence',
+	'Lava',
+	'Water',
+	'Ice',
+	'Earth',
+	'DoorMetal2'
 };
 
 #define POLY_SEQ_NAME(num)		seq_name[SEQ_DOOR_STONE + num]
@@ -528,6 +762,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:16:34  dj_jl
+//  Moved here Actor and Weapon class declarations
+//
 //  Revision 1.10  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

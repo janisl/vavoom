@@ -155,7 +155,8 @@ enum
 	PO_SPAWNCRUSH_TYPE
 };
 
-#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
+//#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
+#define POLY_SEQ_NAME(num)		'Sequence0'
 
 // CONSTANTS ---------------------------------------------------------------
 
@@ -335,97 +336,144 @@ class Entity:MapObject
 	boolean Physics(void);
 };
 
+class Actor:Entity
+{
+	void A_FreeTargMobj(void);
+	void A_RestoreSpecialThing1(void);
+	void A_RestoreSpecialThing2(void);
+	void A_HideThing(void);
+	void A_UnHideThing(void);
+	void A_RestoreArtifact(void);
+	void A_Scream(void);
+	void A_Explode(void);
+	void A_PodPain(void);
+	void A_RemovePod(void);
+	void A_MakePod(void);
+	void A_InitKeyGizmo(void);
+	void A_VolcanoSet(void);
+	void A_VolcanoBlast(void);
+	void A_BeastPuff(void);
+	void A_VolcBallImpact(void);
+	void A_SpawnTeleGlitter(void);
+	void A_SpawnTeleGlitter2(void);
+	void A_AccTeleGlitter(void);
+	void A_SpawnRippers(void);
+	void A_MacePL1Check(void);
+	void A_MaceBallImpact(void);
+	void A_MaceBallImpact2(void);
+	void A_DeathBallImpact(void);
+	void A_SkullRodPL2Seek(void);
+	void A_AddPlayerRain(void);
+	void A_HideInCeiling(void);
+	void A_SkullRodStorm(void);
+	void A_RainImpact(void);
+	void A_PhoenixPuff(void);
+	void A_FlameEnd(void);
+	void A_FloatPuff(void);
+	void A_BoltSpark(void);
+	void A_Pain(void);
+	void A_NoBlocking(void);
+	void A_AddPlayerCorpse(void);
+	void A_SkullPop(void);
+	void A_FlameSnd(void);
+	void A_CheckBurnGone(void);
+	void A_CheckSkullFloor(void);
+	void A_CheckSkullDone(void);
+	void A_Feathers(void);
+	void A_ChicLook(void);
+	void A_ChicChase(void);
+	void A_ChicPain(void);
+	void A_FaceTarget(void);
+	void A_ChicAttack(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_MummyAttack(void);
+	void A_MummyAttack2(void);
+	void A_MummySoul(void);
+	void A_ContMobjSound(void);
+	void A_MummyFX1Seek(void);
+	void A_BeastAttack(void);
+	void A_SnakeAttack(void);
+	void A_SnakeAttack2(void);
+	void A_HeadAttack(void);
+	void A_BossDeath(void);
+	void A_HeadIceImpact(void);
+	void A_HeadFireGrow(void);
+	void A_WhirlwindSeek(void);
+	void A_ClinkAttack(void);
+	void A_WizAtk1(void);
+	void A_WizAtk2(void);
+	void A_WizAtk3(void);
+	void A_GhostOff(void);
+	void A_ImpMeAttack(void);
+	void A_ImpMsAttack(void);
+	void A_ImpMsAttack2(void);
+	void A_ImpDeath(void);
+	void A_ImpXDeath1(void);
+	void A_ImpXDeath2(void);
+	void A_ImpExplode(void);
+	void A_KnightAttack(void);
+	void A_DripBlood(void);
+	void A_Sor1Chase(void);
+	void A_Sor1Pain(void);
+	void A_Srcr1Attack(void);
+	void A_SorZap(void);
+	void A_SorcererRise(void);
+	void A_SorRise(void);
+	void A_SorSightSnd(void);
+	void A_Srcr2Decide(void);
+	void A_Srcr2Attack(void);
+	void A_Sor2DthInit(void);
+	void A_SorDSph(void);
+	void A_Sor2DthLoop(void);
+	void A_SorDExp(void);
+	void A_SorDBon(void);
+	void A_BlueSpark(void);
+	void A_GenWizard(void);
+	void A_MinotaurAtk1(void);
+	void A_MinotaurDecide(void);
+	void A_MinotaurAtk2(void);
+	void A_MinotaurAtk3(void);
+	void A_MinotaurCharge(void);
+	void A_MntrFloorFire(void);
+	void A_ESound(void);
+}
+
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_StaffAttackPL1(void);
+	void A_ReFire(void);
+	void A_StaffAttackPL2(void);
+	void A_BeakReady(void);
+	void A_BeakRaise(void);
+	void A_BeakAttackPL1(void);
+	void A_BeakAttackPL2(void);
+	void A_GauntletAttack(void);
+	void A_FireBlasterPL1(void);
+	void A_FireBlasterPL2(void);
+	void A_FireMacePL1(void);
+	void A_FireMacePL2(void);
+	void A_FireSkullRodPL1(void);
+	void A_FireSkullRodPL2(void);
+	void A_FireGoldWandPL1(void);
+	void A_FireGoldWandPL2(void);
+	void A_FirePhoenixPL1(void);
+	void A_InitPhoenixPL2(void);
+	void A_FirePhoenixPL2(void);
+	void A_ShutdownPhoenixPL2(void);
+	void A_FireCrossbowPL1(void);
+	void A_FireCrossbowPL2(void);
+}
+
 /*
 
   Class definitions for botinfo, chatinfo, and
   other various bot information thingamabobers.
 */
-
-// Note: Any bot past NUMBOTTYPES won't be spawned 
-// randomly. So, in other words, if you did "addbot" at the
-// console, no bots past NUMBOTTYPES will ever be spawned.
-// They can only be spawned by going "addbot <botname>"
-// (ex. "addbot massmouth").
-
-/*typedef enum
-{
-	BOT_CHUBBS,
-	BOT_DEIMOS,
-	BOT_CRASH,
-	BOT_CHARON,
-	BOT_PLUTO,
-	BOT_GAMMA,
-	BOT_SCYON,
-	BOT_SCYTHE,
-	BOT_PROTOS,
-	BOT_ELECTRA,
-	BOT_OMEGA,
-	BOT_PREY,
-	BOT_MANEK,
-	BOT_OBELSIK,
-	BOT_DAEMOS,
-	BOT_MAABUS,
-	BOT_ORION,
-	BOT_ULTIMUS,
-
-	NUMBOTTYPES,
-
-	BOT_ROMERO,
-	BOT_H4X0R,
-	BOT_FRAD,
-	BOT_MEWSE,
-	BOT_LINGUICA,
-	BOT_CONNIE,
-	BOT_CACODEMON,
-	BOT_HISSY,
-	BOT_MASSMOUTH,
-	BOT_DOOMCRATE,
-	BOT_ZOMBIEMAN,
-	BOT_SHOTGUNGUY,
-	BOT_BIGCHAINGUNGUY,
-	BOT_MRTANG,
-	BOT_XXENEMYXX,
-	BOT_FIFFY,
-	BOT_TRIUMPH,
-	BOT_MEEPY,
-	BOT_CHEXMAN,
-	BOT_QUOTEBOT,
-
-	NUMTOTALBOTS
-} bottype_t;
-
-typedef enum
-{
-	CT_NONE,
-	CT_1337,
-	CT_BASRAD,
-	CT_CRASH,
-	CT_CHUBBY,
-	CT_SOLDIER,
-	CT_INSECT,
-	CT_ALIEN,
-	CT_DEMON,
-	CT_CYBORG,
-	CT_GAMMA,
-	CT_ORION,
-	CT_ULTIMUS,
-	CT_CONNIE,
-	CT_CACODEMON,
-	CT_MASSMOUTH,
-	CT_HISSY,
-	CT_HISSYHOGGER,
-	CT_MEWSE,
-	CT_TANGY,
-	CT_MEEPMEEP,
-	CT_PISSEDGUY,
-	CT_REOLLAME,
-	CT_TRIUMPHANT,
-	CT_ROMERO,
-	CT_CRATE,
-	CT_DOOMROOM,
-
-	NUMCHATTYPES
-} chattype_t;*/
 
 enum
 {
@@ -766,6 +814,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/11 18:16:34  dj_jl
+//  Moved here Actor and Weapon class declarations
+//
 //  Revision 1.11  2002/01/11 08:03:12  dj_jl
 //  Renamed 'name' to "Name'
 //

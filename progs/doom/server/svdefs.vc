@@ -80,7 +80,8 @@ enum
 	PO_SPAWNCRUSH_TYPE
 };
 
-#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
+//#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
+#define POLY_SEQ_NAME(num)		'Sequence0'
 
 // CONSTANTS ---------------------------------------------------------------
 
@@ -281,97 +282,96 @@ class Entity:MapObject
 	boolean Physics(void);
 }
 
+class Actor:Entity
+{
+	void A_BFGSpray(void);
+	void A_Explode(void);
+	void A_Pain(void);
+	void A_PlayerScream(void);
+	void A_Fall(void);
+	void A_XScream(void);
+	void A_Look(void);
+	void A_Chase(void);
+	void A_FaceTarget(void);
+	void A_PosAttack(void);
+	void A_Scream(void);
+	void A_SPosAttack(void);
+	void A_VileChase(void);
+	void A_VileStart(void);
+	void A_VileTarget(void);
+	void A_VileAttack(void);
+	void A_StartFire(void);
+	void A_Fire(void);
+	void A_FireCrackle(void);
+	void A_Tracer(void);
+	void A_SkelWhoosh(void);
+	void A_SkelFist(void);
+	void A_SkelMissile(void);
+	void A_FatRaise(void);
+	void A_FatAttack1(void);
+	void A_FatAttack2(void);
+	void A_FatAttack3(void);
+	void A_BossDeath(void);
+	void A_CPosAttack(void);
+	void A_CPosRefire(void);
+	void A_TroopAttack(void);
+	void A_SargAttack(void);
+	void A_HeadAttack(void);
+	void A_BruisAttack(void);
+	void A_SkullAttack(void);
+	void A_Metal(void);
+	void A_SpidRefire(void);
+	void A_BabyMetal(void);
+	void A_BspiAttack(void);
+	void A_Hoof(void);
+	void A_CyberAttack(void);
+	void A_PainAttack(void);
+	void A_PainDie(void);
+	void A_KeenDie(void);
+	void A_BrainPain(void);
+	void A_BrainScream(void);
+	void A_BrainDie(void);
+	void A_BrainAwake(void);
+	void A_BrainSpit(void);
+	void A_SpawnSound(void);
+	void A_SpawnFly(void);
+	void A_BrainExplode(void);
+}
+
+class Weapon:ViewEntity
+{
+	void A_Light0(void);
+	void A_WeaponReady(void);
+	void A_Lower(void);
+	void A_Raise(void);
+	void A_Punch(void);
+	void A_ReFire(void);
+	void A_FirePistol(void);
+	void A_Light1(void);
+	void A_FireShotgun(void);
+	void A_Light2(void);
+	void A_FireShotgun2(void);
+	void A_CheckReload(void);
+	void A_OpenShotgun2(void);
+	void A_LoadShotgun2(void);
+	void A_CloseShotgun2(void);
+	void A_FireCGun(void);
+	void A_GunFlash(void);
+	void A_FireMissile(void);
+	void A_Saw(void);
+	void A_FirePlasma(void);
+	void A_BFGsound(void);
+	void A_FireBFG(void);
+#ifdef GRENADE_LAUNCHER
+	void A_FireGrenade(void);
+#endif
+}
+
 /*
 
   Class definitions for botinfo, chatinfo, and
   other various bot information thingamabobers.
 */
-
-// Note: Any bot past NUMBOTTYPES won't be spawned 
-// randomly. So, in other words, if you did "addbot" at the
-// console, no bots past NUMBOTTYPES will ever be spawned.
-// They can only be spawned by going "addbot <botname>"
-// (ex. "addbot massmouth").
-
-/*typedef enum
-{
-	BOT_CHUBBS,
-	BOT_DEIMOS,
-	BOT_CRASH,
-	BOT_CHARON,
-	BOT_PLUTO,
-	BOT_GAMMA,
-	BOT_SCYON,
-	BOT_SCYTHE,
-	BOT_PROTOS,
-	BOT_ELECTRA,
-	BOT_OMEGA,
-	BOT_PREY,
-	BOT_MANEK,
-	BOT_OBELSIK,
-	BOT_DAEMOS,
-	BOT_MAABUS,
-	BOT_ORION,
-	BOT_ULTIMUS,
-
-	NUMBOTTYPES,
-
-	BOT_ROMERO,
-	BOT_H4X0R,
-	BOT_FRAD,
-	BOT_MEWSE,
-	BOT_LINGUICA,
-	BOT_CONNIE,
-	BOT_CACODEMON,
-	BOT_HISSY,
-	BOT_MASSMOUTH,
-	BOT_DOOMCRATE,
-	BOT_ZOMBIEMAN,
-	BOT_SHOTGUNGUY,
-	BOT_BIGCHAINGUNGUY,
-	BOT_MRTANG,
-	BOT_XXENEMYXX,
-	BOT_FIFFY,
-	BOT_TRIUMPH,
-	BOT_MEEPY,
-	BOT_CHEXMAN,
-	BOT_QUOTEBOT,
-
-	NUMTOTALBOTS
-} bottype_t;
-
-typedef enum
-{
-	CT_NONE,
-	CT_1337,
-	CT_BASRAD,
-	CT_CRASH,
-	CT_CHUBBY,
-	CT_SOLDIER,
-	CT_INSECT,
-	CT_ALIEN,
-	CT_DEMON,
-	CT_CYBORG,
-	CT_GAMMA,
-	CT_ORION,
-	CT_ULTIMUS,
-	CT_CONNIE,
-	CT_CACODEMON,
-	CT_MASSMOUTH,
-	CT_HISSY,
-	CT_HISSYHOGGER,
-	CT_MEWSE,
-	CT_TANGY,
-	CT_MEEPMEEP,
-	CT_PISSEDGUY,
-	CT_REOLLAME,
-	CT_TRIUMPHANT,
-	CT_ROMERO,
-	CT_CRATE,
-	CT_DOOMROOM,
-
-	NUMCHATTYPES
-} chattype_t;*/
 
 enum
 {
@@ -681,6 +681,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/11 18:16:33  dj_jl
+//  Moved here Actor and Weapon class declarations
+//
 //  Revision 1.11  2002/01/11 08:03:10  dj_jl
 //  Renamed 'name' to "Name'
 //
