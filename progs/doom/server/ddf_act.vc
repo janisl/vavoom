@@ -23,16 +23,122 @@
 //**
 //**************************************************************************
 
+enum
+{
+	DLITE_None,
+	DLITE_Constant,	// lighting is constant (regardless of distance)
+	DLITE_Linear,	// lighting is proportional to 1 / distance
+	DLITE_Quadratic	// lighting is proportional to 1 / (distance^2)
+};
+
 class DDFActor:Actor
 {
 
+// New states.
 int SpawnState;
+int ResState;
+int MeanderState;
+int BounceState;
+int TouchState;
+int JumpState;
+int GibState;
 
+// Float move speed
+float FloatSpeed;
+
+// Extra flags.
 bool bStealth;
 bool bJustPickedUp;
 bool bTouchy;
+bool bLessVis;
+bool bDisloyalType;
+bool bOwnAttackHurts;
+bool bFirstCheck;
+bool bNoTrace;
+bool bDummyMobj;
+bool bNoResurect;
+bool bEdgeWalker;
+bool bGravFall;
+bool bClimbable;
+bool bWaterWalker;
+bool bCrossLines;
+bool bNoFriction;
+bool bExtra;
+bool bJustBounced;
+bool bUsable;
+bool bBlockShots;
+bool bCrouching;
+bool bTunnel;
+bool bDLight;
+bool bGibbed;
+
+int ExplodeDamage;
+int ExplodeDamageMax;
+int ExplodeDamageError;
+float ExplodeDamageDelay;
+int ExplodeDamageNoArmour;
 
 string PickupMessage;
+
+int CastOrder;
+float RespawnTime;
+
+float JumpDelay;
+float JumpHeight;
+float CrouchHeight;
+float ViewHeight;
+float ShotHeight;
+float MaxFall;
+float Fast;
+float XScale;
+float YScale;
+float BounceSpeed;
+float BounceUp;
+float SightSlope;
+float SightAngle;
+float RideFriction;
+float ShadowTrans;
+
+// Sounds.
+name OverkillSound;
+name WalkSound;
+name JumpSound;
+name NoWaySound;
+name OofSound;
+name GaspSound;
+
+int Fuse;
+int Side;
+int PlayerNum;
+
+float LungCapacity;
+float GaspStart;
+int ChokeDamage;
+int ChokeDamageMax;
+int ChokeDamageError;
+float ChokeDamageDelay;
+int ChokeDamageNoArmour;
+
+float Bobbing;
+int Immunity;
+
+float HaloHeight;
+float HaloSize;
+float HaloMinSize;
+float HaloMaxSize;
+float HaloTranslucency;
+int HaloColor;
+string HaloGraphic;
+
+int DLightType;
+int DLightIntensity;
+int DLightColor;
+float DLightHeight;
+
+classid DropItem;
+classid BloodType;
+classid RespawnEffect;
+classid SpitSpot;
 
 #define FUNC(name)		void name(void) { }
 
@@ -140,6 +246,41 @@ FUNC(A_PlayerScream)
 
 defaultproperties
 {
+	Health = 1000;
+	Mass = 100.0;
+	FloatSpeed = 2.0;
+	ExplodeDamageMax = -1;
+	ExplodeDamageError = -1;
+	RespawnTime = 30.0;
+	JumpDelay = 1.0;
+	ViewHeight = 0.75;
+	ShotHeight = 0.64;
+	Fast = 1.0;
+	XScale = 1.0;
+	YScale = 1.0;
+	BounceSpeed = 0.5;
+	BounceUp = 0.5;
+	SightSlope = 16.0;
+	SightAngle = 90.0;
+	RideFriction = 0.7;
+	ShadowTrans = 0.5;
+	LungCapacity = 20.0;
+	GaspStart = 2.0;
+	ChokeDamage = 6;
+	ChokeDamageMax = 14;
+	ChokeDamageError = -1;
+	ChokeDamageDelay = 2.0;
+	ChokeDamageNoArmour = true;
+	Bobbing = 1.0;
+	HaloHeight = -1.0;
+	HaloSize = 32.0;
+	HaloMinSize = -1.0;
+	HaloMaxSize = -1.0;
+	HaloTranslucency = 0.5;
+	HaloColor = 0x00ffffff;
+	DLightIntensity = 32;
+	DLightColor = 0x00ffffff;
+	DLightHeight = 0.5;
 }
 
 }
@@ -147,6 +288,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/05/29 16:48:38  dj_jl
+//  Some updates.
+//
 //  Revision 1.1  2002/05/18 17:03:28  dj_jl
 //  Working on DDF to VavoomC converter.
 //
