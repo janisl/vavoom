@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Creates PVS(Potentially Visible Set)
@@ -719,7 +715,9 @@ void BuildPVS(void)
 		
 	if (!silent_mode)
 	{
-		cerr << totalvis << " accepts, " << (numsubsectors * numsubsectors - totalvis) << " rejects\n";
+		cerr << totalvis << " accepts, "
+			<< (numsubsectors * numsubsectors - totalvis) << " rejects, "
+			<< (totalvis * 100 / (numsubsectors * numsubsectors)) << "%\n";
 	}
 
 	//	Write lump
@@ -728,3 +726,13 @@ void BuildPVS(void)
 	delete vis;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

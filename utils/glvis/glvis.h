@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #ifndef GLVIS_H
@@ -97,8 +93,8 @@ typedef leaf_t subsector_t;
 
 struct seg_t : public TPlane
 {
-    vertex_t	*v1;
-    vertex_t	*v2;
+	vertex_t	*v1;
+	vertex_t	*v2;
 
 	seg_t		*partner;
 	int			leaf;
@@ -141,3 +137,13 @@ extern portal_t			*portals;
 
 #endif
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

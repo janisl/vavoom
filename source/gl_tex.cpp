@@ -594,6 +594,8 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 	}
 
 	rgba_t *block = (rgba_t*)Z_Calloc(4 * outw * outh);
+	rgba_t *pal = r_palette[pic_list[handle].palnum];
+	int black = r_black_color[pic_list[handle].palnum];
 
 	for (int x = 0; x < w; x++)
 	{
@@ -609,7 +611,7 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 
 			while (count--)
 			{
-				*dest = pal8_to24[*source];
+				*dest = pal[*source ? *source : black];
 				source++;
 				dest += outw;
 			}
@@ -723,8 +725,18 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
 	int i, j, k;
+	float sx, sy;
 
-//#define POINT_SAMPLE
+	if (widthout > 1)
+		sx = float(widthin - 1) / float(widthout - 1);
+	else
+		sx = float(widthin - 1);
+	if (heightout > 1)
+		sy = float(heightin - 1) / float(heightout - 1);
+	else
+		sy = float(heightin - 1);
+
+#define POINT_SAMPLE
 #ifdef POINT_SAMPLE
 	for (i = 0; i < heightout; i++)
 	{
@@ -743,17 +755,6 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #else
-	float sx, sy;
-
-	if (widthout > 1)
-		sx = float(widthin - 1) / float(widthout - 1);
-	else
-		sx = float(widthin - 1);
-	if (heightout > 1)
-		sy = float(heightin - 1) / float(heightout - 1);
-	else
-		sy = float(heightin - 1);
-
 	if (sx < 1.0 && sy < 1.0)
 	{
 		/* magnify both width and height:  use weighted sample of 4 pixels */
@@ -987,9 +988,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/24 17:05:44  dj_jl
+//	Beautification
+//
 //	Revision 1.6  2001/08/23 17:51:12  dj_jl
 //	My own mipmap creation code, glu not used anymore
-//
+//	
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

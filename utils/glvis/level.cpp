@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -72,11 +68,11 @@ static vertex_t*		gl_vertexes;
 
 static void LoadVertexes(int lump, int gl_lump)
 {
-    int				i;
+	int				i;
 	void*			data;
 	void*			gldata;
-    mapvertex_t*	ml;
-    vertex_t*		li;
+	mapvertex_t*	ml;
+	vertex_t*		li;
 	int				base_verts;
 	int				gl_verts;
 
@@ -94,51 +90,51 @@ static void LoadVertexes(int lump, int gl_lump)
 	}
 	numvertexes = base_verts + gl_verts;
 
-    // Allocate zone memory for buffer.
+	// Allocate zone memory for buffer.
 	li = vertexes = new vertex_t[numvertexes];
 
-    // Load data into cache.
+	// Load data into cache.
 	data = mainwad->GetLump(lump);
-    ml = (mapvertex_t *)data;
+	ml = (mapvertex_t *)data;
 
-    // Copy and convert vertex, internal representation as vector.
-    for (i = 0; i < base_verts; i++, li++, ml++)
-    {
+	// Copy and convert vertex, internal representation as vector.
+	for (i = 0; i < base_verts; i++, li++, ml++)
+	{
 		*li = TVec(LittleShort(ml->x), LittleShort(ml->y));
-    }
+	}
 
-    // Free buffer memory.
-    Free(data);
+	// Free buffer memory.
+	Free(data);
 
 	//	Save pointer to GL vertexes for seg loading
 	gl_vertexes = li;
 
 	if (!strncmp((char*)gldata, GL_V2_VERTEX_MAGIC, 4))
 	{
-	    gl_mapvertex_t*		glml;
+		gl_mapvertex_t*		glml;
 
-	    glml = (gl_mapvertex_t *)((byte*)gldata + 4);
+		glml = (gl_mapvertex_t *)((byte*)gldata + 4);
 
-	    // Copy and convert vertex, internal representation as vector.
-    	for (i = 0; i < gl_verts; i++, li++, glml++)
-	    {
+		// Copy and convert vertex, internal representation as vector.
+		for (i = 0; i < gl_verts; i++, li++, glml++)
+		{
 			*li = TVec((float)LittleLong(glml->x) / (float)0x10000,
 					   (float)LittleLong(glml->y) / (float)0x10000);
-	    }
+		}
 	}
 	else
 	{
-	    ml = (mapvertex_t *)gldata;
+		ml = (mapvertex_t *)gldata;
 
-	    // Copy and convert vertex, internal representation as vector.
-    	for (i = 0; i < gl_verts; i++, li++, ml++)
-	    {
+		// Copy and convert vertex, internal representation as vector.
+		for (i = 0; i < gl_verts; i++, li++, ml++)
+		{
 			*li = TVec(LittleShort(ml->x), LittleShort(ml->y));
-	    }
+		}
 	}
 
    	// Free buffer memory.
-    Free(gldata);
+	Free(gldata);
 }
 
 //==========================================================================
@@ -149,22 +145,22 @@ static void LoadVertexes(int lump, int gl_lump)
 
 static void LoadSegs(int lump)
 {
-    void*		data;
-    int			i;
-    mapglseg_t*	ml;
-    seg_t*		li;
+	void*		data;
+	int			i;
+	mapglseg_t*	ml;
+	seg_t*		li;
 
-    numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
-    segs = new seg_t[numsegs];
-    data = glwad->GetLump(lump);
+	numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
+	segs = new seg_t[numsegs];
+	data = glwad->GetLump(lump);
 	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
-    ml = (mapglseg_t *)data;
-    li = segs;
+	ml = (mapglseg_t *)data;
+	li = segs;
 	numportals = 0;
 
-    for (i = 0; i < numsegs; i++, li++, ml++)
-    {
+	for (i = 0; i < numsegs; i++, li++, ml++)
+	{
 		word	v1num =	LittleShort(ml->v1);
 		word	v2num =	LittleShort(ml->v2);
 
@@ -196,11 +192,11 @@ static void LoadSegs(int lump)
 
 		//	Calc seg's plane params
 		li->Set2Points(*li->v1, *li->v2);
-    }
+	}
 
-    Free(data);
+	Free(data);
 
-    portals = new portal_t[numportals];
+	portals = new portal_t[numportals];
 }
 
 //==========================================================================
@@ -211,32 +207,32 @@ static void LoadSegs(int lump)
 
 static void LoadSubsectors(int lump)
 {
-    void*				data;
-    int					i;
-    mapsubsector_t*		ms;
-    subsector_t*		ss;
+	void*				data;
+	int					i;
+	mapsubsector_t*		ms;
+	subsector_t*		ss;
 
-    numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
-    subsectors = new subsector_t[numsubsectors];
-    data = glwad->GetLump(lump);
+	numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
+	subsectors = new subsector_t[numsubsectors];
+	data = glwad->GetLump(lump);
 	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
-    ms = (mapsubsector_t *)data;
-    ss = subsectors;
+	ms = (mapsubsector_t *)data;
+	ss = subsectors;
 
-    for (i = 0; i < numsubsectors; i++, ss++, ms++)
-    {
+	for (i = 0; i < numsubsectors; i++, ss++, ms++)
+	{
 		//	Set seg subsector links
-	    int count = LittleShort(ms->numsegs);
-    	seg_t *line = &segs[LittleShort(ms->firstseg)];
-	    while (count--)
-    	{
+		int count = LittleShort(ms->numsegs);
+		seg_t *line = &segs[LittleShort(ms->firstseg)];
+		while (count--)
+		{
 			line->leaf = i;
 			line++;
-    	}
-    }
+		}
+	}
 
-    Free(data);
+	Free(data);
 }
 
 //==========================================================================
@@ -247,11 +243,11 @@ static void LoadSubsectors(int lump)
 
 static void LoadNodes(int lump)
 {
-    void*	data;
+	void*	data;
 
-    data = glwad->GetLump(lump);
+	data = glwad->GetLump(lump);
 	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
-    Free(data);
+	Free(data);
 }
 
 //==========================================================================
@@ -267,7 +263,7 @@ static void CreatePortals(void)
 	portal_t *p = portals;
 	for (i = 0; i < numsegs; i++)
 	{
-    	seg_t *line = &segs[i];
+		seg_t *line = &segs[i];
 		subsector_t *sub = &subsectors[line->leaf];
 		if (line->partner)
 		{
@@ -298,12 +294,12 @@ static void CreatePortals(void)
 
 void LoadLevel(int lumpnum, int gl_lumpnum)
 {
-    LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
-    LoadSegs(gl_lumpnum + ML_GL_SEGS);
-    LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
-    LoadNodes(gl_lumpnum + ML_GL_NODES);
+	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
+	LoadSegs(gl_lumpnum + ML_GL_SEGS);
+	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
+	LoadNodes(gl_lumpnum + ML_GL_NODES);
 
-    CreatePortals();
+	CreatePortals();
 
 	cerr << "\nLoaded " << mainwad->LumpName(lumpnum) << ", "
 		<< numvertexes << " vertexes, "
@@ -325,3 +321,14 @@ void FreeLevel(void)
 	delete subsectors;
 	delete portals;
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -35,9 +31,9 @@
 
 struct lumpinfo_t
 {
-    char	name[12];
-    int		position;
-    int		size;
+	char	name[12];
+	int		position;
+	int		size;
 };
 
 class TIWadFile
@@ -58,11 +54,11 @@ class TIWadFile
 	int LumpNumForName(const char* name);
 	char* LumpName(int lump)
 	{
-    	return lumpinfo[lump].name;
+		return lumpinfo[lump].name;
 	}
 	int LumpSize(int lump)
 	{
-    	return lumpinfo[lump].size;
+		return lumpinfo[lump].size;
 	}
 	void* GetLump(int lump);
 	void* GetLumpName(const char* name)
@@ -71,7 +67,7 @@ class TIWadFile
 	}
 	void Close(void);
 
-    FILE*			handle;
+	FILE*			handle;
 	char			wadid[4];
 	lumpinfo_t*		lumpinfo;
 	int				numlumps;
@@ -124,4 +120,13 @@ inline void CleanupName(const char *src, char *dst)
 	}
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -60,44 +56,44 @@
 
 void TIWadFile::Open(const char* filename)
 {
-    wadinfo_t		header;
-    lumpinfo_t*		lump_p;
-    int				i;
-    filelump_t*		fileinfo;
+	wadinfo_t		header;
+	lumpinfo_t*		lump_p;
+	int				i;
+	filelump_t*		fileinfo;
 	filelump_t*		fi_p;
 
 	handle = fopen(filename, "rb");
-    if (!handle)
-    {
+	if (!handle)
+	{
 		Error("couldn't open %s", filename);
-    }
+	}
 
 	fread(&header, 1, sizeof(header), handle);
 	if (strncmp(header.identification, "IWAD", 4))
 	{
-    	// Homebrew levels?
-    	if (strncmp(header.identification, "PWAD", 4))
-    	{
+		// Homebrew levels?
+		if (strncmp(header.identification, "PWAD", 4))
+		{
 			Error("Wad file %s doesn't have IWAD or PWAD id", filename);
-    	}
+		}
 	}
 	strcpy(wadid, header.identification);
 
 	numlumps = LittleLong(header.numlumps);
-    lumpinfo = new lumpinfo_t[numlumps];
+	lumpinfo = new lumpinfo_t[numlumps];
 	fileinfo = new filelump_t[numlumps];
 	fseek(handle, LittleLong(header.infotableofs), SEEK_SET);
 	fread(fileinfo, 1, numlumps * sizeof(filelump_t), handle);
 
-    // Fill in lumpinfo
-    lump_p = lumpinfo;
+	// Fill in lumpinfo
+	lump_p = lumpinfo;
 	fi_p = fileinfo;
-    for (i = 0; i < numlumps; i++, lump_p++, fi_p++)
-    {
+	for (i = 0; i < numlumps; i++, lump_p++, fi_p++)
+	{
 		CleanupName(fi_p->name, lump_p->name);
 		lump_p->position = LittleLong(fi_p->filepos);
 		lump_p->size = LittleLong(fi_p->size);
-    }
+	}
 	
 	delete fileinfo;
 }
@@ -114,10 +110,10 @@ int TIWadFile::LumpNumForName(const char* name)
 	char		buf[12];
 
 	CleanupName(name, buf);
-    for (i = numlumps - 1; i >= 0; i--)
-    {
+	for (i = numlumps - 1; i >= 0; i--)
+	{
 		if (!strcmp(buf, lumpinfo[i].name))
-	    	return i;
+			return i;
 	}
 	Error("W_GetNumForName: %s not found!", name);
 #ifndef __GNUC__
@@ -133,14 +129,14 @@ int TIWadFile::LumpNumForName(const char* name)
 
 void* TIWadFile::GetLump(int lump)
 {
-    void*		ptr;
-    lumpinfo_t*	l;
+	void*		ptr;
+	lumpinfo_t*	l;
 	
-    l = lumpinfo + lump;
+	l = lumpinfo + lump;
 
 	ptr = Malloc(l->size);
-    fseek(handle, l->position, SEEK_SET);
-    fread(ptr, 1, l->size, handle);
+	fseek(handle, l->position, SEEK_SET);
+	fread(ptr, 1, l->size, handle);
 	return ptr;
 }
 
@@ -205,7 +201,7 @@ void TOWadFile::Close(void)
 	header.infotableofs = LittleLong(ftell(handle));
 	for (int i = 0; i < numlumps; i++)
 	{
-	    filelump_t	fileinfo;
+		filelump_t	fileinfo;
 		strncpy(fileinfo.name, lumpinfo[i].name, 8);
 		fileinfo.size = LittleLong(lumpinfo[i].size);
 		fileinfo.filepos = LittleLong(lumpinfo[i].position);
@@ -218,3 +214,13 @@ void TOWadFile::Close(void)
 	delete lumpinfo;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

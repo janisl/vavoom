@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 class  TVec
@@ -43,18 +39,18 @@ class  TVec
 
 	TVec (const float f[2])
 	{
-    	x = f[0];
-    	y = f[1];
+		x = f[0];
+		y = f[1];
 	}
 
 	const float& operator[](int i) const
 	{
-    	return (&x)[i];
+		return (&x)[i];
 	}
 
 	float& operator[](int i)
 	{
-	    return (&x)[i];
+		return (&x)[i];
 	}
 
 	TVec &operator += (const TVec &v)
@@ -188,3 +184,13 @@ class TPlane
 	}
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

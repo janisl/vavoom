@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //==========================================================================
@@ -93,7 +89,7 @@ struct mapsidedef_t
 	char		toptexture[8];
 	char		bottomtexture[8];
 	char		midtexture[8];
-	short		sector;             // Front sector, towards viewer.
+	short		sector;		// Front sector, towards viewer.
 };
 
 // A LineDef, as used for editing, and as input
@@ -213,3 +209,13 @@ struct mapthing2_t
 	byte 		arg5;
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/24 17:08:34  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
