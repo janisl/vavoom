@@ -220,8 +220,8 @@ endif
 
 ifdef USE_AL
 OBJ_FILES += \
-	obj\s_al.o \
-	obj\s_eaxutl.o
+	obj/s_al.o \
+	obj/s_eaxutl.o
 LIBS := -lopenal $(LIBS)
 endif
 
@@ -256,6 +256,7 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 	obj/sv/files.o \
 	obj/sv/host.o \
 	obj/sv/infostr.o \
+	obj/sv/level.o \
 	obj/sv/mapinfo.o \
 	obj/sv/maths.o \
 	obj/sv/message.o \
