@@ -63,6 +63,7 @@ byte			*fadetable32b;
 //	Translucency tables
 //
 byte 			*tinttables[5];
+word			scaletable[32][256];
 
 byte			*d_rgbtable;
 
@@ -326,6 +327,14 @@ static void InitTranslucencyTables(void)
     tinttables[2] = (byte*)W_CacheLumpName("TRANSP30", PU_STATIC);
     tinttables[3] = (byte*)W_CacheLumpName("TRANSP40", PU_STATIC);
     tinttables[4] = (byte*)W_CacheLumpName("TRANSP50", PU_STATIC);
+
+	for (int t = 0; t < 32; t++)
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			scaletable[t][i] = (i << 8) * t / 31;
+		}
+	}
 }
 
 //==========================================================================
@@ -461,9 +470,12 @@ void TSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:27:17  dj_jl
+//	Truecolor translucency with lookup table
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

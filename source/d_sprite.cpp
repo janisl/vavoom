@@ -686,7 +686,7 @@ extern "C" void D_DrawFuzzSpriteSpans_8(sspan_t *pspan)
 				{
 					if (*pz <= (izi >> 16))
 					{
-						*pdest = ds_transluc[*pdest + (btemp << 8)];
+						*pdest = d_transluc[*pdest + (btemp << 8)];
 					}
 				}
 
@@ -844,7 +844,7 @@ extern "C" void D_DrawAltFuzzSpriteSpans_8(sspan_t *pspan)
 				{
 					if (*pz <= (izi >> 16))
 					{
-						*pdest = ds_transluc[(*pdest << 8) + btemp];
+						*pdest = d_transluc[(*pdest << 8) + btemp];
 					}
 				}
 
@@ -1013,9 +1013,9 @@ extern "C" void D_DrawFuzzSpriteSpans_15(sspan_t *pspan)
 						byte r2 = _GetCol15R(btemp);
 						byte g2 = _GetCol15G(btemp);
 						byte b2 = _GetCol15B(btemp);
-						byte r = (r1 * ds_transluc16 + r2 * (256 - ds_transluc16)) / 256;
-						byte g = (g1 * ds_transluc16 + g2 * (256 - ds_transluc16)) / 256;
-						byte b = (b1 * ds_transluc16 + b2 * (256 - ds_transluc16)) / 256;
+						byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
+						byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
+						byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
 						*pdest = _MakeCol15(r, g, b);
 					}
 				}
@@ -1185,9 +1185,9 @@ extern "C" void D_DrawFuzzSpriteSpans_16(sspan_t *pspan)
 						byte r2 = _GetCol16R(btemp);
 						byte g2 = _GetCol16G(btemp);
 						byte b2 = _GetCol16B(btemp);
-						byte r = (r1 * ds_transluc16 + r2 * (256 - ds_transluc16)) / 256;
-						byte g = (g1 * ds_transluc16 + g2 * (256 - ds_transluc16)) / 256;
-						byte b = (b1 * ds_transluc16 + b2 * (256 - ds_transluc16)) / 256;
+						byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
+						byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
+						byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
 						*pdest = _MakeCol16(r, g, b);
 					}
 				}
@@ -1357,9 +1357,9 @@ extern "C" void D_DrawFuzzSpriteSpans_32(sspan_t *pspan)
 						byte r2 = _GetCol32R(btemp);
 						byte g2 = _GetCol32G(btemp);
 						byte b2 = _GetCol32B(btemp);
-						byte r = (r1 * ds_transluc16 + r2 * (256 - ds_transluc16)) / 256;
-						byte g = (g1 * ds_transluc16 + g2 * (256 - ds_transluc16)) / 256;
-						byte b = (b1 * ds_transluc16 + b2 * (256 - ds_transluc16)) / 256;
+						byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
+						byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
+						byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
 						*pdest = _MakeCol32(r, g, b);
 					}
 				}
@@ -1797,15 +1797,18 @@ void D_SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
 			trindex = 8;
 		if (trindex < 5)
 		{
-			ds_transluc = tinttables[trindex];
+			d_transluc = tinttables[trindex];
 			spritespanfunc = D_DrawFuzzSpriteSpans;
 		}
 		else
 		{
-			ds_transluc = tinttables[8 - trindex];
+			d_transluc = tinttables[8 - trindex];
 			spritespanfunc = D_DrawAltFuzzSpriteSpans;
 		}
-		ds_transluc16 = translucency * 256 / 100;
+
+		trindex = translucency * 31 / 100;
+		d_dsttranstab = scaletable[trindex];
+		d_srctranstab = scaletable[31 - trindex];
 	}
 
 	if (surf)
@@ -1850,9 +1853,12 @@ void TSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:27:17  dj_jl
+//	Truecolor translucency with lookup table
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
