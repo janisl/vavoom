@@ -17,10 +17,10 @@ svprogs: $(OUTDIR)/svprogs.dat
 del:
 	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
-$(OUTDIR)/clprogs.dat: *.vc client/*.vc $(COMMON_DIR)/*.vc
+$(OUTDIR)/clprogs.dat: *.vc client/*.vc cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
 	$(VCC) -I$(COMMON_DIR) client/clprogs.vc $@
 
-$(OUTDIR)/svprogs.dat: *.vc server/*.vc $(COMMON_DIR)/*.vc
+$(OUTDIR)/svprogs.dat: *.vc server/*.vc game/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
 	$(VCC) -I$(COMMON_DIR) server/svprogs.vc $@
 
 #---------------------------------------
