@@ -820,7 +820,8 @@ static void ReadJoystick(void)
 	event_t 	event;
 	static int	oldx = 0;
 	static int	oldy = 0;
-	static byte	oldb[4] = {0, 0, 0, 0};
+	static byte	oldb[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	int			i;
 
 	if (!joystick_started)
 		return;
@@ -848,45 +849,18 @@ static void ReadJoystick(void)
 	oldx = JoyState.lX;
 	oldy = JoyState.lY;
 
-	if ((JoyState.rgbButtons[0] ^ oldb[0]) & 0x80)
+	for (i = 0; i < 16; i++)
 	{
-		event.type = (JoyState.rgbButtons[0] & 0x80)? ev_keydown : ev_keyup;
-		event.data1 = K_JOY1;
-		event.data2 = 0;
-		event.data3 = 0;
-		IN_PostEvent(&event);
+		if ((JoyState.rgbButtons[i] ^ oldb[i]) & 0x80)
+		{
+			event.type = (JoyState.rgbButtons[i] & 0x80)? ev_keydown : ev_keyup;
+			event.data1 = K_JOY1 + i;
+			event.data2 = 0;
+			event.data3 = 0;
+			IN_PostEvent(&event);
+		}
+		oldb[i] = JoyState.rgbButtons[i];
 	}
-	oldb[0] = JoyState.rgbButtons[0];
-
-	if ((JoyState.rgbButtons[1] ^ oldb[1]) & 0x80)
-	{
-		event.type = (JoyState.rgbButtons[1] & 0x80)? ev_keydown : ev_keyup;
-		event.data1 = K_JOY2;
-		event.data2 = 0;
-		event.data3 = 0;
-		IN_PostEvent(&event);
-	}
-	oldb[1] = JoyState.rgbButtons[1];
-
-	if ((JoyState.rgbButtons[2] ^ oldb[2]) & 0x80)
-	{
-		event.type = (JoyState.rgbButtons[2] & 0x80)? ev_keydown : ev_keyup;
-		event.data1 = K_JOY3;
-		event.data2 = 0;
-		event.data3 = 0;
-		IN_PostEvent(&event);
-	}
-	oldb[2] = JoyState.rgbButtons[2];
-
-	if ((JoyState.rgbButtons[3] ^ oldb[3]) & 0x80)
-	{
-		event.type = (JoyState.rgbButtons[3] & 0x80)? ev_keydown : ev_keyup;
-		event.data1 = K_JOY4;
-		event.data2 = 0;
-		event.data3 = 0;
-		IN_PostEvent(&event);
-	}
-	oldb[3] = JoyState.rgbButtons[3];
 	unguard;
 }
 
@@ -1015,9 +989,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/11 18:23:34  dj_jl
+//	Added support for 16 joystick buttons
+//
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
