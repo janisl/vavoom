@@ -114,9 +114,7 @@ extern acsstore_t 	ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 #define MAXRADIUS		32.0
 
 // mapblocks are used to check movement against lines and things
-#define MAPBLOCKSIZE	128.0
-
-#define MapBlock(x)		(int)(x / MAPBLOCKSIZE)
+#define MapBlock(x)		((int)floor(x) >> 7)
 
 #define PT_ADDLINES		1
 #define PT_ADDTHINGS	2
@@ -315,9 +313,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/27 07:49:29  dj_jl
+//	Fixed map block stuff
+//
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.10  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

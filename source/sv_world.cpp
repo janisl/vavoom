@@ -35,6 +35,20 @@
 #include "sv_local.h"
 #include "moflags.h"
 
+#define FRACBITS		16
+#define FRACUNIT		(1<<FRACBITS)
+
+typedef int fixed_t;
+
+#define FL(x)	((float)(x) / (float)FRACUNIT)
+#define FX(x)	(fixed_t)((x) * FRACUNIT)
+
+// mapblocks are used to check movement against lines and things
+#define MAPBLOCKUNITS	128
+#define MAPBLOCKSIZE	(MAPBLOCKUNITS*FRACUNIT)
+#define MAPBLOCKSHIFT	(FRACBITS+7)
+#define MAPBTOFRAC		(MAPBLOCKSHIFT-FRACBITS)
+
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -594,10 +608,12 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
     intercept_p = intercepts;
 	memset(intercepts, 0, sizeof(intercepts));
 
-    if (fmod(x1 - level.bmaporgx, MAPBLOCKSIZE) == 0.0)
+	if (((FX(x1 - level.bmaporgx)) & (MAPBLOCKSIZE - 1)) == 0)
+//	if (fmod(x1 - level.bmaporgx, MAPBLOCKSIZE) == 0.0)
 		x1 += 1.0;	// don't side exactly on a line
     
-    if (fmod(y1 - level.bmaporgy, MAPBLOCKSIZE) == 0.0)
+	if (((FX(y1 - level.bmaporgy)) & (MAPBLOCKSIZE - 1)) == 0)
+//	if (fmod(y1 - level.bmaporgy, MAPBLOCKSIZE) == 0.0)
 		y1 += 1.0;	// don't side exactly on a line
 
 	trace_org = TVec(x1, y1, 0);
@@ -621,13 +637,15 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 	if (xt2 > xt1)
 	{
 		mapxstep = 1;
-		partial = 1.0 - (x1 / MAPBLOCKSIZE - xt1);
+		partial = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partial = 1.0 - (x1 / 120.0 - xt1);
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else if (xt2 < xt1)
 	{
 		mapxstep = -1;
-		partial = x1 / MAPBLOCKSIZE - xt1;
+		partial = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partial = x1 / MAPBLOCKSIZE - xt1;
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else
@@ -635,19 +653,22 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 		mapxstep = 0;
 		partial = 1.0;
 		ystep = 256.0;
-    }	
-	yintercept = y1 / MAPBLOCKSIZE + partial * ystep;
+	}
+	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partial * ystep;
+//	yintercept = y1 / MAPBLOCKSIZE + partial * ystep;
 
 	if (yt2 > yt1)
 	{
 		mapystep = 1;
-		partial = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
+		partial = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partial = 1.0 - (y1 / MAPBLOCKSIZE - yt1);
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else if (yt2 < yt1)
 	{
 		mapystep = -1;
-		partial = y1 / MAPBLOCKSIZE - yt1;
+		partial = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+//		partial = y1 / MAPBLOCKSIZE - yt1;
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else
@@ -656,7 +677,8 @@ boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 		partial = 1.0;
 		xstep = 256.0;
 	}
-	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
+	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
+//	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
     
     // Step through map blocks.
     // Count is present to prevent a round off error
@@ -968,9 +990,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/27 07:49:29  dj_jl
+//	Fixed map block stuff
+//
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.4  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	
