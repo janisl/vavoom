@@ -590,22 +590,22 @@ static void RenderSprite(clmobj_t *thing)
 	spriteframe_t*	sprframe;
 
 	// decide which patch to use for sprite relative to player
-#ifdef PARANOID
 	if ((unsigned)thing->sprite >= MAX_SPRITE_MODELS)
 	{
+#ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite number %d", thing->sprite);
+#endif
 		return;
 	}
-#endif
 	sprdef = &sprites[thing->sprite];
-#ifdef PARANOID
 	if ((thing->frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
+#ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
 			thing->sprite, thing->frame);
+#endif
 		return;
 	}
-#endif
 	sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
 
 	int			lump;
@@ -938,22 +938,22 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 	boolean				flip;
 
 	// decide which patch to use
-#ifdef PARANOID
 	if ((unsigned)psp->sprite >= MAX_SPRITE_MODELS)
 	{
+#ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite number %d", psp->sprite);
+#endif
 		return;
 	}
-#endif
 	sprdef = &sprites[psp->sprite];
-#ifdef PARANOID
 	if ((psp->frame & FF_FRAMEMASK)  >= sprdef->numframes)
 	{
+#ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
 			psp->sprite, psp->frame);
+#endif
 		return;
 	}
-#endif
 	sprframe = &sprdef->spriteframes[psp->frame & FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
@@ -1190,9 +1190,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2004/11/22 07:33:17  dj_jl
+//	Always check for valid sprite numbers and frames.
+//
 //	Revision 1.18  2003/12/23 07:15:43  dj_jl
 //	Sprite offset fix
-//
+//	
 //	Revision 1.17  2003/10/23 06:36:47  dj_jl
 //	PSprites drawn at different depths
 //	
