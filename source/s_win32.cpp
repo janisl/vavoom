@@ -147,6 +147,9 @@ void VDefaultSoundDevice::Init(void)
 	WAVEFORMATEX	wfx;
 	DSCAPS			caps;
 
+	dprintf("WF  %d\n", sizeof(WAVEFORMAT));
+	dprintf("WFP %d\n", sizeof(PCMWAVEFORMAT));
+	dprintf("WFX %d\n", sizeof(WAVEFORMATEX));
 	if (M_CheckParm("-nosound") ||
 		(M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
 	{
@@ -231,25 +234,25 @@ void VDefaultSoundDevice::Init(void)
 			}
 
 			LPDIRECTSOUNDBUFFER		tempBuffer;
-		    PCMWAVEFORMAT			pcmwf;
+		    WAVEFORMATEX			pcmwf;
 
 		    // Set up wave format structure.
-			memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
-		    pcmwf.wf.wFormatTag         = WAVE_FORMAT_PCM;      
-			pcmwf.wf.nChannels          = 1;
-			pcmwf.wf.nSamplesPerSec     = 44100;
-		    pcmwf.wBitsPerSample        = WORD(8);
-			pcmwf.wf.nBlockAlign        = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.wf.nChannels);
-			pcmwf.wf.nAvgBytesPerSec    = pcmwf.wf.nSamplesPerSec * pcmwf.wf.nBlockAlign;
+			memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
+		    pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
+			pcmwf.nChannels       = 1;
+			pcmwf.nSamplesPerSec  = 44100;
+		    pcmwf.wBitsPerSample  = WORD(8);
+			pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+			pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
 		    // Set up DSBUFFERDESC structure.
 		    memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-		    dsbdesc.dwSize              = sizeof(DSBUFFERDESC);
-		    dsbdesc.dwFlags             = DSBCAPS_CTRLVOLUME | 
+		    dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
+		    dsbdesc.dwFlags       = DSBCAPS_CTRLVOLUME | 
 				DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | 
 				DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
-		    dsbdesc.dwBufferBytes       = 44100;
-		    dsbdesc.lpwfxFormat         = (LPWAVEFORMATEX)&pcmwf;
+		    dsbdesc.dwBufferBytes = 44100;
+		    dsbdesc.lpwfxFormat   = &pcmwf;
 
 			if SUCCEEDED(DSound->CreateSoundBuffer(&dsbdesc, &tempBuffer, NULL))
 			{
@@ -559,7 +562,7 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
     HRESULT					result;
 	LPDIRECTSOUNDBUFFER		dsbuffer;
     DSBUFFERDESC			dsbdesc;
-    PCMWAVEFORMAT			pcmwf;
+    WAVEFORMATEX			pcmwf;
     void					*buffer;
 	void					*buff2;
     DWORD					size1;
@@ -597,23 +600,23 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 	sfxinfo_t &sfx = VoiceName ? S_VoiceInfo : S_sfx[sound_id];
 
     // Set up wave format structure.
-	memset(&pcmwf, 0, sizeof(PCMWAVEFORMAT));
-    pcmwf.wf.wFormatTag         = WAVE_FORMAT_PCM;      
-    pcmwf.wf.nChannels          = 1;
-	pcmwf.wf.nSamplesPerSec     = sfx.freq;
-    pcmwf.wBitsPerSample        = WORD(8);
-    pcmwf.wf.nBlockAlign        = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.wf.nChannels);
-    pcmwf.wf.nAvgBytesPerSec    = pcmwf.wf.nSamplesPerSec * pcmwf.wf.nBlockAlign;
+	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
+    pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
+    pcmwf.nChannels       = 1;
+	pcmwf.nSamplesPerSec  = sfx.freq;
+    pcmwf.wBitsPerSample  = WORD(8);
+    pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
+    pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
 
     // Set up DSBUFFERDESC structure.
     memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));  // Zero it out.
-    dsbdesc.dwSize              = sizeof(DSBUFFERDESC);
-    dsbdesc.dwFlags             = 
+    dsbdesc.dwSize        = sizeof(DSBUFFERDESC);
+    dsbdesc.dwFlags       = 
 		DSBCAPS_CTRLVOLUME | 
 		DSBCAPS_CTRLFREQUENCY |
 		DSBCAPS_STATIC;
-    dsbdesc.dwBufferBytes       = sfx.len;
-    dsbdesc.lpwfxFormat         = (LPWAVEFORMATEX)&pcmwf;
+    dsbdesc.dwBufferBytes = sfx.len;
+    dsbdesc.lpwfxFormat   = &pcmwf;
 	if (sound3D)
 	{
 		dsbdesc.dwFlags |= DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
@@ -1209,9 +1212,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/08/04 05:36:47  dj_jl
+//	Structure alignment fix.
+//
 //	Revision 1.21  2004/04/15 07:12:58  dj_jl
 //	Restoring sound volume on exit
-//
+//	
 //	Revision 1.20  2004/01/09 08:17:44  dj_jl
 //	Fixed repeating voices
 //	
