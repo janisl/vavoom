@@ -471,9 +471,9 @@ void WriteMobjInfo(void)
         	fprintf(f, "\t{\n");
 
 			if (no_deathmatch)
-    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
+    	    	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
 			if (no_monsters)
-        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
+        		fprintf(f, "\t\tif (nomonsters)\n\t\t{\n\t\t\tRemoveMobjThinker(self);\n\t\t\treturn;\n\t\t}\n");
 
 			//	Calling of start function
 			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
@@ -761,9 +761,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/28 18:51:59  dj_jl
+//	Replaced some pointers with references.
+//
 //	Revision 1.17  2002/01/24 18:21:20  dj_jl
 //	Inverted passmobj flag
-//
+//	
 //	Revision 1.16  2002/01/17 18:18:12  dj_jl
 //	Renamed all map object classes
 //	
