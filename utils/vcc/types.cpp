@@ -29,6 +29,14 @@
 
 // MACROS ------------------------------------------------------------------
 
+// 4 bytes for virtual table
+#define BASE_CLASS_SIZE			4
+// 0 - class ID
+// 1 - size
+// 2 - parent vtable
+// 3 - reserved
+#define BASE_NUM_METHODS		4
+
 // TYPES -------------------------------------------------------------------
 
 struct typedef_t
@@ -437,6 +445,10 @@ void ParseStruct(void)
 			}
 		   	size += TypeSize(t);
 			fi->type = t;
+			if (t->type == ev_class)
+			{
+				ParseWarning("Class field");
+			}
 			dprintf("Field %d %s, ofs %d, type %d.\n",
 				num_fields, fi->name, fi->ofs, fi->type);
 			num_fields++;
@@ -541,6 +553,10 @@ void AddFields(void)
 	   			ParseError("Additional fields size overflow.");
 			}
 			fi->type = t;
+			if (t->type == ev_class)
+			{
+				ParseWarning("Class field");
+			}
 			dprintf("Field %d %s, ofs %d, type %d.\n",
 				num_fields, fi->name, fi->ofs, fi->type);
 			num_fields++;
@@ -668,9 +684,6 @@ void ParseVector(void)
 //	ParseClass
 //
 //==========================================================================
-
-#define BASE_CLASS_SIZE			4
-#define BASE_NUM_METHODS		2
 
 void ParseClass(void)
 {
@@ -884,6 +897,10 @@ void ParseClass(void)
 			}
 		   	size += TypeSize(t);
 			fi->type = t;
+			if (t->type == ev_class)
+			{
+				ParseWarning("Class field");
+			}
 			dprintf("Field %d %s, ofs %d, type %d.\n",
 				class_type->numfields, fi->name, fi->ofs, fi->type);
 			class_type->numfields++;
@@ -1158,9 +1175,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/25 17:03:50  dj_jl
+//	Added calling of parent functions
+//
 //	Revision 1.5  2001/09/24 17:31:38  dj_jl
 //	Some fixes
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	

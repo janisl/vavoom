@@ -548,6 +548,10 @@ static void ParseCompoundStatement(void)
 				{
 					ParseError(ERR_BAD_VAR_TYPE);
 				}
+				if (t->type == ev_class)
+				{
+					ParseWarning("Class local variable");
+				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
 					ParseError(ERR_INVALID_IDENTIFIER, "%s, variable name expected", tk_String);
@@ -823,6 +827,10 @@ static void ParseDef(TType *type, boolean builtin)
 		   	if (t == &type_void)
 			{
 				ERR_Exit(ERR_VOID_VAR, true, NULL);
+			}
+			if (t->type == ev_class)
+			{
+				ParseWarning("Class variable");
 			}
 			if (CheckForGlobalVar(strings + s_name) ||
 				CheckForFunction(strings + s_name) ||
@@ -1159,9 +1167,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/25 17:03:50  dj_jl
+//	Added calling of parent functions
+//
 //	Revision 1.5  2001/09/24 17:31:38  dj_jl
 //	Some fixes
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	

@@ -852,6 +852,35 @@ static TOp *ParseExpressionPriority0(void)
 			TK_Expect(")", ERR_BAD_EXPR);
 			return op;
 		}
+
+		if (TK_Check("::"))
+		{
+			if (!ThisType)
+			{
+				ParseError(":: not in method");
+				break;
+			}
+			field = CheckForField(ThisType->aux_type->aux_type);
+			if (!field)
+			{
+				ParseError("No such method %s", tk_String);
+				break;
+			}
+			if (field->type->type != ev_method)
+			{
+				ParseError("Not a method");
+				break;
+			}
+			op = new TOpLocal(0, MakePointerType(ThisType));
+			op = new TOpPushPointed(op,	ThisType);
+			op = new TOpCopy(op);
+			op = new TOpPushPointed(op,	field->type);
+			op = new TOpField(op, 8, field->type);
+			op = new TOpPushPointed(op,	field->type);
+			op = new TOpField(op, field->ofs * 4, field->type);
+			op = new TOpPushPointed(op,	field->type);
+			return op;
+		}
 		break;
 
 	 case TK_KEYWORD:
@@ -1642,9 +1671,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/25 17:03:50  dj_jl
+//	Added calling of parent functions
+//
 //	Revision 1.5  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.4  2001/09/05 12:19:20  dj_jl
 //	Release changes
 //	
