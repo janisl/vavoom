@@ -397,11 +397,13 @@ int EV_BuildStairsOld(line_t * line, int *args)
 
 	FloorMover Floor;
 
+	int direction;
 	float stairsize;
 	float speed;
 
+	direction = args[2] & 128 ? -1 : 1;
 	speed = itof(args[1]) * 4.0;
-	stairsize = itof(args[2]);
+	stairsize = itof((args[2] & 127) * direction);
 
 	secnum = -1;
 	rtn = 0;
@@ -417,7 +419,7 @@ int EV_BuildStairsOld(line_t * line, int *args)
 		rtn = 1;
 		Floor = NewSpecialThinker(FloorMover);
 		sec->SpecialData = Floor;
-		Floor.direction = 1;
+		Floor.direction = direction;
 		Floor.sector = sec;
 		Floor.speed = speed;
 		height = sec->floorheight + stairsize;
@@ -464,7 +466,7 @@ int EV_BuildStairsOld(line_t * line, int *args)
 				Floor = NewSpecialThinker(FloorMover);
 
 				sec->SpecialData = Floor;
-				Floor.direction = 1;
+				Floor.direction = direction;
 				Floor.sector = sec;
 				Floor.speed = speed;
 				Floor.floordestheight = height;
@@ -970,6 +972,9 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2003/09/11 17:24:56  dj_jl
+//  Build stairs down special
+//
 //  Revision 1.15  2002/11/02 08:22:37  dj_jl
 //  New style classes.
 //
