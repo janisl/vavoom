@@ -63,6 +63,7 @@ byte				light_remap[256];
 TCvarI				r_darken("r_darken", "0", CVAR_ARCHIVE);
 TCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
+TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -72,13 +73,13 @@ static light_t		lights[MAX_STATIC_LIGHTS];
 static TVec			worldtotex[2];
 static TVec			textoworld[2];
 static TVec			texorg;
-static TVec			surfpt[18 * 18];
+static TVec			surfpt[18 * 18 * 4];
 static int			numsurfpt;
 static bool			points_calculated;
-static float		lightmap[18 * 18];
-static float		lightmapr[18 * 18];
-static float		lightmapg[18 * 18];
-static float		lightmapb[18 * 18];
+static float		lightmap[18 * 18 * 4];
+static float		lightmapr[18 * 18 * 4];
+static float		lightmapg[18 * 18 * 4];
+static float		lightmapb[18 * 18 * 4];
 static bool			light_hit;
 static byte			*facevis;
 static bool			is_colored;
@@ -232,6 +233,7 @@ static void CalcPoints(surface_t *surf)
 	int		i;
 	int		s, t;
 	int		w, h;
+	int		step;
 	float	starts, startt, us, ut;
 	float	mids, midt;
 	TVec	*spt;
@@ -248,18 +250,31 @@ static void CalcPoints(surface_t *surf)
 
 	facemid = texorg + textoworld[0] * mids + textoworld[1] * midt;
 
-	w = (surf->extents[0] >> 4) + 1;
-	h = (surf->extents[1] >> 4) + 1;
-	starts = surf->texturemins[0];
-	startt = surf->texturemins[1];
+	if (r_extrasamples)
+	{
+		// extra filtering
+		w = ((surf->extents[0] >> 4) + 1) * 2;
+		h = ((surf->extents[1] >> 4) + 1) * 2;
+		starts = surf->texturemins[0] - 8;
+		startt = surf->texturemins[1] - 8;
+		step = 8;
+	}
+	else
+	{
+		w = (surf->extents[0] >> 4) + 1;
+		h = (surf->extents[1] >> 4) + 1;
+		starts = surf->texturemins[0];
+		startt = surf->texturemins[1];
+		step = 16;
+	}
 
 	numsurfpt = w * h;
 	for (t = 0; t < h; t++)
 	{
 		for (s = 0; s < w; s++, spt++)
 		{
-			us = starts + s * 16;
-			ut = startt + t * 16;
+			us = starts + s * step;
+			ut = startt + t * step;
 
 			// if a line can be traced from surf to facemid, the point is good
 			for (i = 0; i < 6; i++)
@@ -448,21 +463,51 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 		{
 			for (s = 0; s < w; s++, i++)
 			{
-				total = lightmapr[i];
+				if (r_extrasamples)
+				{
+					// filtered sample
+					total = lightmapr[t*w*4+s*2] +
+							lightmapr[t*2*w*2+s*2+1] +
+							lightmapr[(t*2+1)*w*2+s*2] +
+							lightmapr[(t*2+1)*w*2+s*2+1];
+					total *= 0.25;
+				}
+				else
+					total = lightmapr[i];
 				if (total > 255)
 					total = 255;
 				if (total < 0)
 					Sys_Error("light < 0");
 				surf->lightmap_rgb[i].r = (int)total;
 
-				total = lightmapg[i];
+				if (r_extrasamples)
+				{
+					// filtered sample
+					total = lightmapg[t*w*4+s*2] +
+							lightmapg[t*2*w*2+s*2+1] +
+							lightmapg[(t*2+1)*w*2+s*2] +
+							lightmapg[(t*2+1)*w*2+s*2+1];
+					total *= 0.25;
+				}
+				else
+					total = lightmapg[i];
 				if (total > 255)
 					total = 255;
 				if (total < 0)
 					Sys_Error("light < 0");
 				surf->lightmap_rgb[i].g = (int)total;
 
-				total = lightmapb[i];
+				if (r_extrasamples)
+				{
+					// filtered sample
+					total = lightmapb[t*w*4+s*2] +
+							lightmapb[t*2*w*2+s*2+1] +
+							lightmapb[(t*2+1)*w*2+s*2] +
+							lightmapb[(t*2+1)*w*2+s*2+1];
+					total *= 0.25;
+				}
+				else
+					total = lightmapb[i];
 				if (total > 255)
 					total = 255;
 				if (total < 0)
@@ -491,12 +536,22 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	{
 		for (s = 0; s < w; s++, i++)
 		{
-			total = lightmap[i];
+			if (r_extrasamples)
+			{
+				// filtered sample
+				total = lightmap[t*w*4+s*2] +
+						lightmap[t*2*w*2+s*2+1] +
+						lightmap[(t*2+1)*w*2+s*2] +
+						lightmap[(t*2+1)*w*2+s*2+1];
+				total *= 0.25;
+			}
+			else
+				total = lightmap[i];
 			if (total > 255)
 				total = 255;
 			if (total < 0)
 				Sys_Error("light < 0");
-			surf->lightmap[i] = (int)total;
+			surf->lightmap[i] = int(total);
 		}
 	}
 }
@@ -858,9 +913,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/24 17:04:32  dj_jl
+//	Added extra sampling
+//
 //	Revision 1.5  2001/08/21 17:47:05  dj_jl
 //	Made r_darked off by default
-//
+//	
 //	Revision 1.4  2001/08/07 16:48:54  dj_jl
 //	Beautification
 //	

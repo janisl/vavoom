@@ -46,9 +46,10 @@ struct   menu_video_t
 	menuslider_t	scrsize;
 	menuslider_t	gamma;
 	menuslider_t	darkening;
-	menuswitch_t	subdiv;
 	menuswitch_t	croshair;
 	menuswitch_t	darken;
+	menuswitch_t	extrasamples;
+	menuswitch_t	subdiv;
 	menutext_t		title;
 };
 
@@ -96,6 +97,10 @@ void video_func(menucommon_t *item, int msg)
 
 	 case 5:
 		SetCvar("r_darken", VideoMenu.darken.value);
+		break;
+
+	 case 6:
+		SetCvar("r_extrasamples", VideoMenu.extrasamples.value);
 		break;
 
 	 case 10:
@@ -154,6 +159,12 @@ void menu_video(void)
 	AddMenuItem(&VideoMenu.menu, &VideoMenu.darken);
 	y += 10;
 
+	MenuSwitch_Init(&VideoMenu.extrasamples, x, y, "Extra samples", TEXT_SMALLR, GetCvar("r_extrasamples"), 2, &sw_offon[0]);
+	VideoMenu.darken.callback = video_func;
+	VideoMenu.darken.id = 6;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.extrasamples);
+	y += 10;
+
 	switch (drv)
 	{
 	 case DRV_SOFTWARE:
@@ -180,7 +191,10 @@ void menu_video(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/08/24 17:06:40  dj_jl
+//	Added extra sampling
+//
 //	Revision 1.1  2001/08/23 17:38:15  dj_jl
 //	Added video options menu
-//
+//	
 //**************************************************************************
