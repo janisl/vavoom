@@ -25,10 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define LIGHT_SEQUENCE_START    2
-#define LIGHT_SEQUENCE          3
-#define LIGHT_SEQUENCE_ALT      4
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -60,6 +56,129 @@ int PhaseTable[64] = {
 };
 
 // CODE --------------------------------------------------------------------
+
+//**************************************************************************
+//
+//  FIRELIGHT FLICKER
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  P_SpawnFireFlicker
+//
+//==========================================================================
+
+void P_SpawnFireFlicker(sector_t * sector)
+{
+	FireFlicker Flick;
+
+	Flick = NewSpecialThinker(FireFlicker);
+
+	Flick.sector = sector;
+	Flick.time = 4.0 / 35.0;
+	Flick.maxlight = sector->params.lightlevel;
+	Flick.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel) + 16;
+}
+
+//**************************************************************************
+//
+//  GLOWING LIGHT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  P_SpawnGlowingLight
+//
+//  Spawn glowing light
+//
+//==========================================================================
+
+void P_SpawnGlowingLight(sector_t * sector)
+{
+	GlowingLight G;
+
+	G = NewSpecialThinker(GlowingLight);
+
+	G.sector = sector;
+	G.minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
+	G.maxlight = sector->params.lightlevel;
+	G.direction = -1;
+}
+
+//**************************************************************************
+//
+//  BROKEN LIGHT FLASHING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  P_SpawnLightFlash
+//
+//  After the map has been loaded, scan each sector
+// for specials that spawn thinkers
+//
+//==========================================================================
+
+void P_SpawnLightFlash(sector_t * sector)
+{
+	LightFlash Flash;
+
+	Flash = NewSpecialThinker(LightFlash);
+
+	Flash.sector = sector;
+	Flash.maxlight = sector->params.lightlevel;
+	Flash.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel);
+	Flash.maxtime = 64;
+	Flash.mintime = 7;
+	Flash.time = itof((P_Random() & Flash.maxtime) + 1) / 35.0;
+}
+
+//**************************************************************************
+//
+//  STROBE LIGHT FLASHING
+//
+//**************************************************************************
+
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
+//==========================================================================
+//
+//  P_SpawnStrobeFlash
+//
+//  After the map has been loaded, scan each sector for specials that spawn
+// thinkers
+//
+//==========================================================================
+
+void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
+	int inSync)
+{
+	Strobe Flash;
+
+	Flash = NewSpecialThinker(Strobe);
+
+	Flash.sector = sector;
+	Flash.mintime = itof(fastOrSlow) / 35.0;
+	Flash.maxtime = itof(maxtime) / 35.0;
+	Flash.maxlight = sector->params.lightlevel;
+	Flash.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel);
+
+	if (Flash.minlight == Flash.maxlight)
+		Flash.minlight = 0;
+
+	if (!inSync)
+		Flash.time = (Random() * 8.0 + 1.0) / 35.0;
+	else
+		Flash.time = 1.0 / 35.0;
+}
 
 //============================================================================
 //
@@ -200,8 +319,6 @@ void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 	Phase.base = base & 255;
 	sector->params.lightlevel = Phase.base +
 		PhaseTable[ftoi(Phase.index * 32.0) & 63];
-
-	sector->special = 0;
 }
 
 //==========================================================================
@@ -222,13 +339,15 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 	float indexDelta;
 	int base;
 
-	seqSpecial = LIGHT_SEQUENCE;	// look for Light_Sequence, first
+	seqSpecial = SECSPEC_LightSequence;	// look for Light_Sequence, first
 	sec = sector;
 	count = 1.0;
 	do
 	{
 		nextSec = NULL;
-		sec->special = LIGHT_SEQUENCE_START;	// make sure that the search doesn't back up.
+		//	Make sure that the search doesn't back up.
+		sec->special = (sec->special & ~SECSPEC_BASE_MASK) |
+			SECSPEC_LightSequenceStart;
 		for (i = 0; i < sec->linecount; i++)
 		{
 			tempSec = getNextSector(sec->lines[i], sec);
@@ -236,15 +355,15 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 			{
 				continue;
 			}
-			if (tempSec->special == seqSpecial)
+			if ((tempSec->special & SECSPEC_BASE_MASK) == seqSpecial)
 			{
-				if (seqSpecial == LIGHT_SEQUENCE)
+				if (seqSpecial == SECSPEC_LightSequence)
 				{
-					seqSpecial = LIGHT_SEQUENCE_ALT;
+					seqSpecial = SECSPEC_LightSequenceAlt;
 				}
 				else
 				{
-					seqSpecial = LIGHT_SEQUENCE;
+					seqSpecial = SECSPEC_LightSequence;
 				}
 				nextSec = tempSec;
 				count += 1.0;
@@ -275,7 +394,8 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 			{
 				continue;
 			}
-			if (tempSec->special == LIGHT_SEQUENCE_START)
+			if ((tempSec->special & SECSPEC_BASE_MASK) ==
+				SECSPEC_LightSequenceStart)
 			{
 				nextSec = tempSec;
 			}
@@ -288,6 +408,9 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.19  2002/11/02 08:24:10  dj_jl
 //  New style classes.
 //

@@ -108,6 +108,11 @@ bool bAltShadow;
 bool bShadow;
 bool bDontDraw;
 
+float LastSectorDamageTime;
+
+float HazardTime;
+float LastHazardTime;
+
 BotPlayer Bot;
 
 //==========================================================================
@@ -508,6 +513,8 @@ void SpawnPlayer(mthing_t * mthing)
 	MorphTime = 0.0;
 	ExtraLight = 0;
 	FixedColormap = 0;
+	LastSectorDamageTime = 0.0;
+	LastHazardTime = 0.0;
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = pp.Angles;
 	bFixAngle = true;
@@ -1054,8 +1061,9 @@ void MovePlayer(float deltaTime)
 		forward *= 1.5;
 		side *= 1.5;
 	}
-	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
-		MO.GetFloorType() == FLOOR_ICE)	// Friction_Low
+	if ((!Powers[pw_flight] || MO.Origin.z <= MO.FloorZ) &&
+		(MO.GetFloorType() == FLOOR_ICE ||
+		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		forward *= 0.5;
 		side *= 0.5;
@@ -1280,7 +1288,8 @@ void WaterJump()
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
 	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
-		MO.GetFloorType() == FLOOR_ICE)	// Friction_Low
+		(MO.GetFloorType() == FLOOR_ICE ||
+		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		move *= 0.5;
 	}
@@ -1383,78 +1392,210 @@ void PlayerInSpecialSector(float deltaTime)
 		// Player is not touching the floor
 		return;
 	}
+
+	if (MO.Sector->special & SECSPEC_SECRET_MASK)
+	{
+		//	Secret area.
+		SecretCount++;
+		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
+		centerprint(self, "You found a secret area");
+	}
+
+	if (MO.Sector->special <= SECSPEC_LightFlicker &&
+		MO.Sector->special >= 255)
+	{
+		switch (MO.Sector->special)
+		{
+		case SECSPEC_DamageHellslime:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 10);
+			}
+			break;
+		case SECSPEC_DamageSludge:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 4);
+			}
+			break;
+		case SECSPEC_DamageNukage:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 5);
+			}
+			break;
+		case SECSPEC_LightStrobeFastDamage:
+		case SECSPEC_DamageSuperHellslime:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 20);
+			}
+			break;
+		case SECSPEC_DamageSuperHellslimeExit:
+			// EXIT SUPER DAMAGE! (for E1M8 finale)
+			Cheats &= ~CF_GODMODE;
+	
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 20);
+			}
+	
+			if (Health <= 10)
+			{
+				G_ExitLevel();
+			}
+			break;
+		case SECSPEC_DamageLavaWimpy:
+			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(GLavaInflictor, none, 5);
+				//MO.HitFloorEffect();
+				MO.PlaySound('LavaSizzle', CHAN_BODY);
+			}
+			break;
+		case SECSPEC_DamageLavaHefty:
+			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(GLavaInflictor, none, 8);
+				//MO.HitFloorEffect();
+				MO.PlaySound('LavaSizzle', CHAN_BODY);
+			}
+			break;
+		case SECSPEC_ScrollEastLavaDamage:
+			ThrustPlayer(0.0, 1024.0, deltaTime);
+			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(GLavaInflictor, none, 5);
+				//MO.HitFloorEffect();
+				MO.PlaySound('LavaSizzle', CHAN_BODY);
+			}
+			break;
+		case SECSPEC_DamageHazard:
+			HazardTime += 2.0 * deltaTime;
+			break;
+		case SECSPEC_DamageSuperHazard:
+			HazardTime += 4.0 * deltaTime;
+			break;
+		}
+	}
+	else
+	{
+		//	Extended sector damage type.
+		switch (MO.Sector->special & SECSPEC_DAMAGE_MASK)
+		{
+		case 0x0100:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 5);
+			}
+			break;
+		case 0x0200:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 10);
+			}
+			break;
+		case 0x0300:
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, 20);
+			}
+			break;
+		}
+	}
+
 	switch (MO.Sector->special)
 	{
-	case 9:	// SecretArea
-		SecretCount++;
-		MO.Sector->special = 0;
+	case SECSPEC_ScrollNorthSlow:
+	case SECSPEC_ScrollNorthMedium:
+	case SECSPEC_ScrollNorthFast:
+		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow], deltaTime);
 		break;
-
-	case 201:
-	case 202:
-	case 203:	// Scroll_North_xxx
-		ThrustPlayer(90.0, pushTab[MO.Sector->special - 201], deltaTime);
+	case SECSPEC_ScrollEastSlow:
+	case SECSPEC_ScrollEastMedium:
+	case SECSPEC_ScrollEastFast:
+		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow], deltaTime);
 		break;
-	case 204:
-	case 205:
-	case 206:	// Scroll_East_xxx
-		ThrustPlayer(0.0, pushTab[MO.Sector->special - 204], deltaTime);
+	case SECSPEC_ScrollSouthSlow:
+	case SECSPEC_ScrollSouthMedium:
+	case SECSPEC_ScrollSouthFast:
+		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow], deltaTime);
 		break;
-	case 207:
-	case 208:
-	case 209:	// Scroll_South_xxx
-		ThrustPlayer(270.0, pushTab[MO.Sector->special - 207], deltaTime);
+	case SECSPEC_ScrollWestSlow:
+	case SECSPEC_ScrollWestMedium:
+	case SECSPEC_ScrollWestFast:
+		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow], deltaTime);
 		break;
-	case 210:
-	case 211:
-	case 212:	// Scroll_West_xxx
-		ThrustPlayer(180.0, pushTab[MO.Sector->special - 210], deltaTime);
+	case SECSPEC_ScrollNorthWestSlow:
+	case SECSPEC_ScrollNorthWestMedium:
+	case SECSPEC_ScrollNorthWestFast:
+		ThrustPlayer(135.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow], deltaTime);
 		break;
-	case 213:
-	case 214:
-	case 215:	// Scroll_NorthWest_xxx
-		ThrustPlayer(135.0, pushTab[MO.Sector->special - 213], deltaTime);
+	case SECSPEC_ScrollNorthEastSlow:
+	case SECSPEC_ScrollNorthEastMedium:
+	case SECSPEC_ScrollNorthEastFast:
+		ThrustPlayer(45.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow], deltaTime);
 		break;
-	case 216:
-	case 217:
-	case 218:	// Scroll_NorthEast_xxx
-		ThrustPlayer(45.0, pushTab[MO.Sector->special - 216], deltaTime);
+	case SECSPEC_ScrollSouthEastSlow:
+	case SECSPEC_ScrollSouthEastMedium:
+	case SECSPEC_ScrollSouthEastFast:
+		ThrustPlayer(315.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow], deltaTime);
 		break;
-	case 219:
-	case 220:
-	case 221:	// Scroll_SouthEast_xxx
-		ThrustPlayer(315.0, pushTab[MO.Sector->special - 219], deltaTime);
+	case SECSPEC_ScrollSouthWestSlow:
+	case SECSPEC_ScrollSouthWestMedium:
+	case SECSPEC_ScrollSouthWestFast:
+		ThrustPlayer(225.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow], deltaTime);
 		break;
-	case 222:
-	case 223:
-	case 224:	// Scroll_SouthWest_xxx
-		ThrustPlayer(225.0, pushTab[MO.Sector->special - 222], deltaTime);
+	case SECSPEC_ScrollEast5:
+	case SECSPEC_ScrollEast10:
+	case SECSPEC_ScrollEast25:
+	case SECSPEC_ScrollEast30:
+	case SECSPEC_ScrollEast35:
+		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5], deltaTime);
 		break;
-
-	case 40:
-	case 41:
-	case 42:
-	case 43:
-	case 44:
-	case 45:
-	case 46:
-	case 47:
-	case 48:
-	case 49:
-	case 50:
-	case 51:
-		// Wind specials are handled in (P_mobj):P_XYMovement
+	case SECSPEC_ScrollNorth5:
+	case SECSPEC_ScrollNorth10:
+	case SECSPEC_ScrollNorth25:
+	case SECSPEC_ScrollNorth30:
+	case SECSPEC_ScrollNorth35:
+		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorth5], deltaTime);
 		break;
-
-	case 26:	// Stairs_Special1
-	case 27:	// Stairs_Special2
-		// Used in (P_floor):ProcessStairSector
+	case SECSPEC_ScrollSouth5:
+	case SECSPEC_ScrollSouth10:
+	case SECSPEC_ScrollSouth25:
+	case SECSPEC_ScrollSouth30:
+	case SECSPEC_ScrollSouth35:
+		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouth5], deltaTime);
 		break;
-
-	case 198:	// Lightning Special
-	case 199:	// Lightning Flash special
-	case 200:	// Sky2
-		// Used in (R_plane):R_Drawplanes
+	case SECSPEC_ScrollWest5:
+	case SECSPEC_ScrollWest10:
+	case SECSPEC_ScrollWest25:
+	case SECSPEC_ScrollWest30:
+	case SECSPEC_ScrollWest35:
+		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+			SECSPEC_BASE_MASK) - SECSPEC_ScrollWest5], deltaTime);
 		break;
 	}
 }
@@ -2162,6 +2303,19 @@ void PlayerTick(float deltaTime)
 		BonusFlash -= deltaTime;
 		if (BonusFlash <= 0.0)
 			BonusFlash = 0.0;
+	}
+
+	if (HazardTime)
+	{
+		HazardTime -= deltaTime;
+		if (HazardTime <= 0.0)
+			HazardTime = 0.0;
+		if (level->time - LastHazardTime >= 32.0 / 35.0 &&
+			HazardTime > 16.0)
+		{
+			LastHazardTime = level->time;
+			MO.Damage(none, none, 5);
+		}
 	}
 
 	// Handling colormaps.
@@ -3262,6 +3416,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/11/22 07:36:27  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.4  2004/08/28 12:35:23  dj_jl
 //  Move general client functions to player class.
 //

@@ -37,6 +37,17 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
+int PhaseTable[64] = {
+	128, 112, 96, 80, 64, 48, 32, 32,
+	16, 16, 16, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 16, 16, 16,
+	32, 32, 48, 64, 80, 96, 112, 128
+};
+
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -55,17 +66,13 @@ void P_SpawnFireFlicker(sector_t * sector)
 {
 	FireFlicker Flick;
 
-	// Note that we are resetting sector attributes.
-	// Nothing special about it during gameplay.
-	sector->special = 0;
-
 	Flick = NewSpecialThinker(FireFlicker);
 
 	Flick.sector = sector;
 	Flick.time = 4.0 / 35.0;
 	Flick.maxlight = sector->params.lightlevel;
-	Flick.minlight =
-		FindMinSurroundingLight(sector, sector->params.lightlevel) + 16;
+	Flick.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel) + 16;
 }
 
 //**************************************************************************
@@ -92,8 +99,6 @@ void P_SpawnGlowingLight(sector_t * sector)
 	G.minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
 	G.maxlight = sector->params.lightlevel;
 	G.direction = -1;
-
-	sector->special = 0;
 }
 
 //**************************************************************************
@@ -115,15 +120,12 @@ void P_SpawnLightFlash(sector_t * sector)
 {
 	LightFlash Flash;
 
-	// nothing special about it during gameplay
-	sector->special = 0;
-
 	Flash = NewSpecialThinker(LightFlash);
 
 	Flash.sector = sector;
 	Flash.maxlight = sector->params.lightlevel;
-	Flash.minlight =
-		FindMinSurroundingLight(sector, sector->params.lightlevel);
+	Flash.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel);
 	Flash.maxtime = 64;
 	Flash.mintime = 7;
 	Flash.time = itof((P_Random() & Flash.maxtime) + 1) / 35.0;
@@ -159,14 +161,11 @@ void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
 	Flash.mintime = itof(fastOrSlow) / 35.0;
 	Flash.maxtime = itof(maxtime) / 35.0;
 	Flash.maxlight = sector->params.lightlevel;
-	Flash.minlight =
-		FindMinSurroundingLight(sector, sector->params.lightlevel);
+	Flash.minlight = FindMinSurroundingLight(sector,
+		sector->params.lightlevel);
 
 	if (Flash.minlight == Flash.maxlight)
 		Flash.minlight = 0;
-
-	// nothing special about it during gameplay
-	sector->special = 0;
 
 	if (!inSync)
 		Flash.time = (Random() * 8.0 + 1.0) / 35.0;
@@ -415,47 +414,6 @@ bool EV_SpawnLight(line_t * line, int *arg, int type)
 	return rtn;
 }
 
-#if 0
-//**************************************************************************
-//
-//
-//
-//**************************************************************************
-
-#define LIGHT_SEQUENCE_START    2
-#define LIGHT_SEQUENCE          3
-#define LIGHT_SEQUENCE_ALT      4
-
-int PhaseTable[64] = {
-	128, 112, 96, 80, 64, 48, 32, 32,
-	16, 16, 16, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 16, 16, 16,
-	32, 32, 48, 64, 80, 96, 112, 128
-};
-
-class TPhase:SectorThinker
-{
-	float index;
-	int base;
-
-//============================================================================
-//
-//	Tick
-//
-//============================================================================
-
-void Tick(float deltaTime)
-{
-	index += deltaTime;
-	sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
-}
-
-}
-
 //==========================================================================
 //
 // P_SpawnPhasedLight
@@ -464,23 +422,22 @@ void Tick(float deltaTime)
 
 void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 {
-	TPhase *phase;
+	PhasedLight Phase;
 
-	phase = NewSpecialThinker(TPhase);
-	phase->sector = sector;
+	Phase = NewSpecialThinker(PhasedLight);
+	Phase.sector = sector;
 	if (index == -1)
 	{
 		// sector->lightlevel as the index
-		phase->index = itof(sector->params.lightlevel) / 32.0;
+		Phase.index = itof(sector->params.lightlevel) / 32.0;
 	}
 	else
 	{
-		phase->index = itof(index) / 32.0;
+		Phase.index = itof(index) / 32.0;
 	}
-	phase->base = base & 255;
-	sector->params.lightlevel = phase->base + PhaseTable[ftoi(phase->index * 32.0) & 63];
-
-	sector->special = 0;
+	Phase.base = base & 255;
+	sector->params.lightlevel = Phase.base +
+		PhaseTable[ftoi(Phase.index * 32.0) & 63];
 }
 
 //==========================================================================
@@ -501,13 +458,15 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 	float indexDelta;
 	int base;
 
-	seqSpecial = LIGHT_SEQUENCE;	// look for Light_Sequence, first
+	seqSpecial = SECSPEC_LightSequence;	// look for Light_Sequence, first
 	sec = sector;
 	count = 1.0;
 	do
 	{
 		nextSec = NULL;
-		sec->special = LIGHT_SEQUENCE_START;	// make sure that the search doesn't back up.
+		//	Make sure that the search doesn't back up.
+		sec->special = (sec->special & ~SECSPEC_BASE_MASK) |
+			SECSPEC_LightSequenceStart;
 		for (i = 0; i < sec->linecount; i++)
 		{
 			tempSec = getNextSector(sec->lines[i], sec);
@@ -515,15 +474,15 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 			{
 				continue;
 			}
-			if (tempSec->special == seqSpecial)
+			if ((tempSec->special & SECSPEC_BASE_MASK) == seqSpecial)
 			{
-				if (seqSpecial == LIGHT_SEQUENCE)
+				if (seqSpecial == SECSPEC_LightSequence)
 				{
-					seqSpecial = LIGHT_SEQUENCE_ALT;
+					seqSpecial = SECSPEC_LightSequenceAlt;
 				}
 				else
 				{
-					seqSpecial = LIGHT_SEQUENCE;
+					seqSpecial = SECSPEC_LightSequence;
 				}
 				nextSec = tempSec;
 				count += 1.0;
@@ -554,7 +513,8 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 			{
 				continue;
 			}
-			if (tempSec->special == LIGHT_SEQUENCE_START)
+			if ((tempSec->special & SECSPEC_BASE_MASK) ==
+				SECSPEC_LightSequenceStart)
 			{
 				nextSec = tempSec;
 			}
@@ -563,11 +523,13 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 	}
 	while (sec);
 }
-#endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2004/11/22 07:36:25  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.16  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

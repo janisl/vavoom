@@ -25,13 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-// [RH] Equivalents for BOOM's generalized sector types
-
-#define DAMAGE_MASK		0x0300
-#define SECRET_MASK		0x0400
-#define FRICTION_MASK	0x0800
-#define PUSH_MASK		0x1000
-
 enum
 {
 	PO_ANCHOR_TYPE = 9300,
@@ -132,6 +125,7 @@ enum
 #define MAXMOVE			1050.0
 #define STOPSPEED		2.1875
 #define FRICTION		3.28125
+#define FRICTION_LOW	0.95703125
 #define FRICTION_WATER	3.0
 
 #define BOUNCE_VAL		1.5
@@ -436,6 +430,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2004/11/22 07:36:25  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.43  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

@@ -23,70 +23,54 @@
 //**
 //**************************************************************************
 
-class FloorMover : SectorMover;
+class GlowingLight : SectorThinker;
 
-int type;
-float speed;
-int crush;
-int direction;	// 1 = up, 0 = waiting, -1 = down
-int newspecial;
-int texture;
-int textureChange;	// It's index delta, not texture num
-float floordestheight;
+float Speed;
+int direction;
+int maxlight;
+int minlight;
 
 //==========================================================================
 //
-//	Tick
-//
-//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
+//  Tick
 //
 //==========================================================================
 
 void Tick(float deltaTime)
 {
-	int res;
-
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
-
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
+	switch (direction)
 	{
-		SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
-	}
+	case -1:
+		// DOWN
+		sector->params.lightlevel -= ftoi(Speed * deltaTime);
+		if (sector->params.lightlevel <= minlight)
+		{
+			sector->params.lightlevel += ftoi(Speed * deltaTime);
+			direction = 1;
+		}
+		break;
 
-	if (res == RES_PASTDEST)
-	{
-		//FIXME sound sequence
-		SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-		sector->SpecialData = none;
-		if ((direction == 1 && type == FLEV_DONUT) ||
-			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
+	case 1:
+		// UP
+		sector->params.lightlevel += ftoi(Speed * deltaTime);
+		if (sector->params.lightlevel >= maxlight)
 		{
-			sector->special = (sector->special & SECSPEC_SECRET_MASK) |
-				newspecial;
-			SetFloorPic(sector, texture);
+			sector->params.lightlevel -= ftoi(Speed * deltaTime);
+			direction = -1;
 		}
-		if (textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
-		}
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
+		break;
 	}
 }
 
 defaultproperties
 {
+	Speed = 256.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2004/11/22 07:36:24  dj_jl
+//  Revision 1.1  2004/11/22 07:36:27  dj_jl
 //  Implemented all sector specials in all games.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
 //
 //**************************************************************************

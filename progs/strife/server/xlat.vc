@@ -415,13 +415,39 @@ void TranslateLine(line_t * line)
 
 void TranslateSector(sector_t * sector)
 {
-	if (sector->special)
+	int special;
+	int high;
+
+	special = sector->special;
+	if (!special)
 	{
-		sector->special =
-			(sector->special == 9) ? SECRET_MASK :
-			((sector->special & 0xfe0) << 3) |
-			((sector->special & 0x01f) + (((sector->special & 0x1f) <
-					21) ? 64 : -20));
+		return;
+	}
+	if (special == 9)
+	{
+		sector->special = SECSPEC_SECRET_MASK;
+		return;
+	}
+
+	//	This supports phased lighting with specials 21-24 and wind specials
+	// 40-51.
+	high = (sector->special & 0xfe0) << 3;
+	special &= 0x01f;
+	if (special == 5 || special == 15 || special == 16 || special == 18)
+	{
+		sector->special = high | (special + 100);
+	}
+	else if (special < 21)
+	{
+		sector->special = high | (special + 64);
+	}
+	else if (special < 40)
+	{
+		sector->special = high | (special - 20);
+	}
+	else
+	{
+		sector->special = high | special;
 	}
 }
 
@@ -482,6 +508,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2004/11/22 07:36:29  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.11  2004/10/18 06:36:11  dj_jl
 //  Beautification.
 //

@@ -36,9 +36,14 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define LIGHTNING_SPECIAL 	198
-#define LIGHTNING_SPECIAL2 	199
-#define SKYCHANGE_SPECIAL 	200
+#define LIGHTNING_OUTDOOR	197
+#define LIGHTNING_SPECIAL	198
+#define LIGHTNING_SPECIAL2	199
+#define SKYCHANGE_SPECIAL	200
+
+#define VDIVS		8
+#define HDIVS		16
+#define RADIUS		128.0
 
 // TYPES -------------------------------------------------------------------
 
@@ -98,7 +103,7 @@ static int			NextLightningFlash;
 static int			LightningFlash;
 static int			*LightningLightLevels;
 
-static sky_t		sky[1280];
+static sky_t		sky[HDIVS * VDIVS];
 static int			NumSkySurfs;
 
 // CODE --------------------------------------------------------------------
@@ -213,10 +218,8 @@ static void R_InitOldSky(const mapInfo_t &info)
 		skytop = 190;
 	}
 	skybot = skytop - skyheight;
+	int skyh = (int)skytop;
 
-#define VDIVS		8
-#define HDIVS		16
-#define RADIUS		128.0
 	for (int j = 0; j < VDIVS; j++)
 	{
 		float va0 = 90.0 - j * (180.0 / VDIVS);
@@ -256,11 +259,11 @@ static void R_InitOldSky(const mapInfo_t &info)
 			s.plane.Set(normal, DotProduct(s.surf.verts[1], normal));
 
 			s.texinfo.saxis = hdir * (1024 / HDIVS / DotProduct(hdir, hdir));
-float tk = skyheight / RADIUS;
+float tk = skyh / RADIUS;
 			s.texinfo.taxis = TVec(0, 0, -tk);
 			s.texinfo.soffs = -DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
 				s.texinfo.saxis);
-			s.texinfo.toffs = skyheight;
+			s.texinfo.toffs = skyh;
 
 			float mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1], s.texinfo.saxis) + s.texinfo.soffs;
 			float maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2], s.texinfo.saxis) + s.texinfo.soffs;
@@ -275,41 +278,13 @@ float tk = skyheight / RADIUS;
 			bmaxs = (int)ceil(maxs / 16);
 			s.surf.texturemins[1] = bmins * 16;
 			s.surf.extents[1] = (bmaxs - bmins) * 16;
-			//s.surf.extents[1] = skyheight;
+			//s.surf.extents[1] = skyh;
 
 			s.columnOffset1 = s.columnOffset2 = -i * (1024 / HDIVS);
 		}
 	}
 
-	sky[VDIVS * HDIVS].surf.verts[0] = TVec(128.0, 128.0, skytop);
-	sky[VDIVS * HDIVS].surf.verts[1] = TVec(-128.0, 128.0, skytop);
-	sky[VDIVS * HDIVS].surf.verts[2] = TVec(-128.0, -128.0, skytop);
-	sky[VDIVS * HDIVS].surf.verts[3] = TVec(128.0, -128.0, skytop);
-	sky[VDIVS * HDIVS].plane.Set(TVec(0, 0, -1), -skytop);
-	sky[VDIVS * HDIVS].texinfo.saxis = TVec(0, -1.0, 0);
-	sky[VDIVS * HDIVS].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[VDIVS * HDIVS].texinfo.soffs = 128;
-	sky[VDIVS * HDIVS].texinfo.toffs = 128;
-	sky[VDIVS * HDIVS].texinfo.taxis *= skyheight / 256.0;
-	sky[VDIVS * HDIVS].texinfo.toffs *= skyheight / 256.0;
-	sky[VDIVS * HDIVS].surf.extents[0] = 256;
-	sky[VDIVS * HDIVS].surf.extents[1] = skyheight;
-
-	sky[VDIVS * HDIVS + 1].surf.verts[0] = TVec(128, 128, skybot);
-	sky[VDIVS * HDIVS + 1].surf.verts[1] = TVec(128, -128, skybot);
-	sky[VDIVS * HDIVS + 1].surf.verts[2] = TVec(-128, -128, skybot);
-	sky[VDIVS * HDIVS + 1].surf.verts[3] = TVec(-128, 128, skybot);
-	sky[VDIVS * HDIVS + 1].plane.Set(TVec(0, 0, 1), skybot);
-	sky[VDIVS * HDIVS + 1].texinfo.saxis = TVec(0, -1.0, 0);
-	sky[VDIVS * HDIVS + 1].texinfo.taxis = TVec(1.0, 0, 0);
-	sky[VDIVS * HDIVS + 1].texinfo.soffs = 128;
-	sky[VDIVS * HDIVS + 1].texinfo.toffs = 128;
-	sky[VDIVS * HDIVS + 1].texinfo.taxis *= skyheight / 256.0;
-	sky[VDIVS * HDIVS + 1].texinfo.toffs *= skyheight / 256.0;
-	sky[VDIVS * HDIVS + 1].surf.extents[0] = 256;
-	sky[VDIVS * HDIVS + 1].surf.extents[1] = skyheight;
-
-	NumSkySurfs = VDIVS * HDIVS;// + 2;
+	NumSkySurfs = VDIVS * HDIVS;
 
 	for (int j = 0; j < NumSkySurfs; j++)
 	{
@@ -534,6 +509,7 @@ static void R_LightningFlash(void)
 			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
+					tempSec->special == LIGHTNING_OUTDOOR ||
 					tempSec->special == LIGHTNING_SPECIAL ||
 					tempSec->special == LIGHTNING_SPECIAL2)
 				{
@@ -551,9 +527,10 @@ static void R_LightningFlash(void)
 			tempSec = GClLevel->Sectors;
 			for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 			{
-				if (tempSec->ceiling.pic == skyflatnum
-					|| tempSec->special == LIGHTNING_SPECIAL
-					|| tempSec->special == LIGHTNING_SPECIAL2)
+				if (tempSec->ceiling.pic == skyflatnum ||
+					tempSec->special == LIGHTNING_OUTDOOR ||
+					tempSec->special == LIGHTNING_SPECIAL ||
+					tempSec->special == LIGHTNING_SPECIAL2)
 				{
 					tempSec->params.lightlevel = *tempLight;
 					tempLight++;
@@ -575,6 +552,7 @@ static void R_LightningFlash(void)
 	for (i = 0; i < GClLevel->NumSectors; i++, tempSec++)
 	{
 		if (tempSec->ceiling.pic == skyflatnum ||
+			tempSec->special == LIGHTNING_OUTDOOR ||
 			tempSec->special == LIGHTNING_SPECIAL ||
 			tempSec->special == LIGHTNING_SPECIAL2)
 		{
@@ -681,9 +659,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2004/11/22 07:36:29  dj_jl
+//	Implemented all sector specials in all games.
+//
 //	Revision 1.13  2004/10/08 12:37:47  dj_jl
 //	Better rendering of old skies.
-//
+//	
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

@@ -75,6 +75,7 @@ bool bWaterJump;
 bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
+bool bWindThrust;
 
 //  Params
 float Speed;
@@ -503,16 +504,17 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// player specific
 	if (bIsPlayer)
 	{
-		// end of game hell hack
-		if ((Sector->special & 255) == 75 && damage >= Health)
+		//	End of game hell hack.
+		if ((Sector->special & SECSPEC_BASE_MASK) ==
+			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
 		{
 			damage = Health - 1;
 		}
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
-			|| Player.Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+			Player.Powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -782,7 +784,35 @@ void XYMovement()
 	float ptryy;
 	float xmove;
 	float ymove;
+	int special;
 
+	if (bWindThrust)
+	{
+		special = Sector->special & SECSPEC_BASE_MASK;
+		switch (special)
+		{
+		case SECSPEC_WindEastSlow:
+		case SECSPEC_WindEastMedium:
+		case SECSPEC_WindEastFast:
+			Thrust(0.0, windTab[special - SECSPEC_WindEastSlow]);
+			break;
+		case SECSPEC_WindNorthSlow:
+		case SECSPEC_WindNorthMedium:
+		case SECSPEC_WindNorthFast:
+			Thrust(90.0, windTab[special - SECSPEC_WindNorthSlow]);
+			break;
+		case SECSPEC_WindSouthSlow:
+		case SECSPEC_WindSouthMedium:
+		case SECSPEC_WindSouthFast:
+			Thrust(270.0, windTab[special - SECSPEC_WindSouthSlow]);
+			break;
+		case SECSPEC_WindWestSlow:
+		case SECSPEC_WindWestMedium:
+		case SECSPEC_WindWestFast:
+			Thrust(180.0, windTab[special - SECSPEC_WindWestSlow]);
+			break;
+		}
+	}
 	if (Velocity.x > MAXMOVE)
 		Velocity.x = MAXMOVE;
 	else if (Velocity.x < -MAXMOVE)
@@ -1077,6 +1107,10 @@ void ApplyFriction()
 		if (WaterLevel > 1)
 		{
 			Velocity -= Velocity * (FRICTION_WATER * frametime);
+		}
+		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
+		{
+			Velocity -= Velocity * FRICTION_LOW * frametime;
 		}
 		else
 		{
@@ -1883,11 +1917,11 @@ void A_ScrollOrDie()
 
 	if (Origin.z == GetPlanePointZ(Floor, Origin))
 	{
-		if ((Sector->special & 0xFF) == 15 + 64)
+		if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_DamageInstantDeath)
 		{
 			Damage(none, none, 999);
 		}
-		else if ((Sector->special & 0xFF) == 18 + 64)
+		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_ScrollCurrent)
 		{
 			anglespeed = Sector->tag - 100;
 			speed = itof(anglespeed % 10) / 16.0 * 35.0;
@@ -2071,6 +2105,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.12  2004/11/01 07:38:23  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

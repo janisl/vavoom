@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class VerticalDoor:SectorMover;
+class VerticalDoor : SectorMover;
 
 int type;
 float topheight;
@@ -110,6 +110,23 @@ void Tick(float deltaTime)
 			}
 		}
 		break;
+	case 2:
+		//  INITIAL WAIT
+		toptime -= deltaTime;
+		if (toptime <= 0.0)
+		{
+			toptime = 0.0;
+			switch (type)
+			{
+			case raiseIn5Mins:
+				direction = 1;
+				type = DREV_NORMAL;
+				SectorStartSequence(sector,
+					seq_name[SEQ_DOOR_STONE + sector->seqType]);
+				break;
+			}
+		}
+		break;
 	}
 }
 
@@ -120,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/11/22 07:36:27  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

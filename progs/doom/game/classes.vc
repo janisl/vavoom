@@ -56,6 +56,9 @@
 #include "LightFlash.vc"
 #include "Strobe.vc"
 #include "LightEffect.vc"
+#include "PhasedLight.vc"
+#include "FloorScroll.vc"
+#include "WallScroll.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"
 #include "QuakeFocus.vc"
@@ -66,6 +69,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/11/22 07:36:24  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.4  2004/11/01 07:38:21  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

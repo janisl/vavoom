@@ -551,55 +551,118 @@ void P_SpawnSpecials(bool spawn_thinkers)
 			sector = &GLevel.Sectors[i];
 			if (!sector->special)
 				continue;
-			switch (sector->special)
+			if (sector->special & SECSPEC_SECRET_MASK)
 			{
-			case 1:	// Phased light
-				// Hardcoded base, use sector->lightlevel as the index
+				//	Secret sector.
+				level->totalsecret++;
+			}
+			switch (sector->special & SECSPEC_BASE_MASK)
+			{
+			case SECSPEC_LightPhased:	//	Phased light
+				//	Hardcoded base, use sector->lightlevel as the index
 				P_SpawnPhasedLight(sector, 80, -1);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 2:	// Phased light sequence start
+			case SECSPEC_LightSequenceStart:	// Phased light sequence start
 				P_SpawnLightSequence(sector, 1.0);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
 				// Specials 3 & 4 are used by the phased light sequences
-			case 201:
-			case 202:
-			case 203:	// Scroll_North_xxx
-				SpawnScrollingFloor(sector, 0, 1, sector->special - 201);
+			case SECSPEC_LightFlicker:
+				P_SpawnLightFlash(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 204:
-			case 205:
-			case 206:	// Scroll_East_xxx
-				SpawnScrollingFloor(sector, -1, 0, sector->special - 204);
+			case SECSPEC_LightStrobeFast:
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 207:
-			case 208:
-			case 209:	// Scroll_South_xxx
-				SpawnScrollingFloor(sector, 0, -1, sector->special - 207);
+			case SECSPEC_LightStrobeSlow:
+				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 0);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 210:
-			case 211:
-			case 212:	// Scroll_West_xxx
-				SpawnScrollingFloor(sector, 1, 0, sector->special - 210);
+			case SECSPEC_LightStrobeFastDamage:
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
 				break;
-			case 213:
-			case 214:
-			case 215:	// Scroll_NorthWest_xxx
-				SpawnScrollingFloor(sector, 1, 1, sector->special - 213);
+			case SECSPEC_LightGlow:
+				P_SpawnGlowingLight(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 216:
-			case 217:
-			case 218:	// Scroll_NorthEast_xxx
-				SpawnScrollingFloor(sector, -1, 1, sector->special - 216);
+			case SECSPEC_DoorCloseIn30:
+				P_SpawnDoorCloseIn30(sector);
 				break;
-			case 219:
-			case 220:
-			case 221:	// Scroll_SouthEast_xxx
-				SpawnScrollingFloor(sector, -1, -1, sector->special - 219);
+			case SECSPEC_LightSyncStrobeSlow:
+				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 1);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 222:
-			case 223:
-			case 224:	// Scroll_SouthWest_xxx
-				SpawnScrollingFloor(sector, 1, -1, sector->special - 222);
+			case SECSPEC_LightSyncStrobeFast:
+				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 1);
+				sector->special &= ~SECSPEC_BASE_MASK;
+				break;
+			case SECSPEC_DoorRaiseIn5Minutes:
+				P_SpawnDoorRaiseIn5Mins(sector);
+				break;
+			case SECSPEC_LightFireFlicker:
+				P_SpawnFireFlicker(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
+				break;
+			case SECSPEC_ScrollEastLavaDamage:
+				SpawnScrollingFloor(sector, -1, 0, 3);
+				break;
+			case SECSPEC_ScrollNorthSlow:
+			case SECSPEC_ScrollNorthMedium:
+			case SECSPEC_ScrollNorthFast:
+				SpawnScrollingFloor(sector, 0, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow);
+				break;
+			case SECSPEC_ScrollEastSlow:
+			case SECSPEC_ScrollEastMedium:
+			case SECSPEC_ScrollEastFast:
+				SpawnScrollingFloor(sector, -1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow);
+				break;
+			case SECSPEC_ScrollSouthSlow:
+			case SECSPEC_ScrollSouthMedium:
+			case SECSPEC_ScrollSouthFast:
+				SpawnScrollingFloor(sector, 0, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow);
+				break;
+			case SECSPEC_ScrollWestSlow:
+			case SECSPEC_ScrollWestMedium:
+			case SECSPEC_ScrollWestFast:
+				SpawnScrollingFloor(sector, 1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow);
+				break;
+			case SECSPEC_ScrollNorthWestSlow:
+			case SECSPEC_ScrollNorthWestMedium:
+			case SECSPEC_ScrollNorthWestFast:
+				SpawnScrollingFloor(sector, 1, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow);
+				break;
+			case SECSPEC_ScrollNorthEastSlow:
+			case SECSPEC_ScrollNorthEastMedium:
+			case SECSPEC_ScrollNorthEastFast:
+				SpawnScrollingFloor(sector, -1, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow);
+				break;
+			case SECSPEC_ScrollSouthEastSlow:
+			case SECSPEC_ScrollSouthEastMedium:
+			case SECSPEC_ScrollSouthEastFast:
+				SpawnScrollingFloor(sector, -1, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow);
+				break;
+			case SECSPEC_ScrollSouthWestSlow:
+			case SECSPEC_ScrollSouthWestMedium:
+			case SECSPEC_ScrollSouthWestFast:
+				SpawnScrollingFloor(sector, 1, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow);
+				break;
+			case SECSPEC_ScrollEast5:
+			case SECSPEC_ScrollEast10:
+			case SECSPEC_ScrollEast25:
+			case SECSPEC_ScrollEast30:
+			case SECSPEC_ScrollEast35:
+				SpawnScrollingFloor(sector, -1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5);
 				break;
 			}
 		}
@@ -714,6 +777,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.24  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

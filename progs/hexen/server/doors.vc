@@ -35,7 +35,8 @@ enum
 {
 	DREV_NORMAL,
 	DREV_CLOSE,
-	DREV_OPEN
+	DREV_OPEN,
+	raiseIn5Mins
 };
 
 // TYPES -------------------------------------------------------------------
@@ -162,9 +163,63 @@ bool EV_VerticalDoor(line_t * line)
 	return true;
 }
 
+//==========================================================================
+//
+//  P_SpawnDoorCloseIn30
+//
+//  Spawn a door that closes after 30 seconds
+//
+//==========================================================================
+
+void P_SpawnDoorCloseIn30(sector_t * sec)
+{
+	VerticalDoor Door;
+
+	Door = NewSpecialThinker(VerticalDoor);
+
+	sec->SpecialData = Door;
+	sec->special = 0;
+
+	Door.sector = sec;
+	Door.direction = 0;
+	Door.type = DREV_NORMAL;
+	Door.speed = 70.0;
+	Door.toptime = 30.0;
+}
+
+//==========================================================================
+//
+//  P_SpawnDoorRaiseIn5Mins
+//
+//  Spawn a door that opens after 5 minutes
+//
+//==========================================================================
+
+void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
+{
+	VerticalDoor Door;
+
+	Door = NewSpecialThinker(VerticalDoor);
+
+	sec->SpecialData = Door;
+	sec->special = 0;
+
+	Door.sector = sec;
+	Door.direction = 2;
+	Door.type = raiseIn5Mins;
+	Door.speed = 70.0;
+	Door.topheight = FindLowestCeilingSurrounding(sec);
+	Door.topheight -= 4.0;
+	Door.topwait = 150.0 / 35.0;
+	Door.toptime = 5.0 * 60.0;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.12  2002/11/02 08:24:10  dj_jl
 //  New style classes.
 //

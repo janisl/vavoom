@@ -23,57 +23,21 @@
 //**
 //**************************************************************************
 
-class FloorMover : SectorMover;
+class FloorScroll : SectorThinker;
 
-int type;
-float speed;
-int crush;
-int direction;	// 1 = up, 0 = waiting, -1 = down
-int newspecial;
-int texture;
-int textureChange;	// It's index delta, not texture num
-float floordestheight;
+float XSpeed;
+float YSpeed;
 
 //==========================================================================
 //
 //	Tick
 //
-//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
-//
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	int res;
-
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
-
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
-	{
-		SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
-	}
-
-	if (res == RES_PASTDEST)
-	{
-		//FIXME sound sequence
-		SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-		sector->SpecialData = none;
-		if ((direction == 1 && type == FLEV_DONUT) ||
-			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
-		{
-			sector->special = (sector->special & SECSPEC_SECRET_MASK) |
-				newspecial;
-			SetFloorPic(sector, texture);
-		}
-		if (textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
-		}
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
-	}
+	sector->floor.xoffs += XSpeed * DeltaTime;
+	sector->floor.yoffs += YSpeed * DeltaTime;
 }
 
 defaultproperties
@@ -83,10 +47,7 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2004/11/22 07:36:24  dj_jl
+//  Revision 1.1  2004/11/22 07:36:24  dj_jl
 //  Implemented all sector specials in all games.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
 //
 //**************************************************************************

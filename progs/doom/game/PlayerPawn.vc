@@ -33,11 +33,15 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bTelestomp = true;
+	bWindThrust = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/11/22 07:36:24  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.4  2004/08/22 19:23:04  dj_jl
 //  Moved many functions to player class.
 //

@@ -40,6 +40,7 @@ bool respawnmonsters;
 #include "plats.vc"
 #include "polyobj.vc"
 #include "lights.vc"
+#include "scroll.vc"
 #include "spec.vc"
 
 #include "world.vc"
@@ -63,6 +64,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2004/11/22 07:36:27  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.19  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

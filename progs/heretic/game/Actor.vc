@@ -886,8 +886,15 @@ void Damage(Actor inflictor, Actor source, int damage)
 	//
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
-				|| Player.Powers[pw_invulnerability]))
+		//	End of game hell hack.
+		if ((Sector->special & SECSPEC_BASE_MASK) ==
+			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
+		{
+			damage = Health - 1;
+		}
+
+		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+			Player.Powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -1404,7 +1411,7 @@ void ApplyFriction(void)
 		{
 			Velocity -= Velocity * FRICTION_FLY * frametime;
 		}
-		else if (Sector->special == 15)	// Friction_Low
+		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
 		{
 			Velocity -= Velocity * FRICTION_LOW * frametime;
 		}
@@ -1427,30 +1434,30 @@ void XYMovement(void)
 	float xmove, ymove;
 	int special;
 
-	special = Sector->special;
 	if (bWindThrust)
 	{
+		special = Sector->special & SECSPEC_BASE_MASK;
 		switch (special)
 		{
-		case 40:
-		case 41:
-		case 42:	// Wind_East
-			Thrust(0.0, windTab[special - 40]);
+		case SECSPEC_WindEastSlow:
+		case SECSPEC_WindEastMedium:
+		case SECSPEC_WindEastFast:
+			Thrust(0.0, windTab[special - SECSPEC_WindEastSlow]);
 			break;
-		case 43:
-		case 44:
-		case 45:	// Wind_North
-			Thrust(90.0, windTab[special - 43]);
+		case SECSPEC_WindNorthSlow:
+		case SECSPEC_WindNorthMedium:
+		case SECSPEC_WindNorthFast:
+			Thrust(90.0, windTab[special - SECSPEC_WindNorthSlow]);
 			break;
-		case 46:
-		case 47:
-		case 48:	// Wind_South
-			Thrust(270.0, windTab[special - 46]);
+		case SECSPEC_WindSouthSlow:
+		case SECSPEC_WindSouthMedium:
+		case SECSPEC_WindSouthFast:
+			Thrust(270.0, windTab[special - SECSPEC_WindSouthSlow]);
 			break;
-		case 49:
-		case 50:
-		case 51:	// Wind_West
-			Thrust(180.0, windTab[special - 49]);
+		case SECSPEC_WindWestSlow:
+		case SECSPEC_WindWestMedium:
+		case SECSPEC_WindWestFast:
+			Thrust(180.0, windTab[special - SECSPEC_WindWestSlow]);
 			break;
 		}
 	}
@@ -2951,6 +2958,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/11/22 07:36:25  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.8  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

@@ -279,8 +279,131 @@ enum
 #endif
 
 //**************************************************************************
+//**
+//**    SERVER DEFINES
+//**
+//**************************************************************************
+
+#ifdef SERVER
+
+enum
+{
+	SECSPEC_None,
+	SECSPEC_LightPhased,
+	SECSPEC_LightSequenceStart,
+	SECSPEC_LightSequence,
+	SECSPEC_LightSequenceAlt,
+
+	SECSPEC_StairsSpecial1 = 26,
+	SECSPEC_StairsSpecial2,
+
+	SECSPEC_WindEastSlow = 40,//40
+	SECSPEC_WindEastMedium,
+	SECSPEC_WindEastFast,
+	SECSPEC_WindNorthSlow,
+	SECSPEC_WindNorthMedium,
+	SECSPEC_WindNorthFast,
+	SECSPEC_WindSouthSlow,
+	SECSPEC_WindSouthMedium,
+	SECSPEC_WindSouthFast,
+	SECSPEC_WindWestSlow,
+	SECSPEC_WindWestMedium,//50
+	SECSPEC_WindWestFast,
+
+	SECSPEC_LightFlicker = 65,
+	SECSPEC_LightStrobeFast,
+	SECSPEC_LightStrobeSlow,
+	SECSPEC_LightStrobeFastDamage,
+	SECSPEC_DamageHellslime,
+	SECSPEC_DamageSludge,//70
+	SECSPEC_DamageNukage,
+	SECSPEC_LightGlow,
+	SECSPEC_DoorCloseIn30 = 74,
+	SECSPEC_DamageSuperHellslimeExit,
+	SECSPEC_LightSyncStrobeSlow,
+	SECSPEC_LightSyncStrobeFast,
+	SECSPEC_DoorRaiseIn5Minutes,
+	SECSPEC_FrictionLow,
+	SECSPEC_DamageSuperHellslime,// 80
+	SECSPEC_LightFireFlicker,
+	SECSPEC_DamageLavaWimpy,
+	SECSPEC_DamageLavaHefty,
+	SECSPEC_ScrollEastLavaDamage,
+
+	SECSPEC_DamageHazard = 105,
+	SECSPEC_DamageInstantDeath = 115,
+	SECSPEC_DamageSuperHazard,
+	SECSPEC_ScrollCurrent = 118,
+
+	//	These are handled by the engine.
+	SECSPEC_LightningOutdoor = 197,
+	SECSPEC_LightningIndoor1,
+	SECSPEC_Lightningindoor2,
+	SECSPEC_Sky2,//200
+
+	SECSPEC_ScrollNorthSlow,
+	SECSPEC_ScrollNorthMedium,
+	SECSPEC_ScrollNorthFast,
+	SECSPEC_ScrollEastSlow,
+	SECSPEC_ScrollEastMedium,
+	SECSPEC_ScrollEastFast,
+	SECSPEC_ScrollSouthSlow,
+	SECSPEC_ScrollSouthMedium,
+	SECSPEC_ScrollSouthFast,
+	SECSPEC_ScrollWestSlow,//210
+	SECSPEC_ScrollWestMedium,
+	SECSPEC_ScrollWestFast,
+	SECSPEC_ScrollNorthWestSlow,
+	SECSPEC_ScrollNorthWestMedium,
+	SECSPEC_ScrollNorthWestFast,
+	SECSPEC_ScrollNorthEastSlow,
+	SECSPEC_ScrollNorthEastMedium,
+	SECSPEC_ScrollNorthEastFast,
+	SECSPEC_ScrollSouthEastSlow,
+	SECSPEC_ScrollSouthEastMedium,//220
+	SECSPEC_ScrollSouthEastFast,
+	SECSPEC_ScrollSouthWestSlow,
+	SECSPEC_ScrollSouthWestMedium,
+	SECSPEC_ScrollSouthWestFast,
+
+	SECSPEC_ScrollEast5,
+	SECSPEC_ScrollEast10,
+	SECSPEC_ScrollEast25,
+	SECSPEC_ScrollEast30,
+	SECSPEC_ScrollEast35,
+	SECSPEC_ScrollNorth5,//230
+	SECSPEC_ScrollNorth10,
+	SECSPEC_ScrollNorth25,
+	SECSPEC_ScrollNorth30,
+	SECSPEC_ScrollNorth35,
+	SECSPEC_ScrollSouth5,
+	SECSPEC_ScrollSouth10,
+	SECSPEC_ScrollSouth25,
+	SECSPEC_ScrollSouth30,
+	SECSPEC_ScrollSouth35,
+	SECSPEC_ScrollWest5,//240
+	SECSPEC_ScrollWest10,
+	SECSPEC_ScrollWest25,
+	SECSPEC_ScrollWest30,
+	SECSPEC_ScrollWest35,
+
+	SECSPEC_Max
+};
+
+#define SECSPEC_BASE_MASK		0x00ff
+#define SECSPEC_DAMAGE_MASK		0x0300
+#define SECSPEC_SECRET_MASK		0x0400
+#define SECSPEC_FRICTION_MASK	0x0800
+#define SECSPEC_PUSH_MASK		0x1000
+
+#endif
+
+//**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2004/11/22 07:36:23  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.20  2004/11/01 07:38:20  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

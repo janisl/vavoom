@@ -23,57 +23,36 @@
 //**
 //**************************************************************************
 
-class FloorMover : SectorMover;
+class FireFlicker : SectorThinker;
 
-int type;
-float speed;
-int crush;
-int direction;	// 1 = up, 0 = waiting, -1 = down
-int newspecial;
-int texture;
-int textureChange;	// It's index delta, not texture num
-float floordestheight;
+float time;
+int maxlight;
+int minlight;
 
 //==========================================================================
 //
 //	Tick
 //
-//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
-//
 //==========================================================================
 
 void Tick(float deltaTime)
 {
-	int res;
+	int amount;
 
-	res = T_MovePlane(sector, speed * deltaTime,
-		floordestheight, crush, 0, direction);
-
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
+	time -= deltaTime;
+	if (time > 0.0)
 	{
-		SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
+		return;
 	}
 
-	if (res == RES_PASTDEST)
-	{
-		//FIXME sound sequence
-		SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
-		sector->SpecialData = none;
-		if ((direction == 1 && type == FLEV_DONUT) ||
-			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
-		{
-			sector->special = (sector->special & SECSPEC_SECRET_MASK) |
-				newspecial;
-			SetFloorPic(sector, texture);
-		}
-		if (textureChange)
-		{
-			SetFloorPic(sector, sector->floor.pic - textureChange);
-		}
-		TagFinished(sector->tag);
-		RemoveSpecialThinker(self);
-	}
+	amount = (P_Random() & 3) * 16;
+
+	if (sector->params.lightlevel - amount < minlight)
+		sector->params.lightlevel = minlight;
+	else
+		sector->params.lightlevel = maxlight - amount;
+
+	time = 4.0 / 35.0;
 }
 
 defaultproperties
@@ -83,10 +62,7 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2004/11/22 07:36:24  dj_jl
+//  Revision 1.1  2004/11/22 07:36:25  dj_jl
 //  Implemented all sector specials in all games.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
 //
 //**************************************************************************

@@ -534,46 +534,120 @@ void P_SpawnSpecials(bool spawn_thinkers)
 			sector = &GLevel.Sectors[i];
 			if (!sector->special)
 				continue;
-			switch (sector->special)
+			if (sector->special & SECSPEC_SECRET_MASK)
 			{
-			case 1 + 64:	// FLICKERING LIGHTS
+				//	Secret sector.
+				level->totalsecret++;
+			}
+			switch (sector->special & SECSPEC_BASE_MASK)
+			{
+			case SECSPEC_LightPhased:
+				//	Hardcoded base, use sector->lightlevel as the index
+				P_SpawnPhasedLight(sector, 80, -1);
+				sector->special &= ~SECSPEC_BASE_MASK;
+				break;
+			case SECSPEC_LightSequenceStart:
+				P_SpawnLightSequence(sector, 1.0);
+				sector->special &= ~SECSPEC_BASE_MASK;
+				break;
+				// Specials 3 & 4 are used by the phased light sequences
+			case SECSPEC_LightFlicker:
 				P_SpawnLightFlash(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 2 + 64:	// STROBE FAST
+			case SECSPEC_LightStrobeFast:
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 3 + 64:	// STROBE SLOW
+			case SECSPEC_LightStrobeSlow:
 				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 0);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 4 + 64:	// STROBE FAST/DEATH SLIME
+			case SECSPEC_LightStrobeFastDamage:
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
-				sector->special = 4;
 				break;
-			case 8 + 64:	// GLOWING LIGHT
+			case SECSPEC_LightGlow:
 				P_SpawnGlowingLight(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 10 + 64:	// DOOR CLOSE IN 30 SECONDS
+			case SECSPEC_DoorCloseIn30:
 				P_SpawnDoorCloseIn30(sector);
 				break;
-			case 12 + 64:	// SYNC STROBE SLOW
+			case SECSPEC_LightSyncStrobeSlow:
 				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 1);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 13 + 64:	// SYNC STROBE FAST
+			case SECSPEC_LightSyncStrobeFast:
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 1);
+				sector->special &= ~SECSPEC_BASE_MASK;
 				break;
-			case 14 + 64:	// DOOR RAISE IN 5 MINUTES
+			case SECSPEC_DoorRaiseIn5Minutes:
 				P_SpawnDoorRaiseIn5Mins(sector, i);
 				break;
+			case SECSPEC_LightFireFlicker:
+				P_SpawnFireFlicker(sector);
+				sector->special &= ~SECSPEC_BASE_MASK;
+				break;
+			case SECSPEC_ScrollEastLavaDamage:
+				SpawnScrollingFloor(sector, -1, 0, 3);
+				break;
+			case SECSPEC_ScrollNorthSlow:
+			case SECSPEC_ScrollNorthMedium:
+			case SECSPEC_ScrollNorthFast:
+				SpawnScrollingFloor(sector, 0, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow);
+				break;
+			case SECSPEC_ScrollEastSlow:
+			case SECSPEC_ScrollEastMedium:
+			case SECSPEC_ScrollEastFast:
+				SpawnScrollingFloor(sector, -1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow);
+				break;
+			case SECSPEC_ScrollSouthSlow:
+			case SECSPEC_ScrollSouthMedium:
+			case SECSPEC_ScrollSouthFast:
+				SpawnScrollingFloor(sector, 0, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow);
+				break;
+			case SECSPEC_ScrollWestSlow:
+			case SECSPEC_ScrollWestMedium:
+			case SECSPEC_ScrollWestFast:
+				SpawnScrollingFloor(sector, 1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow);
+				break;
+			case SECSPEC_ScrollNorthWestSlow:
+			case SECSPEC_ScrollNorthWestMedium:
+			case SECSPEC_ScrollNorthWestFast:
+				SpawnScrollingFloor(sector, 1, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow);
+				break;
+			case SECSPEC_ScrollNorthEastSlow:
+			case SECSPEC_ScrollNorthEastMedium:
+			case SECSPEC_ScrollNorthEastFast:
+				SpawnScrollingFloor(sector, -1, 1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow);
+				break;
+			case SECSPEC_ScrollSouthEastSlow:
+			case SECSPEC_ScrollSouthEastMedium:
+			case SECSPEC_ScrollSouthEastFast:
+				SpawnScrollingFloor(sector, -1, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow);
+				break;
+			case SECSPEC_ScrollSouthWestSlow:
+			case SECSPEC_ScrollSouthWestMedium:
+			case SECSPEC_ScrollSouthWestFast:
+				SpawnScrollingFloor(sector, 1, -1, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow);
+				break;
+			case SECSPEC_ScrollEast5:
+			case SECSPEC_ScrollEast10:
+			case SECSPEC_ScrollEast25:
+			case SECSPEC_ScrollEast30:
+			case SECSPEC_ScrollEast35:
+				SpawnScrollingFloor(sector, -1, 0, (sector->special &
+					SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5);
+				break;
 			}
-		}
-	}
-
-	for (i = 0; i < GLevel.NumSectors; i++)
-	{
-		if (GLevel.Sectors[i].special & SECRET_MASK)
-		{
-			// SECRET SECTOR
-			level->totalsecret++;
 		}
 	}
 
@@ -668,10 +742,6 @@ void P_UpdateSpecials(void)
 {
 	int i;
 	line_t *line;
-	int scrollOffset;
-	sector_t *sec;
-	int xoffs;
-	int yoffs;
 
 	P_AmbientSound();
 
@@ -698,33 +768,6 @@ void P_UpdateSpecials(void)
 				itof(line->arg1) / 64.0;
 			break;
 		}
-	}
-
-	//  Handle scrolling flats
-	scrollOffset = (level->tictime >> 1) & 63;
-	for (i = 0; i < GLevel.NumSectors; i++)
-	{
-		sec = &GLevel.Sectors[i];
-		switch (sec->special)
-		{
-		case 20 + 205:
-		case 21 + 205:
-		case 22 + 205:
-		case 23 + 205:
-		case 24 + 205:	// Scroll_East
-			xoffs = (63 - scrollOffset) << (sec->special - 20) & 63;
-			yoffs = 0;
-			break;
-		case 84:	// Scroll_EastLavaDamage
-			xoffs = ((63 - scrollOffset) << 3) & 63;
-			yoffs = 0;
-			break;
-		default:
-			xoffs = 0;
-			yoffs = 0;
-		}
-		sec->floor.xoffs = itof(xoffs);
-		sec->floor.yoffs = itof(yoffs);
 	}
 }
 
@@ -860,6 +903,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2004/11/22 07:36:27  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.23  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

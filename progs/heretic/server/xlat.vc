@@ -275,9 +275,13 @@ void TranslateSector(sector_t *sector)
 	int high;
 
 	special = sector->special;
+	if (!special)
+	{
+		return;
+	}
 	if (special == 9)
 	{
-		sector->special = SECRET_MASK;
+		sector->special = SECSPEC_SECRET_MASK;
 		return;
 	}
 
@@ -285,15 +289,19 @@ void TranslateSector(sector_t *sector)
 	special &= 0x3f;
 	if (special == 5)
 	{
-		sector->special = high | 82;
+		sector->special = high | SECSPEC_DamageLavaWimpy;
+	}
+	else if (special == 6)
+	{
+		sector->special = high | SECSPEC_DamageSludge;
 	}
 	else if (special == 16)
 	{
-		sector->special = high | 83;
+		sector->special = high | SECSPEC_DamageLavaHefty;
 	}
 	else if (special == 4)
 	{
-		sector->special = high | 84;
+		sector->special = high | SECSPEC_ScrollEastLavaDamage;
 	}
 	else if (special < 20)
 	{
@@ -360,6 +368,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/11/22 07:36:27  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.7  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

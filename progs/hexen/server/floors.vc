@@ -246,7 +246,6 @@ int EV_FloorCrushStop(line_t * line, int *args)
 
 // ===== Build Stairs Private Data =====
 
-#define STAIR_SECTOR_TYPE       26
 #define STAIR_QUEUE_SIZE        32
 
 enum
@@ -388,20 +387,20 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 			continue;
 		}
 		tsec = line->frontsector;
-		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->SpecialData
-			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
+		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
+			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
+			tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
-			//tsec->special = 0;
 		}
 		tsec = line->backsector;
-		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->SpecialData
-			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
+		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
+			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
+			tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
-			//tsec->special = 0;
 		}
 	}
 }
@@ -457,7 +456,7 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 			continue;
 
 		QueueStairSector(sec, 0, sec->floorheight);
-		sec->special = 0;
+		sec->special &= ~SECSPEC_BASE_MASK;
 	}
 	for (qSec = DequeueStairSector(&type, &height); qSec != NULL;
 		qSec = DequeueStairSector(&type, &height))
@@ -661,6 +660,9 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.16  2002/11/02 08:24:10  dj_jl
 //  New style classes.
 //

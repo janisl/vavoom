@@ -185,7 +185,8 @@ bool EV_DoFloor(line_t * line, int *args, int floortype)
 			Floor.floordestheight = Floor.sector->floorheight +
 				itof(args[2]);
 			SetFloorPic(sec, line->frontsector->floor.pic);
-			sec->special = line->frontsector->special;
+			sec->special = (sec->special & SECSPEC_SECRET_MASK) |
+				(line->frontsector->special & ~SECSPEC_SECRET_MASK);
 			break;
 
 		case FLEV_RAISEFLOORBYVALUECHANGE2:
@@ -232,7 +233,8 @@ bool EV_DoFloor(line_t * line, int *args, int floortype)
 						if (sec->floorheight == Floor.floordestheight)
 						{
 							Floor.texture = sec->floor.pic;
-							Floor.newspecial = sec->special;
+							Floor.newspecial = sec->special &
+								~SECSPEC_SECRET_MASK;
 							break;
 						}
 					}
@@ -243,7 +245,8 @@ bool EV_DoFloor(line_t * line, int *args, int floortype)
 						if (sec->floorheight == Floor.floordestheight)
 						{
 							Floor.texture = sec->floor.pic;
-							Floor.newspecial = sec->special;
+							Floor.newspecial = sec->special &
+								~SECSPEC_SECRET_MASK;
 							break;
 						}
 					}
@@ -257,7 +260,7 @@ bool EV_DoFloor(line_t * line, int *args, int floortype)
 				FindNextHighestFloor(sec, sec->floorheight);
 			SetFloorPic(sec, line->frontsector->floor.pic);
 			// NO MORE DAMAGE, IF APPLICABLE
-			sec->special = 0;
+			sec->special &= SECSPEC_SECRET_MASK;
 			SectorStartSoundName(sec, 'StoneMoving', CHAN_VOICE);
 			break;
 
@@ -543,7 +546,6 @@ int EV_DoDonut(line_t * line, int *args)
 
 // ===== Build Stairs Private Data =====
 
-#define STAIR_SECTOR_TYPE       26
 #define STAIR_QUEUE_SIZE        32
 
 enum
@@ -685,20 +687,20 @@ void ProcessStairSector(sector_t * sec, int type, float height,
 			continue;
 		}
 		tsec = line->frontsector;
-		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->SpecialData
-			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
+		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
+			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
+			tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
-			//tsec->special = 0;
 		}
 		tsec = line->backsector;
-		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->SpecialData
-			&& tsec->floor.pic == StairTexture && tsec->validcount != *validcount)
+		if ((tsec->special & SECSPEC_BASE_MASK) == type + SECSPEC_StairsSpecial1 &&
+			!tsec->SpecialData && tsec->floor.pic == StairTexture &&
+			tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
 			tsec->validcount = *validcount;
-			//tsec->special = 0;
 		}
 	}
 }
@@ -755,7 +757,7 @@ int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 			continue;
 
 		QueueStairSector(sec, 0, sec->floorheight);
-		sec->special = 0;
+		sec->special &= ~SECSPEC_BASE_MASK;
 	}
 	while ((qSec = DequeueStairSector(&type, &height)) != NULL)
 	{
@@ -958,6 +960,9 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2004/11/22 07:36:28  dj_jl
+//  Implemented all sector specials in all games.
+//
 //  Revision 1.17  2003/09/12 16:47:11  dj_jl
 //  Translating most of the line specials
 //
