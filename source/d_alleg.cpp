@@ -107,7 +107,7 @@ BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 	bitmap->clip = TRUE;
 	bitmap->cl = bitmap->ct = 0;
 	bitmap->vtable = vtable;
-	bitmap->write_bank = bitmap->read_bank = _stub_bank_switch;
+	bitmap->write_bank = bitmap->read_bank = (void*)_stub_bank_switch;
 	bitmap->id = 0;
 	bitmap->extra = NULL;
 	bitmap->x_ofs = 0;
@@ -315,9 +315,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/17 17:43:40  dj_jl
+//	LINUX fixes
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -30,6 +30,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <allegro.h>
+#include <dlfcn.h>
 #include "gl_local.h"
 #include <GL/glx.h>
 // Here you see 2 bugs in Allegro headers
@@ -370,6 +371,7 @@ void *TOpenGLDrawer::GetExtFuncPtr(const char *name)
 	}
 	void *ptr = dlsym(prjobj, name);
 	dlclose(prjobj);
+	return ptr;
 }
 
 //==========================================================================
@@ -437,9 +439,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/17 17:43:40  dj_jl
+//	LINUX fixes
+//
 //	Revision 1.4  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

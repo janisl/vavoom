@@ -32,19 +32,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-enum
-{
-	wipe_None,
-
-    // weird screen melt
-    wipe_Melt,	
-
-    // using translucency
-    wipe_Translucent,
-
-    NUMWIPES
-};
-
 typedef struct
 {
     char			manufacturer;
@@ -484,49 +471,49 @@ static void ChangeResolution(int width, int height, int bpp)
 static void CheckResolutionChange(void)
 {
 	bool		must_set_pal = false;
-    bool		res_changed = false;
+	bool		res_changed = false;
 
-    if (brightness != usegamma)
-    {
-    	usegamma = brightness;
-        if (usegamma < 0)
-        {
-        	usegamma = 0;
+	if (brightness != usegamma)
+	{
+		usegamma = brightness;
+		if (usegamma < 0)
+		{
+			usegamma = 0;
 			brightness = usegamma;
 		}
 		if (usegamma > 4)
-        {
-            usegamma = 4;
+		{
+			usegamma = 4;
 			brightness = usegamma;
 		}
-    	must_set_pal = true;
-    }
+		must_set_pal = true;
+	}
 	if (setresolutionneeded)
-    {
+	{
 		ChangeResolution(setwidth, setheight, setbpp);
 		setresolutionneeded = false;
 		res_changed = true;
-        must_set_pal = true;
-    }
-	else if (screen_width != ScreenWidth || screen_height != ScreenHeight ||
-		screen_bpp != ScreenBPP)
+		must_set_pal = true;
+	}
+	else if (!screen_width || screen_width != ScreenWidth ||
+		screen_height != ScreenHeight || screen_bpp != ScreenBPP)
 	{
-    	ChangeResolution(screen_width, screen_height, screen_bpp);
-        res_changed = true;
-        must_set_pal = true;
-    }
+		ChangeResolution(screen_width, screen_height, screen_bpp);
+		res_changed = true;
+		must_set_pal = true;
+	}
 
-    if (must_set_pal)
-    {
+	if (must_set_pal)
+	{
 		Drawer->SetPalette(scr_cur_pal);
-    }
+	}
 
 	if (res_changed)
-    {
-    	Drawer->InitResolution();
+	{
+		Drawer->InitResolution();
 		//	Recalculate view size and other data
 		R_SetViewSize(screenblocks);
-    }
+	}
 	graphics_started = true;
 }
 
@@ -692,9 +679,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/17 17:43:40  dj_jl
+//	LINUX fixes
+//
 //	Revision 1.6  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.5  2001/08/07 16:47:44  dj_jl
 //	Fixed screenshots
 //	

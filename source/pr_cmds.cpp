@@ -2578,7 +2578,7 @@ PF(MB_StartMessage)
 	inp = Pop();
 	mb_func = Pop();
 	str = Pop();
-	MB_StartMessage(PROG_TO_STR(str), ProgResponse, inp);
+	MB_StartMessage(PROG_TO_STR(str), (void*)ProgResponse, inp);
 }
 
 PF(P_GetMapName)
@@ -2892,9 +2892,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/17 17:43:40  dj_jl
+//	LINUX fixes
+//
 //	Revision 1.4  2001/08/15 17:21:47  dj_jl
 //	Added model drawing for menu
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
