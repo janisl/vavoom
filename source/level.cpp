@@ -149,9 +149,21 @@ void VLevel::LoadMap(const char *mapname)
 		else
 		{
 			LoadThings1(lumpnum + ML_THINGS);
-			//	Inform ACS, that we don't have scripts
-			Behavior = NULL;
-			BehaviorSize = 0;
+			mapInfo_t mi;
+			P_GetMapInfo(mapname, mi);
+			if (mi.acsLump[0])
+			{
+				//	ACS object code
+				int ACSLumpNum = W_GetNumForName(mi.acsLump);
+				Behavior = (int*)W_CacheLumpNum(ACSLumpNum, PU_LEVEL);
+				BehaviorSize = W_LumpLength(ACSLumpNum);
+			}
+			else
+			{
+				//	Inform ACS, that we don't have scripts
+				Behavior = NULL;
+				BehaviorSize = 0;
+			}
 		}
 	}
 
@@ -224,7 +236,7 @@ void VLevel::LoadVertexes(int Lump, int GLLump)
 
    	// Load data into cache.
 	Data = W_CacheLumpNum(GLLump, PU_STATIC);
-	if (!strncmp((char*)Data, GL_V2_VERTEX_MAGIC, 4))
+	if (!strncmp((char*)Data, GL_V2_MAGIC, 4))
 	{
 		gl_mapvertex_t *pGLSrc;
 
@@ -514,7 +526,6 @@ void VLevel::LoadGLSegs(int Lump)
 	guard(VLevel::LoadGLSegs);
 	void *data;
 	int i;
-	mapglseg_t *ml;
 	seg_t *li;
 	line_t *ldef;
 	int linedef;
@@ -524,58 +535,120 @@ void VLevel::LoadGLSegs(int Lump)
 	Segs = Z_CNew<seg_t>(NumSegs, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	ml = (mapglseg_t *)data;
-	li = Segs;
-
-	for (i = 0; i < NumSegs; i++, li++, ml++)
+	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		word	v1num =	LittleShort(ml->v1);
-		word	v2num =	LittleShort(ml->v2);
+		NumSegs = (W_LumpLength(Lump) - 4) / sizeof(mapglseg_v3_t);
+		Z_Resize((void**)&Segs, NumSegs * sizeof(seg_t));
 
-		if (v1num & GL_VERTEX)
+		mapglseg_v3_t* ml = (mapglseg_v3_t *)((byte*)data + 4);
+		li = Segs;
+	
+		for (i = 0; i < NumSegs; i++, li++, ml++)
 		{
-			v1num ^= GL_VERTEX;
-			li->v1 = &gl_vertexes[v1num];
-		}
-		else
-		{
-			li->v1 = &Vertexes[v1num];
-		}
-		if (v2num & GL_VERTEX)
-		{
-			v2num ^= GL_VERTEX;
-			li->v2 = &gl_vertexes[v2num];
-		}
-		else
-		{
-			li->v2 = &Vertexes[v2num];
-		}
-
-		linedef = LittleShort(ml->linedef);
-		side = LittleShort(ml->side);
-
-		if (linedef >= 0)
-		{
-			ldef = &Lines[linedef];
-			li->linedef = ldef;
-			li->sidedef = &Sides[ldef->sidenum[side]];
-			li->frontsector = Sides[ldef->sidenum[side]].sector;
-
-			if (ldef->flags & ML_TWOSIDED)
-				li->backsector = Sides[ldef->sidenum[side^1]].sector;
-
-			if (side)
-				li->offset = Length(*li->v1 - *ldef->v2);
+			dword	v1num =	LittleLong(ml->v1);
+			dword	v2num =	LittleLong(ml->v2);
+	
+			if (v1num & GL_VERTEX_V3)
+			{
+				v1num ^= GL_VERTEX_V3;
+				li->v1 = &gl_vertexes[v1num];
+			}
 			else
-				li->offset = Length(*li->v1 - *ldef->v1);
-			li->length = Length(*li->v2 - *li->v1);
-			li->side = side;
+			{
+				li->v1 = &Vertexes[v1num];
+			}
+			if (v2num & GL_VERTEX_V3)
+			{
+				v2num ^= GL_VERTEX_V3;
+				li->v2 = &gl_vertexes[v2num];
+			}
+			else
+			{
+				li->v2 = &Vertexes[v2num];
+			}
+	
+			linedef = LittleShort(ml->linedef);
+			side = LittleShort(ml->flags) & GL_SEG_FLAG_SIDE;
+	
+			if (linedef >= 0)
+			{
+				ldef = &Lines[linedef];
+				li->linedef = ldef;
+				li->sidedef = &Sides[ldef->sidenum[side]];
+				li->frontsector = Sides[ldef->sidenum[side]].sector;
+	
+				if (ldef->flags & ML_TWOSIDED)
+					li->backsector = Sides[ldef->sidenum[side^1]].sector;
+	
+				if (side)
+					li->offset = Length(*li->v1 - *ldef->v2);
+				else
+					li->offset = Length(*li->v1 - *ldef->v1);
+				li->length = Length(*li->v2 - *li->v1);
+				li->side = side;
+			}
+	
+			//	Partner is not used
+	
+			//	Calc seg's plane params
+			CalcSeg(li);
 		}
-
-		//	Partner is not used
-
-		//	Calc seg's plane params
-		CalcSeg(li);
+	}
+	else
+	{
+		mapglseg_t* ml = (mapglseg_t *)data;
+		li = Segs;
+	
+		for (i = 0; i < NumSegs; i++, li++, ml++)
+		{
+			word	v1num =	LittleShort(ml->v1);
+			word	v2num =	LittleShort(ml->v2);
+	
+			if (v1num & GL_VERTEX)
+			{
+				v1num ^= GL_VERTEX;
+				li->v1 = &gl_vertexes[v1num];
+			}
+			else
+			{
+				li->v1 = &Vertexes[v1num];
+			}
+			if (v2num & GL_VERTEX)
+			{
+				v2num ^= GL_VERTEX;
+				li->v2 = &gl_vertexes[v2num];
+			}
+			else
+			{
+				li->v2 = &Vertexes[v2num];
+			}
+	
+			linedef = LittleShort(ml->linedef);
+			side = LittleShort(ml->side);
+	
+			if (linedef >= 0)
+			{
+				ldef = &Lines[linedef];
+				li->linedef = ldef;
+				li->sidedef = &Sides[ldef->sidenum[side]];
+				li->frontsector = Sides[ldef->sidenum[side]].sector;
+	
+				if (ldef->flags & ML_TWOSIDED)
+					li->backsector = Sides[ldef->sidenum[side^1]].sector;
+	
+				if (side)
+					li->offset = Length(*li->v1 - *ldef->v2);
+				else
+					li->offset = Length(*li->v1 - *ldef->v1);
+				li->length = Length(*li->v2 - *li->v1);
+				li->side = side;
+			}
+	
+			//	Partner is not used
+	
+			//	Calc seg's plane params
+			CalcSeg(li);
+		}
 	}
 
 	Z_Free(data);
@@ -594,7 +667,6 @@ void VLevel::LoadSubsectors(int Lump)
 	void *data;
 	int i;
 	int j;
-	mapsubsector_t *ms;
 	subsector_t *ss;
 	seg_t *seg;
 
@@ -602,28 +674,60 @@ void VLevel::LoadSubsectors(int Lump)
 	Subsectors = Z_CNew<subsector_t>(NumSubsectors, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	ms = (mapsubsector_t *)data;
-	ss = Subsectors;
-
-	for (i = 0; i < NumSubsectors; i++, ss++, ms++)
+	if (!strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		ss->numlines = (word)LittleShort(ms->numsegs);
-		ss->firstline = (word)LittleShort(ms->firstseg);
+		NumSubsectors = (W_LumpLength(Lump) - 4) / sizeof(mapglsubsector_v3_t);
+		Z_Resize((void**)&Subsectors, NumSubsectors * sizeof(subsector_t));
 
-		// look up sector number for each subsector
-		seg = &Segs[ss->firstline];
-		for (j = 0; j < ss->numlines; j++)
+		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data + 4);
+		ss = Subsectors;
+	
+		for (i = 0; i < NumSubsectors; i++, ss++, ms++)
 		{
-			if (seg[j].linedef)
+			ss->numlines = LittleLong(ms->numsegs);
+			ss->firstline = LittleLong(ms->firstseg);
+	
+			// look up sector number for each subsector
+			seg = &Segs[ss->firstline];
+			for (j = 0; j < ss->numlines; j++)
 			{
-				ss->sector = seg[j].sidedef->sector;
-				ss->seclink = ss->sector->subsectors;
-				ss->sector->subsectors = ss;
-				break;
+				if (seg[j].linedef)
+				{
+					ss->sector = seg[j].sidedef->sector;
+					ss->seclink = ss->sector->subsectors;
+					ss->sector->subsectors = ss;
+					break;
+				}
 			}
+			if (!ss->sector)
+				Host_Error("Subsector %d without sector", i);
 		}
-		if (!ss->sector)
-			Host_Error("Subsector %d without sector", i);
+	}
+	else
+	{
+		mapsubsector_t* ms = (mapsubsector_t *)data;
+		ss = Subsectors;
+	
+		for (i = 0; i < NumSubsectors; i++, ss++, ms++)
+		{
+			ss->numlines = (word)LittleShort(ms->numsegs);
+			ss->firstline = (word)LittleShort(ms->firstseg);
+	
+			// look up sector number for each subsector
+			seg = &Segs[ss->firstline];
+			for (j = 0; j < ss->numlines; j++)
+			{
+				if (seg[j].linedef)
+				{
+					ss->sector = seg[j].sidedef->sector;
+					ss->seclink = ss->sector->subsectors;
+					ss->sector->subsectors = ss;
+					break;
+				}
+			}
+			if (!ss->sector)
+				Host_Error("Subsector %d without sector", i);
+		}
 	}
 
 	Z_Free(data);
@@ -1119,9 +1223,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2004/10/11 15:55:43  dj_jl
+//	Support for version 3 GL nodes and ACS helpers.
+//
 //	Revision 1.2  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.1  2002/09/07 16:34:23  dj_jl
 //	Added Level class.
 //	
