@@ -108,12 +108,12 @@ char			sv_secret_map[12];
 
 int 			TimerGame;
 
+boolean			in_secret;
+char			mapaftersecret[12];
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int 		LeavePosition;
-
-static boolean	in_secret;
-static char		mapaftersecret[12];
 
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
 
@@ -2051,7 +2051,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 			GPlayers[i]->Message.Clear();
 		}
 	}
-	else
+	else if (!sv_loading)
 	{
 		//	New game
 		in_secret = false;
@@ -2863,9 +2863,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.55  2003/10/22 06:16:54  dj_jl
+//	Secret level info saved in savegame
+//
 //	Revision 1.54  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.53  2003/07/03 18:11:13  dj_jl
 //	Moving extrafloors
 //	

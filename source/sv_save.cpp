@@ -88,6 +88,9 @@ extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
 extern TMessage		sv_signon;
 
+extern boolean		in_secret;
+extern char			mapaftersecret[12];
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -1115,7 +1118,11 @@ void SV_SaveGame(int slot, char* description)
 	// Write current map and difficulty
 	StreamOutByte((byte)gameskill);
 	StreamOutBuffer(level.mapname, 8);
- 
+
+	// Write secret level info
+	StreamOutByte(in_secret);
+	StreamOutBuffer(mapaftersecret, 8);
+
 	// Write global script info
 	StreamOutBuffer(WorldVars, sizeof(WorldVars));
 	StreamOutBuffer(ACSStore, sizeof(ACSStore));
@@ -1200,6 +1207,11 @@ void SV_LoadGame(int slot)
 
 	//	Init skill hacks
 	svpr.Exec("G_InitNew", gameskill);
+
+	// Read secret level info
+	in_secret = GET_BYTE;
+	Loader->Serialize(mapaftersecret, 8);
+	mapaftersecret[8] = 0;
 
 	// Read global script info
 	Loader->Serialize(WorldVars, sizeof(WorldVars));
@@ -1439,9 +1451,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2003/10/22 06:16:53  dj_jl
+//	Secret level info saved in savegame
+//
 //	Revision 1.31  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.30  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	
