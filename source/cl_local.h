@@ -109,7 +109,7 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 model_t *Mod_FindName(char *name);
 void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame);
 
-void R_DrawPic640(int x, int y, int handle, int trans = 0);
+void SCR_SetVirtualScreen(int Width, int Height);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -117,13 +117,13 @@ extern clmobj_t			*cl_mobjs;
 extern clmobjbase_t		*cl_mo_base;
 extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
 
+extern int				VirtualWidth;
+extern int				VirtualHeight;
+
 extern float fScaleX;
 extern float fScaleY;
 extern float fScaleXI;
 extern float fScaleYI;
-
-extern float ScaleX640;
-extern float ScaleY640;
 
 inline subsector_t* CL_PointInSubsector(float x, float y)
 {
@@ -137,9 +137,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2004/08/18 18:05:46  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.13  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.12  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
 //	

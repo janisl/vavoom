@@ -2247,6 +2247,22 @@ PF(FindSkin)
 
 //==========================================================================
 //
+//	PF_SetVirtualScreen
+//
+//==========================================================================
+
+PF(SetVirtualScreen)
+{
+	int			Width;
+	int			Height;
+
+	Height = Pop();
+	Width = Pop();
+	SCR_SetVirtualScreen(Width, Height);
+}
+
+//==========================================================================
+//
 //	PF_R_RegisterPic
 //
 //==========================================================================
@@ -3026,6 +3042,7 @@ builtin_info_t BuiltinInfo[] =
 	_(NewParticle),
 
 	//	Graphics
+	_(SetVirtualScreen),
 	_(R_RegisterPic),
 	_(R_RegisterPicPal),
 	_(R_GetPicInfo),
@@ -3143,9 +3160,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2004/08/18 18:05:46  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.49  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.48  2003/10/31 07:50:44  dj_jl
 //	Line texture setting function
 //	

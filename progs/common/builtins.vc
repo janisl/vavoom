@@ -235,6 +235,8 @@ native classid FindClass(name Name);
 //  Graphics
 //
 
+native void SetVirtualScreen(int Width, int Height);
+
 //  Registers a graphic, returns handle
 native int R_RegisterPic(string Name, int type);
 
@@ -484,6 +486,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2004/08/18 18:06:48  dj_jl
+//  Support for higher virtual screen resolutions.
+//
 //  Revision 1.43  2003/11/12 16:48:02  dj_jl
 //  Changed player structure into a class
 //

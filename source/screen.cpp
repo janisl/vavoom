@@ -81,13 +81,13 @@ int		ScreenBPP = 0;
 
 int		PixelBytes;
 
+int		VirtualWidth = 320;
+int		VirtualHeight = 200;
+
 float	fScaleX;
 float	fScaleY;
 float	fScaleXI;
 float	fScaleYI;
-
-float	ScaleX640;
-float	ScaleY640;
 
 int		usegamma = 0;
 
@@ -456,13 +456,10 @@ static void ChangeResolution(int width, int height, int bpp)
 
 	PixelBytes = (ScreenBPP + 7) / 8;
 
-    fScaleX = (float)ScreenWidth / 320.0;
-    fScaleY = (float)ScreenHeight / 200.0;
-    fScaleXI = 320.0 / (float)ScreenWidth;
-    fScaleYI = 200.0 / (float)ScreenHeight;
-
-    ScaleX640 = (float)ScreenWidth / 640.0;
-    ScaleY640 = (float)ScreenHeight / 480.0;
+    fScaleX = (float)ScreenWidth / (float)VirtualWidth;
+    fScaleY = (float)ScreenHeight / (float)VirtualHeight;
+    fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
+    fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
 	unguard;
 }
 
@@ -710,12 +707,33 @@ void Draw_LoadIcon(void)
 	unguard;
 }
 
+//==========================================================================
+//
+//	SCR_SetVirtualScreen
+//
+//==========================================================================
+
+void SCR_SetVirtualScreen(int Width, int Height)
+{
+	guard(SCR_SetVirtualScreen);
+	VirtualWidth = Width;
+	VirtualHeight = Height;
+    fScaleX = (float)ScreenWidth / (float)VirtualWidth;
+    fScaleY = (float)ScreenHeight / (float)VirtualHeight;
+    fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
+    fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/08/18 18:05:47  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.21  2003/11/03 07:16:55  dj_jl
 //	No memory message
-//
+//	
 //	Revision 1.20  2002/08/28 16:42:45  dj_jl
 //	Moved PixelAspect to the rendering modules.
 //	

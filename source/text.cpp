@@ -388,7 +388,7 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 	if (lenght > (int)strlen(String))
 		lenght = (int)strlen(String);
 	
-	if ((cx < 0) || (cy < 0) || (cx >= 320) || (cy >= 200))
+	if (cx < 0 || cy < 0 || cx >= VirtualWidth || cy >= VirtualHeight)
 	{
 	   	GCon->Logf(NAME_Dev, "T_DrawNString: Draw text \"%s\" at (%d,%d)",
 			String, cx, cy);
@@ -410,7 +410,7 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 		}
 		
 		w = Font->PicInfo[c].width;
-		if (cx + w > 320)
+		if (cx + w > VirtualWidth)
 		{
 			if (HAlign != hleft)
 				break;
@@ -594,20 +594,6 @@ void T_DrawCursorAt(int x, int y)
 
 //==========================================================================
 //
-//	T_DrawCursor640
-//
-//==========================================================================
-
-void T_DrawCursor640(void)
-{
-	guard(T_DrawCursor640);
-	if ((int)(host_time * 4) & 1)
-		R_DrawPic640(LastX, LastY, Font->Pics['_' - 32]);
-	unguard;
-}
-
-//==========================================================================
-//
 //	T_DrawString8
 //
 //	Write a string using the font with fixed width 8.
@@ -637,14 +623,14 @@ void T_DrawString8(int x, int y, const char* String)
 
 	lenght = (int)strlen(String);
 	
-	if ((cx >= 320) || (cy >= 200))
+	if (cx >= VirtualWidth || cy >= VirtualHeight)
 	{
 	   	GCon->Logf(NAME_Dev, "T_DrawString8: Draw text \"%s\" at (%d,%d)",
 			String, cx, cy);
 	  	return;
 	}
 
-	for (i = 0; i < lenght && cx < 320; i++)
+	for (i = 0; i < lenght && cx < VirtualWidth; i++)
 	{
 		c = String[i] - 32;
 
@@ -667,73 +653,15 @@ void T_DrawString8(int x, int y, const char* String)
 	unguard;
 }
 
-//==========================================================================
-//
-//	T_DrawString640
-//
-//	Write a string using the font with fixed width 8.
-//
-//==========================================================================
-
-void T_DrawString640(int x, int y, const char* String)
-{
-	guard(T_DrawString640);
-	int		w;
-	int		c;
-	int		cx;
-	int		cy;
-	int		i;
-	int		lenght;
-
-	if (!String)
-		return;
-		
-	cx = x;
-	cy = y;
-
-	if (HAlign == hcenter)
-		cx -= T_StringWidth(String) / 2;
-	if (HAlign == hright)
-		cx -= T_StringWidth(String);
-
-	lenght = (int)strlen(String);
-	
-	if ((cx >= 640) || (cy >= 480))
-	{
-	   	GCon->Logf(NAME_Dev, "T_DrawString640: Draw text \"%s\" at (%d,%d)",
-			String, cx, cy);
-	  	return;
-	}
-
-	for (i = 0; i < lenght && cx < 640; i++)
-	{
-		c = String[i] - 32;
-
-		if (c < 0)
-		{
-			continue;
-		}
-		if (c >= 96 || Font->Pics[c] < 0)
-		{
-			cx += 8;
-			continue;
-		}
-		
-		w = Font->PicInfo[c].width;
-		R_DrawPic640(cx + (8 - w) / 2, cy, Font->Pics[c]);
-		cx += 8;
-	}
-	LastX = cx;
-	LastY = cy;
-	unguard;
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2004/08/18 18:05:47  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.13  2003/09/26 16:58:42  dj_jl
 //	Wrapped text printing
-//
+//	
 //	Revision 1.12  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

@@ -58,9 +58,6 @@ public:
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void T_DrawCursor640(void);
-void T_DrawString640(int x, int y, const char* String);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -333,22 +330,24 @@ void C_Drawer(void)
 
     // Input line
 #ifdef USE640
+	SCR_SetVirtualScreen(640, 480);
 	y = (int)(cons_h * 480 / 200) - 10;
-	T_DrawString640(4, y, ">");
+	T_DrawString8(4, y, ">");
 	i = strlen(c_iline.Data) - 37;
 	if (i < 0)
 		i = 0;
-	T_DrawString640(12, y, c_iline.Data + i);
-	T_DrawCursor640();
+	T_DrawString8(12, y, c_iline.Data + i);
+	T_DrawCursor();
 	y -= 10;
 
 	// Lines
 	i = last_line;
 	while ((y + 9 > 0) && i--)
 	{
-		T_DrawString640(4, y, clines[(i + first_line) % MAX_LINES]);
+		T_DrawString8(4, y, clines[(i + first_line) % MAX_LINES]);
 		y -= 9;
 	}
+	SCR_SetVirtualScreen(320, 200);
 #else
 	y = (int)cons_h - 10;
 	T_DrawString8(4, y, ">");
@@ -795,9 +794,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2004/08/18 18:05:46  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.20  2003/03/08 12:08:03  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.19  2002/07/27 18:11:46  dj_jl
 //	Scrolling by 5 lines.
 //	

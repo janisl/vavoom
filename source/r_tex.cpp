@@ -1218,31 +1218,6 @@ void R_DrawPic(int x, int y, int handle, int trans)
 
 //==========================================================================
 //
-//	R_DrawPic640
-//
-//==========================================================================
-
-void R_DrawPic640(int x, int y, int handle, int trans)
-{
-	guard(R_DrawPic640);
-	picinfo_t	info;
-
-	if (handle < 0)
-	{
-		return;
-	}
-
-	R_GetPicInfo(handle, &info);
-	x -= info.xoffset;
-	y -= info.yoffset;
-	Drawer->DrawPic(ScaleX640 * x, ScaleY640 * y,
-		ScaleX640 * (x + info.width), ScaleY640 * (y + info.height),
-		0, 0, info.width, info.height, handle, trans);
-	unguard;
-}
-
-//==========================================================================
-//
 //	R_DrawShadowedPic
 //
 //==========================================================================
@@ -1322,9 +1297,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/08/18 18:05:47  dj_jl
+//	Support for higher virtual screen resolutions.
+//
 //	Revision 1.21  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.20  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	
