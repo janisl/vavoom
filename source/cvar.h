@@ -59,6 +59,8 @@ class TCvar
 
  private:
 	void DoSet(const char *value);
+
+	friend void Cvar_Unlatch(void);
 };
 
 //	Cvar, that can be used as int variable
@@ -128,6 +130,7 @@ class TCvarS : public TCvar
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void Cvar_Init(void);
+void Cvar_Unlatch(void);
 
 int Cvar_Value(const char *var_name);
 float Cvar_Float(const char *var_name);
@@ -145,9 +148,12 @@ void Cvar_Write(FILE *f);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:50:42  dj_jl
+//	Implemented CVAR_LATCH
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

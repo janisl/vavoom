@@ -28,6 +28,8 @@
 #include "gamedefs.h"
 
 /*
+FIXME implement these flags
+
 #define	CVAR_INIT			8	//	Don't allow change from console at all,
 								// but can be set from the command line
 #define	CVAR_LATCH			16	//	Save changes until server restart
@@ -145,6 +147,13 @@ void TCvar::Set(float value)
 
 void TCvar::Set(const char *AValue)
 {
+	if (flags & CVAR_LATCH)
+	{
+		if (latched_string)
+			Z_Free(latched_string);
+		latched_string = Z_StrDup(AValue);
+		return;
+	}
 	DoSet(AValue);
 }
 
@@ -196,11 +205,11 @@ void TCvar::DoSet(const char *AValue)
 
 //==========================================================================
 //
-//	COMMAND Vars
+//	COMMAND CvarList
 //
 //==========================================================================
 
-COMMAND(Vars)
+COMMAND(CvarList)
 {
 	int count = 0;
 	for (TCvar *cvar = cvars; cvar; cvar = cvar->next)
@@ -224,6 +233,25 @@ void Cvar_Init(void)
        	var->Init();
     }
 	cvar_initialized = true;
+}
+
+//==========================================================================
+//
+//	Cvar_Unlatch
+//
+//==========================================================================
+
+void Cvar_Unlatch(void)
+{
+	for (TCvar* cvar = cvars; cvar; cvar = cvar->next)
+    {
+		if (cvar->latched_string)
+		{
+			cvar->DoSet(cvar->latched_string);
+			Z_Free(cvar->latched_string);
+			cvar->latched_string = NULL;
+		}
+    }
 }
 
 //==========================================================================
@@ -399,9 +427,12 @@ void Cvar_Write(FILE *f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:50:42  dj_jl
+//	Implemented CVAR_LATCH
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
