@@ -277,8 +277,8 @@ glbsp_ret_e GlbspCheckInfo(nodebuildinfo_t *info,
     SetMessage("-forcenormal and -nonormal cannot be used together");
     return GLBSP_E_BadInfoFixed;
   }
-  
-  if (info->factor <= 0)
+ 
+  if (info->factor <= 0 || info->factor > 32)
   {
     info->factor = DEFAULT_FACTOR;
     SetMessage("Bad factor value !");

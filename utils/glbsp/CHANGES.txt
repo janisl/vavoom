@@ -28,6 +28,11 @@ Changes in V2.00  (Unreleased)
  
  - glBSPX: new misc option "Fresh Partition Lines".
 
+ - fixed (hopefully) some rare sectors that were marked as precious
+   but were being split anyway, because the partition line passed
+   through the sector via vertices (not hitting any linedefs).  Thanks
+   to Janis Legzdinsh for spotting this bug.
+
 
 Changes in V1.96  (1st January 2002)
 ------------------------------------

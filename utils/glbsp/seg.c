@@ -57,6 +57,8 @@
 
 #define PRECIOUS_MULTIPLY  100
 
+#define SEG_REUSE_THRESHHOLD  64
+
 
 #define DEBUG_PICKNODE  0
 #define DEBUG_SPLIT     0
@@ -446,6 +448,18 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
       continue;
     }
 
+    // -AJA- check for passing through a vertex.  Normally this is fine
+    //       (even ideal), but the vertex could on a sector that we
+    //       DONT want to split, and the normal linedef-based checks
+    //       may fail to detect the sector being cut in half.  Thanks
+    //       to Janis Legzdinsh for spotting this obscure bug.
+
+    if (fa <= DIST_EPSILON || fb <= DIST_EPSILON)
+    {
+      if (check->linedef && check->linedef->is_precious)
+        info->cost += 40 * factor * PRECIOUS_MULTIPLY;
+    }
+
     /* check for right side */
     if (a > -DIST_EPSILON && b > -DIST_EPSILON)
     {
@@ -771,7 +785,7 @@ seg_t *PickNode(superblock_t *seg_list, int depth,
    *       good choices, and re-use them as much as possible, saving
    *       *heaps* of time on really large levels.
    */
-  if (*stale_nd && seg_list->real_num >= 32)
+  if (*stale_nd && seg_list->real_num >= SEG_REUSE_THRESHHOLD)
   {
     best = FindSegFromStaleNode(seg_list, *stale_nd, stale_opposite);
 
