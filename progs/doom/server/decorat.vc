@@ -954,7 +954,7 @@ class DeadCacodemon:Decoration
 
 __states__
 {
-	S_HEAD_DEAD('HEAD', 11, 'monsters/cacodie.md2', 5, -1.0, S_NULL) { }
+	S_HEAD_DEAD('HEAD', 11, 'monsters/caco/death.md2', 5, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -998,7 +998,7 @@ class DeadZombieman:Decoration
 
 __states__
 {
-	S_POSS_DEAD('POSS', 11, 'monsters/troopdie.md2', 4, -1.0, S_NULL) { }
+	S_POSS_DEAD('POSS', 11, 'monsters/trooper/death.md2', 4, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -1020,7 +1020,7 @@ class DeadDemon:Decoration
 
 __states__
 {
-	S_SARG_DEAD('SARG', 13, 'monsters/demondie.md2', 5, -1.0, S_NULL) { }
+	S_SARG_DEAD('SARG', 13, 'monsters/demon/death.md2', 5, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -1064,7 +1064,7 @@ class DeadImp:Decoration
 
 __states__
 {
-	S_TROO_DEAD('TROO', 12, 'monsters/impdie.md2', 4, -1.0, S_NULL) { }
+	S_TROO_DEAD('TROO', 12, 'monsters/imp/death.md2', 4, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -1086,7 +1086,7 @@ class DeadShotgunGuy:Decoration
 
 __states__
 {
-	S_SPOS_DEAD('SPOS', 11, 'monsters/sargdie.md2', 4, -1.0, S_NULL) { }
+	S_SPOS_DEAD('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -1568,6 +1568,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/08/05 17:17:20  dj_jl
+//  Working on models.
+//
 //  Revision 1.3  2002/07/23 13:07:29  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

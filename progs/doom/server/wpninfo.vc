@@ -37,7 +37,9 @@ class WeaponMissile;
 class WeaponPlasma;
 class WeaponBFG;
 class WeaponChainsaw;
+#ifdef DOOM2
 class WeaponSuperShotgun;
+#endif
 #ifdef GRENADE_LAUNCHER
 class WeaponGrenade;
 #endif
@@ -51,7 +53,9 @@ classid WeaponClasses[] = {
 	WeaponPlasma,
 	WeaponBFG,
 	WeaponChainsaw,
+#ifdef DOOM2
 	WeaponSuperShotgun,
+#endif
 #ifdef GRENADE_LAUNCHER
 	WeaponGrenade,
 #endif
@@ -67,7 +71,9 @@ int weapon_ammo_type[] =
 	am_cell,
 	am_cell,
 	am_noammo,
+#ifdef DOOM2
 	am_shell,
+#endif
 #ifdef GRENADE_LAUNCHER
 	am_misl,
 #endif
@@ -76,9 +82,12 @@ int weapon_ammo_type[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/08/05 17:17:21  dj_jl
+//	Working on models.
+//
 //	Revision 1.12  2002/05/03 17:11:55  dj_jl
 //	Object classes split up into their files.
-//
+//	
 //	Revision 1.11  2002/03/28 18:24:07  dj_jl
 //	Changed third person model names to type name.
 //	

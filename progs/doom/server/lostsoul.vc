@@ -57,16 +57,16 @@ void A_SkullAttack(void)
 
 __states__
 {
-	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 0, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
-	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 1, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
-	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 2, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
-	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 3, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
-	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 4, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
-	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 5, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
-	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 6, 4.0 / 35.0, S_SKULL_ATK4) { }
-	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 7, 4.0 / 35.0, S_SKULL_ATK3) { }
-	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 8, 3.0 / 35.0, S_SKULL_PAIN2) { }
-	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 9, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
+	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 0, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
+	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 1, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
+	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 2, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
+	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 3, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
+	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 4, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
+	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 5, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
+	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 6, 4.0 / 35.0, S_SKULL_ATK4) { }
+	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 7, 4.0 / 35.0, S_SKULL_ATK3) { }
+	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 8, 3.0 / 35.0, S_SKULL_PAIN2) { }
+	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull/base.md2', 9, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
 	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE2) { }
 	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
 	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE4) { }
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/08/05 17:17:20  dj_jl
+//  Working on models.
+//
 //  Revision 1.19  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

@@ -150,35 +150,92 @@ void A_GhostOff(void)
 
 __states__
 {
-	S_WIZARD_LOOK1('WZRD', 0, 'monsters/wizard.md2', 0, 10.0 / 35.0, S_WIZARD_LOOK2) { A_Look(); }
-	S_WIZARD_LOOK2('WZRD', 1, 'monsters/wizard.md2', 1, 10.0 / 35.0, S_WIZARD_LOOK1) { A_Look(); }
-	S_WIZARD_WALK1('WZRD', 0, 'monsters/wizard.md2', 2, 3.0 / 35.0, S_WIZARD_WALK2) { A_Chase(); }
-	S_WIZARD_WALK2('WZRD', 0, 'monsters/wizard.md2', 3, 4.0 / 35.0, S_WIZARD_WALK3) { A_Chase(); }
-	S_WIZARD_WALK3('WZRD', 0, 'monsters/wizard.md2', 4, 3.0 / 35.0, S_WIZARD_WALK4) { A_Chase(); }
-	S_WIZARD_WALK4('WZRD', 0, 'monsters/wizard.md2', 5, 4.0 / 35.0, S_WIZARD_WALK5) { A_Chase(); }
-	S_WIZARD_WALK5('WZRD', 1, 'monsters/wizard.md2', 6, 3.0 / 35.0, S_WIZARD_WALK6) { A_Chase(); }
-	S_WIZARD_WALK6('WZRD', 1, 'monsters/wizard.md2', 7, 4.0 / 35.0, S_WIZARD_WALK7) { A_Chase(); }
-	S_WIZARD_WALK7('WZRD', 1, 'monsters/wizard.md2', 8, 3.0 / 35.0, S_WIZARD_WALK8) { A_Chase(); }
-	S_WIZARD_WALK8('WZRD', 1, 'monsters/wizard.md2', 9, 4.0 / 35.0, S_WIZARD_WALK1) { A_Chase(); }
-	S_WIZARD_ATK1('WZRD', 2, 'monsters/wizard.md2', 10, 4.0 / 35.0, S_WIZARD_ATK2) { A_WizAtk1(); }
-	S_WIZARD_ATK2('WZRD', 2, 'monsters/wizard.md2', 11, 4.0 / 35.0, S_WIZARD_ATK3) { A_WizAtk2(); }
-	S_WIZARD_ATK3('WZRD', 2, 'monsters/wizard.md2', 12, 4.0 / 35.0, S_WIZARD_ATK4) { A_WizAtk1(); }
-	S_WIZARD_ATK4('WZRD', 2, 'monsters/wizard.md2', 13, 4.0 / 35.0, S_WIZARD_ATK5) { A_WizAtk2(); }
-	S_WIZARD_ATK5('WZRD', 2, 'monsters/wizard.md2', 14, 4.0 / 35.0, S_WIZARD_ATK6) { A_WizAtk1(); }
-	S_WIZARD_ATK6('WZRD', 2, 'monsters/wizard.md2', 15, 4.0 / 35.0, S_WIZARD_ATK7) { A_WizAtk2(); }
-	S_WIZARD_ATK7('WZRD', 2, 'monsters/wizard.md2', 16, 4.0 / 35.0, S_WIZARD_ATK8) { A_WizAtk1(); }
-	S_WIZARD_ATK8('WZRD', 2, 'monsters/wizard.md2', 17, 4.0 / 35.0, S_WIZARD_ATK9) { A_WizAtk2(); }
-	S_WIZARD_ATK9('WZRD', 3, 'monsters/wizard.md2', 18, 12.0 / 35.0, S_WIZARD_WALK1) { A_WizAtk3(); }
-	S_WIZARD_PAIN1('WZRD', 4, 'monsters/wizard.md2', 19, 3.0 / 35.0, S_WIZARD_PAIN2) { A_GhostOff(); }
-	S_WIZARD_PAIN2('WZRD', 4, 'monsters/wizard.md2', 20, 3.0 / 35.0, S_WIZARD_WALK1) { A_Pain(); }
-	S_WIZARD_DIE1('WZRD', 5, 'monsters/wizard.md2', 21, 6.0 / 35.0, S_WIZARD_DIE2) { A_GhostOff(); }
-	S_WIZARD_DIE2('WZRD', 6, 'monsters/wizard.md2', 22, 6.0 / 35.0, S_WIZARD_DIE3) { A_Scream(); }
-	S_WIZARD_DIE3('WZRD', 7, 'monsters/wizard.md2', 23, 6.0 / 35.0, S_WIZARD_DIE4) { }
-	S_WIZARD_DIE4('WZRD', 8, 'monsters/wizard.md2', 24, 6.0 / 35.0, S_WIZARD_DIE5) { }
-	S_WIZARD_DIE5('WZRD', 9, 'monsters/wizard.md2', 25, 6.0 / 35.0, S_WIZARD_DIE6) { A_NoBlocking(); }
-	S_WIZARD_DIE6('WZRD', 10, 'monsters/wizard.md2', 26, 6.0 / 35.0, S_WIZARD_DIE7) { }
-	S_WIZARD_DIE7('WZRD', 11, 'monsters/wizard.md2', 27, 6.0 / 35.0, S_WIZARD_DIE8) { }
-	S_WIZARD_DIE8('WZRD', 12, 'monsters/wizard.md2', 28, -1.0, S_NULL) { }
+	//	Idle
+	S_WIZARD_LOOK1('WZRD', 0, 'monsters/wizard/base.md2', 0, 0.1, S_WIZARD_LOOK2) { A_Look(); }
+	S_WIZARD_LOOK2('WZRD', 0, 'monsters/wizard/base.md2', 1, 0.1, S_WIZARD_LOOK3) { }
+	S_WIZARD_LOOK3('WZRD', 0, 'monsters/wizard/base.md2', 2, 0.1, S_WIZARD_LOOK4) { }
+	S_WIZARD_LOOK4('WZRD', 1, 'monsters/wizard/base.md2', 3, 0.1, S_WIZARD_LOOK5) { A_Look(); }
+	S_WIZARD_LOOK5('WZRD', 1, 'monsters/wizard/base.md2', 4, 0.1, S_WIZARD_LOOK6) { }
+	S_WIZARD_LOOK6('WZRD', 1, 'monsters/wizard/base.md2', 5, 0.1, S_WIZARD_LOOK7) { }
+	S_WIZARD_LOOK7('WZRD', 0, 'monsters/wizard/base.md2', 6, 0.1, S_WIZARD_LOOK8) { A_Look(); }
+	S_WIZARD_LOOK8('WZRD', 0, 'monsters/wizard/base.md2', 7, 0.1, S_WIZARD_LOOK9) { }
+	S_WIZARD_LOOK9('WZRD', 0, 'monsters/wizard/base.md2', 8, 0.1, S_WIZARD_LOOK10) { }
+	S_WIZARD_LOOK10('WZRD', 1, 'monsters/wizard/base.md2', 9, 0.1, S_WIZARD_LOOK11) { A_Look(); }
+	S_WIZARD_LOOK11('WZRD', 1, 'monsters/wizard/base.md2', 10, 0.1, S_WIZARD_LOOK12) { }
+	S_WIZARD_LOOK12('WZRD', 1, 'monsters/wizard/base.md2', 11, 0.1, S_WIZARD_LOOK13) { }
+	S_WIZARD_LOOK13('WZRD', 0, 'monsters/wizard/base.md2', 12, 0.1, S_WIZARD_LOOK14) { A_Look(); }
+	S_WIZARD_LOOK14('WZRD', 0, 'monsters/wizard/base.md2', 13, 0.1, S_WIZARD_LOOK15) { }
+	S_WIZARD_LOOK15('WZRD', 0, 'monsters/wizard/base.md2', 14, 0.1, S_WIZARD_LOOK16) { }
+	S_WIZARD_LOOK16('WZRD', 1, 'monsters/wizard/base.md2', 15, 0.1, S_WIZARD_LOOK17) { A_Look(); }
+	S_WIZARD_LOOK17('WZRD', 1, 'monsters/wizard/base.md2', 16, 0.1, S_WIZARD_LOOK18) { }
+	S_WIZARD_LOOK18('WZRD', 1, 'monsters/wizard/base.md2', 17, 0.1, S_WIZARD_LOOK19) { }
+	S_WIZARD_LOOK19('WZRD', 0, 'monsters/wizard/base.md2', 18, 0.1, S_WIZARD_LOOK20) { A_Look(); }
+	S_WIZARD_LOOK20('WZRD', 0, 'monsters/wizard/base.md2', 19, 0.1, S_WIZARD_LOOK21) { }
+	S_WIZARD_LOOK21('WZRD', 0, 'monsters/wizard/base.md2', 20, 0.1, S_WIZARD_LOOK22) { }
+	S_WIZARD_LOOK22('WZRD', 1, 'monsters/wizard/base.md2', 21, 0.1, S_WIZARD_LOOK23) { A_Look(); }
+	S_WIZARD_LOOK23('WZRD', 1, 'monsters/wizard/base.md2', 22, 0.1, S_WIZARD_LOOK24) { }
+	S_WIZARD_LOOK24('WZRD', 1, 'monsters/wizard/base.md2', 23, 0.1, S_WIZARD_LOOK25) { }
+	S_WIZARD_LOOK25('WZRD', 0, 'monsters/wizard/base.md2', 24, 0.1, S_WIZARD_LOOK26) { A_Look(); }
+	S_WIZARD_LOOK26('WZRD', 0, 'monsters/wizard/base.md2', 25, 0.1, S_WIZARD_LOOK27) { }
+	S_WIZARD_LOOK27('WZRD', 0, 'monsters/wizard/base.md2', 26, 0.1, S_WIZARD_LOOK28) { }
+	S_WIZARD_LOOK28('WZRD', 1, 'monsters/wizard/base.md2', 27, 0.1, S_WIZARD_LOOK29) { A_Look(); }
+	S_WIZARD_LOOK29('WZRD', 1, 'monsters/wizard/base.md2', 28, 0.1, S_WIZARD_LOOK30) { }
+	S_WIZARD_LOOK30('WZRD', 1, 'monsters/wizard/base.md2', 29, 0.1, S_WIZARD_LOOK31) { }
+	S_WIZARD_LOOK31('WZRD', 0, 'monsters/wizard/base.md2', 30, 0.1, S_WIZARD_LOOK32) { A_Look(); }
+	S_WIZARD_LOOK32('WZRD', 0, 'monsters/wizard/base.md2', 31, 0.1, S_WIZARD_LOOK33) { }
+	S_WIZARD_LOOK33('WZRD', 0, 'monsters/wizard/base.md2', 32, 0.1, S_WIZARD_LOOK34) { }
+	S_WIZARD_LOOK34('WZRD', 1, 'monsters/wizard/base.md2', 33, 0.1, S_WIZARD_LOOK35) { A_Look(); }
+	S_WIZARD_LOOK35('WZRD', 1, 'monsters/wizard/base.md2', 34, 0.1, S_WIZARD_LOOK36) { }
+	S_WIZARD_LOOK36('WZRD', 1, 'monsters/wizard/base.md2', 35, 0.1, S_WIZARD_LOOK37) { }
+	S_WIZARD_LOOK37('WZRD', 0, 'monsters/wizard/base.md2', 36, 0.1, S_WIZARD_LOOK38) { A_Look(); }
+	S_WIZARD_LOOK38('WZRD', 0, 'monsters/wizard/base.md2', 37, 0.1, S_WIZARD_LOOK39) { }
+	S_WIZARD_LOOK39('WZRD', 1, 'monsters/wizard/base.md2', 38, 0.1, S_WIZARD_LOOK40) { A_Look(); }
+	S_WIZARD_LOOK40('WZRD', 1, 'monsters/wizard/base.md2', 39, 0.1, S_WIZARD_LOOK1) { }
+	//	Flying
+	S_WIZARD_WALK1('WZRD', 0, 'monsters/wizard/base.md2', 40, 0.1, S_WIZARD_WALK2) { A_Chase(); }
+	S_WIZARD_WALK2('WZRD', 0, 'monsters/wizard/base.md2', 41, 0.1, S_WIZARD_WALK3) { A_Chase(); }
+	S_WIZARD_WALK3('WZRD', 0, 'monsters/wizard/base.md2', 42, 0.1, S_WIZARD_WALK4) { A_Chase(); }
+	S_WIZARD_WALK4('WZRD', 0, 'monsters/wizard/base.md2', 43, 0.1, S_WIZARD_WALK5) { A_Chase(); }
+	S_WIZARD_WALK5('WZRD', 0, 'monsters/wizard/base.md2', 44, 0.1, S_WIZARD_WALK6) { A_Chase(); }
+	S_WIZARD_WALK6('WZRD', 1, 'monsters/wizard/base.md2', 45, 0.1, S_WIZARD_WALK7) { A_Chase(); }
+	S_WIZARD_WALK7('WZRD', 1, 'monsters/wizard/base.md2', 46, 0.1, S_WIZARD_WALK8) { A_Chase(); }
+	S_WIZARD_WALK8('WZRD', 1, 'monsters/wizard/base.md2', 47, 0.1, S_WIZARD_WALK9) { A_Chase(); }
+	S_WIZARD_WALK9('WZRD', 1, 'monsters/wizard/base.md2', 48, 0.1, S_WIZARD_WALK10) { A_Chase(); }
+	S_WIZARD_WALK10('WZRD', 1, 'monsters/wizard/base.md2', 49, 0.1, S_WIZARD_WALK1) { A_Chase(); }
+	//	Attack
+	S_WIZARD_ATK1('WZRD', 2, 'monsters/wizard/base.md2', 50, 0.1, S_WIZARD_ATK2) { A_WizAtk1(); }
+	S_WIZARD_ATK2('WZRD', 2, 'monsters/wizard/base.md2', 51, 0.1, S_WIZARD_ATK3) { A_WizAtk2(); }
+	S_WIZARD_ATK3('WZRD', 2, 'monsters/wizard/base.md2', 52, 0.1, S_WIZARD_ATK4) { A_WizAtk1(); }
+	S_WIZARD_ATK4('WZRD', 2, 'monsters/wizard/base.md2', 53, 0.1, S_WIZARD_ATK5) { A_WizAtk2(); }
+	S_WIZARD_ATK5('WZRD', 2, 'monsters/wizard/base.md2', 54, 0.1, S_WIZARD_ATK6) { A_WizAtk1(); }
+	S_WIZARD_ATK6('WZRD', 2, 'monsters/wizard/base.md2', 55, 0.1, S_WIZARD_ATK7) { A_WizAtk2(); }
+	S_WIZARD_ATK7('WZRD', 2, 'monsters/wizard/base.md2', 56, 0.1, S_WIZARD_ATK8) { A_WizAtk1(); }
+	S_WIZARD_ATK8('WZRD', 2, 'monsters/wizard/base.md2', 57, 0.1, S_WIZARD_ATK9) { A_WizAtk2(); }
+	S_WIZARD_ATK9('WZRD', 3, 'monsters/wizard/base.md2', 58, 0.1, S_WIZARD_ATK10) { A_WizAtk3(); }
+	S_WIZARD_ATK10('WZRD', 3, 'monsters/wizard/base.md2', 59, 0.1, S_WIZARD_ATK11) { }
+	S_WIZARD_ATK11('WZRD', 3, 'monsters/wizard/base.md2', 60, 0.1, S_WIZARD_ATK12) { }
+	S_WIZARD_ATK12('WZRD', 3, 'monsters/wizard/base.md2', 61, 0.1, S_WIZARD_WALK1) { }
+	//	Pain
+	S_WIZARD_PAIN1('WZRD', 4, 'monsters/wizard/base.md2', 62, 0.1, S_WIZARD_PAIN2) { A_GhostOff(); }
+	S_WIZARD_PAIN2('WZRD', 4, 'monsters/wizard/base.md2', 63, 0.1, S_WIZARD_PAIN3) { A_Pain(); }
+	//	Start chase, but model continues playing pain animation
+	S_WIZARD_PAIN3('WZRD', 0, 'monsters/wizard/base.md2', 64, 0.1, S_WIZARD_PAIN4) { A_Chase(); }
+	S_WIZARD_PAIN4('WZRD', 0, 'monsters/wizard/base.md2', 65, 0.1, S_WIZARD_PAIN5) { A_Chase(); }
+	S_WIZARD_PAIN5('WZRD', 0, 'monsters/wizard/base.md2', 66, 0.1, S_WIZARD_PAIN6) { A_Chase(); }
+	S_WIZARD_PAIN6('WZRD', 0, 'monsters/wizard/base.md2', 67, 0.1, S_WIZARD_PAIN7) { A_Chase(); }
+	S_WIZARD_PAIN7('WZRD', 1, 'monsters/wizard/base.md2', 68, 0.1, S_WIZARD_PAIN8) { A_Chase(); }
+	S_WIZARD_PAIN8('WZRD', 1, 'monsters/wizard/base.md2', 69, 0.1, S_WIZARD_PAIN9) { A_Chase(); }
+	S_WIZARD_PAIN9('WZRD', 1, 'monsters/wizard/base.md2', 70, 0.1, S_WIZARD_PAIN10) { A_Chase(); }
+	S_WIZARD_PAIN10('WZRD', 1, 'monsters/wizard/base.md2', 71, 0.1, S_WIZARD_WALK1) { A_Chase(); }
+	//	Death
+	S_WIZARD_DIE1('WZRD', 5, 'monsters/wizard/base.md2', 72, 0.2, S_WIZARD_DIE2) { A_GhostOff(); }
+	S_WIZARD_DIE2('WZRD', 6, 'monsters/wizard/base.md2', 73, 0.2, S_WIZARD_DIE3) { A_Scream(); }
+	S_WIZARD_DIE3('WZRD', 7, 'monsters/wizard/base.md2', 74, 0.2, S_WIZARD_DIE4) { }
+	S_WIZARD_DIE4('WZRD', 8, 'monsters/wizard/base.md2', 75, 0.2, S_WIZARD_DIE5) { }
+	S_WIZARD_DIE5('WZRD', 9, 'monsters/wizard/base.md2', 76, 0.2, S_WIZARD_DIE6) { A_NoBlocking(); }
+	S_WIZARD_DIE6('WZRD', 10, 'monsters/wizard/base.md2', 77, 0.2, S_WIZARD_DIE7) { }
+	S_WIZARD_DIE7('WZRD', 11, 'monsters/wizard/base.md2', 78, 0.2, S_WIZARD_DIE8) { }
+	S_WIZARD_DIE8('WZRD', 12, 'monsters/wizard/base.md2', 79, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -209,6 +266,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/08/05 17:17:21  dj_jl
+//  Working on models.
+//
 //  Revision 1.24  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

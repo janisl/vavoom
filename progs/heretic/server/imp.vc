@@ -110,7 +110,7 @@ void A_ImpMeAttack(void)
 
 void A_ImpMsAttack(void)
 {
-	if (!Enemy || P_Random() > 64)
+	if (!Enemy || Random() > 0.25)
 	{
 		SetState(SeeState);
 		return;
@@ -118,23 +118,7 @@ void A_ImpMsAttack(void)
 	bSkullFly = true;
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-#if 0
-	float an;
-	float dist;
-
-	an = Angles.yaw;
-	Velocity.x = 12.0 * cos(an) * 35.0;
-	Velocity.y = 12.0 * sin(an) * 35.0;
-	dist = MobjDist2(Enemy, self);
-	dist = dist / (12.0 * 35.0);
-	if (dist < 1.0)
-	{
-		dist = 1.0;
-	}
-	Velocity.z = (Enemy.Origin.z + Enemy.Height / 2.0 - Origin.z) / dist;
-#else
 	Velocity = Normalize(MobjCenter(Enemy) - Origin) * 12.0 * 35.0;
-#endif
 }
 
 //==========================================================================
@@ -209,29 +193,54 @@ void A_ImpExplode(void)
 
 __states__
 {
-	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle.md2', 0, 10.0 / 35.0, S_IMP_LOOK2) { A_Look(); }
-	S_IMP_LOOK2('IMPX', 1, 'monsters/gargoyle.md2', 1, 10.0 / 35.0, S_IMP_LOOK3) { A_Look(); }
-	S_IMP_LOOK3('IMPX', 2, 'monsters/gargoyle.md2', 2, 10.0 / 35.0, S_IMP_LOOK4) { A_Look(); }
-	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle.md2', 3, 10.0 / 35.0, S_IMP_LOOK1) { A_Look(); }
-	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle.md2', 4, 3.0 / 35.0, S_IMP_FLY2) { A_Chase(); }
-	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle.md2', 5, 3.0 / 35.0, S_IMP_FLY3) { A_Chase(); }
-	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle.md2', 6, 3.0 / 35.0, S_IMP_FLY4) { A_Chase(); }
-	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle.md2', 7, 3.0 / 35.0, S_IMP_FLY5) { A_Chase(); }
-	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle.md2', 8, 3.0 / 35.0, S_IMP_FLY6) { A_Chase(); }
-	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle.md2', 9, 3.0 / 35.0, S_IMP_FLY7) { A_Chase(); }
-	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle.md2', 10, 3.0 / 35.0, S_IMP_FLY8) { A_Chase(); }
-	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle.md2', 11, 3.0 / 35.0, S_IMP_FLY1) { A_Chase(); }
-	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle.md2', 12, 6.0 / 35.0, S_IMP_MEATK2) { A_FaceTarget(); }
-	S_IMP_MEATK2('IMPX', 4, 'monsters/gargoyle.md2', 13, 6.0 / 35.0, S_IMP_MEATK3) { A_FaceTarget(); }
-	S_IMP_MEATK3('IMPX', 5, 'monsters/gargoyle.md2', 14, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMeAttack(); }
-	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle.md2', 4, 10.0 / 35.0, S_IMP_MSATK1_2) { A_FaceTarget(); }
-	S_IMP_MSATK1_2('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { A_ImpMsAttack(); }
-	S_IMP_MSATK1_3('IMPX', 2, 'monsters/gargoyle.md2', 8, 6.0 / 35.0, S_IMP_MSATK1_4) { }
-	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle.md2', 10, 6.0 / 35.0, S_IMP_MSATK1_5) { }
-	S_IMP_MSATK1_5('IMPX', 0, 'monsters/gargoyle.md2', 4, 6.0 / 35.0, S_IMP_MSATK1_6) { }
-	S_IMP_MSATK1_6('IMPX', 1, 'monsters/gargoyle.md2', 6, 6.0 / 35.0, S_IMP_MSATK1_3) { }
-	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle.md2', 18, 3.0 / 35.0, S_IMP_PAIN2) { }
-	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle.md2', 19, 3.0 / 35.0, S_IMP_FLY1) { A_Pain(); }
+	//	Idle
+	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle/base.md2', 0, 0.1, S_IMP_LOOK2) { A_Look(); }
+	S_IMP_LOOK2('IMPX', 0, 'monsters/gargoyle/base.md2', 1, 0.1, S_IMP_LOOK3) { }
+	S_IMP_LOOK3('IMPX', 0, 'monsters/gargoyle/base.md2', 2, 0.1, S_IMP_LOOK4) { }
+	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle/base.md2', 3, 0.1, S_IMP_LOOK5) { A_Look(); }
+	S_IMP_LOOK5('IMPX', 1, 'monsters/gargoyle/base.md2', 4, 0.1, S_IMP_LOOK6) { }
+	S_IMP_LOOK6('IMPX', 1, 'monsters/gargoyle/base.md2', 5, 0.1, S_IMP_LOOK7) { }
+	S_IMP_LOOK7('IMPX', 2, 'monsters/gargoyle/base.md2', 6, 0.1, S_IMP_LOOK8) { A_Look(); }
+	S_IMP_LOOK8('IMPX', 2, 'monsters/gargoyle/base.md2', 7, 0.1, S_IMP_LOOK9) { }
+	S_IMP_LOOK9('IMPX', 2, 'monsters/gargoyle/base.md2', 8, 0.1, S_IMP_LOOK10) { }
+	S_IMP_LOOK10('IMPX', 1, 'monsters/gargoyle/base.md2', 9, 0.1, S_IMP_LOOK11) { A_Look(); }
+	S_IMP_LOOK11('IMPX', 1, 'monsters/gargoyle/base.md2', 10, 0.1, S_IMP_LOOK12) { }
+	S_IMP_LOOK12('IMPX', 1, 'monsters/gargoyle/base.md2', 11, 0.1, S_IMP_LOOK1) { }
+	//	Flying
+	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_FLY2) { A_Chase(); }
+	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_FLY3) { A_Chase(); }
+	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_FLY4) { A_Chase(); }
+	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_FLY5) { A_Chase(); }
+	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_FLY6) { A_Chase(); }
+	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle/base.md2', 17, 0.1, S_IMP_FLY7) { A_Chase(); }
+	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_FLY8) { A_Chase(); }
+	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_FLY1) { A_Chase(); }
+	//	Melee
+	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle/base.md2', 20, 0.1, S_IMP_MEATK2) { A_FaceTarget(); }
+	S_IMP_MEATK2('IMPX', 3, 'monsters/gargoyle/base.md2', 21, 0.1, S_IMP_MEATK3) { }
+	S_IMP_MEATK3('IMPX', 4, 'monsters/gargoyle/base.md2', 22, 0.1, S_IMP_MEATK4) { A_FaceTarget(); }
+	S_IMP_MEATK4('IMPX', 4, 'monsters/gargoyle/base.md2', 23, 0.1, S_IMP_MEATK5) { }
+	S_IMP_MEATK5('IMPX', 5, 'monsters/gargoyle/base.md2', 24, 0.1, S_IMP_MEATK6) { A_ImpMeAttack(); }
+	S_IMP_MEATK6('IMPX', 5, 'monsters/gargoyle/base.md2', 25, 0.1, S_IMP_MEATK7) { }
+	S_IMP_MEATK7('IMPX', 5, 'monsters/gargoyle/base.md2', 26, 0.1, S_IMP_FLY1) { }
+	//	Skull-fly attack
+	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_MSATK1_2) { A_FaceTarget(); }
+	S_IMP_MSATK1_2('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_MSATK1_3) { }
+	S_IMP_MSATK1_3('IMPX', 0, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_MSATK1_4) { }
+	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_MSATK1_5) { A_ImpMsAttack(); }
+	S_IMP_MSATK1_5('IMPX', 1, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_MSATK1_6) { }
+	S_IMP_MSATK1_6('IMPX', 2, 'monsters/gargoyle/base.md2', 17, 0.1, S_IMP_MSATK1_7) { }
+	S_IMP_MSATK1_7('IMPX', 2, 'monsters/gargoyle/base.md2', 18, 0.1, S_IMP_MSATK1_8) { }
+	S_IMP_MSATK1_8('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_MSATK1_9) { }
+	S_IMP_MSATK1_9('IMPX', 1, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_MSATK1_10) { }
+	S_IMP_MSATK1_10('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_MSATK1_11) { }
+	S_IMP_MSATK1_11('IMPX', 0, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_MSATK1_12) { }
+	S_IMP_MSATK1_12('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_MSATK1_13) { }
+	S_IMP_MSATK1_13('IMPX', 1, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_MSATK1_6) { }
+	//	Pain
+	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle/base.md2', 33, 0.1, S_IMP_PAIN2) { }
+	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle/base.md2', 34, 0.1, S_IMP_FLY1) { A_Pain(); }
+	//	Deaths, no models because it doesn't fit right.
 	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) { A_ImpDeath(); }
 	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) { }
 	S_IMP_XDIE1('IMPX', 18, 5.0 / 35.0, S_IMP_XDIE2) { A_ImpXDeath1(); }
@@ -348,9 +357,13 @@ void A_ImpMsAttack2(void)
 
 __states__
 {
-	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle.md2', 15, 6.0 / 35.0, S_IMP_MSATK2_2) { A_FaceTarget(); }
-	S_IMP_MSATK2_2('IMPX', 4, 'monsters/gargoyle.md2', 16, 6.0 / 35.0, S_IMP_MSATK2_3) { A_FaceTarget(); }
-	S_IMP_MSATK2_3('IMPX', 5, 'monsters/gargoyle.md2', 17, 6.0 / 35.0, S_IMP_FLY1) { A_ImpMsAttack2(); }
+	//	Missile attack
+	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle/base.md2', 27, 0.1, S_IMP_MSATK2_2) { A_FaceTarget(); }
+	S_IMP_MSATK2_2('IMPX', 3, 'monsters/gargoyle/base.md2', 28, 0.1, S_IMP_MSATK2_3) { }
+	S_IMP_MSATK2_3('IMPX', 4, 'monsters/gargoyle/base.md2', 29, 0.1, S_IMP_MSATK2_4) { A_FaceTarget(); }
+	S_IMP_MSATK2_4('IMPX', 4, 'monsters/gargoyle/base.md2', 30, 0.1, S_IMP_MSATK2_5) { }
+	S_IMP_MSATK2_5('IMPX', 5, 'monsters/gargoyle/base.md2', 31, 0.1, S_IMP_MSATK2_6) { A_ImpMsAttack2(); }
+	S_IMP_MSATK2_6('IMPX', 5, 'monsters/gargoyle/base.md2', 32, 0.1, S_IMP_FLY1) { }
 }
 
 defaultproperties
@@ -367,6 +380,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/08/05 17:17:21  dj_jl
+//  Working on models.
+//
 //  Revision 1.25  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

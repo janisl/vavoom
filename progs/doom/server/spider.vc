@@ -158,37 +158,37 @@ void A_BossDeath(void)
 
 __states__
 {
-	S_SPID_STND('SPID', 0, 'monsters/spider.md2', 0, 10.0 / 35.0, S_SPID_STND2) { A_Look(); }
-	S_SPID_STND2('SPID', 1, 'monsters/spider.md2', 1, 10.0 / 35.0, S_SPID_STND) { A_Look(); }
-	S_SPID_RUN1('SPID', 0, 'monsters/spider.md2', 2, 3.0 / 35.0, S_SPID_RUN2) { A_Metal(); }
-	S_SPID_RUN2('SPID', 0, 'monsters/spider.md2', 3, 3.0 / 35.0, S_SPID_RUN3) { A_Chase(); }
-	S_SPID_RUN3('SPID', 1, 'monsters/spider.md2', 4, 3.0 / 35.0, S_SPID_RUN4) { A_Chase(); }
-	S_SPID_RUN4('SPID', 1, 'monsters/spider.md2', 5, 3.0 / 35.0, S_SPID_RUN5) { A_Chase(); }
-	S_SPID_RUN5('SPID', 2, 'monsters/spider.md2', 6, 3.0 / 35.0, S_SPID_RUN6) { A_Metal(); }
-	S_SPID_RUN6('SPID', 2, 'monsters/spider.md2', 7, 3.0 / 35.0, S_SPID_RUN7) { A_Chase(); }
-	S_SPID_RUN7('SPID', 3, 'monsters/spider.md2', 8, 3.0 / 35.0, S_SPID_RUN8) { A_Chase(); }
-	S_SPID_RUN8('SPID', 3, 'monsters/spider.md2', 9, 3.0 / 35.0, S_SPID_RUN9) { A_Chase(); }
-	S_SPID_RUN9('SPID', 4, 'monsters/spider.md2', 10, 3.0 / 35.0, S_SPID_RUN10) { A_Metal(); }
-	S_SPID_RUN10('SPID', 4, 'monsters/spider.md2', 11, 3.0 / 35.0, S_SPID_RUN11) { A_Chase(); }
-	S_SPID_RUN11('SPID', 5, 'monsters/spider.md2', 12, 3.0 / 35.0, S_SPID_RUN12) { A_Chase(); }
-	S_SPID_RUN12('SPID', 5, 'monsters/spider.md2', 13, 3.0 / 35.0, S_SPID_RUN1) { A_Chase(); }
-	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 'monsters/spider.md2', 14, 20.0 / 35.0, S_SPID_ATK2) { A_FaceTarget(); }
-	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 'monsters/spider.md2', 15, 4.0 / 35.0, S_SPID_ATK3) { A_SPosAttack(); }
-	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 4.0 / 35.0, S_SPID_ATK4) { A_SPosAttack(); }
-	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 1.0 / 35.0, S_SPID_ATK2) { A_SpidRefire(); }
-	S_SPID_PAIN('SPID', 8, 'monsters/spider.md2', 16, 3.0 / 35.0, S_SPID_PAIN2) { }
-	S_SPID_PAIN2('SPID', 8, 'monsters/spider.md2', 17, 3.0 / 35.0, S_SPID_RUN1) { A_Pain(); }
-	S_SPID_DIE1('SPID', 9, 'monsters/spiddie.md2', 0, 20.0 / 35.0, S_SPID_DIE2) { A_Scream(); }
-	S_SPID_DIE2('SPID', 10, 'monsters/spiddie.md2', 1, 10.0 / 35.0, S_SPID_DIE3) { A_Fall(); }
-	S_SPID_DIE3('SPID', 11, 'monsters/spiddie.md2', 2, 10.0 / 35.0, S_SPID_DIE4) { }
-	S_SPID_DIE4('SPID', 12, 'monsters/spiddie.md2', 3, 10.0 / 35.0, S_SPID_DIE5) { }
-	S_SPID_DIE5('SPID', 13, 'monsters/spiddie.md2', 4, 10.0 / 35.0, S_SPID_DIE6) { }
-	S_SPID_DIE6('SPID', 14, 'monsters/spiddie.md2', 5, 10.0 / 35.0, S_SPID_DIE7) { }
-	S_SPID_DIE7('SPID', 15, 'monsters/spiddie.md2', 6, 10.0 / 35.0, S_SPID_DIE8) { }
-	S_SPID_DIE8('SPID', 16, 'monsters/spiddie.md2', 7, 10.0 / 35.0, S_SPID_DIE9) { }
-	S_SPID_DIE9('SPID', 17, 'monsters/spiddie.md2', 8, 10.0 / 35.0, S_SPID_DIE10) { }
-	S_SPID_DIE10('SPID', 18, 'monsters/spiddie.md2', 9, 30.0 / 35.0, S_SPID_DIE11) { }
-	S_SPID_DIE11('SPID', 18, 'monsters/spiddie.md2', 10, -1.0, S_NULL) { A_BossDeath(); }
+	S_SPID_STND('SPID', 0, 'monsters/spider/base.md2', 0, 10.0 / 35.0, S_SPID_STND2) { A_Look(); }
+	S_SPID_STND2('SPID', 1, 'monsters/spider/base.md2', 1, 10.0 / 35.0, S_SPID_STND) { A_Look(); }
+	S_SPID_RUN1('SPID', 0, 'monsters/spider/base.md2', 2, 3.0 / 35.0, S_SPID_RUN2) { A_Metal(); }
+	S_SPID_RUN2('SPID', 0, 'monsters/spider/base.md2', 3, 3.0 / 35.0, S_SPID_RUN3) { A_Chase(); }
+	S_SPID_RUN3('SPID', 1, 'monsters/spider/base.md2', 4, 3.0 / 35.0, S_SPID_RUN4) { A_Chase(); }
+	S_SPID_RUN4('SPID', 1, 'monsters/spider/base.md2', 5, 3.0 / 35.0, S_SPID_RUN5) { A_Chase(); }
+	S_SPID_RUN5('SPID', 2, 'monsters/spider/base.md2', 6, 3.0 / 35.0, S_SPID_RUN6) { A_Metal(); }
+	S_SPID_RUN6('SPID', 2, 'monsters/spider/base.md2', 7, 3.0 / 35.0, S_SPID_RUN7) { A_Chase(); }
+	S_SPID_RUN7('SPID', 3, 'monsters/spider/base.md2', 8, 3.0 / 35.0, S_SPID_RUN8) { A_Chase(); }
+	S_SPID_RUN8('SPID', 3, 'monsters/spider/base.md2', 9, 3.0 / 35.0, S_SPID_RUN9) { A_Chase(); }
+	S_SPID_RUN9('SPID', 4, 'monsters/spider/base.md2', 10, 3.0 / 35.0, S_SPID_RUN10) { A_Metal(); }
+	S_SPID_RUN10('SPID', 4, 'monsters/spider/base.md2', 11, 3.0 / 35.0, S_SPID_RUN11) { A_Chase(); }
+	S_SPID_RUN11('SPID', 5, 'monsters/spider/base.md2', 12, 3.0 / 35.0, S_SPID_RUN12) { A_Chase(); }
+	S_SPID_RUN12('SPID', 5, 'monsters/spider/base.md2', 13, 3.0 / 35.0, S_SPID_RUN1) { A_Chase(); }
+	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 'monsters/spider/base.md2', 14, 20.0 / 35.0, S_SPID_ATK2) { A_FaceTarget(); }
+	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 'monsters/spider/base.md2', 15, 4.0 / 35.0, S_SPID_ATK3) { A_SPosAttack(); }
+	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/attack.md2', 0, 4.0 / 35.0, S_SPID_ATK4) { A_SPosAttack(); }
+	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/attack.md2', 0, 1.0 / 35.0, S_SPID_ATK2) { A_SpidRefire(); }
+	S_SPID_PAIN('SPID', 8, 'monsters/spider/base.md2', 16, 3.0 / 35.0, S_SPID_PAIN2) { }
+	S_SPID_PAIN2('SPID', 8, 'monsters/spider/base.md2', 17, 3.0 / 35.0, S_SPID_RUN1) { A_Pain(); }
+	S_SPID_DIE1('SPID', 9, 'monsters/spider/death.md2', 0, 20.0 / 35.0, S_SPID_DIE2) { A_Scream(); }
+	S_SPID_DIE2('SPID', 10, 'monsters/spider/death.md2', 1, 10.0 / 35.0, S_SPID_DIE3) { A_Fall(); }
+	S_SPID_DIE3('SPID', 11, 'monsters/spider/death.md2', 2, 10.0 / 35.0, S_SPID_DIE4) { }
+	S_SPID_DIE4('SPID', 12, 'monsters/spider/death.md2', 3, 10.0 / 35.0, S_SPID_DIE5) { }
+	S_SPID_DIE5('SPID', 13, 'monsters/spider/death.md2', 4, 10.0 / 35.0, S_SPID_DIE6) { }
+	S_SPID_DIE6('SPID', 14, 'monsters/spider/death.md2', 5, 10.0 / 35.0, S_SPID_DIE7) { }
+	S_SPID_DIE7('SPID', 15, 'monsters/spider/death.md2', 6, 10.0 / 35.0, S_SPID_DIE8) { }
+	S_SPID_DIE8('SPID', 16, 'monsters/spider/death.md2', 7, 10.0 / 35.0, S_SPID_DIE9) { }
+	S_SPID_DIE9('SPID', 17, 'monsters/spider/death.md2', 8, 10.0 / 35.0, S_SPID_DIE10) { }
+	S_SPID_DIE10('SPID', 18, 'monsters/spider/death.md2', 9, 30.0 / 35.0, S_SPID_DIE11) { }
+	S_SPID_DIE11('SPID', 18, 'monsters/spider/death.md2', 10, -1.0, S_NULL) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -218,6 +218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/08/05 17:17:21  dj_jl
+//  Working on models.
+//
 //  Revision 1.15  2002/07/13 08:01:49  dj_jl
 //  Moved some functions to the Entity class.
 //

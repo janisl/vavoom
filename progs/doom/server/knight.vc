@@ -35,35 +35,35 @@ class HellKnight:BaronOfHell
 
 __states__
 {
-	S_BOS2_STND('BOS2', 0, 'monsters/knight.md2', 0, 10.0 / 35.0, S_BOS2_STND2) { A_Look(); }
-	S_BOS2_STND2('BOS2', 1, 'monsters/knight.md2', 1, 10.0 / 35.0, S_BOS2_STND) { A_Look(); }
-	S_BOS2_RUN1('BOS2', 0, 'monsters/knight.md2', 2, 3.0 / 35.0, S_BOS2_RUN2) { A_Chase(); }
-	S_BOS2_RUN2('BOS2', 0, 'monsters/knight.md2', 3, 3.0 / 35.0, S_BOS2_RUN3) { A_Chase(); }
-	S_BOS2_RUN3('BOS2', 1, 'monsters/knight.md2', 4, 3.0 / 35.0, S_BOS2_RUN4) { A_Chase(); }
-	S_BOS2_RUN4('BOS2', 1, 'monsters/knight.md2', 5, 3.0 / 35.0, S_BOS2_RUN5) { A_Chase(); }
-	S_BOS2_RUN5('BOS2', 2, 'monsters/knight.md2', 6, 3.0 / 35.0, S_BOS2_RUN6) { A_Chase(); }
-	S_BOS2_RUN6('BOS2', 2, 'monsters/knight.md2', 7, 3.0 / 35.0, S_BOS2_RUN7) { A_Chase(); }
-	S_BOS2_RUN7('BOS2', 3, 'monsters/knight.md2', 8, 3.0 / 35.0, S_BOS2_RUN8) { A_Chase(); }
-	S_BOS2_RUN8('BOS2', 3, 'monsters/knight.md2', 9, 3.0 / 35.0, S_BOS2_RUN1) { A_Chase(); }
-	S_BOS2_ATK1('BOS2', 4, 'monsters/knight.md2', 10, 8.0 / 35.0, S_BOS2_ATK2) { A_FaceTarget(); }
-	S_BOS2_ATK2('BOS2', 5, 'monsters/knight.md2', 11, 8.0 / 35.0, S_BOS2_ATK3) { A_FaceTarget(); }
-	S_BOS2_ATK3('BOS2', 6, 'monsters/knight.md2', 12, 8.0 / 35.0, S_BOS2_RUN1) { A_BruisAttack(); }
-	S_BOS2_PAIN('BOS2', 7, 'monsters/knight.md2', 13, 2.0 / 35.0, S_BOS2_PAIN2) { }
-	S_BOS2_PAIN2('BOS2', 7, 'monsters/knight.md2', 14, 2.0 / 35.0, S_BOS2_RUN1) { A_Pain(); }
-	S_BOS2_DIE1('BOS2', 8, 'monsters/knidie.md2', 0, 8.0 / 35.0, S_BOS2_DIE2) { }
-	S_BOS2_DIE2('BOS2', 9, 'monsters/knidie.md2', 1, 8.0 / 35.0, S_BOS2_DIE3) { A_Scream(); }
-	S_BOS2_DIE3('BOS2', 10, 'monsters/knidie.md2', 2, 8.0 / 35.0, S_BOS2_DIE4) { }
-	S_BOS2_DIE4('BOS2', 11, 'monsters/knidie.md2', 3, 8.0 / 35.0, S_BOS2_DIE5) { A_Fall(); }
-	S_BOS2_DIE5('BOS2', 12, 'monsters/knidie.md2', 4, 8.0 / 35.0, S_BOS2_DIE6) { }
-	S_BOS2_DIE6('BOS2', 13, 'monsters/knidie.md2', 5, 8.0 / 35.0, S_BOS2_DIE7) { }
-	S_BOS2_DIE7('BOS2', 14, 'monsters/knidie.md2', 6, -1.0, S_NULL) { }
-	S_BOS2_RAISE1('BOS2', 14, 'monsters/knidie.md2', 7, 8.0 / 35.0, S_BOS2_RAISE2) { }
-	S_BOS2_RAISE2('BOS2', 13, 'monsters/knidie.md2', 8, 8.0 / 35.0, S_BOS2_RAISE3) { }
-	S_BOS2_RAISE3('BOS2', 12, 'monsters/knidie.md2', 9, 8.0 / 35.0, S_BOS2_RAISE4) { }
-	S_BOS2_RAISE4('BOS2', 11, 'monsters/knidie.md2', 10, 8.0 / 35.0, S_BOS2_RAISE5) { }
-	S_BOS2_RAISE5('BOS2', 10, 'monsters/knidie.md2', 11, 8.0 / 35.0, S_BOS2_RAISE6) { }
-	S_BOS2_RAISE6('BOS2', 9, 'monsters/knidie.md2', 12, 8.0 / 35.0, S_BOS2_RAISE7) { }
-	S_BOS2_RAISE7('BOS2', 8, 'monsters/knidie.md2', 13, 8.0 / 35.0, S_BOS2_RUN1) { }
+	S_BOS2_STND('BOS2', 0, 'monsters/knight/base.md2', 0, 10.0 / 35.0, S_BOS2_STND2) { A_Look(); }
+	S_BOS2_STND2('BOS2', 1, 'monsters/knight/base.md2', 1, 10.0 / 35.0, S_BOS2_STND) { A_Look(); }
+	S_BOS2_RUN1('BOS2', 0, 'monsters/knight/base.md2', 2, 3.0 / 35.0, S_BOS2_RUN2) { A_Chase(); }
+	S_BOS2_RUN2('BOS2', 0, 'monsters/knight/base.md2', 3, 3.0 / 35.0, S_BOS2_RUN3) { A_Chase(); }
+	S_BOS2_RUN3('BOS2', 1, 'monsters/knight/base.md2', 4, 3.0 / 35.0, S_BOS2_RUN4) { A_Chase(); }
+	S_BOS2_RUN4('BOS2', 1, 'monsters/knight/base.md2', 5, 3.0 / 35.0, S_BOS2_RUN5) { A_Chase(); }
+	S_BOS2_RUN5('BOS2', 2, 'monsters/knight/base.md2', 6, 3.0 / 35.0, S_BOS2_RUN6) { A_Chase(); }
+	S_BOS2_RUN6('BOS2', 2, 'monsters/knight/base.md2', 7, 3.0 / 35.0, S_BOS2_RUN7) { A_Chase(); }
+	S_BOS2_RUN7('BOS2', 3, 'monsters/knight/base.md2', 8, 3.0 / 35.0, S_BOS2_RUN8) { A_Chase(); }
+	S_BOS2_RUN8('BOS2', 3, 'monsters/knight/base.md2', 9, 3.0 / 35.0, S_BOS2_RUN1) { A_Chase(); }
+	S_BOS2_ATK1('BOS2', 4, 'monsters/knight/base.md2', 10, 8.0 / 35.0, S_BOS2_ATK2) { A_FaceTarget(); }
+	S_BOS2_ATK2('BOS2', 5, 'monsters/knight/base.md2', 11, 8.0 / 35.0, S_BOS2_ATK3) { A_FaceTarget(); }
+	S_BOS2_ATK3('BOS2', 6, 'monsters/knight/base.md2', 12, 8.0 / 35.0, S_BOS2_RUN1) { A_BruisAttack(); }
+	S_BOS2_PAIN('BOS2', 7, 'monsters/knight/base.md2', 13, 2.0 / 35.0, S_BOS2_PAIN2) { }
+	S_BOS2_PAIN2('BOS2', 7, 'monsters/knight/base.md2', 14, 2.0 / 35.0, S_BOS2_RUN1) { A_Pain(); }
+	S_BOS2_DIE1('BOS2', 8, 'monsters/knight/death.md2', 0, 8.0 / 35.0, S_BOS2_DIE2) { }
+	S_BOS2_DIE2('BOS2', 9, 'monsters/knight/death.md2', 1, 8.0 / 35.0, S_BOS2_DIE3) { A_Scream(); }
+	S_BOS2_DIE3('BOS2', 10, 'monsters/knight/death.md2', 2, 8.0 / 35.0, S_BOS2_DIE4) { }
+	S_BOS2_DIE4('BOS2', 11, 'monsters/knight/death.md2', 3, 8.0 / 35.0, S_BOS2_DIE5) { A_Fall(); }
+	S_BOS2_DIE5('BOS2', 12, 'monsters/knight/death.md2', 4, 8.0 / 35.0, S_BOS2_DIE6) { }
+	S_BOS2_DIE6('BOS2', 13, 'monsters/knight/death.md2', 5, 8.0 / 35.0, S_BOS2_DIE7) { }
+	S_BOS2_DIE7('BOS2', 14, 'monsters/knight/death.md2', 6, -1.0, S_NULL) { }
+	S_BOS2_RAISE1('BOS2', 14, 'monsters/knight/death.md2', 7, 8.0 / 35.0, S_BOS2_RAISE2) { }
+	S_BOS2_RAISE2('BOS2', 13, 'monsters/knight/death.md2', 8, 8.0 / 35.0, S_BOS2_RAISE3) { }
+	S_BOS2_RAISE3('BOS2', 12, 'monsters/knight/death.md2', 9, 8.0 / 35.0, S_BOS2_RAISE4) { }
+	S_BOS2_RAISE4('BOS2', 11, 'monsters/knight/death.md2', 10, 8.0 / 35.0, S_BOS2_RAISE5) { }
+	S_BOS2_RAISE5('BOS2', 10, 'monsters/knight/death.md2', 11, 8.0 / 35.0, S_BOS2_RAISE6) { }
+	S_BOS2_RAISE6('BOS2', 9, 'monsters/knight/death.md2', 12, 8.0 / 35.0, S_BOS2_RAISE7) { }
+	S_BOS2_RAISE7('BOS2', 8, 'monsters/knight/death.md2', 13, 8.0 / 35.0, S_BOS2_RUN1) { }
 }
 
 defaultproperties
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/08/05 17:17:20  dj_jl
+//  Working on models.
+//
 //  Revision 1.18  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

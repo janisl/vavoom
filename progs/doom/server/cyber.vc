@@ -135,33 +135,33 @@ void A_BossDeath(void)
 
 __states__
 {
-	S_CYBER_STND('CYBR', 0, 'monsters/cyber.md2', 0, 10.0 / 35.0, S_CYBER_STND2) { A_Look(); }
-	S_CYBER_STND2('CYBR', 1, 'monsters/cyber.md2', 1, 10.0 / 35.0, S_CYBER_STND) { A_Look(); }
-	S_CYBER_RUN1('CYBR', 0, 'monsters/cyber.md2', 2, 3.0 / 35.0, S_CYBER_RUN2) { A_Hoof(); }
-	S_CYBER_RUN2('CYBR', 0, 'monsters/cyber.md2', 3, 3.0 / 35.0, S_CYBER_RUN3) { A_Chase(); }
-	S_CYBER_RUN3('CYBR', 1, 'monsters/cyber.md2', 4, 3.0 / 35.0, S_CYBER_RUN4) { A_Chase(); }
-	S_CYBER_RUN4('CYBR', 1, 'monsters/cyber.md2', 5, 3.0 / 35.0, S_CYBER_RUN5) { A_Chase(); }
-	S_CYBER_RUN5('CYBR', 2, 'monsters/cyber.md2', 6, 3.0 / 35.0, S_CYBER_RUN6) { A_Chase(); }
-	S_CYBER_RUN6('CYBR', 2, 'monsters/cyber.md2', 7, 3.0 / 35.0, S_CYBER_RUN7) { A_Chase(); }
-	S_CYBER_RUN7('CYBR', 3, 'monsters/cyber.md2', 8, 3.0 / 35.0, S_CYBER_RUN8) { A_Metal(); }
-	S_CYBER_RUN8('CYBR', 3, 'monsters/cyber.md2', 9, 3.0 / 35.0, S_CYBER_RUN1) { A_Chase(); }
-	S_CYBER_ATK1('CYBR', 4, 'monsters/cyber.md2', 10, 6.0 / 35.0, S_CYBER_ATK2) { A_FaceTarget(); }
-	S_CYBER_ATK2('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_ATK3) { A_CyberAttack(); }
-	S_CYBER_ATK3('CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, S_CYBER_ATK4) { A_FaceTarget(); }
-	S_CYBER_ATK4('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_ATK5) { A_CyberAttack(); }
-	S_CYBER_ATK5('CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, S_CYBER_ATK6) { A_FaceTarget(); }
-	S_CYBER_ATK6('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_RUN1) { A_CyberAttack(); }
-	S_CYBER_PAIN('CYBR', 6, 'monsters/cyber.md2', 11, 10.0 / 35.0, S_CYBER_RUN1) { A_Pain(); }
-	S_CYBER_DIE1('CYBR', 7, 'monsters/cyberdie.md2', 0, 10.0 / 35.0, S_CYBER_DIE2) { }
-	S_CYBER_DIE2('CYBR', 8, 'monsters/cyberdie.md2', 1, 10.0 / 35.0, S_CYBER_DIE3) { A_Scream(); }
-	S_CYBER_DIE3('CYBR', 9, 'monsters/cyberdie.md2', 2, 10.0 / 35.0, S_CYBER_DIE4) { }
-	S_CYBER_DIE4('CYBR', 10, 'monsters/cyberdie.md2', 3, 10.0 / 35.0, S_CYBER_DIE5) { }
-	S_CYBER_DIE5('CYBR', 11, 'monsters/cyberdie.md2', 4, 10.0 / 35.0, S_CYBER_DIE6) { }
-	S_CYBER_DIE6('CYBR', 12, 'monsters/cyberdie.md2', 5, 10.0 / 35.0, S_CYBER_DIE7) { A_Fall(); }
-	S_CYBER_DIE7('CYBR', 13, 'monsters/cyberdie.md2', 6, 10.0 / 35.0, S_CYBER_DIE8) { }
-	S_CYBER_DIE8('CYBR', 14, 'monsters/cyberdie.md2', 7, 10.0 / 35.0, S_CYBER_DIE9) { }
-	S_CYBER_DIE9('CYBR', 15, 'monsters/cyberdie.md2', 8, 30.0 / 35.0, S_CYBER_DIE10) { }
-	S_CYBER_DIE10('CYBR', 15, 'monsters/cyberdie.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
+	S_CYBER_STND('CYBR', 0, 'monsters/cyber/base.md2', 0, 10.0 / 35.0, S_CYBER_STND2) { A_Look(); }
+	S_CYBER_STND2('CYBR', 1, 'monsters/cyber/base.md2', 1, 10.0 / 35.0, S_CYBER_STND) { A_Look(); }
+	S_CYBER_RUN1('CYBR', 0, 'monsters/cyber/base.md2', 2, 3.0 / 35.0, S_CYBER_RUN2) { A_Hoof(); }
+	S_CYBER_RUN2('CYBR', 0, 'monsters/cyber/base.md2', 3, 3.0 / 35.0, S_CYBER_RUN3) { A_Chase(); }
+	S_CYBER_RUN3('CYBR', 1, 'monsters/cyber/base.md2', 4, 3.0 / 35.0, S_CYBER_RUN4) { A_Chase(); }
+	S_CYBER_RUN4('CYBR', 1, 'monsters/cyber/base.md2', 5, 3.0 / 35.0, S_CYBER_RUN5) { A_Chase(); }
+	S_CYBER_RUN5('CYBR', 2, 'monsters/cyber/base.md2', 6, 3.0 / 35.0, S_CYBER_RUN6) { A_Chase(); }
+	S_CYBER_RUN6('CYBR', 2, 'monsters/cyber/base.md2', 7, 3.0 / 35.0, S_CYBER_RUN7) { A_Chase(); }
+	S_CYBER_RUN7('CYBR', 3, 'monsters/cyber/base.md2', 8, 3.0 / 35.0, S_CYBER_RUN8) { A_Metal(); }
+	S_CYBER_RUN8('CYBR', 3, 'monsters/cyber/base.md2', 9, 3.0 / 35.0, S_CYBER_RUN1) { A_Chase(); }
+	S_CYBER_ATK1('CYBR', 4, 'monsters/cyber/base.md2', 10, 6.0 / 35.0, S_CYBER_ATK2) { A_FaceTarget(); }
+	S_CYBER_ATK2('CYBR', 5, 'monsters/cyber/attack.md2', 0, 12.0 / 35.0, S_CYBER_ATK3) { A_CyberAttack(); }
+	S_CYBER_ATK3('CYBR', 4, 'monsters/cyber/base.md2', 10, 12.0 / 35.0, S_CYBER_ATK4) { A_FaceTarget(); }
+	S_CYBER_ATK4('CYBR', 5, 'monsters/cyber/attack.md2', 0, 12.0 / 35.0, S_CYBER_ATK5) { A_CyberAttack(); }
+	S_CYBER_ATK5('CYBR', 4, 'monsters/cyber/base.md2', 10, 12.0 / 35.0, S_CYBER_ATK6) { A_FaceTarget(); }
+	S_CYBER_ATK6('CYBR', 5, 'monsters/cyber/attack.md2', 0, 12.0 / 35.0, S_CYBER_RUN1) { A_CyberAttack(); }
+	S_CYBER_PAIN('CYBR', 6, 'monsters/cyber/base.md2', 11, 10.0 / 35.0, S_CYBER_RUN1) { A_Pain(); }
+	S_CYBER_DIE1('CYBR', 7, 'monsters/cyber/death.md2', 0, 10.0 / 35.0, S_CYBER_DIE2) { }
+	S_CYBER_DIE2('CYBR', 8, 'monsters/cyber/death.md2', 1, 10.0 / 35.0, S_CYBER_DIE3) { A_Scream(); }
+	S_CYBER_DIE3('CYBR', 9, 'monsters/cyber/death.md2', 2, 10.0 / 35.0, S_CYBER_DIE4) { }
+	S_CYBER_DIE4('CYBR', 10, 'monsters/cyber/death.md2', 3, 10.0 / 35.0, S_CYBER_DIE5) { }
+	S_CYBER_DIE5('CYBR', 11, 'monsters/cyber/death.md2', 4, 10.0 / 35.0, S_CYBER_DIE6) { }
+	S_CYBER_DIE6('CYBR', 12, 'monsters/cyber/death.md2', 5, 10.0 / 35.0, S_CYBER_DIE7) { A_Fall(); }
+	S_CYBER_DIE7('CYBR', 13, 'monsters/cyber/death.md2', 6, 10.0 / 35.0, S_CYBER_DIE8) { }
+	S_CYBER_DIE8('CYBR', 14, 'monsters/cyber/death.md2', 7, 10.0 / 35.0, S_CYBER_DIE9) { }
+	S_CYBER_DIE9('CYBR', 15, 'monsters/cyber/death.md2', 8, 30.0 / 35.0, S_CYBER_DIE10) { }
+	S_CYBER_DIE10('CYBR', 15, 'monsters/cyber/death.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -191,6 +191,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/08/05 17:17:19  dj_jl
+//  Working on models.
+//
 //  Revision 1.16  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //

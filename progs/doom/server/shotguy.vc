@@ -81,40 +81,40 @@ void DropStuff(void)
 
 __states__
 {
-	S_SPOS_STND('SPOS', 0, 'monsters/sargeant.md2', 0, 10.0 / 35.0, S_SPOS_STND2) { A_Look(); }
-	S_SPOS_STND2('SPOS', 1, 'monsters/sargeant.md2', 1, 10.0 / 35.0, S_SPOS_STND) { A_Look(); }
-	S_SPOS_RUN1('SPOS', 0, 'monsters/sargeant.md2', 2, 3.0 / 35.0, S_SPOS_RUN2) { A_Chase(); }
-	S_SPOS_RUN2('SPOS', 0, 'monsters/sargeant.md2', 3, 3.0 / 35.0, S_SPOS_RUN3) { A_Chase(); }
-	S_SPOS_RUN3('SPOS', 1, 'monsters/sargeant.md2', 4, 3.0 / 35.0, S_SPOS_RUN4) { A_Chase(); }
-	S_SPOS_RUN4('SPOS', 1, 'monsters/sargeant.md2', 5, 3.0 / 35.0, S_SPOS_RUN5) { A_Chase(); }
-	S_SPOS_RUN5('SPOS', 2, 'monsters/sargeant.md2', 6, 3.0 / 35.0, S_SPOS_RUN6) { A_Chase(); }
-	S_SPOS_RUN6('SPOS', 2, 'monsters/sargeant.md2', 7, 3.0 / 35.0, S_SPOS_RUN7) { A_Chase(); }
-	S_SPOS_RUN7('SPOS', 3, 'monsters/sargeant.md2', 8, 3.0 / 35.0, S_SPOS_RUN8) { A_Chase(); }
-	S_SPOS_RUN8('SPOS', 3, 'monsters/sargeant.md2', 9, 3.0 / 35.0, S_SPOS_RUN1) { A_Chase(); }
-	S_SPOS_ATK1('SPOS', 4, 'monsters/sargeant.md2', 10, 10.0 / 35.0, S_SPOS_ATK2) { A_FaceTarget(); }
-	S_SPOS_ATK2('SPOS', 5 | FF_FULLBRIGHT, 'monsters/sargeant.md2', 11, 10.0 / 35.0, S_SPOS_ATK3) { A_SPosAttack(); }
-	S_SPOS_ATK3('SPOS', 4, 'monsters/sargeant.md2', 12, 10.0 / 35.0, S_SPOS_RUN1) { }
-	S_SPOS_PAIN('SPOS', 6, 'monsters/sargeant.md2', 13, 3.0 / 35.0, S_SPOS_PAIN2) { }
-	S_SPOS_PAIN2('SPOS', 6, 'monsters/sargeant.md2', 14, 3.0 / 35.0, S_SPOS_RUN1) { A_Pain(); }
-	S_SPOS_DIE1('SPOS', 7, 'monsters/sargdie.md2', 0, 5.0 / 35.0, S_SPOS_DIE2) { }
-	S_SPOS_DIE2('SPOS', 8, 'monsters/sargdie.md2', 1, 5.0 / 35.0, S_SPOS_DIE3) { A_Scream(); }
-	S_SPOS_DIE3('SPOS', 9, 'monsters/sargdie.md2', 2, 5.0 / 35.0, S_SPOS_DIE4) { A_Fall(); }
-	S_SPOS_DIE4('SPOS', 10, 'monsters/sargdie.md2', 3, 5.0 / 35.0, S_SPOS_DIE5) { }
-	S_SPOS_DIE5('SPOS', 11, 'monsters/sargdie.md2', 4, -1.0, S_NULL) { }
-	S_SPOS_XDIE1('SPOS', 12, 'gibs/sarggib.md2', 0, 5.0 / 35.0, S_SPOS_XDIE2) { }
-	S_SPOS_XDIE2('SPOS', 13, 'gibs/sarggib.md2', 1, 5.0 / 35.0, S_SPOS_XDIE3) { A_XScream(); }
-	S_SPOS_XDIE3('SPOS', 14, 'gibs/sarggib.md2', 2, 5.0 / 35.0, S_SPOS_XDIE4) { A_Fall(); }
-	S_SPOS_XDIE4('SPOS', 15, 'gibs/sarggib.md2', 3, 5.0 / 35.0, S_SPOS_XDIE5) { }
-	S_SPOS_XDIE5('SPOS', 16, 'gibs/sarggib.md2', 4, 5.0 / 35.0, S_SPOS_XDIE6) { }
-	S_SPOS_XDIE6('SPOS', 17, 'gibs/sarggib.md2', 5, 5.0 / 35.0, S_SPOS_XDIE7) { }
-	S_SPOS_XDIE7('SPOS', 18, 'gibs/sarggib.md2', 6, 5.0 / 35.0, S_SPOS_XDIE8) { }
-	S_SPOS_XDIE8('SPOS', 19, 'gibs/sarggib.md2', 7, 5.0 / 35.0, S_SPOS_XDIE9) { }
-	S_SPOS_XDIE9('SPOS', 20, 'gibs/sarggib.md2', 8, -1.0, S_NULL) { }
-	S_SPOS_RAISE1('SPOS', 11, 'monsters/sargdie.md2', 5, 5.0 / 35.0, S_SPOS_RAISE2) { }
-	S_SPOS_RAISE2('SPOS', 10, 'monsters/sargdie.md2', 6, 5.0 / 35.0, S_SPOS_RAISE3) { }
-	S_SPOS_RAISE3('SPOS', 9, 'monsters/sargdie.md2', 7, 5.0 / 35.0, S_SPOS_RAISE4) { }
-	S_SPOS_RAISE4('SPOS', 8, 'monsters/sargdie.md2', 8, 5.0 / 35.0, S_SPOS_RAISE5) { }
-	S_SPOS_RAISE5('SPOS', 7, 'monsters/sargdie.md2', 9, 5.0 / 35.0, S_SPOS_RUN1) { }
+	S_SPOS_STND('SPOS', 0, 'monsters/sargeant/base.md2', 0, 10.0 / 35.0, S_SPOS_STND2) { A_Look(); }
+	S_SPOS_STND2('SPOS', 1, 'monsters/sargeant/base.md2', 1, 10.0 / 35.0, S_SPOS_STND) { A_Look(); }
+	S_SPOS_RUN1('SPOS', 0, 'monsters/sargeant/base.md2', 2, 3.0 / 35.0, S_SPOS_RUN2) { A_Chase(); }
+	S_SPOS_RUN2('SPOS', 0, 'monsters/sargeant/base.md2', 3, 3.0 / 35.0, S_SPOS_RUN3) { A_Chase(); }
+	S_SPOS_RUN3('SPOS', 1, 'monsters/sargeant/base.md2', 4, 3.0 / 35.0, S_SPOS_RUN4) { A_Chase(); }
+	S_SPOS_RUN4('SPOS', 1, 'monsters/sargeant/base.md2', 5, 3.0 / 35.0, S_SPOS_RUN5) { A_Chase(); }
+	S_SPOS_RUN5('SPOS', 2, 'monsters/sargeant/base.md2', 6, 3.0 / 35.0, S_SPOS_RUN6) { A_Chase(); }
+	S_SPOS_RUN6('SPOS', 2, 'monsters/sargeant/base.md2', 7, 3.0 / 35.0, S_SPOS_RUN7) { A_Chase(); }
+	S_SPOS_RUN7('SPOS', 3, 'monsters/sargeant/base.md2', 8, 3.0 / 35.0, S_SPOS_RUN8) { A_Chase(); }
+	S_SPOS_RUN8('SPOS', 3, 'monsters/sargeant/base.md2', 9, 3.0 / 35.0, S_SPOS_RUN1) { A_Chase(); }
+	S_SPOS_ATK1('SPOS', 4, 'monsters/sargeant/base.md2', 10, 10.0 / 35.0, S_SPOS_ATK2) { A_FaceTarget(); }
+	S_SPOS_ATK2('SPOS', 5 | FF_FULLBRIGHT, 'monsters/sargeant/base.md2', 11, 10.0 / 35.0, S_SPOS_ATK3) { A_SPosAttack(); }
+	S_SPOS_ATK3('SPOS', 4, 'monsters/sargeant/base.md2', 12, 10.0 / 35.0, S_SPOS_RUN1) { }
+	S_SPOS_PAIN('SPOS', 6, 'monsters/sargeant/base.md2', 13, 3.0 / 35.0, S_SPOS_PAIN2) { }
+	S_SPOS_PAIN2('SPOS', 6, 'monsters/sargeant/base.md2', 14, 3.0 / 35.0, S_SPOS_RUN1) { A_Pain(); }
+	S_SPOS_DIE1('SPOS', 7, 'monsters/sargeant/death.md2', 0, 5.0 / 35.0, S_SPOS_DIE2) { }
+	S_SPOS_DIE2('SPOS', 8, 'monsters/sargeant/death.md2', 1, 5.0 / 35.0, S_SPOS_DIE3) { A_Scream(); }
+	S_SPOS_DIE3('SPOS', 9, 'monsters/sargeant/death.md2', 2, 5.0 / 35.0, S_SPOS_DIE4) { A_Fall(); }
+	S_SPOS_DIE4('SPOS', 10, 'monsters/sargeant/death.md2', 3, 5.0 / 35.0, S_SPOS_DIE5) { }
+	S_SPOS_DIE5('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, S_NULL) { }
+	S_SPOS_XDIE1('SPOS', 12, 'monsters/sargeant/gibs.md2', 0, 5.0 / 35.0, S_SPOS_XDIE2) { }
+	S_SPOS_XDIE2('SPOS', 13, 'monsters/sargeant/gibs.md2', 1, 5.0 / 35.0, S_SPOS_XDIE3) { A_XScream(); }
+	S_SPOS_XDIE3('SPOS', 14, 'monsters/sargeant/gibs.md2', 2, 5.0 / 35.0, S_SPOS_XDIE4) { A_Fall(); }
+	S_SPOS_XDIE4('SPOS', 15, 'monsters/sargeant/gibs.md2', 3, 5.0 / 35.0, S_SPOS_XDIE5) { }
+	S_SPOS_XDIE5('SPOS', 16, 'monsters/sargeant/gibs.md2', 4, 5.0 / 35.0, S_SPOS_XDIE6) { }
+	S_SPOS_XDIE6('SPOS', 17, 'monsters/sargeant/gibs.md2', 5, 5.0 / 35.0, S_SPOS_XDIE7) { }
+	S_SPOS_XDIE7('SPOS', 18, 'monsters/sargeant/gibs.md2', 6, 5.0 / 35.0, S_SPOS_XDIE8) { }
+	S_SPOS_XDIE8('SPOS', 19, 'monsters/sargeant/gibs.md2', 7, 5.0 / 35.0, S_SPOS_XDIE9) { }
+	S_SPOS_XDIE9('SPOS', 20, 'monsters/sargeant/gibs.md2', 8, -1.0, S_NULL) { }
+	S_SPOS_RAISE1('SPOS', 11, 'monsters/sargeant/death.md2', 5, 5.0 / 35.0, S_SPOS_RAISE2) { }
+	S_SPOS_RAISE2('SPOS', 10, 'monsters/sargeant/death.md2', 6, 5.0 / 35.0, S_SPOS_RAISE3) { }
+	S_SPOS_RAISE3('SPOS', 9, 'monsters/sargeant/death.md2', 7, 5.0 / 35.0, S_SPOS_RAISE4) { }
+	S_SPOS_RAISE4('SPOS', 8, 'monsters/sargeant/death.md2', 8, 5.0 / 35.0, S_SPOS_RAISE5) { }
+	S_SPOS_RAISE5('SPOS', 7, 'monsters/sargeant/death.md2', 9, 5.0 / 35.0, S_SPOS_RUN1) { }
 }
 
 defaultproperties
@@ -144,6 +144,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/08/05 17:17:21  dj_jl
+//  Working on models.
+//
 //  Revision 1.19  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //
