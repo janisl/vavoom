@@ -2802,7 +2802,7 @@ class FConsoleDevice:public FOutputDevice
 public:
 	void Serialize(const char* V, EName)
 	{
-		cout << V << endl;
+		printf("%s\n", V);
 	}
 };
 
@@ -2854,9 +2854,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2002/08/08 18:05:20  dj_jl
+//	Release fixes.
+//
 //	Revision 1.47  2002/08/05 17:21:00  dj_jl
 //	Made sound sequences reliable.
-//
+//	
 //	Revision 1.46  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

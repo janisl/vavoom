@@ -25,9 +25,15 @@
 
 #ifdef _WIN32
 #include "winlocal.h"
+#else
+#define INITGUID
 #endif
 #include <AL/al.h>
 #include <AL/alc.h>
+//	Linux headers doesn't define this
+#ifndef OPENAL
+#define OPENAL
+#endif
 #include "eax.h"
 
 #include "gamedefs.h"
@@ -154,7 +160,10 @@ void VOpenALDevice::Init(void)
 			GCon->Log(NAME_Init, "Couldn't open OpenAL device");
 			return;
 		}
+		//	In Linux it's not implemented.
+#ifdef ALC_DEVICE_SPECIFIER
 		GCon->Logf(NAME_Init, "Opened OpenAL device %s", alcGetString(Device, ALC_DEVICE_SPECIFIER));
+#endif
 
 		//	Create a context and make it current.
 		Context = alcCreateContext(Device, NULL);
@@ -697,25 +706,25 @@ void VOpenALDevice::Tick(float DeltaTime)
 //		(float)listener->mo->momy,
 //		(float)listener->mo->momz);
 
-	ALfloat or[6] = {
+	ALfloat orient[6] = {
 		listener_forward.x,
 		listener_forward.y,
 		listener_forward.z,
 		listener_up.x,
 		listener_up.y,
 		listener_up.z};
-	alListenerfv(AL_ORIENTATION, or);
+	alListenerfv(AL_ORIENTATION, orient);
 
 	alDopplerFactor(doppler_factor);
 	alDopplerVelocity(doppler_velocity);
 
 	if (supportEAX)
 	{
-		DWORD envId = eax_environment;
+		int envId = eax_environment;
 		if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
 			envId = EAX_ENVIRONMENT_GENERIC;
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
-			DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &envId, sizeof(DWORD));
+			DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &envId, sizeof(int));
 
 		float envSize = EAX_CalcEnvSize();
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
@@ -823,9 +832,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/08/08 18:05:20  dj_jl
+//	Release fixes.
+//
 //	Revision 1.3  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.2  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	

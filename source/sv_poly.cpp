@@ -120,8 +120,8 @@ int PO_GetPolyobjMirror(int poly)
 
 static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po)
 {
-	svpr.Exec("PolyThrustMobj", (int)mobj,
-		seg->normal.x, seg->normal.y, seg->normal.z, (int)po);
+	svpr.Exec("PolyThrustMobj", (int)mobj, PassFloat(seg->normal.x),
+		PassFloat(seg->normal.y), PassFloat(seg->normal.z), (int)po);
 }
 
 
@@ -895,9 +895,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/08/08 18:05:20  dj_jl
+//	Release fixes.
+//
 //	Revision 1.14  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.13  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	
