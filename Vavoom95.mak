@@ -61,7 +61,9 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
     obj\d3d_tex.obj \
     \
     obj\gl_draw.obj obj\gl_main.obj obj\gl_poly.obj obj\gl_tex.obj \
-    obj\gl_win32.obj
+    obj\gl_win32.obj \
+    \
+    obj\l_glbsp.obj obj\l_glvis.obj
 
 RESFILES = source\vavoom.RES
 MAINSOURCE = Vavoom95.bpf
@@ -69,7 +71,7 @@ RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES =
+LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib
 PACKAGES =
 SPARELIBS =
 DEFFILE =
@@ -80,13 +82,14 @@ PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-USERDEFINES = _RWSTD_NO_EXCEPTIONS
+USERDEFINES =
 SYSDEFINES = _NO_VCL
 INCLUDEPATH = c:\mssdk\include
 LIBPATH = $(BCB)\lib
-WARNINGS= -w
+#WARNINGS= -w
+WARNINGS=
 # ---------------------------------------------------------------------------
-CFLAG1 = -O2 -x- -RT- -X- -a4 -4 -b -k- -vi -q -c
+CFLAG1 = -O2 -X- -a4 -4 -b -k- -vi -q -c
 IDLCFLAGS = -Ic:\mssdk\include -src_suffix cpp -DNDEBUG \
     -D_RWSTD_NO_EXCEPTIONS
 PFLAGS = -N2obj -N0obj -$Y- -$L- -$D-

@@ -5,7 +5,7 @@
 #---------------------------------------
 
 # Uncomment to compile a debug version
-#DEBUG = 1
+DEBUG = 1
 
 # Uncomment to compile without OpenGL driver
 #NOGL = 1
@@ -119,6 +119,8 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/imission.o \
 	obj/in_input.o \
 	obj/infostr.o \
+	obj/l_glbsp.o \
+	obj/l_glvis.o \
 	obj/maths.o \
 	obj/menu.o \
 	obj/message.o \
@@ -161,6 +163,10 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/v_draw.o \
 	obj/wad.o \
 	obj/zone.o
+
+LIB_FILES = \
+	utils/glbsp/plugin/libglbsp.a \
+	utils/glvis/libglvis.a
 
 ifndef NOGL
 OBJ_FILES += \
@@ -254,7 +260,7 @@ WAD_FILES = \
 # ---------------------------------------
 
 C_ARGS   = -c -W -Wall -mpentiumpro -ffast-math
-CPP_ARGS = -c -W -Wall -mpentiumpro -ffast-math -fno-rtti -fno-exceptions
+CPP_ARGS = -c -W -Wall -mpentiumpro -ffast-math
 ASM_ARGS = -c -W -Wall -x assembler-with-cpp
 LINK_ARGS = -Wall
 
@@ -281,8 +287,8 @@ all: exe utils data
 
 exe: Vavoom$(EXE)
 
-Vavoom$(EXE): $(OBJ_FILES)
-	gcc $(LINK_ARGS) -o $@ $(OBJ_FILES) $(LIBS)
+Vavoom$(EXE): $(OBJ_FILES) $(LIB_FILES)
+	gcc $(LINK_ARGS) -o $@ $^ $(LIBS)
 
 suid:
 	chown root.root Vavoom
@@ -299,6 +305,14 @@ obj/%.o : source/%.cpp source/*.h
 
 obj/%.o : source/%.s source/asm_i386.h
 	gcc $(ASM_ARGS) -o $@ $<
+
+# ---------------------------------------
+
+utils/glbsp/plugin/libglbsp.a:
+	$(MAKE) -C utils/glbsp/plugin
+
+utils/glvis/libglvis.a:
+	$(MAKE) -C utils/glvis libglvis.a
 
 # ---------------------------------------
 
@@ -352,6 +366,10 @@ basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprog
 
 # ---------------------------------------
 
+ifndef INSTALL
+INSTALL = ginstall
+endif
+
 ifndef INSTALL_DIR
 INSTALL_DIR = /usr/local/games/Vavoom
 endif
@@ -361,17 +379,10 @@ INSTALL_UTILS_DIR = /usr/local/bin
 endif
 
 INSTALL_PARMS=-g root -o root -m 0755
+INSTALL_EXEPARMS=-g root -o root -m 4755
 INSTALL_DIRPARMS=-m 0777 -d
 
-install: installdata installutils
-	install $(INSTALL_PARMS) Vavoom$(EXE) $(INSTALL_DIR)
-
-installsv: installdata
-	install $(INSTALL_PARMS) VavoomSV$(EXE) $(INSTALL_DIR)
-
-installdata:
-	install $(INSTALL_DIRPARMS) \
-		$(INSTALL_DIR) \
+INSTALL_DIRS = $(INSTALL_DIR) \
 		$(INSTALL_DIR)/basev \
 		$(INSTALL_DIR)/basev/doom \
 		$(INSTALL_DIR)/basev/doom1 \
@@ -381,27 +392,27 @@ installdata:
 		$(INSTALL_DIR)/basev/heretic \
 		$(INSTALL_DIR)/basev/hexen \
 		$(INSTALL_DIR)/basev/strife
-	install $(INSTALL_PARMS) basev/default.cfg basev/startup.vs \
-		basev/games.txt $(INSTALL_DIR)/basev
-	install $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
-	install $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt \
-		$(INSTALL_DIR)/basev/doom1
-	install $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt \
-		$(INSTALL_DIR)/basev/doom2
-	install $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt \
-		$(INSTALL_DIR)/basev/tnt
-	install $(INSTALL_PARMS) basev/plutonia/wad0.wad \
-		basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
-	install $(INSTALL_PARMS) basev/heretic/wad0.wad \
-		$(INSTALL_DIR)/basev/heretic
-	install $(INSTALL_PARMS) basev/hexen/wad0.wad \
-		$(INSTALL_DIR)/basev/hexen
-	install $(INSTALL_PARMS) basev/strife/wad0.wad \
-		$(INSTALL_DIR)/basev/strife
+
+install: installdata installutils
+	$(INSTALL) $(INSTALL_EXEPARMS) Vavoom$(EXE) $(INSTALL_DIR)
+
+installsv: installdata
+	$(INSTALL) $(INSTALL_PARMS) VavoomSV$(EXE) $(INSTALL_DIR)
+
+installdata:
+	$(INSTALL) $(INSTALL_DIRPARMS) $(INSTALL_DIRS)
+	$(INSTALL) $(INSTALL_PARMS) basev/default.cfg basev/startup.vs basev/games.txt $(INSTALL_DIR)/basev
+	$(INSTALL) $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
+	$(INSTALL) $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
+	$(INSTALL) $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
+	$(INSTALL) $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
+	$(INSTALL) $(INSTALL_PARMS) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	$(INSTALL) $(INSTALL_PARMS) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
+	$(INSTALL) $(INSTALL_PARMS) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
+	$(INSTALL) $(INSTALL_PARMS) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
 
 installutils:
-	install $(INSTALL_PARMS) utils/glbsp/glbsp$(EXE) \
-		utils/glvis/glvis$(EXE) $(INSTALL_UTILS_DIR)
+	$(INSTALL) $(INSTALL_PARMS) utils/glbsp/glbsp$(EXE) utils/glvis/glvis$(EXE) $(INSTALL_UTILS_DIR)
 
 # ---------------------------------------
 

@@ -42,13 +42,13 @@ PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-USERDEFINES = SERVER;_RWSTD_NO_EXCEPTIONS
+USERDEFINES = SERVER
 SYSDEFINES = NO_STRICT;_NO_VCL
 INCLUDEPATH = source;$(BCB)\include
 LIBPATH = source;$(BCB)\lib\obj;$(BCB)\lib
 WARNINGS= -w-par
 # ---------------------------------------------------------------------------
-CFLAG1 = -O2 -Vx -Ve -x- -RT- -X- -a8 -4 -b -k- -vi -tWC -tWM- -c
+CFLAG1 = -O2 -Vx -Ve -X- -a8 -4 -b -k- -vi -tWC -tWM- -c
 IDLCFLAGS = -Isource -I$(BCB)\include -src_suffix cpp -DSERVER -D_RWSTD_NO_EXCEPTIONS \
     -no_tie -boa
 PFLAGS = -N2obj\sv -N0obj\sv -$Y- -$L- -$D- -v -JPHNE -M
