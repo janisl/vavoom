@@ -1,0 +1,74 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenQuit : MenuScreen;
+
+MenuHelpPage	Page;
+bool			bPageShown;
+
+void CreateChoices()
+{
+	::CreateChoices();
+	Page = MenuHelpPage(NewChild(MenuHelpPage));
+	Page.SetPage("PANEL7");
+}
+
+bool Key(int key)
+{
+	return true;
+}
+
+void Tick(float DeltaTime)
+{
+	//	Wait till next frame to make sure the page has been drawn.
+	if (!bPageShown)
+	{
+		bPageShown = true;
+		return;
+	}
+
+	if (shareware)
+		LocalSoundTillDone(TeaserQuitSounds[P_Random() % 5]);
+	else
+		LocalSoundTillDone(QuitSounds[P_Random() % 8]);
+
+	CmdBuf_AddText("Quit\n");
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2005/03/28 07:47:40  dj_jl
+//  Added quit game screen.
+//
+//  Revision 1.1  2002/11/02 08:20:52  dj_jl
+//  New style classes.
+//
+//**************************************************************************
