@@ -2295,6 +2295,20 @@ PF(FindModel)
 
 //==========================================================================
 //
+//	PF_GetModelIndex
+//
+//==========================================================================
+
+PF(GetModelIndex)
+{
+	FName Name;
+
+	Name = PopName();
+	Push(SV_GetModelIndex(Name));
+}
+
+//==========================================================================
+//
 //	PF_FindSkin
 //
 //==========================================================================
@@ -3172,6 +3186,7 @@ builtin_info_t BuiltinInfo[] =
 	_(SendFloorSlope),
 	_(SendCeilingSlope),
 	_(FindModel),
+	_(GetModelIndex),
 	_(FindSkin),
 	_(MSG_SelectClientMsg),
 #endif
@@ -3181,9 +3196,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2002/03/28 18:03:53  dj_jl
+//	Added SV_GetModelIndex
+//
 //	Revision 1.36  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.35  2002/03/02 17:27:48  dj_jl
 //	Renamed builtin Spawn to SpawnObject
 //	
