@@ -302,6 +302,9 @@ native void T_DrawText(int x, int y, string text);
 //  Draws text, but no more than n characters
 native void T_DrawNText(int x, int y, string text, int n);
 
+//  Draws text wrapping at the width w
+native void T_DrawTextW(int x, int y, string text, int w);
+
 //  Draws a cursor at the end of last drawn string
 native void T_DrawCursor(void);
 
@@ -480,6 +483,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2003/09/26 16:52:59  dj_jl
+//  Wrapped text printing
+//
 //  Revision 1.41  2003/03/08 12:16:08  dj_jl
 //  Removing class pointers.
 //
