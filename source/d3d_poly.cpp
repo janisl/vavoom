@@ -620,6 +620,10 @@ void TDirect3DDrawer::WorldDrawing(void)
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
+		if (r_fog)
+		{
+			RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
+		}
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -674,6 +678,10 @@ void TDirect3DDrawer::WorldDrawing(void)
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
+		if (r_fog)
+		{
+			RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
+		}
 	}
 	unguard;
 }
@@ -1185,9 +1193,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/02 17:32:33  dj_jl
+//	Fixed specular lights when fog is enabled.
+//
 //	Revision 1.19  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.18  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

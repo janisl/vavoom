@@ -558,6 +558,10 @@ void TOpenGLDrawer::WorldDrawing(void)
 		glBlendFunc(GL_ONE, GL_ONE);
 		glEnable(GL_BLEND);
 		glColor4f(1, 1, 1, 1);
+		if (r_fog)
+		{
+			glDisable(GL_FOG);
+		}
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -600,6 +604,10 @@ void TOpenGLDrawer::WorldDrawing(void)
 		glDisable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
+		if (r_fog)
+		{
+			glEnable(GL_FOG);
+		}
 	}
 	unguard;
 }
@@ -1053,9 +1061,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/03/02 17:32:33  dj_jl
+//	Fixed specular lights when fog is enabled.
+//
 //	Revision 1.18  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
