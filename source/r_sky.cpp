@@ -50,7 +50,6 @@ struct skyboxinfo_t
 	};
 
 	char name[128];
-	bool autoscale;
 	skyboxsurf_t surfs[6];
 };
 
@@ -147,19 +146,6 @@ void R_InitSkyBoxes(void)
 
 		strcpy(info.name, sc_String);
 		SC_MustGetStringName("{");
-		SC_MustGetString();
-		while (!SC_Compare("{"))
-		{
-			if (SC_Compare("autoscale"))
-			{
-				info.autoscale = true;
-			}
-			else
-			{
-				SC_ScriptError(NULL);
-			}
-		}
-		SC_UnGet();
 		for (int i = 0; i < 6; i++)
 		{
 			SC_MustGetStringName("{");
@@ -208,11 +194,11 @@ static void R_InitOldSky(const mapInfo_t &info)
 		}
 	}
 
-	float skyheight = textures[info.sky1Texture]->height;
+	int skyheight = textures[info.sky1Texture]->height;
 	float skytop;
 	float skybot;
 
-	if (skyheight <= 128.0)
+	if (skyheight <= 128)
 	{
 		skytop = 95;
 	}
@@ -260,17 +246,17 @@ static void R_InitOldSky(const mapInfo_t &info)
 	sky[1].plane.Set(TVec(0, 1, 0), -128);
 	sky[1].texinfo.saxis = TVec(-1.0, 0, 0);
 	sky[1].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[1].texinfo.texorg = TVec(128 + 256, -128, skytop);
+	sky[1].texinfo.texorg = TVec(128, -128, skytop);
 
 	sky[2].plane.Set(TVec(1, 0, 0), -128);
 	sky[2].texinfo.saxis = TVec(0, 1.0, 0);
 	sky[2].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[2].texinfo.texorg = TVec(-128, -128 - 512, skytop);
+	sky[2].texinfo.texorg = TVec(-128, -128, skytop);
 
 	sky[3].plane.Set(TVec(0, -1, 0), -128);
 	sky[3].texinfo.saxis = TVec(1.0, 0, 0);
 	sky[3].texinfo.taxis = TVec(0, 0, -1.0);
-	sky[3].texinfo.texorg = TVec(-128 - 768, 128, skytop);
+	sky[3].texinfo.texorg = TVec(-128, 128, skytop);
 
 	sky[4].plane.Set(TVec(0, 0, -1), -skytop);
 	sky[4].texinfo.saxis = TVec(0, -1.0, 0);
@@ -281,6 +267,10 @@ static void R_InitOldSky(const mapInfo_t &info)
 	sky[5].texinfo.saxis = TVec(0, -1.0, 0);
 	sky[5].texinfo.taxis = TVec(1.0, 0, 0);
 	sky[5].texinfo.texorg = TVec(-128, 128, skybot);
+
+	sky[1].columnOffset1 = sky[1].columnOffset2 = 256;
+	sky[2].columnOffset1 = sky[2].columnOffset2 = 512;
+	sky[3].columnOffset1 = sky[3].columnOffset2 = 768;
 
 	for (int j = 0; j < 6; j++)
 	{
@@ -301,6 +291,8 @@ static void R_InitOldSky(const mapInfo_t &info)
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
+		sky[j].surf.extents[0] = 256;
+		sky[j].surf.extents[1] = skyheight;
 	}
 
 	sky[4].texinfo.taxis *= skyheight / 256.0;
@@ -401,6 +393,8 @@ static void R_InitSkyBox(const mapInfo_t &info)
 
 	for (int j = 0; j < 6; j++)
 	{
+		int smap = sky[j].texture1 & ~TEXF_SKY_MAP;
+
 		sky[j].texture1 = sinfo.surfs[j].texture;
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
@@ -409,12 +403,10 @@ static void R_InitSkyBox(const mapInfo_t &info)
 		//	Precache texture
 		Drawer->SetSkyTexture(sky[j].texture1, false);
 
-		if (sinfo.autoscale)
-		{
-			int smap = sky[j].texture1 & ~TEXF_SKY_MAP;
-			sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
-			sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
-		}
+		sky[j].surf.extents[0] = skymaps[smap].width;
+		sky[j].surf.extents[1] = skymaps[smap].height;
+		sky[j].texinfo.saxis *= skymaps[smap].width / 256.0;
+		sky[j].texinfo.taxis *= skymaps[smap].height / 256.0;
 	}
 }
 
@@ -637,9 +629,12 @@ void R_DrawSky(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/11/02 18:35:55  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

@@ -164,7 +164,7 @@ static void CalcFadetable16(rgb_t *pal)
 	}
 
 	D_FlushCaches(true);
-	D_FlushSpriteCache();
+	D_FlushTextureCaches();
 }
 
 //==========================================================================
@@ -227,7 +227,7 @@ static void CalcFadetable32(rgb_t *pal)
 	}
 
 	D_FlushCaches(true);
-	D_FlushSpriteCache();
+	D_FlushTextureCaches();
 }
 
 //==========================================================================
@@ -443,9 +443,12 @@ void TSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

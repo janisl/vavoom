@@ -34,7 +34,7 @@
 #define MAX_SPANS			3000
 
 #define SURF_SKY			1
-#define SURF_DOUBLE_SKY		2
+#define SURF_SKY_BOX		2
 #define SURF_BACKGROUND		4
 
 //	Theoretically cliping can give only 4 new vertexes. In practice due to
@@ -118,8 +118,6 @@ fixed_t			bbextentt;
 
 void*			cacheblock;
 int				cachewidth;
-int				d_skysmask;
-int				d_skytmask;
 byte*			d_transluc;// For translucent spans
 word			*d_srctranstab;
 word			*d_dsttranstab;
@@ -553,7 +551,7 @@ void TSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	surface_p->key = r_currentkey++;
 	surface_p->last_u = 0;
 	surface_p->spanstate = 0;
-	surface_p->flags = SURF_SKY;
+	surface_p->flags = texture1 & TEXF_SKY_MAP ? SURF_SKY_BOX : SURF_SKY;
 	surface_p->nearzi = r_nearzi;
 
 	surface_p->texture1 = texture1;
@@ -964,16 +962,21 @@ static void D_DrawSurfaces(void)
 		else if (surf->flags & SURF_SKY)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			int base_sadjust = sadjust;
-			sadjust = base_sadjust - (int)(surf->offs1 * 0x10000);
+			cache =	D_CacheSkySurface(surf->surf, surf->texture1,
+				surf->texture2, surf->offs1, surf->offs2);
+			cachewidth = cache->width;
+			cacheblock = cache->data;
+			D_DrawSpans(surf->spans);
+			d_ziorigin = 0;
+			d_zistepv = 0;
+ 			d_zistepu = 0;
+			D_DrawZSpans(surf->spans);
+		}
+		else if (surf->flags & SURF_SKY_BOX)
+		{
+			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
 			Drawer->SetSkyTexture(surf->texture1, false);
-			D_DrawSkySpans(surf->spans);
-			if (surf->texture2)
-			{
-				sadjust = base_sadjust - (int)(surf->offs2 * 0x10000);
-				Drawer->SetSkyTexture(surf->texture2, true);
-				D_DrawSkySpans(surf->spans);
-			}
+			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
  			d_zistepu = 0;
@@ -1089,9 +1092,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.7  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.6  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
 //	

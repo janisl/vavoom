@@ -112,7 +112,6 @@ int						ylookup[MAXSCREENHEIGHT];
 short					*zbuffer = NULL;
 
 spanfunc_t				D_DrawSpans;
-spanfunc_t				D_DrawSkySpans;
 spritespanfunc_t		D_DrawSpriteSpans;
 spritespanfunc_t		D_DrawFuzzSpriteSpans;
 spritespanfunc_t		D_DrawAltFuzzSpriteSpans;
@@ -194,7 +193,7 @@ bool TSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 void TSoftwareDrawer::FreeMemory(void)
 {
 	D_FlushCaches(true);
-	D_FlushSpriteCache();
+	D_FlushTextureCaches();
 //FIXME use Z_FreeTag(PU_VIDEO)
 	if (sc_base)
 	{
@@ -230,7 +229,6 @@ void TSoftwareDrawer::InitResolution(void)
 		bppindex = 0;
 
 		D_DrawSpans = D_DrawSpans8_8;
-		D_DrawSkySpans = D_DrawSkySpans_8;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_8;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawAltFuzzSpriteSpans = D_DrawAltFuzzSpriteSpans_8;
@@ -249,7 +247,6 @@ void TSoftwareDrawer::InitResolution(void)
 		bppindex = 1;
 
 		D_DrawSpans = D_DrawSpans8_16;
-		D_DrawSkySpans = D_DrawSkySpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
@@ -268,7 +265,6 @@ void TSoftwareDrawer::InitResolution(void)
 		bppindex = 2;
 
 		D_DrawSpans = D_DrawSpans8_16;
-		D_DrawSkySpans = D_DrawSkySpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
@@ -290,7 +286,6 @@ void TSoftwareDrawer::InitResolution(void)
 		boffs = bshift / 8;
 
 		D_DrawSpans = D_DrawSpans8_32;
-		D_DrawSkySpans = D_DrawSkySpans_32;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_32;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
@@ -640,9 +635,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.8  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
 //	

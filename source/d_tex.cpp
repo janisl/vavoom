@@ -85,11 +85,11 @@ void TSoftwareDrawer::InitTextures(void)
 
 //==========================================================================
 //
-//	D_FlushSpriteCache
+//	D_FlushTextureCaches
 //
 //==========================================================================
 
-void D_FlushSpriteCache(void)
+void D_FlushTextureCaches(void)
 {
 	int		i;
 
@@ -98,6 +98,14 @@ void D_FlushSpriteCache(void)
 		if (sprite_cache[i].data)
 		{
 			Z_Free(sprite_cache[i].data);
+		}
+	}
+
+	for (i = 0; i < numskymaps; i++)
+	{
+		if (skymapdata[i])
+		{
+			Z_Free(skymapdata[i]);
 		}
 	}
 }
@@ -371,6 +379,104 @@ void TSoftwareDrawer::SetTexture(int tex)
 
 //==========================================================================
 //
+//	LoadSkyMap
+//
+//==========================================================================
+
+static void LoadSkyMap(const char *name, void **dataptr)
+{
+	int j;
+
+	Mod_LoadSkin(name, NULL);
+	Z_Malloc(SkinWidth * SkinHeight * PixelBytes, PU_STATIC, dataptr);
+	if (SkinBPP == 8)
+	{
+		// Load paletted skymap
+		if (ScreenBPP == 8)
+		{
+			byte remap[256];
+
+			for (j = 0; j < 256; j++)
+			{
+				remap[j] = MakeCol8(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+			}
+
+			byte *psrc = (byte *)SkinData;
+			byte *pdst = (byte *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			{
+				*pdst = remap[*psrc];
+			}
+		}
+		else if (ScreenBPP == 15 || ScreenBPP == 16)
+		{
+			word remap[256];
+
+			for (j = 0; j < 256; j++)
+			{
+				remap[j] = MakeCol16(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+			}
+
+			byte *psrc = (byte *)SkinData;
+			word *pdst = (word *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			{
+				*pdst = remap[*psrc];
+			}
+		}
+		else
+		{
+			dword remap[256];
+
+			for (j = 0; j < 256; j++)
+			{
+				remap[j] = MakeCol32(SkinPal[j].r, SkinPal[j].g, SkinPal[j].b);
+			}
+
+			byte *psrc = (byte *)SkinData;
+			dword *pdst = (dword *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, psrc++, pdst++)
+			{
+				*pdst = remap[*psrc];
+			}
+		}
+	}
+	else
+	{
+		if (ScreenBPP == 8)
+		{
+			rgba_t *src = (rgba_t *)SkinData;
+			byte *dst = (byte *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			{
+				*dst = MakeCol8(src->r, src->g, src->b);
+			}
+		}
+		else if (ScreenBPP == 15 || ScreenBPP == 16)
+		{
+			rgba_t *src = (rgba_t *)SkinData;
+			word *dst = (word *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			{
+				*dst = MakeCol16(src->r, src->g, src->b);
+			}
+		}
+		else
+		{
+			rgba_t *src = (rgba_t *)SkinData;
+			dword *dst = (dword *)*dataptr;
+			for (j = 0; j < SkinWidth * SkinHeight; j++, src++, dst++)
+			{
+				*dst = MakeCol32(src->r, src->g, src->b);
+			}
+		}
+	}
+	Z_ChangeTag(*dataptr, PU_CACHE);
+	Z_Free(SkinData);
+}
+
+//==========================================================================
+//
 // 	TSoftwareDrawer::SetSkyTexture
 //
 //==========================================================================
@@ -382,18 +488,14 @@ void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 		tex &= ~TEXF_SKY_MAP;
 		if (!skymapdata[tex])
 		{
-			D_LoadImage(skymaps[tex].name, &skymapdata[tex]);
+			LoadSkyMap(skymaps[tex].name, &skymapdata[tex]);
 			skymaps[tex].width = SkinWidth;
 			skymaps[tex].height = SkinHeight;
 		}
 		cacheblock = (byte *)skymapdata[tex];
 		cachewidth = skymaps[tex].width;
-		d_skysmask = skymaps[tex].width - 1;
-		d_skytmask = skymaps[tex].height - 1;
 		return;
 	}
-
-	tex = R_TextureAnimation(tex);
 
 	if (tex & TEXF_FLAT)
 	{
@@ -406,11 +508,6 @@ void TSoftwareDrawer::SetSkyTexture(int tex, bool double_sky)
 
 		miptexture = texturedata[tex];
 	}
-
-	cacheblock = (byte*)miptexture + miptexture->offsets[0];
-	cachewidth = miptexture->width;
-	d_skysmask = miptexture->width - 1;
-	d_skytmask = miptexture->height - 1;
 }
 
 //==========================================================================
@@ -648,9 +745,12 @@ void SetSpriteLump(int lump, dword light, int translation)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/11/02 18:35:55  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

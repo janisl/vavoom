@@ -66,6 +66,13 @@ void D_DrawSurfaceBlock32RGB_mip0(void);
 void D_DrawSurfaceBlock32RGB_mip1(void);
 void D_DrawSurfaceBlock32RGB_mip2(void);
 void D_DrawSurfaceBlock32RGB_mip3(void);
+
+void D_DrawSkySurf_8(void);
+void D_DrawSkySurf_16(void);
+void D_DrawSkySurf_32(void);
+void D_DrawDoubleSkySurf_8(void);
+void D_DrawDoubleSkySurf_16(void);
+void D_DrawDoubleSkySurf_32(void);
 }
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -92,6 +99,14 @@ int				r_stepback;
 int				r_lightwidth;
 int				r_numhblocks, r_numvblocks;
 byte			*r_source, *r_sourcemax;
+
+miptexture_t	*dsky_mt1;
+miptexture_t	*dsky_mt2;
+int				dsky_offs1;
+int				dsky_offs2;
+int				dsky_cachewidth;
+int				dsky_cacheheight;
+byte			*dsky_cachedest;
 
 static void	(*surfmiptable8[4])(void) =
 {
@@ -309,6 +324,111 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel)
 	}
 
 	return surface->cachespots[miplevel];
+}
+
+//==========================================================================
+//
+//	D_CacheSkySurface
+//
+//==========================================================================
+
+surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
+	int texture2, float offs1, float offs2)
+{
+	surfcache_t     *cache;
+
+	//
+	// if the surface is animating flush the cache
+	//
+	texture1 = R_TextureAnimation(texture1);
+	texture2 = R_TextureAnimation(texture2);
+	
+	//
+	// see if the cache holds apropriate data
+	//
+	cache = surface->cachespots[0];
+
+	if (cache && cache->texture == texture1 &&
+		*(float *)&cache->dlight == offs1 &&
+		cache->lightlevel == texture2 && cache->mipscale == offs2)
+	{
+		return cache;
+	}
+
+	//
+	// determine shape of surface
+	//
+	int surfwidth = surface->extents[0];
+	int surfheight = surface->extents[1];
+	
+	//
+	// allocate memory if needed
+	//
+	if (!cache)     // if a texture just animated, don't reallocate it
+	{
+		cache = D_SCAlloc(surfwidth, surfheight);
+		surface->cachespots[0] = cache;
+		cache->owner = &surface->cachespots[0];
+	}
+	
+	cache->texture = texture1;
+	*(float *)&cache->dlight = offs1;
+	cache->lightlevel = texture2;
+	cache->mipscale = offs2;
+
+	//
+	// draw the surface texture
+	//
+
+//	c_surf++;
+
+	dsky_cachewidth = surfwidth;
+	dsky_cacheheight = surfheight;
+	dsky_cachedest = (byte*)cache->data;
+
+	Drawer->SetSkyTexture(texture1, false);
+	dsky_mt1 = miptexture;
+	dsky_offs1 = (-(int)offs1) & (dsky_mt1->width - 1);
+
+	if (texture2)
+	{
+		// Make sure that texture will be not freed
+		Z_ChangeTag(dsky_mt1, PU_STATIC);
+
+		Drawer->SetSkyTexture(texture2, true);
+		dsky_mt2 = miptexture;
+		dsky_offs2 = (-(int)offs2) & (dsky_mt2->width - 1);
+
+		if (PixelBytes == 1)
+		{
+			D_DrawDoubleSkySurf_8();
+		}
+		else if (PixelBytes == 2)
+		{
+			D_DrawDoubleSkySurf_16();
+		}
+		else
+		{
+			D_DrawDoubleSkySurf_32();
+		}
+	}
+	else
+	{
+		if (PixelBytes == 1)
+		{
+			D_DrawSkySurf_8();
+		}
+		else if (PixelBytes == 2)
+		{
+			D_DrawSkySurf_16();
+		}
+		else
+		{
+			D_DrawSkySurf_32();
+		}
+	}
+
+	return surface->cachespots[0];
 }
 
 #ifndef USEASM
@@ -1863,12 +1983,276 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 
 #endif // USEASM
 
+//==========================================================================
+//
+//	D_DrawSkySurf_8
+//
+//==========================================================================
+
+void D_DrawSkySurf_8(void)
+{
+	byte	*basesrc, *src;
+	byte	*dst;
+	int		texwidth, texheight;
+	int		smask;
+	int		s, t, texs;
+
+	texwidth = dsky_mt1->width;
+	texheight = dsky_mt1->width;
+	smask = texwidth - 1;
+
+	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	dst = dsky_cachedest;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src = &basesrc[(t % texheight) * texwidth];
+
+		texs = dsky_offs1;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			*dst++ = src[texs];
+			texs = (texs + 1) & smask;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawSkySurf_16
+//
+//==========================================================================
+
+void D_DrawSkySurf_16(void)
+{
+	byte	*basesrc, *src;
+	word	*dst;
+	int		texwidth, texheight;
+	int		smask;
+	int		s, t, texs;
+
+	texwidth = dsky_mt1->width;
+	texheight = dsky_mt1->width;
+	smask = texwidth - 1;
+
+	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	dst = (word *)dsky_cachedest;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src = &basesrc[(t % texheight) * texwidth];
+
+		texs = dsky_offs1;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			*dst++ = pal8_to16[src[texs]];
+			texs = (texs + 1) & smask;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawSkySurf_32
+//
+//==========================================================================
+
+void D_DrawSkySurf_32(void)
+{
+	byte	*basesrc, *src;
+	dword	*dst;
+	int		texwidth, texheight;
+	int		smask;
+	int		s, t, texs;
+
+	texwidth = dsky_mt1->width;
+	texheight = dsky_mt1->width;
+	smask = texwidth - 1;
+
+	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	dst = (dword *)dsky_cachedest;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src = &basesrc[(t % texheight) * texwidth];
+
+		texs = dsky_offs1;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			*dst++ = pal2rgb[src[texs]];
+			texs = (texs + 1) & smask;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawDoubleSkySurf_8
+//
+//==========================================================================
+
+void D_DrawDoubleSkySurf_8(void)
+{
+	byte	*basesrc1, *basesrc2, *src1, *src2;
+	byte	*dst;
+	int		texwidth1, texheight1, texwidth2, texheight2;
+	int		smask1, smask2;
+	int		s, t, texs1, texs2;
+
+	texwidth1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->width;
+
+	texwidth2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->width;
+
+	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
+
+	dst = dsky_cachedest;
+
+	smask1 = texwidth1 - 1;
+	smask2 = texwidth2 - 1;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src1 = &basesrc1[(t % texheight1) * texwidth1];
+		src2 = &basesrc2[(t % texheight2) * texwidth2];
+
+		texs1 = dsky_offs1;
+		texs2 = dsky_offs2;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			if (src2[texs2])
+			{
+				*dst++ = src2[texs2];
+			}
+			else
+			{
+				*dst++ = src1[texs1];
+			}
+			texs1 = (texs1 + 1) & smask1;
+			texs2 = (texs2 + 1) & smask2;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawDoubleSkySurf_16
+//
+//==========================================================================
+
+void D_DrawDoubleSkySurf_16(void)
+{
+	byte	*basesrc1, *basesrc2, *src1, *src2;
+	word	*dst;
+	int		texwidth1, texheight1, texwidth2, texheight2;
+	int		smask1, smask2;
+	int		s, t, texs1, texs2;
+
+	texwidth1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->width;
+
+	texwidth2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->width;
+
+	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
+
+	dst = (word *)dsky_cachedest;
+
+	smask1 = texwidth1 - 1;
+	smask2 = texwidth2 - 1;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src1 = &basesrc1[(t % texheight1) * texwidth1];
+		src2 = &basesrc2[(t % texheight2) * texwidth2];
+
+		texs1 = dsky_offs1;
+		texs2 = dsky_offs2;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			if (src2[texs2])
+			{
+				*dst++ = pal8_to16[src2[texs2]];
+			}
+			else
+			{
+				*dst++ = pal8_to16[src1[texs1]];
+			}
+			texs1 = (texs1 + 1) & smask1;
+			texs2 = (texs2 + 1) & smask2;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	D_DrawDoubleSkySurf_32
+//
+//==========================================================================
+
+void D_DrawDoubleSkySurf_32(void)
+{
+	byte	*basesrc1, *basesrc2, *src1, *src2;
+	dword	*dst;
+	int		texwidth1, texheight1, texwidth2, texheight2;
+	int		smask1, smask2;
+	int		s, t, texs1, texs2;
+
+	texwidth1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->width;
+
+	texwidth2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->width;
+
+	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
+	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
+
+	dst = (dword *)dsky_cachedest;
+
+	smask1 = texwidth1 - 1;
+	smask2 = texwidth2 - 1;
+
+	for (t = 0; t < dsky_cacheheight; t++)
+	{
+		src1 = &basesrc1[(t % texheight1) * texwidth1];
+		src2 = &basesrc2[(t % texheight2) * texwidth2];
+
+		texs1 = dsky_offs1;
+		texs2 = dsky_offs2;
+
+		for (s = 0; s < dsky_cachewidth; s++)
+		{
+			if (src2[texs2])
+			{
+				*dst++ = pal2rgb[src2[texs2]];
+			}
+			else
+			{
+				*dst++ = pal2rgb[src1[texs1]];
+			}
+			texs1 = (texs1 + 1) & smask1;
+			texs2 = (texs2 + 1) & smask2;
+		}
+	}
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/11/02 18:35:55  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.5  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

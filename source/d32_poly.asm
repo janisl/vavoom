@@ -15,8 +15,6 @@
  externdef _bbextentt
  externdef _cacheblock
  externdef _cachewidth
- externdef _d_skysmask
- externdef _d_skytmask
  externdef _d_transluc
  externdef _d_srctranstab
  externdef _d_dsttranstab

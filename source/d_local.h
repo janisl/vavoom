@@ -220,16 +220,10 @@ extern "C" {
 
 void D_DrawSpans8_8(espan_t*);
 void D_DrawSpans16_8(espan_t *pspan);
-void D_DrawSkySpans_8(espan_t*);
-
 void D_DrawSpans8_16(espan_t*);
 void D_DrawSpans16_16(espan_t *pspan);
-void D_DrawSkySpans_16(espan_t*);
-
 void D_DrawSpans8_32(espan_t*);
 void D_DrawSpans16_32(espan_t *pspan);
-void D_DrawSkySpans_32(espan_t*);
-
 void D_DrawZSpans(espan_t*);
 
 void D_DrawSpriteSpans_8(sspan_t*);
@@ -251,7 +245,8 @@ void D_DrawParticle_32(particle_t *pparticle);
 void TransformVector(const TVec &in, TVec &out);
 
 void D_BeginEdgeFrame(void);
-void D_FlushSpriteCache(void);
+
+void D_FlushTextureCaches(void);
 
 int D_SurfaceCacheForRes(int, int, int);
 void D_InitCaches(void*, int);
@@ -259,6 +254,8 @@ void D_FlushCaches(bool);
 surfcache_t *D_SCAlloc(int, int);
 
 surfcache_t *D_CacheSurface(surface_t *surface, int miplevel);
+surfcache_t *D_CacheSkySurface(surface_t *surface, int texture1,
+	int texture2, float offs1, float offs2);
 
 void SetSpriteLump(int, dword, int);
 
@@ -284,8 +281,6 @@ extern fixed_t			bbextents;
 extern fixed_t			bbextentt;
 extern void*			cacheblock;
 extern int				cachewidth;
-extern int				d_skysmask;
-extern int				d_skytmask;
 extern byte*			d_transluc;
 extern word*			d_srctranstab;
 extern word*			d_dsttranstab;
@@ -296,7 +291,6 @@ extern spanfunc_t		spanfunc;
 extern spritespanfunc_t	spritespanfunc;
 
 extern spanfunc_t		D_DrawSpans;
-extern spanfunc_t		D_DrawSkySpans;
 extern spritespanfunc_t	D_DrawSpriteSpans;
 extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
 extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;
@@ -544,9 +538,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.15  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
-//
+//	
 //	Revision 1.14  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

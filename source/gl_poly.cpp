@@ -550,33 +550,64 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 {
 	int		i;
 
-	SetSkyTexture(texture1, false);
-	glBegin(GL_POLYGON);
-	glColor4f(1, 1, 1, 1);
-	for (i = 0; i < count; i++)
+#if 0
+	if (mtexable && texture2)
 	{
-		TVec texpt = cv[i] - r_texorg;
-		glTexCoord2f((DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
-		glVertex(cv[i]);
-	}
-	glEnd();
-
-	if (texture2)
-	{
+		SetSkyTexture(texture1, false);
+		SelectTexture(1);
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
 		SetSkyTexture(texture2, true);
-		glEnable(GL_BLEND);
+		SelectTexture(0);
+
+		glColor4f(1, 1, 1, 1);
+		glBegin(GL_POLYGON);
+		for (i = 0; i < count; i++)
+		{
+			TVec texpt = cv[i] - r_texorg;
+			MultiTexCoord(0, (DotProduct(texpt, r_saxis) - offs1) * tex_iw,
+				DotProduct(texpt, r_taxis) * tex_ih);
+			MultiTexCoord(1, (DotProduct(texpt, r_saxis) - offs2) * tex_iw,
+				DotProduct(texpt, r_taxis) * tex_ih);
+			glVertex(cv[i]);
+		}
+		glEnd();
+
+		SelectTexture(1);
+		glDisable(GL_TEXTURE_2D);
+		SelectTexture(0);
+	}
+	else
+#endif
+	{
+		SetSkyTexture(texture1, false);
 		glBegin(GL_POLYGON);
 		glColor4f(1, 1, 1, 1);
 		for (i = 0; i < count; i++)
 		{
 			TVec texpt = cv[i] - r_texorg;
-			glTexCoord2f((DotProduct(texpt, r_saxis) - offs2) * tex_iw,
+			glTexCoord2f((DotProduct(texpt, r_saxis) - offs1) * tex_iw,
 				DotProduct(texpt, r_taxis) * tex_ih);
 			glVertex(cv[i]);
 		}
 		glEnd();
-		glDisable(GL_BLEND);
+
+		if (texture2)
+		{
+			SetSkyTexture(texture2, true);
+			glEnable(GL_BLEND);
+			glBegin(GL_POLYGON);
+			glColor4f(1, 1, 1, 1);
+			for (i = 0; i < count; i++)
+			{
+				TVec texpt = cv[i] - r_texorg;
+				glTexCoord2f((DotProduct(texpt, r_saxis) - offs2) * tex_iw,
+					DotProduct(texpt, r_taxis) * tex_ih);
+				glVertex(cv[i]);
+			}
+			glEnd();
+			glDisable(GL_BLEND);
+		}
 	}
 }
 
@@ -921,9 +952,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/11/02 18:35:55  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.12  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
 //	

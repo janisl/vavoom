@@ -66,15 +66,11 @@ C(bbextentt):		.long	0
 
 .globl	C(cacheblock)
 .globl	C(cachewidth)
-.globl	C(d_skysmask)
-.globl	C(d_skytmask)
 .globl	C(d_transluc)
 .globl	C(d_srctranstab)
 .globl	C(d_dsttranstab)
 C(cacheblock):		.long	0
 C(cachewidth):		.long	0
-C(d_skysmask):		.long	0
-C(d_skytmask):		.long	0
 C(d_transluc):		.long	0
 C(d_srctranstab):	.long	0
 C(d_dsttranstab):	.long	0
@@ -200,9 +196,12 @@ gbstep:			.long	0
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/02 18:35:55  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.5  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.4  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
 //	

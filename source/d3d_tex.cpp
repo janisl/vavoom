@@ -403,7 +403,8 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 			GenerateTexture(tex, double_sky);
 		}
 
-		RenderDevice->SetTexture(0, texturedata[tex]);
+		int tstage = maxMultiTex >= 2 && double_sky ? 1 : 0;
+		RenderDevice->SetTexture(tstage, texturedata[tex]);
 		tex_iw = textureiw[tex];
 		tex_ih = textureih[tex];
 	}
@@ -1214,9 +1215,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.13  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

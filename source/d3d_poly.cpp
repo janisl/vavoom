@@ -605,39 +605,71 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	MyD3DVertex		out[256];
 	int				i;
 
-	SetSkyTexture(texture1, false);
-	for (i = 0; i < count; i++)
+	if (maxMultiTex >= 2 && texture2)
 	{
-		TVec v = cv[i] + vieworg;
-		TVec texpt = cv[i] - r_texorg;
-		out[i] = MyD3DVertex(v, 0xffffffff,
-			(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
-	}
-#if DIRECT3D_VERSION >= 0x0800
-	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
-#endif
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 
-	if (texture2)
-	{
+		SetSkyTexture(texture1, false);
 		SetSkyTexture(texture2, true);
 		for (i = 0; i < count; i++)
 		{
 			TVec v = cv[i] + vieworg;
 			TVec texpt = cv[i] - r_texorg;
 			out[i] = MyD3DVertex(v, 0xffffffff,
+				(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
+				DotProduct(texpt, r_taxis) * tex_ih,
 				(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
 				DotProduct(texpt, r_taxis) * tex_ih);
 		}
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
 #else
 		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
 #endif
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	}
+	else
+	{
+		SetSkyTexture(texture1, false);
+		for (i = 0; i < count; i++)
+		{
+			TVec v = cv[i] + vieworg;
+			TVec texpt = cv[i] - r_texorg;
+			out[i] = MyD3DVertex(v, 0xffffffff,
+				(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
+				DotProduct(texpt, r_taxis) * tex_ih);
+		}
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
+
+		if (texture2)
+		{
+			SetSkyTexture(texture2, true);
+			for (i = 0; i < count; i++)
+			{
+				TVec v = cv[i] + vieworg;
+				TVec texpt = cv[i] - r_texorg;
+				out[i] = MyD3DVertex(v, 0xffffffff,
+					(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
+					DotProduct(texpt, r_taxis) * tex_ih);
+			}
+			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+#if DIRECT3D_VERSION >= 0x0800
+			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+			RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
+			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+		}
 	}
 }
 
@@ -819,7 +851,7 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	shadelightg = ((light >> 8) & 0xff) / 512.0;
 	shadelightb = (light & 0xff) / 512.0;
 	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
-	light *= 0x00ffffff;
+	light &= 0x00ffffff;
 	alpha = ((100 - translucency) * 255 / 100) << 24;
 	
 	//
@@ -1029,9 +1061,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/11/02 18:35:54  dj_jl
+//	Sky optimizations
+//
 //	Revision 1.15  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.14  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
 //	
