@@ -164,6 +164,7 @@ static float*		textureheight;		// needed for texture pegging
 
 static bool IsStrifeTexture(void)
 {
+	guard(IsStrifeTexture);
 	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
 	int numtex = LittleLong(*plump);
 	int *texdir = plump + 1;
@@ -177,6 +178,7 @@ static bool IsStrifeTexture(void)
 	}
 	Z_Free(plump);
 	return i != numtex - 1;
+	unguard;
 }
 
 //==========================================================================
@@ -189,6 +191,7 @@ static bool IsStrifeTexture(void)
 
 template<class T> void InitTextures(void)
 {
+	guard(InitTextures);
 	T*				mtexture;
 	texdef_t*		texture;
 	texpatch_t*		patch;
@@ -320,6 +323,7 @@ template<class T> void InitTextures(void)
     Z_Free(maptex1);
     if (maptex2)
 		Z_Free(maptex2);
+	unguardf(("%d", sizeof(T)));
 }
 
 //==========================================================================
@@ -332,6 +336,7 @@ template<class T> void InitTextures(void)
 
 int	R_CheckTextureNumForName(const char *name)
 {
+	guard(R_CheckTextureNumForName);
     int		i;
 
     // "NoTexture" marker.
@@ -343,6 +348,7 @@ int	R_CheckTextureNumForName(const char *name)
 	    	return i;
 		
     return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -355,6 +361,7 @@ int	R_CheckTextureNumForName(const char *name)
 
 int	R_TextureNumForName(const char* name)
 {
+	guard(R_TextureNumForName);
     int		i;
 	
     i = R_CheckTextureNumForName (name);
@@ -364,6 +371,7 @@ int	R_TextureNumForName(const char* name)
 		Host_Error("R_TextureNumForName: %s not found", name);
     }
     return i;
+	unguard;
 }
 
 //==========================================================================
@@ -374,11 +382,13 @@ int	R_TextureNumForName(const char* name)
 
 float R_TextureHeight(int pic)
 {
+	guard(R_TextureHeight);
 	if (pic & TEXF_FLAT)
 	{
 		return 64.0;
 	}
 	return textureheight[pic];
+	unguard;
 }
 
 //==========================================================================
@@ -389,6 +399,7 @@ float R_TextureHeight(int pic)
 
 static bool FlatFunc(int lump, const char *name, int)
 {
+	guard(FlatFunc);
 	if (!stricmp(name, "F_START") || !strnicmp(name, "FF_START", 8))
 	{
 		//	Found a start marker
@@ -407,6 +418,7 @@ static bool FlatFunc(int lump, const char *name, int)
 		flatlumps[numflats - 1] = lump;
 	}
 	return true;	//	Continue
+	unguard;
 }
 
 //==========================================================================
@@ -417,6 +429,7 @@ static bool FlatFunc(int lump, const char *name, int)
 
 static void InitFlats(void)
 {
+	guard(InitFlats);
 	flatlumps = (int*)Z_Malloc(1, PU_STATIC, 0);
     numflats = 0;
 	inflats = false;
@@ -427,6 +440,7 @@ static void InitFlats(void)
     flattranslation = (int*)Z_Malloc((numflats + 1) * 4, PU_STATIC, 0);
     for (int i = 0; i < numflats; i++)
 		flattranslation[i] = i;
+	unguard;
 }
 
 //==========================================================================
@@ -437,6 +451,7 @@ static void InitFlats(void)
 
 int R_CheckFlatNumForName(const char* name)
 {
+	guard(R_CheckFlatNumForName);
 	for (int i = numflats - 1; i >= 0; i--)
 	{
 		if (!strnicmp(name, W_LumpName(flatlumps[i]), 8))
@@ -445,6 +460,7 @@ int R_CheckFlatNumForName(const char* name)
 		}
 	}
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -457,6 +473,7 @@ int R_CheckFlatNumForName(const char* name)
 
 int R_FlatNumForName(const char* name)
 {
+	guard(R_FlatNumForName);
     char	namet[9];
     int		i;
 
@@ -468,6 +485,7 @@ int R_FlatNumForName(const char* name)
 		Host_Error("R_FlatNumForName: %s not found",namet);
     }
     return i;
+	unguard;
 }
 
 //==========================================================================
@@ -478,6 +496,7 @@ int R_FlatNumForName(const char* name)
 
 static bool	SpriteCallback(int lump, const char *name, int)
 {
+	guard(SpriteCallback);
 	if (!stricmp(name, "S_START") || !strnicmp(name, "SS_START", 8))
 	{
 		//	Found start marker
@@ -496,6 +515,7 @@ static bool	SpriteCallback(int lump, const char *name, int)
 		spritelumps[numspritelumps - 1] = lump;
 	}
 	return true;	//	Continue
+	unguard;
 }
 
 //==========================================================================
@@ -506,6 +526,7 @@ static bool	SpriteCallback(int lump, const char *name, int)
 
 static void InitSpriteLumps(void)
 {
+	guard(InitSpriteLumps);
     int			i;
 
 	spritelumps = (int*)Z_Malloc (1, PU_STATIC, 0);
@@ -526,6 +547,7 @@ static void InitSpriteLumps(void)
 		spriteoffset[i] = -1;
 		spritetopoffset[i] = -1;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -536,7 +558,9 @@ static void InitSpriteLumps(void)
 
 static void InitTranslationTables(void)
 {
+	guard(InitTranslationTables);
 	translationtables = (byte*)W_CacheLumpName("TRANSLAT", PU_STATIC);
+	unguard;
 }
 
 //==========================================================================
@@ -549,6 +573,7 @@ static void InitTranslationTables(void)
 
 static void InitFTAnims(void)
 {
+	guard(InitFTAnims);
 	int 		base;
 	int 		mod;
 	animDef_t 	ad;
@@ -660,6 +685,7 @@ static void InitFTAnims(void)
 	SC_Close();
 	FrameDefs.Shrink();
 	AnimDefs.Shrink();
+	unguard;
 }
 
 //==========================================================================
@@ -671,6 +697,7 @@ static void InitFTAnims(void)
 #ifdef CLIENT
 void R_AnimateSurfaces(void)
 {
+	guard(R_AnimateSurfaces);
 	//	Animate flats and textures
 	for (TArray<animDef_t>::TIterator ad(AnimDefs); ad; ++ad)
 	{
@@ -705,6 +732,7 @@ void R_AnimateSurfaces(void)
 	}
 
 	R_AnimateSky();
+	unguard;
 }
 
 //==========================================================================
@@ -715,12 +743,14 @@ void R_AnimateSurfaces(void)
 
 int R_TextureAnimation(int tex)
 {
+	guard(R_TextureAnimation);
 	if (tex & TEXF_SKY_MAP)
 		return tex;
 	if (tex & TEXF_FLAT)
 		return TEXF_FLAT | flattranslation[tex & ~TEXF_FLAT];
 	else
 		return texturetranslation[tex];
+	unguard;
 }
 #endif
 
@@ -732,10 +762,16 @@ int R_TextureAnimation(int tex)
 
 void R_InitTexture(void)
 {
+	guard(R_InitTexture);
 	if (IsStrifeTexture())
+	{
+		con << "Strife textures detected\n";
 		InitTextures<maptexture_strife_t>();
+	}
 	else
+	{
 		InitTextures<maptexture_t>();
+	}
 	InitFlats();
 	InitSpriteLumps();
 	InitTranslationTables();
@@ -746,6 +782,7 @@ void R_InitTexture(void)
 	    skyflatnum = R_CheckFlatNumForName("F_SKY001");
 	if (skyflatnum < 0)
 	    skyflatnum = R_FlatNumForName("F_SKY1");
+	unguard;
 }
 
 #ifdef CLIENT
@@ -758,6 +795,7 @@ void R_InitTexture(void)
 
 void R_SetupPalette(int palnum, const char *name)
 {
+	guard(R_SetupPalette);
 	byte *psrc = (byte*)W_CacheLumpName(name, PU_TEMP);
 	rgba_t *pal = r_palette[palnum];
 	//	We use color 0 as transparent color, so we must find an alternate
@@ -793,6 +831,7 @@ void R_SetupPalette(int palnum, const char *name)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -803,7 +842,9 @@ void R_SetupPalette(int palnum, const char *name)
 
 void R_InitData(void)
 {
+	guard(R_InitData);
 	R_SetupPalette(0, "PLAYPAL");
+	unguard;
 }
 
 //==========================================================================
@@ -816,6 +857,7 @@ void R_InitData(void)
 
 void R_PrecacheLevel(void)
 {
+	guard(R_PrecacheLevel);
 	int			i;
     
 	if (cls.demoplayback)
@@ -875,6 +917,7 @@ else\
 	Z_Free(flatpresent);
 	Z_Free(texturepresent);
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -885,6 +928,7 @@ else\
 
 int R_RegisterPic(const char *name, int type)
 {
+	guard(R_RegisterPic);
 	for (int i = 0; i < MAX_PICS; i++)
 	{
 		if (!pic_list[i].name[0])
@@ -901,6 +945,7 @@ int R_RegisterPic(const char *name, int type)
 	}
 	cond << "R_RegisterPic: No more free slots\n";
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -911,6 +956,7 @@ int R_RegisterPic(const char *name, int type)
 
 int R_RegisterPicPal(const char *name, int type, const char *palname)
 {
+	guard(R_RegisterPicPal);
 	for (int i = 0; i < MAX_PICS; i++)
 	{
 		if (!pic_list[i].name[0])
@@ -928,6 +974,7 @@ int R_RegisterPicPal(const char *name, int type, const char *palname)
 	}
 	cond << "R_RegisterPic: No more free slots\n";
 	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -938,6 +985,7 @@ int R_RegisterPicPal(const char *name, int type, const char *palname)
 
 void R_GetPicInfo(int handle, picinfo_t *info)
 {
+	guard(R_GetPicInfo);
 	if (handle < 0)
 	{
 		memset(info, 0, sizeof(*info));
@@ -971,6 +1019,7 @@ void R_GetPicInfo(int handle, picinfo_t *info)
 		info->xoffset = pic_list[handle].xoffset;
 		info->yoffset = pic_list[handle].yoffset;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -981,6 +1030,7 @@ void R_GetPicInfo(int handle, picinfo_t *info)
 
 void R_DrawPic(int x, int y, int handle, int trans)
 {
+	guard(R_DrawPic);
 	picinfo_t	info;
 
 	if (handle < 0)
@@ -994,6 +1044,7 @@ void R_DrawPic(int x, int y, int handle, int trans)
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
 		0, 0, info.width, info.height, handle, trans);
+	unguard;
 }
 
 //==========================================================================
@@ -1004,6 +1055,7 @@ void R_DrawPic(int x, int y, int handle, int trans)
 
 void R_DrawPic640(int x, int y, int handle, int trans)
 {
+	guard(R_DrawPic640);
 	picinfo_t	info;
 
 	if (handle < 0)
@@ -1017,6 +1069,7 @@ void R_DrawPic640(int x, int y, int handle, int trans)
 	Drawer->DrawPic(ScaleX640 * x, ScaleY640 * y,
 		ScaleX640 * (x + info.width), ScaleY640 * (y + info.height),
 		0, 0, info.width, info.height, handle, trans);
+	unguard;
 }
 
 //==========================================================================
@@ -1027,6 +1080,7 @@ void R_DrawPic640(int x, int y, int handle, int trans)
 
 void R_DrawShadowedPic(int x, int y, int handle)
 {
+	guard(R_DrawShadowedPic);
 	picinfo_t	info;
 
 	if (handle < 0)
@@ -1043,6 +1097,7 @@ void R_DrawShadowedPic(int x, int y, int handle)
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
 		0, 0, info.width, info.height, handle, 0);
+	unguard;
 }
 
 //==========================================================================
@@ -1055,9 +1110,11 @@ void R_DrawShadowedPic(int x, int y, int handle)
 
 void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
 {
+	guard(R_FillRectWithFlat);
 	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
 		fScaleX * (DestX + width), fScaleY * (DestY + height),
 		0, 0, width, height, fname);
+	unguard;
 }
 
 //==========================================================================
@@ -1071,7 +1128,9 @@ void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char*
 
 void V_DarkenScreen(int darkening)
 {
+	guard(V_DarkenScreen);
 	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
+	unguard;
 }
 
 //==========================================================================
@@ -1082,9 +1141,11 @@ void V_DarkenScreen(int darkening)
 
 void R_ShadeRect(int x, int y, int width, int height, int shade)
 {
+	guard(R_ShadeRect);
 	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
 		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
 		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
+	unguard;
 }
 
 #endif
@@ -1092,9 +1153,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.15  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.14  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

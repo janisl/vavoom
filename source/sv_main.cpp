@@ -404,7 +404,7 @@ void SV_CreateBaseline(void)
 	{
 		if (!sv_mobjs[i])
 			continue;
-		if (sv_mobjs[i]->bNoClient)
+		if (sv_mobjs[i]->bHidden)
 			continue;
 
 		if (sv_signon.CurSize > sv_signon.MaxSize - 32)
@@ -776,9 +776,9 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 			msg << player.CShifts[i];
 
 	//	Update bam_angles (after teleportation)
-	if (player.FixAngle)
+	if (player.bFixAngle)
 	{
-		player.FixAngle = false;
+		player.bFixAngle = false;
 		msg << (byte)svc_set_angles
 			<< (byte)(AngleToByte(player.ViewAngles.pitch))
 			<< (byte)(AngleToByte(player.ViewAngles.yaw))
@@ -994,6 +994,8 @@ void SV_UpdateLevel(TMessage &msg)
 	{
 		if (!sv_mobjs[i])
 			continue;
+		if (sv_mobjs[i]->bHidden)
+			continue;
 		if (!sv_mobjs[i]->bIsPlayer)
 			continue;
 		if (msg.CurSize > 1000)
@@ -1011,7 +1013,7 @@ void SV_UpdateLevel(TMessage &msg)
 		int index = (i + starti) % MAX_MOBJS;
 		if (!sv_mobjs[index])
 			continue;
-		if (sv_mobjs[index]->bNoClient)
+		if (sv_mobjs[index]->bHidden)
 			continue;
 		if (sv_mobjs[index]->bIsPlayer)
 			continue;
@@ -1230,27 +1232,27 @@ static void CheckForSkip(void)
 		{
 		    if (player->Buttons & BT_ATTACK)
 		    {
-				if (!player->AttackDown)
+				if (!player->bAttackDown)
 				{
 				    skip = true;
 				}
-				player->AttackDown = true;
+				player->bAttackDown = true;
 		    }
 		    else
 			{
-				player->AttackDown = false;
+				player->bAttackDown = false;
 			}
 		    if (player->Buttons & BT_USE)
 		    {
-				if (!player->UseDown)
+				if (!player->bUseDown)
 				{
 				    skip = true;
 				}
-				player->UseDown = true;
+				player->bUseDown = true;
 		    }
 		    else
 			{
-				player->UseDown = false;
+				player->bUseDown = false;
 			}
 		}
     }
@@ -1584,7 +1586,7 @@ void G_SecretExitLevel(void)
 	{
 		if (players[i].bActive)
 		{
-			players[i].DidSecret = true;
+			players[i].bDidSecret = true;
 		}
 	}
 } 
@@ -2160,7 +2162,7 @@ COMMAND(Spawn)
 						<< (byte)(AngleToByte(sv_player->ViewAngles.yaw))
 						<< (byte)0;
 	sv_player->Message << (byte)svc_signonnum << (byte)3;
-	sv_player->FixAngle = false;
+	sv_player->bFixAngle = false;
 	memset(sv_player->OldStats, 0, sizeof(sv_player->OldStats));
 }
 
@@ -2688,9 +2690,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.36  2002/02/16 16:30:36  dj_jl
 //	Fixed sending server infor to remote clients
-//
+//	
 //	Revision 1.35  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

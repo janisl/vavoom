@@ -2215,11 +2215,11 @@ static void PF_ClearPlayer(void)
 	pl->MO = NULL;
 	pl->PlayerState = 0;
 	pl->ViewOrg = TVec(0, 0, 0);
-	pl->FixAngle = 0;
+	pl->bFixAngle = false;
 	pl->Health = 0;
 	pl->Items = 0;
-	pl->AttackDown = 0;
-	pl->UseDown = 0;
+	pl->bAttackDown = false;
+	pl->bUseDown = false;
 	pl->ExtraLight = 0;
 	pl->FixedColormap = 0;
 	pl->Palette = 0;
@@ -3334,9 +3334,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.32  2002/02/15 19:12:03  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.31  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

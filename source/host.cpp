@@ -107,6 +107,7 @@ static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
 
 void Host_Init(void)
 {
+	guard(Host_Init);
 	OpenDebugFile(DEBUGFILENAME);
 
 	// init subsystems
@@ -180,7 +181,7 @@ void Host_Init(void)
 #endif
 
 	host_initialized = true;
-	cond << "Host_Init done\n";
+	unguard;
 }
 
 //==========================================================================
@@ -193,6 +194,7 @@ void Host_Init(void)
 
 static void Host_GetConsoleCommands(void)
 {
+	guard(Host_GetConsoleCommands);
 	char	*cmd;
 
 #ifdef CLIENT
@@ -204,6 +206,7 @@ static void Host_GetConsoleCommands(void)
 	{
 		CmdBuf << cmd;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -216,6 +219,7 @@ static void Host_GetConsoleCommands(void)
 
 static bool FilterTime(void)
 {
+	guard(FilterTime);
 	double curr_time = Sys_Time();
 	float time = curr_time - last_time;
 	last_time = curr_time;
@@ -258,6 +262,7 @@ static bool FilterTime(void)
 	lasttime = thistime;
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -588,9 +593,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/02/22 18:09:51  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.18  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.17  2002/01/04 18:22:13  dj_jl
 //	Beautification
 //	

@@ -70,7 +70,7 @@ int					light_mem;
 TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
 TCvarI				r_dynamic("r_dynamic", "1", CVAR_ARCHIVE);
 TCvarI				r_static_add("r_static_add", "0", CVAR_ARCHIVE);
-TCvarF				r_specular("r_specular", "0.2", CVAR_ARCHIVE);
+TCvarF				r_specular("r_specular", "0.1", CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1039,9 +1039,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

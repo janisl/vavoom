@@ -156,7 +156,7 @@ class VMapObject:public VThinker
 
 	//	Flags
 	dword			bSolid:1;		// Blocks.
-	dword			bNoClient:1;	// don't update to clients
+	dword			bHidden:1;		// don't update to clients
 									// (invisible but touchable)
 	dword			bNoBlockmap:1;	// don't use the blocklinks
 									// (inert but displayable)
@@ -461,9 +461,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.21  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.20  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

@@ -692,6 +692,21 @@ void Sys_HighFPPrecision(void)
 
 //==========================================================================
 //
+//	_matherr
+//
+//	Borland floating point exception handling
+//
+//==========================================================================
+
+#ifdef __BORLANDC__
+extern "C" int _matherr(struct _exception  *)
+{
+	return 1;	// Error has been handled.
+}
+#endif
+
+//==========================================================================
+//
 //	WinMain
 //
 // 	Main program
@@ -843,9 +858,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.15  2002/01/11 18:25:14  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.14  2002/01/11 08:12:49  dj_jl
 //	Changes for MinGW
 //	

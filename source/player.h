@@ -67,9 +67,14 @@ class VViewEntity:public VObject
 //
 struct player_t
 {
-	boolean			bActive;
-	boolean			bSpawned;
-	boolean			bIsBot;
+	dword			bActive:1;
+	dword			bSpawned:1;
+	dword			bIsBot:1;
+	dword			bFixAngle:1;
+	dword			bAttackDown:1;	// True if button down last tic.
+	dword			bUseDown:1;
+	dword			bDidSecret:1;	// True if secret level has been done.
+
 	qsocket_t		*NetCon;
 	TMessage		Message;
 	byte			MsgBuf[MAX_MSGLEN];
@@ -102,7 +107,6 @@ struct player_t
 	TVec			ViewOrg;
 
 	TAVec			ViewAngles;
-	boolean			FixAngle;
 
     // This is only used between levels,
     // mo->health is used during levels.
@@ -113,11 +117,7 @@ struct player_t
     // Frags, kills of other players.
     int				Frags[MAXPLAYERS];
 
-    // True if button down last tic.
-    int				AttackDown;
-    int				UseDown;
-
-     // For intermission stats.
+    // For intermission stats.
     int				KillCount;
     int				ItemCount;
     int				SecretCount;
@@ -139,9 +139,6 @@ struct player_t
     VViewEntity		*ViewEnts[NUMPSPRITES];
 	float			PSpriteSY;
 
-    // True if secret level has been done.
-    boolean			DidSecret;
-
 	dword 			WorldTimer;				// total time the player's been playing
 
 	int				OldStats[96];
@@ -157,9 +154,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.11  2002/02/15 19:12:03  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

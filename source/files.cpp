@@ -30,7 +30,6 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAXWADFILES 	20
-#define MAX_BASE_GAMES	16
 
 // TYPES -------------------------------------------------------------------
 
@@ -42,9 +41,10 @@ struct search_path_t
 
 struct version_t
 {
-    char		mainwad[MAX_OSPATH];
-	char		gamedir[MAX_OSPATH];
-	int			parmfound;
+    FString			MainWad;
+	FString			GameDir;
+	TArray<FString>	AddFiles;
+	int				ParmFound;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -129,45 +129,44 @@ static void AddGameDir(const char *dir)
 
 static void ParseBase(const char *name)
 {
-	int			i;
-	version_t	games[MAX_BASE_GAMES];
-	int			num_games;
-	bool		select_game;
+	TArray<version_t>	games;
+	bool				select_game;
 
 	if (!Sys_FileExists(name))
 	{
 		return;
 	}
 
-	num_games = 0;
 	select_game = false;
 	SC_OpenFile(name);
 	while (SC_GetString())
 	{
-		if (num_games == MAX_BASE_GAMES - 1)
-		{
-			SC_ScriptError("Too many games");
-		}
-		version_t &dst = games[num_games++];
-		memset(&dst, 0, sizeof(dst));
+		version_t &dst = *new(games, 0) version_t;
+		dst.ParmFound = 0;
 		if (!SC_Compare("game"))
 		{
 			SC_ScriptError(NULL);
 		}
 		SC_MustGetString();
-		strcpy(dst.gamedir, sc_String);
+		dst.GameDir = sc_String;
 		SC_MustGetString();
 		if (SC_Compare("iwad"))
 		{
 			SC_MustGetString();
-			strcpy(dst.mainwad, sc_String);
+			dst.MainWad = sc_String;
+			SC_MustGetString();
+		}
+		while (SC_Compare("addfile"))
+		{
+			SC_MustGetString();
+			new(dst.AddFiles) FString(sc_String);
 			SC_MustGetString();
 		}
 		if (SC_Compare("param"))
 		{
 			SC_MustGetString();
-			dst.parmfound = M_CheckParm(sc_String);
-			if (dst.parmfound)
+			dst.ParmFound = M_CheckParm(sc_String);
+			if (dst.ParmFound)
 			{
 				select_game = true;
 			}
@@ -180,35 +179,38 @@ static void ParseBase(const char *name)
 	}
 	SC_Close();
 
-    for (i = num_games - 1; i >= 0; i--)
+    for (TArray<version_t>::TIterator GIt(games); GIt; ++GIt)
     {
-    	if (select_game && !games[i].parmfound)
+    	if (select_game && !GIt->ParmFound)
         {
         	continue;
 		}
-		if (!games[i].mainwad[0])
-		{
-			if (fl_mainwad[0])
-			{
-				SetupGameDir(games[i].gamedir);
-		      	return;
-			}
-			continue;
-		}
 		if (fl_mainwad[0])
 		{
-			if (!stricmp(fl_mainwad, games[i].mainwad))
+			if (!GIt->MainWad || GIt->MainWad == fl_mainwad)
 			{
-				SetupGameDir(games[i].gamedir);
+				for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+				{
+					FL_AddFile(**It);
+				}
+				SetupGameDir(*GIt->GameDir);
 		      	return;
 			}
 			continue;
 		}
-	    if (Sys_FileExists(games[i].mainwad))
+		if (!GIt->MainWad)
+		{
+			continue;
+		}
+	    if (Sys_FileExists(*GIt->MainWad))
 	    {
-			strcpy(fl_mainwad, games[i].mainwad);
+			strcpy(fl_mainwad, *GIt->MainWad);
 			FL_AddFile(fl_mainwad);
-			SetupGameDir(games[i].gamedir);
+			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+			{
+				FL_AddFile(**It);
+			}
+			SetupGameDir(*GIt->GameDir);
 	      	return;
 	    }
     }
@@ -647,9 +649,12 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/22 18:09:49  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

@@ -98,10 +98,10 @@ static TVec			listener_forward;
 static TVec			listener_right;
 static TVec			listener_up;
 
-static TCvarF		s3d_distance_unit("s3d_distance_unit", "72.0", CVAR_ARCHIVE);
-static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "2.0", CVAR_ARCHIVE);
+static TCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_ARCHIVE);
+static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_ARCHIVE);
 static TCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_ARCHIVE);
-static TCvarF		s3d_min_distance("s3d_min_distance", "16.0", CVAR_ARCHIVE);
+static TCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_ARCHIVE);
 static TCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
@@ -1036,9 +1036,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/02/22 18:09:52  dj_jl
+//	Some improvements, beautification.
+//
 //	Revision 1.12  2002/01/29 18:17:58  dj_jl
 //	Fixed 3D sound.
-//
+//	
 //	Revision 1.11  2002/01/28 18:43:16  dj_jl
 //	Added console variables for DirectSound3D settings
 //	
