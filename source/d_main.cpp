@@ -78,6 +78,11 @@ dword					pal2rgb[256];
 int						rshift = 11;
 int						gshift = 5;
 int						bshift = 0;
+int						roffs;
+int						goffs;
+int						boffs;
+
+int						bppindex;
 
 float					centerxfrac;
 float					centeryfrac;
@@ -205,6 +210,8 @@ void TSoftwareDrawer::InitResolution(void)
 
 	if (ScreenBPP == 8)
 	{
+		bppindex = 0;
+
 		D_DrawSpans = D_DrawSpans8_8;
 		D_DrawSkySpans = D_DrawSkySpans_8;
 		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_8;
@@ -220,6 +227,8 @@ void TSoftwareDrawer::InitResolution(void)
 	}
 	else if (ScreenBPP == 15)
 	{
+		bppindex = 1;
+
 		D_DrawSpans = D_DrawSpans8_16;
 		D_DrawSkySpans = D_DrawSkySpans_16;
 		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_16;
@@ -235,6 +244,8 @@ void TSoftwareDrawer::InitResolution(void)
 	}
 	else if (ScreenBPP == 16)
 	{
+		bppindex = 2;
+
 		D_DrawSpans = D_DrawSpans8_16;
 		D_DrawSkySpans = D_DrawSkySpans_16;
 		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_16;
@@ -250,6 +261,11 @@ void TSoftwareDrawer::InitResolution(void)
 	}
 	else if (ScreenBPP == 32)
 	{
+		bppindex = 3;
+		roffs = rshift / 8;
+		goffs = gshift / 8;
+		boffs = bshift / 8;
+
 		D_DrawSpans = D_DrawSpans8_32;
 		D_DrawSkySpans = D_DrawSkySpans_32;
 		D_DrawDoubleSkySpans = D_DrawDoubleSkySpans_32;
@@ -440,6 +456,13 @@ void TSoftwareDrawer::SetupFrame(void)
 		else
 			D_DrawSpans = D_DrawSpans8_16;
 	}
+	else if (PixelBytes == 4)
+	{
+		if (d_subdiv == 2)
+			D_DrawSpans = D_DrawSpans16_32;
+		else
+			D_DrawSpans = D_DrawSpans8_32;
+	}
 #endif
 
 	d_roverwrapped = false;
@@ -548,9 +571,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:45:37  dj_jl
+//	Added support for colored lit and translucent models
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

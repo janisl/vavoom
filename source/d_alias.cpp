@@ -87,21 +87,27 @@ auxvert_t		*pauxverts;
 static trivertx_t		*r_apverts;
 
 // TODO: these probably will go away with optimized rasterization
-static mmdl_t				*pmdl;
+static mmdl_t			*pmdl;
 static TVec				r_plightvec;
-static int					r_ambientlight;
-static float				r_shadelight;
-static float		ziscale;
-static int			a_trivial_accept;
+static int				r_ambientlightr;
+static int				r_ambientlightg;
+static int				r_ambientlightb;
+static float			r_shadelightr;
+static float			r_shadelightg;
+static float			r_shadelightb;
+static float			ziscale;
+static int				a_trivial_accept;
 
-static TVec			alias_forward, alias_right, alias_up;
+static TVec				alias_forward, alias_right, alias_up;
 
 static int				r_amodels_drawn;
 static int				r_anumverts;
 
-static float	aliastransform[3][4];
+static float			aliastransform[3][4];
 
-static aedge_t	aedges[12] = {
+static skincache_t		skincache[MAX_SKIN_CACHE];
+
+static aedge_t aedges[12] = {
 {0, 1}, {1, 2}, {2, 3}, {3, 0},
 {4, 5}, {5, 6}, {6, 7}, {7, 4},
 {0, 5}, {1, 4}, {2, 7}, {3, 6}
@@ -109,11 +115,9 @@ static aedge_t	aedges[12] = {
 
 #define NUMVERTEXNORMALS	162
 
-static float	r_avertexnormals[NUMVERTEXNORMALS][3] = {
+static float r_avertexnormals[NUMVERTEXNORMALS][3] = {
 #include "anorms.h"
 };
-
-static skincache_t		skincache[MAX_SKIN_CACHE];
 
 // CODE --------------------------------------------------------------------
 
@@ -471,7 +475,6 @@ void R_AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept)
 void R_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
 	trivertx_t *pverts)
 {
-	int		temp;
 	float	lightcos, *plightnormal;
 
 	TVec v(pverts->v[0], pverts->v[1], pverts->v[2]);
@@ -486,20 +489,30 @@ void R_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
 
 // lighting
 	plightnormal = r_avertexnormals[pverts->lightnormalindex];
-	lightcos = DotProduct (plightnormal, r_plightvec);
-	temp = r_ambientlight;
+	lightcos = DotProduct(plightnormal, r_plightvec);
+	int r = r_ambientlightr;
+	int g = r_ambientlightg;
+	int b = r_ambientlightb;
 
 	if (lightcos < 0)
 	{
-		temp += (int)(r_shadelight * lightcos);
+		r += (int)(r_shadelightr * lightcos);
+		g += (int)(r_shadelightg * lightcos);
+		b += (int)(r_shadelightb * lightcos);
 
-	// clamp; because we limited the minimum ambient and shading light, we
-	// don't have to clamp low light, just bright
-		if (temp < 0)
-			temp = 0;
+		//	Clamp; because we limited the minimum ambient and shading light,
+		// we don't have to clamp low light, just bright
+		if (r < 0)
+			r = 0;
+		if (g < 0)
+			g = 0;
+		if (b < 0)
+			b = 0;
 	}
 
-	fv->l = temp;
+	fv->r = r;
+	fv->g = g;
+	fv->b = b;
 }
 
 //==========================================================================
@@ -510,7 +523,7 @@ void R_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
 
 void R_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
 {
-	int			i, temp;
+	int			i;
 	float		lightcos, *plightnormal, zi;
 	trivertx_t	*pverts;
 
@@ -538,19 +551,29 @@ void R_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
 	// lighting
 		plightnormal = r_avertexnormals[pverts->lightnormalindex];
 		lightcos = DotProduct (plightnormal, r_plightvec);
-		temp = r_ambientlight;
+		int r = r_ambientlightr;
+		int g = r_ambientlightg;
+		int b = r_ambientlightb;
 
 		if (lightcos < 0)
 		{
-			temp += (int)(r_shadelight * lightcos);
+			r += (int)(r_shadelightr * lightcos);
+			g += (int)(r_shadelightg * lightcos);
+			b += (int)(r_shadelightb * lightcos);
 
-		// clamp; because we limited the minimum ambient and shading light, we
-		// don't have to clamp low light, just bright
-			if (temp < 0)
-				temp = 0;
+			//	Clamp; because we limited the minimum ambient and shading
+			// light, we don't have to clamp low light, just bright
+			if (r < 0)
+				r = 0;
+			if (g < 0)
+				g = 0;
+			if (b < 0)
+				b = 0;
 		}
 
-		fv->l = temp;
+		fv->r = r;
+		fv->g = g;
+		fv->b = b;
 	}
 }
 
@@ -677,32 +700,74 @@ void R_AliasSetupSkin(int skinnum)
 //
 //==========================================================================
 
-void R_AliasSetupLighting(alight_t *plighting)
+void R_AliasSetupLighting(dword light)
 {
+	//	Guarantee that no vertex will ever be lit below LIGHT_MIN, so we
+	// don't have to clamp off the bottom
+	r_ambientlightr = (light >> 17) & 0x7f;
 
-// guarantee that no vertex will ever be lit below LIGHT_MIN, so we don't have
-// to clamp off the bottom
-	r_ambientlight = plighting->ambientlight;
+	if (r_ambientlightr < LIGHT_MIN)
+		r_ambientlightr = LIGHT_MIN;
 
-	if (r_ambientlight < LIGHT_MIN)
-		r_ambientlight = LIGHT_MIN;
+	r_ambientlightr = (255 - r_ambientlightr) << VID_CBITS;
 
-	r_ambientlight = (255 - r_ambientlight) << VID_CBITS;
+	if (r_ambientlightr < LIGHT_MIN)
+		r_ambientlightr = LIGHT_MIN;
 
-	if (r_ambientlight < LIGHT_MIN)
-		r_ambientlight = LIGHT_MIN;
+	r_shadelightr = (light >> 17) & 0x7f;
 
-	r_shadelight = plighting->shadelight;
+	if (r_shadelightr < 0)
+		r_shadelightr = 0;
 
-	if (r_shadelight < 0)
-		r_shadelight = 0;
+	r_shadelightr *= VID_GRADES;
 
-	r_shadelight *= VID_GRADES;
+
+	r_ambientlightg = (light >> 9) & 0x7f;
+
+	if (r_ambientlightg < LIGHT_MIN)
+		r_ambientlightg = LIGHT_MIN;
+
+	r_ambientlightg = (255 - r_ambientlightg) << VID_CBITS;
+
+	if (r_ambientlightg < LIGHT_MIN)
+		r_ambientlightg = LIGHT_MIN;
+
+	r_shadelightg = (light >> 9) & 0x7f;
+
+	if (r_shadelightg < 0)
+		r_shadelightg = 0;
+
+	r_shadelightg *= VID_GRADES;
+
+
+	r_ambientlightb = (light >> 1) & 0x7f;
+
+	if (r_ambientlightb < LIGHT_MIN)
+		r_ambientlightb = LIGHT_MIN;
+
+	r_ambientlightb = (255 - r_ambientlightb) << VID_CBITS;
+
+	if (r_ambientlightb < LIGHT_MIN)
+		r_ambientlightb = LIGHT_MIN;
+
+	r_shadelightb = (light >> 1) & 0x7f;
+
+	if (r_shadelightb < 0)
+		r_shadelightb = 0;
+
+	r_shadelightb *= VID_GRADES;
+
+
+	r_affinetridesc.coloredlight = (r_ambientlightr != r_ambientlightg) ||
+		(r_ambientlightr != r_ambientlightb);
+
+// FIXME: remove and do real lighting
+	TVec		lightvec(-1, 0, 0);
 
 // rotate the lighting vector into the model's frame of reference
-	r_plightvec[0] = DotProduct (plighting->plightvec, alias_forward);
-	r_plightvec[1] = DotProduct (plighting->plightvec, alias_right);
-	r_plightvec[2] = DotProduct (plighting->plightvec, alias_up);
+	r_plightvec[0] = DotProduct(lightvec, alias_forward);
+	r_plightvec[1] = DotProduct(lightvec, alias_right);
+	r_plightvec[2] = DotProduct(lightvec, alias_up);
 }
 
 //==========================================================================
@@ -731,7 +796,8 @@ void R_AliasSetupFrame(int frame)
 //
 //==========================================================================
 
-void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame, int skinnum, alight_t *plighting)
+void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame,
+	int skinnum, dword light, int translucency)
 {
 	finalvert_t		finalverts[MAXALIASVERTS +
 						((CACHE_SIZE - 1) / sizeof(finalvert_t)) + 1];
@@ -752,8 +818,10 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame, int skinnu
 
 	R_AliasSetupSkin(skinnum);
 	R_AliasSetUpTransform(angles, frame, a_trivial_accept);
-	R_AliasSetupLighting(plighting);
+	R_AliasSetupLighting(light);
 	R_AliasSetupFrame(frame);
+
+	D_PolysetSetupDrawer(translucency);
 
 #if	id386
 	D_Aff8Patch();
@@ -777,12 +845,8 @@ void R_AliasDrawModel(const TAVec &angles, model_t *model, int frame, int skinnu
 //==========================================================================
 
 void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int)
+	model_t *model, int frame, int skinnum, dword light, int translucency)
 {
-	alight_t	lighting;
-// FIXME: remove and do real lighting
-	float		lightvec[3] = {-1, 0, 0};
-
 	modelorg = vieworg - origin;
 
 	// see if the bounding box lets us trivially reject, also sets
@@ -792,20 +856,18 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		return;
 	}
 
-	lighting.ambientlight = light >> 25;
-	lighting.shadelight = light >> 25;
-
-	lighting.plightvec = lightvec;
-
-	R_AliasDrawModel(angles, model, frame, skinnum, &lighting);
+	R_AliasDrawModel(angles, model, frame, skinnum, light, translucency);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:45:37  dj_jl
+//	Added support for colored lit and translucent models
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

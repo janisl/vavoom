@@ -46,12 +46,12 @@ struct finalvert_t
 {
 	int		u;
 	int		v;
-	int		l;
 	int		zi;
+	int		r;
+	int		g;
+	int		b;
 	int		flags;
-	float	reserved1;
-	float	reserved2;
-	float	reserved3;
+	int		reserved;
 };
 
 struct finalstvert_t
@@ -69,14 +69,7 @@ struct affinetridesc_t
 	finalvert_t			*pfinalverts;
 	finalstvert_t		*pstverts;
 	int					numtriangles;
-};
-
-// viewmodel lighting
-struct alight_t
-{
-	int			ambientlight;
-	int			shadelight;
-	float		*plightvec;
+	boolean				coloredlight;
 };
 
 struct auxvert_t
@@ -86,6 +79,7 @@ struct auxvert_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+void D_PolysetSetupDrawer(int);
 void D_PolysetDraw(void);
 void R_AliasClipTriangle(mtriangle_t *ptri);
 void R_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
@@ -101,12 +95,17 @@ extern finalvert_t			*pfinalverts;
 extern finalstvert_t		*pfinalstverts;
 extern auxvert_t			*pauxverts;
 
+extern int					bppindex;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:45:37  dj_jl
+//	Added support for colored lit and translucent models
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

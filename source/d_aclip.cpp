@@ -82,7 +82,9 @@ static void R_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *ou
 	
 		stout->s = (int)(pst0->s + (pst1->s - pst0->s) * scale);
 		stout->t = (int)(pst0->t + (pst1->t - pst0->t) * scale);
-		out->l = (int)(pfv0->l + (pfv1->l - pfv0->l) * scale);
+		out->r = (int)(pfv0->r + (pfv1->r - pfv0->r) * scale);
+		out->g = (int)(pfv0->g + (pfv1->g - pfv0->g) * scale);
+		out->b = (int)(pfv0->b + (pfv1->b - pfv0->b) * scale);
 	}
 	else
 	{
@@ -95,7 +97,9 @@ static void R_Alias_clip_z(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *ou
 	
 		stout->s = (int)(pst1->s + (pst0->s - pst1->s) * scale);
 		stout->t = (int)(pst1->t + (pst0->t - pst1->t) * scale);
-		out->l = (int)(pfv1->l + (pfv0->l - pfv1->l) * scale);
+		out->r = (int)(pfv1->r + (pfv0->r - pfv1->r) * scale);
+		out->g = (int)(pfv1->g + (pfv0->g - pfv1->g) * scale);
+		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b) * scale);
 	}
 
 	R_AliasProjectFinalVert(out, &avout);
@@ -129,8 +133,10 @@ static void R_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t 
 		out->v = (int)(pfv0->v + (pfv1->v - pfv0->v)*scale + 0.5);
 		stout->s = (int)(pst0->s + (pst1->s - pst0->s)*scale + 0.5);
 		stout->t = (int)(pst0->t + (pst1->t - pst0->t)*scale + 0.5);
-		out->l = (int)(pfv0->l + (pfv1->l - pfv0->l)*scale + 0.5);
 		out->zi = (int)(pfv0->zi + (pfv1->zi - pfv0->zi)*scale + 0.5);
+		out->r = (int)(pfv0->r + (pfv1->r - pfv0->r)*scale + 0.5);
+		out->g = (int)(pfv0->g + (pfv1->g - pfv0->g)*scale + 0.5);
+		out->b = (int)(pfv0->b + (pfv1->b - pfv0->b)*scale + 0.5);
 	}
 	else
 	{
@@ -140,8 +146,10 @@ static void R_Alias_clip_left(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t 
 		out->v = (int)(pfv1->v + (pfv0->v - pfv1->v)*scale + 0.5);
 		stout->s = (int)(pst1->s + (pst0->s - pst1->s)*scale + 0.5);
 		stout->t = (int)(pst1->t + (pst0->t - pst1->t)*scale + 0.5);
-		out->l = (int)(pfv1->l + (pfv0->l - pfv1->l)*scale + 0.5);
 		out->zi = (int)(pfv1->zi + (pfv0->zi - pfv1->zi)*scale + 0.5);
+		out->r = (int)(pfv1->r + (pfv0->r - pfv1->r)*scale + 0.5);
+		out->g = (int)(pfv1->g + (pfv0->g - pfv1->g)*scale + 0.5);
+		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b)*scale + 0.5);
 	}
 }
 
@@ -164,8 +172,10 @@ static void R_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t
 		out->v = (int)(pfv0->v + (pfv1->v - pfv0->v)*scale + 0.5);
 		stout->s = (int)(pst0->s + (pst1->s - pst0->s)*scale + 0.5);
 		stout->t = (int)(pst0->t + (pst1->t - pst0->t)*scale + 0.5);
-		out->l = (int)(pfv0->l + (pfv1->l - pfv0->l)*scale + 0.5);
 		out->zi = (int)(pfv0->zi + (pfv1->zi - pfv0->zi)*scale + 0.5);
+		out->r = (int)(pfv0->r + (pfv1->r - pfv0->r)*scale + 0.5);
+		out->g = (int)(pfv0->g + (pfv1->g - pfv0->g)*scale + 0.5);
+		out->b = (int)(pfv0->b + (pfv1->b - pfv0->b)*scale + 0.5);
 	}
 	else
 	{
@@ -175,8 +185,10 @@ static void R_Alias_clip_right(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t
 		out->v = (int)(pfv1->v + (pfv0->v - pfv1->v)*scale + 0.5);
 		stout->s = (int)(pst1->s + (pst0->s - pst1->s)*scale + 0.5);
 		stout->t = (int)(pst1->t + (pst0->t - pst1->t)*scale + 0.5);
-		out->l = (int)(pfv1->l + (pfv0->l - pfv1->l)*scale + 0.5);
 		out->zi = (int)(pfv1->zi + (pfv0->zi - pfv1->zi)*scale + 0.5);
+		out->r = (int)(pfv1->r + (pfv0->r - pfv1->r)*scale + 0.5);
+		out->g = (int)(pfv1->g + (pfv0->g - pfv1->g)*scale + 0.5);
+		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b)*scale + 0.5);
 	}
 }
 
@@ -199,8 +211,10 @@ static void R_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *
 		out->v = (int)(pfv0->v + (pfv1->v - pfv0->v)*scale + 0.5);
 		stout->s = (int)(pst0->s + (pst1->s - pst0->s)*scale + 0.5);
 		stout->t = (int)(pst0->t + (pst1->t - pst0->t)*scale + 0.5);
-		out->l = (int)(pfv0->l + (pfv1->l - pfv0->l)*scale + 0.5);
 		out->zi = (int)(pfv0->zi + (pfv1->zi - pfv0->zi)*scale + 0.5);
+		out->r = (int)(pfv0->r + (pfv1->r - pfv0->r)*scale + 0.5);
+		out->g = (int)(pfv0->g + (pfv1->g - pfv0->g)*scale + 0.5);
+		out->b = (int)(pfv0->b + (pfv1->b - pfv0->b)*scale + 0.5);
 	}
 	else
 	{
@@ -210,8 +224,10 @@ static void R_Alias_clip_top(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_t *
 		out->v = (int)(pfv1->v + (pfv0->v - pfv1->v)*scale + 0.5);
 		stout->s = (int)(pst1->s + (pst0->s - pst1->s)*scale + 0.5);
 		stout->t = (int)(pst1->t + (pst0->t - pst1->t)*scale + 0.5);
-		out->l = (int)(pfv1->l + (pfv0->l - pfv1->l)*scale + 0.5);
 		out->zi = (int)(pfv1->zi + (pfv0->zi - pfv1->zi)*scale + 0.5);
+		out->r = (int)(pfv1->r + (pfv0->r - pfv1->r)*scale + 0.5);
+		out->g = (int)(pfv1->g + (pfv0->g - pfv1->g)*scale + 0.5);
+		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b)*scale + 0.5);
 	}
 }
 
@@ -235,8 +251,10 @@ static void R_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_
 		out->v = (int)(pfv0->v + (pfv1->v - pfv0->v)*scale + 0.5);
 		stout->s = (int)(pst0->s + (pst1->s - pst0->s)*scale + 0.5);
 		stout->t = (int)(pst0->t + (pst1->t - pst0->t)*scale + 0.5);
-		out->l = (int)(pfv0->l + (pfv1->l - pfv0->l)*scale + 0.5);
 		out->zi = (int)(pfv0->zi + (pfv1->zi - pfv0->zi)*scale + 0.5);
+		out->r = (int)(pfv0->r + (pfv1->r - pfv0->r)*scale + 0.5);
+		out->g = (int)(pfv0->g + (pfv1->g - pfv0->g)*scale + 0.5);
+		out->b = (int)(pfv0->b + (pfv1->b - pfv0->b)*scale + 0.5);
 	}
 	else
 	{
@@ -247,8 +265,10 @@ static void R_Alias_clip_bottom(finalvert_t *pfv0, finalvert_t *pfv1, finalvert_
 		out->v = (int)(pfv1->v + (pfv0->v - pfv1->v)*scale + 0.5);
 		stout->s = (int)(pst1->s + (pst0->s - pst1->s)*scale + 0.5);
 		stout->t = (int)(pst1->t + (pst0->t - pst1->t)*scale + 0.5);
-		out->l = (int)(pfv1->l + (pfv0->l - pfv1->l)*scale + 0.5);
 		out->zi = (int)(pfv1->zi + (pfv0->zi - pfv1->zi)*scale + 0.5);
+		out->r = (int)(pfv1->r + (pfv0->r - pfv1->r)*scale + 0.5);
+		out->g = (int)(pfv1->g + (pfv0->g - pfv1->g)*scale + 0.5);
+		out->b = (int)(pfv1->b + (pfv0->b - pfv1->b)*scale + 0.5);
 	}
 }
 
@@ -417,9 +437,12 @@ void R_AliasClipTriangle(mtriangle_t *ptri)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/02 17:45:37  dj_jl
+//	Added support for colored lit and translucent models
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
