@@ -466,7 +466,10 @@ static void PutEndText(const char *name)
 		}
 
 		/* now the text */
-		putchar(*text);
+		if (*text < 32)
+			putchar('.');
+		else
+			putchar(*text);
 
 		/* do we need a nl? */
 		if (nlflag)
@@ -833,9 +836,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/10/11 06:53:16  dj_jl
+//	In end text characters below space are replaced with dots.
+//
 //	Revision 1.12  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

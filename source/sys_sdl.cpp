@@ -174,7 +174,7 @@ int Sys_FileExists(const char* filename)
 
 int	Sys_FileTime(const char *path)
 {
-	struct	stat	buf;
+	struct stat		buf;
 	
 	if (stat(path,&buf) == -1)
 		return -1;
@@ -380,110 +380,113 @@ static void PutEndText(const char *name)
 			case 6:		/* brown */
 				printf("33");
 				break;
-	    case 7:		/* bright grey */
-	      printf("37");
-	      break;
-	    case 8:		/* dark grey */
-	      printf("1;30");
-	      break;
-	    case 9:		/* bright blue */
-	      printf("1;34");
-	      break;
-	    case 10:	/* bright green */
-	      printf("1;32");
-	      break;
-	    case 11:	/* bright cyan */
-	      printf("1;36");
-	      break;
-	    case 12:	/* bright red */
-	      printf("1;31");
-	      break;
-	    case 13:	/* bright magenta */
-	      printf("1;35");
-	      break;
-	    case 14:	/* yellow */
-	      printf("1;33");
-	      break;
-	    case 15:	/* white */
-	      printf("1;37");
-	      break;
-	    }
-	  printf("m");
-	  /* now background color */
-	  printf("\033[");
-	  switch ((j >> 4) & 0x0f)
-	    {
-	    case 0:		/* black */
-	      printf("40");
-	      break;
-	    case 1:		/* blue */
-	      printf("44");
-	      break;
-	    case 2:		/* green */
-	      printf("42");
-	      break;
-	    case 3:		/* cyan */
-	      printf("46");
-	      break;
-	    case 4:		/* red */
-	      printf("41");
-	      break;
-	    case 5:		/* magenta */
-	      printf("45");
-	      break;
-	    case 6:		/* brown */
-	      printf("43");
-	      break;
-	    case 7:		/* bright grey */
-	      printf("47");
-	      break;
-	    case 8:		/* dark grey */
-	      printf("1;40");
-	      break;
-	    case 9:		/* bright blue */
-	      printf("1;44");
-	      break;
-	    case 10:	/* bright green */
-	      printf("1;42");
-	      break;
-	    case 11:	/* bright cyan */
-	      printf("1;46");
-	      break;
-	    case 12:	/* bright red */
-	      printf("1;41");
-	      break;
-	    case 13:	/* bright magenta */
-	      printf("1;45");
-	      break;
-	    case 14:	/* yellow */
-	      printf("1;43");
-	      break;
-	    case 15:	/* white */
-	      printf("1;47");
-	      break;
-	    }
-	  printf("m");
+			case 7:		/* bright grey */
+				printf("37");
+				break;
+			case 8:		/* dark grey */
+				printf("1;30");
+				break;
+			case 9:		/* bright blue */
+				printf("1;34");
+				break;
+			case 10:	/* bright green */
+				printf("1;32");
+				break;
+			case 11:	/* bright cyan */
+				printf("1;36");
+				break;
+			case 12:	/* bright red */
+				printf("1;31");
+				break;
+			case 13:	/* bright magenta */
+				printf("1;35");
+				break;
+			case 14:	/* yellow */
+				printf("1;33");
+				break;
+			case 15:	/* white */
+				printf("1;37");
+				break;
+			}
+			printf("m");
+			/* now background color */
+			printf("\033[");
+			switch ((j >> 4) & 0x0f)
+			{
+			case 0:		/* black */
+				printf("40");
+				break;
+			case 1:		/* blue */
+				printf("44");
+				break;
+			case 2:		/* green */
+				printf("42");
+				break;
+			case 3:		/* cyan */
+				printf("46");
+				break;
+			case 4:		/* red */
+				printf("41");
+				break;
+			case 5:		/* magenta */
+				printf("45");
+				break;
+			case 6:		/* brown */
+				printf("43");
+				break;
+			case 7:		/* bright grey */
+				printf("47");
+				break;
+			case 8:		/* dark grey */
+				printf("1;40");
+				break;
+			case 9:		/* bright blue */
+				printf("1;44");
+				break;
+			case 10:	/* bright green */
+				printf("1;42");
+				break;
+			case 11:	/* bright cyan */
+				printf("1;46");
+				break;
+			case 12:	/* bright red */
+				printf("1;41");
+				break;
+			case 13:	/* bright magenta */
+				printf("1;45");
+				break;
+			case 14:	/* yellow */
+				printf("1;43");
+				break;
+			case 15:	/* white */
+				printf("1;47");
+				break;
+			}
+			printf("m");
+		}
+
+		/* now the text */
+		if (*text < 32)
+			putchar('.');
+		else
+			putchar(*text);
+
+		/* do we need a nl? */
+		if (nlflag)
+		{
+			if (!(i % 80))
+			{
+				printf("\033[0m");
+				att = 0;
+				printf("\n");
+			}
+		}
 	}
+	/* all attributes off */
+	printf("\033[0m");
 
-      /* now the text */
-      putchar(*text);
-
-      /* do we need a nl? */
-      if (nlflag)
-	{
-	  if (!(i % 80))
-	    {
-	      printf("\033[0m");
-	      att = 0;
-	      printf("\n");
-	    }
-	}
-    }
-  /* all attributes off */
-  printf("\033[0m");
-
-  if (nlflag)
-    printf("\n");
+	if (nlflag)
+		printf("\n");
 }
 
 //==========================================================================
@@ -550,77 +553,77 @@ void Sys_Quit(void)
 
 static void stack_trace(void)
 {
-  FILE			*fff;
-  int				i;
-  static dword	stack_addr[MAX_STACK_ADDR];
-  // can we still print entries on the calling stack or have we finished?
-  static bool		continue_stack_trace = true;
+	FILE			*fff;
+	int				i;
+	static dword	stack_addr[MAX_STACK_ADDR];
+	// can we still print entries on the calling stack or have we finished?
+	static bool		continue_stack_trace = true;
 
-  // clean the stack addresses if necessary
-  for (i = 0; i < MAX_STACK_ADDR; i++)
-    {
-      stack_addr[i] = (unsigned long)0;
-    }
-
-  dprintf("STACK TRACE:\n\n");
-
-  handle_stack_address(0);
-  handle_stack_address(1);
-  handle_stack_address(2);
-  handle_stack_address(3);
-  handle_stack_address(4);
-  handle_stack_address(5);
-  handle_stack_address(6);
-  handle_stack_address(7);
-  handle_stack_address(8);
-  handle_stack_address(9);
-  handle_stack_address(10);
-  handle_stack_address(11);
-  handle_stack_address(12);
-  handle_stack_address(13);
-  handle_stack_address(14);
-  handle_stack_address(15);
-  handle_stack_address(16);
-  handle_stack_address(17);
-  handle_stack_address(18);
-  handle_stack_address(19);
-  handle_stack_address(20);
-  handle_stack_address(21);
-  handle_stack_address(22);
-  handle_stack_address(23);
-  handle_stack_address(24);
-  handle_stack_address(25);
-  handle_stack_address(26);
-  handle_stack_address(27);
-  handle_stack_address(28);
-  handle_stack_address(29);
-  handle_stack_address(30);
-  handle_stack_address(31);
-  handle_stack_address(32);
-  handle_stack_address(33);
-  handle_stack_address(34);
-  handle_stack_address(35);
-  handle_stack_address(36);
-  handle_stack_address(37);
-  handle_stack_address(38);
-  handle_stack_address(39);
-
-  // Give a warning
-  //	fprintf(stderr, "You suddenly see a gruesome SOFTWARE BUG leap for your throat!\n");
-
-  // Open the non-existing file
-  fff = fopen("crash.txt", "w");
-
-  // Invalid file
-  if (fff)
-    {
-      // dump stack frame
-      for (i = (MAX_STACK_ADDR - 1); i >= 0 ; i--)
+	// clean the stack addresses if necessary
+	for (i = 0; i < MAX_STACK_ADDR; i++)
 	{
-	  fprintf(fff,"%x\n", stack_addr[i]);
+		stack_addr[i] = (unsigned long)0;
 	}
-      fclose(fff);
-    }
+
+	dprintf("STACK TRACE:\n\n");
+
+	handle_stack_address(0);
+	handle_stack_address(1);
+	handle_stack_address(2);
+	handle_stack_address(3);
+	handle_stack_address(4);
+	handle_stack_address(5);
+	handle_stack_address(6);
+	handle_stack_address(7);
+	handle_stack_address(8);
+	handle_stack_address(9);
+	handle_stack_address(10);
+	handle_stack_address(11);
+	handle_stack_address(12);
+	handle_stack_address(13);
+	handle_stack_address(14);
+	handle_stack_address(15);
+	handle_stack_address(16);
+	handle_stack_address(17);
+	handle_stack_address(18);
+	handle_stack_address(19);
+	handle_stack_address(20);
+	handle_stack_address(21);
+	handle_stack_address(22);
+	handle_stack_address(23);
+	handle_stack_address(24);
+	handle_stack_address(25);
+	handle_stack_address(26);
+	handle_stack_address(27);
+	handle_stack_address(28);
+	handle_stack_address(29);
+	handle_stack_address(30);
+	handle_stack_address(31);
+	handle_stack_address(32);
+	handle_stack_address(33);
+	handle_stack_address(34);
+	handle_stack_address(35);
+	handle_stack_address(36);
+	handle_stack_address(37);
+	handle_stack_address(38);
+	handle_stack_address(39);
+
+	// Give a warning
+	//	fprintf(stderr, "You suddenly see a gruesome SOFTWARE BUG leap for your throat!\n");
+
+	// Open the non-existing file
+	fff = fopen("crash.txt", "w");
+
+	// Invalid file
+	if (fff)
+	{
+		// dump stack frame
+		for (i = (MAX_STACK_ADDR - 1); i >= 0 ; i--)
+		{
+			fprintf(fff,"%x\n", stack_addr[i]);
+		}
+		fclose(fff);
+	}
 }
 
 void Sys_Error(const char *error, ...)
@@ -768,8 +771,8 @@ static void signal_handler(int s)
 
 extern "C" {
 
-  void Sys_LowFPPrecision(void){}
-  void Sys_HighFPPrecision(void){}
+void Sys_LowFPPrecision(void){}
+void Sys_HighFPPrecision(void){}
 
 }
 
@@ -838,9 +841,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/10/11 06:53:16  dj_jl
+//	In end text characters below space are replaced with dots.
+//
 //	Revision 1.3  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
