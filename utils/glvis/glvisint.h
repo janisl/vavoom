@@ -69,6 +69,7 @@ struct portal_t : TPlane	// normal pointing into neighbor
 #define	MAX_PORTALS_ON_LEAF		128
 struct leaf_t
 {
+	int			secnum;
 	int			numportals;
 	portal_t	*portals[MAX_PORTALS_ON_LEAF];
 };
@@ -101,6 +102,12 @@ struct seg_t : public TPlane
 
 	seg_t		*partner;
 	int			leaf;
+	int			secnum;
+};
+
+struct line_t
+{
+	int secnum[2];
 };
 
 class TVisBuilder
@@ -110,54 +117,70 @@ class TVisBuilder
 	void Run(const char *srcfile);
 
  private:
-	TGLVis			&Owner;
+	TGLVis &Owner;
 
-	TIWadFile		inwad;
-	TIWadFile		gwa;
-	TOWadFile		outwad;
+	TIWadFile inwad;
+	TIWadFile gwa;
+	TOWadFile outwad;
 
-	TIWadFile		*mainwad;
-	TIWadFile		*glwad;
+	TIWadFile *mainwad;
+	TIWadFile *glwad;
 
-	int				numvertexes;
-	vertex_t		*vertexes;
-	vertex_t*		gl_vertexes;
+	int numvertexes;
+	vertex_t *vertexes;
+	vertex_t *gl_vertexes;
 
-	int				numsegs;
-	seg_t			*segs;
+	int numsectors;
+	line_t *lines;
+	int numlines;
+	int *sidesecs;
+	int numsides;
 
-	int				numsubsectors;
-	subsector_t		*subsectors;
+	int numsegs;
+	seg_t *segs;
 
-	int				numportals;
-	portal_t		*portals;
+	int numsubsectors;
+	subsector_t *subsectors;
 
-	int				vissize;
-	byte			*vis;
+	int numportals;
+	portal_t *portals;
 
-	int			bitbytes;				// (portalleafs+63)>>3
-	int			bitlongs;
+	int vissize;
+	byte *vis;
 
-	byte		*portalsee;
-	int			c_leafsee, c_portalsee;
+	int rejectsize;
+	byte *reject;
 
-	int			c_chains;
-	int			c_portalskip, c_leafskip;
-	int			c_vistest, c_mighttest;
-	int			c_portaltest, c_portalpass, c_portalcheck;
+	int bitbytes;				// (portalleafs+63)>>3
+	int bitlongs;
 
-	int			totalvis;
-	int			rowbytes;
+	byte *portalsee;
+	int c_leafsee, c_portalsee;
+
+	int c_chains;
+	int c_portalskip, c_leafskip;
+	int c_vistest, c_mighttest;
+	int c_portaltest, c_portalpass, c_portalcheck;
+
+	int totalvis;
+	int rowbytes;
 
 	bool IsLevelName(int lump);
+	bool IsGLLevelName(int lump);
 
 	void LoadVertexes(int lump, int gl_lump);
+	void LoadSectors(int lump);
+	void LoadSideDefs(int lump);
+	void LoadLineDefs1(int lump);
+	void LoadLineDefs2(int lump);
 	void LoadSegs(int lump);
 	void LoadSubsectors(int lump);
-	void LoadNodes(int lump);
 	void CreatePortals(void);
+	void CopyLump(int i);
 	void LoadLevel(int lumpnum, int gl_lumpnum);
 	void FreeLevel(void);
+	void BuildGWA(void);
+	void BuildWAD(void);
 
 	void SimpleFlood(portal_t *srcportal, int leafnum);
 	void BasePortalVis(void);
@@ -172,6 +195,7 @@ class TVisBuilder
 	void CalcPortalVis(void);
 	void LeafFlow(int leafnum);
 	void BuildPVS(void);
+	void BuildReject(void);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -185,9 +209,12 @@ class TVisBuilder
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/10/18 17:41:47  dj_jl
+//	Added reject building
+//
 //	Revision 1.1  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
 //	

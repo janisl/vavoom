@@ -164,6 +164,7 @@ static void ShowUsage(void)
 	cerr << "    -v            verbose mode\n";
 	cerr << "    -t#           specify test level\n";
 	cerr << "    -m<LEVELNAME> specifies a level to process, can be used multiple times\n";
+	cerr << "    -noreject     don't create reject\n";
 	exit(1);
 }
 
@@ -206,6 +207,13 @@ int main(int argc, char *argv[])
 			 case 'm':
 				strcpy(arg + 2, GLVis.specified_maps[GLVis.num_specified_maps++]);
 				break;
+
+			 case 'n':
+				if (!strcmp(arg, "-noreject"))
+				{
+					GLVis.no_reject = true;
+					break;
+				}
 
 			 default:
 				ShowUsage();
@@ -255,9 +263,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/18 17:41:47  dj_jl
+//	Added reject building
+//
 //	Revision 1.6  2001/09/20 16:38:05  dj_jl
 //	Moved TGLVis out of namespace
-//
+//	
 //	Revision 1.5  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
 //	

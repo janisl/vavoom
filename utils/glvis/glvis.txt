@@ -44,6 +44,8 @@ The following options are recognised:
     -m<LEVELNAME> specifies a level to process, can be used multiple times.
                   This option can be used to specify non-standard map names.
 
+    -noreject     don't build reject
+    
 ============================================================================
     Status
 ============================================================================

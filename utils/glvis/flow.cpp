@@ -696,14 +696,46 @@ void TVisBuilder::BuildPVS(void)
 	Owner.DisplayMapDone(totalvis, numsubsectors * numsubsectors);
 }
 
+//==========================================================================
+//
+//	TVisBuilder::BuildReject
+//
+//==========================================================================
+
+void TVisBuilder::BuildReject(void)
+{
+	Owner.DisplayMessage("Building reject ... ");
+	rejectsize = (numsectors * numsectors + 7) / 8;
+	reject = New<byte>(rejectsize);
+	memset(reject, 0xff, rejectsize);
+	byte *svis = vis;
+	for (int i = 0; i < numsubsectors; i++)
+	{
+		int s1 = subsectors[i].secnum * numsectors;
+		for (int j = 0; j < numsubsectors; j++)
+		{
+			if (svis[j >> 3] & (1 << (j & 7)))
+			{
+				int s = s1 + subsectors[j].secnum;
+				reject[s >> 3] &= ~(1 << (s & 7));
+			}
+		}
+		svis += rowbytes;
+	}
+	Owner.DisplayMessage("done\n");
+}
+
 } // namespace VavoomUtils
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:41:47  dj_jl
+//	Added reject building
+//
 //	Revision 1.5  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.4  2001/08/30 17:47:47  dj_jl
 //	Overflow protection
 //	

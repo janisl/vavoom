@@ -119,8 +119,6 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	base_verts = mainwad->LumpSize(lump) / sizeof(mapvertex_t);
 
 	gldata = glwad->GetLump(gl_lump);
-	outwad.AddLump(glwad->LumpName(gl_lump), gldata,
-		glwad->LumpSize(gl_lump));
 	if (!strncmp((char*)gldata, GL_V2_VERTEX_MAGIC, 4))
 	{
 		gl_verts = (glwad->LumpSize(gl_lump) - 4) / sizeof(gl_mapvertex_t);
@@ -180,6 +178,118 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 
 //==========================================================================
 //
+//  TVisBuilder::LoadSectors
+//
+//==========================================================================
+
+void TVisBuilder::LoadSectors(int lump)
+{
+	numsectors = mainwad->LumpSize(lump) / sizeof(mapsector_t);
+}
+
+//==========================================================================
+//
+//  TVisBuilder::LoadSideDefs
+//
+//==========================================================================
+
+void TVisBuilder::LoadSideDefs(int lump)
+{
+	mapsidedef_t *data;
+	int i;
+
+	numsides = mainwad->LumpSize(lump) / sizeof(mapsidedef_t);
+	sidesecs = New<int>(numsides);
+	data = (mapsidedef_t *)mainwad->GetLump(lump);
+	for (i = 0; i < numsides; i++)
+	{
+		sidesecs[i] = LittleShort(data[i].sector);
+	}
+	Free(data);
+}
+
+//==========================================================================
+//
+//  TVisBuilder::LoadLineDefs1
+//
+//  For Doom and Heretic
+//
+//==========================================================================
+
+void TVisBuilder::LoadLineDefs1(int lump)
+{
+	void *data;
+	int i;
+	maplinedef1_t *mld;
+	line_t *ld;
+
+	numlines = mainwad->LumpSize(lump) / sizeof(maplinedef1_t);
+	lines = New<line_t>(numlines);
+	data = mainwad->GetLump(lump);
+
+	mld = (maplinedef1_t *)data;
+	ld = lines;
+	for (i = 0; i < numlines; i++, mld++, ld++)
+	{
+		int side0 = LittleShort(mld->sidenum[0]);
+		int side1 = LittleShort(mld->sidenum[1]);
+
+		if (side0 != -1)
+			ld->secnum[0] = sidesecs[side0];
+		else
+			ld->secnum[0] = -1;
+
+		if (side1 != -1)
+			ld->secnum[1] = sidesecs[side1];
+		else
+			ld->secnum[1] = -1;
+	}
+
+	Free(data);
+}
+
+//==========================================================================
+//
+//  TVisBuilder::LoadLineDefs2
+//
+//  For Hexen
+//
+//==========================================================================
+
+void TVisBuilder::LoadLineDefs2(int lump)
+{
+	void *data;
+	int i;
+	maplinedef2_t *mld;
+	line_t *ld;
+
+	numlines = mainwad->LumpSize(lump) / sizeof(maplinedef2_t);
+	lines = New<line_t>(numlines);
+	data = mainwad->GetLump(lump);
+
+	mld = (maplinedef2_t *)data;
+	ld = lines;
+	for (i = 0; i < numlines; i++, mld++, ld++)
+	{
+		int side0 = LittleShort(mld->sidenum[0]);
+		int side1 = LittleShort(mld->sidenum[1]);
+
+		if (side0 != -1)
+			ld->secnum[0] = sidesecs[side0];
+		else
+			ld->secnum[0] = -1;
+
+		if (side1 != -1)
+			ld->secnum[1] = sidesecs[side1];
+		else
+			ld->secnum[1] = -1;
+	}
+
+	Free(data);
+}
+
+//==========================================================================
+//
 //	TVisBuilder::LoadSegs
 //
 //==========================================================================
@@ -194,7 +304,6 @@ void TVisBuilder::LoadSegs(int lump)
 	numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
 	segs = New<seg_t>(numsegs);
 	data = glwad->GetLump(lump);
-	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
 	ml = (mapglseg_t *)data;
 	li = segs;
@@ -231,6 +340,16 @@ void TVisBuilder::LoadSegs(int lump)
 			numportals++;
 		}
 
+		int linenum = LittleShort(ml->linedef);
+		if (linenum >= 0)
+		{
+			li->secnum = lines[linenum].secnum[LittleShort(ml->side)];
+		}
+		else
+		{
+			li->secnum = -1;
+		}
+
 		//	Calc seg's plane params
 		li->Set2Points(*li->v1, *li->v2);
 	}
@@ -256,7 +375,6 @@ void TVisBuilder::LoadSubsectors(int lump)
 	numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
 	subsectors = New<subsector_t>(numsubsectors);
 	data = glwad->GetLump(lump);
-	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 
 	ms = (mapsubsector_t *)data;
 	ss = subsectors;
@@ -266,28 +384,26 @@ void TVisBuilder::LoadSubsectors(int lump)
 		//	Set seg subsector links
 		int count = LittleShort(ms->numsegs);
 		seg_t *line = &segs[LittleShort(ms->firstseg)];
+		ss->secnum = -1;
 		while (count--)
 		{
 			line->leaf = i;
+			if (line->secnum >= 0)
+			{
+				if (ss->secnum != -1 && ss->secnum != line->secnum)
+				{
+					throw GLVisError("Segs from different sectors");
+				}
+				ss->secnum = line->secnum;
+			}
 			line++;
+		}
+		if (ss->secnum == -1)
+		{
+			throw GLVisError("Subsector without sector");
 		}
 	}
 
-	Free(data);
-}
-
-//==========================================================================
-//
-//	TVisBuilder::LoadNodes
-//
-//==========================================================================
-
-void TVisBuilder::LoadNodes(int lump)
-{
-	void*	data;
-
-	data = glwad->GetLump(lump);
-	outwad.AddLump(glwad->LumpName(lump), data, glwad->LumpSize(lump));
 	Free(data);
 }
 
@@ -336,11 +452,18 @@ void TVisBuilder::CreatePortals(void)
 void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 {
 	const char *levelname = mainwad->LumpName(lumpnum);
+	bool extended = !stricmp(mainwad->LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
+	LoadSectors(lumpnum + ML_SECTORS);
+	LoadSideDefs(lumpnum + ML_SIDEDEFS);
+	if (extended)
+		LoadLineDefs2(lumpnum + ML_LINEDEFS);
+	else
+		LoadLineDefs1(lumpnum + ML_LINEDEFS);
 	LoadSegs(gl_lumpnum + ML_GL_SEGS);
 	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
-	LoadNodes(gl_lumpnum + ML_GL_NODES);
+	reject = NULL;
 
 	CreatePortals();
 
@@ -359,10 +482,16 @@ void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 void TVisBuilder::FreeLevel(void)
 {
 	Delete(vertexes);
+	Delete(sidesecs);
+	Delete(lines);
 	Delete(segs);
 	Delete(subsectors);
 	Delete(portals);
 	Delete(vis);
+	if (reject)
+	{
+		Delete(reject);
+	}
 }
 
 //==========================================================================
@@ -372,6 +501,44 @@ void TVisBuilder::FreeLevel(void)
 //==========================================================================
 
 bool TVisBuilder::IsLevelName(int lump)
+{
+	if (lump + 10 >= glwad->numlumps)
+	{
+		return false;
+	}
+
+	const char	*name = glwad->LumpName(lump);
+
+	if (Owner.num_specified_maps)
+	{
+		for (int i = 0; i < Owner.num_specified_maps; i++)
+		{
+			if (!stricmp(Owner.specified_maps[i], name))
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		if (!strcmp(glwad->LumpName(lump + 1), "THINGS") &&
+			!strcmp(glwad->LumpName(lump + 2), "LINEDEFS") &&
+			!strcmp(glwad->LumpName(lump + 3), "SIDEDEFS") &&
+			!strcmp(glwad->LumpName(lump + 4), "VERTEXES"))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	TVisBuilder::IsGLLevelName
+//
+//==========================================================================
+
+bool TVisBuilder::IsGLLevelName(int lump)
 {
 	if (lump + 4 >= glwad->numlumps)
 	{
@@ -410,6 +577,107 @@ bool TVisBuilder::IsLevelName(int lump)
 
 //==========================================================================
 //
+//	TVisBuilder::CopyLump
+//
+//==========================================================================
+
+void TVisBuilder::CopyLump(int i)
+{
+	void *ptr =	glwad->GetLump(i);
+	outwad.AddLump(glwad->LumpName(i), ptr, glwad->LumpSize(i));
+	Free(ptr);
+}
+
+//==========================================================================
+//
+//	TVisBuilder::BuildGWA
+//
+//==========================================================================
+
+void TVisBuilder::BuildGWA(void)
+{
+	int i = 0;
+	while (i < glwad->numlumps)
+	{
+		if (IsGLLevelName(i))
+		{
+			const char *name = glwad->LumpName(i);
+			LoadLevel(mainwad->LumpNumForName(name + 3), i);
+			BuildPVS();
+
+			//	Write lumps
+			for (int ii = 0; ii < 5; ii++)
+			{
+				CopyLump(i + ii);
+			}
+			i += 5;
+			if (!strcmp("GL_PVS", glwad->LumpName(i)))
+			{
+				i++;
+			}
+			outwad.AddLump("GL_PVS", vis, vissize);
+
+			FreeLevel();
+		}
+		else
+		{
+			CopyLump(i);
+			i++;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	TVisBuilder::BuildWAD
+//
+//==========================================================================
+
+void TVisBuilder::BuildWAD(void)
+{
+	int i = 0;
+	while (i < glwad->numlumps)
+	{
+		if (IsLevelName(i))
+		{
+			const char *name = glwad->LumpName(i);
+			int gl_lump = mainwad->LumpNumForName(va("GL_%s", name));
+
+			LoadLevel(i, gl_lump);
+			BuildPVS();
+			BuildReject();
+
+			//	Write lumps. Assume GL-nodes immediately follows map data
+			for (int mi = i; mi < gl_lump + 5; mi++)
+			{
+				if (mi == i + ML_REJECT && !Owner.no_reject)
+				{
+					outwad.AddLump("REJECT", reject, rejectsize);
+				}
+				else
+				{
+					CopyLump(mi);
+				}
+			}
+			i = gl_lump + 5;
+			if (!strcmp("GL_PVS", glwad->LumpName(i)))
+			{
+				i++;
+			}
+			outwad.AddLump("GL_PVS", vis, vissize);
+
+			FreeLevel();
+		}
+		else
+		{
+			CopyLump(i);
+			i++;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	TVisBuilder::Run
 //
 //==========================================================================
@@ -419,7 +687,6 @@ void TVisBuilder::Run(const char *srcfile)
 	char filename[1024];
 	char destfile[1024];
 	char bakext[8];
-	int i;
 
 	if (Owner.Malloc && Owner.Free)
 	{
@@ -458,32 +725,13 @@ void TVisBuilder::Run(const char *srcfile)
 	outwad.Open(TEMP_FILE, glwad->wadid);
 
 	//	Process lumps
-	i = 0;
-	while (i < glwad->numlumps)
+	if (mainwad == glwad)
 	{
-		void *ptr =	glwad->GetLump(i);
-		const char *name = glwad->LumpName(i);
-		outwad.AddLump(name, ptr, glwad->LumpSize(i));
-		Free(ptr);
-		if (IsLevelName(i))
-		{
-			LoadLevel(mainwad->LumpNumForName(name + 3), i);
-			i += 5;
-			if (!strcmp("GL_PVS", glwad->LumpName(i)))
-			{
-				i++;
-			}
-			BuildPVS();
-
-			//	Write lump
-			outwad.AddLump("GL_PVS", vis, vissize);
-
-			FreeLevel();
-		}
-		else
-		{
-			i++;
-		}
+		BuildWAD();
+	}
+	else
+	{
+		BuildGWA();
 	}
 
 	inwad.Close();
@@ -543,9 +791,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:41:47  dj_jl
+//	Added reject building
+//
 //	Revision 1.5  2001/09/20 16:38:05  dj_jl
 //	Moved TGLVis out of namespace
-//
+//	
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
 //	
