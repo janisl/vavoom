@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.3  2001/08/15 17:07:10  dj_jl
+//**	Fixed finale
+//**
 //**	Revision 1.2  2001/07/27 14:27:51  dj_jl
 //**	Update with Id-s and Log-s, some fixes
-//**
+//**	
 //**************************************************************************
 
 //**************************************************************************
@@ -120,9 +123,9 @@ void F_InitBunnyScroll(void)
 		fend[i] = R_RegisterPic(va("END%d", i), PIC_PATCH);
 	}
 #ifdef FIXME
-   	S_StartSong("D_BUNNY", P_GetCDEnd2Track(), true);
+	S_StartSong("D_BUNNY", P_GetCDEnd2Track(), true);
 #else
-   	CmdBuf_AddText("music loop D_BUNNY\n");
+	CmdBuf_AddText("music loop D_BUNNY\n");
 #endif
 }
 
@@ -137,21 +140,21 @@ void F_BunnyScroll(void)
     int			scrolled;
     int			stage;
 		
-    scrolled = 320 - ftoi((FinaleTime - 6.5) * 16.0);
-    if (scrolled > 320)
+    scrolled = ftoi((FinaleTime - 6.5) * 16.0);
+    if (scrolled <= 0)
 	{
 		R_DrawPic(0, 0, fpage1);
 	}
-    else if (scrolled < 0)
+    else if (scrolled >= 320)
 	{
 		R_DrawPic(0, 0, fpage2);
 	}
 	else
 	{
-		R_DrawPic(scrolled - 320, 0, fpage2);
 		R_DrawPic(scrolled, 0, fpage1);
+		R_DrawPic(scrolled - 320, 0, fpage2);
 	}
-	
+
     if (FinaleTime < 32.0)
 	{
 		return;
@@ -162,7 +165,7 @@ void F_BunnyScroll(void)
 		laststage = 0;
 		return;
     }
-	
+
     stage = ftoi((FinaleTime - 35.0) * 7.0);
     if (stage > 6)
 	{
@@ -184,6 +187,7 @@ void F_BunnyScroll(void)
 
 void F_StartFinale(void)
 {
+    cl->intermission = 2;
     FinaleStage = 0;
     FinaleTime = 0.0;
 
@@ -586,6 +590,7 @@ void F_CastDrawer(void)
 
 void F_StartFinale(void)
 {
+    cl->intermission = 2;
 	F_StartCast();
 }
 

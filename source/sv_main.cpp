@@ -122,6 +122,8 @@ static TCvarI  	NoMonsters("NoMonsters", "0");
 static TCvarI	Skill("Skill", "2");
 
 static byte		*fatpvs;
+static int		mobj_update_start;
+static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
 
 static bool		mapteleport_issued;
 
@@ -898,21 +900,32 @@ void SV_UpdateLevel(TMessage &msg)
 	//	Then update non-player mobjs in sight
 	for (i = 0; i < MAX_MOBJS; i++)
 	{
-		if (!sv_mobjs[i])
+		int index = (i + mobj_update_start) % MAX_MOBJS;
+		if (!sv_mobjs[index])
 			continue;
-		if (sv_mobjs[i]->flags & MF_NOSECTOR)
+		if (sv_mobjs[index]->flags & MF_NOSECTOR)
 			continue;
-		if (sv_mobjs[i]->player)
+		if (sv_mobjs[index]->player)
 			continue;
-		if (!SV_CheckFatPVS(sv_mobjs[i]->subsector))
+		if (!SV_CheckFatPVS(sv_mobjs[index]->subsector))
 			continue;
 		if (msg.CurSize > 1000)
 		{
-			cond << "UpdateLevel: mobj overflow\n";
+			if (mobj_update_start && show_mobj_overflow)
+			{
+				con << "UpdateLevel: mobj overflow 2\n";
+			}
+			else if (show_mobj_overflow > 1)
+			{
+				con << "UpdateLevel: mobj overflow\n";
+			}
+			//	Next update starts here
+			mobj_update_start = index;
 			return;
 		}
-		SV_UpdateMobj(i, msg);
+		SV_UpdateMobj(index, msg);
 	}
+	mobj_update_start = 0;
 }
 
 //==========================================================================
@@ -1369,6 +1382,10 @@ static void G_DoCompleted(void)
 	mapInfo_t	new_info;
 
  	completed = false;
+	if (sv.intermission)
+	{
+		return;
+	}
 	sv.intermission = 1;
 	sv.intertime = 0;
 
@@ -2424,9 +2441,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:08:59  dj_jl
+//	Fixed finale
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:32:39  dj_jl
 //	Beautification
 //	

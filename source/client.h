@@ -149,10 +149,10 @@ struct client_state_t
 
 	char			serverinfo[MAX_INFO_STRING];
 
+	int				intermission;
+
 	//	128 integers for user defined fields in PROGS
 	int				user_fields[128];
-
-	int				intermission;
 #if 0
 	int			movemessages;	// since connecting to this server
 								// throw out the first couple, so the player
@@ -252,9 +252,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:08:59  dj_jl
+//	Fixed finale
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:10:21  dj_jl
 //	Localizing demo loop
 //	

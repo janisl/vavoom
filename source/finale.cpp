@@ -79,31 +79,6 @@ void F_Ticker(void)
 
 //===========================================================================
 //
-//	F_CheckPal
-//
-//===========================================================================
-
-boolean F_CheckPal(event_t*)
-{
-#ifdef FIXME
-	if (Game == Heretic)
-	{
-		if (event->type == ev_keydown &&
-			FinaleStage == 1 && f_episode == 2)
-		{
-			// we're showing the water pic, make any key kick to demo mode
-			FinaleStage++;
-//FIXME		V_SetPalette((byte*)W_CacheLumpName("PLAYPAL", PU_CACHE));
-			fpage1 = R_RegisterPic("TITLE", PIC_RAW);
-			return true;
-		}
-	}
-#endif
-    return false;
-}
-
-//===========================================================================
-//
 //	F_Responder
 //
 //===========================================================================
@@ -130,9 +105,12 @@ void F_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:08:59  dj_jl
+//	Fixed finale
+//
 //	Revision 1.4  2001/08/07 16:48:54  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
