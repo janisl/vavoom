@@ -29,7 +29,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <stdio.h>
 #include <stdarg.h>
 #include <iostream.h>
 #include <time.h>
@@ -38,8 +37,6 @@
 #include <unistd.h>
 #endif
 #include "glvis.h"
-
-namespace VavoomUtils {
 
 // MACROS ------------------------------------------------------------------
 
@@ -152,10 +149,6 @@ void TConsoleGLVis::DisplayMapDone(int accepts, int total)
 	}
 }
 
-} // namespace VavoomUtils
-
-using namespace VavoomUtils;
-
 //==========================================================================
 //
 //	ShowUsage
@@ -164,7 +157,7 @@ using namespace VavoomUtils;
 
 static void ShowUsage(void)
 {
-	cerr << "\nGLVIS version 1.2, Copyright (c)2000 JÆnis Legzdi·ý      ("__DATE__" "__TIME__")\n";
+	cerr << "\nGLVIS version 1.3, Copyright (c)2000 JÆnis Legzdi·ý      ("__DATE__" "__TIME__")\n";
 	cerr << "Usage: glvis [options] file[.wad]\n";
 	cerr << "    -s            silent mode\n";
 	cerr << "    -f            fast mode\n";
@@ -262,9 +255,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/20 16:38:05  dj_jl
+//	Moved TGLVis out of namespace
+//
 //	Revision 1.5  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.4  2001/08/30 17:47:47  dj_jl
 //	Overflow protection
 //	

@@ -81,21 +81,6 @@ static void GLVisFree(void *ptr)
 
 //==========================================================================
 //
-//	GLVisError::GLVisError
-//
-//==========================================================================
-
-GLVisError::GLVisError(const char *error, ...)
-{
-	va_list		argptr;
-
-	va_start(argptr, error);
-	vsprintf(message, error, argptr);
-	va_end(argptr);
-}
-
-//==========================================================================
-//
 //	TVisBuilder::TVisBuilder
 //
 //==========================================================================
@@ -516,6 +501,25 @@ void TVisBuilder::Run(const char *srcfile)
 	rename(TEMP_FILE, destfile);
 }
 
+} // namespace VavoomUtils
+
+using namespace VavoomUtils;
+
+//==========================================================================
+//
+//	GLVisError::GLVisError
+//
+//==========================================================================
+
+GLVisError::GLVisError(const char *error, ...)
+{
+	va_list		argptr;
+
+	va_start(argptr, error);
+	vsprintf(message, error, argptr);
+	va_end(argptr);
+}
+
 //==========================================================================
 //
 //	TGLVis::Build
@@ -536,14 +540,15 @@ void TGLVis::Build(const char *srcfile)
 	}
 }
 
-} // namespace VavoomUtils
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:38:05  dj_jl
+//	Moved TGLVis out of namespace
+//
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
 //	

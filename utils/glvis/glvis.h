@@ -28,7 +28,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-namespace VavoomUtils {
+#include <stdio.h>
+#include <stdlib.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -78,16 +79,17 @@ class TGLVis
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-} // namespace VavoomUtils
-
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:38:05  dj_jl
+//	Moved TGLVis out of namespace
+//
 //	Revision 1.4  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
-//
+//	
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
 //	
