@@ -884,6 +884,56 @@ state_t	states[NUMHEXENSTATES] = {
 {SPR3_SUIT,8,-1,SA3_NULL,S3_NULL,0,0},	// S3_ZARMORCHUNK8
 {SPR3_SUIT,9,-1,SA3_NULL,S3_NULL,0,0},	// S3_ZARMORCHUNK9
 {SPR3_SUIT,10,-1,SA3_NULL,S3_NULL,0,0},	// S3_ZARMORCHUNK10
+#if 0
+{SPR3_BBLL,5,-1,SA3_NULL,S3_NULL,0,0,"objects/bell.md2",0},	// S3_ZBELL
+{SPR3_BBLL,0,4,SA3_BellReset1,S3_ZBELL_X2,0,0,"objects/bell.md2",0},	// S3_ZBELL_X1
+{SPR3_BBLL,1,4,SA3_NULL,S3_ZBELL_X3,0,0,"objects/bell.md2",1},	// S3_ZBELL_X2
+{SPR3_BBLL,2,4,SA3_NULL,S3_ZBELL_X4,0,0,"objects/bell.md2",2},	// S3_ZBELL_X3
+{SPR3_BBLL,3,5,SA3_Scream,S3_ZBELL_X5,0,0,"objects/bell.md2",3},	// S3_ZBELL_X4
+{SPR3_BBLL,2,4,SA3_NULL,S3_ZBELL_X6,0,0,"objects/bell.md2",2},	// S3_ZBELL_X5
+{SPR3_BBLL,1,4,SA3_NULL,S3_ZBELL_X7,0,0,"objects/bell.md2",1},	// S3_ZBELL_X6
+{SPR3_BBLL,0,3,SA3_NULL,S3_ZBELL_X8,0,0,"objects/bell.md2",0},	// S3_ZBELL_X7
+{SPR3_BBLL,4,4,SA3_NULL,S3_ZBELL_X9,0,0,"objects/bell.md2",0},	// S3_ZBELL_X8
+{SPR3_BBLL,5,5,SA3_NULL,S3_ZBELL_X10,0,0,"objects/bell.md2",0},	// S3_ZBELL_X9
+{SPR3_BBLL,6,6,SA3_Scream,S3_ZBELL_X11,0,0,"objects/bell.md2",0},	// S3_ZBELL_X10
+{SPR3_BBLL,5,5,SA3_NULL,S3_ZBELL_X12,0,0,"objects/bell.md2",0},	// S3_ZBELL_X11
+{SPR3_BBLL,4,4,SA3_NULL,S3_ZBELL_X13,0,0,"objects/bell.md2",0},	// S3_ZBELL_X12
+{SPR3_BBLL,0,4,SA3_NULL,S3_ZBELL_X14,0,0,"objects/bell.md2",0},	// S3_ZBELL_X13
+{SPR3_BBLL,1,5,SA3_NULL,S3_ZBELL_X15,0,0,"objects/bell.md2",1},	// S3_ZBELL_X14
+{SPR3_BBLL,2,5,SA3_NULL,S3_ZBELL_X16,0,0,"objects/bell.md2",2},	// S3_ZBELL_X15
+{SPR3_BBLL,3,6,SA3_Scream,S3_ZBELL_X17,0,0,"objects/bell.md2",3},	// S3_ZBELL_X16
+{SPR3_BBLL,2,5,SA3_NULL,S3_ZBELL_X18,0,0,"objects/bell.md2",2},	// S3_ZBELL_X17
+{SPR3_BBLL,1,5,SA3_NULL,S3_ZBELL_X19,0,0,"objects/bell.md2",1},	// S3_ZBELL_X18
+{SPR3_BBLL,0,4,SA3_NULL,S3_ZBELL_X20,0,0,"objects/bell.md2",0},	// S3_ZBELL_X19
+{SPR3_BBLL,4,5,SA3_NULL,S3_ZBELL_X21,0,0,"objects/bell.md2",0},	// S3_ZBELL_X20
+{SPR3_BBLL,5,5,SA3_NULL,S3_ZBELL_X22,0,0,"objects/bell.md2",0},	// S3_ZBELL_X21
+{SPR3_BBLL,6,7,SA3_Scream,S3_ZBELL_X23,0,0,"objects/bell.md2",0},	// S3_ZBELL_X22
+{SPR3_BBLL,5,5,SA3_NULL,S3_ZBELL_X24,0,0,"objects/bell.md2",0},	// S3_ZBELL_X23
+{SPR3_BBLL,4,5,SA3_NULL,S3_ZBELL_X25,0,0,"objects/bell.md2",0},	// S3_ZBELL_X24
+{SPR3_BBLL,0,5,SA3_NULL,S3_ZBELL_X26,0,0,"objects/bell.md2",0},	// S3_ZBELL_X25
+{SPR3_BBLL,1,6,SA3_NULL,S3_ZBELL_X27,0,0,"objects/bell.md2",1},	// S3_ZBELL_X26
+{SPR3_BBLL,2,6,SA3_NULL,S3_ZBELL_X28,0,0,"objects/bell.md2",2},	// S3_ZBELL_X27
+{SPR3_BBLL,3,7,SA3_Scream,S3_ZBELL_X29,0,0,"objects/bell.md2",3},	// S3_ZBELL_X28
+{SPR3_BBLL,2,6,SA3_NULL,S3_ZBELL_X30,0,0,"objects/bell.md2",2},	// S3_ZBELL_X29
+{SPR3_BBLL,1,6,SA3_NULL,S3_ZBELL_X31,0,0,"objects/bell.md2",1},	// S3_ZBELL_X30
+{SPR3_BBLL,0,5,SA3_NULL,S3_ZBELL_X32,0,0,"objects/bell.md2",0},	// S3_ZBELL_X31
+{SPR3_BBLL,4,6,SA3_NULL,S3_ZBELL_X33,0,0,"objects/bell.md2",0},	// S3_ZBELL_X32
+{SPR3_BBLL,5,6,SA3_NULL,S3_ZBELL_X34,0,0,"objects/bell.md2",0},	// S3_ZBELL_X33
+{SPR3_BBLL,6,7,SA3_Scream,S3_ZBELL_X35,0,0,"objects/bell.md2",0},	// S3_ZBELL_X34
+{SPR3_BBLL,5,6,SA3_NULL,S3_ZBELL_X36,0,0,"objects/bell.md2",0},	// S3_ZBELL_X35
+{SPR3_BBLL,4,6,SA3_NULL,S3_ZBELL_X37,0,0,"objects/bell.md2",0},	// S3_ZBELL_X36
+{SPR3_BBLL,0,6,SA3_NULL,S3_ZBELL_X38,0,0,"objects/bell.md2",0},	// S3_ZBELL_X37
+{SPR3_BBLL,1,6,SA3_NULL,S3_ZBELL_X39,0,0,"objects/bell.md2",1},	// S3_ZBELL_X38
+{SPR3_BBLL,2,6,SA3_NULL,S3_ZBELL_X40,0,0,"objects/bell.md2",2},	// S3_ZBELL_X39
+{SPR3_BBLL,1,7,SA3_NULL,S3_ZBELL_X41,0,0,"objects/bell.md2",1},	// S3_ZBELL_X40
+{SPR3_BBLL,0,8,SA3_NULL,S3_ZBELL_X42,0,0,"objects/bell.md2",0},	// S3_ZBELL_X41
+{SPR3_BBLL,4,12,SA3_NULL,S3_ZBELL_X43,0,0,"objects/bell.md2",0},	// S3_ZBELL_X42
+{SPR3_BBLL,0,10,SA3_NULL,S3_ZBELL_X44,0,0,"objects/bell.md2",0},	// S3_ZBELL_X43
+{SPR3_BBLL,1,12,SA3_NULL,S3_ZBELL_X45,0,0,"objects/bell.md2",1},	// S3_ZBELL_X44
+{SPR3_BBLL,0,12,SA3_NULL,S3_ZBELL_X46,0,0,"objects/bell.md2",0},	// S3_ZBELL_X45
+{SPR3_BBLL,4,14,SA3_NULL,S3_ZBELL_X47,0,0,"objects/bell.md2",0},	// S3_ZBELL_X46
+{SPR3_BBLL,0,1,SA3_BellReset2,S3_ZBELL,0,0,"objects/bell.md2",0},	// S3_ZBELL_X47
+#else
 {SPR3_BBLL,5,-1,SA3_NULL,S3_NULL,0,0},	// S3_ZBELL
 {SPR3_BBLL,0,4,SA3_BellReset1,S3_ZBELL_X2,0,0},	// S3_ZBELL_X1
 {SPR3_BBLL,1,4,SA3_NULL,S3_ZBELL_X3,0,0},	// S3_ZBELL_X2
@@ -932,6 +982,7 @@ state_t	states[NUMHEXENSTATES] = {
 {SPR3_BBLL,0,12,SA3_NULL,S3_ZBELL_X46,0,0},	// S3_ZBELL_X45
 {SPR3_BBLL,4,14,SA3_NULL,S3_ZBELL_X47,0,0},	// S3_ZBELL_X46
 {SPR3_BBLL,0,1,SA3_BellReset2,S3_ZBELL,0,0},	// S3_ZBELL_X47
+#endif
 {SPR3_CAND,32768,5,SA3_NULL,S3_ZBLUE_CANDLE2,0,0},	// S3_ZBLUE_CANDLE1
 {SPR3_CAND,32769,5,SA3_NULL,S3_ZBLUE_CANDLE3,0,0},	// S3_ZBLUE_CANDLE2
 {SPR3_CAND,32770,5,SA3_NULL,S3_ZBLUE_CANDLE4,0,0},	// S3_ZBLUE_CANDLE3
@@ -2880,19 +2931,24 @@ state_t	states[NUMHEXENSTATES] = {
 void MarkSpecialWeaponStates(void)
 {
 	MarkWeaponState(S3_LIGHTDONE);
+    MarkWeaponState(S3_PUNCHATK2_1);
     MarkWeaponState(S3_FAXEREADY_G);
     MarkWeaponState(S3_FAXEDOWN_G);
     MarkWeaponState(S3_FAXEUP_G);
     MarkWeaponState(S3_FAXEATK_G1);
+    MarkWeaponState(S3_CSTAFFATK2_1);
     MarkWeaponState(S3_CSTAFFBLINK1);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/02/22 18:11:01  dj_jl
+//	Some renaming.
+//
 //	Revision 1.8  2002/01/07 12:30:06  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/12 19:20:31  dj_jl
 //	States using methods
 //	

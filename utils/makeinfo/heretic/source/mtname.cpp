@@ -125,7 +125,7 @@ char* mt_names[] =
     "CrossbowFX4",
     "Blood",
     "BloodSplatter",
-    "PlayerEntity",
+    "PlayerPawn",
     "BloodySkull",
     "ChickenPlayer",
     "Chicken",
@@ -194,9 +194,12 @@ char* mt_names[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/02/22 18:11:01  dj_jl
+//	Some renaming.
+//
 //	Revision 1.5  2002/01/17 18:18:13  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.4  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

@@ -176,26 +176,6 @@ void WriteStates(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-/*	fprintf(f, "class Actor:Entity\n{\n");
-    for (i=1; StateActionInfo[i].fname; i++)
-    {
-    	if (!StateActionInfo[i].weapon_action)
-        {
-			fprintf(f, "\tvoid %s(void);\n", StateActionInfo[i].fname);
-        }
-    }
-	fprintf(f, "}\n\n");
-
-	fprintf(f, "class Weapon:ViewEntity\n{\n");
-    for (i=1; StateActionInfo[i].fname; i++)
-    {
-    	if (StateActionInfo[i].weapon_action)
-        {
-			fprintf(f, "\tvoid %s(void);\n", StateActionInfo[i].fname);
-        }
-    }
-	fprintf(f, "}\n\n");*/
-
 	fprintf(f, "__states__(Actor)\n{\n");
 	bool in_weapon = false;
 //	fprintf(f, "\tS_NULL {\"\", 0, -1, NULL, S_NULL}\n");//- Dehacked fails
@@ -227,14 +207,23 @@ void WriteStates(void)
 			fprintf(f, ", -1.0");
 		else
 			fprintf(f, ", %d.0 / 35.0", states[i].tics);
-//		fprintf(f, ", %s", states[i].action_num ?
-//			StateActionInfo[states[i].action_num].fname : "NULL");
 		fprintf(f, ", %s", statename[states[i].nextstate]);
-		if (states[i].misc1 || states[i].misc2)
-        {
-			fprintf(f, ", %.1f, %.1f", (float)states[i].misc1, (float)states[i].misc2);
-		}
 		fprintf(f, ") { ");
+#ifdef HEXEN
+		if (states[i].misc1)
+        {
+			fprintf(f, "SX = %.1f; ", (float)states[i].misc1);
+		}
+		if (states[i].misc2)
+        {
+			fprintf(f, "SY = %.1f; ", (float)states[i].misc2);
+		}
+#else
+		if (states[i].misc1)
+        {
+			fprintf(f, "SX = %.1f; SY = %.1f; ", (float)states[i].misc1, (float)states[i].misc2);
+		}
+#endif
 		if (states[i].action_num)
 			fprintf(f, "%s(); ", StateActionInfo[states[i].action_num].fname);
 		fprintf(f, "}\n");
@@ -753,9 +742,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/02/22 18:11:01  dj_jl
+//	Some renaming.
+//
 //	Revision 1.22  2002/02/14 19:23:07  dj_jl
 //	Renamed Entity properties to new naming style
-//
+//	
 //	Revision 1.21  2002/02/06 17:31:46  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

@@ -31,7 +31,7 @@ char* flagnames1[32] =
     "bSpecial",
     "bSolid",
     "bShootable",
-    "bNoClient",
+    "bHidden",
     "bNoBlockmap",
     "bAmbush",
     "bJustHit",
@@ -106,9 +106,12 @@ char* flagnames2[32] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/02/22 18:11:01  dj_jl
+//	Some renaming.
+//
 //	Revision 1.6  2002/02/06 17:31:46  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.5  2002/01/24 18:21:20  dj_jl
 //	Inverted passmobj flag
 //	
