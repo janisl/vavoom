@@ -21,16 +21,14 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
 #include "cl_local.h"
+
+void StopDemoLoop(void);
 
 // MACROS ------------------------------------------------------------------
 
@@ -426,7 +424,7 @@ void CL_EstablishConnection(char *host)
 	}
 	cond << "CL_EstablishConnection: connected to " << host << endl;
 	
-	cls.demosequence = -1;			// not in the demo loop now
+	StopDemoLoop();
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
 //	cls.message.Clear();
@@ -519,3 +517,14 @@ COMMAND(Say)
 }
 
 #endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:10:21  dj_jl
+//	Localizing demo loop
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -80,9 +76,6 @@ struct client_static_t
 
 	// personalization data sent to server
 	char			userinfo[MAX_INFO_STRING];
-
-	// demo loop control
-	int				demosequence;	// -1 = don't play demos
 
 	// demo recording info must be here, because record is started before
 	// entering a map (and clearing client_state_t)
@@ -257,3 +250,13 @@ extern client_static_t	cls;
 extern client_state_t	cl;
 extern TProgs			clpr;
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:10:21  dj_jl
+//	Localizing demo loop
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
