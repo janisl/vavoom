@@ -162,6 +162,12 @@ class MenuChoice_SkillNightmare:MenuChoice_SkillBaby
 
 class MenuScreenSkill:MenuScreen
 {
+	void SetDefaultChoice(void)
+	{
+		::SetDefaultChoice();
+		SetCursor(CursorPos + 2);
+	}
+
 	defaultproperties
 	{
 		Choices[0] = MenuChoice_SkillBaby;
@@ -173,7 +179,6 @@ class MenuScreenSkill:MenuScreen
 		ChoicesStartY = 40;
 		SelectorType = MenuSelector_Skull;
 		Title = "CHOOSE SKILL LEVEL:";
-		//	SetCursor(2);
 	}
 };
 
@@ -185,6 +190,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:22:16  dj_jl
+//  Some fixes for the menus.
+//
 //  Revision 1.10  2002/01/23 17:54:22  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

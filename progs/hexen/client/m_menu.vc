@@ -250,14 +250,6 @@ class MenuScreen:MenuObject
 		}
 	}
 
-	void Init(void)
-	{
-		::Init();
-		CreateTitle();
-		CreateChoices();
-		CreateSelector();
-	}
-
 	void CursorMoved(void)
 	{
 		if (CursorPrev == CursorPos)
@@ -279,6 +271,36 @@ class MenuScreen:MenuObject
 		{
 			Selector.SetPos(Items[CursorPos].GetX(), Items[CursorPos].GetY());
 		}
+	}
+
+	void SetDefaultChoice(void)
+	{
+		int i;
+
+		// default cursor position
+		CursorPos = 0;
+		CursorPrev = 0;
+
+		// force first available item to have focus
+		for (i = 0; i < NumItems; i++)
+		{
+			if (!Items[i].IsDisabled())
+			{
+				CursorPrev = -1;
+				CursorPos = i;
+				CursorMoved();
+				break;
+			}
+		}
+	}
+
+	void Init(void)
+	{
+		::Init();
+		CreateTitle();
+		CreateChoices();
+		CreateSelector();
+		SetDefaultChoice();
 	}
 
 	void SetCursor(int cursor)
@@ -472,7 +494,6 @@ MenuScreen SpawnMenu(classid CID)
 void PushMenuScreen(MenuScreen menu)
 {
 	int i;
-	MenuObject item;
 
 	// avoid stacking menus invoked by hotkeys
 	for (i = 0; i < menu_sp; i++)
@@ -508,23 +529,6 @@ void PushMenuScreen(MenuScreen menu)
 	}
 
 	CurrentMenuScreen = menu;
-
-	// default cursor position
-	menu.CursorPos = 0;
-	menu.CursorPrev = 0;
-
-	// force first available item to have focus
-	for (i = 0; i < menu.NumItems; i++)
-	{
-		item = menu.Items[i];
-		if (!item.IsDisabled())
-		{
-			menu.CursorPrev = -1;
-			menu.CursorPos = i;
-			menu.CursorMoved();
-			break;
-		}
-	}
 }
 
 //==========================================================================
@@ -1077,137 +1081,6 @@ class MenuChoiceSlider:MenuChoice
 
 //**************************************************************************
 //**
-//**	MenuControlKey
-//**
-//**************************************************************************
-
-class MenuControlKey;
-
-MenuControlKey CurrentCtl;
-int ControlColumn;	// menu column for controls
-
-void ControlResponse(int key);
-
-class MenuControlKey:MenuChoice
-{
-	string Text;
-	string CommandOn;
-	string CommandOff;
-
-	void Draw(void)
-	{
-		int key1;
-		int key2;
-		int name_buf[32 / 4];
-		string Name = ARR2STR(name_buf);
-
-//	if (is_active)
-//	{
-//		T_SetAlign(hleft, vtop);
-//		T_DrawText(x + 2 + ControlColumn * 90, y, ">");
-//	}
-		T_SetFont(font_small);
-		if (bSelected)
-		{
-			T_SetFont(font_yellow);
-		}
-		T_SetAlign(hright, vtop);
-		T_DrawText(X, Y, Text);
-
-		IN_GetBindingKeys(CommandOn, &key1, &key2);
-
-		T_SetAlign(hleft, vtop);
-		if (key1 >= 0)
-		{
-			KeyNameForNum(key1, Name);
-			T_DrawText(X + 10, Y, Name);
-		}
-		else
-		{
-			T_DrawText(X + 10, Y, "---");
-		}
-		if (key2 >= 0)
-		{
-			KeyNameForNum(key2, Name);
-			T_DrawText(X + 100, Y, Name);
-		}
-		else
-		{
-			T_DrawText(X + 100, Y, "---");
-		}
-	}
-
-	boolean Key(int key)
-	{
-		int key1;
-		int key2;
-
-		switch (key)
-		{
-		case K_LEFTARROW:
-			ControlColumn = 0;
-			return true;
-
-		case K_RIGHTARROW:
-			ControlColumn = 1;
-			return true;
-
-		case K_ENTER:
-		case K_MOUSE1:
-			CurrentCtl = self;
-			MB_StartMessage("Press new key\n\nESC to cancel",
-				ControlResponse, false);
-			return true;
-
-		case K_BACKSPACE:
-			IN_GetBindingKeys(CommandOn, &key1, &key2);
-			if (ControlColumn == 0)
-				IN_SetBinding(key1, "", "");
-			if (ControlColumn == 1)
-				IN_SetBinding(key2, "", "");
-			return true;
-		}
-		return false;
-	}
-
-	defaultproperties
-	{
-	}
-}
-
-//==========================================================================
-//
-//  ControlResponse
-//
-//==========================================================================
-
-void ControlResponse(int key)
-{
-	string kb_down;
-	string kb_up;
-	int key1;
-	int key2;
-
-	if (key != K_ESCAPE)
-	{
-		kb_down = CurrentCtl.CommandOn;
-		kb_up = CurrentCtl.CommandOff;
-		IN_GetBindingKeys(kb_down, &key1, &key2);
-		if (ControlColumn == 0)
-		{
-			IN_SetBinding(key1, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-		if (ControlColumn == 1)
-		{
-			IN_SetBinding(key2, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-	}
-}
-
-//**************************************************************************
-//**
 //**	Slot for saves and input lines
 //**
 //**************************************************************************
@@ -1568,6 +1441,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/06 17:22:18  dj_jl
+//  Some fixes for the menus.
+//
 //  Revision 1.16  2002/01/28 18:46:20  dj_jl
 //  Some fixes, beautification
 //

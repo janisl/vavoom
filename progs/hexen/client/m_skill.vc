@@ -79,7 +79,12 @@ class MenuScreenFighterSkill:MenuScreen
 			newChoice.PClass = PClass;
 			newChoice.SkillLevel = i;
 		}
-//		SetCursor(2);
+	}
+
+	void SetDefaultChoice(void)
+	{
+		::SetDefaultChoice();
+		SetCursor(CursorPos + 2);
 	}
 
 	defaultproperties
@@ -155,6 +160,9 @@ void menu_skill3(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/06 17:22:18  dj_jl
+//  Some fixes for the menus.
+//
 //  Revision 1.10  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //
