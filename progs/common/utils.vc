@@ -87,7 +87,7 @@ int MapBlock(float val)
 //
 //==========================================================================
 
-float MobjDist(mobj_t * mo1, mobj_t * mo2)
+float MobjDist(base_mobj_t * mo1, base_mobj_t * mo2)
 {
 	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
@@ -98,7 +98,7 @@ float MobjDist(mobj_t * mo1, mobj_t * mo2)
 //
 //==========================================================================
 
-float MobjDist2(mobj_t * mo1, mobj_t * mo2)
+float MobjDist2(base_mobj_t * mo1, base_mobj_t * mo2)
 {
 	TVec dir;
 
@@ -359,55 +359,6 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 
 //==========================================================================
 //
-//  misc_static_light
-//
-//==========================================================================
-
-class misc_static_light:mobj_t
-{
-	void OnMapSpawn(mthing_t * mthing)
-	{
-		float l;
-
-		RemoveMobjThinker(this);
-		if (!mthing->arg1)
-			l = 200.0;
-		else
-			l = itof(mthing->arg1) * 8.0;
-		AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
-	}
-};
-
-//==========================================================================
-//
-//  misc_static_rgb_light
-//
-//==========================================================================
-
-class misc_static_rgb_light:mobj_t
-{
-	void OnMapSpawn(mthing_t * mthing)
-	{
-		float l;
-
-		RemoveMobjThinker(this);
-		if (!mthing->arg1)
-			l = 200.0;
-		else
-			l = itof(mthing->arg1) * 8.0;
-		AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
-			RGB(mthing->arg2, mthing->arg3, mthing->arg4));
-	}
-};
-
-__mobjinfo__
-{
-	MT_STATIC_LIGHT { 1502, misc_static_light }
-	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
-}
-
-//==========================================================================
-//
 //  RunThink
 //
 //==========================================================================
@@ -446,6 +397,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/10/09 17:38:36  dj_jl
+//  Got rid of mobj addfields
+//
 //  Revision 1.8  2001/10/02 17:42:37  dj_jl
 //  Possibility to declare function's code inside class declaration
 //

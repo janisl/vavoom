@@ -332,15 +332,7 @@ struct base_level_t
 
 #ifdef SERVER
 
-struct player_t;
-class mobj_t;
-
-typedef void (*mobj_func_t) (mobj_t *);
-typedef boolean(*thing_iter_func_t) (mobj_t *);
 typedef boolean(*line_iter_func_t) (line_t *);
-
-// Weapon info: sprite frames, ammunition use.
-typedef void (*weapon_func_t) (player_t *);
 
 //==========================================================================
 //
@@ -421,6 +413,14 @@ class Thinker
 //
 //==========================================================================
 
+#define mobj_t	Actor
+
+struct player_t;
+class mobj_t;
+
+typedef void (*mobj_func_t) (mobj_t *);
+typedef boolean(*thing_iter_func_t) (mobj_t *);
+
 struct state_t
 {
 	int sprite;
@@ -442,7 +442,7 @@ struct mobjinfo_t
 };
 
 // Map Object definition.
-class mobj_t:Thinker
+class base_mobj_t:Thinker
 {
 	// Info for drawing: position.
 	TVec origin;
@@ -485,9 +485,6 @@ class mobj_t:Thinker
 	// If == validcount, already checked.
 	int validcount;
 
-	int type;
-
-	int damage;	// For missiles
 	int flags;
 	int flags2;	// Heretic flags
 	int health;
@@ -495,10 +492,6 @@ class mobj_t:Thinker
 	// For movement checking.
 	float radius;
 	float height;
-
-	// Thing being chased/attacked (or NULL),
-	// also the originator for missiles.
-	mobj_t *target;
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
@@ -509,17 +502,6 @@ class mobj_t:Thinker
 	int args[5];	// special arguments
 
 	int netID;
-
-	//  128 integers for user defined fields in PROGS
-	addfields 128;
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-
-	void OnMapSpawn(mthing_t *mthing)
-	{
-	}
 }
 
 //==========================================================================
@@ -630,6 +612,9 @@ struct player_t
 	//  128 integers for user defined fields in PROGS
 	addfields 128;
 };
+
+// Weapon info: sprite frames, ammunition use.
+typedef void (*weapon_func_t) (player_t *);
 
 //==========================================================================
 //
@@ -957,6 +942,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/10/09 17:38:36  dj_jl
+//  Got rid of mobj addfields
+//
 //  Revision 1.13  2001/10/08 17:23:15  dj_jl
 //  Different client and server level structures
 //
