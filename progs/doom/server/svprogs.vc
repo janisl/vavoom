@@ -68,6 +68,8 @@
 #include "enemy.vc"
 #include "cheat.vc"
 
+#include "bot.vc"
+
 #include "zombiemn.vc"
 #include "shotguy.vc"
 #include "imp.vc"
@@ -93,6 +95,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.9  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

@@ -1,0 +1,2022 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int botskill = 2;
+
+// CODE --------------------------------------------------------------------
+
+/*
+
+  This section contains the main bot AI. The
+  main bot AI loop, B_Think, is called every tic.
+  Also included are various bot decision-making
+  procedures, such as B_CheckStuff and B_SetEnemy.
+
+*/
+
+//==========================================================================
+//
+//	BotPlayer::Think
+//
+//  Main bot function
+//
+//==========================================================================
+
+void BotPlayer::Think(void)
+{
+	botmo = *player->mo;
+
+	player->forwardmove = 0.0;
+	player->sidemove = 0.0;
+	player->flymove = 0.0;
+	player->buttons = 0;
+
+	// Don't do anything if we're talking
+//	if (B_Chat(bot))
+//		return;
+
+	// We're dead, so hit space to respawn
+	if (!player->health)
+	{
+		player->buttons |= BT_USE;
+		return;
+	}
+
+#if 0
+	// Fix me: No other talking period while pissed/frustrated
+	if (!(level.time & 0xff) && !bot->enemy && !bot->t_pissed && !bot->t_frust)
+	{
+		int x = P_Random (pr_botchat) % 100;
+
+		if (x < bot->info.chatty)
+		{
+			if (x)
+			{
+				x = P_Random (pr_botchat)%10;
+				bot->chatline = &chatinfo[bot->info.chatinfo].roam[x];
+				bot->t_chat = bot->info.chattime;
+			}
+			else	// 1/100 chance this'll happen
+			{
+				// Rare chat strings. WHOO!!!!!
+				x = P_Random (pr_botchat)%5;
+				bot->chatline = &chatinfo[bot->info.chatinfo].rare[x];
+				bot->t_chat = bot->info.chattime;
+			}
+		}
+
+	}
+
+	// Periodically let out some anger
+	if (!(level.time & 0xff))
+	{
+		if (bot->angerlevel)
+			bot->angerlevel--;
+		else if (bot->angerlevel < 0)
+			bot->angerlevel = 0;
+	}
+
+	// Set an ally if we're in a mode that has one
+	if (teamgame.value || teamplay.value || !deathmatch.value)
+		bot->ally = B_SetAlly (bot);
+	else
+		bot->ally = NULL;
+	
+	if (teamgame.value)
+	{
+		B_SetAction (bot);
+		B_SetGoal (bot);
+	}
+#endif
+
+	// Weed out any bad destinations/enemies
+	CheckStuff();
+
+	// Destination setting...
+	SetEnemy();
+	Scan();
+
+	// Turning towards destination...
+	BotAim();
+	Turn();
+
+	// Moving towards destination
+	Attack();
+	Move();
+
+	Pitch();
+
+	// Only walk if we're on skill 0
+	if (!botskill)
+	{
+		if (forwardmove == FORWARDRUN)
+			forwardmove = FORWARDWALK;
+		if (forwardmove == -FORWARDRUN)
+			forwardmove = -FORWARDWALK;
+		if (sidemove == SIDERUN)
+			sidemove = SIDEWALK;
+		if (sidemove == -SIDERUN)
+			sidemove = -SIDEWALK;
+	}
+
+	player->sidemove = sidemove;
+	player->forwardmove = forwardmove;
+
+#define DECT(var) \
+	var -= frametime; \
+	if (var <= 0.0) \
+	{ \
+		var = 0.0; \
+	}
+	DECT(t_react)
+//	DECT(t_fight)
+//	DECT(t_rocket)
+//	DECT(t_turn)
+//	DECT(t_pissed)
+//	DECT(t_frust)
+//	DECT(t_fire)
+	DECT(t_anticip)
+#undef DECT
+}
+
+//==========================================================================
+//
+//	BotPlayer::AngleTo
+//
+//==========================================================================
+
+float BotPlayer::AngleTo(TVec dest)
+{
+	TVec dir;
+	TAVec ang;
+
+	dir = dest - botmo.origin;
+	VectorAngles(&dir, &ang);
+	return ang.yaw;
+}
+
+//==========================================================================
+//
+//	BotPlayer::CheckItem
+// 
+//	Determines if we should bother picking up an item or not
+//
+//==========================================================================
+
+boolean BotPlayer::CheckItem(Entity item)
+{
+	int weapon;
+	int ammo;
+
+	newItemIsWeapon = false;
+	newItemIsPowerup = false;
+//?????
+    if (!item)
+		return false;
+	if (!(item.flags & MF_SPECIAL))
+		return false;
+
+	weapon = WeapFromItem(item);
+	if (weapon != -1)
+	{
+		newItemIsWeapon = true;
+
+		// If we don't have the weapon, pick it up
+		if (!player->weaponowned[weapon])
+			return true;
+
+		// If we have no more room for the ammo it gives
+		if (player->ammo[weapon_ammo_type[weapon]] ==
+				maxammo[weapon_ammo_type[weapon]])
+			return false;
+
+		// Can't pick it up because we have it and it's not a dropped weapon
+		if (!(item.flags & MF_DROPPED))
+			return false;
+	}
+
+	ammo = AmmoFromItem(item);
+	if (ammo != -1)
+	{
+		// If we have no more room for the ammo it gives
+		if (player->ammo[ammo] >= maxammo[ammo])
+			return false;
+	}
+
+	if ((item.type == MT_MISC10 || item.type == MT_MISC11) &&
+		(botmo.health >= MAXHEALTH))
+		return false;
+	if ((item.type == MT_MISC12 || item.type == MT_MEGA) &&
+		(botmo.health >= 2 * MAXHEALTH))
+		return false;
+	if (item.type == MT_MISC0 && (player->armorpoints >= 100))
+		return false;
+	if ((item.type == MT_MISC1 || item.type == MT_MEGA) &&
+		(player->armorpoints >= 200))
+		return false;
+#if 0
+	if (teamgame.value && item->flags3 & MF3_KEY && !(item->flags & MF_DROPPED))
+		return false;
+#endif
+
+	// Guess we're okay
+	return true;
+}
+
+//==========================================================================
+//
+//	BotPlayer::SetEnemy
+//
+//==========================================================================
+
+void BotPlayer::SetEnemy(void)
+{
+#if 0
+	if (terminator.value)
+	{
+		// If we can see the terminator, go for him no matter what
+		for (int i=0; i<MAXPLAYERS; i++)
+		{
+			if (!playeringame[i] || players[i].mo == bot->player->mo)
+				continue;
+
+			if (players[i].powers[pw_terminator] &&
+				P_CheckSight (bot->player->mo, players[i].mo))
+				bot->enemy = players[i].mo;
+		}
+	}
+#endif
+
+	if (enemy && enemy.health > 0 && player->mo &&
+		P_CheckSight(player->mo, &enemy))
+	{
+		return;
+	}
+
+	allround = !!enemy;
+	enemy = FindEnemy();
+
+	if (!enemy)
+		return;
+	
+	// Double check the validity of the enemy
+	if (!(enemy.flags & MF_SHOOTABLE))
+		enemy = none;
+}
+
+//==========================================================================
+//
+//	BotPlayer::CheckTo
+//
+//	Checks if an location is reachable
+//
+//==========================================================================
+
+boolean BotPlayer::CheckTo(TVec pos)
+{
+	float dist;
+	float an;
+
+	dist = Length(botmo.origin - pos);
+	an = GetAngle();
+
+	if (!CheckPath(an, dist))
+		return false;
+	
+	return true;
+}
+
+//==========================================================================
+//
+//	BotPlayer::CheckStuff
+//
+//	Make sure that our destinations/enemies and everything are valid.
+//
+//==========================================================================
+
+void BotPlayer::CheckStuff(void)
+{
+	if (item)
+	{
+		if (!(item.flags & MF_SPECIAL) || item.destroyed || // somebody picked
+				!CheckTo(item.origin)) // Can't reach
+			item = none;
+	}
+
+	if (missile)
+	{
+		if (!(missile.flags & MF_MISSILE) || missile.destroyed)
+			missile = none;
+	}
+
+	if (node)
+	{
+		if (!CheckTo(node.origin) ||
+			(MobjDist2(&botmo, &node) < botmo.radius))
+		{
+			prev = node;
+			node = none;
+		}
+	}
+
+	if (posdest_valid)
+	{
+		TVec dir;
+		dir = posdest - botmo.origin;
+		dir.z = 0.0;
+		if ((Length(dir) < botmo.radius) || !CheckTo(posdest))
+		{
+			posdest_valid = false;
+		}
+	}
+
+	if (lastpos_valid)
+	{
+		TVec dir;
+		dir = lastpos - botmo.origin;
+		dir.z = 0.0;
+		if ((Length(dir) < botmo.radius) || !CheckTo(lastpos))
+		{
+			lastpos_valid = false;
+		}
+	}
+
+	if (enemy)
+	{
+		if (enemy.health <= 0 || !(enemy.flags & MF_SHOOTABLE))
+			enemy = none;
+	}
+}
+
+#if 0
+//
+// B_ChooseWeapon
+//
+// Decide which weapon would be best to use in out situation
+weapontype_t B_ChooseWeapon (skullb_s *bot)
+{
+	player_t *player = bot->player;
+	AActor *mo = bot->player->mo;
+	AActor *enemy = bot->enemy;
+	fixed_t dist;
+
+	if (!enemy)
+		return player->readyweapon;
+
+	dist = P_AproxDistance (mo->x - enemy->x, mo->y - enemy->y);
+
+	if (dist <= MELEERANGE)
+	{
+		if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] >= 2)
+			return wp_supershotgun;
+
+		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+			return wp_plasma;
+
+		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+			return wp_railgun;
+
+		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip] >= 20)
+			return wp_chaingun;
+
+		if (player->powers[pw_strength])
+			return wp_fist;
+
+		if (player->weaponowned[wp_chainsaw])
+			return wp_chainsaw;
+
+		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+			return wp_shotgun;
+
+		// Didn't find anything good
+		return player->readyweapon;
+	}
+
+	else if (dist <= 512*FRACUNIT)
+	{
+		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+			return wp_plasma;
+
+		if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] >= 2)
+			return wp_supershotgun;
+
+		if (player->weaponowned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
+			return wp_grenlauncher;
+
+		if (player->weaponowned[wp_missile] && player->ammo[am_misl] >= 2)
+			return wp_missile;
+
+		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+			return wp_railgun;
+
+		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip])
+			return wp_chaingun;
+
+		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+			return wp_shotgun;
+
+		return player->readyweapon;
+	}
+
+	else
+	{
+		if (player->weaponowned[wp_railgun] && player->ammo[am_cell] >= 10)
+			return wp_railgun;
+
+		if (player->weaponowned[wp_chaingun] && player->ammo[am_clip])
+			return wp_chaingun;
+
+		if (player->weaponowned[wp_shotgun] && player->ammo[am_shell])
+			return wp_shotgun;
+
+		if (player->weaponowned[wp_plasma] && player->ammo[am_cell] >= 20)
+			return wp_plasma;
+
+		if (player->weaponowned[wp_missile] && player->ammo[am_misl] >= 2)
+			return wp_missile;
+
+		if (player->weaponowned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
+			return wp_grenlauncher;
+
+		return player->readyweapon;
+	}
+
+	return player->readyweapon;
+}
+#endif
+
+//==========================================================================
+//
+//	BotPlayer::Scan
+//
+//	Scan all mobj's visible to the bot for incoming missiles, enemies, and
+// various items to pick up.
+//
+//==========================================================================
+
+void BotPlayer::Scan(void)
+{
+	Entity actor;
+
+	for (actor = *NextMobj(NULL); actor; actor = *NextMobj(&actor))
+	{
+		if (!(actor.flags & (MF_SPECIAL | MF_MISSILE)))
+		{
+			// Not interested in this one
+			continue;
+		}
+		if (Check_LOS(actor, 90.0))
+		{
+			// Look for special items
+			if (!item && actor.flags & MF_SPECIAL)
+			{
+				if (CheckItem(actor))
+				{
+					item = actor;
+					itemIsWeapon = newItemIsWeapon;
+					itemIsPowerup = newItemIsPowerup;
+				}
+			}
+			else if (!missile && actor.flags & MF_MISSILE &&
+				(MobjDist(&botmo, &actor) < AVOID_DIST))
+			{
+				missile = actor;
+			}
+#if 0
+			else if (!bot->node && actor->flags3 & MF3_NODE)// && P_CheckSight (mo, actor, false) && (bot->prev != actor && P_AproxDistance (mo->x - actor->x, mo->y - actor->y) <= 32*FRACUNIT))
+			{
+				// Note: Debug messages are fun!
+				if (players[consoleplayer].camera == mo)
+					Printf (PRINT_HIGH, "Spotted a node\n");
+				if (actor->type == MT_BOTPATH || actor->type == MT_BOTSNIPE)
+					bot->node = actor;
+				else if (teamgame.value && bot->player->team != TM_NONE)
+				{
+					if (bot->player->team == TM_BLUE)
+					{
+						if (bot->state == BST_DEFENSE && ((int)actor->type == (int)MT_BOTBLUEGUARD))
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Blue defense node\n");
+							bot->node = actor;
+						}
+						else if (bot->state == BST_OFFENSE && ((int)actor->type == (int)MT_BOTBLUEPATH))
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Blue offense node\n");
+							bot->node = actor;
+						}
+						else if (bot->state == BST_RETURN && actor->type == MT_BOTBLUEGOAL)
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Blue return node\n");
+							bot->node = actor;
+						}
+					}
+					if (bot->player->team == TM_RED)
+					{
+						if (bot->state == BST_DEFENSE && ((int)actor->type == (int)MT_BOTREDGUARD))
+	
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Red defense node\n");
+							bot->node = actor;
+						}
+						else if (bot->state == BST_OFFENSE && ((int)actor->type == MT_BOTREDPATH))
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Red offense node\n");
+							bot->node = actor;
+						}
+						else if (bot->state == BST_RETURN && ((int)actor->type == MT_BOTREDGOAL))
+						{
+							if (players[consoleplayer].camera == mo)
+								Printf (PRINT_HIGH, "Red return node\n");
+							bot->node = actor;
+						}
+					}
+				}
+			}
+#endif
+		}
+	}
+}
+
+#if 0
+//
+// B_Chat
+//
+
+// Tic down bot's typing time, and say our message if we're done
+bool B_Chat (skullb_s *bot)
+{
+	// Chat ticker
+	if (bot->t_chat)
+	{
+		if (!bot->chatline || !bot->chatline->string || !botchat.value)
+		{
+			bot->t_chat = 0;
+			bot->player->icon = NULL;
+			return false;
+		}
+		else
+			bot->t_chat--;
+
+		// Chat time has expired, time to say our line
+		if (!bot->t_chat)
+		{
+			int plyrnum = bot->player - players;
+			Net_Command (DEM_SAY, 0, bot->chatline->string, plyrnum);
+
+			// Handle responses
+			for (int i=0; i<MAXPLAYERS; i++)
+			{
+				if (!players[i].skullb || !playeringame[i])
+					continue;
+				if ((bot->info.chatinfo != CT_NONE) && (bot->chatline->bot == players[i].skullb->info.chatinfo))
+				{
+					players[i].skullb->chatline = bot->chatline->line;
+					players[i].skullb->t_chat = players[i].skullb->info.chattime;
+				}
+			}
+			bot->chatline = NULL;
+		}
+		
+		// Don't do anything while "typing"
+		return true;
+
+	}
+
+	return false;
+}
+
+/*
+
+  This section of code contains the console commands
+  related to the bots, such as "addbot" and "removebot".
+  It also contains a console command that displays all
+  of the bot path nodes on the level, which can be particularly
+  helpful for developers, and for people who need to pay
+  close attention to their movement.
+
+*/
+
+// Returns true if a given bot name is valid
+BOOL B_CheckName (char *name)
+{
+	if (!name)
+		return true;
+	else
+	{
+		for (int i=0; i<NUMTOTALBOTS; i++)
+			if (!stricmp (botinfo[i].name, name))
+				return true;
+		return false;
+	}
+}
+#endif
+
+//==========================================================================
+//
+//	BotPlayer::SkillLower
+//
+//==========================================================================
+
+int BotPlayer::SkillLower(int skill, int num)
+{
+	if (num <= 0)
+		return skill;
+
+	skill -= num;
+	if (skill < 0)
+		skill = 0;
+
+	return skill;
+}
+
+//==========================================================================
+//
+//	BotPlayer::SetAngle
+//
+//==========================================================================
+
+void BotPlayer::SetAngle(float an)
+{
+//	if (t_turn)
+//		return;
+
+	angle = AngleMod360(an);
+
+#if 0//Meaningless
+	if (!enemy)
+		return;
+
+	t_turn = 4;
+	return;
+
+	switch (info.accuracy)
+	{
+	case bsk_verypoor:
+	case bsk_poor:
+		t_turn = TICRATE;
+		break;
+	case bsk_low:
+		t_turn = (TICRATE*2)/3;
+		break;
+	case bsk_medium:
+		t_turn = TICRATE/2;
+		break;
+	case bsk_high:
+		t_turn = TICRATE/4;
+		break;
+	case bsk_excellent:
+		t_turn = 4;
+		break;
+	case bsk_supreme:
+		break;
+	}
+#endif
+}
+
+//==========================================================================
+//
+//	BotPlayer::GetAngle
+//
+//==========================================================================
+
+float BotPlayer::GetAngle(void)
+{
+	return angle;
+}
+
+//==========================================================================
+//
+//	BotPlayer::WeapFromItem
+//
+//	Returns a weapon type from an actor
+//
+//==========================================================================
+
+int BotPlayer::WeapFromItem(Entity item)
+{
+	switch (item.type)
+	{
+	case MT_CHAINGUN:
+		return wp_chainsaw;
+	case MT_SHOTGUN:
+		return wp_shotgun;
+	case MT_SUPERSHOTGUN:
+		return wp_supershotgun;
+	case MT_CHAINGUN:
+		return wp_chaingun;
+	case MT_MISC27:
+		return wp_missile;
+	case MT_MISC28:
+		return wp_plasma;
+	case MT_MISC25:
+		return wp_bfg;
+	}
+	return -1;
+}
+
+//==========================================================================
+//
+//	BotPlayer::AmmoFromItem
+//
+//
+// Returns an ammo type from an actor
+//
+//==========================================================================
+
+int BotPlayer::AmmoFromItem(Entity item)
+{
+	switch (item.type)
+	{
+	case MT_CLIP:
+	case MT_MISC17:
+		return am_clip;
+	case MT_MISC22:
+	case MT_MISC23:
+		return am_shell;
+	case MT_MISC18:
+	case MT_MISC19:
+		return am_misl;
+	case MT_MISC20:
+	case MT_MISC21:
+		return am_cell;
+	}
+	return -1;
+}
+
+//==========================================================================
+//
+//	IsDangerous
+//
+//	Checks if a sector is dangerous.
+//
+//==========================================================================
+
+boolean IsDangerous(sector_t *sec)
+{
+	int special = sec->special & ~SECRET_MASK;
+
+	switch (special)
+	{
+		case 64 + 5:
+		case 64 + 7:
+		case 64 + 16:
+		case 64 + 4:
+		case 64 + 11:
+			return true;
+		default:
+			// [RH] Ignore unknown specials
+			break;
+	}
+	switch (special & DAMAGE_MASK)
+	{
+		case 0x100: // 2/5 damage per 31 ticks
+		case 0x200: // 5/10 damage per 31 ticks
+		case 0x300: // 10/20 damage per 31 ticks
+			return true;
+		default:
+			break;
+	}
+
+//	if (sec->damage)
+//		return true;
+
+	return false;
+}
+
+//==========================================================================
+//
+//	PTR_BotPathTraverse
+//
+//	[BC] For the bots
+//
+//==========================================================================
+
+float bottracerange;
+TVec bottracedir;
+
+boolean PTR_BotPathTraverse(intercept_t *in)
+{
+	Entity th;
+	line_t *ld;
+	BotPlayer bot;
+	Entity botmo;
+	TVec hit_point;
+
+	bot = usething->player->Bot;
+	botmo = *usething;
+
+	if (in->isaline)
+	{
+		sector_t *back;
+		sector_t *front;
+		opening_t *open;
+		float diffheight;
+
+		ld = in->line;					// This linedef
+		hit_point = botmo.origin + (bottracerange * in->frac) * bottracedir;
+
+		// Line is impassible
+		if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
+			return false;
+
+		// Line isn't two sided
+		if (!ld->backsector)
+			return false;
+
+		if (!PointOnPlaneSide(botmo.origin, ld))
+		{
+			back = ld->backsector;
+			front = ld->frontsector;
+		}
+		else
+		{
+			back = ld->frontsector;
+			front = ld->backsector;
+		}
+
+		// Sector is dangerous
+		if (IsDangerous(back))
+			return false;
+
+		// crosses a two sided line
+		open = LineOpenings(ld, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + botmo.height);
+		// No valid openings
+		if (!open)
+		{
+			return false;
+		}
+
+		// No cliff jumping unless we're going after something
+		if ((front->floorheight - back->floorheight) > 32.0 && !bot.enemy)
+		{
+			return false;
+		}
+
+		diffheight = back->floorheight - front->floorheight;
+		
+		if (diffheight > 0.0)
+		{
+			if (diffheight > 48.0)
+			{
+/*				if (front->SSpecial == ThrustThingZ || front->springpadzone)
+				{
+					if (bot->player - players == displayplayer && netstate != NS_SERVER)
+						Printf (PRINT_HIGH, "B_CheckPath: Bouncy sector, should be okay\n");
+					return true;
+				}
+				else*/
+					return false;
+			}
+			else if (diffheight <= 48.0 && diffheight >= 24.0)
+			{
+				bot.player->buttons |= BT_JUMP;
+			}
+		}
+
+		return true;
+	}
+
+	th = *in->thing;
+
+	if (th == botmo)
+		return true;
+
+	if (th.flags & MF_SOLID)
+		return false;
+
+/*	fixed_t diffheight = (th->z + th->height) - shootthing->z;
+
+	if (diffheight > 0)
+	{
+		if (diffheight <= 48*FRACUNIT && diffheight >= 24*FRACUNIT)
+		{
+			bot->player->cmd.ucmd.buttons |= BT_JUMP;
+			return true;
+		}
+		else if (diffheight <= 24*FRACUNIT)
+			return true;
+		else
+			return false;
+				
+	}
+*/
+	return true;
+}
+
+//==========================================================================
+//
+//	BotPlayer::CheckPath
+//
+//	Checks for obstructions at a certain angle and distance. Returns true if
+// the path is clear, and false is the path is blocked.
+//
+//==========================================================================
+
+boolean BotPlayer::CheckPath(float ang, float dist)
+{
+	float x1, y1, x2, y2;
+
+	bottracerange = dist;
+	bottracedir.x = cos(ang);
+	bottracedir.y = sin(ang);
+	bottracedir.z = 0.0;
+	x1 = botmo.origin.x;
+	y1 = botmo.origin.y;
+ 	x2 = x1 + dist * bottracedir.x;
+ 	y2 = y1 + dist * bottracedir.y;
+	usething = &botmo;
+
+	P_UseLines(player);
+
+	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_BotPathTraverse))
+		return false;
+	else
+		return true;
+}
+
+//==========================================================================
+//
+//	BotPlayer::Check_LOS
+//
+//	Doesnt check LOS, checks visibility with a set view angle.
+//	B_Checksight checks LOS (straight line)
+//
+//	Check if mo1 has free line to mo2 and if mo2 is within mo1 viewangle
+// (vangle) given with normal degrees. If these conditions are true, the
+// function returns true. GOOD TO KNOW is that the players view angle in
+// doom is 90 degrees infront.
+//
+//==========================================================================
+
+boolean BotPlayer::Check_LOS(Entity to, float vangle)
+{
+	if (!P_CheckSight(&botmo, &to))
+		return false; // out of sight
+	if (vangle == 360.0)
+		return true;
+	if (vangle == 0.0)
+		return false; //Looker seems to be blind.
+
+	return fabs(AngleMod180(AngleTo(to.origin) - botmo.angles.yaw)) <=
+		vangle / 2.0;
+}
+
+#if 0
+//
+// B_SetAction
+//
+// Decide what to do in teamgame (defend, whatever)
+//
+void B_SetAction (skullb_s *bot)
+{
+	AActor *mo = bot->player->mo;
+	int defenders = 0;
+	int attackers = 0;
+
+	if (bot->player->team == TM_NONE)
+		return;
+
+	if (bot->state == BST_NOTHING)
+	{
+		return;
+
+		// Let's see what the other bots on our
+		// team are doing, and decide our action based
+		// off of that
+		for (int i=0; i<MAXPLAYERS; i++)
+		{
+			if (playeringame[i] && players[i].mo->IsTeammate (mo) && players[i].skullb)
+			{
+				if (players[i].skullb->state == BST_OFFENSE)
+					attackers++;
+				if (players[i].skullb->state == BST_DEFENSE)
+					defenders++;
+			}
+		}
+
+		// Defense wins championships...
+		if (defenders <= attackers)
+			bot->state = BST_DEFENSE;
+		else
+			bot->state = BST_OFFENSE;
+	}
+}
+
+void B_SetGoal (skullb_s *bot)
+{
+	return;
+
+	AActor *mo = bot->player->mo;
+	AActor *actor;
+
+	if (bot->player->team == TM_NONE)
+		return;
+
+	TThinkerIterator<AActor> iterator;
+
+	while ((actor = iterator.Next ()) && !bot->goal)
+	{
+		if (bot->state == BST_OFFENSE)
+		{
+			if (actor->type == teams[bot->player->team].theirs)
+				bot->goal = actor;
+		}
+		else if (bot->state == BST_RETURN)
+		{
+			if (actor->type == teams[bot->player->team].ours)
+				bot->goal = actor;
+		}
+	}
+}
+
+//This function is called every
+//tick (for each bot) to set
+//the mate (teammate coop mate).
+AActor *B_SetAlly (skullb_s *bot)
+{
+	return NULL;
+	
+	fixed_t closest_dist, test;
+	AActor *target;
+	bool p_leader[MAXPLAYERS];
+
+	//is mate alive?
+	if (bot->ally)
+	{
+		if (!bot->ally->health)
+			bot->ally = NULL;
+		else
+		{
+			bot->last_mate = bot->ally;
+			return bot->ally;
+		}
+	}
+
+	//Check old_mates status.
+	if (bot->last_mate)
+		if (!bot->last_mate->health)
+			bot->last_mate = NULL;
+
+	for (int i=0; i<MAXPLAYERS; i++)
+	{
+		if (!playeringame[i] || !players[i].team || i == consoleplayer)
+			continue;
+		if (players[i].team == bot->player->team)
+		{
+			bot->ally = players[i].mo;
+			break;
+		}
+
+		p_leader[i] = false;
+		for (int j=0; j<MAXPLAYERS; j++)
+		{
+			if (players[j].skullb->ally == players[i].mo)
+			{
+				p_leader[i] = true;
+				break;
+			}
+		}
+	}
+
+	target = NULL;
+	closest_dist = MAXINT;
+
+	//Check for player friends
+	for (i=0; i<MAXPLAYERS; i++)
+	{
+		if (playeringame[i]
+			&& players[i].mo
+			&& bot->player->mo != players[i].mo
+			&& (bot->player->mo->IsTeammate (players[i].mo) || !deathmatch.value)
+			&& players[i].mo->health
+			&& ((bot->player->health/2) <= players[i].mo->health || !deathmatch.value)
+			&& !p_leader[i]) //taken?
+		{
+
+			if (P_CheckSight (bot->player->mo, players[i].mo, true))
+			{
+				test = P_AproxDistance (players[i].mo->x - bot->player->mo->x,
+										players[i].mo->y - bot->player->mo->y);
+
+				if (test < closest_dist)
+				{
+					closest_dist = test;
+					target = players[i].mo;
+				}
+			}
+		}
+	}
+
+	return target;
+}
+#endif
+
+//==========================================================================
+//
+//	BotPlayer::BotAim
+//
+//==========================================================================
+
+void BotPlayer::BotAim(void)
+{
+	float dist;
+	boolean right;
+	float an;
+
+	if (!enemy)
+		return;
+
+	if (t_react)
+		return;
+
+	// Distance to enemy.
+	dist = MobjDist2(&botmo, &enemy);
+
+	right = !!(P_Random() & 1);
+	an = AngleTo(enemy.origin);
+
+	// [BC] Cajun prediction... maybe use this somewhere
+	/*
+			{
+			//Here goes the prediction.
+			dist = P_AproxDistance (mo->x - enemy->x, mo->y - enemy->y);
+			fixed_t m = (dist/FRACUNIT) / mobjinfo[MT_PLASMA].speed;
+			bot->SetAngle (R_PointToAngle2 (mo->x,
+											mo->y,
+											enemy->x + FixedMul (enemy->momx, (m*2*FRACUNIT)),
+											enemy->y + FixedMul (enemy->momy, (m*2*FRACUNIT))));
+			}
+	*/
+
+	// Fix me: Implement botskill, accuracy, and intelligence
+	switch (player->readyweapon)
+	{
+		// Splash weapons
+	case wp_missile:
+//	case wp_grenlauncher:
+//		bot->SetAngle (R_PointToAngle2 (mo->x, mo->y, enemy->x, enemy->y));
+//		break;
+
+		// Projectile weapons
+	case wp_plasma:
+		switch (info.intelect)
+		{
+		case bsk_verypoor:
+		case bsk_poor:
+		case bsk_low:
+			// Aim right at the enemy
+			SetAngle(an);
+			break;
+		case bsk_medium:
+		case bsk_high:
+		case bsk_excellent:
+		case bsk_supreme:
+			if (right)
+				SetAngle(an + Random() * 20.0);
+			else
+				SetAngle(an - Random() * 20.0);
+			break;
+
+		default:
+			Error("Unknown bot skill level: %d", info.accuracy);
+			return;
+		}
+
+		break;
+		// BFG9000
+	case wp_bfg:
+		SetAngle(AngleTo(enemy.origin));
+		break;
+
+		// Instant weapons
+	case wp_chainsaw:
+	case wp_fist:
+	default:
+
+		switch (info.accuracy)
+		{
+		case bsk_verypoor:
+			if (right)
+				SetAngle(an + Random() * 60.0);
+			else
+				SetAngle(an - Random() * 60.0);
+			break;
+		case bsk_poor:
+			if (right)
+				SetAngle(an + Random() * 45.0);
+			else
+				SetAngle(an - Random() * 45.0);
+			break;
+		case bsk_low:
+			if (right)
+				SetAngle(an + Random() * 30.0);
+			else
+				SetAngle(an - Random() * 30.0);
+			break;
+		case bsk_medium:
+			if (right)
+				SetAngle(an + Random() * 15.0);
+			else
+				SetAngle(an - Random() * 15.0);
+			break;
+		case bsk_high:
+			SetAngle(an);
+			break;
+		case bsk_excellent:
+			SetAngle(AngleTo(enemy.origin + enemy.velocity * 0.1));
+			break;
+		case bsk_supreme://FIXME
+			SetAngle(AngleTo(enemy.origin + enemy.velocity * 0.1));
+			break;
+		default:
+			Error("Unknown bot skill level: %d", info.accuracy);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	BotPlayer::FindEnemy
+//
+//==========================================================================
+
+Entity BotPlayer::FindEnemy(void)
+{
+	float closest_dist, temp;
+	Entity target;
+	float vangle;
+	int i;
+
+	//Note: It's hard to ambush a bot who is not alone
+	if (allround || ally)
+		vangle = 360.0;
+	else
+		vangle = ENEMY_SCAN_FOV;
+	allround = false;
+
+#if 0
+	// Look for monster enemy
+	if (!deathmatch.value && !teamgame.value)
+	{
+		AActor *actor;
+		TThinkerIterator<AActor> iterator;
+
+		while (actor = iterator.Next())
+		{
+			if (!(actor->flags3 & MF3_ENEMY))
+				continue;
+			if (!Check_LOS (mo, actor, vangle))
+				continue;
+			if (!P_CheckSight (mo, actor))
+				continue;
+
+			return actor;
+		}
+
+		// Didn't find anything...
+		return NULL;
+	}
+#endif
+
+	target = none;
+	closest_dist = 99999.0;
+
+	// Search for player enemies
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (players[i].active /*&& !mo->IsTeammate (players[i].mo)*/ &&
+			players[i].mo->health > 0 && botmo != *players[i].mo)
+		{
+			 //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
+			if (Check_LOS(*players[i].mo, vangle))
+			{
+				if (P_CheckSight(&botmo, players[i].mo))
+				{
+					temp = MobjDist(players[i].mo, &botmo);
+
+#if 0
+					//Too dark?
+					if (temp > DARK_DIST &&
+						players[i].mo->subsector->sector->lightlevel < WHATS_DARK &&
+						bot->player->powers[pw_infrared])
+						continue;
+#endif
+	
+					if (temp < closest_dist)
+					{
+						closest_dist = temp;
+						target = *players[i].mo;
+					}
+				}
+			}
+		}
+	}
+
+	return target;
+}
+
+#if 0
+
+// [RH] We absolutely do not want to pick things up here. The bot code is
+// executed apart from all the other simulation code, so we don't want it
+// creating side-effects during gameplay.
+bool SafeCheckPosition (AActor *actor, fixed_t x, fixed_t y)
+{
+	int savedFlags = actor->flags;
+	actor->flags &= ~MF_PICKUP;
+	bool res = P_CheckPosition (actor, x, y) ? true : false;
+	actor->flags = savedFlags;
+	return res;
+}
+#endif
+
+//==========================================================================
+//
+//	BotPlayer::Roam
+//
+//	Handle non-attack/dodging movement
+//
+//==========================================================================
+
+void BotPlayer::Roam(void)
+{
+	TVec dest;
+
+	if (lastpos_valid)
+	{
+		TVec dir;
+
+		dir = lastpos - botmo.origin;
+		dir.z = 0.0;
+		if (Length(dir) <= 32.0)
+		{
+			lastpos_valid = false;
+		}
+	}
+
+	// Order of item response precedence:
+	if (goal)
+	{
+		dest = goal.origin;
+	}
+	else if (lastpos_valid)
+	{
+		dest = lastpos;
+	}
+	else if (item)
+	{
+		dest = item.origin;
+	}
+	else if (node)
+	{
+		dest = node.origin;
+	}
+	else if (posdest_valid)
+	{
+		dest = posdest;
+	}
+	else
+	{
+		// No target, so just run around until we find something
+		int r = P_Random();
+		float an = GetAngle();
+		float dist;
+
+		for (dist = 256.0; dist >= 64.0; dist -= 64.0)
+		{
+			if (CheckPath(an, dist))
+			{
+				posdest_valid = true;
+				posdest.x = botmo.origin.x + dist * cos(an);
+				posdest.y = botmo.origin.y + dist * sin(an);
+				posdest.z = botmo.origin.z;
+				SetAngle(an);
+				break;
+			}
+
+			if (CheckPath(an + 45.0, dist))
+			{
+				posdest_valid = true;
+				posdest.x = botmo.origin.x + dist * cos(an + 45.0);
+				posdest.y = botmo.origin.y + dist * sin(an + 45.0);
+				posdest.z = botmo.origin.z;
+				SetAngle(an + 45.0);
+				break;
+			}
+
+			// Left is no good, try right
+			if (CheckPath(an - 45.0, dist))
+			{
+				posdest_valid = true;
+				posdest.x = botmo.origin.x + dist * cos(an - 45.0);
+				posdest.y = botmo.origin.y + dist * sin(an - 45.0);
+				posdest.z = botmo.origin.z;
+				SetAngle(an - 45.0);
+				break;
+			}
+		}
+		if (posdest_valid)
+		{
+			dest = posdest;
+		}
+		else
+		{
+			SetAngle(GetAngle() + 45.0 / 3.0);
+			forwardmove = -FORWARDWALK;
+			return;
+		}
+	}
+
+	forwardmove = FORWARDRUN;
+	SetAngle(AngleTo(dest));
+}
+
+//==========================================================================
+//
+//	BotPlayer::Move
+//
+//	Main bot movement function. Dodging/attacking movement is also handled
+// here
+//
+//==========================================================================
+
+void BotPlayer::Move(void)
+{
+	float dist;
+	
+	// Worry about missiles above all else
+	if (missile)
+	{
+		if (t_strafe)
+		{
+			t_strafe -= frametime;
+			if (!t_strafe)
+			{
+				// Don't change direction while dodging missiles (that could be bad)
+				//bot->sidemove = -bot->sidemove;
+				t_strafe = 2.0;
+			}
+		}
+
+		// Look at the missle and sidestep it
+		SetAngle(AngleTo(missile.origin));
+		forwardmove = -FORWARDRUN;
+		return;
+	}
+
+	// Anticipate a shot: time to dodge!
+	if (enemy && t_anticip <= 0.25)
+	{
+		if (!sidemove)
+			sidemove = SIDERUN;
+
+		switch (info.anticip)
+		{
+		case bsk_verypoor:
+			// Deer caught in the headlights
+			sidemove = 0.0;
+			return;
+
+		case bsk_poor:
+			// Always walk right
+			sidemove = SIDEWALK;
+			break;
+
+		case bsk_low:
+			// Always run right
+			sidemove = SIDERUN;
+			break;
+
+		case bsk_medium:
+			// Just switch directions every couple seconds
+			if (t_strafe)
+			{
+				t_strafe -= frametime;
+				if (t_strafe <= 0.0)
+				{
+					sidemove = -sidemove;
+					t_strafe = 2.0;
+				}
+			}
+			break;
+
+		case bsk_high:
+			// Switch directions when we think our opponent will fire
+			if (!t_anticip)
+				sidemove = -sidemove;
+			break;
+
+		case bsk_excellent:
+			// Move in a somewhat random direction when we think our opponent will fire
+			if (!t_anticip)
+			{
+				sidemove = Random() < 0.5 ? SIDERUN : -SIDERUN;
+
+				if (Random() < 0.5)
+				{
+					forwardmove = -FORWARDWALK;
+				}
+			}
+			break;
+
+		case bsk_supreme:
+			// What a squirmy little fucker!
+			if (!t_anticip)
+			{
+				switch (P_Random() & 3)
+				{
+				case 0:
+					sidemove = SIDERUN;
+					break;
+				case 1:
+					sidemove = SIDEWALK;
+					break;
+				case 2:
+					sidemove = -SIDERUN;
+					break;
+				case 3:
+					sidemove = -SIDEWALK;
+					break;
+				}
+
+				switch (P_Random() & 3)
+				{
+				case 0:
+					forwardmove = FORWARDRUN;
+					break;
+				case 1:
+					forwardmove = FORWARDWALK;
+					break;
+				case 2:
+					forwardmove = -FORWARDRUN;
+					break;
+				case 3:
+					forwardmove = -FORWARDWALK;
+					break;
+				}
+			}
+			break;
+
+		default:
+			Error("Unknown bot skill level: %d", info.anticip);
+			return;
+		}
+	}
+
+	// Now handle attack movement
+	if (enemy)
+	{
+		boolean noforward = false, noside = false;
+		float an;
+
+		if (!sidemove )
+			sidemove = SIDERUN;
+
+		if (t_strafe)
+		{
+			t_strafe -= frametime;
+			if (t_strafe <= 0.0)
+			{
+				sidemove = -sidemove;
+				t_strafe = 2.0;
+			}
+		}
+
+		dist = MobjDist(&botmo, &enemy);
+
+		// Remember where we saw him last in case he gets away
+		lastpos = enemy.origin;
+		lastpos_valid = true;
+
+		// Check if we'd rather pick up something than fight
+		if (item)
+		{
+			if (itemIsPowerup ||
+				(itemIsWeapon && player->readyweapon == wp_pistol))
+			{
+				Roam();
+				return;
+			}
+		}
+
+		an = botmo.angles.yaw;
+		if (sidemove < 0.0)
+			an -= 90.0;
+		else
+			an += 90.0;
+
+		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
+			sidemove = -sidemove;
+/*
+		switch (bot->player->readyweapon)
+		{
+		case wp_supershotgun:
+
+		default:
+			if (!B_CheckTo(mo, bot->enemy)
+*/
+
+		if (CheckTo(enemy.origin) && dist > combatdist[player->readyweapon])
+			forwardmove = FORWARDRUN;
+		else
+			forwardmove = -FORWARDRUN;
+
+		return;
+	}
+
+#if 0
+	// Follow our buddy if we're tagging along
+	if (ally)
+	{
+		float matedist;
+
+		if (t_strafe)
+		{
+			t_strafe -= frametime;
+			if (t_strafe)
+			{
+				sidemove = -sidemove;
+				t_strafe = 2.0;
+			}
+		}
+
+		SetAngle(R_PointToAngle2(mo->x, mo->y, bot->ally->x, bot->ally->y));
+		matedist = MobjDist(&botmo, &ally);
+
+		if (matedist > (FRIEND_DIST*2))
+			bot->forwardmove = FORWARDRUN;
+		else if (matedist > FRIEND_DIST)
+			bot->forwardmove = FORWARDWALK;
+		else if (matedist < FRIEND_DIST-(FRIEND_DIST/3)) //Got too close, so move away.
+			bot->forwardmove = -FORWARDWALK;
+		return;
+	}
+#endif
+
+	if (t_strafe)
+	{
+		t_strafe -= frametime;
+		if (t_strafe <= 0.0)
+		{
+			sidemove = -sidemove;
+			t_strafe = 2.0;
+		}
+	}
+
+	// Roam after an item
+	Roam();
+}
+
+//==========================================================================
+//
+//	BotPlayer::Attack
+//
+//==========================================================================
+
+void BotPlayer::Attack(void)
+{
+	// Still reacting to something or we don't have an enemy to fight
+	if (t_react || !enemy)
+		return;
+
+	// No point in firing if we won't hit them
+	if (!Check_LOS(enemy, SHOOTFOV))
+		return;
+
+	switch (player->readyweapon)
+	{
+	case wp_chaingun:
+		// Double tap the chaingun for extreme accuracy
+		if (info.accuracy == bsk_supreme)
+			if (t_fire)
+				return;
+		break;
+	default:
+		break;
+	}
+
+	player->buttons |= BT_ATTACK;
+}
+
+//==========================================================================
+//
+//	BotPlayer::Turn
+//
+//	[BC] Ahh, the new and improved turning...
+//
+//==========================================================================
+
+void BotPlayer::Turn(void)
+{
+	float distance;
+
+	distance = GetAngle() - botmo.angles.yaw;
+
+	if (!enemy)
+	{
+		player->viewangles.yaw = GetAngle();
+		return;
+	}
+
+	// [BC] Don't act crazy while trying to aim
+	switch (info.accuracy)
+	{
+	case bsk_verypoor:
+	case bsk_poor:
+	case bsk_low:
+		if (distance > 7.5)
+			distance = 7.5;
+		if (distance < -7.5)
+			distance = -7.5;
+		break;
+	case bsk_medium:
+		if (distance > 15.0)
+			distance = 15.0;
+		if (distance < -15.0)
+			distance = -15.0;
+		break;
+	case bsk_high:
+		if (distance > 22.5)
+			distance = 22.5;
+		if (distance < -22.5)
+			distance = -22.5;
+		break;
+	case bsk_excellent:
+		if (distance > 30.0)
+			distance = 30.0;
+		if (distance < -30.0)
+			distance = -30.0;
+		break;
+	case bsk_supreme:
+		if (distance > 37.5)
+			distance = 37.5;
+		if (distance < -37.5)
+			distance = -37.5;
+		break;
+	}
+	player->viewangles.yaw = AngleMod360(botmo.angles.yaw + distance);
+}
+
+//==========================================================================
+//
+//	BotPlayer::Pitch
+//
+//==========================================================================
+
+void BotPlayer::Pitch(void)
+{
+	if (enemy)
+	{
+		TVec dir;
+		TAVec ang;
+
+		dir = enemy.origin - botmo.origin;
+		VectorAngles(&dir, &ang);
+		botmo.angles.pitch = ang.pitch;
+	}
+	else
+	{
+		botmo.angles.pitch = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	BotPlayer::Killed
+//
+//==========================================================================
+
+void BotPlayer::Killed(Entity victim)
+{
+#if 0
+	// [BC] Bot taunting
+	if ((P_Random() % 100) < info.chatty)
+	{
+		x = P_Random() % 15;	// 15 death strings possible
+		chatline = &chatinfo[info.chatinfo].frag[x];
+		t_chat = info.chattime;
+	}
+#endif
+			
+	// [BC] Let some anger out
+	angerlevel -= 5;
+	enemy = none;
+
+	// [BC] Don't need to worry about following him anymore
+	lastpos_valid = false;
+}
+
+//==========================================================================
+//
+//	BotPlayer::Died
+//
+//==========================================================================
+
+void BotPlayer::Died(Entity killer)
+{
+#if 0
+	int x = P_Random() % 100;
+
+	angerlevel += 10;
+	if (angerlevel >= info.threshold)
+	{
+		if (x < info.pisschance)
+		{
+			x = P_Random (pr_botchat)%5;	// 5 pissed/frustration strings possible
+			bot->chatline = &chatinfo[bot->info.chatinfo].pissed[x];
+			bot->t_pissed = 120*TICRATE;
+		}
+		else
+		{
+			x = P_Random (pr_botchat)%5;	// 5 pissed/frustration strings possible
+			bot->chatline = &chatinfo[bot->info.chatinfo].frustrated[x];
+			bot->t_frust = 120*TICRATE;
+		}
+		bot->t_chat = bot->info.chattime;
+		angerlevel = 0;
+	}
+	else if (x < bot->info.chatty)
+	{
+		x = P_Random (pr_botchat)%10;	// 10 death strings possible
+		bot->chatline = &chatinfo[bot->info.chatinfo].died[x];
+		bot->t_chat = bot->info.chattime;
+	}
+#endif
+}
+
+//==========================================================================
+//
+//	BotPlayer::OnBeginPlay
+//
+//==========================================================================
+
+#define NUMTOTALBOTS	4
+#define	NUMBOTTYPES		4
+
+botinfo_t botinfo[4] =
+{
+	{
+		"bot1",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
+	},
+	{
+		"bot2",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot2\\color\\1\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+	},
+	{
+		"bot3",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot3\\color\\2\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+	},
+	{
+		"bot4",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\bot4\\color\\3\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+	}
+};
+
+void BotPlayer::OnBeginPlay(void)
+{
+	int botskill = 2;
+	int bottype = 0;
+	botinfo_t *binfo;
+	int i;
+
+	if (strcmp(ARR2STR(player->name), ""))
+	{
+		for (i = 0; i < NUMTOTALBOTS; i++)
+		{
+			if (!stricmp(botinfo[i].name, ARR2STR(player->name)))
+			{
+				bottype = i;
+				break;
+			}
+		}
+		// We've already handled the "what if there's no match" exception
+	}
+	else
+	{
+		// If the user doesn't input a name, don't
+		// spawn one of the "special" bots, only one of the
+		// normal ones.
+		bottype = P_Random() % NUMBOTTYPES;
+	}
+
+	binfo = &botinfo[bottype];
+
+	t_strafe = 1.0;
+
+	if (botskill > 4)
+		botskill = 4;
+	if (botskill < 0)
+		botskill = 0;
+
+	// Implement skill settings
+	info.accuracy = SkillLower(binfo->accuracy, 4 - botskill);
+	info.intelect = SkillLower(binfo->intelect, 4 - botskill);
+	info.evade = SkillLower(binfo->evade, 4 - botskill);
+	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
+	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
+	strcpy(ARR2STR(player->userinfo), binfo->userinfo);
+
+	// Setup combat distance tables
+	if (deathmatch/* || teamgame.value*/)
+	{
+		combatdist[wp_fist]			= 1.0;
+		combatdist[wp_chainsaw]		= 1.0;
+		combatdist[wp_pistol]		= 256.0;
+		combatdist[wp_shotgun]		= 192.0;
+		combatdist[wp_supershotgun]	= 128.0;
+		combatdist[wp_chaingun]		= 256.0;
+		combatdist[wp_missile]		= SAFE_SELF_MISDIST * 2.0;
+		combatdist[wp_plasma]		= 384.0;
+		combatdist[wp_bfg]			= 384.0;
+	}
+	else
+	{
+		combatdist[wp_fist]			= 1.0;
+		combatdist[wp_chainsaw]		= 1.0;
+		combatdist[wp_pistol]		= 256.0 / 2.0;
+		combatdist[wp_shotgun]		= 192.0 / 2.0;
+		combatdist[wp_supershotgun]	= 128.0 / 2.0;
+		combatdist[wp_chaingun]		= 256.0 / 2.0;
+		combatdist[wp_missile]		= SAFE_SELF_MISDIST * 2.0 / 2.0;
+		combatdist[wp_plasma]		= 384.0 / 2.0;
+		combatdist[wp_bfg]			= 384.0 / 2.0;
+	}
+}
+
+//==========================================================================
+//
+//	BotPlayer::OnSpawn
+//
+//==========================================================================
+
+void BotPlayer::OnSpawn(void)
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
+//**************************************************************************

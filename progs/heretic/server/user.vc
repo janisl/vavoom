@@ -630,6 +630,11 @@ void PlayerThink(player_t * player)
 {
 	int i;
 
+	if (player->is_bot)
+	{
+		player->Bot.Think();
+	}
+
 	// Copy view angles
 	player->mo->angles = player->viewangles;
 
@@ -1153,10 +1158,13 @@ void PlayerRemoveArtifact(player_t * player, int slot)
 void G_PlayerReborn(int player)
 {
 	player_t *p;
+	BotPlayer b;
 
 	p = &players[player];
 
+	b = p->Bot;
 	ClearPlayer(p);
+	p->Bot = b;
 
 	p->usedown = p->attackdown = true;	// don't do anything immediately 
 	p->playerstate = PST_LIVE;
@@ -1317,6 +1325,12 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
+	if (players[i].is_bot)
+	{
+		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot.player = &players[i];
+		players[i].Bot.OnBeginPlay();
+	}
 	if (deathmatch)
 	{
 		G_DeathMatchSpawnPlayer(i);
@@ -1335,6 +1349,11 @@ void SpawnClient(int i)
 
 void DisconnectClient(player_t * player)
 {
+	if (player->Bot != none)
+	{
+		player->Bot.Destroy();
+		player->Bot = none;
+	}
 	if (player->mo)
 	{
 		player->mo->player = NULL;
@@ -1362,6 +1381,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.11  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

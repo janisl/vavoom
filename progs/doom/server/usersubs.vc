@@ -144,6 +144,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->extralight = 0;
 	p->fixedcolormap = 0;
 	p->viewheight = VIEWHEIGHT;
+	p->viewangles = mobj->angles;
 	p->fixangle = true;
 
 	// setup gun psprite
@@ -157,6 +158,13 @@ void P_SpawnPlayer(mthing_t * mthing)
 
 	// wake up the status bar
 	SB_Start();
+
+	if (p->is_bot)
+	{
+		p->Bot.OnSpawn();
+	}
+
+	SetClientModel(p);
 }
 
 //==========================================================================
@@ -216,6 +224,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.8  2001/12/01 18:14:08  dj_jl
 //  Changed MSG_Select, beautification
 //

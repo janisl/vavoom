@@ -188,7 +188,7 @@ enum
 	CHAN_BODY
 };
 
-class mobj_t:base_mobj_t
+class Entity:base_mobj_t
 {
 	//  States
 	int spawnstate;
@@ -218,6 +218,7 @@ class mobj_t:base_mobj_t
 	float time;	// state tic counter
 	int statenum;
 	int nextstate;
+	boolean fixed_model;
 
 	// Thing being chased/attacked (or NULL),
 	// also the originator for missiles.
@@ -279,6 +280,298 @@ class Actor:mobj_t
 
 class Missile:mobj_t
 {
+}
+
+/*
+
+  Class definitions for botinfo, chatinfo, and
+  other various bot information thingamabobers.
+*/
+
+// Note: Any bot past NUMBOTTYPES won't be spawned 
+// randomly. So, in other words, if you did "addbot" at the
+// console, no bots past NUMBOTTYPES will ever be spawned.
+// They can only be spawned by going "addbot <botname>"
+// (ex. "addbot massmouth").
+
+/*typedef enum
+{
+	BOT_CHUBBS,
+	BOT_DEIMOS,
+	BOT_CRASH,
+	BOT_CHARON,
+	BOT_PLUTO,
+	BOT_GAMMA,
+	BOT_SCYON,
+	BOT_SCYTHE,
+	BOT_PROTOS,
+	BOT_ELECTRA,
+	BOT_OMEGA,
+	BOT_PREY,
+	BOT_MANEK,
+	BOT_OBELSIK,
+	BOT_DAEMOS,
+	BOT_MAABUS,
+	BOT_ORION,
+	BOT_ULTIMUS,
+
+	NUMBOTTYPES,
+
+	BOT_ROMERO,
+	BOT_H4X0R,
+	BOT_FRAD,
+	BOT_MEWSE,
+	BOT_LINGUICA,
+	BOT_CONNIE,
+	BOT_CACODEMON,
+	BOT_HISSY,
+	BOT_MASSMOUTH,
+	BOT_DOOMCRATE,
+	BOT_ZOMBIEMAN,
+	BOT_SHOTGUNGUY,
+	BOT_BIGCHAINGUNGUY,
+	BOT_MRTANG,
+	BOT_XXENEMYXX,
+	BOT_FIFFY,
+	BOT_TRIUMPH,
+	BOT_MEEPY,
+	BOT_CHEXMAN,
+	BOT_QUOTEBOT,
+
+	NUMTOTALBOTS
+} bottype_t;
+
+typedef enum
+{
+	CT_NONE,
+	CT_1337,
+	CT_BASRAD,
+	CT_CRASH,
+	CT_CHUBBY,
+	CT_SOLDIER,
+	CT_INSECT,
+	CT_ALIEN,
+	CT_DEMON,
+	CT_CYBORG,
+	CT_GAMMA,
+	CT_ORION,
+	CT_ULTIMUS,
+	CT_CONNIE,
+	CT_CACODEMON,
+	CT_MASSMOUTH,
+	CT_HISSY,
+	CT_HISSYHOGGER,
+	CT_MEWSE,
+	CT_TANGY,
+	CT_MEEPMEEP,
+	CT_PISSEDGUY,
+	CT_REOLLAME,
+	CT_TRIUMPHANT,
+	CT_ROMERO,
+	CT_CRATE,
+	CT_DOOMROOM,
+
+	NUMCHATTYPES
+} chattype_t;*/
+
+enum
+{
+	bsk_verypoor,
+	bsk_poor,
+	bsk_low,
+	bsk_medium,
+	bsk_high,
+	bsk_excellent,
+	bsk_supreme
+};
+
+struct botinfo_t
+{
+	string name;		// Bot's name*/
+	int accuracy;		// Accuracy with "instant" weapons (this includes "leading")
+	int intelect;		// Accuracy with "missile" weapons (rocket launcher, etc.)
+	int evade;			// Ability to dodge incoming missiles
+	int anticip;		// Ability to anticipate "instant" shots
+	int reaction;		// Overall reaction time (lower is "better")
+/*	int pisschance;		// Chance the bot will get pissed when his threshold is reached
+	int threshold;		// How much it takes to frustrate/piss off the bot
+	int dangerlevel;	// When health is below this, we need some health
+	int wpfav;			// Favorite weapon
+	int chatinfo;		// Bot's chat strings
+	int chattime;		// How long it takes us to type a line
+	int chatty;			// How talkative the bot is
+	char *color;		// Color (in form of a string)
+	char *gender;		// Male/female/it :)
+	char *skin;			// Skin
+	int railcolor;		// Railgun trail color
+	bool revealed;		// Hidden bots must be revealed*/
+	string userinfo;
+};
+
+/*struct chatline_t
+{
+	char		*string;
+	chattype_t  bot;
+	chatline_t	*line;
+};
+
+struct chatinfo_t
+{
+	chatline_t		intro[5];
+	chatline_t		inter[5];
+	chatline_t		rare[5];
+	chatline_t		frag[15];
+	chatline_t		died[10];
+	chatline_t		roam[10];
+	chatline_t		pissed[5];
+	chatline_t		frustrated[5];
+	chatline_t		special[20];
+} chatinfo_t;*/
+
+/*
+
+  The bot class, prototypes and definitions be here!
+
+*/
+
+#define FORWARDWALK		200.0
+#define FORWARDRUN		400.0
+#define SIDEWALK		192.0
+#define SIDERUN			320.0
+
+/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
+#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
+#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
+/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
+#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
+#define WHATS_DARK					64				//light value thats classed as dark.
+#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
+#define ENEMY_SCAN_FOV				120.0
+/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
+#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
+#define SHOOTFOV					60.0
+/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
+
+// The things the bot knows about their enemy
+//struct enemyinfo_t
+//{
+//	int				health;
+//	weapontype_t	weap;
+//};
+
+//
+// Bot states
+//
+enum
+{
+	// Deciding what to do
+	BST_NOTHING,
+	// Bot is "fetching" something (skull, whatever)
+	BST_OFFENSE,
+	// Bot is defending something
+	BST_DEFENSE,
+	// Bot is heading to scoring place
+	BST_RETURN
+};
+
+// Main bot class
+class BotPlayer:Object
+{
+	player_t *player;		// Points to reference player
+	Entity botmo;
+
+	// Destinations
+	Entity item;			// Item (roam towards weapon, etc)
+	boolean itemIsWeapon;
+	boolean itemIsPowerup;
+	Entity goal;			// Teamgame goal spot
+	Entity node;			// Node we're heading towards
+	Entity prev;			// Previous node we were at
+	TVec posdest;			// Position of our destination (doesn't have to be an actor)
+	boolean posdest_valid;
+	Entity enemy;			// The dead meat.
+	TVec lastpos;			// Last place we saw our enemy
+	boolean lastpos_valid;
+	Entity missile;			// A threathing missile that got to be avoided.
+
+	Entity ally;			// Ally to tag along with
+/*	AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
+							// pointed to by this. Allows bot to roam to it if
+							// necessary.
+
+	enemyinfo_t	enemyinfo;	// Things we know about our enemy
+
+	botstate_t	state;		// What we're doing in teamgame mode
+
+	fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
+	fixed_t		lasty;		// Last known y location of bot's enemy
+
+	// Tickers
+
+	float t_respawn;*/
+	float t_strafe;
+	float t_react;
+/*	float t_fight;
+	float t_rocket;
+	float t_turn;
+	float t_pissed;
+	float t_frust;*/
+	float t_fire;			// Tics left until our gun will actually fire again
+	float t_anticip;
+/*	float t_chat;			// Tics left until bots completes "typing" in what he's saying.
+							// Bot also doesn't do anything during this time.*/
+
+	float forwardmove;	// For building ucmd
+	float sidemove;
+
+	// Misc booleans
+	boolean allround;
+	boolean newItemIsWeapon;
+	boolean newItemIsPowerup;
+
+/*	chatline_t	*chatline;	// For when t_chat expires
+
+	bottype_t	bottype;	// Bot type*/
+	botinfo_t info;			// Aiming, name, perfection, yadda yadda
+
+/*	fixed_t		oldx;
+	fixed_t		oldy;
+
+	int			thingnum;*/
+	int angerlevel;
+
+/*	AActor		*things[NUMMOBJTYPES];*/
+	float combatdist[NUMWEAPONS + 1]; //different for each weapon.
+
+	float angle;			// The wanted angle that the bot tries to get every tic.
+
+/*	void LinkToPlayer (int playernum);*/
+
+	void OnBeginPlay(void);
+	void OnSpawn(void);
+	void Think(void);
+	boolean CheckTo(TVec pos);
+	void CheckStuff(void);
+	float GetAngle(void);
+	boolean CheckPath(float ang, float dist);
+	void SetEnemy(void);
+	Entity FindEnemy(void);
+	boolean Check_LOS(Entity to, float vangle);
+	boolean CheckItem(Entity item);
+	void Scan(void);
+	int WeapFromItem(Entity item);
+	int AmmoFromItem(Entity item);
+	void Move(void);
+	void SetAngle(float an);
+	void Roam(void);
+	float AngleTo(TVec dest);
+	void Attack(void);
+	void Turn(void);
+	void BotAim(void);
+	void Pitch(void);
+	int SkillLower(int skill, int num);
+	void Killed(Entity victim);
+	void Died(Entity killer);
 }
 
 addfields player_t
@@ -347,6 +640,8 @@ addfields player_t
 	int armortype;
 
 	TVec movedir;
+
+	BotPlayer Bot;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -368,6 +663,9 @@ boolean respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.5  2001/12/01 18:08:52  dj_jl
 //  Physics functions as methods, started to use class references
 //

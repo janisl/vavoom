@@ -421,21 +421,21 @@ void DeathPlayerThink(player_t * player)
 		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
 			player->attacker->origin.x - player->mo->origin.x);
 
-		delta = AngleMod180(angle - player->mo->angles.yaw);
+		delta = AngleMod180(angle - player->viewangles.yaw);
 
 		if (delta < 5.0 || delta > -5.0)
 		{
 			// Looking at killer,
 			//  so fade damage flash down.
-			player->mo->angles.yaw = angle;
+			player->viewangles.yaw = angle;
 
 			if (player->damagecount)
 				player->damagecount--;
 		}
 		else if (delta > 0.0)
-			player->mo->angles.yaw += 5.0;
+			player->viewangles.yaw += 5.0;
 		else
-			player->mo->angles.yaw -= 5.0;
+			player->viewangles.yaw -= 5.0;
 	}
 	else if (player->damagecount)
 		player->damagecount--;
@@ -476,8 +476,10 @@ void PlayerImpulse(player_t * player)
 
 void PlayerThink(player_t * player)
 {
-	// Copy view angles
-	player->mo->angles = player->viewangles;
+	if (player->is_bot)
+	{
+		player->Bot.Think();
+	}
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
@@ -497,6 +499,9 @@ void PlayerThink(player_t * player)
 		DeathPlayerThink(player);
 		return;
 	}
+
+	// Copy view angles
+	player->mo->angles = player->viewangles;
 
 	if (player->jumpTics)
 	{
@@ -685,7 +690,10 @@ void SetViewPos(player_t * player)
 	player->vieworg.x = player->mo->origin.x;
 	player->vieworg.y = player->mo->origin.y;
 
-	player->viewangles = player->mo->angles;
+	if (player->playerstate != PST_DEAD)
+	{
+		player->viewangles = player->mo->angles;
+	}
 
 	SB_PaletteFlash(player);
 
@@ -710,11 +718,14 @@ void SetViewPos(player_t * player)
 void G_PlayerReborn(int player)
 {
 	player_t *p;
+	BotPlayer b;
 
 	p = &players[player];
 
 	//  Clear player struct
+	b = p->Bot;
 	ClearPlayer(p);
+	p->Bot = b;
 
 	//  Set initial data
 	p->usedown = p->attackdown = true;	// don't do anything immediately 
@@ -853,6 +864,12 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
+	if (players[i].is_bot)
+	{
+		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot.player = &players[i];
+		players[i].Bot.OnBeginPlay();
+	}
 	if (deathmatch)
 	{
 		G_DeathMatchSpawnPlayer(i);
@@ -876,8 +893,45 @@ void DisconnectClient(player_t * player)
 		player->mo->player = NULL;
 		player->mo->Damage(NULL, NULL, 10000);
 	}
+	if (player->Bot != none)
+	{
+		player->Bot.Destroy();
+		player->Bot = none;
+	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
+}
+
+//==========================================================================
+//
+//	SetClientModel
+//
+//==========================================================================
+
+void SetClientModel(player_t *player)
+{
+	string model;
+	string skin;
+
+	model = Info_ValueForKey(ARR2STR(player->userinfo), "model");
+	if (!model || !strgetchar(model, 0))
+	{
+		player->mo->fixed_model = false;
+		player->mo->alias_skinnum = 0;
+		return;
+	}
+
+	player->mo->fixed_model = true;
+	player->mo->model_index = FindModel(va("players/%s/tris.md2", model));
+	skin = Info_ValueForKey(ARR2STR(player->userinfo), "skin");
+	if (skin && strgetchar(skin, 0))
+	{
+		player->mo->alias_skinnum = FindSkin(va("players/%s/%s", model, skin));
+	}
+	else
+	{
+		player->mo->alias_skinnum = 0;
+	}
 }
 
 //==========================================================================
@@ -893,11 +947,15 @@ void UserinfoChanged(player_t * player)
 		return;
 	}
 	player->mo->translation = player->color;
+	SetClientModel(player);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.9  2001/11/02 18:42:08  dj_jl
 //  Damage method
 //

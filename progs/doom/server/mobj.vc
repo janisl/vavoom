@@ -81,7 +81,8 @@ boolean SetMobjState(mobj_t * mobj, int state)
 		mobj->time = st->time;
 		mobj->sprite = st->sprite;
 		mobj->frame = st->frame;
-		mobj->model_index = st->model_index;
+		if (!mobj->fixed_model)
+			mobj->model_index = st->model_index;
 		mobj->alias_frame = st->model_frame;
 		mobj->statenum = st->statenum;
 		mobj->nextstate = st->nextstate;
@@ -162,6 +163,11 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
+
+	if (gameskill == sk_nightmare)
+	{
+		reactiontime = 0;
+	}
 
 	lastlook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
@@ -537,7 +543,19 @@ void KillMobj(mobj_t * source, mobj_t * target)
 			source->player->killcount++;
 
 		if (target->player)
+		{
+			if (source->player->is_bot)
+			{
+				source->player->Bot.Killed(*target);
+			}
+
+			if (target->player->is_bot)
+			{
+				target->player->Bot.Died(*source);
+			}
+
 			source->player->frags[P_GetPlayerNum(target->player)]++;
+		}
 	}
 	else if (!netgame && (target->flags & MF_COUNTKILL))
 	{
@@ -567,6 +585,11 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	if (target->health < target->gibshealth && target->xdeathstate)
 	{
+		if (target->fixed_model)
+		{
+			target->fixed_model = false;
+			target->alias_skinnum = 0;
+		}
 		SetMobjState(target, target->xdeathstate);
 	}
 	else
@@ -966,6 +989,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/12/04 18:36:42  dj_jl
+//  Bots, directly from SkullTag!
+//
 //  Revision 1.13  2001/12/01 18:14:08  dj_jl
 //  Changed MSG_Select, beautification
 //
