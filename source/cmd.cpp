@@ -394,7 +394,11 @@ void Cmd_WriteAlias(FILE *f)
 
 COMMAND(Echo)
 {
+#ifdef CLIENT
 	C_NotifyMessage(Args());
+#else
+	GCon->Log(Args());
+#endif
 }
 
 //==========================================================================
@@ -633,9 +637,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2003/12/19 17:36:58  dj_jl
+//	Dedicated server fix
+//
 //	Revision 1.10  2003/10/31 07:49:52  dj_jl
 //	echo uses notify messages
-//
+//	
 //	Revision 1.9  2003/10/22 06:24:35  dj_jl
 //	Access to the arguments vector
 //	
