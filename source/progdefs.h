@@ -28,7 +28,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	11
+#define PROG_VERSION	12
 
 // TYPES -------------------------------------------------------------------
 
@@ -248,9 +248,12 @@ struct dfield_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/03/28 18:00:41  dj_jl
+//	Updated version number.
+//
 //	Revision 1.14  2002/03/16 17:53:12  dj_jl
 //	Added opcode for pushing virtual function.
-//
+//	
 //	Revision 1.13  2002/02/26 17:54:26  dj_jl
 //	Importing special property info from progs and using it in saving.
 //	
