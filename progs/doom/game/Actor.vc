@@ -1103,7 +1103,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		if (Player->Health < 0)
 			Player->Health = 0;
 
-		Player->Attacker = &source;
+		Player->Attacker = source;
 		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
 		if (Player->DamageFlash > 3.0)
@@ -4171,6 +4171,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:18:36  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

@@ -26,13 +26,6 @@
 #define MobjCenter(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
 
-#define avcpy(src, dst)\
-{\
-	dst.pitch = src.pitch;\
-	dst.yaw = src.yaw;\
-	dst.roll = src.roll;\
-}
-
 //==========================================================================
 //
 //  abs
@@ -387,9 +380,9 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 //
 //==========================================================================
 
-void ArchiveThinker(Thinker * th)
+void ArchiveThinker(Thinker th)
 {
-	th->Archive();
+	th.Archive();
 }
 
 //==========================================================================
@@ -398,9 +391,9 @@ void ArchiveThinker(Thinker * th)
 //
 //==========================================================================
 
-void UnarchiveThinker(Thinker * th)
+void UnarchiveThinker(Thinker th)
 {
-	th->Unarchive();
+	th.Unarchive();
 }
 
 //==========================================================================
@@ -431,6 +424,9 @@ int FindState(name StateName)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2003/03/08 12:16:08  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.29  2002/10/26 16:32:15  dj_jl
 //  New style of defining classes.
 //

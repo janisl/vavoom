@@ -449,7 +449,7 @@ addfields player_t
 	int PendingWeapon;
 
 	// Who did damage (NULL for floors/ceilings).
-	Actor *Attacker;
+	Actor Attacker;
 
 	int JumpTics;
 
@@ -501,6 +501,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2003/03/08 12:18:36  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.41  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //
