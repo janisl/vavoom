@@ -19,6 +19,9 @@
 # Uncoment to compile with OpenAL library
 #USE_AL = 1
 
+# Uncomment to compile with external libglbsp
+#USE_EXT_GLBSP = 1
+
 #---------------------------------------
 #
 #	Executable extension
@@ -200,10 +203,6 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/wad.o \
 	obj/zone.o
 
-LIB_FILES = \
-	utils/glbsp/plugin/libglbsp.a \
-	utils/glvis/libglvis.a
-
 ifndef NOGL
 OBJ_FILES += \
 	$(GL_SYS_OBJ) \
@@ -223,6 +222,16 @@ OBJ_FILES += \
 	obj/s_al.o \
 	obj/s_eaxutl.o
 LIBS := -lopenal $(LIBS)
+endif
+
+ifdef USE_EXT_GLBSP
+LIBS += -lglbsp
+LIB_FILES = \
+	utils/glvis/libglvis.a
+else
+LIB_FILES = \
+	utils/glbsp/libglbsp.a \
+	utils/glvis/libglvis.a
 endif
 
 #---------------------------------------
@@ -308,9 +317,11 @@ WAD_FILES = \
 
 # ---------------------------------------
 
-C_ARGS   = -c -W -Wall -march=pentiumpro -ffast-math
-CPP_ARGS = -c -W -Wall -march=pentiumpro -ffast-math
-ASM_ARGS = -c -W -Wall -x assembler-with-cpp
+ARCH	?= -march=pentiumpro
+export ARCH
+C_ARGS   = -c -W -Wall $(ARCH) -ffast-math
+CPP_ARGS = -c -W -Wall $(ARCH) -ffast-math
+ASM_ARGS = -c -W -Wall $(ARCH) -x assembler-with-cpp
 LINK_ARGS = -Wall
 
 ifdef DEBUG
@@ -357,13 +368,8 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
-ifdef DJGPP
-utils/glbsp/plugin/libglbsp.a:
-	$(MAKE) -C utils/glbsp/plugin -f makefile.dj
-else
-utils/glbsp/plugin/libglbsp.a:
-	$(MAKE) -C utils/glbsp/plugin -f makefile.unx
-endif
+utils/glbsp/libglbsp.a:
+	$(MAKE) -C utils/glbsp -f Plugin.mak
 
 utils/glvis/libglvis.a:
 	$(MAKE) -C utils/glvis libglvis.a

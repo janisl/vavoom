@@ -1,14 +1,13 @@
 #
-# glBSP Makefile for DJGPP Plugin
+# glBSP Makefile for UNIX Plugin
 #
 
-MAIN=..
-SYSDIR=.
+MAIN=.
 
 OUTNAME=libglbsp.a
 
 CC=gcc
-CFLAGS=-O3 -Wall -DGLBSP_PLUGIN -DINLINE_G=inline
+CFLAGS=-O3 -Wall -DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline
 AR=ar rc
 RANLIB=ranlib
 
@@ -29,7 +28,7 @@ OBJS=$(MAIN)/analyze.o  \
 all:    $(OUTNAME)
 
 clean:
-	rm -f $(OUTNAME) $(MAIN)/*.o $(SYSDIR)/*.o
+	rm -f $(OUTNAME) $(MAIN)/*.o
 
 $(OUTNAME): $(OBJS)
 	$(AR) $(OUTNAME) $(OBJS)

@@ -1,13 +1,13 @@
 #
 # glBSP Makefile for Borland C++ Plugin
 #
-MAIN=..
-SYSDIR=.
-OUTPUT=$(SYSDIR)\OBJ
-CFLAGS=-O2 -tWC -pc
+!if !$d(BCB)
+BCB = $(MAKEDIR)\..
+!endif
+MAIN=.
+OUTPUT=.
+CFLAGS=-O2 -tWC -pc -I$(BCB)\include
 DEFINES=-DWIN32 -DGLBSP_PLUGIN
-LIBDIR=$(BCC32DIR)\LIB
-MSLIBDIR=$(LIBDIR)\PSDK
 
 OBJS=$(OUTPUT)\analyze.obj  \
      $(OUTPUT)\blockmap.obj \

@@ -2,7 +2,7 @@
 // MAIN : Main program for glBSP
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -59,16 +59,15 @@ const nodebuildinfo_t default_buildinfo =
   FALSE,   // mini_warnings
   FALSE,   // force_hexen
   FALSE,   // pack_sides
-  FALSE,   // v1_vert
-  FALSE,   // choose_fresh
+  FALSE,   // fast
+
+  2,   // spec_version
 
   FALSE,   // load_all
-  FALSE,   // no_gl
   FALSE,   // no_normal
   FALSE,   // force_normal
   FALSE,   // gwa_mode
   FALSE,   // keep_sect
-  FALSE,   // keep_dummy
   FALSE,   // no_prune
 
   DEFAULT_BLOCK_LIMIT,   // block_limit
@@ -232,6 +231,14 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
       continue;
     }
 
+    if (tolower(opt_str[0]) == 'v' && isdigit(opt_str[1]))
+    {
+      info->spec_version = (opt_str[1] - '0');
+
+      argv++; argc--;
+      continue;
+    }
+
     if (UtilStrCaseCmp(opt_str, "maxblock") == 0)
     {
       if (argc < 2)
@@ -248,20 +255,17 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
     }
 
     HANDLE_BOOLEAN("quiet",       quiet)
-    HANDLE_BOOLEAN("fresh",       choose_fresh)
+    HANDLE_BOOLEAN("fast",        fast)
     HANDLE_BOOLEAN("noreject",    no_reject)
     HANDLE_BOOLEAN("noprog",      no_progress)
     HANDLE_BOOLEAN("warn",        mini_warnings)
     HANDLE_BOOLEAN("packsides",   pack_sides)
     HANDLE_BOOLEAN("normal",      force_normal)
 
-    HANDLE_BOOLEAN("v1",          v1_vert)
     HANDLE_BOOLEAN("loadall",     load_all)
-    HANDLE_BOOLEAN("nogl",        no_gl)
     HANDLE_BOOLEAN("nonormal",    no_normal)
     HANDLE_BOOLEAN("forcegwa",    gwa_mode)
     HANDLE_BOOLEAN("keepsect",    keep_sect)
-    HANDLE_BOOLEAN("keepdummy",   keep_dummy)
     HANDLE_BOOLEAN("noprune",     no_prune)
 
     // to err is human...
@@ -271,11 +275,19 @@ glbsp_ret_e GlbspParseArgs(nodebuildinfo_t *info,
     HANDLE_BOOLEAN("keepsec",     keep_sect)
     HANDLE_BOOLEAN("keepsectors", keep_sect)
 
+    // ignore these options for backwards compatibility
+    if (UtilStrCaseCmp(opt_str, "fresh") == 0 ||
+        UtilStrCaseCmp(opt_str, "keepdummy") == 0)
+    {
+      argv++; argc--;
+      continue;
+    }
+
     // backwards compatibility
     HANDLE_BOOLEAN("forcenormal", force_normal)
 
-    // The -hexen option is only kept for backwards compat.
-    HANDLE_BOOLEAN("hexen",       force_hexen)
+    // The -hexen option is only kept for backwards compatibility
+    HANDLE_BOOLEAN("hexen", force_hexen)
 
     sprintf(glbsp_message_buf, "Unknown option: %s", argv[0]);
     SetErrorMsg(glbsp_message_buf);
@@ -337,13 +349,6 @@ glbsp_ret_e GlbspCheckInfo(nodebuildinfo_t *info,
     return GLBSP_E_BadInfoFixed;
   }
 
-  if (info->gwa_mode && info->no_gl)
-  {
-    info->no_gl = FALSE;
-    SetErrorMsg("-nogl with GWA file: nothing to do !");
-    return GLBSP_E_BadInfoFixed;
-  }
- 
   if (info->gwa_mode && info->force_normal)
   {
     info->force_normal = FALSE;
@@ -362,6 +367,13 @@ glbsp_ret_e GlbspCheckInfo(nodebuildinfo_t *info,
   {
     info->factor = DEFAULT_FACTOR;
     SetErrorMsg("Bad factor value !");
+    return GLBSP_E_BadInfoFixed;
+  }
+
+  if (info->spec_version <= 0 || info->spec_version > 3)
+  {
+    info->spec_version = 2;
+    SetErrorMsg("Bad GL-Nodes version number !");
     return GLBSP_E_BadInfoFixed;
   }
 
@@ -475,12 +487,6 @@ glbsp_ret_e GlbspBuildNodes(const nodebuildinfo_t *info,
       !cur_info->output_file || cur_info->output_file[0] == 0)
   {
     SetErrorMsg("INTERNAL ERROR: Missing in/out filename !");
-    return GLBSP_E_BadArgs;
-  }
-
-  if (cur_info->no_normal && cur_info->no_gl)
-  {
-    SetErrorMsg("-nonormal and -nogl specified: nothing to do !");
     return GLBSP_E_BadArgs;
   }
 

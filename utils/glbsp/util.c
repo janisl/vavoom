@@ -2,7 +2,7 @@
 // UTILITY : general purpose functions
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -122,6 +122,7 @@ int UtilStrCaseCmp(const char *A, const char *B)
 {
   for (; *A || *B; A++, B++)
   {
+    // this test also catches end-of-string conditions
     if (toupper(*A) != toupper(*B))
       return (toupper(*A) - toupper(*B));
   }

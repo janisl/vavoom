@@ -2,7 +2,7 @@
 // LEVEL : Level structure read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -49,8 +49,10 @@
 // per-level variables
 
 boolean_g lev_doing_normal;
-boolean_g lev_doing_gl;
 boolean_g lev_doing_hexen;
+
+static boolean_g lev_v3_segs;
+static boolean_g lev_v3_subsecs;
 
 
 #define LEVELARRAY(TYPE, BASEVAR, NUMVAR)  \
@@ -445,6 +447,17 @@ void GetSidedefs(void)
   }
 }
 
+static INLINE_G sidedef_t *SafeLookupSidedef(uint16_g num)
+{
+  if (num == 0xFFFF)
+    return NULL;
+
+  if ((int)num >= num_sidedefs && (sint16_g)(num) < 0)
+    return NULL;
+
+  return LookupSidedef(num);
+}
+
 //
 // GetLinedefs
 //
@@ -495,11 +508,8 @@ void GetLinedefs(void)
     line->is_precious = (line->tag >= 900 && line->tag < 1000) ? 
         TRUE : FALSE;
 
-    line->right = (SINT16(raw->sidedef1) < 0) ? NULL :
-        LookupSidedef(SINT16(raw->sidedef1));
-
-    line->left  = (SINT16(raw->sidedef2) < 0) ? NULL :
-        LookupSidedef(SINT16(raw->sidedef2));
+    line->right = SafeLookupSidedef(UINT16(raw->sidedef1));
+    line->left  = SafeLookupSidedef(UINT16(raw->sidedef2));
 
     if (line->right)
     {
@@ -570,11 +580,8 @@ void GetLinedefsHexen(void)
     // -JL- Added missing twosided flag handling that caused a broken reject
     line->two_sided = (line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
 
-    line->right = (SINT16(raw->sidedef1) < 0) ? NULL :
-        LookupSidedef(SINT16(raw->sidedef1));
-
-    line->left  = (SINT16(raw->sidedef2) < 0) ? NULL :
-        LookupSidedef(SINT16(raw->sidedef2));
+    line->right = SafeLookupSidedef(UINT16(raw->sidedef1));
+    line->left  = SafeLookupSidedef(UINT16(raw->sidedef2));
 
     // -JL- Added missing sidedef handling that caused all sidedefs to be
     //      pruned.
@@ -691,6 +698,9 @@ static int SegCompare(const void *p1, const void *p2)
 
 /* ----- writing routines ------------------------------ */
 
+static const uint8_g *lev_v2_magic = (uint8_g *) "gNd2";
+static const uint8_g *lev_v3_magic = (uint8_g *) "gNd3";
+
 void PutVertices(char *name, int do_gl)
 {
   int count, i;
@@ -708,30 +718,27 @@ void PutVertices(char *name, int do_gl)
     raw_vertex_t raw;
     vertex_t *vert = lev_vertices[i];
 
-    if ((do_gl && !(vert->index & 0x8000)) ||
-        (!do_gl && (vert->index & 0x8000)))
+    if ((do_gl ? 1 : 0) != ((vert->index & IS_GL_VERTEX) ? 1 : 0))
     {
       continue;
     }
 
-    raw.x = SINT16((int)vert->x);
-    raw.y = SINT16((int)vert->y);
+    raw.x = SINT16(I_ROUND(vert->x));
+    raw.y = SINT16(I_ROUND(vert->y));
 
     AppendLevelLump(lump, &raw, sizeof(raw));
 
     count++;
   }
 
-  if (count >= 32768)
-  {
-    PrintWarn("Number of %svertices (%d) has OVERFLOWED the "
-        "normal limit!\n", do_gl ? "GL " : "", count);
-    MarkLevelFailed();
-  }
-
   if (count != (do_gl ? num_gl_vert : num_normal_vert))
     InternalError("PutVertices miscounted (%d != %d)", count,
       do_gl ? num_gl_vert : num_normal_vert);
+
+  if (lev_doing_normal && ! do_gl && count > 65534)
+    MarkHardFailure(LIMIT_VERTEXES);
+  else if (count > 32767)
+    MarkSoftFailure(do_gl ? LIMIT_GL_VERT : LIMIT_VERTEXES);
 }
 
 void PutV2Vertices(void)
@@ -739,20 +746,18 @@ void PutV2Vertices(void)
   int count, i;
   lump_t *lump;
 
-  static uint8_g v2_magic[4] = "gNd2";
- 
   DisplayTicker();
 
   lump = CreateGLLump("GL_VERT");
 
-  AppendLevelLump(lump, v2_magic, 4);
+  AppendLevelLump(lump, lev_v2_magic, 4);
 
   for (i=0, count=0; i < num_vertices; i++)
   {
     raw_v2_vertex_t raw;
     vertex_t *vert = lev_vertices[i];
 
-    if (! (vert->index & 0x8000))
+    if (! (vert->index & IS_GL_VERTEX))
       continue;
 
     raw.x = SINT32((int)(vert->x * 65536.0));
@@ -763,16 +768,12 @@ void PutV2Vertices(void)
     count++;
   }
 
-  if (count >= 32768)
-  {
-    PrintWarn("Number of GL vertices (%d) has OVERFLOWED the "
-        "normal limit!\n", count);
-    MarkLevelFailed();
-  }
-
   if (count != num_gl_vert)
     InternalError("PutV2Vertices miscounted (%d != %d)", count,
       num_gl_vert);
+
+  if (count > 32767)
+    MarkSoftFailure(LIMIT_GL_VERT);
 }
 
 void PutSectors(void)
@@ -800,12 +801,10 @@ void PutSectors(void)
     AppendLevelLump(lump, &raw, sizeof(raw));
   }
 
-  if (num_sectors >= 32768)
-  {
-    PrintWarn("Number of sectors (%d) has OVERFLOWED the "
-        "normal limit!\n", num_sectors);
-    MarkLevelFailed();
-  }
+  if (num_sectors > 65534)
+    MarkHardFailure(LIMIT_SECTORS);
+  else if (num_sectors > 32767)
+    MarkSoftFailure(LIMIT_SECTORS);
 }
 
 void PutSidedefs(void)
@@ -833,12 +832,10 @@ void PutSidedefs(void)
     AppendLevelLump(lump, &raw, sizeof(raw));
   }
 
-  if (num_sidedefs >= 32768)
-  {
-    PrintWarn("Number of sidedefs (%d) has OVERFLOWED the "
-        "normal limit!\n", num_sidedefs);
-    MarkLevelFailed();
-  }
+  if (num_sidedefs > 65534)
+    MarkHardFailure(LIMIT_SIDEDEFS);
+  else if (num_sidedefs > 32767)
+    MarkSoftFailure(LIMIT_SIDEDEFS);
 }
 
 void PutLinedefs(void)
@@ -866,12 +863,10 @@ void PutLinedefs(void)
     AppendLevelLump(lump, &raw, sizeof(raw));
   }
 
-  if (num_linedefs >= 32768)
-  {
-    PrintWarn("Number of linedefs (%d) has OVERFLOWED the "
-        "normal limit!\n", num_linedefs);
-    MarkLevelFailed();
-  }
+  if (num_linedefs > 65534)
+    MarkHardFailure(LIMIT_LINEDEFS);
+  else if (num_linedefs > 32767)
+    MarkSoftFailure(LIMIT_LINEDEFS);
 }
 
 void PutLinedefsHexen(void)
@@ -902,12 +897,18 @@ void PutLinedefsHexen(void)
     AppendLevelLump(lump, &raw, sizeof(raw));
   }
 
-  if (num_linedefs >= 32768)
-  {
-    PrintWarn("Number of linedefs (%d) has OVERFLOWED the "
-        "normal limit!\n", num_linedefs);
-    MarkLevelFailed();
-  }
+  if (num_linedefs > 65534)
+    MarkHardFailure(LIMIT_LINEDEFS);
+  else if (num_linedefs > 32767)
+    MarkSoftFailure(LIMIT_LINEDEFS);
+}
+
+static INLINE_G uint16_g VertexIndex16Bit(const vertex_t *v)
+{
+  if (v->index & IS_GL_VERTEX)
+    return (uint16_g) ((v->index & ~IS_GL_VERTEX) | 0x8000);
+
+  return (uint16_g) v->index;
 }
 
 void PutSegs(void)
@@ -929,8 +930,8 @@ void PutSegs(void)
     if (! seg->linedef || seg->degenerate)
       continue;
 
-    raw.start   = UINT16(seg->start->index);
-    raw.end     = UINT16(seg->end->index);
+    raw.start   = UINT16(VertexIndex16Bit(seg->start));
+    raw.end     = UINT16(VertexIndex16Bit(seg->end));
     raw.angle   = UINT16(TransformAngle(seg->p_angle));
     raw.linedef = UINT16(seg->linedef->index);
     raw.flip    = UINT16(seg->side);
@@ -949,16 +950,14 @@ void PutSegs(void)
 #   endif
   }
 
-  if (count >= 32768)
-  {
-    PrintWarn("Number of segs (%d) has OVERFLOWED the "
-        "normal limit!\n", count);
-    MarkLevelFailed();
-  }
-
   if (count != num_complete_seg)
     InternalError("PutSegs miscounted (%d != %d)", count,
       num_complete_seg);
+
+  if (count > 65534)
+    MarkHardFailure(LIMIT_SEGS);
+  else if (count > 32767)
+    MarkSoftFailure(LIMIT_SEGS);
 }
 
 void PutGLSegs(void)
@@ -980,8 +979,8 @@ void PutGLSegs(void)
     if (seg->degenerate)
       continue;
 
-    raw.start = UINT16(seg->start->index);
-    raw.end   = UINT16(seg->end->index);
+    raw.start = UINT16(VertexIndex16Bit(seg->start));
+    raw.end   = UINT16(VertexIndex16Bit(seg->end));
     raw.side  = UINT16(seg->side);
 
     if (seg->linedef)
@@ -1006,11 +1005,63 @@ void PutGLSegs(void)
 #   endif
   }
 
-  if (count >= 32768)
+  if (count != num_complete_seg)
+    InternalError("PutGLSegs miscounted (%d != %d)", count,
+      num_complete_seg);
+
+  if (count > 65534)
+    InternalError("PutGLSegs with %d (> 65534) segs", count);
+  else if (count > 32767)
+    MarkSoftFailure(LIMIT_GL_SEGS);
+}
+
+void PutV3Segs(void)
+{
+  int i, count;
+  lump_t *lump = CreateGLLump("GL_SEGS");
+
+  AppendLevelLump(lump, lev_v3_magic, 4);
+
+  DisplayTicker();
+
+  // sort segs into ascending index
+  qsort(segs, num_segs, sizeof(seg_t *), SegCompare);
+
+  for (i=0, count=0; i < num_segs; i++)
   {
-    PrintWarn("Number of GL segs (%d) has OVERFLOWED the "
-        "normal limit!\n", count);
-    MarkLevelFailed();
+    raw_v3_seg_t raw;
+    seg_t *seg = segs[i];
+
+    int flags = (seg->side == 1) ? V3SEG_F_LEFT : 0;
+
+    // ignore degenerate segs
+    if (seg->degenerate)
+      continue;
+
+    raw.start = UINT32(seg->start->index);
+    raw.end   = UINT32(seg->end->index);
+    raw.flags = UINT16(flags);
+
+    if (seg->linedef)
+      raw.linedef = UINT16(seg->linedef->index);
+    else
+      raw.linedef = UINT16(0xFFFF);
+
+    if (seg->partner)
+      raw.partner = UINT32(seg->partner->index);
+    else
+      raw.partner = UINT32(0xFFFFFFFF);
+
+    AppendLevelLump(lump, &raw, sizeof(raw));
+
+    count++;
+
+#   if DEBUG_BSP
+    PrintDebug("PUT V3 SEG: %06X  Line %04X %s  Partner %06X  "
+      "(%1.1f,%1.1f) -> (%1.1f,%1.1f)\n", seg->index, UINT16(raw.linedef), 
+      seg->side ? "L" : "R", UINT32(raw.partner),
+      seg->start->x, seg->start->y, seg->end->x, seg->end->y);
+#   endif
   }
 
   if (count != num_complete_seg)
@@ -1046,12 +1097,39 @@ void PutSubsecs(char *name, int do_gl)
 #   endif
   }
 
-  if (num_subsecs >= 32768)
+  if (num_subsecs > 32767)
+    MarkHardFailure(do_gl ? LIMIT_GL_SSECT : LIMIT_SSECTORS);
+}
+
+void PutV3Subsecs(void)
+{
+  int i;
+  lump_t *lump;
+
+  DisplayTicker();
+
+  lump = CreateGLLump("GL_SSECT");
+
+  AppendLevelLump(lump, lev_v3_magic, 4);
+
+  for (i=0; i < num_subsecs; i++)
   {
-    PrintWarn("Number of %ssubsectors (%d) has OVERFLOWED the "
-        "normal limit!\n", do_gl ? "GL " : "", num_subsecs);
-    MarkLevelFailed();
+    raw_v3_subsec_t raw;
+    subsec_t *sub = subsecs[i];
+
+    raw.first = UINT32(sub->seg_list->index);
+    raw.num   = UINT32(sub->seg_count);
+
+    AppendLevelLump(lump, &raw, sizeof(raw));
+
+#   if DEBUG_BSP
+    PrintDebug("PUT V3 SUBSEC %06X  First %06X  Num %06X\n",
+      sub->index, UINT32(raw.first), UINT32(raw.num));
+#   endif
   }
+
+  if (num_subsecs > 32767)
+    MarkHardFailure(LIMIT_GL_SSECT);
 }
 
 static int node_cur_index;
@@ -1123,16 +1201,12 @@ void PutNodes(char *name, int do_gl, node_t *root)
   if (root)
     PutOneNode(root, lump);
   
-  if (node_cur_index >= 32768)
-  {
-    PrintWarn("Number of %snodes (%d) has OVERFLOWED the "
-        "normal limit!\n", do_gl ? "GL " : "", node_cur_index);
-    MarkLevelFailed();
-  }
-
   if (node_cur_index != num_nodes)
     InternalError("PutNodes miscounted (%d != %d)",
       node_cur_index, num_nodes);
+
+  if (node_cur_index > 32767)
+    MarkHardFailure(LIMIT_NODES);
 }
 
 
@@ -1152,19 +1226,16 @@ void LoadLevel(void)
   lev_doing_normal = !cur_info->gwa_mode && (cur_info->force_normal || 
     (!cur_info->no_normal && !normal_exists));
 
-  lev_doing_gl = cur_info->gwa_mode || !cur_info->no_gl;
-
   // -JL- Identify Hexen mode by presence of BEHAVIOR lump
   lev_doing_hexen = (FindLevelLump("BEHAVIOR") != NULL);
 
-  if (lev_doing_normal && lev_doing_gl)
+  lev_v3_segs = (cur_info->spec_version == 3) ? TRUE : FALSE;
+  lev_v3_subsecs = lev_v3_segs;
+
+  if (lev_doing_normal)
     sprintf(message, "Building normal and GL nodes on %s", level_name);
-  else if (lev_doing_normal)
-    sprintf(message, "Building normal nodes only on %s", level_name);
-  else if (lev_doing_gl)
-    sprintf(message, "Building GL nodes on %s", level_name);
   else
-    sprintf(message, "Building _nothing_ on %s", level_name);
+    sprintf(message, "Building GL nodes on %s", level_name);
  
   if (lev_doing_hexen)
     strcat(message, " (Hexen)");
@@ -1195,7 +1266,7 @@ void LoadLevel(void)
   PrintVerbose("Loaded %d vertices, %d sectors, %d sides, %d lines, %d things\n", 
       num_vertices, num_sectors, num_sidedefs, num_linedefs, num_things);
 
-  if (!cur_info->choose_fresh && !lev_doing_normal &&
+  if (cur_info->fast && !lev_doing_normal &&
       normal_exists && num_sectors > 5 && num_linedefs > 100)
   {
     PrintVerbose("Using original nodes to speed things up\n");
@@ -1225,8 +1296,7 @@ void LoadLevel(void)
     DetectPolyobjSectors();
   }
 
-  if (!cur_info->keep_dummy && num_sectors > 10)
-    DetectDummySectors();
+  DetectOverlappingLines();
 }
 
 //
@@ -1251,27 +1321,50 @@ void FreeLevel(void)
 //
 void SaveLevel(node_t *root_node)
 {
-  if (cur_info->v1_vert)
+  // Note: RoundOffBspTree will covert the GL vertices in segs to their
+  // normal counterparts (pointer change: use normal_dup).
+
+  if (cur_info->spec_version == 1)
     RoundOffBspTree(root_node);
- 
-  if (lev_doing_gl)
+
+  // GL Nodes
   {
-    if (cur_info->v1_vert)
+    if (num_normal_vert > 32767 || num_gl_vert > 32767)
+    {
+      lev_v3_segs = TRUE;
+      MarkV3Switch(LIMIT_VERTEXES | LIMIT_GL_SEGS);
+    }
+
+    if (num_segs > 65534)
+    {
+      lev_v3_subsecs = lev_v3_segs = TRUE;
+      MarkV3Switch(LIMIT_GL_SSECT | LIMIT_GL_SEGS);
+    }
+
+    if (cur_info->spec_version == 1)
       PutVertices("GL_VERT", TRUE);
     else
       PutV2Vertices();
 
-    PutGLSegs();
-    PutSubsecs("GL_SSECT", TRUE);
+    if (lev_v3_segs)
+      PutV3Segs();
+    else
+      PutGLSegs();
+
+    if (lev_v3_subsecs)
+      PutV3Subsecs();
+    else
+      PutSubsecs("GL_SSECT", TRUE);
+
     PutNodes("GL_NODES", TRUE, root_node);
-    
+
     // -JL- Add empty PVS lump
     CreateGLLump("GL_PVS");
   }
 
   if (lev_doing_normal)
   {
-    if (! cur_info->v1_vert)
+    if (cur_info->spec_version != 1)
       RoundOffBspTree(root_node);
  
     NormaliseBspTree(root_node);

@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -172,6 +172,23 @@ static INLINE_G void AddLevelName(const char *name)
 
 
 //
+// NewLevel
+//
+// Create new level information
+//
+static level_t *NewLevel(int flags)
+{
+  level_t *cur;
+
+  cur = UtilCalloc(sizeof(level_t));
+
+  cur->flags = flags;
+
+  return cur;
+}
+
+
+//
 // NewLump
 //
 // Create new lump.  `name' must be allocated storage.
@@ -188,9 +205,7 @@ static lump_t *NewLump(char *name)
   cur->length = 0;
   cur->space = 0;
   cur->data = NULL;
-  cur->level_list = NULL;
-  cur->level_gl_list = NULL;
-  cur->level_buddy = NULL;
+  cur->lev_info = NULL;
 
   return cur;
 }
@@ -202,29 +217,18 @@ static lump_t *NewLump(char *name)
 static void FreeLump(lump_t *lump)
 {
   // free level lumps, if any
-  if (lump->flags & LUMP_IS_LEVEL)
+  if (lump->lev_info)
   {
-    while (lump->level_list)
+    while (lump->lev_info->children)
     {
-      lump_t *head = lump->level_list;
-      lump->level_list = head->next;
+      lump_t *head = lump->lev_info->children;
+      lump->lev_info->children = head->next;
 
       // the ol' recursion trick... :)
       FreeLump(head);
     }
-  }
-  
-  // free GL level lumps, if any
-  if (lump->flags & LUMP_IS_GL_LEVEL)
-  {
-    while (lump->level_gl_list)
-    {
-      lump_t *head = lump->level_gl_list;
-      lump->level_gl_list = head->next;
 
-      // the ol' recursion trick... :)
-      FreeLump(head);
-    }
+    UtilFree(lump->lev_info);
   }
 
   // check `data' here, since it gets freed in WriteLumpData()
@@ -391,7 +395,8 @@ static void ProcessDirEntry(lump_t *lump)
 
     // OK, start a new level
 
-    lump->flags |= LUMP_IS_LEVEL;
+    lump->lev_info = NewLevel(0);
+
     wad.current_level = lump;
 
 #   if DEBUG_DIR
@@ -438,13 +443,13 @@ static void ProcessDirEntry(lump_t *lump)
       lump->flags |= LUMP_READ_ME;
     
       // link it in
-      lump->next = wad.current_level->level_list;
+      lump->next = wad.current_level->lev_info->children;
       lump->prev = NULL;
 
       if (lump->next)
         lump->next->prev = lump;
 
-      wad.current_level->level_list = lump;
+      wad.current_level->lev_info->children = lump;
       return;
     }
       
@@ -567,9 +572,9 @@ static int ReadAllLumps(void)
     if (cur->flags & LUMP_READ_ME)
       ReadLumpData(cur);
 
-    if (cur->flags & LUMP_IS_LEVEL)
+    if (cur->lev_info && ! (cur->lev_info->flags & LEVEL_IS_GL))
     {
-      for (L=cur->level_list; L; L=L->next)
+      for (L=cur->lev_info->children; L; L=L->next)
       {
         count++;
 
@@ -600,16 +605,9 @@ static int CountLumpTypes(int flag_mask, int flag_match)
     if ((cur->flags & flag_mask) == flag_match)
       count++;
 
-    if (cur->flags & LUMP_IS_LEVEL)
+    if (cur->lev_info)
     {
-      for (L=cur->level_list; L; L=L->next)
-        if ((L->flags & flag_mask) == flag_match)
-          count++;
-    }
-
-    if (cur->flags & LUMP_IS_GL_LEVEL)
-    {
-      for (L=cur->level_gl_list; L; L=L->next)
+      for (L=cur->lev_info->children; L; L=L->next)
         if ((L->flags & flag_mask) == flag_match)
           count++;
     }
@@ -662,7 +660,8 @@ lump_t *CreateGLMarker(lump_t *level)
   sprintf(name_buf, "GL_%s", level->name);
 
   cur = NewLump(UtilStrDup(name_buf));
-  cur->flags |= LUMP_IS_GL_LEVEL;
+
+  cur->lev_info = NewLevel(LEVEL_IS_GL);
 
   // link it in
   cur->next = level->next;
@@ -672,7 +671,7 @@ lump_t *CreateGLMarker(lump_t *level)
     cur->next->prev = cur;
 
   level->next = cur;
-  level->level_buddy = cur;
+  level->lev_info->buddy = cur;
 
   return cur;
 }
@@ -730,6 +729,7 @@ static void SortLumps(lump_t ** list, const char **names, int count)
 static void RecomputeDirectory(void)
 {
   lump_t *cur, *L;
+  level_t *lev;
 
   wad.num_entries = 0;
   wad.dir_start = sizeof(raw_wad_header_t);
@@ -748,27 +748,16 @@ static void RecomputeDirectory(void)
     wad.dir_start += ALIGN_LEN(cur->length);
     wad.num_entries++;
 
-    if (cur->flags & LUMP_IS_LEVEL)
+    lev = cur->lev_info;
+
+    if (lev)
     {
-      SortLumps(&cur->level_list, level_lumps, NUM_LEVEL_LUMPS);
+      if (lev->flags & LEVEL_IS_GL)
+        SortLumps(&lev->children, gl_lumps, NUM_GL_LUMPS);
+      else
+        SortLumps(&lev->children, level_lumps, NUM_LEVEL_LUMPS);
 
-      for (L=cur->level_list; L; L=L->next)
-      {
-        if (L->flags & LUMP_IGNORE_ME)
-          continue;
-
-        L->new_start = wad.dir_start;
-
-        wad.dir_start += ALIGN_LEN(L->length);
-        wad.num_entries++;
-      }
-    }
-
-    if (cur->flags & LUMP_IS_GL_LEVEL)
-    {
-      SortLumps(&cur->level_gl_list, gl_lumps, NUM_GL_LUMPS);
-
-      for (L=cur->level_gl_list; L; L=L->next)
+      for (L=lev->children; L; L=L->next)
       {
         if (L->flags & LUMP_IGNORE_ME)
           continue;
@@ -855,21 +844,9 @@ static int WriteAllLumps(void)
     WriteLumpData(cur);
     count++;
 
-    if (cur->flags & LUMP_IS_LEVEL)
+    if (cur->lev_info)
     {
-      for (L=cur->level_list; L; L=L->next)
-      {
-        if (L->flags & LUMP_IGNORE_ME)
-          continue;
-
-        WriteLumpData(L);
-        count++;
-      }
-    }
-
-    if (cur->flags & LUMP_IS_GL_LEVEL)
-    {
-      for (L=cur->level_gl_list; L; L=L->next)
+      for (L=cur->lev_info->children; L; L=L->next)
       {
         if (L->flags & LUMP_IGNORE_ME)
           continue;
@@ -931,31 +908,15 @@ static int WriteDirectory(void)
     count++;
 
 #   if DEBUG_DIR
-    if (cur->flags & (LUMP_IS_LEVEL | LUMP_IS_GL_LEVEL))
-      PrintDebug("Write dir... %s\n", cur->name);
-    else
+    if (cur->lev_info)
       PrintDebug("Write dir... %s :\n", cur->name);
+    else
+      PrintDebug("Write dir... %s\n", cur->name);
 #   endif
 
-    if (cur->flags & LUMP_IS_LEVEL)
+    if (cur->lev_info)
     {
-      for (L=cur->level_list; L; L=L->next)
-      {
-        if (cur->flags & LUMP_IGNORE_ME)
-          continue;
-
-#       if DEBUG_DIR
-        PrintDebug("Write dir... |--- %s\n", L->name);
-#       endif
-
-        WriteDirEntry(L);
-        count++;
-      }
-    }
-
-    if (cur->flags & LUMP_IS_GL_LEVEL)
-    {
-      for (L=cur->level_gl_list; L; L=L->next)
+      for (L=cur->lev_info->children; L; L=L->next)
       {
         if (cur->flags & LUMP_IGNORE_ME)
           continue;
@@ -1034,7 +995,7 @@ lump_t *CreateLevelLump(const char *name)
 # endif
 
   // already exists ?
-  for (cur=wad.current_level->level_list; cur; cur=cur->next)
+  for (cur=wad.current_level->lev_info->children; cur; cur=cur->next)
   {
     if (strcmp(name, cur->name) == 0)
       break;
@@ -1056,13 +1017,13 @@ lump_t *CreateLevelLump(const char *name)
   cur = NewLump(UtilStrDup(name));
 
   // link it in
-  cur->next = wad.current_level->level_list;
+  cur->next = wad.current_level->lev_info->children;
   cur->prev = NULL;
 
   if (cur->next)
     cur->next->prev = cur;
 
-  wad.current_level->level_list = cur;
+  wad.current_level->lev_info->children = cur;
 
   return cur;
 }
@@ -1081,13 +1042,13 @@ lump_t *CreateGLLump(const char *name)
 # endif
 
   // create GL level marker if necessary
-  if (! wad.current_level->level_buddy)
+  if (! wad.current_level->lev_info->buddy)
     CreateGLMarker(wad.current_level);
   
-  gl_level = wad.current_level->level_buddy;
+  gl_level = wad.current_level->lev_info->buddy;
 
   // check if already exists
-  for (cur=gl_level->level_gl_list; cur; cur=cur->next)
+  for (cur=gl_level->lev_info->children; cur; cur=cur->next)
   {
     if (strcmp(name, cur->name) == 0)
       break;
@@ -1109,13 +1070,13 @@ lump_t *CreateGLLump(const char *name)
   cur = NewLump(UtilStrDup(name));
 
   // link it in
-  cur->next = gl_level->level_gl_list;
+  cur->next = gl_level->lev_info->children;
   cur->prev = NULL;
 
   if (cur->next)
     cur->next->prev = cur;
 
-  gl_level->level_gl_list = cur;
+  gl_level->lev_info->children = cur;
 
   return cur;
 }
@@ -1124,7 +1085,7 @@ lump_t *CreateGLLump(const char *name)
 //
 // AppendLevelLump
 //
-void AppendLevelLump(lump_t *lump, void *data, int length)
+void AppendLevelLump(lump_t *lump, const void *data, int length)
 {
   if (length == 0)
     return;
@@ -1157,7 +1118,7 @@ int CountLevels(void)
   
   for (cur=wad.dir_head; cur; cur=cur->next)
   {
-    if (cur->flags & LUMP_IS_LEVEL)
+    if (cur->lev_info && ! (cur->lev_info->flags & LEVEL_IS_GL))
       result++;
   }
 
@@ -1176,7 +1137,7 @@ int FindNextLevel(void)
   else
     cur = wad.dir_head;
 
-  while (cur && ! (cur->flags & LUMP_IS_LEVEL))
+  while (cur && ! (cur->lev_info && ! (cur->lev_info->flags & LEVEL_IS_GL)))
     cur=cur->next;
 
   wad.current_level = cur;
@@ -1200,7 +1161,7 @@ const char *GetLevelName(void)
 //
 lump_t *FindLevelLump(const char *name)
 {
-  lump_t *cur = wad.current_level->level_list;
+  lump_t *cur = wad.current_level->lev_info->children;
 
   while (cur && (strcmp(cur->name, name) != 0))
     cur=cur->next;
@@ -1279,7 +1240,7 @@ glbsp_ret_e ReadWadFile(const char *filename)
   check = ReadAllLumps();
 
   if (check != wad.num_entries)
-    InternalError("Read directory count consistency failure (%d,%d)\n",
+    InternalError("Read directory count consistency failure (%d,%d)",
       check, wad.num_entries);
   
   wad.current_level = NULL;
@@ -1300,6 +1261,9 @@ glbsp_ret_e WriteWadFile(const char *filename)
 
   PrintMsg("\n");
   PrintMsg("Saving WAD as %s\n", filename);
+
+  if (cur_info->gwa_mode)
+    wad.kind = PWAD;
 
   RecomputeDirectory();
 
@@ -1337,7 +1301,7 @@ glbsp_ret_e WriteWadFile(const char *filename)
   check2 = WriteDirectory();
 
   if (check1 != wad.num_entries || check2 != wad.num_entries)
-    InternalError("Write directory count consistency failure (%d,%d,%d\n",
+    InternalError("Write directory count consistency failure (%d,%d,%d)",
       check1, check2, wad.num_entries);
 
   return GLBSP_E_OK;
@@ -1398,57 +1362,199 @@ void CloseWads(void)
 }
 
 
+/* ---------------------------------------------------------------- */
+
+
 //
-// MarkLevelFailed
+// Mark failure routines
 //
-void MarkLevelFailed(void)
+void MarkSoftFailure(int soft)
 {
-  wad.current_level->flags |= LUMP_FAILED_LEVEL;
+  wad.current_level->lev_info->soft_limit |= soft;
+}
+
+void MarkHardFailure(int hard)
+{
+  wad.current_level->lev_info->hard_limit |= hard;
+}
+
+void MarkV3Switch(int v3)
+{
+  wad.current_level->lev_info->v3_switch |= v3;
 }
 
 
 //
+// ReportOneOverflow(
+//
+void ReportOneOverflow(const lump_t *lump, int limit, boolean_g hard)
+{
+  const char *msg = hard ? "overflowed the absolute limit" :
+    "overflowed the original limit";
+
+  PrintMsg("%-6s : ", lump->name);
+
+  switch (limit)
+  {
+    case LIMIT_VERTEXES: PrintMsg("Number of Vertices %s.\n", msg); break;
+    case LIMIT_SECTORS:  PrintMsg("Number of Sectors %s.\n", msg); break;
+    case LIMIT_SIDEDEFS: PrintMsg("Number of Sidedefs %s\n", msg); break;
+    case LIMIT_LINEDEFS: PrintMsg("Number of Linedefs\n", msg); break;
+
+    case LIMIT_SEGS:     PrintMsg("Number of Segs %s.\n", msg); break;
+    case LIMIT_SSECTORS: PrintMsg("Number of Subsectors %s.\n", msg); break;
+    case LIMIT_NODES:    PrintMsg("Number of Nodes %s.\n", msg); break;
+
+    case LIMIT_GL_VERT:  PrintMsg("Number of GL vertices %s.\n", msg); break;
+    case LIMIT_GL_SEGS:  PrintMsg("Number of GL segs %s.\n", msg); break;
+    case LIMIT_GL_SSECT: PrintMsg("Number of GL subsectors %s.\n", msg); break;
+    case LIMIT_GL_NODES: PrintMsg("Number of GL nodes %s.\n", msg); break;
+
+    case LIMIT_BAD_SIDE:   PrintMsg("One or more linedefs has a bad sidedef.\n"); break;
+    case LIMIT_BMAP_TRUNC: PrintMsg("Blockmap area was too big - truncated.\n"); break;
+    case LIMIT_BLOCKMAP:   PrintMsg("Blockmap lump %s.\n", msg); break;
+
+    default:
+      InternalError("UNKNOWN LIMIT BIT: 0x%06x", limit);
+  }
+}
+
+// ReportOverflows
+//
+void ReportOverflows(boolean_g hard)
+{
+  lump_t *cur;
+
+  if (hard)
+  {
+    PrintMsg(
+      "ERRORS.  The following levels failed to be built, and won't\n"
+      "work in any Doom port (and may even crash it).\n\n"
+    );
+  }
+  else  // soft
+  {
+    PrintMsg(
+      "POTENTIAL FAILURES.  The following levels should work in a\n"
+      "modern Doom port, but may fail (or even crash) in older ports.\n\n"
+    );
+  }
+
+  for (cur=wad.dir_head; cur; cur=cur->next)
+  {
+    level_t *lev = cur->lev_info;
+
+    int limits, one_lim;
+
+    if (! (lev && ! (lev->flags & LEVEL_IS_GL)))
+      continue;
+
+    limits = hard ? lev->hard_limit : lev->soft_limit;
+
+    if (limits == 0)
+      continue;
+
+    for (one_lim = (1<<20); one_lim; one_lim >>= 1)
+    {
+      if (limits & one_lim)
+        ReportOneOverflow(cur, one_lim, hard);
+    }
+  }
+}
+
+//
+// ReportV3Switches
+//
+void ReportV3Switches(void)
+{
+  lump_t *cur;
+
+  PrintMsg(
+    "V3 FORMAT UPGRADES.  The following levels require a Doom port\n"
+    "which supports V3 GL-Nodes, otherwise they will fail (or crash).\n\n"
+  );
+
+  for (cur=wad.dir_head; cur; cur=cur->next)
+  {
+    level_t *lev = cur->lev_info;
+
+    if (! (lev && ! (lev->flags & LEVEL_IS_GL)))
+      continue;
+
+    if (lev->v3_switch == 0)
+      continue;
+
+    if (lev->v3_switch & LIMIT_VERTEXES)
+    {
+      PrintMsg("%-6s : Number of vertices overflowed the limit.\n", cur->name);
+    }
+
+    if (lev->v3_switch & LIMIT_GL_SSECT)
+    {
+      PrintMsg("%-6s : Number of GL segs overflowed the limit.\n", cur->name);
+    }
+  }
+}
+
+//
 // ReportFailedLevels
 //
-int ReportFailedLevels(void)
+void ReportFailedLevels(void)
 {
   lump_t *cur;
   int lev_count = 0;
-  int failures = 0;
-  
+
+  int fail_soft = 0;
+  int fail_hard = 0;
+  int fail_v3   = 0;
+
+  boolean_g need_spacer = FALSE;
+ 
   for (cur=wad.dir_head; cur; cur=cur->next)
   {
-    if (! (cur->flags & LUMP_IS_LEVEL))
+    if (! (cur->lev_info && ! (cur->lev_info->flags & LEVEL_IS_GL)))
       continue;
 
     lev_count++;
 
-    if (cur->flags & LUMP_FAILED_LEVEL)
-      failures++;
+    if (cur->lev_info->soft_limit != 0) fail_soft++;
+    if (cur->lev_info->hard_limit != 0) fail_hard++;
+    if (cur->lev_info->v3_switch  != 0) fail_v3++;
   }
-
-  if (failures == 0)
-    return failures;
 
   PrintMsg("\n");
 
-  if (failures == lev_count)
+  if (fail_soft + fail_hard + fail_v3 == 0)
   {
-    PrintMsg("ATTENTION: ALL LEVELS FAILED TO BUILD !!\n");
-    return failures;
+    PrintMsg("All levels were built successfully.\n");
+    return;
   }
 
-  PrintMsg("ATTENTION: The following levels FAILED to build:\n");
+  PrintMsg("*** Problem Report ***\n\n");
 
-  for (cur=wad.dir_head; cur; cur=cur->next)
+  if (fail_soft > 0)
   {
-    if (! (cur->flags & LUMP_IS_LEVEL))
-      continue;
-
-    if (cur->flags & LUMP_FAILED_LEVEL)
-      PrintMsg("  %s\n", cur->name);
+    ReportOverflows(FALSE);
+    need_spacer = TRUE;
   }
-   
-  return failures;
+
+  if (fail_v3 > 0)
+  {
+    if (need_spacer)
+      PrintMsg("\n");
+
+    ReportV3Switches();
+    need_spacer = TRUE;
+  }
+
+  if (fail_hard > 0)
+  {
+    if (need_spacer)
+      PrintMsg("\n");
+
+    ReportOverflows(TRUE);
+  }
+
+  PrintMsg("\nEnd of problem report.\n");
 }
 

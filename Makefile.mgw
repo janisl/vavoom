@@ -152,7 +152,7 @@ OBJ_FILES = \
 	obj/zone.o
 
 LIB_FILES = \
-	utils/glbsp/plugin/libglbsp.a \
+	utils/glbsp/libglbsp.a \
 	utils/glvis/libglvis.a
 
 LIBS := -lgdi32 -lole32 -lwsock32 -lwinmm -lopengl32 -lstdc++
@@ -265,13 +265,6 @@ exe: Vavoom95$(EXE)
 Vavoom95$(EXE): $(OBJ_FILES) $(LIB_FILES)
 	gcc $(LINK_ARGS) -o $@ $^ $(LIBS)
 
-suid:
-	chown root.root Vavoom
-	chmod 4755 Vavoom
-
-crash:
-	addr2line -e Vavoom -f < crash.txt >> basev/debug.txt
-
 obj/%.o : source/%.c
 	gcc $(C_ARGS) -o $@ $<
 
@@ -283,8 +276,8 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
-utils/glbsp/plugin/libglbsp.a:
-	$(MAKE) -C utils/glbsp/plugin -f makefile.mgw
+utils/glbsp/libglbsp.a:
+	$(MAKE) -C utils/glbsp -f Plugin_mgw.mak
 
 utils/glvis/libglvis.a:
 	$(MAKE) -C utils/glvis -f Makefile.mgw libglvis.a
@@ -340,63 +333,6 @@ basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprog
 
 # ---------------------------------------
 
-ifndef INSTALL
-INSTALL = ginstall
-endif
-
-ifndef INSTALL_DIR
-INSTALL_DIR = /usr/local/games/Vavoom
-endif
-
-ifndef INSTALL_GROUP
-INSTALL_GROUP=root
-endif
-
-ifndef INSTALL_OWNER
-INSTALL_OWNER=root
-endif
-
-ifdef INSTALL_GROUP_ONLY
-INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0750
-INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4750
-INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0770 -d
-else
-INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0755
-INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4755
-INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0777 -d
-endif
-
-INSTALL_DIRS = $(INSTALL_DIR) \
-		$(INSTALL_DIR)/basev \
-		$(INSTALL_DIR)/basev/doom \
-		$(INSTALL_DIR)/basev/doom1 \
-		$(INSTALL_DIR)/basev/doom2 \
-		$(INSTALL_DIR)/basev/tnt \
-		$(INSTALL_DIR)/basev/plutonia \
-		$(INSTALL_DIR)/basev/heretic \
-		$(INSTALL_DIR)/basev/hexen \
-		$(INSTALL_DIR)/basev/strife
-
-install: installdata
-	$(INSTALL) $(INSTALL_EXEPARMS) Vavoom$(EXE) $(INSTALL_DIR)
-
-installsv: installdata
-	$(INSTALL) $(INSTALL_PARMS) VavoomSV$(EXE) $(INSTALL_DIR)
-
-installdata:
-	$(INSTALL) $(INSTALL_DIRPARMS) $(INSTALL_DIRS)
-	$(INSTALL) $(INSTALL_PARMS) basev/default.cfg basev/startup.vs basev/games.txt $(INSTALL_DIR)/basev
-	$(INSTALL) $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
-	$(INSTALL) $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
-	$(INSTALL) $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
-	$(INSTALL) $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
-	$(INSTALL) $(INSTALL_PARMS) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
-	$(INSTALL) $(INSTALL_PARMS) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
-	$(INSTALL) $(INSTALL_PARMS) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
-	$(INSTALL) $(INSTALL_PARMS) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
-
-# ---------------------------------------
-
 clean:
 	rm obj/*.o obj/*.obj obj/cl/*.o obj/cl/*.obj obj/sv/*.o obj/sv/*.obj *.tds
 
@@ -441,4 +377,3 @@ source/%.asm : source/%.s source/asm_i386.h source/gas2tasm.exe
 
 source/gas2tasm.exe : source/gas2tasm.c
 	gcc -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<
-

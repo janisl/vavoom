@@ -2,7 +2,7 @@
 // LEVEL : Level structures & read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -55,7 +55,7 @@ typedef struct vertex_s
   float_g x, y;
 
   // vertex index.  Always valid after loading and pruning of unused
-  // vertices has occurred.  For GL vertices, bit 15 will be set.
+  // vertices has occurred.  For GL vertices, bit 30 will be set.
   int index;
 
   // reference count.  When building normal node info, unused vertices
@@ -77,6 +77,8 @@ typedef struct vertex_s
 }
 vertex_t;
 
+#define IS_GL_VERTEX  (1 << 30)
+
 
 typedef struct sector_s
 {
@@ -88,9 +90,6 @@ typedef struct sector_s
 
   // -JL- non-zero if this sector contains a polyobj.
   int has_polyobj;
-
-  // this is a dummy sector (for extrafloors).
-  char is_dummy;
 
   // reference count.  When building normal nodes, unused sectors will
   // be pruned.
@@ -179,6 +178,11 @@ typedef struct linedef_s
 
   // Hexen support
   int specials[5];
+  
+  // normally NULL, except when this linedef directly overlaps an earlier
+  // one (a rarely-used trick to create higher mid-masked textures).
+  // No segs should be created for these overlapping linedefs.
+  struct linedef_s *overlap;
 
   // linedef index.  Always valid after loading & pruning of zero
   // length lines has occurred.
@@ -239,7 +243,7 @@ typedef struct seg_s
   // longer in any superblock (e.g. now in a subsector).
   struct superblock_s *block;
 
-  // precomputed data for fast calculations
+  // precomputed data for faster calculations
   float_g psx, psy;
   float_g pex, pey;
   float_g pdx, pdy;

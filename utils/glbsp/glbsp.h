@@ -2,7 +2,7 @@
 // GLBSP.H : Interface to Node Builder
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -22,7 +22,8 @@
 #define __GLBSP_GLBSP_H__
 
 
-#define GLBSP_VER  "2.05"
+#define GLBSP_VER  "2.10"
+#define GLBSP_VER_HEX  0x210
 
 
 // certain GCC attributes can be useful
@@ -74,11 +75,11 @@ typedef struct nodebuildinfo_s
   const char *input_file;
   const char *output_file;
 
-  const char **extra_files;
   // pointer to a NULL terminated array of strings containing extra
   // input filenames.  Normally this field is NULL.  When there are
-  // extra filenames, `output_file' will be NULL -- also the build
+  // extra filenames, 'output_file' will be NULL -- also the build
   // mode will be GWA.
+  const char **extra_files;
 
   int factor;
 
@@ -88,16 +89,15 @@ typedef struct nodebuildinfo_s
   boolean_g mini_warnings;
   boolean_g force_hexen;
   boolean_g pack_sides;
-  boolean_g v1_vert;
-  boolean_g choose_fresh;
+  boolean_g fast;
+
+  int spec_version;  // 1, 2 or 3
 
   boolean_g load_all;
-  boolean_g no_gl;
   boolean_g no_normal;
   boolean_g force_normal;
   boolean_g gwa_mode;  
   boolean_g keep_sect;
-  boolean_g keep_dummy;
   boolean_g no_prune;
 
   int block_limit;

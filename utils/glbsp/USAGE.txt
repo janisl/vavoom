@@ -2,7 +2,7 @@
 USING glBSP
 ===========
 
-by Andrew Apted.  3rd December 2003.
+by Andrew Apted.  18th September 2004.
 
 
 Running glBSP
@@ -44,7 +44,7 @@ version 2.05].  Even wildcards should work.  For example:
 
 Note !  You should not specify these GWA files on the command line
 of the OpenGL DOOM port (i.e. with the -file option), doing so will
-likely confuse it and it may crash.
+confuse it and it may crash.
 
 Note 2: when using GWA mode, the output file does not contain any
 information for things, linedefs, sidedefs, sectors, reject, or
@@ -72,7 +72,7 @@ Option Descriptions
 
 The following options are recognised:
 
-  -quiet       Quieter output.  Information about each level (like
+  -q / -quiet  Quieter output.  Information about each level (like
                the number of linedefs, blockmap size, etc) is not
                displayed when this option is given, and a few other
                messages are skipped.  Important messages, like
@@ -86,17 +86,16 @@ The following options are recognised:
                trees.  See the section below for more info.  The
                default value is known to be a good compromise.
 
-  -fresh       Starting with version 2.00, glBSP can cheat a bit and
+  -fast        Starting with version 2.00, glBSP can cheat a bit and
                re-use the original node information to create the GL
-               nodes, doing it *much* faster.  When this happens, the
-               message "Using original nodes to speed things up" is
-               displayed.
+               nodes, doing it *much* faster.  Use this option to
+               enable this feature.  The message "Using original nodes
+               to speed things up" will be displayed.
 
-               This option forces glBSP to create "fresh" GL nodes.
                The downside to reusing the original nodes is that they
-               may not be as good as the ones glBSP creates, e.g. the
-               special checks to minimise slime-trails don't kick in,
-               and the -factor value doesn't have much effect.
+               may not be as good as the ones glBSP normally creates,
+               e.g. the special checks to minimise slime-trails don't
+               kick in, and the -factor value doesn't have much effect.
   
   -warn        Shows extra warning messages, which detail various
                non-serious problems that glBSP has while analysing the
@@ -107,9 +106,10 @@ The following options are recognised:
 
   -noreject    Normally glBSP will create an simple REJECT map for
                each level.  This options prevents any existing
-               REJECT map from being clobbered.
+               REJECT map, such as one time-consumingly built by
+               a dedicated reject builder, from being clobbered.
 
-  -noprog      Does not show the progress indicator.
+  -noprog      Turn off the progress indicator.
 
   -normal      glBSP usually detects if the normal node info (i.e.
                the non-GL variety) is present, and leave it untouched
@@ -121,17 +121,18 @@ The following options are recognised:
                smaller PWAD.
                
                NOTE: this may make your level a lot harder to edit !
-               Therefore this option is most useful when producing a
-               final WAD for public release.
+               Therefore this option is most useful when producing
+               the final WAD for public release.
  
-  -v1          Backwards compatibility.  The current version of the
-               "GL Nodes" spec (V2.0) introduces a new format for the
-               GL_VERT lump designed to prevent slime trails.  Some
-               engines may not support this at first, so use this
-               option to produce the old (V1.0) format.
-
 These next set of options normally don't need to be used, but they are
 provided to allow complete control or for special circumstances:
+
+  -v1 .. -v3   Specify the version of the "GL Nodes" spec to use.
+               Using -v1 provides backwards compatibility.  The
+               default is -v2.  Giving -v3 will force certain lumps
+               to use the new V3.0 formats, but is only useful for
+               testing since glBSP will automatically switch to these
+               formats when certain limits are exceeded.
 
   -loadall     glBSP will normally try to copy lumps from the input
                WAD file to the output file instead of loading them
@@ -145,8 +146,6 @@ provided to allow complete control or for special circumstances:
                recommend _against_ it: you could lose your original
                WAD if something goes wrong (and you know Murphy...).
 
-  -nogl        Forces glBSP to not create the GL node info.
-
   -nonormal    Forces glBSP to not create the normal node information
                when it detects that it is absent.
  
@@ -155,12 +154,6 @@ provided to allow complete control or for special circumstances:
                the output filename has the ".gwa" extension.  This
                option forces glBSP into GWA mode.
  
-  -keepdummy   Keeps the small dummy sectors (used for extrafloors)
-               in the generated BSP tree.  Normally these sectors are
-               never entered, viewed or collision checked, and so can
-               be omitted from the BSP tree / blockmap without problem
-               (making everything work more efficiently).
-
   -keepsect    Prevents unused sectors that are found in the level
                from being removed.  This is important for anything
                that refers to sector numbers directly (e.g. certain
@@ -195,75 +188,31 @@ provided to allow complete control or for special circumstances:
                problems.
 
 
-Notes for TC authors:
----------------------
+Interaction with other tools
+----------------------------
 
-None of the various WAD tools that exist (such as DSHRINK, CLEANWAD,
-DEUTEX, etc..) are "glBSP aware", they will rearrange or even remove
-some of the special GL entries.  If you are preparing your final WAD
-file that is either a compilation of just multiple maps, or multiple
-maps and other data (music, textures, sprites, graphics, etc..), run
-the following process to properly compile everything:
+As far as I know, none of the various WAD tools that exist (such
+as DSHRINK, CLEANWAD, DEUTEX, etc..) are "glBSP aware", they will
+rearrange or even remove some of the special GL entries, and
+everything goes pear shaped.
 
-  1. For your final compile of your maps (e.g. you are completely done
-     making your maps), compile them using glbsp and use the -nogl
-     option to *not* build the GL nodes.
-  
-     e.g.:
-          glbsp -nogl map.wad -o map1.wad
-  
-  2) Run rmb (reject map building) at this point on your WAD files.
-  
-     e.g.:
-          rmb map1.wad map2.wad -perfect -nomap
-  
-  3) Merge all your WAD files into your main WAD using NWT or
-     Wintex/DEUSF.
-  
-  4) Run cleanwad on your main WAD
-  
-     e.g.:
-          cleanwad main.wad main1.wad +rr +al +tw +rp +pp +is +rb +pb
-  
-  5) Recompile the maps in your main WAD with the GL nodes.  Be sure
-     to use the -noreject option, which prevents the reject entries
-     created by rmb from being overwritten.
-  
-     e.g.:
-          glbsp -noreject main1.wad -o main2.wad
-
+When using a reject building tool (such as RMB), you need to give
+the -noreject to glBSP to prevent the good REJECT data from being
+overwritten.
  
-Your final output, main2.wad, will be a clean and compact WAD, with no
-wasted space, and all the GL nodes in the proper order. All of your
-data will be in this WAD file as well, as glbsp can compile the maps
-in a WAD without destroying non-map data.
-  
 *** DO NOT: ***
   
-  + Run dshrink on your map WADs at any time!
+  + Run DSHRINK on your map WADs at any time!
 
-  + Run cleanwad on your map WADs *after* you have compiled your GL
+  + Run CLEANWAD on your map WADs *after* you have compiled your GL
     friendly nodes!  (The GL nodes will be removed).
 
   + Use Wintex/DEUSF to merge map WADs with GL friendly nodes in them!
     (The GL node entries will be rearranged, causing problems).
 
 
-Problems under DOS ?
---------------------
-
-If you find that glBSP consistently runs out of memory and/or crashes
-at a certain point within a particular WAD, it could well be your DPMI
-settings.  This happened to me just recently, after much checking of
-the code the problem seemed inexplicable.  It turned out that CWSDPMI
-was the culprit.  The solution was to increase CWSDPMI's "internal
-heap" size using the companion CWSPARAM program, bumping it up from
-128 to 1024 (see the CWSPARAM.DOC file for the details).  If you have
-a different one (e.g. QDPMI), then check its documentation.
-
-
-How glBSP works, and some tips
-------------------------------
+How glBSP works
+---------------
 
 A node builder works like this: say you are looking at your level in
 the automap or in the level editor.  The node builder needs to pick a
@@ -301,9 +250,9 @@ closer together are also better (the BSP is more balanced).
 Differences to BSP 2.3
 ----------------------
 
-As mentioned in the readme file, glBSP is based on BSP 2.3.  Most of
-the code has been rewritten, however, and some features of BSP were
-changed or abandoned.  Features that are different:
+As mentioned in the readme file, glBSP was originally based on BSP 2.3.
+Most of the code has been rewritten, however, and some features of BSP
+were changed or abandoned.  Features that are different:
 
   +  When the output file is not specified (i.e. no -o option), then
      the default output file will be a GWA file with the same name.
@@ -314,7 +263,7 @@ changed or abandoned.  Features that are different:
      needed.  Thus glBSP does not accept the following options that
      BSP 2.3 supports: -thold, -vp, -vpmark, -vpwarn.
 
-  +  glBSP works on big-endian platforms (like the Mac).
+  +  glBSP works on big-endian platforms (like MacOS X).
 
   +  The "just for a grin" special feature where a linedef with tag
      999 would cause an angle adjustment was removed.

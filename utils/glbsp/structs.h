@@ -2,7 +2,7 @@
 // STRUCT : Doom structures, raw on-disk layout
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -195,6 +195,19 @@ typedef struct raw_gl_seg_s
 raw_gl_seg_t;
 
 
+typedef struct raw_v3_seg_s
+{
+  uint32_g start;      // from this vertex...
+  uint32_g end;        // ... to this vertex
+  uint16_g linedef;    // linedef that this seg goes along, or -1
+  uint16_g flags;      // flags (especially: side)
+  uint32_g partner;    // partner seg number, or -1
+}
+raw_v3_seg_t;
+
+#define V3SEG_F_LEFT  0x0001
+
+
 typedef struct raw_bbox_s
 {
   sint16_g maxy, miny;
@@ -219,6 +232,14 @@ typedef struct raw_subsec_s
   uint16_g first;   // first Seg
 }
 raw_subsec_t;
+
+
+typedef struct raw_v3_subsec_s
+{
+  uint32_g num;     // number of Segs in this Sub-Sector
+  uint32_g first;   // first Seg
+}
+raw_v3_subsec_t;
 
 
 #endif /* __GLBSP_STRUCTS_H__ */

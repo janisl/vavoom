@@ -2,7 +2,7 @@
 // UTILITY : general purpose functions
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -37,6 +37,10 @@
 
 #ifndef ABS
 #define ABS(x)  ((x) >= 0 ? (x) : -(x))
+#endif
+
+#ifndef I_ROUND
+#define I_ROUND(x)  ((int) (((x) < 0.0f) ? ((x) - 0.5f) : ((x) + 0.5f)))
 #endif
 
 /* ----- function prototypes ---------------------------- */

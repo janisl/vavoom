@@ -2,7 +2,7 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -352,7 +352,8 @@ static seg_t *CreateOneSeg(linedef_t *line, vertex_t *start, vertex_t *end,
   {
     PrintWarn("Bad sidedef on linedef #%d (Z_CheckHeap error)\n",
         line->index);
-    MarkLevelFailed();
+
+    MarkSoftFailure(LIMIT_BAD_SIDE);
   }
  
   seg->start   = start;
@@ -407,8 +408,8 @@ superblock_t *CreateSegs(void)
     if (line->zero_len)
       continue;
 
-    // ignore lines from dummy sectors
-    if (line->right && line->right->sector && line->right->sector->is_dummy)
+    // ignore overlapping lines
+    if (line->overlap)
       continue;
 
     // check for Humungously long lines
@@ -483,6 +484,14 @@ static void DetermineMiddle(subsec_t *sub)
   sub->mid_y = mid_y / total;
 }
 
+static int LinedefSelfRef(const linedef_t *L)
+{
+  if (! L->left || ! L->right)
+    return FALSE;
+
+  return (L->left->sector == L->right->sector) ? TRUE : FALSE;
+}
+
 //
 // ClockwiseOrder
 //
@@ -497,6 +506,9 @@ static void ClockwiseOrder(subsec_t *sub)
 
   int i;
   int total = 0;
+
+  int first = 0;
+  int score = -1;
 
 # if DEBUG_SUBSEC
   PrintDebug("Subsec: Clockwising %d\n", sub->index);
@@ -550,13 +562,34 @@ static void ClockwiseOrder(subsec_t *sub)
     }
   }
 
+  // choose the seg that will be first (the game engine will typically use
+  // that to determine the sector).  In particular, we don't like self
+  // referencing linedefs (they are often used for deep-water effects).
+  for (i=0; i < total; i++)
+  {
+    int cur_score = 2;
+
+    if (! array[i]->linedef)
+      cur_score = 0;
+    else if (LinedefSelfRef(array[i]->linedef))
+      cur_score = 1;
+
+    if (cur_score > score)
+    {
+      first = i;
+      score = cur_score;
+    }
+  }
+
   // transfer sorted array back into sub
   sub->seg_list = NULL;
 
   for (i=total-1; i >= 0; i--)
   {
-    array[i]->next = sub->seg_list;
-    sub->seg_list  = array[i];
+    int j = (i + first) % total;
+
+    array[j]->next = sub->seg_list;
+    sub->seg_list  = array[j];
   }
  
   if (total > 32)
@@ -671,7 +704,7 @@ static void SanityCheckHasRealSeg(subsec_t *sub)
       return;
   }
 
-  InternalError("Subsector #%d near (%1.1f,%1.1f) has no real seg !\n",
+  InternalError("Subsector #%d near (%1.1f,%1.1f) has no real seg !",
       sub->index, sub->mid_x, sub->mid_y);
 }
 
@@ -882,10 +915,22 @@ glbsp_ret_e BuildNodes(superblock_t *seg_list,
 
   *N = node = NewNode();
 
-  node->x  = (int)best->psx;
-  node->y  = (int)best->psy;
-  node->dx = (int)best->pdx;
-  node->dy = (int)best->pdy;
+  assert(best->linedef);
+
+  if (best->side == 0)
+  {
+    node->x  = best->linedef->start->x;
+    node->y  = best->linedef->start->y;
+    node->dx = best->linedef->end->x - node->x;
+    node->dy = best->linedef->end->y - node->y;
+  }
+  else  /* left side */
+  {
+    node->x  = best->linedef->end->x;
+    node->y  = best->linedef->end->y;
+    node->dx = best->linedef->start->x - node->x;
+    node->dy = best->linedef->start->y - node->y;
+  }
 
   /* check for really long partition (overflows dx,dy in NODES) */
   if (best->p_length >= 30000)
@@ -1058,8 +1103,8 @@ static void RoundOffSubsector(subsec_t *sub)
       cur->end = cur->end->normal_dup;
 
     // is the seg degenerate ?
-    if ((int)cur->start->x == (int)cur->end->x &&
-        (int)cur->start->y == (int)cur->end->y)
+    if (I_ROUND(cur->start->x) == I_ROUND(cur->end->x) &&
+        I_ROUND(cur->start->y) == I_ROUND(cur->end->y))
     {
       cur->degenerate = 1;
 
@@ -1098,8 +1143,10 @@ static void RoundOffSubsector(subsec_t *sub)
 
 #   if DEBUG_SUBSEC
     PrintDebug("Degenerate after:  (%d,%d) -> (%d,%d)\n", 
-        (int)last_real_degen->start->x, (int)last_real_degen->start->y,
-        (int)last_real_degen->end->x, (int)last_real_degen->end->y);
+        I_ROUND(last_real_degen->start->x),
+        I_ROUND(last_real_degen->start->y),
+        I_ROUND(last_real_degen->end->x),
+        I_ROUND(last_real_degen->end->y));
 #   endif
 
     last_real_degen->degenerate = 0;
@@ -1165,20 +1212,6 @@ void RoundOffBspTree(node_t *root)
     RenumberSubsecSegs(sub);
   }
 }
-
-
-//---------------------------------------------------------------------------
-//
-//    This log message by Colin Phipps:
-//
-// Make rounding better in DivideSegs()
-// Fix logic errors in IsItConvex:
-// - Even if both ends of a seg are the same side of a possible
-// dividing seg, we must check that both are not on the wrong side
-// still (one could be on the line)
-// - Even if a split would be near the end of a line, the other end
-// must be on the right side still
-//
 
 
 //---------------------------------------------------------------------------

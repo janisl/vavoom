@@ -2,8 +2,7 @@
 # glBSP Makefile for MINGW32 Plugin
 #
 
-MAIN=..
-SYSDIR=.
+MAIN=.
 
 OUTNAME=libglbsp.a
 
@@ -29,7 +28,7 @@ OBJS=$(MAIN)/analyze.o  \
 all:    $(OUTNAME)
 
 clean:
-	rm -f $(OUTNAME) $(MAIN)/*.o $(SYSDIR)/*.o
+	rm -f $(OUTNAME) $(MAIN)/*.o
 
 $(OUTNAME): $(OBJS)
 	$(AR) $(OUTNAME) $(OBJS)

@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -55,6 +55,49 @@ typedef struct wad_s
 wad_t;
 
 
+// level information
+
+typedef struct level_s
+{
+  // various flags
+  int flags;
+
+  // the child lump list
+  struct lump_s *children;
+
+  // for normal levels, this is the associated GL level lump
+  struct lump_s *buddy;
+
+  // information on overflow
+  int soft_limit;
+  int hard_limit;
+  int v3_switch;
+}
+level_t;
+
+/* this level information holds GL lumps */
+#define LEVEL_IS_GL   0x0002
+
+/* limit flags, to show what went wrong */
+#define LIMIT_VERTEXES     0x000001
+#define LIMIT_SECTORS      0x000002
+#define LIMIT_SIDEDEFS     0x000004
+#define LIMIT_LINEDEFS     0x000008
+
+#define LIMIT_SEGS         0x000010
+#define LIMIT_SSECTORS     0x000020
+#define LIMIT_NODES        0x000040
+
+#define LIMIT_GL_VERT      0x000100
+#define LIMIT_GL_SEGS      0x000200
+#define LIMIT_GL_SSECT     0x000400
+#define LIMIT_GL_NODES     0x000800
+
+#define LIMIT_BAD_SIDE     0x001000
+#define LIMIT_BMAP_TRUNC   0x002000
+#define LIMIT_BLOCKMAP     0x004000
+
+
 // directory entry
 
 typedef struct lump_s
@@ -80,18 +123,10 @@ typedef struct lump_s
   // data of lump
   void *data;
 
-  // for levels, these are the child lump lists
-  struct lump_s *level_list;
-  struct lump_s *level_gl_list;
-
-  // for normal levels, this is the associated GL level lump
-  struct lump_s *level_buddy;
+  // level information, usually NULL
+  level_t *lev_info;
 }
 lump_t;
-
-/* this lump is a level marker */
-#define LUMP_IS_LEVEL      0x0001
-#define LUMP_IS_GL_LEVEL   0x0002
 
 /* this lump should be copied from the input wad */
 #define LUMP_COPY_ME       0x0004
@@ -104,9 +139,6 @@ lump_t;
 
 /* this lump is new (didn't exist in the original) */
 #define LUMP_NEW           0x0200
-
-/* this level failed to build properly */
-#define LUMP_FAILED_LEVEL  0x1000
 
 
 /* ----- function prototypes --------------------- */
@@ -181,15 +213,15 @@ lump_t *CreateGLLump(const char *name);
 // append some raw data to the end of the given level lump (created
 // with the above function).
 //
-void AppendLevelLump(lump_t *lump, void *data, int length);
+void AppendLevelLump(lump_t *lump, const void *data, int length);
 
 // mark the fact that this level failed to build.
-void MarkLevelFailed(void);
+void MarkSoftFailure(int soft);
+void MarkHardFailure(int hard);
+void MarkV3Switch(int v3);
 
-// alert the user if any levels failed to build properly.  Returns the
-// number of failed levels (usually none).
-//
-int ReportFailedLevels(void);
+// alert the user if any levels failed to build properly.
+void ReportFailedLevels(void);
 
 
 /* ----- conversion macros ----------------------- */

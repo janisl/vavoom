@@ -2,7 +2,7 @@
 // ANALYZE : Analyzing level structures
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000-2003 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2004 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -42,12 +42,8 @@
 
 #define DEBUG_WALLTIPS  0
 #define DEBUG_POLYOBJ   0
-#define DEBUG_DUMMY     0
 
 #define POLY_BOX_SZ  10
-
-// forward declarations
-static int VertexCheckMultiSectors(vertex_t *v);
 
 // stuff needed from level.c (this file closely related)
 extern vertex_t  ** lev_vertices;
@@ -56,7 +52,6 @@ extern sidedef_t ** lev_sidedefs;
 extern sector_t  ** lev_sectors;
 
 extern boolean_g lev_doing_normal;
-extern boolean_g lev_doing_gl;
 
 
 /* ----- polyobj handling ----------------------------- */
@@ -301,6 +296,7 @@ void DetectPolyobjSectors(void)
   }
 }
 
+#if 0
 //
 // BoxContainsThing
 //
@@ -323,6 +319,7 @@ static int BoxContainsThing(const bbox_t *bbox)
 
   return FALSE;
 }
+#endif
 
 
 /* ----- analysis routines ----------------------------- */
@@ -413,10 +410,7 @@ void DetectDuplicateVertices(void)
       vertex_t *B = lev_vertices[array[i+1]];
 
       // found a duplicate !
-      if (A->equiv)
-        B->equiv = A->equiv;
-      else
-        B->equiv = A;
+      B->equiv = A->equiv ? A->equiv : A;
     }
   }
 
@@ -446,10 +440,7 @@ void DetectDuplicateSidedefs(void)
       sidedef_t *B = lev_sidedefs[array[i+1]];
 
       // found a duplicate !
-      if (A->equiv)
-        B->equiv = A->equiv;
-      else
-        B->equiv = A;
+      B->equiv = A->equiv ? A->equiv : A;
     }
   }
 
@@ -655,144 +646,103 @@ void PruneSectors(void)
     FatalError("Couldn't find any Sectors");
 }
 
-void DetectDummySectors(void)
+static INLINE_G int LineVertexLowest(const linedef_t *L)
 {
-  // Dummy sectors are detected with the following criteria:
-  //   (a) not larger than 128x128.
-  //   (b) all linedefs are one-sided (isolated from main area).
-  //   (c) contains NO things.
+  // returns the "lowest" vertex (normally the left-most, but if the
+  // line is vertical, then the bottom-most) => 0 for start, 1 for end.
+
+  return ((int)L->start->x < (int)L->end->x ||
+          ((int)L->start->x == (int)L->end->x && 
+           (int)L->start->y <  (int)L->end->y)) ? 0 : 1;
+}
+
+static int LineStartCompare(const void *p1, const void *p2)
+{
+  int line1 = ((const int *) p1)[0];
+  int line2 = ((const int *) p2)[0];
+
+  linedef_t *A = lev_linedefs[line1];
+  linedef_t *B = lev_linedefs[line2];
+
+  vertex_t *C;
+  vertex_t *D;
+
+  if (line1 == line2)
+    return 0;
+
+  // determine left-most vertex of each line
+  C = LineVertexLowest(A) ? A->end : A->start;
+  D = LineVertexLowest(B) ? B->end : B->start;
+
+  if ((int)C->x != (int)D->x)
+    return (int)C->x - (int)D->x; 
+
+  return (int)C->y - (int)D->y;
+}
+
+static int LineEndCompare(const void *p1, const void *p2)
+{
+  int line1 = ((const int *) p1)[0];
+  int line2 = ((const int *) p2)[0];
+
+  linedef_t *A = lev_linedefs[line1];
+  linedef_t *B = lev_linedefs[line2];
+
+  vertex_t *C;
+  vertex_t *D;
+
+  if (line1 == line2)
+    return 0;
+
+  // determine right-most vertex of each line
+  C = LineVertexLowest(A) ? A->start : A->end;
+  D = LineVertexLowest(B) ? B->start : B->end;
+
+  if ((int)C->x != (int)D->x)
+    return (int)C->x - (int)D->x; 
+
+  return (int)C->y - (int)D->y;
+}
+
+void DetectOverlappingLines(void)
+{
+  // Algorithm:
+  //   Sort all lines by left-most vertex (for vertical lines, bottom-most).
+  //   Overlapping lines will then be contiguous in this set.
 
   int i;
-  int count;
-
-  char *notdummy;
-  bbox_t *bboxes;
-
-  if (num_sectors == 0)
-    return;
+  int *array = UtilCalloc(num_linedefs * sizeof(int));
+  int count = 0;
 
   DisplayTicker();
 
-  notdummy = (char *) UtilCalloc(num_sectors);
-  bboxes = (bbox_t *) UtilCalloc(num_sectors * sizeof(bbox_t));
+  // sort array of indices
+  for (i=0; i < num_linedefs; i++)
+    array[i] = i;
+  
+  qsort(array, num_linedefs, sizeof(int), LineStartCompare);
 
-  // reset bounding boxes
-  for (i = 0; i < num_sectors; i++) 
+  for (i=0; i < num_linedefs - 1; i++)
   {
-    notdummy[i] = FALSE;
-
-    bboxes[i].minx = bboxes[i].miny = SHRT_MAX;
-    bboxes[i].maxx = bboxes[i].maxy = SHRT_MIN;
-  }
-
-  // pass over all linedefs, checking if two-sided and computing bboxes
-  for (i = 0; i < num_linedefs; i++)
-  {
-    linedef_t *L = lev_linedefs[i];
-
-    int s1 = (L->right && L->right->sector) ? L->right->sector->index : -1;
-    int s2 = (L->left  && L->left->sector)  ? L->left->sector->index  : -1;
-
-    if (L->zero_len)
-      continue;
-
-    if ((L->left && L->right) || 
-        VertexCheckMultiSectors(L->start) ||
-        VertexCheckMultiSectors(L->end))
+    if (LineStartCompare(array + i, array + i+1) == 0 &&
+          LineEndCompare(array + i, array + i+1) == 0)
     {
-      if (s1 >= 0) notdummy[s1] = TRUE;
-      if (s2 >= 0) notdummy[s2] = TRUE;
+      linedef_t *A = lev_linedefs[array[i]];
+      linedef_t *B = lev_linedefs[array[i+1]];
+
+      // found an overlap !
+      B->overlap = A->overlap ? A->overlap : A;
+
+      count++;
     }
-    else  // update BBOX
-    {
-      float_g x1 = L->start->x;
-      float_g y1 = L->start->y;
-      float_g x2 = L->end->x;
-      float_g y2 = L->end->y;
-
-      int minx = MIN((int)floor(x1), (int)floor(x2));
-      int miny = MIN((int)floor(y1), (int)floor(y2));
-      int maxx = MAX((int)ceil(x1), (int)ceil(x2));
-      int maxy = MAX((int)ceil(y1), (int)ceil(y2));
-
-      if (s1 >= 0)
-      {
-        bboxes[s1].minx = MIN(bboxes[s1].minx, minx);
-        bboxes[s1].miny = MIN(bboxes[s1].miny, miny);
-        bboxes[s1].maxx = MAX(bboxes[s1].maxx, maxx);
-        bboxes[s1].maxy = MAX(bboxes[s1].maxy, maxy);
-      }
-      if (s2 >= 0)
-      {
-        bboxes[s2].minx = MIN(bboxes[s2].minx, minx);
-        bboxes[s2].miny = MIN(bboxes[s2].miny, miny);
-        bboxes[s2].maxx = MAX(bboxes[s2].maxx, maxx);
-        bboxes[s2].maxy = MAX(bboxes[s2].maxy, maxy);
-      }
-    }
-  }
-
-  // check the bboxes, and count the dummies
-  count = 0;
-
-  for (i = 0; i < num_sectors; i++)
-  {
-    if (notdummy[i])
-      continue;
-
-    if (lev_sectors[i]->coalesce || lev_sectors[i]->has_polyobj)
-    {
-      notdummy[i] = TRUE;
-      continue;
-    }
-
-    // ignore sectors which have no linedefs
-    if (bboxes[i].minx == SHRT_MAX)
-    {
-      notdummy[i] = TRUE;
-      continue;
-    }
-
-#   if DEBUG_DUMMY
-    PrintDebug("  Bounding box for isolated sector %d: (%d,%d) .. (%d,%d)\n",
-        i, bboxes[i].minx, bboxes[i].miny, bboxes[i].maxx, bboxes[i].maxy);
-#   endif
-
-    if (bboxes[i].maxx - bboxes[i].minx > 128 ||
-        bboxes[i].maxy - bboxes[i].miny > 128)
-    {
-      notdummy[i] = TRUE;
-      continue;
-    }
-
-    // check if the sector contains a thing
-    if (BoxContainsThing(bboxes + i))
-    {
-#     if DEBUG_DUMMY
-      PrintDebug("  Isolated sector %d contains a thing\n", i);
-#     endif
-
-      notdummy[i] = TRUE;
-      continue;
-    }
-
-    // must be a dummy sector
-    count++;
-
-    lev_sectors[i]->is_dummy = TRUE;
-
-#   if DEBUG_DUMMY
-    PrintDebug("  Sector %d is DUMMY\n", i);
-#   endif
   }
 
   if (count > 0)
   {
-      PrintVerbose("Ignoring %d dummy sectors\n", count);
+      PrintVerbose("Detected %d overlapped linedefs\n", count);
   }
 
-  UtilFree(bboxes);
-  UtilFree(notdummy);
+  UtilFree(array);
 }
 
 
@@ -887,9 +837,9 @@ vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y)
 
   vert->ref_count = seg->partner ? 4 : 2;
 
-  if (lev_doing_gl && (!cur_info->v1_vert || !lev_doing_normal))
+  if (! (cur_info->spec_version == 1 && lev_doing_normal))
   {
-    vert->index = num_gl_vert | 0x8000;
+    vert->index = num_gl_vert | IS_GL_VERTEX;
     num_gl_vert++;
   }
   else
@@ -908,7 +858,7 @@ vertex_t *NewVertexFromSplitSeg(seg_t *seg, float_g x, float_g y)
 
   // create a duplex vertex if needed
 
-  if (lev_doing_normal && lev_doing_gl && !cur_info->v1_vert)
+  if (lev_doing_normal && cur_info->spec_version != 1)
   {
     vert->normal_dup = NewVertex();
 
@@ -944,7 +894,7 @@ vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end)
   }
   else
   {
-    vert->index = num_gl_vert | 0x8000;
+    vert->index = num_gl_vert | IS_GL_VERTEX;
     num_gl_vert++;
   }
 
@@ -959,8 +909,8 @@ vertex_t *NewVertexDegenerate(vertex_t *start, vertex_t *end)
   dx /= dlen;
   dy /= dlen;
 
-  while ((int)vert->x == (int)start->x && 
-         (int)vert->y == (int)start->y)
+  while (I_ROUND(vert->x) == I_ROUND(start->x) && 
+         I_ROUND(vert->y) == I_ROUND(start->y))
   {
     vert->x += dx;
     vert->y += dy;
@@ -1025,36 +975,5 @@ int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
   
   InternalError("Vertex %d has no tips !", vert->index);
   return FALSE;
-}
-
-//
-// VertexCheckMultiSectors
-//
-static int VertexCheckMultiSectors(vertex_t *vert)
-{
-  sector_t *sec = NULL;
-
-  wall_tip_t *tip;
-
-  for (tip = vert->tip_set; tip; tip=tip->next)
-  {
-    if (tip->left)
-    {
-      if (! sec)
-        sec = tip->left;
-      else if (sec != tip->left)
-        return TRUE;
-    }
-
-    if (tip->right)
-    {
-      if (! sec)
-        sec = tip->right;
-      else if (sec != tip->right)
-        return TRUE;
-    }
-  }
-
-  return FALSE;  // zero or one sector
 }
 

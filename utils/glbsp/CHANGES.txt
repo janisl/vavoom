@@ -2,6 +2,53 @@
 CHANGELOG
 =========
 
+Changes in V2.10  (27th September 2004)
+---------------------------------------
+
+ - support V3 GL-Nodes (handle more than 65534 segs in GL_SEGS lump, and
+   more than 32767 vertices in GL_VERT lump).
+
+ - produce a much more comprehensive problem report when levels fail (or
+   have possibly failed) to build properly (by overflowing limits, etc).
+
+ - allow levels to contain more than 32767 sidedefs.
+
+ - choose first seg in a subsector better, avoid self-referenced lines.
+
+ - removed the ability to build plain nodes (without the GL nodes).
+
+ - removed -fresh option (now the default), and added a -fast option.
+
+ - removed code to detect and ignore dummy sectors (which was causing a
+   crash under jHexen).  The -keepdummy option is still accepted but
+   ignored.
+
+ - glBSP now detects overlapping linedefs (used to make higher mid-maskers)
+   and ignores them (produces no segs from the second and subsequent ones).
+   It's now up to the Engine to detect this old trick and emulate it.
+
+ - v1 vertex coords are now rounded to integers (not truncated).
+
+ - generalised the -v1 option, allowing -v2 and -v3 as well.  Using -v3
+   will force the GL_SEGS and GL_SSECT lumps to be the new V3 format
+   (mainly useful for testing an engine's support).
+
+ - when truncating the blockmap, it is now centered on the average of all
+   linedef vertices.
+
+ - fixed potential inaccuracy in the NODES and GL_NODES lumps.
+
+ - modified the "based on BSP" messages in the program output and in the
+   documentation, so that people don't get the impression that glBSP is
+   100% backwards compatible with the original BSP (it isn't).
+
+ - the Unix and MacOS X makefiles now have "make install" targets.  Also
+   converted the docs into a manual page for the Unix installation.
+
+ - moved makefiles and project files into top-level directory.  Removed
+   the support for building with Borland C++Builder.
+
+
 Changes in V2.05  (31st December 2003)
 --------------------------------------
 

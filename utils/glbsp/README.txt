@@ -2,17 +2,17 @@
 README for glBSP
 ================
 
-by Andrew Apted.  3rd December 2003.
+by Andrew Apted.  18th September 2004.
 
 
 Introduction
 ------------
 
-glBSP is a node builder specially designed to be used with OpenGL
-ports of the DOOM game engine. It adheres to the "GL-Friendly Nodes"
-specification, which means it adds some new special nodes to a WAD
-file that makes it very easy (and fast !) for an OpenGL DOOM engine to
-compute the polygons needed for drawing the levels.
+glBSP is a nodes builder specially designed to be used with OpenGL-based
+DOOM game engines. It adheres to the "GL-Friendly Nodes" specification,
+which means it adds some new special nodes to a WAD file that makes it
+very easy for an OpenGL DOOM engine to compute the polygons needed for
+drawing the levels.
 
 There are many DOOM ports that understand the GL Nodes which glBSP
 creates, including: EDGE, the Doomsday engine (JDOOM), Doom3D, PrBoom,
@@ -22,7 +22,7 @@ and Vavoom.  See the links below.
 Status
 ------
 
-The current version of glBSP is 2.05.  It has been tested and known to
+The current version of glBSP is 2.10.  It has been tested and known to
 work on numerous large wads, including DOOM I, DOOM II, TeamTNT's Eternal III,
 Fanatic's QDOOM, and many others.
 
@@ -30,9 +30,9 @@ Fanatic's QDOOM, and many others.
 Copyright
 ---------
 
-glBSP is Copyright (C) 2000-2003 Andrew Apted.  It is based on
-"BSP 2.3" (C) Colin Reed and Lee Killough, which was created from
-the basic theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
+glBSP is Copyright (C) 2000-2004 Andrew Apted.  It was originally
+based on "BSP 2.3" (C) Colin Reed and Lee Killough, which was created
+from the basic theory stated in DEU5 (OBJECTS.C) by Raphael Quinet.
 
 The GUI version (glBSPX) is based in part on the work of the FLTK
 project, see http://www.fltk.org.
@@ -43,11 +43,11 @@ All trademarks are the propriety of their owners.
 License
 -------
 
-Thanks to Lee Killough and André Majorel (the two previous maintainers
-of BSP), glBSP is now under the GNU General Public License (GPL).  See
-the file `GLBSP.lic' in the binary package or `COPYING.txt' in the
-source package (or go to http://www.gnu.org) for the full text, but to
-summarise:
+Thanks to Lee Killough and André Majorel (former maintainer of BSP,
+and former Miss Venezuela, respectively), glBSP is under the GNU
+General Public License (GPL).  See the file `COPYING.txt' in the
+source package (or go to http://www.gnu.org) for the full text, but
+to summarise:
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ releasing the source code to their WAD utilities, and giving me lots
 of ideas to "borrow" :), like blockmap packing.
 
 Colin Reed and Lee Killough (and others), who wrote the original BSP
-2.3 which glBSP is based on.
+2.3 which glBSP was based on.
 
 Matt Fell, for the Doom Specs v1.666.
 
