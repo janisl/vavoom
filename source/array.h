@@ -54,53 +54,53 @@ public:
 	{
 		return ArrayNum;
 	}
-	void InsertZeroed(int Index, int Count, int ElementSize)
+	void InsertZeroed(int Index, int Count, int ElementSize, EZoneTag Tag)
 	{
-		Insert(Index, Count, ElementSize);
+		Insert(Index, Count, ElementSize, Tag);
 		memset((byte *)Data + Index * ElementSize, 0, Count * ElementSize);
 	}
-	void Insert(int Index, int Count, int ElementSize)
+	void Insert(int Index, int Count, int ElementSize, EZoneTag Tag)
 	{
 		int OldNum = ArrayNum;
 		if ((ArrayNum += Count) > ArrayMax)
 		{
 			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize);
+			Realloc(ElementSize, Tag);
 		}
 		memmove((byte *)Data + (Index + Count) * ElementSize,
 			(byte *)Data + Index * ElementSize, 
 			(OldNum - Index) * ElementSize);
 	}
-	int Add(int Count, int ElementSize)
+	int Add(int Count, int ElementSize, EZoneTag Tag)
 	{
 		int Index = ArrayNum;
 		if ((ArrayNum += Count) > ArrayMax)
 		{
 			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize);
+			Realloc(ElementSize, Tag);
 		}
 
 		return Index;
 	}
-	int AddZeroed(int ElementSize, int n = 1)
+	int AddZeroed(int ElementSize, EZoneTag Tag, int n = 1)
 	{
-		int Index = Add(n, ElementSize);
+		int Index = Add(n, ElementSize, Tag);
 		memset((byte *)Data + Index * ElementSize, 0, n * ElementSize);
 		return Index;
 	}
-	void Shrink(int ElementSize)
+	void Shrink(int ElementSize, EZoneTag Tag)
 	{
 		if (ArrayMax != ArrayNum)
 		{
 			ArrayMax = ArrayNum;
-			Realloc(ElementSize);
+			Realloc(ElementSize, Tag);
 		}
 	}
-	void Empty(int ElementSize, int Slack = 0)
+	void Empty(int ElementSize, EZoneTag Tag, int Slack = 0)
 	{
 		ArrayNum = 0;
 		ArrayMax = Slack;
-		Realloc(ElementSize);
+		Realloc(ElementSize, Tag);
 	}
 	FArray(void) : Data(NULL), ArrayNum(0), ArrayMax(0)
 	{}
@@ -117,7 +117,7 @@ public:
 	{
 		Ar.CountBytes(ArrayNum * ElementSize, ArrayMax * ElementSize);
 	}*/
-	void Remove(int Index, int Count, int ElementSize)
+	void Remove(int Index, int Count, int ElementSize, EZoneTag Tag)
 	{
 		if (ArrayNum > Index + Count)
 		{
@@ -129,11 +129,11 @@ public:
 		if (ArrayNum + ArrayNum / 2 + 32 < ArrayMax)
 		{
 			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize);
+			Realloc(ElementSize, Tag);
 		}
 	}
 protected:
-	void Realloc(int ElementSize)
+	void Realloc(int ElementSize, EZoneTag Tag)
 	{
 		if (ArrayMax)
 		{
@@ -143,7 +143,7 @@ protected:
 			}
 			else
 			{
-				Data = Z_Malloc(ArrayMax * ElementSize, PU_STRING, 0);
+				Data = Z_Malloc(ArrayMax * ElementSize, Tag, 0);
 			}
 		}
 		else
@@ -155,10 +155,10 @@ protected:
 			}
 		}
 	}
-	FArray(int InNum, int ElementSize)
+	FArray(int InNum, int ElementSize, EZoneTag Tag)
 		: Data(NULL), ArrayNum(InNum), ArrayMax(InNum)
 	{
-		Realloc(ElementSize);
+		Realloc(ElementSize, Tag);
 	}
 	void *Data;
 	int ArrayNum;
@@ -168,17 +168,17 @@ protected:
 //
 // Templated dynamic array.
 //
-template<class T> class TArray : public FArray
+template<class T, EZoneTag Tag = PU_STRING> class TArray : public FArray
 {
 public:
 	typedef T ElementType;
 	TArray(void) : FArray()
 	{}
 	TArray(int InNum) 
-		: FArray(InNum, sizeof(T))
+		: FArray(InNum, sizeof(T), Tag)
 	{}
 	TArray(const TArray& Other)
-		: FArray(Other.ArrayNum, sizeof(T))
+		: FArray(Other.ArrayNum, sizeof(T), Tag)
 	{
 		ArrayNum = 0;
 		for (int i = 0; i < Other.ArrayNum; i++)
@@ -190,7 +190,7 @@ public:
 	{
 		Remove(0, ArrayNum);
 	}
-    T& operator[](int i)
+	T& operator[](int i)
 	{
 		return ((T*)Data)[i];
 	}
@@ -214,7 +214,7 @@ public:
 	}
 	void Shrink()
 	{
-		FArray::Shrink(sizeof(T));
+		FArray::Shrink(sizeof(T), Tag);
 	}
 	bool FindItem(const T& Item, int& Index) const
 	{
@@ -270,27 +270,27 @@ public:
 	// Add, Insert, Remove, Empty interface.
 	int Add(int n = 1)
 	{
-		return FArray::Add(n, sizeof(T));
+		return FArray::Add(n, sizeof(T), Tag);
 	}
 	void Insert(int Index, int Count = 1)
 	{
-		FArray::Insert(Index, Count, sizeof(T));
+		FArray::Insert(Index, Count, sizeof(T), Tag);
 	}
 	void InsertZeroed(int Index, int Count = 1)
 	{
-		FArray::InsertZeroed( Index, Count, sizeof(T) );
+		FArray::InsertZeroed(Index, Count, sizeof(T), Tag);
 	}
 	void Remove(int Index, int Count = 1)
 	{
 		for (int i = Index; i < Index + Count; i++)
 			(&(*this)[i])->~T();
-		FArray::Remove(Index, Count, sizeof(T));
+		FArray::Remove(Index, Count, sizeof(T), Tag);
 	}
 	void Empty(int Slack = 0)
 	{
 		for (int i = 0; i < ArrayNum; i++ )
 			(&(*this)[i])->~T();
-		FArray::Empty(sizeof(T), Slack);
+		FArray::Empty(sizeof(T), Tag, Slack);
 	}
 
 	// Functions dependent on Add, Remove.
@@ -312,7 +312,7 @@ public:
 	}
 	int AddZeroed(int n = 1)
 	{
-		return FArray::AddZeroed(sizeof(T), n);
+		return FArray::AddZeroed(sizeof(T), Tag, n);
 	}
 	int AddUniqueItem(const T& Item)
 	{
@@ -353,14 +353,14 @@ public:
 //
 // Array operator news.
 //
-template <class T> void* operator new(size_t, TArray<T>& Array)
+template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Array)
 {
-	int Index = Array.FArray::Add(1, sizeof(T));
+	int Index = Array.FArray::Add(1, sizeof(T), Tag);
 	return &Array[Index];
 }
-template <class T> void* operator new(size_t, TArray<T>& Array, int Index)
+template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Array, int Index)
 {
-	Array.FArray::Insert(Index, 1, sizeof(T));
+	Array.FArray::Insert(Index, 1, sizeof(T), Tag);
 	return &Array[Index];
 }
 
@@ -403,7 +403,7 @@ public:
 		if (&(*this)[0] != Other)
 		{
 			ArrayNum = ArrayMax = *Other ? strlen(Other) + 1 : 0;
-			Realloc(sizeof(char));
+			Realloc(sizeof(char), PU_STRING);
 			if (ArrayNum)
 				memcpy(&(*this)[0], Other, ArrayNum * sizeof(char));
 		}
@@ -414,7 +414,7 @@ public:
 		if (this != &Other)
 		{
 			ArrayNum = ArrayMax = Other.Num();
-			Realloc(sizeof(char));
+			Realloc(sizeof(char), PU_STRING);
 			if (ArrayNum)
 				memcpy(&(*this)[0], *Other, ArrayNum * sizeof(char));
 		}
@@ -602,9 +602,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2003/09/26 16:59:23  dj_jl
+//	Added zone tag to array
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/12 18:03:28  dj_jl
 //	Removed zone tag
 //	
