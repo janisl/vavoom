@@ -1103,6 +1103,20 @@ PF(SpawnObject)
 	Push((int)VObject::StaticSpawnObject(Class, Outer, PU_STRING));
 }
 
+//==========================================================================
+//
+//	PF_FindClass
+//
+//==========================================================================
+
+PF(FindClass)
+{
+	FName	Name;
+
+	Name = PopName();
+	Push((int)VClass::FindClass(*Name));
+}
+
 #ifdef SERVER
 //**************************************************************************
 //
@@ -3047,6 +3061,7 @@ builtin_info_t BuiltinInfo[] =
 	_(Info_ValueForKey),
 	_(WadLumpPresent),
 	_(SpawnObject),
+	_(FindClass),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3185,9 +3200,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2002/06/22 07:10:42  dj_jl
+//	Added FindClass.
+//
 //	Revision 1.38  2002/04/11 16:44:44  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.37  2002/03/28 18:03:53  dj_jl
 //	Added SV_GetModelIndex
 //	
