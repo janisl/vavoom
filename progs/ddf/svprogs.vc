@@ -1,0 +1,85 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+#define DDF
+#define DOOM2
+#define NO_BOTS
+
+#include <server.vc>
+
+#include "../doomdefs.vc"
+#include "../gendefs.vc"
+#include "svdefs.vc"
+#include "strings.vc"
+
+#include "xlat.vc"
+#include "specutl.vc"
+#include "ceilings.vc"
+#include "doors.vc"
+#include "floors.vc"
+#include "plats.vc"
+#include "polyobj.vc"
+#include "lights.vc"
+#include "spec.vc"
+
+#include "world.vc"
+
+#include "savegame.vc"
+#include "states.vc"
+#include "mobjinfo.vc"
+#include "wpninfo.vc"
+
+#include "inter.vc"
+#include "user.vc"
+#include "mobj.vc"
+#include "move.vc"
+#include "physics.vc"
+#include "map.vc"
+#include "teleport.vc"
+#include "usersubs.vc"
+#include "ai_subs.vc"
+#include "wpnbase.vc"
+#include "enemy.vc"
+#include "cheat.vc"
+
+#include "miscobj.vc"
+
+#include "player.vc"
+
+#include "ddf_wpn.vc"
+#include "ddf_act.vc"
+
+#include "things.vc"
+#include "weapons.vc"
+
+#include "svmain.vc"
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/18 17:03:26  dj_jl
+//  Working on DDF to VavoomC converter.
+//
+//**************************************************************************

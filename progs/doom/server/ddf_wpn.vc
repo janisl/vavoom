@@ -1,0 +1,70 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class DDFWeapon:Weapon
+{
+
+#define FUNC(name)		void name(void) { }
+
+// Weapon Action Routine pointers
+FUNC(A_WeaponShoot)
+FUNC(A_WeaponEject)
+FUNC(A_WeaponJump)
+FUNC(A_NoFire)
+FUNC(A_NoFireReturn)
+FUNC(A_SFXWeapon1)
+FUNC(A_SFXWeapon2)
+FUNC(A_SFXWeapon3)
+FUNC(A_WeaponPlaySound)
+FUNC(A_WeaponKillSound)
+FUNC(A_WeaponTransSet)
+FUNC(A_WeaponTransFade)
+FUNC(A_WeaponEnableRadTrig)
+FUNC(A_WeaponDisableRadTrig)
+
+FUNC(A_SetCrosshair)
+FUNC(A_GotTarget)
+FUNC(A_WeaponKick)
+
+FUNC(A_WeaponShootSA)
+FUNC(A_ReFireSA)
+FUNC(A_NoFireSA)
+FUNC(A_NoFireReturnSA)
+FUNC(A_CheckReloadSA)
+FUNC(A_GunFlashSA)
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/18 17:03:28  dj_jl
+//  Working on DDF to VavoomC converter.
+//
+//**************************************************************************

@@ -1,0 +1,153 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class DDFActor:Actor
+{
+
+int SpawnState;
+
+bool bStealth;
+bool bJustPickedUp;
+bool bTouchy;
+
+string PickupMessage;
+
+#define FUNC(name)		void name(void) { }
+
+// Needed for the bossbrain.
+FUNC(A_BrainScream)
+FUNC(A_BrainDie)
+FUNC(A_BrainSpit)
+FUNC(A_CubeSpawn)
+FUNC(A_BrainMissileExplode)
+
+// Visibility Actions
+FUNC(P_ActTransSet)
+FUNC(P_ActTransFade)
+FUNC(P_ActTransMore)
+FUNC(P_ActTransLess)
+FUNC(P_ActTransAlternate)
+
+// Sound Actions
+FUNC(P_ActPlaySound)
+FUNC(P_ActKillSound)
+FUNC(P_ActMakeAmbientSound)
+FUNC(P_ActMakeAmbientSoundRandom)
+FUNC(P_ActMakeCloseAttemptSound)
+FUNC(P_ActMakeDyingSound)
+FUNC(P_ActMakeOverKillSound)
+FUNC(P_ActMakePainSound)
+FUNC(P_ActMakeRangeAttemptSound)
+FUNC(P_ActMakeActiveSound)
+
+// Explosion Damage Actions
+FUNC(P_ActDamageExplosion)
+FUNC(P_ActThrust)
+
+// Stand-by / Looking Actions
+FUNC(P_ActStandardLook)
+FUNC(P_ActPlayerSupportLook)
+
+// Meander, aimless movement actions.
+FUNC(P_ActStandardMeander)
+FUNC(P_ActPlayerSupportMeander)
+
+// Chasing Actions
+FUNC(P_ActResurrectChase)
+FUNC(P_ActStandardChase)
+FUNC(P_ActWalkSoundChase)
+
+// Attacking Actions
+FUNC(P_ActComboAttack)
+FUNC(P_ActMeleeAttack)
+FUNC(P_ActRangeAttack)
+FUNC(P_ActSpareAttack)
+FUNC(P_ActRefireCheck)
+
+// Miscellanous
+FUNC(P_ActFaceTarget)
+FUNC(P_ActMakeIntoCorpse)
+FUNC(P_ActResetSpreadCount)
+FUNC(P_ActExplode)
+FUNC(P_ActActivateLineType)
+FUNC(P_ActEnableRadTrig)
+FUNC(P_ActDisableRadTrig)
+FUNC(P_ActTouchyRearm)
+FUNC(P_ActTouchyDisarm)
+FUNC(P_ActBounceRearm)
+FUNC(P_ActBounceDisarm)
+FUNC(P_ActPathCheck)
+FUNC(P_ActPathFollow)
+FUNC(P_ActDropItem)
+FUNC(P_ActDLightSet)
+FUNC(P_ActDLightFade)
+FUNC(P_ActDLightRandom)
+
+// Movement actions
+FUNC(P_ActFaceDir)
+FUNC(P_ActTurnDir)
+FUNC(P_ActTurnRandom)
+FUNC(P_ActMlookFace)
+FUNC(P_ActMlookTurn)
+FUNC(P_ActMoveFwd)
+FUNC(P_ActMoveRight)
+FUNC(P_ActMoveUp)
+FUNC(P_ActStopMoving)
+
+// Projectiles
+FUNC(P_ActFixedHomingProjectile)
+FUNC(P_ActRandomHomingProjectile)
+FUNC(P_ActLaunchOrderedSpread)
+FUNC(P_ActLaunchRandomSpread)
+FUNC(P_ActCreateSmokeTrail)
+FUNC(P_ActHomeToSpot)
+//boolean_t P_ActLookForTargets)
+
+// Trackers
+FUNC(P_ActEffectTracker)
+FUNC(P_ActTrackerActive)
+FUNC(P_ActTrackerFollow)
+FUNC(P_ActTrackerStart)
+
+// Blood and bullet puffs
+FUNC(P_ActCheckBlood)
+FUNC(P_ActCheckMoving)
+
+FUNC(P_ActJump)
+FUNC(A_PlayerScream)
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/18 17:03:28  dj_jl
+//  Working on DDF to VavoomC converter.
+//
+//**************************************************************************
