@@ -268,7 +268,7 @@ void Pawn::OnMapSpawn(mthing_t * mthing)
 {
 	if (bCheckNoMonsters && nomonsters)
 	{
-		RemoveMobjThinker(self);
+		Remove();
 		return;
 	}
 	if (gameskill == sk_nightmare)
@@ -299,11 +299,11 @@ Actor Spawn(classid type, TVec position)
 
 //==========================================================================
 //
-//	Actor::Remove
+//	Actor::Destroyed
 //
 //==========================================================================
 
-void Actor::Remove(void)
+void Actor::Destroyed(void)
 {
 	// Remove from creature queue
 	if (bCountKill && bCorpse)
@@ -317,8 +317,7 @@ void Actor::Remove(void)
 		RemoveFromTIDList();
 	}
 
-	// Free block
-	::Remove();
+	::Destroyed();
 }
 
 //==========================================================================
@@ -2091,6 +2090,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.49  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.48  2002/07/23 16:31:44  dj_jl
 //  Beautification.
 //

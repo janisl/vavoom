@@ -834,7 +834,7 @@ class StaticLightSource:Actor
 	{
 		float l;
 
-		RemoveMobjThinker(self);
+		Remove();
 		if (!mthing->arg1)
 			l = 200.0;
 		else
@@ -856,7 +856,7 @@ class StaticRGBLightSource:Actor
 	{
 		float l;
 
-		RemoveMobjThinker(self);
+		Remove();
 		if (!mthing->arg1)
 			l = 200.0;
 		else
@@ -869,6 +869,9 @@ class StaticRGBLightSource:Actor
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.13  2002/06/29 15:55:42  dj_jl
 //  Fixed static lights, beautification.
 //

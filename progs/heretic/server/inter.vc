@@ -263,7 +263,7 @@ void OnMapSpawn(mthing_t *mthing)
 {
 	if (deathmatch)
 	{
-		RemoveMobjThinker(self);
+		Remove();
 		return;
 	}
 	::OnMapSpawn(mthing);
@@ -993,6 +993,9 @@ void Ammo::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.20  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

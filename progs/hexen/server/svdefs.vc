@@ -273,7 +273,7 @@ class Actor:Entity
 	// Used by player to freeze a bit after teleporting.
 	float ReactionTime;
 
-	boolean Touch(MapObject Other);
+	boolean Touch(Entity Other);
 	void CheckForPushSpecial(line_t * line, int side);
 	void BlockedByLine(line_t * ld);
 	boolean TestLocation(void);
@@ -290,7 +290,7 @@ class Actor:Entity
 	int GetFloorType(void);
 	void SetOrigin2(TVec origin);
 	void OnMapSpawn(mthing_t *mthing);
-	void Remove(void);
+	void Destroyed(void);
 	int HitFloorType(void);
 	void FloorBounceMissile(void);
 	void Thrust(float angle, float move);
@@ -993,6 +993,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.36  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

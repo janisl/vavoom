@@ -166,7 +166,7 @@ boolean Actor::HeightClip(void)
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(MapObject Other)
+boolean PIT_ChangeSector(Entity Other)
 {
 	Actor A;
 	Actor thing;
@@ -800,7 +800,7 @@ float bombdamage;
 //
 //==========================================================================
 
-boolean PIT_RadiusAttack(MapObject Other)
+boolean PIT_RadiusAttack(Entity Other)
 {
 	float dist;
 
@@ -876,7 +876,7 @@ Actor vileobj;
 float viletryx;
 float viletryy;
 
-boolean PIT_VileCheck(MapObject Other)
+boolean PIT_VileCheck(Entity Other)
 {
 	float maxdist;
 	boolean check;
@@ -915,6 +915,9 @@ boolean PIT_VileCheck(MapObject Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.30  2002/07/13 08:01:48  dj_jl
 //  Moved some functions to the Entity class.
 //

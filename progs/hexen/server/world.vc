@@ -336,6 +336,132 @@ void MakeVertexCeilingHeights(void)
 
 //==========================================================================
 //
+//	AlignPlane
+//
+//	Set slopes for sectors, based on line specials
+//
+//	Aligns the floor or ceiling of a sector to the corresponding plane
+// on the other side of the reference line. (By definition, line must be
+// two-sided.)
+//
+//	If (which & 1), sets floor.
+//	If (which & 2), sets ceiling.
+//
+//==========================================================================
+
+void AlignPlane(sector_t *sec, line_t *line, int which)
+{
+	sector_t *refsec;
+	float bestdist;
+	TVec *refvert = (*sec->lines)->v1;
+	int i;
+	line_t **probe;
+	float dist;
+	TVec *vert;
+	TVec p, v1, v2, cross;
+	sec_plane_t *refplane;
+	sec_plane_t *srcplane;
+	float srcheight, destheight;
+
+	if (line->backsector == NULL)
+		return;
+
+	//	Find furthest vertex from the reference line. It, along with the two
+	// ends of the line will define the plane.
+	bestdist = 0.0;
+	for (i = sec->linecount * 2, probe = sec->lines; i > 0; i--)
+	{
+		if (i & 1)
+		{
+			vert = (*probe)->v2;
+			probe = &probe[1];
+		}
+		else
+			vert = (*probe)->v1;
+		dist = fabs(DotProduct(*vert, line->normal));
+
+		if (dist > bestdist)
+		{
+			bestdist = dist;
+			refvert = vert;
+		}
+	}
+
+	refsec = line->frontsector == sec ? line->backsector : line->frontsector;
+
+	p = *line->v1;
+	v1 = *line->v2 - *line->v1;
+	v2 = *refvert - *line->v1;
+
+	refplane = (which == 0) ? &refsec->floor : &refsec->ceiling;
+	srcplane = (which == 0) ? &sec->floor : &sec->ceiling;
+	srcheight = (which == 0) ? sec->floorheight : sec->ceilingheight;
+	destheight = (which == 0) ? refsec->floorheight : refsec->ceilingheight;
+
+	p.z = destheight;
+	v1.z = 0.0;
+	v2.z = srcheight - destheight;
+
+	cross = Normalize(CrossProduct(v1, v2));
+
+	// Fix backward normals
+	if ((cross.z < 0.0 && which == 0) || (cross.z > 0.0 && which == 1))
+	{
+		cross = -cross;
+	}
+
+	srcplane->normal = cross;
+	srcplane->dist = DotProduct(cross, p);
+	if (which == 0)
+		SendFloorSlope(sec);
+	else
+		SendCeilingSlope(sec);
+}
+
+//==========================================================================
+//
+//	SetSlopes
+//
+//==========================================================================
+
+void SetSlopes(void)
+{
+	int i, s;
+
+	for (i = 0; i < level->numlines; i++)
+	{
+		if (level->lines[i].special == 181)
+		{
+			level->lines[i].special = 0;
+//			level->lines[i].id = lines[i].args[2];
+			if (level->lines[i].backsector != NULL)
+			{
+				// args[0] is for floor, args[1] is for ceiling
+				//
+				// As a special case, if args[1] is 0,
+				// then args[0], bits 2-3 are for ceiling.
+				for (s = 0; s < 2; s++)
+				{
+					int bits = (s == 0 ? level->lines[i].arg1 :
+ 						level->lines[i].arg2) & 3;
+
+					if (s == 1 && bits == 0)
+						bits = (level->lines[i].arg1 >> 2) & 3;
+
+					if (bits == 1)			// align front side to back
+						AlignPlane(level->lines[i].frontsector,
+							&level->lines[i], s);
+					else if (bits == 2)		// align back side to front
+						AlignPlane(level->lines[i].backsector,
+							&level->lines[i], s);
+				}
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
 //  SpawnExtraFloors
 //
 //==========================================================================
@@ -414,6 +540,7 @@ void SpawnWorld(void)
 	mthing_t *mthing;
 
 	//  Spawn slopes first
+	SetSlopes();
 	for (i = 0; i < level->numthings; i++)
 	{
 		mthing = &level->things[i];
@@ -453,6 +580,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.7  2002/08/24 14:53:06  dj_jl
 //  Implemented sloping with vertex heights.
 //

@@ -274,7 +274,7 @@ class Actor:Entity
 	int MoveCount;	// when 0, select a new dir
 
 	boolean TestLocation(void);
-	boolean	Touch(MapObject Other);
+	boolean	Touch(Entity Other);
 	void PushLine(void);
 	void CrossSpecialLine(line_t *ld, int side);
 	void HandleFloorclip(void);
@@ -870,6 +870,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.33  2002/07/23 13:07:30  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //

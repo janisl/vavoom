@@ -166,7 +166,7 @@ boolean Actor::HeightClip(void)
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(MapObject Other)
+boolean PIT_ChangeSector(Entity Other)
 {
 	Actor A;
 	Actor thing;
@@ -1030,7 +1030,7 @@ float bombdamage;
 //
 //==========================================================================
 
-boolean PIT_RadiusAttack(MapObject Other)
+boolean PIT_RadiusAttack(Entity Other)
 {
 	float dist;
 
@@ -1096,6 +1096,9 @@ void Actor::RadiusAttack(int damage, int distance, boolean damageSource)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.26  2002/07/27 18:08:12  dj_jl
 //  Implementing Strife conversations.
 //

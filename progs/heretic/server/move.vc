@@ -68,7 +68,7 @@ boolean Actor::TestLocation(void)
 //
 //==========================================================================
 
-boolean	Actor::Touch(MapObject InOther)
+boolean	Actor::Touch(Entity InOther)
 {
 	boolean solid;
 	int damage;
@@ -238,6 +238,9 @@ void Actor::HandleFloorclip(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.28  2002/04/11 16:52:15  dj_jl
 //  Made TryMove native.
 //

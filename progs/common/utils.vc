@@ -74,7 +74,7 @@ int HITDICE(int a)
 //
 //==========================================================================
 
-float MobjDist(MapObject mo1, MapObject mo2)
+float MobjDist(Entity mo1, Entity mo2)
 {
 	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
@@ -85,7 +85,7 @@ float MobjDist(MapObject mo1, MapObject mo2)
 //
 //==========================================================================
 
-float MobjDist2(MapObject mo1, MapObject mo2)
+float MobjDist2(Entity mo1, Entity mo2)
 {
 	TVec dir;
 
@@ -469,6 +469,9 @@ class SectorMover:SectorThinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/08/28 16:36:36  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.26  2002/06/14 15:44:44  dj_jl
 //  Added state names to the states.
 //

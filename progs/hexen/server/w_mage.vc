@@ -454,7 +454,7 @@ int ZigZagCount;	// Only for floor
 //
 //==========================================================================
 
-boolean Touch(MapObject InOther)
+boolean Touch(Entity InOther)
 {
 	int damage;
 	Actor Other;
@@ -1186,6 +1186,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/08/28 16:36:39  dj_jl
+//  Merged MapObject with Entity, some natives, beautification.
+//
 //  Revision 1.29  2002/07/23 13:07:31  dj_jl
 //  Final touches for switching to floating-point time, beautification.
 //
