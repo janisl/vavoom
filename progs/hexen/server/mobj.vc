@@ -136,7 +136,7 @@ void G_PlayerReborn(int player)
 	p.PlayerState = PST_LIVE;
 	p.Health = MAXHEALTH;
 	p.WeaponOwned[WP_FIRST] = true;
-	SetWeapon(p, WP_FIRST);
+	p.SetWeapon(WP_FIRST);
 	p.LocalQuakeHappening = 0;
 }
 
@@ -217,7 +217,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p.ViewHeight = VIEWHEIGHT;
 	p.ViewAngles = pp.Angles;
 	p.bFixAngle = true;
-	SetupPsprites(p);
+	p.SetupPsprites();
 	if (deathmatch)
 	{
 		// Give all keys in death match mode
@@ -516,6 +516,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.55  2004/08/23 19:24:00  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.54  2004/03/01 07:08:48  dj_jl
 //  Height for player starts
 //

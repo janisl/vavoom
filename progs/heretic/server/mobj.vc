@@ -164,7 +164,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p.ViewHeight = VIEWHEIGHT;
 	p.ViewAngles = A.Angles;
 	p.bFixAngle = true;
-	SetupPsprites(p);	// setup gun psprite
+	p.SetupPsprites();	// setup gun psprite
 	if (deathmatch)
 	{
 		// Give all keys in death match mode
@@ -405,6 +405,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.54  2004/08/23 19:23:57  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.53  2004/03/01 07:08:30  dj_jl
 //  Height for player starts
 //

@@ -97,7 +97,7 @@ void G_PlayerReborn(int player)
 	p.WeaponOwned[wp_staff] = true;
 	p.WeaponOwned[wp_goldwand] = true;
 	p.Ammo[am_goldwand] = 50;
-	SetWeapon(p, wp_goldwand);
+	p.SetWeapon(wp_goldwand);
 }
 
 //==========================================================================
@@ -125,7 +125,7 @@ void G_PlayerExitMap(int player, bool clusterChange)
 	}
 	if (p.ChickenTime)
 	{
-		SetWeapon(p, p.MO.Special1);	// Restore weapon
+		p.SetWeapon(p.MO.Special1);	// Restore weapon
 		p.ChickenTime = 0.0;
 	}
 	p.Items = 0;
@@ -332,6 +332,9 @@ void UserinfoChanged(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2004/08/23 19:23:58  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.40  2004/08/22 19:23:25  dj_jl
 //  Moved many functions to player class.
 //

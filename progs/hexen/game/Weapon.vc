@@ -101,7 +101,7 @@ void A_WeaponReady(void)
 	// Put the weapon away if the player has a pending weapon or has died.
 	if (Player.PendingWeapon != wp_nochange || !Player.Health)
 	{
-		SetPsprite(Player, ps_weapon, GetDownState());
+		Player.SetPsprite(ps_weapon, GetDownState());
 		return;
 	}
 
@@ -109,7 +109,7 @@ void A_WeaponReady(void)
 	if (Player.Buttons & BT_ATTACK)
 	{
 		Player.bAttackDown = true;
-		P_FireWeapon(Player);
+		Player.FireWeapon();
 		return;
 	}
 	else
@@ -164,11 +164,11 @@ void A_Lower(void)
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		SetPsprite(Player, ps_weapon, S_NULL);
+		Player.SetPsprite(ps_weapon, S_NULL);
 		return;
 	}
-	SetWeapon(Player, Player.PendingWeapon);
-	BringUpWeapon(Player);
+	Player.SetWeapon(Player.PendingWeapon);
+	Player.BringUpWeapon();
 }
 
 //==========================================================================
@@ -190,7 +190,7 @@ void A_Raise(void)
 		return;
 	}
 	SY = WEAPONTOP;
-	SetPsprite(Player, ps_weapon, GetReadyState());
+	Player.SetPsprite(ps_weapon, GetReadyState());
 }
 
 //==========================================================================
@@ -201,18 +201,18 @@ void A_Raise(void)
 //
 //==========================================================================
 
-void A_ReFire(void)
+void A_ReFire()
 {
 	if ((Player.Buttons & BT_ATTACK) &&
 		Player.PendingWeapon == wp_nochange && Player.Health)
 	{
 		Player.Refire++;
-		P_FireWeapon(Player);
+		Player.FireWeapon();
 	}
 	else
 	{
 		Player.Refire = 0;
-		P_CheckMana(Player);
+		Player.CheckMana();
 	}
 }
 
@@ -229,6 +229,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/23 19:23:59  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.2  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

@@ -1038,7 +1038,7 @@ void ChickenPlayerThink()
 	if (Health > 0)
 	{
 		// Handle beak movement
-		UpdateBeak(self, ViewEnts[ps_weapon]);
+		UpdateBeak(ViewEnts[ps_weapon]);
 	}
 	if (ftoi(32.0 * ChickenTime) & 15)
 	{
@@ -1102,7 +1102,7 @@ bool UndoPlayerChicken()
 	Powers[pw_weaponlevel2] = 0.0;
 	A.Health = MAXHEALTH;
 	Health = A.Health;
-	PostChickenWeapon(self, MO.Special1);
+	PostChickenWeapon(MO.Special1);
 
 	fog = Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
@@ -1128,7 +1128,7 @@ void DeathPlayerTick(float deltaTime)
 	float delta;
 	int lookDelta;
 
-	MovePsprites(self);
+	MovePsprites();
 
 	onground = (MO.Origin.z <= MO.FloorZ);
 
@@ -1356,7 +1356,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	// cycle psprites
-	MovePsprites(self);
+	MovePsprites();
 
 	// Counters, time dependend power ups.
 
@@ -1406,7 +1406,7 @@ void PlayerTick(float deltaTime)
 		if (Powers[pw_weaponlevel2] <= 0.0)
 		{
 			Powers[pw_weaponlevel2] = 0.0;
-			WeaponLevel2Fade(self);
+			WeaponLevel2Fade();
 		}
 	}
 
@@ -1870,6 +1870,315 @@ void UseArtiFireBomb()
 	A.Instigator = MO;
 }
 
+//****************************************************************************
+//
+//  WEAPON UTILITES
+//
+//****************************************************************************
+
+//==========================================================================
+//
+//	SetWeapon
+//
+//==========================================================================
+
+void SetWeapon(int NewWeapon)
+{
+	ReadyWeapon = NewWeapon;
+	PendingWeapon = wp_nochange;
+
+	if (ViewEnts[ps_weapon])
+	{
+		ViewEnts[ps_weapon].Destroy();
+	}
+	ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	ViewEnts[ps_weapon].Player = self;
+	PSpriteSY = Weapon(ViewEnts[ps_weapon]).PSpriteSY;
+}
+
+//===========================================================================
+//
+//  SetPsprite
+//
+//===========================================================================
+
+void SetPsprite(int position, int stnum)
+{
+	ViewEnts[position].SetState(stnum);
+}
+
+//===========================================================================
+//
+//  BringUpWeapon
+//
+//  Starts bringing the pending weapon up from the bottom of the screen.
+//
+//===========================================================================
+
+void BringUpWeapon()
+{
+	SetWeapon(ReadyWeapon);
+	if (ReadyWeapon == wp_gauntlets)
+	{
+		MO.PlaySound('GauntletActive', CHAN_WEAPON);
+	}
+	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	if (Powers[pw_weaponlevel2])
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState2);
+	}
+	else
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	}
+}
+
+//===========================================================================
+//
+//  DropWeapon
+//
+//  The player died, so put the weapon away.
+//
+//===========================================================================
+
+void DropWeapon()
+{
+	if (Powers[pw_weaponlevel2])
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+	}
+	else
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	}
+}
+
+//===========================================================================
+//
+//  SetupPsprites
+//
+//  Called at start of level for each player
+//
+//===========================================================================
+
+void SetupPsprites()
+{
+	int i;
+
+	// Remove all  ViewEnts
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		ViewEnts[i].StateNum = 0;
+	}
+	// Spawn the ready weapon
+	BringUpWeapon();
+}
+
+//===========================================================================
+//
+//  MovePsprites
+//
+//  Called every tic by player thinking routine
+//
+//===========================================================================
+
+void MovePsprites()
+{
+	int i;
+	ViewEntity e;
+
+	for (i = 0; i < NUMPSPRITES; i++)
+	{
+		e = ViewEnts[i];
+		if (e.StateNum)	// a null state means not active
+		{
+			// drop tic count and possibly change state
+			if (e.StateTime != -1.0)	// a -1 tic count never changes
+			{
+				e.StateTime -= frametime;
+				if (e.StateTime <= 0.0)
+				{
+					e.StateTime = 0.0;
+					SetPsprite(i, e.NextState);
+				}
+			}
+		}
+	}
+	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
+	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
+}
+
+//===========================================================================
+//
+//  CheckAmmo
+//
+//  Returns true if there is enough ammo to shoot.  If not, selects the
+// next weapon to use.
+//
+//===========================================================================
+
+bool CheckAmmo()
+{
+	int ammo;
+	int *ammoUse;
+	int count;
+
+	ammo = Weapon(ViewEnts[ps_weapon]).Ammo;
+	if (Powers[pw_weaponlevel2] && !deathmatch)
+	{
+		ammoUse = &WeaponAmmoUsePL2[0];
+	}
+	else
+	{
+		ammoUse = &WeaponAmmoUsePL1[0];
+	}
+	count = ammoUse[ReadyWeapon];
+	if (ammo == am_noammo || Ammo[ammo] >= count)
+	{
+		return true;
+	}
+	// out of ammo, pick a weapon to change to
+	do
+	{
+		if (WeaponOwned[wp_skullrod]
+			&& Ammo[am_skullrod] > ammoUse[wp_skullrod])
+		{
+			PendingWeapon = wp_skullrod;
+		}
+		else if (WeaponOwned[wp_blaster]
+			&& Ammo[am_blaster] > ammoUse[wp_blaster])
+		{
+			PendingWeapon = wp_blaster;
+		}
+		else if (WeaponOwned[wp_crossbow]
+			&& Ammo[am_crossbow] > ammoUse[wp_crossbow])
+		{
+			PendingWeapon = wp_crossbow;
+		}
+		else if (WeaponOwned[wp_mace]
+			&& Ammo[am_mace] > ammoUse[wp_mace])
+		{
+			PendingWeapon = wp_mace;
+		}
+		else if (Ammo[am_goldwand] > ammoUse[wp_goldwand])
+		{
+			PendingWeapon = wp_goldwand;
+		}
+		else if (WeaponOwned[wp_gauntlets])
+		{
+			PendingWeapon = wp_gauntlets;
+		}
+		else if (WeaponOwned[wp_phoenixrod]
+			&& Ammo[am_phoenixrod] > ammoUse[wp_phoenixrod])
+		{
+			PendingWeapon = wp_phoenixrod;
+		}
+		else
+		{
+			PendingWeapon = wp_staff;
+		}
+	}
+	while (PendingWeapon == wp_nochange);
+	if (Powers[pw_weaponlevel2])
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+	}
+	else
+	{
+		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	}
+	return false;
+}
+
+//===========================================================================
+//
+//  FireWeapon
+//
+//===========================================================================
+
+void FireWeapon()
+{
+	int attackState;
+
+	if (!CheckAmmo())
+	{
+		return;
+	}
+	MO.SetState(PlayerPawn(MO).Attack2State);
+	if (Powers[pw_weaponlevel2])
+	{
+		attackState = Refire ?
+			Weapon(ViewEnts[ps_weapon]).HoldAttackState2 :
+			Weapon(ViewEnts[ps_weapon]).AttackState2;
+	}
+	else
+	{
+		attackState = Refire ?
+			Weapon(ViewEnts[ps_weapon]).HoldAttackState :
+			Weapon(ViewEnts[ps_weapon]).AttackState;
+	}
+	SetPsprite(ps_weapon, attackState);
+	P_NoiseAlert(MO, MO);
+	if (ReadyWeapon == wp_gauntlets && !Refire)
+	{
+		// Play the sound for the initial gauntlet attack
+		MO.PlaySound('GauntletUse', CHAN_WEAPON);
+	}
+}
+
+//===========================================================================
+//
+//  ActivateBeak
+//
+//===========================================================================
+
+void ActivateBeak()
+{
+	SetWeapon(wp_beak);
+	ViewEnts[ps_weapon].SY = WEAPONTOP;
+	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
+}
+
+//===========================================================================
+//
+//  PostChickenWeapon
+//
+//===========================================================================
+
+void PostChickenWeapon(int weapon)
+{
+	if (weapon == wp_beak)
+	{
+		// Should never happen
+		weapon = wp_staff;
+	}
+	SetWeapon(weapon);
+	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+}
+
+//===========================================================================
+//
+//  UpdateBeak
+//
+//===========================================================================
+
+void UpdateBeak(ViewEntity e)
+{
+	e.SY = WEAPONTOP + itof(ChickenPeck) / 2.0;
+}
+
+//===========================================================================
+//
+//  WeaponLevel2Fade
+//
+//===========================================================================
+
+void WeaponLevel2Fade()
+{
+	Weapon(ViewEnts[ps_weapon]).WeaponLevel2Fade();
+}
+
 defaultproperties
 {
 }
@@ -1877,6 +2186,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/23 19:23:56  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.2  2004/08/22 19:23:24  dj_jl
 //  Moved many functions to player class.
 //

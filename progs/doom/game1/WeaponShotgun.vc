@@ -41,7 +41,7 @@ void A_FireShotgun(void)
 
 	Player.Ammo[Ammo]--;
 
-	SetPsprite(Player, ps_flash, FlashState);
+	Player.SetPsprite(ps_flash, FlashState);
 
 	dir = Aim(Player.MO, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/23 19:23:54  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

@@ -134,7 +134,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p.bFixAngle = true;
 
 	// setup gun psprite
-	SetupPsprites(p);
+	p.SetupPsprites();
 
 	// give all cards in death match mode
 	if (deathmatch)
@@ -158,6 +158,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2004/08/23 19:23:56  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.34  2004/03/01 07:07:42  dj_jl
 //  Height for player starts
 //

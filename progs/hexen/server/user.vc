@@ -149,7 +149,7 @@ void G_PlayerExitMap(int playerNumber, bool clusterChange)
 
 	if (player.MorphTime)
 	{
-		SetWeapon(player, player.MO._Special1);	// Restore weapon
+		player.SetWeapon(player.MO._Special1);	// Restore weapon
 		player.MorphTime = 0.0;
 	}
 	player.MO.Angles.pitch = 0.0;
@@ -462,6 +462,9 @@ void UserinfoChanged(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2004/08/23 19:24:00  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.43  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

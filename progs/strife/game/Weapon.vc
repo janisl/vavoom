@@ -66,7 +66,7 @@ void A_WeaponReady(void)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		SetPsprite(Player, ps_weapon, DownState);
+		Player.SetPsprite(ps_weapon, DownState);
 		return;
 	}
 
@@ -77,7 +77,7 @@ void A_WeaponReady(void)
 		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_missile))
 		{
 			Player.bAttackDown = true;
-			FireWeapon(Player);
+			Player.FireWeapon();
 			return;
 		}
 	}
@@ -128,13 +128,13 @@ void A_Lower(void)
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		SetPsprite(Player, ps_weapon, S_NULL);
+		Player.SetPsprite(ps_weapon, S_NULL);
 		return;
 	}
 
-	SetWeapon(Player, Player.PendingWeapon);
+	Player.SetWeapon(Player.PendingWeapon);
 
-	BringUpWeapon(Player);
+	Player.BringUpWeapon();
 }
 
 //===========================================================================
@@ -160,7 +160,7 @@ void A_Raise(void)
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	SetPsprite(Player, ps_weapon, ReadyState);
+	Player.SetPsprite(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -179,12 +179,12 @@ void A_ReFire(void)
 		&& Player.PendingWeapon == wp_nochange && Player.Health)
 	{
 		Player.Refire++;
-		FireWeapon(Player);
+		Player.FireWeapon();
 	}
 	else
 	{
 		Player.Refire = 0;
-		CheckAmmo(Player);
+		Player.CheckAmmo();
 	}
 }
 
@@ -196,7 +196,7 @@ void A_ReFire(void)
 
 void A_CheckReload(void)
 {
-	CheckAmmo(Player);
+	Player.CheckAmmo();
 }
 
 //===========================================================================
@@ -208,7 +208,7 @@ void A_CheckReload(void)
 void A_GunFlash(void)
 {
 	Player.MO.SetState(Player.MO.MissileState);
-	SetPsprite(Player, ps_flash, Weapon(Player.ViewEnts[ps_weapon]).FlashState);
+	Player.SetPsprite(ps_flash, Weapon(Player.ViewEnts[ps_weapon]).FlashState);
 }
 
 //===========================================================================
@@ -252,7 +252,7 @@ void A_Light2(void)
 
 void A_ClearFlash()
 {
-	SetPsprite(Player, ps_flash, S_NULL);
+	Player.SetPsprite(ps_flash, S_NULL);
 }
 
 __states__
@@ -279,6 +279,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/08/23 19:24:01  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.4  2004/01/30 17:39:34  dj_jl
 //  Implemented many action functions.
 //

@@ -278,7 +278,7 @@ void Cheat_Class(void)
 		player.ArmorPoints[i] = 0.0;
 	}
 	player.BaseClass = pclass;
-	PostMorphWeapon(player, WP_FIRST);
+	player.PostMorphWeapon(WP_FIRST);
 	SetCvar("class", pclass);
 	SB_Start();
 }
@@ -286,6 +286,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2004/08/23 19:24:00  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.20  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

@@ -634,7 +634,7 @@ void Died(Actor source)
 
 		bSolid = false;
 		Player.PlayerState = PST_DEAD;
-		DropWeapon(Player);
+		Player.DropWeapon();
 #ifdef FIXME
 		if (Player == svvars->Players[consoleplayer] && automapactive)
 		{
@@ -3885,6 +3885,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/08/23 19:23:42  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.7  2004/08/22 19:23:04  dj_jl
 //  Moved many functions to player class.
 //

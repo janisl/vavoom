@@ -90,7 +90,7 @@ void G_PlayerReborn(int player)
 	p.MaxAmmo[am_cell] = maxammo[am_cell];
 	p.WeaponOwned[wp_fist] = true;
 	p.WeaponOwned[wp_pistol] = true;
-	SetWeapon(p, wp_pistol);
+	p.SetWeapon(wp_pistol);
 #endif
 }
 
@@ -342,6 +342,9 @@ void UserinfoChanged(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2004/08/23 19:23:55  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.34  2004/08/22 19:23:24  dj_jl
 //  Moved many functions to player class.
 //

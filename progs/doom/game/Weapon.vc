@@ -120,7 +120,7 @@ void A_WeaponReady(void)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		SetPsprite(Player, ps_weapon, DownState);
+		Player.SetPsprite(ps_weapon, DownState);
 		return;
 	}
 
@@ -136,7 +136,7 @@ void A_WeaponReady(void)
 #endif
 		{
 			Player.bAttackDown = true;
-			FireWeapon(Player);
+			Player.FireWeapon();
 			return;
 		}
 	}
@@ -201,13 +201,13 @@ void A_Lower(void)
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		SetPsprite(Player, ps_weapon, S_NULL);
+		Player.SetPsprite(ps_weapon, S_NULL);
 		return;
 	}
 
-	SetWeapon(Player, Player.PendingWeapon);
+	Player.SetWeapon(Player.PendingWeapon);
 
-	BringUpWeapon(Player);
+	Player.BringUpWeapon();
 }
 
 //===========================================================================
@@ -233,7 +233,7 @@ void A_Raise(void)
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	SetPsprite(Player, ps_weapon, ReadyState);
+	Player.SetPsprite(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -252,12 +252,12 @@ void A_ReFire(void)
 		&& Player.PendingWeapon == wp_nochange && Player.Health)
 	{
 		Player.Refire++;
-		FireWeapon(Player);
+		Player.FireWeapon();
 	}
 	else
 	{
 		Player.Refire = 0;
-		CheckAmmo(Player);
+		Player.CheckAmmo();
 	}
 }
 
@@ -269,7 +269,7 @@ void A_ReFire(void)
 
 void A_CheckReload(void)
 {
-	CheckAmmo(Player);
+	Player.CheckAmmo();
 
 #ifdef DDF
 	if (ReloadState && AmmoFired >= Clip)
@@ -289,7 +289,7 @@ void A_CheckReload(void)
 void A_GunFlash(void)
 {
 	Player.MO.SetState(Player.MO.MissileState);
-	SetPsprite(Player, ps_flash, FlashState);
+	Player.SetPsprite(ps_flash, FlashState);
 }
 
 //===========================================================================
@@ -574,10 +574,36 @@ void A_CheckReloadSA(void)
 void A_GunFlashSA(void)
 {
 	Player.MO.SetState(Player.MO.MissileState);
-	SetPsprite(Player, ps_flash, SAFlashState);
+	Player.SetPsprite(ps_flash, SAFlashState);
 }
 
 #endif
+
+//===========================================================================
+//
+//  GunShot
+//
+//===========================================================================
+
+void GunShot(Actor A, int accurate, TVec dir)
+{
+	int damage;
+
+	//  Make a copy of angles because inacurate shoot will modify them
+	if (!accurate)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+
+	damage = 5 * (P_Random() % 3 + 1);
+
+	LineAttack(A, dir, MISSILERANGE, damage);
+}
 
 __states__
 {
@@ -607,6 +633,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/23 19:23:42  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.2  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

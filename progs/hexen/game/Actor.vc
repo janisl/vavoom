@@ -687,7 +687,7 @@ void Died(Actor source)
 		bFly = false;
 		Player.Powers[pw_flight] = 0.0;
 		Player.PlayerState = PST_DEAD;
-		DropWeapon(Player);
+		Player.DropWeapon();
 		if (bFireDamage)
 		{
 			// Player flame death
@@ -844,7 +844,7 @@ bool MorphPlayer(void)
 	Player.PClass = PCLASS_PIG;
 	beastMo.bFly = bFly;
 	Player.MorphTime = MORPHTIME;
-	ActivateMorphWeapon(Player);
+	Player.ActivateMorphWeapon();
 
 	SetState(S_FREETARGMOBJ);
 
@@ -3931,6 +3931,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/08/23 19:23:59  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.6  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

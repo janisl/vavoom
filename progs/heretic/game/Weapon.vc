@@ -50,14 +50,14 @@ void WeaponLevel2Fade(void) { }
 //
 //===========================================================================
 
-void A_WeaponReady(void)
+void A_WeaponReady()
 {
 	float angle;
 
 	if (Player.ChickenTime)
 	{
 		// Change to the chicken beak
-		ActivateBeak(Player);
+		Player.ActivateBeak();
 		return;
 	}
 	// Change player from attack state
@@ -72,11 +72,11 @@ void A_WeaponReady(void)
 	{
 		if (Player.Powers[pw_weaponlevel2])
 		{
-			SetPsprite(Player, ps_weapon, DownState2);
+			Player.SetPsprite(ps_weapon, DownState2);
 		}
 		else
 		{
-			SetPsprite(Player, ps_weapon, DownState);
+			Player.SetPsprite(ps_weapon, DownState);
 		}
 		return;
 	}
@@ -87,7 +87,7 @@ void A_WeaponReady(void)
 		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_phoenixrod))
 		{
 			Player.bAttackDown = true;
-			FireWeapon(Player);
+			Player.FireWeapon();
 			return;
 		}
 	}
@@ -140,11 +140,11 @@ void A_Lower(void)
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		SetPsprite(Player, ps_weapon, S_NULL);
+		Player.SetPsprite(ps_weapon, S_NULL);
 		return;
 	}
 	Player.ReadyWeapon = Player.PendingWeapon;
-	BringUpWeapon(Player);
+	Player.BringUpWeapon();
 }
 
 //===========================================================================
@@ -168,11 +168,11 @@ void A_Raise(void)
 	SY = WEAPONTOP;
 	if (Player.Powers[pw_weaponlevel2])
 	{
-		SetPsprite(Player, ps_weapon, ReadyState2);
+		Player.SetPsprite(ps_weapon, ReadyState2);
 	}
 	else
 	{
-		SetPsprite(Player, ps_weapon, ReadyState);
+		Player.SetPsprite(ps_weapon, ReadyState);
 	}
 }
 
@@ -190,12 +190,12 @@ void A_ReFire(void)
 		&& Player.PendingWeapon == wp_nochange && Player.Health)
 	{
 		Player.Refire++;
-		FireWeapon(Player);
+		Player.FireWeapon();
 	}
 	else
 	{
 		Player.Refire = 0;
-		CheckAmmo(Player);
+		Player.CheckAmmo();
 	}
 }
 
@@ -225,6 +225,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/08/23 19:23:56  dj_jl
+//  Moved weapon utilites to player class.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //
