@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuHelpPage:MenuStaticBitmap;
+class MenuHelpPage : MenuStaticBitmap;
 
 void SetPage(string pageName)
 {
@@ -32,11 +32,15 @@ void SetPage(string pageName)
 
 defaultproperties
 {
+	PicName = "HELP1";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/02/18 17:38:01  dj_jl
+//  Fixed crash in help screens.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //
