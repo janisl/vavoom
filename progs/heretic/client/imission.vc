@@ -79,7 +79,8 @@ int im_sounds;
 // used for general timing
 float cnt;
 
-yahpt_t YAHspot[3][9] = {
+yahpt_t YAHspot[3][9] =
+{
 	{
 			{172, 78},
 			{86, 90},
@@ -123,7 +124,7 @@ yahpt_t YAHspot[3][9] = {
 //
 //========================================================================
 
-void IM_LoadPics(void)
+void IM_LoadPics()
 {
 	switch (im_episode)
 	{
@@ -159,7 +160,7 @@ void IM_LoadPics(void)
 //
 //========================================================================
 
-void IM_UnloadPics(void)
+void IM_UnloadPics()
 {
 }
 
@@ -169,7 +170,7 @@ void IM_UnloadPics(void)
 //
 //==========================================================================
 
-void IM_DrawBackground(void)
+void IM_DrawBackground()
 {
 	if (interstate == 0)
 	{
@@ -187,7 +188,7 @@ void IM_DrawBackground(void)
 //
 //========================================================================
 
-void IM_InitStats(void)
+void IM_InitStats()
 {
 	int i;
 	int j;
@@ -283,7 +284,7 @@ void IM_InitStats(void)
 //
 //========================================================================
 
-void IM_DrawSingleStats(void)
+void IM_DrawSingleStats()
 {
 	T_SetShadow(true);
 	T_SetFont(font_big);
@@ -393,7 +394,7 @@ void IM_DrawSingleStats(void)
 //
 //========================================================================
 
-void IM_DrawCoopStats(void)
+void IM_DrawCoopStats()
 {
 	int i;
 	int ypos;
@@ -451,7 +452,7 @@ void IM_DrawCoopStats(void)
 //
 //========================================================================
 
-void IM_DrawDMStats(void)
+void IM_DrawDMStats()
 {
 	int i;
 	int j;
@@ -550,7 +551,7 @@ void IM_DrawDMStats(void)
 //
 //========================================================================
 
-void IM_DrawOldLevel(void)
+void IM_DrawOldLevel()
 {
 	int i;
 
@@ -603,7 +604,7 @@ void IM_DrawOldLevel(void)
 //
 //========================================================================
 
-void IM_DrawYAH(void)
+void IM_DrawYAH()
 {
 	int i;
 
@@ -645,7 +646,7 @@ void IM_DrawYAH(void)
 //
 //==========================================================================
 
-void IM_Drawer(void)
+void IM_Drawer()
 {
 	if (interstate == 3)
 	{
@@ -692,7 +693,7 @@ void IM_Drawer(void)
 //
 //========================================================================
 
-void IM_UpdateStats(void)
+void IM_UpdateStats()
 {
 	if (interstate == 3)
 	{
@@ -771,7 +772,7 @@ void FindEpisodeAndMap(string Name, int *epi, int *map)
 	int e;
 	int m;
 
-	for (e = 1; e <= 3; e++)
+	for (e = 1; e <= 5; e++)
 	{
 		for (m = 1; m <= 9; m++)
 		{
@@ -793,7 +794,7 @@ void FindEpisodeAndMap(string Name, int *epi, int *map)
 //
 //==========================================================================
 
-void IM_Start(void)
+void IM_Start()
 {
 	FindEpisodeAndMap(ARR2STR(im->leavemap), &im_episode, &im_map);
 	FindEpisodeAndMap(ARR2STR(im->entermap), &im_nextepisode, &im_nextmap);
@@ -821,6 +822,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/01/19 13:08:57  dj_jl
+//  Fixed wrong episode 5 finale.
+//
 //  Revision 1.9  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //
