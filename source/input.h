@@ -38,12 +38,12 @@ enum
 	K_LEFTARROW,
 	K_RIGHTARROW,
 	K_DOWNARROW,
-    K_INSERT,
-    K_DELETE,
-    K_HOME,
-    K_END,
-    K_PAGEUP,
-    K_PAGEDOWN,
+	K_INSERT,
+	K_DELETE,
+	K_HOME,
+	K_END,
+	K_PAGEUP,
+	K_PAGEDOWN,
 
 	K_PAD0,
 	K_PAD1,
@@ -94,9 +94,19 @@ enum
 	K_RWIN,
 	K_MENU,
 
-    K_PRINTSCRN,
+	K_PRINTSCRN,
 	K_SCROLLLOCK,
 	K_PAUSE,
+
+	K_ABNT_C1,
+	K_YEN,
+	K_KANA,
+	K_CONVERT,
+	K_NOCONVERT,
+	K_AT,
+	K_CIRCUMFLEX,
+	K_COLON2,
+	K_KANJI,
 
 	K_MOUSE1,
 	K_MOUSE2,
@@ -123,25 +133,25 @@ enum
 	K_JOY15,
 	K_JOY16,
 
-    KEY_COUNT
+	KEY_COUNT
 };
 
 //	Input event types.
 enum evtype_t
 {
-    ev_keydown,
-    ev_keyup,
-    ev_mouse,
-    ev_joystick
+	ev_keydown,
+	ev_keyup,
+	ev_mouse,
+	ev_joystick
 };
 
 //	Event structure.
 struct event_t
 {
-    evtype_t	type;		// event type
-    int			data1;		// keys / mouse/joystick buttons
-    int			data2;		// mouse/joystick x move
-    int			data3;		// mouse/joystick y move
+	evtype_t	type;		// event type
+	int			data1;		// keys / mouse/joystick buttons
+	int			data2;		// mouse/joystick x move
+	int			data3;		// mouse/joystick y move
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -171,9 +181,12 @@ extern int		altdown;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/31 17:24:52  dj_jl
+//	Added some new keys
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -31,10 +31,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <allegro.h>
-//#include <signal.h>
-#undef stricmp
-#undef strnicmp
-
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -75,7 +71,8 @@ static byte					scantokey[KEY_MAX] =
 	K_LEFTARROW, K_RIGHTARROW, K_UPARROW, K_DOWNARROW,
 	K_PADDIVIDE, K_PADMULTIPLE, K_PADMINUS, K_PADPLUS,
 	K_PADDOT, K_PADENTER, K_PRINTSCRN, K_PAUSE,
-	0, 0, 0, 0, 0, 0, 0, 0, 0,
+	K_ABNT_C1, K_YEN, K_KANA, K_CONVERT, K_NOCONVERT,
+	K_AT, K_CIRCUMFLEX, K_COLON2, K_KANJI,
 	K_LSHIFT, K_RSHIFT, K_LCTRL, K_RCTRL, K_LALT, K_RALT,
 	K_LWIN, K_RWIN, K_MENU, K_SCROLLLOCK, K_NUMLOCK, K_CAPSLOCK
 };
@@ -446,9 +443,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/31 17:24:52  dj_jl
+//	Added some new keys
+//
 //	Revision 1.5  2001/08/23 17:42:06  dj_jl
 //	Added new keys
-//
+//	
 //	Revision 1.4  2001/08/07 16:48:54  dj_jl
 //	Beautification
 //	

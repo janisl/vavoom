@@ -128,6 +128,16 @@ static char*	KeyNames[SCANCODECOUNT] =
 	"SCROLLLOCK",
 	"PAUSE",
 
+	"ABNT_C1",
+	"YEN",
+	"KANA",
+	"CONVERT",
+	"NOCONVERT",
+	"AT",
+	"CIRCUMFLEX",
+	"COLON2",
+	"KANJI",
+
 	"MOUSE1",
 	"MOUSE2",
 	"MOUSE3",
@@ -598,9 +608,12 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/31 17:24:52  dj_jl
+//	Added some new keys
+//
 //	Revision 1.4  2001/08/15 17:25:53  dj_jl
 //	Removed F_CheckPal
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
