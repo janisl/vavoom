@@ -329,12 +329,12 @@ void WriteMobjInfo(void)
 			parent = "HackedActor";
 		if (i == 0)
 			parent = "PlayerPawn";
-		fprintf(f, "class %s:%s\n", mt_names[i], parent);
+		fprintf(f, "class %s:%s", mt_names[i], parent);
 		if (mobjinfo[i].doomednum > 0)
 		{
-	    	fprintf(f, "\t__mobjinfo__(%d)\n", mobjinfo[i].doomednum);
+	    	fprintf(f, "\n\t__mobjinfo__(%d)", mobjinfo[i].doomednum);
 		}
-		fprintf(f, "{\n");
+		fprintf(f, ";\n\n");
 
         //  ------------ OnMapSpawn method -----------
 		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
@@ -483,7 +483,6 @@ void WriteMobjInfo(void)
 		fprintf(f, "\t}\n");
 
 		//  End of class
-		fprintf(f, "};\n");
 		fprintf(f, "\n");
     }
 
@@ -566,21 +565,19 @@ void WriteWeaponInfo(void)
 		fprintf(f, "\n");
 
         //	Start of function
-        fprintf(f, "class %s:%s\n", weapon_names[i], Hacked ? "HackedWeapon" : "Weapon");
+        fprintf(f, "class %s:%s;", weapon_names[i], Hacked ? "HackedWeapon" : "Weapon");
+        fprintf(f, "defaultproperties\n");
         fprintf(f, "{\n");
-        fprintf(f, "\tdefaultproperties\n");
-        fprintf(f, "\t{\n");
 
-        fprintf(f, "\t\tAmmo = %s;\n", ammo_names[weaponinfo[i].ammo]);
-		fprintf(f, "\t\tUpState = %s;\n", statename[weaponinfo[i].upstate]);
-		fprintf(f, "\t\tDownState = %s;\n", statename[weaponinfo[i].downstate]);
-		fprintf(f, "\t\tReadyState = %s;\n", statename[weaponinfo[i].readystate]);
-		fprintf(f, "\t\tAttackState = %s;\n", statename[weaponinfo[i].atkstate]);
-		fprintf(f, "\t\tHoldAttackState = %s;\n", statename[weaponinfo[i].holdatkstate]);
-		fprintf(f, "\t\tFlashState = %s;\n", statename[weaponinfo[i].flashstate]);
+        fprintf(f, "\tAmmo = %s;\n", ammo_names[weaponinfo[i].ammo]);
+		fprintf(f, "\tUpState = %s;\n", statename[weaponinfo[i].upstate]);
+		fprintf(f, "\tDownState = %s;\n", statename[weaponinfo[i].downstate]);
+		fprintf(f, "\tReadyState = %s;\n", statename[weaponinfo[i].readystate]);
+		fprintf(f, "\tAttackState = %s;\n", statename[weaponinfo[i].atkstate]);
+		fprintf(f, "\tHoldAttackState = %s;\n", statename[weaponinfo[i].holdatkstate]);
+		fprintf(f, "\tFlashState = %s;\n", statename[weaponinfo[i].flashstate]);
 
         //	End of function
-        fprintf(f, "\t}\n");
         fprintf(f, "}\n");
         fprintf(f, "\n");
 	}
@@ -743,9 +740,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/04/04 07:53:23  dj_jl
+//	Fixed dehacked support.
+//
 //	Revision 1.28  2002/07/13 08:17:19  dj_jl
 //	Removed all non-Doom stuff, since it's now used only for DeHackEd.
-//
+//	
 //	Revision 1.27  2002/06/29 16:01:54  dj_jl
 //	Floatized PainChance.
 //	
