@@ -23,6 +23,7 @@
 //**
 //**************************************************************************
 
+class ModalWindow;
 class RootWindow;
 
 struct ClipRect
@@ -79,6 +80,7 @@ int WindowType;			// Contains window type
 
 // Booleans
 bool bIsVisible;		// TRUE if the window is visible
+bool bIsSensitive;		// TRUE if the window can take input
 bool bTickEnabled;		// TRUE if Tick() event should be called
 bool bIsInitialized;	// TRUE if the window has been initialized
 
@@ -105,11 +107,17 @@ native void Destroy(void);
 native Window NewChild(classid ChildClass);
 native void Raise(void);
 native void Lower(void);
-native boolean IsVisible(void);
+native void SetVisibility(boolean bNewVisibility);
 native void Show(void);
 native void Hide(void);
+native boolean IsVisible(void);
+native void SetSensitivity(boolean bNewSensitivity);
+native void Enable(void);
+native void Disable(void);
+native boolean IsSensitive(void);
 
 native RootWindow GetRootWindow(void);
+native ModalWindow GetModalWindow(void);
 native Window GetParent(void);
 
 native void SetPos(int NewX, int NewY);
@@ -235,6 +243,18 @@ void VisibilityChanged(boolean bNewVisibility)
 
 //==========================================================================
 //
+//	SensitivityChanged
+//
+//	Called when this window becomes sensitive or insensitive.
+//
+//==========================================================================
+
+void SensitivityChanged(boolean bNewSensitivity)
+{
+}
+
+//==========================================================================
+//
 //	DrawWindow
 //
 //	Draws the window.
@@ -277,11 +297,27 @@ defaultproperties
 
 //**************************************************************************
 //
+//	ModalWindow
+//
+//**************************************************************************
+
+class ModalWindow:Window
+	native
+{
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
 //	RootWindow
 //
 //**************************************************************************
 
-class RootWindow:Window
+class RootWindow:ModalWindow
 	native
 {
 
@@ -298,6 +334,9 @@ RootWindow GRoot;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/06/14 15:46:45  dj_jl
+//  Added modal window class.
+//
 //  Revision 1.1  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

@@ -81,7 +81,8 @@ class MenuScreenSkill:MenuScreen
 	void SetDefaultChoice(void)
 	{
 		::SetDefaultChoice();
-		SetCursor(CursorPos + 2);
+		CycleNextChoice();
+		CycleNextChoice();
 	}
 
 	defaultproperties
@@ -106,6 +107,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/06/14 15:46:45  dj_jl
+//  Added modal window class.
+//
 //  Revision 1.11  2002/05/29 16:50:26  dj_jl
 //  Started a work on native Window classes.
 //

@@ -165,7 +165,8 @@ class MenuScreenSkill:MenuScreen
 	void SetDefaultChoice(void)
 	{
 		::SetDefaultChoice();
-		SetCursor(CursorPos + 2);
+		CycleNextChoice();
+		CycleNextChoice();
 	}
 
 	defaultproperties
@@ -190,6 +191,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/06/14 15:46:45  dj_jl
+//  Added modal window class.
+//
 //  Revision 1.12  2002/03/09 17:52:49  dj_jl
 //  Got rid of function pointers
 //
