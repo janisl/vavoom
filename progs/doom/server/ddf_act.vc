@@ -1099,11 +1099,11 @@ void Actor::P_ActTrackerFollow(void)
 	if (!Instigator.CanSee(Enemy))
 		return;
 
-	P_UnsetThingPosition(self);
+	UnlinkFromWorld();
 	Origin.x = Enemy.Origin.x + 24.0 * cos(Enemy.Angles.yaw);
 	Origin.y = Enemy.Origin.y + 24.0 * sin(Enemy.Angles.yaw);
 	Origin.z = Enemy.Origin.z;
-	P_SetThingPosition(self);
+	LinkToWorld();
 }
 
 //==========================================================================
@@ -1298,6 +1298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/08/08 18:04:40  dj_jl
+//  Fixes for renamed functions.
+//
 //  Revision 1.6  2002/07/23 16:31:43  dj_jl
 //  Beautification.
 //
