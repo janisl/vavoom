@@ -58,8 +58,8 @@ struct mobjinfo_t
 
 struct compstate_t
 {
-	int name;
-	int next_name;
+	FName Name;
+	FName NextName;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -124,42 +124,42 @@ void InitInfoTables(void)
 	memset(mobj_info, 0, MAX_MOBJ_TYPES * sizeof(mobjinfo_t));
 	num_mobj_types = 0;
 
-	globaldefs[numglobaldefs].s_name = FindString("num_sprite_names");
+	globaldefs[numglobaldefs].Name = "num_sprite_names";
 	globaldefs[numglobaldefs].type = &type_int;
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_sprite_names = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("sprite_names");
+	globaldefs[numglobaldefs].Name = "sprite_names";
 	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_sprite_names = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("num_models");
+	globaldefs[numglobaldefs].Name = "num_models";
 	globaldefs[numglobaldefs].type = &type_int;
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_models = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("models");
+	globaldefs[numglobaldefs].Name = "models";
 	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_models = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("num_states");
+	globaldefs[numglobaldefs].Name = "num_states";
 	globaldefs[numglobaldefs].type = &type_int;
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_states = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("states");
+	globaldefs[numglobaldefs].Name = "states";
 	globaldefs[numglobaldefs].type = MakeArrayType(&type_state, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_states = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("num_mobj_types");
+	globaldefs[numglobaldefs].Name = "num_mobj_types";
 	globaldefs[numglobaldefs].type = &type_int;
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_num_mobj_info = numglobaldefs++;
 
-	globaldefs[numglobaldefs].s_name = FindString("mobjinfo");
+	globaldefs[numglobaldefs].Name = "mobjinfo";
 	globaldefs[numglobaldefs].type = MakeArrayType(&type_mobjinfo, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_mobj_info = numglobaldefs++;
@@ -201,8 +201,8 @@ void ParseStates(TType *class_type)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		cs.name = tk_StringI;
-		AddConstant(tk_StringI, num_states);
+		cs.Name = tk_Name;
+		AddConstant(tk_Name, num_states);
 		TK_NextToken();
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	Nummurs
@@ -228,11 +228,8 @@ void ParseStates(TType *class_type)
 			}
 			if (i == num_sprite_names)
 			{
-				char	snc[12];
-
 			   	sprite_names[i] = j;
-				sprintf(snc, "SPR_%s", tk_String);
-				AddConstant(FindString(snc), num_sprite_names);
+				AddConstant(va("SPR_%s", tk_String), num_sprite_names);
 				num_sprite_names++;
 			}
 			s.sprite = i;
@@ -297,7 +294,7 @@ void ParseStates(TType *class_type)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
-		cs.next_name = tk_StringI;
+		cs.NextName = tk_Name;
 		TK_NextToken();
 		if (TK_Check(PU_COMMA))
 		{
@@ -360,7 +357,7 @@ static void CheckStates(void)
 	{
 		for (j = 0; j < num_states; j++)
 		{
-			if (compstates[i].next_name == compstates[j].name)
+			if (compstates[i].NextName == compstates[j].Name)
 			{
 				states[i].nextstate = j;
 				break;
@@ -369,7 +366,7 @@ static void CheckStates(void)
 		if (j == num_states)
 		{
 			ERR_Exit(ERR_NONE, true, "State named \"%s\" was not defined",
-				strings + compstates[i].next_name);
+				*compstates[i].NextName);
 		}
 	}
 
@@ -436,9 +433,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.11  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
 //	

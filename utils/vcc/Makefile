@@ -12,6 +12,7 @@ OBJS = \
 	error.o \
 	expressn.o \
 	info.o \
+	name.o \
 	parse.o \
 	pcode.o \
 	token.o \

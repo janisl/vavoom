@@ -65,7 +65,6 @@ localvardef_t			localdefs[MAX_LOCAL_DEFS];
 
 constant_t				Constants[MAX_CONSTANTS];
 int						numconstants;
-int						ConstLookup[256];
 
 TType					*ThisType;
 TType					*SelfType;
@@ -91,13 +90,15 @@ static TType			*FuncRetType;
 //
 //==========================================================================
 
-int CheckForGlobalVar(int s_name)
+int CheckForGlobalVar(FName Name)
 {
-	int		i;
-
-	for (i=1; i<numglobaldefs; i++)
+	if (Name == NAME_None)
 	{
-		if (globaldefs[i].s_name == s_name)
+		return 0;
+	}
+	for (int i = 1; i < numglobaldefs; i++)
+	{
+		if (globaldefs[i].Name == Name)
 		{
 			return i;
 		}
@@ -111,13 +112,15 @@ int CheckForGlobalVar(int s_name)
 //
 //==========================================================================
 
-int CheckForFunction(int s_name)
+int CheckForFunction(TType *InClass, FName Name)
 {
-	int		i;
-
-	for (i=1; i<numfunctions; i++)
+	if (Name == NAME_None)
 	{
-		if (functions[i].s_name == s_name)
+		return 0;
+	}
+	for (int i = 1; i < numfunctions; i++)
+	{
+		if (functions[i].OuterClass == InClass && functions[i].Name == Name)
 		{
 			return i;
 		}
@@ -131,13 +134,15 @@ int CheckForFunction(int s_name)
 //
 //==========================================================================
 
-int CheckForLocalVar(int s_name)
+int CheckForLocalVar(FName Name)
 {
-	int i;
-
-	for (i = 1; i < numlocaldefs; i++)
+	if (Name == NAME_None)
 	{
-		if (localdefs[i].s_name == s_name)
+		return 0;
+	}
+	for (int i = 1; i < numlocaldefs; i++)
+	{
+		if (localdefs[i].Name == Name)
 		{
 			return i;
 		}
@@ -151,11 +156,11 @@ int CheckForLocalVar(int s_name)
 //
 //==========================================================================
 
-int CheckForConstant(int s_name)
+int CheckForConstant(FName Name)
 {
-	for (int i = ConstLookup[s_name & 0xff]; i != -1; i = Constants[i].next)
+	for (int i = 0; i < numconstants; i++)
 	{
-		if (s_name == Constants[i].s_name)
+		if (Constants[i].Name == Name)
 		{
 			return i;
 		}
@@ -483,6 +488,9 @@ static void ParseStatement(void)
 					if (etype->type == ev_classid)
 						AddStatement(OPC_CASE_GOTO_CLASSID,
 							CaseInfo[i].value, CaseInfo[i].address);
+					else if (etype->type == ev_name)
+						AddStatement(OPC_CASE_GOTO_NAME,
+							CaseInfo[i].value, CaseInfo[i].address);
 					else
 						AddStatement(OPC_CASEGOTO, CaseInfo[i].value,
 										CaseInfo[i].address);
@@ -516,9 +524,12 @@ static void ParseStatement(void)
 				break;
 			}
 		default:
-			t = ParseExpression();
-			AddDrop(t);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			t = ParseExpression(true);
+			if (t)
+			{
+				AddDrop(t);
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
 			break;
 	}
 }
@@ -567,7 +578,7 @@ static void ParseCompoundStatement(void)
 				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
-					ParseError(ERR_INVALID_IDENTIFIER, "%s, variable name expected", tk_String);
+					ParseError(ERR_INVALID_IDENTIFIER, "variable name expected");
 					continue;
 				}
 				if (numlocaldefs == MAX_LOCAL_DEFS)
@@ -575,11 +586,11 @@ static void ParseCompoundStatement(void)
 					ParseError(ERR_LOCALS_OVERFLOW);
 					continue;
 				}
-				localdefs[numlocaldefs].s_name = tk_StringI;
+				localdefs[numlocaldefs].Name = tk_Name;
 
-				if (CheckForLocalVar(tk_StringI))
+				if (CheckForLocalVar(tk_Name))
 				{
-					ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
+					ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 				}
 				TK_NextToken();
 
@@ -725,6 +736,10 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		{
 			globalinfo[dst - globals] = 3;
 		}
+		else if (type->type == ev_name)
+		{
+			globalinfo[dst - globals] = 4;
+		}
 	}
 	return type;
 }
@@ -768,7 +783,7 @@ static TType *ParseArrayDimensions(TType *type)
 
 static void ParseDef(TType *type, bool IsNative)
 {
-	int			s_name = 0;
+	FName		Name;
 	int			num;
 	TType		*t;
 	field_t		*method = NULL;
@@ -803,7 +818,7 @@ static void ParseDef(TType *type, bool IsNative)
 		{
 			ParseError("Method name expected");
 		}
-		s_name = FindString(va("%s::%s", ctype->name, tk_String));
+		Name = tk_Name;
 		method = CheckForField(ctype, false);
 		if (!method || method->type->type != ev_method)
 		{
@@ -819,7 +834,7 @@ static void ParseDef(TType *type, bool IsNative)
 	}
 	else
 	{
-		s_name = tk_StringI;
+		Name = tk_Name;
 		TK_NextToken();
 	}
 
@@ -835,7 +850,7 @@ static void ParseDef(TType *type, bool IsNative)
 		}
 		do
 		{
-			if (!s_name)
+			if (Name == NAME_None)
 			{
 				t = type;
 				if (TK_Check(PU_ASTERISK))
@@ -852,7 +867,7 @@ static void ParseDef(TType *type, bool IsNative)
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 				}
-				s_name = tk_StringI;
+				Name = tk_Name;
 			}
 		   	if (t == &type_void)
 			{
@@ -862,12 +877,12 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				t = MakeReferenceType(t);
 			}
-			if (CheckForGlobalVar(s_name) ||
-				CheckForFunction(s_name) ||
-				CheckForConstant(s_name) != -1)
+			if (CheckForGlobalVar(Name) ||
+				CheckForFunction(NULL, Name) ||
+				CheckForConstant(Name) != -1)
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
-					strings + s_name);
+					*Name);
 			}
 			t = ParseArrayDimensions(t);
 			// inicializÆcija
@@ -879,12 +894,12 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
 			}
-			globaldefs[numglobaldefs].s_name = s_name;
+			globaldefs[numglobaldefs].Name = Name;
 			globaldefs[numglobaldefs].type = t;
 			globaldefs[numglobaldefs].ofs = numglobals;
 			numglobals += TypeSize(t) / 4;
 			numglobaldefs++;
-			s_name = 0;
+			Name = NAME_None;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -909,13 +924,16 @@ static void ParseDef(TType *type, bool IsNative)
 	functype.size = 4;
 	functype.aux_type = t;
 
-	if (CheckForGlobalVar(s_name))
+	if (!ctype)
 	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
-	}
-	if (CheckForConstant(s_name) != -1)
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
+		if (CheckForGlobalVar(Name))
+		{
+			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
+		}
+		if (CheckForConstant(Name) != -1)
+		{
+			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
+		}
 	}
 
 	do
@@ -962,11 +980,11 @@ static void ParseDef(TType *type, bool IsNative)
 		}
    		if (tk_Token == TK_IDENTIFIER)
 		{
-			if (CheckForLocalVar(tk_StringI))
+			if (CheckForLocalVar(tk_Name))
 			{
-				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
+				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 			}
-			localdefs[numlocaldefs].s_name = tk_StringI;
+			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
 			numlocaldefs++;
@@ -980,7 +998,7 @@ static void ParseDef(TType *type, bool IsNative)
 	functype.params_size = localsofs;
 	maxlocalsofs = localsofs;
 
-	num = CheckForFunction(s_name);
+	num = CheckForFunction(ctype, Name);
 	if (num)
 	{
 		if (IsNative && functions[num].first_statement > 0)
@@ -996,7 +1014,8 @@ static void ParseDef(TType *type, bool IsNative)
 	else
 	{
 		num = numfunctions;
-		functions[num].s_name = s_name;
+		functions[num].Name = Name;
+		functions[num].OuterClass = ctype;
 		functions[num].first_statement = 0;
 		functions[num].type = FindType(&functype);
 		numfunctions++;
@@ -1023,8 +1042,7 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		if (functions[num].first_statement)
 		{
-			ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-					 "Function: %s", strings + s_name);
+			ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
 		}
 		functions[num].first_statement = CodeBufferSize;
 
@@ -1116,11 +1134,11 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		}
    		if (tk_Token == TK_IDENTIFIER)
 		{
-			if (CheckForLocalVar(tk_StringI))
+			if (CheckForLocalVar(tk_Name))
 			{
-				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", tk_String);
+				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 			}
-			localdefs[numlocaldefs].s_name = tk_StringI;
+			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
 			numlocaldefs++;
@@ -1153,18 +1171,17 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	}
 	class_type->numfields++;
 
-	int s_name = FindString(va("%s::%s",
-		class_type->name, strings + method->s_name));
-	if (CheckForFunction(s_name))
+	if (CheckForFunction(class_type, method->Name))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			 "Function: %s", strings + s_name);
+			 "Function: %s::%s", *class_type->Name, *method->Name);
 	}
 
 	int num = numfunctions;
 	numfunctions++;
 	method->func_num = num;
-	functions[num].s_name = s_name;
+	functions[num].Name = method->Name;
+	functions[num].OuterClass = class_type;
 	functions[num].type = FindType(&functype);
 	functions[num].first_statement = 0;
 
@@ -1216,20 +1233,20 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	methodtype.type = ev_method;
 	method->type = FindType(&methodtype);
 	method->ofs = 0;
+	method->Name = class_type->Name;
 	class_type->numfields++;
 
-	int s_name = FindString(va("%s::%s",
-		class_type->name, class_type->name));
-	if (CheckForFunction(s_name))
+	if (CheckForFunction(class_type, class_type->Name))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			 "Function: %s", strings + s_name);
+			 "Function: %s", *class_type->Name, *class_type->Name);
 	}
 
 	int num = numfunctions;
 	numfunctions++;
 	method->func_num = num;
-	functions[num].s_name = s_name;
+	functions[num].Name = class_type->Name;
+	functions[num].OuterClass = class_type;
 	functions[num].type = FindType(&functype);
 	functions[num].first_statement = 0;
 
@@ -1268,22 +1285,19 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 //
 //==========================================================================
 
-void AddConstant(int s_name, int value)
+void AddConstant(FName Name, int value)
 {
-	if (CheckForGlobalVar(s_name) ||
-		CheckForFunction(s_name) ||
-		CheckForConstant(s_name) != -1)
+	if (CheckForGlobalVar(Name) || CheckForFunction(NULL, Name) ||
+		CheckForConstant(Name) != -1)
 	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", strings + s_name);
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
 	if (numconstants == MAX_CONSTANTS)
 	{
 		ERR_Exit(ERR_TOO_MENY_CONSTANTS, true, NULL);
 	}
-	Constants[numconstants].s_name = s_name;
+	Constants[numconstants].Name = Name;
 	Constants[numconstants].value = value;
-	Constants[numconstants].next = ConstLookup[s_name & 0xff];
-	ConstLookup[s_name & 0xff] = numconstants;
 	numconstants++;
 }
 
@@ -1301,13 +1315,9 @@ void PA_Parse(void)
 
 	dprintf("Compiling\n");
 
-	for (i = 0; i < 256; i++)
-	{
-		ConstLookup[i] = -1;
-	}
 	numconstants = 0;
 
-	//  Add empty function for default constructors and destructors
+	//  Add empty function for default constructors
 	TType functype;
 	memset(&functype, 0, sizeof(TType));
 	functype.type = ev_function;
@@ -1315,7 +1325,8 @@ void PA_Parse(void)
 	functype.aux_type = &type_void;
 	functype.params_size = 1; // this pointer
 
-	functions[numfunctions].s_name = 0;
+	functions[numfunctions].Name = NAME_None;
+	functions[numfunctions].OuterClass = NULL;
 	functions[numfunctions].type = FindType(&functype);
 	functions[numfunctions].first_statement = CodeBufferSize;
 	functions[numfunctions].num_locals = 1;
@@ -1353,7 +1364,7 @@ void PA_Parse(void)
 				else if (TK_Check(KW_ENUM))
 				{
 					int val;
-					int s_name;
+					FName Name;
 
 					val = 0;
 					TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -1363,13 +1374,13 @@ void PA_Parse(void)
 						{
 							ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 						}
-						s_name = tk_StringI;
+						Name = tk_Name;
 						TK_NextToken();
 						if (TK_Check(PU_ASSIGN))
 						{
 							val = EvalConstExpression(ev_int);
 						}
-						AddConstant(s_name, val);
+						AddConstant(Name, val);
 						val++;
 					} while (TK_Check(PU_COMMA));
 					TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
@@ -1435,8 +1446,9 @@ void PA_Parse(void)
 	{
 		if (!functions[i].first_statement)
 		{
-			fprintf(stderr, "Function %s was not defined\n",
-					strings + functions[i].s_name);
+			fprintf(stderr, "Function %s::%s was not defined\n",
+				functions[i].OuterClass ? *functions[i].OuterClass->Name :
+				"none", *functions[i].Name);
 			done = false;
 		}
 	}
@@ -1453,9 +1465,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.17  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.16  2001/12/27 17:44:00  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

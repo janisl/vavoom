@@ -35,7 +35,7 @@
 
 struct typedef_t
 {
-	int			s_name;
+	FName		Name;
 	TType		*type;
 	typedef_t	*next;
 };
@@ -52,19 +52,19 @@ struct typedef_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-TType		type_void("void", ev_void, NULL, NULL, 0);
-TType		type_int("int", ev_int, &type_void, NULL, 4);
-TType		type_uint("uint", ev_uint, &type_int, NULL, 4);
-TType		type_float("float", ev_float, &type_uint, NULL, 4);
-TType		type_string("string", ev_string, &type_float, NULL, 4);
-TType		type_function("function_t", ev_function, &type_string, &type_void, 4);
-TType		type_state("state_t", ev_struct, &type_function, NULL, -1);
-TType		type_mobjinfo("mobjinfo_t", ev_struct, &type_state, NULL, -1);
-TType		type_void_ptr("", ev_pointer, &type_mobjinfo, &type_void, 4);
-TType		type_vector("", ev_vector, &type_void_ptr, NULL, 12);
-TType		type_classid("classid", ev_classid, &type_vector, NULL, 4);
-TType		type_class("Object", ev_class, &type_classid, NULL, -1);
-TType		type_none_ref("", ev_reference, &type_class, &type_class, 4);
+TType		type_void(ev_void, NULL, NULL, 0);
+TType		type_int(ev_int, &type_void, NULL, 4);
+TType		type_float(ev_float, &type_int, NULL, 4);
+TType		type_name(ev_name, &type_float, NULL, 4);
+TType		type_string(ev_string, &type_name, NULL, 4);
+TType		type_function(ev_function, &type_string, &type_void, 4);
+TType		type_state(ev_struct, &type_function, NULL, -1);
+TType		type_mobjinfo(ev_struct, &type_state, NULL, -1);
+TType		type_void_ptr(ev_pointer, &type_mobjinfo, &type_void, 4);
+TType		type_vector(ev_vector, &type_void_ptr, NULL, 12);
+TType		type_classid(ev_classid, &type_vector, NULL, 4);
+TType		type_class(ev_class, &type_classid, NULL, -1);
+TType		type_none_ref(ev_reference, &type_class, &type_class, 4);
 
 TType		*types = &type_none_ref;
 
@@ -84,6 +84,9 @@ int			numclasses = 1;
 
 void InitTypes(void)
 {
+	type_state.Name = "state_t";
+	type_mobjinfo.Name = "mobjinfo_t";
+	type_class.Name = "Object";
 }
 
 //==========================================================================
@@ -184,6 +187,41 @@ TType *MakeArrayType(TType *type, int elcount)
 
 //==========================================================================
 //
+//	CheckForTypeKeyword
+//
+//==========================================================================
+
+TType *CheckForTypeKeyword(void)
+{
+	if (TK_Check(KW_VOID))
+	{
+		return &type_void;
+	}
+	if (TK_Check(KW_INT))
+	{
+		return &type_int;
+	}
+	if (TK_Check(KW_FLOAT))
+	{
+		return &type_float;
+	}
+	if (TK_Check(KW_NAME))
+	{
+		return &type_name;
+	}
+	if (TK_Check(KW_STRING))
+	{
+		return &type_string;
+	}
+	if (TK_Check(KW_CLASSID))
+	{
+		return &type_classid;
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
 //  CheckForType
 //
 //==========================================================================
@@ -193,9 +231,14 @@ TType *CheckForType(void)
 	TType		*check;
 	typedef_t	*tdef;
 
+	if (tk_Token == TK_KEYWORD)
+	{
+		return CheckForTypeKeyword();
+	}
+
 	for (tdef = typedefs; tdef; tdef = tdef->next)
 	{
-		if (TK_Check(tdef->s_name))
+		if (TK_Check(tdef->Name))
 		{
 			return tdef->type;
 		}
@@ -203,16 +246,49 @@ TType *CheckForType(void)
 
 	for (check = types; check; check = check->next)
 	{
-		if (check->s_name)
+		if (check->Name != NAME_None)
 		{
-			if (TK_Check(check->s_name))
+			if (TK_Check(check->Name))
 			{
 				return check;
 			}
 		}
-		else if (check->name[0] && TK_Check(check->name))
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//  CheckForType
+//
+//==========================================================================
+
+TType *CheckForType(FName Name)
+{
+	TType		*check;
+	typedef_t	*tdef;
+
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+
+	for (tdef = typedefs; tdef; tdef = tdef->next)
+	{
+		if (Name == tdef->Name)
 		{
-			return check;
+			return tdef->type;
+		}
+	}
+
+	for (check = types; check; check = check->next)
+	{
+		if (check->Name != NAME_None)
+		{
+			if (Name == check->Name)
+			{
+				return check;
+			}
 		}
 	}
 	return NULL;
@@ -280,7 +356,7 @@ void TypeCheck1(TType *t)
 void TypeCheck2(TType *t)
 {
 	TypeCheck1(t);
-	if (t != &type_int && t != &type_uint)
+	if (t != &type_int)
 	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH);
 	}
@@ -301,8 +377,6 @@ void TypeCheck3(TType *t1, TType *t2)
 {
 	TypeCheckPassable(t1);
 	TypeCheckPassable(t2);
-	if (t1 == &type_uint) t1 = &type_int;
-	if (t2 == &type_uint) t2 = &type_int;
 	if (t1 == t2)
 	{
 		return;
@@ -320,8 +394,6 @@ void TypeCheck3(TType *t1, TType *t2)
 	{
 		t1 = t1->aux_type;
 		t2 = t2->aux_type;
-		if (t1 == &type_uint) t1 = &type_int;
-		if (t2 == &type_uint) t2 = &type_int;
 		if (t1 == t2)
 		{
 			return;
@@ -347,8 +419,6 @@ void TypeCheck3(TType *t1, TType *t2)
 	{
 		t1 = t1->aux_type;
 		t2 = t2->aux_type;
-		if (t1 == &type_uint) t1 = &type_int;
-		if (t2 == &type_uint) t2 = &type_int;
 		if (t1 == t2)
 		{
 			return;
@@ -371,7 +441,7 @@ void TypeCheck3(TType *t1, TType *t2)
 		}
 	}
 	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible",
-		t1->name, t2->name);
+		*t1->Name, *t2->Name);
 }
 
 //==========================================================================
@@ -414,7 +484,7 @@ void ParseStruct(void)
 		//  Pievieno pie tipiem
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
-		strcpy(struct_type->name, tk_String);
+		struct_type->Name = tk_Name;
 		struct_type->type = ev_struct;
 		struct_type->next = types;
 		types = struct_type;
@@ -497,7 +567,7 @@ void ParseStruct(void)
 				ParseError("Field name expected");
 			}
 			fi = &fields[num_fields];
-			fi->s_name = tk_StringI;
+			fi->Name = tk_Name;
 			TK_NextToken();
 			fi->ofs = size;
 			if (t->type == ev_class)
@@ -605,7 +675,7 @@ void AddFields(void)
 				ParseError("Field name expected");
 			}
 			fi = &fields[num_fields];
-			fi->s_name = tk_StringI;
+			fi->Name = tk_Name;
 			TK_NextToken();
 			fi->ofs = ofs;
 			if (t->type == ev_class)
@@ -677,7 +747,7 @@ void ParseVector(void)
 		//  Pievieno pie tipiem
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
-		strcpy(struct_type->name, tk_String);
+		struct_type->Name = tk_Name;
 		struct_type->type = ev_vector;
 		struct_type->next = types;
 		types = struct_type;
@@ -720,7 +790,7 @@ void ParseVector(void)
 				continue;
 			}
 			fi = &fields[num_fields];
-			fi->s_name = tk_StringI;
+			fi->Name = tk_Name;
 			TK_NextToken();
 			fi->ofs = size;
 		   	size += TypeSize(type);
@@ -772,10 +842,6 @@ void ParseClass(void)
 			ParseError("Class definition already completed");
 			return;
 		}
-		if (!class_type->s_name)
-		{
-			class_type->s_name = FindString(class_type->name);
-		}
 	}
 	else
 	{
@@ -786,8 +852,7 @@ void ParseClass(void)
 		//  Pievieno pie tipiem
 		class_type = new TType;
 		memset(class_type, 0, sizeof(TType));
-		strcpy(class_type->name, tk_String);
-		class_type->s_name = tk_StringI;
+		class_type->Name = tk_Name;
 		class_type->type = ev_class;
 		class_type->next = types;
 		class_type->classid = numclasses++;
@@ -822,12 +887,6 @@ void ParseClass(void)
 			class_type->num_methods = type->num_methods;
 			size = TypeSize(type);
 		}
-	}
-	else if (class_type != &type_class)
-	{
-		class_type->aux_type = &type_class;
-		class_type->num_methods = type_class.num_methods;
-		size = TypeSize(&type_class);
 	}
 
    	class_type->available_size = 0;
@@ -865,7 +924,6 @@ void ParseClass(void)
 		{
 			fi = new(fields) field_t;
 class_type->fields = &fields[0];
-			fi->s_name = class_type->s_name;
 			ParseDefaultProperties(fi, class_type);
 			continue;
 		}
@@ -897,7 +955,7 @@ class_type->fields = &fields[0];
 			}
 			fi = new(fields) field_t;
 class_type->fields = &fields[0];
-			fi->s_name = tk_StringI;
+			fi->Name = tk_Name;
 			otherfield = CheckForField(class_type);
 			if (!otherfield)
 			{
@@ -973,12 +1031,12 @@ field_t* ParseField(TType *t)
 	fi = t->fields;
 	if (tk_Token != TK_IDENTIFIER)
 	{
-		ParseError(ERR_INVALID_IDENTIFIER, "%s, field name expacted", tk_String);
+		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
 	for (i = 0; i < t->numfields; i++)
 	{
-		if (TK_Check(fi[i].s_name))
+		if (TK_Check(fi[i].Name))
 		{
 			return &fi[i];
 		}
@@ -987,7 +1045,7 @@ field_t* ParseField(TType *t)
 	{
 		return ParseField(t->aux_type);
 	}
-	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", tk_String);
+	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
 	return NULL;
 }
 
@@ -1018,7 +1076,7 @@ field_t* CheckForField(TType *t, bool check_aux)
 	field_t *fi = t->fields;
 	for (int i = 0; i < t->numfields; i++)
 	{
-		if (TK_Check(fi[i].s_name))
+		if (TK_Check(fi[i].Name))
 		{
 			return &fi[i];
 		}
@@ -1026,6 +1084,45 @@ field_t* CheckForField(TType *t, bool check_aux)
 	if (check_aux)
 	{
 		return CheckForField(t->aux_type);
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	CheckForField
+//
+//==========================================================================
+
+field_t* CheckForField(FName Name, TType *t, bool check_aux)
+{
+	if (!t)
+	{
+		return NULL;
+	}
+	if (t->type != ev_class)
+	{
+		return NULL;
+	}
+	if (t->size == -1)
+	{
+		return NULL;
+	}
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+	field_t *fi = t->fields;
+	for (int i = 0; i < t->numfields; i++)
+	{
+		if (Name == fi[i].Name)
+		{
+			return &fi[i];
+		}
+	}
+	if (check_aux)
+	{
+		return CheckForField(Name, t->aux_type);
 	}
 	return NULL;
 }
@@ -1053,7 +1150,7 @@ field_t* FindConstructor(TType *t)
 	field_t *fi = t->fields;
 	for (int i = 0; i < t->numfields; i++)
 	{
-		if (fi[i].s_name == t->s_name)
+		if (fi[i].Name == t->Name)
 		{
 			return &fi[i];
 		}
@@ -1093,8 +1190,8 @@ void ParseTypeDef(void)
 	if (TK_Check(PU_LPAREN))
 	{
 		//	Function pointer type
-		TType		functype;
-		int s_name;
+		TType	functype;
+		FName	Name;
 
 		memset(&functype, 0, sizeof(TType));
 		functype.type = ev_function;
@@ -1111,7 +1208,7 @@ void ParseTypeDef(void)
 			ParseError("New type name expected");
 			return;
 		}
-		s_name = tk_StringI;
+		Name = tk_Name;
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
@@ -1169,7 +1266,7 @@ void ParseTypeDef(void)
 
 		//	Add to typedefs
 		tdef = new typedef_t;
-		tdef->s_name = s_name;
+		tdef->Name = Name;
 		tdef->type = FindType(&functype);
 		tdef->next = typedefs;
 		typedefs = tdef;
@@ -1185,7 +1282,7 @@ void ParseTypeDef(void)
 
 	//	Add to typedefs
 	tdef = new typedef_t;
-	tdef->s_name = tk_StringI;
+	tdef->Name = tk_Name;
 	tdef->type = type;
 	tdef->next = typedefs;
 	typedefs = tdef;
@@ -1230,8 +1327,7 @@ static void AddVTable(TType *t)
 		}
 		if (!f.func_num)
 		{
-			ParseError("Method %s::%s not defined", t->name,
-				strings + f.s_name);
+			ParseError("Method %s::%s not defined", *t->Name, *f.Name);
 		}
 		vtable[f.ofs] = f.func_num;
 	}
@@ -1259,9 +1355,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.16  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2001/12/27 17:44:02  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

@@ -379,6 +379,8 @@ class TOpConst : public	TTree
 			AddStatement(OPC_PUSHFUNCTION, vInt);
 		else if (type->type == ev_classid)
 			AddStatement(OPC_PUSHCLASSID, vInt);
+		else if (type->type == ev_name)
+			AddStatement(OPC_PUSHNAME, vInt);
 		else
 			AddStatement(OPC_PUSHNUMBER, vInt);
 	}
@@ -564,110 +566,68 @@ static TTree* ParseExpressionPriority14(void);
 static TOperator	*operators[TOperator::NUM_OPERATORS];
 
 static TOperator	UnaryPlus_int(TOperator::ID_UNARYPLUS, &type_int, &type_int, &type_void, OPC_DONE);
-static TOperator	UnaryPlus_uint(TOperator::ID_UNARYPLUS, &type_uint, &type_uint, &type_void, OPC_DONE);
 static TOperator	UnaryPlus_float(TOperator::ID_UNARYPLUS, &type_float, &type_float, &type_void, OPC_DONE);
 
 static TOperator	UnaryMinus_int(TOperator::ID_UNARYMINUS, &type_int, &type_int, &type_void, OPC_UNARYMINUS);
-static TOperator	UnaryMinus_uint(TOperator::ID_UNARYMINUS, &type_uint, &type_uint, &type_void, OPC_UNARYMINUS);
 static TOperator	UnaryMinus_float(TOperator::ID_UNARYMINUS, &type_float, &type_float, &type_void, OPC_FUNARYMINUS);
 static TOperator	UnaryMinus_vector(TOperator::ID_UNARYMINUS, &type_vector, &type_vector, &type_void, OPC_VUNARYMINUS);
 
 static TOperator	NotLogical_int(TOperator::ID_NEGATELOGICAL, &type_int, &type_int, &type_void, OPC_NEGATELOGICAL);
-static TOperator	NotLogical_uint(TOperator::ID_NEGATELOGICAL, &type_int, &type_uint, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_float(TOperator::ID_NEGATELOGICAL, &type_int, &type_float, &type_void, OPC_NEGATELOGICAL);
+static TOperator	NotLogical_name(TOperator::ID_NEGATELOGICAL, &type_int, &type_name, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_str(TOperator::ID_NEGATELOGICAL, &type_int, &type_string, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_func(TOperator::ID_NEGATELOGICAL, &type_int, &type_function, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ptr(TOperator::ID_NEGATELOGICAL, &type_int, &type_void_ptr, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ref(TOperator::ID_NEGATELOGICAL, &type_int, &type_none_ref, &type_void, OPC_NEGATELOGICAL);
 
 static TOperator	BitInverse_int(TOperator::ID_BITINVERSE, &type_int, &type_int, &type_void, OPC_BITINVERSE);
-static TOperator	BitInverse_uint(TOperator::ID_BITINVERSE, &type_uint, &type_uint, &type_void, OPC_BITINVERSE);
 
 static TOperator	PreInc_int(TOperator::ID_PREINC, &type_int, &type_int, &type_void, OPC_PREINC);
-static TOperator	PreInc_uint(TOperator::ID_PREINC, &type_uint, &type_uint, &type_void, OPC_PREINC);
 
 static TOperator	PreDec_int(TOperator::ID_PREDEC, &type_int, &type_int, &type_void, OPC_PREDEC);
-static TOperator	PreDec_uint(TOperator::ID_PREDEC, &type_uint, &type_uint, &type_void, OPC_PREDEC);
 
 static TOperator	PostInc_int(TOperator::ID_POSTINC, &type_int, &type_int, &type_void, OPC_POSTINC);
-static TOperator	PostInc_uint(TOperator::ID_POSTINC, &type_uint, &type_uint, &type_void, OPC_POSTINC);
 
 static TOperator	PostDec_int(TOperator::ID_POSTDEC, &type_int, &type_int, &type_void, OPC_POSTDEC);
-static TOperator	PostDec_uint(TOperator::ID_POSTDEC, &type_uint, &type_uint, &type_void, OPC_POSTDEC);
 
 static TOperator	Mul_int_int(TOperator::ID_MULTIPLY, &type_int, &type_int, &type_int, OPC_MULTIPLY);
-static TOperator	Mul_int_uint(TOperator::ID_MULTIPLY, &type_uint, &type_int, &type_uint, OPC_MULTIPLY);
-static TOperator	Mul_uint_int(TOperator::ID_MULTIPLY, &type_uint, &type_uint, &type_int, OPC_MULTIPLY);
-static TOperator	Mul_uint_uint(TOperator::ID_MULTIPLY, &type_uint, &type_uint, &type_uint, OPC_MULTIPLY);
 static TOperator	Mul_float_float(TOperator::ID_MULTIPLY, &type_float, &type_float, &type_float, OPC_FMULTIPLY);
 static TOperator	Mul_vec_float(TOperator::ID_MULTIPLY, &type_vector, &type_vector, &type_float, OPC_VPOSTSCALE);
 static TOperator	Mul_float_vec(TOperator::ID_MULTIPLY, &type_vector, &type_float, &type_vector, OPC_VPRESCALE);
 
 static TOperator	Div_int_int(TOperator::ID_DIVIDE, &type_int, &type_int, &type_int, OPC_DIVIDE);
-static TOperator	Div_int_uint(TOperator::ID_DIVIDE, &type_uint, &type_int, &type_uint, OPC_UDIVIDE);
-static TOperator	Div_uint_int(TOperator::ID_DIVIDE, &type_uint, &type_uint, &type_int, OPC_UDIVIDE);
-static TOperator	Div_uint_uint(TOperator::ID_DIVIDE, &type_uint, &type_uint, &type_uint, OPC_UDIVIDE);
 static TOperator	Div_float_float(TOperator::ID_DIVIDE, &type_float, &type_float, &type_float, OPC_FDIVIDE);
 static TOperator	Div_vec_float(TOperator::ID_DIVIDE, &type_vector, &type_vector, &type_float, OPC_VISCALE);
 
 static TOperator	Mod_int_int(TOperator::ID_MODULUS, &type_int, &type_int, &type_int, OPC_MODULUS);
-static TOperator	Mod_int_uint(TOperator::ID_MODULUS, &type_uint, &type_int, &type_uint, OPC_UMODULUS);
-static TOperator	Mod_uint_int(TOperator::ID_MODULUS, &type_uint, &type_uint, &type_int, OPC_UMODULUS);
-static TOperator	Mod_uint_uint(TOperator::ID_MODULUS, &type_uint, &type_uint, &type_uint, OPC_UMODULUS);
 
 static TOperator	Add_int_int(TOperator::ID_ADD, &type_int, &type_int, &type_int, OPC_ADD);
-static TOperator	Add_int_uint(TOperator::ID_ADD, &type_uint, &type_int, &type_uint, OPC_ADD);
-static TOperator	Add_uint_int(TOperator::ID_ADD, &type_uint, &type_uint, &type_int, OPC_ADD);
-static TOperator	Add_uint_uint(TOperator::ID_ADD, &type_uint, &type_uint, &type_uint, OPC_ADD);
 static TOperator	Add_float_float(TOperator::ID_ADD, &type_float, &type_float, &type_float, OPC_FADD);
 static TOperator	Add_vec_vec(TOperator::ID_ADD, &type_vector, &type_vector, &type_vector, OPC_VADD);
 
 static TOperator	Sub_int_int(TOperator::ID_SUBTRACT, &type_int, &type_int, &type_int, OPC_SUBTRACT);
-static TOperator	Sub_int_uint(TOperator::ID_SUBTRACT, &type_uint, &type_int, &type_uint, OPC_SUBTRACT);
-static TOperator	Sub_uint_int(TOperator::ID_SUBTRACT, &type_uint, &type_uint, &type_int, OPC_SUBTRACT);
-static TOperator	Sub_uint_uint(TOperator::ID_SUBTRACT, &type_uint, &type_uint, &type_uint, OPC_SUBTRACT);
 static TOperator	Sub_float_float(TOperator::ID_SUBTRACT, &type_float, &type_float, &type_float, OPC_FSUBTRACT);
 static TOperator	Sub_vec_vec(TOperator::ID_SUBTRACT, &type_vector, &type_vector, &type_vector, OPC_VSUBTRACT);
 
 static TOperator	LShift_int_int(TOperator::ID_LSHIFT, &type_int, &type_int, &type_int, OPC_LSHIFT);
-static TOperator	LShift_int_uint(TOperator::ID_LSHIFT, &type_int, &type_int, &type_uint, OPC_LSHIFT);
-static TOperator	LShift_uint_int(TOperator::ID_LSHIFT, &type_uint, &type_uint, &type_int, OPC_LSHIFT);
-static TOperator	LShift_uint_uint(TOperator::ID_LSHIFT, &type_uint, &type_uint, &type_uint, OPC_LSHIFT);
 
 static TOperator	RShift_int_int(TOperator::ID_RSHIFT, &type_int, &type_int, &type_int, OPC_RSHIFT);
-static TOperator	RShift_int_uint(TOperator::ID_RSHIFT, &type_int, &type_int, &type_uint, OPC_RSHIFT);
-static TOperator	RShift_uint_int(TOperator::ID_RSHIFT, &type_uint, &type_uint, &type_int, OPC_URSHIFT);
-static TOperator	RShift_uint_uint(TOperator::ID_RSHIFT, &type_uint, &type_uint, &type_uint, OPC_URSHIFT);
 
 static TOperator	Lt_int_int(TOperator::ID_LT, &type_int, &type_int, &type_int, OPC_LT);
-static TOperator	Lt_int_uint(TOperator::ID_LT, &type_int, &type_int, &type_uint, OPC_ULT);
-static TOperator	Lt_uint_int(TOperator::ID_LT, &type_int, &type_uint, &type_int, OPC_ULT);
-static TOperator	Lt_uint_uint(TOperator::ID_LT, &type_int, &type_uint, &type_uint, OPC_ULT);
 static TOperator	Lt_float_float(TOperator::ID_LT, &type_int, &type_float, &type_float, OPC_FLT);
 
 static TOperator	Le_int_int(TOperator::ID_LE, &type_int, &type_int, &type_int, OPC_LE);
-static TOperator	Le_int_uint(TOperator::ID_LE, &type_int, &type_int, &type_uint, OPC_ULE);
-static TOperator	Le_uint_int(TOperator::ID_LE, &type_int, &type_uint, &type_int, OPC_ULE);
-static TOperator	Le_uint_uint(TOperator::ID_LE, &type_int, &type_uint, &type_uint, OPC_ULE);
 static TOperator	Le_float_float(TOperator::ID_LE, &type_int, &type_float, &type_float, OPC_FLE);
 
 static TOperator	Gt_int_int(TOperator::ID_GT, &type_int, &type_int, &type_int, OPC_GT);
-static TOperator	Gt_int_uint(TOperator::ID_GT, &type_int, &type_int, &type_uint, OPC_UGT);
-static TOperator	Gt_uint_int(TOperator::ID_GT, &type_int, &type_uint, &type_int, OPC_UGT);
-static TOperator	Gt_uint_uint(TOperator::ID_GT, &type_int, &type_uint, &type_uint, OPC_UGT);
 static TOperator	Gt_float_float(TOperator::ID_GT, &type_int, &type_float, &type_float, OPC_FGT);
 
 static TOperator	Ge_int_int(TOperator::ID_GE, &type_int, &type_int, &type_int, OPC_GE);
-static TOperator	Ge_int_uint(TOperator::ID_GE, &type_int, &type_int, &type_uint, OPC_UGE);
-static TOperator	Ge_uint_int(TOperator::ID_GE, &type_int, &type_uint, &type_int, OPC_UGE);
-static TOperator	Ge_uint_uint(TOperator::ID_GE, &type_int, &type_uint, &type_uint, OPC_UGE);
 static TOperator	Ge_float_float(TOperator::ID_GE, &type_int, &type_float, &type_float, OPC_FGE);
 
 static TOperator	Eq_int_int(TOperator::ID_EQ, &type_int, &type_int, &type_int, OPC_EQ);
-static TOperator	Eq_int_uint(TOperator::ID_EQ, &type_int, &type_int, &type_uint, OPC_EQ);
-static TOperator	Eq_uint_int(TOperator::ID_EQ, &type_int, &type_uint, &type_int, OPC_EQ);
-static TOperator	Eq_uint_uint(TOperator::ID_EQ, &type_int, &type_uint, &type_uint, OPC_EQ);
 static TOperator	Eq_float_float(TOperator::ID_EQ, &type_int, &type_float, &type_float, OPC_FEQ);
+static TOperator	Eq_name_name(TOperator::ID_EQ, &type_int, &type_name, &type_name, OPC_EQ);
 static TOperator	Eq_str_str(TOperator::ID_EQ, &type_int, &type_string, &type_string, OPC_EQ);
 static TOperator	Eq_func_func(TOperator::ID_EQ, &type_int, &type_function, &type_function, OPC_EQ);
 static TOperator	Eq_ptr_ptr(TOperator::ID_EQ, &type_int, &type_void_ptr, &type_void_ptr, OPC_EQ);
@@ -676,10 +636,8 @@ static TOperator	Eq_cid_cid(TOperator::ID_EQ, &type_int, &type_classid, &type_cl
 static TOperator	Eq_ref_ref(TOperator::ID_EQ, &type_int, &type_none_ref, &type_none_ref, OPC_EQ);
 
 static TOperator	Ne_int_int(TOperator::ID_NE, &type_int, &type_int, &type_int, OPC_NE);
-static TOperator	Ne_int_uint(TOperator::ID_NE, &type_int, &type_int, &type_uint, OPC_NE);
-static TOperator	Ne_uint_int(TOperator::ID_NE, &type_int, &type_uint, &type_int, OPC_NE);
-static TOperator	Ne_uint_uint(TOperator::ID_NE, &type_int, &type_uint, &type_uint, OPC_NE);
 static TOperator	Ne_float_float(TOperator::ID_NE, &type_int, &type_float, &type_float, OPC_FNE);
+static TOperator	Ne_name_name(TOperator::ID_NE, &type_int, &type_name, &type_name, OPC_NE);
 static TOperator	Ne_str_str(TOperator::ID_NE, &type_int, &type_string, &type_string, OPC_NE);
 static TOperator	Ne_func_func(TOperator::ID_NE, &type_int, &type_function, &type_function, OPC_NE);
 static TOperator	Ne_ptr_ptr(TOperator::ID_NE, &type_int, &type_void_ptr, &type_void_ptr, OPC_NE);
@@ -688,25 +646,14 @@ static TOperator	Ne_cid_cid(TOperator::ID_NE, &type_int, &type_classid, &type_cl
 static TOperator	Ne_ref_ref(TOperator::ID_NE, &type_int, &type_none_ref, &type_none_ref, OPC_NE);
 
 static TOperator	And_int_int(TOperator::ID_ANDBITWISE, &type_int, &type_int, &type_int, OPC_ANDBITWISE);
-static TOperator	And_int_uint(TOperator::ID_ANDBITWISE, &type_uint, &type_int, &type_uint, OPC_ANDBITWISE);
-static TOperator	And_uint_int(TOperator::ID_ANDBITWISE, &type_uint, &type_uint, &type_int, OPC_ANDBITWISE);
-static TOperator	And_uint_uint(TOperator::ID_ANDBITWISE, &type_uint, &type_uint, &type_uint, OPC_ANDBITWISE);
 
 static TOperator	Xor_int_int(TOperator::ID_XORBITWISE, &type_int, &type_int, &type_int, OPC_XORBITWISE);
-static TOperator	Xor_int_uint(TOperator::ID_XORBITWISE, &type_uint, &type_int, &type_uint, OPC_XORBITWISE);
-static TOperator	Xor_uint_int(TOperator::ID_XORBITWISE, &type_uint, &type_uint, &type_int, OPC_XORBITWISE);
-static TOperator	Xor_uint_uint(TOperator::ID_XORBITWISE, &type_uint, &type_uint, &type_uint, OPC_XORBITWISE);
 
 static TOperator	Or_int_int(TOperator::ID_ORBITWISE, &type_int, &type_int, &type_int, OPC_ORBITWISE);
-static TOperator	Or_int_uint(TOperator::ID_ORBITWISE, &type_uint, &type_int, &type_uint, OPC_ORBITWISE);
-static TOperator	Or_uint_int(TOperator::ID_ORBITWISE, &type_uint, &type_uint, &type_int, OPC_ORBITWISE);
-static TOperator	Or_uint_uint(TOperator::ID_ORBITWISE, &type_uint, &type_uint, &type_uint, OPC_ORBITWISE);
 
 static TOperator	Assign_int_int(TOperator::ID_ASSIGN, &type_int, &type_int, &type_int, OPC_ASSIGN);
-static TOperator	Assign_int_uint(TOperator::ID_ASSIGN, &type_uint, &type_int, &type_uint, OPC_ASSIGN);
-static TOperator	Assign_uint_int(TOperator::ID_ASSIGN, &type_uint, &type_uint, &type_int, OPC_ASSIGN);
-static TOperator	Assign_uint_uint(TOperator::ID_ASSIGN, &type_uint, &type_uint, &type_uint, OPC_ASSIGN);
 static TOperator	Assign_float_float(TOperator::ID_ASSIGN, &type_float, &type_float, &type_float, OPC_ASSIGN);
+static TOperator	Assign_name_name(TOperator::ID_ASSIGN, &type_name, &type_name, &type_name, OPC_ASSIGN);
 static TOperator	Assign_str_str(TOperator::ID_ASSIGN, &type_string, &type_string, &type_string, OPC_ASSIGN);
 static TOperator	Assign_func_func(TOperator::ID_ASSIGN, &type_function, &type_function, &type_function, OPC_ASSIGN);
 static TOperator	Assign_ptr_ptr(TOperator::ID_ASSIGN, &type_void_ptr, &type_void_ptr, &type_void_ptr, OPC_ASSIGN);
@@ -715,62 +662,32 @@ static TOperator	Assign_cid_cid(TOperator::ID_ASSIGN, &type_classid, &type_class
 static TOperator	Assign_ref_ref(TOperator::ID_ASSIGN, &type_none_ref, &type_none_ref, &type_none_ref, OPC_ASSIGN);
 
 static TOperator	AddVar_int_int(TOperator::ID_ADDVAR, &type_int, &type_int, &type_int, OPC_ADDVAR);
-static TOperator	AddVar_int_uint(TOperator::ID_ADDVAR, &type_uint, &type_int, &type_uint, OPC_ADDVAR);
-static TOperator	AddVar_uint_int(TOperator::ID_ADDVAR, &type_uint, &type_uint, &type_int, OPC_ADDVAR);
-static TOperator	AddVar_uint_uint(TOperator::ID_ADDVAR, &type_uint, &type_uint, &type_uint, OPC_ADDVAR);
 static TOperator	AddVar_float_float(TOperator::ID_ADDVAR, &type_float, &type_float, &type_float, OPC_FADDVAR);
 static TOperator	AddVar_vec_vec(TOperator::ID_ADDVAR, &type_vector, &type_vector, &type_vector, OPC_VADDVAR);
 
 static TOperator	SubVar_int_int(TOperator::ID_SUBVAR, &type_int, &type_int, &type_int, OPC_SUBVAR);
-static TOperator	SubVar_int_uint(TOperator::ID_SUBVAR, &type_uint, &type_int, &type_uint, OPC_SUBVAR);
-static TOperator	SubVar_uint_int(TOperator::ID_SUBVAR, &type_uint, &type_uint, &type_int, OPC_SUBVAR);
-static TOperator	SubVar_uint_uint(TOperator::ID_SUBVAR, &type_uint, &type_uint, &type_uint, OPC_SUBVAR);
 static TOperator	SubVar_float_float(TOperator::ID_SUBVAR, &type_float, &type_float, &type_float, OPC_FSUBVAR);
 static TOperator	SubVar_vec_vec(TOperator::ID_SUBVAR, &type_vector, &type_vector, &type_vector, OPC_VSUBVAR);
 
 static TOperator	MulVar_int_int(TOperator::ID_MULVAR, &type_int, &type_int, &type_int, OPC_MULVAR);
-static TOperator	MulVar_int_uint(TOperator::ID_MULVAR, &type_uint, &type_int, &type_uint, OPC_MULVAR);
-static TOperator	MulVar_uint_int(TOperator::ID_MULVAR, &type_uint, &type_uint, &type_int, OPC_MULVAR);
-static TOperator	MulVar_uint_uint(TOperator::ID_MULVAR, &type_uint, &type_uint, &type_uint, OPC_MULVAR);
 static TOperator	MulVar_float_float(TOperator::ID_MULVAR, &type_float, &type_float, &type_float, OPC_FMULVAR);
 static TOperator	MulVar_vec_float(TOperator::ID_MULVAR, &type_vector, &type_vector, &type_float, OPC_VSCALEVAR);
 
 static TOperator	DivVar_int_int(TOperator::ID_DIVVAR, &type_int, &type_int, &type_int, OPC_DIVVAR);
-static TOperator	DivVar_int_uint(TOperator::ID_DIVVAR, &type_uint, &type_int, &type_uint, OPC_UDIVVAR);
-static TOperator	DivVar_uint_int(TOperator::ID_DIVVAR, &type_uint, &type_uint, &type_int, OPC_UDIVVAR);
-static TOperator	DivVar_uint_uint(TOperator::ID_DIVVAR, &type_uint, &type_uint, &type_uint, OPC_UDIVVAR);
 static TOperator	DivVar_float_float(TOperator::ID_DIVVAR, &type_float, &type_float, &type_float, OPC_FDIVVAR);
 static TOperator	DivVar_vec_float(TOperator::ID_DIVVAR, &type_vector, &type_vector, &type_float, OPC_VISCALEVAR);
 
 static TOperator	ModVar_int_int(TOperator::ID_MODVAR, &type_int, &type_int, &type_int, OPC_MODVAR);
-static TOperator	ModVar_int_uint(TOperator::ID_MODVAR, &type_uint, &type_int, &type_uint, OPC_UMODVAR);
-static TOperator	ModVar_uint_int(TOperator::ID_MODVAR, &type_uint, &type_uint, &type_int, OPC_UMODVAR);
-static TOperator	ModVar_uint_uint(TOperator::ID_MODVAR, &type_uint, &type_uint, &type_uint, OPC_UMODVAR);
 
 static TOperator	AndVar_int_int(TOperator::ID_ANDVAR, &type_int, &type_int, &type_int, OPC_ANDVAR);
-static TOperator	AndVar_int_uint(TOperator::ID_ANDVAR, &type_uint, &type_int, &type_uint, OPC_ANDVAR);
-static TOperator	AndVar_uint_int(TOperator::ID_ANDVAR, &type_uint, &type_uint, &type_int, OPC_ANDVAR);
-static TOperator	AndVar_uint_uint(TOperator::ID_ANDVAR, &type_uint, &type_uint, &type_uint, OPC_ANDVAR);
 
 static TOperator	OrVar_int_int(TOperator::ID_ORVAR, &type_int, &type_int, &type_int, OPC_ORVAR);
-static TOperator	OrVar_int_uint(TOperator::ID_ORVAR, &type_uint, &type_int, &type_uint, OPC_ORVAR);
-static TOperator	OrVar_uint_int(TOperator::ID_ORVAR, &type_uint, &type_uint, &type_int, OPC_ORVAR);
-static TOperator	OrVar_uint_uint(TOperator::ID_ORVAR, &type_uint, &type_uint, &type_uint, OPC_ORVAR);
 
 static TOperator	XorVar_int_int(TOperator::ID_XORVAR, &type_int, &type_int, &type_int, OPC_XORVAR);
-static TOperator	XorVar_int_uint(TOperator::ID_XORVAR, &type_uint, &type_int, &type_uint, OPC_XORVAR);
-static TOperator	XorVar_uint_int(TOperator::ID_XORVAR, &type_uint, &type_uint, &type_int, OPC_XORVAR);
-static TOperator	XorVar_uint_uint(TOperator::ID_XORVAR, &type_uint, &type_uint, &type_uint, OPC_XORVAR);
 
 static TOperator	LShiftVar_int_int(TOperator::ID_LSHIFTVAR, &type_int, &type_int, &type_int, OPC_LSHIFTVAR);
-static TOperator	LShiftVar_int_uint(TOperator::ID_LSHIFTVAR, &type_uint, &type_int, &type_uint, OPC_LSHIFTVAR);
-static TOperator	LShiftVar_uint_int(TOperator::ID_LSHIFTVAR, &type_uint, &type_uint, &type_int, OPC_LSHIFTVAR);
-static TOperator	LShiftVar_uint_uint(TOperator::ID_LSHIFTVAR, &type_uint, &type_uint, &type_uint, OPC_LSHIFTVAR);
 
 static TOperator	RShiftVar_int_int(TOperator::ID_RSHIFTVAR, &type_int, &type_int, &type_int, OPC_RSHIFTVAR);
-static TOperator	RShiftVar_int_uint(TOperator::ID_RSHIFTVAR, &type_uint, &type_int, &type_uint, OPC_URSHIFTVAR);
-static TOperator	RShiftVar_uint_int(TOperator::ID_RSHIFTVAR, &type_uint, &type_uint, &type_int, OPC_URSHIFTVAR);
-static TOperator	RShiftVar_uint_uint(TOperator::ID_RSHIFTVAR, &type_uint, &type_uint, &type_uint, OPC_URSHIFTVAR);
 
 static TOperator	NullOp(TOperator::NUM_OPERATORS, &type_void, &type_void, &type_void, OPC_DONE);
 
@@ -918,6 +835,49 @@ static TTree *ParseFunctionCall(int num, bool is_method)
 
 //==========================================================================
 //
+//	ParseIFunctionCall
+//
+//==========================================================================
+
+TTree *ParseIFunctionCall(TTree *op)
+{
+	TOpIndirectFuncCall *fop;
+	TType *ftype = op->type;
+
+	if (ftype->type != ev_function && ftype->type != ev_method)
+	{
+		ParseError("Not a function");
+		return op;
+	}
+	fop = new TOpIndirectFuncCall(op, ftype);
+	int arg = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			op = ParseExpressionPriority14();
+			if (arg >= ftype->num_params)
+			{
+				ParseError("Incorrect number of arguments.");
+			}
+			else
+			{
+				TypeCheck3(op->type, ftype->param_types[arg]);
+				fop->AddToList(op);
+			}
+			arg++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	if (arg != ftype->num_params)
+	{
+		ParseError("Incorrect argument count %d, should be %d", arg, ftype->num_params);
+	}
+	return fop;
+}
+
+//==========================================================================
+//
 //	ParseExpressionPriority0
 //
 //==========================================================================
@@ -928,6 +888,7 @@ static TTree *ParseExpressionPriority0(void)
 	TType		*type;
 	int			num;
 	field_t		*field;
+	FName		Name;
 
    	switch (tk_Token)
 	{
@@ -938,6 +899,11 @@ static TTree *ParseExpressionPriority0(void)
 
 	 case TK_FLOAT:
 		op = new TOpConst(PassFloat(tk_Float), &type_float);
+		TK_NextToken();
+		return op;
+
+	 case TK_NAME:
+		op = new TOpConst(tk_Name.GetIndex(), &type_name);
 		TK_NextToken();
 		return op;
 
@@ -977,7 +943,7 @@ static TTree *ParseExpressionPriority0(void)
 			field = CheckForField(ThisType->aux_type->aux_type);
 			if (!field)
 			{
-				ParseError("No such method %s", tk_String);
+				ParseError("No such method %s", *tk_Name);
 				break;
 			}
 			if (field->type->type != ev_method)
@@ -1037,46 +1003,109 @@ static TTree *ParseExpressionPriority0(void)
 		break;
 
 	 case TK_IDENTIFIER:
-		num = CheckForLocalVar(tk_StringI);
+		Name = tk_Name;
+		TK_NextToken();
+		if (TK_Check(PU_LPAREN))
+		{
+			op = NULL;
+
+			type = CheckForType(Name);
+			if (type)
+			{
+				if (type->type != ev_class)
+				{
+					ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", *Name);
+					break;
+				}
+				op = ParseExpressionPriority14();
+				if (op->type->type != ev_reference)
+				{
+					ParseError(ERR_BAD_EXPR, "Class reference required");
+				}
+				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
+				return new TOpDynamicCast(op, type);
+			}
+
+			num = CheckForLocalVar(Name);
+			if (num)
+			{
+				op = new TOpLocal(localdefs[num].ofs, MakePointerType(localdefs[num].type));
+				op = new TOpPushPointed(op,	localdefs[num].type);
+			}
+
+			num = CheckForGlobalVar(Name);
+			if (!op && num)
+			{
+				op = new TOpGlobal(num, MakePointerType(globaldefs[num].type));
+				op = new TOpPushPointed(op,	globaldefs[num].type);
+			}
+
+			num = CheckForFunction(NULL, Name);
+			if (!op && num)
+			{
+				return ParseFunctionCall(num, false);
+			}
+
+			if (!op && ThisType)
+			{
+				field = CheckForField(Name, ThisType->aux_type);
+				if (field)
+				{
+					op = new TOpPushThis();
+					if (field->type->type == ev_method)
+					{
+						op = new TOpPushSelfMethod(op, field->ofs, field->type);
+					}
+					else
+					{
+						op = new TOpField(op, field->ofs, field->type);
+						op = new TOpPushPointed(op,	field->type);
+					}
+				}
+			}
+
+			if (op && (op->type->type == ev_function ||
+				op->type->type == ev_method))
+			{
+				return ParseIFunctionCall(op);
+			}
+
+			ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
+			break;
+		}
+
+		num = CheckForLocalVar(Name);
 		if (num)
 		{
-			TK_NextToken();
 			op = new TOpLocal(localdefs[num].ofs, MakePointerType(localdefs[num].type));
 			op = new TOpPushPointed(op,	localdefs[num].type);
 			return op;
 		}
 
-		num = CheckForConstant(tk_StringI);
+		num = CheckForConstant(Name);
 		if (num != -1)
 		{
-			TK_NextToken();
 		   	return new TOpConst(Constants[num].value, &type_int);
 		}
 
-		num = CheckForGlobalVar(tk_StringI);
+		num = CheckForGlobalVar(Name);
 		if (num)
 		{
-			TK_NextToken();
 			op = new TOpGlobal(num, MakePointerType(globaldefs[num].type));
 			op = new TOpPushPointed(op,	globaldefs[num].type);
 			return op;
 		}
 
-		num = CheckForFunction(tk_StringI);
+		num = CheckForFunction(NULL, Name);
 		if (num)
 		{
-			TK_NextToken();
-			if (!TK_Check(PU_LPAREN))
-			{
-				op = new TOpConst(num, functions[num].type);
-				return op;
-			}
-			return ParseFunctionCall(num, false);
+			op = new TOpConst(num, functions[num].type);
+			return op;
 		}
 
 		if (ThisType)
 		{
-			field = CheckForField(ThisType->aux_type);
+			field = CheckForField(Name, ThisType->aux_type);
 			if (field)
 			{
 				op = new TOpPushThis();
@@ -1093,28 +1122,18 @@ static TTree *ParseExpressionPriority0(void)
 			}
 		}
 
-		type = CheckForType();
+		type = CheckForType(Name);
 		if (type)
 		{
 			if (type->type != ev_class)
 			{
-				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", *Name);
 				break;
-			}
-			if (TK_Check(PU_LPAREN))
-			{
-				op = ParseExpressionPriority14();
-				if (op->type->type != ev_reference)
-				{
-					ParseError(ERR_BAD_EXPR, "Class reference required");
-				}
-				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-				return new TOpDynamicCast(op, type);
 			}
 		   	return new TOpConst(type->classid, &type_classid);
 		}
 
-		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", tk_String);
+		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
 		break;
 
 	 default:
@@ -1135,7 +1154,7 @@ static TTree *ParseExpressionPriority0(void)
 static TTree *ParseExpressionPriority1(void)
 {
 	bool		done;
-	TTree			*op;
+	TTree		*op;
 	TType		*type;
 	field_t		*field;
 
@@ -1223,39 +1242,7 @@ static TTree *ParseExpressionPriority1(void)
 		}
 		else if (TK_Check(PU_LPAREN))
 		{
-			TOpIndirectFuncCall *fop;
-			TType *ftype = op->type;
-
-			if (ftype->type != ev_function && ftype->type != ev_method)
-			{
-				ParseError("Not a function");
-				return op;
-			}
-			fop = new TOpIndirectFuncCall(op, ftype);
-			int arg = 0;
-			if (!TK_Check(PU_RPAREN))
-			{
-				do
-				{
-					op = ParseExpressionPriority14();
-					if (arg >= ftype->num_params)
-					{
-						ParseError("Incorrect number of arguments.");
-					}
-					else
-					{
-						TypeCheck3(op->type, ftype->param_types[arg]);
-						fop->AddToList(op);
-					}
-					arg++;
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			}
-			if (arg != ftype->num_params)
-			{
-				ParseError("Incorrect argument count %d, should be %d", arg, ftype->num_params);
-			}
-			return fop;
+			return ParseIFunctionCall(op);
 		}
 		else
 		{
@@ -1772,7 +1759,7 @@ static TTree* ParseExpressionPriority14(void)
 //
 //==========================================================================
 
-TType *ParseExpression(void)
+TType *ParseExpression(bool)
 {
 	TTree *op = ParseExpressionPriority14();
 	op->Code();
@@ -1784,9 +1771,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.15  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.14  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
 //	

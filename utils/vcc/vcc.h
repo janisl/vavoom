@@ -34,8 +34,16 @@
 using namespace VavoomUtils;
 
 #include "array.h"
+#include "names.h"
+#include "name.h"
 
 // MACROS ------------------------------------------------------------------
+
+//	Number of elements in an array.
+#define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
+
+//	Offset of a struct member.
+#define STRUCT_OFFSET(struc, member)	((int)&((struc *)NULL)->member)
 
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
@@ -58,8 +66,8 @@ enum
 {
 	ev_void,
 	ev_int,
-	ev_uint,
 	ev_float,
+	ev_name,
 	ev_string,
 	ev_function,
 	ev_pointer,
@@ -72,51 +80,6 @@ enum
 	ev_classid,
 
 	NUM_BASIC_TYPES
-};
-
-class TType;
-
-struct field_t
-{
-	int			s_name;
-	int			ofs;
-	TType		*type;
-	int			func_num;	// Method's function
-};
-
-class TType
-{
- public:
-	TType(void) {}
-	TType(const char *Aname, int Atype, TType *Anext, TType *Aaux_type, int Asize) :
-		type(Atype), next(Anext), aux_type(Aaux_type), size(Asize)
-	{
-		strcpy(name, Aname);
-	}
-
-	char		name[MAX_IDENTIFIER_LENGTH];
-	int			s_name;
-	int			type;
-	TType		*next;
-	TType		*aux_type;
-	int			size;
-
-	//	Structure fields
-	int			numfields;
-	field_t		*fields;
-	//	Addfield info
-	int			available_size;
-	int			available_ofs;
-
-	//  Class stuff
-	int			classid;
-	int			num_methods;
-	int			vtable;
-
-	//	Function params
-	int			num_params;
-	int			params_size;
-	TType		*param_types[MAX_PARAMS];
 };
 
 enum error_t
@@ -194,6 +157,7 @@ enum tokenType_t
 	TK_EOF,				//	Sasniegtas faila biegas
 	TK_IDENTIFIER, 		//	Identifik∆tors, vÒrtÿba: tk_String
 	TK_PUNCT, 			//	speci∆lais simbols, vÒrtÿba: tk_String
+	TK_NAME,
 	TK_KEYWORD,			//	atslÒgv∆rds, vÒrtÿba: tk_String
 	TK_STRING,			//	simbolu virkne, vÒrtÿba: tk_String
 	TK_INTEGER,			//	vesels skaitlis, vÒrtÿba: tk_Number
@@ -220,6 +184,7 @@ enum Keyword
 	KW_FUNCTION,
 	KW_IF,
    	KW_INT,
+	KW_NAME,
 	KW_NATIVE,
 	KW_NONE,
 	KW_NULL,
@@ -230,7 +195,6 @@ enum Keyword
 	KW_SWITCH,
 	KW_THIS,
 	KW_TYPEDEF,
-   	KW_UINT,
 	KW_VECTOR,
    	KW_VOID,
 	KW_WHILE,
@@ -287,10 +251,53 @@ enum Punctuation
 	PU_RBRACE,
 };
 
+class TType;
+
+struct field_t
+{
+	FName		Name;
+	int			ofs;
+	TType		*type;
+	int			func_num;	// Method's function
+};
+
+class TType
+{
+public:
+	TType(void) {}
+	TType(int Atype, TType *Anext, TType *Aaux_type, int Asize) :
+		type(Atype), next(Anext), aux_type(Aaux_type), size(Asize)
+	{ }
+
+	FName		Name;
+	int			type;
+	TType		*next;
+	TType		*aux_type;
+	int			size;
+
+	//	Structure fields
+	int			numfields;
+	field_t		*fields;
+	//	Addfield info
+	int			available_size;
+	int			available_ofs;
+
+	//  Class stuff
+	int			classid;
+	int			num_methods;
+	int			vtable;
+
+	//	Function params
+	int			num_params;
+	int			params_size;
+	TType		*param_types[MAX_PARAMS];
+};
+
 class TFunction
 {
- public:
-	int			s_name;
+public:
+	FName		Name;
+	TType		*OuterClass;
 	int			first_statement;	//	Negatÿvi skaitıi ir ieb›vÒt∆s funkcijas
 	int			num_locals;
 	int			flags;
@@ -299,32 +306,28 @@ class TFunction
 
 class TGlobalDef
 {
- public:
-	int			s_name;
+public:
+	FName		Name;
 	int			ofs;
 	TType		*type;
 };
 
 struct localvardef_t
 {
-	int			s_name;
+	FName		Name;
 	int			ofs;
 	TType		*type;
 };
 
 struct constant_t
 {
-	int			s_name;
+	FName		Name;
 	int			value;
-	int			next;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void PA_Parse(void);
-void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
-	TType *class_type);
-void ParseDefaultProperties(field_t *method, TType *class_type);
+// -- Common --
 
 void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
 void ParseError(error_t error);
@@ -338,6 +341,7 @@ int dprintf(const char *text, ...);
 
 void TK_Init(void);
 void TK_OpenSource(void *buf, size_t size);
+void TK_Restart(void);
 void TK_CloseSource(void);
 void TK_NextToken(void);
 bool TK_Check(const char *string);
@@ -354,8 +358,23 @@ int UndoStatement(void);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
+int EvalConstExpression(int type);
+float ConstFloatExpression(void);
+
+void PA_Parse(void);
+void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
+	TType *class_type);
+void ParseDefaultProperties(field_t *method, TType *class_type);
+
+int CheckForFunction(TType *InClass, FName Name);
+int CheckForGlobalVar(FName Name);
+int CheckForLocalVar(FName Name);
+int CheckForConstant(FName Name);
+void AddConstant(FName Name, int value);
+
 void InitTypes(void);
 TType *CheckForType(void);
+TType *CheckForType(FName Name);
 TType *FindType(TType *type);
 TType *MakePointerType(TType *type);
 TType *MakeReferenceType(TType *type);
@@ -371,6 +390,7 @@ void AddFields(void);
 void ParseVector(void);
 field_t* ParseField(TType *t);
 field_t* CheckForField(TType *, bool = true);
+field_t* CheckForField(FName, TType *, bool = true);
 field_t* FindConstructor(TType *t);
 void ParseTypeDef(void);
 void AddVirtualTables(void);
@@ -380,16 +400,7 @@ void ParseStates(TType *class_type);
 void ParseMobjInfo(void);
 void AddInfoTables(void);
 
-int EvalConstExpression(int type);
-float ConstFloatExpression(void);
-
-TType *ParseExpression(void);
-
-int CheckForFunction(int s_name);
-int CheckForGlobalVar(int s_name);
-int CheckForLocalVar(int s_name);
-int CheckForConstant(int s_name);
-void AddConstant(int s_name, int value);
+TType *ParseExpression(bool = false);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -404,6 +415,7 @@ extern char*			tk_String;
 extern int				tk_StringI;
 extern Keyword			tk_Keyword;
 extern Punctuation		tk_Punct;
+extern FName			tk_Name;
 
 extern int*				CodeBuffer;
 extern int				CodeBufferSize;
@@ -434,8 +446,8 @@ extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
 
 extern TType			type_void;
 extern TType			type_int;
-extern TType			type_uint;
 extern TType			type_float;
+extern TType			type_name;
 extern TType			type_string;
 extern TType			type_function;
 extern TType			type_state;
@@ -449,6 +461,8 @@ extern TType			type_none_ref;
 extern int				numclasses;
 
 extern TType			**classtypes;
+
+extern int				CurrentPass;
 
 // INLINE CODE -------------------------------------------------------------
 
@@ -473,6 +487,16 @@ inline int PassFloat(float f)
 inline bool TK_Check(int s_string)
 {
 	if (tk_Token == TK_IDENTIFIER && tk_StringI == s_string)
+	{
+		TK_NextToken();
+		return true;
+	}
+	return false;
+}
+
+inline bool TK_Check(FName Name)
+{
+	if (tk_Token == TK_IDENTIFIER && tk_Name == Name)
 	{
 		TK_NextToken();
 		return true;
@@ -505,9 +529,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.16  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2001/12/27 17:44:02  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

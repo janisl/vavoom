@@ -80,7 +80,7 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CheckForConstant(tk_StringI);
+			num = CheckForConstant(tk_Name);
 			if (num != -1)
 			{
 				TK_NextToken();
@@ -88,7 +88,7 @@ static int ConstExprFactor(void)
 			}
 			else
 			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
+				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *tk_Name);
 			}
 			break;
 
@@ -401,11 +401,19 @@ int EvalConstExpression(int type)
  	switch (type)
 	{
 	 case ev_int:
-	 case ev_uint:
 		return CExprLevA();
 
 	 case ev_float:
 		return PassFloat(FCExprLevI());
+
+	 case ev_name:
+	 	if (tk_Token != TK_NAME)
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Name expected");
+		}
+		ret = tk_Name.GetIndex();
+		TK_NextToken();
+		return ret;
 
 	 case ev_string:
 	 	if (tk_Token != TK_STRING)
@@ -423,10 +431,10 @@ int EvalConstExpression(int type)
 		}
 		else if (tk_Token == TK_IDENTIFIER)
 		{
-			ret = CheckForFunction(tk_StringI);
+			ret = CheckForFunction(NULL, tk_Name);
 			if (!ret)
 			{
-				ERR_Exit(ERR_NONE, true, "%s is not a function", tk_String);
+				ERR_Exit(ERR_NONE, true, "%s is not a function", *tk_Name);
 			}
 			TK_NextToken();
 			return ret;
@@ -469,9 +477,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.8  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/27 17:44:00  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

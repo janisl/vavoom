@@ -219,14 +219,6 @@ int* AddStatement(int statement)
 			statement = OPC_MODVAR_DROP;
 			break;
 
-		 case OPC_UDIVVAR:
-			statement = OPC_UDIVVAR_DROP;
-			break;
-
-		 case OPC_UMODVAR:
-			statement = OPC_UMODVAR_DROP;
-			break;
-
 		 case OPC_ANDVAR:
 			statement = OPC_ANDVAR_DROP;
 			break;
@@ -245,10 +237,6 @@ int* AddStatement(int statement)
 
 		 case OPC_RSHIFTVAR:
 			statement = OPC_RSHIFTVAR_DROP;
-			break;
-
-		 case OPC_URSHIFTVAR:
-			statement = OPC_URSHIFTVAR_DROP;
 			break;
 
 		 case OPC_PREINC:
@@ -455,8 +443,16 @@ void PC_WriteObject(char *name)
 	memset(&progs, 0, sizeof(progs));
 	fwrite(&progs, 1, sizeof(progs), f);
 
+	progs.ofs_names = ftell(f);
+	progs.num_names = FName::GetMaxNames();
+	for (i = 0; i < FName::GetMaxNames(); i++)
+	{
+		FNameEntry *E = FName::GetEntry(i);
+		int len = strlen(E->Name);
+		fwrite(E->Name, 1, (len + 4) & ~3, f);
+	}
+
 	progs.ofs_strings = ftell(f);
-	progs.num_strings = strofs;
 	fwrite(strings, 1, strofs, f);
 
 	progs.ofs_statements = ftell(f);
@@ -478,14 +474,16 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_globalinfo = ftell(f);
-	fwrite(globalinfo, 1, numglobals, f);
+	fwrite(globalinfo, 1, (numglobals + 3) & ~3, f);
 
 	progs.ofs_functions = ftell(f);
 	progs.num_functions = numfunctions;
 	for (i = 0; i < numfunctions; i++)
 	{
 		dfunction_t func;
-		func.s_name = LittleLong(functions[i].s_name);
+		func.name = LittleShort(functions[i].Name.GetIndex());
+		func.outer_class = LittleShort(functions[i].OuterClass ?
+			functions[i].OuterClass->classid : -1);
 		func.first_statement = LittleLong(functions[i].first_statement);
 		func.num_parms = LittleShort(functions[i].type->params_size);
 		func.num_locals = LittleShort(functions[i].num_locals);
@@ -498,11 +496,10 @@ void PC_WriteObject(char *name)
 	progs.num_globaldefs = numglobaldefs;
 	for (i = 0; i < numglobaldefs; i++)
 	{
-		globaldef_t gdef;
-		gdef.type = LittleShort(globaldefs[i].type->type);
+		dglobaldef_t gdef;
+		gdef.name = LittleShort(globaldefs[i].Name.GetIndex());
 		gdef.ofs = LittleShort(globaldefs[i].ofs);
-		gdef.s_name = LittleLong(globaldefs[i].s_name);
-		fwrite(&gdef, 1, sizeof(globaldef_t), f);
+		fwrite(&gdef, 1, sizeof(dglobaldef_t), f);
 	}
 
 	progs.ofs_classinfo = ftell(f);
@@ -512,7 +509,7 @@ void PC_WriteObject(char *name)
 		dclassinfo_t ci;
 		TType *ct = classtypes[i];
 
-		ci.s_name = LittleLong(ct->s_name);
+		ci.name = LittleLong(ct->Name.GetIndex());
 		ci.vtable = LittleLong(ct->vtable);
 		ci.size = LittleShort(ct->size);
 		ci.num_methods = LittleShort(ct->num_methods);
@@ -522,13 +519,14 @@ void PC_WriteObject(char *name)
 
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
+	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringCount, strofs);
 	dprintf("Statements %6d %6d\n", CodeBufferSize, CodeBufferSize * 4);
 	dprintf("Globals    %6d %6d\n", numglobals, numglobals * 4);
-	dprintf("Global info       %6d\n", numglobals);
+	dprintf("Global info       %6d\n", (numglobals + 3) & ~3);
 	dprintf("Functions  %6d %6ld\n", numfunctions, numfunctions * sizeof(dfunction_t));
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(globaldef_t));
+	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(dglobaldef_t));
 	dprintf("Class info %6d %6ld\n", numclasses, numclasses * sizeof(dclassinfo_t));
 	dprintf("TOTAL SIZE        %6d\n", (int)ftell(f));
 
@@ -586,7 +584,9 @@ static void DumpAsmFunction(int num)
 			if (st == OPC_CALL)
 			{
 				//	IzsauktÆs funkcijas vÆrds
-				dprintf("(%s)", strings + functions[CodeBuffer[s]].s_name);
+				dprintf("(%s::%s)", functions[CodeBuffer[s]].OuterClass ?
+					*functions[CodeBuffer[s]].OuterClass->Name : "none",
+					*functions[CodeBuffer[s]].Name);
 			}
 			else if (st == OPC_PUSHSTRING)
 			{
@@ -623,12 +623,29 @@ static void DumpAsmFunction(int num)
 void PC_DumpAsm(char* name)
 {
 	int		i;
+	char	buf[1024];
+	char	*cname;
+	char	*fname;
 
+	strcpy(buf, name);
+	if (strstr(buf, "::"))
+	{
+		cname = buf;
+		fname = strstr(buf, "::") + 2;
+	}
+	else
+	{
+		cname = NULL;
+		fname = buf;
+	}
 	dprintf("--------------------------------------------\n");
 	dprintf("Dump ASM function %s\n\n", name);
-	for (i=0; i<numfunctions; i++)
+	for (i = 0; i < numfunctions; i++)
 	{
-		if (!strcmp(name, strings + functions[i].s_name))
+		if (((!cname && !functions[i].OuterClass) ||
+			(cname && functions[i].OuterClass &&
+			!strcmp(cname, *functions[i].OuterClass->Name))) &&
+			!strcmp(fname, *functions[i].Name))
 		{
 			DumpAsmFunction(i);
 			return;
@@ -640,9 +657,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.14  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.13  2001/12/27 17:44:02  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

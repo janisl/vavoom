@@ -52,6 +52,8 @@ static void DumpAsm(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+int				CurrentPass;
+
 bool			ClassAddfields = false;
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
@@ -62,7 +64,6 @@ static int		num_dump_asm;
 static char*	dump_asm_names[1024];
 static boolean 	DebugMode;
 static FILE*	DebugFile;
-static bool		dumpPreprocessed = false;
 
 // CODE --------------------------------------------------------------------
 
@@ -86,18 +87,13 @@ int main(int argc, char **argv)
 
 	dprintf("Preprocessing\n");
 	size = cpp_main(SourceFileName, &buf);
-	if (dumpPreprocessed)
-	{
-		FILE *f = fopen("vcc.i", "w");
-		fwrite(buf, 1, size, f);
-		fclose(f);
-	}
 	TK_OpenSource(buf, size);
 	PA_Parse();
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
 	DumpAsm();
+	FName::StaticExit();
 	endtime = time(0);
 	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
@@ -122,6 +118,7 @@ static void Init(void)
 	DebugMode = false;
 	DebugFile = NULL;
 	num_dump_asm = 0;
+	FName::StaticInit();
 	TK_Init();
 	PC_Init();
 	InitTypes();
@@ -175,9 +172,6 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			option = *text++;
 			switch (option)
 			{
-				case 'i':
-					dumpPreprocessed = true;
-					break;
 				case 'c':
 					if (*text == 'a' && !text[1])
 					{
@@ -300,9 +294,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.11  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/12/27 17:44:02  dj_jl
 //	Removed support for C++ style constructors and destructors, some fixes
 //	

@@ -66,6 +66,7 @@ int 				tk_Number;
 float				tk_Float;
 Keyword				tk_Keyword;
 Punctuation			tk_Punct;
+FName				tk_Name;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -101,6 +102,7 @@ static char* Keywords[] =
 	"function_t",
 	"if",
    	"int",
+	"name",
 	"native",
 	"none",
 	"NULL",
@@ -111,7 +113,6 @@ static char* Keywords[] =
 	"switch",
 	"this",
 	"typedef",
-   	"uint",
 	"vector",
    	"void",
 	"while",
@@ -180,6 +181,21 @@ void TK_OpenSource(void *buf, size_t size)
 	SourceOpen = true;
 	FileStart = (char *)buf;
 	FileEnd = FileStart + size;
+	FilePtr = FileStart;
+	tk_Line = 1;
+	tk_Token = TK_NONE;
+	NewLine = true;
+	NextChr();
+}
+
+//==========================================================================
+//
+//	TK_Restart
+//
+//==========================================================================
+
+void TK_Restart(void)
+{
 	FilePtr = FileStart;
 	tk_Line = 1;
 	tk_Token = TK_NONE;
@@ -372,7 +388,7 @@ static void ProcessQuoteToken(void)
 	NextChr();
 	while (Chr != '\"')
 	{
-		if (len >= MAX_QUOTED_LENGTH-1)
+		if (len >= MAX_QUOTED_LENGTH - 1)
 		{
 			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
 		}
@@ -384,6 +400,35 @@ static void ProcessQuoteToken(void)
 	TokenStringBuffer[len] = 0;
 	NextChr();
 	tk_StringI = FindString(tk_String);
+}
+
+//==========================================================================
+//
+// ProcessSingleQuoteToken
+//
+//==========================================================================
+
+static void ProcessSingleQuoteToken(void)
+{
+	int len;
+
+	tk_Token = TK_NAME;
+	len = 0;
+	NextChr();
+	while (Chr != '\'')
+	{
+		if (len >= MAX_IDENTIFIER_LENGTH - 1)
+		{
+			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
+		}
+		ProcessChar();
+		TokenStringBuffer[len] = Chr;
+		NextChr();
+		len++;
+	}
+	TokenStringBuffer[len] = 0;
+	NextChr();
+	tk_Name = TokenStringBuffer;
 }
 
 //==========================================================================
@@ -540,7 +585,13 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'n':
-		if (tk_String[1] == 'o' && tk_String[2] == 'n' &&
+		if (tk_String[1] == 'a' && tk_String[2] == 'm' &&
+			tk_String[3] == 'e' && tk_String[4] == 0)
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_NAME;
+		}
+		else if (tk_String[1] == 'o' && tk_String[2] == 'n' &&
 			tk_String[3] == 'e' && tk_String[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
@@ -606,14 +657,6 @@ static void ProcessLetterToken(void)
 		}
 		break;
 
-	case 'u':
-		if (!strcmp(tk_String, "uint"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_UINT;
-		}
-		break;
-
 	case 'v':
 		if (!strcmp(tk_String, "vector"))
 		{
@@ -644,7 +687,7 @@ static void ProcessLetterToken(void)
 
 	if (tk_Token == TK_IDENTIFIER)
 	{
-		tk_StringI = FindString(tk_String);
+		tk_Name = tk_String;
 	}
 }
 
@@ -993,9 +1036,9 @@ void TK_NextToken(void)
 			case CHR_QUOTE:
 				ProcessQuoteToken();
 				break;
-//			case CHR_SINGLE_QUOTE:
-//				ProcessSingleQuoteToken();
-//				break;
+			case CHR_SINGLE_QUOTE:
+				ProcessSingleQuoteToken();
+				break;
 			default:
 				ProcessSpecialToken();
 				break;
@@ -1094,9 +1137,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/01/11 08:17:31  dj_jl
+//	Added name subsystem, removed support for unsigned ints
+//
 //	Revision 1.12  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.11  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
 //	
