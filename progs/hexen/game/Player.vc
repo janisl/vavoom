@@ -1521,6 +1521,32 @@ void PlayerInSpecialSector(float deltaTime)
 		}
 	}
 
+	//	Apply any customizable damage
+	if (MO.Sector->Damage)
+	{
+		if (MO.Sector->Damage < 20)
+		{
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (MO.Sector->Damage < 50)
+		{
+			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			{
+				LastSectorDamageTime = level->time;
+				MO.Damage(none, none, MO.Sector->Damage);
+			}
+		}
+		else if (level->time - LastSectorDamageTime >= 1.0 / 35.0)
+		{
+			LastSectorDamageTime = level->time;
+			MO.Damage(none, none, MO.Sector->Damage);
+		}
+	}
+
 	switch (MO.Sector->special)
 	{
 	case SECSPEC_ScrollCurrent:
@@ -3642,6 +3668,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.7  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //

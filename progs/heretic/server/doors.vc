@@ -203,15 +203,65 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //
 //  EV_LightTurnOnPartway
 //
+//	killough 10/98
+//
+//	Turn sectors tagged to line lights on to specified or max neighbor level
+//
+//	Passed the tag of sector(s) to light and a light level fraction between
+// 0 and 1. Sets the light to min on 0, max on 1, and interpolates
+// in-between. Used for doors with gradual lighting effects.
+//
 //==========================================================================
 
-void EV_LightTurnOnPartway(int LightTag, float Delta)
+void EV_LightTurnOnPartway(int Tag, float Frac)
 {
+	sector_t*	temp;
+	sector_t*	sector;
+	int			i;
+	int			j;
+	int			bright;
+	int			min;
+
+	if (Frac < 0.0)
+		Frac = 0.0;
+	else if (Frac > 1.0)
+		Frac = 1.0;
+
+	//	Search all sectors for ones with same tag as activating line
+	i = -1;
+	for (i = FindSectorFromTag(Tag, i); i >= 0;
+		i = FindSectorFromTag(Tag, i))
+	{
+		sector = &GLevel.Sectors[i];
+		bright = 0;
+		min = sector->params.lightlevel;
+
+		for (j = 0; j < sector->linecount; j++)
+		{
+			temp = getNextSector(sector->lines[j], sector);
+			if (temp)
+			{
+				if (temp->params.lightlevel > bright)
+				{
+					bright = temp->params.lightlevel;
+				}
+				if (temp->params.lightlevel < min)
+				{
+					min = temp->params.lightlevel;
+				}
+			}
+		}
+		sector->params.lightlevel = ftoi(Frac * itof(bright) +
+			(1.0 - Frac) * itof(min));
+	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2005/03/28 07:43:30  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.20  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

@@ -28,7 +28,6 @@
 #include "../hexndefs.vc"
 #include "svdefs.vc"
 
-#include "specutl.vc"
 #include "scroll.vc"
 #include "ceilings.vc"
 #include "doors.vc"
@@ -57,6 +56,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.18  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

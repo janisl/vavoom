@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pawn:Actor
+class Pawn : Actor
 	abstract;
 
 bool bCheckNoMonsters;
@@ -470,6 +470,7 @@ defaultproperties
 	bCountKill = true;
 	bFloorClip = true;
 	bActivateMCross = true;
+	bActivatePushWall = true;
 	bCheckNoMonsters = true;
 	bCheckLineBlockMonsters = true;
 }
@@ -477,6 +478,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:43:29  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.3  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

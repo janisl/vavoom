@@ -90,19 +90,36 @@ int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 	FloorMover	Floor;
 
 	Rtn = false;
-	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = FindSectorFromTag(Arg1, SecNum))
+	if (!Arg1)
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		if (!Line || !Line->backsector)
+			return false;
 
-		// ALREADY MOVING?  IF SO, KEEP GOING...
-		if (Sec->FloorData)
-			continue;
+		if (!Line->backsector->FloorData)
+		{
+			// new floor thinker
+			Rtn = true;
+			Floor = NewSpecialThinker(FloorMover);
+			Floor.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type,
+				Line);
+		}
+	}
+	else
+	{
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &GLevel.Sectors[SecNum];
 
-		// new floor thinker
-		Rtn = true;
-		Floor = NewSpecialThinker(FloorMover);
-		Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+			// ALREADY MOVING?  IF SO, KEEP GOING...
+			if (Sec->FloorData)
+				continue;
+
+			// new floor thinker
+			Rtn = true;
+			Floor = NewSpecialThinker(FloorMover);
+			Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+		}
 	}
 	return Rtn;
 }
@@ -125,6 +142,117 @@ int EV_FloorCrushStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		{
 			Rtn = true;
 		}
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_BuildStairsOld
+//
+//  BUILD A STAIRCASE!
+//
+//==========================================================================
+
+int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	bool Generic, line_t* Line)
+{
+	int			SecNum;
+	float		Height;
+	int			i;
+	int			j;
+	int			Ok;
+	int			Texture;
+	int			Rtn;
+	sector_t*	Sec;
+	sector_t*	TSec;
+	FloorMover	Floor;
+	line_t*		SecLine;
+	int			Direction;
+	float		StairSize;
+	bool		IgnTxt;
+	int			OldSecNum;
+
+	if (!Arg1 && (!Line || !Line->backsector))
+		return false;
+
+	if (Generic)
+	{
+		Direction = Arg4 & 1 ? 1 : -1;
+		IgnTxt = !!(Arg4 & 2);
+	}
+	else
+	{
+		Direction = 1;
+		IgnTxt = false;
+	}
+	StairSize = itof(Arg3 * Direction);
+	Rtn = 0;
+	for (SecNum = Arg1 ? FindSectorFromTag(Arg1, -1) : 1; SecNum >= 0;
+		SecNum = Arg1 ? FindSectorFromTag(Arg1, SecNum) : -1)
+	{
+		Sec = Arg1 ? &GLevel.Sectors[SecNum] : Line->backsector;
+
+		// ALREADY MOVING?  IF SO, KEEP GOING...
+		if (Sec->FloorData)
+			continue;
+
+		// new floor thinker
+		Rtn = 1;
+		Height = GetPlanePointZ(&Sec->floor, vector(0.0, 0.0, 0.0)) +
+			StairSize;
+		Floor = NewSpecialThinker(FloorMover);
+		Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic, Height);
+
+		Texture = Sec->floor.pic;
+		OldSecNum = SecNum;	//jff 3/4/98 preserve loop index
+
+		// Find next sector to raise
+		// 1. Find 2-sided line with same sector side[0]
+		// 2. Other side is the next sector to raise
+		// 3. Unless already moving, or different texture, then stop building
+		do
+		{
+			Ok = false;
+			for (i = 0; i < Sec->linecount; i++)
+			{
+				SecLine = Sec->lines[i];
+
+				if (!(SecLine->flags & ML_TWOSIDED))
+					continue;
+
+				TSec = SecLine->frontsector;
+				if (Sec != TSec)
+					continue;
+				TSec = SecLine->backsector;
+				if (!TSec)
+					continue;	//jff 5/7/98 if no backside, continue
+				if (!IgnTxt && TSec->floor.pic != Texture)
+					continue;
+
+				Height += StairSize;
+				if (TSec->FloorData)
+					continue;
+
+				Sec = TSec;
+				//	SecNum = TSec - GLevel.Sectors;
+				for (j = 0; j < GLevel.NumSectors; j++)
+				{
+					if (TSec == &GLevel.Sectors[j])
+					{
+						SecNum = j;
+						break;
+					}
+				}
+				Floor = NewSpecialThinker(FloorMover);
+				Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic,
+					Height);
+				Ok = true;
+				break;
+			}
+		}
+		while (Ok);
+		SecNum = OldSecNum;	//jff 3/4/98 restore loop index
 	}
 	return Rtn;
 }
@@ -457,6 +585,9 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.20  2005/03/16 15:04:40  dj_jl
 //  More work on line specials.
 //

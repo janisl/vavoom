@@ -36,8 +36,7 @@
 #include "Carcas.vc"
 #include "Decoration.vc"
 
-#include "FloorScroll.vc"
-#include "WallScroll.vc"
+#include "Scroller.vc"
 #include "CeilingMover.vc"
 #include "VerticalDoor.vc"
 #include "FloorMover.vc"
@@ -501,6 +500,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.6  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //

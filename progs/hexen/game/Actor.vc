@@ -1851,7 +1851,8 @@ void CheckForPushSpecial(line_t * line, int side)
 		}
 		else if (bActivateImpact)
 		{
-			P_ActivateLine(line, self, side, SPAC_IMPACT);
+			P_ActivateLine(line, bMissile ? Instigator : self, side,
+				SPAC_IMPACT);
 		}
 	}
 }
@@ -1877,7 +1878,7 @@ void BlockedByLine(line_t * ld)
 //
 //==========================================================================
 
-void PushLine(void)
+void PushLine()
 {
 	if (bColideWithWorld)
 	{
@@ -1987,7 +1988,7 @@ void ApplyFriction(void)
 		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
 			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
 		{
-			if (FloorZ != Sector->floorheight)
+			if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 			{
 				return;
 			}
@@ -2013,24 +2014,36 @@ void ApplyFriction(void)
 	}
 	else
 	{
-		if (WaterLevel >= 2)
-		{
-			Velocity -= Velocity * FRICTION_WATER * frametime;
-		}
-		else if (bFly && !(Origin.z <= FloorZ) && !bOnMobj)
-		{
-			Velocity -= Velocity * FRICTION_FLY * frametime;
-		}
-		else if (GetFloorType() == FLOOR_ICE ||
-			(Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
-		{
-			Velocity -= Velocity * FRICTION_LOW * frametime;
-		}
-		else
-		{
-			Velocity -= Velocity * FRICTION_NORMAL * frametime;
-		}
+		Velocity -= Velocity * (GetFriction() * frametime);
 	}
+}
+
+//==========================================================================
+//
+//	GetFriction
+//
+//==========================================================================
+
+float GetFriction()
+{
+	if (WaterLevel >= 2)
+	{
+		return FRICTION_WATER;
+	}
+	if (bFly && !(Origin.z <= FloorZ) && !bOnMobj)
+	{
+		return FRICTION_FLY;
+	}
+	if (GetFloorType() == FLOOR_ICE ||
+		(Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
+	{
+		return FRICTION_LOW;
+	}
+	if (Sector->special & SECSPEC_FRICTION_MASK)
+	{
+		return Sector->Friction;
+	}
+	return FRICTION_NORMAL;
 }
 
 //==========================================================================
@@ -3841,6 +3854,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.13  2005/03/16 15:04:22  dj_jl
 //  More work on line specials.
 //

@@ -84,6 +84,10 @@ int pic_shld[16];
 
 int pic_paused;
 
+// For the Fullscreen stuff
+int pic_health;
+int pic_armor2;
+
 string arti_pic_names[NUMARTIFACTS] = {
 	"ARTIBOX",	// none
 	"ARTIINVU",	// invulnerability
@@ -303,6 +307,10 @@ void SB_StartMap(void)
 	}
 
 	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
+
+	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
+	pic_health = R_RegisterPic("PTN1A0", PIC_PATCH);
+	pic_armor2 = R_RegisterPic("ARM1A0", PIC_PATCH);
 }
 
 //==========================================================================
@@ -666,9 +674,21 @@ void SB_DrawFullscreenStats(void)
 {
 	int i;
 	int x;
+	int sb_mana1;
+	int sb_mana2;
+	int readyweapon;
 
 	//  Health
 	SB_DrawNumber12(5, 180, cl->health);
+	R_DrawPic(62, 224, pic_health);
+
+	// Armor
+	SB_DrawNumber12(5, 160, ftoi((AutoArmorSave[sb_pclass]
+			+ cl->armorpoints[ARMOR_ARMOR]
+			+ cl->armorpoints[ARMOR_SHIELD]
+			+ cl->armorpoints[ARMOR_HELMET]
+			+ cl->armorpoints[ARMOR_AMULET]) / 5.0));
+	R_DrawPic(62, 200, pic_armor2);
 
 	//  Frags
 	if (deathmatch)
@@ -708,6 +728,50 @@ void SB_DrawFullscreenStats(void)
 		R_DrawPic(284, 169, pic_arti[cl->readyArtifact]);
 		SB_DrawINumber(306, 192, cl->inventory[cl->inv_ptr].count);
 	}
+
+	//  Mana
+	if (cl->mana[0] == 0)
+	{
+		// Draw Dim Mana icon
+		sb_mana1 = 0;
+	}
+	else
+	{
+		sb_mana1 = 1;
+	}
+	if (cl->mana[1] == 0)
+	{
+		// Draw Dim Mana icon
+		sb_mana2 = 0;
+	}
+	else
+	{
+		sb_mana2 = 1;
+	}
+
+	// Update mana graphics based upon mana count/weapon type
+	readyweapon = (cl->stats.flags & SBF_WPN_MASK) >> SBF_WPN_SHIFT;
+	if (readyweapon == WP_FIRST)
+	{
+		sb_mana1 = 0;
+		sb_mana2 = 0;
+	}
+	else if (readyweapon == WP_SECOND)
+	{
+		sb_mana2 = 0;
+	}
+	else if (readyweapon == WP_THIRD)
+	{
+		sb_mana1 = 0;
+	}
+	else
+	{
+	}
+
+	SB_DrawMNumber(270, 176, cl->mana[0]);
+	SB_DrawMNumber(270, 192, cl->mana[1]);
+	R_DrawPic(254, 170, pic_manadim1[sb_mana1]);
+	R_DrawPic(254, 186, pic_manadim2[sb_mana2]);
 }
 
 //==========================================================================
@@ -859,6 +923,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.14  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

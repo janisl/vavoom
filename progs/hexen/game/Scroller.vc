@@ -1,0 +1,329 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Scroller : Thinker;
+
+int				Type;
+int				Affectee;
+float			XSpeed;
+float			YSpeed;
+float			VDX;
+float			VDY;
+bool			bAccel;
+int				Control;
+float			LastHeight;
+
+//==========================================================================
+//
+//	InitFloor
+//
+//==========================================================================
+
+void InitFloor(sector_t* InSector, int XDir, int YDir, int InSpeed)
+{
+	int		i;
+
+	for (i = 0; i < XLevel.NumSectors; i++)
+	{
+		if (&XLevel.Sectors[i] == InSector)
+		{
+			Affectee = i;
+			break;
+		}
+	}
+	Type = SCROLLEV_Floor;
+	XSpeed = itof(XDir) * itof(1 << InSpeed) * 35.0 / 2.0;
+	YSpeed = itof(YDir) * itof(1 << InSpeed) * 35.0 / 2.0;
+}
+
+//==========================================================================
+//
+//  InitWall
+//
+//==========================================================================
+
+void InitWall(line_t* Line, int XDir, int YDir)
+{
+	Type = SCROLLEV_Side;
+	Affectee = Line->sidenum[0];
+	XSpeed = itof(XDir * Line->arg1) * 35.0 / 64.0;
+	YSpeed = itof(YDir * Line->arg1) * 35.0 / 64.0;
+}
+
+//==========================================================================
+//
+//  InitWallOffsets
+//
+//==========================================================================
+
+void InitWallOffsets(line_t* Line)
+{
+	Type = SCROLLEV_Side;
+	Affectee = Line->sidenum[0];
+	XSpeed = -XLevel.Sides[Affectee].textureoffset * 35.0;
+	YSpeed = XLevel.Sides[Affectee].rowoffset * 35.0;
+}
+
+//==========================================================================
+//
+//  InitTextureBoth
+//
+//==========================================================================
+
+void InitTextureBoth(line_t* Line)
+{
+	Type = SCROLLEV_Side;
+	Affectee = Line->sidenum[0];
+	XSpeed = itof(Line->arg2 - Line->arg3) * 35.0 / 64.0;
+	YSpeed = itof(Line->arg5 - Line->arg4) * 35.0 / 64.0;
+}
+
+//==========================================================================
+//
+//  InitTextureModel
+//
+//	Adds wall scroller. Scroll amount is rotated with respect to wall's
+// linedef first, so that scrolling towards the wall in a perpendicular
+// direction is translated into vertical motion, while scrolling along
+// the wall in a parallel direction is translated into horizontal motion.
+//
+// killough 5/25/98: cleaned up arithmetic to avoid drift due to roundoff
+//
+//==========================================================================
+
+void InitTextureModel(line_t* Line, line_t* SrcLine)
+{
+	float		ldx;
+	float		ldy;
+	float		dx;	// direction and speed of scrolling
+	float		dy;
+	float		x;
+	float		y;
+	float		d;
+	int			i;
+
+	// The line housing the special controls the
+	// direction and speed of scrolling.
+	dx = (SrcLine->v2->x - SrcLine->v1->x) / 32.0;
+	dy = (SrcLine->v2->y - SrcLine->v1->y) / 32.0;
+
+	ldx = Line->v2->x - Line->v1->x;
+	ldy = Line->v2->y - Line->v1->y;
+
+	x = fabs(ldx);
+	y = fabs(ldy);
+	if (y > x)
+	{
+		d = x;
+		x = y;
+		y = d;
+	}
+	d = x / sin(atan(y / x) + 90.0);
+	x = -(dy * ldy + dx * ldx) / d;
+	y = -(dx * ldy - dy * ldx) / d;
+
+	Type = SCROLLEV_Side;
+	Affectee = Line->sidenum[0];
+	XSpeed = x * 35.0;
+	YSpeed = y * 35.0;
+
+	//	Set up control sector and acceleration.
+	if (SrcLine->arg2 & 3)
+	{
+		// if 1, then displacement
+		// if 2, then accelerative (also if 3)
+		for (i = 0; i < XLevel.NumSectors; i++)
+		{
+			if (&XLevel.Sectors[i] == SrcLine->frontsector)
+			{
+				Control = i;
+				break;
+			}
+		}
+		if (SrcLine->arg2 & 2)
+		{
+			bAccel = true;
+		}
+	}
+	if (Control != -1)
+	{
+		LastHeight = GetPlanePointZ(&XLevel.Sectors[Control].floor,
+			XLevel.Sectors[Control].soundorg) +
+			GetPlanePointZ(&XLevel.Sectors[Control].ceiling,
+			XLevel.Sectors[Control].soundorg);
+	}
+}
+
+//==========================================================================
+//
+//	InitGen
+//
+//	Add a generalized scroller to the thinker list.
+//
+// type: the enumerated type of scrolling: floor, ceiling, floor carrier,
+//   wall, floor carrier & scroller
+//
+// (dx,dy): the direction and speed of the scrolling or its acceleration
+//
+// control: the sector whose heights control this scroller's effect
+//   remotely, or -1 if no control sector
+//
+// affectee: the index of the affected object (sector or sidedef)
+//
+// accel: non-zero if this is an accelerative effect
+//
+//==========================================================================
+
+void InitGen(int InType, line_t* SrcLine, int InAffectee)
+{
+	int			i;
+
+	Type = InType;
+	Affectee = InAffectee;
+	if (SrcLine->arg2 & 4)
+	{
+		//	The line housing the special controls the
+		// direction and speed of scrolling.
+		XSpeed = (SrcLine->v2->x - SrcLine->v1->x) * 35.0 / 32.0;
+		YSpeed = (SrcLine->v2->y - SrcLine->v1->y) * 35.0 / 32.0;
+	}
+	else
+	{
+		//	The speed and direction are parameters to the special.
+		XSpeed = itof(SrcLine->arg4 - 128) * 32.0 * 35.0;
+		YSpeed = itof(SrcLine->arg5 - 128) * 32.0 * 35.0;
+	}
+
+	if (Type == SCROLLEV_Carry)
+	{
+		//level.AddScroller (this, affectee);
+		//XSpeed *= CARRYFACTOR;
+		//YSpeed *= CARRYFACTOR;
+	}
+	else
+	{
+		XSpeed = -XSpeed;
+	}
+
+	if (SrcLine->arg2 & 3)
+	{
+		// if 1, then displacement
+		// if 2, then accelerative (also if 3)
+		for (i = 0; i < XLevel.NumSectors; i++)
+		{
+			if (&XLevel.Sectors[i] == SrcLine->frontsector)
+			{
+				Control = i;
+				break;
+			}
+		}
+		if (SrcLine->arg2 & 2)
+			bAccel = true;
+	}
+	if (Control != -1)
+	{
+		LastHeight = GetPlanePointZ(&XLevel.Sectors[Control].floor,
+			XLevel.Sectors[Control].soundorg) +
+			GetPlanePointZ(&XLevel.Sectors[Control].ceiling,
+			XLevel.Sectors[Control].soundorg);
+	}
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	float		XDelta;
+	float		YDelta;
+	float		Height;
+	float		Delta;
+
+	XDelta = XSpeed * DeltaTime;
+	YDelta = YSpeed * DeltaTime;
+
+	if (Control != -1)
+	{
+		//	Compute scroll amounts based on a sector's height changes
+		Height = GetPlanePointZ(&XLevel.Sectors[Control].floor,
+			XLevel.Sectors[Control].soundorg) +
+			GetPlanePointZ(&XLevel.Sectors[Control].ceiling,
+			XLevel.Sectors[Control].soundorg);
+		Delta = Height - LastHeight;
+		LastHeight = Height;
+		XDelta = XDelta * Delta;
+		YDelta = YDelta * Delta;
+	}
+
+	//	Add acceleration
+	if (bAccel)
+	{
+		XDelta += VDX * DeltaTime;
+		YDelta += VDY * DeltaTime;
+		VDX = XDelta / DeltaTime;
+		VDY = YDelta / DeltaTime;
+	}
+
+	if (!XDelta && !YDelta)		// no-op if both (x,y) offsets are 0
+		return;
+
+	switch (Type)
+	{
+	case SCROLLEV_Side:
+		XLevel.Sides[Affectee].textureoffset += XDelta;
+		XLevel.Sides[Affectee].rowoffset += YDelta;
+		break;
+
+	case SCROLLEV_Floor:
+		XLevel.Sectors[Affectee].floor.xoffs += XDelta;
+		XLevel.Sectors[Affectee].floor.yoffs += YDelta;
+		break;
+
+	case SCROLLEV_Ceiling:
+		XLevel.Sectors[Affectee].ceiling.xoffs += XDelta;
+		XLevel.Sectors[Affectee].ceiling.yoffs += YDelta;
+		break;
+
+	case SCROLLEV_Carry:
+		//FIXME
+		break;
+	}
+}
+
+defaultproperties
+{
+	Control = -1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
+//
+//**************************************************************************

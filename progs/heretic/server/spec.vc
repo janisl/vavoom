@@ -111,6 +111,114 @@ bool EV_SectorSoundChange(int *args)
 	return rtn;
 }
 
+//=========================================================================
+//
+//	EV_SectorSetDamage
+//
+//=========================================================================
+
+bool EV_SectorSetDamage(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int		SecNum;
+	bool	Rtn;
+
+	if (!Arg1)
+	{
+		return false;
+	}
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		GLevel.Sectors[SecNum].Damage = Arg2;
+		//FIXME Arg3 is MOD
+		Rtn = true;
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_NoiseAlert
+//
+//==========================================================================
+
+bool EV_NoiseAlert(Actor A, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	Actor	ASource;
+	Actor	ATarget;
+	int		Search;
+
+	if (!Arg1)
+	{
+		ASource = A;
+	}
+	else
+	{
+		Search = -1;
+		ASource = Actor(FindMobjFromTID(Arg1, &Search));
+	}
+
+	if (!Arg2)
+	{
+		ATarget = A;
+	}
+	else
+	{
+		Search = -1;
+		ATarget = Actor(FindMobjFromTID(Arg2, &Search));
+	}
+
+	P_NoiseAlert(ASource, ATarget);
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_ForceField
+//
+//==========================================================================
+
+bool EV_ForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, Actor A)
+{
+	A.Damage(none, none, 10);
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_RemoveForceField
+//
+//==========================================================================
+
+bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int i;
+	int secnum;
+	sector_t *sec;
+	line_t *secline;
+
+	secnum = -1;
+	while ((secnum = FindSectorFromTag(Arg1, secnum)) >= 0)
+	{
+		sec = &GLevel.Sectors[secnum];
+		for (i = 0; i < sec->linecount; i++)
+		{
+			secline = sec->lines[i];
+			if (secline->special != LNSPEC_ForceField)
+				continue;
+			if (!(secline->flags & ML_TWOSIDED))
+				continue;
+
+			SetLineTexture(secline->sidenum[0], 1, 0);
+			SetLineTexture(secline->sidenum[1], 1, 0);
+			secline->special = 0;
+			secline->flags &= ~ML_BLOCKING;
+		}
+	}
+	return true;
+}
+
 //==========================================================================
 //
 //  ExecuteLineSpecial
@@ -226,6 +334,12 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
 			STAIRSEV_UpSync);
 		break;
+	case LNSPEC_ForceField:
+		buttonSuccess = EV_ForceField(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_ClearForceField:
+		buttonSuccess = EV_RemoveForceField(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_FloorRaiseByValueTimes8:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FLOOREV_RaiseByValueTimes8, line);
@@ -274,26 +388,26 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case LNSPEC_PlatPerpetualRaise:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_PerpetualRaise);
+			PLATEV_PerpetualRaise, line);
 		break;
 	case LNSPEC_PlatStop:
 		buttonSuccess = EV_StopPlat(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_PlatDownWaitUpStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownWaitUpStay);
+			PLATEV_DownWaitUpStay, line);
 		break;
 	case LNSPEC_PlatDownByValueWaitUpStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownByValueWaitUpStay);
+			PLATEV_DownByValueWaitUpStay, line);
 		break;
 	case LNSPEC_PlatUpWaitDownStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpWaitDownStay);
+			PLATEV_UpWaitDownStay, line);
 		break;
 	case LNSPEC_PlatUpByValueWaitDownStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpByValueWaitDownStay);
+			PLATEV_UpByValueWaitDownStay, line);
 		break;
 	case LNSPEC_FloorLowerTimes8Instant:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -499,7 +613,10 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case LNSPEC_PlaneUpNearestWaitDownStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpNearestWaitDownStay);
+			PLATEV_UpNearestWaitDownStay, line);
+		break;
+	case LNSPEC_NoiseAlert:
+		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_CeilingLowerToHighestFloor:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -546,7 +663,11 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case LNSPEC_PlatGeneric:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_Generic);
+			PLATEV_Generic, line);
+		break;
+	case LNSPEC_StairsGeneric:
+		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
+			true, line);
 		break;
 	case LNSPEC_CeilingGenericCrush:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -554,14 +675,25 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case LNSPEC_PlatDownWaitUpStayLip:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownWaitUpStayLip);
+			PLATEV_DownWaitUpStayLip, line);
 		break;
 	case LNSPEC_PlatPerpetualRaiseLip:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_PerpetualRaiseLip);
+			PLATEV_PerpetualRaiseLip, line);
+		break;
+	case LNSPEC_SectorSetDamage:
+		buttonSuccess = EV_SectorSetDamage(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_TeleportLine:
 		buttonSuccess = EV_SilentLineTeleport(line, side, A, args[1], args[2]);
+		break;
+	case LNSPEC_StairsBuildUpDoom:
+		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
+			false, line);
+		break;
+	case LNSPEC_SectorSetFriction:
+		SetSectorFriction(Arg1, Arg2, true);
+		buttonSuccess = true;
 		break;
 	case LNSPEC_ACSExecuteAlways:
 		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, line, side,
@@ -577,7 +709,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case LNSPEC_PlatToggle:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_Toggle);
+			PLATEV_Toggle, line);
 		break;
 	case LNSPEC_LightStrobeDoom:
 		buttonSuccess = EV_StartLightStrobing(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -675,13 +807,13 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	// LNSPEC_3DFloor:
 	// LNSPEC_Contents:
 	// LNSPEC_PlaneAlign:
+	// LNSPEC_ScrollTextureBoth:
+	// LNSPEC_ScrollTextureModel:
+	// LNSPEC_ScrollFloor:
+	// LNSPEC_ScrollCeiling:
 	// LNSPEC_ScrollTextureOffsets:
 
-	case 217:	// Stairs_BuildUpOld
-		buttonSuccess = EV_BuildStairsOld(line, args);
-		break;
-
-		// Inert Line specials
+	// Inert Line specials
 	default:
 		break;
 	}
@@ -699,6 +831,57 @@ void P_SpawnSpecials(bool spawn_thinkers)
 	sector_t *sector;
 	int i;
 	int j;
+
+	TaggedLineCount = 0;
+	for (i = 0; i < GLevel.NumLines; i++)
+	{
+		switch (GLevel.Lines[i].special)
+		{
+		case LNSPEC_LineSetIdentification:
+		case LNSPEC_LineTranslucent:
+		case LNSPEC_TeleportLine:
+			if (GLevel.Lines[i].arg1)
+			{
+				if (TaggedLineCount == MAX_TAGGED_LINES)
+				{
+					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
+				}
+				TaggedLines[TaggedLineCount].line = &GLevel.Lines[i];
+				TaggedLines[TaggedLineCount++].lineTag = GLevel.Lines[i].arg1;
+			}
+			if (GLevel.Lines[i].special == LNSPEC_LineSetIdentification)
+			{
+				GLevel.Lines[i].special = 0;
+			}
+			break;
+		}
+	}
+
+	//	Process translucent lines
+	for (i = 0; i < GLevel.NumLines; i++)
+	{
+		if (GLevel.Lines[i].special != LNSPEC_LineTranslucent)
+		{
+			continue;
+		}
+
+		int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
+		if (GLevel.Lines[i].arg1)
+		{
+			for (j = 0; j < TaggedLineCount; j++)
+			{
+				if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
+				{
+					SetLineTransluc(TaggedLines[j].line, trans);
+				}
+			}
+		}
+		else
+		{
+			SetLineTransluc(&GLevel.Lines[i], trans);
+		}
+		GLevel.Lines[i].special = 0;
+	}
 
 	if (spawn_thinkers)
 	{
@@ -838,72 +1021,42 @@ void P_SpawnSpecials(bool spawn_thinkers)
 			{
 			case LNSPEC_ScrollTextureLeft:
 				SpawnWallScroller(&GLevel.Lines[i], 1, 0);
+				GLevel.Lines[i].special = 0;
 				break;
 			case LNSPEC_ScrollTextureRight:
 				SpawnWallScroller(&GLevel.Lines[i], -1, 0);
+				GLevel.Lines[i].special = 0;
 				break;
 			case LNSPEC_ScrollTextureUp:
 				SpawnWallScroller(&GLevel.Lines[i], 0, 1);
+				GLevel.Lines[i].special = 0;
 				break;
 			case LNSPEC_ScrollTextureDown:
 				SpawnWallScroller(&GLevel.Lines[i], 0, -1);
+				GLevel.Lines[i].special = 0;
+				break;
+			case LNSPEC_ScrollTextureBoth:
+				SpawnTextureBothScroller(&GLevel.Lines[i]);
+				GLevel.Lines[i].special = 0;
+				break;
+			case LNSPEC_ScrollTextureModel:
+				SpawnScrollTextureModel(&GLevel.Lines[i]);
+				GLevel.Lines[i].special = 0;
+				break;
+			case LNSPEC_ScrollFloor:
+				SpawnScrollFloor(&GLevel.Lines[i]);
+				GLevel.Lines[i].special = 0;
+				break;
+			case LNSPEC_ScrollCeiling:
+				SpawnScrollCeiling(&GLevel.Lines[i]);
+				GLevel.Lines[i].special = 0;
 				break;
 			case LNSPEC_ScrollTextureOffsets:
 				SpawnWallOffsetsScroller(&GLevel.Lines[i]);
+				GLevel.Lines[i].special = 0;
 				break;
 			}
 		}
-	}
-
-	TaggedLineCount = 0;
-	for (i = 0; i < GLevel.NumLines; i++)
-	{
-		switch (GLevel.Lines[i].special)
-		{
-		case LNSPEC_LineSetIdentification:
-		case LNSPEC_LineTranslucent:
-		case LNSPEC_TeleportLine:
-			if (GLevel.Lines[i].arg1)
-			{
-				if (TaggedLineCount == MAX_TAGGED_LINES)
-				{
-					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
-				}
-				TaggedLines[TaggedLineCount].line = &GLevel.Lines[i];
-				TaggedLines[TaggedLineCount++].lineTag = GLevel.Lines[i].arg1;
-			}
-			if (GLevel.Lines[i].special == LNSPEC_LineSetIdentification)
-			{
-				GLevel.Lines[i].special = 0;
-			}
-			break;
-		}
-	}
-
-	//	Process translucent lines
-	for (i = 0; i < GLevel.NumLines; i++)
-	{
-		if (GLevel.Lines[i].special != LNSPEC_LineTranslucent)
-		{
-			continue;
-		}
-
-		int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
-		if (GLevel.Lines[i].arg1)
-		{
-			for (j = 0; j < TaggedLineCount; j++)
-			{
-				if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
-				{
-					SetLineTransluc(TaggedLines[j].line, trans);
-				}
-			}
-		}
-		else
-		{
-			SetLineTransluc(&GLevel.Lines[i], trans);
-		}
-		GLevel.Lines[i].special = 0;
 	}
 }
 
@@ -942,8 +1095,18 @@ bool CheckActivation(int activationType, line_t * line, Actor A)
 
 	noway = true;
 	lineActivation = GET_SPAC(line->flags);
-	if (line->special == 70 && lineActivation == SPAC_CROSS &&
-		activationType == SPAC_PCROSS && A != none && A.bMissile)
+	if (lineActivation == SPAC_PTOUCH &&
+		(activationType == SPAC_PCROSS || activationType == SPAC_IMPACT))
+	{
+		lineActivation = activationType;
+	}
+	else if (lineActivation == SPAC_USETHROUGH)
+	{
+		lineActivation = SPAC_USE;
+	}
+	else if (line->special == LNSPEC_Teleport &&
+		lineActivation == SPAC_CROSS && activationType == SPAC_PCROSS &&
+		A && A.bMissile)
 	{
 		// Let missiles use regular player teleports
 		lineActivation = SPAC_PCROSS;
@@ -1019,6 +1182,10 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 	}
 
 	lineActivation = GET_SPAC(line->flags);
+	if (lineActivation == SPAC_PTOUCH)
+	{
+		lineActivation = activationType;
+	}
 	repeat = line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
 		side, A);
@@ -1028,8 +1195,8 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 		// clear the special on non-retriggerable lines
 		line->special = 0;
 	}
-	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT)
-		&& buttonSuccess)
+	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
+		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
 	{
 		P_ChangeSwitchTexture(line, repeat);
 	}
@@ -1078,6 +1245,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2005/03/28 07:43:30  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.29  2005/03/16 15:04:22  dj_jl
 //  More work on line specials.
 //

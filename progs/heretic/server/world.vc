@@ -494,7 +494,7 @@ int terrain_contents[] = {
 };
 int contents_transluc[] = { 0, 50, 20, 30 };
 
-void CreateContents(line_t * line)
+void MakeContents(line_t * line)
 {
 	int contents;
 
@@ -529,14 +529,90 @@ void CreateContents(line_t * line)
 
 //==========================================================================
 //
+//  SetSectorFriction
+//
+//==========================================================================
+
+void SetSectorFriction(int tag, int amount, bool alterFlag)
+{
+	int			s;
+	int			OldFriction;
+	int			OldMoveFactor;
+	float		Friction;
+	float		MoveFactor;
+
+	// An amount of 100 should result in a friction of
+	// ORIG_FRICTION (0xE800)
+	OldFriction = (0x1EB8 * amount) / 0x80 + 0xD001;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldFriction > 0x10000)
+		OldFriction = 0x10000;
+	if (OldFriction < 0)
+		OldFriction = 0;
+
+	// The following check might seem odd. At the time of movement,
+	// the move distance is multiplied by 'friction/0x10000', so a
+	// higher friction value actually means 'less friction'.
+
+	// [RH] Twiddled these values so that momentum on ice (with
+	//		friction 0xf900) is the same as in Heretic/Hexen.
+	if (OldFriction >= 0xe800)	// ice
+//		movefactor = ((0x10092 - friction)*(0x70))/0x158;
+		OldMoveFactor = ((0x10092 - OldFriction) * 1024) / 4352 + 568;
+	else
+		OldMoveFactor = ((OldFriction - 0xDB34) * (0xA)) / 0x80;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldMoveFactor < 32)
+		OldMoveFactor = 32;
+
+	Friction = (1.0 - itof(OldFriction) / itof(0x10000)) * 35.0;
+	MoveFactor = itof(OldMoveFactor) / itof(0x10000);
+
+	for (s = FindSectorFromTag(tag, -1); s >= 0;
+		s = FindSectorFromTag(tag, s))
+	{
+		// killough 8/28/98:
+		//
+		// Instead of spawning thinkers, which are slow and expensive,
+		// modify the sector's own friction values. Friction should be
+		// a property of sectors, not objects which reside inside them.
+		// Original code scanned every object in every friction sector
+		// on every tic, adjusting its friction, putting unnecessary
+		// drag on CPU. New code adjusts friction of sector only once
+		// at level startup, and then uses this friction value.
+
+		GLevel.Sectors[s].Friction = Friction;
+		GLevel.Sectors[s].MoveFactor = MoveFactor;
+		if (alterFlag)
+		{
+			// When used inside a script, the sectors' friction flags
+			// can be enabled and disabled at will.
+			if (OldFriction == 0xe800)
+			{
+				GLevel.Sectors[s].special &= ~SECSPEC_FRICTION_MASK;
+			}
+			else
+			{
+				GLevel.Sectors[s].special |= SECSPEC_FRICTION_MASK;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
 //  SpawnWorld
 //
 //==========================================================================
 
 void SpawnWorld(void)
 {
-	int i;
-	mthing_t *mthing;
+	int			i;
+	int			length;
+	int			SecNum;
+	mthing_t*	mthing;
 
 	//  Spawn slopes first
 	SetSlopes();
@@ -562,18 +638,65 @@ void SpawnWorld(void)
 	MakeVertexCeilingHeights();
 	CleanVertexHeights();
 
+	//	Initialise initial friction values.
+	for (i = 0; i < GLevel.NumSectors; i++)
+	{
+		GLevel.Sectors[i].Friction = FRICTION_NORMAL;
+	}
+
 	//  Spawn 3D floors
 	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special == LNSPEC_3DFloor)
+		switch (GLevel.Lines[i].special)
 		{
+		case LNSPEC_3DFloor:
 			SpawnExtraFloors(&GLevel.Lines[i]);
 			GLevel.Lines[i].special = 0;
-		}
-		if (GLevel.Lines[i].special == LNSPEC_Contents)
-		{
-			CreateContents(&GLevel.Lines[i]);
+			break;
+
+		case LNSPEC_Contents:
+			MakeContents(&GLevel.Lines[i]);
 			GLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_TransferFloorLight:
+			for (SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, -1);
+				SecNum >= 0;
+				SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, SecNum))
+			{
+				SetFloorLightSector(&GLevel.Sectors[SecNum],
+					GLevel.Lines[i].frontsector);
+			}
+			GLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_TransferCeilingLight:
+			for (SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, -1);
+				SecNum >= 0;
+				SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, SecNum))
+			{
+				SetCeilingLightSector(&GLevel.Sectors[SecNum],
+					GLevel.Lines[i].frontsector);
+			}
+			GLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_SectorSetFriction:
+			if (GLevel.Lines[i].arg2)
+			{
+				//	Allow setting friction amount from parameter
+				length = GLevel.Lines[i].arg2 <= 200 ?
+					GLevel.Lines[i].arg2 : 200;
+			}
+			else
+			{
+				length = ftoi(Length(*GLevel.Lines[i].v2 -
+					*GLevel.Lines[i].v1));
+			}
+
+			SetSectorFriction(GLevel.Lines[i].arg1, length, false);
+			GLevel.Lines[i].special = 0;
+			break;
 		}
 	}
 }
@@ -581,6 +704,9 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/28 07:43:30  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.10  2005/01/25 17:45:15  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

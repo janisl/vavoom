@@ -34,6 +34,13 @@ int		Texture;
 float	FloorDestDist;
 int		TextureChange;	// It's delta, not texture index
 
+float	ResetTime;
+float	OrgDist;
+float	Delay;
+float	PauseTime;
+float	StepTime;
+float	PerStepTime;
+
 //==========================================================================
 //
 //	Init
@@ -334,19 +341,38 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 //
 //==========================================================================
 
-void InitStair(sector_t* InSector, int Arg2, int InDirection, float InHeight)
+void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, bool Generic, float InHeight)
 {
-	TVec			Spot;
-
 	Sector = InSector;
 	Sector->FloorData = self;
 
 	Type = FLOOREV_RaiseBuildStep;
-	Direction = InDirection;
+	if (Generic)
+	{
+		Direction = Arg4 & 1 ? 1 : -1;
+	}
+	else
+	{
+		Direction = 1;
+	}
 	Speed = itof(Arg2) * 35.0 / 8.0;
-	FindHighestFloorPoint(Sector, &Spot);
-	Spot.z = InHeight;
-	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+	//jff 2/27/98 fix uninitialized crush field
+	Crush = (Arg2 == 32) ? 10 : -1;
+	FloorDestDist = DotProduct(Sector->floor.normal,
+		vector(0.0, 0.0, InHeight));
+
+	//	Delay between steps.
+	if (!Generic)
+	{
+		Delay = itof(Arg4) / 35.0;
+		StepTime = itof(Arg3) / Speed;
+		PerStepTime = StepTime;
+	}
+
+	//	Reset.
+	ResetTime = itof(Arg5) / 35.0;
+	OrgDist = Sector->floor.dist;
 }
 
 //==========================================================================
@@ -432,6 +458,50 @@ void Tick(float deltaTime)
 {
 	int res;
 
+	//	Handle resetting stairs.
+	if (Type == FLOOREV_RaiseBuildStep)
+	{
+		if (ResetTime)
+		{
+			ResetTime -= deltaTime;
+			if (ResetTime <= 0.0)
+			{
+				ResetTime = 0.0;
+				Direction = -Direction;
+				FloorDestDist = OrgDist;
+				//	Clear all delay variables.
+				PauseTime = 0.0;
+				Delay = 0.0;
+				StepTime = 0.0;
+				PerStepTime = 0.0;
+			}
+		}
+		if (PauseTime)
+		{
+			PauseTime -= deltaTime;
+			if (PauseTime <= 0.0)
+			{
+				PauseTime = 0.0;
+			}
+			return;
+		}
+		else if (StepTime)
+		{
+			StepTime -= deltaTime;
+			if (StepTime <= 0.0)
+			{
+				PauseTime = Delay;
+				StepTime = PerStepTime;
+			}
+		}
+
+		if (ResetTime && Sector->floor.dist == FloorDestDist)
+		{
+			//	Reached dest, waiting for reset.
+			return;
+		}
+	}
+
 	res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
 		Direction, false);
 
@@ -453,6 +523,10 @@ void Tick(float deltaTime)
 			Type == FLOOREV_RaiseToNearestChange)
 		{
 			SectorStartSoundName(Sector, 'PlatformStop', CHAN_VOICE);
+		}
+		if (Type == FLOOREV_RaiseBuildStep && ResetTime)
+		{
+			return;
 		}
 		if ((Direction == 1 && Type == FLOOREV_Donut) ||
 			(Direction == -1 && Type == FLOOREV_LowerToLowestChange) ||
@@ -482,6 +556,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:43:29  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.3  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //
