@@ -90,12 +90,6 @@ void menu_load(void)
 	int y = 40;
 	int i;
 
-/*    if (sv.active && svs.max_clients > 1)
-   	{
-		MB_StartMessage("you can't do load while in a net game!", NULL, false);
-		return;
-   	}*/
-
 	enteringText = false;
 
 	InitMenu(&LoadMenu.menu);
@@ -122,6 +116,9 @@ void menu_load(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:39:42  dj_jl
+//  Beautification
+//
 //  Revision 1.4  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //
