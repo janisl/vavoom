@@ -302,7 +302,7 @@ COMMAND(Record)
 		return;
 	}
 
-	cls.demofile->Serialize("VDEM", 4);
+	cls.demofile->Serialize(const_cast<char *>("VDEM"), 4);
 
 	cls.demorecording = true;
 }
@@ -398,9 +398,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/05/29 16:54:33  dj_jl
+//	Added const cast.
+//
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
