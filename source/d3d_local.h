@@ -32,9 +32,16 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define D3D_OVERLOADS
 #include "winlocal.h"
+#if 0
+#define D3D_OVERLOADS
 #include <d3d.h>
+#else
+#define sqrtf(x)	sqrt(x)
+#include <d3d8.h>
+#include <d3dx8.h>
+#include <dx7todx8.h>
+#endif
 #include "gamedefs.h"
 #include "cl_local.h"
 #include "r_shared.h"
@@ -75,6 +82,56 @@ struct surfcache_t
 	int			dlight;
 	surface_t	*surf;
 };
+
+struct MyD3DVertex
+{
+	float		x;			// Homogeneous coordinates
+	float		y;
+	float		z;
+	dword		color;		// Vertex color
+	float		texs;		// Texture coordinates
+	float		text;
+	float		lights;		// Lightmap coordinates
+    float		lightt;
+
+	MyD3DVertex() { }
+	MyD3DVertex(const TVec& v, dword _color, float _s, float _t)
+	{
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		color = _color;
+		texs = _s;
+		text = _t;
+		lights = 0.0;
+		lightt = 0.0;
+	}
+	MyD3DVertex(const TVec& v, dword _color, float _s, float _t,
+		float _ls, float _lt)
+	{
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		color = _color;
+		texs = _s;
+		text = _t;
+		lights = _ls;
+		lightt = _lt;
+	}
+	MyD3DVertex(float _x, float _y, dword _color, float _s, float _t)
+	{
+		x = _x;
+		y = _y;
+		z = 0.0;
+		color = _color;
+		texs = _s;
+		text = _t;
+		lights = 0.0;
+		lightt = 0.0;
+	}
+};
+
+#define MYD3D_VERTEX_FORMAT		(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX2)
 
 class TDirect3DDrawer : public TDrawer
 {
@@ -136,7 +193,11 @@ class TDirect3DDrawer : public TDrawer
 	void Setup2D(void);
 	void ReleaseTextures(void);
 	int ToPowerOf2(int);
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
+#else
 	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
+#endif
 	void DrawColumnInCache(column_t*, rgba_t*, int, int, int, int, bool);
 	void GenerateTexture(int, bool);
 	void GenerateFlat(int);
@@ -146,11 +207,20 @@ class TDirect3DDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
+#if DIRECT3D_VERSION >= 0x0800
+	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, rgba_t*);
+#else
 	void UploadTextureImage(LPDIRECTDRAWSURFACE7, int, int, rgba_t*);
+#endif
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8 UploadTexture(int, int, rgba_t*);
+	LPDIRECT3DTEXTURE8 UploadTextureNoMip(int, int, rgba_t*);
+#else
 	LPDIRECTDRAWSURFACE7 UploadTexture(int, int, rgba_t*);
 	LPDIRECTDRAWSURFACE7 UploadTextureNoMip(int, int, rgba_t*);
+#endif
 
 	void FlushCaches(bool);
 	surfcache_t	*AllocBlock(int width, int height);
@@ -158,10 +228,10 @@ class TDirect3DDrawer : public TDrawer
 
 	word MakeCol16(byte r, byte g, byte b, byte a)
 	{
-		return ((a >> (8 - abits)) << ashift) |
+		return word(((a >> (8 - abits)) << ashift) |
 			((r >> (8 - rbits)) << rshift) |
 			((g >> (8 - gbits)) << gshift) |
-			((b >> (8 - bbits)) << bshift);
+			((b >> (8 - bbits)) << bshift));
 	}
 	dword MakeCol32(byte r, byte g, byte b, byte a)
 	{
@@ -169,6 +239,19 @@ class TDirect3DDrawer : public TDrawer
 			(g << gshift32) | (b << bshift32);
 	}
 
+#if DIRECT3D_VERSION >= 0x0800
+	HMODULE						DLLHandle;
+
+	//	Direct3D interfaces
+	LPDIRECT3D8					Direct3D;
+	LPDIRECT3DDEVICE8			RenderDevice;
+
+	D3DXMATRIX					IdentityMatrix;
+
+	D3DVIEWPORT8				viewData;
+	D3DXMATRIX					matProj;
+	D3DXMATRIX					matView;
+#else
 	//	DirectDraw interfaces
 	LPDIRECTDRAW7				DDraw;
 	LPDIRECTDRAWSURFACE7		PrimarySurface;
@@ -187,6 +270,7 @@ class TDirect3DDrawer : public TDrawer
 
 	DDPIXELFORMAT				PixelFormat;
 	DDPIXELFORMAT				PixelFormat32;
+#endif
 	dword						SurfaceMemFlag;
 	bool						square_textures;
 	int							maxTexSize;
@@ -209,35 +293,74 @@ class TDirect3DDrawer : public TDrawer
 	float						tex_iw;
 	float						tex_ih;
 
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*texturesurfaces;
+#else
 	LPDIRECTDRAWSURFACE7		*texturesurfaces;
+#endif
 	int							numsurfaces;
 	int							tscount;
 
+#if DIRECT3D_VERSION >= 0x0800
+	D3DTEXTUREFILTERTYPE		magfilter;
+	D3DTEXTUREFILTERTYPE		minfilter;
+	D3DTEXTUREFILTERTYPE		mipfilter;
+#else
 	D3DTEXTUREMAGFILTER			magfilter;
 	D3DTEXTUREMINFILTER			minfilter;
 	D3DTEXTUREMIPFILTER			mipfilter;
+#endif
 
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*texturedata;
+#else
 	LPDIRECTDRAWSURFACE7		*texturedata;
+#endif
 	float						*textureiw;
 	float						*textureih;
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*flatdata;
+	LPDIRECT3DTEXTURE8			*spritedata;
+#else
 	LPDIRECTDRAWSURFACE7		*flatdata;
 	LPDIRECTDRAWSURFACE7		*spritedata;
+#endif
 	float						*spriteiw;
 	float						*spriteih;
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*trsprdata;
+#else
 	LPDIRECTDRAWSURFACE7		*trsprdata;
+#endif
 	int							trsprlump[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
 	float						trspriw[MAX_TRANSLATED_SPRITES];
 	float						trsprih[MAX_TRANSLATED_SPRITES];
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*skin_data;
+#else
 	LPDIRECTDRAWSURFACE7		*skin_data;
+#endif
 	char						skin_name[MAX_SKIN_CACHE][64];
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			particle_texture;
+#else
 	LPDIRECTDRAWSURFACE7		particle_texture;
+#endif
 
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*picdata;
+#else
 	LPDIRECTDRAWSURFACE7		*picdata;
+#endif
 	float						piciw[MAX_PICS];
 	float						picih[MAX_PICS];
 
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*light_surf;
+#else
 	LPDIRECTDRAWSURFACE7		*light_surf;
+#endif
 	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						block_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
@@ -250,8 +373,12 @@ class TDirect3DDrawer : public TDrawer
 	TCvarI						tex_linear;
 	TCvarI						dither;
 
+#if DIRECT3D_VERSION >= 0x0800
+	friend ostream &operator << (ostream &str, const D3DCAPS8 *dd);
+#else
 	friend ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd);
 	friend ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf);
+#endif
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -263,9 +390,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/09/14 16:48:22  dj_jl
+//	Switched to DirectX 8
+//
 //	Revision 1.11  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.10  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
 //	

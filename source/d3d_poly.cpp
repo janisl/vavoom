@@ -29,29 +29,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MTEX_VERTEX_F	D3DFVF_XYZ | D3DFVF_TEX2
-#define PART_VERTEX_F	D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1
-
 // TYPES -------------------------------------------------------------------
-
-struct MTEX_VERTEX
-{
-	float		x;			// Homogeneous coordinates
-	float		y;
-	float		z;
-	float		texs;		// Texture coordinates
-	float		text;
-	float		lights;		// Lightmap coordinates
-    float		lightt;
-};
-
-struct PART_VERTEX
-{
-	TVec		origin;
-	dword		color;
-	float		s;
-	float		t;
-};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -84,6 +62,25 @@ static byte ptex[8][8] =
 };
 
 // CODE --------------------------------------------------------------------
+
+#if DIRECT3D_VERSION >= 0x0800
+void MatrixMultiply(D3DXMATRIX &out, const D3DXMATRIX& a, const D3DXMATRIX& b)
+{
+	D3DXMATRIX ret;
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            ret(i, j) = 0.0f;
+            for (int k = 0; k < 4; k++)
+            {
+                ret(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+	out = ret;
+}
+#endif
 
 //==========================================================================
 //
@@ -360,9 +357,9 @@ void TDirect3DDrawer::CacheSurface(surface_t *surface)
 		for (i = 0; i < smax; i++)
 		{
 			rgba_t &cdst = light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s];
- 			cdst.r = 255 - (blocklightsr[j * smax + i] >> 8);
-			cdst.g = 255 - (blocklightsg[j * smax + i] >> 8);
-			cdst.b = 255 - (blocklightsb[j * smax + i] >> 8);
+ 			cdst.r = byte(255 - (blocklightsr[j * smax + i] >> 8));
+			cdst.g = byte(255 - (blocklightsg[j * smax + i] >> 8));
+			cdst.b = byte(255 - (blocklightsb[j * smax + i] >> 8));
 			cdst.a = 255;
 		}
 	}
@@ -378,9 +375,8 @@ void TDirect3DDrawer::CacheSurface(surface_t *surface)
 
 void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 {
-	D3DLVERTEX		out[256];
-	int				i, j, l;
-	float			s, t;
+	MyD3DVertex		out[256];
+	int				i, l;
 	bool			lightmaped;
 	surface_t		*surf = r_surface;
 
@@ -407,12 +403,16 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	for (i = 0; i < count; i++)
 	{
 		TVec texpt = cv[i] - r_texorg;
-		out[i] = D3DLVERTEX(D3DVECTOR(cv[i].x, cv[i].y, cv[i].z), l, 0,
+		out[i] = MyD3DVertex(cv[i], l,
 			DotProduct(texpt, r_saxis) * tex_iw,
 			DotProduct(texpt, r_taxis) * tex_ih);
 	}
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
 }
 
 //==========================================================================
@@ -423,8 +423,7 @@ void TDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 
 void TDirect3DDrawer::WorldDrawing(void)
 {
-	D3DLVERTEX		out[256];
-	MTEX_VERTEX		mtv[256];
+	MyD3DVertex		out[256];
 	int				lb, i;
 	surfcache_t		*cache;
 	float			s, t, lights, lightt;
@@ -438,8 +437,13 @@ void TDirect3DDrawer::WorldDrawing(void)
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
+#else
 		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
 		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTFN_LINEAR);
+#endif
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -456,7 +460,11 @@ void TDirect3DDrawer::WorldDrawing(void)
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
+#if DIRECT3D_VERSION >= 0x0800
+				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+#else
 				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+#endif
 			}
 
 			RenderDevice->SetTexture(1, light_surf[lb]);
@@ -473,15 +481,15 @@ void TDirect3DDrawer::WorldDrawing(void)
 					t = DotProduct(texpt, tex->taxis);
 					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
 					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
-					mtv[i].x = surf->verts[i].x;
-					mtv[i].y = surf->verts[i].y;
-					mtv[i].z = surf->verts[i].z;
-					mtv[i].texs = s * tex_iw;
-					mtv[i].text = t * tex_ih;
-					mtv[i].lights = lights / BLOCK_WIDTH;
-					mtv[i].lightt = lightt / BLOCK_HEIGHT;
+					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
+						s * tex_iw, t * tex_ih,
+						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
 				}
-				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MTEX_VERTEX_F, mtv, surf->count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
+#else
+				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
+#endif
 			}
 		}
 
@@ -490,9 +498,15 @@ void TDirect3DDrawer::WorldDrawing(void)
 	}
 	else
 	{
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
+#else
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
+#endif
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_SRCCOLOR);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -513,7 +527,11 @@ void TDirect3DDrawer::WorldDrawing(void)
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
+#if DIRECT3D_VERSION >= 0x0800
+				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+#else
 				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+#endif
 			}
 
 			RenderDevice->SetTexture(0, light_surf[lb]);
@@ -529,11 +547,14 @@ void TDirect3DDrawer::WorldDrawing(void)
 					t = DotProduct(texpt, tex->taxis);
 					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
 					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
-					out[i] = D3DLVERTEX(D3DVECTOR(surf->verts[i].x,
-						surf->verts[i].y, surf->verts[i].z), 0xffffffff, 0,
+					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
 						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
 				}
-				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, surf->count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
+#else
+				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
+#endif
 			}
 		}
 
@@ -556,10 +577,14 @@ void TDirect3DDrawer::WorldDrawing(void)
 void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	int texture1, float offs1, int texture2, float offs2)
 {
-	D3DLVERTEX		out[256];
+	MyD3DVertex		out[256];
 	int				i;
 
+#if DIRECT3D_VERSION >= 0x0800
+	viewData.MinZ = 0.99;
+#else
 	viewData.dvMinZ = 0.99;
+#endif
     RenderDevice->SetViewport(&viewData);
 
 	if (r_use_fog)
@@ -572,11 +597,15 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	{
 		TVec v = cv[i] + vieworg;
 		TVec texpt = cv[i] - r_texorg;
-		out[i] = D3DLVERTEX(D3DVECTOR(v.x, v.y, v.z), 0xffffffff, 0,
+		out[i] = MyD3DVertex(v, 0xffffffff,
 			(DotProduct(texpt, r_saxis) - offs1) * tex_iw,
 			DotProduct(texpt, r_taxis) * tex_ih);
 	}
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
 
 	if (texture2)
 	{
@@ -585,12 +614,16 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		{
 			TVec v = cv[i] + vieworg;
 			TVec texpt = cv[i] - r_texorg;
-			out[i] = D3DLVERTEX(D3DVECTOR(v.x, v.y, v.z), 0xffffffff, 0,
+			out[i] = MyD3DVertex(v, 0xffffffff,
 				(DotProduct(texpt, r_saxis) - offs2) * tex_iw,
 				DotProduct(texpt, r_taxis) * tex_ih);
 		}
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	}
 
@@ -599,7 +632,11 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
 	}
 
+#if DIRECT3D_VERSION >= 0x0800
+	viewData.MinZ = 0;
+#else
 	viewData.dvMinZ = 0;
+#endif
     RenderDevice->SetViewport(&viewData);
 }
 
@@ -612,7 +649,7 @@ void TDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	int texture, int translucency)
 {
-	D3DLVERTEX	out[256];
+	MyD3DVertex	out[256];
 	int			i, r, g, b, alpha, w, h, size, l;
 	surface_t	*surf = r_surface;
 
@@ -640,7 +677,7 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	for (i = 0; i < count; i++)
 	{
 		TVec texpt = cv[i] - r_texorg;
-		out[i] = D3DLVERTEX(D3DVECTOR(cv[i].x, cv[i].y, cv[i].z), l, 0,
+		out[i] = MyD3DVertex(cv[i], l,
 			DotProduct(texpt, r_saxis) * tex_iw,
 			DotProduct(texpt, r_taxis) * tex_ih);
 	}
@@ -652,7 +689,11 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
 	}
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	if (translucency)
@@ -671,7 +712,7 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
-	D3DLVERTEX		out[4];
+	MyD3DVertex		out[4];
 	int				i;
 
 	SetSpriteLump(lump, translation);
@@ -680,7 +721,7 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	for (i = 0; i < 4; i++)
 	{
 		TVec texpt = cv[i] - r_texorg;
-		out[i] = D3DLVERTEX(D3DVECTOR(cv[i].x, cv[i].y, cv[i].z), l, 0,
+		out[i] = MyD3DVertex(cv[i], l,
 			DotProduct(texpt, r_saxis) * tex_iw,
 			DotProduct(texpt, r_taxis) * tex_ih);
 	}
@@ -692,7 +733,11 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	}
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, out, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
+#endif
 
 	if (translucency)
 	{
@@ -724,11 +769,16 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	float				shadelightg;
 	float				shadelightb;
 	float				*shadedots;
-	D3DLVERTEX			out[256];//FIXME
+	MyD3DVertex			out[256];//FIXME
 	D3DPRIMITIVETYPE	primtype;
 	int					i;
+#if DIRECT3D_VERSION >= 0x0800
+	D3DXMATRIX			matWorld;
+	D3DXMATRIX			matTmp;
+#else
 	D3DMATRIX			matWorld;
 	D3DMATRIX			matTmp;
+#endif
 	TVec				alias_forward;
 	TVec				alias_right;
 	TVec				alias_up;
@@ -737,7 +787,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	if (is_view_model)
 	{
 		// hack the depth range to prevent view model from poking into walls
+#if DIRECT3D_VERSION >= 0x0800
+		viewData.MaxZ = 0.3;
+#else
 		viewData.dvMaxZ = 0.3;
+#endif
 		RenderDevice->SetViewport(&viewData);
 	}
 
@@ -790,7 +844,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 1) = pframedesc->scale_origin[1];
 	matTmp(3, 2) = pframedesc->scale_origin[2];
 
+#if DIRECT3D_VERSION >= 0x0800
+	MatrixMultiply(matWorld, matTmp, matWorld);
+#else
 	matWorld = matTmp * matWorld;
+#endif
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
 	if (skin && *skin)
@@ -834,8 +892,8 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		for (i = 0; i < count; i++)
 		{
 			// texture coordinates come from the draw list
-			out[i].tu = ((float *)order)[0];
-			out[i].tv = ((float *)order)[1];
+			out[i].texs = ((float *)order)[0];
+			out[i].text = ((float *)order)[1];
 			order += 2;
 
 			// normals and vertexes come from the frame list
@@ -851,7 +909,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			out[i].z = verts[index].v[2];
 		}
 
-		RenderDevice->DrawPrimitive(primtype, D3DFVF_LVERTEX, out, count, 0);
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->DrawPrimitiveUP(primtype, count - 2, out, sizeof(MyD3DVertex));
+#else
+		RenderDevice->DrawPrimitive(primtype, MYD3D_VERTEX_FORMAT, out, count, 0);
+#endif
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
@@ -863,7 +925,11 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 	if (is_view_model)
 	{
+#if DIRECT3D_VERSION >= 0x0800
+		viewData.MaxZ = 1.0;
+#else
 		viewData.dvMaxZ = 1.0;
+#endif
 		RenderDevice->SetViewport(&viewData);
 	}
 
@@ -890,11 +956,15 @@ void TDirect3DDrawer::StartParticles(void)
 				pbuf[j][i].r = 255;
 				pbuf[j][i].g = 255;
 				pbuf[j][i].b = 255;
-				pbuf[j][i].a = ptex[j][i] * 255;
+				pbuf[j][i].a = byte(ptex[j][i] * 255);
 			}
 		}
 		particle_texture = CreateSurface(8, 8, 16, false);
+#if DIRECT3D_VERSION >= 0x0800
+		UploadTextureImage(particle_texture, 0, 8, 8, &pbuf[0][0]);
+#else
 		UploadTextureImage(particle_texture, 8, 8, &pbuf[0][0]);
+#endif
 	}
 	RenderDevice->SetTexture(0, particle_texture);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -910,24 +980,16 @@ void TDirect3DDrawer::StartParticles(void)
 
 void TDirect3DDrawer::DrawParticle(particle_t *p)
 {
-	PART_VERTEX		out[4];
-	out[0].origin = p->org - viewright + viewup;
-	out[0].color = p->color;
-	out[0].s = 0;
-	out[0].t = 0;
-	out[1].origin = p->org + viewright + viewup;
-	out[1].color = p->color;
-	out[1].s = 1;
-	out[1].t = 0;
-	out[2].origin = p->org + viewright - viewup;
-	out[2].color = p->color;
-	out[2].s = 1;
-	out[2].t = 1;
-	out[3].origin = p->org - viewright - viewup;
-	out[3].color = p->color;
-	out[3].s = 0;
-	out[3].t = 1;
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, PART_VERTEX_F, out, 4, 0);
+	MyD3DVertex out[4];
+	out[0] = MyD3DVertex(p->org - viewright + viewup, p->color, 0, 0);
+	out[1] = MyD3DVertex(p->org + viewright + viewup, p->color, 1, 0);
+	out[2] = MyD3DVertex(p->org + viewright - viewup, p->color, 1, 1);
+	out[3] = MyD3DVertex(p->org - viewright - viewup, p->color, 0, 1);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
+#endif
 }
 
 //==========================================================================
@@ -946,9 +1008,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/14 16:48:22  dj_jl
+//	Switched to DirectX 8
+//
 //	Revision 1.10  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.9  2001/08/29 17:47:55  dj_jl
 //	Added texture filtering variables
 //	

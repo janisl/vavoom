@@ -65,12 +65,24 @@ int TDirect3DDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
+#if DIRECT3D_VERSION >= 0x0800
+LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
+#else
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
+#endif
 {
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8 surf = NULL;
+#else
 	DDSURFACEDESC2			ddsd;
 	LPDIRECTDRAWSURFACE7	surf = NULL;
+#endif
 	int i;
 
+#if DIRECT3D_VERSION >= 0x0800
+	UINT levels = mipmaps ? 0 : 1;
+	D3DFORMAT format = bpp == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5;
+#else
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS | DDSD_PIXELFORMAT;
@@ -85,13 +97,32 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat32, sizeof(DDPIXELFORMAT));
 	else
 		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat, sizeof(DDPIXELFORMAT));
+#endif
 
 	do
 	{
+#if DIRECT3D_VERSION >= 0x0800
+		HRESULT res = RenderDevice->CreateTexture(w, h, levels, 0, format,
+			D3DPOOL_MANAGED, &surf);
+		if (res == D3D_OK)
+		{
+			return surf;
+		}
+		if (res == D3DERR_INVALIDCALL)
+			con << "Invalid call\n";
+		else if (res == D3DERR_OUTOFVIDEOMEMORY)
+			con << "Out of vid mem\n";
+		else if (res == E_OUTOFMEMORY)
+			con << "Out of mem\n";
+		else
+			con << "Unknown error " << res << endl;
+		Sys_Error("Texture failed\n");
+#else
 		if (DDraw->CreateSurface(&ddsd, &surf, NULL) == DD_OK)
 		{
 			return surf;
 		}
+#endif
 
 		tscount++;
 		for (i = 0; i < numsurfaces; i++)
@@ -119,7 +150,11 @@ void TDirect3DDrawer::InitTextures(void)
 {
 	numsurfaces = numtextures + numflats + numspritelumps +
 		MAX_TRANSLATED_SPRITES + MAX_PICS + MAX_SKIN_CACHE;
+#if DIRECT3D_VERSION >= 0x0800
+	texturesurfaces = (LPDIRECT3DTEXTURE8*)Z_Calloc(numsurfaces * 4);
+#else
 	texturesurfaces = (LPDIRECTDRAWSURFACE7*)Z_Calloc(numsurfaces * 4);
+#endif
 	//	Textures
 	texturedata = texturesurfaces;
 	//	Flats
@@ -134,7 +169,11 @@ void TDirect3DDrawer::InitTextures(void)
 
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
+#if DIRECT3D_VERSION >= 0x0800
+	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+#else
 	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+#endif
 
 	textureiw = (float*)Z_Calloc(numtextures * 4);
 	textureih = (float*)Z_Calloc(numtextures * 4);
@@ -693,6 +732,39 @@ void TDirect3DDrawer::SetSkin(const char *name)
 //
 //==========================================================================
 
+#if DIRECT3D_VERSION >= 0x0800
+void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
+	int width, int height, rgba_t *data)
+{
+	LPDIRECT3DSURFACE8 surf;
+	tex->GetSurfaceLevel(level, &surf);
+	D3DLOCKED_RECT lrect;
+	if (FAILED(surf->LockRect(&lrect, NULL, 0)))
+	{
+		cond << "Failed to lock surface\n";
+		return;
+	}
+	rgba_t *in = data;
+//	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
+	{
+		word *out = (word*)lrect.pBits;
+		for (int i = 0; i < width * height; i++, in++, out++)
+		{
+			*out = MakeCol16(in->r, in->g, in->b, in->a);
+		}
+	}
+/*	else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32)
+	{
+		dword *out = (dword*)lrect.pBits;
+		for (int i = 0; i < width * height; i++, in++, out++)
+		{
+			*out = MakeCol32(in->r, in->g, in->b, in->a);
+		}
+	}*/
+	surf->UnlockRect();
+	surf->Release();
+}
+#else
 void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	int width, int height, rgba_t *data)
 {
@@ -724,6 +796,7 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	}
 	surf->Unlock(NULL);
 }
+#endif
 
 //==========================================================================
 //
@@ -897,15 +970,24 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 //
 //==========================================================================
 
+#if DIRECT3D_VERSION >= 0x0800
+LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+#else
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
+#endif
 {
 	int						w, h;
 	byte					*image;
 	byte					stackbuf[256 * 128 * 4];
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8		surf;
+	UINT					level;
+#else
 	LPDIRECTDRAWSURFACE7	surf;
 	LPDIRECTDRAWSURFACE7	mipsurf;
 	DDSCAPS2				ddsc;
 	HRESULT					ddres;
+#endif
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
@@ -940,6 +1022,19 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 		memcpy(image, data, w * h * 4);
 	}
 	surf = CreateSurface(w, h, 16, true);
+#if DIRECT3D_VERSION >= 0x0800
+	UploadTextureImage(surf, 0, w, h, (rgba_t*)image);
+
+	for (level = 1; level < surf->GetLevelCount(); level++)
+	{
+		MipMap(w, h, image);
+		if (w > 1)
+			w >>= 1;
+		if (h > 1)
+			h >>= 1;
+		UploadTextureImage(surf, level, w, h, (rgba_t*)image);
+	}
+#else
 	UploadTextureImage(surf, w, h, (rgba_t*)image);
 
 	mipsurf = NULL;
@@ -968,6 +1063,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 		}
 		UploadTextureImage(mipsurf, w, h, (rgba_t*)image);
 	}
+#endif
 
 	if (image != stackbuf)
 	{
@@ -982,12 +1078,20 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 //
 //==========================================================================
 
+#if DIRECT3D_VERSION >= 0x0800
+LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+#else
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
+#endif
 {
 	int		w, h;
 	byte	*image;
 	byte	stackbuf[64 * 1024];
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8		surf;
+#else
 	LPDIRECTDRAWSURFACE7	surf;
+#endif
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
@@ -1017,7 +1121,11 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 			image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
 		}
 		ResampleTexture(width, height, (byte*)data, w, h, image);
+#if DIRECT3D_VERSION >= 0x0800
+		UploadTextureImage(surf, 0, w, h, (rgba_t*)image);
+#else
 		UploadTextureImage(surf, w, h, (rgba_t*)image);
+#endif
 		if (image != stackbuf)
 		{
 			Z_Free(image);
@@ -1025,7 +1133,11 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 	}
 	else
 	{
+#if DIRECT3D_VERSION >= 0x0800
+		UploadTextureImage(surf, 0, w, h, data);
+#else
 		UploadTextureImage(surf, w, h, data);
+#endif
 	}
 	return surf;
 }
@@ -1033,9 +1145,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/14 16:48:22  dj_jl
+//	Switched to DirectX 8
+//
 //	Revision 1.8  2001/08/30 17:37:39  dj_jl
 //	Using linear texture resampling
-//
+//	
 //	Revision 1.7  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
 //	

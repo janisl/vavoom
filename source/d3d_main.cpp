@@ -44,6 +44,7 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TDirect3DDrawer		Direct3DDrawer;
+static bool					Windowed;
 
 // CODE --------------------------------------------------------------------
 
@@ -65,11 +66,13 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 {
 	_Direct3DDrawer = this;
 
+#if DIRECT3D_VERSION < 0x0800
 	//	DirectDraw interfaces
 	DDraw = NULL;
 	PrimarySurface = NULL;
 	RenderSurface = NULL;
 	ZBuffer = NULL;
+#endif
 
 	//	Direct3D interfaces
 	Direct3D = NULL;
@@ -86,6 +89,30 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 
 void TDirect3DDrawer::Init(void)
 {
+#if DIRECT3D_VERSION >= 0x0800
+	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
+
+	fp_Direct3DCreate8 p_Direct3DCreate8;
+
+	DLLHandle = LoadLibrary("d3d8.dll");
+	if (!DLLHandle)
+	{
+		Sys_Error("Couldn't load d3d8.dll");
+	}
+
+	p_Direct3DCreate8 = fp_Direct3DCreate8(GetProcAddress(DLLHandle, "Direct3DCreate8"));
+	if (!p_Direct3DCreate8)
+	{
+		Sys_Error("Symbol Direct3DCreate8 not found");
+	}
+
+	// Create Direct3D object
+	Direct3D = p_Direct3DCreate8(D3D_SDK_VERSION);
+	if (!Direct3D)
+		Sys_Error("Failed to create Direct3D object");
+
+	Windowed = !!M_CheckParm("-window");
+#else
 	HRESULT			result;
 
 	// Create DirectDraw object
@@ -109,6 +136,7 @@ void TDirect3DDrawer::Init(void)
 	result = DDraw->QueryInterface(IID_IDirect3D7, (void**)&Direct3D);
 	if (FAILED(result))
 		Sys_Error("Failed to create Direct3D object");
+#endif
 }
 
 //==========================================================================
@@ -120,6 +148,8 @@ void TDirect3DDrawer::Init(void)
 void TDirect3DDrawer::InitData(void)
 {
 }
+
+#if DIRECT3D_VERSION < 0x0800
 
 //==========================================================================
 //
@@ -249,6 +279,8 @@ inline int GetShift(dword mask)
 	return answer;
 }
 
+#endif
+
 //==========================================================================
 //
 // 	TDirect3DDrawer::SetResolution
@@ -275,6 +307,79 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 		return false;
 	}
 
+#if DIRECT3D_VERSION >= 0x0800
+	//	Shut down current mode
+	ReleaseTextures();
+	SAFE_RELEASE(RenderDevice)
+
+	D3DPRESENT_PARAMETERS d3dpp;
+
+	if (Windowed)
+	{
+		RECT WindowRect;
+		WindowRect.left = 0;
+		WindowRect.right = Width;
+		WindowRect.top = 0;
+		WindowRect.bottom = Height;
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
+			WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
+			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
+	}
+
+	ZeroMemory(&d3dpp, sizeof(d3dpp));
+	d3dpp.BackBufferWidth = Width;
+	d3dpp.BackBufferHeight = Height;
+	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dpp.BackBufferCount = 1;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_FLIP;
+	d3dpp.hDeviceWindow = hwnd;
+	d3dpp.Windowed = Windowed;
+	d3dpp.EnableAutoDepthStencil = TRUE;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+
+	if (Direct3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
+//		D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING,
+		D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE,
+		&d3dpp, &RenderDevice) != D3D_OK)
+	{
+		return false;
+	}
+
+	D3DCAPS8 DeviceCaps;
+	RenderDevice->GetDeviceCaps(&DeviceCaps);
+//	Cvar_Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
+	square_textures = (DeviceCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
+	maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
+	if (square_textures)
+	{
+		//	Limit texture size when square textures are requred
+		maxTexSize = 256;
+	}
+	maxMultiTex = DeviceCaps.MaxSimultaneousTextures;
+	if (device == 1)
+	{
+		//	In software actually can be only one texture
+		maxMultiTex = 1;
+	}
+	RenderDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
+
+	abits = 1;
+	ashift = 15;
+	rbits = 5;
+	rshift = 10;
+	gbits = 5;
+	gshift = 5;
+	bbits = 5;
+	bshift = 0;
+
+	ashift32 = 24;
+	rshift32 = 16;
+	gshift32 = 8;
+	bshift32 = 0;
+#else
 	con << "-------------------------------------\n";
 
 	DDSURFACEDESC2	ddsd;
@@ -406,12 +511,13 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	gshift32 = GetShift(PixelFormat32.dwGBitMask);
 	bshift32 = GetShift(PixelFormat32.dwBBitMask);
 
+//	Sys_HighFPPrecision();
+#endif
+
 	//	Set screen params
 	ScreenWidth = Width;
 	ScreenHeight = Height;
 	ScreenBPP = BPP;
-
-//	Sys_HighFPPrecision();
 
 	return true;
 }
@@ -424,6 +530,10 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 void TDirect3DDrawer::InitResolution(void)
 {
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
+	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
+#endif
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_LESSEQUAL);
@@ -465,11 +575,13 @@ void TDirect3DDrawer::NewMap(void)
 
 void TDirect3DDrawer::StartUpdate(void)
 {
+#if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
 	{
 		RenderSurface->Restore();
 	}
+#endif
 
 	//	Clear surface
 	if (clear)
@@ -477,6 +589,39 @@ void TDirect3DDrawer::StartUpdate(void)
 		RenderDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0, 0);
 	}
 
+#if DIRECT3D_VERSION >= 0x0800
+	//	Setup texture filtering
+	if (tex_linear == 4)
+	{
+		magfilter = D3DTEXF_ANISOTROPIC;
+		minfilter = D3DTEXF_ANISOTROPIC;
+		mipfilter = D3DTEXF_LINEAR;
+	}
+	else if (tex_linear == 3)
+	{
+		magfilter = D3DTEXF_LINEAR;
+		minfilter = D3DTEXF_LINEAR;
+		mipfilter = D3DTEXF_LINEAR;
+	}
+	else if (tex_linear == 2)
+	{
+		magfilter = D3DTEXF_LINEAR;
+		minfilter = D3DTEXF_LINEAR;
+		mipfilter = D3DTEXF_POINT;
+	}
+	else if (tex_linear)
+	{
+		magfilter = D3DTEXF_LINEAR;
+		minfilter = D3DTEXF_LINEAR;
+		mipfilter = D3DTEXF_NONE;
+	}
+	else
+	{
+		magfilter = D3DTEXF_POINT;
+		minfilter = D3DTEXF_POINT;
+		mipfilter = D3DTEXF_NONE;
+	}
+#else
 	//	Setup texture filtering
 	if (tex_linear == 4)
 	{
@@ -508,6 +653,7 @@ void TDirect3DDrawer::StartUpdate(void)
 		minfilter = D3DTFN_POINT;
 		mipfilter = D3DTFP_NONE;
 	}
+#endif
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
 	RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
@@ -538,6 +684,16 @@ void TDirect3DDrawer::StartUpdate(void)
 void TDirect3DDrawer::Setup2D(void)
 {
 	//	Setup viewport
+#if DIRECT3D_VERSION >= 0x0800
+	D3DVIEWPORT8 view2D;
+	memset(&view2D, 0, sizeof(D3DVIEWPORT8));
+	view2D.X = 0;
+	view2D.Y = 0;
+	view2D.Width  = ScreenWidth;
+	view2D.Height = ScreenHeight;
+	view2D.MinZ = 0.0f;
+	view2D.MaxZ = 1.0f;
+#else
 	D3DVIEWPORT7 view2D;
 	memset(&view2D, 0, sizeof(D3DVIEWPORT7));
 	view2D.dwX = 0;
@@ -546,10 +702,15 @@ void TDirect3DDrawer::Setup2D(void)
 	view2D.dwHeight = ScreenHeight;
 	view2D.dvMinZ = 0.0f;
 	view2D.dvMaxZ = 1.0f;
+#endif
 	RenderDevice->SetViewport(&view2D);
 
 	//	Setup projection
+#if DIRECT3D_VERSION >= 0x0800
+	D3DXMATRIX proj2D = IdentityMatrix;
+#else
 	D3DMATRIX proj2D = IdentityMatrix;
+#endif
 	proj2D(0, 0) = 2.0 / (float)ScreenWidth;
 	proj2D(1, 1) = -2.0 / (float)ScreenHeight;
 	proj2D(3, 0) = -1.0;
@@ -579,6 +740,15 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	}
 
 	//	Setup viewport
+#if DIRECT3D_VERSION >= 0x0800
+	memset(&viewData, 0, sizeof(D3DVIEWPORT8));
+	viewData.X = rd->x;
+	viewData.Y = rd->y;
+	viewData.Width  = rd->width;
+	viewData.Height = rd->height;
+	viewData.MinZ = 0;
+	viewData.MaxZ = 1;
+#else
 	memset(&viewData, 0, sizeof(D3DVIEWPORT7));
 	viewData.dwX = rd->x;
 	viewData.dwY = rd->y;
@@ -586,6 +756,7 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	viewData.dwHeight = rd->height;
 	viewData.dvMinZ = 0;
 	viewData.dvMaxZ = 1;
+#endif
 	RenderDevice->SetViewport(&viewData);
 
 	//	Setup projection
@@ -601,7 +772,11 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
 
 	// The view matrix defines the position and orientation of the camera.
+#if DIRECT3D_VERSION >= 0x0800
+	D3DXMATRIX matView;
+#else
 	D3DMATRIX matView;
+#endif
 	matView(0, 0) = viewright.x;
 	matView(1, 0) = viewright.y;
 	matView(2, 0) = viewright.z;
@@ -650,18 +825,22 @@ void TDirect3DDrawer::EndView(void)
 			continue;
 		}
 
-		D3DLVERTEX	dv[4];
+		MyD3DVertex	dv[4];
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-		dv[0] = D3DLVERTEX(D3DVECTOR(0, 0, 0), cl.cshifts[i], 0, 0, 0);
-		dv[1] = D3DLVERTEX(D3DVECTOR(ScreenWidth, 0, 0), cl.cshifts[i], 0, 0, 0);
-		dv[2] = D3DLVERTEX(D3DVECTOR(ScreenWidth, ScreenHeight, 0), cl.cshifts[i], 0, 0, 0);
-		dv[3] = D3DLVERTEX(D3DVECTOR(0, ScreenHeight, 0), cl.cshifts[i], 0, 0, 0);
+		dv[0] = MyD3DVertex(0, 0, cl.cshifts[i], 0, 0);
+		dv[1] = MyD3DVertex(ScreenWidth, 0, cl.cshifts[i], 0, 0);
+		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl.cshifts[i], 0, 0);
+		dv[3] = MyD3DVertex(0, ScreenHeight, cl.cshifts[i], 0, 0);
 
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -682,6 +861,9 @@ void TDirect3DDrawer::Update(void)
 	// End the scene.
 	RenderDevice->EndScene();
 
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->Present(NULL, NULL, NULL, NULL);
+#else
 	// Check for lost surface
 	if (PrimarySurface->IsLost() != DD_OK)
 	{
@@ -689,6 +871,7 @@ void TDirect3DDrawer::Update(void)
 	}
 
 	PrimarySurface->Blt(NULL, RenderSurface, NULL, DDBLT_WAIT, NULL);
+#endif
 }
 
 //==========================================================================
@@ -699,11 +882,13 @@ void TDirect3DDrawer::Update(void)
 
 void TDirect3DDrawer::BeginDirectUpdate(void)
 {
+#if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
 	{
 		RenderSurface->Restore();
 	}
+#endif
 
 	// Begin the scene.
 	RenderDevice->BeginScene();
@@ -732,6 +917,15 @@ void TDirect3DDrawer::EndDirectUpdate(void)
 void TDirect3DDrawer::Shutdown(void)
 {
 	ReleaseTextures();
+#if DIRECT3D_VERSION >= 0x0800
+	SAFE_RELEASE(RenderDevice)
+	SAFE_RELEASE(Direct3D)
+	if (DLLHandle)
+	{
+		FreeLibrary(DLLHandle);
+		DLLHandle = NULL;
+	}
+#else
 	SAFE_RELEASE(RenderDevice)
 	SAFE_RELEASE(Direct3D)
 
@@ -739,6 +933,7 @@ void TDirect3DDrawer::Shutdown(void)
 	SAFE_RELEASE(RenderSurface)
 	SAFE_RELEASE(PrimarySurface)
 	SAFE_RELEASE(DDraw)
+#endif
 }
 
 //==========================================================================
@@ -749,6 +944,9 @@ void TDirect3DDrawer::Shutdown(void)
 
 void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
+#if DIRECT3D_VERSION >= 0x0800
+	return NULL;
+#else
 	DDSURFACEDESC2	ddsd;
 
 	//	Allocate buffer
@@ -791,6 +989,7 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
+#endif
 }
 
 //==========================================================================
@@ -820,9 +1019,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/09/14 16:48:22  dj_jl
+//	Switched to DirectX 8
+//
 //	Revision 1.11  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.10  2001/08/31 17:25:38  dj_jl
 //	Anisotropy filtering
 //	

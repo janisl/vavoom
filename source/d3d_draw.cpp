@@ -58,15 +58,15 @@
 void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 	int l = (((100 - trans) * 255 / 100) << 24) | 0xffffff;
 
 	SetPic(handle);
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), l, 0, s1 * tex_iw, t1 * tex_ih);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), l, 0, s2 * tex_iw, t1 * tex_ih);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), l, 0, s2 * tex_iw, t2 * tex_ih);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), l, 0, s1 * tex_iw, t2 * tex_ih);
+	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
+	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
+	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
+	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
 	if (trans)
 	{
@@ -74,7 +74,11 @@ void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	}
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 
 	if (trans)
 	{
@@ -92,20 +96,24 @@ void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 	int l = shade << 24;
 
 	SetPic(handle);
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), l, 0, s1 * tex_iw, t1 * tex_ih);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), l, 0, s2 * tex_iw, t1 * tex_ih);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), l, 0, s2 * tex_iw, t2 * tex_ih);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), l, 0, s1 * tex_iw, t2 * tex_ih);
+	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
+	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
+	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
+	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -122,17 +130,21 @@ void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
 	SetFlat(R_FlatNumForName(fname));
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), l, 0, s1 * tex_iw, t1 * tex_ih);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), l, 0, s2 * tex_iw, t1 * tex_ih);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), l, 0, s2 * tex_iw, t2 * tex_ih);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), l, 0, s1 * tex_iw, t2 * tex_ih);
+	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
+	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
+	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
+	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 }
 
 //==========================================================================
@@ -144,16 +156,20 @@ void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), color, 0, 0, 0);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), color, 0, 0, 0);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), color, 0, 0, 0);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), color, 0, 0, 0);
+	dv[0] = MyD3DVertex(x1, y1, color, 0, 0);
+	dv[1] = MyD3DVertex(x2, y1, color, 0, 0);
+	dv[2] = MyD3DVertex(x2, y2, color, 0, 0);
+	dv[3] = MyD3DVertex(x1, y2, color, 0, 0);
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 }
@@ -169,19 +185,23 @@ void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 	int l = darkening << 27;
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x, y, 0), l, 0, 0, 0);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x + w, y, 0), l, 0, 0, 0);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x + w, y + h, 0), l, 0, 0, 0);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x, y + h, 0), l, 0, 0, 0);
+	dv[0] = MyD3DVertex(x, y, l, 0, 0);
+	dv[1] = MyD3DVertex(x + w, y, l, 0, 0);
+	dv[2] = MyD3DVertex(x + w, y + h, l, 0, 0);
+	dv[3] = MyD3DVertex(x, y + h, l, 0, 0);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -196,19 +216,23 @@ void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 void TDirect3DDrawer::DrawConsoleBackground(int h)
 {
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 	int l = 0xc000007f;
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(0, 0, 0), l, 0, 0, 0);
-	dv[1] = D3DLVERTEX(D3DVECTOR(ScreenWidth, 0, 0), l, 0, 0, 0);
-	dv[2] = D3DLVERTEX(D3DVECTOR(ScreenWidth, h, 0), l, 0, 0, 0);
-	dv[3] = D3DLVERTEX(D3DVECTOR(0, h, 0), l, 0, 0, 0);
+	dv[0] = MyD3DVertex(0, 0, l, 0, 0);
+	dv[1] = MyD3DVertex(ScreenWidth, 0, l, 0, 0);
+	dv[2] = MyD3DVertex(ScreenWidth, h, l, 0, 0);
+	dv[3] = MyD3DVertex(0, h, l, 0, 0);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -239,14 +263,18 @@ void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	}
 	float texh = spriteheight[lump] * tex_ih;
 
-	D3DLVERTEX	dv[4];
+	MyD3DVertex	dv[4];
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), 0xffffffff, 0, s1, 0);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), 0xffffffff, 0, s2, 0);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), 0xffffffff, 0, s2, texh);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), 0xffffffff, 0, s1, texh);
+	dv[0] = MyD3DVertex(x1, y1, 0xffffffff, s1, 0);
+	dv[1] = MyD3DVertex(x2, y1, 0xffffffff, s2, 0);
+	dv[2] = MyD3DVertex(x2, y2, 0xffffffff, s2, texh);
+	dv[3] = MyD3DVertex(x1, y2, 0xffffffff, s1, texh);
 
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
+#endif
 }
 
 //==========================================================================
@@ -270,16 +298,14 @@ void TDirect3DDrawer::StartAutomap(void)
 
 void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
-	struct
-	{
-		TVec		origin;
-		dword		color;
-	} out[2];
- 	out[0].origin = TVec(x1, y1, 0);
-	out[0].color =	c1;
- 	out[1].origin = TVec(x2, y2, 0);
-	out[1].color =	c2;
-	RenderDevice->DrawPrimitive(D3DPT_LINELIST, D3DFVF_XYZ | D3DFVF_DIFFUSE, out, 2, 0);
+	MyD3DVertex out[2];
+ 	out[0] = MyD3DVertex(x1, y1, c1, 0, 0);
+ 	out[1] = MyD3DVertex(x2, y2, c2, 0, 0);
+#if DIRECT3D_VERSION >= 0x0800
+	RenderDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, out, sizeof(MyD3DVertex));
+#else
+	RenderDevice->DrawPrimitive(D3DPT_LINELIST, MYD3D_VERTEX_FORMAT, out, 2, 0);
+#endif
 }
 
 //==========================================================================
@@ -298,9 +324,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/14 16:48:22  dj_jl
+//	Switched to DirectX 8
+//
 //	Revision 1.7  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.6  2001/08/29 17:49:01  dj_jl
 //	Line colors in RGBA format
 //	
