@@ -35,7 +35,7 @@ player_t *players;
 int *validcount;
 int skyflatnum;
 
-level_t *level;
+sv_level_t *level;
 
 int RebornPosition;
 
@@ -44,6 +44,9 @@ float frametime = 1.0 / 35.0;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/08 17:23:15  dj_jl
+//  Different client and server level structures
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

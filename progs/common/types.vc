@@ -279,11 +279,7 @@ struct subsector_t
 	void *__regions;
 };
 
-#ifdef SERVER
-class mobj_t;
-#endif
-
-struct level_t
+struct base_level_t
 {
 	//
 	// MAP related Lookup tables.
@@ -314,52 +310,12 @@ struct level_t
 	int __numpolyobjs;
 	void *__polyobjs;	// list of all poly-objects on the level
 
-	// !!! Valid only during level loading
-	int numthings;
-	mthing_t *things;
-	int *behavior;
-
-	//
-	//  BLOCKMAP
-	//  Created from axis aligned bounding box of the map, a rectangular
-	// array of blocks of size ...
-	// Used to speed up collision detection by spatial subdivision in 2D.
-	//
-	void *__blockmaplump;	// offsets in blockmap are from here
-	void *__blockmap;	// int for larger maps
-	int bmapwidth;	// Blockmap size.
-	int bmapheight;	// size in mapblocks
-	float bmaporgx;	// origin of block map
-	float bmaporgy;
-#ifdef SERVER
-	mobj_t **blocklinks;	// for thing chains
-#define BlockLink(num)	level->blocklinks[num]
-#else
-	void **__blocklinks;	// for thing chains
-#endif
-	void *__PolyBlockMap;
-
-	//
-	//  REJECT
-	//  For fast sight rejection.
-	//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-	//  Without special effect, this could be used as a PVS lookup as well.
-	//
-	void *__rejectmatrix;
-
-	// Maintain single and multi player starting spots.
-	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
-	int numdeathmatchstarts;
-	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
-
 	float time;
 	int tictime;
 
 	int totalkills;
 	int totalitems;
 	int totalsecret;	// for intermission
-
-	int __thinkers[4];	// both the head and tail of the thinker list
 
 	int mapname[3];
 	int __nextmap[3];
@@ -377,6 +333,7 @@ struct level_t
 #ifdef SERVER
 
 struct player_t;
+class mobj_t;
 
 typedef void (*mobj_func_t) (mobj_t *);
 typedef boolean(*thing_iter_func_t) (mobj_t *);
@@ -676,6 +633,52 @@ struct player_t
 
 //==========================================================================
 //
+//	Level
+//
+//==========================================================================
+
+#define BlockLink(num)	level->blocklinks[num]
+
+struct sv_level_t:base_level_t
+{
+	// !!! Valid only during level loading
+	int numthings;
+	mthing_t *things;
+	int *behavior;
+
+	//
+	//  BLOCKMAP
+	//  Created from axis aligned bounding box of the map, a rectangular
+	// array of blocks of size ...
+	// Used to speed up collision detection by spatial subdivision in 2D.
+	//
+	void *__blockmaplump;	// offsets in blockmap are from here
+	void *__blockmap;	// int for larger maps
+	int bmapwidth;	// Blockmap size.
+	int bmapheight;	// size in mapblocks
+	float bmaporgx;	// origin of block map
+	float bmaporgy;
+	mobj_t **blocklinks;	// for thing chains
+	void *__PolyBlockMap;
+
+	//
+	//  REJECT
+	//  For fast sight rejection.
+	//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+	//  Without special effect, this could be used as a PVS lookup as well.
+	//
+	void *__rejectmatrix;
+
+	// Maintain single and multi player starting spots.
+	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
+	int numdeathmatchstarts;
+	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
+
+	int __thinkers[4];	// both the head and tail of the thinker list
+};
+
+//==========================================================================
+//
 //  Other stuff
 //
 //==========================================================================
@@ -753,6 +756,10 @@ addfields sector_t
 //**************************************************************************
 
 #ifdef CLIENT
+
+struct cl_level_t:base_level_t
+{
+};
 
 struct model_t;
 
@@ -950,6 +957,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/10/08 17:23:15  dj_jl
+//  Different client and server level structures
+//
 //  Revision 1.12  2001/10/04 17:28:47  dj_jl
 //  Fixed thinkers size in level structure
 //

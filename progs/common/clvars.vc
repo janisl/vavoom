@@ -29,7 +29,7 @@ int netgame;
 int deathmatch;
 
 client_state_t *cl;
-level_t *level;
+cl_level_t *level;
 
 float frametime;
 
@@ -42,6 +42,9 @@ boolean skipintermission;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/08 17:23:15  dj_jl
+//  Different client and server level structures
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //
