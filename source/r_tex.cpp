@@ -891,8 +891,9 @@ void R_DrawPic(int x, int y, int handle, int trans)
 	R_GetPicInfo(handle, &info);
 	x -= info.xoffset;
 	y -= info.yoffset;
-	Drawer->DrawPic(fScaleX * x, fScaleX * (x + info.width), fScaleY * y,
-		fScaleY * (y + info.height), 0, info.width, 0, info.height, handle, trans);
+	Drawer->DrawPic(fScaleX * x, fScaleY * y,
+		fScaleX * (x + info.width), fScaleY * (y + info.height),
+		0, 0, info.width, info.height, handle, trans);
 }
 
 //==========================================================================
@@ -913,20 +914,24 @@ void R_DrawShadowedPic(int x, int y, int handle)
 	R_GetPicInfo(handle, &info);
 	x -= info.xoffset;
 	y -= info.yoffset;
-	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleX * (x + 2 + info.width),
-		fScaleY * (y + 2), fScaleY * (y + 2 + info.height),
-		0, info.width, 0, info.height, handle, 160);
-	Drawer->DrawPic(fScaleX * x, fScaleX * (x + info.width), fScaleY * y,
-		fScaleY * (y + info.height), 0, info.width, 0, info.height, handle, 0);
+	Drawer->DrawPicShadow(fScaleX * (x + 2), fScaleY * (y + 2),
+		fScaleX * (x + 2 + info.width), fScaleY * (y + 2 + info.height),
+		0, 0, info.width, info.height, handle, 160);
+	Drawer->DrawPic(fScaleX * x, fScaleY * y,
+		fScaleX * (x + info.width), fScaleY * (y + info.height),
+		0, 0, info.width, info.height, handle, 0);
 }
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:33:58  dj_jl
+//	Fixed drawing of spite lump for player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -669,8 +669,8 @@ void SetPic(int handle)
 //
 //==========================================================================
 
-void D_DrawPic(float x1, float x2, float y1, float y2,
-	float s1, float s2, float t1, float t2)
+void D_DrawPic(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2)
 {
 	if (x1 < 0)
 	{
@@ -732,8 +732,8 @@ void D_DrawPic(float x1, float x2, float y1, float y2,
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawPic(float x1, float x2, float y1, float y2,
-	float s1, float s2, float t1, float t2, int handle, int trans)
+void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, int handle, int trans)
 {
 	SetPic(handle);
 	if (ScreenBPP == 8)
@@ -789,7 +789,7 @@ void TSoftwareDrawer::DrawPic(float x1, float x2, float y1, float y2,
 			return;
 		}
 	}
-	D_DrawPic(x1, x2, y1, y2, s1, s2, t1, t2);
+	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 }
 
 //==========================================================================
@@ -798,8 +798,8 @@ void TSoftwareDrawer::DrawPic(float x1, float x2, float y1, float y2,
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawPicShadow(float x1, float x2, float y1, float y2,
-	float s1, float s2, float t1, float t2, int handle, int shade)
+void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, int handle, int shade)
 {
 	SetPic(handle);
 	ds_shade = shade;
@@ -815,7 +815,7 @@ void TSoftwareDrawer::DrawPicShadow(float x1, float x2, float y1, float y2,
 	{
 		picspanfunc = D_DrawPicSpanShadow_32;
 	}
-	D_DrawPic(x1, x2, y1, y2, s1, s2, t1, t2);
+	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 }
 
 //==========================================================================
@@ -842,7 +842,7 @@ void TSoftwareDrawer::FillRectWithFlat(int DestX, int DestY, int width, int heig
 	{
 		picspanfunc = D_DrawFlatSpan_32;
 	}
-	D_DrawPic(DestX, DestX + width, DestY, DestY + height, 0, width, 0, height);
+	D_DrawPic(DestX, DestY, DestX + width, DestY + height, 0, 0, width, height);
 }
 
 //==========================================================================
@@ -886,23 +886,21 @@ void TSoftwareDrawer::DrawConsoleBackground(int h)
 //
 //==========================================================================
 
-void TSoftwareDrawer::DrawSpriteLump(int x, int y, int lump, int translation, boolean flip)
+void TSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
+	int lump, int translation, boolean flip)
 {
-	SetSpriteLump(lump, 0xffffffff, translation);
-	picsource = (byte*)cacheblock;
-    x -= (int)spriteoffset[lump];
-   	y -= (int)spritetopoffset[lump];
-	picspanfunc = ScreenBPP == 8 ? D_DrawPicSpan_8 :
-		PixelBytes == 2 ? D_DrawSpritePicSpan_16 : D_DrawSpritePicSpan_32;
 	float w = spritewidth[lump];
 	float h = spriteheight[lump];
 
+	SetSpriteLump(lump, 0xffffffff, translation);
+	picsource = (byte*)cacheblock;
+	picspanfunc = ScreenBPP == 8 ? D_DrawPicSpan_8 :
+		PixelBytes == 2 ? D_DrawSpritePicSpan_16 : D_DrawSpritePicSpan_32;
+
     if (flip)
-		D_DrawPic(fScaleX * x, fScaleX * (x + w), fScaleY * y,
-			fScaleY * (y + h), w - 0.0001, 0, 0, h);
+		D_DrawPic(x1, y1, x2, y2, w - 0.0001, 0, 0, h);
     else
-		D_DrawPic(fScaleX * x, fScaleX * (x + w), fScaleY * y,
-			fScaleY * (y + h), 0, w, 0, h);
+		D_DrawPic(x1, y1, x2, y2, 0, 0, w, h);
 }
 
 //==========================================================================
@@ -1210,9 +1208,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:33:58  dj_jl
+//	Fixed drawing of spite lump for player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -55,8 +55,8 @@
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawPic(float x1, float x2, float y1, float y2,
-	float s1, float s2, float t1, float t2, int handle, int trans)
+void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, int handle, int trans)
 {
 	D3DLVERTEX	dv[4];
 	int l = (((100 - trans) * 255 / 100) << 24) | 0xffffff;
@@ -89,8 +89,8 @@ void TDirect3DDrawer::DrawPic(float x1, float x2, float y1, float y2,
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawPicShadow(float x1, float x2, float y1, float y2,
-	float s1, float s2, float t1, float t2, int handle, int shade)
+void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, int handle, int shade)
 {
 	D3DLVERTEX	dv[4];
 	int l = shade << 24;
@@ -197,34 +197,30 @@ void TDirect3DDrawer::DrawConsoleBackground(int h)
 //
 //==========================================================================
 
-void TDirect3DDrawer::DrawSpriteLump(int x, int y, int lump, int translation, boolean flip)
+void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
+	int lump, int translation, boolean flip)
 {
 	SetSpriteLump(lump, translation);
 
-	x -= (int)spriteoffset[lump];
-	y -= (int)spritetopoffset[lump];
-	float w = spritewidth[lump];
-	float h = spriteheight[lump];
-	float texw = w * tex_iw;
-	float texh = h * tex_ih;
-
-	D3DLVERTEX	dv[4];
-	int l = 0xffffffff;
-
+	float s1, s2;
 	if (flip)
 	{
-		dv[0] = D3DLVERTEX(D3DVECTOR(x, y, 0), l, 0, texw, 0);
-		dv[1] = D3DLVERTEX(D3DVECTOR(x + w, y, 0), l, 0, 0, 0);
-		dv[2] = D3DLVERTEX(D3DVECTOR(x + w, y + h, 0), l, 0, 0, texh);
-		dv[3] = D3DLVERTEX(D3DVECTOR(x, y + h, 0), l, 0, texw, texh);
+		s1 = spritewidth[lump] * tex_iw;
+		s2 = 0;
 	}
 	else
 	{
-		dv[0] = D3DLVERTEX(D3DVECTOR(x, y, 0), l, 0, 0, 0);
-		dv[1] = D3DLVERTEX(D3DVECTOR(x + w, y, 0), l, 0, texw, 0);
-		dv[2] = D3DLVERTEX(D3DVECTOR(x + w, y + h, 0), l, 0, texw, texh);
-		dv[3] = D3DLVERTEX(D3DVECTOR(x, y + h, 0), l, 0, 0, texh);
+		s1 = 0;
+		s2 = spritewidth[lump] * tex_iw;
 	}
+	float texh = spriteheight[lump] * tex_ih;
+
+	D3DLVERTEX	dv[4];
+
+	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), 0xffffffff, 0, s1, 0);
+	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), 0xffffffff, 0, s2, 0);
+	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), 0xffffffff, 0, s2, texh);
+	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), 0xffffffff, 0, s1, texh);
 
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
 }
@@ -284,9 +280,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:33:58  dj_jl
+//	Fixed drawing of spite lump for player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

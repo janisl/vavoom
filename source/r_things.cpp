@@ -1041,28 +1041,40 @@ void R_DrawCroshair(void)
 
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation)
 {
-    spritedef_t*	sprdef;
-    spriteframe_t*	sprframe;
     boolean			flip;
 	int				lump;
 
-    sprdef = &sprites[sprite];
-    sprframe = &sprdef->spriteframes[frame & FF_FRAMEMASK];
+    spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
     flip = (boolean)sprframe->flip[rot];
 	lump = sprframe->lump[rot];
+
 	if (spritewidth[lump] == -1.0)
 	{
 		GetSpriteParams(lump);
 	}
-	Drawer->DrawSpriteLump(x, y, lump, translation, flip);
+
+	float x1 = x - spriteoffset[lump];
+	float y1 = y - spritetopoffset[lump];
+	float x2 = x1 + spritewidth[lump];
+	float y2 = y1 + spriteheight[lump];
+
+	x1 *= fScaleX;
+	y1 *= fScaleY;
+	x2 *= fScaleX;
+	y2 *= fScaleY;
+
+	Drawer->DrawSpriteLump(x1, y1, x2, y2, lump, translation, flip);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:33:58  dj_jl
+//	Fixed drawing of spite lump for player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:11:56  dj_jl
 //	Some fixes in model rendering
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

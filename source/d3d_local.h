@@ -129,7 +129,7 @@ class TDirect3DDrawer : public TDrawer
 	void FillRectWithFlat(int, int, int, int, const char*);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(int, int, int, int, boolean);
+	void DrawSpriteLump(float, float, float, float, int, int, boolean);
 
 	//	Automap
 	void StartAutomap(void);
@@ -261,9 +261,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:33:58  dj_jl
+//	Fixed drawing of spite lump for player setup menu, beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
