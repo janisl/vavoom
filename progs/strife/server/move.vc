@@ -73,7 +73,7 @@ boolean Actor::Touch(MapObject InOther)
 			if (Other == Owner)
 				return true;
 
-			if (Other.Class != PlayerPawn)
+			if (Other.Class != StrifePlayer)
 			{
 				// Explode, but do no damage.
 				// Let players missile other players.
@@ -227,6 +227,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/16 17:48:58  dj_jl
+//  Added PlayerPawn class, beautifucation.
+//
 //  Revision 1.25  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

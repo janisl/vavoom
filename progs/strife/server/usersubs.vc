@@ -30,15 +30,15 @@ int bodyqueslot;
 
 //==========================================================================
 //
-//  SetPlayerRunState
+//  PlayerPawn::SetPlayerRunState
 //
 //==========================================================================
 
-void SetPlayerRunState(player_t * player)
+void PlayerPawn::SetPlayerRunState(void)
 {
-	if (player->mo->StateNum == S_PLAY)
+	if (StateNum == S_PLAY)
 	{
-		player->mo->SetState(S_PLAY_RUN1);
+		SetState(S_PLAY_RUN1);
 	}
 }
 
@@ -127,7 +127,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 	z = ONFLOORZ;
-	mobj = P_SpawnMobj(x, y, z, PlayerPawn);
+	mobj = P_SpawnMobj(x, y, z, StrifePlayer);
 
 	// set color translations for player sprites
 	mobj->Translation = p->Color;
@@ -163,32 +163,29 @@ void P_SpawnPlayer(mthing_t * mthing)
 
 //==========================================================================
 //
-//  SpawnPlayerMissile
+//  PlayerPawn::SpawnPlayerMissile
 //
 //  Tries to aim at a nearby monster
 //
 //==========================================================================
 
-mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
+Actor PlayerPawn::SpawnPlayerMissile(classid type)
 {
-	mobj_t *th;
+	Actor A;
 	TAVec angles;
 	TVec vforward;
-	float x;
-	float y;
-	float z;
 
 	// see which target is to be aimed at
-	angles = source->Angles;
-	AimLineAttack(source, &angles, 16.0 * 64.0);
+	angles = Angles;
+	AimLineAttack(this, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(source, &angles, 16.0 * 64.0);
+		AimLineAttack(this, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 8.0);
-			AimLineAttack(source, &angles, 16.0 * 64.0);
+			AimLineAttack(this, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
@@ -196,28 +193,27 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		}
 	}
 
-	x = source->Origin.x;
-	y = source->Origin.y;
-	z = source->Origin.z + 32.0;
+	A = Spawn(type, Origin + vector(0.0, 0.0, 32.0));
 
-	th = P_SpawnMobj(x, y, z, type);
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	if (th->SightSound)
-		th->PlaySound(th->SightSound, CHAN_VOICE);
-
-	th->Owner = *source;
-	avcpy(angles, th->Angles);
+	A.Owner = self;
+	avcpy(angles, A.Angles);
 	AngleVector(&angles, &vforward);
-	th->Velocity = vforward * th->Speed;
+	A.Velocity = vforward * A.Speed;
 
-	CheckMissileSpawn(th);
+	CheckMissileSpawn(&A);
 
-	return th;
+	return A;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:48:58  dj_jl
+//  Added PlayerPawn class, beautifucation.
+//
 //  Revision 1.21  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

@@ -54,11 +54,11 @@ class Thing0:Actor
 
 //==========================================================================
 //
-//	PlayerPawn
+//	StrifePlayer
 //
 //==========================================================================
 
-class PlayerPawn:Actor
+class StrifePlayer:PlayerPawn
 {
 	defaultproperties
 	{
@@ -9023,9 +9023,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/16 17:48:58  dj_jl
+//	Added PlayerPawn class, beautifucation.
+//
 //	Revision 1.23  2002/03/04 18:31:36  dj_jl
 //	Replaced bNoClip with two seperate flags, beautification.
-//
+//	
 //	Revision 1.22  2002/02/22 18:00:25  dj_jl
 //	A lots of the renaming, beautification.
 //	

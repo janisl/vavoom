@@ -124,7 +124,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	if (!bMissile)
 	{
 		bCheckLineBlocking = true;
-		if (Class != PlayerPawn)
+		if (Class != StrifePlayer)
 		{
 			bCheckLineBlockMonsters = true;
 		}
@@ -202,6 +202,23 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	{
 		SetOrigin(this, Origin);
 	}
+}
+
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
 }
 
 //==========================================================================
@@ -679,15 +696,15 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 //==========================================================================
 //
-//  P_RemoveMobj
+//  Actor::Remove
 //
 //==========================================================================
 
-void P_RemoveMobj(mobj_t * mobj)
+void Actor::Remove(void)
 {
-	if (mobj->bSpecial && !mobj->bDropped)
+	if (bSpecial && !bDropped)
 	{
-		CopyMThing(&mobj->SpawnSpot, &itemrespawnque[iquehead]);
+		CopyMThing(&SpawnSpot, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
 		iquehead = (iquehead + 1) & (ITEMQUESIZE - 1);
 
@@ -697,7 +714,18 @@ void P_RemoveMobj(mobj_t * mobj)
 	}
 
 	// free block
-	RemoveMobjThinker(*mobj);
+	::Remove();
+}
+
+//==========================================================================
+//
+//  P_RemoveMobj
+//
+//==========================================================================
+
+void P_RemoveMobj(mobj_t * mobj)
+{
+	mobj->Remove();
 }
 
 //==========================================================================
@@ -934,6 +962,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/03/16 17:48:58  dj_jl
+//  Added PlayerPawn class, beautifucation.
+//
 //  Revision 1.35  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

@@ -237,6 +237,7 @@ enum
 // TYPES -------------------------------------------------------------------
 
 class Actor:Entity
+	abstract
 {
 	//  States
 	int SpawnState;
@@ -328,6 +329,7 @@ class Actor:Entity
 	void OnMapSpawn(mthing_t *mthing);
 
 	void Damage(Actor inflictor, Actor source, int damage);
+	void Remove(void);
 
 	// Physics
 	void SlideMove(void);
@@ -432,6 +434,35 @@ class Actor:Entity
 	void A_110(void);
 	void A_111(void);
 	void A_112(void);
+
+	defaultproperties
+	{
+	}
+}
+
+class PlayerPawn:Actor
+	abstract
+{
+	void ThrustPlayer(float angle, float move, float deltaTime);
+	void CalcHeight(float deltaTime);
+	void MovePlayer(float deltaTime);
+	void CheckWaterJump(void);
+	void WaterMove(float deltaTime);
+	void WaterJump(void);
+	void PlayerInSpecialSector(void);
+	void PlayerInContents(void);
+	void DeathPlayerTick(float deltaTime);
+	void PlayerImpulse(void);
+	void PlayerTick(float deltaTime);
+	void PaletteFlash(void);
+	void SetViewPos(void);
+
+	void SetPlayerRunState(void);
+	Actor SpawnPlayerMissile(classid type);
+
+	defaultproperties
+	{
+	}
 }
 
 class Weapon:ViewEntity
@@ -453,6 +484,10 @@ class Weapon:ViewEntity
 	void A_9(void);
 	void A_12(void);
 	void A_13(void);
+
+	defaultproperties
+	{
+	}
 }
 
 addfields player_t
@@ -536,6 +571,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/16 17:48:58  dj_jl
+//  Added PlayerPawn class, beautifucation.
+//
 //  Revision 1.25  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //
