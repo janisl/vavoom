@@ -198,7 +198,7 @@ static void StartupKeyboard(void)
 	}
 	asm("sti");
 
-	_go32_dpmi_lock_code(KeyboardHandler, (long)ReadKeyboard - (long)KeyboardHandler);
+	_go32_dpmi_lock_code((void*)KeyboardHandler, (long)ReadKeyboard - (long)KeyboardHandler);
 	_go32_dpmi_lock_data(keyboardque, sizeof(keyboardque));
 	_go32_dpmi_lock_data(&kbdhead, sizeof(kbdhead));
 
@@ -539,9 +539,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/11/16 17:13:09  dj_jl
+//	Some compatibility changes.
+//
 //	Revision 1.7  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

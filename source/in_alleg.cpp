@@ -145,7 +145,7 @@ static void ReadKeyboard(void)
 static void StartupKeyboard(void)
 {
 	guard(StartupKeyboard);
-    LOCK_FUNCTION(KeyboardHandler);
+    LOCK_FUNCTION((void*)KeyboardHandler);
     LOCK_DATA(keyboardque, sizeof(keyboardque));
     LOCK_VARIABLE(kbdhead);
 
@@ -459,9 +459,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/11/16 17:13:09  dj_jl
+//	Some compatibility changes.
+//
 //	Revision 1.8  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -594,13 +594,13 @@ public:
 	}
 	void Seek(int InPos)
 	{
-		guard(FArchiveFileReader::Seek);
+		//guard(FArchiveFileReader::Seek);
 		if (fseek(File, InPos, SEEK_SET))
 		{
 			ArIsError = true;
 			//Error->Logf("seek Failed %i/%i: %i %i", InPos, Size, Pos, ferror(File) );
 		}
-		unguard;
+		//unguard;
 	}
 	int Tell(void)
 	{
@@ -684,13 +684,13 @@ public:
 	}
 	void Seek(int InPos)
 	{
-		guard(FArchiveFileWriter::Seek);
+		//guard(FArchiveFileWriter::Seek);
 		if (fseek(File, InPos, SEEK_SET))
 		{
 			ArIsError = true;
 			//Error->Logf( TEXT("seek Failed %i/%i: %i %i"), InPos, Size, Pos, ferror(File) );
 		}
-		unguard;
+		//unguard;
 	}
 	int Tell(void)
 	{
@@ -759,9 +759,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/11/16 17:13:09  dj_jl
+//	Some compatibility changes.
+//
 //	Revision 1.13  2002/08/24 14:52:16  dj_jl
 //	Fixed screenshots.
-//
+//	
 //	Revision 1.12  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
