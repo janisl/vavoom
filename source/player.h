@@ -99,7 +99,7 @@ struct player_t
 	int				Buttons;		// fire, use
 	int				Impulse;		// weapon changes, inventory, etc
 
-    VMapObject*		MO;
+    VEntity*		MO;
     int				PlayerState;
 
 	//	Model of current weapon
@@ -159,9 +159,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.14  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
-//
+//	
 //	Revision 1.13  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

@@ -54,8 +54,7 @@ enum
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-VMapObject *SV_SpawnMobj(VClass *Class);
-void SV_RemoveMobj(VMapObject *mobj);
+VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
@@ -1419,20 +1418,6 @@ PF(NewMobjThinker)
 
 //==========================================================================
 //
-//  PF_RemoveThinker
-//
-//==========================================================================
-
-PF(RemoveMobjThinker)
-{
-	VMapObject		*mobj;
-
-    mobj = (VMapObject*)Pop();
-	SV_RemoveMobj(mobj);
-}
-
-//==========================================================================
-//
 //	PF_NextMobj
 //
 //==========================================================================
@@ -1454,7 +1439,7 @@ PF(NextMobj)
     while (i < VObject::GetObjectsCount())
     {
 		th = VObject::GetIndexObject(i);
-        if (th && th->IsA(VMapObject::StaticClass()))
+        if (th && th->IsA(VEntity::StaticClass()))
         {
             Push((int)th);
             return;
@@ -1674,13 +1659,13 @@ PF(StartACS)
 	int		num;
     int		map;
 	int 	*args;
-    VMapObject	*activator;
+    VEntity	*activator;
     line_t	*line;
     int		side;
 
     side = Pop();
 	line = (line_t*)Pop();
-    activator = (VMapObject*)Pop();
+    activator = (VEntity*)Pop();
 	args = (int*)Pop();
     map = Pop();
     num = Pop();
@@ -1761,7 +1746,7 @@ PF(PolyobjFinished)
 
 PF(StartSoundAtVolume)
 {
-	VMapObject*		mobj;
+	VEntity*	mobj;
     int			sound;
 	int			channel;
     int			vol;
@@ -1769,7 +1754,7 @@ PF(StartSoundAtVolume)
     vol = Pop();
 	channel = Pop();
     sound = Pop();
-    mobj = (VMapObject*)Pop();
+    mobj = (VEntity*)Pop();
     SV_StartSound(mobj, sound, channel, vol);
 }
 
@@ -1949,10 +1934,10 @@ PF(NumToSector)
 
 PF(MobjToNum)
 {
-	VMapObject**	mobj;
+	VEntity**	mobj;
 
-    mobj = (VMapObject**)Pop();
-    *mobj = (VMapObject*)GetMobjNum(*mobj);
+    mobj = (VEntity**)Pop();
+    *mobj = (VEntity*)GetMobjNum(*mobj);
 }
 
 //==========================================================================
@@ -1963,9 +1948,9 @@ PF(MobjToNum)
 
 PF(NumToMobj)
 {
-	VMapObject**	mobj;
+	VEntity**	mobj;
 
-	mobj = (VMapObject**)Pop();
+	mobj = (VEntity**)Pop();
     *mobj = SetMobjPtr((int)*mobj);
 }
 
@@ -2204,6 +2189,27 @@ PF(SendCeilingSlope)
 			<< sector->ceiling.normal.y
 			<< sector->ceiling.normal.z
 			<< sector->ceiling.dist;
+}
+
+//==========================================================================
+//
+//	PF_SetSecLightColor
+//
+//==========================================================================
+
+PF(SetSecLightColor)
+{
+	sector_t	*sector;
+	int			Col;
+
+	Col = Pop();
+	sector = (sector_t*)Pop();
+	sector->params.LightColor = Col;
+	sv_signon << (byte)svc_sec_light_color
+			<< (word)(sector - level.sectors)
+			<< (byte)(Col >> 16)
+			<< (byte)(Col >> 8)
+			<< (byte)Col;
 }
 
 //==========================================================================
@@ -3068,7 +3074,6 @@ builtin_info_t BuiltinInfo[] =
 
 	//	Mobj utilites
     _(NewMobjThinker),
-    _(RemoveMobjThinker),
     _(NextMobj),
 
     //	Special thinker utilites
@@ -3123,6 +3128,7 @@ builtin_info_t BuiltinInfo[] =
 	_(SetLineTransluc),
 	_(SendFloorSlope),
 	_(SendCeilingSlope),
+	_(SetSecLightColor),
 	_(FindModel),
 	_(GetModelIndex),
 	_(FindSkin),
@@ -3134,9 +3140,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.42  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.41  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

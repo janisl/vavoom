@@ -162,7 +162,7 @@ static bool CheckPlanes(sector_t *sec)
 //
 //==========================================================================
 
-static boolean CheckLine(seg_t* seg)
+static bool CheckLine(seg_t* seg)
 {
 	line_t*			line;
 	int				s1;
@@ -324,7 +324,7 @@ static boolean CheckLine(seg_t* seg)
 //
 //==========================================================================
 
-static boolean CrossSubsector(int num)
+static bool CrossSubsector(int num)
 {
 	subsector_t*	sub;
 	int				count;
@@ -376,7 +376,7 @@ static boolean CrossSubsector(int num)
 //
 //==========================================================================
 
-static boolean CrossBSPNode(int bspnum)
+static bool CrossBSPNode(int bspnum)
 {
 	node_t*	bsp;
 	int		side;
@@ -434,32 +434,32 @@ static bool	SightTraceLine(sector_t *sec)
 
 //==========================================================================
 //
-//	P_CheckSight
+//	VEntity::CanSee
 //
 //	Returns true if a straight line between t1 and t2 is unobstructed.
 //
 //==========================================================================
 
-boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
+bool VEntity::CanSee(VEntity* Other)
 {
 	guard(P_CheckSight);
 	int			s1;
 	int			s2;
 	int			pnum;
 
-	if (!t1 || !t2)
+	if (!Other)
 	{
 		return false;
 	}
-	if ((t1->GetFlags() & OF_Destroyed) || (t2->GetFlags() & OF_Destroyed))
+	if ((GetFlags() & OF_Destroyed) || (Other->GetFlags() & OF_Destroyed))
 	{
 		return false;
 	}
 
 	//	Determine subsector entries in GL_PVS table.
 	//	First check for trivial rejection.
-	byte *vis = LeafPVS(level, t1->SubSector);
-	s2 = t2->SubSector - level.subsectors;
+	byte *vis = LeafPVS(level, SubSector);
+	s2 = Other->SubSector - level.subsectors;
 	if (!(vis[s2 >> 3] & (1 << (s2 & 7))))
 	{
 		// can't possibly be connected
@@ -469,8 +469,8 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	//	Determine subsector entries in REJECT table.
 	//	We must do this because REJECT can have some special effects like
 	// "safe sectors"
-	s1 = t1->Sector - level.sectors;
-	s2 = t2->Sector - level.sectors;
+	s1 = Sector - level.sectors;
+	s2 = Other->Sector - level.sectors;
 	pnum = s1 * level.numsectors + s2;
 	// Check in REJECT table.
 	if (level.rejectmatrix[pnum >> 3] & (1 << (pnum & 7)))
@@ -483,15 +483,15 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	// Now look from eyes of t1 to any part of t2.
 	validcount++;
 
-	sightstart = t1->Origin;
-	sightstart.z += t1->Height * 0.75;
-	sightend = t2->Origin;
-	sightend.z += t2->Height * 0.5;
+	sightstart = Origin;
+	sightstart.z += Height * 0.75;
+	sightend = Other->Origin;
+	sightend.z += Other->Height * 0.5;
 
 #ifdef LINE_SIGHT
 	SightEarlyOut = false;
 	//	Check middle
-	if (SightTraceLine(t2->Sector))
+	if (SightTraceLine(Other->Sector))
 	{
 		return true;
 	}
@@ -502,23 +502,23 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 
 	//	Check head
 	validcount++;
-	sightend = t2->Origin;
-	sightend.z += t2->Height;
-	if (SightTraceLine(t2->Sector))
+	sightend = Other->Origin;
+	sightend.z += Other->Height;
+	if (SightTraceLine(Other->Sector))
 	{
 		return true;
 	}
 
 	//	Check feats
 	validcount++;
-	sightend = t2->Origin;
-	sightend.z -= t2->FloorClip;
-	return SightTraceLine(t2->Sector);
+	sightend = Other->Origin;
+	sightend.z -= Other->FloorClip;
+	return SightTraceLine(Other->Sector);
 #else
-	topslope =    t2->Origin.z + t2->Height - sightstart.z;
-	bottomslope = t2->Origin.z - sightstart.z;
+	topslope =    Other->Origin.z + Other->Height - sightstart.z;
+	bottomslope = Other->Origin.z - sightstart.z;
 
-	return SightTraceLine(t2->Sector);
+	return SightTraceLine(Other->Sector);
 #endif
 	unguard;
 }
@@ -526,9 +526,12 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/08/28 16:41:10  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.10  2002/03/09 18:02:53  dj_jl
 //	Added early out when one-sided line is crossed
 //	

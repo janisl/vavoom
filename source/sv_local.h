@@ -50,9 +50,9 @@ class VThinker:public VObject
 
 //==========================================================================
 //
-//								MAPOBJ DATA
+//								ENTITY DATA
 //
-// 	NOTES: VMapObject
+// 	NOTES: VEntity
 //
 // 	mobj_ts are used to tell the refresh where to draw an image, tell the
 // world simulation when objects are contacted, and tell the sound driver
@@ -70,29 +70,29 @@ class VThinker:public VObject
 // equal to the floor it is standing on.
 //
 // 	The sound code uses the x,y, and subsector fields to do stereo
-// positioning of any sound effited by the VMapObject.
+// positioning of any sound effited by the VEntity.
 //
 // 	The play simulation uses the blocklinks, x,y,z, radius, height to
 // determine when mobj_ts are touching each other, touching lines in the map,
-// or hit by trace lines (gunshots, lines of sight, etc). The VMapObject->flags
+// or hit by trace lines (gunshots, lines of sight, etc). The VEntity->flags
 // element has various bit flags used by the simulation.
 //
-// 	Every VMapObject is linked into a single sector based on its origin
+// 	Every VEntity is linked into a single sector based on its origin
 // coordinates. The subsector_t is found with R_PointInSubsector(x,y), and
 // the sector_t can be found with subsector->sector. The sector links are
 // only used by the rendering code, the play simulation does not care about
 // them at all.
 //
-// 	Any VMapObject that needs to be acted upon by something else in the play
+// 	Any VEntity that needs to be acted upon by something else in the play
 // world (block movement, be shot, etc) will also need to be linked into the
 // blockmap. If the thing has the MF_NOBLOCK flag set, it will not use the
 // block links. It can still interact with other things, but only as the
 // instigator (missiles will run into other things, but nothing can run into
 // a missile). Each block in the grid is 128*128 units, and knows about every
-// line_t that it contains a piece of, and every interactable VMapObject that has
+// line_t that it contains a piece of, and every interactable VEntity that has
 // its origin contained.
 //
-// 	A valid VMapObject is a VMapObject that has the proper subsector_t filled in for
+// 	A valid VEntity is a VEntity that has the proper subsector_t filled in for
 // its xy coordinates and is linked into the sector from which the subsector
 // was made, or has the MF_NOSECTOR flag set (the subsector_t needs to be
 // valid even if MF_NOSECTOR is set), and is linked into a blockmap block or
@@ -106,13 +106,10 @@ class VThinker:public VObject
 
 struct player_t;
 
-// Map Object definition.
-class VMapObject:public VThinker
+class VEntity:public VThinker
 {
-	DECLARE_CLASS(VMapObject, VThinker, 0)
-
-	VMapObject(void);
-	virtual ~VMapObject(void);
+	DECLARE_CLASS(VEntity, VThinker, 0)
+	NO_DEFAULT_CONSTRUCTOR(VEntity)
 
 	// Info for drawing: position.
 	TVec			Origin;
@@ -143,8 +140,8 @@ class VMapObject:public VThinker
 
 	// Interaction info, by BLOCKMAP.
 	// Links in blocks (if needed).
-	VMapObject*		BlockMapNext;
-	VMapObject*		BlockMapPrev;
+	VEntity*		BlockMapNext;
+	VEntity*		BlockMapPrev;
 
 	// The closest interval over all contacted Sectors.
 	float			FloorZ;
@@ -180,6 +177,115 @@ class VMapObject:public VThinker
 	int				Args[5];		// special arguments
 
 	int				NetID;
+
+	FName SpriteName;
+	float StateTime;	// state tic counter
+	int StateNum;
+	int NextState;
+	dword bFixedModel:1;
+
+	dword bNoGravity:1;		// don't apply gravity every tic
+	dword bNoPassMobj:1;	// Disable z block checking.  If on,
+							// this flag will prevent the mobj
+							// from passing over/under other mobjs.
+	dword bColideWithThings:1;
+	dword bColideWithWorld:1;
+	dword bCheckLineBlocking:1;
+	dword bCheckLineBlockMonsters:1;
+	dword bDropOff:1;		// allow jumps from high places
+	dword bFloat:1;			// allow moves to any height, no gravity
+	dword bFly:1;			// fly mode is active
+	dword bBlasted:1;		// missile will pass through ghosts
+	dword bCantLeaveFloorpic:1;	// stay within a certain floor type
+	dword bFloorClip:1;		// if feet are allowed to be clipped
+
+	//  Params
+	float Mass;
+	float MaxStepHeight;
+
+	//  Water
+	int WaterLevel;
+	int WaterType;
+
+	static int FIndex_Destroyed;
+	static int FIndex_Touch;
+	static int FIndex_BlockedByLine;
+	static int FIndex_ApplyFriction;
+	static int FIndex_PushLine;
+	static int FIndex_HandleFloorclip;
+	static int FIndex_CrossSpecialLine;
+
+	static void InitFuncIndexes(void);
+
+	//	VObject interface.
+	void Destroy(void);
+
+	void eventDestroyed(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_Destroyed), (int)this);
+	}
+	boolean eventTouch(VEntity *Other)
+	{
+		return svpr.Exec(GetVFunction(FIndex_Touch), (int)this, (int)Other);
+	}
+	void eventBlockedByLine(line_t * ld)
+	{
+		svpr.Exec(GetVFunction(FIndex_BlockedByLine), (int)this, (int)ld);
+	}
+	void eventApplyFriction(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
+	}
+	void eventPushLine(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_PushLine), (int)this);
+	}
+	void eventHandleFloorclip(void)
+	{
+		svpr.Exec(GetVFunction(FIndex_HandleFloorclip), (int)this);
+	}
+	void eventCrossSpecialLine(line_t *ld, int side)
+	{
+		svpr.Exec(GetVFunction(FIndex_CrossSpecialLine), (int)this, (int)ld, side);
+	}
+
+	void Remove(void)
+	{
+		Destroy();
+	}
+
+	boolean SetState(int state);
+
+	boolean CheckWater(void);
+	boolean CheckPosition(TVec Pos);
+	boolean CheckRelPosition(TVec Pos);
+	boolean TryMove(TVec newPos);
+	void SlideMove(void);
+	void BounceWall(float overbounce);
+	void UpdateVelocity(void);
+	void FakeZMovement(void);
+	VEntity *CheckOnmobj(void);
+
+	void LinkToWorld(void);
+	void UnlinkFromWorld(void);
+	bool CanSee(VEntity* Other);
+
+	DECLARE_FUNCTION(Remove)
+	DECLARE_FUNCTION(SetState)
+	DECLARE_FUNCTION(PlaySound)
+	DECLARE_FUNCTION(PlayFullVolumeSound)
+	DECLARE_FUNCTION(StopSound)
+	DECLARE_FUNCTION(CheckWater)
+	DECLARE_FUNCTION(CheckPosition)
+	DECLARE_FUNCTION(CheckRelPosition)
+	DECLARE_FUNCTION(TryMove)
+	DECLARE_FUNCTION(SlideMove)
+	DECLARE_FUNCTION(BounceWall)
+	DECLARE_FUNCTION(UpdateVelocity)
+	DECLARE_FUNCTION(CheckOnmobj)
+	DECLARE_FUNCTION(LinkToWorld)
+	DECLARE_FUNCTION(UnlinkFromWorld)
+	DECLARE_FUNCTION(CanSee)
 };
 
 //==========================================================================
@@ -224,7 +330,7 @@ struct acsstore_t
 };
 
 void P_LoadACScripts(boolean spawn_thinkers);
-boolean P_StartACS(int number, int map, int *args, VMapObject *activator,
+boolean P_StartACS(int number, int map, int *args, VEntity *activator,
 	line_t *line, int side);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
@@ -273,7 +379,7 @@ struct intercept_t
 {
     float		frac;		// along trace line
     boolean		isaline;
-	VMapObject	*thing;
+	VEntity		*thing;
 	line_t		*line;
 };
 
@@ -281,11 +387,8 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point);
 
 int P_BoxOnLineSide(float* tmbox, line_t* ld);
 
-void SV_UnlinkFromWorld(VMapObject* thing);
-void SV_LinkToWorld(VMapObject* thing);
-
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*));
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 	FFunction *prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 	int flags, boolean(*trav)(intercept_t *), FFunction *prtrav);
@@ -294,16 +397,6 @@ sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, f
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);
 sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p);
 int SV_PointContents(const sector_t *sector, const TVec &p);
-
-//==========================================================================
-//
-//	sv_sight
-//
-//	Sight checking
-//
-//==========================================================================
-
-boolean P_CheckSight(VMapObject* t1, VMapObject* t2);
 
 //==========================================================================
 //
@@ -372,8 +465,8 @@ struct mobj_base_t
 	int			Effects;		// dynamic lights, trails
 };
 
-void SV_StartSound(const VMapObject *, int, int, int);
-void SV_StopSound(const VMapObject *, int);
+void SV_StartSound(const VEntity *, int, int, int);
+void SV_StopSound(const VEntity *, int);
 void SV_SectorStartSound(const sector_t *, int, int, int);
 void SV_SectorStopSound(const sector_t *, int);
 void SV_SectorStartSequence(const sector_t *, const char *);
@@ -420,8 +513,8 @@ void G_WorldDone(void);
 void G_PlayerReborn(int player);
 void G_StartNewInit(void);
 
-int GetMobjNum(VMapObject *mobj);
-VMapObject* SetMobjPtr(int archiveNum);
+int GetMobjNum(VEntity *mobj);
+VEntity* SetMobjPtr(int archiveNum);
 
 extern player_t			players[MAXPLAYERS]; // Bookkeeping on players - state.
 
@@ -448,9 +541,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.25  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
-//
+//	
 //	Revision 1.24  2002/03/28 18:05:25  dj_jl
 //	Added SV_GetModelIndex.
 //	

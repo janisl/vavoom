@@ -46,108 +46,6 @@ struct state_t
 	FName statename;
 };
 
-class VEntity:public VMapObject
-{
-	DECLARE_CLASS(VEntity, VMapObject, 0)
-	NO_DEFAULT_CONSTRUCTOR(VEntity)
-
-	FName SpriteName;
-	float StateTime;	// state tic counter
-	int StateNum;
-	int NextState;
-	dword bFixedModel:1;
-
-	dword bNoGravity:1;		// don't apply gravity every tic
-	dword bNoPassMobj:1;	// Disable z block checking.  If on,
-							// this flag will prevent the mobj
-							// from passing over/under other mobjs.
-	dword bColideWithThings:1;
-	dword bColideWithWorld:1;
-	dword bCheckLineBlocking:1;
-	dword bCheckLineBlockMonsters:1;
-	dword bDropOff:1;		// allow jumps from high places
-	dword bFloat:1;			// allow moves to any height, no gravity
-	dword bFly:1;			// fly mode is active
-	dword bBlasted:1;		// missile will pass through ghosts
-	dword bCantLeaveFloorpic:1;	// stay within a certain floor type
-	dword bFloorClip:1;		// if feet are allowed to be clipped
-
-	//  Params
-	float Mass;
-	float MaxStepHeight;
-
-	//  Water
-	int WaterLevel;
-	int WaterType;
-
-	static int FIndex_Remove;
-	static int FIndex_Touch;
-	static int FIndex_BlockedByLine;
-	static int FIndex_ApplyFriction;
-	static int FIndex_PushLine;
-	static int FIndex_HandleFloorclip;
-	static int FIndex_CrossSpecialLine;
-
-	static void InitFuncIndexes(void);
-
-	void eventRemove(void)
-	{
-		svpr.Exec(GetVFunction(FIndex_Remove), (int)this);
-	}
-	boolean eventTouch(VMapObject *Other)
-	{
-		return svpr.Exec(GetVFunction(FIndex_Touch), (int)this, (int)Other);
-	}
-	void eventBlockedByLine(line_t * ld)
-	{
-		svpr.Exec(GetVFunction(FIndex_BlockedByLine), (int)this, (int)ld);
-	}
-	void eventApplyFriction(void)
-	{
-		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
-	}
-	void eventPushLine(void)
-	{
-		svpr.Exec(GetVFunction(FIndex_PushLine), (int)this);
-	}
-	void eventHandleFloorclip(void)
-	{
-		svpr.Exec(GetVFunction(FIndex_HandleFloorclip), (int)this);
-	}
-	void eventCrossSpecialLine(line_t *ld, int side)
-	{
-		svpr.Exec(GetVFunction(FIndex_CrossSpecialLine), (int)this, (int)ld, side);
-	}
-
-	boolean SetState(int state);
-
-	boolean CheckWater(void);
-	boolean CheckPosition(TVec Pos);
-	boolean CheckRelPosition(TVec Pos);
-	boolean TryMove(TVec newPos);
-	void SlideMove(void);
-	void BounceWall(float overbounce);
-	void UpdateVelocity(void);
-	void FakeZMovement(void);
-	VEntity *CheckOnmobj(void);
-
-	DECLARE_FUNCTION(SetState)
-	DECLARE_FUNCTION(PlaySound)
-	DECLARE_FUNCTION(PlayFullVolumeSound)
-	DECLARE_FUNCTION(StopSound)
-	DECLARE_FUNCTION(CheckWater)
-	DECLARE_FUNCTION(CheckPosition)
-	DECLARE_FUNCTION(CheckRelPosition)
-	DECLARE_FUNCTION(TryMove)
-	DECLARE_FUNCTION(SlideMove)
-	DECLARE_FUNCTION(BounceWall)
-	DECLARE_FUNCTION(UpdateVelocity)
-	DECLARE_FUNCTION(CheckOnmobj)
-	DECLARE_FUNCTION(LinkToWorld)
-	DECLARE_FUNCTION(UnlinkFromWorld)
-	DECLARE_FUNCTION(CanSee)
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -163,10 +61,10 @@ static FName	*GSpriteNames;
 
 IMPLEMENT_CLASS(VEntity);
 
+int VEntity::FIndex_Destroyed;
 int VEntity::FIndex_Touch;
 int VEntity::FIndex_BlockedByLine;
 int VEntity::FIndex_ApplyFriction;
-int VEntity::FIndex_Remove;
 int VEntity::FIndex_PushLine;
 int VEntity::FIndex_HandleFloorclip;
 int VEntity::FIndex_CrossSpecialLine;
@@ -194,7 +92,7 @@ boolean VEntity::SetState(int state)
 		{
 			// Remove mobj
 			StateNum = 0;
-			eventRemove();
+			Remove();
 			return false;
 		}
 
@@ -286,7 +184,7 @@ static cptrace_t cptrace;
 //
 //==========================================================================
 
-static boolean PIT_CheckThing(VMapObject *Other)
+static boolean PIT_CheckThing(VEntity *Other)
 {
 	guardSlow(PIT_CheckThing);
 	float blockdist;
@@ -528,7 +426,7 @@ struct tmtrace_t
 	line_t *SpecHit[MAXSPECIALCROSS];
 	int NumSpecHit;
 
-	VMapObject *BlockingMobj;
+	VEntity *BlockingMobj;
 };
 
 static tmtrace_t tmtrace;
@@ -539,7 +437,7 @@ static tmtrace_t tmtrace;
 //
 //==========================================================================
 
-static boolean PIT_CheckRelThing(VMapObject *Other)
+static boolean PIT_CheckRelThing(VEntity *Other)
 {
 	guardSlow(PIT_CheckRelThing);
 	float blockdist;
@@ -827,7 +725,7 @@ boolean VEntity::TryMove(TVec newPos)
 	tmtrace.FloatOk = false;
 	if (!check)
 	{
-		VMapObject *O = tmtrace.BlockingMobj;
+		VEntity *O = tmtrace.BlockingMobj;
 		if (!O || O->bIsPlayer || !bIsPlayer || 
 			O->Origin.z + O->Height - Origin.z > MaxStepHeight ||
 			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
@@ -900,12 +798,12 @@ boolean VEntity::TryMove(TVec newPos)
 
 	// the move is ok,
 	// so link the thing into its new position
-	SV_UnlinkFromWorld(this);
+	UnlinkFromWorld();
 
 	oldorg = Origin;
 	Origin = newPos;
 
-	SV_LinkToWorld(this);
+	LinkToWorld();
 	FloorZ = tmtrace.FloorZ;
 	CeilingZ = tmtrace.CeilingZ;
 	Floor = tmtrace.Floor;
@@ -1283,7 +1181,7 @@ static VEntity *onmobj;	//generic global onmobj...used for landing on pods/playe
 //
 //==========================================================================
 
-static boolean PIT_CheckOnmobjZ(VMapObject *Other)
+static boolean PIT_CheckOnmobjZ(VEntity *Other)
 {
 	float blockdist;
 
@@ -1313,7 +1211,7 @@ static boolean PIT_CheckOnmobjZ(VMapObject *Other)
 		// under thing
 		return true;
 	}
-	onmobj = (VEntity *)Other;
+	onmobj = Other;
 	return false;
 }
 
@@ -1407,6 +1305,18 @@ VEntity *VEntity::CheckOnmobj(void)
 		}
 	}
 	return NULL;
+}
+
+//==========================================================================
+//
+//	Entity.Remove
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, Remove)
+{
+	VEntity *Self = (VEntity *)PR_Pop();
+	Self->Remove();
 }
 
 //==========================================================================
@@ -1572,7 +1482,7 @@ IMPLEMENT_FUNCTION(VEntity, CheckOnmobj)
 IMPLEMENT_FUNCTION(VEntity, LinkToWorld)
 {
 	VEntity *Self = (VEntity *)PR_Pop();
-	SV_LinkToWorld(Self);
+	Self->LinkToWorld();
 }
 
 //===========================================================================
@@ -1584,7 +1494,7 @@ IMPLEMENT_FUNCTION(VEntity, LinkToWorld)
 IMPLEMENT_FUNCTION(VEntity, UnlinkFromWorld)
 {
 	VEntity *Self = (VEntity *)PR_Pop();
-	SV_UnlinkFromWorld(Self);
+	Self->UnlinkFromWorld();
 }
 
 //===========================================================================
@@ -1597,7 +1507,7 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 {
 	VEntity *Other = (VEntity *)PR_Pop();
 	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(P_CheckSight(Self, Other));
+	PR_Push(Self->CanSee(Other));
 }
 
 //===========================================================================
@@ -1656,7 +1566,7 @@ IMPLEMENT_FUNCTION(VViewEntity, SetState)
 
 void VEntity::InitFuncIndexes(void)
 {
-	FIndex_Remove = StaticClass()->GetFunctionIndex("Remove");
+	FIndex_Destroyed = StaticClass()->GetFunctionIndex("Destroyed");
 	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
 	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex("BlockedByLine");
 	FIndex_ApplyFriction = StaticClass()->GetFunctionIndex("ApplyFriction");
@@ -1688,9 +1598,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.8  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/07/13 07:48:08  dj_jl
 //	Moved some global functions to Entity class.
 //	

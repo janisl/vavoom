@@ -83,8 +83,8 @@ void CL_Disconnect(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern VMapObject		*sv_mobjs[MAX_MOBJS];
-extern mobj_base_t	sv_mo_base[MAX_MOBJS];
+extern VEntity		**sv_mobjs;
+extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
 extern TMessage		sv_signon;
 
@@ -330,7 +330,7 @@ static void AssertSegment(gameArchiveSegment_t segType)
 //
 //==========================================================================
 
-int GetMobjNum(VMapObject *mobj)
+int GetMobjNum(VEntity *mobj)
 {
 	guard(GetMobjNum);
 	if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
@@ -347,7 +347,7 @@ int GetMobjNum(VMapObject *mobj)
 //
 //==========================================================================
 
-VMapObject* SetMobjPtr(int id)
+VEntity* SetMobjPtr(int id)
 {
 	guard(SetMobjPtr);
 	if (id == MOBJ_NULL)
@@ -741,7 +741,7 @@ void MangleVObject(VObject *Obj, VClass *InClass)
 		switch (InClass->PropertyInfo[i].Type)
 		{
 		case PROPTYPE_Reference:
-			*p = GetMobjNum((VMapObject *)*p);
+			*p = GetMobjNum((VEntity *)*p);
 			break;
 
 		case PROPTYPE_ClassID:
@@ -841,7 +841,7 @@ static void ArchiveThinkers(void)
 		VThinker *th = (VThinker*)Z_Malloc(size);
 		memcpy(th, *It, size);
 
-		VMapObject *mobj = Cast<VMapObject>(th);
+		VEntity *mobj = Cast<VEntity>(th);
 		if (mobj)
 		{
 			if (mobj->bIsPlayer)
@@ -888,18 +888,18 @@ static void UnarchiveThinkers(void)
 	{
 		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
 
-		//  Handle mobjs
-		VMapObject *mobj = Cast<VMapObject>(thinker);
-		if (mobj)
+		//  Handle entities
+		VEntity *Ent = Cast<VEntity>(thinker);
+		if (Ent)
 		{
-			if (mobj->bIsPlayer)
+			if (Ent->bIsPlayer)
 			{
-				mobj->Player = &players[(int)mobj->Player - 1];
-				mobj->Player->MO = mobj;
+				Ent->Player = &players[(int)Ent->Player - 1];
+				Ent->Player->MO = Ent;
 			}
-			mobj->SubSector = NULL;	//	Must mark as not linked
-			SV_LinkToWorld(mobj);
-			sv_mobjs[mobj->NetID] = mobj;
+			Ent->SubSector = NULL;	//	Must mark as not linked
+			Ent->LinkToWorld();
+			sv_mobjs[Ent->NetID] = Ent;
 		}
 	}
 
@@ -1068,7 +1068,7 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	StreamOutLong(ASEG_BASELINE);
 	StreamOutLong(sv_signon.CurSize);
 	StreamOutBuffer(sv_signon.Data, sv_signon.CurSize);
-	StreamOutBuffer(sv_mo_base, sizeof(sv_mo_base));
+	StreamOutBuffer(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
 
 	ArchiveWorld();
 	ArchiveThinkers();
@@ -1122,7 +1122,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	void *tmp = Z_StrMalloc(len);
 	Loader->Serialize(tmp, len);
 	sv_signon.Write(tmp, len);
-	Loader->Serialize(sv_mo_base, sizeof(sv_mo_base));
+	Loader->Serialize(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
 
 	UnarchiveWorld();
 	UnarchiveThinkers();
@@ -1499,9 +1499,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.28  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.27  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

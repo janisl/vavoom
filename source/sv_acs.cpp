@@ -56,7 +56,7 @@ class VACS:public VThinker
 	DECLARE_CLASS(VACS, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VACS)
 
-	VMapObject 	*activator;
+	VEntity 	*Activator;
 	line_t 		*line;
 	int 		side;
 	int 		number;
@@ -328,7 +328,7 @@ static int (*PCodeCmds[])(void) =
 // CODE --------------------------------------------------------------------
 
 static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int side,
-	VMapObject *mo)
+	VEntity *mo)
 {
    	return svpr.Exec("ExecuteLineSpecial",
    		special, (int)args, (int)line, side, (int)mo);
@@ -339,9 +339,9 @@ static line_t *P_FindLine(int lineTag, int *searchPosition)
 	return (line_t*)svpr.Exec("P_FindLine", lineTag, (int)searchPosition);
 }
 
-static VMapObject *P_FindMobjFromTID(int tid, int *searchPosition)
+static VEntity *P_FindMobjFromTID(int tid, int *searchPosition)
 {
-	return (VMapObject*)svpr.Exec("FindMobjFromTID", tid, (int)searchPosition);
+	return (VEntity*)svpr.Exec("FindMobjFromTID", tid, (int)searchPosition);
 }
 
 //==========================================================================
@@ -460,7 +460,7 @@ void P_CheckACSStore(void)
 //
 //==========================================================================
 
-boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
+boolean P_StartACS(int number, int map_num, int *args, VEntity *activator,
 	line_t *line, int side)
 {
 	guard(P_StartACS);
@@ -500,7 +500,7 @@ boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 	script = (VACS *)VObject::StaticSpawnObject(VACS::StaticClass(), NULL, PU_LEVSPEC);
 	script->number = number;
 	script->infoIndex = infoIndex;
-	script->activator = activator;
+	script->Activator = (VEntity *)activator;
 	script->line = line;
 	script->side = side;
 	script->ip = ACSInfo[infoIndex].address;
@@ -681,7 +681,7 @@ IMPLEMENT_FUNCTION(VACS, Archive)
 	acs = (VACS *)PR_Pop();
 	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
 	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
-	acs->activator = (VMapObject *)GetMobjNum(acs->activator);
+	acs->Activator = (VEntity *)GetMobjNum(acs->Activator);
 	unguard;
 }
 
@@ -706,7 +706,7 @@ IMPLEMENT_FUNCTION(VACS, Unarchive)
 	{
 		acs->line = &level.lines[(int)acs->line];
 	}
-	acs->activator = SetMobjPtr((int)acs->activator);
+	acs->Activator = (VEntity *)SetMobjPtr((int)acs->Activator);
 	unguard;
 }
 
@@ -914,7 +914,7 @@ static int CmdLSpec1(void)
 	special = *PCodePtr++;
 	SpecArgs[0] = Pop();
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -926,7 +926,7 @@ static int CmdLSpec2(void)
 	SpecArgs[1] = Pop();
 	SpecArgs[0] = Pop();
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -939,7 +939,7 @@ static int CmdLSpec3(void)
 	SpecArgs[1] = Pop();
 	SpecArgs[0] = Pop();
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -953,7 +953,7 @@ static int CmdLSpec4(void)
 	SpecArgs[1] = Pop();
 	SpecArgs[0] = Pop();
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -968,7 +968,7 @@ static int CmdLSpec5(void)
 	SpecArgs[1] = Pop();
 	SpecArgs[0] = Pop();
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -979,7 +979,7 @@ static int CmdLSpec1Direct(void)
 	special = *PCodePtr++;
 	SpecArgs[0] = *PCodePtr++;
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -991,7 +991,7 @@ static int CmdLSpec2Direct(void)
 	SpecArgs[0] = *PCodePtr++;
 	SpecArgs[1] = *PCodePtr++;
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1004,7 +1004,7 @@ static int CmdLSpec3Direct(void)
 	SpecArgs[1] = *PCodePtr++;
 	SpecArgs[2] = *PCodePtr++;
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1018,7 +1018,7 @@ static int CmdLSpec4Direct(void)
 	SpecArgs[2] = *PCodePtr++;
 	SpecArgs[3] = *PCodePtr++;
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1033,7 +1033,7 @@ static int CmdLSpec5Direct(void)
 	SpecArgs[3] = *PCodePtr++;
 	SpecArgs[4] = *PCodePtr++;
 	P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
-		ACScript->side, ACScript->activator);
+		ACScript->side, ACScript->Activator);
 	return SCRIPT_CONTINUE;
 }
 
@@ -1590,9 +1590,9 @@ static int CmdBeginPrint(void)
 
 static int CmdEndPrint(void)
 {
-	if (ACScript->activator && ACScript->activator->bIsPlayer)
+	if (ACScript->Activator && ACScript->Activator->bIsPlayer)
 	{
-		SV_ClientCenterPrintf(ACScript->activator->Player, "%s\n", PrintBuffer);
+		SV_ClientCenterPrintf(ACScript->Activator->Player, "%s\n", PrintBuffer);
 	}
 	else
 	{
@@ -1710,7 +1710,7 @@ static int CmdThingSound(void)
 	int tid;
 	int sound;
 	int volume;
-	VMapObject *mobj;
+	VEntity *mobj;
 	int searcher;
 
 	volume = Pop();
@@ -1814,9 +1814,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.20  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.19  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
 //	

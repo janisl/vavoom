@@ -232,7 +232,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 
 //==========================================================================
 //
-//	SV_UnlinkFromWorld
+//	VEntity::UnlinkFromWorld
 //
 //	Unlinks a thing from block map and sectors. On each position change,
 // BLOCKMAP and other lookups maintaining lists ot things inside these
@@ -240,109 +240,103 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 //
 //==========================================================================
 
-void SV_UnlinkFromWorld(VMapObject* thing)
+void VEntity::UnlinkFromWorld(void)
 {
 	guard(SV_UnlinkFromWorld);
-    int		blockx;
-    int		blocky;
-
-	if (!thing->SubSector)
+	if (!SubSector)
 	{
 		return;
 	}
 
-    if (!thing->bNoBlockmap)
+    if (!bNoBlockmap)
     {
-		// inert things don't need to be in blockmap
-		// unlink from block map
-		if (thing->BlockMapNext)
-		    thing->BlockMapNext->BlockMapPrev = thing->BlockMapPrev;
+		//	Inert things don't need to be in blockmap
+		//	Unlink from block map
+		if (BlockMapNext)
+		    BlockMapNext->BlockMapPrev = BlockMapPrev;
 	
-		if (thing->BlockMapPrev)
-		    thing->BlockMapPrev->BlockMapNext = thing->BlockMapNext;
+		if (BlockMapPrev)
+		    BlockMapPrev->BlockMapNext = BlockMapNext;
 		else
 		{
-		    blockx = MapBlock(thing->Origin.x - level.bmaporgx);
-		    blocky = MapBlock(thing->Origin.y - level.bmaporgy);
+		    int blockx = MapBlock(Origin.x - level.bmaporgx);
+		    int blocky = MapBlock(Origin.y - level.bmaporgy);
 
 		    if (blockx >= 0 && blockx < level.bmapwidth &&
 		    	blocky >= 0 && blocky < level.bmapheight)
 		    {
 				level.blocklinks[blocky * level.bmapwidth + blockx] =
-					thing->BlockMapNext;
+					BlockMapNext;
 		    }
 		}
     }
-	thing->SubSector = NULL;
-	thing->Sector = NULL;
+	SubSector = NULL;
+	Sector = NULL;
 	unguard;
 }
 
 //==========================================================================
 //
-//	SV_LinkToWorld
+//	VEntity::LinkToWorld
 //
 //	Links a thing into both a block and a subsector based on it's x y.
 //	Sets thing->subsector properly
 //
 //==========================================================================
 
-void SV_LinkToWorld(VMapObject* thing)
+void VEntity::LinkToWorld(void)
 {
 	guard(SV_LinkToWorld);
     subsector_t*	ss;
 	sec_region_t*	reg;
 	sec_region_t*	r;
-    int				blockx;
-    int				blocky;
-    VMapObject**		link;
 
-	if (thing->SubSector)
+	if (SubSector)
 	{
-		SV_UnlinkFromWorld(thing);
+		UnlinkFromWorld();
 	}
 
     // link into subsector
-	ss = SV_PointInSubsector(thing->Origin.x, thing->Origin.y);
-	reg = SV_FindThingGap(ss->sector->botregion, thing->Origin,
-		thing->Origin.z, thing->Origin.z + thing->Height);
-	thing->SubSector = ss;
-	thing->Sector = ss->sector;
+	ss = SV_PointInSubsector(Origin.x, Origin.y);
+	reg = SV_FindThingGap(ss->sector->botregion, Origin,
+		Origin.z, Origin.z + Height);
+	SubSector = ss;
+	Sector = ss->sector;
 
 	r = reg;
 	while (r->floor->flags)
 		r = r->prev;
-	thing->Floor = r->floor;
-	thing->FloorZ = r->floor->GetPointZ(thing->Origin);
+	Floor = r->floor;
+	FloorZ = r->floor->GetPointZ(Origin);
 
 	r = reg;
 	while (r->ceiling->flags)
 		r = r->next;
-	thing->Ceiling = r->ceiling;
-	thing->CeilingZ = r->ceiling->GetPointZ(thing->Origin);
+	Ceiling = r->ceiling;
+	CeilingZ = r->ceiling->GetPointZ(Origin);
 
     // link into blockmap
-    if (!thing->bNoBlockmap)
+    if (!bNoBlockmap)
     {
 		// inert things don't need to be in blockmap
-		blockx = MapBlock(thing->Origin.x - level.bmaporgx);
-		blocky = MapBlock(thing->Origin.y - level.bmaporgy);
+		int blockx = MapBlock(Origin.x - level.bmaporgx);
+		int blocky = MapBlock(Origin.y - level.bmaporgy);
 
 		if (blockx >= 0 && blockx < level.bmapwidth &&
 			blocky >= 0 && blocky < level.bmapheight)
 		{
-		    link = &level.blocklinks[blocky * level.bmapwidth + blockx];
-	    	thing->BlockMapPrev = NULL;
-		    thing->BlockMapNext = *link;
+		    VEntity** link = &level.blocklinks[blocky * level.bmapwidth + blockx];
+	    	BlockMapPrev = NULL;
+		    BlockMapNext = *link;
 		    if (*link)
-				(*link)->BlockMapPrev = thing;
+				(*link)->BlockMapPrev = this;
 
-		    *link = thing;
+		    *link = this;
 		}
 		else
 		{
 		    // thing is off the map
-		    thing->BlockMapNext = thing->BlockMapPrev = NULL;
+		    BlockMapNext = BlockMapPrev = NULL;
 		}
     }
 	unguard;
@@ -440,24 +434,21 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 //
 //==========================================================================
 
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 	FFunction *prfunc)
 {
 	guard(SV_BlockThingsIterator);
-    VMapObject*		mobj;
-	
     if (x < 0 || y < 0 || x >= level.bmapwidth || y >= level.bmapheight)
     {
 		return true;
     }
     
-
-    for (mobj = level.blocklinks[y * level.bmapwidth + x]; mobj;
-		mobj = mobj->BlockMapNext)
+    for (VEntity *Ent = level.blocklinks[y * level.bmapwidth + x]; Ent;
+		Ent = Ent->BlockMapNext)
     {
-		if (func && !func(mobj))
+		if (func && !func(Ent))
 		    return false;
-		if (prfunc && !svpr.Exec(prfunc, (int)mobj))
+		if (prfunc && !svpr.Exec(prfunc, (int)Ent))
 		    return false;
     }
     return true;
@@ -554,7 +545,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 //
 //==========================================================================
 
-static boolean PIT_AddThingIntercepts(VMapObject* thing)
+static boolean PIT_AddThingIntercepts(VEntity* thing)
 {
 	guard(PIT_AddThingIntercepts);
 	float dot = DotProduct(thing->Origin, trace_plane.normal) - trace_plane.dist;
@@ -1018,9 +1009,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/08/28 16:41:10  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.16  2002/08/24 14:49:43  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.15  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

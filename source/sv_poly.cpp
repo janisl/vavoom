@@ -42,7 +42,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po);
+static void ThrustMobj(VEntity *mobj, seg_t *seg, polyobj_t *po);
 static void UnLinkPolyobj(polyobj_t *po);
 static void LinkPolyobj(polyobj_t *po);
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po);
@@ -118,7 +118,7 @@ int PO_GetPolyobjMirror(int poly)
 //
 //==========================================================================
 
-static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po)
+static void ThrustMobj(VEntity *mobj, seg_t *seg, polyobj_t *po)
 {
 	svpr.Exec("PolyThrustMobj", (int)mobj, PassFloat(seg->normal.x),
 		PassFloat(seg->normal.y), PassFloat(seg->normal.z), (int)po);
@@ -454,7 +454,7 @@ static void LinkPolyobj(polyobj_t *po)
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 {
 	guard(CheckMobjBlocking);
-	VMapObject *mobj;
+	VEntity *mobj;
 	int i, j;
 	int left, right, top, bottom;
 	float	tmbbox[4];
@@ -895,9 +895,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.15  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
-//
+//	
 //	Revision 1.14  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

@@ -67,7 +67,6 @@ static void G_DoCompleted(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VMapObject)
 IMPLEMENT_CLASS(VViewEntity)
 
 TCvarI			real_time("real_time", "1");
@@ -90,9 +89,9 @@ boolean         paused;
 boolean         deathmatch = false;   	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast
 
-VMapObject			*sv_mobjs[MAX_MOBJS];
-mobj_base_t		sv_mo_base[MAX_MOBJS];
-double			sv_mo_free_time[MAX_MOBJS];
+VEntity			**sv_mobjs;
+mobj_base_t		*sv_mo_base;
+double			*sv_mo_free_time;
 
 byte		sv_reliable_buf[MAX_MSGLEN];
 TMessage	sv_reliable(sv_reliable_buf, MAX_MSGLEN);
@@ -157,6 +156,10 @@ void SV_Init(void)
 	guard(SV_Init);
 	svs.max_clients = 1;
 
+	sv_mobjs = Z_CNew<VEntity *>(GMaxEntities);
+	sv_mo_base = Z_CNew<mobj_base_t>(GMaxEntities);
+	sv_mo_free_time = Z_CNew<double>(GMaxEntities);
+
     svpr.Load("svprogs");
 
     svpr.SetGlobal("players", (int)players);
@@ -189,9 +192,9 @@ void SV_Clear(void)
 	SV_DestroyAllThinkers();
 	memset(&sv, 0, sizeof(sv));
 	memset(&level, 0, sizeof(level));
-	memset(sv_mobjs, 0, sizeof(sv_mobjs));
-	memset(sv_mo_base, 0, sizeof(sv_mo_base));
-	memset(sv_mo_free_time, 0, sizeof(sv_mo_free_time));
+	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
+	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
+	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 	sv_signon.Clear();
 	sv_reliable.Clear();
 	sv_datagram.Clear();
@@ -219,41 +222,21 @@ void SV_ClearDatagram(void)
 
 //==========================================================================
 //
-//	VMapObject::VMapObject
-//
-//==========================================================================
-
-VMapObject::VMapObject(void)
-{
-}
-
-//==========================================================================
-//
-//	VMapObject::~VMapObject
-//
-//==========================================================================
-
-VMapObject::~VMapObject(void)
-{
-}
-
-//==========================================================================
-//
 //	SV_SpawnMobj
 //
 //==========================================================================
 
-VMapObject *SV_SpawnMobj(VClass *Class)
+VEntity *SV_SpawnMobj(VClass *Class)
 {
 	guard(SV_SpawnMobj);
-	int			i;
-    VMapObject*		mobj;
-
-    mobj = (VMapObject*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
+	VEntity *Ent;
+	int i;
+	
+	Ent = (VEntity*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
-	for (i = svs.max_clients + 1; i < MAX_MOBJS; i++)
+	for (i = svs.max_clients + 1; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i] && (sv_mo_free_time[i] < 1.0 ||
 			level.time - sv_mo_free_time[i] > 2.0))
@@ -261,15 +244,13 @@ VMapObject *SV_SpawnMobj(VClass *Class)
 			break;
 		}
 	}
-	if (i == MAX_MOBJS)
+	if (i == GMaxEntities)
 	{
 		Sys_Error("SV_SpawnMobj: Overflow");
 	}
-
-	sv_mobjs[i] = mobj;
-	mobj->NetID = i;
-
-	return mobj;
+	sv_mobjs[i] = Ent;
+	Ent->NetID = i;
+	return Ent;
 	unguard;
 }
 
@@ -279,7 +260,7 @@ VMapObject *SV_SpawnMobj(VClass *Class)
 //
 //==========================================================================
 
-int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
+int	SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 {
 	guard(SV_GetMobjBits);
 	int		bits = 0;
@@ -326,7 +307,7 @@ int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 //
 //==========================================================================
 
-void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
+void SV_WriteMobj(int bits, VEntity &mobj, TMessage &msg)
 {
 	guard(SV_WriteMobj);
 	if (bits & MOB_X)
@@ -364,32 +345,34 @@ void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 
 //==========================================================================
 //
-//	SV_RemoveMobj
+//	VEntity::Destroy
 //
 //==========================================================================
 
-void SV_RemoveMobj(VMapObject *mobj)
+void VEntity::Destroy(void)
 {
-	guard(SV_RemoveMobj);
-	if (mobj->GetFlags() & OF_Destroyed)
+	guard(VEntity::Destroy);
+	if (GetFlags() & OF_Destroyed)
 	{
-		GCon->Log(NAME_Dev, "Mobj already destroyed");
+		GCon->Log(NAME_Dev, "Entity already destroyed");
 		return;
 	}
 
-	if (sv_mobjs[mobj->NetID] != mobj)
-		Sys_Error("Invalid mobj num %d", mobj->NetID);
+	if (sv_mobjs[NetID] != this)
+		Sys_Error("Invalid entity num %d", NetID);
+
+	eventDestroyed();
 
 	// unlink from sector and block lists
-	SV_UnlinkFromWorld(mobj);
+	UnlinkFromWorld();
 
 	// stop any playing sound
-	SV_StopSound(mobj, 0);
-    
-	sv_mobjs[mobj->NetID] = NULL;
-	mobj->Destroy();
+	SV_StopSound(this, 0);
 
-	sv_mo_free_time[mobj->NetID] = level.time;
+	sv_mobjs[NetID] = NULL;
+	sv_mo_free_time[NetID] = level.time;
+
+	Super::Destroy();
 	unguard;
 }
 
@@ -415,7 +398,7 @@ void SV_CreateBaseline(void)
 		}
 	}
 
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i])
 			continue;
@@ -428,7 +411,7 @@ void SV_CreateBaseline(void)
 			return;
 		}
 
-		VMapObject &mobj = *sv_mobjs[i];
+		VEntity &mobj = *sv_mobjs[i];
 		mobj_base_t &base = sv_mo_base[i];
 
 		base.Origin.x = mobj.Origin.x;
@@ -471,7 +454,7 @@ void SV_CreateBaseline(void)
 //
 //==========================================================================
 
-int GetOriginNum(const VMapObject *mobj)
+int GetOriginNum(const VEntity *mobj)
 {
 	if (!mobj)
 	{
@@ -535,7 +518,7 @@ void SV_StopSound(int origin_id, int channel)
 //
 //==========================================================================
 
-void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
+void SV_StartSound(const VEntity * origin, int sound_id, int channel,
 	int volume)
 {
 	guard(SV_StartSound);
@@ -557,7 +540,7 @@ void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 //
 //==========================================================================
 
-void SV_StopSound(const VMapObject *origin, int channel)
+void SV_StopSound(const VEntity *origin, int channel)
 {
 	guard(SV_StopSound);
 	SV_StopSound(GetOriginNum(origin), channel);
@@ -577,7 +560,7 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 	if (sector)
 	{
 		SV_StartSound(sector->soundorg,
-			(sector - level.sectors) + MAX_MOBJS,
+			(sector - level.sectors) + GMaxEntities,
 			sound_id, channel, volume);
 	}
 	else
@@ -596,7 +579,7 @@ void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
 void SV_SectorStopSound(const sector_t *sector, int channel)
 {
 	guard(SV_SectorStopSound);
-	SV_StopSound((sector - level.sectors) + MAX_MOBJS, channel);
+	SV_StopSound((sector - level.sectors) + GMaxEntities, channel);
 	unguard;
 }
 
@@ -644,7 +627,7 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 	if (sector)
 	{
 		SV_StartSequence(sector->soundorg,
-			(sector - level.sectors) + MAX_MOBJS, name);
+			(sector - level.sectors) + GMaxEntities, name);
 	}
 	else
 	{
@@ -662,7 +645,7 @@ void SV_SectorStartSequence(const sector_t *sector, const char *name)
 void SV_SectorStopSequence(const sector_t *sector)
 {
 	guard(SV_SectorStopSequence);
-	SV_StopSequence((sector - level.sectors) + MAX_MOBJS);
+	SV_StopSequence((sector - level.sectors) + GMaxEntities);
 	unguard;
 }
 
@@ -676,7 +659,7 @@ void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 {
 	guard(SV_PolyobjStartSequence);
 	SV_StartSequence(poly->startSpot,
-		(poly - level.polyobjs) + MAX_MOBJS + level.numsectors, name);
+		(poly - level.polyobjs) + GMaxEntities + level.numsectors, name);
 	unguard;
 }
 
@@ -689,7 +672,7 @@ void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
 void SV_PolyobjStopSequence(const polyobj_t *poly)
 {
 	guard(SV_PolyobjStopSequence);
-	SV_StopSequence((poly - level.polyobjs) + MAX_MOBJS + level.numsectors);
+	SV_StopSequence((poly - level.polyobjs) + GMaxEntities + level.numsectors);
 	unguard;
 }
 
@@ -1034,7 +1017,7 @@ void SV_UpdateLevel(TMessage &msg)
   	}
 
 	//	First update players
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i])
 			continue;
@@ -1052,9 +1035,9 @@ void SV_UpdateLevel(TMessage &msg)
 
 	//	Then update non-player mobjs in sight
 	int starti = sv_player->MobjUpdateStart;
-	for (i = 0; i < MAX_MOBJS; i++)
+	for (i = 0; i < GMaxEntities; i++)
 	{
-		int index = (i + starti) % MAX_MOBJS;
+		int index = (i + starti) % GMaxEntities;
 		if (!sv_mobjs[index])
 			continue;
 		if (sv_mobjs[index]->bHidden)
@@ -2854,9 +2837,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2002/08/28 16:41:09  dj_jl
+//	Merged VMapObject with VEntity, some natives.
+//
 //	Revision 1.48  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
-//
+//	
 //	Revision 1.47  2002/08/05 17:21:00  dj_jl
 //	Made sound sequences reliable.
 //	
