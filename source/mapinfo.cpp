@@ -71,6 +71,8 @@ struct FMapSongInfo
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+char *P_TranslateMap(int map);
+
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -288,6 +290,14 @@ void InitMapInfo(void)
 		}
 	}
 	SC_Close();
+
+	for (int i = 1; i < MapCount; i++)
+	{
+		if (MapInfo[i].nextMap[0] >= '0' && MapInfo[i].nextMap[0] <= '9')
+		{
+			strcpy(MapInfo[i].nextMap, P_TranslateMap(atoi(MapInfo[i].nextMap)));
+		}
+	}
 }
 
 //==========================================================================
@@ -499,9 +509,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/03/12 19:22:22  dj_jl
+//	Fixed next maps in Hexen.
+//
 //	Revision 1.7  2002/03/02 17:31:28  dj_jl
 //	Added P_GetMapLumpName for Hexen net menu.
-//
+//	
 //	Revision 1.6  2002/02/26 17:53:08  dj_jl
 //	Fixes for menus.
 //	
