@@ -726,11 +726,11 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 
 //==========================================================================
 //
-//  misc_static_light
+//	StaticLightSource
 //
 //==========================================================================
 
-class misc_static_light:Actor
+class StaticLightSource:Actor
 	__mobjinfo__(1502)
 {
 	void OnMapSpawn(mthing_t * mthing)
@@ -748,11 +748,11 @@ class misc_static_light:Actor
 
 //==========================================================================
 //
-//  misc_static_rgb_light
+//	StaticRGBLightSource
 //
 //==========================================================================
 
-class misc_static_rgb_light:Actor
+class StaticRGBLightSource:Actor
 	__mobjinfo__(1503)
 {
 	void OnMapSpawn(mthing_t * mthing)
@@ -772,6 +772,9 @@ class misc_static_rgb_light:Actor
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/06/29 15:55:42  dj_jl
+//  Fixed static lights, beautification.
+//
 //  Revision 1.13  2002/04/11 16:48:10  dj_jl
 //  New base classes for sector thinkers, Tick function.
 //
