@@ -217,7 +217,7 @@ static void CL_ParseUpdateMobj(void)
 	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i], i);
 
 	//	Marking mobj in use
-	cl_mobjs[i].in_use = true;
+	cl_mobjs[i].in_use = 2;
 
 	if (bits & MOB_WEAPON && i < cl.maxclients + 1 && clPlayerInfo[i - 1].weapon_model)
 	{
@@ -256,6 +256,10 @@ static void CL_ParseUpdateMobj(void)
 		VectorAngles(p[1] - p[0], wangles);
 		wpent.angles.yaw += wangles.yaw;
 		wpent.angles.pitch += wangles.pitch;
+	}
+	else if (bits & MOB_WEAPON)
+	{
+		net_msg.ReadShort();
 	}
 }
 
@@ -474,12 +478,18 @@ static void CL_ParseTime()
 
 	for (i = 0; i < MAX_MOBJS; i++)
 	{
-		cl_mobjs[i].in_use = false;
+		if (cl_mobjs[i].in_use)
+		{
+			cl_mobjs[i].in_use--;
+		}
 	}
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		cl_weapon_mobjs[i].in_use = false;
+		if (cl_weapon_mobjs[i].in_use)
+		{
+			cl_weapon_mobjs[i].in_use--;
+		}
 	}
 
 	net_msg >> new_time;
@@ -1031,9 +1041,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:24:02  dj_jl
+//	Improved object update on packet overflows
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
