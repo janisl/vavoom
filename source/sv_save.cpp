@@ -52,7 +52,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.16"
+#define SAVE_VERSION_TEXT			"Version 1.16.1"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -982,6 +982,7 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	StreamOutLong(ASEG_MAP_HEADER);
 
 	// Write the level timer
+	StreamOutFloat(level.time);
 	StreamOutLong(level.tictime);
 
 	//	Write totals, because when thinkers are not spawned, they are not
@@ -1050,6 +1051,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	AssertSegment(ASEG_MAP_HEADER);
 
 	// Read the level timer
+	level.time = GET_FLOAT;
 	level.tictime = GET_LONG;
 
 	level.totalkills = GET_LONG;
@@ -1482,9 +1484,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2005/01/24 12:56:58  dj_jl
+//	Saving of level time.
+//
 //	Revision 1.37  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.36  2004/12/22 07:50:51  dj_jl
 //	Fixed loading of ACS arrays.
 //	
