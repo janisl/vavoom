@@ -34,14 +34,14 @@ int GetInitialValue(void)
 	w = GetCvar("screen_width");
 	h = GetCvar("screen_height");
 
-	for (mi = 0; mi < 8; mi++)
+	for (mi = 0; mi < 9; mi++)
 	{
 		if (modes[mi].width == w && modes[mi].height == h)
 		{
 			break;
 		}
 	}
-	if (mi == 8)
+	if (mi == 9)
 	{
 		mi = 0;
 	}
@@ -69,11 +69,15 @@ defaultproperties
 	EnumNames[5] = "1024x768";
 	EnumNames[6] = "1152x864";
 	EnumNames[7] = "1280x1024";
+	EnumNames[8] = "1600x1200";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/09/24 16:37:32  dj_jl
+//  Increase max video mode
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

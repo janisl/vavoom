@@ -66,7 +66,7 @@ int pic_M_LSRGHT;
 MenuControlKey CurrentCtl;
 int ControlColumn;	// menu column for controls
 
-mode_t modes[8] = {
+mode_t modes[9] = {
 	{320, 200},
 	{320, 240},
 	{640, 400},
@@ -74,7 +74,8 @@ mode_t modes[8] = {
 	{800, 600},
 	{1024, 768},
 	{1152, 864},
-	{1280, 1024}
+	{1280, 1024},
+	{1600, 1200}
 };
 int depths[4] = { 8, 16, 24, 32 };
 
@@ -323,6 +324,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2003/09/24 16:38:58  dj_jl
+//  Increase max video mode
+//
 //  Revision 1.27  2003/03/08 12:13:52  dj_jl
 //  Menu code cleanup.
 //

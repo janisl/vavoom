@@ -28,8 +28,8 @@
 // MACROS ------------------------------------------------------------------
 
 // Maximal resolution. Needed for some arrays
-#define MAXSCREENWIDTH			1280
-#define MAXSCREENHEIGHT			1024
+#define MAXSCREENWIDTH			1600
+#define MAXSCREENHEIGHT			1200
 
 // TYPES -------------------------------------------------------------------
 
@@ -49,9 +49,12 @@ extern int		PixelBytes;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2003/09/24 16:41:27  dj_jl
+//	Increase max video mode
+//
 //	Revision 1.5  2002/08/28 16:42:45  dj_jl
 //	Moved PixelAspect to the rendering modules.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
