@@ -1,0 +1,1098 @@
+Patch File for DeHackEd v2.3
+
+# Note: Use the pound sign ('#') to start comment lines.
+
+Doom version = 19
+Patch format = 5
+
+
+Thing 2 (Trooper)
+Initial frame = 442
+Hit points = 180
+First moving frame = 444
+Alert sound = 39
+Attack sound = 0
+Injury frame = 455
+Pain chance = 180
+Close attack frame = 452
+Far attack frame = 0
+Death frame = 457
+Exploding frame = 462
+Death sound = 62
+Speed = 10
+Width = 1048576
+Mass = 20
+Missile damage = 30
+Action sound = 76
+
+Thing 3 (Sargeant)
+Initial frame = 475
+Hit points = 130
+First moving frame = 477
+Alert sound = 0
+Injury frame = 488
+Pain chance = 180
+Pain sound = 0
+Close attack frame = 485
+Far attack frame = 0
+Death frame = 462
+Exploding frame = 0
+Death sound = 0
+Speed = 10
+Width = 1966080
+Mass = 400
+Action sound = 0
+
+Thing 12 (Imp)
+Death sound = 64
+Missile damage = 30
+
+Thing 13 (Demon)
+Death sound = 67
+
+Thing 14 (Spectre)
+Hit points = 130
+Death frame = 462
+Bits = 4194310
+
+Thing 15 (Cacodemon)
+Hit points = 60
+First moving frame = 507
+Alert sound = 0
+Injury frame = 0
+Pain chance = 0
+Pain sound = 0
+Far attack frame = 507
+Death frame = 194
+Speed = 1
+Width = 1048576
+Height = 2359296
+Mass = 60
+Bits = 4
+
+Thing 16 (Baron of Hell)
+Hit points = 1500
+Pain chance = 100
+Height = 6815744
+Mass = 1500
+
+Thing 17 (Baron Fireball)
+Alert sound = 0
+
+Thing 19 (Lost Soul)
+Hit points = 50
+Death sound = 31
+Speed = 10
+Height = 1966080
+Bits = 4194310
+
+Thing 20 (Spiderdemon)
+Initial frame = 527
+Hit points = 1500
+First moving frame = 529
+Alert sound = 43
+Attack sound = 0
+Injury frame = 540
+Pain chance = 150
+Close attack frame = 537
+Far attack frame = 0
+Death frame = 542
+Death sound = 67
+Width = 2097152
+Height = 6815744
+Mass = 1500
+
+Thing 31 (Barrel)
+Death frame = 228
+Speed = 1
+
+Thing 32 (Imp Fireball)
+Initial frame = 522
+Death frame = 524
+
+Thing 33 (Caco Fireball)
+Initial frame = 585
+Hit points = 50
+First moving frame = 587
+Alert sound = 0
+Attack sound = 51
+Injury frame = 593
+Pain chance = 256
+Pain sound = 26
+Far attack frame = 589
+Death frame = 595
+Death sound = 31
+Speed = 10
+Width = 1048576
+Height = 1638400
+Mass = 50
+Missile damage = 3
+Action sound = 77
+Bits = 4194310
+
+Thing 34 (Rocket (in air))
+Width = 589824
+
+Thing 35 (Plasma Bullet)
+Width = 262144
+Height = 262144
+
+Thing 40 (Teleport Flash)
+Bits = 536
+
+Thing 42 (Teleport Exit)
+Height = 19660800
+Bits = 798
+
+Thing 45 (Blue Armor)
+Bits = 9
+
+Thing 84 (Short Gr. Pillar)
+Hit points = 60
+Death frame = 194
+Death sound = 65
+Height = 3145728
+Bits = 6
+
+Thing 85 (Tall Red Pillar)
+Width = 524288
+Height = 4718592
+
+Thing 86 (Short Red Pillar)
+Width = 524288
+Height = 4718592
+
+Thing 89 (Eye in Symbol)
+Initial frame = 926
+Width = 458752
+Height = 4259840
+
+Thing 90 (Flaming Skulls)
+Initial frame = 899
+Hit points = 60
+Death frame = 194
+Death sound = 65
+Height = 2621440
+Mass = 300
+Bits = 6
+
+Thing 91 (Grey Tree)
+Hit points = 999999999
+Width = 10158080
+Height = 7864320
+Mass = 999999999
+Bits = 524294
+
+Thing 92 (Tall Blue Torch)
+Initial frame = 601
+Width = 786432
+Height = 12582912
+
+Thing 93 (Tall Green Torch)
+Initial frame = 905
+Bits = 768
+
+Thing 94 (Tall Red Torch)
+Initial frame = 803
+Bits = 768
+
+Thing 95 (Small Blue Torch)
+Width = 4980736
+Height = 6815744
+Bits = 0
+
+Thing 96 (Small Gr. Torch)
+Initial frame = 912
+Hit points = 1
+Death frame = 942
+Exploding frame = 942
+Width = 393216
+Height = 4980736
+Mass = 99999999
+Bits = 524292
+
+Thing 97 (Small Red Torch)
+Width = 655360
+Bits = 0
+
+Thing 98 (Brown Stub)
+Hit points = 999999999
+Width = 9502720
+Height = 6815744
+Mass = 999999999
+Bits = 524294
+
+Thing 100 (Candle)
+Initial frame = 887
+
+Thing 101 (Candelabra)
+Initial frame = 700
+Hit points = 999999999
+Width = 10813440
+Height = 10092544
+Mass = 999999999
+Bits = 524294
+
+Thing 102 (Swaying Body)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 9
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 103 (Hanging Arms Out)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 15
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 104 (One-legged Body)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 42
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 105 (Hanging Torso)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 44
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 106 (Hanging Leg)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 45
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 107 (Hanging Arms Out2)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 68
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 108 (Hanging Torso 2)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 69
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 109 (One-legged Body 2)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 36
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 110 (Hanging Leg 2)
+Initial frame = 674
+First moving frame = 676
+Bits = 8
+
+Thing 111 (Swaying Body 2)
+Height = 6815744
+Bits = 0
+
+Thing 112 (Dead Cacodemon)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 36
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 116 (Dead Lost Soul)
+Initial frame = 698
+Width = 2097152
+Height = 6815744
+Bits = 2
+
+Thing 117 (Dead Imp)
+Initial frame = 698
+Width = 2097152
+Height = 6815744
+Bits = 2
+
+Thing 119 (Guts and Bones)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 37
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 120 (Guts and Bones 2)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 38
+Pain chance = 200
+Speed = 1
+Height = 3670016
+Bits = 8
+
+Thing 121 (Skewered Heads)
+Width = 786432
+Height = 1966080
+Bits = 768
+
+Thing 123 (Pole with Skull)
+Hit points = 100
+Height = 6815744
+Mass = 100000
+
+Thing 124 (Pile of Skulls)
+Initial frame = 601
+First moving frame = 603
+Bits = 8
+
+Thing 125 (Impaled Body)
+Initial frame = 442
+Hit points = 1
+First moving frame = 444
+Alert sound = 85
+Pain chance = 200
+Speed = 1
+Width = 1310720
+Height = 3670016
+Bits = 8
+
+Thing 127 (Large Tree)
+Hit points = 150
+Death frame = 510
+Width = 1048576
+Height = 4980736
+Mass = -99999999
+Bits = 524294
+
+Frame 67
+Duration = 14
+
+Frame 68
+Duration = 14
+Next frame = 89
+
+Frame 69
+Duration = 3
+
+Frame 70
+Duration = 3
+
+Frame 71
+Sprite number = 14
+Sprite subnumber = 1
+Duration = 6
+
+Frame 72
+Duration = 6
+
+Frame 73
+Sprite subnumber = 0
+Duration = 6
+Next frame = 83
+
+Frame 81
+Sprite subnumber = 2
+Duration = 60
+
+Frame 82
+Sprite number = 11
+Sprite subnumber = 3
+Duration = 10
+Next frame = 67
+
+Frame 83
+Sprite number = 11
+Sprite subnumber = 1
+Duration = 6
+Next frame = 71
+
+Frame 84
+Sprite subnumber = 2
+Duration = 0
+Next frame = 81
+
+Frame 86
+Sprite number = 11
+Sprite subnumber = 3
+Next frame = 67
+
+Frame 88
+Sprite number = 11
+Sprite subnumber = 3
+Duration = 14
+Next frame = 67
+
+Frame 89
+Sprite number = 14
+Sprite subnumber = 0
+Duration = 14
+Next frame = 88
+
+Frame 184
+Duration = 5
+
+Frame 185
+Duration = 5
+
+Frame 186
+Duration = 5
+Next frame = 587
+
+Frame 197
+Duration = -1
+Next frame = 0
+
+Frame 200
+Duration = -1
+Next frame = 0
+
+Frame 218
+Sprite subnumber = 5
+
+Frame 463
+Next frame = 811
+
+Frame 476
+Sprite subnumber = 0
+
+Frame 504
+Duration = 6
+
+Frame 505
+Duration = 6
+
+Frame 506
+Duration = 0
+Next frame = 908
+
+Frame 507
+Duration = 7
+
+Frame 508
+Duration = 7
+Next frame = 621
+
+Frame 510
+Duration = 5
+
+Frame 511
+Duration = 5
+
+Frame 512
+Duration = 5
+
+Frame 513
+Duration = 5
+
+Frame 514
+Duration = 5
+
+Frame 515
+Duration = 5
+Next frame = 904
+
+Frame 522
+Sprite subnumber = 0
+
+Frame 523
+Sprite subnumber = 1
+
+Frame 524
+Sprite subnumber = 2
+
+Frame 525
+Sprite subnumber = 3
+
+Frame 526
+Sprite subnumber = 4
+
+Frame 533
+Sprite subnumber = 0
+
+Frame 534
+Sprite subnumber = 0
+
+Frame 537
+Sprite number = 29
+Sprite subnumber = 0
+
+Frame 538
+Sprite subnumber = 0
+
+Frame 539
+Sprite number = 29
+Sprite subnumber = 1
+
+Frame 540
+Sprite number = 29
+Sprite subnumber = 2
+
+Frame 541
+Sprite number = 29
+Sprite subnumber = 2
+
+Frame 542
+Duration = 16
+Next frame = 544
+
+Frame 547
+Duration = 12
+
+Frame 585
+Sprite number = 30
+Sprite subnumber = 0
+
+Frame 586
+Sprite number = 30
+Sprite subnumber = 1
+
+Frame 587
+Sprite number = 30
+Sprite subnumber = 0
+
+Frame 588
+Sprite number = 30
+Sprite subnumber = 1
+
+Frame 589
+Sprite number = 30
+Sprite subnumber = 2
+
+Frame 590
+Sprite number = 30
+Sprite subnumber = 3
+
+Frame 591
+Sprite number = 30
+Sprite subnumber = 2
+
+Frame 592
+Sprite number = 30
+Sprite subnumber = 3
+
+Frame 593
+Sprite number = 30
+Sprite subnumber = 4
+
+Frame 594
+Sprite number = 30
+Sprite subnumber = 1
+
+Frame 595
+Sprite subnumber = 5
+Duration = 5
+
+Frame 596
+Sprite subnumber = 6
+Duration = 5
+
+Frame 597
+Sprite subnumber = 7
+Duration = 5
+
+Frame 598
+Sprite subnumber = 8
+Duration = 5
+
+Frame 599
+Duration = 5
+
+Frame 600
+Duration = 5
+Next frame = 201
+
+Frame 601
+Duration = -1
+Next frame = 601
+
+Frame 602
+Duration = 1
+Next frame = 602
+
+Frame 603
+Duration = 6
+
+Frame 604
+Duration = 5
+
+Frame 605
+Duration = 5
+
+Frame 606
+Duration = 5
+Next frame = 603
+
+Frame 607
+Duration = 7
+
+Frame 608
+Duration = 7
+
+Frame 609
+Duration = 7
+
+Frame 610
+Duration = 7
+
+Frame 611
+Duration = 7
+
+Frame 612
+Duration = 7
+
+Frame 613
+Duration = 7
+
+Frame 614
+Duration = 7
+
+Frame 615
+Sprite subnumber = 0
+
+Frame 616
+Sprite subnumber = 6
+
+Frame 617
+Sprite subnumber = 7
+
+Frame 618
+Sprite subnumber = 7
+
+Frame 621
+Duration = 7
+
+Frame 622
+Duration = 7
+
+Frame 623
+Duration = 7
+
+Frame 624
+Duration = 60
+
+Frame 625
+Duration = 7
+
+Frame 626
+Duration = 7
+
+Frame 627
+Duration = 7
+
+Frame 628
+Duration = 7
+Next frame = 504
+
+Frame 629
+Duration = 7
+Next frame = 504
+
+Frame 630
+Duration = 4
+Next frame = 630
+
+Frame 676
+Duration = 7
+
+Frame 677
+Duration = 7
+
+Frame 678
+Duration = 7
+
+Frame 679
+Duration = 7
+
+Frame 680
+Duration = 7
+
+Frame 681
+Duration = 6
+Next frame = 676
+
+Frame 682
+Duration = 1
+
+Frame 683
+Duration = 6
+
+Frame 685
+Duration = 0
+
+Frame 686
+Duration = 0
+
+Frame 687
+Duration = 0
+
+Frame 688
+Duration = 0
+
+Frame 689
+Duration = 0
+
+Frame 698
+Duration = -1
+Next frame = 0
+
+Frame 802
+Duration = -1
+Next frame = 0
+
+Frame 803
+Duration = -1
+Next frame = 0
+
+Frame 811
+Sprite subnumber = 3
+Duration = 5
+Next frame = 465
+
+Frame 842
+Sprite subnumber = 0
+
+Frame 843
+Sprite subnumber = 1
+
+Frame 844
+Sprite subnumber = 2
+
+Frame 845
+Sprite subnumber = 3
+
+Frame 846
+Sprite subnumber = 2
+
+Frame 847
+Sprite subnumber = 1
+
+Frame 848
+Sprite subnumber = 0
+
+Frame 849
+Sprite subnumber = 1
+
+Frame 850
+Sprite subnumber = 2
+
+Frame 851
+Sprite subnumber = 3
+
+Frame 852
+Sprite subnumber = 0
+
+Frame 853
+Sprite subnumber = 0
+
+Frame 854
+Sprite subnumber = 1
+
+Frame 855
+Sprite subnumber = 2
+
+Frame 856
+Sprite subnumber = 3
+
+Frame 861
+Sprite subnumber = 0
+
+Frame 862
+Sprite subnumber = 0
+
+Frame 863
+Sprite subnumber = 1
+
+Frame 864
+Sprite subnumber = 2
+
+Frame 865
+Sprite subnumber = 3
+
+Frame 866
+Sprite subnumber = 2
+
+Frame 867
+Sprite subnumber = 1
+
+Frame 888
+Duration = 5
+
+Frame 889
+Duration = 5
+
+Frame 890
+Duration = 5
+Next frame = 902
+
+Frame 902
+Duration = 5
+Next frame = 903
+
+Frame 903
+Duration = 5
+Next frame = 888
+
+Frame 926
+Duration = 13
+
+Frame 928
+Duration = 13
+
+Frame 929
+Duration = 13
+
+Frame 940
+Next frame = 938
+
+Text 466 464
+You've done it! The hideous cyber-
+demon lord that ruled the lost Deimos
+moon base has been slain and you
+are triumphant! But ... where are
+you? You clamber to the edge of the
+moon and look down to see the awful
+truth.
+
+Deimos floats above Hell itself!
+You've never heard of anyone escaping
+from Hell, but you'll make the bastards
+sorry they ever heard of you! Quickly,
+you rappel down to  the surface of
+Hell.
+
+Now, it's on to the final chapter of
+DOOM! -- Inferno.You made it! The queen is dead, the nest
+is history, and the derelect, plague-
+bearing host ship was probably destroyed
+in the blast. Most of those who came to
+LB4-26 are dead, but you are safe, on
+the Sulacco.
+The nightmare is over
+For now....
+
+Thanks for playing ALIENS-TC. Be sure to
+distribute it to your friends.
+
+Thats all for now        or...
+If ALIENS-TC becomes quite popular, I'll
+make a level & graphics supplement.
+In the mean time, try E3M1 and E3M2.
+
+
+Text 7 7
+SFLR6_1FWATER1
+
+Text 9 11
+ZOMBIEMANALIEN DRONE
+
+Text 3 3
+IMPDRN
+
+Text 5 5
+DEMONALIEN
+
+Text 9 11
+LOST SOULFACE HUGGER
+
+Text 9 9
+CACODEMONALIEN EGG
+
+Text 13 15
+BARON OF HELLTHE ALIEN QUEEN
+
+Text 21 20
+THE SPIDER MASTERMINDTHE ALIEN QUEEN     
+
+Text 78 76
+                          DOOM System Startup v%i.%i                                         DOOM v%i.%i running   A L | E N S   -   T.C.!                
+
+Text 415 413
+===========================================================================
+ATTENTION:  This version of DOOM has been modified.  If you would like to
+get a copy of the original game, call 1-800-IDGAMES or see the readme file.
+        You will not receive technical support for modified games.
+                      press enter to continue
+===========================================================================
+===========================================================================
+     IMPORTANT: This version of DOOM is as modified as they come!  To
+get a copy of the original game, call 1-800-IDGAMES or see the order form.
+        You will not receive technical support for modified games.
+                       HIT ENTER TO CONTINUE    
+===========================================================================
+
+
+Text 281 281
+===========================================================================
+             This version is NOT SHAREWARE, do not distribute!
+         Please report software piracy to the SPA: 1-800-388-PIR8
+===========================================================================
+===========================================================================
+             This version is NOT SHAREWARE, do not distribute!
+                   You may freely distribute ALIENS-TC!          
+===========================================================================
+
+
+Text 20 20
+Picked up the armor.Picked up the armor 
+
+Text 24 24
+Picked up the MegaArmor!The Cargo bay loader!   
+
+Text 25 24
+Picked up a health bonus.Picked up a health bonus
+
+Text 25 24
+Picked up an armor bonus.Picked up an armor bonus
+
+Text 25 24
+Picked up a blue keycard.Picked up a blue keycard
+
+Text 27 26
+Picked up a yellow keycard.Picked up a yellow keycard
+
+Text 24 24
+Picked up a red keycard.Picked up a red keycard 
+
+Text 27 26
+Picked up a blue skull key.Picked up a blue skull key
+
+Text 29 28
+Picked up a yellow skull key.Picked up a yellow skull key
+
+Text 26 25
+Picked up a red skull key.Picked up a red skull key
+
+Text 21 20
+Picked up a stimpack.Picked up a stimpack
+
+Text 20 20
+Picked up a medikit.Picked up a medikit 
+
+Text 24 24
+Radiation Shielding SuitVacuum / EVA Suit       
+
+Text 17 17
+Computer Area MapComputer Terminal
+
+Text 17 16
+Picked up a clip.Picked up a clip
+
+Text 27 26
+Picked up a box of bullets.Picked up a box of bullets
+
+Text 19 19
+Picked up a rocket.Picked up a grenade
+
+Text 27 27
+Picked up a box of rockets.Picked up a box of grenades
+
+Text 25 24
+Picked up an energy cell.Picked up a battery pack
+
+Text 30 28
+Picked up an energy cell pack.Picked up a battery set     
+
+Text 27 26
+Picked up 4 shotgun shells.Picked up 4 shotgun shells
+
+Text 34 33
+Picked up a box of shotgun shells.Picked up a box of shotgun shells
+
+Text 21 23
+You got the chaingun!You got the Pulse Rifle
+
+Text 28 28
+A chainsaw!  Find some meat!The Cargo bay loader!       
+
+Text 28 28
+You got the rocket launcher!You got the Pulse Rifle     
+
+Text 23 23
+You got the plasma gun!A Smart-gun! LETS ROCK!
+
+Text 20 23
+You got the shotgun!For close encounters...
+
+Text 22 23
+Degreelessness Mode OnCome on! Play properly!
+
+Text 23 20
+Degreelessness Mode OffAbout time too!     
+
+Text 20 21
+Ammo (no keys) AddedOK, just this once...
+
+Text 21 20
+Very Happy Ammo AddedPlay fair, man!     
+
+Text 16 16
+Power-up ToggledCheat!          
+
+Text 45 44
+inVuln, Str, Inviso, Rad, Allmap, or Lite-ampIt's more fun when there's a challenge...   
+
+Text 20 22
+E2M1: Deimos AnomalyE2M1: The Landing Pads
+
+Text 22 23
+E2M2: Containment AreaE2M2: Atmospheric Pros.
+
+Text 14 14
+E2M3: RefineryE2M3: Med-Labs
+
+Text 16 16
+E2M4: Deimos LabE2M4: Med-Labs  
+
+Text 20 20
+E2M5: Command CenterE2M5: Operations    
+
+Text 25 27
+E2M6: Halls of the DamnedE2M6: Atmospheric Processor
+
+Text 19 16
+E2M7: Spawning VatsE2M7: Alien Hive
+
+Text 20 20
+E2M8: Tower of BabelE2M8: The Sulacco   
+
+Text 25 24
+E2M9: Fortress of MysteryE2M9: Original Host Ship
