@@ -616,9 +616,9 @@ void Draw_TeleportIcon(void)
 {
 	if (W_CheckNumForName("teleicon") >= 0)
 	{
-		Drawer->StartUpdate();
+		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("teleicon", PIC_PATCH));
-		Drawer->Update();
+		Drawer->EndDirectUpdate();
 	}
 }
 
@@ -632,9 +632,9 @@ void Draw_SaveIcon(void)
 {
 	if (W_CheckNumForName("saveicon") >= 0)
 	{
-		Drawer->StartUpdate();
+		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("saveicon", PIC_PATCH));
-		Drawer->Update();
+		Drawer->EndDirectUpdate();
 	}
 }
 
@@ -648,18 +648,21 @@ void Draw_LoadIcon(void)
 {
 	if (W_CheckNumForName("loadicon") >= 0)
 	{
-		Drawer->StartUpdate();
+		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, R_RegisterPic("loadicon", PIC_PATCH));
-		Drawer->Update();
+		Drawer->EndDirectUpdate();
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/09/12 17:35:13  dj_jl
+//	Direct update for Hexen icons
+//
 //	Revision 1.8  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.7  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
 //	
