@@ -33,7 +33,6 @@
 #define MAXHISTORY			32
 #define MAX_LINES			1024
 #define MAX_LINE_LENGTH		40
-#define NUM_NOTIFY_LINES	5
 
 // TYPES -------------------------------------------------------------------
 
@@ -64,6 +63,8 @@ class TConBuf : public streambuf
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+void C_AddNotifyLine(const char *str);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -104,16 +105,6 @@ static char				c_autocompleteString[MAX_ILINE_LENGTH];
 
 static const char**		c_ac_Table = NULL;
 static int				c_ac_Count = 0;
-
-static char				notify_lines[NUM_NOTIFY_LINES][MAX_LINE_LENGTH];
-static double			notify_times[NUM_NOTIFY_LINES];
-static int				num_notify = 0;
-static int				first_notify = 0;
-static TCvarF			notify_time("notify_time", "5", CVAR_ARCHIVE);
-
-static char				center_message[256];
-static float			center_time;
-static TCvarF			center_msg_time("center_message_time", "7", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
 
@@ -295,43 +286,8 @@ void C_Drawer(void)
         }
 	}
 
-	if (center_time)
-	{
-		T_SetFont(font_small);
-	    T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 100, center_message);
-		center_time -= host_frametime;
-		if (center_time < 0.0)
-		{
-			center_time = 0.0;
-		}
-	}
-
 	if (!consolestate)
     {
-    	if (cls.state == ca_connected && !cl.intermission)
-        {
-			T_SetFont(font_small);
-		    T_SetAlign(hleft, vtop);
-
-		    //  Notify lines
-	        y = 0;
-		    i = 0;
-		    while (i < num_notify)
-			{
-				if (notify_times[(i + first_notify) % NUM_NOTIFY_LINES] < host_time)
-		        {
-		        	first_notify++;
-		            num_notify--;
-		        }
-		        else
-		        {
-					T_DrawString8(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES]);
-			       	y += 9;
-		            i++;
-		        }
-			}
-		}
     	return;
     }
 
@@ -538,18 +494,6 @@ COMMAND(Cls)
 
 //==========================================================================
 //
-//	C_ClearNotify
-//
-//==========================================================================
-
-void C_ClearNotify(void)
-{
-	num_notify = 0;
-	first_notify = 0;
-}
-
-//==========================================================================
-//
 //  AddLine
 //
 //  Ads a line to console strings
@@ -570,29 +514,8 @@ static void AddLine(char* Data)
 
     if (!consolestate/* && !MN_Active()*/)
     {
-		if (num_notify >= NUM_NOTIFY_LINES)
-	    {
-	    	num_notify--;
-	        first_notify++;
-		}
-	    strcpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
-	    	clines[(num_lines + first_line - 1) % MAX_LINES]);
-		notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
-			host_time + notify_time;
-	    num_notify++;
+		C_AddNotifyLine(clines[(num_lines + first_line - 1) % MAX_LINES]);
 	}
-}
-
-//==========================================================================
-//
-//	C_CenterMessage
-//
-//==========================================================================
-
-void C_CenterMessage(const char *msg)
-{
-	strcpy(center_message, msg);
-	center_time = center_msg_time;
 }
 
 //==========================================================================
@@ -730,11 +653,127 @@ int TConBuf::overflow(int ch)
 }
 
 //**************************************************************************
+//**************************************************************************
+
+#define NUM_NOTIFY_LINES	5
+
+static char				notify_lines[NUM_NOTIFY_LINES][MAX_LINE_LENGTH];
+static double			notify_times[NUM_NOTIFY_LINES];
+static int				num_notify = 0;
+static int				first_notify = 0;
+static TCvarF			notify_time("notify_time", "5", CVAR_ARCHIVE);
+
+//==========================================================================
+//
+//	C_ClearNotify
+//
+//==========================================================================
+
+void C_ClearNotify(void)
+{
+	num_notify = 0;
+	first_notify = 0;
+}
+
+//==========================================================================
+//
+//	C_AddNotifyLine
+//
+//==========================================================================
+
+void C_AddNotifyLine(const char *str)
+{
+	if (num_notify >= NUM_NOTIFY_LINES)
+	{
+		num_notify--;
+        first_notify++;
+	}
+	strcpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
+		str);
+	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
+			host_time + notify_time;
+	num_notify++;
+}
+
+//==========================================================================
+//
+//	C_DrawNotify
+//
+//==========================================================================
+
+void C_DrawNotify(void)
+{
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+
+	//  Notify lines
+	int y = 0;
+	int i = 0;
+	while (i < num_notify)
+	{
+		if (notify_times[(i + first_notify) % NUM_NOTIFY_LINES] < host_time)
+		{
+			first_notify++;
+			num_notify--;
+		}
+		else
+		{
+			T_DrawString(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES]);
+			y += 9;
+			i++;
+		}
+	}
+}
+
+//**************************************************************************
+//**************************************************************************
+
+static char				center_message[256];
+static float			center_time;
+static TCvarF			center_msg_time("center_message_time", "7", CVAR_ARCHIVE);
+
+//==========================================================================
+//
+//	C_CenterMessage
+//
+//==========================================================================
+
+void C_CenterMessage(const char *msg)
+{
+	strcpy(center_message, msg);
+	center_time = center_msg_time;
+}
+
+//==========================================================================
+//
+//	C_DrawCenterMessage
+//
+//==========================================================================
+
+void C_DrawCenterMessage(void)
+{
+	if (center_time)
+	{
+		T_SetFont(font_small);
+	    T_SetAlign(hcenter, vcenter);
+		T_DrawText(160, 100, center_message);
+		center_time -= host_frametime;
+		if (center_time < 0.0)
+		{
+			center_time = 0.0;
+		}
+	}
+}
+
+//**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/04 17:19:32  dj_jl
+//	Seperated drawing of notify and center messages
+//
 //	Revision 1.6  2001/09/12 17:33:39  dj_jl
 //	Fixed paranoid errors
-//
+//	
 //	Revision 1.5  2001/08/15 17:26:35  dj_jl
 //	Made console not active when closing
 //	

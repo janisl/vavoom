@@ -63,6 +63,9 @@ typedef struct
 void CalcFadetable16(byte *pal);
 void V_DarkenScreen(int darkening);
 
+void C_DrawNotify(void);
+void C_DrawCenterMessage(void);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -592,6 +595,8 @@ void SCR_Update(void)
 			}
 			CT_Drawer();
 			SB_Drawer();
+			C_DrawNotify();
+			C_DrawCenterMessage();
 			break;
 
 		  case 1:
@@ -607,13 +612,13 @@ void SCR_Update(void)
 	if (MN_Active())
 		V_DarkenScreen(menu_darkening);
 
-	// Console drawing
-	C_Drawer();
-
 	// Menu drawing
 	MN_Drawer();
 
 	MB_Drawer();
+
+	// Console drawing
+	C_Drawer();
 
 	DrawFPS();
 
@@ -671,9 +676,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/04 17:19:32  dj_jl
+//	Seperated drawing of notify and center messages
+//
 //	Revision 1.10  2001/09/14 16:52:44  dj_jl
 //	Added vid_restart
-//
+//	
 //	Revision 1.9  2001/09/12 17:35:13  dj_jl
 //	Direct update for Hexen icons
 //	
