@@ -204,7 +204,6 @@ void __fastcall TLauncherForm::RunButtonClick(TObject *Sender)
 	memset(&StartInfo, 0, sizeof(StartInfo));
 	memset(&ProcInfo, 0 , sizeof(ProcInfo));
 	StartInfo.cb = sizeof(StartInfo);
-	StartInfo.dwFlags = STARTF_USESHOWWINDOW;
 	if (CreateProcess(
 			NULL, // pointer to name of executable module
 			CmdLine, // pointer to command line string
@@ -233,9 +232,12 @@ void __fastcall TLauncherForm::ExitButtonClick(TObject *Sender)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/18 17:42:53  dj_jl
+//	Fixed show window command
+//
 //	Revision 1.3  2001/09/24 17:30:40  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:56  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
