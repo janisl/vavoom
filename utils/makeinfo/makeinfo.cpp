@@ -371,7 +371,7 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\tReactionCount = %d;\n", mobjinfo[i].reactiontime);
 		}
 		if (mobjinfo[i].painchance)
-			fprintf(f, "\t\tPainChance = %d;\n", mobjinfo[i].painchance);
+			fprintf(f, "\t\tPainChance = %f;\n", (float)mobjinfo[i].painchance / 256.0);
 		if (mobjinfo[i].damage)
 			fprintf(f, "\t\tMissileDamage = %d;\n", mobjinfo[i].damage);
 
@@ -789,9 +789,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/06/29 16:01:54  dj_jl
+//	Floatized PainChance.
+//
 //	Revision 1.26  2002/06/14 15:34:09  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.25  2002/05/03 17:03:03  dj_jl
 //	Some updates.
 //	

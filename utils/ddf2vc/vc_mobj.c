@@ -482,7 +482,7 @@ void VC_WriteMobjs(void)
 		if (m->reactiontime)
 			fprintf(f, "\tReactionCount = %d;\n", m->reactiontime);
 		if (m->painchance)
-			fprintf(f, "\tPainChance = %d;\n", (int)(m->painchance * 255));
+			fprintf(f, "\tPainChance = %f;\n", m->painchance);
 		if (m->spawnhealth != 1000)
 		{
 			fprintf(f, "\tHealth = %d;\n", (int)m->spawnhealth);
