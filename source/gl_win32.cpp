@@ -296,14 +296,25 @@ void TOpenGLDrawer::Shutdown(void)
 	{
 		ChangeDisplaySettings(NULL, 0);
 	}
+
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/20 16:21:58  dj_jl
+//	Fixed error message box
+//
 //	Revision 1.7  2001/09/12 17:35:40  dj_jl
 //	Added windowed mode
-//
+//	
 //	Revision 1.6  2001/08/29 17:47:21  dj_jl
 //	Fixed resolution change to different color depth
 //	
