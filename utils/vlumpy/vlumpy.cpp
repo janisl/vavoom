@@ -36,6 +36,30 @@ using namespace VavoomUtils;
 
 // TYPES -------------------------------------------------------------------
 
+// posts are runs of non masked source pixels
+struct post_t
+{
+	byte		topdelta;       // -1 is the last post in a column
+	byte		length;         // length data bytes follows
+};
+
+// column_t is a list of 0 or more post_t, (byte)-1 terminated
+typedef post_t column_t;
+
+//  Patches.
+//  A patch holds one or more columns.
+//  Patches are used for sprites and all masked pictures, and we compose
+// textures from the TEXTURE1/2 lists of patches.
+struct patch_t
+{
+	short		width;          // bounding box size
+	short		height;
+	short		leftoffset;     // pixels to the left of origin
+	short		topoffset;      // pixels below the origin
+	int			columnofs[8];   // only [width] used
+	// the [0] is &columnofs[width]
+};
+
 struct vpic_t
 {
 	char		magic[4];
@@ -398,6 +422,95 @@ void GrabRaw(void)
 
 //==========================================================================
 //
+//	GrabPatch
+//
+//	lumpname PATCH x y width height leftoffset topoffset
+//
+//==========================================================================
+
+void GrabPatch(void)
+{
+	SC_MustGetNumber();
+	int x1 = sc_Number;
+	SC_MustGetNumber();
+	int y1 = sc_Number;
+	SC_MustGetNumber();
+	int w = sc_Number;
+	SC_MustGetNumber();
+	int h = sc_Number;
+	SC_MustGetNumber();
+	int leftoffset = sc_Number;
+	SC_MustGetNumber();
+	int topoffset = sc_Number;
+
+	int TransColor = 0;
+	patch_t* Patch = (patch_t*)Malloc(8 + 4 * w + w * h * 4);
+	Patch->width = w;
+	Patch->height = h;
+	Patch->leftoffset = leftoffset;
+	Patch->topoffset = topoffset;
+	column_t* Col = (column_t*)&Patch->columnofs[w];
+
+	for (int x = 0; x < w; x++)
+	{
+		Patch->columnofs[x] = (byte*)Col - (byte*)Patch;
+		int y = 0;
+		int PrevTop = -1;
+		while (y < h)
+		{
+			//	Skip transparent pixels.
+			if (GetPixel(x1 + x, y1 + y) == TransColor)
+			{
+				y++;
+				continue;
+			}
+			//	Grab a post.
+			if (y < 255)
+			{
+				Col->topdelta = y;
+			}
+			else
+			{
+				//	Tall patch.
+				while (y - PrevTop > 254)
+				{
+					//	Insert empty post.
+					Col->topdelta = 254;
+					Col = (column_t*)((byte*)Col + 4);
+					if (PrevTop < 254)
+					{
+						PrevTop = 254;
+					}
+					else
+					{
+						PrevTop += 254;
+					}
+				}
+				Col->topdelta = y - PrevTop;
+			}
+			PrevTop = y;
+			byte* Pixels = (byte*)Col + 3;
+			while (y < h && Col->length < 255 &&
+				GetPixel(x1 + x, y1 + y) != TransColor)
+			{
+				Pixels[Col->length] = GetPixel(x1 + x, y1 + y);
+				Col->length++;
+				y++;
+			}
+			Col = (column_t*)((byte*)Col + Col->length + 4);
+		}
+
+		//	Add terminating post.
+		Col->topdelta = 0xff;
+		Col = (column_t*)((byte*)Col + 4);
+	}
+
+	outwad.AddLump(lumpname, Patch, (byte*)Col - (byte*)Patch);
+	Free(Patch);
+}
+
+//==========================================================================
+//
 //	GrabPic
 //
 //	lumpname PIC x y width height
@@ -592,6 +705,10 @@ void ParseScript(const char *name)
 			{
 				GrabRaw();
 			}
+			else if (SC_Compare("patch"))
+			{
+				GrabPatch();
+			}
 			else if (SC_Compare("pic"))
 			{
 				GrabPic();
@@ -658,9 +775,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2003/11/03 07:20:30  dj_jl
+//	Grabbing of patches
+//
 //	Revision 1.9  2002/08/24 14:41:35  dj_jl
 //	Removed usage of the iostream.
-//
+//	
 //	Revision 1.8  2002/06/22 07:25:43  dj_jl
 //	Added transparent pixels to VPIC.
 //	
