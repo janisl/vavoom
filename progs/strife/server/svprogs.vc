@@ -27,8 +27,6 @@
 //**
 //**************************************************************************
 
-//#define TEASER
-
 #include <server.vc>
 
 #include "../strfdefs.vc"
@@ -98,6 +96,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.17  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

@@ -223,7 +223,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//	GateControl 123 122
+//	GateControl 123
 //
 //**************************************************************************
 
@@ -238,21 +238,12 @@ __states__
 	S_GATES_X1('PSTN', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X2) { A_Scream(); }
 	S_GATES_X2('PSTN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X3) { A_Fall(); }
 	S_GATES_X3('PSTN', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X4) { A_Unknown110(); }
-#ifdef TEASER
-	S_GATES_X4('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X5) { A_XDying(); }
-	S_GATES_X5('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X6) { A_SpawnPuff(); }
-#else
 	S_GATES_X4('PSTN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X5) { A_SpawnPuff(); }
 	S_GATES_X5('PSTN', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X6) { A_XDying(); }
-#endif
 	S_GATES_X6('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X7) { }
 	S_GATES_X7('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X8) { A_SpawnPuff(); }
 	S_GATES_X8('PSTN', 7, 4.0 / 35.0, S_GATES_X9) { }
-#ifdef TEASER
-	S_GATES_X9('PSTN', 8, -1.0, S_NULL) { A_SpawnPuff(); }
-#else
 	S_GATES_X9('PSTN', 8, -1.0, S_NULL) { }
-#endif
 }
 
 defaultproperties
@@ -261,14 +252,10 @@ defaultproperties
 	Radius = 20.0;
 	Height = 76.0;
 	Mass = 10000000.0;
-#ifndef TEASER
 	StepSpeed = 16.0;
-#endif
 	bSolid = true;
 	bShootable = true;
-#ifndef TEASER
 	bUnknown5 = true;
-#endif
 	bUnknown4 = true;
 	bNoBlood = true;
 	IdleState = S_GATES_1;
@@ -280,7 +267,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//	ComputerCore 124 123
+//	ComputerCore 124
 //
 //**************************************************************************
 
@@ -295,21 +282,6 @@ __states__
 	S_COMP_CORE_3('SECR', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_4) { }
 	S_COMP_CORE_4('SECR', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_COMP_CORE_1) { }
 	S_COMP_CORE_X1('SECR', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X2) { A_SpawnPuff(); }
-#ifdef TEASER
-	S_COMP_CORE_X2('BNG4', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X3) { A_Scream(); }
-	S_COMP_CORE_X3('BNG4', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X4) { A_XDying(); }
-	S_COMP_CORE_X4('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X5) { A_Fall(); }
-	S_COMP_CORE_X5('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X6) { A_SpawnPuff(); }
-	S_COMP_CORE_X6('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X7) { A_XDying(); }
-	S_COMP_CORE_X7('SECR', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X8) { A_SpawnPuff(); }
-	S_COMP_CORE_X8('SECR', 9, 5.0 / 35.0, S_COMP_CORE_X9) { }
-	S_COMP_CORE_X9('SECR', 10, 5.0 / 35.0, S_COMP_CORE_X10) { A_SpawnPuff(); }
-	S_COMP_CORE_X10('SECR', 11, 5.0 / 35.0, S_COMP_CORE_X11) { }
-	S_COMP_CORE_X11('SECR', 12, 5.0 / 35.0, S_COMP_CORE_X12) { A_SpawnPuff(); }
-	S_COMP_CORE_X12('SECR', 13, 5.0 / 35.0, S_COMP_CORE_X13) { }
-	S_COMP_CORE_X13('SECR', 14, 5.0 / 35.0, S_COMP_CORE_X14) { A_SpawnPuff(); }
-	S_COMP_CORE_X14('SECR', 15, -1.0, S_NULL) { }
-#else
 	S_COMP_CORE_X2('SECR', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X3) { A_Fall(); }
 	S_COMP_CORE_X3('SECR', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X4) { A_Unknown110(); }
 	S_COMP_CORE_X4('SECR', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_COMP_CORE_X5) { A_XDying(); }
@@ -321,7 +293,6 @@ __states__
 	S_COMP_CORE_X10('SECR', 13, 5.0 / 35.0, S_COMP_CORE_X11) { }
 	S_COMP_CORE_X11('SECR', 14, 5.0 / 35.0, S_COMP_CORE_X12) { A_SpawnPuff(); }
 	S_COMP_CORE_X12('SECR', 15, -1.0, S_NULL) { }
-#endif
 }
 
 defaultproperties
@@ -330,14 +301,10 @@ defaultproperties
 	Radius = 26.0;
 	Height = 128.0;
 	Mass = 100000.0;
-#ifndef TEASER
 	StepSpeed = 27.0;
-#endif
 	bSolid = true;
 	bShootable = true;
-#ifndef TEASER
 	bUnknown5 = true;
-#endif
 	bUnknown4 = true;
 	bNoBlood = true;
 	IdleState = S_COMP_CORE_1;
@@ -393,7 +360,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//	PowerCrystal 201 199
+//	PowerCrystal 201
 //
 //**************************************************************************
 
@@ -410,52 +377,26 @@ __states__
 	S_CRYSTAL_5('CRYS', 4, 4.0 / 35.0, S_CRYSTAL_6) { A_ActiveSound(); }
 	S_CRYSTAL_6('CRYS', 5, 4.0 / 35.0, S_CRYSTAL_1) { A_ActiveSound(); }
 	S_CRYSTAL_X1('BOOM', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRYSTAL_X2) { A_Unknown112(); }
-#ifdef TEASER
-	S_CRYSTAL_X2('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X3) { A_Unknown114(); }
-#else
 	S_CRYSTAL_X2('BOOM', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X3) { A_Unknown110(); }
-#endif
 	S_CRYSTAL_X3('BOOM', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_CRYSTAL_X4) { A_Unknown113(); }
-#ifdef TEASER
-	S_CRYSTAL_X4('BOOM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X5) { }
-#else
 	S_CRYSTAL_X4('BOOM', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X5) { A_SpawnPuff(); }
-#endif
 	S_CRYSTAL_X5('BOOM', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X6) { }
 	S_CRYSTAL_X6('BOOM', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X7) { }
-#ifdef TEASER
-	S_CRYSTAL_X7('BOOM', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X8) { }
-#else
 	S_CRYSTAL_X7('BOOM', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X8) { A_SpawnPuff(); }
-#endif
 	S_CRYSTAL_X8('BOOM', 7 | FF_FULLBRIGHT, 1.0 / 35.0, S_CRYSTAL_X9) { A_Unknown112(); }
 	S_CRYSTAL_X9('BOOM', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X10) { }
-#ifdef TEASER
-	S_CRYSTAL_X10('BOOM', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X11) { }
-	S_CRYSTAL_X11('BOOM', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X12) { }
-	S_CRYSTAL_X12('BOOM', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X13) { }
-#else
 	S_CRYSTAL_X10('BOOM', 9 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X11) { A_SpawnPuff(); }
 	S_CRYSTAL_X11('BOOM', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X12) { A_SpawnPuff(); }
 	S_CRYSTAL_X12('BOOM', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X13) { A_SpawnPuff(); }
-#endif
 	S_CRYSTAL_X13('BOOM', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X14) { }
 	S_CRYSTAL_X14('BOOM', 13 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X15) { }
-#ifdef TEASER
-	S_CRYSTAL_X15('BOOM', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X16) { }
-#else
 	S_CRYSTAL_X15('BOOM', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X16) { A_SpawnPuff(); }
-#endif
 	S_CRYSTAL_X16('BOOM', 15 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X17) { }
 	S_CRYSTAL_X17('BOOM', 16 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X18) { }
 	S_CRYSTAL_X18('BOOM', 17 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X19) { }
 	S_CRYSTAL_X19('BOOM', 18 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X20) { }
 	S_CRYSTAL_X20('BOOM', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X21) { }
-#ifdef TEASER
-	S_CRYSTAL_X21('BOOM', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X22) { }
-#else
 	S_CRYSTAL_X21('BOOM', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X22) { A_Unknown114(); }
-#endif
 	S_CRYSTAL_X22('BOOM', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X23) { }
 	S_CRYSTAL_X23('BOOM', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X24) { }
 	S_CRYSTAL_X24('BOOM', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_CRYSTAL_X25) { }
@@ -465,16 +406,12 @@ __states__
 defaultproperties
 {
 	Health = 50;
-#ifndef TEASER
 	Mass = 99999999.0;
 	StepSpeed = 14.0;
-#endif
 	bSolid = true;
 	bShootable = true;
-#ifndef TEASER
 	bNoGravity = true;
 	bUnknown5 = true;
-#endif
 	bNoBlood = true;
 	IdleState = S_CRYSTAL_1;
 	DeathState = S_CRYSTAL_X1;
@@ -1294,11 +1231,7 @@ __states__
 defaultproperties
 {
 	Radius = 16.0;
-#ifdef TEASER
-	Height = 32.0;
-#else
 	Height = 48.0;
-#endif
 	bSolid = true;
 	IdleState = S_BURN_BARREL_1;
 }
@@ -1317,11 +1250,7 @@ class Bowl:Decoration
 
 __states__
 {
-#ifdef TEASER
-	S_BOWL_1('BOWL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_2) { A_ActiveSound(); }
-#else
 	S_BOWL_1('BOWL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_2) { }
-#endif
 	S_BOWL_2('BOWL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_3) { }
 	S_BOWL_3('BOWL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_4) { }
 	S_BOWL_4('BOWL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BOWL_1) { }
@@ -1333,7 +1262,6 @@ defaultproperties
 	Height = 16.0;
 	bSolid = true;
 	IdleState = S_BOWL_1;
-	ActiveSound = 'SmallFire';
 }
 
 }
@@ -1350,11 +1278,7 @@ class Brazier:Decoration
 
 __states__
 {
-#ifdef TEASER
-	S_BRAZ_1('BRAZ', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRAZ_2) { A_ActiveSound(); }
-#else
 	S_BRAZ_1('BRAZ', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRAZ_2) { }
-#endif
 	S_BRAZ_2('BRAZ', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRAZ_3) { }
 	S_BRAZ_3('BRAZ', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRAZ_4) { }
 	S_BRAZ_4('BRAZ', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_BRAZ_1) { }
@@ -1366,7 +1290,6 @@ defaultproperties
 	Height = 32.0;
 	bSolid = true;
 	IdleState = S_BRAZ_1;
-	ActiveSound = 'SmallFire';
 }
 
 }
@@ -1383,11 +1306,7 @@ class WallTorch:Decoration
 
 __states__
 {
-#ifdef TEASER
-	S_TORCH_1('TRCH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORCH_2) { A_ActiveSound(); }
-#else
 	S_TORCH_1('TRCH', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORCH_2) { }
-#endif
 	S_TORCH_2('TRCH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORCH_3) { }
 	S_TORCH_3('TRCH', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORCH_4) { }
 	S_TORCH_4('TRCH', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_TORCH_1) { }
@@ -1399,7 +1318,6 @@ defaultproperties
 	Height = 16.0;
 	bNoBlockmap = true;
 	IdleState = S_TORCH_1;
-	ActiveSound = 'SmallFire';
 }
 
 }
@@ -1967,11 +1885,7 @@ class LampCandle:Decoration
 
 __states__
 {
-#ifdef TEASER
-	S_LAMPCAND_1('LMPC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_2) { A_ActiveSound(); }
-#else
 	S_LAMPCAND_1('LMPC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_2) { }
-#endif
 	S_LAMPCAND_2('LMPC', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_3) { }
 	S_LAMPCAND_3('LMPC', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_4) { }
 	S_LAMPCAND_4('LMPC', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LAMPCAND_1) { }
@@ -2001,11 +1915,7 @@ class TallTorch:Decoration
 
 __states__
 {
-#ifdef TEASER
-	S_LOGS_1('LOGS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_2) { A_ActiveSound(); }
-#else
 	S_LOGS_1('LOGS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_2) { }
-#endif
 	S_LOGS_2('LOGS', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_3) { }
 	S_LOGS_3('LOGS', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_4) { }
 	S_LOGS_4('LOGS', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LOGS_1) { }
@@ -2582,28 +2492,17 @@ __states__
 defaultproperties
 {
 	Health = 40;
-#ifdef TEASER
-	Radius = 16.0;
-	Height = 24.0;
-#else
 	Radius = 17.0;
 	Height = 64.0;
-#endif
 	Mass = 999999.0;
-#ifndef TEASER
 	StepSpeed = 6.0;
-#endif
 	bSolid = true;
 	bShootable = true;
-#ifndef TEASER
 	bUnknown5 = true;
-#endif
 	bUnknown4 = true;
 	bDropped = true;
 	bNoBlood = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_COUPLING_1;
 }
 
@@ -2747,6 +2646,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.1  2002/06/29 15:59:26  dj_jl
 //  Split out items, projectiles and decorations.
 //

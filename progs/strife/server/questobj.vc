@@ -53,7 +53,7 @@ class Quest1:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 312;//310
+	ConversationID = 312;
 }
 
 }
@@ -69,10 +69,7 @@ class Quest2:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 313;//311
-#ifdef TEASER
-	QuestMessage = "Blown Up the Crystal";
-#endif
+	ConversationID = 313;
 }
 
 }
@@ -88,10 +85,7 @@ class Quest3:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 314;//312
-#ifdef TEASER
-	QuestMessage = "Blown Up the Gates";
-#endif
+	ConversationID = 314;
 }
 
 }
@@ -107,7 +101,7 @@ class Quest4:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 315;//313
+	ConversationID = 315;
 	QuestMessage = "quest4";
 }
 
@@ -124,7 +118,7 @@ class Quest5:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 316;//314
+	ConversationID = 316;
 	QuestMessage = "quest5";
 }
 
@@ -141,13 +135,12 @@ class Quest6:QuestInfo
 
 defaultproperties
 {
-	ConversationID = 317;//315
+	ConversationID = 317;
 	QuestMessage = "quest6";
 }
 
 }
 
-#ifndef TEASER
 //**************************************************************************
 //
 //	Quest7
@@ -554,11 +547,13 @@ defaultproperties
 }
 
 }
-#endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.1  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

@@ -148,9 +148,7 @@ defaultproperties
 	bFloat = true;
 	bUnknown4 = true;
 	bNoBlood = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_LOREMASTER_LOOK1;
 	SeeState = S_LOREMASTER_RUN1;
 	MeleeState = S_LOREMASTER_ATK1_1;
@@ -168,6 +166,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.4  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

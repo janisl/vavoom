@@ -54,10 +54,8 @@ defaultproperties
 	Mass = 100.0;
 	StepSpeed = 13.0;
 	bSolid = false;
-#ifndef TEASER
 	bShootable = false;
 	bUnknown4 = true;
-#endif
 	bNoBlood = true;
 	IdleState = S_RAT_LOOK;
 	SeeState = S_RAT_RUN1;
@@ -73,6 +71,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.4  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

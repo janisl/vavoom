@@ -52,9 +52,7 @@ __states__(Actor)
 	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
 	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
 
-#ifndef TEASER
 	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Unknown24(); }
-#endif
 	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_Unknown25(); }
 	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
 	S_ZAP1_3('ZAP1', 2, 3.0 / 35.0, S_ZAP1_4) { }
@@ -74,11 +72,9 @@ __states__(Actor)
 	S_SHARD_1('SHRD', 0, 128.0 / 35.0, S_NULL) { }
 	S_SHARD_2('SHRD', 1, 128.0 / 35.0, S_NULL) { }
 	S_SHARD_3('SHRD', 2, 128.0 / 35.0, S_NULL) { }
-#ifndef TEASER
 	S_SHARD_4('SHRD', 3, 128.0 / 35.0, S_NULL) { }
 	S_SHARD_5('SHRD', 4, 128.0 / 35.0, S_NULL) { }
 	S_SHARD_6('SHRD', 5, 128.0 / 35.0, S_NULL) { }
-#endif
 
 	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) { A_Unknown34(); }
 	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) { A_Unknown34(); }
@@ -87,9 +83,7 @@ __states__(Actor)
 
 	S_GIBS('DIE1', 0, -1.0, S_NULL) { }
 
-#ifndef TEASER
 	S_ANKH('ANKH', 0, -1.0, S_NULL) { }
-#endif
 }
 
 __states__(Pawn)
@@ -119,11 +113,7 @@ __states__(Pawn)
 	S_BURN23('BURN', 20, 7.0 / 35.0, S_BURN24) { }
 	S_BURN24('BURN', 21, 700.0 / 35.0, S_NULL) { A_Dying(); }
 
-#ifdef TEASER
-	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { A_Scream(); }
-#else
 	S_DISRUPT1('DISR', 0, 5.0 / 35.0, S_DISRUPT2) { }
-#endif
 	S_DISRUPT2('DISR', 1, 5.0 / 35.0, S_DISRUPT3) { }
 	S_DISRUPT3('DISR', 2, 5.0 / 35.0, S_DISRUPT4) { }
 	S_DISRUPT4('DISR', 3, 5.0 / 35.0, S_DISRUPT5) { A_Fall(); }
@@ -139,9 +129,12 @@ __states__(Pawn)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/15 17:54:19  dj_jl
+//	Removed all data from teaser exe.
+//
 //	Revision 1.14  2002/07/13 07:56:42  dj_jl
 //	Huge work on Strife: splitting, merging, implementing stuff, etc.
-//
+//	
 //	Revision 1.13  2002/06/29 15:59:26  dj_jl
 //	Split out items, projectiles and decorations.
 //	

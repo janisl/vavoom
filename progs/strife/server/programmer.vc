@@ -47,10 +47,8 @@ __states__
 defaultproperties
 {
 	bNoGravity = false;
-#ifndef TEASER
 	bColideWithThings = false;
 	bColideWithWorld = false;
-#endif
 	bNoBlood = true;
 	IdleState = S_PROGRAMMER_BASE_1;
 }
@@ -108,11 +106,7 @@ __states__
 	S_PROGRAMMER_DIE10('PRGR', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE11) { }
 	S_PROGRAMMER_DIE11('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE12) { }
 	S_PROGRAMMER_DIE12('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE13) { }
-#ifdef TEASER
-	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 64.0 / 35.0, S_PROGRAMMER_DIE14) { }
-#else
 	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_PROGRAMMER_DIE14) { }
-#endif
 	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, S_NULL) { A_Unknown72(); }
 }
 
@@ -123,19 +117,13 @@ defaultproperties
 	Height = 60.0;
 	Mass = 800.0;
 	StepSpeed = 26.0;
-#ifdef TEASER
-	PainChance = 0.25;
-#else
 	PainChance = 0.1953125;
-#endif
 	MissileDamage = 4;
 	bNoGravity = true;
 	bUnknown5 = true;
 	bFloat = true;
 	bNoBlood = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_PROGRAMMER_LOOK1;
 	SeeState = S_PROGRAMMER_RUN1;
 	MeleeState = S_PROGRAMMER_ATK1_1;
@@ -153,6 +141,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

@@ -495,72 +495,6 @@ defaultproperties
 
 }
 
-#ifdef TEASER
-//**************************************************************************
-//
-//	GasCloud
-//
-//**************************************************************************
-
-class GasCloud:Effect
-{
-
-__states__
-{
-	S_GAS_CLOUD_1('GASC', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_2) { }
-	S_GAS_CLOUD_2('GASC', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_3) { }
-	S_GAS_CLOUD_3('GASC', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_4) { }
-	S_GAS_CLOUD_4('GASC', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_5) { }
-	S_GAS_CLOUD_5('GASC', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_6) { A_Unknown24(); }
-	S_GAS_CLOUD_6('GASC', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_7) { A_DecReactionCount(); }
-	S_GAS_CLOUD_7('GASC', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_8) { A_DecReactionCount(); }
-	S_GAS_CLOUD_8('GASC', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAS_CLOUD_5) { A_DecReactionCount(); }
-}
-
-defaultproperties
-{
-	ReactionCount = 80;
-	Translucency = 66;
-	bUnknown2 = true;
-	IdleState = S_GAS_CLOUD_1;
-}
-
-}
-
-//**************************************************************************
-//
-//	GasGrenade
-//
-//**************************************************************************
-
-class GasGrenade:Projectile
-{
-
-__states__
-{
-	S_GRENADE_GAS_1('GASG', 1, 3.0 / 35.0, S_GRENADE_GAS_2) { A_DecReactionCount(); }
-	S_GRENADE_GAS_2('GASG', 2, 3.0 / 35.0, S_GRENADE_GAS_1) { A_DecReactionCount(); }
-	S_GRENADE_GAS_X1('GASS', 0, 1.0 / 35.0, S_NULL) { A_GasGrenadeExplode(); }
-}
-
-defaultproperties
-{
-	Radius = 13.0;
-	Height = 13.0;
-	Mass = 20.0;
-	Speed = 525.0;
-	ReactionCount = 40;
-	MissileDamage = 1;
-	bNoGravity = false;
-	IdleState = S_GRENADE_GAS_1;
-	DeathState = S_GRENADE_GAS_X1;
-	SightSound = 'FireGrenade';
-	DeathSound = 'Explode';
-}
-
-}
-#endif
-
 //**************************************************************************
 //
 //	WeaponGrenadeLauncher
@@ -633,15 +567,6 @@ class FlameFX1:Projectile
 __states__
 {
 	S_FLAMEFX_1('FRBL', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_2) { }
-#ifdef TEASER
-	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
-	S_FLAMEFX_X1('FRBL', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
-	S_FLAMEFX_X2('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X3) { }
-	S_FLAMEFX_X3('FRBL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X4) { }
-	S_FLAMEFX_X4('FRBL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
-	S_FLAMEFX_X5('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
-	S_FLAMEFX_X6('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-#else
 	S_FLAMEFX_2('FRBL', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_3) { }
 	S_FLAMEFX_3('FRBL', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_FLAMEFX_1) { A_DecReactionCount(); }
 	S_FLAMEFX_X1('FRBL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X2) { A_FlameFXExplode(); }
@@ -650,7 +575,6 @@ __states__
 	S_FLAMEFX_X4('FRBL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X5) { }
 	S_FLAMEFX_X5('FRBL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FLAMEFX_X6) { }
 	S_FLAMEFX_X6('FRBL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
-#endif
 }
 
 defaultproperties
@@ -659,11 +583,7 @@ defaultproperties
 	Height = 11.0;
 	Mass = 10.0;
 	Speed = 525.0;
-#ifdef TEASER
-	MissileDamage = 3;
-#else
 	MissileDamage = 4;
-#endif
 	bNoGravity = false;
 	IdleState = S_FLAMEFX_1;
 	DeathState = S_FLAMEFX_X1;
@@ -895,11 +815,7 @@ defaultproperties
 	MissileDamage = 70;
 	bUnknown3 = true;
 	IdleState = S_SIGIL_FX1_1;
-#ifdef TEASER
-	DeathState = S_ZAP1_2;
-#else
 	DeathState = S_ZAP1_1;
-#endif
 	SightSound = 'SigilFire';
 	DeathSound = 'SigilHit';
 }
@@ -932,11 +848,7 @@ defaultproperties
 	MissileDamage = 70;
 	bUnknown3 = true;
 	IdleState = S_SIGIL_FX2_1;
-#ifdef TEASER
-	DeathState = S_ZAP1_2;
-#else
 	DeathState = S_ZAP1_1;
-#endif
 	SightSound = 'SigilFire';
 	DeathSound = 'SigilHit';
 }
@@ -1086,11 +998,7 @@ __states__
 defaultproperties
 {
 	Speed = 630.0;
-#ifdef TEASER
-	ReactionCount = 90;
-#else
 	ReactionCount = 70;
-#endif
 	Translucency = 66;
 	bNoGravity = false;
 	IdleState = S_SIGIL_FLOOR_1;
@@ -1157,6 +1065,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.24  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

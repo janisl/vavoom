@@ -56,19 +56,6 @@ __states__
 	S_ENTITY_RAISE12('MNAM', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_LOOK1) { A_FlightChase(); }
 	S_ENTITY_LOOK1('MNAL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_LOOK2) { A_Look(); }
 	S_ENTITY_LOOK2('MNAL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_LOOK1) { A_FlightChase(); }
-#ifdef TEASER
-	S_ENTITY_RUN1('MNAL', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN2) { A_Chase(); }
-	S_ENTITY_RUN2('MNAL', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN3) { A_Chase(); }
-	S_ENTITY_RUN3('MNAL', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN4) { A_FlightChase(); }
-	S_ENTITY_RUN4('MNAL', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN5) { A_Chase(); }
-	S_ENTITY_RUN5('MNAL', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN6) { A_Chase(); }
-	S_ENTITY_RUN6('MNAL', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN7) { A_Chase(); }
-	S_ENTITY_RUN7('MNAL', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN8) { A_FlightChase(); }
-	S_ENTITY_RUN8('MNAL', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN9) { A_Chase(); }
-	S_ENTITY_RUN9('MNAL', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN10) { A_Chase(); }
-	S_ENTITY_RUN10('MNAL', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN11) { A_Chase(); }
-	S_ENTITY_RUN11('MNAL', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_ENTITY_RUN1) { A_FlightChase(); }
-#else
 	S_ENTITY_RUN1('MNAL', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN2) { A_Chase(); }
 	S_ENTITY_RUN2('MNAL', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN3) { A_Chase(); }
 	S_ENTITY_RUN3('MNAL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN4) { A_FlightChase(); }
@@ -80,7 +67,6 @@ __states__
 	S_ENTITY_RUN9('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN10) { A_Chase(); }
 	S_ENTITY_RUN10('MNAL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN11) { A_Chase(); }
 	S_ENTITY_RUN11('MNAL', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN1) { A_FlightChase(); }
-#endif
 	S_ENTITY_MELEE1('MNAL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_MELEE2) { A_FaceTarget(); }
 	S_ENTITY_MELEE2('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_MELEE3) { A_SpecterMelee(); }
 	S_ENTITY_MELEE3('MNAL', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN3) { }
@@ -88,14 +74,6 @@ __states__
 	S_ENTITY_ATK2('MNAL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_ATK3) { A_EntityAttack(); }
 	S_ENTITY_ATK3('MNAL', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_ENTITY_RUN11) { }
 	S_ENTITY_PAIN('MNAL', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_ENTITY_RUN7) { A_Pain(); }
-#ifdef TEASER
-	S_ENTITY_DIE1('MNAL', 11 | FF_FULLBRIGHT, 6.0 / 35.0, S_ENTITY_DIE2) { A_Fall(); }
-	S_ENTITY_DIE2('MNAL', 12 | FF_FULLBRIGHT, 6.0 / 35.0, S_ENTITY_DIE3) { A_Scream(); }
-	S_ENTITY_DIE3('MNAL', 13 | FF_FULLBRIGHT, 6.0 / 35.0, S_ENTITY_DIE4) { A_SpecterDying(); }
-	S_ENTITY_DIE4('MNAL', 14 | FF_FULLBRIGHT, 6.0 / 35.0, S_ENTITY_DIE5) { A_EntityDeath(); }
-	S_ENTITY_DIE5('MNAL', 15 | FF_FULLBRIGHT, 6.0 / 35.0, S_ENTITY_DIE6) { A_SpecterDying(); }
-	S_ENTITY_DIE6('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { A_EntityDeath(); }
-#else
 	S_ENTITY_DIE1('MNAL', 11 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE2) { A_SpecterDying(); }
 	S_ENTITY_DIE2('MNAL', 12 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE3) { A_Scream(); }
 	S_ENTITY_DIE3('MNAL', 13 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE4) { A_SpecterDying(); }
@@ -103,24 +81,15 @@ __states__
 	S_ENTITY_DIE5('MNAL', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE6) { A_SpecterDeath(); }
 	S_ENTITY_DIE6('MNAL', 16 | FF_FULLBRIGHT, 64.0 / 35.0, S_ENTITY_DIE7) { A_SpecterDying(); }
 	S_ENTITY_DIE7('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { A_EntityDeath(); }
-#endif
 }
 
 defaultproperties
 {
-#ifdef TEASER
-	Health = 1500;
-#else
 	Health = 2500;
-#endif
 	Radius = 130.0;
 	Height = 8.0;
 	Mass = 1000.0;
-#ifdef TEASER
-	StepSpeed = 10.0;
-#else
 	StepSpeed = 13.0;
-#endif
 	PainChance = 1.0;
 	Translucency = 66;
 	bSpecial = true;
@@ -130,9 +99,7 @@ defaultproperties
 	bUnknown4 = true;
 	bUnknown2 = true;
 	bUnknown3 = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_ENTITY_RAISE1;
 	SeeState = S_ENTITY_RUN1;
 	MeleeState = S_ENTITY_MELEE1;
@@ -177,9 +144,7 @@ defaultproperties
 	Radius = 25.0;
 	Height = 91.0;
 	bSolid = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_ENT_POD;
 	SeeState = S_ENT_POD_OPEN1;
 	SightSound = 'Slop';
@@ -207,9 +172,7 @@ defaultproperties
 	Radius = 84.0;
 	Height = 47.0;
 	bSolid = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_ENTITY_NEST;
 }
 
@@ -218,6 +181,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

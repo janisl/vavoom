@@ -58,9 +58,7 @@ defaultproperties
 	Height = 6.0;
 	Mass = 50000.0;
 	PainChance = 1.0;
-#ifndef TEASER
 	bUnknown4 = true;
-#endif
 	bNoBlood = true;
 	IdleState = S_PRAYER_STAND1;
 	SeeState = S_PRAYER_STAND1;
@@ -77,6 +75,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.4  2002/06/29 15:54:35  dj_jl
 //  Floatized PainChance.
 //

@@ -165,7 +165,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 125;//124
+	ConversationID = 125;
 	ClassName = 'Med_patch';
 	Mass = 20.0;
 	IdleState = S_MED_PATCH;
@@ -190,7 +190,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 126;//125
+	ConversationID = 126;
 	ClassName = 'Medical_kit';
 	Mass = 15.0;
 	IdleState = S_MEDICAL_KIT;
@@ -216,12 +216,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 127;//126
-#ifdef TEASER
-	ClassName = 'full_health';
-#else
+	ConversationID = 127;
 	ClassName = 'Surgery_Kit';
-#endif
 	Mass = 5.0;
 	IdleState = S_FULL_HEALTH;
 }
@@ -254,20 +250,12 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 128;//127
-#ifdef TEASER
-	ClassName = 'Thalite_Ore';
-#else
+	ConversationID = 128;
 	ClassName = 'Degnin_Ore';
-#endif
 	Health = 10;
 	Radius = 16.0;
 	Height = 8.0;
-#ifdef TEASER
-	Mass = 4.0;
-#else
 	Mass = 10.0;
-#endif
 	bSolid = true;
 	bShootable = true;
 	bUnknown4 = true;
@@ -296,7 +284,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 129;//128
+	ConversationID = 129;
 	ClassName = 'Metal_Armor';
 	Mass = 3.0;
 	IdleState = S_METAL_ARMOR;
@@ -321,7 +309,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 130;//129
+	ConversationID = 130;
 	ClassName = 'Leather_Armor';
 	Mass = 5.0;
 	IdleState = S_LEATHER_ARMOR;
@@ -336,28 +324,20 @@ defaultproperties
 //**************************************************************************
 
 class ItemBaseKey:KeyPickup
-#ifndef TEASER
 	__mobjinfo__(230)
-#endif
 {
 
-#ifndef TEASER
 __states__
 {
 	S_BASE_KEY('FUSL', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 133;//132
+	ConversationID = 133;
 	PickupString = "Base Key";
-#ifdef TEASER
-	IdleState = S_TOKENS;
-#else
 	bNoDeathmatch = true;
 	IdleState = S_BASE_KEY;
-#endif
 	KeyType = KEY_BaseKey;
 }
 
@@ -372,23 +352,16 @@ defaultproperties
 class ItemGovsKey:KeyPickup
 {
 
-#ifndef TEASER
 __states__
 {
 	S_GOVS_KEY('REBL', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 134;//133
-#ifdef TEASER
-	PickupString = "Rebel Key";
-	IdleState = S_TOKENS;
-#else
+	ConversationID = 134;
 	PickupString = "Govs Key";
 	IdleState = S_GOVS_KEY;
-#endif
 	KeyType = KEY_GovsKey;
 }
 
@@ -411,7 +384,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 135;//134
+	ConversationID = 135;
 	PickupString = "Passcard";
 	bNoDeathmatch = true;
 	IdleState = S_PASSCARD;
@@ -437,7 +410,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 136;//135
+	ConversationID = 136;
 	PickupString = "ID Badge";
 	bNoDeathmatch = true;
 	IdleState = S_ID_BADGE;
@@ -462,12 +435,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 137;//136
+	ConversationID = 137;
 	PickupString = "Prison Key";
-#ifndef TEASER
 	StepSpeed = 11.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_PRISON_KEY;
 	KeyType = KEY_PrisonKey;
 }
@@ -491,12 +462,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 138;//137
+	ConversationID = 138;
 	PickupString = "Severed Hand";
-#ifndef TEASER
 	StepSpeed = 12.0;
 	bUnknown5 = true;
-#endif
 	bNoDeathmatch = true;
 	IdleState = S_SEVERED_HAND;
 	KeyType = KEY_SeveredHand;
@@ -520,7 +489,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 139;//138
+	ConversationID = 139;
 	PickupString = "Power1 Key";
 	IdleState = S_POWER1_KEY;
 	KeyType = KEY_Power1Key;
@@ -544,7 +513,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 140;//139
+	ConversationID = 140;
 	PickupString = "Power2 Key";
 	IdleState = S_POWER2_KEY;
 	KeyType = KEY_Power2Key;
@@ -568,7 +537,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 141;//140
+	ConversationID = 141;
 	PickupString = "Power3 Key";
 	IdleState = S_POWER3_KEY;
 	KeyType = KEY_Power3Key;
@@ -593,7 +562,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 142;//141
+	ConversationID = 142;
 	PickupString = "Gold Key";
 	bNoDeathmatch = true;
 	IdleState = S_GOLD_KEY;
@@ -619,7 +588,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 143;//142
+	ConversationID = 143;
 	PickupString = "ID Card";
 	bNoDeathmatch = true;
 	IdleState = S_ID_CARD;
@@ -645,7 +614,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 144;//143
+	ConversationID = 144;
 	PickupString = "Silver Key";
 	bNoDeathmatch = true;
 	IdleState = S_SILVER_KEY;
@@ -671,7 +640,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 145;//144
+	ConversationID = 145;
 	PickupString = "Oracle Key";
 	bNoDeathmatch = true;
 	IdleState = S_ORACLE_KEY;
@@ -696,7 +665,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 146;//145
+	ConversationID = 146;
 	PickupString = "Military ID";
 	IdleState = S_MILITARY_ID;
 	KeyType = KEY_MilitaryID;
@@ -721,7 +690,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 147;//146
+	ConversationID = 147;
 	PickupString = "Order Key";
 	bNoDeathmatch = true;
 	IdleState = S_ORDER_KEY;
@@ -747,7 +716,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 148;//147
+	ConversationID = 148;
 	PickupString = "Warehouse Key";
 	bNoDeathmatch = true;
 	IdleState = S_WAREHOUSE_KEY;
@@ -773,7 +742,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 149;//148
+	ConversationID = 149;
 	PickupString = "Brass Key";
 	bNoDeathmatch = true;
 	IdleState = S_BRASS_KEY;
@@ -794,16 +763,12 @@ class ItemRedCrystalKey:KeyPickup
 
 __states__
 {
-#ifdef TEASER
-	S_RED_CRYSTAL_KEY('RCRY', 0, -1.0, S_NULL) { }
-#else
 	S_RED_CRYSTAL_KEY('RCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-#endif
 }
 
 defaultproperties
 {
-	ConversationID = 150;//149
+	ConversationID = 150;
 	PickupString = "Red Crystal Key";
 	bNoDeathmatch = true;
 	IdleState = S_RED_CRYSTAL_KEY;
@@ -824,16 +789,12 @@ class ItemBlueCrystalKey:KeyPickup
 
 __states__
 {
-#ifdef TEASER
-	S_BLUE_CRYSTAL_KEY('BCRY', 0, -1.0, S_NULL) { }
-#else
 	S_BLUE_CRYSTAL_KEY('BCRY', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-#endif
 }
 
 defaultproperties
 {
-	ConversationID = 151;//150
+	ConversationID = 151;
 	PickupString = "Blue Crystal Key";
 	bNoDeathmatch = true;
 	IdleState = S_BLUE_CRYSTAL_KEY;
@@ -859,7 +820,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 152;//151
+	ConversationID = 152;
 	PickupString = "Chapel Key";
 	bNoDeathmatch = true;
 	IdleState = S_CHAPEL_KEY;
@@ -884,14 +845,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 153;//152
-#ifdef TEASER
-	PickupString = "Tunnel Key";
-#else
+	ConversationID = 153;
 	PickupString = "Catacomb Key";
 	StepSpeed = 28.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_CATACOMB_KEY;
 	KeyType = KEY_CatacombKey;
 }
@@ -907,22 +864,16 @@ defaultproperties
 class ItemSecurityKey:KeyPickup
 {
 
-#ifndef TEASER
 __states__
 {
 	S_SECURITY_KEY('SECK', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 154;//153
+	ConversationID = 154;
 	PickupString = "Security Key";
-#ifdef TEASER
-	IdleState = S_MAULER_KEY;
-#else
 	IdleState = S_SECURITY_KEY;
-#endif
 	KeyType = KEY_SecurityKey;
 }
 
@@ -935,29 +886,20 @@ defaultproperties
 //**************************************************************************
 
 class ItemCoreKey:KeyPickup
-#ifndef TEASER
 	__mobjinfo__(236)
-#endif
 {
 
-#ifndef TEASER
 __states__
 {
 	S_CORE_KEY('GOID', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 155;//154
-#ifdef TEASER
-	PickupString = "New Key1";
-	IdleState = S_MAULER_KEY;
-#else
+	ConversationID = 155;
 	PickupString = "Core Key";
 	bNoDeathmatch = true;
 	IdleState = S_CORE_KEY;
-#endif
 	KeyType = KEY_CoreKey;
 }
 
@@ -970,9 +912,7 @@ defaultproperties
 //**************************************************************************
 
 class ItemMaulerKey:KeyPickup
-#ifndef TEASER
 	__mobjinfo__(233)
-#endif
 {
 
 __states__
@@ -982,13 +922,9 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 156;//155
-#ifdef TEASER
-	PickupString = "New Key2";
-#else
+	ConversationID = 156;
 	PickupString = "Mauler Key";
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_MAULER_KEY;
 	KeyType = KEY_MaulerKey;
 }
@@ -1005,24 +941,17 @@ class ItemFactoryKey:KeyPickup
 	__mobjinfo__(234)
 {
 
-#ifndef TEASER
 __states__
 {
 	S_FACTORY_KEY('PROC', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 157;//156
-#ifdef TEASER
-	PickupString = "New Key3";
-	IdleState = S_MAULER_KEY;
-#else
+	ConversationID = 157;
 	PickupString = "Factory Key";
 	bNoDeathmatch = true;
 	IdleState = S_FACTORY_KEY;
-#endif
 	KeyType = KEY_FactoryKey;
 }
 
@@ -1035,29 +964,20 @@ defaultproperties
 //**************************************************************************
 
 class ItemMineKey:KeyPickup
-#ifndef TEASER
 	__mobjinfo__(235)
-#endif
 {
 
-#ifndef TEASER
 __states__
 {
 	S_MINE_KEY('MINE', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 158;//157
-#ifdef TEASER
-	PickupString = "New Key4";
-	IdleState = S_MAULER_KEY;
-#else
+	ConversationID = 158;
 	PickupString = "Minre Key";
 	bNoDeathmatch = true;
 	IdleState = S_MINE_KEY;
-#endif
 	KeyType = KEY_MineKey;
 }
 
@@ -1074,7 +994,7 @@ class ItemNewKey5:KeyPickup
 
 defaultproperties
 {
-	ConversationID = 159;//158
+	ConversationID = 159;
 	PickupString = "New Key5";
 	IdleState = S_MAULER_KEY;
 	KeyType = KEY_NewKey5;
@@ -1102,7 +1022,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 160;//159
+	ConversationID = 160;
 	ClassName = 'Shadow_armor';
 	Mass = 2.0;
 	IdleState = S_SHADOW_ARMOR1;
@@ -1127,7 +1047,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 161;//160
+	ConversationID = 161;
 	ClassName = 'Environmental_Suit';
 	Mass = 5.0;
 	IdleState = S_ENV_SUIT;
@@ -1152,12 +1072,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 162;//161
+	ConversationID = 162;
 	ClassName = 'Guard_Uniform';
-#ifndef TEASER
 	StepSpeed = 15.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_GUARD_UNIFORM;
 }
 
@@ -1180,7 +1098,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 163;//162
+	ConversationID = 163;
 	ClassName = 'Officer\'s_Uniform';
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
@@ -1206,12 +1124,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 164;//163
-#ifdef TEASER
-	ClassName = 'Map';
-#else
+	ConversationID = 164;
 	ClassName = 'map';
-#endif
 	IdleState = S_MAP_1;
 }
 
@@ -1235,13 +1149,9 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 165;//164
-#ifdef TEASER
-	ClassName = 'Map-Radar';
-#else
+	ConversationID = 165;
 	ClassName = 'scanner';
 	Mass = 1.0;
-#endif
 	IdleState = S_SCANNER_1;
 }
 
@@ -1266,12 +1176,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 166;//293
-#ifdef TEASER
-	ClassName = 'Teleportor_Beacon';
-#else
+	ConversationID = 166;
 	ClassName = 'Teleporter_Beacon';
-#endif
 	Health = 5;
 	Radius = 16.0;
 	Height = 8.0;
@@ -1300,11 +1206,9 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 167;//173
+	ConversationID = 167;
 	ClassName = 'Targeter';
-#ifndef TEASER
 	Mass = 5.0;
-#endif
 	IdleState = S_TARGETER;
 }
 
@@ -1327,13 +1231,11 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 168;//165
+	ConversationID = 168;
 	ClassName = 'coin';
 	Mass = 99999.0;
 	bDropped = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_COIN;
 }
 
@@ -1356,12 +1258,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 169;//166
+	ConversationID = 169;
 	ClassName = '10_gold';
 	bDropped = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_GOLD10;
 }
 
@@ -1384,12 +1284,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 170;//167
+	ConversationID = 170;
 	ClassName = '25_gold';
 	bDropped = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_GOLD25;
 }
 
@@ -1412,18 +1310,15 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 171;//168
+	ConversationID = 171;
 	ClassName = '50_gold';
 	bDropped = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_GOLD50;
 }
 
 }
 
-#ifndef TEASER
 //**************************************************************************
 //
 //	Gold300
@@ -1444,7 +1339,6 @@ defaultproperties
 }
 
 }
-#endif
 
 //**************************************************************************
 //
@@ -1462,12 +1356,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 173;//169
+	ConversationID = 173;
 	ClassName = 'ring';
-#ifndef TEASER
 	StepSpeed = 1.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_RING;
 }
 
@@ -1490,14 +1382,12 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 174;//170
+	ConversationID = 174;
 	ClassName = 'Offering_Chalice';
 	Radius = 10.0;
 	Height = 8.0;
-#ifndef TEASER
 	StepSpeed = 2.0;
 	bUnknown5 = true;
-#endif
 	bDropped = true;
 	IdleState = S_CHALICE;
 }
@@ -1520,12 +1410,10 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 175;//171
+	ConversationID = 175;
 	ClassName = 'ear';
-#ifndef TEASER
 	StepSpeed = 9.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_EAR;
 }
 
@@ -1548,7 +1436,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 176;//172
+	ConversationID = 176;
 	ClassName = 'Communicator';
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
@@ -1573,7 +1461,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 177;//174
+	ConversationID = 177;
 	PickupString = "HE-Grenade Rounds";
 	IdleState = S_GRENADE_HE;
 	AmmoType = am_grenade1;
@@ -1598,44 +1486,13 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 178;//175
-#ifdef TEASER
-	PickupString = "Fire-Grenade Rounds";
-#else
+	ConversationID = 178;
 	PickupString = "Phosphorus-Grenade Rounds";
-#endif
 	IdleState = S_GRENADE_FIRE;
 	AmmoType = am_grenade2;
 }
 
 }
-
-#ifdef TEASER
-//**************************************************************************
-//
-//	ItemAmmoGasGrenadeRounds
-//
-//**************************************************************************
-
-class ItemAmmoGasGrenadeRounds:AmmoPickup
-	__mobjinfo__(84)
-{
-
-__states__
-{
-	S_GRENADE_GAS('GASG', 0, -1.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	ConversationID = 176;
-	PickupString = "Gas-Grenade Rounds";
-	IdleState = S_GRENADE_GAS;
-	AmmoType = am_grenade2;
-}
-
-}
-#endif
 
 //**************************************************************************
 //
@@ -1654,12 +1511,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 179;//177
-#ifdef TEASER
-	PickupString = "bullets";
-#else
+	ConversationID = 179;
 	PickupString = "clip of bullets";
-#endif
 	IdleState = S_BULLETS;
 	AmmoType = am_clip;
 }
@@ -1683,7 +1536,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 180;//178
+	ConversationID = 180;
 	PickupString = "ammo";
 	IdleState = S_AMMO;
 	AmmoType = am_clip;
@@ -1709,12 +1562,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 181;//179
-#ifdef TEASER
-	PickupString = "rocket";
-#else
-	PickupString = "mini_missiles";
-#endif
+	ConversationID = 181;
+	PickupString = "mini missiles";
 	IdleState = S_MINI_MISSILES;
 	AmmoType = am_misl;
 }
@@ -1738,12 +1587,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 182;//180
-#ifdef TEASER
-	PickupString = "box of rockets";
-#else
+	ConversationID = 182;
 	PickupString = "crate of missiles";
-#endif
 	IdleState = S_CRATE_OF_MISSILES;
 	AmmoType = am_misl;
 	NumClips = 4;
@@ -1769,7 +1614,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 183;//181
+	ConversationID = 183;
 	PickupString = "energy pod";
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = am_cell;
@@ -1795,7 +1640,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 184;//182
+	ConversationID = 184;
 	PickupString = "energy pack";
 	IdleState = S_ENERGY_PACK_1;
 	AmmoType = am_cell;
@@ -1821,12 +1666,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 185;//183
-#ifdef TEASER
-	PickupString = "poison arrows";
-#else
+	ConversationID = 185;
 	PickupString = "poison bolts";
-#endif
 	IdleState = S_ARROWS_POISON;
 	AmmoType = am_poison_arrow;
 }
@@ -1850,12 +1691,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 186;//184
-#ifdef TEASER
-	PickupString = "electric arrows";
-#else
+	ConversationID = 186;
 	PickupString = "electric bolts";
-#endif
 	IdleState = S_ARROWS_ELECTRIC;
 	AmmoType = am_electric_arrow;
 }
@@ -1879,12 +1716,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 187;//185
-#ifdef TEASER
-	ClassName = 'Back_pack';
-#else
+	ConversationID = 187;
 	ClassName = 'ammo_satchel';
-#endif
 	IdleState = S_BACKPACK;
 }
 
@@ -1907,7 +1740,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 188;//186
+	ConversationID = 188;
 	PickupString = "assault gun";
 	IdleState = S_ASSAULT_GUN1;
 	WeaponType = wp_riffle;
@@ -1932,12 +1765,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 189;//187
-#ifdef TEASER
-	PickupString = "pulse rifle";
-#else
+	ConversationID = 189;
 	PickupString = "assault gun";
-#endif
 	IdleState = S_ASSAULT_GUN2;
 	WeaponType = wp_riffle;
 }
@@ -1961,7 +1790,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 190;//188
+	ConversationID = 190;
 	PickupString = "flame thrower";
 	IdleState = S_FLAME_THROWER;
 	WeaponType = wp_flame;
@@ -1985,12 +1814,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 191;//189
-#ifdef TEASER
-	ClassName = 'flame_thrower_Parts';
-#else
+	ConversationID = 191;
 	ClassName = 'flame_thrower_parts';
-#endif
 	IdleState = S_FLAME_THROWER_PARTS;
 }
 
@@ -2013,12 +1838,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 192;//190
-#ifdef TEASER
-	PickupString = "missile gun";
-#else
+	ConversationID = 192;
 	PickupString = "mini missile launcher";
-#endif
 	IdleState = S_MISSILE_LAUNCHER;
 	WeaponType = wp_missile;
 }
@@ -2042,12 +1863,8 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 193;//191
-#ifdef TEASER
-	PickupString = "blaster";
-#else
+	ConversationID = 193;
 	PickupString = "mauler";
-#endif
 	IdleState = S_MAULER;
 	WeaponType = wp_blaster;
 }
@@ -2071,7 +1888,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 194;//192
+	ConversationID = 194;
 	PickupString = "crossbow";
 	IdleState = S_CROSSBOW;
 	WeaponType = wp_crossbow;
@@ -2096,7 +1913,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 195;//193
+	ConversationID = 195;
 	PickupString = "Grenade launcher";
 	IdleState = S_GRENADE_LAUNCHER;
 	WeaponType = wp_grenade;
@@ -2121,7 +1938,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 196;//194
+	ConversationID = 196;
 	PickupString = "SIGIL";
 	IdleState = S_SIGIL_1;
 	WeaponType = wp_sigil;
@@ -2146,7 +1963,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 197;//195
+	ConversationID = 197;
 	PickupString = "SIGIL";
 	IdleState = S_SIGIL_2;
 	WeaponType = wp_sigil;
@@ -2171,7 +1988,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 198;//196
+	ConversationID = 198;
 	PickupString = "SIGIL";
 	IdleState = S_SIGIL_3;
 	WeaponType = wp_sigil;
@@ -2196,7 +2013,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 199;//197
+	ConversationID = 199;
 	PickupString = "SIGIL";
 	IdleState = S_SIGIL_4;
 	WeaponType = wp_sigil;
@@ -2221,7 +2038,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 200;//198
+	ConversationID = 200;
 	PickupString = "SIGIL";
 	IdleState = S_SIGIL_5;
 	WeaponType = wp_sigil;
@@ -2247,20 +2064,14 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 289;//287
-#ifdef TEASER
-	ClassName = 'POWER_COUPLING';
-#else
+	ConversationID = 289;
 	ClassName = 'BROKEN_POWER_COUPLING';
-#endif
 	Health = 40;
 	Radius = 16.0;
 	Height = 8.0;
 	Mass = 1.0;
-#ifndef TEASER
 	Speed = 17920.0;
 	bUnknown5 = true;
-#endif
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
 }
@@ -2278,7 +2089,7 @@ class Ammo2:Pickup
 
 defaultproperties
 {
-	ConversationID = 298;//297
+	ConversationID = 298;
 	ClassName = 'Ammo';
 	IdleState = S_TOKENS;
 }
@@ -2296,7 +2107,7 @@ class Health1:Pickup
 
 defaultproperties
 {
-	ConversationID = 299;//298
+	ConversationID = 299;
 	ClassName = 'Health';
 	IdleState = S_TOKENS;
 }
@@ -2314,7 +2125,7 @@ class Info1:Pickup
 
 defaultproperties
 {
-	ConversationID = 300;//299
+	ConversationID = 300;
 	ClassName = 'info';
 	IdleState = S_TOKENS;
 }
@@ -2332,7 +2143,7 @@ class Alarm1:Pickup
 
 defaultproperties
 {
-	ConversationID = 301;//300
+	ConversationID = 301;
 	ClassName = 'alarm';
 	IdleState = S_TOKENS;
 }
@@ -2350,7 +2161,7 @@ class ConversationItem302:Pickup
 
 defaultproperties
 {
-	ConversationID = 302;//301
+	ConversationID = 302;
 	IdleState = S_TOKENS;
 }
 
@@ -2367,7 +2178,7 @@ class ConversationItem303:Pickup
 
 defaultproperties
 {
-	ConversationID = 303;//302
+	ConversationID = 303;
 	IdleState = S_TOKENS;
 }
 
@@ -2384,12 +2195,10 @@ class Prison_pass:InventoryItem
 
 defaultproperties
 {
-	ConversationID = 304;//303
+	ConversationID = 304;
 	ClassName = 'Prison_pass';
-#ifndef TEASER
 	StepSpeed = 10.0;
 	bUnknown5 = true;
-#endif
 	IdleState = S_TOKENS;
 }
 
@@ -2406,7 +2215,7 @@ class ConversationItem305:Pickup
 
 defaultproperties
 {
-	ConversationID = 305;//304
+	ConversationID = 305;
 	IdleState = S_TOKENS;
 }
 
@@ -2423,13 +2232,12 @@ class ConversationItem306:Pickup
 
 defaultproperties
 {
-	ConversationID = 306;//305
+	ConversationID = 306;
 	IdleState = S_TOKENS;
 }
 
 }
 
-#ifndef TEASER
 //**************************************************************************
 //
 //	ConversationItem307
@@ -2446,7 +2254,6 @@ defaultproperties
 }
 
 }
-#endif
 
 //**************************************************************************
 //
@@ -2459,7 +2266,7 @@ class Report:InventoryItem
 
 defaultproperties
 {
-	ConversationID = 308;//306
+	ConversationID = 308;
 	ClassName = 'report';
 	IdleState = S_TOKENS;
 }
@@ -2482,7 +2289,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 309;//307
+	ConversationID = 309;
 	ClassName = 'Toughness';
 	IdleState = S_TOUGHNESS;
 }
@@ -2505,7 +2312,7 @@ __states__
 
 defaultproperties
 {
-	ConversationID = 310;//308
+	ConversationID = 310;
 	ClassName = 'Accuracy';
 	IdleState = S_ACCURACY;
 }
@@ -2521,29 +2328,22 @@ defaultproperties
 class Oracle_Pass:InventoryItem
 {
 
-#ifndef TEASER
 __states__
 {
 	S_ORACLE_PASS('OTOK', 0, -1.0, S_NULL) { }
 }
-#endif
 
 defaultproperties
 {
-	ConversationID = 311;//309
+	ConversationID = 311;
 	ClassName = 'Oracle_Pass';
-#ifdef TEASER
-	IdleState = S_TOKENS;
-#else
 	StepSpeed = 18.0;
 	bUnknown5 = true;
 	IdleState = S_ORACLE_PASS;
-#endif
 }
 
 }
 
-#ifndef TEASER
 //**************************************************************************
 //
 //	ConversationItem343
@@ -2560,11 +2360,13 @@ defaultproperties
 }
 
 }
-#endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.2  2002/06/29 15:59:26  dj_jl
 //  Split out items, projectiles and decorations.
 //

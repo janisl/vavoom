@@ -382,11 +382,6 @@ void Actor::A_Unknown27(void)
 void Actor::A_FireGrenadeExplode(void)
 {
 }
-#ifdef TEASER
-void Actor::A_GasGrenadeExplode(void)
-{
-}
-#endif
 void Actor::A_Unknown30(void)
 {
 }
@@ -396,11 +391,9 @@ void Actor::A_Unknown31(void)
 void Actor::A_Unknown32(void)
 {
 }
-#ifndef TEASER
 void Actor::A_RocketTrail(void)
 {
 }
-#endif
 void Actor::A_Unknown34(void)
 {
 }
@@ -458,11 +451,9 @@ void Actor::A_SpecterAttack(void)
 void Actor::A_SpecterDying(void)
 {
 }
-#ifndef TEASER
 void Actor::A_SpecterDeath(void)
 {
 }
-#endif
 void Actor::A_Specter2Attack(void)
 {
 }
@@ -515,6 +506,9 @@ void Actor::A_SummonRebel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.24  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

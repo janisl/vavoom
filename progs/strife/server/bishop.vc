@@ -34,11 +34,7 @@ class RobotMissile2:MiniMissile
 
 __states__
 {
-#ifdef TEASER
-	S_ROBOT_MISSILE2_1('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ROBOT_MISSILE2_2) { A_SpawnPuff(); }
-#else
 	S_ROBOT_MISSILE2_1('MISS', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ROBOT_MISSILE2_2) { A_RocketTrail(); }
-#endif
 	S_ROBOT_MISSILE2_2('MISS', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ROBOT_MISSILE2_1) { A_Unknown34(); }
 }
 
@@ -108,9 +104,7 @@ defaultproperties
 	PainChance = 0.5;
 	bUnknown4 = true;
 	bNoBlood = true;
-#ifndef TEASER
 	bNoDeathmatch = true;
-#endif
 	IdleState = S_BISHOP_LOOK;
 	SeeState = S_BISHOP_RUN1;
 	MissileState = S_BISHOP_ATK1;
@@ -127,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

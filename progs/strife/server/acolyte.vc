@@ -33,11 +33,9 @@ class AcolyteBase:Pawn
 	abstract
 {
 
-#ifndef TEASER
 void A_AcolyteDeath(void)
 {
 }
-#endif
 
 __states__
 {
@@ -50,11 +48,7 @@ __states__
 	S_ACOLYTE_XDIE7('GIBS', 6, 4.0 / 35.0, S_ACOLYTE_XDIE8) { }
 	S_ACOLYTE_XDIE8('GIBS', 7, 4.0 / 35.0, S_ACOLYTE_XDIE9) { }
 	S_ACOLYTE_XDIE9('GIBS', 8, 5.0 / 35.0, S_ACOLYTE_XDIE10) { }
-#ifdef TEASER
-	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { }
-#else
 	S_ACOLYTE_XDIE10('GIBS', 9, 5.0 / 35.0, S_ACOLYTE_XDIE11) { A_AcolyteDeath(); }
-#endif
 	S_ACOLYTE_XDIE11('GIBS', 10, 5.0 / 35.0, S_ACOLYTE_XDIE12) { }
 	S_ACOLYTE_XDIE12('GIBS', 11, 1400.0 / 35.0, S_NULL) { }
 }
@@ -107,11 +101,7 @@ __states__
 	S_ACOLYTE_DIE4('AGRD', 9, 3.0 / 35.0, S_ACOLYTE_DIE5) { }
 	S_ACOLYTE_DIE5('AGRD', 10, 3.0 / 35.0, S_ACOLYTE_DIE6) { A_Fall(); }
 	S_ACOLYTE_DIE6('AGRD', 11, 3.0 / 35.0, S_ACOLYTE_DIE7) { }
-#ifdef TEASER
-	S_ACOLYTE_DIE7('AGRD', 12, 3.0 / 35.0, S_ACOLYTE_DIE8) { }
-#else
 	S_ACOLYTE_DIE7('AGRD', 12, 3.0 / 35.0, S_ACOLYTE_DIE8) { A_AcolyteDeath(); }
-#endif
 	S_ACOLYTE_DIE8('AGRD', 13, 1400.0 / 35.0, S_ACOLYTE_XDIE11) { }
 }
 
@@ -235,7 +225,6 @@ defaultproperties
 
 }
 
-#ifndef TEASER
 //**************************************************************************
 //
 //	Acolyte7
@@ -277,7 +266,6 @@ defaultproperties
 }
 
 }
-#endif
 
 //**************************************************************************
 //
@@ -298,11 +286,7 @@ __states__
 
 defaultproperties
 {
-#ifdef TEASER
-	ConversationID = 59;
-#else
 	ConversationID = 61;
-#endif
 	SeeState = S_ACOLYTE_RUN_B;
 	PainState = S_ACOLYTE_PAIN_B1;
 	ActiveSound = 'AcolyteActive2';
@@ -372,6 +356,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

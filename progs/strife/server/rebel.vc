@@ -87,11 +87,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	StepSpeed = 8.0;
-#ifdef TEASER
-	PainChance = 0.6640625;
-#else
 	PainChance = 0.9765625;
-#endif
 	bUnknown1 = true;
 	IdleState = S_REBEL_STAND;
 	SeeState = S_REBEL_RUN1;
@@ -217,6 +213,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

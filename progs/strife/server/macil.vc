@@ -125,9 +125,6 @@ defaultproperties
 	GibsHealth = -47;
 	PainChance = 0.78125;
 	bUnknown3 = true;
-#ifdef TEASER
-	bNoDeathmatch = false;
-#endif
 	MissileState = S_MACIL_ATK2_1;
 	DeathState = S_MACIL_DIE1;
 	GibsDeathState = S_MACIL_DIE1;
@@ -139,6 +136,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

@@ -60,11 +60,7 @@ __states__
 	S_STALKER_RUN4('SPID', 1, 3.0 / 35.0, S_STALKER_RUN5) { A_Chase(); }
 	S_STALKER_RUN5('SPID', 2, 3.0 / 35.0, S_STALKER_RUN6) { A_StalkerChase(); }
 	S_STALKER_RUN6('SPID', 2, 3.0 / 35.0, S_STALKER_RUN1) { A_Chase(); }
-#ifdef TEASER
-	S_STALKER_ATK1('SPID', 9, 3.0 / 35.0, S_STALKER_ATK2) { A_StalkerAttack(); }
-#else
 	S_STALKER_ATK1('SPID', 9, 3.0 / 35.0, S_STALKER_ATK2) { A_FaceTarget(); }
-#endif
 	S_STALKER_ATK2('SPID', 10, 3.0 / 35.0, S_STALKER_F_RUN1) { A_StalkerAttack(); }
 	S_STALKER_LAND1('SPID', 2, 2.0 / 35.0, S_STALKER_LAND2) { A_StalkerLand(); }
 	S_STALKER_LAND2('SPID', 8, 3.0 / 35.0, S_STALKER_LAND3) { }
@@ -125,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.5  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

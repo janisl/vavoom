@@ -342,16 +342,11 @@ class Actor:Entity
 	void A_DecReactionCount(void);
 	void A_Unknown27(void);
 	void A_FireGrenadeExplode(void);
-#ifdef TEASER
-	void A_GasGrenadeExplode(void);
-#endif
 	void A_Explode2(void);
 	void A_Unknown30(void);
 	void A_Unknown31(void);
 	void A_Unknown32(void);
-#ifndef TEASER
 	void A_RocketTrail(void);
-#endif
 	void A_Unknown34(void);
 	void A_ActiveSound(void);
 	void A_MaulerTorpedoExplode(void);
@@ -383,9 +378,7 @@ class Actor:Entity
 	void A_SpecterMelee(void);
 	void A_SpecterAttack(void);
 	void A_SpecterDying(void);
-#ifndef TEASER
 	void A_SpecterDeath(void);
-#endif
 	void A_Specter2Attack(void);
 	void A_Specter3Attack(void);
 	void A_Specter4Attack(void);
@@ -630,6 +623,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.36  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //

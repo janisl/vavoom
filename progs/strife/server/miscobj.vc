@@ -303,39 +303,6 @@ defaultproperties
 
 }
 
-#ifdef TEASER
-//**************************************************************************
-//
-//	MiscGass
-//
-//**************************************************************************
-
-class MiscGass:Effect
-{
-
-__states__
-{
-	S_GASS_1('GASS', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_2) { }
-	S_GASS_2('GASS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_3) { }
-	S_GASS_3('GASS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_4) { }
-	S_GASS_4('GASS', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_5) { }
-	S_GASS_5('GASS', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_6) { }
-	S_GASS_6('GASS', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_7) { }
-	S_GASS_7('GASS', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_8) { }
-	S_GASS_8('GASS', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_GASS_9) { }
-	S_GASS_9('GASS', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
-}
-
-defaultproperties
-{
-	Translucency = 66;
-	bUnknown2 = true;
-	IdleState = S_GASS_1;
-}
-
-}
-#endif
-
 //**************************************************************************
 //
 //	ForceFieldGuardian
@@ -359,9 +326,7 @@ defaultproperties
 	Mass = 10000.0;
 	bShootable = true;
 	bHidden = true;
-#ifndef TEASER
 	bUnknown4 = true;
-#endif
 	IdleState = S_TOKENS;
 	DeathState = S_REMOVE_FORCE_FIELD;
 }
@@ -415,6 +380,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2002/07/15 17:54:19  dj_jl
+//  Removed all data from teaser exe.
+//
 //  Revision 1.1  2002/07/13 07:56:42  dj_jl
 //  Huge work on Strife: splitting, merging, implementing stuff, etc.
 //
