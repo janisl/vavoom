@@ -512,10 +512,6 @@ void* Sys_ZoneBase(int* size)
 	}
 	else
 	{
-		if (M_CheckParm("-opengl"))
-		{
-			maxzone = 0x800000;
-		}
 		p = M_CheckParm("-maxzone");
 		if (p && p < myargc - 1)
 	    {
@@ -710,9 +706,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/04/11 16:43:58  dj_jl
+//	Removed limiting of memory for OpenGL.
+//
 //	Revision 1.12  2002/01/25 18:06:53  dj_jl
 //	Little changes for progs profiling
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
