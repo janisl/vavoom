@@ -25,4 +25,3 @@ CONSMAP scalemap 0 0 1
 TRANSLAT raw 0 0 256 11
 
 $wad strifdat.wad
-$wad jldoom.wad  //FIXME
