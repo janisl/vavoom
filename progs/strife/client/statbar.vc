@@ -27,73 +27,75 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	SBP_INVBACK,
-	SBP_INVTOP,
-	SBP_PAUSE,
-	NUM_SB_PATCHES
-};
-
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string sb_patch_names[] = {
-	"INVBACK",
-	"INVTOP",
-	"M_PAUSE",
-	""
-};
-
 int sb_height = 32;
 
-//
-//  WIDGET VISIBILITY
-//
-
-// whether left-side main status bar is active
-boolean st_statusbaron;
-
-// whether fullscreen statusbar is on
-boolean st_fullscreen;
-
-boolean st_pauseon;
+int pic_invback;
+int pic_invtop;
+int pic_pause;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SB_CreateWidgets
+//  SB_StartMap
 //
 //==========================================================================
 
-void SB_CreateWidgets(void)
+void SB_StartMap(void)
 {
-	//  background
-	SB_CreateWidget(SBW_PATCH, 0, 168, SBP_INVBACK, SB_STYLE_NORMAL,
-		&st_statusbaron, 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 0, 160, SBP_INVTOP, SB_STYLE_NORMAL,
-		&st_statusbaron, 0, NULL);
+	pic_invback = R_RegisterPic("INVBACK", PIC_PATCH);
+	pic_invtop = R_RegisterPic("INVTOP", PIC_PATCH);
 
-	//  Pause
-	SB_CreateWidget(SBW_PATCH, 126, 4, SBP_PAUSE, SB_STYLE_NORMAL,
-		&st_pauseon, 0, NULL);
+	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 }
 
 //==========================================================================
 //
-//  SB_OnDraw
+//	SB_DrawMainBar
 //
 //==========================================================================
 
-void SB_OnDraw(int sb_view)
+void SB_DrawMainBar(void)
 {
-	st_statusbaron = sb_view != SB_VIEW_FULLSCREEN;
-	st_fullscreen = !st_statusbaron;
-	st_pauseon = cl->paused && GetCvar("draw_pause");
+	//  background
+	R_DrawPic(0, 168, pic_invback);
+	R_DrawPic(0, 160, pic_invtop);
+}
+
+//==========================================================================
+//
+//	SB_DrawPause
+//
+//==========================================================================
+
+void SB_DrawPause(void)
+{
+	if (cl->paused && GetCvar("draw_pause"))
+	{
+		//  Pause
+		R_DrawPic(126, 4, pic_pause);
+	}
+}
+
+//==========================================================================
+//
+//  SB_Drawer
+//
+//==========================================================================
+
+void SB_Drawer(int sb_view)
+{
+	if (sb_view != SB_VIEW_FULLSCREEN)
+	{
+		SB_DrawMainBar();
+	}
+	SB_DrawPause();
 }
 
 //==========================================================================
@@ -109,6 +111,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:37:19  dj_jl
+//  Removed status bar widgets
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -2620,35 +2620,6 @@ PF(InputLine_Key)
 	iline = (TILine*)Pop();
 	Push(iline->Key(key));
 }
-
-//==========================================================================
-//
-//  PF_SB_CreateWidget
-//
-//==========================================================================
-
-static void PF_SB_CreateWidget(void)
-{
-	int		type;
-	int		x;
-	int 	y;
-	int 	pindex;
-	int		style;
-	boolean *on;
-	int 	pparam;
-    int 	*data;
-
-    data = (int*)Pop();
-	pparam = Pop();
-    on = (boolean*)Pop();
-    style = Pop();
-    pindex = Pop();
-    y = Pop();
-    x = Pop();
-    type = Pop();
-	Push((int)SB_CreateWidget((sb_widget_type_t)type, x, y, pindex,
-		(sb_style_t)style, on, pparam, data));
-}
 #endif
 
 //==========================================================================
@@ -2997,8 +2968,6 @@ builtin_info_t BuiltinInfo[] =
 	_(InputLine_Init),
 	_(InputLine_SetValue),
 	_(InputLine_Key),
-
-	_(SB_CreateWidget),
 #endif
 #ifdef SERVER
 	//	Print functions
@@ -3092,9 +3061,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/02 17:36:08  dj_jl
+//	Removed status bar widgets
+//
 //	Revision 1.13  2001/09/27 17:34:22  dj_jl
 //	Fixed bug with input line
-//
+//	
 //	Revision 1.12  2001/09/27 17:03:20  dj_jl
 //	Support for multiple mobj classes
 //	

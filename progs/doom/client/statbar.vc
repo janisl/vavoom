@@ -133,199 +133,11 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	SBP_BAR,
-	SBP_ARMS,
-	SBP_FB0,
-	SBP_FB1,
-	SBP_FB2,
-	SBP_FB3,
-	SBP_TNUM0,
-	SBP_TNUM1,
-	SBP_TNUM2,
-	SBP_TNUM3,
-	SBP_TNUM4,
-	SBP_TNUM5,
-	SBP_TNUM6,
-	SBP_TNUM7,
-	SBP_TNUM8,
-	SBP_TNUM9,
-	SBP_TMINUS,
-	SBP_TPRCNT,
-	SBP_YSNUM0,
-	SBP_YSNUM1,
-	SBP_YSNUM2,
-	SBP_YSNUM3,
-	SBP_YSNUM4,
-	SBP_YSNUM5,
-	SBP_YSNUM6,
-	SBP_YSNUM7,
-	SBP_YSNUM8,
-	SBP_YSNUM9,
-	SBP_GNUM2,
-	SBP_YSNUM2_2,
-	SBP_GNUM3,
-	SBP_YSNUM3_2,
-	SBP_GNUM4,
-	SBP_YSNUM4_2,
-	SBP_GNUM5,
-	SBP_YSNUM5_2,
-	SBP_GNUM6,
-	SBP_YSNUM6_2,
-	SBP_GNUM7,
-	SBP_YSNUM7_2,
-	SBP_KEYS0,
-	SBP_KEYS1,
-	SBP_KEYS2,
-	SBP_KEYS3,
-	SBP_KEYS4,
-	SBP_KEYS5,
-	SBP_FST00,
-	SBP_FST01,
-	SBP_FST02,
-	SBP_FTR00,
-	SBP_FTL00,
-	SBP_FOUCH0,
-	SBP_FEVL0,
-	SBP_FKILL0,
-	SBP_FST10,
-	SBP_FST11,
-	SBP_FST12,
-	SBP_FTR10,
-	SBP_FTL10,
-	SBP_FOUCH1,
-	SBP_FEVL1,
-	SBP_FKILL1,
-	SBP_FST20,
-	SBP_FST21,
-	SBP_FST22,
-	SBP_FTR20,
-	SBP_FTL20,
-	SBP_FOUCH2,
-	SBP_FEVL2,
-	SBP_FKILL2,
-	SBP_FST30,
-	SBP_FST31,
-	SBP_FST32,
-	SBP_FTR30,
-	SBP_FTL30,
-	SBP_FOUCH3,
-	SBP_FEVL3,
-	SBP_FKILL3,
-	SBP_FST40,
-	SBP_FST41,
-	SBP_FST42,
-	SBP_FTR40,
-	SBP_FTL40,
-	SBP_FOUCH4,
-	SBP_FEVL4,
-	SBP_FKILL4,
-	SBP_FGOD0,
-	SBP_FDEAD0,
-	SBP_PAUSE,
-
-	NUM_SB_PATCHES
-};
-
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
-
-string sb_patch_names[] = {
-	"STBAR",
-	"STARMS",
-	"STFB0",
-	"STFB1",
-	"STFB2",
-	"STFB3",
-	"STTNUM0",
-	"STTNUM1",
-	"STTNUM2",
-	"STTNUM3",
-	"STTNUM4",
-	"STTNUM5",
-	"STTNUM6",
-	"STTNUM7",
-	"STTNUM8",
-	"STTNUM9",
-	"STTMINUS",
-	"STTPRCNT",
-	"STYSNUM0",
-	"STYSNUM1",
-	"STYSNUM2",
-	"STYSNUM3",
-	"STYSNUM4",
-	"STYSNUM5",
-	"STYSNUM6",
-	"STYSNUM7",
-	"STYSNUM8",
-	"STYSNUM9",
-	"STGNUM2",
-	"STYSNUM2",
-	"STGNUM3",
-	"STYSNUM3",
-	"STGNUM4",
-	"STYSNUM4",
-	"STGNUM5",
-	"STYSNUM5",
-	"STGNUM6",
-	"STYSNUM6",
-	"STGNUM7",
-	"STYSNUM7",
-	"STKEYS0",
-	"STKEYS1",
-	"STKEYS2",
-	"STKEYS3",
-	"STKEYS4",
-	"STKEYS5",
-	"STFST00",
-	"STFST01",
-	"STFST02",
-	"STFTR00",
-	"STFTL00",
-	"STFOUCH0",
-	"STFEVL0",
-	"STFKILL0",
-	"STFST10",
-	"STFST11",
-	"STFST12",
-	"STFTR10",
-	"STFTL10",
-	"STFOUCH1",
-	"STFEVL1",
-	"STFKILL1",
-	"STFST20",
-	"STFST21",
-	"STFST22",
-	"STFTR20",
-	"STFTL20",
-	"STFOUCH2",
-	"STFEVL2",
-	"STFKILL2",
-	"STFST30",
-	"STFST31",
-	"STFST32",
-	"STFTR30",
-	"STFTL30",
-	"STFOUCH3",
-	"STFEVL3",
-	"STFKILL3",
-	"STFST40",
-	"STFST41",
-	"STFST42",
-	"STFTR40",
-	"STFTL40",
-	"STFOUCH4",
-	"STFEVL4",
-	"STFKILL4",
-	"STFGOD0",
-	"STFDEAD0",
-	"M_PAUSE",
-	""
-};
 
 int sb_height = 32;
 
@@ -338,9 +150,6 @@ int st_fragscount;
 
 // current face index, used by w_faces
 int st_faceindex = 0;
-
-// holds key-type for each key box on bar
-int keyboxes[3];
 
 int st_maxammo[4];
 
@@ -364,145 +173,325 @@ int sb_cpo_lastcalc;
 int sb_cpo_oldhealth = -1;
 
 //
-//  WIDGET VISIBILITY
+//  PICS
 //
 
-// whether left-side main status bar is active
-boolean st_statusbaron;
-
-// whether fullscreen statusbar is on
-boolean st_fullscreen;
-
-boolean st_pauseon;
+int pic_bar;
+int pic_arms;
+int pic_tallnum[10];
+int pic_yellownum[10];
+int pic_graynum[10];
+int pic_minus;
+int pic_percent;
+int pic_faceback;
+int pic_faces[ST_NUMFACES];
+int pic_keys[6];
+int pic_pause;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SB_CreateWidgets
+//  SB_StartMap
 //
 //==========================================================================
 
-void SB_CreateWidgets(void)
+void SB_StartMap(void)
 {
+	int namebuf[3];
+	string name = ARR2STR(namebuf);
 	int i;
+
+	pic_bar = R_RegisterPic("STBAR", PIC_PATCH);
+	pic_arms = R_RegisterPic("STARMS", PIC_PATCH);
+
+	for (i = 0; i < 10; i++)
+	{
+		sprint(name, "STTNUM%d", i);
+		pic_tallnum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STYSNUM%d", i);
+		pic_yellownum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STGNUM%d", i);
+		pic_graynum[i] = R_RegisterPic(name, PIC_PATCH);
+	}
+	pic_minus = R_RegisterPic("STTMINUS", PIC_PATCH);
+	pic_percent = R_RegisterPic("STTPRCNT", PIC_PATCH);
+
+	sprint(name, "STFB%d", cl->clientnum);
+	pic_faceback = R_RegisterPic(name, PIC_PATCH);
+
+	for (i = 0; i < 6; i++)
+	{
+		sprint(name, "STKEYS%d", i);
+		pic_keys[i] = R_RegisterPic(name, PIC_PATCH);
+	}
+
+	for (i = 0; i < ST_NUMPAINFACES; i++)
+	{
+		sprint(name, "STFST%d0", i);
+		pic_faces[i * ST_FACESTRIDE] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFST%d1", i);
+		pic_faces[i * ST_FACESTRIDE + 1] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFST%d2", i);
+		pic_faces[i * ST_FACESTRIDE + 2] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFTR%d0", i);
+		pic_faces[i * ST_FACESTRIDE + 3] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFTL%d0", i);
+		pic_faces[i * ST_FACESTRIDE + 4] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFOUCH%d", i);
+		pic_faces[i * ST_FACESTRIDE + 5] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFEVL%d", i);
+		pic_faces[i * ST_FACESTRIDE + 6] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "STFKILL%d", i);
+		pic_faces[i * ST_FACESTRIDE + 7] = R_RegisterPic(name, PIC_PATCH);
+	}
+	pic_faces[ST_GODFACE] = R_RegisterPic("STFGOD0", PIC_PATCH);
+	pic_faces[ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
+
+	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 
 	st_faceindex = 0;
 	st_oldhealth = -1;
-
 	for (i = 0; i < NUMWEAPONS; i++)
 		oldweaponsowned[i] = cl->weaponowned[i];
+}
 
-	for (i = 0; i < 3; i++)
-		keyboxes[i] = -1;
+//==========================================================================
+//
+//	SB_DrawTallNum
+//
+//==========================================================================
+
+void SB_DrawTallNum(int x, int y, int num, int trans, boolean perc)
+{
+	int w;
+	int neg;
+	picinfo_t info;
+
+	// if non-number, do not draw it
+	if (num == 1994)
+	{
+		return;
+	}
+
+	if (perc)
+	{
+		R_DrawPic2(ST_HEALTHX, ST_HEALTHY, pic_percent, trans);
+	}
+
+	R_GetPicInfo(pic_tallnum[0], &info);
+	w = info.width;
+
+	neg = num < 0;
+	if (neg)
+	{
+		num = -num;
+	}
+
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawPic2(x - w, y, pic_tallnum[0], trans);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= w;
+		R_DrawPic2(x, y, pic_tallnum[num % 10], trans);
+		num /= 10;
+	}
+
+	// draw a minus sign if necessary
+	if (neg)
+	{
+		R_DrawPic2(x - 8, y, pic_minus, trans);
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawSmallNum
+//
+//==========================================================================
+
+void SB_DrawSmallNum(int x, int y, int num)
+{
+	int w;
+	picinfo_t info;
+
+	if (num < 0)
+	{
+		num = -num;
+	}
+
+	R_GetPicInfo(pic_yellownum[0], &info);
+	w = info.width;
+
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawPic(x - w, y, pic_yellownum[0]);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= w;
+		R_DrawPic(x, y, pic_yellownum[num % 10]);
+		num /= 10;
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawMainBar
+//
+//==========================================================================
+
+void SB_DrawMainBar(void)
+{
+	int i;
 
 	//  background
-	SB_CreateWidget(SBW_PATCH, ST_BGX, ST_BGY, SBP_BAR, SB_STYLE_NORMAL,
-		&st_statusbaron, 0, NULL);
+	R_DrawPic(ST_BGX, ST_BGY, pic_bar);
 
 	// ready weapon ammo
-	SB_CreateWidget(SBW_NUMBER, ST_AMMOX, ST_AMMOY, SBP_TNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->ready_ammo);
+	SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl->ready_ammo, 0, false);
 
 	// health percentage
-	SB_CreateWidget(SBW_NUMBER, ST_HEALTHX, ST_HEALTHY, SBP_TNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->health);
-	SB_CreateWidget(SBW_PATCH, ST_HEALTHX, ST_HEALTHY, SBP_TPRCNT,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
+	SB_DrawTallNum(ST_HEALTHX, ST_HEALTHY, cl->health, 0, true);
 
 	if (deathmatch)
 	{
 		// frags sum
-		SB_CreateWidget(SBW_NUMBER, ST_FRAGSX, ST_FRAGSY, SBP_TNUM0,
-			SB_STYLE_NORMAL, &st_statusbaron, 0, &st_fragscount);
+		SB_DrawTallNum(ST_FRAGSX, ST_FRAGSY, st_fragscount, 0, false);
 	}
 	else
 	{
 		// weapons owned
-		SB_CreateWidget(SBW_PATCH, ST_ARMSBGX, ST_ARMSBGY, SBP_ARMS,
-			SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
+		R_DrawPic(ST_ARMSBGX, ST_ARMSBGY, pic_arms);
 		for (i = 0; i < 6; i++)
 		{
-			SB_CreateWidget(SBW_PATCHI, ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
-				ST_ARMSY + (i / 3) * ST_ARMSYSPACE, SBP_GNUM2 + i * 2,
-				SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->weaponowned[i + 1]);
+			if (cl->weaponowned[i + 1])
+			{
+				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
+					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_yellownum[i + 2]);
+			}
+			else
+			{
+				R_DrawPic(ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
+					ST_ARMSY + (i / 3) * ST_ARMSYSPACE, pic_graynum[i + 2]);
+			}
 		}
 	}
 
 	// faces
 	if (netgame)
-		SB_CreateWidget(SBW_PATCHI, ST_FACESX, ST_FACESY, SBP_FB0,
-			SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->clientnum);
-	SB_CreateWidget(SBW_PATCHI, ST_FACESX, ST_FACESY, SBP_FST00,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &st_faceindex);
+	{
+		R_DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
+	}
+	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[st_faceindex]);
 
 	// armor percentage
-	SB_CreateWidget(SBW_NUMBER, ST_ARMORX, ST_ARMORY, SBP_TNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->armorpoints);
-	SB_CreateWidget(SBW_PATCH, ST_ARMORX, ST_ARMORY, SBP_TPRCNT,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, NULL);
+	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl->armorpoints, 0, true);
 
 	// keyboxes 0-2
-	SB_CreateWidget(SBW_PATCHI, ST_KEY0X, ST_KEY0Y, SBP_KEYS0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &keyboxes[0]);
-	SB_CreateWidget(SBW_PATCHI, ST_KEY1X, ST_KEY1Y, SBP_KEYS0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &keyboxes[1]);
-	SB_CreateWidget(SBW_PATCHI, ST_KEY2X, ST_KEY2Y, SBP_KEYS0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &keyboxes[2]);
-
-	// ammo count (all four kinds)
-	SB_CreateWidget(SBW_NUMBER, ST_AMMO0X, ST_AMMO0Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->ammo[0]);
-	SB_CreateWidget(SBW_NUMBER, ST_AMMO1X, ST_AMMO1Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->ammo[1]);
-	SB_CreateWidget(SBW_NUMBER, ST_AMMO2X, ST_AMMO2Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->ammo[2]);
-	SB_CreateWidget(SBW_NUMBER, ST_AMMO3X, ST_AMMO3Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &cl->ammo[3]);
-
-	// max ammo count (all four kinds)
-	SB_CreateWidget(SBW_NUMBER, ST_MAXAMMO0X, ST_MAXAMMO0Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &st_maxammo[0]);
-	SB_CreateWidget(SBW_NUMBER, ST_MAXAMMO1X, ST_MAXAMMO1Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &st_maxammo[1]);
-	SB_CreateWidget(SBW_NUMBER, ST_MAXAMMO2X, ST_MAXAMMO2Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &st_maxammo[2]);
-	SB_CreateWidget(SBW_NUMBER, ST_MAXAMMO3X, ST_MAXAMMO3Y, SBP_YSNUM0,
-		SB_STYLE_NORMAL, &st_statusbaron, 0, &st_maxammo[3]);
-
-	// fullscreen health
-	SB_CreateWidget(SBW_NUMBER, ST_TDHEALTHX, ST_TDHEALTHY, SBP_TNUM0,
-		SB_STYLE_TRANSLUCENT, &st_fullscreen, 40, &cl->health);
-
-	// fullscreen armor
-	SB_CreateWidget(SBW_NUMBER, ST_TDARMORX, ST_TDARMORY, SBP_TNUM0,
-		SB_STYLE_TRANSLUCENT, &st_fullscreen, 40, &cl->armorpoints);
-
-	// fullscreen ready weapon ammo
-	SB_CreateWidget(SBW_NUMBER, ST_TDAMMOX, ST_TDAMMOY, SBP_TNUM0,
-		SB_STYLE_TRANSLUCENT, &st_fullscreen, 40, &cl->ready_ammo);
-	if (deathmatch)
+	if (cl->keys & (1 << 3))
 	{
-		// frags sum
-		SB_CreateWidget(SBW_NUMBER, 315, 5, SBP_TNUM0, SB_STYLE_TRANSLUCENT,
-			&st_fullscreen, 40, &st_fragscount);
+		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
+	}
+	else if (cl->keys & (1 << 0))
+	{
+		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
-	SB_CreateWidget(SBW_PATCH, 126, 4, SBP_PAUSE, SB_STYLE_NORMAL,
-		&st_pauseon, 0, NULL);
+	if (cl->keys & (1 << 4))
+	{
+		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
+	}
+	else if (cl->keys & (1 << 1))
+	{
+		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
+	}
+
+	if (cl->keys & (1 << 5))
+	{
+		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
+	}
+	else if (cl->keys & (1 << 2))
+	{
+		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
+	}
+
+	// ammo count (all four kinds)
+	SB_DrawSmallNum(ST_AMMO0X, ST_AMMO0Y, cl->ammo[0]);
+	SB_DrawSmallNum(ST_AMMO1X, ST_AMMO1Y, cl->ammo[1]);
+	SB_DrawSmallNum(ST_AMMO2X, ST_AMMO2Y, cl->ammo[2]);
+	SB_DrawSmallNum(ST_AMMO3X, ST_AMMO3Y, cl->ammo[3]);
+
+	// max ammo count (all four kinds)
+	SB_DrawSmallNum(ST_MAXAMMO0X, ST_MAXAMMO0Y, st_maxammo[0]);
+	SB_DrawSmallNum(ST_MAXAMMO1X, ST_MAXAMMO1Y, st_maxammo[1]);
+	SB_DrawSmallNum(ST_MAXAMMO2X, ST_MAXAMMO2Y, st_maxammo[2]);
+	SB_DrawSmallNum(ST_MAXAMMO3X, ST_MAXAMMO3Y, st_maxammo[3]);
 }
 
 //==========================================================================
 //
-//  SB_OnDraw
+//	SB_DrawFullscreenStats
 //
 //==========================================================================
 
-void SB_OnDraw(int sb_view)
+void SB_DrawFullscreenStats(void)
 {
-	st_statusbaron = sb_view != SB_VIEW_FULLSCREEN;
-	st_fullscreen = !st_statusbaron;
-	st_pauseon = cl->paused && GetCvar("draw_pause");
+	// health
+	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl->health, 40, false);
+
+	// armor
+	SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->armorpoints, 40, false);
+
+	// ready weapon ammo
+	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl->ready_ammo, 40, false);
+
+	if (deathmatch)
+	{
+		// frags sum
+		SB_DrawTallNum(315, 5, st_fragscount, 40, false);
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawPause
+//
+//==========================================================================
+
+void SB_DrawPause(void)
+{
+	if (cl->paused && GetCvar("draw_pause"))
+	{
+		R_DrawPic(126, 4, pic_pause);
+	}
+}
+
+//==========================================================================
+//
+//  SB_Drawer
+//
+//==========================================================================
+
+void SB_Drawer(int sb_view)
+{
+	if (sb_view == SB_VIEW_FULLSCREEN)
+	{
+		SB_DrawFullscreenStats();
+	}
+	else
+	{
+		SB_DrawMainBar();
+	}
+	SB_DrawPause();
 }
 
 //==========================================================================
@@ -723,13 +712,6 @@ void SB_UpdateWidgets(void)
 		else
 			st_fragscount -= cl->frags[i];
 	}
-	for (i = 0; i < 3; i++)
-	{
-		keyboxes[i] = cl->keys & (1 << i) ? i : -1;
-
-		if (cl->keys & (1 << (i + 3)))
-			keyboxes[i] = i + 3;
-	}
 	for (i = 0; i < 4; i++)
 	{
 		st_maxammo[i] = maxammo[i] * (cl->backpack ? 2 : 1);
@@ -740,6 +722,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/02 17:37:19  dj_jl
+//  Removed status bar widgets
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

@@ -248,9 +248,9 @@ enum
 //
 enum
 {
-	hleft,	//Left
+	hleft,		//Left
 	hcenter,	//Centred
-	hright	//Right
+	hright		//Right
 };
 
 //
@@ -258,34 +258,14 @@ enum
 //
 enum
 {
-	vtop,	//Top
+	vtop,		//Top
 	vcenter,	//Center
-	vbottom	//Bottom
+	vbottom		//Bottom
 };
 
 //
-//  STATUS BAR DEFS
+//  STATUS BAR VIEW TYPE
 //
-
-enum
-{
-	SBW_PATCH,
-	SBW_PATCHI,
-	SBW_NUMBER,
-	SBW_INUMBER,
-	SBW_MNUMBER,
-	SBW_NUMBER9,
-	SBW_NUMBER12,
-	SBW_SHADE
-};
-
-enum
-{
-	SB_STYLE_NORMAL,
-	SB_STYLE_TRANSLUCENT,
-	SB_STYLE_SHADOWED
-};
-
 enum
 {
 	SB_VIEW_NORMAL,
@@ -298,6 +278,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/10/02 17:37:19  dj_jl
+//  Removed status bar widgets
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

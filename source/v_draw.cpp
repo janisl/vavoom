@@ -134,12 +134,28 @@ void V_DarkenScreen(int darkening)
 	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
 }
 
+//==========================================================================
+//
+//	R_ShadeRect
+//
+//==========================================================================
+
+void R_ShadeRect(int x, int y, int width, int height, int shade)
+{
+	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
+		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
+		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/02 17:36:08  dj_jl
+//	Removed status bar widgets
+//
 //	Revision 1.5  2001/08/21 17:23:28  dj_jl
 //	Added _driver variable
-//
+//	
 //	Revision 1.4  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

@@ -27,586 +27,462 @@
 
 // CONSTANTS ---------------------------------------------------------------
 
-enum
-{
-	SBP_BARBACK,
-	SBP_GOD1,
-	SBP_GOD2,
-	SBP_LTFCTOP,
-	SBP_RTFCTOP,
-	SBP_CHAIN,
-	SBP_LIFEGEM0,
-	SBP_LIFEGEM1,
-	SBP_LIFEGEM2,
-	SBP_LIFEGEM3,
-	SBP_LTFACE,
-	SBP_RTFACE,
-	SBP_STATBAR,
-	SBP_LIFEBAR,
-	SBP_IN0,
-	SBP_IN1,
-	SBP_IN2,
-	SBP_IN3,
-	SBP_IN4,
-	SBP_IN5,
-	SBP_IN6,
-	SBP_IN7,
-	SBP_IN8,
-	SBP_IN9,
-	SBP_NEGNUM,
-	SBP_LAME,
-	SBP_INAMGLD,
-	SBP_INAMBOW,
-	SBP_INAMBST,
-	SBP_INAMRAM,
-	SBP_INAMPNX,
-	SBP_INAMLOB,
-	SBP_YKEYICON,
-	SBP_GKEYICON,
-	SBP_BKEYICON,
-	SBP_USEARTIA,
-	SBP_USEARTIB,
-	SBP_USEARTIC,
-	SBP_USEARTID,
-	SBP_ARTIBOX,
-	SBP_ARTIINVU,
-	SBP_ARTIINVS,
-	SBP_ARTIPTN2,
-	SBP_ARTISPHL,
-	SBP_ARTIPWBK,
-	SBP_ARTITRCH,
-	SBP_ARTIFBMB,
-	SBP_ARTIEGGC,
-	SBP_ARTISOAR,
-	SBP_ARTIATLP,
-	SBP_SMALLIN0,
-	SBP_SMALLIN1,
-	SBP_SMALLIN2,
-	SBP_SMALLIN3,
-	SBP_SMALLIN4,
-	SBP_SMALLIN5,
-	SBP_SMALLIN6,
-	SBP_SMALLIN7,
-	SBP_SMALLIN8,
-	SBP_SMALLIN9,
-	SBP_INVBAR,
-	SBP_SELECTBO,
-	SBP_INVGEML1,
-	SBP_INVGEML2,
-	SBP_INVGEMR1,
-	SBP_INVGEMR2,
-	SBP_FONTB16,
-	SBP_FONTB17,
-	SBP_FONTB18,
-	SBP_FONTB19,
-	SBP_FONTB20,
-	SBP_FONTB21,
-	SBP_FONTB22,
-	SBP_FONTB23,
-	SBP_FONTB24,
-	SBP_FONTB25,
-	SBP_SPFLY0,
-	SBP_SPFLY1,
-	SBP_SPFLY2,
-	SBP_SPFLY3,
-	SBP_SPFLY4,
-	SBP_SPFLY5,
-	SBP_SPFLY6,
-	SBP_SPFLY7,
-	SBP_SPFLY8,
-	SBP_SPFLY9,
-	SBP_SPFLY10,
-	SBP_SPFLY11,
-	SBP_SPFLY12,
-	SBP_SPFLY13,
-	SBP_SPFLY14,
-	SBP_SPFLY15,
-	SBP_SPINBK0,
-	SBP_SPINBK1,
-	SBP_SPINBK2,
-	SBP_SPINBK3,
-	SBP_SPINBK4,
-	SBP_SPINBK5,
-	SBP_SPINBK6,
-	SBP_SPINBK7,
-	SBP_SPINBK8,
-	SBP_SPINBK9,
-	SBP_SPINBK10,
-	SBP_SPINBK11,
-	SBP_SPINBK12,
-	SBP_SPINBK13,
-	SBP_SPINBK14,
-	SBP_SPINBK15,
-	SBP_PAUSED,
-
-	NUM_SB_PATCHES
-};
-
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string sb_patch_names[] = {
-	"BARBACK",
-	"GOD1",
-	"GOD2",
-	"LTFCTOP",
-	"RTFCTOP",
-	"CHAIN",
-	"LIFEGEM0",
-	"LIFEGEM1",
-	"LIFEGEM2",
-	"LIFEGEM3",
-	"LTFACE",
-	"RTFACE",
-	"STATBAR",
-	"LIFEBAR",
-	"IN0",
-	"IN1",
-	"IN2",
-	"IN3",
-	"IN4",
-	"IN5",
-	"IN6",
-	"IN7",
-	"IN8",
-	"IN9",
-	"NEGNUM",
-	"LAME",
-	"INAMGLD",
-	"INAMBOW",
-	"INAMBST",
-	"INAMRAM",
-	"INAMPNX",
-	"INAMLOB",
-	"YKEYICON",
-	"GKEYICON",
-	"BKEYICON",
-	"USEARTIA",
-	"USEARTIB",
-	"USEARTIC",
-	"USEARTID",
-	"ARTIBOX",	// none
-	"ARTIINVU",	// invulnerability
-	"ARTIINVS",	// invisibility
-	"ARTIPTN2",	// health
-	"ARTISPHL",	// superhealth
-	"ARTIPWBK",	// tomeofpower
-	"ARTITRCH",	// torch
-	"ARTIFBMB",	// firebomb
-	"ARTIEGGC",	// egg
-	"ARTISOAR",	// fly
-	"ARTIATLP",	// teleport
-	"SMALLIN0",
-	"SMALLIN1",
-	"SMALLIN2",
-	"SMALLIN3",
-	"SMALLIN4",
-	"SMALLIN5",
-	"SMALLIN6",
-	"SMALLIN7",
-	"SMALLIN8",
-	"SMALLIN9",
-	"INVBAR",
-	"SELECTBO",
-	"INVGEML1",
-	"INVGEML2",
-	"INVGEMR1",
-	"INVGEMR2",
-	"FONTB16",
-	"FONTB17",
-	"FONTB18",
-	"FONTB19",
-	"FONTB20",
-	"FONTB21",
-	"FONTB22",
-	"FONTB23",
-	"FONTB24",
-	"FONTB25",
-	"SPFLY0",
-	"SPFLY1",
-	"SPFLY2",
-	"SPFLY3",
-	"SPFLY4",
-	"SPFLY5",
-	"SPFLY6",
-	"SPFLY7",
-	"SPFLY8",
-	"SPFLY9",
-	"SPFLY10",
-	"SPFLY11",
-	"SPFLY12",
-	"SPFLY13",
-	"SPFLY14",
-	"SPFLY15",
-	"SPINBK0",
-	"SPINBK1",
-	"SPINBK2",
-	"SPINBK3",
-	"SPINBK4",
-	"SPINBK5",
-	"SPINBK6",
-	"SPINBK7",
-	"SPINBK8",
-	"SPINBK9",
-	"SPINBK10",
-	"SPINBK11",
-	"SPINBK12",
-	"SPINBK13",
-	"SPINBK14",
-	"SPINBK15",
-	"PAUSED",
-	""
-};
-
 int sb_height = 42;
 
-int sb_frags;
-int sb_health;
-int sb_ammo;
-int sb_readyarti;
-int sb_readyarticount;
-int sb_artitype[7];
-int sb_articount[7];
-int sb_invgeml;
-int sb_invgemr;
-int sb_flightframe;
-int sb_bookframe;
-
-boolean hitCenterFrame;
-
-//
-//  CHAIN
-//
-
+// Chain
 int HealthMarker;
 int ChainWiggle;
 
-//
-//  WIDGETS
-//
+int sb_frags;
 
-sb_widget_t *w_chain;
-sb_widget_t *w_lifegem;
-sb_widget_t *w_selectbox1;
-sb_widget_t *w_selectbox2;
+boolean hitCenterFrame;
 
-//
-//  WIDGET VISIBILITY
-//
-
-boolean sb_baron;
-boolean sb_godmodeon;
-boolean sb_mainbaron;
-boolean sb_ammoon;
-boolean sb_keyon[3];
-boolean sb_artiflash1on;
-boolean sb_readyarti1on;
-boolean sb_inventorybar1on;
-boolean sb_fullscreenon;
-boolean sb_ammo2on;
-boolean sb_readyarti2on;
-boolean sb_inventorybar2on;
-boolean sb_pauseon;
+// Graphics
+int pic_barback;
+int pic_god1;
+int pic_god2;
+int pic_barltop;
+int pic_barrtop;
+int pic_chain;
+int pic_lifegem;
+int pic_ltface;
+int pic_rtface;
+int pic_mainbar;
+int pic_innum[10];
+int pic_smallinnum[10];
+int pic_minus;
+int pic_lame;
+int pic_bignum[10];
+int bignumwidth[10];
+int pic_ammoicon[6];
+int pic_ykey;
+int pic_gkey;
+int pic_bkey;
+int pic_artiflash[4];
+int pic_arti[10];
+int pic_artibox;
+int pic_invbar;
+int pic_selectbox;
+int pic_flight[16];
+int pic_book[16];
+int pic_invgeml[2];
+int pic_invgemr[2];
+int pic_paused;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SB_CreateWidgets
+//  SB_StartMap
 //
 //==========================================================================
 
-void SB_CreateWidgets(void)
+void SB_StartMap(void)
 {
 	int i;
+	int namebuf[3];
+	string name = ARR2STR(namebuf);
+	picinfo_t info;
 
-	//
-	//  BAR BACKGROUND
-	//
-
-	//  Background
-	SB_CreateWidget(SBW_PATCH, 0, 158, SBP_BARBACK, SB_STYLE_NORMAL,
-		&sb_baron, 0, NULL);
-
-	//  God mode
-	SB_CreateWidget(SBW_PATCH, 16, 167, SBP_GOD1, SB_STYLE_NORMAL,
-		&sb_godmodeon, 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 287, 167, SBP_GOD2, SB_STYLE_NORMAL,
-		&sb_godmodeon, 0, NULL);
-
-	//  Top
-	SB_CreateWidget(SBW_PATCH, 0, 148, SBP_LTFCTOP, SB_STYLE_NORMAL,
-		&sb_baron, 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 290, 148, SBP_RTFCTOP, SB_STYLE_NORMAL,
-		&sb_baron, 0, NULL);
-
-	//  Chain
-	w_chain =
-		SB_CreateWidget(SBW_PATCH, 2, 191, SBP_CHAIN, SB_STYLE_NORMAL,
-		&sb_baron, 0, NULL);
+	pic_barback = R_RegisterPic("BARBACK", PIC_PATCH);
+	pic_god1 = R_RegisterPic("GOD1", PIC_PATCH);
+	pic_god2 = R_RegisterPic("GOD2", PIC_PATCH);
+	pic_barltop = R_RegisterPic("LTFCTOP", PIC_PATCH);
+	pic_barrtop = R_RegisterPic("RTFCTOP", PIC_PATCH);
+	pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
 	if (!netgame)
-	{	// single player game uses red life gem
-		w_lifegem =
-			SB_CreateWidget(SBW_PATCH, 17, 191, SBP_LIFEGEM2, SB_STYLE_NORMAL,
-			&sb_baron, 0, NULL);
+	{
+		// single player game uses red life gem
+		pic_lifegem = R_RegisterPic("LIFEGEM2", PIC_PATCH);
 	}
 	else
 	{
-		w_lifegem =
-			SB_CreateWidget(SBW_PATCHI, 17, 191, SBP_LIFEGEM0,
-			SB_STYLE_NORMAL, &sb_baron, 0, &cl->clientnum);
+		sprint(name, "LIFEGEM%d", cl->clientnum);
+		pic_lifegem = R_RegisterPic(name, PIC_PATCH);
 	}
-	SB_CreateWidget(SBW_PATCH, 0, 190, SBP_LTFACE, SB_STYLE_NORMAL, &sb_baron,
-		0, NULL);
-	SB_CreateWidget(SBW_PATCH, 276, 190, SBP_RTFACE, SB_STYLE_NORMAL,
-		&sb_baron, 0, NULL);
+	pic_ltface = R_RegisterPic("LTFACE", PIC_PATCH);
+	pic_rtface = R_RegisterPic("RTFACE", PIC_PATCH);
+
+	if (deathmatch)
+	{
+		pic_mainbar = R_RegisterPic("STATBAR", PIC_PATCH);
+	}
+	else
+	{
+		pic_mainbar = R_RegisterPic("LIFEBAR", PIC_PATCH);
+	}
+	for (i = 0; i < 10; i++)
+	{
+		sprint(name, "IN%d", i);
+		pic_innum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "SMALLIN%d", i);
+		pic_smallinnum[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "FONTB%d", 16 + i);
+		pic_bignum[i] = R_RegisterPic(name, PIC_PATCH);
+		R_GetPicInfo(pic_bignum[i], &info);
+		bignumwidth[i] = info.width;
+	}
+	pic_minus = R_RegisterPic("NEGNUM", PIC_PATCH);
+	pic_lame = R_RegisterPic("LAME", PIC_PATCH);
+	pic_ammoicon[0] = R_RegisterPic("INAMGLD", PIC_PATCH);
+	pic_ammoicon[1] = R_RegisterPic("INAMBOW", PIC_PATCH);
+	pic_ammoicon[2] = R_RegisterPic("INAMBST", PIC_PATCH);
+	pic_ammoicon[3] = R_RegisterPic("INAMRAM", PIC_PATCH);
+	pic_ammoicon[4] = R_RegisterPic("INAMPNX", PIC_PATCH);
+	pic_ammoicon[5] = R_RegisterPic("INAMLOB", PIC_PATCH);
+	pic_ykey = R_RegisterPic("YKEYICON", PIC_PATCH);
+	pic_gkey = R_RegisterPic("GKEYICON", PIC_PATCH);
+	pic_bkey = R_RegisterPic("BKEYICON", PIC_PATCH);
+
+	pic_artiflash[0] = R_RegisterPic("USEARTIA", PIC_PATCH);
+	pic_artiflash[1] = R_RegisterPic("USEARTIB", PIC_PATCH);
+	pic_artiflash[2] = R_RegisterPic("USEARTIC", PIC_PATCH);
+	pic_artiflash[3] = R_RegisterPic("USEARTID", PIC_PATCH);
+	pic_arti[0] = R_RegisterPic("ARTIINVU", PIC_PATCH);	// invulnerability
+	pic_arti[1] = R_RegisterPic("ARTIINVS", PIC_PATCH);	// invisibility
+	pic_arti[2] = R_RegisterPic("ARTIPTN2", PIC_PATCH);	// health
+	pic_arti[3] = R_RegisterPic("ARTISPHL", PIC_PATCH);	// superhealth
+	pic_arti[4] = R_RegisterPic("ARTIPWBK", PIC_PATCH);	// tomeofpower
+	pic_arti[5] = R_RegisterPic("ARTITRCH", PIC_PATCH);	// torch
+	pic_arti[6] = R_RegisterPic("ARTIFBMB", PIC_PATCH);	// firebomb
+	pic_arti[7] = R_RegisterPic("ARTIEGGC", PIC_PATCH);	// egg
+	pic_arti[8] = R_RegisterPic("ARTISOAR", PIC_PATCH);	// fly
+	pic_arti[9] = R_RegisterPic("ARTIATLP", PIC_PATCH);	// teleport
+	pic_artibox = R_RegisterPic("ARTIBOX", PIC_PATCH);
+	pic_invbar = R_RegisterPic("INVBAR", PIC_PATCH);
+	pic_selectbox = R_RegisterPic("SELECTBO", PIC_PATCH);
+	pic_invgeml[0] = R_RegisterPic("INVGEML1", PIC_PATCH);
+	pic_invgeml[1] = R_RegisterPic("INVGEML2", PIC_PATCH);
+	pic_invgemr[0] = R_RegisterPic("INVGEMR1", PIC_PATCH);
+	pic_invgemr[1] = R_RegisterPic("INVGEMR2", PIC_PATCH);
+
 	for (i = 0; i < 16; i++)
 	{
-		SB_CreateWidget(SBW_SHADE, 277 + i, 190, 10, SB_STYLE_NORMAL,
-			&sb_baron, i / 2, NULL);
-		SB_CreateWidget(SBW_SHADE, 19 + i, 190, 10, SB_STYLE_NORMAL,
-			&sb_baron, 7 - (i / 2), NULL);
+		sprint(name, "SPFLY%d", i);
+		pic_flight[i] = R_RegisterPic(name, PIC_PATCH);
+		sprint(name, "SPINBK%d", i);
+		pic_book[i] = R_RegisterPic(name, PIC_PATCH);
 	}
 
-	//
-	//  MAIN BAR
-	//
-
-	//  Main interface
-	if (deathmatch)
-	{
-		SB_CreateWidget(SBW_PATCH, 34, 160, SBP_STATBAR, SB_STYLE_NORMAL,
-			&sb_mainbaron, 0, NULL);
-	}
-	else
-	{
-		SB_CreateWidget(SBW_PATCH, 34, 160, SBP_LIFEBAR, SB_STYLE_NORMAL,
-			&sb_mainbaron, 0, NULL);
-	}
-
-	//  Frags / Health
-	if (deathmatch)
-	{
-		SB_CreateWidget(SBW_NUMBER9, 61, 170, SBP_IN0, SB_STYLE_NORMAL,
-			&sb_mainbaron, 0, &sb_frags);
-	}
-	else
-	{
-		SB_CreateWidget(SBW_NUMBER9, 61, 170, SBP_IN0, SB_STYLE_NORMAL,
-			&sb_mainbaron, 0, &sb_health);
-	}
-
-	//  Ammo
-	SB_CreateWidget(SBW_NUMBER9, 109, 162, SBP_IN0, SB_STYLE_NORMAL,
-		&sb_ammoon, 0, &sb_ammo);
-	SB_CreateWidget(SBW_PATCHI, 111, 172, SBP_INAMGLD - 1, SB_STYLE_NORMAL,
-		&sb_ammoon, 0, &cl->readyweapon);
-
-	//  Keys
-	SB_CreateWidget(SBW_PATCH, 153, 164, SBP_YKEYICON, SB_STYLE_NORMAL,
-		&sb_keyon[0], 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 153, 172, SBP_GKEYICON, SB_STYLE_NORMAL,
-		&sb_keyon[1], 0, NULL);
-	SB_CreateWidget(SBW_PATCH, 153, 180, SBP_BKEYICON, SB_STYLE_NORMAL,
-		&sb_keyon[2], 0, NULL);
-
-	//  Ready artifact
-	SB_CreateWidget(SBW_PATCHI, 182, 161, SBP_USEARTIA, SB_STYLE_NORMAL,
-		&sb_artiflash1on, 0, &cl->ArtifactFlash);
-	SB_CreateWidget(SBW_PATCHI, 179, 160, SBP_ARTIBOX, SB_STYLE_NORMAL,
-		&sb_readyarti1on, 0, &sb_readyarti);
-	SB_CreateWidget(SBW_INUMBER, 201, 182, SBP_SMALLIN0, SB_STYLE_NORMAL,
-		&sb_readyarti1on, 0, &sb_readyarticount);
-
-	//  Armor
-	SB_CreateWidget(SBW_NUMBER9, 228, 170, SBP_IN0, SB_STYLE_NORMAL,
-		&sb_mainbaron, 0, &cl->armorpoints);
-
-	//  Inventory
-	SB_CreateWidget(SBW_PATCH, 34, 160, SBP_INVBAR, SB_STYLE_NORMAL,
-		&sb_inventorybar1on, 0, NULL);
-	for (i = 0; i < 7; i++)
-	{
-		SB_CreateWidget(SBW_PATCHI, 50 + i * 31, 160, SBP_ARTIBOX,
-			SB_STYLE_NORMAL, &sb_inventorybar1on, 0, &sb_artitype[i]);
-		SB_CreateWidget(SBW_INUMBER, 69 + i * 31, 182, SBP_SMALLIN0,
-			SB_STYLE_NORMAL, &sb_inventorybar1on, 0, &sb_articount[i]);
-	}
-	w_selectbox1 =
-		SB_CreateWidget(SBW_PATCH, 50, 189, SBP_SELECTBO, SB_STYLE_NORMAL,
-		&sb_inventorybar1on, 0, NULL);
-	SB_CreateWidget(SBW_PATCHI, 38, 159, SBP_INVGEML1, SB_STYLE_NORMAL,
-		&sb_inventorybar1on, 0, &sb_invgeml);
-	SB_CreateWidget(SBW_PATCHI, 269, 159, SBP_INVGEMR1, SB_STYLE_NORMAL,
-		&sb_inventorybar1on, 0, &sb_invgemr);
-
-	//
-	//  FULLSCREEN
-	//
-
-	//  Health
-	SB_CreateWidget(SBW_NUMBER12, 5, 180, SBP_FONTB16, SB_STYLE_SHADOWED,
-		&sb_fullscreenon, 0, &cl->health);
-
-	//  Frags
-	if (deathmatch)
-	{
-		SB_CreateWidget(SBW_NUMBER9, 45, 185, SBP_IN0, SB_STYLE_NORMAL,
-			&sb_fullscreenon, 0, &sb_frags);
-	}
-
-	//  Ammo
-	SB_CreateWidget(SBW_NUMBER9, 290, 186, SBP_IN0, SB_STYLE_NORMAL,
-		&sb_ammo2on, 0, &sb_ammo);
-	SB_CreateWidget(SBW_PATCHI, 270, 184, SBP_INAMGLD - 1, SB_STYLE_NORMAL,
-		&sb_ammo2on, 0, &cl->readyweapon);
-
-	//  Ready artifact
-	SB_CreateWidget(SBW_PATCH, 286, 150, SBP_ARTIBOX, SB_STYLE_TRANSLUCENT,
-		&sb_readyarti2on, 40, NULL);
-	SB_CreateWidget(SBW_PATCHI, 286, 150, SBP_ARTIBOX, SB_STYLE_NORMAL,
-		&sb_readyarti2on, 0, &sb_readyarti);
-	SB_CreateWidget(SBW_INUMBER, 307, 172, SBP_SMALLIN0, SB_STYLE_NORMAL,
-		&sb_readyarti2on, 0, &sb_readyarticount);
-
-	//  Inventory
-	for (i = 0; i < 7; i++)
-	{
-		SB_CreateWidget(SBW_PATCH, 50 + i * 31, 168, SBP_ARTIBOX,
-			SB_STYLE_TRANSLUCENT, &sb_inventorybar2on, 40, NULL);
-		SB_CreateWidget(SBW_PATCHI, 50 + i * 31, 168, SBP_ARTIBOX,
-			SB_STYLE_NORMAL, &sb_inventorybar2on, 0, &sb_artitype[i]);
-		SB_CreateWidget(SBW_INUMBER, 69 + i * 31, 190, SBP_SMALLIN0,
-			SB_STYLE_NORMAL, &sb_inventorybar2on, 0, &sb_articount[i]);
-	}
-	w_selectbox2 =
-		SB_CreateWidget(SBW_PATCH, 50, 197, SBP_SELECTBO, SB_STYLE_NORMAL,
-		&sb_inventorybar2on, 0, NULL);
-	SB_CreateWidget(SBW_PATCHI, 38, 167, SBP_INVGEML1, SB_STYLE_NORMAL,
-		&sb_inventorybar2on, 0, &sb_invgeml);
-	SB_CreateWidget(SBW_PATCHI, 269, 167, SBP_INVGEMR1, SB_STYLE_NORMAL,
-		&sb_inventorybar2on, 0, &sb_invgemr);
-
-	//
-	//  ICONS
-	//
-
-	//  Artifact rotating icons
-	SB_CreateWidget(SBW_PATCHI, 20, 17, SBP_SPFLY0, SB_STYLE_NORMAL,
-		&cl->powers[pw_flight], 0, &sb_flightframe);
-	SB_CreateWidget(SBW_PATCHI, 300, 17, SBP_SPINBK0, SB_STYLE_NORMAL,
-		&cl->powers[pw_weaponlevel2], 0, &sb_bookframe);
-
-	//  Pause
-	SB_CreateWidget(SBW_PATCH, 160, netgame ? 70 : 20, SBP_PAUSED,
-		SB_STYLE_NORMAL, &sb_pauseon, 0, NULL);
+	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
 }
 
 //==========================================================================
 //
-//  SB_OnDraw
+//	SB_DrawNumber9
 //
 //==========================================================================
 
-void SB_OnDraw(int sb_view)
+void SB_DrawNumber9(int x, int y, int num)
+{
+	int w = 9;
+	int neg = num < 0;
+
+	if (num < -9)
+	{
+		//	Lame message
+		R_DrawPic(x + 1, y + 1, pic_lame);
+		return;
+	}
+	if (neg)
+	{
+		num = -num;
+	}
+
+	x = x + 27;
+
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawPic(x - w, y, pic_innum[0]);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= w;
+		R_DrawPic(x, y, pic_innum[num % 10]);
+		num /= 10;
+	}
+
+	// draw a minus sign if necessary
+	if (neg)
+	{
+		R_DrawPic(x - 8, y, pic_minus);
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawNumber12
+//
+//==========================================================================
+
+void SB_DrawNumber12(int x, int y, int num)
+{
+	x = x + 36;
+    
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawShadowedPic(x - bignumwidth[0], y, pic_bignum[0]);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= bignumwidth[num % 10];
+		R_DrawShadowedPic(x, y, pic_bignum[num % 10]);
+		num /= 10;
+		x -= 3;
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawINumber
+//
+//==========================================================================
+
+void SB_DrawINumber(int x, int y, int num)
+{
+	if (num > 1)
+	{
+		x = x + 8;
+    
+		// draw the new number
+		while (num)
+		{
+			x -= 4;
+			R_DrawPic(x, y, pic_smallinnum[num % 10]);
+			num /= 10;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawMainBar
+//
+//==========================================================================
+
+void SB_DrawMainBar(void)
 {
 	int chainY;
 	int healthPos;
 	int i;
-	int x;
+	int health;
 
-	//  Visibility
-	sb_baron = sb_view != SB_VIEW_FULLSCREEN;
-	sb_godmodeon = sb_baron && cl->cheats & CF_GODMODE;
-	sb_mainbaron = sb_baron && !cl->inventoryTics;
-	sb_ammoon = sb_mainbaron &&
-		cl->readyweapon > 0 && cl->readyweapon < 7 && cl->ammo[cl->readyammo];
-	sb_keyon[0] = sb_mainbaron && (cl->keys & (1 << key_yellow));
-	sb_keyon[1] = sb_mainbaron && (cl->keys & (1 << key_green));
-	sb_keyon[2] = sb_mainbaron && (cl->keys & (1 << key_blue));
-	sb_artiflash1on = sb_mainbaron && cl->ArtifactFlash;
-	sb_readyarti1on = sb_mainbaron && !cl->ArtifactFlash
-		&& cl->readyArtifact > 0;
-	sb_inventorybar1on = sb_baron && cl->inventoryTics;
-	sb_fullscreenon = !sb_baron;
-	sb_ammo2on = sb_fullscreenon &&
-		cl->readyweapon > 0 && cl->readyweapon < 7 && cl->ammo[cl->readyammo];
-	sb_readyarti2on = sb_fullscreenon && cl->readyArtifact > 0
-		&& !cl->inventoryTics;
-	sb_inventorybar2on = !sb_baron && cl->inventoryTics;
+	//  Background
+	R_DrawPic(0, 158, pic_barback);
+
+	if (cl->cheats & CF_GODMODE)
+	{
+		//  God mode
+		R_DrawPic(16, 167, pic_god1);
+		R_DrawPic(287, 167, pic_god2);
+	}
+
+	//  Top
+	R_DrawPic(0, 148, pic_barltop);
+	R_DrawPic(290, 148, pic_barrtop);
 
 	//  Healtn and chain
-	sb_health = HealthMarker;
-	if (sb_health < 0)
+	health = HealthMarker;
+	if (health < 0)
 	{
-		sb_health = 0;
+		health = 0;
 	}
-	else if (sb_health > 100)
+	else if (health > 100)
 	{
-		sb_health = 100;
+		health = 100;
 	}
-	healthPos = (sb_health * 256) / 100;
+	healthPos = (health * 256) / 100;
 	chainY = (HealthMarker == cl->health) ? 191 : 191 + ChainWiggle;
-	w_chain->x = 2 + (healthPos % 17);
-	w_chain->y = chainY;
-	w_lifegem->x = 17 + healthPos;
-	w_lifegem->y = chainY;
 
-	//  Ammo
-	if (sb_ammoon || sb_ammo2on)
-		sb_ammo = cl->ammo[cl->readyammo];
-	else
-		sb_ammo = 0;
-
-	//  Ready artifact
-	sb_readyarti = cl->readyArtifact;
-	sb_readyarticount = cl->inventory[cl->inv_ptr].count;
-
-	//  Inventory
-	if (cl->inventoryTics)
+	//  Chain
+	R_DrawPic(2 + (healthPos % 17), chainY, pic_chain);
+	R_DrawPic(17 + healthPos, chainY, pic_lifegem);
+	R_DrawPic(0, 190, pic_ltface);
+	R_DrawPic(276, 190, pic_rtface);
+	for (i = 0; i < 16; i++)
 	{
+		R_ShadeRect(277 + i, 190, 1, 10, 9 + i);
+		R_ShadeRect(19 + i, 190, 1, 10, 9 + 15 - i);
+	}
+
+	if (!cl->inventoryTics)
+	{
+		//  Main interface
+		R_DrawPic(34, 160, pic_mainbar);
+
+		//  Frags / Health
+		if (deathmatch)
+		{
+			SB_DrawNumber9(61, 170, sb_frags);
+		}
+		else
+		{
+			SB_DrawNumber9(61, 170, health);
+		}
+
+		if (cl->readyweapon > 0 && cl->readyweapon < 7 &&
+			cl->ammo[cl->readyammo])
+		{
+			//  Ammo
+			SB_DrawNumber9(109, 162, cl->ammo[cl->readyammo]);
+			R_DrawPic(111, 172, pic_ammoicon[cl->readyweapon - 1]);
+		}
+
+		//  Ready artifact
+		if (cl->ArtifactFlash)
+		{
+			R_DrawPic(182, 161, pic_artiflash[cl->ArtifactFlash]);
+		}
+		else if (cl->readyArtifact > 0)
+		{
+			R_DrawPic(179, 160, pic_arti[cl->readyArtifact - 1]);
+			SB_DrawINumber(201, 182, cl->inventory[cl->inv_ptr].count);
+		}
+
+		//  Keys
+		if (cl->keys & (1 << key_yellow))
+		{
+			R_DrawPic(153, 164, pic_ykey);
+		}
+		if (cl->keys & (1 << key_green))
+		{
+			R_DrawPic(153, 172, pic_gkey);
+		}
+		if (cl->keys & (1 << key_blue))
+		{
+			R_DrawPic(153, 180, pic_bkey);
+		}
+
+		//  Armor
+		SB_DrawNumber9(228, 170, cl->armorpoints);
+	}
+	else
+	{
+		int x;
+
+		//  Inventory
+		R_DrawPic(34, 160, pic_invbar);
 		x = cl->inv_ptr - cl->curpos;
 		for (i = 0; i < 7; i++)
 		{
 			if (cl->inventorySlotNum > x + i
 				&& cl->inventory[x + i].type != arti_none)
 			{
-				sb_artitype[i] = cl->inventory[x + i].type;
-				sb_articount[i] = cl->inventory[x + i].count;
-			}
-			else
-			{
-				sb_artitype[i] = -1;
-				sb_articount[i] = 0;
+				R_DrawPic(50 + i * 31, 160,
+					pic_arti[cl->inventory[x + i].type - 1]);
+				SB_DrawINumber(69 + i * 31, 182, cl->inventory[x + i].count);
 			}
 		}
-		w_selectbox1->x = 50 + cl->curpos * 31;
-		w_selectbox2->x = 50 + cl->curpos * 31;
-		sb_invgeml = (x != 0) ? !(level->tictime & 4) ? 0 : 1 : -1;
-		sb_invgemr =
-			(cl->inventorySlotNum - x >
-			7) ? !(level->tictime & 4) ? 0 : 1 : -1;
+		R_DrawPic(50 + cl->curpos * 31, 189, pic_selectbox);
+		if (x != 0)
+		{
+			R_DrawPic(38, 159, pic_invgeml[!(level->tictime & 4) ? 0 : 1]);
+		}
+		if ((cl->inventorySlotNum - x > 7))
+		{
+			R_DrawPic(269, 159, pic_invgemr[!(level->tictime & 4) ? 0 : 1]);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawFullscreenStats
+//
+//==========================================================================
+
+void SB_DrawFullscreenStats(void)
+{
+	int i;
+	int x;
+
+	//  Health
+	SB_DrawNumber12(5, 180, cl->health);
+
+	//  Frags
+	if (deathmatch)
+	{
+		SB_DrawNumber9(45, 185, sb_frags);
 	}
 
-	// Flight icons
-	sb_flightframe = -1;
+	//  Ammo
+	if (cl->readyweapon > 0 && cl->readyweapon < 7 &&
+		cl->ammo[cl->readyammo])
+	{
+		SB_DrawNumber9(290, 186, cl->ammo[cl->readyammo]);
+		R_DrawPic(270, 184, pic_ammoicon[cl->readyweapon - 1]);
+	}
+
+	if (cl->inventoryTics)
+	{
+		//  Inventory
+		x = cl->inv_ptr - cl->curpos;
+		for (i = 0; i < 7; i++)
+		{
+			R_DrawPic2(50 + i * 31, 168, pic_artibox, 40);
+			if (cl->inventorySlotNum > x + i
+				&& cl->inventory[x + i].type != arti_none)
+			{
+				R_DrawPic(50 + i * 31, 168,
+					pic_arti[cl->inventory[x + i].type - 1]);
+				SB_DrawINumber(69 + i * 31, 190, cl->inventory[x + i].count);
+			}
+		}
+		R_DrawPic(50 + cl->curpos * 31, 197, pic_selectbox);
+		if (x != 0)
+		{
+			R_DrawPic(38, 167, pic_invgeml[!(level->tictime & 4) ? 0 : 1]);
+		}
+		if (cl->inventorySlotNum - x > 7)
+		{
+			R_DrawPic(269, 167, pic_invgemr[!(level->tictime & 4) ? 0 : 1]);
+		}
+	}
+	else if (cl->readyArtifact > 0)
+	{
+		//  Ready artifact
+		R_DrawPic2(286, 150, pic_artibox, 40);
+		R_DrawPic(286, 150, pic_arti[cl->readyArtifact - 1]);
+		SB_DrawINumber(307, 172, cl->inventory[cl->inv_ptr].count);
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawIcons
+//
+//==========================================================================
+
+void SB_DrawIcons(void)
+{
+	int frame;
+
+	//  Artifact rotating icons
 	if (cl->powers[pw_flight])
 	{
 		if (cl->powers[pw_flight] > ftoi(BLINKTHRESHOLD * 35.0)
 			|| !(cl->powers[pw_flight] & 16))
 		{
-			sb_flightframe = (level->tictime / 3) & 15;
+			frame = (level->tictime / 3) & 15;
 #ifdef FIXME
 			if (!cl->mo || cl->mo->flags2 & MF2_FLY)
 #endif
 			{
-				if (hitCenterFrame && sb_flightframe != 15
-					&& sb_flightframe != 0)
+				if (hitCenterFrame && frame != 15 && frame != 0)
 				{
-					sb_flightframe = 15;
+					frame = 15;
 				}
 				else
 				{
@@ -616,27 +492,60 @@ void SB_OnDraw(int sb_view)
 #ifdef FIXME
 			else
 			{
-				if (hitCenterFrame || sb_flightframe == 15
-					|| sb_flightframe == 0)
+				if (hitCenterFrame || frame == 15 || frame == 0)
 				{
-					sb_flightframe = 15;
+					frame = 15;
 					hitCenterFrame = true;
 				}
 			}
 #endif
+			R_DrawPic(20, 17, pic_flight[frame]);
 		}
 	}
 
-	sb_bookframe = -1;
 	if (cl->powers[pw_weaponlevel2] && !cl->chickenTics)
 	{
 		if (cl->powers[pw_weaponlevel2] > ftoi(BLINKTHRESHOLD * 35.0)
 			|| !(cl->powers[pw_weaponlevel2] & 16))
 		{
-			sb_bookframe = (level->tictime / 3) & 15;
+			frame = (level->tictime / 3) & 15;
+			R_DrawPic(300, 17, pic_book[frame]);
 		}
 	}
-	sb_pauseon = cl->paused && GetCvar("draw_pause");
+}
+
+//==========================================================================
+//
+//	SB_DrawPause
+//
+//==========================================================================
+
+void SB_DrawPause(void)
+{
+	if (cl->paused && GetCvar("draw_pause"))
+	{
+		R_DrawPic(160, netgame ? 70 : 20, pic_paused);
+	}
+}
+
+//==========================================================================
+//
+//  SB_Drawer
+//
+//==========================================================================
+
+void SB_Drawer(int sb_view)
+{
+	if (sb_view == SB_VIEW_FULLSCREEN)
+	{
+		SB_DrawFullscreenStats();
+	}
+	else
+	{
+		SB_DrawMainBar();
+	}
+	SB_DrawIcons();
+	SB_DrawPause();
 }
 
 //==========================================================================
@@ -697,6 +606,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/02 17:37:19  dj_jl
+//  Removed status bar widgets
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

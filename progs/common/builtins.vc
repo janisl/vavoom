@@ -320,9 +320,6 @@ extern void IN_SetBinding(int key, string ondown, string onup);
 
 extern void LoadTextLump(string name, void *buf, int bufsize);
 
-extern sb_widget_t *SB_CreateWidget(int type, int x, int y,
-	int pindex, int style, boolean * on, int pparam, int *data);
-
 extern dlight_t *AllocDlight(int key);
 extern particle_t *NewParticle(void);
 
@@ -480,6 +477,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/10/02 17:37:19  dj_jl
+//  Removed status bar widgets
+//
 //  Revision 1.10  2001/09/27 17:08:19  dj_jl
 //  Removed spawn functions, added mobj classes
 //
