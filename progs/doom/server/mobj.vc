@@ -295,13 +295,26 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		return;
 	}
 
+	if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+	{
+		// Polyobj StartSpot Pt.
+		SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+			(mthing->type == PO_SPAWNCRUSH_TYPE));
+		return;
+	}
+	if (mthing->type == PO_ANCHOR_TYPE)
+	{
+		// Polyobj Anchor Pt.
+		AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+		return;
+	}
+
 	// check for players specially
 	if (mthing->type <= 4)
 	{
 		// save spots for respawning in network games
-		CopyMThing(mthing,
-			&level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type -
-				1]);
+		CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
 		return;
 	}
 
@@ -989,6 +1002,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2001/12/18 18:35:26  dj_jl
+//  Added polyobjs
+//
 //  Revision 1.15  2001/12/12 18:57:40  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //

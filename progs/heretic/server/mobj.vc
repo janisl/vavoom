@@ -44,25 +44,6 @@ boolean P_CheckPosition(mobj_t * thing, float x, float y);
 mobj_t *MissileMobj;
 classid PuffType;
 
-float FloatBobOffsets[64] = {
-	0.0, 0.7841339111, 1.560714722, 2.322265625,
-	3.061462402, 3.77116394, 4.444549561, 5.075134277,
-	5.656845093, 6.184082031, 6.651748657, 7.055358887,
-	7.391021729, 7.655517578, 7.8462677, 7.961471558,
-	7.999984741, 7.961471558, 7.8462677, 7.655517578,
-	7.391021729, 7.055358887, 6.651748657, 6.184082031,
-	5.656845093, 5.075134277, 4.444549561, 3.77116394,
-	3.061462402, 2.322265625, 1.560714722, 0.7841339111,
-	-0.0000152587, -0.7841491699, -1.56072998, -2.322280884,
-	-3.061477661, -3.771179199, -4.444564819, -5.075149536,
-	-5.656860352, -6.18409729, -6.651763916, -7.055374146,
-	-7.391052246, -7.655532837, -7.846298218, -7.961486816,
-	-8.0, -7.961486816, -7.846298218, -7.655532837,
-	-7.391052246, -7.055374146, -6.651763916, -6.18409729,
-	-5.656860352, -5.075149536, -4.444564819, -3.771179199,
-	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
-};
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -1261,6 +1242,20 @@ void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 		return;
 	}
 
+	if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+	{
+		// Polyobj StartSpot Pt.
+		SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+			(mthing->type == PO_SPAWNCRUSH_TYPE));
+		return;
+	}
+	if (mthing->type == PO_ANCHOR_TYPE)
+	{
+		// Polyobj Anchor Pt.
+		AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+		return;
+	}
+
 	// Check current game type with spawn flags
 	if (netgame == false)
 	{
@@ -1548,6 +1543,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2001/12/18 18:35:26  dj_jl
+//  Added polyobjs
+//
 //  Revision 1.15  2001/12/12 18:57:41  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //
