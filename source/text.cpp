@@ -536,15 +536,72 @@ void T_DrawString8(int x, int y, const char* String)
 
 	lenght = (int)strlen(String);
 	
-//	if ((cx >= 320) || (cy >= 200))
-	if ((cx >= 640) || (cy >= 480))
+	if ((cx >= 320) || (cy >= 200))
 	{
 	   	cond << "T_DrawString8: Draw text \"" << String << "\" at ("
 	   		<< cx << "," << cy << ")\n";
 	  	return;
 	}
 
-//	for (i = 0; i < lenght && cx < 320; i++)
+	for (i = 0; i < lenght && cx < 320; i++)
+	{
+		c = String[i] - 32;
+
+		if (c < 0)
+		{
+			continue;
+		}
+		if (c >= 96 || !Font->Pics[c])
+		{
+			cx += 8;
+			continue;
+		}
+		
+		w = Font->PicInfo[c].width;
+		R_DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
+		cx += 8;
+	}
+	LastX = cx;
+	LastY = cy;
+}
+
+//==========================================================================
+//
+//	T_DrawString640
+//
+//	Write a string using the font with fixed width 8.
+//
+//==========================================================================
+
+void T_DrawString640(int x, int y, const char* String)
+{
+	int		w;
+	int		c;
+	int		cx;
+	int		cy;
+	int		i;
+	int		lenght;
+
+	if (!String)
+		return;
+		
+	cx = x;
+	cy = y;
+
+	if (HAlign == hcenter)
+		cx -= T_StringWidth(String) / 2;
+	if (HAlign == hright)
+		cx -= T_StringWidth(String);
+
+	lenght = (int)strlen(String);
+	
+	if ((cx >= 640) || (cy >= 480))
+	{
+	   	cond << "T_DrawString640: Draw text \"" << String << "\" at ("
+	   		<< cx << "," << cy << ")\n";
+	  	return;
+	}
+
 	for (i = 0; i < lenght && cx < 640; i++)
 	{
 		c = String[i] - 32;
@@ -560,7 +617,6 @@ void T_DrawString8(int x, int y, const char* String)
 		}
 		
 		w = Font->PicInfo[c].width;
-//		R_DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
 		R_DrawPic640(cx + (8 - w) / 2, cy, Font->Pics[c]);
 		cx += 8;
 	}
@@ -571,9 +627,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/12 17:30:25  dj_jl
+//	Seperate function for drawing text to virtual 640x480 screen
+//
 //	Revision 1.7  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
-//
+//	
 //	Revision 1.6  2001/09/27 17:34:22  dj_jl
 //	Fixed bug with input line
 //	
