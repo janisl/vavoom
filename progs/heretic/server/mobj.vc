@@ -219,6 +219,11 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		{
 			Flags |= MF_AMBUSH;
 		}
+		if (mthing->options & MTF_DORMANT)
+		{
+			Flags2 |= MF2_DORMANT;
+			time = -1.0;
+		}
 	}
 	else
 	{
@@ -751,6 +756,11 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			return;
 		}
 		velocity = vector(0.0, 0.0, 0.0);
+	}
+	if (Flags2 & MF2_DORMANT)
+	{
+		// Invulnerable, and won't wake up
+		return;
 	}
 	if (player && gameskill == sk_baby)
 	{
@@ -1463,6 +1473,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/01/29 18:11:23  dj_jl
+//  Added dormant things
+//
 //  Revision 1.26  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.
