@@ -60,6 +60,9 @@ void Sys_SetFPCW(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+jmp_buf __Context::Env;
+const char* __Context::ErrToThrow;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static DIR *current_dir;
@@ -719,29 +722,38 @@ char *Sys_ConsoleInput(void)
 
 static void signal_handler(int s)
 {
-	signal(s,SIG_IGN);  // Ignore future instances of this signal.
+	signal(s, SIG_IGN);	// Ignore future instances of this signal.
 
 	switch (s)
 	{
-	 case SIGABRT:
-		throw VavoomError("Aborted");
-	 case SIGFPE:
-		throw VavoomError("Floating Point Exception");
-	 case SIGILL:
-		throw VavoomError("Illegal Instruction");
-	 case SIGSEGV:
-		throw VavoomError("Segmentation Violation");
-	 case SIGTERM:
-		throw VavoomError("Terminated");
-	 case SIGINT:
-		throw VavoomError("Interrupted by User");
-	 case SIGKILL:
-		throw VavoomError("Killed");
-	 case SIGQUIT:
-		throw VavoomError("Quited");
-	 default:
-		throw VavoomError("Terminated by signal");
+	case SIGABRT:
+		__Context::ErrToThrow = "Aborted";
+		break;
+	case SIGFPE:
+		__Context::ErrToThrow = "Floating Point Exception";
+		break;
+	case SIGILL:
+		__Context::ErrToThrow = "Illegal Instruction";
+		break;
+	case SIGSEGV:
+		__Context::ErrToThrow = "Segmentation Violation";
+		break;
+	case SIGTERM:
+		__Context::ErrToThrow = "Terminated";
+		break;
+	case SIGINT:
+		__Context::ErrToThrow = "Interrupted by User";
+		break;
+	case SIGKILL:
+		__Context::ErrToThrow = "Killed";
+		break;
+	case SIGQUIT:
+		__Context::ErrToThrow = "Quited";
+		break;
+	default:
+		__Context::ErrToThrow = "Terminated by signal";
 	}
+	longjmp(__Context::Env, 1);
 }
 
 //==========================================================================
@@ -821,9 +833,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2003/10/22 06:15:00  dj_jl
+//	Safer handling of signals in Linux
+//
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.10  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
 //	

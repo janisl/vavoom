@@ -99,16 +99,40 @@ typedef unsigned long	 	dword;
 //
 //==========================================================================
 
-#if !defined(_DEBUG) && DO_GUARD
-#define guard(name)		static const char __FUNC_NAME__[] = #name; try {
-#define unguard			} catch (RecoverableError &e) { throw e; } \
-	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }
-#define unguardf(msg)	} catch (RecoverableError &e) { throw e; } \
-	catch (...) { Host_CoreDump(__FUNC_NAME__); Host_CoreDump msg; throw; }
-#else
+#ifdef __linux__
+#include <setjmp.h>
+//	Stack control.
+class __Context
+{
+public:
+	__Context() { memcpy(&Last, &Env, sizeof(jmp_buf)); }
+	~__Context() { memcpy(&Env, &Last, sizeof(jmp_buf)); }
+	static jmp_buf Env;
+	static const char* ErrToThrow;
+
+protected:
+	jmp_buf Last;
+};
+#endif
+
+#if defined(_DEBUG) || !DO_GUARD
 #define guard(name)		static const char __FUNC_NAME__[] = #name; {
 #define unguard			}
 #define unguardf(msg)	}
+#elif defined(__linux__)
+#define guard(name)		{static const char __FUNC_NAME__[] = #name; \
+	__Context __LOCAL_CONTEXT__; try { if (setjmp(__Context::Env)) { \
+	throw VavoomError(__Context::ErrToThrow); } else {
+#define unguard			}} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }}
+#define unguardf(msg)	}} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); Host_CoreDump msg; throw; }}
+#else
+#define guard(name)		{static const char __FUNC_NAME__[] = #name; try {
+#define unguard			} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }}
+#define unguardf(msg)	} catch (RecoverableError &e) { throw e; } \
+	catch (...) { Host_CoreDump(__FUNC_NAME__); Host_CoreDump msg; throw; }}
 #endif
 
 #if !defined(_DEBUG) && DO_GUARD_SLOW
@@ -162,9 +186,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2003/10/22 06:15:00  dj_jl
+//	Safer handling of signals in Linux
+//
 //	Revision 1.16  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.15  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
 //	

@@ -72,6 +72,11 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef __linux__
+jmp_buf __Context::Env;
+const char* __Context::ErrToThrow;
+#endif
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static DIR *current_dir;
@@ -420,6 +425,38 @@ static void signal_handler(int s)
 	signal(s, SIG_IGN);
 
 	//	Exit with error message
+#ifdef __linux__
+	switch (s)
+	{
+	case SIGABRT:
+		__Context::ErrToThrow = "Aborted";
+		break;
+	case SIGFPE:
+		__Context::ErrToThrow = "Floating Point Exception";
+		break;
+	case SIGILL:
+		__Context::ErrToThrow = "Illegal Instruction";
+		break;
+	case SIGSEGV:
+		__Context::ErrToThrow = "Segmentation Violation";
+		break;
+	case SIGTERM:
+		__Context::ErrToThrow = "Terminated";
+		break;
+	case SIGINT:
+		__Context::ErrToThrow = "Interrupted by User";
+		break;
+	case SIGKILL:
+		__Context::ErrToThrow = "Killed";
+		break;
+	case SIGQUIT:
+		__Context::ErrToThrow = "Quited";
+		break;
+	default:
+		__Context::ErrToThrow = "Terminated by signal";
+	}
+	longjmp(__Context::Env, 1);
+#else
 	switch (s)
 	{
 	 case SIGABRT:	throw VavoomError("Abnormal termination triggered by abort call");
@@ -439,6 +476,7 @@ static void signal_handler(int s)
 #endif
      default:		throw VavoomError("Terminated by signal");
 	}
+#endif
 }
 
 //==========================================================================
@@ -505,9 +543,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2003/10/22 06:15:00  dj_jl
+//	Safer handling of signals in Linux
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
 //	
