@@ -920,20 +920,6 @@ static TTree *ParseExpressionPriority0(void)
 	 case TK_PUNCT:
 	   	if (TK_Check(PU_LPAREN))
 		{
-			type = CheckForType();
-			if (type)
-			{
-				while (TK_Check(PU_ASTERISK))
-				{
-					type = MakePointerType(type);
-				}
-				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-				op = ParseExpressionPriority2();
-				op->type = type;
-				ParseWarning("C style type cast");
-				return op;
-			}
-
 			op = ParseExpressionPriority14();
 			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
 			return op;
@@ -1801,9 +1787,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/23 17:56:28  dj_jl
+//	Removed support for C-style type casting.
+//
 //	Revision 1.18  2002/01/21 18:23:09  dj_jl
 //	Constructors with no names
-//
+//	
 //	Revision 1.17  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
 //	
