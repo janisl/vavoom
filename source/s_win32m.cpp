@@ -1010,7 +1010,7 @@ static boolean convert(char *mus, int length)
 //
 //==========================================================================
 
-static void WriteBuf(void *p, int size)
+static void WriteBuf(const void *p, int size)
 {
 	memcpy(mid_file, p, size);
 	mid_file += size;
@@ -1089,9 +1089,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/09/24 10:54:11  dj_jl
+//	MinGW support.
+//
 //	Revision 1.10  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
-//
+//	
 //	Revision 1.9  2002/08/24 14:49:20  dj_jl
 //	Added MP3 test.
 //	

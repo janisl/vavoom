@@ -246,7 +246,7 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
 	guard(VOpenGLDrawer::GetExtFuncPtr);
-	return wglGetProcAddress(name);
+	return (void*)wglGetProcAddress(name);
 	unguard;
 }
 
@@ -317,9 +317,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/09/24 10:54:11  dj_jl
+//	MinGW support.
+//
 //	Revision 1.12  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.11  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	
