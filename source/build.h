@@ -47,7 +47,7 @@
 // will not be compiled
 //#define PARANOID		1
 
-#define DEVELOPER		1
+//#define DEVELOPER		1
 
 #define DO_GUARD		1
 
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/08/05 17:19:14  dj_jl
+//	Switched to release.
+//
 //	Revision 1.4  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.3  2002/06/22 07:07:21  dj_jl
 //	Back to work.
 //	
