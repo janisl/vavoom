@@ -97,7 +97,7 @@ void TGLVisGUI::DisplayMessage(const char *text, ...)
 	va_start(args, text);
 	vsprintf(message, text, args);
 	va_end(args);
-	cond << message;
+	GCon->Log(NAME_Dev, message);
 }
 
 //==========================================================================
@@ -176,8 +176,8 @@ void TGLVisGUI::DisplayPortalVisProgress(int count, int total)
 
 void TGLVisGUI::DisplayMapDone(int accepts, int total)
 {
-	cond << accepts << " accepts, " << (total - accepts) << " rejects, "
-		<< (accepts * 100 / total) << "%\n";
+	GCon->Logf(NAME_Dev, "%d accepts, %d rejects, %d%",
+		accepts, total - accepts, accepts * 100 / total);
 }
 
 //==========================================================================
@@ -248,9 +248,12 @@ COMMAND(glVIS)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/27 07:47:21  dj_jl
 //	Noreject option, fast mode warning
 //	

@@ -680,7 +680,7 @@ static boolean PIT_CheckRelLine(line_t * ld)
 	{
 		if (tmtrace.NumSpecHit >= MAXSPECIALCROSS)
 		{
-			//cond << "Spechit overflow\n";
+			//GCon->Log(NAME_Dev, "Spechit overflow");
 		}
 		else
 		{
@@ -1688,9 +1688,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/07/13 07:48:08  dj_jl
 //	Moved some global functions to Entity class.
-//
+//	
 //	Revision 1.6  2002/06/22 07:08:45  dj_jl
 //	Made sliding and bouncing functions native.
 //	

@@ -232,7 +232,7 @@ void VObject::UnhashObject(void)
 		}
 		else
 		{
-			con << "VObject::UnhashObject: Not in hash\n";
+			GCon->Log(NAME_Dev, "VObject::UnhashObject: Not in hash");
 		}
 	}
 #endif
@@ -409,9 +409,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
-//
+//	
 //	Revision 1.7  2002/05/29 16:53:52  dj_jl
 //	Added GetVFunction.
 //	

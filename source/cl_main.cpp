@@ -339,7 +339,7 @@ void CL_KeepaliveMessage(void)
 	lastmsg = time;
 
 	// write out a nop
-	con << "--> client to server keepalive\n";
+	GCon->Log("--> client to server keepalive");
 
 	cls.message << (byte)clc_nop;
 	NET_SendMessage(cls.netcon, &cls.message);
@@ -378,10 +378,10 @@ void CL_Disconnect(void)
 			CL_StopRecording();
 		}
 
-		cond << "Sending clc_disconnect\n";
+		GCon->Log(NAME_Dev, "Sending clc_disconnect");
 		if (cls.message.CurSize)
 		{
-			cond << "Buffer contains data\n";
+			GCon->Log(NAME_Dev, "Buffer contains data");
 		}
 		cls.message.Clear();
 		cls.message << (byte)clc_disconnect;
@@ -426,10 +426,10 @@ void CL_EstablishConnection(char *host)
 	cls.netcon = NET_Connect(host);
 	if (!cls.netcon)
 	{
-		con << "Failed to connect to the server\n";
+		GCon->Log("Failed to connect to the server");
 		return;
 	}
-	cond << "CL_EstablishConnection: connected to " << host << endl;
+	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
 
 	UserInfoSent = false;
 
@@ -516,9 +516,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.12  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.11  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
 //	

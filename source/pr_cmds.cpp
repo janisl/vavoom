@@ -238,7 +238,7 @@ static char *PF_FormatString(void)
 				break;
 
 			 default:
-				cond << "PF_FormatString: Unknown format identifier " << *src << endl;
+				GCon->Logf(NAME_Dev, "PF_FormatString: Unknown format identifier %s", *src);
 				src--;
 				*dst = *src;
 				break;
@@ -254,11 +254,11 @@ static char *PF_FormatString(void)
 	}
 	if (pi < count)
 	{
-		cond << "PF_FormatString: Not all params were used\n";
+		GCon->Log(NAME_Dev, "PF_FormatString: Not all params were used");
 	}
 	if (pi > count)
 	{
-		cond << "PF_FormatString: Param count overflow\n";
+		GCon->Log(NAME_Dev, "PF_FormatString: Param count overflow");
 	}
 	return vastring;
 }
@@ -2553,7 +2553,7 @@ PF(T_SetShadow)
 {
 	bool		state;
 
-	state = Pop();
+	state = !!Pop();
 	T_SetShadow(state);
 }
 
@@ -2681,7 +2681,7 @@ PF(TranslateKey)
 
 static void PF_print(void)
 {
-	con << PF_FormatString();
+	GCon->Log(PF_FormatString());
 }
 
 //==========================================================================
@@ -2692,7 +2692,7 @@ static void PF_print(void)
 
 static void PF_dprint(void)
 {
-	cond << PF_FormatString();
+	GCon->Log(NAME_Dev, PF_FormatString());
 }
 
 //==========================================================================
@@ -3119,9 +3119,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.40  2002/07/13 07:48:08  dj_jl
 //	Moved some global functions to Entity class.
-//
+//	
 //	Revision 1.39  2002/06/22 07:10:42  dj_jl
 //	Added FindClass.
 //	

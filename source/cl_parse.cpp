@@ -540,8 +540,9 @@ static void CL_ParseServerInfo(void)
 	R_Start(info);
    	S_Start(info);
 
-	con << "---------------------------------------\n";
-	con << cl_level.level_name << "\n\n";
+	GCon->Log("---------------------------------------");
+	GCon->Log(cl_level.level_name);
+	GCon->Log("");
     C_ClearNotify();
 
 	cl.clientnum = net_msg.ReadByte();
@@ -559,7 +560,7 @@ static void CL_ParseServerInfo(void)
 
     Z_CheckHeap();
 
-	cond << "Client level loaded\n";
+	GCon->Log(NAME_Dev, "Client level loaded");
 }
 
 //==========================================================================
@@ -644,13 +645,13 @@ static void CL_ParseModel(void)
 			}
 			else
 			{
-				con << "Can't find wepon info model " << wpname << endl;
+				GCon->Logf("Can't find wepon info model %s", wpname);
 			}
 		}
 	}
 	else if (TCvar::Value("r_models"))
 	{
-		con << "Can't find " << name << endl;
+		GCon->Logf("Can't find %s", name);
 	}
 }
 
@@ -731,10 +732,9 @@ void CL_ParseServerMessage(void)
 	{
 		if (net_msg.badread)
 		{
-			cond <<	net_msg.CurSize << " [ ";
+			GCon->Logf(NAME_Dev, "Length %d", net_msg.CurSize);
 			for (i = 0; i < net_msg.CurSize; i++)
-				cond << (int)net_msg.Data[i] << ' ';
-			cond << "]\n";
+				GCon->Logf(NAME_Dev, "  %d", (int)net_msg.Data[i]);
 			Host_Error("Packet corupted");
 		}
 
@@ -1013,13 +1013,12 @@ void CL_ParseServerMessage(void)
 			{
 				break;
 			}
-			cond <<	net_msg.CurSize << " [ ";
+			GCon->Logf(NAME_Dev, "Length %d", net_msg.CurSize);
 			for (i = 0; i < net_msg.CurSize; i++)
 			{
-				if (!(i % 10)) cond << endl;
-				cond << (int)net_msg.Data[i] << ' ';
+				GCon->Logf(NAME_Dev, "  %d", (int)net_msg.Data[i]);
 			}
-			cond << "] " << net_msg.readcount << endl;
+			GCon->Logf(NAME_Dev, "ReadCount %d", net_msg.readcount);
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}
@@ -1029,9 +1028,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.26  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
-//
+//	
 //	Revision 1.25  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

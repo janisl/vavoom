@@ -163,7 +163,7 @@ void VectorAngles(const TVec &vec, TAVec &angles)
 	double length = sqrt(vec.x * vec.x + vec.y * vec.y);
 	if (!length)
 	{
-		cond << "Length 0, z = " << vec.z << endl;
+		GCon->Logf(NAME_Dev, "Length 0, z = %f", vec.z);
 		angles.pitch = 0;
 		angles.yaw = 0;
 		angles.roll = 0;
@@ -235,9 +235,12 @@ void PerpendicularVector(TVec &dst, const TVec &src)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/12/18 19:07:15  dj_jl
 //	Changed AngleMod to a more precise version
 //	

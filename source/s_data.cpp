@@ -219,7 +219,7 @@ int S_GetSoundID(FName Name)
 			return It.GetIndex();
 		}
 	}
-	con << "WARNING! Can't find sound \"" << *Name << "\".\n";
+	GCon->Logf("WARNING! Can't find sound %s", *Name);
 	return 0;
 	unguard;
 }
@@ -241,7 +241,7 @@ int S_GetSoundID(char *name)
 			return It.GetIndex();
 		}
 	}
-	con << "WARNING! Can't find sound named \"" << name << "\".\n";
+	GCon->Logf("WARNING! Can't find sound named %s", name);
 	return 0;
 	unguard;
 }
@@ -354,9 +354,12 @@ void S_Init(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/07/20 14:50:24  dj_jl
 //	Missing sound data will not crash game anymore.
-//
+//	
 //	Revision 1.7  2002/01/12 18:05:00  dj_jl
 //	Beautification
 //	

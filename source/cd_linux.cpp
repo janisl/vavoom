@@ -107,7 +107,8 @@ void CD_Init(void)
     cdfile = open(cd_dev, O_RDONLY);
 	if (cdfile == -1)
 	{
-		con << "CD_Init: open of \"" << cd_dev << "\" failed (" << errno << ")\n";
+		GCon->Logf(NAME_Init, "CD_Init: open of \"%s\" failed (%d)",
+			cd_dev, errno);
 		cdfile = -1;
 		return;
 	}
@@ -120,10 +121,10 @@ void CD_Init(void)
     CD_GetInfo();
 	if (!cdValid)
 	{
-		con << "CD_Init: No CD in player.\n";
+		GCon->Log(NAME_Init, "CD_Init: No CD in player.");
 	}
 
-	con << "CD Audio Initialized\n";
+	GCon->Log(NAME_Init, "CD Audio Initialized");
 	unguard;
 }
 
@@ -151,7 +152,7 @@ void CD_Update(void)
 		subchnl.cdsc_format = CDROM_MSF;
 		if (ioctl(cdfile, CDROMSUBCHNL, &subchnl) == -1 )
 		{
-			cond << "ioctl cdromsubchnl failed\n";
+			GCon->Log(NAME_Dev, "ioctl cdromsubchnl failed");
 			playing = false;
 			return;
 		}
@@ -241,7 +242,7 @@ COMMAND(CD)
 		{
 			for (n = 1; n < 100; n++)
 				if (remap[n] != n)
-					con << n << " -> " << remap[n] << endl;
+					GCon->Logf("%d -> %d", n, remap[n]);
 			return;
 		}
 		for (n = 1; n <= ret; n++)
@@ -274,7 +275,7 @@ COMMAND(CD)
 		CD_GetInfo();
 		if (!cdValid)
 		{
-			con << "No CD in player.\n";
+			GCon->Log("No CD in player.");
 			return;
 		}
 	}
@@ -311,12 +312,11 @@ COMMAND(CD)
 
 	if (!stricmp(command, "info"))
 	{
-		con << maxTrack << " tracks\n";
+		GCon->Logf("%d tracks", maxTrack);
 		if (playing || wasPlaying)
         {
-			con << (playing ? "Currently " : "Paused ")
-				<< (playLooping ? "looping" : "playing")
-				<< " track " << playTrack << endl;
+			GCon->Logf("%s %s track %d", playing ? "Currently" : "Paused",
+				playLooping ? "looping" : "playing", playTrack);
         }
 		return;
 	}
@@ -343,13 +343,13 @@ static void CD_GetInfo(void)
 
 	if (ioctl(cdfile, CDROMREADTOCHDR, &tochdr) == -1)
     {
-		cond << "ioctl cdromreadtochdr failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromreadtochdr failed");
 		return;
     }
 
 	if (tochdr.cdth_trk0 < 1)
 	{
-		cond << "CDAudio: no music tracks\n";
+		GCon->Log(NAME_Dev, "CDAudio: no music tracks");
 		return;
 	}
 
@@ -379,7 +379,7 @@ static void CD_Play(int track, boolean looping)
 
 	if (track < 1 || track > maxTrack)
 	{
-		cond << "CDAudio: Bad track number " << track << ".\n";
+		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
 	}
 
@@ -388,12 +388,12 @@ static void CD_Play(int track, boolean looping)
 	entry.cdte_format = CDROM_MSF;
     if (ioctl(cdfile, CDROMREADTOCENTRY, &entry) == -1)
 	{
-		cond << "ioctl cdromreadtocentry failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromreadtocentry failed");
 		return;
 	}
 	if (entry.cdte_ctrl == CDROM_DATA_TRACK)
 	{
-		con << "CDAudio: track " << track << " is not audio\n";
+		GCon->Logf("CDAudio: track %d is not audio", track);
 		return;
 	}
 
@@ -411,12 +411,12 @@ static void CD_Play(int track, boolean looping)
 
 	if (ioctl(cdfile, CDROMPLAYTRKIND, &ti) == -1)
     {
-		cond << "ioctl cdromplaytrkind failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromplaytrkind failed");
 		return;
     }
 
 	if (ioctl(cdfile, CDROMRESUME) == -1)
-		cond << "ioctl cdromresume failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
 
 	playLooping = looping;
 	playTrack = track;
@@ -435,7 +435,7 @@ static void CD_Pause(void)
 		return;
 
 	if (ioctl(cdfile, CDROMPAUSE) == -1)
-		cond << "ioctl cdrompause failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdrompause failed");
 
 	wasPlaying = playing;
 	playing = false;
@@ -453,7 +453,7 @@ static void CD_Resume(void)
 		return;
 	
 	if (ioctl(cdfile, CDROMRESUME) == -1)
-		cond << "ioctl cdromresume failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
 
 	playing = true;
 }
@@ -470,7 +470,7 @@ static void CD_Stop(void)
 		return;
 
 	if (ioctl(cdfile, CDROMSTOP) == -1)
-		cond << "ioctl cdromstop failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromstop failed");
 
 	wasPlaying = false;
 	playing = false;
@@ -485,7 +485,7 @@ static void CD_Stop(void)
 static void CD_OpenDoor(void)
 {
 	if (ioctl(cdfile, CDROMEJECT) == -1)
-		cond << "ioctl cdromeject failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromeject failed");
 }
 
 //==========================================================================
@@ -497,15 +497,18 @@ static void CD_OpenDoor(void)
 static void CD_CloseDoor(void)
 {
 	if (ioctl(cdfile, CDROMCLOSETRAY) == -1)
-		cond << "ioctl cdromclosetray failed\n";
+		GCon->Log(NAME_Dev, "ioctl cdromclosetray failed");
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

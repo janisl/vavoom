@@ -38,10 +38,6 @@
 #include <ctype.h>
 #include <math.h>
 
-//	C++ headers
-#include <iostream.h>
-#include <iomanip.h>
-
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "misc.h"		//	Misc utilites
@@ -110,9 +106,12 @@ class VSubsystem:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.22  2002/07/15 17:51:09  dj_jl
 //	Made VSubsystem global.
-//
+//	
 //	Revision 1.21  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

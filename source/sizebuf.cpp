@@ -105,7 +105,7 @@ void *TSizeBuf::GetSpace(int length)
 			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length);
 			
 		Overflowed = true;
-		con << "TSizeBuf::GetSpace: overflow";
+		GCon->Log("TSizeBuf::GetSpace: overflow");
 		Clear();
 	}
 
@@ -165,9 +165,12 @@ void TTextBuf::PrintInt(int data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

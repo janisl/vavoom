@@ -187,7 +187,7 @@ void Cmd_TokenizeString(const char *str)
 	        }
 			if (!*p)
 			{
-				con << "ERROR: Missing closing quote!\n";
+				GCon->Log("ERROR: Missing closing quote!");
 				return;
 			}
             //	Erase closing quote
@@ -291,11 +291,10 @@ COMMAND(CmdList)
     {
 		if (pref_len && strnicmp(cmd->Name, prefix, pref_len))
 			continue;
-		con << cmd->Name << " ";
+		GCon->Logf(" %s", cmd->Name);
 		count++;
     }
-    con << endl;
-	con << count << " commands.\n";
+	GCon->Logf("%d commands.", count);
 }
 
 //==========================================================================
@@ -313,10 +312,10 @@ COMMAND(Alias)
 
 	if (Argc() == 1)
     {
-		con << "Current alias:\n";
+		GCon->Log("Current alias:");
 	   	for (a = alias; a; a = a->next)
         {
-        	con << a->Name << ": " << a->CmdLine << endl;
+        	GCon->Logf("%s: %s", a->Name, a->CmdLine);
         }
         return;
     }
@@ -333,7 +332,7 @@ COMMAND(Alias)
 
 	if (tmp.Overflowed)
     {
-    	con << "Command line too long\n";
+    	GCon->Log("Command line too long");
         return;
     }
 
@@ -368,11 +367,11 @@ COMMAND(Alias)
 //
 //==========================================================================
 
-void Cmd_WriteAlias(ostream &strm)
+void Cmd_WriteAlias(FILE *f)
 {
 	for (alias_t *a = alias; a; a = a->next)
 	{
-		strm << "alias " << a->Name << " \"" << a->CmdLine << "\"\n";
+		fprintf(f, "alias %s \"%s\"\n", a->Name, a->CmdLine);
 	}
 }
 
@@ -384,7 +383,7 @@ void Cmd_WriteAlias(ostream &strm)
 
 COMMAND(Echo)
 {
-	con << Args() << endl;
+	GCon->Log(Args());
 }
 
 //==========================================================================
@@ -400,17 +399,17 @@ COMMAND(Exec)
 
 	if (Argc() != 2)
 	{
-		con << "Exec <filename> : execute script file\n";
+		GCon->Log("Exec <filename> : execute script file");
 		return;
 	}
 
     if (!FL_FindFile(Argv(1), path))
     {
-		con << "Can't find \"" << Argv(1) << "\".\n";
+		GCon->Logf("Can't find \"%s\".", Argv(1));
         return;
     }
 
-   	con << "Executing \"" << path << "\".\n";
+   	GCon->Logf("Executing \"%s\".", path);
 
 	M_ReadFile(path, (byte**)&buf);
 	CmdBuf.Insert(buf);
@@ -602,7 +601,7 @@ void Cmd_ExecuteString(const char *Acmd, cmd_source_t src)
 #ifndef CLIENT
 	if (host_initialized)
 #endif
-	    con << "Unknown command \"" << cmd_argv[0] << "\".\n";
+	    GCon->Logf("Unknown command \"%s\".", cmd_argv[0]);
 }
 
 #ifdef CLIENT
@@ -623,9 +622,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

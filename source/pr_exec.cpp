@@ -391,9 +391,9 @@ void TProgs::Load(const char *AName)
 #if defined CLIENT && defined SERVER
 			//	Don't abort with error, because it will be done, when this
 			// function will be called (if it will be called).
-			cond << "WARNING: Builtin " << (Functions[i].OuterClass ?
-				Functions[i].OuterClass->GetName() : "") <<
-				"." << *Functions[i].Name << " not found!\n";
+			GCon->Logf(NAME_Dev, "WARNING: Builtin %s.%s not found!",
+				Functions[i].OuterClass ? Functions[i].OuterClass->GetName() : "",
+				*Functions[i].Name);
 #endif
 		}
 		if (!(Functions[i].Flags & FUNC_Native))
@@ -1685,7 +1685,7 @@ void TProgs::DumpProfile(void)
 	for (i = 0; i < MAX_PROF && profsort[i]; i++)
 	{
 		int fnum = profsort[i];
-		con << va("%3.2f%% (%9d) %9d %s\n",
+		GCon->Logf("%3.2f%% (%9d) %9d %s",
 			(double)Functions[fnum].Profile2 * 100.0 / (double)totalcount,
 			(int)Functions[fnum].Profile2, (int)Functions[fnum].Profile1,
 			*Functions[fnum].Name);
@@ -1713,9 +1713,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.28  2002/05/03 17:04:35  dj_jl
 //	Mangling of string pointers.
-//
+//	
 //	Revision 1.27  2002/04/11 16:45:42  dj_jl
 //	Ignoring natives in profiling.
 //	

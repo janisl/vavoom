@@ -137,7 +137,7 @@ void WadFile::Open(const char *filename)
 	{
 		Sys_Error("Couldn't open %s", filename);
 	}
-	con << "adding " << filename << endl;
+	GCon->Logf(NAME_Init, "adding %s", filename);
 
 	// WAD file
 	Sys_FileRead(Handle, &header, sizeof(header));
@@ -190,7 +190,7 @@ void WadFile::OpenSingleLump(const char *filename)
 	{
 		Sys_Error("Couldn't open %s", filename);
 	}
-	con << "adding " << filename << endl;
+	GCon->Logf(NAME_Init, "adding %s", filename);
 
 	strcpy(Name, filename);
 
@@ -464,8 +464,8 @@ void W_BuildPVS(int lump, int gllump)
 
 	if (!wad_files[glfi].CanClose())
 	{
-		con << "Can't close " << glname << ", some lumps are in use\n";
-		con << "PVS build not performed\n";
+		GCon->Logf("Can't close %s, some lumps are in use", glname);
+		GCon->Log("PVS build not performed");
 		return;
 	}
 
@@ -858,6 +858,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/07/23 16:29:56  dj_jl
+//  Replaced console streams with output device class.
+//
 //  Revision 1.10  2002/05/18 16:56:35  dj_jl
 //  Added FArchive and FOutputDevice classes.
 //

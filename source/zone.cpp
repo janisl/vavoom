@@ -35,7 +35,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <new>
-#include <fstream.h>
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -78,7 +77,7 @@ class TMemZone
 	void FreeTag(int tag);
 	void CheckHeap(void);
 	int FreeMemory(void);
-	void DumpHeap(ostream &str);
+	void DumpHeap(FOutputDevice &Ar);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -626,10 +625,10 @@ int TMemZone::FreeMemory(void)
 			purgableblocks++;
 		}
     }
-	cond << "Free memory " << free << ", largest block " << largest
-		<< ", free blocks " << numblocks << endl;
-	cond << "Purgable memory " << purgable << ", largest block "
-		<< largestpurgable << ", total blocks " << purgableblocks << endl;		
+	GCon->Logf(NAME_Dev, "Free memory %d, largest block %d, free blocks %d",
+		free, largest, numblocks);
+	GCon->Logf(NAME_Dev, "Purgable memory %d, largest block %d, total blocks %d",
+		purgable, largestpurgable, purgableblocks);
     return free;
 	unguard;
 }
@@ -640,16 +639,16 @@ int TMemZone::FreeMemory(void)
 //
 //==========================================================================
 
-void TMemZone::DumpHeap(ostream &str)
+void TMemZone::DumpHeap(FOutputDevice &Ar)
 {
 	guard(TMemZone::DumpHeap);
 	memblock_t*	block;
 	
-	str << "zone size: " << Size << "  location: " << (void*)this << endl;
+	Ar.Logf("zone size: %d  location: %p", Size, this);
 
 	for (block = BlockList.next; ; block = block->next)
 	{
-		str << va("block:%p    size:%7i    user:%8p    tag:%3i\n",
+		Ar.Logf("block:%p    size:%7i    user:%8p    tag:%3i",
 			block, block->size, block->user, block->tag);
 		
 		if (block->next == &BlockList)
@@ -660,17 +659,17 @@ void TMemZone::DumpHeap(ostream &str)
 	
 		if ((byte *)block + block->size != (byte *)block->next)
 		{
-			str << "ERROR: block size does not touch the next block\n";
+			Ar.Log("ERROR: block size does not touch the next block");
 		}
 
 		if (block->next->prev != block)
 		{
-	    	str << "ERROR: next block doesn't have proper back link\n";
+	    	Ar.Log("ERROR: next block doesn't have proper back link");
 		}
 
 		if (!block->tag && !block->next->tag)
 		{
-			str << "ERROR: two consecutive free blocks\n";
+			Ar.Log("ERROR: two consecutive free blocks");
 		}
 	}
 	return;
@@ -731,11 +730,9 @@ void *Z_Malloc(int size, int tag, void** user)
 		}
 		else if (tag != PU_VIDEO)
 		{
-			ofstream f(va("%s/heapdump.txt", fl_gamedir));
-			mainzone->DumpHeap(f);
-			f << endl;
-			minizone->DumpHeap(f);
-			f.close();
+			mainzone->DumpHeap(*GCon);
+			GCon->Log("");
+			minizone->DumpHeap(*GCon);
     		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 		}
 	}
@@ -867,27 +864,21 @@ int Z_FreeMemory(void)
 COMMAND(DumpHeap)
 {
 	guard(COMMAND DumpHeap);
-	if (Argc() == 1)
-	{
-		mainzone->DumpHeap(con);
-		con << endl;
-		minizone->DumpHeap(con);
-		return;
-	}
-	ofstream f(va("%s/%s", fl_gamedir, Argv(1)));
-	mainzone->DumpHeap(f);
-	f << endl;
-	minizone->DumpHeap(f);
-	f.close();
+	mainzone->DumpHeap(*GCon);
+	GCon->Log("");
+	minizone->DumpHeap(*GCon);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.10  2002/07/13 07:46:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.9  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

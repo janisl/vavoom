@@ -371,8 +371,8 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 	
 	if ((cx < 0) || (cy < 0) || (cx >= 320) || (cy >= 200))
 	{
-	   	cond << "T_DrawNString: Draw text \"" << String << "\" at ("
-	   		<< cx << "," << cy << ")\n";
+	   	GCon->Logf(NAME_Dev, "T_DrawNString: Draw text \"%s\" at (%d,%d)",
+			String, cx, cy);
 	  	return;
 	}
 
@@ -538,8 +538,8 @@ void T_DrawString8(int x, int y, const char* String)
 	
 	if ((cx >= 320) || (cy >= 200))
 	{
-	   	cond << "T_DrawString8: Draw text \"" << String << "\" at ("
-	   		<< cx << "," << cy << ")\n";
+	   	GCon->Logf(NAME_Dev, "T_DrawString8: Draw text \"%s\" at (%d,%d)",
+			String, cx, cy);
 	  	return;
 	}
 
@@ -597,8 +597,8 @@ void T_DrawString640(int x, int y, const char* String)
 	
 	if ((cx >= 640) || (cy >= 480))
 	{
-	   	cond << "T_DrawString640: Draw text \"" << String << "\" at ("
-	   		<< cx << "," << cy << ")\n";
+	   	GCon->Logf(NAME_Dev, "T_DrawString640: Draw text \"%s\" at (%d,%d)",
+			String, cx, cy);
 	  	return;
 	}
 
@@ -627,9 +627,12 @@ void T_DrawString640(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/10/12 17:30:25  dj_jl
 //	Seperate function for drawing text to virtual 640x480 screen
 //	

@@ -449,12 +449,10 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 
 	if (!t1 || !t2)
 	{
-//		cond << "Bad check sight\n";
 		return false;
 	}
 	if ((t1->GetFlags() & OF_Destroyed) || (t2->GetFlags() & OF_Destroyed))
 	{
-//		cond << "Check sight with destroyed thing\n";
 		return false;
 	}
 
@@ -528,9 +526,12 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.10  2002/03/09 18:02:53  dj_jl
 //	Added early out when one-sided line is crossed
-//
+//	
 //	Revision 1.9  2002/03/02 17:31:55  dj_jl
 //	Improved sight checking with 3 rays.
 //	

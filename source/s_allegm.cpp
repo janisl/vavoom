@@ -251,12 +251,12 @@ COMMAND(Music)
 	{
 	    if (midi_pos >= 0)
         {
-        	con << "Currently " << (mus_looping ? "looping" : "playing")
-        		<< " \"" << Mus_Song << "\".\n";
+        	GCon->Logf("Currently %s %s.",
+				mus_looping ? "looping" : "playing", Mus_Song);
         }
         else
         {
-        	con << "No song currently playing\n";
+        	GCon->Log("No song currently playing");
         }
         return;
 	}
@@ -295,7 +295,7 @@ static void StartMidiSong(char* song, boolean loop)
 			name = va("%s%s.mid", ArchivePath, song);
 		    if (!Sys_FileExists(name))
 		    {
-		    	con << "Can't find song \"" << song << "\"\n";
+		    	GCon->Logf("Can't find song %s", song);
 		        return;
 			}
 	    }
@@ -309,7 +309,7 @@ static void StartMidiSong(char* song, boolean loop)
 		lump = W_CheckNumForName(song);
     	if (lump < 0)
 	    {
-	    	con << "Can't find song \"" << song << "\"\n";
+	    	GCon->Logf("Can't find song %s", song);
     	    return;
 	    }
 		StopMidiSong();
@@ -327,7 +327,7 @@ static void StartMidiSong(char* song, boolean loop)
 	}
     else
     {
-    	con << "Not a MUS or MIDI file\n";
+    	GCon->Log("Not a MUS or MIDI file");
         res = false;
     }
 	if (!res)
@@ -427,7 +427,7 @@ static boolean LoadMIDI(void)
    	if ((i != 0) && (i != 1))
     {
         // only type 0 and 1 are suported
-       	cond << "Unsuported MIDI type\n";
+       	GCon->Log(NAME_Dev, "Unsuported MIDI type");
      	return false;
     }
 
@@ -435,7 +435,7 @@ static boolean LoadMIDI(void)
 	num_tracks = BigShort(hdr->num_tracks);
    	if ((num_tracks < 1) || (num_tracks > MIDI_TRACKS))
     {
-       	cond << "Invalid MIDI track count\n";
+       	GCon->Log(NAME_Dev, "Invalid MIDI track count");
       	return false;
     }
 
@@ -448,7 +448,7 @@ static boolean LoadMIDI(void)
 	{
 	   	if (memcmp(data, "MTrk", 4))
         {
-           	cond << "Bad MIDI track " << i << " header\n";
+           	GCon->Logf(NAME_Dev, "Bad MIDI track %d header", i);
 		 	return false;
         }
       	data += 4;
@@ -657,7 +657,7 @@ static boolean LoadMUS(int length)
 
 	if (MUSh->channels > 15)	 /* <=> MUSchannels+drums > 16 */
     {
-    	cond << "Too many channels\n";
+    	GCon->Log(NAME_Dev, "Too many channels");
 		return false;
 	}
 
@@ -751,7 +751,7 @@ static boolean LoadMUS(int length)
   			break;
 		 case 5:
 		 case 7:
-			cond << "MUS file corupted\n";
+			GCon->Log(NAME_Dev, "MUS file corupted");
   			return false;
 		 default:
            	break;
@@ -782,8 +782,8 @@ static boolean LoadMUS(int length)
 
 	if (ouch)
     {
-		cond << "WARNING : There are bytes missing at the end of MUS file. "
-			"The end of the MIDI file might not fit the original one.\n";
+		GCon->Log(NAME_Dev, "WARNING : There are bytes missing at the end of MUS file.");
+		GCon->Log(NAME_Dev, "The end of the MIDI file might not fit the original one.");
 	}
 
 	FreeLump();
@@ -826,9 +826,12 @@ static void FreeTracks(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -188,7 +188,7 @@ void TKButton::KeyDown(char *c)
 		down[1] = k;
 	else
 	{
-		con << "Three keys down for a button!\n";
+		GCon->Log(NAME_Dev, "Three keys down for a button!");
 		return;
 	}
 	
@@ -620,7 +620,7 @@ void CL_SendMove(void)
 
 	if (!NET_CanSendMessage(cls.netcon))
 	{
-		cond << "CL_WriteToServer: can't send\n";
+		GCon->Log(NAME_Dev, "CL_WriteToServer: can't send");
 		return;
 	}
 
@@ -680,9 +680,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

@@ -373,7 +373,7 @@ void SV_RemoveMobj(VMapObject *mobj)
 	guard(SV_RemoveMobj);
 	if (mobj->GetFlags() & OF_Destroyed)
 	{
-		cond << "Mobj already destroyed\n";
+		GCon->Log(NAME_Dev, "Mobj already destroyed");
 		return;
 	}
 
@@ -424,7 +424,7 @@ void SV_CreateBaseline(void)
 
 		if (!sv_signon.CheckSpace(32))
 		{
-			con << "SV_CreateBaseline: Overflow\n";
+			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
 			return;
 		}
 
@@ -959,7 +959,7 @@ void SV_UpdateLevel(TMessage &msg)
 
 		if (!msg.CheckSpace(14))
 		{
-			cond << "UpdateLevel: secs overflow\n";
+			GCon->Log(NAME_Dev, "UpdateLevel: secs overflow");
 			return;
 		}
 		
@@ -1000,7 +1000,7 @@ void SV_UpdateLevel(TMessage &msg)
 
 		if (!msg.CheckSpace(7))
 		{
-			cond << "UpdateLevel: sides overflow\n";
+			GCon->Log(NAME_Dev, "UpdateLevel: sides overflow");
 			return;
 		}
 
@@ -1028,7 +1028,7 @@ void SV_UpdateLevel(TMessage &msg)
 
 		if (!msg.CheckSpace(7))
 		{
-			cond << "UpdateLevel: poly overflow\n";
+			GCon->Log(NAME_Dev, "UpdateLevel: poly overflow");
 			return;
 		}
 
@@ -1050,7 +1050,7 @@ void SV_UpdateLevel(TMessage &msg)
 			continue;
 		if (!msg.CheckSpace(25))
 		{
-			cond << "UpdateLevel: player overflow\n";
+			GCon->Log(NAME_Dev, "UpdateLevel: player overflow");
 			return;
 		}
 		SV_UpdateMobj(i, msg);
@@ -1073,11 +1073,11 @@ void SV_UpdateLevel(TMessage &msg)
 		{
 			if (sv_player->MobjUpdateStart && show_mobj_overflow)
 			{
-				con << "UpdateLevel: mobj overflow 2\n";
+				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow 2");
 			}
 			else if (show_mobj_overflow > 1)
 			{
-				con << "UpdateLevel: mobj overflow\n";
+				GCon->Log(NAME_Dev, "UpdateLevel: mobj overflow");
 			}
 			//	Next update starts here
 			sv_player->MobjUpdateStart = index;
@@ -1236,7 +1236,7 @@ void SV_SendReliable(void)
 		if (players[i].Message.Overflowed)
 		{
 			SV_DropClient(true);
-			cond << "Client message overflowed\n";
+			GCon->Log(NAME_Dev, "Client message overflowed");
 			continue;
 		}
 
@@ -2032,7 +2032,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
     int			i;
 	mapInfo_t	info;
 
-	cond << "Spawning server " << mapname << endl;
+	GCon->Logf(NAME_Dev, "Spawning server %s", mapname);
 	paused = false;
 	mapteleport_issued = false;
 
@@ -2157,7 +2157,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	P_Ticker();
 	SV_CreateBaseline();
 
-	cond << "Server spawned\n";
+	GCon->Log(NAME_Dev, "Server spawned");
 	unguard;
 }
 
@@ -2251,7 +2251,7 @@ COMMAND(PreSpawn)
 	guard(COMMAND PreSpawn);
 	if (cmd_source == src_command)
 	{
-		con << "PreSpawn is not valid from console\n";
+		GCon->Log("PreSpawn is not valid from console");
 		return;
 	}
 
@@ -2271,7 +2271,7 @@ COMMAND(Spawn)
 	guard(COMMAND Spawn);
 	if (cmd_source == src_command)
 	{
-		con << "Spawn is not valid from console\n";
+		GCon->Log("Spawn is not valid from console");
 		return;
 	}
 
@@ -2279,11 +2279,11 @@ COMMAND(Spawn)
 	{
 		if (sv_player->bSpawned)
 		{
-			con << "Already spawned\n";
+			GCon->Log(NAME_Dev, "Already spawned");
 		}
 		if (sv_player->MO)
 		{
-			con << "Mobj already spawned\n";
+			GCon->Log(NAME_Dev, "Mobj already spawned");
 		}
 		svpr.Exec("SpawnClient", sv_player - players);
 	}
@@ -2316,7 +2316,7 @@ COMMAND(Begin)
 	guard(COMMAND Begin);
 	if (cmd_source == src_command)
 	{
-		con << "Begin is not valid from console\n";
+		GCon->Log("Begin is not valid from console");
 		return;
 	}
 
@@ -2418,7 +2418,7 @@ void SV_ShutdownServer(boolean crash)
 	msg << (byte)svc_disconnect;
 	count = NET_SendToAll(&msg, 5);
 	if (count)
-		con << "Shutdown server failed for " << count << " clients\n";
+		GCon->Logf("Shutdown server failed for %d clients", count);
 
 	for (i = 0, sv_player = players; i < svs.max_clients; i++, sv_player++)
 		if (sv_player->bActive)
@@ -2524,7 +2524,7 @@ COMMAND(Stats)
 void SV_ConnectClient(player_t *player)
 {
 	guard(SV_ConnectClient);
-	cond << "Client " << player->NetCon->address << " connected\n";
+	GCon->Logf(NAME_Dev, "Client %s connected", player->NetCon->address);
 
 	player->bActive = true;
 
@@ -2650,7 +2650,7 @@ COMMAND(Map)
 
 	if (Argc() != 2)
 	{
-		con << "map <mapname> : cange level\n";
+		GCon->Log("map <mapname> : cange level");
 	 	return;
 	}
 	strcpy(mapname, Argv(1));
@@ -2697,13 +2697,13 @@ COMMAND(MaxPlayers)
 
 	if (Argc () != 2)
 	{
-		con << "\"maxplayers\" is \"" << svs.max_clients << "\"\n";
+		GCon->Logf("maxplayers is %d", svs.max_clients);
 		return;
 	}
 
 	if (sv.active)
 	{
-		con << "maxplayers can not be changed while a server is running.\n";
+		GCon->Log("maxplayers can not be changed while a server is running.");
 		return;
 	}
 
@@ -2713,7 +2713,7 @@ COMMAND(MaxPlayers)
 	if (n > MAXPLAYERS)
 	{
 		n = MAXPLAYERS;
-		con << "\"maxplayers\" set to \"" << n << "\"\n";
+		GCon->Logf("maxplayers set to %d", n);
 	}
 	svs.max_clients = n;
 
@@ -2803,53 +2803,6 @@ COMMAND(Say)
 
 #ifndef CLIENT
 
-class TConBuf : public streambuf
-{
- public:
-	TConBuf(bool dev_buf)
-	{
-		dev_only = dev_buf;
-	}
-
-	int sync();
-	int overflow(int ch);
-
-	bool		dev_only;
-};
-     
-static TConBuf			cbuf(false);
-static TConBuf			cdbuf(true);
-
-ostream					con(&cbuf);
-ostream					cond(&cdbuf);
-
-//==========================================================================
-//
-//  TConBuf::sync
-//
-//==========================================================================
-
-int TConBuf::sync()
-{
-	return 0;
-}
-     
-//==========================================================================
-//
-//  TConBuf::overflow
-//
-//==========================================================================
-
-int TConBuf::overflow(int ch)
-{
-	if (ch != EOF && (!dev_only || (int)developer))
-	{
-		dprintf("%c", ch);
-   		cout << (char)ch;
-	}
-	return 0;
-}
-
 class FConsoleDevice:public FOutputDevice
 {
 public:
@@ -2907,9 +2860,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.45  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
-//
+//	
 //	Revision 1.44  2002/07/13 07:43:31  dj_jl
 //	Fixed net buffer hack.
 //	

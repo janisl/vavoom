@@ -230,7 +230,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 	FArchive *Ar = FL_OpenFileWrite(filename);
 	if (!Ar)
 	{
-		con << "Couldn't write pcx\n";
+		GCon->Log("Couldn't write pcx");
 		return;
 	}
 	
@@ -341,7 +341,7 @@ COMMAND(ScreenShot)
 	}
 	if (i == 10000)
 	{
-		con << "Couldn't create a PCX";
+		GCon->Log("Couldn't create a PCX");
 		return;
 	}
     
@@ -361,7 +361,7 @@ COMMAND(ScreenShot)
 		}
 		else
 		{
-			con << "Bad screenshot type\n";
+			GCon->Log("Bad screenshot type");
 		}
 		Z_Free(data);
 	}
@@ -421,30 +421,30 @@ static void ChangeResolution(int width, int height, int bpp)
 		height = MAXSCREENHEIGHT;
 	if (bpp != 8 && bpp != 15 && bpp != 16 && bpp != 24 && bpp != 32)
 	{
-		con << "Invalid bpp, using 8\n";
+		GCon->Log("Invalid bpp, using 8");
 		bpp = 8;
 	}
 
 	// Changing resolution
     if (!Drawer->SetResolution(width, height, bpp))
    	{
-        con << "Failed to set resolution " << width << "x" << height << "x" << bpp << endl;
+        GCon->Logf("Failed to set resolution %dx%dx%d", width, height, bpp);
    	   	if (ScreenWidth)
        	{
            	if (!Drawer->SetResolution(ScreenWidth, ScreenHeight, ScreenBPP))
            		Sys_Error("ChangeResolution: failed to restore resolution");
             else
-   	            con << "Restoring previous resolution\n";
+   	            GCon->Log("Restoring previous resolution");
        	}
         else
    		{
    			if (!Drawer->SetResolution(0, 0, 0))
    				Sys_Error("ChangeResolution: Failed to set default resolution");
 			else
-           		con << "Setting default resolution\n";
+           		GCon->Log("Setting default resolution");
 	  	}
    	}
-	con << ScreenWidth << "x" << ScreenHeight << "x" << ScreenBPP << ".\n";
+	GCon->Logf("%dx%dx%d.", ScreenWidth, ScreenHeight, ScreenBPP);
 
 	screen_width = ScreenWidth;
 	screen_height = ScreenHeight;
@@ -541,7 +541,7 @@ COMMAND(SetResolution)
 	}
     else
     {
-		con << "SetResolution <width> <height> [<bpp>]:change resolution\n";
+		GCon->Log("SetResolution <width> <height> [<bpp>]:change resolution");
 	}
 }
 
@@ -699,9 +699,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.16  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.15  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

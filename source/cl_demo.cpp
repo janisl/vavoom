@@ -75,7 +75,7 @@ void CL_FinishTimeDemo(void)
 	time = realtime - cls.td_starttime;
 	if (!time)
 		time = 1;
-	con << frames << " frames " << time << " seconds " << (frames/time) << " fps\n";
+	GCon->Logf("%d frames %f seconds %f fps", frames, time, frames / time);
 }
 
 //==========================================================================
@@ -183,7 +183,7 @@ int CL_GetMessage(void)
 	
 		// discard nop keepalive message
 		if (net_msg.CurSize == 1 && net_msg.Data[0] == svc_nop)
-			con << "<-- server to client keepalive\n";
+			GCon->Log("<-- server to client keepalive");
 		else
 			break;
 	}
@@ -214,7 +214,7 @@ void CL_StopRecording(void)
 	delete cls.demofile;
 	cls.demofile = NULL;
 	cls.demorecording = false;
-	con << "Completed demo\n";
+	GCon->Log("Completed demo");
 }
 
 //==========================================================================
@@ -234,7 +234,7 @@ COMMAND(StopDemo)
 
 	if (!cls.demorecording)
 	{
-		con << "Not recording a demo.\n";
+		GCon->Log("Not recording a demo.");
 		return;
 	}
 	CL_StopRecording();
@@ -261,20 +261,20 @@ COMMAND(Record)
 	c = Argc();
 	if (c != 2 && c != 3)
 	{
-		con << "record <demoname> [<map>]\n";
+		GCon->Log("record <demoname> [<map>]");
 		return;
 	}
 
 	if (strstr(Argv(1), ".."))
 	{
-		con << "Relative pathnames are not allowed.\n";
+		GCon->Log("Relative pathnames are not allowed.");
 		return;
 	}
 
 	if (c == 2 && cls.state == ca_connected)
 	{
-		con << "Can not record - already connected to server\n"
-			<< "Client demo recording must be started before connecting\n";
+		GCon->Log("Can not record - already connected to server");
+		GCon->Log("Client demo recording must be started before connecting");
 		return;
 	}
 
@@ -294,11 +294,11 @@ COMMAND(Record)
 	//
 	FL_DefaultExtension(name, ".dem");
 
-	con << "recording to " << name << ".\n";
+	GCon->Logf("recording to %s.", name);
 	cls.demofile = FL_OpenFileWrite(name);
 	if (!cls.demofile)
 	{
-		con << "ERROR: couldn't open.\n";
+		GCon->Log("ERROR: couldn't open.");
 		return;
 	}
 
@@ -327,7 +327,7 @@ COMMAND(PlayDemo)
 
 	if (Argc() != 2)
 	{
-		con << "play <demoname> : plays a demo\n";
+		GCon->Log("play <demoname> : plays a demo");
 		return;
 	}
 
@@ -342,11 +342,11 @@ COMMAND(PlayDemo)
 	sprintf(name, "demos/%s", Argv(1));
 	FL_DefaultExtension(name, ".dem");
 
-	con << "Playing demo from " << name << ".\n";
+	GCon->Logf("Playing demo from %s.", name);
 	cls.demofile = FL_OpenFileRead(name);
 	if (!cls.demofile)
 	{
-		con << "ERROR: couldn't open.\n";
+		GCon->Log("ERROR: couldn't open.");
 		return;
 	}
 
@@ -356,7 +356,7 @@ COMMAND(PlayDemo)
 	{
 		delete cls.demofile;
 		cls.demofile = NULL;
-		con << "ERROR: not a Vavoom demo.\n";
+		GCon->Log("ERROR: not a Vavoom demo.");
 		return;
 	}
 
@@ -381,7 +381,7 @@ COMMAND(TimeDemo)
 
 	if (Argc() != 2)
 	{
-		con << "timedemo <demoname> : gets demo speeds\n";
+		GCon->Log("timedemo <demoname> : gets demo speeds");
 		return;
 	}
 
@@ -398,9 +398,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.9  2002/05/29 16:54:33  dj_jl
 //	Added const cast.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

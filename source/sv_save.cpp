@@ -52,7 +52,7 @@
    	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.13"
+#define SAVE_VERSION_TEXT			"Version 1.14"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------
@@ -1244,7 +1244,7 @@ void SV_LoadGame(int slot)
 		// Bad version
 		Loader->Close();
 		delete Loader;
-		con << "Savegame is from incompatible version\n";
+		GCon->Log("Savegame is from incompatible version");
 		return;
 	}
 
@@ -1427,13 +1427,13 @@ COMMAND(Save)
 
 	if (netgame)
 	{
-		con << "Can't save in net game\n";
+		GCon->Log("Can't save in net game");
 		return;
 	}
 
 	if (!sv.active)
 	{
-		con << "you can't save if you aren't playing!";
+		GCon->Log("you can't save if you aren't playing!");
 		return;
 	}
 
@@ -1444,7 +1444,7 @@ COMMAND(Save)
 
 	if (strlen(Argv(2)) >= 32)
 	{
-		con << "Description too long\n";
+		GCon->Log("Description too long");
 		return;
 	}
 
@@ -1452,7 +1452,7 @@ COMMAND(Save)
 
 	SV_SaveGame(atoi(Argv(1)), Argv(2));
 
-	con << "GAME SAVED\n";
+	GCon->Log("Game saved");
 	unguard;
 } 
  
@@ -1471,7 +1471,7 @@ COMMAND(Load)
 	}
 	if (netgame)
 	{
-		con << "Can't load in net game\n";
+		GCon->Log("Can't load in net game");
 		return;
 	}
 
@@ -1479,10 +1479,10 @@ COMMAND(Load)
 	char	desc[32];
 	if (!SV_GetSaveString(slot, desc))
 	{
-		con << "Empty slot\n";
+		GCon->Log("Empty slot");
 		return;
 	}
-	con << "Loading \"" << desc << "\"\n";
+	GCon->Logf("Loading \"%s\"", desc);
 
 	Draw_LoadIcon();
 	SV_LoadGame(slot);
@@ -1499,9 +1499,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.27  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.26  2002/06/14 15:36:35  dj_jl
 //	Changed version number.
 //	

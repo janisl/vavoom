@@ -515,7 +515,7 @@ static void ReadKeyboard(void)
 		break;
 
 	case DI_BUFFEROVERFLOW:
-		cond << "Keyboard buffer overflowed.\n";
+		GCon->Log(NAME_Dev, "Keyboard buffer overflowed.");
 		break;
 
 	case DIERR_INPUTLOST:
@@ -994,9 +994,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
-//
+//	
 //	Revision 1.7  2002/01/11 18:23:34  dj_jl
 //	Added support for 16 joystick buttons
 //	

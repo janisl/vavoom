@@ -265,13 +265,13 @@ static boolean convert(char *mus, int length)
 	MUSh = (MUSheader *)mus;
 	if (strncmp(MUSh->ID, MUSMAGIC, 4))
     {
-    	con << "Not a MUS file\n";
+    	GCon->Log("Not a MUS file");
 		return false;
 	}
 
 	if (MUSh->channels > 15)	 /* <=> MUSchannels+drums > 16 */
     {
-    	cond << "Too meny channels\n";
+    	GCon->Log(NAME_Dev,"Too meny channels");
 		return false;
 	}
 
@@ -361,7 +361,7 @@ static boolean convert(char *mus, int length)
   			break;
 		 case 5:
 		 case 7:
-			cond << "MUS file corupted\n";
+			GCon->Log(NAME_Dev,"MUS file corupted");
   			return false;
 		 default:
            	break;
@@ -392,8 +392,8 @@ static boolean convert(char *mus, int length)
 
 	if (ouch)
     {
-		cond << "WARNING : There are bytes missing at the end.\n"
-		"The end of the MIDI file might not fit the original one.\n";
+		GCon->Logf(NAME_Dev, "WARNING : There are bytes missing at the end.");
+		GCon->Logf(NAME_Dev, "The end of the MIDI file might not fit the original one.");
 	}
 
 	return true;
@@ -484,9 +484,12 @@ int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

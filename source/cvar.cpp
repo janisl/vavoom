@@ -146,7 +146,7 @@ void TCvar::Set(const char *AValue)
 
 	if (flags & CVAR_CHEAT && !Cheating)
 	{
-		con << name << "cannot be changed while cheating is disabled\n";
+		GCon->Logf("%s cannot be changed while cheating is disabled", name);
 		return;
 	}
 
@@ -396,19 +396,19 @@ bool TCvar::Command(int argc, const char **argv)
 		// perform a variable print or set
 		if (argc == 1)
 		{
-			con << cvar->name << " is \"" << cvar->string << "\"\n";
+			GCon->Logf("%s is \"%s\"", cvar->name, cvar->string);
 			if (cvar->flags & CVAR_LATCH && cvar->latched_string)
-				con << "Latched \"" << cvar->latched_string << "\"\n";
+				GCon->Logf("Latched \"%s\"", cvar->latched_string);
 		}
         else
         {
 			if (cvar->flags & CVAR_ROM)
 			{
-				con << cvar->name << " is read-only\n";
+				GCon->Logf("%s is read-only", cvar->name);
 			}
 			else if (cvar->flags & CVAR_INIT && host_initialized)
 			{
-				con << cvar->name << " can be set only from command-line\n";
+				GCon->Logf("%s can be set only from command-line", cvar->name);
 			}
 			else
 			{
@@ -426,13 +426,13 @@ bool TCvar::Command(int argc, const char **argv)
 //
 //==========================================================================
 
-void TCvar::WriteVariables(ostream &strm)
+void TCvar::WriteVariables(FILE *f)
 {
 	for (TCvar *cvar = Variables; cvar; cvar = cvar->next)
     {
     	if (cvar->flags & CVAR_ARCHIVE)
         {
-        	strm << cvar->name << "\t\t\"" << cvar->string << "\"\n";
+        	fprintf(f, "%s\t\t\"%s\"\n", cvar->name, cvar->string);
         }
     }
 }
@@ -448,18 +448,21 @@ COMMAND(CvarList)
 	int count = 0;
 	for (TCvar *cvar = TCvar::Variables; cvar; cvar = cvar->next)
     {
-		con << cvar->name << " - \"" << cvar->string << "\"\n";
+		GCon->Logf("%s - \"%s\"", cvar->name, cvar->string);
 		count++;
     }
-	con << count << " variables.\n";
+	GCon->Logf("%d variables.", count);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

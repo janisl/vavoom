@@ -166,7 +166,7 @@ void VDefaultSoundDevice::Init(void)
 			//	User don't have a sound card
 			DSound->Release();
 			DSound = NULL;
-			cond << "I_StartupSound: Sound driver not found\n";
+			GCon->Log(NAME_Init, "I_StartupSound: Sound driver not found");
 			return;
 		}
 		if (result != DS_OK)
@@ -185,7 +185,7 @@ void VDefaultSoundDevice::Init(void)
 			!M_CheckParm("-no3dsound"))
 		{
 			sound3D = true;
-			con << "3D sound on\n";
+			GCon->Log(NAME_Init, "3D sound on");
 		}
 
 		//	Create primary buffer
@@ -253,11 +253,11 @@ void VDefaultSoundDevice::Init(void)
 				if FAILED(tempBuffer->QueryInterface(IID_IKsPropertySet, 
 					(void **)&PropertySet))
 				{
-					con << "IKsPropertySet failed\n";
+					GCon->Log(NAME_Init, "IKsPropertySet failed");
 				}
 				else
 				{
-					con << "IKsPropertySet acquired\n";
+					GCon->Log(NAME_Init, "IKsPropertySet acquired");
 
 					ULONG Support;
 					result = PropertySet->QuerySupport(
@@ -267,13 +267,13 @@ void VDefaultSoundDevice::Init(void)
 						(Support & (KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET)) !=
 						(KSPROPERTY_SUPPORT_GET|KSPROPERTY_SUPPORT_SET))
 					{
-						con << "EAX 2.0 not supported\n";
+						GCon->Log(NAME_Init, "EAX 2.0 not supported");
 						PropertySet->Release();
 						PropertySet = NULL;
 					}
 					else
 					{
-						con << "EAX 2.0 supported\n";
+						GCon->Log(NAME_Init, "EAX 2.0 supported");
 						supportEAX = true;
 					}
 				}
@@ -302,7 +302,7 @@ void VDefaultSoundDevice::Init(void)
 			snd_Channels = caps.dwFreeHwMixingStaticBuffers;
 		if (!snd_Channels)
 		{
-			con << "No HW channels available\n";
+			GCon->Log(NAME_Init, "No HW channels available");
 			snd_Channels = 8;
 		}
 		if (snd_Channels > MAX_VOICES)
@@ -314,7 +314,7 @@ void VDefaultSoundDevice::Init(void)
 
 		SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
 
-		cond << "Using " << snd_Channels << " sound buffers\n";
+		GCon->Logf(NAME_Init, "Using %d sound buffers", snd_Channels);
 	}
 	unguard;
 }
@@ -642,7 +642,8 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id)
 
     if (result != DS_OK)
 	{
-		cond << "Failed to create sound buffer\n" << DS_Error(result) << endl;
+		GCon->Log(NAME_Dev, "Failed to create sound buffer");
+		GCon->Log(NAME_Dev, DS_Error(result));
 
 		//	We don't need to keep lump static
 		S_DoneWithLump(sound_id);
@@ -785,7 +786,8 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	result = dsbuffer->Play(0, 0, 0);
 	if (result != DS_OK)
 	{
-		cond << "Failed to play channel\n" << DS_Error(result) << endl;
+		GCon->Log(NAME_Dev, "Failed to play channel");
+		GCon->Log(NAME_Dev, DS_Error(result));
 		StopChannel(chan);
 	}
 	unguard;
@@ -1134,9 +1136,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.16  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.15  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
 //	

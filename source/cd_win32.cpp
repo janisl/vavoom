@@ -92,7 +92,7 @@ void CD_Init(void)
 	result = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_SHAREABLE, (DWORD)&open);
 	if (result)
 	{
-		con << "CDAudio_Init: MCI_OPEN failed\n";
+		GCon->Log(NAME_Init, "CDAudio_Init: MCI_OPEN failed");
 		return;
 	}
     CDDevice = open.wDeviceID;
@@ -102,7 +102,7 @@ void CD_Init(void)
 	result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD)&set);
     if (result)
     {
-		con << "MCI_SET_TIME_FORMAT failed\n";
+		GCon->Log(NAME_Init, "MCI_SET_TIME_FORMAT failed");
         mciSendCommand(CDDevice, MCI_CLOSE, 0, (DWORD)NULL);
 		return;
     }
@@ -115,10 +115,10 @@ void CD_Init(void)
     CD_GetInfo();
 	if (!cdValid)
 	{
-		con << "CDAudio_Init: No CD in player.\n";
+		GCon->Log(NAME_Init, "CDAudio_Init: No CD in player.");
 	}
 
-	con << "CD Audio Initialized\n";
+	GCon->Log(NAME_Init, "CD Audio Initialized");
 	unguard;
 }
 
@@ -150,13 +150,13 @@ LONG CD_MessageHandler(HWND, UINT, WPARAM wParam, LPARAM lParam)
 		break;
 
 	 case MCI_NOTIFY_FAILURE:
-		cond << "MCI_NOTIFY_FAILURE\n";
+		GCon->Log(NAME_Dev, "MCI_NOTIFY_FAILURE");
 		CD_Stop();
 		cdValid = false;
 		break;
 
 	 default:
-		cond << "Unexpected MM_MCINOTIFY type (" << wParam << ")\n";
+		GCon->Logf(NAME_Dev, "Unexpected MM_MCINOTIFY type (%d)", wParam);
 		return 1;
 	}
 
@@ -190,7 +190,7 @@ void CD_Shutdown(void)
 
 	CD_Stop();
 	if (mciSendCommand(CDDevice, MCI_CLOSE, MCI_WAIT, (DWORD)NULL))
-		cond << "CD_Shutdown: MCI_CLOSE failed\n";
+		GCon->Log(NAME_Dev, "CD_Shutdown: MCI_CLOSE failed");
 	cd_started = false;
 	unguard;
 }
@@ -251,7 +251,7 @@ COMMAND(CD)
 		{
 			for (n = 1; n < 100; n++)
 				if (remap[n] != n)
-					con << n << " -> " << remap[n] << endl;
+					GCon->Logf("%d -> %d", n, remap[n]);
 			return;
 		}
 		for (n = 1; n <= ret; n++)
@@ -284,7 +284,7 @@ COMMAND(CD)
 		CD_GetInfo();
 		if (!cdValid)
 		{
-			con << "No CD in player.\n";
+			GCon->Log("No CD in player.");
 			return;
 		}
 	}
@@ -321,12 +321,11 @@ COMMAND(CD)
 
 	if (!stricmp(command, "info"))
 	{
-		con << maxTrack << " tracks\n";
+		GCon->Logf("%d tracks", maxTrack);
 		if (playing || wasPlaying)
         {
-			con << (playing ? "Currently " : "Paused ")
-				<< (playLooping ? "looping" : "playing")
-				<< " track " << playTrack << endl;
+			GCon->Logf("%s %s track %d", playing ? "Currently" : "Paused",
+				playLooping ? "looping" : "playing", playTrack);
         }
 		return;
 	}
@@ -351,12 +350,12 @@ static void CD_GetInfo(void)
     result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
 	if (result)
 	{
-		cond << "CDAudio: drive ready test - get status failed\n";
+		GCon->Log(NAME_Dev, "CDAudio: drive ready test - get status failed");
 		return;
 	}
 	if (!parms.dwReturn)
 	{
-		cond << "CDAudio: drive not ready\n";
+		GCon->Log(NAME_Dev, "CDAudio: drive not ready");
 		return;
 	}
 
@@ -364,12 +363,12 @@ static void CD_GetInfo(void)
     result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&parms);
 	if (result)
 	{
-		cond << "CDAudio: get tracks - status failed\n";
+		GCon->Log(NAME_Dev, "CDAudio: get tracks - status failed");
 		return;
 	}
 	if (parms.dwReturn < 1)
 	{
-		cond << "CDAudio: no music tracks\n";
+		GCon->Log(NAME_Dev, "CDAudio: no music tracks");
 		return;
 	}
 
@@ -400,7 +399,7 @@ static void CD_Play(int track, boolean looping)
 
 	if (track < 1 || track > maxTrack)
 	{
-		cond << "CDAudio: Bad track number " << track << ".\n";
+		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
 	}
 
@@ -411,12 +410,12 @@ static void CD_Play(int track, boolean looping)
     	MCI_TRACK | MCI_WAIT, (DWORD)&status);
 	if (result)
 	{
-		cond << "MCI_STATUS failed\n";
+		GCon->Log(NAME_Dev, "MCI_STATUS failed");
 		return;
 	}
 	if (status.dwReturn != MCI_CDA_TRACK_AUDIO)
 	{
-		con << "CDAudio: track " << track << " is not audio\n";
+		GCon->Logf("CDAudio: track %d is not audio", track);
 		return;
 	}
 
@@ -426,7 +425,7 @@ static void CD_Play(int track, boolean looping)
     result = mciSendCommand(CDDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK | MCI_WAIT, (DWORD)&status);
 	if (result)
 	{
-		cond << "MCI_STATUS failed\n";
+		GCon->Log(NAME_Dev, "MCI_STATUS failed");
 		return;
 	}
 
@@ -445,7 +444,7 @@ static void CD_Play(int track, boolean looping)
 
 	if (result)
 	{
-		cond << "MCI_PLAY failed\n";
+		GCon->Log(NAME_Dev, "MCI_PLAY failed");
 		return;
 	}
 
@@ -473,7 +472,7 @@ static void CD_Pause(void)
     result = mciSendCommand(CDDevice, MCI_PAUSE, 0, (DWORD)&parms);
 
     if (result)
-		cond << "MCI_PAUSE failed\n";
+		GCon->Log(NAME_Dev, "MCI_PAUSE failed");
 
 	wasPlaying = playing;
 	playing = false;
@@ -498,7 +497,7 @@ static void CD_Resume(void)
 
 	if (result)
 	{
-		cond << "MCI_RESUME failed\n";
+		GCon->Log(NAME_Dev, "MCI_RESUME failed");
 		return;
 	}
 
@@ -521,7 +520,7 @@ static void CD_Stop(void)
 	result = mciSendCommand(CDDevice, MCI_STOP, 0, (DWORD)NULL);
 
     if (result)
-		cond << "MCI_STOP failed\n";
+		GCon->Log(NAME_Dev, "MCI_STOP failed");
 
 	wasPlaying = false;
 	playing = false;
@@ -543,7 +542,7 @@ static void CD_OpenDoor(void)
     result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_DOOR_OPEN, (DWORD)&parms);
 
     if (result)
-		cond << "MCI_SET_DOOR_OPEN failed\n";
+		GCon->Log(NAME_Dev, "MCI_SET_DOOR_OPEN failed");
 }
 
 //==========================================================================
@@ -562,15 +561,18 @@ static void CD_CloseDoor(void)
 	result = mciSendCommand(CDDevice, MCI_SET, MCI_SET_DOOR_CLOSED, (DWORD)&parms);
 
     if (result)
-		cond << "MCI_SET_DOOR_CLOSED failed\n";
+		GCon->Log(NAME_Dev, "MCI_SET_DOOR_CLOSED failed");
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

@@ -169,7 +169,7 @@ bool SV_ReadClientMessages(int clientnum)
 		ret = NET_GetMessage(sv_player->NetCon);
 		if (ret == -1)
 		{
-			cond << "Bad read\n";
+			GCon->Log(NAME_DevNet, "Bad read");
 			return false;
 		}
 
@@ -182,7 +182,7 @@ bool SV_ReadClientMessages(int clientnum)
 		{
 			if (net_msg.badread)
 			{
-				cond << "Packet corupted";
+				GCon->Log(NAME_DevNet, "Packet corupted");
 				return false;
 			}
 
@@ -212,7 +212,7 @@ bool SV_ReadClientMessages(int clientnum)
 				break;
 
 			 default:
-				cond << "Invalid command\n";
+				GCon->Log(NAME_DevNet, "Invalid command");
 				return false;
 			}
 		}
@@ -233,7 +233,7 @@ COMMAND(SetInfo)
 	guard(COMMAND SetInfo);
 	if (cmd_source != src_client)
 	{
-		con << "SetInfo is not valid from console\n";
+		GCon->Log("SetInfo is not valid from console");
 		return;
 	}
 
@@ -254,9 +254,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.10  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.9  2002/02/15 19:12:04  dj_jl
 //	Property namig style change
 //	

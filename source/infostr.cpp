@@ -129,7 +129,7 @@ void Info_RemoveKey(char *s, const char *key)
 
 	if (strchr(key, '\\'))
 	{
-		con << "Can't use a key with a \\\n";
+		GCon->Log("Can't use a key with a \\");
 		return;
 	}
 
@@ -187,13 +187,13 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 
 	if (strchr(key, '\\') || strchr(value, '\\'))
 	{
-		con << "Can't use keys or values with a \\\n";
+		GCon->Log("Can't use keys or values with a \\");
 		return;
 	}
 
 	if (strchr(key, '\"') || strchr(value, '\"'))
 	{
-		con << "Can't use keys or values with a \"\n";
+		GCon->Log("Can't use keys or values with a \"");
 		return;
 	}
 
@@ -205,7 +205,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 		// don't, don't change it!
 		if (strlen(value) - strlen(v) + strlen(s) > MAX_INFO_STRING)
 		{
-			con << "Info string length exceeded\n";
+			GCon->Log("Info string length exceeded");
 			return;
 		}
 	}
@@ -218,7 +218,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 
 	if (strlen(newi) + strlen(s) > MAX_INFO_STRING)
 	{
-		con << "Info string length exceeded\n";
+		GCon->Log("Info string length exceeded");
 		return;
 	}
 
@@ -228,9 +228,12 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

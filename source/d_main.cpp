@@ -157,14 +157,14 @@ bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 	scrn = (byte*)Z_Malloc(width * height * ((bpp + 7) >> 3), PU_VIDEO, 0);
 	if (!scrn)
 	{
-		con << "Not enough memory for screen buffer\n";
+		GCon->Log(NAME_Init, "Not enough memory for screen buffer");
 		return false;
 	}
 
 	zbuffer = (short*)Z_Malloc(width * height * 2, PU_VIDEO, 0);
 	if (!zbuffer)
 	{
-		con << "Not enough memory for Z-buffer\n";
+		GCon->Log(NAME_Init, "Not enough memory for Z-buffer");
 		return false;
 	}
 
@@ -172,7 +172,7 @@ bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 	void *buffer = Z_Malloc(size, PU_VIDEO, 0);
 	if (!buffer)
 	{
-		con << "Not enough memory for cache\n";
+		GCon->Log(NAME_Init, "Not enough memory for cache");
 		return false;
 	}
 	D_InitCaches(buffer, size);
@@ -648,9 +648,12 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.15  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.14  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

@@ -66,7 +66,7 @@ public:
 	static void Set(const char *var_name, const char *value);
 
 	static bool Command(int argc, const char **argv);
-	static void WriteVariables(ostream &strm);
+	static void WriteVariables(FILE *f);
 
 	static void Unlatch(void);
 	static void SetCheating(bool);
@@ -146,30 +146,15 @@ public:
 	}
 };
 
-//
-//  Stream operators
-//
-inline ostream &operator << (ostream &strm, const TCvarI &var)
-{
-	return strm << (int)var;
-}
-
-inline ostream &operator << (ostream &strm, const TCvarF &var)
-{
-	return strm << (float)var;
-}
-
-inline ostream &operator << (ostream &strm, const TCvarS &var)
-{
-	return strm << (char*)var;
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

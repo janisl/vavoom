@@ -60,23 +60,23 @@ static boolean CheatAllowed(void)
 {
    	if (!sv.active || sv.intermission)
     {
-		con << "You are not in game!\n";
+		GCon->Log("You are not in game!");
         return false;
 	}
   	if (netgame)
     {
-		con << "You cannot cheat in a network game!\n";
+		GCon->Log("You cannot cheat in a network game!");
 		return false;
 	}
 	if (gameskill == sk_nightmare)
 	{
-		con << "You are too good to cheat!\n";
+		GCon->Log("You are too good to cheat!");
 		return false;
 	}
 	if (players[0].Health <= 0)
 	{
 		// Dead players can't cheat
-        con << "You must be alive to cheat\n";
+        GCon->Log("You must be alive to cheat");
 		return false;
 	}
 	return true;
@@ -203,7 +203,7 @@ COMMAND(Script)
 
 		if (P_StartACS(script, 0, args, players[0].MO, NULL, 0))
 		{
-			con << "RUNNING SCRIPT " << script << endl;
+			GCon->Logf("Running script %d", script);
 		}
     }
 }
@@ -218,22 +218,22 @@ COMMAND(MyPos)
 {
 	if (CheatAllowed())
     {
-		con << "MAP " << level.mapname
-			<< "  X:" << players[0].MO->Origin.x
-			<< "  Y:" << players[0].MO->Origin.y
-			<< "  Z:" << players[0].MO->Origin.z
-			<< "  Ang:" << players[0].MO->Angles.yaw
-			<< " Look:" << players[0].MO->Angles.pitch
-			<< endl;
+		GCon->Logf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
+			level.mapname, players[0].MO->Origin.x,
+			players[0].MO->Origin.y, players[0].MO->Origin.z,
+			players[0].MO->Angles.yaw, players[0].MO->Angles.pitch);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/02/15 19:12:29  dj_jl
 //	Property namig style change
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

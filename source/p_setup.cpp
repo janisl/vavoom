@@ -95,7 +95,7 @@ int FTNumForName(const char *name)
 			memcpy(namet, name, 8);
 			if (ignore_missing_textures)
 			{
-				con << "FTNumForName: " << namet << " not found\n";
+				GCon->Logf("FTNumForName: %s not found", namet);
 				return 0;
 			}
 			Host_Error("FTNumForName: %s not found", namet);
@@ -129,7 +129,7 @@ int TFNumForName(const char *name)
 			memcpy(namet, name, 8);
 			if (ignore_missing_textures)
 			{
-				con << "TFNumForName: " << namet << " not found\n";
+				GCon->Logf("TFNumForName: %s not found", namet);
 				return 0;
 			}
 			Host_Error("TFNumForName: %s not found", namet);
@@ -752,7 +752,7 @@ static void	LoadPVS(int lump, base_level_t &loadlevel)
 	guard(LoadPVS);
 	if (strcmp(W_LumpName(lump), "GL_PVS") || W_LumpLength(lump) == 0)
 	{
-		cond << "Empty or missing PVS lump\n";
+		GCon->Logf(NAME_Dev, "Empty or missing PVS lump");
 		loadlevel.vis_data = NULL;
 		memset(novis, 0xff, sizeof(novis));
 	}
@@ -1318,7 +1318,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 			return region;
 		}
 	}
-	con << "Invalid extra floor, tag " << dst->tag << endl;
+	GCon->Logf("Invalid extra floor, tag %d", dst->tag);
 	return NULL;
 	unguard;
 }
@@ -1362,6 +1362,9 @@ void SwapPlanes(sector_t *s)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/07/23 16:29:56  dj_jl
+//  Replaced console streams with output device class.
+//
 //  Revision 1.17  2002/07/13 07:44:50  dj_jl
 //  Added some error checks.
 //

@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	13
+#define VERSION_MINOR	14
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.13"
+#define VERSION_TEXT	"1.14"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.3  2002/06/22 07:07:21  dj_jl
 //	Back to work.
-//
+//	
 //	Revision 1.2  2002/06/14 15:36:35  dj_jl
 //	Changed version number.
 //	

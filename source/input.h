@@ -170,7 +170,7 @@ int IN_ReadKey(void);
 void IN_GetBindingKeys(const char *, int &, int &);
 void IN_GetBindingKeyNames(const char *, char *, char *);
 void IN_SetBinding(int, const char *, const char *);
-void IN_WriteBindings(ostream &strm);
+void IN_WriteBindings(FILE *f);
 
 int IN_TranslateKey(int);
 
@@ -183,9 +183,12 @@ extern int		altdown;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/09 14:26:48  dj_jl
 //	Moved here shift-key table
 //	

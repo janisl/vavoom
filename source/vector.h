@@ -172,11 +172,6 @@ inline FArchive& operator << (FArchive &Ar, TVec &v)
 	return Ar << v.x << v.y << v.z;
 }
 
-inline ostream &operator << (ostream &strm, const TVec &v)
-{
-	return strm << '(' << v.x << ',' << v.y << ',' << v.z << ')';
-}
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -184,9 +179,12 @@ inline ostream &operator << (ostream &strm, const TVec &v)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

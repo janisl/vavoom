@@ -482,9 +482,9 @@ boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 	}
 	infoIndex = GetACSIndex(number);
 	if(infoIndex == -1)
-	{ // Script not found
-		//I_Error("P_StartACS: Unknown script number %d", number);
-		con << "P_STARTACS ERROR: UNKNOWN SCRIPT " << number << endl;
+	{
+		// Script not found
+		GCon->Logf(NAME_Dev, "P_StartACS ERROR: Unknown script %d", number);
 		return false;
 	}
 	statePtr = &ACSInfo[infoIndex].state;
@@ -1814,9 +1814,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.19  2002/07/23 13:10:37  dj_jl
 //	Some fixes for switching to floating-point time.
-//
+//	
 //	Revision 1.18  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

@@ -532,7 +532,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 
 	if (intercept_p - intercepts >= MAXINTERCEPTS)
 	{
-		cond << "Intercepts overflow\n";
+		GCon->Log(NAME_Dev, "Intercepts overflow");
 	}
 	else
 	{
@@ -571,7 +571,7 @@ static boolean PIT_AddThingIntercepts(VMapObject* thing)
 
 	if (intercept_p - intercepts >= MAXINTERCEPTS)
 	{
-		cond << "Intercepts overflow\n";
+		GCon->Log(NAME_Dev, "Intercepts overflow");
 	}
 	else
 	{
@@ -1016,9 +1016,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.14  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.13  2002/03/09 18:07:10  dj_jl
 //	SV_BlockLinesIterator not used by progs anymore
 //	

@@ -151,7 +151,7 @@ static void GLBSP_PrintMsg(const char *str, ...)
 	vsprintf(message_buf, str, args);
 	va_end(args);
 
-	con << "GB: " << message_buf;
+	GCon->Logf("GB: %s", message_buf);
 }
 
 //==========================================================================
@@ -343,9 +343,12 @@ COMMAND(glBSP)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/09/20 16:23:40  dj_jl
 //	Beautification
 //	

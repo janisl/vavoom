@@ -32,6 +32,7 @@
 #pragma warning(disable : 4291) // no matching operator delete found
 #pragma warning(disable : 4305) // truncation from 'const double' to 'float'
 #pragma warning(disable : 4512) // assignment operator could not be generated
+#pragma warning(disable : 4514)	// unreferenced inline function has been removed
 #pragma warning(disable : 4702) // unreachable code in inline expanded function
 #pragma warning(disable : 4710) // inline function not expanded
 #endif
@@ -161,9 +162,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.13  2002/07/20 14:47:25  dj_jl
 //	Changed function name in guard macros from pointer to static array.
-//
+//	
 //	Revision 1.12  2002/05/29 16:52:42  dj_jl
 //	Disabled another warnong.
 //	

@@ -28,7 +28,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	13
+#define PROG_VERSION	14
 
 // TYPES -------------------------------------------------------------------
 
@@ -248,9 +248,12 @@ struct dfield_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.16  2002/06/14 15:36:35  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.15  2002/03/28 18:00:41  dj_jl
 //	Updated version number.
 //	

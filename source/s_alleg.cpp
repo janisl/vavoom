@@ -145,9 +145,9 @@ void VDefaultSoundDevice::Init(void)
 
 	SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
 
-	cond << "configured audio device\n"
-		<< " SFX   : " << digi_driver->desc << endl
-		<< " Music : " << midi_driver->desc << endl;
+	GCon->Logf(NAME_Init, "configured audio device");
+	GCon->Logf(NAME_Init, "SFX   : %s", digi_driver->desc);
+	GCon->Logf(NAME_Init, "Music : %s", midi_driver->desc);
 	unguard;
 }
 
@@ -690,9 +690,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.9  2002/07/20 14:49:41  dj_jl
 //	Implemented sound drivers.
-//
+//	
 //	Revision 1.8  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

@@ -678,16 +678,16 @@ boolean AM_Responder(event_t* ev)
 		 case AM_FOLLOWKEY:
 		    followplayer = !followplayer;
 	    	f_oldloc.x = 99999.0;
-		    con << (followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF) << endl;
+		    C_NotifyMessage(followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF);
 		    break;
 		 case AM_GRIDKEY:
 		    grid = !grid;
-	    	con << (grid ? AMSTR_GRIDON : AMSTR_GRIDOFF) << endl;
+	    	C_NotifyMessage(grid ? AMSTR_GRIDON : AMSTR_GRIDOFF);
 		    break;
 		 case AM_MARKKEY:
          	if (use_marks)
             {
-		    	con << AMSTR_MARKEDSPOT << " " << markpointnum << endl;
+		    	C_NotifyMessage(va("%s %d", AMSTR_MARKEDSPOT, markpointnum));
 			    AM_addMark();
 			}
             else
@@ -699,7 +699,7 @@ boolean AM_Responder(event_t* ev)
          	if (use_marks)
             {
 			    AM_clearMarks();
-		    	con << AMSTR_MARKSCLEARED << endl;
+		    	C_NotifyMessage(AMSTR_MARKSCLEARED);
 			}
             else
             {
@@ -1522,9 +1522,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.11  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
-//
+//	
 //	Revision 1.10  2002/01/25 18:08:19  dj_jl
 //	Beautification
 //	

@@ -520,14 +520,14 @@ COMMAND(Unbind)
 
 	if (Argc() != 2)
 	{
-		con << "unbind <key> : remove commands from a key\n";
+		GCon->Log("unbind <key> : remove commands from a key");
 		return;
 	}
 	
 	b = KeyNumForName(Argv(1));
 	if (b == -1)
 	{
-		con << "\"" << Argv(1) << "\" isn't a valid key\n";
+		GCon->Logf("\"%s\" isn't a valid key", Argv(1));
 		return;
 	}
 
@@ -563,23 +563,23 @@ COMMAND(Bind)
 
 	if (c != 2 && c != 3 && c != 4)
 	{
-		con << "bind <key> [down_command] [up_command]: attach a command to a key\n";
+		GCon->Log("bind <key> [down_command] [up_command]: attach a command to a key");
 		return;
 	}
 	b = KeyNumForName(Argv(1));
 	if (b == -1)
 	{
-		con << "\"" << Argv(1) << "\" isn't a valid key\n";
+		GCon->Logf("\"%s\" isn't a valid key", Argv(1));
 		return;
 	}
 
 	if (c == 2)
 	{
 		if (keybindings_down[b] || keybindings_up[b])
-			con << "\"" << Argv(1) << "\" = \"" << keybindings_down[b]
-				<< "\" / \"" << keybindings_up[b] << "\"\n";
+			GCon->Logf("\"%s\" = \"%s\" / \"%s\"",
+				Argv(1), keybindings_down[b], keybindings_up[b]);
 		else
-			con << "\"" << Argv(1) << "\" is not bound\n";
+			GCon->Logf("\"%s\" is not bound", Argv(1));
 		return;
 	}
 	if (c == 3 && Argv(2)[0] == '+')
@@ -603,19 +603,19 @@ COMMAND(Bind)
 //
 //==========================================================================
 
-void IN_WriteBindings(ostream &strm)
+void IN_WriteBindings(FILE *f)
 {
 	int i;
 	char name[32];
 
-	strm << "UnbindAll\n";
+	fprintf(f, "UnbindAll\n");
 	for (i = 0; i < 256; i++)
 	{
 		if (keybindings_down[i] && (*keybindings_down[i] || *keybindings_up[i]))
 		{
 			KeyNameForNum(i, name);
-			strm << "bind \"" << name << "\" \"" << keybindings_down[i]
-				<< "\" \"" << keybindings_up[i] << "\"\n";
+			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n",
+				name, keybindings_down[i], keybindings_up[i]);
 		}
 	}
 }
@@ -664,9 +664,12 @@ int IN_TranslateKey(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/11/09 14:31:18  dj_jl
 //	Moved here shift-key table
 //	

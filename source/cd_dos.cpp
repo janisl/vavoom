@@ -111,10 +111,10 @@ void CD_Init(void)
     CD_GetInfo();
 	if (!cdValid)
 	{
-		con << "CDAudio_Init: No CD in player.\n";
+		GCon->Log(NAME_Init, "CDAudio_Init: No CD in player.");
 	}
 
-	con << "CD Audio Initialized\n";
+	GCon->Log(NAME_Init, "CD Audio Initialized");
 	unguard;
 }
 
@@ -244,7 +244,7 @@ COMMAND(CD)
 		{
 			for (n = 1; n < 100; n++)
 				if (remap[n] != n)
-					con << n << " -> " << remap[n] << "\n";
+					GCon->Logf("%d -> %d", n, remap[n]);
 			return;
 		}
 		for (n = 1; n <= ret; n++)
@@ -277,7 +277,7 @@ COMMAND(CD)
 		CD_GetInfo();
 		if (!cdValid)
 		{
-			con << "No CD in player.\n";
+			GCon->Log("No CD in player.");
 			return;
 		}
 	}
@@ -314,16 +314,18 @@ COMMAND(CD)
 
 	if (!stricmp(command, "info"))
 	{
-		con << maxTrack << " tracks\n";
+		GCon->Logf("&d tracks", maxTrack);
 		if (playing)
         {
-			con << "Currently " << (playLooping ? "looping" : "playing") << " track " << playTrack << "\n";
+			GCon->Logf("Currently %s track %d",
+				playLooping ? "looping" : "playing", playTrack);
 		}
 		else if (wasPlaying)
         {
-			con << "Paused " << (playLooping ? "looping" : "playing") << " track " << playTrack << "\n";
+			GCon->Logf("Paused %s track %d",
+				playLooping ? "looping" : "playing", playTrack);
 		}
-		con << "Volume is " << cdvolume << "\n";
+		GCon->Logf("Volume is %d", cdvolume);
 		return;
 	}
 	unguard;
@@ -343,7 +345,7 @@ static void CD_GetInfo(void)
 
 	if (maxTrack == 0)
     {
-    	cond << "CDAudio: no music tracks\n";
+    	GCon->Log(NAME_Dev, "CDAudio: no music tracks");
 		return;
 	}
 
@@ -369,14 +371,14 @@ static void CD_Play(int track, boolean looping)
 
 	if (track < 1 || track > maxTrack)
 	{
-		cond << "CDAudio: Bad track number " << track << ".\n";
+		GCon->Logf(NAME_Dev, "CDAudio: Bad track number %d.", track);
 		return;
 	}
 
 	// don't try to play a non-audio track
 	if (!bcd_track_is_audio(track))
 	{
-		con << "CDAudio: track " << track << " is not audio\n";
+		GCon->Logf("CDAudio: track %d is not audio", track);
 		return;
 	}
 
@@ -649,7 +651,7 @@ static int bcd_open(void)
 	/* disk I/O wouldn't work anyway if you set sizeof tb this low, but... */
 	if (_go32_info_block.size_of_transfer_buffer < 4096)
 	{
-		con << "bcd_open: Transfer buffer too small\n";
+		GCon->Log(NAME_Init, "bcd_open: Transfer buffer too small");
 		return 0;
 	}
 
@@ -659,7 +661,7 @@ static int bcd_open(void)
 	__dpmi_int(0x2f, &regs);
 	if (regs.x.bx == 0)
 	{	/* abba no longer lives */
-		con << "bcd_open: MSCDEX not found\n";
+		GCon->Log(NAME_Init, "bcd_open: MSCDEX not found");
 		return 0;
 	}
 
@@ -671,7 +673,7 @@ static int bcd_open(void)
 	__dpmi_int(0x2f, &regs);
 	if (regs.x.bx == 0)
 	{
-		con << "bcd_open: MSCDEX version < 2.0\n";
+		GCon->Log(NAME_Init, "bcd_open: MSCDEX version < 2.0");
 		return 0;
 	}
 	mscdex_version = regs.x.bx;
@@ -679,12 +681,12 @@ static int bcd_open(void)
 	/* allocate 256 bytes of dos memory for the command blocks */
 	if ((dos_mem_segment = __dpmi_allocate_dos_memory(16, &dos_mem_selector))<0)
 	{
-		con << "bcd_open: Could not allocate 256 bytes of DOS memory\n";
+		GCon->Log(NAME_Init, "bcd_open: Could not allocate 256 bytes of DOS memory");
 		return 0;
 	}
 
-	cond << "MSCDEX version " << (mscdex_version / 0x100) << "."
-		<< (mscdex_version % 0x100) << endl;
+	GCon->Logf(NAME_Init, "MSCDEX version %d.%d", mscdex_version / 0x100,
+		mscdex_version % 0x100);
 	return mscdex_version;
 }
 
@@ -739,14 +741,9 @@ static int bcd_ioctl(IOCTLI *ioctli, void *command, int len, char *act)
 	if (_status & ERROR_BIT)
 	{
 		error_code = _status & 0xff;
-
-		cond << "CD " << act << " failed (";
-		if (error_code < 0 || error_code > 0xf)
-			cond << "Invalid error";
-		else
-			cond << errorcodes[error_code];
-		cond << ")\n";
-
+		GCon->Logf(NAME_Dev, "CD %s failed (%s)", act,
+			(error_code < 0 || error_code > 0xf) ? "Invalid error" :
+			errorcodes[error_code]);
 		return 1;
 	}
 	else
@@ -1036,9 +1033,12 @@ static int bcd_audio_busy(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.5  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

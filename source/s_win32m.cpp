@@ -165,7 +165,7 @@ static void PlaySong(void* data, int length, int looping)
 
 	if (strncmp((char*)data, "MThd", 4))
 	{
-		con << "PlaySong: Bad MIDI header\n";
+		GCon->Log("PlaySong: Bad MIDI header");
 		return;
 	}
 
@@ -178,7 +178,7 @@ static void PlaySong(void* data, int length, int looping)
     result = Loader->GetObject(&ObjDesc, IID_IDirectMusicSegment2, (void**)&Segment);
 	if (result != S_OK)
 	{
-		con << "PlaySong: Failed to get object\n";
+		GCon->Log("PlaySong: Failed to get object");
 		return;
 	}
 
@@ -194,7 +194,7 @@ static void PlaySong(void* data, int length, int looping)
 		Segment->SetRepeats(1000000);
 
 	if (Performance->PlaySegment(Segment, 0, 0, NULL) != S_OK)
-		con << "PlaySegment failed\n";
+		GCon->Log("PlaySegment failed");
 
     Performance->GetTime(NULL, &StartTime);
 	TimeOffset = 0;
@@ -286,13 +286,13 @@ void S_UpdateMusic(void)
 		if (res != S_OK)
 		{
 			if (res == E_FAIL)
-				con << "Failed to set music volume\n";
+				GCon->Log("Failed to set music volume");
 			else if (res == E_POINTER)
-				con << "Invalid pointer\n";
+				GCon->Log("Invalid pointer");
 			else if (res == E_OUTOFMEMORY)
-				con << "Out of memory\n";
+				GCon->Log("Out of memory");
 			else
-				con << "Invalid error\n";
+				GCon->Log("Invalid error");
 		}
     }
 	unguard;
@@ -391,7 +391,7 @@ static void StartMidiSong(char* song, boolean loop)
 			name = va("%s%s.mid", ArchivePath, song);
 		    if (!Sys_FileExists(name))
 		    {
-		    	con << "Can't find song \"" << song << "\"\n";
+		    	GCon->Logf("Can't find song %s", song);
 		        return;
 			}
 	    }
@@ -405,7 +405,7 @@ static void StartMidiSong(char* song, boolean loop)
 		lump = W_CheckNumForName(song);
     	if (lump < 0)
 	    {
-	    	con << "Can't find song \"" << song << "\"\n";
+	    	GCon->Logf("Can't find song %s", song);
     	    return;
 	    }
 		StopMidiSong();
@@ -517,12 +517,12 @@ COMMAND(Music)
 	{
 	    if (QrySongPlaying())
         {
-        	con << "Currently " << (mus_looping ? "looping" : "playing")
-        		<< " \"" << Mus_Song << "\".\n";
+        	GCon->Logf("Currently %s %s.",
+				mus_looping ? "looping" : "playing", Mus_Song);
         }
         else
         {
-        	con << "No song currently playing\n";
+        	GCon->Log("No song currently playing");
         }
         return;
 	}
@@ -773,13 +773,13 @@ static boolean convert(char *mus, int length)
 	MUSh = (MUSheader *)mus;
 	if (strncmp(MUSh->ID, MUSMAGIC, 4))
     {
-    	con << "Not a MUS file\n";
+    	GCon->Log("Not a MUS file");
 		return false;
 	}
 
 	if (MUSh->channels > 15)	 /* <=> MUSchannels+drums > 16 */
     {
-    	cond << "Too many channels\n";
+    	GCon->Log(NAME_Dev, "Too many channels");
 		return false;
 	}
 
@@ -869,7 +869,7 @@ static boolean convert(char *mus, int length)
   			break;
 		 case 5:
 		 case 7:
-			cond << "MUS file corupted\n";
+			GCon->Log(NAME_Dev, "MUS file corupted");
   			return false;
 		 default:
            	break;
@@ -899,8 +899,8 @@ static boolean convert(char *mus, int length)
 
 	if (ouch)
     {
-		cond << "WARNING : There are bytes missing at the end.\n"
-		"The end of the MIDI file might not fit the original one.\n";
+		GCon->Log(NAME_Dev, "WARNING : There are bytes missing at the end.");
+		GCon->Log(NAME_Dev, "The end of the MIDI file might not fit the original one.");
 	}
 
 	return true;
@@ -991,9 +991,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/07/20 14:53:02  dj_jl
 //	Got rid of warnings.
-//
+//	
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

@@ -492,7 +492,7 @@ COMMAND(MapList)
 	{
 		if (W_CheckNumForName(MapInfo[i].lumpname) >= 0)
 		{
-			con << MapInfo[i].lumpname << " - " << MapInfo[i].name << endl;
+			GCon->Logf("%s - %s", MapInfo[i].lumpname, MapInfo[i].name);
 		}
 	}
 }
@@ -509,9 +509,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/23 16:29:56  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.8  2002/03/12 19:22:22  dj_jl
 //	Fixed next maps in Hexen.
-//
+//	
 //	Revision 1.7  2002/03/02 17:31:28  dj_jl
 //	Added P_GetMapLumpName for Hexen net menu.
 //	

@@ -60,17 +60,17 @@ void C_CenterMessage(const char *msg);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern ostream			con;
-extern ostream			cond;
-
 extern FOutputDevice	*GCon;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

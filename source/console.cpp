@@ -50,21 +50,6 @@ enum cons_state_t
     cons_closing
 };
 
-class TConBuf : public streambuf
-{
- public:
-	TConBuf(bool dev_buf)
-	{
-		dev_only = dev_buf;
-	}
-
-	int sync();
-	int overflow(int ch);
-	int underflow(void);	//	In MSVC it's abstract
-
-	bool		dev_only;
-};
-
 class FConsoleDevice:public FOutputDevice
 {
 public:
@@ -85,12 +70,6 @@ void T_DrawString640(int x, int y, const char* String);
 extern boolean				graphics_started;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-static TConBuf			cbuf(false);
-static TConBuf			cdbuf(true);
-
-ostream					con(&cbuf);
-ostream					cond(&cdbuf);
 
 FConsoleDevice			Console;
 
@@ -430,7 +409,7 @@ boolean C_Responder(event_t* ev)
 	 case K_ENTER:
 	 case K_PADENTER:
    		//	Print it
-		con << ">" << c_iline.Data << "\n";
+		GCon->Logf(">%s", c_iline.Data);
 
 		//	Add to history
         c_history_last = (MAXHISTORY + c_history_last - 1) % MAXHISTORY;
@@ -677,76 +656,15 @@ static void DoPrint(const char *buf)
 
 //==========================================================================
 //
-//  AddChar
-//
-//==========================================================================
-
-static char		con_print_buf[1024];
-static int		print_buf_len = 0;
-
-static void AddChar(char ch)
-{
-	con_print_buf[print_buf_len] = ch;
-	print_buf_len++;
-
-	if (ch <= ' ')
-	{
-        con_print_buf[print_buf_len] = 0;
-	    DoPrint(con_print_buf);
-        print_buf_len = 0;
-	}
-}
-
-//==========================================================================
-//
 //	FConsoleDevice::Serialize
 //
 //==========================================================================
 
 void FConsoleDevice::Serialize(const char* V, EName Event)
 {
-	dprintf("%s\n", V);
+	dprintf("%s: %s\n", *FName(Event), V);
 	DoPrint(V);
 	DoPrint("\n");
-}
-
-//==========================================================================
-//
-//  TConBuf::sync
-//
-//==========================================================================
-
-int TConBuf::sync()
-{
-	return 0;
-}
-     
-//==========================================================================
-//
-//  TConBuf::overflow
-//
-//==========================================================================
-
-int TConBuf::overflow(int ch)
-{
-	//	All messages to debug file, even without developer being set to 1
-	dprintf("%c", (char)ch);
-	if (ch != EOF && (!dev_only || (int)developer))
-	{
-    	AddChar((char)ch);
-	}
-	return 0;
-}
-
-//==========================================================================
-//
-//  TConBuf::underflow
-//
-//==========================================================================
-
-int TConBuf::underflow(void)
-{
-	return 0;
 }
 
 //**************************************************************************
@@ -783,7 +701,7 @@ void C_NotifyMessage(const char *str)
 {
 	if (msg_echo)
 	{
-		con << str << endl;
+		GCon->Log(str);
 	}
 
 	if (num_notify >= NUM_NOTIFY_LINES)
@@ -871,9 +789,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/07/23 16:29:55  dj_jl
+//	Replaced console streams with output device class.
+//
 //	Revision 1.17  2002/07/13 07:47:05  dj_jl
 //	Console device now echos messages to debugfile.
-//
+//	
 //	Revision 1.16  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
