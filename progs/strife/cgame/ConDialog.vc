@@ -36,12 +36,15 @@ string SpeechText;
 ConDlgChoice WinChoices[6];
 int NumChoices;
 
+RandomConversation RandomConversations[5];
 string CancelTexts[3];
 
 void SetSpeech(int SpeechNum)
 {
 	int i;
 	RogueConSpeech *Speech;
+	int TempBuffer[80];
+	string TempStr = ARR2STR(TempBuffer);
 
 	if (!SpeechNum)
 		return;
@@ -65,6 +68,25 @@ void SetSpeech(int SpeechNum)
 
 	SpeakerName = ARR2STR(Speech->Name);
 	SpeechText = ARR2STR(Speech->Text);
+
+	//	Check for random conversation text.
+	strcpy(TempStr, SpeechText);
+	strsetchar(TempStr, 6, 0);
+	if (!strcmp(TempStr, "RANDOM"))
+	{
+		for (i = 0; i < 20; i++)
+		{
+			strsetchar(TempStr, i, strgetchar(TempStr, i + 7));
+		}
+		for (i = 0; i < 5; i++)
+		{
+			if (!strcmp(TempStr, RandomConversations[i].Name))
+			{
+				SpeechText = RandomConversations[i].Texts[P_Random() % 10];
+				break;
+			}
+		}
+	}
 
 	for (i = 0; i < 5; i++)
 	{
@@ -103,7 +125,7 @@ void DrawWindow(GC gc)
 		gc.DrawIcon(0, 0, BackPic);
 	}
 	gc.DrawText(16, 16, SpeakerName);
-	gc.DrawText(16, 32, SpeechText);
+	T_DrawTextW(16, 32, SpeechText, 320 - 32);
 	gc.DrawText(50, 160 - NumChoices * 16,
 		"______________________________");
 }
@@ -125,6 +147,61 @@ defaultproperties
 {
 	SelectorType = MenuSelector_Spinner;
 	BackPic = -1;
+	RandomConversations[0].Name = "PEASANT";
+	RandomConversations[0].Texts[0] = "PLEASE DON'T HURT ME.";
+	RandomConversations[0].Texts[1] = "IF YOU'RE LOOKING TO HURT ME, I'M \nNOT REALLY WORTH THE EFFORT.";
+	RandomConversations[0].Texts[2] = "I DON'T KNOW ANYTHING.";
+	RandomConversations[0].Texts[3] = "GO AWAY OR I'LL CALL THE GUARDS!";
+	RandomConversations[0].Texts[4] = "I WISH SOMETIMES THAT ALL THESE \nREBELS WOULD JUST LEARN THEIR \nPLACE AND STOP THIS NONSENSE.";
+	RandomConversations[0].Texts[5] = "JUST LEAVE ME ALONE, OK?";
+	RandomConversations[0].Texts[6] = "I'M NOT SURE, BUT SOMETIMES I THINK \nTHAT I KNOW SOME OF THE ACOLYTES.";
+	RandomConversations[0].Texts[7] = "THE ORDER'S GOT EVERYTHING AROUND HERE PRETTY WELL LOCKED UP TIGHT.";
+	RandomConversations[0].Texts[8] = "THERE'S NO WAY THAT THIS IS JUST A \nSECURITY FORCE.";
+	RandomConversations[0].Texts[9] = "I'VE HEARD THAT THE ORDER IS REALLY \nNERVOUS ABOUT THE FRONT'S \nACTIONS AROUND HERE.";
+	RandomConversations[1].Name = "REBEL";
+	RandomConversations[1].Texts[0] = "THERE'S NO WAY THE ORDER WILL \nSTAND AGAINST US.";
+	RandomConversations[1].Texts[1] = "WE'RE ALMOST READY TO STRIKE. \nMACIL'S PLANS ARE FALLING IN PLACE.";
+	RandomConversations[1].Texts[2] = "WE'RE ALL BEHIND YOU, DON'T WORRY.";
+	RandomConversations[1].Texts[3] = "DON'T GET TOO CLOSE TO ANY OF THOSE BIG ROBOTS. THEY'LL MELT YOU DOWN \nFOR SCRAP!";
+	RandomConversations[1].Texts[4] = "THE DAY OF OUR GLORY WILL SOON \nCOME, AND THOSE WHO OPPOSE US WILL \nBE CRUSHED!";
+	RandomConversations[1].Texts[5] = "DON'T GET TOO COMFORTABLE. WE'VE \nSTILL GOT OUR WORK CUT OUT FOR US.";
+	RandomConversations[1].Texts[6] = "MACIL SAYS THAT YOU'RE THE NEW \nHOPE. BEAR THAT IN MIND.";
+	RandomConversations[1].Texts[7] = "ONCE WE'VE TAKEN THESE CHARLATANS DOWN, WE'LL BE ABLE TO REBUILD THIS WORLD AS IT SHOULD BE.";
+	RandomConversations[1].Texts[8] = "REMEMBER THAT YOU AREN'T FIGHTING \nJUST FOR YOURSELF, BUT FOR \nEVERYONE HERE AND OUTSIDE.";
+	RandomConversations[1].Texts[9] = "AS LONG AS ONE OF US STILL STANDS, \nWE WILL WIN.";
+	RandomConversations[2].Name = "AGUARD";
+	RandomConversations[2].Texts[0] = "MOVE ALONG,  PEASANT.";
+	RandomConversations[2].Texts[1] = "FOLLOW THE TRUE FAITH, ONLY THEN \nWILL YOU BEGIN TO UNDERSTAND.";
+	RandomConversations[2].Texts[2] = "ONLY THROUGH DEATH CAN ONE BE \nTRULY REBORN.";
+	RandomConversations[2].Texts[3] = "I'M NOT INTERESTED IN YOUR USELESS \nDRIVEL.";
+	RandomConversations[2].Texts[4] = "IF I HAD WANTED TO TALK TO YOU I \nWOULD HAVE TOLD YOU SO.";
+	RandomConversations[2].Texts[5] = "GO AND ANNOY SOMEONE ELSE!";
+	RandomConversations[2].Texts[6] = "KEEP MOVING!";
+	RandomConversations[2].Texts[7] = "IF THE ALARM GOES OFF, JUST STAY OUT OF OUR WAY!";
+	RandomConversations[2].Texts[8] = "THE ORDER WILL CLEANSE THE WORLD \nAND USHER IT INTO THE NEW ERA.";
+	RandomConversations[2].Texts[9] = "PROBLEM?  NO, I THOUGHT NOT.";
+	RandomConversations[3].Name = "BEGGAR";
+	RandomConversations[3].Texts[0] = "ALMS FOR THE POOR?";
+	RandomConversations[3].Texts[1] = "WHAT ARE YOU LOOKING AT, SURFACER?";
+	RandomConversations[3].Texts[2] = "YOU WOULDN'T HAVE ANY EXTRA FOOD, WOULD YOU?";
+	RandomConversations[3].Texts[3] = "YOU  SURFACE PEOPLE WILL NEVER \n                                                                                                       UNDERSTAND US.";
+	RandomConversations[3].Texts[4] = "HA, THE GUARDS CAN'T FIND US.  THOSE \nIDIOTS DON'T EVEN KNOW WE EXIST. ";
+	RandomConversations[3].Texts[5] = "ONE DAY EVERYONE BUT THOSE WHO SERVE THE ORDER WILL BE FORCED TO   JOIN US.";
+	RandomConversations[3].Texts[6] = "STARE NOW,  BUT YOU KNOW THAT THIS WILL BE YOUR OWN FACE ONE DAY.";
+	RandomConversations[3].Texts[7] = "THERE'S NOTHING THING MORE \nANNOYING THAN A SURFACER WITH AN ATTITUDE!";
+	RandomConversations[3].Texts[8] = "THE ORDER WILL MAKE SHORT WORK OF YOUR PATHETIC FRONT.";
+	RandomConversations[3].Texts[9] = "WATCH YOURSELF SURFACER. WE KNOW OUR ENEMIES!";
+	RandomConversations[4].Name = "PGUARD";
+	RandomConversations[4].Texts[0] = "WE ARE THE HANDS OF FATE. TO EARN \nOUR WRATH IS TO FIND OBLIVION!";
+	RandomConversations[4].Texts[1] = "THE ORDER WILL CLEANSE THE WORLD \nOF THE WEAK AND CORRUPT!";
+	RandomConversations[4].Texts[2] = "OBEY THE WILL OF THE MASTERS!";
+	RandomConversations[4].Texts[3] = "LONG LIFE TO THE BROTHERS OF THE \nORDER!";
+	RandomConversations[4].Texts[4] = "FREE WILL IS AN ILLUSION THAT BINDS \nTHE WEAK MINDED.";
+	RandomConversations[4].Texts[5] = "POWER IS THE PATH TO GLORY. TO \nFOLLOW THE ORDER IS TO WALK THAT \nPATH!";
+	RandomConversations[4].Texts[6] = "TAKE YOUR PLACE AMONG THE \nRIGHTEOUS, JOIN US!";
+	RandomConversations[4].Texts[7] = "THE ORDER PROTECTS ITS OWN.";
+	RandomConversations[4].Texts[8] = "ACOLYTES?  THEY HAVE YET TO SEE THE FULL GLORY OF THE ORDER.";
+	RandomConversations[4].Texts[9] = "IF THERE IS ANY HONOR INSIDE THAT \nPATHETIC SHELL OF A BODY, \nYOU'LL ENTER INTO THE ARMS OF THE \nORDER.";
 	CancelTexts[0] = "BYE!";
 	CancelTexts[1] = "Thanks, Bye!";
 	CancelTexts[2] = "See you later!";
@@ -133,6 +210,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/09/26 16:54:19  dj_jl
+//  Wrapped text printing, random speeches
+//
 //  Revision 1.2  2003/09/11 17:18:43  dj_jl
 //  Sending impulse when closing dialog with ESC
 //
