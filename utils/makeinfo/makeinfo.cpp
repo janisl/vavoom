@@ -217,8 +217,6 @@ void WriteMobjInfo(void)
 	fprintf(f, "//**\n");
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
-	fprintf(f, "void generic_mobj_start(mobj_t *self, mthing_t *mthing);\n");
-	fprintf(f, "\n");
 
 	for (i = 0; i < nummobjtypes; i++)
     {
@@ -230,16 +228,19 @@ void WriteMobjInfo(void)
 		fprintf(f, "//==========================================================================\n");
 		fprintf(f, "\n");
 
+        flags = mobjinfo[i].flags;
+        flags2 = mobjinfo[i].flags2;
+
 		//  Class declaration
-		fprintf(f, "class %s:mobj_t\n", mobj_names[i]);
+		if (flags & MF_MISSILE)
+			fprintf(f, "class %s:Missile\n", mobj_names[i]);
+		else
+			fprintf(f, "class %s:Actor\n", mobj_names[i]);
 		fprintf(f, "{\n");
 
         //	Start of function
         fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
         fprintf(f, "\t{\n");
-
-        flags = mobjinfo[i].flags;
-        flags2 = mobjinfo[i].flags2;
 
 		if (flags & MF_NOTDMATCH && mobjinfo[i].doomednum != -1)
         	fprintf(f, "\t\tif (deathmatch)\n\t\t{\n\t\t\tRemoveMobjThinker(this);\n\t\t\treturn;\n\t\t}\n");
@@ -384,7 +385,7 @@ void WriteMobjInfo(void)
 			fprintf(f, "\t\teffects = %s;\n", mobjinfo[i].effects);
 
 		//	Calling of start function
-		fprintf(f, "\t\tgeneric_mobj_start(this, mthing);\n");
+		fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
 
 		//	Static lights
 		if (mobjinfo[i].extra)
@@ -661,9 +662,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/18 17:42:19  dj_jl
+//	Seperate class for missiles
+//
 //	Revision 1.5  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
-//
+//	
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
 //	
