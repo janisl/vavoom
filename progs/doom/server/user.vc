@@ -42,7 +42,6 @@ float air_control = 1.0 / 256.0;
 
 void SetWeapon(player_t * player, int NewWeapon);
 void MovePsprites(player_t * player);
-void SetPlayerRunState(player_t * player);
 void ChangeWeapon(player_t * player, int newweapon);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
@@ -52,27 +51,27 @@ boolean onground;
 
 //==========================================================================
 //
-//  ThrustPlayer
+//  PlayerPawn::ThrustPlayer
 //
 //  Moves the given origin along a given angle.
 //
 //==========================================================================
 
-void ThrustPlayer(player_t * player, float angle, float move)
+void PlayerPawn::ThrustPlayer(float angle, float move, float deltaTime)
 {
-	player->mo->Velocity.x += move * cos(angle) * frametime;
-	player->mo->Velocity.y += move * sin(angle) * frametime;
+	Velocity.x += move * cos(angle) * deltaTime;
+	Velocity.y += move * sin(angle) * deltaTime;
 }
 
 //==========================================================================
 //
-//  CalcHeight
+//  PlayerPawn::CalcHeight
 //
 //  Calculate the walking / running height adjustment
 //
 //==========================================================================
 
-void CalcHeight(player_t * player)
+void PlayerPawn::CalcHeight(float deltaTime)
 {
 	float angle;
 	float bob;
@@ -83,66 +82,64 @@ void CalcHeight(player_t * player)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	player->Bob = (player->mo->Velocity.x * player->mo->Velocity.x
-		+ player->mo->Velocity.y * player->mo->Velocity.y)
-		* frametime * frametime;
+	Player->Bob = (Velocity.x * Velocity.x + Velocity.y * Velocity.y)
+		* deltaTime * deltaTime;
 
-	player->Bob /= 4.0;
-	if (player->Bob > MAXBOB)
-		player->Bob = MAXBOB;
+	Player->Bob /= 4.0;
+	if (Player->Bob > MAXBOB)
+		Player->Bob = MAXBOB;
 
 	angle = (180.0 * 35.0 / 10.0) * level->time;
-	bob = player->Bob / 2.0 * sin(angle);
+	bob = Player->Bob / 2.0 * sin(angle);
 
 	// move viewheight
-	if (player->PlayerState == PST_LIVE)
+	if (Player->PlayerState == PST_LIVE)
 	{
-		player->ViewHeight += player->DeltaViewHeight;
+		Player->ViewHeight += Player->DeltaViewHeight;
 
-		if (player->ViewHeight > VIEWHEIGHT)
+		if (Player->ViewHeight > VIEWHEIGHT)
 		{
-			player->ViewHeight = VIEWHEIGHT;
-			player->DeltaViewHeight = 0.0;
+			Player->ViewHeight = VIEWHEIGHT;
+			Player->DeltaViewHeight = 0.0;
 		}
 
-		if (player->ViewHeight < VIEWHEIGHT / 2.0)
+		if (Player->ViewHeight < VIEWHEIGHT / 2.0)
 		{
-			player->ViewHeight = VIEWHEIGHT / 2.0;
-			if (player->DeltaViewHeight <= 0.0)
-				player->DeltaViewHeight = 0.00001;
+			Player->ViewHeight = VIEWHEIGHT / 2.0;
+			if (Player->DeltaViewHeight <= 0.0)
+				Player->DeltaViewHeight = 0.00001;
 		}
 
-		if (player->DeltaViewHeight)
+		if (Player->DeltaViewHeight)
 		{
-			player->DeltaViewHeight += 0.25;
-			if (!player->DeltaViewHeight)
-				player->DeltaViewHeight = 0.00001;
+			Player->DeltaViewHeight += 0.25;
+			if (!Player->DeltaViewHeight)
+				Player->DeltaViewHeight = 0.00001;
 		}
 	}
-	player->ViewOrg.z = player->mo->Origin.z + player->ViewHeight + bob;
+	Player->ViewOrg.z = Origin.z + Player->ViewHeight + bob;
 
-	if (player->ViewOrg.z > player->mo->CeilingZ - 4.0)
-		player->ViewOrg.z = player->mo->CeilingZ - 4.0;
+	if (Player->ViewOrg.z > CeilingZ - 4.0)
+		Player->ViewOrg.z = CeilingZ - 4.0;
 }
 
 //==========================================================================
 //
-//  MovePlayer
+//  PlayerPawn::MovePlayer
 //
 //==========================================================================
 
-void MovePlayer(player_t * player)
+void PlayerPawn::MovePlayer(float deltaTime)
 {
 	float forward;
 	float side;
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = player->mo->Origin.z <= player->mo->FloorZ ||
-		player->mo->bOnMobj;
+	onground = Origin.z <= FloorZ || bOnMobj;
 
-	forward = player->ForwardMove * 5.0;
-	side = player->SideMove * 5.0;
+	forward = Player->ForwardMove * 5.0;
+	side = Player->SideMove * 5.0;
 
 	if (!onground)
 	{
@@ -152,68 +149,68 @@ void MovePlayer(player_t * player)
 
 	if (forward)
 	{
-		ThrustPlayer(player, player->mo->Angles.yaw, forward);
+		ThrustPlayer(Angles.yaw, forward, deltaTime);
 	}
 	if (side)
 	{
-		ThrustPlayer(player, player->mo->Angles.yaw - 90.0, side);
+		ThrustPlayer(Angles.yaw - 90.0, side, deltaTime);
 	}
 
 	if (forward || side)
 	{
-		SetPlayerRunState(player);
+		SetPlayerRunState();
 	}
 
-	if ((player->Buttons & BT_JUMP) && onground && !player->JumpTics)
+	if ((Player->Buttons & BT_JUMP) && onground && !Player->JumpTics)
 	{
 		//  Jump
-		player->mo->Velocity.z = 9.0 * 35.0;
-		player->JumpTics = 18;
+		Velocity.z = 9.0 * 35.0;
+		Player->JumpTics = 18;
 	}
 }
 
 //==========================================================================
 //
-//  CheckWaterJump
+//  PlayerPawn::CheckWaterJump
 //
 //==========================================================================
 
-void CheckWaterJump(player_t * player)
+void PlayerPawn::CheckWaterJump(void)
 {
 	TVec start;
 	TVec end;
 	TVec vforward;
 
 	// check for a jump-out-of-water
-	AngleVector(&player->mo->Angles, &vforward);
-	start = player->mo->Origin;
-	start.z += player->mo->Height * 0.5 + 8.0;
+	AngleVector(&Angles, &vforward);
+	start = Origin;
+	start.z += Height * 0.5 + 8.0;
 	vforward.z = 0.0;
 	vforward = Normalize(vforward);
 	end = start + vforward * 24.0;
 	if (!TraceLine(start, end))
 	{
 		// solid at waist
-		start.z = player->mo->Origin.z + player->mo->Height;
+		start.z = Origin.z + Height;
 		end = start + vforward * 24.0;
-		player->MoveDir = trace_plane_normal * -50.0;
+		Player->MoveDir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
-			player->mo->bWaterJump = true;
-			player->mo->Velocity.z = 320.0;
-			player->mo->ReactionTime = 2.0;	// safety net
+			bWaterJump = true;
+			Velocity.z = 320.0;
+			ReactionTime = 2.0;	// safety net
 		}
 	}
 }
 
 //==========================================================================
 //
-//  WaterMove
+//  PlayerPawn::WaterMove
 //
 //==========================================================================
 
-void WaterMove(player_t * player)
+void PlayerPawn::WaterMove(float deltaTime)
 {
 	float forward;
 	float side;
@@ -224,13 +221,12 @@ void WaterMove(player_t * player)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = player->mo->Origin.z <= player->mo->FloorZ ||
-		player->mo->bOnMobj;
+	onground = Origin.z <= FloorZ || bOnMobj;
 
-	AngleVectors(&player->mo->Angles, &vforward, &vright, &vup);
+	AngleVectors(&Angles, &vforward, &vright, &vup);
 
-	forward = player->ForwardMove;
-	side = player->SideMove;
+	forward = Player->ForwardMove;
+	side = Player->SideMove;
 
 	wishvel = forward * vforward + side * vright;
 	if (!forward && !side /* && !cmd.upmove */ )
@@ -238,105 +234,100 @@ void WaterMove(player_t * player)
 //  else
 //      wishvel.z += cmd.upmove;
 
-	player->mo->Velocity += 3.5 * frametime * wishvel;
+	Velocity += 3.5 * deltaTime * wishvel;
 
 	if (forward || side)
 	{
-		SetPlayerRunState(player);
+		SetPlayerRunState();
 	}
 
-	if (player->Buttons & BT_JUMP)
+	if (Player->Buttons & BT_JUMP)
 	{
-		if (player->mo->WaterType == CONTENTS_WATER)
-			player->mo->Velocity.z = 100.0;
-		else if (player->mo->WaterType == CONTENTS_NUKAGE ||
-			player->mo->WaterType == CONTENTS_SLIME)
-			player->mo->Velocity.z = 80.0;
+		if (WaterType == CONTENTS_WATER)
+			Velocity.z = 100.0;
+		else if (WaterType == CONTENTS_NUKAGE || WaterType == CONTENTS_SLIME)
+			Velocity.z = 80.0;
 		else
-			player->mo->Velocity.z = 50.0;
+			Velocity.z = 50.0;
 	}
-	CheckWaterJump(player);
+	CheckWaterJump();
 }
 
 //==========================================================================
 //
-//  WaterJump
+//  PlayerPawn::WaterJump
 //
 //==========================================================================
 
-void WaterJump(player_t * player)
+void PlayerPawn::WaterJump(void)
 {
-	if (!player->mo->ReactionTime || !player->mo->WaterLevel)
+	if (!ReactionTime || !WaterLevel)
 	{
-		player->mo->bWaterJump = false;
-		player->mo->ReactionTime = 0.0;
+		bWaterJump = false;
+		ReactionTime = 0.0;
 	}
-	player->mo->Velocity.x = player->MoveDir.x;
-	player->mo->Velocity.y = player->MoveDir.y;
+	Velocity.x = Player->MoveDir.x;
+	Velocity.y = Player->MoveDir.y;
 }
 
 //==========================================================================
 //
-//  PlayerInSpecialSector
+//  PlayerPawn::PlayerInSpecialSector
 //
 //  Called every tic frame that the player origin is in a special sector
 //
 //==========================================================================
 
-void PlayerInSpecialSector(player_t * player)
+void PlayerPawn::PlayerInSpecialSector(void)
 {
-	sector_t *sector;
-
-	sector = player->mo->Sector;
-
 	// Falling, not all the way down yet?
-	if (player->mo->Origin.z != sector->floorheight)
+	if (Origin.z != Sector->floorheight)
 		return;
 
-	if (sector->special & SECRET_MASK)
+	if (Sector->special & SECRET_MASK)
 	{
 		// SECRET SECTOR
-		player->SecretCount++;
-		centerprint(player, "You found a secret area");
-		sector->special &= ~SECRET_MASK;
+		Player->SecretCount++;
+		centerprint(Player, "You found a secret area");
+		Sector->special &= ~SECRET_MASK;
 	}
 
 	// Has hitten ground.
-	switch (sector->special & 255)
+	switch (Sector->special & 255)
 	{
 	case 64 + 5:
 		// HELLSLIME DAMAGE
-		if (!player->Powers[pw_ironfeet])
+		if (!Player->Powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 10);
+				Damage(none, none, 10);
 		break;
 
 	case 64 + 7:
 		// NUKAGE DAMAGE
-		if (!player->Powers[pw_ironfeet])
+		if (!Player->Powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 5);
+				Damage(none, none, 5);
 		break;
 
 	case 64 + 16:
 		// SUPER HELLSLIME DAMAGE
 	case 64 + 4:
 		// STROBE HURT
-		if (!player->Powers[pw_ironfeet] || (P_Random() < 5))
+		if (!Player->Powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 20);
+				Damage(none, none, 20);
 		}
 		break;
 
 	case 64 + 11:
 		// EXIT SUPER DAMAGE! (for E1M8 finale)
-		player->Cheats &= ~CF_GODMODE;
+		Player->Cheats &= ~CF_GODMODE;
 
 		if (!(level->tictime & 0x1f))
-			player->mo->Damage(none, none, 20);
+			Damage(none, none, 20);
 
-		if (player->Health <= 10)
+		if (Player->Health <= 10)
 			G_ExitLevel();
 		break;
 
@@ -347,38 +338,38 @@ void PlayerInSpecialSector(player_t * player)
 
 //==========================================================================
 //
-//  PlayerInContents
+//  PlayerPawn::PlayerInContents
 //
 //==========================================================================
 
-void PlayerInContents(player_t * player)
+void PlayerPawn::PlayerInContents(void)
 {
-	if (!player->mo->WaterLevel)
+	if (!WaterLevel)
 	{
 		return;
 	}
-	switch (player->mo->WaterType)
+	switch (WaterType)
 	{
 	case CONTENTS_NUKAGE:
 		// NUKAGE DAMAGE
-		if (!player->Powers[pw_ironfeet])
+		if (!Player->Powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 5);
+				Damage(none, none, 5);
 		break;
 
 	case CONTENTS_SLIME:
 		// HELLSLIME DAMAGE
-		if (!player->Powers[pw_ironfeet])
+		if (!Player->Powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 10);
+				Damage(none, none, 10);
 		break;
 
 	case CONTENTS_LAVA:
 		// SUPER HELLSLIME DAMAGE
-		if (!player->Powers[pw_ironfeet] || (P_Random() < 5))
+		if (!Player->Powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				player->mo->Damage(none, none, 20);
+				Damage(none, none, 20);
 		}
 		break;
 	}
@@ -386,87 +377,229 @@ void PlayerInContents(player_t * player)
 
 //==========================================================================
 //
-//  DeathPlayerThink
+//  PlayerPawn::DeathPlayerTick
 //
 //  Fall on your face when dying. Decrease POV height to floor height.
 //
 //==========================================================================
 
-void DeathPlayerThink(player_t * player)
+void PlayerPawn::DeathPlayerTick(float deltaTime)
 {
 	float angle;
 	float delta;
 
-	MovePsprites(player);
+	MovePsprites(Player);
 
-	onground = player->mo->Origin.z <= player->mo->FloorZ ||
-		player->mo->bOnMobj;
+	onground = Origin.z <= FloorZ || bOnMobj;
 
-	if (player->mo->WaterLevel > 1)
+	if (WaterLevel > 1)
 	{
-		player->mo->Velocity.z = -60.0;	// drift towards bottom
+		Velocity.z = -60.0;	// drift towards bottom
 	}
 
 	// fall to the ground
-	if (player->ViewHeight > 6.0)
-		player->ViewHeight -= 1.0;
+	if (Player->ViewHeight > 6.0)
+		Player->ViewHeight -= 1.0;
 
-	if (player->ViewHeight < 6.0)
-		player->ViewHeight = 6.0;
+	if (Player->ViewHeight < 6.0)
+		Player->ViewHeight = 6.0;
 
-	player->DeltaViewHeight = 0.0;
-	CalcHeight(player);
+	Player->DeltaViewHeight = 0.0;
+	CalcHeight(deltaTime);
 
-	if (player->Attacker && player->Attacker != player->mo)
+	if (Player->Attacker && Player->Attacker != this)
 	{
-		angle = atan2(player->Attacker->Origin.y - player->mo->Origin.y,
-			player->Attacker->Origin.x - player->mo->Origin.x);
+		angle = atan2(Player->Attacker->Origin.y - Origin.y,
+			Player->Attacker->Origin.x - Origin.x);
 
-		delta = AngleMod180(angle - player->ViewAngles.yaw);
+		delta = AngleMod180(angle - Player->ViewAngles.yaw);
 
 		if (delta < 5.0 || delta > -5.0)
 		{
 			// Looking at killer,
 			//  so fade damage flash down.
-			player->ViewAngles.yaw = angle;
+			Player->ViewAngles.yaw = angle;
 
-			if (player->DamageCount)
-				player->DamageCount--;
+			if (Player->DamageCount)
+				Player->DamageCount--;
 		}
 		else if (delta > 0.0)
-			player->ViewAngles.yaw += 5.0;
+			Player->ViewAngles.yaw += 5.0;
 		else
-			player->ViewAngles.yaw -= 5.0;
+			Player->ViewAngles.yaw -= 5.0;
 	}
-	else if (player->DamageCount)
-		player->DamageCount--;
+	else if (Player->DamageCount)
+		Player->DamageCount--;
 
-	if (player->Buttons & BT_USE)
-		player->PlayerState = PST_REBORN;
+	if (Player->Buttons & BT_USE)
+		Player->PlayerState = PST_REBORN;
 }
 
 //==========================================================================
 //
-//  PlayerImpulse
+//  PlayerPawn::PlayerImpulse
 //
 //==========================================================================
 
-void PlayerImpulse(player_t * player)
+void PlayerPawn::PlayerImpulse(void)
 {
 	int impulse;
 
-	impulse = player->Impulse;
-	player->Impulse = 0;
+	impulse = Player->Impulse;
+	Player->Impulse = 0;
 
 	if (impulse <= 7)
 	{
-		ChangeWeapon(player, impulse - 1);
+		ChangeWeapon(Player, impulse - 1);
 	}
 	else if (impulse == 16)
 	{
 		//  Suicide
-		player->mo->Damage(none, none, 10000);
+		Damage(none, none, 10000);
 	}
+}
+
+//==========================================================================
+//
+//  PlayerPawn::PlayerTick
+//
+//==========================================================================
+
+void PlayerPawn::PlayerTick(float deltaTime)
+{
+	if (Player->bIsBot)
+	{
+		Player->Bot.Think();
+	}
+
+	// fixme: do this in the cheat code
+	if (Player->Cheats & CF_NOCLIP)
+	{
+		bColideWithThings = false;
+		bColideWithWorld = false;
+	}
+	else
+	{
+		bColideWithThings = true;
+		bColideWithWorld = true;
+	}
+
+	if (bJustAttacked)
+	{
+		Player->ForwardMove = 100.0;
+		Player->SideMove = 0.0;
+		bJustAttacked = false;
+	}
+
+	if (Player->PlayerState == PST_DEAD)
+	{
+		DeathPlayerTick(deltaTime);
+		return;
+	}
+
+	// Copy view angles
+	Angles = Player->ViewAngles;
+
+	if (Player->JumpTics)
+	{
+		Player->JumpTics--;
+	}
+
+	// Move around.
+	// Reactiontime is used to prevent movement
+	//  for a bit after a teleport.
+	if (ReactionTime)
+	{
+		ReactionTime -= deltaTime;
+		if (ReactionTime <= 0.0)
+			ReactionTime = 0.0;
+		if (bWaterJump)
+			WaterJump();
+	}
+	else
+	{
+		if (WaterLevel > 1)
+			WaterMove(deltaTime);
+		else
+			MovePlayer(deltaTime);
+	}
+
+	CalcHeight(deltaTime);
+
+	if (Sector->special)
+		PlayerInSpecialSector();
+	PlayerInContents();
+
+	// Check for weapon change.
+	if (Player->Impulse)
+	{
+		PlayerImpulse();
+	}
+
+	// check for use
+	if (Player->Buttons & BT_USE)
+	{
+		if (!Player->bUseDown)
+		{
+			P_UseLines(Player);
+			Player->bUseDown = true;
+		}
+	}
+	else
+	{
+		Player->bUseDown = false;
+	}
+
+	//  cycle psprites
+	MovePsprites(Player);
+
+	//  Counters, time dependend power ups.
+
+	//  Strength counts up to diminish fade.
+	if (Player->Powers[pw_strength])
+		Player->Powers[pw_strength]++;
+
+	if (Player->Powers[pw_invulnerability])
+		Player->Powers[pw_invulnerability]--;
+
+	if (Player->Powers[pw_invisibility])
+		if (!--Player->Powers[pw_invisibility])
+			Translucency = 0;
+
+	if (Player->Powers[pw_infrared])
+		Player->Powers[pw_infrared]--;
+
+	if (Player->Powers[pw_ironfeet])
+		Player->Powers[pw_ironfeet]--;
+
+	if (Player->DamageCount)
+		Player->DamageCount--;
+
+	if (Player->BonusCount)
+		Player->BonusCount--;
+
+	// Handling colormaps.
+	if (Player->Powers[pw_invulnerability])
+	{
+		if (Player->Powers[pw_invulnerability] > 4 * 32 ||
+			(Player->Powers[pw_invulnerability] & 8))
+			Player->FixedColormap = INVERSECOLORMAP;
+		else
+			Player->FixedColormap = 0;
+	}
+	else if (Player->Powers[pw_infrared])
+	{
+		if (Player->Powers[pw_infrared] > 4 * 32 ||
+			(Player->Powers[pw_infrared] & 8))
+		{
+			// almost full bright
+			Player->FixedColormap = 1;
+		}
+		else
+			Player->FixedColormap = 0;
+	}
+	else
+		Player->FixedColormap = 0;
 }
 
 //==========================================================================
@@ -477,187 +610,55 @@ void PlayerImpulse(player_t * player)
 
 void PlayerThink(player_t * player)
 {
-	if (player->bIsBot)
-	{
-		player->Bot.Think();
-	}
-
-	// fixme: do this in the cheat code
-	if (player->Cheats & CF_NOCLIP)
-	{
-		player->mo->bColideWithThings = false;
-		player->mo->bColideWithWorld = false;
-	}
-	else
-	{
-		player->mo->bColideWithThings = true;
-		player->mo->bColideWithWorld = true;
-	}
-
-	if (player->mo->bJustAttacked)
-	{
-		player->ForwardMove = 100.0;
-		player->SideMove = 0.0;
-		player->mo->bJustAttacked = false;
-	}
-
-	if (player->PlayerState == PST_DEAD)
-	{
-		DeathPlayerThink(player);
-		return;
-	}
-
-	// Copy view angles
-	player->mo->Angles = player->ViewAngles;
-
-	if (player->JumpTics)
-	{
-		player->JumpTics--;
-	}
-
-	// Move around.
-	// Reactiontime is used to prevent movement
-	//  for a bit after a teleport.
-	if (player->mo->ReactionTime)
-	{
-		player->mo->ReactionTime -= frametime;
-		if (player->mo->ReactionTime <= 0.0)
-			player->mo->ReactionTime = 0.0;
-		if (player->mo->bWaterJump)
-			WaterJump(player);
-	}
-	else
-	{
-		if (player->mo->WaterLevel > 1)
-			WaterMove(player);
-		else
-			MovePlayer(player);
-	}
-
-	CalcHeight(player);
-
-	if (player->mo->Sector->special)
-		PlayerInSpecialSector(player);
-	PlayerInContents(player);
-
-	// Check for weapon change.
-	if (player->Impulse)
-	{
-		PlayerImpulse(player);
-	}
-
-	// check for use
-	if (player->Buttons & BT_USE)
-	{
-		if (!player->bUseDown)
-		{
-			P_UseLines(player);
-			player->bUseDown = true;
-		}
-	}
-	else
-	{
-		player->bUseDown = false;
-	}
-
-	//  cycle psprites
-	MovePsprites(player);
-
-	//  Counters, time dependend power ups.
-
-	//  Strength counts up to diminish fade.
-	if (player->Powers[pw_strength])
-		player->Powers[pw_strength]++;
-
-	if (player->Powers[pw_invulnerability])
-		player->Powers[pw_invulnerability]--;
-
-	if (player->Powers[pw_invisibility])
-		if (!--player->Powers[pw_invisibility])
-			player->mo->Translucency = 0;
-
-	if (player->Powers[pw_infrared])
-		player->Powers[pw_infrared]--;
-
-	if (player->Powers[pw_ironfeet])
-		player->Powers[pw_ironfeet]--;
-
-	if (player->DamageCount)
-		player->DamageCount--;
-
-	if (player->BonusCount)
-		player->BonusCount--;
-
-	// Handling colormaps.
-	if (player->Powers[pw_invulnerability])
-	{
-		if (player->Powers[pw_invulnerability] > 4 * 32
-			|| (player->Powers[pw_invulnerability] & 8))
-			player->FixedColormap = INVERSECOLORMAP;
-		else
-			player->FixedColormap = 0;
-	}
-	else if (player->Powers[pw_infrared])
-	{
-		if (player->Powers[pw_infrared] > 4 * 32
-			|| (player->Powers[pw_infrared] & 8))
-		{
-			// almost full bright
-			player->FixedColormap = 1;
-		}
-		else
-			player->FixedColormap = 0;
-	}
-	else
-		player->FixedColormap = 0;
+	PlayerPawn(*player->mo).PlayerTick(frametime);
 }
 
 //==========================================================================
 //
-//  SB_PaletteFlash
+//  PlayerPawn::PaletteFlash
 //
 //  Do red-/gold-shifts from damage/items
 //
 //==========================================================================
 
-void SB_PaletteFlash(player_t * player)
+void PlayerPawn::PaletteFlash(void)
 {
 	int cnt;
 	int bzc;
 
-	player->CShifts[CSHIFT_CONTENTS] = 0;
-	if (player->mo->WaterLevel == 3)
+	Player->CShifts[CSHIFT_CONTENTS] = 0;
+	if (WaterLevel == 3)
 	{
-		switch (player->mo->WaterType)
+		switch (WaterType)
 		{
 		case CONTENTS_WATER:
-			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_BLOOD:
-			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
 			break;
 
 		case CONTENTS_NUKAGE:
-			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
 			break;
 
 		case CONTENTS_SLIME:
-			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
 			break;
 
 		case CONTENTS_LAVA:
-			player->CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
 			break;
 		}
 	}
 
-	cnt = player->DamageCount;
+	cnt = Player->DamageCount;
 
-	if (player->Powers[pw_strength])
+	if (Player->Powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		bzc = 12 - (player->Powers[pw_strength] >> 6);
+		bzc = 12 - (Player->Powers[pw_strength] >> 6);
 
 		if (bzc > cnt)
 			cnt = bzc;
@@ -665,27 +666,55 @@ void SB_PaletteFlash(player_t * player)
 
 	if (cnt)
 	{
-		player->Palette = (cnt + 7) >> 3;
+		Player->Palette = (cnt + 7) >> 3;
 
-		if (player->Palette >= NUMREDPALS)
-			player->Palette = NUMREDPALS - 1;
+		if (Player->Palette >= NUMREDPALS)
+			Player->Palette = NUMREDPALS - 1;
 
-		player->Palette += STARTREDPALS;
+		Player->Palette += STARTREDPALS;
 	}
-	else if (player->BonusCount)
+	else if (Player->BonusCount)
 	{
-		player->Palette = (player->BonusCount + 7) >> 3;
+		Player->Palette = (Player->BonusCount + 7) >> 3;
 
-		if (player->Palette >= NUMBONUSPALS)
-			player->Palette = NUMBONUSPALS - 1;
+		if (Player->Palette >= NUMBONUSPALS)
+			Player->Palette = NUMBONUSPALS - 1;
 
-		player->Palette += STARTBONUSPALS;
+		Player->Palette += STARTBONUSPALS;
 	}
-	else if (player->Powers[pw_ironfeet] > 4 * 32
-		|| player->Powers[pw_ironfeet] & 8)
-		player->Palette = RADIATIONPAL;
+	else if (Player->Powers[pw_ironfeet] > 4 * 32 ||
+		Player->Powers[pw_ironfeet] & 8)
+		Player->Palette = RADIATIONPAL;
 	else
-		player->Palette = 0;
+		Player->Palette = 0;
+}
+
+//==========================================================================
+//
+//  PlayerPawn::SetViewPos
+//
+//==========================================================================
+
+void PlayerPawn::SetViewPos(void)
+{
+	Player->ViewOrg.x = Origin.x;
+	Player->ViewOrg.y = Origin.y;
+
+	if (Player->PlayerState != PST_DEAD)
+	{
+		Player->ViewAngles = Angles;
+	}
+
+	PaletteFlash();
+
+	Player->Stats.flags = Player->Keys;
+	if ((Player->Cheats & CF_GODMODE) || Player->Powers[pw_invulnerability])
+		Player->Stats.flags |= SBF_GOD_MODE;
+
+	if (Weapon(Player->ViewEnts[ps_weapon]).Ammo == am_noammo)
+		Player->ReadyAmmo = 1994;	// means "n/a"
+	else
+		Player->ReadyAmmo = Player->Ammo[Weapon(Player->ViewEnts[ps_weapon]).Ammo];
 }
 
 //==========================================================================
@@ -696,24 +725,7 @@ void SB_PaletteFlash(player_t * player)
 
 void SetViewPos(player_t * player)
 {
-	player->ViewOrg.x = player->mo->Origin.x;
-	player->ViewOrg.y = player->mo->Origin.y;
-
-	if (player->PlayerState != PST_DEAD)
-	{
-		player->ViewAngles = player->mo->Angles;
-	}
-
-	SB_PaletteFlash(player);
-
-	player->Stats.flags = player->Keys;
-	if ((player->Cheats & CF_GODMODE) || player->Powers[pw_invulnerability])
-		player->Stats.flags |= SBF_GOD_MODE;
-
-	if (Weapon(player->ViewEnts[ps_weapon]).Ammo == am_noammo)
-		player->ReadyAmmo = 1994;	// means "n/a"
-	else
-		player->ReadyAmmo = player->Ammo[Weapon(player->ViewEnts[ps_weapon]).Ammo];
+	PlayerPawn(*player->mo).SetViewPos();
 }
 
 //==========================================================================
@@ -989,6 +1001,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:44:02  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.23  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

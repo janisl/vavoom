@@ -124,7 +124,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	if (!bMissile)
 	{
 		bCheckLineBlocking = true;
-		if (Class != PlayerPawn)
+		if (Class != DoomPlayer)
 		{
 			bCheckLineBlockMonsters = true;
 		}
@@ -208,6 +208,23 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	{
 		SetOrigin(this, Origin);
 	}
+}
+
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
 }
 
 //==========================================================================
@@ -745,17 +762,17 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 //==========================================================================
 //
-//  P_RemoveMobj
+//  Actor::Remove
 //
 //==========================================================================
 
-void P_RemoveMobj(mobj_t * mobj)
+void Actor::Remove(void)
 {
-	if (mobj->bSpecial && !mobj->bDropped &&
-		(mobj->Class != ItemInvulnerability) &&
-		(mobj->Class != ItemInvisibility))
+	if (bSpecial && !bDropped &&
+		(Class != ItemInvulnerability) &&
+		(Class != ItemInvisibility))
 	{
-		CopyMThing(&mobj->SpawnPoint, &itemrespawnque[iquehead]);
+		CopyMThing(&SpawnPoint, &itemrespawnque[iquehead]);
 		itemrespawntime[iquehead] = level->tictime;
 		iquehead = (iquehead + 1) & (ITEMQUESIZE - 1);
 
@@ -765,7 +782,18 @@ void P_RemoveMobj(mobj_t * mobj)
 	}
 
 	// free block
-	RemoveMobjThinker(*mobj);
+	::Remove();
+}
+
+//==========================================================================
+//
+//  P_RemoveMobj
+//
+//==========================================================================
+
+void P_RemoveMobj(mobj_t * mobj)
+{
+	mobj->Remove();
 }
 
 //==========================================================================
@@ -988,6 +1016,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/03/16 17:44:01  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.36  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

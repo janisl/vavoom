@@ -816,52 +816,8 @@ void Weapon::A_FireCGun(void)
 void Weapon::A_FireMissile(void)
 {
 	Player->Ammo[Ammo]--;
-	SpawnPlayerMissile(Player->mo, Rocket);
+	PlayerPawn(*Player->mo).SpawnPlayerMissile(Rocket);
 }
-
-//===========================================================================
-//
-//  WeaponGrenade::A_FireGrenade
-//
-//===========================================================================
-
-#ifdef GRENADE_LAUNCHER
-void WeaponGrenade::A_FireGrenade(void)
-{
-	mobj_t *mo;
-
-	Player->Ammo[Ammo]--;
-
-	mo = P_SpawnMobj(Player->mo->Origin.x, Player->mo->Origin.y,
-		Player->mo->Origin.z + 32.0, missile_grenade);
-
-	if (mo->SightSound)
-		mo->PlaySound(mo->SightSound, CHAN_VOICE);
-
-	mo->Owner = *Player->mo;
-
-	//  See which target is to be aimed at
-	if (Player->mo->Angles.pitch)
-	{
-		TVec v_forward;
-		TVec v_right;
-		TVec v_up;
-
-		AngleVectors(&Player->mo->Angles, &v_forward, &v_right, &v_up);
-		mo->Velocity = v_forward * mo->Speed + v_up * mo->Speed / 3.0 +
-			((Random() - 0.5) * 20.0) * v_right +
-			((Random() - 0.5) * 20.0) * v_up;
-	}
-	else
-	{
-		mo->Velocity = Aim(Player->mo, 16.0 * 64.0) * mo->Speed;
-		mo->Velocity.z = mo->Speed / 3.0;
-	}
-	VectorAngles(&mo->Velocity, &mo->Angles);
-
-	CheckMissileSpawn(mo);
-}
-#endif
 
 //===========================================================================
 //
@@ -875,7 +831,7 @@ void Weapon::A_FirePlasma(void)
 
 	SetPsprite(Player, ps_flash, FlashState + (P_Random() & 1));
 
-	SpawnPlayerMissile(Player->mo, PlasmaShot);
+	PlayerPawn(*Player->mo).SpawnPlayerMissile(PlasmaShot);
 }
 
 //===========================================================================
@@ -898,7 +854,7 @@ void Weapon::A_BFGsound(void)
 void Weapon::A_FireBFG(void)
 {
 	Player->Ammo[Ammo] -= BFGCELLS;
-	SpawnPlayerMissile(Player->mo, BFGShot);
+	PlayerPawn(*Player->mo).SpawnPlayerMissile(BFGShot);
 }
 
 //===========================================================================
@@ -915,7 +871,7 @@ void Actor::A_BFGSpray(void)
 	int j;
 	int damage;
 	TAVec aimAng;
-	mobj_t *emo;
+	Actor emo;
 
 	// offset angles from its attack angle
 	for (i = 0; i < 40; i++)
@@ -931,15 +887,15 @@ void Actor::A_BFGSpray(void)
 			continue;
 		}
 
-		emo = P_SpawnMobj(linetarget->Origin.x, linetarget->Origin.y,
-			linetarget->Origin.z + linetarget->Height / 4.0, ExtraBFG);
+		emo = Spawn(ExtraBFG, linetarget->Origin +
+			vector(0.0, 0.0, linetarget->Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
 		MSG_WriteByte(EF_DL_GBALL);
-		MSG_WriteShort(ftoi(emo->Origin.x));
-		MSG_WriteShort(ftoi(emo->Origin.y));
-		MSG_WriteShort(ftoi(emo->Origin.z));
+		MSG_WriteShort(ftoi(emo.Origin.x));
+		MSG_WriteShort(ftoi(emo.Origin.y));
+		MSG_WriteShort(ftoi(emo.Origin.z));
 
 		damage = 0;
 		for (j = 0; j < 15; j++)
@@ -952,6 +908,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:44:02  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.21  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

@@ -178,20 +178,19 @@ void Actor::A_VileStart(void)
 
 void Actor::A_VileTarget(void)
 {
-	mobj_t *fog;
+	Actor fog;
 
 	if (!Target)
 		return;
 
 	A_FaceTarget();
 
-	fog = P_SpawnMobj(Target.Origin.x, Target.Origin.x,
-		Target.Origin.z, ArchvileFire);
+	fog = Spawn(ArchvileFire, Target.Origin);
 
-	Owner = *fog;//FIXME!!!!!!!
-	fog->Owner = self;
-	fog->Target = Target;
-	Actor(*fog).A_Fire();
+	Owner = fog;//FIXME!!!!!!!
+	fog.Owner = self;
+	fog.Target = Target;
+	fog.A_Fire();
 }
 
 //==========================================================================
@@ -323,6 +322,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/16 17:44:01  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.21  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -73,7 +73,7 @@ boolean Actor::Touch(MapObject InOther)
 			if (Other == Owner)
 				return true;
 
-			if (Other.Class != PlayerPawn)
+			if (Other.Class != DoomPlayer)
 			{
 				// Explode, but do no damage.
 				// Let players missile other players.
@@ -240,6 +240,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/16 17:44:01  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.23  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

@@ -43,7 +43,7 @@ int CanActivateCross(mobj_t * thing);
 void P_RespawnSpecials(void);
 
 int EV_Teleport(int tag, mobj_t * thing, boolean usefog);
-boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
+boolean EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 							boolean reverse);
 
 void P_ThrustMobj(mobj_t *mo, float an, float force);
@@ -567,7 +567,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_DoPlat(line, args, PLAT_PERPETUALRAISELIP);
 		break;
 	case 215:	// Teleport_Line
-		buttonSuccess = EV_SilentLineTeleport(line, side, mo, args[1], args[2]);
+		buttonSuccess = EV_SilentLineTeleport(line, side, *mo, args[1], args[2]);
 		break;
 	case 217:	// Stairs_BuildUpDoom
 		buttonSuccess = EV_BuildStairsOld(line, args);
@@ -937,6 +937,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/16 17:44:02  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.14  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

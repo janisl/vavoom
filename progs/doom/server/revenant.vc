@@ -114,7 +114,7 @@ void Actor::A_SkelMissile(void)
 
 void Actor::A_Tracer(void)
 {
-	mobj_t *th;
+	Actor A;
 	TVec wishdir;
 	TVec currdir;
 	TVec delta;
@@ -126,14 +126,12 @@ void Actor::A_Tracer(void)
 	// spawn a puff of smoke behind the rocket      
 	SpawnPuff(Origin.x, Origin.y, Origin.z);
 
-	th = P_SpawnMobj(Origin.x - Velocity.x * frametime,
-		Origin.y - Velocity.y * frametime,
-		Origin.z - Velocity.z * frametime, RevenantTracerSmoke);
+	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
 
-	th->Velocity.z = 1.0 * 35.0;
-	th->StateTime -= Random() * 0.1;
-	if (th->StateTime < 0.1)
-		th->StateTime = 0.1;
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
 
 	// adjust direction
 	if (!Target || Target.Health <= 0)
@@ -177,6 +175,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/03/16 17:44:02  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.9  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

@@ -173,7 +173,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 		if (mo == self)
 			continue;
 
-		if (mo.Class != LostSoul && mo.Class != PlayerPawn && !mo.bCountKill)
+		if (mo.Class != LostSoul && mo.Class != DoomPlayer && !mo.bCountKill)
 			continue;
 
 		if (!P_CheckSight(self, mo))
@@ -562,6 +562,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/16 17:44:01  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.17  2002/03/09 17:57:01  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

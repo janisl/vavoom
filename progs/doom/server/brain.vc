@@ -122,23 +122,21 @@ void Actor::A_BrainPain(void)
 
 void Actor::A_BrainScream(void)
 {
-	float x;
-	float y;
-	float z;
-	mobj_t *th;
+	TVec org;
+	Actor A;
 
-	for (x = Origin.x - 196.0; x < Origin.x + 320.0; x += 8.0)
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
 	{
-		y = Origin.y - 320.0;
-		z = 1.0 / 512.0 + Random() * 512.0;
-		th = P_SpawnMobj(x, y, z, Rocket);
-		th->Velocity.z = Random() * 2.0 * 35.0;
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(Rocket, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
 
-		th->SetState(S_BRAINEXPLODE1);
+		A.SetState(S_BRAINEXPLODE1);
 
-		th->StateTime -= Random() * 0.2;
-		if (th->StateTime < 0.1)
-			th->StateTime = 0.1;
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
 	}
 
 	PlayFullVolumeSound('BossDeath', CHAN_VOICE);
@@ -154,22 +152,20 @@ void Actor::A_BrainScream(void)
 
 void Actor::A_BrainExplode(void)
 {
-	float x;
-	float y;
-	float z;
-	mobj_t *th;
+	TVec org;
+	Actor A;
 
-	x = Origin.x + (Random() - Random()) * 8.0;
-	y = Origin.y;
-	z = 1.0 / 512.0 + Random() * 512.0;
-	th = P_SpawnMobj(x, y, z, Rocket);
-	th->Velocity.z = Random() * 2.0 * 35.0;
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(Rocket, org);
+	A.Velocity.z = Random() * 2.0 * 35.0;
 
-	th->SetState(S_BRAINEXPLODE1);
+	A.SetState(S_BRAINEXPLODE1);
 
-	th->StateTime -= Random() * 0.2;
-	if (th->StateTime < 0.1)
-		th->StateTime = 0.1;
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
 }
 
 //==========================================================================
@@ -209,21 +205,17 @@ void Actor::A_SpawnSound(void)
 
 void Actor::A_SpawnFly(void)
 {
-	mobj_t *newmobj;
-	mobj_t *fog;
-	mobj_t *targ;
+	Actor newmobj;
+	Actor fog;
 	int r;
 	classid type;
 
 	if (--ReactionCount)
 		return;	// still flying
 
-	targ = &Target;
-
 	// First spawn teleport fog.
-	fog = P_SpawnMobj(targ->Origin.x, targ->Origin.y, targ->Origin.z,
-		SpawnFire);
-	fog->PlaySound('Teleport', CHAN_VOICE);
+	fog = Spawn(SpawnFire, Target.Origin);
+	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	// Randomly select monster to spawn.
 	r = P_Random();
@@ -253,16 +245,15 @@ void Actor::A_SpawnFly(void)
 	else
 		type = BaronOfHell;
 
-	newmobj = P_SpawnMobj(targ->Origin.x, targ->Origin.y,
-		targ->Origin.z, type);
-	if (newmobj->LookForPlayers(true))
-		newmobj->SetState(newmobj->SeeState);
+	newmobj = Spawn(type, Target.Origin);
+	if (newmobj.LookForPlayers(true))
+		newmobj.SetState(newmobj.SeeState);
 
 	// telefrag anything in this spot
-	P_TeleportMove(newmobj, newmobj->Origin.x, newmobj->Origin.y);
+	P_TeleportMove(&newmobj, newmobj.Origin.x, newmobj.Origin.y);
 
 	// remove self (i.e., cube).
-	P_RemoveMobj(this);
+	Remove();
 }
 
 #else
@@ -312,6 +303,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/16 17:44:01  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.17  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

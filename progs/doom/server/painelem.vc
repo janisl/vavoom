@@ -49,11 +49,8 @@
 
 void Actor::A_PainShootSkull(float angle)
 {
-	float x;
-	float y;
-	float z;
 	Actor mo;
-	mobj_t *newmobj;
+	Actor newmobj;
 	float prestep;
 	int count;
 
@@ -73,22 +70,19 @@ void Actor::A_PainShootSkull(float angle)
 	// okay, there's playe for another one
 	prestep = 4.0 + 3.0 * (Radius + SKULL_RADIUS) / 2.0;
 
-	x = Origin.x + prestep * cos(angle);
-	y = Origin.y + prestep * sin(angle);
-	z = Origin.z + 8.0;
-
-	newmobj = P_SpawnMobj(x, y, z, LostSoul);
+	newmobj = Spawn(LostSoul, Origin + vector(
+		prestep * cos(angle), prestep * sin(angle), 8.0));
 
 	// Check for movements.
-	if (!P_TryMove(newmobj, newmobj->Origin.x, newmobj->Origin.y))
+	if (!P_TryMove(&newmobj, newmobj.Origin.x, newmobj.Origin.y))
 	{
 		// kill it immediately
-		newmobj->Damage(self, self, 10000);
+		newmobj.Damage(self, self, 10000);
 		return;
 	}
 
-	newmobj->Target = Target;
-	newmobj->A_SkullAttack();
+	newmobj.Target = Target;
+	newmobj.A_SkullAttack();
 }
 
 //==========================================================================
@@ -141,6 +135,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/16 17:44:02  dj_jl
+//  Added PlayerPawn class, added function Spawn, beautification.
+//
 //  Revision 1.17  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
