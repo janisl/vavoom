@@ -902,7 +902,17 @@ void VDirect3DDrawer::Update(void)
 		PrimarySurface->Restore();
 	}
 
-	PrimarySurface->Blt(NULL, RenderSurface, NULL, DDBLT_WAIT, NULL);
+	if (Windowed)
+	{
+		POINT Point = {0, 0};
+		ClientToScreen(hwnd, &Point);
+		RECT ScreenRect = {Point.x, Point.y, Point.x + ScreenWidth, Point.y + ScreenHeight}, ViewportRect = {0, 0, ScreenWidth, ScreenHeight};
+		PrimarySurface->Blt(&ScreenRect, RenderSurface, &ViewportRect, DDBLT_WAIT, NULL);
+	}
+	else
+	{
+		PrimarySurface->Blt(NULL, RenderSurface, NULL, DDBLT_WAIT, NULL);
+	}
 #endif
 	unguard;
 }
@@ -1133,9 +1143,12 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2004/04/08 15:19:40  dj_jl
+//	Windowed mode
+//
 //	Revision 1.22  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
-//
+//	
 //	Revision 1.21  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

@@ -50,6 +50,7 @@ static LPDIRECTDRAWSURFACE	PrimarySurface = NULL;
 static LPDIRECTDRAWPALETTE	Palette = NULL;
 static PALETTEENTRY			PaletteEntries[256];
 
+static bool					Windowed;
 static bool					new_palette = false;
 
 // CODE --------------------------------------------------------------------
@@ -67,6 +68,8 @@ void VSoftwareDrawer::Init(void)
 	guard(VSoftwareDrawer::Init);
 	HRESULT			result;
 
+	Windowed = !!M_CheckParm("-window");
+
 	// Create DirectDraw object
 	result = CoCreateInstance(CLSID_DirectDraw, NULL,
 		CLSCTX_ALL, IID_IDirectDraw, (void**)&DDraw);
@@ -80,6 +83,7 @@ void VSoftwareDrawer::Init(void)
 
 	// Set cooperative level
 	result = DDraw->SetCooperativeLevel(hwnd,
+		Windowed ? DDSCL_NORMAL :
 		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX);
 	if (result != DD_OK)
 		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
@@ -125,8 +129,23 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 	if (BPP != 8 && BPP != 16 && BPP != 32)
 		return false;
 
-	if (DDraw->SetDisplayMode(Width, Height, BPP) != DD_OK)
-		return false;
+	if (Windowed)
+	{
+		RECT WindowRect;
+		WindowRect.left = 0;
+		WindowRect.right = Width;
+		WindowRect.top = 0;
+		WindowRect.bottom = Height;
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
+			WS_EX_APPWINDOW);
+		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
+			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
+	}
+	else
+	{
+		if (DDraw->SetDisplayMode(Width, Height, BPP) != DD_OK)
+			return false;
+	}
 
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
@@ -274,8 +293,19 @@ void VSoftwareDrawer::Update(void)
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_LPSURFACE | DDSD_PITCH;
-	if (PrimarySurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
-		Sys_Error("V_Update: Failed to lock screen");
+	if (Windowed)
+	{
+		POINT Point = {0, 0};
+		ClientToScreen(hwnd, &Point);
+		RECT ScreenRect = {Point.x, Point.y, Point.x + ScreenWidth, Point.y + ScreenHeight};
+		if (PrimarySurface->Lock(&ScreenRect, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
+			Sys_Error("V_Update: Failed to lock screen");
+	}
+	else
+	{
+		if (PrimarySurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
+			Sys_Error("V_Update: Failed to lock screen");
+	}
 
 	byte *psrc = (byte*)scrn;
 	byte *pdst = (byte*)ddsd.lpSurface;
@@ -322,9 +352,12 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/04/08 15:19:40  dj_jl
+//	Windowed mode
+//
 //	Revision 1.9  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.8  2002/01/21 18:24:22  dj_jl
 //	Fixed 32 bit mode
 //	
