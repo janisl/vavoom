@@ -150,7 +150,7 @@ enum
 };
 
 #define MAXDEATHMATCHSTARTS		16
-#define MAX_PLAYER_STARTS		8
+#define MAX_PLAYER_STARTS		16
 
 #define MAXRADIUS		32.0
 
@@ -279,6 +279,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2003/10/22 06:27:38  dj_jl
+//  Increased maximal start spot count
+//
 //  Revision 1.18  2003/09/26 16:53:26  dj_jl
 //  Added more line flags
 //

@@ -415,7 +415,7 @@ struct FRogueConSpeech
 //==========================================================================
 
 #define MAXDEATHMATCHSTARTS		16
-#define MAX_PLAYER_STARTS 		8
+#define MAX_PLAYER_STARTS 		16
 
 class VLevel : public VObject
 {
@@ -584,9 +584,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2003/10/22 06:23:46  dj_jl
+//	Increased maximal start spot count
+//
 //	Revision 1.26  2003/07/03 18:11:13  dj_jl
 //	Moving extrafloors
-//
+//	
 //	Revision 1.25  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
 //	
