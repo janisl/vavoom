@@ -21,14 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.3  2001/08/07 16:38:52  dj_jl
-//**	Added models
-//**
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
+
 #include "../../makeinfo.h"
 #include "info.h"
 
@@ -37,9 +31,9 @@ int		numstates = NUMHERETICSTATES;
 state_t	states[] = {
 {SPR2_IMPX,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_NULL
 {SPR2_ACLO,4,1050,SA2_FreeTargMobj,S2_NULL,0,0},	// S2_FREETARGMOBJ
-{SPR2_PTN1,0,3,SA2_NULL,S2_ITEM_PTN1_2,0,0},	// S2_ITEM_PTN1_1
-{SPR2_PTN1,1,3,SA2_NULL,S2_ITEM_PTN1_3,0,0},	// S2_ITEM_PTN1_2
-{SPR2_PTN1,2,3,SA2_NULL,S2_ITEM_PTN1_1,0,0},	// S2_ITEM_PTN1_3
+{SPR2_PTN1,0,3,SA2_NULL,S2_ITEM_PTN1_2,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_1
+{SPR2_PTN1,1,3,SA2_NULL,S2_ITEM_PTN1_3,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_2
+{SPR2_PTN1,2,3,SA2_NULL,S2_ITEM_PTN1_1,0,0,"items/hboost.md2",0},	// S2_ITEM_PTN1_3
 {SPR2_SHLD,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_SHLD1
 {SPR2_SHD2,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_SHD2_1
 {SPR2_BAGH,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_ITEM_BAGH1
@@ -87,9 +81,9 @@ state_t	states[] = {
 {SPR2_ACLO,1,3,SA2_NULL,S2_DEADARTI10,0,0},	// S2_DEADARTI9
 {SPR2_ACLO,0,3,SA2_NULL,S2_NULL,0,0},	// S2_DEADARTI10
 {SPR2_INVS,32768,350,SA2_NULL,S2_ARTI_INVS1,0,0},	// S2_ARTI_INVS1
-{SPR2_PTN2,0,4,SA2_NULL,S2_ARTI_PTN2_2,0,0},	// S2_ARTI_PTN2_1
-{SPR2_PTN2,1,4,SA2_NULL,S2_ARTI_PTN2_3,0,0},	// S2_ARTI_PTN2_2
-{SPR2_PTN2,2,4,SA2_NULL,S2_ARTI_PTN2_1,0,0},	// S2_ARTI_PTN2_3
+{SPR2_PTN2,0,4,SA2_NULL,S2_ARTI_PTN2_2,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_1
+{SPR2_PTN2,1,4,SA2_NULL,S2_ARTI_PTN2_3,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_2
+{SPR2_PTN2,2,4,SA2_NULL,S2_ARTI_PTN2_1,0,0,"artifact/hboost.md2",0},	// S2_ARTI_PTN2_3
 {SPR2_SOAR,0,5,SA2_NULL,S2_ARTI_SOAR2,0,0},	// S2_ARTI_SOAR1
 {SPR2_SOAR,1,5,SA2_NULL,S2_ARTI_SOAR3,0,0},	// S2_ARTI_SOAR2
 {SPR2_SOAR,2,5,SA2_NULL,S2_ARTI_SOAR4,0,0},	// S2_ARTI_SOAR3
@@ -186,9 +180,9 @@ state_t	states[] = {
 {SPR2_SKH2,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_SKULLHANG60_1
 {SPR2_SKH3,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_SKULLHANG45_1
 {SPR2_SKH4,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_SKULLHANG35_1
-{SPR2_CHDL,0,4,SA2_NULL,S2_CHANDELIER2,0,0},	// S2_CHANDELIER1
-{SPR2_CHDL,1,4,SA2_NULL,S2_CHANDELIER3,0,0},	// S2_CHANDELIER2
-{SPR2_CHDL,2,4,SA2_NULL,S2_CHANDELIER1,0,0},	// S2_CHANDELIER3
+{SPR2_CHDL,0,4,SA2_NULL,S2_CHANDELIER2,0,0,"objects/chandelr.md2",0},	// S2_CHANDELIER1
+{SPR2_CHDL,1,4,SA2_NULL,S2_CHANDELIER3,0,0,"objects/chandelr.md2",0},	// S2_CHANDELIER2
+{SPR2_CHDL,2,4,SA2_NULL,S2_CHANDELIER1,0,0,"objects/chandelr.md2",0},	// S2_CHANDELIER3
 {SPR2_SRTC,0,4,SA2_NULL,S2_SERPTORCH2,0,0},	// S2_SERPTORCH1
 {SPR2_SRTC,1,4,SA2_NULL,S2_SERPTORCH3,0,0},	// S2_SERPTORCH2
 {SPR2_SRTC,2,4,SA2_NULL,S2_SERPTORCH1,0,0},	// S2_SERPTORCH3
@@ -205,7 +199,7 @@ state_t	states[] = {
 {SPR2_KFR1,32773,3,SA2_NULL,S2_FIREBRAZIER7,0,0},	// S2_FIREBRAZIER6
 {SPR2_KFR1,32774,3,SA2_NULL,S2_FIREBRAZIER8,0,0},	// S2_FIREBRAZIER7
 {SPR2_KFR1,32775,3,SA2_NULL,S2_FIREBRAZIER1,0,0},	// S2_FIREBRAZIER8
-{SPR2_BARL,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_BARREL
+{SPR2_BARL,0,-1,SA2_NULL,S2_NULL,0,0,"objects/barrel.md2",0},	// S2_BARREL
 {SPR2_BRPL,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_BRPILLAR
 {SPR2_MOS1,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_MOSS1
 {SPR2_MOS2,0,-1,SA2_NULL,S2_NULL,0,0},	// S2_MOSS2
@@ -1242,3 +1236,16 @@ state_t	states[] = {
 {SPR2_AMG1,0,85,SA2_ESound,S2_SND_WATERFALL,0,0}	// S2_SND_WATERFALL
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.4  2001/09/20 16:32:18  dj_jl
+//	Added some models
+//
+//	Revision 1.3  2001/08/07 16:38:52  dj_jl
+//	Added models
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
