@@ -270,7 +270,8 @@ void DSparilTeleport(void)
 	Actor fog;
 
 	if (!BossSpotCount)
-	{	// No spots
+	{
+		// No spots
 		return;
 	}
 	i = P_Random();
@@ -371,9 +372,9 @@ void A_Srcr2Attack(void)
 	{
 		// Wizard spawners
 		SpawnMissileAngles(Sorcerer2Missile2,
-			AngleMod360(Angles.yaw - 45.0), 30.0);
+			AngleMod360(Angles.yaw - 45.0), -30.0);
 		SpawnMissileAngles(Sorcerer2Missile2,
-			AngleMod360(Angles.yaw + 45.0), 30.0);
+			AngleMod360(Angles.yaw + 45.0), -30.0);
 	}
 	else
 	{
@@ -595,6 +596,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/28 18:29:04  dj_jl
+//  Fixed spawning of wizards.
+//
 //  Revision 1.23  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //
