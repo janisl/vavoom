@@ -80,7 +80,7 @@ class VDefaultSoundDevice : public VSoundDevice
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VDefaultSoundDevice);
+IMPLEMENT_CLASS(V, DefaultSoundDevice);
 
 static TCvarI mix_frequency		("mix_frequency", "22050", CVAR_ARCHIVE);
 static TCvarI mix_bits			("mix_bits",      "16",    CVAR_ARCHIVE);
@@ -757,9 +757,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.7  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.6  2002/08/24 14:50:05  dj_jl
 //	Some fixes.
 //	

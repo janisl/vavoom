@@ -42,7 +42,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VSoundDevice);
+IMPLEMENT_CLASS(V, SoundDevice);
 
 TCvarI				sfx_volume("sfx_volume", "8", CVAR_ARCHIVE);
 TCvarI				music_volume("music_volume", "8", CVAR_ARCHIVE);
@@ -329,9 +329,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.9  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.8  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

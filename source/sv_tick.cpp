@@ -52,7 +52,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-IMPLEMENT_CLASS(VThinker)
+IMPLEMENT_CLASS(V, Thinker)
 
 static FFunction *pf_UpdateSpecials;
 static FFunction *pf_SetViewPos;
@@ -153,9 +153,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.17  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.16  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

@@ -96,7 +96,7 @@ static void StopChannel(int chan_num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VDefaultSoundDevice);
+IMPLEMENT_CLASS(V, DefaultSoundDevice);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1212,9 +1212,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.22  2004/08/04 05:36:47  dj_jl
 //	Structure alignment fix.
-//
+//	
 //	Revision 1.21  2004/04/15 07:12:58  dj_jl
 //	Restoring sound volume on exit
 //	

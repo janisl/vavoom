@@ -59,7 +59,7 @@ static FName	*GSpriteNames;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VEntity);
+IMPLEMENT_CLASS(V, Entity);
 
 int VEntity::FIndex_Destroyed;
 int VEntity::FIndex_Touch;
@@ -1752,9 +1752,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.10  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.9  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

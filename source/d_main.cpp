@@ -81,7 +81,7 @@ extern surfcache_t		*sc_base;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VSoftwareDrawer);
+IMPLEMENT_CLASS(V, SoftwareDrawer);
 
 byte					*scrn;
 short					*zbuffer;
@@ -644,9 +644,12 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.17  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.16  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

@@ -45,7 +45,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VOpenGLDrawer);
+IMPLEMENT_CLASS(V, OpenGLDrawer);
 
 TCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE);
 TCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_ARCHIVE);
@@ -473,9 +473,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.20  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
-//
+//	
 //	Revision 1.19  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

@@ -84,7 +84,7 @@ refdef_t				refdef;
 
 float					PixelAspect;
 
-IMPLEMENT_CLASS(VDrawer);
+IMPLEMENT_CLASS(V, Drawer);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -699,9 +699,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.24  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.23  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

@@ -25,7 +25,8 @@
 
 #include "gamedefs.h"
 
-IMPLEMENT_CLASS(VClass)
+bool			VClass::GObjInitialized;
+VClass*			VClass::GClasses;
 
 //==========================================================================
 //
@@ -33,8 +34,14 @@ IMPLEMENT_CLASS(VClass)
 //
 //==========================================================================
 
-VClass::VClass(void)
+VClass::VClass(FName AName, int ASize)
+: Name(AName)
+, ClassSize(ASize)
 {
+	guard(VClass::VClass);
+	LinkNext = GClasses;
+	GClasses = this;
+	unguard;
 }
 
 //==========================================================================
@@ -44,11 +51,76 @@ VClass::VClass(void)
 //==========================================================================
 
 VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags, 
-	VClass *AParent, const char *AName, int AFlags, void(*ACtor)(void*))
-	: VObject(EC_NativeConstructor, StaticClass(), AName, AFlags), 
-	ParentClass(AParent), ClassSize(ASize),
-	ClassFlags(AClassFlags), ClassConstructor(ACtor)
+	VClass *AParent, EName AName, int AFlags, void(*ACtor)(void*))
+: ObjectFlags(AFlags)
+, Name(AName)
+, ParentClass(AParent)
+, ClassSize(ASize)
+, ClassFlags(AClassFlags)
+, ClassConstructor(ACtor)
 {
+	guard(native VClass::VClass);
+	LinkNext = GClasses;
+	GClasses = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::~VClass
+//
+//==========================================================================
+
+VClass::~VClass(void)
+{
+	guard(VClass::~VClass);
+	if (!GObjInitialized)
+	{
+		return;
+	}
+	if (GClasses == this)
+	{
+		GClasses = LinkNext;
+	}
+	else
+	{
+		VClass* Prev = GClasses;
+		while (Prev && Prev->LinkNext != this)
+		{
+			Prev = Prev->LinkNext;
+		}
+		if (Prev)
+		{
+			Prev->LinkNext = LinkNext;
+		}
+		else
+		{
+			GCon->Log(NAME_Dev, "VClass Unlink: Class not in list");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::StaticInit
+//
+//==========================================================================
+
+void VClass::StaticInit(void)
+{
+	GObjInitialized = true;
+}
+
+//==========================================================================
+//
+//	VClass::StaticExit
+//
+//==========================================================================
+
+void VClass::StaticExit(void)
+{
+	GObjInitialized = false;
 }
 
 //==========================================================================
@@ -65,11 +137,11 @@ VClass *VClass::FindClass(const char *AName)
 		// No such name, no chance to find a class
 		return NULL;
 	}
-	for (TObjectIterator<VClass> It; It; ++It)
+	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 	{
-		if (It->GetFName() == TempName)
+		if (Cls->GetFName() == TempName)
 		{
-			return *It;
+			return Cls;
 		}
 	}
 	return NULL;
@@ -136,9 +208,12 @@ int VClass::GetFunctionIndex(FName InName)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.3  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

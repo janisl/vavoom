@@ -122,7 +122,7 @@ private:
 	}
 };
 
-IMPLEMENT_CLASS(VOpenALDevice);
+IMPLEMENT_CLASS(V, OpenALDevice);
 
 TCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_ARCHIVE);
 TCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_ARCHIVE);
@@ -832,9 +832,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.5  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.4  2002/08/08 18:05:20  dj_jl
 //	Release fixes.
 //	

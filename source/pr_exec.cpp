@@ -226,7 +226,8 @@ void TProgs::Load(const char *AName)
 	if (strncmp(Progs->magic, PROG_MAGIC, 4))
 		Sys_Error("Progs has wrong file ID, possibly older version");
 	if (Progs->version != PROG_VERSION)
-		Sys_Error("Progs has wrong version number (%i should be %i)", Progs->version, PROG_VERSION);
+		Sys_Error("Progs has wrong version number (%i should be %i)",
+			Progs->version, PROG_VERSION);
 
 	Strings = (char*)Progs + Progs->ofs_strings;
 	Statements = (int*)((byte*)Progs + Progs->ofs_statements);
@@ -289,25 +290,26 @@ void TProgs::Load(const char *AName)
 		ClassList[i] = VClass::FindClass(*NameRemap[ClassInfo[i].name]);
 		if (!ClassList[i])
 		{
-			ClassList[i] = (VClass *)VObject::StaticSpawnObject(
-				VClass::StaticClass(), NULL, PU_STRING);
-			ClassList[i]->Name = NameRemap[ClassInfo[i].name];
-			ClassList[i]->ClassSize = ClassInfo[i].size;
+			ClassList[i] = new(PU_STRING) VClass(NameRemap[ClassInfo[i].name],
+				ClassInfo[i].size);
 		}
 		else if (ClassList[i]->ClassSize != ClassInfo[i].size)
 		{
 			Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
-				*ClassList[i]->Name, ClassList[i]->ClassSize, ClassInfo[i].size);
+				ClassList[i]->GetName(), ClassList[i]->ClassSize,
+				ClassInfo[i].size);
 		}
 		if (!ClassList[i]->ClassVTable)
 		{
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
-			ClassList[i]->ClassVTable = (FFunction **)(Globals + ClassInfo[i].vtable);
+			ClassList[i]->ClassVTable = (FFunction **)(Globals +
+				ClassInfo[i].vtable);
 		}
 		if (!ClassList[i]->PropertyInfo)
 		{
 			ClassList[i]->NumPropertyInfo = ClassInfo[i].num_properties;
-			ClassList[i]->PropertyInfo = (FPropertyInfo *)(Globals + ClassInfo[i].ofs_properties);
+			ClassList[i]->PropertyInfo = (FPropertyInfo *)(Globals +
+				ClassInfo[i].ofs_properties);
 		}
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
@@ -1718,9 +1720,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.30  2002/11/02 17:09:55  dj_jl
 //	Some debugging stuff.
-//
+//	
 //	Revision 1.29  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

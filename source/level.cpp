@@ -43,7 +43,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VLevel);
+IMPLEMENT_CLASS(V, Level);
 
 VLevel*			GLevel;
 VLevel*			GClLevel;
@@ -1119,7 +1119,10 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.1  2002/09/07 16:34:23  dj_jl
 //	Added Level class.
-//
+//	
 //**************************************************************************

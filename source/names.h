@@ -48,6 +48,26 @@ REGISTER_NAME(Init)
 REGISTER_NAME(Dev)
 REGISTER_NAME(DevNet)
 
+//	Native class names.
+REGISTER_NAME(Object)
+REGISTER_NAME(Level)
+REGISTER_NAME(Subsystem)
+REGISTER_NAME(SoftwareDrawer)
+REGISTER_NAME(OpenGLDrawer)
+REGISTER_NAME(Direct3DDrawer)
+REGISTER_NAME(Drawer)
+REGISTER_NAME(OpenALDevice)
+REGISTER_NAME(SoundDevice)
+REGISTER_NAME(DefaultSoundDevice)
+REGISTER_NAME(GC)
+REGISTER_NAME(ModalWindow)
+REGISTER_NAME(RootWindow)
+REGISTER_NAME(Window)
+REGISTER_NAME(ACS)
+REGISTER_NAME(Entity)
+REGISTER_NAME(ViewEntity)
+REGISTER_NAME(Thinker)
+
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
@@ -60,9 +80,12 @@ REGISTER_NAME(DevNet)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

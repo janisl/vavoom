@@ -43,28 +43,42 @@ struct FPropertyInfo
 //
 //==========================================================================
 
-class VClass : public VObject
+class VClass
 {
-	DECLARE_CLASS(VClass, VObject, 0)
+private:
+	// Internal per-object variables.
+	dword			ObjectFlags;		// Private EObjectFlags used by object manager.
+	FName			Name;				// Name of the object.
+	VClass*			LinkNext;			// Next class in linked list
 
-	VClass*		ParentClass;
+	// Private systemwide variables.
+	static bool		GObjInitialized;
+	static VClass*	GClasses;			// Linked list of all classes.
 
-	int			ClassSize;
-	dword		ClassFlags;
-	FFunction	**ClassVTable;
-	void (*ClassConstructor)(void*);
+public:
+	VClass*			ParentClass;
 
-	int			ClassNumMethods;
+	int				ClassSize;
+	dword			ClassFlags;
+	FFunction		**ClassVTable;
+	void			(*ClassConstructor)(void*);
+
+	int				ClassNumMethods;
 
 	int				NumPropertyInfo;
 	FPropertyInfo	*PropertyInfo;
 
-	static VClass *FindClass(const char *);
-
-	VClass(void);
+	// Constructors.
+	VClass(FName AName, int ASize);
 	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
-		VClass *AParent, const char *AName, int AFlags, 
-		void(*ACtor)(void*));
+		VClass *AParent, EName AName, int AFlags, void(*ACtor)(void*));
+	void* operator new(size_t Size, int Tag)
+		{ return Z_Calloc(Size, Tag, 0); }
+
+	// Destructors.
+	~VClass();
+	void operator delete(void* Object, size_t)
+		{ Z_Free(Object); }
 
 	bool IsChildOf(const VClass *SomeBaseClass) const
 	{
@@ -78,6 +92,32 @@ class VClass : public VObject
 		return false;
 	}
 
+	// Systemwide functions.
+	static void StaticInit(void);
+	static void StaticExit(void);
+	static VClass *FindClass(const char *);
+
+	// Accessors.
+	dword GetFlags(void) const
+	{
+		return ObjectFlags;
+	}
+	void SetFlags(dword NewFlags)
+	{
+		ObjectFlags |= NewFlags;
+	}
+	void ClearFlags(dword NewFlags)
+	{
+		ObjectFlags &= ~NewFlags;
+	}
+	const char *GetName(void) const
+	{
+		return *Name;
+	}
+	const FName GetFName(void) const
+	{
+		return Name;
+	}
 	VClass *GetSuperClass(void) const
 	{
 		return ParentClass;
@@ -91,9 +131,12 @@ class VClass : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.8  2003/03/08 12:08:05  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.7  2002/05/03 17:06:23  dj_jl
 //	Mangling of string pointers.
 //	

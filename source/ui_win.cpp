@@ -42,7 +42,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VWindow);
+IMPLEMENT_CLASS(V, Window);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -794,9 +794,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.5  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.4  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

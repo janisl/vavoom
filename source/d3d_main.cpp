@@ -41,7 +41,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VDirect3DDrawer);
+IMPLEMENT_CLASS(V, Direct3DDrawer);
 
 TCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_ARCHIVE);
 TCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_ARCHIVE);
@@ -1143,9 +1143,12 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.23  2004/04/08 15:19:40  dj_jl
 //	Windowed mode
-//
+//	
 //	Revision 1.22  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
 //	

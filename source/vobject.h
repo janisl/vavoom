@@ -63,18 +63,18 @@ public: \
 		{ ConditionalDestroy(); }
 
 // Register a class at startup time.
-#define IMPLEMENT_CLASS(TClass) \
-	VClass TClass::PrivateStaticClass \
+#define IMPLEMENT_CLASS(Pre, TClass) \
+	VClass Pre##TClass::PrivateStaticClass \
 	( \
 		EC_NativeConstructor, \
-		sizeof(TClass), \
-		TClass::StaticClassFlags, \
-		TClass::Super::StaticClass(), \
-		#TClass + 1, \
-		OF_Public | OF_Standalone | OF_Transient | OF_Native, \
-		(void(*)(void*))TClass::InternalConstructor \
+		sizeof(Pre##TClass), \
+		Pre##TClass::StaticClassFlags, \
+		Pre##TClass::Super::StaticClass(), \
+		NAME_##TClass, \
+		OF_Native, \
+		(void(*)(void*))Pre##TClass::InternalConstructor \
 	); \
-	VClass* autoclass##TClass = TClass::StaticClass();
+	VClass* autoclass##Pre##TClass = Pre##TClass::StaticClass();
 
 #define DECLARE_FUNCTION(func) \
 	static FBuiltinInfo funcinfo##func; \
@@ -112,12 +112,8 @@ enum EClassFlags
 //
 enum EObjectFlags
 {
-	OF_Public			= 0x00000001,	// Object is visible outside its package.
-	OF_Transient        = 0x00000002,	// Don't save object.
-	OF_Standalone       = 0x00000004,   // Keep object around for editing even if unreferenced.
-	OF_Native			= 0x00000008,   // Native (VClass only).
-	OF_EliminateObject  = 0x00000010,   // NULL out references to this during garbage collecion.
-	OF_Destroyed        = 0x00000020,	// Object Destroy has already been called.
+	OF_Native			= 0x00000001,   // Native (VClass only).
+	OF_Destroyed        = 0x00000002,	// Object Destroy has already been called.
 };
 
 // TYPES -------------------------------------------------------------------
@@ -165,7 +161,6 @@ private:
 	static bool				GObjInitialized;
 	static TArray<VObject*>	GObjObjects;		// List of all objects.
 	static TArray<int>		GObjAvailable;		// Available object indices.
-	static VObject*			GObjAutoRegister;	// Objects to automatically register.
 	static VObject*			GObjHash[4096];		// Object hash.
 
 	// Private functions.
@@ -175,7 +170,6 @@ private:
 public:
 	// Constructors.
 	VObject();
-	VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AFlags);
 	static void InternalConstructor(void* X)
 		{ new((EInternal*)X)VObject(); }
 
@@ -319,9 +313,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.11  2003/03/08 11:36:03  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.10  2002/05/29 16:53:52  dj_jl
 //	Added GetVFunction.
 //	

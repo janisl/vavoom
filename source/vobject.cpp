@@ -43,8 +43,8 @@ VClass VObject::PrivateStaticClass
 	sizeof(VObject),
 	VObject::StaticClassFlags,
 	NULL,
-	"Object",
-	OF_Public | OF_Standalone | OF_Transient | OF_Native,
+	NAME_Object,
+	OF_Native,
 	(void(*)(void*))VObject::InternalConstructor
 );
 VClass* autoclassVObject = VObject::StaticClass();
@@ -52,10 +52,9 @@ VClass* autoclassVObject = VObject::StaticClass();
 bool				VObject::GObjInitialized;
 TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
-VObject*			VObject::GObjAutoRegister;
 VObject*			VObject::GObjHash[4096];
 
-IMPLEMENT_CLASS(VSubsystem);	// FIXME
+IMPLEMENT_CLASS(V, Subsystem);	// FIXME
 
 //==========================================================================
 //
@@ -65,20 +64,6 @@ IMPLEMENT_CLASS(VSubsystem);	// FIXME
 
 VObject::VObject(void)
 {
-}
-
-//==========================================================================
-//
-//	VObject::VObject
-//
-//==========================================================================
-
-VObject::VObject(ENativeConstructor, VClass* AClass, const char *AName, dword AFlags)
-	: ObjectFlags(AFlags), Class(AClass)
-{
-	*(const char **)&Name = AName;
-	HashNext = GObjAutoRegister;
-	GObjAutoRegister = this;
 }
 
 //==========================================================================
@@ -116,14 +101,8 @@ VObject::~VObject(void)
 
 void VObject::StaticInit(void)
 {
-	guard(VObject::StaticInit);
-	for (VObject *c = GObjAutoRegister; c; c = c->HashNext)
-	{
-		c->Name = FName(*(char **)&c->Name);
-		c->Register();
-	}
+	VClass::StaticInit();
 	GObjInitialized = true;
-	unguard;
 }
 
 //==========================================================================
@@ -135,6 +114,7 @@ void VObject::StaticInit(void)
 void VObject::StaticExit(void)
 {
 	GObjInitialized = false;
+	VClass::StaticExit();
 }
 
 //==========================================================================
@@ -425,9 +405,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.11  2003/03/08 11:36:03  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.10  2002/08/28 16:43:13  dj_jl
 //	Fixed object registration.
 //	

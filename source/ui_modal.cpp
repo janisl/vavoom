@@ -42,7 +42,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VModalWindow);
+IMPLEMENT_CLASS(V, ModalWindow);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -68,7 +68,10 @@ VModalWindow::VModalWindow(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.1  2002/06/14 15:45:57  dj_jl
 //	Added modal window class.
-//
+//	
 //**************************************************************************

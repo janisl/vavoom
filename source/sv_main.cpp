@@ -67,7 +67,7 @@ static void G_DoCompleted(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(VViewEntity)
+IMPLEMENT_CLASS(V, ViewEntity)
 
 TCvarI			real_time("real_time", "1");
 
@@ -2873,9 +2873,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.59  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.58  2004/04/15 07:08:05  dj_jl
 //	Fixed bot spawning at first time
-//
+//	
 //	Revision 1.57  2004/02/09 17:28:45  dj_jl
 //	Bots fix
 //	

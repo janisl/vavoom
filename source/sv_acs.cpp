@@ -206,7 +206,7 @@ acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-IMPLEMENT_CLASS(VACS)
+IMPLEMENT_CLASS(V, ACS)
 
 static byte *ActionCodeBase;
 static VACS *ACScript;
@@ -1815,9 +1815,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2004/08/21 15:03:07  dj_jl
+//	Remade VClass to be standalone class.
+//
 //	Revision 1.25  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.24  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	
