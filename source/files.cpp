@@ -30,6 +30,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAXWADFILES 	20
+#define MAX_BASE_GAMES	16
 
 // TYPES -------------------------------------------------------------------
 
@@ -41,9 +42,8 @@ struct search_path_t
 
 struct version_t
 {
-    const char	*mainwad;
-	const char	*gamedir;
-	const char	*checkparm;
+    char		mainwad[MAX_OSPATH];
+	char		gamedir[MAX_OSPATH];
 	int			parmfound;
 };
 
@@ -73,81 +73,6 @@ char	fl_mainwad[MAX_OSPATH];
 static search_path_t	*searchpaths;
 
 const char				*wadfiles[MAXWADFILES];
-static version_t		games[] =
-{
-	{
-        "doom1.wad",
-		"basev/doom1",
-		"-doom",
-		0
-	},
-	{
-        "doom.wad",
-		"basev/doom1",
-		"-doom",
-		0
-	},
-	{
-        "doomu.wad",
-		"basev/doom1",
-		"-doom",
-		0
-	},
-	{
-        "doom2.wad",
-		"basev/doom2",
-		"-doom2",
-		0
-	},
-	{
-        "doom2f.wad",
-		"basev/doom2",
-		"-doom2",
-		0
-	},
-	{
-        "tnt.wad",
-		"basev/tnt",
-		"-tnt",
-		0
-	},
-	{
-        "plutonia.wad",
-		"basev/plutonia",
-		"-plutonia",
-		0
-	},
-	{
-        "heretic1.wad",
-		"basev/heretic",
-		"-heretic",
-		0
-	},
-	{
-        "heretic.wad",
-		"basev/heretic",
-		"-heretic",
-		0
-	},
-	{
-        "hexen.wad",
-		"basev/hexen",
-		"-hexen",
-		0
-	},
-	{
-        "strife0.wad",
-		"basev/strife",
-		"-strife",
-		0
-	},
-	{
-        "strife1.wad",
-		"basev/strife",
-		"-strife",
-		0
-	}
-};
 
 // CODE --------------------------------------------------------------------
 
@@ -208,20 +133,94 @@ static void AddGameDir(const char *dir)
 
 static void ParseBase(const char *name)
 {
-	char		tmp[256];
+	int			i;
+	version_t	games[MAX_BASE_GAMES];
+	int			num_games;
+	bool		select_game;
 
 	if (!Sys_FileExists(name))
 	{
 		return;
 	}
 
+	num_games = 0;
+	select_game = false;
 	SC_OpenFile(name);
-	SC_MustGetStringName("base");
-	SC_MustGetString();
-	strcpy(tmp, sc_String);
-	SC_MustGetStringName("end");
+	while (SC_GetString())
+	{
+		if (num_games == MAX_BASE_GAMES - 1)
+		{
+			SC_ScriptError("Too many games");
+		}
+		version_t &dst = games[num_games++];
+		memset(&dst, 0, sizeof(dst));
+		if (!SC_Compare("game"))
+		{
+			SC_ScriptError(NULL);
+		}
+		SC_MustGetString();
+		strcpy(dst.gamedir, sc_String);
+		SC_MustGetString();
+		if (SC_Compare("iwad"))
+		{
+			SC_MustGetString();
+			strcpy(dst.mainwad, sc_String);
+			SC_MustGetString();
+		}
+		if (SC_Compare("param"))
+		{
+			SC_MustGetString();
+			dst.parmfound = M_CheckParm(sc_String);
+			if (dst.parmfound)
+			{
+				select_game = true;
+			}
+			SC_MustGetString();
+		}
+		if (!SC_Compare("end"))
+		{
+			SC_ScriptError(NULL);
+		}
+	}
 	SC_Close();
-	SetupGameDir(tmp);
+
+    for (i = num_games - 1; i >= 0; i--)
+    {
+    	if (select_game && !games[i].parmfound)
+        {
+        	continue;
+		}
+		if (!games[i].mainwad[0])
+		{
+			if (fl_mainwad[0])
+			{
+				SetupGameDir(games[i].gamedir);
+		      	return;
+			}
+			continue;
+		}
+		if (fl_mainwad[0])
+		{
+			if (!stricmp(fl_mainwad, games[i].mainwad))
+			{
+				SetupGameDir(games[i].gamedir);
+		      	return;
+			}
+			continue;
+		}
+	    if (Sys_FileExists(games[i].mainwad))
+	    {
+			strcpy(fl_mainwad, games[i].mainwad);
+			FL_AddFile(fl_mainwad);
+			SetupGameDir(games[i].gamedir);
+	      	return;
+	    }
+    }
+
+	if (select_game)
+		Sys_Error("Main wad file not found.");
+	else
+	    Sys_Error("Game mode indeterminate.");
 }
 
 //==========================================================================
@@ -237,54 +236,6 @@ static void SetupGameDir(const char *dirname)
 	sprintf(tmp, "%s/base.txt", dirname);
 	ParseBase(tmp);
 	AddGameDir(dirname);
-}
-
-//==========================================================================
-//
-//	IdentifyVersion
-//	Checks availability of IWAD files by name, to determine whether
-// registered/commercial features should be executed (notably loading PWAD's).
-//
-//==========================================================================
-
-#define NUM_GAMES		(sizeof(games) / sizeof(games[0]))
-
-static void IdentifyVersion (void)
-{
-	int		i;
-	bool	select_game = false;
-
-	for (i = 0; i < int(NUM_GAMES); i++)
-	{
-		games[i].parmfound = M_CheckParm(games[i].checkparm);
-		if (games[i].parmfound)
-		{
-			select_game = true;
-		}
-	}
-
-    for (i = NUM_GAMES - 1; i >= 0; i--)
-    {
-    	if (select_game && !games[i].parmfound)
-        {
-        	continue;
-		}
-	    if (Sys_FileExists(games[i].mainwad))
-	    {
-			if (!fl_mainwad[0])
-			{
-				strcpy(fl_mainwad, games[i].mainwad);
-				FL_AddFile(fl_mainwad);
-			}
-			SetupGameDir(games[i].gamedir);
-	      	return;
-	    }
-    }
-
-	if (select_game)
-		Sys_Error("Main wad file not found.");
-	else
-	    Sys_Error("Game mode indeterminate.");
 }
 
 //==========================================================================
@@ -306,19 +257,23 @@ void FL_Init(void)
 		FL_AddFile(fl_mainwad);
 	}
 
-	IdentifyVersion();
-
-	p =	M_CheckParm("-game");
-	if (p && p < myargc - 1)
-	{
-		SetupGameDir(myargv[p + 1]);
-	}
-
 	p =	M_CheckParm("-devgame");
 	if (p && p < myargc - 1)
 	{
 		fl_devmode = true;
+	}
+	else
+	{
+		p =	M_CheckParm("-game");
+	}
+
+	if (p && p < myargc - 1)
+	{
 		SetupGameDir(myargv[p + 1]);
+	}
+	else
+	{
+		ParseBase("basev/games.txt");
 	}
 
 	p = M_CheckParm("-file");
@@ -625,9 +580,12 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/31 17:21:01  dj_jl
+//	Finished base game script
+//
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
-//
+//	
 //	Revision 1.5  2001/08/21 17:40:54  dj_jl
 //	Added devgame mode
 //	
