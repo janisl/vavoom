@@ -1623,78 +1623,11 @@ void MenuSlist_Init(menuslist_t * self)
 }
 
 //**************************************************************************
-//**
-//**    Menu API functions
-//**
-//**************************************************************************
-
-//==========================================================================
-//
-//  MN_DeactivateMenu
-//
-//==========================================================================
-
-void MN_DeactivateMenu(void)
-{
-	ForceMenuOff();
-}
-
-//==========================================================================
-//
-//  MN_Responder
-//
-//==========================================================================
-
-boolean MN_Responder(event_t * event)
-{
-	if (!CurrentMenu)
-	{
-		// Pop-up menu?
-		if (event->type == ev_keydown && event->data1 == K_ESCAPE)
-		{
-			menu_main();
-			return true;
-		}
-		return false;
-	}
-
-	if (event->type != ev_keydown)
-	{
-		return false;
-	}
-	return CurrentMenu->responder(CurrentMenu, event->data1);
-}
-
-//==========================================================================
-//
-//  MN_Drawer
-//
-//==========================================================================
-
-void MN_Drawer(void)
-{
-	if (!CurrentMenu)
-	{
-		return;
-	}
-	MenuTime += frametime;
-	CurrentMenu->drawer(CurrentMenu);
-}
-
-//==========================================================================
-//
-//  MN_Active
-//
-//==========================================================================
-
-boolean MN_Active(void)
-{
-	return CurrentMenu != NULL;
-}
-
-//**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.5  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

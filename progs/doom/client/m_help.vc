@@ -61,12 +61,12 @@ boolean UseHelp(menucommon_t * item, int key)
 {
 	LocalSound("MenuClose");
 #ifdef DOOM2
-	MN_DeactivateMenu();
+	ForceMenuOff();
 #else
 	HelpMenu.curpage++;
 	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
 	{
-		MN_DeactivateMenu();
+		ForceMenuOff();
 	}
 	else
 	{
@@ -113,6 +113,9 @@ void menu_help(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.3  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

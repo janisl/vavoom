@@ -23,136 +23,134 @@
 //**
 //**************************************************************************
 //**
-//**    Skill menu
+//**    Menu API functions
 //**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
 
+#define NUM_MENUS		13
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_skill_t
+struct menulist_t
 {
-	menu_t menu;
-	menutext_t skill[5];
-	menutext_t title;
+	string name;
+	menufunc_t func;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_skill_t SkillMenu;
-int MenuSkill;
+menulist_t menulist[NUM_MENUS] = {
+	{ "Main", menu_main },
+	{ "Save", menu_save },
+	{ "Load", menu_load },
+	{ "PSetup", menu_psetup },
+	{ "Options", menu_options },
+	{ "Controls", menu_controls },
+	{ "Controls2", menu_controls2 },
+	{ "Mouse", menu_mouse },
+	{ "Resolution", menu_resolution },
+	{ "Video", menu_video },
+	{ "Sound", menu_sound },
+	{ "Help", menu_help },
+	{ "Quit", menu_quit },
+};
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SkillCallback
+//  MN_DeactivateMenu
 //
 //==========================================================================
 
-void SkillCallback(menucommon_t * item, int msg)
+void MN_DeactivateMenu(void)
 {
-	if (msg == MMSG_ACTIVATE)
-	{
-		MenuSkill = item->id;
-	}
-}
-
-//==========================================================================
-//
-//  skill_func
-//
-//  Let's play
-//
-//==========================================================================
-
-void skill_func(void)
-{
-	SetCvar("Skill", MenuSkill);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-	CmdBuf_AddText("Map E%dM1\n", MenuEpisode);
-
 	ForceMenuOff();
 }
 
 //==========================================================================
 //
-//  menu_skill
+//  MN_Responder
 //
 //==========================================================================
 
-void menu_skill(void)
+boolean MN_Responder(event_t * event)
 {
-	int x;
-	int y;
+	if (!CurrentMenu)
+	{
+		// Pop-up menu?
+		if (event->type == ev_keydown && event->data1 == K_ESCAPE)
+		{
+			menu_main();
+			return true;
+		}
+		return false;
+	}
 
-	InitMenu(&SkillMenu.menu);
+	if (event->type != ev_keydown)
+	{
+		return false;
+	}
+	return CurrentMenu->responder(CurrentMenu, event->data1);
+}
 
-	x = 38;
-	y = 30;
+//==========================================================================
+//
+//  MN_Drawer
+//
+//==========================================================================
 
-	MenuText_InitFunc(&SkillMenu.skill[0], x, y, "THOU NEEDETH A WET-NURSE",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[0].callback = SkillCallback;
-	SkillMenu.skill[0].id = 0;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[0]);
-	y += 18;
+void MN_Drawer(void)
+{
+	if (!CurrentMenu)
+	{
+		return;
+	}
+	MenuTime += frametime;
+	CurrentMenu->drawer(CurrentMenu);
+}
 
-	MenuText_InitFunc(&SkillMenu.skill[1], x, y, "YELLOWBELLIES-R-US",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[1].callback = SkillCallback;
-	SkillMenu.skill[1].id = 1;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[1]);
-	y += 18;
+//==========================================================================
+//
+//  MN_Active
+//
+//==========================================================================
 
-	MenuText_InitFunc(&SkillMenu.skill[2], x, y, "BRINGEST THEM ONETH",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[2].callback = SkillCallback;
-	SkillMenu.skill[2].id = 2;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[2]);
-	y += 18;
+boolean MN_Active(void)
+{
+	return CurrentMenu != NULL;
+}
 
-	MenuText_InitFunc(&SkillMenu.skill[3], x, y, "THOU ART A SMITE-MEISTER",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[3].callback = SkillCallback;
-	SkillMenu.skill[3].id = 3;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[3]);
-	y += 18;
+//==========================================================================
+//
+//	MN_SetMenu
+//
+//==========================================================================
 
-	MenuText_InitFunc(&SkillMenu.skill[4], x, y,
-		"BLACK PLAGUE POSSESSES THEE", TEXT_BIG, skill_func);
-	SkillMenu.skill[4].callback = SkillCallback;
-	SkillMenu.skill[4].id = 4;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[4]);
+void MN_SetMenu(string name)
+{
+	int i;
 
-	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
-		TEXT_BIGC);
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
-
-	PushMenu(&SkillMenu.menu);
-	Menu_SetCursorToItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+	for (i = 0; i < NUM_MENUS; i++)
+	{
+		if (!stricmp(name, menulist[i].name))
+		{
+			menulist[i].func();
+		}
+	}
+	menu_main();
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.5  2001/09/25 17:11:04  dj_jl
+//  Revision 1.1  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/09/20 16:19:59  dj_jl
-//  Start using object-oriented stuff, beautification
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

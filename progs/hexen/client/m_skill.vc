@@ -91,7 +91,7 @@ void skill_func(void)
 	CmdBuf_AddText("Map MAP01\n");
 #endif
 
-	MN_DeactivateMenu();
+	ForceMenuOff();
 }
 
 //==========================================================================
@@ -168,6 +168,9 @@ void menu_skill(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

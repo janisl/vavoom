@@ -57,12 +57,16 @@ void QuitResponse(int ch)
 
 void menu_quit(void)
 {
+	LocalSound("Chat");
 	MB_StartMessage("ARE YOU SURE YOU WANT TO QUIT?", QuitResponse, true);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -56,6 +56,7 @@
 #include "m_sound.vc"
 #include "m_help.vc"
 #include "m_quit.vc"
+#include "m_api.vc"
 
 #include "statbar.vc"
 
@@ -66,6 +67,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.7  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

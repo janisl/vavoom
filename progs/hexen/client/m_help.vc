@@ -64,7 +64,7 @@ boolean UseHelp(menucommon_t * item, int key)
 
 	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
 	{
-		MN_DeactivateMenu();
+		ForceMenuOff();
 	}
 	else
 	{
@@ -99,6 +99,9 @@ void menu_help(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/25 17:11:04  dj_jl
+//  Seperated menu API
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
