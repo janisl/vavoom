@@ -127,7 +127,10 @@ void VOpenGLDrawer::FlushOldCaches()
 			}
 		}
 	}
-	Sys_Error("No more free blocks");
+	if (!freeblocks)
+	{
+		Sys_Error("No more free blocks");
+	}
 	unguard;
 }
 
@@ -1107,9 +1110,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/02/09 17:29:26  dj_jl
+//	Old blocks free fix
+//
 //	Revision 1.23  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
-//
+//	
 //	Revision 1.22  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	
