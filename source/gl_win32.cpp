@@ -45,6 +45,7 @@
 
 static HDC			DeviceContext;
 static HGLRC		RenderContext;
+static HWND			RenderWindow;
 
 // CODE --------------------------------------------------------------------
 
@@ -106,28 +107,44 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		return false;
 	}
 
+	//	Create window
+	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
+		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
+	if (!RenderWindow)
+	{
+		con << "Couldn't create window\n";
+		return false;
+	}
+
+	//	Make the window visible & update its client area
+	ShowWindow(RenderWindow, SW_SHOWDEFAULT);
+	UpdateWindow(RenderWindow);
+
+	//	Switch input to this window
+	IN_SetActiveWindow(RenderWindow);
+
 	//	Now we try to make sure we get the focus on the mode switch, because
 	// sometimes in some systems we don't. We grab the foreground, pump all
 	// our messages, and sleep for a little while to let messages finish
 	// bouncing around the system, then we put ourselves at the top of the z
 	// order, then grab the foreground again.
 	//	Who knows if it helps, but it probably doesn't hurt
-	SetForegroundWindow(hwnd);
+	SetForegroundWindow(RenderWindow);
 
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-      	TranslateMessage(&msg);
-      	DispatchMessage(&msg);
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 
 	Sleep(100);
 
-	SetWindowPos(hwnd, HWND_TOP, 0, 0, Width, Height, SWP_NOMOVE);
+	SetWindowPos(RenderWindow, HWND_TOP, 0, 0, Width, Height, SWP_NOMOVE);
 
-	SetForegroundWindow(hwnd);
+	SetForegroundWindow(RenderWindow);
 
 	//	Get device context
-	DeviceContext = GetDC(hwnd);
+	DeviceContext = GetDC(RenderWindow);
 	if (!DeviceContext)
 	{
 		con << "Failed to get device context\n";
@@ -184,18 +201,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	//	Make this context current
 	if (!wglMakeCurrent(DeviceContext, RenderContext))
 	{
-		char* lpMsgBuf;
- 
-		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		    NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		    (LPTSTR) &lpMsgBuf, 0, NULL);
-
-		// Display the string.
-		con << "Make current failed: " << lpMsgBuf << endl;
-
-		// Free the buffer.
-		LocalFree(lpMsgBuf);
-
+		con << "Make current failed\n";
 		return false;
 	}
 
@@ -252,8 +258,15 @@ void TOpenGLDrawer::Shutdown(void)
 
 	if (DeviceContext)
 	{
-		ReleaseDC(hwnd, DeviceContext);
+		ReleaseDC(RenderWindow, DeviceContext);
 		DeviceContext = 0;
+	}
+
+	if (RenderWindow)
+	{
+		IN_SetActiveWindow(hwnd);
+		DestroyWindow(RenderWindow);
+		RenderWindow = NULL;
 	}
 
 	ChangeDisplaySettings(NULL, 0);
@@ -262,9 +275,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:47:21  dj_jl
+//	Fixed resolution change to different color depth
+//
 //	Revision 1.5  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
-//
+//	
 //	Revision 1.4  2001/08/01 17:43:51  dj_jl
 //	Some modeset improvements
 //	
