@@ -566,7 +566,7 @@ void PlayerOnSpecialFlat(player_t * player, int floorType)
 	case FLOOR_LAVA:
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 10);
+			player->mo->Damage(LavaInflictor, NULL, 10);
 			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
 		}
 		break;
@@ -592,7 +592,7 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 10);
+			player->mo->Damage(LavaInflictor, NULL, 10);
 			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
 		}
 		break;
@@ -639,7 +639,7 @@ void PlayerImpulse(player_t * player)
 	}
 	else if (impulse == 16)
 	{
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 	// Hexen artifact hot keys
 	if (!player->arti)
@@ -1930,7 +1930,7 @@ void DisconnectClient(player_t * player)
 	if (player->mo)
 	{
 		player->mo->player = NULL;
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
@@ -1954,6 +1954,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.13  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

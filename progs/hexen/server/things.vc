@@ -306,7 +306,7 @@ boolean ActivateThing(mobj_t * mobj)
 	case MT_ZBELL:
 		if (mobj->health > 0)
 		{
-			DamageMobj(mobj, NULL, NULL, 10);	// 'ring' the bell
+			mobj->Damage(NULL, NULL, 10);	// 'ring' the bell
 		}
 		break;
 	case MT_ZCAULDRON:
@@ -489,7 +489,7 @@ boolean EV_ThingDestroy(int tid)
 	{
 		if (mobj->flags & MF_SHOOTABLE)
 		{
-			DamageMobj(mobj, NULL, NULL, 10000);
+			mobj->Damage(NULL, NULL, 10000);
 			success = true;
 		}
 	}
@@ -562,6 +562,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.7  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

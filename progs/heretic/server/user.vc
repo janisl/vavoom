@@ -44,9 +44,7 @@ void ArtiFireBomb(player_t * player);
 void PlayerUseArtifact(player_t * player, int arti);
 void PlayerNextArtifact(player_t * player);
 void PlayerRemoveArtifact(player_t * player, int slot);
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 
-	int damage);
 int P_HitFloor(mobj_t * thing);
 boolean P_Teleport(mobj_t * thing, float x, float y, float angle);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
@@ -426,20 +424,20 @@ void PlayerInSpecialSector(player_t * player)
 	case 7:	// Damage_Sludge
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, NULL, NULL, 4);
+			player->mo->Damage(NULL, NULL, 4);
 		}
 		break;
 	case 5:	// Damage_LavaWimpy
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 5);
+			player->mo->Damage(LavaInflictor, NULL, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
 	case 16:	// Damage_LavaHefty
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 8);
+			player->mo->Damage(LavaInflictor, NULL, 8);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -447,7 +445,7 @@ void PlayerInSpecialSector(player_t * player)
 		ThrustPlayer(player, 0.0, 1024.0);
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 5);
+			player->mo->Damage(LavaInflictor, NULL, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -541,14 +539,14 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, LavaInflictor, NULL, 8);
+			player->mo->Damage(LavaInflictor, NULL, 8);
 		}
 		break;
 
 	case CONTENTS_SLUDGE:
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, NULL, NULL, 4);
+			player->mo->Damage(NULL, NULL, 4);
 		}
 		break;
 	}
@@ -612,7 +610,7 @@ void PlayerImpulse(player_t * player)
 	}
 	else if (impulse == 16)
 	{
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 
 	if (player->arti)
@@ -1340,7 +1338,7 @@ void DisconnectClient(player_t * player)
 	if (player->mo)
 	{
 		player->mo->player = NULL;
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
@@ -1364,6 +1362,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.10  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

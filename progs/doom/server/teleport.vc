@@ -69,7 +69,7 @@ boolean PIT_StompThing(mobj_t * thing)
 		return false;
 	}
 
-	DamageMobj(thing, teleport_thing, teleport_thing, 10000);
+	thing->Damage(teleport_thing, teleport_thing, 10000);
 
 	return true;
 }
@@ -199,6 +199,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

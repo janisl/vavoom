@@ -335,9 +335,7 @@ class Entity:base_mobj_t
 
 	void Think(void);
 
-#if 0
 	void Damage(Entity * inflictor, Entity * source, int damage);
-#endif
 
 	//  Physics
 	boolean Physics(void);
@@ -536,6 +534,9 @@ string door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/10/27 07:40:58  dj_jl
 //  Switched some functions into class members
 //

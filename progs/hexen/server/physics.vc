@@ -1062,7 +1062,7 @@ boolean Entity::HitFloor(void)
 		}
 		else if (type == MT_POTTERY1 || type == MT_POTTERY2 || type == MT_POTTERY3)
 		{
-			DamageMobj(this, NULL, NULL, 25);
+			Damage(NULL, NULL, 25);
 		}
 		else if (flags & MF_COUNTKILL)
 		{
@@ -1474,6 +1474,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.10  2001/10/27 07:40:58  dj_jl
 //  Switched some functions into class members
 //

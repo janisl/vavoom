@@ -675,8 +675,8 @@ __states__
 	S_ARTIPUZZGEMGREEN2 {"AGG2", 0, -1.0, NULL, S_NULL}
 	S_ARTIPUZZGEMBLUE1 {"AGMB", 0, -1.0, NULL, S_NULL}
 	S_ARTIPUZZGEMBLUE2 {"AGB2", 0, -1.0, NULL, S_NULL}
-	S_ARTIPUZZBOOK1 {"ABK1", 0, -1.0, NULL, S_NULL}
-	S_ARTIPUZZBOOK2 {"ABK2", 0, -1.0, NULL, S_NULL}
+	S_ARTIPUZZBOOK1 {"ABK1", 0, "puzzle/book1.md2", 0, -1.0, NULL, S_NULL}
+	S_ARTIPUZZBOOK2 {"ABK2", 0, "puzzle/book2.md2", 0, -1.0, NULL, S_NULL}
 	S_ARTIPUZZSKULL2 {"ASK2", 0, -1.0, NULL, S_NULL}
 	S_ARTIPUZZFWEAPON {"AFWP", 0, -1.0, NULL, S_NULL}
 	S_ARTIPUZZCWEAPON {"ACWP", 0, -1.0, NULL, S_NULL}
@@ -3109,9 +3109,12 @@ __states__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/02 18:42:08  dj_jl
+//	Damage method
+//
 //	Revision 1.5  2001/10/27 07:38:58  dj_jl
 //	Added new models
-//
+//	
 //	Revision 1.4  2001/09/25 17:15:44  dj_jl
 //	Renamed some models
 //	

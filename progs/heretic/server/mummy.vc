@@ -50,7 +50,7 @@ void A_MummyAttack(mobj_t * actor)
 	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(2));
+		actor->target->Damage(actor, actor, HITDICE(2));
 		StartSoundName(actor, "MumyAttack2", CHAN_WEAPON);
 		return;
 	}
@@ -75,7 +75,7 @@ void A_MummyAttack2(mobj_t * actor)
 	}
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(2));
+		actor->target->Damage(actor, actor, HITDICE(2));
 		return;
 	}
 	mo = SpawnMissile(actor, actor->target, MT_MUMMYFX1);
@@ -115,6 +115,9 @@ void A_MummyFX1Seek(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

@@ -260,7 +260,7 @@ void P_Massacre(void)
 	{
 		if ((mo->flags & MF_COUNTKILL) && (mo->health > 0))
 		{
-			DamageMobj(mo, NULL, NULL, 10000);
+			mo->Damage(NULL, NULL, 10000);
 		}
 	}
 }
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

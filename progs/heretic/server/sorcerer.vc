@@ -72,7 +72,7 @@ void A_Srcr1Attack(mobj_t * actor)
 	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(8));
+		actor->target->Damage(actor, actor, HITDICE(8));
 		return;
 	}
 	if (actor->health > (actor->spawnhealth / 3) * 2)
@@ -243,7 +243,7 @@ void A_Srcr2Attack(mobj_t * actor)
 	StartSound(NULL, actor->sound_attack, CHAN_AUTO);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(20));
+		actor->target->Damage(actor, actor, HITDICE(20));
 		return;
 	}
 	chance = actor->health < actor->spawnhealth / 2 ? 96 : 48;
@@ -377,6 +377,9 @@ void A_GenWizard(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

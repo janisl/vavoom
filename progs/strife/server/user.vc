@@ -43,9 +43,6 @@ float air_control = 1.0 / 256.0;
 void MovePsprites(player_t * player);
 void SetPlayerRunState(player_t * player);
 void ChangeWeapon(player_t * player, int newweapon);
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
-
-	int damage);
 boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
@@ -300,14 +297,14 @@ void PlayerInSpecialSector(player_t * player)
 		// HELLSLIME DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				DamageMobj(player->mo, NULL, NULL, 10);
+				player->mo->Damage(NULL, NULL, 10);
 		break;
 
 	case 7:
 		// NUKAGE DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				DamageMobj(player->mo, NULL, NULL, 5);
+				player->mo->Damage(NULL, NULL, 5);
 		break;
 
 	case 16:
@@ -317,7 +314,7 @@ void PlayerInSpecialSector(player_t * player)
 		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				DamageMobj(player->mo, NULL, NULL, 20);
+				player->mo->Damage(NULL, NULL, 20);
 		}
 		break;
 
@@ -332,7 +329,7 @@ void PlayerInSpecialSector(player_t * player)
 		player->cheats &= ~CF_GODMODE;
 
 		if (!(level->tictime & 0x1f))
-			DamageMobj(player->mo, NULL, NULL, 20);
+			player->mo->Damage(NULL, NULL, 20);
 
 		if (player->health <= 10)
 			G_ExitLevel();
@@ -360,14 +357,14 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_SLUDGE:
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
-				DamageMobj(player->mo, NULL, NULL, 10);
+				player->mo->Damage(NULL, NULL, 10);
 		break;
 
 	case CONTENTS_LAVA:
 		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(level->tictime & 0x1f))
-				DamageMobj(player->mo, NULL, NULL, 20);
+				player->mo->Damage(NULL, NULL, 20);
 		}
 		break;
 	}
@@ -449,7 +446,7 @@ void PlayerImpulse(player_t * player)
 	else if (impulse == 16)
 	{
 		//  Suicide
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 }
 
@@ -832,7 +829,7 @@ void DisconnectClient(player_t * player)
 	if (player->mo)
 	{
 		player->mo->player = NULL;
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 	}
 	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
@@ -856,6 +853,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

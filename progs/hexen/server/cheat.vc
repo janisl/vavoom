@@ -164,7 +164,7 @@ int P_Massacre(void)
 		{
 			mo->flags2 &= ~(MF2_NONSHOOTABLE + MF2_INVULNERABLE);
 			mo->flags |= MF_SHOOTABLE;
-			DamageMobj(mo, NULL, NULL, 10000);
+			mo->Damage(NULL, NULL, 10000);
 			count++;
 		}
 	}
@@ -263,6 +263,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

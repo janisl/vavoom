@@ -85,8 +85,6 @@ addfields polyobj_t
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
-	int damage);
 boolean P_CheckPosition(mobj_t * thing, float x, float y);
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -622,7 +620,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		testPos = mobj->origin + force * thrustDir * frametime;
 		if (!P_CheckPosition(mobj, testPos.x, testPos.y))
 		{
-			DamageMobj(mobj, NULL, NULL, 3);
+			mobj->Damage(NULL, NULL, 3);
 		}
 	}
 }
@@ -651,6 +649,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.7  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

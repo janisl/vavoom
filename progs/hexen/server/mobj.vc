@@ -475,7 +475,7 @@ int P_HitFloor(mobj_t * thing)
 		StartSoundName(mo, "LavaSizzle", CHAN_VOICE);
 		if (thing->player && level->tictime & 31)
 		{
-			DamageMobj(thing, LavaInflictor, NULL, 5);
+			thing->Damage(LavaInflictor, NULL, 5);
 		}
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
@@ -660,7 +660,7 @@ void P_MonsterFallingDamage(mobj_t * mo)
 		damage = ftoi((mom - 23.0) * 6.0);
 	}
 	damage = 10000;	// always kill 'em
-	DamageMobj(mo, NULL, NULL, damage);
+	mo->Damage(NULL, NULL, damage);
 }
 
 //==========================================================================
@@ -928,7 +928,7 @@ void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 	thrust = 16.0 + Random() * 4.0;
 	target->velocity.x += thrust * cos(angle) * 35.0;
 	target->velocity.y += thrust * sin(angle) * 35.0;
-	DamageMobj(target, NULL, source, HITDICE(4));
+	target->Damage(NULL, source, HITDICE(4));
 	if (target->player)
 	{
 		target->reactiontime = 14 + (P_Random() & 7);
@@ -1165,8 +1165,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 //
 //==========================================================================
 
-#if 0
-void Entity::Damage(mobj_t * inflictor, mobj_t * source, int damage)
+void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 {
 	float saved;
 	float savedPercent;
@@ -1336,7 +1335,7 @@ void Entity::Damage(mobj_t * inflictor, mobj_t * source, int damage)
 			break;
 		}
 	}
-	// Push the target
+	// Push the	target
 	if (inflictor && (!source || !source->player)
 		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
 	{
@@ -1517,363 +1516,6 @@ void Entity::Damage(mobj_t * inflictor, mobj_t * source, int damage)
 		}
 	}
 }
-#else
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
-	int damage)
-{
-	float saved;
-	float savedPercent;
-	player_t *player;
-	mobj_t *master;
-	int i;
-
-	if (!(target->flags & MF_SHOOTABLE))
-	{
-		// Shouldn't happen
-		return;
-	}
-	if (target->health <= 0)
-	{
-		if (inflictor && inflictor->flags2 & MF2_ICEDAMAGE)
-		{
-			return;
-		}
-		else if (target->flags & MF_ICECORPSE)	// frozen
-		{
-			target->time = 0.1;
-			target->velocity.x = target->velocity.y = 0.0;
-		}
-		return;
-	}
-	if ((target->flags2 & MF2_INVULNERABLE) && damage < 10000)
-	{
-		// mobj is invulnerable
-		if (target->player)
-			return;	// for player, no exceptions
-		if (inflictor)
-		{
-			switch (inflictor->type)
-			{
-				// These inflictors aren't foiled by invulnerability
-			case MT_HOLY_FX:
-			case MT_POISONCLOUD:
-			case MT_FIREBOMB:
-				break;
-			default:
-				return;
-			}
-		}
-		else
-		{
-			return;
-		}
-	}
-	if (target->player)
-	{
-		if (damage < 1000 && ((target->player->cheats & CF_GODMODE)
-				|| target->player->powers[pw_invulnerability]))
-		{
-			return;
-		}
-	}
-	if (target->flags & MF_SKULLFLY)
-	{
-		target->velocity.x = target->velocity.y = target->velocity.z = 0.0;
-	}
-	if (target->flags2 & MF2_DORMANT)
-	{
-		// Invulnerable, and won't wake up
-		return;
-	}
-	player = target->player;
-	if (player && gameskill == sk_baby)
-	{
-		// Take half damage in trainer mode
-		damage >>= 1;
-	}
-	// Special damage types
-	if (inflictor)
-	{
-		switch (inflictor->type)
-		{
-		case MT_EGGFX:
-			if (player)
-			{
-				P_MorphPlayer(player);
-			}
-			else
-			{
-				P_MorphMonster(target);
-			}
-			return;	// Always return
-		case MT_TELOTHER_FX1:
-		case MT_TELOTHER_FX2:
-		case MT_TELOTHER_FX3:
-		case MT_TELOTHER_FX4:
-		case MT_TELOTHER_FX5:
-			if ((target->flags & MF_COUNTKILL) &&
-				(target->type != MT_SERPENT) &&
-				(target->type != MT_SERPENTLEADER) &&
-				(!(target->flags2 & MF2_BOSS)))
-			{
-				TeleportOther(target);
-			}
-			return;
-		case MT_MINOTAUR:
-			if (inflictor->flags & MF_SKULLFLY)
-			{	// Slam only when in charge mode
-				P_MinotaurSlam(inflictor, target);
-				return;
-			}
-			break;
-		case MT_BISH_FX:
-			// Bishops are just too nasty
-			damage >>= 1;
-			break;
-		case MT_SHARDFX1:
-			switch (inflictor->special2)
-			{
-			case 3:
-				damage <<= 3;
-				break;
-			case 2:
-				damage <<= 2;
-				break;
-			case 1:
-				damage <<= 1;
-				break;
-			default:
-				break;
-			}
-			break;
-		case MT_CSTAFF_MISSILE:
-			// Cleric Serpent Staff does poison damage
-			if (target->player)
-			{
-				P_PoisonPlayer(target->player, source, 20);
-				damage >>= 1;
-			}
-			break;
-		case MT_ICEGUY_FX2:
-			damage >>= 1;
-			break;
-		case MT_POISONDART:
-			if (target->player)
-			{
-				P_PoisonPlayer(target->player, source, 20);
-				damage >>= 1;
-			}
-			break;
-		case MT_POISONCLOUD:
-			if (target->player)
-			{
-				if (target->player->poisoncount < 4)
-				{
-					P_PoisonDamage(target->player, source,
-						15 + (P_Random() & 15), false);	// Don't play painsound
-					P_PoisonPlayer(target->player, source, 50);
-					StartSoundName(target, "PlayerPoisonCough", CHAN_VOICE);
-				}
-				return;
-			}
-			else if (!(target->flags & MF_COUNTKILL))
-			{	// only damage monsters/players with the poison cloud
-				return;
-			}
-			break;
-		case MT_FSWORD_MISSILE:
-			if (target->player)
-			{
-				damage -= damage >> 2;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	// Push the target
-	if (inflictor && (!source || !source->player)
-		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
-	{
-		TVec dir;
-		float thrust;
-
-		thrust = itof(damage) / target->mass * 656.25;
-		dir = Normalize(MobjCenter(target) - MobjCenter(inflictor));
-		target->velocity += dir * thrust;
-	}
-
-	//
-	// player specific
-	//
-	if (player)
-	{
-		savedPercent = AutoArmorSave[player->pclass]
-			+ player->armorpoints[ARMOR_ARMOR]
-			+ player->armorpoints[ARMOR_SHIELD]
-			+ player->armorpoints[ARMOR_HELMET]
-			+ player->armorpoints[ARMOR_AMULET];
-		if (savedPercent)
-		{
-			// armor absorbed some damage
-			if (savedPercent > 100.0)
-			{
-				savedPercent = 100.0;
-			}
-			for (i = 0; i < NUMARMOR; i++)
-			{
-				if (player->armorpoints[i])
-				{
-					player->armorpoints[i] -= itof(damage) *
-						ArmorIncrement[player->pclass * NUMARMOR + i] / 300.0;
-					if (player->armorpoints[i] < 2.0)
-					{
-						player->armorpoints[i] = 0.0;
-					}
-				}
-			}
-			saved = itof(damage) * savedPercent / 100.0;
-			if (saved > savedPercent * 2.0)
-			{
-				saved = savedPercent * 2.0;
-			}
-			damage -= ftoi(saved);
-		}
-		if (damage >= player->health
-			&& ((gameskill == sk_baby) || deathmatch) && !player->morphTics)
-		{
-			// Try to use some inventory health
-			P_AutoUseHealth(player, damage - player->health + 1);
-		}
-		player->health -= damage;	// mirror mobj health here for Dave
-		if (player->health < 0)
-		{
-			player->health = 0;
-		}
-		player->attacker = source;
-		player->damagecount += damage;	// add damage after armor / invuln
-		if (player->damagecount > 100)
-		{
-			player->damagecount = 100;	// teleport stomp does 10k points...
-		}
-	}
-
-	//
-	// do the damage
-	//
-	target->health -= damage;
-	if (target->health <= 0)
-	{
-		// Death
-		if (inflictor)
-		{
-			// check for special fire damage or ice damage deaths
-			if (inflictor->flags2 & MF2_FIREDAMAGE)
-			{
-				if (player && !player->morphTics)
-				{
-					// Check for flame death
-					if (target->health > -50 && damage > 25)
-					{
-						target->flags2 |= MF2_FIREDAMAGE;
-					}
-				}
-				else
-				{
-					target->flags2 |= MF2_FIREDAMAGE;
-				}
-			}
-			else if (inflictor->flags2 & MF2_ICEDAMAGE)
-			{
-				target->flags2 |= MF2_ICEDAMAGE;
-			}
-		}
-		if (source && (source->type == MT_MINOTAUR))
-		{
-			// Minotaur's kills go to his master
-			master = source->specialmobj1;
-			// Make sure still alive and not a pointer to fighter head
-			if (master->player && (master->player->mo == master))
-			{
-				source = master;
-			}
-		}
-		if (source && (source->player) &&
-			(source->player->readyweapon == WP_FOURTH))
-		{
-			// Always extreme death from fourth weapon
-			target->health = -5000;
-		}
-		P_KillMobj(source, target);
-		return;
-	}
-	if ((P_Random() < target->painchance) && !(target->flags & MF_SKULLFLY))
-	{
-		if (inflictor && (inflictor->type == MT_LIGHTNING_FLOOR
-				|| inflictor->type == MT_LIGHTNING_ZAP))
-		{
-			if (P_Random() < 96)
-			{
-				target->flags |= MF_JUSTHIT;	// fight back!
-				SetMobjState(target, target->painstate);
-			}
-			else
-			{
-				// "electrocute" the target
-				target->frame |= FF_FULLBRIGHT;
-				if (target->flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(target, GetSoundID("PuppyBeat")))
-				{
-					if ((target->type == MT_CENTAUR) ||
-						(target->type == MT_CENTAURLEADER) ||
-						(target->type == MT_ETTIN))
-					{
-						StartSoundName(target, "PuppyBeat", CHAN_VOICE);
-					}
-				}
-			}
-		}
-		else
-		{
-			target->flags |= MF_JUSTHIT;	// fight back!
-			SetMobjState(target, target->painstate);
-			if (inflictor && inflictor->type == MT_POISONCLOUD)
-			{
-				if (target->flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(target, GetSoundID("PuppyBeat")))
-				{
-					if ((target->type == MT_CENTAUR) ||
-						(target->type == MT_CENTAURLEADER) ||
-						(target->type == MT_ETTIN))
-					{
-						StartSoundName(target, "PuppyBeat", CHAN_VOICE);
-					}
-				}
-			}
-		}
-	}
-	target->reactiontime = 0;	// we're awake now...
-	if (!target->threshold && source && !(source->flags2 & MF2_BOSS)
-		&& !(target->type == MT_BISHOP) && !(target->type == MT_MINOTAUR))
-	{
-		// Target actor is not intent on another actor,
-		// so make him chase after source
-		if ((target->type == MT_CENTAUR && source->type == MT_CENTAURLEADER)
-			|| (target->type == MT_CENTAURLEADER
-				&& source->type == MT_CENTAUR))
-		{
-			return;
-		}
-		target->target = source;
-		target->threshold = BASETHRESHOLD;
-		if (target->statenum == target->spawnstate
-			&& target->seestate != S_NULL)
-		{
-			SetMobjState(target, target->seestate);
-		}
-	}
-}
-#endif
 
 //==========================================================================
 //
@@ -1893,7 +1535,7 @@ void P_FallingDamage(player_t * player)
 	if (mom >= 63.0 * 35.0)
 	{
 		// automatic death
-		DamageMobj(player->mo, NULL, NULL, 10000);
+		player->mo->Damage(NULL, NULL, 10000);
 		return;
 	}
 	damage = ftoi(dist * dist / 10.0) - 24;
@@ -1904,7 +1546,7 @@ void P_FallingDamage(player_t * player)
 		damage = player->mo->health - 1;
 	}
 	StartSoundName(player->mo, "PlayerLand", CHAN_BODY);
-	DamageMobj(player->mo, NULL, NULL, damage);
+	player->mo->Damage(NULL, NULL, damage);
 }
 
 //==========================================================================
@@ -1931,7 +1573,7 @@ void P_PoisonPlayer(player_t * player, mobj_t * poisoner, int poison)
 //
 //  P_PoisonDamage
 //
-//  Similar to DamageMobj
+//  Similar to Entity::Damage
 //
 //==========================================================================
 
@@ -2737,6 +2379,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.14  2001/10/27 07:40:58  dj_jl
 //  Switched some functions into class members
 //

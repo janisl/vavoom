@@ -336,7 +336,7 @@ class MT_FLAME_SMALL:Actor
 		spawnstate = S_FLAME_SMALL1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin, 64.0);
+			AddStaticLight(origin, 64.0);
 	}
 };
 
@@ -362,7 +362,7 @@ class MT_FLAME_LARGE:Actor
 		spawnstate = S_FLAME_LARGE1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin, 128.0);
+			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -2431,7 +2431,7 @@ class MT_MISC5:Actor
 		spawnstate = S_ZCHANDELIER1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin, 128.0);
+			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -4538,7 +4538,8 @@ class MT_ZWALLTORCH:Actor
 		spawnstate = S_ZWALLTORCH1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin + vector(0.0, 0.0, 48.0), 128.0);
+			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 
+				mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 };
 
@@ -4712,7 +4713,7 @@ class MT_ZFIREBULL:Actor
 		spawnstate = S_ZFIREBULL1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);
+			AddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);
 	}
 };
 
@@ -4760,7 +4761,7 @@ class MT_FIRETHING:Actor
 		spawnstate = S_ZFIRETHING1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);
+			AddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);
 	}
 };
 
@@ -4785,7 +4786,7 @@ class MT_BRASSTORCH:Actor
 		spawnstate = S_ZBRASSTORCH1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);
+			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);
 	}
 };
 
@@ -4882,7 +4883,7 @@ class MT_ZBLUE_CANDLE:Actor
 		spawnstate = S_ZBLUE_CANDLE1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));
+			AddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));
 	}
 };
 
@@ -4956,7 +4957,7 @@ class MT_ZCAULDRON:Actor
 		spawnstate = S_ZCAULDRON1;
 		::OnMapSpawn(mthing);
 		if (!tid)
-		AddStaticLight(origin, 128.0);
+			AddStaticLight(origin, 128.0);
 	}
 };
 
@@ -10418,9 +10419,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/02 18:42:08  dj_jl
+//	Damage method
+//
 //	Revision 1.7  2001/10/22 17:23:13  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.6  2001/10/18 17:39:34  dj_jl
 //	A lots of changes for Alpha 2
 //	

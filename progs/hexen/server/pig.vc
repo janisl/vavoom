@@ -180,7 +180,7 @@ void A_PigAttack(mobj_t * actor)
 	}
 	if (CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, 2 + (P_Random() & 1));
+		actor->target->Damage(actor, actor, 2 + (P_Random() & 1));
 		StartSoundName(actor, "PigAttack", CHAN_VOICE);
 	}
 }
@@ -203,6 +203,9 @@ void A_PigPain(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

@@ -118,7 +118,7 @@ void A_ChicAttack(mobj_t * actor)
 	}
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, 1 + (P_Random() & 1));
+		actor->target->Damage(actor, actor, 1 + (P_Random() & 1));
 	}
 }
 
@@ -140,6 +140,9 @@ void A_ChicPain(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

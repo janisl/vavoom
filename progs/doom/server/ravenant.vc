@@ -74,7 +74,7 @@ void A_SkelFist(mobj_t * actor)
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
 		StartSoundName(actor, "RavenantPunch", CHAN_WEAPON);
-		DamageMobj(actor->target, actor, actor, damage);
+		actor->target->Damage(actor, actor, damage);
 	}
 }
 
@@ -180,6 +180,9 @@ void A_Tracer(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

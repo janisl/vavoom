@@ -127,7 +127,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 	if (tmthing->flags & MF_SKULLFLY)
 	{
 		damage = ((P_Random() % 8) + 1) * tmthing->damage;
-		DamageMobj(thing, tmthing, tmthing, damage);
+		thing->Damage(tmthing, tmthing, damage);
 		tmthing->flags &= ~MF_SKULLFLY;
 		tmthing->velocity.x = tmthing->velocity.y = tmthing->velocity.z = 0.0;
 		SetMobjState(tmthing, tmthing->seestate);
@@ -178,7 +178,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 			}
 			StartSoundName(tmthing, "RipSlop", CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * tmthing->damage;
-			DamageMobj(thing, tmthing, tmthing->target, damage);
+			thing->Damage(tmthing, tmthing->target, damage);
 			if (thing->flags2 & MF2_PUSHABLE &&
 				!(tmthing->flags2 & MF2_CANNOTPUSH))
 			{
@@ -198,7 +198,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
 					tmthing->origin.z, thing);
 			}
-			DamageMobj(thing, tmthing, tmthing->target, damage);
+			thing->Damage(tmthing, tmthing->target, damage);
 		}
 		// don't traverse any more
 		return false;
@@ -687,6 +687,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

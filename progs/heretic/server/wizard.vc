@@ -79,7 +79,7 @@ void A_WizAtk3(mobj_t * actor)
 	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(4));
+		actor->target->Damage(actor, actor, HITDICE(4));
 		return;
 	}
 	mo = SpawnMissile(actor, actor->target, MT_WIZFX1);
@@ -108,6 +108,9 @@ void A_GhostOff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

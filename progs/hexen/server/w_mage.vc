@@ -84,7 +84,7 @@ void A_FireConePL1(mobj_t * actor)
 		if (linetarget)
 		{
 			pmo->flags2 |= MF2_ICEDAMAGE;
-			DamageMobj(linetarget, pmo, pmo, damage);
+			linetarget->Damage(pmo, pmo, damage);
 			pmo->flags2 &= ~MF2_ICEDAMAGE;
 			conedone = true;
 			break;
@@ -545,6 +545,9 @@ void A_MStaffTrack(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

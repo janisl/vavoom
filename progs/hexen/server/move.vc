@@ -168,7 +168,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 						// ghost burns out faster when attacking players/bosses
 						tmthing->health -= 6;
 					}
-					DamageMobj(thing, tmthing, tmthing->target, damage);
+					thing->Damage(tmthing, tmthing->target, damage);
 					if (P_Random() < 128)
 					{
 						P_SpawnMobj(tmthing->origin.x, tmthing->origin.y,
@@ -197,7 +197,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 			return true;
 		}
 		damage = ((P_Random() % 8) + 1) * tmthing->damage;
-		DamageMobj(thing, tmthing, tmthing, damage);
+		thing->Damage(tmthing, tmthing, damage);
 		tmthing->flags &= ~MF_SKULLFLY;
 		tmthing->velocity.x = tmthing->velocity.y = tmthing->velocity.z = 0.0;
 		SetMobjState(tmthing, tmthing->seestate);
@@ -213,9 +213,9 @@ boolean PIT_CheckThing(mobj_t * thing)
 			if ((thing->velocity.x + thing->velocity.y) > 3.0 * 35.0)
 			{
 				damage = (ftoi(tmthing->mass) / 100) + 1;
-				DamageMobj(thing, tmthing, tmthing, damage);
+				thing->Damage(tmthing, tmthing, damage);
 				damage = (ftoi(thing->mass) / 100) + 1;
-				DamageMobj(tmthing, thing, thing, damage >> 2);
+				tmthing->Damage(thing, thing, damage >> 2);
 			}
 			return false;
 		}
@@ -264,11 +264,11 @@ boolean PIT_CheckThing(mobj_t * thing)
 					if (thing->type == MT_CENTAUR
 						|| thing->type == MT_CENTAURLEADER)
 					{	// Lightning does more damage to centaurs
-						DamageMobj(thing, tmthing, tmthing->target, 9);
+						thing->Damage(tmthing, tmthing->target, 9);
 					}
 					else
 					{
-						DamageMobj(thing, tmthing, tmthing->target, 3);
+						thing->Damage(tmthing, tmthing->target, 3);
 					}
 					if (!(GetSoundPlayingInfo(tmthing,
 								GetSoundID("MageLightningZap"))))
@@ -347,7 +347,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				case MT_MAGE_BOSS:
 					break;
 				default:
-					DamageMobj(thing, tmthing, tmthing->target, 10);
+					thing->Damage(tmthing, tmthing->target, 10);
 					return true;
 					break;
 				}
@@ -382,7 +382,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 			}
 			//StartSoundName(tmthing, sfx_ripslop);
 			damage = ((P_Random() & 3) + 2) * tmthing->damage;
-			DamageMobj(thing, tmthing, tmthing->target, damage);
+			thing->Damage(tmthing, tmthing->target, damage);
 			if (thing->flags2 & MF2_PUSHABLE
 				&& !(tmthing->flags2 & MF2_CANNOTPUSH))
 			{	// Push thing
@@ -408,7 +408,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				P_BloodSplatter(tmthing->origin.x, tmthing->origin.y,
 					tmthing->origin.z, thing);
 			}
-			DamageMobj(thing, tmthing, tmthing->target, damage);
+			thing->Damage(tmthing, tmthing->target, damage);
 		}
 		return false;
 	}
@@ -491,7 +491,7 @@ boolean PIT_CheckLine(line_t * ld)
 		// One sided line
 		if (tmthing->flags2 & MF2_BLASTED)
 		{
-			DamageMobj(tmthing, NULL, NULL, ftoi(tmthing->mass) >> 5);
+			tmthing->Damage(NULL, NULL, ftoi(tmthing->mass) >> 5);
 		}
 		CheckForPushSpecial(ld, 0, tmthing);
 		return false;
@@ -504,7 +504,7 @@ boolean PIT_CheckLine(line_t * ld)
 			// Explicitly blocking everything
 			if (tmthing->flags2 & MF2_BLASTED)
 			{
-				DamageMobj(tmthing, NULL, NULL, ftoi(tmthing->mass) >> 5);
+				tmthing->Damage(NULL, NULL, ftoi(tmthing->mass) >> 5);
 			}
 			CheckForPushSpecial(ld, 0, tmthing);
 			return false;
@@ -515,7 +515,7 @@ boolean PIT_CheckLine(line_t * ld)
 			// Block monsters only
 			if (tmthing->flags2 & MF2_BLASTED)
 			{
-				DamageMobj(tmthing, NULL, NULL, ftoi(tmthing->mass) >> 5);
+				tmthing->Damage(NULL, NULL, ftoi(tmthing->mass) >> 5);
 			}
 			return false;
 		}
@@ -701,7 +701,7 @@ void PushLine(mobj_t * thing)
 
 		if (thing->flags2 & MF2_BLASTED)
 		{
-			DamageMobj(thing, NULL, NULL, ftoi(thing->mass) >> 5);
+			thing->Damage(NULL, NULL, ftoi(thing->mass) >> 5);
 		}
 		numSpecHitTemp = numspechit;
 		while (numSpecHitTemp > 0)
@@ -954,6 +954,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

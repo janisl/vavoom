@@ -363,11 +363,11 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 73:	// Damage Mobj
 		if (args[0])
 		{
-			DamageMobj(mo, NULL, NULL, args[0]);
+			mo->Damage(NULL, NULL, args[0]);
 		}
 		else
 		{	// If arg1 is zero, then guarantee a kill
-			DamageMobj(mo, NULL, NULL, 10000);
+			mo->Damage(NULL, NULL, 10000);
 		}
 		buttonSuccess = 1;
 		break;
@@ -709,6 +709,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.6  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

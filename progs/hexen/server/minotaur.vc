@@ -191,7 +191,7 @@ void A_MinotaurChase(mobj_t * actor)
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
-		DamageMobj(actor, NULL, NULL, 10000);
+		actor->Damage(NULL, NULL, 10000);
 		return;
 	}
 
@@ -254,7 +254,7 @@ void A_MinotaurRoam(mobj_t * actor)
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
-		DamageMobj(actor, NULL, NULL, 10000);
+		actor->Damage(NULL, NULL, 10000);
 		return;
 	}
 
@@ -296,7 +296,7 @@ void A_MinotaurAtk1(mobj_t * actor)
 	StartSoundName(actor, "MaulatorHamSwing", CHAN_WEAPON);
 	if (CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(4));
+		actor->target->Damage(actor, actor, HITDICE(4));
 	}
 }
 
@@ -363,7 +363,7 @@ void A_MinotaurAtk2(mobj_t * actor)
 	StartSoundName(actor, "MaulatorHamSwing", CHAN_WEAPON);
 	if (CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		actor->target->Damage(actor, actor, HITDICE(3));
 		return;
 	}
 	mo = SpawnMissile(actor, actor->target, MT_MNTRFX1);
@@ -398,7 +398,7 @@ void A_MinotaurAtk3(mobj_t * actor)
 	}
 	if (CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		actor->target->Damage(actor, actor, HITDICE(3));
 		if ((player = actor->target->player) != NULL)
 		{	// Squish the player
 			player->deltaviewheight = -16.0;
@@ -515,6 +515,9 @@ void A_SmokePuffExit(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.7  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

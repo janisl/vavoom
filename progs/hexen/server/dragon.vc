@@ -108,7 +108,7 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 			actor->target = target;
 			if (CheckMeleeRange(actor))
 			{
-				DamageMobj(actor->target, actor, actor, HITDICE(10));
+				actor->target->Damage(actor, actor, HITDICE(10));
 				StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange(actor))
@@ -213,7 +213,7 @@ void A_DragonFlight(mobj_t * actor)
 		if (fabs(AngleMod180(actor->angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange(actor))
 		{
-			DamageMobj(actor->target, actor, actor, HITDICE(8));
+			actor->target->Damage(actor, actor, HITDICE(8));
 			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(actor->angles.yaw - angle)) <= 20.0)
@@ -318,6 +318,9 @@ void A_DragonFX2(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

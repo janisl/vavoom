@@ -50,7 +50,7 @@ void A_BeastAttack(mobj_t * actor)
 	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, HITDICE(3));
+		actor->target->Damage(actor, actor, HITDICE(3));
 		return;
 	}
 	SpawnMissile(actor, actor->target, MT_BEASTBALL);
@@ -80,6 +80,9 @@ void A_BeastPuff(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

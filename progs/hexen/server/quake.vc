@@ -119,7 +119,7 @@ void A_Quake(mobj_t * actor)
 			{
 				if (P_Random() < 50)
 				{
-					DamageMobj(victim, NULL, NULL, HITDICE(1));
+					victim->Damage(NULL, NULL, HITDICE(1));
 				}
 				// Thrust player around
 				an = victim->angles.yaw + Random() * 256.0;
@@ -140,6 +140,9 @@ void A_Quake(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

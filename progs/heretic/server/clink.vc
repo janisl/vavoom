@@ -53,13 +53,16 @@ void A_ClinkAttack(mobj_t * actor)
 	if (P_CheckMeleeRange(actor))
 	{
 		damage = ((P_Random() % 7) + 3);
-		DamageMobj(actor->target, actor, actor, damage);
+		actor->target->Damage(actor, actor, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

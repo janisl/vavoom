@@ -49,7 +49,7 @@ void A_CentaurAttack(mobj_t * actor)
 	}
 	if (CheckMeleeRange(actor))
 	{
-		DamageMobj(actor->target, actor, actor, P_Random() % 7 + 3);
+		actor->target->Damage(actor, actor, P_Random() % 7 + 3);
 	}
 }
 
@@ -195,6 +195,9 @@ void A_CheckFloor(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //

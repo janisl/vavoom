@@ -222,7 +222,7 @@ void A_VileAttack(mobj_t * actor)
 		return;
 
 	StartSoundName(actor, "BarrelExplode", CHAN_WEAPON);
-	DamageMobj(actor->target, actor, actor, 20);
+	actor->target->Damage(actor, actor, 20);
 	actor->target->velocity.z = 1000.0 / actor->target->mass * 35.0;
 
 	fire = actor->tracer;
@@ -333,6 +333,9 @@ void A_FireCrackle(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/09/24 17:24:09  dj_jl
 //  Beautification
 //

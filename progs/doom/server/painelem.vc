@@ -84,7 +84,7 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
 	{
 		// kill it immediately
-		DamageMobj(newmobj, actor, actor, 10000);
+		newmobj->Damage(actor, actor, 10000);
 		return;
 	}
 
@@ -142,6 +142,9 @@ void A_PainDie(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.4  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

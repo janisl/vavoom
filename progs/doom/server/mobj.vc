@@ -155,11 +155,11 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 
 //==========================================================================
 //
-//  generic_mobj_start
+//	Entity::OnMapSpawn
 //
 //==========================================================================
 
-void mobj_t::OnMapSpawn(mthing_t * mthing)
+void Entity::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
@@ -607,7 +607,7 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 //==========================================================================
 //
-//  DamageMobj
+//	Entity::Damage
 //
 //  Damages both enemies and players.
 //  "inflictor" is the thing that caused the damage, creature or missile,
@@ -618,46 +618,42 @@ void KillMobj(mobj_t * source, mobj_t * target)
 //
 //==========================================================================
 
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
-	int damage)
+void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 {
 	int saved;
-	player_t *player;
 
-	if (!(target->flags & MF_SHOOTABLE))
+	if (!(flags & MF_SHOOTABLE))
 		return;	// shouldn't happen...
 
-	if (target->health <= 0)
+	if (health <= 0)
 		return;
 
-	if (target->flags & MF_SKULLFLY)
+	if (flags & MF_SKULLFLY)
 	{
-		target->velocity = vector(0.0, 0.0, 0.0);
+		velocity = vector(0.0, 0.0, 0.0);
 	}
 
-	player = target->player;
 	if (player && gameskill == sk_baby)
 		damage >>= 1;	// take half damage in trainer mode
 
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
 	// thus kick away unless using the chainsaw.
-	if (inflictor && !(target->flags & MF_NOCLIP) &&
+	if (inflictor && !(flags & MF_NOCLIP) &&
 		(!source || !source->player ||
 			source->player->readyweapon != wp_chainsaw))
 	{
-		target->velocity += (500.0 * itof(damage) / target->mass) *
-			Normalize(MobjCenter(target) - MobjCenter(inflictor));
+		velocity += (500.0 * itof(damage) / mass) *
+			Normalize(MobjCenter(this) - MobjCenter(inflictor));
 	}
 
 	// player specific
 	if (player)
 	{
 		// end of game hell hack
-		if ((target->subsector->sector->special & 255) == 75
-			&& damage >= target->health)
+		if ((subsector->sector->special & 255) == 75 && damage >= health)
 		{
-			damage = target->health - 1;
+			damage = health - 1;
 		}
 
 		// Below certain threshold,
@@ -696,32 +692,31 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 	}
 
 	// do the damage    
-	target->health -= damage;
-	if (target->health <= 0)
+	health -= damage;
+	if (health <= 0)
 	{
-		KillMobj(source, target);
+		KillMobj(source, this);
 		return;
 	}
 
-	if ((P_Random() < target->painchance) && !(target->flags & MF_SKULLFLY))
+	if ((P_Random() < painchance) && !(flags & MF_SKULLFLY))
 	{
-		target->flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(target, target->painstate);
+		flags |= MF_JUSTHIT;	// fight back!
+		SetMobjState(this, painstate);
 	}
 
-	target->reactiontime = 0;	// we're awake now...   
+	reactiontime = 0;	// we're awake now...   
 
-	if ((!target->threshold || target->type == MT_VILE)
-		&& source && source != target && source->type != MT_VILE)
+	if ((!threshold || type == MT_VILE)
+		&& source && source != this && source->type != MT_VILE)
 	{
 		// if not intent on another player,
 		// chase after this one
-		target->target = source;
-		target->threshold = BASETHRESHOLD;
-		if (target->statenum == target->spawnstate
-			&& target->seestate != S_NULL)
+		target = source;
+		threshold = BASETHRESHOLD;
+		if (statenum == spawnstate && seestate != S_NULL)
 		{
-			SetMobjState(target, target->seestate);
+			SetMobjState(this, seestate);
 		}
 	}
 
@@ -971,6 +966,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.11  2001/10/22 17:23:11  dj_jl
 //  Floatification of angles
 //

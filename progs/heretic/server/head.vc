@@ -64,7 +64,7 @@ void A_HeadAttack(mobj_t * actor)
 	A_FaceTarget(actor);
 	if (P_CheckMeleeRange(actor))
 	{
-		DamageMobj(target, actor, actor, HITDICE(6));
+		target->Damage(actor, actor, HITDICE(6));
 		return;
 	}
 	dist = MobjDist2(actor, target) > 8.0 * 64.0;
@@ -189,6 +189,9 @@ void A_WhirlwindSeek(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.5  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //

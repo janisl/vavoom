@@ -545,7 +545,7 @@ void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 	thrust = 16.0 + Random() * 4.0;
 	target->velocity.x += thrust * cos(angle) * 35.0;
 	target->velocity.y += thrust * sin(angle) * 35.0;
-	DamageMobj(target, NULL, NULL, HITDICE(6));
+	target->Damage(NULL, NULL, HITDICE(6));
 	if (target->player)
 	{
 		target->reactiontime = 14 + (P_Random() & 7);
@@ -581,7 +581,7 @@ void P_TouchWhirlwind(mobj_t * target)
 	}
 	if (!(level->tictime & 7))
 	{
-		DamageMobj(target, NULL, NULL, 3);
+		target->Damage(NULL, NULL, 3);
 	}
 }
 
@@ -796,7 +796,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 
 //==========================================================================
 //
-//  DamageMobj
+//  Entity::Damage
 //
 //  Damages both enemies and players.
 //  inflictor is the thing that caused the damage creature or missile, can
@@ -807,31 +807,28 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
 //
 //==========================================================================
 
-void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
-	int damage)
+void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 {
 	int saved;
-	player_t *player;
 
-	if (!(target->flags & MF_SHOOTABLE))
+	if (!(flags & MF_SHOOTABLE))
 	{
 		// Shouldn't happen
 		return;
 	}
-	if (target->health <= 0)
+	if (health <= 0)
 	{
 		return;
 	}
-	if (target->flags & MF_SKULLFLY)
+	if (flags & MF_SKULLFLY)
 	{
-		if (target->type == MT_MINOTAUR)
+		if (type == MT_MINOTAUR)
 		{
 			// Minotaur is invulnerable during charge attack
 			return;
 		}
-		target->velocity.x = target->velocity.y = target->velocity.z = 0.0;
+		velocity = vector(0.0, 0.0, 0.0);
 	}
-	player = target->player;
 	if (player && gameskill == sk_baby)
 	{
 		// Take half damage in trainer mode
@@ -849,35 +846,35 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 			}
 			else
 			{
-				P_ChickenMorph(target);
+				P_ChickenMorph(this);
 			}
 			return;	// Always return
 		case MT_WHIRLWIND:
-			P_TouchWhirlwind(target);
+			P_TouchWhirlwind(this);
 			return;
 		case MT_MINOTAUR:
 			if (inflictor->flags & MF_SKULLFLY)
 			{
 				// Slam only when in charge mode
-				P_MinotaurSlam(inflictor, target);
+				P_MinotaurSlam(inflictor, this);
 				return;
 			}
 			break;
 		case MT_MACEFX4:	// Death ball
-			if ((target->flags2 & MF2_BOSS) || target->type == MT_HEAD)
+			if ((flags2 & MF2_BOSS) || type == MT_HEAD)
 			{
 				// Don't allow cheap boss kills
 				break;
 			}
-			else if (target->player)
+			else if (player)
 			{
 				// Player specific checks
-				if (target->player->powers[pw_invulnerability])
+				if (player->powers[pw_invulnerability])
 				{
 					// Can't hurt invulnerable players
 					break;
 				}
-				if (P_AutoUseChaosDevice(target->player))
+				if (P_AutoUseChaosDevice(player))
 				{
 					// Player was saved using chaos device
 					return;
@@ -886,17 +883,17 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 			damage = 10000;	// Something's gonna die
 			break;
 		case MT_PHOENIXFX2:	// Flame thrower
-			if (target->player && P_Random() < 128)
+			if (player && P_Random() < 128)
 			{
 				// Freeze player for a bit
-				target->reactiontime += 4;
+				reactiontime += 4;
 			}
 			break;
 		case MT_RAINPLR1:	// Rain missiles
 		case MT_RAINPLR2:
 		case MT_RAINPLR3:
 		case MT_RAINPLR4:
-			if (target->flags2 & MF2_BOSS)
+			if (flags2 & MF2_BOSS)
 			{
 				// Decrease damage for bosses
 				damage = (P_Random() & 7) + 1;
@@ -904,16 +901,16 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 			break;
 		case MT_HORNRODFX2:
 		case MT_PHOENIXFX1:
-			if (target->type == MT_SORCERER2 && P_Random() < 96)
+			if (type == MT_SORCERER2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
-				DSparilTeleport(target);
+				DSparilTeleport(this);
 				return;
 			}
 			break;
 		case MT_BLASTERFX1:
 		case MT_RIPPER:
-			if (target->type == MT_HEAD)
+			if (type == MT_HEAD)
 			{
 				// Less damage to Ironlich bosses
 				damage = P_Random() & 1;
@@ -944,15 +941,15 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 		}
 		else
 		{
-			thrust = itof(damage) / target->mass * 656.25;
+			thrust = itof(damage) / mass * 656.25;
 		}
 
-		dir = MobjCenter(target) - MobjCenter(inflictor);
-		if (target->flags & MF_NOGRAVITY)
+		dir = MobjCenter(this) - MobjCenter(inflictor);
+		if (flags & MF_NOGRAVITY)
 		{
 			dir.z = 0.0;
 		}
-		target->velocity += Normalize(dir) * thrust;
+		velocity += Normalize(dir) * thrust;
 	}
 
 	//
@@ -1006,46 +1003,45 @@ void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 	//
 	// do the damage
 	//
-	target->health -= damage;
-	if (target->health <= 0)
+	health -= damage;
+	if (health <= 0)
 	{
 		// Death
-		target->special1 = damage;
-		if (target->type == MT_POD && source && source->type != MT_POD)
+		special1 = damage;
+		if (type == MT_POD && source && source->type != MT_POD)
 		{
 			// Make sure players get frags for chain-reaction kills
-			target->target = source;
+			target = source;
 		}
 		if (player && inflictor && !player->chickenTics)
 		{
 			// Check for flame death
 			if ((inflictor->flags2 & MF2_FIREDAMAGE)
 				|| ((inflictor->type == MT_PHOENIXFX1)
-					&& (target->health > -50) && (damage > 25)))
+					&& (health > -50) && (damage > 25)))
 			{
-				target->flags2 |= MF2_FIREDAMAGE;
+				flags2 |= MF2_FIREDAMAGE;
 			}
 		}
-		P_KillMobj(source, target);
+		P_KillMobj(source, this);
 		return;
 	}
-	if ((P_Random() < target->painchance) && !(target->flags & MF_SKULLFLY))
+	if ((P_Random() < painchance) && !(flags & MF_SKULLFLY))
 	{
-		target->flags |= MF_JUSTHIT;	// fight back!
-		SetMobjState(target, target->painstate);
+		flags |= MF_JUSTHIT;	// fight back!
+		SetMobjState(this, painstate);
 	}
-	target->reactiontime = 0;	// we're awake now...
-	if (!target->threshold && source && !(source->flags2 & MF2_BOSS)
-		&& !(target->type == MT_SORCERER2 && source->type == MT_WIZARD))
+	reactiontime = 0;	// we're awake now...
+	if (!threshold && source && !(source->flags2 & MF2_BOSS)
+		&& !(type == MT_SORCERER2 && source->type == MT_WIZARD))
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		target->target = source;
-		target->threshold = BASETHRESHOLD;
-		if (target->statenum == target->spawnstate
-			&& target->seestate != S_NULL)
+		target = source;
+		threshold = BASETHRESHOLD;
+		if (statenum == spawnstate && seestate != S_NULL)
 		{
-			SetMobjState(target, target->seestate);
+			SetMobjState(this, seestate);
 		}
 	}
 }
@@ -1483,6 +1479,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/11/02 18:42:08  dj_jl
+//  Damage method
+//
 //  Revision 1.11  2001/10/22 17:23:12  dj_jl
 //  Floatification of angles
 //
