@@ -1,5 +1,5 @@
 
-                              VCC version 1.10
+                              VCC version 1.11
                               ****************
 
 ============================================================================
@@ -55,6 +55,8 @@ file name like this:
     * Windows 98 with DJGPP 2.03.
 
     * Windows 98 with Borland C++ 5.5.
+
+    * Windows 98 with Microsoft VisualC++ 6.0.
 
     * Linux Mandrake 8.0
 
