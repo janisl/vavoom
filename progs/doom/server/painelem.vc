@@ -1,29 +1,25 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
 //**
 //**************************************************************************
 
@@ -45,93 +41,111 @@
 
 //==========================================================================
 //
-//	A_PainShootSkull
+//  A_PainShootSkull
 //
-//	Spawn a lost soul and launch it at the target
+//  Spawn a lost soul and launch it at the target
 //
 //==========================================================================
 
-void A_PainShootSkull(mobj_t *actor,int angle)
+void A_PainShootSkull(mobj_t * actor, int angle)
 {
-	float	x;
-	float	y;
-	float	z;
-	mobj_t	*mo;
-    mobj_t	*newmobj;
-	float	prestep;
-    int		count;
+	float x;
+	float y;
+	float z;
+	mobj_t *mo;
+	mobj_t *newmobj;
+	float prestep;
+	int count;
 
-    // count total number of skull currently on the level
-   	count = 0;
+	// count total number of skull currently on the level
+	count = 0;
 	mo = NULL;
-    while (mo = NextMobj(mo))
-   	{
+	while (mo = NextMobj(mo))
+	{
 		if (mo->type == MT_SKULL)
-	    	count++;
-    }
+			count++;
+	}
 
-    // if there are allready 20 skulls on the level,
-   	// don't spit another one
-    if (count > 20)
+	// if there are allready 20 skulls on the level,
+	// don't spit another one
+	if (count > 20)
 		return;
 
-    // okay, there's playe for another one
-    prestep = 4.0 + 3.0 * (actor->radius + SKULL_RADIUS) / 2.0;
-    
-    x = actor->origin.x + prestep * cos(angle);
-    y = actor->origin.y + prestep * sin(angle);
-    z = actor->origin.z + 8.0;
+	// okay, there's playe for another one
+	prestep = 4.0 + 3.0 * (actor->radius + SKULL_RADIUS) / 2.0;
 
-   	newmobj = P_SpawnMobj(x, y, z, MT_SKULL);
+	x = actor->origin.x + prestep * cos(angle);
+	y = actor->origin.y + prestep * sin(angle);
+	z = actor->origin.z + 8.0;
 
-    // Check for movements.
-    if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
-    {
+	newmobj = P_SpawnMobj(x, y, z, MT_SKULL);
+
+	// Check for movements.
+	if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
+	{
 		// kill it immediately
 		DamageMobj(newmobj, actor, actor, 10000);
 		return;
-    }
-		
-    newmobj->target = actor->target;
+	}
+
+	newmobj->target = actor->target;
 	A_SkullAttack(newmobj);
 }
 
 //==========================================================================
 //
-//	A_PainAttack
+//  A_PainAttack
 //
-//	Pain elemental attack. Spawn a lost soul and launch it at the target.
+//  Pain elemental attack. Spawn a lost soul and launch it at the target.
 // 
 //==========================================================================
 
-void A_PainAttack(mobj_t *actor)
+void A_PainAttack(mobj_t * actor)
 {
-    if (!actor->target)
+	if (!actor->target)
 		return;
 
-    A_FaceTarget(actor);
-    A_PainShootSkull(actor, actor->angles.yaw);
+	A_FaceTarget(actor);
+	A_PainShootSkull(actor, actor->angles.yaw);
 }
 
 //==========================================================================
 //
-//	A_PainDie
+//  A_PainDie
 //
-//	Pain elemental death.
+//  Pain elemental death.
 //
 //==========================================================================
 
-void A_PainDie(mobj_t *actor)
+void A_PainDie(mobj_t * actor)
 {
-    A_Fall(actor);
-    A_PainShootSkull(actor, actor->angles.yaw + ANG90);
-    A_PainShootSkull(actor, actor->angles.yaw + ANG180);
-    A_PainShootSkull(actor, actor->angles.yaw + ANG270);
+	A_Fall(actor);
+	A_PainShootSkull(actor, actor->angles.yaw + ANG90);
+	A_PainShootSkull(actor, actor->angles.yaw + ANG180);
+	A_PainShootSkull(actor, actor->angles.yaw + ANG270);
 }
 
 #else
 
-void A_PainAttack(mobj_t *actor) { NotDoom2(); }
-void A_PainDie(mobj_t *actor) { NotDoom2(); }
+void A_PainAttack(mobj_t * actor)
+{
+	NotDoom2();
+}
+
+void A_PainDie(mobj_t * actor)
+{
+	NotDoom2();
+}
 
 #endif
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:09  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

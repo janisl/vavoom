@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -28,7 +28,7 @@ float air_control = 1.0 / 256.0;
 #define INVERSECOLORMAP		32
 
 //
-//	PALETTE MACROS
+//  PALETTE MACROS
 //
 
 // Palette indices.
@@ -40,25 +40,27 @@ float air_control = 1.0 / 256.0;
 // Radiation suit, green shift.
 #define RADIATIONPAL		13
 
-void MovePsprites(player_t* player);
-void SetPlayerRunState(player_t* player);
-void ChangeWeapon(player_t* player, int newweapon);
-void DamageMobj(mobj_t* target,mobj_t* inflictor,mobj_t* source,int damage);
-boolean G_CheckSpot(int playernum, mthing_t* mthing);
-void P_SpawnPlayer(mthing_t* mthing);
-void P_UseLines(player_t* player);
+void MovePsprites(player_t * player);
+void SetPlayerRunState(player_t * player);
+void ChangeWeapon(player_t * player, int newweapon);
+void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
 
-boolean		onground;
+	int damage);
+boolean G_CheckSpot(int playernum, mthing_t * mthing);
+void P_SpawnPlayer(mthing_t * mthing);
+void P_UseLines(player_t * player);
+
+boolean onground;
 
 //==========================================================================
 //
-// 	ThrustPlayer
+//  ThrustPlayer
 //
-// 	Moves the given origin along a given angle.
+//  Moves the given origin along a given angle.
 //
 //==========================================================================
 
-void ThrustPlayer(player_t* player, angle_t angle, float move)
+void ThrustPlayer(player_t * player, angle_t angle, float move)
 {
 	player->mo->velocity.x += move * cos(angle) * frametime;
 	player->mo->velocity.y += move * sin(angle) * frametime;
@@ -66,63 +68,62 @@ void ThrustPlayer(player_t* player, angle_t angle, float move)
 
 //==========================================================================
 //
-// 	CalcHeight
+//  CalcHeight
 //
-// 	Calculate the walking / running height adjustment
+//  Calculate the walking / running height adjustment
 //
 //==========================================================================
 
-void CalcHeight(player_t* player)
+void CalcHeight(player_t * player)
 {
-    int			angle;
-	float		bob;
-    
-    // Regular movement bobbing
-    // (needs to be calculated for gun swing
-    // even if not on ground)
-    // OPTIMIZE: tablify angle
-    // Note: a LUT allows for effects
-    //  like a ramp with low health.
-   	player->bob = (player->mo->velocity.x * player->mo->velocity.x
-   				+  player->mo->velocity.y * player->mo->velocity.y)
-   				* frametime * frametime;
+	int angle;
+	float bob;
 
-   	player->bob /= 4.0;
+	// Regular movement bobbing
+	// (needs to be calculated for gun swing
+	// even if not on ground)
+	// OPTIMIZE: tablify angle
+	// Note: a LUT allows for effects
+	//  like a ramp with low health.
+	player->bob = (player->mo->velocity.x * player->mo->velocity.x
+		+ player->mo->velocity.y * player->mo->velocity.y)
+		* frametime * frametime;
+
+	player->bob /= 4.0;
 	if (player->bob > MAXBOB)
 		player->bob = MAXBOB;
 
-    angle = ANG180 / 10 * level->tictime;
-    bob = player->bob / 2.0 * sin(angle);
+	angle = ANG180 / 10 * level->tictime;
+	bob = player->bob / 2.0 * sin(angle);
 
-    
-    // move viewheight
-    if (player->playerstate == PST_LIVE)
-    {
+	// move viewheight
+	if (player->playerstate == PST_LIVE)
+	{
 		player->viewheight += player->deltaviewheight;
 
 		if (player->viewheight > VIEWHEIGHT)
 		{
-		    player->viewheight = VIEWHEIGHT;
-		    player->deltaviewheight = 0.0;
+			player->viewheight = VIEWHEIGHT;
+			player->deltaviewheight = 0.0;
 		}
 
 		if (player->viewheight < VIEWHEIGHT / 2.0)
 		{
-		    player->viewheight = VIEWHEIGHT / 2.0;
-		    if (player->deltaviewheight <= 0.0)
+			player->viewheight = VIEWHEIGHT / 2.0;
+			if (player->deltaviewheight <= 0.0)
 				player->deltaviewheight = 0.00001;
 		}
-	
+
 		if (player->deltaviewheight)
 		{
-		    player->deltaviewheight += 0.25;
-		    if (!player->deltaviewheight)
+			player->deltaviewheight += 0.25;
+			if (!player->deltaviewheight)
 				player->deltaviewheight = 0.00001;
 		}
-    }
+	}
 	player->vieworg.z = player->mo->origin.z + player->viewheight + bob;
 
-    if (player->vieworg.z > player->mo->ceilingz - 4.0)
+	if (player->vieworg.z > player->mo->ceilingz - 4.0)
 		player->vieworg.z = player->mo->ceilingz - 4.0;
 }
 
@@ -132,15 +133,15 @@ void CalcHeight(player_t* player)
 //
 //==========================================================================
 
-void MovePlayer(player_t* player)
+void MovePlayer(player_t * player)
 {
-	float		forward;
-	float		side;
+	float forward;
+	float side;
 
-    // Do not let the player control movement
-    //  if not onground.
+	// Do not let the player control movement
+	//  if not onground.
 	onground = player->mo->origin.z <= player->mo->floorz ||
-				(player->mo->flags2 & MF2_ONMOBJ);
+		(player->mo->flags2 & MF2_ONMOBJ);
 
 	forward = player->forwardmove * 5.0;
 	side = player->sidemove * 5.0;
@@ -160,14 +161,14 @@ void MovePlayer(player_t* player)
 		ThrustPlayer(player, player->mo->angles.yaw - ANG90, side);
 	}
 
-    if (forward || side)
-    {
+	if (forward || side)
+	{
 		SetPlayerRunState(player);
 	}
 
 	if ((player->buttons & BT_JUMP) && onground && !player->jumpTics)
 	{
-       	//	Jump
+		//  Jump
 		player->mo->velocity.z = 9.0 * 35.0;
 		player->jumpTics = 18;
 	}
@@ -175,15 +176,15 @@ void MovePlayer(player_t* player)
 
 //==========================================================================
 //
-//	CheckWaterJump
+//  CheckWaterJump
 //
 //==========================================================================
 
-void CheckWaterJump(player_t *player)
+void CheckWaterJump(player_t * player)
 {
-	TVec	start;
-	TVec	end;
-	TVec	vforward;
+	TVec start;
+	TVec end;
+	TVec vforward;
 
 	// check for a jump-out-of-water
 	AngleVector(&player->mo->angles, &vforward);
@@ -214,19 +215,19 @@ void CheckWaterJump(player_t *player)
 //
 //==========================================================================
 
-void WaterMove(player_t* player)
+void WaterMove(player_t * player)
 {
-	float		forward;
-	float		side;
-	TVec		vforward;
-	TVec		vright;
-	TVec		vup;
-	TVec		wishvel;
+	float forward;
+	float side;
+	TVec vforward;
+	TVec vright;
+	TVec vup;
+	TVec wishvel;
 
-    // Do not let the player control movement
-    //  if not onground.
+	// Do not let the player control movement
+	//  if not onground.
 	onground = player->mo->origin.z <= player->mo->floorz ||
-				(player->mo->flags2 & MF2_ONMOBJ);
+		(player->mo->flags2 & MF2_ONMOBJ);
 
 	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
 
@@ -234,15 +235,15 @@ void WaterMove(player_t* player)
 	side = player->sidemove;
 
 	wishvel = forward * vforward + side * vright;
-	if (!forward && !side/* && !cmd.upmove*/)
-		wishvel.z -= 60.0;		// drift towards bottom
-//	else
-//		wishvel.z += cmd.upmove;
+	if (!forward && !side /* && !cmd.upmove */ )
+		wishvel.z -= 60.0;	// drift towards bottom
+//  else
+//      wishvel.z += cmd.upmove;
 
 	player->mo->velocity += 3.5 * frametime * wishvel;
 
-    if (forward || side)
-    {
+	if (forward || side)
+	{
 		SetPlayerRunState(player);
 	}
 
@@ -261,11 +262,11 @@ void WaterMove(player_t* player)
 
 //==========================================================================
 //
-//	WaterJump
+//  WaterJump
 //
 //==========================================================================
 
-void WaterJump(player_t *player)
+void WaterJump(player_t * player)
 {
 	if (!player->mo->reactiontime || !player->mo->waterlevel)
 	{
@@ -280,18 +281,18 @@ void WaterJump(player_t *player)
 //
 //  PlayerInSpecialSector
 //
-//	Called every tic frame that the player origin is in a special sector
+//  Called every tic frame that the player origin is in a special sector
 //
 //==========================================================================
 
-void PlayerInSpecialSector(player_t* player)
+void PlayerInSpecialSector(player_t * player)
 {
-    sector_t*	sector;
-	
-    sector = player->mo->subsector->sector;
+	sector_t *sector;
 
-    // Falling, not all the way down yet?
-    if (player->mo->origin.z != sector->floorheight)
+	sector = player->mo->subsector->sector;
+
+	// Falling, not all the way down yet?
+	if (player->mo->origin.z != sector->floorheight)
 		return;
 
 	if (sector->special & SECRET_MASK)
@@ -302,57 +303,57 @@ void PlayerInSpecialSector(player_t* player)
 		sector->special &= ~SECRET_MASK;
 	}
 
-    // Has hitten ground.
+	// Has hitten ground.
 	switch (sector->special)
 	{
-      case 64+5:
+	case 64 + 5:
 		// HELLSLIME DAMAGE
 		if (!player->powers[pw_ironfeet])
-		    if (!(level->tictime & 0x1f))
+			if (!(level->tictime & 0x1f))
 				DamageMobj(player->mo, NULL, NULL, 10);
 		break;
-	
-      case 64+7:
+
+	case 64 + 7:
 		// NUKAGE DAMAGE
 		if (!player->powers[pw_ironfeet])
-		    if (!(level->tictime & 0x1f))
+			if (!(level->tictime & 0x1f))
 				DamageMobj(player->mo, NULL, NULL, 5);
 		break;
-	
-      case 64+16:
+
+	case 64 + 16:
 		// SUPER HELLSLIME DAMAGE
-      case 64+4:
+	case 64 + 4:
 		// STROBE HURT
-		if (!player->powers[pw_ironfeet] || (P_Random()<5))
+		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
-		    if (!(level->tictime & 0x1f))
+			if (!(level->tictime & 0x1f))
 				DamageMobj(player->mo, NULL, NULL, 20);
 		}
 		break;
-			
-      case 64+11:
+
+	case 64 + 11:
 		// EXIT SUPER DAMAGE! (for E1M8 finale)
 		player->cheats &= ~CF_GODMODE;
 
 		if (!(level->tictime & 0x1f))
-		    DamageMobj(player->mo, NULL, NULL, 20);
+			DamageMobj(player->mo, NULL, NULL, 20);
 
 		if (player->health <= 10)
-		    G_ExitLevel();
+			G_ExitLevel();
 		break;
-			
-      default:
+
+	default:
 		break;
-     };
+	};
 }
 
 //==========================================================================
 //
-//	PlayerInContents
+//  PlayerInContents
 //
 //==========================================================================
 
-void PlayerInContents(player_t *player)
+void PlayerInContents(player_t * player)
 {
 	if (!player->mo->waterlevel)
 	{
@@ -360,21 +361,21 @@ void PlayerInContents(player_t *player)
 	}
 	switch (player->mo->watertype)
 	{
-	 case CONTENTS_NUKAGE:
+	case CONTENTS_NUKAGE:
 		// NUKAGE DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
 				DamageMobj(player->mo, NULL, NULL, 5);
 		break;
 
-	 case CONTENTS_SLIME:
+	case CONTENTS_SLIME:
 		// HELLSLIME DAMAGE
 		if (!player->powers[pw_ironfeet])
 			if (!(level->tictime & 0x1f))
 				DamageMobj(player->mo, NULL, NULL, 10);
 		break;
 
-	 case CONTENTS_LAVA:
+	case CONTENTS_LAVA:
 		// SUPER HELLSLIME DAMAGE
 		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
 		{
@@ -387,214 +388,213 @@ void PlayerInContents(player_t *player)
 
 //==========================================================================
 //
-// 	DeathPlayerThink
+//  DeathPlayerThink
 //
-// 	Fall on your face when dying. Decrease POV height to floor height.
+//  Fall on your face when dying. Decrease POV height to floor height.
 //
 //==========================================================================
 
-void DeathPlayerThink(player_t* player)
+void DeathPlayerThink(player_t * player)
 {
-    angle_t		angle;
-    angle_t		delta;
+	angle_t angle;
+	angle_t delta;
 
-    MovePsprites(player);
-	
+	MovePsprites(player);
+
 	onground = player->mo->origin.z <= player->mo->floorz ||
-				(player->mo->flags2 & MF2_ONMOBJ);
+		(player->mo->flags2 & MF2_ONMOBJ);
 
 	if (player->mo->waterlevel > 1)
 	{
 		player->mo->velocity.z = -60.0;	// drift towards bottom
 	}
 
-    // fall to the ground
-    if (player->viewheight > 6.0)
+	// fall to the ground
+	if (player->viewheight > 6.0)
 		player->viewheight -= 1.0;
 
-    if (player->viewheight < 6.0)
+	if (player->viewheight < 6.0)
 		player->viewheight = 6.0;
 
-    player->deltaviewheight = 0.0;
-    CalcHeight(player);
-	
-    if (player->attacker && player->attacker != player->mo)
-    {
+	player->deltaviewheight = 0.0;
+	CalcHeight(player);
+
+	if (player->attacker && player->attacker != player->mo)
+	{
 		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
-					  player->attacker->origin.x - player->mo->origin.x);
-	
+			player->attacker->origin.x - player->mo->origin.x);
+
 		delta = angle - player->mo->angles.yaw;
-	
+
 		if (delta < ANG5 || delta > -ANG5)
 		{
-		    // Looking at killer,
-	    	//  so fade damage flash down.
-		    player->mo->angles.yaw = angle;
+			// Looking at killer,
+			//  so fade damage flash down.
+			player->mo->angles.yaw = angle;
 
-		    if (player->damagecount)
+			if (player->damagecount)
 				player->damagecount--;
 		}
 		else if (delta < ANG180)
-		    player->mo->angles.yaw += ANG5;
+			player->mo->angles.yaw += ANG5;
 		else
-		    player->mo->angles.yaw -= ANG5;
-    }
-    else if (player->damagecount)
+			player->mo->angles.yaw -= ANG5;
+	}
+	else if (player->damagecount)
 		player->damagecount--;
-	
 
-    if (player->buttons & BT_USE)
+	if (player->buttons & BT_USE)
 		player->playerstate = PST_REBORN;
 }
 
 //==========================================================================
 //
-//	PlayerImpulse
+//  PlayerImpulse
 //
 //==========================================================================
 
-void PlayerImpulse(player_t *player)
+void PlayerImpulse(player_t * player)
 {
-	int		impulse;
+	int impulse;
 
 	impulse = player->impulse;
 	player->impulse = 0;
 
-    if (impulse <= 7)
-    {
+	if (impulse <= 7)
+	{
 		ChangeWeapon(player, impulse - 1);
 	}
-    else if (impulse == 16)
-    {
-		//	Suicide
+	else if (impulse == 16)
+	{
+		//  Suicide
 		DamageMobj(player->mo, NULL, NULL, 10000);
-    }
+	}
 }
 
 //==========================================================================
 //
-// 	PlayerThink
+//  PlayerThink
 //
 //==========================================================================
 
-void PlayerThink(player_t* player)
+void PlayerThink(player_t * player)
 {
-    // fixme: do this in the cheat code
-    if (player->cheats & CF_NOCLIP)
+	// fixme: do this in the cheat code
+	if (player->cheats & CF_NOCLIP)
 		player->mo->flags |= MF_NOCLIP;
-    else
+	else
 		player->mo->flags &= ~MF_NOCLIP;
-    
-    if (player->mo->flags & MF_JUSTATTACKED)
-    {
+
+	if (player->mo->flags & MF_JUSTATTACKED)
+	{
 		player->forwardmove = 100.0;
 		player->sidemove = 0.0;
 		player->mo->flags &= ~MF_JUSTATTACKED;
-    }
+	}
 
-    if (player->playerstate == PST_DEAD)
-    {
+	if (player->playerstate == PST_DEAD)
+	{
 		DeathPlayerThink(player);
 		return;
-    }
-    
+	}
+
 	if (player->jumpTics)
 	{
 		player->jumpTics--;
 	}
 
-    // Move around.
-    // Reactiontime is used to prevent movement
-    //  for a bit after a teleport.
-    if (player->mo->reactiontime)
+	// Move around.
+	// Reactiontime is used to prevent movement
+	//  for a bit after a teleport.
+	if (player->mo->reactiontime)
 	{
 		player->mo->reactiontime--;
 		if (player->mo->flags & MF_WATERJUMP)
 			WaterJump(player);
 	}
-    else
+	else
 	{
 		if (player->mo->waterlevel > 1)
 			WaterMove(player);
 		else
 			MovePlayer(player);
 	}
-    
-    CalcHeight(player);
 
-    if (player->mo->subsector->sector->special)
+	CalcHeight(player);
+
+	if (player->mo->subsector->sector->special)
 		PlayerInSpecialSector(player);
 	PlayerInContents(player);
 
-    // Check for weapon change.
-    if (player->impulse)
-    {
+	// Check for weapon change.
+	if (player->impulse)
+	{
 		PlayerImpulse(player);
 	}
 
-    // check for use
-    if (player->buttons & BT_USE)
-    {
+	// check for use
+	if (player->buttons & BT_USE)
+	{
 		if (!player->usedown)
 		{
-		    P_UseLines(player);
-		    player->usedown = true;
+			P_UseLines(player);
+			player->usedown = true;
 		}
-    }
-    else
+	}
+	else
 	{
 		player->usedown = false;
 	}
 
-    //	cycle psprites
-    MovePsprites(player);
-    
-    //	Counters, time dependend power ups.
+	//  cycle psprites
+	MovePsprites(player);
 
-    //	Strength counts up to diminish fade.
-    if (player->powers[pw_strength])
+	//  Counters, time dependend power ups.
+
+	//  Strength counts up to diminish fade.
+	if (player->powers[pw_strength])
 		player->powers[pw_strength]++;
-		
-    if (player->powers[pw_invulnerability])
+
+	if (player->powers[pw_invulnerability])
 		player->powers[pw_invulnerability]--;
 
-    if (player->powers[pw_invisibility])
-		if (! --player->powers[pw_invisibility])
-		    player->mo->translucency = 0;
-			
-    if (player->powers[pw_infrared])
+	if (player->powers[pw_invisibility])
+		if (!--player->powers[pw_invisibility])
+			player->mo->translucency = 0;
+
+	if (player->powers[pw_infrared])
 		player->powers[pw_infrared]--;
-		
-    if (player->powers[pw_ironfeet])
+
+	if (player->powers[pw_ironfeet])
 		player->powers[pw_ironfeet]--;
 
-    if (player->damagecount)
+	if (player->damagecount)
 		player->damagecount--;
-		
-    if (player->bonuscount)
+
+	if (player->bonuscount)
 		player->bonuscount--;
 
-    // Handling colormaps.
-    if (player->powers[pw_invulnerability])
-    {
+	// Handling colormaps.
+	if (player->powers[pw_invulnerability])
+	{
 		if (player->powers[pw_invulnerability] > 4 * 32
-			    || (player->powers[pw_invulnerability] & 8) )
-		    player->fixedcolormap = INVERSECOLORMAP;
+			|| (player->powers[pw_invulnerability] & 8))
+			player->fixedcolormap = INVERSECOLORMAP;
 		else
-		    player->fixedcolormap = 0;
-    }
-    else if (player->powers[pw_infrared])
-    {
+			player->fixedcolormap = 0;
+	}
+	else if (player->powers[pw_infrared])
+	{
 		if (player->powers[pw_infrared] > 4 * 32
-		    || (player->powers[pw_infrared] & 8))
+			|| (player->powers[pw_infrared] & 8))
 		{
-		    // almost full bright
-		    player->fixedcolormap = 1;
+			// almost full bright
+			player->fixedcolormap = 1;
 		}
 		else
-		    player->fixedcolormap = 0;
-    }
-    else
+			player->fixedcolormap = 0;
+	}
+	else
 		player->fixedcolormap = 0;
 }
 
@@ -602,188 +602,188 @@ void PlayerThink(player_t* player)
 //
 //  SB_PaletteFlash
 //
-//	Do red-/gold-shifts from damage/items
+//  Do red-/gold-shifts from damage/items
 //
 //==========================================================================
 
-void SB_PaletteFlash(player_t *player)
+void SB_PaletteFlash(player_t * player)
 {
-    int		cnt;
-    int		bzc;
+	int cnt;
+	int bzc;
 
 	player->cshifts[CSHIFT_CONTENTS] = 0;
 	if (player->mo->waterlevel == 3)
 	{
 		switch (player->mo->watertype)
 		{
-		 case CONTENTS_WATER:
- 			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+		case CONTENTS_WATER:
+			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
 			break;
 
-		 case CONTENTS_BLOOD:
- 			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+		case CONTENTS_BLOOD:
+			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
 			break;
 
-		 case CONTENTS_NUKAGE:
- 			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+		case CONTENTS_NUKAGE:
+			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
 			break;
 
-		 case CONTENTS_SLIME:
- 			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+		case CONTENTS_SLIME:
+			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
 			break;
 
-		 case CONTENTS_LAVA:
- 			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+		case CONTENTS_LAVA:
+			player->cshifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
 			break;
 		}
 	}
 
-    cnt = player->damagecount;
+	cnt = player->damagecount;
 
-    if (player->powers[pw_strength])
-    {
+	if (player->powers[pw_strength])
+	{
 		// slowly fade the berzerk out
-  		bzc = 12 - (player->powers[pw_strength] >> 6);
+		bzc = 12 - (player->powers[pw_strength] >> 6);
 
 		if (bzc > cnt)
-	    	cnt = bzc;
-    }
-	
-    if (cnt)
-    {
+			cnt = bzc;
+	}
+
+	if (cnt)
+	{
 		player->palette = (cnt + 7) >> 3;
-	
+
 		if (player->palette >= NUMREDPALS)
-	    	player->palette = NUMREDPALS - 1;
+			player->palette = NUMREDPALS - 1;
 
 		player->palette += STARTREDPALS;
-    }
-    else if (player->bonuscount)
-    {
+	}
+	else if (player->bonuscount)
+	{
 		player->palette = (player->bonuscount + 7) >> 3;
 
 		if (player->palette >= NUMBONUSPALS)
-	    	player->palette = NUMBONUSPALS - 1;
+			player->palette = NUMBONUSPALS - 1;
 
 		player->palette += STARTBONUSPALS;
-    }
-    else if (player->powers[pw_ironfeet] > 4 * 32
-	      || player->powers[pw_ironfeet] & 8)
+	}
+	else if (player->powers[pw_ironfeet] > 4 * 32
+		|| player->powers[pw_ironfeet] & 8)
 		player->palette = RADIATIONPAL;
-    else
+	else
 		player->palette = 0;
 }
 
 //==========================================================================
 //
-//	SetViewPos
+//  SetViewPos
 //
 //==========================================================================
 
-void SetViewPos(player_t *player)
+void SetViewPos(player_t * player)
 {
 	player->vieworg.x = player->mo->origin.x;
 	player->vieworg.y = player->mo->origin.y;
 	SB_PaletteFlash(player);
 
-    if (player->w_ammo == am_noammo)
-		player->ready_ammo = 1994; // means "n/a"
-    else
+	if (player->w_ammo == am_noammo)
+		player->ready_ammo = 1994;	// means "n/a"
+	else
 		player->ready_ammo = player->ammo[player->w_ammo];
 }
 
 //==========================================================================
 //
-//	G_PlayerReborn
+//  G_PlayerReborn
 //
-//	Called after a player dies almost everything is cleared and initialized
+//  Called after a player dies almost everything is cleared and initialized
 //
 //==========================================================================
 
 void G_PlayerReborn(int player)
 {
-    player_t*	p; 
-	 
-    p = &players[player];
+	player_t *p;
 
-	//	Clear player struct
-    ClearPlayer(p);
+	p = &players[player];
 
-	//	Set initial data
-    p->usedown = p->attackdown = true;	// don't do anything immediately 
-    p->playerstate = PST_LIVE;       
-    p->health = INITIAL_HEALTH;
-    p->readyweapon = p->pendingweapon = wp_pistol;
+	//  Clear player struct
+	ClearPlayer(p);
+
+	//  Set initial data
+	p->usedown = p->attackdown = true;	// don't do anything immediately 
+	p->playerstate = PST_LIVE;
+	p->health = INITIAL_HEALTH;
+	p->readyweapon = p->pendingweapon = wp_pistol;
 	set_weapon_pistol(p);
-    p->weaponowned[wp_fist] = true; 
-    p->weaponowned[wp_pistol] = true; 
-    p->ammo[am_clip] = INITIAL_AMMO;
+	p->weaponowned[wp_fist] = true;
+	p->weaponowned[wp_pistol] = true;
+	p->ammo[am_clip] = INITIAL_AMMO;
 }
 
 //==========================================================================
 //
 //  G_PlayerExitMap
 //
-//	Call when a player completes a level.
+//  Call when a player completes a level.
 //
 //==========================================================================
 
 void G_PlayerExitMap(int player, boolean clusterChange)
-{ 
-    player_t*	p;
-	int			i;
-	 
-    p = &players[player]; 
+{
+	player_t *p;
+	int i;
+
+	p = &players[player];
 
 	if (clusterChange)
 	{
-	    p->keys = 0;
+		p->keys = 0;
 	}
 
 	for (i = 0; i < NUMPOWERS; i++)
-    {
-	    p->powers[i] = 0;
+	{
+		p->powers[i] = 0;
 	}
 	p->mo->angles.pitch = 0;
-    p->mo->translucency = 0;	// cancel invisibility
-    p->extralight = 0;			// cancel gun flashes 
-    p->fixedcolormap = 0;		// cancel ir gogles 
-    p->damagecount = 0;			// no palette changes 
-    p->bonuscount = 0; 
+	p->mo->translucency = 0;	// cancel invisibility
+	p->extralight = 0;	// cancel gun flashes 
+	p->fixedcolormap = 0;	// cancel ir gogles 
+	p->damagecount = 0;	// no palette changes 
+	p->bonuscount = 0;
 }
 
 //==========================================================================
 //
-//	G_DeathMatchSpawnPlayer
+//  G_DeathMatchSpawnPlayer
 //
-//	Spawns a player at one of the random death match spots called at level
+//  Spawns a player at one of the random death match spots called at level
 // load and each death
 //
 //==========================================================================
 
 void G_DeathMatchSpawnPlayer(int playernum)
-{ 
-    int             i;
-    int				j;
-	 
+{
+	int i;
+	int j;
+
 	// This check has been moved to p_setup.c:P_LoadThings()
-//	if (selections < 4)
-//		I_Error("Only %i deathmatch spots, 4 required", selections);
- 
-    for (j=0 ; j<20 ; j++) 
-    { 
+//  if (selections < 4)
+//      I_Error("Only %i deathmatch spots, 4 required", selections);
+
+	for (j = 0; j < 20; j++)
+	{
 		i = P_Random() % level->numdeathmatchstarts;
 		if (G_CheckSpot(playernum, &level->deathmatchstarts[i]))
 		{
-	    	level->deathmatchstarts[i].type = playernum + 1;
-	    	P_SpawnPlayer(&level->deathmatchstarts[i]);
-	    	return;
+			level->deathmatchstarts[i].type = playernum + 1;
+			P_SpawnPlayer(&level->deathmatchstarts[i]);
+			return;
 		}
-    } 
- 
-    // no good spot, so the player will probably get stuck 
-    P_SpawnPlayer(&level->playerstarts[playernum]);
-} 
+	}
+
+	// no good spot, so the player will probably get stuck 
+	P_SpawnPlayer(&level->playerstarts[playernum]);
+}
 
 //==========================================================================
 //
@@ -793,7 +793,7 @@ void G_DeathMatchSpawnPlayer(int playernum)
 
 void NetGameReborn(int playernum)
 {
-    int			i;
+	int i;
 
 	// respawn at the start
 
@@ -803,45 +803,51 @@ void NetGameReborn(int playernum)
 
 	// first dissasociate the corpse
 	players[playernum].mo->player = NULL;
-		 
+
 	// spawn at random spot if in death match
 	if (deathmatch)
 	{
-    	G_DeathMatchSpawnPlayer(playernum);
-    	return;
+		G_DeathMatchSpawnPlayer(playernum);
+		return;
 	}
-		 
-	if (G_CheckSpot(playernum, &level->playerstarts[RebornPosition * MAXPLAYERS + playernum]))
+
+	if (G_CheckSpot(playernum,
+			&level->playerstarts[RebornPosition * MAXPLAYERS + playernum]))
 	{
-    	P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + playernum]);
-    	return;
+		P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+				playernum]);
+		return;
 	}
-	
+
 	// try to spawn at one of the other players spots
-	for (i=0 ; i<MAXPLAYERS ; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-    	if (G_CheckSpot(playernum, &level->playerstarts[RebornPosition * MAXPLAYERS + i]))
-    	{
-			level->playerstarts[RebornPosition * MAXPLAYERS + i].type = playernum + 1;// fake as other player
-			P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + i]);
-			level->playerstarts[RebornPosition * MAXPLAYERS + i].type = i + 1;		// restore
+		if (G_CheckSpot(playernum,
+				&level->playerstarts[RebornPosition * MAXPLAYERS + i]))
+		{
+			level->playerstarts[RebornPosition * MAXPLAYERS + i].type =
+				playernum + 1;	// fake as other player
+			P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+					i]);
+			level->playerstarts[RebornPosition * MAXPLAYERS + i].type = i + 1;	// restore
 			return;
-       	}
-    	// he's going to be inside something.  Too bad.
+		}
+		// he's going to be inside something.  Too bad.
 	}
-	P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + playernum]);
+	P_SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+			playernum]);
 }
 
 //==========================================================================
 //
-//	SpawnClient
+//  SpawnClient
 //
 //==========================================================================
 
 void SpawnClient(int i)
 {
-   	if (deathmatch)
-   	{
+	if (deathmatch)
+	{
 		G_DeathMatchSpawnPlayer(i);
 	}
 	else
@@ -852,28 +858,28 @@ void SpawnClient(int i)
 
 //==========================================================================
 //
-//	DisconnectClient
+//  DisconnectClient
 //
 //==========================================================================
 
-void DisconnectClient(player_t *player)
+void DisconnectClient(player_t * player)
 {
 	if (player->mo)
 	{
 		player->mo->player = NULL;
 		DamageMobj(player->mo, NULL, NULL, 10000);
 	}
-   	bprint("%s left the game\n", ARR2STR(player->name));
+	bprint("%s left the game\n", ARR2STR(player->name));
 	StartSoundName(NULL, "Chat", CHAN_AUTO);
 }
 
 //==========================================================================
 //
-//	UserinfoChanged
+//  UserinfoChanged
 //
 //==========================================================================
 
-void UserinfoChanged(player_t *player)
+void UserinfoChanged(player_t * player)
 {
 	if (!player->spawned)
 	{
@@ -884,14 +890,17 @@ void UserinfoChanged(player_t *player)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:09  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/15 17:06:38  dj_jl
-//	Fixed death model angles
-//	
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.3  2001/08/15 17:06:38  dj_jl
+//  Fixed death model angles
+//  
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

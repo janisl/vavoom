@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Mouse menu
+//**    Mouse menu
 //**
 //**************************************************************************
 
@@ -35,14 +35,14 @@
 
 struct menu_mouse_t
 {
-	menu_t			menu;
-	menuslider_t	xsens;
-	menuslider_t	ysens;
-	menuswitch_t	mlook;
-	menuswitch_t	invert;
-	menuswitch_t	lspring;
-	menuswitch_t	lstrafe;
-	menutext_t		title;
+	menu_t menu;
+	menuslider_t xsens;
+	menuslider_t ysens;
+	menuswitch_t mlook;
+	menuswitch_t invert;
+	menuswitch_t lspring;
+	menuswitch_t lstrafe;
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -55,11 +55,11 @@ menu_mouse_t MouseMenu;
 
 //==========================================================================
 //
-//	mouse_func
+//  mouse_func
 //
 //==========================================================================
 
-void mouse_func(menucommon_t *item, int msg)
+void mouse_func(menucommon_t * item, int msg)
 {
 	if (msg != MMSG_ACTIVATE)
 	{
@@ -68,27 +68,27 @@ void mouse_func(menucommon_t *item, int msg)
 
 	switch (item->id)
 	{
-	 case 1:
+	case 1:
 		SetCvarF("mouse_x_sensitivity", itof(MouseMenu.xsens.value) / 4.0);
 		break;
 
-	 case 2:
+	case 2:
 		SetCvarF("mouse_y_sensitivity", itof(MouseMenu.ysens.value) / 4.0);
 		break;
 
-	 case 3:
+	case 3:
 		SetCvar("mouse_look", MouseMenu.mlook.value);
 		break;
 
-	 case 4:
+	case 4:
 		SetCvar("invert_mouse", MouseMenu.invert.value);
 		break;
 
-	 case 5:
+	case 5:
 		SetCvar("lookspring", MouseMenu.lspring.value);
 		break;
 
-	 case 6:
+	case 6:
 		SetCvar("lookstrafe", MouseMenu.lstrafe.value);
 		break;
 	}
@@ -99,39 +99,45 @@ void menu_mouse(void)
 	int x = 160;
 	int y = 32;
 
-    InitMenu(&MouseMenu.menu);
+	InitMenu(&MouseMenu.menu);
 
-	MenuSlider_Init(&MouseMenu.xsens, x, y, "Mouse X sensitivity", TEXT_SMALLR, ftoi(GetCvarF("mouse_x_sensitivity") * 4.0), 41);
+	MenuSlider_Init(&MouseMenu.xsens, x, y, "Mouse X sensitivity",
+		TEXT_SMALLR, ftoi(GetCvarF("mouse_x_sensitivity") * 4.0), 41);
 	MouseMenu.xsens.callback = mouse_func;
 	MouseMenu.xsens.id = 1;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.xsens);
 	y += 20;
 
-	MenuSlider_Init(&MouseMenu.ysens, x, y, "Mouse Y sensitivity", TEXT_SMALLR, ftoi(GetCvarF("mouse_y_sensitivity") * 4.0), 41);
+	MenuSlider_Init(&MouseMenu.ysens, x, y, "Mouse Y sensitivity",
+		TEXT_SMALLR, ftoi(GetCvarF("mouse_y_sensitivity") * 4.0), 41);
 	MouseMenu.ysens.callback = mouse_func;
 	MouseMenu.ysens.id = 2;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.ysens);
 	y += 20;
 
-	MenuSwitch_Init(&MouseMenu.mlook, x, y, "Mouse look", TEXT_SMALLR, GetCvar("mouse_look"), 2, &sw_offon[0]);
+	MenuSwitch_Init(&MouseMenu.mlook, x, y, "Mouse look", TEXT_SMALLR,
+		GetCvar("mouse_look"), 2, &sw_offon[0]);
 	MouseMenu.mlook.callback = mouse_func;
 	MouseMenu.mlook.id = 3;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.mlook);
 	y += 10;
 
-	MenuSwitch_Init(&MouseMenu.invert, x, y, "Invert mouse", TEXT_SMALLR, GetCvar("invert_mouse"), 2, &sw_offon[0]);
+	MenuSwitch_Init(&MouseMenu.invert, x, y, "Invert mouse", TEXT_SMALLR,
+		GetCvar("invert_mouse"), 2, &sw_offon[0]);
 	MouseMenu.invert.callback = mouse_func;
 	MouseMenu.invert.id = 4;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.invert);
 	y += 10;
 
-	MenuSwitch_Init(&MouseMenu.lspring, x, y, "Look spring", TEXT_SMALLR, GetCvar("lookspring"), 2, &sw_offon[0]);
+	MenuSwitch_Init(&MouseMenu.lspring, x, y, "Look spring", TEXT_SMALLR,
+		GetCvar("lookspring"), 2, &sw_offon[0]);
 	MouseMenu.lspring.id = 5;
 	MouseMenu.lspring.callback = mouse_func;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.lspring);
 	y += 10;
 
-	MenuSwitch_Init(&MouseMenu.lstrafe, x, y, "Look strafe", TEXT_SMALLR, GetCvar("lookstrafe"), 2, &sw_offon[0]);
+	MenuSwitch_Init(&MouseMenu.lstrafe, x, y, "Look strafe", TEXT_SMALLR,
+		GetCvar("lookstrafe"), 2, &sw_offon[0]);
 	MouseMenu.lstrafe.callback = mouse_func;
 	MouseMenu.lstrafe.id = 6;
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.lstrafe);
@@ -140,16 +146,19 @@ void menu_mouse(void)
 	MenuText_InitTitle(&MouseMenu.title, 160, 24, "MOUSE OPTIONS", TEXT_BIGC);
 	AddMenuItem(&MouseMenu.menu, &MouseMenu.title);
 
-    PushMenu(&MouseMenu.menu);
+	PushMenu(&MouseMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

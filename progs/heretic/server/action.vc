@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,15 +25,15 @@
 
 //==========================================================================
 //
-//	A_RestoreSpecialThing1
+//  A_RestoreSpecialThing1
 //
-//	Make a special thing visible again.
+//  Make a special thing visible again.
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(mobj_t* thing)
+void A_RestoreSpecialThing1(mobj_t * thing)
 {
-	if(thing->type == MT_WMACE)
+	if (thing->type == MT_WMACE)
 	{
 		// Do random mace placement
 		RepositionMace(thing);
@@ -44,11 +44,11 @@ void A_RestoreSpecialThing1(mobj_t* thing)
 
 //==========================================================================
 //
-//	A_RestoreSpecialThing2
+//  A_RestoreSpecialThing2
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(mobj_t* thing)
+void A_RestoreSpecialThing2(mobj_t * thing)
 {
 	thing->flags |= MF_SPECIAL;
 	SetMobjState(thing, thing->spawnstate);
@@ -56,33 +56,33 @@ void A_RestoreSpecialThing2(mobj_t* thing)
 
 //==========================================================================
 //
-//	A_HideThing
+//  A_HideThing
 //
 //==========================================================================
 
-void A_HideThing(mobj_t* actor)
+void A_HideThing(mobj_t * actor)
 {
 	actor->translucency += 100;
 }
 
 //==========================================================================
 //
-//	A_UnHideThing
+//  A_UnHideThing
 //
 //==========================================================================
 
-void A_UnHideThing(mobj_t* actor)
+void A_UnHideThing(mobj_t * actor)
 {
 	actor->translucency -= 100;
 }
 
 //==========================================================================
 //
-//	A_RestoreArtifact
+//  A_RestoreArtifact
 //
 //==========================================================================
 
-void A_RestoreArtifact(mobj_t* arti)
+void A_RestoreArtifact(mobj_t * arti)
 {
 	arti->flags |= MF_SPECIAL;
 	SetMobjState(arti, arti->spawnstate);
@@ -91,28 +91,28 @@ void A_RestoreArtifact(mobj_t* arti)
 
 //==========================================================================
 //
-//	A_InitKeyGizmo
+//  A_InitKeyGizmo
 //
 //==========================================================================
 
-void A_InitKeyGizmo(mobj_t* gizmo)
+void A_InitKeyGizmo(mobj_t * gizmo)
 {
-	mobj_t*	mo;
-	int		state;
+	mobj_t *mo;
+	int state;
 
 	switch (gizmo->type)
 	{
-		case MT_KEYGIZMOBLUE:
-			state = S_KGZ_BLUEFLOAT1;
-			break;
-		case MT_KEYGIZMOGREEN:
-			state = S_KGZ_GREENFLOAT1;
-			break;
-		case MT_KEYGIZMOYELLOW:
-			state = S_KGZ_YELLOWFLOAT1;
-			break;
-		default:
-			break;
+	case MT_KEYGIZMOBLUE:
+		state = S_KGZ_BLUEFLOAT1;
+		break;
+	case MT_KEYGIZMOGREEN:
+		state = S_KGZ_GREENFLOAT1;
+		break;
+	case MT_KEYGIZMOYELLOW:
+		state = S_KGZ_YELLOWFLOAT1;
+		break;
+	default:
+		break;
 	}
 	mo = P_SpawnMobj(gizmo->origin.x, gizmo->origin.y, gizmo->origin.z + 60.0,
 		MT_KEYGIZMOFLOAT);
@@ -121,33 +121,36 @@ void A_InitKeyGizmo(mobj_t* gizmo)
 
 //==========================================================================
 //
-//	A_ESound
+//  A_ESound
 //
 //==========================================================================
 
-void A_ESound(mobj_t* mo)
+void A_ESound(mobj_t * mo)
 {
-	string 	sound = "";
+	string sound = "";
 
 	switch (mo->type)
 	{
-		case MT_SOUNDWATERFALL:
-			sound = "Waterfall";
-			break;
-		case MT_SOUNDWIND:
-			sound = "Wind";
-			break;
+	case MT_SOUNDWATERFALL:
+		sound = "Waterfall";
+		break;
+	case MT_SOUNDWIND:
+		sound = "Wind";
+		break;
 	}
 	StartSoundName(mo, sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

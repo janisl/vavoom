@@ -1,33 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
-//**	Join net game menu
+//**    Join net game menu
 //**
 //**************************************************************************
 
@@ -39,10 +35,10 @@
 
 struct menu_join_game_t
 {
-	menu_t			menu;
-	menutext_t		search;
-	menuinputline_t	joinat;
-	menutext_t		title;
+	menu_t menu;
+	menutext_t search;
+	menuinputline_t joinat;
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -57,13 +53,13 @@ menu_join_game_t JoinGameMenu;
 
 //==========================================================================
 //
-//	join_at_func
+//  join_at_func
 //
 //==========================================================================
 
-void join_at_func(menucommon_t *aitem, int msg)
+void join_at_func(menucommon_t * aitem, int msg)
 {
-   	if (msg == MMSG_ACTIVATE && JoinGameMenu.joinat.value[0])
+	if (msg == MMSG_ACTIVATE && JoinGameMenu.joinat.value[0])
 	{
 		CmdBuf_AddText("Connect %s\n", ARR2STR(JoinGameMenu.joinat.value));
 	}
@@ -71,7 +67,7 @@ void join_at_func(menucommon_t *aitem, int msg)
 
 //==========================================================================
 //
-//	menu_join_game
+//  menu_join_game
 //
 //==========================================================================
 
@@ -80,13 +76,15 @@ void menu_join_game(void)
 	int x = 64;
 	int y = 40;
 
-    InitMenu(&JoinGameMenu.menu);
+	InitMenu(&JoinGameMenu.menu);
 
-	MenuText_InitFunc(&JoinGameMenu.search, x, y, "Search for games...", TEXT_SMALLL, menu_search);
+	MenuText_InitFunc(&JoinGameMenu.search, x, y, "Search for games...",
+		TEXT_SMALLL, menu_search);
 	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.search);
 	y += 10;
 
-	MenuInputLine_Init(&JoinGameMenu.joinat, x, y, "Join Game At", TEXT_SMALLL, 0);
+	MenuInputLine_Init(&JoinGameMenu.joinat, x, y, "Join Game At",
+		TEXT_SMALLL, 0);
 	JoinGameMenu.joinat.callback = join_at_func;
 	JoinGameMenu.joinat.value[0] = 0;
 	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.joinat);
@@ -94,21 +92,21 @@ void menu_join_game(void)
 	MenuText_InitTitle(&JoinGameMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
 	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.title);
 
-    PushMenu(&JoinGameMenu.menu);
+	PushMenu(&JoinGameMenu.menu);
 }
 
 struct SlistMenu_t
 {
-	menu_t		menu;
-	menuslist_t	list;
-	menutext_t	title;
+	menu_t menu;
+	menuslist_t list;
+	menutext_t title;
 };
 
 SlistMenu_t SlistMenu;
 
 void menu_search(void)
 {
-    InitMenu(&SlistMenu.menu);
+	InitMenu(&SlistMenu.menu);
 
 	StartSearch();
 
@@ -118,7 +116,16 @@ void menu_search(void)
 	MenuText_InitTitle(&SlistMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
 	AddMenuItem(&SlistMenu.menu, &SlistMenu.title);
 
-    PushMenu(&SlistMenu.menu);
+	PushMenu(&SlistMenu.menu);
 }
 
-
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:10  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

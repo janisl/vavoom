@@ -1,34 +1,34 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 
-int opposite[] =
-{
+int opposite[] = {
 	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST, DI_EAST, DI_NORTHEAST,
-	DI_NORTH, DI_NORTHWEST, DI_NODIR};
+	DI_NORTH, DI_NORTHWEST, DI_NODIR
+};
 
-int diags[] = {DI_NORTHWEST,DI_NORTHEAST,DI_SOUTHWEST,DI_SOUTHEAST};
+int diags[] = { DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST };
 
 //==========================================================================
 //
@@ -36,10 +36,10 @@ int diags[] = {DI_NORTHWEST,DI_NORTHEAST,DI_SOUTHWEST,DI_SOUTHEAST};
 //
 //==========================================================================
 
-int CheckMeleeRange(mobj_t* actor)
+int CheckMeleeRange(mobj_t * actor)
 {
-	mobj_t*	mo;
-	float	dist;
+	mobj_t *mo;
+	float dist;
 
 	if (!actor->target)
 	{
@@ -74,10 +74,10 @@ int CheckMeleeRange(mobj_t* actor)
 //
 //==========================================================================
 
-int CheckMeleeRange2(mobj_t* actor)
+int CheckMeleeRange2(mobj_t * actor)
 {
-	mobj_t*	mo;
-	float	dist;
+	mobj_t *mo;
+	float dist;
 
 	if (!actor->target)
 	{
@@ -112,9 +112,9 @@ int CheckMeleeRange2(mobj_t* actor)
 //
 //==========================================================================
 
-int CheckMissileRange(mobj_t* actor)
+int CheckMissileRange(mobj_t * actor)
 {
-	float		dist;
+	float dist;
 
 	if (!P_CheckSight(actor, actor->target))
 	{
@@ -129,7 +129,7 @@ int CheckMissileRange(mobj_t* actor)
 	if (actor->reactiontime)
 	{
 		// Don't attack yet
-		return(false);
+		return (false);
 	}
 	dist = MobjDist(actor, actor->target) - 64.0;
 	if (!actor->meleestate)
@@ -154,82 +154,82 @@ int CheckMissileRange(mobj_t* actor)
 //
 //==========================================================================
 
-void FaceMovementDirection(mobj_t* actor)
+void FaceMovementDirection(mobj_t * actor)
 {
-	switch(actor->movedir)
+	switch (actor->movedir)
 	{
-		case DI_EAST:
-			actor->angles.yaw = 0<<24;
-			break;
-		case DI_NORTHEAST:
-			actor->angles.yaw = 32<<24;
-			break;
-		case DI_NORTH:
-			actor->angles.yaw = 64<<24;
-			break;
-		case DI_NORTHWEST:
-			actor->angles.yaw = 96<<24;
-			break;
-		case DI_WEST:
-			actor->angles.yaw = 128<<24;
-			break;
-		case DI_SOUTHWEST:
-			actor->angles.yaw = 160<<24;
-			break;
-		case DI_SOUTH:
-			actor->angles.yaw = 192<<24;
-			break;
-		case DI_SOUTHEAST:
-			actor->angles.yaw = 224<<24;
-			break;
+	case DI_EAST:
+		actor->angles.yaw = 0 << 24;
+		break;
+	case DI_NORTHEAST:
+		actor->angles.yaw = 32 << 24;
+		break;
+	case DI_NORTH:
+		actor->angles.yaw = 64 << 24;
+		break;
+	case DI_NORTHWEST:
+		actor->angles.yaw = 96 << 24;
+		break;
+	case DI_WEST:
+		actor->angles.yaw = 128 << 24;
+		break;
+	case DI_SOUTHWEST:
+		actor->angles.yaw = 160 << 24;
+		break;
+	case DI_SOUTH:
+		actor->angles.yaw = 192 << 24;
+		break;
+	case DI_SOUTHEAST:
+		actor->angles.yaw = 224 << 24;
+		break;
 	}
 }
 
 //============================================================================
 //
-//	P_LookForMonsters
+//  P_LookForMonsters
 //
 //============================================================================
 
 #define MONS_LOOK_RANGE (16.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
-boolean P_LookForMonsters(mobj_t *actor)
+boolean P_LookForMonsters(mobj_t * actor)
 {
 	int count;
 	mobj_t *mo;
 
-	if(!P_CheckSight(players[0].mo, actor))
-	{ // Player can't see monster
-		return(false);
+	if (!P_CheckSight(players[0].mo, actor))
+	{	// Player can't see monster
+		return (false);
 	}
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
-		if(!(mo->flags&MF_COUNTKILL) || (mo == actor) || (mo->health <= 0))
-		{ // Not a valid monster
+		if (!(mo->flags & MF_COUNTKILL) || (mo == actor) || (mo->health <= 0))
+		{	// Not a valid monster
 			continue;
 		}
 		if (MobjDist(actor, mo) > MONS_LOOK_RANGE)
-		{ // Out of range
+		{	// Out of range
 			continue;
 		}
 		if (P_Random() < 16)
-		{ // Skip
+		{	// Skip
 			continue;
 		}
 		if (count++ > MONS_LOOK_LIMIT)
-		{ // Stop searching
+		{	// Stop searching
 			return false;
 		}
 		if (!P_CheckSight(actor, mo))
-		{ // Out of sight
+		{	// Out of sight
 			continue;
 		}
 		if (actor->type == MT_MINOTAUR)
 		{
 			if ((mo->type == MT_MINOTAUR) &&
-				 (mo->target != actor->specialmobj1))
+				(mo->target != actor->specialmobj1))
 			{
 				continue;
 			}
@@ -243,14 +243,14 @@ boolean P_LookForMonsters(mobj_t *actor)
 
 //============================================================================
 //
-//	P_LookForPlayers
+//  P_LookForPlayers
 //
-//	If allaround is false, only look 180 degrees in front
-//	returns true if a player is targeted
+//  If allaround is false, only look 180 degrees in front
+//  returns true if a player is targeted
 //
 //============================================================================
 
-boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
+boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 {
 	int c;
 	int stop;
@@ -260,13 +260,13 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 	float dist;
 
 	if (!netgame && players[0].spawned && players[0].health <= 0)
-	{ // Single player game and player is dead, look for monsters
+	{	// Single player game and player is dead, look for monsters
 		return P_LookForMonsters(actor);
 	}
 	sector = actor->subsector->sector;
 	c = 0;
-	stop = (actor->lastlook-1)&3;
-	for( ; ; actor->lastlook = (actor->lastlook+1)&3 )
+	stop = (actor->lastlook - 1) & 3;
+	for (;; actor->lastlook = (actor->lastlook + 1) & 3)
 	{
 		if (actor->lastlook == stop)
 			return false;	// done looking
@@ -278,12 +278,12 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 			return false;	// done looking
 
 		player = &players[actor->lastlook];
-        if (!player->spawned || !player->mo)
-        	continue;		//	not spawned yet
+		if (!player->spawned || !player->mo)
+			continue;	//  not spawned yet
 		if (player->health <= 0)
-			continue;		// dead
+			continue;	// dead
 		if (!P_CheckSight(actor, player->mo))
-			continue;		// out of sight
+			continue;	// out of sight
 
 		if (!allaround)
 		{
@@ -294,7 +294,7 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 				dist = MobjDist(player->mo, actor);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
-					continue;               // behind back
+					continue;	// behind back
 			}
 		}
 		if (player->mo->translucency)
@@ -302,11 +302,11 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 			// Player is invisible
 			if (MobjDist(player->mo, actor) > 2.0 * MELEERANGE &&
 				Length(player->mo->velocity) < 5.0 * 35.0)
-			{ // Player is sneaking - can't detect
+			{	// Player is sneaking - can't detect
 				return false;
 			}
 			if (P_Random() < 225)
-			{ // Player isn't sneaking, but still didn't detect
+			{	// Player isn't sneaking, but still didn't detect
 				return false;
 			}
 		}
@@ -314,7 +314,7 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 		{
 			if (actor->specialmobj1 == player->mo)
 			{
-				continue;			// Don't target master
+				continue;	// Don't target master
 			}
 		}
 		actor->target = player->mo;
@@ -325,16 +325,16 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 
 //============================================================================
 //
-//	P_TryWalk
+//  P_TryWalk
 //
-//	Attempts to move actor in its current (ob->moveangle) direction.
-//	If blocked by either a wall or an actor returns FALSE.
-//	If move is either clear of block only by a door, returns TRUE and sets.
-//	If a door is in the way, an OpenDoor call is made to start it opening.
+//  Attempts to move actor in its current (ob->moveangle) direction.
+//  If blocked by either a wall or an actor returns FALSE.
+//  If move is either clear of block only by a door, returns TRUE and sets.
+//  If a door is in the way, an OpenDoor call is made to start it opening.
 //
 //----------------------------------------------------------------------------
 
-boolean P_TryWalk(mobj_t *actor)
+boolean P_TryWalk(mobj_t * actor)
 {
 	if (!P_Move(actor))
 	{
@@ -346,36 +346,36 @@ boolean P_TryWalk(mobj_t *actor)
 
 //============================================================================
 //
-//	P_NewChaseDir
+//  P_NewChaseDir
 //
 //============================================================================
 
-void P_NewChaseDir(mobj_t *actor)
+void P_NewChaseDir(mobj_t * actor)
 {
-	float		deltax,deltay;
-	int			d[3];
-	int			tdir, olddir, turnaround;
+	float deltax, deltay;
+	int d[3];
+	int tdir, olddir, turnaround;
 
 	if (!actor->target)
 		Error("P_NewChaseDir: called with no target");
 
 	olddir = actor->movedir;
-	turnaround=opposite[olddir];
+	turnaround = opposite[olddir];
 
 	deltax = actor->target->origin.x - actor->origin.x;
 	deltay = actor->target->origin.y - actor->origin.y;
 	if (deltax > 10.0)
-		d[1]= DI_EAST;
+		d[1] = DI_EAST;
 	else if (deltax < -10.0)
-		d[1]= DI_WEST;
+		d[1] = DI_WEST;
 	else
-		d[1]=DI_NODIR;
+		d[1] = DI_NODIR;
 	if (deltay < -10.0)
-		d[2]= DI_SOUTH;
+		d[2] = DI_SOUTH;
 	else if (deltay > 10.0)
-		d[2]= DI_NORTH;
+		d[2] = DI_NORTH;
 	else
-		d[2]=DI_NODIR;
+		d[2] = DI_NODIR;
 
 // try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
@@ -388,42 +388,42 @@ void P_NewChaseDir(mobj_t *actor)
 // try other directions
 	if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
 	{
-		tdir=d[1];
-		d[1]=d[2];
-		d[2]=tdir;
+		tdir = d[1];
+		d[1] = d[2];
+		d[2] = tdir;
 	}
 
-	if (d[1]==turnaround)
-		d[1]=DI_NODIR;
-	if (d[2]==turnaround)
-		d[2]=DI_NODIR;
+	if (d[1] == turnaround)
+		d[1] = DI_NODIR;
+	if (d[2] == turnaround)
+		d[2] = DI_NODIR;
 
-	if (d[1]!=DI_NODIR)
+	if (d[1] != DI_NODIR)
 	{
 		actor->movedir = d[1];
 		if (P_TryWalk(actor))
-			return;     /*either moved forward or attacked*/
+			return;	/*either moved forward or attacked */
 	}
 
-	if (d[2]!=DI_NODIR)
+	if (d[2] != DI_NODIR)
 	{
-		actor->movedir =d[2];
+		actor->movedir = d[2];
 		if (P_TryWalk(actor))
 			return;
 	}
 
 /* there is no direct path to the player, so pick another direction */
 
-	if (olddir!=DI_NODIR)
+	if (olddir != DI_NODIR)
 	{
 		actor->movedir = olddir;
 		if (P_TryWalk(actor))
 			return;
 	}
 
-	if (P_Random() & 1)       /*randomly determine direction of search*/
+	if (P_Random() & 1)	/*randomly determine direction of search */
 	{
-		for (tdir=DI_EAST; tdir<=DI_SOUTHEAST; tdir++)
+		for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
 		{
 			if (tdir != turnaround)
 			{
@@ -439,30 +439,30 @@ void P_NewChaseDir(mobj_t *actor)
 		{
 			if (tdir != turnaround)
 			{
-				actor->movedir =tdir;
+				actor->movedir = tdir;
 				if (P_TryWalk(actor))
-				return;
+					return;
 			}
 		}
 	}
 
 	if (turnaround != DI_NODIR)
 	{
-		actor->movedir =turnaround;
+		actor->movedir = turnaround;
 		if (P_TryWalk(actor))
 			return;
 	}
 
-	actor->movedir = DI_NODIR;              // can't move
+	actor->movedir = DI_NODIR;	// can't move
 }
 
 //===========================================================================
 //
-//	RoughBlockCheck
+//  RoughBlockCheck
 //
 //===========================================================================
 
-mobj_t *RoughBlockCheck(mobj_t *mo, int index)
+mobj_t *RoughBlockCheck(mobj_t * mo, int index)
 {
 	mobj_t *link;
 	mobj_t *master;
@@ -471,7 +471,7 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 	link = BlockLink(index);
 	while (link)
 	{
-		if (mo->player)				// Minotaur looking around player
+		if (mo->player)	// Minotaur looking around player
 		{
 			if ((link->flags & MF_COUNTKILL) ||
 				(link->player && (link != mo)))
@@ -507,15 +507,15 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 		else if (mo->type == MT_MINOTAUR)	// looking around minotaur
 		{
 			master = mo->specialmobj1;
-			if ((link->flags&MF_COUNTKILL) ||
+			if ((link->flags & MF_COUNTKILL) ||
 				(link->player && (link != master)))
 			{
-				if (!(link->flags&MF_SHOOTABLE))
+				if (!(link->flags & MF_SHOOTABLE))
 				{
 					link = link->bnext;
 					continue;
 				}
-				if (link->flags2&MF2_DORMANT)
+				if (link->flags2 & MF2_DORMANT)
 				{
 					link = link->bnext;
 					continue;
@@ -526,41 +526,42 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 					link = link->bnext;
 					continue;
 				}
-				if(netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link->player)
 				{
 					link = link->bnext;
 					continue;
 				}
-				if(P_CheckSight(mo, link))
+				if (P_CheckSight(mo, link))
 				{
 					return link;
 				}
 			}
 			link = link->bnext;
 		}
-		else if (mo->type == MT_MSTAFF_FX2)		// bloodscourge
+		else if (mo->type == MT_MSTAFF_FX2)	// bloodscourge
 		{
-			if ((link->flags&MF_COUNTKILL ||
-				(link->player && link != mo->target))
-				&& !(link->flags2&MF2_DORMANT))
+			if ((link->flags & MF_COUNTKILL ||
+					(link->player && link != mo->target))
+				&& !(link->flags2 & MF2_DORMANT))
 			{
-				if (!(link->flags&MF_SHOOTABLE))
+				if (!(link->flags & MF_SHOOTABLE))
 				{
 					link = link->bnext;
 					continue;
 				}
-				if(netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link->player)
 				{
 					link = link->bnext;
 					continue;
 				}
-				else if(P_CheckSight(mo, link))
+				else if (P_CheckSight(mo, link))
 				{
 					master = mo->target;
 					angle = atan2(link->origin.y - master->origin.y,
-						link->origin.x - master->origin.x) - master->angles.yaw;
+						link->origin.x - master->origin.x) -
+						master->angles.yaw;
 					angle >>= 24;
-					if (angle>226 || angle<30)
+					if (angle > 226 || angle < 30)
 					{
 						return link;
 					}
@@ -568,18 +569,18 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 			}
 			link = link->bnext;
 		}
-		else								// spirits
+		else	// spirits
 		{
-			if ((link->flags&MF_COUNTKILL ||
-				(link->player && link != mo->target))
-				&& !(link->flags2&MF2_DORMANT))
+			if ((link->flags & MF_COUNTKILL ||
+					(link->player && link != mo->target))
+				&& !(link->flags2 & MF2_DORMANT))
 			{
-				if (!(link->flags&MF_SHOOTABLE))
+				if (!(link->flags & MF_SHOOTABLE))
 				{
 					link = link->bnext;
 					continue;
 				}
-				if(netgame && !deathmatch && link->player)
+				if (netgame && !deathmatch && link->player)
 				{
 					link = link->bnext;
 					continue;
@@ -589,7 +590,7 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 					link = link->bnext;
 					continue;
 				}
-				else if(P_CheckSight(mo, link))
+				else if (P_CheckSight(mo, link))
 				{
 					return link;
 				}
@@ -605,10 +606,10 @@ mobj_t *RoughBlockCheck(mobj_t *mo, int index)
 // P_RoughMonsterSearch
 //
 // Searches though the surrounding mapblocks for monsters/players
-//		distance is in MAPBLOCKUNITS
+//      distance is in MAPBLOCKUNITS
 //===========================================================================
 
-mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
+mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 {
 	int blockX;
 	int blockY;
@@ -623,18 +624,20 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 
 	startX = MapBlock(mo->origin.x - level->bmaporgx);
 	startY = MapBlock(mo->origin.y - level->bmaporgy);
-	
-	if (startX >= 0 && startX < level->bmapwidth && startY >= 0 && startY < level->bmapheight)
+
+	if (startX >= 0 && startX < level->bmapwidth && startY >= 0
+		&& startY < level->bmapheight)
 	{
-		if ((target = RoughBlockCheck(mo, startY*level->bmapwidth+startX)))
-		{ // found a target right away
+		if ((target =
+				RoughBlockCheck(mo, startY * level->bmapwidth + startX)))
+		{	// found a target right away
 			return target;
 		}
 	}
 	for (count = 1; count <= distance; count++)
 	{
-		blockX = startX-count;
-		blockY = startY-count;
+		blockX = startX - count;
+		blockY = startY - count;
 
 		if (blockY < 0)
 		{
@@ -642,7 +645,7 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 		}
 		else if (blockY >= level->bmapheight)
 		{
-			blockY = level->bmapheight-1;
+			blockY = level->bmapheight - 1;
 		}
 		if (blockX < 0)
 		{
@@ -650,31 +653,31 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 		}
 		else if (blockX >= level->bmapwidth)
 		{
-			blockX = level->bmapwidth-1;
+			blockX = level->bmapwidth - 1;
 		}
-		blockIndex = blockY*level->bmapwidth+blockX;
-		firstStop = startX+count;
+		blockIndex = blockY * level->bmapwidth + blockX;
+		firstStop = startX + count;
 		if (firstStop < 0)
 		{
 			continue;
 		}
 		if (firstStop >= level->bmapwidth)
 		{
-			firstStop = level->bmapwidth-1;
+			firstStop = level->bmapwidth - 1;
 		}
-		secondStop = startY+count;
+		secondStop = startY + count;
 		if (secondStop < 0)
 		{
 			continue;
 		}
 		if (secondStop >= level->bmapheight)
 		{
-			secondStop = level->bmapheight-1;
+			secondStop = level->bmapheight - 1;
 		}
 		thirdStop = secondStop * level->bmapwidth + blockX;
 		secondStop = secondStop * level->bmapwidth + firstStop;
 		firstStop += blockY * level->bmapwidth;
-		finalStop = blockIndex;		
+		finalStop = blockIndex;
 
 		// Trace the first block section (along the top)
 		for (; blockIndex <= firstStop; blockIndex++)
@@ -685,15 +688,17 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 			}
 		}
 		// Trace the second block section (right edge)
-		for (blockIndex--; blockIndex <= secondStop; blockIndex += level->bmapwidth)
+		for (blockIndex--; blockIndex <= secondStop;
+			blockIndex += level->bmapwidth)
 		{
 			if ((target = RoughBlockCheck(mo, blockIndex)))
 			{
 				return target;
 			}
-		}		
+		}
 		// Trace the third block section (bottom edge)
-		for (blockIndex -= level->bmapwidth; blockIndex >= thirdStop; blockIndex--)
+		for (blockIndex -= level->bmapwidth; blockIndex >= thirdStop;
+			blockIndex--)
 		{
 			if ((target = RoughBlockCheck(mo, blockIndex)))
 			{
@@ -701,7 +706,8 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 			}
 		}
 		// Trace the final block section (left edge)
-		for (blockIndex++; blockIndex > finalStop; blockIndex -= level->bmapwidth)
+		for (blockIndex++; blockIndex > finalStop;
+			blockIndex -= level->bmapwidth)
 		{
 			if ((target = RoughBlockCheck(mo, blockIndex)))
 			{
@@ -709,16 +715,19 @@ mobj_t *P_RoughMonsterSearch(mobj_t *mo, int distance)
 			}
 		}
 	}
-	return NULL;	
+	return NULL;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

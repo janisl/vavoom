@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,8 +25,8 @@
 
 #define	BODYQUESIZE				32
 
-mobj_t*	bodyque[BODYQUESIZE];
-int		bodyqueslot;
+mobj_t *bodyque[BODYQUESIZE];
+int bodyqueslot;
 
 //==========================================================================
 //
@@ -34,126 +34,126 @@ int		bodyqueslot;
 //
 //==========================================================================
 
-void SetPlayerRunState(player_t* player)
+void SetPlayerRunState(player_t * player)
 {
 	if (player->mo->statenum == S_PLAY)
 	{
 		SetMobjState(player->mo, S_PLAY_RUN1);
-    }
+	}
 }
 
 //==========================================================================
 //
-//	G_CheckSpot
+//  G_CheckSpot
 //
-//	Returns false if the player cannot be respawned at the given mthing_t
+//  Returns false if the player cannot be respawned at the given mthing_t
 // spot because something is occupying it
 //
 //==========================================================================
 
-boolean G_CheckSpot(int playernum, mthing_t* mthing)
+boolean G_CheckSpot(int playernum, mthing_t * mthing)
 {
-    float			x;
-    float			y;
-    subsector_t*	ss; 
-    angle_t			an;
-    mobj_t*			mo;
-	int				mtnum;
-    int				sfxnum;
-    int				i;
-	
-    if (!players[playernum].mo)
-    {
+	float x;
+	float y;
+	subsector_t *ss;
+	angle_t an;
+	mobj_t *mo;
+	int mtnum;
+	int sfxnum;
+	int i;
+
+	if (!players[playernum].mo)
+	{
 		// first spawn of level, before corpses
-		for (i=0 ; i<playernum ; i++)
-	    	if (players[i].mo->origin.x == mthing->x &&
-	    		players[i].mo->origin.y == mthing->y)
+		for (i = 0; i < playernum; i++)
+			if (players[i].mo->origin.x == mthing->x &&
+				players[i].mo->origin.y == mthing->y)
 				return false;
 		return true;
-    }
+	}
 
-    x = mthing->x;
-    y = mthing->y;
-	 
-    if (!P_CheckPosition(players[playernum].mo, x, y))
+	x = mthing->x;
+	y = mthing->y;
+
+	if (!P_CheckPosition(players[playernum].mo, x, y))
 	{
 		return false;
 	}
 
-    // flush an old corpse if needed 
-    if (bodyqueslot >= BODYQUESIZE) 
+	// flush an old corpse if needed 
+	if (bodyqueslot >= BODYQUESIZE)
 		P_RemoveMobj(bodyque[bodyqueslot % BODYQUESIZE]);
-    bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].mo;
-    bodyqueslot++; 
+	bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].mo;
+	bodyqueslot++;
 
-    // spawn a teleport fog 
-    ss = PointInSubsector(x, y);
-    an = ANG45 * (mthing->angle / 45);
- 
+	// spawn a teleport fog 
+	ss = PointInSubsector(x, y);
+	an = ANG45 * (mthing->angle / 45);
+
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, MT_TFOG);
 	StartSoundName(mo, "Teleport", CHAN_VOICE);	// don't start sound on first frame
 
-    return true; 
+	return true;
 }
 
 //==========================================================================
 //
-//	P_SpawnPlayer
+//  P_SpawnPlayer
 //
-//	Called when a player is spawned on the level. Most of the player
+//  Called when a player is spawned on the level. Most of the player
 // structure stays unchanged between levels.
 //
 //==========================================================================
 
-void P_SpawnPlayer(mthing_t* mthing)
+void P_SpawnPlayer(mthing_t * mthing)
 {
-    player_t*	p;
-    float		x;
-    float		y;
-    float		z;
+	player_t *p;
+	float x;
+	float y;
+	float z;
 
-    mobj_t*		mobj;
+	mobj_t *mobj;
 
-    p = &players[mthing->type - 1];
+	p = &players[mthing->type - 1];
 
-    // not playing?
-    if (!p->active)
+	// not playing?
+	if (!p->active)
 		return;
-		
-    if (p->playerstate == PST_REBORN)
+
+	if (p->playerstate == PST_REBORN)
 		G_PlayerReborn(mthing->type - 1);
 
-    x = mthing->x;
-    y = mthing->y;
-    z = ONFLOORZ;
-    mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
+	x = mthing->x;
+	y = mthing->y;
+	z = ONFLOORZ;
+	mobj = P_SpawnMobj(x, y, z, MT_PLAYER);
 
-    // set color translations for player sprites
+	// set color translations for player sprites
 	mobj->translation = p->color;
-		
-    mobj->angles.yaw = ANG45 * (mthing->angle / 45);
-    mobj->player = p;
-    mobj->health = p->health;
 
-    p->mo = mobj;
-    p->playerstate = PST_LIVE;	
-    p->refire = 0;
-    p->damagecount = 0;
-    p->bonuscount = 0;
-    p->extralight = 0;
-    p->fixedcolormap = 0;
-    p->viewheight = VIEWHEIGHT;
+	mobj->angles.yaw = ANG45 * (mthing->angle / 45);
+	mobj->player = p;
+	mobj->health = p->health;
 
-    // setup gun psprite
-    SetupPsprites(p);
-    
-    // give all cards in death match mode
-    if (deathmatch)
-    {
-    	p->keys = 0x3f;
+	p->mo = mobj;
+	p->playerstate = PST_LIVE;
+	p->refire = 0;
+	p->damagecount = 0;
+	p->bonuscount = 0;
+	p->extralight = 0;
+	p->fixedcolormap = 0;
+	p->viewheight = VIEWHEIGHT;
+
+	// setup gun psprite
+	SetupPsprites(p);
+
+	// give all cards in death match mode
+	if (deathmatch)
+	{
+		p->keys = 0x3f;
 	}
-			
+
 	// wake up the status bar
 	SB_Start();
 }
@@ -162,66 +162,69 @@ void P_SpawnPlayer(mthing_t* mthing)
 //
 //  SpawnPlayerMissile
 //
-//	Tries to aim at a nearby monster
+//  Tries to aim at a nearby monster
 //
 //==========================================================================
 
-mobj_t* SpawnPlayerMissile(mobj_t* source, int type)
+mobj_t *SpawnPlayerMissile(mobj_t * source, int type)
 {
-    mobj_t		*th;
-    TAVec		angles;
-	TVec		vforward;
-	float		x;
-	float		y;
-	float		z;
-    
-    // see which target is to be aimed at
-    avcpy(source->angles, angles);
+	mobj_t *th;
+	TAVec angles;
+	TVec vforward;
+	float x;
+	float y;
+	float z;
+
+	// see which target is to be aimed at
+	avcpy(source->angles, angles);
 	AimLineAttack(source, &angles, 16.0 * 64.0);
-    if (!linetarget)
-   	{
+	if (!linetarget)
+	{
 		angles.yaw += 1 << 26;
 		AimLineAttack(source, &angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
-    		angles.yaw -= 2 << 26;
+			angles.yaw -= 2 << 26;
 			AimLineAttack(source, &angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw += 1 << 26;
 			}
 		}
-    }
+	}
 
-    x = source->origin.x;
-    y = source->origin.y;
-    z = source->origin.z + 32.0;
-	
-    th = P_SpawnMobj(x, y, z, type);
+	x = source->origin.x;
+	y = source->origin.y;
+	z = source->origin.z + 32.0;
 
-    if (th->sound_sight)
+	th = P_SpawnMobj(x, y, z, type);
+
+	if (th->sound_sight)
 		StartSound(th, th->sound_sight, CHAN_VOICE);
 
-    th->target = source;
-    avcpy(angles, th->angles);
+	th->target = source;
+	avcpy(angles, th->angles);
 	AngleVector(&angles, &vforward);
 	th->velocity = vforward * th->speed;
 
-    CheckMissileSpawn(th);
+	CheckMissileSpawn(th);
 
 	return th;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/30 17:33:18  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.3  2001/08/30 17:33:18  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

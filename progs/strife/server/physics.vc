@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -45,9 +45,9 @@
 
 //==========================================================================
 //
-//	ClipVelocity
+//  ClipVelocity
 //
-//	Slide off of the impacting object
+//  Slide off of the impacting object
 //
 //==========================================================================
 
@@ -58,75 +58,76 @@ TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 
 //**************************************************************************
 //
-//	SLIDE MOVE
+//  SLIDE MOVE
 //
-//	Allows the player to slide along any angled walls.
+//  Allows the player to slide along any angled walls.
 //
 //**************************************************************************
 
-float			bestslidefrac;
-line_t*			bestslideline;
+float bestslidefrac;
+line_t *bestslideline;
 
-mobj_t*			slidemo;
-TVec			slideorg;
-TVec			slidedir;
+mobj_t *slidemo;
+TVec slideorg;
+TVec slidedir;
 
 //==========================================================================
 //
-//	PTR_SlideTraverse
+//  PTR_SlideTraverse
 //
 //==========================================================================
 
-boolean PTR_SlideTraverse(intercept_t* in)
+boolean PTR_SlideTraverse(intercept_t * in)
 {
-	line_t*		li;
-	TVec		hit_point;
-	opening_t	*open;
+	line_t *li;
+	TVec hit_point;
+	opening_t *open;
 
-    if (!in->isaline)
+	if (!in->isaline)
 		Error("PTR_SlideTraverse: not a line?");
-		
-    li = in->line;
 
-    if (li->flags & ML_TWOSIDED)
-    {
-	    // set openrange, opentop, openbottom
+	li = in->line;
+
+	if (li->flags & ML_TWOSIDED)
+	{
+		// set openrange, opentop, openbottom
 		hit_point = slideorg + in->frac * slidedir;
-    	open = LineOpenings(li, hit_point);
-		open = FindOpening(open, slidemo->origin.z,	slidemo->origin.z + slidemo->height);
-    
-	    if (open &&
-	    	(open->range >= slidemo->height) &&	//	fits
-    		(open->top - slidemo->origin.z >= slidemo->height) && // mobj is not too high
-	    	(open->bottom - slidemo->origin.z <= 24.0)) // not too big a step up
+		open = LineOpenings(li, hit_point);
+		open =
+			FindOpening(open, slidemo->origin.z,
+			slidemo->origin.z + slidemo->height);
+
+		if (open && (open->range >= slidemo->height) &&	//  fits
+			(open->top - slidemo->origin.z >= slidemo->height) &&	// mobj is not too high
+			(open->bottom - slidemo->origin.z <= 24.0))	// not too big a step up
 		{
-    		// this line doesn't block movement
-    		return true;
+			// this line doesn't block movement
+			return true;
 		}
 	}
 	else
-    {
+	{
 		if (PointOnPlaneSide(slidemo->origin, li))
 		{
-	    	// don't hit the back side
-	    	return true;
+			// don't hit the back side
+			return true;
 		}
-    }
+	}
 
-    // the line does block movement,
-    // see if it is closer than best so far
-    if (in->frac < bestslidefrac)
-    {
+	// the line does block movement,
+	// see if it is closer than best so far
+	if (in->frac < bestslidefrac)
+	{
 		bestslidefrac = in->frac;
 		bestslideline = li;
-    }
-	
-    return false;	// stop
+	}
+
+	return false;	// stop
 }
 
 //==========================================================================
 //
-//	SlidePathTraverse
+//  SlidePathTraverse
 //
 //==========================================================================
 
@@ -140,127 +141,136 @@ void SlidePathTraverse(float x, float y)
 
 //==========================================================================
 //
-//	P_SlideMove
+//  P_SlideMove
 //
-//	The momx / momy move is bad, so try to slide along a wall.
-//	Find the first line hit, move flush to it, and slide along it.
-//	This is a kludgy mess.
+//  The momx / momy move is bad, so try to slide along a wall.
+//  Find the first line hit, move flush to it, and slide along it.
+//  This is a kludgy mess.
 //
 //==========================================================================
 
-void P_SlideMove(mobj_t* mo)
+void P_SlideMove(mobj_t * mo)
 {
-	float		leadx;
-	float		leady;
-	float		trailx;
-	float		traily;
-	float		newx;
-	float		newy;
-    int			hitcount;
-		
-    slidemo = mo;
-    hitcount = 0;
+	float leadx;
+	float leady;
+	float trailx;
+	float traily;
+	float newx;
+	float newy;
+	int hitcount;
+
+	slidemo = mo;
+	hitcount = 0;
 
 	do
-    {
-	    if (++hitcount == 3)
+	{
+		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(mo, mo->origin.x, mo->origin.y + mo->velocity.y * frametime))
-			    P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime, mo->origin.y);
+			if (!P_TryMove(mo, mo->origin.x,
+					mo->origin.y + mo->velocity.y * frametime))
+				P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
+					mo->origin.y);
 			return;
 		}
 
-	    // trace along the three leading corners
-	    if (mo->velocity.x > 0.0)
-    	{
+		// trace along the three leading corners
+		if (mo->velocity.x > 0.0)
+		{
 			leadx = mo->origin.x + mo->radius;
 			trailx = mo->origin.x - mo->radius;
-    	}
-	    else
-    	{
+		}
+		else
+		{
 			leadx = mo->origin.x - mo->radius;
 			trailx = mo->origin.x + mo->radius;
-	    }
+		}
 
-	    if (mo->velocity.y > 0.0)
-	    {
+		if (mo->velocity.y > 0.0)
+		{
 			leady = mo->origin.y + mo->radius;
 			traily = mo->origin.y - mo->radius;
-	    }
-    	else
-	    {
+		}
+		else
+		{
 			leady = mo->origin.y - mo->radius;
 			traily = mo->origin.y + mo->radius;
-	    }
-		
-	    bestslidefrac = 1.00001;
+		}
 
-	    SlidePathTraverse(leadx, leady);
-	    SlidePathTraverse(trailx, leady);
-	    SlidePathTraverse(leadx, traily);
-    
-	    // move up to the wall
-    	if (bestslidefrac == 1.00001)
-	    {
+		bestslidefrac = 1.00001;
+
+		SlidePathTraverse(leadx, leady);
+		SlidePathTraverse(trailx, leady);
+		SlidePathTraverse(leadx, traily);
+
+		// move up to the wall
+		if (bestslidefrac == 1.00001)
+		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(mo, mo->origin.x, mo->origin.y + mo->velocity.y * frametime))
-			    P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime, mo->origin.y);
+			if (!P_TryMove(mo, mo->origin.x,
+					mo->origin.y + mo->velocity.y * frametime))
+				P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
+					mo->origin.y);
 			return;
-    	}
+		}
 
-	    // fudge a bit to make sure it doesn't hit
-    	bestslidefrac -= 0.03125;
-	    if (bestslidefrac > 0.0)
-    	{
+		// fudge a bit to make sure it doesn't hit
+		bestslidefrac -= 0.03125;
+		if (bestslidefrac > 0.0)
+		{
 			newx = mo->velocity.x * frametime * bestslidefrac;
 			newy = mo->velocity.y * frametime * bestslidefrac;
-	
+
 			if (!P_TryMove(mo, mo->origin.x + newx, mo->origin.y + newy))
-            {
-				if (!P_TryMove(mo, mo->origin.x, mo->origin.y + mo->velocity.y * frametime))
-				    P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime, mo->origin.y);
+			{
+				if (!P_TryMove(mo, mo->origin.x,
+						mo->origin.y + mo->velocity.y * frametime))
+					P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
+						mo->origin.y);
 				return;
 			}
-	    }
-    
-	    // Now continue along the wall.
-    	// First calculate remainder.
-	    bestslidefrac = 1.0 - (bestslidefrac + 0.03125);
-    
-	    if (bestslidefrac > 1.0)
-			bestslidefrac = 1.0;
-    
-	    if (bestslidefrac <= 0.0)
-			return;
-    
-	    // clip the moves
-		mo->velocity = ClipVelocity(mo->velocity * bestslidefrac, bestslideline->normal, 1.0);
+		}
 
-    } while (!P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
-    	mo->origin.y + mo->velocity.y * frametime));
+		// Now continue along the wall.
+		// First calculate remainder.
+		bestslidefrac = 1.0 - (bestslidefrac + 0.03125);
+
+		if (bestslidefrac > 1.0)
+			bestslidefrac = 1.0;
+
+		if (bestslidefrac <= 0.0)
+			return;
+
+		// clip the moves
+		mo->velocity =
+			ClipVelocity(mo->velocity * bestslidefrac, bestslideline->normal,
+			1.0);
+
+	}
+	while (!P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
+			mo->origin.y + mo->velocity.y * frametime));
 }
 
 //**************************************************************************
 //
-//	OBJECT MOVEMENT
+//  OBJECT MOVEMENT
 //
 //**************************************************************************
 
 //==========================================================================
 //
-//	CheckWater
+//  CheckWater
 //
 //==========================================================================
 
-boolean CheckWater(mobj_t *mobj)
+boolean CheckWater(mobj_t * mobj)
 {
-	TVec	point;
-	int		cont;
+	TVec point;
+	int cont;
 
 	point = mobj->origin;
 	point.z += 1.0;
-	
+
 	mobj->waterlevel = 0;
 	mobj->watertype = CONTENTS_EMPTY;
 	cont = PointContents(mobj->subsector->sector, point);
@@ -287,88 +297,89 @@ boolean CheckWater(mobj_t *mobj)
 
 //==========================================================================
 //
-//	P_XYMovement
+//  P_XYMovement
 //
 //==========================================================================
 
-void P_XYMovement(mobj_t* mo)
-{ 	
-    float		ptryx;
-    float		ptryy;
-    float		xmove;
-    float		ymove;
-			
-    if (!mo->velocity.x && !mo->velocity.y)
-    {
+void P_XYMovement(mobj_t * mo)
+{
+	float ptryx;
+	float ptryy;
+	float xmove;
+	float ymove;
+
+	if (!mo->velocity.x && !mo->velocity.y)
+	{
 		if (mo->flags & MF_SKULLFLY)
 		{
-	    	// the skull slammed into something
-		    mo->flags &= ~MF_SKULLFLY;
-		    mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
+			// the skull slammed into something
+			mo->flags &= ~MF_SKULLFLY;
+			mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 
-		    SetMobjState(mo, mo->spawnstate);
+			SetMobjState(mo, mo->spawnstate);
 		}
 		return;
-    }
-	
-    if (mo->velocity.x > MAXMOVE)
+	}
+
+	if (mo->velocity.x > MAXMOVE)
 		mo->velocity.x = MAXMOVE;
-    else if (mo->velocity.x < -MAXMOVE)
+	else if (mo->velocity.x < -MAXMOVE)
 		mo->velocity.x = -MAXMOVE;
 
-    if (mo->velocity.y > MAXMOVE)
+	if (mo->velocity.y > MAXMOVE)
 		mo->velocity.y = MAXMOVE;
-    else if (mo->velocity.y < -MAXMOVE)
+	else if (mo->velocity.y < -MAXMOVE)
 		mo->velocity.y = -MAXMOVE;
-		
-    xmove = mo->velocity.x * frametime;
-    ymove = mo->velocity.y * frametime;
 
-    do
-    {
+	xmove = mo->velocity.x * frametime;
+	ymove = mo->velocity.y * frametime;
+
+	do
+	{
 		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
 		{
-		    ptryx = mo->origin.x + xmove / 2.0;
-		    ptryy = mo->origin.y + ymove / 2.0;
-		    xmove /= 2.0;
-		    ymove /= 2.0;
+			ptryx = mo->origin.x + xmove / 2.0;
+			ptryy = mo->origin.y + ymove / 2.0;
+			xmove /= 2.0;
+			ymove /= 2.0;
 		}
 		else
 		{
-		    ptryx = mo->origin.x + xmove;
-	    	ptryy = mo->origin.y + ymove;
-		    xmove = ymove = 0.0;
+			ptryx = mo->origin.x + xmove;
+			ptryy = mo->origin.y + ymove;
+			xmove = ymove = 0.0;
 		}
-		
+
 		if (!P_TryMove(mo, ptryx, ptryy))
 		{
-	    	// blocked move
-		    if (mo->player)
-		    {
-		    	// try to slide along it
+			// blocked move
+			if (mo->player)
+			{
+				// try to slide along it
 				P_SlideMove(mo);
-		    }
-		    else if (mo->flags & MF_MISSILE)
-		    {
+			}
+			else if (mo->flags & MF_MISSILE)
+			{
 				// explode a missile
 				if (ceilingline &&
-			    	ceilingline->backsector &&
-				    ceilingline->backsector->ceiling.pic == skyflatnum)
+					ceilingline->backsector &&
+					ceilingline->backsector->ceiling.pic == skyflatnum)
 				{
-				    // Hack to prevent missiles exploding
-			    	// against the sky.
-				    // Does not handle sky floors.
-				    P_RemoveMobj(mo);
-				    return;
+					// Hack to prevent missiles exploding
+					// against the sky.
+					// Does not handle sky floors.
+					P_RemoveMobj(mo);
+					return;
 				}
 				P_ExplodeMissile(mo);
-		    }
-		    else
+			}
+			else
 			{
 				mo->velocity.x = mo->velocity.y = 0.0;
 			}
 		}
-    } while (xmove || ymove);
+	}
+	while (xmove || ymove);
 }
 
 //==========================================================================
@@ -377,42 +388,42 @@ void P_XYMovement(mobj_t* mo)
 //
 //==========================================================================
 
-void P_ZMovement(mobj_t* mo)
+void P_ZMovement(mobj_t * mo)
 {
-	float	dist;
-    float	delta;
+	float dist;
+	float delta;
 
-    // check for smooth step up
-    if (mo->player && mo->origin.z < mo->floorz)
-    {
+	// check for smooth step up
+	if (mo->player && mo->origin.z < mo->floorz)
+	{
 		mo->player->viewheight -= mo->floorz - mo->origin.z;
 
 		mo->player->deltaviewheight
-		    = (VIEWHEIGHT - mo->player->viewheight) / 8.0;
-    }
-    
-    // adjust height
-    mo->origin.z += mo->velocity.z * frametime;
-	
-    if (mo->flags & MF_FLOAT && mo->target)
-    {
+			= (VIEWHEIGHT - mo->player->viewheight) / 8.0;
+	}
+
+	// adjust height
+	mo->origin.z += mo->velocity.z * frametime;
+
+	if (mo->flags & MF_FLOAT && mo->target)
+	{
 		// float down towards target if too close
 		if (!(mo->flags & MF_SKULLFLY) && !(mo->flags & MF_INFLOAT))
 		{
-		    dist = MobjDist2(mo, mo->target);
-	    
-		    delta = mo->target->origin.z + mo->height / 2.0 - mo->origin.z;
+			dist = MobjDist2(mo, mo->target);
 
-		    if (delta < 0.0 && dist < -(delta * 3.0))
+			delta = mo->target->origin.z + mo->height / 2.0 - mo->origin.z;
+
+			if (delta < 0.0 && dist < -(delta * 3.0))
 				mo->origin.z -= FLOATSPEED * frametime;
-		    else if (delta > 0.0 && dist < (delta * 3.0))
+			else if (delta > 0.0 && dist < (delta * 3.0))
 				mo->origin.z += FLOATSPEED * frametime;
 		}
-    }
-    
-    // clip movement
-    if (mo->origin.z <= mo->floorz)
-    {
+	}
+
+	// clip movement
+	if (mo->origin.z <= mo->floorz)
+	{
 		// hit the floor
 
 		// Note (id):
@@ -420,21 +431,22 @@ void P_ZMovement(mobj_t* mo)
 		//  kinda useless there.
 		if (mo->flags & MF_SKULLFLY)
 		{
-		    // the skull slammed into something
-		    mo->velocity.z = -mo->velocity.z;
+			// the skull slammed into something
+			mo->velocity.z = -mo->velocity.z;
 		}
-	
+
 		if (mo->velocity.z < 0.0)
 		{
-		    if (mo->player && (mo->velocity.z < -GRAVITY * 0.25))
-		    {
+			if (mo->player && (mo->velocity.z < -GRAVITY * 0.25))
+			{
 				// Squat down.
 				// Decrease viewheight for a moment
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
-				mo->player->deltaviewheight = mo->velocity.z / 8.0 * frametime;
+				mo->player->deltaviewheight =
+					mo->velocity.z / 8.0 * frametime;
 				StartSoundName(mo, "PlayerLand", CHAN_VOICE);
-		    }
+			}
 		}
 		mo->origin.z = mo->floorz;
 
@@ -442,78 +454,80 @@ void P_ZMovement(mobj_t* mo)
 		{
 			if (!(mo->flags & MF_NOCLIP))
 			{
-			    P_ExplodeMissile(mo);
-		    	return;
+				P_ExplodeMissile(mo);
+				return;
 			}
 		}
-    }
+	}
 
-    if (mo->origin.z + mo->height > mo->ceilingz)
-    {
+	if (mo->origin.z + mo->height > mo->ceilingz)
+	{
 		// hit the ceiling
 		if (mo->velocity.z > 0.0)
-	    	mo->velocity.z = 0.0;
+			mo->velocity.z = 0.0;
 
-	    mo->origin.z = mo->ceilingz - mo->height;
+		mo->origin.z = mo->ceilingz - mo->height;
 
 		if (mo->flags & MF_SKULLFLY)
 		{
 			// the skull slammed into something
-		    mo->velocity.z = -mo->velocity.z;
+			mo->velocity.z = -mo->velocity.z;
 		}
 
 		if (mo->flags & MF_MISSILE)
 		{
 			if (!(mo->flags & MF_NOCLIP))
 			{
-			    P_ExplodeMissile(mo);
-	    		return;
+				P_ExplodeMissile(mo);
+				return;
 			}
 		}
-    }
+	}
 }
 
 //==========================================================================
 //
-//	UpdateVelocity
+//  UpdateVelocity
 //
 //==========================================================================
 
-void UpdateVelocity(mobj_t *mo)
+void UpdateVelocity(mobj_t * mo)
 {
-	float		dot;
-    player_t*	player;
+	float dot;
+	player_t *player;
 
-    player = mo->player;
+	player = mo->player;
 
 	if (mo->waterlevel < 2)
 	{
-	    if (!(mo->flags & MF_NOGRAVITY) &&
-    		(mo->origin.z > mo->floorz || mo->subsector->sector->floor.normal.z < 0.7))
-	    {
-			//	Add gravity
-	    	mo->velocity.z -= GRAVITY * frametime;
-	    }
+		if (!(mo->flags & MF_NOGRAVITY) &&
+			(mo->origin.z > mo->floorz
+|| mo->subsector->sector->floor.normal.z < 0.7))
+		{
+			//  Add gravity
+			mo->velocity.z -= GRAVITY * frametime;
+		}
 	}
 	else if (!mo->player)
 	{
-	    if (!(mo->flags & MF_NOGRAVITY) &&
-    		(mo->origin.z > mo->floorz || mo->subsector->sector->floor.normal.z < 0.7))
-	    {
-			//	Add gravity
-	    	mo->velocity.z = -60.0;
-	    }
+		if (!(mo->flags & MF_NOGRAVITY) &&
+			(mo->origin.z > mo->floorz
+|| mo->subsector->sector->floor.normal.z < 0.7))
+		{
+			//  Add gravity
+			mo->velocity.z = -60.0;
+		}
 	}
-	
-    // slow down
 
-    if (mo->flags & (MF_MISSILE | MF_SKULLFLY))
-		return; 	// no friction for missiles ever
-		
-    if (mo->origin.z > mo->floorz && mo->waterlevel < 2)
-		return;		// no friction when airborne
+	// slow down
 
-	//	Clip velocity
+	if (mo->flags & (MF_MISSILE | MF_SKULLFLY))
+		return;	// no friction for missiles ever
+
+	if (mo->origin.z > mo->floorz && mo->waterlevel < 2)
+		return;	// no friction when airborne
+
+	//  Clip velocity
 	if (mo->origin.z <= mo->floorz)
 	{
 		dot = DotProduct(mo->velocity, mo->floor->normal);
@@ -523,148 +537,151 @@ void UpdateVelocity(mobj_t *mo)
 		}
 	}
 
-    if (mo->flags & MF_CORPSE)
-    {
+	if (mo->flags & MF_CORPSE)
+	{
 		// do not stop sliding if halfway off a step with some momentum
 		if (mo->velocity.x > 0.25 * 35.0 || mo->velocity.x < -0.25 * 35.0 ||
 			mo->velocity.y > 0.25 * 35.0 || mo->velocity.y < -0.25 * 35.0)
 		{
-		    if (mo->floorz != mo->subsector->sector->floorheight)
+			if (mo->floorz != mo->subsector->sector->floorheight)
 				return;
 		}
-    }
+	}
 
-    if (mo->velocity.x > -STOPSPEED && mo->velocity.x < STOPSPEED &&
+	if (mo->velocity.x > -STOPSPEED && mo->velocity.x < STOPSPEED &&
 		mo->velocity.y > -STOPSPEED && mo->velocity.y < STOPSPEED &&
 		mo->velocity.z > -STOPSPEED && mo->velocity.z < STOPSPEED &&
-    	(!player || (!player->forwardmove && !player->sidemove)))
-    {
+		(!player || (!player->forwardmove && !player->sidemove)))
+	{
 		if (player)
 		{
-        	int		sn;
+			int sn;
 
 			// if in a walking frame, stop moving
-            sn = player->mo->statenum;
+			sn = player->mo->statenum;
 			if (sn >= S_PLAY_RUN1 && sn <= S_PLAY_RUN4)
-		    	SetMobjState(player->mo, S_PLAY);
+				SetMobjState(player->mo, S_PLAY);
 		}
 		mo->velocity = vector(0.0, 0.0, 0.0);
-    }
-    else
-    {
+	}
+	else
+	{
 		if (mo->waterlevel > 1)
 			mo->velocity -= mo->velocity * (FRICTION_WATER * frametime);
 		else
 			mo->velocity -= mo->velocity * (FRICTION * frametime);
-    }
+	}
 }
 
 //==========================================================================
 //
-//	P_MobjThinker
+//  P_MobjThinker
 //
 //==========================================================================
 
-void P_MobjThinker(mobj_t* mobj)
+void P_MobjThinker(mobj_t * mobj)
 {
- 	//  In my deathmatch mode remove dropped weapons after 30 seconds
-    // because otherwise they are spawned fastar than player(s) can pick 
-    // them up and the game is going slower and slower and slower ...
+	//  In my deathmatch mode remove dropped weapons after 30 seconds
+	// because otherwise they are spawned fastar than player(s) can pick 
+	// them up and the game is going slower and slower and slower ...
 	if ((mobj->flags & MF_DROPPED) && (deathmatch == 3))
 	{
-       	mobj->movecount++;
-        if (mobj->movecount >= 30 * 35)
+		mobj->movecount++;
+		if (mobj->movecount >= 30 * 35)
 		{
-           	P_RemoveMobj(mobj);
-            return;
+			P_RemoveMobj(mobj);
+			return;
 		}
 	}
 
 	CheckWater(mobj);
 	UpdateVelocity(mobj);
 
-    // momentum movement
-    if (mobj->velocity.x || mobj->velocity.y || (mobj->flags & MF_SKULLFLY))
-    {
+	// momentum movement
+	if (mobj->velocity.x || mobj->velocity.y || (mobj->flags & MF_SKULLFLY))
+	{
 		P_XYMovement(mobj);
 
 		if (mobj->destroyed)
-        {
-	    	return;		// mobj was removed
+		{
+			return;	// mobj was removed
 		}
-    }
-    if ((mobj->origin.z != mobj->floorz) || mobj->velocity.z)
-    {
+	}
+	if ((mobj->origin.z != mobj->floorz) || mobj->velocity.z)
+	{
 		P_ZMovement(mobj);
 
 		if (mobj->destroyed)
-        {
-	    	return;		// mobj was removed
+		{
+			return;	// mobj was removed
 		}
-    }
+	}
 
-    // cycle through states,
-    // calling action functions at transitions
-    if (mobj->time != -1.0)
-    {
+	// cycle through states,
+	// calling action functions at transitions
+	if (mobj->time != -1.0)
+	{
 		mobj->time -= frametime;
-		
+
 		// you can cycle through multiple states in a tic
 		if (mobj->time <= 0.0)
 		{
 			mobj->time = 0.0;
-	    	if (!SetMobjState(mobj, mobj->nextstate))
-				return;		// freed itself
+			if (!SetMobjState(mobj, mobj->nextstate))
+				return;	// freed itself
 		}
-    }
-    else
-    {
+	}
+	else
+	{
 		// check for nightmare respawn
 		if (!(mobj->flags & MF_COUNTKILL))
-	    	return;
+			return;
 
-        //  In my deathmatch mode monstars respawns very fast
-        if (deathmatch == 3)
+		//  In my deathmatch mode monstars respawns very fast
+		if (deathmatch == 3)
 		{
 			if (level->tictime & 31)
-	    		return;
+				return;
 
 			if (P_Random() > 32)
-	    		return;
+				return;
 
 			P_NightmareRespawn(mobj);
 		}
-        else
+		else
 		{
 			if (!respawnmonsters)
-	    		return;
+				return;
 
-        	mobj->movecount++;
+			mobj->movecount++;
 
 			if (mobj->movecount < 12 * 35)
-	    		return;
+				return;
 
 			if (level->tictime & 31)
-	    		return;
+				return;
 
 			if (P_Random() > 4)
-	    		return;
+				return;
 
 			P_NightmareRespawn(mobj);
 		}
-    }
+	}
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/30 17:33:18  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/08/30 17:33:18  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

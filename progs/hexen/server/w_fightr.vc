@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -37,21 +37,21 @@
 
 //============================================================================
 //
-// 	A_FPunchAttack
+//  A_FPunchAttack
 //
 //============================================================================
 
-void A_FPunchAttack(mobj_t *actor)
+void A_FPunchAttack(mobj_t * actor)
 {
-	player_t*	player = actor->player;
-	int 		damage;
-	mobj_t		*pmo = player->mo;
-	float		power;
-	int 		i;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	int damage;
+	mobj_t *pmo = player->mo;
+	float power;
+	int i;
+	TAVec angles;
+	TVec vforward;
 
-	damage = 40+(P_Random()&15);
+	damage = 40 + (P_Random() & 15);
 	power = 2.0;
 	PuffType = MT_PUNCHPUFF;
 	for (i = 0; i < 16; i++)
@@ -70,16 +70,16 @@ void A_FPunchAttack(mobj_t *actor)
 			}
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, 2.0 * MELEERANGE, damage))
-            {
+			{
 				if (PuffType == MT_HAMMERPUFF)
 				{
 					StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
 				}
-                else
-                {
+				else
+				{
 					StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
 				}
-            }
+			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
@@ -101,13 +101,13 @@ void A_FPunchAttack(mobj_t *actor)
 			}
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, 2.0 * MELEERANGE, damage))
-            {
+			{
 				if (PuffType == MT_HAMMERPUFF)
 				{
 					StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
 				}
-                else
-                {
+				else
+				{
 					StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
 				}
 			}
@@ -119,8 +119,8 @@ void A_FPunchAttack(mobj_t *actor)
 			break;
 		}
 	}
-    if (i == 16)
-    {
+	if (i == 16)
+	{
 		// didn't find any creatures, so try to strike any walls
 		pmo->special1 = 0;
 
@@ -128,9 +128,9 @@ void A_FPunchAttack(mobj_t *actor)
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
-        {
+		{
 			StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
-        }
+		}
 	}
 
 	if (pmo->special1 == 3)
@@ -143,24 +143,24 @@ void A_FPunchAttack(mobj_t *actor)
 
 //============================================================================
 //
-//	A_FAxeAttack
+//  A_FAxeAttack
 //
 //============================================================================
 
 #define AXERANGE	(9.0 * MELEERANGE / 4.0)
 
-void A_FAxeAttack(mobj_t *actor)
+void A_FAxeAttack(mobj_t * actor)
 {
-	player_t*	player = actor->player;
-	mobj_t		*pmo = player->mo;
-	float		power;
-	int 		damage;
-	int 		i;
-	int 		useMana;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	mobj_t *pmo = player->mo;
+	float power;
+	int damage;
+	int i;
+	int useMana;
+	TAVec angles;
+	TVec vforward;
 
-	damage = 40+(P_Random()&15)+(P_Random()&7);
+	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
 	if (player->mana[MANA_1] > 0)
 	{
@@ -177,21 +177,21 @@ void A_FAxeAttack(mobj_t *actor)
 	for (i = 0; i < 16; i++)
 	{
 		avcpy(pmo->angles, angles);
-		angles.yaw += i*(ANG45/16);
+		angles.yaw += i * (ANG45 / 16);
 		AimLineAttack(pmo, &angles, AXERANGE);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
-            {
+			{
 				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-            }
+			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
-			useMana++; 
+			useMana++;
 			break;
 		}
 		avcpy(pmo->angles, angles);
@@ -201,20 +201,20 @@ void A_FAxeAttack(mobj_t *actor)
 		{
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
-            {
+			{
 				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-            }
+			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
-			useMana++; 
+			useMana++;
 			break;
 		}
 	}
-    if (i == 16)
-    {
+	if (i == 16)
+	{
 		// didn't find any creatures, so try to strike any walls
 		pmo->special1 = 0;
 
@@ -222,14 +222,14 @@ void A_FAxeAttack(mobj_t *actor)
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
-        {
+		{
 			StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-        }
+		}
 	}
 
 	if (useMana == 2)
 	{
-		player->mana[MANA_1] -= 
+		player->mana[MANA_1] -=
 			WeaponManaUse(player->pclass, player->readyweapon);
 		if (player->mana[MANA_1] <= 0)
 		{
@@ -240,23 +240,23 @@ void A_FAxeAttack(mobj_t *actor)
 
 //============================================================================
 //
-//	A_FHammerAttack
+//  A_FHammerAttack
 //
 //============================================================================
 
 #define HAMMER_RANGE	(MELEERANGE + MELEERANGE / 2.0)
 
-void A_FHammerAttack(mobj_t *actor)
+void A_FHammerAttack(mobj_t * actor)
 {
-	player_t*	player = actor->player;
-	mobj_t		*pmo = player->mo;
-	int 		damage;
-	float		power;
-	int 		i;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	mobj_t *pmo = player->mo;
+	int damage;
+	float power;
+	int i;
+	TAVec angles;
+	TVec vforward;
 
-	damage = 60+(P_Random()&63);
+	damage = 60 + (P_Random() & 63);
 	power = 10.0;
 	PuffType = MT_HAMMERPUFF;
 	for (i = 0; i < 16; i++)
@@ -268,15 +268,15 @@ void A_FHammerAttack(mobj_t *actor)
 		{
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
-            {
+			{
 				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-            }
+			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
-			pmo->special1 = false; // Don't throw a hammer
+			pmo->special1 = false;	// Don't throw a hammer
 			break;
 		}
 		avcpy(pmo->angles, angles);
@@ -286,29 +286,29 @@ void A_FHammerAttack(mobj_t *actor)
 		{
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
-            {
+			{
 				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-            }
+			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
-			pmo->special1 = false; // Don't throw a hammer
+			pmo->special1 = false;	// Don't throw a hammer
 			break;
 		}
 	}
-    if (i == 16)
-    {
+	if (i == 16)
+	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		PuffSpawned = NULL;
 		avcpy(pmo->angles, angles);
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
-        {
+		{
 			StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
-        }
+		}
 		if (PuffSpawned)
 		{
 			pmo->special1 = false;
@@ -321,87 +321,93 @@ void A_FHammerAttack(mobj_t *actor)
 
 	if (player->mana[MANA_2] <
 		WeaponManaUse(player->pclass, player->readyweapon))
-	{ // Don't spawn a hammer if the player doesn't have enough mana
+	{	// Don't spawn a hammer if the player doesn't have enough mana
 		pmo->special1 = false;
 	}
-	return;		
+	return;
 }
 
 //============================================================================
 //
-//	A_FHammerThrow
+//  A_FHammerThrow
 //
 //============================================================================
 
-void A_FHammerThrow(mobj_t *actor)
+void A_FHammerThrow(mobj_t * actor)
 {
-	player_t*	player = actor->player;
-	mobj_t*	mo;
+	player_t *player = actor->player;
+	mobj_t *mo;
 
 	if (!player->mo->special1)
 	{
 		return;
 	}
-	player->mana[MANA_2] -= WeaponManaUse(player->pclass, player->readyweapon);
-	mo = SpawnPlayerMissile(player->mo, MT_HAMMER_MISSILE); 
+	player->mana[MANA_2] -=
+		WeaponManaUse(player->pclass, player->readyweapon);
+	mo = SpawnPlayerMissile(player->mo, MT_HAMMER_MISSILE);
 	if (mo)
 	{
 		mo->special1 = 0;
-	}	
+	}
 }
 
 //============================================================================
 //
-// 	A_FSwordAttack
+//  A_FSwordAttack
 //
 //============================================================================
 
-void A_FSwordAttack(mobj_t *actor)
+void A_FSwordAttack(mobj_t * actor)
 {
-	player_t*	player = actor->player;
-	mobj_t*	pmo;
+	player_t *player = actor->player;
+	mobj_t *pmo;
 
-	player->mana[MANA_1] -= WeaponManaUse(player->pclass, player->readyweapon);
-	player->mana[MANA_2] -= WeaponManaUse(player->pclass, player->readyweapon);
+	player->mana[MANA_1] -=
+		WeaponManaUse(player->pclass, player->readyweapon);
+	player->mana[MANA_2] -=
+		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y, pmo->origin.z - 10.0, MT_FSWORD_MISSILE,
-		pmo->angles.yaw+ANG45/4);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y, pmo->origin.z - 5.0, MT_FSWORD_MISSILE,
-		pmo->angles.yaw+ANG45/8);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y, pmo->origin.z, MT_FSWORD_MISSILE, pmo->angles.yaw);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y, pmo->origin.z + 5.0, MT_FSWORD_MISSILE,
-		pmo->angles.yaw-ANG45/8);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y, pmo->origin.z + 10.0, MT_FSWORD_MISSILE,
-		pmo->angles.yaw-ANG45/4);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
+		pmo->origin.z - 10.0, MT_FSWORD_MISSILE, pmo->angles.yaw + ANG45 / 4);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
+		pmo->origin.z - 5.0, MT_FSWORD_MISSILE, pmo->angles.yaw + ANG45 / 8);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
+		pmo->origin.z, MT_FSWORD_MISSILE, pmo->angles.yaw);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
+		pmo->origin.z + 5.0, MT_FSWORD_MISSILE, pmo->angles.yaw - ANG45 / 8);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
+		pmo->origin.z + 10.0, MT_FSWORD_MISSILE, pmo->angles.yaw - ANG45 / 4);
 	StartSoundName(pmo, "FighterSwordFire", CHAN_WEAPON);
 }
 
 //============================================================================
 //
-//	A_FSwordFlames
+//  A_FSwordFlames
 //
 //============================================================================
 
-void A_FSwordFlames(mobj_t* actor)
+void A_FSwordFlames(mobj_t * actor)
 {
-	int 	i;
+	int i;
 
-	for (i = 1+(P_Random()&3); i; i--)
+	for (i = 1 + (P_Random() & 3); i; i--)
 	{
 		P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
 			actor->origin.y + (Random() - 0.5) * 16.0,
-			actor->origin.z + (Random() - 0.5) * 8.0,
-			MT_FSWORD_FLAME);
+			actor->origin.z + (Random() - 0.5) * 8.0, MT_FSWORD_FLAME);
 	}
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:18  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:18  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

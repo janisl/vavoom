@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Options menu
+//**    Options menu
 //**
 //**************************************************************************
 
@@ -35,15 +35,15 @@
 
 struct menu_options_t
 {
-	menu_t			menu;
-	menutext_t		ctl;
-	menutext_t		ctl2;
-	menutext_t		mouse;
-	menutext_t		res;
-	menutext_t		video;
-	menutext_t		sound;
-	menutext_t		console;
-	menutext_t		title;
+	menu_t menu;
+	menutext_t ctl;
+	menutext_t ctl2;
+	menutext_t mouse;
+	menutext_t res;
+	menutext_t video;
+	menutext_t sound;
+	menutext_t console;
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -57,13 +57,13 @@ void menu_sound(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_options_t	OptionsMenu;
+menu_options_t OptionsMenu;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	menu_options
+//  menu_options
 //
 //==========================================================================
 
@@ -72,49 +72,59 @@ void menu_options(void)
 	int x = 160;
 	int y = 32;
 
-    InitMenu(&OptionsMenu.menu);
+	InitMenu(&OptionsMenu.menu);
 
-	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR, menu_controls);
+	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR,
+		menu_controls);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl);
 	y += 10;
 
-	MenuText_InitFunc(&OptionsMenu.ctl2, x, y, "Controls 2", TEXT_SMALLR, menu_controls2);
+	MenuText_InitFunc(&OptionsMenu.ctl2, x, y, "Controls 2", TEXT_SMALLR,
+		menu_controls2);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl2);
 	y += 10;
 
-	MenuText_InitFunc(&OptionsMenu.mouse, x, y, "Mouse Options", TEXT_SMALLR, menu_mouse);
+	MenuText_InitFunc(&OptionsMenu.mouse, x, y, "Mouse Options", TEXT_SMALLR,
+		menu_mouse);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.mouse);
 	y += 10;
 
-	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution", TEXT_SMALLR, menu_resolution);
+	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution",
+		TEXT_SMALLR, menu_resolution);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.res);
 	y += 10;
 
-	MenuText_InitFunc(&OptionsMenu.video, x, y, "Video options", TEXT_SMALLR, menu_video);
+	MenuText_InitFunc(&OptionsMenu.video, x, y, "Video options", TEXT_SMALLR,
+		menu_video);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.video);
 	y += 10;
 
-	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR, menu_sound);
+	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR,
+		menu_sound);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.sound);
 	y += 10;
 
-	MenuText_InitCmd(&OptionsMenu.console, x, y, "Go to console", TEXT_SMALLR, "ToggleConsole\n");
+	MenuText_InitCmd(&OptionsMenu.console, x, y, "Go to console", TEXT_SMALLR,
+		"ToggleConsole\n");
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.console);
 	y += 10;
 
 	MenuText_InitTitle(&OptionsMenu.title, 160, 24, "OPTIONS", TEXT_BIGC);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.title);
 
-    PushMenu(&OptionsMenu.menu);
+	PushMenu(&OptionsMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/23 17:38:15  dj_jl
-//	Added video options menu
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/23 17:38:15  dj_jl
+//  Added video options menu
+//  
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

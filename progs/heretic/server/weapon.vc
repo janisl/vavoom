@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -38,47 +38,45 @@
 
 #define MAX_MACE_SPOTS	8
 
-int WeaponAmmoUsePL1[NUMWEAPONS] =
-{
-	0,					// staff
+int WeaponAmmoUsePL1[NUMWEAPONS] = {
+	0,	// staff
 	USE_GWND_AMMO_1,	// gold wand
 	USE_CBOW_AMMO_1,	// crossbow
 	USE_BLSR_AMMO_1,	// blaster
 	USE_SKRD_AMMO_1,	// skull rod
 	USE_PHRD_AMMO_1,	// phoenix rod
 	USE_MACE_AMMO_1,	// mace
-	0,					// gauntlets
-	0					// beak
+	0,	// gauntlets
+	0	// beak
 };
 
-int WeaponAmmoUsePL2[NUMWEAPONS] =
-{
-	0,					// staff
+int WeaponAmmoUsePL2[NUMWEAPONS] = {
+	0,	// staff
 	USE_GWND_AMMO_2,	// gold wand
 	USE_CBOW_AMMO_2,	// crossbow
 	USE_BLSR_AMMO_2,	// blaster
 	USE_SKRD_AMMO_2,	// skull rod
 	USE_PHRD_AMMO_2,	// phoenix rod
 	USE_MACE_AMMO_2,	// mace
-	0,					// gauntlets
-	0					// beak
+	0,	// gauntlets
+	0	// beak
 };
 
-int 			MaceSpotCount;
-float			MaceSpot_x[MAX_MACE_SPOTS];
-float			MaceSpot_y[MAX_MACE_SPOTS];
+int MaceSpotCount;
+float MaceSpot_x[MAX_MACE_SPOTS];
+float MaceSpot_y[MAX_MACE_SPOTS];
 
 //****************************************************************************
 //
-//	WEAPON UTILITES
+//  WEAPON UTILITES
 //
 //****************************************************************************
 
 //===========================================================================
 //
-//	OpenWeapons
+//  OpenWeapons
 //
-//	Called at level load before things are loaded.
+//  Called at level load before things are loaded.
 //
 //===========================================================================
 
@@ -89,7 +87,7 @@ void OpenWeapons(void)
 
 //===========================================================================
 //
-//	AddMaceSpot
+//  AddMaceSpot
 //
 //===========================================================================
 
@@ -108,13 +106,13 @@ void AddMaceSpot(float x, float y)
 //
 //  RepositionMace
 //
-//	Chooses the next spot to place the mace.
+//  Chooses the next spot to place the mace.
 //
 //===========================================================================
 
-void RepositionMace(mobj_t *mo)
+void RepositionMace(mobj_t * mo)
 {
-	int 		spot;
+	int spot;
 
 	spot = P_Random() % MaceSpotCount;
 	P_UnsetThingPosition(mo);
@@ -126,9 +124,9 @@ void RepositionMace(mobj_t *mo)
 
 //===========================================================================
 //
-//	CloseWeapons
+//  CloseWeapons
 //
-//	Called at level load after things are loaded.
+//  Called at level load after things are loaded.
 //
 //===========================================================================
 
@@ -154,14 +152,14 @@ void CloseWeapons(void)
 //
 //  BringUpWeapon
 //
-//	Starts bringing the pending weapon up from the bottom of the screen.
+//  Starts bringing the pending weapon up from the bottom of the screen.
 //
 //===========================================================================
 
-void BringUpWeapon(player_t *player)
+void BringUpWeapon(player_t * player)
 {
 	player->pspriteSY = PSpriteSY[player->readyweapon];
-	weaponinfo[player->readyweapon](player);
+	weaponinfo[player->readyweapon] (player);
 	if (player->readyweapon == wp_gauntlets)
 	{
 		StartSoundName(player->mo, "GauntletActive", CHAN_WEAPON);
@@ -180,13 +178,13 @@ void BringUpWeapon(player_t *player)
 
 //===========================================================================
 //
-//	DropWeapon
+//  DropWeapon
 //
-//	The player died, so put the weapon away.
+//  The player died, so put the weapon away.
 //
 //===========================================================================
 
-void DropWeapon(player_t *player)
+void DropWeapon(player_t * player)
 {
 	if (player->powers[pw_weaponlevel2])
 	{
@@ -200,15 +198,15 @@ void DropWeapon(player_t *player)
 
 //===========================================================================
 //
-//	SetupPsprites
+//  SetupPsprites
 //
-//	Called at start of level for each player
+//  Called at start of level for each player
 //
 //===========================================================================
 
-void SetupPsprites(player_t *player)
+void SetupPsprites(player_t * player)
 {
-	int 	i;
+	int i;
 
 	// Remove all psprites
 	for (i = 0; i < NUMPSPRITES; i++)
@@ -221,21 +219,21 @@ void SetupPsprites(player_t *player)
 
 //===========================================================================
 //
-//	MovePsprites
+//  MovePsprites
 //
-//	Called every tic by player thinking routine
+//  Called every tic by player thinking routine
 //
 //===========================================================================
 
-void MovePsprites(player_t *player)
+void MovePsprites(player_t * player)
 {
-	int 		i;
-	pspdef_t 	*psp;
+	int i;
+	pspdef_t *psp;
 
-	for(i = 0; i < NUMPSPRITES; i++)
+	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		psp = &player->psprites[i];
-		if (psp->statenum) // a null state means not active
+		if (psp->statenum)	// a null state means not active
 		{
 			// drop tic count and possibly change state
 			if (psp->time != -1.0)	// a -1 tic count never changes
@@ -257,19 +255,19 @@ void MovePsprites(player_t *player)
 //
 //  CheckAmmo
 //
-//	Returns true if there is enough ammo to shoot.  If not, selects the
+//  Returns true if there is enough ammo to shoot.  If not, selects the
 // next weapon to use.
 //
 //===========================================================================
 
-boolean CheckAmmo(player_t *player)
+boolean CheckAmmo(player_t * player)
 {
 	int ammo;
 	int *ammoUse;
 	int count;
 
 	ammo = player->w_ammo;
-	if(player->powers[pw_weaponlevel2] && !deathmatch)
+	if (player->powers[pw_weaponlevel2] && !deathmatch)
 	{
 		ammoUse = &WeaponAmmoUsePL2[0];
 	}
@@ -278,42 +276,42 @@ boolean CheckAmmo(player_t *player)
 		ammoUse = &WeaponAmmoUsePL1[0];
 	}
 	count = ammoUse[player->readyweapon];
-	if(ammo == am_noammo || player->ammo[ammo] >= count)
+	if (ammo == am_noammo || player->ammo[ammo] >= count)
 	{
 		return true;
 	}
 	// out of ammo, pick a weapon to change to
 	do
 	{
-		if(player->weaponowned[wp_skullrod]
+		if (player->weaponowned[wp_skullrod]
 			&& player->ammo[am_skullrod] > ammoUse[wp_skullrod])
 		{
 			player->pendingweapon = wp_skullrod;
 		}
-		else if(player->weaponowned[wp_blaster]
+		else if (player->weaponowned[wp_blaster]
 			&& player->ammo[am_blaster] > ammoUse[wp_blaster])
 		{
 			player->pendingweapon = wp_blaster;
 		}
-		else if(player->weaponowned[wp_crossbow]
+		else if (player->weaponowned[wp_crossbow]
 			&& player->ammo[am_crossbow] > ammoUse[wp_crossbow])
 		{
 			player->pendingweapon = wp_crossbow;
 		}
-		else if(player->weaponowned[wp_mace]
+		else if (player->weaponowned[wp_mace]
 			&& player->ammo[am_mace] > ammoUse[wp_mace])
 		{
 			player->pendingweapon = wp_mace;
 		}
-		else if(player->ammo[am_goldwand] > ammoUse[wp_goldwand])
+		else if (player->ammo[am_goldwand] > ammoUse[wp_goldwand])
 		{
 			player->pendingweapon = wp_goldwand;
 		}
-		else if(player->weaponowned[wp_gauntlets])
+		else if (player->weaponowned[wp_gauntlets])
 		{
 			player->pendingweapon = wp_gauntlets;
 		}
-		else if(player->weaponowned[wp_phoenixrod]
+		else if (player->weaponowned[wp_phoenixrod]
 			&& player->ammo[am_phoenixrod] > ammoUse[wp_phoenixrod])
 		{
 			player->pendingweapon = wp_phoenixrod;
@@ -322,8 +320,9 @@ boolean CheckAmmo(player_t *player)
 		{
 			player->pendingweapon = wp_staff;
 		}
-	} while(player->pendingweapon == wp_nochange);
-	if(player->powers[pw_weaponlevel2])
+	}
+	while (player->pendingweapon == wp_nochange);
+	if (player->powers[pw_weaponlevel2])
 	{
 		SetPsprite(player, ps_weapon, player->w2_downstate);
 	}
@@ -338,12 +337,12 @@ boolean CheckAmmo(player_t *player)
 //
 //  BulletSlope
 //
-//	Sets a slope so a near miss is at aproximately the height of the
+//  Sets a slope so a near miss is at aproximately the height of the
 // intended target
 //
 //===========================================================================
 
-void BulletSlope(mobj_t *mo, TAVec *angles)
+void BulletSlope(mobj_t * mo, TAVec * angles)
 {
 	//
 	// see which target is to be aimed at
@@ -375,7 +374,7 @@ void BulletSlope(mobj_t *mo, TAVec *angles)
 //
 //===========================================================================
 
-void FireWeapon(player_t *player)
+void FireWeapon(player_t * player)
 {
 	int attackState;
 
@@ -385,15 +384,15 @@ void FireWeapon(player_t *player)
 	}
 	SetMobjState(player->mo, S_PLAY_ATK2);
 	if (player->powers[pw_weaponlevel2])
- 	{
+	{
 		attackState = player->refire ? player->w2_holdatkstate
 			: player->w2_atkstate;
- 	}
- 	else
- 	{
+	}
+	else
+	{
 		attackState = player->refire ? player->w_holdatkstate
 			: player->w_atkstate;
- 	}
+	}
 	SetPsprite(player, ps_weapon, attackState);
 	P_NoiseAlert(player->mo, player->mo);
 	if (player->readyweapon == wp_gauntlets && !player->refire)
@@ -409,11 +408,11 @@ void FireWeapon(player_t *player)
 //
 //===========================================================================
 
-void ActivateBeak(player_t *player)
+void ActivateBeak(player_t * player)
 {
 	player->pendingweapon = wp_nochange;
 	player->readyweapon = wp_beak;
-	weaponinfo[wp_beak](player);
+	weaponinfo[wp_beak] (player);
 	player->pspriteSY = PSpriteSY[player->readyweapon];
 	player->psprites[ps_weapon].sy = WEAPONTOP;
 	SetPsprite(player, ps_weapon, S_BEAKREADY);
@@ -425,15 +424,15 @@ void ActivateBeak(player_t *player)
 //
 //===========================================================================
 
-void PostChickenWeapon(player_t *player, int weapon)
+void PostChickenWeapon(player_t * player, int weapon)
 {
-	if(weapon == wp_beak)
-	{ // Should never happen
+	if (weapon == wp_beak)
+	{	// Should never happen
 		weapon = wp_staff;
 	}
 	player->pendingweapon = wp_nochange;
 	player->readyweapon = weapon;
-	weaponinfo[weapon](player);
+	weaponinfo[weapon] (player);
 	player->pspriteSY = PSpriteSY[player->readyweapon];
 	player->psprites[ps_weapon].sy = WEAPONBOTTOM;
 	SetPsprite(player, ps_weapon, player->w_upstate);
@@ -445,18 +444,18 @@ void PostChickenWeapon(player_t *player, int weapon)
 //
 //===========================================================================
 
-void UpdateBeak(player_t *player, pspdef_t *psp)
+void UpdateBeak(player_t * player, pspdef_t * psp)
 {
 	psp->sy = WEAPONTOP + itof(player->chickenPeck) / 2.0;
 }
 
 //===========================================================================
 //
-//	WeaponLevel2Fade
+//  WeaponLevel2Fade
 //
 //===========================================================================
 
-void WeaponLevel2Fade(player_t* player)
+void WeaponLevel2Fade(player_t * player)
 {
 	if ((player->readyweapon == wp_phoenixrod) &&
 		(player->psprites[ps_weapon].statenum != S_PHOENIXREADY) &&
@@ -466,7 +465,7 @@ void WeaponLevel2Fade(player_t* player)
 		player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 		player->refire = 0;
 	}
-	else if((player->readyweapon == wp_gauntlets)
+	else if ((player->readyweapon == wp_gauntlets)
 		|| (player->readyweapon == wp_staff))
 	{
 		player->pendingweapon = player->readyweapon;
@@ -475,23 +474,23 @@ void WeaponLevel2Fade(player_t* player)
 
 //****************************************************************************
 //
-//	WEAPON ACTIONS
+//  WEAPON ACTIONS
 //
 //****************************************************************************
 
 //===========================================================================
 //
-//	A_WeaponReady
+//  A_WeaponReady
 //
-//	The player can fire the weapon or change to another weapon at this time.
+//  The player can fire the weapon or change to another weapon at this time.
 //
 //===========================================================================
 
-void A_WeaponReady(mobj_t *actor)
+void A_WeaponReady(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
-	int 		angle;
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+	int angle;
 
 	if (player->chickenTics)
 	{
@@ -507,16 +506,15 @@ void A_WeaponReady(mobj_t *actor)
 	}
 	// Check for staff PL2 active sound
 	if ((player->readyweapon == wp_staff) &&
-		(psp->statenum == S_STAFFREADY2_1) &&
-		P_Random() < 128)
+		(psp->statenum == S_STAFFREADY2_1) && P_Random() < 128)
 	{
 		StartSoundName(player->mo, "StaffActive", CHAN_WEAPON);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
-	if(player->pendingweapon != wp_nochange || !player->health)
+	if (player->pendingweapon != wp_nochange || !player->health)
 	{
-		if(player->powers[pw_weaponlevel2])
+		if (player->powers[pw_weaponlevel2])
 		{
 			SetPsprite(player, ps_weapon, player->w2_downstate);
 		}
@@ -551,13 +549,14 @@ void A_WeaponReady(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_BeakReady
+//  A_BeakReady
 //
 //===========================================================================
 
-void A_BeakReady(mobj_t *actor)
+void A_BeakReady(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	if (player->buttons & BT_ATTACK)
 	{
 		// Chicken beak attack
@@ -576,7 +575,7 @@ void A_BeakReady(mobj_t *actor)
 	else
 	{
 		if (player->mo->statenum == S_CHICPLAY_ATK1)
-		{ // Take out of attack state
+		{	// Take out of attack state
 			SetMobjState(player->mo, S_CHICPLAY);
 		}
 		player->attackdown = false;
@@ -585,14 +584,15 @@ void A_BeakReady(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_Lower
+//  A_Lower
 //
 //===========================================================================
 
-void A_Lower(mobj_t *actor)
+void A_Lower(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+
 	if (player->chickenTics)
 	{
 		psp->sy = WEAPONBOTTOM;
@@ -615,7 +615,7 @@ void A_Lower(mobj_t *actor)
 	if (!player->health)
 	{
 		// Player is dead, so keep the weapon off screen
-		SetPsprite(player,  ps_weapon, S_NULL);
+		SetPsprite(player, ps_weapon, S_NULL);
 		return;
 	}
 	player->readyweapon = player->pendingweapon;
@@ -624,14 +624,15 @@ void A_Lower(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_Raise
+//  A_Raise
 //
 //===========================================================================
 
-void A_Raise(mobj_t *actor)
+void A_Raise(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+
 	psp->sy -= RAISESPEED;
 	if (psp->sy > WEAPONTOP)
 	{
@@ -651,29 +652,31 @@ void A_Raise(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_BeakRaise
+//  A_BeakRaise
 //
 //===========================================================================
 
-void A_BeakRaise(mobj_t *actor)
+void A_BeakRaise(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+
 	psp->sy = WEAPONTOP;
 	SetPsprite(player, ps_weapon, player->w_readystate);
 }
 
 //===========================================================================
 //
-//	A_ReFire
+//  A_ReFire
 //
-// 	The player can re fire the weapon without lowering it entirely.
+//  The player can re fire the weapon without lowering it entirely.
 //
 //===========================================================================
 
-void A_ReFire(mobj_t *actor)
+void A_ReFire(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	if ((player->buttons & BT_ATTACK)
 		&& player->pendingweapon == wp_nochange && player->health)
 	{
@@ -689,34 +692,35 @@ void A_ReFire(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_Light0
+//  A_Light0
 //
 //===========================================================================
 
-void A_Light0(mobj_t *actor)
+void A_Light0(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	player->extralight = 0;
 }
 
 //****************************************************************************
 //
-//	WEAPON ATTACKS
+//  WEAPON ATTACKS
 //
 //****************************************************************************
 
 //===========================================================================
 //
-//	A_StaffAttackPL1
+//  A_StaffAttackPL1
 //
 //===========================================================================
 
-void A_StaffAttackPL1(mobj_t *actor)
+void A_StaffAttackPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	TAVec	angles;
-	int 	damage;
-	TVec	vforward;
+	player_t *player = actor->player;
+	TAVec angles;
+	int damage;
+	TVec vforward;
 
 	damage = 5 + (P_Random() & 15);
 	avcpy(player->mo->angles, angles);
@@ -729,23 +733,24 @@ void A_StaffAttackPL1(mobj_t *actor)
 	{
 		//StartSoundName(player->mo, sfx_stfhit);
 		// turn to face target
-		player->mo->angles.yaw = atan2(linetarget->origin.y - player->mo->origin.y,
+		player->mo->angles.yaw =
+			atan2(linetarget->origin.y - player->mo->origin.y,
 			linetarget->origin.x - player->mo->origin.x);
 	}
 }
 
 //===========================================================================
 //
-//	A_StaffAttackPL2
+//  A_StaffAttackPL2
 //
 //===========================================================================
 
-void A_StaffAttackPL2(mobj_t *actor)
+void A_StaffAttackPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	TAVec	angles;
-	int 	damage;
-	TVec	vforward;
+	player_t *player = actor->player;
+	TAVec angles;
+	int damage;
+	TVec vforward;
 
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
@@ -760,7 +765,8 @@ void A_StaffAttackPL2(mobj_t *actor)
 	{
 		//StartSoundName(player->mo, sfx_stfpow);
 		// turn to face target
-		player->mo->angles.yaw = atan2(linetarget->origin.y - player->mo->origin.y,
+		player->mo->angles.yaw =
+			atan2(linetarget->origin.y - player->mo->origin.y,
 			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
@@ -768,21 +774,21 @@ void A_StaffAttackPL2(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_GauntletAttack
+//  A_GauntletAttack
 //
 //===========================================================================
 
-void A_GauntletAttack(mobj_t *actor)
+void A_GauntletAttack(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
-	angle_t		angle;
-	int 		damage;
-	float		slope;
-	int 		randVal;
-	float		dist;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+	angle_t angle;
+	int damage;
+	float slope;
+	int randVal;
+	float dist;
+	TAVec angles;
+	TVec vforward;
 
 	psp->sx = Random() * 4.0 - 2.0;
 	psp->sy = WEAPONTOP + Random() * 4.0;
@@ -791,14 +797,14 @@ void A_GauntletAttack(mobj_t *actor)
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
-		angles.yaw += (P_Random()-P_Random())<<17;
+		angles.yaw += (P_Random() - P_Random()) << 17;
 		PuffType = MT_GAUNTLETPUFF2;
 	}
 	else
 	{
 		damage = HITDICE(2);
 		dist = MELEERANGE + 0.00001;
-		angles.yaw += (P_Random()-P_Random())<<18;
+		angles.yaw += (P_Random() - P_Random()) << 18;
 		PuffType = MT_GAUNTLETPUFF1;
 	}
 	AimLineAttack(player->mo, &angles, dist);
@@ -838,7 +844,7 @@ void A_GauntletAttack(mobj_t *actor)
 	// turn to face target
 	angle = atan2(linetarget->origin.y - player->mo->origin.y,
 		linetarget->origin.x - player->mo->origin.x);
-	if (angle-player->mo->angles.yaw > ANG180)
+	if (angle - player->mo->angles.yaw > ANG180)
 	{
 		if (angle - player->mo->angles.yaw < -ANG90 / 20)
 			player->mo->angles.yaw = angle + ANG90 / 21;
@@ -847,7 +853,7 @@ void A_GauntletAttack(mobj_t *actor)
 	}
 	else
 	{
-		if(angle-player->mo->angles.yaw > ANG90 / 20)
+		if (angle - player->mo->angles.yaw > ANG90 / 20)
 			player->mo->angles.yaw = angle - ANG90 / 21;
 		else
 			player->mo->angles.yaw += ANG90 / 20;
@@ -857,17 +863,17 @@ void A_GauntletAttack(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FireGoldWandPL1
+//  A_FireGoldWandPL1
 //
 //===========================================================================
 
-void A_FireGoldWandPL1(mobj_t *actor)
+void A_FireGoldWandPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t		*mo;
-	int			damage;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	mobj_t *mo;
+	int damage;
+	TAVec angles;
+	TVec vforward;
 
 	mo = player->mo;
 	player->ammo[am_goldwand] -= USE_GWND_AMMO_1;
@@ -885,27 +891,29 @@ void A_FireGoldWandPL1(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FireGoldWandPL2
+//  A_FireGoldWandPL2
 //
 //===========================================================================
 
-void A_FireGoldWandPL2(mobj_t *actor)
+void A_FireGoldWandPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	int 		i;
-	mobj_t*		mo;
-	int 		damage;
-	float		momz;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	int i;
+	mobj_t *mo;
+	int damage;
+	float momz;
+	TAVec angles;
+	TVec vforward;
 
 	mo = player->mo;
 	player->ammo[am_goldwand] -=
 		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	PuffType = MT_GOLDWANDPUFF2;
 	BulletSlope(mo, &angles);
-	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw - (ANG45 / 8), angles.pitch);
-	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw + (ANG45 / 8), angles.pitch);
+	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw - (ANG45 / 8),
+		angles.pitch);
+	SpawnMissileAngles(mo, MT_GOLDWANDFX2, angles.yaw + (ANG45 / 8),
+		angles.pitch);
 	angles.yaw -= (ANG45 / 8);
 	for (i = 0; i < 5; i++)
 	{
@@ -919,57 +927,57 @@ void A_FireGoldWandPL2(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FireCrossbowPL1
+//  A_FireCrossbowPL1
 //
 //===========================================================================
 
-void A_FireCrossbowPL1(mobj_t *actor)
+void A_FireCrossbowPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	pmo;
+	player_t *player = actor->player;
+	mobj_t *pmo;
 
 	pmo = player->mo;
 	player->ammo[am_crossbow] -= USE_CBOW_AMMO_1;
 	SpawnPlayerMissile(pmo, MT_CRBOWFX1);
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw-(ANG45/10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw+(ANG45/10));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw - (ANG45 / 10));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw + (ANG45 / 10));
 }
 
 //===========================================================================
 //
-//	A_FireCrossbowPL2
+//  A_FireCrossbowPL2
 //
 //===========================================================================
 
-void A_FireCrossbowPL2(mobj_t *actor)
+void A_FireCrossbowPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	pmo;
+	player_t *player = actor->player;
+	mobj_t *pmo;
 
 	pmo = player->mo;
 	player->ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
 	SpawnPlayerMissile(pmo, MT_CRBOWFX2);
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw-(ANG45/10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw+(ANG45/10));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw-(ANG45/5));
-	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw+(ANG45/5));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw - (ANG45 / 10));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX2, pmo->angles.yaw + (ANG45 / 10));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw - (ANG45 / 5));
+	SpawnPlayerMissileAngle(pmo, MT_CRBOWFX3, pmo->angles.yaw + (ANG45 / 5));
 }
 
 //===========================================================================
 //
-//	A_FireBlasterPL1
+//  A_FireBlasterPL1
 //
 //===========================================================================
 
-void A_FireBlasterPL1(mobj_t *actor)
+void A_FireBlasterPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*		mo;
-	int 		damage;
-    float		bulletslope;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	mobj_t *mo;
+	int damage;
+	float bulletslope;
+	TAVec angles;
+	TVec vforward;
 
 	mo = player->mo;
 	StartSoundName(mo, "GoldWandFire", CHAN_WEAPON);
@@ -988,35 +996,35 @@ void A_FireBlasterPL1(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FireBlasterPL2
+//  A_FireBlasterPL2
 //
 //===========================================================================
 
-void A_FireBlasterPL2(mobj_t *actor)
+void A_FireBlasterPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	mo;
+	player_t *player = actor->player;
+	mobj_t *mo;
 
 	player->ammo[am_blaster] -=
 		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
 	mo = SpawnPlayerMissile(player->mo, MT_BLASTERFX1);
 	if (mo)
 	{
-    	mo->blaster = true;
+		mo->blaster = true;
 	}
 	StartSoundName(player->mo, "BlasterFire", CHAN_WEAPON);
 }
 
 //===========================================================================
 //
-//	A_FireSkullRodPL1
+//  A_FireSkullRodPL1
 //
 //===========================================================================
 
-void A_FireSkullRodPL1(mobj_t *actor)
+void A_FireSkullRodPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	mo;
+	player_t *player = actor->player;
+	mobj_t *mo;
 
 	if (player->ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
@@ -1033,17 +1041,18 @@ void A_FireSkullRodPL1(mobj_t *actor)
 
 //===========================================================================
 //
-// 	A_FireSkullRodPL2
+//  A_FireSkullRodPL2
 //
-// 	The special2 field holds the player number that shot the rain missile.
+//  The special2 field holds the player number that shot the rain missile.
 // The specialmobj1 field is used for the seeking routines, special1 as a
 // counter for the sound looping.
 //
 //===========================================================================
 
-void A_FireSkullRodPL2(mobj_t *actor)
+void A_FireSkullRodPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	player->ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
 	SpawnPlayerMissile(player->mo, MT_HORNRODFX2);
@@ -1069,14 +1078,14 @@ void A_FireSkullRodPL2(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FirePhoenixPL1
+//  A_FirePhoenixPL1
 //
 //===========================================================================
 
-void A_FirePhoenixPL1(mobj_t *actor)
+void A_FirePhoenixPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	TVec		vforward;
+	player_t *player = actor->player;
+	TVec vforward;
 
 	player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
 	SpawnPlayerMissile(player->mo, MT_PHOENIXFX1);
@@ -1086,31 +1095,32 @@ void A_FirePhoenixPL1(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_InitPhoenixPL2
+//  A_InitPhoenixPL2
 //
 //===========================================================================
 
-void A_InitPhoenixPL2(mobj_t *actor)
+void A_InitPhoenixPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	player->flamecount = ftoi(FLAME_THROWER_TIME * 35.0);
 }
 
 //===========================================================================
 //
-//	A_FirePhoenixPL2
+//  A_FirePhoenixPL2
 //
-// 	Flame thrower effect.
+//  Flame thrower effect.
 //
 //===========================================================================
 
-void A_FirePhoenixPL2(mobj_t *actor)
+void A_FirePhoenixPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*		mo;
-	mobj_t*		pmo;
-	TVec		dir;
-	float		x, y, z;
+	player_t *player = actor->player;
+	mobj_t *mo;
+	mobj_t *pmo;
+	TVec dir;
+	float x, y, z;
 
 	if (--player->flamecount == 0)
 	{
@@ -1133,19 +1143,20 @@ void A_FirePhoenixPL2(mobj_t *actor)
 	if (!player->refire || !(level->tictime % 38))
 	{
 		StartSoundName(player->mo, "PhoenixHit2", CHAN_WEAPON);
-	}	
+	}
 	CheckMissileSpawn(mo);
 }
 
 //===========================================================================
 //
-//	A_ShutdownPhoenixPL2
+//  A_ShutdownPhoenixPL2
 //
 //===========================================================================
 
-void A_ShutdownPhoenixPL2(mobj_t *actor)
+void A_ShutdownPhoenixPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
+	player_t *player = actor->player;
+
 	player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
 
@@ -1155,12 +1166,12 @@ void A_ShutdownPhoenixPL2(mobj_t *actor)
 //
 //===========================================================================
 
-void A_FireMacePL1B(mobj_t *actor)
+void A_FireMacePL1B(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	pmo;
-	mobj_t*	ball;
-	angle_t	angle;
+	player_t *player = actor->player;
+	mobj_t *pmo;
+	mobj_t *ball;
+	angle_t angle;
 
 	if (player->ammo[am_mace] < USE_MACE_AMMO_1)
 	{
@@ -1170,7 +1181,8 @@ void A_FireMacePL1B(mobj_t *actor)
 	pmo = player->mo;
 	ball = P_SpawnMobj(pmo->origin.x, pmo->origin.y, pmo->origin.z + 28.0
 		- pmo->floorclip, MT_MACEFX2);
-	ball->velocity.z = (2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
+	ball->velocity.z =
+		(2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
 	angle = pmo->angles.yaw;
 	ball->target = pmo;
 	ball->angles.yaw = angle;
@@ -1183,15 +1195,15 @@ void A_FireMacePL1B(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_FireMacePL1
+//  A_FireMacePL1
 //
 //===========================================================================
 
-void A_FireMacePL1(mobj_t *actor)
+void A_FireMacePL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
-	mobj_t*	ball;
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+	mobj_t *ball;
 
 	if (P_Random() < 28)
 	{
@@ -1205,33 +1217,34 @@ void A_FireMacePL1(mobj_t *actor)
 	player->ammo[am_mace] -= USE_MACE_AMMO_1;
 	psp->sx = Random() * 4.0 - 2.0;
 	psp->sy = WEAPONTOP + Random() * 4.0;
-	ball = SpawnPlayerMissileAngle(player->mo, MT_MACEFX1, player->mo->angles.yaw
-		+(((P_Random()&7)-4)<<24));
+	ball =
+		SpawnPlayerMissileAngle(player->mo, MT_MACEFX1,
+		player->mo->angles.yaw + (((P_Random() & 7) - 4) << 24));
 	if (ball)
 	{
-		ball->special1 = 16; // tics till dropoff
+		ball->special1 = 16;	// tics till dropoff
 	}
 }
 
 //===========================================================================
 //
-//	A_FireMacePL2
+//  A_FireMacePL2
 //
 //===========================================================================
 
-void A_FireMacePL2(mobj_t *actor)
+void A_FireMacePL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	mobj_t*	mo;
+	player_t *player = actor->player;
+	mobj_t *mo;
 
-	player->ammo[am_mace] -=
-		deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	player->ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
 	mo = SpawnPlayerMissile(player->mo, MT_MACEFX4);
 	if (mo)
 	{
 		mo->velocity.x += player->mo->velocity.x;
 		mo->velocity.y += player->mo->velocity.y;
-		mo->velocity.z = (2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
+		mo->velocity.z =
+			(2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
 		if (linetarget)
 		{
 			mo->specialmobj1 = linetarget;
@@ -1242,19 +1255,19 @@ void A_FireMacePL2(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_BeakAttackPL1
+//  A_BeakAttackPL1
 //
 //===========================================================================
 
-void A_BeakAttackPL1(mobj_t *actor)
+void A_BeakAttackPL1(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
-	int 		damage;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+	int damage;
+	TAVec angles;
+	TVec vforward;
 
-	damage = 1+(P_Random()&3);
+	damage = 1 + (P_Random() & 3);
 	avcpy(player->mo->angles, angles);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	PuffType = MT_BEAKPUFF;
@@ -1262,28 +1275,30 @@ void A_BeakAttackPL1(mobj_t *actor)
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->angles.yaw = atan2(linetarget->origin.y - player->mo->origin.y,
+		player->mo->angles.yaw =
+			atan2(linetarget->origin.y - player->mo->origin.y,
 			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
-	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3), CHAN_VOICE);
+	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3),
+		CHAN_VOICE);
 	player->chickenPeck = 12;
 	psp->time -= Random() * 0.25;
 }
 
 //===========================================================================
 //
-//	A_BeakAttackPL2
+//  A_BeakAttackPL2
 //
 //===========================================================================
 
-void A_BeakAttackPL2(mobj_t *actor)
+void A_BeakAttackPL2(mobj_t * actor)
 {
-	player_t	*player = actor->player;
-	pspdef_t	*psp = &player->psprites[ps_weapon];
-	int 		damage;
-	TAVec		angles;
-	TVec		vforward;
+	player_t *player = actor->player;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+	int damage;
+	TAVec angles;
+	TVec vforward;
 
 	damage = HITDICE(4);
 	avcpy(player->mo->angles, angles);
@@ -1293,11 +1308,13 @@ void A_BeakAttackPL2(mobj_t *actor)
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->angles.yaw = atan2(linetarget->origin.y - player->mo->origin.y,
+		player->mo->angles.yaw =
+			atan2(linetarget->origin.y - player->mo->origin.y,
 			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
-	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3), CHAN_VOICE);
+	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3),
+		CHAN_VOICE);
 	player->chickenPeck = 12;
 	psp->time -= Random() * 0.125;
 }
@@ -1310,17 +1327,19 @@ void A_BeakAttackPL2(mobj_t *actor)
 
 //===========================================================================
 //
-//	A_BoltSpark
+//  A_BoltSpark
 //
 //===========================================================================
 
-void A_BoltSpark(mobj_t* bolt)
+void A_BoltSpark(mobj_t * bolt)
 {
-	mobj_t*	spark;
+	mobj_t *spark;
 
 	if (P_Random() > 50)
 	{
-		spark = P_SpawnMobj(bolt->origin.x, bolt->origin.y, bolt->origin.z, MT_CRBOWFX4);
+		spark =
+			P_SpawnMobj(bolt->origin.x, bolt->origin.y, bolt->origin.z,
+			MT_CRBOWFX4);
 		spark->origin.x += (Random() - Random()) * 4.0;
 		spark->origin.y += (Random() - Random()) * 4.0;
 	}
@@ -1328,19 +1347,21 @@ void A_BoltSpark(mobj_t* bolt)
 
 //===========================================================================
 //
-//	A_SpawnRippers
+//  A_SpawnRippers
 //
 //===========================================================================
 
-void A_SpawnRippers(mobj_t* actor)
+void A_SpawnRippers(mobj_t * actor)
 {
-	int 	i;
-	angle_t	angle;
-	mobj_t*	ripper;
+	int i;
+	angle_t angle;
+	mobj_t *ripper;
 
 	for (i = 0; i < 8; i++)
 	{
-		ripper = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_RIPPER);
+		ripper =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_RIPPER);
 		angle = i * ANG45;
 		ripper->target = actor->target;
 		ripper->angles.yaw = angle;
@@ -1352,25 +1373,25 @@ void A_SpawnRippers(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_SkullRodPL2Seek
+//  A_SkullRodPL2Seek
 //
 //===========================================================================
 
-void A_SkullRodPL2Seek(mobj_t* actor)
+void A_SkullRodPL2Seek(mobj_t * actor)
 {
 	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 30);
 }
 
 //===========================================================================
 //
-//	A_AddPlayerRain
+//  A_AddPlayerRain
 //
 //===========================================================================
 
-void A_AddPlayerRain(mobj_t* actor)
+void A_AddPlayerRain(mobj_t * actor)
 {
-	int 		playerNum;
-	player_t*	player;
+	int playerNum;
+	player_t *player;
 
 	playerNum = netgame ? actor->special2 : 0;
 	player = &players[playerNum];
@@ -1417,17 +1438,17 @@ void A_AddPlayerRain(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_SkullRodStorm
+//  A_SkullRodStorm
 //
 //===========================================================================
 
-void A_SkullRodStorm(mobj_t* actor)
+void A_SkullRodStorm(mobj_t * actor)
 {
-	float		x;
-	float		y;
-	mobj_t*		mo;
-	int 		playerNum;
-	player_t*	player;
+	float x;
+	float y;
+	mobj_t *mo;
+	int playerNum;
+	player_t *player;
 
 	if (actor->health-- == 0)
 	{
@@ -1463,9 +1484,9 @@ void A_SkullRodStorm(mobj_t* actor)
 	y = actor->origin.y + Random() * 128.0 - 64.0;
 	mo = P_SpawnMobj(x, y, ONCEILINGZ, MT_RAINPLR1 + actor->special2);
 	mo->target = actor->target;
-	mo->velocity.x = 0.00001; // Force collision detection
+	mo->velocity.x = 0.00001;	// Force collision detection
 	mo->velocity.z = -mo->speed;
-	mo->special2 = actor->special2; // Transfer player number
+	mo->special2 = actor->special2;	// Transfer player number
 	CheckMissileSpawn(mo);
 	if (!(actor->special1 & 31))
 	{
@@ -1476,11 +1497,11 @@ void A_SkullRodStorm(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_RainImpact
+//  A_RainImpact
 //
 //===========================================================================
 
-void A_RainImpact(mobj_t* actor)
+void A_RainImpact(mobj_t * actor)
 {
 	if (actor->origin.z > actor->floorz)
 	{
@@ -1494,33 +1515,37 @@ void A_RainImpact(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_HideInCeiling
+//  A_HideInCeiling
 //
 //===========================================================================
 
-void A_HideInCeiling(mobj_t* actor)
+void A_HideInCeiling(mobj_t * actor)
 {
 	actor->origin.z = actor->ceilingz + 4.0;
 }
 
 //===========================================================================
 //
-//	A_PhoenixPuff
+//  A_PhoenixPuff
 //
 //===========================================================================
 
-void A_PhoenixPuff(mobj_t* actor)
+void A_PhoenixPuff(mobj_t * actor)
 {
-	mobj_t*	puff;
-	angle_t	angle;
+	mobj_t *puff;
+	angle_t angle;
 
 	P_SeekerMissile(actor, ANGLE_1 * 5, ANGLE_1 * 10);
-	puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_PHOENIXPUFF);
+	puff =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_PHOENIXPUFF);
 	angle = actor->angles.yaw + ANG90;
 	puff->velocity.x = 1.3 * cos(angle) * 35.0;
 	puff->velocity.y = 1.3 * sin(angle) * 35.0;
 	puff->velocity.z = 0.0;
-	puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_PHOENIXPUFF);
+	puff =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_PHOENIXPUFF);
 	angle = actor->angles.yaw - ANG90;
 	puff->velocity.x = 1.3 * cos(angle) * 35.0;
 	puff->velocity.y = 1.3 * sin(angle) * 35.0;
@@ -1529,35 +1554,35 @@ void A_PhoenixPuff(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_FlameEnd
+//  A_FlameEnd
 //
 //===========================================================================
 
-void A_FlameEnd(mobj_t* actor)
+void A_FlameEnd(mobj_t * actor)
 {
 	actor->velocity.z += 1.5 * 35.0;
 }
 
 //===========================================================================
 //
-// 	A_FloatPuff
+//  A_FloatPuff
 //
 //===========================================================================
 
-void A_FloatPuff(mobj_t* puff)
+void A_FloatPuff(mobj_t * puff)
 {
 	puff->velocity.z += 1.8 * 35.0;
 }
 
 //===========================================================================
 //
-//	A_MacePL1Check
+//  A_MacePL1Check
 //
 //===========================================================================
 
-void A_MacePL1Check(mobj_t* ball)
+void A_MacePL1Check(mobj_t * ball)
 {
-	int		angle;
+	int angle;
 
 	if (ball->special1 == 0)
 	{
@@ -1578,11 +1603,11 @@ void A_MacePL1Check(mobj_t* ball)
 
 //===========================================================================
 //
-//	A_MaceBallImpact
+//  A_MaceBallImpact
 //
 //===========================================================================
 
-void A_MaceBallImpact(mobj_t* ball)
+void A_MaceBallImpact(mobj_t * ball)
 {
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1590,7 +1615,8 @@ void A_MaceBallImpact(mobj_t* ball)
 		P_RemoveMobj(ball);
 		return;
 	}
-	if ((ball->health != MAGIC_JUNK) && (ball->origin.z <= ball->floorz) && ball->velocity.z)
+	if ((ball->health != MAGIC_JUNK) && (ball->origin.z <= ball->floorz)
+		&& ball->velocity.z)
 	{
 		// Bounce
 		ball->health = MAGIC_JUNK;
@@ -1610,14 +1636,14 @@ void A_MaceBallImpact(mobj_t* ball)
 
 //===========================================================================
 //
-//	A_MaceBallImpact2
+//  A_MaceBallImpact2
 //
 //===========================================================================
 
-void A_MaceBallImpact2(mobj_t* ball)
+void A_MaceBallImpact2(mobj_t * ball)
 {
-	mobj_t*	tiny;
-	angle_t	angle;
+	mobj_t *tiny;
+	angle_t angle;
 
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1630,7 +1656,7 @@ void A_MaceBallImpact2(mobj_t* ball)
 		// Explode
 		ball->velocity.x = ball->velocity.y = ball->velocity.z = 0.0;
 		ball->flags |= MF_NOGRAVITY;
-		ball->flags2 &= ~(MF2_LOGRAV|MF2_FLOORBOUNCE);
+		ball->flags2 &= ~(MF2_LOGRAV | MF2_FLOORBOUNCE);
 	}
 	else
 	{
@@ -1638,21 +1664,29 @@ void A_MaceBallImpact2(mobj_t* ball)
 		ball->velocity.z = ball->velocity.z * 192.0 / 256.0;
 		SetMobjState(ball, ball->spawnstate);
 
-		tiny = P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z, MT_MACEFX3);
-		angle = ball->angles.yaw+ANG90;
+		tiny =
+			P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
+			MT_MACEFX3);
+		angle = ball->angles.yaw + ANG90;
 		tiny->target = ball->target;
 		tiny->angles.yaw = angle;
-		tiny->velocity.x = ball->velocity.x / 2.0 + (ball->velocity.z - 35.0) * cos(angle);
-		tiny->velocity.y = ball->velocity.y / 2.0 + (ball->velocity.z - 35.0) * sin(angle);
+		tiny->velocity.x =
+			ball->velocity.x / 2.0 + (ball->velocity.z - 35.0) * cos(angle);
+		tiny->velocity.y =
+			ball->velocity.y / 2.0 + (ball->velocity.z - 35.0) * sin(angle);
 		tiny->velocity.z = ball->velocity.z;
 		CheckMissileSpawn(tiny);
 
-		tiny = P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z, MT_MACEFX3);
+		tiny =
+			P_SpawnMobj(ball->origin.x, ball->origin.y, ball->origin.z,
+			MT_MACEFX3);
 		angle = ball->angles.yaw - ANG90;
 		tiny->target = ball->target;
 		tiny->angles.yaw = angle;
-		tiny->velocity.x = ball->velocity.x / 2.0 + (ball->velocity.z - 35.0) * cos(angle);
-		tiny->velocity.y = ball->velocity.y / 2.0 + (ball->velocity.z - 35.0) * sin(angle);
+		tiny->velocity.x =
+			ball->velocity.x / 2.0 + (ball->velocity.z - 35.0) * cos(angle);
+		tiny->velocity.y =
+			ball->velocity.y / 2.0 + (ball->velocity.z - 35.0) * sin(angle);
 		tiny->velocity.z = ball->velocity.z;
 		CheckMissileSpawn(tiny);
 	}
@@ -1660,17 +1694,17 @@ void A_MaceBallImpact2(mobj_t* ball)
 
 //===========================================================================
 //
-//	A_DeathBallImpact
+//  A_DeathBallImpact
 //
 //===========================================================================
 
-void A_DeathBallImpact(mobj_t* ball)
+void A_DeathBallImpact(mobj_t * ball)
 {
-	int 	i;
-	mobj_t*	target;
-	angle_t	angle;
-	int		newAngle;
-	TAVec	angles;
+	int i;
+	mobj_t *target;
+	angle_t angle;
+	int newAngle;
+	TAVec angles;
 
 	if ((ball->origin.z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
 	{
@@ -1685,7 +1719,7 @@ void A_DeathBallImpact(mobj_t* ball)
 		target = ball->specialmobj1;
 		if (target)
 		{
-			if (!(target->flags&MF_SHOOTABLE))
+			if (!(target->flags & MF_SHOOTABLE))
 			{
 				// Target died
 				ball->specialmobj1 = NULL;
@@ -1728,7 +1762,7 @@ void A_DeathBallImpact(mobj_t* ball)
 		StartSoundName(ball, "PlatformStop", CHAN_VOICE);
 	}
 	else
-	{ // Explode
+	{	// Explode
 		ball->flags |= MF_NOGRAVITY;
 		ball->flags2 &= ~MF2_LOGRAV;
 		StartSoundName(ball, "PhoenixHit", CHAN_VOICE);
@@ -1737,14 +1771,17 @@ void A_DeathBallImpact(mobj_t* ball)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,29 +1,25 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
 //**
 //**************************************************************************
 
@@ -43,177 +39,182 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-float			xspeed[8] = {1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0, 0.7171630859};
-float			yspeed[8] = {0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859};
+float xspeed[8] =
+	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
+		0.7171630859 };
+float yspeed[8] =
+	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
+		-0.7171630859 };
 
-boolean			floatok;	// if true, move would be ok if
+boolean floatok;	// if true, move would be ok if
+
 							// within tmfloorz - tmceilingz
-float			saved_tmfloorz;
+float saved_tmfloorz;
 
 // keep track of the line that lowers the ceiling,
 // so missiles don't explode against sky hack walls
-line_t*			ceilingline;
+line_t *ceilingline;
 
-float			tmbbox[4];
-mobj_t*			tmthing;
-int				tmflags;
-float			tmx;
-float			tmy;
-float			tmz;
-TVec			tmpos;
-float			tmfloorz;
-float			tmceilingz;
-float			tmdropoffz;
-sec_plane_t*	tmfloor;
-sec_plane_t*	tmceiling;
+float tmbbox[4];
+mobj_t *tmthing;
+int tmflags;
+float tmx;
+float tmy;
+float tmz;
+TVec tmpos;
+float tmfloorz;
+float tmceilingz;
+float tmdropoffz;
+sec_plane_t *tmfloor;
+sec_plane_t *tmceiling;
 
-line_t*			spechit[MAXSPECIALCROSS];
-int				numspechit;
+line_t *spechit[MAXSPECIALCROSS];
+int numspechit;
 
-mobj_t			*BlockingMobj;
+mobj_t *BlockingMobj;
 
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
 //
-//	MOVEMENT CLIPPING
+//  MOVEMENT CLIPPING
 //
 //**************************************************************************
 
 //==========================================================================
 //
-//	PIT_CheckThing
+//  PIT_CheckThing
 //
 //==========================================================================
 
-boolean PIT_CheckThing(mobj_t* thing)
+boolean PIT_CheckThing(mobj_t * thing)
 {
-    float		blockdist;
-    boolean		solid;
-    int			damage;
+	float blockdist;
+	boolean solid;
+	int damage;
 
-    if (!(thing->flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
+	if (!(thing->flags & (MF_SOLID | MF_SPECIAL | MF_SHOOTABLE)))
 		return true;
-    
-    blockdist = thing->radius + tmthing->radius;
 
-    if (fabs(thing->origin.x - tmx) >= blockdist || fabs(thing->origin.y - tmy) >= blockdist)
-    {
+	blockdist = thing->radius + tmthing->radius;
+
+	if (fabs(thing->origin.x - tmx) >= blockdist
+		|| fabs(thing->origin.y - tmy) >= blockdist)
+	{
 		// didn't hit it
 		return true;
-    }
-    
-    // don't clip against self
-    if (thing == tmthing)
+	}
+
+	// don't clip against self
+	if (thing == tmthing)
 		return true;
 
 	BlockingMobj = thing;
 
-    // check for skulls slamming into things
-    if (tmthing->flags & MF_SKULLFLY)
-    {
-		damage = ((P_Random()%8)+1)*tmthing->damage;
+	// check for skulls slamming into things
+	if (tmthing->flags & MF_SKULLFLY)
+	{
+		damage = ((P_Random() % 8) + 1) * tmthing->damage;
 		DamageMobj(thing, tmthing, tmthing, damage);
 		tmthing->flags &= ~MF_SKULLFLY;
 		tmthing->velocity.x = tmthing->velocity.y = tmthing->velocity.z = 0.0;
 		SetMobjState(tmthing, tmthing->spawnstate);
-		return false;		// stop moving
-    }
+		return false;	// stop moving
+	}
 
-    // missiles can hit other things
-    if (tmthing->flags & MF_MISSILE)
-    {
+	// missiles can hit other things
+	if (tmthing->flags & MF_MISSILE)
+	{
 		// see if it went over / under
 		if (tmthing->origin.z > thing->origin.z + thing->height)
-	    	return true;		// overhead
+			return true;	// overhead
 		if (tmthing->origin.z + tmthing->height < thing->origin.z)
-		    return true;		// underneath
+			return true;	// underneath
 
 		if (tmthing->target && tmthing->target->type == thing->type)
 		{
-		    // Don't hit same species as originator.
-		    if (thing == tmthing->target)
+			// Don't hit same species as originator.
+			if (thing == tmthing->target)
 				return true;
 
-		    if (thing->type != MT_PLAYER)
-		    {
+			if (thing->type != MT_PLAYER)
+			{
 				// Explode, but do no damage.
 				// Let players missile other players.
 				return false;
-		    }
+			}
 		}
 
-		if (! (thing->flags & MF_SHOOTABLE) )
+		if (!(thing->flags & MF_SHOOTABLE))
 		{
-		    // didn't do any damage
-		    return !(thing->flags & MF_SOLID);
+			// didn't do any damage
+			return !(thing->flags & MF_SOLID);
 		}
 
 		// damage / explode
-		damage = ((P_Random()%8)+1)*tmthing->damage;
+		damage = ((P_Random() % 8) + 1) * tmthing->damage;
 		DamageMobj(thing, tmthing, tmthing->target, damage);
 		// don't traverse any more
 		return false;
-    }
+	}
 
-
-    // check for special pickup
-    if (thing->flags & MF_SPECIAL)
-    {
+	// check for special pickup
+	if (thing->flags & MF_SPECIAL)
+	{
 		solid = thing->flags & MF_SOLID;
 		if (tmthing->flags & MF_PICKUP)
 		{
-		    // can remove thing
-		    P_TouchSpecialThing(thing, tmthing);
+			// can remove thing
+			P_TouchSpecialThing(thing, tmthing);
 		}
 		return !solid;
-    }
+	}
 
 	return !(thing->flags & MF_SOLID) || (thing->flags & MF_NOCLIP);
 }
 
 //==========================================================================
 //
-//	PIT_CheckLine
+//  PIT_CheckLine
 //
-//	Adjusts tmfloorz and tmceilingz as lines are contacted
+//  Adjusts tmfloorz and tmceilingz as lines are contacted
 //
 //==========================================================================
 
-boolean PIT_CheckLine(line_t* ld)
+boolean PIT_CheckLine(line_t * ld)
 {
-	TVec		hit_point;
-	opening_t	*open;
+	TVec hit_point;
+	opening_t *open;
 
-    if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-    	tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-    	tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-    	tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+	if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+		tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+		tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+		tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
 		return true;
 
 	if (P_BoxOnLineSide(&tmbbox[0], ld) != -1)
 		return true;
-		
-    // A line has been hit
-    
-    // The moving thing's destination position will cross
-    // the given line.
-    // If this should not be allowed, return false.
-    // If the line is special, keep track of it
-    // to process later if the move is proven ok.
-    // NOTE: specials are NOT sorted by order,
-    // so two special lines that are only 8 pixels apart
-    // could be crossed in either order.
-    
-    if (!ld->backsector)
+
+	// A line has been hit
+
+	// The moving thing's destination position will cross
+	// the given line.
+	// If this should not be allowed, return false.
+	// If the line is special, keep track of it
+	// to process later if the move is proven ok.
+	// NOTE: specials are NOT sorted by order,
+	// so two special lines that are only 8 pixels apart
+	// could be crossed in either order.
+
+	if (!ld->backsector)
 	{
 		// One sided line
 		return false;
 	}
 
-    if (!(tmthing->flags & MF_MISSILE))
-    {
-		if ( ld->flags & ML_BLOCKING )
+	if (!(tmthing->flags & MF_MISSILE))
+	{
+		if (ld->flags & ML_BLOCKING)
 		{
 			// Explicitly blocking everything
 			return false;
@@ -224,59 +225,61 @@ boolean PIT_CheckLine(line_t* ld)
 			// Block monsters only
 			return false;
 		}
-    }
+	}
 
-    // set openrange, opentop, openbottom
-	hit_point = tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
+	// set openrange, opentop, openbottom
+	hit_point =
+		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
 	open = FindOpening(open, tmz, tmz + tmthing->height);
 
 	if (open)
 	{
-	    // adjust floor / ceiling heights
-    	if (!(open->ceiling->flags & SPF_NOBLOCKING) && open->top < tmceilingz)
-	    {
+		// adjust floor / ceiling heights
+		if (!(open->ceiling->flags & SPF_NOBLOCKING)
+			&& open->top < tmceilingz)
+		{
 			tmceiling = open->ceiling;
 			tmceilingz = open->top;
 			ceilingline = ld;
-	    }
+		}
 
-	    if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > tmfloorz)
+		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > tmfloorz)
 		{
 			tmfloor = open->floor;
 			tmfloorz = open->bottom;
 		}
 
-	    if (open->lowfloor < tmdropoffz)
+		if (open->lowfloor < tmdropoffz)
 			tmdropoffz = open->lowfloor;
 	}
 	else
 	{
 		tmceilingz = tmfloorz;
 	}
-		
-    // if contacted a special line, add it to the list
-    if (ld->special)
-    {
-    	if (numspechit >= MAXSPECIALCROSS)
-        {
-        	//cond << "Spechit overflow\n";
+
+	// if contacted a special line, add it to the list
+	if (ld->special)
+	{
+		if (numspechit >= MAXSPECIALCROSS)
+		{
+			//cond << "Spechit overflow\n";
 		}
-        else
-        {
+		else
+		{
 			spechit[numspechit] = ld;
 			numspechit++;
 		}
-    }
+	}
 
-    return true;
+	return true;
 }
 
 //==========================================================================
 //
-//	P_CheckPosition
+//  P_CheckPosition
 //
-//	This is purely informative, nothing is modified
+//  This is purely informative, nothing is modified
 // (except things picked up).
 // 
 // in:
@@ -300,116 +303,118 @@ boolean PIT_CheckLine(line_t* ld)
 //
 //==========================================================================
 
-boolean P_CheckPosition(mobj_t* thing, float x, float y)
+boolean P_CheckPosition(mobj_t * thing, float x, float y)
 {
-    int				xl;
-    int				xh;
-    int				yl;
-    int				yh;
-    int				bx;
-    int				by;
-    subsector_t*	newsubsec;
-	sec_region_t*	gap;
-	sec_region_t*	reg;
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
+	subsector_t *newsubsec;
+	sec_region_t *gap;
+	sec_region_t *reg;
 
-    tmthing = thing;
-    tmflags = thing->flags;
-	
-    tmx = x;
-    tmy = y;
+	tmthing = thing;
+	tmflags = thing->flags;
+
+	tmx = x;
+	tmy = y;
 	tmz = thing->origin.z;
 	tmpos = vector(x, y, tmz);
-	
-    tmbbox[BOXTOP] = y + tmthing->radius;
-    tmbbox[BOXBOTTOM] = y - tmthing->radius;
-    tmbbox[BOXRIGHT] = x + tmthing->radius;
-    tmbbox[BOXLEFT] = x - tmthing->radius;
 
-    newsubsec = PointInSubsector(x, y);
-    ceilingline = NULL;
-    
-    // The base floor / ceiling is from the subsector
-    // that contains the point.
-    // Any contacted lines the step closer together
-    // will adjust them.
-	gap = FindThingGap(newsubsec->sector->botregion, tmpos, tmz, tmz + thing->height);
+	tmbbox[BOXTOP] = y + tmthing->radius;
+	tmbbox[BOXBOTTOM] = y - tmthing->radius;
+	tmbbox[BOXRIGHT] = x + tmthing->radius;
+	tmbbox[BOXLEFT] = x - tmthing->radius;
+
+	newsubsec = PointInSubsector(x, y);
+	ceilingline = NULL;
+
+	// The base floor / ceiling is from the subsector
+	// that contains the point.
+	// Any contacted lines the step closer together
+	// will adjust them.
+	gap =
+		FindThingGap(newsubsec->sector->botregion, tmpos, tmz,
+		tmz + thing->height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
-    tmfloor = reg->floor;
-    tmfloorz = tmdropoffz = GetPlanePointZ(reg->floor, tmpos);
+	tmfloor = reg->floor;
+	tmfloorz = tmdropoffz = GetPlanePointZ(reg->floor, tmpos);
 	reg = gap;
 	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
 		reg = reg->next;
-    tmceiling = reg->ceiling;
-    tmceilingz = GetPlanePointZ(reg->ceiling, tmpos);
-			
-    (*validcount)++;
-    numspechit = 0;
+	tmceiling = reg->ceiling;
+	tmceilingz = GetPlanePointZ(reg->ceiling, tmpos);
 
-    if (tmflags & MF_NOCLIP)
+	(*validcount)++;
+	numspechit = 0;
+
+	if (tmflags & MF_NOCLIP)
 		return true;
 
 	BlockingMobj = NULL;
 
-    // Check things first, possibly picking things up.
-    // The bounding box is extended by MAXRADIUS
-    // because mobj_ts are grouped into mapblocks
-    // based on their origin point, and can overlap
-    // into adjacent blocks by up to MAXRADIUS units.
-    xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-    xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-    yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-    yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
+	// Check things first, possibly picking things up.
+	// The bounding box is extended by MAXRADIUS
+	// because mobj_ts are grouped into mapblocks
+	// based on their origin point, and can overlap
+	// into adjacent blocks by up to MAXRADIUS units.
+	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
 
-    for (bx = xl; bx <= xh; bx++)
+	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-	    	if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
+			if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
 				return false;
-    
+
 	BlockingMobj = NULL;
 
-    // check lines
-    xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx);
-    xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx);
-    yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy);
-    yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy);
+	// check lines
+	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx);
+	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx);
+	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy);
+	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy);
 
-    for (bx = xl; bx <= xh; bx++)
+	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-	    	if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
+			if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
 				return false;
 
-    return true;
+	return true;
 }
 
 //==========================================================================
 //
-//	P_TryMove
+//  P_TryMove
 //
-//	Attempt to move to a new position, crossing special lines unless
+//  Attempt to move to a new position, crossing special lines unless
 // MF_TELEPORT is set.
 //
 //==========================================================================
 
-boolean P_TryMove(mobj_t* thing, float x, float y)
+boolean P_TryMove(mobj_t * thing, float x, float y)
 {
-	boolean		check;
-	TVec		oldorg;
-	int			side;
-	int			oldside;
-	line_t		*ld;
+	boolean check;
+	TVec oldorg;
+	int side;
+	int oldside;
+	line_t *ld;
 
 	check = P_CheckPosition(thing, x, y);
 	saved_tmfloorz = tmfloorz;
-    floatok = false;
+	floatok = false;
 	if (!check)
 	{
 		return false;
 	}
-    
-    if (!(thing->flags & MF_NOCLIP))
-    {
+
+	if (!(thing->flags & MF_NOCLIP))
+	{
 		if (tmceilingz - tmfloorz < thing->height)
 		{
 			// Doesn't fit
@@ -417,7 +422,7 @@ boolean P_TryMove(mobj_t* thing, float x, float y)
 		}
 
 		floatok = true;
-	
+
 		if (!(thing->flags & MF_TELEPORT)
 			&& tmceilingz - thing->origin.z < thing->height)
 		{
@@ -425,21 +430,22 @@ boolean P_TryMove(mobj_t* thing, float x, float y)
 			return false;
 		}
 
-		if (!(thing->flags & MF_TELEPORT) && tmfloorz - thing->origin.z > 24.0)
-	    	return false;	// too big a step up
+		if (!(thing->flags & MF_TELEPORT)
+			&& tmfloorz - thing->origin.z > 24.0)
+			return false;	// too big a step up
 
 		if (!(thing->flags & (MF_DROPOFF | MF_FLOAT))
-		     && tmfloorz - tmdropoffz > 24.0)
-	    	return false;	// don't stand over a dropoff
-    }
-    
-    // the move is ok,
-    // so link the thing into its new position
-    P_UnsetThingPosition(thing);
+			&& tmfloorz - tmdropoffz > 24.0)
+			return false;	// don't stand over a dropoff
+	}
 
-    oldorg = thing->origin;
-    thing->origin.x = x;
-    thing->origin.y = y;
+	// the move is ok,
+	// so link the thing into its new position
+	P_UnsetThingPosition(thing);
+
+	oldorg = thing->origin;
+	thing->origin.x = x;
+	thing->origin.y = y;
 
 	P_SetThingPosition(thing);
 	thing->floor = tmfloor;
@@ -455,12 +461,12 @@ boolean P_TryMove(mobj_t* thing, float x, float y)
 		while (numspechit > 0)
 		{
 			numspechit--;
-		    // see if the line was crossed
-		    ld = spechit[numspechit];
-		    side = PointOnPlaneSide(thing->origin, ld);
-	    	oldside = PointOnPlaneSide(oldorg, ld);
-		    if (side != oldside)
-		    {
+			// see if the line was crossed
+			ld = spechit[numspechit];
+			side = PointOnPlaneSide(thing->origin, ld);
+			oldside = PointOnPlaneSide(oldorg, ld);
+			if (side != oldside)
+			{
 				if (ld->special)
 				{
 					P_CrossSpecialLine(ld, oldside, thing);
@@ -474,73 +480,85 @@ boolean P_TryMove(mobj_t* thing, float x, float y)
 
 //==========================================================================
 //
-//	P_Move
+//  P_Move
 //
-//	Move in the current direction, returns false if the move is blocked.
+//  Move in the current direction, returns false if the move is blocked.
 //
 //==========================================================================
 
-boolean P_Move(mobj_t* actor)
+boolean P_Move(mobj_t * actor)
 {
-	float		tryx;
-	float		tryy;
-    
-    line_t*		ld;
-    boolean		good;
-    
-    if (actor->movedir == DI_NODIR)
+	float tryx;
+	float tryy;
+
+	line_t *ld;
+	boolean good;
+
+	if (actor->movedir == DI_NODIR)
 		return false;
 
 #ifdef RANGECHECK
-    if (actor->movedir >= 8 || actor->movedir < 0)
+	if (actor->movedir >= 8 || actor->movedir < 0)
 		I_Error("Weird actor->movedir!");
 #endif
-		
-    tryx = actor->origin.x + actor->speed * frametime * xspeed[actor->movedir];
-    tryy = actor->origin.y + actor->speed * frametime * yspeed[actor->movedir];
 
-    if (!P_TryMove(actor, tryx, tryy))
-    {
+	tryx =
+		actor->origin.x + actor->speed * frametime * xspeed[actor->movedir];
+	tryy =
+		actor->origin.y + actor->speed * frametime * yspeed[actor->movedir];
+
+	if (!P_TryMove(actor, tryx, tryy))
+	{
 		// open any specials
 		if (actor->flags & MF_FLOAT && floatok)
 		{
-	    	// must adjust height
-	    	if (actor->origin.z < saved_tmfloorz)
+			// must adjust height
+			if (actor->origin.z < saved_tmfloorz)
 				actor->origin.z += FLOATSPEED * frametime;
-	    	else
+			else
 				actor->origin.z -= FLOATSPEED * frametime;
 
-	    	actor->flags |= MF_INFLOAT;
-	    	return true;
+			actor->flags |= MF_INFLOAT;
+			return true;
 		}
-		
+
 		if (!numspechit)
-	    	return false;
-			
+			return false;
+
 		actor->movedir = DI_NODIR;
 		good = false;
 		while (numspechit--)
 		{
-	    	ld = spechit[numspechit];
-	    	// if the special is not a door
-	    	// that can be opened,
-	    	// return false
-	    	if (P_UseSpecialLine(actor, ld))
+			ld = spechit[numspechit];
+			// if the special is not a door
+			// that can be opened,
+			// return false
+			if (P_UseSpecialLine(actor, ld))
 			{
 				good = true;
 			}
 		}
 		return good;
-    }
-    else
-    {
+	}
+	else
+	{
 		actor->flags &= ~MF_INFLOAT;
-    }
-	
-	if (!(actor->flags&MF_FLOAT))
+	}
+
+	if (!(actor->flags & MF_FLOAT))
 	{
 		actor->origin.z = actor->floorz;
 	}
-    return true; 
+	return true;
 }
 
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:10  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,22 +25,22 @@
 
 #define MAX_BOSS_SPOTS 8
 
-int 			BossSpotCount;
-TVec			BossSpot[MAX_BOSS_SPOTS];
-angle_t 		BossSpot_angle[MAX_BOSS_SPOTS];
+int BossSpotCount;
+TVec BossSpot[MAX_BOSS_SPOTS];
+angle_t BossSpot_angle[MAX_BOSS_SPOTS];
 
-int opposite[] =
-{
+int opposite[] = {
 	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST, DI_EAST, DI_NORTHEAST,
-	DI_NORTH, DI_NORTHWEST, DI_NODIR};
+	DI_NORTH, DI_NORTHWEST, DI_NODIR
+};
 
-int diags[] = {DI_NORTHWEST,DI_NORTHEAST,DI_SOUTHWEST,DI_SOUTHEAST};
+int diags[] = { DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST };
 
 //==========================================================================
 //
-//	InitMonsters
+//  InitMonsters
 //
-//	Called at level load.
+//  Called at level load.
 //
 //==========================================================================
 
@@ -51,7 +51,7 @@ void InitMonsters(void)
 
 //==========================================================================
 //
-//	P_AddBossSpot
+//  P_AddBossSpot
 //
 //==========================================================================
 
@@ -63,7 +63,7 @@ void AddBossSpot(float x, float y, angle_t angle)
 	}
 	BossSpot[BossSpotCount].x = x;
 	BossSpot[BossSpotCount].y = y;
-	BossSpot[BossSpotCount].z = 0.0;//FIXME
+	BossSpot[BossSpotCount].z = 0.0;	//FIXME
 	BossSpot_angle[BossSpotCount] = angle;
 	BossSpotCount++;
 }
@@ -74,19 +74,19 @@ void AddBossSpot(float x, float y, angle_t angle)
 //
 //==========================================================================
 
-void DSparilTeleport(mobj_t *actor)
+void DSparilTeleport(mobj_t * actor)
 {
 	int i;
-	float	x;
-	float	y;
-	float	prevX;
-	float	prevY;
-	float	prevZ;
-	TVec	dir;
+	float x;
+	float y;
+	float prevX;
+	float prevY;
+	float prevZ;
+	TVec dir;
 	mobj_t *mo;
 
 	if (!BossSpotCount)
-	{ // No spots
+	{	// No spots
 		return;
 	}
 	i = P_Random();
@@ -96,7 +96,8 @@ void DSparilTeleport(mobj_t *actor)
 		x = BossSpot[i % BossSpotCount].x;
 		y = BossSpot[i % BossSpotCount].y;
 		dir = BossSpot[i % BossSpotCount] - actor->origin;
-	} while (Length(dir) < 128.0);
+	}
+	while (Length(dir) < 128.0);
 	prevX = actor->origin.x;
 	prevY = actor->origin.y;
 	prevZ = actor->origin.z;
@@ -114,14 +115,14 @@ void DSparilTeleport(mobj_t *actor)
 
 //==========================================================================
 //
-//	P_CheckMeleeRange
+//  P_CheckMeleeRange
 //
 //==========================================================================
 
-int P_CheckMeleeRange(mobj_t* actor)
+int P_CheckMeleeRange(mobj_t * actor)
 {
-	mobj_t		*mo;
-	float		dist;
+	mobj_t *mo;
+	float dist;
 
 	if (!actor->target)
 	{
@@ -142,13 +143,13 @@ int P_CheckMeleeRange(mobj_t* actor)
 
 //==========================================================================
 //
-//	P_CheckMissileRange
+//  P_CheckMissileRange
 //
 //==========================================================================
 
-int P_CheckMissileRange(mobj_t* actor)
+int P_CheckMissileRange(mobj_t * actor)
 {
-	float		dist;
+	float dist;
 
 	if (!P_CheckSight(actor, actor->target))
 	{
@@ -191,22 +192,22 @@ int P_CheckMissileRange(mobj_t* actor)
 //
 //  UpdateChicken
 //
-//	Returns true if the chicken morphs.
+//  Returns true if the chicken morphs.
 //
 //==========================================================================
 
-int UpdateChicken(mobj_t* actor, int tics)
+int UpdateChicken(mobj_t * actor, int tics)
 {
-	mobj_t*	fog;
-	float	x;
-	float	y;
-	float	z;
-	int		moType;
-	angle_t	angle;
-    int		flags;
-    int		health;
-    mobj_t*	target;
-	mobj_t*	mo;
+	mobj_t *fog;
+	float x;
+	float y;
+	float z;
+	int moType;
+	angle_t angle;
+	int flags;
+	int health;
+	mobj_t *target;
+	mobj_t *mo;
 
 	actor->special1 -= tics;
 	if (actor->special1 > 0)
@@ -218,9 +219,9 @@ int UpdateChicken(mobj_t* actor, int tics)
 	y = actor->origin.y;
 	z = actor->origin.z;
 	angle = actor->angles.yaw;
-    flags = actor->flags;
+	flags = actor->flags;
 	health = actor->health;
-    target = actor->target;
+	target = actor->target;
 	SetMobjState(actor, S_FREETARGMOBJ);
 	mo = P_SpawnMobj(x, y, z, moType);
 	if (P_TestMobjLocation(mo) == false)
@@ -232,7 +233,7 @@ int UpdateChicken(mobj_t* actor, int tics)
 		mo->flags = flags;
 		mo->health = health;
 		mo->target = target;
-		mo->special1 = 5 * 35; // Next try in 5 seconds
+		mo->special1 = 5 * 35;	// Next try in 5 seconds
 		mo->special2 = moType;
 		return false;
 	}
@@ -245,15 +246,15 @@ int UpdateChicken(mobj_t* actor, int tics)
 
 //==========================================================================
 //
-//	P_Massacre
+//  P_Massacre
 //
-//	Kills all monsters.
+//  Kills all monsters.
 //
 //==========================================================================
 
 void P_Massacre(void)
 {
-	mobj_t	*mo;
+	mobj_t *mo;
 
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
@@ -266,43 +267,43 @@ void P_Massacre(void)
 
 //==========================================================================
 //
-//	P_LookForMonsters
+//  P_LookForMonsters
 //
 //==========================================================================
 
 #define MONS_LOOK_RANGE (20.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
-boolean P_LookForMonsters(mobj_t *actor)
+boolean P_LookForMonsters(mobj_t * actor)
 {
-	int 	count;
-	mobj_t 	*mo;
+	int count;
+	mobj_t *mo;
 
 	if (!P_CheckSight(players[0].mo, actor))
-	{ // Player can't see monster
+	{	// Player can't see monster
 		return false;
 	}
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
 	{
 		if (!(mo->flags & MF_COUNTKILL) || (mo == actor) || (mo->health <= 0))
-		{ // Not a valid monster
+		{	// Not a valid monster
 			continue;
 		}
 		if (MobjDist(actor, mo) > MONS_LOOK_RANGE)
-		{ // Out of range
+		{	// Out of range
 			continue;
 		}
 		if (P_Random() < 16)
-		{ // Skip
+		{	// Skip
 			continue;
 		}
 		if (count++ > MONS_LOOK_LIMIT)
-		{ // Stop searching
-			return(false);
+		{	// Stop searching
+			return (false);
 		}
 		if (!P_CheckSight(actor, mo))
-		{ // Out of sight
+		{	// Out of sight
 			continue;
 		}
 		// Found a target monster
@@ -314,48 +315,48 @@ boolean P_LookForMonsters(mobj_t *actor)
 
 //==========================================================================
 //
-//	P_LookForPlayers
+//  P_LookForPlayers
 //
-//	If allaround is false, only look 180 degrees in front
-//	returns true if a player is targeted
+//  If allaround is false, only look 180 degrees in front
+//  returns true if a player is targeted
 //
 //==========================================================================
 
-boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
+boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 {
 	int c;
 	int stop;
 	player_t *player;
 	sector_t *sector;
 	angle_t an;
-	float	dist;
+	float dist;
 
 	if (!netgame && players[0].spawned && players[0].health <= 0)
-	{ // Single player game and player is dead, look for monsters
+	{	// Single player game and player is dead, look for monsters
 		return P_LookForMonsters(actor);
 	}
 	sector = actor->subsector->sector;
 	c = 0;
-	stop = (actor->lastlook-1)&3;
-	for ( ; ; actor->lastlook = (actor->lastlook + 1) & (MAXPLAYERS - 1))
+	stop = (actor->lastlook - 1) & 3;
+	for (;; actor->lastlook = (actor->lastlook + 1) & (MAXPLAYERS - 1))
 	{
 		if (actor->lastlook == stop)
-			return false;		// done looking
+			return false;	// done looking
 
 		if (!players[actor->lastlook].active)
 			continue;
-			
+
 		if (c++ == 2)
-			return false;		// done looking
+			return false;	// done looking
 
 		player = &players[actor->lastlook];
-        if (!player->spawned || !player->mo)
-        	continue;		// not spawned yet
+		if (!player->spawned || !player->mo)
+			continue;	// not spawned yet
 		if (player->health <= 0)
-			continue;		// dead
+			continue;	// dead
 		if (!P_CheckSight(actor, player->mo))
-			continue;		// out of sight
-			
+			continue;	// out of sight
+
 		if (!allaround)
 		{
 			an = atan2(player->mo->origin.y - actor->origin.y,
@@ -365,7 +366,7 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 				dist = MobjDist(player->mo, actor);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
-					continue;		// behind back
+					continue;	// behind back
 			}
 		}
 		if (player->mo->translucency)
@@ -375,12 +376,12 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 				Length(player->mo->velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
-				return(false);
+				return (false);
 			}
 			if (P_Random() < 225)
 			{
 				// Player isn't sneaking, but still didn't detect
-				return(false);
+				return (false);
 			}
 		}
 		actor->target = player->mo;
@@ -391,16 +392,16 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround)
 
 //==========================================================================
 //
-//	P_TryWalk
+//  P_TryWalk
 //
-//	Attempts to move actor in its current (ob->moveangle) direction.
-//	If blocked by either a wall or an actor returns FALSE.
-//	If move is either clear of block only by a door, returns TRUE and sets.
-//	If a door is in the way, an OpenDoor call is made to start it opening.
+//  Attempts to move actor in its current (ob->moveangle) direction.
+//  If blocked by either a wall or an actor returns FALSE.
+//  If move is either clear of block only by a door, returns TRUE and sets.
+//  If a door is in the way, an OpenDoor call is made to start it opening.
 //
 //==========================================================================
 
-boolean P_TryWalk(mobj_t *actor)
+boolean P_TryWalk(mobj_t * actor)
 {
 	if (!P_Move(actor))
 	{
@@ -412,36 +413,36 @@ boolean P_TryWalk(mobj_t *actor)
 
 //==========================================================================
 //
-//	P_NewChaseDir
+//  P_NewChaseDir
 //
 //==========================================================================
 
-void P_NewChaseDir(mobj_t *actor)
+void P_NewChaseDir(mobj_t * actor)
 {
-	float		deltax,deltay;
-	int			d[3];
-	int			tdir, olddir, turnaround;
+	float deltax, deltay;
+	int d[3];
+	int tdir, olddir, turnaround;
 
 	if (!actor->target)
 		Error("P_NewChaseDir: called with no target");
-		
+
 	olddir = actor->movedir;
-	turnaround=opposite[olddir];
+	turnaround = opposite[olddir];
 
 	deltax = actor->target->origin.x - actor->origin.x;
 	deltay = actor->target->origin.y - actor->origin.y;
 	if (deltax > 10.0)
-		d[1]= DI_EAST;
+		d[1] = DI_EAST;
 	else if (deltax < -10.0)
-		d[1]= DI_WEST;
+		d[1] = DI_WEST;
 	else
-		d[1]=DI_NODIR;
+		d[1] = DI_NODIR;
 	if (deltay < -10.0)
-		d[2]= DI_SOUTH;
+		d[2] = DI_SOUTH;
 	else if (deltay > 10.0)
-		d[2]= DI_NORTH;
+		d[2] = DI_NORTH;
 	else
-		d[2]=DI_NODIR;
+		d[2] = DI_NODIR;
 
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
@@ -454,84 +455,87 @@ void P_NewChaseDir(mobj_t *actor)
 	// try other directions
 	if (P_Random() > 200 || fabs(deltay) > fabs(deltax))
 	{
-		tdir=d[1];
-		d[1]=d[2];
-		d[2]=tdir;
+		tdir = d[1];
+		d[1] = d[2];
+		d[2] = tdir;
 	}
 
-	if (d[1]==turnaround)
-		d[1]=DI_NODIR;
-	if (d[2]==turnaround)
-		d[2]=DI_NODIR;
-	
-	if (d[1]!=DI_NODIR)
+	if (d[1] == turnaround)
+		d[1] = DI_NODIR;
+	if (d[2] == turnaround)
+		d[2] = DI_NODIR;
+
+	if (d[1] != DI_NODIR)
 	{
 		actor->movedir = d[1];
 		if (P_TryWalk(actor))
-			return;     /*either moved forward or attacked*/
+			return;	/*either moved forward or attacked */
 	}
 
-	if (d[2]!=DI_NODIR)
+	if (d[2] != DI_NODIR)
 	{
-		actor->movedir =d[2];
+		actor->movedir = d[2];
 		if (P_TryWalk(actor))
 			return;
 	}
 
 	/* there is no direct path to the player, so pick another direction */
 
-	if (olddir!=DI_NODIR)
+	if (olddir != DI_NODIR)
 	{
-		actor->movedir =olddir;
+		actor->movedir = olddir;
 		if (P_TryWalk(actor))
 			return;
 	}
 
-	if (P_Random()&1) 	/*randomly determine direction of search*/
+	if (P_Random() & 1)	/*randomly determine direction of search */
 	{
-		for (tdir=DI_EAST ; tdir<=DI_SOUTHEAST ; tdir++)
+		for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
 		{
-			if (tdir!=turnaround)
+			if (tdir != turnaround)
 			{
-				actor->movedir =tdir;
-				if ( P_TryWalk(actor) )
+				actor->movedir = tdir;
+				if (P_TryWalk(actor))
 					return;
 			}
 		}
 	}
 	else
 	{
-		for (tdir=DI_SOUTHEAST ; tdir >= DI_EAST;tdir--)
+		for (tdir = DI_SOUTHEAST; tdir >= DI_EAST; tdir--)
 		{
-			if (tdir!=turnaround)
+			if (tdir != turnaround)
 			{
-				actor->movedir =tdir;
-				if ( P_TryWalk(actor) )
-				return;
+				actor->movedir = tdir;
+				if (P_TryWalk(actor))
+					return;
 			}
 		}
 	}
 
-	if (turnaround !=  DI_NODIR)
+	if (turnaround != DI_NODIR)
 	{
-		actor->movedir =turnaround;
-		if ( P_TryWalk(actor) )
+		actor->movedir = turnaround;
+		if (P_TryWalk(actor))
 			return;
 	}
 
-	actor->movedir = DI_NODIR;		// can't move
+	actor->movedir = DI_NODIR;	// can't move
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

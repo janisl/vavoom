@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -31,119 +31,119 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-int CanActivateCross(mobj_t* thing);
+int CanActivateCross(mobj_t * thing);
 void P_RespawnSpecials(void);
 
-int EV_Teleport(line_t* line, int side, mobj_t* thing);
+int EV_Teleport(line_t * line, int side, mobj_t * thing);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
 //
 //      Animating line specials
 //
-int			numlinespecials;
-line_t*		linespeciallist[MAXLINEANIMS];
+int numlinespecials;
+line_t *linespeciallist[MAXLINEANIMS];
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	P_SpawnSpecials
+//  P_SpawnSpecials
 //
 //==========================================================================
 
 void P_SpawnSpecials(boolean spawn_thinkers)
 {
-    sector_t*	sector;
-    int			i;
+	sector_t *sector;
+	int i;
 
-    //	Init special SECTORs.
+	//  Init special SECTORs.
 	if (spawn_thinkers)
-    {
-	    for (i=0 ; i<level->numsectors ; i++)
-    	{
-    		sector = &level->sectors[i];
+	{
+		for (i = 0; i < level->numsectors; i++)
+		{
+			sector = &level->sectors[i];
 
 			if (!sector->special)
-			    continue;
+				continue;
 
 			switch (sector->special)
 			{
-			 case 1:
-			    // FLICKERING LIGHTS
-			    P_SpawnLightFlash(sector);
-			    break;
-
-			 case 2:
-			    // STROBE FAST
-			    P_SpawnStrobeFlash(sector, FASTDARK, 0);
-			    break;
-	    
-			 case 3:
-			    // STROBE SLOW
-			    P_SpawnStrobeFlash(sector, SLOWDARK, 0);
-			    break;
-
-			 case 4:
-		    	// STROBE FAST/DEATH SLIME
-			    P_SpawnStrobeFlash(sector,FASTDARK,0);
-			    sector->special = 4;
-			    break;
-	    
-			 case 8:
-		    	// GLOWING LIGHT
-			    P_SpawnGlowingLight(sector);
-			    break;
-
-			 case 9:
-			    // SECRET SECTOR
-		    	level->totalsecret++;
+			case 1:
+				// FLICKERING LIGHTS
+				P_SpawnLightFlash(sector);
 				break;
 
-			 case 10:
-		    	// DOOR CLOSE IN 30 SECONDS
-			    P_SpawnDoorCloseIn30(sector);
-			    break;
-	    
-			 case 12:
-			    // SYNC STROBE SLOW
-			    P_SpawnStrobeFlash(sector, SLOWDARK, 1);
-			    break;
+			case 2:
+				// STROBE FAST
+				P_SpawnStrobeFlash(sector, FASTDARK, 0);
+				break;
 
-			 case 13:
-			    // SYNC STROBE FAST
-			    P_SpawnStrobeFlash(sector, FASTDARK, 1);
-		    	break;
+			case 3:
+				// STROBE SLOW
+				P_SpawnStrobeFlash(sector, SLOWDARK, 0);
+				break;
 
-			 case 14:
-		    	// DOOR RAISE IN 5 MINUTES
-			    P_SpawnDoorRaiseIn5Mins(sector, i);
-			    break;
-	    
-			 case 17:
-			    P_SpawnFireFlicker(sector);
-			    break;
+			case 4:
+				// STROBE FAST/DEATH SLIME
+				P_SpawnStrobeFlash(sector, FASTDARK, 0);
+				sector->special = 4;
+				break;
+
+			case 8:
+				// GLOWING LIGHT
+				P_SpawnGlowingLight(sector);
+				break;
+
+			case 9:
+				// SECRET SECTOR
+				level->totalsecret++;
+				break;
+
+			case 10:
+				// DOOR CLOSE IN 30 SECONDS
+				P_SpawnDoorCloseIn30(sector);
+				break;
+
+			case 12:
+				// SYNC STROBE SLOW
+				P_SpawnStrobeFlash(sector, SLOWDARK, 1);
+				break;
+
+			case 13:
+				// SYNC STROBE FAST
+				P_SpawnStrobeFlash(sector, FASTDARK, 1);
+				break;
+
+			case 14:
+				// DOOR RAISE IN 5 MINUTES
+				P_SpawnDoorRaiseIn5Mins(sector, i);
+				break;
+
+			case 17:
+				P_SpawnFireFlicker(sector);
+				break;
 			}
-	    }
-    }
+		}
+	}
 
-    //	Init line EFFECTs
-    numlinespecials = 0;
-    for (i = 0; i < level->numlines; i++)
-    {
+	//  Init line EFFECTs
+	numlinespecials = 0;
+	for (i = 0; i < level->numlines; i++)
+	{
 		switch (level->lines[i].special)
 		{
-		 case 48:
-		    // EFFECT FIRSTCOL SCROLL+
-		    linespeciallist[numlinespecials] = &level->lines[i];
-		    numlinespecials++;
-		    break;
+		case 48:
+			// EFFECT FIRSTCOL SCROLL+
+			linespeciallist[numlinespecials] = &level->lines[i];
+			numlinespecials++;
+			break;
 
-		 case 182:
+		case 182:
 			SetLineTransluc(&level->lines[i], 33);
 			break;
 		}
-    }
+	}
 
 	P_ClearActiveCeilings();
 	P_ClearActivePlats();
@@ -151,858 +151,858 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 
 //==========================================================================
 //
-// 	P_CrossSpecialLine - TRIGGER
+//  P_CrossSpecialLine - TRIGGER
 //
-//	Called every time a thing origin is about to cross a line with a non 0
+//  Called every time a thing origin is about to cross a line with a non 0
 // special.
 //
 //==========================================================================
 
-void P_CrossSpecialLine(line_t* line, int side, mobj_t* thing)
+void P_CrossSpecialLine(line_t * line, int side, mobj_t * thing)
 {
-    //	Triggers that other things can activate
-    if (!thing->player)
-    {
+	//  Triggers that other things can activate
+	if (!thing->player)
+	{
 		// Things that should NOT trigger specials...
-    	if (!CanActivateCross(thing))
-        {
-        	return;
-        }
-
-		switch(line->special)
+		if (!CanActivateCross(thing))
 		{
-		 case 39:	// TELEPORT TRIGGER
-		 case 97:	// TELEPORT RETRIGGER
-		 case 125:	// TELEPORT MONSTERONLY TRIGGER
-		 case 126:	// TELEPORT MONSTERONLY RETRIGGER
-		 case 10:	// PLAT DOWN-WAIT-UP-STAY TRIGGER
-		 case 88:	// PLAT DOWN-WAIT-UP-STAY RETRIGGER
-		 case 4:	// RAISE DOOR
-		    break;
-         default:
-          	return;
+			return;
 		}
-    }
 
-    // Note: could use some const's here.
-    switch (line->special)
-    {
+		switch (line->special)
+		{
+		case 39:	// TELEPORT TRIGGER
+		case 97:	// TELEPORT RETRIGGER
+		case 125:	// TELEPORT MONSTERONLY TRIGGER
+		case 126:	// TELEPORT MONSTERONLY RETRIGGER
+		case 10:	// PLAT DOWN-WAIT-UP-STAY TRIGGER
+		case 88:	// PLAT DOWN-WAIT-UP-STAY RETRIGGER
+		case 4:	// RAISE DOOR
+			break;
+		default:
+			return;
+		}
+	}
+
+	// Note: could use some const's here.
+	switch (line->special)
+	{
 // TRIGGERS.
 // All from here to RETRIGGERS.
-      case 2:
+	case 2:
 		// Open Door
-		EV_DoDoor(line,open);
+		EV_DoDoor(line, open);
 		line->special = 0;
 		break;
 
-      case 3:
+	case 3:
 		// Close Door
-		EV_DoDoor(line,close);
+		EV_DoDoor(line, close);
 		line->special = 0;
 		break;
 
-      case 4:
+	case 4:
 		// Raise Door
-		EV_DoDoor(line,door_normal);
+		EV_DoDoor(line, door_normal);
 		line->special = 0;
 		break;
-	
-      case 5:
+
+	case 5:
 		// Raise Floor
 		EV_DoFloor(line, raiseFloor);
 		line->special = 0;
 		break;
-	
-      case 6:
+
+	case 6:
 		// Fast Ceiling Crush & Raise
-		EV_DoCeiling(line,fastCrushAndRaise);
+		EV_DoCeiling(line, fastCrushAndRaise);
 		line->special = 0;
 		break;
-	
-      case 8:
+
+	case 8:
 		// Build Stairs
 		EV_BuildStairs(line, build8);
 		line->special = 0;
 		break;
-	
-     case 10:
+
+	case 10:
 		// PlatDownWaitUp
-		EV_DoPlat(line,downWaitUpStay,0);
+		EV_DoPlat(line, downWaitUpStay, 0);
 		line->special = 0;
 		break;
 
-     case 12:
+	case 12:
 		// Light Turn On - brightest near
-		EV_LightTurnOn(line,0);
+		EV_LightTurnOn(line, 0);
 		line->special = 0;
 		break;
-	
-     case 13:
+
+	case 13:
 		// Light Turn On 255
-		EV_LightTurnOn(line,255);
+		EV_LightTurnOn(line, 255);
 		line->special = 0;
 		break;
 
-      case 16:
+	case 16:
 		// Close Door 30
-		EV_DoDoor(line,close30ThenOpen);
+		EV_DoDoor(line, close30ThenOpen);
 		line->special = 0;
 		break;
 
-     case 17:
+	case 17:
 		// Start Light Strobing
 		EV_StartLightStrobing(line);
 		line->special = 0;
 		break;
 
-      case 19:
+	case 19:
 		// Lower Floor
-		EV_DoFloor(line,lowerFloor);
+		EV_DoFloor(line, lowerFloor);
 		line->special = 0;
 		break;
-	
-     case 22:
+
+	case 22:
 		// Raise floor to nearest height and change texture
 		EV_DoPlat(line, raiseToNearestAndChange, 0);
 		line->special = 0;
 		break;
-	
-     case 25:
+
+	case 25:
 		// Ceiling Crush and Raise
-		EV_DoCeiling(line,crushAndRaise);
+		EV_DoCeiling(line, crushAndRaise);
 		line->special = 0;
 		break;
-	
-      case 30:
+
+	case 30:
 		// Raise floor to shortest texture height
 		//  on either side of lines.
-		EV_DoFloor(line,raiseToTexture);
+		EV_DoFloor(line, raiseToTexture);
 		line->special = 0;
 		break;
 
-     case 35:
+	case 35:
 		// Lights Very Dark
-		EV_LightTurnOn(line,35);
+		EV_LightTurnOn(line, 35);
 		line->special = 0;
 		break;
 
-      case 36:
+	case 36:
 		// Lower Floor (TURBO)
-		EV_DoFloor(line,turboLower);
-		line->special = 0;
-		break;
-	
-      case 37:
-		// LowerAndChange
-		EV_DoFloor(line,lowerAndChange);
-		line->special = 0;
-		break;
-	
-      case 38:
-		// Lower Floor To Lowest
-		EV_DoFloor( line, lowerFloorToLowest );
-		line->special = 0;
-		break;
-	
-     case 39:
-		// TELEPORT!
-		EV_Teleport( line, side, thing );
+		EV_DoFloor(line, turboLower);
 		line->special = 0;
 		break;
 
-     case 40:
+	case 37:
+		// LowerAndChange
+		EV_DoFloor(line, lowerAndChange);
+		line->special = 0;
+		break;
+
+	case 38:
+		// Lower Floor To Lowest
+		EV_DoFloor(line, lowerFloorToLowest);
+		line->special = 0;
+		break;
+
+	case 39:
+		// TELEPORT!
+		EV_Teleport(line, side, thing);
+		line->special = 0;
+		break;
+
+	case 40:
 		// RaiseCeilingLowerFloor
 		EV_DoCeiling(line, raiseToHighest);
 		EV_DoFloor(line, lowerFloorToLowest);
 		line->special = 0;
 		break;
-	
-     case 44:
+
+	case 44:
 		// Ceiling Crush
-		EV_DoCeiling( line, lowerAndCrush );
+		EV_DoCeiling(line, lowerAndCrush);
 		line->special = 0;
 		break;
-	
-      case 52:
+
+	case 52:
 		// EXIT!
 		G_ExitLevel();
 		break;
-	
-     case 53:
+
+	case 53:
 		// Perpetual Platform Raise
 		EV_DoPlat(line, perpetualRaise, 0);
 		line->special = 0;
 		break;
 
-     case 54:
+	case 54:
 		// Platform Stop
 		EV_StopPlat(line);
 		line->special = 0;
 		break;
 
-      case 56:
+	case 56:
 		// Raise Floor Crush
-		EV_DoFloor(line,raiseFloorCrush);
+		EV_DoFloor(line, raiseFloorCrush);
 		line->special = 0;
 		break;
 
-     case 57:
+	case 57:
 		// Ceiling Crush Stop
 		EV_CeilingCrushStop(line);
 		line->special = 0;
 		break;
-	
-      case 58:
+
+	case 58:
 		// Raise Floor 24
-		EV_DoFloor(line,raiseFloor24);
+		EV_DoFloor(line, raiseFloor24);
 		line->special = 0;
 		break;
 
-      case 59:
+	case 59:
 		// Raise Floor 24 And Change
-		EV_DoFloor(line,raiseFloor24AndChange);
+		EV_DoFloor(line, raiseFloor24AndChange);
 		line->special = 0;
 		break;
 
-      case 100:
+	case 100:
 		// Build Stairs Turbo 16
 		EV_BuildStairs(line, turbo16);
 		line->special = 0;
 		break;
-	
-     case 104:
+
+	case 104:
 		// Turn lights off in sector(tag)
 		EV_TurnTagLightsOff(line);
 		line->special = 0;
 		break;
 
-     case 108:
+	case 108:
 		// Blazing Door Raise (faster than TURBO!)
 		EV_DoDoor(line, blazeRaise);
 		line->special = 0;
 		break;
-	
-     case 109:
+
+	case 109:
 		// Blazing Door Open (faster than TURBO!)
 		EV_DoDoor(line, blazeOpen);
 		line->special = 0;
 		break;
-	
-     case 110:
+
+	case 110:
 		// Blazing Door Close (faster than TURBO!)
 		EV_DoDoor(line, blazeClose);
 		line->special = 0;
 		break;
 
-      case 119:
+	case 119:
 		// Raise floor to nearest surr. floor
-		EV_DoFloor(line,raiseFloorToNearest);
+		EV_DoFloor(line, raiseFloorToNearest);
 		line->special = 0;
 		break;
-	
-     case 121:
+
+	case 121:
 		// Blazing PlatDownWaitUpStay
 		EV_DoPlat(line, blazeDWUS, 0);
 		line->special = 0;
 		break;
-	
-      case 124:
+
+	case 124:
 		// Secret EXIT
 		G_SecretExitLevel();
 		break;
-		
-     case 125:
+
+	case 125:
 		// TELEPORT MonsterONLY
 		if (!thing->player)
 		{
-		    EV_Teleport(line, side, thing);
-		    line->special = 0;
+			EV_Teleport(line, side, thing);
+			line->special = 0;
 		}
 		break;
-	
-      case 130:
+
+	case 130:
 		// Raise Floor Turbo
-		EV_DoFloor(line,raiseFloorTurbo);
+		EV_DoFloor(line, raiseFloorTurbo);
 		line->special = 0;
 		break;
-	
-     case 141:
+
+	case 141:
 		// Silent Ceiling Crush & Raise
 		EV_DoCeiling(line, silentCrushAndRaise);
 		line->special = 0;
 		break;
-	
+
 // RETRIGGERS.  All from here till end.
-      case 72:
+	case 72:
 		// Ceiling Crush
-		EV_DoCeiling( line, lowerAndCrush );
+		EV_DoCeiling(line, lowerAndCrush);
 		break;
 
-      case 73:
+	case 73:
 		// Ceiling Crush and Raise
-		EV_DoCeiling(line,crushAndRaise);
+		EV_DoCeiling(line, crushAndRaise);
 		break;
 
-      case 74:
+	case 74:
 		// Ceiling Crush Stop
 		EV_CeilingCrushStop(line);
 		break;
-	
-      case 75:
+
+	case 75:
 		// Close Door
-		EV_DoDoor(line,close);
-		break;
-	
-      case 76:
-		// Close Door 30
-		EV_DoDoor(line,close30ThenOpen);
-		break;
-	
-      case 77:
-		// Fast Ceiling Crush & Raise
-		EV_DoCeiling(line,fastCrushAndRaise);
+		EV_DoDoor(line, close);
 		break;
 
-     case 79:
+	case 76:
+		// Close Door 30
+		EV_DoDoor(line, close30ThenOpen);
+		break;
+
+	case 77:
+		// Fast Ceiling Crush & Raise
+		EV_DoCeiling(line, fastCrushAndRaise);
+		break;
+
+	case 79:
 		// Lights Very Dark
 		EV_LightTurnOn(line, 35);
 		break;
-	
-     case 80:
+
+	case 80:
 		// Light Turn On - brightest near
 		EV_LightTurnOn(line, 0);
 		break;
-	
-     case 81:
+
+	case 81:
 		// Light Turn On 255
 		EV_LightTurnOn(line, 255);
 		break;
 
-      case 82:
+	case 82:
 		// Lower Floor To Lowest
-		EV_DoFloor( line, lowerFloorToLowest );
+		EV_DoFloor(line, lowerFloorToLowest);
 		break;
-	
-      case 83:
+
+	case 83:
 		// Lower Floor
-		EV_DoFloor(line,lowerFloor);
+		EV_DoFloor(line, lowerFloor);
 		break;
 
-      case 84:
+	case 84:
 		// LowerAndChange
-		EV_DoFloor(line,lowerAndChange);
+		EV_DoFloor(line, lowerAndChange);
 		break;
 
-      case 86:
+	case 86:
 		// Open Door
-		EV_DoDoor(line,open);
+		EV_DoDoor(line, open);
 		break;
-	
-     case 87:
+
+	case 87:
 		// Perpetual Platform Raise
 		EV_DoPlat(line, perpetualRaise, 0);
 		break;
-	
-     case 88:
+
+	case 88:
 		// PlatDownWaitUp
 		EV_DoPlat(line, downWaitUpStay, 0);
 		break;
 
-     case 89:
+	case 89:
 		// Platform Stop
 		EV_StopPlat(line);
 		break;
 
-      case 90:
+	case 90:
 		// Raise Door
-		EV_DoDoor(line,door_normal);
+		EV_DoDoor(line, door_normal);
 		break;
-	
-      case 91:
+
+	case 91:
 		// Raise Floor
-		EV_DoFloor(line,raiseFloor);
+		EV_DoFloor(line, raiseFloor);
 		break;
-	
-      case 92:
+
+	case 92:
 		// Raise Floor 24
-		EV_DoFloor(line,raiseFloor24);
+		EV_DoFloor(line, raiseFloor24);
 		break;
-	
-      case 93:
+
+	case 93:
 		// Raise Floor 24 And Change
-		EV_DoFloor(line,raiseFloor24AndChange);
+		EV_DoFloor(line, raiseFloor24AndChange);
 		break;
-	
-      case 94:
+
+	case 94:
 		// Raise Floor Crush
-		EV_DoFloor(line,raiseFloorCrush);
+		EV_DoFloor(line, raiseFloorCrush);
 		break;
-	
-     case 95:
+
+	case 95:
 		// Raise floor to nearest height
 		// and change texture.
 		EV_DoPlat(line, raiseToNearestAndChange, 0);
 		break;
-	
-      case 96:
+
+	case 96:
 		// Raise floor to shortest texture height
 		// on either side of lines.
-		EV_DoFloor(line,raiseToTexture);
+		EV_DoFloor(line, raiseToTexture);
 		break;
-	
-     case 97:
+
+	case 97:
 		// TELEPORT!
 		EV_Teleport(line, side, thing);
 		break;
-	
-      case 98:
+
+	case 98:
 		// Lower Floor (TURBO)
-		EV_DoFloor(line,turboLower);
+		EV_DoFloor(line, turboLower);
 		break;
 
-      case 105:
+	case 105:
 		// Blazing Door Raise (faster than TURBO!)
-		EV_DoDoor (line,blazeRaise);
+		EV_DoDoor(line, blazeRaise);
 		break;
-	
-      case 106:
+
+	case 106:
 		// Blazing Door Open (faster than TURBO!)
-		EV_DoDoor (line,blazeOpen);
+		EV_DoDoor(line, blazeOpen);
 		break;
 
-      case 107:
+	case 107:
 		// Blazing Door Close (faster than TURBO!)
-		EV_DoDoor (line,blazeClose);
+		EV_DoDoor(line, blazeClose);
 		break;
 
-     case 120:
+	case 120:
 		// Blazing PlatDownWaitUpStay.
 		EV_DoPlat(line, blazeDWUS, 0);
 		break;
-	
-     case 126:
+
+	case 126:
 		// TELEPORT MonsterONLY.
 		if (!thing->player)
-		    EV_Teleport( line, side, thing );
+			EV_Teleport(line, side, thing);
 		break;
-	
-      case 128:
+
+	case 128:
 		// Raise To Nearest Floor
-		EV_DoFloor(line,raiseFloorToNearest);
+		EV_DoFloor(line, raiseFloorToNearest);
 		break;
-	
-      case 129:
+
+	case 129:
 		// Raise Floor Turbo
-		EV_DoFloor(line,raiseFloorTurbo);
+		EV_DoFloor(line, raiseFloorTurbo);
 		break;
 	}
 }
 
 //==========================================================================
 //
-//	P_ShootSpecialLine - IMPACT SPECIALS
+//  P_ShootSpecialLine - IMPACT SPECIALS
 //
-//	Called when a thing shoots a special line.
+//  Called when a thing shoots a special line.
 //
 //==========================================================================
 
-void P_ShootSpecialLine(mobj_t* thing, line_t* line)
+void P_ShootSpecialLine(mobj_t * thing, line_t * line)
 {
-    //	Impacts that other things can activate.
-    if (!thing->player)
-    {
+	//  Impacts that other things can activate.
+	if (!thing->player)
+	{
 		switch (line->special)
 		{
-		 case 46:	// OPEN DOOR IMPACT
-		    break;
-		 default:
-         	return;
+		case 46:	// OPEN DOOR IMPACT
+			break;
+		default:
+			return;
 		}
-    }
+	}
 
-    switch (line->special)
-    {
-      case 24:
+	switch (line->special)
+	{
+	case 24:
 		// RAISE FLOOR
 		EV_DoFloor(line, raiseFloor);
-		P_ChangeSwitchTexture(line,0);
+		P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 46:
+
+	case 46:
 		// OPEN DOOR
-		EV_DoDoor(line,open);
-		P_ChangeSwitchTexture(line,1);
+		EV_DoDoor(line, open);
+		P_ChangeSwitchTexture(line, 1);
 		break;
-	
-     case 47:
+
+	case 47:
 		// RAISE FLOOR NEAR AND CHANGE
 		EV_DoPlat(line, raiseToNearestAndChange, 0);
 		P_ChangeSwitchTexture(line, 0);
 		break;
 
-	 case 182:
+	case 182:
 		P_ChangeSwitchTexture(line, 0);
 		break;
-    }
+	}
 }
 
 //==========================================================================
 //
-//	P_UseSpecialLine
+//  P_UseSpecialLine
 //
-//	Called when a thing uses a special line. Only the front sides of lines
+//  Called when a thing uses a special line. Only the front sides of lines
 // are usable.
 //
 //==========================================================================
 
-boolean P_UseSpecialLine(mobj_t* thing, line_t* line)
-{               
-    // Switches that other things can activate.
-    if (!thing->player)
-    {
+boolean P_UseSpecialLine(mobj_t * thing, line_t * line)
+{
+	// Switches that other things can activate.
+	if (!thing->player)
+	{
 		// never open secret doors
 		if (line->flags & ML_SECRET)
-		    return false;
-	
-		switch(line->special)
+			return false;
+
+		switch (line->special)
 		{
-		  case 1: 	// MANUAL DOOR RAISE
-		  case 32:	// MANUAL BLUE
-		  case 33:	// MANUAL RED
-		  case 34:	// MANUAL YELLOW
-		    break;
-	    
-		  default:
-		    return false;
+		case 1:	// MANUAL DOOR RAISE
+		case 32:	// MANUAL BLUE
+		case 33:	// MANUAL RED
+		case 34:	// MANUAL YELLOW
+			break;
+
+		default:
+			return false;
 		}
-    }
+	}
 
-    // do something  
-    switch (line->special)
-    {
-	 // MANUALS
-      case 1:		// Vertical Door
-      case 26:		// Blue Door/Locked
-      case 27:		// Yellow Door /Locked
-      case 28:		// Red Door /Locked
+	// do something  
+	switch (line->special)
+	{
+		// MANUALS
+	case 1:	// Vertical Door
+	case 26:	// Blue Door/Locked
+	case 27:	// Yellow Door /Locked
+	case 28:	// Red Door /Locked
 
-      case 31:		// Manual door open
-      case 32:		// Blue locked door open
-      case 33:		// Red locked door open
-      case 34:		// Yellow locked door open
+	case 31:	// Manual door open
+	case 32:	// Blue locked door open
+	case 33:	// Red locked door open
+	case 34:	// Yellow locked door open
 
-      case 117:		// Blazing door raise
-      case 118:		// Blazing door open
+	case 117:	// Blazing door raise
+	case 118:	// Blazing door open
 		EV_VerticalDoor(line, thing);
 		break;
-	
+
 // SWITCHES
-      case 7:
+	case 7:
 		// Build Stairs
-		if (EV_BuildStairs(line,build8))
-		    P_ChangeSwitchTexture(line, 0);
+		if (EV_BuildStairs(line, build8))
+			P_ChangeSwitchTexture(line, 0);
 		break;
 
-      case 9:
+	case 9:
 		// Change Donut
 		if (EV_DoDonut(line))
-		    P_ChangeSwitchTexture(line, 0);
+			P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 11:
+
+	case 11:
 		// Exit level
 		P_ChangeSwitchTexture(line, 0);
 		SectorStartSoundName(line->frontsector, "SwitchExit", CHAN_VOICE);
 		G_ExitLevel();
 		break;
-	
-      case 14:
+
+	case 14:
 		// Raise Floor 32 and change texture
 		if (EV_DoPlat(line, raiseAndChange, 32))
-		    P_ChangeSwitchTexture(line, 0);
-		break;
-	
-      case 15:
-		// Raise Floor 24 and change texture
-		if (EV_DoPlat(line,raiseAndChange,24))
-		    P_ChangeSwitchTexture(line, 0);
-		break;
-	
-      case 18:
-		// Raise Floor to next highest floor
-		if (EV_DoFloor(line, raiseFloorToNearest))
-		    P_ChangeSwitchTexture(line, 0);
-		break;
-	
-      case 20:
-		// Raise Plat next highest floor and change texture
-		if (EV_DoPlat(line,raiseToNearestAndChange,0))
-		    P_ChangeSwitchTexture(line, 0);
-		break;
-	
-      case 21:
-		// PlatDownWaitUpStay
-		if (EV_DoPlat(line,downWaitUpStay,0))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 23:
-		// Lower Floor to Lowest
-		if (EV_DoFloor(line,lowerFloorToLowest))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 29:
-		// Raise Door
-		if (EV_DoDoor(line,door_normal))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 41:
-		// Lower Ceiling to Floor
-		if (EV_DoCeiling(line,lowerToFloor))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 49:
-		// Ceiling Crush And Raise
-		if (EV_DoCeiling(line,crushAndRaise))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 50:
-		// Close Door
-		if (EV_DoDoor(line,close))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 51:
-		// Secret EXIT
-		P_ChangeSwitchTexture(line,0);
-		G_SecretExitLevel();
-		break;
-	
-      case 55:
-		// Raise Floor Crush
-		if (EV_DoFloor(line,raiseFloorCrush))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 71:
-		// Turbo Lower Floor
-		if (EV_DoFloor(line,turboLower))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 101:
-		// Raise Floor
-		if (EV_DoFloor(line,raiseFloor))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 102:
-		// Lower Floor to Surrounding floor height
-		if (EV_DoFloor(line,lowerFloor))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 103:
-		// Open Door
-		if (EV_DoDoor(line,open))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 111:
-		// Blazing Door Raise (faster than TURBO!)
-		if (EV_DoDoor (line,blazeRaise))
-		    P_ChangeSwitchTexture(line,0);
+			P_ChangeSwitchTexture(line, 0);
 		break;
 
-      case 112:
-		// Blazing Door Open (faster than TURBO!)
-		if (EV_DoDoor (line,blazeOpen))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 113:
-		// Blazing Door Close (faster than TURBO!)
-		if (EV_DoDoor (line,blazeClose))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 122:
-		// Blazing PlatDownWaitUpStay
-		if (EV_DoPlat(line,blazeDWUS,0))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 127:
-		// Build Stairs Turbo 16
-		if (EV_BuildStairs(line,turbo16))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 131:
-		// Raise Floor Turbo
-		if (EV_DoFloor(line,raiseFloorTurbo))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 133:
-		// BlzOpenDoor BLUE
-      case 135:
-		// BlzOpenDoor RED
-      case 137:
-		// BlzOpenDoor YELLOW
-		if (EV_DoLockedDoor (line,blazeOpen,thing))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-      case 140:
-		// Raise Floor 512
-		if (EV_DoFloor(line,raiseFloor512))
-		    P_ChangeSwitchTexture(line,0);
-		break;
-	
-// BUTTONS
-      case 42:
-		// Close Door
-		if (EV_DoDoor(line,close))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 43:
-		// Lower Ceiling to Floor
-		if (EV_DoCeiling(line,lowerToFloor))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 45:
-		// Lower Floor to Surrounding floor height
-		if (EV_DoFloor(line,lowerFloor))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 60:
-		// Lower Floor to Lowest
-		if (EV_DoFloor(line,lowerFloorToLowest))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 61:
-		// Open Door
-		if (EV_DoDoor(line,open))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 62:
-		// PlatDownWaitUpStay
-		if (EV_DoPlat(line,downWaitUpStay,1))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 63:
-		// Raise Door
-		if (EV_DoDoor(line,door_normal))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 64:
-		// Raise Floor to ceiling
-		if (EV_DoFloor(line,raiseFloor))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 65:
-		// Raise Floor Crush
-		if (EV_DoFloor(line,raiseFloorCrush))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 66:
+	case 15:
 		// Raise Floor 24 and change texture
-		if (EV_DoPlat(line,raiseAndChange,24))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoPlat(line, raiseAndChange, 24))
+			P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 67:
-		// Raise Floor 32 and change texture
-		if (EV_DoPlat(line,raiseAndChange,32))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 68:
-		// Raise Plat to next highest floor and change texture
-		if (EV_DoPlat(line,raiseToNearestAndChange,0))
-		    P_ChangeSwitchTexture(line,1);
-		break;
-	
-      case 69:
+
+	case 18:
 		// Raise Floor to next highest floor
 		if (EV_DoFloor(line, raiseFloorToNearest))
-		    P_ChangeSwitchTexture(line,1);
+			P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 70:
+
+	case 20:
+		// Raise Plat next highest floor and change texture
+		if (EV_DoPlat(line, raiseToNearestAndChange, 0))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 21:
+		// PlatDownWaitUpStay
+		if (EV_DoPlat(line, downWaitUpStay, 0))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 23:
+		// Lower Floor to Lowest
+		if (EV_DoFloor(line, lowerFloorToLowest))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 29:
+		// Raise Door
+		if (EV_DoDoor(line, door_normal))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 41:
+		// Lower Ceiling to Floor
+		if (EV_DoCeiling(line, lowerToFloor))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 49:
+		// Ceiling Crush And Raise
+		if (EV_DoCeiling(line, crushAndRaise))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 50:
+		// Close Door
+		if (EV_DoDoor(line, close))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 51:
+		// Secret EXIT
+		P_ChangeSwitchTexture(line, 0);
+		G_SecretExitLevel();
+		break;
+
+	case 55:
+		// Raise Floor Crush
+		if (EV_DoFloor(line, raiseFloorCrush))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 71:
 		// Turbo Lower Floor
-		if (EV_DoFloor(line,turboLower))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoFloor(line, turboLower))
+			P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 99:
+
+	case 101:
+		// Raise Floor
+		if (EV_DoFloor(line, raiseFloor))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 102:
+		// Lower Floor to Surrounding floor height
+		if (EV_DoFloor(line, lowerFloor))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 103:
+		// Open Door
+		if (EV_DoDoor(line, open))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 111:
+		// Blazing Door Raise (faster than TURBO!)
+		if (EV_DoDoor(line, blazeRaise))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 112:
+		// Blazing Door Open (faster than TURBO!)
+		if (EV_DoDoor(line, blazeOpen))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 113:
+		// Blazing Door Close (faster than TURBO!)
+		if (EV_DoDoor(line, blazeClose))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 122:
+		// Blazing PlatDownWaitUpStay
+		if (EV_DoPlat(line, blazeDWUS, 0))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 127:
+		// Build Stairs Turbo 16
+		if (EV_BuildStairs(line, turbo16))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 131:
+		// Raise Floor Turbo
+		if (EV_DoFloor(line, raiseFloorTurbo))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+	case 133:
 		// BlzOpenDoor BLUE
-      case 134:
+	case 135:
 		// BlzOpenDoor RED
-      case 136:
+	case 137:
 		// BlzOpenDoor YELLOW
 		if (EV_DoLockedDoor(line, blazeOpen, thing))
-		    P_ChangeSwitchTexture(line, 1);
+			P_ChangeSwitchTexture(line, 0);
 		break;
-	
-      case 114:
+
+	case 140:
+		// Raise Floor 512
+		if (EV_DoFloor(line, raiseFloor512))
+			P_ChangeSwitchTexture(line, 0);
+		break;
+
+// BUTTONS
+	case 42:
+		// Close Door
+		if (EV_DoDoor(line, close))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 43:
+		// Lower Ceiling to Floor
+		if (EV_DoCeiling(line, lowerToFloor))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 45:
+		// Lower Floor to Surrounding floor height
+		if (EV_DoFloor(line, lowerFloor))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 60:
+		// Lower Floor to Lowest
+		if (EV_DoFloor(line, lowerFloorToLowest))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 61:
+		// Open Door
+		if (EV_DoDoor(line, open))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 62:
+		// PlatDownWaitUpStay
+		if (EV_DoPlat(line, downWaitUpStay, 1))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 63:
+		// Raise Door
+		if (EV_DoDoor(line, door_normal))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 64:
+		// Raise Floor to ceiling
+		if (EV_DoFloor(line, raiseFloor))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 65:
+		// Raise Floor Crush
+		if (EV_DoFloor(line, raiseFloorCrush))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 66:
+		// Raise Floor 24 and change texture
+		if (EV_DoPlat(line, raiseAndChange, 24))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 67:
+		// Raise Floor 32 and change texture
+		if (EV_DoPlat(line, raiseAndChange, 32))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 68:
+		// Raise Plat to next highest floor and change texture
+		if (EV_DoPlat(line, raiseToNearestAndChange, 0))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 69:
+		// Raise Floor to next highest floor
+		if (EV_DoFloor(line, raiseFloorToNearest))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 70:
+		// Turbo Lower Floor
+		if (EV_DoFloor(line, turboLower))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 99:
+		// BlzOpenDoor BLUE
+	case 134:
+		// BlzOpenDoor RED
+	case 136:
+		// BlzOpenDoor YELLOW
+		if (EV_DoLockedDoor(line, blazeOpen, thing))
+			P_ChangeSwitchTexture(line, 1);
+		break;
+
+	case 114:
 		// Blazing Door Raise (faster than TURBO!)
-		if (EV_DoDoor (line,blazeRaise))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoDoor(line, blazeRaise))
+			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 115:
+
+	case 115:
 		// Blazing Door Open (faster than TURBO!)
-		if (EV_DoDoor (line,blazeOpen))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoDoor(line, blazeOpen))
+			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 116:
+
+	case 116:
 		// Blazing Door Close (faster than TURBO!)
-		if (EV_DoDoor (line,blazeClose))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoDoor(line, blazeClose))
+			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 123:
+
+	case 123:
 		// Blazing PlatDownWaitUpStay
-		if (EV_DoPlat(line,blazeDWUS,0))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoPlat(line, blazeDWUS, 0))
+			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 132:
+
+	case 132:
 		// Raise Floor Turbo
-		if (EV_DoFloor(line,raiseFloorTurbo))
-		    P_ChangeSwitchTexture(line,1);
+		if (EV_DoFloor(line, raiseFloorTurbo))
+			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 138:
+
+	case 138:
 		// Light Turn On
-		if (EV_LightTurnOn(line,255))
+		if (EV_LightTurnOn(line, 255))
 			P_ChangeSwitchTexture(line, 1);
 		break;
-	
-      case 139:
+
+	case 139:
 		// Light Turn Off
-		if (EV_LightTurnOn(line,35))
+		if (EV_LightTurnOn(line, 35))
 			P_ChangeSwitchTexture(line, 1);
 		break;
-    }
-	
-    return true;
+	}
+
+	return true;
 }
 
 //==========================================================================
@@ -1013,35 +1013,38 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line)
 
 void P_UpdateSpecials(void)
 {
-    int		i;
-    line_t*	line;
+	int i;
+	line_t *line;
 
-    //	ANIMATE LINE SPECIALS
-    for (i = 0; i < numlinespecials; i++)
-    {
+	//  ANIMATE LINE SPECIALS
+	for (i = 0; i < numlinespecials; i++)
+	{
 		line = linespeciallist[i];
 		switch (line->special)
 		{
-		 case 48:
-		    // EFFECT FIRSTCOL SCROLL +
-		    level->sides[line->sidenum[0]].textureoffset += 1.0;
-		    break;
+		case 48:
+			// EFFECT FIRSTCOL SCROLL +
+			level->sides[line->sidenum[0]].textureoffset += 1.0;
+			break;
 		}
-    }
+	}
 
-    P_RespawnSpecials();
+	P_RespawnSpecials();
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/30 17:33:18  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/08/30 17:33:18  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

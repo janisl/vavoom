@@ -1,33 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
-//**	Main menu
+//**    Main menu
 //**
 //**************************************************************************
 
@@ -39,13 +35,13 @@
 
 struct menu_main_t
 {
-	menu_t			menu;
-	menutext_t		single;
-	menutext_t		multi;
-	menutext_t		options;
-	menutext_t		help;
-	menutext_t		quit;
-	menubitmap_t	logo;
+	menu_t menu;
+	menutext_t single;
+	menutext_t multi;
+	menutext_t options;
+	menutext_t help;
+	menutext_t quit;
+	menubitmap_t logo;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -58,13 +54,13 @@ void menu_quit(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_main_t		MainMenu;
+menu_main_t MainMenu;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	menu_main
+//  menu_main
 //
 //==========================================================================
 
@@ -76,27 +72,31 @@ void menu_main(void)
 	x = 97;
 	y = 80;
 
-    InitMenu(&MainMenu.menu);
+	InitMenu(&MainMenu.menu);
 
 	if (local_server)
 	{
-		MenuText_InitFunc(&MainMenu.single, x, y, "Single Player", TEXT_BIG, menu_single);
+		MenuText_InitFunc(&MainMenu.single, x, y, "Single Player", TEXT_BIG,
+			menu_single);
 		AddMenuItem(&MainMenu.menu, &MainMenu.single);
 		y += 18;
 	}
 
-	MenuText_InitFunc(&MainMenu.multi, x, y, "Multiplayer", TEXT_BIG, menu_multi);
+	MenuText_InitFunc(&MainMenu.multi, x, y, "Multiplayer", TEXT_BIG,
+		menu_multi);
 	AddMenuItem(&MainMenu.menu, &MainMenu.multi);
 	y += 18;
 
-	MenuText_InitFunc(&MainMenu.options, x, y, "Options", TEXT_BIG, menu_options);
+	MenuText_InitFunc(&MainMenu.options, x, y, "Options", TEXT_BIG,
+		menu_options);
 	AddMenuItem(&MainMenu.menu, &MainMenu.options);
 	y += 18;
 
 #ifndef DOOM2
 	if (shareware)
 	{
-		MenuText_InitFunc(&MainMenu.help, x, y, "Read This!", TEXT_BIG, menu_help);
+		MenuText_InitFunc(&MainMenu.help, x, y, "Read This!", TEXT_BIG,
+			menu_help);
 	}
 	else
 #endif
@@ -112,6 +112,16 @@ void menu_main(void)
 	MenuBitmap_Init(&MainMenu.logo, 94, 2, MNF_INACTIVE, "M_DOOM", PIC_PATCH);
 	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
 
-    PushMenu(&MainMenu.menu);
+	PushMenu(&MainMenu.menu);
 }
 
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:09  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -1,145 +1,148 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	TELEPORTATION
+//**    TELEPORTATION
 //**
 //**************************************************************************
 
-float		teleport_bbox[4];
-mobj_t*		teleport_thing;
-float		teleport_x;
-float		teleport_y;
+float teleport_bbox[4];
+mobj_t *teleport_thing;
+float teleport_x;
+float teleport_y;
 
 //==========================================================================
 //
-//	PIT_StompThing
+//  PIT_StompThing
 //
 //==========================================================================
 
-boolean PIT_StompThing(mobj_t* thing)
+boolean PIT_StompThing(mobj_t * thing)
 {
-    float	blockdist;
-		
-    if (!(thing->flags & MF_SHOOTABLE))
+	float blockdist;
+
+	if (!(thing->flags & MF_SHOOTABLE))
 		return true;
-		
-    blockdist = thing->radius + teleport_thing->radius;
-    
-    if (fabs(thing->origin.x - teleport_x) >= blockdist || fabs(thing->origin.y - teleport_y) >= blockdist)
-    {
+
+	blockdist = thing->radius + teleport_thing->radius;
+
+	if (fabs(thing->origin.x - teleport_x) >= blockdist
+		|| fabs(thing->origin.y - teleport_y) >= blockdist)
+	{
 		// didn't hit it
 		return true;
-    }
-    
-    // don't clip against self
-    if (thing == teleport_thing)
+	}
+
+	// don't clip against self
+	if (thing == teleport_thing)
 		return true;
 
 #ifdef DOOM2
-    // monsters don't stomp things except on boss level
-    if (!(teleport_thing->player || !strcmp(ptrtos(&level->mapname[0]), "MAP30")))
+	// monsters don't stomp things except on boss level
+	if (!(teleport_thing->player
+			|| !strcmp(ptrtos(&level->mapname[0]), "MAP30")))
 #else
-    if (!(teleport_thing->player != NULL))
+	if (!(teleport_thing->player != NULL))
 #endif
-    {
-    	return false;
-    }
-		
+	{
+		return false;
+	}
+
 	DamageMobj(thing, teleport_thing, teleport_thing, 10000);
-	
-    return true;
+
+	return true;
 }
 
 //==========================================================================
 //
-//	P_TeleportMove
+//  P_TeleportMove
 //
 //==========================================================================
 
-boolean P_TeleportMove(mobj_t* thing, float x, float y)
+boolean P_TeleportMove(mobj_t * thing, float x, float y)
 {
-    int			xl;
-    int			xh;
-    int			yl;
-    int			yh;
-    int			bx;
-    int			by;
-    
-    // kill anything occupying the position
-    teleport_thing = thing;
-	
-    teleport_x = x;
-    teleport_y = y;
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
 
-    // stomp on any things contacted
-    xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
-    xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
-    yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
-    yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+	// kill anything occupying the position
+	teleport_thing = thing;
 
-    for (bx = xl; bx <= xh; bx++)
+	teleport_x = x;
+	teleport_y = y;
+
+	// stomp on any things contacted
+	xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+
+	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-	    	if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+			if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
 				return false;
-    
-    // the move is ok,
-    // so link the thing into its new position
-    P_UnsetThingPosition(thing);
 
-    thing->origin.x = x;
-    thing->origin.y = y;
+	// the move is ok,
+	// so link the thing into its new position
+	P_UnsetThingPosition(thing);
 
-    P_SetThingPosition(thing);
+	thing->origin.x = x;
+	thing->origin.y = y;
 
-    return true;
+	P_SetThingPosition(thing);
+
+	return true;
 }
 
 //==========================================================================
 //
-//	P_Teleport
+//  P_Teleport
 //
 //==========================================================================
 
-int P_Teleport(mobj_t *thing, float x, float y, angle_t angle)
+int P_Teleport(mobj_t * thing, float x, float y, angle_t angle)
 {
-    float		oldx;
-    float		oldy;
-    float		oldz;
-    mobj_t*		fog;
+	float oldx;
+	float oldy;
+	float oldz;
+	mobj_t *fog;
 
 	oldx = thing->origin.x;
 	oldy = thing->origin.y;
 	oldz = thing->origin.z;
 
 	if (!P_TeleportMove(thing, x, y))
-	    return 0;
-		
-	thing->origin.z = thing->floorz;  //fixme: not needed?
+		return 0;
+
+	thing->origin.z = thing->floorz;	//fixme: not needed?
 	if (thing->player)
-	    thing->player->vieworg.z = thing->origin.z + thing->player->viewheight;
-				
+		thing->player->vieworg.z =
+			thing->origin.z + thing->player->viewheight;
+
 	// spawn teleport fog at source and destination
 	fog = P_SpawnMobj(oldx, oldy, oldz, MT_TFOG);
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
@@ -149,11 +152,11 @@ int P_Teleport(mobj_t *thing, float x, float y, angle_t angle)
 
 	// emit sound, where?
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
-		
+
 	// don't move for a bit
 	if (thing->player)
 	{
-	    thing->reactiontime = 18;
+		thing->reactiontime = 18;
 		thing->player->fixangle = true;
 	}
 
@@ -168,38 +171,41 @@ int P_Teleport(mobj_t *thing, float x, float y, angle_t angle)
 //
 //==========================================================================
 
-int EV_Teleport(int tag, mobj_t* thing, boolean usefog)
+int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 {
-    int			i;
-    mobj_t*		m;
-    sector_t*	sector;
+	int i;
+	mobj_t *m;
+	sector_t *sector;
 
-    // don't teleport missiles
-    if (thing->flags & MF_MISSILE)
+	// don't teleport missiles
+	if (thing->flags & MF_MISSILE)
 		return 0;
 
-    for (m = NextMobj(NULL); m; m = NextMobj(m))
-    {
+	for (m = NextMobj(NULL); m; m = NextMobj(m))
+	{
 		// not a teleportman
 		if (m->type != MT_TELEPORTMAN)
-		    continue;
+			continue;
 
 		// wrong sector
 		if (m->tid != tag)
-		    continue;
+			continue;
 
 		return P_Teleport(thing, m->origin.x, m->origin.y, m->angles.yaw);
-    }
-    return 0;
+	}
+	return 0;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:09  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

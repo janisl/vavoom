@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -37,21 +37,20 @@
 
 //============================================================================
 //
-// 	A_LeafSpawn
+//  A_LeafSpawn
 //
 //============================================================================
 
-void A_LeafSpawn(mobj_t* actor)
+void A_LeafSpawn(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	i;
+	mobj_t *mo;
+	int i;
 
-	for (i = (P_Random()&3)+1; i; i--)
+	for (i = (P_Random() & 3) + 1; i; i--)
 	{
 		mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 64.0,
 			actor->origin.y + (Random() - Random()) * 64.0,
-			actor->origin.z + Random() * 64.0,
-			MT_LEAF1+(P_Random()&1));
+			actor->origin.z + Random() * 64.0, MT_LEAF1 + (P_Random() & 1));
 		if (mo)
 		{
 			P_ThrustMobj(mo, actor->angles.yaw, Random() * 2.0 + 3.0);
@@ -63,11 +62,11 @@ void A_LeafSpawn(mobj_t* actor)
 
 //============================================================================
 //
-// 	A_LeafThrust
+//  A_LeafThrust
 //
 //============================================================================
 
-void A_LeafThrust(mobj_t* actor)
+void A_LeafThrust(mobj_t * actor)
 {
 	if (P_Random() > 96)
 	{
@@ -78,11 +77,11 @@ void A_LeafThrust(mobj_t* actor)
 
 //============================================================================
 //
-// 	A_LeafCheck
+//  A_LeafCheck
 //
 //============================================================================
 
-void A_LeafCheck(mobj_t* actor)
+void A_LeafCheck(mobj_t * actor)
 {
 	actor->special1++;
 	if (actor->special1 >= 20)
@@ -94,7 +93,8 @@ void A_LeafCheck(mobj_t* actor)
 	{
 		if (!actor->velocity.x && !actor->velocity.y)
 		{
-			P_ThrustMobj(actor, actor->target->angles.yaw, Random() * 2.0 + 1.0);
+			P_ThrustMobj(actor, actor->target->angles.yaw,
+				Random() * 2.0 + 1.0);
 		}
 		return;
 	}
@@ -106,17 +106,17 @@ void A_LeafCheck(mobj_t* actor)
 
 //===========================================================================
 //
-// 	A_TreeDeath
+//  A_TreeDeath
 //
 //===========================================================================
 
-void A_TreeDeath(mobj_t* actor)
+void A_TreeDeath(mobj_t * actor)
 {
-	if (!(actor->flags2&MF2_FIREDAMAGE))
+	if (!(actor->flags2 & MF2_FIREDAMAGE))
 	{
 		actor->height *= 4.0;
 		actor->flags |= MF_SHOOTABLE;
-		actor->flags &= ~(MF_CORPSE+MF_DROPOFF);
+		actor->flags &= ~(MF_CORPSE + MF_DROPOFF);
 		actor->health = 35;
 		return;
 	}
@@ -128,11 +128,14 @@ void A_TreeDeath(mobj_t* actor)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

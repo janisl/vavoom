@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -33,20 +33,20 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int		pic_brdr_t;
-int		pic_brdr_b;
-int		pic_brdr_l;
-int		pic_brdr_r;
-int		pic_brdr_tl;
-int		pic_brdr_tr;
-int		pic_brdr_bl;
-int		pic_brdr_br;
+int pic_brdr_t;
+int pic_brdr_b;
+int pic_brdr_l;
+int pic_brdr_r;
+int pic_brdr_tl;
+int pic_brdr_tr;
+int pic_brdr_bl;
+int pic_brdr_br;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	InitBorder
+//  InitBorder
 //
 //==========================================================================
 
@@ -64,15 +64,15 @@ void InitBorder(void)
 
 //==========================================================================
 //
-//	DrawBorder
+//  DrawBorder
 //
-//	Draws border
+//  Draws border
 //
 //==========================================================================
 
 void DrawBorder(int x, int y, int w, int h)
 {
-	int			i;
+	int i;
 
 	if (!pic_brdr_b)
 	{
@@ -112,8 +112,11 @@ void DrawViewBorder(int x, int y, int w, int h)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.1  2001/08/29 17:46:25  dj_jl
-//	Moved view border and message box to progs
+//  $Log$
+//  Revision 1.2  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
+//  Revision 1.1  2001/08/29 17:46:25  dj_jl
+//  Moved view border and message box to progs
+//  
 //**************************************************************************

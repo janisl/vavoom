@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -37,11 +37,11 @@
 
 //============================================================================
 //
-//	A_BishopDecide
+//  A_BishopDecide
 //
 //============================================================================
 
-void A_BishopDecide(mobj_t* actor)
+void A_BishopDecide(mobj_t * actor)
 {
 	if (P_Random() < 220)
 	{
@@ -50,28 +50,28 @@ void A_BishopDecide(mobj_t* actor)
 	else
 	{
 		SetMobjState(actor, S_BISHOP_BLUR1);
-	}		
+	}
 }
 
 //============================================================================
 //
-//	A_BishopDoBlur
+//  A_BishopDoBlur
 //
 //============================================================================
 
-void A_BishopDoBlur(mobj_t* actor)
+void A_BishopDoBlur(mobj_t * actor)
 {
-	actor->special1 = (P_Random() & 3) + 3; // P_Random number of blurs
+	actor->special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
-		P_ThrustMobj(actor, actor->angles.yaw+ANG90, 11.0);
+		P_ThrustMobj(actor, actor->angles.yaw + ANG90, 11.0);
 	}
 	else if (P_Random() > 125)
 	{
-		P_ThrustMobj(actor, actor->angles.yaw-ANG90, 11.0);
+		P_ThrustMobj(actor, actor->angles.yaw - ANG90, 11.0);
 	}
 	else
-	{ // Thrust forward
+	{	// Thrust forward
 		P_ThrustMobj(actor, actor->angles.yaw, 11.0);
 	}
 	StartSoundName(actor, "BishopBlur", CHAN_VOICE);
@@ -83,15 +83,15 @@ void A_BishopDoBlur(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopSpawnBlur(mobj_t* actor)
+void A_BishopSpawnBlur(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
-	if(!--actor->special1)
+	if (!--actor->special1)
 	{
 		actor->velocity.x = 0.0;
 		actor->velocity.y = 0.0;
-		if(P_Random() > 96)
+		if (P_Random() > 96)
 		{
 			SetMobjState(actor, S_BISHOP_WALK1);
 		}
@@ -100,8 +100,10 @@ void A_BishopSpawnBlur(mobj_t* actor)
 			SetMobjState(actor, S_BISHOP_ATK1);
 		}
 	}
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_BISHOPBLUR);
-	if(mo)
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_BISHOPBLUR);
+	if (mo)
 	{
 		mo->angles.yaw = actor->angles.yaw;
 	}
@@ -113,7 +115,7 @@ void A_BishopSpawnBlur(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopChase(mobj_t* actor)
+void A_BishopChase(mobj_t * actor)
 {
 	actor->origin.z -= FloatBobOffsets[actor->special2] / 2.0;
 	actor->special2 = (actor->special2 + 4) & 63;
@@ -126,9 +128,9 @@ void A_BishopChase(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopAttack(mobj_t* actor)
+void A_BishopAttack(mobj_t * actor)
 {
-	if(!actor->target)
+	if (!actor->target)
 	{
 		return;
 	}
@@ -138,56 +140,54 @@ void A_BishopAttack(mobj_t* actor)
 		DamageMobj(actor->target, actor, actor, HITDICE(4));
 		return;
 	}
-	actor->special1 = (P_Random()&3)+5;
+	actor->special1 = (P_Random() & 3) + 5;
 }
 
 //============================================================================
 //
-// 	A_BishopAttack2
+//  A_BishopAttack2
 //
-//	Spawns one of a string of bishop missiles
+//  Spawns one of a string of bishop missiles
 //
 //============================================================================
 
-void A_BishopAttack2(mobj_t* actor)
+void A_BishopAttack2(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
-	if(!actor->target || !actor->special1)
+	if (!actor->target || !actor->special1)
 	{
 		actor->special1 = 0;
 		SetMobjState(actor, S_BISHOP_WALK1);
 		return;
 	}
 	mo = SpawnMissile(actor, actor->target, MT_BISH_FX);
-	if(mo)
+	if (mo)
 	{
 		mo->specialmobj1 = actor->target;
-		mo->special2 = 16; // High word == x/y, Low word == z
+		mo->special2 = 16;	// High word == x/y, Low word == z
 	}
 	actor->special1--;
 }
 
 //============================================================================
 //
-//	A_BishopPainBlur
+//  A_BishopPainBlur
 //
 //============================================================================
 
-void A_BishopPainBlur(mobj_t* actor)
+void A_BishopPainBlur(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
 	if (P_Random() < 64)
 	{
 		SetMobjState(actor, S_BISHOP_BLUR1);
 		return;
 	}
-	mo = P_SpawnMobj(
-		actor->origin.x + (Random() - Random()) * 16.0,
+	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 16.0,
 		actor->origin.y + (Random() - Random()) * 16.0,
-		actor->origin.z + (Random() - Random()) * 8.0,
-		MT_BISHOPPAINBLUR);
+		actor->origin.z + (Random() - Random()) * 8.0, MT_BISHOPPAINBLUR);
 	if (mo)
 	{
 		mo->angles.yaw = actor->angles.yaw;
@@ -200,11 +200,13 @@ void A_BishopPainBlur(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopPuff(mobj_t* actor)
+void A_BishopPuff(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 40.0, MT_BISHOP_PUFF);
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 40.0,
+		MT_BISHOP_PUFF);
 	if (mo)
 	{
 		mo->velocity.z = 0.5 * 35.0;
@@ -217,7 +219,7 @@ void A_BishopPuff(mobj_t* actor)
 //
 //==========================================================================
 
-void A_SetAltShadow(mobj_t* actor)
+void A_SetAltShadow(mobj_t * actor)
 {
 	actor->translucency = 33;
 }
@@ -228,11 +230,11 @@ void A_SetAltShadow(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopMissileWeave(mobj_t* actor)
+void A_BishopMissileWeave(mobj_t * actor)
 {
-	float	newX, newY;
-	int 	weaveXY, weaveZ;
-	angle_t	angle;
+	float newX, newY;
+	int weaveXY, weaveZ;
+	angle_t angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
@@ -255,18 +257,21 @@ void A_BishopMissileWeave(mobj_t* actor)
 //
 //============================================================================
 
-void A_BishopMissileSeek(mobj_t* actor)
+void A_BishopMissileSeek(mobj_t * actor)
 {
-	SeekerMissile(actor, ANGLE_1*2, ANGLE_1*3);
+	SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 3);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

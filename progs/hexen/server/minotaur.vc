@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -27,10 +27,10 @@
 //
 // Minotaur variables
 //
-// 	specialmobj1	pointer to player that spawned it (mobj_t)
-//	special2		internal to minotaur AI
-//	args[0]			minotaur start time
-//	args[4]			charge duration countdown
+//  specialmobj1    pointer to player that spawned it (mobj_t)
+//  special2        internal to minotaur AI
+//  args[0]         minotaur start time
+//  args[4]         charge duration countdown
 //
 //============================================================================
 
@@ -51,26 +51,31 @@
 
 //==========================================================================
 //
-//	A_Summon
+//  A_Summon
 //
-//	Summon Minotaur
+//  Summon Minotaur
 //
 //==========================================================================
 
-void A_Summon(mobj_t* actor)
+void A_Summon(mobj_t * actor)
 {
-	mobj_t*	mo;
-	mobj_t*	master;
+	mobj_t *mo;
+	mobj_t *master;
 
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MINOTAUR);
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_MINOTAUR);
 	if (mo)
 	{
 		if (P_TestMobjLocation(mo) == false || !actor->specialmobj1)
 		{
 			// Didn't fit - change back to artifact
 			SetMobjState(mo, S_NULL);
-			mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_SUMMONMAULATOR);
-			if (mo) mo->flags2 |= MF2_DROPPED;
+			mo =
+				P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+				MT_SUMMONMAULATOR);
+			if (mo)
+				mo->flags2 |= MF2_DROPPED;
 			return;
 		}
 
@@ -78,78 +83,88 @@ void A_Summon(mobj_t* actor)
 		master = actor->specialmobj1;
 		if (master->flags & MF_CORPSE)
 		{	// Master dead
-			mo->specialmobj1 = NULL;		// No master
+			mo->specialmobj1 = NULL;	// No master
 		}
 		else
 		{
-			mo->specialmobj1 = actor->specialmobj1;		// Pointer to master (mobj_t *)
+			mo->specialmobj1 = actor->specialmobj1;	// Pointer to master (mobj_t *)
 			P_GivePower(master->player, pw_minotaur);
 		}
 
 		// Make smoke puff
-		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MNTRSMOKE);
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_MNTRSMOKE);
 		StartSoundName(actor, "MaulatorActive", CHAN_VOICE);
 	}
 }
 
 //============================================================================
 //
-//	A_MinotaurLook
+//  A_MinotaurLook
 //
-//	Look for enemy of player
+//  Look for enemy of player
 //
 //============================================================================
 
-void A_MinotaurLook(mobj_t* actor)
+void A_MinotaurLook(mobj_t * actor)
 {
-	mobj_t*		mo = NULL;
-	player_t*	player;
-	float		dist;
-	int 		i;
-	mobj_t*		master = actor->specialmobj1;
+	mobj_t *mo = NULL;
+	player_t *player;
+	float dist;
+	int i;
+	mobj_t *master = actor->specialmobj1;
 
 	actor->target = NULL;
 
-	if (deathmatch)					// Quick search for players
+	if (deathmatch)	// Quick search for players
 	{
-    	for (i=0; i<MAXPLAYERS; i++)
+		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!players[i].spawned) continue;
+			if (!players[i].spawned)
+				continue;
 			player = &players[i];
 			mo = player->mo;
-			if (mo == master) continue;
-			if (mo->health <= 0) continue;
+			if (mo == master)
+				continue;
+			if (mo->health <= 0)
+				continue;
 			dist = MobjDist(actor, mo);
-			if (dist > MINOTAUR_LOOK_DIST) continue;
+			if (dist > MINOTAUR_LOOK_DIST)
+				continue;
 			actor->target = mo;
 			break;
 		}
 	}
 
-	if (!actor->target)				// Near player monster search
+	if (!actor->target)	// Near player monster search
 	{
-		if (master && (master->health>0) && (master->player))
+		if (master && (master->health > 0) && (master->player))
 			mo = P_RoughMonsterSearch(master, 20);
 		else
 			mo = P_RoughMonsterSearch(actor, 20);
 		actor->target = mo;
 	}
 
-	if (!actor->target)				// Normal monster search
+	if (!actor->target)	// Normal monster search
 	{
-    	mo = NULL;
+		mo = NULL;
 		while (mo = NextMobj(mo))
 		{
-			if (!(mo->flags&MF_COUNTKILL)) continue;
-			if (mo->health <= 0) continue;
-			if (!(mo->flags&MF_SHOOTABLE)) continue;
+			if (!(mo->flags & MF_COUNTKILL))
+				continue;
+			if (mo->health <= 0)
+				continue;
+			if (!(mo->flags & MF_SHOOTABLE))
+				continue;
 			dist = MobjDist(actor, mo);
-			if (dist > MINOTAUR_LOOK_DIST) continue;
-			if ((mo == master) || (mo == actor)) continue;
+			if (dist > MINOTAUR_LOOK_DIST)
+				continue;
+			if ((mo == master) || (mo == actor))
+				continue;
 			if ((mo->type == MT_MINOTAUR) &&
 				(mo->specialmobj1 == actor->specialmobj1)) continue;
 			actor->target = mo;
-			break;			// Found mobj to attack
+			break;	// Found mobj to attack
 		}
 	}
 
@@ -169,11 +184,11 @@ void A_MinotaurLook(mobj_t* actor)
 //
 //============================================================================
 
-void A_MinotaurChase(mobj_t* actor)
+void A_MinotaurChase(mobj_t * actor)
 {
-	int		starttime = actor->args[0];
+	int starttime = actor->args[0];
 
-	actor->translucency = 0; // In case pain caused him to skip his fade in.
+	actor->translucency = 0;	// In case pain caused him to skip his fade in.
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
@@ -182,17 +197,17 @@ void A_MinotaurChase(mobj_t* actor)
 	}
 
 	if (P_Random() < 30)
-		A_MinotaurLook(actor);		// adjust to closest target
+		A_MinotaurLook(actor);	// adjust to closest target
 
 	if (!actor->target || (actor->target->health <= 0) ||
 		!(actor->target->flags & MF_SHOOTABLE))
-	{ // look for a new target
+	{	// look for a new target
 		SetMobjState(actor, S_MNTR_LOOK1);
 		return;
 	}
 
 	FaceMovementDirection(actor);
-	actor->reactiontime=0;
+	actor->reactiontime = 0;
 
 	// Melee attack
 	if (actor->meleestate && CheckMeleeRange(actor))
@@ -232,22 +247,22 @@ void A_MinotaurChase(mobj_t* actor)
 //
 //============================================================================
 
-void A_MinotaurRoam(mobj_t* actor)
+void A_MinotaurRoam(mobj_t * actor)
 {
-	int		starttime = actor->args[0];
+	int starttime = actor->args[0];
 
-	actor->translucency = 0; // In case pain caused him to skip his fade in.
+	actor->translucency = 0;	// In case pain caused him to skip his fade in.
 
 	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
-		DamageMobj(actor,NULL,NULL,10000);
+		DamageMobj(actor, NULL, NULL, 10000);
 		return;
 	}
 
-	if (P_Random()<30)
-		A_MinotaurLook(actor);		// adjust to closest target
+	if (P_Random() < 30)
+		A_MinotaurLook(actor);	// adjust to closest target
 
-	if (P_Random()<6)
+	if (P_Random() < 6)
 	{
 		//Choose new direction
 		actor->movedir = P_Random() % 8;
@@ -257,22 +272,22 @@ void A_MinotaurRoam(mobj_t* actor)
 	{
 		// Turn
 		if (P_Random() & 1)
-			actor->movedir = (++actor->movedir)%8;
+			actor->movedir = (++actor->movedir) % 8;
 		else
-			actor->movedir = (actor->movedir+7)%8;
+			actor->movedir = (actor->movedir + 7) % 8;
 		FaceMovementDirection(actor);
 	}
 }
 
 //============================================================================
 //
-//	A_MinotaurAtk1
+//  A_MinotaurAtk1
 //
-// 	Melee attack.
+//  Melee attack.
 //
 //============================================================================
 
-void A_MinotaurAtk1(mobj_t* actor)
+void A_MinotaurAtk1(mobj_t * actor)
 {
 	if (!actor->target)
 	{
@@ -288,43 +303,41 @@ void A_MinotaurAtk1(mobj_t* actor)
 
 //============================================================================
 //
-//	A_MinotaurDecide
+//  A_MinotaurDecide
 //
-// 	Choose a missile attack.
+//  Choose a missile attack.
 //
 //============================================================================
 
-void A_MinotaurDecide(mobj_t* actor)
+void A_MinotaurDecide(mobj_t * actor)
 {
-	mobj_t		*target = actor->target;
-	float		dist;
+	mobj_t *target = actor->target;
+	float dist;
 
-	if (!target) return;
+	if (!target)
+		return;
 	dist = MobjDist(actor, target);
 
 	if (target->origin.z + target->height > actor->origin.z &&
 		target->origin.z + target->height < actor->origin.z + actor->height &&
-		dist < 16.0 * 64.0 &&
-		dist > 1.0 * 64.0 &&
-		P_Random() < 230)
-	{ // Charge attack
+		dist < 16.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 230)
+	{	// Charge attack
 		// Don't call the state function right away
 		SetMobjStateNF(actor, S_MNTR_ATK4_1);
 		actor->flags |= MF_SKULLFLY;
 		A_FaceTarget(actor);
 		actor->velocity = Normalize(actor->target->origin - actor->origin) *
 			MNTR_CHARGE_SPEED;
-		actor->args[4] = 35 / 2; // Charge duration
+		actor->args[4] = 35 / 2;	// Charge duration
 	}
 	else if (target->origin.z == target->floorz &&
-		dist < 9.0 * 64.0 &&
-		P_Random() < 100)
-	{ // Floor fire attack
+		dist < 9.0 * 64.0 && P_Random() < 100)
+	{	// Floor fire attack
 		SetMobjState(actor, S_MNTR_ATK3_1);
 		actor->special2 = 0;
 	}
 	else
-	{ // Swing attack
+	{	// Swing attack
 		A_FaceTarget(actor);
 		// Don't need to call SetMobjState because the current state
 		// falls through to the swing attack
@@ -333,19 +346,20 @@ void A_MinotaurDecide(mobj_t* actor)
 
 //============================================================================
 //
-//	A_MinotaurAtk2
+//  A_MinotaurAtk2
 //
-// 	Swing attack.
+//  Swing attack.
 //
 //============================================================================
 
-void A_MinotaurAtk2(mobj_t* actor)
+void A_MinotaurAtk2(mobj_t * actor)
 {
-	mobj_t		*mo;
-	angle_t		angle;
-	float		momz;
+	mobj_t *mo;
+	angle_t angle;
+	float momz;
 
-	if (!actor->target) return;
+	if (!actor->target)
+		return;
 
 	StartSoundName(actor, "MaulatorHamSwing", CHAN_WEAPON);
 	if (CheckMeleeRange(actor))
@@ -359,47 +373,47 @@ void A_MinotaurAtk2(mobj_t* actor)
 		//StartSoundName(mo, sfx_minat2);
 		momz = mo->velocity.z * frametime;
 		angle = mo->angles.yaw;
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle-(ANG45/8), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle+(ANG45/8), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle-(ANG45/16), momz);
-		SpawnMissileAngle(actor, MT_MNTRFX1, angle+(ANG45/16), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle - (ANG45 / 8), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle + (ANG45 / 8), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle - (ANG45 / 16), momz);
+		SpawnMissileAngle(actor, MT_MNTRFX1, angle + (ANG45 / 16), momz);
 	}
 }
 
 //============================================================================
 //
-//	A_MinotaurAtk3
+//  A_MinotaurAtk3
 //
-// 	Floor fire attack.
+//  Floor fire attack.
 //
 //============================================================================
 
-void A_MinotaurAtk3(mobj_t* actor)
+void A_MinotaurAtk3(mobj_t * actor)
 {
-	mobj_t*		mo;
-	player_t*	player;
+	mobj_t *mo;
+	player_t *player;
 
 	if (!actor->target)
 	{
 		return;
 	}
-	if(CheckMeleeRange(actor))
+	if (CheckMeleeRange(actor))
 	{
 		DamageMobj(actor->target, actor, actor, HITDICE(3));
-		if((player = actor->target->player) != NULL)
-		{ // Squish the player
+		if ((player = actor->target->player) != NULL)
+		{	// Squish the player
 			player->deltaviewheight = -16.0;
 		}
 	}
 	else
 	{
 		mo = SpawnMissile(actor, actor->target, MT_MNTRFX2);
-		if(mo != NULL)
+		if (mo != NULL)
 		{
 			StartSoundName(mo, "MaulatorHamHit", CHAN_VOICE);
 		}
 	}
-	if(P_Random() < 192 && actor->special2 == 0)
+	if (P_Random() < 192 && actor->special2 == 0)
 	{
 		SetMobjState(actor, S_MNTR_ATK3_4);
 		actor->special2 = 1;
@@ -408,19 +422,22 @@ void A_MinotaurAtk3(mobj_t* actor)
 
 //============================================================================
 //
-//	A_MinotaurCharge
+//  A_MinotaurCharge
 //
 //============================================================================
 
-void A_MinotaurCharge(mobj_t* actor)
+void A_MinotaurCharge(mobj_t * actor)
 {
-	mobj_t*	puff;
+	mobj_t *puff;
 
-	if (!actor->target) return;
+	if (!actor->target)
+		return;
 
-	if(actor->args[4] > 0)
+	if (actor->args[4] > 0)
 	{
-		puff = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_PUNCHPUFF);
+		puff =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_PUNCHPUFF);
 		puff->velocity.z = 2.0 * 35.0;
 		actor->args[4]--;
 	}
@@ -437,7 +454,7 @@ void A_MinotaurCharge(mobj_t* actor)
 //
 //============================================================================
 
-void A_MinotaurFade0(mobj_t* actor)
+void A_MinotaurFade0(mobj_t * actor)
 {
 	actor->translucency = 66;
 }
@@ -448,7 +465,7 @@ void A_MinotaurFade0(mobj_t* actor)
 //
 //============================================================================
 
-void A_MinotaurFade1(mobj_t* actor)
+void A_MinotaurFade1(mobj_t * actor)
 {
 	// Second level of transparency
 	actor->translucency = 33;
@@ -460,7 +477,7 @@ void A_MinotaurFade1(mobj_t* actor)
 //
 //============================================================================
 
-void A_MinotaurFade2(mobj_t* actor)
+void A_MinotaurFade2(mobj_t * actor)
 {
 	// Make fully visible
 	actor->translucency = 0;
@@ -468,18 +485,19 @@ void A_MinotaurFade2(mobj_t* actor)
 
 //============================================================================
 //
-//	A_MntrFloorFire
+//  A_MntrFloorFire
 //
 //============================================================================
 
-void A_MntrFloorFire(mobj_t* actor)
+void A_MntrFloorFire(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
+
 	actor->origin.z = actor->floorz;
 	mo = P_SpawnMobj(actor->origin.x + (Random() - Random()) * 4.0,
 		actor->origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MT_MNTRFX3);
 	mo->target = actor->target;
-	mo->velocity.x = 0.00001; // Force block checking
+	mo->velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(mo);
 }
 
@@ -489,21 +507,25 @@ void A_MntrFloorFire(mobj_t* actor)
 //
 //============================================================================
 
-void A_SmokePuffExit(mobj_t* actor)
+void A_SmokePuffExit(mobj_t * actor)
 {
-	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_MNTRSMOKEEXIT);
+	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_MNTRSMOKEEXIT);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

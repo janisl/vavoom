@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Class menu
+//**    Class menu
 //**
 //**************************************************************************
 
@@ -35,17 +35,17 @@
 
 struct menu_class_t
 {
-	menu_t			menu;
-	menutext_t		fighter;
-	menutext_t		cleric;
-	menutext_t		mage;
-	menutext_t		title;
-	menubitmap_t	fbox;
-	menuanim_t		fwalk;
-	menubitmap_t	cbox;
-	menuanim_t		cwalk;
-	menubitmap_t	mbox;
-	menuanim_t		mwalk;
+	menu_t menu;
+	menutext_t fighter;
+	menutext_t cleric;
+	menutext_t mage;
+	menutext_t title;
+	menubitmap_t fbox;
+	menuanim_t fwalk;
+	menubitmap_t cbox;
+	menuanim_t cwalk;
+	menubitmap_t mbox;
+	menuanim_t mwalk;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -54,54 +54,54 @@ void menu_skill(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_class_t	ClassMenu;
+menu_class_t ClassMenu;
 
-int				MenuPClass;
+int MenuPClass;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	class_callback
+//  class_callback
 //
 //==========================================================================
 
-void class_callback(menucommon_t *item, int msg)
+void class_callback(menucommon_t * item, int msg)
 {
 	switch (msg)
 	{
-	 case MMSG_LOST_FOCUS:
+	case MMSG_LOST_FOCUS:
 		switch (item->id)
 		{
-		 case 0:
+		case 0:
 			ClassMenu.fbox.flags |= MNF_HIDEN;
 			ClassMenu.fwalk.flags |= MNF_HIDEN;
 			break;
-		 case 1:
+		case 1:
 			ClassMenu.cbox.flags |= MNF_HIDEN;
 			ClassMenu.cwalk.flags |= MNF_HIDEN;
 			break;
-		 case 2:
+		case 2:
 			ClassMenu.mbox.flags |= MNF_HIDEN;
 			ClassMenu.mwalk.flags |= MNF_HIDEN;
 			break;
 		}
 		break;
 
-	 case MMSG_RECEIVE_FOCUS:
+	case MMSG_RECEIVE_FOCUS:
 		switch (item->id)
 		{
-		 case 0:
+		case 0:
 			ClassMenu.fbox.flags &= ~MNF_HIDEN;
 			ClassMenu.fwalk.flags &= ~MNF_HIDEN;
 			MenuPClass = PCLASS_FIGHTER;
 			break;
-		 case 1:
+		case 1:
 			ClassMenu.cbox.flags &= ~MNF_HIDEN;
 			ClassMenu.cwalk.flags &= ~MNF_HIDEN;
 			MenuPClass = PCLASS_CLERIC;
 			break;
-		 case 2:
+		case 2:
 			ClassMenu.mbox.flags &= ~MNF_HIDEN;
 			ClassMenu.mwalk.flags &= ~MNF_HIDEN;
 			MenuPClass = PCLASS_MAGE;
@@ -113,7 +113,7 @@ void class_callback(menucommon_t *item, int msg)
 
 //==========================================================================
 //
-//	menu_class
+//  menu_class
 //
 //==========================================================================
 
@@ -122,15 +122,17 @@ void menu_class(void)
 	int x = 66;
 	int y = 66;
 
-    InitMenu(&ClassMenu.menu);
+	InitMenu(&ClassMenu.menu);
 
-	MenuText_InitFunc(&ClassMenu.fighter, x, y, "FIGHTER", TEXT_BIG, menu_skill);
+	MenuText_InitFunc(&ClassMenu.fighter, x, y, "FIGHTER", TEXT_BIG,
+		menu_skill);
 	ClassMenu.fighter.callback = class_callback;
 	ClassMenu.fighter.id = 0;
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.fighter);
 	y += 18;
 
-	MenuText_InitFunc(&ClassMenu.cleric, x, y, "CLERIC", TEXT_BIG, menu_skill);
+	MenuText_InitFunc(&ClassMenu.cleric, x, y, "CLERIC", TEXT_BIG,
+		menu_skill);
 	ClassMenu.cleric.callback = class_callback;
 	ClassMenu.cleric.id = 1;
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.cleric);
@@ -145,46 +147,55 @@ void menu_class(void)
 	MenuText_InitTitle(&ClassMenu.title, 34, 24, "CHOOSE CLASS:", TEXT_BIG);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.title);
 
-	MenuBitmap_Init(&ClassMenu.fbox, 174, 8, MNF_INACTIVE | MNF_HIDEN, "m_fbox", PIC_PATCH);
+	MenuBitmap_Init(&ClassMenu.fbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
+		"m_fbox", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.fbox);
 
-	MenuAnim_Init(&ClassMenu.fwalk, 174 + 24, 8 + 12, MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
+	MenuAnim_Init(&ClassMenu.fwalk, 174 + 24, 8 + 12,
+		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
 	ClassMenu.fwalk.pics[0] = R_RegisterPic("m_fwalk1", PIC_PATCH);
 	ClassMenu.fwalk.pics[1] = R_RegisterPic("m_fwalk2", PIC_PATCH);
 	ClassMenu.fwalk.pics[2] = R_RegisterPic("m_fwalk3", PIC_PATCH);
 	ClassMenu.fwalk.pics[3] = R_RegisterPic("m_fwalk4", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.fwalk);
 
-	MenuBitmap_Init(&ClassMenu.cbox, 174, 8, MNF_INACTIVE | MNF_HIDEN, "m_cbox", PIC_PATCH);
+	MenuBitmap_Init(&ClassMenu.cbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
+		"m_cbox", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.cbox);
 
-	MenuAnim_Init(&ClassMenu.cwalk, 174 + 24, 8 + 12, MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
+	MenuAnim_Init(&ClassMenu.cwalk, 174 + 24, 8 + 12,
+		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
 	ClassMenu.cwalk.pics[0] = R_RegisterPic("m_cwalk1", PIC_PATCH);
 	ClassMenu.cwalk.pics[1] = R_RegisterPic("m_cwalk2", PIC_PATCH);
 	ClassMenu.cwalk.pics[2] = R_RegisterPic("m_cwalk3", PIC_PATCH);
 	ClassMenu.cwalk.pics[3] = R_RegisterPic("m_cwalk4", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.cwalk);
 
-	MenuBitmap_Init(&ClassMenu.mbox, 174, 8, MNF_INACTIVE | MNF_HIDEN, "m_mbox", PIC_PATCH);
+	MenuBitmap_Init(&ClassMenu.mbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
+		"m_mbox", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.mbox);
 
-	MenuAnim_Init(&ClassMenu.mwalk, 174 + 24, 8 + 12, MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
+	MenuAnim_Init(&ClassMenu.mwalk, 174 + 24, 8 + 12,
+		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
 	ClassMenu.mwalk.pics[0] = R_RegisterPic("m_mwalk1", PIC_PATCH);
 	ClassMenu.mwalk.pics[1] = R_RegisterPic("m_mwalk2", PIC_PATCH);
 	ClassMenu.mwalk.pics[2] = R_RegisterPic("m_mwalk3", PIC_PATCH);
 	ClassMenu.mwalk.pics[3] = R_RegisterPic("m_mwalk4", PIC_PATCH);
 	AddMenuItem(&ClassMenu.menu, &ClassMenu.mwalk);
 
-    PushMenu(&ClassMenu.menu);
+	PushMenu(&ClassMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,63 +1,63 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Environmental Action routines
+//**    Environmental Action routines
 //**
 //**************************************************************************
 
-void A_Explode(mobj_t* actor);
+void A_Explode(mobj_t * actor);
 
 //==========================================================================
 //
-// 	A_HideThing
+//  A_HideThing
 //
 //==========================================================================
 
-void A_HideThing(mobj_t* actor)
+void A_HideThing(mobj_t * actor)
 {
 	actor->translucency += 100;
 }
 
 //==========================================================================
 //
-// 	A_UnHideThing
+//  A_UnHideThing
 //
 //==========================================================================
 
-void A_UnHideThing(mobj_t* actor)
+void A_UnHideThing(mobj_t * actor)
 {
 	actor->translucency -= 100;
 }
 
 //==========================================================================
 //
-//	A_RestoreArtifact
+//  A_RestoreArtifact
 //
 //==========================================================================
 
-void A_RestoreArtifact(mobj_t* arti)
+void A_RestoreArtifact(mobj_t * arti)
 {
 	arti->flags |= MF_SPECIAL;
 	SetMobjState(arti, arti->spawnstate);
@@ -66,13 +66,13 @@ void A_RestoreArtifact(mobj_t* arti)
 
 //==========================================================================
 //
-// 	A_RestoreSpecialThing1
+//  A_RestoreSpecialThing1
 //
-// 	Make a special thing visible again.
+//  Make a special thing visible again.
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(mobj_t* thing)
+void A_RestoreSpecialThing1(mobj_t * thing)
 {
 	thing->translucency -= 100;
 	StartSoundName(thing, "Respawn", CHAN_VOICE);
@@ -80,11 +80,11 @@ void A_RestoreSpecialThing1(mobj_t* thing)
 
 //==========================================================================
 //
-// 	A_RestoreSpecialThing2
+//  A_RestoreSpecialThing2
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(mobj_t* thing)
+void A_RestoreSpecialThing2(mobj_t * thing)
 {
 	thing->flags |= MF_SPECIAL;
 	SetMobjState(thing, thing->spawnstate);
@@ -92,13 +92,13 @@ void A_RestoreSpecialThing2(mobj_t* thing)
 
 //===========================================================================
 //
-// 	A_FlameCheck
+//  A_FlameCheck
 //
 //===========================================================================
 
-void A_FlameCheck(mobj_t* actor)
+void A_FlameCheck(mobj_t * actor)
 {
-	if (!actor->args[0]--)		// Called every 8 tics
+	if (!actor->args[0]--)	// Called every 8 tics
 	{
 		SetMobjState(actor, S_NULL);
 	}
@@ -106,16 +106,15 @@ void A_FlameCheck(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_CheckThrowBomb
+//  A_CheckThrowBomb
 //
 //===========================================================================
 
-void A_CheckThrowBomb(mobj_t* actor)
+void A_CheckThrowBomb(mobj_t * actor)
 {
 	if (fabs(actor->velocity.x) < 1.5 * 35.0 &&
 		fabs(actor->velocity.y) < 1.5 * 35.0 &&
-		actor->velocity.z < 2.0 * 35.0 &&
-		actor->statenum == S_THROWINGBOMB6)
+		actor->velocity.z < 2.0 * 35.0 && actor->statenum == S_THROWINGBOMB6)
 	{
 		SetMobjState(actor, S_THROWINGBOMB7);
 		actor->origin.z = actor->floorz;
@@ -131,47 +130,49 @@ void A_CheckThrowBomb(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_NoGravity
+//  A_NoGravity
 //
 //===========================================================================
 
-void A_NoGravity(mobj_t* actor)
+void A_NoGravity(mobj_t * actor)
 {
 	actor->flags |= MF_NOGRAVITY;
 }
 
 //============================================================================
 //
-// 	A_CorpseBloodDrip
+//  A_CorpseBloodDrip
 //
 //============================================================================
 
-void A_CorpseBloodDrip(mobj_t* actor)
+void A_CorpseBloodDrip(mobj_t * actor)
 {
-	if(P_Random() > 128)
+	if (P_Random() > 128)
 	{
 		return;
 	}
-	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + actor->height / 2.0,
-		MT_CORPSEBLOODDRIP);
+	P_SpawnMobj(actor->origin.x, actor->origin.y,
+		actor->origin.z + actor->height / 2.0, MT_CORPSEBLOODDRIP);
 }
 
 //============================================================================
 //
-// 	A_CorpseExplode
+//  A_CorpseExplode
 //
 //============================================================================
 
-void A_CorpseExplode(mobj_t* actor)
+void A_CorpseExplode(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	i;
+	mobj_t *mo;
+	int i;
 
-	for (i = (P_Random()&3)+3; i; i--)
+	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_CORPSEBIT);
-		SetMobjState(mo, mo->spawnstate+(P_Random()%3));
-		if(mo)
+		mo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_CORPSEBIT);
+		SetMobjState(mo, mo->spawnstate + (P_Random() % 3));
+		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
@@ -179,7 +180,9 @@ void A_CorpseExplode(mobj_t* actor)
 		}
 	}
 	// Spawn a skull
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_CORPSEBIT);
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+		MT_CORPSEBIT);
 	SetMobjState(mo, S_CORPSEBIT_4);
 	if (mo)
 	{
@@ -193,24 +196,23 @@ void A_CorpseExplode(mobj_t* actor)
 
 //===========================================================================
 //
-//	A_SoAExplode
+//  A_SoAExplode
 //
-//	Suit of Armor Explode
+//  Suit of Armor Explode
 //
 //===========================================================================
 
-void A_SoAExplode(mobj_t* actor)
+void A_SoAExplode(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	i;
+	mobj_t *mo;
+	int i;
 
 	for (i = 0; i < 10; i++)
 	{
 		mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
 			actor->origin.y + (Random() - 0.5) * 16.0,
-			actor->origin.z + Random() * actor->height,
-			MT_ZARMORCHUNK);
-		SetMobjState(mo, mo->spawnstate+i);
+			actor->origin.z + Random() * actor->height, MT_ZARMORCHUNK);
+		SetMobjState(mo, mo->spawnstate + i);
 		if (mo)
 		{
 			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -218,8 +220,8 @@ void A_SoAExplode(mobj_t* actor)
 			mo->velocity.z = (Random() * 8.0 + 5.0) * 35.0;
 		}
 	}
-	if(actor->args[0])
-	{ // Spawn an item
+	if (actor->args[0])
+	{	// Spawn an item
 		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
 			TranslateThingType[actor->args[0]]);
 	}
@@ -229,39 +231,39 @@ void A_SoAExplode(mobj_t* actor)
 
 //==========================================================================
 //
-// 	A_ContMobjSound
+//  A_ContMobjSound
 //
 //==========================================================================
 
-void A_ContMobjSound(mobj_t* actor)
+void A_ContMobjSound(mobj_t * actor)
 {
-	switch(actor->type)
+	switch (actor->type)
 	{
-		case MT_SERPENTFX:
-			StartSoundName(actor, "SerpentFXContinuous", CHAN_VOICE);
-			break;
-		case MT_HAMMER_MISSILE:
-			StartSoundName(actor, "FighterHammerContinuous", CHAN_VOICE);
-			break;
-		case MT_QUAKE_FOCUS:
-			StartSoundName(actor, "Earthquake", CHAN_VOICE);
-			break;
-		default:
-			break;
+	case MT_SERPENTFX:
+		StartSoundName(actor, "SerpentFXContinuous", CHAN_VOICE);
+		break;
+	case MT_HAMMER_MISSILE:
+		StartSoundName(actor, "FighterHammerContinuous", CHAN_VOICE);
+		break;
+	case MT_QUAKE_FOCUS:
+		StartSoundName(actor, "Earthquake", CHAN_VOICE);
+		break;
+	default:
+		break;
 	}
 }
 
 //==========================================================================
 //
-//	A_ESound
+//  A_ESound
 //
 //==========================================================================
 
-void A_ESound(mobj_t* mo)
+void A_ESound(mobj_t * mo)
 {
 	switch (mo->type)
 	{
-	 case MT_SOUNDWIND:
+	case MT_SOUNDWIND:
 		StartSoundName(mo, "Wind", CHAN_VOICE);
 		break;
 	}
@@ -269,11 +271,14 @@ void A_ESound(mobj_t* mo)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

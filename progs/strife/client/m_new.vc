@@ -1,33 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
-//**	New game menu
+//**    New game menu
 //**
 //**************************************************************************
 
@@ -39,36 +35,40 @@
 
 struct menu_new_game_t
 {
-	menu_t			menu;
-	menutext_t		start;
-	menuswitch_t	players;
-	menuswitch_t	monsters;
-	menuswitch_t	deathmatch;
-	menuswitch_t	skill;
-	menuswitch_t	timelimit;
-	menuswitch_t	level;
-	menutext_t		title;
+	menu_t menu;
+	menutext_t start;
+	menuswitch_t players;
+	menuswitch_t monsters;
+	menuswitch_t deathmatch;
+	menuswitch_t skill;
+	menuswitch_t timelimit;
+	menuswitch_t level;
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_new_game_t	NewGameMenu;
+menu_new_game_t NewGameMenu;
 
-string			sw_mapnames[99];
+string sw_mapnames[99];
 
-string			sw_players[7] = {"2", "3", "4", "5", "6", "7", "8"};
-string			sw_deathmatch[4] = {"Cooperative", "Deathmatch",
-					"Deathmatch2", "Deathmatch3"};
-string			sw_skill[5] = {"Baby", "Easy", "Normal", "Hard", "Nightmare"};
-string			sw_cnt5[13] = {"0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
+string sw_players[7] = { "2", "3", "4", "5", "6", "7", "8" };
+string sw_deathmatch[4] = { "Cooperative", "Deathmatch",
+	"Deathmatch2", "Deathmatch3"
+};
+string sw_skill[5] = { "Baby", "Easy", "Normal", "Hard", "Nightmare" };
+string sw_cnt5[13] =
+	{ "0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55",
+	"60"
+};
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	StartNewGame
+//  StartNewGame
 //
 //==========================================================================
 
@@ -88,7 +88,7 @@ void StartNewGame(void)
 
 //==========================================================================
 //
-//	menu_new_game
+//  menu_new_game
 //
 //==========================================================================
 
@@ -99,29 +99,35 @@ void menu_new_game(void)
 	int i;
 	int count = 0;
 
-    InitMenu(&NewGameMenu.menu);
+	InitMenu(&NewGameMenu.menu);
 
-	MenuText_InitFunc(&NewGameMenu.start, x, y, "Start Game", TEXT_SMALLR, StartNewGame);
+	MenuText_InitFunc(&NewGameMenu.start, x, y, "Start Game", TEXT_SMALLR,
+		StartNewGame);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.start);
 	y += 10;
 
-	MenuSwitch_Init(&NewGameMenu.players, x, y, "Max players", TEXT_SMALLR, 2, 6, &sw_players[0]);
+	MenuSwitch_Init(&NewGameMenu.players, x, y, "Max players", TEXT_SMALLR, 2,
+		6, &sw_players[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.players);
 	y += 10;
 
-	MenuSwitch_Init(&NewGameMenu.monsters, x, y, "Monsters", TEXT_SMALLR, 0, 2, &sw_offon[0]);
+	MenuSwitch_Init(&NewGameMenu.monsters, x, y, "Monsters", TEXT_SMALLR, 0,
+		2, &sw_offon[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.monsters);
 	y += 10;
 
-	MenuSwitch_Init(&NewGameMenu.deathmatch, x, y, "Game type", TEXT_SMALLR, 2, 4, &sw_deathmatch[0]);
+	MenuSwitch_Init(&NewGameMenu.deathmatch, x, y, "Game type", TEXT_SMALLR,
+		2, 4, &sw_deathmatch[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.deathmatch);
 	y += 10;
 
-	MenuSwitch_Init(&NewGameMenu.skill, x, y, "Skill", TEXT_SMALLR, 2, 5, &sw_skill[0]);
+	MenuSwitch_Init(&NewGameMenu.skill, x, y, "Skill", TEXT_SMALLR, 2, 5,
+		&sw_skill[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.skill);
 	y += 10;
 
-	MenuSwitch_Init(&NewGameMenu.timelimit, x, y, "Time limit", TEXT_SMALLR, 0, 13, &sw_cnt5[0]);
+	MenuSwitch_Init(&NewGameMenu.timelimit, x, y, "Time limit", TEXT_SMALLR,
+		0, 13, &sw_cnt5[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.timelimit);
 	y += 10;
 
@@ -129,6 +135,7 @@ void menu_new_game(void)
 	for (i = 1; i <= 99; i++)
 	{
 		int map = P_TranslateMap(i);
+
 		if (map != -1)
 		{
 			sw_mapnames[count] = P_GetMapName(map);
@@ -143,12 +150,23 @@ void menu_new_game(void)
 	}
 #endif
 
-	MenuSwitch_Init(&NewGameMenu.level, x, y, "Level", TEXT_SMALLR, 0, count, &sw_mapnames[0]);
+	MenuSwitch_Init(&NewGameMenu.level, x, y, "Level", TEXT_SMALLR, 0, count,
+		&sw_mapnames[0]);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.level);
 
 	MenuText_InitTitle(&NewGameMenu.title, 160, 24, "NEW GAME", TEXT_BIGC);
 	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.title);
 
-    PushMenu(&NewGameMenu.menu);
+	PushMenu(&NewGameMenu.menu);
 }
 
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:10  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

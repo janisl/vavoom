@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -37,21 +37,23 @@
 
 //===========================================================================
 //
-// 	A_PoisonBagInit
+//  A_PoisonBagInit
 //
 //===========================================================================
 
-void A_PoisonBagInit(mobj_t* actor)
+void A_PoisonBagInit(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 28.0, MT_POISONCLOUD);
-	if(!mo)
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 28.0,
+		MT_POISONCLOUD);
+	if (!mo)
 	{
 		return;
 	}
-	mo->velocity.x = 0.00001; // missile objects must move to impact other objects
-	mo->special1 = 24+(P_Random()&7);
+	mo->velocity.x = 0.00001;	// missile objects must move to impact other objects
+	mo->special1 = 24 + (P_Random() & 7);
 	mo->special2 = 0;
 	mo->target = actor->target;
 	mo->radius = 20.0;
@@ -61,13 +63,13 @@ void A_PoisonBagInit(mobj_t* actor)
 
 //===========================================================================
 //
-// 	A_PoisonBagCheck
+//  A_PoisonBagCheck
 //
 //===========================================================================
 
-void A_PoisonBagCheck(mobj_t* actor)
+void A_PoisonBagCheck(mobj_t * actor)
 {
-	if(!--actor->special1)
+	if (!--actor->special1)
 	{
 		SetMobjState(actor, S_POISONCLOUD_X1);
 	}
@@ -79,15 +81,15 @@ void A_PoisonBagCheck(mobj_t* actor)
 
 //===========================================================================
 //
-// 	A_PoisonBagDamage
+//  A_PoisonBagDamage
 //
 //===========================================================================
 
-void A_PoisonBagDamage(mobj_t* actor)
+void A_PoisonBagDamage(mobj_t * actor)
 {
-	int 	bobIndex;
-	
-	A_Explode(actor);	
+	int bobIndex;
+
+	A_Explode(actor);
 
 	bobIndex = actor->special2;
 	actor->origin.z += FloatBobOffsets[bobIndex] / 16.0;
@@ -96,22 +98,25 @@ void A_PoisonBagDamage(mobj_t* actor)
 
 //===========================================================================
 //
-// 	A_PoisonShroom
+//  A_PoisonShroom
 //
 //===========================================================================
 
-void A_PoisonShroom(mobj_t* actor)
+void A_PoisonShroom(mobj_t * actor)
 {
 	actor->time = 4.0 + Random() * 16.0;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

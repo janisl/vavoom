@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,18 +25,18 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_AMBIENT_SFX 8 // Per level
+#define MAX_AMBIENT_SFX 8	// Per level
 
 // CONSTANTS ---------------------------------------------------------------
 
 enum
 {
-	afxcmd_play,		// (sound)
+	afxcmd_play,	// (sound)
 	afxcmd_playabsvol,	// (sound, volume)
 	afxcmd_playrelvol,	// (sound, volume)
-	afxcmd_delay,		// (ticks)
+	afxcmd_delay,	// (ticks)
 	afxcmd_delayrand,	// (andbits)
-	afxcmd_end			// ()
+	afxcmd_end	// ()
 };
 
 // TYPES -------------------------------------------------------------------
@@ -45,28 +45,24 @@ enum
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int	*LevelAmbientSfx[MAX_AMBIENT_SFX];
+int *LevelAmbientSfx[MAX_AMBIENT_SFX];
 int *AmbSfxPtr;
 int AmbSfxCount;
 int AmbSfxTics;
 int AmbSfxVolume;
 
-int AmbSndSeqInit[] =
-{ // Startup
+int AmbSndSeqInit[] = {	// Startup
 	afxcmd_end
 };
-int AmbSndSeq1[] =
-{ // Scream
+int AmbSndSeq1[] = {	// Scream
 	afxcmd_play, 1,
 	afxcmd_end
 };
-int AmbSndSeq2[] =
-{ // Squish
+int AmbSndSeq2[] = {	// Squish
 	afxcmd_play, 2,
 	afxcmd_end
 };
-int AmbSndSeq3[] =
-{ // Drops
+int AmbSndSeq3[] = {	// Drops
 	afxcmd_play, 3,
 	afxcmd_delay, 16,
 	afxcmd_delayrand, 31,
@@ -87,8 +83,7 @@ int AmbSndSeq3[] =
 	afxcmd_delayrand, 31,
 	afxcmd_end
 };
-int AmbSndSeq4[] =
-{ // SlowFootSteps
+int AmbSndSeq4[] = {	// SlowFootSteps
 	afxcmd_play, 4,
 	afxcmd_delay, 15,
 	afxcmd_playrelvol, 11, -3,
@@ -106,8 +101,7 @@ int AmbSndSeq4[] =
 	afxcmd_playrelvol, 11, -3,
 	afxcmd_end
 };
-int AmbSndSeq5[] =
-{ // Heartbeat
+int AmbSndSeq5[] = {	// Heartbeat
 	afxcmd_play, 5,
 	afxcmd_delay, 35,
 	afxcmd_play, 5,
@@ -117,8 +111,7 @@ int AmbSndSeq5[] =
 	afxcmd_play, 5,
 	afxcmd_end
 };
-int AmbSndSeq6[] =
-{ // Bells
+int AmbSndSeq6[] = {	// Bells
 	afxcmd_play, 6,
 	afxcmd_delay, 17,
 	afxcmd_playrelvol, 6, -8,
@@ -128,18 +121,15 @@ int AmbSndSeq6[] =
 	afxcmd_playrelvol, 6, -8,
 	afxcmd_end
 };
-int AmbSndSeq7[] =
-{ // Growl
+int AmbSndSeq7[] = {	// Growl
 	afxcmd_play, 0,
 	afxcmd_end
 };
-int AmbSndSeq8[] =
-{ // Magic
+int AmbSndSeq8[] = {	// Magic
 	afxcmd_play, 8,
 	afxcmd_end
 };
-int AmbSndSeq9[] =
-{ // Laughter
+int AmbSndSeq9[] = {	// Laughter
 	afxcmd_play, 9,
 	afxcmd_delay, 16,
 	afxcmd_playrelvol, 9, -4,
@@ -153,8 +143,7 @@ int AmbSndSeq9[] =
 	afxcmd_playrelvol, 10, -4,
 	afxcmd_end
 };
-int AmbSndSeq10[] =
-{ // FastFootsteps
+int AmbSndSeq10[] = {	// FastFootsteps
 	afxcmd_play, 4,
 	afxcmd_delay, 8,
 	afxcmd_playrelvol, 11, -3,
@@ -175,7 +164,7 @@ int AmbSndSeq10[] =
 
 int *AmbientSfx[10];
 
-int		AmbientSoundStart;
+int AmbientSoundStart;
 
 // CODE --------------------------------------------------------------------
 
@@ -192,23 +181,23 @@ void P_InitAmbientSound(void)
 	AmbSfxVolume = 0;
 	AmbSfxTics = 10 * TICRATE;
 	AmbSfxPtr = &AmbSndSeqInit[0];
-	AmbientSfx[0] = &AmbSndSeq1[0];		// Scream
-	AmbientSfx[1] = &AmbSndSeq2[0];		// Squish
-	AmbientSfx[2] = &AmbSndSeq3[0];		// Drops
-	AmbientSfx[3] = &AmbSndSeq4[0];		// SlowFootsteps
-	AmbientSfx[4] = &AmbSndSeq5[0];		// Heartbeat
-	AmbientSfx[5] = &AmbSndSeq6[0];		// Bells
-	AmbientSfx[6] = &AmbSndSeq7[0];		// Growl
-	AmbientSfx[7] = &AmbSndSeq8[0];		// Magic
-	AmbientSfx[8] = &AmbSndSeq9[0];		// Laughter
+	AmbientSfx[0] = &AmbSndSeq1[0];	// Scream
+	AmbientSfx[1] = &AmbSndSeq2[0];	// Squish
+	AmbientSfx[2] = &AmbSndSeq3[0];	// Drops
+	AmbientSfx[3] = &AmbSndSeq4[0];	// SlowFootsteps
+	AmbientSfx[4] = &AmbSndSeq5[0];	// Heartbeat
+	AmbientSfx[5] = &AmbSndSeq6[0];	// Bells
+	AmbientSfx[6] = &AmbSndSeq7[0];	// Growl
+	AmbientSfx[7] = &AmbSndSeq8[0];	// Magic
+	AmbientSfx[8] = &AmbSndSeq9[0];	// Laughter
 	AmbientSfx[9] = &AmbSndSeq10[0];	// FastFootsteps
 }
 
 //==========================================================================
 //
-//	P_AddAmbientSfx
+//  P_AddAmbientSfx
 //
-//	Called by (P_mobj):P_SpawnMapThing during (P_setup):P_SetupLevel.
+//  Called by (P_mobj):P_SpawnMapThing during (P_setup):P_SetupLevel.
 //
 //==========================================================================
 
@@ -223,17 +212,17 @@ void P_AddAmbientSfx(int sequence)
 
 //==========================================================================
 //
-//	P_AmbientSound
+//  P_AmbientSound
 //
-//	Called every tic by (P_tick):P_Ticker.
+//  Called every tic by (P_tick):P_Ticker.
 //
 //==========================================================================
 
 void P_AmbientSound(void)
 {
-	int		cmd;
-	int		sound;
-	boolean	done;
+	int cmd;
+	int sound;
+	boolean done;
 
 	if (!AmbSfxCount)
 	{
@@ -248,81 +237,85 @@ void P_AmbientSound(void)
 	do
 	{
 		cmd = *AmbSfxPtr;
-        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
+		AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 		switch (cmd)
 		{
-			case afxcmd_play:
-				AmbSfxVolume = P_Random() >> 2;
-                sound = *AmbSfxPtr;
-                if (sound)
-	                sound += AmbientSoundStart;
-				else
-                	sound = GetSoundID("BeastSight");
-				StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				break;
-			case afxcmd_playabsvol:
-				sound = *AmbSfxPtr;
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				AmbSfxVolume = *AmbSfxPtr;
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-                if (sound)
-	                sound += AmbientSoundStart;
-				else
-                	sound = GetSoundID("BeastSight");
-				StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
-				break;
-			case afxcmd_playrelvol:
-				sound = *AmbSfxPtr;
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				AmbSfxVolume += *AmbSfxPtr;
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				if(AmbSfxVolume < 0)
-				{
-					AmbSfxVolume = 0;
-				}
-				else if(AmbSfxVolume > 127)
-				{
-					AmbSfxVolume = 127;
-				}			
-                if (sound)
-	                sound += AmbientSoundStart;
-				else
-                	sound = GetSoundID("BeastSight");
-				StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
-				break;
-			case afxcmd_delay:
-				AmbSfxTics = *AmbSfxPtr;
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				done = true;
-				break;
-			case afxcmd_delayrand:
-				AmbSfxTics = P_Random() & (*AmbSfxPtr);
-		        AmbSfxPtr = &AmbSfxPtr[1];//AmbSfxPtr++;
-				done = true;
-				break;
-			case afxcmd_end:
-				AmbSfxTics = 6 * TICRATE + P_Random();
-				AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
-				done = true;
-				break;
-			default:
-				Error("P_AmbientSound: Unknown afxcmd");
-				break;
+		case afxcmd_play:
+			AmbSfxVolume = P_Random() >> 2;
+			sound = *AmbSfxPtr;
+			if (sound)
+				sound += AmbientSoundStart;
+			else
+				sound = GetSoundID("BeastSight");
+			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			break;
+		case afxcmd_playabsvol:
+			sound = *AmbSfxPtr;
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			AmbSfxVolume = *AmbSfxPtr;
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			if (sound)
+				sound += AmbientSoundStart;
+			else
+				sound = GetSoundID("BeastSight");
+			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			break;
+		case afxcmd_playrelvol:
+			sound = *AmbSfxPtr;
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			AmbSfxVolume += *AmbSfxPtr;
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			if (AmbSfxVolume < 0)
+			{
+				AmbSfxVolume = 0;
+			}
+			else if (AmbSfxVolume > 127)
+			{
+				AmbSfxVolume = 127;
+			}
+			if (sound)
+				sound += AmbientSoundStart;
+			else
+				sound = GetSoundID("BeastSight");
+			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
+			break;
+		case afxcmd_delay:
+			AmbSfxTics = *AmbSfxPtr;
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			done = true;
+			break;
+		case afxcmd_delayrand:
+			AmbSfxTics = P_Random() & (*AmbSfxPtr);
+			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
+			done = true;
+			break;
+		case afxcmd_end:
+			AmbSfxTics = 6 * TICRATE + P_Random();
+			AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
+			done = true;
+			break;
+		default:
+			Error("P_AmbientSound: Unknown afxcmd");
+			break;
 		}
-	} while (!done);
+	}
+	while (!done);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Player setup
+//**    Player setup
 //**
 //**************************************************************************
 
@@ -35,12 +35,12 @@
 
 struct psetup_menu_t
 {
-	menu_t				menu;
-	menuinputline_t		name;
-	menuswitch_t		color;
-	menuswitch_t		pclass;
-	menuspriteanim_t	anim;
-	menutext_t			title;
+	menu_t menu;
+	menuinputline_t name;
+	menuswitch_t color;
+	menuswitch_t pclass;
+	menuspriteanim_t anim;
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -49,7 +49,10 @@ struct psetup_menu_t
 
 psetup_menu_t PSetupMenu;
 
-string sw_colors[] = { "blue", "red", "gold", "light green", "green", "gray", "brown", "magenta" };
+string sw_colors[] =
+	{ "blue", "red", "gold", "light green", "green", "gray", "brown",
+	"magenta"
+};
 string sw_class[] = { "fighter", "cleric", "mage" };
 
 // CODE --------------------------------------------------------------------
@@ -68,11 +71,13 @@ void SetColor(void)
 	else
 	{
 		if (PSetupMenu.color.value)
-			PSetupMenu.anim.translation = PSetupMenu.pclass.value * (MAXPLAYERS - 1) + PSetupMenu.color.value;
+			PSetupMenu.anim.translation =
+				PSetupMenu.pclass.value * (MAXPLAYERS - 1) +
+				PSetupMenu.color.value;
 	}
 }
 
-void psetup_func(menucommon_t *item, int msg)
+void psetup_func(menucommon_t * item, int msg)
 {
 	if (msg != MMSG_ACTIVATE)
 	{
@@ -81,16 +86,16 @@ void psetup_func(menucommon_t *item, int msg)
 
 	switch (item->id)
 	{
-	 case 1:
+	case 1:
 		SetCvarS("name", ARR2STR(PSetupMenu.name.value));
 		break;
 
-	 case 2:
+	case 2:
 		SetCvar("color", PSetupMenu.color.value);
 		SetColor();
 		break;
 
-	 case 3:
+	case 3:
 		SetCvar("class", PSetupMenu.pclass.value);
 		SetColor();
 		break;
@@ -99,8 +104,8 @@ void psetup_func(menucommon_t *item, int msg)
 
 void menu_psetup(void)
 {
-	int		x = 16;
-	int		y = 40;
+	int x = 16;
+	int y = 40;
 
 	InitMenu(&PSetupMenu.menu);
 
@@ -111,13 +116,15 @@ void menu_psetup(void)
 	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.name);
 	y += 20;
 
-	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL, GetCvar("color"), 8, &sw_colors[0]);
+	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL,
+		GetCvar("color"), 8, &sw_colors[0]);
 	PSetupMenu.color.callback = psetup_func;
 	PSetupMenu.color.id = 2;
 	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.color);
 	y += 10;
 
-	MenuSwitch_Init(&PSetupMenu.pclass, x, y, "Class", TEXT_SMALLL, GetCvar("class"), 3, &sw_class[0]);
+	MenuSwitch_Init(&PSetupMenu.pclass, x, y, "Class", TEXT_SMALLL,
+		GetCvar("class"), 3, &sw_class[0]);
 	PSetupMenu.pclass.callback = psetup_func;
 	PSetupMenu.pclass.id = 3;
 	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.pclass);
@@ -134,16 +141,19 @@ void menu_psetup(void)
 	MenuText_InitTitle(&PSetupMenu.title, 160, 24, "PLAYER SETUP", TEXT_BIGC);
 	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.title);
 
-    PushMenu(&PSetupMenu.menu);
+	PushMenu(&PSetupMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

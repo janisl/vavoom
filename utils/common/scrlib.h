@@ -21,14 +21,12 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #ifndef _SCRIPTS_H
 #define _SCRIPTS_H
+
+namespace VavoomUtils {
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -62,4 +60,17 @@ extern int 		sc_Line;
 extern bool 	sc_End;
 extern bool 	sc_Crossed;
 
+} // namespace
+
 #endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/24 17:28:45  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

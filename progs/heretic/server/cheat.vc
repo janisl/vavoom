@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -82,13 +82,13 @@ void Cheat_NoClip(void)
 void Cheat_Gimme(void)
 {
 	if (Cmd_CheckParm("weapons"))
-    {
+	{
 		int i;
 
 		players[0].armorpoints = 200;
 		players[0].armortype = 2;
 		players[0].backpack = true;
-		for (i = 0; i < NUMWEAPONS-1; i++)
+		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
 			players[0].weaponowned[i] = true;
 		}
@@ -98,14 +98,14 @@ void Cheat_Gimme(void)
 			players[0].weaponowned[wp_phoenixrod] = false;
 			players[0].weaponowned[wp_mace] = false;
 		}
-		for(i = 0; i < 6/*NUMAMMO2*/; i++)
+		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
 		{
 			players[0].ammo[i] = maxammo[i] * 2;
 		}
 		cprint(&players[0], "ALL WEAPONS\n");
 	}
-    if (Cmd_CheckParm("power"))
-    {
+	if (Cmd_CheckParm("power"))
+	{
 		if (players[0].powers[pw_weaponlevel2])
 		{
 			players[0].powers[pw_weaponlevel2] = 0;
@@ -117,8 +117,8 @@ void Cheat_Gimme(void)
 			cprint(&players[0], "POWER ON\n");
 		}
 	}
-    if (Cmd_CheckParm("health"))
-    {
+	if (Cmd_CheckParm("health"))
+	{
 		if (players[0].chickenTics)
 		{
 			players[0].health = players[0].mo->health = MAXCHICKENHEALTH;
@@ -129,14 +129,14 @@ void Cheat_Gimme(void)
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
-    if (Cmd_CheckParm("keys"))
-    {
+	if (Cmd_CheckParm("keys"))
+	{
 		players[0].keys = 7;
 		cprint(&players[0], "ALL KEYS\n");
 	}
-    if (Cmd_CheckParm("artifacts"))
-    {
-        int i;
+	if (Cmd_CheckParm("artifacts"))
+	{
+		int i;
 		int j;
 
 		// All artifacts
@@ -239,6 +239,7 @@ void Cheat_Morph(void)
 void Cheat_NoWeapons(void)
 {
 	int i;
+
 	if (players[0].chickenTics)
 	{
 		return;
@@ -263,14 +264,17 @@ void Cheat_Class(void)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.3  2001/07/31 16:57:52  dj_jl
-//	Checking for shareware/extended wad by the presence of wad lump
+//  Revision 1.4  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/07/31 16:57:52  dj_jl
+//  Checking for shareware/extended wad by the presence of wad lump
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -51,30 +51,29 @@
 // DATA DECLARATIONS -------------------------------------------------------
 
 // specifies current state
-int				interstate;
-float			intertime;
+int interstate;
+float intertime;
 
 // background (map of levels).
-int				patchINTERPIC;
+int patchINTERPIC;
 
-int				ClusterMessage[MAX_INTRMSN_MESSAGE_SIZE / 4];
+int ClusterMessage[MAX_INTRMSN_MESSAGE_SIZE / 4];
 
-float			HubCount;
-string			HubText;
+float HubCount;
+string HubText;
 
 // used for general timing
-float			cnt;
+float cnt;
 
-int				slaughterboy;
-int				totalFrags[MAXPLAYERS];
+int slaughterboy;
+int totalFrags[MAXPLAYERS];
 
-int				tallytop;
-int				tallylft;
+int tallytop;
+int tallylft;
 
-boolean			showTotals;
+boolean showTotals;
 
-string ClusMsgLumpNames[] =
-{
+string ClusMsgLumpNames[] = {
 	"clus1msg",
 	"clus2msg",
 	"clus3msg",
@@ -114,7 +113,7 @@ void IM_UnloadPics(void)
 //
 //  IM_InitStats
 //
-//	Initializes the stats for single player mode
+//  Initializes the stats for single player mode
 //
 //========================================================================
 
@@ -136,7 +135,8 @@ void IM_InitStats(void)
 			if (im->leavecluster >= 1 && im->leavecluster <= 5)
 			{
 				msgLumpName = ClusMsgLumpNames[im->leavecluster - 1];
-				LoadTextLump(msgLumpName, &ClusterMessage[0], MAX_INTRMSN_MESSAGE_SIZE);
+				LoadTextLump(msgLumpName, &ClusterMessage[0],
+					MAX_INTRMSN_MESSAGE_SIZE);
 				HubText = ARR2STR(ClusterMessage);
 				HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
 #ifdef FIXME
@@ -177,12 +177,12 @@ void IM_InitStats(void)
 			}
 			else if (totalFrags[i] == slaughterfrags)
 			{
-				slaughterboy |= 1<<i;
+				slaughterboy |= 1 << i;
 				slaughtercount++;
 			}
 		}
 		if (playercount == slaughtercount)
-		{ // don't do the slaughter stuff if everyone is equal
+		{	// don't do the slaughter stuff if everyone is equal
 			slaughterboy = 0;
 		}
 #ifdef FIXME
@@ -201,7 +201,7 @@ void IM_InitStats(void)
 
 void IM_DrawHubText(void)
 {
-	int		count;
+	int count;
 
 	count = ftoi((intertime - 0.3) / TEXTSPEED);
 	if (count < 0)
@@ -221,15 +221,16 @@ void IM_DrawHubText(void)
 
 void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 {
-    T_SetFont(font_small);
-    T_SetAlign(hcenter, vtop);
+	T_SetFont(font_small);
+	T_SetAlign(hcenter, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
-	    T_DrawText(x, y, va("%d", val >= wrapThresh ? val % wrapThresh : val));
+		T_DrawText(x, y, va("%d",
+				val >= wrapThresh ? val % wrapThresh : val));
 	}
 	else
 	{
-	    T_DrawText(x, y, "XX");
+		T_DrawText(x, y, "XX");
 	}
 }
 
@@ -241,15 +242,16 @@ void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 
 void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 {
-    T_SetFont(font_yellow);
-    T_SetAlign(hcenter, vtop);
+	T_SetFont(font_yellow);
+	T_SetAlign(hcenter, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
-	    T_DrawText(x, y, va("%d", val >= wrapThresh ? val % wrapThresh : val));
+		T_DrawText(x, y, va("%d",
+				val >= wrapThresh ? val % wrapThresh : val));
 	}
 	else
 	{
-	    T_DrawText(x, y, "XX");
+		T_DrawText(x, y, "XX");
 	}
 }
 
@@ -316,18 +318,18 @@ void IM_DrawDeathTally(void)
 			{
 				if (bold)
 				{
-				    T_SetFont(font_yellow);
+					T_SetFont(font_yellow);
 				}
 				else
 				{
-				    T_SetFont(font_small);
+					T_SetFont(font_small);
 				}
-			    T_SetAlign(hcenter, vtop);
-			    T_DrawText(x, y, "--");
+				T_SetAlign(hcenter, vtop);
+				T_DrawText(x, y, "--");
 			}
 		}
 		if (showTotals && scores[i].active && !((slaughterboy & (1 << i)) &&
-			!(ftoi(32.0 * intertime) & 16)))
+				!(ftoi(32.0 * intertime) & 16)))
 		{
 			IM_DrawNumber(totalFrags[i], TALLY_TOTALS_X, y, 1000);
 		}
@@ -366,7 +368,7 @@ void IM_Drawer(void)
 
 //========================================================================
 //
-//	IM_UpdateStats
+//  IM_UpdateStats
 //
 //========================================================================
 
@@ -396,7 +398,7 @@ void IM_UpdateStats(void)
 
 //==========================================================================
 //
-//	IM_Start
+//  IM_Start
 //
 //==========================================================================
 
@@ -417,11 +419,14 @@ void IM_Start(void)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

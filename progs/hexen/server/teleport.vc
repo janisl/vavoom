@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -41,95 +41,96 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-float		teleport_bbox[4];
-mobj_t*		teleport_thing;
-float		teleport_x;
-float		teleport_y;
+float teleport_bbox[4];
+mobj_t *teleport_thing;
+float teleport_x;
+float teleport_y;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	PIT_StompThing
+//  PIT_StompThing
 //
 //==========================================================================
 
-boolean PIT_StompThing(mobj_t* thing)
+boolean PIT_StompThing(mobj_t * thing)
 {
-    float	blockdist;
-		
-    if (!(thing->flags & MF_SHOOTABLE))
-	{
-		return true;
-	}
-		
-    blockdist = thing->radius + teleport_thing->radius;
-    
-    if (fabs(thing->origin.x - teleport_x) >= blockdist || fabs(thing->origin.y - teleport_y) >= blockdist)
-    {
-		// didn't hit it
-		return true;
-    }
-    
-    // don't clip against self
-    if (thing == teleport_thing)
+	float blockdist;
+
+	if (!(thing->flags & MF_SHOOTABLE))
 	{
 		return true;
 	}
 
-	//	Check if allowed to stomp things
+	blockdist = thing->radius + teleport_thing->radius;
+
+	if (fabs(thing->origin.x - teleport_x) >= blockdist
+		|| fabs(thing->origin.y - teleport_y) >= blockdist)
+	{
+		// didn't hit it
+		return true;
+	}
+
+	// don't clip against self
+	if (thing == teleport_thing)
+	{
+		return true;
+	}
+
+	//  Check if allowed to stomp things
 	if (!(teleport_thing->flags2 & MF2_TELESTOMP))
-    {
-    	return false;
-    }
-		
+	{
+		return false;
+	}
+
 	DamageMobj(thing, teleport_thing, teleport_thing, 10000);
-	
-    return true;
+
+	return true;
 }
 
 //==========================================================================
 //
-//	P_TeleportMove
+//  P_TeleportMove
 //
 //==========================================================================
 
-boolean P_TeleportMove(mobj_t* thing, float x, float y)
+boolean P_TeleportMove(mobj_t * thing, float x, float y)
 {
-    int			xl;
-    int			xh;
-    int			yl;
-    int			yh;
-    int			bx;
-    int			by;
-    
-    // kill anything occupying the position
-    teleport_thing = thing;
-	
-    teleport_x = x;
-    teleport_y = y;
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
 
-    // stomp on any things contacted
-    xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
-    xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
-    yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
-    yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+	// kill anything occupying the position
+	teleport_thing = thing;
 
-    for (bx = xl; bx <= xh; bx++)
+	teleport_x = x;
+	teleport_y = y;
+
+	// stomp on any things contacted
+	xl = MapBlock(x - thing->radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(x + thing->radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(y - thing->radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(y + thing->radius - level->bmaporgy + MAXRADIUS);
+
+	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-	    	if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+			if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
 				return false;
-    
-    // the move is ok,
-    // so link the thing into its new position
-    P_UnsetThingPosition(thing);
 
-    thing->origin.x = x;
-    thing->origin.y = y;
+	// the move is ok,
+	// so link the thing into its new position
+	P_UnsetThingPosition(thing);
 
-    P_SetThingPosition(thing);
+	thing->origin.x = x;
+	thing->origin.y = y;
 
-    return true;
+	P_SetThingPosition(thing);
+
+	return true;
 }
 
 //==========================================================================
@@ -138,16 +139,16 @@ boolean P_TeleportMove(mobj_t* thing, float x, float y)
 //
 //==========================================================================
 
-boolean P_Teleport(mobj_t *thing, float x, float y, angle_t angle,
+boolean P_Teleport(mobj_t * thing, float x, float y, angle_t angle,
 	boolean useFog)
 {
-	float		oldx;
-	float		oldy;
-	float		oldz;
-	float		aboveFloor;
-	float		fogDelta;
-	player_t	*player;
-	mobj_t		*fog;
+	float oldx;
+	float oldy;
+	float oldz;
+	float aboveFloor;
+	float fogDelta;
+	player_t *player;
+	mobj_t *fog;
 
 	oldx = thing->origin.x;
 	oldy = thing->origin.y;
@@ -200,15 +201,15 @@ boolean P_Teleport(mobj_t *thing, float x, float y, angle_t angle,
 		fog = P_SpawnMobj(x + 20.0 * cos(angle),
 			y + 20.0 * sin(angle), thing->origin.z + fogDelta, MT_TFOG);
 		StartSoundName(fog, "Teleport", CHAN_VOICE);
-		if(thing->player && !thing->player->powers[pw_speed])
-		{ // Freeze player for about .5 sec
+		if (thing->player && !thing->player->powers[pw_speed])
+		{	// Freeze player for about .5 sec
 			thing->reactiontime = 18;
 		}
 		thing->angles.yaw = angle;
 		if (thing->player)
 			thing->player->fixangle = true;
 	}
-	if(thing->flags2&MF2_FLOORCLIP)
+	if (thing->flags2 & MF2_FLOORCLIP)
 	{
 		if (thing->origin.z == thing->subsector->sector->floorheight &&
 			P_GetThingFloorType(thing) > FLOOR_SOLID)
@@ -220,12 +221,12 @@ boolean P_Teleport(mobj_t *thing, float x, float y, angle_t angle,
 			thing->floorclip = 0.0;
 		}
 	}
-	if (thing->flags&MF_MISSILE)
+	if (thing->flags & MF_MISSILE)
 	{
 		thing->velocity.x = thing->speed * cos(angle);
 		thing->velocity.y = thing->speed * sin(angle);
 	}
-	else if (useFog) // no fog doesn't alter the player's momentums
+	else if (useFog)	// no fog doesn't alter the player's momentums
 	{
 		thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
 	}
@@ -238,28 +239,28 @@ boolean P_Teleport(mobj_t *thing, float x, float y, angle_t angle,
 //
 //==========================================================================
 
-boolean EV_Teleport(int tid, mobj_t *thing, boolean fog)
+boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 {
 	int i;
 	int count;
 	mobj_t *mo;
 	int searcher;
 
-	if(!thing)
-	{ // Teleport function called with an invalid mobj
+	if (!thing)
+	{	// Teleport function called with an invalid mobj
 		return false;
 	}
-	if(thing->flags2&MF2_NOTELEPORT)
+	if (thing->flags2 & MF2_NOTELEPORT)
 	{
 		return false;
 	}
 	count = 0;
 	searcher = -1;
-	while(P_FindMobjFromTID(tid, &searcher) != NULL)
+	while (P_FindMobjFromTID(tid, &searcher) != NULL)
 	{
 		count++;
 	}
-	if(count == 0)
+	if (count == 0)
 	{
 		return false;
 	}
@@ -269,17 +270,21 @@ boolean EV_Teleport(int tid, mobj_t *thing, boolean fog)
 	{
 		mo = P_FindMobjFromTID(tid, &searcher);
 	}
-	if (!mo) Error("Can't find teleport mapspot\n");
+	if (!mo)
+		Error("Can't find teleport mapspot\n");
 	return P_Teleport(thing, mo->origin.x, mo->origin.y, mo->angles.yaw, fog);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

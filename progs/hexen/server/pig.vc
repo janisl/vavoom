@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -39,26 +39,26 @@
 //
 //  UpdateMorphedMonster
 //
-//	Returns true if the pig morphs.
+//  Returns true if the pig morphs.
 //
 //==========================================================================
 
-int UpdateMorphedMonster(mobj_t* actor, int tics)
+int UpdateMorphedMonster(mobj_t * actor, int tics)
 {
-	mobj_t*	fog;
-	float 	x;
-	float	y;
-	float	z;
-	int 	moType;
-    angle_t	angle;
-    int		flags;
-    int		health;
-    mobj_t*	target;
-    int		special;
-    int		tid;
-    int		args[5];
-    int		pig_type;
-	mobj_t*	mo;
+	mobj_t *fog;
+	float x;
+	float y;
+	float z;
+	int moType;
+	angle_t angle;
+	int flags;
+	int health;
+	mobj_t *target;
+	int special;
+	int tid;
+	int args[5];
+	int pig_type;
+	mobj_t *mo;
 
 	actor->special1 -= tics;
 	if (actor->special1 > 0)
@@ -68,29 +68,29 @@ int UpdateMorphedMonster(mobj_t* actor, int tics)
 	moType = actor->special2;
 	switch (moType)
 	{
-		case MT_WRAITHB:			// These must remain morphed
-		case MT_SERPENT:
-		case MT_SERPENTLEADER:
-		case MT_MINOTAUR:
-			return false;
-		default:
-			break;
+	case MT_WRAITHB:	// These must remain morphed
+	case MT_SERPENT:
+	case MT_SERPENTLEADER:
+	case MT_MINOTAUR:
+		return false;
+	default:
+		break;
 	}
 	x = actor->origin.x;
 	y = actor->origin.y;
 	z = actor->origin.z;
-    angle = actor->angles.yaw;
-    flags = actor->flags;
+	angle = actor->angles.yaw;
+	flags = actor->flags;
 	health = actor->health;
-    target = actor->target;
-    special = actor->special;
+	target = actor->target;
+	special = actor->special;
 	tid = actor->tid;
-    args[0] = actor->args[0];
-    args[1] = actor->args[1];
-    args[2] = actor->args[2];
-    args[3] = actor->args[3];
-    args[4] = actor->args[4];
-    pig_type = actor->type;
+	args[0] = actor->args[0];
+	args[1] = actor->args[1];
+	args[2] = actor->args[2];
+	args[3] = actor->args[3];
+	args[4] = actor->args[4];
+	pig_type = actor->type;
 
 	P_RemoveMobjFromTIDList(actor);
 	SetMobjState(actor, S_FREETARGMOBJ);
@@ -106,14 +106,14 @@ int UpdateMorphedMonster(mobj_t* actor, int tics)
 		mo->health = health;
 		mo->target = target;
 		mo->special = special;
-		mo->special1 = 5*35; // Next try in 5 seconds
+		mo->special1 = 5 * 35;	// Next try in 5 seconds
 		mo->special2 = moType;
 		mo->tid = tid;
-        mo->args[0] = args[0];
-        mo->args[1] = args[1];
-        mo->args[2] = args[2];
-        mo->args[3] = args[3];
-        mo->args[4] = args[4];
+		mo->args[0] = args[0];
+		mo->args[1] = args[1];
+		mo->args[2] = args[2];
+		mo->args[3] = args[3];
+		mo->args[4] = args[4];
 		P_InsertMobjIntoTIDList(mo, tid);
 		return false;
 	}
@@ -121,11 +121,11 @@ int UpdateMorphedMonster(mobj_t* actor, int tics)
 	mo->target = target;
 	mo->tid = tid;
 	mo->special = special;
-    mo->args[0] = args[0];
-    mo->args[1] = args[1];
-    mo->args[2] = args[2];
-    mo->args[3] = args[3];
-    mo->args[4] = args[4];
+	mo->args[0] = args[0];
+	mo->args[1] = args[1];
+	mo->args[2] = args[2];
+	mo->args[3] = args[3];
+	mo->args[4] = args[4];
 	P_InsertMobjIntoTIDList(mo, tid);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
 	StartSoundName(fog, "Teleport", CHAN_VOICE);
@@ -134,11 +134,11 @@ int UpdateMorphedMonster(mobj_t* actor, int tics)
 
 //============================================================================
 //
-//	A_PigLook
+//  A_PigLook
 //
 //============================================================================
 
-void A_PigLook(mobj_t* actor)
+void A_PigLook(mobj_t * actor)
 {
 	if (UpdateMorphedMonster(actor, 10))
 	{
@@ -149,11 +149,11 @@ void A_PigLook(mobj_t* actor)
 
 //============================================================================
 //
-//	A_PigChase
+//  A_PigChase
 //
 //============================================================================
 
-void A_PigChase(mobj_t* actor)
+void A_PigChase(mobj_t * actor)
 {
 	if (UpdateMorphedMonster(actor, 3))
 	{
@@ -168,7 +168,7 @@ void A_PigChase(mobj_t* actor)
 //
 //============================================================================
 
-void A_PigAttack(mobj_t* actor)
+void A_PigAttack(mobj_t * actor)
 {
 	if (UpdateMorphedMonster(actor, 18))
 	{
@@ -187,11 +187,11 @@ void A_PigAttack(mobj_t* actor)
 
 //============================================================================
 //
-//	A_PigPain
+//  A_PigPain
 //
 //============================================================================
 
-void A_PigPain(mobj_t* actor)
+void A_PigPain(mobj_t * actor)
 {
 	A_Pain(actor);
 	if (actor->origin.z <= actor->floorz)
@@ -202,11 +202,14 @@ void A_PigPain(mobj_t* actor)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

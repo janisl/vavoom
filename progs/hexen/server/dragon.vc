@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -41,19 +41,19 @@
 //
 //============================================================================
 
-void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
+void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 {
-	int 	dir;
-	float	dist;
-	angle_t	delta;
-	mobj_t	*target;
-	int 	search;
-	int 	i;
-	int 	bestArg;
-	angle_t	bestAngle;
-	angle_t	angleToSpot, angleToTarget;
-	mobj_t	*mo;
-	mobj_t 	*oldTarget;
+	int dir;
+	float dist;
+	angle_t delta;
+	mobj_t *target;
+	int search;
+	int i;
+	int bestArg;
+	angle_t bestAngle;
+	angle_t angleToSpot, angleToTarget;
+	mobj_t *mo;
+	mobj_t *oldTarget;
 
 	target = actor->specialmobj1;
 	if (!target)
@@ -97,19 +97,19 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 		dist = MobjDist2(target, actor);
 		dist = dist / actor->speed;
 	}
-	if (target->flags&MF_SHOOTABLE && P_Random() < 64)
-	{ // attack the destination mobj if it's attackable
+	if (target->flags & MF_SHOOTABLE && P_Random() < 64)
+	{	// attack the destination mobj if it's attackable
 		if (abs(actor->angles.yaw - atan2(target->origin.y - actor->origin.y,
-			target->origin.x - actor->origin.x)) < ANG45 / 2)
+					target->origin.x - actor->origin.x)) < ANG45 / 2)
 		{
 			oldTarget = actor->target;
 			actor->target = target;
-			if(CheckMeleeRange(actor))
+			if (CheckMeleeRange(actor))
 			{
 				DamageMobj(actor->target, actor, actor, HITDICE(10));
 				StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
 			}
-			else if(P_Random() < 128 && CheckMissileRange(actor))
+			else if (P_Random() < 128 && CheckMissileRange(actor))
 			{
 				SpawnMissile(actor, target, MT_DRAGON_FX);
 				StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
@@ -118,8 +118,8 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 		}
 	}
 	if (dist * 35.0 < 4.0)
-	{ // Hit the target thing
-		if(actor->target && P_Random() < 200)
+	{	// Hit the target thing
+		if (actor->target && P_Random() < 200)
 		{
 			bestArg = -1;
 			bestAngle = ANGLE_MAX;
@@ -127,7 +127,7 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 				actor->target->origin.x - actor->origin.x);
 			for (i = 0; i < 5; i++)
 			{
-				if(!target->args[i])
+				if (!target->args[i])
 				{
 					continue;
 				}
@@ -135,13 +135,13 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 				mo = P_FindMobjFromTID(target->args[i], &search);
 				angleToSpot = atan2(mo->origin.y - actor->origin.y,
 					mo->origin.x - actor->origin.x);
-				if (abs(angleToSpot-angleToTarget) < bestAngle)
+				if (abs(angleToSpot - angleToTarget) < bestAngle)
 				{
-					bestAngle = abs(angleToSpot-angleToTarget);
+					bestAngle = abs(angleToSpot - angleToTarget);
 					bestArg = i;
 				}
 			}
-			if(bestArg != -1)
+			if (bestArg != -1)
 			{
 				search = -1;
 				actor->specialmobj1 = P_FindMobjFromTID(target->args[bestArg],
@@ -152,8 +152,9 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 		{
 			do
 			{
-				i = (P_Random()>>2)%5;
-			} while(!target->args[i]);
+				i = (P_Random() >> 2) % 5;
+			}
+			while (!target->args[i]);
 			search = -1;
 			actor->specialmobj1 = P_FindMobjFromTID(target->args[i], &search);
 		}
@@ -166,9 +167,9 @@ void DragonSeek(mobj_t* actor, angle_t thresh, angle_t turnMax)
 //
 //============================================================================
 
-void A_DragonInitFlight(mobj_t* actor)
+void A_DragonInitFlight(mobj_t * actor)
 {
-	int 	search;
+	int search;
 
 	search = -1;
 	do
@@ -180,7 +181,8 @@ void A_DragonInitFlight(mobj_t* actor)
 			SetMobjState(actor, actor->spawnstate);
 			return;
 		}
-	} while(actor->specialmobj1 == actor);
+	}
+	while (actor->specialmobj1 == actor);
 	P_RemoveMobjFromTIDList(actor);
 }
 
@@ -190,26 +192,27 @@ void A_DragonInitFlight(mobj_t* actor)
 //
 //============================================================================
 
-void A_DragonFlight(mobj_t* actor)
+void A_DragonFlight(mobj_t * actor)
 {
-	angle_t		angle;
+	angle_t angle;
 
-	DragonSeek(actor, 4*ANGLE_1, 8*ANGLE_1);
-	if(actor->target)
+	DragonSeek(actor, 4 * ANGLE_1, 8 * ANGLE_1);
+	if (actor->target)
 	{
-		if(!(actor->target->flags&MF_SHOOTABLE))
-		{ // target died
+		if (!(actor->target->flags & MF_SHOOTABLE))
+		{	// target died
 			actor->target = NULL;
 			return;
 		}
 		angle = atan2(actor->target->origin.y - actor->origin.y,
 			actor->target->origin.x - actor->origin.x);
-		if(abs(actor->angles.yaw - angle) < ANG45/2 && CheckMeleeRange(actor))
+		if (abs(actor->angles.yaw - angle) < ANG45 / 2
+			&& CheckMeleeRange(actor))
 		{
 			DamageMobj(actor->target, actor, actor, HITDICE(8));
 			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
 		}
-		else if(abs(actor->angles.yaw-angle) <= ANGLE_1*20)
+		else if (abs(actor->angles.yaw - angle) <= ANGLE_1 * 20)
 		{
 			SetMobjState(actor, actor->missilestate);
 			StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
@@ -227,10 +230,10 @@ void A_DragonFlight(mobj_t* actor)
 //
 //============================================================================
 
-void A_DragonFlap(mobj_t* actor)
+void A_DragonFlap(mobj_t * actor)
 {
 	A_DragonFlight(actor);
-	if(P_Random() < 240)
+	if (P_Random() < 240)
 	{
 		StartSoundName(actor, "DragonWingflap", CHAN_BODY);
 	}
@@ -246,24 +249,24 @@ void A_DragonFlap(mobj_t* actor)
 //
 //============================================================================
 
-void A_DragonAttack(mobj_t* actor)
+void A_DragonAttack(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
-	mo = SpawnMissile(actor, actor->target, MT_DRAGON_FX);						
+	mo = SpawnMissile(actor, actor->target, MT_DRAGON_FX);
 }
 
 //============================================================================
 //
-//	A_DragonPain
+//  A_DragonPain
 //
 //============================================================================
 
-void A_DragonPain(mobj_t* actor)
+void A_DragonPain(mobj_t * actor)
 {
 	A_Pain(actor);
 	if (!actor->specialmobj1)
-	{ // no destination spot yet
+	{	// no destination spot yet
 		SetMobjState(actor, S_DRAGON_INIT);
 	}
 }
@@ -274,7 +277,7 @@ void A_DragonPain(mobj_t* actor)
 //
 //============================================================================
 
-void A_DragonCheckCrash(mobj_t* actor)
+void A_DragonCheckCrash(mobj_t * actor)
 {
 	if (actor->origin.z <= actor->floorz)
 	{
@@ -288,34 +291,36 @@ void A_DragonCheckCrash(mobj_t* actor)
 //
 //============================================================================
 
-void A_DragonFX2(mobj_t* actor)
+void A_DragonFX2(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	i;
-	float 	delay;
+	mobj_t *mo;
+	int i;
+	float delay;
 
 	delay = 0.5 + Random();
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
 		mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 64.0,
 			actor->origin.y + (Random() - 0.5) * 64.0,
-			actor->origin.z + (Random() - 0.5) * 16.0,
-			MT_DRAGON_FX2);
+			actor->origin.z + (Random() - 0.5) * 16.0, MT_DRAGON_FX2);
 		if (mo)
 		{
 			mo->time = delay + Random() * 0.2 * itof(i);
 			mo->target = actor->target;
 		}
-	} 
+	}
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

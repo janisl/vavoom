@@ -1,35 +1,31 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
-//**	Save menu
+//**    Save menu
 //**
-//**	Selected from Single Player menu
+//**    Selected from Single Player menu
 //**
 //**************************************************************************
 
@@ -41,9 +37,9 @@
 
 struct menu_save_t
 {
-	menu_t			menu;
-	menusaveslot_t	slot[NUMSLOTS];
-	menutext_t		title;
+	menu_t menu;
+	menusaveslot_t slot[NUMSLOTS];
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -56,33 +52,33 @@ menu_save_t SaveMenu;
 
 //==========================================================================
 //
-//	save_func
+//  save_func
 //
 //==========================================================================
 
-void save_func(menucommon_t *aitem, int msg)
+void save_func(menucommon_t * aitem, int msg)
 {
-	menusaveslot_t *item = (menusaveslot_t*)aitem;
+	menusaveslot_t *item = (menusaveslot_t *) aitem;
 
 	if (msg != MMSG_ACTIVATE)
 	{
 		return;
 	}
 
-    // we are going to be intercepting all chars
-   	enteringText = true;
-   	InputLine_Init(&slot_enter_text);
-    
+	// we are going to be intercepting all chars
+	enteringText = true;
+	InputLine_Init(&slot_enter_text);
+
 	if (item->status)
-    {
+	{
 		InputLine_SetValue(&slot_enter_text, ARR2STR(item->text));
 	}
-  	LocalSound("MenuSelect");
+	LocalSound("MenuSelect");
 }
 
 //==========================================================================
 //
-//	menu_save
+//  menu_save
 //
 //==========================================================================
 
@@ -106,14 +102,15 @@ void menu_save(void)
 
 	enteringText = false;
 
-    InitMenu(&SaveMenu.menu);
+	InitMenu(&SaveMenu.menu);
 
 	for (i = 0; i < NUMSLOTS; i++)
 	{
 		MenuSaveSlot_Init(&SaveMenu.slot[i], x, y);
 		SaveMenu.slot[i].callback = save_func;
 		SaveMenu.slot[i].id = i;
-        SaveMenu.slot[i].status = SV_GetSaveString(i, ARR2STR(SaveMenu.slot[i].text));
+		SaveMenu.slot[i].status =
+			SV_GetSaveString(i, ARR2STR(SaveMenu.slot[i].text));
 		AddMenuItem(&SaveMenu.menu, &SaveMenu.slot[i]);
 		y += 18;
 	}
@@ -121,9 +118,18 @@ void menu_save(void)
 	MenuText_InitTitle(&SaveMenu.title, 160, 24, "SAVE GAME", TEXT_BIGC);
 	AddMenuItem(&SaveMenu.menu, &SaveMenu.title);
 
-    PushMenu(&SaveMenu.menu);
+	PushMenu(&SaveMenu.menu);
 
 	InitSelector();
 }
 
-
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:10  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,28 +25,28 @@
 
 //==========================================================================
 //
-//	A_Look
+//  A_Look
 //
-//	Stay in state until a player is sighted
+//  Stay in state until a player is sighted
 //
 //==========================================================================
 
-void A_Look(mobj_t* actor)
+void A_Look(mobj_t * actor)
 {
-	mobj_t*		targ;
+	mobj_t *targ;
 
-	actor->threshold = 0;       // any shot will wake up
+	actor->threshold = 0;	// any shot will wake up
 	targ = actor->subsector->sector->soundtarget;
 
 	if (targ && targ->flags & MF_SHOOTABLE)
 	{
 		actor->target = targ;
 
-		if ( actor->flags & MF_AMBUSH )
+		if (actor->flags & MF_AMBUSH)
 		{
 			if (!P_CheckSight(actor, actor->target))
 			{
-				if (!P_LookForPlayers (actor, false) )
+				if (!P_LookForPlayers(actor, false))
 					return;
 			}
 		}
@@ -61,7 +61,7 @@ void A_Look(mobj_t* actor)
 	if (actor->sound_sight)
 	{
 		if (actor->flags2 & MF2_BOSS)
-		{ // Full volume
+		{	// Full volume
 			StartSound(NULL, actor->sound_sight, CHAN_VOICE);
 		}
 		else
@@ -75,31 +75,31 @@ void A_Look(mobj_t* actor)
 
 //==========================================================================
 //
-//	A_Chase
+//  A_Chase
 //
-//	Actor has a melee attack, so it tries to close as fast as possible
+//  Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-void A_Chase(mobj_t* actor)
+void A_Chase(mobj_t * actor)
 {
-    int		delta;
+	int delta;
 
-	if(actor->reactiontime)
+	if (actor->reactiontime)
 	{
 		actor->reactiontime--;
 	}
 
-    // modify target threshold
-    if  (actor->threshold)
-    {
+	// modify target threshold
+	if (actor->threshold)
+	{
 		if (!actor->target || actor->target->health <= 0)
 		{
-		    actor->threshold = 0;
+			actor->threshold = 0;
 		}
 		else
-        {
-		    actor->threshold--;
+		{
+			actor->threshold--;
 		}
 	}
 
@@ -113,88 +113,88 @@ void A_Chase(mobj_t* actor)
 		}
 	}
 
-    // turn towards movement direction if not there yet
-    if (actor->movedir < 8)
-    {
+	// turn towards movement direction if not there yet
+	if (actor->movedir < 8)
+	{
 		actor->angles.yaw &= (7 << 29);
 		delta = actor->angles.yaw - (actor->movedir << 29);
-	
+
 		if (delta > 0)
-        {
-		    actor->angles.yaw -= ANG90 / 2;
+		{
+			actor->angles.yaw -= ANG90 / 2;
 		}
 		else if (delta < 0)
 		{
-		    actor->angles.yaw += ANG90 / 2;
+			actor->angles.yaw += ANG90 / 2;
 		}
-    }
+	}
 
-    if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
-    {
+	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
+	{
 		// look for a new target
-		if (P_LookForPlayers(actor,true))
-        {
-		    return; 	// got a new target
-	    }
+		if (P_LookForPlayers(actor, true))
+		{
+			return;	// got a new target
+		}
 		SetMobjState(actor, actor->spawnstate);
 		return;
-    }
-    
-    // do not attack twice in a row
-    if (actor->flags & MF_JUSTATTACKED)
-    {
+	}
+
+	// do not attack twice in a row
+	if (actor->flags & MF_JUSTATTACKED)
+	{
 		actor->flags &= ~MF_JUSTATTACKED;
 		if (!fastparm)
-        {
-		    P_NewChaseDir(actor);
+		{
+			P_NewChaseDir(actor);
 		}
 		return;
-    }
-    
-    // check for melee attack
-    if (actor->meleestate	&& P_CheckMeleeRange(actor))
-    {
+	}
+
+	// check for melee attack
+	if (actor->meleestate && P_CheckMeleeRange(actor))
+	{
 		if (actor->sound_attack)
-        {
-		    StartSound(actor, actor->sound_attack, CHAN_WEAPON);
+		{
+			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
 		SetMobjState(actor, actor->meleestate);
 		return;
-    }
-    
-    // check for missile attack
-    if (actor->missilestate)
-    {
+	}
+
+	// check for missile attack
+	if (actor->missilestate)
+	{
 		if (fastparm || !actor->movecount)
-        {
+		{
 			if (P_CheckMissileRange(actor))
-            {
+			{
 				SetMobjState(actor, actor->missilestate);
 				actor->flags |= MF_JUSTATTACKED;
 				return;
 			}
 		}
-    }
-
-    // possibly choose another target
-    if (netgame && !actor->threshold)
-    {
-    	if (!P_CheckSight(actor, actor->target))
-	    {
-			if (P_LookForPlayers(actor,true))
-			    return;	// got a new target
-	    }
 	}
 
-    // chase towards player
-    if (--actor->movecount < 0 || !P_Move(actor))
-    {
-		P_NewChaseDir(actor);
-    }
+	// possibly choose another target
+	if (netgame && !actor->threshold)
+	{
+		if (!P_CheckSight(actor, actor->target))
+		{
+			if (P_LookForPlayers(actor, true))
+				return;	// got a new target
+		}
+	}
 
-    // make active sound
-    if (actor->sound_active && P_Random() < 3)
-    {
+	// chase towards player
+	if (--actor->movecount < 0 || !P_Move(actor))
+	{
+		P_NewChaseDir(actor);
+	}
+
+	// make active sound
+	if (actor->sound_active && P_Random() < 3)
+	{
 		if (actor->type == MT_WIZARD && P_Random() < 128)
 		{
 			StartSound(actor, actor->sound_sight, CHAN_VOICE);
@@ -207,26 +207,26 @@ void A_Chase(mobj_t* actor)
 		{
 			StartSound(actor, actor->sound_active, CHAN_VOICE);
 		}
-    }
+	}
 }
 
 //==========================================================================
 //
-//	A_FaceTarget
+//  A_FaceTarget
 //
 //==========================================================================
 
-void A_FaceTarget(mobj_t* actor)
+void A_FaceTarget(mobj_t * actor)
 {
-    if (!actor->target)
+	if (!actor->target)
 		return;
-    
-    actor->flags &= ~MF_AMBUSH;
-	
-    actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
-	    actor->target->origin.x - actor->origin.x);
-    
-    if (actor->target->translucency)
+
+	actor->flags &= ~MF_AMBUSH;
+
+	actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
+		actor->target->origin.x - actor->origin.x);
+
+	if (actor->target->translucency)
 	{
 		actor->angles.yaw += (P_Random() - P_Random()) << 21;
 	}
@@ -234,25 +234,25 @@ void A_FaceTarget(mobj_t* actor)
 
 //==========================================================================
 //
-//	A_Pain
+//  A_Pain
 //
 //==========================================================================
 
-void A_Pain(mobj_t* actor)
+void A_Pain(mobj_t * actor)
 {
-    if (actor->sound_pain)
-    {
+	if (actor->sound_pain)
+	{
 		StartSound(actor, actor->sound_pain, CHAN_VOICE);
 	}
 }
 
 //==========================================================================
 //
-//	A_FreeTargMobj
+//  A_FreeTargMobj
 //
 //==========================================================================
 
-void A_FreeTargMobj(mobj_t* mo)
+void A_FreeTargMobj(mobj_t * mo)
 {
 	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
 	mo->origin.z = mo->ceilingz + 4.0;
@@ -264,72 +264,72 @@ void A_FreeTargMobj(mobj_t* mo)
 
 //==========================================================================
 //
-//	A_Scream
+//  A_Scream
 //
 //==========================================================================
 
-void A_Scream(mobj_t* actor)
+void A_Scream(mobj_t * actor)
 {
-	switch(actor->type)
+	switch (actor->type)
 	{
-		case MT_CHICPLAYER:
-		case MT_SORCERER1:
-		case MT_MINOTAUR:
-			// Make boss death sounds full volume
-			StartSound(NULL, actor->sound_death, CHAN_VOICE);
-			break;
-		case MT_PLAYER:
-			// Handle the different player death screams
-			if(actor->special1 < 10)
-			{ // Wimpy death sound
-				StartSoundName(actor, "PlayerWimpyDeath", CHAN_VOICE);
-			}
-			else if(actor->health > -50)
-			{ // Normal death sound
-				StartSound(actor, actor->sound_death, CHAN_VOICE);
-			}
-			else if(actor->health > -100)
-			{ // Crazy death sound
-				StartSoundName(actor, "PlayerCrazyDeath", CHAN_VOICE);
-			}
-			else
-			{ // Extreme death sound
-				StartSoundName(actor, "PlayerExtremeDeath", CHAN_VOICE);
-			}
-			break;
-		default:
+	case MT_CHICPLAYER:
+	case MT_SORCERER1:
+	case MT_MINOTAUR:
+		// Make boss death sounds full volume
+		StartSound(NULL, actor->sound_death, CHAN_VOICE);
+		break;
+	case MT_PLAYER:
+		// Handle the different player death screams
+		if (actor->special1 < 10)
+		{	// Wimpy death sound
+			StartSoundName(actor, "PlayerWimpyDeath", CHAN_VOICE);
+		}
+		else if (actor->health > -50)
+		{	// Normal death sound
 			StartSound(actor, actor->sound_death, CHAN_VOICE);
-			break;
+		}
+		else if (actor->health > -100)
+		{	// Crazy death sound
+			StartSoundName(actor, "PlayerCrazyDeath", CHAN_VOICE);
+		}
+		else
+		{	// Extreme death sound
+			StartSoundName(actor, "PlayerExtremeDeath", CHAN_VOICE);
+		}
+		break;
+	default:
+		StartSound(actor, actor->sound_death, CHAN_VOICE);
+		break;
 	}
 }
 
 //==========================================================================
 //
-//	A_Explode
+//  A_Explode
 //
-//	Handles a bunch of exploding things.
+//  Handles a bunch of exploding things.
 //
 //==========================================================================
 
-void A_Explode(mobj_t* actor)
+void A_Explode(mobj_t * actor)
 {
-	int 	damage;
+	int damage;
 
 	damage = 128;
 	switch (actor->type)
 	{
-		case MT_FIREBOMB: // Time Bombs
-			actor->origin.z += 32.0;
-			actor->translucency = 0;
-			break;
-		case MT_MNTRFX2: // Minotaur floor fire
-			damage = 24;
-			break;
-		case MT_SOR2FX1: // D'Sparil missile
-			damage = 80 + (P_Random() & 31);
-			break;
-		default:
-			break;
+	case MT_FIREBOMB:	// Time Bombs
+		actor->origin.z += 32.0;
+		actor->translucency = 0;
+		break;
+	case MT_MNTRFX2:	// Minotaur floor fire
+		damage = 24;
+		break;
+	case MT_SOR2FX1:	// D'Sparil missile
+		damage = 80 + (P_Random() & 31);
+		break;
+	default:
+		break;
 	}
 	P_RadiusAttack(actor, actor->target, damage, 0, 0);
 	P_HitFloor(actor);
@@ -355,13 +355,13 @@ void A_Explode(mobj_t* actor)
 
 //==========================================================================
 //
-//	P_DropItem
+//  P_DropItem
 //
 //==========================================================================
 
-void P_DropItem(mobj_t* source, int type, int special, int chance)
+void P_DropItem(mobj_t * source, int type, int special, int chance)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
 	if (P_Random() > chance)
 	{
@@ -378,49 +378,49 @@ void P_DropItem(mobj_t* source, int type, int special, int chance)
 
 //==========================================================================
 //
-//	A_NoBlocking
+//  A_NoBlocking
 //
 //==========================================================================
 
-void A_NoBlocking(mobj_t* actor)
+void A_NoBlocking(mobj_t * actor)
 {
 	actor->flags &= ~MF_SOLID;
 	// Check for monsters dropping things
-	switch(actor->type)
+	switch (actor->type)
 	{
-		case MT_MUMMY:
-		case MT_MUMMYLEADER:
-		case MT_MUMMYGHOST:
-		case MT_MUMMYLEADERGHOST:
-			P_DropItem(actor, MT_AMGWNDWIMPY, 3, 84);
-			break;
-		case MT_KNIGHT:
-		case MT_KNIGHTGHOST:
-			P_DropItem(actor, MT_AMCBOWWIMPY, 5, 84);
-			break;
-		case MT_WIZARD:
-			P_DropItem(actor, MT_AMBLSRWIMPY, 10, 84);
-			P_DropItem(actor, MT_ARTITOMEOFPOWER, 0, 4);
-			break;
-		case MT_HEAD:
-			P_DropItem(actor, MT_AMBLSRWIMPY, 10, 84);
-			P_DropItem(actor, MT_ARTIEGG, 0, 51);
-			break;
-		case MT_BEAST:
-			P_DropItem(actor, MT_AMCBOWWIMPY, 10, 84);
-			break;
-		case MT_CLINK:
-			P_DropItem(actor, MT_AMSKRDWIMPY, 20, 84);
-			break;
-		case MT_SNAKE:
-			P_DropItem(actor, MT_AMPHRDWIMPY, 5, 84);
-			break;
-		case MT_MINOTAUR:
-			P_DropItem(actor, MT_ARTISUPERHEAL, 0, 51);
-			P_DropItem(actor, MT_AMPHRDWIMPY, 10, 84);
-			break;
-		default:
-			break;
+	case MT_MUMMY:
+	case MT_MUMMYLEADER:
+	case MT_MUMMYGHOST:
+	case MT_MUMMYLEADERGHOST:
+		P_DropItem(actor, MT_AMGWNDWIMPY, 3, 84);
+		break;
+	case MT_KNIGHT:
+	case MT_KNIGHTGHOST:
+		P_DropItem(actor, MT_AMCBOWWIMPY, 5, 84);
+		break;
+	case MT_WIZARD:
+		P_DropItem(actor, MT_AMBLSRWIMPY, 10, 84);
+		P_DropItem(actor, MT_ARTITOMEOFPOWER, 0, 4);
+		break;
+	case MT_HEAD:
+		P_DropItem(actor, MT_AMBLSRWIMPY, 10, 84);
+		P_DropItem(actor, MT_ARTIEGG, 0, 51);
+		break;
+	case MT_BEAST:
+		P_DropItem(actor, MT_AMCBOWWIMPY, 10, 84);
+		break;
+	case MT_CLINK:
+		P_DropItem(actor, MT_AMSKRDWIMPY, 20, 84);
+		break;
+	case MT_SNAKE:
+		P_DropItem(actor, MT_AMPHRDWIMPY, 5, 84);
+		break;
+	case MT_MINOTAUR:
+		P_DropItem(actor, MT_ARTISUPERHEAL, 0, 51);
+		P_DropItem(actor, MT_AMPHRDWIMPY, 10, 84);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -431,10 +431,10 @@ void A_NoBlocking(mobj_t* actor)
 //==========================================================================
 
 #define BODYQUESIZE		32
-mobj_t*	bodyque[BODYQUESIZE];
-int 	bodyqueslot;
+mobj_t *bodyque[BODYQUESIZE];
+int bodyqueslot;
 
-void A_AddPlayerCorpse(mobj_t* actor)
+void A_AddPlayerCorpse(mobj_t * actor)
 {
 	if (bodyqueslot >= BODYQUESIZE)
 	{
@@ -447,17 +447,19 @@ void A_AddPlayerCorpse(mobj_t* actor)
 
 //==========================================================================
 //
-//	A_SkullPop
+//  A_SkullPop
 //
 //==========================================================================
 
-void A_SkullPop(mobj_t* actor)
+void A_SkullPop(mobj_t * actor)
 {
-	mobj_t*		mo;
-	player_t*	player;
+	mobj_t *mo;
+	player_t *player;
 
 	actor->flags &= ~MF_SOLID;
-	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 48.0, MT_BLOODYSKULL);
+	mo =
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 48.0,
+		MT_BLOODYSKULL);
 	//mo->target = actor;
 	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -478,20 +480,20 @@ void A_SkullPop(mobj_t* actor)
 //
 //==========================================================================
 
-void A_FlameSnd(mobj_t* actor)
+void A_FlameSnd(mobj_t * actor)
 {
-	StartSoundName(actor, "HeadAttack1", CHAN_WEAPON); // Burn sound
+	StartSoundName(actor, "HeadAttack1", CHAN_WEAPON);	// Burn sound
 }
 
 //==========================================================================
 //
-//	A_CheckBurnGone
+//  A_CheckBurnGone
 //
 //==========================================================================
 
-void A_CheckBurnGone(mobj_t* actor)
+void A_CheckBurnGone(mobj_t * actor)
 {
-	if(actor->special2 == 666)
+	if (actor->special2 == 666)
 	{
 		SetMobjState(actor, S_PLAY_FDTH20);
 	}
@@ -503,7 +505,7 @@ void A_CheckBurnGone(mobj_t* actor)
 //
 //==========================================================================
 
-void A_CheckSkullFloor(mobj_t* actor)
+void A_CheckSkullFloor(mobj_t * actor)
 {
 	if (actor->origin.z <= actor->floorz)
 	{
@@ -517,7 +519,7 @@ void A_CheckSkullFloor(mobj_t* actor)
 //
 //==========================================================================
 
-void A_CheckSkullDone(mobj_t* actor)
+void A_CheckSkullDone(mobj_t * actor)
 {
 	if (actor->special2 == 666)
 	{
@@ -527,23 +529,23 @@ void A_CheckSkullDone(mobj_t* actor)
 
 //==========================================================================
 //
-//	A_BossDeath
+//  A_BossDeath
 //
-//	Trigger special effects if all bosses are dead.
+//  Trigger special effects if all bosses are dead.
 //
 //==========================================================================
 
-void A_BossDeath(mobj_t *actor)
+void A_BossDeath(mobj_t * actor)
 {
-	string		mapname;
-	mobj_t		*mo;
-	int			args[5];
+	string mapname;
+	mobj_t *mo;
+	int args[5];
 
 	mapname = ptrtos(&level->mapname[0]);
 
 	if (!strcmp(mapname, "E1M8"))
 	{
-	    if (actor->type != MT_HEAD)
+		if (actor->type != MT_HEAD)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -551,7 +553,7 @@ void A_BossDeath(mobj_t *actor)
 	}
 	else if (!strcmp(mapname, "E2M8"))
 	{
-	    if (actor->type != MT_MINOTAUR)
+		if (actor->type != MT_MINOTAUR)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -559,7 +561,7 @@ void A_BossDeath(mobj_t *actor)
 	}
 	else if (!strcmp(mapname, "E3M8"))
 	{
-	    if (actor->type != MT_SORCERER2)
+		if (actor->type != MT_SORCERER2)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -567,7 +569,7 @@ void A_BossDeath(mobj_t *actor)
 	}
 	else if (!strcmp(mapname, "E4M8"))
 	{
-	    if (actor->type != MT_HEAD)
+		if (actor->type != MT_HEAD)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -575,7 +577,7 @@ void A_BossDeath(mobj_t *actor)
 	}
 	else if (!strcmp(mapname, "E5M8"))
 	{
-	    if (actor->type != MT_MINOTAUR)
+		if (actor->type != MT_MINOTAUR)
 		{
 			// Not considered a boss in this episode
 			return;
@@ -583,7 +585,7 @@ void A_BossDeath(mobj_t *actor)
 	}
 	else
 	{
-		//	Not a boss level
+		//  Not a boss level
 		return;
 	}
 
@@ -608,32 +610,35 @@ void A_BossDeath(mobj_t *actor)
 
 //==========================================================================
 //
-//	A_ContMobjSound
+//  A_ContMobjSound
 //
 //==========================================================================
 
-void A_ContMobjSound(mobj_t* actor)
+void A_ContMobjSound(mobj_t * actor)
 {
 	switch (actor->type)
 	{
-		case MT_KNIGHTAXE:
-			StartSoundName(actor, "KnightAttack1", CHAN_VOICE);
-			break;
-		case MT_MUMMYFX1:
-			StartSoundName(actor, "MumyHeadExplode", CHAN_VOICE);
-			break;  
-		default:
-			break;
+	case MT_KNIGHTAXE:
+		StartSoundName(actor, "KnightAttack1", CHAN_VOICE);
+		break;
+	case MT_MUMMYFX1:
+		StartSoundName(actor, "MumyHeadExplode", CHAN_VOICE);
+		break;
+	default:
+		break;
 	}
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

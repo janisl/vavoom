@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -31,21 +31,20 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-void DropWeapon(player_t *player);
-void ActivateBeak(player_t *player);
-void DSparilTeleport(mobj_t *actor);
-void SetupPsprites(player_t *player);
+void DropWeapon(player_t * player);
+void ActivateBeak(player_t * player);
+void DSparilTeleport(mobj_t * actor);
+void SetupPsprites(player_t * player);
 void AddBossSpot(float x, float y, angle_t angle);
 void AddMaceSpot(float x, float y);
-boolean P_CheckPosition(mobj_t* thing, float x, float y);
+boolean P_CheckPosition(mobj_t * thing, float x, float y);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-mobj_t*	MissileMobj;
-int		PuffType;
+mobj_t *MissileMobj;
+int PuffType;
 
-float	FloatBobOffsets[64] =
-{
+float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
 	3.061462402, 3.77116394, 4.444549561, 5.075134277,
 	5.656845093, 6.184082031, 6.651748657, 7.055358887,
@@ -68,24 +67,24 @@ float	FloatBobOffsets[64] =
 
 //===========================================================================
 //
-//	P_GetThingFloorType
+//  P_GetThingFloorType
 //
 //===========================================================================
 
-int P_GetThingFloorType(mobj_t *thing)
+int P_GetThingFloorType(mobj_t * thing)
 {
 	return TerrainType(thing->floor->pic);
 }
 
 //==========================================================================
 //
-//	SetOrigin
+//  SetOrigin
 //
 //==========================================================================
 
-void SetOrigin(mobj_t *mobj, TVec origin)
+void SetOrigin(mobj_t * mobj, TVec origin)
 {
-	float		space;
+	float space;
 
 	mobj->origin = origin;
 	// Set subsector and/or block links.
@@ -119,17 +118,17 @@ void SetOrigin(mobj_t *mobj, TVec origin)
 	}
 	else
 	{
-      	mobj->floorclip = 0.0;
+		mobj->floorclip = 0.0;
 	}
 }
 
 //==========================================================================
 //
-//	CopyMThing
+//  CopyMThing
 //
 //==========================================================================
 
-void CopyMThing(mthing_t *from, mthing_t *to)
+void CopyMThing(mthing_t * from, mthing_t * to)
 {
 	to->tid = from->tid;
 	to->x = from->x;
@@ -148,13 +147,13 @@ void CopyMThing(mthing_t *from, mthing_t *to)
 
 //==========================================================================
 //
-//	generic_mobj_start
+//  generic_mobj_start
 //
 //==========================================================================
 
-void generic_mobj_start(mobj_t *self, mthing_t *mthing)
+void generic_mobj_start(mobj_t * self, mthing_t * mthing)
 {
-	state_t		*st;
+	state_t *st;
 
 	self->lastlook = P_Random() % MAXPLAYERS;
 
@@ -172,7 +171,7 @@ void generic_mobj_start(mobj_t *self, mthing_t *mthing)
 
 	if (mthing)
 	{
-		float	x, y, z;
+		float x, y, z;
 
 		x = mthing->x;
 		y = mthing->y;
@@ -217,7 +216,7 @@ void generic_mobj_start(mobj_t *self, mthing_t *mthing)
 		if (self->flags & MF_COUNTKILL)
 		{
 			level->totalkills++;
-    	    CopyMThing(mthing, &self->spawnpoint);
+			CopyMThing(mthing, &self->spawnpoint);
 		}
 		if (self->flags & MF_COUNTITEM)
 		{
@@ -237,13 +236,13 @@ void generic_mobj_start(mobj_t *self, mthing_t *mthing)
 
 //===========================================================================
 //
-//	P_SpawnMobj
+//  P_SpawnMobj
 //
 //===========================================================================
 
 mobj_t *P_SpawnMobj(float x, float y, float z, int type)
 {
-	mobj_t		*mobj;
+	mobj_t *mobj;
 
 	mobj = NewMobjThinker();
 
@@ -255,11 +254,11 @@ mobj_t *P_SpawnMobj(float x, float y, float z, int type)
 
 //===========================================================================
 //
-//	P_RemoveMobj
+//  P_RemoveMobj
 //
 //===========================================================================
 
-void P_RemoveMobj(mobj_t *mobj)
+void P_RemoveMobj(mobj_t * mobj)
 {
 	// free block
 	RemoveMobjThinker(mobj);
@@ -267,15 +266,15 @@ void P_RemoveMobj(mobj_t *mobj)
 
 //===========================================================================
 //
-//	P_FaceMobj
+//  P_FaceMobj
 //
-//	Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
+//  Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
 // to turn counter clockwise.  'delta' is set to the amount 'source'
 // needs to turn.
 //
 //===========================================================================
 
-int P_FaceMobj(mobj_t *source, mobj_t *target, angle_t *delta)
+int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
 {
 	angle_t diff;
 	angle_t angle1;
@@ -316,16 +315,16 @@ int P_FaceMobj(mobj_t *source, mobj_t *target, angle_t *delta)
 
 //===========================================================================
 //
-//	P_TestMobjLocation
+//  P_TestMobjLocation
 //
-//	Returns true if the mobj is not blocked by anything at its current
+//  Returns true if the mobj is not blocked by anything at its current
 // location, otherwise returns false.
 //
 //===========================================================================
 
-boolean P_TestMobjLocation(mobj_t *mobj)
+boolean P_TestMobjLocation(mobj_t * mobj)
 {
-	int 	flags;
+	int flags;
 
 	flags = mobj->flags;
 	mobj->flags &= ~MF_PICKUP;
@@ -347,11 +346,11 @@ boolean P_TestMobjLocation(mobj_t *mobj)
 
 //===========================================================================
 //
-//	P_ExplodeMissile
+//  P_ExplodeMissile
 //
 //===========================================================================
 
-void P_ExplodeMissile(mobj_t *mo)
+void P_ExplodeMissile(mobj_t * mo)
 {
 	if (mo->type == MT_WHIRLWIND)
 	{
@@ -382,19 +381,19 @@ void P_ExplodeMissile(mobj_t *mo)
 
 //==========================================================================
 //
-//	P_KillMobj
+//  P_KillMobj
 //
 //==========================================================================
 
-void P_KillMobj(mobj_t *source, mobj_t *target)
+void P_KillMobj(mobj_t * source, mobj_t * target)
 {
-	target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY|MF_NOGRAVITY);
-	target->flags |= MF_CORPSE|MF_DROPOFF;
+	target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
+	target->flags |= MF_CORPSE | MF_DROPOFF;
 	target->flags2 &= ~MF2_PASSMOBJ;
 	target->height /= 4.0;
 	if (source && source->player)
 	{
-		if (target->flags&MF_COUNTKILL)
+		if (target->flags & MF_COUNTKILL)
 		{
 			// Count for intermission
 			source->player->killcount++;
@@ -419,7 +418,7 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 			}
 		}
 	}
-	else if (!netgame && (target->flags&MF_COUNTKILL))
+	else if (!netgame && (target->flags & MF_COUNTKILL))
 	{
 		// Count all monster deaths
 		players[0].killcount++;
@@ -437,7 +436,7 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 		target->player->powers[pw_weaponlevel2] = 0;
 		target->player->playerstate = PST_DEAD;
 		DropWeapon(target->player);
-		if (target->flags2&MF2_FIREDAMAGE)
+		if (target->flags2 & MF2_FIREDAMAGE)
 		{
 			// Player flame death
 			SetMobjState(target, S_PLAY_FDTH1);
@@ -460,14 +459,14 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 
 //==========================================================================
 //
-//	P_MinotaurSlam
+//  P_MinotaurSlam
 //
 //==========================================================================
 
-void P_MinotaurSlam(mobj_t *source, mobj_t *target)
+void P_MinotaurSlam(mobj_t * source, mobj_t * target)
 {
 	angle_t angle;
-	float	thrust;
+	float thrust;
 
 	angle = atan2(target->origin.y - source->origin.y,
 		target->origin.x - source->origin.x);
@@ -483,13 +482,13 @@ void P_MinotaurSlam(mobj_t *source, mobj_t *target)
 
 //==========================================================================
 //
-//	P_TouchWhirlwind
+//  P_TouchWhirlwind
 //
 //==========================================================================
 
-void P_TouchWhirlwind(mobj_t *target)
+void P_TouchWhirlwind(mobj_t * target)
 {
-	float		randVal;
+	float randVal;
 
 	target->angles.yaw += (P_Random() - P_Random()) << 20;
 	target->velocity.x += (Random() - Random()) * 4.0 * 35.0;
@@ -517,18 +516,18 @@ void P_TouchWhirlwind(mobj_t *target)
 //
 //  ChickenMorphPlayer
 //
-//	Returns true if the player gets turned into a chicken.
+//  Returns true if the player gets turned into a chicken.
 //
 //==========================================================================
 
-boolean ChickenMorphPlayer(player_t *player)
+boolean ChickenMorphPlayer(player_t * player)
 {
 	mobj_t *pmo;
 	mobj_t *fog;
 	mobj_t *chicken;
-	float	x;
-	float	y;
-	float	z;
+	float x;
+	float y;
+	float z;
 	angle_t angle;
 	int oldFlags2;
 
@@ -576,19 +575,19 @@ boolean ChickenMorphPlayer(player_t *player)
 
 //==========================================================================
 //
-//	P_ChickenMorph
+//  P_ChickenMorph
 //
 //==========================================================================
 
-boolean P_ChickenMorph(mobj_t *actor)
+boolean P_ChickenMorph(mobj_t * actor)
 {
 	mobj_t *fog;
 	mobj_t *chicken;
 	mobj_t *target;
 	int moType;
-	float	x;
-	float	y;
-	float	z;
+	float x;
+	float y;
+	float z;
 	angle_t angle;
 	int ghost;
 
@@ -599,15 +598,15 @@ boolean P_ChickenMorph(mobj_t *actor)
 	moType = actor->type;
 	switch (moType)
 	{
-		case MT_POD:
-		case MT_CHICKEN:
-		case MT_HEAD:
-		case MT_MINOTAUR:
-		case MT_SORCERER1:
-		case MT_SORCERER2:
-			return false;
-		default:
-			break;
+	case MT_POD:
+	case MT_CHICKEN:
+	case MT_HEAD:
+	case MT_MINOTAUR:
+	case MT_SORCERER1:
+	case MT_SORCERER2:
+		return false;
+	default:
+		break;
 	}
 	x = actor->origin.x;
 	y = actor->origin.y;
@@ -629,11 +628,11 @@ boolean P_ChickenMorph(mobj_t *actor)
 
 //==========================================================================
 //
-//	P_AutoUseChaosDevice
+//  P_AutoUseChaosDevice
 //
 //==========================================================================
 
-boolean P_AutoUseChaosDevice(player_t *player)
+boolean P_AutoUseChaosDevice(player_t * player)
 {
 	int i;
 
@@ -642,7 +641,7 @@ boolean P_AutoUseChaosDevice(player_t *player)
 		if (player->inventory[i].type == arti_teleport)
 		{
 			PlayerUseArtifact(player, arti_teleport);
-			player->health = player->mo->health = (player->health+1)/2;
+			player->health = player->mo->health = (player->health + 1) / 2;
 			return true;
 		}
 	}
@@ -651,11 +650,11 @@ boolean P_AutoUseChaosDevice(player_t *player)
 
 //==========================================================================
 //
-//	P_AutoUseHealth
+//  P_AutoUseHealth
 //
 //==========================================================================
 
-void P_AutoUseHealth(player_t *player, int saveHealth)
+void P_AutoUseHealth(player_t * player, int saveHealth)
 {
 	int i;
 	int count;
@@ -678,20 +677,20 @@ void P_AutoUseHealth(player_t *player, int saveHealth)
 			superCount = player->inventory[i].count;
 		}
 	}
-	if ((gameskill == sk_baby) && (normalCount*25 >= saveHealth))
+	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
 	{
 		// Use quartz flasks
-		count = (saveHealth+24)/25;
+		count = (saveHealth + 24) / 25;
 		for (i = 0; i < count; i++)
 		{
 			player->health += 25;
 			PlayerRemoveArtifact(player, normalSlot);
 		}
 	}
-	else if (superCount*100 >= saveHealth)
+	else if (superCount * 100 >= saveHealth)
 	{
 		// Use mystic urns
-		count = (saveHealth+99)/100;
+		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			player->health += 100;
@@ -699,23 +698,23 @@ void P_AutoUseHealth(player_t *player, int saveHealth)
 		}
 	}
 	else if ((gameskill == sk_baby)
-		&& (superCount*100+normalCount*25 >= saveHealth))
+		&& (superCount * 100 + normalCount * 25 >= saveHealth))
 	{
 		// Use mystic urns and quartz flasks
-		count = (saveHealth+24)/25;
-		saveHealth -= count*25;
+		count = (saveHealth + 24) / 25;
+		saveHealth -= count * 25;
 		for (i = 0; i < count; i++)
 		{
 			player->health += 25;
 			PlayerRemoveArtifact(player, normalSlot);
 		}
-		count = (saveHealth+99)/100;
-		for(i = 0; i < count; i++)
+		count = (saveHealth + 99) / 100;
+		for (i = 0; i < count; i++)
 		{
 			player->health += 100;
-	        //	I found a bug. There must be used superSlot, not normalSlot.
-	        // 	Also if player used all quartz flasks, superSlot may be
-	        // invalid, so it must be found again.
+			//  I found a bug. There must be used superSlot, not normalSlot.
+			//  Also if player used all quartz flasks, superSlot may be
+			// invalid, so it must be found again.
 			PlayerRemoveArtifact(player, superSlot);
 		}
 	}
@@ -726,19 +725,20 @@ void P_AutoUseHealth(player_t *player, int saveHealth)
 //
 //  DamageMobj
 //
-//	Damages both enemies and players.
-// 	inflictor is the thing that caused the damage creature or missile, can
+//  Damages both enemies and players.
+//  inflictor is the thing that caused the damage creature or missile, can
 // be NULL (slime, etc)
-// 	source is the thing to target after taking damage creature or NULL
-// 	Source and inflictor are the same for melee attacks
-// 	source can be null for barrel explosions and other environmental stuff
+//  source is the thing to target after taking damage creature or NULL
+//  Source and inflictor are the same for melee attacks
+//  source can be null for barrel explosions and other environmental stuff
 //
 //==========================================================================
 
-void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
+void DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
+	int damage)
 {
-	int 		saved;
-	player_t 	*player;
+	int saved;
+	player_t *player;
 
 	if (!(target->flags & MF_SHOOTABLE))
 	{
@@ -769,98 +769,98 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 	{
 		switch (inflictor->type)
 		{
-			case MT_EGGFX:
-				if (player)
-				{
-					ChickenMorphPlayer(player);
-				}
-				else
-				{
-					P_ChickenMorph(target);
-				}
-				return; // Always return
-			case MT_WHIRLWIND:
-				P_TouchWhirlwind(target);
+		case MT_EGGFX:
+			if (player)
+			{
+				ChickenMorphPlayer(player);
+			}
+			else
+			{
+				P_ChickenMorph(target);
+			}
+			return;	// Always return
+		case MT_WHIRLWIND:
+			P_TouchWhirlwind(target);
+			return;
+		case MT_MINOTAUR:
+			if (inflictor->flags & MF_SKULLFLY)
+			{
+				// Slam only when in charge mode
+				P_MinotaurSlam(inflictor, target);
 				return;
-			case MT_MINOTAUR:
-				if (inflictor->flags & MF_SKULLFLY)
-				{
-					// Slam only when in charge mode
-					P_MinotaurSlam(inflictor, target);
-					return;
-				}
+			}
+			break;
+		case MT_MACEFX4:	// Death ball
+			if ((target->flags2 & MF2_BOSS) || target->type == MT_HEAD)
+			{
+				// Don't allow cheap boss kills
 				break;
-			case MT_MACEFX4: // Death ball
-				if ((target->flags2 & MF2_BOSS) || target->type == MT_HEAD)
+			}
+			else if (target->player)
+			{
+				// Player specific checks
+				if (target->player->powers[pw_invulnerability])
 				{
-					// Don't allow cheap boss kills
+					// Can't hurt invulnerable players
 					break;
 				}
-				else if (target->player)
+				if (P_AutoUseChaosDevice(target->player))
 				{
-					// Player specific checks
-					if (target->player->powers[pw_invulnerability])
-					{
-						// Can't hurt invulnerable players
-						break;
-					}
-					if (P_AutoUseChaosDevice(target->player))
-					{
-						// Player was saved using chaos device
-						return;
-					}
-				}
-				damage = 10000; // Something's gonna die
-				break;
-			case MT_PHOENIXFX2: // Flame thrower
-				if (target->player && P_Random() < 128)
-				{
-					// Freeze player for a bit
-					target->reactiontime += 4;
-				}
-				break;
-			case MT_RAINPLR1: // Rain missiles
-			case MT_RAINPLR2:
-			case MT_RAINPLR3:
-			case MT_RAINPLR4:
-				if (target->flags2 & MF2_BOSS)
-				{
-					// Decrease damage for bosses
-					damage = (P_Random() & 7) + 1;
-				}
-				break;
-			case MT_HORNRODFX2:
-			case MT_PHOENIXFX1:
-				if (target->type == MT_SORCERER2 && P_Random() < 96)
-				{
-					// D'Sparil teleports away
-					DSparilTeleport(target);
+					// Player was saved using chaos device
 					return;
 				}
-				break;
-			case MT_BLASTERFX1:
-			case MT_RIPPER:
-				if (target->type == MT_HEAD)
+			}
+			damage = 10000;	// Something's gonna die
+			break;
+		case MT_PHOENIXFX2:	// Flame thrower
+			if (target->player && P_Random() < 128)
+			{
+				// Freeze player for a bit
+				target->reactiontime += 4;
+			}
+			break;
+		case MT_RAINPLR1:	// Rain missiles
+		case MT_RAINPLR2:
+		case MT_RAINPLR3:
+		case MT_RAINPLR4:
+			if (target->flags2 & MF2_BOSS)
+			{
+				// Decrease damage for bosses
+				damage = (P_Random() & 7) + 1;
+			}
+			break;
+		case MT_HORNRODFX2:
+		case MT_PHOENIXFX1:
+			if (target->type == MT_SORCERER2 && P_Random() < 96)
+			{
+				// D'Sparil teleports away
+				DSparilTeleport(target);
+				return;
+			}
+			break;
+		case MT_BLASTERFX1:
+		case MT_RIPPER:
+			if (target->type == MT_HEAD)
+			{
+				// Less damage to Ironlich bosses
+				damage = P_Random() & 1;
+				if (!damage)
 				{
-					// Less damage to Ironlich bosses
-					damage = P_Random() & 1;
-					if (!damage)
-					{
-						return;
-					}
+					return;
 				}
-				break;
-			default:
-				break;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source->player ||
-		source->player->readyweapon != wp_gauntlets)
+			source->player->readyweapon != wp_gauntlets)
 		&& !(inflictor->flags2 & MF2_NODMGTHRUST))
 	{
-		TVec		dir;
-	    float		thrust;
+		TVec dir;
+		float thrust;
 
 		if (source && source->player && (source == inflictor)
 			&& source->player->powers[pw_weaponlevel2]
@@ -887,12 +887,12 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 	//
 	if (player)
 	{
-		if(damage < 1000 && ((player->cheats&CF_GODMODE)
-			|| player->powers[pw_invulnerability]))
+		if (damage < 1000 && ((player->cheats & CF_GODMODE)
+				|| player->powers[pw_invulnerability]))
 		{
 			return;
 		}
-		if(player->armortype)
+		if (player->armortype)
 		{
 			if (player->armortype == 1)
 			{
@@ -912,22 +912,21 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 			damage -= saved;
 		}
 		if (damage >= player->health
-			&& ((gameskill == sk_baby) || deathmatch)
-			&& !player->chickenTics)
+			&& ((gameskill == sk_baby) || deathmatch) && !player->chickenTics)
 		{
 			// Try to use some inventory health
-			P_AutoUseHealth(player, damage-player->health + 1);
+			P_AutoUseHealth(player, damage - player->health + 1);
 		}
-		player->health -= damage; // mirror mobj health here for Dave
+		player->health -= damage;	// mirror mobj health here for Dave
 		if (player->health < 0)
 		{
 			player->health = 0;
 		}
 		player->attacker = source;
-		player->damagecount += damage; // add damage after armor / invuln
+		player->damagecount += damage;	// add damage after armor / invuln
 		if (player->damagecount > 100)
 		{
-			player->damagecount = 100; // teleport stomp does 10k points...
+			player->damagecount = 100;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -949,7 +948,7 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 			// Check for flame death
 			if ((inflictor->flags2 & MF2_FIREDAMAGE)
 				|| ((inflictor->type == MT_PHOENIXFX1)
-				&& (target->health > -50) && (damage > 25)))
+					&& (target->health > -50) && (damage > 25)))
 			{
 				target->flags2 |= MF2_FIREDAMAGE;
 			}
@@ -957,14 +956,13 @@ void DamageMobj(mobj_t *target,mobj_t *inflictor,mobj_t *source,int damage)
 		P_KillMobj(source, target);
 		return;
 	}
-	if ((P_Random() < target->painchance)
-		&& !(target->flags&MF_SKULLFLY))
+	if ((P_Random() < target->painchance) && !(target->flags & MF_SKULLFLY))
 	{
-		target->flags |= MF_JUSTHIT; // fight back!
+		target->flags |= MF_JUSTHIT;	// fight back!
 		SetMobjState(target, target->painstate);
 	}
-	target->reactiontime = 0; // we're awake now...
-	if (!target->threshold && source && !(source->flags2&MF2_BOSS)
+	target->reactiontime = 0;	// we're awake now...
+	if (!target->threshold && source && !(source->flags2 & MF2_BOSS)
 		&& !(target->type == MT_SORCERER2 && source->type == MT_WIZARD))
 	{
 		// Target actor is not intent on another actor,
@@ -997,15 +995,15 @@ void SpawnPuff(float x, float y, float z)
 	}
 	switch (PuffType)
 	{
-		case MT_BEAKPUFF:
-		case MT_STAFFPUFF:
-			puff->velocity.z = 1.0 * 35.0;
-			break;
-		case MT_GAUNTLETPUFF1:
-		case MT_GAUNTLETPUFF2:
-			puff->velocity.z = 0.8 * 35.0;
-		default:
-			break;
+	case MT_BEAKPUFF:
+	case MT_STAFFPUFF:
+		puff->velocity.z = 1.0 * 35.0;
+		break;
+	case MT_GAUNTLETPUFF1:
+	case MT_GAUNTLETPUFF2:
+		puff->velocity.z = 0.8 * 35.0;
+	default:
+		break;
 	}
 	if (PuffType == MT_GOLDWANDPUFF1)
 	{
@@ -1029,11 +1027,11 @@ void SpawnPuff(float x, float y, float z)
 
 //==========================================================================
 //
-//	P_BloodSplatter
+//  P_BloodSplatter
 //
 //==========================================================================
 
-void P_BloodSplatter(float x, float y, float z, mobj_t *originator)
+void P_BloodSplatter(float x, float y, float z, mobj_t * originator)
 {
 	mobj_t *mo;
 
@@ -1046,11 +1044,11 @@ void P_BloodSplatter(float x, float y, float z, mobj_t *originator)
 
 //==========================================================================
 //
-//	P_RipperBlood
+//  P_RipperBlood
 //
 //==========================================================================
 
-void P_RipperBlood(mobj_t *mo)
+void P_RipperBlood(mobj_t * mo)
 {
 	mobj_t *th;
 	float x, y, z;
@@ -1067,26 +1065,26 @@ void P_RipperBlood(mobj_t *mo)
 
 //==========================================================================
 //
-//	P_SpawnPlayer
+//  P_SpawnPlayer
 //
-//	Called when a player is spawned on the level
-//	Most of the player structure stays unchanged between levels
+//  Called when a player is spawned on the level
+//  Most of the player structure stays unchanged between levels
 //
 //==========================================================================
 
-void P_SpawnPlayer(mthing_t *mthing)
+void P_SpawnPlayer(mthing_t * mthing)
 {
-	player_t	*p;
-	float		x, y, z;
-	mobj_t		*mobj;
+	player_t *p;
+	float x, y, z;
+	mobj_t *mobj;
 
 	p = &players[mthing->type - 1];
 
 	if (!p->active)
-		return;                                         // not playing
-		
+		return;	// not playing
+
 	if (p->playerstate == PST_REBORN)
-    {
+	{
 		G_PlayerReborn(mthing->type - 1);
 	}
 	x = mthing->x;
@@ -1101,7 +1099,7 @@ void P_SpawnPlayer(mthing_t *mthing)
 	mobj->player = p;
 	mobj->health = p->health;
 	p->mo = mobj;
-	p->playerstate = PST_LIVE;      
+	p->playerstate = PST_LIVE;
 	p->refire = 0;
 	p->damagecount = 0;
 	p->bonuscount = 0;
@@ -1111,7 +1109,7 @@ void P_SpawnPlayer(mthing_t *mthing)
 	p->extralight = 0;
 	p->fixedcolormap = 0;
 	p->viewheight = VIEWHEIGHT;
-	SetupPsprites(p); // setup gun psprite
+	SetupPsprites(p);	// setup gun psprite
 	if (deathmatch)
 	{
 		// Give all keys in death match mode
@@ -1121,16 +1119,16 @@ void P_SpawnPlayer(mthing_t *mthing)
 
 //==========================================================================
 //
-//	P_SpawnMapThing
+//  P_SpawnMapThing
 //
 //==========================================================================
 
-void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
+void P_SpawnMapThing(mthing_t * mthing, boolean spawn_thinkers)
 {
-	int 	i;
-	int 	bit;
-	mobj_t 	*mobj;
-	int		spawnMask;
+	int i;
+	int bit;
+	mobj_t *mobj;
+	int spawnMask;
 
 	if (mthing->type <= 0)
 	{
@@ -1142,17 +1140,20 @@ void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
 	{
 		if (level->numdeathmatchstarts < MAXDEATHMATCHSTARTS)
 		{
-        	CopyMThing(mthing, &level->deathmatchstarts[level->numdeathmatchstarts]);
+			CopyMThing(mthing,
+				&level->deathmatchstarts[level->numdeathmatchstarts]);
 			level->numdeathmatchstarts++;
 		}
 		return;
 	}
-	
+
 	// check for players specially
 	if (mthing->type <= 4)
 	{
 		// save spots for respawning in network games
-		CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type - 1]);
+		CopyMThing(mthing,
+			&level->playerstarts[mthing->arg1 * MAXPLAYERS + mthing->type -
+				1]);
 		return;
 	}
 
@@ -1164,7 +1165,7 @@ void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
 	}
 
 	// Check for boss spots
-	if (mthing->type == 56) // Monster_BossSpot
+	if (mthing->type == 56)	// Monster_BossSpot
 	{
 		AddBossSpot(mthing->x, mthing->y, ANG45 * (mthing->angle / 45));
 		return;
@@ -1175,7 +1176,7 @@ void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
 	{
 		spawnMask = MTF_GSINGLE;
 	}
-	else if(deathmatch)
+	else if (deathmatch)
 	{
 		spawnMask = MTF_GDEATHMATCH;
 	}
@@ -1197,55 +1198,55 @@ void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
 		bit = 1 << (gameskill - 1);
 	if (!(mthing->options & bit))
 		return;
-	
+
 	// find which type to spawn
 	for (i = 0; i < num_mobj_types; i++)
 		if (mthing->type == mobjinfo[i].doomednum)
 			break;
-	
+
 	if (i == num_mobj_types)
 	{
 		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
 		return;
 	}
-		
+
 	// spawn it
-	switch(i)
+	switch (i)
 	{
 		// Special stuff
-		case MT_WSKULLROD:
-		case MT_WPHOENIXROD:
-		case MT_AMSKRDWIMPY:
-		case MT_AMSKRDHEFTY:
-		case MT_AMPHRDWIMPY:
-		case MT_AMPHRDHEFTY:
-		case MT_AMMACEWIMPY:
-		case MT_AMMACEHEFTY:
-		case MT_ARTISUPERHEAL:
-		case MT_ARTITELEPORT:
-		case MT_ITEMSHIELD2:
-			if (shareware)
-			{
-				// Don't place on map in shareware version
-				return;
-			}
-			break;
-		case MT_WMACE:
-			if (!shareware)
-			{
-				// Put in the mace spot list
-				AddMaceSpot(mthing->x, mthing->y);
-				return;
-			}
+	case MT_WSKULLROD:
+	case MT_WPHOENIXROD:
+	case MT_AMSKRDWIMPY:
+	case MT_AMSKRDHEFTY:
+	case MT_AMPHRDWIMPY:
+	case MT_AMPHRDHEFTY:
+	case MT_AMMACEWIMPY:
+	case MT_AMMACEHEFTY:
+	case MT_ARTISUPERHEAL:
+	case MT_ARTITELEPORT:
+	case MT_ITEMSHIELD2:
+		if (shareware)
+		{
+			// Don't place on map in shareware version
 			return;
-		default:
-			break;
+		}
+		break;
+	case MT_WMACE:
+		if (!shareware)
+		{
+			// Put in the mace spot list
+			AddMaceSpot(mthing->x, mthing->y);
+			return;
+		}
+		return;
+	default:
+		break;
 	}
-    if (!spawn_thinkers)
-    {
-    	return;
-    }
+	if (!spawn_thinkers)
+	{
+		return;
+	}
 
 	mobj = NewMobjThinker();
 
@@ -1255,11 +1256,11 @@ void P_SpawnMapThing(mthing_t *mthing, boolean spawn_thinkers)
 
 //==========================================================================
 //
-//	P_HitFloor
+//  P_HitFloor
 //
 //==========================================================================
 
-int P_HitFloor(mobj_t *thing)
+int P_HitFloor(mobj_t * thing)
 {
 	mobj_t *mo;
 
@@ -1270,40 +1271,49 @@ int P_HitFloor(mobj_t *thing)
 	}
 	switch (P_GetThingFloorType(thing))
 	{
-		case FLOOR_WATER:
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASHBASE);
-			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SPLASH);
-			mo->target = thing;
-			mo->velocity.x = (Random() - Random()) * 35.0;
-			mo->velocity.y = (Random() - Random()) * 35.0;
-			mo->velocity.z = (2.0 + Random()) * 35.0;
-			StartSoundName(mo, "WaterSplash", CHAN_VOICE);
-			return FLOOR_WATER;
-		case FLOOR_LAVA:
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASPLASH);
-			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_LAVASMOKE);
-			mo->velocity.z = (1.0 + Random() / 2.0) * 35.0;
-			StartSoundName(mo, "Burn", CHAN_VOICE);
-			return FLOOR_LAVA;
-		case FLOOR_SLUDGE:
-			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGESPLASH);
-			mo = P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ, MT_SLUDGECHUNK);
-			mo->target = thing;
-			mo->velocity.x = (Random() - Random()) * 35.0;
-			mo->velocity.y = (Random() - Random()) * 35.0;
-			mo->velocity.z = (1.0 + Random()) * 35.0;
-			return FLOOR_SLUDGE;
+	case FLOOR_WATER:
+		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_SPLASHBASE);
+		mo =
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_SPLASH);
+		mo->target = thing;
+		mo->velocity.x = (Random() - Random()) * 35.0;
+		mo->velocity.y = (Random() - Random()) * 35.0;
+		mo->velocity.z = (2.0 + Random()) * 35.0;
+		StartSoundName(mo, "WaterSplash", CHAN_VOICE);
+		return FLOOR_WATER;
+	case FLOOR_LAVA:
+		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_LAVASPLASH);
+		mo =
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_LAVASMOKE);
+		mo->velocity.z = (1.0 + Random() / 2.0) * 35.0;
+		StartSoundName(mo, "Burn", CHAN_VOICE);
+		return FLOOR_LAVA;
+	case FLOOR_SLUDGE:
+		P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_SLUDGESPLASH);
+		mo =
+			P_SpawnMobj(thing->origin.x, thing->origin.y, ONFLOORZ,
+			MT_SLUDGECHUNK);
+		mo->target = thing;
+		mo->velocity.x = (Random() - Random()) * 35.0;
+		mo->velocity.y = (Random() - Random()) * 35.0;
+		mo->velocity.z = (1.0 + Random()) * 35.0;
+		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
 }
 
 //===========================================================================
 //
-//	P_FloorBounceMissile
+//  P_FloorBounceMissile
 //
 //===========================================================================
 
-void P_FloorBounceMissile(mobj_t *mo)
+void P_FloorBounceMissile(mobj_t * mo)
 {
 	mo->velocity.z = -mo->velocity.z;
 	SetMobjState(mo, mo->deathstate);
@@ -1311,11 +1321,11 @@ void P_FloorBounceMissile(mobj_t *mo)
 
 //===========================================================================
 //
-//	P_ThrustMobj
+//  P_ThrustMobj
 //
 //===========================================================================
 
-void P_ThrustMobj(mobj_t *mo, angle_t angle, float move)
+void P_ThrustMobj(mobj_t * mo, angle_t angle, float move)
 {
 	mo->velocity.x += move * cos(angle) * 35.0;
 	mo->velocity.y += move * sin(angle) * 35.0;
@@ -1323,94 +1333,97 @@ void P_ThrustMobj(mobj_t *mo, angle_t angle, float move)
 
 //**************************************************************************
 //
-//		NOISE ALERT
+//      NOISE ALERT
 //
 //**************************************************************************
 
-mobj_t*		soundtarget;
+mobj_t *soundtarget;
 
 //==========================================================================
 //
 //  P_RecursiveSound
 //
-//	Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
+//  Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
 // blocking lines cut off traversal.
 //
 //==========================================================================
 
-void P_RecursiveSound(sector_t* sec, int soundblocks)
+void P_RecursiveSound(sector_t * sec, int soundblocks)
 {
-    int			i;
-    line_t*		check;
-    sector_t*	other;
-	
-    // wake up all monsters in this sector
-    if (sec->validcount == *validcount &&
-    	sec->soundtraversed <= soundblocks + 1)
-    {
-		return;		// already flooded
-    }
-    
-    sec->validcount = *validcount;
-    sec->soundtraversed = soundblocks + 1;
-    sec->soundtarget = soundtarget;
-	
-    for (i=0; i<sec->linecount; i++)
-    {
+	int i;
+	line_t *check;
+	sector_t *other;
+
+	// wake up all monsters in this sector
+	if (sec->validcount == *validcount &&
+		sec->soundtraversed <= soundblocks + 1)
+	{
+		return;	// already flooded
+	}
+
+	sec->validcount = *validcount;
+	sec->soundtraversed = soundblocks + 1;
+	sec->soundtarget = soundtarget;
+
+	for (i = 0; i < sec->linecount; i++)
+	{
 		check = sec->lines[i];
 		if (!(check->flags & ML_TWOSIDED))
-		    continue;
-	
+			continue;
+
 		if (!LineOpenings(check, *check->v1))
 		{
 			if (!LineOpenings(check, *check->v2))
-			    continue;	// closed door
+				continue;	// closed door
 		}
-	
+
 		if (level->sides[check->sidenum[0]].sector == sec)
-		    other = level->sides[check->sidenum[1]].sector;
+			other = level->sides[check->sidenum[1]].sector;
 		else
-		    other = level->sides[check->sidenum[0]].sector;
-	
+			other = level->sides[check->sidenum[0]].sector;
+
 		if (check->flags & ML_SOUNDBLOCK)
 		{
-		    if (!soundblocks)
+			if (!soundblocks)
 				P_RecursiveSound(other, 1);
 		}
 		else
-		    P_RecursiveSound(other, soundblocks);
-    }
+			P_RecursiveSound(other, soundblocks);
+	}
 }
 
 //==========================================================================
 //
-//	P_NoiseAlert
+//  P_NoiseAlert
 //
-//	If a monster yells at a player, it will alert other monsters to the
+//  If a monster yells at a player, it will alert other monsters to the
 // player.
 //
 //==========================================================================
 
-void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
+void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 {
-    soundtarget = target;
-    (*validcount)++;
-    P_RecursiveSound(emmiter->subsector->sector, 0);
+	soundtarget = target;
+	(*validcount)++;
+	P_RecursiveSound(emmiter->subsector->sector, 0);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.5  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
+//  $Log$
+//  Revision 1.6  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.4  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.3  2001/07/31 16:59:30  dj_jl
-//	Set model when spawning object
+//  Revision 1.5  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.4  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.3  2001/07/31 16:59:30  dj_jl
+//  Set model when spawning object
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

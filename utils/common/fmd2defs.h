@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	ALIAS MODELS
@@ -96,3 +92,13 @@ struct trivertx_t
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.1  2001/09/24 17:29:18  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

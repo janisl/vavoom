@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -41,11 +41,11 @@
 //
 //============================================================================
 
-void A_SerpentChase(mobj_t* actor)
+void A_SerpentChase(mobj_t * actor)
 {
-	int 	delta;
-	float	oldX, oldY;
-	int		oldFloor;
+	int delta;
+	float oldX, oldY;
+	int oldFloor;
 
 	if (actor->reactiontime)
 	{
@@ -71,24 +71,24 @@ void A_SerpentChase(mobj_t* actor)
 	//
 	// turn towards movement direction if not there yet
 	//
-	if(actor->movedir < 8)
+	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7<<29);
-		delta = actor->angles.yaw-(actor->movedir << 29);
-		if(delta > 0)
+		actor->angles.yaw &= (7 << 29);
+		delta = actor->angles.yaw - (actor->movedir << 29);
+		if (delta > 0)
 		{
-			actor->angles.yaw -= ANG90/2;
+			actor->angles.yaw -= ANG90 / 2;
 		}
-		else if(delta < 0)
+		else if (delta < 0)
 		{
-			actor->angles.yaw += ANG90/2;
+			actor->angles.yaw += ANG90 / 2;
 		}
 	}
 
-	if(!actor->target || !(actor->target->flags&MF_SHOOTABLE))
-	{ // look for a new target
-		if(P_LookForPlayers(actor, true))
-		{ // got a new target
+	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
+	{	// look for a new target
+		if (P_LookForPlayers(actor, true))
+		{	// got a new target
 			return;
 		}
 		SetMobjState(actor, actor->spawnstate);
@@ -98,34 +98,34 @@ void A_SerpentChase(mobj_t* actor)
 	//
 	// don't attack twice in a row
 	//
-	if(actor->flags & MF_JUSTATTACKED)
+	if (actor->flags & MF_JUSTATTACKED)
 	{
 		actor->flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir (actor);
+			P_NewChaseDir(actor);
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (actor->meleestate && CheckMeleeRange (actor))
+	if (actor->meleestate && CheckMeleeRange(actor))
 	{
 		if (actor->sound_attack)
 		{
-			StartSound (actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
-		SetMobjState (actor, actor->meleestate);
+		SetMobjState(actor, actor->meleestate);
 		return;
 	}
 
 	//
 	// possibly choose another target
 	//
-	if (netgame && !actor->threshold && !P_CheckSight (actor, actor->target) )
+	if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target))
 	{
-		if (P_LookForPlayers(actor,true))
-			return;         // got a new target
+		if (P_LookForPlayers(actor, true))
+			return;	// got a new target
 	}
 
 	//
@@ -134,7 +134,7 @@ void A_SerpentChase(mobj_t* actor)
 	oldX = actor->origin.x;
 	oldY = actor->origin.y;
 	oldFloor = actor->subsector->sector->floor.pic;
-	if (--actor->movecount<0 || !P_Move(actor))
+	if (--actor->movecount < 0 || !P_Move(actor))
 	{
 		P_NewChaseDir(actor);
 	}
@@ -155,38 +155,38 @@ void A_SerpentChase(mobj_t* actor)
 
 //============================================================================
 //
-//	A_SerpentHumpDecide
+//  A_SerpentHumpDecide
 //
-//	Decided whether to hump up, or if the mobj is a serpent leader,
+//  Decided whether to hump up, or if the mobj is a serpent leader,
 // to missile attack
 //============================================================================
 
-void A_SerpentHumpDecide(mobj_t* actor)
+void A_SerpentHumpDecide(mobj_t * actor)
 {
-	if(actor->type == MT_SERPENTLEADER)
+	if (actor->type == MT_SERPENTLEADER)
 	{
-		if(P_Random() > 30)
+		if (P_Random() > 30)
 		{
 			return;
 		}
-		else if(P_Random() < 40)
-		{ // Missile attack
+		else if (P_Random() < 40)
+		{	// Missile attack
 			SetMobjState(actor, S_SERPENT_SURFACE1);
 			return;
 		}
 	}
-	else if(P_Random() > 3)
+	else if (P_Random() > 3)
 	{
 		return;
 	}
-	if(!CheckMeleeRange(actor))
-	{ // The hump shouldn't occur when within melee range
-		if(actor->type == MT_SERPENTLEADER && P_Random() < 128)
+	if (!CheckMeleeRange(actor))
+	{	// The hump shouldn't occur when within melee range
+		if (actor->type == MT_SERPENTLEADER && P_Random() < 128)
 		{
 			SetMobjState(actor, S_SERPENT_SURFACE1);
 		}
 		else
-		{	
+		{
 			SetMobjState(actor, S_SERPENT_HUMP1);
 			StartSoundName(actor, "SerpentActive", CHAN_VOICE);
 		}
@@ -199,7 +199,7 @@ void A_SerpentHumpDecide(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentUnHide(mobj_t* actor)
+void A_SerpentUnHide(mobj_t * actor)
 {
 	actor->translucency = 0;
 	actor->floorclip = 24.0;
@@ -212,7 +212,7 @@ void A_SerpentUnHide(mobj_t* actor)
 // Raises the hump above the surface by raising the floorclip level
 //============================================================================
 
-void A_SerpentRaiseHump(mobj_t* actor)
+void A_SerpentRaiseHump(mobj_t * actor)
 {
 	actor->floorclip -= 4.0;
 }
@@ -223,7 +223,7 @@ void A_SerpentRaiseHump(mobj_t* actor)
 // 
 //============================================================================
 
-void A_SerpentLowerHump(mobj_t* actor)
+void A_SerpentLowerHump(mobj_t * actor)
 {
 	actor->floorclip += 4.0;
 }
@@ -234,7 +234,7 @@ void A_SerpentLowerHump(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentHide(mobj_t* actor)
+void A_SerpentHide(mobj_t * actor)
 {
 	actor->translucency = 100;
 	actor->floorclip = 0.0;
@@ -246,7 +246,7 @@ void A_SerpentHide(mobj_t* actor)
 //
 //==========================================================================
 
-void A_SetShootable(mobj_t* actor)
+void A_SetShootable(mobj_t * actor)
 {
 	actor->flags2 &= ~MF2_NONSHOOTABLE;
 	actor->flags |= MF_SHOOTABLE;
@@ -258,7 +258,7 @@ void A_SetShootable(mobj_t* actor)
 //
 //==========================================================================
 
-void A_UnSetShootable(mobj_t* actor)
+void A_UnSetShootable(mobj_t * actor)
 {
 	actor->flags2 |= MF2_NONSHOOTABLE;
 	actor->flags &= ~MF_SHOOTABLE;
@@ -270,38 +270,38 @@ void A_UnSetShootable(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentBirthScream(mobj_t* actor)
+void A_SerpentBirthScream(mobj_t * actor)
 {
 	StartSoundName(actor, "SerpentBirth", CHAN_VOICE);
 }
 
 //============================================================================
 //
-//	A_SerpentCheckForAttack
+//  A_SerpentCheckForAttack
 //
 //============================================================================
 
-void A_SerpentCheckForAttack(mobj_t* actor)
+void A_SerpentCheckForAttack(mobj_t * actor)
 {
-	if(!actor->target)
+	if (!actor->target)
 	{
 		return;
 	}
-	if(actor->type == MT_SERPENTLEADER)
+	if (actor->type == MT_SERPENTLEADER)
 	{
-		if(!CheckMeleeRange(actor))
+		if (!CheckMeleeRange(actor))
 		{
 			SetMobjState(actor, S_SERPENT_ATK1);
 			return;
 		}
 	}
-	if(CheckMeleeRange2(actor))
+	if (CheckMeleeRange2(actor))
 	{
 		SetMobjState(actor, S_SERPENT_WALK1);
 	}
-	else if(CheckMeleeRange(actor))
+	else if (CheckMeleeRange(actor))
 	{
-		if(P_Random() < 32)
+		if (P_Random() < 32)
 		{
 			SetMobjState(actor, S_SERPENT_WALK1);
 		}
@@ -318,36 +318,36 @@ void A_SerpentCheckForAttack(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentDiveSound(mobj_t* actor)
+void A_SerpentDiveSound(mobj_t * actor)
 {
 	StartSoundName(actor, "SerpentActive", CHAN_VOICE);
 }
 
 //============================================================================
 //
-//	A_SerpentWalk
+//  A_SerpentWalk
 //
-//	Similar to A_Chase, only has a hardcoded entering of meleestate.
+//  Similar to A_Chase, only has a hardcoded entering of meleestate.
 //
 //============================================================================
 
-void A_SerpentWalk(mobj_t* actor)
+void A_SerpentWalk(mobj_t * actor)
 {
 	int delta;
 
-	if(actor->reactiontime)
+	if (actor->reactiontime)
 	{
 		actor->reactiontime--;
 	}
 
 	// Modify target threshold
-	if(actor->threshold)
+	if (actor->threshold)
 	{
 		actor->threshold--;
 	}
 
-	if(gameskill == sk_nightmare)
-	{ // Monsters move faster in nightmare mode
+	if (gameskill == sk_nightmare)
+	{	// Monsters move faster in nightmare mode
 		actor->time *= 0.5;
 		if (actor->time < 0.1)
 		{
@@ -358,24 +358,24 @@ void A_SerpentWalk(mobj_t* actor)
 	//
 	// turn towards movement direction if not there yet
 	//
-	if(actor->movedir < 8)
+	if (actor->movedir < 8)
 	{
-		actor->angles.yaw &= (7<<29);
-		delta = actor->angles.yaw-(actor->movedir << 29);
-		if(delta > 0)
+		actor->angles.yaw &= (7 << 29);
+		delta = actor->angles.yaw - (actor->movedir << 29);
+		if (delta > 0)
 		{
-			actor->angles.yaw -= ANG90/2;
+			actor->angles.yaw -= ANG90 / 2;
 		}
-		else if(delta < 0)
+		else if (delta < 0)
 		{
-			actor->angles.yaw += ANG90/2;
+			actor->angles.yaw += ANG90 / 2;
 		}
 	}
 
-	if(!actor->target || !(actor->target->flags&MF_SHOOTABLE))
-	{ // look for a new target
-		if(P_LookForPlayers(actor, true))
-		{ // got a new target
+	if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
+	{	// look for a new target
+		if (P_LookForPlayers(actor, true))
+		{	// got a new target
 			return;
 		}
 		SetMobjState(actor, actor->spawnstate);
@@ -385,22 +385,22 @@ void A_SerpentWalk(mobj_t* actor)
 	//
 	// don't attack twice in a row
 	//
-	if(actor->flags & MF_JUSTATTACKED)
+	if (actor->flags & MF_JUSTATTACKED)
 	{
 		actor->flags &= ~MF_JUSTATTACKED;
 		if (gameskill != sk_nightmare)
-			P_NewChaseDir (actor);
+			P_NewChaseDir(actor);
 		return;
 	}
 
 	//
 	// check for melee attack
 	//
-	if (actor->meleestate && CheckMeleeRange (actor))
+	if (actor->meleestate && CheckMeleeRange(actor))
 	{
 		if (actor->sound_attack)
 		{
-			StartSound (actor, actor->sound_attack, CHAN_WEAPON);
+			StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
 		SetMobjState(actor, S_SERPENT_ATK1);
 		return;
@@ -408,57 +408,57 @@ void A_SerpentWalk(mobj_t* actor)
 	//
 	// possibly choose another target
 	//
-	if (netgame && !actor->threshold && !P_CheckSight (actor, actor->target) )
+	if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target))
 	{
-		if (P_LookForPlayers(actor,true))
-			return;         // got a new target
+		if (P_LookForPlayers(actor, true))
+			return;	// got a new target
 	}
 
 	//
 	// chase towards player
 	//
-	if (--actor->movecount<0 || !P_Move(actor))
+	if (--actor->movecount < 0 || !P_Move(actor))
 	{
-		P_NewChaseDir (actor);
+		P_NewChaseDir(actor);
 	}
 }
 
 //============================================================================
 //
-//	A_SerpentChooseAttack
+//  A_SerpentChooseAttack
 //
 //============================================================================
 
-void A_SerpentChooseAttack(mobj_t* actor)
+void A_SerpentChooseAttack(mobj_t * actor)
 {
-	if(!actor->target || CheckMeleeRange(actor))
+	if (!actor->target || CheckMeleeRange(actor))
 	{
 		return;
 	}
-	if(actor->type == MT_SERPENTLEADER)
+	if (actor->type == MT_SERPENTLEADER)
 	{
 		SetMobjState(actor, S_SERPENT_MISSILE1);
 	}
 }
-	
+
 //============================================================================
 //
 // A_SerpentMeleeAttack
 //
 //============================================================================
 
-void A_SerpentMeleeAttack(mobj_t* actor)
+void A_SerpentMeleeAttack(mobj_t * actor)
 {
-	if(!actor->target)
+	if (!actor->target)
 	{
 		return;
 	}
-	if(CheckMeleeRange(actor))
+	if (CheckMeleeRange(actor))
 	{
 		DamageMobj(actor->target, actor, actor, HITDICE(5));
 		StartSoundName(actor, "SerpentMeleeHit", CHAN_WEAPON);
 	}
-	if(P_Random() < 96)
+	if (P_Random() < 96)
 	{
 		A_SerpentCheckForAttack(actor);
 	}
@@ -469,12 +469,12 @@ void A_SerpentMeleeAttack(mobj_t* actor)
 // A_SerpentMissileAttack
 //
 //============================================================================
-	
-void A_SerpentMissileAttack(mobj_t* actor)
-{
-	mobj_t*	mo;
 
-	if(!actor->target)
+void A_SerpentMissileAttack(mobj_t * actor)
+{
+	mobj_t *mo;
+
+	if (!actor->target)
 	{
 		return;
 	}
@@ -487,9 +487,10 @@ void A_SerpentMissileAttack(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentHeadPop(mobj_t* actor)
+void A_SerpentHeadPop(mobj_t * actor)
 {
-	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0, MT_SERPENT_HEAD);
+	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 45.0,
+		MT_SERPENT_HEAD);
 }
 
 //============================================================================
@@ -498,14 +499,14 @@ void A_SerpentHeadPop(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentSpawnGibs(mobj_t* actor)
+void A_SerpentSpawnGibs(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
 	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
 		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
-		MT_SERPENT_GIB1);	
-	if(mo)
+		MT_SERPENT_GIB1);
+	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
@@ -513,8 +514,8 @@ void A_SerpentSpawnGibs(mobj_t* actor)
 	}
 	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
 		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
-		MT_SERPENT_GIB2);	
-	if(mo)
+		MT_SERPENT_GIB2);
+	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
@@ -522,8 +523,8 @@ void A_SerpentSpawnGibs(mobj_t* actor)
 	}
 	mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
 		actor->origin.y + (Random() - 0.5) * 16.0, actor->floorz + 1.0,
-		MT_SERPENT_GIB3);	
-	if(mo)
+		MT_SERPENT_GIB3);
+	if (mo)
 	{
 		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
 		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
@@ -537,11 +538,11 @@ void A_SerpentSpawnGibs(mobj_t* actor)
 //
 //============================================================================
 
-void A_SerpentHeadCheck(mobj_t* actor)
+void A_SerpentHeadCheck(mobj_t * actor)
 {
 	if (actor->origin.z <= actor->floorz)
 	{
-		if(P_GetThingFloorType(actor) >= FLOOR_LIQUID)
+		if (P_GetThingFloorType(actor) >= FLOOR_LIQUID)
 		{
 			P_HitFloor(actor);
 			SetMobjState(actor, S_NULL);
@@ -559,7 +560,7 @@ void A_SerpentHeadCheck(mobj_t* actor)
 //
 //============================================================================
 
-void A_FloatGib(mobj_t* actor)
+void A_FloatGib(mobj_t * actor)
 {
 	actor->floorclip -= 1.0;
 }
@@ -570,7 +571,7 @@ void A_FloatGib(mobj_t* actor)
 //
 //============================================================================
 
-void A_SinkGib(mobj_t* actor)
+void A_SinkGib(mobj_t * actor)
 {
 	actor->floorclip += 1.0;
 }
@@ -581,18 +582,21 @@ void A_SinkGib(mobj_t* actor)
 //
 //============================================================================
 
-void A_DelayGib(mobj_t* actor)
+void A_DelayGib(mobj_t * actor)
 {
 	actor->time -= Random() * 2.0;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Episode menu
+//**    Episode menu
 //**
 //**************************************************************************
 
@@ -41,28 +41,28 @@ void menu_skill(void);
 
 struct menu_episode_t
 {
-	menu_t		menu;
-	menutext_t	epi1;
-	menutext_t	epi2;
-	menutext_t	epi3;
-	menutext_t	epi4;
-	menutext_t	epi5;
-	menutext_t	title;
+	menu_t menu;
+	menutext_t epi1;
+	menutext_t epi2;
+	menutext_t epi3;
+	menutext_t epi4;
+	menutext_t epi5;
+	menutext_t title;
 };
 
 menu_episode_t EpisodeMenu;
 
-int				MenuEpisode;
+int MenuEpisode;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	menu_episode_callback
+//  menu_episode_callback
 //
 //==========================================================================
 
-void menu_episode_callback(menucommon_t *item, int msg)
+void menu_episode_callback(menucommon_t * item, int msg)
 {
 	if (msg == MMSG_RECEIVE_FOCUS)
 	{
@@ -72,7 +72,7 @@ void menu_episode_callback(menucommon_t *item, int msg)
 
 //==========================================================================
 //
-//	SharewareResponse
+//  SharewareResponse
 //
 //==========================================================================
 
@@ -83,18 +83,19 @@ void SharewareResponse(int key)
 
 //==========================================================================
 //
-//	shareware_func
+//  shareware_func
 //
 //==========================================================================
 
 void shareware_func(void)
 {
-	MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION", SharewareResponse, false);
+	MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
+		SharewareResponse, false);
 }
 
 //==========================================================================
 //
-//	menu_episode
+//  menu_episode
 //
 //==========================================================================
 
@@ -103,9 +104,10 @@ void menu_episode(void)
 	int x = 48;
 	int y = 40;
 
-    InitMenu(&EpisodeMenu.menu);
+	InitMenu(&EpisodeMenu.menu);
 
-	MenuText_InitFunc(&EpisodeMenu.epi1, x, y, "CITY OF THE DAMNED", TEXT_BIG, menu_skill);
+	MenuText_InitFunc(&EpisodeMenu.epi1, x, y, "CITY OF THE DAMNED", TEXT_BIG,
+		menu_skill);
 	EpisodeMenu.epi1.callback = menu_episode_callback;
 	EpisodeMenu.epi1.id = 1;
 	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi1);
@@ -118,8 +120,8 @@ void menu_episode(void)
 	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi2);
 	y += 18;
 
-	MenuText_InitFunc(&EpisodeMenu.epi3, x, y, "THE DOME OF D'SPARIL", TEXT_BIG,
-		shareware ? shareware_func : menu_skill);
+	MenuText_InitFunc(&EpisodeMenu.epi3, x, y, "THE DOME OF D'SPARIL",
+		TEXT_BIG, shareware ? shareware_func : menu_skill);
 	EpisodeMenu.epi3.callback = menu_episode_callback;
 	EpisodeMenu.epi3.id = 3;
 	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi3);
@@ -127,31 +129,37 @@ void menu_episode(void)
 
 	if (ExtendedWAD)
 	{
-		MenuText_InitFunc(&EpisodeMenu.epi4, x, y, "THE OSSUARY", TEXT_BIG, menu_skill);
+		MenuText_InitFunc(&EpisodeMenu.epi4, x, y, "THE OSSUARY", TEXT_BIG,
+			menu_skill);
 		EpisodeMenu.epi4.callback = menu_episode_callback;
 		EpisodeMenu.epi4.id = 4;
 		AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi4);
 		y += 18;
 
-		MenuText_InitFunc(&EpisodeMenu.epi5, x, y, "THE STAGNANT DEMESNE", TEXT_BIG, menu_skill);
+		MenuText_InitFunc(&EpisodeMenu.epi5, x, y, "THE STAGNANT DEMESNE",
+			TEXT_BIG, menu_skill);
 		EpisodeMenu.epi5.callback = menu_episode_callback;
 		EpisodeMenu.epi5.id = 5;
 		AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi5);
 	}
 
-	MenuText_InitTitle(&EpisodeMenu.title, 160, 24, "WHICH EPISODE?", TEXT_BIGC);
+	MenuText_InitTitle(&EpisodeMenu.title, 160, 24, "WHICH EPISODE?",
+		TEXT_BIGC);
 	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.title);
 
-    PushMenu(&EpisodeMenu.menu);
+	PushMenu(&EpisodeMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

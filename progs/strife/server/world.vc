@@ -1,29 +1,25 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
 //**
 //**************************************************************************
 
@@ -41,15 +37,15 @@
 
 //==========================================================================
 //
-//	MakeFloorSlope
+//  MakeFloorSlope
 //
 //==========================================================================
 
-void MakeFloorSlope(mthing_t *mthing)
+void MakeFloorSlope(mthing_t * mthing)
 {
-	sector_t	*sec;
-	line_t		*line;
-	int			i;
+	sector_t *sec;
+	line_t *line;
+	int i;
 
 	sec = PointInSubsector(mthing->x, mthing->y)->sector;
 	for (i = 0; i < sec->linecount; i++)
@@ -57,11 +53,11 @@ void MakeFloorSlope(mthing_t *mthing)
 		line = sec->lines[i];
 		if (mthing->tid == line->arg1)
 		{
-			TVec	v1;
-			TVec	v2;
-			TVec	p1;
-			TVec	p2;
-			TVec	p3;
+			TVec v1;
+			TVec v2;
+			TVec p1;
+			TVec p2;
+			TVec p3;
 
 			p1 = vector(line->v1->x, line->v1->y, sec->floor.minz);
 			p2 = vector(line->v2->x, line->v2->y, sec->floor.minz);
@@ -92,15 +88,15 @@ void MakeFloorSlope(mthing_t *mthing)
 
 //==========================================================================
 //
-//	MakeCeilingSlope
+//  MakeCeilingSlope
 //
 //==========================================================================
 
-void MakeCeilingSlope(mthing_t *mthing)
+void MakeCeilingSlope(mthing_t * mthing)
 {
-	sector_t	*sec;
-	line_t		*line;
-	int			i;
+	sector_t *sec;
+	line_t *line;
+	int i;
 
 	sec = PointInSubsector(mthing->x, mthing->y)->sector;
 	for (i = 0; i < sec->linecount; i++)
@@ -143,13 +139,13 @@ void MakeCeilingSlope(mthing_t *mthing)
 
 //==========================================================================
 //
-//	SpawnExtraFloors
+//  SpawnExtraFloors
 //
 //==========================================================================
 
-void SpawnExtraFloors(line_t *line)
+void SpawnExtraFloors(line_t * line)
 {
-	int				j;
+	int j;
 
 	for (j = 0; j < level->numsectors; j++)
 	{
@@ -162,11 +158,11 @@ void SpawnExtraFloors(line_t *line)
 
 //==========================================================================
 //
-//	MakeContents
+//  MakeContents
 //
 //==========================================================================
 
-void MakeContents(line_t *line)
+void MakeContents(line_t * line)
 {
 	line->frontsector->params.contents = line->arg1;
 
@@ -179,16 +175,16 @@ void MakeContents(line_t *line)
 
 //==========================================================================
 //
-//	SpawnWorld
+//  SpawnWorld
 //
 //==========================================================================
 
 void SpawnWorld(void)
 {
-	int			i;
-	mthing_t	*mthing;
+	int i;
+	mthing_t *mthing;
 
-	//	Spawn slopes first
+	//  Spawn slopes first
 	for (i = 0; i < level->numthings; i++)
 	{
 		mthing = &level->things[i];
@@ -209,7 +205,7 @@ void SpawnWorld(void)
 	}
 
 #if 0
-	//	Spawn 3D floors
+	//  Spawn 3D floors
 	for (i = 0; i < level->numlines; i++)
 	{
 		if (level->lines[i].special == 200)
@@ -220,4 +216,13 @@ void SpawnWorld(void)
 #endif
 }
 
-
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:11  dj_jl
+//  Beautification
+//
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

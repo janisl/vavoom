@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -34,18 +34,18 @@
 // DATA DECLARATIONS -------------------------------------------------------
 
 // demo loop control
-int				demosequence = -1;	// -1 = don't play demos
+int demosequence = -1;	// -1 = don't play demos
 
-float			pagetime;
-int				page_pic;
+float pagetime;
+int page_pic;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	AdvanceDemo
+//  AdvanceDemo
 //
-//	This cycles through the demo sequences.
+//  This cycles through the demo sequences.
 //
 //==========================================================================
 
@@ -53,34 +53,34 @@ void AdvanceDemo(void)
 {
 	demosequence++;
 	demosequence %= 4;
-    
-    switch (demosequence)
-    {
-      case 0:
+
+	switch (demosequence)
+	{
+	case 0:
 		pagetime = 170.0 / 35.0;
 		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-//		S_StartSong("D_STRIFE", P_GetCDTitleTrack(), false);
+//      S_StartSong("D_STRIFE", P_GetCDTitleTrack(), false);
 		CmdBuf_AddText("music play D_STRIFE");
 		break;
 
-      case 1:
+	case 1:
 		CmdBuf_AddText("PlayDemo demo1\n");
 		break;
 
-      case 2:
+	case 2:
 		pagetime = 200.0 / 35.0;
 		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
 		break;
 
-      case 3:
+	case 3:
 		CmdBuf_AddText("PlayDemo demo2\n");
 		break;
-    }
+	}
 }
 
 //==========================================================================
 //
-//	ForceTitle
+//  ForceTitle
 //
 //==========================================================================
 
@@ -92,14 +92,14 @@ void ForceTitle(void)
 
 //==========================================================================
 //
-//	PageDrawer
+//  PageDrawer
 //
 //==========================================================================
 
 void PageDrawer(void)
 {
 	pagetime -= frametime;
-    if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
+	if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
 	{
 		AdvanceDemo();
 	}
@@ -109,7 +109,7 @@ void PageDrawer(void)
 
 //==========================================================================
 //
-//	OnHostEndGame
+//  OnHostEndGame
 //
 //==========================================================================
 
@@ -122,7 +122,7 @@ void OnHostEndGame(void)
 
 //==========================================================================
 //
-//	OnHostError
+//  OnHostError
 //
 //==========================================================================
 
@@ -134,19 +134,22 @@ void OnHostError(void)
 
 //==========================================================================
 //
-//	StopDemoLoop
+//  StopDemoLoop
 //
 //==========================================================================
 
 void StopDemoLoop(void)
 {
-	demosequence = -1;			// not in the demo loop now
+	demosequence = -1;	// not in the demo loop now
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.1  2001/08/04 17:18:35  dj_jl
-//	Moved title / demo loop to progs
+//  $Log$
+//  Revision 1.2  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
+//  Revision 1.1  2001/08/04 17:18:35  dj_jl
+//  Moved title / demo loop to progs
+//  
 //**************************************************************************

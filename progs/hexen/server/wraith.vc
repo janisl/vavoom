@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -26,8 +26,8 @@
 //============================================================================
 // Wraith Variables
 //
-//	special1				Internal index into floatbob
-//	special2
+//  special1                Internal index into floatbob
+//  special2
 //============================================================================
 
 // MACROS ------------------------------------------------------------------
@@ -44,14 +44,14 @@
 
 //============================================================================
 //
-//	A_WraithInit
+//  A_WraithInit
 //
 //============================================================================
 
-void A_WraithInit(mobj_t* actor)
+void A_WraithInit(mobj_t * actor)
 {
 	actor->origin.z += 48.0;
-	actor->special1 = 0;			// index into floatbob
+	actor->special1 = 0;	// index into floatbob
 }
 
 //============================================================================
@@ -60,26 +60,26 @@ void A_WraithInit(mobj_t* actor)
 //
 //============================================================================
 
-void A_WraithRaiseInit(mobj_t* actor)
+void A_WraithRaiseInit(mobj_t * actor)
 {
 	actor->translucency = 0;
 	actor->flags2 &= ~MF2_NONSHOOTABLE;
-	actor->flags |= MF_SHOOTABLE|MF_SOLID;
+	actor->flags |= MF_SHOOTABLE | MF_SOLID;
 	actor->floorclip = actor->height;
 }
 
 //============================================================================
 //
-//	A_WraithRaise
+//  A_WraithRaise
 //
 //============================================================================
 
-void A_WraithRaise(mobj_t* actor)
+void A_WraithRaise(mobj_t * actor)
 {
 	if (RaiseMobj(actor))
 	{
 		// Reached it's target height
-		SetMobjState(actor,S_WRAITH_CHASE1);
+		SetMobjState(actor, S_WRAITH_CHASE1);
 	}
 
 	SpawnDirt(actor, actor->radius);
@@ -87,11 +87,11 @@ void A_WraithRaise(mobj_t* actor)
 
 //============================================================================
 //
-//	A_WraithLook
+//  A_WraithLook
 //
 //============================================================================
 
-void A_WraithLook(mobj_t* actor)
+void A_WraithLook(mobj_t * actor)
 {
 //      A_WraithFX4(actor);             // too expensive
 	A_Look(actor);
@@ -99,30 +99,32 @@ void A_WraithLook(mobj_t* actor)
 
 //============================================================================
 //
-//	A_WraithFX2
+//  A_WraithFX2
 //
-//	Spawns sparkle tail of missile.
+//  Spawns sparkle tail of missile.
 //
 //============================================================================
 
-void A_WraithFX2(mobj_t* actor)
+void A_WraithFX2(mobj_t * actor)
 {
-	mobj_t*	mo;
-	angle_t	angle;
-	int 	i;
+	mobj_t *mo;
+	angle_t angle;
+	int i;
 
-	for (i=0; i<2; i++)
+	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_WRAITHFX2);
-		if(mo)
+		mo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_WRAITHFX2);
+		if (mo)
 		{
-			if (P_Random()<128)
+			if (P_Random() < 128)
 			{
-				 angle = actor->angles.yaw+(P_Random()<<22);
+				angle = actor->angles.yaw + (P_Random() << 22);
 			}
 			else
 			{
-				 angle = actor->angles.yaw-(P_Random()<<22);
+				angle = actor->angles.yaw - (P_Random() << 22);
 			}
 			mo->velocity.z = 0.0;
 			mo->velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
@@ -137,26 +139,28 @@ void A_WraithFX2(mobj_t* actor)
 //
 //  A_WraithFX3
 //
-//	Spawn an FX3 around the actor during attacks.
+//  Spawn an FX3 around the actor during attacks.
 //
 //============================================================================
 
-void A_WraithFX3(mobj_t* actor)
+void A_WraithFX3(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	numdropped=P_Random()%15;
-	int 	i;
+	mobj_t *mo;
+	int numdropped = P_Random() % 15;
+	int i;
 
-	for (i=0; i<numdropped; i++)
+	for (i = 0; i < numdropped; i++)
 	{
-		  mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_WRAITHFX3);
-		  if(mo)
-		  {
-				mo->origin.x += (Random() - 0.5) * 8.0;
-				mo->origin.y += (Random() - 0.5) * 8.0;
-				mo->origin.z += Random() * 4.0;
-				mo->target = actor;
-		  }
+		mo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_WRAITHFX3);
+		if (mo)
+		{
+			mo->origin.x += (Random() - 0.5) * 8.0;
+			mo->origin.y += (Random() - 0.5) * 8.0;
+			mo->origin.z += Random() * 4.0;
+			mo->target = actor;
+		}
 	}
 }
 
@@ -164,15 +168,15 @@ void A_WraithFX3(mobj_t* actor)
 //
 //  A_WraithFX4
 //
-//	Spawn an FX4 during movement.
+//  Spawn an FX4 during movement.
 //
 //============================================================================
 
-void A_WraithFX4(mobj_t* actor)
+void A_WraithFX4(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int 	chance = P_Random();
-	int 	spawn4,spawn5;
+	mobj_t *mo;
+	int chance = P_Random();
+	int spawn4, spawn5;
 
 	if (chance < 10)
 	{
@@ -197,25 +201,29 @@ void A_WraithFX4(mobj_t* actor)
 
 	if (spawn4)
 	{
-		  mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_WRAITHFX4);
-		  if(mo)
-		  {
-				mo->origin.x += (Random() - 0.5) * 16.0;
-				mo->origin.y += (Random() - 0.5) * 16.0;
-				mo->origin.z += Random() * 4.0;
-				mo->target = actor;
-		  }
+		mo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_WRAITHFX4);
+		if (mo)
+		{
+			mo->origin.x += (Random() - 0.5) * 16.0;
+			mo->origin.y += (Random() - 0.5) * 16.0;
+			mo->origin.z += Random() * 4.0;
+			mo->target = actor;
+		}
 	}
 	if (spawn5)
 	{
-		  mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_WRAITHFX5);
-		  if(mo)
-		  {
-				mo->origin.x += (Random() - 0.5) * 8.0;
-				mo->origin.y += (Random() - 0.5) * 8.0;
-				mo->origin.z += Random() * 4.0;
-				mo->target = actor;
-		  }
+		mo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			MT_WRAITHFX5);
+		if (mo)
+		{
+			mo->origin.x += (Random() - 0.5) * 8.0;
+			mo->origin.y += (Random() - 0.5) * 8.0;
+			mo->origin.z += Random() * 4.0;
+			mo->target = actor;
+		}
 	}
 }
 
@@ -225,16 +233,17 @@ void A_WraithFX4(mobj_t* actor)
 //
 //============================================================================
 
-void A_WraithChase(mobj_t* actor)
+void A_WraithChase(mobj_t * actor)
 {
 	int weaveindex = actor->special1;
+
 	actor->origin.z += FloatBobOffsets[weaveindex];
-	actor->special1 = (weaveindex+2)&63;
-//	if (actor->floorclip > 0)
-//	{
-//		SetMobjState(actor, S_WRAITH_RAISE2);
-//		return;
-//	}
+	actor->special1 = (weaveindex + 2) & 63;
+//  if (actor->floorclip > 0)
+//  {
+//      SetMobjState(actor, S_WRAITH_RAISE2);
+//      return;
+//  }
 	A_Chase(actor);
 	A_WraithFX4(actor);
 }
@@ -245,12 +254,12 @@ void A_WraithChase(mobj_t* actor)
 //
 //============================================================================
 
-void A_WraithMelee(mobj_t* actor)
+void A_WraithMelee(mobj_t * actor)
 {
-	int 	amount;
+	int amount;
 
 	// Steal health from target and give to player
-	if(CheckMeleeRange(actor) && (P_Random()<220))
+	if (CheckMeleeRange(actor) && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
 		DamageMobj(actor->target, actor, actor, amount);
@@ -264,9 +273,9 @@ void A_WraithMelee(mobj_t* actor)
 //
 //============================================================================
 
-void A_WraithMissile(mobj_t* actor)
+void A_WraithMissile(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
 	mo = SpawnMissile(actor, actor->target, MT_WRAITHFX1);
 	if (mo)
@@ -277,11 +286,14 @@ void A_WraithMissile(mobj_t* actor)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:18  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:18  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

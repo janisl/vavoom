@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Controls menus
+//**    Controls menus
 //**
 //**************************************************************************
 
@@ -35,30 +35,30 @@
 
 struct menu_controls_t
 {
-	menu_t			menu;
-	menucontrol_t	ctl[15];
-	menutext_t		title;
+	menu_t menu;
+	menucontrol_t ctl[15];
+	menutext_t title;
 };
 
 struct menu_controls2_t
 {
-	menu_t			menu;
-	menucontrol_t	ctl[7];
-	menutext_t		title;
+	menu_t menu;
+	menucontrol_t ctl[7];
+	menutext_t title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_controls_t		ControlsMenu;
-menu_controls2_t	Controls2Menu;
+menu_controls_t ControlsMenu;
+menu_controls2_t Controls2Menu;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	menu_controls
+//  menu_controls
 //
 //==========================================================================
 
@@ -67,61 +67,77 @@ void menu_controls(void)
 	int x = 120;
 	int y = 26;
 
-    InitMenu(&ControlsMenu.menu);
+	InitMenu(&ControlsMenu.menu);
 
-	MenuControl_Init(&ControlsMenu.ctl[0], &ControlsMenu.menu, x, y, "Move foward", "+Forward", "-Forward");
+	MenuControl_Init(&ControlsMenu.ctl[0], &ControlsMenu.menu, x, y,
+		"Move foward", "+Forward", "-Forward");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[1], &ControlsMenu.menu, x, y, "Move backward", "+Backward", "-Backward");
+	MenuControl_Init(&ControlsMenu.ctl[1], &ControlsMenu.menu, x, y,
+		"Move backward", "+Backward", "-Backward");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[2], &ControlsMenu.menu, x, y, "Turn left", "+Left", "-Left");
+	MenuControl_Init(&ControlsMenu.ctl[2], &ControlsMenu.menu, x, y,
+		"Turn left", "+Left", "-Left");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[3], &ControlsMenu.menu, x, y, "Turn right", "+Right", "-Right");
+	MenuControl_Init(&ControlsMenu.ctl[3], &ControlsMenu.menu, x, y,
+		"Turn right", "+Right", "-Right");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[4], &ControlsMenu.menu, x, y, "Move left", "+MoveLeft", "-MoveLeft");
+	MenuControl_Init(&ControlsMenu.ctl[4], &ControlsMenu.menu, x, y,
+		"Move left", "+MoveLeft", "-MoveLeft");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[5], &ControlsMenu.menu, x, y, "Move right", "+MoveRight", "-MoveRight");
+	MenuControl_Init(&ControlsMenu.ctl[5], &ControlsMenu.menu, x, y,
+		"Move right", "+MoveRight", "-MoveRight");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[6], &ControlsMenu.menu, x, y, "Look up", "+LookUp", "-LookUp");
+	MenuControl_Init(&ControlsMenu.ctl[6], &ControlsMenu.menu, x, y,
+		"Look up", "+LookUp", "-LookUp");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[7], &ControlsMenu.menu, x, y, "Look down", "+LookDown", "-LookDown");
+	MenuControl_Init(&ControlsMenu.ctl[7], &ControlsMenu.menu, x, y,
+		"Look down", "+LookDown", "-LookDown");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[8], &ControlsMenu.menu, x, y, "Center look", "+LookCenter", "-LookCenter");
+	MenuControl_Init(&ControlsMenu.ctl[8], &ControlsMenu.menu, x, y,
+		"Center look", "+LookCenter", "-LookCenter");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[9], &ControlsMenu.menu, x, y, "Jump", "+Jump", "-Jump");
+	MenuControl_Init(&ControlsMenu.ctl[9], &ControlsMenu.menu, x, y, "Jump",
+		"+Jump", "-Jump");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[10], &ControlsMenu.menu, x, y, "Fire", "+Attack", "-Attack");
+	MenuControl_Init(&ControlsMenu.ctl[10], &ControlsMenu.menu, x, y, "Fire",
+		"+Attack", "-Attack");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[11], &ControlsMenu.menu, x, y, "Use", "+Use", "-Use");
+	MenuControl_Init(&ControlsMenu.ctl[11], &ControlsMenu.menu, x, y, "Use",
+		"+Use", "-Use");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[12], &ControlsMenu.menu, x, y, "Strafe", "+Strafe", "-Strafe");
+	MenuControl_Init(&ControlsMenu.ctl[12], &ControlsMenu.menu, x, y,
+		"Strafe", "+Strafe", "-Strafe");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[13], &ControlsMenu.menu, x, y, "Run", "+Speed", "-Speed");
+	MenuControl_Init(&ControlsMenu.ctl[13], &ControlsMenu.menu, x, y, "Run",
+		"+Speed", "-Speed");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[14], &ControlsMenu.menu, x, y, "Mouse look", "+MouseLook", "-MouseLook");
+	MenuControl_Init(&ControlsMenu.ctl[14], &ControlsMenu.menu, x, y,
+		"Mouse look", "+MouseLook", "-MouseLook");
 
-	MenuText_InitTitle(&ControlsMenu.title, 160, 24, "SETUP CONTROLS", TEXT_BIGC);
+	MenuText_InitTitle(&ControlsMenu.title, 160, 24, "SETUP CONTROLS",
+		TEXT_BIGC);
 	AddMenuItem(&ControlsMenu.menu, &ControlsMenu.title);
 
-    PushMenu(&ControlsMenu.menu);
+	PushMenu(&ControlsMenu.menu);
 }
 
 //==========================================================================
 //
-//	menu_controls2
+//  menu_controls2
 //
 //==========================================================================
 
@@ -130,41 +146,52 @@ void menu_controls2(void)
 	int x = 120;
 	int y = 26;
 
-    InitMenu(&Controls2Menu.menu);
+	InitMenu(&Controls2Menu.menu);
 
-	MenuControl_Init(&Controls2Menu.ctl[0], &Controls2Menu.menu, x, y, "Fly up", "+FlyUp", "-FlyUp");
+	MenuControl_Init(&Controls2Menu.ctl[0], &Controls2Menu.menu, x, y,
+		"Fly up", "+FlyUp", "-FlyUp");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[1], &Controls2Menu.menu, x, y, "Fly down", "+FlyDown", "-FlyDown");
+	MenuControl_Init(&Controls2Menu.ctl[1], &Controls2Menu.menu, x, y,
+		"Fly down", "+FlyDown", "-FlyDown");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[2], &Controls2Menu.menu, x, y, "Center flight", "+FlyCenter", "-FlyCenter");
+	MenuControl_Init(&Controls2Menu.ctl[2], &Controls2Menu.menu, x, y,
+		"Center flight", "+FlyCenter", "-FlyCenter");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[3], &Controls2Menu.menu, x, y, "Inventory left", "Impulse 13", "");
+	MenuControl_Init(&Controls2Menu.ctl[3], &Controls2Menu.menu, x, y,
+		"Inventory left", "Impulse 13", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[4], &Controls2Menu.menu, x, y, "Inventory right", "Impulse 14", "");
+	MenuControl_Init(&Controls2Menu.ctl[4], &Controls2Menu.menu, x, y,
+		"Inventory right", "Impulse 14", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[5], &Controls2Menu.menu, x, y, "Inventory use", "Impulse 15", "");
+	MenuControl_Init(&Controls2Menu.ctl[5], &Controls2Menu.menu, x, y,
+		"Inventory use", "Impulse 15", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[6], &Controls2Menu.menu, x, y, "Talk key", "ChatMode", "");
+	MenuControl_Init(&Controls2Menu.ctl[6], &Controls2Menu.menu, x, y,
+		"Talk key", "ChatMode", "");
 
-	MenuText_InitTitle(&Controls2Menu.title, 160, 24, "SETUP CONTROLS", TEXT_BIGC);
+	MenuText_InitTitle(&Controls2Menu.title, 160, 24, "SETUP CONTROLS",
+		TEXT_BIGC);
 	AddMenuItem(&Controls2Menu.menu, &Controls2Menu.title);
 
-    PushMenu(&Controls2Menu.menu);
+	PushMenu(&Controls2Menu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -35,9 +35,8 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int		ecolors[8] =
-{
-	0,					// EF_DL_NONE
+int ecolors[8] = {
+	0,	// EF_DL_NONE
 	RGB(255, 255, 255),	// EF_DL_WHITE
 	RGB(255, 32, 32),	// EF_DL_RED
 	RGB(32, 255, 32),	// EF_DL_GREEN
@@ -48,16 +47,16 @@ int		ecolors[8] =
 
 //==========================================================================
 //
-//	ParseGunShot
+//  ParseGunShot
 //
 //==========================================================================
 
 void ParseGunShot(void)
 {
-	TVec		org;
-	int			i, j;
-	particle_t	*p;
-	int			c;
+	TVec org;
+	int i, j;
+	particle_t *p;
+	int c;
 
 	org.x = itof(MSG_ReadShort());
 	org.y = itof(MSG_ReadShort());
@@ -81,17 +80,17 @@ void ParseGunShot(void)
 
 //==========================================================================
 //
-//	ParseBlood
+//  ParseBlood
 //
 //==========================================================================
 
 void ParseBlood(void)
 {
-	TVec		org;
-	int			damage;
-	int			i, j;
-	particle_t	*p;
-	int			c;
+	TVec org;
+	int damage;
+	int i, j;
+	particle_t *p;
+	int c;
 
 	org.x = itof(MSG_ReadShort());
 	org.y = itof(MSG_ReadShort());
@@ -116,15 +115,15 @@ void ParseBlood(void)
 
 //==========================================================================
 //
-//	ParseExplosion
+//  ParseExplosion
 //
 //==========================================================================
 
 void ParseExplosion(void)
 {
-	TVec		org;
-	dlight_t	*dl;
-	int			etype;
+	TVec org;
+	dlight_t *dl;
+	int etype;
 
 	etype = MSG_ReadByte();
 	org.x = itof(MSG_ReadShort());
@@ -141,7 +140,7 @@ void ParseExplosion(void)
 
 //==========================================================================
 //
-//	ParseServerCommand
+//  ParseServerCommand
 //
 //==========================================================================
 
@@ -149,19 +148,19 @@ boolean ParseServerCommand(int cmd_type)
 {
 	switch (cmd_type)
 	{
-	 case svc_gun_shot:
+	case svc_gun_shot:
 		ParseGunShot();
 		break;
 
-	 case svc_blood:
+	case svc_blood:
 		ParseBlood();
 		break;
 
-	 case svc_explosion:
+	case svc_explosion:
 		ParseExplosion();
 		break;
 
-	 default:
+	default:
 		return false;
 	}
 	return true;
@@ -169,30 +168,30 @@ boolean ParseServerCommand(int cmd_type)
 
 //==========================================================================
 //
-//	UpdateParticle
+//  UpdateParticle
 //
 //==========================================================================
 
-void UpdateParticle(particle_t *p)
+void UpdateParticle(particle_t * p)
 {
 }
 
 //==========================================================================
 //
-//	CL_UpdateMobj
+//  CL_UpdateMobj
 //
 //==========================================================================
 
-void CL_UpdateMobj(clmobj_t *mobj, int key)
+void CL_UpdateMobj(clmobj_t * mobj, int key)
 {
-	dlight_t	*dl;
+	dlight_t *dl;
 
 	switch (mobj->effects & EF_DLIGHT_MASK)
 	{
-	 case EF_DL_NONE:
+	case EF_DL_NONE:
 		break;
 
-	 case EF_DL_WHITE:
+	case EF_DL_WHITE:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -200,7 +199,7 @@ void CL_UpdateMobj(clmobj_t *mobj, int key)
 		dl->die = cl->time + 0.1;
 		break;
 
-	 case EF_DL_RED:
+	case EF_DL_RED:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -208,7 +207,7 @@ void CL_UpdateMobj(clmobj_t *mobj, int key)
 		dl->die = cl->time + 0.1;
 		break;
 
-	 case EF_DL_GREEN:
+	case EF_DL_GREEN:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -216,7 +215,7 @@ void CL_UpdateMobj(clmobj_t *mobj, int key)
 		dl->die = cl->time + 0.1;
 		break;
 
-	 case EF_DL_BLUE:
+	case EF_DL_BLUE:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -228,11 +227,14 @@ void CL_UpdateMobj(clmobj_t *mobj, int key)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

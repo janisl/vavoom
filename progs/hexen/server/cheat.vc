@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -82,12 +82,13 @@ void Cheat_NoClip(void)
 void Cheat_Gimme(void)
 {
 	if (Cmd_CheckParm("weapons"))
-    {
+	{
 		int i;
 
 		for (i = 0; i < NUMARMOR; i++)
 		{
-			players[0].armorpoints[i] = ArmorIncrement[players[0].pclass * NUMARMOR + i];
+			players[0].armorpoints[i] =
+				ArmorIncrement[players[0].pclass * NUMARMOR + i];
 		}
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
@@ -97,11 +98,11 @@ void Cheat_Gimme(void)
 		{
 			players[0].mana[i] = MAX_MANA;
 		}
-        players[0].pieces = 7;
+		players[0].pieces = 7;
 		cprint(&players[0], "ALL WEAPONS\n");
 	}
-    if (Cmd_CheckParm("health"))
-    {
+	if (Cmd_CheckParm("health"))
+	{
 		if (players[0].morphTics)
 		{
 			players[0].health = players[0].mo->health = MAXMORPHHEALTH;
@@ -112,13 +113,13 @@ void Cheat_Gimme(void)
 		}
 		cprint(&players[0], "FULL HEALTH\n");
 	}
-    if (Cmd_CheckParm("keys"))
-    {
+	if (Cmd_CheckParm("keys"))
+	{
 		players[0].keys = 2047;
 		cprint(&players[0], "ALL KEYS\n");
 	}
-    if (Cmd_CheckParm("artifacts"))
-    {
+	if (Cmd_CheckParm("artifacts"))
+	{
 		int i;
 		int j;
 
@@ -131,8 +132,8 @@ void Cheat_Gimme(void)
 		}
 		cprint(&players[0], "ALL ARTIFACTS\n");
 	}
-    if (Cmd_CheckParm("puzzles"))
-    {
+	if (Cmd_CheckParm("puzzles"))
+	{
 		int i;
 
 		for (i = arti_firstpuzzitem; i < NUMARTIFACTS; i++)
@@ -145,16 +146,16 @@ void Cheat_Gimme(void)
 
 //==========================================================================
 //
-//	P_Massacre
+//  P_Massacre
 //
-//	Kills all monsters.
+//  Kills all monsters.
 //
 //==========================================================================
 
 int P_Massacre(void)
 {
-	int 	count;
-	mobj_t	*mo;
+	int count;
+	mobj_t *mo;
 
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
@@ -195,7 +196,7 @@ void Cheat_Morph(void)
 	}
 	else
 	{
-	 	P_MorphPlayer(&players[0]);
+		P_MorphPlayer(&players[0]);
 	}
 	cprint(&players[0], "SQUEAL!!\n");
 }
@@ -209,6 +210,7 @@ void Cheat_Morph(void)
 void Cheat_NoWeapons(void)
 {
 	int i;
+
 	if (players[0].morphTics)
 	{
 		return;
@@ -218,7 +220,7 @@ void Cheat_NoWeapons(void)
 		players[0].weaponowned[i] = false;
 	}
 	players[0].pendingweapon = WP_FIRST;
-    players[0].pieces = 0;
+	players[0].pieces = 0;
 	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS\n");
 }
 
@@ -230,19 +232,19 @@ void Cheat_NoWeapons(void)
 
 void Cheat_Class(void)
 {
-	int	i;
-	int	pclass;
+	int i;
+	int pclass;
 
 	if (players[0].morphTics)
-	{ // don't change class if the player is morphed
+	{	// don't change class if the player is morphed
 		return;
 	}
-    if (Cmd_CheckParm("fighter"))
-    	pclass = PCLASS_FIGHTER;
-    else if (Cmd_CheckParm("cleric"))
-    	pclass = PCLASS_CLERIC;
-    else if (Cmd_CheckParm("mage"))
-    	pclass = PCLASS_MAGE;
+	if (Cmd_CheckParm("fighter"))
+		pclass = PCLASS_FIGHTER;
+	else if (Cmd_CheckParm("cleric"))
+		pclass = PCLASS_CLERIC;
+	else if (Cmd_CheckParm("mage"))
+		pclass = PCLASS_MAGE;
 	else
 	{
 		cprint(&players[0], "INVALID PLAYER CLASS\n");
@@ -260,11 +262,14 @@ void Cheat_Class(void)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

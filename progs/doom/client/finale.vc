@@ -1,38 +1,31 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.3  2001/08/15 17:07:10  dj_jl
-//**	Fixed finale
-//**
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 
 //**************************************************************************
 //**
-//**	DOOM finale
+//**    DOOM finale
 //**
 //**************************************************************************
 
@@ -53,27 +46,27 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int				f_episode;
-int				f_map;
+int f_episode;
+int f_map;
 
-int				FinaleStage;
-float			FinaleTime;
-float			FinaleEndTime;
-string			FinaleFlat;
+int FinaleStage;
+float FinaleTime;
+float FinaleEndTime;
+string FinaleFlat;
 
-int				FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
+int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
 
-int				fpage1;
-int				fpage2;
-int				fend[7];
+int fpage1;
+int fpage2;
+int fend[7];
 
-int				laststage;
+int laststage;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	F_GetFinaleText
+//  F_GetFinaleText
 //
 //==========================================================================
 
@@ -85,20 +78,20 @@ void F_GetFinaleText(string msgLumpName)
 
 //===========================================================================
 //
-//	F_TextWrite
+//  F_TextWrite
 //
 //===========================================================================
 
 void F_TextWrite(void)
 {
-    int		count;
+	int count;
 
-    // erase the entire screen to a tiled background
+	// erase the entire screen to a tiled background
 	R_FillRectWithFlat(0, 0, 320, 200, FinaleFlat);
 
-    // draw some of the text onto the screen
-    count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
-    if (count < 0)
+	// draw some of the text onto the screen
+	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
+	if (count < 0)
 		count = 0;
 
 	T_SetFont(font_small);
@@ -108,13 +101,13 @@ void F_TextWrite(void)
 
 //==========================================================================
 //
-//	F_InitBunnyScroll
+//  F_InitBunnyScroll
 //
 //==========================================================================
 
 void F_InitBunnyScroll(void)
 {
-	int			i;
+	int i;
 
 	fpage1 = R_RegisterPic("PFUB1", PIC_PATCH);
 	fpage2 = R_RegisterPic("PFUB2", PIC_PATCH);
@@ -137,15 +130,15 @@ void F_InitBunnyScroll(void)
 
 void F_BunnyScroll(void)
 {
-    int			scrolled;
-    int			stage;
-		
-    scrolled = ftoi((FinaleTime - 6.5) * 16.0);
-    if (scrolled <= 0)
+	int scrolled;
+	int stage;
+
+	scrolled = ftoi((FinaleTime - 6.5) * 16.0);
+	if (scrolled <= 0)
 	{
 		R_DrawPic(0, 0, fpage1);
 	}
-    else if (scrolled >= 320)
+	else if (scrolled >= 320)
 	{
 		R_DrawPic(0, 0, fpage2);
 	}
@@ -155,65 +148,65 @@ void F_BunnyScroll(void)
 		R_DrawPic(scrolled - 320, 0, fpage2);
 	}
 
-    if (FinaleTime < 32.0)
+	if (FinaleTime < 32.0)
 	{
 		return;
 	}
-    if (FinaleTime < 35.0)
-    {
+	if (FinaleTime < 35.0)
+	{
 		R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[0]);
 		laststage = 0;
 		return;
-    }
+	}
 
-    stage = ftoi((FinaleTime - 35.0) * 7.0);
-    if (stage > 6)
+	stage = ftoi((FinaleTime - 35.0) * 7.0);
+	if (stage > 6)
 	{
 		stage = 6;
 	}
-    if (stage > laststage)
-    {
+	if (stage > laststage)
+	{
 		LocalSound("PistolFire");
 		laststage = stage;
-    }
-    R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
+	}
+	R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
 }
 
 //==========================================================================
 //
-//	F_StartFinale
+//  F_StartFinale
 //
 //==========================================================================
 
 void F_StartFinale(void)
 {
-    cl->intermission = 2;
-    FinaleStage = 0;
-    FinaleTime = 0.0;
+	cl->intermission = 2;
+	FinaleStage = 0;
+	FinaleTime = 0.0;
 
 	FindEpisodeAndMap(ARR2STR(level->mapname), &f_episode, &f_map);
 
 	switch (f_episode)
 	{
-	 case 1:
-	    FinaleFlat = "FLOOR4_8";
+	case 1:
+		FinaleFlat = "FLOOR4_8";
 		F_GetFinaleText("FIN1TEXT");
-	    break;
-	 case 2:
-	    FinaleFlat = "SFLR6_1";
+		break;
+	case 2:
+		FinaleFlat = "SFLR6_1";
 		F_GetFinaleText("FIN2TEXT");
-	    break;
-	 case 3:
-	    FinaleFlat = "MFLR8_4";
+		break;
+	case 3:
+		FinaleFlat = "MFLR8_4";
 		F_GetFinaleText("FIN3TEXT");
-	    break;
-	 case 4:
-	    FinaleFlat = "MFLR8_3";
+		break;
+	case 4:
+		FinaleFlat = "MFLR8_3";
 		F_GetFinaleText("FIN4TEXT");
-	    break;
-	 default:
-	    // Ouch.
-	    break;
+		break;
+	default:
+		// Ouch.
+		break;
 	}
 
 #ifdef FIXME
@@ -225,49 +218,49 @@ void F_StartFinale(void)
 
 //===========================================================================
 //
-//	F_Ticker
+//  F_Ticker
 //
 //===========================================================================
 
 void F_Ticker(void)
 {
-   	FinaleTime += frametime;
+	FinaleTime += frametime;
 
-    if (!FinaleStage && FinaleTime > FinaleEndTime)
-   	{
+	if (!FinaleStage && FinaleTime > FinaleEndTime)
+	{
 		FinaleTime = 0.0;
 		FinaleStage = 1;
 		switch (f_episode)
 		{
-		 case 1:
-		    if (ExtendedWAD)
-	    		fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
-		    else
-	    		fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
-		    break;
-		 case 2:
-		    fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
-		    break;
-		 case 3:
+		case 1:
+			if (ExtendedWAD)
+				fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
+			else
+				fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
+			break;
+		case 2:
+			fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
+			break;
+		case 3:
 			F_InitBunnyScroll();
-		    break;
-		 case 4:
-		    fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
-		    break;
+			break;
+		case 4:
+			fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
+			break;
 		}
-   	}
+	}
 }
 
 //==========================================================================
 //
-//	F_Drawer
+//  F_Drawer
 //
 //==========================================================================
 
 void F_Drawer(void)
 {
-    if (!FinaleStage)
-    {
+	if (!FinaleStage)
+	{
 		F_TextWrite();
 		return;
 	}
@@ -278,26 +271,26 @@ void F_Drawer(void)
 	}
 	else
 	{
-	    R_DrawPic(0, 0, fpage1);
+		R_DrawPic(0, 0, fpage1);
 	}
 }
 
 //===========================================================================
 //
-//	F_Responder
+//  F_Responder
 //
 //===========================================================================
 
-boolean F_Responder(event_t *event)
+boolean F_Responder(event_t * event)
 {
-    return false;
+	return false;
 }
 
 #else
 
 //**************************************************************************
 //**
-//**	DOOM 2 finale
+//**    DOOM 2 finale
 //**
 //**************************************************************************
 
@@ -311,47 +304,45 @@ boolean F_Responder(event_t *event)
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int					fpage1;
+int fpage1;
 
 #if 0
-static int			castnum;
-static int			*castorder;
-static state_t		*caststate;
-static float		casttime;
-static boolean		castdeath;
-static int			castframes;
-static int			castonmelee;
-static boolean		castattacking;
+static int castnum;
+static int *castorder;
+static state_t *caststate;
+static float casttime;
+static boolean castdeath;
+static int castframes;
+static int castonmelee;
+static boolean castattacking;
 
 // Casting by id Software. in order of appearance
-int castorder[] =
-{
-    MT_POSSESSED,
-    MT_SHOTGUY,
-    MT_CHAINGUY,
-    MT_TROOP,
-    MT_SERGEANT,
-    MT_SKULL,
-    MT_HEAD,
-    MT_KNIGHT,
-    MT_BRUISER,
-    MT_BABY,
-    MT_PAIN,
-    MT_UNDEAD,
-    MT_FATSO,
-    MT_VILE,
-    MT_SPIDER,
-    MT_CYBORG,
-    MT_PLAYER,
+int castorder[] = {
+	MT_POSSESSED,
+	MT_SHOTGUY,
+	MT_CHAINGUY,
+	MT_TROOP,
+	MT_SERGEANT,
+	MT_SKULL,
+	MT_HEAD,
+	MT_KNIGHT,
+	MT_BRUISER,
+	MT_BABY,
+	MT_PAIN,
+	MT_UNDEAD,
+	MT_FATSO,
+	MT_VILE,
+	MT_SPIDER,
+	MT_CYBORG,
+	MT_PLAYER,
 
-    -1
+	-1
 };
 
 //
 // Character cast strings
 //
-string caststrings[] =
-{
+string caststrings[] = {
 	"ZOMBIEMAN",
 	"SHOTGUN GUY",
 	"HEAVY WEAPON DUDE",
@@ -383,70 +374,106 @@ string caststrings[] =
 void F_StartCast(void)
 {
 #ifdef FIXME
-    S_StartSong("D_EVIL", P_GetCDEnd2Track(), true);
+	S_StartSong("D_EVIL", P_GetCDEnd2Track(), true);
 #else
-    CmdBuf_AddText("music loop D_EVIL\n");
+	CmdBuf_AddText("music loop D_EVIL\n");
 #endif
 	fpage1 = R_RegisterPic("BOSSBACK", PIC_PATCH);
 
 #if 0
-    castnum = 0;
+	castnum = 0;
 	castorder = svpr.GlobalAddr("castorder");
-    caststate = &states[mobjinfo[castorder[castnum]].seestate];
-    casttime = caststate->time;
-    castdeath = false;
-    castframes = 0;
-    castonmelee = 0;
-    castattacking = false;
+	caststate = &states[mobjinfo[castorder[castnum]].seestate];
+	casttime = caststate->time;
+	castdeath = false;
+	castframes = 0;
+	castonmelee = 0;
+	castattacking = false;
 #endif
 }
 
 //==========================================================================
 //
-//	CastSound
+//  CastSound
 //
 //==========================================================================
 
 #if 0
 void CastSound(int state)
 {
-	string		sfx;
+	string sfx;
 
 	// sound hacks....
 	switch (state)
 	{
-	 case S_PLAY_ATK1:	sfx = "SuperShotgunFire"; break;
-	 case S_POSS_ATK2:	sfx = "PistolFire"; break;
-	 case S_SPOS_ATK2:	sfx = "ShotgunFire"; break;
-	 case S_VILE_ATK2:	sfx = "ArchVileAttack"; break;
-	 case S_SKEL_FIST2:	sfx = "RavenantSwing"; break;
-	 case S_SKEL_FIST4:	sfx = "RavenantPunch"; break;
-	 case S_SKEL_MISS2:	sfx = "RavenantAttack"; break;
-	 case S_FATT_ATK8:
-	 case S_FATT_ATK5:
-	 case S_FATT_ATK2:	sfx = "FireballShoot"; break;
-	 case S_CPOS_ATK2:
-	 case S_CPOS_ATK3:
-	 case S_CPOS_ATK4:	sfx = "ShotgunFire"; break;
-	 case S_TROO_ATK3:	sfx = "ImpAttack"; break;
-	 case S_SARG_ATK2:	sfx = "DemonAttack"; break;
-	 case S_BOSS_ATK2:
-	 case S_BOS2_ATK2:
-	 case S_HEAD_ATK2:	sfx = "FireballShoot"; break;
-	 case S_SKULL_ATK2:	sfx = "LostSoulAttack"; break;
-	 case S_SPID_ATK2:
-	 case S_SPID_ATK3:	sfx = "ShotgunFire"; break;
-	 case S_BSPI_ATK2:	sfx = "PlasmaFire"; break;
-	 case S_CYBER_ATK2:
-	 case S_CYBER_ATK4:
-	 case S_CYBER_ATK6:	sfx = "LauncherFire"; break;
-	 case S_PAIN_ATK3:	sfx = "LostSoulAttack"; break;
-	 default: sfx = ""; break;
+	case S_PLAY_ATK1:
+		sfx = "SuperShotgunFire";
+		break;
+	case S_POSS_ATK2:
+		sfx = "PistolFire";
+		break;
+	case S_SPOS_ATK2:
+		sfx = "ShotgunFire";
+		break;
+	case S_VILE_ATK2:
+		sfx = "ArchVileAttack";
+		break;
+	case S_SKEL_FIST2:
+		sfx = "RavenantSwing";
+		break;
+	case S_SKEL_FIST4:
+		sfx = "RavenantPunch";
+		break;
+	case S_SKEL_MISS2:
+		sfx = "RavenantAttack";
+		break;
+	case S_FATT_ATK8:
+	case S_FATT_ATK5:
+	case S_FATT_ATK2:
+		sfx = "FireballShoot";
+		break;
+	case S_CPOS_ATK2:
+	case S_CPOS_ATK3:
+	case S_CPOS_ATK4:
+		sfx = "ShotgunFire";
+		break;
+	case S_TROO_ATK3:
+		sfx = "ImpAttack";
+		break;
+	case S_SARG_ATK2:
+		sfx = "DemonAttack";
+		break;
+	case S_BOSS_ATK2:
+	case S_BOS2_ATK2:
+	case S_HEAD_ATK2:
+		sfx = "FireballShoot";
+		break;
+	case S_SKULL_ATK2:
+		sfx = "LostSoulAttack";
+		break;
+	case S_SPID_ATK2:
+	case S_SPID_ATK3:
+		sfx = "ShotgunFire";
+		break;
+	case S_BSPI_ATK2:
+		sfx = "PlasmaFire";
+		break;
+	case S_CYBER_ATK2:
+	case S_CYBER_ATK4:
+	case S_CYBER_ATK6:
+		sfx = "LauncherFire";
+		break;
+	case S_PAIN_ATK3:
+		sfx = "LostSoulAttack";
+		break;
+	default:
+		sfx = "";
+		break;
 	}
 
 	if (sfx)
-    {
-    	StartSoundName(NULL, sfx);
+	{
+		StartSoundName(NULL, sfx);
 	}
 }
 #endif
@@ -460,72 +487,71 @@ void CastSound(int state)
 void F_CastTicker(void)
 {
 #if 0
-    int		st;
+	int st;
 
 	casttime -= host_frametime;
-    if (casttime > 0)
-		return;			// not time to change state yet
-		
-    if (caststate->time == -1 || !caststate->nextstate)
-    {
+	if (casttime > 0)
+		return;	// not time to change state yet
+
+	if (caststate->time == -1 || !caststate->nextstate)
+	{
 		// switch from deathstate to next monster
 		castnum++;
 		castdeath = false;
 		if (castorder[castnum] == -1)
-	    	castnum = 0;
+			castnum = 0;
 		if (mobjinfo[castorder[castnum]].seesound)
-		    S_StartSound(mobjinfo[castorder[castnum]].seesound);
+			S_StartSound(mobjinfo[castorder[castnum]].seesound);
 		caststate = &states[mobjinfo[castorder[castnum]].seestate];
 		castframes = 0;
-    }
-    else
-    {
+	}
+	else
+	{
 		// just advance to next state in animation
-//		if (caststate == &states[S1_PLAY_ATK1])
-//	    	goto stopattack;	// Oh, gross hack!
+//      if (caststate == &states[S1_PLAY_ATK1])
+//          goto stopattack;    // Oh, gross hack!
 		st = caststate->nextstate;
-        if (st == mobjinfo[castorder[castnum]].spawnstate)
-        	st = mobjinfo[castorder[castnum]].seestate;
+		if (st == mobjinfo[castorder[castnum]].spawnstate)
+			st = mobjinfo[castorder[castnum]].seestate;
 		caststate = &states[st];
 		castframes++;
 
 		svpr.Exec("CastSound", st);
-    }
-	
-    if (castframes == 12)
-    {
+	}
+
+	if (castframes == 12)
+	{
 		// go into attack frame
 		castattacking = true;
 		if (castonmelee)
-		    caststate=&states[mobjinfo[castorder[castnum]].meleestate];
+			caststate = &states[mobjinfo[castorder[castnum]].meleestate];
 		else
-		    caststate=&states[mobjinfo[castorder[castnum]].missilestate];
+			caststate = &states[mobjinfo[castorder[castnum]].missilestate];
 		castonmelee ^= 1;
 		if (caststate == &states[0])
 		{
-		    if (castonmelee)
-				caststate=
-				    &states[mobjinfo[castorder[castnum]].meleestate];
-	    	else
-				caststate=
-				    &states[mobjinfo[castorder[castnum]].missilestate];
+			if (castonmelee)
+				caststate = &states[mobjinfo[castorder[castnum]].meleestate];
+			else
+				caststate =
+					&states[mobjinfo[castorder[castnum]].missilestate];
 		}
-    }
-	
-    if (castattacking)
-    {
+	}
+
+	if (castattacking)
+	{
 		if (castframes == 24
-		    ||	caststate == &states[mobjinfo[castorder[castnum]].seestate])
+			|| caststate == &states[mobjinfo[castorder[castnum]].seestate])
 		{
-//		  stopattack:
-	    	castattacking = false;
-		    castframes = 0;
-		    caststate = &states[mobjinfo[castorder[castnum]].seestate];
+//        stopattack:
+			castattacking = false;
+			castframes = 0;
+			caststate = &states[mobjinfo[castorder[castnum]].seestate];
 		}
-    }
-	
-    casttime = caststate->time;
-    if (casttime == -1)
+	}
+
+	casttime = caststate->time;
+	if (casttime == -1)
 		casttime = 15;
 #endif
 }
@@ -536,25 +562,25 @@ void F_CastTicker(void)
 //
 //==========================================================================
 
-boolean F_CastResponder(event_t* ev)
+boolean F_CastResponder(event_t * ev)
 {
 #if 0
-    if (ev->type != ev_keydown)
+	if (ev->type != ev_keydown)
 		return false;
-		
-    if (castdeath)
-		return true;			// already in dying frames
-		
-    // go into death frame
-    castdeath = true;
-    caststate = &states[mobjinfo[castorder[castnum]].deathstate];
-    casttime = caststate->time;
-    castframes = 0;
-    castattacking = false;
-    if (mobjinfo[castorder[castnum]].deathsound)
+
+	if (castdeath)
+		return true;	// already in dying frames
+
+	// go into death frame
+	castdeath = true;
+	caststate = &states[mobjinfo[castorder[castnum]].deathstate];
+	casttime = caststate->time;
+	castframes = 0;
+	castattacking = false;
+	if (mobjinfo[castorder[castnum]].deathsound)
 		S_StartSound(mobjinfo[castorder[castnum]].deathsound);
 
-    return true;
+	return true;
 #else
 	return false;
 #endif
@@ -568,35 +594,36 @@ boolean F_CastResponder(event_t* ev)
 
 void F_CastDrawer(void)
 {
-    // erase the entire screen to a background
-    R_DrawPic(0, 0, fpage1);
+	// erase the entire screen to a background
+	R_DrawPic(0, 0, fpage1);
 
 #if 0
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vtop);
-//	T_DrawText(160, 180, castorder[castnum].name);
-	T_DrawText(160, 180, svpr.GetString(mobjinfo[castorder[castnum]].message));
-    
-    // draw the current frame in the middle of the screen
+//  T_DrawText(160, 180, castorder[castnum].name);
+	T_DrawText(160, 180,
+		svpr.GetString(mobjinfo[castorder[castnum]].message));
+
+	// draw the current frame in the middle of the screen
 	R_DrawSpritePatch(160, 170, caststate->sprite, caststate->frame, 0);
 #endif
 }
 
 //==========================================================================
 //
-//	F_StartFinale
+//  F_StartFinale
 //
 //==========================================================================
 
 void F_StartFinale(void)
 {
-    cl->intermission = 2;
+	cl->intermission = 2;
 	F_StartCast();
 }
 
 //===========================================================================
 //
-//	F_Ticker
+//  F_Ticker
 //
 //===========================================================================
 
@@ -607,7 +634,7 @@ void F_Ticker(void)
 
 //==========================================================================
 //
-//	F_Drawer
+//  F_Drawer
 //
 //==========================================================================
 
@@ -618,14 +645,27 @@ void F_Drawer(void)
 
 //===========================================================================
 //
-//	F_Responder
+//  F_Responder
 //
 //===========================================================================
 
-boolean F_Responder(event_t *event)
+boolean F_Responder(event_t * event)
 {
 	return F_CastResponder(event);
 }
 
 #endif
 
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:09  dj_jl
+//  Beautification
+//
+//  Revision 1.3  2001/08/15 17:07:10  dj_jl
+//  Fixed finale
+//
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

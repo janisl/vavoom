@@ -21,16 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.4  2001/08/04 17:38:19  dj_jl
-//**	Added moving of texture vertexes
-//**
-//**	Revision 1.3  2001/07/31 17:03:38  dj_jl
-//**	Added checks for model file
-//**	
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -250,3 +240,20 @@ int main(int argc, char *argv[])
 	WriteModel();
 	return 0;
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.5  2001/09/24 17:29:38  dj_jl
+//	Beautification
+//
+//	Revision 1.4  2001/08/04 17:38:19  dj_jl
+//	Added moving of texture vertexes
+//
+//	Revision 1.3  2001/07/31 17:03:38  dj_jl
+//	Added checks for model file
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

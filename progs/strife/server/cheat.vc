@@ -1,29 +1,25 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
-//**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
 //**
 //**************************************************************************
 
@@ -41,7 +37,7 @@
 
 //==========================================================================
 //
-//	Cheat_God
+//  Cheat_God
 //
 //==========================================================================
 
@@ -50,13 +46,13 @@ void Cheat_God(void)
 	players[0].cheats ^= CF_GODMODE;
 	if (players[0].cheats & CF_GODMODE)
 	{
-  		if (players[0].mo)
-    		players[0].mo->health = GOD_HEALTH;
-  		players[0].health = GOD_HEALTH;
-  		cprint(&players[0], "Degreelessness Mode On\n");
+		if (players[0].mo)
+			players[0].mo->health = GOD_HEALTH;
+		players[0].health = GOD_HEALTH;
+		cprint(&players[0], "Degreelessness Mode On\n");
 	}
 	else
-  		cprint(&players[0], "Degreelessness Mode Off\n");
+		cprint(&players[0], "Degreelessness Mode Off\n");
 }
 
 //==========================================================================
@@ -68,11 +64,11 @@ void Cheat_God(void)
 void Cheat_NoClip(void)
 {
 	players[0].cheats ^= CF_NOCLIP;
-	
+
 	if (players[0].cheats & CF_NOCLIP)
-  		cprint(&players[0], "No Clipping Mode ON\n");
+		cprint(&players[0], "No Clipping Mode ON\n");
 	else
-  		cprint(&players[0], "No Clipping Mode OFF\n");
+		cprint(&players[0], "No Clipping Mode OFF\n");
 }
 
 //==========================================================================
@@ -117,7 +113,7 @@ void Cheat_Gimme(void)
 #define GIMME_POWERS			0x00fc0000
 #define GIMME_ALL				0xffffffff
 
-    int		i1;
+	int i1;
 
 /*	if (Cmd_Argc() == 1)
     {
@@ -133,12 +129,12 @@ void Cheat_Gimme(void)
         return;
     }*/
 
-   	i1 = 0;
+	i1 = 0;
 	// All
 	if (Cmd_CheckParm("All"))
 		i1 |= GIMME_ALL;
 
-    // Weapons
+	// Weapons
 	if (Cmd_CheckParm("Weapons"))
 		i1 |= GIMME_WEAPONS;
 	if (Cmd_CheckParm("Shotgun"))
@@ -157,7 +153,7 @@ void Cheat_Gimme(void)
 	if (Cmd_CheckParm("Backpack"))
 		i1 |= GIMME_BACKPACK;
 
-        // Ammo
+	// Ammo
 	if (Cmd_CheckParm("Ammo"))
 		i1 |= GIMME_AMMO;
 	if (Cmd_CheckParm("Bullets"))
@@ -169,7 +165,7 @@ void Cheat_Gimme(void)
 	if (Cmd_CheckParm("Cells"))
 		i1 |= GIMME_CELLS;
 
-        // Keys
+	// Keys
 	if (Cmd_CheckParm("Keys"))
 		i1 |= GIMME_KEYS;
 	if (Cmd_CheckParm("BlueCard"))
@@ -185,7 +181,7 @@ void Cheat_Gimme(void)
 	if (Cmd_CheckParm("RedSkull"))
 		i1 |= GIMME_REDSKULL;
 
-        // Powers
+	// Powers
 	if (Cmd_CheckParm("Powers"))
 		i1 |= GIMME_POWERS;
 	if (Cmd_CheckParm("Invulnerability"))
@@ -201,119 +197,119 @@ void Cheat_Gimme(void)
 	if (Cmd_CheckParm("LiteAmp"))
 		i1 |= GIMME_INFRARED;
 
-        // Health
+	// Health
 	if (Cmd_CheckParm("Health"))
 		i1 |= GIMME_HEALTH;
 	if (Cmd_CheckParm("Health2"))
 		i1 |= GIMME_HEALTH2;
 
-        // Armor
+	// Armor
 	if (Cmd_CheckParm("Armor"))
 		i1 |= GIMME_ARMOR;
 	if (Cmd_CheckParm("Armor2"))
 		i1 |= GIMME_ARMOR2;
-	
-    // Weapons
+
+	// Weapons
 #ifdef FIXME
-    if (i1 & GIMME_SHOTGUN)
-        players[0].weaponowned[wp_shotgun] = true;
+	if (i1 & GIMME_SHOTGUN)
+		players[0].weaponowned[wp_shotgun] = true;
 	if (i1 & GIMME_CHAINGUN)
-        players[0].weaponowned[wp_chaingun] = true;
+		players[0].weaponowned[wp_chaingun] = true;
 	if (i1 & GIMME_LAUNCHER)
-        players[0].weaponowned[wp_missile] = true;
+		players[0].weaponowned[wp_missile] = true;
 	if (i1 & GIMME_PLASMA)
-        players[0].weaponowned[wp_plasma] = true;
+		players[0].weaponowned[wp_plasma] = true;
 	if (i1 & GIMME_BFG)
-        players[0].weaponowned[wp_bfg] = true;
+		players[0].weaponowned[wp_bfg] = true;
 	if (i1 & GIMME_CHAINSAW)
-        players[0].weaponowned[wp_chainsaw] = true;
+		players[0].weaponowned[wp_chainsaw] = true;
 #endif
 
-    // Backpack
+	// Backpack
 	if (i1 & GIMME_BACKPACK)
-	    players[0].backpack = true;
+		players[0].backpack = true;
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-        players[0].ammo[am_clip] =
-        	maxammo[am_clip] * (players[0].backpack ? 2 : 1);
+		players[0].ammo[am_clip] =
+			maxammo[am_clip] * (players[0].backpack ? 2 : 1);
 	if (i1 & GIMME_SHELLS)
-        players[0].ammo[am_electric_arrow] =
-        	maxammo[am_electric_arrow] * (players[0].backpack ? 2 : 1);
+		players[0].ammo[am_electric_arrow] =
+			maxammo[am_electric_arrow] * (players[0].backpack ? 2 : 1);
 	if (i1 & GIMME_ROCKETS)
-        players[0].ammo[am_misl] =
-        	maxammo[am_misl] * (players[0].backpack ? 2 : 1);
+		players[0].ammo[am_misl] =
+			maxammo[am_misl] * (players[0].backpack ? 2 : 1);
 	if (i1 & GIMME_CELLS)
-        players[0].ammo[am_cell] =
-        	maxammo[am_cell] * (players[0].backpack ? 2 : 1);
+		players[0].ammo[am_cell] =
+			maxammo[am_cell] * (players[0].backpack ? 2 : 1);
 
-    // Keys
+	// Keys
 	if (i1 & GIMME_BLUECARD)
-        players[0].keys |= 1 << it_bluecard;
+		players[0].keys |= 1 << it_bluecard;
 	if (i1 & GIMME_YELLOWCARD)
-        players[0].keys |= 1 << it_yellowcard;
+		players[0].keys |= 1 << it_yellowcard;
 	if (i1 & GIMME_REDCARD)
-        players[0].keys |= 1 << it_redcard;
+		players[0].keys |= 1 << it_redcard;
 	if (i1 & GIMME_BLUESKULL)
-        players[0].keys |= 1 << it_blueskull;
+		players[0].keys |= 1 << it_blueskull;
 	if (i1 & GIMME_YELLOWSKULL)
-        players[0].keys |= 1 << it_yellowskull;
+		players[0].keys |= 1 << it_yellowskull;
 	if (i1 & GIMME_REDSKULL)
-        players[0].keys |= 1 << it_redskull;
+		players[0].keys |= 1 << it_redskull;
 
-    // Powers
+	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-        P_GivePower(&players[0], pw_invulnerability);
+		P_GivePower(&players[0], pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-        P_GivePower(&players[0], pw_strength);
+		P_GivePower(&players[0], pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-        P_GivePower(&players[0], pw_invisibility);
+		P_GivePower(&players[0], pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-        P_GivePower(&players[0], pw_ironfeet);
+		P_GivePower(&players[0], pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-        P_GivePower(&players[0], pw_infrared);
+		P_GivePower(&players[0], pw_infrared);
 
-	//	Items
+	//  Items
 	if (i1 & GIMME_ALLMAP)
-        P_GiveItem(&players[0], IT_ALL_MAP);
+		P_GiveItem(&players[0], IT_ALL_MAP);
 
-    // Health
+	// Health
 	if ((i1 & GIMME_HEALTH) && (players[0].health < 100))
-    {
+	{
 		players[0].health = 100;
 		players[0].mo->health = 100;
-    }
+	}
 	if (i1 & GIMME_HEALTH2)
-    {
+	{
 		players[0].health = 200;
 		players[0].mo->health = 200;
-    }
+	}
 
-    // Armor
+	// Armor
 	if ((i1 & GIMME_ARMOR) && (players[0].armorpoints < 100))
-    {
-	    players[0].armortype = 1;
-	    players[0].armorpoints = 100;
-    }
+	{
+		players[0].armortype = 1;
+		players[0].armorpoints = 100;
+	}
 	if (i1 & GIMME_ARMOR2)
-    {
-	    players[0].armortype = 2;
-	    players[0].armorpoints = 200;
-    }
+	{
+		players[0].armortype = 2;
+		players[0].armorpoints = 200;
+	}
 }
 
 //==========================================================================
 //
-//	P_Massacre
+//  P_Massacre
 //
-//	Kills all monsters.
+//  Kills all monsters.
 //
 //==========================================================================
 
 int P_Massacre(void)
 {
-	int 	count;
-	mobj_t	*mo;
+	int count;
+	mobj_t *mo;
 
 	count = 0;
 	for (mo = NextMobj(NULL); mo; mo = NextMobj(mo))
@@ -338,10 +334,13 @@ void Cheat_KillAll(void)
 	cprint(&players[0], "%d MONSTERS KILLED\n", P_Massacre());
 }
 
-//==========================================================================
+//**************************************************************************
 //
+//  $Log$
+//  Revision 1.3  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
-//==========================================================================
-
-
+//**************************************************************************

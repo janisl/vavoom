@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -39,16 +39,16 @@
 
 //==========================================================================
 //
-//	A_MakePod
+//  A_MakePod
 //
 //==========================================================================
 
-void A_MakePod(mobj_t* actor)
+void A_MakePod(mobj_t * actor)
 {
-	mobj_t		*mo;
-	float		x;
-	float		y;
-	float		z;
+	mobj_t *mo;
+	float x;
+	float y;
+	float z;
 
 	if (actor->special1 == MAX_GEN_PODS)
 	{
@@ -68,22 +68,22 @@ void A_MakePod(mobj_t* actor)
 	SetMobjState(mo, S_POD_GROW1);
 	P_ThrustMobj(mo, P_Random() << 24, 4.5);
 	StartSoundName(mo, "PodNew", CHAN_VOICE);
-	actor->special1++; // Increment generated pod count
-	mo->specialmobj2 = actor; // Link the generator to the pod
+	actor->special1++;	// Increment generated pod count
+	mo->specialmobj2 = actor;	// Link the generator to the pod
 }
 
 //==========================================================================
 //
-//	A_PodPain
+//  A_PodPain
 //
 //==========================================================================
 
-void A_PodPain(mobj_t* actor)
+void A_PodPain(mobj_t * actor)
 {
-	int 	i;
-	int 	count;
-	int 	chance;
-	mobj_t*	goo;
+	int i;
+	int count;
+	int chance;
+	mobj_t *goo;
 
 	chance = P_Random();
 	if (chance < 128)
@@ -93,7 +93,9 @@ void A_PodPain(mobj_t* actor)
 	count = chance > 240 ? 2 : 1;
 	for (i = 0; i < count; i++)
 	{
-		goo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + 48.0, MT_PODGOO);
+		goo =
+			P_SpawnMobj(actor->origin.x, actor->origin.y,
+			actor->origin.z + 48.0, MT_PODGOO);
 		goo->target = actor;
 		goo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		goo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
@@ -103,13 +105,13 @@ void A_PodPain(mobj_t* actor)
 
 //==========================================================================
 //
-//	A_RemovePod
+//  A_RemovePod
 //
 //==========================================================================
 
-void A_RemovePod(mobj_t* actor)
+void A_RemovePod(mobj_t * actor)
 {
-	mobj_t*	mo;
+	mobj_t *mo;
 
 	if (actor->specialmobj2)
 	{
@@ -123,11 +125,14 @@ void A_RemovePod(mobj_t* actor)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,29 +1,29 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 //**
-//**	Screen resolution menu
+//**    Screen resolution menu
 //**
 //**************************************************************************
 
@@ -35,47 +35,47 @@
 
 struct menu_resolution_t
 {
-	menu_t			menu;
-	menuswitch_t	mode;
-	menuswitch_t	bpp;
-	menutext_t		set_res;
-	menutext_t		title;
+	menu_t menu;
+	menuswitch_t mode;
+	menuswitch_t bpp;
+	menutext_t set_res;
+	menutext_t title;
 };
 
 struct mode_t
 {
-	int			width;
-	int			height;
+	int width;
+	int height;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_resolution_t	ResolutionMenu;
+menu_resolution_t ResolutionMenu;
 
-string	sw_mode[8] = { "320x200", "320x240", "640x400", "640x480",
-	"800x600", "1024x768", "1152x864", "1280x1024" };
-string	sw_bpp[4] = { "8", "16", "24", "32" };
-
-mode_t	modes[8] =
-{
-	{ 320, 200 },
-	{ 320, 240 },
-	{ 640, 400 },
-	{ 640, 480 },
-	{ 800, 600 },
-	{ 1024, 768 },
-	{ 1152, 864 },
-	{ 1280, 1024 }
+string sw_mode[8] = { "320x200", "320x240", "640x400", "640x480",
+	"800x600", "1024x768", "1152x864", "1280x1024"
 };
-int		depths[4] = { 8, 16, 24, 32 };
+string sw_bpp[4] = { "8", "16", "24", "32" };
+
+mode_t modes[8] = {
+	{320, 200},
+	{320, 240},
+	{640, 400},
+	{640, 480},
+	{800, 600},
+	{1024, 768},
+	{1152, 864},
+	{1280, 1024}
+};
+int depths[4] = { 8, 16, 24, 32 };
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	set_resolution
+//  set_resolution
 //
 //==========================================================================
 
@@ -89,7 +89,7 @@ void set_resolution(void)
 
 //==========================================================================
 //
-//	menu_resolution
+//  menu_resolution
 //
 //==========================================================================
 
@@ -126,32 +126,39 @@ void menu_resolution(void)
 		bi = 0;
 	}
 
-    InitMenu(&ResolutionMenu.menu);
+	InitMenu(&ResolutionMenu.menu);
 
-	MenuSwitch_Init(&ResolutionMenu.mode, x, y, "Resolution", TEXT_SMALLR, mi, 8, &sw_mode[0]);
+	MenuSwitch_Init(&ResolutionMenu.mode, x, y, "Resolution", TEXT_SMALLR, mi,
+		8, &sw_mode[0]);
 	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.mode);
 	y += 10;
 
-	MenuSwitch_Init(&ResolutionMenu.bpp, x, y, "Bit depth", TEXT_SMALLR, bi, 4, &sw_bpp[0]);
+	MenuSwitch_Init(&ResolutionMenu.bpp, x, y, "Bit depth", TEXT_SMALLR, bi,
+		4, &sw_bpp[0]);
 	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.bpp);
 	y += 10;
 
-	MenuText_InitFunc(&ResolutionMenu.set_res, x, y, "Set Resolution", TEXT_SMALLR, set_resolution);
+	MenuText_InitFunc(&ResolutionMenu.set_res, x, y, "Set Resolution",
+		TEXT_SMALLR, set_resolution);
 	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.set_res);
 
-	MenuText_InitTitle(&ResolutionMenu.title, 160, 24, "SCREEN RESOLUTION", TEXT_BIGC);
+	MenuText_InitTitle(&ResolutionMenu.title, 160, 24, "SCREEN RESOLUTION",
+		TEXT_BIGC);
 	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.title);
 
-    PushMenu(&ResolutionMenu.menu);
+	PushMenu(&ResolutionMenu.menu);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/23 17:38:15  dj_jl
-//	Added video options menu
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:09  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/23 17:38:15  dj_jl
+//  Added video options menu
+//  
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

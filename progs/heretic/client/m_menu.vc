@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -28,7 +28,7 @@
 #define MNF_INACTIVE		1
 #define MNF_HIDEN			2
 
-//	callback notifications
+//  callback notifications
 #define MMSG_ACTIVATE		1
 #define MMSG_LOST_FOCUS		2
 #define MMSG_RECEIVE_FOCUS	4
@@ -43,34 +43,34 @@
 
 struct menucommon_t;
 
-typedef void (*menu_item_drawer_t)(menucommon_t*);
-typedef boolean (*menu_item_responder_t)(menucommon_t*, int);
-typedef void (*itemcallback_t)(menucommon_t*, int);
+typedef void (*menu_item_drawer_t) (menucommon_t *);
+typedef boolean(*menu_item_responder_t) (menucommon_t *, int);
+typedef void (*itemcallback_t) (menucommon_t *, int);
 
 struct menucommon_t
 {
-	menu_item_drawer_t		drawer;
-	menu_item_responder_t	responder;
-	itemcallback_t		callback;
-	int					flags;
-	int					id;
-	int					x;
-	int					y;
+	menu_item_drawer_t drawer;
+	menu_item_responder_t responder;
+	itemcallback_t callback;
+	int flags;
+	int id;
+	int x;
+	int y;
 };
 
 struct menu_t;
 
-typedef void (*menu_drawer_t)(menu_t*);
-typedef boolean (*menu_responder_t)(menu_t*, int);
+typedef void (*menu_drawer_t) (menu_t *);
+typedef boolean(*menu_responder_t) (menu_t *, int);
 
 struct menu_t
 {
-	menu_drawer_t		drawer;
-	menu_responder_t	responder;
-	int					cursor;
-	int					cursor_prev;
-	int					numitems;
-	menucommon_t		*items[MAX_MENU_ITEMS];
+	menu_drawer_t drawer;
+	menu_responder_t responder;
+	int cursor;
+	int cursor_prev;
+	int numitems;
+	menucommon_t *items[MAX_MENU_ITEMS];
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -80,22 +80,22 @@ void menu_main(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_t			*menu_stack[MAX_MENU_STACK];
-int				menu_sp;
+menu_t *menu_stack[MAX_MENU_STACK];
+int menu_sp;
 
-menu_t			*CurrentMenu;
+menu_t *CurrentMenu;
 
-float			MenuTime;
+float MenuTime;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	Menu_CursorMoved
+//  Menu_CursorMoved
 //
 //==========================================================================
 
-void Menu_CursorMoved(menu_t *m)
+void Menu_CursorMoved(menu_t * m)
 {
 	if (m->cursor_prev == m->cursor)
 		return;
@@ -103,23 +103,25 @@ void Menu_CursorMoved(menu_t *m)
 	if (m->cursor_prev >= 0 && m->cursor_prev < m->numitems)
 	{
 		if (m->items[m->cursor_prev]->callback)
-			m->items[m->cursor_prev]->callback(m->items[m->cursor_prev], MMSG_LOST_FOCUS);
+			m->items[m->cursor_prev]->callback(m->items[m->cursor_prev],
+				MMSG_LOST_FOCUS);
 	}
-	
+
 	if (m->cursor >= 0 && m->cursor < m->numitems)
 	{
 		if (m->items[m->cursor]->callback)
-			m->items[m->cursor]->callback(m->items[m->cursor], MMSG_RECEIVE_FOCUS);
+			m->items[m->cursor]->callback(m->items[m->cursor],
+				MMSG_RECEIVE_FOCUS);
 	}
 }
 
 //==========================================================================
 //
-//	Menu_SetCursor
+//  Menu_SetCursor
 //
 //==========================================================================
 
-void Menu_SetCursor(menu_t *m, int cursor)
+void Menu_SetCursor(menu_t * m, int cursor)
 {
 	if (m->items[cursor]->flags & (MNF_INACTIVE))
 	{
@@ -128,20 +130,20 @@ void Menu_SetCursor(menu_t *m, int cursor)
 	}
 
 	m->cursor_prev = m->cursor;
-	m->cursor      = cursor;
+	m->cursor = cursor;
 
 	Menu_CursorMoved(m);
 }
 
 //==========================================================================
 //
-//	Menu_SetCursorToItem
+//  Menu_SetCursorToItem
 //
 //==========================================================================
 
-void Menu_SetCursorToItem(menu_t *m, menucommon_t* ptr)
+void Menu_SetCursorToItem(menu_t * m, menucommon_t * ptr)
 {
-	int	i;
+	int i;
 
 	for (i = 0; i < m->numitems; i++)
 	{
@@ -155,13 +157,13 @@ void Menu_SetCursorToItem(menu_t *m, menucommon_t* ptr)
 
 //==========================================================================
 //
-//	Menu_Draw
+//  Menu_Draw
 //
 //==========================================================================
 
-void Menu_Draw(menu_t *menu)
+void Menu_Draw(menu_t * menu)
 {
-	int		i;
+	int i;
 
 	for (i = 0; i < menu->numitems; i++)
 	{
@@ -174,26 +176,27 @@ void Menu_Draw(menu_t *menu)
 
 //==========================================================================
 //
-//	Menu_Use
+//  Menu_Use
 //
 //==========================================================================
 
-boolean Menu_Use(menu_t *menu, int key)
+boolean Menu_Use(menu_t * menu, int key)
 {
 	if (menu->items[menu->cursor]->responder)
-	   	if (menu->items[menu->cursor]->responder(menu->items[menu->cursor], key))
+		if (menu->items[menu->cursor]->responder(menu->items[menu->cursor],
+				key))
 			return true;
 
 	switch (key)
 	{
-	 case K_DOWNARROW:
+	case K_DOWNARROW:
 		menu->cursor_prev = menu->cursor;
 		do
 		{
 			if (menu->cursor == menu->numitems - 1)
 				menu->cursor = 0;
 			else
-	   			menu->cursor++;
+				menu->cursor++;
 		}
 		while ((menu->items[menu->cursor]->flags & MNF_INACTIVE) &&
 			menu->cursor_prev != menu->cursor);
@@ -201,7 +204,7 @@ boolean Menu_Use(menu_t *menu, int key)
 		LocalSound("MenuMove");
 		return true;
 
-	 case K_UPARROW:
+	case K_UPARROW:
 		menu->cursor_prev = menu->cursor;
 		do
 		{
@@ -216,8 +219,8 @@ boolean Menu_Use(menu_t *menu, int key)
 		LocalSound("MenuMove");
 		return true;
 
-	 case K_ESCAPE:
-	 case K_MOUSE2:
+	case K_ESCAPE:
+	case K_MOUSE2:
 		PopMenu();
 		return true;
 	}
@@ -227,11 +230,11 @@ boolean Menu_Use(menu_t *menu, int key)
 
 //==========================================================================
 //
-//	InitMenu
+//  InitMenu
 //
 //==========================================================================
 
-void InitMenu(menu_t *menu)
+void InitMenu(menu_t * menu)
 {
 	menu->numitems = 0;
 	menu->drawer = Menu_Draw;
@@ -240,11 +243,11 @@ void InitMenu(menu_t *menu)
 
 //==========================================================================
 //
-//	AddMenuItem
+//  AddMenuItem
 //
 //==========================================================================
 
-void AddMenuItem(menu_t *menu, menucommon_t *item)
+void AddMenuItem(menu_t * menu, menucommon_t * item)
 {
 	if (menu->numitems >= MAX_MENU_ITEMS)
 	{
@@ -256,7 +259,7 @@ void AddMenuItem(menu_t *menu, menucommon_t *item)
 
 //==========================================================================
 //
-//	ActiveItem
+//  ActiveItem
 //
 //==========================================================================
 
@@ -267,20 +270,20 @@ menucommon_t *ActiveItem(void)
 
 //**************************************************************************
 //**
-//**	Menu stack handling
+//**    Menu stack handling
 //**
 //**************************************************************************
 
 //==========================================================================
 //
-//	PushMenu
+//  PushMenu
 //
 //==========================================================================
 
-void PushMenu(menu_t *menu)
+void PushMenu(menu_t * menu)
 {
-	int				i;
-	menucommon_t*	item;
+	int i;
+	menucommon_t *item;
 
 	// avoid stacking menus invoked by hotkeys
 	for (i = 0; i < menu_sp; i++)
@@ -325,7 +328,7 @@ void PushMenu(menu_t *menu)
 		if (!(item->flags & (MNF_INACTIVE)))
 		{
 			menu->cursor_prev = -1;
-			menu->cursor      = i;
+			menu->cursor = i;
 			Menu_CursorMoved(menu);
 			break;
 		}
@@ -334,7 +337,7 @@ void PushMenu(menu_t *menu)
 
 //==========================================================================
 //
-//	PopMenu
+//  PopMenu
 //
 //==========================================================================
 
@@ -359,7 +362,7 @@ void PopMenu(void)
 
 //==========================================================================
 //
-//	ForceMenuOff
+//  ForceMenuOff
 //
 //==========================================================================
 
@@ -371,38 +374,38 @@ void ForceMenuOff(void)
 
 //**************************************************************************
 //**
-//**	Base type of all items
+//**    Base type of all items
 //**
 //**************************************************************************
 
 //==========================================================================
 //
-//	MenuCommon_Draw
+//  MenuCommon_Draw
 //
 //==========================================================================
 
-void MenuCommon_Draw(menucommon_t *self)
+void MenuCommon_Draw(menucommon_t * self)
 {
 }
 
 //==========================================================================
 //
-//	MenuCommon_Use
+//  MenuCommon_Use
 //
 //==========================================================================
 
-boolean MenuCommon_Use(menucommon_t *self, int key)
+boolean MenuCommon_Use(menucommon_t * self, int key)
 {
 	return false;
 }
 
 //==========================================================================
 //
-//	MenuCommon_Init
+//  MenuCommon_Init
 //
 //==========================================================================
 
-void MenuCommon_Init(menucommon_t *self, int x, int y, int flags)
+void MenuCommon_Init(menucommon_t * self, int x, int y, int flags)
 {
 	self->drawer = MenuCommon_Draw;
 	self->responder = MenuCommon_Use;
@@ -414,24 +417,24 @@ void MenuCommon_Init(menucommon_t *self, int x, int y, int flags)
 
 //**************************************************************************
 //**
-//**	Bitmap
+//**    Bitmap
 //**
 //**************************************************************************
 
-struct menubitmap_t : menucommon_t
+struct menubitmap_t:menucommon_t
 {
-	int				handle;
+	int handle;
 };
 
 //==========================================================================
 //
-//	MenuBitmap_Draw
+//  MenuBitmap_Draw
 //
 //==========================================================================
 
-void MenuBitmap_Draw(menucommon_t *aitem)
+void MenuBitmap_Draw(menucommon_t * aitem)
 {
-	menubitmap_t	*item = (menubitmap_t*)aitem;
+	menubitmap_t *item = (menubitmap_t *) aitem;
 
 	int x = item->x;
 	int y = item->y;
@@ -441,11 +444,12 @@ void MenuBitmap_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuBitmap_Init
+//  MenuBitmap_Init
 //
 //==========================================================================
 
-void MenuBitmap_Init(menubitmap_t *self, int x, int y, int flags, string name, int type)
+void MenuBitmap_Init(menubitmap_t * self, int x, int y, int flags,
+	string name, int type)
 {
 	MenuCommon_Init(self, x, y, flags);
 	self->drawer = MenuBitmap_Draw;
@@ -454,34 +458,36 @@ void MenuBitmap_Init(menubitmap_t *self, int x, int y, int flags, string name, i
 
 //**************************************************************************
 //**
-//**	Anims
+//**    Anims
 //**
 //**************************************************************************
 
 #define MAX_ANIM_FRAMES		18
 
-struct menuanim_t : menucommon_t
+struct menuanim_t:menucommon_t
 {
-	int				speed;
-	int				frames;
-	int				start;
-	boolean			backwards;
-	int				pics[MAX_ANIM_FRAMES];
+	int speed;
+	int frames;
+	int start;
+	boolean backwards;
+	int pics[MAX_ANIM_FRAMES];
 };
 
 //==========================================================================
 //
-//	MenuAnim_Draw
+//  MenuAnim_Draw
 //
 //==========================================================================
 
-void MenuAnim_Draw(menucommon_t *aitem)
+void MenuAnim_Draw(menucommon_t * aitem)
 {
-	menuanim_t	*item = (menuanim_t*)aitem;
+	menuanim_t *item = (menuanim_t *) aitem;
 
 	int x = item->x;
 	int y = item->y;
-	int frame = ftoi(MenuTime * itof(item->speed) + itof(item->start)) % item->frames;
+	int frame =
+
+		ftoi(MenuTime * itof(item->speed) + itof(item->start)) % item->frames;
 	if (item->backwards)
 	{
 		frame = item->frames - frame - 1;
@@ -492,11 +498,11 @@ void MenuAnim_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuAnim_Init
+//  MenuAnim_Init
 //
 //==========================================================================
 
-void MenuAnim_Init(menuanim_t *self, int x, int y, int flags, int speed,
+void MenuAnim_Init(menuanim_t * self, int x, int y, int flags, int speed,
 	int frames, int start, boolean backwards)
 {
 	MenuCommon_Init(self, x, y, flags);
@@ -509,27 +515,27 @@ void MenuAnim_Init(menuanim_t *self, int x, int y, int flags, int speed,
 
 //**************************************************************************
 //**
-//**	Sprite animation
+//**    Sprite animation
 //**
 //**************************************************************************
 
-struct menuspriteanim_t : menucommon_t
+struct menuspriteanim_t:menucommon_t
 {
-	int			sprdef;
-	int			speed;
-	int			frames;
-	int			translation;
+	int sprdef;
+	int speed;
+	int frames;
+	int translation;
 };
 
 //==========================================================================
 //
-//	MenuSpriteAnim_Draw
+//  MenuSpriteAnim_Draw
 //
 //==========================================================================
 
-void MenuSpriteAnim_Draw(menucommon_t *aitem)
+void MenuSpriteAnim_Draw(menucommon_t * aitem)
 {
-	menuspriteanim_t	*item = (menuspriteanim_t*)aitem;
+	menuspriteanim_t *item = (menuspriteanim_t *) aitem;
 
 	int x = item->x;
 	int y = item->y;
@@ -540,11 +546,12 @@ void MenuSpriteAnim_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuSpriteAnim_Init
+//  MenuSpriteAnim_Init
 //
 //==========================================================================
 
-void MenuSpriteAnim_Init(menuspriteanim_t *self, int x, int y, int sprdef, int speed, int frames)
+void MenuSpriteAnim_Init(menuspriteanim_t * self, int x, int y, int sprdef,
+	int speed, int frames)
 {
 	MenuCommon_Init(self, x, y, MNF_INACTIVE);
 	self->drawer = MenuSpriteAnim_Draw;
@@ -555,9 +562,9 @@ void MenuSpriteAnim_Init(menuspriteanim_t *self, int x, int y, int sprdef, int s
 }
 
 //**************************************************************************
-//**	
-//**	Selector
-//**	
+//**    
+//**    Selector
+//**    
 //**************************************************************************
 
 #define SELECTOR_XOFFSET	(-28)
@@ -567,7 +574,7 @@ int selector_pics[2];
 
 //==========================================================================
 //
-//	DrawSelector
+//  DrawSelector
 //
 //==========================================================================
 
@@ -579,7 +586,7 @@ void DrawSelector(int x, int y)
 
 //==========================================================================
 //
-//	InitSelector
+//  InitSelector
 //
 //==========================================================================
 
@@ -590,9 +597,9 @@ void InitSelector(void)
 }
 
 //**************************************************************************
-//**	
-//**	Text
-//**	
+//**    
+//**    Text
+//**    
 //**************************************************************************
 
 enum
@@ -603,25 +610,26 @@ enum
 	TEXT_SMALLR
 };
 
-typedef void (*menufunc_t)(void);
+typedef void (*menufunc_t) (void);
 
-struct menutext_t : menucommon_t
+struct menutext_t:menucommon_t
 {
-	string			text;
-	int				type;
-	menufunc_t		func;
-	string			command;
+	string text;
+	int type;
+	menufunc_t func;
+	string command;
 };
 
 //==========================================================================
 //
-//	MenuText_Use
+//  MenuText_Use
 //
 //==========================================================================
 
-boolean MenuText_Use(menucommon_t *aitem, int key)
+boolean MenuText_Use(menucommon_t * aitem, int key)
 {
-	menutext_t	*item = (menutext_t*)aitem;
+	menutext_t *item = (menutext_t *) aitem;
+
 	if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
 	{
 		if (item->callback)
@@ -640,7 +648,7 @@ boolean MenuText_Use(menucommon_t *aitem, int key)
 		{
 			return false;
 		}
-	  	LocalSound("MenuSelect");
+		LocalSound("MenuSelect");
 		return true;
 	}
 	return false;
@@ -648,21 +656,21 @@ boolean MenuText_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuText_Draw
+//  MenuText_Draw
 //
 //==========================================================================
 
-void MenuText_Draw(menucommon_t *aitem)
+void MenuText_Draw(menucommon_t * aitem)
 {
-	menutext_t	*item = (menutext_t*)aitem;
+	menutext_t *item = (menutext_t *) aitem;
 
-	int		x = item->x;
-	int		y = item->y;
-	boolean	is_active = ActiveItem() == aitem;
+	int x = item->x;
+	int y = item->y;
+	boolean is_active = ActiveItem() == aitem;
 
 	switch (item->type)
 	{
-	 case TEXT_BIG:
+	case TEXT_BIG:
 		if (is_active)
 		{
 			DrawSelector(x, y);
@@ -671,12 +679,12 @@ void MenuText_Draw(menucommon_t *aitem)
 		T_SetAlign(hleft, vtop);
 		break;
 
-	 case TEXT_BIGC:
+	case TEXT_BIGC:
 		T_SetFont(font_big);
 		T_SetAlign(hcenter, vbottom);
 		break;
 
-	 case TEXT_SMALLL:
+	case TEXT_SMALLL:
 		T_SetFont(font_small);
 		if (is_active)
 		{
@@ -686,7 +694,7 @@ void MenuText_Draw(menucommon_t *aitem)
 		T_SetAlign(hleft, vtop);
 		break;
 
-	 case TEXT_SMALLR:
+	case TEXT_SMALLR:
 		T_SetFont(font_small);
 		if (is_active)
 		{
@@ -701,11 +709,12 @@ void MenuText_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuText_Init
+//  MenuText_Init
 //
 //==========================================================================
 
-void MenuText_Init(menutext_t *self, int x, int y, int flags, string text, int type)
+void MenuText_Init(menutext_t * self, int x, int y, int flags, string text,
+	int type)
 {
 	MenuCommon_Init(self, x, y, flags);
 	self->drawer = MenuText_Draw;
@@ -717,11 +726,12 @@ void MenuText_Init(menutext_t *self, int x, int y, int flags, string text, int t
 
 //==========================================================================
 //
-//	MenuText_InitFunc
+//  MenuText_InitFunc
 //
 //==========================================================================
 
-void MenuText_InitFunc(menutext_t *self, int x, int y, string text, int type, menufunc_t func)
+void MenuText_InitFunc(menutext_t * self, int x, int y, string text, int type,
+	menufunc_t func)
 {
 	MenuText_Init(self, x, y, 0, text, type);
 	self->func = func;
@@ -729,11 +739,12 @@ void MenuText_InitFunc(menutext_t *self, int x, int y, string text, int type, me
 
 //==========================================================================
 //
-//	MenuText_InitCmd
+//  MenuText_InitCmd
 //
 //==========================================================================
 
-void MenuText_InitCmd(menutext_t *self, int x, int y, string text, int type, string cmd)
+void MenuText_InitCmd(menutext_t * self, int x, int y, string text, int type,
+	string cmd)
 {
 	MenuText_Init(self, x, y, 0, text, type);
 	self->command = cmd;
@@ -741,40 +752,41 @@ void MenuText_InitCmd(menutext_t *self, int x, int y, string text, int type, str
 
 //==========================================================================
 //
-//	MenuText_InitTitle
+//  MenuText_InitTitle
 //
 //==========================================================================
 
-void MenuText_InitTitle(menutext_t *self, int x, int y, string text, int type)
+void MenuText_InitTitle(menutext_t * self, int x, int y, string text,
+	int type)
 {
 	MenuText_Init(self, x, y, MNF_INACTIVE, text, type);
 }
 
 //**************************************************************************
 //**
-//**	Switch
+//**    Switch
 //**
 //**************************************************************************
 
-struct menuswitch_t : menutext_t
+struct menuswitch_t:menutext_t
 {
-	int				value;
-	int				max;
-	string			*names;
+	int value;
+	int max;
+	string *names;
 };
 
-//	Widely used on/off
-string			sw_offon[2] = {"Off", "On"};
+//  Widely used on/off
+string sw_offon[2] = { "Off", "On" };
 
 //==========================================================================
 //
-//	MenuSwitch_Draw
+//  MenuSwitch_Draw
 //
 //==========================================================================
 
-void MenuSwitch_Draw(menucommon_t *aitem)
+void MenuSwitch_Draw(menucommon_t * aitem)
 {
-	menuswitch_t	*item = (menuswitch_t*)aitem;
+	menuswitch_t *item = (menuswitch_t *) aitem;
 
 	int x = item->x;
 	int y = item->y;
@@ -795,32 +807,32 @@ void MenuSwitch_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuSwitch_Use
+//  MenuSwitch_Use
 //
 //==========================================================================
 
-boolean MenuSwitch_Use(menucommon_t *aitem, int key)
+boolean MenuSwitch_Use(menucommon_t * aitem, int key)
 {
-	menuswitch_t	*item = (menuswitch_t*)aitem;
+	menuswitch_t *item = (menuswitch_t *) aitem;
 
 	switch (key)
 	{
-	 case K_LEFTARROW:
-	   	if (item->value > 0)
-		   	item->value--;
+	case K_LEFTARROW:
+		if (item->value > 0)
+			item->value--;
 		else
-		   	item->value = item->max - 1;
+			item->value = item->max - 1;
 		LocalSound("MenuSwitch");
 		if (item->callback)
 			item->callback(aitem, MMSG_ACTIVATE);
 		return true;
-	 case K_RIGHTARROW:
-	 case K_ENTER:
-	 case K_MOUSE1:
-	   	if (item->value < item->max - 1)
-		   	item->value++;
+	case K_RIGHTARROW:
+	case K_ENTER:
+	case K_MOUSE1:
+		if (item->value < item->max - 1)
+			item->value++;
 		else
-		   	item->value = 0;
+			item->value = 0;
 		LocalSound("MenuSwitch");
 		if (item->callback)
 			item->callback(aitem, MMSG_ACTIVATE);
@@ -831,12 +843,12 @@ boolean MenuSwitch_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuSwitch_Init
+//  MenuSwitch_Init
 //
 //==========================================================================
 
-void MenuSwitch_Init(menuswitch_t *self, int x, int y, string text, int type,
-	int value, int max, string *names)
+void MenuSwitch_Init(menuswitch_t * self, int x, int y, string text, int type,
+	int value, int max, string * names)
 {
 	MenuText_Init(self, x, y, 0, text, type);
 	self->drawer = MenuSwitch_Draw;
@@ -852,14 +864,14 @@ void MenuSwitch_Init(menuswitch_t *self, int x, int y, string text, int type,
 
 //**************************************************************************
 //**
-//**	Slider
+//**    Slider
 //**
 //**************************************************************************
 
-struct menuslider_t : menutext_t
+struct menuslider_t:menutext_t
 {
-	int				value;
-	int				max;
+	int value;
+	int max;
 };
 
 int pic_M_SLDLT;
@@ -870,23 +882,23 @@ int pic_M_SLDKB;
 
 //==========================================================================
 //
-//	MenuSlider_Draw
+//  MenuSlider_Draw
 //
 //==========================================================================
 
-void MenuSlider_Draw(menucommon_t *aitem)
+void MenuSlider_Draw(menucommon_t * aitem)
 {
-	menuslider_t	*item = (menuslider_t*)aitem;
+	menuslider_t *item = (menuslider_t *) aitem;
 
-	int		i;
-	int		xx;
+	int i;
+	int xx;
 
 	int x = item->x;
 	int y = item->y;
 
 	MenuText_Draw(aitem);
 
-   	xx = x;
+	xx = x;
 	R_DrawPic(xx, y, pic_M_SLDLT);
 	xx += 32;
 	for (i = 0; i < 12; i++)
@@ -901,18 +913,18 @@ void MenuSlider_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuSlider_Use
+//  MenuSlider_Use
 //
 //==========================================================================
 
-boolean MenuSlider_Use(menucommon_t *aitem, int key)
+boolean MenuSlider_Use(menucommon_t * aitem, int key)
 {
-	menuslider_t	*item = (menuslider_t*)aitem;
+	menuslider_t *item = (menuslider_t *) aitem;
 
 	switch (key)
 	{
-	 case K_LEFTARROW:
-	   	if (item->value > 0)
+	case K_LEFTARROW:
+		if (item->value > 0)
 		{
 			item->value--;
 		}
@@ -921,8 +933,8 @@ boolean MenuSlider_Use(menucommon_t *aitem, int key)
 			item->callback(aitem, MMSG_ACTIVATE);
 		return true;
 
-	 case K_RIGHTARROW:
-	   	if (item->value < item->max - 1)
+	case K_RIGHTARROW:
+		if (item->value < item->max - 1)
 		{
 			item->value++;
 		}
@@ -936,11 +948,12 @@ boolean MenuSlider_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuSlider_Init
+//  MenuSlider_Init
 //
 //==========================================================================
 
-void MenuSlider_Init(menuslider_t *self, int x, int y, string text, int type, int value, int max)
+void MenuSlider_Init(menuslider_t * self, int x, int y, string text, int type,
+	int value, int max)
 {
 	MenuText_Init(self, x, y, 0, text, type);
 	self->drawer = MenuSlider_Draw;
@@ -961,38 +974,38 @@ void MenuSlider_Init(menuslider_t *self, int x, int y, string text, int type, in
 
 //**************************************************************************
 //**
-//**	Control key
+//**    Control key
 //**
 //**************************************************************************
 
-struct menucontrol_t : menucommon_t
+struct menucontrol_t:menucommon_t
 {
-	string		text;
-	string		command_on;
-	string		command_off;
+	string text;
+	string command_on;
+	string command_off;
 };
 
-menucontrol_t		*current_ctl;
-int 				ControlColumn;	// menu column for controls
+menucontrol_t *current_ctl;
+int ControlColumn;	// menu column for controls
 
 //==========================================================================
 //
-//	MenuControl_Draw
+//  MenuControl_Draw
 //
 //==========================================================================
 
-void MenuControl_Draw(menucommon_t *aitem)
+void MenuControl_Draw(menucommon_t * aitem)
 {
-	menucontrol_t	*item = (menucontrol_t*)aitem;
+	menucontrol_t *item = (menucontrol_t *) aitem;
 
-	int			key1;
-	int			key2;
-	int			name_buf[32 / 4];
-	string		name = ARR2STR(name_buf);
+	int key1;
+	int key2;
+	int name_buf[32 / 4];
+	string name = ARR2STR(name_buf);
 
-	int		x = item->x;
-	int		y = item->y;
-	boolean	is_active = ActiveItem() == aitem;
+	int x = item->x;
+	int y = item->y;
+	boolean is_active = ActiveItem() == aitem;
 
 	T_SetFont(font_small);
 	if (is_active)
@@ -1002,7 +1015,7 @@ void MenuControl_Draw(menucommon_t *aitem)
 	}
 
 	T_SetAlign(hright, vtop);
-  	T_DrawText(x, y, item->text);
+	T_DrawText(x, y, item->text);
 
 	IN_GetBindingKeys(item->command_on, &key1, &key2);
 
@@ -1029,16 +1042,16 @@ void MenuControl_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	ControlResponse
+//  ControlResponse
 //
 //==========================================================================
 
 void ControlResponse(int key)
 {
-	string	kb_down;
-	string	kb_up;
-	int		key1;
-	int		key2;
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
 
 	if (key != K_ESCAPE)
 	{
@@ -1060,37 +1073,40 @@ void ControlResponse(int key)
 
 //==========================================================================
 //
-//	MenuControl_Use
+//  MenuControl_Use
 //
 //==========================================================================
 
-boolean MenuControl_Use(menucommon_t *aitem, int key)
+boolean MenuControl_Use(menucommon_t * aitem, int key)
 {
-	menucontrol_t	*item = (menucontrol_t*)aitem;
+	menucontrol_t *item = (menucontrol_t *) aitem;
 
-	int		key1;
-	int		key2;
+	int key1;
+	int key2;
 
 	switch (key)
 	{
-	 case K_LEFTARROW:
+	case K_LEFTARROW:
 		ControlColumn = 0;
 		return true;
 
-	 case K_RIGHTARROW:
+	case K_RIGHTARROW:
 		ControlColumn = 1;
 		return true;
 
-	 case K_ENTER:
-	 case K_MOUSE1:
+	case K_ENTER:
+	case K_MOUSE1:
 		current_ctl = item;
-	  	MB_StartMessage("Press new key\n\nESC to cancel", ControlResponse, false);
+		MB_StartMessage("Press new key\n\nESC to cancel", ControlResponse,
+			false);
 		return true;
 
-	 case K_BACKSPACE:
+	case K_BACKSPACE:
 		IN_GetBindingKeys(item->command_on, &key1, &key2);
-		if (ControlColumn == 0) IN_SetBinding(key1, "", "");
-		if (ControlColumn == 1) IN_SetBinding(key2, "", "");
+		if (ControlColumn == 0)
+			IN_SetBinding(key1, "", "");
+		if (ControlColumn == 1)
+			IN_SetBinding(key2, "", "");
 		return true;
 	}
 	return false;
@@ -1098,11 +1114,11 @@ boolean MenuControl_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuControl_Init
+//  MenuControl_Init
 //
 //==========================================================================
 
-void MenuControl_Init(menucontrol_t *item, menu_t *parent, int x, int y,
+void MenuControl_Init(menucontrol_t * item, menu_t * parent, int x, int y,
 	string text, string kbdown, string kbup)
 {
 	MenuCommon_Init(item, x, y, 0);
@@ -1116,22 +1132,22 @@ void MenuControl_Init(menucontrol_t *item, menu_t *parent, int x, int y,
 
 //**************************************************************************
 //**
-//**	Slot for saves and input lines
+//**    Slot for saves and input lines
 //**
 //**************************************************************************
 
-int	pic_M_FSLOT;
+int pic_M_FSLOT;
 
 //==========================================================================
 //
-//	DrawSlot
+//  DrawSlot
 //
 //==========================================================================
 
 int DrawSlot(int x, int y, string text, boolean entering)
 {
-	int		xx;
-	int		j;
+	int xx;
+	int j;
 
 	R_DrawPic(x, y, pic_M_FSLOT);
 
@@ -1147,7 +1163,7 @@ int DrawSlot(int x, int y, string text, boolean entering)
 
 //==========================================================================
 //
-//	InitSlot
+//  InitSlot
 //
 //==========================================================================
 
@@ -1158,34 +1174,34 @@ void InitSlot(void)
 
 //**************************************************************************
 //**
-//**	Save slot
+//**    Save slot
 //**
 //**************************************************************************
 
 #define SLOTTEXTLEN 		24
 
-struct menusaveslot_t : menucommon_t
+struct menusaveslot_t:menucommon_t
 {
-	int 		status;
-	int			text[(SLOTTEXTLEN + 4) / 4];
+	int status;
+	int text[(SLOTTEXTLEN + 4) / 4];
 };
 
-boolean	enteringText;
-TILine	slot_enter_text;
+boolean enteringText;
+TILine slot_enter_text;
 
 //==========================================================================
 //
-//	MenuSaveSlot_Draw
+//  MenuSaveSlot_Draw
 //
 //==========================================================================
 
-void MenuSaveSlot_Draw(menucommon_t *aitem)
+void MenuSaveSlot_Draw(menucommon_t * aitem)
 {
-	menusaveslot_t	*item = (menusaveslot_t*)aitem;
+	menusaveslot_t *item = (menusaveslot_t *) aitem;
 
-	int		x = item->x;
-	int		y = item->y;
-	boolean	is_active = ActiveItem() == aitem;
+	int x = item->x;
+	int y = item->y;
+	boolean is_active = ActiveItem() == aitem;
 
 	if (enteringText && is_active)
 	{
@@ -1203,36 +1219,37 @@ void MenuSaveSlot_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuSaveSlot_Use
+//  MenuSaveSlot_Use
 //
 //==========================================================================
 
-boolean MenuSaveSlot_Use(menucommon_t *aitem, int key)
+boolean MenuSaveSlot_Use(menucommon_t * aitem, int key)
 {
-	menusaveslot_t	*item = (menusaveslot_t*)aitem;
+	menusaveslot_t *item = (menusaveslot_t *) aitem;
 
 	if (enteringText)
 	{
 		// Save Game string input
 		switch (key)
 		{
-	  	 case K_ESCAPE:
-		 case K_MOUSE2:
+		case K_ESCAPE:
+		case K_MOUSE2:
 			enteringText = false;
 			break;
-				
-	  	 case K_ENTER:
-		 case K_MOUSE1:
+
+		case K_ENTER:
+		case K_MOUSE1:
 			enteringText = false;
 			if (slot_enter_text.Data[0])
 			{
 				strcpy(ARR2STR(item->text), ARR2STR(slot_enter_text.Data));
-				CmdBuf_AddText("Save %d \"%s\"\n", item->id, ARR2STR(item->text));
+				CmdBuf_AddText("Save %d \"%s\"\n", item->id,
+					ARR2STR(item->text));
 				ForceMenuOff();
 			}
 			break;
-				
-	  	 default:
+
+		default:
 			InputLine_Key(&slot_enter_text, key);
 			if (slot_enter_text.len >= SLOTTEXTLEN - 1)
 			{
@@ -1254,11 +1271,11 @@ boolean MenuSaveSlot_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuSaveSlot_Init
+//  MenuSaveSlot_Init
 //
 //==========================================================================
 
-void MenuSaveSlot_Init(menusaveslot_t *self, int x, int y)
+void MenuSaveSlot_Init(menusaveslot_t * self, int x, int y)
 {
 	MenuCommon_Init(self, x, y, 0);
 	self->drawer = MenuSaveSlot_Draw;
@@ -1268,25 +1285,25 @@ void MenuSaveSlot_Init(menusaveslot_t *self, int x, int y)
 
 //**************************************************************************
 //**
-//**	Input line
+//**    Input line
 //**
 //**************************************************************************
 
-struct menuinputline_t : menutext_t
+struct menuinputline_t:menutext_t
 {
-	int			value[32 / 4];
-	int			ilstyle;
+	int value[32 / 4];
+	int ilstyle;
 };
 
 //==========================================================================
 //
-//	MenuInputLine_Draw
+//  MenuInputLine_Draw
 //
 //==========================================================================
 
-void MenuInputLine_Draw(menucommon_t *aitem)
+void MenuInputLine_Draw(menucommon_t * aitem)
 {
-	menuinputline_t *item = (menuinputline_t*)aitem;
+	menuinputline_t *item = (menuinputline_t *) aitem;
 	int x = item->x;
 	int y = item->y;
 
@@ -1308,31 +1325,32 @@ void MenuInputLine_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuInputLine_Use
+//  MenuInputLine_Use
 //
 //==========================================================================
 
-boolean MenuInputLine_Use(menucommon_t *aitem, int key)
+boolean MenuInputLine_Use(menucommon_t * aitem, int key)
 {
-	menuinputline_t *item = (menuinputline_t*)aitem;
+	menuinputline_t *item = (menuinputline_t *) aitem;
+
 	if (enteringText)
 	{
 		switch (key)
 		{
-	  	 case K_ESCAPE:
-		 case K_MOUSE2:
+		case K_ESCAPE:
+		case K_MOUSE2:
 			enteringText = false;
 			break;
-				
-	  	 case K_ENTER:
-		 case K_MOUSE1:
+
+		case K_ENTER:
+		case K_MOUSE1:
 			enteringText = false;
 			strcpy(ARR2STR(item->value), ARR2STR(slot_enter_text.Data));
 			if (item->callback)
 				item->callback(aitem, MMSG_ACTIVATE);
 			break;
-				
-	  	 default:
+
+		default:
 			InputLine_Key(&slot_enter_text, key);
 			if (slot_enter_text.len >= 30)
 			{
@@ -1347,21 +1365,22 @@ boolean MenuInputLine_Use(menucommon_t *aitem, int key)
 	{
 		// we are going to be intercepting all chars
 		enteringText = true;
-	   	InputLine_Init(&slot_enter_text);
-	  	LocalSound("MenuSelect");
+		InputLine_Init(&slot_enter_text);
+		LocalSound("MenuSelect");
 		InputLine_SetValue(&slot_enter_text, ARR2STR(item->value));
 		return true;
 	}
-   	return false;
+	return false;
 }
 
 //==========================================================================
 //
-//	MenuInputLine_Init
+//  MenuInputLine_Init
 //
 //==========================================================================
 
-void MenuInputLine_Init(menuinputline_t *self, int x, int y, string text, int type, int ilstyle)
+void MenuInputLine_Init(menuinputline_t * self, int x, int y, string text,
+	int type, int ilstyle)
 {
 	MenuText_Init(self, x, y, 0, text, type);
 	self->drawer = MenuInputLine_Draw;
@@ -1372,38 +1391,40 @@ void MenuInputLine_Init(menuinputline_t *self, int x, int y, string text, int ty
 
 //**************************************************************************
 //**
-//**	Server list
+//**    Server list
 //**
 //**************************************************************************
 
-struct menuslist_t : menucommon_t
+struct menuslist_t:menucommon_t
 {
-	int			cursor;
+	int cursor;
 };
 
-slist_t		slist;
+slist_t slist;
 
 //==========================================================================
 //
-//	Text box
+//  Text box
 //
 //==========================================================================
 
 void DrawTextBox(string text)
 {
-	int		x;
-	int		y;
-	int		w;
-	int		h;
+	int x;
+	int y;
+	int w;
+	int h;
 
 	// Horiz. & Vertically center string and print it.
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vcenter);
 
-	w = (T_TextWidth (text) + 16) & ~15;
+	w = (T_TextWidth(text) + 16) & ~15;
 	h = (T_TextHeight(text) + 16) & ~15;
-	if (w > 304) w = 304;
-	if (h > 184) h = 184;
+	if (w > 304)
+		w = 304;
+	if (h > 184)
+		h = 184;
 	x = (320 - w) / 2;
 	y = (200 - h) / 2;
 
@@ -1415,28 +1436,29 @@ void DrawTextBox(string text)
 
 //==========================================================================
 //
-//	MenuSlist_Draw
+//  MenuSlist_Draw
 //
 //==========================================================================
 
-void MenuSlist_Draw(menucommon_t *aitem)
+void MenuSlist_Draw(menucommon_t * aitem)
 {
-	int		i;
-	int		x;
-	int		y;
-	menuslist_t	*item = (menuslist_t*)aitem;
+	int i;
+	int x;
+	int y;
+	menuslist_t *item = (menuslist_t *) aitem;
 
 	GetSlist(&slist);
 
-  	T_SetFont(font_small);
+	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	for (i = 0; i < slist.count; i++)
 	{
 		T_DrawText(16, 32 + 10 * i, ARR2STR(slist.cache[i].name));
-		T_DrawText(16+128, 32 + 10 * i, ARR2STR(slist.cache[i].map));
+		T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist.cache[i].map));
 		if (slist.cache[i].maxusers)
 		{
-			T_DrawText(16+256, 32 + 10 * i, va("%d/%d", slist.cache[i].users, slist.cache[i].maxusers));
+			T_DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
+					slist.cache[i].users, slist.cache[i].maxusers));
 		}
 	}
 	T_DrawText(8, 32 + item->cursor * 10, ">");
@@ -1448,9 +1470,11 @@ void MenuSlist_Draw(menucommon_t *aitem)
 	{
 		x = 8;
 		y = 124;
-		for (i = 0;	i < 20 && slist.cache[item->cursor].wadfiles[i][0]; i++)
+		for (i = 0; i < 20 && slist.cache[item->cursor].wadfiles[i][0]; i++)
 		{
-			int w = T_TextWidth(ARR2STR(slist.cache[item->cursor].wadfiles[i]));
+			int w =
+
+				T_TextWidth(ARR2STR(slist.cache[item->cursor].wadfiles[i]));
 			if (x + w > 312)
 			{
 				x = 8;
@@ -1475,13 +1499,13 @@ void MenuSlist_Draw(menucommon_t *aitem)
 
 //==========================================================================
 //
-//	MenuSlist_Use
+//  MenuSlist_Use
 //
 //==========================================================================
 
-boolean MenuSlist_Use(menucommon_t *aitem, int key)
+boolean MenuSlist_Use(menucommon_t * aitem, int key)
 {
-	menuslist_t	*item = (menuslist_t*)aitem;
+	menuslist_t *item = (menuslist_t *) aitem;
 
 	GetSlist(&slist);
 
@@ -1492,17 +1516,17 @@ boolean MenuSlist_Use(menucommon_t *aitem, int key)
 
 	switch (key)
 	{
-	 case K_DOWNARROW:
+	case K_DOWNARROW:
 		if (slist.count)
 		{
-	   		item->cursor++;
+			item->cursor++;
 			if (item->cursor >= slist.count)
 				item->cursor = 0;
 			LocalSound("MenuMove");
 		}
 		return true;
 
-	 case K_UPARROW:
+	case K_UPARROW:
 		if (slist.count)
 		{
 			item->cursor--;
@@ -1512,15 +1536,16 @@ boolean MenuSlist_Use(menucommon_t *aitem, int key)
 		}
 		return true;
 
-	 case K_ENTER:
+	case K_ENTER:
 		if (slist.count)
 		{
-		  	LocalSound("MenuSelect");
-			CmdBuf_AddText("connect \"%s\"\n", slist.cache[item->cursor].cname);
+			LocalSound("MenuSelect");
+			CmdBuf_AddText("connect \"%s\"\n",
+				slist.cache[item->cursor].cname);
 		}
 		return true;
 
-	 case ' ':
+	case ' ':
 		item->cursor = 0;
 		StartSearch();
 		return true;
@@ -1530,11 +1555,11 @@ boolean MenuSlist_Use(menucommon_t *aitem, int key)
 
 //==========================================================================
 //
-//	MenuSlist_Init
+//  MenuSlist_Init
 //
 //==========================================================================
 
-void MenuSlist_Init(menuslist_t *self)
+void MenuSlist_Init(menuslist_t * self)
 {
 	MenuCommon_Init(self, 0, 0, 0);
 	self->drawer = MenuSlist_Draw;
@@ -1544,13 +1569,13 @@ void MenuSlist_Init(menuslist_t *self)
 
 //**************************************************************************
 //**
-//**	Menu API functions
+//**    Menu API functions
 //**
 //**************************************************************************
 
 //==========================================================================
 //
-//	MN_DeactivateMenu
+//  MN_DeactivateMenu
 //
 //==========================================================================
 
@@ -1561,11 +1586,11 @@ void MN_DeactivateMenu(void)
 
 //==========================================================================
 //
-//	MN_Responder
+//  MN_Responder
 //
 //==========================================================================
 
-boolean MN_Responder(event_t *event)
+boolean MN_Responder(event_t * event)
 {
 	if (!CurrentMenu)
 	{
@@ -1587,7 +1612,7 @@ boolean MN_Responder(event_t *event)
 
 //==========================================================================
 //
-//	MN_Drawer
+//  MN_Drawer
 //
 //==========================================================================
 
@@ -1603,7 +1628,7 @@ void MN_Drawer(void)
 
 //==========================================================================
 //
-//	MN_Active
+//  MN_Active
 //
 //==========================================================================
 
@@ -1614,11 +1639,14 @@ boolean MN_Active(void)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/29 17:46:25  dj_jl
-//	Moved view border and message box to progs
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/29 17:46:25  dj_jl
+//  Moved view border and message box to progs
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -26,31 +26,31 @@
 //===========================================================================
 //
 // Korax Variables
-//	special1	last teleport destination
-//	special2	set if "below half" script not yet run
+//  special1    last teleport destination
+//  special2    set if "below half" script not yet run
 //
 // Korax Scripts (reserved)
-//	249		Tell scripts that we are below half health
-//	250-254	Control scripts
-//	255		Death script
+//  249     Tell scripts that we are below half health
+//  250-254 Control scripts
+//  255     Death script
 //
 // Korax TIDs (reserved)
-//	245		Reserved for Korax himself
-//  248		Initial teleport destination
-//	249		Teleport destination
-//	250-254	For use in respective control scripts
-//	255		For use in death script (spawn spots)
+//  245     Reserved for Korax himself
+//  248     Initial teleport destination
+//  249     Teleport destination
+//  250-254 For use in respective control scripts
+//  255     For use in death script (spawn spots)
 //
 //===========================================================================
 //
 // Arm projectiles
-//		arm positions numbered:
-//			1	top left
-//			2	middle left
-//			3	lower left
-//			4	top right
-//			5	middle right
-//			6	lower right
+//      arm positions numbered:
+//          1   top left
+//          2   middle left
+//          3   lower left
+//          4   top right
+//          5   middle right
+//          6   lower right
 //
 //===========================================================================
 
@@ -90,22 +90,22 @@
 
 //============================================================================
 //
-//	A_KoraxStep
+//  A_KoraxStep
 //
 //============================================================================
 
-void A_KoraxStep(mobj_t* actor)
+void A_KoraxStep(mobj_t * actor)
 {
 	A_Chase(actor);
 }
 
 //============================================================================
 //
-//	A_KoraxStep2
+//  A_KoraxStep2
 //
 //============================================================================
 
-void A_KoraxStep2(mobj_t* actor)
+void A_KoraxStep2(mobj_t * actor)
 {
 	StartSoundName(NULL, "KoraxStep", CHAN_BODY);
 	A_Chase(actor);
@@ -113,24 +113,25 @@ void A_KoraxStep2(mobj_t* actor)
 
 //============================================================================
 //
-//	A_KoraxChase
+//  A_KoraxChase
 //
 //============================================================================
 
-void A_KoraxChase(mobj_t* actor)
+void A_KoraxChase(mobj_t * actor)
 {
-	mobj_t*	spot;
-	int		search;
-	int		args[3];
+	mobj_t *spot;
+	int search;
+	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	if ((!actor->special2) && (actor->health <= (actor->spawnhealth/2)))
+	if ((!actor->special2) && (actor->health <= (actor->spawnhealth / 2)))
 	{
-    	search = 0;
+		search = 0;
 		spot = P_FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
 		if (spot)
 		{
-			P_Teleport(actor, spot->origin.x, spot->origin.y, spot->angles.yaw, true);
+			P_Teleport(actor, spot->origin.x, spot->origin.y,
+				spot->angles.yaw, true);
 		}
 
 		StartACS(249, 0, &args[0], actor, NULL, 0);
@@ -139,25 +140,27 @@ void A_KoraxChase(mobj_t* actor)
 		return;
 	}
 
-	if (!actor->target) return;
-	if (P_Random()<30)
+	if (!actor->target)
+		return;
+	if (P_Random() < 30)
 	{
 		SetMobjState(actor, actor->missilestate);
 	}
-	else if (P_Random()<30)
+	else if (P_Random() < 30)
 	{
 		StartSoundName(NULL, "KoraxActive", CHAN_VOICE);
 	}
 
 	// Teleport away
-	if (actor->health < (actor->spawnhealth>>1))
+	if (actor->health < (actor->spawnhealth >> 1))
 	{
-		if (P_Random()<10)
+		if (P_Random() < 10)
 		{
 			spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &actor->special1);
 			if (spot)
 			{
-				P_Teleport(actor, spot->origin.x, spot->origin.y, spot->angles.yaw, true);
+				P_Teleport(actor, spot->origin.x, spot->origin.y,
+					spot->angles.yaw, true);
 			}
 		}
 	}
@@ -169,9 +172,9 @@ void A_KoraxChase(mobj_t* actor)
 //
 //============================================================================
 
-void A_KoraxDecide(mobj_t* actor)
+void A_KoraxDecide(mobj_t * actor)
 {
-	if (P_Random()<220)
+	if (P_Random() < 220)
 	{
 		SetMobjState(actor, S_KORAX_MISSILE1);
 	}
@@ -185,11 +188,11 @@ void A_KoraxDecide(mobj_t* actor)
 // Arm 1 projectile
 //============================================================================
 
-void KoraxFire1(mobj_t* actor, int type)
+void KoraxFire1(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw - KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
@@ -202,11 +205,11 @@ void KoraxFire1(mobj_t* actor, int type)
 // Arm 2 projectile
 //============================================================================
 
-void KoraxFire2(mobj_t* actor, int type)
+void KoraxFire2(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw - KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
@@ -219,11 +222,11 @@ void KoraxFire2(mobj_t* actor, int type)
 // Arm 3 projectile
 //============================================================================
 
-void KoraxFire3(mobj_t* actor, int type)
+void KoraxFire3(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw - KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
@@ -236,11 +239,11 @@ void KoraxFire3(mobj_t* actor, int type)
 // Arm 4 projectile
 //============================================================================
 
-void KoraxFire4(mobj_t* actor, int type)
+void KoraxFire4(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw + KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
@@ -253,11 +256,11 @@ void KoraxFire4(mobj_t* actor, int type)
 // Arm 5 projectile
 //============================================================================
 
-void KoraxFire5(mobj_t* actor, int type)
+void KoraxFire5(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw + KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
@@ -270,11 +273,11 @@ void KoraxFire5(mobj_t* actor, int type)
 // Arm 6 projectile
 //============================================================================
 
-void KoraxFire6(mobj_t* actor, int type)
+void KoraxFire6(mobj_t * actor, int type)
 {
-	mobj_t*	mo;
-	angle_t	ang;
-	float	x,y,z;
+	mobj_t *mo;
+	angle_t ang;
+	float x, y, z;
 
 	ang = actor->angles.yaw + KORAX_DELTAANGLE;
 	x = actor->origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
@@ -289,39 +292,39 @@ void KoraxFire6(mobj_t* actor, int type)
 //
 //============================================================================
 
-void A_KoraxMissile(mobj_t* actor)
+void A_KoraxMissile(mobj_t * actor)
 {
-	int		type = P_Random() % 6;
-	string	sound;
+	int type = P_Random() % 6;
+	string sound;
 
 	StartSoundName(actor, "KoraxAttack", CHAN_VOICE);
 
-	switch(type)
+	switch (type)
 	{
-		case 0:
-			type = MT_WRAITHFX1;
-			sound = "WraithMissileFire";
-			break;
-		case 1:
-			type = MT_DEMONFX1;
-			sound = "DemonMissileFire";
-			break;
-		case 2:
-			type = MT_DEMON2FX1;
-			sound = "DemonMissileFire";
-			break;
-		case 3:
-			type = MT_FIREDEMON_FX6;
-			sound = "FireDemonAttack";
-			break;
-		case 4:
-			type = MT_CENTAUR_FX;
-			sound = "CentaurLeaderAttack";
-			break;
-		case 5:
-			type = MT_SERPENTFX;
-			sound = "CentaurLeaderAttack";
-			break;
+	case 0:
+		type = MT_WRAITHFX1;
+		sound = "WraithMissileFire";
+		break;
+	case 1:
+		type = MT_DEMONFX1;
+		sound = "DemonMissileFire";
+		break;
+	case 2:
+		type = MT_DEMON2FX1;
+		sound = "DemonMissileFire";
+		break;
+	case 3:
+		type = MT_FIREDEMON_FX6;
+		sound = "FireDemonAttack";
+		break;
+	case 4:
+		type = MT_CENTAUR_FX;
+		sound = "CentaurLeaderAttack";
+		break;
+	case 5:
+		type = MT_SERPENTFX;
+		sound = "CentaurLeaderAttack";
+		break;
 	}
 
 	// Fire all 6 missiles at once
@@ -338,12 +341,12 @@ void A_KoraxMissile(mobj_t* actor)
 // Call action code scripts (250-254)
 //============================================================================
 
-void A_KoraxCommand(mobj_t* actor)
+void A_KoraxCommand(mobj_t * actor)
 {
-	float	x,y,z;
-	angle_t	ang;
-	int 	numcommands;
-	int		args[3];
+	float x, y, z;
+	angle_t ang;
+	int numcommands;
+	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
 	StartSoundName(actor, "KoraxCommand", CHAN_VOICE);
@@ -364,23 +367,23 @@ void A_KoraxCommand(mobj_t* actor)
 		numcommands = 4;
 	}
 
-	switch(P_Random() % numcommands)
+	switch (P_Random() % numcommands)
 	{
-		case 0:
-			StartACS(250, 0, &args[0], actor, NULL, 0);
-			break;
-		case 1:
-			StartACS(251, 0, &args[0], actor, NULL, 0);
-			break;
-		case 2:
-			StartACS(252, 0, &args[0], actor, NULL, 0);
-			break;
-		case 3:
-			StartACS(253, 0, &args[0], actor, NULL, 0);
-			break;
-		case 4:
-			StartACS(254, 0, &args[0], actor, NULL, 0);
-			break;
+	case 0:
+		StartACS(250, 0, &args[0], actor, NULL, 0);
+		break;
+	case 1:
+		StartACS(251, 0, &args[0], actor, NULL, 0);
+		break;
+	case 2:
+		StartACS(252, 0, &args[0], actor, NULL, 0);
+		break;
+	case 3:
+		StartACS(253, 0, &args[0], actor, NULL, 0);
+		break;
+	case 4:
+		StartACS(254, 0, &args[0], actor, NULL, 0);
+		break;
 	}
 }
 
@@ -390,30 +393,34 @@ void A_KoraxCommand(mobj_t* actor)
 //
 //============================================================================
 
-void KSpiritInit(mobj_t* spirit, mobj_t* korax)
+void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 {
-	int 	i;
-	mobj_t*	tail;
-	mobj_t*	next;
+	int i;
+	mobj_t *tail;
+	mobj_t *next;
 
 	spirit->health = KORAX_SPIRIT_LIFETIME;
 
-	spirit->specialmobj1 = korax;				// Swarm around korax
-	spirit->special2 = 32+(P_Random()&7);		// Float bob index
-	spirit->args[0] = 10; 						// initial turn value
-	spirit->args[1] = 0; 						// initial look angle
+	spirit->specialmobj1 = korax;	// Swarm around korax
+	spirit->special2 = 32 + (P_Random() & 7);	// Float bob index
+	spirit->args[0] = 10;	// initial turn value
+	spirit->args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
-	tail = P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z, MT_HOLY_TAIL);
-	tail->specialmobj2 = spirit; // parent
-	for(i = 1; i < 3; i++)
+	tail =
+		P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
+		MT_HOLY_TAIL);
+	tail->specialmobj2 = spirit;	// parent
+	for (i = 1; i < 3; i++)
 	{
-		next = P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z, MT_HOLY_TAIL);
-		SetMobjState(next, next->spawnstate+1);
+		next =
+			P_SpawnMobj(spirit->origin.x, spirit->origin.y, spirit->origin.z,
+			MT_HOLY_TAIL);
+		SetMobjState(next, next->spawnstate + 1);
 		tail->specialmobj1 = next;
 		tail = next;
 	}
-	tail->specialmobj1 = NULL; // last tail bit
+	tail->specialmobj1 = NULL;	// last tail bit
 }
 
 //============================================================================
@@ -422,27 +429,33 @@ void KSpiritInit(mobj_t* spirit, mobj_t* korax)
 //
 //============================================================================
 
-void A_KoraxBonePop(mobj_t* actor)
+void A_KoraxBonePop(mobj_t * actor)
 {
-	mobj_t*	mo;
-	int		args[3];
+	mobj_t *mo;
+	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
 	// Spawn 6 spirits equalangularly
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT1, ANG60*0, 5.0);
-	if (mo) KSpiritInit(mo,actor);
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT2, ANG60*1, 5.0);
-	if (mo) KSpiritInit(mo,actor);
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT3, ANG60*2, 5.0);
-	if (mo) KSpiritInit(mo,actor);
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT4, ANG60*3, 5.0);
-	if (mo) KSpiritInit(mo,actor);
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT5, ANG60*4, 5.0);
-	if (mo) KSpiritInit(mo,actor);
-	mo = SpawnMissileAngle(actor,MT_KORAX_SPIRIT6, ANG60*5, 5.0);
-	if (mo) KSpiritInit(mo,actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, ANG60 * 0, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT2, ANG60 * 1, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT3, ANG60 * 2, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT4, ANG60 * 3, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT5, ANG60 * 4, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
+	mo = SpawnMissileAngle(actor, MT_KORAX_SPIRIT6, ANG60 * 5, 5.0);
+	if (mo)
+		KSpiritInit(mo, actor);
 
-	StartACS(255, 0, &args[0], actor, NULL, 0);		// Death script
+	StartACS(255, 0, &args[0], actor, NULL, 0);	// Death script
 }
 
 //============================================================================
@@ -451,15 +464,15 @@ void A_KoraxBonePop(mobj_t* actor)
 //
 //============================================================================
 
-void A_KSpiritSeeker(mobj_t* actor, angle_t thresh, angle_t turnMax)
+void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
 {
-	int 	dir;
-	float	dist;
-	angle_t	delta;
-	angle_t	angle;
-	mobj_t*	target;
-	float	newZ;
-	float	deltaZ;
+	int dir;
+	float dist;
+	angle_t delta;
+	angle_t angle;
+	mobj_t *target;
+	float newZ;
+	float deltaZ;
 
 	target = actor->specialmobj1;
 	if (target == NULL)
@@ -467,27 +480,27 @@ void A_KSpiritSeeker(mobj_t* actor, angle_t thresh, angle_t turnMax)
 		return;
 	}
 	dir = P_FaceMobj(actor, target, &delta);
-	if(delta > thresh)
+	if (delta > thresh)
 	{
 		delta >>= 1;
-		if(delta > turnMax)
+		if (delta > turnMax)
 		{
 			delta = turnMax;
 		}
 	}
-	if(dir)
-	{ // Turn clockwise
+	if (dir)
+	{	// Turn clockwise
 		actor->angles.yaw += delta;
 	}
 	else
-	{ // Turn counter clockwise
+	{	// Turn counter clockwise
 		actor->angles.yaw -= delta;
 	}
 	angle = actor->angles.yaw;
 	actor->velocity.x = actor->speed * cos(angle);
 	actor->velocity.y = actor->speed * sin(angle);
 
-	if (!(level->tictime&15) ||
+	if (!(level->tictime & 15) ||
 		actor->origin.z > target->origin.z + target->height ||
 		actor->origin.z + actor->height < target->origin.z)
 	{
@@ -521,11 +534,11 @@ void A_KSpiritSeeker(mobj_t* actor, angle_t thresh, angle_t turnMax)
 //
 //============================================================================
 
-void A_KSpiritWeave(mobj_t* actor)
+void A_KSpiritWeave(mobj_t * actor)
 {
-	float	newX, newY;
-	int 	weaveXY, weaveZ;
-	angle_t	angle;
+	float newX, newY;
+	int weaveXY, weaveZ;
+	angle_t angle;
 
 	weaveXY = actor->special2 >> 16;
 	weaveZ = actor->special2 & 0xFFFF;
@@ -548,7 +561,7 @@ void A_KSpiritWeave(mobj_t* actor)
 //
 //============================================================================
 
-void A_KSpiritRoam(mobj_t* actor)
+void A_KSpiritRoam(mobj_t * actor)
 {
 	if (actor->health-- <= 0)
 	{
@@ -559,11 +572,11 @@ void A_KSpiritRoam(mobj_t* actor)
 	{
 		if (actor->specialmobj1)
 		{
-			A_KSpiritSeeker(actor, actor->args[0]*ANGLE_1,
-							actor->args[0]*ANGLE_1*2);
+			A_KSpiritSeeker(actor, actor->args[0] * ANGLE_1,
+				actor->args[0] * ANGLE_1 * 2);
 		}
 		A_KSpiritWeave(actor);
-		if (P_Random()<50)
+		if (P_Random() < 50)
 		{
 			StartSoundName(NULL, "SpiritActive", CHAN_VOICE);
 		}
@@ -576,10 +589,10 @@ void A_KSpiritRoam(mobj_t* actor)
 //
 //============================================================================
 
-void A_KBoltRaise(mobj_t* actor)
+void A_KBoltRaise(mobj_t * actor)
 {
-	mobj_t*	mo;
-	float	z;
+	mobj_t *mo;
+	float z;
 
 	// Spawn a child upward
 	z = actor->origin.z + KORAX_BOLT_HEIGHT;
@@ -604,7 +617,7 @@ void A_KBoltRaise(mobj_t* actor)
 //
 //============================================================================
 
-void A_KBolt(mobj_t* actor)
+void A_KBolt(mobj_t * actor)
 {
 	// Countdown lifetime
 	if (actor->special1-- <= 0)
@@ -615,11 +628,14 @@ void A_KBolt(mobj_t* actor)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/08/30 17:33:17  dj_jl
-//	Added sound channels
+//  $Log$
+//  Revision 1.4  2001/09/24 17:24:10  dj_jl
+//  Beautification
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/08/30 17:33:17  dj_jl
+//  Added sound channels
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************
