@@ -182,7 +182,7 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	}
 
 #ifdef USE_FULLSCREEN
-	if (vidmode_ext)
+	if (vidmode_ext && !M_CheckParm("-window"))
 	{
 		int best_fit;
 
@@ -305,19 +305,6 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		XDefineCursor(RenderDisplay, RenderWindow, cursor);
 	}
 
-	if (XGrabPointer(RenderDisplay, RenderWindow,
-				 True,
-				 0,
-				 GrabModeAsync, GrabModeAsync,
-				 RenderWindow,
-				 None,
-				 CurrentTime) != GrabSuccess)
-	{
-		GCon->Log(NAME_Init, "Failed to grab mouse");
-		return false;
-	}
-	_xwin.mouse_grabbed = 1;
-
 #ifdef USE_FULLSCREEN
 	if (XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
 	{
@@ -338,13 +325,31 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		0, 0, 0, 0, Width / 2, Height / 2);
 #endif
 
-	if (XGrabKeyboard(RenderDisplay, RenderWindow, False,
-		GrabModeAsync, GrabModeAsync, CurrentTime) != GrabSuccess)
+#ifdef USE_FULLSCREEN
+	if (vidmode_active)
 	{
-		GCon->Log(NAME_Init, "Failed to grab keyboard");
-		return false;
+		if (XGrabPointer(RenderDisplay, RenderWindow,
+			True,
+			0,
+			GrabModeAsync, GrabModeAsync,
+			RenderWindow,
+			None,
+			CurrentTime) != GrabSuccess)
+		{
+			GCon->Log(NAME_Init, "Failed to grab mouse");
+			return false;
+		}
+		_xwin.mouse_grabbed = 1;
+
+		if (XGrabKeyboard(RenderDisplay, RenderWindow, False,
+			GrabModeAsync, GrabModeAsync, CurrentTime) != GrabSuccess)
+		{
+			GCon->Log(NAME_Init, "Failed to grab keyboard");
+			return false;
+		}
+		_xwin.keyboard_grabbed = 1;
 	}
-	_xwin.keyboard_grabbed = 1;
+#endif
 
 	ScreenWidth = Width;
 	ScreenHeight = Height;
@@ -455,9 +460,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/03/28 07:26:54  dj_jl
+//	New OpenGL driver for Allegro.
+//
 //	Revision 1.11  2004/11/22 07:34:06  dj_jl
 //	Updated to match latest Allegro.
-//
+//	
 //	Revision 1.10  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	
