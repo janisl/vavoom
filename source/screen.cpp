@@ -332,12 +332,8 @@ COMMAND(ScreenShot)
 	//	Find a file name to save it to
 	for (i = 0; i <= 9999; i++)
 	{
-#ifdef DEVELOPER
-		sprintf(filename, "basev/shot%04d.%s", i, (char *)screenshot_type);
-#else
-		sprintf(filename, "%s/shot%04d.%s", fl_gamedir, i, (char *)screenshot_type);
-#endif
-		if (!Sys_FileExists(filename))
+		sprintf(filename, "shot%04d.%s", i, (char *)screenshot_type);
+		if (!Sys_FileExists(va("%s/%s", fl_gamedir, filename)))
 			break;	//	File doesn't exist
 	}
 	if (i == 10000)
@@ -715,9 +711,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/08/24 14:52:16  dj_jl
+//	Fixed screenshots.
+//
 //	Revision 1.18  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.17  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

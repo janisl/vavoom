@@ -749,15 +749,22 @@ FArchive* FL_OpenFileWrite(const char *Name)
 
 	sprintf(TmpName, "%s/%s", fl_gamedir, Name);
 	FILE *File = fopen(TmpName, "wb");
+	if (!File)
+	{
+		return NULL;
+	}
 	return new FArchiveFileWriter(File, GCon);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/08/24 14:52:16  dj_jl
+//	Fixed screenshots.
+//
 //	Revision 1.12  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.11  2002/02/22 18:09:49  dj_jl
 //	Some improvements, beautification.
 //	
