@@ -94,7 +94,7 @@ class TClipPlane : public TPlane
 
 struct pic_info_t
 {
-	char	name[12];
+	char	name[MAX_VPATH];
 	int		type;
 	int		palnum;
 };
@@ -114,6 +114,7 @@ void Mod_LoadSkin(const char *name, void **bufptr);
 
 extern int				numtextures;
 extern texdef_t**		textures;
+extern int				numflats;
 extern int*				flatlumps;
 extern int				numspritelumps;
 extern int*				spritelumps;
@@ -158,10 +159,14 @@ extern TVec				r_texorg;
 extern surface_t		*r_surface;
 
 extern int				r_dlightframecount;
+extern bool				r_light_add;
 extern dword			blocklights[18 * 18];
 extern dword			blocklightsr[18 * 18];
 extern dword			blocklightsg[18 * 18];
 extern dword			blocklightsb[18 * 18];
+extern dword			blockaddlightsr[18 * 18];
+extern dword			blockaddlightsg[18 * 18];
+extern dword			blockaddlightsb[18 * 18];
 
 extern rgba_t			r_palette[MAX_PALETTES][256];
 extern byte				r_black_color[MAX_PALETTES];
@@ -180,9 +185,12 @@ extern byte				gammatable[5][256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.10  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
-//
+//	
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

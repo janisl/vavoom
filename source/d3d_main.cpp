@@ -65,6 +65,7 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 	blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE),
 	maxdist("d3d_maxdist", "8192.0", CVAR_ARCHIVE),
 	model_lighting("d3d_model_lighting", "0", CVAR_ARCHIVE),
+	specular_highlights("d3d_specular_highlights", "1", CVAR_ARCHIVE),
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -1103,9 +1104,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.16  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.15  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

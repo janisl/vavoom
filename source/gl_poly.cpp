@@ -335,6 +335,26 @@ void TOpenGLDrawer::CacheSurface(surface_t *surface)
 	}
 	cache->chain = light_chain[bnum];
 	light_chain[bnum] = cache;
+
+	// specular highlights
+	for (j = 0; j < tmax; j++)
+	{
+		for (i = 0; i < smax; i++)
+		{
+			rgba_t &lb = add_block[bnum][(j + cache->t) * BLOCK_WIDTH +
+				i + cache->s];
+			lb.r = byte(blockaddlightsr[j * smax + i] >> 8);
+			lb.g = byte(blockaddlightsg[j * smax + i] >> 8);
+			lb.b = byte(blockaddlightsb[j * smax + i] >> 8);
+			lb.a = 255;
+		}
+	}
+	if (r_light_add)
+	{
+		cache->addchain = add_chain[bnum];
+		add_chain[bnum] = cache;
+		add_changed[bnum] = true;
+	}
 }
 
 //==========================================================================
@@ -494,6 +514,59 @@ void TOpenGLDrawer::WorldDrawing(void)
 			}
 
 			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			{
+				surf = cache->surf;
+				tex = surf->texinfo;
+
+				glBegin(GL_POLYGON);
+				for (i = 0; i < surf->count; i++)
+				{
+					TVec texpt = surf->verts[i] - tex->texorg;
+					s = (DotProduct(texpt, tex->saxis) - surf->texturemins[0] +
+						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+					t = (DotProduct(texpt, tex->taxis) - surf->texturemins[1] +
+						cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+					glTexCoord2f(s, t);
+					glVertex(surf->verts[i]);
+				}
+				glEnd();
+			}
+		}
+
+		glDisable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(1);		// back to normal Z buffering
+	}
+
+	//
+	//	Add specular lights
+	//
+	if (specular_highlights)
+	{
+		glDepthMask(0);		// don't bother writing Z
+		glBlendFunc(GL_ONE, GL_ONE);
+		glEnable(GL_BLEND);
+		glColor4f(1, 1, 1, 1);
+
+		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+		{
+			if (!add_chain[lb])
+			{
+				continue;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			if (add_changed[lb])
+			{
+				add_changed[lb] = false;
+				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, add_block[lb]);
+			}
+
+			for (cache = add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -795,7 +868,7 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 
 	glPushMatrix();
-	glTranslatef(origin.x,  origin.y,  origin.z);
+	glTranslatef(origin.x, origin.y, origin.z);
 
 	glRotatef(angles.yaw,  0, 0, 1);
 	glRotatef(angles.pitch,  0, 1, 0);
@@ -952,9 +1025,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.14  2001/11/02 18:35:55  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

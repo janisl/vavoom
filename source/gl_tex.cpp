@@ -125,6 +125,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 	glGenTextures(MAX_TRANSLATED_SPRITES, trspr_id);
 	glGenTextures(MAX_PICS, pic_id);
 	glGenTextures(NUM_BLOCK_SURFS, lmap_id);
+	glGenTextures(NUM_BLOCK_SURFS, addmap_id);
 	glGenTextures(MAX_SKIN_CACHE, skin_id);
 	glGenTextures(1, &particle_texture);
 
@@ -183,6 +184,7 @@ void TOpenGLDrawer::DeleteTextures(void)
 		glDeleteTextures(MAX_TRANSLATED_SPRITES, trspr_id);
 		glDeleteTextures(MAX_PICS, pic_id);
 		glDeleteTextures(NUM_BLOCK_SURFS, lmap_id);
+		glDeleteTextures(NUM_BLOCK_SURFS, addmap_id);
 		glDeleteTextures(MAX_SKIN_CACHE, skin_id);
 		glDeleteTextures(1, &particle_texture);
 		texturesGenerated = false;
@@ -1085,9 +1087,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.13  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

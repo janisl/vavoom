@@ -67,6 +67,7 @@ struct surfcache_t
 	surfcache_t	*lprev;		// cache list in line
 	surfcache_t	*lnext;
 	surfcache_t	*chain;		// list of drawable surfaces
+	surfcache_t	*addchain;	// list of specular surfaces
 	int			blocknum;	// light surface index
 	surfcache_t	**owner;
 	int			lightlevel;	// checked for strobe flush
@@ -395,6 +396,16 @@ class TDirect3DDrawer : public TDrawer
 	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						block_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
+
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DTEXTURE8			*add_surf;
+#else
+	LPDIRECTDRAWSURFACE7		*add_surf;
+#endif
+	rgba_t						add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
+	bool						add_changed[NUM_BLOCK_SURFS];
+	surfcache_t					*add_chain[NUM_BLOCK_SURFS];
+
 	surfcache_t					*freeblocks;
 	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
@@ -406,6 +417,7 @@ class TDirect3DDrawer : public TDrawer
 	TCvarI blend_sprites;
 	TCvarF maxdist;
 	TCvarI model_lighting;
+	TCvarI specular_highlights;
 
 #if DIRECT3D_VERSION >= 0x0800
 	friend ostream &operator << (ostream &str, const D3DCAPS8 *dd);
@@ -424,9 +436,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.17  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.16  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

@@ -53,11 +53,15 @@ struct light_t
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int					r_dlightframecount;
+bool				r_light_add;
 
 dword				blocklights[18 * 18];
 dword				blocklightsr[18 * 18];
 dword				blocklightsg[18 * 18];
 dword				blocklightsb[18 * 18];
+dword				blockaddlightsr[18 * 18];
+dword				blockaddlightsg[18 * 18];
+dword				blockaddlightsb[18 * 18];
 
 byte				light_remap[256];
 TCvarI				r_darken("r_darken", "0", CVAR_ARCHIVE);
@@ -65,6 +69,8 @@ TCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
 TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
 TCvarI				r_dynamic("r_dynamic", "1", CVAR_ARCHIVE);
+TCvarI				r_static_add("r_static_add", "0", CVAR_ARCHIVE);
+TCvarF				r_specular("r_specular", "0.2", CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -893,6 +899,7 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	rgb_t		*lightmap_rgb;
 
 	is_colored = false;
+	r_light_add = false;
 	smax = (surf->extents[0] >> 4) + 1;
 	tmax = (surf->extents[1] >> 4) + 1;
 	size = smax*tmax;
@@ -908,6 +915,9 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 		blocklightsr[i] = t;
 		blocklightsg[i] = t;
 		blocklightsb[i] = t;
+		blockaddlightsr[i] = 0;
+		blockaddlightsg[i] = 0;
+		blockaddlightsb[i] = 0;
 	}
 
 	// add lightmap
@@ -924,6 +934,15 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 			blocklightsr[i] += lightmap_rgb[i].r << 8;
 			blocklightsg[i] += lightmap_rgb[i].g << 8;
 			blocklightsb[i] += lightmap_rgb[i].b << 8;
+			if (!r_static_add)
+			{
+				if (blocklightsr[i] > 0xffff)
+					blocklightsr[i] = 0xffff;
+				if (blocklightsg[i] > 0xffff)
+					blocklightsg[i] = 0xffff;
+				if (blocklightsb[i] > 0xffff)
+					blocklightsb[i] = 0xffff;
+			}
 		}
 	}
 	else if (lightmap)
@@ -935,6 +954,15 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 			blocklightsr[i] += t;
 			blocklightsg[i] += t;
 			blocklightsb[i] += t;
+			if (!r_static_add)
+			{
+				if (blocklightsr[i] > 0xffff)
+					blocklightsr[i] = 0xffff;
+				if (blocklightsg[i] > 0xffff)
+					blocklightsg[i] = 0xffff;
+				if (blocklightsb[i] > 0xffff)
+					blocklightsb[i] = 0xffff;
+			}
 		}
 	}
 
@@ -942,27 +970,66 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	if (surf->dlightframe == r_dlightframecount)
 		R_AddDynamicLights(surf);
 
+	//  Calc additive light. This must be done before lightmap procesing
+	// because it will clamp all lights
+	if (!shift)
+	{
+		for (i = 0; i < size; i++)
+		{
+			t = blocklightsr[i] - 0x10000;
+			if (t > 0)
+			{
+				t = int(r_specular * t);
+				if (t > 0xffff)
+					t = 0xffff;
+				blockaddlightsr[i] = t;
+				r_light_add = true;
+			}
+
+			t = blocklightsg[i] - 0x10000;
+			if (t > 0)
+			{
+				t = int(r_specular * t);
+				if (t > 0xffff)
+					t = 0xffff;
+				blockaddlightsg[i] = t;
+				r_light_add = true;
+			}
+
+			t = blocklightsb[i] - 0x10000;
+			if (t > 0)
+			{
+				t = int(r_specular * t);
+				if (t > 0xffff)
+					t = 0xffff;
+				blockaddlightsb[i] = t;
+				r_light_add = true;
+			}
+		}
+	}
+
 	// bound, invert, and shift
+	int minlight = 1 << (8 - shift);
 	for (i = 0; i < size; i++)
 	{
 		t = (255 * 256 - (int)blocklights[i]) >> shift;
-		if (t < (1 << 6))
-			t = (1 << 6);
+		if (t < minlight)
+			t = minlight;
 		blocklights[i] = t;
 
 		t = (255 * 256 - (int)blocklightsr[i]) >> shift;
-		if (t < (1 << 6))
-			t = (1 << 6);
+		if (t < minlight)
+			t = minlight;
 		blocklightsr[i] = t;
 
 		t = (255 * 256 - (int)blocklightsg[i]) >> shift;
-		if (t < (1 << 6))
-			t = (1 << 6);
+		if (t < minlight)
+			t = minlight;
 		blocklightsg[i] = t;
 
 		t = (255 * 256 - (int)blocklightsb[i]) >> shift;
-		if (t < (1 << 6))
-			t = (1 << 6);
+		if (t < minlight)
+			t = minlight;
 		blocklightsb[i] = t;
 	}
 
@@ -972,9 +1039,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

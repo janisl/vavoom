@@ -94,6 +94,7 @@ struct surfcache_t
 	surfcache_t	*lprev;		// cache list in line
 	surfcache_t	*lnext;
 	surfcache_t	*chain;		// list of drawable surfaces
+	surfcache_t	*addchain;	// list of specular surfaces
 	int			blocknum;	// light surface index
 	surfcache_t	**owner;
 	int			lightlevel;	// checked for strobe flush
@@ -216,11 +217,18 @@ class TOpenGLDrawer : public TDrawer
 	TCvarI		ext_anisotropy;
 	TCvarF		maxdist;
 	TCvarI		model_lighting;
+	TCvarI		specular_highlights;
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool		block_changed[NUM_BLOCK_SURFS];
 	surfcache_t	*light_chain[NUM_BLOCK_SURFS];
+
+	GLuint		addmap_id[NUM_BLOCK_SURFS];
+	rgba_t		add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
+	bool		add_changed[NUM_BLOCK_SURFS];
+	surfcache_t	*add_chain[NUM_BLOCK_SURFS];
+
 	surfcache_t	*freeblocks;
 	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
@@ -285,9 +293,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.17  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.16  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

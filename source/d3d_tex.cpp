@@ -166,8 +166,10 @@ void TDirect3DDrawer::InitTextures(void)
 	// release them
 #if DIRECT3D_VERSION >= 0x0800
 	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #else
 	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #endif
 
 	textureiw = (float*)Z_Calloc(numtextures * 4);
@@ -206,6 +208,7 @@ void TDirect3DDrawer::ReleaseTextures(void)
 	for (i = 0; i < NUM_BLOCK_SURFS; i++)
 	{
 		SAFE_RELEASE(light_surf[i]);
+		SAFE_RELEASE(add_surf[i]);
 	}
 	SAFE_RELEASE(particle_texture);
 }
@@ -1215,9 +1218,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.14  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.13  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
 //	

@@ -66,7 +66,8 @@ TOpenGLDrawer::TOpenGLDrawer(void) :
 	ext_point_parameters("gl_ext_point_parameters", "1", CVAR_ARCHIVE),
 	ext_anisotropy("gl_ext_anisotropy", "1", CVAR_ARCHIVE),
 	maxdist("gl_maxdist", "8192.0", CVAR_ARCHIVE),
-	model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE)
+	model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE),
+	specular_highlights("gl_specular_highlights", "1", CVAR_ARCHIVE)
 {
 	_OpenGLDrawer = this;
 }
@@ -118,6 +119,8 @@ void TOpenGLDrawer::InitResolution(void)
 	{
 		mtexable = false;
 	}
+
+	//  Check point parameters extensions
 	if (ext_point_parameters && CheckExtension("GL_EXT_point_parameters"))
 	{
 		con << "Found GL_EXT_point_parameters...\n";
@@ -139,6 +142,8 @@ void TOpenGLDrawer::InitResolution(void)
 	{
 		pointparmsable = false;
 	}
+
+	//  Anisotropy extension
 	if (ext_anisotropy && CheckExtension("GL_EXT_texture_filter_anisotropic"))
 	{
 		GLfloat		max_anisotropy;
@@ -369,6 +374,7 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 	}
 
 	memset(light_chain, 0, sizeof(light_chain));
+	memset(add_chain, 0, sizeof(add_chain));
 }
 
 //==========================================================================
@@ -455,9 +461,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.14  2001/10/27 07:45:01  dj_jl
 //	Added gamma controls
-//
+//	
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

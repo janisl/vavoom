@@ -369,6 +369,26 @@ void TDirect3DDrawer::CacheSurface(surface_t *surface)
 	}
 	cache->chain = light_chain[bnum];
 	light_chain[bnum] = cache;
+
+	// specular highlights
+	for (j = 0; j < tmax; j++)
+	{
+		for (i = 0; i < smax; i++)
+		{
+			rgba_t &lb = add_block[bnum][(j + cache->t) * BLOCK_WIDTH +
+				i + cache->s];
+			lb.r = byte(blockaddlightsr[j * smax + i] >> 8);
+			lb.g = byte(blockaddlightsg[j * smax + i] >> 8);
+			lb.b = byte(blockaddlightsb[j * smax + i] >> 8);
+			lb.a = 255;
+		}
+	}
+	if (r_light_add)
+	{
+		cache->addchain = add_chain[bnum];
+		add_chain[bnum] = cache;
+		add_changed[bnum] = true;
+	}
 }
 
 //==========================================================================
@@ -541,6 +561,80 @@ void TDirect3DDrawer::WorldDrawing(void)
 			RenderDevice->SetTexture(0, light_surf[lb]);
 
 			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			{
+				surf = cache->surf;
+				tex = surf->texinfo;
+				for (i = 0; i < surf->count; i++)
+				{
+					TVec texpt = surf->verts[i] - tex->texorg;
+					s = DotProduct(texpt, tex->saxis);
+					t = DotProduct(texpt, tex->taxis);
+					lights = (s - surf->texturemins[0]) / 16 + cache->s + 0.5;
+					lightt = (t - surf->texturemins[1]) / 16 + cache->t + 0.5;
+					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
+						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
+				}
+#if DIRECT3D_VERSION >= 0x0800
+				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
+#else
+				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
+#endif
+			}
+		}
+
+		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
+	}
+
+	//
+	//  Add specular hightlights
+	//
+	if (specular_highlights)
+	{
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
+#else
+		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
+#endif
+		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
+
+		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+		{
+			if (!add_chain[lb])
+			{
+				continue;
+			}
+
+			if (!add_surf[lb])
+			{
+				add_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
+				add_changed[lb] = true;
+			}
+			if (add_changed[lb])
+			{
+				add_changed[lb] = false;
+#if DIRECT3D_VERSION >= 0x0800
+				UploadTextureImage(add_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, add_block[lb]);
+#else
+				UploadTextureImage(add_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, add_block[lb]);
+#endif
+			}
+
+			RenderDevice->SetTexture(0, add_surf[lb]);
+
+			for (cache = add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -1061,9 +1155,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/11/09 14:18:40  dj_jl
+//	Added specular highlights
+//
 //	Revision 1.16  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.15  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
