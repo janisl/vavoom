@@ -49,7 +49,7 @@
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
 #define NUM_BLOCK_SURFS				32
-#define NUM_CACHE_BLOCKS			4000
+#define NUM_CACHE_BLOCKS			(8 * 1024)
 
 // TYPES -------------------------------------------------------------------
 
@@ -304,9 +304,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2004/02/09 17:29:58  dj_jl
+//	Increased block count
+//
 //	Revision 1.24  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
-//
+//	
 //	Revision 1.23  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	
