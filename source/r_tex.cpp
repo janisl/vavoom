@@ -916,7 +916,7 @@ void R_InitTexture(void)
 	guard(R_InitTexture);
 	if (IsStrifeTexture())
 	{
-		con << "Strife textures detected\n";
+		GCon->Log(NAME_Init, "Strife textures detected");
 		InitTextures2();
 	}
 	else
@@ -1094,7 +1094,7 @@ int R_RegisterPic(const char *name, int type)
 			return i;
 		}
 	}
-	cond << "R_RegisterPic: No more free slots\n";
+	GCon->Log(NAME_Dev, "R_RegisterPic: No more free slots");
 	return -1;
 	unguard;
 }
@@ -1123,7 +1123,7 @@ int R_RegisterPicPal(const char *name, int type, const char *palname)
 			return i;
 		}
 	}
-	cond << "R_RegisterPic: No more free slots\n";
+	GCon->Log(NAME_Dev, "R_RegisterPic: No more free slots");
 	return -1;
 	unguard;
 }
@@ -1304,9 +1304,12 @@ void R_ShadeRect(int x, int y, int width, int height, int shade)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/13 07:51:49  dj_jl
+//	Replacing console's iostream with output device.
+//
 //	Revision 1.18  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.17  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

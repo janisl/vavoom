@@ -591,7 +591,7 @@ static void RenderSprite(clmobj_t *thing)
 #ifdef PARANOID
 	if ((unsigned)thing->sprite >= MAX_SPRITE_MODELS)
 	{
-		cond << "Invalid sprite number " << thing->sprite << endl;
+		GCon->Logf(NAME_Dev, "Invalid sprite number %d", thing->sprite);
 		return;
 	}
 #endif
@@ -599,7 +599,7 @@ static void RenderSprite(clmobj_t *thing)
 #ifdef PARANOID
 	if ((thing->frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
-		cond << "Invalid sprite frame " << thing->sprite << " : " << thing->frame << endl;
+		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",thing->sprite, thing->frame);
 		return;
 	}
 #endif
@@ -935,7 +935,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 #ifdef PARANOID
     if ((unsigned)psp->sprite >= MAX_SPRITE_MODELS)
 	{
-		con << "R_ProjectSprite: invalid sprite number " << psp->sprite << endl;
+		GCon->Logf("R_ProjectSprite: invalid sprite number %d", psp->sprite);
 		return;
 	}
 #endif
@@ -943,8 +943,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 #ifdef PARANOID
     if ((psp->frame & FF_FRAMEMASK)  >= sprdef->numframes)
 	{
-        con << "R_ProjectSprite: invalid sprite frame "
-        	<< psp->sprite << " : " << psp->frame << endl;
+        GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d", psp->sprite, psp->frame);
 		return;
 	}
 #endif
@@ -1175,9 +1174,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/13 07:51:49  dj_jl
+//	Replacing console's iostream with output device.
+//
 //	Revision 1.14  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.13  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

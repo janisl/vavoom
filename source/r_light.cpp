@@ -125,7 +125,7 @@ void R_AddStaticLight(const TVec &origin, float radius, dword color)
 	guard(R_AddStaticLight);
 	if (num_lights == MAX_STATIC_LIGHTS)
 	{
-		con << "Too many static lights\n";
+		GCon->Log("Too many static lights");
 		return;
 	}
 	lights[num_lights].origin = origin;
@@ -1062,9 +1062,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/07/13 07:51:48  dj_jl
+//	Replacing console's iostream with output device.
+//
 //	Revision 1.14  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.13  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

@@ -779,7 +779,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	FArchive *Ar = FL_OpenFileWrite(filename);
 	if (!Ar)
 	{
-		con << "Couldn't write tga\n";
+		GCon->Log("Couldn't write tga");
 		return;
 	}
 
@@ -894,9 +894,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/13 07:51:48  dj_jl
+//	Replacing console's iostream with output device.
+//
 //	Revision 1.6  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.5  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	

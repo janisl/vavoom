@@ -1728,9 +1728,9 @@ void R_PreRender(void)
 		}
 	}
 
-	cond << c_subdivides << " subdivides\n";
-	cond << c_seg_div << " seg subdivides\n";
-	cond << (light_mem / 1024) << "k light mem\n";
+	GCon->Logf(NAME_Dev, "%d subdivides", c_subdivides);
+	GCon->Logf(NAME_Dev, "%d seg subdivides", c_seg_div);
+	GCon->Logf(NAME_Dev, "%dk light mem", light_mem / 1024);
 	unguard;
 }
 
@@ -1870,9 +1870,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/07/13 07:51:48  dj_jl
+//	Replacing console's iostream with output device.
+//
 //	Revision 1.10  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.9  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	
