@@ -39,6 +39,9 @@ class Entity:MapObject
 	bool bCheckLineBlocking;
 	bool bCheckLineBlockMonsters;
 
+boolean CheckPosition(TVec Pos);
+boolean CheckRelPosition(TVec Pos);
+
 //==========================================================================
 //
 //  SetState
@@ -330,7 +333,7 @@ boolean PIT_CheckLine(line_t * ld)
 
 //==========================================================================
 //
-//  CheckPosition
+//  Entity::CheckPosition
 //
 //  This is purely informative, nothing is modified
 // 
@@ -341,7 +344,7 @@ boolean PIT_CheckLine(line_t * ld)
 //
 //==========================================================================
 
-boolean CheckPosition(Entity thing, TVec Pos)
+boolean Entity::CheckPosition(TVec Pos)
 {
 	int xl;
 	int xh;
@@ -353,21 +356,21 @@ boolean CheckPosition(Entity thing, TVec Pos)
 	sec_region_t *gap;
 	sec_region_t *reg;
 
-	cptrace.Thing = thing;
+	cptrace.Thing = self;
 
 	cptrace.Pos = Pos;
 
-	cptrace.bbox[BOXTOP] = Pos.y + thing.Radius;
-	cptrace.bbox[BOXBOTTOM] = Pos.y - thing.Radius;
-	cptrace.bbox[BOXRIGHT] = Pos.x + thing.Radius;
-	cptrace.bbox[BOXLEFT] = Pos.x - thing.Radius;
+	cptrace.bbox[BOXTOP] = Pos.y + Radius;
+	cptrace.bbox[BOXBOTTOM] = Pos.y - Radius;
+	cptrace.bbox[BOXRIGHT] = Pos.x + Radius;
+	cptrace.bbox[BOXLEFT] = Pos.x - Radius;
 
 	newsubsec = PointInSubsector(Pos.x, Pos.y);
 
 	// The base floor / ceiling is from the subsector that contains the point.
 	// Any contacted lines the step closer together will adjust them.
 	gap = FindThingGap(newsubsec->sector->botregion, Pos,
-		Pos.z, Pos.z + thing.Height);
+		Pos.z, Pos.z + Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
@@ -627,7 +630,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 //
 //==========================================================================
 
-boolean P_CheckRelPosition(Entity * thing, float x, float y)
+boolean Entity::CheckRelPosition(TVec Pos)
 {
 	int xl;
 	int xh;
@@ -639,16 +642,16 @@ boolean P_CheckRelPosition(Entity * thing, float x, float y)
 	sec_region_t *gap;
 	sec_region_t *reg;
 
-	tmtrace.Thing = *thing;
+	tmtrace.Thing = self;
 
-	tmtrace.End = vector(x, y, thing->Origin.z);
+	tmtrace.End = Pos;
 
-	tmtrace.BBox[BOXTOP] = y + thing->Radius;
-	tmtrace.BBox[BOXBOTTOM] = y - thing->Radius;
-	tmtrace.BBox[BOXRIGHT] = x + thing->Radius;
-	tmtrace.BBox[BOXLEFT] = x - thing->Radius;
+	tmtrace.BBox[BOXTOP] = Pos.y + Radius;
+	tmtrace.BBox[BOXBOTTOM] = Pos.y - Radius;
+	tmtrace.BBox[BOXRIGHT] = Pos.x + Radius;
+	tmtrace.BBox[BOXLEFT] = Pos.x - Radius;
 
-	newsubsec = PointInSubsector(x, y);
+	newsubsec = PointInSubsector(Pos.x, Pos.y);
 	tmtrace.CeilingLine = NULL;
 
 	// The base floor / ceiling is from the subsector
@@ -656,7 +659,7 @@ boolean P_CheckRelPosition(Entity * thing, float x, float y)
 	// Any contacted lines the step closer together
 	// will adjust them.
 	gap = FindThingGap(newsubsec->sector->botregion, tmtrace.End,
-		tmtrace.End.z, tmtrace.End.z + thing->Height);
+		tmtrace.End.z, tmtrace.End.z + Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
@@ -672,7 +675,7 @@ boolean P_CheckRelPosition(Entity * thing, float x, float y)
 	(*validcount)++;
 	tmtrace.NumSpecHit = 0;
 
-	if (thing->bNoClip && !thing->bSkullFly)
+	if (bNoClip && !bSkullFly)
 		return true;
 
 	tmtrace.BlockingMobj = none;
@@ -692,7 +695,7 @@ boolean P_CheckRelPosition(Entity * thing, float x, float y)
 			if (!P_BlockThingsIterator(bx, by, PIT_CheckRelThing))
 				return false;
 
-	if (thing->bNoClip)
+	if (bNoClip)
 	{
 		return true;
 	}
@@ -715,6 +718,9 @@ boolean P_CheckRelPosition(Entity * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/03/02 17:39:06  dj_jl
+//  Beautification
+//
 //  Revision 1.6  2002/02/22 18:00:05  dj_jl
 //  A lots of the renaming, beautification.
 //
