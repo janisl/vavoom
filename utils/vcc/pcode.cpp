@@ -538,6 +538,30 @@ void PC_WriteObject(char *name)
 	dprograms_t		progs;
 
 	dprintf("Writing object\n");
+
+	//	Chack buffers
+	if (StringCount >= MAX_STRINGS)
+	{
+		ERR_Exit(ERR_TOO_MANY_STRINGS, true,
+				 "Current maximum: %d", MAX_STRINGS);
+	}
+	if (CodeBufferSize >= CODE_BUFFER_SIZE)
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
+	if (numglobals >= MAX_GLOBALS)
+	{
+		ERR_Exit(ERR_NONE, false, "Globals overflow");
+	}
+	if (numfunctions >= MAX_FUNCTIONS)
+	{
+		ERR_Exit(ERR_NONE, false, "Functions overflow");
+	}
+	if (strofs >= MAX_STRINGS_BUF)
+	{
+		ERR_Exit(ERR_NONE, false, "Strings buffer overflow");
+	}
+
 	f = fopen(name, "wb");
 	if (!f)
 	{
@@ -722,9 +746,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/27 07:54:59  dj_jl
+//	Added support for constructors and destructors
+//
 //	Revision 1.6  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.5  2001/09/27 17:05:24  dj_jl
 //	Increased strings limit
 //	

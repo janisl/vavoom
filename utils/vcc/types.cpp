@@ -35,7 +35,9 @@
 // 1 - size
 // 2 - parent vtable
 // 3 - reserved
-#define BASE_NUM_METHODS		4
+// 4 - constructor
+// 5 - destructor
+#define BASE_NUM_METHODS		6
 
 // TYPES -------------------------------------------------------------------
 
@@ -47,9 +49,6 @@ struct typedef_t
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
-	TType *class_type);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -776,11 +775,34 @@ void ParseClass(void)
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
+
+		if (TK_Check(PU_TILDE))
+		{
+			type = CheckForType();
+			if (type != class_type)
+			{
+				ParseError("Class name expected.");
+			}
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			fi = &fields[class_type->numfields];
+			sprintf(fi->name, "~%s", class_type->name);
+			ParseMethodDef(&type_void, fi, NULL, class_type, 2);
+			continue;
+		}
+
 		type = CheckForType();
 		if (!type)
 		{
 			ParseError("Field type expected.");
 		}
+		if (type == class_type && TK_Check(PU_LPAREN))
+		{
+			fi = &fields[class_type->numfields];
+			strcpy(fi->name, class_type->name);
+			ParseMethodDef(&type_void, fi, NULL, class_type, 1);
+			continue;
+		}
+
 		bool need_semicolon = true;
 		do
 		{
@@ -803,7 +825,7 @@ void ParseClass(void)
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, class_type);
+				ParseMethodDef(t, fi, otherfield, class_type, 0);
 				need_semicolon = false;
 				break;
 			}
@@ -1066,6 +1088,11 @@ static void AddVTable(TType *t)
 		memcpy(vtable, globals + t->aux_type->vtable,
 			t->aux_type->num_methods * 4);
 	}
+	else
+	{
+		vtable[4] = 1;
+		vtable[5] = 1;
+	}
 	vtable[0] = t->classid;
 	vtable[1] = t->size;
 	for (int i = 0; i < t->numfields; i++)
@@ -1107,9 +1134,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/27 07:54:59  dj_jl
+//	Added support for constructors and destructors
+//
 //	Revision 1.8  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
-//
+//	
 //	Revision 1.7  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
 //	

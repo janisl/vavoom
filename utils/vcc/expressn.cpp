@@ -105,26 +105,6 @@ class TOp
 	TOperator	*oper;
 };
 
-class TOpCopy : public TOp
-{
- public:
-	TOpCopy(TOp *Aop) : op(Aop)
-	{
-		type = op->type;
-	}
-	~TOpCopy(void)
-	{
-		if (op) delete op;
-	}
-	void Code(void)
-	{
-		if (op) op->Code();
-		AddStatement(OPC_COPY);
-	}
-
-	TOp			*op;
-};
-
 class TOp1 : public TOp
 {
  public:
@@ -507,6 +487,65 @@ class TOpVector : public TOp
 	TOp *op3;
 };
 
+class TOpPushThis:public TOp
+{
+ public:
+	TOpPushThis(void)
+	{
+		type = ThisType;
+	}
+	void Code(void)
+	{
+		AddStatement(OPC_LOCALADDRESS, 0);
+		AddStatement(OPC_PUSHPOINTED);
+	}
+};
+
+class TOpPushSelfMethod:public TOp
+{
+ public:
+	TOpPushSelfMethod(TOp *Aop, int Aoffs, TType *Atype) : op(Aop), offs(Aoffs)
+	{
+		type = Atype;
+	}
+	void Code(void)
+	{
+		if (op) op->Code();
+		AddStatement(OPC_COPY);
+		AddStatement(OPC_PUSHPOINTED);
+		AddStatement(OPC_PUSHNUMBER, offs * 4);
+		AddStatement(OPC_ADD);
+		AddStatement(OPC_PUSHPOINTED);
+	}
+
+	TOp *op;
+	int offs;
+};
+
+class TOpPushAuxMethod:public TOp
+{
+ public:
+	TOpPushAuxMethod(TOp *Aop, int Aoffs, TType *Atype) : op(Aop), offs(Aoffs)
+	{
+		type = Atype;
+	}
+	void Code(void)
+	{
+		if (op) op->Code();
+		AddStatement(OPC_COPY);
+		AddStatement(OPC_PUSHPOINTED);
+		AddStatement(OPC_PUSHNUMBER, 8);
+		AddStatement(OPC_ADD);
+		AddStatement(OPC_PUSHPOINTED);
+		AddStatement(OPC_PUSHNUMBER, offs * 4);
+		AddStatement(OPC_ADD);
+		AddStatement(OPC_PUSHPOINTED);
+	}
+
+	TOp *op;
+	int offs;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -874,14 +913,8 @@ static TOp *ParseExpressionPriority0(void)
 				ParseError("Not a method");
 				break;
 			}
-			op = new TOpLocal(0, MakePointerType(ThisType));
-			op = new TOpPushPointed(op,	ThisType);
-			op = new TOpCopy(op);
-			op = new TOpPushPointed(op,	field->type);
-			op = new TOpField(op, 8, field->type);
-			op = new TOpPushPointed(op,	field->type);
-			op = new TOpField(op, field->ofs * 4, field->type);
-			op = new TOpPushPointed(op,	field->type);
+			op = new TOpPushThis();
+			op = new TOpPushAuxMethod(op, field->ofs, field->type);
 			return op;
 		}
 		break;
@@ -906,8 +939,7 @@ static TOp *ParseExpressionPriority0(void)
 			}
 			else
 			{
-				op = new TOpLocal(0, MakePointerType(ThisType));
-				op = new TOpPushPointed(op,	ThisType);
+				op = new TOpPushThis();
 				return op;
 			}
 		}
@@ -1007,14 +1039,10 @@ static TOp *ParseExpressionPriority0(void)
 			field = CheckForField(ThisType->aux_type);
 			if (field)
 			{
-				op = new TOpLocal(0, MakePointerType(ThisType));
-				op = new TOpPushPointed(op,	ThisType);
+				op = new TOpPushThis();
 				if (field->type->type == ev_method)
 				{
-					op = new TOpCopy(op);
-					op = new TOpPushPointed(op,	field->type);
-					op = new TOpField(op, field->ofs * 4, field->type);
-					op = new TOpPushPointed(op,	field->type);
+					op = new TOpPushSelfMethod(op, field->ofs, field->type);
 				}
 				else
 				{
@@ -1080,10 +1108,7 @@ static TOp *ParseExpressionPriority1(void)
 			{
 				if (field->type->type == ev_method)
 				{
-					op = new TOpCopy(op);
-					op = new TOpPushPointed(op,	field->type);
-					op = new TOpField(op, field->ofs * 4, field->type);
-					op = new TOpPushPointed(op,	field->type);
+					op = new TOpPushSelfMethod(op, field->ofs, field->type);
 				}
 				else
 				{
@@ -1673,9 +1698,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/27 07:54:59  dj_jl
+//	Added support for constructors and destructors
+//
 //	Revision 1.8  2001/10/22 17:29:58  dj_jl
 //	Operators for clasid type
-//
+//	
 //	Revision 1.7  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	

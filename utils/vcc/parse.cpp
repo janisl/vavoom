@@ -1003,7 +1003,7 @@ static void ParseDef(TType *type, boolean builtin)
 //==========================================================================
 
 void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
-	TType *class_type)
+	TType *class_type, int method_type)
 {
 	if (t != &type_void)
 	{
@@ -1084,6 +1084,14 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		}
 		method->ofs = otherfield->ofs;
 	}
+	else if (method_type == 1)
+	{
+		method->ofs = 4;
+	}
+	else if (method_type == 2)
+	{
+		method->ofs = 5;
+	}
 	else
 	{
 		method->ofs = class_type->num_methods;
@@ -1112,7 +1120,39 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		functions[num].type = FindType(&functype);
 		functions[num].first_statement = CodeBufferSize;
 
+		if (method_type == 1 && class_type->aux_type)
+		{
+			//  Call parent constructor
+			AddStatement(OPC_LOCALADDRESS, 0);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_COPY);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_PUSHNUMBER, 8);
+			AddStatement(OPC_ADD);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_PUSHNUMBER, 4 * 4);
+			AddStatement(OPC_ADD);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_ICALL);
+		}
+
 	   	ParseCompoundStatement();
+
+		if (method_type == 2 && class_type->aux_type)
+		{
+			// Call parent destructor
+			AddStatement(OPC_LOCALADDRESS, 0);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_COPY);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_PUSHNUMBER, 8);
+			AddStatement(OPC_ADD);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_PUSHNUMBER, 5 * 4);
+			AddStatement(OPC_ADD);
+			AddStatement(OPC_PUSHPOINTED);
+			AddStatement(OPC_ICALL);
+		}
 
 		if (FuncRetType == &type_void)
 		{
@@ -1165,6 +1205,23 @@ void PA_Parse(void)
 	TType		*type;
 
 	dprintf("Compiling\n");
+
+	//  Add empty function for default constructors and destructors
+	TType functype;
+	memset(&functype, 0, sizeof(TType));
+	functype.type = ev_function;
+	functype.size = 4;
+	functype.aux_type = &type_void;
+	functype.params_size = 1; // this pointer
+
+	functions[numfunctions].s_name = 0;
+	functions[numfunctions].type = FindType(&functype);
+	functions[numfunctions].first_statement = CodeBufferSize;
+	functions[numfunctions].num_locals = 1;
+	numfunctions++;
+
+	AddStatement(OPC_RETURN);
+
 	TK_NextToken();
 	done = false;
 	while (!done)
@@ -1295,9 +1352,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/27 07:54:59  dj_jl
+//	Added support for constructors and destructors
+//
 //	Revision 1.8  2001/10/22 17:31:34  dj_jl
 //	Posibility to use classid constants in switch statement
-//
+//	
 //	Revision 1.7  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
 //	

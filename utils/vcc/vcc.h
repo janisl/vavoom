@@ -310,6 +310,8 @@ struct constant_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void PA_Parse(void);
+void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
+	TType *class_type, int method_type);
 
 void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
 void ParseError(error_t error);
@@ -473,9 +475,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/27 07:54:59  dj_jl
+//	Added support for constructors and destructors
+//
 //	Revision 1.8  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
-//
+//	
 //	Revision 1.7  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	
