@@ -45,8 +45,6 @@ struct state_t
 	float	time;
 	int		statenum;
 	int		nextstate;
-	float	misc1;
-    float	misc2;
 	int		function;
 };
 
@@ -294,19 +292,6 @@ void ParseStates(TType *class_type)
 		}
 		cs.NextName = tk_Name;
 		TK_NextToken();
-		if (TK_Check(PU_COMMA))
-		{
-			//	Misc1
-			s.misc1 = ConstFloatExpression();
-			TK_Expect(PU_COMMA, ERR_NONE);
-			//	Misc2
-			s.misc2 = ConstFloatExpression();
-		}
-		else
-		{
-			s.misc1 = 0.0;
-			s.misc2 = 0.0;
-		}
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
 		s.function = ParseStateCode(class_type);
@@ -399,7 +384,8 @@ void AddInfoTables(void)
 	{
 		if (states[i].function)
 		{
-			globalinfo[numglobals + i * sizeof(*states) / 4 + 9] = 2;
+			globalinfo[numglobals + i * sizeof(*states) / 4 +
+				STRUCT_OFFSET(state_t, function) / 4] = 2;
 		}
 	}
 	AddInfoData(gv_states, states, num_states * sizeof(*states), false);
@@ -420,9 +406,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/02/22 18:11:53  dj_jl
+//	Removed misc fields from states.
+//
 //	Revision 1.16  2002/02/16 16:28:36  dj_jl
 //	Added support for bool variables
-//
+//	
 //	Revision 1.15  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
 //	
