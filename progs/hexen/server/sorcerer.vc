@@ -287,7 +287,7 @@ defaultproperties
 	Height = 110.0;
 	Mass = 500.0;
 	StepSpeed = 16.0;
-	PainChance = 10;
+	PainChance = 0.0390625;
 	MissileDamage = 9;
 	bNoBlood = true;
 	bBoss = true;
@@ -1250,6 +1250,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.28  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

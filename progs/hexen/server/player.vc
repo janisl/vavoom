@@ -100,7 +100,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	Mass = 100.0;
-	PainChance = 255;
+	PainChance = 1.0;
 	bPickUp = true;
 	IdleState = S_FPLAY;
 	SeeState = S_FPLAY_RUN1;
@@ -166,7 +166,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	Mass = 100.0;
-	PainChance = 255;
+	PainChance = 1.0;
 	bPickUp = true;
 	IdleState = S_CPLAY;
 	SeeState = S_CPLAY_RUN1;
@@ -228,7 +228,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	Mass = 100.0;
-	PainChance = 255;
+	PainChance = 1.0;
 	bPickUp = true;
 	IdleState = S_MPLAY;
 	SeeState = S_MPLAY_RUN1;
@@ -279,7 +279,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 24.0;
 	Mass = 100.0;
-	PainChance = 255;
+	PainChance = 1.0;
 	IdleState = S_PIGPLAY;
 	SeeState = S_PIGPLAY_RUN1;
 	MissileState = S_PIGPLAY_ATK1;
@@ -429,6 +429,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.6  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

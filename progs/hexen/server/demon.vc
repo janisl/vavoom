@@ -337,7 +337,7 @@ defaultproperties
 	Height = 64.0;
 	Mass = 220.0;
 	StepSpeed = 13.0;
-	PainChance = 50;
+	PainChance = 0.1953125;
 	bActivatePushWall = false;
 	IdleState = S_DEMN_LOOK1;
 	SeeState = S_DEMN_CHASE1;
@@ -691,6 +691,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.22  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

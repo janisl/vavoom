@@ -501,7 +501,17 @@ void Actor::Died(Actor source)
 			source.Player->KillCount++;
 
 		if (bIsPlayer)
-			source.Player->Frags[P_GetPlayerNum(Player)]++;
+		{
+			source.Player->FragsStats[P_GetPlayerNum(Player)]++;
+			if (source == self)
+			{
+				Player->Frags--;
+			}
+			else
+			{
+				source.Player->Frags++;
+			}
+		}
 	}
 	else if (!netgame && bCountKill)
 	{
@@ -514,7 +524,10 @@ void Actor::Died(Actor source)
 	{
 		// count environment kills against you
 		if (!source)
-			Player->Frags[P_GetPlayerNum(Player)]++;
+		{
+			Player->FragsStats[P_GetPlayerNum(Player)]++;
+			Player->Frags--;
+		}
 
 		bSolid = false;
 		Player->PlayerState = PST_DEAD;
@@ -667,7 +680,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 
-	if ((P_Random() < PainChance) && !bSkullFly)
+	if ((Random() < PainChance) && !bSkullFly)
 	{
 		bJustHit = true;	// fight back!
 		SetState(PainState);
@@ -836,6 +849,9 @@ void Actor::Thrust(float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2002/06/29 15:54:35  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.43  2002/06/14 15:47:53  dj_jl
 //  Added state names to the states.
 //

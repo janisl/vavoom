@@ -89,7 +89,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 #ifdef TEASER
-	PainChance = 200;
+	PainChance = 0.78125;
 #endif
 	bNoBlood = true;
 #ifndef TEASER
@@ -110,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/06/29 15:54:35  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.3  2002/06/22 07:17:45  dj_jl
 //  Beautification.
 //

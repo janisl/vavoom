@@ -257,7 +257,7 @@ defaultproperties
 	Height = 64.0;
 	Mass = 120.0;
 	StepSpeed = 13.0;
-	PainChance = 135;
+	PainChance = 0.52734375;
 	IdleState = S_CENTAUR_LOOK1;
 	SeeState = S_CENTAUR_WALK1;
 	MeleeState = S_CENTAUR_ATK1;
@@ -346,7 +346,7 @@ defaultproperties
 	Health = 250;
 	GibsHealth = -125;
 	StepSpeed = 10.0;
-	PainChance = 96;
+	PainChance = 0.375;
 	MissileState = S_CENTAUR_MISSILE1;
 }
 
@@ -378,6 +378,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.25  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

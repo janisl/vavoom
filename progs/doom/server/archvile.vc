@@ -332,7 +332,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 500.0;
 	StepSpeed = 15.0;
-	PainChance = 10;
+	PainChance = 0.0390625;
 	MissileMaxRange = 14.0 * 64.0;
 	bNoGrudge = true;
 	bNeverTarget = true;
@@ -353,6 +353,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/06/29 15:54:33  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.26  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

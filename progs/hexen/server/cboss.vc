@@ -272,7 +272,7 @@ defaultproperties
 	Height = 64.0;
 	Mass = 100.0;
 	StepSpeed = 25.0;
-	PainChance = 50;
+	PainChance = 0.1953125;
 	IdleState = S_FIGHTER;
 	SeeState = S_FIGHTER_RUN1;
 	MeleeState = S_FIGHTER_ATK1;
@@ -358,7 +358,7 @@ defaultproperties
 	Height = 64.0;
 	Mass = 100.0;
 	StepSpeed = 25.0;
-	PainChance = 50;
+	PainChance = 0.1953125;
 	IdleState = S_CLERIC;
 	SeeState = S_CLERIC_RUN1;
 	MeleeState = S_CLERIC_ATK1;
@@ -459,7 +459,7 @@ defaultproperties
 	Height = 64.0;
 	Mass = 100.0;
 	StepSpeed = 25.0;
-	PainChance = 50;
+	PainChance = 0.1953125;
 	IdleState = S_MAGE;
 	SeeState = S_MAGE_RUN1;
 	MeleeState = S_MAGE_ATK1;
@@ -477,6 +477,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.23  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //

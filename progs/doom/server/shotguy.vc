@@ -125,7 +125,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	StepSpeed = 8.0;
-	PainChance = 170;
+	PainChance = 0.6640625;
 	IdleState = S_SPOS_STND;
 	SeeState = S_SPOS_RUN1;
 	MissileState = S_SPOS_ATK1;
@@ -144,6 +144,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.18  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

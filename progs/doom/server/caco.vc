@@ -125,7 +125,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 400.0;
 	StepSpeed = 8.0;
-	PainChance = 128;
+	PainChance = 0.5;
 	bNoGravity = true;
 	bFloat = true;
 	IdleState = S_HEAD_STND;
@@ -145,6 +145,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.14  2002/05/18 16:59:58  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

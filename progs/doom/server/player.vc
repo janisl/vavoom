@@ -68,7 +68,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 56.0;
 	Mass = 100.0;
-	PainChance = 255;
+	PainChance = 1.0;
 	bDropOff = true;
 	bPickUp = true;
 	IdleState = S_PLAY;
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.3  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

@@ -314,7 +314,7 @@ defaultproperties
 	Height = 16.0;
 	Mass = 10000000.0;
 	ReactionCount = 8;
-	PainChance = 255;
+	PainChance = 1.0;
 	bSolid = true;
 	bShootable = true;
 	IdleState = S_BRAIN;
@@ -421,6 +421,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.23  2002/06/22 07:22:16  dj_jl
 //  Added default values to Actor.
 //

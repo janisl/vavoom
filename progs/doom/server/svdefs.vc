@@ -322,7 +322,7 @@ class Actor:Entity
 	//  Params
 	float Speed;
 	float StepSpeed;
-	int PainChance;
+	float PainChance;
 	int SpawnHealth;
 	int GibsHealth;
 
@@ -1212,6 +1212,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.34  2002/06/22 07:09:58  dj_jl
 //  Made sliding and bouncing functions native.
 //

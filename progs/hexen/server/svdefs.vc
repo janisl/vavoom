@@ -251,7 +251,7 @@ class Actor:Entity
 
 	//  Params
 	float Speed;
-	int PainChance;
+	float PainChance;
 	int SpawnHealth;
 	int GibsHealth;
 
@@ -992,6 +992,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.34  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

@@ -160,7 +160,7 @@ defaultproperties
 	Height = 68.0;
 	Mass = 175.0;
 	StepSpeed = 13.0;
-	PainChance = 60;
+	PainChance = 0.234375;
 	bNoPassMobj = true;
 	IdleState = S_ETTIN_LOOK1;
 	SeeState = S_ETTIN_CHASE1;
@@ -205,6 +205,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.18  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

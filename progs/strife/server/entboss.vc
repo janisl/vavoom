@@ -114,7 +114,7 @@ defaultproperties
 #else
 	StepSpeed = 13.0;
 #endif
-	PainChance = 255;
+	PainChance = 1.0;
 	Translucency = 66;
 	bSpecial = true;
 	bNoGravity = true;
@@ -143,7 +143,73 @@ defaultproperties
 
 //**************************************************************************
 //
+//	EntityBossPod
+//
+//**************************************************************************
+
+class EntityBossPod:Decoration
+	__mobjinfo__(198)
+{
+
+__states__
+{
+	S_ENT_POD('PODD', 0, 60.0 / 35.0, S_ENT_POD) { A_Look(); }
+	S_ENT_POD_OPEN1('PODD', 0, 360.0 / 35.0, S_ENT_POD_OPEN2) { }
+	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) { A_Fall(); }
+	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) { }
+	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) { A_EntityBossRaise(); }
+	S_ENT_POD_OPEN5('PODD', 4, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 25.0;
+	Height = 91.0;
+	bSolid = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_ENT_POD;
+	SeeState = S_ENT_POD_OPEN1;
+	SightSound = 'Slop';
+}
+
+}
+
+//**************************************************************************
+//
+//	EntityNest
+//
+//**************************************************************************
+
+class EntityNest:Decoration
+	__mobjinfo__(26)
+{
+
+__states__
+{
+	S_ENTITY_NEST('NEST', 0, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Radius = 84.0;
+	Height = 47.0;
+	bSolid = true;
+#ifndef TEASER
+	bNoDeathmatch = true;
+#endif
+	IdleState = S_ENTITY_NEST;
+}
+
+}
+
+//**************************************************************************
+//
 //  $Log$
+//  Revision 1.4  2002/06/29 15:54:35  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.3  2002/06/22 07:17:45  dj_jl
 //  Beautification.
 //

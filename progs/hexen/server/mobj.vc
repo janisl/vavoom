@@ -659,11 +659,13 @@ void Actor::Died(Actor source)
 			if (self == source)
 			{
 				// Self-frag
-				Player->Frags[P_GetPlayerNum(Player)]--;
+				Player->FragsStats[P_GetPlayerNum(Player)]--;
+				Player->Frags--;
 			}
 			else
 			{
-				source.Player->Frags[P_GetPlayerNum(Player)]++;
+				source.Player->FragsStats[P_GetPlayerNum(Player)]++;
+				source.Player->Frags++;
 			}
 		}
 	}
@@ -673,7 +675,8 @@ void Actor::Died(Actor source)
 		if (!source)
 		{
 			// Self-frag
-			Player->Frags[P_GetPlayerNum(Player)]--;
+			Player->FragsStats[P_GetPlayerNum(Player)]--;
+			Player->Frags--;
 		}
 		bSolid = false;
 		bFly = false;
@@ -1294,7 +1297,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		Died(source);
 		return;
 	}
-	if ((P_Random() < PainChance) && !bSkullFly)
+	if ((Random() < PainChance) && !bSkullFly)
 	{
 		if (inflictor && (inflictor.Class == LightningFloor
 				|| inflictor.Class == LightningZap))
@@ -2087,6 +2090,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.44  2002/06/22 07:16:01  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

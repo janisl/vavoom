@@ -190,7 +190,7 @@ defaultproperties
 	Height = 22.0;
 	Mass = 60.0;
 	StepSpeed = 10.0;
-	PainChance = 128;
+	PainChance = 0.5;
 	bWindThrust = true;
 	bActivateMCross = false;
 	IdleState = S_PIG_LOOK1;
@@ -228,6 +228,9 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/06/29 15:54:34  dj_jl
+//  Floatized PainChance.
+//
 //  Revision 1.25  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //
