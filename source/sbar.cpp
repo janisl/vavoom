@@ -44,11 +44,11 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int				viewheight;
+extern refdef_t			refdef;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int 			sb_height = 32;
+int 					sb_height = 32;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -388,11 +388,6 @@ static void SB_DestroyWidgets(void)
 
 void SB_Init(void)
 {
-	if (Game == Strife)
-	{
-		sb_height = 32;
-		return;
-	}
 	sb_height = clpr.GetGlobal("sb_height");
 
 	SB_LoadPatches();
@@ -429,14 +424,10 @@ boolean SB_Responder(event_t *)
 
 void SB_Drawer(void)
 {
-	if (Game == Strife)
-	{
-		return;
-	}
 	sb_view_t	sb_view;
 
-	sb_view = automapactive ? SB_VIEW_AUTOMAP : viewheight == ScreenHeight ?
-    	SB_VIEW_FULLSCREEN : SB_VIEW_NORMAL;
+	sb_view = automapactive ? SB_VIEW_AUTOMAP :
+		refdef.height == ScreenHeight ? SB_VIEW_FULLSCREEN : SB_VIEW_NORMAL;
 	//	Update widget visibility
 	clpr.Exec("SB_OnDraw", sb_view);
 
@@ -455,77 +446,15 @@ void SB_Start(void)
 	clpr.Exec("SB_CreateWidgets");
 }
 
-//==========================================================================
-//
-//	DrawSoundInfo
-//
-//	Displays sound debugging information.
-//
-//==========================================================================
-
-#if 0
-static void DrawSoundInfo(void)
-{
-	int i;
-	SoundInfo_t s;
-	ChanInfo_t *c;
-	char text[32];
-	int x;
-	int y;
-	int xPos[7] = {1, 75, 112, 156, 200, 230, 260};
-
-	if(level.time&16)
-	{
-		MN_DrTextA("*** SOUND DEBUG INFO ***", xPos[0], 20);
-	}
-	S_GetChannelInfo(&s);
-	if(s.channelCount == 0)
-	{
-		return;
-	}
-	x = 0;
-	MN_DrTextA("NAME", xPos[x++], 30);
-	MN_DrTextA("MO.T", xPos[x++], 30);
-	MN_DrTextA("MO.X", xPos[x++], 30);
-	MN_DrTextA("MO.Y", xPos[x++], 30);
-	MN_DrTextA("ID", xPos[x++], 30);
-	MN_DrTextA("PRI", xPos[x++], 30);
-	MN_DrTextA("DIST", xPos[x++], 30);
-	for(i = 0; i < s.channelCount; i++)
-	{
-		c = &s.chan[i];
-		x = 0;
-		y = 40+i*10;
-		if(c->mo == NULL)
-		{ // Channel is unused
-			MN_DrTextA("------", xPos[0], y);
-			continue;
-		}
-		sprintf(text, "%s", c->name);
-		M_ForceUppercase(text);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->mo->type);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->mo->x>>FRACBITS);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->mo->y>>FRACBITS);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->id);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->priority);
-		MN_DrTextA(text, xPos[x++], y);
-		sprintf(text, "%d", c->distance);
-		MN_DrTextA(text, xPos[x++], y);
-	}
-}
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:08:15  dj_jl
+//	Fixed Strife status bar
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
