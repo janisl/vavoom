@@ -73,6 +73,11 @@ void A_SkullPop(void)
 {
 	Actor A;
 
+	if (!bIsPlayer)
+	{
+		//	Not a player anymore, i.e. already respawned or disconnected.
+		return;
+	}
 	bSolid = false;
 	A = Spawn(BloodySkull, Origin + vector(0.0, 0.0, 48.0));
 	A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
@@ -315,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/07/20 14:46:08  dj_jl
+//  Some network fixes.
+//
 //  Revision 1.3  2002/06/22 07:16:00  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //

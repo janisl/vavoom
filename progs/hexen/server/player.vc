@@ -44,6 +44,7 @@ void A_SkullPop(void)
 
 	if (!bIsPlayer)
 	{
+		//	Not a player anymore, i.e. already respawned or disconnected.
 		return;
 	}
 	bSolid = false;
@@ -429,6 +430,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/07/20 14:46:09  dj_jl
+//  Some network fixes.
+//
 //  Revision 1.7  2002/06/29 15:54:34  dj_jl
 //  Floatized PainChance.
 //
