@@ -75,16 +75,16 @@ void Actor::A_ImpMsAttack(void)
 	bSkullFly = true;
 	StartSound(self, sound_attack, CHAN_WEAPON);
 	A_FaceTarget();
-	an = angles.yaw;
-	velocity.x = 12.0 * cos(an) * 35.0;
-	velocity.y = 12.0 * sin(an) * 35.0;
+	an = Angles.yaw;
+	Velocity.x = 12.0 * cos(an) * 35.0;
+	Velocity.y = 12.0 * sin(an) * 35.0;
 	dist = MobjDist2(*dest, self);
 	dist = dist / 12.0;
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
-	velocity.z = (dest->origin.z + dest->Height / 2.0 - origin.z) / dist;
+	Velocity.z = (dest->Origin.z + dest->Height / 2.0 - Origin.z) / dist;
 }
 
 //==========================================================================
@@ -120,7 +120,7 @@ void Actor::A_ImpDeath(void)
 {
 	bSolid = false;
 	bFootClip = true;
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		SetState(S_IMP_CRASH1);
 	}
@@ -149,7 +149,7 @@ void Actor::A_ImpXDeath1(void)
 void Actor::A_ImpXDeath2(void)
 {
 	bNoGravity = false;
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		SetState(S_IMP_CRASH1);
 	}
@@ -165,14 +165,14 @@ void Actor::A_ImpExplode(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, ImpChunk1);
-	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->velocity.z = 9.0 * 35.0;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, ImpChunk2);
-	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-	mo->velocity.z = 9.0 * 35.0;
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, ImpChunk1);
+	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo->Velocity.z = 9.0 * 35.0;
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, ImpChunk2);
+	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo->Velocity.z = 9.0 * 35.0;
 	if (special1 == 666)
 	{
 		// Extreme death crash
@@ -183,6 +183,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

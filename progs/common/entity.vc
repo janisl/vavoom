@@ -26,10 +26,10 @@
 class Entity:MapObject
 {
 	name SpriteName;
-	float time;	// state tic counter
-	int statenum;
-	int nextstate;
-	boolean fixed_model;
+	float StateTime;	// state tic counter
+	int StateNum;
+	int NextState;
+	boolean bFixedModel;
 
 	boolean bNoPassMobj;	// Disable z block checking.  If on,
 							// this flag will prevent the mobj
@@ -54,21 +54,21 @@ boolean SetState(int state)
 		if (!state)
 		{
 			// Remove mobj
-			statenum = 0;
+			StateNum = 0;
 			P_RemoveMobj(&Actor(self));
 			return false;
 		}
 
 		st = &states[state];
-		time = st->time;
-		sprite = st->sprite;
+		StateTime = st->time;
+		SpriteIndex = st->sprite;
 		SpriteName = sprite_names[st->sprite];
-		frame = st->frame;
-		if (!fixed_model)
-			model_index = st->model_index;
-		alias_frame = st->model_frame;
-		statenum = st->statenum;
-		nextstate = st->nextstate;
+		SpriteFrame = st->frame;
+		if (!bFixedModel)
+			ModelIndex = st->model_index;
+		ModelFrame = st->model_frame;
+		StateNum = st->statenum;
+		NextState = st->nextstate;
 
 		// Modified handling.
 		// Call action functions when the state is set
@@ -79,7 +79,7 @@ boolean SetState(int state)
 
 		state = st->nextstate;
 	}
-	while (!time);
+	while (!StateTime);
 	return true;
 }
 
@@ -100,25 +100,25 @@ boolean SetStateNF(int state)
 		if (!state)
 		{
 			// Remove mobj
-			statenum = 0;
+			StateNum = 0;
 			P_RemoveMobj(&Actor(self));
 			return false;
 		}
 
 		st = &states[state];
-		time = st->time;
-		sprite = st->sprite;
+		StateTime = st->time;
+		SpriteIndex = st->sprite;
 		SpriteName = sprite_names[st->sprite];
-		frame = st->frame;
-		if (!fixed_model)
-			model_index = st->model_index;
-		alias_frame = st->model_frame;
-		statenum = st->statenum;
-		nextstate = st->nextstate;
+		SpriteFrame = st->frame;
+		if (!bFixedModel)
+			ModelIndex = st->model_index;
+		ModelFrame = st->model_frame;
+		StateNum = st->statenum;
+		NextState = st->nextstate;
 
 		state = st->nextstate;
 	}
-	while (!time);
+	while (!StateTime);
 	return true;
 }
 
@@ -169,8 +169,8 @@ boolean PIT_CheckThing(MapObject Other)
 
 	blockdist = Other.Radius + cptrace.Thing.Radius;
 
-	if (fabs(Other.origin.x - cptrace.Pos.x) >= blockdist ||
-		fabs(Other.origin.y - cptrace.Pos.y) >= blockdist)
+	if (fabs(Other.Origin.x - cptrace.Pos.x) >= blockdist ||
+		fabs(Other.Origin.y - cptrace.Pos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -194,11 +194,11 @@ boolean PIT_CheckThing(MapObject Other)
 			// don't let bishops fly over other bishops
 			return false;
 		}*/
-		if (cptrace.Pos.z >= Other.origin.z + Other.Height)
+		if (cptrace.Pos.z >= Other.Origin.z + Other.Height)
 		{
 			return true;
 		}
-		if (cptrace.Pos.z + cptrace.Thing.Height < Other.origin.z)
+		if (cptrace.Pos.z + cptrace.Thing.Height < Other.Origin.z)
 		{
 			// under thing
 			return true;
@@ -369,6 +369,9 @@ boolean CheckPosition(Entity thing, TVec Pos)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2002/02/14 19:20:53  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.3  2002/02/09 18:13:46  dj_jl
 //  Added flags that determines what line blocking flags to check
 //

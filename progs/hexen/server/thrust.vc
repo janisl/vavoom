@@ -55,8 +55,8 @@
 void Actor::A_ThrustInitUp(void)
 {
 	special2 = 5;	// Raise speed
-	args[0] = 1;	// Mark as up
-	floorclip = 0.0;
+	Args[0] = 1;	// Mark as up
+	FloorClip = 0.0;
 	bSolid = true;
 	//Flags = 0;
 	bNoTeleport = true;
@@ -76,14 +76,14 @@ void Actor::A_ThrustInitDn(void)
 	mobj_t *mo;
 
 	special2 = 5;	// Raise speed
-	args[0] = 0;	// Mark as down
-	floorclip = Height;
+	Args[0] = 0;	// Mark as down
+	FloorClip = Height;
 	//Flags = 0;
 	bNoTeleport = true;
 	bFloorClip = true;
 	//Flags2 = 0;
 	Translucency = 100;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, DirtClump);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, DirtClump);
 	specialmobj1 = mo;
 }
 
@@ -98,15 +98,15 @@ void Actor::A_ThrustRaise(void)
 	if (RaiseMobj(this))
 	{
 		// Reached it's target height
-		args[0] = 1;
-		if (args[1])
+		Args[0] = 1;
+		if (Args[1])
 			SetStateNF(S_BTHRUSTINIT2_1);
 		else
 			SetStateNF(S_THRUSTINIT2_1);
 	}
 
 	// Lose the dirt clump
-	if ((floorclip < Height) && specialmobj1)
+	if ((FloorClip < Height) && specialmobj1)
 	{
 		P_RemoveMobj(specialmobj1);
 		specialmobj1 = NULL;
@@ -128,8 +128,8 @@ void Actor::A_ThrustLower(void)
 {
 	if (SinkMobj(this))
 	{
-		args[0] = 0;
-		if (args[1])
+		Args[0] = 0;
+		if (Args[1])
 			SetStateNF(S_BTHRUSTINIT1_1);
 		else
 			SetStateNF(S_THRUSTINIT1_1);
@@ -162,6 +162,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -45,8 +45,8 @@ boolean PIT_StompThing(MapObject Other)
 
 	blockdist = Other.Radius + teleport_thing->Radius;
 
-	if (fabs(Other.origin.x - teleport_x) >= blockdist ||
-		fabs(Other.origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -105,8 +105,8 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 	// so link the thing into its new position
 	P_UnsetThingPosition(*thing);
 
-	thing->origin.x = x;
-	thing->origin.y = y;
+	thing->Origin.x = x;
+	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
 
@@ -129,75 +129,75 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle)
 	player_t *player;
 	mobj_t *fog;
 
-	oldx = thing->origin.x;
-	oldy = thing->origin.y;
-	oldz = thing->origin.z;
-	aboveFloor = thing->origin.z - thing->floorz;
+	oldx = thing->Origin.x;
+	oldy = thing->Origin.y;
+	oldz = thing->Origin.z;
+	aboveFloor = thing->Origin.z - thing->FloorZ;
 	if (!P_TeleportMove(thing, x, y))
 	{
 		return false;
 	}
-	if (thing->player)
+	if (thing->bIsPlayer)
 	{
-		player = thing->player;
+		player = thing->Player;
 		if (player->powers[pw_flight] && aboveFloor)
 		{
-			thing->origin.z = thing->floorz + aboveFloor;
-			if (thing->origin.z + thing->Height > thing->ceilingz)
+			thing->Origin.z = thing->FloorZ + aboveFloor;
+			if (thing->Origin.z + thing->Height > thing->CeilingZ)
 			{
-				thing->origin.z = thing->ceilingz - thing->Height;
+				thing->Origin.z = thing->CeilingZ - thing->Height;
 			}
-			player->vieworg.z = thing->origin.z + player->viewheight;
+			player->vieworg.z = thing->Origin.z + player->viewheight;
 		}
 		else
 		{
-			thing->origin.z = thing->floorz;
-			player->vieworg.z = thing->origin.z + player->viewheight;
-			thing->angles.pitch = 0.0;
+			thing->Origin.z = thing->FloorZ;
+			player->vieworg.z = thing->Origin.z + player->viewheight;
+			thing->Angles.pitch = 0.0;
 		}
 		player->fixangle = true;
 	}
 	else if (thing->bMissile)
 	{
-		thing->origin.z = thing->floorz + aboveFloor;
-		if (thing->origin.z + thing->Height > thing->ceilingz)
+		thing->Origin.z = thing->FloorZ + aboveFloor;
+		if (thing->Origin.z + thing->Height > thing->CeilingZ)
 		{
-			thing->origin.z = thing->ceilingz - thing->Height;
+			thing->Origin.z = thing->CeilingZ - thing->Height;
 		}
 	}
 	else
 	{
-		thing->origin.z = thing->floorz;
+		thing->Origin.z = thing->FloorZ;
 	}
 	// Spawn teleport fog at source and destination
 	fogDelta = thing->bMissile ? 0.0 : TELEFOGHEIGHT;
 	fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), thing->origin.z + fogDelta, TeleportFog);
+		y + 20.0 * sin(angle), thing->Origin.z + fogDelta, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
-	if (thing->player && !thing->player->powers[pw_weaponlevel2])
+	if (thing->bIsPlayer && !thing->Player->powers[pw_weaponlevel2])
 	{
 		// Freeze player for about .5 sec
 		thing->ReactionTime = 0.5;
 	}
-	thing->angles.yaw = angle;
+	thing->Angles.yaw = angle;
 	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
-		thing->floorclip = FOOTCLIPSIZE;
+		thing->FloorClip = FOOTCLIPSIZE;
 	}
 	else
 	{
-		thing->floorclip = 0.0;
+		thing->FloorClip = 0.0;
 	}
 	if (thing->bMissile)
 	{
-		thing->velocity.x = thing->Speed * cos(angle);
-		thing->velocity.y = thing->Speed * sin(angle);
+		thing->Velocity.x = thing->Speed * cos(angle);
+		thing->Velocity.y = thing->Speed * sin(angle);
 	}
 	else
 	{
-		thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
+		thing->Velocity = vector(0.0, 0.0, 0.0);
 	}
 	return true;
 }
@@ -213,7 +213,6 @@ boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 	int i;
 	Actor m;
 
-print("Teleport to %d\n", tag);
 	if (thing->bNoTeleport)
 	{
 		return false;
@@ -225,21 +224,22 @@ print("Teleport to %d\n", tag);
 			// Not a teleportman
 			continue;
 		}
-print("Check %d\n", m.tid);
-		if (m.tid != tag)
+		if (m.TID != tag)
 		{
 			// Wrong sector
 			continue;
 		}
-		return P_Teleport(thing, m.origin.x, m.origin.y, m.angles.yaw);
+		return P_Teleport(thing, m.Origin.x, m.Origin.y, m.Angles.yaw);
 	}
-print("No spots\n");
 	return false;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/09 18:15:42  dj_jl
 //  Beautification
 //

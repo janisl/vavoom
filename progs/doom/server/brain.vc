@@ -93,8 +93,8 @@ void Actor::A_BrainSpit(void)
 	// spawn brain missile
 	newmobj = SpawnMissile(this, targ, SpawnShot);
 	newmobj->target = targ;
-	newmobj->ReactionCount = ftoi((targ->origin.y - origin.y) /
-		newmobj->velocity.y / newmobj->time);
+	newmobj->ReactionCount = ftoi((targ->Origin.y - Origin.y) /
+		newmobj->Velocity.y / newmobj->StateTime);
 
 	StartSoundName(none, 'BossFire', CHAN_WEAPON);
 }
@@ -127,18 +127,18 @@ void Actor::A_BrainScream(void)
 	float z;
 	mobj_t *th;
 
-	for (x = origin.x - 196.0; x < origin.x + 320.0; x += 8.0)
+	for (x = Origin.x - 196.0; x < Origin.x + 320.0; x += 8.0)
 	{
-		y = origin.y - 320.0;
+		y = Origin.y - 320.0;
 		z = 1.0 / 512.0 + Random() * 512.0;
 		th = P_SpawnMobj(x, y, z, Rocket);
-		th->velocity.z = Random() * 2.0 * 35.0;
+		th->Velocity.z = Random() * 2.0 * 35.0;
 
 		th->SetState(S_BRAINEXPLODE1);
 
-		th->time -= Random() * 0.2;
-		if (th->time < 0.1)
-			th->time = 0.1;
+		th->StateTime -= Random() * 0.2;
+		if (th->StateTime < 0.1)
+			th->StateTime = 0.1;
 	}
 
 	StartSoundName(none, 'BossDeath', CHAN_VOICE);
@@ -159,17 +159,17 @@ void Actor::A_BrainExplode(void)
 	float z;
 	mobj_t *th;
 
-	x = origin.x + (Random() - Random()) * 8.0;
-	y = origin.y;
+	x = Origin.x + (Random() - Random()) * 8.0;
+	y = Origin.y;
 	z = 1.0 / 512.0 + Random() * 512.0;
 	th = P_SpawnMobj(x, y, z, Rocket);
-	th->velocity.z = Random() * 2.0 * 35.0;
+	th->Velocity.z = Random() * 2.0 * 35.0;
 
 	th->SetState(S_BRAINEXPLODE1);
 
-	th->time -= Random() * 0.2;
-	if (th->time < 0.1)
-		th->time = 0.1;
+	th->StateTime -= Random() * 0.2;
+	if (th->StateTime < 0.1)
+		th->StateTime = 0.1;
 }
 
 //==========================================================================
@@ -221,7 +221,7 @@ void Actor::A_SpawnFly(void)
 	targ = target;
 
 	// First spawn teleport fog.
-	fog = P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z,
+	fog = P_SpawnMobj(targ->Origin.x, targ->Origin.y, targ->Origin.z,
 		SpawnFire);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 
@@ -253,13 +253,13 @@ void Actor::A_SpawnFly(void)
 	else
 		type = BaronOfHell;
 
-	newmobj = P_SpawnMobj(targ->origin.x, targ->origin.y,
-		targ->origin.z, type);
+	newmobj = P_SpawnMobj(targ->Origin.x, targ->Origin.y,
+		targ->Origin.z, type);
 	if (newmobj->LookForPlayers(true))
 		newmobj->SetState(newmobj->SeeState);
 
 	// telefrag anything in this spot
-	P_TeleportMove(newmobj, newmobj->origin.x, newmobj->origin.y);
+	P_TeleportMove(newmobj, newmobj->Origin.x, newmobj->Origin.y);
 
 	// remove self (i.e., cube).
 	P_RemoveMobj(this);
@@ -312,6 +312,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

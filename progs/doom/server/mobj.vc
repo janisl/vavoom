@@ -70,18 +70,18 @@ int iquetail;
 
 void SetOrigin(mobj_t * mobj, TVec origin)
 {
-	mobj->origin = origin;
+	mobj->Origin = origin;
 
 	// set subsector and/or block links
 	P_SetThingPosition(*mobj);
 
 	if (origin.z == ONFLOORZ)
 	{
-		mobj->origin.z = mobj->floorz;
+		mobj->Origin.z = mobj->FloorZ;
 	}
 	else if (origin.z == ONCEILINGZ)
 	{
-		mobj->origin.z = mobj->ceilingz - mobj->Height;
+		mobj->Origin.z = mobj->CeilingZ - mobj->Height;
 	}
 }
 
@@ -145,14 +145,14 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	// do not set the state with SetState,
 	// because action routines can not be called yet
 	st = &states[SpawnState];
-	time = st->time;
-	sprite = st->sprite;
+	StateTime = st->time;
+	SpriteIndex = st->sprite;
 	SpriteName = sprite_names[st->sprite];
-	frame = st->frame;
-	model_index = st->model_index;
-	alias_frame = st->model_frame;
-	statenum = st->statenum;
-	nextstate = st->nextstate;
+	SpriteFrame = st->frame;
+	ModelIndex = st->model_index;
+	ModelFrame = st->model_frame;
+	StateNum = st->statenum;
+	NextState = st->nextstate;
 
 	if (mthing)
 	{
@@ -171,29 +171,29 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		SetOrigin(this, vector(x, y, z));
 		if (z == ONFLOORZ)
 		{
-			origin.z += mthing->height;
+			Origin.z += mthing->height;
 		}
 		else if (z == ONCEILINGZ)
 		{
-			origin.z -= mthing->height;
+			Origin.z -= mthing->height;
 		}
 		P_SetThingPosition(self);
 
-		tid = mthing->tid;
-		special = mthing->special;
-		args[0] = mthing->arg1;
-		args[1] = mthing->arg2;
-		args[2] = mthing->arg3;
-		args[3] = mthing->arg4;
-		args[4] = mthing->arg5;
-		if (time > 0.0)
-			time = 0.1 + Random() * time;
+		TID = mthing->tid;
+		Special = mthing->special;
+		Args[0] = mthing->arg1;
+		Args[1] = mthing->arg2;
+		Args[2] = mthing->arg3;
+		Args[3] = mthing->arg4;
+		Args[4] = mthing->arg5;
+		if (StateTime > 0.0)
+			StateTime = 0.1 + Random() * StateTime;
 		if (bCountKill)
 			level->totalkills++;
 		if (bCountItem)
 			level->totalitems++;
 
-		angles.yaw = itof(45 * (mthing->angle / 45));
+		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
 		{
 			bAmbush = true;
@@ -201,12 +201,12 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		if (mthing->options & MTF_DORMANT)
 		{
 			bDormant = true;
-			time = -1.0;
+			StateTime = -1.0;
 		}
 	}
 	else
 	{
-		SetOrigin(this, origin);
+		SetOrigin(this, Origin);
 	}
 }
 
@@ -221,7 +221,7 @@ mobj_t *P_SpawnMobj(float x, float y, float z, classid type)
 	mobj_t *mobj;
 
 	mobj = &Actor(NewMobjThinker(type));
-	mobj->origin = vector(x, y, z);
+	mobj->Origin = vector(x, y, z);
 	mobj->OnMapSpawn(NULL);
 	return mobj;
 }
@@ -366,7 +366,7 @@ void SpawnPuff(float x, float y, float z)
 	z += (Random() - Random()) * 4.0;
 
 	th = P_SpawnMobj(x, y, z, MT_PUFF);
-	th->velocity.z = 1.0 * 35.0;
+	th->Velocity.z = 1.0 * 35.0;
 	th->time -= Random() * 0.1;
 
 	if (th->time < 0.1)
@@ -401,7 +401,7 @@ void P_SpawnBlood(float x, float y, float z, int damage)
 #if 0
 	z += (Random() - Random()) * 4.0;
 	th = P_SpawnMobj(x, y, z, MT_BLOOD);
-	th->velocity.z = 2.0 * 35.0;
+	th->Velocity.z = 2.0 * 35.0;
 	th->time -= Random() * 0.1;
 
 	if (th->time < 0.1)
@@ -422,14 +422,14 @@ void P_SpawnBlood(float x, float y, float z, int damage)
 
 void P_ExplodeMissile(mobj_t * mo)
 {
-	mo->velocity.x = mo->velocity.y = mo->velocity.z = 0.0;
+	mo->Velocity = vector(0.0, 0.0, 0.0);
 
 	mo->SetState(mo->DeathState);
 
-	mo->time -= Random() * 0.1;
+	mo->StateTime -= Random() * 0.1;
 
-	if (mo->time < 0.1)
-		mo->time = 0.1;
+	if (mo->StateTime < 0.1)
+		mo->StateTime = 0.1;
 
 	mo->bMissile = false;
 
@@ -441,9 +441,9 @@ void P_ExplodeMissile(mobj_t * mo)
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
 		MSG_WriteByte(mo->Effects & EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(mo->origin.x));
-		MSG_WriteShort(ftoi(mo->origin.y));
-		MSG_WriteShort(ftoi(mo->origin.z));
+		MSG_WriteShort(ftoi(mo->Origin.x));
+		MSG_WriteShort(ftoi(mo->Origin.y));
+		MSG_WriteShort(ftoi(mo->Origin.z));
 		mo->Effects &= ~EF_DLIGHT_MASK;
 	}
 	mo->Effects &= ~EF_ROCKET;
@@ -459,15 +459,15 @@ void P_ExplodeMissile(mobj_t * mo)
 
 void CheckMissileSpawn(mobj_t * th)
 {
-	th->time -= Random() * 0.1;
-	if (th->time < 0.1)
-		th->time = 0.1;
+	th->StateTime -= Random() * 0.1;
+	if (th->StateTime < 0.1)
+		th->StateTime = 0.1;
 
 	// move a little forward so an angle can
 	// be computed if it immediately explodes
-	th->origin = th->origin + th->velocity * 0.0142857143;
+	th->Origin = th->Origin + th->Velocity * 0.0142857143;
 
-	if (!P_TryMove(th, th->origin.x, th->origin.y))
+	if (!P_TryMove(th, th->Origin.x, th->Origin.y))
 		P_ExplodeMissile(th);
 }
 
@@ -483,24 +483,24 @@ mobj_t *SpawnMissile(mobj_t * source, mobj_t * dest, classid type)
 	TVec dir;
 
 	th =
-		P_SpawnMobj(source->origin.x, source->origin.y,
-		source->origin.z + 32.0, type);
+		P_SpawnMobj(source->Origin.x, source->Origin.y,
+		source->Origin.z + 32.0, type);
 
 	if (th->sound_sight)
 		StartSound(*th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;	// where it came from
 
-	dir = dest->origin - source->origin;
+	dir = dest->Origin - source->Origin;
 	// fuzzy player
 	if (dest->Translucency)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
 	dir = Normalize(dir);
-	th->velocity = dir * th->Speed;
+	th->Velocity = dir * th->Speed;
 
-	VectorAngles(&dir, &th->angles);
+	VectorAngles(&dir, &th->Angles);
 
 	CheckMissileSpawn(th);
 
@@ -529,25 +529,25 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	target->bCorpse = true;
 	target->Height /= 4.0;
 
-	if (source && source->player)
+	if (source && source->bIsPlayer)
 	{
 		// count for intermission
 		if (target->bCountKill)
-			source->player->killcount++;
+			source->Player->killcount++;
 
-		if (target->player)
+		if (target->bIsPlayer)
 		{
-			if (source->player->is_bot)
+			if (source->Player->is_bot)
 			{
-				source->player->Bot.Killed(*target);
+				source->Player->Bot.Killed(*target);
 			}
 
-			if (target->player->is_bot)
+			if (target->Player->is_bot)
 			{
-				target->player->Bot.Died(*source);
+				target->Player->Bot.Died(*source);
 			}
 
-			source->player->frags[P_GetPlayerNum(target->player)]++;
+			source->Player->frags[P_GetPlayerNum(target->Player)]++;
 		}
 	}
 	else if (!netgame && target->bCountKill)
@@ -557,17 +557,17 @@ void KillMobj(mobj_t * source, mobj_t * target)
 		players[0].killcount++;
 	}
 
-	if (target->player)
+	if (target->bIsPlayer)
 	{
 		// count environment kills against you
 		if (!source)
-			target->player->frags[P_GetPlayerNum(target->player)]++;
+			target->Player->frags[P_GetPlayerNum(target->Player)]++;
 
 		target->bSolid = false;
-		target->player->playerstate = PST_DEAD;
-		DropWeapon(target->player);
+		target->Player->playerstate = PST_DEAD;
+		DropWeapon(target->Player);
 #ifdef FIXME
-		if (target->player == &players[consoleplayer] && automapactive)
+		if (target->Player == &players[consoleplayer] && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying
@@ -578,10 +578,10 @@ void KillMobj(mobj_t * source, mobj_t * target)
 
 	if (target->Health < target->GibsHealth && target->GibsDeathState)
 	{
-		if (target->fixed_model)
+		if (target->bFixedModel)
 		{
-			target->fixed_model = false;
-			target->alias_skinnum = 0;
+			target->bFixedModel = false;
+			target->ModelSkinNum = 0;
 		}
 		target->SetState(target->GibsDeathState);
 	}
@@ -589,10 +589,10 @@ void KillMobj(mobj_t * source, mobj_t * target)
 	{
 		target->SetState(target->DeathState);
 	}
-	target->time -= Random() * 0.1;
+	target->StateTime -= Random() * 0.1;
 
-	if (target->time < 0.1)
-		target->time = 0.1;
+	if (target->StateTime < 0.1)
+		target->StateTime = 0.1;
 
 	// Drop stuff.
 	// This determines the kind of object spawned
@@ -616,8 +616,8 @@ void KillMobj(mobj_t * source, mobj_t * target)
 		return;
 	}
 
-	mo =
-		P_SpawnMobj(target->origin.x, target->origin.y, target->floorz, item);
+	mo = P_SpawnMobj(target->Origin.x, target->Origin.y, target->FloorZ,
+		item);
 	mo->bDropped = true;	// special versions of items
 }
 
@@ -646,7 +646,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 
 	if (bSkullFly)
 	{
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	if (bDormant)
 	{
@@ -654,62 +654,62 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 
-	if (player && gameskill == sk_baby)
+	if (bIsPlayer && gameskill == sk_baby)
 		damage >>= 1;	// take half damage in trainer mode
 
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
 	// thus kick away unless using the chainsaw.
 	if (inflictor && !bNoClip &&
-		(!source || !source.player ||
-			source.player->readyweapon != wp_chainsaw))
+		(!source || !source.bIsPlayer ||
+			source.Player->readyweapon != wp_chainsaw))
 	{
-		velocity += (500.0 * itof(damage) / Mass) *
+		Velocity += (500.0 * itof(damage) / Mass) *
 			Normalize(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
 	// player specific
-	if (player)
+	if (bIsPlayer)
 	{
 		// end of game hell hack
-		if ((subsector->sector->special & 255) == 75 && damage >= Health)
+		if ((Sector->special & 255) == 75 && damage >= Health)
 		{
 			damage = Health - 1;
 		}
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((player->cheats & CF_GODMODE) ||
-			player->powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player->cheats & CF_GODMODE) ||
+			Player->powers[pw_invulnerability]))
 		{
 			return;
 		}
 
-		if (player->armortype)
+		if (Player->armortype)
 		{
-			if (player->armortype == 1)
+			if (Player->armortype == 1)
 				saved = damage / 3;
 			else
 				saved = damage / 2;
 
-			if (player->armorpoints <= saved)
+			if (Player->armorpoints <= saved)
 			{
 				// armor is used up
-				saved = player->armorpoints;
-				player->armortype = 0;
+				saved = Player->armorpoints;
+				Player->armortype = 0;
 			}
-			player->armorpoints -= saved;
+			Player->armorpoints -= saved;
 			damage -= saved;
 		}
-		player->health -= damage;	// mirror mobj health here for Dave
-		if (player->health < 0)
-			player->health = 0;
+		Player->health -= damage;	// mirror mobj health here for Dave
+		if (Player->health < 0)
+			Player->health = 0;
 
-		player->attacker = &source;
-		player->damagecount += damage;	// add damage after armor / invuln
+		Player->attacker = &source;
+		Player->damagecount += damage;	// add damage after armor / invuln
 
-		if (player->damagecount > 100)
-			player->damagecount = 100;	// teleport stomp does 10k points...
+		if (Player->damagecount > 100)
+			Player->damagecount = 100;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -735,7 +735,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		// chase after this one
 		target = &source;
 		threshold = BASETHRESHOLD;
-		if (statenum == SpawnState && SeeState != S_NULL)
+		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
 			SetState(SeeState);
 		}
@@ -823,7 +823,7 @@ void P_RespawnSpecials(void)
 
 	mo = P_SpawnMobj(x, y, z, mobjinfo[i].class_id);
 	CopyMThing(mthing, &mo->spawnpoint);
-	mo->angles.yaw = itof(45 * (mthing->angle / 45));
+	mo->Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	// pull it from the que
 	iquetail = (iquetail + 1) & (ITEMQUESIZE - 1);
@@ -852,7 +852,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 
 	// spawn a teleport fog at old spot
 	// because of removal of the body?
-	mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, TeleportFog);
+	mo = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, ONFLOORZ, TeleportFog);
 
 	// initiate teleport sound
 	StartSoundName(*mo, 'Teleport', CHAN_BODY);
@@ -876,7 +876,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	// inherit attributes from deceased one
 	mo = P_SpawnMobj(x, y, z, mobj->Class);
 	CopyMThing(&mobj->spawnpoint, &mo->spawnpoint);
-	mo->angles.yaw = itof(45 * (mthing->angle / 45));
+	mo->Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
 		mo->bAmbush = true;
@@ -982,12 +982,15 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 {
 	soundtarget = target;
 	(*validcount)++;
-	P_RecursiveSound(emmiter->subsector->sector, 0);
+	P_RecursiveSound(emmiter->Sector, 0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.30  2002/02/09 18:13:46  dj_jl
 //  Added flags that determines what line blocking flags to check
 //

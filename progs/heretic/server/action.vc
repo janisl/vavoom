@@ -114,7 +114,7 @@ void Actor::A_InitKeyGizmo(void)
 	default:
 		break;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 60.0, KeyGizmoFloat);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 60.0, KeyGizmoFloat);
 	mo->SetState(state);
 }
 
@@ -140,6 +140,9 @@ void Actor::A_ESound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

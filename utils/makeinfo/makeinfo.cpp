@@ -363,7 +363,12 @@ void WriteMobjInfo(void)
 		if (mobjinfo[i].mass)
 			fprintf(f, "\t\tMass = %.1f;\n", mobjinfo[i].mass == 0x7fffffff ? 99999.0 : (float)mobjinfo[i].mass);
 		if (mobjinfo[i].speed)
-			fprintf(f, "\t\tSpeed = %.1f;\n", 35.0 * (mobjinfo[i].speed < 100 ? (float)mobjinfo[i].speed : (float)mobjinfo[i].speed / (float)FRACUNIT));
+		{
+			if (mobjinfo[i].speed < 100)
+				fprintf(f, "\t\tStepSpeed = %.1f;\n", (float)mobjinfo[i].speed);
+			else
+				fprintf(f, "\t\tSpeed = %.1f;\n", 35.0 * (float)mobjinfo[i].speed / (float)FRACUNIT);
+		}
 		if (mobjinfo[i].reactiontime)
         {
 			fprintf(f, "\t\tReactionCount = %d;\n", mobjinfo[i].reactiontime);
@@ -748,9 +753,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/14 19:23:07  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.21  2002/02/06 17:31:46  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.20  2002/02/02 19:13:06  dj_jl
 //	Fixed things not spawned in deathmatch.
 //	

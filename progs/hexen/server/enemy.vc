@@ -36,7 +36,7 @@ void Actor::A_Look(void)
 	Actor targ;
 
 	threshold = 0;	// any shot will wake up
-	targ = Actor(subsector->sector->SoundTarget);
+	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
@@ -107,26 +107,26 @@ void Actor::A_Chase(void)
 	if (fastparm)
 	{
 		// Monsters move faster in nightmare mode
-		time *= 0.5;
-		if (time < 0.1)
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
 		{
-			time = 0.1;
+			StateTime = 0.1;
 		}
 	}
 
 	// turn towards movement direction if not there yet
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
@@ -229,12 +229,12 @@ void Actor::A_FaceTarget(void)
 
 	bAmbush = false;
 
-	angles.yaw = atan2(target->origin.y - origin.y,
-		target->origin.x - origin.x);
+	Angles.yaw = atan2(target->Origin.y - Origin.y,
+		target->Origin.x - Origin.x);
 
 	if (target->Translucency)
 	{
-		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
 }
 
@@ -260,8 +260,8 @@ void Actor::A_Pain(void)
 
 void Actor::A_FreeTargMobj(void)
 {
-	velocity = vector(0.0, 0.0, 0.0);
-	origin.z = ceilingz + 4.0;
+	Velocity = vector(0.0, 0.0, 0.0);
+	Origin.z = CeilingZ + 4.0;
 	bSolid = false;
 	bShootable = false;
 	bFloat = false;
@@ -273,7 +273,8 @@ void Actor::A_FreeTargMobj(void)
 	bLowGravity = false;
 	bNoPassMobj = true;
 	Translucency = 100;
-	player = NULL;
+	Player = NULL;
+	bIsPlayer = false;
 	Health = -1000;	// Don't resurrect
 }
 
@@ -286,16 +287,16 @@ void Actor::A_FreeTargMobj(void)
 void Actor::A_Scream(void)
 {
 	StopSound(self, CHAN_AUTO);
-	if (player)
+	if (bIsPlayer)
 	{
-		if (player->morphTics)
+		if (Player->morphTics)
 		{
 			StartSound(self, sound_death, CHAN_VOICE);
 		}
 		else
 		{
 			// Handle the different player death screams
-			if (velocity.z <= -39.0 * 35.0)
+			if (Velocity.z <= -39.0 * 35.0)
 			{
 				// Falling splat
 				StartSoundName(self, 'PlayerFallingSplat', CHAN_VOICE);
@@ -303,7 +304,7 @@ void Actor::A_Scream(void)
 			else if (Health > -50)
 			{
 				// Normal death sound
-				switch (player->pclass)
+				switch (Player->pclass)
 				{
 				case PCLASS_FIGHTER:
 					StartSoundName(self, 'PlayerFighterNormalDeath',
@@ -322,7 +323,7 @@ void Actor::A_Scream(void)
 			else if (Health > -100)
 			{
 				// Crazy death sound
-				switch (player->pclass)
+				switch (Player->pclass)
 				{
 				case PCLASS_FIGHTER:
 					StartSoundName(self, 'PlayerFighterCrazyDeath',
@@ -341,7 +342,7 @@ void Actor::A_Scream(void)
 			{	// Extreme death sound
 				int sound;
 
-				switch (player->pclass)
+				switch (Player->pclass)
 				{
 				case PCLASS_FIGHTER:
 					sound = GetSoundID('PlayerFighterExtreme1Death');
@@ -384,7 +385,7 @@ void Actor::A_Explode(void)
 	switch (Class)
 	{
 	case FireBomb:	// Time Bombs
-		origin.z += 32.0;
+		Origin.z += 32.0;
 		Translucency = 0;
 		break;
 	case MinotaurFloorFire1:	// Minotaur floor fire
@@ -410,7 +411,7 @@ void Actor::A_Explode(void)
 	case SorcererBall3:
 		distance = 255.0;
 		damage = 255;
-		args[0] = 1;	// don't play bounce
+		Args[0] = 1;	// don't play bounce
 		break;
 	case SorcererFX1:	// Sorcerer spell 1
 		damage = 30;
@@ -448,7 +449,7 @@ void Actor::A_Explode(void)
 		break;
 	}
 	P_RadiusAttack(this, target, damage, distance, damageSelf);
-	if (origin.z <= floorz + distance && Class != PoisonCloud)
+	if (Origin.z <= FloorZ + distance && Class != PoisonCloud)
 	{
 		P_HitFloor(this);
 	}
@@ -496,23 +497,25 @@ void Actor::A_SkullPop(void)
 {
 	mobj_t *mo;
 
-	if (!player)
+	if (!bIsPlayer)
 	{
 		return;
 	}
 	bSolid = false;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
-	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo->velocity.z = (2.0 + Random() / 4.0) * 35.0;
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, BloodySkull);
+	mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+	mo->Velocity.z = (2.0 + Random() / 4.0) * 35.0;
 	// Attach player mobj to bloody skull
-	mo->player = player;
-	player = NULL;
-	special1 = mo->player->pclass;
+	mo->Player = Player;
+	mo->bIsPlayer = true;
+	Player = NULL;
+	bIsPlayer = false;
+	special1 = mo->Player->pclass;
 	mo->Health = Health;
-	mo->angles.yaw = angles.yaw;
-	mo->player->mo = mo;
-	mo->player->damagecount = 32;
+	mo->Angles.yaw = Angles.yaw;
+	mo->Player->mo = mo;
+	mo->Player->damagecount = 32;
 }
 
 //============================================================================
@@ -523,7 +526,7 @@ void Actor::A_SkullPop(void)
 
 void Actor::A_FreezeDeath(void)
 {
-	time = 2.0 + Random() * 8.0 + Random() * 8.0;
+	StateTime = 2.0 + Random() * 8.0 + Random() * 8.0;
 	bSolid = true;
 	bShootable = true;
 	bNoBlood = true;
@@ -534,18 +537,18 @@ void Actor::A_FreezeDeath(void)
 	Height *= 4.0;
 	StartSoundName(self, 'FreezeDeath', CHAN_VOICE);
 
-	if (player)
+	if (bIsPlayer)
 	{
-		player->damagecount = 0;
-		player->poisoncount = 0;
-		player->bonuscount = 0;
+		Player->damagecount = 0;
+		Player->poisoncount = 0;
+		Player->bonuscount = 0;
 	}
 	else
 	{
-		if (bCountKill && special)
+		if (bCountKill && Special)
 		{
 			// Initiate monster death actions
-			ExecuteLineSpecial(special, &args[0], NULL, 0, this);
+			ExecuteLineSpecial(Special, &Args[0], NULL, 0, this);
 		}
 	}
 }
@@ -560,15 +563,15 @@ void Actor::A_IceSetTics(void)
 {
 	int floor;
 
-	time = 2.0 + Random() * 2.0;
+	StateTime = 2.0 + Random() * 2.0;
 	floor = P_GetThingFloorType(this);
 	if (floor == FLOOR_LAVA)
 	{
-		time /= 4.0;
+		StateTime /= 4.0;
 	}
 	else if (floor == FLOOR_ICE)
 	{
-		time *= 2.0;
+		StateTime *= 2.0;
 	}
 }
 
@@ -583,57 +586,59 @@ void Actor::A_FreezeDeathChunks(void)
 	int i;
 	mobj_t *mo;
 
-	if (velocity.x || velocity.y || velocity.z)
+	if (Velocity.x || Velocity.y || Velocity.z)
 	{
-		time = 3.0;
+		StateTime = 3.0;
 		return;
 	}
 	StartSoundName(self, 'FreezeShatter', CHAN_VOICE);
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
-			origin.y + (Random() - 0.5) * 2.0 * Radius,
-			origin.z + Random() * Height, IceChunk);
+		mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 2.0 * Radius,
+			Origin.y + (Random() - 0.5) * 2.0 * Radius,
+			Origin.z + Random() * Height, IceChunk);
 		mo->SetState(mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
-			mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
-			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
+			mo->Velocity.z = (mo->Origin.z - Origin.z) / Height * 4.0 * 35.0;
+			mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+			mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 			Actor(*mo).A_IceSetTics();	// set a random tic wait
 		}
 	}
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 2.0 * Radius,
-			origin.y + (Random() - 0.5) * 2.0 * Radius,
-			origin.z + Random() * Height, IceChunk);
+		mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 2.0 * Radius,
+			Origin.y + (Random() - 0.5) * 2.0 * Radius,
+			Origin.z + Random() * Height, IceChunk);
 		mo->SetState(mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
-			mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
-			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
+			mo->Velocity.z = (mo->Origin.z - Origin.z) / Height * 4.0 * 35.0;
+			mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+			mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 			Actor(*mo).A_IceSetTics();	// set a random tic wait
 		}
 	}
-	if (player)
+	if (bIsPlayer)
 	{
 		// attach the player's view to a chunk of ice
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z + VIEWHEIGHT, IceChunk);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + VIEWHEIGHT, IceChunk);
 		mo->SetState(S_ICECHUNK_HEAD);
-		mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-		mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		mo->velocity.z = (mo->origin.z - origin.z) / Height * 4.0 * 35.0;
+		mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		mo->Velocity.z = (mo->Origin.z - Origin.z) / Height * 4.0 * 35.0;
 		mo->bIceDamage = true;	// used to force blue palette
 		mo->bFloorClip = false;
-		mo->player = player;
-		player = NULL;
+		mo->Player = Player;
+		mo->bIsPlayer = true;
+		Player = NULL;
+		bIsPlayer = false;
 		mo->Health = Health;
-		mo->angles.yaw = angles.yaw;
-		mo->player->mo = mo;
-		mo->angles.pitch = 0.0;
+		mo->Angles.yaw = Angles.yaw;
+		mo->Player->mo = mo;
+		mo->Angles.pitch = 0.0;
 	}
 	P_RemoveMobjFromTIDList(this);
 	SetState(S_FREETARGMOBJ);
@@ -662,7 +667,7 @@ void Actor::A_CheckBurnGone(void)
 
 void Actor::A_CheckSkullFloor(void)
 {
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		SetState(S_BLOODYSKULLX1);
 		StartSoundName(self, 'Drip', CHAN_VOICE);
@@ -692,7 +697,7 @@ void Actor::A_CheckSkullDone(void)
 void Actor::A_SpeedFade(void)
 {
 	Translucency = 66;
-	sprite = target->sprite;
+	SpriteIndex = target->SpriteIndex;
 }
 
 //============================================================================
@@ -830,6 +835,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.18  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

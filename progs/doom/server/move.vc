@@ -87,7 +87,7 @@ boolean Actor::Touch(Actor Other)
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 		SetState(SpawnState);
 		return false;	// stop moving
 	}
@@ -147,8 +147,8 @@ boolean PIT_CheckRelThing(MapObject Other)
 
 	blockdist = Other.Radius + tmthing->Radius;
 
-	if (fabs(Other.origin.x - tmpos.x) >= blockdist ||
-		fabs(Other.origin.y - tmpos.y) >= blockdist)
+	if (fabs(Other.Origin.x - tmpos.x) >= blockdist ||
+		fabs(Other.Origin.y - tmpos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -159,11 +159,11 @@ boolean PIT_CheckRelThing(MapObject Other)
 		return true;
 
 	// see if it went over / under
-	if (tmthing->origin.z >= Other.origin.z + Other.Height)
+	if (tmthing->Origin.z >= Other.Origin.z + Other.Height)
 	{
 		return true;	// overhead
 	}
-	if (tmthing->origin.z + tmthing->Height < Other.origin.z)
+	if (tmthing->Origin.z + tmthing->Height < Other.Origin.z)
 	{
 		return true;	// underneath
 	}
@@ -326,7 +326,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 	tmthing = thing;
 
-	tmpos = vector(x, y, thing->origin.z);
+	tmpos = vector(x, y, thing->Origin.z);
 
 	tmbbox[BOXTOP] = y + tmthing->Radius;
 	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
@@ -414,12 +414,12 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	floatok = false;
 	if (!check)
 	{
-		if (!BlockingMobj || BlockingMobj->player || !thing->player ||
-			BlockingMobj->origin.z + BlockingMobj->Height - thing->origin.z >
+		if (!BlockingMobj || BlockingMobj->bIsPlayer || !thing->bIsPlayer ||
+			BlockingMobj->Origin.z + BlockingMobj->Height - thing->Origin.z >
 			24.0
-			|| (BlockingMobj->subsector->sector->ceilingheight -
-		   (BlockingMobj->origin.z + BlockingMobj->Height) < thing->Height)
-			|| (tmceilingz - (BlockingMobj->origin.z + BlockingMobj->Height) <
+			|| (BlockingMobj->Sector->ceilingheight -
+		   (BlockingMobj->Origin.z + BlockingMobj->Height) < thing->Height)
+			|| (tmceilingz - (BlockingMobj->Origin.z + BlockingMobj->Height) <
 				thing->Height))
 		{
 			return false;
@@ -437,13 +437,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmceilingz - thing->origin.z < thing->Height)
+			tmceilingz - thing->Origin.z < thing->Height)
 		{
 			// mobj must lower itself to fit
 			return false;
 		}
 
-		if (!thing->bTeleport && tmfloorz - thing->origin.z > 24.0)
+		if (!thing->bTeleport && tmfloorz - thing->Origin.z > 24.0)
 			return false;	// too big a step up
 
 		if (!thing->bDropOff && !thing->bFloat &&
@@ -455,15 +455,15 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	// so link the thing into its new position
 	P_UnsetThingPosition(*thing);
 
-	oldorg = thing->origin;
-	thing->origin.x = x;
-	thing->origin.y = y;
+	oldorg = thing->Origin;
+	thing->Origin.x = x;
+	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->floorz = tmfloorz;
-	thing->ceilingz = tmceilingz;
-	thing->floor = tmfloor;
-	thing->ceiling = tmceiling;
+	thing->FloorZ = tmfloorz;
+	thing->CeilingZ = tmceilingz;
+	thing->Floor = tmfloor;
+	thing->Ceiling = tmceiling;
 
 	//
 	// if any special lines were hit, do the effect
@@ -475,13 +475,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			numspechit--;
 			// see if the line was crossed
 			ld = spechit[numspechit];
-			side = PointOnPlaneSide(thing->origin, ld);
+			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
 			{
 				if (ld->special)
 				{
-					if (thing->player)
+					if (thing->bIsPlayer)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
@@ -514,13 +514,16 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 void P_ThrustMobj(mobj_t * mo, float angle, float move)
 {
-	mo->velocity.x += move * cos(angle) * 35.0;
-	mo->velocity.y += move * sin(angle) * 35.0;
+	mo->Velocity.x += move * cos(angle) * 35.0;
+	mo->Velocity.y += move * sin(angle) * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/09 18:13:46  dj_jl
 //  Added flags that determines what line blocking flags to check
 //

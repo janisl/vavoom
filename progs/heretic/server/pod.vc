@@ -55,11 +55,11 @@ void Actor::A_MakePod(void)
 		// Too many generated pods
 		return;
 	}
-	x = origin.x;
-	y = origin.y;
-	z = origin.z;
+	x = Origin.x;
+	y = Origin.y;
+	z = Origin.z;
 	mo = P_SpawnMobj(x, y, ONFLOORZ, Pod);
-	if (!CheckPosition(*mo, mo->origin))
+	if (!CheckPosition(*mo, mo->Origin))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
@@ -93,11 +93,11 @@ void Actor::A_PodPain(void)
 	count = chance > 240 ? 2 : 1;
 	for (i = 0; i < count; i++)
 	{
-		goo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, PodGoo);
+		goo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, PodGoo);
 		goo->target = this;
-		goo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-		goo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-		goo->velocity.z = (0.5 + Random() * 2.0) * 35.0;
+		goo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+		goo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+		goo->Velocity.z = (0.5 + Random() * 2.0) * 35.0;
 	}
 }
 
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/07 18:50:08  dj_jl
 //  Made CheckPosition shared.
 //

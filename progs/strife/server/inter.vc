@@ -311,13 +311,12 @@ boolean P_GivePower(player_t * player, int power)
 
 void Actor::TouchSpecial(Actor Toucher)
 {
-	player_t *player;
 	int i;
 	name sound;
 
-	if (!Toucher.bPickUp)
+	if (!Toucher.bIsPlayer)
 	{
-		// can remove thing
+		// can't remove thing
 		return;
 	}
 	// Dead thing touching.
@@ -326,7 +325,6 @@ void Actor::TouchSpecial(Actor Toucher)
 		return;
 
 	sound = 'PickupItem';
-	Toucher.player = Toucher.player;
 
 	// Identify by sprite.
 /*    switch (_self->sprite)
@@ -602,15 +600,18 @@ void Actor::TouchSpecial(Actor Toucher)
     }*/
 
 	if (bCountItem)
-		Toucher.player->itemcount++;
+		Toucher.Player->itemcount++;
 	P_RemoveMobj(this);
-	Toucher.player->bonuscount += BONUSADD;
+	Toucher.Player->bonuscount += BONUSADD;
 	StartSoundName(Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.11  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

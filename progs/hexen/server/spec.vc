@@ -107,7 +107,7 @@ string TextKeyMessages[] = {
 
 boolean CheckedLockedDoor(mobj_t * mo, int lock)
 {
-	if (!mo->player)
+	if (!mo->bIsPlayer)
 	{
 		return false;
 	}
@@ -115,9 +115,9 @@ boolean CheckedLockedDoor(mobj_t * mo, int lock)
 	{
 		return true;
 	}
-	if (!(mo->player->keys & (1 << (lock - 1))))
+	if (!(mo->Player->keys & (1 << (lock - 1))))
 	{
-		centerprint(mo->player, "YOU NEED THE %s\n",
+		centerprint(mo->Player, "YOU NEED THE %s",
 			TextKeyMessages[lock - 1]);
 		StartSoundName(*mo, 'DoorLocked', CHAN_ITEM);
 		return false;
@@ -374,7 +374,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -384,7 +384,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -526,7 +526,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 	{
 		return false;
 	}
-	if (!mo->player && !mo->bMissile)
+	if (!mo->bIsPlayer && !mo->bMissile)
 	{
 		if (lineActivation != SPAC_MCROSS)
 		{
@@ -709,6 +709,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.14  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

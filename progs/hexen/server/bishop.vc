@@ -64,16 +64,16 @@ void Actor::A_BishopDoBlur(void)
 	special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
 	if (P_Random() < 120)
 	{
-		P_ThrustMobj(this, AngleMod360(angles.yaw + 90.0), 11.0);
+		P_ThrustMobj(this, AngleMod360(Angles.yaw + 90.0), 11.0);
 	}
 	else if (P_Random() > 125)
 	{
-		P_ThrustMobj(this, AngleMod360(angles.yaw - 90.0), 11.0);
+		P_ThrustMobj(this, AngleMod360(Angles.yaw - 90.0), 11.0);
 	}
 	else
 	{
 		// Thrust forward
-		P_ThrustMobj(this, angles.yaw, 11.0);
+		P_ThrustMobj(this, Angles.yaw, 11.0);
 	}
 	StartSoundName(self, 'BishopBlur', CHAN_VOICE);
 }
@@ -90,8 +90,8 @@ void Actor::A_BishopSpawnBlur(void)
 
 	if (!--special1)
 	{
-		velocity.x = 0.0;
-		velocity.y = 0.0;
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
 		if (P_Random() > 96)
 		{
 			SetState(S_BISHOP_WALK1);
@@ -101,10 +101,10 @@ void Actor::A_BishopSpawnBlur(void)
 			SetState(S_BISHOP_ATK1);
 		}
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, BishopBlur);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, BishopBlur);
 	if (mo)
 	{
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 	}
 }
 
@@ -116,9 +116,9 @@ void Actor::A_BishopSpawnBlur(void)
 
 void Actor::A_BishopChase(void)
 {
-	origin.z -= FloatBobOffsets[special2] / 2.0;
+	Origin.z -= FloatBobOffsets[special2] / 2.0;
 	special2 = (special2 + 4) & 63;
-	origin.z += FloatBobOffsets[special2] / 2.0;
+	Origin.z += FloatBobOffsets[special2] / 2.0;
 }
 
 //============================================================================
@@ -184,12 +184,12 @@ void Actor::A_BishopPainBlur(void)
 		SetState(S_BISHOP_BLUR1);
 		return;
 	}
-	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 16.0,
-		origin.y + (Random() - Random()) * 16.0,
-		origin.z + (Random() - Random()) * 8.0, BishopPainBlur);
+	mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 16.0,
+		Origin.y + (Random() - Random()) * 16.0,
+		Origin.z + (Random() - Random()) * 8.0, BishopPainBlur);
 	if (mo)
 	{
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 	}
 }
 
@@ -203,10 +203,10 @@ void Actor::A_BishopPuff(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 40.0, BishopPuff);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 40.0, BishopPuff);
 	if (mo)
 	{
-		mo->velocity.z = 0.5 * 35.0;
+		mo->Velocity.z = 0.5 * 35.0;
 	}
 }
 
@@ -235,16 +235,16 @@ void Actor::A_BishopMissileWeave(void)
 
 	weaveXY = special2 >> 16;
 	weaveZ = special2 & 0xFFFF;
-	angle = AngleMod360(angles.yaw + 90.0);
-	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
-	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	weaveXY = (weaveXY + 2) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 2.0;
 	P_TryMove(this, newX, newY);
-	origin.z -= FloatBobOffsets[weaveZ];
+	Origin.z -= FloatBobOffsets[weaveZ];
 	weaveZ = (weaveZ + 2) & 63;
-	origin.z += FloatBobOffsets[weaveZ];
+	Origin.z += FloatBobOffsets[weaveZ];
 	special2 = weaveZ + (weaveXY << 16);
 }
 
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -102,7 +102,7 @@ void Actor::A_RestoreSpecialThing2(void)
 
 void Actor::A_FlameCheck(void)
 {
-	if (!args[0]--)	// Called every 8 tics
+	if (!Args[0]--)	// Called every 8 tics
 	{
 		SetState(S_NULL);
 	}
@@ -116,13 +116,13 @@ void Actor::A_FlameCheck(void)
 
 void Actor::A_CheckThrowBomb(void)
 {
-	if (fabs(velocity.x) < 1.5 * 35.0 &&
-		fabs(velocity.y) < 1.5 * 35.0 &&
-		velocity.z < 2.0 * 35.0 && statenum == S_THROWINGBOMB6)
+	if (fabs(Velocity.x) < 1.5 * 35.0 &&
+		fabs(Velocity.y) < 1.5 * 35.0 &&
+		Velocity.z < 2.0 * 35.0 && StateNum == S_THROWINGBOMB6)
 	{
 		SetState(S_THROWINGBOMB7);
-		origin.z = floorz;
-		velocity.z = 0.0;
+		Origin.z = FloorZ;
+		Velocity.z = 0.0;
 		bFloorBounce = false;
 		bMissile = false;
 	}
@@ -155,7 +155,7 @@ void Actor::A_CorpseBloodDrip(void)
 	{
 		return;
 	}
-	P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0,
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0,
 		CorpseBloodDrip);
 }
 
@@ -172,23 +172,23 @@ void Actor::A_CorpseExplode(void)
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CorpseBit);
 		mo->SetState(mo->SpawnState + (P_Random() % 3));
 		if (mo)
 		{
-			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
 	// Spawn a skull
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, CorpseBit);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CorpseBit);
 	mo->SetState(S_CORPSEBIT_4);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-		mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-		mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		StartSoundName(*mo, 'FireDemonDeath', CHAN_VOICE);
 	}
 	P_RemoveMobj(this);
@@ -209,22 +209,22 @@ void Actor::A_SoAExplode(void)
 
 	for (i = 0; i < 10; i++)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
-			origin.y + (Random() - 0.5) * 16.0,
-			origin.z + Random() * Height, ZArmorChunk);
+		mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
+			Origin.y + (Random() - 0.5) * 16.0,
+			Origin.z + Random() * Height, ZArmorChunk);
 		mo->SetState(mo->SpawnState + i);
 		if (mo)
 		{
-			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.z = (Random() * 8.0 + 5.0) * 35.0;
+			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
 		}
 	}
-	if (args[0])
+	if (Args[0])
 	{
 		// Spawn an item
-		P_SpawnMobj(origin.x, origin.y, origin.z,
-			TranslateThingType[args[0]]);
+		P_SpawnMobj(Origin.x, Origin.y, Origin.z,
+			TranslateThingType[Args[0]]);
 	}
 	StartSoundName(*mo, 'SuitofArmorBreak', CHAN_VOICE);
 	P_RemoveMobj(this);
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.14  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

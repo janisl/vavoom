@@ -75,16 +75,16 @@ void Actor::A_FiredSpawnRock(void)
 		break;
 	}
 
-	rockOrg.x = origin.x + (Random() - 0.5) * 16.0;
-	rockOrg.y = origin.y + (Random() - 0.5) * 16.0;
-	rockOrg.z = origin.z + Random() * 8.0;
+	rockOrg.x = Origin.x + (Random() - 0.5) * 16.0;
+	rockOrg.y = Origin.y + (Random() - 0.5) * 16.0;
+	rockOrg.z = Origin.z + Random() * 8.0;
 	mo = SpawnActor(rockOrg, rtype);
 	if (mo)
 	{
 		mo.target = this;
-		mo.velocity.x = (Random() - 0.5) * 4.0 * 35.0;
-		mo.velocity.y = (Random() - 0.5) * 4.0 * 35.0;
-		mo.velocity.z = Random() * 4.0 * 35.0;
+		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.z = Random() * 4.0 * 35.0;
 		mo.special1 = 2;	// Number bounces
 	}
 
@@ -126,13 +126,13 @@ void Actor::A_FiredChase(void)
 		threshold--;
 
 	// Float up and down
-	origin.z += FloatBobOffsets[weaveindex];
+	Origin.z += FloatBobOffsets[weaveindex];
 	special1 = (weaveindex + 2) & 63;
 
 	// Insure it stays above certain height
-	if (origin.z < floorz + 64.0)
+	if (Origin.z < FloorZ + 64.0)
 	{
-		origin.z += 2.0;
+		Origin.z += 2.0;
 	}
 
 	if (!target || !target->bShootable)
@@ -150,21 +150,21 @@ void Actor::A_FiredChase(void)
 	else
 	{
 		special2 = 0;
-		velocity.x = 0.0;
-		velocity.y = 0.0;
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
 		dist = MobjDist(self, *target);
 		if (dist < FIREDEMON_ATTACK_RANGE)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(target->origin.y - origin.y,
-					target->origin.x - origin.x);
+				ang = atan2(target->Origin.y - Origin.y,
+					target->Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
-				velocity.x = 8.0 * cos(ang) * 35.0;
-				velocity.y = 8.0 * sin(ang) * 35.0;
+				Velocity.x = 8.0 * cos(ang) * 35.0;
+				Velocity.y = 8.0 * sin(ang) * 35.0;
 				special2 = 3;	// strafe time
 			}
 		}
@@ -228,19 +228,19 @@ void Actor::A_FiredSplotch(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, FireDemonSplotch1);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FireDemonSplotch1);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
+		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, FireDemonSplotch2);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FireDemonSplotch2);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.z = (3.0 + Random() * 4.0) * 35.0;
+		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.z = (3.0 + Random() * 4.0) * 35.0;
 	}
 }
 
@@ -253,15 +253,18 @@ void Actor::A_FiredSplotch(void)
 void Actor::A_SmBounce(void)
 {
 	// give some more momentum (x,y,&z)
-	origin.z = floorz + 1.0;
-	velocity.z = (2.0 + Random() * 4.0) * 35.0;
-	velocity.x = Random() * 3.0 * 35.0;
-	velocity.y = Random() * 3.0 * 35.0;
+	Origin.z = FloorZ + 1.0;
+	Velocity.z = (2.0 + Random() * 4.0) * 35.0;
+	Velocity.x = Random() * 3.0 * 35.0;
+	Velocity.y = Random() * 3.0 * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

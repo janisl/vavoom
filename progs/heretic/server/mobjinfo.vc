@@ -764,7 +764,7 @@ class Chandelier:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin,
+		AddStaticLight(Origin,
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -794,7 +794,7 @@ class SerpentTorch:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 
@@ -937,7 +937,7 @@ class FireBrazier:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -1056,7 +1056,7 @@ class WallTorch:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 80.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 80.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -2544,7 +2544,7 @@ class Chicken:Actor
 		Radius = 9.0;
 		Height = 22.0;
 		Mass = 40.0;
-		Speed = 140.0;
+		StepSpeed = 4.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -2620,7 +2620,7 @@ class Mummy:Actor
 		Radius = 22.0;
 		Height = 62.0;
 		Mass = 75.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -2666,7 +2666,7 @@ class MummyLeader:Actor
 		Radius = 22.0;
 		Height = 62.0;
 		Mass = 75.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 64;
 		bSolid = true;
@@ -2713,7 +2713,7 @@ class MummyGhost:Actor
 		Radius = 22.0;
 		Height = 62.0;
 		Mass = 75.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		Translucency = 33;
@@ -2760,7 +2760,7 @@ class MummyLeaderGhost:Actor
 		Radius = 22.0;
 		Height = 62.0;
 		Mass = 75.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 64;
 		Translucency = 33;
@@ -2860,7 +2860,7 @@ class Beast:Actor
 		Radius = 32.0;
 		Height = 74.0;
 		Mass = 200.0;
-		Speed = 490.0;
+		StepSpeed = 14.0;
 		ReactionCount = 8;
 		PainChance = 100;
 		bSolid = true;
@@ -3020,7 +3020,7 @@ class Snake:Actor
 		Radius = 22.0;
 		Height = 70.0;
 		Mass = 100.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 48;
 		bSolid = true;
@@ -3125,7 +3125,7 @@ class Head:Actor
 		Radius = 40.0;
 		Height = 72.0;
 		Mass = 325.0;
-		Speed = 210.0;
+		StepSpeed = 6.0;
 		ReactionCount = 8;
 		PainChance = 32;
 		bSolid = true;
@@ -3289,7 +3289,7 @@ class Clink:Actor
 		Radius = 20.0;
 		Height = 64.0;
 		Mass = 75.0;
-		Speed = 490.0;
+		StepSpeed = 14.0;
 		ReactionCount = 8;
 		PainChance = 32;
 		bSolid = true;
@@ -3336,7 +3336,7 @@ class Wizard:Actor
 		Radius = 16.0;
 		Height = 68.0;
 		Mass = 100.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 64;
 		bSolid = true;
@@ -3413,7 +3413,7 @@ class Imp:Actor
 		Radius = 16.0;
 		Height = 36.0;
 		Mass = 50.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -3465,7 +3465,7 @@ class ImpLeader:Actor
 		Radius = 16.0;
 		Height = 36.0;
 		Mass = 50.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -3587,7 +3587,7 @@ class Knight:Actor
 		Radius = 24.0;
 		Height = 78.0;
 		Mass = 150.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 100;
 		bSolid = true;
@@ -3634,7 +3634,7 @@ class KnightGhost:Actor
 		Radius = 24.0;
 		Height = 78.0;
 		Mass = 150.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 100;
 		Translucency = 33;
@@ -3745,7 +3745,7 @@ class Sorcerer1:Actor
 		Radius = 28.0;
 		Height = 100.0;
 		Mass = 800.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 56;
 		bSolid = true;
@@ -3821,7 +3821,7 @@ class Sorcerer2:Actor
 		Radius = 16.0;
 		Height = 70.0;
 		Mass = 300.0;
-		Speed = 490.0;
+		StepSpeed = 14.0;
 		ReactionCount = 8;
 		PainChance = 32;
 		bSolid = true;
@@ -3971,7 +3971,7 @@ class Minotaur:Actor
 		Radius = 28.0;
 		Height = 100.0;
 		Mass = 800.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 25;
 		MissileDamage = 7;
@@ -4496,9 +4496,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/14 19:20:58  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.21  2002/02/06 17:28:52  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.20  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
 //	

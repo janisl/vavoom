@@ -85,8 +85,8 @@ void Actor::A_WizAtk3(void)
 	mo = SpawnMissile(this, target, WizardMissile);
 	if (mo)
 	{
-		VectorAngles(&mo->velocity, &ang);
-		angle = mo->angles.yaw;
+		VectorAngles(&mo->Velocity, &ang);
+		angle = mo->Angles.yaw;
 		SpawnMissileAngles(this, WizardMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
 		SpawnMissileAngles(this, WizardMissile,
@@ -108,6 +108,9 @@ void Actor::A_GhostOff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.14  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

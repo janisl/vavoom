@@ -2294,7 +2294,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin + vector(0.0, 0.0, 64.0),\n"
+	"AddStaticLight(Origin + vector(0.0, 0.0, 64.0),\n"
 	"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -2326,7 +2326,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin + vector(0.0, 0.0, 48.0),\n"
+	"AddStaticLight(Origin + vector(0.0, 0.0, 48.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -2358,7 +2358,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -2558,7 +2558,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
@@ -2646,7 +2646,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
@@ -2678,7 +2678,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
@@ -2710,7 +2710,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
@@ -2742,7 +2742,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
@@ -2774,7 +2774,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
@@ -2806,7 +2806,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),\n"
+	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
@@ -2894,7 +2894,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);"
+	"AddStaticLight(Origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);"
     },
 
     {		//   Candelabra
@@ -2925,7 +2925,7 @@ mobjinfo_t mobjinfo[NUMDOOMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
@@ -3980,9 +3980,12 @@ void MarkSpecialWeaponStates(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/02/14 19:23:07  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.8  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
-//
+//	
 //	Revision 1.7  2002/01/17 18:18:12  dj_jl
 //	Renamed all map object classes
 //	

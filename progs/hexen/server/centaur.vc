@@ -130,22 +130,22 @@ void Actor::A_CentaurDropStuff(void)
 	mobj_t *mo;
 	float angle;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, CentaurShield);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, CentaurShield);
 	if (mo)
 	{
-		angle = AngleMod360(angles.yaw + 90.0);
-		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
-		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
-		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
+		angle = AngleMod360(Angles.yaw + 90.0);
+		mo->Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
+		mo->Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
+		mo->Velocity.z = 8.0 + Random() * 4.0 * 35.0;
 		mo->target = this;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, CentaurSword);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, CentaurSword);
 	if (mo)
 	{
-		angle = AngleMod360(angles.yaw - 90.0);
-		mo->velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
-		mo->velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
-		mo->velocity.z = 8.0 + Random() * 4.0 * 35.0;
+		angle = AngleMod360(Angles.yaw - 90.0);
+		mo->Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
+		mo->Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
+		mo->Velocity.z = 8.0 + Random() * 4.0 * 35.0;
 		mo->target = this;
 	}
 }
@@ -160,9 +160,9 @@ void Actor::A_CentaurDropStuff(void)
 
 void Actor::A_CheckFloor(void)
 {
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
-		origin.z = floorz;
+		Origin.z = FloorZ;
 		bLowGravity = false;
 		SetState(DeathState);
 	}
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

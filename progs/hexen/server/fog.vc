@@ -62,34 +62,34 @@ void Actor::A_FogSpawn(void)
 	if (special1-- > 0)
 		return;
 
-	special1 = args[2];	// Reset frequency count
+	special1 = Args[2];	// Reset frequency count
 
 	switch (P_Random() % 3)
 	{
 	case 0:
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, FogPatchSmall);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchSmall);
 		break;
 	case 1:
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, FogPatchMedium);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchMedium);
 		break;
 	case 2:
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, FogPatchLarge);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, FogPatchLarge);
 		break;
 	}
 
 	if (mo)
 	{
-		delta = itof(args[1]);
+		delta = itof(Args[1]);
 		if (delta == 0.0)
 			delta = 1.0;
-		mo->angles.yaw = AngleMod360(angles.yaw +
+		mo->Angles.yaw = AngleMod360(Angles.yaw +
 			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
 		mo->target = this;
-		if (args[0] < 1)
-			args[0] = 1;
-		mo->args[0] = (P_Random() % (args[0])) + 1;	// P_Random speed
-		mo->args[3] = args[3];	// Set lifetime
-		mo->args[4] = 1;	// Set to moving
+		if (Args[0] < 1)
+			Args[0] = 1;
+		mo->Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
+		mo->Args[3] = Args[3];	// Set lifetime
+		mo->Args[4] = 1;	// Set to moving
 		mo->special2 = P_Random() & 63;
 	}
 }
@@ -102,34 +102,37 @@ void Actor::A_FogSpawn(void)
 
 void Actor::A_FogMove(void)
 {
-	float speed = itof(args[0]);
+	float speed = itof(Args[0]);
 	float angle;
 	int weaveindex;
 
-	if (!args[4])
+	if (!Args[4])
 		return;
 
-	if (args[3]-- <= 0)
+	if (Args[3]-- <= 0)
 	{
 		SetStateNF(DeathState);
 		return;
 	}
 
-	if ((args[3] % 4) == 0)
+	if ((Args[3] % 4) == 0)
 	{
 		weaveindex = special2;
-		origin.z += FloatBobOffsets[weaveindex] / 2.0;
+		Origin.z += FloatBobOffsets[weaveindex] / 2.0;
 		special2 = (weaveindex + 1) & 63;
 	}
 
-	angle = angles.yaw;
-	velocity.x = speed * cos(angle) * 35.0;
-	velocity.y = speed * sin(angle) * 35.0;
+	angle = Angles.yaw;
+	Velocity.x = speed * cos(angle) * 35.0;
+	Velocity.y = speed * sin(angle) * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/01/24 18:19:26  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

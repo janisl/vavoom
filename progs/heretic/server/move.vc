@@ -49,11 +49,11 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 	if (mobj->bNoClip)
 		return true;
 
-	if (CheckPosition(*mobj, mobj->origin))
+	if (CheckPosition(*mobj, mobj->Origin))
 	{
 		// XY is ok, now check Z
-		if ((mobj->origin.z < mobj->floorz) ||
-			(mobj->origin.z + mobj->Height > mobj->ceilingz))
+		if ((mobj->Origin.z < mobj->FloorZ) ||
+			(mobj->Origin.z + mobj->Height > mobj->CeilingZ))
 		{
 			// Bad Z
 			return false;
@@ -113,7 +113,7 @@ boolean	Actor::Touch(Actor Other)
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 		SetState(SeeState);
 		return false;
 	}
@@ -161,8 +161,8 @@ boolean	Actor::Touch(Actor Other)
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push	thing
-				Other.velocity.x += velocity.x / 4.0;
-				Other.velocity.y += velocity.y / 4.0;
+				Other.Velocity.x += Velocity.x / 4.0;
+				Other.Velocity.y += Velocity.y / 4.0;
 			}
 			numspechit = 0;
 			return true;
@@ -173,7 +173,7 @@ boolean	Actor::Touch(Actor Other)
 		{
 			if (!Other.bNoBlood && P_Random() < 192)
 			{
-				P_BloodSplatter(origin.x, origin.y, origin.z, &Other);
+				P_BloodSplatter(Origin.x, Origin.y, Origin.z, &Other);
 			}
 			Other.Damage(self, *target, damage);
 		}
@@ -184,8 +184,8 @@ boolean	Actor::Touch(Actor Other)
 	if (Other.bPushable && !bCannotPush)
 	{
 		// Push thing
-		Other.velocity.x += velocity.x / 4.0;
-		Other.velocity.y += velocity.y / 4.0;
+		Other.Velocity.x += Velocity.x / 4.0;
+		Other.Velocity.y += Velocity.y / 4.0;
 	}
 
 	// check for special pickup
@@ -211,8 +211,8 @@ boolean PIT_CheckRelThing(MapObject Other)
 
 	blockdist = Other.Radius + tmthing->Radius;
 
-	if (fabs(Other.origin.x - tmpos.x) >= blockdist
-		|| fabs(Other.origin.y - tmpos.y) >= blockdist)
+	if (fabs(Other.Origin.x - tmpos.x) >= blockdist
+		|| fabs(Other.Origin.y - tmpos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -231,11 +231,11 @@ boolean PIT_CheckRelThing(MapObject Other)
 			// don't let imps/wizards fly over other imps/wizards
 			return false;
 		}
-		if (tmthing->origin.z > Other.origin.z + Other.Height)
+		if (tmthing->Origin.z > Other.Origin.z + Other.Height)
 		{
 			return true;
 		}
-		if (tmthing->origin.z + tmthing->Height < Other.origin.z)
+		if (tmthing->Origin.z + tmthing->Height < Other.Origin.z)
 		{
 			// under thing
 			return true;
@@ -384,8 +384,8 @@ boolean PIT_CheckRelLine(line_t * ld)
 //
 // out:
 //  newsubsec
-//  floorz
-//  ceilingz
+//	FloorZ
+//	CeilingZ
 //  tmdropoffz
 //   the lowest point contacted
 //   (monsters won't move to a dropoff)
@@ -408,7 +408,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 	tmthing = thing;
 
-	tmpos = vector(x, y, thing->origin.z);
+	tmpos = vector(x, y, thing->Origin.z);
 
 	tmbbox[BOXTOP] = y + tmthing->Radius;
 	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
@@ -479,7 +479,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 void PushLine(mobj_t * thing)
 {
 	if (numspechit && thing->bMissile &&
-		thing->target && thing->target->player)
+		thing->target && thing->target->bIsPlayer)
 	{
 		int i;
 
@@ -528,7 +528,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmceilingz - thing->origin.z < thing->Height && !thing->bFly)
+			tmceilingz - thing->Origin.z < thing->Height && !thing->bFly)
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
@@ -536,28 +536,28 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (thing->bFly)
 		{
-			if (thing->origin.z + thing->Height > tmceilingz)
+			if (thing->Origin.z + thing->Height > tmceilingz)
 			{
-				thing->velocity.z = -8.0 * 35.0;
+				thing->Velocity.z = -8.0 * 35.0;
 				return false;
 			}
-			else if (thing->origin.z < tmfloorz &&
+			else if (thing->Origin.z < tmfloorz &&
 				tmfloorz - tmdropoffz > 24.0)
 			{
-				thing->velocity.z = 8.0 * 35.0;
+				thing->Velocity.z = 8.0 * 35.0;
 				return false;
 			}
 		}
 		if (!thing->bTeleport &&
 			// The Minotaur floor fire can step up any amount
 			thing->Class != MinotaurFloorFire &&
-			tmfloorz - thing->origin.z > 24.0)
+			tmfloorz - thing->Origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
 			return false;
 		}
-		if (thing->bMissile && tmfloorz > thing->origin.z)
+		if (thing->bMissile && tmfloorz > thing->Origin.z)
 		{
 			PushLine(thing);
 		}
@@ -573,23 +573,23 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	// so link the thing into its new position
 	P_UnsetThingPosition(*thing);
 
-	oldorg = thing->origin;
-	thing->origin.x = x;
-	thing->origin.y = y;
+	oldorg = thing->Origin;
+	thing->Origin.x = x;
+	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->floor = tmfloor;
-	thing->ceiling = tmceiling;
-	thing->floorz = tmfloorz;
-	thing->ceilingz = tmceilingz;
+	thing->Floor = tmfloor;
+	thing->Ceiling = tmceiling;
+	thing->FloorZ = tmfloorz;
+	thing->CeilingZ = tmceilingz;
 
 	if (thing->bFootClip && P_GetThingFloorType(thing) != FLOOR_SOLID)
 	{
-		thing->floorclip = FOOTCLIPSIZE;
+		thing->FloorClip = FOOTCLIPSIZE;
 	}
 	else
 	{
-		thing->floorclip = 0.0;
+		thing->FloorClip = 0.0;
 	}
 
 	//
@@ -602,13 +602,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			numspechit--;
 			// see if the line was crossed
 			ld = spechit[numspechit];
-			side = PointOnPlaneSide(thing->origin, ld);
+			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
 			{
 				if (ld->special)
 				{
-					if (thing->player)
+					if (thing->bIsPlayer)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
@@ -636,6 +636,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/09 18:13:46  dj_jl
 //  Added flags that determines what line blocking flags to check
 //

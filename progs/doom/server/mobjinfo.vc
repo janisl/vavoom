@@ -86,7 +86,7 @@ class Zombieman:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -134,7 +134,7 @@ class ShotgunGuy:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -180,7 +180,7 @@ class ArchVile:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 500.0;
-		Speed = 525.0;
+		StepSpeed = 15.0;
 		ReactionCount = 8;
 		PainChance = 10;
 		bSolid = true;
@@ -247,7 +247,7 @@ class Revenant:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 500.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 100;
 		bSolid = true;
@@ -346,7 +346,7 @@ class Mancubus:Actor
 		Radius = 48.0;
 		Height = 64.0;
 		Mass = 1000.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 80;
 		bSolid = true;
@@ -423,7 +423,7 @@ class ChaingunGuy:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -470,7 +470,7 @@ class Imp:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -517,7 +517,7 @@ class Demon:Actor
 		Radius = 30.0;
 		Height = 56.0;
 		Mass = 400.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 180;
 		bSolid = true;
@@ -563,7 +563,7 @@ class Shadows:Actor
 		Radius = 30.0;
 		Height = 56.0;
 		Mass = 400.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 180;
 		Translucency = 90;
@@ -610,7 +610,7 @@ class Cacodemon:Actor
 		Radius = 31.0;
 		Height = 56.0;
 		Mass = 400.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -657,7 +657,7 @@ class BaronOfHell:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 1000.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -734,7 +734,7 @@ class HellKnight:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 1000.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -780,7 +780,7 @@ class LostSoul:Actor
 		Radius = 16.0;
 		Height = 56.0;
 		Mass = 50.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 256;
 		MissileDamage = 3;
@@ -828,7 +828,7 @@ class SpiderMastermind:Actor
 		Radius = 128.0;
 		Height = 100.0;
 		Mass = 1000.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 40;
 		bSolid = true;
@@ -873,7 +873,7 @@ class Arachnotron:Actor
 		Radius = 64.0;
 		Height = 64.0;
 		Mass = 600.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -918,7 +918,7 @@ class Cyberdemon:Actor
 		Radius = 40.0;
 		Height = 110.0;
 		Mass = 1000.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 20;
 		bSolid = true;
@@ -962,7 +962,7 @@ class PainElemental:Actor
 		Radius = 31.0;
 		Height = 56.0;
 		Mass = 400.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -1010,7 +1010,7 @@ class WolfSS:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -2376,7 +2376,7 @@ class TechLamp:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 64.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 64.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -2404,7 +2404,7 @@ class TechLamp2:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 48.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 48.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -2432,7 +2432,7 @@ class ColumnLamp:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 	}
 
@@ -2586,7 +2586,7 @@ class EvilEye:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 
@@ -2656,7 +2656,7 @@ class TorchBlue:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));
 	}
 
@@ -2684,7 +2684,7 @@ class TorchGreen:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));
 	}
 
@@ -2712,7 +2712,7 @@ class TorchRed:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));
 	}
 
@@ -2740,7 +2740,7 @@ class TorchBlueShort:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));
 	}
 
@@ -2768,7 +2768,7 @@ class TorchGreenShort:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));
 	}
 
@@ -2796,7 +2796,7 @@ class TorchRedShort:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLightRGB(origin + vector(0.0, 0.0, 16.0),
+		AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));
 	}
 
@@ -2866,7 +2866,7 @@ class CandleStick:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);
+		AddStaticLight(Origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);
 	}
 
 	defaultproperties
@@ -2892,7 +2892,7 @@ class Candelabra:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 32.0),
+		AddStaticLight(Origin + vector(0.0, 0.0, 32.0),
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 
@@ -3684,9 +3684,12 @@ class BrainStem:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/14 19:20:57  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.21  2002/02/06 17:28:51  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.20  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
 //	

@@ -254,6 +254,7 @@ class Actor:Entity
 	//  Params
 	float Mass;
 	float Speed;
+	float StepSpeed;
 	int PainChance;
 	int spawnhealth;
 	int GibsHealth;
@@ -818,6 +819,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/07 18:50:08  dj_jl
 //  Made CheckPosition shared.
 //

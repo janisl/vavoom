@@ -65,15 +65,15 @@ boolean A_LocalQuake(int *args)
 		target = P_FindMobjFromTID(args[4], &lastfound);
 		if (target)
 		{
-			focus = P_SpawnMobj(target->origin.x,
-				target->origin.y, target->origin.z, QuakeFocus);
+			focus = P_SpawnMobj(target->Origin.x,
+				target->Origin.y, target->Origin.z, QuakeFocus);
 			if (focus)
 			{
-				focus->args[0] = args[0];
-				focus->args[1] = args[1] >> 1;	// decremented every 2 tics
-				focus->args[2] = args[2];
-				focus->args[3] = args[3];
-				focus->args[4] = args[4];
+				focus->Args[0] = args[0];
+				focus->Args[1] = args[1] >> 1;	// decremented every 2 tics
+				focus->Args[2] = args[2];
+				focus->Args[3] = args[3];
+				focus->Args[4] = args[4];
 				success = true;
 			}
 		}
@@ -94,11 +94,11 @@ void Actor::A_Quake(void)
 	float an;
 	player_t *pl;
 	mobj_t *victim;
-	int richters = args[0];
+	int richters = Args[0];
 	int playnum;
 	int dist;
 
-	if (args[1]-- > 0)
+	if (Args[1]-- > 0)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
@@ -109,19 +109,19 @@ void Actor::A_Quake(void)
 			victim = pl->mo;
 			dist = ftoi(MobjDist(self, *victim)) >> 6;
 			// Tested in tile units (64 pixels)
-			if (dist < args[3])	// In tremor radius
+			if (dist < Args[3])	// In tremor radius
 			{
 				pl->localQuakeHappening = richters;
 			}
 			// Check if in damage radius
-			if ((dist < args[2]) && (victim->origin.z <= victim->floorz))
+			if ((dist < Args[2]) && (victim->Origin.z <= victim->FloorZ))
 			{
 				if (P_Random() < 50)
 				{
 					victim->Damage(none, none, HITDICE(1));
 				}
 				// Thrust player around
-				an = victim->angles.yaw + Random() * 256.0;
+				an = victim->Angles.yaw + Random() * 256.0;
 				P_ThrustMobj(victim, an, itof(richters) / 2.0);
 			}
 		}
@@ -139,6 +139,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

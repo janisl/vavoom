@@ -881,7 +881,7 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin,\n"
+"AddStaticLight(Origin,\n"
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
@@ -913,7 +913,7 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
@@ -1080,7 +1080,7 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin + vector(0.0, 0.0, 32.0),\n"
+"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
@@ -1220,7 +1220,7 @@ MF_NOGRAVITY,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin + vector(0.0, 0.0, 80.0),\n"
+"AddStaticLight(Origin + vector(0.0, 0.0, 80.0),\n"
 "\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
  },
 
@@ -4477,9 +4477,12 @@ MF_NOBLOCKMAP|MF_NOSECTOR,		// flags
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/02/14 19:23:07  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.7  2002/01/29 18:19:01  dj_jl
 //	Added MCROSS and PCROSS flags.
-//
+//	
 //	Revision 1.6  2002/01/17 18:18:13  dj_jl
 //	Renamed all map object classes
 //	

@@ -43,7 +43,7 @@
 
 void Actor::A_VolcanoSet(void)
 {
-	time = 3.0 + Random() * 3.5;
+	StateTime = 3.0 + Random() * 3.5;
 }
 
 //==========================================================================
@@ -62,14 +62,14 @@ void Actor::A_VolcanoBlast(void)
 	count = 1 + (P_Random() % 3);
 	for (i = 0; i < count; i++)
 	{
-		blast = P_SpawnMobj(origin.x, origin.y, origin.z + 44.0,
+		blast = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 44.0,
 			VolcanoBlast);
 		blast->target = this;
 		angle = Random() * 360.0;
-		blast->angles.yaw = angle;
-		blast->velocity.x = cos(angle) * 35.0;
-		blast->velocity.y = sin(angle) * 35.0;
-		blast->velocity.z = (2.5 + Random() * 4.0) * 35.0;
+		blast->Angles.yaw = angle;
+		blast->Velocity.x = cos(angle) * 35.0;
+		blast->Velocity.y = sin(angle) * 35.0;
+		blast->Velocity.z = (2.5 + Random() * 4.0) * 35.0;
 		StartSoundName(*blast, 'VolcanoBlast', CHAN_VOICE);
 		CheckMissileSpawn(blast);
 	}
@@ -87,22 +87,22 @@ void Actor::A_VolcBallImpact(void)
 	mobj_t *tiny;
 	float angle;
 
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		bNoGravity = true;
 		bLowGravity = false;
-		origin.z += 28.0;
+		Origin.z += 28.0;
 	}
 	P_RadiusAttack(this, target, 25, 0, 0);
 	for (i = 0; i < 4; i++)
 	{
-		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, VolcanoTBlast);
+		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, VolcanoTBlast);
 		tiny->target = this;
 		angle = itof(i) * 90.0;
-		tiny->angles.yaw = angle;
-		tiny->velocity.x = 0.7 * cos(angle) * 35.0;
-		tiny->velocity.y = 0.7 * sin(angle) * 35.0;
-		tiny->velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		tiny->Angles.yaw = angle;
+		tiny->Velocity.x = 0.7 * cos(angle) * 35.0;
+		tiny->Velocity.y = 0.7 * sin(angle) * 35.0;
+		tiny->Velocity.z = (1.0 + Random() * 2.0) * 35.0;
 		CheckMissileSpawn(tiny);
 	}
 }
@@ -110,6 +110,9 @@ void Actor::A_VolcBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

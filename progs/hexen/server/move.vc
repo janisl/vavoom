@@ -49,11 +49,11 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 	if (mobj->bNoClip)
 		return true;
 
-	if (CheckPosition(*mobj, mobj->origin))
+	if (CheckPosition(*mobj, mobj->Origin))
 	{
 		// XY is ok, now check Z
-		if ((mobj->origin.z < mobj->floorz) ||
-			(mobj->origin.z + mobj->Height > mobj->ceilingz))
+		if ((mobj->Origin.z < mobj->FloorZ) ||
+			(mobj->Origin.z + mobj->Height > mobj->CeilingZ))
 		{
 			// Bad Z
 			return false;
@@ -122,25 +122,25 @@ boolean Actor::Touch(Actor Other)
 		{
 			if (Other.bShootable && Other != *target)
 			{
-				if (netgame && !deathmatch && Other.player)
+				if (netgame && !deathmatch && Other.bIsPlayer)
 				{
 					// don't attack other co-op players
 					return true;
 				}
-				if (Other.bReflective && (Other.player || Other.bBoss))
+				if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
 				{
 					specialmobj1 = target;
 					target = &Other;
 					return true;
 				}
-				if (Other.bCountKill || Other.player)
+				if (Other.bCountKill || Other.bIsPlayer)
 				{
 					specialmobj1 = &Other;
 				}
 				if (P_Random() < 96)
 				{
 					damage = 12;
-					if (Other.player || Other.bBoss)
+					if (Other.bIsPlayer || Other.bBoss)
 					{
 						damage = 3;
 						// ghost burns out faster when attacking players/bosses
@@ -149,7 +149,7 @@ boolean Actor::Touch(Actor Other)
 					Other.Damage(self, *target, damage);
 					if (P_Random() < 128)
 					{
-						P_SpawnMobj(origin.x, origin.y, origin.z, HolyPuff);
+						P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyPuff);
 						StartSoundName(self, 'SpiritAttack', CHAN_VOICE);
 						if (Other.bCountKill && P_Random() < 128
 							&& !GetSoundPlayingInfo(Other,
@@ -176,7 +176,7 @@ boolean Actor::Touch(Actor Other)
 		damage = ((P_Random() % 8) + 1) * MissileDamage;
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 		SetState(SeeState);
 		return false;
 	}
@@ -185,9 +185,9 @@ boolean Actor::Touch(Actor Other)
 	{
 		if (!Other.bBoss && Other.bCountKill)
 		{
-			Other.velocity.x += velocity.x;
-			Other.velocity.y += velocity.y;
-			if ((Other.velocity.x + Other.velocity.y) > 3.0 * 35.0)
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
 			{
 				damage = (ftoi(Mass) / 100) + 1;
 				Other.Damage(self, self, damage);
@@ -222,10 +222,10 @@ boolean Actor::Touch(Actor Other)
 			{
 				if (Other.Mass != 99999.0)
 				{
-					Other.velocity.x += velocity.x / 16.0;
-					Other.velocity.y += velocity.y / 16.0;
+					Other.Velocity.x += Velocity.x / 16.0;
+					Other.Velocity.y += Velocity.y / 16.0;
 				}
-				if ((!Other.player && !Other.bBoss)
+				if ((!Other.bIsPlayer && !Other.bBoss)
 					|| !(level->tictime & 1))
 				{
 					if (Other.Class == Centaur ||
@@ -305,7 +305,7 @@ boolean Actor::Touch(Actor Other)
 		}
 		else if (Class == MageStaffFX2 && Other != *target)
 		{
-			if (!Other.player && !Other.bBoss)
+			if (!Other.bIsPlayer && !Other.bBoss)
 			{
 				switch (Other.Class)
 				{
@@ -327,7 +327,7 @@ boolean Actor::Touch(Actor Other)
 				// Don't missile self
 				return true;
 			}
-			if (!Other.player)
+			if (!Other.bIsPlayer)
 			{
 				// Hit same species as originator, explode, no damage
 				return false;
@@ -350,8 +350,8 @@ boolean Actor::Touch(Actor Other)
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push thing
-				Other.velocity.x += velocity.x / 4.0;
-				Other.velocity.y += velocity.y / 4.0;
+				Other.Velocity.x += Velocity.x / 4.0;
+				Other.Velocity.y += Velocity.y / 4.0;
 			}
 			numspechit = 0;
 			return true;
@@ -368,7 +368,7 @@ boolean Actor::Touch(Actor Other)
 				!(Class == TeleportOtherFX4) &&
 				!(Class == TeleportOtherFX5) && (P_Random() < 192))
 			{
-				P_BloodSplatter(origin.x, origin.y, origin.z, &Other);
+				P_BloodSplatter(Origin.x, Origin.y, Origin.z, &Other);
 			}
 			Other.Damage(self, *target, damage);
 		}
@@ -377,8 +377,8 @@ boolean Actor::Touch(Actor Other)
 	if (Other.bPushable && !bCannotPush)
 	{
 		// Push thing
-		Other.velocity.x += velocity.x / 4.0;
-		Other.velocity.y += velocity.y / 4.0;
+		Other.Velocity.x += Velocity.x / 4.0;
+		Other.Velocity.y += Velocity.y / 4.0;
 	}
 	// Check for special thing
 	if (Other.bSpecial)
@@ -402,8 +402,8 @@ boolean PIT_CheckRelThing(MapObject Other)
 
 	blockdist = Other.Radius + tmthing->Radius;
 
-	if (fabs(Other.origin.x - tmpos.x) >= blockdist
-		|| fabs(Other.origin.y - tmpos.y) >= blockdist)
+	if (fabs(Other.Origin.x - tmpos.x) >= blockdist
+		|| fabs(Other.Origin.y - tmpos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -422,11 +422,11 @@ boolean PIT_CheckRelThing(MapObject Other)
 			// don't let bishops fly over other bishops
 			return false;
 		}
-		if (tmthing->origin.z >= Other.origin.z + Other.Height)
+		if (tmthing->Origin.z >= Other.Origin.z + Other.Height)
 		{
 			return true;
 		}
-		if (tmthing->origin.z + tmthing->Height < Other.origin.z)
+		if (tmthing->Origin.z + tmthing->Height < Other.Origin.z)
 		{
 			// under thing
 			return true;
@@ -591,8 +591,8 @@ boolean PIT_CheckRelLine(line_t * ld)
 //
 // out:
 //  newsubsec
-//  floorz
-//  ceilingz
+//	FloorZ
+//	CeilingZ
 //  tmdropoffz
 //   the lowest point contacted
 //   (monsters won't move to a dropoff)
@@ -615,7 +615,7 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 	tmthing = thing;
 
-	tmpos = vector(x, y, thing->origin.z);
+	tmpos = vector(x, y, thing->Origin.z);
 
 	tmbbox[BOXTOP] = y + tmthing->Radius;
 	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
@@ -708,7 +708,7 @@ void PushLine(mobj_t * thing)
 			numSpecHitTemp--;
 			// see if the line was crossed
 			ld = spechit[numSpecHitTemp];
-			side = PointOnPlaneSide(thing->origin, ld);
+			side = PointOnPlaneSide(thing->Origin, ld);
 			thing->CheckForPushSpecial(ld, side);
 		}
 	}
@@ -736,12 +736,12 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	saved_tmfloorz = tmfloorz;
 	if (!check)
 	{
-		if (!BlockingMobj || BlockingMobj->player || !thing->player ||
-			BlockingMobj->origin.z + BlockingMobj->Height - thing->origin.z >
+		if (!BlockingMobj || BlockingMobj->bIsPlayer || !thing->bIsPlayer ||
+			BlockingMobj->Origin.z + BlockingMobj->Height - thing->Origin.z >
 			24.0
-			|| (BlockingMobj->subsector->sector->ceilingheight -
-		   (BlockingMobj->origin.z + BlockingMobj->Height) < thing->Height)
-			|| (tmceilingz - (BlockingMobj->origin.z + BlockingMobj->Height) <
+			|| (BlockingMobj->Sector->ceilingheight -
+		   (BlockingMobj->Origin.z + BlockingMobj->Height) < thing->Height)
+			|| (tmceilingz - (BlockingMobj->Origin.z + BlockingMobj->Height) <
 				thing->Height))
 		{
 			PushLine(thing);
@@ -761,7 +761,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmceilingz - thing->origin.z < thing->Height &&
+			tmceilingz - thing->Origin.z < thing->Height &&
 			thing->Class != LightningCeiling && !thing->bFly)
 		{
 			// mobj must lower itself to fit
@@ -770,16 +770,16 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (thing->bFly)
 		{
-			if (thing->origin.z + thing->Height > tmceilingz)
+			if (thing->Origin.z + thing->Height > tmceilingz)
 			{
-				thing->velocity.z = -8.0 * 35.0;
+				thing->Velocity.z = -8.0 * 35.0;
 				PushLine(thing);
 				return false;
 			}
-			else if (thing->origin.z < tmfloorz
+			else if (thing->Origin.z < tmfloorz
 				&& tmfloorz - tmdropoffz > 24.0)
 			{
-				thing->velocity.z = 8.0 * 35.0;
+				thing->Velocity.z = 8.0 * 35.0;
 				PushLine(thing);
 				return false;
 			}
@@ -787,7 +787,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		if (!thing->bTeleport
 			// The Minotaur floor fire (MinotaurFloorFire1) can step up any amount
 			&& thing->Class != MinotaurFloorFire1 && thing->Class != LightningFloor
-			&& tmfloorz - thing->origin.z > 24.0)
+			&& tmfloorz - thing->Origin.z > 24.0)
 		{
 			PushLine(thing);
 			return false;
@@ -798,8 +798,8 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			// Can't move over a dropoff unless it's been blasted
 			return false;
 		}
-		if (thing->bCantLeaveFloorpic && (tmfloor->pic != thing->floor->pic
-				|| tmfloorz != thing->origin.z))
+		if (thing->bCantLeaveFloorpic && (tmfloor->pic != thing->Floor->pic
+				|| tmfloorz != thing->Origin.z))
 		{
 			// must stay within a sector of a certain floor type
 			return false;
@@ -810,26 +810,26 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	// so link the thing into its new position
 	P_UnsetThingPosition(*thing);
 
-	oldorg = thing->origin;
-	thing->origin.x = x;
-	thing->origin.y = y;
+	oldorg = thing->Origin;
+	thing->Origin.x = x;
+	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->floor = tmfloor;
-	thing->ceiling = tmceiling;
-	thing->floorz = tmfloorz;
-	thing->ceilingz = tmceilingz;
+	thing->Floor = tmfloor;
+	thing->Ceiling = tmceiling;
+	thing->FloorZ = tmfloorz;
+	thing->CeilingZ = tmceilingz;
 
 	if (thing->bFloorClip)
 	{
-		if (thing->origin.z == thing->subsector->sector->floorheight &&
+		if (thing->Origin.z == thing->Sector->floorheight &&
 			P_GetThingFloorType(thing) >= FLOOR_LIQUID)
 		{
-			thing->floorclip = 10.0;
+			thing->FloorClip = 10.0;
 		}
 		else
 		{
-			thing->floorclip = 0.0;
+			thing->FloorClip = 0.0;
 		}
 	}
 
@@ -843,13 +843,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 			numspechit--;
 			// see if the line was crossed
 			ld = spechit[numspechit];
-			side = PointOnPlaneSide(thing->origin, ld);
+			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
 			{
 				if (ld->special)
 				{
-					if (thing->player)
+					if (thing->bIsPlayer)
 					{
 						P_ActivateLine(ld, thing, oldside, SPAC_CROSS);
 					}
@@ -872,6 +872,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/09 18:13:46  dj_jl
 //  Added flags that determines what line blocking flags to check
 //

@@ -94,7 +94,7 @@ void MorphPlayerThink(player_t * player)
 		return;
 	}
 	pmo = player->mo;
-	if (!(pmo->velocity.x + pmo->velocity.y) && P_Random() < 64)
+	if (!(pmo->Velocity.x + pmo->Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
 		SetPspriteNF(player, ps_weapon, S_SNOUTATK2);
@@ -134,10 +134,10 @@ boolean UndoPlayerMorph(player_t * player)
 
 	pmo = player->mo;
 	P_UnsetThingPosition(*pmo);
-	x = pmo->origin.x;
-	y = pmo->origin.y;
-	z = pmo->origin.z;
-	angle = pmo->angles.yaw;
+	x = pmo->Origin.x;
+	y = pmo->Origin.y;
+	z = pmo->Origin.z;
+	angle = pmo->Angles.yaw;
 	weapon = pmo->special1;
 	OldbFly = pmo->bFly;
 	switch (player->baseclass)
@@ -164,8 +164,9 @@ boolean UndoPlayerMorph(player_t * player)
 	}
 	pmo->SetState(S_FREETARGMOBJ);
 	SetPlayerColor(player);
-	mo->angles.yaw = angle;
-	mo->player = player;
+	mo->Angles.yaw = angle;
+	mo->Player = player;
+	mo->bIsPlayer = true;
 	mo->ReactionTime = 0.5;
 	if (OldbFly)
 	{
@@ -191,7 +192,7 @@ boolean UndoPlayerMorph(player_t * player)
 
 void SetPlayerRunState(player_t * player)
 {
-	if (player->mo->statenum == PStateNormal[player->pclass])
+	if (player->mo->StateNum == PStateNormal[player->pclass])
 	{
 		player->mo->SetState(PStateRun[player->pclass]);
 	}
@@ -214,10 +215,10 @@ void DeathPlayerThink(player_t * player)
 	MovePsprites(player);
 	if (player->mo->waterlevel > 1)
 	{
-		player->mo->velocity.z -= 60.0;	// drift towards bottom
+		player->mo->Velocity.z -= 60.0;	// drift towards bottom
 	}
 
-	onground = (player->mo->origin.z <= player->mo->floorz);
+	onground = (player->mo->Origin.z <= player->mo->FloorZ);
 
 	if (player->mo->Class == BloodySkull || player->mo->Class == IceChunk)
 	{
@@ -296,11 +297,11 @@ void DeathPlayerThink(player_t * player)
 		if (dir)
 		{
 			// Turn clockwise
-			player->mo->angles.yaw += delta;
+			player->mo->Angles.yaw += delta;
 		}
 		else
 		{	// Turn counter clockwise
-			player->mo->angles.yaw -= delta;
+			player->mo->Angles.yaw -= delta;
 		}
 	}
 	else if (player->damagecount || player->poisoncount)
@@ -343,7 +344,7 @@ void DeathPlayerThink(player_t * player)
 
 mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 {
-	return P_SpawnMobj(pmo->origin.x, pmo->origin.y, pmo->origin.z,
+	return P_SpawnMobj(pmo->Origin.x, pmo->Origin.y, pmo->Origin.z,
 		PlayerSpeed);
 }
 
@@ -357,13 +358,13 @@ void ArtiPig(mobj_t * mo)
 {
 	SpawnPlayerMissile(mo, EggMissile);
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw - 45.0 / 6.0));
+		AngleMod360(mo->Angles.yaw - 45.0 / 6.0));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw + 45.0 / 6.0));
+		AngleMod360(mo->Angles.yaw + 45.0 / 6.0));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw - 45.0 / 3.0));
+		AngleMod360(mo->Angles.yaw - 45.0 / 3.0));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw + 45.0 / 3.0));
+		AngleMod360(mo->Angles.yaw + 45.0 / 3.0));
 }
 
 //==========================================================================
@@ -381,7 +382,7 @@ void ArtiSummon(player_t * player)
 	{
 		mo->target = player->mo;
 		mo->specialmobj1 = player->mo;
-		mo->velocity.z = 5.0 * 35.0;
+		mo->Velocity.z = 5.0 * 35.0;
 	}
 }
 
@@ -397,12 +398,12 @@ void ArtiPoisonBag(player_t * player)
 	mobj_t *mo;
 	mobj_t *bomb;
 
-	angle = player->mo->angles.yaw;
+	angle = player->mo->Angles.yaw;
 	if (player->pclass == PCLASS_CLERIC)
 	{
-		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
-			player->mo->origin.y + 24.0 * sin(angle),
-			player->mo->origin.z - player->mo->floorclip + 8.0, PoisonBag);
+		mo = P_SpawnMobj(player->mo->Origin.x + 16.0 * cos(angle),
+			player->mo->Origin.y + 24.0 * sin(angle),
+			player->mo->Origin.z - player->mo->FloorClip + 8.0, PoisonBag);
 		if (mo)
 		{
 			mo->target = player->mo;
@@ -410,9 +411,9 @@ void ArtiPoisonBag(player_t * player)
 	}
 	else if (player->pclass == PCLASS_MAGE)
 	{
-		mo = P_SpawnMobj(player->mo->origin.x + 16.0 * cos(angle),
-			player->mo->origin.y + 24.0 * sin(angle),
-			player->mo->origin.z - player->mo->floorclip + 8.0, FireBomb);
+		mo = P_SpawnMobj(player->mo->Origin.x + 16.0 * cos(angle),
+			player->mo->Origin.y + 24.0 * sin(angle),
+			player->mo->Origin.z - player->mo->FloorClip + 8.0, FireBomb);
 		if (mo)
 		{
 			mo->target = player->mo;
@@ -420,21 +421,21 @@ void ArtiPoisonBag(player_t * player)
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
 	{
-		bomb = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
-			player->mo->origin.z - player->mo->floorclip + 35.0,
+		bomb = P_SpawnMobj(player->mo->Origin.x, player->mo->Origin.y,
+			player->mo->Origin.z - player->mo->FloorClip + 35.0,
 			ThrowingBomb);
 		if (bomb)
 		{
-			bomb->angles.yaw = AngleMod360(player->mo->angles.yaw +
+			bomb->Angles.yaw = AngleMod360(player->mo->Angles.yaw +
 				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
-			bomb->velocity.z =
-				(4.0 + 173.0 * -tan(player->mo->angles.pitch) / 16.0) * 35.0;
-			bomb->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
-			P_ThrustMobj(bomb, bomb->angles.yaw, bomb->Speed * frametime);
-			bomb->velocity.x += player->mo->velocity.x / 2.0;
-			bomb->velocity.y += player->mo->velocity.y / 2.0;
+			bomb->Velocity.z =
+				(4.0 + 173.0 * -tan(player->mo->Angles.pitch) / 16.0) * 35.0;
+			bomb->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
+			P_ThrustMobj(bomb, bomb->Angles.yaw, bomb->Speed * frametime);
+			bomb->Velocity.x += player->mo->Velocity.x / 2.0;
+			bomb->Velocity.y += player->mo->Velocity.y / 2.0;
 			bomb->target = player->mo;
-			bomb->time -= Random() * 0.1;
+			bomb->StateTime -= Random() * 0.1;
 			CheckMissileSpawn(bomb);
 		}
 	}
@@ -472,13 +473,13 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 	float y;
 	float z;
 
-	angle = atan2(victim->origin.y - source->origin.y,
-		victim->origin.x - source->origin.x);
+	angle = atan2(victim->Origin.y - source->Origin.y,
+		victim->Origin.x - source->Origin.x);
 	if (strength < BLAST_FULLSTRENGTH)
 	{
-		victim->velocity.x = strength * cos(angle) * 35.0;
-		victim->velocity.y = strength * sin(angle) * 35.0;
-		if (victim->player)
+		victim->Velocity.x = strength * cos(angle) * 35.0;
+		victim->Velocity.y = strength * sin(angle) * 35.0;
+		if (victim->bIsPlayer)
 		{
 			// Players handled automatically
 		}
@@ -515,32 +516,32 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 				victim->target = source;
 			}
 		}
-		victim->velocity.x = BLAST_SPEED * cos(angle) * 35.0;
-		victim->velocity.y = BLAST_SPEED * sin(angle) * 35.0;
+		victim->Velocity.x = BLAST_SPEED * cos(angle) * 35.0;
+		victim->Velocity.y = BLAST_SPEED * sin(angle) * 35.0;
 
 		// Spawn blast puff
-		ang = atan2(source->origin.y - victim->origin.y,
-			source->origin.x - victim->origin.x);
-		x = victim->origin.x + (victim->Radius + 1.0) * cos(ang);
-		y = victim->origin.y + (victim->Radius + 1.0) * sin(ang);
-		z = victim->origin.z - victim->floorclip + victim->Height / 2.0;
+		ang = atan2(source->Origin.y - victim->Origin.y,
+			source->Origin.x - victim->Origin.x);
+		x = victim->Origin.x + (victim->Radius + 1.0) * cos(ang);
+		y = victim->Origin.y + (victim->Radius + 1.0) * sin(ang);
+		z = victim->Origin.z - victim->FloorClip + victim->Height / 2.0;
 		mo = P_SpawnMobj(x, y, z, BlastEffect);
 		if (mo)
 		{
-			mo->velocity.x = victim->velocity.x;
-			mo->velocity.y = victim->velocity.y;
+			mo->Velocity.x = victim->Velocity.x;
+			mo->Velocity.y = victim->Velocity.y;
 		}
 
 		if (victim->bMissile)
 		{
-			victim->velocity.z = 8.0 * 35.0;
-			mo->velocity.z = victim->velocity.z;
+			victim->Velocity.z = 8.0 * 35.0;
+			mo->Velocity.z = victim->Velocity.z;
 		}
 		else
 		{
-			victim->velocity.z = 1000.0 / victim->Mass * 35.0;
+			victim->Velocity.z = 1000.0 / victim->Mass * 35.0;
 		}
-		if (victim->player)
+		if (victim->bIsPlayer)
 		{
 			// Players handled automatically
 		}
@@ -586,7 +587,7 @@ void ArtiBlastRadius(player_t * player)
 		{
 			continue;
 		}
-		else if (!mo.bCountKill && !mo.player && !mo.bMissile)
+		else if (!mo.bCountKill && !mo.bIsPlayer && !mo.bMissile)
 		{
 			// Must be monster, player, or missile
 			continue;
@@ -639,8 +640,8 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->origin.x == mthing->x &&
-				players[i].mo->origin.y == mthing->y)
+			if (players[i].mo->Origin.x == mthing->x &&
+				players[i].mo->Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -670,6 +671,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.18  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //

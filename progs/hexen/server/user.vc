@@ -122,7 +122,7 @@ void MovePlayer(player_t * player)
 		side *= 1.5;
 	}
 	if (!(player->powers[pw_flight]
-			&& !(player->mo->origin.z <= player->mo->floorz))
+			&& !(player->mo->Origin.z <= player->mo->FloorZ))
 		&& P_GetThingFloorType(player->mo) == FLOOR_ICE)	// Friction_Low
 	{
 		forward *= 0.5;
@@ -131,7 +131,7 @@ void MovePlayer(player_t * player)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (player->mo->origin.z <= player->mo->floorz)
+	onground = (player->mo->Origin.z <= player->mo->FloorZ)
 		|| player->mo->bOnMobj;
 	if (!(onground || player->mo->bFly))
 	{
@@ -140,7 +140,7 @@ void MovePlayer(player_t * player)
 		side *= air_control;
 	}
 
-	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
+	AngleVectors(&player->mo->Angles, &vforward, &vright, &vup);
 
 	wishvel = forward * vforward + side * vright;
 	if (onground && !player->mo->bFly)
@@ -148,7 +148,7 @@ void MovePlayer(player_t * player)
 		wishvel.z = 0.0;
 	}
 
-	player->mo->velocity += 5.0 * frametime * wishvel;
+	player->mo->Velocity += 5.0 * frametime * wishvel;
 
 	if (forward || side)
 	{
@@ -165,7 +165,7 @@ void MovePlayer(player_t * player)
 			{
 				player->mo->bFly = true;
 				player->mo->bNoGravity = true;
-				if (player->mo->velocity.z <= -39.0 * 35.0)
+				if (player->mo->Velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
 					StopSound(*player->mo, CHAN_AUTO);
@@ -184,7 +184,7 @@ void MovePlayer(player_t * player)
 	}
 	if (player->mo->bFly)
 	{
-		player->mo->velocity.z = player->flyheight * 35.0 + wishvel.z;
+		player->mo->Velocity.z = player->flyheight * 35.0 + wishvel.z;
 		if (player->flyheight)
 		{
 			player->flyheight /= 2.0;
@@ -194,11 +194,11 @@ void MovePlayer(player_t * player)
 	{
 		if (player->morphTics)
 		{
-			player->mo->velocity.z = 6.0 * 35.0;
+			player->mo->Velocity.z = 6.0 * 35.0;
 		}
 		else
 		{
-			player->mo->velocity.z = 9.0 * 35.0;
+			player->mo->Velocity.z = 9.0 * 35.0;
 		}
 		player->mo->bOnMobj = false;
 		player->jumpTics = 18;
@@ -218,8 +218,8 @@ void CheckWaterJump(player_t * player)
 	TVec vforward;
 
 	// check for a jump-out-of-water
-	AngleVector(&player->mo->angles, &vforward);
-	start = player->mo->origin;
+	AngleVector(&player->mo->Angles, &vforward);
+	start = player->mo->Origin;
 	start.z += player->mo->Height * 0.5 + 8.0;
 	vforward.z = 0.0;
 	vforward = Normalize(vforward);
@@ -227,14 +227,14 @@ void CheckWaterJump(player_t * player)
 	if (!TraceLine(start, end))
 	{
 		// solid at waist
-		start.z = player->mo->origin.z + player->mo->Height;
+		start.z = player->mo->Origin.z + player->mo->Height;
 		end = start + vforward * 24.0;
 		player->movedir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
 			player->mo->bWaterJump = true;
-			player->mo->velocity.z = 350.0;
+			player->mo->Velocity.z = 350.0;
 			player->mo->ReactionTime = 2.0;	// safety net
 		}
 	}
@@ -257,10 +257,10 @@ void WaterMove(player_t * player)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (player->mo->origin.z <= player->mo->floorz)
+	onground = (player->mo->Origin.z <= player->mo->FloorZ)
 		|| player->mo->bOnMobj;
 
-	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
+	AngleVectors(&player->mo->Angles, &vforward, &vright, &vup);
 
 	forward = player->forwardmove;
 	side = player->sidemove;
@@ -303,7 +303,7 @@ void WaterMove(player_t * player)
 //  else
 //      wishvel.z += cmd.upmove;
 
-	player->mo->velocity += 3.5 * frametime * wishvel;
+	player->mo->Velocity += 3.5 * frametime * wishvel;
 
 	if (forward || side)
 	{
@@ -313,11 +313,11 @@ void WaterMove(player_t * player)
 	if (player->buttons & BT_JUMP)
 	{
 		if (player->mo->watertype == CONTENTS_WATER)
-			player->mo->velocity.z = 100.0;
+			player->mo->Velocity.z = 100.0;
 		else if (player->mo->watertype == CONTENTS_SLUDGE)
-			player->mo->velocity.z = 80.0;
+			player->mo->Velocity.z = 80.0;
 		else
-			player->mo->velocity.z = 50.0;
+			player->mo->Velocity.z = 50.0;
 	}
 	CheckWaterJump(player);
 }
@@ -335,8 +335,8 @@ void WaterJump(player_t * player)
 		player->mo->bWaterJump = false;
 		player->mo->ReactionTime = 0.0;
 	}
-	player->mo->velocity.x = player->movedir.x;
-	player->mo->velocity.y = player->movedir.y;
+	player->mo->Velocity.x = player->movedir.x;
+	player->mo->Velocity.y = player->movedir.y;
 }
 
 //==========================================================================
@@ -350,13 +350,13 @@ void WaterJump(player_t * player)
 void ThrustPlayer(player_t * player, float angle, float move)
 {
 	if (!(player->powers[pw_flight]
-			&& !(player->mo->origin.z <= player->mo->floorz))
+			&& !(player->mo->Origin.z <= player->mo->FloorZ))
 		&& P_GetThingFloorType(player->mo) == FLOOR_ICE)	// Friction_Low
 	{
 		move *= 0.5;
 	}
-	player->mo->velocity.x += move * cos(angle) * frametime;
-	player->mo->velocity.y += move * sin(angle) * frametime;
+	player->mo->Velocity.x += move * cos(angle) * frametime;
+	player->mo->Velocity.y += move * sin(angle) * frametime;
 }
 
 //==========================================================================
@@ -378,8 +378,8 @@ void CalcHeight(player_t * player)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	player->bob = (player->mo->velocity.x * player->mo->velocity.x +
-		player->mo->velocity.y * player->mo->velocity.y)
+	player->bob = (player->mo->Velocity.x * player->mo->Velocity.x +
+		player->mo->Velocity.y * player->mo->Velocity.y)
 		* frametime * frametime;
 
 	player->bob /= 4.0;
@@ -421,24 +421,24 @@ void CalcHeight(player_t * player)
 	}
 	if (player->morphTics)
 	{
-		player->vieworg.z = player->mo->origin.z + player->viewheight - 20.0;
+		player->vieworg.z = player->mo->Origin.z + player->viewheight - 20.0;
 	}
 	else
 	{
-		player->vieworg.z = player->mo->origin.z + player->viewheight + bob;
+		player->vieworg.z = player->mo->Origin.z + player->viewheight + bob;
 	}
-	if (player->mo->floorclip && player->playerstate != PST_DEAD
-		&& player->mo->origin.z <= player->mo->floorz)
+	if (player->mo->FloorClip && player->playerstate != PST_DEAD &&
+		player->mo->Origin.z <= player->mo->FloorZ)
 	{
-		player->vieworg.z -= player->mo->floorclip;
+		player->vieworg.z -= player->mo->FloorClip;
 	}
-	if (player->vieworg.z < player->mo->floorz + 4.0)
+	if (player->vieworg.z < player->mo->FloorZ + 4.0)
 	{
-		player->vieworg.z = player->mo->floorz + 4.0;
+		player->vieworg.z = player->mo->FloorZ + 4.0;
 	}
 
-	if (player->vieworg.z > player->mo->ceilingz - 4.0)
-		player->vieworg.z = player->mo->ceilingz - 4.0;
+	if (player->vieworg.z > player->mo->CeilingZ - 4.0)
+		player->vieworg.z = player->mo->CeilingZ - 4.0;
 }
 
 //==========================================================================
@@ -459,8 +459,8 @@ void PlayerInSpecialSector(player_t * player)
 {
 	sector_t *sector;
 
-	sector = player->mo->subsector->sector;
-	if (player->mo->origin.z != sector->floorheight)
+	sector = player->mo->Sector;
+	if (player->mo->Origin.z != sector->floorheight)
 	{
 		// Player is not touching the floor
 		return;
@@ -552,7 +552,7 @@ void PlayerInSpecialSector(player_t * player)
 
 void PlayerOnSpecialFlat(player_t * player, int floorType)
 {
-	if (player->mo->origin.z != player->mo->floorz)
+	if (player->mo->Origin.z != player->mo->FloorZ)
 	{
 		// Player is not touching the floor
 		return;
@@ -711,7 +711,7 @@ void PlayerThink(player_t * player)
 	}
 
 	// Copy view angles
-	player->mo->angles = player->viewangles;
+	player->mo->Angles = player->viewangles;
 
 	// fixme: do this in the cheat code
 	if (player->cheats & CF_NOCLIP)
@@ -762,12 +762,12 @@ void PlayerThink(player_t * player)
 			MovePlayer(player);
 		pmo = player->mo;
 		if (player->powers[pw_speed] && !(level->tictime & 1) &&
-			Length(pmo->velocity) > 12.0 * 35.0)
+			Length(pmo->Velocity) > 12.0 * 35.0)
 		{
 			speedMo = SpawnSpeedMobj(pmo);
 			if (speedMo)
 			{
-				speedMo->angles.yaw = pmo->angles.yaw;
+				speedMo->Angles.yaw = pmo->Angles.yaw;
 				speedMo->Translation = pmo->Translation;
 				speedMo->target = pmo;
 				speedMo->special1 = player->pclass;
@@ -775,12 +775,12 @@ void PlayerThink(player_t * player)
 				{
 					speedMo->special1 = 0;
 				}
-				speedMo->sprite = pmo->sprite;
-				speedMo->floorclip = pmo->floorclip;
+				speedMo->SpriteIndex = pmo->SpriteIndex;
+				speedMo->FloorClip = pmo->FloorClip;
 #ifdef FIXME
 				if (player == &players[consoleplayer])
 				{
-					speedMo->translucency = 100;
+					speedMo->Translucency = 100;
 				}
 #endif
 			}
@@ -789,7 +789,7 @@ void PlayerThink(player_t * player)
 
 	CalcHeight(player);
 
-	if (player->mo->subsector->sector->special)
+	if (player->mo->Sector->special)
 	{
 		PlayerInSpecialSector(player);
 	}
@@ -802,8 +802,8 @@ void PlayerThink(player_t * player)
 	switch (player->pclass)
 	{
 	case PCLASS_FIGHTER:
-		if (player->mo->velocity.z <= -35.0 * 35.0
-			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
+		if (player->mo->Velocity.z <= -35.0 * 35.0
+			&& player->mo->Velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(*player->mo,
 				GetSoundID('PlayerFighterFallingScream')))
 		{
@@ -812,8 +812,8 @@ void PlayerThink(player_t * player)
 		}
 		break;
 	case PCLASS_CLERIC:
-		if (player->mo->velocity.z <= -35.0 * 35.0
-			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
+		if (player->mo->Velocity.z <= -35.0 * 35.0
+			&& player->mo->Velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(*player->mo,
 				GetSoundID('PlayerClericFallingScream')))
 		{
@@ -822,8 +822,8 @@ void PlayerThink(player_t * player)
 		}
 		break;
 	case PCLASS_MAGE:
-		if (player->mo->velocity.z <= -35.0 * 35.0
-			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
+		if (player->mo->Velocity.z <= -35.0 * 35.0
+			&& player->mo->Velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(*player->mo,
 				GetSoundID('PlayerMageFallingScream')))
 		{
@@ -945,7 +945,7 @@ void PlayerThink(player_t * player)
 	{
 		if (!--player->powers[pw_flight])
 		{
-			if (player->mo->origin.z != player->mo->floorz)
+			if (player->mo->Origin.z != player->mo->FloorZ)
 			{
 //FIXME             player->centering = true;
 			}
@@ -1090,8 +1090,8 @@ void SB_PaletteFlash(player_t * player)
 
 void SetViewPos(player_t * player)
 {
-	player->vieworg.x = player->mo->origin.x;
-	player->vieworg.y = player->mo->origin.y;
+	player->vieworg.x = player->mo->Origin.x;
+	player->vieworg.y = player->mo->Origin.y;
 
 	if (player->localQuakeHappening)
 	{
@@ -1102,7 +1102,7 @@ void SetViewPos(player_t * player)
 		player->vieworg.y += (Random() - 0.5) * (intensity * 4.0);
 	}
 
-	player->viewangles = player->mo->angles;
+	player->viewangles = player->mo->Angles;
 
 	SB_PaletteFlash(player);
 
@@ -1164,7 +1164,7 @@ boolean ArtiHealRadius(player_t * player)
 
 	FOREACH(Actor, mo)
 	{
-		if (!mo.player)
+		if (!mo.bIsPlayer)
 			continue;
 		if (mo.Health <= 0)
 			continue;
@@ -1292,7 +1292,7 @@ boolean UseArtifact(player_t * player, int arti)
 		{
 			return false;
 		}
-		if (player->mo->velocity.z <= -35.0 * 35.0)
+		if (player->mo->Velocity.z <= -35.0 * 35.0)
 		{	// stop falling scream
 			StopSound(*player->mo, CHAN_AUTO);
 		}
@@ -1566,7 +1566,7 @@ void TeleportToDeathmatchStarts(mobj_t * victim)
 
 void TeleportOther(mobj_t * victim)
 {
-	if (victim->player)
+	if (victim->bIsPlayer)
 	{
 		if (deathmatch)
 			TeleportToDeathmatchStarts(victim);
@@ -1576,12 +1576,12 @@ void TeleportOther(mobj_t * victim)
 	else
 	{
 		// If death action, run it upon teleport
-		if (victim->bCountKill && victim->special)
+		if (victim->bCountKill && victim->Special)
 		{
 			P_RemoveMobjFromTIDList(victim);
-			ExecuteLineSpecial(victim->special, &victim->args[0],
+			ExecuteLineSpecial(victim->Special, &victim->Args[0],
 				NULL, 0, victim);
-			victim->special = 0;
+			victim->Special = 0;
 		}
 
 		// Send all monsters to deathmatch spots
@@ -1603,7 +1603,7 @@ boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, mobj_t * mo)
 
 	if (!mo)
 		return false;
-	player = mo->player;
+	player = mo->Player;
 	if (!player)
 		return false;
 
@@ -1690,7 +1690,7 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 			PSpriteSY[player->pclass * NUMWEAPONS + player->readyweapon];
 		player->morphTics = 0;
 	}
-	player->mo->angles.pitch = 0.0;
+	player->mo->Angles.pitch = 0.0;
 	player->mo->Translucency = 0;	// Remove invisibility
 	player->extralight = 0;	// Remove weapon flashes
 	player->fixedcolormap = 0;	// Remove torch
@@ -1746,7 +1746,8 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// first dissasociate the corpse
-	players[playernum].mo->player = NULL;
+	players[playernum].mo->Player = NULL;
+	players[playernum].mo->bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -1930,7 +1931,7 @@ void SpawnClient(int i)
 	}
 
 	// Destroy all things touching players
-	P_TeleportMove(player->mo, player->mo->origin.x, player->mo->origin.y);
+	P_TeleportMove(player->mo, player->mo->Origin.x, player->mo->Origin.y);
 }
 
 //==========================================================================
@@ -1950,7 +1951,8 @@ void DisconnectClient(player_t * player)
 	}
 	if (player->mo)
 	{
-		player->mo->player = NULL;
+		player->mo->Player = NULL;
+		player->mo->bIsPlayer = false;
 		player->mo->Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
@@ -1983,6 +1985,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.25  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -228,8 +228,8 @@ boolean Actor::LookForPlayers(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->mo->origin.y - origin.y,
-				P->mo->origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(P->mo->Origin.y - Origin.y,
+				P->mo->Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
 				dist = MobjDist(*P->mo, self);
@@ -242,7 +242,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 		{
 			// Player is invisible
 			if ((MobjDist(*P->mo, self) > 2.0 * MELEERANGE) &&
-				Length(P->mo->velocity) < 5.0 * 35.0)
+				Length(P->mo->Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
 				return false;
@@ -283,8 +283,8 @@ boolean Actor::StepMove(void)
 		Error("Weird movedir!");
 #endif
 
-	tryx = origin.x + Speed * frametime * xspeed[movedir];
-	tryy = origin.y + Speed * frametime * yspeed[movedir];
+	tryx = Origin.x + StepSpeed * xspeed[movedir];
+	tryy = Origin.y + StepSpeed * yspeed[movedir];
 
 	if (!P_TryMove(this, tryx, tryy))
 	{
@@ -292,10 +292,10 @@ boolean Actor::StepMove(void)
 		if (bFloat && floatok)
 		{
 			// must adjust height
-			if (origin.z < saved_tmfloorz)
-				origin.z += FLOATSPEED * frametime;
+			if (Origin.z < saved_tmfloorz)
+				Origin.z += FLOATSPEED * frametime;
 			else
-				origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * frametime;
 
 			bInFloat = true;
 			return true;
@@ -326,11 +326,11 @@ boolean Actor::StepMove(void)
 
 	if (!bFloat)
 	{
-		if (origin.z > floorz)
+		if (Origin.z > FloorZ)
 		{
 			P_HitFloor(this);
 		}
-		origin.z = floorz;
+		Origin.z = FloorZ;
 	}
 	return true;
 }
@@ -374,8 +374,8 @@ void Actor::NewChaseDir(void)
 	olddir = movedir;
 	turnaround = opposite[olddir];
 
-	deltax = target->origin.x - origin.x;
-	deltay = target->origin.y - origin.y;
+	deltax = target->Origin.x - Origin.x;
+	deltay = target->Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -471,6 +471,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

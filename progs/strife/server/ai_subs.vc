@@ -194,8 +194,8 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo.origin.y - actor->origin.y,
-				mo.origin.x - actor->origin.x) - actor->angles.yaw);
+			an = AngleMod360(atan2(mo.Origin.y - actor->Origin.y,
+				mo.Origin.x - actor->Origin.x) - actor->Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
@@ -267,8 +267,8 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(player->mo->origin.y - actor->origin.y,
-				player->mo->origin.x - actor->origin.x) - actor->angles.yaw);
+			an = AngleMod360(atan2(player->mo->Origin.y - actor->Origin.y,
+				player->mo->Origin.x - actor->Origin.x) - actor->Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
@@ -310,10 +310,8 @@ boolean P_Move(mobj_t * actor)
 		I_Error("Weird actor->movedir!");
 #endif
 
-	tryx =
-		actor->origin.x + actor->Speed * frametime * xspeed[actor->movedir];
-	tryy =
-		actor->origin.y + actor->Speed * frametime * yspeed[actor->movedir];
+	tryx = actor->Origin.x + actor->StepSpeed * xspeed[actor->movedir];
+	tryy = actor->Origin.y + actor->StepSpeed * yspeed[actor->movedir];
 
 	if (!P_TryMove(actor, tryx, tryy))
 	{
@@ -321,10 +319,10 @@ boolean P_Move(mobj_t * actor)
 		if (actor->bFloat && floatok)
 		{
 			// must adjust height
-			if (actor->origin.z < saved_tmfloorz)
-				actor->origin.z += FLOATSPEED * frametime;
+			if (actor->Origin.z < saved_tmfloorz)
+				actor->Origin.z += FLOATSPEED * frametime;
 			else
-				actor->origin.z -= FLOATSPEED * frametime;
+				actor->Origin.z -= FLOATSPEED * frametime;
 
 			actor->bInFloat = true;
 			return true;
@@ -355,7 +353,7 @@ boolean P_Move(mobj_t * actor)
 
 	if (!actor->bFloat)
 	{
-		actor->origin.z = actor->floorz;
+		actor->Origin.z = actor->FloorZ;
 	}
 	return true;
 }
@@ -408,8 +406,8 @@ void P_NewChaseDir(mobj_t * actor)
 	olddir = actor->movedir;
 	turnaround = opposite[olddir];
 
-	deltax = actor->target->origin.x - actor->origin.x;
-	deltay = actor->target->origin.y - actor->origin.y;
+	deltax = actor->target->Origin.x - actor->Origin.x;
+	deltay = actor->target->Origin.y - actor->Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -515,6 +513,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //

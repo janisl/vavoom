@@ -54,12 +54,15 @@ void Actor::A_SkullAttack(void)
 
 	StartSound(self, sound_attack, CHAN_VOICE);
 	A_FaceTarget();
-	velocity = Normalize(MobjCenter((*target)) - origin) * SKULLSPEED;
+	Velocity = Normalize(MobjCenter((*target)) - Origin) * SKULLSPEED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

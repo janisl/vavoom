@@ -116,10 +116,10 @@ void RepositionMace(mobj_t * mo)
 
 	spot = P_Random() % MaceSpotCount;
 	P_UnsetThingPosition(*mo);
-	mo->origin.x = MaceSpot_x[spot];
-	mo->origin.y = MaceSpot_y[spot];
+	mo->Origin.x = MaceSpot_x[spot];
+	mo->Origin.y = MaceSpot_y[spot];
 	P_SetThingPosition(*mo);
-	mo->origin.z = mo->floorz;
+	mo->Origin.z = mo->FloorZ;
 }
 
 //===========================================================================
@@ -395,9 +395,9 @@ void BulletSlope(mobj_t * mo, TAVec * angles)
 	//
 	// see which target is to be aimed at
 	//
-	angles->pitch = mo->angles.pitch;
-	angles->yaw = mo->angles.yaw;
-	angles->roll = mo->angles.roll;
+	angles->pitch = mo->Angles.pitch;
+	angles->yaw = mo->Angles.yaw;
+	angles->roll = mo->Angles.roll;
 
 	AimLineAttack(mo, angles, 16.0 * 64.0);
 	if (!linetarget)
@@ -545,8 +545,8 @@ void Weapon::A_WeaponReady(void)
 		return;
 	}
 	// Change player from attack state
-	if (player->mo->statenum == S_PLAY_ATK1 ||
-		player->mo->statenum == S_PLAY_ATK2)
+	if (player->mo->StateNum == S_PLAY_ATK1 ||
+		player->mo->StateNum == S_PLAY_ATK2)
 	{
 		player->mo->SetState(S_PLAY);
 	}
@@ -621,7 +621,7 @@ void Weapon::A_BeakReady(void)
 	}
 	else
 	{
-		if (player->mo->statenum == S_CHICPLAY_ATK1)
+		if (player->mo->StateNum == S_CHICPLAY_ATK1)
 		{	// Take out of attack state
 			player->mo->SetState(S_CHICPLAY);
 		}
@@ -756,7 +756,7 @@ void Weapon::A_StaffAttackPL1(void)
 	TVec vforward;
 
 	damage = 5 + (P_Random() & 15);
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
@@ -767,9 +767,9 @@ void Weapon::A_StaffAttackPL1(void)
 	{
 		//StartSoundName(player->mo, sfx_stfhit);
 		// turn to face target
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 	}
 }
 
@@ -788,7 +788,7 @@ void Weapon::A_StaffAttackPL2(void)
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
@@ -799,9 +799,9 @@ void Weapon::A_StaffAttackPL2(void)
 	{
 		//StartSoundName(player->mo, sfx_stfpow);
 		// turn to face target
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 		player->fixangle = 1;
 	}
 }
@@ -824,7 +824,7 @@ void Weapon::A_GauntletAttack(void)
 
 	sx = Random() * 4.0 - 2.0;
 	sy = WEAPONTOP + Random() * 4.0;
-	angles = player->mo->angles;
+	angles = player->mo->Angles;
 	if (player->powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
@@ -876,21 +876,21 @@ void Weapon::A_GauntletAttack(void)
 		StartSoundName(*player->mo, 'GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget->origin.y - player->mo->origin.y,
-		linetarget->origin.x - player->mo->origin.x);
-	if (AngleMod360(angle - player->mo->angles.yaw) > 180.0)
+	angle = atan2(linetarget->Origin.y - player->mo->Origin.y,
+		linetarget->Origin.x - player->mo->Origin.x);
+	if (AngleMod360(angle - player->mo->Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - player->mo->angles.yaw) < 360.0 - 90.0 / 20.0)
-			player->mo->angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - player->mo->Angles.yaw) < 360.0 - 90.0 / 20.0)
+			player->mo->Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw - 90.0 / 20.0);
+			player->mo->Angles.yaw = AngleMod360(player->mo->Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - player->mo->angles.yaw) > 90.0 / 20.0)
-			player->mo->angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - player->mo->Angles.yaw) > 90.0 / 20.0)
+			player->mo->Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw + 90.0 / 20.0);
+			player->mo->Angles.yaw = AngleMod360(player->mo->Angles.yaw + 90.0 / 20.0);
 	}
 	player->mo->bJustAttacked = true;
 }
@@ -972,9 +972,9 @@ void Weapon::A_FireCrossbowPL1(void)
 	player->ammo[am_crossbow] -= USE_CBOW_AMMO_1;
 	SpawnPlayerMissile(pmo, CrossbowFX1);
 	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->angles.yaw - (45.0 / 10.0)));
+		AngleMod360(pmo->Angles.yaw - (45.0 / 10.0)));
 	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->angles.yaw + (45.0 / 10.0)));
+		AngleMod360(pmo->Angles.yaw + (45.0 / 10.0)));
 }
 
 //===========================================================================
@@ -992,13 +992,13 @@ void Weapon::A_FireCrossbowPL2(void)
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
 	SpawnPlayerMissile(pmo, CrossbowFX2);
 	SpawnPlayerMissileAngle(pmo, CrossbowFX2,
-		AngleMod360(pmo->angles.yaw - (45.0 / 10.0)));
+		AngleMod360(pmo->Angles.yaw - (45.0 / 10.0)));
 	SpawnPlayerMissileAngle(pmo, CrossbowFX2,
-		AngleMod360(pmo->angles.yaw + (45.0 / 10.0)));
+		AngleMod360(pmo->Angles.yaw + (45.0 / 10.0)));
 	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->angles.yaw - (45.0 / 5.0)));
+		AngleMod360(pmo->Angles.yaw - (45.0 / 5.0)));
 	SpawnPlayerMissileAngle(pmo, CrossbowFX3,
-		AngleMod360(pmo->angles.yaw + (45.0 / 5.0)));
+		AngleMod360(pmo->Angles.yaw + (45.0 / 5.0)));
 }
 
 //===========================================================================
@@ -1121,8 +1121,8 @@ void Weapon::A_FirePhoenixPL1(void)
 
 	player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
 	SpawnPlayerMissile(player->mo, PhoenixFX1);
-	AngleVector(&player->mo->angles, &vforward);
-	player->mo->velocity -= vforward * 140.0;
+	AngleVector(&player->mo->Angles, &vforward);
+	player->mo->Velocity -= vforward * 140.0;
 }
 
 //===========================================================================
@@ -1159,16 +1159,16 @@ void Weapon::A_FirePhoenixPL2(void)
 		return;
 	}
 	pmo = player->mo;
-	x = pmo->origin.x + (Random() - Random()) * 2.0;
-	y = pmo->origin.y + (Random() - Random()) * 2.0;
-	z = pmo->origin.z + 26.0 - sin(player->mo->angles.pitch);
-	z -= pmo->floorclip;
+	x = pmo->Origin.x + (Random() - Random()) * 2.0;
+	y = pmo->Origin.y + (Random() - Random()) * 2.0;
+	z = pmo->Origin.z + 26.0 - sin(player->mo->Angles.pitch);
+	z -= pmo->FloorClip;
 	mo = P_SpawnMobj(x, y, z, PhoenixFX2);
 	mo->target = pmo;
-	mo->angles.yaw = pmo->angles.yaw;
-	mo->angles.pitch = pmo->angles.pitch;
-	AngleVector(&mo->angles, &dir);
-	mo->velocity = pmo->velocity + mo->Speed * dir;
+	mo->Angles.yaw = pmo->Angles.yaw;
+	mo->Angles.pitch = pmo->Angles.pitch;
+	AngleVector(&mo->Angles, &dir);
+	mo->Velocity = pmo->Velocity + mo->Speed * dir;
 	if (!player->refire || !(level->tictime % 38))
 	{
 		StartSoundName(*player->mo, 'PhoenixHit2', CHAN_WEAPON);
@@ -1195,7 +1195,7 @@ void Weapon::A_ShutdownPhoenixPL2(void)
 
 void A_FireMacePL1B(mobj_t * actor)
 {
-	player_t *player = actor->player;
+	player_t *player = actor->Player;
 	mobj_t *pmo;
 	mobj_t *ball;
 	float angle;
@@ -1206,16 +1206,16 @@ void A_FireMacePL1B(mobj_t * actor)
 	}
 	player->ammo[am_mace] -= USE_MACE_AMMO_1;
 	pmo = player->mo;
-	ball = P_SpawnMobj(pmo->origin.x, pmo->origin.y, pmo->origin.z + 28.0
-		- pmo->floorclip, MaceFX2);
-	ball->velocity.z =
-		(2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
-	angle = pmo->angles.yaw;
+	ball = P_SpawnMobj(pmo->Origin.x, pmo->Origin.y, pmo->Origin.z + 28.0
+		- pmo->FloorClip, MaceFX2);
+	ball->Velocity.z =
+		(2.0 + 173.0 * -tan(player->mo->Angles.pitch) / 32.0) * 35.0;
+	angle = pmo->Angles.yaw;
 	ball->target = pmo;
-	ball->angles.yaw = angle;
-	ball->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
-	ball->velocity.x = pmo->velocity.x / 2.0 + ball->Speed * cos(angle);
-	ball->velocity.y = pmo->velocity.y / 2.0 + ball->Speed * sin(angle);
+	ball->Angles.yaw = angle;
+	ball->Origin.z += 173.0 * -tan(player->mo->Angles.pitch) / 16.0;
+	ball->Velocity.x = pmo->Velocity.x / 2.0 + ball->Speed * cos(angle);
+	ball->Velocity.y = pmo->Velocity.y / 2.0 + ball->Speed * sin(angle);
 	StartSoundName(*ball, 'MaceFire', CHAN_WEAPON);
 	CheckMissileSpawn(ball);
 }
@@ -1243,7 +1243,7 @@ void Weapon::A_FireMacePL1(void)
 	sx = Random() * 4.0 - 2.0;
 	sy = WEAPONTOP + Random() * 4.0;
 	ball = SpawnPlayerMissileAngle(player->mo, MaceFX1,
-		AngleMod360(player->mo->angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+		AngleMod360(player->mo->Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
 		ball->special1 = 16;	// tics till dropoff
@@ -1264,10 +1264,10 @@ void Weapon::A_FireMacePL2(void)
 	mo = SpawnPlayerMissile(player->mo, MaceFX4);
 	if (mo)
 	{
-		mo->velocity.x += player->mo->velocity.x;
-		mo->velocity.y += player->mo->velocity.y;
-		mo->velocity.z =
-			(2.0 + 173.0 * -tan(player->mo->angles.pitch) / 32.0) * 35.0;
+		mo->Velocity.x += player->mo->Velocity.x;
+		mo->Velocity.y += player->mo->Velocity.y;
+		mo->Velocity.z =
+			(2.0 + 173.0 * -tan(player->mo->Angles.pitch) / 32.0) * 35.0;
 		if (linetarget)
 		{
 			mo->specialmobj1 = linetarget;
@@ -1289,16 +1289,16 @@ void Weapon::A_BeakAttackPL1(void)
 	TVec vforward;
 
 	damage = 1 + (P_Random() & 3);
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	PuffType = BeakPuff;
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 		player->fixangle = 1;
 	}
 	StartSound(*player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
@@ -1320,16 +1320,16 @@ void Weapon::A_BeakAttackPL2(void)
 	TVec vforward;
 
 	damage = HITDICE(4);
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	PuffType = BeakPuff;
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
 	if (linetarget)
 	{
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 		player->fixangle = 1;
 	}
 	StartSound(*player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
@@ -1356,9 +1356,9 @@ void Actor::A_BoltSpark(void)
 
 	if (P_Random() > 50)
 	{
-		spark = P_SpawnMobj(origin.x, origin.y, origin.z, CrossbowFX4);
-		spark->origin.x += (Random() - Random()) * 4.0;
-		spark->origin.y += (Random() - Random()) * 4.0;
+		spark = P_SpawnMobj(Origin.x, Origin.y, Origin.z, CrossbowFX4);
+		spark->Origin.x += (Random() - Random()) * 4.0;
+		spark->Origin.y += (Random() - Random()) * 4.0;
 	}
 }
 
@@ -1376,12 +1376,12 @@ void Actor::A_SpawnRippers(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		ripper = P_SpawnMobj(origin.x, origin.y, origin.z, Ripper);
+		ripper = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Ripper);
 		angle = itof(i) * 45.0;
 		ripper->target = target;
-		ripper->angles.yaw = angle;
-		ripper->velocity.x = ripper->Speed * cos(angle);
-		ripper->velocity.y = ripper->Speed * sin(angle);
+		ripper->Angles.yaw = angle;
+		ripper->Velocity.x = ripper->Speed * cos(angle);
+		ripper->Velocity.y = ripper->Speed * sin(angle);
 		CheckMissileSpawn(ripper);
 	}
 }
@@ -1496,8 +1496,8 @@ void Actor::A_SkullRodStorm(void)
 		// Fudge rain frequency
 		return;
 	}
-	x = origin.x + Random() * 128.0 - 64.0;
-	y = origin.y + Random() * 128.0 - 64.0;
+	x = Origin.x + Random() * 128.0 - 64.0;
+	y = Origin.y + Random() * 128.0 - 64.0;
 	switch (special2)
 	{
 	case 0: rain_type = RainPlayer1; break;
@@ -1507,8 +1507,8 @@ void Actor::A_SkullRodStorm(void)
 	}
 	mo = P_SpawnMobj(x, y, ONCEILINGZ, rain_type);
 	mo->target = target;
-	mo->velocity.x = 0.00001;	// Force collision detection
-	mo->velocity.z = -mo->Speed;
+	mo->Velocity.x = 0.00001;	// Force collision detection
+	mo->Velocity.z = -mo->Speed;
 	mo->special2 = special2;	// Transfer player number
 	CheckMissileSpawn(mo);
 	if (!(special1 & 31))
@@ -1526,7 +1526,7 @@ void Actor::A_SkullRodStorm(void)
 
 void Actor::A_RainImpact(void)
 {
-	if (origin.z > floorz)
+	if (Origin.z > FloorZ)
 	{
 		SetState(S_RAINAIRXPLR1_1 + special2);
 	}
@@ -1544,7 +1544,7 @@ void Actor::A_RainImpact(void)
 
 void Actor::A_HideInCeiling(void)
 {
-	origin.z = ceilingz + 4.0;
+	Origin.z = CeilingZ + 4.0;
 }
 
 //===========================================================================
@@ -1559,16 +1559,16 @@ void Actor::A_PhoenixPuff(void)
 	float angle;
 
 	P_SeekerMissile(this, 5.0, 10.0);
-	puff = P_SpawnMobj(origin.x, origin.y, origin.z, PhoenixPuff);
-	angle = AngleMod360(angles.yaw + 90.0);
-	puff->velocity.x = 1.3 * cos(angle) * 35.0;
-	puff->velocity.y = 1.3 * sin(angle) * 35.0;
-	puff->velocity.z = 0.0;
-	puff = P_SpawnMobj(origin.x, origin.y, origin.z, PhoenixPuff);
-	angle = AngleMod360(angles.yaw - 90.0);
-	puff->velocity.x = 1.3 * cos(angle) * 35.0;
-	puff->velocity.y = 1.3 * sin(angle) * 35.0;
-	puff->velocity.z = 0.0;
+	puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
+	angle = AngleMod360(Angles.yaw + 90.0);
+	puff->Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff->Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff->Velocity.z = 0.0;
+	puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
+	angle = AngleMod360(Angles.yaw - 90.0);
+	puff->Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff->Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff->Velocity.z = 0.0;
 }
 
 //===========================================================================
@@ -1579,7 +1579,7 @@ void Actor::A_PhoenixPuff(void)
 
 void Actor::A_FlameEnd(void)
 {
-	velocity.z += 1.5 * 35.0;
+	Velocity.z += 1.5 * 35.0;
 }
 
 //===========================================================================
@@ -1590,7 +1590,7 @@ void Actor::A_FlameEnd(void)
 
 void Actor::A_FloatPuff(void)
 {
-	velocity.z += 1.8 * 35.0;
+	Velocity.z += 1.8 * 35.0;
 }
 
 //===========================================================================
@@ -1614,10 +1614,10 @@ void Actor::A_MacePL1Check(void)
 	}
 	special1 = 0;
 	bLowGravity = true;
-	angle = angles.yaw;
-	velocity.x = 7.0 * cos(angle) * 35.0;
-	velocity.y = 7.0 * sin(angle) * 35.0;
-	velocity.z -= velocity.z / 2.0;
+	angle = Angles.yaw;
+	Velocity.x = 7.0 * cos(angle) * 35.0;
+	Velocity.y = 7.0 * sin(angle) * 35.0;
+	Velocity.z -= Velocity.z / 2.0;
 }
 
 //===========================================================================
@@ -1628,17 +1628,17 @@ void Actor::A_MacePL1Check(void)
 
 void Actor::A_MaceBallImpact(void)
 {
-	if ((origin.z <= floorz) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
 		return;
 	}
-	if ((Health != MAGIC_JUNK) && (origin.z <= floorz) && velocity.z)
+	if ((Health != MAGIC_JUNK) && (Origin.z <= FloorZ) && Velocity.z)
 	{
 		// Bounce
 		Health = MAGIC_JUNK;
-		velocity.z = velocity.z * 192.0 / 256.0;
+		Velocity.z = Velocity.z * 192.0 / 256.0;
 		bFloorBounce = false;
 		SetState(SpawnState);
 		StartSoundName(self, 'Bounce', CHAN_VOICE);
@@ -1663,16 +1663,16 @@ void Actor::A_MaceBallImpact2(void)
 	mobj_t *tiny;
 	float angle;
 
-	if ((origin.z <= floorz) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
 		return;
 	}
-	if ((origin.z != floorz) || (velocity.z < 2.0 * 35.0))
+	if ((Origin.z != FloorZ) || (Velocity.z < 2.0 * 35.0))
 	{
 		// Explode
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 		bNoGravity = true;
 		bLowGravity = false;
 		bFloorBounce = false;
@@ -1680,29 +1680,29 @@ void Actor::A_MaceBallImpact2(void)
 	else
 	{
 		// Bounce
-		velocity.z = velocity.z * 192.0 / 256.0;
+		Velocity.z = Velocity.z * 192.0 / 256.0;
 		SetState(SpawnState);
 
-		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, MaceFX3);
-		angle = AngleMod360(angles.yaw + 90.0);
+		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
+		angle = AngleMod360(Angles.yaw + 90.0);
 		tiny->target = target;
-		tiny->angles.yaw = angle;
-		tiny->velocity.x =
-			velocity.x / 2.0 + (velocity.z - 35.0) * cos(angle);
-		tiny->velocity.y =
-			velocity.y / 2.0 + (velocity.z - 35.0) * sin(angle);
-		tiny->velocity.z = velocity.z;
+		tiny->Angles.yaw = angle;
+		tiny->Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny->Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny->Velocity.z = Velocity.z;
 		CheckMissileSpawn(tiny);
 
-		tiny = P_SpawnMobj(origin.x, origin.y, origin.z, MaceFX3);
-		angle = AngleMod360(angles.yaw - 90.0);
+		tiny = P_SpawnMobj(Origin.x, Origin.y, Origin.z, MaceFX3);
+		angle = AngleMod360(Angles.yaw - 90.0);
 		tiny->target = target;
-		tiny->angles.yaw = angle;
-		tiny->velocity.x =
-			velocity.x / 2.0 + (velocity.z - 35.0) * cos(angle);
-		tiny->velocity.y =
-			velocity.y / 2.0 + (velocity.z - 35.0) * sin(angle);
-		tiny->velocity.z = velocity.z;
+		tiny->Angles.yaw = angle;
+		tiny->Velocity.x =
+			Velocity.x / 2.0 + (Velocity.z - 35.0) * cos(angle);
+		tiny->Velocity.y =
+			Velocity.y / 2.0 + (Velocity.z - 35.0) * sin(angle);
+		tiny->Velocity.z = Velocity.z;
 		CheckMissileSpawn(tiny);
 	}
 }
@@ -1721,13 +1721,13 @@ void Actor::A_DeathBallImpact(void)
 	int newAngle;
 	TAVec angles;
 
-	if ((origin.z <= floorz) && (P_HitFloor(this) != FLOOR_SOLID))
+	if ((Origin.z <= FloorZ) && (P_HitFloor(this) != FLOOR_SOLID))
 	{
 		// Landed in some sort of liquid
 		P_RemoveMobj(this);
 		return;
 	}
-	if ((origin.z <= floorz) && velocity.z)
+	if ((Origin.z <= FloorZ) && Velocity.z)
 	{
 		// Bounce
 		newAngle = false;
@@ -1742,8 +1742,8 @@ void Actor::A_DeathBallImpact(void)
 			else
 			{
 				// Seek
-				angle = atan2(targ->origin.y - origin.y,
-					targ->origin.x - origin.x);
+				angle = atan2(targ->Origin.y - Origin.y,
+					targ->Origin.x - Origin.x);
 				newAngle = true;
 			}
 		}
@@ -1759,8 +1759,8 @@ void Actor::A_DeathBallImpact(void)
 				if (linetarget && target != linetarget)
 				{
 					specialmobj1 = linetarget;
-					angle = atan2(linetarget->origin.y - origin.y,
-						linetarget->origin.x - origin.x);
+					angle = atan2(linetarget->Origin.y - Origin.y,
+						linetarget->Origin.x - Origin.x);
 					newAngle = true;
 					break;
 				}
@@ -1769,9 +1769,9 @@ void Actor::A_DeathBallImpact(void)
 		}
 		if (newAngle)
 		{
-			angles.yaw = angle;
-			velocity.x = Speed * cos(angle);
-			velocity.y = Speed * sin(angle);
+			Angles.yaw = angle;
+			Velocity.x = Speed * cos(angle);
+			Velocity.y = Speed * sin(angle);
 		}
 		SetState(SpawnState);
 		StartSoundName(self, 'PlatformStop', CHAN_VOICE);
@@ -1787,6 +1787,9 @@ void Actor::A_DeathBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -59,12 +59,12 @@ void Actor::A_DropMace(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0, EttinMace);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0, EttinMace);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->velocity.z = (10.0 + Random() * 4.0) * 35.0;
+		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mo->Velocity.z = (10.0 + Random() * 4.0) * 35.0;
 		mo->target = this;
 	}
 }
@@ -72,6 +72,9 @@ void Actor::A_DropMace(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.11  2002/01/25 18:04:35  dj_jl
 //  Many global functions made Actor functions
 //

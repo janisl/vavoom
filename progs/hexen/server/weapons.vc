@@ -352,19 +352,19 @@ void AdjustPlayerAngle(mobj_t * pmo)
 	float angle;
 	float difference;
 
-	angle = atan2(linetarget->origin.y - pmo->origin.y,
-		linetarget->origin.x - pmo->origin.x);
-	difference = AngleMod180(angle - pmo->angles.yaw);
+	angle = atan2(linetarget->Origin.y - pmo->Origin.y,
+		linetarget->Origin.x - pmo->Origin.x);
+	difference = AngleMod180(angle - pmo->Angles.yaw);
 	if (fabs(difference) > MAX_ANGLE_ADJUST)
 	{
-		pmo->angles.yaw +=
+		pmo->Angles.yaw +=
 			difference > 0.0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
 	}
 	else
 	{
-		pmo->angles.yaw = angle;
+		pmo->Angles.yaw = angle;
 	}
-	pmo->player->fixangle = true;
+	pmo->Player->fixangle = true;
 }
 
 //==========================================================================
@@ -420,8 +420,8 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// Change player from attack state
-	if (player->mo->statenum >= PStateAttack[player->pclass] &&
-		player->mo->statenum <= PStateAttackEnd[player->pclass])
+	if (player->mo->StateNum >= PStateAttack[player->pclass] &&
+		player->mo->StateNum <= PStateAttackEnd[player->pclass])
 	{
 		player->mo->SetState(PStateNormal[player->pclass]);
 	}
@@ -561,6 +561,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.9  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

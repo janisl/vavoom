@@ -48,21 +48,21 @@ void Actor::A_PotteryExplode(void)
 
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, PotteryBit);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PotteryBit);
 		mo->SetState(mo->SpawnState + (P_Random() % 5));
 		if (mo)
 		{
-			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
-			mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+			mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			mo->Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
 	StartSoundName(*mo, 'PotteryExplode', CHAN_VOICE);
-	if (args[0])
+	if (Args[0])
 	{
 		// Spawn an item
-		P_SpawnMobj(origin.x, origin.y, origin.z,
-			TranslateThingType[args[0]]);
+		P_SpawnMobj(Origin.x, Origin.y, Origin.z,
+			TranslateThingType[Args[0]]);
 	}
 //	P_RemoveMobj(this);
 }
@@ -76,7 +76,7 @@ void Actor::A_PotteryExplode(void)
 void Actor::A_PotteryChooseBit(void)
 {
 	SetState(DeathState + (P_Random() % 5) + 1);
-	time = 8.0 + Random() * 16.0;
+	StateTime = 8.0 + Random() * 16.0;
 }
 
 //============================================================================
@@ -98,11 +98,11 @@ void Actor::A_PotteryCheck(void)
 		}
 		pmo = players[i].mo;
 		if (P_CheckSight(self, *pmo) &&
-			(fabs(AngleMod180(atan2(origin.y - pmo->origin.y,
-			origin.x - pmo->origin.x) - pmo->angles.yaw)) <= 45.0))
+			(fabs(AngleMod180(atan2(Origin.y - pmo->Origin.y,
+			Origin.x - pmo->Origin.x) - pmo->Angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
-			SetState(statenum - 1);
+			SetState(StateNum - 1);
 			return;
 		}
 	}
@@ -111,6 +111,9 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/01/28 18:50:19  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

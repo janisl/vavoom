@@ -465,29 +465,31 @@ struct mobjinfo_t
 class MapObject:Thinker
 {
 	// Info for drawing: position.
-	TVec origin;
+	TVec Origin;
 
 	// Momentums, used to update position.
-	TVec velocity;
+	TVec Velocity;
+
+	TAVec Angles;		// orientation
 
 	//More drawing info: to determine current sprite.
-	TAVec angles;	// orientation
-	int spritetype;	//  How to draw sprite
-	int sprite;	// used to find patch_t and flip value
-	int frame;	// might be ORed with FF_FULLBRIGHT
+	int SpriteType;		//  How to draw sprite
+	int SpriteIndex;	// used to find patch_t and flip value
+	int SpriteFrame;	// might be ORed with FF_FULLBRIGHT
 
-	int model_index;
-	int alias_frame;
-	int alias_skinnum;
+	int ModelIndex;
+	int ModelFrame;
+	int ModelSkinNum;
 
 	int Translucency;
 	int Translation;
 
-	float floorclip;	// value to use for floor clipping
+	float FloorClip;	// value to use for floor clipping
 
 	int Effects;
 
-	subsector_t *subsector;
+	subsector_t *SubSector;
+	sector_t *Sector;
 
 	// Interaction info, by BLOCKMAP.
 	// Links in blocks (if needed).
@@ -495,15 +497,15 @@ class MapObject:Thinker
 	MapObject BlockMapPrev;
 
 	// The closest interval over all contacted Sectors.
-	float floorz;
-	float ceilingz;
+	float FloorZ;
+	float CeilingZ;
 
 	//  Closest floor and ceiling, source of floorz and ceilingz
-	sec_plane_t *floor;
-	sec_plane_t *ceiling;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
 
 	// If == validcount, already checked.
-	int validcount;
+	int ValidCount;
 
 	//	Flags
 	boolean bSolid;			// Blocks.
@@ -511,6 +513,7 @@ class MapObject:Thinker
 							// (invisible but touchable)
 	boolean bNoBlockmap;	// don't use the blocklinks
 							// (inert but displayable)
+	boolean bIsPlayer;		// PLayer or player-bot
 
 	int Health;
 
@@ -520,13 +523,18 @@ class MapObject:Thinker
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
-	player_t *player;
+	player_t *Player;
 
-	int tid;	// thing identifier
-	int special;	// special
-	int args[5];	// special arguments
+	int TID;	// thing identifier
+	int Special;	// special
+	int Args[5];	// special arguments
 
-	int netID;
+	int NetID;
+
+	void SetOrigin(TVec NewOrigin)
+	{
+		Origin = NewOrigin;
+	}
 }
 
 typedef boolean(*thing_iter_func_t) (MapObject);
@@ -974,6 +982,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/02/14 19:20:54  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.29  2002/02/06 17:28:50  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

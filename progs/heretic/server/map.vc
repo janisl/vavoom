@@ -121,7 +121,7 @@ void CalcSecMinMaxs(sector_t * sector)
 //
 //  P_ThingHeightClip
 //
-//  Takes a valid thing and adjusts the thing->floorz, thing->ceilingz, and
+//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
 // possibly thing->z. This is called for all nearby monsters whenever a
 // sector changes height. If the thing doesn't fit, the z will be set to the
 // lowest value and false will be returned.
@@ -132,29 +132,29 @@ boolean P_ThingHeightClip(mobj_t * thing)
 {
 	boolean onfloor;
 
-	onfloor = (thing->origin.z == thing->floorz);
+	onfloor = (thing->Origin.z == thing->FloorZ);
 
-	P_CheckRelPosition(thing, thing->origin.x, thing->origin.y);
+	P_CheckRelPosition(thing, thing->Origin.x, thing->Origin.y);
 	// what about stranding a monster partially off an edge?
 
-	thing->floor = tmfloor;
-	thing->ceiling = tmceiling;
-	thing->floorz = tmfloorz;
-	thing->ceilingz = tmceilingz;
+	thing->Floor = tmfloor;
+	thing->Ceiling = tmceiling;
+	thing->FloorZ = tmfloorz;
+	thing->CeilingZ = tmceilingz;
 
 	if (onfloor)
 	{
 		// walking monsters rise and fall with the floor
-		thing->origin.z = thing->floorz;
+		thing->Origin.z = thing->FloorZ;
 	}
 	else
 	{
 		// don't adjust a floating monster unless forced to
-		if (thing->origin.z + thing->Height > thing->ceilingz)
-			thing->origin.z = thing->ceilingz - thing->Height;
+		if (thing->Origin.z + thing->Height > thing->CeilingZ)
+			thing->Origin.z = thing->CeilingZ - thing->Height;
 	}
 
-	if (thing->ceilingz - thing->floorz < thing->Height)
+	if (thing->CeilingZ - thing->FloorZ < thing->Height)
 		return false;
 
 	return true;
@@ -210,10 +210,10 @@ boolean PIT_ChangeSector(MapObject Other)
 
 		// spray blood in a random direction
 		mo =
-			P_SpawnMobj(thing->origin.x, thing->origin.y,
-			thing->origin.z + thing->Height / 2.0, Blood);
-		mo->velocity.x = (Random() - Random()) * 16.0 * 35.0;
-		mo->velocity.y = (Random() - Random()) * 16.0 * 35.0;
+			P_SpawnMobj(thing->Origin.x, thing->Origin.y,
+			thing->Origin.z + thing->Height / 2.0, Blood);
+		mo->Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+		mo->Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 	}
 
 	// keep checking (crush other things)   
@@ -271,7 +271,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		TVec hit_point;
 		opening_t *open;
 
-		hit_point = usething->origin + (USERANGE * in->frac) * useDir;
+		hit_point = usething->Origin + (USERANGE * in->frac) * useDir;
 		open = LineOpenings(in->line, hit_point);
 		open = FindOpening(open, hit_point.z, hit_point.z + usething->Height);
 		if (!open)
@@ -282,7 +282,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		return true;	// not a special line, but keep checking
 	}
 
-	if (PointOnPlaneSide(usething->origin, in->line) == 1)
+	if (PointOnPlaneSide(usething->Origin, in->line) == 1)
 		return false;	// don't use back sides
 
 	P_ActivateLine(in->line, usething, 0, SPAC_USE);
@@ -307,9 +307,9 @@ void P_UseLines(player_t * player)
 
 	usething = player->mo;
 
-	AngleVector(&player->mo->angles, &useDir);
-	x1 = player->mo->origin.x;
-	y1 = player->mo->origin.y;
+	AngleVector(&player->mo->Angles, &useDir);
+	x1 = player->mo->Origin.x;
+	y1 = player->mo->Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
 	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse);
@@ -365,7 +365,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 		// A two sided line will restrict
 		// the possible target ranges.
 		dist = aim_range * in->frac;
-		hit_point = aim_thing->origin + dist * aim_dir;
+		hit_point = aim_thing->Origin + dist * aim_dir;
 		open = LineOpenings(li, hit_point);
 		open = FindOpening(open, hit_point.z, hit_point.z);
 
@@ -417,12 +417,12 @@ boolean PTR_AimTraverse(intercept_t * in)
 
 	// check angles to see if the thing can be aimed at
 	dist = aim_range2d * in->frac;
-	thingtopslope = (th.origin.z + th.Height - aim_z) / dist;
+	thingtopslope = (th.Origin.z + th.Height - aim_z) / dist;
 
 	if (thingtopslope < aim_bottomslope)
 		return true;	// shot over the thing
 
-	thingbottomslope = (th.origin.z - aim_z) / dist;
+	thingbottomslope = (th.Origin.z - aim_z) / dist;
 
 	if (thingbottomslope > aim_topslope)
 		return true;	// shot under the thing
@@ -456,9 +456,9 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	aim_thing = t1;
 
 	AngleVector(angles, &aim_dir);
-	x2 = t1->origin.x + distance * aim_dir.x;
-	y2 = t1->origin.y + distance * aim_dir.y;
-	aim_z = t1->origin.z + t1->Height / 2.0 + 8.0 - t1->floorclip;
+	x2 = t1->Origin.x + distance * aim_dir.x;
+	y2 = t1->Origin.y + distance * aim_dir.y;
+	aim_z = t1->Origin.z + t1->Height / 2.0 + 8.0 - t1->FloorClip;
 	aim_range2d =
 		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
 
@@ -475,7 +475,7 @@ void AimLineAttack(mobj_t * t1, TAVec * angles, float distance)
 	aim_range = distance;
 	linetarget = NULL;
 
-	P_PathTraverse(t1->origin.x, t1->origin.y, x2, y2,
+	P_PathTraverse(t1->Origin.x, t1->Origin.y, x2, y2,
 		PT_ADDLINES | PT_ADDTHINGS, PTR_AimTraverse);
 
 	if (linetarget)
@@ -684,10 +684,10 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	// check angles to see if the thing can be aimed at
 	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
 
-	if (th.origin.z + th.Height < hit_point.z)
+	if (th.Origin.z + th.Height < hit_point.z)
 		return true;	// shot over the thing
 
-	if (th.origin.z > hit_point.z)
+	if (th.Origin.z > hit_point.z)
 		return true;	// shot under the thing
 
 	// hit thing
@@ -695,7 +695,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 	hit_point -= 10.0 * shoot_dir;
 
 	//  check for physical attacks on a ghost
-	if (th.Translucency && shoot_thing->player->readyweapon == wp_staff)
+	if (th.Translucency && shoot_thing->Player->readyweapon == wp_staff)
 	{
 		return true;
 	}
@@ -748,15 +748,15 @@ int LineAttack(mobj_t * t1, TVec * dir, float distance, int damage)
 	shoot_thing = t1;
 	la_damage = damage;
 
-	shoot_origin = t1->origin;
-	shoot_origin.z += t1->Height * 0.5 + 8.0 - t1->floorclip;
+	shoot_origin = t1->Origin;
+	shoot_origin.z += t1->Height * 0.5 + 8.0 - t1->FloorClip;
 
 	shoot_dir = *dir;
 	shoot_range = distance;
 
 	dst = shoot_origin + shoot_range * shoot_dir;
 	linestart = shoot_origin;
-	if (!P_PathTraverse(t1->origin.x, t1->origin.y, dst.x, dst.y,
+	if (!P_PathTraverse(t1->Origin.x, t1->Origin.y, dst.x, dst.y,
 			PT_ADDLINES | PT_ADDTHINGS, PTR_ShootTraverse))
 	{
 		return false;
@@ -836,10 +836,10 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 	float dist;
 
 	dist = itof(damage);
-	yh = MapBlock(spot->origin.y + dist - level->bmaporgy);
-	yl = MapBlock(spot->origin.y - dist - level->bmaporgy);
-	xh = MapBlock(spot->origin.x + dist - level->bmaporgx);
-	xl = MapBlock(spot->origin.x - dist - level->bmaporgx);
+	yh = MapBlock(spot->Origin.y + dist - level->bmaporgy);
+	yl = MapBlock(spot->Origin.y - dist - level->bmaporgy);
+	xh = MapBlock(spot->Origin.x + dist - level->bmaporgx);
+	xl = MapBlock(spot->Origin.x - dist - level->bmaporgx);
 	bombspot = spot;
 	if (spot->Class == Pod && spot->target)
 	{
@@ -859,6 +859,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

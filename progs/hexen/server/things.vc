@@ -166,17 +166,17 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	vspeed = itof(args[4]) / 8.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		newMobj = P_SpawnMobj(mobj->origin.x, mobj->origin.y,
-			mobj->origin.z, moType);
+		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
+			mobj->Origin.z, moType);
 		if (newMobj->sound_sight)
 		{
 			StartSound(*newMobj, newMobj->sound_sight, CHAN_VOICE);
 		}
 		newMobj->target = mobj;	// Originator
-		newMobj->angles.yaw = angle;
-		newMobj->velocity.x = speed * cos(angle) * 35.0;
-		newMobj->velocity.y = speed * sin(angle) * 35.0;
-		newMobj->velocity.z = vspeed * 35.0;
+		newMobj->Angles.yaw = angle;
+		newMobj->Velocity.x = speed * cos(angle) * 35.0;
+		newMobj->Velocity.y = speed * sin(angle) * 35.0;
+		newMobj->Velocity.z = vspeed * 35.0;
 		newMobj->bDropped = true;	// Don't respawn
 		if (gravity)
 		{
@@ -215,12 +215,12 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 	angle = itof(args[2]) * 360.0 / 256.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		newMobj = P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
+		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, mobj->Origin.z,
 			moType);
 		if (newMobj->bFloatBob)
 		{
-			newMobj->origin.z = mobj->origin.z - mobj->floorz;
-			SetOrigin(newMobj, newMobj->origin);
+			newMobj->Origin.z = mobj->Origin.z - mobj->FloorZ;
+			SetOrigin(newMobj, newMobj->Origin);
 		}
 		if (P_TestMobjLocation(newMobj) == false)
 		{
@@ -229,17 +229,17 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 		}
 		else
 		{
-			newMobj->angles.yaw = angle;
+			newMobj->Angles.yaw = angle;
 			if (fog == true)
 			{
-				fogMobj = P_SpawnMobj(mobj->origin.x, mobj->origin.y,
-					mobj->origin.z + TELEFOGHEIGHT, TeleportFog);
+				fogMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
+					mobj->Origin.z + TELEFOGHEIGHT, TeleportFog);
 				StartSoundName(*fogMobj, 'Teleport', CHAN_VOICE);
 			}
 			newMobj->bDropped = true;	// Don't respawn
 			if (newMobj->bFloatBob)
 			{
-				newMobj->special1f = newMobj->origin.z - newMobj->floorz;
+				newMobj->special1f = newMobj->Origin.z - newMobj->FloorZ;
 			}
 			success = true;
 		}
@@ -261,7 +261,7 @@ boolean Actor::Activate(void)
 		if (bDormant)
 		{
 			bDormant = false;
-			time = 0.1;
+			StateTime = 0.1;
 			return true;
 		}
 		return false;
@@ -286,11 +286,11 @@ boolean Actor::Activate(void)
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
-		if (args[0] == 0)
+		if (Args[0] == 0)
 		{
 			StartSoundName(self, 'ThrustSpikeLower', CHAN_VOICE);
 			Translucency = 0;
-			if (args[1])
+			if (Args[1])
 				SetState(S_BTHRUSTRAISE1);
 			else
 				SetState(S_THRUSTRAISE1);
@@ -368,7 +368,7 @@ boolean Actor::Deactivate(void)
 		if (!bDormant)
 		{
 			bDormant = true;
-			time = -1.0;
+			StateTime = -1.0;
 			return true;
 		}
 		return false;
@@ -385,10 +385,10 @@ boolean Actor::Deactivate(void)
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
-		if (args[0] == 1)
+		if (Args[0] == 1)
 		{
 			StartSoundName(self, 'ThrustSpikeRaise', CHAN_VOICE);
-			if (args[1])
+			if (Args[1])
 				SetState(S_BTHRUSTLOWER);
 			else
 				SetState(S_THRUSTLOWER);
@@ -560,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //

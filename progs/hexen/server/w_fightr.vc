@@ -55,7 +55,7 @@ void Weapon::A_FPunchAttack(void)
 	PuffType = PunchPuff;
 	for (i = 0; i < 16; i++)
 	{
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
@@ -79,14 +79,14 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
 			AdjustPlayerAngle(pmo);
 			break;
 		}
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
@@ -110,7 +110,7 @@ void Weapon::A_FPunchAttack(void)
 					StartSoundName(*pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -123,7 +123,7 @@ void Weapon::A_FPunchAttack(void)
 		// didn't find any creatures, so try to strike any walls
 		pmo->special1 = 0;
 
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
@@ -174,7 +174,7 @@ void Weapon::A_FAxeAttack(void)
 	}
 	for (i = 0; i < 16; i++)
 	{
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, AXERANGE);
 		if (linetarget)
@@ -184,7 +184,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -192,7 +192,7 @@ void Weapon::A_FAxeAttack(void)
 			useMana++;
 			break;
 		}
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, AXERANGE);
 		if (linetarget)
@@ -202,7 +202,7 @@ void Weapon::A_FAxeAttack(void)
 			{
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -216,7 +216,7 @@ void Weapon::A_FAxeAttack(void)
 		// didn't find any creatures, so try to strike any walls
 		pmo->special1 = 0;
 
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		AimLineAttack(pmo, &angles, MELEERANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
@@ -258,7 +258,7 @@ void Weapon::A_FHammerAttack(void)
 	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		if (linetarget)
@@ -269,14 +269,14 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
 			pmo->special1 = false;	// Don't throw a hammer
 			break;
 		}
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		if (linetarget)
@@ -287,7 +287,7 @@ void Weapon::A_FHammerAttack(void)
 				StartSoundName(*pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
-			if (linetarget->bCountKill || linetarget->player)
+			if (linetarget->bCountKill || linetarget->bIsPlayer)
 			{
 				P_ThrustMobj(linetarget, angles.yaw, power);
 			}
@@ -299,7 +299,7 @@ void Weapon::A_FHammerAttack(void)
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		PuffSpawned = NULL;
-		avcpy(pmo->angles, angles);
+		avcpy(pmo->Angles, angles);
 		AimLineAttack(pmo, &angles, HAMMER_RANGE);
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
@@ -363,20 +363,20 @@ void Weapon::A_FSwordAttack(void)
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 10.0, FighterSwordMissile,
-		AngleMod360(pmo->angles.yaw + 45.0 / 4.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z - 5.0, FighterSwordMissile,
-		AngleMod360(pmo->angles.yaw + 45.0 / 8.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z, FighterSwordMissile, pmo->angles.yaw);
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 5.0, FighterSwordMissile,
-		AngleMod360(pmo->angles.yaw - 45.0 / 8.0));
-	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
-		pmo->origin.z + 10.0, FighterSwordMissile,
-		AngleMod360(pmo->angles.yaw - 45.0 / 4.0));
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
+		pmo->Origin.z - 10.0, FighterSwordMissile,
+		AngleMod360(pmo->Angles.yaw + 45.0 / 4.0));
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
+		pmo->Origin.z - 5.0, FighterSwordMissile,
+		AngleMod360(pmo->Angles.yaw + 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
+		pmo->Origin.z, FighterSwordMissile, pmo->Angles.yaw);
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
+		pmo->Origin.z + 5.0, FighterSwordMissile,
+		AngleMod360(pmo->Angles.yaw - 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(pmo, pmo->Origin.x, pmo->Origin.y,
+		pmo->Origin.z + 10.0, FighterSwordMissile,
+		AngleMod360(pmo->Angles.yaw - 45.0 / 4.0));
 	StartSoundName(*pmo, 'FighterSwordFire', CHAN_WEAPON);
 }
 
@@ -392,15 +392,18 @@ void Actor::A_FSwordFlames(void)
 
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
-		P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
-			origin.y + (Random() - 0.5) * 16.0,
-			origin.z + (Random() - 0.5) * 8.0, FighterSwordFlame);
+		P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
+			Origin.y + (Random() - 0.5) * 16.0,
+			Origin.z + (Random() - 0.5) * 8.0, FighterSwordFlame);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

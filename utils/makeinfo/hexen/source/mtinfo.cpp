@@ -363,8 +363,8 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin, 64.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin, 64.0);"
  },
 
 {		// FlameLarge
@@ -395,8 +395,8 @@ MF2_NOTELEPORT|MF2_DONTDRAW,		// flags2
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin, 128.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin, 128.0);"
  },
 
 {		// ItemHealingBottle
@@ -2695,8 +2695,8 @@ MF_SPAWNCEILING|MF_NOGRAVITY,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin, 128.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin, 128.0);"
  },
 
 {		// ZChandelierUnlit
@@ -4941,7 +4941,7 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin, 128.0);"
+"AddStaticLight(Origin, 128.0);"
  },
 
 {		// ZLeafSpawner
@@ -5053,7 +5053,7 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"AddStaticLight(origin + vector(0.0, 0.0, 64.0), 200.0);"
+"AddStaticLight(Origin + vector(0.0, 0.0, 64.0), 200.0);"
  },
 
 {		// ZTWinedTorchUnlit
@@ -5165,8 +5165,8 @@ MF_NOBLOCKMAP|MF_NOGRAVITY,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), \n"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin + vector(0.0, 0.0, 48.0), \n"
 "\t\t\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
  },
 
@@ -5360,8 +5360,8 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin + vector(0.0, 0.0, 32.0), 200.0);"
  },
 
 {		// ZFireBullUnlit
@@ -5419,8 +5419,8 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin + vector(0.0, 0.0, 16.0), 160.0);"
  },
 
 {		// BrassTorch
@@ -5451,8 +5451,8 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin + vector(0.0, 0.0, 48.0), 160.0);"
  },
 
 {		// ZSuitOfArmor
@@ -5564,8 +5564,8 @@ MF_NOBLOCKMAP,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));"
+"if (!TID)\n"
+"\t\t\tAddStaticLightRGB(Origin, 128.0, RGB(0, 0, 255));"
  },
 
 {		// ZIronMaiden
@@ -5650,8 +5650,8 @@ MF_SOLID,		// flags
 0,
 0,
 0,
-"if (!tid)\n"
-"\t\t\tAddStaticLight(origin, 128.0);"
+"if (!TID)\n"
+"\t\t\tAddStaticLight(Origin, 128.0);"
  },
 
 {		// ZCauldronUnlit
@@ -10929,9 +10929,12 @@ MF2_PASSMOBJ|MF2_NOTELEPORT		// flags2
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/02/14 19:23:07  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.7  2002/01/17 18:18:13  dj_jl
 //	Renamed all map object classes
-//
+//	
 //	Revision 1.6  2002/01/07 12:30:06  dj_jl
 //	Changed copyright year
 //	

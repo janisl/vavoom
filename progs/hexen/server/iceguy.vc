@@ -50,10 +50,10 @@ void Actor::A_IceGuyLook(void)
 	if (P_Random() < 64)
 	{
 		dist = Radius * itof(P_Random() - 128) / 128.0;
-		an = AngleMod360(angles.yaw + 90.0);
+		an = AngleMod360(Angles.yaw + 90.0);
 
-		P_SpawnMobj(origin.x + dist * cos(an),
-			origin.y + dist * sin(an), origin.z + 60.0,
+		P_SpawnMobj(Origin.x + dist * cos(an),
+			Origin.y + dist * sin(an), Origin.z + 60.0,
 			P_Random() & 1 ? IceGuyWisp2 : IceGuyWisp1);
 	}
 }
@@ -74,14 +74,14 @@ void Actor::A_IceGuyChase(void)
 	if (P_Random() < 128)
 	{
 		dist = Radius * itof(P_Random() - 128) / 128.0;
-		an = AngleMod360(angles.yaw + 90.0);
+		an = AngleMod360(Angles.yaw + 90.0);
 
-		mo = P_SpawnMobj(origin.x + dist * cos(an),
-			origin.y + dist * sin(an), origin.z + 60.0,
+		mo = P_SpawnMobj(Origin.x + dist * cos(an),
+			Origin.y + dist * sin(an), Origin.z + 60.0,
 			P_Random() & 1 ? IceGuyWisp2 : IceGuyWisp1);
 		if (mo)
 		{
-			mo->velocity = velocity;
+			mo->Velocity = Velocity;
 			mo->target = this;
 		}
 	}
@@ -101,15 +101,15 @@ void Actor::A_IceGuyAttack(void)
 	{
 		return;
 	}
-	an = AngleMod360(angles.yaw + 90.0);
-	SpawnMissileXYZ(origin.x + Radius / 2.0 * cos(an),
-		origin.y + Radius / 2.0 * sin(an),
-		origin.z + 40.0, this, target, IceGuyMissile);
+	an = AngleMod360(Angles.yaw + 90.0);
+	SpawnMissileXYZ(Origin.x + Radius / 2.0 * cos(an),
+		Origin.y + Radius / 2.0 * sin(an),
+		Origin.z + 40.0, this, target, IceGuyMissile);
 
-	an = AngleMod360(angles.yaw - 90.0);
-	SpawnMissileXYZ(origin.x + Radius / 2.0 * cos(an),
-		origin.y + Radius / 2.0 * sin(an),
-		origin.z + 40.0, this, target, IceGuyMissile);
+	an = AngleMod360(Angles.yaw - 90.0);
+	SpawnMissileXYZ(Origin.x + Radius / 2.0 * cos(an),
+		Origin.y + Radius / 2.0 * sin(an),
+		Origin.z + 40.0, this, target, IceGuyMissile);
 
 	StartSound(self, sound_attack, CHAN_WEAPON);
 }
@@ -122,7 +122,7 @@ void Actor::A_IceGuyAttack(void)
 
 void Actor::A_IceGuyMissilePuff(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z + 2.0, IceGuyMissilePuff);
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z + 2.0, IceGuyMissilePuff);
 }
 
 //============================================================================
@@ -154,7 +154,7 @@ void Actor::A_IceGuyMissileExplode(void)
 
 void Actor::A_IceGuyDie(void)
 {
-	velocity = vector(0.0, 0.0, 0.0);
+	Velocity = vector(0.0, 0.0, 0.0);
 	Height *= 4.0;
 	A_FreezeDeathChunks();
 }
@@ -162,6 +162,9 @@ void Actor::A_IceGuyDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

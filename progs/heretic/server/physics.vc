@@ -102,12 +102,12 @@ boolean PTR_SlideTraverse(intercept_t * in)
 		hit_point = slideorg + in->frac * slidedir;
 		open = LineOpenings(li, hit_point);
 		open =
-			FindOpening(open, slidemo.origin.z,
-			slidemo.origin.z + slidemo.Height);
+			FindOpening(open, slidemo.Origin.z,
+			slidemo.Origin.z + slidemo.Height);
 
 		if (open && (open->range >= slidemo.Height) &&	//  fits
-			(open->top - slidemo.origin.z >= slidemo.Height) &&	// mobj is not too high
-			(open->bottom - slidemo.origin.z <= 24.0))	// not too big a step up
+			(open->top - slidemo.Origin.z >= slidemo.Height) &&	// mobj is not too high
+			(open->bottom - slidemo.Origin.z <= 24.0))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
@@ -115,7 +115,7 @@ boolean PTR_SlideTraverse(intercept_t * in)
 	}
 	else
 	{
-		if (PointOnPlaneSide(slidemo.origin, li))
+		if (PointOnPlaneSide(slidemo.Origin, li))
 		{
 			// don't hit the back side
 			return true;
@@ -143,8 +143,8 @@ boolean PTR_SlideTraverse(intercept_t * in)
 
 void SlidePathTraverse(float x, float y)
 {
-	slideorg = vector(x, y, slidemo.origin.z);
-	slidedir = slidemo.velocity * frametime;
+	slideorg = vector(x, y, slidemo.Origin.z);
+	slidedir = slidemo.Velocity * frametime;
 	P_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
 		PT_ADDLINES, PTR_SlideTraverse);
 }
@@ -177,32 +177,32 @@ void Actor::SlideMove(void)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(this, origin.x, origin.y + velocity.y * frametime))
-				P_TryMove(this, origin.x + velocity.x * frametime, origin.y);
+			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
+				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
 		// trace along the three leading corners
-		if (velocity.x > 0.0)
+		if (Velocity.x > 0.0)
 		{
-			leadx = origin.x + Radius;
-			trailx = origin.x - Radius;
+			leadx = Origin.x + Radius;
+			trailx = Origin.x - Radius;
 		}
 		else
 		{
-			leadx = origin.x - Radius;
-			trailx = origin.x + Radius;
+			leadx = Origin.x - Radius;
+			trailx = Origin.x + Radius;
 		}
 
-		if (velocity.y > 0.0)
+		if (Velocity.y > 0.0)
 		{
-			leady = origin.y + Radius;
-			traily = origin.y - Radius;
+			leady = Origin.y + Radius;
+			traily = Origin.y - Radius;
 		}
 		else
 		{
-			leady = origin.y - Radius;
-			traily = origin.y + Radius;
+			leady = Origin.y - Radius;
+			traily = Origin.y + Radius;
 		}
 
 		bestslidefrac = 1.00001;
@@ -215,8 +215,8 @@ void Actor::SlideMove(void)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(this, origin.x, origin.y + velocity.y * frametime))
-				P_TryMove(this, origin.x + velocity.x * frametime, origin.y);
+			if (!P_TryMove(this, Origin.x, Origin.y + Velocity.y * frametime))
+				P_TryMove(this, Origin.x + Velocity.x * frametime, Origin.y);
 			return;
 		}
 
@@ -224,15 +224,15 @@ void Actor::SlideMove(void)
 		bestslidefrac -= 0.03125;
 		if (bestslidefrac > 0.0)
 		{
-			newx = velocity.x * frametime * bestslidefrac;
-			newy = velocity.y * frametime * bestslidefrac;
+			newx = Velocity.x * frametime * bestslidefrac;
+			newy = Velocity.y * frametime * bestslidefrac;
 
-			if (!P_TryMove(this, origin.x + newx, origin.y + newy))
+			if (!P_TryMove(this, Origin.x + newx, Origin.y + newy))
 			{
-				if (!P_TryMove(this, origin.x,
-						origin.y + velocity.y * frametime))
-					P_TryMove(this, origin.x + velocity.x * frametime,
-						origin.y);
+				if (!P_TryMove(this, Origin.x,
+						Origin.y + Velocity.y * frametime))
+					P_TryMove(this, Origin.x + Velocity.x * frametime,
+						Origin.y);
 				return;
 			}
 		}
@@ -248,12 +248,12 @@ void Actor::SlideMove(void)
 			return;
 
 		// clip the moves
-		velocity = ClipVelocity(velocity * bestslidefrac,
+		Velocity = ClipVelocity(Velocity * bestslidefrac,
 			bestslideline->normal, 1.0);
 
 	}
-	while (!P_TryMove(this, origin.x + velocity.x * frametime,
-			origin.y + velocity.y * frametime));
+	while (!P_TryMove(this, Origin.x + Velocity.x * frametime,
+			Origin.y + Velocity.y * frametime));
 }
 
 //**************************************************************************
@@ -287,17 +287,17 @@ boolean PTR_BounceTraverse(intercept_t * in)
 		hit_point = slideorg + in->frac * slidedir;
 		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
 		open =
-			FindOpening(open, slidemo.origin.z,
-			slidemo.origin.z + slidemo.Height);
+			FindOpening(open, slidemo.Origin.z,
+			slidemo.Origin.z + slidemo.Height);
 		if (open && open->range >= slidemo.Height &&	// fits
-			open->top - slidemo.origin.z >= slidemo.Height)	// mobj is not too high
+			open->top - slidemo.Origin.z >= slidemo.Height)	// mobj is not too high
 		{
 			return true;	// this line doesn't block movement
 		}
 	}
 	else
 	{
-		if (PointOnPlaneSide(slidemo.origin, li))
+		if (PointOnPlaneSide(slidemo.Origin, li))
 		{
 			return true;	// don't hit the back side
 		}
@@ -329,28 +329,28 @@ void Actor::BounceWall(void)
 	//
 	// trace along the three leading corners
 	//
-	if (velocity.x > 0.0)
+	if (Velocity.x > 0.0)
 	{
-		leadx = origin.x + Radius;
+		leadx = Origin.x + Radius;
 	}
 	else
 	{
-		leadx = origin.x - Radius;
+		leadx = Origin.x - Radius;
 	}
-	if (velocity.y > 0.0)
+	if (Velocity.y > 0.0)
 	{
-		leady = origin.y + Radius;
+		leady = Origin.y + Radius;
 	}
 	else
 	{
-		leady = origin.y - Radius;
+		leady = Origin.y - Radius;
 	}
 	bestslidefrac = 1.00001;
-	slideorg = vector(leadx, leady, slidemo.origin.z);
-	slidedir = velocity * frametime;
+	slideorg = vector(leadx, leady, slidemo.Origin.z);
+	slidedir = Velocity * frametime;
 	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
 		PT_ADDLINES, PTR_BounceTraverse);
-	velocity = ClipVelocity(velocity * 0.75, bestslideline->normal, 2.0);
+	Velocity = ClipVelocity(Velocity * 0.75, bestslideline->normal, 2.0);
 }
 
 #endif
@@ -372,25 +372,25 @@ boolean Actor::CheckWater(void)
 	TVec point;
 	int cont;
 
-	point = origin;
+	point = Origin;
 	point.z += 1.0;
 
 	waterlevel = 0;
 	watertype = CONTENTS_EMPTY;
-	cont = PointContents(subsector->sector, point);
+	cont = PointContents(Sector, point);
 	if (cont >= CONTENTS_WATER)
 	{
 		watertype = cont;
 		waterlevel = 1;
-		point.z = origin.z + Height * 0.5;
-		cont = PointContents(subsector->sector, point);
+		point.z = Origin.z + Height * 0.5;
+		cont = PointContents(Sector, point);
 		if (cont >= CONTENTS_WATER)
 		{
 			waterlevel = 2;
-			if (player)
+			if (bIsPlayer)
 			{
-				point = player->vieworg;
-				cont = PointContents(subsector->sector, point);
+				point = Player->vieworg;
+				cont = PointContents(Sector, point);
 				if (cont >= CONTENTS_WATER)
 					waterlevel = 3;
 			}
@@ -407,36 +407,36 @@ boolean Actor::CheckWater(void)
 
 void Actor::UpdateVelocity(void)
 {
-	if (origin.z <= floorz && !velocity.x && !velocity.y &&
-		!velocity.z && !bCountKill && !player)
+	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
+		!Velocity.z && !bCountKill && !bIsPlayer)
 	{
 		//  No gravity for non-moving things on ground to prevent
 		// static objects from sliding on slopes
 		return;
 	}
 
-	if (origin.z > floorz || floor->normal.z < 0.7)
+	if (Origin.z > FloorZ || Floor->normal.z < 0.7)
 	{
 		if (waterlevel < 2)
 		{
 			if (bLowGravity)
 			{
-				velocity.z -= GRAVITY / 8.0 * frametime;
+				Velocity.z -= GRAVITY / 8.0 * frametime;
 			}
 			else if (!bNoGravity)
 			{
-				velocity.z -= GRAVITY * frametime;
+				Velocity.z -= GRAVITY * frametime;
 			}
 		}
-		else if (!player)
+		else if (!bIsPlayer)
 		{
 			if (bLowGravity)
 			{
-				velocity.z = -10.0;
+				Velocity.z = -10.0;
 			}
 			else if (!bNoGravity)
 			{
-				velocity.z = -60.0;
+				Velocity.z = -60.0;
 			}
 		}
 	}
@@ -449,49 +449,49 @@ void Actor::UpdateVelocity(void)
 		return;
 	}
 
-	if (origin.z > floorz && waterlevel < 2 && !bFly && !bOnMobj)
+	if (Origin.z > FloorZ && waterlevel < 2 && !bFly && !bOnMobj)
 	{
 		// No friction when falling
 		return;
 	}
 
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		//  Clip velocity
-		float dot = DotProduct(velocity, floor->normal);
+		float dot = DotProduct(Velocity, Floor->normal);
 
 		if (dot < 0.0)
 		{
-			velocity -= dot * floor->normal;
+			Velocity -= dot * Floor->normal;
 		}
 	}
 
 	if (bCorpse)
 	{
 		// Don't stop sliding if halfway off a step with some momentum
-		if (velocity.x > 0.25 * 35.0 || velocity.x < -0.25 * 35.0 ||
-			velocity.y > 0.25 * 35.0 || velocity.y < -0.25 * 35.0)
+		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
+			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
 		{
-			if (floorz != subsector->sector->floorheight)
+			if (FloorZ != Sector->floorheight)
 			{
 				return;
 			}
 		}
 	}
 
-	if (velocity.x > -STOPSPEED && velocity.x < STOPSPEED &&
-		velocity.y > -STOPSPEED && velocity.y < STOPSPEED &&
-		velocity.z > -STOPSPEED && velocity.z < STOPSPEED &&
-		(!player || (!player->forwardmove && !player->sidemove)))
+	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
+		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
+		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
+		(!bIsPlayer || (!Player->forwardmove && !Player->sidemove)))
 	{
 		// If in a walking frame, stop moving
-		if (player)
+		if (bIsPlayer)
 		{
-			if (player->chickenTics)
+			if (Player->chickenTics)
 			{
 				int sn;
 
-				sn = statenum;
+				sn = StateNum;
 				if (sn >= S_CHICPLAY_RUN1 && sn <= S_CHICPLAY_RUN4)
 				{
 					SetState(S_CHICPLAY);
@@ -501,32 +501,32 @@ void Actor::UpdateVelocity(void)
 			{
 				int sn;
 
-				sn = statenum;
+				sn = StateNum;
 				if (sn >= S_PLAY_RUN1 && sn <= S_PLAY_RUN4)
 				{
 					SetState(S_PLAY);
 				}
 			}
 		}
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
 		if (waterlevel > 1)
 		{
-			velocity -= velocity * FRICTION_WATER * frametime;
+			Velocity -= Velocity * FRICTION_WATER * frametime;
 		}
-		else if (bFly && !(origin.z <= floorz) && !bOnMobj)
+		else if (bFly && !(Origin.z <= FloorZ) && !bOnMobj)
 		{
-			velocity -= velocity * FRICTION_FLY * frametime;
+			Velocity -= Velocity * FRICTION_FLY * frametime;
 		}
-		else if (subsector->sector->special == 15)	// Friction_Low
+		else if (Sector->special == 15)	// Friction_Low
 		{
-			velocity -= velocity * FRICTION_LOW * frametime;
+			Velocity -= Velocity * FRICTION_LOW * frametime;
 		}
 		else
 		{
-			velocity -= velocity * FRICTION_NORMAL * frametime;
+			Velocity -= Velocity * FRICTION_NORMAL * frametime;
 		}
 	}
 }
@@ -543,18 +543,18 @@ void Actor::XYMovement(void)
 	float xmove, ymove;
 	int special;
 
-	if (!velocity.x && !velocity.y)
+	if (!Velocity.x && !Velocity.y)
 	{
 		if (bSkullFly)
 		{
 			// A flying mobj slammed into something
 			bSkullFly = false;
-			velocity = vector(0.0, 0.0, 0.0);
+			Velocity = vector(0.0, 0.0, 0.0);
 			SetState(SeeState);
 		}
 		return;
 	}
-	special = subsector->sector->special;
+	special = Sector->special;
 	if (bWindThrust)
 	{
 		switch (special)
@@ -581,37 +581,37 @@ void Actor::XYMovement(void)
 			break;
 		}
 	}
-	if (velocity.x > MAXMOVE)
+	if (Velocity.x > MAXMOVE)
 	{
-		velocity.x = MAXMOVE;
+		Velocity.x = MAXMOVE;
 	}
-	else if (velocity.x < -MAXMOVE)
+	else if (Velocity.x < -MAXMOVE)
 	{
-		velocity.x = -MAXMOVE;
+		Velocity.x = -MAXMOVE;
 	}
-	if (velocity.y > MAXMOVE)
+	if (Velocity.y > MAXMOVE)
 	{
-		velocity.y = MAXMOVE;
+		Velocity.y = MAXMOVE;
 	}
-	else if (velocity.y < -MAXMOVE)
+	else if (Velocity.y < -MAXMOVE)
 	{
-		velocity.y = -MAXMOVE;
+		Velocity.y = -MAXMOVE;
 	}
-	xmove = velocity.x * frametime;
-	ymove = velocity.y * frametime;
+	xmove = Velocity.x * frametime;
+	ymove = Velocity.y * frametime;
 	do
 	{
 		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
 		{
-			ptryx = origin.x + xmove / 2.0;
-			ptryy = origin.y + ymove / 2.0;
+			ptryx = Origin.x + xmove / 2.0;
+			ptryy = Origin.y + ymove / 2.0;
 			xmove /= 2.0;
 			ymove /= 2.0;
 		}
 		else
 		{
-			ptryx = origin.x + xmove;
-			ptryy = origin.y + ymove;
+			ptryx = Origin.x + xmove;
+			ptryy = Origin.y + ymove;
 			xmove = ymove = 0.0;
 		}
 		if (!P_TryMove(this, ptryx, ptryy))
@@ -631,8 +631,7 @@ void Actor::XYMovement(void)
 					// Hack to prevent missiles exploding against the sky
 					if (Class == BloodySkull)
 					{
-						velocity.x = velocity.y = 0.0;
-						velocity.z = -1.0 * 35.0;
+						Velocity = vector(0.0, 0.0, -1.0 * 35.0);
 					}
 					else
 					{
@@ -644,13 +643,14 @@ void Actor::XYMovement(void)
 			}
 			//else if (crashstate)
 			//{
-			//      velocity.x = velocity.y = 0.0;
+			//      Velocity.x = Velocity.y = 0.0;
 			//      P_SetMobjState(this, crashstate);
 			//      return;
 			//}
 			else
 			{
-				velocity.x = velocity.y = 0.0;
+				Velocity.x = 0.0;
+				Velocity.y = 0.0;
 			}
 		}
 	}
@@ -683,8 +683,8 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 		return true;
 	}
 	blockdist = thing.Radius + Radius;
-	if (fabs(thing.origin.x - tzorg.x) >= blockdist
-		|| fabs(thing.origin.y - tzorg.y) >= blockdist)
+	if (fabs(thing.Origin.x - tzorg.x) >= blockdist
+		|| fabs(thing.Origin.y - tzorg.y) >= blockdist)
 	{
 		// Didn't hit thing
 		return true;
@@ -694,11 +694,11 @@ boolean Actor::Iter_CheckOnmobjZ(Actor thing)
 		// Don't clip against self
 		return true;
 	}
-	if (tzorg.z > thing.origin.z + thing.Height)
+	if (tzorg.z > thing.Origin.z + thing.Height)
 	{
 		return true;
 	}
-	else if (tzorg.z + Height < thing.origin.z)
+	else if (tzorg.z + Height < thing.Origin.z)
 	{
 		// under thing
 		return true;
@@ -737,21 +737,21 @@ void Actor::FakeZMovement(void)
 	//
 	//  adjust height
 	//
-	tzorg.z += velocity.z * frametime;
+	tzorg.z += Velocity.z * frametime;
 	if (bFloat && target)
 	{
 		// float down towards target if too close
 		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist2(self, *target);
-			delta = target->origin.z + Height / 2.0 - tzorg.z;
+			delta = target->Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
 				tzorg.z += FLOATSPEED * frametime;
 		}
 	}
-	if (player && bFly && !(tzorg.z <= floorz) && level->tictime & 2)
+	if (bIsPlayer && bFly && !(tzorg.z <= FloorZ) && level->tictime & 2)
 	{
 		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
@@ -759,20 +759,20 @@ void Actor::FakeZMovement(void)
 	//
 	//  clip movement
 	//
-	if (tzorg.z <= floorz)
+	if (tzorg.z <= FloorZ)
 	{
 		// Hit the floor
-		tzorg.z = floorz;
+		tzorg.z = FloorZ;
 		if (CrashState && bCorpse)
 		{
 			return;
 		}
 	}
 
-	if (tzorg.z + Height > ceilingz)
+	if (tzorg.z + Height > CeilingZ)
 	{
 		// hit the ceiling
-		tzorg.z = ceilingz - Height;
+		tzorg.z = CeilingZ - Height;
 	}
 }
 
@@ -792,7 +792,7 @@ Actor Actor::CheckOnmobj(void)
 		return none;
 
 	tzmthing = self;
-	tzorg = origin;
+	tzorg = Origin;
 	FakeZMovement();
 
 	//
@@ -801,10 +801,10 @@ Actor Actor::CheckOnmobj(void)
 	// into mapblocks based on their origin point, and can overlap into adjacent
 	// blocks by up to MAXRADIUS units
 	//
-	xl = MapBlock(origin.x - Radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(origin.x + Radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(origin.y - Radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(origin.y + Radius - level->bmaporgy + MAXRADIUS);
+	xl = MapBlock(Origin.x - Radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(Origin.x + Radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(Origin.y - Radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(Origin.y + Radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 	{
@@ -834,45 +834,45 @@ void Actor::ZMovement(void)
 	//
 	// check for smooth step up
 	//
-	if (player && origin.z < floorz)
+	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		player->viewheight -= floorz - origin.z;
-		player->deltaviewheight =
-			(VIEWHEIGHT - player->viewheight) / 8.0;
+		Player->viewheight -= FloorZ - Origin.z;
+		Player->deltaviewheight =
+			(VIEWHEIGHT - Player->viewheight) / 8.0;
 	}
 
 	//
 	// adjust height
 	//
-	origin.z += velocity.z * frametime;
+	Origin.z += Velocity.z * frametime;
 	if (bFloat && target)
 	{
 		// float down towards target if too close
 		if (!bSkullFly && !bInFloat)
 		{
 			dist = MobjDist(self, *target);
-			delta = target->origin.z + Height / 2.0 - origin.z;
+			delta = target->Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
-				origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
-				origin.z += FLOATSPEED * frametime;
+				Origin.z += FLOATSPEED * frametime;
 		}
 	}
-	if (player && bFly && !(origin.z <= floorz) && level->tictime & 2)
+	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && level->tictime & 2)
 	{
-		origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
+		Origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
 
 	//
 	// clip movement
 	//
-	if (origin.z <= floorz + 0.1)
+	if (Origin.z <= FloorZ + 0.1)
 	{
 		// Hit the floor
-		vdot = DotProduct(velocity, floor->normal);
+		vdot = DotProduct(Velocity, Floor->normal);
 		if (bMissile)
 		{
-			origin.z = floorz;
+			Origin.z = FloorZ;
 			if (bFloorBounce)
 			{
 				P_FloorBounceMissile(this);
@@ -889,26 +889,26 @@ void Actor::ZMovement(void)
 				return;
 			}
 		}
-		if (origin.z - velocity.z * frametime > floorz)
+		if (Origin.z - Velocity.z * frametime > FloorZ)
 		{
 			// Spawn splashes, etc.
 			P_HitFloor(this);
 		}
-		origin.z = floorz;
+		Origin.z = FloorZ;
 		if (vdot < -0.1)
 		{
-			if (player && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
+			if (bIsPlayer && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
-				player->deltaviewheight = vdot * frametime / 8.0;
+				Player->deltaviewheight = vdot * frametime / 8.0;
 				StartSoundName(self, 'PlayerLand', CHAN_BODY);
-//FIXME             player->centering = true;
+//FIXME             Player->centering = true;
 			}
-			velocity -= vdot * floor->normal;
+			Velocity -= vdot * Floor->normal;
 		}
 		if (bSkullFly)
 		{
 			// The skull slammed into something
-			velocity -= vdot * floor->normal * 2.0;
+			Velocity -= vdot * Floor->normal * 2.0;
 		}
 		if (CrashState && bCorpse)
 		{
@@ -917,25 +917,24 @@ void Actor::ZMovement(void)
 		}
 	}
 
-	if (origin.z + Height > ceilingz)
+	if (Origin.z + Height > CeilingZ)
 	{
 		// hit the ceiling
-		vdot = DotProduct(velocity, ceiling->normal);
+		vdot = DotProduct(Velocity, Ceiling->normal);
 		if (vdot < 0.0)
-			velocity -= vdot * ceiling->normal;
-		origin.z = ceilingz - Height;
+			Velocity -= vdot * Ceiling->normal;
+		Origin.z = CeilingZ - Height;
 		if (bSkullFly)
 		{	// the skull slammed into something
-			velocity.z = -velocity.z;
+			Velocity.z = -Velocity.z;
 		}
 		if (bMissile)
 		{
-			if (subsector->sector->ceiling.pic == skyflatnum)
+			if (Sector->ceiling.pic == skyflatnum)
 			{
 				if (Class == BloodySkull)
 				{
-					velocity.x = velocity.y = 0.0;
-					velocity.z = -1.0 * 35.0;
+					Velocity = vector(0.0, 0.0, -1.0 * 35.0);
 				}
 				else
 				{
@@ -967,48 +966,48 @@ boolean Actor::BlasterPhysics(void)
 	boolean changexy;
 
 	// Handle movement
-	if (velocity.x || velocity.y ||
-		(origin.z != floorz) || velocity.z)
+	if (Velocity.x || Velocity.y ||
+		(Origin.z != FloorZ) || Velocity.z)
 	{
-		xfrac = velocity.x * frametime / 8.0;
-		yfrac = velocity.y * frametime / 8.0;
-		zfrac = velocity.z * frametime / 8.0;
+		xfrac = Velocity.x * frametime / 8.0;
+		yfrac = Velocity.y * frametime / 8.0;
+		zfrac = Velocity.z * frametime / 8.0;
 		changexy = xfrac || yfrac;
 		for (i = 0; i < 8; i++)
 		{
 			if (changexy)
 			{
-				if (!P_TryMove(this, origin.x + xfrac, origin.y + yfrac))
+				if (!P_TryMove(this, Origin.x + xfrac, Origin.y + yfrac))
 				{
 					// Blocked move
 					P_ExplodeMissile(this);
 					return !IsDestroyed();
 				}
 			}
-			origin.z += zfrac;
-			if (origin.z <= floorz)
+			Origin.z += zfrac;
+			if (Origin.z <= FloorZ)
 			{
 				// Hit the floor
-				origin.z = floorz;
+				Origin.z = FloorZ;
 				P_HitFloor(this);
 				P_ExplodeMissile(this);
 				return !IsDestroyed();
 			}
-			if (origin.z + Height > ceilingz)
+			if (Origin.z + Height > CeilingZ)
 			{
 				// Hit the ceiling
-				origin.z = ceilingz - Height;
+				Origin.z = CeilingZ - Height;
 				P_ExplodeMissile(this);
 				return !IsDestroyed();
 			}
 			if (changexy && (P_Random() < 64))
 			{
-				z = origin.z - 8.0;
-				if (z < floorz)
+				z = Origin.z - 8.0;
+				if (z < FloorZ)
 				{
-					z = floorz;
+					z = FloorZ;
 				}
-				P_SpawnMobj(origin.x, origin.y, z, BlasterSmoke);
+				P_SpawnMobj(Origin.x, Origin.y, z, BlasterSmoke);
 			}
 		}
 	}
@@ -1037,7 +1036,7 @@ boolean Actor::Physics(void)
 	}
 
 	// Handle X and Y momentums
-	if (velocity.x || velocity.y || bSkullFly)
+	if (Velocity.x || Velocity.y || bSkullFly)
 	{
 		XYMovement();
 		if (IsDestroyed())
@@ -1049,9 +1048,9 @@ boolean Actor::Physics(void)
 	if (bFloatBob)
 	{
 		// Floating item bobbing motion
-		origin.z = floorz + FloatBobOffsets[(Health++) & 63];
+		Origin.z = FloorZ + FloatBobOffsets[(Health++) & 63];
 	}
-	else if ((origin.z != floorz) || velocity.z)
+	else if ((Origin.z != FloorZ) || Velocity.z)
 	{
 		// Handle Z momentum and gravity
 		if (!bNoPassMobj)
@@ -1062,26 +1061,26 @@ boolean Actor::Physics(void)
 			}
 			else
 			{
-				if (player && velocity.z < 0.0)
+				if (bIsPlayer && Velocity.z < 0.0)
 				{
 					bOnMobj = true;
-					velocity.z = 0.0;
+					Velocity.z = 0.0;
 				}
-				if (player && (onmo.player || onmo.Class == Pod))
+				if (bIsPlayer && (onmo.bIsPlayer || onmo.Class == Pod))
 				{
-					velocity.x = onmo.velocity.x;
-					velocity.y = onmo.velocity.y;
-					if (onmo.origin.z < onmo.floorz)
+					Velocity.x = onmo.Velocity.x;
+					Velocity.y = onmo.Velocity.y;
+					if (onmo.Origin.z < onmo.FloorZ)
 					{
-						origin.z += onmo.floorz - onmo.origin.z;
-						if (onmo.player)
+						Origin.z += onmo.FloorZ - onmo.Origin.z;
+						if (onmo.bIsPlayer)
 						{
-							onmo.player->viewheight -=
-								onmo.floorz - onmo.origin.z;
-							onmo.player->deltaviewheight =
-								(VIEWHEIGHT - onmo.player->viewheight) / 8.0;
+							onmo.Player->viewheight -=
+								onmo.FloorZ - onmo.Origin.z;
+							onmo.Player->deltaviewheight =
+								(VIEWHEIGHT - onmo.Player->viewheight) / 8.0;
 						}
-						onmo.origin.z = onmo.floorz;
+						onmo.Origin.z = onmo.FloorZ;
 					}
 				}
 			}
@@ -1115,21 +1114,17 @@ void Actor::Think(void)
 	//
 	// cycle through states, calling action functions at transitions
 	//
-	if (time != -1.0)
+	if (StateTime != -1.0)
 	{
-		time -= frametime;
-		if (time <= 0.0)
+		StateTime -= frametime;
+		if (StateTime <= 0.0)
 		{
 			// you can cycle through multiple states in a tic
-			do
+			if (!SetState(NextState))
 			{
-				if (!SetState(nextstate))
-				{
-					// mobj was removed
-					return;
-				}
+				// mobj was removed
+				return;
 			}
-			while (!time);
 		}
 	}
 	else
@@ -1163,6 +1158,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.20  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

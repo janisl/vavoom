@@ -76,7 +76,7 @@ void Weapon::A_FireConePL1(void)
 	damage = 90 + (P_Random() & 15);
 	for (i = 0; i < 16; i++)
 	{
-		ang = pmo->angles;
+		ang = pmo->Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &ang, MELEERANGE);
 		if (linetarget)
@@ -99,7 +99,7 @@ void Weapon::A_FireConePL1(void)
 				| SHARDSPAWN_RIGHT;
 			mo->special2 = 3;	// Set sperm count (levels of reproductivity)
 			mo->target = pmo;
-			mo->args[0] = 3;	// Mark Initial shard as super damage
+			mo->Args[0] = 3;	// Mark Initial shard as super damage
 		}
 	}
 }
@@ -125,37 +125,37 @@ void Actor::A_ShedShard(void)
 	if (spawndir & SHARDSPAWN_LEFT)
 	{
 		mo = SpawnMissileAngleSpeed(this, ShardMissile,
-			angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+			Angles.yaw + (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_LEFT;
 			mo->special2 = spermcount;
-			mo->velocity.z = velocity.z;
+			mo->Velocity.z = Velocity.z;
 			mo->target = target;
-			mo->args[0] = (spermcount == 3) ? 2 : 0;
+			mo->Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_RIGHT)
 	{
 		mo = SpawnMissileAngleSpeed(this, ShardMissile,
-			angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
+			Angles.yaw - (45.0 / 9.0), 0.0, itof(20 + 2 * spermcount));
 		if (mo)
 		{
 			mo->special1 = SHARDSPAWN_RIGHT;
 			mo->special2 = spermcount;
-			mo->velocity.z = velocity.z;
+			mo->Velocity.z = Velocity.z;
 			mo->target = target;
-			mo->args[0] = (spermcount == 3) ? 2 : 0;
+			mo->Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_UP)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile, angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile, Angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
-			mo->velocity.z = velocity.z;
-			mo->origin.z += 8.0;
+			mo->Velocity.z = Velocity.z;
+			mo->Origin.z += 8.0;
 			if (spermcount & 1)	// Every other reproduction
 				mo->special1 =
 					SHARDSPAWN_UP | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
@@ -163,17 +163,17 @@ void Actor::A_ShedShard(void)
 				mo->special1 = SHARDSPAWN_UP;
 			mo->special2 = spermcount;
 			mo->target = target;
-			mo->args[0] = (spermcount == 3) ? 2 : 0;
+			mo->Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 	if (spawndir & SHARDSPAWN_DOWN)
 	{
-		mo = SpawnMissileAngleSpeed(this, ShardMissile, angles.yaw,
+		mo = SpawnMissileAngleSpeed(this, ShardMissile, Angles.yaw,
 			0.0, itof(15 + 2 * spermcount));
 		if (mo)
 		{
-			mo->velocity.z = velocity.z;
-			mo->origin.z -= 4.0;
+			mo->Velocity.z = Velocity.z;
+			mo->Origin.z -= 4.0;
 			if (spermcount & 1)	// Every other reproduction
 				mo->special1 =
 					SHARDSPAWN_DOWN | SHARDSPAWN_LEFT | SHARDSPAWN_RIGHT;
@@ -181,7 +181,7 @@ void Actor::A_ShedShard(void)
 				mo->special1 = SHARDSPAWN_DOWN;
 			mo->special2 = spermcount;
 			mo->target = target;
-			mo->args[0] = (spermcount == 3) ? 2 : 0;
+			mo->Args[0] = (spermcount == 3) ? 2 : 0;
 		}
 	}
 }
@@ -258,12 +258,12 @@ void Actor::A_LightningClip(void)
 
 	if (Class == LightningFloor)
 	{
-		origin.z = floorz;
+		Origin.z = FloorZ;
 		targ = specialmobj2->specialmobj1;
 	}
 	else if (Class == LightningCeiling)
 	{
-		origin.z = ceilingz - Height;
+		Origin.z = CeilingZ - Height;
 		targ = specialmobj1;
 	}
 	if (Class == LightningFloor)
@@ -273,19 +273,19 @@ void Actor::A_LightningClip(void)
 		zigZag = P_Random();
 		if ((zigZag > 128 && special1 < 2) || special1 < -2)
 		{
-			P_ThrustMobj(this, angles.yaw + 90.0, ZAGSPEED);
+			P_ThrustMobj(this, Angles.yaw + 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, angles.yaw + 90.0, ZAGSPEED);
+				P_ThrustMobj(cMo, Angles.yaw + 90.0, ZAGSPEED);
 			}
 			special1++;
 		}
 		else
 		{
-			P_ThrustMobj(this, angles.yaw - 90.0, ZAGSPEED);
+			P_ThrustMobj(this, Angles.yaw - 90.0, ZAGSPEED);
 			if (cMo)
 			{
-				P_ThrustMobj(cMo, cMo->angles.yaw - 90.0, ZAGSPEED);
+				P_ThrustMobj(cMo, cMo->Angles.yaw - 90.0, ZAGSPEED);
 			}
 			special1--;
 		}
@@ -298,11 +298,11 @@ void Actor::A_LightningClip(void)
 		}
 		else
 		{
-			angles.yaw = atan2(targ->origin.y - origin.y,
-				targ->origin.x - origin.x);
-			velocity.x = 0.0;
-			velocity.y = 0.0;
-			P_ThrustMobj(this, angles.yaw, Speed * frametime / 2.0);
+			Angles.yaw = atan2(targ->Origin.y - Origin.y,
+				targ->Origin.x - Origin.x);
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+			P_ThrustMobj(this, Angles.yaw, Speed * frametime / 2.0);
 		}
 	}
 }
@@ -334,22 +334,22 @@ void Actor::A_LightningZap(void)
 	{
 		deltaZ = -10.0;
 	}
-	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * Radius,
-		origin.y + (Random() - 0.5) * Radius,
-		origin.z + deltaZ, LightningZap);
+	mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * Radius,
+		Origin.y + (Random() - 0.5) * Radius,
+		Origin.z + deltaZ, LightningZap);
 	if (mo)
 	{
 		mo->specialmobj2 = this;
-		mo->velocity.x = velocity.x;
-		mo->velocity.y = velocity.y;
+		mo->Velocity.x = Velocity.x;
+		mo->Velocity.y = Velocity.y;
 		mo->target = target;
 		if (Class == LightningFloor)
 		{
-			mo->velocity.z = 20.0 * 35.0;
+			mo->Velocity.z = 20.0 * 35.0;
 		}
 		else
 		{
-			mo->velocity.z = -20.0 * 35.0;
+			mo->Velocity.z = -20.0 * 35.0;
 		}
 	}
 	if (Class == LightningFloor && P_Random() < 160)
@@ -371,14 +371,14 @@ void Actor::A_ZapMimic(void)
 	mo = specialmobj2;
 	if (mo)
 	{
-		if (mo->statenum >= mo->DeathState || mo->statenum == S_FREETARGMOBJ)
+		if (mo->StateNum >= mo->DeathState || mo->StateNum == S_FREETARGMOBJ)
 		{
 			P_ExplodeMissile(this);
 		}
 		else
 		{
-			velocity.x = mo->velocity.x;
-			velocity.y = mo->velocity.y;
+			Velocity.x = mo->Velocity.x;
+			Velocity.y = mo->Velocity.y;
 		}
 	}
 }
@@ -393,11 +393,11 @@ void Actor::A_LastZap(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, LightningZap);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, LightningZap);
 	if (mo)
 	{
 		mo->SetState(S_LIGHTNING_ZAP_X1);
-		mo->velocity.z = 40.0 * 35.0;
+		mo->Velocity.z = 40.0 * 35.0;
 	}
 }
 
@@ -453,7 +453,7 @@ void Weapon::A_MStaffAttack(void)
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
-	angle = pmo->angles.yaw;
+	angle = pmo->Angles.yaw;
 
 	MStaffSpawn(pmo, angle);
 	MStaffSpawn(pmo, angle - 5.0);
@@ -496,19 +496,19 @@ void Actor::A_MStaffWeave(void)
 
 	weaveXY = special2 >> 16;
 	weaveZ = special2 & 0xFFFF;
-	angle = AngleMod360(angles.yaw + 90.0);
-	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + 6) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	P_TryMove(this, newX, newY);
-	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + 3) & 63;
-	origin.z += FloatBobOffsets[weaveZ] * 2.0;
-	if (origin.z <= floorz)
+	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	if (Origin.z <= FloorZ)
 	{
-		origin.z = floorz + 1.0;
+		Origin.z = FloorZ + 1.0;
 	}
 	special2 = weaveZ + (weaveXY << 16);
 }
@@ -531,6 +531,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.18  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -94,11 +94,11 @@ void Actor::A_SkelMissile(void)
 		return;
 
 	A_FaceTarget();
-	origin.z += 16.0;	// so missile spawns higher
+	Origin.z += 16.0;	// so missile spawns higher
 	mo = SpawnMissile(this, target, RevenantTracer);
-	origin.z -= 16.0;	// back to normal
+	Origin.z -= 16.0;	// back to normal
 
-	mo->origin = mo->origin + mo->velocity * 0.03;
+	mo->Origin = mo->Origin + mo->Velocity * 0.03;
 	mo->tracer = target;
 }
 
@@ -125,16 +125,16 @@ void Actor::A_Tracer(void)
 		return;
 
 	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(origin.x, origin.y, origin.z);
+	SpawnPuff(Origin.x, Origin.y, Origin.z);
 
-	th = P_SpawnMobj(origin.x - velocity.x * frametime,
-		origin.y - velocity.y * frametime,
-		origin.z - velocity.z * frametime, RevenantTracerSmoke);
+	th = P_SpawnMobj(Origin.x - Velocity.x * frametime,
+		Origin.y - Velocity.y * frametime,
+		Origin.z - Velocity.z * frametime, RevenantTracerSmoke);
 
-	th->velocity.z = 1.0 * 35.0;
-	th->time -= Random() * 0.1;
-	if (th->time < 0.1)
-		th->time = 0.1;
+	th->Velocity.z = 1.0 * 35.0;
+	th->StateTime -= Random() * 0.1;
+	if (th->StateTime < 0.1)
+		th->StateTime = 0.1;
 
 	// adjust direction
 	dest = tracer;
@@ -142,15 +142,15 @@ void Actor::A_Tracer(void)
 	if (!dest || dest->Health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter((*dest)) - origin);
-	currdir = Normalize(velocity);
+	wishdir = Normalize(MobjCenter((*dest)) - Origin);
+	currdir = Normalize(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
 	if (adjustlen > TRACEADJUST)
 		adjustlen = TRACEADJUST;
 	wishdir = currdir + delta * adjustlen;
-	velocity = wishdir * Speed;
-	VectorAngles(&wishdir, &angles);
+	Velocity = wishdir * Speed;
+	VectorAngles(&wishdir, &Angles);
 }
 
 #else
@@ -180,6 +180,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.5  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

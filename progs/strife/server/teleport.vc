@@ -47,8 +47,8 @@ boolean PIT_StompThing(MapObject Other)
 
 	blockdist = Other.Radius + teleport_thing->Radius;
 
-	if (fabs(Other.origin.x - teleport_x) >= blockdist ||
-		fabs(Other.origin.y - teleport_y) >= blockdist)
+	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -58,13 +58,7 @@ boolean PIT_StompThing(MapObject Other)
 	if (Other == *teleport_thing)
 		return true;
 
-#ifdef DOOM2
-	// monsters don't stomp things except on boss level
-	if (!(teleport_thing->player
-			|| !strcmp(ptrtos(&level->mapname[0]), "MAP30")))
-#else
-	if (!(teleport_thing->player != NULL))
-#endif
+	if (!teleport_thing->bIsPlayer)
 	{
 		return false;
 	}
@@ -110,8 +104,8 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 	// so link the thing into its new position
 	P_UnsetThingPosition(*thing);
 
-	thing->origin.x = x;
-	thing->origin.y = y;
+	thing->Origin.x = x;
+	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
 
@@ -131,37 +125,37 @@ int P_Teleport(mobj_t * thing, float x, float y, float angle)
 	float oldz;
 	mobj_t *fog;
 
-	oldx = thing->origin.x;
-	oldy = thing->origin.y;
-	oldz = thing->origin.z;
+	oldx = thing->Origin.x;
+	oldy = thing->Origin.y;
+	oldz = thing->Origin.z;
 
 	if (!P_TeleportMove(thing, x, y))
 		return 0;
 
-	thing->origin.z = thing->floorz;	//fixme: not needed?
-	if (thing->player)
-		thing->player->vieworg.z =
-			thing->origin.z + thing->player->viewheight;
+	thing->Origin.z = thing->FloorZ;	//fixme: not needed?
+	if (thing->bIsPlayer)
+		thing->Player->vieworg.z =
+			thing->Origin.z + thing->Player->viewheight;
 
 	// spawn teleport fog at source and destination
 	fog = P_SpawnMobj(oldx, oldy, oldz, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), thing->origin.z, TeleportFog);
+		y + 20.0 * sin(angle), thing->Origin.z, TeleportFog);
 
 	// emit sound, where?
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
 
 	// don't move for a bit
-	if (thing->player)
+	if (thing->bIsPlayer)
 	{
 		thing->ReactionTime = 0.5;
-		thing->player->fixangle = true;
+		thing->Player->fixangle = true;
 	}
 
-	thing->angles.yaw = angle;
-	thing->velocity.x = thing->velocity.y = thing->velocity.z = 0.0;
+	thing->Angles.yaw = angle;
+	thing->Velocity = vector(0.0, 0.0, 0.0);
 	return 1;
 }
 
@@ -188,10 +182,10 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 			continue;
 
 		// wrong sector
-		if (m.tid != tag)
+		if (m.TID != tag)
 			continue;
 
-		return P_Teleport(thing, m.origin.x, m.origin.y, m.angles.yaw);
+		return P_Teleport(thing, m.Origin.x, m.Origin.y, m.Angles.yaw);
 	}
 	return 0;
 }
@@ -199,6 +193,9 @@ int EV_Teleport(int tag, mobj_t * thing, boolean usefog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:21:00  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

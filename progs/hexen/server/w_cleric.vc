@@ -52,7 +52,7 @@ void Weapon::A_CMaceAttack(void)
 	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
-		angles = player->mo->angles;
+		angles = player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
@@ -65,7 +65,7 @@ void Weapon::A_CMaceAttack(void)
 			AdjustPlayerAngle(player->mo);
 			return;
 		}
-		angles = player->mo->angles;
+		angles = player->mo->Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 2.0 * MELEERANGE);
 		if (linetarget)
@@ -82,7 +82,7 @@ void Weapon::A_CMaceAttack(void)
 	// didn't find any creatures, so try to strike any walls
 	player->mo->special1 = 0;
 
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
 	if (LineAttack(player->mo, &vforward, MELEERANGE, damage))
@@ -137,16 +137,16 @@ void Weapon::A_CStaffCheck(void)
 	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
 	{
-		angles = pmo->angles;
+		angles = pmo->Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		AimLineAttack(pmo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
-			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
-				linetarget->origin.x - pmo->origin.x);
-			if ((linetarget->player || linetarget->bCountKill) &&
+			pmo->Angles.yaw = atan2(linetarget->Origin.y - pmo->Origin.y,
+				linetarget->Origin.x - pmo->Origin.x);
+			if ((linetarget->bIsPlayer || linetarget->bCountKill) &&
 				!linetarget->bDormant && !linetarget->bInvulnerable)
 			{
 				newLife = player->health + (damage >> 3);
@@ -158,16 +158,16 @@ void Weapon::A_CStaffCheck(void)
 				WeaponManaUse(player->pclass, player->readyweapon);
 			break;
 		}
-		angles = pmo->angles;
+		angles = pmo->Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		AimLineAttack(player->mo, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
 			LineAttack(pmo, &vforward, 1.5 * MELEERANGE, damage);
-			pmo->angles.yaw = atan2(linetarget->origin.y - pmo->origin.y,
-				linetarget->origin.x - pmo->origin.x);
-			if (linetarget->player || linetarget->bCountKill)
+			pmo->Angles.yaw = atan2(linetarget->Origin.y - pmo->Origin.y,
+				linetarget->Origin.x - pmo->Origin.x);
+			if (linetarget->bIsPlayer || linetarget->bCountKill)
 			{
 				newLife = player->health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
@@ -196,13 +196,13 @@ void Weapon::A_CStaffAttack(void)
 		WeaponManaUse(player->pclass, player->readyweapon);
 	pmo = player->mo;
 	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
-		pmo->angles.yaw - (45.0 / 15.0));
+		pmo->Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		mo->special2 = 32;
 	}
 	mo = SpawnPlayerMissileAngle(pmo, ClericStaffMissile,
-		pmo->angles.yaw + (45.0 / 15.0));
+		pmo->Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
 		mo->special2 = 0;
@@ -223,9 +223,9 @@ void Actor::A_CStaffMissileSlither(void)
 	float angle;
 
 	weaveXY = special2;
-	angle = AngleMod360(angles.yaw + 90.0);
-	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY];
-	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY];
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY];
+	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY];
 	weaveXY = (weaveXY + 3) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY];
 	newY += sin(angle) * FloatBobOffsets[weaveXY];
@@ -281,27 +281,27 @@ void Actor::A_CFlameMissile(void)
 		for (i = 0; i < 4; i++)
 		{
 			an = itof(i) * 45.0;
-			mo = P_SpawnMobj(bmo->origin.x + dist * cos(an),
-				bmo->origin.y + dist * sin(an),
-				bmo->origin.z + 5.0, CircleFlame);
+			mo = P_SpawnMobj(bmo->Origin.x + dist * cos(an),
+				bmo->Origin.y + dist * sin(an),
+				bmo->Origin.z + 5.0, CircleFlame);
 			if (mo)
 			{
-				mo->angles.yaw = an;
+				mo->Angles.yaw = an;
 				mo->target = target;
-				mo->velocity.x = mo->special1f = FLAMESPEED * cos(an);
-				mo->velocity.y = mo->special2f = FLAMESPEED * sin(an);
-				mo->time -= Random() * 0.1;
+				mo->Velocity.x = mo->special1f = FLAMESPEED * cos(an);
+				mo->Velocity.y = mo->special2f = FLAMESPEED * sin(an);
+				mo->StateTime -= Random() * 0.1;
 			}
-			mo = P_SpawnMobj(bmo->origin.x - dist * cos(an),
-				bmo->origin.y - dist * sin(an),
-				bmo->origin.z + 5.0, CircleFlame);
+			mo = P_SpawnMobj(bmo->Origin.x - dist * cos(an),
+				bmo->Origin.y - dist * sin(an),
+				bmo->Origin.z + 5.0, CircleFlame);
 			if (mo)
 			{
-				mo->angles.yaw = AngleMod360(180.0 + an);
+				mo->Angles.yaw = AngleMod360(180.0 + an);
 				mo->target = target;
-				mo->velocity.x = mo->special1f = -FLAMESPEED * cos(an);
-				mo->velocity.y = mo->special2f = -FLAMESPEED * sin(an);
-				mo->time -= Random() * 0.1;
+				mo->Velocity.x = mo->special1f = -FLAMESPEED * cos(an);
+				mo->Velocity.y = mo->special2f = -FLAMESPEED * sin(an);
+				mo->StateTime -= Random() * 0.1;
 			}
 		}
 		SetState(S_FLAMEPUFF2_1);
@@ -320,10 +320,10 @@ void Actor::A_CFlameRotate(void)
 {
 	float an;
 
-	an = AngleMod360(angles.yaw + 90.0);
-	velocity.x = special1f + FLAMEROTSPEED * cos(an);
-	velocity.y = special2f + FLAMEROTSPEED * sin(an);
-	angles.yaw = AngleMod360(angles.yaw + 90.0 / 15.0);
+	an = AngleMod360(Angles.yaw + 90.0);
+	Velocity.x = special1f + FLAMEROTSPEED * cos(an);
+	Velocity.y = special2f + FLAMEROTSPEED * sin(an);
+	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
 }
 
 //============================================================================
@@ -335,7 +335,7 @@ void Actor::A_CFlameRotate(void)
 void Actor::A_CFlamePuff(void)
 {
 	A_UnHideThing();
-	velocity = vector(0.0, 0.0, 0.0);
+	Velocity = vector(0.0, 0.0, 0.0);
 	StartSoundName(self, 'ClericFlameExplode', CHAN_VOICE);
 }
 
@@ -397,7 +397,7 @@ void Actor::A_CHolyAttack2(void)
 
 	for (j = 0; j < 4; j++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, HolyFX);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyFX);
 		if (!mo)
 		{
 			continue;
@@ -418,13 +418,13 @@ void Actor::A_CHolyAttack2(void)
 				((32 + (P_Random() & 7)) << 16) + 32 + (P_Random() & 7);
 			break;
 		}
-		mo->origin.z = origin.z;
-		mo->angles.yaw = AngleMod360(angles.yaw +
+		mo->Origin.z = Origin.z;
+		mo->Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		P_ThrustMobj(mo, mo->angles.yaw, mo->Speed * frametime);
+		P_ThrustMobj(mo, mo->Angles.yaw, mo->Speed * frametime);
 		mo->target = target;
-		mo->args[0] = 10;	// initial turn value
-		mo->args[1] = 0;	// initial look angle
+		mo->Args[0] = 10;	// initial turn value
+		mo->Args[1] = 0;	// initial look angle
 		if (deathmatch)
 		{
 			// Ghosts last slightly less longer in DeathMatch
@@ -437,12 +437,12 @@ void Actor::A_CHolyAttack2(void)
 			mo->bSkullFly = true;
 			mo->bMissile = false;
 		}
-		tail = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
+		tail = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
 			HolyTail);
 		tail->specialmobj2 = mo;	// parent
 		for (i = 1; i < 3; i++)
 		{
-			next = P_SpawnMobj(mo->origin.x, mo->origin.y, mo->origin.z,
+			next = P_SpawnMobj(mo->Origin.x, mo->Origin.y, mo->Origin.z,
 				HolyTail);
 			next->SetState(next->SpawnState + 1);
 			tail->specialmobj1 = next;
@@ -495,7 +495,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	{
 		return;
 	}
-	if (!targ->bShootable || (!targ->bCountKill && !targ->player))
+	if (!targ->bShootable || (!targ->bCountKill && !targ->bIsPlayer))
 	{
 		// Target died/target isn't a player or creature
 		specialmobj1 = NULL;
@@ -517,23 +517,23 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		angles.yaw += delta;
+		Angles.yaw += delta;
 	}
 	else
 	{
 		// Turn counter clockwise
-		angles.yaw -= delta;
+		Angles.yaw -= delta;
 	}
-	angles.yaw = AngleMod360(angles.yaw);
-	angle = angles.yaw;
-	velocity.x = Speed * cos(angle);
-	velocity.y = Speed * sin(angle);
+	Angles.yaw = AngleMod360(Angles.yaw);
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
 	if (!(level->tictime & 15) ||
-		origin.z > targ->origin.z + targ->Height ||
-		origin.z + Height < targ->origin.z)
+		Origin.z > targ->Origin.z + targ->Height ||
+		Origin.z + Height < targ->Origin.z)
 	{
-		newZ = targ->origin.z + Random() * targ->Height;
-		deltaZ = newZ - origin.z;
+		newZ = targ->Origin.z + Random() * targ->Height;
+		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
 			if (deltaZ > 0.0)
@@ -551,7 +551,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 		{
 			dist = 1.0;
 		}
-		velocity.z = deltaZ / dist;
+		Velocity.z = deltaZ / dist;
 	}
 	return;
 }
@@ -570,16 +570,16 @@ void Actor::CHolyWeave(void)
 
 	weaveXY = special2 >> 16;
 	weaveZ = special2 & 0xFFFF;
-	angle = AngleMod360(angles.yaw + 90.0);
-	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	P_TryMove(this, newX, newY);
-	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
-	origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
 	special2 = weaveZ + (weaveXY << 16);
 }
 
@@ -594,19 +594,19 @@ void Actor::A_CHolySeek(void)
 	Health--;
 	if (Health <= 0)
 	{
-		velocity.x /= 4.0;
-		velocity.y /= 4.0;
-		velocity.z = 0.0;
+		Velocity.x /= 4.0;
+		Velocity.y /= 4.0;
+		Velocity.z = 0.0;
 		SetState(DeathState);
-		time -= Random() * 0.1;
+		StateTime -= Random() * 0.1;
 		return;
 	}
 	if (specialmobj1)
 	{
-		CHolySeekerMissile(itof(args[0]), itof(args[0]) * 2.0);
+		CHolySeekerMissile(itof(Args[0]), itof(Args[0]) * 2.0);
 		if (!((level->tictime + 7) & 15))
 		{
-			args[0] = 5 + (P_Random() / 20);
+			Args[0] = 5 + (P_Random() / 20);
 		}
 	}
 	CHolyWeave();
@@ -646,28 +646,28 @@ void Actor::CHolyTailFollow(float dist)
 	child = specialmobj1;
 	if (child)
 	{
-		an = atan2(child->origin.y - origin.y,
-			origin.x - child->origin.x);
+		an = atan2(child->Origin.y - Origin.y,
+			Origin.x - child->Origin.x);
 		oldDistance = MobjDist(*child, self);
-		if (P_TryMove(child, origin.x + dist * cos(an),
-				origin.y + dist * sin(an)))
+		if (P_TryMove(child, Origin.x + dist * cos(an),
+				Origin.y + dist * sin(an)))
 		{
 			newDistance = MobjDist2(*child, self) - 1.0;
 			if (oldDistance < 1.0)
 			{
-				if (child->origin.z < origin.z)
+				if (child->Origin.z < Origin.z)
 				{
-					child->origin.z = origin.z - dist;
+					child->Origin.z = Origin.z - dist;
 				}
 				else
 				{
-					child->origin.z = origin.z + dist;
+					child->Origin.z = Origin.z + dist;
 				}
 			}
 			else
 			{
-				child->origin.z = origin.z + newDistance / oldDistance *
-					(child->origin.z - origin.z);
+				child->Origin.z = Origin.z + newDistance / oldDistance *
+					(child->Origin.z - Origin.z);
 			}
 		}
 		child->CHolyTailFollow(dist - 1.0);
@@ -706,17 +706,17 @@ void Actor::A_CHolyTail(void)
 
 	if (parent)
 	{
-		if (parent->statenum >= parent->DeathState)
+		if (parent->StateNum >= parent->DeathState)
 		{
 			// Ghost removed, so remove all tail parts
 			CHolyTailRemove();
 			return;
 		}
 		else if (P_TryMove(this,
-				parent->origin.x - 14.0 * cos(parent->angles.yaw),
-				parent->origin.y - 14.0 * sin(parent->angles.yaw)))
+				parent->Origin.x - 14.0 * cos(parent->Angles.yaw),
+				parent->Origin.y - 14.0 * sin(parent->Angles.yaw)))
 		{
-			origin.z = parent->origin.z - 5.0;
+			Origin.z = parent->Origin.z - 5.0;
 		}
 		CHolyTailFollow(10.0);
 	}
@@ -730,12 +730,15 @@ void Actor::A_CHolyTail(void)
 
 void Actor::A_CHolySpawnPuff(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, HolyMissilePuff);
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyMissilePuff);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

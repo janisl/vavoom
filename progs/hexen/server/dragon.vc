@@ -72,17 +72,17 @@ void Actor::DragonSeek(float thresh, float turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		angles.yaw = AngleMod360(angles.yaw + delta);
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
 	}
 	else
 	{
 		// Turn counter clockwise
-		angles.yaw = AngleMod360(angles.yaw - delta);
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
 	}
-	velocity.x = Speed * cos(angles.yaw);
-	velocity.y = Speed * sin(angles.yaw);
-	if (origin.z + Height < tempTarget->origin.z ||
-		tempTarget->origin.z + tempTarget->Height < origin.z)
+	Velocity.x = Speed * cos(Angles.yaw);
+	Velocity.y = Speed * sin(Angles.yaw);
+	if (Origin.z + Height < tempTarget->Origin.z ||
+		tempTarget->Origin.z + tempTarget->Height < Origin.z)
 	{
 		dist = MobjDist2(*tempTarget, self);
 		dist = dist / Speed;
@@ -90,7 +90,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 		{
 			dist = 1.0;
 		}
-		velocity.z = (tempTarget->origin.z - origin.z) / dist;
+		Velocity.z = (tempTarget->Origin.z - Origin.z) / dist;
 	}
 	else
 	{
@@ -100,9 +100,9 @@ void Actor::DragonSeek(float thresh, float turnMax)
 	if (tempTarget->bShootable && P_Random() < 64)
 	{
 		// attack the destination mobj if it's attackable
-		if (fabs(AngleMod180(angles.yaw -
-			atan2(tempTarget->origin.y - origin.y,
-			tempTarget->origin.x - origin.x))) < 45.0 / 2.0)
+		if (fabs(AngleMod180(Angles.yaw -
+			atan2(tempTarget->Origin.y - Origin.y,
+			tempTarget->Origin.x - Origin.x))) < 45.0 / 2.0)
 		{
 			oldTarget = target;
 			target = tempTarget;
@@ -126,18 +126,18 @@ void Actor::DragonSeek(float thresh, float turnMax)
 		{
 			bestArg = -1;
 			bestAngle = 360.0;
-			angleToTarget = atan2(target->origin.y - origin.y,
-				target->origin.x - origin.x);
+			angleToTarget = atan2(target->Origin.y - Origin.y,
+				target->Origin.x - Origin.x);
 			for (i = 0; i < 5; i++)
 			{
-				if (!tempTarget->args[i])
+				if (!tempTarget->Args[i])
 				{
 					continue;
 				}
 				search = -1;
-				mo = P_FindMobjFromTID(tempTarget->args[i], &search);
-				angleToSpot = atan2(mo->origin.y - origin.y,
-					mo->origin.x - origin.x);
+				mo = P_FindMobjFromTID(tempTarget->Args[i], &search);
+				angleToSpot = atan2(mo->Origin.y - Origin.y,
+					mo->Origin.x - Origin.x);
 				delta = fabs(AngleMod180(angleToSpot - angleToTarget));
 				if (delta < bestAngle)
 				{
@@ -148,7 +148,7 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			if (bestArg != -1)
 			{
 				search = -1;
-				specialmobj1 = P_FindMobjFromTID(tempTarget->args[bestArg],
+				specialmobj1 = P_FindMobjFromTID(tempTarget->Args[bestArg],
 					&search);
 			}
 		}
@@ -158,9 +158,9 @@ void Actor::DragonSeek(float thresh, float turnMax)
 			{
 				i = (P_Random() >> 2) % 5;
 			}
-			while (!tempTarget->args[i]);
+			while (!tempTarget->Args[i]);
 			search = -1;
-			specialmobj1 = P_FindMobjFromTID(tempTarget->args[i], &search);
+			specialmobj1 = P_FindMobjFromTID(tempTarget->Args[i], &search);
 		}
 	}
 }
@@ -179,7 +179,7 @@ void Actor::A_DragonInitFlight(void)
 	do
 	{
 		// find the first tid identical to the dragon's tid
-		specialmobj1 = P_FindMobjFromTID(tid, &search);
+		specialmobj1 = P_FindMobjFromTID(TID, &search);
 		if (search == -1)
 		{
 			SetState(SpawnState);
@@ -209,15 +209,15 @@ void Actor::A_DragonFlight(void)
 			target = NULL;
 			return;
 		}
-		angle = atan2(target->origin.y - origin.y,
-			target->origin.x - origin.x);
-		if (fabs(AngleMod180(angles.yaw - angle)) < 45.0 / 2.0
+		angle = atan2(target->Origin.y - Origin.y,
+			target->Origin.x - Origin.x);
+		if (fabs(AngleMod180(Angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange())
 		{
 			target->Damage(self, self, HITDICE(8));
 			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
 		}
-		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
+		else if (fabs(AngleMod180(Angles.yaw - angle)) <= 20.0)
 		{
 			SetState(MissileState);
 			StartSoundName(self, 'DragonAttack', CHAN_WEAPON);
@@ -283,7 +283,7 @@ void Actor::A_DragonPain(void)
 
 void Actor::A_DragonCheckCrash(void)
 {
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		SetState(S_DRAGON_CRASH1);
 	}
@@ -304,12 +304,12 @@ void Actor::A_DragonFX2(void)
 	delay = 0.5 + Random();
 	for (i = 1 + (P_Random() & 3); i; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 64.0,
-			origin.y + (Random() - 0.5) * 64.0,
-			origin.z + (Random() - 0.5) * 16.0, DragonFX2);
+		mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 64.0,
+			Origin.y + (Random() - 0.5) * 64.0,
+			Origin.z + (Random() - 0.5) * 16.0, DragonFX2);
 		if (mo)
 		{
-			mo->time = delay + Random() * 0.2 * itof(i);
+			mo->StateTime = delay + Random() * 0.2 * itof(i);
 			mo->target = target;
 		}
 	}
@@ -318,6 +318,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

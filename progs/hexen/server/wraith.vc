@@ -50,7 +50,7 @@
 
 void Actor::A_WraithInit(void)
 {
-	origin.z += 48.0;
+	Origin.z += 48.0;
 	special1 = 0;	// index into floatbob
 }
 
@@ -66,7 +66,7 @@ void Actor::A_WraithRaiseInit(void)
 	bNonShootable = false;
 	bShootable = true;
 	bSolid = true;
-	floorclip = Height;
+	FloorClip = Height;
 }
 
 //============================================================================
@@ -114,22 +114,22 @@ void Actor::A_WraithFX2(void)
 
 	for (i = 0; i < 2; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, WraithSparkDrip);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, WraithSparkDrip);
 		if (mo)
 		{
 			if (Random() < 0.5)
 			{
-				angle = AngleMod360(angles.yaw + Random() * 90.0);
+				angle = AngleMod360(Angles.yaw + Random() * 90.0);
 			}
 			else
 			{
-				angle = AngleMod360(angles.yaw - Random() * 90.0);
+				angle = AngleMod360(Angles.yaw - Random() * 90.0);
 			}
-			mo->velocity.z = 0.0;
-			mo->velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
-			mo->velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
+			mo->Velocity.z = 0.0;
+			mo->Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
+			mo->Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
 			mo->target = this;
-			mo->floorclip = 10.0;
+			mo->FloorClip = 10.0;
 		}
 	}
 }
@@ -150,12 +150,12 @@ void Actor::A_WraithFX3(void)
 
 	for (i = 0; i < numdropped; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z, WraithFX3);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, WraithFX3);
 		if (mo)
 		{
-			mo->origin.x += (Random() - 0.5) * 8.0;
-			mo->origin.y += (Random() - 0.5) * 8.0;
-			mo->origin.z += Random() * 4.0;
+			mo->Origin.x += (Random() - 0.5) * 8.0;
+			mo->Origin.y += (Random() - 0.5) * 8.0;
+			mo->Origin.z += Random() * 4.0;
 			mo->target = this;
 		}
 	}
@@ -198,23 +198,23 @@ void Actor::A_WraithFX4(void)
 
 	if (spawn4)
 	{
-		mo = SpawnActor(origin, WraithFleshDrip1);
+		mo = SpawnActor(Origin, WraithFleshDrip1);
 		if (mo)
 		{
-			mo.origin.x += (Random() - 0.5) * 16.0;
-			mo.origin.y += (Random() - 0.5) * 16.0;
-			mo.origin.z += Random() * 4.0;
+			mo.Origin.x += (Random() - 0.5) * 16.0;
+			mo.Origin.y += (Random() - 0.5) * 16.0;
+			mo.Origin.z += Random() * 4.0;
 			mo.target = this;
 		}
 	}
 	if (spawn5)
 	{
-		mo = SpawnActor(origin, WraithFleshDrip2);
+		mo = SpawnActor(Origin, WraithFleshDrip2);
 		if (mo)
 		{
-			mo.origin.x += (Random() - 0.5) * 8.0;
-			mo.origin.y += (Random() - 0.5) * 8.0;
-			mo.origin.z += Random() * 4.0;
+			mo.Origin.x += (Random() - 0.5) * 8.0;
+			mo.Origin.y += (Random() - 0.5) * 8.0;
+			mo.Origin.z += Random() * 4.0;
 			mo.target = this;
 		}
 	}
@@ -230,9 +230,9 @@ void Actor::A_WraithChase(void)
 {
 	int weaveindex = special1;
 
-	origin.z += FloatBobOffsets[weaveindex];
+	Origin.z += FloatBobOffsets[weaveindex];
 	special1 = (weaveindex + 2) & 63;
-//  if (actor->floorclip > 0)
+//  if (actor->FloorClip > 0)
 //  {
 //      SetState(S_WRAITH_RAISE2);
 //      return;
@@ -280,6 +280,9 @@ void Actor::A_WraithMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

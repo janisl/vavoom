@@ -75,16 +75,19 @@ void Actor::A_DripBlood(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 8.0,
-		origin.y + (Random() - Random()) * 8.0, origin.z, Blood);
-	mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
-	mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 8.0,
+		Origin.y + (Random() - Random()) * 8.0, Origin.z, Blood);
+	mo->Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo->bLowGravity = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

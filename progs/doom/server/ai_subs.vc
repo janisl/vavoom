@@ -185,8 +185,8 @@ boolean Actor::LookForMonsters(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo.origin.y - origin.y,
-				mo.origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
+				mo.Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
@@ -239,8 +239,8 @@ boolean Actor::LookForMonsters2(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(mo.origin.y - origin.y,
-				mo.origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(mo.Origin.y - Origin.y,
+				mo.Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
@@ -317,8 +317,8 @@ boolean Actor::LookForPlayers(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->mo->origin.y - origin.y,
-				P->mo->origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(P->mo->Origin.y - Origin.y,
+				P->mo->Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
@@ -360,8 +360,8 @@ boolean Actor::StepMove(void)
 		Error("Weird movedir!");
 #endif
 
-	tryx = origin.x + Speed * frametime * xspeed[movedir];
-	tryy = origin.y + Speed * frametime * yspeed[movedir];
+	tryx = Origin.x + StepSpeed * xspeed[movedir];
+	tryy = Origin.y + StepSpeed * yspeed[movedir];
 
 	if (!P_TryMove(this, tryx, tryy))
 	{
@@ -369,10 +369,10 @@ boolean Actor::StepMove(void)
 		if (bFloat && floatok)
 		{
 			// must adjust height
-			if (origin.z < saved_tmfloorz)
-				origin.z += FLOATSPEED * frametime;
+			if (Origin.z < saved_tmfloorz)
+				Origin.z += FLOATSPEED * frametime;
 			else
-				origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * frametime;
 
 			bInFloat = true;
 			return true;
@@ -403,7 +403,7 @@ boolean Actor::StepMove(void)
 
 	if (!bFloat)
 	{
-		origin.z = floorz;
+		Origin.z = FloorZ;
 	}
 	return true;
 }
@@ -456,8 +456,8 @@ void Actor::NewChaseDir(void)
 	olddir = movedir;
 	turnaround = opposite[olddir];
 
-	deltax = target->origin.x - origin.x;
-	deltay = target->origin.y - origin.y;
+	deltax = target->Origin.x - Origin.x;
+	deltay = target->Origin.y - Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -563,6 +563,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

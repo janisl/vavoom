@@ -130,8 +130,8 @@ void Actor::A_KoraxChase(void)
 		spot = P_FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, &search);
 		if (spot)
 		{
-			P_Teleport(this, spot->origin.x, spot->origin.y,
-				spot->angles.yaw, true);
+			P_Teleport(this, spot->Origin.x, spot->Origin.y,
+				spot->Angles.yaw, true);
 		}
 
 		StartACS(249, 0, &args[0], self, NULL, 0);
@@ -159,8 +159,8 @@ void Actor::A_KoraxChase(void)
 			spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &special1);
 			if (spot)
 			{
-				P_Teleport(this, spot->origin.x, spot->origin.y,
-					spot->angles.yaw, true);
+				P_Teleport(this, spot->Origin.x, spot->Origin.y,
+					spot->Angles.yaw, true);
 			}
 		}
 	}
@@ -194,10 +194,10 @@ void Actor::KoraxFire1(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM1_HEIGHT;
+	ang = AngleMod360(Angles.yaw - KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM1_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -211,10 +211,10 @@ void Actor::KoraxFire2(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM2_HEIGHT;
+	ang = AngleMod360(Angles.yaw - KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM2_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -228,10 +228,10 @@ void Actor::KoraxFire3(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw - KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM3_HEIGHT;
+	ang = AngleMod360(Angles.yaw - KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM3_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -245,10 +245,10 @@ void Actor::KoraxFire4(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM4_HEIGHT;
+	ang = AngleMod360(Angles.yaw + KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM4_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -262,10 +262,10 @@ void Actor::KoraxFire5(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM5_HEIGHT;
+	ang = AngleMod360(Angles.yaw + KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM5_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -279,10 +279,10 @@ void Actor::KoraxFire6(classid type)
 	float ang;
 	float x, y, z;
 
-	ang = AngleMod360(angles.yaw + KORAX_DELTAANGLE);
-	x = origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
-	y = origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
-	z = origin.z - floorclip + KORAX_ARM6_HEIGHT;
+	ang = AngleMod360(Angles.yaw + KORAX_DELTAANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM6_HEIGHT;
 	mo = SpawnKoraxMissile(x, y, z, this, target, type);
 }
 
@@ -352,10 +352,10 @@ void Actor::A_KoraxCommand(void)
 	StartSoundName(self, 'KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
-	ang = AngleMod360(angles.yaw - 90.0);
-	x = origin.x + KORAX_COMMAND_OFFSET * cos(ang);
-	y = origin.y + KORAX_COMMAND_OFFSET * sin(ang);
-	z = origin.z + KORAX_COMMAND_HEIGHT;
+	ang = AngleMod360(Angles.yaw - 90.0);
+	x = Origin.x + KORAX_COMMAND_OFFSET * cos(ang);
+	y = Origin.y + KORAX_COMMAND_OFFSET * sin(ang);
+	z = Origin.z + KORAX_COMMAND_HEIGHT;
 	P_SpawnMobj(x, y, z, KoraxBolt);
 
 	if (Health <= (spawnhealth >> 1))
@@ -403,15 +403,15 @@ void Actor::KSpiritInit(Actor korax)
 
 	specialmobj1 = &korax;	// Swarm around korax
 	special2 = 32 + (P_Random() & 7);	// Float bob index
-	args[0] = 10;	// initial turn value
-	args[1] = 0;	// initial look angle
+	Args[0] = 10;	// initial turn value
+	Args[1] = 0;	// initial look angle
 
 	// Spawn a tail for spirit
-	tail = P_SpawnMobj(origin.x, origin.y, origin.z, HolyTail);
+	tail = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
 	tail->specialmobj2 = this;	// parent
 	for (i = 1; i < 3; i++)
 	{
-		next = P_SpawnMobj(origin.x, origin.y, origin.z, HolyTail);
+		next = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HolyTail);
 		next->SetState(next->SpawnState + 1);
 		tail->specialmobj1 = next;
 		tail = next;
@@ -487,23 +487,23 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 	if (dir)
 	{
 		// Turn clockwise
-		angles.yaw = AngleMod360(angles.yaw + delta);
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
 	}
 	else
 	{
 		// Turn counter clockwise
-		angles.yaw = AngleMod360(angles.yaw - delta);
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
 	}
-	angle = angles.yaw;
-	velocity.x = Speed * cos(angle);
-	velocity.y = Speed * sin(angle);
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
 
 	if (!(level->tictime & 15) ||
-		origin.z > tempTarget->origin.z + tempTarget->Height ||
-		origin.z + Height < tempTarget->origin.z)
+		Origin.z > tempTarget->Origin.z + tempTarget->Height ||
+		Origin.z + Height < tempTarget->Origin.z)
 	{
-		newZ = tempTarget->origin.z + Random() * tempTarget->Height;
-		deltaZ = newZ - origin.z;
+		newZ = tempTarget->Origin.z + Random() * tempTarget->Height;
+		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
 			if (deltaZ > 0.0)
@@ -521,7 +521,7 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 		{
 			dist = 1.0;
 		}
-		velocity.z = deltaZ / dist;
+		Velocity.z = deltaZ / dist;
 	}
 	return;
 }
@@ -540,16 +540,16 @@ void Actor::A_KSpiritWeave(void)
 
 	weaveXY = special2 >> 16;
 	weaveZ = special2 & 0xFFFF;
-	angle = AngleMod360(angles.yaw + 90.0);
-	newX = origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
-	newY = origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	angle = AngleMod360(Angles.yaw + 90.0);
+	newX = Origin.x - cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	weaveXY = (weaveXY + (P_Random() % 5)) & 63;
 	newX += cos(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	newY += sin(angle) * FloatBobOffsets[weaveXY] * 4.0;
 	P_TryMove(this, newX, newY);
-	origin.z -= FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z -= FloatBobOffsets[weaveZ] * 2.0;
 	weaveZ = (weaveZ + (P_Random() % 5)) & 63;
-	origin.z += FloatBobOffsets[weaveZ] * 2.0;
+	Origin.z += FloatBobOffsets[weaveZ] * 2.0;
 	special2 = weaveZ + (weaveXY << 16);
 }
 
@@ -570,7 +570,7 @@ void Actor::A_KSpiritRoam(void)
 	{
 		if (specialmobj1)
 		{
-			A_KSpiritSeeker(itof(args[0]), itof(args[0]) * 2.0);
+			A_KSpiritSeeker(itof(Args[0]), itof(Args[0]) * 2.0);
 		}
 		A_KSpiritWeave();
 		if (P_Random() < 50)
@@ -592,11 +592,11 @@ void Actor::A_KBoltRaise(void)
 	float z;
 
 	// Spawn a child upward
-	z = origin.z + KORAX_BOLT_HEIGHT;
+	z = Origin.z + KORAX_BOLT_HEIGHT;
 
-	if (z + KORAX_BOLT_HEIGHT < ceilingz)
+	if (z + KORAX_BOLT_HEIGHT < CeilingZ)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, z, KoraxBolt);
+		mo = P_SpawnMobj(Origin.x, Origin.y, z, KoraxBolt);
 		if (mo)
 		{
 			mo->special1 = KORAX_BOLT_LIFETIME;
@@ -626,6 +626,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.14  2002/02/02 19:17:26  dj_jl
 //  Replacing pointers with references, beautification.
 //

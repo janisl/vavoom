@@ -71,16 +71,16 @@ int Actor::UpdateMorphedMonster(int tics)
 	default:
 		break;
 	}
-	oldOrigin = origin;
-	oldAngle = angles.yaw;
+	oldOrigin = Origin;
+	oldAngle = Angles.yaw;
 	oldTarget = target;
-	oldSpecial = special;
-	oldTID = tid;
-	oldArgs[0] = args[0];
-	oldArgs[1] = args[1];
-	oldArgs[2] = args[2];
-	oldArgs[3] = args[3];
-	oldArgs[4] = args[4];
+	oldSpecial = Special;
+	oldTID = TID;
+	oldArgs[0] = Args[0];
+	oldArgs[1] = Args[1];
+	oldArgs[2] = Args[2];
+	oldArgs[3] = Args[3];
+	oldArgs[4] = Args[4];
 
 	P_UnsetThingPosition(self);
 	mo = SpawnActor(oldOrigin, originalClass);
@@ -95,15 +95,15 @@ int Actor::UpdateMorphedMonster(int tics)
 	}
 	P_RemoveMobjFromTIDList(this);
 	SetState(S_FREETARGMOBJ);
-	mo.angles.yaw = oldAngle;
+	mo.Angles.yaw = oldAngle;
 	mo.target = oldTarget;
-	mo.tid = oldTID;
-	mo.special = oldSpecial;
-	mo.args[0] = oldArgs[0];
-	mo.args[1] = oldArgs[1];
-	mo.args[2] = oldArgs[2];
-	mo.args[3] = oldArgs[3];
-	mo.args[4] = oldArgs[4];
+	mo.TID = oldTID;
+	mo.Special = oldSpecial;
+	mo.Args[0] = oldArgs[0];
+	mo.Args[1] = oldArgs[1];
+	mo.Args[2] = oldArgs[2];
+	mo.Args[3] = oldArgs[3];
+	mo.Args[4] = oldArgs[4];
 	P_InsertMobjIntoTIDList(&mo, oldTID);
 	fog = SpawnActor(oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT),
 		TeleportFog);
@@ -173,15 +173,18 @@ void Actor::A_PigAttack(void)
 void Actor::A_PigPain(void)
 {
 	A_Pain();
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
-		velocity.z = 3.5 * 35.0;
+		Velocity.z = 3.5 * 35.0;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

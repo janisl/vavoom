@@ -81,10 +81,10 @@ void Actor::A_FastChase(void)
 	if (gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
-		time *= 0.5;
-		if (time < 0.1)
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
 		{
-			time = 0.1;
+			StateTime = 0.1;
 		}
 	}
 
@@ -93,15 +93,15 @@ void Actor::A_FastChase(void)
 	//
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
@@ -136,21 +136,21 @@ void Actor::A_FastChase(void)
 	else
 	{
 		special2 = 0;
-		velocity.x = 0.0;
-		velocity.y = 0.0;
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
 		dist = MobjDist(self, *target);
 		if (dist < CLASS_BOSS_STRAFE_RANGE)
 		{
 			if (P_Random() < 100)
 			{
-				ang = atan2(target->origin.y - origin.y,
-					target->origin.x - origin.x);
+				ang = atan2(target->Origin.y - Origin.y,
+					target->Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
-				velocity.x = 13.0 * cos(ang) * 35.0;
-				velocity.y = 13.0 * sin(ang) * 35.0;
+				Velocity.x = 13.0 * cos(ang) * 35.0;
+				Velocity.y = 13.0 * sin(ang) * 35.0;
 				special2 = 3;	// strafe time
 			}
 		}
@@ -201,7 +201,7 @@ void Actor::A_FastChase(void)
 
 void Actor::A_FSwordAttack2(void)
 {
-	float angle = angles.yaw;
+	float angle = Angles.yaw;
 
 	SpawnMissileAngle(this, FighterSwordMissile,
 		AngleMod360(angle + 45.0 / 4.0), 0.0);
@@ -283,7 +283,7 @@ void Actor::A_MStaffAttack2(void)
 {
 	float angle;
 
-	angle = angles.yaw;
+	angle = Angles.yaw;
 	MStaffSpawn2(angle);
 	MStaffSpawn2(AngleMod360(angle - 5.0));
 	MStaffSpawn2(AngleMod360(angle + 5.0));
@@ -306,6 +306,9 @@ void Actor::A_MageAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.15  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

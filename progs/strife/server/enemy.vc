@@ -37,7 +37,7 @@ void A_Look(mobj_t * actor)
 	int sound;
 
 	actor->threshold = 0;	// any shot will wake up
-	targ = Actor(actor->subsector->sector->SoundTarget);
+	targ = Actor(actor->Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
@@ -109,16 +109,16 @@ void A_Chase(mobj_t * actor)
 	// turn towards movement direction if not there yet
 	if (actor->movedir < 8)
 	{
-		actor->angles.yaw = itof(ftoi(actor->angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(actor->angles.yaw - itof(actor->movedir) * 45.0);
+		actor->Angles.yaw = itof(ftoi(actor->Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(actor->Angles.yaw - itof(actor->movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw - 45.0);
+			actor->Angles.yaw = AngleMod360(actor->Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			actor->angles.yaw = AngleMod360(actor->angles.yaw + 45.0);
+			actor->Angles.yaw = AngleMod360(actor->Angles.yaw + 45.0);
 		}
 	}
 
@@ -205,12 +205,12 @@ void A_FaceTarget(mobj_t * actor)
 
 	actor->bAmbush = false;
 
-	actor->angles.yaw = atan2(actor->target->origin.y - actor->origin.y,
-		actor->target->origin.x - actor->origin.x);
+	actor->Angles.yaw = atan2(actor->target->Origin.y - actor->Origin.y,
+		actor->target->Origin.x - actor->Origin.x);
 
 	if (actor->target->Translucency)
 	{
-		actor->angles.yaw = AngleMod360(actor->angles.yaw +
+		actor->Angles.yaw = AngleMod360(actor->Angles.yaw +
 			(Random() - Random()) * 45.0);
 	}
 }
@@ -312,6 +312,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

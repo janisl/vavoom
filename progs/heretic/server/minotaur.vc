@@ -55,10 +55,10 @@ void Actor::A_MinotaurAtk1(void)
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(4));
-		if (target->player)
+		if (target->bIsPlayer)
 		{
 			// Squish the player
-			target->player->deltaviewheight = -16.0;
+			target->Player->deltaviewheight = -16.0;
 		}
 	}
 }
@@ -81,8 +81,8 @@ void Actor::A_MinotaurDecide(void)
 	}
 	StartSoundName(self, 'MinotaurSight', CHAN_VOICE);
 	dist = MobjDist(self, *target);
-	if (target->origin.z + target->Height > origin.z &&
-		target->origin.z + target->Height < origin.z + Height &&
+	if (target->Origin.z + target->Height > Origin.z &&
+		target->Origin.z + target->Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
@@ -90,10 +90,10 @@ void Actor::A_MinotaurDecide(void)
 		SetStateNF(S_MNTR_ATK4_1);
 		bSkullFly = true;
 		A_FaceTarget();
-		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(target->Origin - Origin) * MNTR_CHARGE_SPEED;
 		special1 = 35 / 2;	// Charge duration
 	}
-	else if (target->origin.z == target->floorz &&
+	else if (target->Origin.z == target->FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
@@ -137,8 +137,8 @@ void Actor::A_MinotaurAtk2(void)
 	if (mo)
 	{
 		StartSoundName(*mo, 'MinotaurAttack2', CHAN_WEAPON);
-		VectorAngles(&mo->velocity, &ang);
-		angle = mo->angles.yaw;
+		VectorAngles(&mo->Velocity, &ang);
+		angle = mo->Angles.yaw;
 		SpawnMissileAngles(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
 		SpawnMissileAngles(this, MinotaurMissile,
@@ -169,10 +169,10 @@ void Actor::A_MinotaurAtk3(void)
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(5));
-		if (target->player)
+		if (target->Player)
 		{
 			// Squish the player
-			target->player->deltaviewheight = -16.0;
+			target->Player->deltaviewheight = -16.0;
 		}
 	}
 	else
@@ -202,8 +202,8 @@ void Actor::A_MinotaurCharge(void)
 
 	if (special1)
 	{
-		puff = P_SpawnMobj(origin.x, origin.y, origin.z, PhoenixPuff);
-		puff->velocity.z = 2.0 * 35.0;
+		puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PhoenixPuff);
+		puff->Velocity.z = 2.0 * 35.0;
 		special1--;
 	}
 	else
@@ -225,18 +225,21 @@ void Actor::A_MntrFloorFire(void)
 	float i1;
 	float i2;
 
-	origin.z = floorz;
-	i1 = origin.x + (Random() - Random()) * 4.0;
-	i2 = origin.y + (Random() - Random()) * 4.0;
+	Origin.z = FloorZ;
+	i1 = Origin.x + (Random() - Random()) * 4.0;
+	i2 = Origin.y + (Random() - Random()) * 4.0;
 	mo = P_SpawnMobj(i1, i2, ONFLOORZ, MinotaurFloorFire2);
 	mo->target = target;
-	mo->velocity.x = 0.00001;	// Force block checking
+	mo->Velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(mo);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.18  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

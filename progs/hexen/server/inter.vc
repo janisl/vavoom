@@ -183,7 +183,7 @@ boolean Actor::GiveMana(int mana, int count)
 	{
 		Error("Actor::GiveMana: bad type %i", mana);
 	}
-	if (player->mana[mana] == MAX_MANA)
+	if (Player->mana[mana] == MAX_MANA)
 	{
 		return false;
 	}
@@ -192,17 +192,17 @@ boolean Actor::GiveMana(int mana, int count)
 		// extra mana in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevMana = player->mana[mana];
+	prevMana = Player->mana[mana];
 
-	player->mana[mana] += count;
-	if (player->mana[mana] > MAX_MANA)
+	Player->mana[mana] += count;
+	if (Player->mana[mana] > MAX_MANA)
 	{
-		player->mana[mana] = MAX_MANA;
+		Player->mana[mana] = MAX_MANA;
 	}
-	if (player->pclass == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
+	if (Player->pclass == PCLASS_FIGHTER && Player->readyweapon == WP_SECOND
 		&& mana == MANA_1 && prevMana <= 0)
 	{
-		SetFighterAxe(player);
+		SetFighterAxe(Player);
 	}
 	return true;
 }
@@ -221,7 +221,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 	boolean gaveWeapon;
 
 	remove = true;
-	if (player->pclass != weaponClass)
+	if (Player->pclass != weaponClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -247,11 +247,11 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (player->weaponowned[weaponType])
+		if (Player->weaponowned[weaponType])
 		{
 			return;
 		}
-		player->weaponowned[weaponType] = true;
+		Player->weaponowned[weaponType] = true;
 		if (weaponType == WP_SECOND)
 		{
 			GiveMana(MANA_1, 25);
@@ -260,7 +260,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 		{
 			GiveMana(MANA_2, 25);
 		}
-		player->pendingweapon = weaponType;
+		Player->pendingweapon = weaponType;
 		remove = false;
 	}
 	else
@@ -274,18 +274,18 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 		{
 			gaveMana = GiveMana(MANA_2, 25);
 		}
-		if (player->weaponowned[weaponType])
+		if (Player->weaponowned[weaponType])
 		{
 			gaveWeapon = false;
 		}
 		else
 		{
 			gaveWeapon = true;
-			player->weaponowned[weaponType] = true;
-			if (weaponType > player->readyweapon)
+			Player->weaponowned[weaponType] = true;
+			if (weaponType > Player->readyweapon)
 			{
 				// Only switch to more powerful weapons
-				player->pendingweapon = weaponType;
+				Player->pendingweapon = weaponType;
 			}
 		}
 		if (!gaveWeapon && !gaveMana)
@@ -295,11 +295,11 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 		}
 	}
 
-	cprint(player, "%s\n", message);
-	if (weapon.special)
+	cprint(Player, "%s\n", message);
+	if (weapon.Special)
 	{
-		ExecuteLineSpecial(weapon.special, &weapon.args[0], NULL, 0, this);
-		weapon.special = 0;
+		ExecuteLineSpecial(weapon.Special, &weapon.Args[0], NULL, 0, this);
+		weapon.Special = 0;
 	}
 
 	if (remove)
@@ -314,7 +314,7 @@ void Actor::TryPickupWeapon(int weaponClass, int weaponType,
 		}
 	}
 
-	player->bonuscount += BONUSADD;
+	Player->bonuscount += BONUSADD;
 	StartSoundName(self, 'PickupWeapon', CHAN_ITEM);
 }
 
@@ -335,7 +335,7 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	remove = true;
 	checkAssembled = true;
 	gaveWeapon = false;
-	if (player->pclass != matchClass)
+	if (Player->pclass != matchClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -354,7 +354,7 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (player->pieces & pieceValue)
+		if (Player->pieces & pieceValue)
 		{
 			// Already has the piece
 			return;
@@ -368,7 +368,7 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	{
 		// Deathmatch or single player game
 		gaveMana = GiveMana(MANA_1, 20) + GiveMana(MANA_2, 20);
-		if (player->pieces & pieceValue)
+		if (Player->pieces & pieceValue)
 		{
 			// Already has the piece, check if mana needed
 			if (!gaveMana)
@@ -381,11 +381,11 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 	}
 
 	// Pick up the weapon piece
-	if (pieceMobj.special)
+	if (pieceMobj.Special)
 	{
-		ExecuteLineSpecial(pieceMobj.special, &pieceMobj.args[0], NULL, 0,
+		ExecuteLineSpecial(pieceMobj.Special, &pieceMobj.Args[0], NULL, 0,
 			this);
-		pieceMobj.special = 0;
+		pieceMobj.Special = 0;
 	}
 	if (remove)
 	{
@@ -398,29 +398,29 @@ void Actor::TryPickupWeaponPiece(int matchClass, int pieceValue,
 			P_RemoveMobj(&pieceMobj);
 		}
 	}
-	player->bonuscount += BONUSADD;
+	Player->bonuscount += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
 	{
-		player->pieces |= pieceValue;
-		if (player->pieces == (WPIECE1 | WPIECE2 | WPIECE3))
+		Player->pieces |= pieceValue;
+		if (Player->pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 		{
 			gaveWeapon = true;
-			player->weaponowned[WP_FOURTH] = true;
-			player->pendingweapon = WP_FOURTH;
+			Player->weaponowned[WP_FOURTH] = true;
+			Player->pendingweapon = WP_FOURTH;
 		}
 	}
 
 	if (gaveWeapon)
 	{
-		cprint(player, "%s\n", fourthWeaponText[matchClass]);
+		cprint(Player, "%s\n", fourthWeaponText[matchClass]);
 		// Play the build-sound full volume for all players
 		StartSoundName(none, 'WeaponBuild', CHAN_ITEM);
 	}
 	else
 	{
-		cprint(player, "%s\n", weaponPieceText[matchClass]);
+		cprint(Player, "%s\n", weaponPieceText[matchClass]);
 		StartSoundName(none, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
 	}
 }
@@ -438,20 +438,20 @@ boolean Actor::GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (player->morphTics)
+	if (Player->morphTics)
 	{
 		max = MAXMORPHHEALTH;
 	}
-	if (player->health >= max)
+	if (Player->health >= max)
 	{
 		return false;
 	}
-	player->health += num;
-	if (player->health > max)
+	Player->health += num;
+	if (Player->health > max)
 	{
-		player->health = max;
+		Player->health = max;
 	}
-	Health = player->health;
+	Health = Player->health;
 	return true;
 }
 
@@ -470,27 +470,27 @@ boolean Actor::GiveArmor(int armortype, int amount)
 
 	if (amount == -1)
 	{
-		hits = ArmorIncrement[player->pclass * NUMARMOR + armortype];
-		if (player->armorpoints[armortype] >= hits)
+		hits = ArmorIncrement[Player->pclass * NUMARMOR + armortype];
+		if (Player->armorpoints[armortype] >= hits)
 		{
 			return false;
 		}
 		else
 		{
-			player->armorpoints[armortype] = hits;
+			Player->armorpoints[armortype] = hits;
 		}
 	}
 	else
 	{
 		hits = itof(amount) * 5.0;
-		totalArmor = player->armorpoints[ARMOR_ARMOR]
-			+ player->armorpoints[ARMOR_SHIELD]
-			+ player->armorpoints[ARMOR_HELMET]
-			+ player->armorpoints[ARMOR_AMULET]
-			+ AutoArmorSave[player->pclass];
-		if (totalArmor < ArmorMax[player->pclass] * 5.0)
+		totalArmor = Player->armorpoints[ARMOR_ARMOR]
+			+ Player->armorpoints[ARMOR_SHIELD]
+			+ Player->armorpoints[ARMOR_HELMET]
+			+ Player->armorpoints[ARMOR_AMULET]
+			+ AutoArmorSave[Player->pclass];
+		if (totalArmor < ArmorMax[Player->pclass] * 5.0)
 		{
-			player->armorpoints[armortype] += hits;
+			Player->armorpoints[armortype] += hits;
 		}
 		else
 		{
@@ -508,12 +508,12 @@ boolean Actor::GiveArmor(int armortype, int amount)
 
 boolean Actor::GiveKey(int key)
 {
-	if (player->keys & (1 << key))
+	if (Player->keys & (1 << key))
 	{
 		return false;
 	}
-	player->bonuscount += BONUSADD;
-	player->keys |= 1 << key;
+	Player->bonuscount += BONUSADD;
+	Player->keys |= 1 << key;
 	return true;
 }
 
@@ -529,14 +529,14 @@ boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->powers[power] = ftoi(INVULNTIME * 35.0);
 		bInvulnerable = true;
-		if (player->pclass == PCLASS_MAGE)
+		if (Player->pclass == PCLASS_MAGE)
 		{
 			bReflective = true;
 		}
@@ -544,51 +544,51 @@ boolean Actor::GivePower(int power)
 	}
 	if (power == pw_flight)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
+		Player->powers[power] = ftoi(FLIGHTTIME * 35.0);
 		bFly = true;
 		bNoGravity = true;
-		if (origin.z <= floorz)
+		if (Origin.z <= FloorZ)
 		{
-			player->flyheight = 10.0;	// thrust the player in the air a bit
+			Player->flyheight = 10.0;	// thrust the player in the air a bit
 		}
 		return (true);
 	}
 	if (power == pw_infrared)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(INFRATIME * 35.0);
+		Player->powers[power] = ftoi(INFRATIME * 35.0);
 		return true;
 	}
 	if (power == pw_speed)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(SPEEDTIME * 35.0);
+		Player->powers[power] = ftoi(SPEEDTIME * 35.0);
 		return true;
 	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		player->powers[power] = ftoi(MAULATORTIME * 35.0);
+		Player->powers[power] = ftoi(MAULATORTIME * 35.0);
 		return true;
 	}
-	if (player->powers[power])
+	if (Player->powers[power])
 	{
 		return false;	// already got it
 	}
-	player->powers[power] = 1;
+	Player->powers[power] = 1;
 	return true;
 }
 
@@ -608,34 +608,34 @@ boolean Actor::GiveArtifact(int arti)
 
 	slidePointer = false;
 	i = 0;
-	while (player->inventory[i].type != arti && i < player->inventorySlotNum)
+	while (Player->inventory[i].type != arti && i < Player->inventorySlotNum)
 	{
 		i++;
 	}
-	if (i == player->inventorySlotNum)
+	if (i == Player->inventorySlotNum)
 	{
 		if (arti < arti_firstpuzzitem)
 		{
 			i = 0;
-			while (player->inventory[i].type < arti_firstpuzzitem
-				&& i < player->inventorySlotNum)
+			while (Player->inventory[i].type < arti_firstpuzzitem
+				&& i < Player->inventorySlotNum)
 			{
 				i++;
 			}
-			if (i != player->inventorySlotNum)
+			if (i != Player->inventorySlotNum)
 			{
-				for (j = player->inventorySlotNum; j > i; j--)
+				for (j = Player->inventorySlotNum; j > i; j--)
 				{
-					player->inventory[j].count =
-						player->inventory[j - 1].count;
-					player->inventory[j].type = player->inventory[j - 1].type;
+					Player->inventory[j].count =
+						Player->inventory[j - 1].count;
+					Player->inventory[j].type = Player->inventory[j - 1].type;
 					slidePointer = true;
 				}
 			}
 		}
-		player->inventory[i].count = 1;
-		player->inventory[i].type = arti;
-		player->inventorySlotNum++;
+		Player->inventory[i].count = 1;
+		Player->inventory[i].type = arti;
+		Player->inventorySlotNum++;
 	}
 	else
 	{
@@ -644,27 +644,27 @@ boolean Actor::GiveArtifact(int arti)
 			// Can't carry more than 1 puzzle item in coop netplay
 			return false;
 		}
-		if (player->inventory[i].count >= 25)
+		if (Player->inventory[i].count >= 25)
 		{
 			// Player already has 25 of this item
 			return false;
 		}
-		player->inventory[i].count++;
+		Player->inventory[i].count++;
 	}
-	if (!player->artifactCount)
+	if (!Player->artifactCount)
 	{
-		player->readyArtifact = arti;
+		Player->readyArtifact = arti;
 	}
-	else if (slidePointer && i <= player->inv_ptr)
+	else if (slidePointer && i <= Player->inv_ptr)
 	{
-		player->inv_ptr++;
-		player->curpos++;
-		if (player->curpos > 6)
+		Player->inv_ptr++;
+		Player->curpos++;
+		if (Player->curpos > 6)
 		{
-			player->curpos = 6;
+			Player->curpos = 6;
 		}
 	}
-	player->artifactCount++;
+	Player->artifactCount++;
 	return true;
 }
 
@@ -678,24 +678,24 @@ void Actor::TryPickupArtifact(int artifactType, Actor artifact)
 {
 	if (GiveArtifact(artifactType))
 	{
-		if (artifact.special)
+		if (artifact.Special)
 		{
-			ExecuteLineSpecial(artifact.special, &artifact.args[0],
+			ExecuteLineSpecial(artifact.Special, &artifact.Args[0],
 				NULL, 0, NULL);
-			artifact.special = 0;
+			artifact.Special = 0;
 		}
-		player->bonuscount += BONUSADD;
+		Player->bonuscount += BONUSADD;
 		if (artifactType < arti_firstpuzzitem)
 		{
 			SetDormantArtifact(&artifact);
 			StartSoundName(artifact, 'PickupArtifact', CHAN_ITEM);
-			cprint(player, "%s\n", artifactMessages[artifactType]);
+			cprint(Player, "%s\n", artifactMessages[artifactType]);
 		}
 		else
 		{
 			// Puzzle item
 			StartSoundName(none, 'PickupItem', CHAN_ITEM);
-			cprint(player, "%s\n", artifactMessages[artifactType]);
+			cprint(Player, "%s\n", artifactMessages[artifactType]);
 			if (!netgame || deathmatch)
 			{
 				// Remove puzzle items if not cooperative netplay
@@ -738,35 +738,35 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ITEMHEALTH);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMHEALTH);
 		break;
 	case 'ARM1':
 		if (!Toucher.GiveArmor(ARMOR_ARMOR, -1))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ARMOR1);
+		cprint(Toucher.Player, "%s\n", TXT_ARMOR1);
 		break;
 	case 'ARM2':
 		if (!Toucher.GiveArmor(ARMOR_SHIELD, -1))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ARMOR2);
+		cprint(Toucher.Player, "%s\n", TXT_ARMOR2);
 		break;
 	case 'ARM3':
 		if (!Toucher.GiveArmor(ARMOR_HELMET, -1))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ARMOR3);
+		cprint(Toucher.Player, "%s\n", TXT_ARMOR3);
 		break;
 	case 'ARM4':
 		if (!Toucher.GiveArmor(ARMOR_AMULET, -1))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ARMOR4);
+		cprint(Toucher.Player, "%s\n", TXT_ARMOR4);
 		break;
 
 		// Keys
@@ -796,7 +796,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TextKeyMessages[KeyType]);
+		cprint(Toucher.Player, "%s\n", TextKeyMessages[KeyType]);
 		sound = 'PickupKey';
 		break;
 
@@ -906,14 +906,14 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_MANA_1);
+		cprint(Toucher.Player, "%s\n", TXT_MANA_1);
 		break;
 	case 'MAN2':
 		if (!Toucher.GiveMana(MANA_2, 15))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_MANA_2);
+		cprint(Toucher.Player, "%s\n", TXT_MANA_2);
 		break;
 	case 'MAN3':	// Double Mana Dodecahedron
 		if (!Toucher.GiveMana(MANA_1, 20))
@@ -927,7 +927,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			Toucher.GiveMana(MANA_2, 20);
 		}
-		cprint(Toucher.player, "%s\n", TXT_MANA_BOTH);
+		cprint(Toucher.Player, "%s\n", TXT_MANA_BOTH);
 		break;
 
 		// 2nd and 3rd Mage Weapons
@@ -989,10 +989,10 @@ void Actor::TouchSpecial(Actor Toucher)
 		Toucher.TryPickupWeaponPiece(PCLASS_MAGE, WPIECE3, self);
 		return;
 	}
-	if (special)
+	if (Special)
 	{
-		ExecuteLineSpecial(special, &args[0], NULL, 0, &Toucher);
-		special = 0;
+		ExecuteLineSpecial(Special, &Args[0], NULL, 0, &Toucher);
+		Special = 0;
 	}
 	if (KeyType == -1 || !netgame)
 	{
@@ -1006,13 +1006,16 @@ void Actor::TouchSpecial(Actor Toucher)
 			P_RemoveMobj(this);
 		}
 	}
-	Toucher.player->bonuscount += BONUSADD;
+	Toucher.Player->bonuscount += BONUSADD;
 	StartSoundName(Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/09 18:12:25  dj_jl
 //  Replaced identifying sprite name indexes with sprite names
 //

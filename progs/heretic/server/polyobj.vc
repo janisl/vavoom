@@ -582,7 +582,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 	float force;
 	PolyobjThinker pe;
 
-	if (!mobj->bShootable && !mobj->player)
+	if (!mobj->bShootable && !mobj->bIsPlayer)
 	{
 		return;
 	}
@@ -605,12 +605,12 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		force = 1.0;
 	}
 
-	mobj->velocity += force * thrustDir;
+	mobj->Velocity += force * thrustDir;
 	if (po->crush)
 	{
 		TVec testPos;
 
-		testPos = mobj->origin + force * thrustDir * frametime;
+		testPos = mobj->Origin + force * thrustDir * frametime;
 		if (!P_CheckRelPosition(mobj, testPos.x, testPos.y))
 		{
 			mobj->Damage(none, none, 3);
@@ -642,6 +642,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.7  2002/02/07 18:50:08  dj_jl
 //  Made CheckPosition shared.
 //

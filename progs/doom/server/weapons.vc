@@ -376,8 +376,8 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (player->mo->statenum == S_PLAY_ATK1 ||
-		player->mo->statenum == S_PLAY_ATK2)
+	if (player->mo->StateNum == S_PLAY_ATK1 ||
+		player->mo->StateNum == S_PLAY_ATK2)
 	{
 		player->mo->SetState(S_PLAY);
 	}
@@ -590,7 +590,7 @@ void Weapon::A_Punch(void)
 	if (player->powers[pw_strength])
 		damage *= 10;
 
-	aimAngles = player->mo->angles;
+	aimAngles = player->mo->Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 	dir = AimLineAttack(player->mo, aimAngles, MELEERANGE);
@@ -600,9 +600,9 @@ void Weapon::A_Punch(void)
 	if (linetarget)
 	{
 		StartSoundName(*player->mo, 'Punch', CHAN_WEAPON);
-		player->mo->angles.yaw = atan2(
-			linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw = atan2(
+			linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 		player->fixangle = 1;
 	}
 }
@@ -621,7 +621,7 @@ void Weapon::A_Saw(void)
 	TVec dir;
 
 	damage = 2 * (P_Random() % 10 + 1);
-	aimAng = player->mo->angles;
+	aimAng = player->mo->Angles;
 	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
@@ -637,23 +637,23 @@ void Weapon::A_Saw(void)
 	StartSoundName(*player->mo, 'ChainsawHit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(linetarget->origin.y - player->mo->origin.y,
-		linetarget->origin.x - player->mo->origin.x);
-	if (AngleMod360(angle - player->mo->angles.yaw) > 180.0)
+	angle = atan2(linetarget->Origin.y - player->mo->Origin.y,
+		linetarget->Origin.x - player->mo->Origin.x);
+	if (AngleMod360(angle - player->mo->Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - player->mo->angles.yaw) < -90.0 / 20.0)
-			player->mo->angles.yaw = angle + 90.0 / 21.0;
+		if (AngleMod360(angle - player->mo->Angles.yaw) < -90.0 / 20.0)
+			player->mo->Angles.yaw = angle + 90.0 / 21.0;
 		else
-			player->mo->angles.yaw = player->mo->angles.yaw - 90.0 / 20.0;
+			player->mo->Angles.yaw = player->mo->Angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (AngleMod360(angle - player->mo->angles.yaw) > 90.0 / 20.0)
-			player->mo->angles.yaw = angle - 90.0 / 21.0;
+		if (AngleMod360(angle - player->mo->Angles.yaw) > 90.0 / 20.0)
+			player->mo->Angles.yaw = angle - 90.0 / 21.0;
 		else
-			player->mo->angles.yaw += 90.0 / 20.0;
+			player->mo->Angles.yaw += 90.0 / 20.0;
 	}
-	player->mo->angles.yaw = AngleMod360(player->mo->angles.yaw);
+	player->mo->Angles.yaw = AngleMod360(player->mo->Angles.yaw);
 	player->mo->bJustAttacked = true;
 	player->fixangle = 1;
 }
@@ -850,8 +850,8 @@ void Weapon::A_FireGrenade(void)
 
 	player->ammo[player->w_ammo]--;
 
-	mo = P_SpawnMobj(player->mo->origin.x, player->mo->origin.y,
-		player->mo->origin.z + 32.0, missile_grenade);
+	mo = P_SpawnMobj(player->mo->Origin.x, player->mo->Origin.y,
+		player->mo->Origin.z + 32.0, missile_grenade);
 
 	if (mo->sound_sight)
 		StartSound(*mo, mo->sound_sight, CHAN_VOICE);
@@ -859,23 +859,23 @@ void Weapon::A_FireGrenade(void)
 	mo->target = player->mo;
 
 	//  See which target is to be aimed at
-	if (player->mo->angles.pitch)
+	if (player->mo->Angles.pitch)
 	{
 		TVec v_forward;
 		TVec v_right;
 		TVec v_up;
 
-		AngleVectors(&player->mo->angles, &v_forward, &v_right, &v_up);
-		mo->velocity = v_forward * mo->Speed + v_up * mo->Speed / 3.0 +
+		AngleVectors(&player->mo->Angles, &v_forward, &v_right, &v_up);
+		mo->Velocity = v_forward * mo->Speed + v_up * mo->Speed / 3.0 +
 			((Random() - 0.5) * 20.0) * v_right +
 			((Random() - 0.5) * 20.0) * v_up;
 	}
 	else
 	{
-		mo->velocity = Aim(player->mo, 16.0 * 64.0) * mo->Speed;
-		mo->velocity.z = mo->Speed / 3.0;
+		mo->Velocity = Aim(player->mo, 16.0 * 64.0) * mo->Speed;
+		mo->Velocity.z = mo->Speed / 3.0;
 	}
-	VectorAngles(&mo->velocity, &mo->angles);
+	VectorAngles(&mo->Velocity, &mo->Angles);
 
 	CheckMissileSpawn(mo);
 }
@@ -938,7 +938,7 @@ void Actor::A_BFGSpray(void)
 	// offset angles from its attack angle
 	for (i = 0; i < 40; i++)
 	{
-		aimAng = angles;
+		aimAng = Angles;
 		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / 40.0 * itof(i));
 
 		// target is the originator (player)
@@ -949,15 +949,15 @@ void Actor::A_BFGSpray(void)
 			continue;
 		}
 
-		emo = P_SpawnMobj(linetarget->origin.x, linetarget->origin.y,
-			linetarget->origin.z + linetarget->Height / 4.0, ExtraBFG);
+		emo = P_SpawnMobj(linetarget->Origin.x, linetarget->Origin.y,
+			linetarget->Origin.z + linetarget->Height / 4.0, ExtraBFG);
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
 		MSG_WriteByte(EF_DL_GBALL);
-		MSG_WriteShort(ftoi(emo->origin.x));
-		MSG_WriteShort(ftoi(emo->origin.y));
-		MSG_WriteShort(ftoi(emo->origin.z));
+		MSG_WriteShort(ftoi(emo->Origin.x));
+		MSG_WriteShort(ftoi(emo->Origin.y));
+		MSG_WriteShort(ftoi(emo->Origin.z));
 
 		damage = 0;
 		for (j = 0; j < 15; j++)
@@ -970,6 +970,9 @@ void Actor::A_BFGSpray(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

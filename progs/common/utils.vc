@@ -24,7 +24,7 @@
 //**************************************************************************
 
 #define MobjCenter(mobj)\
-	(mobj.origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.floorclip))
+	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
 
 #define avcpy(src, dst)\
 {\
@@ -91,7 +91,7 @@ float MobjDist2(MapObject mo1, MapObject mo2)
 {
 	TVec dir;
 
-	dir = mo2.origin - mo1.origin;
+	dir = mo2.Origin - mo1.Origin;
 	dir.z = 0.0;
 	return Length(dir);
 }
@@ -447,6 +447,9 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/02/14 19:20:54  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.21  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

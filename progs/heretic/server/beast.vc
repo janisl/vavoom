@@ -70,9 +70,9 @@ void Actor::A_BeastPuff(void)
 
 	if (P_Random() > 64)
 	{
-		i1 = origin.x + (Random() - Random()) * 4.0;
-		i2 = origin.y + (Random() - Random()) * 4.0;
-		i3 = origin.z + (Random() - Random()) * 4.0;
+		i1 = Origin.x + (Random() - Random()) * 4.0;
+		i2 = Origin.y + (Random() - Random()) * 4.0;
+		i3 = Origin.z + (Random() - Random()) * 4.0;
 		P_SpawnMobj(i1, i2, i3, Puffy);
 	}
 }
@@ -80,6 +80,9 @@ void Actor::A_BeastPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.11  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

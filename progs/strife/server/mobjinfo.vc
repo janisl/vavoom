@@ -261,7 +261,7 @@ class Thing6:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 140.0;
+		StepSpeed = 4.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -310,7 +310,7 @@ class Thing7:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 175.0;
+		StepSpeed = 5.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -359,7 +359,7 @@ class Thing8:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 175.0;
+		StepSpeed = 5.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -408,7 +408,7 @@ class Thing9:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 1;
@@ -458,7 +458,7 @@ class Thing10:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 1;
@@ -508,7 +508,7 @@ class Thing11:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 1;
@@ -558,7 +558,7 @@ class Thing12:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 3;
@@ -608,7 +608,7 @@ class Thing13:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 3;
@@ -658,7 +658,7 @@ class Thing14:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 3;
@@ -708,7 +708,7 @@ class Thing15:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 2;
@@ -758,7 +758,7 @@ class Thing16:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 2;
@@ -808,7 +808,7 @@ class Thing17:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 2;
@@ -858,7 +858,7 @@ class Thing18:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 4;
@@ -908,7 +908,7 @@ class Thing19:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 4;
@@ -958,7 +958,7 @@ class Thing20:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 4;
@@ -1008,7 +1008,7 @@ class Thing21:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 6;
@@ -1058,7 +1058,7 @@ class Thing22:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 6;
@@ -1108,7 +1108,7 @@ class Thing23:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 6;
@@ -1158,7 +1158,7 @@ class Thing24:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 5;
@@ -1208,7 +1208,7 @@ class Thing25:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 5;
@@ -1258,7 +1258,7 @@ class Thing26:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 5;
@@ -1308,7 +1308,7 @@ class Thing27:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		Translation = 7;
@@ -1627,7 +1627,7 @@ class Beggar1:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 105.0;
+		StepSpeed = 3.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -1674,7 +1674,7 @@ class Beggar2:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 105.0;
+		StepSpeed = 3.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -1721,7 +1721,7 @@ class Beggar3:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 105.0;
+		StepSpeed = 3.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -1768,7 +1768,7 @@ class Beggar4:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 105.0;
+		StepSpeed = 3.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -1815,7 +1815,7 @@ class Beggar5:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 105.0;
+		StepSpeed = 3.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -1862,7 +1862,7 @@ class Rebel1:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -1910,7 +1910,7 @@ class Rebel2:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -1958,7 +1958,7 @@ class Rebel3:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -2006,7 +2006,7 @@ class Rebel4:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -2054,7 +2054,7 @@ class Rebel5:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -2102,7 +2102,7 @@ class Rebel6:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 170;
 		bSolid = true;
@@ -2154,7 +2154,7 @@ class Macil1:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		bSolid = true;
@@ -2199,7 +2199,7 @@ class Macil2:Actor
 		Radius = 20.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 200;
 		bSolid = true;
@@ -2269,7 +2269,7 @@ class Thing52:Actor
 		Radius = 20.0;
 		Height = 60.0;
 		Mass = 500.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -2319,7 +2319,7 @@ class Acolyte1:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		bSolid = true;
@@ -2367,7 +2367,7 @@ class Acolyte2:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		Translation = 1;
@@ -2416,7 +2416,7 @@ class Acolyte3:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		Translation = 2;
@@ -2465,7 +2465,7 @@ class Acolyte4:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		Translation = 3;
@@ -2514,7 +2514,7 @@ class Acolyte5:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		Translation = 4;
@@ -2563,7 +2563,7 @@ class Acolyte6:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		Translation = 5;
@@ -2612,7 +2612,7 @@ class Acolyte7:Actor
 		Radius = 24.0;
 		Height = 64.0;
 		Mass = 400.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 150;
 		bSolid = true;
@@ -2658,7 +2658,7 @@ class Thing60:Actor
 		Radius = 40.0;
 		Height = 56.0;
 		Mass = 400.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -2704,7 +2704,7 @@ class Thing61:Actor
 		Radius = 40.0;
 		Height = 56.0;
 		Mass = 500.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -2751,7 +2751,7 @@ class Enforcer:Actor
 		Radius = 20.0;
 		Height = 60.0;
 		Mass = 500.0;
-		Speed = 280.0;
+		StepSpeed = 8.0;
 		ReactionCount = 8;
 		PainChance = 100;
 		bSolid = true;
@@ -2839,7 +2839,7 @@ class Priest:Actor
 		Radius = 15.0;
 		Height = 56.0;
 		Mass = 100.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
@@ -2888,7 +2888,7 @@ class Thing65:Actor
 		Radius = 64.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 250;
 		Translucency = 66;
@@ -3007,7 +3007,7 @@ class Thing69:Actor
 		Radius = 24.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 66;
@@ -3061,7 +3061,7 @@ class Thing70:Actor
 		Radius = 24.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 66;
@@ -3115,7 +3115,7 @@ class Thing71:Actor
 		Radius = 24.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 66;
@@ -3169,7 +3169,7 @@ class Thing72:Actor
 		Radius = 24.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 66;
@@ -3223,7 +3223,7 @@ class Thing73:Actor
 		Radius = 130.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 255;
 		Translucency = 66;
@@ -3276,7 +3276,7 @@ class Thing74:Actor
 		Radius = 130.0;
 		Height = 8.0;
 		Mass = 1000.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 255;
 		Translucency = 66;
@@ -3719,7 +3719,7 @@ class Thing89:Actor
 		Radius = 23.0;
 		Height = 53.0;
 		Mass = 300.0;
-		Speed = 245.0;
+		StepSpeed = 7.0;
 		ReactionCount = 8;
 		PainChance = 255;
 		bSolid = true;
@@ -3768,7 +3768,7 @@ class Thing90:Actor
 		Radius = 31.0;
 		Height = 25.0;
 		Mass = 100.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 40;
 		bSolid = true;
@@ -3818,7 +3818,7 @@ class Thing91:Actor
 		Radius = 40.0;
 		Height = 110.0;
 		Mass = 1000.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
@@ -3861,7 +3861,7 @@ class Thing92:Actor
 		Radius = 45.0;
 		Height = 60.0;
 		Mass = 800.0;
-		Speed = 910.0;
+		StepSpeed = 26.0;
 		ReactionCount = 8;
 		PainChance = 64;
 		MissileDamage = 4;
@@ -6533,7 +6533,7 @@ class Rat_buddy:Actor
 		Radius = 10.0;
 		Height = 16.0;
 		Mass = 100.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		bShootable = true;
 		bNoBlood = true;
@@ -9012,9 +9012,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/14 19:20:59  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.20  2002/02/06 17:28:53  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.19  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
 //	

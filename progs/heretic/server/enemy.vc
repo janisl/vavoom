@@ -36,7 +36,7 @@ void Actor::A_Look(void)
 	Actor targ;
 
 	threshold = 0;	// any shot will wake up
-	targ = Actor(subsector->sector->SoundTarget);
+	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
@@ -107,26 +107,26 @@ void Actor::A_Chase(void)
 	if (fastparm)
 	{
 		// Monsters move faster in nightmare mode
-		time *= 0.5;
-		if (time < 0.1)
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
 		{
-			time = 0.1;
+			StateTime = 0.1;
 		}
 	}
 
 	// turn towards movement direction if not there yet
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
@@ -224,12 +224,12 @@ void Actor::A_FaceTarget(void)
 
 	bAmbush = false;
 
-	angles.yaw = atan2(target->origin.y - origin.y,
-		target->origin.x - origin.x);
+	Angles.yaw = atan2(target->Origin.y - Origin.y,
+		target->Origin.x - Origin.x);
 
 	if (target->Translucency)
 	{
-		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
 }
 
@@ -255,8 +255,8 @@ void Actor::A_Pain(void)
 
 void Actor::A_FreeTargMobj(void)
 {
-	velocity = vector(0.0, 0.0, 0.0);
-	origin.z = ceilingz + 4.0;
+	Velocity = vector(0.0, 0.0, 0.0);
+	Origin.z = CeilingZ + 4.0;
 	bSolid = false;
 	bShootable = false;
 	bFloat = false;
@@ -266,7 +266,8 @@ void Actor::A_FreeTargMobj(void)
 	bCorpse = true;
 	bLowGravity = false;
 	bNoPassMobj = true;
-	player = NULL;
+	Player = NULL;
+	bIsPlayer = false;
 }
 
 //==========================================================================
@@ -326,7 +327,7 @@ void Actor::A_Explode(void)
 	switch (Class)
 	{
 	case FireBomb:	// Time Bombs
-		origin.z += 32.0;
+		Origin.z += 32.0;
 		Translucency = 0;
 		break;
 	case MinotaurFloorFire:	// Minotaur floor fire
@@ -345,18 +346,18 @@ void Actor::A_Explode(void)
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_WHITE);
-		MSG_WriteShort(ftoi(origin.x));
-		MSG_WriteShort(ftoi(origin.y));
-		MSG_WriteShort(ftoi(origin.z));
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
 	}
 	if (Class == Pod)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
 		MSG_WriteByte(EF_DL_GREEN);
-		MSG_WriteShort(ftoi(origin.x));
-		MSG_WriteShort(ftoi(origin.y));
-		MSG_WriteShort(ftoi(origin.z));
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
 	}
 }
 
@@ -374,10 +375,10 @@ void Actor::DropItem(classid type, int amount, int chance)
 	{
 		return;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + Height / 2.0, type);
-	mo->velocity.x = (Random() - Random()) * 35.0;
-	mo->velocity.y = (Random() - Random()) * 35.0;
-	mo->velocity.z = (5.0 + Random() * 4.0) * 35.0;
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0, type);
+	mo->Velocity.x = (Random() - Random()) * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 35.0;
+	mo->Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 	mo->bDropped = true;
 	mo->Health = amount;
 }
@@ -460,17 +461,19 @@ void Actor::A_SkullPop(void)
 	mobj_t *mo;
 
 	bSolid = false;
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 48.0, BloodySkull);
-	mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo->velocity.z = (2.0 + Random() / 4.0) * 35.0;
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, BloodySkull);
+	mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
+	mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
+	mo->Velocity.z = (2.0 + Random() / 4.0) * 35.0;
 	// Attach player mobj to bloody skull
-	mo->player = player;
-	player = NULL;
+	mo->Player = Player;
+	mo->bIsPlayer = true;
+	Player = NULL;
+	bIsPlayer = false;
 	mo->Health = Health;
-	mo->angles.yaw = angles.yaw;
-	mo->player->mo = mo;
-	mo->player->damagecount = 32;
+	mo->Angles.yaw = Angles.yaw;
+	mo->Player->mo = mo;
+	mo->Player->damagecount = 32;
 }
 
 //==========================================================================
@@ -506,7 +509,7 @@ void Actor::A_CheckBurnGone(void)
 
 void Actor::A_CheckSkullFloor(void)
 {
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		SetState(S_BLOODYSKULLX1);
 	}
@@ -631,6 +634,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

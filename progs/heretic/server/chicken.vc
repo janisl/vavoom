@@ -60,10 +60,10 @@ boolean Actor::UpdateChicken(int tics)
 		return false;
 	}
 	moType = specialcid;
-	x = origin.x;
-	y = origin.y;
-	z = origin.z;
-	angle = angles.yaw;
+	x = Origin.x;
+	y = Origin.y;
+	z = Origin.z;
+	angle = Angles.yaw;
 	targ = target;
 	P_UnsetThingPosition(self);
 	mo = P_SpawnMobj(x, y, z, moType);
@@ -76,7 +76,7 @@ boolean Actor::UpdateChicken(int tics)
 		return false;
 	}
 	SetState(S_FREETARGMOBJ);
-	mo->angles.yaw = angle;
+	mo->Angles.yaw = angle;
 	mo->target = targ;
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, TeleportFog);
 	StartSoundName(*fog, 'Teleport', CHAN_VOICE);
@@ -137,11 +137,11 @@ void Actor::A_Feathers(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		mo = P_SpawnMobj(origin.x, origin.y, origin.z + 20.0, Feather);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 20.0, Feather);
 		mo->target = this;
-		mo->velocity.x = (Random() - Random()) * 35.0;
-		mo->velocity.y = (Random() - Random()) * 35.0;
-		mo->velocity.z = (1.0 + Random() * 2.0) * 35.0;
+		mo->Velocity.x = (Random() - Random()) * 35.0;
+		mo->Velocity.y = (Random() - Random()) * 35.0;
+		mo->Velocity.z = (1.0 + Random() * 2.0) * 35.0;
 		mo->SetState(S_FEATHER1 + (P_Random() & 7));
 	}
 }
@@ -186,6 +186,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

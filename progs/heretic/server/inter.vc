@@ -156,8 +156,8 @@ boolean Actor::GiveAmmo(int ammo, int count)
 	{
 		Error("GiveAmmo: bad type %i", ammo);
 	}
-	max = player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
-	if (player->ammo[ammo] == max)
+	max = Player->backpack ? maxammo[ammo] * 2 : maxammo[ammo];
+	if (Player->ammo[ammo] == max)
 	{
 		return false;
 	}
@@ -166,12 +166,12 @@ boolean Actor::GiveAmmo(int ammo, int count)
 		// extra ammo in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevAmmo = player->ammo[ammo];
+	prevAmmo = Player->ammo[ammo];
 
-	player->ammo[ammo] += count;
-	if (player->ammo[ammo] > max)
+	Player->ammo[ammo] += count;
+	if (Player->ammo[ammo] > max)
 	{
-		player->ammo[ammo] = max;
+		Player->ammo[ammo] = max;
 	}
 	if (prevAmmo)
 	{
@@ -179,12 +179,12 @@ boolean Actor::GiveAmmo(int ammo, int count)
 		// ammo of the type just given
 		return true;
 	}
-	if (player->readyweapon == wp_staff
-		|| player->readyweapon == wp_gauntlets)
+	if (Player->readyweapon == wp_staff ||
+		Player->readyweapon == wp_gauntlets)
 	{
-		if (player->weaponowned[GetAmmoChange[ammo]])
+		if (Player->weaponowned[GetAmmoChange[ammo]])
 		{
-			player->pendingweapon = GetAmmoChange[ammo];
+			Player->pendingweapon = GetAmmoChange[ammo];
 		}
 	}
 	return true;
@@ -206,30 +206,30 @@ boolean Actor::GiveWeapon(int weapon)
 	if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (player->weaponowned[weapon])
+		if (Player->weaponowned[weapon])
 		{
 			return false;
 		}
-		player->bonuscount += BONUSADD;
-		player->weaponowned[weapon] = true;
+		Player->bonuscount += BONUSADD;
+		Player->weaponowned[weapon] = true;
 		GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
-		player->pendingweapon = weapon;
+		Player->pendingweapon = weapon;
 		StartSoundName(self, 'PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 	gaveAmmo = GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
-	if (player->weaponowned[weapon])
+	if (Player->weaponowned[weapon])
 	{
 		gaveWeapon = false;
 	}
 	else
 	{
 		gaveWeapon = true;
-		player->weaponowned[weapon] = true;
-		if (WeaponValue[weapon] > WeaponValue[player->readyweapon])
+		Player->weaponowned[weapon] = true;
+		if (WeaponValue[weapon] > WeaponValue[Player->readyweapon])
 		{
 			// Only switch to more powerful weapons
-			player->pendingweapon = weapon;
+			Player->pendingweapon = weapon;
 		}
 	}
 	return (gaveWeapon || gaveAmmo);
@@ -248,20 +248,20 @@ boolean Actor::GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (player->chickenTics)
+	if (Player->chickenTics)
 	{
 		max = MAXCHICKENHEALTH;
 	}
-	if (player->health >= max)
+	if (Player->health >= max)
 	{
 		return false;
 	}
-	player->health += num;
-	if (player->health > max)
+	Player->health += num;
+	if (Player->health > max)
 	{
-		player->health = max;
+		Player->health = max;
 	}
-	Health = player->health;
+	Health = Player->health;
 	return true;
 }
 
@@ -278,12 +278,12 @@ boolean Actor::GiveArmor(int armortype)
 	int hits;
 
 	hits = armortype * 100;
-	if (player->armorpoints >= hits)
+	if (Player->armorpoints >= hits)
 	{
 		return false;
 	}
-	player->armortype = armortype;
-	player->armorpoints = hits;
+	Player->armortype = armortype;
+	Player->armorpoints = hits;
 	return true;
 }
 
@@ -295,12 +295,12 @@ boolean Actor::GiveArmor(int armortype)
 
 boolean Actor::GiveKey(int key)
 {
-	if ((player->keys & (1 << key)))
+	if ((Player->keys & (1 << key)))
 	{
 		return false;
 	}
-	player->bonuscount = BONUSADD;
-	player->keys |= 1 << key;
+	Player->bonuscount = BONUSADD;
+	Player->keys |= 1 << key;
 	return true;
 }
 
@@ -316,66 +316,66 @@ boolean Actor::GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(INVULNTIME * 35.0);
+		Player->powers[power] = ftoi(INVULNTIME * 35.0);
 		return true;
 	}
 	if (power == pw_weaponlevel2)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(WPNLEV2TIME * 35.0);
+		Player->powers[power] = ftoi(WPNLEV2TIME * 35.0);
 		return true;
 	}
 	if (power == pw_invisibility)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(INVISTIME * 35.0);
+		Player->powers[power] = ftoi(INVISTIME * 35.0);
 		Translucency = 33;
 		return true;
 	}
 	if (power == pw_flight)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(FLIGHTTIME * 35.0);
+		Player->powers[power] = ftoi(FLIGHTTIME * 35.0);
 		bFly = true;
 		bNoGravity = true;
-		if (origin.z <= floorz)
+		if (Origin.z <= FloorZ)
 		{
-			player->flyheight = 10.0;	// thrust the player in the air a bit
+			Player->flyheight = 10.0;	// thrust the player in the air a bit
 		}
 		return true;
 	}
 	if (power == pw_infrared)
 	{
-		if (player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
+		if (Player->powers[power] > ftoi(BLINKTHRESHOLD * 35.0))
 		{
 			// Already have it
 			return false;
 		}
-		player->powers[power] = ftoi(INFRATIME * 35.0);
+		Player->powers[power] = ftoi(INFRATIME * 35.0);
 		return true;
 	}
-	if (player->powers[power])
+	if (Player->powers[power])
 	{
 		return false;	// already got it
 	}
-	player->powers[power] = 1;
+	Player->powers[power] = 1;
 	return true;
 }
 
@@ -387,11 +387,11 @@ boolean Actor::GivePower(int power)
 
 boolean Actor::GiveItem(int item)
 {
-	if (player->items & item)
+	if (Player->items & item)
 	{
 		return false;	// already got it
 	}
-	player->items |= item;
+	Player->items |= item;
 	return true;
 }
 
@@ -408,33 +408,33 @@ boolean Actor::GiveArtifact(int arti, Actor mo)
 	int i;
 
 	i = 0;
-	while (player->inventory[i].type != arti && i < player->inventorySlotNum)
+	while (Player->inventory[i].type != arti && i < Player->inventorySlotNum)
 	{
 		i++;
 	}
-	if (i == player->inventorySlotNum)
+	if (i == Player->inventorySlotNum)
 	{
-		player->inventory[i].count = 1;
-		player->inventory[i].type = arti;
-		player->inventorySlotNum++;
+		Player->inventory[i].count = 1;
+		Player->inventory[i].type = arti;
+		Player->inventorySlotNum++;
 	}
 	else
 	{
-		if (player->inventory[i].count >= 16)
+		if (Player->inventory[i].count >= 16)
 		{
 			// Player already has 16 of this item
 			return false;
 		}
-		player->inventory[i].count++;
+		Player->inventory[i].count++;
 	}
-	if (player->artifactCount == 0)
+	if (Player->artifactCount == 0)
 	{
-		player->readyArtifact = arti;
+		Player->readyArtifact = arti;
 	}
-	player->artifactCount++;
+	Player->artifactCount++;
 	if (mo && mo.bCountItem)
 	{
-		player->itemcount++;
+		Player->itemcount++;
 	}
 	return true;
 }
@@ -471,44 +471,44 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ITEMHEALTH);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMHEALTH);
 		break;
 	case 'SHLD':	// Item_Shield1
 		if (!Toucher.GiveArmor(1))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ITEMSHIELD1);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMSHIELD1);
 		break;
 	case 'SHD2':	// Item_Shield2
 		if (!Toucher.GiveArmor(2))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ITEMSHIELD2);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMSHIELD2);
 		break;
 	case 'BAGH':	// Item_BagOfHolding
-		Toucher.player->backpack = true;
+		Toucher.Player->backpack = true;
 		Toucher.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
 		Toucher.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
 		Toucher.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
 		Toucher.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
 		Toucher.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
-		cprint(Toucher.player, "%s\n", TXT_ITEMBAGOFHOLDING);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMBAGOFHOLDING);
 		break;
 	case 'SPMP':	// Item_SuperMap
 		if (!Toucher.GiveItem(IT_ALL_MAP))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_ITEMSUPERMAP);
+		cprint(Toucher.Player, "%s\n", TXT_ITEMSUPERMAP);
 		break;
 
 		// Keys
 	case 'BKYY':	// Key_Blue
 		if (Toucher.GiveKey(key_blue))
 		{
-			cprint(Toucher.player, "%s\n", TXT_GOTBLUEKEY);
+			cprint(Toucher.Player, "%s\n", TXT_GOTBLUEKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -519,7 +519,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'CKYY':	// Key_Yellow
 		if (Toucher.GiveKey(key_yellow))
 		{
-			cprint(Toucher.player, "%s\n", TXT_GOTYELLOWKEY);
+			cprint(Toucher.Player, "%s\n", TXT_GOTYELLOWKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -530,7 +530,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'AKYY':	// Key_Green
 		if (Toucher.GiveKey(key_green))
 		{
-			cprint(Toucher.player, "%s\n", TXT_GOTGREENKEY);
+			cprint(Toucher.Player, "%s\n", TXT_GOTGREENKEY);
 		}
 		sound = 'PickupKey';
 		if (!netgame)
@@ -543,70 +543,70 @@ void Actor::TouchSpecial(Actor Toucher)
 	case 'PTN2':	// Arti_HealingPotion
 		if (Toucher.GiveArtifact(arti_health, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIHEALTH);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIHEALTH);
 			P_SetDormantArtifact(this);
 		}
 		return;
 	case 'SOAR':	// Arti_Fly
 		if (Toucher.GiveArtifact(arti_fly, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIFLY);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIFLY);
 			P_SetDormantArtifact(this);
 		}
 		return;
 	case 'INVU':	// Arti_Invulnerability
 		if (Toucher.GiveArtifact(arti_invulnerability, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIINVULNERABILITY);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIINVULNERABILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'PWBK':	// Arti_TomeOfPower
 		if (Toucher.GiveArtifact(arti_tomeofpower, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTITOMEOFPOWER);
+			cprint(Toucher.Player, "%s\n", TXT_ARTITOMEOFPOWER);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'INVS':	// Arti_Invisibility
 		if (Toucher.GiveArtifact(arti_invisibility, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIINVISIBILITY);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIINVISIBILITY);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'EGGC':	// Arti_Egg
 		if (Toucher.GiveArtifact(arti_egg, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIEGG);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIEGG);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'SPHL':	// Arti_SuperHealth
 		if (Toucher.GiveArtifact(arti_superhealth, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTISUPERHEALTH);
+			cprint(Toucher.Player, "%s\n", TXT_ARTISUPERHEALTH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'TRCH':	// Arti_Torch
 		if (Toucher.GiveArtifact(arti_torch, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTITORCH);
+			cprint(Toucher.Player, "%s\n", TXT_ARTITORCH);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'FBMB':	// Arti_FireBomb
 		if (Toucher.GiveArtifact(arti_firebomb, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTIFIREBOMB);
+			cprint(Toucher.Player, "%s\n", TXT_ARTIFIREBOMB);
 			P_SetDormantArtifact(&self);
 		}
 		return;
 	case 'ATLP':	// Arti_Teleport
 		if (Toucher.GiveArtifact(arti_teleport, self))
 		{
-			cprint(Toucher.player, "%s\n", TXT_ARTITELEPORT);
+			cprint(Toucher.Player, "%s\n", TXT_ARTITELEPORT);
 			P_SetDormantArtifact(&self);
 		}
 		return;
@@ -617,84 +617,84 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOGOLDWAND1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOGOLDWAND1);
 		break;
 	case 'AMG2':	// Ammo_GoldWandHefty
 		if (!Toucher.GiveAmmo(am_goldwand, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOGOLDWAND2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOGOLDWAND2);
 		break;
 	case 'AMM1':	// Ammo_MaceWimpy
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOMACE1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOMACE1);
 		break;
 	case 'AMM2':	// Ammo_MaceHefty
 		if (!Toucher.GiveAmmo(am_mace, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOMACE2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOMACE2);
 		break;
 	case 'AMC1':	// Ammo_CrossbowWimpy
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOCROSSBOW1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOCROSSBOW1);
 		break;
 	case 'AMC2':	// Ammo_CrossbowHefty
 		if (!Toucher.GiveAmmo(am_crossbow, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOCROSSBOW2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOCROSSBOW2);
 		break;
 	case 'AMB1':	// Ammo_BlasterWimpy
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOBLASTER1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOBLASTER1);
 		break;
 	case 'AMB2':	// Ammo_BlasterHefty
 		if (!Toucher.GiveAmmo(am_blaster, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOBLASTER2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOBLASTER2);
 		break;
 	case 'AMS1':	// Ammo_SkullRodWimpy
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOSKULLROD1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOSKULLROD1);
 		break;
 	case 'AMS2':	// Ammo_SkullRodHefty
 		if (!Toucher.GiveAmmo(am_skullrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOSKULLROD2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOSKULLROD2);
 		break;
 	case 'AMP1':	// Ammo_PhoenixRodWimpy
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOPHOENIXROD1);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOPHOENIXROD1);
 		break;
 	case 'AMP2':	// Ammo_PhoenixRodHefty
 		if (!Toucher.GiveAmmo(am_phoenixrod, Health))
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_AMMOPHOENIXROD2);
+		cprint(Toucher.Player, "%s\n", TXT_AMMOPHOENIXROD2);
 		break;
 
 		// Weapons
@@ -703,7 +703,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNMACE);
+		cprint(Toucher.Player, "%s\n", TXT_WPNMACE);
 		sound = 'PickupWeapon';
 		break;
 	case 'WBOW':	// Weapon_Crossbow
@@ -711,7 +711,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNCROSSBOW);
+		cprint(Toucher.Player, "%s\n", TXT_WPNCROSSBOW);
 		sound = 'PickupWeapon';
 		break;
 	case 'WBLS':	// Weapon_Blaster
@@ -719,7 +719,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNBLASTER);
+		cprint(Toucher.Player, "%s\n", TXT_WPNBLASTER);
 		sound = 'PickupWeapon';
 		break;
 	case 'WSKL':	// Weapon_SkullRod
@@ -727,7 +727,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNSKULLROD);
+		cprint(Toucher.Player, "%s\n", TXT_WPNSKULLROD);
 		sound = 'PickupWeapon';
 		break;
 	case 'WPHX':	// Weapon_PhoenixRod
@@ -735,7 +735,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNPHOENIXROD);
+		cprint(Toucher.Player, "%s\n", TXT_WPNPHOENIXROD);
 		sound = 'PickupWeapon';
 		break;
 	case 'WGNT':	// Weapon_Gauntlets
@@ -743,7 +743,7 @@ void Actor::TouchSpecial(Actor Toucher)
 		{
 			return;
 		}
-		cprint(Toucher.player, "%s\n", TXT_WPNGAUNTLETS);
+		cprint(Toucher.Player, "%s\n", TXT_WPNGAUNTLETS);
 		sound = 'PickupWeapon';
 		break;
 
@@ -752,7 +752,7 @@ void Actor::TouchSpecial(Actor Toucher)
 	}
 	if (bCountItem)
 	{
-		Toucher.player->itemcount++;
+		Toucher.Player->itemcount++;
 	}
 	if (deathmatch && respawn && !bDropped)
 	{
@@ -762,13 +762,16 @@ void Actor::TouchSpecial(Actor Toucher)
 	{
 		P_RemoveMobj(&self);
 	}
-	Toucher.player->bonuscount += BONUSADD;
+	Toucher.Player->bonuscount += BONUSADD;
 	StartSoundName(Toucher, sound, CHAN_ITEM);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/02/09 18:12:25  dj_jl
 //  Replaced identifying sprite name indexes with sprite names
 //

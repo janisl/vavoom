@@ -73,14 +73,14 @@ void Actor::A_PainShootSkull(float angle)
 	// okay, there's playe for another one
 	prestep = 4.0 + 3.0 * (Radius + SKULL_RADIUS) / 2.0;
 
-	x = origin.x + prestep * cos(angle);
-	y = origin.y + prestep * sin(angle);
-	z = origin.z + 8.0;
+	x = Origin.x + prestep * cos(angle);
+	y = Origin.y + prestep * sin(angle);
+	z = Origin.z + 8.0;
 
 	newmobj = P_SpawnMobj(x, y, z, LostSoul);
 
 	// Check for movements.
-	if (!P_TryMove(newmobj, newmobj->origin.x, newmobj->origin.y))
+	if (!P_TryMove(newmobj, newmobj->Origin.x, newmobj->Origin.y))
 	{
 		// kill it immediately
 		newmobj->Damage(self, self, 10000);
@@ -105,7 +105,7 @@ void Actor::A_PainAttack(void)
 		return;
 
 	A_FaceTarget();
-	A_PainShootSkull(angles.yaw);
+	A_PainShootSkull(Angles.yaw);
 }
 
 //==========================================================================
@@ -119,9 +119,9 @@ void Actor::A_PainAttack(void)
 void Actor::A_PainDie(void)
 {
 	A_Fall();
-	A_PainShootSkull(angles.yaw + 90.0);
-	A_PainShootSkull(angles.yaw + 180.0);
-	A_PainShootSkull(angles.yaw + 270.0);
+	A_PainShootSkull(Angles.yaw + 90.0);
+	A_PainShootSkull(Angles.yaw + 180.0);
+	A_PainShootSkull(Angles.yaw + 270.0);
 }
 
 #else
@@ -141,6 +141,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.14  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -83,16 +83,16 @@ void ChickenPlayerThink(player_t * player)
 		return;
 	}
 	pmo = player->mo;
-	if (!(pmo->velocity.x + pmo->velocity.y) && P_Random() < 160)
+	if (!(pmo->Velocity.x + pmo->Velocity.y) && P_Random() < 160)
 	{
 		// Twitch view angle
-		pmo->angles.yaw = AngleMod360(pmo->angles.yaw +
+		pmo->Angles.yaw = AngleMod360(pmo->Angles.yaw +
 			(Random() - Random()) * 45.0 / 4.0);
 	}
-	if ((pmo->origin.z <= pmo->floorz) && (P_Random() < 32))
+	if ((pmo->Origin.z <= pmo->FloorZ) && (P_Random() < 32))
 	{
 		// Jump and noise
-		pmo->velocity.z += 1.0 * 35.0;
+		pmo->Velocity.z += 1.0 * 35.0;
 		pmo->SetState(S_CHICPLAY_PAIN);
 		return;
 	}
@@ -123,10 +123,10 @@ boolean UndoPlayerChicken(player_t * player)
 
 	pmo = player->mo;
 	P_UnsetThingPosition(*pmo);
-	x = pmo->origin.x;
-	y = pmo->origin.y;
-	z = pmo->origin.z;
-	angle = pmo->angles.yaw;
+	x = pmo->Origin.x;
+	y = pmo->Origin.y;
+	z = pmo->Origin.z;
+	angle = pmo->Angles.yaw;
 	weapon = pmo->special1;
 	OldbFly = pmo->bFly;
 	mo = P_SpawnMobj(x, y, z, PlayerEntity);
@@ -141,8 +141,9 @@ boolean UndoPlayerChicken(player_t * player)
 	pmo->SetState(S_FREETARGMOBJ);
 	// Set color translation
 	mo->Translation = player->color;
-	mo->angles.yaw = angle;
-	mo->player = player;
+	mo->Angles.yaw = angle;
+	mo->Player = player;
+	mo->bIsPlayer = true;
 	mo->ReactionTime = 0.5;
 	if (OldbFly)
 	{
@@ -170,14 +171,14 @@ void SetPlayerRunState(player_t * player)
 {
 	if (player->chickenTics)
 	{
-		if (player->mo->statenum == S_CHICPLAY)
+		if (player->mo->StateNum == S_CHICPLAY)
 		{
 			player->mo->SetState(S_CHICPLAY_RUN1);
 		}
 	}
 	else
 	{
-		if (player->mo->statenum == S_PLAY)
+		if (player->mo->StateNum == S_PLAY)
 		{
 			player->mo->SetState(S_PLAY_RUN1);
 		}
@@ -200,7 +201,7 @@ void DeathPlayerThink(player_t * player)
 
 	MovePsprites(player);
 
-	onground = (player->mo->origin.z <= player->mo->floorz);
+	onground = (player->mo->Origin.z <= player->mo->FloorZ);
 
 	if (player->mo->Class == BloodySkull)
 	{
@@ -253,22 +254,22 @@ void DeathPlayerThink(player_t * player)
 
 	if (player->attacker && player->attacker != player->mo)
 	{
-		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
-			player->attacker->origin.x - player->mo->origin.x);
-		delta = AngleMod180(angle - player->mo->angles.yaw);
+		angle = atan2(player->attacker->Origin.y - player->mo->Origin.y,
+			player->attacker->Origin.x - player->mo->Origin.x);
+		delta = AngleMod180(angle - player->mo->Angles.yaw);
 		if (delta < 5.0 && delta > -5.0)
 		{
 			// Looking at killer, so fade damage flash down
-			player->mo->angles.yaw = angle;
+			player->mo->Angles.yaw = angle;
 			if (player->damagecount)
 			{
 				player->damagecount--;
 			}
 		}
 		else if (delta > 0.0)
-			player->mo->angles.yaw += 5.0;
+			player->mo->Angles.yaw += 5.0;
 		else
-			player->mo->angles.yaw -= 5.0;
+			player->mo->Angles.yaw -= 5.0;
 	}
 	else if (player->damagecount)
 	{
@@ -302,13 +303,13 @@ void ArtiEgg(mobj_t * mo)
 {
 	SpawnPlayerMissile(mo, EggMissile);
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw - (45.0 / 6.0)));
+		AngleMod360(mo->Angles.yaw - (45.0 / 6.0)));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw + (45.0 / 6.0)));
+		AngleMod360(mo->Angles.yaw + (45.0 / 6.0)));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw - (45.0 / 3.0)));
+		AngleMod360(mo->Angles.yaw - (45.0 / 3.0)));
 	SpawnPlayerMissileAngle(mo, EggMissile,
-		AngleMod360(mo->angles.yaw + (45.0 / 3.0)));
+		AngleMod360(mo->Angles.yaw + (45.0 / 3.0)));
 }
 
 //==========================================================================
@@ -360,10 +361,10 @@ boolean ArtiTomeOfPower(player_t * player)
 
 void ArtiFireBomb(player_t * player)
 {
-	float angle = player->mo->angles.yaw;
-	mobj_t *mo = P_SpawnMobj(player->mo->origin.x + 24.0 * cos(angle),
-		player->mo->origin.y + 24.0 * sin(angle),
-		player->mo->origin.z - player->mo->floorclip,
+	float angle = player->mo->Angles.yaw;
+	mobj_t *mo = P_SpawnMobj(player->mo->Origin.x + 24.0 * cos(angle),
+		player->mo->Origin.y + 24.0 * sin(angle),
+		player->mo->Origin.z - player->mo->FloorClip,
 		FireBomb);
 
 	mo->target = player->mo;
@@ -428,8 +429,8 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->origin.x == mthing->x &&
-				players[i].mo->origin.y == mthing->y)
+			if (players[i].mo->Origin.x == mthing->x &&
+				players[i].mo->Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -459,6 +460,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/07 18:50:08  dj_jl
 //  Made CheckPosition shared.
 //

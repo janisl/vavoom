@@ -36,7 +36,7 @@ int bodyqueslot;
 
 void SetPlayerRunState(player_t * player)
 {
-	if (player->mo->statenum == S_PLAY)
+	if (player->mo->StateNum == S_PLAY)
 	{
 		player->mo->SetState(S_PLAY_RUN1);
 	}
@@ -66,8 +66,8 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].mo->origin.x == mthing->x &&
-				players[i].mo->origin.y == mthing->y)
+			if (players[i].mo->Origin.x == mthing->x &&
+				players[i].mo->Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -132,8 +132,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// set color translations for player sprites
 	mobj->Translation = p->color;
 
-	mobj->angles.yaw = itof(45 * (mthing->angle / 45));
-	mobj->player = p;
+	mobj->Angles.yaw = itof(45 * (mthing->angle / 45));
+	mobj->Player = p;
+	mobj->bIsPlayer = true;
 	mobj->Health = p->health;
 
 	p->mo = mobj;
@@ -144,7 +145,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->extralight = 0;
 	p->fixedcolormap = 0;
 	p->viewheight = VIEWHEIGHT;
-	p->viewangles = mobj->angles;
+	p->viewangles = mobj->Angles;
 	p->fixangle = true;
 
 	// setup gun psprite
@@ -178,7 +179,7 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 	float z;
 
 	// see which target is to be aimed at
-	angles = source->angles;
+	angles = source->Angles;
 	AimLineAttack(source, &angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
@@ -195,9 +196,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		}
 	}
 
-	x = source->origin.x;
-	y = source->origin.y;
-	z = source->origin.z + 32.0;
+	x = source->Origin.x;
+	y = source->Origin.y;
+	z = source->Origin.z + 32.0;
 
 	th = P_SpawnMobj(x, y, z, type);
 
@@ -205,9 +206,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		StartSound(*th, th->sound_sight, CHAN_VOICE);
 
 	th->target = source;
-	avcpy(angles, th->angles);
+	avcpy(angles, th->Angles);
 	AngleVector(&angles, &vforward);
-	th->velocity = vforward * th->Speed;
+	th->Velocity = vforward * th->Speed;
 
 	CheckMissileSpawn(th);
 
@@ -217,6 +218,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:21:00  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //

@@ -58,7 +58,7 @@ boolean PIT_VileCheck(MapObject Other)
 	if (!Actor(Other).bCorpse)
 		return true;	// not a monster
 
-	if (Actor(Other).time != -1.0)
+	if (Actor(Other).StateTime != -1.0)
 		return true;	// not lying still yet
 
 	if (Actor(Other).RaiseState == S_NULL)
@@ -66,18 +66,18 @@ boolean PIT_VileCheck(MapObject Other)
 
 	maxdist = Other.Radius + vileobj.Radius;
 
-	if (fabs(Other.origin.x - viletryx) > maxdist ||
-		fabs(Other.origin.y - viletryy) > maxdist)
+	if (fabs(Other.Origin.x - viletryx) > maxdist ||
+		fabs(Other.Origin.y - viletryy) > maxdist)
 		return true;	// not actually touching
 
 	if (!P_CheckSight(vileobj, Other))
 		return true;	//  Con't see, possibly in other region
 
 	CorpseHit = Actor(Other);
-	CorpseHit.velocity.x = 0.0;
-	CorpseHit.velocity.y = 0.0;
+	CorpseHit.Velocity.x = 0.0;
+	CorpseHit.Velocity.y = 0.0;
 	CorpseHit.Height *= 4.0;
-	check = CheckPosition(CorpseHit, CorpseHit.origin);
+	check = CheckPosition(CorpseHit, CorpseHit.Origin);
 	CorpseHit.Height /= 4.0;
 
 	if (!check)
@@ -109,8 +109,8 @@ void Actor::A_VileChase(void)
 	if (movedir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = origin.x + Speed * frametime * xspeed[movedir];
-		viletryy = origin.y + Speed * frametime * yspeed[movedir];
+		viletryx = Origin.x + StepSpeed * xspeed[movedir];
+		viletryy = Origin.y + StepSpeed * yspeed[movedir];
 		vileobj = self;
 
 		xl = MapBlock(viletryx - level->bmaporgx - MAXRADIUS * 2.0);
@@ -185,8 +185,8 @@ void Actor::A_VileTarget(void)
 
 	A_FaceTarget();
 
-	fog = P_SpawnMobj(target->origin.x, target->origin.x,
-		target->origin.z, ArchvileFire);
+	fog = P_SpawnMobj(target->Origin.x, target->Origin.x,
+		target->Origin.z, ArchvileFire);
 
 	tracer = fog;
 	fog->target = this;
@@ -216,7 +216,7 @@ void Actor::A_VileAttack(void)
 
 	StartSoundName(self, 'BarrelExplode', CHAN_WEAPON);
 	target->Damage(self, self, 20);
-	target->velocity.z = 1000.0 / target->Mass * 35.0;
+	target->Velocity.z = 1000.0 / target->Mass * 35.0;
 
 	fire = tracer;
 
@@ -224,8 +224,8 @@ void Actor::A_VileAttack(void)
 		return;
 
 	// move the fire between the vile and the player
-	fire->origin.x = target->origin.x - 24.0 * cos(angles.yaw);
-	fire->origin.y = target->origin.y - 24.0 * sin(angles.yaw);
+	fire->Origin.x = target->Origin.x - 24.0 * cos(Angles.yaw);
+	fire->Origin.y = target->Origin.y - 24.0 * sin(Angles.yaw);
 	P_RadiusAttack(fire, this, 70, 0, 0);
 }
 
@@ -264,9 +264,9 @@ void Actor::A_Fire(void)
 		return;
 
 	P_UnsetThingPosition(self);
-	origin.x = dest->origin.x + 24.0 * cos(dest->angles.yaw);
-	origin.y = dest->origin.y + 24.0 * sin(dest->angles.yaw);
-	origin.z = dest->origin.z;
+	Origin.x = dest->Origin.x + 24.0 * cos(dest->Angles.yaw);
+	Origin.y = dest->Origin.y + 24.0 * sin(dest->Angles.yaw);
+	Origin.z = dest->Origin.z;
 	P_SetThingPosition(self);
 }
 
@@ -326,6 +326,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/07 18:50:08  dj_jl
 //  Made CheckPosition shared.
 //

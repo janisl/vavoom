@@ -29,8 +29,8 @@
 //
 //  specialmobj1    pointer to player that spawned it (mobj_t)
 //  special2        internal to minotaur AI
-//  args[0]         minotaur start time
-//  args[4]         charge duration countdown
+//  Args[0]         minotaur start time
+//  Args[4]         charge duration countdown
 //
 //============================================================================
 
@@ -62,21 +62,21 @@ void Actor::A_Summon(void)
 	mobj_t *mo;
 	mobj_t *master;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Minotaur);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Minotaur);
 	if (mo)
 	{
 		if (P_TestMobjLocation(mo) == false || !specialmobj1)
 		{
 			// Didn't fit - change back to artifact
 			mo->SetState(S_NULL);
-			mo = P_SpawnMobj(origin.x, origin.y, origin.z,
+			mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z,
 				ArtifactSummonMaulator);
 			if (mo)
 				mo->bDropped = true;
 			return;
 		}
 
-		mo->args[0] = level->tictime;
+		mo->Args[0] = level->tictime;
 		master = specialmobj1;
 		if (master->bCorpse)
 		{
@@ -90,7 +90,7 @@ void Actor::A_Summon(void)
 		}
 
 		// Make smoke puff
-		P_SpawnMobj(origin.x, origin.y, origin.z, MinotaurSmoke);
+		P_SpawnMobj(Origin.x, Origin.y, Origin.z, MinotaurSmoke);
 		StartSoundName(self, 'MaulatorActive', CHAN_VOICE);
 	}
 }
@@ -133,7 +133,7 @@ void Actor::A_MinotaurLook(void)
 
 	if (!target)	// Near player monster search
 	{
-		if (master && (master.Health > 0) && (master.player))
+		if (master && (master.Health > 0) && master.bIsPlayer)
 			target = &master.RoughMonsterSearch(20);
 		else
 			target = &RoughMonsterSearch(20);
@@ -179,7 +179,7 @@ void Actor::A_MinotaurLook(void)
 
 void Actor::A_MinotaurChase(void)
 {
-	int starttime = args[0];
+	int starttime = Args[0];
 
 	Translucency = 0;	// In case pain caused him to skip his fade in.
 
@@ -242,7 +242,7 @@ void Actor::A_MinotaurChase(void)
 
 void Actor::A_MinotaurRoam(void)
 {
-	int starttime = args[0];
+	int starttime = Args[0];
 
 	Translucency = 0;	// In case pain caused him to skip his fade in.
 
@@ -310,8 +310,8 @@ void Actor::A_MinotaurDecide(void)
 		return;
 	dist = MobjDist(self, *target);
 
-	if (target->origin.z + target->Height > origin.z &&
-		target->origin.z + target->Height < origin.z + Height &&
+	if (target->Origin.z + target->Height > Origin.z &&
+		target->Origin.z + target->Height < Origin.z + Height &&
 		dist < 16.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 230)
 	{
 		// Charge attack
@@ -319,10 +319,10 @@ void Actor::A_MinotaurDecide(void)
 		SetStateNF(S_MNTR_ATK4_1);
 		bSkullFly = true;
 		A_FaceTarget();
-		velocity = Normalize(target->origin - origin) * MNTR_CHARGE_SPEED;
-		args[4] = 35 / 2;	// Charge duration
+		Velocity = Normalize(target->Origin - Origin) * MNTR_CHARGE_SPEED;
+		Args[4] = 35 / 2;	// Charge duration
 	}
-	else if (target->origin.z == target->floorz &&
+	else if (target->Origin.z == target->FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 100)
 	{
 		// Floor fire attack
@@ -365,8 +365,8 @@ void Actor::A_MinotaurAtk2(void)
 	if (mo)
 	{
 		//StartSoundName(mo, sfx_minat2);
-		momz = mo->velocity.z * frametime;
-		angle = mo->angles.yaw;
+		momz = mo->Velocity.z * frametime;
+		angle = mo->Angles.yaw;
 		SpawnMissileAngle(this, MinotaurMissile,
 			AngleMod360(angle - (45.0 / 8.0)), momz);
 		SpawnMissileAngle(this, MinotaurMissile,
@@ -397,10 +397,10 @@ void Actor::A_MinotaurAtk3(void)
 	if (CheckMeleeRange())
 	{
 		target->Damage(self, self, HITDICE(3));
-		if (target->player)
+		if (target->bIsPlayer)
 		{
 			// Squish the player
-			target->player->deltaviewheight = -16.0;
+			target->Player->deltaviewheight = -16.0;
 		}
 	}
 	else
@@ -431,11 +431,11 @@ void Actor::A_MinotaurCharge(void)
 	if (!target)
 		return;
 
-	if (args[4] > 0)
+	if (Args[4] > 0)
 	{
-		puff = P_SpawnMobj(origin.x, origin.y, origin.z, PunchPuff);
-		puff->velocity.z = 2.0 * 35.0;
-		args[4]--;
+		puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PunchPuff);
+		puff->Velocity.z = 2.0 * 35.0;
+		Args[4]--;
 	}
 	else
 	{
@@ -489,11 +489,11 @@ void Actor::A_MntrFloorFire(void)
 {
 	mobj_t *mo;
 
-	origin.z = floorz;
-	mo = P_SpawnMobj(origin.x + (Random() - Random()) * 4.0,
-		origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MinotaurFloorFire2);
+	Origin.z = FloorZ;
+	mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 4.0,
+		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MinotaurFloorFire2);
 	mo->target = target;
-	mo->velocity.x = 0.00001;	// Force block checking
+	mo->Velocity.x = 0.00001;	// Force block checking
 	CheckMissileSpawn(mo);
 }
 
@@ -505,12 +505,15 @@ void Actor::A_MntrFloorFire(void)
 
 void Actor::A_SmokePuffExit(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, MinotaurSmokeExit);
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z, MinotaurSmokeExit);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

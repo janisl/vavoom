@@ -53,13 +53,13 @@ void Actor::A_TeloSpawnA(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX2);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX2);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 		mo->target = target;
-		mo->velocity = velocity / 2.0;
+		mo->Velocity = Velocity / 2.0;
 	}
 }
 
@@ -73,13 +73,13 @@ void Actor::A_TeloSpawnB(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX3);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX3);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 		mo->target = target;
-		mo->velocity = velocity / 2.0;
+		mo->Velocity = Velocity / 2.0;
 	}
 }
 
@@ -93,13 +93,13 @@ void Actor::A_TeloSpawnC(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX4);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX4);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 		mo->target = target;
-		mo->velocity = velocity / 2.0;
+		mo->Velocity = Velocity / 2.0;
 	}
 }
 
@@ -113,13 +113,13 @@ void Actor::A_TeloSpawnD(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, TeleportOtherFX5);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX5);
 	if (mo)
 	{
 		mo->special1 = TELEPORT_LIFE;	// Lifetime countdown
-		mo->angles.yaw = angles.yaw;
+		mo->Angles.yaw = Angles.yaw;
 		mo->target = target;
-		mo->velocity = velocity / 2.0;
+		mo->Velocity = Velocity / 2.0;
 	}
 }
 
@@ -140,6 +140,9 @@ void Actor::A_CheckTeleRing(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.9  2002/01/24 18:19:27  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

@@ -82,15 +82,15 @@ void Actor::A_HeadAttack(void)
 			baseFire->SetState(S_HEADFX3_4);	// Don't grow
 			for (i = 0; i < 5; i++)
 			{
-				fire = P_SpawnMobj(baseFire->origin.x, baseFire->origin.y,
-					baseFire->origin.z, HeadMissile3);
+				fire = P_SpawnMobj(baseFire->Origin.x, baseFire->Origin.y,
+					baseFire->Origin.z, HeadMissile3);
 				if (i == 0)
 				{
 					StartSoundName(self, 'HeadAttack1', CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
-				fire->angles.yaw = baseFire->angles.yaw;
-				fire->velocity = baseFire->velocity;
+				fire->Angles.yaw = baseFire->Angles.yaw;
+				fire->Velocity = baseFire->Velocity;
 				fire->MissileDamage = 0;
 				fire->Health = (i + 1) * 2;
 				CheckMissileSpawn(fire);
@@ -103,7 +103,7 @@ void Actor::A_HeadAttack(void)
 		mo = SpawnMissile(this, target, WhirlWind);
 		if (mo != NULL)
 		{
-			mo->origin.z -= 32.0;
+			mo->Origin.z -= 32.0;
 			mo->specialmobj1 = target;
 			mo->special2 = 50;	// Timer for active sound
 			mo->Health = 20 * TICRATE;	// Duration
@@ -126,13 +126,13 @@ void Actor::A_HeadIceImpact(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		shard = P_SpawnMobj(origin.x, origin.y, origin.z, HeadMissile2);
+		shard = P_SpawnMobj(Origin.x, Origin.y, Origin.z, HeadMissile2);
 		angle = itof(i) * 45.0;
 		shard->target = target;
-		shard->angles.yaw = angle;
-		shard->velocity.x = shard->Speed * cos(angle);
-		shard->velocity.y = shard->Speed * sin(angle);
-		shard->velocity.z = -0.6 * 35.0;
+		shard->Angles.yaw = angle;
+		shard->Velocity.x = shard->Speed * cos(angle);
+		shard->Velocity.y = shard->Speed * sin(angle);
+		shard->Velocity.z = -0.6 * 35.0;
 		CheckMissileSpawn(shard);
 	}
 }
@@ -146,7 +146,7 @@ void Actor::A_HeadIceImpact(void)
 void Actor::A_HeadFireGrow(void)
 {
 	Health--;
-	origin.z += 9.0;
+	Origin.z += 9.0;
 	if (Health == 0)
 	{
 		SetState(S_HEADFX3_4);
@@ -164,7 +164,7 @@ void Actor::A_WhirlwindSeek(void)
 	Health -= 3;
 	if (Health < 0)
 	{
-		velocity = vector(0.0, 0.0, 0.0);
+		Velocity = vector(0.0, 0.0, 0.0);
 		SetState(DeathState);
 		bMissile = false;
 		return;
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -68,12 +68,12 @@ void Actor::A_FatAttack1(void)
 
 	A_FaceTarget();
 	// Change direction  to ...
-	angles.yaw = AngleMod360(angles.yaw + FATSPREAD);
+	Angles.yaw = AngleMod360(Angles.yaw + FATSPREAD);
 	SpawnMissile(this, target, MancubusMissile);
 
 	mo = SpawnMissile(this, target, MancubusMissile);
-	mo->angles.yaw = AngleMod360(mo->angles.yaw + FATSPREAD);
-	VectorRotateAroundZ(&mo->velocity, FATSPREAD);
+	mo->Angles.yaw = AngleMod360(mo->Angles.yaw + FATSPREAD);
+	VectorRotateAroundZ(&mo->Velocity, FATSPREAD);
 }
 
 //==========================================================================
@@ -90,12 +90,12 @@ void Actor::A_FatAttack2(void)
 
 	A_FaceTarget();
 	// Now here choose opposite deviation.
-	angles.yaw = AngleMod360(angles.yaw - FATSPREAD);
+	Angles.yaw = AngleMod360(Angles.yaw - FATSPREAD);
 	SpawnMissile(this, target, MancubusMissile);
 
 	mo = SpawnMissile(this, target, MancubusMissile);
-	mo->angles.yaw = AngleMod360(mo->angles.yaw - FATSPREAD * 2.0);
-	VectorRotateAroundZ(&mo->velocity, -FATSPREAD * 2.0);
+	mo->Angles.yaw = AngleMod360(mo->Angles.yaw - FATSPREAD * 2.0);
+	VectorRotateAroundZ(&mo->Velocity, -FATSPREAD * 2.0);
 }
 
 //==========================================================================
@@ -113,12 +113,12 @@ void Actor::A_FatAttack3(void)
 	A_FaceTarget();
 
 	mo = SpawnMissile(this, target, MancubusMissile);
-	mo->angles.yaw = AngleMod360(mo->angles.yaw - FATSPREAD / 2.0);
-	VectorRotateAroundZ(&mo->velocity, -FATSPREAD / 2.0);
+	mo->Angles.yaw = AngleMod360(mo->Angles.yaw - FATSPREAD / 2.0);
+	VectorRotateAroundZ(&mo->Velocity, -FATSPREAD / 2.0);
 
 	mo = SpawnMissile(this, target, MancubusMissile);
-	mo->angles.yaw = AngleMod360(mo->angles.yaw + FATSPREAD / 2.0);
-	VectorRotateAroundZ(&mo->velocity, FATSPREAD / 2.0);
+	mo->Angles.yaw = AngleMod360(mo->Angles.yaw + FATSPREAD / 2.0);
+	VectorRotateAroundZ(&mo->Velocity, FATSPREAD / 2.0);
 }
 
 #else
@@ -148,6 +148,9 @@ void Actor::A_FatAttack3(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

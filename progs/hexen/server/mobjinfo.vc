@@ -327,8 +327,8 @@ class FlameSmall:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 64.0);
+		if (!TID)
+			AddStaticLight(Origin, 64.0);
 	}
 
 	defaultproperties
@@ -357,8 +357,8 @@ class FlameLarge:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
+		if (!TID)
+			AddStaticLight(Origin, 128.0);
 	}
 
 	defaultproperties
@@ -2407,8 +2407,8 @@ class ZChandelier:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
+		if (!TID)
+			AddStaticLight(Origin, 128.0);
 	}
 
 	defaultproperties
@@ -4278,7 +4278,7 @@ class ZCandle:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin, 128.0);
+		AddStaticLight(Origin, 128.0);
 	}
 
 	defaultproperties
@@ -4379,7 +4379,7 @@ class ZTWinedTorch:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		AddStaticLight(origin + vector(0.0, 0.0, 64.0), 200.0);
+		AddStaticLight(Origin + vector(0.0, 0.0, 64.0), 200.0);
 	}
 
 	defaultproperties
@@ -4476,8 +4476,8 @@ class ZWallTorch:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 
+		if (!TID)
+			AddStaticLight(Origin + vector(0.0, 0.0, 48.0), 
 				mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
 	}
 
@@ -4659,8 +4659,8 @@ class ZFireBull:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 32.0), 200.0);
+		if (!TID)
+			AddStaticLight(Origin + vector(0.0, 0.0, 32.0), 200.0);
 	}
 
 	defaultproperties
@@ -4710,8 +4710,8 @@ class FireThing:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 16.0), 160.0);
+		if (!TID)
+			AddStaticLight(Origin + vector(0.0, 0.0, 16.0), 160.0);
 	}
 
 	defaultproperties
@@ -4739,8 +4739,8 @@ class BrassTorch:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin + vector(0.0, 0.0, 48.0), 160.0);
+		if (!TID)
+			AddStaticLight(Origin + vector(0.0, 0.0, 48.0), 160.0);
 	}
 
 	defaultproperties
@@ -4842,8 +4842,8 @@ class ZBlueCandle:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLightRGB(origin, 128.0, RGB(0, 0, 255));
+		if (!TID)
+			AddStaticLightRGB(Origin, 128.0, RGB(0, 0, 255));
 	}
 
 	defaultproperties
@@ -4920,8 +4920,8 @@ class ZCauldron:Actor
 	void OnMapSpawn(mthing_t *mthing)
 	{
 		::OnMapSpawn(mthing);
-		if (!tid)
-			AddStaticLight(origin, 128.0);
+		if (!TID)
+			AddStaticLight(Origin, 128.0);
 	}
 
 	defaultproperties
@@ -6881,7 +6881,7 @@ class Pig:Actor
 		Radius = 12.0;
 		Height = 22.0;
 		Mass = 60.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 128;
 		bSolid = true;
@@ -6929,7 +6929,7 @@ class Centaur:Actor
 		Radius = 20.0;
 		Height = 64.0;
 		Mass = 120.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 135;
 		bSolid = true;
@@ -6979,7 +6979,7 @@ class CentaurLeader:Actor
 		Radius = 20.0;
 		Height = 64.0;
 		Mass = 120.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 96;
 		bSolid = true;
@@ -7109,7 +7109,7 @@ class Demon:Actor
 		Radius = 32.0;
 		Height = 64.0;
 		Mass = 220.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -7321,7 +7321,7 @@ class Demon2:Actor
 		Radius = 32.0;
 		Height = 64.0;
 		Mass = 220.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -7533,7 +7533,7 @@ class WraithBuried:Actor
 		Radius = 20.0;
 		Height = 68.0;
 		Mass = 75.0;
-		Speed = 385.0;
+		StepSpeed = 11.0;
 		ReactionCount = 8;
 		PainChance = 25;
 		MissileDamage = 10;
@@ -7586,7 +7586,7 @@ class Wraith:Actor
 		Radius = 20.0;
 		Height = 55.0;
 		Mass = 75.0;
-		Speed = 385.0;
+		StepSpeed = 11.0;
 		ReactionCount = 8;
 		PainChance = 25;
 		MissileDamage = 10;
@@ -7772,7 +7772,7 @@ class Minotaur:Actor
 		Radius = 28.0;
 		Height = 100.0;
 		Mass = 800.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 25;
 		MissileDamage = 7;
@@ -7957,7 +7957,7 @@ class Serpent:Actor
 		Radius = 32.0;
 		Height = 70.0;
 		Mass = 99999.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 96;
 		Translucency = 100;
@@ -8006,7 +8006,7 @@ class SerpentLeader:Actor
 		Radius = 32.0;
 		Height = 70.0;
 		Mass = 200.0;
-		Speed = 420.0;
+		StepSpeed = 12.0;
 		ReactionCount = 8;
 		PainChance = 96;
 		Translucency = 100;
@@ -8171,7 +8171,7 @@ class Bishop:Actor
 		Radius = 22.0;
 		Height = 65.0;
 		Mass = 100.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 110;
 		bSolid = true;
@@ -8872,7 +8872,7 @@ class Ettin:Actor
 		Radius = 25.0;
 		Height = 68.0;
 		Mass = 175.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 60;
 		MissileDamage = 3;
@@ -8949,7 +8949,7 @@ class FireDemon:Actor
 		Radius = 20.0;
 		Height = 68.0;
 		Mass = 75.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 1;
 		MissileDamage = 1;
@@ -9215,7 +9215,7 @@ class IceGuy:Actor
 		Radius = 22.0;
 		Height = 75.0;
 		Mass = 150.0;
-		Speed = 490.0;
+		StepSpeed = 14.0;
 		ReactionCount = 8;
 		PainChance = 144;
 		bSolid = true;
@@ -9419,7 +9419,7 @@ class FighterBoss:Actor
 		Radius = 16.0;
 		Height = 64.0;
 		Mass = 100.0;
-		Speed = 875.0;
+		StepSpeed = 25.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -9467,7 +9467,7 @@ class ClericBoss:Actor
 		Radius = 16.0;
 		Height = 64.0;
 		Mass = 100.0;
-		Speed = 875.0;
+		StepSpeed = 25.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -9515,7 +9515,7 @@ class MageBoss:Actor
 		Radius = 16.0;
 		Height = 64.0;
 		Mass = 100.0;
-		Speed = 875.0;
+		StepSpeed = 25.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		bSolid = true;
@@ -9562,7 +9562,7 @@ class Sorcerer:Actor
 		Radius = 40.0;
 		Height = 110.0;
 		Mass = 500.0;
-		Speed = 560.0;
+		StepSpeed = 16.0;
 		ReactionCount = 8;
 		PainChance = 10;
 		MissileDamage = 9;
@@ -9922,7 +9922,7 @@ class Korax:Actor
 		Radius = 65.0;
 		Height = 115.0;
 		Mass = 2000.0;
-		Speed = 350.0;
+		StepSpeed = 10.0;
 		ReactionCount = 8;
 		PainChance = 20;
 		MissileDamage = 15;
@@ -10134,7 +10134,7 @@ class DemonMash:Actor
 		Radius = 32.0;
 		Height = 64.0;
 		Mass = 220.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 33;
@@ -10183,7 +10183,7 @@ class Demon2Mash:Actor
 		Radius = 32.0;
 		Height = 64.0;
 		Mass = 220.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 50;
 		Translucency = 33;
@@ -10232,7 +10232,7 @@ class EttinMash:Actor
 		Radius = 25.0;
 		Height = 68.0;
 		Mass = 175.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 60;
 		MissileDamage = 3;
@@ -10281,7 +10281,7 @@ class CentaurMash:Actor
 		Radius = 20.0;
 		Height = 64.0;
 		Mass = 120.0;
-		Speed = 455.0;
+		StepSpeed = 13.0;
 		ReactionCount = 8;
 		PainChance = 135;
 		Translucency = 33;
@@ -10383,9 +10383,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/14 19:20:58  dj_jl
+//	Renamed Entity properties to new naming style
+//
 //	Revision 1.21  2002/02/06 17:28:53  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.20  2002/02/02 19:14:08  dj_jl
 //	Fixed things not spawned in deathmatch.
 //	

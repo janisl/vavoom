@@ -48,13 +48,13 @@ void Actor::A_LeafSpawn(void)
 
 	for (i = (P_Random() & 3) + 1; i; i--)
 	{
-		mo = P_SpawnMobj(origin.x + (Random() - Random()) * 64.0,
-			origin.y + (Random() - Random()) * 64.0,
-			origin.z + Random() * 64.0,
+		mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 64.0,
+			Origin.y + (Random() - Random()) * 64.0,
+			Origin.z + Random() * 64.0,
 			P_Random() & 1 ? Leaf2 : Leaf1);
 		if (mo)
 		{
-			P_ThrustMobj(mo, angles.yaw, Random() * 2.0 + 3.0);
+			P_ThrustMobj(mo, Angles.yaw, Random() * 2.0 + 3.0);
 			mo->target = this;
 			mo->special1 = 0;
 		}
@@ -73,7 +73,7 @@ void Actor::A_LeafThrust(void)
 	{
 		return;
 	}
-	velocity.z += (Random() * 2.0 + 1.0) * 35.0;
+	Velocity.z += (Random() * 2.0 + 1.0) * 35.0;
 }
 
 //============================================================================
@@ -92,15 +92,15 @@ void Actor::A_LeafCheck(void)
 	}
 	if (P_Random() > 64)
 	{
-		if (!velocity.x && !velocity.y)
+		if (!Velocity.x && !Velocity.y)
 		{
-			P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 1.0);
+			P_ThrustMobj(this, target->Angles.yaw, Random() * 2.0 + 1.0);
 		}
 		return;
 	}
 	SetState(S_LEAF1_8);
-	velocity.z = (Random() * 2.0 + 1.0) * 35.0;
-	P_ThrustMobj(this, target->angles.yaw, Random() * 2.0 + 2.0);
+	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
+	P_ThrustMobj(this, target->Angles.yaw, Random() * 2.0 + 2.0);
 	bMissile = true;
 }
 
@@ -130,6 +130,9 @@ void Actor::A_TreeDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.11  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -265,9 +265,9 @@ int CheckAmmo(player_t * player)
 void BulletSlope(mobj_t * mo, TAVec * angles)
 {
 	// see which target is to be aimed at
-	angles->pitch = mo->angles.pitch;
-	angles->yaw = mo->angles.yaw;
-	angles->roll = mo->angles.roll;
+	angles->pitch = mo->Angles.pitch;
+	angles->yaw = mo->Angles.yaw;
+	angles->roll = mo->Angles.roll;
 
 	AimLineAttack(mo, angles, 16.0 * 64.0);
 	if (!linetarget)
@@ -324,8 +324,8 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (player->mo->statenum == S_PLAY_ATK1
-		|| player->mo->statenum == S_PLAY_ATK2)
+	if (player->mo->StateNum == S_PLAY_ATK1 ||
+		player->mo->StateNum == S_PLAY_ATK2)
 	{
 		player->mo->SetState(S_PLAY);
 	}
@@ -464,7 +464,7 @@ void Weapon::A_ReFire(void)
 
 void A_CheckReload(mobj_t * actor)
 {
-	player_t *player = actor->player;
+	player_t *player = actor->Player;
 
 	CheckAmmo(player);
 }
@@ -477,7 +477,7 @@ void A_CheckReload(mobj_t * actor)
 
 void A_GunFlash(mobj_t * actor)
 {
-	player_t *player = actor->player;
+	player_t *player = actor->Player;
 
 	player->mo->SetState(S_PLAY_ATK2);
 	SetPsprite(player, ps_flash, player->w_flashstate);
@@ -502,7 +502,7 @@ void Weapon::A_Light0(void)
 
 void A_Light1(mobj_t * actor)
 {
-	player_t *player = actor->player;
+	player_t *player = actor->Player;
 
 	player->extralight = 1;
 }
@@ -515,7 +515,7 @@ void A_Light1(mobj_t * actor)
 
 void A_Light2(mobj_t * actor)
 {
-	player_t *player = actor->player;
+	player_t *player = actor->Player;
 
 	player->extralight = 2;
 }
@@ -543,7 +543,7 @@ void Weapon::A_Punch(void)
 	if (player->powers[pw_strength])
 		damage *= 10;
 
-	avcpy(player->mo->angles, angles);
+	avcpy(player->mo->Angles, angles);
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	AimLineAttack(player->mo, &angles, MELEERANGE);
@@ -554,9 +554,9 @@ void Weapon::A_Punch(void)
 	if (linetarget)
 	{
 		StartSoundName(*player->mo, 'Punch', CHAN_WEAPON);
-		player->mo->angles.yaw =
-			atan2(linetarget->origin.y - player->mo->origin.y,
-			linetarget->origin.x - player->mo->origin.x);
+		player->mo->Angles.yaw =
+			atan2(linetarget->Origin.y - player->mo->Origin.y,
+			linetarget->Origin.x - player->mo->Origin.x);
 		player->fixangle = 1;
 	}
 }
@@ -564,6 +564,9 @@ void Weapon::A_Punch(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:21:00  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/01/28 18:50:20  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -37,7 +37,7 @@ void Actor::A_Look(void)
 	int sound;
 
 	threshold = 0;	// any shot will wake up
-	targ = Actor(subsector->sector->SoundTarget);
+	targ = Actor(Sector->SoundTarget);
 
 	if (targ && targ.bShootable)
 	{
@@ -136,17 +136,17 @@ void Actor::A_Chase(void)
 	// turn towards movement direction if not there yet
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
 
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 
 		if (delta > 0.0)
 		{
-			angles.yaw -= 45.0;
+			Angles.yaw -= 45.0;
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw += 45.0;
+			Angles.yaw += 45.0;
 		}
 	}
 
@@ -233,12 +233,12 @@ void Actor::A_FaceTarget(void)
 
 	bAmbush = false;
 
-	angles.yaw = atan2(target->origin.y - origin.y,
-		target->origin.x - origin.x);
+	Angles.yaw = atan2(target->Origin.y - Origin.y,
+		target->Origin.x - Origin.x);
 
 	if (target->Translucency)
 	{
-		angles.yaw = AngleMod360(angles.yaw + (Random() - Random()) * 45.0);
+		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
 }
 
@@ -278,9 +278,9 @@ void Actor::A_Explode(void)
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);
 	MSG_WriteByte(svc_explosion);
-	MSG_WriteShort(ftoi(origin.x));
-	MSG_WriteShort(ftoi(origin.y));
-	MSG_WriteShort(ftoi(origin.z + Height * 0.5));
+	MSG_WriteShort(ftoi(Origin.x));
+	MSG_WriteShort(ftoi(Origin.y));
+	MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
 
 	//  Clear old dynamic light effect
 	Effects &= ~EF_DLIGHT_MASK;
@@ -560,6 +560,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

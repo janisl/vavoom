@@ -76,19 +76,19 @@ void Actor::A_BatSpawn(void)
 	// Countdown until next spawn
 	if (special1-- > 0)
 		return;
-	special1 = args[0];	// Reset frequency count
+	special1 = Args[0];	// Reset frequency count
 
-	delta = itof(args[1]);
+	delta = itof(Args[1]);
 	if (delta == 0.0)
 		delta = 1.0;
-	angle = AngleMod360(angles.yaw +
+	angle = AngleMod360(Angles.yaw +
 		delta * (Random() - 0.5) * 360.0 / 256.0);
 	mo = SpawnMissileAngle(this, Bat, angle, 0.0);
 	if (mo)
 	{
-		mo->args[0] = P_Random() & 63;	// floatbob index
-		mo->args[4] = args[4];	// turn degrees
-		mo->special2 = args[3] << 3;	// Set lifetime
+		mo->Args[0] = P_Random() & 63;	// floatbob index
+		mo->Args[4] = Args[4];	// turn degrees
+		mo->special2 = Args[3] << 3;	// Set lifetime
 		mo->target = this;
 	}
 }
@@ -112,29 +112,32 @@ void Actor::A_BatMove(void)
 
 	if (P_Random() < 128)
 	{
-		newangle = AngleMod360(angles.yaw + itof(args[4]));
+		newangle = AngleMod360(Angles.yaw + itof(Args[4]));
 	}
 	else
 	{
-		newangle = AngleMod360(angles.yaw - itof(args[4]));
+		newangle = AngleMod360(Angles.yaw - itof(Args[4]));
 	}
 
 	// Adjust momentum vector to new direction
 	newSpeed = Speed * Random() * 4.0;
-	velocity.x = newSpeed * cos(newangle);
-	velocity.y = newSpeed * sin(newangle);
+	Velocity.x = newSpeed * cos(newangle);
+	Velocity.y = newSpeed * sin(newangle);
 
 	if (P_Random() < 15)
 		StartSoundName(self, 'BatScream', CHAN_VOICE);
 
 	// Handle Z movement
-	origin.z = target->origin.z + 2.0 * FloatBobOffsets[args[0]];
-	args[0] = (args[0] + 3) & 63;
+	Origin.z = target->Origin.z + 2.0 * FloatBobOffsets[Args[0]];
+	Args[0] = (Args[0] + 3) & 63;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.12  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

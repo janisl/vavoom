@@ -61,10 +61,10 @@ void Actor::A_SerpentChase(void)
 	if (gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
-		time *= 0.5;
-		if (time < 0.1)
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
 		{
-			time = 0.1;
+			StateTime = 0.1;
 		}
 	}
 
@@ -73,15 +73,15 @@ void Actor::A_SerpentChase(void)
 	//
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
@@ -133,14 +133,14 @@ void Actor::A_SerpentChase(void)
 	//
 	// chase towards player
 	//
-	oldX = origin.x;
-	oldY = origin.y;
-	oldFloor = subsector->sector->floor.pic;
+	oldX = Origin.x;
+	oldY = Origin.y;
+	oldFloor = Sector->floor.pic;
 	if (--movecount < 0 || !StepMove())
 	{
 		NewChaseDir();
 	}
-	if (subsector->sector->floor.pic != oldFloor)
+	if (Sector->floor.pic != oldFloor)
 	{
 		P_TryMove(this, oldX, oldY);
 		NewChaseDir();
@@ -207,20 +207,20 @@ void Actor::A_SerpentHumpDecide(void)
 void Actor::A_SerpentUnHide(void)
 {
 	Translucency = 0;
-	floorclip = 24.0;
+	FloorClip = 24.0;
 }
 
 //============================================================================
 //
 //	Actor::A_SerpentRaiseHump
 // 
-//	Raises the hump above the surface by raising the floorclip level
+//	Raises the hump above the surface by raising the FloorClip level
 //
 //============================================================================
 
 void Actor::A_SerpentRaiseHump(void)
 {
-	floorclip -= 4.0;
+	FloorClip -= 4.0;
 }
 
 //============================================================================
@@ -231,7 +231,7 @@ void Actor::A_SerpentRaiseHump(void)
 
 void Actor::A_SerpentLowerHump(void)
 {
-	floorclip += 4.0;
+	FloorClip += 4.0;
 }
 
 //============================================================================
@@ -243,7 +243,7 @@ void Actor::A_SerpentLowerHump(void)
 void Actor::A_SerpentHide(void)
 {
 	Translucency = 100;
-	floorclip = 0.0;
+	FloorClip = 0.0;
 }
 
 //==========================================================================
@@ -355,10 +355,10 @@ void Actor::A_SerpentWalk(void)
 	if (gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
-		time *= 0.5;
-		if (time < 0.1)
+		StateTime *= 0.5;
+		if (StateTime < 0.1)
 		{
-			time = 0.1;
+			StateTime = 0.1;
 		}
 	}
 
@@ -367,15 +367,15 @@ void Actor::A_SerpentWalk(void)
 	//
 	if (movedir < 8)
 	{
-		angles.yaw = itof(ftoi(angles.yaw / 45.0)) * 45.0;
-		delta = AngleMod180(angles.yaw - itof(movedir) * 45.0);
+		Angles.yaw = itof(ftoi(Angles.yaw / 45.0)) * 45.0;
+		delta = AngleMod180(Angles.yaw - itof(movedir) * 45.0);
 		if (delta > 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw - 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 45.0);
 		}
 		else if (delta < 0.0)
 		{
-			angles.yaw = AngleMod360(angles.yaw + 45.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 45.0);
 		}
 	}
 
@@ -498,7 +498,7 @@ void Actor::A_SerpentMissileAttack(void)
 
 void Actor::A_SerpentHeadPop(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z + 45.0, SerpentHead);
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z + 45.0, SerpentHead);
 }
 
 //============================================================================
@@ -511,32 +511,32 @@ void Actor::A_SerpentSpawnGibs(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
-		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
+	mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0,
 		SerpentGib1);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
-		mo->floorclip = 6.0;
+		mo->Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		mo->FloorClip = 6.0;
 	}
-	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
-		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
+	mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0,
 		SerpentGib2);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
-		mo->floorclip = 6.0;
+		mo->Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		mo->FloorClip = 6.0;
 	}
-	mo = P_SpawnMobj(origin.x + (Random() - 0.5) * 16.0,
-		origin.y + (Random() - 0.5) * 16.0, floorz + 1.0,
+	mo = P_SpawnMobj(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0,
 		SerpentGib3);
 	if (mo)
 	{
-		mo->velocity.x = (Random() - 0.5) / 4.0 * 35.0;
-		mo->velocity.y = (Random() - 0.5) / 4.0 * 35.0;
-		mo->floorclip = 6.0;
+		mo->Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		mo->Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		mo->FloorClip = 6.0;
 	}
 }
 
@@ -548,7 +548,7 @@ void Actor::A_SerpentSpawnGibs(void)
 
 void Actor::A_SerpentHeadCheck(void)
 {
-	if (origin.z <= floorz)
+	if (Origin.z <= FloorZ)
 	{
 		if (P_GetThingFloorType(this) >= FLOOR_LIQUID)
 		{
@@ -570,7 +570,7 @@ void Actor::A_SerpentHeadCheck(void)
 
 void Actor::A_FloatGib(void)
 {
-	floorclip -= 1.0;
+	FloorClip -= 1.0;
 }
 
 //============================================================================
@@ -581,7 +581,7 @@ void Actor::A_FloatGib(void)
 
 void Actor::A_SinkGib(void)
 {
-	floorclip += 1.0;
+	FloorClip += 1.0;
 }
 
 //============================================================================
@@ -592,12 +592,15 @@ void Actor::A_SinkGib(void)
 
 void Actor::A_DelayGib(void)
 {
-	time -= Random() * 2.0;
+	StateTime -= Random() * 2.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.16  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

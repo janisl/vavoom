@@ -45,12 +45,12 @@ void Actor::A_PoisonBagInit(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z + 28.0, PoisonCloud);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 28.0, PoisonCloud);
 	if (!mo)
 	{
 		return;
 	}
-	mo->velocity.x = 0.00001;	// missile objects must move to impact other objects
+	mo->Velocity.x = 0.00001;	// missile objects must move to impact other objects
 	mo->special1 = 24 + (P_Random() & 7);
 	mo->special2 = 0;
 	mo->target = target;
@@ -86,7 +86,7 @@ void Actor::A_PoisonBagDamage(void)
 	A_Explode();
 
 	bobIndex = special2;
-	origin.z += FloatBobOffsets[bobIndex] / 16.0;
+	Origin.z += FloatBobOffsets[bobIndex] / 16.0;
 	special2 = (bobIndex + 1) & 63;
 }
 
@@ -98,12 +98,15 @@ void Actor::A_PoisonBagDamage(void)
 
 void Actor::A_PoisonShroom(void)
 {
-	time = 4.0 + Random() * 16.0;
+	StateTime = 4.0 + Random() * 16.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -194,10 +194,10 @@ void Actor::A_BridgeOrbit(void)
 	{
 		SetState(S_NULL);
 	}
-	args[0] += 3;
-	origin.x = target->origin.x + orbitTableX[args[0] & 255];
-	origin.y = target->origin.y + orbitTableY[args[0] & 255];
-	origin.z = target->origin.z;
+	Args[0] += 3;
+	Origin.x = target->Origin.x + orbitTableX[Args[0] & 255];
+	Origin.y = target->Origin.y + orbitTableY[Args[0] & 255];
+	Origin.z = target->Origin.z;
 }
 
 //==========================================================================
@@ -214,23 +214,23 @@ void Actor::A_BridgeInit(void)
 	mobj_t *ball3;
 	float cx, cy, cz;
 
-	cx = origin.x;
-	cy = origin.y;
-	cz = origin.z;
+	cx = Origin.x;
+	cy = Origin.y;
+	cz = Origin.z;
 	startangle = P_Random();
 	special1 = 0;
 
 	// Spawn triad into world
 	ball1 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball1->args[0] = startangle;
+	ball1->Args[0] = startangle;
 	ball1->target = this;
 
 	ball2 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball2->args[0] = (startangle + 85) & 255;
+	ball2->Args[0] = (startangle + 85) & 255;
 	ball2->target = this;
 
 	ball3 = P_SpawnMobj(cx, cy, cz, BridgeBall);
-	ball3->args[0] = (startangle + 170) & 255;
+	ball3->Args[0] = (startangle + 170) & 255;
 	ball3->target = this;
 
 	Actor(*ball1).A_BridgeOrbit();
@@ -254,6 +254,9 @@ void Actor::A_BridgeRemove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

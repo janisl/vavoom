@@ -182,7 +182,7 @@ float BotPlayer::AngleTo(TVec dest)
 	TVec dir;
 	TAVec ang;
 
-	dir = dest - botmo.origin;
+	dir = dest - botmo.Origin;
 	VectorAngles(&dir, &ang);
 	return ang.yaw;
 }
@@ -309,7 +309,7 @@ boolean BotPlayer::CheckTo(TVec pos)
 	float dist;
 	float an;
 
-	dist = Length(botmo.origin - pos);
+	dist = Length(botmo.Origin - pos);
 	an = GetAngle();
 
 	if (!CheckPath(an, dist))
@@ -331,7 +331,7 @@ void BotPlayer::CheckStuff(void)
 	if (item)
 	{
 		if (!item.bSpecial || item.IsDestroyed() || // somebody picked
-				!CheckTo(item.origin)) // Can't reach
+				!CheckTo(item.Origin)) // Can't reach
 			item = none;
 	}
 
@@ -343,7 +343,7 @@ void BotPlayer::CheckStuff(void)
 
 	if (node)
 	{
-		if (!CheckTo(node.origin) ||
+		if (!CheckTo(node.Origin) ||
 			(MobjDist2(botmo, node) < botmo.Radius))
 		{
 			prev = node;
@@ -354,7 +354,7 @@ void BotPlayer::CheckStuff(void)
 	if (posdest_valid)
 	{
 		TVec dir;
-		dir = posdest - botmo.origin;
+		dir = posdest - botmo.Origin;
 		dir.z = 0.0;
 		if ((Length(dir) < botmo.Radius) || !CheckTo(posdest))
 		{
@@ -365,7 +365,7 @@ void BotPlayer::CheckStuff(void)
 	if (lastpos_valid)
 	{
 		TVec dir;
-		dir = lastpos - botmo.origin;
+		dir = lastpos - botmo.Origin;
 		dir.z = 0.0;
 		if ((Length(dir) < botmo.Radius) || !CheckTo(lastpos))
 		{
@@ -824,7 +824,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 	Actor botmo;
 	TVec hit_point;
 
-	bot = usething->player->Bot;
+	bot = usething->Player->Bot;
 	botmo = *usething;
 
 	if (in->isaline)
@@ -835,7 +835,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 		float diffheight;
 
 		ld = in->line;					// This linedef
-		hit_point = botmo.origin + (bottracerange * in->frac) * bottracedir;
+		hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
 
 		// Line is impassible
 		if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
@@ -845,7 +845,7 @@ boolean PTR_BotPathTraverse(intercept_t *in)
 		if (!ld->backsector)
 			return false;
 
-		if (!PointOnPlaneSide(botmo.origin, ld))
+		if (!PointOnPlaneSide(botmo.Origin, ld))
 		{
 			back = ld->backsector;
 			front = ld->frontsector;
@@ -943,8 +943,8 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 	bottracedir.x = cos(ang);
 	bottracedir.y = sin(ang);
 	bottracedir.z = 0.0;
-	x1 = botmo.origin.x;
-	y1 = botmo.origin.y;
+	x1 = botmo.Origin.x;
+	y1 = botmo.Origin.y;
  	x2 = x1 + dist * bottracedir.x;
  	y2 = y1 + dist * bottracedir.y;
 	usething = &botmo;
@@ -980,7 +980,7 @@ boolean BotPlayer::Check_LOS(Actor to, float vangle)
 	if (vangle == 0.0)
 		return false; //Looker seems to be blind.
 
-	return fabs(AngleMod180(AngleTo(to.origin) - botmo.angles.yaw)) <=
+	return fabs(AngleMod180(AngleTo(to.Origin) - botmo.Angles.yaw)) <=
 		vangle / 2.0;
 }
 
@@ -1156,7 +1156,7 @@ void BotPlayer::BotAim(void)
 	dist = MobjDist2(botmo, enemy);
 
 	right = !!(P_Random() & 1);
-	an = AngleTo(enemy.origin);
+	an = AngleTo(enemy.Origin);
 
 	// [BC] Cajun prediction... maybe use this somewhere
 	/*
@@ -1207,7 +1207,7 @@ void BotPlayer::BotAim(void)
 		break;
 		// BFG9000
 	case wp_mace:
-		SetAngle(AngleTo(enemy.origin));
+		SetAngle(AngleTo(enemy.Origin));
 		break;
 
 		// Instant weapons
@@ -1246,10 +1246,10 @@ void BotPlayer::BotAim(void)
 			SetAngle(an);
 			break;
 		case bsk_excellent:
-			SetAngle(AngleTo(enemy.origin + enemy.velocity * 0.1));
+			SetAngle(AngleTo(enemy.Origin + enemy.Velocity * 0.1));
 			break;
 		case bsk_supreme://FIXME
-			SetAngle(AngleTo(enemy.origin + enemy.velocity * 0.1));
+			SetAngle(AngleTo(enemy.Origin + enemy.Velocity * 0.1));
 			break;
 		default:
 			Error("Unknown bot skill level: %d", info.accuracy);
@@ -1370,7 +1370,7 @@ void BotPlayer::Roam(void)
 	{
 		TVec dir;
 
-		dir = lastpos - botmo.origin;
+		dir = lastpos - botmo.Origin;
 		dir.z = 0.0;
 		if (Length(dir) <= 32.0)
 		{
@@ -1381,7 +1381,7 @@ void BotPlayer::Roam(void)
 	// Order of item response precedence:
 	if (goal)
 	{
-		dest = goal.origin;
+		dest = goal.Origin;
 	}
 	else if (lastpos_valid)
 	{
@@ -1389,11 +1389,11 @@ void BotPlayer::Roam(void)
 	}
 	else if (item)
 	{
-		dest = item.origin;
+		dest = item.Origin;
 	}
 	else if (node)
 	{
-		dest = node.origin;
+		dest = node.Origin;
 	}
 	else if (posdest_valid)
 	{
@@ -1411,9 +1411,9 @@ void BotPlayer::Roam(void)
 			if (CheckPath(an, dist))
 			{
 				posdest_valid = true;
-				posdest.x = botmo.origin.x + dist * cos(an);
-				posdest.y = botmo.origin.y + dist * sin(an);
-				posdest.z = botmo.origin.z;
+				posdest.x = botmo.Origin.x + dist * cos(an);
+				posdest.y = botmo.Origin.y + dist * sin(an);
+				posdest.z = botmo.Origin.z;
 				SetAngle(an);
 				break;
 			}
@@ -1421,9 +1421,9 @@ void BotPlayer::Roam(void)
 			if (CheckPath(an + 45.0, dist))
 			{
 				posdest_valid = true;
-				posdest.x = botmo.origin.x + dist * cos(an + 45.0);
-				posdest.y = botmo.origin.y + dist * sin(an + 45.0);
-				posdest.z = botmo.origin.z;
+				posdest.x = botmo.Origin.x + dist * cos(an + 45.0);
+				posdest.y = botmo.Origin.y + dist * sin(an + 45.0);
+				posdest.z = botmo.Origin.z;
 				SetAngle(an + 45.0);
 				break;
 			}
@@ -1432,9 +1432,9 @@ void BotPlayer::Roam(void)
 			if (CheckPath(an - 45.0, dist))
 			{
 				posdest_valid = true;
-				posdest.x = botmo.origin.x + dist * cos(an - 45.0);
-				posdest.y = botmo.origin.y + dist * sin(an - 45.0);
-				posdest.z = botmo.origin.z;
+				posdest.x = botmo.Origin.x + dist * cos(an - 45.0);
+				posdest.y = botmo.Origin.y + dist * sin(an - 45.0);
+				posdest.z = botmo.Origin.z;
 				SetAngle(an - 45.0);
 				break;
 			}
@@ -1483,7 +1483,7 @@ void BotPlayer::Move(void)
 		}
 
 		// Look at the missle and sidestep it
-		SetAngle(AngleTo(missile.origin));
+		SetAngle(AngleTo(missile.Origin));
 		forwardmove = -FORWARDRUN;
 		return;
 	}
@@ -1609,7 +1609,7 @@ void BotPlayer::Move(void)
 		dist = MobjDist(botmo, enemy);
 
 		// Remember where we saw him last in case he gets away
-		lastpos = enemy.origin;
+		lastpos = enemy.Origin;
 		lastpos_valid = true;
 
 		// Check if we'd rather pick up something than fight
@@ -1623,7 +1623,7 @@ void BotPlayer::Move(void)
 			}
 		}
 
-		an = botmo.angles.yaw;
+		an = botmo.Angles.yaw;
 		if (sidemove < 0.0)
 			an -= 90.0;
 		else
@@ -1640,7 +1640,7 @@ void BotPlayer::Move(void)
 			if (!B_CheckTo(mo, bot->enemy)
 */
 
-		if (CheckTo(enemy.origin) && dist > combatdist[player->readyweapon])
+		if (CheckTo(enemy.Origin) && dist > combatdist[player->readyweapon])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1734,7 +1734,7 @@ void BotPlayer::Turn(void)
 {
 	float distance;
 
-	distance = GetAngle() - botmo.angles.yaw;
+	distance = GetAngle() - botmo.Angles.yaw;
 
 	if (!enemy)
 	{
@@ -1778,7 +1778,7 @@ void BotPlayer::Turn(void)
 			distance = -37.5;
 		break;
 	}
-	player->viewangles.yaw = AngleMod360(botmo.angles.yaw + distance);
+	player->viewangles.yaw = AngleMod360(botmo.Angles.yaw + distance);
 }
 
 //==========================================================================
@@ -1794,13 +1794,13 @@ void BotPlayer::Pitch(void)
 		TVec dir;
 		TAVec ang;
 
-		dir = enemy.origin - botmo.origin;
+		dir = enemy.Origin - botmo.Origin;
 		VectorAngles(&dir, &ang);
-		botmo.angles.pitch = ang.pitch;
+		botmo.Angles.pitch = ang.pitch;
 	}
 	else
 	{
-		botmo.angles.pitch = 0.0;
+		botmo.Angles.pitch = 0.0;
 	}
 }
 
@@ -2037,6 +2037,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.10  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -266,6 +266,7 @@ class Actor:Entity
 	//  Params
 	float Mass;
 	float Speed;
+	float StepSpeed;
 	int PainChance;
 	int spawnhealth;
 	int GibsHealth;
@@ -1015,6 +1016,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/09 18:15:42  dj_jl
 //  Beautification
 //

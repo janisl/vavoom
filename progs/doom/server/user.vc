@@ -59,8 +59,8 @@ boolean onground;
 
 void ThrustPlayer(player_t * player, float angle, float move)
 {
-	player->mo->velocity.x += move * cos(angle) * frametime;
-	player->mo->velocity.y += move * sin(angle) * frametime;
+	player->mo->Velocity.x += move * cos(angle) * frametime;
+	player->mo->Velocity.y += move * sin(angle) * frametime;
 }
 
 //==========================================================================
@@ -82,8 +82,8 @@ void CalcHeight(player_t * player)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	player->bob = (player->mo->velocity.x * player->mo->velocity.x
-		+ player->mo->velocity.y * player->mo->velocity.y)
+	player->bob = (player->mo->Velocity.x * player->mo->Velocity.x
+		+ player->mo->Velocity.y * player->mo->Velocity.y)
 		* frametime * frametime;
 
 	player->bob /= 4.0;
@@ -118,10 +118,10 @@ void CalcHeight(player_t * player)
 				player->deltaviewheight = 0.00001;
 		}
 	}
-	player->vieworg.z = player->mo->origin.z + player->viewheight + bob;
+	player->vieworg.z = player->mo->Origin.z + player->viewheight + bob;
 
-	if (player->vieworg.z > player->mo->ceilingz - 4.0)
-		player->vieworg.z = player->mo->ceilingz - 4.0;
+	if (player->vieworg.z > player->mo->CeilingZ - 4.0)
+		player->vieworg.z = player->mo->CeilingZ - 4.0;
 }
 
 //==========================================================================
@@ -137,7 +137,7 @@ void MovePlayer(player_t * player)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = player->mo->origin.z <= player->mo->floorz ||
+	onground = player->mo->Origin.z <= player->mo->FloorZ ||
 		player->mo->bOnMobj;
 
 	forward = player->forwardmove * 5.0;
@@ -151,11 +151,11 @@ void MovePlayer(player_t * player)
 
 	if (forward)
 	{
-		ThrustPlayer(player, player->mo->angles.yaw, forward);
+		ThrustPlayer(player, player->mo->Angles.yaw, forward);
 	}
 	if (side)
 	{
-		ThrustPlayer(player, player->mo->angles.yaw - 90.0, side);
+		ThrustPlayer(player, player->mo->Angles.yaw - 90.0, side);
 	}
 
 	if (forward || side)
@@ -166,7 +166,7 @@ void MovePlayer(player_t * player)
 	if ((player->buttons & BT_JUMP) && onground && !player->jumpTics)
 	{
 		//  Jump
-		player->mo->velocity.z = 9.0 * 35.0;
+		player->mo->Velocity.z = 9.0 * 35.0;
 		player->jumpTics = 18;
 	}
 }
@@ -184,8 +184,8 @@ void CheckWaterJump(player_t * player)
 	TVec vforward;
 
 	// check for a jump-out-of-water
-	AngleVector(&player->mo->angles, &vforward);
-	start = player->mo->origin;
+	AngleVector(&player->mo->Angles, &vforward);
+	start = player->mo->Origin;
 	start.z += player->mo->Height * 0.5 + 8.0;
 	vforward.z = 0.0;
 	vforward = Normalize(vforward);
@@ -193,14 +193,14 @@ void CheckWaterJump(player_t * player)
 	if (!TraceLine(start, end))
 	{
 		// solid at waist
-		start.z = player->mo->origin.z + player->mo->Height;
+		start.z = player->mo->Origin.z + player->mo->Height;
 		end = start + vforward * 24.0;
 		player->movedir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
 			player->mo->bWaterJump = true;
-			player->mo->velocity.z = 320.0;
+			player->mo->Velocity.z = 320.0;
 			player->mo->ReactionTime = 2.0;	// safety net
 		}
 	}
@@ -223,10 +223,10 @@ void WaterMove(player_t * player)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = player->mo->origin.z <= player->mo->floorz ||
+	onground = player->mo->Origin.z <= player->mo->FloorZ ||
 		player->mo->bOnMobj;
 
-	AngleVectors(&player->mo->angles, &vforward, &vright, &vup);
+	AngleVectors(&player->mo->Angles, &vforward, &vright, &vup);
 
 	forward = player->forwardmove;
 	side = player->sidemove;
@@ -237,7 +237,7 @@ void WaterMove(player_t * player)
 //  else
 //      wishvel.z += cmd.upmove;
 
-	player->mo->velocity += 3.5 * frametime * wishvel;
+	player->mo->Velocity += 3.5 * frametime * wishvel;
 
 	if (forward || side)
 	{
@@ -247,12 +247,12 @@ void WaterMove(player_t * player)
 	if (player->buttons & BT_JUMP)
 	{
 		if (player->mo->watertype == CONTENTS_WATER)
-			player->mo->velocity.z = 100.0;
+			player->mo->Velocity.z = 100.0;
 		else if (player->mo->watertype == CONTENTS_NUKAGE ||
 			player->mo->watertype == CONTENTS_SLIME)
-			player->mo->velocity.z = 80.0;
+			player->mo->Velocity.z = 80.0;
 		else
-			player->mo->velocity.z = 50.0;
+			player->mo->Velocity.z = 50.0;
 	}
 	CheckWaterJump(player);
 }
@@ -270,8 +270,8 @@ void WaterJump(player_t * player)
 		player->mo->bWaterJump = false;
 		player->mo->ReactionTime = 0.0;
 	}
-	player->mo->velocity.x = player->movedir.x;
-	player->mo->velocity.y = player->movedir.y;
+	player->mo->Velocity.x = player->movedir.x;
+	player->mo->Velocity.y = player->movedir.y;
 }
 
 //==========================================================================
@@ -286,10 +286,10 @@ void PlayerInSpecialSector(player_t * player)
 {
 	sector_t *sector;
 
-	sector = player->mo->subsector->sector;
+	sector = player->mo->Sector;
 
 	// Falling, not all the way down yet?
-	if (player->mo->origin.z != sector->floorheight)
+	if (player->mo->Origin.z != sector->floorheight)
 		return;
 
 	if (sector->special & SECRET_MASK)
@@ -398,12 +398,12 @@ void DeathPlayerThink(player_t * player)
 
 	MovePsprites(player);
 
-	onground = player->mo->origin.z <= player->mo->floorz ||
+	onground = player->mo->Origin.z <= player->mo->FloorZ ||
 		player->mo->bOnMobj;
 
 	if (player->mo->waterlevel > 1)
 	{
-		player->mo->velocity.z = -60.0;	// drift towards bottom
+		player->mo->Velocity.z = -60.0;	// drift towards bottom
 	}
 
 	// fall to the ground
@@ -418,8 +418,8 @@ void DeathPlayerThink(player_t * player)
 
 	if (player->attacker && player->attacker != player->mo)
 	{
-		angle = atan2(player->attacker->origin.y - player->mo->origin.y,
-			player->attacker->origin.x - player->mo->origin.x);
+		angle = atan2(player->attacker->Origin.y - player->mo->Origin.y,
+			player->attacker->Origin.x - player->mo->Origin.x);
 
 		delta = AngleMod180(angle - player->viewangles.yaw);
 
@@ -501,7 +501,7 @@ void PlayerThink(player_t * player)
 	}
 
 	// Copy view angles
-	player->mo->angles = player->viewangles;
+	player->mo->Angles = player->viewangles;
 
 	if (player->jumpTics)
 	{
@@ -529,7 +529,7 @@ void PlayerThink(player_t * player)
 
 	CalcHeight(player);
 
-	if (player->mo->subsector->sector->special)
+	if (player->mo->Sector->special)
 		PlayerInSpecialSector(player);
 	PlayerInContents(player);
 
@@ -689,12 +689,12 @@ void SB_PaletteFlash(player_t * player)
 
 void SetViewPos(player_t * player)
 {
-	player->vieworg.x = player->mo->origin.x;
-	player->vieworg.y = player->mo->origin.y;
+	player->vieworg.x = player->mo->Origin.x;
+	player->vieworg.y = player->mo->Origin.y;
 
 	if (player->playerstate != PST_DEAD)
 	{
-		player->viewangles = player->mo->angles;
+		player->viewangles = player->mo->Angles;
 	}
 
 	SB_PaletteFlash(player);
@@ -764,7 +764,7 @@ void G_PlayerExitMap(int player, boolean clusterChange)
 	{
 		p->powers[i] = 0;
 	}
-	p->mo->angles.pitch = 0.0;
+	p->mo->Angles.pitch = 0.0;
 	p->mo->Translucency = 0;	// cancel invisibility
 	p->extralight = 0;	// cancel gun flashes 
 	p->fixedcolormap = 0;	// cancel ir gogles 
@@ -818,11 +818,12 @@ void NetGameReborn(int playernum)
 	// respawn at the start
 
 	// remove pitch and roll angles from corpse
-	players[playernum].mo->angles.pitch = 0.0;
-	players[playernum].mo->angles.roll = 0.0;
+	players[playernum].mo->Angles.pitch = 0.0;
+	players[playernum].mo->Angles.roll = 0.0;
 
 	// first dissasociate the corpse
-	players[playernum].mo->player = NULL;
+	players[playernum].mo->Player = NULL;
+	players[playernum].mo->bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -896,15 +897,16 @@ void DisconnectClient(player_t * player)
 {
 	int i;
 
-	if (player->mo)
-	{
-		player->mo->player = NULL;
-		player->mo->Damage(none, none, 10000);
-	}
 	if (player->Bot != none)
 	{
 		player->Bot.Destroy();
 		player->Bot = none;
+	}
+	if (player->mo)
+	{
+		player->mo->Player = NULL;
+		player->mo->bIsPlayer = false;
+		player->mo->Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -932,21 +934,21 @@ void SetClientModel(player_t *player)
 	model = Info_ValueForKey(ARR2STR(player->userinfo), "model");
 	if (!model || !strgetchar(model, 0))
 	{
-		player->mo->fixed_model = false;
-		player->mo->alias_skinnum = 0;
+		player->mo->bFixedModel = false;
+		player->mo->ModelSkinNum = 0;
 		return;
 	}
 
-	player->mo->fixed_model = true;
-	player->mo->model_index = FindModel(va("players/%s/tris.md2", model));
+	player->mo->bFixedModel = true;
+	player->mo->ModelIndex = FindModel(va("players/%s/tris.md2", model));
 	skin = Info_ValueForKey(ARR2STR(player->userinfo), "skin");
 	if (skin && strgetchar(skin, 0))
 	{
-		player->mo->alias_skinnum = FindSkin(va("players/%s/%s", model, skin));
+		player->mo->ModelSkinNum = FindSkin(va("players/%s/%s", model, skin));
 	}
 	else
 	{
-		player->mo->alias_skinnum = 0;
+		player->mo->ModelSkinNum = 0;
 	}
 }
 
@@ -969,6 +971,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.19  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -60,12 +60,12 @@ boolean Actor::CheckMeleeRange(void)
 	{
 		return false;
 	}
-	if (target->origin.z > origin.z + Height)
+	if (target->Origin.z > Origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (origin.z > target->origin.z + target->Height)
+	else if (Origin.z > target->Origin.z + target->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -96,12 +96,12 @@ boolean Actor::CheckMeleeRange2(void)
 	{
 		return false;
 	}
-	if (target->origin.z > origin.z + Height)
+	if (target->Origin.z > Origin.z + Height)
 	{
 		// Target is higher than the attacker
 		return false;
 	}
-	else if (origin.z > target->origin.z + target->Height)
+	else if (Origin.z > target->Origin.z + target->Height)
 	{
 		// Attacker is higher
 		return false;
@@ -162,28 +162,28 @@ void Actor::FaceMovementDirection(void)
 	switch (movedir)
 	{
 	case DI_EAST:
-		angles.yaw = 0.0;
+		Angles.yaw = 0.0;
 		break;
 	case DI_NORTHEAST:
-		angles.yaw = 45.0;
+		Angles.yaw = 45.0;
 		break;
 	case DI_NORTH:
-		angles.yaw = 90.0;
+		Angles.yaw = 90.0;
 		break;
 	case DI_NORTHWEST:
-		angles.yaw = 135.0;
+		Angles.yaw = 135.0;
 		break;
 	case DI_WEST:
-		angles.yaw = 180.0;
+		Angles.yaw = 180.0;
 		break;
 	case DI_SOUTHWEST:
-		angles.yaw = 225.0;
+		Angles.yaw = 225.0;
 		break;
 	case DI_SOUTH:
-		angles.yaw = 270.0;
+		Angles.yaw = 270.0;
 		break;
 	case DI_SOUTHEAST:
-		angles.yaw = 315.0;
+		Angles.yaw = 315.0;
 		break;
 	}
 }
@@ -294,8 +294,8 @@ boolean Actor::LookForPlayers(boolean allaround)
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->mo->origin.y - origin.y,
-				P->mo->origin.x - origin.x) - angles.yaw);
+			an = AngleMod360(atan2(P->mo->Origin.y - Origin.y,
+				P->mo->Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
 				dist = MobjDist(*P->mo, self);
@@ -308,7 +308,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 		{
 			// Player is invisible
 			if (MobjDist(*P->mo, self) > 2.0 * MELEERANGE &&
-				Length(P->mo->velocity) < 5.0 * 35.0)
+				Length(P->mo->Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
 				return false;
@@ -358,8 +358,8 @@ boolean Actor::StepMove(void)
 		Error("Weird actor->movedir!");
 #endif
 
-	tryx = origin.x + Speed * frametime * xspeed[movedir];
-	tryy = origin.y + Speed * frametime * yspeed[movedir];
+	tryx = Origin.x + StepSpeed * xspeed[movedir];
+	tryy = Origin.y + StepSpeed * yspeed[movedir];
 
 	if (!P_TryMove(this, tryx, tryy))
 	{
@@ -367,10 +367,10 @@ boolean Actor::StepMove(void)
 		if (bFloat && floatok)
 		{
 			// must adjust height
-			if (origin.z < saved_tmfloorz)
-				origin.z += FLOATSPEED * frametime;
+			if (Origin.z < saved_tmfloorz)
+				Origin.z += FLOATSPEED * frametime;
 			else
-				origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * frametime;
 
 			bInFloat = true;
 			return true;
@@ -401,11 +401,11 @@ boolean Actor::StepMove(void)
 
 	if (!bFloat)
 	{
-		if (origin.z > floorz)
+		if (Origin.z > FloorZ)
 		{
 			P_HitFloor(this);
 		}
-		origin.z = floorz;
+		Origin.z = FloorZ;
 	}
 	return true;
 }
@@ -449,8 +449,8 @@ void Actor::NewChaseDir(void)
 	olddir = movedir;
 	turnaround = opposite[olddir];
 
-	deltax = target->origin.x - origin.x;
-	deltay = target->origin.y - origin.y;
+	deltax = target->Origin.x - Origin.x;
+	deltay = target->Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -557,9 +557,9 @@ Actor Actor::RoughBlockCheck(int index)
 	link = Actor(BlockLink(index));
 	while (link)
 	{
-		if (player)	// Minotaur looking around player
+		if (bIsPlayer)	// Minotaur looking around player
 		{
-			if (link.bCountKill || (link.player && (link != self)))
+			if (link.bCountKill || (link.bIsPlayer && (link != self)))
 			{
 				if (!link.bShootable)
 				{
@@ -577,7 +577,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link.player)
+				if (netgame && !deathmatch && link.bIsPlayer)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -591,7 +591,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == Minotaur)	// looking around minotaur
 		{
-			if (link.bCountKill || (link.player && (link != *specialmobj1)))
+			if (link.bCountKill || (link.bIsPlayer && (link != *specialmobj1)))
 			{
 				if (!link.bShootable)
 				{
@@ -609,7 +609,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link.player)
+				if (netgame && !deathmatch && link.bIsPlayer)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -623,7 +623,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else if (Class == MageStaffFX2)	// bloodscourge
 		{
-			if ((link.bCountKill || (link.player && link != *target)) &&
+			if ((link.bCountKill || (link.bIsPlayer && link != *target)) &&
 				!link.bDormant)
 			{
 				if (!link.bShootable)
@@ -631,7 +631,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link.player)
+				if (netgame && !deathmatch && link.bIsPlayer)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -639,9 +639,9 @@ Actor Actor::RoughBlockCheck(int index)
 				else if (P_CheckSight(self, link))
 				{
 					angle = AngleMod360(atan2(
-						link.origin.y - target->origin.y,
-						link.origin.x - target->origin.x) -
-						target->angles.yaw);
+						link.Origin.y - target->Origin.y,
+						link.Origin.x - target->Origin.x) -
+						target->Angles.yaw);
 					if (angle > 226.0 * 360.0 / 256.0 ||
 						angle < 30.0 * 360.0 / 256.0)
 					{
@@ -653,7 +653,7 @@ Actor Actor::RoughBlockCheck(int index)
 		}
 		else	// spirits
 		{
-			if ((link.bCountKill || (link.player && link != *target)) &&
+			if ((link.bCountKill || (link.bIsPlayer && link != *target)) &&
 				!link.bDormant)
 			{
 				if (!link.bShootable)
@@ -661,7 +661,7 @@ Actor Actor::RoughBlockCheck(int index)
 					link = Actor(link.BlockMapNext);
 					continue;
 				}
-				if (netgame && !deathmatch && link.player)
+				if (netgame && !deathmatch && link.bIsPlayer)
 				{
 					link = Actor(link.BlockMapNext);
 					continue;
@@ -704,8 +704,8 @@ Actor Actor::RoughMonsterSearch(int distance)
 	int count;
 	Actor newEnemy;
 
-	startX = MapBlock(origin.x - level->bmaporgx);
-	startY = MapBlock(origin.y - level->bmaporgy);
+	startX = MapBlock(Origin.x - level->bmaporgx);
+	startY = MapBlock(Origin.y - level->bmaporgy);
 
 	if (startX >= 0 && startX < level->bmapwidth && startY >= 0
 		&& startY < level->bmapheight)
@@ -808,6 +808,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/02/14 19:20:58  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.13  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

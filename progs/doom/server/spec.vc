@@ -58,7 +58,7 @@ boolean CheckLock(mobj_t * user, int lock)
 {
 	player_t *player;
 
-	player = user->player;
+	player = user->Player;
 
 	if (!player)
 	{
@@ -413,7 +413,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -423,7 +423,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(mo && mo->player && mo->player->playerstate == PST_DEAD))	// Players must be alive to teleport
+			if (!(mo && mo->bIsPlayer && mo->Player->playerstate == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -761,7 +761,7 @@ boolean CheckActivation(int activationType, line_t * line, mobj_t * mo)
 	{
 		return false;
 	}
-	if (!mo->player && !mo->bMissile)
+	if (!mo->bIsPlayer && !mo->bMissile)
 	{
 		if ((activationType == SPAC_USE || activationType == SPAC_PUSH)
 			&& (line->flags & ML_SECRET))
@@ -847,6 +847,9 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/14 19:20:57  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.11  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

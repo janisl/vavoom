@@ -30,15 +30,15 @@
 // Sorcerer Variables
 //      special1f       Angle of ball 1 (all others relative to that)
 //      special2        which ball to stop at in stop mode (MT_???)
-//      args[0]         Denfense time
-//      args[1]         Number of full rotations since stopping mode
-//      args[2]         Target orbit speed for acceleration/deceleration
-//      args[3]         Movement mode (see SORC_ macros)
-//      args[4]         Current ball orbit speed
+//      Args[0]         Denfense time
+//      Args[1]         Number of full rotations since stopping mode
+//      Args[2]         Target orbit speed for acceleration/deceleration
+//      Args[3]         Movement mode (see SORC_ macros)
+//      Args[4]         Current ball orbit speed
 //  Sorcerer Ball Variables
 //      special1f       Previous angle of ball (for woosh)
 //      special2        Countdown of rapid fire (FX4)
-//      args[0]         If set, don't play the bounce sound when bouncing
+//      Args[0]         If set, don't play the bounce sound when bouncing
 //============================================================================
 
 // MACROS ------------------------------------------------------------------
@@ -82,8 +82,8 @@
 
 void Actor::A_SpeedBalls(void)
 {
-	args[3] = SORC_ACCELERATE;	// speed mode
-	args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
+	Args[3] = SORC_ACCELERATE;	// speed mode
+	Args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
 }
 
 //============================================================================
@@ -94,8 +94,8 @@ void Actor::A_SpeedBalls(void)
 
 void Actor::A_SlowBalls(void)
 {
-	args[3] = SORC_DECELERATE;	// slow mode
-	args[2] = SORCBALL_INITIAL_SPEED;	// target speed
+	Args[3] = SORC_DECELERATE;	// slow mode
+	Args[2] = SORCBALL_INITIAL_SPEED;	// target speed
 }
 
 //============================================================================
@@ -112,22 +112,22 @@ void Actor::A_SorcSpinBalls(void)
 	float z;
 
 	A_SlowBalls();
-	args[0] = 0;	// Currently no defense
-	args[3] = SORC_NORMAL;
-	args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
+	Args[0] = 0;	// Currently no defense
+	Args[3] = SORC_NORMAL;
+	Args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
 	special1f = 1.0;
-	z = origin.z - floorclip + Height;
+	z = Origin.z - FloorClip + Height;
 
-	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall1);
+	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall1);
 	if (mo)
 	{
 		mo->target = this;
 		mo->special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall2);
+	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall2);
 	if (mo)
 		mo->target = this;
-	mo = P_SpawnMobj(origin.x, origin.y, z, SorcererBall3);
+	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall3);
 	if (mo)
 		mo->target = this;
 }
@@ -145,10 +145,10 @@ void Actor::A_StopBalls(void)
 {
 	int chance = P_Random();
 
-	args[3] = SORC_STOPPING;	// stopping mode
-	args[1] = 0;	// Reset rotation counter
+	Args[3] = SORC_STOPPING;	// stopping mode
+	Args[1] = 0;	// Reset rotation counter
 
-	if ((args[0] <= 0) && (chance < 200))
+	if ((Args[0] <= 0) && (chance < 200))
 	{
 		specialcid = SorcererBall2;	// Blue
 	}
@@ -174,14 +174,14 @@ void Actor::A_AccelBalls(void)
 {
 	mobj_t *sorc = target;
 
-	if (sorc->args[4] < sorc->args[2])
+	if (sorc->Args[4] < sorc->Args[2])
 	{
-		sorc->args[4]++;
+		sorc->Args[4]++;
 	}
 	else
 	{
-		sorc->args[3] = SORC_NORMAL;
-		if (sorc->args[4] >= SORCBALL_TERMINAL_SPEED)
+		sorc->Args[3] = SORC_NORMAL;
+		if (sorc->Args[4] >= SORCBALL_TERMINAL_SPEED)
 		{
 			// Reached terminal velocity - stop balls
 			sorc->A_StopBalls();
@@ -201,13 +201,13 @@ void Actor::A_DecelBalls(void)
 {
 	mobj_t *sorc = target;
 
-	if (sorc->args[4] > sorc->args[2])
+	if (sorc->Args[4] > sorc->Args[2])
 	{
-		sorc->args[4]--;
+		sorc->Args[4]--;
 	}
 	else
 	{
-		sorc->args[3] = SORC_NORMAL;
+		sorc->Args[3] = SORC_NORMAL;
 	}
 }
 
@@ -224,7 +224,7 @@ void Actor::A_SorcUpdateBallAngle(void)
 	if (Class == SorcererBall1)
 	{
 		target->special1f = AngleMod360(target->special1f +
-			itof(target->args[4]));
+			itof(target->Args[4]));
 	}
 }
 
@@ -242,23 +242,23 @@ void Actor::A_SorcOffense1(void)
 	float ang1, ang2;
 	mobj_t *parent = target;
 
-	ang1 = AngleMod360(angles.yaw + 70.0);
-	ang2 = AngleMod360(angles.yaw - 70.0);
+	ang1 = AngleMod360(Angles.yaw + 70.0);
+	ang2 = AngleMod360(Angles.yaw - 70.0);
 	mo = SpawnMissileAngle(parent, SorcererFX1, ang1, 0.0);
 	if (mo)
 	{
 		mo->target = parent;
 		mo->specialmobj1 = parent->target;
-		mo->args[4] = BOUNCE_TIME_UNIT;
-		mo->args[3] = 15;	// Bounce time in seconds
+		mo->Args[4] = BOUNCE_TIME_UNIT;
+		mo->Args[3] = 15;	// Bounce time in seconds
 	}
 	mo = SpawnMissileAngle(parent, SorcererFX1, ang2, 0.0);
 	if (mo)
 	{
 		mo->target = parent;
 		mo->specialmobj1 = parent->target;
-		mo->args[4] = BOUNCE_TIME_UNIT;
-		mo->args[3] = 15;	// Bounce time in seconds
+		mo->Args[4] = BOUNCE_TIME_UNIT;
+		mo->Args[3] = 15;	// Bounce time in seconds
 	}
 }
 
@@ -279,10 +279,10 @@ void Actor::A_SorcOffense2(void)
 	mobj_t *dest = parent->target;
 	float dist;
 
-	index = itof(args[4]) * 360.0 / 256.0;
-	args[4] = (args[4] + 15) & 0xff;
+	index = itof(Args[4]) * 360.0 / 256.0;
+	Args[4] = (Args[4] + 15) & 0xff;
 	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
-	ang1 = AngleMod360(angles.yaw + delta);
+	ang1 = AngleMod360(Angles.yaw + delta);
 	mo = SpawnMissileAngle(parent, SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
@@ -291,7 +291,7 @@ void Actor::A_SorcOffense2(void)
 		dist = dist / mo->Speed;
 		if (dist < 1.0)
 			dist = 1.0;
-		mo->velocity.z = (dest->origin.z - mo->origin.z) / dist;
+		mo->Velocity.z = (dest->Origin.z - mo->Origin.z) / dist;
 	}
 }
 
@@ -323,17 +323,17 @@ void Actor::A_CastSorcererSpell(void)
 		A_SorcOffense1();
 		break;
 	case SorcererBall2:	// Defensive
-		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
-		mo = P_SpawnMobj(origin.x, origin.y, z, SorcererFX2);
+		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
+		mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererFX2);
 		parent->bInvulnerable = true;
 		parent->bReflective = true;
-		parent->args[0] = SORC_DEFENSE_TIME;
+		parent->Args[0] = SORC_DEFENSE_TIME;
 		if (mo)
 			mo->target = parent;
 		break;
 	case SorcererBall3:	// Reinforcements
-		ang1 = AngleMod360(angles.yaw - 45.0);
-		ang2 = AngleMod360(angles.yaw + 45.0);
+		ang1 = AngleMod360(Angles.yaw - 45.0);
+		ang2 = AngleMod360(Angles.yaw + 45.0);
 		if (Health < (spawnhealth / 3))
 		{	// Spawn 2 at a time
 			mo = SpawnMissileAngle(parent, SorcererFX3, ang1, 4.0);
@@ -367,7 +367,7 @@ void Actor::A_SorcBallOrbit(void)
 {
 	float x, y;
 	float angle, baseangle;
-	int mode = target->args[3];
+	int mode = target->Args[3];
 	mobj_t *parent = target;
 	float dist = parent->Radius - (Radius * 2.0);
 	float prevangle = special1f;
@@ -391,7 +391,7 @@ void Actor::A_SorcBallOrbit(void)
 //		I_Error("corrupted sorcerer");
 		break;
 	}
-	angles.yaw = angle;
+	Angles.yaw = angle;
 
 	switch (mode)
 	{
@@ -408,26 +408,26 @@ void Actor::A_SorcBallOrbit(void)
 		break;
 	case SORC_STOPPING:	// Balls stopping
 		if ((parent->specialcid == Class) &&
-			(parent->args[1] > SORCBALL_SPEED_ROTATIONS) &&
-			(fabs(AngleMod180(angle - parent->angles.yaw)) <
+			(parent->Args[1] > SORCBALL_SPEED_ROTATIONS) &&
+			(fabs(AngleMod180(angle - parent->Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			target->args[3] = SORC_FIRESPELL;
-			target->args[4] = 0;
+			target->Args[3] = SORC_FIRESPELL;
+			target->Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
 			switch (Class)
 			{
 			case SorcererBall1:
-				parent->special1f = AngleMod360(parent->angles.yaw -
+				parent->special1f = AngleMod360(parent->Angles.yaw -
 					BALL1_ANGLEOFFSET);
 				break;
 			case SorcererBall2:
-				parent->special1f = AngleMod360(parent->angles.yaw -
+				parent->special1f = AngleMod360(parent->Angles.yaw -
 					BALL2_ANGLEOFFSET);
 				break;
 			case SorcererBall3:
-				parent->special1f = AngleMod360(parent->angles.yaw -
+				parent->special1f = AngleMod360(parent->Angles.yaw -
 					BALL3_ANGLEOFFSET);
 				break;
 			default:
@@ -450,13 +450,13 @@ void Actor::A_SorcBallOrbit(void)
 			{
 				StartSoundName(none, 'SorcererSpellCast', CHAN_VOICE);
 				special2 = SORCFX4_RAPIDFIRE_TIME;
-				args[4] = 128;
-				parent->args[3] = SORC_FIRING_SPELL;
+				Args[4] = 128;
+				parent->Args[3] = SORC_FIRING_SPELL;
 			}
 			else
 			{
 				A_CastSorcererSpell();
-				parent->args[3] = SORC_STOPPED;
+				parent->Args[3] = SORC_STOPPED;
 			}
 		}
 		break;
@@ -466,7 +466,7 @@ void Actor::A_SorcBallOrbit(void)
 			if (special2-- <= 0)
 			{
 				// Done rapid firing 
-				parent->args[3] = SORC_STOPPED;
+				parent->Args[3] = SORC_STOPPED;
 				// Back to orbit balls
 				if (parent->Health > 0)
 					parent->SetStateNF(S_SORC_ATTACK4);
@@ -483,18 +483,18 @@ void Actor::A_SorcBallOrbit(void)
 		break;
 	}
 
-	if ((angle < prevangle) && (parent->args[4] == SORCBALL_TERMINAL_SPEED))
+	if ((angle < prevangle) && (parent->Args[4] == SORCBALL_TERMINAL_SPEED))
 	{
-		parent->args[1]++;	// Bump rotation counter
+		parent->Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
 		StartSoundName(none, 'SorcererBallWoosh', CHAN_VOICE);
 	}
 	special1f = angle;	// Set previous angle
-	x = parent->origin.x + dist * cos(angle);
-	y = parent->origin.y + dist * sin(angle);
-	origin.x = x;
-	origin.y = y;
-	origin.z = parent->origin.z - parent->floorclip + parent->Height;
+	x = parent->Origin.x + dist * cos(angle);
+	y = parent->Origin.y + dist * sin(angle);
+	Origin.x = x;
+	Origin.y = y;
+	Origin.z = parent->Origin.z - parent->FloorClip + parent->Height;
 }
 
 //============================================================================
@@ -507,8 +507,8 @@ void Actor::A_SorcBallOrbit(void)
 
 void Actor::A_SorcBossAttack(void)
 {
-	args[3] = SORC_ACCELERATE;
-	args[2] = SORCBALL_INITIAL_SPEED;
+	Args[3] = SORC_ACCELERATE;
+	Args[2] = SORCBALL_INITIAL_SPEED;
 }
 
 //============================================================================
@@ -523,23 +523,23 @@ void Actor::A_SpawnFizzle(void)
 {
 	float x, y, z;
 	float dist = 5.0;
-	float angle = angles.yaw;
+	float angle = Angles.yaw;
 	float rangle;
 	mobj_t *mo;
 	int ix;
 
-	x = origin.x + dist * cos(angle);
-	y = origin.y + dist * sin(angle);
-	z = origin.z - floorclip + Height / 2.0;
+	x = Origin.x + dist * cos(angle);
+	y = Origin.y + dist * sin(angle);
+	z = Origin.z - FloorClip + Height / 2.0;
 	for (ix = 0; ix < 5; ix++)
 	{
 		mo = P_SpawnMobj(x, y, z, SorcererSpark);
 		if (mo)
 		{
 			rangle = angle + Random() * 5.0 * 90.0 / 1024.0;
-			mo->velocity.x = Random() * Speed * cos(rangle);
-			mo->velocity.y = Random() * Speed * sin(rangle);
-			mo->velocity.z = 2.0 * 35.0;
+			mo->Velocity.x = Random() * Speed * cos(rangle);
+			mo->Velocity.y = Random() * Speed * sin(rangle);
+			mo->Velocity.z = 2.0 * 35.0;
 		}
 	}
 }
@@ -557,13 +557,13 @@ void Actor::A_SorcBallPop(void)
 	StartSoundName(none, 'SorcererBallPop', CHAN_VOICE);
 	bNoGravity = false;
 	bLowGravity = true;
-	velocity.x = (Random() * 10.0 - 5.0) * 35.0;
-	velocity.y = (Random() * 10.0 - 5.0) * 35.0;
-	velocity.z = (2.0 + Random() * 3.0) * 35.0;
+	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
+	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
+	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
 	//Not used
 //	special2 = 4 * FRACUNIT;     // Initial bounce factor
-	args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
-	args[3] = 5;	// Bounce time in seconds
+	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
+	Args[3] = 5;	// Bounce time in seconds
 }
 
 //============================================================================
@@ -574,9 +574,9 @@ void Actor::A_SorcBallPop(void)
 
 void Actor::A_BounceCheck(void)
 {
-	if (args[4]-- <= 0)
+	if (Args[4]-- <= 0)
 	{
-		if (args[3]-- <= 0)
+		if (Args[3]-- <= 0)
 		{
 			SetState(DeathState);
 			switch (Class)
@@ -595,7 +595,7 @@ void Actor::A_BounceCheck(void)
 		}
 		else
 		{
-			args[4] = BOUNCE_TIME_UNIT;
+			Args[4] = BOUNCE_TIME_UNIT;
 		}
 	}
 }
@@ -621,8 +621,8 @@ void Actor::A_SorcFX1Seek(void)
 // FX2 Variables
 //      special1f       current angle
 //      special2
-//      args[0]     0 = CW,  1 = CCW
-//      args[1]     
+//      Args[0]     0 = CW,  1 = CCW
+//      Args[1]     
 //============================================================================
 
 //============================================================================
@@ -637,20 +637,20 @@ void Actor::A_SorcFX2Split(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX2);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX2);
 	if (mo)
 	{
 		mo->target = target;
-		mo->args[0] = 0;	// CW
-		mo->special1f = angles.yaw;	// Set angle
+		mo->Args[0] = 0;	// CW
+		mo->special1f = Angles.yaw;	// Set angle
 		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX2);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX2);
 	if (mo)
 	{
 		mo->target = target;
-		mo->args[0] = 1;	// CCW
-		mo->special1f = angles.yaw;	// Set angle
+		mo->Args[0] = 1;	// CCW
+		mo->special1f = Angles.yaw;	// Set angle
 		mo->SetStateNF(S_SORCFX2_ORBIT1);
 	}
 	SetState(S_NULL);
@@ -672,29 +672,29 @@ void Actor::A_SorcFX2Orbit(void)
 	float dist = parent->Radius;
 
 	if ((parent->Health <= 0) ||	// Sorcerer is dead
-		(!parent->args[0]))	// Time expired
+		(!parent->Args[0]))	// Time expired
 	{
 		SetStateNF(DeathState);
-		parent->args[0] = 0;
+		parent->Args[0] = 0;
 		parent->bReflective = false;
 		parent->bInvulnerable = false;
 	}
 
-	if (args[0] && (parent->args[0]-- <= 0))	// Time expired
+	if (Args[0] && (parent->Args[0]-- <= 0))	// Time expired
 	{
 		SetStateNF(DeathState);
-		parent->args[0] = 0;
+		parent->Args[0] = 0;
 		parent->bReflective = false;
 	}
 
 	// Move to new position based on angle
-	if (args[0])	// Counter clock-wise
+	if (Args[0])	// Counter clock-wise
 	{
 		special1f = AngleMod360(special1f + 10.0);
 		angle = special1f;
-		x = parent->origin.x + dist * cos(angle);
-		y = parent->origin.y + dist * sin(angle);
-		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
+		x = parent->Origin.x + dist * cos(angle);
+		y = parent->Origin.y + dist * sin(angle);
+		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
 		z += 15.0 * cos(angle);
 		// Spawn trailer
 		P_SpawnMobj(x, y, z, SorcererFX2_T1);
@@ -703,17 +703,17 @@ void Actor::A_SorcFX2Orbit(void)
 	{
 		special1f = AngleMod360(special1f - 10.0);
 		angle = special1f;
-		x = parent->origin.x + dist * cos(angle);
-		y = parent->origin.y + dist * sin(angle);
-		z = parent->origin.z - parent->floorclip + SORC_DEFENSE_HEIGHT;
+		x = parent->Origin.x + dist * cos(angle);
+		y = parent->Origin.y + dist * sin(angle);
+		z = parent->Origin.z - parent->FloorClip + SORC_DEFENSE_HEIGHT;
 		z += 20.0 * sin(angle);
 		// Spawn trailer
 		P_SpawnMobj(x, y, z, SorcererFX2_T1);
 	}
 
-	origin.x = x;
-	origin.y = y;
-	origin.z = z;
+	Origin.x = x;
+	Origin.y = y;
+	Origin.z = z;
 }
 
 //============================================================================
@@ -728,7 +728,7 @@ void Actor::A_SpawnBishop(void)
 {
 	mobj_t *mo;
 
-	mo = P_SpawnMobj(origin.x, origin.y, origin.z, Bishop);
+	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Bishop);
 	if (mo)
 	{
 		if (!P_TestMobjLocation(mo))
@@ -747,7 +747,7 @@ void Actor::A_SpawnBishop(void)
 
 void Actor::A_SorcererBishopEntry(void)
 {
-	P_SpawnMobj(origin.x, origin.y, origin.z, SorcererFX3Explosion);
+	P_SpawnMobj(Origin.x, Origin.y, Origin.z, SorcererFX3Explosion);
 	StartSound(self, sound_sight, CHAN_VOICE);
 }
 
@@ -770,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/14 19:20:59  dj_jl
+//  Renamed Entity properties to new naming style
+//
 //  Revision 1.17  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //
