@@ -65,6 +65,7 @@ static byte ptex[8][8] =
 
 void TOpenGLDrawer::InitData(void)
 {
+	guard(TOpenGLDrawer::InitData);
 	byte *pal = (byte*)W_CacheLumpName("PLAYPAL", PU_CACHE);
 	for (int i = 0; i < 256; i++)
 	{
@@ -73,6 +74,7 @@ void TOpenGLDrawer::InitData(void)
 		pal8_to24[i].b = *pal++;
 		pal8_to24[i].a = 255;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -83,6 +85,7 @@ void TOpenGLDrawer::InitData(void)
 
 void TOpenGLDrawer::InitTextures(void)
 {
+	guard(TOpenGLDrawer::InitTextures);
 	//	Textures
 	texture_id = (GLuint*)Z_Calloc(numtextures * 4);
 	texture_sent = (bool*)Z_Calloc(numtextures);
@@ -102,6 +105,7 @@ void TOpenGLDrawer::InitTextures(void)
 	sprite_sent = (bool*)Z_Calloc(numspritelumps);
 	spriteiw = (float*)Z_Calloc(numspritelumps * 4);
 	spriteih = (float*)Z_Calloc(numspritelumps * 4);
+	unguard;
 }
 
 //==========================================================================
@@ -112,6 +116,7 @@ void TOpenGLDrawer::InitTextures(void)
 
 void TOpenGLDrawer::GenerateTextures(void)
 {
+	guard(TOpenGLDrawer::GenerateTextures);
 	int			i, j;
 	rgba_t		pbuf[8][8];
 
@@ -145,6 +150,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, pbuf);
 
 	texturesGenerated = true;
+	unguard;
 }
 
 //==========================================================================
@@ -155,6 +161,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 
 void TOpenGLDrawer::FlushTextures(void)
 {
+	guard(TOpenGLDrawer::FlushTextures);
 	memset(texture_sent, 0, numtextures);
 	memset(flat_sent, 0, numflats);
 	memset(skymap_sent, 0, numskymaps);
@@ -162,6 +169,7 @@ void TOpenGLDrawer::FlushTextures(void)
 	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
 	memset(pic_sent, 0, MAX_PICS);
 	memset(skin_name, 0, sizeof(skin_name));
+	unguard;
 }
 
 //==========================================================================
@@ -172,6 +180,7 @@ void TOpenGLDrawer::FlushTextures(void)
 
 void TOpenGLDrawer::DeleteTextures(void)
 {
+	guard(TOpenGLDrawer::DeleteTextures);
 	if (texturesGenerated)
 	{
 		glDeleteTextures(numtextures, texture_id);
@@ -189,6 +198,7 @@ void TOpenGLDrawer::DeleteTextures(void)
 		glDeleteTextures(1, &particle_texture);
 		texturesGenerated = false;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -221,6 +231,7 @@ int TOpenGLDrawer::ToPowerOf2(int val)
 void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 	int originx, int originy, int cachewidth, int cacheheight)
 {
+	guard(TOpenGLDrawer::DrawColumnInCache);
 	int		count;
 	int		position;
 	byte*	source;
@@ -255,6 +266,7 @@ void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 
 		column = (column_t *)((byte *)column + column->length + 4);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -268,6 +280,7 @@ void TOpenGLDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 
 void TOpenGLDrawer::GenerateTexture(int texnum)
 {
+	guard(TOpenGLDrawer::GenerateTexture);
 	rgba_t*			block;
 	texdef_t*		texture;
 	texpatch_t*		patch;
@@ -315,6 +328,7 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 	texture_iw[texnum] = 1.0 / float(texture->width);
 	texture_ih[texnum] = 1.0 / float(texture->height);
 	texture_sent[texnum] = true;
+	unguard;
 }
 
 //==========================================================================
@@ -325,6 +339,7 @@ void TOpenGLDrawer::GenerateTexture(int texnum)
 
 void TOpenGLDrawer::SetTexture(int tex)
 {
+	guard(TOpenGLDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -342,6 +357,7 @@ void TOpenGLDrawer::SetTexture(int tex)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	tex_iw = texture_iw[tex];
 	tex_ih = texture_ih[tex];
+	unguard;
 }
 
 //==========================================================================
@@ -352,6 +368,7 @@ void TOpenGLDrawer::SetTexture(int tex)
 
 void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 {
+	guard(TOpenGLDrawer::SetSkyTexture);
 	if (tex & TEXF_SKY_MAP)
 	{
 		tex &= ~TEXF_SKY_MAP;
@@ -400,6 +417,7 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 	// No mipmaping for sky
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+	unguard;
 }
 
 //==========================================================================
@@ -410,6 +428,7 @@ void TOpenGLDrawer::SetSkyTexture(int tex, bool double_sky)
 
 void TOpenGLDrawer::GenerateFlat(int num)
 {
+	guard(TOpenGLDrawer::GenerateFlat);
 	rgba_t *block = (rgba_t*)Z_Malloc(4 * 64 * 64);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 	for (int i = 0; i < 64 * 64; i++)
@@ -421,6 +440,7 @@ void TOpenGLDrawer::GenerateFlat(int num)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	Z_Free(block);
 	flat_sent[num] = true;
+	unguard;
 }
 
 //==========================================================================
@@ -431,6 +451,7 @@ void TOpenGLDrawer::GenerateFlat(int num)
 
 void TOpenGLDrawer::SetFlat(int num)
 {
+	guard(TOpenGLDrawer::SetFlat);
 	num = R_TextureAnimation(num);
 	num &= ~TEXF_FLAT;
 
@@ -444,6 +465,7 @@ void TOpenGLDrawer::SetFlat(int num)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	tex_iw = 1.0 / 64.0;
 	tex_ih = 1.0 / 64.0;
+	unguard;
 }
 
 //==========================================================================
@@ -454,6 +476,7 @@ void TOpenGLDrawer::SetFlat(int num)
 
 void TOpenGLDrawer::GenerateSprite(int lump)
 {
+	guard(TOpenGLDrawer::GenerateSprite);
 	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -493,6 +516,7 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -503,6 +527,7 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 
 void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
+	guard(TOpenGLDrawer::GenerateTranslatedSprite);
 	patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -546,6 +571,7 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -556,6 +582,7 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 {
+	guard(TOpenGLDrawer::SetSpriteLump);
 	if (translation)
 	{
 		int i;
@@ -603,6 +630,7 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 		tex_iw = spriteiw[lump];
 		tex_ih = spriteih[lump];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -613,6 +641,7 @@ void TOpenGLDrawer::SetSpriteLump(int lump, int translation)
 
 void TOpenGLDrawer::SetPic(int handle)
 {
+	guard(TOpenGLDrawer::SetPic);
 	glBindTexture(GL_TEXTURE_2D, pic_id[handle]);
 
 	if (!pic_sent[handle])
@@ -634,6 +663,7 @@ void TOpenGLDrawer::SetPic(int handle)
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+	unguard;
 }
 
 //==========================================================================
@@ -644,6 +674,7 @@ void TOpenGLDrawer::SetPic(int handle)
 
 void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 {
+	guard(TOpenGLDrawer::GeneratePicFromPatch);
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -684,6 +715,7 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 	pic_iw[handle] = 1.0 / float(w);
 	pic_ih[handle] = 1.0 / float(h);
 	pic_sent[handle] = true;
+	unguard;
 }
 
 //==========================================================================
@@ -694,6 +726,7 @@ void TOpenGLDrawer::GeneratePicFromPatch(int handle)
 
 void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 {
+	guard(TOpenGLDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	byte *raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
@@ -727,6 +760,7 @@ void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 	pic_iw[handle] = 1.0 / float(320);
 	pic_ih[handle] = 1.0 / float(h);
 	pic_sent[handle] = true;
+	unguard;
 }
 
 //==========================================================================
@@ -737,6 +771,7 @@ void TOpenGLDrawer::GeneratePicFromRaw(int handle)
 
 void TOpenGLDrawer::SetSkin(const char *name)
 {
+	guard(TOpenGLDrawer::SetSkin);
 	int			i;
 	int			avail;
 
@@ -788,6 +823,7 @@ void TOpenGLDrawer::SetSkin(const char *name)
 	}
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	unguard;
 }
 
 //==========================================================================
@@ -798,6 +834,7 @@ void TOpenGLDrawer::SetSkin(const char *name)
 
 void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 {
+	guard(TOpenGLDrawer::AdjustGamma);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < size; i++)
 	{
@@ -805,6 +842,7 @@ void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 		data[i].g = gt[data[i].g];
 		data[i].b = gt[data[i].b];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -819,6 +857,7 @@ void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
+	guard(TOpenGLDrawer::ResampleTexture);
 	int i, j, k;
 	float sx, sy;
 
@@ -929,6 +968,7 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -941,6 +981,7 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 
 void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 {
+	guard(TOpenGLDrawer::MipMap);
 	int		i, j;
 	byte	*out = in;
 
@@ -971,6 +1012,7 @@ void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -981,6 +1023,7 @@ void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 
 void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 {
+	guard(TOpenGLDrawer::UploadTexture);
 	int		w, h;
 	byte	*image;
 	int		level;
@@ -1033,6 +1076,7 @@ void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	{
 		Z_Free(image);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1043,6 +1087,7 @@ void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 
 void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 {
+	guard(TOpenGLDrawer::UploadTextureNoMip);
 	int		w, h;
 	byte	*image;
 	byte	stackbuf[64 * 1024];
@@ -1082,14 +1127,18 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.15  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.14  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

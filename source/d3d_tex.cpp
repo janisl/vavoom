@@ -68,6 +68,7 @@ int TDirect3DDrawer::ToPowerOf2(int val)
 #if DIRECT3D_VERSION >= 0x0800
 LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 {
+	guard(TDirect3DDrawer::CreateSurface);
 	LPDIRECT3DTEXTURE8 surf = NULL;
 
 	HRESULT res = RenderDevice->CreateTexture(w, h, mipmaps ? 0 : 1, 0,
@@ -86,10 +87,12 @@ LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 		Sys_Error("Create texture failed\n");
 	}
 	return surf;
+	unguard;
 }
 #else
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 {
+	guard(TDirect3DDrawer::CreateSurface);
 	DDSURFACEDESC2			ddsd;
 	LPDIRECTDRAWSURFACE7	surf = NULL;
 	int i;
@@ -128,8 +131,9 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 		}
 	} while (i < numsurfaces);
 
-	cond << "Not enough video memory\n";
+	Sys_Error("Failed to create surface");
 	return NULL;
+	unguard;
 }
 #endif
 
@@ -141,6 +145,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 
 void TDirect3DDrawer::InitTextures(void)
 {
+	guard(TDirect3DDrawer::InitTextures);
 	numsurfaces = numtextures + numflats + numskymaps + numspritelumps +
 		MAX_TRANSLATED_SPRITES + MAX_PICS + MAX_SKIN_CACHE;
 #if DIRECT3D_VERSION >= 0x0800
@@ -176,6 +181,7 @@ void TDirect3DDrawer::InitTextures(void)
 	textureih = (float*)Z_Calloc(numtextures * 4);
 	spriteiw = (float*)Z_Calloc(numspritelumps * 4);
 	spriteih = (float*)Z_Calloc(numspritelumps * 4);
+	unguard;
 }
 
 //==========================================================================
@@ -186,10 +192,12 @@ void TDirect3DDrawer::InitTextures(void)
 
 void TDirect3DDrawer::FlushTextures(void)
 {
+	guard(TDirect3DDrawer::FlushTextures);
 	for (int i = 0; i < numsurfaces; i++)
 	{
 		SAFE_RELEASE(texturesurfaces[i]);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -200,6 +208,7 @@ void TDirect3DDrawer::FlushTextures(void)
 
 void TDirect3DDrawer::ReleaseTextures(void)
 {
+	guard(TDirect3DDrawer::ReleaseTextures);
 	int i;
 	for (i = 0; i < numsurfaces; i++)
 	{
@@ -211,6 +220,7 @@ void TDirect3DDrawer::ReleaseTextures(void)
 		SAFE_RELEASE(add_surf[i]);
 	}
 	SAFE_RELEASE(particle_texture);
+	unguard;
 }
 
 //==========================================================================
@@ -229,6 +239,7 @@ void TDirect3DDrawer::ReleaseTextures(void)
 void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 	int originx, int originy, int cachewidth, int cacheheight, bool dsky)
 {
+	guard(TDirect3DDrawer::DrawColumnInCache);
     int		count;
     int		position;
 	byte*	source;
@@ -263,6 +274,7 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 		
 		column = (column_t *)((byte *)column + column->length + 4);
     }
+	unguard;
 }
 
 //==========================================================================
@@ -276,6 +288,7 @@ void TDirect3DDrawer::DrawColumnInCache(column_t* column, rgba_t* cache,
 
 void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 {
+	guard(TDirect3DDrawer::GenerateTexture);
     rgba_t*			block;
     texdef_t*		texture;
     texpatch_t*		patch;	
@@ -320,6 +333,7 @@ void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 	textureih[texnum] = 1.0 / (float)texture->height;
 	texturedata[texnum] = UploadTexture(texture->width, texture->height, block);
 	Z_Free(block);
+	unguard;
 }
 
 //==========================================================================
@@ -330,6 +344,7 @@ void TDirect3DDrawer::GenerateTexture(int texnum, bool dsky)
 
 void TDirect3DDrawer::SetTexture(int tex)
 {
+	guard(TDirect3DDrawer::SetTexture);
 	if (tex & TEXF_FLAT)
 	{
 		SetFlat(tex);
@@ -351,6 +366,7 @@ void TDirect3DDrawer::SetTexture(int tex)
 	RenderDevice->SetTexture(0, texturedata[tex]);
 	tex_iw = textureiw[tex];
 	tex_ih = textureih[tex];
+	unguard;
 }
 
 //==========================================================================
@@ -361,6 +377,7 @@ void TDirect3DDrawer::SetTexture(int tex)
 
 void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 {
+	guard(TDirect3DDrawer::SetSkyTexture);
 	if (!RenderDevice)
 	{
 		return;
@@ -411,6 +428,7 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 		tex_iw = textureiw[tex];
 		tex_ih = textureih[tex];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -421,6 +439,7 @@ void TDirect3DDrawer::SetSkyTexture(int tex, bool double_sky)
 
 void TDirect3DDrawer::GenerateFlat(int num)
 {
+	guard(TDirect3DDrawer::GenerateFlat);
 	rgba_t *block = (rgba_t*)Z_Malloc(64 * 64 * 4, PU_HIGH, 0);
 	byte *data = (byte*)W_CacheLumpNum(flatlumps[num], PU_CACHE);
 
@@ -433,6 +452,7 @@ void TDirect3DDrawer::GenerateFlat(int num)
 
 	flatdata[num] = UploadTexture(64, 64, block);
 	Z_Free(block);
+	unguard;
 }
 
 //==========================================================================
@@ -443,6 +463,7 @@ void TDirect3DDrawer::GenerateFlat(int num)
 
 void TDirect3DDrawer::SetFlat(int num)
 {
+	guard(TDirect3DDrawer::SetFlat);
 	if (!RenderDevice)
 		return;
 
@@ -456,6 +477,7 @@ void TDirect3DDrawer::SetFlat(int num)
     RenderDevice->SetTexture(0, flatdata[num]);
 	tex_iw = 1.0 / 64.0;
 	tex_ih = 1.0 / 64.0;
+	unguard;
 }
 
 //==========================================================================
@@ -466,6 +488,7 @@ void TDirect3DDrawer::SetFlat(int num)
 
 void TDirect3DDrawer::GenerateSprite(int lump)
 {
+	guard(TDirect3DDrawer::GenerateSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -500,6 +523,7 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 	spritedata[lump] = UploadTexture(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -510,6 +534,7 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 
 void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
+	guard(TDirect3DDrawer::GenerateTranslatedSprite);
     patch_t	*patch = (patch_t*)W_CacheLumpNum(spritelumps[lump], PU_STATIC);
 
 	int w = LittleShort(patch->width);
@@ -549,6 +574,7 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 	trsprdata[slot] = UploadTexture(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -559,6 +585,7 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 
 void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 {
+	guard(TDirect3DDrawer::SetSpriteLump);
 	if (!RenderDevice)
 		return;
 
@@ -604,6 +631,7 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 		tex_iw = spriteiw[lump];
 		tex_ih = spriteih[lump];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -614,6 +642,7 @@ void TDirect3DDrawer::SetSpriteLump(int lump, int translation)
 
 void TDirect3DDrawer::SetPic(int handle)
 {
+	guard(TDirect3DDrawer::SetPic);
 	if (!RenderDevice)
 		return;
 
@@ -634,6 +663,7 @@ void TDirect3DDrawer::SetPic(int handle)
 	RenderDevice->SetTexture(0, picdata[handle]);
 	tex_iw = piciw[handle];
 	tex_ih = picih[handle];
+	unguard;
 }
 
 //==========================================================================
@@ -644,6 +674,7 @@ void TDirect3DDrawer::SetPic(int handle)
 
 void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 {
+	guard(TDirect3DDrawer::GeneratePicFromPatch);
 	patch_t *patch = (patch_t*)W_CacheLumpName(pic_list[handle].name, PU_STATIC);
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
@@ -679,6 +710,7 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 	picih[handle] = 1.0 / float(h);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -689,6 +721,7 @@ void TDirect3DDrawer::GeneratePicFromPatch(int handle)
 
 void TDirect3DDrawer::GeneratePicFromRaw(int handle)
 {
+	guard(TDirect3DDrawer::GeneratePicFromRaw);
 	int lump = W_GetNumForName(pic_list[handle].name);
 	int len = W_LumpLength(lump);
 	byte* raw = (byte*)W_CacheLumpNum(lump, PU_STATIC);
@@ -711,6 +744,7 @@ void TDirect3DDrawer::GeneratePicFromRaw(int handle)
 	picdata[handle] = UploadTextureNoMip(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(raw, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -721,6 +755,7 @@ void TDirect3DDrawer::GeneratePicFromRaw(int handle)
 
 void TDirect3DDrawer::SetSkin(const char *name)
 {
+	guard(TDirect3DDrawer::SetSkin);
 	int			i;
 	int			avail;
 
@@ -771,6 +806,7 @@ void TDirect3DDrawer::SetSkin(const char *name)
 	}
 
 	RenderDevice->SetTexture(0, skin_data[avail]);
+	unguard;
 }
 
 //==========================================================================
@@ -783,6 +819,7 @@ void TDirect3DDrawer::SetSkin(const char *name)
 void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	int width, int height, rgba_t *data)
 {
+	guard(TDirect3DDrawer::UploadTextureImage);
 	LPDIRECT3DSURFACE8 surf;
 	tex->GetSurfaceLevel(level, &surf);
 
@@ -815,11 +852,13 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	}
 	surf->UnlockRect();
 	surf->Release();
+	unguard;
 }
 #else
 void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	int width, int height, rgba_t *data)
 {
+	guard(TDirect3DDrawer::UploadTextureImage);
 	DDSURFACEDESC2			ddsd;
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
@@ -847,6 +886,7 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 		}
 	}
 	surf->Unlock(NULL);
+	unguard;
 }
 #endif
 
@@ -858,6 +898,7 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 
 void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
 {
+	guard(TDirect3DDrawer::AdjustGamma);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < size; i++)
 	{
@@ -865,6 +906,7 @@ void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
 		data[i].g = gt[data[i].g];
 		data[i].b = gt[data[i].b];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -879,6 +921,7 @@ void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
 void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 	const byte *datain, int widthout, int heightout, byte *dataout)
 {
+	guard(TDirect3DDrawer::ResampleTexture);
 	int i, j, k;
 	float sx, sy;
 
@@ -989,6 +1032,7 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 		}
 	}
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -1001,6 +1045,7 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 
 void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 {
+	guard(TDirect3DDrawer::MipMap);
 	int		i, j;
 	byte	*out = in;
 
@@ -1031,6 +1076,7 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1045,6 +1091,7 @@ LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t 
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_t *data)
 #endif
 {
+	guard(TDirect3DDrawer::UploadTexture);
 	int						w, h;
 	byte					*image;
 	byte					stackbuf[256 * 128 * 4];
@@ -1141,6 +1188,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 		Z_Free(image);
 	}
 	return surf;
+	unguard;
 }
 
 //==========================================================================
@@ -1155,6 +1203,7 @@ LPDIRECT3DTEXTURE8 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rg
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 #endif
 {
+	guard(TDirect3DDrawer::UploadTextureNoMip);
 	int		w, h;
 	byte	*image;
 	byte	stackbuf[64 * 1024];
@@ -1213,14 +1262,18 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 #endif
 	}
 	return surf;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.16  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

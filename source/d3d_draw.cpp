@@ -58,6 +58,7 @@
 void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
+	guard(TDirect3DDrawer::DrawPic);
 	MyD3DVertex	dv[4];
 	int l = (((100 - trans) * 255 / 100) << 24) | 0xffffff;
 
@@ -85,6 +86,7 @@ void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -96,6 +98,7 @@ void TDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
+	guard(TDirect3DDrawer::DrawPicShadow);
 	MyD3DVertex	dv[4];
 	int l = shade << 24;
 
@@ -117,6 +120,7 @@ void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	unguard;
 }
 
 //==========================================================================
@@ -130,6 +134,7 @@ void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
+	guard(TDirect3DDrawer::FillRectWithFlat);
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
@@ -145,6 +150,7 @@ void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 #else
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -156,6 +162,7 @@ void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
+	guard(TDirect3DDrawer::FillRect);
 	MyD3DVertex	dv[4];
 
 	dv[0] = MyD3DVertex(x1, y1, color, 0, 0);
@@ -172,6 +179,7 @@ void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 #endif
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	unguard;
 }
 
 //==========================================================================
@@ -185,6 +193,7 @@ void TDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
+	guard(TDirect3DDrawer::ShadeRect);
 	MyD3DVertex	dv[4];
 	int l = darkening << 27;
 
@@ -206,6 +215,7 @@ void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	unguard;
 }
 
 //==========================================================================
@@ -216,6 +226,7 @@ void TDirect3DDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 void TDirect3DDrawer::DrawConsoleBackground(int h)
 {
+	guard(TDirect3DDrawer::DrawConsoleBackground);
 	MyD3DVertex	dv[4];
 	int l = 0xc000007f;
 
@@ -237,6 +248,7 @@ void TDirect3DDrawer::DrawConsoleBackground(int h)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	unguard;
 }
 
 //==========================================================================
@@ -248,6 +260,7 @@ void TDirect3DDrawer::DrawConsoleBackground(int h)
 void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
+	guard(TDirect3DDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
 	float s1, s2;
@@ -275,6 +288,7 @@ void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 #else
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -285,9 +299,11 @@ void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 void TDirect3DDrawer::StartAutomap(void)
 {
+	guard(TDirect3DDrawer::StartAutomap);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	unguard;
 }
 
 //==========================================================================
@@ -298,6 +314,7 @@ void TDirect3DDrawer::StartAutomap(void)
 
 void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
+	guard(TDirect3DDrawer::DrawLine);
 	MyD3DVertex out[2];
  	out[0] = MyD3DVertex(x1, y1, c1, 0, 0);
  	out[1] = MyD3DVertex(x2, y2, c2, 0, 0);
@@ -306,6 +323,7 @@ void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c
 #else
 	RenderDevice->DrawPrimitive(D3DPT_LINELIST, MYD3D_VERTEX_FORMAT, out, 2, 0);
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -316,17 +334,22 @@ void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c
 
 void TDirect3DDrawer::EndAutomap(void)
 {
+	guard(TDirect3DDrawer::EndAutomap);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.9  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

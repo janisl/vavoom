@@ -44,9 +44,7 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TDirect3DDrawer		Direct3DDrawer;
-#if DIRECT3D_VERSION >= 0x0800
 static bool					Windowed;
-#endif
 
 // CODE --------------------------------------------------------------------
 
@@ -96,6 +94,9 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 
 void TDirect3DDrawer::Init(void)
 {
+	guard(TDirect3DDrawer::Init);
+
+	Windowed = !!M_CheckParm("-window");
 #if DIRECT3D_VERSION >= 0x0800
 	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
 
@@ -107,7 +108,7 @@ void TDirect3DDrawer::Init(void)
 		Sys_Error("Couldn't load d3d8.dll");
 	}
 
-	p_Direct3DCreate8 = fp_Direct3DCreate8(GetProcAddress(DLLHandle, "Direct3DCreate8"));
+	p_Direct3DCreate8 = (fp_Direct3DCreate8)GetProcAddress(DLLHandle, "Direct3DCreate8");
 	if (!p_Direct3DCreate8)
 	{
 		Sys_Error("Symbol Direct3DCreate8 not found");
@@ -116,9 +117,9 @@ void TDirect3DDrawer::Init(void)
 	// Create Direct3D object
 	Direct3D = p_Direct3DCreate8(D3D_SDK_VERSION);
 	if (!Direct3D)
+	{
 		Sys_Error("Failed to create Direct3D object");
-
-	Windowed = !!M_CheckParm("-window");
+	}
 #else
 	HRESULT			result;
 
@@ -135,6 +136,7 @@ void TDirect3DDrawer::Init(void)
 
 	// Set cooperative level
 	result = DDraw->SetCooperativeLevel(hwnd,
+		Windowed ? DDSCL_NORMAL | DDSCL_FPUPRESERVE :
 		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_FPUPRESERVE);
 	if (result != DD_OK)
 		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
@@ -144,6 +146,7 @@ void TDirect3DDrawer::Init(void)
 	if (FAILED(result))
 		Sys_Error("Failed to create Direct3D object");
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -298,6 +301,7 @@ int GetShift(dword mask)
 
 bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 {
+	guard(TDirect3DDrawer::SetResolution);
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -399,9 +403,24 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	SAFE_RELEASE(RenderSurface)
 	SAFE_RELEASE(PrimarySurface)
 
-	//	Set video mode
-	if (DDraw->SetDisplayMode(Width, Height, BPP, 0, 0) != DD_OK)
-		return false;
+	if (Windowed)
+	{
+		RECT WindowRect;
+		WindowRect.left = 0;
+		WindowRect.right = Width;
+		WindowRect.top = 0;
+		WindowRect.bottom = Height;
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
+			WS_EX_APPWINDOW);
+		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
+			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
+	}
+	else
+	{
+		//	Set video mode
+		if (DDraw->SetDisplayMode(Width, Height, BPP, 0, 0) != DD_OK)
+			return false;
+	}
 
 	//	Create primary surface
 	memset(&ddsd, 0, sizeof(ddsd));
@@ -528,6 +547,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	ScreenBPP = BPP;
 
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -538,6 +558,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 void TDirect3DDrawer::InitResolution(void)
 {
+	guard(TDirect3DDrawer::InitResolution);
 #if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
 	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
@@ -556,6 +577,7 @@ void TDirect3DDrawer::InitResolution(void)
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
+	unguard;
 }
 
 //==========================================================================
@@ -577,6 +599,7 @@ void TDirect3DDrawer::NewMap(void)
 
 void TDirect3DDrawer::StartUpdate(void)
 {
+	guard(TDirect3DDrawer::StartUpdate);
 #if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
@@ -681,6 +704,7 @@ void TDirect3DDrawer::StartUpdate(void)
 	RenderDevice->BeginScene();
 
 	Setup2D();
+	unguard;
 }
 
 //==========================================================================
@@ -691,6 +715,7 @@ void TDirect3DDrawer::StartUpdate(void)
 
 void TDirect3DDrawer::Setup2D(void)
 {
+	guard(TDirect3DDrawer::Setup2D);
 	//	Setup viewport
 #if DIRECT3D_VERSION >= 0x0800
 	D3DVIEWPORT8 view2D;
@@ -728,6 +753,7 @@ void TDirect3DDrawer::Setup2D(void)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	unguard;
 }
 
 //==========================================================================
@@ -738,6 +764,7 @@ void TDirect3DDrawer::Setup2D(void)
 
 void TDirect3DDrawer::SetupView(const refdef_t *rd)
 {
+	guard(TDirect3DDrawer::SetupView);
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		R_DrawViewBorder();
@@ -814,8 +841,10 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	}
 
 	memset(light_chain, 0, sizeof(light_chain));
+	memset(add_chain, 0, sizeof(add_chain));
 
 	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
+	unguard;
 }
 
 //==========================================================================
@@ -826,6 +855,7 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 
 void TDirect3DDrawer::EndView(void)
 {
+	guard(TDirect3DDrawer::EndView);
 	Setup2D();
 
 	cl.cshifts[7] = cl.prev_cshifts[7];
@@ -857,6 +887,7 @@ void TDirect3DDrawer::EndView(void)
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -869,6 +900,7 @@ void TDirect3DDrawer::EndView(void)
 
 void TDirect3DDrawer::Update(void)
 {
+	guard(TDirect3DDrawer::Update);
 	// End the scene.
 	RenderDevice->EndScene();
 
@@ -883,6 +915,7 @@ void TDirect3DDrawer::Update(void)
 
 	PrimarySurface->Blt(NULL, RenderSurface, NULL, DDBLT_WAIT, NULL);
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -893,6 +926,7 @@ void TDirect3DDrawer::Update(void)
 
 void TDirect3DDrawer::BeginDirectUpdate(void)
 {
+	guard(TDirect3DDrawer::BeginDirectUpdate);
 #if DIRECT3D_VERSION < 0x0800
 	// Check for lost surface
 	if (RenderSurface->IsLost() != DD_OK)
@@ -903,6 +937,7 @@ void TDirect3DDrawer::BeginDirectUpdate(void)
 
 	// Begin the scene.
 	RenderDevice->BeginScene();
+	unguard;
 }
 
 //==========================================================================
@@ -913,7 +948,6 @@ void TDirect3DDrawer::BeginDirectUpdate(void)
 
 void TDirect3DDrawer::EndDirectUpdate(void)
 {
-	//FIXME
 	Update();
 }
 
@@ -927,6 +961,7 @@ void TDirect3DDrawer::EndDirectUpdate(void)
 
 void TDirect3DDrawer::Shutdown(void)
 {
+	guard(TDirect3DDrawer::Shutdown);
 	ReleaseTextures();
 #if DIRECT3D_VERSION >= 0x0800
 	SAFE_RELEASE(RenderDevice)
@@ -945,6 +980,7 @@ void TDirect3DDrawer::Shutdown(void)
 	SAFE_RELEASE(PrimarySurface)
 	SAFE_RELEASE(DDraw)
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -955,6 +991,7 @@ void TDirect3DDrawer::Shutdown(void)
 
 void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
+	guard(TDirect3DDrawer::ReadScreen);
 	//	Allocate buffer
 	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
 	if (!dst)
@@ -1075,6 +1112,7 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
+	unguard;
 }
 
 //==========================================================================
@@ -1085,6 +1123,7 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 void TDirect3DDrawer::SetPalette(int pnum)
 {
+	guard(TDirect3DDrawer::SetPalette);
 	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 
 	pal += 256 * pnum;
@@ -1099,14 +1138,18 @@ void TDirect3DDrawer::SetPalette(int pnum)
 			((255 * pal[0].g / cmax) << 8) | (255 * pal[0].b / cmax);
 	}
 	cl.prev_cshifts[7] = cl.cshifts[7];
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.19  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.18  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

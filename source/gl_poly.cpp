@@ -59,6 +59,7 @@ static float	r_avertexnormal_dots[SHADEDOT_QUANT][256] =
 
 void TOpenGLDrawer::FlushCaches(bool free_blocks)
 {
+	guard(TOpenGLDrawer::FlushCaches);
 	int				i;
 	surfcache_t		*blines;
 	surfcache_t		*block;
@@ -93,6 +94,7 @@ void TOpenGLDrawer::FlushCaches(bool free_blocks)
 		cacheblocks[i]->height = BLOCK_HEIGHT;
 		cacheblocks[i]->blocknum = i;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -103,6 +105,7 @@ void TOpenGLDrawer::FlushCaches(bool free_blocks)
 
 surfcache_t	*TOpenGLDrawer::AllocBlock(int width, int height)
 {
+	guard(TOpenGLDrawer::AllocBlock);
 	int				i;
 	surfcache_t		*blines;
 	surfcache_t		*block;
@@ -203,6 +206,7 @@ surfcache_t	*TOpenGLDrawer::AllocBlock(int width, int height)
 
 	Sys_Error("overflow");
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -213,6 +217,7 @@ surfcache_t	*TOpenGLDrawer::AllocBlock(int width, int height)
 
 void TOpenGLDrawer::FreeSurfCache(surfcache_t *block)
 {
+	guard(TOpenGLDrawer::FreeSurfCache);
 	surfcache_t		*other;
 
 	*block->owner = NULL;
@@ -265,6 +270,7 @@ void TOpenGLDrawer::FreeSurfCache(surfcache_t *block)
 		other->chain = freeblocks;
 		freeblocks = other;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -275,6 +281,7 @@ void TOpenGLDrawer::FreeSurfCache(surfcache_t *block)
 
 void TOpenGLDrawer::CacheSurface(surface_t *surface)
 {
+	guard(TOpenGLDrawer::CacheSurface);
 	surfcache_t     *cache;
 	int				smax, tmax;
 	int				i, j, bnum;
@@ -355,6 +362,7 @@ void TOpenGLDrawer::CacheSurface(surface_t *surface)
 		add_chain[bnum] = cache;
 		add_changed[bnum] = true;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -376,6 +384,7 @@ inline void	glVertex(const TVec &v)
 
 void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 {
+	guard(TOpenGLDrawer::DrawPolygon);
 	int			i;
 	bool		lightmaped;
 	surface_t	*surf = r_surface;
@@ -413,6 +422,7 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		glVertex(cv[i]);
 	}
 	glEnd();
+	unguard;
 }
 
 //==========================================================================
@@ -423,6 +433,7 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 
 void TOpenGLDrawer::WorldDrawing(void)
 {
+	guard(TOpenGLDrawer::WorldDrawing);
 	int			lb, i;
 	surfcache_t	*cache;
 	GLfloat		s, t;
@@ -590,6 +601,7 @@ void TOpenGLDrawer::WorldDrawing(void)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -600,6 +612,7 @@ void TOpenGLDrawer::WorldDrawing(void)
 
 void TOpenGLDrawer::BeginSky(void)
 {
+	guard(TOpenGLDrawer::BeginSky);
 	glDepthRange(0.99, 1.0);
 
 	//	Sky polys are alredy translated
@@ -610,6 +623,7 @@ void TOpenGLDrawer::BeginSky(void)
 	{
 		glDisable(GL_FOG);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -621,6 +635,7 @@ void TOpenGLDrawer::BeginSky(void)
 void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	int texture1, float offs1, int texture2, float offs2)
 {
+	guard(TOpenGLDrawer::DrawSkyPolygon);
 	int		i;
 
 	if (mtexable && texture2)
@@ -680,6 +695,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			glDisable(GL_BLEND);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -690,6 +706,7 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 void TOpenGLDrawer::EndSky(void)
 {
+	guard(TOpenGLDrawer::EndSky);
 	if (r_fog)
 	{
 		glEnable(GL_FOG);
@@ -697,6 +714,7 @@ void TOpenGLDrawer::EndSky(void)
 
 	glPopMatrix();
 	glDepthRange(0.0, 1.0);
+	unguard;
 }
 
 //==========================================================================
@@ -708,6 +726,7 @@ void TOpenGLDrawer::EndSky(void)
 void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	int texture, int translucency)
 {
+	guard(TOpenGLDrawer::DrawMaskedPolygon);
 	int			i, r, g, b, w, h, size;
 	double		iscale;
 	surface_t	*surf = r_surface;
@@ -753,6 +772,7 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 		glDisable(GL_BLEND);
 	}
 	glDisable(GL_ALPHA_TEST);
+	unguard;
 }
 
 //==========================================================================
@@ -764,6 +784,7 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	int translucency, int translation, dword light)
 {
+	guard(TOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
 
 	SetSpriteLump(lump, translation);
@@ -808,6 +829,7 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 		glDisable(GL_BLEND);
 	}
 	glDisable(GL_ALPHA_TEST);
+	unguard;
 }
 
 //==========================================================================
@@ -820,6 +842,7 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	model_t *model, int frame, const char *skin, dword light,
 	int translucency, bool is_view_model)
 {
+	guard(TOpenGLDrawer::DrawAliasModel);
 	mmdl_t		*pmdl;
 	mframe_t	*framedesc;
 	mskin_t		*pskindesc;
@@ -948,6 +971,7 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	// Make it cachable again
 	Z_ChangeTag(pmdl, PU_CACHE);
+	unguard;
 }
 
 //==========================================================================
@@ -958,6 +982,7 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 void TOpenGLDrawer::StartParticles(void)
 {
+	guard(TOpenGLDrawer::StartParticles);
 	glEnable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0);
@@ -977,6 +1002,7 @@ void TOpenGLDrawer::StartParticles(void)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
 		glBegin(GL_QUADS);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -987,6 +1013,7 @@ void TOpenGLDrawer::StartParticles(void)
 
 void TOpenGLDrawer::DrawParticle(particle_t *p)
 {
+	guard(TOpenGLDrawer::DrawParticle);
 	SetColor(p->color);
 	if (pointparmsable)
 	{
@@ -999,6 +1026,7 @@ void TOpenGLDrawer::DrawParticle(particle_t *p)
 		glTexCoord2f(1, 1); glVertex(p->org + viewright - viewup);
 		glTexCoord2f(0, 1); glVertex(p->org - viewright - viewup);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1009,6 +1037,7 @@ void TOpenGLDrawer::DrawParticle(particle_t *p)
 
 void TOpenGLDrawer::EndParticles(void)
 {
+	guard(TOpenGLDrawer::EndParticles);
 	glEnd();
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
@@ -1018,14 +1047,18 @@ void TOpenGLDrawer::EndParticles(void)
 		glDisable(GL_POINT_SMOOTH);
 		glEnable(GL_TEXTURE_2D);
 	}
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.16  2001/11/12 18:47:08  dj_jl
 //	Some quick fixes
 //	

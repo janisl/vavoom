@@ -80,6 +80,7 @@ TOpenGLDrawer::TOpenGLDrawer(void) :
 
 void TOpenGLDrawer::InitResolution(void)
 {
+	guard(TOpenGLDrawer::InitResolution);
 	con << "GL_VENDOR: " << glGetString(GL_VENDOR) << endl;
 	con << "GL_RENDERER: " << glGetString(GL_RENDERER) << endl;
 	con << "GL_VERSION: " << glGetString (GL_VERSION) << endl;
@@ -172,6 +173,7 @@ void TOpenGLDrawer::InitResolution(void)
 	glDepthRange(0.0, 1.0);
 
 	glDisable(GL_POLYGON_SMOOTH);
+	unguard;
 }
 
 //==========================================================================
@@ -182,6 +184,7 @@ void TOpenGLDrawer::InitResolution(void)
 
 bool TOpenGLDrawer::CheckExtension(const char *ext)
 {
+	guard(TOpenGLDrawer::CheckExtension);
 	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
 	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
 	{
@@ -193,6 +196,7 @@ bool TOpenGLDrawer::CheckExtension(const char *ext)
 	}
 	Z_Free(sbuf);
 	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -214,6 +218,7 @@ void TOpenGLDrawer::NewMap(void)
 
 void TOpenGLDrawer::Setup2D(void)
 {
+	guard(TOpenGLDrawer::Setup2D);
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
 
 	glMatrixMode(GL_PROJECTION);
@@ -232,6 +237,7 @@ void TOpenGLDrawer::Setup2D(void)
 	glEnable(GL_ALPHA_TEST);
 
 	glColor4f(1,1,1,1);
+	unguard;
 }
 
 //==========================================================================
@@ -242,6 +248,7 @@ void TOpenGLDrawer::Setup2D(void)
 
 void TOpenGLDrawer::StartUpdate(void)
 {
+	guard(TOpenGLDrawer::StartUpdate);
 	glFinish();
 	if (clear)
 	{
@@ -280,6 +287,7 @@ void TOpenGLDrawer::StartUpdate(void)
 	}
 
 	Setup2D();
+	unguard;
 }
 
 //==========================================================================
@@ -290,8 +298,10 @@ void TOpenGLDrawer::StartUpdate(void)
 
 void TOpenGLDrawer::BeginDirectUpdate(void)
 {
+	guard(TOpenGLDrawer::BeginDirectUpdate);
 	glFinish();
 	glDrawBuffer(GL_FRONT);
+	unguard;
 }
 
 //==========================================================================
@@ -302,7 +312,9 @@ void TOpenGLDrawer::BeginDirectUpdate(void)
 
 void TOpenGLDrawer::EndDirectUpdate(void)
 {
+	guard(TOpenGLDrawer::EndDirectUpdate);
 	glDrawBuffer(GL_BACK);
+	unguard;
 }
 
 //==========================================================================
@@ -313,6 +325,7 @@ void TOpenGLDrawer::EndDirectUpdate(void)
 
 void TOpenGLDrawer::SetupView(const refdef_t *rd)
 {
+	guard(TOpenGLDrawer::SetupView);
 	if (rd->drawworld && rd->width != ScreenWidth)
 	{
 		// 	Draws the border around the view for different size windows
@@ -377,6 +390,7 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
+	unguard;
 }
 
 //==========================================================================
@@ -387,6 +401,7 @@ void TOpenGLDrawer::SetupView(const refdef_t *rd)
 
 void TOpenGLDrawer::EndView(void)
 {
+	guard(TOpenGLDrawer::EndView);
 	Setup2D();
 
 	cl.cshifts[7] = cl.prev_cshifts[7];
@@ -415,6 +430,7 @@ void TOpenGLDrawer::EndView(void)
 		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_TEXTURE_2D);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -425,6 +441,7 @@ void TOpenGLDrawer::EndView(void)
 
 void *TOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
+	guard(TOpenGLDrawer::ReadScreen);
 	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * 3, PU_VIDEO, 0);
 	if (!dst)
 	{
@@ -436,6 +453,7 @@ void *TOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = true;
 	return dst;
+	unguard;
 }
 
 //==========================================================================
@@ -446,6 +464,7 @@ void *TOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 void TOpenGLDrawer::SetPalette(int pnum)
 {
+	guard(TOpenGLDrawer::SetPalette);
 	byte *pal = (byte*)W_CacheLumpName("PLAYPAL", PU_CACHE) + 768 * pnum;
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
@@ -458,14 +477,18 @@ void TOpenGLDrawer::SetPalette(int pnum)
 			((255 * pal[1] / cmax) << 8) | (255 * pal[2] / cmax);
 	}
 	cl.prev_cshifts[7] = cl.cshifts[7];
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.17  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.16  2001/12/01 17:47:23  dj_jl
 //	Forced GL_POLYGON_SMOOTH to be disabled (possibly this caused those white
 //	dots around polygons)

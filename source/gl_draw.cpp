@@ -58,6 +58,7 @@
 void TOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int trans)
 {
+	guard(TOpenGLDrawer::DrawPic);
 	SetPic(handle);
 	if (trans)
 	{
@@ -84,6 +85,7 @@ void TOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		glDisable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -95,6 +97,7 @@ void TOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, int handle, int shade)
 {
+	guard(TOpenGLDrawer::DrawPicShadow);
 	SetPic(handle);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
@@ -111,6 +114,7 @@ void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	glEnd();
 	glDisable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
+	unguard;
 }
 
 //==========================================================================
@@ -124,6 +128,7 @@ void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
+	guard(TOpenGLDrawer::FillRectWithFlat);
 	SetFlat(R_FlatNumForName(fname));
 
 	glColor4f(1, 1, 1, 1);
@@ -137,6 +142,7 @@ void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	glTexCoord2f(s1 * tex_iw, t2 * tex_ih);
 	glVertex2f(x1, y2);
 	glEnd();
+	unguard;
 }
 
 //==========================================================================
@@ -148,6 +154,7 @@ void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
+	guard(TOpenGLDrawer::FillRect);
 	SetColor(color);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
@@ -159,6 +166,7 @@ void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 	glEnd();
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_TEXTURE_2D);
+	unguard;
 }
 
 //==========================================================================
@@ -172,6 +180,7 @@ void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 void TOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 {
+	guard(TOpenGLDrawer::ShadeRect);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -187,6 +196,7 @@ void TOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 	glDisable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_TEXTURE_2D);
+	unguard;
 }
 
 //==========================================================================
@@ -197,6 +207,7 @@ void TOpenGLDrawer::ShadeRect(int x, int y, int w, int h, int darkening)
 
 void TOpenGLDrawer::DrawConsoleBackground(int h)
 {
+	guard(TOpenGLDrawer::DrawConsoleBackground);
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -212,6 +223,7 @@ void TOpenGLDrawer::DrawConsoleBackground(int h)
 	glDisable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_TEXTURE_2D);
+	unguard;
 }
 
 //==========================================================================
@@ -223,6 +235,7 @@ void TOpenGLDrawer::DrawConsoleBackground(int h)
 void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	int lump, int translation, boolean flip)
 {
+	guard(TOpenGLDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
 	float s1, s2;
@@ -251,6 +264,7 @@ void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	glVertex2f(x1, y2);
 
 	glEnd();
+	unguard;
 }
 
 
@@ -262,11 +276,13 @@ void TOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 
 void TOpenGLDrawer::StartAutomap(void)
 {
+	guard(TOpenGLDrawer::StartAutomap);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_BLEND);
 	glBegin(GL_LINES);
+	unguard;
 }
 
 //==========================================================================
@@ -277,10 +293,12 @@ void TOpenGLDrawer::StartAutomap(void)
 
 void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
+	guard(TOpenGLDrawer::DrawLine);
 	SetColor(c1);
 	glVertex2f(x1, y1);
 	SetColor(c2);
 	glVertex2f(x2, y2);
+	unguard;
 }
 
 //==========================================================================
@@ -291,19 +309,24 @@ void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 
 void TOpenGLDrawer::EndAutomap(void)
 {
+	guard(TOpenGLDrawer::EndAutomap);
 	glEnd();
 	glDisable(GL_BLEND);
 	glDisable(GL_LINE_SMOOTH);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_TEXTURE_2D);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/11 18:24:44  dj_jl
+//	Added guard macros
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	
