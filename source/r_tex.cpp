@@ -157,6 +157,29 @@ static float*		textureheight;		// needed for texture pegging
 
 //==========================================================================
 //
+//	IsStrifeTextures
+//
+//==========================================================================
+
+static bool IsStrifeTextures(void)
+{
+	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
+	int numtex = LittleLong(*plump);
+	int *texdir = plump + 1;
+	int i;
+	for (i = 0; i < numtex - 1; i++)
+	{
+		if (LittleLong(texdir[i + 1]) - LittleLong(texdir[i]) == sizeof(maptexture_strife_t))
+		{
+			break;
+		}
+	}
+	Z_Free(plump);
+	return i != numtex - 1;
+}
+
+//==========================================================================
+//
 //	InitTextures
 //
 // 	Initializes the texture list with the textures from the world map.
@@ -274,14 +297,15 @@ template<class T> void InitTextures(void)
 	    	}
 		}
 
-		if (Game == Heretic)
+		//	Fix sky texture heights for Heretic, but it can also be used
+		// for Doom and Strife
+		if (!strnicmp(texture->name, "SKY", 3) && texture->height == 128)
 		{
-			if (!stricmp(texture->name, "SKY1") ||
-				!stricmp(texture->name, "SKY2") ||
-				!stricmp(texture->name, "SKY3") ||
-				!stricmp(texture->name, "SKY4"))
+			patch_t *realpatch = (patch_t*)W_CacheLumpNum(
+				texture->patches[0].patch, PU_TEMP);
+			if (LittleShort(realpatch->height) > texture->height)
 			{
-				texture->height = 240;
+				texture->height = LittleShort(realpatch->height);
 			}
 		}
 
@@ -706,7 +730,7 @@ void R_AnimateSurfaces(void)
 
 void R_InitTexture(void)
 {
-	if (Game == Strife)
+	if (IsStrifeTextures())
 		InitTextures<maptexture_strife_t>();
 	else
 		InitTextures<maptexture_t>();
@@ -926,9 +950,12 @@ void R_DrawShadowedPic(int x, int y, int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:21:14  dj_jl
+//	Removed game dependency
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
