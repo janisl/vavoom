@@ -86,8 +86,10 @@ SYS_OBJS = \
 	obj/s_allegm.o \
 	obj/sys_i386.o \
 	obj/sys_lin.o
-GL_SYS_OBJ = obj/gl_x.o
-LIBS := `allegro-config --libs` -lXxf86dga -lpng -lz -lm -lstdc++
+GL_SYS_OBJ = obj/gl_agl.o
+LIBS := `allegro-config --libs` -lagl -lGLU -lXxf86dga -lpng -lz -lm -lstdc++
+#GL_SYS_OBJ = obj/gl_x.o
+#LIBS := `allegro-config --libs` -lXxf86dga -lpng -lz -lm -lstdc++
 #LIBS := `allegro-config --static` -lm -lstdc++ -static
 endif
 endif
