@@ -590,13 +590,13 @@ void Sys_Error(const char *error, ...)
 
 void* Sys_ZoneBase(int* size)
 {
-	#define MINIMUM_HEAP_SIZE	0x800000		//  8 meg
-	#define MAXIMUM_HEAP_SIZE	0x2000000		// 32 meg
+	#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
+	#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
 
 	int			heap;
     void*		ptr;
-	// Maximum allocated for zone heap (16meg default)
-	int			maxzone = 0x1000000;
+	// Maximum allocated for zone heap (64meg default)
+	int			maxzone = 0x4000000;
 	int			p;
 
 	p = M_CheckParm("-maxzone");
@@ -758,9 +758,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/20 16:27:43  dj_jl
+//	Improved zone allocation
+//
 //	Revision 1.7  2001/09/06 17:47:31  dj_jl
 //	no message
-//
+//	
 //	Revision 1.6  2001/08/30 17:41:00  dj_jl
 //	Added end text
 //	

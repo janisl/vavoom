@@ -37,8 +37,8 @@
 
 #define R_OK	4
 
-#define MINIMUM_HEAP_SIZE	0x800000		//  8 meg
-#define MAXIMUM_HEAP_SIZE	0x2000000		// 32 meg
+#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
+#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
 
 #define PAUSE_SLEEP		50				// sleep time on pause or minimization
 #define NOT_FOCUS_SLEEP	20				// sleep time when not focus
@@ -434,9 +434,10 @@ void* Sys_ZoneBase(int* size)
 {
 	int			heap;
 	void*		ptr;
-	// Maximum allocated for zone heap (16meg default)
-	int			maxzone = 0x1000000;
+	// Maximum allocated for zone heap (64meg default)
+	int			maxzone = 0x4000000;
 	int			p;
+	MEMORYSTATUS	lpBuffer;
 
 	p = M_CheckParm("-maxzone");
 	if (p && p < myargc - 1)
@@ -448,21 +449,30 @@ void* Sys_ZoneBase(int* size)
 			maxzone = MAXIMUM_HEAP_SIZE;
 	}
 
-	heap = MAXIMUM_HEAP_SIZE + 0x10000;
+	lpBuffer.dwLength = sizeof(MEMORYSTATUS);
+	GlobalMemoryStatus (&lpBuffer);
 
-	do
+	// take the greater of all the available memory or half the total memory,
+	// but at least 8 Mb
+	heap = lpBuffer.dwAvailPhys;
+
+	if (heap < MINIMUM_HEAP_SIZE)
+		heap = MINIMUM_HEAP_SIZE;
+
+	if (heap < (lpBuffer.dwTotalPhys >> 1))
+		heap = lpBuffer.dwTotalPhys >> 1;
+
+	if (heap > maxzone)
+		heap = maxzone;
+
+	ptr = malloc(heap);
+	if (!ptr)
 	{
-		heap -= 0x10000;                // leave 64k alone
-		if (heap > maxzone)
-			heap = maxzone;
-		ptr = malloc(heap);
-	} while (!ptr);
+		Sys_Error("Not enough memory");
+	}
 
 	dprintf("  0x%x (%f meg) allocated for zone, ZoneBase: 0x%X\n",
 		heap, (float)heap / (float)(1024 * 1024), (int)ptr);
-
-	if (heap < 0x180000)
-		Sys_Error("Insufficient memory!");
 
 	Sys_PageIn(ptr, heap);
 
@@ -697,9 +707,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/20 16:27:43  dj_jl
+//	Improved zone allocation
+//
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
