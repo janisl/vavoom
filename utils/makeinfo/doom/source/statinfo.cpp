@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.5  2001/08/07 16:39:28  dj_jl
+//**	Changed player model path
+//**
 //**	Revision 1.4  2001/08/01 17:48:14  dj_jl
 //**	Fixed plasma model
-//**
+//**	
 //**	Revision 1.3  2001/07/31 17:05:04  dj_jl
 //**	Added all available Doom models
 //**	
@@ -187,31 +190,31 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_IFOG,32770,6,SA1_NULL,S1_IFOG4,0,0},	// S1_IFOG3
     {SPR1_IFOG,32771,6,SA1_NULL,S1_IFOG5,0,0},	// S1_IFOG4
     {SPR1_IFOG,32772,6,SA1_NULL,S1_NULL,0,0},	// S1_IFOG5
-    {SPR1_PLAY,0,-1,SA1_NULL,S1_NULL,0,0,"player/doomguy/tris.md2",0},	// S1_PLAY
-    {SPR1_PLAY,0,4,SA1_NULL,S1_PLAY_RUN2,0,0,"player/doomguy/tris.md2",1},	// S1_PLAY_RUN1
-    {SPR1_PLAY,1,4,SA1_NULL,S1_PLAY_RUN3,0,0,"player/doomguy/tris.md2",2},	// S1_PLAY_RUN2
-    {SPR1_PLAY,2,4,SA1_NULL,S1_PLAY_RUN4,0,0,"player/doomguy/tris.md2",3},	// S1_PLAY_RUN3
-    {SPR1_PLAY,3,4,SA1_NULL,S1_PLAY_RUN1,0,0,"player/doomguy/tris.md2",4},	// S1_PLAY_RUN4
-    {SPR1_PLAY,4,12,SA1_NULL,S1_PLAY,0,0,"player/doomguy/tris.md2",5},	// S1_PLAY_ATK1
-    {SPR1_PLAY,32773,6,SA1_NULL,S1_PLAY_ATK1,0,0,"player/doomguy/tris.md2",6},	// S1_PLAY_ATK2
-    {SPR1_PLAY,6,4,SA1_NULL,S1_PLAY_PAIN2,0,0,"player/doomguy/tris.md2",7},	// S1_PLAY_PAIN
-    {SPR1_PLAY,6,4,SA1_Pain,S1_PLAY,0,0,"player/doomguy/tris.md2",8},	// S1_PLAY_PAIN2
-    {SPR1_PLAY,7,10,SA1_NULL,S1_PLAY_DIE2,0,0,"player/doomguy/tris.md2",9},	// S1_PLAY_DIE1
-    {SPR1_PLAY,8,10,SA1_PlayerScream,S1_PLAY_DIE3,0,0,"player/doomguy/tris.md2",10},	// S1_PLAY_DIE2
-    {SPR1_PLAY,9,10,SA1_Fall,S1_PLAY_DIE4,0,0,"player/doomguy/tris.md2",11},	// S1_PLAY_DIE3
-    {SPR1_PLAY,10,10,SA1_NULL,S1_PLAY_DIE5,0,0,"player/doomguy/tris.md2",12},	// S1_PLAY_DIE4
-    {SPR1_PLAY,11,10,SA1_NULL,S1_PLAY_DIE6,0,0,"player/doomguy/tris.md2",13},	// S1_PLAY_DIE5
-    {SPR1_PLAY,12,10,SA1_NULL,S1_PLAY_DIE7,0,0,"player/doomguy/tris.md2",14},	// S1_PLAY_DIE6
-    {SPR1_PLAY,13,-1,SA1_NULL,S1_NULL,0,0,"player/doomguy/tris.md2",15},	// S1_PLAY_DIE7
-    {SPR1_PLAY,14,5,SA1_NULL,S1_PLAY_XDIE2,0,0,"player/doomguy/xplode.md2",0},	// S1_PLAY_XDIE1
-    {SPR1_PLAY,15,5,SA1_XScream,S1_PLAY_XDIE3,0,0,"player/doomguy/xplode.md2",1},	// S1_PLAY_XDIE2
-    {SPR1_PLAY,16,5,SA1_Fall,S1_PLAY_XDIE4,0,0,"player/doomguy/xplode.md2",2},	// S1_PLAY_XDIE3
-    {SPR1_PLAY,17,5,SA1_NULL,S1_PLAY_XDIE5,0,0,"player/doomguy/xplode.md2",3},	// S1_PLAY_XDIE4
-    {SPR1_PLAY,18,5,SA1_NULL,S1_PLAY_XDIE6,0,0,"player/doomguy/xplode.md2",4},	// S1_PLAY_XDIE5
-    {SPR1_PLAY,19,5,SA1_NULL,S1_PLAY_XDIE7,0,0,"player/doomguy/xplode.md2",5},	// S1_PLAY_XDIE6
-    {SPR1_PLAY,20,5,SA1_NULL,S1_PLAY_XDIE8,0,0,"player/doomguy/xplode.md2",6},	// S1_PLAY_XDIE7
-    {SPR1_PLAY,21,5,SA1_NULL,S1_PLAY_XDIE9,0,0,"player/doomguy/xplode.md2",7},	// S1_PLAY_XDIE8
-    {SPR1_PLAY,22,-1,SA1_NULL,S1_NULL,0,0,"player/doomguy/xplode.md2",8},	// S1_PLAY_XDIE9
+    {SPR1_PLAY,0,-1,SA1_NULL,S1_NULL,0,0,"players/doomguy/tris.md2",0},	// S1_PLAY
+    {SPR1_PLAY,0,4,SA1_NULL,S1_PLAY_RUN2,0,0,"players/doomguy/tris.md2",1},	// S1_PLAY_RUN1
+    {SPR1_PLAY,1,4,SA1_NULL,S1_PLAY_RUN3,0,0,"players/doomguy/tris.md2",2},	// S1_PLAY_RUN2
+    {SPR1_PLAY,2,4,SA1_NULL,S1_PLAY_RUN4,0,0,"players/doomguy/tris.md2",3},	// S1_PLAY_RUN3
+    {SPR1_PLAY,3,4,SA1_NULL,S1_PLAY_RUN1,0,0,"players/doomguy/tris.md2",4},	// S1_PLAY_RUN4
+    {SPR1_PLAY,4,12,SA1_NULL,S1_PLAY,0,0,"players/doomguy/tris.md2",5},	// S1_PLAY_ATK1
+    {SPR1_PLAY,32773,6,SA1_NULL,S1_PLAY_ATK1,0,0,"players/doomguy/tris.md2",6},	// S1_PLAY_ATK2
+    {SPR1_PLAY,6,4,SA1_NULL,S1_PLAY_PAIN2,0,0,"players/doomguy/tris.md2",7},	// S1_PLAY_PAIN
+    {SPR1_PLAY,6,4,SA1_Pain,S1_PLAY,0,0,"players/doomguy/tris.md2",8},	// S1_PLAY_PAIN2
+    {SPR1_PLAY,7,10,SA1_NULL,S1_PLAY_DIE2,0,0,"players/doomguy/tris.md2",9},	// S1_PLAY_DIE1
+    {SPR1_PLAY,8,10,SA1_PlayerScream,S1_PLAY_DIE3,0,0,"players/doomguy/tris.md2",10},	// S1_PLAY_DIE2
+    {SPR1_PLAY,9,10,SA1_Fall,S1_PLAY_DIE4,0,0,"players/doomguy/tris.md2",11},	// S1_PLAY_DIE3
+    {SPR1_PLAY,10,10,SA1_NULL,S1_PLAY_DIE5,0,0,"players/doomguy/tris.md2",12},	// S1_PLAY_DIE4
+    {SPR1_PLAY,11,10,SA1_NULL,S1_PLAY_DIE6,0,0,"players/doomguy/tris.md2",13},	// S1_PLAY_DIE5
+    {SPR1_PLAY,12,10,SA1_NULL,S1_PLAY_DIE7,0,0,"players/doomguy/tris.md2",14},	// S1_PLAY_DIE6
+    {SPR1_PLAY,13,-1,SA1_NULL,S1_NULL,0,0,"players/doomguy/tris.md2",15},	// S1_PLAY_DIE7
+    {SPR1_PLAY,14,5,SA1_NULL,S1_PLAY_XDIE2,0,0,"players/doomguy/xplode.md2",0},	// S1_PLAY_XDIE1
+    {SPR1_PLAY,15,5,SA1_XScream,S1_PLAY_XDIE3,0,0,"players/doomguy/xplode.md2",1},	// S1_PLAY_XDIE2
+    {SPR1_PLAY,16,5,SA1_Fall,S1_PLAY_XDIE4,0,0,"players/doomguy/xplode.md2",2},	// S1_PLAY_XDIE3
+    {SPR1_PLAY,17,5,SA1_NULL,S1_PLAY_XDIE5,0,0,"players/doomguy/xplode.md2",3},	// S1_PLAY_XDIE4
+    {SPR1_PLAY,18,5,SA1_NULL,S1_PLAY_XDIE6,0,0,"players/doomguy/xplode.md2",4},	// S1_PLAY_XDIE5
+    {SPR1_PLAY,19,5,SA1_NULL,S1_PLAY_XDIE7,0,0,"players/doomguy/xplode.md2",5},	// S1_PLAY_XDIE6
+    {SPR1_PLAY,20,5,SA1_NULL,S1_PLAY_XDIE8,0,0,"players/doomguy/xplode.md2",6},	// S1_PLAY_XDIE7
+    {SPR1_PLAY,21,5,SA1_NULL,S1_PLAY_XDIE9,0,0,"players/doomguy/xplode.md2",7},	// S1_PLAY_XDIE8
+    {SPR1_PLAY,22,-1,SA1_NULL,S1_NULL,0,0,"players/doomguy/xplode.md2",8},	// S1_PLAY_XDIE9
     {SPR1_POSS,0,10,SA1_Look,S1_POSS_STND2,0,0,"monsters/trooper.md2",0},	// S1_POSS_STND
     {SPR1_POSS,1,10,SA1_Look,S1_POSS_STND,0,0,"monsters/trooper.md2",1},	// S1_POSS_STND2
     {SPR1_POSS,0,4,SA1_Chase,S1_POSS_RUN2,0,0,"monsters/trooper.md2",2},	// S1_POSS_RUN1
@@ -930,8 +933,8 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_GOR1,1,15,SA1_NULL,S1_BLOODYTWITCH3,0,0,"bodies/twitch.md2",1},	// S1_BLOODYTWITCH2
     {SPR1_GOR1,2,8,SA1_NULL,S1_BLOODYTWITCH4,0,0,"bodies/twitch.md2",2},	// S1_BLOODYTWITCH3
     {SPR1_GOR1,1,6,SA1_NULL,S1_BLOODYTWITCH,0,0,"bodies/twitch.md2",3},	// S1_BLOODYTWITCH4
-    {SPR1_PLAY,13,-1,SA1_NULL,S1_NULL,0,0,"player/doomguy/tris.md2",15},	// S1_DEADTORSO
-    {SPR1_PLAY,18,-1,SA1_NULL,S1_NULL,0,0,"player/doomguy/xplode.md2",8},	// S1_DEADBOTTOM
+    {SPR1_PLAY,13,-1,SA1_NULL,S1_NULL,0,0,"players/doomguy/tris.md2",15},	// S1_DEADTORSO
+    {SPR1_PLAY,18,-1,SA1_NULL,S1_NULL,0,0,"players/doomguy/xplode.md2",8},	// S1_DEADBOTTOM
     {SPR1_POL2,0,-1,SA1_NULL,S1_NULL,0,0,"bodies/poleskls.md2",0},	// S1_HEADSONSTICK
     {SPR1_POL5,0,-1,SA1_NULL,S1_NULL,0,0,"gibs/gibs.md2",0},	// S1_GIBS
     {SPR1_POL4,0,-1,SA1_NULL,S1_NULL,0,0,"bodies/poleskul.md2",0},	// S1_HEADONASTICK
