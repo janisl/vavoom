@@ -161,7 +161,8 @@ void PR_Traceback(void)
 {
 	if (current_func)
 	{
-		Host_CoreDump("(%s)", *current_func->Name);
+		Host_CoreDump("(%s.%s)", current_func->OuterClass ? 
+			current_func->OuterClass->GetName() : "", *current_func->Name);
 	}
 }
 
@@ -1669,9 +1670,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/01/17 18:21:40  dj_jl
+//	Fixed Hexen class bug
+//
 //	Revision 1.18  2002/01/11 08:07:17  dj_jl
 //	Added names to progs
-//
+//	
 //	Revision 1.17  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

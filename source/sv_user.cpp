@@ -133,11 +133,14 @@ void SV_ReadFromUserInfo(void)
 
 void SV_SetUserInfo(const char *info)
 {
-	strcpy(sv_player->userinfo, info);
-	SV_ReadFromUserInfo();
-	sv_reliable << (byte)svc_userinfo
-				<< (byte)(sv_player - players)
-				<< sv_player->userinfo;
+	if (!sv_loading)
+	{
+		strcpy(sv_player->userinfo, info);
+		SV_ReadFromUserInfo();
+		sv_reliable << (byte)svc_userinfo
+					<< (byte)(sv_player - players)
+					<< sv_player->userinfo;
+	}
 }
 
 //==========================================================================
@@ -239,9 +242,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/17 18:21:40  dj_jl
+//	Fixed Hexen class bug
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

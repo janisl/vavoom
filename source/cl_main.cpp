@@ -66,6 +66,8 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 
 static int pf_CL_UpdateMobj;
 
+static bool UserInfoSent;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -266,6 +268,11 @@ void CL_SignonReply(void)
 
 	 case 2:
 		R_PreRender();
+		if (!UserInfoSent)
+		{
+			cls.message << (byte)clc_player_info << cls.userinfo;
+			UserInfoSent = true;
+		}
 		cls.message << (byte)clc_stringcmd << "Spawn\n";
 		break;
 
@@ -424,8 +431,8 @@ void CL_EstablishConnection(char *host)
 	}
 	cond << "CL_EstablishConnection: connected to " << host << endl;
 
-	cls.message << (byte)clc_player_info << cls.userinfo;
-	
+	UserInfoSent = false;
+
 	clpr.Exec("StopDemoLoop");
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
@@ -509,9 +516,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/01/17 18:21:40  dj_jl
+//	Fixed Hexen class bug
+//
 //	Revision 1.10  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/28 16:23:04  dj_jl
 //	Full user info sent only when establishing connection
 //	
