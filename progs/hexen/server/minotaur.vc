@@ -23,94 +23,87 @@
 //**
 //**************************************************************************
 
-//============================================================================
+//**************************************************************************
+//**************************************************************************
+//
+//	Minotaur
+//
+//**************************************************************************
+//**************************************************************************
+
+class Minotaur:Pawn
+	__mobjinfo__(9)
+{
+
 //
 // Minotaur variables
 //
+
 //  SpecialMobj1    pointer to player that spawned it (mobj_t)
-//  Special2        internal to minotaur AI
+bool bFloorFireRefired;		//  internal to minotaur AI
 //  Args[0]         minotaur start time
 //  Args[4]         charge duration countdown
-//
-//============================================================================
 
-// MACROS ------------------------------------------------------------------
+int LookState;
+int RoamState;
+int FloorFireState;
+int FloorFireRefireState;
+int ChargeState;
 
 #define MINOTAUR_LOOK_DIST		(16.0 * 54.0)
 #define MNTR_CHARGE_SPEED		805.0
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
+//============================================================================
 //
-//  Actor::A_Summon
+//  A_MinotaurFade0
 //
-//  Summon Minotaur
-//
-//==========================================================================
+//============================================================================
 
-void Actor::A_Summon(void)
+void A_MinotaurFade0(void)
 {
-	mobj_t *mo;
-	mobj_t *master;
-
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, Minotaur);
-	if (mo)
-	{
-		if (P_TestMobjLocation(mo) == false || !SpecialMobj1)
-		{
-			// Didn't fit - change back to artifact
-			mo->SetState(S_NULL);
-			mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z,
-				ArtifactSummonMaulator);
-			if (mo)
-				mo->bDropped = true;
-			return;
-		}
-
-		mo->Args[0] = level->tictime;
-		master = SpecialMobj1;
-		if (master->bCorpse)
-		{
-			// Master dead
-			mo->SpecialMobj1 = NULL;	// No master
-		}
-		else
-		{
-			mo->SpecialMobj1 = SpecialMobj1;	// Pointer to master (mobj_t *)
-			master->GivePower(pw_minotaur);
-		}
-
-		// Make smoke puff
-		P_SpawnMobj(Origin.x, Origin.y, Origin.z, MinotaurSmoke);
-		PlaySound('MaulatorActive', CHAN_VOICE);
-	}
+	Translucency = 66;
 }
 
 //============================================================================
 //
-//  Actor::A_MinotaurLook
+//  A_MinotaurFade1
+//
+//============================================================================
+
+void A_MinotaurFade1(void)
+{
+	// Second level of transparency
+	Translucency = 33;
+}
+
+//============================================================================
+//
+//  A_MinotaurFade2
+//
+//============================================================================
+
+void A_MinotaurFade2(void)
+{
+	// Make fully visible
+	Translucency = 0;
+}
+
+//============================================================================
+//
+//  A_MinotaurLook
 //
 //  Look for enemy of player
 //
 //============================================================================
 
-void Actor::A_MinotaurLook(void)
+void A_MinotaurLook(void)
 {
 	Actor mo;
 	float dist;
 	int i;
-	Actor master = *SpecialMobj1;
+	Actor master = *_SpecialMobj1;
 
-	Enemy = none;
+	Target = none;
 
 	if (deathmatch)	// Quick search for players
 	{
@@ -126,20 +119,20 @@ void Actor::A_MinotaurLook(void)
 			dist = MobjDist(self, mo);
 			if (dist > MINOTAUR_LOOK_DIST)
 				continue;
-			Enemy = mo;
+			Target = mo;
 			break;
 		}
 	}
 
-	if (!Enemy)	// Near player monster search
+	if (!Target)	// Near player monster search
 	{
 		if (master && (master.Health > 0) && master.bIsPlayer)
-			Enemy = master.RoughMonsterSearch(20);
+			Target = master.RoughMonsterSearch(20);
 		else
-			Enemy = RoughMonsterSearch(20);
+			Target = RoughMonsterSearch(20);
 	}
 
-	if (!Enemy)	// Normal monster search
+	if (!Target)	// Normal monster search
 	{
 		FOREACH(Actor, mo)
 		{
@@ -155,29 +148,29 @@ void Actor::A_MinotaurLook(void)
 			if ((mo == master) || (mo == self))
 				continue;
 			if ((mo.Class == Minotaur) &&
-				(mo.SpecialMobj1 == SpecialMobj1)) continue;
-			Enemy = mo;
+				(mo._SpecialMobj1 == _SpecialMobj1)) continue;
+			Target = mo;
 			break;	// Found mobj to attack
 		}
 	}
 
-	if (Enemy)
+	if (Target)
 	{
-		SetStateNF(S_MNTR_WALK1);
+		SetStateNF(SeeState);
 	}
 	else
 	{
-		SetStateNF(S_MNTR_ROAM1);
+		SetStateNF(RoamState);
 	}
 }
 
 //============================================================================
 //
-//  Actor::A_MinotaurChase
+//  A_MinotaurChase
 //
 //============================================================================
 
-void Actor::A_MinotaurChase(void)
+void A_MinotaurChase(void)
 {
 	int starttime = Args[0];
 
@@ -192,10 +185,10 @@ void Actor::A_MinotaurChase(void)
 	if (P_Random() < 30)
 		A_MinotaurLook();	// adjust to closest target
 
-	if (!Enemy || (Enemy.Health <= 0) || !Enemy.bShootable)
+	if (!Target || (Target.Health <= 0) || !Target.bShootable)
 	{
 		// look for a new enemy
-		SetState(S_MNTR_LOOK1);
+		SetState(LookState);
 		return;
 	}
 
@@ -236,11 +229,11 @@ void Actor::A_MinotaurChase(void)
 
 //============================================================================
 //
-//  Actor::A_MinotaurRoam
+//  A_MinotaurRoam
 //
 //============================================================================
 
-void Actor::A_MinotaurRoam(void)
+void A_MinotaurRoam(void)
 {
 	int starttime = Args[0];
 
@@ -274,15 +267,15 @@ void Actor::A_MinotaurRoam(void)
 
 //============================================================================
 //
-//  Actor::A_MinotaurAtk1
+//  A_MinotaurAtk1
 //
 //  Melee attack.
 //
 //============================================================================
 
-void Actor::A_MinotaurAtk1(void)
+void A_MinotaurAtk1(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
@@ -290,44 +283,44 @@ void Actor::A_MinotaurAtk1(void)
 	PlaySound('MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
+		Target.Damage(self, self, HITDICE(4));
 	}
 }
 
 //============================================================================
 //
-//  Actor::A_MinotaurDecide
+//  A_MinotaurDecide
 //
 //  Choose a missile attack.
 //
 //============================================================================
 
-void Actor::A_MinotaurDecide(void)
+void A_MinotaurDecide(void)
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 		return;
-	dist = MobjDist(self, Enemy);
+	dist = MobjDist(self, Target);
 
-	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
-		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
+	if (Target.Origin.z + Target.Height > Origin.z &&
+		Target.Origin.z + Target.Height < Origin.z + Height &&
 		dist < 16.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 230)
 	{
 		// Charge attack
 		// Don't call the state function right away
-		SetStateNF(S_MNTR_ATK4_1);
+		SetStateNF(ChargeState);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(Enemy.Origin - Origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(Target.Origin - Origin) * MNTR_CHARGE_SPEED;
 		Args[4] = 35 / 2;	// Charge duration
 	}
-	else if (Enemy.Origin.z == Enemy.FloorZ &&
+	else if (Target.Origin.z == Target.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 100)
 	{
 		// Floor fire attack
-		SetState(S_MNTR_ATK3_1);
-		Special2 = 0;
+		SetState(FloorFireState);
+		bFloorFireRefired = false;
 	}
 	else
 	{
@@ -340,28 +333,28 @@ void Actor::A_MinotaurDecide(void)
 
 //============================================================================
 //
-//  Actor::A_MinotaurAtk2
+//  A_MinotaurAtk2
 //
 //  Swing attack.
 //
 //============================================================================
 
-void Actor::A_MinotaurAtk2(void)
+void A_MinotaurAtk2(void)
 {
 	Actor mo;
 	float angle;
 	float momz;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
+		Target.Damage(self, self, HITDICE(3));
 		return;
 	}
-	mo = SpawnMissile(Enemy, MinotaurMissile);
+	mo = SpawnMissile(Target, MinotaurMissile);
 	if (mo)
 	{
 		momz = mo.Velocity.z;
@@ -379,61 +372,61 @@ void Actor::A_MinotaurAtk2(void)
 
 //============================================================================
 //
-//  Actor::A_MinotaurAtk3
+//  A_MinotaurAtk3
 //
 //  Floor fire attack.
 //
 //============================================================================
 
-void Actor::A_MinotaurAtk3(void)
+void A_MinotaurAtk3(void)
 {
 	Actor mo;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
-		if (Enemy.bIsPlayer)
+		Target.Damage(self, self, HITDICE(3));
+		if (Target.bIsPlayer)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -16.0;
+			Target.Player->DeltaViewHeight = -16.0;
 		}
 	}
 	else
 	{
-		mo = SpawnMissile(Enemy, MinotaurFloorFire1);
+		mo = SpawnMissile(Target, MinotaurFloorFire1);
 		if (mo)
 		{
 			mo.PlaySound('MaulatorHamHit', CHAN_VOICE);
 		}
 	}
-	if (P_Random() < 192 && Special2 == 0)
+	if (P_Random() < 192 && !bFloorFireRefired)
 	{
-		SetState(S_MNTR_ATK3_4);
-		Special2 = 1;
+		SetState(FloorFireRefireState);
+		bFloorFireRefired = true;
 	}
 }
 
 //============================================================================
 //
-//  Actor::A_MinotaurCharge
+//  A_MinotaurCharge
 //
 //============================================================================
 
-void Actor::A_MinotaurCharge(void)
+void A_MinotaurCharge(void)
 {
-	mobj_t *puff;
+	Actor puff;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	if (Args[4] > 0)
 	{
-		puff = P_SpawnMobj(Origin.x, Origin.y, Origin.z, PunchPuff);
-		puff->Velocity.z = 2.0 * 35.0;
+		puff = Spawn(PunchPuff, Origin);
+		puff.Velocity.z = 2.0 * 35.0;
 		Args[4]--;
 	}
 	else
@@ -445,37 +438,129 @@ void Actor::A_MinotaurCharge(void)
 
 //============================================================================
 //
-//  Actor::A_MinotaurFade0
+//  A_SmokePuffExit
 //
 //============================================================================
 
-void Actor::A_MinotaurFade0(void)
+void A_SmokePuffExit(void)
 {
+	Spawn(MinotaurSmokeExit, Origin);
+}
+
+__states__
+{
+	S_MNTR_SPAWN1('MNTR', 0, 15.0 / 35.0, S_MNTR_SPAWN2) { }
+	S_MNTR_SPAWN2('MNTR', 0, 15.0 / 35.0, S_MNTR_SPAWN3) { A_MinotaurFade1(); }
+	S_MNTR_SPAWN3('MNTR', 0, 3.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurFade2(); }
+	S_MNTR_LOOK1('MNTR', 0, 10.0 / 35.0, S_MNTR_LOOK2) { A_MinotaurLook(); }
+	S_MNTR_LOOK2('MNTR', 1, 10.0 / 35.0, S_MNTR_LOOK1) { A_MinotaurLook(); }
+	S_MNTR_WALK1('MNTR', 0, 5.0 / 35.0, S_MNTR_WALK2) { A_MinotaurChase(); }
+	S_MNTR_WALK2('MNTR', 1, 5.0 / 35.0, S_MNTR_WALK3) { A_MinotaurChase(); }
+	S_MNTR_WALK3('MNTR', 2, 5.0 / 35.0, S_MNTR_WALK4) { A_MinotaurChase(); }
+	S_MNTR_WALK4('MNTR', 3, 5.0 / 35.0, S_MNTR_WALK1) { A_MinotaurChase(); }
+	S_MNTR_ROAM1('MNTR', 0, 5.0 / 35.0, S_MNTR_ROAM2) { A_MinotaurRoam(); }
+	S_MNTR_ROAM2('MNTR', 1, 5.0 / 35.0, S_MNTR_ROAM3) { A_MinotaurRoam(); }
+	S_MNTR_ROAM3('MNTR', 2, 5.0 / 35.0, S_MNTR_ROAM4) { A_MinotaurRoam(); }
+	S_MNTR_ROAM4('MNTR', 3, 5.0 / 35.0, S_MNTR_ROAM1) { A_MinotaurRoam(); }
+	S_MNTR_ATK1_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK1_2) { A_FaceTarget(); }
+	S_MNTR_ATK1_2('MNTR', 7, 7.0 / 35.0, S_MNTR_ATK1_3) { A_FaceTarget(); }
+	S_MNTR_ATK1_3('MNTR', 8, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk1(); }
+	S_MNTR_ATK2_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK2_2) { A_MinotaurDecide(); }
+	S_MNTR_ATK2_2('MNTR', 9, 4.0 / 35.0, S_MNTR_ATK2_3) { A_FaceTarget(); }
+	S_MNTR_ATK2_3('MNTR', 10, 9.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk2(); }
+	S_MNTR_ATK3_1('MNTR', 6, 10.0 / 35.0, S_MNTR_ATK3_2) { A_FaceTarget(); }
+	S_MNTR_ATK3_2('MNTR', 7, 7.0 / 35.0, S_MNTR_ATK3_3) { A_FaceTarget(); }
+	S_MNTR_ATK3_3('MNTR', 8, 12.0 / 35.0, S_MNTR_WALK1) { A_MinotaurAtk3(); }
+	S_MNTR_ATK3_4('MNTR', 8, 12.0 / 35.0, S_MNTR_ATK3_1) { }
+	S_MNTR_ATK4_1('MNTR', 5, 2.0 / 35.0, S_MNTR_ATK4_1) { A_MinotaurCharge(); }
+	S_MNTR_PAIN1('MNTR', 4, 3.0 / 35.0, S_MNTR_PAIN2) { }
+	S_MNTR_PAIN2('MNTR', 4, 6.0 / 35.0, S_MNTR_WALK1) { A_Pain(); }
+	S_MNTR_DIE1('MNTR', 4, 6.0 / 35.0, S_MNTR_DIE2) { }
+	S_MNTR_DIE2('MNTR', 4, 2.0 / 35.0, S_MNTR_DIE3) { A_Scream(); }
+	S_MNTR_DIE3('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE4) { A_SmokePuffExit(); }
+	S_MNTR_DIE4('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE5) { }
+	S_MNTR_DIE5('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE6) { A_NoBlocking(); }
+	S_MNTR_DIE6('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE7) { }
+	S_MNTR_DIE7('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE8) { A_MinotaurFade1(); }
+	S_MNTR_DIE8('MNTR', 4, 5.0 / 35.0, S_MNTR_DIE9) { A_MinotaurFade0(); }
+	S_MNTR_DIE9('MNTR', 4, 10.0 / 35.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 2500;
+	Radius = 28.0;
+	Height = 100.0;
+	Mass = 800.0;
+	StepSpeed = 16.0;
+	PainChance = 25;
+	MissileDamage = 7;
 	Translucency = 66;
+	SpawnState = S_MNTR_SPAWN1;
+	LookState = S_MNTR_LOOK1;
+	SeeState = S_MNTR_WALK1;
+	RoamState = S_MNTR_ROAM1;
+	MeleeState = S_MNTR_ATK1_1;
+	MissileState = S_MNTR_ATK2_1;
+	FloorFireState = S_MNTR_ATK3_1;
+	FloorFireRefireState = S_MNTR_ATK3_4;
+	ChargeState = S_MNTR_ATK4_1;
+	PainState = S_MNTR_PAIN1;
+	DeathState = S_MNTR_DIE1;
+	SightSound = 'MaulatorSight';
+	ActiveSound = 'MaulatorActive';
+	AttackSound = 'MaulatorHamSwing';
+	PainSound = 'MaulatorPain';
+	DeathSound = 'MaulatorDeath';
+	bActivateMCross = false;
 }
 
-//============================================================================
-//
-//  Actor::A_MinotaurFade1
-//
-//============================================================================
-
-void Actor::A_MinotaurFade1(void)
-{
-	// Second level of transparency
-	Translucency = 33;
 }
 
-//============================================================================
-//
-//  Actor::A_MinotaurFade2
-//
-//============================================================================
+//**************************************************************************
+//**************************************************************************
 
-void Actor::A_MinotaurFade2(void)
+//==========================================================================
+//
+//  Actor::A_Summon
+//
+//  Summon Minotaur
+//
+//==========================================================================
+
+void Actor::A_Summon(void)
 {
-	// Make fully visible
-	Translucency = 0;
+	Actor A;
+
+	A = Spawn(Minotaur, Origin);
+	if (A)
+	{
+		if (!P_TestMobjLocation(&A) || !_SpecialMobj1)
+		{
+			// Didn't fit - change back to artifact
+			A.SetState(S_NULL);
+			A = Spawn(ArtifactSummonMaulator, Origin);
+			if (A)
+				A.bDropped = true;
+			return;
+		}
+
+		A.Args[0] = level->tictime;
+		if (_SpecialMobj1->bCorpse)
+		{
+			// Master dead
+			A._SpecialMobj1 = NULL;	// No master
+		}
+		else
+		{
+			A._SpecialMobj1 = _SpecialMobj1;	// Pointer to master (mobj_t *)
+			_SpecialMobj1->GivePower(pw_minotaur);
+		}
+
+		// Make smoke puff
+		Spawn(MinotaurSmoke, Origin);
+		PlaySound('MaulatorActive', CHAN_VOICE);
+	}
 }
 
 //============================================================================
@@ -486,30 +571,24 @@ void Actor::A_MinotaurFade2(void)
 
 void Actor::A_MntrFloorFire(void)
 {
-	mobj_t *mo;
+	Actor A;
 
 	Origin.z = FloorZ;
-	mo = P_SpawnMobj(Origin.x + (Random() - Random()) * 4.0,
-		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ, MinotaurFloorFire2);
-	mo->Owner = Owner;
-	mo->Velocity.x = 0.00001;	// Force block checking
-	mo->CheckMissileSpawn();
-}
-
-//============================================================================
-//
-//  Actor::A_SmokePuffExit
-//
-//============================================================================
-
-void Actor::A_SmokePuffExit(void)
-{
-	P_SpawnMobj(Origin.x, Origin.y, Origin.z, MinotaurSmokeExit);
+	A = Spawn(MinotaurFloorFire2, vector(
+		Origin.x + (Random() - Random()) * 4.0,
+		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ));
+	A.Owner = Owner;
+	A.Velocity.x = 0.00001;	// Force block checking
+	A.CheckMissileSpawn();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.23  2002/02/26 17:49:49  dj_jl
 //  no message
 //

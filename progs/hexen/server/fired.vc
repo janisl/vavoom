@@ -23,34 +23,34 @@
 //**
 //**************************************************************************
 
-//============================================================================
+//**************************************************************************
+//**************************************************************************
+//
+//	FireDemon
+//
+//**************************************************************************
+//**************************************************************************
+
+class FireDemon:Pawn
+	__mobjinfo__(10060)
+{
+
+//
 // Fire Demon AI
 //
-// Special1         index into floatbob
-// Special2         whether strafing or not
-//============================================================================
-
-// MACROS ------------------------------------------------------------------
 
 #define FIREDEMON_ATTACK_RANGE	(64.0 * 8.0)
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+int WeaveIndex;		//	Index into floatbob
+int StrafeCount;	//	Whether strafing or not
 
 //============================================================================
 //
-//  Actor::A_FiredSpawnRock
+//  A_FiredSpawnRock
 //
 //============================================================================
 
-void Actor::A_FiredSpawnRock(void)
+void A_FiredSpawnRock(void)
 {
 	Actor mo;
 	TVec rockOrg;
@@ -85,21 +85,21 @@ void Actor::A_FiredSpawnRock(void)
 		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.z = Random() * 4.0 * 35.0;
-		mo.Special1 = 2;	// Number bounces
+		mo._Special1 = 2;	// Number bounces
 	}
 
 	// Initialize fire demon
-	Special2 = 0;
+	StrafeCount = 0;
 	bJustAttacked = false;
 }
 
 //============================================================================
 //
-//  Actor::A_FiredRocks
+//  A_FiredRocks
 //
 //============================================================================
 
-void Actor::A_FiredRocks(void)
+void A_FiredRocks(void)
 {
 	A_FiredSpawnRock();
 	A_FiredSpawnRock();
@@ -110,13 +110,12 @@ void Actor::A_FiredRocks(void)
 
 //============================================================================
 //
-//  Actor::A_FiredChase
+//  A_FiredChase
 //
 //============================================================================
 
-void Actor::A_FiredChase(void)
+void A_FiredChase(void)
 {
-	int weaveindex = Special1;
 	float ang;
 	float dist;
 
@@ -126,8 +125,8 @@ void Actor::A_FiredChase(void)
 		Threshold--;
 
 	// Float up and down
-	Origin.z += FloatBobOffsets[weaveindex];
-	Special1 = (weaveindex + 2) & 63;
+	Origin.z += FloatBobOffsets[WeaveIndex];
+	WeaveIndex = (WeaveIndex + 2) & 63;
 
 	// Insure it stays above certain height
 	if (Origin.z < FloorZ + 64.0)
@@ -135,7 +134,7 @@ void Actor::A_FiredChase(void)
 		Origin.z += 2.0;
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// Invalid enemy
 		LookForPlayers(true);
@@ -143,29 +142,29 @@ void Actor::A_FiredChase(void)
 	}
 
 	// Strafe
-	if (Special2 > 0)
+	if (StrafeCount > 0)
 	{
-		Special2--;
+		StrafeCount--;
 	}
 	else
 	{
-		Special2 = 0;
+		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, Enemy);
+		dist = MobjDist(self, Target);
 		if (dist < FIREDEMON_ATTACK_RANGE)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(Enemy.Origin.y - Origin.y,
-					Enemy.Origin.x - Origin.x);
+				ang = atan2(Target.Origin.y - Origin.y,
+					Target.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
 				Velocity.x = 8.0 * cos(ang) * 35.0;
 				Velocity.y = 8.0 * sin(ang) * 35.0;
-				Special2 = 3;	// strafe time
+				StrafeCount = 3;	// strafe time
 			}
 		}
 	}
@@ -173,7 +172,7 @@ void Actor::A_FiredChase(void)
 	FaceMovementDirection();
 
 	// Normal movement
-	if (!Special2)
+	if (!StrafeCount)
 	{
 		if (--MoveCount < 0 || !StepMove())
 		{
@@ -205,15 +204,15 @@ void Actor::A_FiredChase(void)
 
 //============================================================================
 //
-//  Actor::A_FiredAttack
+//  A_FiredAttack
 //
 //============================================================================
 
-void Actor::A_FiredAttack(void)
+void A_FiredAttack(void)
 {
 	Actor mo;
 
-	mo = SpawnMissile(Enemy, FireDemonMissile);
+	mo = SpawnMissile(Target, FireDemonMissile);
 	if (mo)
 	{
 		PlaySound('FireDemonAttack', CHAN_WEAPON);
@@ -222,11 +221,11 @@ void Actor::A_FiredAttack(void)
 
 //============================================================================
 //
-//  Actor::A_FiredSplotch
+//  A_FiredSplotch
 //
 //============================================================================
 
-void Actor::A_FiredSplotch(void)
+void A_FiredSplotch(void)
 {
 	mobj_t *mo;
 
@@ -246,6 +245,74 @@ void Actor::A_FiredSplotch(void)
 	}
 }
 
+__states__
+{
+	S_FIRED_SPAWN1('FDMN', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK1) { }
+	S_FIRED_LOOK1('FDMN', 4 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK2) { A_Look(); }
+	S_FIRED_LOOK2('FDMN', 5 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK3) { A_Look(); }
+	S_FIRED_LOOK3('FDMN', 6 | FF_FULLBRIGHT, 10.0 / 35.0, S_FIRED_LOOK1) { A_Look(); }
+	S_FIRED_LOOK4('FDMN', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK5) { }
+	S_FIRED_LOOK5('FDMN', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK6) { }
+	S_FIRED_LOOK6('FDMN', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOK7) { }
+	S_FIRED_LOOK7('FDMN', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_FIRED_LOOK8) { }
+	S_FIRED_LOOK8('FDMN', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_LOOK9) { }
+	S_FIRED_LOOK9('FDMN', 5 | FF_FULLBRIGHT, 7.0 / 35.0, S_FIRED_LOOK0) { A_FiredRocks(); }
+	S_FIRED_LOOK0('FDMN', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKA) { }
+	S_FIRED_LOOKA('FDMN', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_LOOKB) { }
+	S_FIRED_LOOKB('FDMN', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_UnSetInvulnerable(); }
+	S_FIRED_WALK1('FDMN', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK2) { A_FiredChase(); }
+	S_FIRED_WALK2('FDMN', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK3) { A_FiredChase(); }
+	S_FIRED_WALK3('FDMN', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredChase(); }
+	S_FIRED_PAIN1('FDMN', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_FIRED_WALK1) { A_Pain(); }
+	S_FIRED_ATTACK1('FDMN', 10 | FF_FULLBRIGHT, 3.0 / 35.0, S_FIRED_ATTACK2) { A_FaceTarget(); }
+	S_FIRED_ATTACK2('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK3) { A_FiredAttack(); }
+	S_FIRED_ATTACK3('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_ATTACK4) { A_FiredAttack(); }
+	S_FIRED_ATTACK4('FDMN', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_FIRED_WALK1) { A_FiredAttack(); }
+	S_FIRED_DEATH1('FDMN', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH2) { A_FaceTarget(); }
+	S_FIRED_DEATH2('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH3) { A_Scream(); }
+	S_FIRED_DEATH3('FDMN', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIRED_DEATH4) { A_NoBlocking(); }
+	S_FIRED_DEATH4('FDMN', 11 | FF_FULLBRIGHT, 200.0 / 35.0, S_NULL) { }
+	S_FIRED_XDEATH1('FDMN', 12, 5.0 / 35.0, S_FIRED_XDEATH2) { A_FaceTarget(); }
+	S_FIRED_XDEATH2('FDMN', 13, 5.0 / 35.0, S_FIRED_XDEATH3) { A_NoBlocking(); }
+	S_FIRED_XDEATH3('FDMN', 14, 5.0 / 35.0, S_NULL) { A_FiredSplotch(); }
+	S_FIRED_ICE1('FDMN', 17, 5.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeath(); }
+	S_FIRED_ICE2('FDMN', 17, 1.0 / 35.0, S_FIRED_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 80;
+	GibsHealth = -40;
+	Radius = 20.0;
+	Height = 68.0;
+	Mass = 75.0;
+	StepSpeed = 13.0;
+	PainChance = 1;
+	MissileDamage = 1;
+	bNoGravity = true;
+	bDropOff = true;
+	bFloat = true;
+	bInvulnerable = true;
+	SpawnState = S_FIRED_SPAWN1;
+	SeeState = S_FIRED_LOOK4;
+	MissileState = S_FIRED_ATTACK1;
+	PainState = S_FIRED_PAIN1;
+	CrashState = S_FIRED_XDEATH1;
+	DeathState = S_FIRED_DEATH1;
+	GibsDeathState = S_FIRED_XDEATH1;
+	IceDeathState = S_FIRED_ICE1;
+	SightSound = 'FireDemonSpawn';
+	ActiveSound = 'FireDemonActive';
+	PainSound = 'FireDemonPain';
+	DeathSound = 'FireDemonDeath';
+	Effects = EF_DL_WHITE;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+
 //============================================================================
 //
 //  Actor::A_SmBounce
@@ -264,6 +331,10 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.19  2002/02/26 17:49:48  dj_jl
 //  no message
 //

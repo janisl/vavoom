@@ -192,6 +192,7 @@ class Actor:Entity
 	int CrashState;
 	int DeathState;
 	int GibsDeathState;
+	int IceDeathState;
 
 	//  Sounds
 	name SightSound;
@@ -264,15 +265,15 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or none).
-	Actor Enemy;
+	Actor Target;
 	// The originator for missiles.
 	Actor Owner;
 
-	int Special1;	// Special info
-	int Special2;	// Special info
+	int _Special1;	// Special info
+	int _Special2;	// Special info
 	float Special1f;
 	float Special2f;
-	Actor *SpecialMobj1;
+	Actor *_SpecialMobj1;
 	Actor *SpecialMobj2;
 	classid SpecialCID;
 
@@ -368,6 +369,12 @@ class Actor:Entity
 	boolean Iter_CheckOnmobjZ(Actor thing);
 	Actor CheckOnmobj(void);
 
+	void SetDormant(void)
+	{
+		bDormant = true;
+		StateTime = -1.0;
+	}
+
 	void Archive(void);
 	void Unarchive(void);
 
@@ -411,28 +418,12 @@ class Actor:Entity
 
 	// Misc enemy functions
 	void A_DeQueueCorpse(void);
-	int UpdateMorphedMonster(int tics);
-	void A_FiredSpawnRock(void);
-	void A_WraithFX4(void);
-	void DragonSeek(float thresh, float turnMax);
-	void A_SlowBalls(void);
-	void A_StopBalls(void);
 	void A_AccelBalls(void);
 	void A_DecelBalls(void);
 	void A_SorcUpdateBallAngle(void);
 	void A_SorcOffense1(void);
 	void A_SorcOffense2(void);
 	void A_CastSorcererSpell(void);
-	void A_FSwordAttack2(void);
-	void A_CHolyAttack3(void);
-	void MStaffSpawn2(float angle);
-	void A_MStaffAttack2(void);
-	void KoraxFire1(classid type);
-	void KoraxFire2(classid type);
-	void KoraxFire3(classid type);
-	void KoraxFire4(classid type);
-	void KoraxFire5(classid type);
-	void KoraxFire6(classid type);
 	void KSpiritInit(Actor korax);
 	void A_KSpiritSeeker(float thresh, float turnMax);
 	void A_KSpiritWeave(void);
@@ -513,110 +504,27 @@ class Actor:Entity
 	void A_SpeedFade(void);
 	void A_IceSetTics(void);
 	void A_IceCheckHeadDone(void);
-	void A_PigPain(void);
-	void A_PigLook(void);
-	void A_PigChase(void);
 	void A_FaceTarget(void);
-	void A_PigAttack(void);
+	void A_PigPain(void);
 	void A_QueueCorpse(void);
 	void A_Look(void);
 	void A_Chase(void);
-	void A_CentaurAttack(void);
-	void A_CentaurAttack2(void);
-	void A_SetReflective(void);
-	void A_CentaurDefend(void);
-	void A_UnSetReflective(void);
-	void A_CentaurDropStuff(void);
 	void A_CheckFloor(void);
-	void A_DemonAttack1(void);
-	void A_DemonAttack2(void);
-	void A_DemonDeath(void);
-	void A_Demon2Death(void);
-	void A_WraithRaiseInit(void);
-	void A_WraithRaise(void);
-	void A_WraithInit(void);
-	void A_WraithLook(void);
-	void A_WraithChase(void);
-	void A_WraithFX3(void);
-	void A_WraithMelee(void);
-	void A_WraithMissile(void);
 	void A_WraithFX2(void);
-	void A_MinotaurFade1(void);
-	void A_MinotaurFade2(void);
-	void A_MinotaurLook(void);
-	void A_MinotaurChase(void);
-	void A_MinotaurRoam(void);
-	void A_MinotaurAtk1(void);
-	void A_MinotaurDecide(void);
-	void A_MinotaurAtk2(void);
-	void A_MinotaurAtk3(void);
-	void A_MinotaurCharge(void);
-	void A_SmokePuffExit(void);
-	void A_MinotaurFade0(void);
 	void A_MntrFloorFire(void);
-	void A_SerpentChase(void);
-	void A_SerpentHumpDecide(void);
-	void A_SerpentUnHide(void);
-	void A_SerpentRaiseHump(void);
-	void A_SerpentLowerHump(void);
-	void A_SerpentHide(void);
-	void A_SerpentBirthScream(void);
-	void A_SetShootable(void);
-	void A_SerpentCheckForAttack(void);
-	void A_UnSetShootable(void);
-	void A_SerpentDiveSound(void);
-	void A_SerpentWalk(void);
-	void A_SerpentChooseAttack(void);
-	void A_SerpentMeleeAttack(void);
-	void A_SerpentMissileAttack(void);
-	void A_SerpentHeadPop(void);
-	void A_SerpentSpawnGibs(void);
 	void A_SerpentHeadCheck(void);
 	void A_FloatGib(void);
 	void A_DelayGib(void);
 	void A_SinkGib(void);
-	void A_BishopDecide(void);
-	void A_BishopDoBlur(void);
-	void A_BishopSpawnBlur(void);
-	void A_BishopChase(void);
-	void A_BishopAttack(void);
-	void A_BishopAttack2(void);
-	void A_BishopPainBlur(void);
-	void A_BishopPuff(void);
 	void A_SetAltShadow(void);
 	void A_BishopMissileWeave(void);
 	void A_BishopMissileSeek(void);
-	void A_DragonInitFlight(void);
-	void A_DragonFlap(void);
-	void A_DragonFlight(void);
-	void A_DragonAttack(void);
-	void A_DragonPain(void);
-	void A_DragonCheckCrash(void);
 	void A_DragonFX2(void);
 	void A_ESound(void);
-	void A_EttinAttack(void);
-	void A_DropMace(void);
-	void A_FiredRocks(void);
 	void A_UnSetInvulnerable(void);
-	void A_FiredChase(void);
-	void A_FiredAttack(void);
-	void A_FiredSplotch(void);
 	void A_SmBounce(void);
-	void A_IceGuyLook(void);
-	void A_IceGuyChase(void);
-	void A_IceGuyAttack(void);
-	void A_IceGuyDie(void);
 	void A_IceGuyMissilePuff(void);
 	void A_IceGuyMissileExplode(void);
-	void A_ClassBossHealth(void);
-	void A_FastChase(void);
-	void A_FighterAttack(void);
-	void A_ClericAttack(void);
-	void A_MageAttack(void);
-	void A_SorcSpinBalls(void);
-	void A_SpeedBalls(void);
-	void A_SpawnFizzle(void);
-	void A_SorcBossAttack(void);
 	void A_SorcBallOrbit(void);
 	void A_SorcBallPop(void);
 	void A_BounceCheck(void);
@@ -626,13 +534,6 @@ class Actor:Entity
 	void A_SorcererBishopEntry(void);
 	void A_SpawnBishop(void);
 	void A_SorcFX4Check(void);
-	void A_KoraxStep2(void);
-	void A_KoraxChase(void);
-	void A_KoraxStep(void);
-	void A_KoraxDecide(void);
-	void A_KoraxMissile(void);
-	void A_KoraxCommand(void);
-	void A_KoraxBonePop(void);
 	void A_KSpiritRoam(void);
 	void A_KBoltRaise(void);
 	void A_KBolt(void);
@@ -641,35 +542,56 @@ class Actor:Entity
 	void A_BatMove(void);
 }
 
+class Pawn:Actor
+{
+	bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
+
+	void OnMapSpawn(mthing_t *mthing)
+	{
+		if (bCheckNoMonsters && nomonsters)
+		{
+			RemoveMobjThinker(self);
+			return;
+		}
+		::OnMapSpawn(mthing);
+	}
+
+	defaultproperties
+	{
+		ReactionCount = 8;
+		bSolid = true;
+		bShootable = true;
+		bCountKill = true;
+		bFloorClip = true;
+		bTelestomp = true;
+		bActivatePushWall = true;
+		bActivateMCross = true;
+		bCheckNoMonsters = true;
+	}
+}
+
 class Weapon:ViewEntity
 {
-	void MStaffSpawn(float angle);
+	int Mana;
+	int UpState;
+	int DownState;
+	int ReadyState;
+	int AttackState;
+	int HoldAttackState;
+	float PSpriteSY;		// Y-adjustment value for full screen
+
+	int GetUpState(void) { return UpState; }
+	int GetDownState(void) { return DownState; }
+	int GetReadyState(void) { return ReadyState; }
+	int GetAttackState(void);
+	void GotMana(int InMana) { }
+	void SnoutSniff(void) { }	// FIXME
 
 	void A_Light0(void);
 	void A_WeaponReady(void);
 	void A_Lower(void);
 	void A_Raise(void);
-	void A_FPunchAttack(void);
 	void A_ReFire(void);
-	void A_FAxeAttack(void);
-	void A_FHammerAttack(void);
-	void A_FHammerThrow(void);
-	void A_FSwordAttack(void);
-	void A_CMaceAttack(void);
-	void A_CStaffInitBlink(void);
-	void A_CStaffCheckBlink(void);
-	void A_CStaffCheck(void);
-	void A_CStaffAttack(void);
-	void A_CFlameAttack(void);
-	void A_CHolyAttack(void);
-	void A_CHolyPalette(void);
-	void A_MWandAttack(void);
-	void A_LightningReady(void);
-	void A_MLightningAttack(void);
-	void A_MStaffAttack(void);
-	void A_MStaffPalette(void);
-	void A_SnoutAttack(void);
-	void A_FireConePL1(void);
 }
 
 /*
@@ -935,14 +857,6 @@ addfields player_t
 	int PendingWeapon;
 	int ReadyWeapon;
 
-	int w_Mana;
-	int w_UpState;
-	int w_DownState;
-	int w_ReadyState;
-	int w_AttackState;
-	int w_HoldAttackState;
-	int w_FlashState;
-
 	boolean WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
@@ -1050,6 +964,10 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/02 17:58:37  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.23  2002/02/26 17:49:49  dj_jl
 //  no message
 //

@@ -23,55 +23,148 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Ettin
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Ettin:Pawn
+	__mobjinfo__(10030)
+{
 
 //============================================================================
 //
-//  Actor::A_EttinAttack
+//  A_EttinAttack
 //
 //============================================================================
 
-void Actor::A_EttinAttack(void)
+void A_EttinAttack(void)
 {
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 	}
 }
 
 //============================================================================
 //
-//  Actor::A_DropMace
+//  A_DropMace
 //
 //============================================================================
 
-void Actor::A_DropMace(void)
+void A_DropMace(void)
 {
-	mobj_t *mo;
+	Actor mace;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + Height / 2.0, EttinMace);
-	if (mo)
+	mace = Spawn(EttinMace, Origin + vector(0.0, 0.0, Height / 2.0));
+	if (mace)
 	{
-		mo->Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
-		mo->Velocity.z = (10.0 + Random() * 4.0) * 35.0;
-		mo->Owner = self;
+		mace.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		mace.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		mace.Velocity.z = (10.0 + Random() * 4.0) * 35.0;
+		mace.Owner = self;
 	}
+}
+
+__states__
+{
+	S_ETTIN_LOOK1('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK2) { A_Look(); }
+	S_ETTIN_LOOK2('ETTN', 0, 10.0 / 35.0, S_ETTIN_LOOK1) { A_Look(); }
+	S_ETTIN_CHASE1('ETTN', 0, 5.0 / 35.0, S_ETTIN_CHASE2) { A_Chase(); }
+	S_ETTIN_CHASE2('ETTN', 1, 5.0 / 35.0, S_ETTIN_CHASE3) { A_Chase(); }
+	S_ETTIN_CHASE3('ETTN', 2, 5.0 / 35.0, S_ETTIN_CHASE4) { A_Chase(); }
+	S_ETTIN_CHASE4('ETTN', 3, 5.0 / 35.0, S_ETTIN_CHASE1) { A_Chase(); }
+	S_ETTIN_PAIN1('ETTN', 7, 7.0 / 35.0, S_ETTIN_CHASE1) { A_Pain(); }
+	S_ETTIN_ATK1_1('ETTN', 4, 6.0 / 35.0, S_ETTIN_ATK1_2) { A_FaceTarget(); }
+	S_ETTIN_ATK1_2('ETTN', 5, 6.0 / 35.0, S_ETTIN_ATK1_3) { A_FaceTarget(); }
+	S_ETTIN_ATK1_3('ETTN', 6, 8.0 / 35.0, S_ETTIN_CHASE1) { A_EttinAttack(); }
+	S_ETTIN_DEATH1_1('ETTN', 8, 4.0 / 35.0, S_ETTIN_DEATH1_2) { }
+	S_ETTIN_DEATH1_2('ETTN', 9, 4.0 / 35.0, S_ETTIN_DEATH1_3) { }
+	S_ETTIN_DEATH1_3('ETTN', 10, 4.0 / 35.0, S_ETTIN_DEATH1_4) { A_Scream(); }
+	S_ETTIN_DEATH1_4('ETTN', 11, 4.0 / 35.0, S_ETTIN_DEATH1_5) { A_NoBlocking(); }
+	S_ETTIN_DEATH1_5('ETTN', 12, 4.0 / 35.0, S_ETTIN_DEATH1_6) { A_QueueCorpse(); }
+	S_ETTIN_DEATH1_6('ETTN', 13, 4.0 / 35.0, S_ETTIN_DEATH1_7) { }
+	S_ETTIN_DEATH1_7('ETTN', 14, 4.0 / 35.0, S_ETTIN_DEATH1_8) { }
+	S_ETTIN_DEATH1_8('ETTN', 15, 4.0 / 35.0, S_ETTIN_DEATH1_9) { }
+	S_ETTIN_DEATH1_9('ETTN', 16, -1.0, S_NULL) { }
+	S_ETTIN_DEATH2_1('ETTB', 0, 4.0 / 35.0, S_ETTIN_DEATH2_2) { }
+	S_ETTIN_DEATH2_2('ETTB', 1, 4.0 / 35.0, S_ETTIN_DEATH2_3) { A_NoBlocking(); }
+	S_ETTIN_DEATH2_3('ETTB', 2, 4.0 / 35.0, S_ETTIN_DEATH2_4) { A_DropMace(); }
+	S_ETTIN_DEATH2_4('ETTB', 3, 4.0 / 35.0, S_ETTIN_DEATH2_5) { A_Scream(); }
+	S_ETTIN_DEATH2_5('ETTB', 4, 4.0 / 35.0, S_ETTIN_DEATH2_6) { A_QueueCorpse(); }
+	S_ETTIN_DEATH2_6('ETTB', 5, 4.0 / 35.0, S_ETTIN_DEATH2_7) { }
+	S_ETTIN_DEATH2_7('ETTB', 6, 4.0 / 35.0, S_ETTIN_DEATH2_8) { }
+	S_ETTIN_DEATH2_8('ETTB', 7, 4.0 / 35.0, S_ETTIN_DEATH2_9) { }
+	S_ETTIN_DEATH2_9('ETTB', 8, 4.0 / 35.0, S_ETTIN_DEATH2_0) { }
+	S_ETTIN_DEATH2_0('ETTB', 9, 4.0 / 35.0, S_ETTIN_DEATH2_A) { }
+	S_ETTIN_DEATH2_A('ETTB', 10, 4.0 / 35.0, S_ETTIN_DEATH2_B) { }
+	S_ETTIN_DEATH2_B('ETTB', 11, -1.0, S_NULL) { }
+	S_ETTIN_ICE1('ETTN', 17, 5.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeath(); }
+	S_ETTIN_ICE2('ETTN', 17, 1.0 / 35.0, S_ETTIN_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 175;
+	GibsHealth = -87;
+	Radius = 25.0;
+	Height = 68.0;
+	Mass = 175.0;
+	StepSpeed = 13.0;
+	PainChance = 60;
+	bNoPassMobj = true;
+	SpawnState = S_ETTIN_LOOK1;
+	SeeState = S_ETTIN_CHASE1;
+	MeleeState = S_ETTIN_ATK1_1;
+	PainState = S_ETTIN_PAIN1;
+	DeathState = S_ETTIN_DEATH1_1;
+	GibsDeathState = S_ETTIN_DEATH2_1;
+	IceDeathState = S_ETTIN_ICE1;
+	SightSound = 'EttinSight';
+	ActiveSound = 'EttinActive';
+	AttackSound = 'EttinAttack';
+	PainSound = 'EttinPain';
+	DeathSound = 'EttinDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	EttinMash
+//
+//**************************************************************************
+//**************************************************************************
+
+class EttinMash:Ettin
+{
+
+defaultproperties
+{
+	GibsHealth = 0;
+	Translucency = 33;
+	bNoBlood = true;
+	bBlasted = true;
+	bTelestomp = false;
+	bNoPassMobj = false;
+	DeathState = S_NULL;
+	GibsDeathState = S_NULL;
+	IceDeathState = S_NULL;
+}
+
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.13  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -23,27 +23,26 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	Pig
+//
+//**************************************************************************
+//**************************************************************************
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
+class Pig:Pawn
+{
 
 //==========================================================================
 //
-//  Actor::UpdateMorphedMonster
+//  UpdateMorphedMonster
 //
 //  Returns true if the pig morphs.
 //
 //==========================================================================
 
-int Actor::UpdateMorphedMonster(int tics)
+int UpdateMorphedMonster(int tics)
 {
 	Actor fog;
 	TVec oldOrigin;
@@ -55,8 +54,8 @@ int Actor::UpdateMorphedMonster(int tics)
 	int oldArgs[5];
 	Actor mo;
 
-	Special1 -= tics;
-	if (Special1 > 0)
+	_Special1 -= tics;
+	if (_Special1 > 0)
 	{
 		return false;
 	}
@@ -73,7 +72,7 @@ int Actor::UpdateMorphedMonster(int tics)
 	}
 	oldOrigin = Origin;
 	oldAngle = Angles.yaw;
-	oldEnemy = Enemy;
+	oldEnemy = Target;
 	oldSpecial = Special;
 	oldTID = TID;
 	oldArgs[0] = Args[0];
@@ -90,13 +89,13 @@ int Actor::UpdateMorphedMonster(int tics)
 		// Didn't fit
 		P_RemoveMobj(&mo);
 		P_SetThingPosition(self);
-		mo.Special1 = 5 * 35;	// Next try in 5 seconds
+		mo._Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
 	P_RemoveMobjFromTIDList(this);
 	SetState(S_FREETARGMOBJ);
 	mo.Angles.yaw = oldAngle;
-	mo.Enemy = oldEnemy;
+	mo.Target = oldEnemy;
 	mo.TID = oldTID;
 	mo.Special = oldSpecial;
 	mo.Args[0] = oldArgs[0];
@@ -113,11 +112,11 @@ int Actor::UpdateMorphedMonster(int tics)
 
 //============================================================================
 //
-//  Actor::A_PigLook
+//  A_PigLook
 //
 //============================================================================
 
-void Actor::A_PigLook(void)
+void A_PigLook(void)
 {
 	if (UpdateMorphedMonster(10))
 	{
@@ -128,11 +127,11 @@ void Actor::A_PigLook(void)
 
 //============================================================================
 //
-//  Actor::A_PigChase
+//  A_PigChase
 //
 //============================================================================
 
-void Actor::A_PigChase(void)
+void A_PigChase(void)
 {
 	if (UpdateMorphedMonster(3))
 	{
@@ -143,26 +142,66 @@ void Actor::A_PigChase(void)
 
 //============================================================================
 //
-//	Actor::A_PigAttack
+//	A_PigAttack
 //
 //============================================================================
 
-void Actor::A_PigAttack(void)
+void A_PigAttack(void)
 {
 	if (UpdateMorphedMonster(18))
 	{
 		return;
 	}
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 2 + (P_Random() & 1));
+		Target.Damage(self, self, 2 + (P_Random() & 1));
 		PlaySound('PigAttack', CHAN_VOICE);
 	}
 }
+
+__states__
+{
+	S_PIG_LOOK1('PIGY', 1, 10.0 / 35.0, S_PIG_LOOK1) { A_PigLook(); }
+	S_PIG_WALK1('PIGY', 0, 3.0 / 35.0, S_PIG_WALK2) { A_PigChase(); }
+	S_PIG_WALK2('PIGY', 1, 3.0 / 35.0, S_PIG_WALK3) { A_PigChase(); }
+	S_PIG_WALK3('PIGY', 2, 3.0 / 35.0, S_PIG_WALK4) { A_PigChase(); }
+	S_PIG_WALK4('PIGY', 3, 3.0 / 35.0, S_PIG_WALK1) { A_PigChase(); }
+	S_PIG_PAIN('PIGY', 3, 4.0 / 35.0, S_PIG_WALK1) { A_PigPain(); }
+	S_PIG_ATK1('PIGY', 0, 5.0 / 35.0, S_PIG_ATK2) { A_FaceTarget(); }
+	S_PIG_ATK2('PIGY', 0, 10.0 / 35.0, S_PIG_WALK1) { A_PigAttack(); }
+	//	Death and ice is shared with player pig
+}
+
+defaultproperties
+{
+	Health = 25;
+	Radius = 12.0;
+	Height = 22.0;
+	Mass = 60.0;
+	StepSpeed = 10.0;
+	PainChance = 128;
+	bWindThrust = true;
+	bActivateMCross = false;
+	SpawnState = S_PIG_LOOK1;
+	SeeState = S_PIG_WALK1;
+	MeleeState = S_PIG_ATK1;
+	PainState = S_PIG_PAIN;
+	DeathState = S_PIG_DIE1;
+	IceDeathState = S_PIG_ICE;
+	SightSound = 'PigActive1';
+	ActiveSound = 'PigActive1';
+	PainSound = 'PigPain';
+	DeathSound = 'PigDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
 
 //============================================================================
 //
@@ -182,6 +221,10 @@ void Actor::A_PigPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.18  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -23,45 +23,47 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//**************************************************************************
+//**************************************************************************
+//
+//	ClassBoss
+//
+//**************************************************************************
+//**************************************************************************
+
+class ClassBoss:Pawn
+{
+
+bool bHealthInitialized;
+int StrafeCount;
 
 #define CLASS_BOSS_STRAFE_RANGE		64.0 * 10.0
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
 //============================================================================
 //
-//  Actor::A_ClassBossHealth
+//  A_ClassBossHealth
 //
 //============================================================================
 
-void Actor::A_ClassBossHealth(void)
+void A_ClassBossHealth(void)
 {
 	if (netgame && !deathmatch)	// co-op only
 	{
-		if (!Special1)
+		if (!bHealthInitialized)
 		{
 			Health *= 5;
-			Special1 = true;	// has been initialized
+			bHealthInitialized = true;	// has been initialized
 		}
 	}
 }
 
 //============================================================================
 //
-//  Actor::A_FastChase
+//  A_FastChase
 //
 //============================================================================
 
-void Actor::A_FastChase(void)
+void A_FastChase(void)
 {
 	float delta;
 	float dist;
@@ -105,7 +107,7 @@ void Actor::A_FastChase(void)
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new enemy
 		if (LookForPlayers(true))
@@ -129,29 +131,29 @@ void Actor::A_FastChase(void)
 	}
 
 	// Strafe
-	if (Special2 > 0)
+	if (StrafeCount > 0)
 	{
-		Special2--;
+		StrafeCount--;
 	}
 	else
 	{
-		Special2 = 0;
+		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, Enemy);
+		dist = MobjDist(self, Target);
 		if (dist < CLASS_BOSS_STRAFE_RANGE)
 		{
 			if (P_Random() < 100)
 			{
-				ang = atan2(Enemy.Origin.y - Origin.y,
-					Enemy.Origin.x - Origin.x);
+				ang = atan2(Target.Origin.y - Origin.y,
+					Target.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
 					ang = AngleMod360(ang - 90.0);
 				Velocity.x = 13.0 * cos(ang) * 35.0;
 				Velocity.y = 13.0 * sin(ang) * 35.0;
-				Special2 = 3;	// strafe time
+				StrafeCount = 3;	// strafe time
 			}
 		}
 	}
@@ -175,7 +177,7 @@ void Actor::A_FastChase(void)
 	//
 	// possibly choose another enemy
 	//
-	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
+	if (netgame && !Threshold && !P_CheckSight(self, Target))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy
@@ -184,7 +186,7 @@ void Actor::A_FastChase(void)
 	//
 	// chase towards player
 	//
-	if (!Special2)
+	if (!StrafeCount)
 	{
 		if (--MoveCount < 0 || !StepMove())
 		{
@@ -193,75 +195,209 @@ void Actor::A_FastChase(void)
 	}
 }
 
-//============================================================================
-//
-//	Actor::A_FSwordAttack2
-//
-//============================================================================
-
-void Actor::A_FSwordAttack2(void)
+defaultproperties
 {
-	float angle = Angles.yaw;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	FighterBoss
+//
+//**************************************************************************
+//**************************************************************************
+
+class FighterBoss:ClassBoss
+	__mobjinfo__(10100)
+{
+
+//============================================================================
+//
+//  A_FighterAttack
+//
+//============================================================================
+
+void A_FighterAttack(void)
+{
+	if (!Target)
+		return;
 
 	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(angle + 45.0 / 4.0), 0.0);
+		AngleMod360(Angles.yaw + 45.0 / 4.0), 0.0);
 	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(angle + 45.0 / 8.0), 0.0);
-	SpawnMissileAngle(FighterSwordMissile, angle, 0.0);
+		AngleMod360(Angles.yaw + 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(FighterSwordMissile, Angles.yaw, 0.0);
 	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(angle - 45.0 / 8.0), 0.0);
+		AngleMod360(Angles.yaw - 45.0 / 8.0), 0.0);
 	SpawnMissileAngle(FighterSwordMissile,
-		AngleMod360(angle - 45.0 / 4.0), 0.0);
+		AngleMod360(Angles.yaw - 45.0 / 4.0), 0.0);
 	PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
-//============================================================================
-//
-//  Actor::A_FighterAttack
-//
-//============================================================================
-
-void Actor::A_FighterAttack(void)
+__states__
 {
-	if (!Enemy)
-		return;
-	A_FSwordAttack2();
+	S_FIGHTER('PLAY', 0, 2.0 / 35.0, S_FIGHTER2) { }
+	S_FIGHTER2('PLAY', 0, 3.0 / 35.0, S_FIGHTERLOOK) { A_ClassBossHealth(); }
+	S_FIGHTERLOOK('PLAY', 0, 5.0 / 35.0, S_FIGHTERLOOK) { A_Look(); }
+	S_FIGHTER_RUN1('PLAY', 0, 4.0 / 35.0, S_FIGHTER_RUN2) { A_FastChase(); }
+	S_FIGHTER_RUN2('PLAY', 1, 4.0 / 35.0, S_FIGHTER_RUN3) { A_FastChase(); }
+	S_FIGHTER_RUN3('PLAY', 2, 4.0 / 35.0, S_FIGHTER_RUN4) { A_FastChase(); }
+	S_FIGHTER_RUN4('PLAY', 3, 4.0 / 35.0, S_FIGHTER_RUN1) { A_FastChase(); }
+	S_FIGHTER_ATK1('PLAY', 4, 8.0 / 35.0, S_FIGHTER_ATK2) { A_FaceTarget(); }
+	S_FIGHTER_ATK2('PLAY', 5, 8.0 / 35.0, S_FIGHTER_RUN1) { A_FighterAttack(); }
+	S_FIGHTER_PAIN('PLAY', 6, 4.0 / 35.0, S_FIGHTER_PAIN2) { }
+	S_FIGHTER_PAIN2('PLAY', 6, 4.0 / 35.0, S_FIGHTER_RUN1) { A_Pain(); }
+	S_FIGHTER_DIE1('PLAY', 7, 6.0 / 35.0, S_FIGHTER_DIE2) { }
+	S_FIGHTER_DIE2('PLAY', 8, 6.0 / 35.0, S_FIGHTER_DIE3) { A_Scream(); }
+	S_FIGHTER_DIE3('PLAY', 9, 6.0 / 35.0, S_FIGHTER_DIE4) { }
+	S_FIGHTER_DIE4('PLAY', 10, 6.0 / 35.0, S_FIGHTER_DIE5) { }
+	S_FIGHTER_DIE5('PLAY', 11, 6.0 / 35.0, S_FIGHTER_DIE6) { A_NoBlocking(); }
+	S_FIGHTER_DIE6('PLAY', 12, 6.0 / 35.0, S_FIGHTER_DIE7) { }
+	S_FIGHTER_DIE7('PLAY', 13, -1.0, S_NULL) { }
+	S_FIGHTER_XDIE1('PLAY', 14, 5.0 / 35.0, S_FIGHTER_XDIE2) { A_Scream(); }
+	S_FIGHTER_XDIE2('PLAY', 15, 5.0 / 35.0, S_FIGHTER_XDIE3) { A_SkullPop(); }
+	S_FIGHTER_XDIE3('PLAY', 17, 5.0 / 35.0, S_FIGHTER_XDIE4) { A_NoBlocking(); }
+	S_FIGHTER_XDIE4('PLAY', 18, 5.0 / 35.0, S_FIGHTER_XDIE5) { }
+	S_FIGHTER_XDIE5('PLAY', 19, 5.0 / 35.0, S_FIGHTER_XDIE6) { }
+	S_FIGHTER_XDIE6('PLAY', 20, 5.0 / 35.0, S_FIGHTER_XDIE7) { }
+	S_FIGHTER_XDIE7('PLAY', 21, 5.0 / 35.0, S_FIGHTER_XDIE8) { }
+	S_FIGHTER_XDIE8('PLAY', 22, -1.0, S_NULL) { }
+	S_FIGHTER_ICE('PLAY', 23, 5.0 / 35.0, S_FIGHTER_ICE2) { A_FreezeDeath(); }
+	S_FIGHTER_ICE2('PLAY', 23, 1.0 / 35.0, S_FIGHTER_ICE2) { A_FreezeDeathChunks(); }
 }
 
+defaultproperties
+{
+	Health = 800;
+	GibsHealth = -400;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	StepSpeed = 25.0;
+	PainChance = 50;
+	SpawnState = S_FIGHTER;
+	SeeState = S_FIGHTER_RUN1;
+	MeleeState = S_FIGHTER_ATK1;
+	MissileState = S_FIGHTER_ATK1;
+	PainState = S_FIGHTER_PAIN;
+	DeathState = S_FIGHTER_DIE1;
+	GibsDeathState = S_FIGHTER_XDIE1;
+	IceDeathState = S_FIGHTER_ICE;
+	PainSound = 'PlayerFighterPain';
+	DeathSound = 'PlayerFighterCrazyDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ClericBoss
+//
+//**************************************************************************
+//**************************************************************************
+
+class ClericBoss:ClassBoss
+	__mobjinfo__(10101)
+{
+
 //============================================================================
 //
-//	Actor::A_CHolyAttack3
+//  A_ClericAttack
 //
 //  Spawns the spirits
 //
 //============================================================================
 
-void Actor::A_CHolyAttack3(void)
+void A_ClericAttack(void)
 {
-	SpawnMissile(Enemy, HolyMissile);
+	if (!Target)
+		return;
+	SpawnMissile(Target, HolyMissile);
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
-//============================================================================
-//
-//  Actor::A_ClericAttack
-//
-//============================================================================
-
-void Actor::A_ClericAttack(void)
+__states__
 {
-	if (!Enemy)
-		return;
-	A_CHolyAttack3();
+	S_CLERIC('CLER', 0, 2.0 / 35.0, S_CLERIC2) { }
+	S_CLERIC2('CLER', 0, 3.0 / 35.0, S_CLERICLOOK) { A_ClassBossHealth(); }
+	S_CLERICLOOK('CLER', 0, 5.0 / 35.0, S_CLERICLOOK) { A_Look(); }
+	S_CLERIC_RUN1('CLER', 0, 4.0 / 35.0, S_CLERIC_RUN2) { A_FastChase(); }
+	S_CLERIC_RUN2('CLER', 1, 4.0 / 35.0, S_CLERIC_RUN3) { A_FastChase(); }
+	S_CLERIC_RUN3('CLER', 2, 4.0 / 35.0, S_CLERIC_RUN4) { A_FastChase(); }
+	S_CLERIC_RUN4('CLER', 3, 4.0 / 35.0, S_CLERIC_RUN1) { A_FastChase(); }
+	S_CLERIC_ATK1('CLER', 4, 8.0 / 35.0, S_CLERIC_ATK2) { A_FaceTarget(); }
+	S_CLERIC_ATK2('CLER', 5, 8.0 / 35.0, S_CLERIC_ATK3) { A_FaceTarget(); }
+	S_CLERIC_ATK3('CLER', 6, 10.0 / 35.0, S_CLERIC_RUN1) { A_ClericAttack(); }
+	S_CLERIC_PAIN('CLER', 7, 4.0 / 35.0, S_CLERIC_PAIN2) { }
+	S_CLERIC_PAIN2('CLER', 7, 4.0 / 35.0, S_CLERIC_RUN1) { A_Pain(); }
+	S_CLERIC_DIE1('CLER', 8, 6.0 / 35.0, S_CLERIC_DIE2) { }
+	S_CLERIC_DIE2('CLER', 10, 6.0 / 35.0, S_CLERIC_DIE3) { A_Scream(); }
+	S_CLERIC_DIE3('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE4) { }
+	S_CLERIC_DIE4('CLER', 11, 6.0 / 35.0, S_CLERIC_DIE5) { }
+	S_CLERIC_DIE5('CLER', 12, 6.0 / 35.0, S_CLERIC_DIE6) { A_NoBlocking(); }
+	S_CLERIC_DIE6('CLER', 13, 6.0 / 35.0, S_CLERIC_DIE7) { }
+	S_CLERIC_DIE7('CLER', 14, 6.0 / 35.0, S_CLERIC_DIE8) { }
+	S_CLERIC_DIE8('CLER', 15, 6.0 / 35.0, S_CLERIC_DIE9) { }
+	S_CLERIC_DIE9('CLER', 16, -1.0, S_NULL) { }
+	S_CLERIC_XDIE1('CLER', 17, 5.0 / 35.0, S_CLERIC_XDIE2) { A_Scream(); }
+	S_CLERIC_XDIE2('CLER', 18, 5.0 / 35.0, S_CLERIC_XDIE3) { }
+	S_CLERIC_XDIE3('CLER', 19, 5.0 / 35.0, S_CLERIC_XDIE4) { A_NoBlocking(); }
+	S_CLERIC_XDIE4('CLER', 20, 5.0 / 35.0, S_CLERIC_XDIE5) { }
+	S_CLERIC_XDIE5('CLER', 21, 5.0 / 35.0, S_CLERIC_XDIE6) { }
+	S_CLERIC_XDIE6('CLER', 22, 5.0 / 35.0, S_CLERIC_XDIE7) { }
+	S_CLERIC_XDIE7('CLER', 23, 5.0 / 35.0, S_CLERIC_XDIE8) { }
+	S_CLERIC_XDIE8('CLER', 24, 5.0 / 35.0, S_CLERIC_XDIE9) { }
+	S_CLERIC_XDIE9('CLER', 25, 5.0 / 35.0, S_CLERIC_XDIE10) { }
+	S_CLERIC_XDIE10('CLER', 26, -1.0, S_NULL) { }
+	S_CLERIC_ICE('CLER', 27, 5.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeath(); }
+	S_CLERIC_ICE2('CLER', 27, 1.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeathChunks(); }
 }
 
+defaultproperties
+{
+	Health = 800;
+	GibsHealth = -400;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	StepSpeed = 25.0;
+	PainChance = 50;
+	SpawnState = S_CLERIC;
+	SeeState = S_CLERIC_RUN1;
+	MeleeState = S_CLERIC_ATK1;
+	MissileState = S_CLERIC_ATK1;
+	PainState = S_CLERIC_PAIN;
+	DeathState = S_CLERIC_DIE1;
+	GibsDeathState = S_CLERIC_XDIE1;
+	IceDeathState = S_CLERIC_ICE;
+	PainSound = 'PlayerClericPain';
+	DeathSound = 'PlayerClericCrazyDeath';
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	MageBoss
+//
+//**************************************************************************
+//**************************************************************************
+
+class MageBoss:ClassBoss
+	__mobjinfo__(10102)
+{
+
 //============================================================================
 //
-//  Actor::MStaffSpawn2
+//  MStaffSpawn2
 //
 //============================================================================
 
-void Actor::MStaffSpawn2(float angle)
+void MStaffSpawn2(float angle)
 {
 	Actor mo;
 
@@ -269,43 +405,90 @@ void Actor::MStaffSpawn2(float angle)
 	if (mo)
 	{
 		mo.Owner = self;
-		mo.SpecialMobj1 = &mo.RoughMonsterSearch(10);
+		mo.Target = mo.RoughMonsterSearch(10);
 	}
 }
 
 //============================================================================
 //
-//	Actor::A_MStaffAttack2 - for use by mage class boss
+//  A_MageAttack
 //
 //============================================================================
 
-void Actor::A_MStaffAttack2(void)
+void A_MageAttack(void)
 {
-	float angle;
+	if (!Target)
+		return;
 
-	angle = Angles.yaw;
-	MStaffSpawn2(angle);
-	MStaffSpawn2(AngleMod360(angle - 5.0));
-	MStaffSpawn2(AngleMod360(angle + 5.0));
+	MStaffSpawn2(Angles.yaw);
+	MStaffSpawn2(AngleMod360(Angles.yaw - 5.0));
+	MStaffSpawn2(AngleMod360(Angles.yaw + 5.0));
 	PlaySound('MageStaffFire', CHAN_WEAPON);
 }
 
-//============================================================================
-//
-//  Actor::A_MageAttack
-//
-//============================================================================
-
-void Actor::A_MageAttack(void)
+__states__
 {
-	if (!Enemy)
-		return;
-	A_MStaffAttack2();
+	S_MAGE('MAGE', 0, 2.0 / 35.0, S_MAGE2) { }
+	S_MAGE2('MAGE', 0, 3.0 / 35.0, S_MAGELOOK) { A_ClassBossHealth(); }
+	S_MAGELOOK('MAGE', 0, 5.0 / 35.0, S_MAGELOOK) { A_Look(); }
+	S_MAGE_RUN1('MAGE', 0, 4.0 / 35.0, S_MAGE_RUN2) { A_FastChase(); }
+	S_MAGE_RUN2('MAGE', 1, 4.0 / 35.0, S_MAGE_RUN3) { A_FastChase(); }
+	S_MAGE_RUN3('MAGE', 2, 4.0 / 35.0, S_MAGE_RUN4) { A_FastChase(); }
+	S_MAGE_RUN4('MAGE', 3, 4.0 / 35.0, S_MAGE_RUN1) { A_FastChase(); }
+	S_MAGE_ATK1('MAGE', 4, 8.0 / 35.0, S_MAGE_ATK2) { A_FaceTarget(); }
+	S_MAGE_ATK2('MAGE', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_MAGE_RUN1) { A_MageAttack(); }
+	S_MAGE_PAIN('MAGE', 6, 4.0 / 35.0, S_MAGE_PAIN2) { }
+	S_MAGE_PAIN2('MAGE', 6, 4.0 / 35.0, S_MAGE_RUN1) { A_Pain(); }
+	S_MAGE_DIE1('MAGE', 7, 6.0 / 35.0, S_MAGE_DIE2) { }
+	S_MAGE_DIE2('MAGE', 8, 6.0 / 35.0, S_MAGE_DIE3) { A_Scream(); }
+	S_MAGE_DIE3('MAGE', 9, 6.0 / 35.0, S_MAGE_DIE4) { }
+	S_MAGE_DIE4('MAGE', 10, 6.0 / 35.0, S_MAGE_DIE5) { }
+	S_MAGE_DIE5('MAGE', 11, 6.0 / 35.0, S_MAGE_DIE6) { A_NoBlocking(); }
+	S_MAGE_DIE6('MAGE', 12, 6.0 / 35.0, S_MAGE_DIE7) { }
+	S_MAGE_DIE7('MAGE', 13, -1.0, S_NULL) { }
+	S_MAGE_XDIE1('MAGE', 14, 5.0 / 35.0, S_MAGE_XDIE2) { A_Scream(); }
+	S_MAGE_XDIE2('MAGE', 15, 5.0 / 35.0, S_MAGE_XDIE3) { }
+	S_MAGE_XDIE3('MAGE', 17, 5.0 / 35.0, S_MAGE_XDIE4) { A_NoBlocking(); }
+	S_MAGE_XDIE4('MAGE', 18, 5.0 / 35.0, S_MAGE_XDIE5) { }
+	S_MAGE_XDIE5('MAGE', 19, 5.0 / 35.0, S_MAGE_XDIE6) { }
+	S_MAGE_XDIE6('MAGE', 20, 5.0 / 35.0, S_MAGE_XDIE7) { }
+	S_MAGE_XDIE7('MAGE', 21, 5.0 / 35.0, S_MAGE_XDIE8) { }
+	S_MAGE_XDIE8('MAGE', 22, 5.0 / 35.0, S_MAGE_XDIE9) { }
+	S_MAGE_XDIE9('MAGE', 23, -1.0, S_NULL) { }
+	S_MAGE_ICE('MAGE', 24, 5.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeath(); }
+	S_MAGE_ICE2('MAGE', 24, 1.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeathChunks(); }
+}
+
+defaultproperties
+{
+	Health = 800;
+	GibsHealth = -400;
+	Radius = 16.0;
+	Height = 64.0;
+	Mass = 100.0;
+	StepSpeed = 25.0;
+	PainChance = 50;
+	SpawnState = S_MAGE;
+	SeeState = S_MAGE_RUN1;
+	MeleeState = S_MAGE_ATK1;
+	MissileState = S_MAGE_ATK1;
+	PainState = S_MAGE_PAIN;
+	DeathState = S_MAGE_DIE1;
+	GibsDeathState = S_MAGE_XDIE1;
+	IceDeathState = S_MAGE_ICE;
+	PainSound = 'PlayerMagePain';
+	DeathSound = 'PlayerMageCrazyDeath';
+}
+
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.18  2002/02/26 17:49:48  dj_jl
 //  no message
 //

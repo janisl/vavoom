@@ -23,26 +23,6 @@
 //**
 //**************************************************************************
 
-//============================================================================
-//
-//  Sorcerer stuff
-//
-// Sorcerer Variables
-//      Special1f       Angle of ball 1 (all others relative to that)
-//      Special2        which ball to stop at in stop mode (MT_???)
-//      Args[0]         Denfense time
-//      Args[1]         Number of full rotations since stopping mode
-//      Args[2]         Target orbit speed for acceleration/deceleration
-//      Args[3]         Movement mode (see SORC_ macros)
-//      Args[4]         Current ball orbit speed
-//  Sorcerer Ball Variables
-//      Special1f       Previous angle of ball (for woosh)
-//      Special2        Countdown of rapid fire (FX4)
-//      Args[0]         If set, don't play the bounce sound when bouncing
-//============================================================================
-
-// MACROS ------------------------------------------------------------------
-
 #define SORCBALL_INITIAL_SPEED 		7
 #define SORCBALL_TERMINAL_SPEED		25
 #define SORCBALL_SPEED_ROTATIONS 	5
@@ -64,27 +44,29 @@
 #define BALL2_ANGLEOFFSET	120.0
 #define BALL3_ANGLEOFFSET	240.0
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
-//============================================================================
+//**************************************************************************
+//**************************************************************************
 //
-//	Set balls to speed mode - actor is sorcerer
+//	Sorcerer
 //
-//============================================================================
+//**************************************************************************
+//**************************************************************************
 
-void Actor::A_SpeedBalls(void)
+class Sorcerer:Pawn
+	__mobjinfo__(10080)
 {
-	Args[3] = SORC_ACCELERATE;	// speed mode
-	Args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
-}
+
+//
+// Sorcerer Variables
+//
+
+//      Special1f       Angle of ball 1 (all others relative to that)
+//      Special2        which ball to stop at in stop mode (MT_???)
+//      Args[0]         Defense time
+//      Args[1]         Number of full rotations since stopping mode
+//      Args[2]         Target orbit speed for acceleration/deceleration
+//      Args[3]         Movement mode (see SORC_ macros)
+//      Args[4]         Current ball orbit speed
 
 //============================================================================
 //
@@ -92,7 +74,7 @@ void Actor::A_SpeedBalls(void)
 //
 //============================================================================
 
-void Actor::A_SlowBalls(void)
+void A_SlowBalls(void)
 {
 	Args[3] = SORC_DECELERATE;	// slow mode
 	Args[2] = SORCBALL_INITIAL_SPEED;	// target speed
@@ -100,48 +82,108 @@ void Actor::A_SlowBalls(void)
 
 //============================================================================
 //
-//  Actor::A_SorcSpinBalls
+//  A_SorcSpinBalls
 //
 //  Spawn spinning balls above head - actor is sorcerer.
 //
 //============================================================================
 
-void Actor::A_SorcSpinBalls(void)
+void A_SorcSpinBalls(void)
 {
-	mobj_t *mo;
-	float z;
+	Actor ball;
+	TVec org;
 
 	A_SlowBalls();
 	Args[0] = 0;	// Currently no defense
 	Args[3] = SORC_NORMAL;
 	Args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
 	Special1f = 1.0;
-	z = Origin.z - FloorClip + Height;
+	org = Origin;
+	org.z = Origin.z - FloorClip + Height;
 
-	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall1);
-	if (mo)
+	ball = Spawn(SorcererBall1, org);
+	if (ball)
 	{
-		mo->Owner = self;
-		mo->Special2 = SORCFX4_RAPIDFIRE_TIME;
+		ball.Owner = self;
+		ball._Special2 = SORCFX4_RAPIDFIRE_TIME;
 	}
-	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall2);
-	if (mo)
-		mo->Owner = self;
-	mo = P_SpawnMobj(Origin.x, Origin.y, z, SorcererBall3);
-	if (mo)
-		mo->Owner = self;
+	ball = Spawn(SorcererBall2, org);
+	if (ball)
+		ball.Owner = self;
+	ball = Spawn(SorcererBall3, org);
+	if (ball)
+		ball.Owner = self;
 }
 
 //============================================================================
 //
-//  Actor::A_StopBalls
+//	Set balls to speed mode - actor is sorcerer
 //
-//  Instant stop when rotation gets to ball in   Special2
+//============================================================================
+
+void A_SpeedBalls(void)
+{
+	Args[3] = SORC_ACCELERATE;	// speed mode
+	Args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
+}
+
+//============================================================================
+//
+//  A_SpawnFizzle
+//
+//  Spell cast magic fizzle
+//
+//============================================================================
+
+void A_SpawnFizzle(void)
+{
+	TVec org;
+	float dist = 5.0;
+	float angle = Angles.yaw;
+	float rangle;
+	Actor A;
+	int ix;
+
+	org.x = Origin.x + dist * cos(angle);
+	org.y = Origin.y + dist * sin(angle);
+	org.z = Origin.z - FloorClip + Height / 2.0;
+	for (ix = 0; ix < 5; ix++)
+	{
+		A = Spawn(SorcererSpark, org);
+		if (A)
+		{
+			rangle = angle + Random() * 5.0 * 90.0 / 1024.0;
+			A.Velocity.x = Random() * Speed * cos(rangle);
+			A.Velocity.y = Random() * Speed * sin(rangle);
+			A.Velocity.z = 2.0 * 35.0;
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_SorcBossAttack
+//
+//  Resume ball spinning
+//
+//============================================================================
+
+void A_SorcBossAttack(void)
+{
+	Args[3] = SORC_ACCELERATE;
+	Args[2] = SORCBALL_INITIAL_SPEED;
+}
+
+//============================================================================
+//
+//  A_StopBalls
+//
+//  Instant stop when rotation gets to ball in _Special2
 // actor is sorcerer
 //
 //============================================================================
 
-void Actor::A_StopBalls(void)
+void A_StopBalls(void)
 {
 	int chance = P_Random();
 
@@ -161,6 +203,82 @@ void Actor::A_StopBalls(void)
 		SpecialCID = SorcererBall1;	// Yellow
 	}
 }
+
+__states__
+{
+	S_SORC_SPAWN1('SORC', 0, 3.0 / 35.0, S_SORC_SPAWN2) { }
+	S_SORC_SPAWN2('SORC', 0, 2.0 / 35.0, S_SORC_LOOK1) { A_SorcSpinBalls(); }
+	S_SORC_LOOK1('SORC', 0, 10.0 / 35.0, S_SORC_LOOK1) { A_Look(); }
+	S_SORC_WALK1('SORC', 0, 5.0 / 35.0, S_SORC_WALK2) { A_Chase(); }
+	S_SORC_WALK2('SORC', 1, 5.0 / 35.0, S_SORC_WALK3) { A_Chase(); }
+	S_SORC_WALK3('SORC', 2, 5.0 / 35.0, S_SORC_WALK4) { A_Chase(); }
+	S_SORC_WALK4('SORC', 3, 5.0 / 35.0, S_SORC_WALK1) { A_Chase(); }
+	S_SORC_PAIN1('SORC', 6, 8.0 / 35.0, S_SORC_PAIN2) { }
+	S_SORC_PAIN2('SORC', 6, 8.0 / 35.0, S_SORC_WALK1) { A_Pain(); }
+	S_SORC_ATK2_1('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_2) { A_FaceTarget(); }
+	S_SORC_ATK2_2('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_3) { A_SpeedBalls(); }
+	S_SORC_ATK2_3('SORC', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATK2_3) { A_FaceTarget(); }
+	S_SORC_ATTACK1('SORC', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATTACK2) { }
+	S_SORC_ATTACK2('SORC', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORC_ATTACK3) { A_SpawnFizzle(); }
+	S_SORC_ATTACK3('SORC', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_ATTACK2) { A_FaceTarget(); }
+	S_SORC_ATTACK4('SORC', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORC_ATTACK5) { }
+	S_SORC_ATTACK5('SORC', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORC_WALK1) { A_SorcBossAttack(); }
+	S_SORC_DIE1('SORC', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE2) { }
+	S_SORC_DIE2('SORC', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE3) { A_FaceTarget(); }
+	S_SORC_DIE3('SORC', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE4) { A_Scream(); }
+	S_SORC_DIE4('SORC', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE5) { }
+	S_SORC_DIE5('SORC', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE6) { }
+	S_SORC_DIE6('SORC', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE7) { }
+	S_SORC_DIE7('SORC', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE8) { }
+	S_SORC_DIE8('SORC', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE9) { }
+	S_SORC_DIE9('SORC', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIE0) { }
+	S_SORC_DIE0('SORC', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEA) { }
+	S_SORC_DIEA('SORC', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEB) { }
+	S_SORC_DIEB('SORC', 18 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEC) { }
+	S_SORC_DIEC('SORC', 19 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIED) { }
+	S_SORC_DIED('SORC', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEE) { A_NoBlocking(); }
+	S_SORC_DIEE('SORC', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEF) { }
+	S_SORC_DIEF('SORC', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEG) { }
+	S_SORC_DIEG('SORC', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEH) { }
+	S_SORC_DIEH('SORC', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEI) { }
+	S_SORC_DIEI('SORC', 25 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+}
+
+defaultproperties
+{
+	Health = 5000;
+	Radius = 40.0;
+	Height = 110.0;
+	Mass = 500.0;
+	StepSpeed = 16.0;
+	PainChance = 10;
+	MissileDamage = 9;
+	bNoBlood = true;
+	bBoss = true;
+	bTelestomp = false;
+	SpawnState = S_SORC_SPAWN1;
+	SeeState = S_SORC_WALK1;
+	MissileState = S_SORC_ATK2_1;
+	PainState = S_SORC_PAIN1;
+	DeathState = S_SORC_DIE1;
+	SightSound = 'SorcererSight';
+	ActiveSound = 'SorcererActive';
+	PainSound = 'SorcererPain';
+	DeathSound = 'SorcererDeathScream';
+}
+
+}
+
+
+//**************************************************************************
+//**************************************************************************
+
+//============================================================================
+//  Sorcerer Ball Variables
+//      Special1f       Previous angle of ball (for woosh)
+//      Special2        Countdown of rapid fire (FX4)
+//      Args[0]         If set, don't play the bounce sound when bouncing
+//============================================================================
 
 //============================================================================
 //
@@ -184,7 +302,7 @@ void Actor::A_AccelBalls(void)
 		if (sorc->Args[4] >= SORCBALL_TERMINAL_SPEED)
 		{
 			// Reached terminal velocity - stop balls
-			sorc->A_StopBalls();
+			Sorcerer(*sorc).A_StopBalls();
 		}
 	}
 }
@@ -246,7 +364,7 @@ void Actor::A_SorcOffense1(void)
 	if (mo)
 	{
 		mo.Owner = Owner;
-		mo.SpecialMobj1 = &Owner.Enemy;
+		mo.Target = Owner.Target;
 		mo.Args[4] = BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
@@ -254,7 +372,7 @@ void Actor::A_SorcOffense1(void)
 	if (mo)
 	{
 		mo.Owner = Owner;
-		mo.SpecialMobj1 = &Owner.Enemy;
+		mo.Target = Owner.Target;
 		mo.Args[4] = BOUNCE_TIME_UNIT;
 		mo.Args[3] = 15;	// Bounce time in seconds
 	}
@@ -282,12 +400,12 @@ void Actor::A_SorcOffense2(void)
 	mo = Owner.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
 	if (mo)
 	{
-		mo.Special2 = 35 * 5 / 2;	// 5 seconds
-		dist = MobjDist2(Owner.Enemy, mo);
+		mo._Special2 = 35 * 5 / 2;	// 5 seconds
+		dist = MobjDist2(Owner.Target, mo);
 		dist = dist / mo.Speed;
 		if (dist < 1.0)
 			dist = 1.0;
-		mo.Velocity.z = (Owner.Enemy.Origin.z - mo.Origin.z) / dist;
+		mo.Velocity.z = (Owner.Target.Origin.z - mo.Origin.z) / dist;
 	}
 }
 
@@ -444,7 +562,7 @@ void Actor::A_SorcBallOrbit(void)
 			if (Class == SorcererBall1 && P_Random() < 200)
 			{
 				PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
-				Special2 = SORCFX4_RAPIDFIRE_TIME;
+				_Special2 = SORCFX4_RAPIDFIRE_TIME;
 				Args[4] = 128;
 				parent->Args[3] = SORC_FIRING_SPELL;
 			}
@@ -458,7 +576,7 @@ void Actor::A_SorcBallOrbit(void)
 	case SORC_FIRING_SPELL:
 		if (parent->SpecialCID == Class)
 		{
-			if (Special2-- <= 0)
+			if (_Special2-- <= 0)
 			{
 				// Done rapid firing 
 				parent->Args[3] = SORC_STOPPED;
@@ -494,53 +612,6 @@ void Actor::A_SorcBallOrbit(void)
 
 //============================================================================
 //
-//  Actor::A_SorcBossAttack
-//
-//  Resume ball spinning
-//
-//============================================================================
-
-void Actor::A_SorcBossAttack(void)
-{
-	Args[3] = SORC_ACCELERATE;
-	Args[2] = SORCBALL_INITIAL_SPEED;
-}
-
-//============================================================================
-//
-//  Actor::A_SpawnFizzle
-//
-//  Spell cast magic fizzle
-//
-//============================================================================
-
-void Actor::A_SpawnFizzle(void)
-{
-	float x, y, z;
-	float dist = 5.0;
-	float angle = Angles.yaw;
-	float rangle;
-	mobj_t *mo;
-	int ix;
-
-	x = Origin.x + dist * cos(angle);
-	y = Origin.y + dist * sin(angle);
-	z = Origin.z - FloorClip + Height / 2.0;
-	for (ix = 0; ix < 5; ix++)
-	{
-		mo = P_SpawnMobj(x, y, z, SorcererSpark);
-		if (mo)
-		{
-			rangle = angle + Random() * 5.0 * 90.0 / 1024.0;
-			mo->Velocity.x = Random() * Speed * cos(rangle);
-			mo->Velocity.y = Random() * Speed * sin(rangle);
-			mo->Velocity.z = 2.0 * 35.0;
-		}
-	}
-}
-
-//============================================================================
-//
 //  Actor::A_SorcBallPop
 //
 //  Ball death - spawn stuff.
@@ -556,7 +627,7 @@ void Actor::A_SorcBallPop(void)
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
 	//Not used
-//	Special2 = 4 * FRACUNIT;     // Initial bounce factor
+//	_Special2 = 4 * FRACUNIT;     // Initial bounce factor
 	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
 	Args[3] = 5;	// Bounce time in seconds
 }
@@ -615,7 +686,7 @@ void Actor::A_SorcFX1Seek(void)
 //
 // FX2 Variables
 //      Special1f       current angle
-//		Special2
+//		_Special2
 //      Args[0]     0 = CW,  1 = CCW
 //      Args[1]     
 //============================================================================
@@ -756,7 +827,7 @@ void Actor::A_SorcererBishopEntry(void)
 
 void Actor::A_SorcFX4Check(void)
 {
-	if (Special2-- <= 0)
+	if (_Special2-- <= 0)
 	{
 		SetStateNF(DeathState);
 	}
@@ -765,6 +836,10 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 17:58:36  dj_jl
+//  Created Pawn class as a base class for all creatures.
+//  Moved all monster classes into corresponding files.
+//
 //  Revision 1.21  2002/02/26 17:49:49  dj_jl
 //  no message
 //
