@@ -362,10 +362,7 @@ template <class T> void* operator new(size_t, TArray<T>& Array, int Index)
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.2  2002/01/07 12:31:35  dj_jl
-//	Changed copyright year
+//	Revision 1.1  2002/05/03 17:01:08  dj_jl
+//	Moved to common.
 //
-//	Revision 1.1  2001/12/12 19:23:09  dj_jl
-//	Added dynamic arrays
-//	
 //**************************************************************************
