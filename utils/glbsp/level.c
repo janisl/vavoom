@@ -506,7 +506,7 @@ static void MarkPolyobjSector(float_g x, float_g y)
   
   float_g best_dist = 999999;
   linedef_t *best_match = NULL;
-  sector_t *sector = NULL;
+  sector_t *sector; // -JL- got rid of warning
 
   // -AJA- Algorithm is just like in DEU: we cast a line horizontally
   // from the given (x,y) position and find all linedefs that
@@ -527,6 +527,7 @@ static void MarkPolyobjSector(float_g x, float_g y)
     float_g y2 = L->end->y;
 
     float_g x_cut;
+	float_g x_dist;  // -JL- distance
 
     // check vertical range
     if ((y > y1 && y > y2) || (y < y1 && y < y2))
@@ -536,22 +537,26 @@ static void MarkPolyobjSector(float_g x, float_g y)
       continue;
 
     x_cut = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
+	// -JL- calc distance and compare against distance, not cut position
+	x_dist = x_cut - x;
 
-    if (x_cut < DIST_EPSILON)
+	// -JL- Use -DIST_EPSILON because polyobj start points can be placed
+	// on lines
+    if (x_dist < -DIST_EPSILON)
       continue;
 
-    if (x_cut < best_dist)
+    if (x_dist < best_dist)
     {
       // found a closer linedef
 
       best_match = L;
-      best_dist = x_cut;
+      best_dist = x_dist;
     }
   }
 
   #if DEBUG_POLYOBJ
   PrintDebug("  Closest line was %d (dist=%1.1f)\n", best_match ?
-      best_match->index : -1, best_match ? best_dist - x : -1);
+      best_match->index : -1, best_match ? best_dist : -1);
   #endif
 
   if (! best_match)
