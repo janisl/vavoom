@@ -488,9 +488,7 @@ class Actor:Entity
 	void Damage(Actor inflictor, Actor source, int damage);
 
 	// Physics
-	void SlideMove(void);
-	void BounceWall(float overbounce);
-	boolean XYMovement(void);
+	void XYMovement(void);
 	void ZMovement(void);
 	void ApplyFriction(void);
 	void PlayerLandedOnThing(void);
@@ -628,10 +626,10 @@ class Actor:Entity
 	{
 		MaxStepHeight = 24.0;
 		MissileChance = 200.0;
-#ifdef DDF
 		Health = 1000;
 		GibsHealth = -1000;
 		Mass = 100.0;
+#ifdef DDF
 		FloatSpeed = 2.0;
 		ExplodeDamageMax = -1;
 		ExplodeDamageError = -1;
@@ -727,8 +725,6 @@ class Projectile:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
-		Mass = 100.0;
 		ReactionCount = 8;
 		bMissile = true;
 		bNoBlockmap = true;
@@ -742,10 +738,8 @@ class Effect:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -756,10 +750,8 @@ class Pickup:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 8.0;
-		Mass = 100.0;
 		ReactionCount = 8;
 		bSpecial = true;
 	}
@@ -769,10 +761,8 @@ class Decoration:Actor
 {
 	defaultproperties
 	{
-		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
 		ReactionCount = 8;
 	}
 }
@@ -1222,6 +1212,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/06/22 07:09:58  dj_jl
+//  Made sliding and bouncing functions native.
+//
 //  Revision 1.33  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

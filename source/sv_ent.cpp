@@ -123,6 +123,8 @@ class VEntity:public VMapObject
 	boolean CheckPosition(TVec Pos);
 	boolean CheckRelPosition(TVec Pos);
 	boolean TryMove(TVec newPos);
+	void SlideMove(void);
+	void BounceWall(float overbounce);
 	void UpdateVelocity(void);
 	void FakeZMovement(void);
 	VEntity *CheckOnmobj(void);
@@ -134,6 +136,8 @@ class VEntity:public VMapObject
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
 	DECLARE_FUNCTION(TryMove)
+	DECLARE_FUNCTION(SlideMove)
+	DECLARE_FUNCTION(BounceWall)
 	DECLARE_FUNCTION(UpdateVelocity)
 	DECLARE_FUNCTION(CheckOnmobj)
 };
@@ -268,7 +272,7 @@ struct cptrace_t
 	sec_plane_t *Ceiling;
 };
 
-cptrace_t cptrace;
+static cptrace_t cptrace;
 
 //==========================================================================
 //
@@ -276,7 +280,7 @@ cptrace_t cptrace;
 //
 //==========================================================================
 
-boolean PIT_CheckThing(VMapObject *Other)
+static boolean PIT_CheckThing(VMapObject *Other)
 {
 	float blockdist;
 
@@ -332,7 +336,7 @@ boolean PIT_CheckThing(VMapObject *Other)
 //
 //==========================================================================
 
-boolean PIT_CheckLine(line_t * ld)
+static boolean PIT_CheckLine(line_t * ld)
 {
 	TVec hit_point;
 	opening_t *open;
@@ -517,7 +521,7 @@ struct tmtrace_t
 	VMapObject *BlockingMobj;
 };
 
-tmtrace_t tmtrace;
+static tmtrace_t tmtrace;
 
 //==========================================================================
 //
@@ -525,7 +529,7 @@ tmtrace_t tmtrace;
 //
 //==========================================================================
 
-boolean PIT_CheckRelThing(VMapObject *Other)
+static boolean PIT_CheckRelThing(VMapObject *Other)
 {
 	float blockdist;
 
@@ -579,7 +583,7 @@ boolean PIT_CheckRelThing(VMapObject *Other)
 //
 //==========================================================================
 
-boolean PIT_CheckRelLine(line_t * ld)
+static boolean PIT_CheckRelLine(line_t * ld)
 {
 	TVec hit_point;
 	opening_t *open;
@@ -927,6 +931,287 @@ boolean VEntity::TryMove(TVec newPos)
 	return true;
 }
 
+//**************************************************************************
+//
+//  SLIDE MOVE
+//
+//  Allows the player to slide along any angled walls.
+//
+//**************************************************************************
+
+static float bestslidefrac;
+static line_t *bestslideline;
+
+static VEntity *slidemo;
+static TVec slideorg;
+static TVec slidedir;
+
+//==========================================================================
+//
+//  ClipVelocity
+//
+//  Slide off of the impacting object
+//
+//==========================================================================
+
+static TVec ClipVelocity(TVec in, TVec normal, float overbounce)
+{
+	return in - normal * (DotProduct(in, normal) * overbounce);
+}
+
+//==========================================================================
+//
+//  PTR_SlideTraverse
+//
+//==========================================================================
+
+static boolean PTR_SlideTraverse(intercept_t * in)
+{
+	line_t *li;
+	TVec hit_point;
+	opening_t *open;
+
+	if (!in->isaline)
+		Host_Error("PTR_SlideTraverse: not a line?");
+
+	li = in->line;
+
+	if (li->flags & ML_TWOSIDED)
+	{
+		// set openrange, opentop, openbottom
+		hit_point = slideorg + in->frac * slidedir;
+		open = SV_LineOpenings(li, hit_point);
+		open = SV_FindOpening(open, slidemo->Origin.z,
+			slidemo->Origin.z + slidemo->Height);
+
+		if (open && (open->range >= slidemo->Height) &&	//  fits
+			(open->top - slidemo->Origin.z >= slidemo->Height) &&	// mobj is not too high
+			(open->bottom - slidemo->Origin.z <= slidemo->MaxStepHeight))	// not too big a step up
+		{
+			// this line doesn't block movement
+			return true;
+		}
+	}
+	else
+	{
+		if (li->PointOnSide(slidemo->Origin))
+		{
+			// don't hit the back side
+			return true;
+		}
+	}
+
+	// the line does block movement,
+	// see if it is closer than best so far
+	if (in->frac < bestslidefrac)
+	{
+		bestslidefrac = in->frac;
+		bestslideline = li;
+	}
+
+	return false;	// stop
+}
+
+//==========================================================================
+//
+//  SlidePathTraverse
+//
+//==========================================================================
+
+static void SlidePathTraverse(float x, float y)
+{
+	slideorg = TVec(x, y, slidemo->Origin.z);
+	slidedir = slidemo->Velocity * host_frametime;
+	SV_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
+		PT_ADDLINES, PTR_SlideTraverse, NULL);
+}
+
+//==========================================================================
+//
+//  VEntity::SlideMove
+//
+//  The momx / momy move is bad, so try to slide along a wall.
+//  Find the first line hit, move flush to it, and slide along it.
+//  This is a kludgy mess.
+//
+//==========================================================================
+
+void VEntity::SlideMove(void)
+{
+	float leadx;
+	float leady;
+	float trailx;
+	float traily;
+	float newx;
+	float newy;
+	int hitcount;
+
+	slidemo = this;
+	hitcount = 0;
+
+	do
+	{
+		if (++hitcount == 3)
+		{
+			// don't loop forever
+			if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+				TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			return;
+		}
+
+		// trace along the three leading corners
+		if (Velocity.x > 0.0)
+		{
+			leadx = Origin.x + Radius;
+			trailx = Origin.x - Radius;
+		}
+		else
+		{
+			leadx = Origin.x - Radius;
+			trailx = Origin.x + Radius;
+		}
+
+		if (Velocity.y > 0.0)
+		{
+			leady = Origin.y + Radius;
+			traily = Origin.y - Radius;
+		}
+		else
+		{
+			leady = Origin.y - Radius;
+			traily = Origin.y + Radius;
+		}
+
+		bestslidefrac = 1.00001f;
+
+		SlidePathTraverse(leadx, leady);
+		SlidePathTraverse(trailx, leady);
+		SlidePathTraverse(leadx, traily);
+
+		// move up to the wall
+		if (bestslidefrac == 1.00001f)
+		{
+			// the move most have hit the middle, so stairstep
+			if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+				TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			return;
+		}
+
+		// fudge a bit to make sure it doesn't hit
+		bestslidefrac -= 0.03125;
+		if (bestslidefrac > 0.0)
+		{
+			newx = Velocity.x * host_frametime * bestslidefrac;
+			newy = Velocity.y * host_frametime * bestslidefrac;
+
+			if (!TryMove(TVec(Origin.x + newx, Origin.y + newy, Origin.z)))
+			{
+				if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+					TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+				return;
+			}
+		}
+
+		// Now continue along the wall.
+		// First calculate remainder.
+		bestslidefrac = 1.0 - (bestslidefrac + 0.03125);
+
+		if (bestslidefrac > 1.0)
+			bestslidefrac = 1.0;
+
+		if (bestslidefrac <= 0.0)
+			return;
+
+		// clip the moves
+		Velocity = ClipVelocity(Velocity * bestslidefrac,
+			bestslideline->normal, 1.0);
+
+	}
+	while (!TryMove(TVec(Origin.x + Velocity.x * host_frametime,
+			Origin.y + Velocity.y * host_frametime, Origin.z)));
+}
+
+//**************************************************************************
+//
+//  BOUNCING
+//
+//  Bounce missile against walls
+//
+//**************************************************************************
+
+//============================================================================
+//
+//  PTR_BounceTraverse
+//
+//============================================================================
+
+static boolean PTR_BounceTraverse(intercept_t * in)
+{
+	line_t *li;
+	TVec hit_point;
+	opening_t *open;
+
+	if (!in->isaline)
+		Host_Error("PTR_BounceTraverse: not a line?");
+
+	li = in->line;
+	if (li->flags & ML_TWOSIDED)
+	{
+		hit_point = slideorg + in->frac * slidedir;
+		open = SV_LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
+		open = SV_FindOpening(open, slidemo->Origin.z,
+			slidemo->Origin.z + slidemo->Height);
+		if (open && open->range >= slidemo->Height &&	// fits
+			open->top - slidemo->Origin.z >= slidemo->Height)	// mobj is not too high
+		{
+			return true;	// this line doesn't block movement
+		}
+	}
+	else
+	{
+		if (li->PointOnSide(slidemo->Origin))
+		{
+			return true;	// don't hit the back side
+		}
+	}
+
+	bestslideline = li;
+	return false;	// stop
+}
+
+//============================================================================
+//
+//  VEntity::BounceWall
+//
+//============================================================================
+
+void VEntity::BounceWall(float overbounce)
+{
+	slidemo = this;
+	if (Velocity.x > 0.0)
+	{
+		slideorg.x = Origin.x + Radius;
+	}
+	else
+	{
+		slideorg.x = Origin.x - Radius;
+	}
+	if (Velocity.y > 0.0)
+	{
+		slideorg.y = Origin.y + Radius;
+	}
+	else
+	{
+		slideorg.y = Origin.y - Radius;
+	}
+	slideorg.z = Origin.z;
+	slidedir = Velocity * host_frametime;
+	SV_PathTraverse(slideorg.x, slideorg.y,
+		slideorg.x + slidedir.x, slideorg.y + slidedir.y,
+		PT_ADDLINES, PTR_BounceTraverse, NULL);
+	Velocity = ClipVelocity(Velocity, bestslideline->normal, overbounce);
+}
+
 //==========================================================================
 //
 //  VEntity::UpdateVelocity
@@ -974,9 +1259,9 @@ void VEntity::UpdateVelocity(void)
 //
 //**************************************************************************
 
-VEntity *tzmthing;
-TVec tzorg;
-VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
+static VEntity *tzmthing;
+static TVec tzorg;
+static VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
 
 //==========================================================================
 //
@@ -984,7 +1269,7 @@ VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
 //
 //==========================================================================
 
-boolean PIT_CheckOnmobjZ(VMapObject *Other)
+static boolean PIT_CheckOnmobjZ(VMapObject *Other)
 {
 	float blockdist;
 
@@ -1118,11 +1403,8 @@ VEntity *VEntity::CheckOnmobj(void)
 
 IMPLEMENT_FUNCTION(VEntity, SetState)
 {
-	VEntity	*Self;
-	int		state;
-
-	state = PR_Pop();
-	Self = (VEntity *)PR_Pop();
+	int state = PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->SetState(state));
 }
 
@@ -1134,13 +1416,9 @@ IMPLEMENT_FUNCTION(VEntity, SetState)
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
 {
-	VEntity	*Self;
-	FName	SoundName;
-	int		Channel;
-
-	Channel = PR_Pop();
-	SoundName = PR_PopName();
-	Self = (VEntity *)PR_Pop();
+	int Channel = PR_Pop();
+	FName SoundName = PR_PopName();
+	VEntity *Self = (VEntity *)PR_Pop();
 	SV_StartSound(Self, S_GetSoundID(SoundName), Channel, 127);
 }
 
@@ -1152,13 +1430,9 @@ IMPLEMENT_FUNCTION(VEntity, PlaySound)
 
 IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 {
-	VEntity	*Self;
-	FName	SoundName;
-	int		Channel;
-
-	Channel = PR_Pop();
-	SoundName = PR_PopName();
-	Self = (VEntity *)PR_Pop();
+	int Channel = PR_Pop();
+	FName SoundName = PR_PopName();
+	VEntity *Self = (VEntity *)PR_Pop();
 	SV_StartSound(NULL, S_GetSoundID(SoundName), Channel, 127);
 }
 
@@ -1170,9 +1444,7 @@ IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 
 IMPLEMENT_FUNCTION(VEntity, CheckWater)
 {
-	VEntity	*Self;
-
-	Self = (VEntity *)PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->CheckWater());
 }
 
@@ -1184,11 +1456,8 @@ IMPLEMENT_FUNCTION(VEntity, CheckWater)
 
 IMPLEMENT_FUNCTION(VEntity, CheckPosition)
 {
-	VEntity	*Self;
-	TVec	Pos;
-
-	Pos = PR_Popv();
-	Self = (VEntity *)PR_Pop();
+	TVec Pos = PR_Popv();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->CheckPosition(Pos));
 }
 
@@ -1200,11 +1469,8 @@ IMPLEMENT_FUNCTION(VEntity, CheckPosition)
 
 IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 {
-	VEntity	*Self;
-	TVec	Pos;
-
-	Pos = PR_Popv();
-	Self = (VEntity *)PR_Pop();
+	TVec Pos = PR_Popv();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->CheckRelPosition(Pos));
 }
 
@@ -1216,12 +1482,34 @@ IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 
 IMPLEMENT_FUNCTION(VEntity, TryMove)
 {
-	VEntity	*Self;
-	TVec	Pos;
-
-	Pos = PR_Popv();
-	Self = (VEntity *)PR_Pop();
+	TVec Pos = PR_Popv();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->TryMove(Pos));
+}
+
+//==========================================================================
+//
+//	Entity.SlideMove
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, SlideMove)
+{
+	VEntity *Self = (VEntity *)PR_Pop();
+	Self->SlideMove();
+}
+
+//==========================================================================
+//
+//	Entity.SlideMove
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, BounceWall)
+{
+	float overbounce = PR_Popf();
+	VEntity	*Self = (VEntity *)PR_Pop();
+	Self->BounceWall(overbounce);
 }
 
 //==========================================================================
@@ -1232,9 +1520,7 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 
 IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)
 {
-	VEntity	*Self;
-
-	Self = (VEntity *)PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
 	Self->UpdateVelocity();
 }
 
@@ -1246,9 +1532,7 @@ IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)
 
 IMPLEMENT_FUNCTION(VEntity, CheckOnmobj)
 {
-	VEntity	*Self;
-
-	Self = (VEntity *)PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push((int)Self->CheckOnmobj());
 }
 
@@ -1295,11 +1579,8 @@ void VViewEntity::SetState(int stnum)
 
 IMPLEMENT_FUNCTION(VViewEntity, SetState)
 {
-	VViewEntity	*Self;
-	int			state;
-
-	state = PR_Pop();
-	Self = (VViewEntity *)PR_Pop();
+	int state = PR_Pop();
+	VViewEntity *Self = (VViewEntity *)PR_Pop();
 	Self->SetState(state);
 }
 
@@ -1339,9 +1620,12 @@ void EntInit(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/06/22 07:08:45  dj_jl
+//	Made sliding and bouncing functions native.
+//
 //	Revision 1.5  2002/06/14 15:40:09  dj_jl
 //	Added state name to the state.
-//
+//	
 //	Revision 1.4  2002/04/27 17:01:08  dj_jl
 //	Fixed clipping when walking over/under other things.
 //	

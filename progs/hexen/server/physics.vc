@@ -61,303 +61,6 @@ TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 
 //**************************************************************************
 //
-//  SLIDE MOVE
-//
-//  Allows the player to slide along any angled walls.
-//
-//**************************************************************************
-
-float bestslidefrac;
-float secondslidefrac;
-
-line_t *bestslideline;
-line_t *secondslideline;
-
-Actor slidemo;
-TVec slideorg;
-TVec slidedir;
-
-//==========================================================================
-//
-//  PTR_SlideTraverse
-//
-//==========================================================================
-
-boolean PTR_SlideTraverse(intercept_t * in)
-{
-	line_t *li;
-	TVec hit_point;
-	opening_t *open;
-
-	if (!in->isaline)
-		Error("PTR_SlideTraverse: not a line?");
-
-	li = in->line;
-
-	if (li->flags & ML_TWOSIDED)
-	{
-		// set openrange, opentop, openbottom
-		hit_point = slideorg + in->frac * slidedir;
-		open = LineOpenings(li, hit_point);
-		open =
-			FindOpening(open, slidemo.Origin.z,
-			slidemo.Origin.z + slidemo.Height);
-
-		if (open && (open->range >= slidemo.Height) &&	//  fits
-			(open->top - slidemo.Origin.z >= slidemo.Height) &&	// mobj is not too high
-			(open->bottom - slidemo.Origin.z <= slidemo.MaxStepHeight))	// not too big a step up
-		{
-			// this line doesn't block movement
-			return true;
-		}
-	}
-	else
-	{
-		if (PointOnPlaneSide(slidemo.Origin, li))
-		{
-			// don't hit the back side
-			return true;
-		}
-	}
-
-	// the line does block movement,
-	// see if it is closer than best so far
-	if (in->frac < bestslidefrac)
-	{
-		secondslidefrac = bestslidefrac;
-		secondslideline = bestslideline;
-		bestslidefrac = in->frac;
-		bestslideline = li;
-	}
-
-	return false;	// stop
-}
-
-//==========================================================================
-//
-//  SlidePathTraverse
-//
-//==========================================================================
-
-void SlidePathTraverse(float x, float y)
-{
-	slideorg = vector(x, y, slidemo.Origin.z);
-	slidedir = slidemo.Velocity * frametime;
-	P_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
-		PT_ADDLINES, 'PTR_SlideTraverse');
-}
-
-//==========================================================================
-//
-//  Actor::SlideMove
-//
-//  The momx / momy move is bad, so try to slide along a wall.
-//  Find the first line hit, move flush to it, and slide along it.
-//  This is a kludgy mess.
-//
-//==========================================================================
-
-void Actor::SlideMove(void)
-{
-	float leadx;
-	float leady;
-	float trailx;
-	float traily;
-	float newx;
-	float newy;
-	int hitcount;
-
-	slidemo = self;
-	hitcount = 0;
-
-	do
-	{
-		if (++hitcount == 3)
-		{
-			// don't loop forever
-			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
-			{
-				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
-			}
-			return;
-		}
-
-		// trace along the three leading corners
-		if (Velocity.x > 0.0)
-		{
-			leadx = Origin.x + Radius;
-			trailx = Origin.x - Radius;
-		}
-		else
-		{
-			leadx = Origin.x - Radius;
-			trailx = Origin.x + Radius;
-		}
-
-		if (Velocity.y > 0.0)
-		{
-			leady = Origin.y + Radius;
-			traily = Origin.y - Radius;
-		}
-		else
-		{
-			leady = Origin.y - Radius;
-			traily = Origin.y + Radius;
-		}
-
-		bestslidefrac = 1.00001;
-
-		SlidePathTraverse(leadx, leady);
-		SlidePathTraverse(trailx, leady);
-		SlidePathTraverse(leadx, traily);
-
-		// move up to the wall
-		if (bestslidefrac == 1.00001)
-		{
-			// the move most have hit the middle, so stairstep
-			if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
-			{
-				TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
-			}
-			return;
-		}
-
-		// fudge a bit to make sure it doesn't hit
-		bestslidefrac -= 0.03125;
-		if (bestslidefrac > 0.0)
-		{
-			newx = Velocity.x * frametime * bestslidefrac;
-			newy = Velocity.y * frametime * bestslidefrac;
-
-			if (!TryMove(vector(Origin.x + newx, Origin.y + newy, Origin.z)))
-			{
-				if (!TryMove(vector(Origin.x, Origin.y + Velocity.y * frametime, Origin.z)))
-				{
-					TryMove(vector(Origin.x + Velocity.x * frametime, Origin.y, Origin.z));
-				}
-				return;
-			}
-		}
-
-		// Now continue along the wall.
-		// First calculate remainder.
-		bestslidefrac = 1.0 - (bestslidefrac + 0.03125);
-
-		if (bestslidefrac > 1.0)
-			bestslidefrac = 1.0;
-
-		if (bestslidefrac <= 0.0)
-			return;
-
-		// clip the moves
-		Velocity = ClipVelocity(Velocity * bestslidefrac,
-			bestslideline->normal, 1.0);
-
-	}
-	while (!TryMove(vector(Origin.x + Velocity.x * frametime,
-			Origin.y + Velocity.y * frametime, Origin.z)));
-}
-
-//**************************************************************************
-//
-//  BOUNCING
-//
-//  Bounce missile against walls
-//
-//**************************************************************************
-
-//============================================================================
-//
-//  PTR_BounceTraverse
-//
-//============================================================================
-
-boolean PTR_BounceTraverse(intercept_t * in)
-{
-	line_t *li;
-	TVec hit_point;
-	opening_t *open;
-
-	if (!in->isaline)
-		Error("PTR_BounceTraverse: not a line?");
-
-	li = in->line;
-	if (li->flags & ML_TWOSIDED)
-	{
-		hit_point = slideorg + in->frac * slidedir;
-		open = LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
-		open = FindOpening(open, slidemo.Origin.z,
-			slidemo.Origin.z + slidemo.Height);
-		if (open && open->range >= slidemo.Height &&	// fits
-			open->top - slidemo.Origin.z >= slidemo.Height)	// mobj is not too high
-		{
-			return true;	// this line doesn't block movement
-		}
-	}
-	else
-	{
-		if (PointOnPlaneSide(slidemo.Origin, li))
-		{
-			return true;	// don't hit the back side
-		}
-	}
-
-	// the line does block movement, see if it is closer than best so far
-	if (in->frac < bestslidefrac)
-	{
-		secondslidefrac = bestslidefrac;
-		secondslideline = bestslideline;
-		bestslidefrac = in->frac;
-		bestslideline = li;
-	}
-	return false;	// stop
-}
-
-//============================================================================
-//
-//  Actor::BounceWall
-//
-//============================================================================
-
-void Actor::BounceWall(void)
-{
-	float leadx, leady;
-
-	slidemo = self;
-
-	//
-	// trace along the three leading corners
-	//
-	if (Velocity.x > 0.0)
-	{
-		leadx = Origin.x + Radius;
-	}
-	else
-	{
-		leadx = Origin.x - Radius;
-	}
-	if (Velocity.y > 0.0)
-	{
-		leady = Origin.y + Radius;
-	}
-	else
-	{
-		leady = Origin.y - Radius;
-	}
-	bestslidefrac = 1.00001;
-	slideorg = vector(leadx, leady, Origin.z);
-	slidedir = Velocity * frametime;
-	bestslideline = NULL;
-	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
-		PT_ADDLINES, 'PTR_BounceTraverse');
-	if (bestslideline)
-	{
-		Velocity = ClipVelocity(Velocity * 0.75, bestslideline->normal, 2.0);
-	}
-}
-
-//**************************************************************************
-//
 //  OBJECT MOVEMENT
 //
 //**************************************************************************
@@ -449,7 +152,7 @@ void Actor::ApplyFriction(void)
 //
 //==========================================================================
 
-boolean Actor::HitMobj(Entity Other)
+void Actor::HitMobj(Entity Other)
 {
 	float angle;
 
@@ -473,13 +176,13 @@ boolean Actor::HitMobj(Entity Other)
 				{
 					PlaySound(SightSound, CHAN_VOICE);
 				}
-				return true;
 			}
 			else
 			{
 				// Struck a player/creature
-				return ExplodeMissile();
+				ExplodeMissile();
 			}
+			return;
 		}
 		if (Actor(Other).bReflective)
 		{
@@ -530,11 +233,11 @@ boolean Actor::HitMobj(Entity Other)
 					Enemy = Instigator;
 				}
 				Instigator = Other;
-				return true;
+				return;
 			}
 		}
 		// Explode a missile
-		return ExplodeMissile();
+		ExplodeMissile();
 	}
 	else
 	{
@@ -563,7 +266,6 @@ boolean Actor::HitMobj(Entity Other)
 			Velocity.x = 0.0;
 			Velocity.y = 0.0;
 		}
-		return true;
 	}
 }
 
@@ -573,14 +275,14 @@ boolean Actor::HitMobj(Entity Other)
 //
 //==========================================================================
 
-boolean Actor::HitLine(void)
+void Actor::HitLine(void)
 {
 	if (bMissile)
 	{
 		if (bFloorBounce)
 		{
 			// Struck a wall
-			BounceWall();
+			BounceWall(1.5);
 			switch (Class)
 			{
 			case SorcererBall1:
@@ -595,7 +297,7 @@ boolean Actor::HitLine(void)
 				}
 				break;
 			}
-			return true;
+			return;
 		}
 
 		// Explode a missile
@@ -609,22 +311,15 @@ boolean Actor::HitLine(void)
 			}
 			else if (Class == HolyFX)
 			{
-				if (!ExplodeMissile())
-				{
-					return false;
-				}
+				ExplodeMissile();
 			}
 			else
 			{
 				Remove();
-				return false;
 			}
-			return true;
+			return;
 		}
-		if (!ExplodeMissile())
-		{
-			return false;
-		}
+		ExplodeMissile();
 	}
 	else
 	{
@@ -640,7 +335,6 @@ boolean Actor::HitLine(void)
 			Velocity.y = 0.0;
 		}
 	}
-	return true;
 }
 
 //==========================================================================
@@ -649,7 +343,7 @@ boolean Actor::HitLine(void)
 //
 //==========================================================================
 
-boolean Actor::XYMovement(void)
+void Actor::XYMovement(void)
 {
 	float ptryx, ptryy;
 	float xmove, ymove;
@@ -721,17 +415,16 @@ boolean Actor::XYMovement(void)
 			// Blocked move
 			if (tmtrace->BlockingMobj)
 			{
-				return HitMobj(Entity(tmtrace->BlockingMobj));
+				HitMobj(Entity(tmtrace->BlockingMobj));
 			}
 			else
 			{
-				return HitLine();
+				HitLine();
 			}
+			return;
 		}
 	}
 	while (xmove || ymove);
-
-	return true;
 }
 
 //==========================================================================
@@ -1129,7 +822,8 @@ boolean Actor::Physics(void)
 	tmtrace->BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
-		if (!XYMovement())
+		XYMovement();
+		if (IsDestroyed())
 		{
 			return false;
 		}
@@ -1244,6 +938,9 @@ void Actor::Tick(float deltaTime)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/06/22 07:09:58  dj_jl
+//  Made sliding and bouncing functions native.
+//
 //  Revision 1.33  2002/05/18 17:00:00  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

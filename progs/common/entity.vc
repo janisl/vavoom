@@ -27,34 +27,35 @@ class Entity:MapObject
 	native
 	abstract
 {
-	name SpriteName;
-	float StateTime;	// state tic counter
-	int StateNum;
-	int NextState;
-	bool bFixedModel;
 
-	bool bNoGravity;	// don't apply gravity every tic
-	bool bNoPassMobj;	// Disable z block checking.  If on,
-						// this flag will prevent the mobj
-						// from passing over/under other mobjs.
-	bool bColideWithThings;
-	bool bColideWithWorld;
-	bool bCheckLineBlocking;
-	bool bCheckLineBlockMonsters;
-	bool bDropOff;		// allow jumps from high places
-	bool bFloat;		// allow moves to any height, no gravity
-	bool bFly;			// fly mode is active
-	bool bBlasted;		// missile will pass through ghosts
-	bool bCantLeaveFloorpic;	// stay within a certain floor type
-	bool bFloorClip;	// if feet are allowed to be clipped
+name SpriteName;
+float StateTime;	// state tic counter
+int StateNum;
+int NextState;
+bool bFixedModel;
 
-	//  Params
-	float Mass;
-	float MaxStepHeight;
+bool bNoGravity;	// don't apply gravity every tic
+bool bNoPassMobj;	// Disable z block checking.  If on,
+					// this flag will prevent the mobj
+					// from passing over/under other mobjs.
+bool bColideWithThings;
+bool bColideWithWorld;
+bool bCheckLineBlocking;
+bool bCheckLineBlockMonsters;
+bool bDropOff;		// allow jumps from high places
+bool bFloat;		// allow moves to any height, no gravity
+bool bFly;			// fly mode is active
+bool bBlasted;		// missile will pass through ghosts
+bool bCantLeaveFloorpic;	// stay within a certain floor type
+bool bFloorClip;	// if feet are allowed to be clipped
 
-	//  Water
-	int WaterLevel;
-	int WaterType;
+//  Params
+float Mass;
+float MaxStepHeight;
+
+//  Water
+int WaterLevel;
+int WaterType;
 
 native boolean SetState(int state);
 
@@ -65,7 +66,14 @@ native boolean CheckPosition(TVec Pos);
 native boolean CheckRelPosition(TVec Pos);
 native boolean TryMove(TVec newPos);
 
+native void SlideMove(void);
+native void BounceWall(float overbounce);
+
 native boolean CheckWater(void);
+
+native void UpdateVelocity(void);
+
+native Entity CheckOnmobj(void);
 
 //==========================================================================
 //
@@ -139,12 +147,6 @@ void ApplyFriction(void)
 {
 }
 
-#define GRAVITY			1225.0
-
-native void UpdateVelocity(void);
-
-native Entity CheckOnmobj(void);
-
 //
 //	States
 //
@@ -167,6 +169,11 @@ defaultproperties
 }
 
 }
+
+//**************************************************************************
+//**************************************************************************
+
+#define GRAVITY			1225.0
 
 struct tmtrace_t
 {
@@ -197,9 +204,21 @@ struct tmtrace_t
 
 tmtrace_t *tmtrace;
 
+#ifdef DOOM
+#endif
+#ifdef HERETIC
+#endif
+#ifdef HEXEN
+#endif
+#ifdef STRIFE
+#endif
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/06/22 07:09:58  dj_jl
+//  Made sliding and bouncing functions native.
+//
 //  Revision 1.14  2002/05/03 17:12:50  dj_jl
 //  S_NULL defined in Entity.
 //
