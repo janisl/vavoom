@@ -1064,6 +1064,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 		LoadThings2(lumpnum + ML_THINGS);
 		//	ACS object code
 		lev.behavior = (int*)W_CacheLumpNum(lumpnum + ML_BEHAVIOR, PU_LEVEL);
+		lev.behaviorsize = W_LumpLength(lumpnum + ML_BEHAVIOR);
 	}
 	else
 	{
@@ -1220,6 +1221,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/12/01 17:48:09  dj_jl
+//  Added behaviorsize
+//
 //  Revision 1.12  2001/10/22 17:25:55  dj_jl
 //  Floatification of angles
 //
