@@ -237,7 +237,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 //
 //==========================================================================
 
-void SV_UnlinkFromWorld(mobj_t* thing)
+void SV_UnlinkFromWorld(VMapObject* thing)
 {
     int		blockx;
     int		blocky;
@@ -280,14 +280,14 @@ void SV_UnlinkFromWorld(mobj_t* thing)
 //
 //==========================================================================
 
-void SV_LinkToWorld(mobj_t* thing)
+void SV_LinkToWorld(VMapObject* thing)
 {
     subsector_t*	ss;
 	sec_region_t*	reg;
 	sec_region_t*	r;
     int				blockx;
     int				blocky;
-    mobj_t**		link;
+    VMapObject**		link;
 
 	if (thing->subsector)
 	{
@@ -430,9 +430,9 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*), int prfunc)
 //
 //==========================================================================
 
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(mobj_t*), int prfunc)
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*), int prfunc)
 {
-    mobj_t*		mobj;
+    VMapObject*		mobj;
 	
     if (x < 0 || y < 0 || x >= level.bmapwidth || y >= level.bmapheight)
     {
@@ -538,7 +538,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 //
 //==========================================================================
 
-static boolean PIT_AddThingIntercepts(mobj_t* thing)
+static boolean PIT_AddThingIntercepts(VMapObject* thing)
 {
 	float dot = DotProduct(thing->origin, trace_plane.normal) - trace_plane.dist;
 	if (dot >= thing->radius || dot <= -thing->radius)
@@ -990,9 +990,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/18 19:03:17  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.6  2001/10/27 07:49:29  dj_jl
 //	Fixed map block stuff
-//
+//	
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

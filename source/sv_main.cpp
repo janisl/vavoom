@@ -53,6 +53,7 @@ void Draw_TeleportIcon(void);
 void CL_Disconnect(void);
 void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
+void SV_DestroyAllThinkers(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -66,6 +67,9 @@ static void G_DoCompleted(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CLASS(VMapObject)
+IMPLEMENT_CLASS(VViewEntity)
 
 server_t		sv;
 server_static_t	svs;
@@ -85,7 +89,7 @@ boolean         paused;
 boolean         deathmatch = false;   	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast
 
-mobj_t			*sv_mobjs[MAX_MOBJS];
+VMapObject			*sv_mobjs[MAX_MOBJS];
 mobj_base_t		sv_mo_base[MAX_MOBJS];
 double			sv_mo_free_time[MAX_MOBJS];
 
@@ -102,9 +106,6 @@ char			sv_next_map[12];
 char			sv_secret_map[12];
 
 int 		TimerGame;
-
-int				cid_mobj;
-int				cid_acs;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -159,9 +160,6 @@ void SV_Init(void)
 	svpr.SetGlobal("level", (int)&level);
 	svpr.SetGlobal("skyflatnum", skyflatnum);
 
-	cid_mobj = svpr.GetClassID("base_mobj_t");
-	cid_acs = svpr.GetClassID("ACS");
-
 	num_stats = svpr.GetGlobal("num_stats");
 	if (num_stats > 96)
 		Sys_Error("Too many stats %d", num_stats);
@@ -179,6 +177,7 @@ void SV_Init(void)
 
 void SV_Clear(void)
 {
+	SV_DestroyAllThinkers();
 	memset(&sv, 0, sizeof(sv));
 	memset(&level, 0, sizeof(level));
 	memset(sv_mobjs, 0, sizeof(sv_mobjs));
@@ -212,12 +211,12 @@ void SV_ClearDatagram(void)
 //
 //==========================================================================
 
-mobj_t *SV_SpawnMobj(int cid)
+VMapObject *SV_SpawnMobj(VClass *Class)
 {
 	int			i;
-    mobj_t*		mobj;
+    VMapObject*		mobj;
 
-    mobj = (mobj_t*)svpr.Spawn(cid, PU_LEVSPEC);
+    mobj = (VMapObject*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
     P_AddThinker(mobj);
 
 	//	Client treats first objects as player objects and will use
@@ -247,7 +246,7 @@ mobj_t *SV_SpawnMobj(int cid)
 //
 //==========================================================================
 
-int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
+int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 {
 	int		bits = 0;
 
@@ -292,7 +291,7 @@ int	SV_GetMobjBits(mobj_t &mobj, mobj_base_t &base)
 //
 //==========================================================================
 
-void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
+void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 {
 	if (bits & MOB_X)
 		msg << (word)mobj.origin.x;
@@ -332,7 +331,7 @@ void SV_WriteMobj(int bits, mobj_t &mobj, TMessage &msg)
 //
 //==========================================================================
 
-void SV_RemoveMobj(mobj_t *mobj)
+void SV_RemoveMobj(VMapObject *mobj)
 {
 	if (sv_mobjs[mobj->netID] != mobj)
 		Sys_Error("Invalid mobj num %d", mobj->netID);
@@ -383,7 +382,7 @@ void SV_CreateBaseline(void)
 			return;
 		}
 
-		mobj_t &mobj = *sv_mobjs[i];
+		VMapObject &mobj = *sv_mobjs[i];
 		mobj_base_t &base = sv_mo_base[i];
 
 		base.origin.x = mobj.origin.x;
@@ -425,7 +424,7 @@ void SV_CreateBaseline(void)
 //
 //==========================================================================
 
-int GetOriginNum(const mobj_t *mobj)
+int GetOriginNum(const VMapObject *mobj)
 {
 	if (!mobj)
 	{
@@ -485,7 +484,7 @@ void SV_StopSound(int origin_id, int channel)
 //
 //==========================================================================
 
-void SV_StartSound(const mobj_t * origin, int sound_id, int channel,
+void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 	int volume)
 {
 	if (origin)
@@ -505,7 +504,7 @@ void SV_StartSound(const mobj_t * origin, int sound_id, int channel,
 //
 //==========================================================================
 
-void SV_StopSound(const mobj_t *origin, int channel)
+void SV_StopSound(const VMapObject *origin, int channel)
 {
 	SV_StopSound(GetOriginNum(origin), channel);
 }
@@ -1888,7 +1887,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	}
 
 	SV_Clear();
-	Cvar_Unlatch();
+	TCvar::Unlatch();
 
 	sv.active = true;
 
@@ -1961,7 +1960,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 	if (!spawn_thinkers)
 	{
-	    if (level.thinkers.next != &level.thinkers)
+	    if (level.thinkerHead)
     	{
     		Sys_Error("Spawned a thinker when it's not allowed");
 	    }
@@ -2230,6 +2229,7 @@ void SV_ShutdownServer(boolean crash)
 	//
 	// clear structures
 	//
+	SV_DestroyAllThinkers();
 	memset(players, 0, sizeof(players));
 	memset(&sv, 0, sizeof(sv));
 }
@@ -2638,9 +2638,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.23  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.22  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
 //	

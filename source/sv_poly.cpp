@@ -43,7 +43,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ThrustMobj(mobj_t *mobj, seg_t *seg, polyobj_t *po);
+static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po);
 static void UnLinkPolyobj(polyobj_t *po);
 static void LinkPolyobj(polyobj_t *po);
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po);
@@ -115,7 +115,7 @@ int PO_GetPolyobjMirror(int poly)
 //
 //==========================================================================
 
-static void ThrustMobj(mobj_t *mobj, seg_t *seg, polyobj_t *po)
+static void ThrustMobj(VMapObject *mobj, seg_t *seg, polyobj_t *po)
 {
 	svpr.Exec("PolyThrustMobj", (int)mobj,
 		seg->normal.x, seg->normal.y, seg->normal.z, (int)po);
@@ -454,7 +454,7 @@ static void LinkPolyobj(polyobj_t *po)
 
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 {
-	mobj_t *mobj;
+	VMapObject *mobj;
 	int i, j;
 	int left, right, top, bottom;
 	float	tmbbox[4];
@@ -881,9 +881,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.8  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.7  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

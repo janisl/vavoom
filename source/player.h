@@ -27,13 +27,9 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXNAME			32
-
-#define IT_ALL_MAP		1
-
-#define NUM_CSHIFTS		8
-
 // TYPES -------------------------------------------------------------------
+
+struct player_t;
 
 //
 // Player states.
@@ -46,18 +42,6 @@ enum playerstate_t
     PST_DEAD,
     // Ready to restart/respawn???
     PST_REBORN		
-};
-
-//
-// Overlay psprites are scaled shapes
-// drawn directly on the view screen,
-// coordinates are given for a 320*200 view screen.
-//
-enum psprnum_t
-{
-    ps_weapon,
-    ps_flash,	//	Only DOOM uses it
-    NUMPSPRITES
 };
 
 class VViewEntity:public VObject
@@ -75,6 +59,7 @@ class VViewEntity:public VObject
 	int			statenum;
 	int			nextstate;
     float		time;
+	player_t	*player;
 };
 
 //
@@ -105,7 +90,7 @@ struct player_t
 	int				buttons;		// fire, use
 	int				impulse;		// weapon changes, inventory, etc
 
-    mobj_t*			mo;
+    VMapObject*		mo;
     int				playerstate;
 
 	//	Model of current weapon
@@ -172,9 +157,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.8  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.7  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

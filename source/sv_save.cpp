@@ -31,13 +31,9 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
+#include "archive.h"
 
 // MACROS ------------------------------------------------------------------
-
-#define GET_BYTE	(*SavePtr.b++)
-#define GET_WORD	(*SavePtr.w++)
-#define GET_LONG	(*SavePtr.l++)
-#define GET_FLOAT	(*SavePtr.f++)
 
 #define MAX_TARGET_PLAYERS 512
 #define MAX_MAPS	99
@@ -71,6 +67,23 @@ typedef enum
 	ASEG_END
 } gameArchiveSegment_t;
 
+class FSaver:public FArchive
+{
+public:
+	FSaver()
+	{}
+
+	// FArchive intervace
+	void Serialize(void *V, int Length);
+
+	// Public functions
+	void OpenRead(const char *FileName);
+	void OpenWrite(const char *FileName);
+	void Close(void);
+private:
+	int Handle;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
@@ -85,7 +98,7 @@ void CreateSavePath(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern mobj_t		*sv_mobjs[MAX_MOBJS];
+extern VMapObject		*sv_mobjs[MAX_MOBJS];
 extern mobj_base_t	sv_mo_base[MAX_MOBJS];
 extern bool			sv_loading;
 extern TMessage		sv_signon;
@@ -94,20 +107,56 @@ extern TMessage		sv_signon;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-//static FILE 	*SavingFP;
-static int		SavingFP;
-static byte		*SaveBuffer;
-static union
-{
-	byte	*b;
-	short	*w;
-	int		*l;
-	float	*f;
-} SavePtr;
-
 static boolean 	SavingPlayers;
+static FSaver	Saver;
+
+inline byte _GET_BYTE(void) { byte B; Saver.Serialize(&B, 1); return B; }
+inline word _GET_WORD(void) { word W; Saver.Serialize(&W, 2); return W; }
+inline int _GET_LONG(void) { dword L; Saver.Serialize(&L, 4); return L; }
+inline float _GET_FLOAT(void) { float F; Saver.Serialize(&F, 4); return F; }
+#define GET_BYTE	_GET_BYTE()
+#define GET_WORD	_GET_WORD()
+#define GET_LONG	_GET_LONG()
+#define GET_FLOAT	_GET_FLOAT()
 
 // CODE --------------------------------------------------------------------
+
+void FSaver::OpenRead(const char *FileName)
+{
+	Handle = Sys_FileOpenRead(FileName);
+	ArIsLoading = true;
+	ArIsSaving = false;
+	ArIsPersistent = true;
+}
+
+void FSaver::OpenWrite(const char *FileName)
+{
+	Handle = Sys_FileOpenWrite(FileName);
+	ArIsLoading = false;
+	ArIsSaving = true;
+	ArIsPersistent = true;
+}
+
+void FSaver::Close(void)
+{
+	if (Handle >= 0)
+	{
+		Sys_FileClose(Handle);
+		Handle = -1;
+	}
+}
+
+void FSaver::Serialize(void *V, int Length)
+{
+	if (ArIsLoading)
+	{
+		Sys_FileRead(Handle, V, Length);
+	}
+	else
+	{
+		Sys_FileWrite(Handle, V, Length);
+	}
+}
 
 //==========================================================================
 //
@@ -143,7 +192,7 @@ boolean	SV_GetSaveString(int slot, char* buf)
 
 static void OpenStreamOut(char *fileName)
 {
-	SavingFP = Sys_FileOpenWrite(fileName);
+	Saver.OpenWrite(fileName);
 }
 
 //==========================================================================
@@ -154,7 +203,7 @@ static void OpenStreamOut(char *fileName)
 
 static void StreamOutByte(byte val)
 {
-	Sys_FileWrite(SavingFP, &val, sizeof(byte));
+	Saver.Serialize(&val, sizeof(byte));
 }
 
 //==========================================================================
@@ -165,7 +214,7 @@ static void StreamOutByte(byte val)
 
 static void StreamOutWord(word val)
 {
-	Sys_FileWrite(SavingFP, &val, sizeof(word));
+	Saver.Serialize(&val, sizeof(word));
 }
 
 //==========================================================================
@@ -176,7 +225,7 @@ static void StreamOutWord(word val)
 
 static void StreamOutLong(int val)
 {
-	Sys_FileWrite(SavingFP, &val, sizeof(int));
+	Saver.Serialize(&val, sizeof(int));
 }
 
 //==========================================================================
@@ -187,7 +236,7 @@ static void StreamOutLong(int val)
 
 static void StreamOutFloat(float val)
 {
-	Sys_FileWrite(SavingFP, &val, sizeof(float));
+	Saver.Serialize(&val, sizeof(float));
 }
 
 //==========================================================================
@@ -196,9 +245,9 @@ static void StreamOutFloat(float val)
 //
 //==========================================================================
 
-static void StreamOutBuffer(void *buffer, int size)
+static void StreamOutBuffer(const void *buffer, int size)
 {
-	Sys_FileWrite(SavingFP, buffer, size);
+	Saver.Serialize(const_cast<void *>(buffer), size);
 }
 
 //==========================================================================
@@ -209,10 +258,7 @@ static void StreamOutBuffer(void *buffer, int size)
 
 static void CloseStreamOut(void)
 {
-	if (SavingFP >= 0)
-	{
-		Sys_FileClose(SavingFP);
-	}
+	Saver.Close();
 }
 
 //==========================================================================
@@ -317,7 +363,7 @@ static void AssertSegment(gameArchiveSegment_t segType)
 //
 //==========================================================================
 
-int GetMobjNum(mobj_t *mobj)
+int GetMobjNum(VMapObject *mobj)
 {
 	try
 	{
@@ -340,7 +386,7 @@ int GetMobjNum(mobj_t *mobj)
 //
 //==========================================================================
 
-mobj_t* SetMobjPtr(int id)
+VMapObject* SetMobjPtr(int id)
 {
 	if (id == MOBJ_NULL)
 	{
@@ -357,11 +403,12 @@ mobj_t* SetMobjPtr(int id)
 
 void WriteVObject(VObject *Obj)
 {
-	int size = Obj->GetSize();
+	VClass *Class = Obj->GetClass();
 
-	StreamOutLong(size);
-	StreamOutLong(Obj->GetClassID());
-	StreamOutBuffer((byte *)Obj + sizeof(VObject), size - sizeof(VObject));
+	StreamOutByte(strlen(Class->GetName()) + 1);
+	StreamOutBuffer(Class->GetName(), strlen(Class->GetName()) + 1);
+	StreamOutBuffer((byte *)Obj + sizeof(VObject),
+		Class->ClassSize - sizeof(VObject));
 }
 
 //==========================================================================
@@ -372,15 +419,30 @@ void WriteVObject(VObject *Obj)
 
 VObject *ReadVObject(int tag)
 {
-	//  Get params
-	int size = GET_LONG;
-	int cid = GET_LONG;
+	char NameBuf[256];
+	int NameLen;
 
-	//  Allocate object and copy data
-	VObject *o = svpr.Spawn(cid, tag);
-	memcpy((byte*)o + sizeof(VObject), SavePtr.b, size - sizeof(VObject));
-	SavePtr.b += size - sizeof(VObject);
-	return o;
+	try
+	{
+		//  Get params
+		NameLen = GET_BYTE;
+		Saver.Serialize(NameBuf, NameLen);
+		VClass *Class = VClass::FindClass(NameBuf);
+		if (!Class)
+		{
+			Sys_Error("ReadVObject: No such class %s\n", NameBuf);
+		}
+
+		//  Allocate object and copy data
+		VObject *o = VObject::StaticSpawnObject(Class, NULL, tag);
+		Saver.Serialize((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
+		return o;
+	}
+	catch (...)
+	{
+		dprintf("- ReadVObject %s %d\n", NameBuf, NameLen);
+		throw;
+	}
 }
 
 //==========================================================================
@@ -446,8 +508,7 @@ static void UnarchivePlayers(void)
 		{
 			continue;
 		}
-		memcpy(&players[i], SavePtr.b, sizeof(player_t));
-		SavePtr.b += sizeof(player_t);
+		Saver.Serialize(&players[i], sizeof(player_t));
 		players[i].mo = NULL; // Will be set when unarc thinker
 		svpr.Exec(pf_unarchive_player, (int)&players[i]);
 		players[i].active = false;
@@ -461,75 +522,6 @@ static void UnarchivePlayers(void)
 			players[i].ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
 		}
 	}
-}
-
-//==========================================================================
-//
-//	ArchiveWorld
-//
-//==========================================================================
-
-static void ArchiveWorld(void)
-{
-	int			i;
-	int			j;
-	sector_t*	sec;
-	line_t*		li;
-	side_t*		si;
-
-	StreamOutLong(ASEG_WORLD);
-
-	//
-	//	Sectors
-	//
-	for (i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
-	{
-		StreamOutFloat(sec->floor.dist);
-		StreamOutFloat(sec->ceiling.dist);
-		StreamOutWord((word)sec->floor.pic);
-		StreamOutWord((word)sec->ceiling.pic);
-		StreamOutWord((word)sec->params.lightlevel);
-		StreamOutWord((word)sec->special);
-		StreamOutWord((word)sec->tag);
-		StreamOutWord((word)sec->seqType);
-	}
-
-	//
-	//	Lines
-	//
-	for (i = 0, li = level.lines; i < level.numlines; i++, li++)
-	{
-		StreamOutWord((word)li->flags);
-		StreamOutByte((byte)li->special);
-		StreamOutWord((word)li->arg1);
-		StreamOutByte((byte)li->arg2);
-		StreamOutByte((byte)li->arg3);
-		StreamOutByte((byte)li->arg4);
-		StreamOutByte((byte)li->arg5);
-		for (j = 0; j < 2; j++)
-		{
-			if (li->sidenum[j] == -1)
-			{
-				continue;
-			}
-			si = &level.sides[li->sidenum[j]];
-			StreamOutWord((word)si->textureoffset);
-			StreamOutWord((word)si->rowoffset);
-			StreamOutWord((word)si->toptexture);
-			StreamOutWord((word)si->bottomtexture);
-			StreamOutWord((word)si->midtexture);
-		}
-	}
-
-	//
-	//	Polyobjs
-	//
-	for (i = 0; i < level.numpolyobjs; i++)
-	{
-		StreamOutFloat(level.polyobjs[i].angle);
-		StreamOutFloat(level.polyobjs[i].startSpot.x);
-		StreamOutFloat(level.polyobjs[i].startSpot.y);
-  	}
 }
 
 //==========================================================================
@@ -598,75 +590,147 @@ static void CalcSecMinMaxs(sector_t *sector)
 
 //==========================================================================
 //
-// UnarchiveWorld
+//	Level__Serialize
 //
 //==========================================================================
 
-static void UnarchiveWorld(void)
+static void Level__Serialize(FArchive &Ar)
 {
 	int i;
 	int j;
-	sector_t *sec;
-	line_t *li;
-	side_t *si;
-	float	deltaX;
-	float	deltaY;
-
-	AssertSegment(ASEG_WORLD);
+	sector_t* sec;
+	line_t* li;
+	side_t* si;
 
 	//
 	//	Sectors
 	//
-	for(i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
+	for (i = 0, sec = level.sectors; i < level.numsectors; i++, sec++)
 	{
-		sec->floor.dist = GET_FLOAT;
-		sec->ceiling.dist = GET_FLOAT;
-		sec->floor.pic = (word)GET_WORD;
-		sec->ceiling.pic = GET_WORD;
-		sec->params.lightlevel = GET_WORD;
-		sec->special = GET_WORD;
-		sec->tag = GET_WORD;
-		sec->seqType = GET_WORD;
-		CalcSecMinMaxs(sec);
+		Ar << sec->floor.dist
+			<< sec->ceiling.dist;
+		if (Ar.IsSaving())
+		{
+			StreamOutWord((word)sec->floor.pic);
+			StreamOutWord((word)sec->ceiling.pic);
+			StreamOutWord((word)sec->params.lightlevel);
+			StreamOutWord((word)sec->special);
+			StreamOutWord((word)sec->tag);
+			StreamOutWord((word)sec->seqType);
+		}
+		else
+		{
+			sec->floor.pic = (word)GET_WORD;
+			sec->ceiling.pic = GET_WORD;
+			sec->params.lightlevel = GET_WORD;
+			sec->special = GET_WORD;
+			sec->tag = GET_WORD;
+			sec->seqType = GET_WORD;
+			CalcSecMinMaxs(sec);
+		}
 	}
 
 	//
 	//	Lines
 	//
-	for(i = 0, li = level.lines; i < level.numlines; i++, li++)
+	for (i = 0, li = level.lines; i < level.numlines; i++, li++)
 	{
-		li->flags = GET_WORD;
-		li->special = GET_BYTE;
-		li->arg1 = GET_WORD;
-		li->arg2 = GET_BYTE;
-		li->arg3 = GET_BYTE;
-		li->arg4 = GET_BYTE;
-		li->arg5 = GET_BYTE;
-		for(j = 0; j < 2; j++)
+		if (Ar.IsSaving())
 		{
-			if(li->sidenum[j] == -1)
+			StreamOutWord((word)li->flags);
+			StreamOutByte((byte)li->special);
+			StreamOutWord((word)li->arg1);
+			StreamOutByte((byte)li->arg2);
+			StreamOutByte((byte)li->arg3);
+			StreamOutByte((byte)li->arg4);
+			StreamOutByte((byte)li->arg5);
+		}
+		else
+		{
+			li->flags = GET_WORD;
+			li->special = GET_BYTE;
+			li->arg1 = GET_WORD;
+			li->arg2 = GET_BYTE;
+			li->arg3 = GET_BYTE;
+			li->arg4 = GET_BYTE;
+			li->arg5 = GET_BYTE;
+		}
+		for (j = 0; j < 2; j++)
+		{
+			if (li->sidenum[j] == -1)
 			{
 				continue;
 			}
 			si = &level.sides[li->sidenum[j]];
-			si->textureoffset = GET_WORD;
-			si->rowoffset = GET_WORD;
-			si->toptexture = GET_WORD;
-			si->bottomtexture = GET_WORD;
-			si->midtexture = GET_WORD;
+			if (Ar.IsSaving())
+			{
+				StreamOutWord((word)si->textureoffset);
+				StreamOutWord((word)si->rowoffset);
+				StreamOutWord((word)si->toptexture);
+				StreamOutWord((word)si->bottomtexture);
+				StreamOutWord((word)si->midtexture);
+			}
+			else
+			{
+				si->textureoffset = GET_WORD;
+				si->rowoffset = GET_WORD;
+				si->toptexture = GET_WORD;
+				si->bottomtexture = GET_WORD;
+				si->midtexture = GET_WORD;
+			}
 		}
 	}
 
 	//
 	//	Polyobjs
 	//
-	for(i = 0; i < level.numpolyobjs; i++)
+	for (i = 0; i < level.numpolyobjs; i++)
 	{
-		PO_RotatePolyobj(level.polyobjs[i].tag, GET_FLOAT);
-		deltaX = GET_FLOAT - level.polyobjs[i].startSpot.x;
-		deltaY = GET_FLOAT - level.polyobjs[i].startSpot.y;
-		PO_MovePolyobj(level.polyobjs[i].tag, deltaX, deltaY);
+		if (Ar.IsSaving())
+		{
+			Ar << level.polyobjs[i].angle
+				<< level.polyobjs[i].startSpot.x
+				<< level.polyobjs[i].startSpot.y;
+		}
+		else
+		{
+			float angle, polyX, polyY;
+
+			Ar << angle
+				<< polyX
+				<< polyY;
+			PO_RotatePolyobj(level.polyobjs[i].tag, angle);
+			PO_MovePolyobj(level.polyobjs[i].tag, 
+				polyX - level.polyobjs[i].startSpot.x, 
+				polyY - level.polyobjs[i].startSpot.y);
+		}
 	}
+}
+
+//==========================================================================
+//
+//	ArchiveWorld
+//
+//==========================================================================
+
+static void ArchiveWorld(void)
+{
+	StreamOutLong(ASEG_WORLD);
+
+	Level__Serialize(Saver);
+}
+
+//==========================================================================
+//
+// UnarchiveWorld
+//
+//==========================================================================
+
+static void UnarchiveWorld(void)
+{
+	AssertSegment(ASEG_WORLD);
+
+	Level__Serialize(Saver);
 }
 
 //==========================================================================
@@ -683,22 +747,21 @@ static void ArchiveThinkers(void)
 
 	StreamOutLong(ASEG_THINKERS);
 
-	for (thinker = level.thinkers.next; thinker != &level.thinkers;
-		thinker = thinker->next)
+	for (thinker = level.thinkerHead; thinker; thinker = thinker->next)
 	{
 		if (thinker->destroyed)
 		{
 			continue;
 		}
 
-		int size = thinker->GetSize();
+		int size = thinker->GetClass()->ClassSize;
 
 		VThinker *th = (VThinker*)Z_Malloc(size);
 		memcpy(th, thinker, size);
 
-		if (svpr.CanCast(th, cid_mobj))
+		VMapObject *mobj = Cast<VMapObject>(th);
+		if (mobj)
 		{
-			mobj_t *mobj = (mobj_t *)th;
 			if (mobj->player)
 			{
 				if (!SavingPlayers)
@@ -713,6 +776,7 @@ static void ArchiveThinkers(void)
 
 		svpr.Exec(pf_archive_thinker, (int)th);
 
+		StreamOutByte(1);
 		WriteVObject(th);
 		Z_Free(th);
 	}
@@ -720,7 +784,7 @@ static void ArchiveThinkers(void)
 	//
 	//  End marker
 	//
-	StreamOutLong(-1);
+	StreamOutByte(0);
 }
 
 //==========================================================================
@@ -735,7 +799,7 @@ static void UnarchiveThinkers(void)
 
 	AssertSegment(ASEG_THINKERS);
 
-	while (*SavePtr.l != -1)
+	while (GET_BYTE)
 	{
 		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
 
@@ -743,9 +807,9 @@ static void UnarchiveThinkers(void)
 		P_AddThinker(thinker);
 
 		//  Handle mobjs
-		if (svpr.CanCast(thinker, cid_mobj))
+		VMapObject *mobj = Cast<VMapObject>(thinker);
+		if (mobj)
 		{
-			mobj_t *mobj = (mobj_t*)thinker;
 			if (mobj->player)
 			{
 				mobj->player = &players[(int)mobj->player - 1];
@@ -757,14 +821,10 @@ static void UnarchiveThinkers(void)
 		}
 	}
 
-	//  Skip end marker
-	SavePtr.l++;
-
 	//  Call unarchive function for each thinker.
 	int pf_unarchive_thinker = svpr.FuncNumForName("UnarchiveThinker");
 
-	for (thinker = level.thinkers.next; thinker != &level.thinkers;
-		thinker = thinker->next)
+	for (thinker = level.thinkerHead; thinker; thinker = thinker->next)
 	{
 		svpr.Exec(pf_unarchive_thinker, (int)thinker);
 	}
@@ -807,8 +867,7 @@ static void UnarchiveScripts(void)
 		ACSInfo[i].state = (aste_t)GET_WORD;
 		ACSInfo[i].waitValue = GET_WORD;
 	}
-	memcpy(MapVars, SavePtr.b, sizeof(MapVars));
-	SavePtr.b += sizeof(MapVars);
+	Saver.Serialize(MapVars, sizeof(MapVars));
 }
 
 //==========================================================================
@@ -949,8 +1008,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	SAVE_MAP_NAME(fileName, slot, mapname);
 
 	// Load the file
-	M_ReadFile(fileName, &SaveBuffer);
-	SavePtr.b = SaveBuffer;
+	Saver.OpenRead(fileName);
 
 	AssertSegment(ASEG_MAP_HEADER);
 
@@ -964,10 +1022,10 @@ static void SV_LoadMap(char *mapname, int slot)
 	AssertSegment(ASEG_BASELINE);
 	int len = GET_LONG;
 	sv_signon.Clear();
-	sv_signon.Write(SavePtr.b, len);
-	SavePtr.b += len;
-	memcpy(sv_mo_base, SavePtr.b, sizeof(sv_mo_base));
-	SavePtr.b += sizeof(sv_mo_base);
+	void *tmp = Z_StrMalloc(len);
+	Saver.Serialize(tmp, len);
+	sv_signon.Write(tmp, len);
+	Saver.Serialize(sv_mo_base, sizeof(sv_mo_base));
 
 	UnarchiveWorld();
 	UnarchiveThinkers();
@@ -977,7 +1035,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	AssertSegment(ASEG_END);
 
 	// Free save buffer
-	Z_Free(SaveBuffer);
+	Saver.Close();
 }
 
 //==========================================================================
@@ -1064,42 +1122,41 @@ void SV_LoadGame(int slot)
 	SAVE_NAME(fileName, BASE_SLOT);
 
 	// Load the file
-	M_ReadFile(fileName, &SaveBuffer);
+	Saver.OpenRead(fileName);
 
 	// Set the save pointer and skip the description field
-	SavePtr.b = SaveBuffer + SAVE_DESCRIPTION_LENGTH;
+	char desc[SAVE_DESCRIPTION_LENGTH];
+	Saver.Serialize(desc, SAVE_DESCRIPTION_LENGTH);
 
 	// Check the version text
-	if (strcmp((char*)SavePtr.b, SAVE_VERSION_TEXT))
+	char versionText[SAVE_VERSION_TEXT_LENGTH];
+	Saver.Serialize(versionText, SAVE_VERSION_TEXT_LENGTH);
+	if (strcmp(versionText, SAVE_VERSION_TEXT))
 	{
 		// Bad version
-		Z_Free(SaveBuffer);
+		Saver.Close();
 		return;
 	}
-	SavePtr.b += SAVE_VERSION_TEXT_LENGTH;
 
 	AssertSegment(ASEG_GAME_HEADER);
 
 	gameskill = (skill_t)GET_BYTE;
-	strncpy(mapname, (char*)SavePtr.b, 8);
-	SavePtr.b += 8;
+	Saver.Serialize(mapname, 8);
 	mapname[8] = 0;
 
 	//	Init skill hacks
 	svpr.Exec("G_InitNew", gameskill);
 
 	// Read global script info
-	memcpy(WorldVars, SavePtr.b, sizeof(WorldVars));
-	SavePtr.b += sizeof(WorldVars);
-	memcpy(ACSStore, SavePtr.b, sizeof(ACSStore));
-	SavePtr.b += sizeof(ACSStore);
+	Saver.Serialize(WorldVars, sizeof(WorldVars));
+	Saver.Serialize(ACSStore, sizeof(ACSStore));
 
 	// Read the player structures
 	UnarchivePlayers();
 
 	AssertSegment(ASEG_END);
 
-	Z_Free(SaveBuffer);
+	Saver.Close();
 
 	sv_loading = true;
 
@@ -1329,9 +1386,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.15  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.14  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
 //	

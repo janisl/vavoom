@@ -185,13 +185,15 @@ acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static acs_t *ACScript;
+IMPLEMENT_CLASS(VACS)
+
+static VACS *ACScript;
 static int *PCodePtr;
 static int SpecArgs[8];
 static int ACStringCount;
 static char **ACStrings;
 static char PrintBuffer[PRINT_BUFFER_SIZE];
-static acs_t *NewScript;
+static VACS *NewScript;
 
 static int (*PCodeCmds[])(void) =
 {
@@ -302,7 +304,7 @@ static int (*PCodeCmds[])(void) =
 // CODE --------------------------------------------------------------------
 
 static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int side,
-	mobj_t *mo)
+	VMapObject *mo)
 {
    	return svpr.Exec("ExecuteLineSpecial",
    		special, (int)args, (int)line, side, (int)mo);
@@ -313,9 +315,9 @@ static line_t *P_FindLine(int lineTag, int *searchPosition)
 	return (line_t*)svpr.Exec("P_FindLine", lineTag, (int)searchPosition);
 }
 
-static mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
+static VMapObject *P_FindMobjFromTID(int tid, int *searchPosition)
 {
-	return (mobj_t*)svpr.Exec("P_FindMobjFromTID", tid, (int)searchPosition);
+	return (VMapObject*)svpr.Exec("P_FindMobjFromTID", tid, (int)searchPosition);
 }
 
 //==========================================================================
@@ -340,8 +342,9 @@ void P_LoadACScripts(boolean spawn_thinkers)
 	ActionCodeBase = (byte *)header;
 	buffer = (int *)((byte *)header+header->infoOffset);
 	ACScriptCount = *buffer++;
-	if(ACScriptCount == 0)
-	{ // Empty behavior lump
+	if (ACScriptCount == 0)
+	{
+		// Empty behavior lump
 		return;
 	}
 	ACSInfo = (acsInfo_t*)Z_Malloc(ACScriptCount*sizeof(acsInfo_t), PU_LEVEL, 0);
@@ -382,9 +385,9 @@ void P_LoadACScripts(boolean spawn_thinkers)
 
 static void StartOpenACS(int number, int infoIndex, int *address)
 {
-	acs_t *script;
+	VACS *script;
 
-	script = (acs_t *)svpr.Spawn(cid_acs, PU_LEVSPEC);
+	script = (VACS *)VObject::StaticSpawnObject(VACS::StaticClass(), NULL, PU_LEVSPEC);
 	script->number = number;
 
 	// World objects are allotted 1 second for initialization
@@ -428,15 +431,19 @@ void P_CheckACSStore(void)
 //
 //==========================================================================
 
-boolean P_StartACS(int number, int map_num, int *args, mobj_t *activator,
+boolean P_StartACS(int number, int map_num, int *args, VMapObject *activator,
 	line_t *line, int side)
 {
 	int i;
-	acs_t *script;
+	VACS *script;
 	int infoIndex;
 	aste_t *statePtr;
-char map[12] = "";
-if (map_num) strcpy(map, SV_GetMapName(map_num));
+	char map[12] = "";
+
+	if (map_num)
+	{
+		strcpy(map, SV_GetMapName(map_num));
+	}
 
 	NewScript = NULL;
 	if (map[0] && strcmp(map, level.mapname))
@@ -460,7 +467,7 @@ if (map_num) strcpy(map, SV_GetMapName(map_num));
 	{ // Script is already executing
 		return false;
 	}
-	script = (acs_t *)svpr.Spawn(cid_acs, PU_LEVSPEC);
+	script = (VACS *)VObject::StaticSpawnObject(VACS::StaticClass(), NULL, PU_LEVSPEC);
 	script->number = number;
 	script->infoIndex = infoIndex;
 	script->activator = activator;
@@ -585,7 +592,7 @@ void P_ACSInitNewGame(void)
 //
 //==========================================================================
 
-void SV_InterpretACS(acs_t *script)
+void SV_InterpretACS(VACS *script)
 {
 	int cmd;
 	int action;
@@ -1601,12 +1608,12 @@ static int CmdTimer(void)
 static int CmdSectorSound(void)
 {
 	int volume;
-	mobj_t *mobj;
+	VMapObject *mobj;
 
 	mobj = NULL;
 	if(ACScript->line)
 	{
-		mobj = (mobj_t *)&ACScript->line->frontsector->soundorg;
+		mobj = (VMapObject *)&ACScript->line->frontsector->soundorg;
 	}
 	volume = Pop();
 	SV_StartSound(mobj, S_GetSoundID(ACStrings[Pop()]), 0, volume);
@@ -1618,7 +1625,7 @@ static int CmdThingSound(void)
 	int tid;
 	int sound;
 	int volume;
-	mobj_t *mobj;
+	VMapObject *mobj;
 	int searcher;
 
 	volume = Pop();
@@ -1722,9 +1729,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.8  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.7  2001/10/09 17:28:41  dj_jl
 //	Moved thing counting to progs
 //	

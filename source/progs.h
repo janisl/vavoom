@@ -32,7 +32,6 @@
 struct dprograms_t;
 struct dfunction_t;
 struct globaldef_t;
-struct dclassinfo_t;
 
 typedef void (*builtin_t)(void);
 
@@ -78,18 +77,18 @@ class TProgs
 		return &Globals[GlobalNumForName(name)];
 	}
 
-	int Exec(int fnum);
-	int Exec(int fnum, int parm1);
-	int Exec(int fnum, int parm1, int parm2);
-	int Exec(int fnum, int parm1, int parm2, int parm3);
-	int Exec(int fnum, int parm1, int parm2, int parm3, int parm4);
-	int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(int fnum);
+	static int Exec(int fnum, int parm1);
+	static int Exec(int fnum, int parm1, int parm2);
+	static int Exec(int fnum, int parm1, int parm2, int parm3);
+	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4);
+	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 						int parm5);
-	int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6);
-	int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6, int parm7);
-	int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6, int parm7, int parm8);
 	int Exec(const char *name)
 	{
@@ -136,32 +135,16 @@ class TProgs
 	}
 	void DumpProfile(void);
 
-	int GetClassID(const char *);
-	VObject *Spawn(int, int);
-	VObject *Spawn(const char *name, int tag)
-	{
-		return Spawn(GetClassID(name), tag);
-	}
-	void Destroy(VObject *);
-	bool CanCast(VObject *, int);
-	bool CanCast(int, int);
-
  private:
 	dprograms_t	*Progs;
-	char		*Strings;
-	int			*Statements;
 	int			*Globals;
 	dfunction_t	*Functions;
 	globaldef_t	*Globaldefs;
-	builtin_t	*Builtins;
-	dclassinfo_t	*ClassInfo;
-	dword		*Profile1;
-	dword		*Profile2;
 
 	int CheckFuncNumForName(const char* name);
 	int CheckGlobalNumForName(const char* name);
 	char* FuncName(int fnum);
-	int ExecuteFunction(int fnum);
+	static int ExecuteFunction(int fnum);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -177,9 +160,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.6  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
-//
+//	
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

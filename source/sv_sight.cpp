@@ -415,7 +415,7 @@ static boolean CrossBSPNode(int bspnum)
 //
 //==========================================================================
 
-boolean P_CheckSight(mobj_t* t1, mobj_t* t2)
+boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 {
 	int			s1;
 	int			s2;
@@ -474,9 +474,12 @@ boolean P_CheckSight(mobj_t* t1, mobj_t* t2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.4  2001/08/31 17:28:00  dj_jl
 //	Removed RANGECHECK
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

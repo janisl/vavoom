@@ -38,8 +38,7 @@
 #define STACK_ID		0x45f6cd4b
 
 # define CHECK_STACK_OVERFLOW
-# define CHECK_PARM_COUNT
-//# define CHECK_RUNAWAY
+//# define CHECK_PARM_COUNT
 //	Not needed, if PROGS are correct
 # define CHECK_STACK_UNDERFLOW
 //# define CHECK_FUNC_NUM
@@ -59,31 +58,25 @@
 
 extern builtin_info_t	BuiltinInfo[];
 
+extern "C" void TestCaller(void);
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-static int				pr_stack[MAX_PROG_STACK];
-int						*pr_stackPtr;
+extern "C" { 
+int				*pr_stackPtr; 
+dfunction_t		*current_func = NULL;
+}
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-TProgs*					current_progs;
-dprograms_t*			progs;
-char*					pr_strings;
-int*					pr_globals;
-int*					pr_statements;
-dfunction_t*			pr_functions;
-globaldef_t*			pr_globaldefs;
-builtin_t*				pr_builtins;
-int						current_func = 0;
-dword*					pr_profile1;
-dword*					pr_profile2;
-int						function_call_trace[256];
-int						function_call_depth;
+static int				pr_stack[MAX_PROG_STACK];
 
-#ifdef CHECK_RUNAWAY
-int						runaway;
-int						caller_func;
-#endif
+#define DECLARE_OPC(name, argcount)		argcount
+#define OPCODE_INFO
+static int OpcodeArgCount[NUM_OPCODES] =
+{
+#include "progdefs.h"
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -109,24 +102,8 @@ void PR_Init(void)
 
 void PR_OnAbort(void)
 {
-	current_func = 0;
+	current_func = NULL;
 	pr_stackPtr = pr_stack + 1;
-}
-
-//==========================================================================
-//
-//  PR_FuncName
-//
-//==========================================================================
-
-static char* PR_FuncName(int fnum)
-{
-	if (fnum <= 0 || fnum >= progs->num_functions)
-	{
-		return "NULL function";
-	}
-
-	return pr_strings + pr_functions[fnum].s_name;
 }
 
 //==========================================================================
@@ -137,7 +114,7 @@ static char* PR_FuncName(int fnum)
 
 extern "C" void PR_Profile1(void)
 {
-	pr_profile1[current_func]++;
+//	pr_profile1[current_func]++;
 }
 
 //==========================================================================
@@ -148,10 +125,10 @@ extern "C" void PR_Profile1(void)
 
 extern "C" void PR_Profile2(void)
 {
-	if (current_func)
-	{
-		pr_profile2[current_func]++;
-	}
+//	if (current_func)
+//	{
+//		pr_profile2[current_func]++;
+//	}
 }
 extern "C" void PR_Profile2_end(void){}
 
@@ -164,8 +141,8 @@ extern "C" void PR_Profile2_end(void){}
 void PR_Traceback(void)
 {
 	if (current_func)
-		cond << "\nCurrently running PROG function " << current_func
-			<< " (" << PR_FuncName(current_func) << ")\n\n";
+		cond << "\nCurrently running PROG function  (" <<
+			current_func->name << ")\n\n";
 }
 
 //==========================================================================
@@ -190,6 +167,10 @@ void TProgs::Load(const char *AName)
 	int		i;
 	int		len;
 	char	progfilename[256];
+	char	*Strings;
+	int		*Statements;
+	dclassinfo_t	*ClassInfo;
+	VClass		**ClassList;
 
 	i = M_CheckParm("-progs");
     if (i && i < myargc - 1)
@@ -246,24 +227,53 @@ void TProgs::Load(const char *AName)
 	}
 	for (i = 0; i < Progs->num_functions; i++)
 	{
-		Functions[i].s_name = LittleLong(Functions[i].s_name);
+		Functions[i].name = Strings + LittleLong(Functions[i].s_name);
 		Functions[i].first_statement = LittleLong(Functions[i].first_statement);
 		Functions[i].num_parms = LittleShort(Functions[i].num_parms);
 		Functions[i].num_locals = LittleShort(Functions[i].num_locals);
-		Functions[i].type = LittleLong(Functions[i].type);
+		Functions[i].type = LittleShort(Functions[i].type);
+		Functions[i].flags = LittleShort(Functions[i].flags);
 	}
 	for (i = 0; i < Progs->num_globaldefs; i++)
 	{
 		Globaldefs[i].type = LittleShort(Globaldefs[i].type);
 		Globaldefs[i].ofs = LittleShort(Globaldefs[i].ofs);
-		Globaldefs[i].s_name = LittleLong(Globaldefs[i].s_name);
+		Globaldefs[i].name = Strings + LittleLong(Globaldefs[i].s_name);
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
-		ClassInfo[i].s_name = LittleLong(ClassInfo[i].s_name);
+		ClassInfo[i].name = Strings + LittleLong(ClassInfo[i].s_name);
 		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
 		ClassInfo[i].size = LittleLong(ClassInfo[i].size);
 		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
+	}
+
+	//	Setup classes
+	ClassList = Z_CNew<VClass *>(Progs->num_classinfo);
+	for (i = 0; i < Progs->num_classinfo; i++)
+	{
+		ClassList[i] = VClass::FindClass(ClassInfo[i].name);
+		if (!ClassList[i])
+		{
+			//con << "New class " << ClassInfo[i].name << endl;
+			ClassList[i] = (VClass *)VObject::StaticSpawnObject(
+				VClass::StaticClass(), NULL, PU_STRING);
+			ClassList[i]->Name = ClassInfo[i].name;
+			ClassList[i]->ClassSize = ClassInfo[i].size;
+			ClassList[i]->ClassVTable = (int *)(Globals + ClassInfo[i].vtable);
+		}
+		else if (!ClassList[i]->ClassVTable)
+		{
+			//con << "Loading class " << ClassInfo[i].name << endl;
+			ClassList[i]->ClassVTable = (int *)(Globals + ClassInfo[i].vtable);
+		}
+	}
+	for (i = 0; i < Progs->num_classinfo; i++)
+	{
+		if (!ClassList[i]->ParentClass && !(ClassList[i]->GetFlags() & OF_Native))
+		{
+			ClassList[i]->ParentClass = ClassList[ClassInfo[i].parent];
+		}
 	}
 
 	//	Setup string pointers in globals
@@ -274,16 +284,23 @@ void TProgs::Load(const char *AName)
 		{
 			Globals[i] += int(Strings);
 		}
+		if (globalinfo[i] == 2 && Globals[i])
+		{
+#ifdef CHECK_FUNC_NUM
+			if (Globals[i] < 0 || Globals[i] >= Progs->num_functions)
+			{
+				Sys_Error("RunFunction: NULL function");
+			}
+#endif
+			Globals[i] = int(Functions + Globals[i]);
+		}
+		if (globalinfo[i] == 3)
+		{
+			Globals[i] = (int)ClassList[Globals[i]];
+		}
 	}
 
 	//	Set up builtins
-	Builtins = (builtin_t*)Z_Malloc(Progs->num_builtins * sizeof(builtin_t), PU_STATIC, 0);
-	for (i = 0; i < Progs->num_builtins; i++)
-    {
-    	//	Default builtin
-    	Builtins[i] = PF_Fixme;
-    }
-
 	for (i = 1; i < Progs->num_functions; i++)
     {
     	int		j;
@@ -292,16 +309,11 @@ void TProgs::Load(const char *AName)
 			Sys_Error("Function haves more than 8 params");
         for (j=0; BuiltinInfo[j].name; j++)
         {
-        	if (!strcmp(BuiltinInfo[j].name, FuncName(i)))
+        	if (!strcmp(BuiltinInfo[j].name, Functions[i].name))
 			{
-            	if (Functions[i].first_statement < 0)
+            	if (Functions[i].flags & FUNC_Native)
                 {
-                	int		num;
-
-                    num = -Functions[i].first_statement;
-					if (num >= Progs->num_builtins)
-						Sys_Error("Bad builtin number %d", num);
-                	Builtins[num] = BuiltinInfo[j].func;
+					Functions[i].first_statement = (int)BuiltinInfo[j].func;
 					break;
                 }
                 else
@@ -310,21 +322,73 @@ void TProgs::Load(const char *AName)
                 }
             }
         }
-#if defined CLIENT && defined SERVER
-		if (!BuiltinInfo[j].name && Functions[i].first_statement < 0)
+		if (!BuiltinInfo[j].name && Functions[i].flags & FUNC_Native)
         {
+	    	//	Default builtin
+			Functions[i].first_statement = (int)PF_Fixme;
+#if defined CLIENT && defined SERVER
         	//	Don't abort with error, because it will be done, when this
             // function will be called (if it will be called).
-        	cond << "WARNING: Builtin " << FuncName(i) << " not found!\n";
-        }
+        	cond << "WARNING: Builtin " << Functions[i].name << " not found!\n";
 #endif
+        }
+		if (!(Functions[i].flags & FUNC_Native))
+		{
+			Functions[i].first_statement =
+				(int)(Statements + Functions[i].first_statement);
+		}
     }
 
-	Profile1 = (dword*)Z_Calloc(Progs->num_functions * 4);
-	Profile2 = (dword*)Z_Calloc(Progs->num_functions * 4);
+	//
+	//	Patch code
+	//
+	for (i = 0; i < Progs->num_statements; i++)
+	{
+		switch (Statements[i])
+		{
+		case OPC_PUSHSTRING:
+			Statements[i + 1] += (int)Strings;
+			break;
+		case OPC_PUSHFUNCTION:
+			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
+			break;
+		case OPC_PUSHCLASSID:
+		case OPC_DYNAMIC_CAST:
+			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
+			break;
+		case OPC_GOTO:
+		case OPC_IFGOTO:
+		case OPC_IFNOTGOTO:
+		case OPC_IFTOPGOTO:
+		case OPC_IFNOTTOPGOTO:
+			Statements[i + 1] = (int)(Statements + Statements[i + 1]);
+			break;
+		case OPC_CASEGOTO:
+			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
+			break;
+		case OPC_CASE_GOTO_CLASSID:
+			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
+			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
+			break;
+		case OPC_GLOBALADDRESS:
+#ifdef CHECK_VALID_VAR_NUM
+			if (Statements[i + 1] < 0 || Statements[i + 1] >= Progs->num_globaldefs)
+			{
+		    	Sys_Error("Bad global num %d", Statements[i + 1]);
+	    	}
+#endif
+			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].ofs);
+			break;
+		case OPC_CALL:
+		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
+			break;
+		}
+		i += OpcodeArgCount[Statements[i]];
+	}
 
 	//	Execute initialization function
 	Exec("main");
+	Z_Free(ClassList);
 }
 
 //==========================================================================
@@ -336,9 +400,6 @@ void TProgs::Load(const char *AName)
 void TProgs::Unload(void)
 {
 	Z_Free(Progs);
-	Z_Free(Builtins);
-	Z_Free(Profile1);
-	Z_Free(Profile2);
 }
 
 //==========================================================================
@@ -353,9 +414,9 @@ int TProgs::CheckFuncNumForName(const char* name)
 
 	for (i=1; i<Progs->num_functions; i++)
     {
-    	if (!strcmp(Strings + Functions[i].s_name, name))
+    	if (!strcmp(Functions[i].name, name))
 		{
-        	return i;
+			return (int)(Functions + i);
 		}
     }
 	return 0;
@@ -391,7 +452,7 @@ int TProgs::CheckGlobalNumForName(const char* name)
 
 	for (i=1; i<Progs->num_globaldefs; i++)
     {
-    	if (!strcmp(Strings + Globaldefs[i].s_name, name))
+    	if (!strcmp(Globaldefs[i].name, name))
 		{
         	return Globaldefs[i].ofs;
 		}
@@ -425,12 +486,7 @@ int TProgs::GlobalNumForName(const char* name)
 
 char* TProgs::FuncName(int fnum)
 {
-	if (fnum <= 0 || fnum >= Progs->num_functions)
-	{
-		return "NULL function";
-	}
-
-	return Strings + Functions[fnum].s_name;
+	return ((dfunction_t *)fnum)->name;
 }
 
 //==========================================================================
@@ -445,51 +501,35 @@ extern "C" void PR_RFInvalidOpcode(void)
 	Sys_Error("Empty function or invalid opcode");
 }
 
-extern "C" VObject *PR_DynamicCast(VObject *object, int class_id)
+extern "C" VObject *PR_DynamicCast(VObject *object, VClass *SomeClass)
 {
-cond << "DynCast " << (void *)object << " to " << class_id << endl;
-	if (!current_progs->CanCast(object, class_id))
+	if (!object->IsA(SomeClass))
 	{
-cond << "Failed\n";
 		return NULL;
 	}
-cond << "Succed\n";
 	return object;
 }
 
 #ifdef USEASM
 
 //	Use asm version
-extern "C" void RunFunction(int fnum);
+extern "C" void RunFunction(dfunction_t *func);
 
 #else
 
-static void RunFunction(int fnum)
+static void RunFunction(dfunction_t *func)
 {
 	int			*current_statement;
 	int			*sp;
 	int			*local_vars;
 
-    current_func = fnum;
+    current_func = func;
 
-#ifdef CHECK_FUNC_NUM
-	if (fnum <= 0 || fnum >= progs->num_functions)
-	{
-		Sys_Error("RunFunction: NULL function");
-	}
-#endif
-
-	if (pr_functions[fnum].first_statement < 0)
+	if (func->flags & FUNC_Native)
 	{
 		//	Negative first statements are built in functions. Don't need to
 		// check builtin number (already done when setup builtins).
-#ifdef CHECK_RUNAWAY
-		if (!--runaway)
-        {
-			Sys_Error("RunFunction: runaway loop error");
-		}
-#endif
-		pr_builtins[-pr_functions[fnum].first_statement]();
+		((void(*)(void))func->first_statement)();
 		return;
 	}
 
@@ -497,10 +537,10 @@ static void RunFunction(int fnum)
 	sp = pr_stackPtr;
 
 	//	Setup local vars
-    local_vars = sp - pr_functions[fnum].num_parms;
-	sp += pr_functions[fnum].num_locals - pr_functions[fnum].num_parms;
+    local_vars = sp - func->num_parms;
+	sp += func->num_locals - func->num_parms;
 
-	current_statement = pr_statements + pr_functions[fnum].first_statement;
+	current_statement = (int *)func->first_statement;
 
 	//
     //	The main function loop
@@ -512,12 +552,6 @@ static void RunFunction(int fnum)
     //
  func_loop:
 
-#ifdef CHECK_RUNAWAY
-	if (!--runaway)
-    {
-		Sys_Error("RunFunction: runaway loop error");
-	}
-#endif
 	switch (*current_statement++)
 	{
      case OPC_DONE:
@@ -541,6 +575,10 @@ static void RunFunction(int fnum)
         return;
 
 	 case OPC_PUSHNUMBER:
+	 case OPC_GLOBALADDRESS:
+	 case OPC_PUSHSTRING:
+	 case OPC_PUSHFUNCTION:
+	 case OPC_PUSHCLASSID:
 		*sp++ = *current_statement++;
 		break;
 
@@ -556,16 +594,6 @@ static void RunFunction(int fnum)
 		}
 #endif
 		*sp++ = (int)&local_vars[*current_statement++];
-		break;
-
-	 case OPC_GLOBALADDRESS:
-#ifdef CHECK_VALID_VAR_NUM
-		if (*current_statement < 0 || *current_statement >= progs->num_globaldefs)
-		{
-	    	Sys_Error("Bad global num %d", *current_statement);
-	    }
-#endif
-		*sp++ = (int)&pr_globals[pr_globaldefs[*current_statement++].ofs];
 		break;
 
 	 case OPC_ADD:
@@ -707,20 +735,20 @@ static void RunFunction(int fnum)
 
 	 case OPC_CALL:
 		pr_stackPtr = sp;
-	    RunFunction(*current_statement++);
-		current_func = fnum;
+	    RunFunction((dfunction_t *)*current_statement++);
+		current_func = func;
 		sp = pr_stackPtr;
 		break;
 
 	 case OPC_GOTO:
-		current_statement = pr_statements + *current_statement;
+		current_statement = (int *)*current_statement;
 		break;
 
 	 case OPC_IFGOTO:
         sp--;
 		if (*sp)
 		{
-			current_statement = pr_statements + *current_statement;
+			current_statement = (int *)*current_statement;
 		}
 		else
 	    {
@@ -732,7 +760,7 @@ static void RunFunction(int fnum)
         sp--;
 	    if (!*sp)
 	    {
-	    	current_statement = pr_statements + *current_statement;
+	    	current_statement = (int *)*current_statement;
 		}
 		else
 	    {
@@ -741,9 +769,10 @@ static void RunFunction(int fnum)
 		break;
 
 	 case OPC_CASEGOTO:
+	 case OPC_CASE_GOTO_CLASSID:
 		if (*current_statement++ == sp[-1])
 	    {
-	    	current_statement = pr_statements + *current_statement;
+	    	current_statement = (int *)*current_statement;
 			sp--;
 		}
 		else
@@ -899,7 +928,7 @@ static void RunFunction(int fnum)
 	 case OPC_IFTOPGOTO:
 	    if (sp[-1])
 	    {
-	    	current_statement = pr_statements + *current_statement;
+	    	current_statement = (int *)*current_statement;
 	    }
 		else
 	    {
@@ -910,7 +939,7 @@ static void RunFunction(int fnum)
 	 case OPC_IFNOTTOPGOTO:
 	    if (!sp[-1])
 	    {
-	    	current_statement = pr_statements + *current_statement;
+	    	current_statement = (int *)*current_statement;
 		}
 	    else
 	    {
@@ -1130,8 +1159,8 @@ static void RunFunction(int fnum)
 	 case OPC_ICALL:
 		sp--;
 		pr_stackPtr = sp;
-	    RunFunction(*sp);
-		current_func = fnum;
+	    RunFunction((dfunction_t *)*sp);
+		current_func = func;
 		sp = pr_stackPtr;
 		break;
 
@@ -1246,12 +1275,6 @@ static void RunFunction(int fnum)
 
 //=====================================
 
-	 case OPC_PUSHSTRING:
-		*sp++ = int(pr_strings) + (*current_statement++);
-		break;
-
-//=====================================
-
 	 case OPC_COPY:
 		*sp = sp[-1];
 		sp++;
@@ -1268,7 +1291,7 @@ static void RunFunction(int fnum)
 		break;
 
 	 case OPC_DYNAMIC_CAST:
-		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], *current_statement++);
+		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], (VClass *)*current_statement++);
 		break;
 
 	 default:
@@ -1291,43 +1314,17 @@ static void RunFunction(int fnum)
 
 int TProgs::ExecuteFunction(int fnum)
 {
-	int		prev_func;
-	int		ret = 0;
-
-#ifdef CHECK_RUNAWAY
-	//	If this function is base function, then init runaway check
-    if (!current_func)
-    {
-    	caller_func = fnum;
-		runaway = 100000;
-    }
-#endif
-
-#ifdef CHECK_FUNC_NUM
-	if (fnum <= 0 || fnum >= Progs->num_functions)
-	{
-		Sys_Error("RunFunction: NULL function");
-	}
-#endif
-
-	current_progs = this;
-	progs = Progs;
-	pr_strings = Strings;
-	pr_globals = Globals;
-	pr_statements =	Statements;
-	pr_functions = Functions;
-	pr_globaldefs = Globaldefs;
-	pr_builtins = Builtins;
-	pr_profile1 = Profile1;
-	pr_profile2 = Profile2;
+	dfunction_t		*prev_func;
+	int				ret = 0;
+	dfunction_t		*func = (dfunction_t *)fnum;
 
 	//	Run function
 	prev_func = current_func;
-	RunFunction(fnum);
+	RunFunction(func);
 	current_func = prev_func;
 
 	//	Get return value
-	if (Functions[fnum].type)
+	if (func->type)
     {
 		ret = *(--pr_stackPtr);
 	}
@@ -1337,7 +1334,7 @@ int TProgs::ExecuteFunction(int fnum)
     if (!current_func && pr_stackPtr != pr_stack + 1)
     {
     	Sys_Error("ExecuteFunction: Stack is not empty after executing function:\n%s\nstack = %p, sp = %p",
-            FuncName(fnum), pr_stack, pr_stackPtr);
+            func->name, pr_stack, pr_stackPtr);
     }
 #endif
 
@@ -1345,7 +1342,7 @@ int TProgs::ExecuteFunction(int fnum)
 	//	Check, if stack wasn't underflowed
 	if (pr_stack[0] != STACK_ID)
    	{
-   		Sys_Error("ExecuteFunction: Stack underflow in %s", FuncName(fnum));
+   		Sys_Error("ExecuteFunction: Stack underflow in %s", func->name);
     }
 #endif
 
@@ -1353,7 +1350,7 @@ int TProgs::ExecuteFunction(int fnum)
 	//	Check, if stack wasn't overflowed
 	if (pr_stack[MAX_PROG_STACK - 1] != STACK_ID)
    	{
-   		Sys_Error("ExecuteFunction: Stack overflow in %s", FuncName(fnum));
+   		Sys_Error("ExecuteFunction: Stack overflow in %s", func->name);
     }
 #endif
 
@@ -1603,6 +1600,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 
 void TProgs::DumpProfile(void)
 {
+#if 0
 	#define MAX_PROF	100
 	int i;
 	int profsort[MAX_PROF];
@@ -1640,92 +1638,7 @@ void TProgs::DumpProfile(void)
 			(double)Profile2[fnum] * 100.0 / (double)totalcount,
 			(int)Profile2[fnum], (int)Profile1[fnum], FuncName(fnum));
 	}
-}
-
-//==========================================================================
-//
-//	TProgs::GetClassID
-//
-//==========================================================================
-
-int TProgs::GetClassID(const char *name)
-{
-	for (int i = 0; i < Progs->num_classinfo; i++)
-	{
-		if (!strcmp(name, Strings + ClassInfo[i].s_name))
-		{
-			return i;
-		}
-	}
-	Sys_Error("Class %s not found", name);
-#ifndef __GNUC__
-	return 0;// Shut up compiler
 #endif
-}
-
-//==========================================================================
-//
-//	TProgs::Spawn
-//
-//==========================================================================
-
-VObject *TProgs::Spawn(int cid, int tag)
-{
-	try
-	{
-		VObject *Obj = new((EInternal *)Z_Calloc(ClassInfo[cid].size,
-			tag, 0)) VObject;
-		Obj->vtable = Globals + ClassInfo[cid].vtable;
-		Exec(Obj->vtable[4], (int)Obj);
-		return Obj;
-	}
-	catch (...)
-	{
-		dprintf("- TProgs::Spawn\n");
-		throw;
-	}
-}
-
-//==========================================================================
-//
-//	TProgs::Destroy
-//
-//==========================================================================
-
-void TProgs::Destroy(VObject *buf)
-{
-	Exec(buf->vtable[5], (int)buf);
-	delete buf;
-}
-
-//==========================================================================
-//
-//	TProgs::CanCast
-//
-//==========================================================================
-
-bool TProgs::CanCast(VObject *object, int cid)
-{
-	return CanCast(object->GetClassID(), cid);
-}
-
-//==========================================================================
-//
-//	TProgs::CanCast
-//
-//==========================================================================
-
-bool TProgs::CanCast(int fromid, int cid)
-{
-	while (fromid)
-	{
-		if (fromid == cid)
-		{
-			return true;
-		}
-		fromid = ClassInfo[fromid].parent;
-	}
-	return false;
 }
 
 //==========================================================================
@@ -1749,9 +1662,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.12  2001/12/12 19:27:46  dj_jl
 //	Added dynamic cast
-//
+//	
 //	Revision 1.11  2001/12/03 19:21:45  dj_jl
 //	Added swaping with vector
 //	

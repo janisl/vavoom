@@ -57,11 +57,11 @@ enum
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-int GetMobjNum(mobj_t *mobj);
-mobj_t* SetMobjPtr(int archiveNum);
+int GetMobjNum(VMapObject *mobj);
+VMapObject* SetMobjPtr(int archiveNum);
 
-mobj_t *SV_SpawnMobj(int cid);
-void SV_RemoveMobj(mobj_t *mobj);
+VMapObject *SV_SpawnMobj(VClass *Class);
+void SV_RemoveMobj(VMapObject *mobj);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
@@ -72,9 +72,7 @@ void SV_SetCeilPic(int i, int texture);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern TProgs*			current_progs;
-extern char*			pr_strings;
-extern int				*pr_stackPtr;
+extern "C" { extern int	*pr_stackPtr; }
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -320,7 +318,7 @@ static void PF_GetCvar(void)
 	int		name;
 
     name = Pop();
-    Push(Cvar_Value(PROG_TO_STR(name)));
+    Push(TCvar::Value(PROG_TO_STR(name)));
 }
 
 //==========================================================================
@@ -336,7 +334,7 @@ static void PF_SetCvar(void)
 
     value = Pop();
     name = Pop();
-    Cvar_Set(PROG_TO_STR(name), value);
+    TCvar::Set(PROG_TO_STR(name), value);
 }
 
 //==========================================================================
@@ -350,7 +348,7 @@ static void PF_GetCvarF(void)
 	int		name;
 
     name = Pop();
-    Pushf(Cvar_Float(PROG_TO_STR(name)));
+    Pushf(TCvar::Float(PROG_TO_STR(name)));
 }
 
 //==========================================================================
@@ -366,7 +364,7 @@ static void PF_SetCvarF(void)
 
     value = Popf();
     name = Pop();
-    Cvar_Set(PROG_TO_STR(name), value);
+    TCvar::Set(PROG_TO_STR(name), value);
 }
 
 //==========================================================================
@@ -380,7 +378,7 @@ static void PF_GetCvarS(void)
 	int		name;
 
     name = Pop();
-    Push((int)STR_TO_PROG(Cvar_String(PROG_TO_STR(name))));
+    Push((int)STR_TO_PROG(TCvar::String(PROG_TO_STR(name))));
 }
 
 //==========================================================================
@@ -396,7 +394,7 @@ static void PF_SetCvarS(void)
 
     value = Pop();
     name = Pop();
-    Cvar_Set(PROG_TO_STR(name), PROG_TO_STR(value));
+    TCvar::Set(PROG_TO_STR(name), PROG_TO_STR(value));
 }
 
 //**************************************************************************
@@ -1092,12 +1090,12 @@ PF(MSG_ReadLong)
 
 PF(Spawn)
 {
-	int cid;
-	VObject *owner;
+	VClass *Class;
+	VObject *Outer;
 
-	owner = (VObject *)Pop();//Unused
-	cid = Pop();
-	Push((int)current_progs->Spawn(cid, PU_STRING));
+	Outer = (VObject *)Pop();
+	Class = (VClass *)Pop();
+	Push((int)VObject::StaticSpawnObject(Class, Outer, PU_STRING));
 }
 
 //==========================================================================
@@ -1111,7 +1109,7 @@ PF_M(Object, Destroy)
 	VObject *ptr;
 
 	ptr = (VObject *)Pop();
-	current_progs->Destroy(ptr);
+	ptr->Destroy();
 }
 
 #ifdef SERVER
@@ -1377,10 +1375,10 @@ static void PF_MapBlock(void)
 
 PF(NewMobjThinker)
 {
-	int cid;
+	VClass *Class;
 
-	cid = Pop();
-	Push((int)SV_SpawnMobj(cid));
+	Class = (VClass *)Pop();
+	Push((int)SV_SpawnMobj(Class));
 }
 
 //==========================================================================
@@ -1391,9 +1389,9 @@ PF(NewMobjThinker)
 
 static void PF_RemoveMobjThinker(void)
 {
-	mobj_t		*mobj;
+	VMapObject		*mobj;
 
-    mobj = (mobj_t*)Pop();
+    mobj = (VMapObject*)Pop();
 	SV_RemoveMobj(mobj);
 }
 
@@ -1405,9 +1403,9 @@ static void PF_RemoveMobjThinker(void)
 
 static void PF_P_SetThingPosition(void)
 {
-	mobj_t*		thing;
+	VMapObject*		thing;
 
-    thing = (mobj_t*)Pop();
+    thing = (VMapObject*)Pop();
     SV_LinkToWorld(thing);
 }
 
@@ -1419,9 +1417,9 @@ static void PF_P_SetThingPosition(void)
 
 static void PF_P_UnsetThingPosition(void)
 {
-	mobj_t*		thing;
+	VMapObject*		thing;
 
-    thing = (mobj_t*)Pop();
+    thing = (VMapObject*)Pop();
     SV_UnlinkFromWorld(thing);
 }
 
@@ -1438,15 +1436,20 @@ static void PF_NextMobj(void)
     th = (VThinker*)Pop();
 	if (!th)
     {
-    	th = &level.thinkers;
+    	th = level.thinkerHead;
 	}
-    for (th = th->next; th != &level.thinkers; th = th->next)
+	else
+	{
+		th = th->next;
+	}
+    while (th)
     {
-        if (SV_CanCast(th, cid_mobj))
+        if (SV_CanCast(th, VMapObject::StaticClass()))
         {
             Push((int)th);
             return;
 		}
+		th = th->next;
     }
 	Push(0);
 }
@@ -1459,11 +1462,11 @@ static void PF_NextMobj(void)
 
 static void PF_P_CheckSight(void)
 {
-	mobj_t*		mobj1;
-    mobj_t*		mobj2;
+	VMapObject*		mobj1;
+    VMapObject*		mobj2;
 
-	mobj2 = (mobj_t*)Pop();
-    mobj1 = (mobj_t*)Pop();
+	mobj2 = (VMapObject*)Pop();
+    mobj1 = (VMapObject*)Pop();
     Push(P_CheckSight(mobj1, mobj2));
 }
 
@@ -1481,11 +1484,11 @@ static void PF_P_CheckSight(void)
 
 PF(NewSpecialThinker)
 {
-	int			cid;
+	VClass		*Class;
 	VThinker	*spec;
 
-	cid = Pop();
-	spec = (VThinker*)svpr.Spawn(cid, PU_LEVSPEC);
+	Class = (VClass *)Pop();
+	spec = (VThinker*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
 	P_AddThinker(spec);
 	Push((int)spec);
 }
@@ -1529,21 +1532,26 @@ static void PF_P_ChangeSwitchTexture(void)
 PF(NextThinker)
 {
 	VThinker *th;
-	int cid;
+	VClass *Class;
 
-	cid = Pop();
+	Class = (VClass *)Pop();
 	th = (VThinker*)Pop();
 	if (!th)
 	{
-		th = &level.thinkers;
+		th = level.thinkerHead;
 	}
-	for (th = th->next; th != &level.thinkers; th = th->next)
+	else
 	{
-		if (SV_CanCast(th, cid))
+		th = th->next;
+	}
+	while (th)
+	{
+		if (SV_CanCast(th, Class))
 		{
 			Push((int)th);
 			return;
 		}
+		th = th->next;
 	}
 	Push(0);
 }
@@ -1671,13 +1679,13 @@ static void PF_StartACS(void)
 	int		num;
     int		map;
 	int 	*args;
-    mobj_t	*activator;
+    VMapObject	*activator;
     line_t	*line;
     int		side;
 
     side = Pop();
 	line = (line_t*)Pop();
-    activator = (mobj_t*)Pop();
+    activator = (VMapObject*)Pop();
 	args = (int*)Pop();
     map = Pop();
     num = Pop();
@@ -1752,9 +1760,9 @@ static void PF_PolyobjFinished(void)
 
 PF_M(ACS, Think)
 {
-	acs_t	*script;
+	VACS	*script;
 
-	script = (acs_t *)Pop();
+	script = (VACS *)Pop();
 	SV_InterpretACS(script);
 }
 
@@ -1766,12 +1774,12 @@ PF_M(ACS, Think)
 
 PF_M(ACS, Archive)
 {
-	acs_t		*acs;
+	VACS	*acs;
 
-	acs = (acs_t *)Pop();
+	acs = (VACS *)Pop();
 	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
 	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
-	acs->activator = (mobj_t *)GetMobjNum(acs->activator);
+	acs->activator = (VMapObject *)GetMobjNum(acs->activator);
 }
 
 //==========================================================================
@@ -1782,9 +1790,9 @@ PF_M(ACS, Archive)
 
 PF_M(ACS, Unarchive)
 {
-	acs_t		*acs;
+	VACS	*acs;
 
-	acs = (acs_t *)Pop();
+	acs = (VACS *)Pop();
 	acs->ip = (int *)(ActionCodeBase + (int)acs->ip);
 	if ((int)acs->line == -1)
 	{
@@ -1811,13 +1819,13 @@ PF_M(ACS, Unarchive)
 
 PF(StartSound)
 {
-	mobj_t*		mobj;
+	VMapObject*		mobj;
     int			sound;
 	int			channel;
 
 	channel = Pop();
     sound = Pop();
-    mobj = (mobj_t*)Pop();
+    mobj = (VMapObject*)Pop();
 	SV_StartSound(mobj, sound, channel, 127);
 }
 
@@ -1829,7 +1837,7 @@ PF(StartSound)
 
 PF(StartSoundAtVolume)
 {
-	mobj_t*		mobj;
+	VMapObject*		mobj;
     int			sound;
 	int			channel;
     int			vol;
@@ -1837,7 +1845,7 @@ PF(StartSoundAtVolume)
     vol = Pop();
 	channel = Pop();
     sound = Pop();
-    mobj = (mobj_t*)Pop();
+    mobj = (VMapObject*)Pop();
     SV_StartSound(mobj, sound, channel, vol);
 }
 
@@ -1849,11 +1857,11 @@ PF(StartSoundAtVolume)
 
 PF(StopSound)
 {
-	mobj_t*		mobj;
+	VMapObject*		mobj;
 	int			channel;
 
 	channel = Pop();
-    mobj = (mobj_t*)Pop();
+    mobj = (VMapObject*)Pop();
     SV_StopSound(mobj, channel);
 }
 
@@ -2033,9 +2041,9 @@ static void PF_NumToSector(void)
 
 static void PF_MobjToNum(void)
 {
-	mobj_t*		mobj;
+	VMapObject*		mobj;
 
-    mobj = (mobj_t*)Pop();
+    mobj = (VMapObject*)Pop();
     Push(GetMobjNum(mobj));
 }
 
@@ -3177,9 +3185,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.23  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
-//
+//	
 //	Revision 1.22  2001/12/04 18:16:28  dj_jl
 //	Player models and skins handled by server
 //	

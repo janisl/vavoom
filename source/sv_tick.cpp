@@ -52,6 +52,8 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+IMPLEMENT_CLASS(VThinker)
+
 static int	pf_UpdateSpecials;
 static int	pf_SetViewPos;
 static int	pf_RunThink;
@@ -69,7 +71,24 @@ void P_InitThinkers(void)
 	pf_UpdateSpecials = svpr.FuncNumForName("P_UpdateSpecials");
     pf_SetViewPos = svpr.FuncNumForName("SetViewPos");
 	pf_RunThink = svpr.FuncNumForName("RunThink");
-	level.thinkers.prev = level.thinkers.next  = &level.thinkers;
+	level.thinkerHead = NULL;
+ 	level.thinkerTail = NULL;
+}
+
+//==========================================================================
+//
+//	SV_DestroyAllThinkers
+//
+//==========================================================================
+
+void SV_DestroyAllThinkers(void)
+{
+	for (VThinker *th = level.thinkerHead; th; th = th->next)
+	{
+		th->Destroy();
+	}
+	level.thinkerHead = NULL;
+ 	level.thinkerTail = NULL;
 }
 
 //==========================================================================
@@ -82,10 +101,20 @@ void P_InitThinkers(void)
 
 void P_AddThinker(VThinker *thinker)
 {
-	level.thinkers.prev->next = thinker;
-	thinker->next = &level.thinkers;
-	thinker->prev = level.thinkers.prev;
-	level.thinkers.prev = thinker;
+	if (level.thinkerHead)
+	{
+		thinker->next = NULL;
+		thinker->prev = level.thinkerTail;
+		level.thinkerTail->next = thinker;
+		level.thinkerTail = thinker;
+	}
+	else
+	{
+		thinker->prev = NULL;
+		thinker->next = NULL;
+		level.thinkerHead = thinker;
+		level.thinkerTail = thinker;
+	}
 }
 
 //==========================================================================
@@ -112,8 +141,8 @@ static void RunThinkers(void)
 {
 	VThinker *currentthinker;
 
-	currentthinker = level.thinkers.next;
-	while (currentthinker != &level.thinkers)
+	currentthinker = level.thinkerHead;
+	while (currentthinker)
 	{
 		if (!currentthinker->destroyed)
 		{
@@ -122,9 +151,23 @@ static void RunThinkers(void)
         else
 		{
 			// Time to remove it
-			currentthinker->next->prev = currentthinker->prev;
-			currentthinker->prev->next = currentthinker->next;
-			Z_Free(currentthinker);
+			if (currentthinker->next)
+			{
+				currentthinker->next->prev = currentthinker->prev;
+			}
+			else
+			{
+				level.thinkerTail = currentthinker->prev;
+			}
+			if (currentthinker->prev)
+			{
+				currentthinker->prev->next = currentthinker->next;
+			}
+			else
+			{
+				level.thinkerHead = currentthinker->next;
+			}
+			currentthinker->Destroy();
 		}
 		currentthinker = currentthinker->next;
 	}
@@ -159,9 +202,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/18 19:03:17  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.5  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
-//
+//	
 //	Revision 1.4  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

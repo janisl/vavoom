@@ -28,6 +28,131 @@
 
 #define MAXHEALTH		100
 
+#include "player.h"
+
+//==========================================================================
+//
+//								MAPOBJ DATA
+//
+// 	NOTES: VMapObject
+//
+// 	mobj_ts are used to tell the refresh where to draw an image, tell the
+// world simulation when objects are contacted, and tell the sound driver
+// how to position a sound.
+//
+// 	The refresh uses the next and prev links to follow lists of things in
+// sectors as they are being drawn. The sprite, frame, and angle elements
+// determine which patch_t is used to draw the sprite if it is visible.
+// The sprite and frame values are allmost allways set from state_t
+// structures. The statescr.exe utility generates the states.h and states.c
+// files that contain the sprite/frame numbers from the statescr.txt source
+// file. The xyz origin point represents a point at the bottom middle of the
+// sprite (between the feet of a biped). This is the default origin position
+// for patch_ts grabbed with lumpy.exe. A walking creature will have its z
+// equal to the floor it is standing on.
+//
+// 	The sound code uses the x,y, and subsector fields to do stereo
+// positioning of any sound effited by the VMapObject.
+//
+// 	The play simulation uses the blocklinks, x,y,z, radius, height to
+// determine when mobj_ts are touching each other, touching lines in the map,
+// or hit by trace lines (gunshots, lines of sight, etc). The VMapObject->flags
+// element has various bit flags used by the simulation.
+//
+// 	Every VMapObject is linked into a single sector based on its origin
+// coordinates. The subsector_t is found with R_PointInSubsector(x,y), and
+// the sector_t can be found with subsector->sector. The sector links are
+// only used by the rendering code, the play simulation does not care about
+// them at all.
+//
+// 	Any VMapObject that needs to be acted upon by something else in the play
+// world (block movement, be shot, etc) will also need to be linked into the
+// blockmap. If the thing has the MF_NOBLOCK flag set, it will not use the
+// block links. It can still interact with other things, but only as the
+// instigator (missiles will run into other things, but nothing can run into
+// a missile). Each block in the grid is 128*128 units, and knows about every
+// line_t that it contains a piece of, and every interactable VMapObject that has
+// its origin contained.
+//
+// 	A valid VMapObject is a VMapObject that has the proper subsector_t filled in for
+// its xy coordinates and is linked into the sector from which the subsector
+// was made, or has the MF_NOSECTOR flag set (the subsector_t needs to be
+// valid even if MF_NOSECTOR is set), and is linked into a blockmap block or
+// has the MF_NOBLOCKMAP flag set. Links should only be modified by the
+// P_[Un]SetThingPosition() functions. Do not change the MF_NO? flags while
+// a thing is valid.
+//
+// 	Any questions?
+//
+//==========================================================================
+
+struct player_t;
+
+// Map Object definition.
+class VMapObject:public VThinker
+{
+	DECLARE_CLASS(VMapObject, VThinker, 0)
+
+	// Info for drawing: position.
+	TVec			origin;
+
+	// Momentums, used to update position.
+	TVec			velocity;
+
+	//More drawing info: to determine current sprite.
+	TAVec			angles;	// orientation
+	int				spritetype;
+	int				sprite;	// used to find patch_t and flip value
+	int				frame;	// might be ORed with FF_FULLBRIGHT
+
+	int				model_index;
+	int				alias_frame;
+	int				alias_skinnum;
+
+	int				translucency;
+	int				translation;
+
+	float			floorclip;		// value to use for floor clipping
+
+	int				effects;
+
+	subsector_t*	subsector;
+
+	// Interaction info, by BLOCKMAP.
+	// Links in blocks (if needed).
+	VMapObject*		bnext;
+	VMapObject*		bprev;
+
+	// The closest interval over all contacted Sectors.
+	float			floorz;
+	float			ceilingz;
+
+	//	Closest floor and ceiling, source of floorz and ceilingz
+	sec_plane_t		*floor;
+	sec_plane_t		*ceiling;
+
+	// If == validcount, already checked.
+	int				validcount;
+
+	int				flags;
+	int				flags2;			// Heretic flags
+	int				health;
+
+	// For movement checking.
+	float			radius;
+	float			height;
+
+	// Additional info record for player avatars only.
+	// Only valid if type == MT_PLAYER
+	player_t		*player;
+
+	int				tid;			// thing identifier
+	int				special;		// special
+	int				args[5];		// special arguments
+
+	int				netID;
+};
+
 //==========================================================================
 //
 //	sv_acs
@@ -62,11 +187,12 @@ struct acsInfo_t
 	int 	waitValue;
 };
 
-class acs_t:public VThinker
+class VACS:public VThinker
 {
-	DECLARE_CLASS(acs_t, VThinker, 0)
-public:
-	mobj_t 		*activator;
+	DECLARE_CLASS(VACS, VThinker, 0)
+	NO_DEFAULT_CONSTRUCTOR(VACS)
+
+	VMapObject 		*activator;
 	line_t 		*line;
 	int 		side;
 	int 		number;
@@ -86,11 +212,11 @@ struct acsstore_t
 };
 
 void P_LoadACScripts(boolean spawn_thinkers);
-boolean P_StartACS(int number, int map, int *args, mobj_t *activator,
+boolean P_StartACS(int number, int map, int *args, VMapObject *activator,
 	line_t *line, int side);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
-void SV_InterpretACS(acs_t *script);
+void SV_InterpretACS(VACS *script);
 void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
@@ -137,7 +263,7 @@ struct intercept_t
 {
     float		frac;		// along trace line
     boolean		isaline;
-	mobj_t		*thing;
+	VMapObject		*thing;
 	line_t		*line;
 };
 
@@ -145,11 +271,11 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point);
 
 int P_BoxOnLineSide(float* tmbox, line_t* ld);
 
-void SV_UnlinkFromWorld(mobj_t* thing);
-void SV_LinkToWorld(mobj_t* thing);
+void SV_UnlinkFromWorld(VMapObject* thing);
+void SV_LinkToWorld(VMapObject* thing);
 
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*), int prfunc);
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(mobj_t*), int prfunc);
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*), int prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
 	int flags, boolean(*trav)(intercept_t *), int prtrav);
 
@@ -166,7 +292,7 @@ int SV_PointContents(const sector_t *sector, const TVec &p);
 //
 //==========================================================================
 
-boolean P_CheckSight(mobj_t* t1, mobj_t* t2);
+boolean P_CheckSight(VMapObject* t1, VMapObject* t2);
 
 //==========================================================================
 //
@@ -237,8 +363,8 @@ struct mobj_base_t
 	int			effects;		// dynamic lights, trails
 };
 
-void SV_StartSound(const mobj_t *, int, int, int);
-void SV_StopSound(const mobj_t *, int);
+void SV_StartSound(const VMapObject *, int, int, int);
+void SV_StopSound(const VMapObject *, int);
 void SV_SectorStartSound(const sector_t *, int, int, int);
 void SV_SectorStopSound(const sector_t *, int);
 void SV_SectorStartSequence(const sector_t *, const char *);
@@ -259,9 +385,6 @@ int SV_FindSkin(const char *name);
 void SV_ReadMove(void);
 
 extern player_t		*sv_player;
-
-extern int			cid_mobj;
-extern int			cid_acs;
 
 //==========================================================================
 //
@@ -307,9 +430,9 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return PointInSubsector(level, x, y);
 }
 
-inline bool SV_CanCast(VThinker *th, int cid)
+inline bool SV_CanCast(VThinker *th, VClass *Class)
 {
-	return !th->destroyed && svpr.CanCast(th, cid);
+	return !th->destroyed && th->IsA(Class);
 }
 
 #endif
@@ -317,9 +440,12 @@ inline bool SV_CanCast(VThinker *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/18 19:03:16  dj_jl
+//	A lots of work on VObject
+//
 //	Revision 1.13  2001/12/04 18:14:46  dj_jl
 //	Renamed thinker_t to VThinker
-//
+//	
 //	Revision 1.12  2001/10/27 07:49:29  dj_jl
 //	Fixed map block stuff
 //	
