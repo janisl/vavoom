@@ -517,25 +517,7 @@ struct mobj_t : public thinker_t
 #define MAXDEATHMATCHSTARTS		16
 #define MAX_PLAYER_STARTS 		8
 
-struct mapInfo_t
-{
-	char	lumpname[12];
-	int		cluster;    // Defines what cluster level belongs to
-	int		warpTrans;  // Actual map number in case maps are not sequential
-	char	nextMap[12];// Map to teleport to upon exit of timed deathmatch
-	int		cdTrack;    // CD track to play during level
-	char	name[32];   // Name of map
-	int		sky1Texture;// Default sky texture
-	int		sky2Texture;// Alternate sky displayed in Sky2 sectors
-	float	sky1ScrollDelta;// Default sky texture speed
-	float	sky2ScrollDelta;// Alternate sky texture speed
-	boolean	doubleSky;  // parallax sky: sky2 behind sky1
-	boolean	lightning;  // Use of lightning on the level flashes from sky1 to sky2
-	char	fadetable[12];// Fade table {fogmap}
-	char	songLump[12];// Background music (MUS or MIDI)
-};
-
-struct level_t
+struct base_level_t
 {
 	//
 	// MAP related Lookup tables.
@@ -566,6 +548,22 @@ struct level_t
 	int 		numpolyobjs;
 	polyobj_t	*polyobjs; // list of all poly-objects on the level
 
+	float		time;
+	int			tictime;
+
+	int			totalkills;
+	int			totalitems;
+	int			totalsecret;    // for intermission
+
+	char		mapname[12];
+	char		nextmap[12];
+	char		level_name[32];
+
+	byte		*vis_data;
+};
+
+struct sv_level_t:base_level_t
+{
 	// !!! Valid only during level loading
 	int			numthings;
 	mthing_t	*things;
@@ -598,41 +596,38 @@ struct level_t
 	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int			numdeathmatchstarts;
 	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
-
-	float		time;
-	int			tictime;
-
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;    // for intermission
  
 	thinker_t	thinkers;// both the head and tail of the thinker list
+};
 
-	char		mapname[12];
-	char		nextmap[12];
-	char		level_name[32];
-
-	byte		*vis_data;
+struct cl_level_t:base_level_t
+{
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void P_GetMapInfo(const char *map, mapInfo_t &info);
 void CalcLine(line_t *line);
 void CalcSeg(seg_t *seg);
-void LoadLevel(level_t &lev, const char *mapname, bool server_level);
-subsector_t* PointInSubsector(const level_t &lev, float x, float y);
-byte *LeafPVS(const level_t &lev, const subsector_t *ss);
+void LoadLevel(sv_level_t &lev, const char *mapname);
+void LoadLevel(cl_level_t &lev, const char *mapname);
+subsector_t* PointInSubsector(const base_level_t &lev, float x, float y);
+byte *LeafPVS(const base_level_t &lev, const subsector_t *ss);
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+extern sv_level_t		level;
+extern cl_level_t		cl_level;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/08 17:33:01  dj_jl
+//	Different client and server level structures
+//
 //	Revision 1.7  2001/10/02 17:43:50  dj_jl
 //	Added addfields to lines, sectors and polyobjs
-//
+//	
 //	Revision 1.6  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
 //	

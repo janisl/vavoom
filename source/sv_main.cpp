@@ -147,6 +147,7 @@ void SV_Init(void)
     svpr.SetGlobal("players", (int)players);
     svpr.SetGlobal("validcount", (int)&validcount);
 	svpr.SetGlobal("level", (int)&level);
+	svpr.SetGlobal("skyflatnum", skyflatnum);
 
 	cid_mobj = svpr.GetClassID("mobj_t");
 	cid_acs = svpr.GetClassID("ACS");
@@ -157,16 +158,7 @@ void SV_Init(void)
 	if (long_stats + short_stats + byte_stats > 96)
 		Sys_Error("Too meny stats %d + %d + %d", long_stats, short_stats, byte_stats);
     pf_PlayerThink = svpr.FuncNumForName("PlayerThink");
-}
 
-//==========================================================================
-//
-//  P_Init
-//
-//==========================================================================
-
-void P_Init(void)
-{
 	P_InitSwitchList();
 	P_InitTerrainTypes();
 }
@@ -1276,7 +1268,7 @@ void SV_RunClients(void)
     	// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
 		if (players[i].spawned && !sv.intermission && !paused &&
-			(netgame || !(MN_Active() || C_Active() || MB_Active())))
+			(netgame || !(MN_Active() || C_Active())))
 #else
 		if (players[i].spawned && !sv.intermission && !paused)
 #endif
@@ -1316,7 +1308,7 @@ void SV_Ticker(void)
 	{
 	    // pause if in menu or console
 #ifdef CLIENT
-		if (!paused && (netgame || !(MN_Active() || C_Active() || MB_Active())))
+		if (!paused && (netgame || !(MN_Active() || C_Active())))
 #else
 		if (!paused)
 #endif
@@ -1712,29 +1704,6 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 //==========================================================================
 //
-//	SV_SendReconnect
-//
-//	Tell all the clients that the server is changing levels
-//
-//==========================================================================
-
-void SV_SendReconnect(void)
-{
-	byte		data[128];
-	TMessage	msg(data, 128);
-
-	msg << (byte)svc_stringcmd
-		<< "Reconnect\n";
-	NET_SendToAll(&msg, 5);
-
-#ifdef CLIENT
-	if (cls.state != ca_dedicated)
-		Cmd_ExecuteString("reconnect\n", src_command);
-#endif
-}
-
-//==========================================================================
-//
 //	SV_SendServerInfo
 //
 //==========================================================================
@@ -1824,7 +1793,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 				players[i].playerstate = PST_REBORN;
 			players[i].message.Clear();
 		}
-		SV_SendReconnect();
 	}
 	else
 	{
@@ -1853,7 +1821,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	svpr.Exec("StartLevelLoading");
 
 	//	Load it
-	LoadLevel(level, level.mapname, true);
+	LoadLevel(level, level.mapname);
 
 	//	Spawn slopes, extra floors, etc.
 	svpr.Exec("SpawnWorld");
@@ -2392,24 +2360,32 @@ COMMAND(MaxPlayers)
 
 void ServerFrame(int realtics)
 {
-	SV_ClearDatagram();
+	try
+	{
+		SV_ClearDatagram();
 
-	SV_CheckForNewClients();
+		SV_CheckForNewClients();
 
 #ifndef REAL_TIME
-    // run the count dics
-    while (realtics--)
+	    // run the count dics
+    	while (realtics--)
 #endif
-    {
-		SV_Ticker();
-	}
+	    {
+			SV_Ticker();
+		}
 
-	if (mapteleport_issued)
+		if (mapteleport_issued)
+		{
+			SV_MapTeleport(sv_next_map);
+		}
+
+		SV_SendClientMessages();
+	}
+	catch (...)
 	{
-		SV_MapTeleport(sv_next_map);
+		dprintf("- ServerFrame\n");
+		throw;
 	}
-
-	SV_SendClientMessages();
 }
 
 //==========================================================================
@@ -2494,9 +2470,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/08 17:33:01  dj_jl
+//	Different client and server level structures
+//
 //	Revision 1.13  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.12  2001/09/27 17:03:20  dj_jl
 //	Support for multiple mobj classes
 //	

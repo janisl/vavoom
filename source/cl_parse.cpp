@@ -81,7 +81,7 @@ static model_t			*model_precache[1024];
 void CL_Clear(void)
 {
 	memset(&cl, 0, sizeof(cl));
-	memset(&cl_level, 0, sizeof(level));
+	memset(&cl_level, 0, sizeof(cl_level));
 	memset(cl_mobjs, 0, sizeof(cl_mobjs));
 	memset(cl_mo_base, 0, sizeof(cl_mo_base));
 	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
@@ -97,6 +97,7 @@ void CL_Clear(void)
 		Z_FreeTag(PU_LEVEL);
 		Z_FreeTag(PU_LEVSPEC);
 	}
+	cls.signon = 0;
 }
 
 static void CL_ReadMobjBase(clmobjbase_t &mobj)
@@ -507,7 +508,6 @@ static void	CL_ReadFromServerInfo(void)
 //==========================================================================
 
 void CL_SetupLevel(void);
-void P_GetMapInfo(const char *map, mapInfo_t &info);
 
 static void CL_ParseServerInfo(void)
 {
@@ -527,7 +527,7 @@ static void CL_ParseServerInfo(void)
 	P_GetMapInfo(cl_level.mapname, info);
 	strcpy(cl_level.level_name, info.name);
 
-	LoadLevel(cl_level, cl_level.mapname, false);
+	LoadLevel(cl_level, cl_level.mapname);
 
 	R_Start(info);
    	S_Start(info);
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/08 17:33:01  dj_jl
+//	Different client and server level structures
+//
 //	Revision 1.8  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

@@ -51,10 +51,10 @@ void BuildPVS(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 #ifdef CLIENT
-level_t cl_level;
+cl_level_t cl_level;
 #endif
 #ifdef SERVER
-level_t level;
+sv_level_t level;
 #endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -63,6 +63,8 @@ static vertex_t *gl_vertexes;
 static int numglvertexes;
 
 static byte novis[32 * 1024 / 8];
+
+static bool AuxiliaryMap;
 
 // CODE --------------------------------------------------------------------
 
@@ -120,13 +122,15 @@ int TFNumForName(const char *name)
 	return i;
 }
 
+#ifdef SERVER
+
 //==========================================================================
 //
 //  LoadBlockMap
 //
 //==========================================================================
 
-static void LoadBlockMap(int lump, level_t &loadlevel)
+static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 {
 	int i;
 	int count;
@@ -148,13 +152,15 @@ static void LoadBlockMap(int lump, level_t &loadlevel)
 	loadlevel.blocklinks = Z_CNew<mobj_t*>(count, PU_LEVEL, 0);
 }
 
+#endif
+
 //==========================================================================
 //
 //  LoadVertexes
 //
 //==========================================================================
 
-static void LoadVertexes(int lump, int gl_lump, level_t &loadlevel)
+static void LoadVertexes(int lump, int gl_lump, base_level_t &loadlevel)
 {
 	int i;
 	void *data;
@@ -228,7 +234,7 @@ static void LoadVertexes(int lump, int gl_lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void LoadSectors(int lump, level_t &loadlevel)
+static void LoadSectors(int lump, base_level_t &loadlevel)
 {
 	byte *data;
 	int i;
@@ -294,7 +300,7 @@ static void LoadSectors(int lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void LoadSideDefs(int lump, level_t &loadlevel)
+static void LoadSideDefs(int lump, base_level_t &loadlevel)
 {
 	byte *data;
 	int i;
@@ -390,7 +396,7 @@ void CalcLine(line_t *line)
 //
 //==========================================================================
 
-static void LoadLineDefs1(int lump, level_t &loadlevel)
+static void LoadLineDefs1(int lump, base_level_t &loadlevel)
 {
 	byte *data;
 	int i;
@@ -438,7 +444,7 @@ static void LoadLineDefs1(int lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void LoadLineDefs2(int lump, level_t &loadlevel)
+static void LoadLineDefs2(int lump, base_level_t &loadlevel)
 {
 	byte *data;
 	int i;
@@ -500,7 +506,7 @@ void CalcSeg(seg_t *seg)
 //
 //==========================================================================
 
-static void LoadGLSegs(int lump, level_t &loadlevel)
+static void LoadGLSegs(int lump, base_level_t &loadlevel)
 {
 	void *data;
 	int i;
@@ -577,7 +583,7 @@ static void LoadGLSegs(int lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void LoadSubsectors(int lump, level_t &loadlevel)
+static void LoadSubsectors(int lump, base_level_t &loadlevel)
 {
 	void *data;
 	int i;
@@ -623,7 +629,7 @@ static void LoadSubsectors(int lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void LoadNodes(int lump, level_t &loadlevel)
+static void LoadNodes(int lump, base_level_t &loadlevel)
 {
 	byte *data;
 	int i;
@@ -663,7 +669,7 @@ static void LoadNodes(int lump, level_t &loadlevel)
 //
 //==========================================================================
 
-static void	LoadPVS(int lump, level_t &loadlevel)
+static void	LoadPVS(int lump, base_level_t &loadlevel)
 {
 	if (strcmp(W_LumpName(lump), "GL_PVS") || W_LumpLength(lump) == 0)
 	{
@@ -686,7 +692,7 @@ static void	LoadPVS(int lump, level_t &loadlevel)
 
 static void LoadThings1(int lump)
 {
-	level_t &loadlevel = level;
+	sv_level_t &loadlevel = level;
 	byte *data;
 	int i;
 	mapthing1_t *mt;
@@ -717,7 +723,7 @@ static void LoadThings1(int lump)
 
 static void LoadThings2(int lump)
 {
-	level_t &loadlevel = level;
+	sv_level_t &loadlevel = level;
 	byte *data;
 	int i;
 	mapthing2_t *mt;
@@ -785,7 +791,7 @@ static void AddToBox(float* box, float x, float y)
 //
 //==========================================================================
 
-static void LinkNode(int bspnum, node_t *parent, level_t &loadlevel)
+static void LinkNode(int bspnum, node_t *parent, base_level_t &loadlevel)
 {
 	if (bspnum & NF_SUBSECTOR)
 	{
@@ -807,6 +813,8 @@ static void LinkNode(int bspnum, node_t *parent, level_t &loadlevel)
 	}
 }
 
+#ifdef SERVER
+
 //==========================================================================
 //
 //  GroupLines
@@ -816,7 +824,7 @@ static void LinkNode(int bspnum, node_t *parent, level_t &loadlevel)
 //
 //==========================================================================
 
-static void GroupLines(level_t &loadlevel)
+static void GroupLines(sv_level_t &loadlevel)
 {
 	line_t ** linebuffer;
 	int i;
@@ -887,15 +895,84 @@ static void GroupLines(level_t &loadlevel)
 	}
 }
 
+#endif
+#ifdef CLIENT
+
 //==========================================================================
 //
-//  LoadLevel
+//  GroupLines
+//
+//  Builds sector line lists and subsector sector numbers. Finds block
+// bounding boxes for sectors.
 //
 //==========================================================================
 
-void LoadLevel(level_t &lev, const char *mapname, bool server_level)
+static void GroupLines(cl_level_t &loadlevel)
 {
-	bool AuxiliaryMap = false;
+	line_t ** linebuffer;
+	int i;
+	int j;
+	int total;
+	line_t *li;
+	sector_t *sector;
+	float bbox[4];
+
+	LinkNode(loadlevel.numnodes - 1, NULL, loadlevel);
+
+	// count number of lines in each sector
+	li = loadlevel.lines;
+	total = 0;
+	for (i = 0; i < loadlevel.numlines; i++, li++)
+	{
+		total++;
+		li->frontsector->linecount++;
+
+		if (li->backsector && li->backsector != li->frontsector)
+		{
+			li->backsector->linecount++;
+			total++;
+		}
+	}
+
+	// build line tables for each sector
+	linebuffer = Z_New<line_t*>(total, PU_LEVEL, 0);
+	sector = loadlevel.sectors;
+	for (i = 0; i < loadlevel.numsectors; i++, sector++)
+	{
+		ClearBox(bbox);
+		sector->lines = linebuffer;
+		li = loadlevel.lines;
+		for (j = 0; j < loadlevel.numlines; j++, li++)
+		{
+			if (li->frontsector == sector || li->backsector == sector)
+			{
+				*linebuffer++ = li;
+				AddToBox(bbox, li->v1->x, li->v1->y);
+				AddToBox(bbox, li->v2->x, li->v2->y);
+			}
+		}
+		if (linebuffer - sector->lines != sector->linecount)
+			Sys_Error("GroupLines: miscounted");
+
+		// set the soundorg to the middle of the bounding box
+		sector->soundorg = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
+			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
+	}
+}
+
+#endif
+
+//==========================================================================
+//
+//	LoadBaseLevel
+//
+//==========================================================================
+
+static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
+	int &lumpnum, int &gl_lumpnum)
+{
+	W_CloseAuxiliary();
+	AuxiliaryMap = false;
 	// if working with a devlopment map, reload it
 	if (fl_devmode)
 	{
@@ -908,12 +985,13 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 		}
 	}
 
-	int lumpnum = W_CheckNumForName(mapname);
+	lumpnum = W_CheckNumForName(mapname);
 	if (lumpnum < 0)
 	{
 		Host_Error("Map %s not found\n", mapname);
 	}
-	int gl_lumpnum = W_CheckNumForName(va("GL_%s", mapname));
+	gl_lumpnum = W_CheckNumForName(va("GL_%s", mapname));
+#ifdef CLIENT
 	if (gl_lumpnum < lumpnum)
 	{
 		W_BuildGLNodes(lumpnum);
@@ -926,13 +1004,19 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 		lumpnum = W_GetNumForName(mapname);
 		gl_lumpnum = W_GetNumForName(va("GL_%s", mapname));
 	}
+#else
+	if (gl_lumpnum < lumpnum)
+	{
+		// Dedicated servers doesn't have plugins
+		Host_Error("Map %s is missing GL-Nodes\n");
+	}
+#endif
 	bool extended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
 	//
 	// Begin processing map lumps
 	// Note: most of this ordering is important
 	//
-	LoadBlockMap(lumpnum + ML_BLOCKMAP, lev);
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, lev);
 	LoadSectors(lumpnum + ML_SECTORS, lev);
 	LoadSideDefs(lumpnum + ML_SIDEDEFS, lev);
@@ -949,28 +1033,42 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
    	LoadNodes(gl_lumpnum + ML_GL_NODES, lev);
 	LoadPVS(gl_lumpnum + ML_GL_PVS, lev);
 
-	lev.rejectmatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
-	GroupLines(lev);
+	return extended;
+}
 
 #ifdef SERVER
-	if (server_level)
+
+//==========================================================================
+//
+//  LoadLevel
+//
+//==========================================================================
+
+void LoadLevel(sv_level_t &lev, const char *mapname)
+{
+	int lumpnum;
+	int gl_lumpnum;
+
+	bool extended = LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum);
+	LoadBlockMap(lumpnum + ML_BLOCKMAP, lev);
+	lev.rejectmatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
+
+	GroupLines(lev);
+
+	if (extended)
 	{
-		if (extended)
-		{
-			LoadThings2(lumpnum + ML_THINGS);
-			//	ACS object code
-			lev.behavior = (int*)W_CacheLumpNum(lumpnum + ML_BEHAVIOR, PU_LEVEL);
-		}
-		else
-		{
-			LoadThings1(lumpnum + ML_THINGS);
-			//	Inform ACS, that we don't have scripts
-			lev.behavior = NULL;
-			//	Translate level to Hexen format
-			svpr.Exec("TranslateLevel");
-		}
+		LoadThings2(lumpnum + ML_THINGS);
+		//	ACS object code
+		lev.behavior = (int*)W_CacheLumpNum(lumpnum + ML_BEHAVIOR, PU_LEVEL);
 	}
-#endif
+	else
+	{
+		LoadThings1(lumpnum + ML_THINGS);
+		//	Inform ACS, that we don't have scripts
+		lev.behavior = NULL;
+		//	Translate level to Hexen format
+		svpr.Exec("TranslateLevel");
+	}
 
 	//
 	// End of map lump processing
@@ -984,13 +1082,44 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 	}
 }
 
+#endif
+#ifdef CLIENT
+
+//==========================================================================
+//
+//  LoadLevel
+//
+//==========================================================================
+
+void LoadLevel(cl_level_t &lev, const char *mapname)
+{
+	int lumpnum;
+	int gl_lumpnum;
+
+	LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum);
+	GroupLines(lev);
+
+	//
+	// End of map lump processing
+	//
+	if (AuxiliaryMap)
+	{
+		// Close the auxiliary file, but don't free its loaded lumps.
+		// The next call to W_OpenAuxiliary() will do a full shutdown
+		// of the current auxiliary WAD (free lumps and info lists).
+		W_CloseAuxiliaryFile();
+	}
+}
+
+#endif
+
 //==========================================================================
 //
 //  PointInSubsector
 //
 //==========================================================================
 
-subsector_t* PointInSubsector(const level_t &lev, float x, float y)
+subsector_t* PointInSubsector(const base_level_t &lev, float x, float y)
 {
 	node_t *node;
 	int side;
@@ -1018,7 +1147,7 @@ subsector_t* PointInSubsector(const level_t &lev, float x, float y)
 //
 //==========================================================================
 
-byte *LeafPVS(const level_t &lev, const subsector_t *ss)
+byte *LeafPVS(const base_level_t &lev, const subsector_t *ss)
 {
 	int sub = ss - lev.subsectors;
 	if (lev.vis_data)
@@ -1079,6 +1208,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/08 17:33:01  dj_jl
+//  Different client and server level structures
+//
 //  Revision 1.9  2001/09/20 16:27:02  dj_jl
 //  Removed degenmobj
 //
