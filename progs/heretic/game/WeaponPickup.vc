@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPickup:Pickup
+class WeaponPickup : Pickup
 	abstract;
 
 int WeaponType;
@@ -56,7 +56,7 @@ void TouchSpecial(Actor Toucher)
 	cprint(P.Player, WeaponText[WeaponType]);
 	if (bCountItem)
 	{
-		P.Player->ItemCount++;
+		P.Player.ItemCount++;
 	}
 	if (deathmatch && !bDropped)
 	{
@@ -66,7 +66,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusFlash += BONUSADD;
+	P.Player.BonusFlash += BONUSADD;
 	P.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
@@ -77,6 +77,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

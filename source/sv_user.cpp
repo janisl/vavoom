@@ -125,7 +125,7 @@ void SV_ReadFromUserInfo(void)
 	{
 		sv_player->BaseClass = atoi(Info_ValueForKey(sv_player->UserInfo, "class"));
 	}
-	strcpy(sv_player->Name, Info_ValueForKey(sv_player->UserInfo, "name"));
+	strcpy(sv_player->PlayerName, Info_ValueForKey(sv_player->UserInfo, "name"));
 	sv_player->Color = atoi(Info_ValueForKey(sv_player->UserInfo, "color"));
 	svpr.Exec("UserinfoChanged", (int)sv_player);
 	unguard;
@@ -163,7 +163,7 @@ bool SV_ReadClientMessages(int clientnum)
 	int			ret;
 	byte		cmd_type;
 
-	sv_player = GPlayers[clientnum];
+	sv_player = svvars.Players[clientnum];
 	sv_player->bNeedsUpdate = false;
 	do
 	{
@@ -257,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.13  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.12  2003/03/08 16:02:53  dj_jl
 //	A little multiplayer fix.
 //	

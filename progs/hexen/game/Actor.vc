@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor:Entity
+class Actor : Entity
 	abstract;
 
 //  States
@@ -651,26 +651,26 @@ void Died(Actor source)
 	{	// Check for frag changes
 		if (bIsPlayer)
 		{
-			if (source.Player->bIsBot)
+			if (source.Player.bIsBot)
 			{
-				source.Player->Bot.Killed(self);
+				source.Player.Bot.Killed(self);
 			}
 
-			if (Player->bIsBot)
+			if (Player.bIsBot)
 			{
-				Player->Bot.Died(source);
+				Player.Bot.Died(source);
 			}
 
 			if (self == source)
 			{
 				// Self-frag
-				Player->FragsStats[P_GetPlayerNum(Player)]--;
-				Player->Frags--;
+				Player.FragsStats[P_GetPlayerNum(Player)]--;
+				Player.Frags--;
 			}
 			else
 			{
-				source.Player->FragsStats[P_GetPlayerNum(Player)]++;
-				source.Player->Frags++;
+				source.Player.FragsStats[P_GetPlayerNum(Player)]++;
+				source.Player.Frags++;
 			}
 		}
 	}
@@ -680,18 +680,18 @@ void Died(Actor source)
 		if (!source)
 		{
 			// Self-frag
-			Player->FragsStats[P_GetPlayerNum(Player)]--;
-			Player->Frags--;
+			Player.FragsStats[P_GetPlayerNum(Player)]--;
+			Player.Frags--;
 		}
 		bSolid = false;
 		bFly = false;
-		Player->Powers[pw_flight] = 0.0;
-		Player->PlayerState = PST_DEAD;
+		Player.Powers[pw_flight] = 0.0;
+		Player.PlayerState = PST_DEAD;
 		DropWeapon(Player);
 		if (bFireDamage)
 		{
 			// Player flame death
-			switch (Player->PClass)
+			switch (Player.PClass)
 			{
 			case PCLASS_FIGHTER:
 				PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
@@ -815,12 +815,12 @@ bool MorphPlayer(void)
 	Actor beastMo;
 	int i;
 
-	if (Player->Powers[pw_invulnerability])
+	if (Player.Powers[pw_invulnerability])
 	{
 		// Immune when invulnerable
 		return (false);
 	}
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
 		// Player is already a beast
 		return false;
@@ -830,20 +830,20 @@ bool MorphPlayer(void)
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	beastMo = Spawn(PlayerPig, Origin);
-	beastMo._Special1 = Player->ReadyWeapon;
+	beastMo._Special1 = Player.ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
 	beastMo.bIsPlayer = true;
 	beastMo.Health = MAXMORPHHEALTH;
-	Player->Health = beastMo.Health;
-	Player->MO = beastMo;
+	Player.Health = beastMo.Health;
+	Player.MO = beastMo;
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		Player->ArmorPoints[i] = 0.0;
+		Player.ArmorPoints[i] = 0.0;
 	}
-	Player->PClass = PCLASS_PIG;
+	Player.PClass = PCLASS_PIG;
 	beastMo.bFly = bFly;
-	Player->MorphTime = MORPHTIME;
+	Player.MorphTime = MORPHTIME;
 	ActivateMorphWeapon(Player);
 
 	SetState(S_FREETARGMOBJ);
@@ -919,17 +919,17 @@ void AutoUseHealth(int saveHealth)
 
 	normalCount = 0;
 	superCount = 0;
-	for (i = 0; i < Player->InventorySlotNum; i++)
+	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player->Inventory[i].type == arti_health)
+		if (Player.Inventory[i].type == arti_health)
 		{
 			normalSlot = i;
-			normalCount = Player->Inventory[i].count;
+			normalCount = Player.Inventory[i].count;
 		}
-		else if (Player->Inventory[i].type == arti_superhealth)
+		else if (Player.Inventory[i].type == arti_superhealth)
 		{
 			superSlot = i;
-			superCount = Player->Inventory[i].count;
+			superCount = Player.Inventory[i].count;
 		}
 	}
 	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -975,7 +975,7 @@ void AutoUseHealth(int saveHealth)
 			PlayerPawn(self).PlayerRemoveArtifact(normalSlot);
 		}
 	}
-	Player->Health = Health;
+	Player.Health = Health;
 }
 
 //==========================================================================
@@ -1042,8 +1042,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
-				|| Player->Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
+				|| Player.Powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -1137,7 +1137,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		case PoisonCloud:
 			if (bIsPlayer)
 			{
-				if (Player->PoisonCount < 4)
+				if (Player.PoisonCount < 4)
 				{
 					PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
 					PoisonPlayer(source, 50);
@@ -1178,11 +1178,11 @@ void Damage(Actor inflictor, Actor source, int damage)
 	//
 	if (bIsPlayer)
 	{
-		savedPercent = AutoArmorSave[Player->PClass]
-			+ Player->ArmorPoints[ARMOR_ARMOR]
-			+ Player->ArmorPoints[ARMOR_SHIELD]
-			+ Player->ArmorPoints[ARMOR_HELMET]
-			+ Player->ArmorPoints[ARMOR_AMULET];
+		savedPercent = AutoArmorSave[Player.PClass]
+			+ Player.ArmorPoints[ARMOR_ARMOR]
+			+ Player.ArmorPoints[ARMOR_SHIELD]
+			+ Player.ArmorPoints[ARMOR_HELMET]
+			+ Player.ArmorPoints[ARMOR_AMULET];
 		if (savedPercent)
 		{
 			// armor absorbed some damage
@@ -1192,13 +1192,13 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 			for (i = 0; i < NUMARMOR; i++)
 			{
-				if (Player->ArmorPoints[i])
+				if (Player.ArmorPoints[i])
 				{
-					Player->ArmorPoints[i] -= itof(damage) *
-						ArmorIncrement[Player->PClass * NUMARMOR + i] / 300.0;
-					if (Player->ArmorPoints[i] < 2.0)
+					Player.ArmorPoints[i] -= itof(damage) *
+						ArmorIncrement[Player.PClass * NUMARMOR + i] / 300.0;
+					if (Player.ArmorPoints[i] < 2.0)
 					{
-						Player->ArmorPoints[i] = 0.0;
+						Player.ArmorPoints[i] = 0.0;
 					}
 				}
 			}
@@ -1209,22 +1209,22 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 			damage -= ftoi(saved);
 		}
-		if (damage >= Player->Health
-			&& ((gameskill == sk_baby) || deathmatch) && !Player->MorphTime)
+		if (damage >= Player.Health
+			&& ((gameskill == sk_baby) || deathmatch) && !Player.MorphTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
 		}
-		Player->Health -= damage;	// mirror mobj health here for Dave
-		if (Player->Health < 0)
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 0)
 		{
-			Player->Health = 0;
+			Player.Health = 0;
 		}
-		Player->Attacker = source;
-		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-		if (Player->DamageFlash > 3.0)
+		Player.Attacker = source;
+		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (Player.DamageFlash > 3.0)
 		{
-			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
+			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -1240,7 +1240,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			// check for special fire damage or ice damage deaths
 			if (inflictor.bFireDamage)
 			{
-				if (bIsPlayer && !Player->MorphTime)
+				if (bIsPlayer && !Player.MorphTime)
 				{
 					// Check for flame death
 					if (Health > -50 && damage > 25)
@@ -1263,13 +1263,13 @@ void Damage(Actor inflictor, Actor source, int damage)
 			// Minotaur's kills go to his master
 			master = source.Instigator;
 			// Make sure still alive and not a pointer to fighter head
-			if (master && master.bIsPlayer && (master.Player->MO == master))
+			if (master && master.bIsPlayer && (master.Player.MO == master))
 			{
 				source = master;
 			}
 		}
 		if (source && (source.bIsPlayer) &&
-			(source.Player->ReadyWeapon == WP_FOURTH))
+			(source.Player.ReadyWeapon == WP_FOURTH))
 		{
 			// Always extreme death from fourth weapon
 			Health = -5000;
@@ -1386,17 +1386,17 @@ void FallingDamage(void)
 
 void PoisonPlayer(Actor poisoner, int poison)
 {
-	if ((Player->Cheats & CF_GODMODE) || Player->Powers[pw_invulnerability])
+	if ((Player.Cheats & CF_GODMODE) || Player.Powers[pw_invulnerability])
 	{
 		return;
 	}
-	Player->PoisonCount += poison;
-	Player->Poisoner = poisoner;
-	if (Player->PoisonCount > 100)
+	Player.PoisonCount += poison;
+	Player.Poisoner = poisoner;
+	if (Player.PoisonCount > 100)
 	{
-		Player->PoisonCount = 100;
+		Player.PoisonCount = 100;
 	}
-	Player->LastPoisonTime = level->time;
+	Player.LastPoisonTime = level->time;
 }
 
 //==========================================================================
@@ -1425,23 +1425,23 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 		// Take half damage in trainer mode
 		damage >>= 1;
 	}
-	if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
-			|| Player->Powers[pw_invulnerability]))
+	if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
+			|| Player.Powers[pw_invulnerability]))
 	{
 		return;
 	}
-	if (damage >= Player->Health && ((gameskill == sk_baby) || deathmatch) &&
-		!Player->MorphTime)
+	if (damage >= Player.Health && ((gameskill == sk_baby) || deathmatch) &&
+		!Player.MorphTime)
 	{
 		// Try to use some inventory health
-		AutoUseHealth(damage - Player->Health + 1);
+		AutoUseHealth(damage - Player.Health + 1);
 	}
-	Player->Health -= damage;	// mirror mobj health here for Dave
-	if (Player->Health < 0)
+	Player.Health -= damage;	// mirror mobj health here for Dave
+	if (Player.Health < 0)
 	{
-		Player->Health = 0;
+		Player.Health = 0;
 	}
-	Player->Attacker = source;
+	Player.Attacker = source;
 
 	//
 	// do the damage
@@ -1451,7 +1451,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	{
 		// Death
 		_Special1 = damage;
-		if (bIsPlayer && inflictor && !Player->MorphTime)
+		if (bIsPlayer && inflictor && !Player.MorphTime)
 		{
 			// Check for flame death
 			if (inflictor.bFireDamage && (Health > -50) && (damage > 25))
@@ -1647,7 +1647,7 @@ void TeleportToPlayerStarts(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars->Players[i])
 			continue;
 		selections++;
 	}
@@ -2093,7 +2093,7 @@ void ApplyFriction(void)
 	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
 		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
-		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
+		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		// If in a walking frame, stop moving
 		if (bIsPlayer)
@@ -2471,21 +2471,21 @@ bool HitFloor(void)
 		}
 		if (bIsPlayer)
 		{
-			Player->JumpTime = 0.2;	// delay any jumping for a short time
+			Player.JumpTime = 0.2;	// delay any jumping for a short time
 			if (vdot < -GRAVITY * 0.25 && !bFly)
 			{
 				// squat down
-				Player->DeltaViewHeight = vdot / 8.0;
+				Player.DeltaViewHeight = vdot / 8.0;
 				if (vdot < -23.0 * 35.0)
 				{
 					FallingDamage();
 					NoiseAlert(self, self);
 				}
 				else if (vdot < -GRAVITY * 0.375
-					&& !Player->MorphTime)
+					&& !Player.MorphTime)
 				{
 					PlaySound('PlayerLand', CHAN_BODY);
-					switch (Player->PClass)
+					switch (Player.PClass)
 					{
 					case PCLASS_FIGHTER:
 						PlaySound('PlayerFighterGrunt', CHAN_VOICE);
@@ -2500,11 +2500,11 @@ bool HitFloor(void)
 						break;
 					}
 				}
-				else if (GetFloorType() < FLOOR_LIQUID && !Player->MorphTime)
+				else if (GetFloorType() < FLOOR_LIQUID && !Player.MorphTime)
 				{
 					PlaySound('PlayerLand', CHAN_BODY);
 				}
-//FIXME				Player->centering = true;
+//FIXME				Player.centering = true;
 			}
 		}
 		else if (Class == Pottery1 || Class == Pottery2 || Class == Pottery3)
@@ -2608,8 +2608,8 @@ bool ZMovement(void)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player->ViewHeight -= FloorZ - Origin.z;
-		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
+		Player.ViewHeight -= FloorZ - Origin.z;
+		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 	//
 	// adjust height
@@ -2673,16 +2673,16 @@ void ResetBlasted(void)
 
 void PlayerLandedOnThing(void)
 {
-	Player->DeltaViewHeight = Velocity.z / 8.0;
+	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		FallingDamage();
 		NoiseAlert(self, self);
 	}
-	else if (Velocity.z < -GRAVITY * 0.375 && !Player->MorphTime)
+	else if (Velocity.z < -GRAVITY * 0.375 && !Player.MorphTime)
 	{
 		PlaySound('PlayerLand', CHAN_BODY);
-		switch (Player->PClass)
+		switch (Player.PClass)
 		{
 		case PCLASS_FIGHTER:
 			PlaySound('PlayerFighterGrunt', CHAN_VOICE);
@@ -2697,11 +2697,11 @@ void PlayerLandedOnThing(void)
 			break;
 		}
 	}
-	else if (!Player->MorphTime)
+	else if (!Player.MorphTime)
 	{
 		PlaySound('PlayerLand', CHAN_BODY);
 	}
-//FIXME Player->centering = true;
+//FIXME Player.centering = true;
 }
 
 //==========================================================================
@@ -2859,10 +2859,10 @@ bool Physics(void)
 					}
 					if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 					{
-						Player->ViewHeight -=
+						Player.ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
-						Player->DeltaViewHeight =
-							(VIEWHEIGHT - Player->ViewHeight) * 4.0;
+						Player.DeltaViewHeight =
+							(VIEWHEIGHT - Player.ViewHeight) * 4.0;
 						Origin.z = onmo.Origin.z + onmo.Height;
 						bOnMobj = true;
 						Velocity.z = 0.0;
@@ -3103,19 +3103,19 @@ bool Teleport(TVec pos, float angle, bool useFog)
 	}
 	if (bIsPlayer)
 	{
-		if (Player->Powers[pw_flight] && aboveFloor)
+		if (Player.Powers[pw_flight] && aboveFloor)
 		{
 			Origin.z = FloorZ + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
 			}
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 		}
 		else
 		{
 			Origin.z = FloorZ;
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 			if (useFog)
 			{
 				Angles.pitch = 0.0;
@@ -3143,14 +3143,14 @@ bool Teleport(TVec pos, float angle, bool useFog)
 		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
 			20.0 * sin(angle), fogDelta));
 		fog.PlaySound('Teleport', CHAN_VOICE);
-		if (bIsPlayer && !Player->Powers[pw_speed])
+		if (bIsPlayer && !Player.Powers[pw_speed])
 		{
 			// Freeze player for about .5 sec
 			ReactionTime = 0.5;
 		}
 		Angles.yaw = angle;
 		if (bIsPlayer)
-			Player->bFixAngle = true;
+			Player.bFixAngle = true;
 	}
 	if (bFloorClip)
 	{
@@ -3584,7 +3584,7 @@ void A_Scream(void)
 	StopSound(CHAN_AUTO);
 	if (bIsPlayer)
 	{
-		if (Player->MorphTime)
+		if (Player.MorphTime)
 		{
 			PlaySound(DeathSound, CHAN_VOICE);
 		}
@@ -3599,7 +3599,7 @@ void A_Scream(void)
 			else if (Health > -50)
 			{
 				// Normal death sound
-				switch (Player->PClass)
+				switch (Player.PClass)
 				{
 				case PCLASS_FIGHTER:
 					PlaySound('PlayerFighterNormalDeath',
@@ -3618,7 +3618,7 @@ void A_Scream(void)
 			else if (Health > -100)
 			{
 				// Crazy death sound
-				switch (Player->PClass)
+				switch (Player.PClass)
 				{
 				case PCLASS_FIGHTER:
 					PlaySound('PlayerFighterCrazyDeath',
@@ -3637,7 +3637,7 @@ void A_Scream(void)
 			{	// Extreme death sound
 				name sound;
 
-				switch (Player->PClass)
+				switch (Player.PClass)
 				{
 				case PCLASS_FIGHTER:
 					switch (P_Random() % 3)
@@ -3929,6 +3929,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

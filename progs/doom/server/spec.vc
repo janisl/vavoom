@@ -72,7 +72,7 @@ bool CheckLock(Actor user, int lock)
 	switch (lock)
 	{
 	case 2:	// Blue Lock
-		if (!(user.Player->Keys & (1 << it_bluecard)))
+		if (!(user.Player.Keys & (1 << it_bluecard)))
 		{
 			centerprint(user.Player, "You need a blue keycard");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -81,7 +81,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 1:	// Red Lock
-		if (!(user.Player->Keys & (1 << it_redcard)))
+		if (!(user.Player.Keys & (1 << it_redcard)))
 		{
 			centerprint(user.Player, "You need a red keycard");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -90,7 +90,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 3:	// Yellow Lock
-		if (!(user.Player->Keys & (1 << it_yellowcard)))
+		if (!(user.Player.Keys & (1 << it_yellowcard)))
 		{
 			centerprint(user.Player, "You need a yellow keycard");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -99,7 +99,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 5:	// Blue Lock
-		if (!(user.Player->Keys & (1 << it_blueskull)))
+		if (!(user.Player.Keys & (1 << it_blueskull)))
 		{
 			centerprint(user.Player, "You need a blue skullkey");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -108,7 +108,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 4:	// Red Lock
-		if (!(user.Player->Keys & (1 << it_redskull)))
+		if (!(user.Player.Keys & (1 << it_redskull)))
 		{
 			centerprint(user.Player, "You need a red skullkey");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -117,7 +117,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 6:	// Yellow Lock
-		if (!(user.Player->Keys & (1 << it_yellowskull)))
+		if (!(user.Player.Keys & (1 << it_yellowskull)))
 		{
 			centerprint(user.Player, "You need a yellow skullkey");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -127,7 +127,7 @@ bool CheckLock(Actor user, int lock)
 
 	case 100:	// Any key
 	case 128 + 100:	// Any key
-		if (!user.Player->Keys)
+		if (!user.Player.Keys)
 		{
 			centerprint(user.Player, "You need any key");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -136,7 +136,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 110:	// All keys
-		if (user.Player->Keys != 0x3f)
+		if (user.Player.Keys != 0x3f)
 		{
 			centerprint(user.Player, "You need all keycards and skullkeys");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -145,7 +145,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 2:	// Blue Lock
-		if (!(user.Player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		if (!(user.Player.Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(user.Player, "You need a blue key");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -154,7 +154,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 1:	// Red Lock
-		if (!(user.Player->Keys & ((1 << it_redcard) | (1 << it_redskull))))
+		if (!(user.Player.Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(user.Player, "You need a red key");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -163,7 +163,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 3:	// Yellow Lock
-		if (!(user.Player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need a yellow key");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -172,9 +172,9 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 101:	// All keys
-		if (!(user.Player->Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
-			!(user.Player->Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
-			!(user.Player->Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(user.Player.Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
+			!(user.Player.Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
+			!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need all keys");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -413,7 +413,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 74:	// Teleport_NewMap
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				G_Completed(args[0], args[1]);
 				buttonSuccess = true;
@@ -423,7 +423,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -922,6 +922,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.19  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

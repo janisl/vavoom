@@ -46,175 +46,6 @@ int botskill = 2;
 
 */
 
-#if 0
-//
-// B_ChooseWeapon
-//
-// Decide which weapon would be best to use in out situation
-weapontype_t B_ChooseWeapon (skullb_s *bot)
-{
-	player_t *player = bot->player;
-	AActor *MO = bot->player->MO;
-	AActor *enemy = bot->enemy;
-	fixed_t dist;
-
-	if (!enemy)
-		return player->readyweapon;
-
-	dist = P_AproxDistance(MO->x - enemy->x, MO->y - enemy->y);
-
-	if (dist <= MELEERANGE)
-	{
-		if (player->WeaponOwned[wp_supershotgun] && player->ammo[am_shell] >= 2)
-			return wp_supershotgun;
-
-		if (player->WeaponOwned[wp_plasma] && player->ammo[am_cell] >= 20)
-			return wp_plasma;
-
-		if (player->WeaponOwned[wp_railgun] && player->ammo[am_cell] >= 10)
-			return wp_railgun;
-
-		if (player->WeaponOwned[wp_chaingun] && player->ammo[am_clip] >= 20)
-			return wp_chaingun;
-
-		if (player->powers[pw_strength])
-			return wp_fist;
-
-		if (player->WeaponOwned[wp_chainsaw])
-			return wp_chainsaw;
-
-		if (player->WeaponOwned[wp_shotgun] && player->ammo[am_shell])
-			return wp_shotgun;
-
-		// Didn't find anything good
-		return player->readyweapon;
-	}
-
-	else if (dist <= 512*FRACUNIT)
-	{
-		if (player->WeaponOwned[wp_plasma] && player->ammo[am_cell] >= 20)
-			return wp_plasma;
-
-		if (player->WeaponOwned[wp_supershotgun] && player->ammo[am_shell] >= 2)
-			return wp_supershotgun;
-
-		if (player->WeaponOwned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
-			return wp_grenlauncher;
-
-		if (player->WeaponOwned[wp_missile] && player->ammo[am_misl] >= 2)
-			return wp_missile;
-
-		if (player->WeaponOwned[wp_railgun] && player->ammo[am_cell] >= 10)
-			return wp_railgun;
-
-		if (player->WeaponOwned[wp_chaingun] && player->ammo[am_clip])
-			return wp_chaingun;
-
-		if (player->WeaponOwned[wp_shotgun] && player->ammo[am_shell])
-			return wp_shotgun;
-
-		return player->readyweapon;
-	}
-
-	else
-	{
-		if (player->WeaponOwned[wp_railgun] && player->ammo[am_cell] >= 10)
-			return wp_railgun;
-
-		if (player->WeaponOwned[wp_chaingun] && player->ammo[am_clip])
-			return wp_chaingun;
-
-		if (player->WeaponOwned[wp_shotgun] && player->ammo[am_shell])
-			return wp_shotgun;
-
-		if (player->WeaponOwned[wp_plasma] && player->ammo[am_cell] >= 20)
-			return wp_plasma;
-
-		if (player->WeaponOwned[wp_missile] && player->ammo[am_misl] >= 2)
-			return wp_missile;
-
-		if (player->WeaponOwned[wp_grenlauncher] && player->ammo[am_misl] >= 2)
-			return wp_grenlauncher;
-
-		return player->readyweapon;
-	}
-
-	return player->readyweapon;
-}
-
-//
-// B_Chat
-//
-
-// Tic down bot's typing time, and say our message if we're done
-bool B_Chat (skullb_s *bot)
-{
-	// Chat ticker
-	if (bot->t_chat)
-	{
-		if (!bot->chatline || !bot->chatline->string || !botchat.value)
-		{
-			bot->t_chat = 0;
-			bot->player->icon = NULL;
-			return false;
-		}
-		else
-			bot->t_chat--;
-
-		// Chat time has expired, time to say our line
-		if (!bot->t_chat)
-		{
-			int plyrnum = P_GetPlayerNum(bot->player);
-			Net_Command (DEM_SAY, 0, bot->chatline->string, plyrnum);
-
-			// Handle responses
-			for (int i=0; i<MAXPLAYERS; i++)
-			{
-				if (!GPlayers[i] || !GPlayers[i]->skullb)
-					continue;
-				if ((bot->info.chatinfo != CT_NONE) && (bot->chatline->bot == GPlayers[i]->skullb->info.chatinfo))
-				{
-					GPlayers[i]->skullb->chatline = bot->chatline->line;
-					GPlayers[i]->skullb->t_chat = GPlayers[i]->skullb->info.chattime;
-				}
-			}
-			bot->chatline = NULL;
-		}
-		
-		// Don't do anything while "typing"
-		return true;
-
-	}
-
-	return false;
-}
-
-/*
-
-  This section of code contains the console commands
-  related to the bots, such as "addbot" and "removebot".
-  It also contains a console command that displays all
-  of the bot path nodes on the level, which can be particularly
-  helpful for developers, and for people who need to pay
-  close attention to their movement.
-
-*/
-
-// Returns true if a given bot name is valid
-BOOL B_CheckName (char *name)
-{
-	if (!name)
-		return true;
-	else
-	{
-		for (int i=0; i<NUMTOTALBOTS; i++)
-			if (!stricmp (botinfo[i].name, name))
-				return true;
-		return false;
-	}
-}
-#endif
-
 //==========================================================================
 //
 //	IsDangerous
@@ -255,7 +86,7 @@ bool PTR_BotPathTraverse(intercept_t *in)
 	Actor botmo;
 	TVec hit_point;
 
-	bot = usething.Player->Bot;
+	bot = usething.Player.Bot;
 	botmo = usething;
 
 	if (in->bIsALine)
@@ -321,7 +152,7 @@ bool PTR_BotPathTraverse(intercept_t *in)
 			}
 			else if (diffheight <= 48.0 && diffheight >= 24.0)
 			{
-				bot.player->Buttons |= BT_JUMP;
+				bot.player.Buttons |= BT_JUMP;
 			}
 		}
 
@@ -354,168 +185,6 @@ bool PTR_BotPathTraverse(intercept_t *in)
 */
 	return true;
 }
-
-#if 0
-//
-// B_SetAction
-//
-// Decide what to do in teamgame (defend, whatever)
-//
-void B_SetAction (skullb_s *bot)
-{
-	AActor *MO = bot->player->MO;
-	int defenders = 0;
-	int attackers = 0;
-
-	if (bot->player->team == TM_NONE)
-		return;
-
-	if (bot->state == BST_NOTHING)
-	{
-		return;
-
-		// Let's see what the other bots on our
-		// team are doing, and decide our action based
-		// off of that
-		for (int i=0; i<MAXPLAYERS; i++)
-		{
-			if (GPlayers[i] && GPlayers[i]->MO->IsTeammate(MO) && GPlayers[i]->skullb)
-			{
-				if (GPlayers[i]->skullb->state == BST_OFFENSE)
-					attackers++;
-				if (GPlayers[i]->skullb->state == BST_DEFENSE)
-					defenders++;
-			}
-		}
-
-		// Defense wins championships...
-		if (defenders <= attackers)
-			bot->state = BST_DEFENSE;
-		else
-			bot->state = BST_OFFENSE;
-	}
-}
-
-void B_SetGoal (skullb_s *bot)
-{
-	return;
-
-	AActor *MO = bot->player->MO;
-	AActor *actor;
-
-	if (bot->player->team == TM_NONE)
-		return;
-
-	TThinkerIterator<AActor> iterator;
-
-	while ((actor = iterator.Next ()) && !bot->goal)
-	{
-		if (bot->state == BST_OFFENSE)
-		{
-			if (actor->Class == teams[bot->player->team].theirs)
-				bot->goal = actor;
-		}
-		else if (bot->state == BST_RETURN)
-		{
-			if (actor->Class == teams[bot->player->team].ours)
-				bot->goal = actor;
-		}
-	}
-}
-
-//This function is called every
-//tick (for each bot) to set
-//the mate (teammate coop mate).
-AActor *B_SetAlly (skullb_s *bot)
-{
-	return NULL;
-	
-	fixed_t closest_dist, test;
-	AActor *target;
-	bool p_leader[MAXPLAYERS];
-
-	//is mate alive?
-	if (bot->ally)
-	{
-		if (!bot->ally->health)
-			bot->ally = NULL;
-		else
-		{
-			bot->last_mate = bot->ally;
-			return bot->ally;
-		}
-	}
-
-	//Check old_mates status.
-	if (bot->last_mate)
-		if (!bot->last_mate->health)
-			bot->last_mate = NULL;
-
-	for (int i=0; i<MAXPLAYERS; i++)
-	{
-		if (!GPlayers[i] || !GPlayers[i]->team || i == consoleplayer)
-			continue;
-		if (GPlayers[i]->team == bot->player->team)
-		{
-			bot->ally = GPlayers[i]->MO;
-			break;
-		}
-
-		p_leader[i] = false;
-		for (int j=0; j<MAXPLAYERS; j++)
-		{
-			if (GPlayers[j]->skullb->ally == GPlayers[i]->MO)
-			{
-				p_leader[i] = true;
-				break;
-			}
-		}
-	}
-
-	target = NULL;
-	closest_dist = MAXINT;
-
-	//Check for player friends
-	for (i=0; i<MAXPLAYERS; i++)
-	{
-		if (GPlayers[i]
-			&& GPlayers[i]->MO
-			&& bot->player->MO != GPlayers[i]->MO
-			&& (bot->player->MO->IsTeammate(GPlayers[i]->MO) || !deathmatch.value)
-			&& GPlayers[i]->MO->health
-			&& ((bot->player->health/2) <= GPlayers[i]->MO->health || !deathmatch.value)
-			&& !p_leader[i]) //taken?
-		{
-
-			if (P_CheckSight(bot->player->MO, GPlayers[i]->MO, true))
-			{
-				test = P_AproxDistance(GPlayers[i]->MO->x - bot->player->MO->x,
-										GPlayers[i]->MO->y - bot->player->MO->y);
-
-				if (test < closest_dist)
-				{
-					closest_dist = test;
-					target = GPlayers[i]->MO;
-				}
-			}
-		}
-	}
-
-	return target;
-}
-
-// [RH] We absolutely do not want to pick things up here. The bot code is
-// executed apart from all the other simulation code, so we don't want it
-// creating side-effects during gameplay.
-bool SafeCheckPosition (AActor *actor, fixed_t x, fixed_t y)
-{
-	int savedFlags = actor->flags;
-	actor->flags &= ~MF_PICKUP;
-	bool res = P_CheckPosition (actor, x, y) ? true : false;
-	actor->flags = savedFlags;
-	return res;
-}
-#endif
 
 botinfo_t botinfo[NUMTOTALBOTS] =
 {
@@ -740,6 +409,9 @@ botinfo_t botinfo[NUMTOTALBOTS] =
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.11  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPlasma:Weapon;
+class WeaponPlasma : Weapon;
 
 //===========================================================================
 //
@@ -33,11 +33,11 @@ class WeaponPlasma:Weapon;
 
 void A_FirePlasma(void)
 {
-	Player->Ammo[Ammo]--;
+	Player.Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState + (P_Random() & 1));
 
-	PlayerPawn(Player->MO).SpawnPlayerMissile(PlasmaShot);
+	PlayerPawn(Player.MO).SpawnPlayerMissile(PlasmaShot);
 }
 
 __states__
@@ -65,6 +65,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

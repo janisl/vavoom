@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponGrenade:Weapon;
+class WeaponGrenade : Weapon;
 
 //===========================================================================
 //
@@ -35,30 +35,30 @@ void A_FireGrenade(void)
 {
 	Actor A;
 
-	Player->Ammo[Ammo]--;
+	Player.Ammo[Ammo]--;
 
-	A = Spawn(Grenade, Player->MO.Origin + vector(0.0, 0.0, 32.0));
+	A = Spawn(Grenade, Player.MO.Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = Player->MO;
+	A.Instigator = Player.MO;
 
 	//  See which target is to be aimed at
-	if (Player->MO.Angles.pitch)
+	if (Player.MO.Angles.pitch)
 	{
 		TVec v_forward;
 		TVec v_right;
 		TVec v_up;
 
-		AngleVectors(&Player->MO.Angles, &v_forward, &v_right, &v_up);
+		AngleVectors(&Player.MO.Angles, &v_forward, &v_right, &v_up);
 		A.Velocity = v_forward * A.Speed + v_up * A.Speed / 3.0 +
 			((Random() - 0.5) * 20.0) * v_right +
 			((Random() - 0.5) * 20.0) * v_up;
 	}
 	else
 	{
-		A.Velocity = Aim(Player->MO, 16.0 * 64.0) * A.Speed;
+		A.Velocity = Aim(Player.MO, 16.0 * 64.0) * A.Speed;
 		A.Velocity.z = A.Speed / 3.0;
 	}
 	VectorAngles(&A.Velocity, &A.Angles);
@@ -94,6 +94,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

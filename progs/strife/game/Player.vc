@@ -23,52 +23,84 @@
 //**
 //**************************************************************************
 
-class ItemBackpack : Pickup
-	__mobjinfo__(8);
+class Player : BasePlayer;
 
-//==========================================================================
 //
-//	HandlePickup
+//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
 //
-//==========================================================================
 
-bool HandlePickup(Actor Toucher)
-{
-	int i;
+int Ammo[NUMAMMO];
+int ReadyAmmo;
 
-	if (!Toucher.Player.Backpack)
-	{
-		Toucher.Player.Backpack = true;
-		for (i = 0; i < NUMAMMO; i++)
-			Toucher.Player.MaxAmmo[i] *= 2;
-	}
-	for (i = 0; i < NUMAMMO; i++)
-	{
-		Toucher.GiveAmmo(i, clipammo[i]);
-	}
-	cprint(Toucher.Player, PickupMessage);
-	Toucher.PlaySound('PickupItem', CHAN_ITEM);
-	return true;
-}
+bool WeaponOwned[NUMWEAPONS];
+int Sigil;
 
-__states__
-{
-	S_BPAK('BPAK', 0, 'ammo/backpack.md2', 0, -1.0, S_NULL) { }
-}
+bool Backpack;
+bool Communicator;
+
+int Accuracy;
+int Stamina;
+
+int Keys;
+
+int Inventory[NUMINVITEMS];
+int InvFirst;
+int InvCursor;
+
+int Objectives;
+
+//
+//  ----------
+//
+
+int ArmorPoints;
+
+int Quests;
+
+int ReadyWeapon;
+
+// For screen flashing (red or bright).
+float DamageFlash;
+float BonusFlash;
+
+// Bit flags, for cheats and debug.
+// See cheat_t, above.
+int Cheats;
+
+// Power ups. invinc and invis are timers.
+float Powers[NUMPOWERS];
+
+// Base height above floor for viewz.
+float ViewHeight;
+// Bob/squat speed.
+float DeltaViewHeight;
+// bounded/scaled total momentum.
+float Bob;
+
+// Refired shots are less accurate.
+int Refire;
+
+// Is wp_nochange if not changing.
+int PendingWeapon;
+
+// Who did damage (NULL for floors/ceilings).
+Actor Attacker;
+
+float JumpTime;
+
+// Armor type is 0-2.
+int ArmorType;
+
+TVec MoveDir;
 
 defaultproperties
 {
-	IdleState = S_BPAK;
-	PickupMessage = "Picked up a backpack full of ammo!";
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Revision 1.1  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
-//
-//  Revision 1.1  2002/10/26 16:32:20  dj_jl
-//  New style of defining classes.
 //
 //**************************************************************************

@@ -70,7 +70,7 @@ bool CheckLock(Actor user, int lock)
 	if (lock <= 32)
 	{
 		//	Regular keys.
-		if (!(user.Player->Keys & (1 << (lock - 1))))
+		if (!(user.Player.Keys & (1 << (lock - 1))))
 		{
 			centerprint(user.Player, "You need a key");
 			user.PlaySound('PlayerLand', CHAN_VOICE);
@@ -123,6 +123,40 @@ bool StartLockedACS(line_t * line, int *args, Actor A, int side)
 	}
 	newArgs[4] = 0;
 	return StartACS(newArgs[0], newArgs[1], &newArgs[2], A, line, side);
+}
+
+//==========================================================================
+//
+//  EV_RemoveForceField
+//
+//==========================================================================
+
+bool EV_RemoveForceField(int *args)
+{
+	int i;
+	int secnum;
+	sector_t *sec;
+	line_t *secline;
+
+	secnum = -1;
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	{
+		sec = &GLevel.Sectors[secnum];
+		for (i = 0; i < sec->linecount; i++)
+		{
+			secline = sec->lines[i];
+			if (secline->special != 258)
+				continue;
+			if (!(secline->flags & ML_TWOSIDED))
+				continue;
+
+			SetLineTexture(secline->sidenum[0], 1, 0);
+			SetLineTexture(secline->sidenum[1], 1, 0);
+			secline->special = 0;
+			secline->flags &= ~ML_BLOCKING;
+		}
+	}
+	return true;
 }
 
 //==========================================================================
@@ -327,7 +361,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = 1;
 		break;
 	case 74:	// Teleport_NewMap
-		if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+		if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))	// Players must be alive to teleport
 		{
 			G_Completed(args[0], args[1]);
 			buttonSuccess = true;
@@ -336,7 +370,7 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 75:	// Teleport_EndGame
 		if (side == 0)
 		{	// Only teleport when crossing the front side of a line
-			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))	// Players must be alive to teleport
 			{
 				buttonSuccess = true;
 				if (deathmatch)
@@ -544,6 +578,20 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 			P_NoiseAlert(A, A);
 		}
 		break;
+	case 257:	//	Break glass.
+		if (line->flags & ML_TWOSIDED)
+		{
+			line->flags &= ~ML_BLOCKING;
+		}
+		buttonSuccess = true;
+		break;
+	case 258:	//	Force field.
+		A.Damage(none, none, 10);
+		buttonSuccess = true;
+		break;
+	case 259:	//	Remove force field.
+		buttonSuccess = EV_RemoveForceField(args);
+		break;
 
 		// Inert Line specials
 	default:
@@ -676,27 +724,30 @@ void P_SpawnSpecials(bool spawn_thinkers)
 	//	Process translucent lines
 	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special != 208)
+		if (GLevel.Lines[i].special == 208)
 		{
-			continue;
-		}
-
-		int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
-		if (GLevel.Lines[i].arg1)
-		{
-			for (j = 0; j < TaggedLineCount; j++)
+			int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
+			if (GLevel.Lines[i].arg1)
 			{
-				if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
+				for (j = 0; j < TaggedLineCount; j++)
 				{
-					SetLineTransluc(TaggedLines[j].line, trans);
+					if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
+					{
+						SetLineTransluc(TaggedLines[j].line, trans);
+					}
 				}
 			}
+			else
+			{
+				SetLineTransluc(&GLevel.Lines[i], trans);
+			}
+			GLevel.Lines[i].special = 0;
 		}
-		else
+		else if (GLevel.Lines[i].special == 257 && GLevel.Lines[i].arg2 != 255)
 		{
+			int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
 			SetLineTransluc(&GLevel.Lines[i], trans);
 		}
-		GLevel.Lines[i].special = 0;
 	}
 }
 
@@ -803,6 +854,7 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 	int lineActivation;
 	bool repeat;
 	bool buttonSuccess;
+	bool changeBack;
 
 	if (!CheckActivation(activationType, line, A))
 	{
@@ -813,6 +865,7 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 	repeat = line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteLineSpecial(line->special, &line->arg1, line,
 		side, A);
+	changeBack = line->special == 257 && (line->flags & ML_TWOSIDED) && buttonSuccess;
 	if (!repeat && buttonSuccess)
 	{
 		// clear the special on non-retriggerable lines
@@ -822,6 +875,10 @@ bool P_ActivateLine(line_t * line, Actor A, int side, int activationType)
 		&& buttonSuccess)
 	{
 		P_ChangeSwitchTexture(line, repeat);
+	}
+	if (changeBack)
+	{
+		SetLineTexture(line->sidenum[1], 1, GLevel.Sides[line->sidenum[0]].midtexture);
 	}
 	return true;
 }
@@ -851,6 +908,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.23  2003/09/12 16:47:11  dj_jl
 //  Translating most of the line specials
 //

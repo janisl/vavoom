@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponMageLightning:Weapon;
+class WeaponMageLightning : Weapon;
 
 //==========================================================================
 //
@@ -36,7 +36,7 @@ void A_LightningReady(void)
 	A_WeaponReady();
 	if (P_Random() < 160)
 	{
-		Player->MO.PlaySound('MageLightningReady', CHAN_WEAPON);
+		Player.MO.PlaySound('MageLightningReady', CHAN_WEAPON);
 	}
 }
 
@@ -51,8 +51,8 @@ void A_MLightningAttack(void)
 	LightningFloor fmo;
 	LightningCeiling cmo;
 
-	fmo = LightningFloor(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningFloor));
-	cmo = LightningCeiling(PlayerPawn(Player->MO).SpawnPlayerMissile(LightningCeiling));
+	fmo = LightningFloor(PlayerPawn(Player.MO).SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(PlayerPawn(Player.MO).SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
 		fmo.LightningLink = cmo;
@@ -64,9 +64,9 @@ void A_MLightningAttack(void)
 		cmo.LightningLink = fmo;
 		cmo.A_LightningZap();
 	}
-	Player->MO.PlaySound('MageLightningFire', CHAN_WEAPON);
-	Player->Mana[MANA_2] -= WeaponManaUse(Player->PClass,
-		Player->ReadyWeapon);
+	Player.MO.PlaySound('MageLightningFire', CHAN_WEAPON);
+	Player.Mana[MANA_2] -= WeaponManaUse(Player.PClass,
+		Player.ReadyWeapon);
 }
 
 __states__
@@ -124,6 +124,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/03/08 12:41:44  dj_jl
 //  Removing class pointers.
 //

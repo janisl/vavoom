@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon:ViewEntity
+class Weapon : ViewEntity
 	abstract;
 
 int Ammo;
@@ -54,23 +54,23 @@ void A_WeaponReady(void)
 {
 	float angle;
 
-	if (Player->ChickenTime)
+	if (Player.ChickenTime)
 	{
 		// Change to the chicken beak
 		ActivateBeak(Player);
 		return;
 	}
 	// Change player from attack state
-	if (Player->MO.StateNum == Player->MO.MissileState ||
-		Player->MO.StateNum == PlayerPawn(Player->MO).Attack2State)
+	if (Player.MO.StateNum == Player.MO.MissileState ||
+		Player.MO.StateNum == PlayerPawn(Player.MO).Attack2State)
 	{
-		Player->MO.SetState(Player->MO.IdleState);
+		Player.MO.SetState(Player.MO.IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
-	if (Player->PendingWeapon != wp_nochange || !Player->Health)
+	if (Player.PendingWeapon != wp_nochange || !Player.Health)
 	{
-		if (Player->Powers[pw_weaponlevel2])
+		if (Player.Powers[pw_weaponlevel2])
 		{
 			SetPsprite(Player, ps_weapon, DownState2);
 		}
@@ -82,28 +82,28 @@ void A_WeaponReady(void)
 	}
 
 	// Check for fire.  The phoenix rod does not auto fire.
-	if (Player->Buttons & BT_ATTACK)
+	if (Player.Buttons & BT_ATTACK)
 	{
-		if (!Player->bAttackDown || (Player->ReadyWeapon != wp_phoenixrod))
+		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_phoenixrod))
 		{
-			Player->bAttackDown = true;
+			Player.bAttackDown = true;
 			FireWeapon(Player);
 			return;
 		}
 	}
 	else
 	{
-		Player->bAttackDown = false;
+		Player.bAttackDown = false;
 	}
 
 	// Bob the weapon based on movement speed.
 	angle = AngleMod360(180.0 * level->time);
-	SX = 1.0 + Player->Bob * cos(angle);
+	SX = 1.0 + Player.Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	SY = WEAPONTOP + Player->Bob * sin(angle);
+	SY = WEAPONTOP + Player.Bob * sin(angle);
 }
 
 //===========================================================================
@@ -114,7 +114,7 @@ void A_WeaponReady(void)
 
 void A_Lower(void)
 {
-	if (Player->ChickenTime)
+	if (Player.ChickenTime)
 	{
 		SY = WEAPONBOTTOM;
 	}
@@ -131,19 +131,19 @@ void A_Lower(void)
 		// Not lowered all the way yet
 		return;
 	}
-	if (Player->PlayerState == PST_DEAD)
+	if (Player.PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
 		SY = WEAPONBOTTOM;
 		return;
 	}
-	if (!Player->Health)
+	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
 		SetPsprite(Player, ps_weapon, S_NULL);
 		return;
 	}
-	Player->ReadyWeapon = Player->PendingWeapon;
+	Player.ReadyWeapon = Player.PendingWeapon;
 	BringUpWeapon(Player);
 }
 
@@ -166,7 +166,7 @@ void A_Raise(void)
 		return;
 	}
 	SY = WEAPONTOP;
-	if (Player->Powers[pw_weaponlevel2])
+	if (Player.Powers[pw_weaponlevel2])
 	{
 		SetPsprite(Player, ps_weapon, ReadyState2);
 	}
@@ -186,15 +186,15 @@ void A_Raise(void)
 
 void A_ReFire(void)
 {
-	if ((Player->Buttons & BT_ATTACK)
-		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	if ((Player.Buttons & BT_ATTACK)
+		&& Player.PendingWeapon == wp_nochange && Player.Health)
 	{
-		Player->Refire++;
+		Player.Refire++;
 		FireWeapon(Player);
 	}
 	else
 	{
-		Player->Refire = 0;
+		Player.Refire = 0;
 		CheckAmmo(Player);
 	}
 }
@@ -207,7 +207,7 @@ void A_ReFire(void)
 
 void A_Light0(void)
 {
-	Player->ExtraLight = 0;
+	Player.ExtraLight = 0;
 }
 
 //
@@ -225,6 +225,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

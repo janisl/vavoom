@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponGauntlets:Weapon;
+class WeaponGauntlets : Weapon;
 
 //==========================================================================
 //
@@ -44,7 +44,7 @@ void WeaponLevel2Init(void)
 
 void WeaponLevel2Fade(void)
 {
-	Player->PendingWeapon = Player->ReadyWeapon;
+	Player.PendingWeapon = Player.ReadyWeapon;
 }
 
 //===========================================================================
@@ -65,8 +65,8 @@ void A_GauntletAttack(void)
 
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
-	angles = Player->MO.Angles;
-	if (Player->Powers[pw_weaponlevel2])
+	angles = Player.MO.Angles;
+	if (Player.Powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -82,57 +82,57 @@ void A_GauntletAttack(void)
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = AimLineAttack(Player->MO, angles, dist);
-	LineAttack(Player->MO, dir, dist, damage);
+	dir = AimLineAttack(Player.MO, angles, dist);
+	LineAttack(Player.MO, dir, dist, damage);
 	if (!linetarget)
 	{
 		if (P_Random() > 64)
 		{
-			Player->ExtraLight = !Player->ExtraLight;
+			Player.ExtraLight = !Player.ExtraLight;
 		}
-		Player->MO.PlaySound('GauntletFull', CHAN_WEAPON);
+		Player.MO.PlaySound('GauntletFull', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
 	if (randVal < 64)
 	{
-		Player->ExtraLight = 0;
+		Player.ExtraLight = 0;
 	}
 	else if (randVal < 160)
 	{
-		Player->ExtraLight = 1;
+		Player.ExtraLight = 1;
 	}
 	else
 	{
-		Player->ExtraLight = 2;
+		Player.ExtraLight = 2;
 	}
-	if (Player->Powers[pw_weaponlevel2])
+	if (Player.Powers[pw_weaponlevel2])
 	{
-		PlayerPawn(Player->MO).GiveBody(damage >> 1);
-		Player->MO.PlaySound('GauntletHit2', CHAN_WEAPON);
+		PlayerPawn(Player.MO).GiveBody(damage >> 1);
+		Player.MO.PlaySound('GauntletHit2', CHAN_WEAPON);
 	}
 	else
 	{
-		Player->MO.PlaySound('GauntletHit', CHAN_WEAPON);
+		Player.MO.PlaySound('GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
-		linetarget.Origin.x - Player->MO.Origin.x);
-	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
+	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
+		linetarget.Origin.x - Player.MO.Origin.x);
+	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player->MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
-			Player->MO.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - Player.MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Player.MO.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw - 90.0 / 20.0);
+			Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
-			Player->MO.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - Player.MO.Angles.yaw) > 90.0 / 20.0)
+			Player.MO.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw + 90.0 / 20.0);
+			Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw + 90.0 / 20.0);
 	}
-	Player->MO.bJustAttacked = true;
+	Player.MO.bJustAttacked = true;
 }
 
 __states__
@@ -180,6 +180,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

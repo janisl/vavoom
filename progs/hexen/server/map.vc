@@ -67,7 +67,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		{
 			if (usething.bIsPlayer)
 			{
-				switch (usething.Player->PClass)
+				switch (usething.Player.PClass)
 				{
 				case PCLASS_FIGHTER:
 					sound = 'PlayerFighterFailedUse';
@@ -94,7 +94,7 @@ bool PTR_UseTraverse(intercept_t * in)
 			pheight = usething.Origin.z + usething.Height / 2.0;
 			if ((open->top < pheight) || (open->bottom > pheight))
 			{
-				switch (usething.Player->PClass)
+				switch (usething.Player.PClass)
 				{
 				case PCLASS_FIGHTER:
 					sound = 'PlayerFighterFailedUse';
@@ -134,18 +134,18 @@ bool PTR_UseTraverse(intercept_t * in)
 //
 //==========================================================================
 
-void P_UseLines(player_t * player)
+void P_UseLines(Player player)
 {
 	float x1;
 	float y1;
 	float x2;
 	float y2;
 
-	usething = player->MO;
+	usething = player.MO;
 
-	AngleVector(&player->MO.Angles, &useDir);
-	x1 = player->MO.Origin.x;
-	y1 = player->MO.Origin.y;
+	AngleVector(&player.MO.Angles, &useDir);
+	x1 = player.MO.Origin.x;
+	y1 = player.MO.Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
 	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_UseTraverse');
@@ -191,7 +191,7 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 				sound = 'None';
 				if (PuzzleItemUser.bIsPlayer)
 				{
-					switch (PuzzleItemUser.Player->PClass)
+					switch (PuzzleItemUser.Player.PClass)
 					{
 					case PCLASS_FIGHTER:
 						sound = 'PuzzleFailFighter';
@@ -251,16 +251,16 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 //
 //==========================================================================
 
-bool P_UsePuzzleItem(player_t * player, int itemType)
+bool P_UsePuzzleItem(Player player, int itemType)
 {
 	float x1, y1, x2, y2;
 
 	PuzzleItemType = itemType;
-	PuzzleItemUser = player->MO;
+	PuzzleItemUser = player.MO;
 	PuzzleActivated = false;
-	AngleVector(&player->MO.Angles, &PuzzleUseDir);
-	x1 = player->MO.Origin.x;
-	y1 = player->MO.Origin.y;
+	AngleVector(&player.MO.Angles, &PuzzleUseDir);
+	x1 = player.MO.Origin.x;
+	y1 = player.MO.Origin.y;
 	x2 = x1 + USERANGE * PuzzleUseDir.x;
 	y2 = y1 + USERANGE * PuzzleUseDir.y;
 	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
@@ -877,6 +877,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.31  2002/11/02 08:24:10  dj_jl
 //  New style classes.
 //

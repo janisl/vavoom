@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPiece:Pickup
+class WeaponPiece : Pickup
 	abstract;
 
 int PieceClass;
@@ -62,7 +62,7 @@ void TouchSpecial(Actor Toucher)
 	remove = true;
 	checkAssembled = true;
 	gaveWeapon = false;
-	if (P.Player->PClass != PieceClass)
+	if (P.Player.PClass != PieceClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -81,7 +81,7 @@ void TouchSpecial(Actor Toucher)
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (P.Player->Pieces & PieceValue)
+		if (P.Player.Pieces & PieceValue)
 		{
 			// Already has the piece
 			return;
@@ -94,7 +94,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		// Deathmatch or single player game
 		gaveMana = P.GiveMana(MANA_BOTH, 20);
-		if (P.Player->Pieces & PieceValue)
+		if (P.Player.Pieces & PieceValue)
 		{
 			// Already has the piece, check if mana needed
 			if (!gaveMana)
@@ -123,17 +123,17 @@ void TouchSpecial(Actor Toucher)
 			Remove();
 		}
 	}
-	P.Player->BonusFlash += BONUSADD;
+	P.Player.BonusFlash += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
 	{
-		P.Player->Pieces |= PieceValue;
-		if (P.Player->Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
+		P.Player.Pieces |= PieceValue;
+		if (P.Player.Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 		{
 			gaveWeapon = true;
-			P.Player->WeaponOwned[WP_FOURTH] = true;
-			P.Player->PendingWeapon = WP_FOURTH;
+			P.Player.WeaponOwned[WP_FOURTH] = true;
+			P.Player.PendingWeapon = WP_FOURTH;
 		}
 	}
 
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

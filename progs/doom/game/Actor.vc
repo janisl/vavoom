@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor:Entity
+class Actor : Entity
 	abstract;
 
 //  States
@@ -260,8 +260,8 @@ bool GiveAmmo(int ammo, int num)
 	if (ammo < 0 || ammo > NUMAMMO)
 		Error("P_GiveAmmo: bad type %i", ammo);
 
-	max = Player->MaxAmmo[ammo];
-	if (Player->Ammo[ammo] == max)
+	max = Player.MaxAmmo[ammo];
+	if (Player.Ammo[ammo] == max)
 		return false;
 
 	if (gameskill == sk_baby || gameskill == sk_nightmare)
@@ -271,11 +271,11 @@ bool GiveAmmo(int ammo, int num)
 		num <<= 1;
 	}
 
-	oldammo = Player->Ammo[ammo];
-	Player->Ammo[ammo] += num;
+	oldammo = Player.Ammo[ammo];
+	Player.Ammo[ammo] += num;
 
-	if (Player->Ammo[ammo] > max)
-		Player->Ammo[ammo] = max;
+	if (Player.Ammo[ammo] > max)
+		Player.Ammo[ammo] = max;
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -289,38 +289,38 @@ bool GiveAmmo(int ammo, int num)
 	switch (ammo)
 	{
 	case am_clip:
-		if (Player->ReadyWeapon == wp_fist)
+		if (Player.ReadyWeapon == wp_fist)
 		{
-			if (Player->WeaponOwned[wp_chaingun])
-				Player->PendingWeapon = wp_chaingun;
+			if (Player.WeaponOwned[wp_chaingun])
+				Player.PendingWeapon = wp_chaingun;
 			else
-				Player->PendingWeapon = wp_pistol;
+				Player.PendingWeapon = wp_pistol;
 		}
 		break;
 
 	case am_shell:
-		if (Player->ReadyWeapon == wp_fist
-			|| Player->ReadyWeapon == wp_pistol)
+		if (Player.ReadyWeapon == wp_fist
+			|| Player.ReadyWeapon == wp_pistol)
 		{
-			if (Player->WeaponOwned[wp_shotgun])
-				Player->PendingWeapon = wp_shotgun;
+			if (Player.WeaponOwned[wp_shotgun])
+				Player.PendingWeapon = wp_shotgun;
 		}
 		break;
 
 	case am_cell:
-		if (Player->ReadyWeapon == wp_fist
-			|| Player->ReadyWeapon == wp_pistol)
+		if (Player.ReadyWeapon == wp_fist
+			|| Player.ReadyWeapon == wp_pistol)
 		{
-			if (Player->WeaponOwned[wp_plasma])
-				Player->PendingWeapon = wp_plasma;
+			if (Player.WeaponOwned[wp_plasma])
+				Player.PendingWeapon = wp_plasma;
 		}
 		break;
 
 	case am_misl:
-		if (Player->ReadyWeapon == wp_fist)
+		if (Player.ReadyWeapon == wp_fist)
 		{
-			if (Player->WeaponOwned[wp_missile])
-				Player->PendingWeapon = wp_missile;
+			if (Player.WeaponOwned[wp_missile])
+				Player.PendingWeapon = wp_missile;
 		}
 	default:
 		break;
@@ -340,12 +340,12 @@ bool GiveAmmo(int ammo, int num)
 bool GiveWeapon(int weapon, bool dropped)
 {
 #ifdef DDF
-	if (Player->WeaponOwned[weapon])
+	if (Player.WeaponOwned[weapon])
 	{
 		return false;
 	}
-	Player->WeaponOwned[weapon] = true;
-	Player->PendingWeapon = weapon;
+	Player.WeaponOwned[weapon] = true;
+	Player.PendingWeapon = weapon;
 	return true;
 #else
 	bool gaveammo;
@@ -356,17 +356,17 @@ bool GiveWeapon(int weapon, bool dropped)
 	if (netgame && (deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
-		if (Player->WeaponOwned[weapon])
+		if (Player.WeaponOwned[weapon])
 			return false;
 
-		Player->BonusFlash += BONUSADD;
-		Player->WeaponOwned[weapon] = true;
+		Player.BonusFlash += BONUSADD;
+		Player.WeaponOwned[weapon] = true;
 
 		if (deathmatch)
 			GiveAmmo(weapon_ammo_type[weapon], 5 * ammoCount);
 		else
 			GiveAmmo(weapon_ammo_type[weapon], 2 * ammoCount);
-		Player->PendingWeapon = weapon;
+		Player.PendingWeapon = weapon;
 
 		PlaySound('PickupWeapon', CHAN_ITEM);
 		return false;
@@ -384,11 +384,11 @@ bool GiveWeapon(int weapon, bool dropped)
 	}
 
 	gaveweapon = false;
-	if (!Player->WeaponOwned[weapon])
+	if (!Player.WeaponOwned[weapon])
 	{
 		gaveweapon = true;
-		Player->WeaponOwned[weapon] = true;
-		Player->PendingWeapon = weapon;
+		Player.WeaponOwned[weapon] = true;
+		Player.PendingWeapon = weapon;
 	}
 
 	return (gaveweapon || gaveammo);
@@ -415,7 +415,7 @@ bool GiveBody(int num, int max)
 	{
 		Health = max;
 	}
-	Player->Health = Health;
+	Player.Health = Health;
 
 	return true;
 }
@@ -433,11 +433,11 @@ bool GiveArmor(int armortype)
 	int hits;
 
 	hits = armortype * 100;
-	if (Player->ArmorPoints >= hits)
+	if (Player.ArmorPoints >= hits)
 		return false;	// don't pick up
 
-	Player->ArmorType = armortype;
-	Player->ArmorPoints = hits;
+	Player.ArmorType = armortype;
+	Player.ArmorPoints = hits;
 
 	return true;
 }
@@ -452,18 +452,18 @@ bool GiveArmor(int armortype)
 
 bool GiveArmor2(int armortype, int num, int max)
 {
-	if (Player->ArmorPoints >= max)
+	if (Player.ArmorPoints >= max)
 	{
 		return false;	// don't pick up
 	}
-	Player->ArmorPoints += num;
-	if (Player->ArmorPoints > max)
+	Player.ArmorPoints += num;
+	if (Player.ArmorPoints > max)
 	{
-		Player->ArmorPoints = max;
+		Player.ArmorPoints = max;
 	}
-	if (Player->ArmorType < armortype)
+	if (Player.ArmorType < armortype)
 	{
-		Player->ArmorType = armortype;
+		Player.ArmorType = armortype;
 	}
 	return true;
 }
@@ -476,11 +476,11 @@ bool GiveArmor2(int armortype, int num, int max)
 
 bool GiveCard(int card)
 {
-	if (Player->Keys & (1 << card))
+	if (Player.Keys & (1 << card))
 		return false;
 
-	Player->BonusFlash = BONUSADD;
-	Player->Keys |= 1 << card;
+	Player.BonusFlash = BONUSADD;
+	Player.Keys |= 1 << card;
 	return true;
 }
 
@@ -492,12 +492,12 @@ bool GiveCard(int card)
 
 bool GiveItem(int item)
 {
-	if (Player->Items & item)
+	if (Player.Items & item)
 	{
 		return false;	// already got it
 	}
 
-	Player->Items |= item;
+	Player.Items |= item;
 	return true;
 }
 
@@ -511,42 +511,42 @@ bool GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		Player->Powers[power] = INVULNTIME;
+		Player.Powers[power] = INVULNTIME;
 		return true;
 	}
 
 	if (power == pw_invisibility)
 	{
-		Player->Powers[power] = INVISTIME;
+		Player.Powers[power] = INVISTIME;
 		Translucency = 90;
 		return true;
 	}
 
 	if (power == pw_infrared)
 	{
-		Player->Powers[power] = INFRATIME;
+		Player.Powers[power] = INFRATIME;
 		return true;
 	}
 
 	if (power == pw_ironfeet)
 	{
-		Player->Powers[power] = IRONTIME;
+		Player.Powers[power] = IRONTIME;
 		return true;
 	}
 
 	if (power == pw_strength)
 	{
 		GiveBody(100, MAXHEALTH);
-		Player->Powers[power] = 1.0;
-		if (Player->ReadyWeapon != wp_fist)
-			Player->PendingWeapon = wp_fist;
+		Player.Powers[power] = 1.0;
+		if (Player.ReadyWeapon != wp_fist)
+			Player.PendingWeapon = wp_fist;
 		return true;
 	}
 
-	if (Player->Powers[power])
+	if (Player.Powers[power])
 		return false;	// already got it
 
-	Player->Powers[power] = 1.0;
+	Player.Powers[power] = 1.0;
 	return true;
 }
 
@@ -558,13 +558,13 @@ bool GivePower(int power)
 
 bool GivePower2(int power, float duration, float max)
 {
-	if (Player->Powers[power] >= max)
+	if (Player.Powers[power] >= max)
 		return false;	// already got it
 
-	Player->Powers[power] += duration;
-	if (Player->Powers[power] >= max)
+	Player.Powers[power] += duration;
+	if (Player.Powers[power] >= max)
 	{
-		Player->Powers[power] = max;
+		Player.Powers[power] = max;
 	}
 
 	if (power == pw_invisibility)
@@ -573,8 +573,8 @@ bool GivePower2(int power, float duration, float max)
 	}
 	if (power == pw_strength)
 	{
-		if (Player->ReadyWeapon != wp_fist)
-			Player->PendingWeapon = wp_fist;
+		if (Player.ReadyWeapon != wp_fist)
+			Player.PendingWeapon = wp_fist;
 	}
 
 	return true;
@@ -658,9 +658,9 @@ void TouchSpecial(Actor Toucher)
 	Toucher.PlaySound(ActiveSound, CHAN_ITEM);
 #endif
 	if (bCountItem)
-		Toucher.Player->ItemCount++;
+		Toucher.Player.ItemCount++;
 	HideSpecial();
-	Toucher.Player->BonusFlash += BONUSADD;
+	Toucher.Player.BonusFlash += BONUSADD;
 }
 
 //==========================================================================
@@ -923,30 +923,30 @@ void Died(Actor source)
 	{
 		// count for intermission
 		if (bCountKill)
-			source.Player->KillCount++;
+			source.Player.KillCount++;
 
 		if (bIsPlayer)
 		{
 #ifndef	NO_BOTS
-			if (source.Player->bIsBot)
+			if (source.Player.bIsBot)
 			{
-				source.Player->Bot.Killed(self);
+				source.Player.Bot.Killed(self);
 			}
 
-			if (Player->bIsBot)
+			if (Player.bIsBot)
 			{
-				Player->Bot.Died(source);
+				Player.Bot.Died(source);
 			}
 #endif
 
-			source.Player->FragsStats[P_GetPlayerNum(Player)]++;
+			source.Player.FragsStats[P_GetPlayerNum(Player)]++;
 			if (source == self)
 			{
-				Player->Frags--;
+				Player.Frags--;
 			}
 			else
 			{
-				source.Player->Frags++;
+				source.Player.Frags++;
 			}
 		}
 	}
@@ -954,7 +954,7 @@ void Died(Actor source)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
-		GPlayers[0]->KillCount++;
+		svvars->Players[0].KillCount++;
 	}
 
 	if (bIsPlayer)
@@ -962,15 +962,15 @@ void Died(Actor source)
 		// count environment kills against you
 		if (!source)
 		{
-			Player->FragsStats[P_GetPlayerNum(Player)]++;
-			Player->Frags--;
+			Player.FragsStats[P_GetPlayerNum(Player)]++;
+			Player.Frags--;
 		}
 
 		bSolid = false;
-		Player->PlayerState = PST_DEAD;
+		Player.PlayerState = PST_DEAD;
 		DropWeapon(Player);
 #ifdef FIXME
-		if (Player == GPlayers[consoleplayer] && automapactive)
+		if (Player == svvars->Players[consoleplayer] && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying
@@ -1060,7 +1060,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// thus kick away unless using the chainsaw.
 	if (inflictor && bColideWithThings &&
 		(!source || !source.bIsPlayer ||
-			source.Player->ReadyWeapon != wp_chainsaw))
+			source.Player.ReadyWeapon != wp_chainsaw))
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
 			Normalize(MobjCenter(self) - MobjCenter(inflictor));
@@ -1077,37 +1077,37 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player->Cheats & CF_GODMODE) ||
-			Player->Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+			Player.Powers[pw_invulnerability]))
 		{
 			return;
 		}
 
-		if (Player->ArmorType)
+		if (Player.ArmorType)
 		{
-			if (Player->ArmorType == 1)
+			if (Player.ArmorType == 1)
 				saved = damage / 3;
 			else
 				saved = damage / 2;
 
-			if (Player->ArmorPoints <= saved)
+			if (Player.ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player->ArmorPoints;
-				Player->ArmorType = 0;
+				saved = Player.ArmorPoints;
+				Player.ArmorType = 0;
 			}
-			Player->ArmorPoints -= saved;
+			Player.ArmorPoints -= saved;
 			damage -= saved;
 		}
-		Player->Health -= damage;	// mirror mobj health here for Dave
-		if (Player->Health < 0)
-			Player->Health = 0;
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 0)
+			Player.Health = 0;
 
-		Player->Attacker = source;
-		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		Player.Attacker = source;
+		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
-		if (Player->DamageFlash > 3.0)
-			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
+		if (Player.DamageFlash > 3.0)
+			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -1500,8 +1500,8 @@ void ZMovement(void)
 	// check for smooth step up
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player->ViewHeight -= FloorZ - Origin.z;
-		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
+		Player.ViewHeight -= FloorZ - Origin.z;
+		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -1546,7 +1546,7 @@ void ZMovement(void)
 				// Decrease ViewHeight for a moment
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
-				Player->DeltaViewHeight = vdot / 8.0;
+				Player.DeltaViewHeight = vdot / 8.0;
 				PlaySound('PlayerLand', CHAN_VOICE);
 			}
 		}
@@ -1640,7 +1640,7 @@ void ApplyFriction(void)
 	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
 		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
-		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
+		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		if (bIsPlayer)
 		{
@@ -1672,7 +1672,7 @@ void ApplyFriction(void)
 
 void PlayerLandedOnThing(void)
 {
-	Player->DeltaViewHeight = Velocity.z / 8.0;
+	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('PlayerLand', CHAN_VOICE);
@@ -1733,10 +1733,10 @@ bool Physics(void)
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player->ViewHeight -= onmo.Origin.z + onmo.Height
+					Player.ViewHeight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
-					Player->DeltaViewHeight =
-						(VIEWHEIGHT - Player->ViewHeight) * 4.0;
+					Player.DeltaViewHeight =
+						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -2024,7 +2024,7 @@ int Teleport(float x, float y, float angle)
 
 	Origin.z = FloorZ;	//fixme: not needed?
 	if (bIsPlayer)
-		Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 
 	// spawn teleport fog at source and destination
 	fog = Spawn(TeleportFog, oldOrg);
@@ -2046,7 +2046,7 @@ int Teleport(float x, float y, float angle)
 	if (bIsPlayer)
 	{
 		ReactionTime = 0.5;
-		Player->bFixAngle = true;
+		Player.bFixAngle = true;
 	}
 
 	Angles.yaw = angle;
@@ -2224,7 +2224,7 @@ bool LookForMonsters2(bool allaround)
 	float an;
 	float dist;
 
-	if (!GPlayers[0]->MO.CanSee(self))
+	if (!svvars->Players[0].MO.CanSee(self))
 	{
 		return false;	//  Not seen by player
 	}
@@ -2279,7 +2279,7 @@ bool LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
-	player_t *P;
+	Player P;
 	float an;
 	float dist;
 
@@ -2288,7 +2288,7 @@ bool LookForPlayers(bool allaround)
 		return LookForMonsters(allaround);
 	}
 
-	if (!netgame && GPlayers[0] && GPlayers[0]->bSpawned && GPlayers[0]->Health <= 0)
+	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
 	{
 		return LookForMonsters2(allaround);
 	}
@@ -2304,7 +2304,7 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		P = GPlayers[LastLook];
+		P = svvars->Players[LastLook];
 
 		if (!P)
 			continue;
@@ -2315,30 +2315,30 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		if (!P->bSpawned || !P->MO)
+		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
 
-		if (P->Health <= 0)
+		if (P.Health <= 0)
 			continue;	// dead
 
-		if (!CanSee(P->MO))
+		if (!CanSee(P.MO))
 			continue;	//  out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->MO.Origin.y - Origin.y,
-				P->MO.Origin.x - Origin.x) - Angles.yaw);
+			an = AngleMod360(atan2(P.MO.Origin.y - Origin.y,
+				P.MO.Origin.x - Origin.x) - Angles.yaw);
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(P->MO, self);
+				dist = MobjDist(P.MO, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
 
-		Enemy = P->MO;
+		Enemy = P.MO;
 		return true;
 	}
 
@@ -4219,6 +4219,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.4  2003/10/22 06:42:04  dj_jl
 //  Added look at actor function
 //

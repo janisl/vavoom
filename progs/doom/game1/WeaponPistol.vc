@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPistol:Weapon;
+class WeaponPistol : Weapon;
 
 //===========================================================================
 //
@@ -35,16 +35,16 @@ void A_FirePistol(void)
 {
 	TVec dir;
 
-	Player->MO.PlaySound('PistolFire', CHAN_WEAPON);
+	Player.MO.PlaySound('PistolFire', CHAN_WEAPON);
 
-	Player->MO.SetState(Player->MO.MissileState);
-	Player->Ammo[Ammo]--;
+	Player.MO.SetState(Player.MO.MissileState);
+	Player.Ammo[Ammo]--;
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	dir = Aim(Player->MO, 16.0 * 64.0);
-	GunShot(Player->MO, !Player->Refire, dir);
-	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+	dir = Aim(Player.MO, 16.0 * 64.0);
+	GunShot(Player.MO, !Player.Refire, dir);
+	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__
@@ -73,6 +73,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPickup:Pickup
+class WeaponPickup : Pickup
 	abstract;
 
 int WeaponClass;
@@ -59,7 +59,7 @@ void TouchSpecial(Actor Toucher)
 		return;
 	}
 	remove = true;
-	if (P.Player->PClass != WeaponClass)
+	if (P.Player.PClass != WeaponClass)
 	{
 		// Wrong class, but try to pick up for mana
 		if (netgame && !deathmatch)
@@ -85,11 +85,11 @@ void TouchSpecial(Actor Toucher)
 	else if (netgame && !deathmatch)
 	{
 		// Cooperative net-game
-		if (P.Player->WeaponOwned[WeaponType])
+		if (P.Player.WeaponOwned[WeaponType])
 		{
 			return;
 		}
-		P.Player->WeaponOwned[WeaponType] = true;
+		P.Player.WeaponOwned[WeaponType] = true;
 		if (WeaponType == WP_SECOND)
 		{
 			P.GiveMana(MANA_1, 25);
@@ -98,7 +98,7 @@ void TouchSpecial(Actor Toucher)
 		{
 			P.GiveMana(MANA_2, 25);
 		}
-		P.Player->PendingWeapon = WeaponType;
+		P.Player.PendingWeapon = WeaponType;
 		remove = false;
 	}
 	else
@@ -112,18 +112,18 @@ void TouchSpecial(Actor Toucher)
 		{
 			gaveMana = P.GiveMana(MANA_2, 25);
 		}
-		if (P.Player->WeaponOwned[WeaponType])
+		if (P.Player.WeaponOwned[WeaponType])
 		{
 			gaveWeapon = false;
 		}
 		else
 		{
 			gaveWeapon = true;
-			P.Player->WeaponOwned[WeaponType] = true;
-			if (WeaponType > P.Player->ReadyWeapon)
+			P.Player.WeaponOwned[WeaponType] = true;
+			if (WeaponType > P.Player.ReadyWeapon)
 			{
 				// Only switch to more powerful weapons
-				P.Player->PendingWeapon = WeaponType;
+				P.Player.PendingWeapon = WeaponType;
 			}
 		}
 		if (!gaveWeapon && !gaveMana)
@@ -152,7 +152,7 @@ void TouchSpecial(Actor Toucher)
 		}
 	}
 
-	P.Player->BonusFlash += BONUSADD;
+	P.Player.BonusFlash += BONUSADD;
 	P.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
@@ -163,6 +163,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponClericFire:Weapon;
+class WeaponClericFire : Weapon;
 
 //============================================================================
 //
@@ -35,15 +35,15 @@ void A_CFlameAttack(void)
 {
 	Actor mo;
 
-	mo = PlayerPawn(Player->MO).SpawnPlayerMissile(ClericFlameMissile);
+	mo = PlayerPawn(Player.MO).SpawnPlayerMissile(ClericFlameMissile);
 	if (mo)
 	{
 		mo._Special1 = 2;
 	}
 
-	Player->Mana[MANA_2] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->MO.PlaySound('ClericFlameFire', CHAN_WEAPON);
+	Player.Mana[MANA_2] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	Player.MO.PlaySound('ClericFlameFire', CHAN_WEAPON);
 }
 
 __states__
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ViewEntity:Object
+class ViewEntity : Object
 	native
 	abstract;
 
@@ -37,7 +37,7 @@ float SY;
 int StateNum;	// a 0 state means not active
 int NextState;
 float StateTime;
-player_t *Player;
+Player Player;
 
 native void SetState(int stnum);
 
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:02  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponBeak:Weapon;
+class WeaponBeak : Weapon;
 
 //===========================================================================
 //
@@ -45,12 +45,12 @@ void A_BeakRaise(void)
 
 void A_BeakReady(void)
 {
-	if (Player->Buttons & BT_ATTACK)
+	if (Player.Buttons & BT_ATTACK)
 	{
 		// Chicken beak attack
-		Player->bAttackDown = true;
-		Player->MO.SetState(Player->MO.MissileState);
-		if (Player->Powers[pw_weaponlevel2])
+		Player.bAttackDown = true;
+		Player.MO.SetState(Player.MO.MissileState);
+		if (Player.Powers[pw_weaponlevel2])
 		{
 			SetState(AttackState2);
 		}
@@ -58,16 +58,16 @@ void A_BeakReady(void)
 		{
 			SetState(AttackState);
 		}
-		P_NoiseAlert(Player->MO, Player->MO);
+		P_NoiseAlert(Player.MO, Player.MO);
 	}
 	else
 	{
-		if (Player->MO.StateNum == Player->MO.MissileState)
+		if (Player.MO.StateNum == Player.MO.MissileState)
 		{
 			// Take out of attack state
-			Player->MO.SetState(Player->MO.IdleState);
+			Player.MO.SetState(Player.MO.IdleState);
 		}
-		Player->bAttackDown = false;
+		Player.bAttackDown = false;
 	}
 }
 
@@ -84,15 +84,15 @@ void A_BeakAttackPL1(void)
 	name SoundName;
 
 	damage = 1 + (P_Random() & 3);
-	dir = AimLineAttack(Player->MO, Player->MO.Angles, MELEERANGE);
+	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
-		Player->MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 	switch (P_Random() % 3)
 	{
@@ -106,8 +106,8 @@ void A_BeakAttackPL1(void)
 		SoundName = 'ChickenPeak3';
 		break;
 	}
-	Player->MO.PlaySound(SoundName, CHAN_VOICE);
-	Player->ChickenPeck = 12;
+	Player.MO.PlaySound(SoundName, CHAN_VOICE);
+	Player.ChickenPeck = 12;
 	StateTime -= Random() * 0.25;
 }
 
@@ -124,15 +124,15 @@ void A_BeakAttackPL2(void)
 	name SoundName;
 
 	damage = HITDICE(4);
-	dir = AimLineAttack(Player->MO, Player->MO.Angles, MELEERANGE);
+	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
-		Player->MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 	switch (P_Random() % 3)
 	{
@@ -146,8 +146,8 @@ void A_BeakAttackPL2(void)
 		SoundName = 'ChickenPeak3';
 		break;
 	}
-	Player->MO.PlaySound(SoundName, CHAN_VOICE);
-	Player->ChickenPeck = 12;
+	Player.MO.PlaySound(SoundName, CHAN_VOICE);
+	Player.ChickenPeck = 12;
 	StateTime -= Random() * 0.125;
 }
 
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/03/08 12:42:31  dj_jl
 //  Removed old macro.
 //

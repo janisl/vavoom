@@ -53,12 +53,12 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	Actor A;
 	int i;
 
-	if (!GPlayers[playernum]->MO)
+	if (!svvars->Players[playernum].MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (GPlayers[i] && GPlayers[i]->MO.Origin.x == mthing->x &&
-				GPlayers[i]->MO.Origin.y == mthing->y)
+			if (svvars->Players[i] && svvars->Players[i].MO.Origin.x == mthing->x &&
+				svvars->Players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -66,13 +66,13 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	GPlayers[playernum]->MO.bNoPassMobj = true;
-	if (!GPlayers[playernum]->MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	svvars->Players[playernum].MO.bNoPassMobj = true;
+	if (!svvars->Players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
-		GPlayers[playernum]->MO.bNoPassMobj = false;
+		svvars->Players[playernum].MO.bNoPassMobj = false;
 		return false;
 	}
-	GPlayers[playernum]->MO.bNoPassMobj = false;
+	svvars->Players[playernum].MO.bNoPassMobj = false;
 
 	// spawn a teleport fog 
 	sec = GLevel.PointInSector(vector(x, y, 0.0));
@@ -88,6 +88,9 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.33  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

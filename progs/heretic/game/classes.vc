@@ -28,6 +28,7 @@
 #include "PlayerPawn.vc"
 #include "Weapon.vc"
 #include "BotPlayer.vc"
+#include "Player.vc"
 
 #include "Projectile.vc"
 #include "Effect.vc"
@@ -237,6 +238,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponChainsaw:Weapon;
+class WeaponChainsaw : Weapon;
 
 //===========================================================================
 //
@@ -39,41 +39,41 @@ void A_Saw(void)
 	TVec dir;
 
 	damage = 2 * (P_Random() % 10 + 1);
-	aimAng = Player->MO.Angles;
+	aimAng = Player.MO.Angles;
 	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = AimLineAttack(Player->MO, aimAng, MELEERANGE + 0.00001);
-	LineAttack(Player->MO, dir, MELEERANGE + 0.00001, damage);
+	dir = AimLineAttack(Player.MO, aimAng, MELEERANGE + 0.00001);
+	LineAttack(Player.MO, dir, MELEERANGE + 0.00001, damage);
 
 	if (!linetarget)
 	{
-		Player->MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
+		Player.MO.PlaySound('ChainsawTriggered', CHAN_WEAPON);
 		return;
 	}
-	Player->MO.PlaySound('ChainsawHit', CHAN_WEAPON);
+	Player.MO.PlaySound('ChainsawHit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(linetarget.Origin.y - Player->MO.Origin.y,
-		linetarget.Origin.x - Player->MO.Origin.x);
-	if (AngleMod360(angle - Player->MO.Angles.yaw) > 180.0)
+	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
+		linetarget.Origin.x - Player.MO.Origin.x);
+	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Player->MO.Angles.yaw) < -90.0 / 20.0)
-			Player->MO.Angles.yaw = angle + 90.0 / 21.0;
+		if (AngleMod360(angle - Player.MO.Angles.yaw) < -90.0 / 20.0)
+			Player.MO.Angles.yaw = angle + 90.0 / 21.0;
 		else
-			Player->MO.Angles.yaw = Player->MO.Angles.yaw - 90.0 / 20.0;
+			Player.MO.Angles.yaw = Player.MO.Angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (AngleMod360(angle - Player->MO.Angles.yaw) > 90.0 / 20.0)
-			Player->MO.Angles.yaw = angle - 90.0 / 21.0;
+		if (AngleMod360(angle - Player.MO.Angles.yaw) > 90.0 / 20.0)
+			Player.MO.Angles.yaw = angle - 90.0 / 21.0;
 		else
-			Player->MO.Angles.yaw += 90.0 / 20.0;
+			Player.MO.Angles.yaw += 90.0 / 20.0;
 	}
-	Player->MO.Angles.yaw = AngleMod360(Player->MO.Angles.yaw);
-	Player->MO.bJustAttacked = true;
-	Player->bFixAngle = true;
+	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw);
+	Player.MO.bJustAttacked = true;
+	Player.bFixAngle = true;
 }
 
 __states__
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

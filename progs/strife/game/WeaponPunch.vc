@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPunch:Weapon;
+class WeaponPunch : Weapon;
 
 //===========================================================================
 //
@@ -39,34 +39,34 @@ void A_Punch(void)
 
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (Player->Powers[pw_strength])
+	if (Player.Powers[pw_strength])
 		damage *= 10;
 
-	angles = Player->MO.Angles;
+	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
 		if (linetarget.bNoBlood)
 		{
-			Player->MO.PlaySound('PunchHitMetal', CHAN_WEAPON);
+			Player.MO.PlaySound('PunchHitMetal', CHAN_WEAPON);
 		}
 		else
 		{
-			Player->MO.PlaySound('PunchHitMeat', CHAN_WEAPON);
+			Player.MO.PlaySound('PunchHitMeat', CHAN_WEAPON);
 		}
-		Player->MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 	else
 	{
-		Player->MO.PlaySound('PunchMiss', CHAN_WEAPON);
+		Player.MO.PlaySound('PunchMiss', CHAN_WEAPON);
 	}
 }
 
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/09/11 17:21:04  dj_jl
 //  Silent weapons
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponPigSnout:Weapon;
+class WeaponPigSnout : Weapon;
 
 int SniffState;
 
@@ -40,21 +40,21 @@ void A_SnoutAttack(void)
 	TVec vforward;
 
 	damage = 3 + (P_Random() & 3);
-	angles = Player->MO.Angles;
-	AimLineAttack(Player->MO, &angles, MELEERANGE);
+	angles = Player.MO.Angles;
+	AimLineAttack(Player.MO, &angles, MELEERANGE);
 	PuffType = SnoutPuff;
 	PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	LineAttack(Player->MO, vforward, MELEERANGE, damage);
-	Player->MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
+	LineAttack(Player.MO, vforward, MELEERANGE, damage);
+	Player.MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
 	{
-		PlayerPawn(Player->MO).AdjustPlayerAngle();
+		PlayerPawn(Player.MO).AdjustPlayerAngle();
 		if (PuffSpawned)
 		{
 			// Bit something
-			Player->MO.PlaySound('PigAttack', CHAN_VOICE);
+			Player.MO.PlaySound('PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/03/08 12:42:31  dj_jl
 //  Removed old macro.
 //

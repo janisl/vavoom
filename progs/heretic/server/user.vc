@@ -55,9 +55,9 @@ float pushTab[5] = {
 //
 //==========================================================================
 
-void PlayerThink(player_t * player)
+void PlayerThink(Player player)
 {
-	PlayerPawn(player->MO).PlayerTick(frametime);
+	PlayerPawn(player.MO).PlayerTick(frametime);
 }
 
 //==========================================================================
@@ -66,9 +66,9 @@ void PlayerThink(player_t * player)
 //
 //==========================================================================
 
-void SetViewPos(player_t * player)
+void SetViewPos(Player player)
 {
-	PlayerPawn(player->MO).SetViewPos();
+	PlayerPawn(player.MO).SetViewPos();
 }
 
 //==========================================================================
@@ -81,26 +81,23 @@ void SetViewPos(player_t * player)
 
 void G_PlayerReborn(int player)
 {
-	player_t *p;
+	Player p;
 	BotPlayer b;
 
-	p = GPlayers[player];
+	p = svvars->Players[player];
 
-	b = p->Bot;
+	b = p.Bot;
 	ClearPlayer(p);
-	p->Bot = b;
+	p.Bot = b;
 
-	p->bUseDown = true;	// don't do anything immediately
-	p->bAttackDown = true;
-	p->PlayerState = PST_LIVE;
-	p->Health = MAXHEALTH;
-	p->WeaponOwned[wp_staff] = true;
-	p->WeaponOwned[wp_goldwand] = true;
-	p->Ammo[am_goldwand] = 50;
+	p.bUseDown = true;	// don't do anything immediately
+	p.bAttackDown = true;
+	p.PlayerState = PST_LIVE;
+	p.Health = MAXHEALTH;
+	p.WeaponOwned[wp_staff] = true;
+	p.WeaponOwned[wp_goldwand] = true;
+	p.Ammo[am_goldwand] = 50;
 	SetWeapon(p, wp_goldwand);
-
-	p->InvPtr = 0;	// reset the inventory pointer
-	p->InvCurPos = 0;
 }
 
 //==========================================================================
@@ -113,45 +110,45 @@ void G_PlayerReborn(int player)
 
 void G_PlayerExitMap(int player, bool clusterChange)
 {
-	player_t *p;
+	Player p;
 	int i;
 
-	p = GPlayers[player];
+	p = svvars->Players[player];
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		p->Powers[i] = 0.0;
+		p.Powers[i] = 0.0;
 	}
 	if (clusterChange)
 	{
-		p->Keys = 0;
+		p.Keys = 0;
 	}
-	if (p->ChickenTime)
+	if (p.ChickenTime)
 	{
-		SetWeapon(p, p->MO.Special1);	// Restore weapon
-		p->ChickenTime = 0.0;
+		SetWeapon(p, p.MO.Special1);	// Restore weapon
+		p.ChickenTime = 0.0;
 	}
-	p->Items = 0;
-	p->MO.Angles.pitch = 0.0;
-	p->MO.Translucency = 0;	// cancel invisibility
-	p->ExtraLight = 0;	// cancel gun flashes
-	p->FixedColormap = 0;	// cancel ir gogles
-	p->DamageFlash = 0.0;	// no palette changes
-	p->BonusFlash = 0.0;
-	p->Rain1 = none;
-	p->Rain2 = none;
+	p.Items = 0;
+	p.MO.Angles.pitch = 0.0;
+	p.MO.Translucency = 0;	// cancel invisibility
+	p.ExtraLight = 0;	// cancel gun flashes
+	p.FixedColormap = 0;	// cancel ir gogles
+	p.DamageFlash = 0.0;	// no palette changes
+	p.BonusFlash = 0.0;
+	p.Rain1 = none;
+	p.Rain2 = none;
 
-	for (i = 0; i < p->InventorySlotNum; i++)
+	for (i = 0; i < p.InventorySlotNum; i++)
 	{
-		p->Inventory[i].count = 1;
+		p.Inventory[i].count = 1;
 	}
-	p->ArtifactCount = p->InventorySlotNum;
+	p.ArtifactCount = p.InventorySlotNum;
 
 	if (!deathmatch)
 	{
 		for (i = 0; i < 16; i++)
 		{
-			PlayerPawn(p->MO).PlayerUseArtifact(arti_fly);
+			PlayerPawn(p.MO).PlayerUseArtifact(arti_fly);
 		}
 	}
 }
@@ -198,18 +195,18 @@ void G_DeathMatchSpawnPlayer(int playernum)
 void NetGameReborn(int playernum)
 {
 	int i;
-	player_t* player;
+	Player player;
 
 	// respawn at the start
-	player = GPlayers[playernum];
+	player = svvars->Players[playernum];
 
 	// remove pitch and roll angles from corpse
-	player->MO.Angles.pitch = 0.0;
-	player->MO.Angles.roll = 0.0;
+	player.MO.Angles.pitch = 0.0;
+	player.MO.Angles.roll = 0.0;
 
 	// first dissasociate the corpse
-	player->MO.Player = NULL;
-	player->MO.bIsPlayer = false;
+	player.MO.Player = none;
+	player.MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -252,17 +249,17 @@ void NetGameReborn(int playernum)
 //
 //==========================================================================
 
-void PutClientIntoServer(player_t * player)
+void PutClientIntoServer(Player player)
 {
-	player->ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
-	player->ViewEnts[ps_weapon].Player = player;
-	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
-	player->ViewEnts[ps_flash].Player = player;
-	if (player->bIsBot)
+	player.ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	player.ViewEnts[ps_weapon].Player = player;
+	player.ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	player.ViewEnts[ps_flash].Player = player;
+	if (player.bIsBot)
 	{
-		player->Bot = SpawnObject(BotPlayer, none);
-		player->Bot.player = player;
-		player->Bot.OnBeginPlay();
+		player.Bot = SpawnObject(BotPlayer, none);
+		player.Bot.player = player;
+		player.Bot.OnBeginPlay();
 	}
 }
 
@@ -290,31 +287,31 @@ void SpawnClient(int i)
 //
 //==========================================================================
 
-void DisconnectClient(player_t * player)
+void DisconnectClient(Player player)
 {
 	int i;
 
-	if (player->Bot != none)
+	if (player.Bot != none)
 	{
-		player->Bot.Destroy();
-		player->Bot = none;
+		player.Bot.Destroy();
+		player.Bot = none;
 	}
-	if (player->MO)
+	if (player.MO)
 	{
-		player->MO.Player = NULL;
-		player->MO.bIsPlayer = false;
-		player->MO.Damage(none, none, 10000);
+		player.MO.Player = none;
+		player.MO.bIsPlayer = false;
+		player.MO.Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		if (player->ViewEnts[i])
+		if (player.ViewEnts[i])
 		{
-			player->ViewEnts[i].Destroy();
-			player->ViewEnts[i] = none;
+			player.ViewEnts[i].Destroy();
+			player.ViewEnts[i] = none;
 		}
 	}
-	bprint("%s left the game\n", ARR2STR(player->Name));
-	player->MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
+	bprint("%s left the game\n", ARR2STR(player.PlayerName));
+	player.MO.PlayFullVolumeSound('Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -323,18 +320,21 @@ void DisconnectClient(player_t * player)
 //
 //==========================================================================
 
-void UserinfoChanged(player_t * player)
+void UserinfoChanged(Player player)
 {
-	if (!player->bSpawned)
+	if (!player.bSpawned)
 	{
 		return;
 	}
-	player->MO.Translation = player->Color;
+	player.MO.Translation = player.Color;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.38  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

@@ -60,7 +60,7 @@ spec_trans_t spec_trans_tab[] = {
 	{250, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
 
 	{206, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
-	{243, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11
+	{243, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11 --
 	{234, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
 	{112, -1, 255, 0, 0, 0, SPAC_CROSS, false},	//  13
 	{230, -1, 4, 4, 0, 0, SPAC_USE, false},	//  14
@@ -104,7 +104,7 @@ spec_trans_t spec_trans_tab[] = {
 	{196, -1, 8, 8, 10, 0, SPAC_USE, false},	//  49
 
 	{10, -1, 16, 0, 0, 0, SPAC_USE, false},	//  50
-	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51
+	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51 S1 EndLevelSecret
 	{243, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
 	{207, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
 	{61, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  54
@@ -184,7 +184,7 @@ spec_trans_t spec_trans_tab[] = {
 	{206, -1, 64, 105, 0, 0, SPAC_CROSS, false},	//  121
 	{206, -1, 64, 105, 0, 0, SPAC_USE, false},	//  122
 	{206, -1, 64, 105, 0, 0, SPAC_USE, true},	//  123
-	{244, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124
+	{244, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124 W1 EndLevelSecret UNUSED
 	{70, -1, 0, 0, 0, 0, SPAC_MCROSS, false},	//  125
 	{70, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  126
 	{217, -1, 32, 16, 0, 0, SPAC_USE, false},	//  127
@@ -204,28 +204,28 @@ spec_trans_t spec_trans_tab[] = {
 
 	{35, -1, 8, 64, 0, 0, SPAC_USE, false},	//  140
 	{197, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  141
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  142
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  143
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  144
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  142 -- ScrollTexture
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  143 -- ScrollTextureDown
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  144 S1 Open Sliding Door (spcl txt)
 	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
-	{217, -1, 2, 128 + 16, 0, 0, SPAC_USE, false},	//  146
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  147
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  148
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  149
+	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
+	{259, -1, 0, 0, 0, 0, SPAC_USE, false},	//  147
+	{258, -1, 0, 0, 0, 0, SPAC_USE, true},	//  148
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  149 UNUSED
 
 	{256, 0, 0, 0, 0, 0, SPAC_CROSS, true},	//  150
 	{13, -1, 64, 0, 9, 0, SPAC_USE, true},	//  151
 	{13, -1, 64, 0, 17, 0, SPAC_USE, true},	//  152
 	{13, -1, 64, 0, 12, 0, SPAC_USE, true},	//  153
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  154
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  155
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  154 SR LowerLift Gold key
+	{64, -1, 32, 105, 0, 0, 0, 0},	//  155
 	{13, 0, 16, 0, 17, 0, SPAC_USE, false},	//  156
 	{13, 0, 16, 0, 12, 0, SPAC_USE, false},	//  157
 	{13, 0, 16, 0, 9, 0, SPAC_USE, false},	//  158
 	{13, 0, 16, 150, 9, 0, SPAC_USE, true},	//  159
 
 	{13, 0, 16, 150, 12, 0, SPAC_USE, true},	//  160
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  161
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  161 (Teaser Governor's room)
 	{13, -1, 64, 0, 17, 0, SPAC_USE, false},	//  162
 	{13, -1, 64, 0, 12, 0, SPAC_USE, false},	//  163
 	{13, -1, 64, 0, 9, 0, SPAC_USE, false},	//  164
@@ -235,27 +235,27 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 64, 0, 6, 0, SPAC_USE, true},	//  168
 	{13, 0, 16, 0, 1, 0, SPAC_USE, false},	//  169
 
-	{13, 0, 16, 150, 1, 0, SPAC_USE, true},	//  170
+	{13, 0, 16, 150, 2, 0, SPAC_USE, true},	//  170
 	{13, -1, 16, 0, 5, 0, SPAC_USE, false},	//  171
 	{13, -1, 16, 0, 7, 0, SPAC_USE, true},	//  172
 	{13, -1, 16, 0, 8, 0, SPAC_USE, true},	//  173
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  174
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  174 W1 LowerFloor_RaiseCeiling
 	{256, 1, 16, 0, 0, 0, SPAC_CROSS, false},	//  175
 	{13, -1, 16, 0, 10, 0, SPAC_USE, true},	//  176
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  177
-	{217, -1, 2, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  179
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  177 SR LowerLift Power 3
+	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  179 W1 LowerCeilingToFloor Crush
 
 	{230, -1, 4, 64, 0, 0, SPAC_IMPACT, false},	//  180
 	{230, -1, 4, 64, 0, 0, SPAC_USE, false},	//  181
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  182
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  183
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  184
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  185
-	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  186
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  187
+	{257, -1, 255, 0, 0, 0, 0, 0},	//  182
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  183 (MAP12)
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  184 SR LiftUpNearDownStay
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  185 WR TeleportSilent
+	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  186 1-Way
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  187 W1 ClearForceField Crystal
 	{13, -1, 16, 0, 129, 0, SPAC_CROSS, false},	//  188
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  189
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  189 S1 LowerFloor_RaiseCeiling_O
 
 	{13, 0, 16, 150, 14, 0, SPAC_USE, true},	//  190
 	{13, -1, 16, 0, 14, 0, SPAC_USE, true},	//  191
@@ -336,10 +336,18 @@ spec_trans_t spec_trans_tab[] = {
 void TranslateLine(line_t * line)
 {
 	int oldspec;
+	int oldflags;
 
 	oldspec = line->special;
+	oldflags = line->flags;
+	line->flags &= 0x01ff;
 	if (!line->special)
 	{
+		if (oldflags & ML_TRANSLUCENT_STRIFE)
+		{
+			line->special = 208;
+			line->arg2 = 170;
+		}
 		return;
 	}
 
@@ -369,6 +377,13 @@ void TranslateLine(line_t * line)
 	line->flags |= spec_trans_tab[oldspec].spac << ML_SPAC_SHIFT;
 	if (spec_trans_tab[oldspec].repeat)
 		line->flags |= ML_REPEAT_SPECIAL;
+	if (oldflags & ML_TRANSLUCENT_STRIFE)
+	{
+		if (line->special == 257)
+		{
+			line->arg2 = 170;
+		}
+	}
 }
 
 //==========================================================================
@@ -446,6 +461,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.4  2003/09/12 16:47:11  dj_jl
 //  Translating most of the line specials
 //

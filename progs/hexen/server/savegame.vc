@@ -29,7 +29,7 @@
 //
 //==========================================================================
 
-void ArchivePlayer(player_t * player)
+void ArchivePlayer(Player player)
 {
 }
 
@@ -39,15 +39,18 @@ void ArchivePlayer(player_t * player)
 //
 //==========================================================================
 
-void UnarchivePlayer(player_t * player)
+void UnarchivePlayer(Player player)
 {
-	player->Attacker = none;
-	player->Poisoner = none;
+	player.Attacker = none;
+	player.Poisoner = none;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.21  2003/03/08 12:41:45  dj_jl
 //  Removing class pointers.
 //

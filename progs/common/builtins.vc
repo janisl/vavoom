@@ -357,10 +357,10 @@ native particle_t *NewParticle(void);
 native void bprint(string format, ...);
 
 //  Print to client
-native void cprint(player_t * player, string format, ...);
+native void cprint(BasePlayer player, string format, ...);
 
 //  Client's center message
-native void centerprint(player_t * player, string format, ...);
+native void centerprint(BasePlayer player, string format, ...);
 
 //
 //  Map utilites
@@ -460,14 +460,15 @@ native sector_t *NumToSector(sector_t * sector);
 native void G_ExitLevel(void);
 native void G_SecretExitLevel(void);
 
-native int P_GetPlayerNum(player_t * player);
-native void ClearPlayer(player_t * p);
+native int P_GetPlayerNum(BasePlayer player);
+native void ClearPlayer(BasePlayer p);
 native void G_Completed(int map, int position);
 native int TerrainType(int pic);
 native void P_ForceLightning(void);
 native void SB_Start(void);
 native void SetFloorPic(sector_t * sec, int texture);
 native void SetCeilPic(sector_t * sec, int texture);
+native void SetLineTexture(int side, int position, int texture);
 native void SetLineTransluc(line_t * line, int trans);
 native void SendFloorSlope(sector_t * sector);
 native void SendCeilingSlope(sector_t * sector);
@@ -476,13 +477,16 @@ native int FindModel(string Name);
 native int GetModelIndex(name Name);
 native int FindSkin(string Name);
 
-native void MSG_SelectClientMsg(int msgtype, player_t * client);
+native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 
 #endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2003/11/12 16:48:02  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.42  2003/09/26 16:52:59  dj_jl
 //  Wrapped text printing
 //

@@ -171,7 +171,7 @@ class VEntity : public VThinker
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
-	player_t		*Player;
+	VBasePlayer		*Player;
 
 	int				TID;			// thing identifier
 	int				Special;		// special
@@ -480,6 +480,12 @@ struct mobj_base_t
 	int			Effects;		// dynamic lights, trails
 };
 
+//	Variables shared with progs.
+struct server_vars_t
+{
+	VBasePlayer*		Players[MAXPLAYERS]; // Bookkeeping on players - state.
+};
+
 void SV_StartSound(const VEntity *, int, int, int);
 void SV_StopSound(const VEntity *, int);
 void SV_SectorStartSound(const sector_t *, int, int, int);
@@ -489,8 +495,8 @@ void SV_SectorStopSequence(const sector_t *);
 void SV_PolyobjStartSequence(const polyobj_t *, const char *);
 void SV_PolyobjStopSequence(const polyobj_t *);
 void SV_BroadcastPrintf(const char *s, ...);
-void SV_ClientPrintf(player_t *player, const char *s, ...);
-void SV_ClientCenterPrintf(player_t *player, const char *s, ...);
+void SV_ClientPrintf(VBasePlayer *player, const char *s, ...);
+void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 void SV_SetLineTexture(int side, int position, int texture);
@@ -502,7 +508,8 @@ int SV_FindSkin(const char *name);
 
 void SV_ReadMove(void);
 
-extern player_t*		sv_player;
+extern server_vars_t	svvars;
+extern VBasePlayer*		sv_player;
 
 //==========================================================================
 //
@@ -531,8 +538,7 @@ void G_StartNewInit(void);
 int GetMobjNum(VEntity *mobj);
 VEntity* SetMobjPtr(int archiveNum);
 
-extern player_t*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state.
-extern player_t*		GPlayers[MAXPLAYERS]; // Bookkeeping on players - state.
+extern VBasePlayer*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state.
 
 extern skill_t			gameskill;
  
@@ -552,7 +558,7 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return GLevel->PointInSubsector(TVec(x, y, 0));
 }
 
-inline int SV_GetPlayerNum(player_t* player)
+inline int SV_GetPlayerNum(VBasePlayer* player)
 {
 	int		i;
 
@@ -571,9 +577,12 @@ inline int SV_GetPlayerNum(player_t* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.30  2003/09/24 16:42:31  dj_jl
 //	Fixed rough block checking
-//
+//	
 //	Revision 1.29  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

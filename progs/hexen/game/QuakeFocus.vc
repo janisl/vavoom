@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class QuakeFocus:Actor;
+class QuakeFocus : Actor;
 
 //
 // Quake variables
@@ -42,7 +42,7 @@ float TremorRadius;	// Radius for tremor
 void A_Quake(void)
 {
 	float an;
-	player_t *pl;
+	Player pl;
 	Actor victim;
 	int playnum;
 	float dist;
@@ -51,15 +51,15 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = GPlayers[playnum];
-			if (!pl || !pl->bSpawned)
+			pl = svvars->Players[playnum];
+			if (!pl || !pl.bSpawned)
 				continue;
 
-			victim = pl->MO;
+			victim = pl.MO;
 			dist = MobjDist(self, victim);
 			if (dist < TremorRadius)	// In tremor radius
 			{
-				pl->LocalQuakeHappening = Richters;
+				pl.LocalQuakeHappening = Richters;
 			}
 			// Check if in damage radius
 			if (dist < DamageRadius && victim.Origin.z <= victim.FloorZ)
@@ -78,8 +78,8 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			if (GPlayers[playnum])
-				GPlayers[playnum]->LocalQuakeHappening = 0;
+			if (svvars->Players[playnum])
+				svvars->Players[playnum].LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Minotaur:Pawn
+class Minotaur : Pawn
 	__mobjinfo__(9);
 
 //
@@ -57,7 +57,7 @@ void Died(Actor source)
 	{
 		if (!Instigator.ActiveMinotaur())
 		{
-			Instigator.Player->Powers[pw_minotaur] = 0.0;
+			Instigator.Player.Powers[pw_minotaur] = 0.0;
 		}
 	}
 }
@@ -77,7 +77,7 @@ bool MorphMonster(void)
 		{
 			if (!Instigator.ActiveMinotaur())
 			{
-				Instigator.Player->Powers[pw_minotaur] = 0.0;
+				Instigator.Player.Powers[pw_minotaur] = 0.0;
 			}
 		}
 		return true;
@@ -177,9 +177,9 @@ void A_MinotaurLook(void)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!GPlayers[i] || !GPlayers[i]->bSpawned)
+			if (!svvars->Players[i] || !svvars->Players[i].bSpawned)
 				continue;
-			mo = GPlayers[i]->MO;
+			mo = svvars->Players[i].MO;
 			if (mo == Instigator)
 				continue;
 			if (mo.Health <= 0)
@@ -460,7 +460,7 @@ void A_MinotaurAtk3(void)
 		if (Enemy.bIsPlayer)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -512.0;
+			Enemy.Player.DeltaViewHeight = -512.0;
 		}
 	}
 	else
@@ -640,6 +640,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

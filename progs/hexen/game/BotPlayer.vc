@@ -24,9 +24,9 @@
 //**************************************************************************
 
 // Main bot class
-class BotPlayer:Object;
+class BotPlayer : Object;
 
-player_t *player;		// Points to reference player
+Player player;		// Points to reference player
 Actor botmo;
 
 // Destinations
@@ -44,31 +44,10 @@ bool lastpos_valid;
 Actor missile;			// A threathing missile that got to be avoided.
 
 Actor ally;			// Ally to tag along with
-/*AActor		*last_mate;	// If bots mate dissapeared (not if died) that mate is
-						// pointed to by this. Allows bot to roam to it if
-						// necessary.
-
-enemyinfo_t	enemyinfo;	// Things we know about our enemy
-
-botstate_t	state;		// What we're doing in teamgame mode
-
-fixed_t		lastx;		// Last known x location of bot's enemy (go there if enemy goes out of sight)
-fixed_t		lasty;		// Last known y location of bot's enemy
-
-// Tickers
-
-float t_respawn;*/
 float t_strafe;
 float t_react;
-/*float t_fight;
-float t_rocket;
-float t_turn;
-float t_pissed;
-float t_frust;*/
 float t_fire;			// Tics left until our gun will actually fire again
 float t_anticip;
-/*float t_chat;			// Tics left until bots completes "typing" in what he's saying.
-						// Bot also doesn't do anything during this time.*/
 
 float forwardmove;	// For building ucmd
 float sidemove;
@@ -78,23 +57,13 @@ bool bAllRound;
 bool bNewItemIsWeapon;
 bool bNewItemIsPowerup;
 
-/*chatline_t	*chatline;	// For when t_chat expires
-
-bottype_t	bottype;	// Bot type*/
 botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
-/*fixed_t		oldx;
-fixed_t		oldy;
-
-int			thingnum;*/
 int angerlevel;
 
-/*AActor		*things[NUMMOBJTYPES];*/
 float combatdist[NUMWEAPONS * NUMCLASSES]; //different for each weapon.
 
 float angle;			// The wanted angle that the bot tries to get every tic.
-
-/*	void LinkToPlayer (int playernum);*/
 
 //==========================================================================
 //
@@ -106,70 +75,19 @@ float angle;			// The wanted angle that the bot tries to get every tic.
 
 void BotTick(float deltaTime)
 {
-	botmo = player->MO;
+	botmo = player.MO;
 
-	player->ForwardMove = 0.0;
-	player->SideMove = 0.0;
-	player->FlyMove = 0.0;
-	player->Buttons = 0;
-
-	// Don't do anything if we're talking
-//	if (B_Chat(bot))
-//		return;
+	player.ForwardMove = 0.0;
+	player.SideMove = 0.0;
+	player.FlyMove = 0.0;
+	player.Buttons = 0;
 
 	// We're dead, so hit space to respawn
-	if (!player->Health)
+	if (!player.Health)
 	{
-		player->Buttons |= BT_USE;
+		player.Buttons |= BT_USE;
 		return;
 	}
-
-#if 0
-	// Fix me: No other talking period while pissed/frustrated
-	if (!(level.time & 0xff) && !bot->enemy && !bot->t_pissed && !bot->t_frust)
-	{
-		int x = P_Random (pr_botchat) % 100;
-
-		if (x < bot->info.chatty)
-		{
-			if (x)
-			{
-				x = P_Random (pr_botchat)%10;
-				bot->chatline = &chatinfo[bot->info.chatinfo].roam[x];
-				bot->t_chat = bot->info.chattime;
-			}
-			else	// 1/100 chance this'll happen
-			{
-				// Rare chat strings. WHOO!!!!!
-				x = P_Random (pr_botchat)%5;
-				bot->chatline = &chatinfo[bot->info.chatinfo].rare[x];
-				bot->t_chat = bot->info.chattime;
-			}
-		}
-
-	}
-
-	// Periodically let out some anger
-	if (!(level.time & 0xff))
-	{
-		if (bot->angerlevel)
-			bot->angerlevel--;
-		else if (bot->angerlevel < 0)
-			bot->angerlevel = 0;
-	}
-
-	// Set an ally if we're in a mode that has one
-	if (teamgame.value || teamplay.value || !deathmatch.value)
-		bot->ally = B_SetAlly (bot);
-	else
-		bot->ally = NULL;
-	
-	if (teamgame.value)
-	{
-		B_SetAction (bot);
-		B_SetGoal (bot);
-	}
-#endif
 
 	// Weed out any bad destinations/enemies
 	CheckStuff();
@@ -201,8 +119,8 @@ void BotTick(float deltaTime)
 			sidemove = -SIDEWALK;
 	}
 
-	player->SideMove = sidemove;
-	player->ForwardMove = forwardmove;
+	player.SideMove = sidemove;
+	player.ForwardMove = forwardmove;
 
 #define DECT(var) \
 	var -= deltaTime; \
@@ -211,12 +129,6 @@ void BotTick(float deltaTime)
 		var = 0.0; \
 	}
 	DECT(t_react)
-//	DECT(t_fight)
-//	DECT(t_rocket)
-//	DECT(t_turn)
-//	DECT(t_pissed)
-//	DECT(t_frust)
-//	DECT(t_fire)
 	DECT(t_anticip)
 #undef DECT
 }
@@ -265,12 +177,12 @@ bool CheckItem(Actor item)
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (!player->WeaponOwned[weapon])
+		if (!player.WeaponOwned[weapon])
 			return true;
 
 		// If we have no more room for the mana it gives
-		if ((weapon == WP_SECOND && player->Mana[MANA_1] == MAX_MANA) ||
-			(weapon == WP_THIRD && player->Mana[MANA_2] == MAX_MANA))
+		if ((weapon == WP_SECOND && player.Mana[MANA_1] == MAX_MANA) ||
+			(weapon == WP_THIRD && player.Mana[MANA_2] == MAX_MANA))
 			return false;
 	}
 
@@ -280,12 +192,12 @@ bool CheckItem(Actor item)
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (!(player->Pieces & piece))
+		if (!(player.Pieces & piece))
 			return true;
 
 		// If we have no more room for the mana it gives
-		if (player->Mana[MANA_1] == MAX_MANA &&
-			player->Mana[MANA_2] == MAX_MANA)
+		if (player.Mana[MANA_1] == MAX_MANA &&
+			player.Mana[MANA_2] == MAX_MANA)
 			return false;
 	}
 
@@ -293,26 +205,17 @@ bool CheckItem(Actor item)
 	if (mana != -1)
 	{
 		// If we have no more room for the mana it gives
-		if (mana == MANA_1 && player->Mana[MANA_1] == MAX_MANA)
+		if (mana == MANA_1 && player.Mana[MANA_1] == MAX_MANA)
 			return false;
-		if (mana == MANA_2 && player->Mana[MANA_2] == MAX_MANA)
+		if (mana == MANA_2 && player.Mana[MANA_2] == MAX_MANA)
 			return false;
-		if (mana == MANA_BOTH && player->Mana[MANA_1] == MAX_MANA &&
-			player->Mana[MANA_2] == MAX_MANA)
+		if (mana == MANA_BOTH && player.Mana[MANA_1] == MAX_MANA &&
+			player.Mana[MANA_2] == MAX_MANA)
 			return false;
 	}
 
 	if (item.Class == ItemHealingBottle && (botmo.Health >= MAXHEALTH))
 		return false;
-#if 0
-	if ((item.Class == MT_MISC12 || item.Class == MT_MEGA) &&
-		(botmo.health >= 2 * MAXHEALTH))
-		return false;
-	if (item.Class == MT_ARMOR_1 && (player->armorpoints >= 100))
-		return false;
-	if (teamgame.value && item->flags3 & MF3_KEY && !(item->flags & MF_DROPPED))
-		return false;
-#endif
 
 	// Guess we're okay
 	return true;
@@ -326,24 +229,8 @@ bool CheckItem(Actor item)
 
 void SetEnemy(void)
 {
-#if 0
-	if (terminator.value)
-	{
-		// If we can see the terminator, go for him no matter what
-		for (int i=0; i<MAXPLAYERS; i++)
-		{
-			if (!GPlayers[i] || GPlayers[i]->MO == bot->player->MO)
-				continue;
-
-			if (GPlayers[i]->powers[pw_terminator] &&
-				P_CheckSight(bot->player->MO, GPlayers[i]->MO))
-				bot->enemy = GPlayers[i]->MO;
-		}
-	}
-#endif
-
-	if (enemy && enemy.Health > 0 && player->MO &&
-		player->MO.CanSee(enemy))
+	if (enemy && enemy.Health > 0 && player.MO &&
+		player.MO.CanSee(enemy))
 	{
 		return;
 	}
@@ -479,47 +366,6 @@ void Scan(void)
 			{
 				missile = actor;
 			}
-#if 0
-			else if (!bot->node && actor->flags3 & MF3_NODE)// && P_CheckSight(MO, actor, false) && (bot->prev != actor && P_AproxDistance(MO->x - actor->x, MO->y - actor->y) <= 32*FRACUNIT))
-			{
-				if (actor->Class == MT_BOTPATH || actor->Class == MT_BOTSNIPE)
-					bot->node = actor;
-				else if (teamgame.value && bot->player->team != TM_NONE)
-				{
-					if (bot->player->team == TM_BLUE)
-					{
-						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTBLUEGUARD))
-						{
-							bot->node = actor;
-						}
-						else if (bot->state == BST_OFFENSE && ((int)actor->Class == (int)MT_BOTBLUEPATH))
-						{
-							bot->node = actor;
-						}
-						else if (bot->state == BST_RETURN && actor->Class == MT_BOTBLUEGOAL)
-						{
-							bot->node = actor;
-						}
-					}
-					if (bot->player->team == TM_RED)
-					{
-						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTREDGUARD))
-	
-						{
-							bot->node = actor;
-						}
-						else if (bot->state == BST_OFFENSE && ((int)actor->Class == MT_BOTREDPATH))
-						{
-							bot->node = actor;
-						}
-						else if (bot->state == BST_RETURN && ((int)actor->Class == MT_BOTREDGOAL))
-						{
-							bot->node = actor;
-						}
-					}
-				}
-			}
-#endif
 		}
 	}
 }
@@ -550,40 +396,7 @@ int SkillLower(int skill, int num)
 
 void SetAngle(float an)
 {
-//	if (t_turn)
-//		return;
-
 	angle = AngleMod360(an);
-
-#if 0//Meaningless
-	if (!enemy)
-		return;
-
-	t_turn = 4;
-	return;
-
-	switch (info.accuracy)
-	{
-	case bsk_verypoor:
-	case bsk_poor:
-		t_turn = TICRATE;
-		break;
-	case bsk_low:
-		t_turn = (TICRATE*2)/3;
-		break;
-	case bsk_medium:
-		t_turn = TICRATE/2;
-		break;
-	case bsk_high:
-		t_turn = TICRATE/4;
-		break;
-	case bsk_excellent:
-		t_turn = 4;
-		break;
-	case bsk_supreme:
-		break;
-	}
-#endif
 }
 
 //==========================================================================
@@ -607,7 +420,7 @@ float GetAngle(void)
 
 int WeapFromItem(Actor item)
 {
-	switch (player->PClass)
+	switch (player.PClass)
 	{
 	case PCLASS_FIGHTER:
 		switch (item.Class)
@@ -650,7 +463,7 @@ int WeapFromItem(Actor item)
 
 int WeapPieceFromItem(Actor item)
 {
-	switch (player->PClass)
+	switch (player.PClass)
 	{
 	case PCLASS_FIGHTER:
 		switch (item.Class)
@@ -808,9 +621,9 @@ void BotAim(void)
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	if ((player->PClass == PCLASS_FIGHTER && player->ReadyWeapon >= WP_THIRD) ||
-		(player->PClass == PCLASS_CLERIC && player->ReadyWeapon >= WP_SECOND) ||
-		(player->PClass == PCLASS_MAGE))
+	if ((player.PClass == PCLASS_FIGHTER && player.ReadyWeapon >= WP_THIRD) ||
+		(player.PClass == PCLASS_CLERIC && player.ReadyWeapon >= WP_SECOND) ||
+		(player.PClass == PCLASS_MAGE))
 	{
 		// Projectile weapons
 		switch (info.intelect)
@@ -901,58 +714,25 @@ Actor FindEnemy(void)
 		vangle = ENEMY_SCAN_FOV;
 	bAllRound = false;
 
-#if 0
-	// Look for monster enemy
-	if (!deathmatch.value && !teamgame.value)
-	{
-		AActor *actor;
-		TThinkerIterator<AActor> iterator;
-
-		while (actor = iterator.Next())
-		{
-			if (!(actor->flags3 & MF3_ENEMY))
-				continue;
-			if (!Check_LOS(MO, actor, vangle))
-				continue;
-			if (!P_CheckSight(MO, actor))
-				continue;
-
-			return actor;
-		}
-
-		// Didn't find anything...
-		return NULL;
-	}
-#endif
-
 	target = none;
 	closest_dist = 99999.0;
 
 	// Search for player enemies
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i] /*&& !MO->IsTeammate(GPlayers[i]->MO)*/ &&
-			GPlayers[i]->MO.Health > 0 && botmo != GPlayers[i]->MO)
+		if (svvars->Players[i] &&
+			svvars->Players[i].MO.Health > 0 && botmo != svvars->Players[i].MO)
 		{
 			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
-			if (Check_LOS(GPlayers[i]->MO, vangle))
+			if (Check_LOS(svvars->Players[i].MO, vangle))
 			{
-				if (botmo.CanSee(GPlayers[i]->MO))
+				if (botmo.CanSee(svvars->Players[i].MO))
 				{
-					temp = MobjDist(GPlayers[i]->MO, botmo);
-
-#if 0
-					//Too dark?
-					if (temp > DARK_DIST &&
-						GPlayers[i]->MO->subsector->sector->lightlevel < WHATS_DARK &&
-						bot->player->powers[pw_infrared])
-						continue;
-#endif
-	
+					temp = MobjDist(svvars->Players[i].MO, botmo);
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = GPlayers[i]->MO;
+						target = svvars->Players[i].MO;
 					}
 				}
 			}
@@ -1227,7 +1007,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player->ReadyWeapon == WP_FIRST))
+				(bItemIsWeapon && player.ReadyWeapon == WP_FIRST))
 			{
 				Roam();
 				return;
@@ -1242,52 +1022,15 @@ void Move(float deltaTime)
 
 		if (!CheckPath(an, 48.0)) // We're blocked, so go the other way!
 			sidemove = -sidemove;
-/*
-		switch (bot->player->ReadyWeapon)
-		{
-		case wp_supershotgun:
-
-		default:
-			if (!B_CheckTo(MO, bot->enemy)
-*/
 
 		if (CheckTo(enemy.Origin) && dist >
-				combatdist[player->PClass * NUMWEAPONS + player->ReadyWeapon])
+				combatdist[player.PClass * NUMWEAPONS + player.ReadyWeapon])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
 
 		return;
 	}
-
-#if 0
-	// Follow our buddy if we're tagging along
-	if (ally)
-	{
-		float matedist;
-
-		if (t_strafe)
-		{
-			t_strafe -= deltaTime;
-			if (t_strafe)
-			{
-				sidemove = -sidemove;
-				t_strafe = 2.0;
-			}
-		}
-
-		SetAngle(R_PointToAngle2(MO->x, MO->y, bot->ally->x, bot->ally->y));
-		matedist = MobjDist(&botmo, &ally);
-
-		if (matedist > (FRIEND_DIST*2))
-			bot->forwardmove = FORWARDRUN;
-		else if (matedist > FRIEND_DIST)
-			bot->forwardmove = FORWARDWALK;
-		else if (matedist < FRIEND_DIST-(FRIEND_DIST/3)) //Got too close, so move away.
-			bot->forwardmove = -FORWARDWALK;
-		return;
-	}
-#endif
 
 	if (t_strafe)
 	{
@@ -1319,21 +1062,7 @@ void Attack(void)
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-#if 0
-	switch (player->ReadyWeapon)
-	{
-	case wp_gauntlets:
-		// Double tap the chaingun for extreme accuracy
-		if (info.accuracy == bsk_supreme)
-			if (t_fire)
-				return;
-		break;
-	default:
-		break;
-	}
-#endif
-
-	player->Buttons |= BT_ATTACK;
+	player.Buttons |= BT_ATTACK;
 }
 
 //==========================================================================
@@ -1352,7 +1081,7 @@ void Turn(void)
 
 	if (!enemy)
 	{
-		player->ViewAngles.yaw = GetAngle();
+		player.ViewAngles.yaw = GetAngle();
 		return;
 	}
 
@@ -1392,7 +1121,7 @@ void Turn(void)
 			distance = -37.5;
 		break;
 	}
-	player->ViewAngles.yaw = AngleMod360(botmo.Angles.yaw + distance);
+	player.ViewAngles.yaw = AngleMod360(botmo.Angles.yaw + distance);
 }
 
 //==========================================================================
@@ -1426,16 +1155,6 @@ void Pitch(void)
 
 void Killed(Actor victim)
 {
-#if 0
-	// [BC] Bot taunting
-	if ((P_Random() % 100) < info.chatty)
-	{
-		x = P_Random() % 15;	// 15 death strings possible
-		chatline = &chatinfo[info.chatinfo].frag[x];
-		t_chat = info.chattime;
-	}
-#endif
-			
 	// [BC] Let some anger out
 	angerlevel -= 5;
 	enemy = none;
@@ -1452,34 +1171,6 @@ void Killed(Actor victim)
 
 void Died(Actor killer)
 {
-#if 0
-	int x = P_Random() % 100;
-
-	angerlevel += 10;
-	if (angerlevel >= info.threshold)
-	{
-		if (x < info.pisschance)
-		{
-			x = P_Random (pr_botchat)%5;	// 5 pissed/frustration strings possible
-			bot->chatline = &chatinfo[bot->info.chatinfo].pissed[x];
-			bot->t_pissed = 120*TICRATE;
-		}
-		else
-		{
-			x = P_Random (pr_botchat)%5;	// 5 pissed/frustration strings possible
-			bot->chatline = &chatinfo[bot->info.chatinfo].frustrated[x];
-			bot->t_frust = 120*TICRATE;
-		}
-		bot->t_chat = bot->info.chattime;
-		angerlevel = 0;
-	}
-	else if (x < bot->info.chatty)
-	{
-		x = P_Random (pr_botchat)%10;	// 10 death strings possible
-		bot->chatline = &chatinfo[bot->info.chatinfo].died[x];
-		bot->t_chat = bot->info.chattime;
-	}
-#endif
 }
 
 //==========================================================================
@@ -1495,11 +1186,11 @@ void OnBeginPlay(void)
 	botinfo_t *binfo;
 	int i;
 
-	if (strcmp(ARR2STR(player->Name), ""))
+	if (strcmp(ARR2STR(player.PlayerName), ""))
 	{
 		for (i = 0; i < NUMTOTALBOTS; i++)
 		{
-			if (!stricmp(botinfo[i].Name, ARR2STR(player->Name)))
+			if (!stricmp(botinfo[i].Name, ARR2STR(player.PlayerName)))
 			{
 				bottype = i;
 				break;
@@ -1530,10 +1221,10 @@ void OnBeginPlay(void)
 	info.evade = SkillLower(binfo->evade, 4 - botskill);
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
-	strcpy(ARR2STR(player->UserInfo), binfo->userinfo);
+	strcpy(ARR2STR(player.UserInfo), binfo->userinfo);
 
 	// Setup combat distance tables
-	if (deathmatch/* || teamgame.value*/)
+	if (deathmatch)
 	{
 		combatdist[WP_FIRST]		= 48.0;
 		combatdist[WP_SECOND]		= 48.0;
@@ -1582,6 +1273,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

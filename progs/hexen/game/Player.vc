@@ -1,0 +1,118 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Player : BasePlayer;
+
+//
+//  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
+//
+
+sb_stats_t Stats;
+
+float ArmorPoints[NUMARMOR];
+
+float InventoryTime;
+
+int ArtifactFlash;
+int ReadyArtifact;
+int InvPtr;
+int InvCurPos;
+int InventorySlotNum;
+inventory_t Inventory[NUMARTIFACTS];
+
+int Mana[NUMMANA];
+
+//
+//  ----------
+//
+
+int Keys;
+
+// Power ups. invinc and invis are tic counters.
+float Powers[NUMPOWERS];
+
+int Arti;	// artitype_t to use
+
+// Base height above floor for viewz.
+float ViewHeight;
+// Bob/squat speed.
+float DeltaViewHeight;
+// bounded/scaled total momentum.
+float Bob;
+
+float FlyHeight;
+
+int ArtifactCount;
+
+// Bit flags, for cheats and debug.
+// See cheat_t, above.
+int Cheats;
+
+// Refired shots are less accurate.
+int Refire;
+
+int Pieces;	// Fourth Weapon pieces
+
+// Is wp_nochange if not changing.
+int PendingWeapon;
+int ReadyWeapon;
+
+bool WeaponOwned[NUMWEAPONS];
+
+// Who did damage (none for floors/ceilings).
+Actor Attacker;
+
+// For screen flashing (red or bright).
+float DamageFlash;
+float BonusFlash;
+
+int PoisonCount;	// screen flash for poison damage
+float LastPoisonTime;
+Actor Poisoner;		// none for non-player mobjs
+
+float JumpTime;
+int LocalQuakeHappening;
+
+int NewTorch;	// used in the torch flicker effect.
+int NewTorchDelta;
+
+int WeaponPalette;
+float MorphTime;	// player is a pig if > 0
+
+TVec MoveDir;
+
+BotPlayer Bot;
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
+//**************************************************************************

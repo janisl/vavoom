@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponCrossbow:Weapon;
+class WeaponCrossbow : Weapon;
 
 //===========================================================================
 //
@@ -33,12 +33,12 @@ class WeaponCrossbow:Weapon;
 
 void A_FireCrossbowPL1(void)
 {
-	Player->Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
-	Player->MO.SpawnPlayerMissile(CrossbowFX1);
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
+	Player.Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
+	Player.MO.SpawnPlayerMissile(CrossbowFX1);
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player.MO.Angles.yaw - (45.0 / 10.0)));
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player.MO.Angles.yaw + (45.0 / 10.0)));
 }
 
 //===========================================================================
@@ -49,17 +49,17 @@ void A_FireCrossbowPL1(void)
 
 void A_FireCrossbowPL2(void)
 {
-	Player->Ammo[am_crossbow] -=
+	Player.Ammo[am_crossbow] -=
 		deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
-	Player->MO.SpawnPlayerMissile(CrossbowFX2);
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
-		AngleMod360(Player->MO.Angles.yaw - (45.0 / 10.0)));
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX2,
-		AngleMod360(Player->MO.Angles.yaw + (45.0 / 10.0)));
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->MO.Angles.yaw - (45.0 / 5.0)));
-	Player->MO.SpawnPlayerMissileAngle(CrossbowFX3,
-		AngleMod360(Player->MO.Angles.yaw + (45.0 / 5.0)));
+	Player.MO.SpawnPlayerMissile(CrossbowFX2);
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player.MO.Angles.yaw - (45.0 / 10.0)));
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX2,
+		AngleMod360(Player.MO.Angles.yaw + (45.0 / 10.0)));
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player.MO.Angles.yaw - (45.0 / 5.0)));
+	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+		AngleMod360(Player.MO.Angles.yaw + (45.0 / 5.0)));
 }
 
 __states__
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

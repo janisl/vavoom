@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PotteryBit:Fragment;
+class PotteryBit : Fragment;
 
 //==========================================================================
 //
@@ -50,11 +50,11 @@ void A_PotteryCheck(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GPlayers[i] || !GPlayers[i]->bSpawned)
+		if (!svvars->Players[i] || !svvars->Players[i].bSpawned)
 		{
 			continue;
 		}
-		pmo = GPlayers[i]->MO;
+		pmo = svvars->Players[i].MO;
 		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
@@ -99,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

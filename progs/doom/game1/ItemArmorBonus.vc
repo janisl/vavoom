@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemArmorBonus:Pickup
+class ItemArmorBonus : Pickup
 	__mobjinfo__(2015);
 
 //==========================================================================
@@ -34,11 +34,11 @@ class ItemArmorBonus:Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player->ArmorPoints++;	// can go over 100%
-	if (Toucher.Player->ArmorPoints > 200)
-		Toucher.Player->ArmorPoints = 200;
-	if (!Toucher.Player->ArmorType)
-		Toucher.Player->ArmorType = 1;
+	Toucher.Player.ArmorPoints++;	// can go over 100%
+	if (Toucher.Player.ArmorPoints > 200)
+		Toucher.Player.ArmorPoints = 200;
+	if (!Toucher.Player.ArmorType)
+		Toucher.Player.ArmorType = 1;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 	return true;
@@ -64,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

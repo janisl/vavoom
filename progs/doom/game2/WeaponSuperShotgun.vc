@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponSuperShotgun:Weapon;
+class WeaponSuperShotgun : Weapon;
 
 //===========================================================================
 //
@@ -39,14 +39,14 @@ void A_FireShotgun2(void)
 	TVec aimDir;
 	TVec dir;
 
-	Player->MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
-	Player->MO.SetState(Player->MO.MissileState);
+	Player.MO.PlaySound('SuperShotgunFire', CHAN_WEAPON);
+	Player.MO.SetState(Player.MO.MissileState);
 
-	Player->Ammo[Ammo] -= 2;
+	Player.Ammo[Ammo] -= 2;
 
 	SetPsprite(Player, ps_flash, FlashState);
 
-	aimDir = Aim(Player->MO, 16.0 * 64.0);
+	aimDir = Aim(Player.MO, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -54,9 +54,9 @@ void A_FireShotgun2(void)
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(Player->MO, dir, MISSILERANGE, damage);
+		LineAttack(Player.MO, dir, MISSILERANGE, damage);
 	}
-	Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -67,7 +67,7 @@ void A_FireShotgun2(void)
 
 void A_OpenShotgun2(void)
 {
-	Player->MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
+	Player.MO.PlaySound('SuperShotgunOpen', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -78,7 +78,7 @@ void A_OpenShotgun2(void)
 
 void A_LoadShotgun2(void)
 {
-	Player->MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
+	Player.MO.PlaySound('SuperShotgunLoad', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -89,7 +89,7 @@ void A_LoadShotgun2(void)
 
 void A_CloseShotgun2(void)
 {
-	Player->MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
+	Player.MO.PlaySound('SuperShotgunClose', CHAN_WEAPON);
 	A_ReFire();
 }
 
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawn:Pawn
+class PlayerPawn : Pawn
 	abstract;
 
 // For cleric's invulnerability effect
@@ -60,7 +60,7 @@ bool GiveMana(int mana, int count)
 	{
 		Error("Actor::GiveMana: bad type %i", mana);
 	}
-	if (Player->Mana[mana] == MAX_MANA)
+	if (Player.Mana[mana] == MAX_MANA)
 	{
 		return false;
 	}
@@ -69,16 +69,16 @@ bool GiveMana(int mana, int count)
 		// extra mana in baby mode and nightmare mode
 		count += count >> 1;
 	}
-	prevMana = Player->Mana[mana];
+	prevMana = Player.Mana[mana];
 
-	Player->Mana[mana] += count;
-	if (Player->Mana[mana] > MAX_MANA)
+	Player.Mana[mana] += count;
+	if (Player.Mana[mana] > MAX_MANA)
 	{
-		Player->Mana[mana] = MAX_MANA;
+		Player.Mana[mana] = MAX_MANA;
 	}
 	if (prevMana <= 0)
 	{
-		Weapon(Player->ViewEnts[ps_weapon]).GotMana(mana);
+		Weapon(Player.ViewEnts[ps_weapon]).GotMana(mana);
 	}
 	return true;
 }
@@ -96,7 +96,7 @@ bool GiveBody(int num)
 	int max;
 
 	max = MAXHEALTH;
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
 		max = MAXMORPHHEALTH;
 	}
@@ -109,7 +109,7 @@ bool GiveBody(int num)
 	{
 		Health = max;
 	}
-	Player->Health = Health;
+	Player.Health = Health;
 	return true;
 }
 
@@ -128,27 +128,27 @@ bool GiveArmor(int armortype, int amount)
 
 	if (amount == -1)
 	{
-		hits = ArmorIncrement[Player->PClass * NUMARMOR + armortype];
-		if (Player->ArmorPoints[armortype] >= hits)
+		hits = ArmorIncrement[Player.PClass * NUMARMOR + armortype];
+		if (Player.ArmorPoints[armortype] >= hits)
 		{
 			return false;
 		}
 		else
 		{
-			Player->ArmorPoints[armortype] = hits;
+			Player.ArmorPoints[armortype] = hits;
 		}
 	}
 	else
 	{
 		hits = itof(amount) * 5.0;
-		totalArmor = Player->ArmorPoints[ARMOR_ARMOR]
-			+ Player->ArmorPoints[ARMOR_SHIELD]
-			+ Player->ArmorPoints[ARMOR_HELMET]
-			+ Player->ArmorPoints[ARMOR_AMULET]
-			+ AutoArmorSave[Player->PClass];
-		if (totalArmor < ArmorMax[Player->PClass] * 5.0)
+		totalArmor = Player.ArmorPoints[ARMOR_ARMOR]
+			+ Player.ArmorPoints[ARMOR_SHIELD]
+			+ Player.ArmorPoints[ARMOR_HELMET]
+			+ Player.ArmorPoints[ARMOR_AMULET]
+			+ AutoArmorSave[Player.PClass];
+		if (totalArmor < ArmorMax[Player.PClass] * 5.0)
 		{
-			Player->ArmorPoints[armortype] += hits;
+			Player.ArmorPoints[armortype] += hits;
 		}
 		else
 		{
@@ -166,12 +166,12 @@ bool GiveArmor(int armortype, int amount)
 
 bool GiveKey(int key)
 {
-	if (Player->Keys & (1 << key))
+	if (Player.Keys & (1 << key))
 	{
 		return false;
 	}
-	Player->BonusFlash += BONUSADD;
-	Player->Keys |= 1 << key;
+	Player.BonusFlash += BONUSADD;
+	Player.Keys |= 1 << key;
 	return true;
 }
 
@@ -187,14 +187,14 @@ bool GivePower(int power)
 {
 	if (power == pw_invulnerability)
 	{
-		if (Player->Powers[power] > BLINKTHRESHOLD)
+		if (Player.Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = INVULNTIME;
+		Player.Powers[power] = INVULNTIME;
 		bInvulnerable = true;
-		if (Player->PClass == PCLASS_MAGE)
+		if (Player.PClass == PCLASS_MAGE)
 		{
 			bReflective = true;
 		}
@@ -202,51 +202,51 @@ bool GivePower(int power)
 	}
 	if (power == pw_flight)
 	{
-		if (Player->Powers[power] > BLINKTHRESHOLD)
+		if (Player.Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = FLIGHTTIME;
+		Player.Powers[power] = FLIGHTTIME;
 		bFly = true;
 		bNoGravity = true;
 		if (Origin.z <= FloorZ)
 		{
-			Player->FlyHeight = 10.0;	// thrust the player in the air a bit
+			Player.FlyHeight = 10.0;	// thrust the player in the air a bit
 		}
 		return (true);
 	}
 	if (power == pw_infrared)
 	{
-		if (Player->Powers[power] > BLINKTHRESHOLD)
+		if (Player.Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = INFRATIME;
+		Player.Powers[power] = INFRATIME;
 		return true;
 	}
 	if (power == pw_speed)
 	{
-		if (Player->Powers[power] > BLINKTHRESHOLD)
+		if (Player.Powers[power] > BLINKTHRESHOLD)
 		{
 			// Already have it
 			return false;
 		}
-		Player->Powers[power] = SPEEDTIME;
+		Player.Powers[power] = SPEEDTIME;
 		return true;
 	}
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		Player->Powers[power] = MAULATORTIME;
+		Player.Powers[power] = MAULATORTIME;
 		return true;
 	}
-	if (Player->Powers[power])
+	if (Player.Powers[power])
 	{
 		return false;	// already got it
 	}
-	Player->Powers[power] = 1.0;
+	Player.Powers[power] = 1.0;
 	return true;
 }
 
@@ -266,34 +266,34 @@ bool GiveArtifact(int arti)
 
 	slidePointer = false;
 	i = 0;
-	while (Player->Inventory[i].type != arti && i < Player->InventorySlotNum)
+	while (Player.Inventory[i].type != arti && i < Player.InventorySlotNum)
 	{
 		i++;
 	}
-	if (i == Player->InventorySlotNum)
+	if (i == Player.InventorySlotNum)
 	{
 		if (arti < arti_firstpuzzitem)
 		{
 			i = 0;
-			while (Player->Inventory[i].type < arti_firstpuzzitem
-				&& i < Player->InventorySlotNum)
+			while (Player.Inventory[i].type < arti_firstpuzzitem
+				&& i < Player.InventorySlotNum)
 			{
 				i++;
 			}
-			if (i != Player->InventorySlotNum)
+			if (i != Player.InventorySlotNum)
 			{
-				for (j = Player->InventorySlotNum; j > i; j--)
+				for (j = Player.InventorySlotNum; j > i; j--)
 				{
-					Player->Inventory[j].count =
-						Player->Inventory[j - 1].count;
-					Player->Inventory[j].type = Player->Inventory[j - 1].type;
+					Player.Inventory[j].count =
+						Player.Inventory[j - 1].count;
+					Player.Inventory[j].type = Player.Inventory[j - 1].type;
 					slidePointer = true;
 				}
 			}
 		}
-		Player->Inventory[i].count = 1;
-		Player->Inventory[i].type = arti;
-		Player->InventorySlotNum++;
+		Player.Inventory[i].count = 1;
+		Player.Inventory[i].type = arti;
+		Player.InventorySlotNum++;
 	}
 	else
 	{
@@ -302,27 +302,27 @@ bool GiveArtifact(int arti)
 			// Can't carry more than 1 puzzle item in coop netplay
 			return false;
 		}
-		if (Player->Inventory[i].count >= 25)
+		if (Player.Inventory[i].count >= 25)
 		{
 			// Player already has 25 of this item
 			return false;
 		}
-		Player->Inventory[i].count++;
+		Player.Inventory[i].count++;
 	}
-	if (!Player->ArtifactCount)
+	if (!Player.ArtifactCount)
 	{
-		Player->ReadyArtifact = arti;
+		Player.ReadyArtifact = arti;
 	}
-	else if (slidePointer && i <= Player->InvPtr)
+	else if (slidePointer && i <= Player.InvPtr)
 	{
-		Player->InvPtr++;
-		Player->InvCurPos++;
-		if (Player->InvCurPos > 6)
+		Player.InvPtr++;
+		Player.InvCurPos++;
+		if (Player.InvCurPos > 6)
 		{
-			Player->InvCurPos = 6;
+			Player.InvCurPos = 6;
 		}
 	}
-	Player->ArtifactCount++;
+	Player.ArtifactCount++;
 	return true;
 }
 
@@ -334,23 +334,23 @@ bool GiveArtifact(int arti)
 
 void InventoryLeft(void)
 {
-	if (!Player->InventoryTime)
+	if (!Player.InventoryTime)
 	{
-		Player->InventoryTime = 5.0;
+		Player.InventoryTime = 5.0;
 		return;
 	}
-	Player->InventoryTime = 5.0;
-	Player->InvPtr--;
-	if (Player->InvPtr < 0)
+	Player.InventoryTime = 5.0;
+	Player.InvPtr--;
+	if (Player.InvPtr < 0)
 	{
-		Player->InvPtr = 0;
+		Player.InvPtr = 0;
 	}
 	else
 	{
-		Player->InvCurPos--;
-		if (Player->InvCurPos < 0)
+		Player.InvCurPos--;
+		if (Player.InvCurPos < 0)
 		{
-			Player->InvCurPos = 0;
+			Player.InvCurPos = 0;
 		}
 	}
 }
@@ -363,25 +363,25 @@ void InventoryLeft(void)
 
 void InventoryRight(void)
 {
-	if (!Player->InventoryTime)
+	if (!Player.InventoryTime)
 	{
-		Player->InventoryTime = 5.0;
+		Player.InventoryTime = 5.0;
 		return;
 	}
-	Player->InventoryTime = 5.0;
-	Player->InvPtr++;
-	if (Player->InvPtr >= Player->InventorySlotNum)
+	Player.InventoryTime = 5.0;
+	Player.InvPtr++;
+	if (Player.InvPtr >= Player.InventorySlotNum)
 	{
-		Player->InvPtr--;
-		if (Player->InvPtr < 0)
-			Player->InvPtr = 0;
+		Player.InvPtr--;
+		if (Player.InvPtr < 0)
+			Player.InvPtr = 0;
 	}
 	else
 	{
-		Player->InvCurPos++;
-		if (Player->InvCurPos > 6)
+		Player.InvCurPos++;
+		if (Player.InvCurPos > 6)
 		{
-			Player->InvCurPos = 6;
+			Player.InvCurPos = 6;
 		}
 	}
 }
@@ -394,15 +394,15 @@ void InventoryRight(void)
 
 void InventoryUse(void)
 {
-	Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
+	Player.ReadyArtifact = Player.Inventory[Player.InvPtr].type;
 	// flag to denote that it's okay to use an artifact
-	if (Player->InventoryTime)
+	if (Player.InventoryTime)
 	{
-		Player->InventoryTime = 0.0;
+		Player.InventoryTime = 0.0;
 	}
 	else
 	{
-		Player->Arti = Player->ReadyArtifact;
+		Player.Arti = Player.ReadyArtifact;
 	}
 }
 
@@ -415,18 +415,18 @@ void InventoryUse(void)
 void InventoryTick(float deltaTime)
 {
 	// turn inventory off after a certain amount of time
-	if (Player->InventoryTime)
+	if (Player.InventoryTime)
 	{
-		Player->InventoryTime -= deltaTime;
-		if (Player->InventoryTime <= 0.0)
+		Player.InventoryTime -= deltaTime;
+		if (Player.InventoryTime <= 0.0)
 		{
-			Player->InventoryTime = 0.0;
-			Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
+			Player.InventoryTime = 0.0;
+			Player.ReadyArtifact = Player.Inventory[Player.InvPtr].type;
 		}
 	}
-	if (Player->ArtifactFlash)
+	if (Player.ArtifactFlash)
 	{
-		Player->ArtifactFlash--;
+		Player.ArtifactFlash--;
 	}
 }
 
@@ -446,14 +446,14 @@ void MovePlayer(float deltaTime)
 	TVec vup;
 	TVec wishvel;
 
-	forward = Player->ForwardMove;
-	side = Player->SideMove;
+	forward = Player.ForwardMove;
+	side = Player.SideMove;
 
 	//  Adjust speed depending on class. Originaly this is done in input
 	// code, but to simplify it, we do it here.
 	//  Fighter moves faster, cleric at original speed, mage - slower,
 	// pig - slower, but faster than mage
-	switch (Player->PClass)
+	switch (Player.PClass)
 	{
 	case PCLASS_FIGHTER:
 		forward *= 1.18;
@@ -474,13 +474,13 @@ void MovePlayer(float deltaTime)
 		break;
 	}
 
-	if (Player->Powers[pw_speed] && !Player->MorphTime)
+	if (Player.Powers[pw_speed] && !Player.MorphTime)
 	{
 		// Adjust for a player with a speed artifact
 		forward *= 1.5;
 		side *= 1.5;
 	}
-	if (!(Player->Powers[pw_flight] && !(Origin.z <= FloorZ)) &&
+	if (!(Player.Powers[pw_flight] && !(Origin.z <= FloorZ)) &&
 		GetFloorType() == FLOOR_ICE)	// Friction_Low
 	{
 		forward *= 0.5;
@@ -512,12 +512,12 @@ void MovePlayer(float deltaTime)
 		SetPlayerRunState();
 	}
 
-	fly = Player->FlyMove / 16.0;
-	if (fly && Player->Powers[pw_flight])
+	fly = Player.FlyMove / 16.0;
+	if (fly && Player.Powers[pw_flight])
 	{
-		if (Player->FlyMove != TOCENTER)
+		if (Player.FlyMove != TOCENTER)
 		{
-			Player->FlyHeight = fly * 2.0;
+			Player.FlyHeight = fly * 2.0;
 			if (!bFly)
 			{
 				bFly = true;
@@ -541,15 +541,15 @@ void MovePlayer(float deltaTime)
 	}
 	if (bFly)
 	{
-		Velocity.z = Player->FlyHeight * 35.0 + wishvel.z;
-		if (Player->FlyHeight)
+		Velocity.z = Player.FlyHeight * 35.0 + wishvel.z;
+		if (Player.FlyHeight)
 		{
-			Player->FlyHeight /= 2.0;
+			Player.FlyHeight /= 2.0;
 		}
 	}
-	if ((Player->Buttons & BT_JUMP) && onground && !Player->JumpTime)
+	if ((Player.Buttons & BT_JUMP) && onground && !Player.JumpTime)
 	{
-		if (Player->MorphTime)
+		if (Player.MorphTime)
 		{
 			Velocity.z = 6.0 * 35.0;
 		}
@@ -558,7 +558,7 @@ void MovePlayer(float deltaTime)
 			Velocity.z = 9.0 * 35.0;
 		}
 		bOnMobj = false;
-		Player->JumpTime = 0.5;
+		Player.JumpTime = 0.5;
 	}
 }
 
@@ -586,7 +586,7 @@ void CheckWaterJump(void)
 		// solid at waist
 		start.z = Origin.z + Height;
 		end = start + vforward * 24.0;
-		Player->MoveDir = trace_plane_normal * -50.0;
+		Player.MoveDir = trace_plane_normal * -50.0;
 		if (TraceLine(start, end))
 		{
 			// open at eye level
@@ -618,14 +618,14 @@ void WaterMove(float deltaTime)
 
 	AngleVectors(&Angles, &vforward, &vright, &vup);
 
-	forward = Player->ForwardMove;
-	side = Player->SideMove;
+	forward = Player.ForwardMove;
+	side = Player.SideMove;
 
 	//  Adjust speed depending on class. Originaly this is done in input
 	// code, but to simplify it, we do it here.
 	//  Fighter moves faster, cleric at original speed, mage - slower,
 	// pig - slower, but faster than mage
-	switch (Player->PClass)
+	switch (Player.PClass)
 	{
 	case PCLASS_FIGHTER:
 		forward *= 1.18;
@@ -646,7 +646,7 @@ void WaterMove(float deltaTime)
 		break;
 	}
 
-	if (Player->Powers[pw_speed] && !Player->MorphTime)
+	if (Player.Powers[pw_speed] && !Player.MorphTime)
 	{
 		// Adjust for a player with a speed artifact
 		forward *= 1.5;
@@ -666,7 +666,7 @@ void WaterMove(float deltaTime)
 		SetPlayerRunState();
 	}
 
-	if (Player->Buttons & BT_JUMP)
+	if (Player.Buttons & BT_JUMP)
 	{
 		if (WaterType == CONTENTS_WATER)
 			Velocity.z = 100.0;
@@ -691,8 +691,8 @@ void WaterJump(void)
 		bWaterJump = false;
 		ReactionTime = 0.0;
 	}
-	Velocity.x = Player->MoveDir.x;
-	Velocity.y = Player->MoveDir.y;
+	Velocity.x = Player.MoveDir.x;
+	Velocity.y = Player.MoveDir.y;
 }
 
 //==========================================================================
@@ -705,7 +705,7 @@ void WaterJump(void)
 
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
-	if (!(Player->Powers[pw_flight] && !(Origin.z <= FloorZ)) &&
+	if (!(Player.Powers[pw_flight] && !(Origin.z <= FloorZ)) &&
 		GetFloorType() == FLOOR_ICE)	// Friction_Low
 	{
 		move *= 0.5;
@@ -733,64 +733,64 @@ void CalcHeight(float deltaTime)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	Player->Bob = Velocity.x * Velocity.x + Velocity.y * Velocity.y;
-	Player->Bob /= 4.0 * 35.0 * 35.0;
-	if (Player->Bob > MAXBOB)
-		Player->Bob = MAXBOB;
+	Player.Bob = Velocity.x * Velocity.x + Velocity.y * Velocity.y;
+	Player.Bob /= 4.0 * 35.0 * 35.0;
+	if (Player.Bob > MAXBOB)
+		Player.Bob = MAXBOB;
 
 	if (bFly && !onground)
 	{
-		Player->Bob = 0.5;
+		Player.Bob = 0.5;
 	}
 
 	angle = 180.0 * 35.0 / 10.0 * level->time;
-	bob = Player->Bob / 2.0 * sin(angle);
+	bob = Player.Bob / 2.0 * sin(angle);
 
 	// move viewheight
-	if (Player->PlayerState == PST_LIVE)
+	if (Player.PlayerState == PST_LIVE)
 	{
-		Player->ViewHeight += Player->DeltaViewHeight * deltaTime;
+		Player.ViewHeight += Player.DeltaViewHeight * deltaTime;
 
-		if (Player->ViewHeight > VIEWHEIGHT)
+		if (Player.ViewHeight > VIEWHEIGHT)
 		{
-			Player->ViewHeight = VIEWHEIGHT;
-			Player->DeltaViewHeight = 0.0;
+			Player.ViewHeight = VIEWHEIGHT;
+			Player.DeltaViewHeight = 0.0;
 		}
 
-		if (Player->ViewHeight < VIEWHEIGHT / 2.0)
+		if (Player.ViewHeight < VIEWHEIGHT / 2.0)
 		{
-			Player->ViewHeight = VIEWHEIGHT / 2.0;
-			if (Player->DeltaViewHeight <= 0.0)
-				Player->DeltaViewHeight = 0.00001;
+			Player.ViewHeight = VIEWHEIGHT / 2.0;
+			if (Player.DeltaViewHeight <= 0.0)
+				Player.DeltaViewHeight = 0.00001;
 		}
 
-		if (Player->DeltaViewHeight)
+		if (Player.DeltaViewHeight)
 		{
-			Player->DeltaViewHeight += 256.0 * deltaTime;
-			if (!Player->DeltaViewHeight)
-				Player->DeltaViewHeight = 0.00001;
+			Player.DeltaViewHeight += 256.0 * deltaTime;
+			if (!Player.DeltaViewHeight)
+				Player.DeltaViewHeight = 0.00001;
 		}
 	}
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
-		Player->ViewOrg.z = Origin.z + Player->ViewHeight - 20.0;
+		Player.ViewOrg.z = Origin.z + Player.ViewHeight - 20.0;
 	}
 	else
 	{
-		Player->ViewOrg.z = Origin.z + Player->ViewHeight + bob;
+		Player.ViewOrg.z = Origin.z + Player.ViewHeight + bob;
 	}
-	if (FloorClip && Player->PlayerState != PST_DEAD &&
+	if (FloorClip && Player.PlayerState != PST_DEAD &&
 		Origin.z <= FloorZ)
 	{
-		Player->ViewOrg.z -= FloorClip;
+		Player.ViewOrg.z -= FloorClip;
 	}
-	if (Player->ViewOrg.z < FloorZ + 4.0)
+	if (Player.ViewOrg.z < FloorZ + 4.0)
 	{
-		Player->ViewOrg.z = FloorZ + 4.0;
+		Player.ViewOrg.z = FloorZ + 4.0;
 	}
 
-	if (Player->ViewOrg.z > CeilingZ - 4.0)
-		Player->ViewOrg.z = CeilingZ - 4.0;
+	if (Player.ViewOrg.z > CeilingZ - 4.0)
+		Player.ViewOrg.z = CeilingZ - 4.0;
 }
 
 //==========================================================================
@@ -812,7 +812,7 @@ void PlayerInSpecialSector(float deltaTime)
 	switch (Sector->special)
 	{
 	case 9:	// SecretArea
-		Player->SecretCount++;
+		Player.SecretCount++;
 		Sector->special = 0;
 		break;
 
@@ -947,19 +947,19 @@ void PlayerImpulse(void)
 	int impulse;
 	int i;
 
-	impulse = Player->Impulse;
-	Player->Impulse = 0;
-	Player->Arti = 0;
+	impulse = Player.Impulse;
+	Player.Impulse = 0;
+	Player.Arti = 0;
 
 	if (impulse <= NUMWEAPONS)
 	{
 		// The actual changing of the weapon is done when the weapon
 		// psprite can do it (A_WeaponReady), so it doesn't happen in
 		// the middle of an attack.
-		if (Player->WeaponOwned[impulse - 1] &&
-			impulse - 1 != Player->ReadyWeapon && !Player->MorphTime)
+		if (Player.WeaponOwned[impulse - 1] &&
+			impulse - 1 != Player.ReadyWeapon && !Player.MorphTime)
 		{
-			Player->PendingWeapon = impulse - 1;
+			Player.PendingWeapon = impulse - 1;
 		}
 	}
 	else if (impulse == 13)
@@ -979,46 +979,46 @@ void PlayerImpulse(void)
 		Damage(none, none, 10000);
 	}
 	// Hexen artifact hot keys
-	if (!Player->Arti)
+	if (!Player.Arti)
 	{
 		if (impulse == 11)
 		{
-			Player->Arti = NUMARTIFACTS;
+			Player.Arti = NUMARTIFACTS;
 		}
 		else if (impulse == 12 && (Health < MAXHEALTH))
 		{
-			Player->Arti = arti_health;
+			Player.Arti = arti_health;
 		}
 		else if (impulse == 10)
 		{
-			Player->Arti = arti_poisonbag;
+			Player.Arti = arti_poisonbag;
 		}
 		else if (impulse == 9)
 		{
-			Player->Arti = arti_blastradius;
+			Player.Arti = arti_blastradius;
 		}
 		else if (impulse == 8)
 		{
-			Player->Arti = arti_teleport;
+			Player.Arti = arti_teleport;
 		}
 		else if (impulse == 7)
 		{
-			Player->Arti = arti_teleportother;
+			Player.Arti = arti_teleportother;
 		}
 		else if (impulse == 6)
 		{
-			Player->Arti = arti_egg;
+			Player.Arti = arti_egg;
 		}
-		else if (impulse == 5 && !Player->Powers[pw_invulnerability])
+		else if (impulse == 5 && !Player.Powers[pw_invulnerability])
 		{
-			Player->Arti = arti_invulnerability;
+			Player.Arti = arti_invulnerability;
 		}
 	}
 
-	if (Player->Arti)
+	if (Player.Arti)
 	{
 		// Use an artifact
-		if (Player->Arti == NUMARTIFACTS)
+		if (Player.Arti == NUMARTIFACTS)
 		{
 			// use one of each artifact (except puzzle artifacts)
 			for (i = 1; i < arti_firstpuzzitem; i++)
@@ -1028,7 +1028,7 @@ void PlayerImpulse(void)
 		}
 		else
 		{
-			PlayerUseArtifact(Player->Arti);
+			PlayerUseArtifact(Player.Arti);
 		}
 	}
 }
@@ -1045,16 +1045,16 @@ void PlayerTick(float deltaTime)
 	int newweapon;
 	Actor speedA;
 
-	if (Player->bIsBot)
+	if (Player.bIsBot)
 	{
-		Player->Bot.BotTick(deltaTime);
+		Player.Bot.BotTick(deltaTime);
 	}
 
 	// Copy view angles
-	Angles = Player->ViewAngles;
+	Angles = Player.ViewAngles;
 
 	// fixme: do this in the cheat code
-	if (Player->Cheats & CF_NOCLIP)
+	if (Player.Cheats & CF_NOCLIP)
 	{
 		bColideWithThings = false;
 		bColideWithWorld = false;
@@ -1067,27 +1067,27 @@ void PlayerTick(float deltaTime)
 
 	if (bJustAttacked)
 	{
-		Player->ForwardMove = 100.0;
-		Player->SideMove = 0.0;
+		Player.ForwardMove = 100.0;
+		Player.SideMove = 0.0;
 		bJustAttacked = false;
 	}
 
-	Player->WorldTimer++;
+	Player.WorldTimer++;
 	InventoryTick(deltaTime);
 
-	if (Player->PlayerState == PST_DEAD)
+	if (Player.PlayerState == PST_DEAD)
 	{
 		DeathPlayerTick(deltaTime);
 		return;
 	}
 
-	if (Player->JumpTime)
+	if (Player.JumpTime)
 	{
-		Player->JumpTime -= deltaTime;
-		if (Player->JumpTime <= 0.0)
-			Player->JumpTime = 0.0;
+		Player.JumpTime -= deltaTime;
+		if (Player.JumpTime <= 0.0)
+			Player.JumpTime = 0.0;
 	}
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
 		MorphPlayerThink();
 	}
@@ -1108,7 +1108,7 @@ void PlayerTick(float deltaTime)
 			WaterMove(deltaTime);
 		else
 			MovePlayer(deltaTime);
-		if (Player->Powers[pw_speed] && !(level->tictime & 1) &&
+		if (Player.Powers[pw_speed] && !(level->tictime & 1) &&
 			Length(Velocity) > 12.0 * 35.0)
 		{
 			speedA = Spawn(PlayerSpeed, Origin);
@@ -1117,7 +1117,7 @@ void PlayerTick(float deltaTime)
 				speedA.Angles.yaw = Angles.yaw;
 				speedA.Translation = Translation;
 				speedA.Instigator = self;
-				speedA._Special1 = Player->PClass;
+				speedA._Special1 = Player.PClass;
 				if (speedA._Special1 > 2)
 				{
 					speedA._Special1 = 0;
@@ -1147,11 +1147,11 @@ void PlayerTick(float deltaTime)
 	}
 	PlayerInContents();
 
-	switch (Player->PClass)
+	switch (Player.PClass)
 	{
 	case PCLASS_FIGHTER:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTime && !GetSoundPlayingInfo(self,
+			!Player.MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerFighterFallingScream')))
 		{
 			PlaySound('PlayerFighterFallingScream', CHAN_VOICE);
@@ -1159,7 +1159,7 @@ void PlayerTick(float deltaTime)
 		break;
 	case PCLASS_CLERIC:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTime && !GetSoundPlayingInfo(self,
+			!Player.MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerClericFallingScream')))
 		{
 			PlaySound('PlayerClericFallingScream', CHAN_VOICE);
@@ -1167,7 +1167,7 @@ void PlayerTick(float deltaTime)
 		break;
 	case PCLASS_MAGE:
 		if (Velocity.z <= -35.0 * 35.0 && Velocity.z >= -40.0 * 35.0 &&
-			!Player->MorphTime && !GetSoundPlayingInfo(self,
+			!Player.MorphTime && !GetSoundPlayingInfo(self,
 				GetSoundID('PlayerMageFallingScream')))
 		{
 			PlaySound('PlayerMageFallingScream', CHAN_VOICE);
@@ -1178,33 +1178,33 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Check for weapon change.
-	if (Player->Impulse)
+	if (Player.Impulse)
 	{
 		PlayerImpulse();
 	}
 
 	// check for use
-	if (Player->Buttons & BT_USE)
+	if (Player.Buttons & BT_USE)
 	{
-		if (!Player->bUseDown)
+		if (!Player.bUseDown)
 		{
 			P_UseLines(Player);
-			Player->bUseDown = true;
+			Player.bUseDown = true;
 		}
 	}
 	else
 	{
-		Player->bUseDown = false;
+		Player.bUseDown = false;
 	}
 
 	// Morph counter
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
-		Player->MorphTime -= deltaTime;
-		if (Player->MorphTime <= 0.0)
+		Player.MorphTime -= deltaTime;
+		if (Player.MorphTime <= 0.0)
 		{
 			// Attempt to undo the pig
-			Player->MorphTime = 0.0;
+			Player.MorphTime = 0.0;
 			UndoPlayerMorph();
 		}
 	}
@@ -1214,9 +1214,9 @@ void PlayerTick(float deltaTime)
 
 	// Counters, time dependend power ups.
 
-	if (Player->Powers[pw_invulnerability])
+	if (Player.Powers[pw_invulnerability])
 	{
-		if (Player->PClass == PCLASS_CLERIC)
+		if (Player.PClass == PCLASS_CLERIC)
 		{
 			if (!(level->tictime & 7) && bShadow && !bDontDraw)
 			{
@@ -1265,13 +1265,13 @@ void PlayerTick(float deltaTime)
 				Translucency = 0;
 			}
 		}
-		Player->Powers[pw_invulnerability] -= deltaTime;
-		if (Player->Powers[pw_invulnerability] <= 0.0)
+		Player.Powers[pw_invulnerability] -= deltaTime;
+		if (Player.Powers[pw_invulnerability] <= 0.0)
 		{
-			Player->Powers[pw_invulnerability] = 0.0;
+			Player.Powers[pw_invulnerability] = 0.0;
 			bInvulnerable = false;
 			bReflective = false;
-			if (Player->PClass == PCLASS_CLERIC)
+			if (Player.PClass == PCLASS_CLERIC)
 			{
 				bNonShootable = false;
 				Translucency = 0;
@@ -1279,33 +1279,33 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	if (Player->Powers[pw_minotaur])
+	if (Player.Powers[pw_minotaur])
 	{
-		Player->Powers[pw_minotaur] -= deltaTime;
-		if (Player->Powers[pw_minotaur] <= 0.0)
-			Player->Powers[pw_minotaur] = 0.0;
+		Player.Powers[pw_minotaur] -= deltaTime;
+		if (Player.Powers[pw_minotaur] <= 0.0)
+			Player.Powers[pw_minotaur] = 0.0;
 	}
 
-	if (Player->Powers[pw_infrared])
+	if (Player.Powers[pw_infrared])
 	{
-		Player->Powers[pw_infrared] -= deltaTime;
-		if (Player->Powers[pw_infrared] <= 0.0)
-			Player->Powers[pw_infrared] = 0.0;
+		Player.Powers[pw_infrared] -= deltaTime;
+		if (Player.Powers[pw_infrared] <= 0.0)
+			Player.Powers[pw_infrared] = 0.0;
 	}
 
-	if (Player->Powers[pw_speed])
+	if (Player.Powers[pw_speed])
 	{
-		Player->Powers[pw_speed] -= deltaTime;
-		if (Player->Powers[pw_speed] <= 0.0)
-			Player->Powers[pw_speed] = 0.0;
+		Player.Powers[pw_speed] -= deltaTime;
+		if (Player.Powers[pw_speed] <= 0.0)
+			Player.Powers[pw_speed] = 0.0;
 	}
 
-	if (Player->Powers[pw_flight] && netgame)
+	if (Player.Powers[pw_flight] && netgame)
 	{
-		Player->Powers[pw_flight] -= deltaTime;
-		if (Player->Powers[pw_flight] <= 0.0)
+		Player.Powers[pw_flight] -= deltaTime;
+		if (Player.Powers[pw_flight] <= 0.0)
 		{
-			Player->Powers[pw_flight] = 0.0;
+			Player.Powers[pw_flight] = 0.0;
 			if (Origin.z != FloorZ)
 			{
 //FIXME             player->centering = true;
@@ -1315,77 +1315,77 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	if (Player->PoisonCount && level->time - Player->LastPoisonTime >= 0.5)
+	if (Player.PoisonCount && level->time - Player.LastPoisonTime >= 0.5)
 	{
-		Player->PoisonCount -= 5;
-		if (Player->PoisonCount < 0)
+		Player.PoisonCount -= 5;
+		if (Player.PoisonCount < 0)
 		{
-			Player->PoisonCount = 0;
+			Player.PoisonCount = 0;
 		}
-		Player->LastPoisonTime = level->time;
-		PoisonDamage(Player->Poisoner, 1, true);
+		Player.LastPoisonTime = level->time;
+		PoisonDamage(Player.Poisoner, 1, true);
 	}
 
-	if (Player->DamageFlash)
+	if (Player.DamageFlash)
 	{
-		Player->DamageFlash -= deltaTime;
-		if (Player->DamageFlash <= 0.0)
-			Player->DamageFlash = 0.0;
+		Player.DamageFlash -= deltaTime;
+		if (Player.DamageFlash <= 0.0)
+			Player.DamageFlash = 0.0;
 	}
 
-	if (Player->BonusFlash)
+	if (Player.BonusFlash)
 	{
-		Player->BonusFlash -= deltaTime;
-		if (Player->BonusFlash <= 0.0)
-			Player->BonusFlash = 0.0;
+		Player.BonusFlash -= deltaTime;
+		if (Player.BonusFlash <= 0.0)
+			Player.BonusFlash = 0.0;
 	}
 
 	// Handling colormaps.
-	if (Player->Powers[pw_infrared])
+	if (Player.Powers[pw_infrared])
 	{
-		if (Player->Powers[pw_infrared] <= BLINKTHRESHOLD)
+		if (Player.Powers[pw_infrared] <= BLINKTHRESHOLD)
 		{
-			if (ftoi(Player->Powers[pw_infrared] * 35.0) & 8)
+			if (ftoi(Player.Powers[pw_infrared] * 35.0) & 8)
 			{
-				Player->FixedColormap = 0;
+				Player.FixedColormap = 0;
 			}
 			else
 			{
-				Player->FixedColormap = 1;
+				Player.FixedColormap = 1;
 			}
 		}
 		else if (!(level->tictime & 16))
 		{
-			if (Player->NewTorch)
+			if (Player.NewTorch)
 			{
-				if (Player->FixedColormap + Player->NewTorchDelta > 7 ||
-					Player->FixedColormap + Player->NewTorchDelta < 1 ||
-					Player->FixedColormap == Player->NewTorch)
+				if (Player.FixedColormap + Player.NewTorchDelta > 7 ||
+					Player.FixedColormap + Player.NewTorchDelta < 1 ||
+					Player.FixedColormap == Player.NewTorch)
 				{
-					Player->NewTorch = 0;
+					Player.NewTorch = 0;
 				}
 				else
 				{
-					Player->FixedColormap += Player->NewTorchDelta;
+					Player.FixedColormap += Player.NewTorchDelta;
 				}
 			}
 			else
 			{
-				Player->NewTorch = (P_Random() & 7) + 1;
-				Player->NewTorchDelta =
-					(Player->NewTorch ==
-					Player->FixedColormap) ? 0 : ((Player->NewTorch >
-						Player->FixedColormap) ? 1 : -1);
+				Player.NewTorch = (P_Random() & 7) + 1;
+				Player.NewTorchDelta =
+					(Player.NewTorch ==
+					Player.FixedColormap) ? 0 : ((Player.NewTorch >
+						Player.FixedColormap) ? 1 : -1);
 			}
 		}
 	}
 	else
-		Player->FixedColormap = 0;
+		Player.FixedColormap = 0;
 
 	//	Need this for unmorphing
 	if (!bIsPlayer)
 	{
-		Player = NULL;
+		Player = none;
 	}
 }
 
@@ -1394,67 +1394,67 @@ void PlayerTick(float deltaTime)
 //  PaletteFlash
 //
 //  Sets the new palette based upon the current values of
-// Player->DamageFlash and Player->BonusFlash.
+// Player.DamageFlash and Player.BonusFlash.
 //
 //==========================================================================
 
 void PaletteFlash(void)
 {
-	Player->CShifts[CSHIFT_CONTENTS] = 0;
+	Player.CShifts[CSHIFT_CONTENTS] = 0;
 	if (WaterLevel == 3)
 	{
 		switch (WaterType)
 		{
 		case CONTENTS_WATER:
-			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			Player.CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_SLUDGE:
-			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			Player.CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
 			break;
 
 		case CONTENTS_LAVA:
-			Player->CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			Player.CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
 			break;
 		}
 	}
 
-	if (Player->PoisonCount)
+	if (Player.PoisonCount)
 	{
-		Player->Palette = 0;
-		Player->Palette = (Player->PoisonCount + 7) >> 3;
-		if (Player->Palette >= NUMPOISONPALS)
+		Player.Palette = 0;
+		Player.Palette = (Player.PoisonCount + 7) >> 3;
+		if (Player.Palette >= NUMPOISONPALS)
 		{
-			Player->Palette = NUMPOISONPALS - 1;
+			Player.Palette = NUMPOISONPALS - 1;
 		}
-		Player->Palette += STARTPOISONPALS;
+		Player.Palette += STARTPOISONPALS;
 	}
-	else if (Player->DamageFlash)
+	else if (Player.DamageFlash)
 	{
-		Player->Palette = (ftoi(32.0 * Player->DamageFlash) + 7) >> 3;
-		if (Player->Palette >= NUMREDPALS)
+		Player.Palette = (ftoi(32.0 * Player.DamageFlash) + 7) >> 3;
+		if (Player.Palette >= NUMREDPALS)
 		{
-			Player->Palette = NUMREDPALS - 1;
+			Player.Palette = NUMREDPALS - 1;
 		}
-		Player->Palette += STARTREDPALS;
+		Player.Palette += STARTREDPALS;
 	}
-	else if (Player->BonusFlash)
+	else if (Player.BonusFlash)
 	{
-		Player->Palette = (ftoi(32.0 * Player->BonusFlash) + 7) >> 3;
-		if (Player->Palette >= NUMBONUSPALS)
+		Player.Palette = (ftoi(32.0 * Player.BonusFlash) + 7) >> 3;
+		if (Player.Palette >= NUMBONUSPALS)
 		{
-			Player->Palette = NUMBONUSPALS - 1;
+			Player.Palette = NUMBONUSPALS - 1;
 		}
-		Player->Palette += STARTBONUSPALS;
+		Player.Palette += STARTBONUSPALS;
 	}
 	else if (bIceDamage)
 	{
 		// Frozen player
-		Player->Palette = STARTICEPAL;
+		Player.Palette = STARTICEPAL;
 	}
 	else
 	{
-		Player->Palette = Player->WeaponPalette;
+		Player.Palette = Player.WeaponPalette;
 	}
 }
 
@@ -1466,60 +1466,60 @@ void PaletteFlash(void)
 
 void SetViewPos(void)
 {
-	Player->ViewOrg.x = Origin.x;
-	Player->ViewOrg.y = Origin.y;
+	Player.ViewOrg.x = Origin.x;
+	Player.ViewOrg.y = Origin.y;
 
-	if (Player->LocalQuakeHappening)
+	if (Player.LocalQuakeHappening)
 	{
 		float intensity;
 
-		intensity = itof(Player->LocalQuakeHappening);
-		Player->ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-		Player->ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		intensity = itof(Player.LocalQuakeHappening);
+		Player.ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+		Player.ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
 	}
 
-	Player->ViewAngles = Angles;
+	Player.ViewAngles = Angles;
 
 	PaletteFlash();
 
-	Player->Stats.flags = Player->Keys;
-	Player->Stats.flags |= Player->ReadyWeapon << SBF_WPN_SHIFT;
-	Player->Stats.flags |= Player->Pieces << SBF_PIECES_SHIFT;
-	if (Player->Powers[pw_flight])
+	Player.Stats.flags = Player.Keys;
+	Player.Stats.flags |= Player.ReadyWeapon << SBF_WPN_SHIFT;
+	Player.Stats.flags |= Player.Pieces << SBF_PIECES_SHIFT;
+	if (Player.Powers[pw_flight])
 	{
-		if (Player->Powers[pw_flight] > BLINKTHRESHOLD ||
-			!(ftoi(Player->Powers[pw_flight] * 35.0) & 16))
+		if (Player.Powers[pw_flight] > BLINKTHRESHOLD ||
+			!(ftoi(Player.Powers[pw_flight] * 35.0) & 16))
 		{
-			Player->Stats.flags |= SBF_POWER_FLIGHT;
+			Player.Stats.flags |= SBF_POWER_FLIGHT;
 		}
 	}
-	if (Player->Powers[pw_speed])
+	if (Player.Powers[pw_speed])
 	{
-		if (Player->Powers[pw_speed] > BLINKTHRESHOLD ||
-			!(ftoi(Player->Powers[pw_speed] * 35.0) & 16))
+		if (Player.Powers[pw_speed] > BLINKTHRESHOLD ||
+			!(ftoi(Player.Powers[pw_speed] * 35.0) & 16))
 		{
-			Player->Stats.flags |= SBF_POWER_SPEED;
+			Player.Stats.flags |= SBF_POWER_SPEED;
 		}
 	}
-	if (Player->Powers[pw_invulnerability])
+	if (Player.Powers[pw_invulnerability])
 	{
-		if (Player->Powers[pw_invulnerability] > BLINKTHRESHOLD ||
-			!(ftoi(Player->Powers[pw_invulnerability] * 35.0) & 16))
+		if (Player.Powers[pw_invulnerability] > BLINKTHRESHOLD ||
+			!(ftoi(Player.Powers[pw_invulnerability] * 35.0) & 16))
 		{
-			Player->Stats.flags |= SBF_POWER_INVULN;
+			Player.Stats.flags |= SBF_POWER_INVULN;
 		}
 	}
-	if (Player->Powers[pw_minotaur])
+	if (Player.Powers[pw_minotaur])
 	{
-		if (Player->Powers[pw_minotaur] > BLINKTHRESHOLD ||
-			!(ftoi(Player->Powers[pw_minotaur] * 35.0) & 16))
+		if (Player.Powers[pw_minotaur] > BLINKTHRESHOLD ||
+			!(ftoi(Player.Powers[pw_minotaur] * 35.0) & 16))
 		{
-			Player->Stats.flags |= SBF_POWER_MINOTAUR;
+			Player.Stats.flags |= SBF_POWER_MINOTAUR;
 		}
 	}
 	if (bFly)
 	{
-		Player->Stats.flags |= SBF_IN_FLIGHT;
+		Player.Stats.flags |= SBF_IN_FLIGHT;
 	}
 }
 
@@ -1551,7 +1551,7 @@ bool UseArtiHealRadius(void)
 			continue;
 		}
 
-		switch (Player->PClass)
+		switch (Player.PClass)
 		{
 		case PCLASS_FIGHTER:	// Radius armor boost
 			if ((P.GiveArmor(ARMOR_ARMOR, 1)) ||
@@ -1615,7 +1615,7 @@ void UseArtiTele(void)
 		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
 	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true);
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
 		// Teleporting away will undo any morph effects (pig)
 		UndoPlayerMorph();
@@ -1764,9 +1764,9 @@ void PlayerUseArtifact(int arti)
 {
 	int i;
 
-	for (i = 0; i < Player->InventorySlotNum; i++)
+	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player->Inventory[i].type == arti)
+		if (Player.Inventory[i].type == arti)
 		{
 			// Found match - try to use
 			if (UseArtifact(arti))
@@ -1781,7 +1781,7 @@ void PlayerUseArtifact(int arti)
 				{
 					PlaySound('PuzzleSuccess', CHAN_ITEM);
 				}
-				Player->ArtifactFlash = 4;
+				Player.ArtifactFlash = 4;
 			}
 			else if (arti < arti_firstpuzzitem)
 			{
@@ -1801,28 +1801,28 @@ void PlayerUseArtifact(int arti)
 
 void PlayerNextArtifact(void)
 {
-	Player->InvPtr--;
-	if (Player->InvPtr < 6)
+	Player.InvPtr--;
+	if (Player.InvPtr < 6)
 	{
-		Player->InvCurPos--;
-		if (Player->InvCurPos < 0)
+		Player.InvCurPos--;
+		if (Player.InvCurPos < 0)
 		{
-			Player->InvCurPos = 0;
+			Player.InvCurPos = 0;
 		}
 	}
-	if (Player->InvPtr < 0)
+	if (Player.InvPtr < 0)
 	{
-		Player->InvPtr = Player->InventorySlotNum - 1;
-		if (Player->InvPtr < 6)
+		Player.InvPtr = Player.InventorySlotNum - 1;
+		if (Player.InvPtr < 6)
 		{
-			Player->InvCurPos = Player->InvPtr;
+			Player.InvCurPos = Player.InvPtr;
 		}
 		else
 		{
-			Player->InvCurPos = 6;
+			Player.InvCurPos = 6;
 		}
 	}
-	Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
+	Player.ReadyArtifact = Player.Inventory[Player.InvPtr].type;
 }
 
 //==========================================================================
@@ -1835,37 +1835,37 @@ void PlayerRemoveArtifact(int slot)
 {
 	int i;
 
-	Player->ArtifactCount--;
-	if (!(--Player->Inventory[slot].count))
+	Player.ArtifactCount--;
+	if (!(--Player.Inventory[slot].count))
 	{
 		// Used last of a type - compact the artifact list
-		Player->ReadyArtifact = arti_none;
-		Player->Inventory[slot].type = arti_none;
-		for (i = slot + 1; i < Player->InventorySlotNum; i++)
+		Player.ReadyArtifact = arti_none;
+		Player.Inventory[slot].type = arti_none;
+		for (i = slot + 1; i < Player.InventorySlotNum; i++)
 		{
-			Player->Inventory[i - 1].type = Player->Inventory[i].type;
-			Player->Inventory[i - 1].count = Player->Inventory[i].count;
+			Player.Inventory[i - 1].type = Player.Inventory[i].type;
+			Player.Inventory[i - 1].count = Player.Inventory[i].count;
 		}
-		Player->InventorySlotNum--;
+		Player.InventorySlotNum--;
 		// Set position markers and get next ReadyArtifact
-		Player->InvPtr--;
-		if (Player->InvPtr < 6)
+		Player.InvPtr--;
+		if (Player.InvPtr < 6)
 		{
-			Player->InvCurPos--;
-			if (Player->InvCurPos < 0)
+			Player.InvCurPos--;
+			if (Player.InvCurPos < 0)
 			{
-				Player->InvCurPos = 0;
+				Player.InvCurPos = 0;
 			}
 		}
-		if (Player->InvPtr >= Player->InventorySlotNum)
+		if (Player.InvPtr >= Player.InventorySlotNum)
 		{
-			Player->InvPtr = Player->InventorySlotNum - 1;
+			Player.InvPtr = Player.InventorySlotNum - 1;
 		}
-		if (Player->InvPtr < 0)
+		if (Player.InvPtr < 0)
 		{
-			Player->InvPtr = 0;
+			Player.InvPtr = 0;
 		}
-		Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
+		Player.ReadyArtifact = Player.Inventory[Player.InvPtr].type;
 	}
 }
 
@@ -2037,14 +2037,14 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 void MorphPlayerThink(void)
 {
 	//FIXME this sucks
-	if (ftoi(32.0 * Player->MorphTime) & 15)
+	if (ftoi(32.0 * Player.MorphTime) & 15)
 	{
 		return;
 	}
 	if (!(Velocity.x + Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		Weapon(Player->ViewEnts[ps_weapon]).SnoutSniff();
+		Weapon(Player.ViewEnts[ps_weapon]).SnoutSniff();
 		PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
@@ -2073,7 +2073,7 @@ bool UndoPlayerMorph(void)
 	Actor A;
 
 	UnlinkFromWorld();
-	switch (Player->BaseClass)
+	switch (Player.BaseClass)
 	{
 	case PCLASS_FIGHTER:
 		A = Spawn(PlayerFighter, Origin);
@@ -2085,14 +2085,14 @@ bool UndoPlayerMorph(void)
 		A = Spawn(PlayerMage, Origin);
 		break;
 	default:
-		Error("UndoPlayerMorph: Unknown player class %d", Player->BaseClass);
+		Error("UndoPlayerMorph: Unknown player class %d", Player.BaseClass);
 	}
 	if (!A.TestLocation())
 	{
 		// Didn't fit
 		A.Remove();
 		LinkToWorld();
-		Player->MorphTime = 2.0;
+		Player.MorphTime = 2.0;
 		return false;
 	}
 	LinkToWorld();
@@ -2105,11 +2105,11 @@ bool UndoPlayerMorph(void)
 		A.bFly = true;
 		A.bNoGravity = true;
 	}
-	Player->MorphTime = 0.0;
+	Player.MorphTime = 0.0;
 	A.Health = MAXHEALTH;
-	Player->Health = A.Health;
-	Player->MO = A;
-	Player->PClass = Player->BaseClass;
+	Player.Health = A.Health;
+	Player.MO = A;
+	Player.PClass = Player.BaseClass;
 	SetPlayerColor(Player);
 	PostMorphWeapon(Player, _Special1);
 
@@ -2160,8 +2160,8 @@ void DeathPlayerTick(float deltaTime)
 	if (Class == BloodySkull || Class == IceChunk)
 	{
 		// Flying bloody skull or flying ice chunk
-		Player->ViewHeight = 6.0;
-		Player->DeltaViewHeight = 0.0;
+		Player.ViewHeight = 6.0;
+		Player.DeltaViewHeight = 0.0;
 		//player->damagecount = 20;
 		if (onground)
 		{
@@ -2185,14 +2185,14 @@ void DeathPlayerTick(float deltaTime)
 	else if (!bIceDamage)
 	{
 		// Fall to ground (if not frozen)
-		Player->DeltaViewHeight = 0.0;
-		if (Player->ViewHeight > 6.0)
+		Player.DeltaViewHeight = 0.0;
+		if (Player.ViewHeight > 6.0)
 		{
-			Player->ViewHeight -= 35.0 * deltaTime;
+			Player.ViewHeight -= 35.0 * deltaTime;
 		}
-		if (Player->ViewHeight < 6.0)
+		if (Player.ViewHeight < 6.0)
 		{
-			Player->ViewHeight = 6.0;
+			Player.ViewHeight = 6.0;
 		}
 #ifdef FIXME
 		if (player->lookdir > 0)
@@ -2211,22 +2211,22 @@ void DeathPlayerTick(float deltaTime)
 	}
 	CalcHeight(deltaTime);
 
-	if (Player->Attacker && Player->Attacker != self)
+	if (Player.Attacker && Player.Attacker != self)
 	{
 		// Watch killer
-		dir = FaceActor(Player->Attacker, &delta);
+		dir = FaceActor(Player.Attacker, &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
-			if (Player->DamageFlash)
+			if (Player.DamageFlash)
 			{
-				Player->DamageFlash -= deltaTime;
-				if (Player->DamageFlash <= 0.0)
-					Player->DamageFlash = 0.0;
+				Player.DamageFlash -= deltaTime;
+				if (Player.DamageFlash <= 0.0)
+					Player.DamageFlash = 0.0;
 			}
-			if (Player->PoisonCount)
+			if (Player.PoisonCount)
 			{
-				Player->PoisonCount--;
+				Player.PoisonCount--;
 			}
 		}
 		delta = delta / 8.0;
@@ -2244,30 +2244,30 @@ void DeathPlayerTick(float deltaTime)
 			Angles.yaw -= delta;
 		}
 	}
-	else if (Player->DamageFlash || Player->PoisonCount)
+	else if (Player.DamageFlash || Player.PoisonCount)
 	{
-		if (Player->DamageFlash)
+		if (Player.DamageFlash)
 		{
-			Player->DamageFlash -= deltaTime;
-			if (Player->DamageFlash <= 0.0)
-				Player->DamageFlash = 0.0;
+			Player.DamageFlash -= deltaTime;
+			if (Player.DamageFlash <= 0.0)
+				Player.DamageFlash = 0.0;
 		}
 		else
 		{
-			Player->PoisonCount--;
+			Player.PoisonCount--;
 		}
 	}
 
-	if (Player->Buttons & BT_USE)
+	if (Player.Buttons & BT_USE)
 	{
-		Player->Palette = 0;
-		Player->WeaponPalette = 0;
-		Player->InvPtr = 0;
-		Player->InvCurPos = 0;
-		Player->NewTorch = 0;
-		Player->NewTorchDelta = 0;
-		Player->PlayerState = PST_REBORN;
-		_Special1 = Player->PClass;
+		Player.Palette = 0;
+		Player.WeaponPalette = 0;
+		Player.InvPtr = 0;
+		Player.InvCurPos = 0;
+		Player.NewTorch = 0;
+		Player.NewTorchDelta = 0;
+		Player.PlayerState = PST_REBORN;
+		_Special1 = Player.PClass;
 		if (_Special1 > 2)
 		{
 			_Special1 = 0;
@@ -2327,7 +2327,7 @@ void UseArtiPoisonBag(void)
 	Actor bomb;
 
 	angle = Angles.yaw;
-	if (Player->PClass == PCLASS_CLERIC)
+	if (Player.PClass == PCLASS_CLERIC)
 	{
 		bomb = Spawn(PoisonBag, Origin +
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
@@ -2336,7 +2336,7 @@ void UseArtiPoisonBag(void)
 			bomb.Instigator = self;
 		}
 	}
-	else if (Player->PClass == PCLASS_MAGE)
+	else if (Player.PClass == PCLASS_MAGE)
 	{
 		bomb = Spawn(FireBomb, Origin +
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - FloorClip));
@@ -2512,7 +2512,7 @@ void AdjustPlayerAngle(void)
 	{
 		Angles.yaw = angle;
 	}
-	Player->bFixAngle = true;
+	Player.bFixAngle = true;
 }
 
 defaultproperties
@@ -2529,6 +2529,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemMegaSphere:Pickup
+class ItemMegaSphere : Pickup
 	__mobjinfo__(83);
 
 //==========================================================================
@@ -34,8 +34,8 @@ class ItemMegaSphere:Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player->Health = MEGASPHERE_HEALTH;
-	Toucher.Health = Toucher.Player->Health;
+	Toucher.Player.Health = MEGASPHERE_HEALTH;
+	Toucher.Health = Toucher.Player.Health;
 	Toucher.GiveArmor(2);
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('PickupPower', CHAN_ITEM);
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

@@ -1598,9 +1598,9 @@ static int CmdEndPrint(void)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GPlayers[i])
+			if (svvars.Players[i])
 			{
-				SV_ClientCenterPrintf(GPlayers[i], "%s\n", PrintBuffer);
+				SV_ClientCenterPrintf(svvars.Players[i], "%s\n", PrintBuffer);
 			}
 		}
 	}
@@ -1611,9 +1611,9 @@ static int CmdEndPrintBold(void)
 {//FIXME yellow message
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 		{
-			SV_ClientCenterPrintf(GPlayers[i], "%s\n", PrintBuffer);
+			SV_ClientCenterPrintf(svvars.Players[i], "%s\n", PrintBuffer);
 		}
 	}
 	return SCRIPT_CONTINUE;
@@ -1652,7 +1652,7 @@ static int CmdPlayerCount(void)
 	count = 0;
 	for(i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 			count++;
 	}
 	Push(count);
@@ -1815,9 +1815,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.24  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.23  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	

@@ -467,34 +467,37 @@ static void ArchivePlayers(void)
 {
 	guard(ArchivePlayers);
 	int			i;
-	player_t 	tempPlayer;
-	FFunction *pf_archive_player;
+	VBasePlayer	*tempPlayer;
+	FFunction	*pf_archive_player;
 
 	pf_archive_player = svpr.FuncForName("ArchivePlayer");
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		StreamOutByte((byte)!!GPlayers[i]);
+		StreamOutByte((byte)!!svvars.Players[i]);
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 		{
 			continue;
 		}
 
-		tempPlayer = *GPlayers[i];
-		svpr.Exec(pf_archive_player, (int)&tempPlayer);
-		StreamOutBuffer(&tempPlayer, sizeof(player_t));
+		tempPlayer = (VBasePlayer*)Z_Malloc(svvars.Players[i]->GetClass()->ClassSize);
+		memcpy(tempPlayer, svvars.Players[i], svvars.Players[i]->GetClass()->ClassSize);
+		svpr.Exec(pf_archive_player, (int)tempPlayer);
+		StreamOutBuffer((byte*)tempPlayer + sizeof(VObject),
+			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
-			if (!tempPlayer.ViewEnts[pi])
+			if (!tempPlayer->ViewEnts[pi])
 			{
 				continue;
 			}
-			WriteVObject(tempPlayer.ViewEnts[pi]);
+			WriteVObject(tempPlayer->ViewEnts[pi]);
 		}
+		Z_Free(tempPlayer);
 	}
 	unguard;
 }
@@ -518,31 +521,32 @@ static void UnarchivePlayers(void)
 		byte Active = GET_BYTE;
 		GPlayersBase[i]->bActive = Active;
 		if (Active)
-			GPlayers[i] = GPlayersBase[i];
+			svvars.Players[i] = GPlayersBase[i];
 		else
-			GPlayers[i] = NULL;
+			svvars.Players[i] = NULL;
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 		{
 			continue;
 		}
-		Loader->Serialize(GPlayers[i], sizeof(player_t));
-		GPlayers[i]->MO = NULL; // Will be set when unarc thinker
-		svpr.Exec(pf_unarchive_player, (int)GPlayers[i]);
-		GPlayers[i]->bActive = false;
+		Loader->Serialize((byte*)svvars.Players[i] + sizeof(VObject),
+			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
+		svvars.Players[i]->MO = NULL; // Will be set when unarc thinker
+		svpr.Exec(pf_unarchive_player, (int)svvars.Players[i]);
+		svvars.Players[i]->bActive = false;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
-			if (!GPlayers[i]->ViewEnts[pi])
+			if (!svvars.Players[i]->ViewEnts[pi])
 			{
 				continue;
 			}
-			GPlayers[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
-			GPlayers[i]->ViewEnts[pi]->Player = GPlayers[i];
+			svvars.Players[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
+			svvars.Players[i]->ViewEnts[pi]->Player = svvars.Players[i];
 		}
-		GPlayers[i] = NULL;
+		svvars.Players[i] = NULL;
 	}
 	unguard;
 }
@@ -795,7 +799,7 @@ static void ArchiveThinkers(void)
 					Z_Free(th);
 					continue;
 				}
-				mobj->Player = (player_t *)(SV_GetPlayerNum(mobj->Player) + 1);
+				mobj->Player = (VBasePlayer *)(SV_GetPlayerNum(mobj->Player) + 1);
 			}
 		}
 
@@ -1451,9 +1455,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.32  2003/10/22 06:16:53  dj_jl
 //	Secret level info saved in savegame
-//
+//	
 //	Revision 1.31  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

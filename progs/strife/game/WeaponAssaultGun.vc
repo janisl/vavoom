@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponAssaultGun:Weapon;
+class WeaponAssaultGun : Weapon;
 
 //==========================================================================
 //
@@ -36,16 +36,16 @@ void A_FireRiffle(void)
 	TVec dir;
 	int damage;
 
-	Player->MO.PlaySound('AssaultGunFire', CHAN_WEAPON);
+	Player.MO.PlaySound('AssaultGunFire', CHAN_WEAPON);
 
-	if (!Player->Ammo[Ammo])
+	if (!Player.Ammo[Ammo])
 		return;
 
-	Player->MO.SetState(Player->MO.MissileState);
-	Player->Ammo[Ammo]--;
+	Player.MO.SetState(Player.MO.MissileState);
+	Player.Ammo[Ammo]--;
 
-	dir = Aim(Player->MO, 16.0 * 64.0);
-	if (Player->Refire)
+	dir = Aim(Player.MO, 16.0 * 64.0);
+	if (Player.Refire)
 	{
 		TAVec angles;
 
@@ -55,8 +55,8 @@ void A_FireRiffle(void)
 		AngleVector(&angles, &dir);
 	}
 	damage = 5 * (P_Random() % 3 + 1);
-	LineAttack(Player->MO, dir, MISSILERANGE, damage);
-	//Player->MO.Effects |= EF_DL_MUZZLEFLASH;
+	LineAttack(Player.MO, dir, MISSILERANGE, damage);
+	//Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
 __states__
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

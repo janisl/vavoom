@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
+server_vars_t *svvars;
+
 int netgame;
 int deathmatch;
 int gameskill;
 int respawn;
 int nomonsters;
 int fastparm;
-
-player_t** GPlayers;
 
 int *validcount;
 int skyflatnum;
@@ -47,6 +47,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2003/11/12 16:48:02  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.9  2003/07/11 16:47:38  dj_jl
 //  Made array of players with pointers
 //

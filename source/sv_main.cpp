@@ -74,14 +74,14 @@ TCvarI			real_time("real_time", "1");
 server_t		sv;
 server_static_t	svs;
 TProgs			svpr;
+server_vars_t	svvars;
 
 // increment every time a check is made
 int				validcount = 1;
 
 bool			sv_loading = false;
 
-player_t*		GPlayersBase[MAXPLAYERS];
-player_t*		GPlayers[MAXPLAYERS];
+VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
 skill_t         gameskill; 
  
@@ -101,7 +101,7 @@ TMessage		sv_datagram(sv_datagram_buf, MAX_DATAGRAM);
 byte			sv_signon_buf[MAX_MSGLEN];
 TMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
 
-player_t*		sv_player;
+VBasePlayer*	sv_player;
 
 char			sv_next_map[12];
 char			sv_secret_map[12];
@@ -157,11 +157,6 @@ void SV_Init(void)
 	guard(SV_Init);
 	int		i;
 
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		GPlayersBase[i] = Z_CNew<player_t>();
-	}
-
 	svs.max_clients = 1;
 
 	sv_mobjs = Z_CNew<VEntity *>(GMaxEntities);
@@ -170,7 +165,14 @@ void SV_Init(void)
 
 	svpr.Load("svprogs");
 
-	svpr.SetGlobal("GPlayers", (int)GPlayers);
+	VClass* PlayerClass = VClass::FindClass("Player");
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
+			PlayerClass, NULL, PU_STATIC);
+	}
+
+	svpr.SetGlobal("svvars", (int)&svvars);
 	svpr.SetGlobal("validcount", (int)&validcount);
 	svpr.SetGlobal("level", (int)&level);
 	svpr.SetGlobal("skyflatnum", skyflatnum);
@@ -683,7 +685,7 @@ void SV_PolyobjStopSequence(const polyobj_t *poly)
 //
 //==========================================================================
 
-void SV_ClientPrintf(player_t *player, const char *s, ...)
+void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 {
 	guard(SV_ClientPrintf);
 	va_list	v;
@@ -703,7 +705,7 @@ void SV_ClientPrintf(player_t *player, const char *s, ...)
 //
 //==========================================================================
 
-void SV_ClientCenterPrintf(player_t *player, const char *s, ...)
+void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...)
 {
 	guard(SV_ClientCenterPrintf);
 	va_list	v;
@@ -734,8 +736,8 @@ void SV_BroadcastPrintf(const char *s, ...)
 	va_end(v);
 
 	for (int i = 0; i < svs.max_clients; i++)
-		if (GPlayers[i])
-			GPlayers[i]->Message << (byte)svc_print << buf;
+		if (svvars.Players[i])
+			svvars.Players[i]->Message << (byte)svc_print << buf;
 	unguard;
 }
 
@@ -745,7 +747,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 //
 //==========================================================================
 
-void SV_WriteViewData(player_t &player, TMessage &msg)
+void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
 {
 	guard(SV_WriteViewData);
 	int		i;
@@ -1076,7 +1078,7 @@ void SV_UpdateLevel(TMessage &msg)
 //
 //==========================================================================
 
-void SV_SendNop(player_t *client)
+void SV_SendNop(VBasePlayer *client)
 {
 	guard(SV_SendNop);
 	TMessage	msg;
@@ -1114,12 +1116,12 @@ void SV_SendClientDatagram(void)
 	}
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 		{
 			continue;
 		}
 
-		sv_player = GPlayers[i];
+		sv_player = svvars.Players[i];
 
 		if (!sv_player->bSpawned)
 		{
@@ -1168,40 +1170,42 @@ void SV_SendReliable(void)
 {
 	guard(SV_SendReliable);
 	int		i, j;
+	int		*Stats;
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 			continue;
 
-		GPlayers[i]->Message << sv_reliable;
+		svvars.Players[i]->Message << sv_reliable;
 
-		if (!GPlayers[i]->bSpawned)
+		if (!svvars.Players[i]->bSpawned)
 			continue;
 
+		Stats = (int*)((byte*)svvars.Players[i] + sizeof(VBasePlayer));
 		for (j = 0; j < num_stats; j++)
 		{
-			if (GPlayers[i]->user_fields[j] == GPlayers[i]->OldStats[j])
+			if (Stats[j] == svvars.Players[i]->OldStats[j])
 			{
 				continue;
 			}
-			int sval = GPlayers[i]->user_fields[j];
+			int sval = Stats[j];
 			if (sval >= 0 && sval < 256)
 			{
-				GPlayers[i]->Message << (byte)svc_stats_byte
+				svvars.Players[i]->Message << (byte)svc_stats_byte
 					<< (byte)j << (byte)sval;
 			}
 			else if (sval >= MINSHORT && sval <= MAXSHORT)
 			{
-				GPlayers[i]->Message << (byte)svc_stats_short
+				svvars.Players[i]->Message << (byte)svc_stats_short
 					<< (byte)j << (short)sval;
 			}
 			else
 			{
-				GPlayers[i]->Message << (byte)svc_stats_long
+				svvars.Players[i]->Message << (byte)svc_stats_long
 					<< (byte)j << sval;
 			}
-			GPlayers[i]->OldStats[j] = GPlayers[i]->user_fields[j];
+			svvars.Players[i]->OldStats[j] = sval;
 		}
 	}
 
@@ -1209,35 +1213,35 @@ void SV_SendReliable(void)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 		{
 			continue;
 		}
 
-		if (GPlayers[i]->Message.Overflowed)
+		if (svvars.Players[i]->Message.Overflowed)
 		{
 			SV_DropClient(true);
 			GCon->Log(NAME_Dev, "Client message overflowed");
 			continue;
 		}
 
-		if (!GPlayers[i]->Message.CurSize)
+		if (!svvars.Players[i]->Message.CurSize)
 		{
 			continue;
 		}
 
-		if (!NET_CanSendMessage(GPlayers[i]->NetCon))
+		if (!NET_CanSendMessage(svvars.Players[i]->NetCon))
 		{
 			continue;
 		}
 
-		if (NET_SendMessage(GPlayers[i]->NetCon, &GPlayers[i]->Message) == -1)
+		if (NET_SendMessage(svvars.Players[i]->NetCon, &svvars.Players[i]->Message) == -1)
 		{
 			SV_DropClient(true);
 			continue;
 		}
-		GPlayers[i]->Message.Clear();
-		GPlayers[i]->LastMessage = realtime;
+		svvars.Players[i]->Message.Clear();
+		svvars.Players[i]->LastMessage = realtime;
 	}
 	unguard;
 }
@@ -1266,13 +1270,13 @@ void SV_SendClientMessages(void)
 static void CheckForSkip(void)
 {
 	int   			i;
-	player_t		*player;
+	VBasePlayer		*player;
 	static boolean	triedToSkip;
 	bool			skip = false;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		player = GPlayers[i];
+		player = svvars.Players[i];
 		if (player)
 		{
 			if (player->Buttons & BT_ATTACK)
@@ -1339,13 +1343,13 @@ void SV_RunClients(void)
 	// get commands
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 		{
 			continue;
 		}
 
 		// do player reborns if needed
-		if (GPlayers[i]->PlayerState == PST_REBORN)
+		if (svvars.Players[i]->PlayerState == PST_REBORN)
 		{
 			G_DoReborn(i);
 		}
@@ -1358,13 +1362,13 @@ void SV_RunClients(void)
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
-		if (GPlayers[i]->bSpawned && !sv.intermission && !paused &&
+		if (svvars.Players[i]->bSpawned && !sv.intermission && !paused &&
 			(netgame || !(MN_Active() || C_Active())))
 #else
-		if (GPlayers[i]->bSpawned && !sv.intermission && !paused)
+		if (svvars.Players[i]->bSpawned && !sv.intermission && !paused)
 #endif
 		{
-			svpr.Exec(pf_PlayerThink, (int)GPlayers[i]);
+			svpr.Exec(pf_PlayerThink, (int)svvars.Players[i]);
 		}
 	}
 
@@ -1545,7 +1549,7 @@ static void G_DoCompleted(void)
 	{
 		return;
 	}
-	if (!netgame && (!GPlayers[0] || !GPlayers[0]->bSpawned))
+	if (!netgame && (!svvars.Players[0] || !svvars.Players[0]->bSpawned))
 	{
 		//FIXME Some ACS left from previous visit of the level
 		return;
@@ -1558,7 +1562,7 @@ static void G_DoCompleted(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 		{
 			svpr.Exec("G_PlayerExitMap", i,
 				!old_info.cluster || old_info.cluster != new_info.cluster);
@@ -1576,14 +1580,14 @@ static void G_DoCompleted(void)
 				<< sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 		{
 			sv_reliable << (byte)true;
 			for (j = 0; j < MAXPLAYERS; j++)
-				sv_reliable << (byte)GPlayers[i]->FragsStats[j];
-			sv_reliable << (short)GPlayers[i]->KillCount
-						<< (short)GPlayers[i]->ItemCount
-						<< (short)GPlayers[i]->SecretCount;
+				sv_reliable << (byte)svvars.Players[i]->FragsStats[j];
+			sv_reliable << (short)svvars.Players[i]->KillCount
+						<< (short)svvars.Players[i]->ItemCount
+						<< (short)svvars.Players[i]->SecretCount;
 		}
 		else
 		{
@@ -1656,9 +1660,9 @@ void G_SecretExitLevel(void)
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 		{
-			GPlayers[i]->bDidSecret = true;
+			svvars.Players[i]->bDidSecret = true;
 		}
 	}
 	unguard;
@@ -1743,12 +1747,12 @@ COMMAND(TeleportNewMap)
 
 static void G_DoReborn(int playernum)
 {
-	if (!GPlayers[playernum] || !GPlayers[playernum]->bSpawned)
+	if (!svvars.Players[playernum] || !svvars.Players[playernum]->bSpawned)
 		return;
 	if (!netgame && !deathmatch)// For fun now
 	{
 		CmdBuf << "Restart\n";
-		GPlayers[playernum]->PlayerState = PST_LIVE;
+		svvars.Players[playernum]->PlayerState = PST_LIVE;
 	}
 	else
 	{
@@ -1773,7 +1777,7 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = GPlayers[i];
+		sv_player = svvars.Players[i];
 		if (sv_player && sv_player->NetCon)
 		{
 			if (sv_player->NetCon->driver == 0)
@@ -1800,7 +1804,7 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 		count = 0;
 		for (i = 0; i < svs.max_clients; i++)
 		{
-			sv_player = GPlayers[i];
+			sv_player = svvars.Players[i];
 			if (!state1[i])
 			{
 				if (NET_CanSendMessage(sv_player->NetCon))
@@ -1964,7 +1968,7 @@ int SV_FindSkin(const char *name)
 //
 //==========================================================================
 
-void SV_SendServerInfo(player_t *player)
+void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
 	int			i;
@@ -1985,7 +1989,7 @@ void SV_SendServerInfo(player_t *player)
 	{
 		msg << (byte)svc_userinfo
 			<< (byte)i
-			<< (GPlayers[i] ? GPlayers[i]->UserInfo : "");
+			<< (svvars.Players[i] ? svvars.Players[i]->UserInfo : "");
 	}
 
 	msg << (byte)svc_sprites
@@ -2035,20 +2039,20 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 		//	Level change
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!GPlayers[i])
+			if (!svvars.Players[i])
 				continue;
 
-			GPlayers[i]->KillCount = 0;
-			GPlayers[i]->SecretCount = 0;
-			GPlayers[i]->ItemCount = 0;
+			svvars.Players[i]->KillCount = 0;
+			svvars.Players[i]->SecretCount = 0;
+			svvars.Players[i]->ItemCount = 0;
 
-			GPlayers[i]->bSpawned = false;
-			GPlayers[i]->MO = NULL;
-			GPlayers[i]->Frags = 0;
-			memset(GPlayers[i]->FragsStats, 0, sizeof(GPlayers[i]->FragsStats));
-			if (GPlayers[i]->PlayerState == PST_DEAD)
-				GPlayers[i]->PlayerState = PST_REBORN;
-			GPlayers[i]->Message.Clear();
+			svvars.Players[i]->bSpawned = false;
+			svvars.Players[i]->MO = NULL;
+			svvars.Players[i]->Frags = 0;
+			memset(svvars.Players[i]->FragsStats, 0, sizeof(svvars.Players[i]->FragsStats));
+			if (svvars.Players[i]->PlayerState == PST_DEAD)
+				svvars.Players[i]->PlayerState = PST_REBORN;
+			svvars.Players[i]->Message.Clear();
 		}
 	}
 	else if (!sv_loading)
@@ -2125,12 +2129,12 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	SV_InitModelLists();
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (GPlayers[i])
+		if (svvars.Players[i])
 		{
-			SV_SendServerInfo(GPlayers[i]);
-			if (GPlayers[i]->bIsBot)
+			SV_SendServerInfo(svvars.Players[i]);
+			if (svvars.Players[i]->bIsBot)
 			{
-				sv_player = GPlayers[i];
+				sv_player = svvars.Players[i];
 				SV_RunClientCommand("PreSpawn\n");
 				SV_RunClientCommand("Spawn\n");
 				SV_RunClientCommand("Begin\n");
@@ -2340,7 +2344,7 @@ void SV_DropClient(boolean)
 		svpr.Exec("DisconnectClient", (int)sv_player);
 	}
 	sv_player->bActive = false;
-	GPlayers[SV_GetPlayerNum(sv_player)] = NULL;
+	svvars.Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->bSpawned = false;
 	NET_Close(sv_player->NetCon);
 	sv_player->NetCon = NULL;
@@ -2417,7 +2421,7 @@ void SV_ShutdownServer(boolean crash)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = GPlayers[i];
+		sv_player = svvars.Players[i];
 		if (sv_player)
 			SV_DropClient(crash);
 	}
@@ -2428,9 +2432,10 @@ void SV_ShutdownServer(boolean crash)
 	SV_DestroyAllThinkers();
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		memset(GPlayersBase[i], 0, sizeof(*GPlayersBase[i]));
+		memset((byte*)GPlayersBase[i] + sizeof(VObject), 0,
+			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
 	}
-	memset(GPlayers, 0, sizeof(GPlayers));
+	memset(svvars.Players, 0, sizeof(svvars.Players));
 	memset(&sv, 0, sizeof(sv));
 	unguard;
 }
@@ -2523,12 +2528,12 @@ COMMAND(Stats)
 //
 //==========================================================================
 
-void SV_ConnectClient(player_t *player)
+void SV_ConnectClient(VBasePlayer *player)
 {
 	guard(SV_ConnectClient);
 	GCon->Logf(NAME_Dev, "Client %s connected", player->NetCon->address);
 
-	GPlayers[SV_GetPlayerNum(player)] = player;
+	svvars.Players[SV_GetPlayerNum(player)] = player;
 	player->bActive = true;
 
 	player->Message.Data = player->MsgBuf;
@@ -2574,7 +2579,7 @@ void SV_CheckForNewClients(void)
 		// init a new client structure
 		//
 		for (i = 0; i < svs.max_clients; i++)
-			if (!GPlayers[i])
+			if (!svvars.Players[i])
 				break;
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
@@ -2610,18 +2615,18 @@ void SV_ConnectBot(const char *name)
 	// init a new client structure
 	//
 	for (i = 0; i < svs.max_clients; i++)
-		if (!GPlayers[i])
+		if (!svvars.Players[i])
 			break;
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
 	GPlayersBase[i]->NetCon = sock;
 	GPlayersBase[i]->bIsBot = true;
-	strcpy(GPlayersBase[i]->Name, name);
+	strcpy(GPlayersBase[i]->PlayerName, name);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 
-	sv_player = GPlayers[i];
+	sv_player = svvars.Players[i];
 	SV_RunClientCommand("PreSpawn\n");
 	SV_RunClientCommand("Spawn\n");
 	SV_SetUserInfo(sv_player->UserInfo);
@@ -2793,7 +2798,7 @@ COMMAND(Say)
 	if (Argc() < 2)
 		return;
 
-	SV_BroadcastPrintf("%s: %s", sv_player->Name, Args());
+	SV_BroadcastPrintf("%s: %s", sv_player->PlayerName, Args());
 	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
 	unguard;
 }
@@ -2863,9 +2868,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.56  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.55  2003/10/22 06:16:54  dj_jl
 //	Secret level info saved in savegame
-//
+//	
 //	Revision 1.54  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
 //	

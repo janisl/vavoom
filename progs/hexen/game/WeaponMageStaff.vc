@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponMageStaff:Weapon;
+class WeaponMageStaff : Weapon;
 
 //==========================================================================
 //
@@ -35,10 +35,10 @@ void MStaffSpawn(float angle)
 {
 	Actor mo;
 
-	mo = PlayerPawn(Player->MO).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = PlayerPawn(Player.MO).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Instigator = Player->MO;
+		mo.Instigator = Player.MO;
 		mo.Enemy = Actor(mo.RoughMonsterSearch(10));
 	}
 }
@@ -53,19 +53,19 @@ void A_MStaffAttack(void)
 {
 	float angle;
 
-	Player->Mana[MANA_1] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->Mana[MANA_2] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	angle = Player->MO.Angles.yaw;
+	Player.Mana[MANA_1] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	Player.Mana[MANA_2] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	angle = Player.MO.Angles.yaw;
 
 	MStaffSpawn(angle);
 	MStaffSpawn(angle - 5.0);
 	MStaffSpawn(angle + 5.0);
-	Player->MO.PlaySound('MageStaffFire', CHAN_WEAPON);
-	Player->DamageFlash = 0.0;
-	Player->BonusFlash = 0.0;
-	Player->WeaponPalette = STARTSCOURGEPAL;
+	Player.MO.PlaySound('MageStaffFire', CHAN_WEAPON);
+	Player.DamageFlash = 0.0;
+	Player.BonusFlash = 0.0;
+	Player.WeaponPalette = STARTSCOURGEPAL;
 }
 
 //==========================================================================
@@ -76,7 +76,7 @@ void A_MStaffAttack(void)
 
 void A_MStaffPalette1(void)
 {
-	Player->WeaponPalette = STARTSCOURGEPAL + 1;
+	Player.WeaponPalette = STARTSCOURGEPAL + 1;
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ void A_MStaffPalette1(void)
 
 void A_MStaffPalette2(void)
 {
-	Player->WeaponPalette = STARTSCOURGEPAL + 2;
+	Player.WeaponPalette = STARTSCOURGEPAL + 2;
 }
 
 //==========================================================================
@@ -99,7 +99,7 @@ void A_MStaffPalette2(void)
 void A_MStaffPalette3(void)
 {
 	// reset back to original playpal
-	Player->WeaponPalette = 0;
+	Player.WeaponPalette = 0;
 }
 
 __states__
@@ -164,6 +164,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

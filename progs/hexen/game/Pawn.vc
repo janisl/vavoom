@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pawn:Actor
+class Pawn : Actor
 	abstract;
 
 bool bCheckNoMonsters;		// Don't spawn if monsters are disabled
@@ -354,7 +354,7 @@ bool LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!GPlayers[0]->MO.CanSee(self))
+	if (!svvars->Players[0].MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -414,11 +414,11 @@ bool LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
-	player_t *P;
+	Player P;
 	float an;
 	float dist;
 
-	if (!netgame && GPlayers[0] && GPlayers[0]->bSpawned && GPlayers[0]->Health <= 0)
+	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
@@ -430,37 +430,37 @@ bool LookForPlayers(bool allaround)
 		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!GPlayers[LastLook])
+		if (!svvars->Players[LastLook])
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = GPlayers[LastLook];
-		if (!P->bSpawned || !P->MO)
+		P = svvars->Players[LastLook];
+		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
-		if (P->Health <= 0)
+		if (P.Health <= 0)
 			continue;	// dead
-		if (!CanSee(P->MO))
+		if (!CanSee(P.MO))
 			continue;	// out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->MO.Origin.y - Origin.y,
-				P->MO.Origin.x - Origin.x) - Angles.yaw);
+			an = AngleMod360(atan2(P.MO.Origin.y - Origin.y,
+				P.MO.Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(P->MO, self);
+				dist = MobjDist(P.MO, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
-		if (P->MO.Translucency)
+		if (P.MO.Translucency)
 		{
 			// Player is invisible
-			if (MobjDist(P->MO, self) > 2.0 * MELEERANGE &&
-				Length(P->MO.Velocity) < 5.0 * 35.0)
+			if (MobjDist(P.MO, self) > 2.0 * MELEERANGE &&
+				Length(P.MO.Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
 				return false;
@@ -473,12 +473,12 @@ bool LookForPlayers(bool allaround)
 		}
 		if (Class == Minotaur)
 		{
-			if (Instigator == P->MO)
+			if (Instigator == P.MO)
 			{
 				continue;	// Don't target master
 			}
 		}
-		Enemy = P->MO;
+		Enemy = P.MO;
 		return true;
 	}
 	return false;
@@ -931,9 +931,9 @@ void A_FreezeDeath(void)
 
 	if (bIsPlayer)
 	{
-		Player->DamageFlash = 0.0;
-		Player->PoisonCount = 0;
-		Player->BonusFlash = 0.0;
+		Player.DamageFlash = 0.0;
+		Player.PoisonCount = 0;
+		Player.BonusFlash = 0.0;
 	}
 	else
 	{
@@ -1002,11 +1002,11 @@ void A_FreezeDeathChunks(void)
 		A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
 		A.Player = Player;
 		A.bIsPlayer = true;
-		Player = NULL;
+		Player = none;
 		bIsPlayer = false;
 		A.Health = Health;
 		A.Angles.yaw = Angles.yaw;
-		A.Player->MO = A;
+		A.Player.MO = A;
 		A.Angles.pitch = 0.0;
 	}
 	RemoveFromTIDList();
@@ -1030,6 +1030,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

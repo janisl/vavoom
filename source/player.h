@@ -29,7 +29,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct player_t;
+class VBasePlayer;
 
 //
 // Player states.
@@ -59,7 +59,7 @@ class VViewEntity : public VObject
 	int			StateNum;
 	int			NextState;
     float		StateTime;
-	player_t	*Player;
+	VBasePlayer	*Player;
 
 	void SetState(int stnum);
 
@@ -69,8 +69,11 @@ class VViewEntity : public VObject
 //
 // Extended player object info: player_t
 //
-struct player_t
+class VBasePlayer : public VObject
 {
+	DECLARE_CLASS(VBasePlayer, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VBasePlayer)
+
 	dword			bActive:1;
 	dword			bSpawned:1;
 	dword			bIsBot:1;
@@ -88,7 +91,7 @@ struct player_t
 
 	char			UserInfo[MAX_INFO_STRING];
 
-	char			Name[MAXNAME];
+	char			PlayerName[MAXNAME];
 	int				BaseClass;
 	int				PClass;			// player class type
 	int				Color;
@@ -148,9 +151,6 @@ struct player_t
 	dword 			WorldTimer;				// total time the player's been playing
 
 	int				OldStats[96];
-
-	//	256 integers for user defined fields in PROGS
-	int				user_fields[256];
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -160,9 +160,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.17  2003/03/08 16:02:52  dj_jl
 //	A little multiplayer fix.
-//
+//	
 //	Revision 1.16  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

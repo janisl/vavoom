@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponSkullRod:Weapon;
+class WeaponSkullRod : Weapon;
 
 //===========================================================================
 //
@@ -35,12 +35,12 @@ void A_FireSkullRodPL1(void)
 {
 	Actor A;
 
-	if (Player->Ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	if (Player.Ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
-	Player->Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
-	A = Player->MO.SpawnPlayerMissile(HornRodMissile1);
+	Player.Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	A = Player.MO.SpawnPlayerMissile(HornRodMissile1);
 	// Randomize the first frame
 	if (A && P_Random() > 128)
 	{
@@ -60,9 +60,9 @@ void A_FireSkullRodPL1(void)
 
 void A_FireSkullRodPL2(void)
 {
-	Player->Ammo[am_skullrod] -=
+	Player.Ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	Player->MO.SpawnPlayerMissile(HornRodMissile2);
+	Player.MO.SpawnPlayerMissile(HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

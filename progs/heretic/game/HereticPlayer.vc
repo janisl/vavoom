@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticPlayer:PlayerPawn;
+class HereticPlayer : PlayerPawn;
 
 //==========================================================================
 //
@@ -79,12 +79,12 @@ void A_SkullPop(void)
 	// Attach player mobj to bloody skull
 	A.Player = Player;
 	A.bIsPlayer = true;
-	Player = NULL;
+	Player = none;
 	bIsPlayer = false;
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
-	A.Player->MO = A;
-	A.Player->DamageFlash = 1.0;
+	A.Player.MO = A;
+	A.Player.DamageFlash = 1.0;
 }
 
 //==========================================================================
@@ -190,6 +190,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:43  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Arachnotron:Pawn
+class Arachnotron : Pawn
 	__mobjinfo__(68);
 
 //==========================================================================
@@ -103,7 +103,7 @@ void A_BossDeath(void)
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (GPlayers[i] && GPlayers[i]->bSpawned && GPlayers[i]->Health > 0)
+		if (svvars->Players[i] && svvars->Players[i].bSpawned && svvars->Players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -190,6 +190,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/07/11 16:47:38  dj_jl
 //  Made array of players with pointers
 //

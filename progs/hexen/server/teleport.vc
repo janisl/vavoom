@@ -223,9 +223,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 		// Adjust a player's view, in case there has been a height change
 		if (thing.bIsPlayer)
 		{
-			thing.Player->ViewOrg.z += thing.Origin.z - oldZ;
+			thing.Player.ViewOrg.z += thing.Origin.z - oldZ;
 
-			thing.Player->bFixAngle = true;
+			thing.Player.bFixAngle = true;
 		}
 		return true;
 	}
@@ -235,6 +235,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.24  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //

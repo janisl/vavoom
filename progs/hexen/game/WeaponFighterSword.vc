@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponFighterSword:Weapon;
+class WeaponFighterSword : Weapon;
 
 //============================================================================
 //
@@ -33,12 +33,12 @@ class WeaponFighterSword:Weapon;
 
 void A_FSwordAttack(void)
 {
-	PlayerPawn Owner = PlayerPawn(Player->MO);
+	PlayerPawn Owner = PlayerPawn(Player.MO);
 
-	Player->Mana[MANA_1] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->Mana[MANA_2] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+	Player.Mana[MANA_1] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	Player.Mana[MANA_2] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
 	Owner.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Actor:Entity
+class Actor : Entity
 	abstract;
 
 //  States
@@ -372,33 +372,33 @@ void Kill(Actor source)
 		if (bCountKill)
 		{
 			// Count for intermission
-			source.Player->KillCount++;
+			source.Player.KillCount++;
 		}
 		if (bIsPlayer)
 		{
-			if (source.Player->bIsBot)
+			if (source.Player.bIsBot)
 			{
-				source.Player->Bot.Killed(self);
+				source.Player.Bot.Killed(self);
 			}
 
-			if (Player->bIsBot)
+			if (Player.bIsBot)
 			{
-				Player->Bot.Died(source);
+				Player.Bot.Died(source);
 			}
 
 			// Frag stuff
 			if (self == source)
 			{
 				// Self-frag
-				Player->FragsStats[P_GetPlayerNum(Player)]--;
-				Player->Frags--;
+				Player.FragsStats[P_GetPlayerNum(Player)]--;
+				Player.Frags--;
 			}
 			else
 			{
-				source.Player->FragsStats[P_GetPlayerNum(Player)]++;
-				source.Player->Frags++;
+				source.Player.FragsStats[P_GetPlayerNum(Player)]++;
+				source.Player.Frags++;
 				source.PlaySound('Frag', CHAN_ITEM);
-				if (source.Player->ChickenTime)
+				if (source.Player.ChickenTime)
 				{
 					// Make a super chicken
 					PlayerPawn(source).GivePower(pw_weaponlevel2);
@@ -409,21 +409,21 @@ void Kill(Actor source)
 	else if (!netgame && bCountKill)
 	{
 		// Count all monster deaths
-		GPlayers[0]->KillCount++;
+		svvars->Players[0].KillCount++;
 	}
 	if (bIsPlayer)
 	{
 		if (!source)
 		{
 			// Self-frag
-			Player->FragsStats[P_GetPlayerNum(Player)]--;
-			Player->Frags--;
+			Player.FragsStats[P_GetPlayerNum(Player)]--;
+			Player.Frags--;
 		}
 		bSolid = false;
 		bFly = false;
-		Player->Powers[pw_flight] = 0.0;
-		Player->Powers[pw_weaponlevel2] = 0.0;
-		Player->PlayerState = PST_DEAD;
+		Player.Powers[pw_flight] = 0.0;
+		Player.Powers[pw_weaponlevel2] = 0.0;
+		Player.PlayerState = PST_DEAD;
 		DropWeapon(Player);
 		if (bFireDamage)
 		{
@@ -513,17 +513,17 @@ bool ChickenMorphPlayer(void)
 	Actor fog;
 	Actor chicken;
 
-	if (Player->ChickenTime)
+	if (Player.ChickenTime)
 	{
-		if ((Player->ChickenTime < CHICKENTIME - 1.0) &&
-			!Player->Powers[pw_weaponlevel2])
+		if ((Player.ChickenTime < CHICKENTIME - 1.0) &&
+			!Player.Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
 			PlayerPawn(self).GivePower(pw_weaponlevel2);
 		}
 		return false;
 	}
-	if (Player->Powers[pw_invulnerability])
+	if (Player.Powers[pw_invulnerability])
 	{
 		// Immune when invulnerable
 		return false;
@@ -533,19 +533,19 @@ bool ChickenMorphPlayer(void)
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	chicken = Spawn(ChickenPlayer, Origin);
-	chicken.Special1 = Player->ReadyWeapon;
+	chicken.Special1 = Player.ReadyWeapon;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.Player = Player;
 	chicken.bIsPlayer = true;
 	chicken.Health = MAXCHICKENHEALTH;
-	Player->Health = chicken.Health;
-	Player->MO = chicken;
-	Player->ArmorPoints = 0;
-	Player->ArmorType = 0;
-	Player->Powers[pw_invisibility] = 0.0;
-	Player->Powers[pw_weaponlevel2] = 0.0;
+	Player.Health = chicken.Health;
+	Player.MO = chicken;
+	Player.ArmorPoints = 0;
+	Player.ArmorType = 0;
+	Player.Powers[pw_invisibility] = 0.0;
+	Player.Powers[pw_weaponlevel2] = 0.0;
 	chicken.bFly = bFly;
-	Player->ChickenTime = CHICKENTIME;
+	Player.ChickenTime = CHICKENTIME;
 	ActivateBeak(Player);
 
 	SetState(S_FREETARGMOBJ);
@@ -606,13 +606,13 @@ bool AutoUseChaosDevice(void)
 {
 	int i;
 
-	for (i = 0; i < Player->InventorySlotNum; i++)
+	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player->Inventory[i].type == arti_teleport)
+		if (Player.Inventory[i].type == arti_teleport)
 		{
 			PlayerPawn(self).PlayerUseArtifact(arti_teleport);
 			Health = (Health + 1) / 2;
-			Player->Health = Health;
+			Player.Health = Health;
 			return true;
 		}
 	}
@@ -636,17 +636,17 @@ void AutoUseHealth(int saveHealth)
 
 	normalCount = 0;
 	superCount = 0;
-	for (i = 0; i < Player->InventorySlotNum; i++)
+	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player->Inventory[i].type == arti_health)
+		if (Player.Inventory[i].type == arti_health)
 		{
 			normalSlot = i;
-			normalCount = Player->Inventory[i].count;
+			normalCount = Player.Inventory[i].count;
 		}
-		else if (Player->Inventory[i].type == arti_superhealth)
+		else if (Player.Inventory[i].type == arti_superhealth)
 		{
 			superSlot = i;
-			superCount = Player->Inventory[i].count;
+			superCount = Player.Inventory[i].count;
 		}
 	}
 	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -690,7 +690,7 @@ void AutoUseHealth(int saveHealth)
 			PlayerPawn(self).PlayerRemoveArtifact(superSlot);
 		}
 	}
-	Player->Health = Health;
+	Player.Health = Health;
 }
 
 //==========================================================================
@@ -773,7 +773,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			else if (bIsPlayer)
 			{
 				// Player specific checks
-				if (Player->Powers[pw_invulnerability])
+				if (Player.Powers[pw_invulnerability])
 				{
 					// Can't hurt invulnerable players
 					break;
@@ -830,15 +830,15 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source.bIsPlayer ||
-			source.Player->ReadyWeapon != wp_gauntlets) &&
+			source.Player.ReadyWeapon != wp_gauntlets) &&
 			!inflictor.bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
 
 		if (source && source.bIsPlayer && (source == inflictor)
-			&& source.Player->Powers[pw_weaponlevel2]
-			&& source.Player->ReadyWeapon == wp_staff)
+			&& source.Player.Powers[pw_weaponlevel2]
+			&& source.Player.ReadyWeapon == wp_staff)
 		{
 			// Staff power level 2
 			thrust = 350.0;
@@ -861,14 +861,14 @@ void Damage(Actor inflictor, Actor source, int damage)
 	//
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player->Cheats & CF_GODMODE)
-				|| Player->Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
+				|| Player.Powers[pw_invulnerability]))
 		{
 			return;
 		}
-		if (Player->ArmorType)
+		if (Player.ArmorType)
 		{
-			if (Player->ArmorType == 1)
+			if (Player.ArmorType == 1)
 			{
 				saved = damage >> 1;
 			}
@@ -876,31 +876,31 @@ void Damage(Actor inflictor, Actor source, int damage)
 			{
 				saved = (damage >> 1) + (damage >> 2);
 			}
-			if (Player->ArmorPoints <= saved)
+			if (Player.ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player->ArmorPoints;
-				Player->ArmorType = 0;
+				saved = Player.ArmorPoints;
+				Player.ArmorType = 0;
 			}
-			Player->ArmorPoints -= saved;
+			Player.ArmorPoints -= saved;
 			damage -= saved;
 		}
-		if (damage >= Player->Health
-			&& ((gameskill == sk_baby) || deathmatch) && !Player->ChickenTime)
+		if (damage >= Player.Health
+			&& ((gameskill == sk_baby) || deathmatch) && !Player.ChickenTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
 		}
-		Player->Health -= damage;	// mirror mobj health here for Dave
-		if (Player->Health < 0)
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 0)
 		{
-			Player->Health = 0;
+			Player.Health = 0;
 		}
-		Player->Attacker = source;
-		Player->DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-		if (Player->DamageFlash > 3.0)
+		Player.Attacker = source;
+		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (Player.DamageFlash > 3.0)
 		{
-			Player->DamageFlash = 3.0;	// teleport stomp does 10k points...
+			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -917,7 +917,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			// Make sure players get frags for chain-reaction kills
 			Instigator = source;
 		}
-		if (bIsPlayer && inflictor && !Player->ChickenTime)
+		if (bIsPlayer && inflictor && !Player.ChickenTime)
 		{
 			// Check for flame death
 			if (inflictor.bFireDamage
@@ -1357,7 +1357,7 @@ void ApplyFriction(void)
 	if (Velocity.x > -STOPSPEED && Velocity.x < STOPSPEED &&
 		Velocity.y > -STOPSPEED && Velocity.y < STOPSPEED &&
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
-		(!bIsPlayer || (!Player->ForwardMove && !Player->SideMove)))
+		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		// If in a walking frame, stop moving
 		if (bIsPlayer)
@@ -1523,8 +1523,8 @@ void ZMovement(void)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player->ViewHeight -= FloorZ - Origin.z;
-		Player->DeltaViewHeight = (VIEWHEIGHT - Player->ViewHeight) * 4.0;
+		Player.ViewHeight -= FloorZ - Origin.z;
+		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 
 	//
@@ -1585,9 +1585,9 @@ void ZMovement(void)
 		{
 			if (bIsPlayer && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
-				Player->DeltaViewHeight = vdot / 8.0;
+				Player.DeltaViewHeight = vdot / 8.0;
 				PlaySound('PlayerLand', CHAN_BODY);
-//FIXME             Player->centering = true;
+//FIXME             Player.centering = true;
 			}
 			Velocity -= vdot * Floor->normal;
 		}
@@ -1709,7 +1709,7 @@ bool BlasterPhysics(void)
 
 void PlayerLandedOnThing(void)
 {
-	Player->DeltaViewHeight = Velocity.z / 8.0;
+	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('PlayerLand', CHAN_VOICE);
@@ -1786,10 +1786,10 @@ bool Physics(void)
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player->ViewHeight -=
+					Player.ViewHeight -=
 						onmo.Origin.z + onmo.Height - Origin.z;
-					Player->DeltaViewHeight =
-						(VIEWHEIGHT - Player->ViewHeight) * 4.0;
+					Player.DeltaViewHeight =
+						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -1808,10 +1808,10 @@ bool Physics(void)
 						Origin.z += onmo.FloorZ - onmo.Origin.z;
 						if (onmo.bIsPlayer)
 						{
-							onmo.Player->ViewHeight -=
+							onmo.Player.ViewHeight -=
 								onmo.FloorZ - onmo.Origin.z;
-							onmo.Player->DeltaViewHeight =
-								(VIEWHEIGHT - onmo.Player->ViewHeight) * 4.0;
+							onmo.Player.DeltaViewHeight =
+								(VIEWHEIGHT - onmo.Player.ViewHeight) * 4.0;
 						}
 						onmo.Origin.z = onmo.FloorZ;
 					}
@@ -2334,22 +2334,22 @@ bool Teleport(float x, float y, float angle)
 	}
 	if (bIsPlayer)
 	{
-		if (Player->Powers[pw_flight] && aboveFloor)
+		if (Player.Powers[pw_flight] && aboveFloor)
 		{
 			Origin.z = FloorZ + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
 			}
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 		}
 		else
 		{
 			Origin.z = FloorZ;
-			Player->ViewOrg.z = Origin.z + Player->ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 			Angles.pitch = 0.0;
 		}
-		Player->bFixAngle = true;
+		Player.bFixAngle = true;
 	}
 	else if (bMissile)
 	{
@@ -2370,7 +2370,7 @@ bool Teleport(float x, float y, float angle)
 	fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
 		y + 20.0 * sin(angle), Origin.z + fogDelta));
 	fog.PlaySound('Teleport', CHAN_VOICE);
-	if (bIsPlayer && !Player->Powers[pw_weaponlevel2])
+	if (bIsPlayer && !Player.Powers[pw_weaponlevel2])
 	{
 		// Freeze player for about .5 sec
 		ReactionTime = 0.5;
@@ -2480,7 +2480,7 @@ bool LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!GPlayers[0]->MO.CanSee(self))
+	if (!svvars->Players[0].MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -2533,11 +2533,11 @@ bool LookForPlayers(bool allaround)
 {
 	int c;
 	int stop;
-	player_t *P;
+	Player P;
 	float an;
 	float dist;
 
-	if (!netgame && GPlayers[0] && GPlayers[0]->bSpawned && GPlayers[0]->Health <= 0)
+	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
@@ -2549,37 +2549,37 @@ bool LookForPlayers(bool allaround)
 		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!GPlayers[LastLook])
+		if (!svvars->Players[LastLook])
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = GPlayers[LastLook];
-		if (!P->bSpawned || !P->MO)
+		P = svvars->Players[LastLook];
+		if (!P.bSpawned || !P.MO)
 			continue;	// not spawned yet
-		if (P->Health <= 0)
+		if (P.Health <= 0)
 			continue;	// dead
-		if (!CanSee(P->MO))
+		if (!CanSee(P.MO))
 			continue;	// out of sight
 
 		if (!allaround)
 		{
-			an = AngleMod360(atan2(P->MO.Origin.y - Origin.y,
-				P->MO.Origin.x - Origin.x) - Angles.yaw);
+			an = AngleMod360(atan2(P.MO.Origin.y - Origin.y,
+				P.MO.Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(P->MO, self);
+				dist = MobjDist(P.MO, self);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
 			}
 		}
-		if (P->MO.Translucency)
+		if (P.MO.Translucency)
 		{
 			// Player is invisible
-			if ((MobjDist(P->MO, self) > 2.0 * MELEERANGE) &&
-				Length(P->MO.Velocity) < 5.0 * 35.0)
+			if ((MobjDist(P.MO, self) > 2.0 * MELEERANGE) &&
+				Length(P.MO.Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
 				return false;
@@ -2590,7 +2590,7 @@ bool LookForPlayers(bool allaround)
 				return false;
 			}
 		}
-		Enemy = P->MO;
+		Enemy = P.MO;
 		return true;
 	}
 	return false;
@@ -2914,6 +2914,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2003/11/12 16:49:43  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.3  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

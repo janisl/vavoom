@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerFighter:PlayerPawn;
+class PlayerFighter : PlayerPawn;
 
 //============================================================================
 //
@@ -48,13 +48,13 @@ void A_SkullPop(void)
 	// Attach player mobj to bloody skull
 	A.Player = Player;
 	A.bIsPlayer = true;
-	Player = NULL;
+	Player = none;
 	bIsPlayer = false;
-	_Special1 = A.Player->PClass;
+	_Special1 = A.Player.PClass;
 	A.Health = Health;
 	A.Angles.yaw = Angles.yaw;
-	A.Player->MO = A;
-	A.Player->DamageFlash = 1.0;
+	A.Player.MO = A;
+	A.Player.DamageFlash = 1.0;
 }
 
 __states__
@@ -110,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

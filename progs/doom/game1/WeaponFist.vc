@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponFist:Weapon;
+class WeaponFist : Weapon;
 
 //===========================================================================
 //
@@ -39,23 +39,23 @@ void A_Punch(void)
 
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (Player->Powers[pw_strength])
+	if (Player.Powers[pw_strength])
 		damage *= 10;
 
-	aimAngles = Player->MO.Angles;
+	aimAngles = Player.MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->MO, aimAngles, MELEERANGE);
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	dir = AimLineAttack(Player.MO, aimAngles, MELEERANGE);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 
 	// turn to face target
 	if (linetarget)
 	{
-		Player->MO.PlaySound('Punch', CHAN_WEAPON);
-		Player->MO.Angles.yaw = atan2(
-			linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.PlaySound('Punch', CHAN_WEAPON);
+		Player.MO.Angles.yaw = atan2(
+			linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 }
 
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

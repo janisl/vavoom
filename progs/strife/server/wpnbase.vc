@@ -35,16 +35,16 @@
 //
 //==========================================================================
 
-void SetWeapon(player_t * player, int NewWeapon)
+void SetWeapon(Player player, int NewWeapon)
 {
-	player->ReadyWeapon = NewWeapon;
-	player->PendingWeapon = wp_nochange;
-	if (player->ViewEnts[ps_weapon])
+	player.ReadyWeapon = NewWeapon;
+	player.PendingWeapon = wp_nochange;
+	if (player.ViewEnts[ps_weapon])
 	{
-		player->ViewEnts[ps_weapon].Destroy();
+		player.ViewEnts[ps_weapon].Destroy();
 	}
-	player->ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
-	player->ViewEnts[ps_weapon].Player = player;
+	player.ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	player.ViewEnts[ps_weapon].Player = player;
 }
 
 //===========================================================================
@@ -53,9 +53,9 @@ void SetWeapon(player_t * player, int NewWeapon)
 //
 //===========================================================================
 
-void SetPsprite(player_t * player, int position, int stnum)
+void SetPsprite(Player player, int position, int stnum)
 {
-	player->ViewEnts[position].SetState(stnum);
+	player.ViewEnts[position].SetState(stnum);
 }
 
 //===========================================================================
@@ -67,12 +67,12 @@ void SetPsprite(player_t * player, int position, int stnum)
 //
 //===========================================================================
 
-void BringUpWeapon(player_t * player)
+void BringUpWeapon(Player player)
 {
-	player->PendingWeapon = wp_nochange;
-	player->ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	player.PendingWeapon = wp_nochange;
+	player.ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).UpState);
+	SetPsprite(player, ps_weapon, Weapon(player.ViewEnts[ps_weapon]).UpState);
 }
 
 //==========================================================================
@@ -84,14 +84,14 @@ void BringUpWeapon(player_t * player)
 //
 //==========================================================================
 
-void ChangeWeapon(player_t * player, int newweapon)
+void ChangeWeapon(Player player, int newweapon)
 {
-	if (player->WeaponOwned[newweapon] && newweapon != player->ReadyWeapon)
+	if (player.WeaponOwned[newweapon] && newweapon != player.ReadyWeapon)
 	{
 		// Do not go to ??? in shareware, even if cheated.
 //FIXME     if ((newweapon != wp_plasma && newweapon != wp_bfg) || !shareware)
 		{
-			player->PendingWeapon = newweapon;
+			player.PendingWeapon = newweapon;
 		}
 	}
 }
@@ -104,9 +104,9 @@ void ChangeWeapon(player_t * player, int newweapon)
 //
 //===========================================================================
 
-void DropWeapon(player_t * player)
+void DropWeapon(Player player)
 {
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
+	SetPsprite(player, ps_weapon, Weapon(player.ViewEnts[ps_weapon]).DownState);
 }
 
 //===========================================================================
@@ -117,14 +117,14 @@ void DropWeapon(player_t * player)
 //
 //===========================================================================
 
-void SetupPsprites(player_t * player)
+void SetupPsprites(Player player)
 {
 	int i;
 
 	// remove all  ViewEnts
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		player->ViewEnts[i].StateNum = 0;
+		player.ViewEnts[i].StateNum = 0;
 	}
 
 	// spawn the gun
@@ -139,14 +139,14 @@ void SetupPsprites(player_t * player)
 //
 //==========================================================================
 
-void MovePsprites(player_t * player)
+void MovePsprites(Player player)
 {
 	int i;
 	ViewEntity e;
 
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		e = player->ViewEnts[i];
+		e = player.ViewEnts[i];
 		// a null state means not active
 		if (e.StateNum)
 		{
@@ -165,8 +165,8 @@ void MovePsprites(player_t * player)
 		}
 	}
 
-	player->ViewEnts[ps_flash].SX = player->ViewEnts[ps_weapon].SX;
-	player->ViewEnts[ps_flash].SY = player->ViewEnts[ps_weapon].SY;
+	player.ViewEnts[ps_flash].SX = player.ViewEnts[ps_weapon].SX;
+	player.ViewEnts[ps_flash].SY = player.ViewEnts[ps_weapon].SY;
 }
 
 //==========================================================================
@@ -178,16 +178,16 @@ void MovePsprites(player_t * player)
 //
 //==========================================================================
 
-int CheckAmmo(player_t * player)
+int CheckAmmo(Player player)
 {
 	int ammo;
 	int count;
 
-	ammo = Weapon(player->ViewEnts[ps_weapon]).Ammo;
+	ammo = Weapon(player.ViewEnts[ps_weapon]).Ammo;
 
 	// Minimal amount for one shot varies.
 #ifdef FIXME
-	if (player->ReadyWeapon == wp_bfg)
+	if (player.ReadyWeapon == wp_bfg)
 		count = BFGCELLS;
 	else
 #endif
@@ -195,40 +195,40 @@ int CheckAmmo(player_t * player)
 
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (ammo == am_noammo || player->Ammo[ammo] >= count)
+	if (ammo == am_noammo || player.Ammo[ammo] >= count)
 		return true;
 
 	// Out of ammo, pick a weapon to change to.
 	// Preferences are set here.
 	do
 	{
-		if (player->WeaponOwned[wp_flame] && player->Ammo[am_cell])
+		if (player.WeaponOwned[wp_flame] && player.Ammo[am_cell])
 		{
-			player->PendingWeapon = wp_flame;
+			player.PendingWeapon = wp_flame;
 		}
-		else if (player->WeaponOwned[wp_riffle] && player->Ammo[am_clip])
+		else if (player.WeaponOwned[wp_riffle] && player.Ammo[am_clip])
 		{
-			player->PendingWeapon = wp_riffle;
+			player.PendingWeapon = wp_riffle;
 		}
-		else if (player->WeaponOwned[wp_crossbow]
-			&& player->Ammo[am_electric_arrow])
+		else if (player.WeaponOwned[wp_crossbow]
+			&& player.Ammo[am_electric_arrow])
 		{
-			player->PendingWeapon = wp_crossbow;
+			player.PendingWeapon = wp_crossbow;
 		}
-		else if (player->WeaponOwned[wp_missile] && player->Ammo[am_misl])
+		else if (player.WeaponOwned[wp_missile] && player.Ammo[am_misl])
 		{
-			player->PendingWeapon = wp_missile;
+			player.PendingWeapon = wp_missile;
 		}
 		else
 		{
 			// If everything fails.
-			player->PendingWeapon = wp_fist;
+			player.PendingWeapon = wp_fist;
 		}
 	}
-	while (player->PendingWeapon == wp_nochange);
+	while (player.PendingWeapon == wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).DownState);
+	SetPsprite(player, ps_weapon, Weapon(player.ViewEnts[ps_weapon]).DownState);
 
 	return false;
 }
@@ -239,22 +239,25 @@ int CheckAmmo(player_t * player)
 //
 //===========================================================================
 
-void FireWeapon(player_t * player)
+void FireWeapon(Player player)
 {
 	if (!CheckAmmo(player))
 	{
 		return;
 	}
 
-	player->MO.SetState(player->MO.MeleeState);
-	SetPsprite(player, ps_weapon, Weapon(player->ViewEnts[ps_weapon]).AttackState);
-	if (Weapon(player->ViewEnts[ps_weapon]).bRaiseNoiseAlert)
-		P_NoiseAlert(player->MO, player->MO);
+	player.MO.SetState(player.MO.MeleeState);
+	SetPsprite(player, ps_weapon, Weapon(player.ViewEnts[ps_weapon]).AttackState);
+	if (Weapon(player.ViewEnts[ps_weapon]).bRaiseNoiseAlert)
+		P_NoiseAlert(player.MO, player.MO);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.4  2003/09/11 17:23:27  dj_jl
 //  Silent weapons
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon:ViewEntity;
+class Weapon : ViewEntity;
 
 int Ammo;
 int UpState;
@@ -49,20 +49,20 @@ void A_WeaponReady(void)
 	float angle;
 
 	// get out of attack state
-	if (Player->MO.StateNum == Player->MO.MeleeState ||
-		Player->MO.StateNum == Player->MO.MissileState)
+	if (Player.MO.StateNum == Player.MO.MeleeState ||
+		Player.MO.StateNum == Player.MO.MissileState)
 	{
-		Player->MO.SetState(Player->MO.IdleState);
+		Player.MO.SetState(Player.MO.IdleState);
 	}
 
-	if (Player->ReadyWeapon == wp_flame && StateNum == ReadyState)
+	if (Player.ReadyWeapon == wp_flame && StateNum == ReadyState)
 	{
-		Player->MO.PlaySound('FlameThrowerIdle', CHAN_WEAPON);
+		Player.MO.PlaySound('FlameThrowerIdle', CHAN_WEAPON);
 	}
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player->PendingWeapon != wp_nochange || !Player->Health)
+	if (Player.PendingWeapon != wp_nochange || !Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
@@ -72,26 +72,26 @@ void A_WeaponReady(void)
 
 	// check for fire
 	//  the missile launcher and bfg do not auto fire
-	if (Player->Buttons & BT_ATTACK)
+	if (Player.Buttons & BT_ATTACK)
 	{
-		if (!Player->bAttackDown || (Player->ReadyWeapon != wp_missile))
+		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_missile))
 		{
-			Player->bAttackDown = true;
+			Player.bAttackDown = true;
 			FireWeapon(Player);
 			return;
 		}
 	}
 	else
-		Player->bAttackDown = false;
+		Player.bAttackDown = false;
 
 	// bob the weapon based on movement speed
 	angle = AngleMod360(180.0 * level->time);
-	SX = 1.0 + Player->Bob * cos(angle);
+	SX = 1.0 + Player.Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	SY = WEAPONTOP + Player->Bob * sin(angle);
+	SY = WEAPONTOP + Player.Bob * sin(angle);
 }
 
 //===========================================================================
@@ -115,7 +115,7 @@ void A_Lower(void)
 		return;
 
 	// Player is dead.
-	if (Player->PlayerState == PST_DEAD)
+	if (Player.PlayerState == PST_DEAD)
 	{
 		SY = WEAPONBOTTOM;
 
@@ -125,14 +125,14 @@ void A_Lower(void)
 
 	// The old weapon has been lowered off the screen,
 	// so change the weapon and start raising it
-	if (!Player->Health)
+	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
 		SetPsprite(Player, ps_weapon, S_NULL);
 		return;
 	}
 
-	SetWeapon(Player, Player->PendingWeapon);
+	SetWeapon(Player, Player.PendingWeapon);
 
 	BringUpWeapon(Player);
 }
@@ -175,15 +175,15 @@ void A_ReFire(void)
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
-	if ((Player->Buttons & BT_ATTACK)
-		&& Player->PendingWeapon == wp_nochange && Player->Health)
+	if ((Player.Buttons & BT_ATTACK)
+		&& Player.PendingWeapon == wp_nochange && Player.Health)
 	{
-		Player->Refire++;
+		Player.Refire++;
 		FireWeapon(Player);
 	}
 	else
 	{
-		Player->Refire = 0;
+		Player.Refire = 0;
 		CheckAmmo(Player);
 	}
 }
@@ -207,8 +207,8 @@ void A_CheckReload(void)
 
 void A_GunFlash(void)
 {
-	Player->MO.SetState(Player->MO.MissileState);
-	SetPsprite(Player, ps_flash, Weapon(Player->ViewEnts[ps_weapon]).FlashState);
+	Player.MO.SetState(Player.MO.MissileState);
+	SetPsprite(Player, ps_flash, Weapon(Player.ViewEnts[ps_weapon]).FlashState);
 }
 
 //===========================================================================
@@ -219,7 +219,7 @@ void A_GunFlash(void)
 
 void A_Light0(void)
 {
-	Player->ExtraLight = 0;
+	Player.ExtraLight = 0;
 }
 
 //===========================================================================
@@ -230,7 +230,7 @@ void A_Light0(void)
 
 void A_Light1(void)
 {
-	Player->ExtraLight = 1;
+	Player.ExtraLight = 1;
 }
 
 //===========================================================================
@@ -241,7 +241,7 @@ void A_Light1(void)
 
 void A_Light2(void)
 {
-	Player->ExtraLight = 2;
+	Player.ExtraLight = 2;
 }
 
 void A_7(void)
@@ -272,6 +272,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/09/11 17:21:04  dj_jl
 //  Silent weapons
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Weapon:ViewEntity
+class Weapon : ViewEntity
 	abstract;
 
 int Mana;
@@ -57,7 +57,7 @@ int GetReadyState(void)
 
 int GetAttackState(void)
 {
-	return Player->Refire ? HoldAttackState : AttackState;
+	return Player.Refire ? HoldAttackState : AttackState;
 }
 
 void GotMana(int InMana)
@@ -77,7 +77,7 @@ void SnoutSniff(void)
 
 void A_Light0(void)
 {
-	Player->ExtraLight = 0;
+	Player.ExtraLight = 0;
 }
 
 //==========================================================================
@@ -93,40 +93,40 @@ void A_WeaponReady(void)
 	float angle;
 
 	// Change player from attack state
-	if (Player->MO.StateNum >= Player->MO.MissileState &&
-		Player->MO.StateNum <= PlayerPawn(Player->MO).AttackEndState)
+	if (Player.MO.StateNum >= Player.MO.MissileState &&
+		Player.MO.StateNum <= PlayerPawn(Player.MO).AttackEndState)
 	{
-		Player->MO.SetState(Player->MO.IdleState);
+		Player.MO.SetState(Player.MO.IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has died.
-	if (Player->PendingWeapon != wp_nochange || !Player->Health)
+	if (Player.PendingWeapon != wp_nochange || !Player.Health)
 	{
 		SetPsprite(Player, ps_weapon, GetDownState());
 		return;
 	}
 
 	// Check for fire. 
-	if (Player->Buttons & BT_ATTACK)
+	if (Player.Buttons & BT_ATTACK)
 	{
-		Player->bAttackDown = true;
+		Player.bAttackDown = true;
 		P_FireWeapon(Player);
 		return;
 	}
 	else
 	{
-		Player->bAttackDown = false;
+		Player.bAttackDown = false;
 	}
 
-	if (!Player->MorphTime)
+	if (!Player.MorphTime)
 	{
 		// Bob the weapon based on movement speed.
 		angle = AngleMod360(180.0 * level->time);
-		SX = 1.0 + Player->Bob * cos(angle);
+		SX = 1.0 + Player.Bob * cos(angle);
 		if (angle >= 180.0)
 		{
 			angle -= 180.0;
 		}
-		SY = WEAPONTOP + Player->Bob * sin(angle);
+		SY = WEAPONTOP + Player.Bob * sin(angle);
 	}
 }
 
@@ -138,7 +138,7 @@ void A_WeaponReady(void)
 
 void A_Lower(void)
 {
-	if (Player->MorphTime)
+	if (Player.MorphTime)
 	{
 		SY = WEAPONBOTTOM;
 	}
@@ -155,19 +155,19 @@ void A_Lower(void)
 		// Not lowered all the way yet
 		return;
 	}
-	if (Player->PlayerState == PST_DEAD)
+	if (Player.PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
 		SY = WEAPONBOTTOM;
 		return;
 	}
-	if (!Player->Health)
+	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
 		SetPsprite(Player, ps_weapon, S_NULL);
 		return;
 	}
-	SetWeapon(Player, Player->PendingWeapon);
+	SetWeapon(Player, Player.PendingWeapon);
 	BringUpWeapon(Player);
 }
 
@@ -203,15 +203,15 @@ void A_Raise(void)
 
 void A_ReFire(void)
 {
-	if ((Player->Buttons & BT_ATTACK) &&
-		Player->PendingWeapon == wp_nochange && Player->Health)
+	if ((Player.Buttons & BT_ATTACK) &&
+		Player.PendingWeapon == wp_nochange && Player.Health)
 	{
-		Player->Refire++;
+		Player.Refire++;
 		P_FireWeapon(Player);
 	}
 	else
 	{
-		Player->Refire = 0;
+		Player.Refire = 0;
 		P_CheckMana(Player);
 	}
 }
@@ -229,6 +229,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -75,7 +75,7 @@
 //
 //**************************************************************************
 
-class Entity:Thinker
+class Entity : Thinker
 	native
 	abstract;
 
@@ -136,7 +136,7 @@ float Height;
 
 // Additional info record for player avatars only.
 // Only valid if type == MT_PLAYER
-player_t *Player;
+Player Player;
 
 int TID;	// thing identifier
 int Special;	// special
@@ -333,6 +333,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:48:02  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

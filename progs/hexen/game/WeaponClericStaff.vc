@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponClericStaff:Weapon;
+class WeaponClericStaff : Weapon;
 
 int BlinkCount;
 int BlinkState;
@@ -70,7 +70,7 @@ void A_CStaffCheck(void)
 	TAVec angles;
 	TVec vforward;
 
-	pmo = Player->MO;
+	pmo = Player.MO;
 	damage = 20 + (P_Random() & 15);
 	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
@@ -87,19 +87,19 @@ void A_CStaffCheck(void)
 			if ((linetarget.bIsPlayer || linetarget.bCountKill) &&
 				!linetarget.bDormant && !linetarget.bInvulnerable)
 			{
-				newLife = Player->Health + (damage >> 3);
+				newLife = Player.Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
-				Player->Health = newLife;
+				Player.Health = newLife;
 				SetState(Attack2State);
 			}
-			Player->Mana[MANA_1] -=
-				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+			Player.Mana[MANA_1] -=
+				WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 			break;
 		}
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		AimLineAttack(Player->MO, &angles, 3.0 * MELEERANGE / 2.0);
+		AimLineAttack(Player.MO, &angles, 3.0 * MELEERANGE / 2.0);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
@@ -108,14 +108,14 @@ void A_CStaffCheck(void)
 				linetarget.Origin.x - pmo.Origin.x);
 			if (linetarget.bIsPlayer || linetarget.bCountKill)
 			{
-				newLife = Player->Health + (damage >> 4);
+				newLife = Player.Health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
-				Player->Health = pmo.Health;
+				Player.Health = pmo.Health;
 				SetState(Attack2State);
 			}
-			Player->Mana[MANA_1] -=
-				WeaponManaUse(Player->PClass, Player->ReadyWeapon);
+			Player.Mana[MANA_1] -=
+				WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 			break;
 		}
 	}
@@ -132,9 +132,9 @@ void A_CStaffAttack(void)
 	Actor mo;
 	PlayerPawn playPawn;
 
-	Player->Mana[MANA_1] -=
-		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	playPawn = PlayerPawn(Player->MO);
+	Player.Mana[MANA_1] -=
+		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	playPawn = PlayerPawn(Player.MO);
 	mo = playPawn.SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
@@ -202,6 +202,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

@@ -46,12 +46,12 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	int sfxnum;
 	int i;
 
-	if (!GPlayers[playernum]->MO)
+	if (!svvars->Players[playernum].MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (GPlayers[i] && GPlayers[i]->MO.Origin.x == mthing->x &&
-				GPlayers[i]->MO.Origin.y == mthing->y)
+			if (svvars->Players[i] && svvars->Players[i].MO.Origin.x == mthing->x &&
+				svvars->Players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -59,7 +59,7 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!GPlayers[playernum]->MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	if (!svvars->Players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		return false;
 	}
@@ -67,7 +67,7 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	// flush an old corpse if needed 
 	if (bodyqueslot >= BODYQUESIZE)
 		bodyque[bodyqueslot % BODYQUESIZE].Remove();
-	bodyque[bodyqueslot % BODYQUESIZE] = GPlayers[playernum]->MO;
+	bodyque[bodyqueslot % BODYQUESIZE] = svvars->Players[playernum].MO;
 	bodyqueslot++;
 
 	// spawn a teleport fog 
@@ -92,20 +92,20 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 
 void P_SpawnPlayer(mthing_t * mthing)
 {
-	player_t *p;
+	Player p;
 	float x;
 	float y;
 	float z;
 
 	Actor A;
 
-	p = GPlayers[mthing->type - 1];
+	p = svvars->Players[mthing->type - 1];
 
 	// not playing?
 	if (!p)
 		return;
 
-	if (p->PlayerState == PST_REBORN)
+	if (p.PlayerState == PST_REBORN)
 		G_PlayerReborn(mthing->type - 1);
 
 	x = mthing->x;
@@ -114,23 +114,23 @@ void P_SpawnPlayer(mthing_t * mthing)
 	A = Spawn(StrifePlayer, vector(x, y, z));
 
 	// set color translations for player sprites
-	A.Translation = p->Color;
+	A.Translation = p.Color;
 
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 	A.Player = p;
 	A.bIsPlayer = true;
-	A.Health = p->Health;
+	A.Health = p.Health;
 
-	p->MO = A;
-	p->PlayerState = PST_LIVE;
-	p->Refire = 0;
-	p->DamageFlash = 0.0;
-	p->BonusFlash = 0.0;
-	p->ExtraLight = 0;
-	p->FixedColormap = 0;
-	p->ViewHeight = VIEWHEIGHT;
-	p->ViewAngles = A.Angles;
-	p->bFixAngle = true;
+	p.MO = A;
+	p.PlayerState = PST_LIVE;
+	p.Refire = 0;
+	p.DamageFlash = 0.0;
+	p.BonusFlash = 0.0;
+	p.ExtraLight = 0;
+	p.FixedColormap = 0;
+	p.ViewHeight = VIEWHEIGHT;
+	p.ViewAngles = A.Angles;
+	p.bFixAngle = true;
 
 	// setup gun psprite
 	SetupPsprites(p);
@@ -138,7 +138,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	// give all cards in death match mode
 	if (deathmatch)
 	{
-		p->Keys = 0x3f;
+		p.Keys = 0x3f;
 	}
 
 	// wake up the status bar
@@ -148,6 +148,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.30  2003/07/11 16:47:39  dj_jl
 //  Made array of players with pointers
 //

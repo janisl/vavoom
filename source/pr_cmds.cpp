@@ -973,9 +973,9 @@ PF(MSG_Select)
 PF(MSG_SelectClientMsg)
 {
 	int			msgtype;
-	player_t	*client;
+	VBasePlayer	*client;
 
-	client = (player_t*)Pop();
+	client = (VBasePlayer*)Pop();
 	msgtype = Pop();
 	switch (msgtype)
 	{
@@ -1143,10 +1143,10 @@ PF(bprint)
 
 PF(cprint)
 {
-	player_t*	player;
+	VBasePlayer*	player;
 
 	PF_FormatString();
-    player = (player_t*)Pop();
+    player = (VBasePlayer*)Pop();
 	SV_ClientPrintf(player, vastring);
 }
 
@@ -1158,10 +1158,10 @@ PF(cprint)
 
 PF(centerprint)
 {
-	player_t*	player;
+	VBasePlayer*	player;
 
 	PF_FormatString();
-    player = (player_t*)Pop();
+    player = (VBasePlayer*)Pop();
 	SV_ClientCenterPrintf(player, vastring);
 }
 
@@ -1951,9 +1951,9 @@ PF(NumToSector)
 
 PF(ClearPlayer)
 {
-	player_t	*pl;
+	VBasePlayer	*pl;
 
-    pl = (player_t*)Pop();
+    pl = (VBasePlayer*)Pop();
 
 	pl->PClass = 0;
 	pl->ForwardMove = 0;
@@ -1974,7 +1974,8 @@ PF(ClearPlayer)
 	pl->Palette = 0;
 	memset(pl->CShifts, 0, sizeof(pl->CShifts));
 	pl->PSpriteSY = 0;
-	memset(pl->user_fields, 0, sizeof(pl->user_fields));
+	memset((byte*)pl + sizeof(VBasePlayer), 0,
+		pl->GetClass()->ClassSize - sizeof(VBasePlayer));
 }
 
 //==========================================================================
@@ -2037,9 +2038,9 @@ PF(TerrainType)
 
 PF(P_GetPlayerNum)
 {
-	player_t*	player;
+	VBasePlayer*	player;
 
-	player = (player_t*)Pop();
+	player = (VBasePlayer*)Pop();
 	Push(SV_GetPlayerNum(player));
 }
 
@@ -3142,9 +3143,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2003/11/12 16:47:40  dj_jl
+//	Changed player structure into a class
+//
 //	Revision 1.48  2003/10/31 07:50:44  dj_jl
 //	Line texture setting function
-//
+//	
 //	Revision 1.47  2003/09/26 16:58:42  dj_jl
 //	Wrapped text printing
 //	

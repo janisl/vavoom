@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponStaff:Weapon;
+class WeaponStaff : Weapon;
 
 //==========================================================================
 //
@@ -44,7 +44,7 @@ void WeaponLevel2Init(void)
 
 void WeaponLevel2Fade(void)
 {
-	Player->PendingWeapon = Player->ReadyWeapon;
+	Player.PendingWeapon = Player.ReadyWeapon;
 }
 
 //===========================================================================
@@ -60,19 +60,19 @@ void A_StaffAttackPL1(void)
 	TVec dir;
 
 	damage = 5 + (P_Random() & 15);
-	angles = Player->MO.Angles;
+	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
 	PuffType = StaffPuff;
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
-		Player->MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 }
 
@@ -91,19 +91,19 @@ void A_StaffAttackPL2(void)
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	angles = Player->MO.Angles;
+	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player->MO, angles, MELEERANGE);
+	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
 	PuffType = StaffPuff2;
-	LineAttack(Player->MO, dir, MELEERANGE, damage);
+	LineAttack(Player.MO, dir, MELEERANGE, damage);
 	if (linetarget)
 	{
 		// turn to face target
-		Player->MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player->MO.Origin.y,
-			linetarget.Origin.x - Player->MO.Origin.x);
-		Player->bFixAngle = true;
+		Player.MO.Angles.yaw =
+			atan2(linetarget.Origin.y - Player.MO.Origin.y,
+			linetarget.Origin.x - Player.MO.Origin.x);
+		Player.bFixAngle = true;
 	}
 }
 
@@ -117,7 +117,7 @@ __states__
 		// Check for staff PL2 active sound
 		if (Random() < 0.5)
 		{
-			Player->MO.PlaySound('StaffActive', CHAN_WEAPON);
+			Player.MO.PlaySound('StaffActive', CHAN_WEAPON);
 		}
 		A_WeaponReady();
 	}
@@ -152,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:44  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

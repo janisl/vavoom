@@ -33,7 +33,7 @@ class ConversationItem307 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player->Accuracy += 10;
+	Toucher.Player.Accuracy += 10;
 	return true;
 }
 
@@ -46,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/11/12 16:51:33  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.2  2003/10/02 18:01:17  dj_jl
 //  Special items for conversations
 //

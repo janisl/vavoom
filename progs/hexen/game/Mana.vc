@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Mana:Pickup
+class Mana : Pickup
 	abstract;
 
 int ManaType;
@@ -73,7 +73,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	P.Player->BonusFlash += BONUSADD;
+	P.Player.BonusFlash += BONUSADD;
 	P.PlaySound('PickupItem', CHAN_ITEM);
 }
 
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

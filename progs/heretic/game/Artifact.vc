@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Artifact:Pickup
+class Artifact : Pickup
 	abstract;
 
 int ArtifactType;
@@ -149,7 +149,7 @@ void TouchSpecial(Actor Toucher)
 		cprint(P.Player, ArtifactText[ArtifactType]);
 		if (bCountItem)
 		{
-			P.Player->ItemCount++;
+			P.Player.ItemCount++;
 		}
 		SetDormantArtifact();
 	}
@@ -165,6 +165,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:49:43  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

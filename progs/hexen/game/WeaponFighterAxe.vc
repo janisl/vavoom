@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponFighterAxe:Weapon;
+class WeaponFighterAxe : Weapon;
 
 int NoMoreManaState;
 float AxeRange;
@@ -36,7 +36,7 @@ float AxeRange;
 
 void A_FAxeAttack(void)
 {
-	Actor Owner = Player->MO;
+	Actor Owner = Player.MO;
 	float power;
 	int damage;
 	int i;
@@ -46,7 +46,7 @@ void A_FAxeAttack(void)
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (Player->Mana[MANA_1] > 0)
+	if (Player.Mana[MANA_1] > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -111,9 +111,9 @@ void A_FAxeAttack(void)
 
 	if (useMana == 2)
 	{
-		Player->Mana[MANA_1] -=
-			WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-		if (Player->Mana[MANA_1] <= 0)
+		Player.Mana[MANA_1] -=
+			WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+		if (Player.Mana[MANA_1] <= 0)
 		{
 			SetState(NoMoreManaState);
 		}
@@ -169,7 +169,7 @@ __states__
 
 int GetUpState(void)
 {
-	if (Player->Mana[MANA_1])
+	if (Player.Mana[MANA_1])
 	{
 		return S_FAXEUP_G;
 	}
@@ -187,7 +187,7 @@ int GetUpState(void)
 
 int GetDownState(void)
 {
-	if (Player->Mana[MANA_1])
+	if (Player.Mana[MANA_1])
 	{
 		return S_FAXEDOWN_G;
 	}
@@ -205,7 +205,7 @@ int GetDownState(void)
 
 int GetReadyState(void)
 {
-	if (Player->Mana[MANA_1])
+	if (Player.Mana[MANA_1])
 	{
 		return S_FAXEREADY_G;
 	}
@@ -223,14 +223,14 @@ int GetReadyState(void)
 
 int GetAttackState(void)
 {
-	if (Player->Mana[MANA_1] > 0)
+	if (Player.Mana[MANA_1] > 0)
 	{
 		// Glowing axe
 		return S_FAXEATK_G1;
 	}
 	else
 	{
-		return Player->Refire ? HoldAttackState : AttackState;
+		return Player.Refire ? HoldAttackState : AttackState;
 	}
 }
 
@@ -264,6 +264,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/11/12 16:50:47  dj_jl
+//  Changed player structure into a class
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
