@@ -27,116 +27,192 @@
 //**
 //**************************************************************************
 
-classid TranslateThingType[] = {
+classid TranslateThingType[] =
+{
 	MapSpot,	// T_NONE
-	Centaur,	// T_CENTAUR
-	CentaurLeader,	// T_CENTAURLEADER
-	Demon,	// T_DEMON
-	Ettin,	// T_ETTIN
-	FireDemon,	// T_FIREGARGOYLE
-	Serpent,	// T_WATERLURKER
-	SerpentLeader,	// T_WATERLURKERLEADER
-	Wraith,	// T_WRAITH
-	WraithBuried,	// T_WRAITHBURIED
-	FireBall1,	// T_FIREBALL1
-	ItemManaBlue,	// T_MANA1
-	ItemManaGreen,	// T_MANA2
-	ArtifactSpeedBoots,	// T_ITEMBOOTS
-	ArtifactEgg,	// T_ITEMEGG
-	ArtifactFly,	// T_ITEMFLIGHT
-	ArtifactSummonMaulator,	// T_ITEMSUMMON
-	ArtifactTeleportOther,	// T_ITEMTPORTOTHER
-	ArtifactTeleport,	// T_ITEMTELEPORT
-	Bishop,	// T_BISHOP
-	IceGuy,	// T_ICEGOLEM
-	Bridge,	// T_BRIDGE
-	ArtifactBoostArmor,	// T_DRAGONSKINBRACERS
-	ItemHealingBottle,	// T_ITEMHEALTHPOTION
-	ArtifactHealthFlask,	// T_ITEMHEALTHFLASK
-	ArtifactSuperHeal,	// T_ITEMHEALTHFULL
-	ArtifactBoostMana,	// T_ITEMBOOSTMANA
-	WeaponFAxe,	// T_FIGHTERAXE
-	WeaponFHammer,	// T_FIGHTERHAMMER
-	WeaponFSwordPiece1,	// T_FIGHTERSWORD1
-	WeaponFSwordPiece2,	// T_FIGHTERSWORD2
-	WeaponFSwordPiece3,	// T_FIGHTERSWORD3
-	WeaponCSerpentStaff,	// T_CLERICSTAFF
-	WeaponCHolyPiece1,	// T_CLERICHOLY1
-	WeaponCHolyPiece2,	// T_CLERICHOLY2
-	WeaponCHolyPiece3,	// T_CLERICHOLY3
-	WeaponMCone,	// T_MAGESHARDS
-	WeaponMStaffPiece1,	// T_MAGESTAFF1
-	WeaponMStaffPiece2,	// T_MAGESTAFF2
-	WeaponMStaffPiece3,	// T_MAGESTAFF3
-	EggMissile,	// T_MORPHBLAST
-	Rock1,	// T_ROCK1
-	Rock2,	// T_ROCK2
-	Rock3,	// T_ROCK3
-	Dirt1,	// T_DIRT1
-	Dirt2,	// T_DIRT2
-	Dirt3,	// T_DIRT3
-	Dirt4,	// T_DIRT4
-	Dirt5,	// T_DIRT5
-	Dirt6,	// T_DIRT6
-	Arrow,	// T_ARROW
-	Dart,	// T_DART
-	PoisonDart,	// T_POISONDART
-	RipperBall,	// T_RIPPERBALL
-	StainedGlassShard1,	// T_STAINEDGLASS1
-	StainedGlassShard2,	// T_STAINEDGLASS2
-	StainedGlassShard3,	// T_STAINEDGLASS3
-	StainedGlassShard4,	// T_STAINEDGLASS4
-	StainedGlassShard5,	// T_STAINEDGLASS5
-	StainedGlassShard6,	// T_STAINEDGLASS6
-	StainedGlassShard7,	// T_STAINEDGLASS7
-	StainedGlassShard8,	// T_STAINEDGLASS8
-	StainedGlassShard9,	// T_STAINEDGLASS9
-	StainedGlassShard0,	// T_STAINEDGLASS0
-	ProjectileBlade,	// T_BLADE
-	IceShard,	// T_ICESHARD
-	FlameSmall,	// T_FLAME_SMALL
-	FlameLarge,	// T_FLAME_LARGE
-	ItemArmor1,	// T_MESHARMOR
-	ItemArmor2,	// T_FALCONSHIELD
-	ItemArmor3,	// T_PLATINUMHELM
-	ItemArmor4,	// T_AMULETOFWARDING
-	ArtifactFlechette,	// T_ITEMFLECHETTE
-	ArtifactTorch,	// T_ITEMTORCH
-	ArtifactBlastRadius,	// T_ITEMREPULSION
-	ItemManaCombined,	// T_MANA3
-	ArtifactPuzzleSkull,	// T_PUZZSKULL
-	ArtifactPuzzleGemBig,	// T_PUZZGEMBIG
-	ArtifactPuzzleGemRed,	// T_PUZZGEMRED
-	ArtifactPuzzleGemGreen1,	// T_PUZZGEMGREEN1
-	ArtifactPuzzleGemGreen2,	// T_PUZZGEMGREEN2
-	ArtifactPuzzleGemBlue1,	// T_PUZZGEMBLUE1
-	ArtifactPuzzleGemBlue2,	// T_PUZZGEMBLUE2
-	ArtifactPuzzleBook1,	// T_PUZZBOOK1
-	ArtifactPuzzleBook2,	// T_PUZZBOOK2
-	ItemKey1,	// T_METALKEY
-	ItemKey2,	// T_SMALLMETALKEY
-	ItemKey3,	// T_AXEKEY
-	ItemKey4,	// T_FIREKEY
-	ItemKey5,	// T_GREENKEY
-	ItemKey6,	// T_MACEKEY
-	ItemKey7,	// T_SILVERKEY
-	ItemKey8,	// T_RUSTYKEY
-	ItemKey9,	// T_HORNKEY
-	ItemKeyA,	// T_SERPENTKEY
-	WaterDrip,	// T_WATERDRIP
-	FlameSmallTemp,	// T_TEMPSMALLFLAME
-	FlameSmall,	// T_PERMSMALLFLAME
-	FlameLargeTemp,	// T_TEMPLARGEFLAME
-	FlameLarge,	// T_PERMLARGEFLAME
-	DemonMash,	// T_DEMON_MASH
-	Demon2Mash,	// T_DEMON2_MASH
-	EttinMash,	// T_ETTIN_MASH
-	CentaurMash,	// T_CENTAUR_MASH
-	ThrustFloorUp,	// T_THRUSTSPIKEUP
-	ThrustFloorDown,	// T_THRUSTSPIKEDOWN
-	WraithFleshDrip1,	// T_FLESH_DRIP1
-	WraithFleshDrip2,	// T_FLESH_DRIP2
-	WraithSparkDrip	// T_SPARK_DRIP
+	Clink,
+	MummyLeader,
+	Beast,
+	Mummy,
+	Imp,
+	Knight,
+	ImpLeader,
+	MummyGhost,
+	MummyLeaderGhost,
+
+	ImpBall,	// 10
+	ItemAmmoGoldWandWimpy,
+	ItemAmmoGoldWandHefty,
+	MapSpot,
+	ArtifactEgg,
+	ArtifactFly,
+	MapSpot,
+	MapSpot,
+	ArtifactTeleport,
+	Wizard,
+
+	Head,	// 20
+	MapSpot/*Bridge*/,
+	MapSpot,
+	ItemHealthPotion,
+	ArtifactHealthFlask,
+	ArtifactSuperHeal,
+	MapSpot,
+	ItemWeaponCrossbow,
+	ItemWeaponBlaster,
+	ItemWeaponPhoenixRod,
+
+	ItemWeaponSkullRod,	// 30
+	MapSpot,
+	ItemWeaponGauntlets,
+	ItemAmmoCrossbowWimpy,
+	ItemAmmoCrossbowHefty,
+	ItemAmmoMaceWimpy,
+	ItemAmmoMaceHefty,
+	ItemAmmoBlasterWimpy,
+	ItemAmmoBlasterHefty,
+	MapSpot,
+
+	EggMissile,	// 40
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 50
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 60
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemShield1,
+	ItemShield2,
+
+	MapSpot,	// 70
+	MapSpot,
+	ArtifactFireBomb/*FireBomb*/,
+	ArtifactTorch,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 80
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemKeyBlue,
+	ItemKeyGreen,
+	ItemKeyYellow,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 90
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 100
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	SoundWind,	// 110
+	SoundWaterfall,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	BeastBall,	// 120
+	Feather,
+	Chicken,
+	VolcanoBlast,
+	VolcanoTBlast,
+	MapSpot,
+	PodGenerator,
+	KnightAxe,
+	KnightRedAxe,
+	KnightGhost,
+
+	Blood,	// 130
+	MummyMissile,
+	Snake,
+	ArtifactInvulnerability,
+	ArtifactTomeOfPower,
+	ArtifactInvisibility,
+	ItemBagOfHolding,
+	ItemMap,
+	SnakeProjectileA,
+	SnakeProjectileB,
+
+	WizardMissile,	// 140
+	MapSpot/*BossSpot*/,
+	Sorcerer1,
+	Sorcerer2,
+	Sorcerer1Missile,
+	Sorcerer2Missile1,
+	Sorcerer2Missile2,
+	CrossbowFX1,
+	CrossbowFX2,
+	CrossbowFX3,
+
+	Volcano,	// 150
+	GoldWandMissile1,
+	GoldWandMissile2,
+	MaceFX4,
+	MaceFX1,
+	MaceFX3,
+	MaceFX2,
+	Ripper,
+	ItemAmmoSkullRodWimpy,
+	ItemAmmoSkullRodHefty,
+
+	HornRodMissile1,	// 160
+	ItemAmmoPhoenixWimpy,
+	ItemAmmoPhoenixHefty,
+	PhoenixFX1,
+	HeadMissile1,
+	WhirlWind,
+	TeleGlitter,
+	TeleGlitter2
 };
 
 //==========================================================================
@@ -413,90 +489,7 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.29  2004/11/01 07:38:23  dj_jl
+//  Revision 1.1  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
-//
-//  Revision 1.28  2002/09/07 16:28:26  dj_jl
-//  Added Level class.
-//
-//  Revision 1.27  2002/06/22 07:16:02  dj_jl
-//  Added base classes for objects, split them into corresponding files.
-//
-//  Revision 1.26  2002/03/28 18:32:51  dj_jl
-//  Little renaming, some bug fixes.
-//
-//  Revision 1.25  2002/03/16 17:47:47  dj_jl
-//  Got rid of mobj_t and some other legacy.
-//
-//  Revision 1.24  2002/03/09 17:57:02  dj_jl
-//  Got rid of function pointers, made most of the physics functions native.
-//
-//  Revision 1.23  2002/02/26 17:49:49  dj_jl
-//  no message
-//
-//  Revision 1.22  2002/02/22 18:00:24  dj_jl
-//  A lots of the renaming, beautification.
-//
-//  Revision 1.21  2002/02/16 16:26:56  dj_jl
-//  Removed precalculated sound IDs
-//
-//  Revision 1.20  2002/02/14 19:20:59  dj_jl
-//  Renamed Entity properties to new naming style
-//
-//  Revision 1.19  2002/02/07 18:50:09  dj_jl
-//  Made CheckPosition shared.
-//
-//  Revision 1.18  2002/02/06 17:28:53  dj_jl
-//  Replaced Actor flags with boolean variables.
-//
-//  Revision 1.17  2002/01/28 18:50:19  dj_jl
-//  Made some functions Actor members.
-//  Replaced some pointers with references.
-//
-//  Revision 1.16  2002/01/25 18:04:35  dj_jl
-//  Many global functions made Actor functions
-//
-//  Revision 1.15  2002/01/24 18:19:27  dj_jl
-//  Split common class Entity, made SetMobjState an Entity function
-//
-//  Revision 1.14  2002/01/17 18:15:55  dj_jl
-//  Renamed all map object classes
-//
-//  Revision 1.13  2002/01/15 18:27:00  dj_jl
-//  Some property names with logical words starting with capital letter.
-//  Moved everything from Entity class into Actor class.
-//
-//  Revision 1.12  2002/01/12 18:02:48  dj_jl
-//  Replaced some C style casts with dynamic casts
-//
-//  Revision 1.11  2002/01/11 18:19:42  dj_jl
-//  Started to use names in progs
-//
-//  Revision 1.10  2002/01/07 12:25:58  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.9  2001/12/27 17:52:24  dj_jl
-//  Removed Entity property type, replaced with Object property Class
-//
-//  Revision 1.8  2001/11/02 18:42:08  dj_jl
-//  Damage method
-//
-//  Revision 1.7  2001/10/22 17:23:13  dj_jl
-//  Floatification of angles
-//
-//  Revision 1.6  2001/10/18 17:39:34  dj_jl
-//  A lots of changes for Alpha 2
-//
-//  Revision 1.5  2001/10/09 17:40:38  dj_jl
-//  Moved thing counting to progs
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/08/30 17:33:17  dj_jl
-//  Added sound channels
-//  
-//  Revision 1.2  2001/07/27 14:27:53  dj_jl
-//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

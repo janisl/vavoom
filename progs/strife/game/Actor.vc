@@ -318,7 +318,7 @@ void ExplodeMissile()
 //
 //==========================================================================
 
-void CheckMissileSpawn()
+bool CheckMissileSpawn()
 {
 	StateTime -= Random() * 0.1;
 	if (StateTime < 0.1)
@@ -329,7 +329,11 @@ void CheckMissileSpawn()
 	Origin += Velocity * 0.0142857143;
 
 	if (!TryMove(Origin))
+	{
 		ExplodeMissile();
+		return false;
+	}
+	return true;
 }
 
 //==========================================================================
@@ -635,6 +639,33 @@ void Thrust(float angle, float move)
 {
 	Velocity.x += move * cos(angle) * 35.0;
 	Velocity.y += move * sin(angle) * 35.0;
+}
+
+//==========================================================================
+//
+//  TestLocation
+//
+//  Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//==========================================================================
+
+bool TestLocation()
+{
+	if (!bColideWithThings && !bColideWithWorld)
+		return true;
+
+	if (CheckPosition(Origin))
+	{
+		// XY is ok, now check Z
+		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
+		{
+			// Bad Z
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -1397,7 +1428,7 @@ bool TeleportMove(TVec org)
 //
 //==========================================================================
 
-int Teleport(float x, float y, float angle)
+int Teleport(float x, float y, float angle, bool usefog)
 {
 	TVec oldOrg;
 	Actor fog;
@@ -1411,25 +1442,28 @@ int Teleport(float x, float y, float angle)
 	if (bIsPlayer)
 		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 
-	// spawn teleport fog at source and destination
-	fog = Spawn(TeleportFog, oldOrg);
-	fog.PlaySound('Teleport', CHAN_VOICE);
-
-	fog = Spawn(TeleportFog, Origin +
-		vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
-
-	// emit sound, where?
-	fog.PlaySound('Teleport', CHAN_VOICE);
-
-	// don't move for a bit
-	if (bIsPlayer)
+	if (usefog)
 	{
-		ReactionTime = 0.5;
-		Player.bFixAngle = true;
-	}
+		// spawn teleport fog at source and destination
+		fog = Spawn(TeleportFog, oldOrg);
+		fog.PlaySound('Teleport', CHAN_VOICE);
 
-	Angles.yaw = angle;
-	Velocity = vector(0.0, 0.0, 0.0);
+		fog = Spawn(TeleportFog, Origin +
+			vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
+
+		// emit sound, where?
+		fog.PlaySound('Teleport', CHAN_VOICE);
+
+		// don't move for a bit
+		if (bIsPlayer)
+		{
+			ReactionTime = 0.5;
+			Player.bFixAngle = true;
+		}
+
+		Angles.yaw = angle;
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
 	return 1;
 }
 
@@ -2037,6 +2071,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.11  2004/10/14 06:22:38  dj_jl
 //  Implemented several objects amd monsters.
 //

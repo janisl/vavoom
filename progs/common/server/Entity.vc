@@ -211,8 +211,13 @@ native Entity RoughMonsterSearch(int distance);
 //
 //==========================================================================
 
-void Destroyed(void)
+void Destroyed()
 {
+	if (TID)
+	{
+		// Remove from TID list
+		RemoveFromTIDList();
+	}
 }
 
 //==========================================================================
@@ -242,7 +247,7 @@ void BlockedByLine(line_t * ld)
 //
 //==========================================================================
 
-void PushLine(void)
+void PushLine()
 {
 }
 
@@ -252,7 +257,7 @@ void PushLine(void)
 //
 //==========================================================================
 
-void HandleFloorclip(void)
+void HandleFloorclip()
 {
 }
 
@@ -272,7 +277,7 @@ void CrossSpecialLine(line_t *ld, int side)
 //
 //==========================================================================
 
-void ApplyFriction(void)
+void ApplyFriction()
 {
 }
 
@@ -320,6 +325,98 @@ void SetOrigin(TVec NewOrigin)
 
 //==========================================================================
 //
+//	InsertIntoTIDList
+//
+//==========================================================================
+
+void InsertIntoTIDList(int tid)
+{
+	int i;
+	int index;
+
+	index = -1;
+	for (i = 0; TIDList[i] != 0; i++)
+	{
+		if (TIDList[i] == -1)
+		{
+			// Found empty slot
+			index = i;
+			break;
+		}
+	}
+	if (index == -1)
+	{
+		// Append required
+		if (i == MAX_TID_COUNT)
+		{
+			Error("P_InsertMobjIntoTIDList: MAX_TID_COUNT exceeded.");
+		}
+		index = i;
+		TIDList[index + 1] = 0;
+	}
+	TID = tid;
+	TIDList[index] = tid;
+	TIDMobj[index] = self;
+}
+
+//==========================================================================
+//
+//	RemoveFromTIDList
+//
+//==========================================================================
+
+void RemoveFromTIDList()
+{
+	int i;
+
+	for (i = 0; TIDList[i] != 0; i++)
+	{
+		if (TIDMobj[i] == self)
+		{
+			TIDList[i] = -1;
+			TIDMobj[i] = none;
+			TID = 0;
+			return;
+		}
+	}
+	TID = 0;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	RemoveThing
+//
+//==========================================================================
+
+void RemoveThing()
+{
+	Remove();
+}
+
+//==========================================================================
+//
 //
 //
 //==========================================================================
@@ -333,6 +430,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.2  2003/11/12 16:48:02  dj_jl
 //  Changed player structure into a class
 //

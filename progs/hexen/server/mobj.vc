@@ -27,10 +27,8 @@ classid PuffType;
 Actor PuffSpawned;
 Actor linetarget;	// who got hit (or none)
 
-int TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
-Actor TIDMobj[MAX_TID_COUNT];
-
-int classFlags[] = {
+int classFlags[] =
+{
 	MTF_FIGHTER,
 	MTF_CLERIC,
 	MTF_MAGE
@@ -44,7 +42,8 @@ Actor GLavaInflictor;
 
 bool onground;
 
-float pushTab[3] = {
+float pushTab[3] =
+{
 	5.0 * 35.0 * 35.0 / 32.0,
 	10.0 * 35.0 * 35.0 / 32.0,
 	25.0 * 35.0 * 35.0 / 32.0
@@ -52,7 +51,8 @@ float pushTab[3] = {
 
 float ArmorMax[NUMCLASSES] = { 20.0, 18.0, 16.0, 1.0 };
 
-int pieceValueTrans[] = {
+int pieceValueTrans[] =
+{
 	0,	// 0: never
 	WPIECE1 | WPIECE2 | WPIECE3,	// WPIECE1 (1)
 	WPIECE2 | WPIECE3,	// WPIECE2 (2)
@@ -63,7 +63,8 @@ int pieceValueTrans[] = {
 //
 //  Pickup messages
 //
-string weaponMessages[6] = {
+string weaponMessages[6] =
+{
 	TXT_WEAPON_F2,
 	TXT_WEAPON_F3,
 	TXT_WEAPON_C2,
@@ -71,17 +72,20 @@ string weaponMessages[6] = {
 	TXT_WEAPON_M2,
 	TXT_WEAPON_M3,
 };
-string fourthWeaponText[] = {
+string fourthWeaponText[] =
+{
 	TXT_WEAPON_F4,
 	TXT_WEAPON_C4,
 	TXT_WEAPON_M4
 };
-string weaponPieceText[] = {
+string weaponPieceText[] =
+{
 	TXT_QUIETUS_PIECE,
 	TXT_WRAITHVERGE_PIECE,
 	TXT_BLOODSCOURGE_PIECE
 };
-string artifactMessages[NUMARTIFACTS] = {
+string artifactMessages[NUMARTIFACTS] =
+{
 	"",
 	TXT_ARTIINVULNERABILITY,
 	TXT_ARTIHEALTH,
@@ -117,20 +121,23 @@ string artifactMessages[NUMARTIFACTS] = {
 	TXT_ARTIPUZZGEAR,
 	TXT_ARTIPUZZGEAR
 };
-string armorText[NUMARMOR] = {
+string armorText[NUMARMOR] =
+{
 	TXT_ARMOR1,
 	TXT_ARMOR2,
 	TXT_ARMOR3,
 	TXT_ARMOR4
 };
-string manaText[4] = {
+string manaText[4] =
+{
 	TXT_MANA_1,
 	TXT_MANA_2,
 	"",
 	TXT_MANA_BOTH
 };
 
-int opposite[] = {
+int opposite[] =
+{
 	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST, DI_EAST, DI_NORTHEAST,
 	DI_NORTH, DI_NORTHWEST, DI_NODIR
 };
@@ -144,7 +151,8 @@ float yspeed[8] =
 	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
 		-0.7171630859 };
 
-int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS] = {
+int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS] =
+{
 	0, 2, 3, 14,	//  Fighter
 	0, 1, 4, 18,	//  Priest
 	0, 3, 5, 15,	//  Mage
@@ -377,57 +385,6 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 	// Can't find thing type
 	dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
 		mthing->type, mthing->x, mthing->y);
-}
-
-//==========================================================================
-//
-// P_CreateTIDList
-//
-//==========================================================================
-
-void P_CreateTIDList(void)
-{
-	int i;
-	Actor mobj;
-
-	i = 0;
-	FOREACH(Actor, mobj)
-	{
-		if (mobj.TID != 0)
-		{
-			// Add to list
-			if (i == MAX_TID_COUNT)
-			{
-				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
-			}
-			TIDList[i] = mobj.TID;
-			TIDMobj[i++] = mobj;
-		}
-	}
-	// Add termination marker
-	TIDList[i] = 0;
-}
-
-//==========================================================================
-//
-//	FindMobjFromTID
-//
-//==========================================================================
-
-Actor FindMobjFromTID(int tid, int *searchPosition)
-{
-	int i;
-
-	for (i = *searchPosition + 1; TIDList[i] != 0; i++)
-	{
-		if (TIDList[i] == tid)
-		{
-			*searchPosition = i;
-			return TIDMobj[i];
-		}
-	}
-	*searchPosition = -1;
-	return none;
 }
 
 //**************************************************************************
@@ -687,7 +644,7 @@ bool A_LocalQuake(int *args)
 	// Find all quake foci
 	do
 	{
-		target = FindMobjFromTID(args[4], &lastfound);
+		target = Actor(FindMobjFromTID(args[4], &lastfound));
 		if (target)
 		{
 			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
@@ -709,6 +666,9 @@ bool A_LocalQuake(int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.57  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.56  2004/08/28 12:35:23  dj_jl
 //  Move general client functions to player class.
 //

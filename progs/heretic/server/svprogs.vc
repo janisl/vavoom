@@ -53,6 +53,7 @@ bool respawnmonsters;
 #include "mobj.vc"
 #include "map.vc"
 #include "teleport.vc"
+#include "things.vc"
 #include "cheat.vc"
 
 #include "bot.vc"
@@ -62,6 +63,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2004/11/01 07:38:22  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.18  2004/08/28 12:35:22  dj_jl
 //  Move general client functions to player class.
 //

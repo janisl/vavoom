@@ -312,18 +312,12 @@ void OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-void Destroyed(void)
+void Destroyed()
 {
 	// Remove from creature queue
 	if (bCountKill && bCorpse)
 	{
 		A_DeQueueCorpse();
-	}
-
-	if (TID)
-	{
-		// Remove from TID list
-		RemoveFromTIDList();
 	}
 
 	::Destroyed();
@@ -857,7 +851,7 @@ bool MorphPlayer(void)
 //
 //==========================================================================
 
-bool MorphMonster(void)
+bool MorphMonster()
 {
 	Actor monster;
 	Actor fog;
@@ -878,8 +872,6 @@ bool MorphMonster(void)
 		return false;
 	}
 
-	RemoveFromTIDList();
-
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
@@ -896,6 +888,8 @@ bool MorphMonster(void)
 	{
 		monster.Args[i] = Args[i];
 	}
+
+	RemoveFromTIDList();
 
 	SetState(S_FREETARGMOBJ);
 
@@ -1570,65 +1564,6 @@ void SpawnDirt(float radius)
 
 //==========================================================================
 //
-//	InsertIntoTIDList
-//
-//==========================================================================
-
-void InsertIntoTIDList(int tid)
-{
-	int i;
-	int index;
-
-	index = -1;
-	for (i = 0; TIDList[i] != 0; i++)
-	{
-		if (TIDList[i] == -1)
-		{
-			// Found empty slot
-			index = i;
-			break;
-		}
-	}
-	if (index == -1)
-	{
-		// Append required
-		if (i == MAX_TID_COUNT)
-		{
-			Error("P_InsertMobjIntoTIDList: MAX_TID_COUNT exceeded.");
-		}
-		index = i;
-		TIDList[index + 1] = 0;
-	}
-	TID = tid;
-	TIDList[index] = tid;
-	TIDMobj[index] = self;
-}
-
-//==========================================================================
-//
-//	RemoveFromTIDList
-//
-//==========================================================================
-
-void RemoveFromTIDList(void)
-{
-	int i;
-
-	for (i = 0; TIDList[i] != 0; i++)
-	{
-		if (TIDMobj[i] == self)
-		{
-			TIDList[i] = -1;
-			TIDMobj[i] = none;
-			TID = 0;
-			return;
-		}
-	}
-	TID = 0;
-}
-
-//==========================================================================
-//
 //  TeleportToPlayerStarts
 //
 //==========================================================================
@@ -2003,39 +1938,6 @@ void HandleFloorclip(void)
 			FloorClip = 0.0;
 		}
 	}
-}
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate(void)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate(void)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	RemoveThing
-//
-//==========================================================================
-
-void RemoveThing(void)
-{
-	Remove();
 }
 
 //**************************************************************************
@@ -3931,6 +3833,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.8  2004/10/11 06:56:14  dj_jl
 //  Fixed flying blood.
 //

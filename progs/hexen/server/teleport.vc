@@ -124,7 +124,7 @@ bool EV_Teleport(int tid, Actor thing, bool fog)
 	searcher = -1;
 	for (i = 0; i < count; i++)
 	{
-		A = FindMobjFromTID(tid, &searcher);
+		A = Actor(FindMobjFromTID(tid, &searcher));
 	}
 	if (!A)
 		Error("Can't find teleport mapspot\n");
@@ -235,6 +235,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.25  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

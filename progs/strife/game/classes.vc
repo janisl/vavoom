@@ -51,6 +51,9 @@
 #include "LightFlash.vc"
 #include "Strobe.vc"
 #include "LightEffect.vc"
+#include "MapSpot.vc"
+#include "MapSpotGravity.vc"
+#include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 
@@ -423,6 +426,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.3  2004/10/13 06:41:13  dj_jl
 //  Implemented animated doors.
 //

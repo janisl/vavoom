@@ -214,6 +214,8 @@ enum
 #define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
 #define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
+#define MAX_TID_COUNT		200
+
 //**************************************************************************
 //**
 //**    CLIENT DEFINES
@@ -279,6 +281,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2004/11/01 07:38:20  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.19  2003/10/22 06:27:38  dj_jl
 //  Increased maximal start spot count
 //

@@ -37,6 +37,11 @@ bool UpdateChicken(int tics)
 {
 	Actor fog;
 	classid moType;
+	float oldAngle;
+	Actor oldEnemy;
+	int oldSpecial;
+	int oldTID;
+	int oldArgs[5];
 	Actor A;
 
 	Special1 -= tics;
@@ -45,6 +50,15 @@ bool UpdateChicken(int tics)
 		return false;
 	}
 	moType = SpecialCID;
+	oldAngle = Angles.yaw;
+	oldEnemy = Enemy;
+	oldSpecial = Special;
+	oldTID = TID;
+	oldArgs[0] = Args[0];
+	oldArgs[1] = Args[1];
+	oldArgs[2] = Args[2];
+	oldArgs[3] = Args[3];
+	oldArgs[4] = Args[4];
 	UnlinkFromWorld();
 	A = Spawn(moType, Origin);
 	if (A.TestLocation() == false)
@@ -56,11 +70,20 @@ bool UpdateChicken(int tics)
 		return false;
 	}
 	LinkToWorld();
-	A.Angles.yaw = Angles.yaw;
-	A.Enemy = Enemy;
-	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	RemoveFromTIDList();
 	SetState(S_FREETARGMOBJ);
+	A.Angles.yaw = oldAngle;
+	A.Enemy = oldEnemy;
+	A.TID = oldTID;
+	A.Special = oldSpecial;
+	A.Args[0] = oldArgs[0];
+	A.Args[1] = oldArgs[1];
+	A.Args[2] = oldArgs[2];
+	A.Args[3] = oldArgs[3];
+	A.Args[4] = oldArgs[4];
+	A.InsertIntoTIDList(oldTID);
+	fog = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
+	fog.PlaySound('Teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -176,6 +199,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/11/01 07:38:22  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

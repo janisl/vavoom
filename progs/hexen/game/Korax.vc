@@ -118,7 +118,7 @@ void A_KoraxChase(void)
 	if (!bDidBelowHalfHealth && (Health <= (SpawnHealth / 2)))
 	{
 		search = 0;
-		spot = FindMobjFromTID(FirstTeleportTID, &search);
+		spot = Actor(FindMobjFromTID(FirstTeleportTID, &search));
 		if (spot)
 		{
 			Teleport(spot.Origin, spot.Angles.yaw, true);
@@ -146,7 +146,7 @@ void A_KoraxChase(void)
 	{
 		if (Random() < 0.0390625)
 		{
-			spot = FindMobjFromTID(TeleportTID, &_Special1);
+			spot = Actor(FindMobjFromTID(TeleportTID, &_Special1));
 			if (spot)
 			{
 				Teleport(spot.Origin, spot.Angles.yaw, true);
@@ -527,6 +527,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

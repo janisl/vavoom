@@ -53,6 +53,7 @@
 #include "mobj.vc"
 #include "map.vc"
 #include "teleport.vc"
+#include "things.vc"
 #include "cheat.vc"
 
 #include "svmain.vc"
@@ -60,6 +61,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2004/11/01 07:38:24  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.21  2004/08/28 12:35:25  dj_jl
 //  Move general client functions to player class.
 //

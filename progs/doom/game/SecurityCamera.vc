@@ -450,9 +450,10 @@ void BeginPlay()
 //
 //==========================================================================
 
-void Deactivate()
+bool Deactivate()
 {
 	bActive = false;
+	return true;
 }
 
 //==========================================================================
@@ -461,7 +462,7 @@ void Deactivate()
 //
 //==========================================================================
 
-void Activate()
+bool Activate()
 {
 	if (!bActive)
 	{
@@ -477,7 +478,9 @@ void Activate()
 			bJustStepped = true;
 			bActive = true;
 		}
+		return true;
 	}
+	return false;
 }
 
 //==========================================================================
@@ -766,10 +769,10 @@ bool Interpolate()
 //
 //==========================================================================
 
-void Activate()
+bool Activate()
 {
 	if (Enemy == none || bActive)
-		return;
+		return false;
 
 	::Activate();
 	bSavedNoGravity = Enemy.bNoGravity;
@@ -788,6 +791,7 @@ void Activate()
 	{
 		Enemy.bDormant = true;
 	}
+	return true;
 }
 
 //==========================================================================
@@ -796,7 +800,7 @@ void Activate()
 //
 //==========================================================================
 
-void Deactivate()
+bool Deactivate()
 {
 	::Deactivate();
 	if (Enemy != none)
@@ -808,6 +812,7 @@ void Deactivate()
 		Enemy.LinkToWorld();
 		Enemy.bDormant = bSavedDormant;
 	}
+	return true;
 }
 
 defaultproperties
@@ -891,6 +896,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.1  2003/11/03 07:13:23  dj_jl
 //  Cameras
 //

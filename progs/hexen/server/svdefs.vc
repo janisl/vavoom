@@ -178,8 +178,6 @@
 // --------- Mobj ------------
 //
 
-#define MAX_TID_COUNT		200
-
 #define SMALLSPLASHCLIP		12.0
 
 //
@@ -519,6 +517,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.41  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

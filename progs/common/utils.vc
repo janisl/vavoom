@@ -26,6 +26,10 @@
 #define MobjCenter(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
 
+#define FOREACH(type, var) \
+	for (var = type(NextThinker(none, type)); var; \
+		var = type(NextThinker(var, type)))
+
 //==========================================================================
 //
 //  abs
@@ -488,6 +492,57 @@ void SetViewPos(BasePlayer player)
 
 //==========================================================================
 //
+//	CreateTIDList
+//
+//==========================================================================
+
+void CreateTIDList()
+{
+	int i;
+	Entity mobj;
+
+	i = 0;
+	FOREACH(Entity, mobj)
+	{
+		if (mobj.TID != 0)
+		{
+			//	Add to list
+			if (i == MAX_TID_COUNT)
+			{
+				Error("P_CreateTIDList: MAX_TID_COUNT exceeded.");
+			}
+			TIDList[i] = mobj.TID;
+			TIDMobj[i++] = mobj;
+		}
+	}
+	//	Add termination marker
+	TIDList[i] = 0;
+}
+
+//==========================================================================
+//
+//	FindMobjFromTID
+//
+//==========================================================================
+
+Entity FindMobjFromTID(int tid, int *searchPosition)
+{
+	int i;
+
+	for (i = *searchPosition + 1; TIDList[i] != 0; i++)
+	{
+		if (TIDList[i] == tid)
+		{
+			*searchPosition = i;
+			return TIDMobj[i];
+		}
+	}
+	*searchPosition = -1;
+	return none;
+}
+
+//==========================================================================
+//
 //	FindState
 //
 //==========================================================================
@@ -507,13 +562,12 @@ int FindState(name StateName)
 	return 0;
 }
 
-#define FOREACH(type, var) \
-	for (var = type(NextThinker(none, type)); var; \
-		var = type(NextThinker(var, type)))
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.31  2004/08/28 12:35:19  dj_jl
 //  Move general client functions to player class.
 //

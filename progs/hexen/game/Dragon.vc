@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Dragon:Pawn
+class Dragon : Pawn
 	__mobjinfo__(254);
 
 int CrashedState;		//	Maybe it's safe to use CrashState?
@@ -35,7 +35,7 @@ Actor FlightTarget;
 //
 //============================================================================
 
-void A_DragonInitFlight(void)
+void A_DragonInitFlight()
 {
 	int search;
 
@@ -43,7 +43,7 @@ void A_DragonInitFlight(void)
 	do
 	{
 		// find the first tid identical to the dragon's tid
-		FlightTarget = FindMobjFromTID(TID, &search);
+		FlightTarget = Actor(FindMobjFromTID(TID, &search));
 		if (search == -1)
 		{
 			SetState(IdleState);
@@ -154,7 +154,7 @@ void DragonSeek(float thresh, float turnMax)
 					continue;
 				}
 				search = -1;
-				A = FindMobjFromTID(tempTarget.Args[i], &search);
+				A = Actor(FindMobjFromTID(tempTarget.Args[i], &search));
 				angleToSpot = atan2(A.Origin.y - Origin.y,
 					A.Origin.x - Origin.x);
 				delta = fabs(AngleMod180(angleToSpot - angleToTarget));
@@ -167,8 +167,8 @@ void DragonSeek(float thresh, float turnMax)
 			if (bestArg != -1)
 			{
 				search = -1;
-				FlightTarget = FindMobjFromTID(tempTarget.Args[bestArg],
-					&search);
+				FlightTarget = Actor(FindMobjFromTID(tempTarget.Args[bestArg],
+					&search));
 			}
 		}
 		else
@@ -179,7 +179,7 @@ void DragonSeek(float thresh, float turnMax)
 			}
 			while (!tempTarget.Args[i]);
 			search = -1;
-			FlightTarget = FindMobjFromTID(tempTarget.Args[i], &search);
+			FlightTarget = Actor(FindMobjFromTID(tempTarget.Args[i], &search));
 		}
 	}
 }
@@ -343,6 +343,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

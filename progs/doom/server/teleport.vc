@@ -98,7 +98,7 @@ bool EV_Teleport(int tag, Actor thing, bool usefog)
 		if (m.TID != tag)
 			continue;
 
-		return thing.Teleport(m.Origin.x, m.Origin.y, m.Angles.yaw);
+		return thing.Teleport(m.Origin.x, m.Origin.y, m.Angles.yaw, usefog);
 	}
 	return 0;
 }
@@ -209,6 +209,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2004/11/01 07:38:22  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.28  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //

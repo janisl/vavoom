@@ -87,6 +87,7 @@ int PendingWeapon;
 Actor Attacker;
 
 float JumpTime;
+int LocalQuakeHappening;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -379,6 +380,7 @@ void PlayerReborn()
 	Health = INITIAL_HEALTH;
 	WeaponOwned[wp_fist] = true;
 	SetWeapon(wp_fist);
+	LocalQuakeHappening = 0;
 }
 
 //==========================================================================
@@ -1604,6 +1606,15 @@ void SetViewPos()
 	ViewOrg.x = MO.Origin.x;
 	ViewOrg.y = MO.Origin.y;
 
+	if (LocalQuakeHappening)
+	{
+		float intensity;
+
+		intensity = itof(LocalQuakeHappening);
+		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+	}
+
 	ViewAngles = MO.Angles;
 
 	PaletteFlash();
@@ -1940,6 +1951,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.8  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

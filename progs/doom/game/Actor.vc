@@ -506,7 +506,7 @@ void ExplodeMissile(void)
 //
 //==========================================================================
 
-void CheckMissileSpawn(void)
+bool CheckMissileSpawn()
 {
 	StateTime -= Random() * 0.1;
 	if (StateTime < 0.1)
@@ -517,7 +517,11 @@ void CheckMissileSpawn(void)
 	Origin = Origin + Velocity * 0.0142857143;
 
 	if (!TryMove(Origin))
+	{
 		ExplodeMissile();
+		return false;
+	}
+	return true;
 }
 
 //==========================================================================
@@ -863,6 +867,33 @@ void NightmareRespawn(void)
 
 	// remove the old monster,
 	Remove();
+}
+
+//==========================================================================
+//
+//  TestLocation
+//
+//  Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//==========================================================================
+
+bool TestLocation()
+{
+	if (!bColideWithThings && !bColideWithWorld)
+		return true;
+
+	if (CheckPosition(Origin))
+	{
+		// XY is ok, now check Z
+		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
+		{
+			// Bad Z
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -1678,7 +1709,7 @@ bool TeleportMove(TVec org)
 //
 //==========================================================================
 
-int Teleport(float x, float y, float angle)
+int Teleport(float x, float y, float angle, bool usefog)
 {
 	TVec oldOrg;
 	Actor fog;
@@ -1692,31 +1723,34 @@ int Teleport(float x, float y, float angle)
 	if (bIsPlayer)
 		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 
-	// spawn teleport fog at source and destination
-	fog = Spawn(TeleportFog, oldOrg);
-#ifdef DDF
-	fog.SetState(fog.SeeState);
-#else
-	fog.PlaySound('Teleport', CHAN_VOICE);
-#endif
-
-	fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), Origin.z));
-#ifdef DDF
-	fog.SetState(fog.SeeState);
-#else
-	fog.PlaySound('Teleport', CHAN_VOICE);
-#endif
-
-	// don't move for a bit
-	if (bIsPlayer)
+	if (usefog)
 	{
-		ReactionTime = 0.5;
-		Player.bFixAngle = true;
-	}
+		// spawn teleport fog at source and destination
+		fog = Spawn(TeleportFog, oldOrg);
+#ifdef DDF
+		fog.SetState(fog.SeeState);
+#else
+		fog.PlaySound('Teleport', CHAN_VOICE);
+#endif
 
-	Angles.yaw = angle;
-	Velocity = vector(0.0, 0.0, 0.0);
+		fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
+			y + 20.0 * sin(angle), Origin.z));
+#ifdef DDF
+		fog.SetState(fog.SeeState);
+#else
+		fog.PlaySound('Teleport', CHAN_VOICE);
+#endif
+
+		// don't move for a bit
+		if (bIsPlayer)
+		{
+			ReactionTime = 0.5;
+			Player.bFixAngle = true;
+		}
+
+		Angles.yaw = angle;
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
 	return 1;
 }
 
@@ -3885,6 +3919,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.8  2004/08/23 19:23:42  dj_jl
 //  Moved weapon utilites to player class.
 //

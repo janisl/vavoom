@@ -23,62 +23,29 @@
 //**
 //**************************************************************************
 
-class Pawn : Actor
-	abstract;
+class MapSpotGravity : Actor
+	__mobjinfo__(9013);
 
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
+__states__
 {
-	// Monster
-	if (bDormant)
-	{
-		bDormant = false;
-		StateTime = 0.1;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
-{
-	// Monster
-	if (!bDormant)
-	{
-		bDormant = true;
-		StateTime = -1.0;
-		return true;
-	}
-	return false;
+	S_MAPSPOT_GRAV('TLGL', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
 {
-	ReactionCount = 8;
-	bSolid = true;
-	bShootable = true;
-	bCountKill = true;
-	bMonster = true;
-	bActivateMCross = true;
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bNoPassMobj = true;
+	IdleState = S_MAPSPOT_GRAV;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.2  2004/11/01 07:38:21  dj_jl
+//  Revision 1.1  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
 //
 //**************************************************************************

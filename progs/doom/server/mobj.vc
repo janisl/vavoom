@@ -356,9 +356,58 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 	P_RecursiveSound(emmiter.Sector, 0);
 }
 
+//===========================================================================
+// Quake variables
+//
+//      args[0]     Intensity on richter scale (2..9)
+//      args[1]     Duration in tics
+//      args[2]     Radius for damage, in tile units (64 pixels)
+//      args[3]     Radius for tremor in tile units (64 pixels)
+//      args[4]     TID of map thing for focus of quake
+//
+//===========================================================================
+
+//===========================================================================
+//
+//	A_LocalQuake
+//
+//===========================================================================
+
+bool A_LocalQuake(int *args)
+{
+	QuakeFocus focus;
+	Actor target;
+	int lastfound = 0;
+	int success = false;
+
+	// Find all quake foci
+	do
+	{
+		target = Actor(FindMobjFromTID(args[4], &lastfound));
+		if (target)
+		{
+			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
+			if (focus)
+			{
+				focus.Richters = args[0];
+				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
+				focus.DamageRadius = itof(args[2]) * 64.0;
+				focus.TremorRadius = itof(args[3]) * 64.0;
+				success = true;
+			}
+		}
+	}
+	while (target);
+
+	return success;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.53  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.52  2004/08/28 12:35:20  dj_jl
 //  Move general client functions to player class.
 //

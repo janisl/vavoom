@@ -29,8 +29,9 @@
 //
 //==========================================================================
 
-void AfterUnarchiveThinkers(void)
+void AfterUnarchiveThinkers()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -52,7 +53,7 @@ void G_InitNew(int skill)
 //
 //==========================================================================
 
-void StartLevelLoading(void)
+void StartLevelLoading()
 {
 	bodyqueslot = 0;
 }
@@ -63,8 +64,9 @@ void StartLevelLoading(void)
 //
 //==========================================================================
 
-void EndLevelLoading(void)
+void EndLevelLoading()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -73,7 +75,7 @@ void EndLevelLoading(void)
 //
 //==========================================================================
 
-void main(void)
+void main()
 {
 	shareware = !WadLumpPresent("MAP01");
 }
@@ -81,6 +83,9 @@ void main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/11/01 07:38:24  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.6  2002/07/15 17:54:19  dj_jl
 //  Removed all data from teaser exe.
 //

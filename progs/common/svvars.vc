@@ -44,9 +44,15 @@ float frametime = 1.0 / 35.0;
 
 tmtrace_t *tmtrace;
 
+int TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
+Entity TIDMobj[MAX_TID_COUNT];
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.10  2003/11/12 16:48:02  dj_jl
 //  Changed player structure into a class
 //

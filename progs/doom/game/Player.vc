@@ -77,6 +77,7 @@ int PendingWeapon;
 Actor Attacker;
 
 int JumpTics;
+int LocalQuakeHappening;
 
 // Armor type is 0-2.
 int ArmorType;
@@ -451,6 +452,7 @@ void PlayerReborn()
 	WeaponOwned[wp_pistol] = true;
 	SetWeapon(wp_pistol);
 #endif
+	LocalQuakeHappening = 0;
 }
 
 //==========================================================================
@@ -1497,6 +1499,15 @@ void SetViewPos()
 	ViewOrg.x = MO.Origin.x;
 	ViewOrg.y = MO.Origin.y;
 
+	if (LocalQuakeHappening)
+	{
+		float intensity;
+
+		intensity = itof(LocalQuakeHappening);
+		ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+		ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+	}
+
 	if (PlayerState != PST_DEAD)
 	{
 		ViewAngles = MO.Angles;
@@ -2133,6 +2144,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.4  2004/08/28 12:35:20  dj_jl
 //  Move general client functions to player class.
 //

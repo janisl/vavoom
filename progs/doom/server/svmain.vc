@@ -29,8 +29,9 @@
 //
 //==========================================================================
 
-void AfterUnarchiveThinkers(void)
+void AfterUnarchiveThinkers()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -81,7 +82,7 @@ void G_InitNew(int skill)
 //
 //==========================================================================
 
-void StartLevelLoading(void)
+void StartLevelLoading()
 {
 	bodyqueslot = 0;
 }
@@ -92,8 +93,9 @@ void StartLevelLoading(void)
 //
 //==========================================================================
 
-void EndLevelLoading(void)
+void EndLevelLoading()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -102,7 +104,7 @@ void EndLevelLoading(void)
 //
 //==========================================================================
 
-void main(void)
+void main()
 {
 #ifndef DOOM2
 	shareware = !WadLumpPresent("E2M1");
@@ -112,6 +114,9 @@ void main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.5  2002/05/18 16:59:59  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //

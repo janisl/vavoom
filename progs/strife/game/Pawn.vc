@@ -46,6 +46,42 @@ void OnMapSpawn(mthing_t *mthing)
 
 //==========================================================================
 //
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	// Monster
+	if (bDormant)
+	{
+		bDormant = false;
+		StateTime = 0.1;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	// Monster
+	if (!bDormant)
+	{
+		bDormant = true;
+		StateTime = -1.0;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //  SpawnMissile
 //
 //==========================================================================
@@ -1222,6 +1258,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/11/01 07:38:23  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.4  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

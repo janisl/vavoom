@@ -1,0 +1,167 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class QuakeFocus : Actor;
+
+//
+// Quake variables
+//
+int Richters;		// Intensity on richter scale (2..9)
+int QuakeDuration;	// Duration in tics
+float DamageRadius;	// Radius for damage
+float TremorRadius;	// Radius for tremor
+
+//==========================================================================
+//
+//	A_Quake
+//
+//==========================================================================
+
+void A_Quake(void)
+{
+	float an;
+	Player pl;
+	Actor victim;
+	int playnum;
+	float dist;
+
+	if (QuakeDuration-- > 0)
+	{
+		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
+		{
+			pl = svvars->Players[playnum];
+			if (!pl || !pl.bSpawned)
+				continue;
+
+			victim = pl.MO;
+			dist = MobjDist(self, victim);
+			if (dist < TremorRadius)	// In tremor radius
+			{
+				pl.LocalQuakeHappening = Richters;
+			}
+			// Check if in damage radius
+			if (dist < DamageRadius && victim.Origin.z <= victim.FloorZ)
+			{
+				if (Random() < 0.1953125)
+				{
+					victim.Damage(none, none, HITDICE(1));
+				}
+				// Thrust player around
+				an = victim.Angles.yaw + Random() * 256.0;
+				victim.Thrust(an, itof(Richters) / 2.0);
+			}
+		}
+	}
+	else
+	{
+		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
+		{
+			if (svvars->Players[playnum])
+				svvars->Players[playnum].LocalQuakeHappening = 0;
+		}
+		SetState(S_NULL);
+	}
+}
+
+//==========================================================================
+//
+//  A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(void)
+{
+	PlaySound('Earthquake', CHAN_VOICE);
+}
+
+__states__
+{
+	S_QUAKE_ACTIVE1('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE2) { A_Quake(); }
+	S_QUAKE_ACTIVE2('', 0, 1.0 / 35.0, S_QUAKE_ACTIVE3) { A_ContMobjSound(); }
+	S_QUAKE_ACTIVE3('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE4) { A_Quake(); }
+	S_QUAKE_ACTIVE4('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE5) { A_Quake(); }
+	S_QUAKE_ACTIVE5('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE6) { A_Quake(); }
+	S_QUAKE_ACTIVE6('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE7) { A_Quake(); }
+	S_QUAKE_ACTIVE7('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE8) { A_Quake(); }
+	S_QUAKE_ACTIVE8('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE9) { A_Quake(); }
+	S_QUAKE_ACTIVE9('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE0) { A_Quake(); }
+	S_QUAKE_ACTIVE0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEA) { A_Quake(); }
+	S_QUAKE_ACTIVEA('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEB) { A_Quake(); }
+	S_QUAKE_ACTIVEB('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEC) { A_Quake(); }
+	S_QUAKE_ACTIVEC('', 0, 2.0 / 35.0, S_QUAKE_ACTIVED) { A_Quake(); }
+	S_QUAKE_ACTIVED('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEE) { A_Quake(); }
+	S_QUAKE_ACTIVEE('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEF) { A_Quake(); }
+	S_QUAKE_ACTIVEF('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEG) { A_Quake(); }
+	S_QUAKE_ACTIVEG('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEH) { A_Quake(); }
+	S_QUAKE_ACTIVEH('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEI) { A_Quake(); }
+	S_QUAKE_ACTIVEI('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEJ) { A_Quake(); }
+	S_QUAKE_ACTIVEJ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEK) { A_Quake(); }
+	S_QUAKE_ACTIVEK('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEL) { A_Quake(); }
+	S_QUAKE_ACTIVEL('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEM) { A_Quake(); }
+	S_QUAKE_ACTIVEM('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEN) { A_Quake(); }
+	S_QUAKE_ACTIVEN('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEO) { A_Quake(); }
+	S_QUAKE_ACTIVEO('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEP) { A_Quake(); }
+	S_QUAKE_ACTIVEP('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEQ) { A_Quake(); }
+	S_QUAKE_ACTIVEQ('', 0, 2.0 / 35.0, S_QUAKE_ACTIVER) { A_Quake(); }
+	S_QUAKE_ACTIVER('', 0, 2.0 / 35.0, S_QUAKE_ACTIVES) { A_Quake(); }
+	S_QUAKE_ACTIVES('', 0, 2.0 / 35.0, S_QUAKE_ACTIVET) { A_Quake(); }
+	S_QUAKE_ACTIVET('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEU) { A_Quake(); }
+	S_QUAKE_ACTIVEU('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEV) { A_Quake(); }
+	S_QUAKE_ACTIVEV('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEW) { A_Quake(); }
+	S_QUAKE_ACTIVEW('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEX) { A_Quake(); }
+	S_QUAKE_ACTIVEX('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEY) { A_Quake(); }
+	S_QUAKE_ACTIVEY('', 0, 2.0 / 35.0, S_QUAKE_ACTIVEZ) { A_Quake(); }
+	S_QUAKE_ACTIVEZ('', 0, 2.0 / 35.0, S_QUAKE_ACT1) { A_Quake(); }
+	S_QUAKE_ACT1('', 0, 2.0 / 35.0, S_QUAKE_ACT2) { A_Quake(); }
+	S_QUAKE_ACT2('', 0, 2.0 / 35.0, S_QUAKE_ACT3) { A_Quake(); }
+	S_QUAKE_ACT3('', 0, 2.0 / 35.0, S_QUAKE_ACT4) { A_Quake(); }
+	S_QUAKE_ACT4('', 0, 2.0 / 35.0, S_QUAKE_ACT5) { A_Quake(); }
+	S_QUAKE_ACT5('', 0, 2.0 / 35.0, S_QUAKE_ACT6) { A_Quake(); }
+	S_QUAKE_ACT6('', 0, 2.0 / 35.0, S_QUAKE_ACT7) { A_Quake(); }
+	S_QUAKE_ACT7('', 0, 2.0 / 35.0, S_QUAKE_ACT8) { A_Quake(); }
+	S_QUAKE_ACT8('', 0, 2.0 / 35.0, S_QUAKE_ACT9) { A_Quake(); }
+	S_QUAKE_ACT9('', 0, 2.0 / 35.0, S_QUAKE_ACT0) { A_Quake(); }
+	S_QUAKE_ACT0('', 0, 2.0 / 35.0, S_QUAKE_ACTIVE1) { A_Quake(); }
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 16.0;
+	Mass = 100.0;
+	Translucency = 100;
+	bHidden = true;
+	bNoBlockmap = true;
+	IdleState = S_QUAKE_ACTIVE1;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2004/11/01 07:38:21  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
+//**************************************************************************

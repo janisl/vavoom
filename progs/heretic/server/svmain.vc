@@ -41,8 +41,9 @@
 //
 //==========================================================================
 
-void AfterUnarchiveThinkers(void)
+void AfterUnarchiveThinkers()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -85,7 +86,7 @@ void G_InitNew(int skill)
 //
 //==========================================================================
 
-void StartLevelLoading(void)
+void StartLevelLoading()
 {
 	InitMonsters();
 	OpenWeapons();
@@ -99,8 +100,9 @@ void StartLevelLoading(void)
 //
 //==========================================================================
 
-void EndLevelLoading(void)
+void EndLevelLoading()
 {
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -109,7 +111,7 @@ void EndLevelLoading(void)
 //
 //==========================================================================
 
-void main(void)
+void main()
 {
 	shareware = !WadLumpPresent("E2M1");
 }
@@ -117,6 +119,9 @@ void main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2004/11/01 07:38:22  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.3  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

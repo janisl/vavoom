@@ -95,6 +95,7 @@ Actor Enemy;
 Actor Instigator;
 
 int Special1;	// Special info
+float Special1f;
 classid SpecialCID;
 
 int MissileDamage;	// For missiles
@@ -163,6 +164,10 @@ void SetOrigin2(TVec origin)
 			Origin.z = FloorZ;
 		}
 	}
+	else if (bFloatBob)
+	{
+		origin.z = FloorZ + origin.z;	// artifact z passed in as height
+	}
 	if (bFloorClip && GetFloorType() != FLOOR_SOLID &&
 		FloorZ == Sector->floorheight)
 	{
@@ -219,6 +224,10 @@ void OnMapSpawn(mthing_t * mthing)
 		{
 			z = FLOATRANDZ;
 		}
+		else if (bFloatBob)
+		{
+			z = mthing->height;
+		}
 		else
 		{
 			z = ONFLOORZ;
@@ -228,6 +237,7 @@ void OnMapSpawn(mthing_t * mthing)
 		{
 			// Seed random starting index for bobbing motion
 			Health = P_Random();
+			Special1f = mthing->height;
 		}
 		if (z == ONFLOORZ)
 		{
@@ -568,6 +578,7 @@ bool ChickenMorph(void)
 {
 	Actor fog;
 	Actor chicken;
+	int i;
 
 	if (bIsPlayer)
 	{
@@ -595,6 +606,15 @@ bool ChickenMorph(void)
 	chicken.Translucency = Translucency;
 	chicken.Enemy = Enemy;
 	chicken.Angles.yaw = Angles.yaw;
+	chicken.TID = TID;
+	chicken.Special = Special;
+	chicken.InsertIntoTIDList(TID);
+	for (i = 0; i < 5; i++)
+	{
+		chicken.Args[i] = Args[i];
+	}
+
+	RemoveFromTIDList();
 
 	SetState(S_FREETARGMOBJ);
 
@@ -1766,8 +1786,14 @@ bool Physics(void)
 	}
 	if (bFloatBob)
 	{
-		// Floating item bobbing motion
-		Origin.z = FloorZ + FloatBobOffsets[(Health++) & 63];
+		// Floating item bobbing motion (special1 is height)
+		if (Sector->bHasExtrafloors)
+		{
+			//	Make sure FloorZ is from bottom region.
+			Origin.z = ONFLOORZ;
+			LinkToWorld();
+		}
+		Origin.z = FloorZ + Special1f + FloatBobOffsets[(Health++) & 63];
 	}
 	else if ((Origin.z != FloorZ) || Velocity.z)
 	{
@@ -2324,7 +2350,7 @@ bool TeleportMove(TVec newOrg)
 //
 //==========================================================================
 
-bool Teleport(float x, float y, float angle)
+bool Teleport(float x, float y, float angle, bool usefog)
 {
 	TVec oldOrg;
 	float aboveFloor;
@@ -2352,7 +2378,10 @@ bool Teleport(float x, float y, float angle)
 		{
 			Origin.z = FloorZ;
 			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
-			Angles.pitch = 0.0;
+			if (usefog)
+			{
+				Angles.pitch = 0.0;
+			}
 		}
 		Player.bFixAngle = true;
 	}
@@ -2368,19 +2397,22 @@ bool Teleport(float x, float y, float angle)
 	{
 		Origin.z = FloorZ;
 	}
-	// Spawn teleport fog at source and destination
-	fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
-	fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
-	fog.PlaySound('Teleport', CHAN_VOICE);
-	fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
-		y + 20.0 * sin(angle), Origin.z + fogDelta));
-	fog.PlaySound('Teleport', CHAN_VOICE);
-	if (bIsPlayer && !Player.Powers[pw_weaponlevel2])
+	if (usefog)
 	{
-		// Freeze player for about .5 sec
-		ReactionTime = 0.5;
+		// Spawn teleport fog at source and destination
+		fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
+		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
+		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
+			y + 20.0 * sin(angle), Origin.z + fogDelta));
+		fog.PlaySound('Teleport', CHAN_VOICE);
+		if (bIsPlayer && !Player.Powers[pw_weaponlevel2])
+		{
+			// Freeze player for about .5 sec
+			ReactionTime = 0.5;
+		}
+		Angles.yaw = angle;
 	}
-	Angles.yaw = angle;
 	if (bFloorClip && GetFloorType() != FLOOR_SOLID)
 	{
 		FloorClip = FOOTCLIPSIZE;
@@ -2394,7 +2426,7 @@ bool Teleport(float x, float y, float angle)
 		Velocity.x = Speed * cos(angle);
 		Velocity.y = Speed * sin(angle);
 	}
-	else
+	else if (usefog)
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -2919,6 +2951,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/11/01 07:38:22  dj_jl
+//  Almost all Hexen line specials are available in all games.
+//
 //  Revision 1.7  2004/08/23 19:23:56  dj_jl
 //  Moved weapon utilites to player class.
 //
