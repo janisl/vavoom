@@ -35,6 +35,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <new>
+#include <fstream.h>
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -846,9 +847,12 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

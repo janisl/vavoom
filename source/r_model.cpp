@@ -776,8 +776,8 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top)
 {
 	guard(WriteTGA);
-	ofstream s(filename, ios::out | ios::binary);
-	if (!s)
+	FArchive *Ar = FL_OpenFileWrite(filename);
+	if (!Ar)
 	{
 		con << "Couldn't write tga\n";
 		return;
@@ -788,42 +788,43 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	hdr.pal_type = (bpp == 8) ? 1 : 0;
 	hdr.img_type = (bpp == 8) ? 1 : 2;
 	hdr.first_color = 0;
-	hdr.pal_colors = (bpp == 8) ? 256 : 0;
+	hdr.pal_colors = LittleShort((bpp == 8) ? 256 : 0);
 	hdr.pal_entry_size = (bpp == 8) ? 24 : 0;
 	hdr.left = 0;
 	hdr.top = 0;
-	hdr.width = width;
-	hdr.height = height;
+	hdr.width = LittleShort(width);
+	hdr.height = LittleShort(height);
 	hdr.bpp = bpp;
 	hdr.descriptor_bits = bot2top ? 0 : 0x20;
-	s.write((char *)&hdr, sizeof(hdr));
+	Ar->Serialize(&hdr, sizeof(hdr));
 
 	if (bpp == 8)
 	{
 		for (int i = 0; i < 256; i++)
 		{
-			s.put(palette[i * 3 + 2]);
-			s.put(palette[i * 3 + 1]);
-			s.put(palette[i * 3]);
+			*Ar << palette[i * 3 + 2]
+				<< palette[i * 3 + 1]
+				<< palette[i * 3];
 		}
 	}
 
 	if (bpp == 8)
 	{
-		s.write((char *)data, width * height);
+		Ar->Serialize(data, width * height);
 	}
 	else if (bpp == 24)
 	{
 		rgb_t *src = (rgb_t *)data;
 		for (int i = 0; i < width * height; i++, src++)
 		{
-			s.put(src->b);
-			s.put(src->g);
-			s.put(src->r);
+			*Ar << src->b 
+				<< src->g 
+				<< src->r;
 		}
 	}
 
-	s.close();
+	Ar->Close();
+	delete Ar;
 	unguard;
 }
 
@@ -893,9 +894,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.5  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

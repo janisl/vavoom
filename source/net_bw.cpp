@@ -313,7 +313,7 @@ int BW_Init(void)
 
 	if (GetEthdevinfo())
 	{
-		cond << "Beame & Whiteside TCP/IP not detected\n";
+		GCon->Log(NAME_DevNet, "Beame & Whiteside TCP/IP not detected");
 		return -1;
 	}
 	netmask = 0xffffffff >> (32 - ethdevinfo.subnetMask);
@@ -321,7 +321,7 @@ int BW_Init(void)
 
 	if ((net_controlsocket = BW_OpenSocket(0)) == -1)
 	{
-		cond << "BW_Init unable to open control socket; disabled\n";
+		GCon->Log(NAME_DevNet, "BW_Init unable to open control socket; disabled");
 		return -1;
 	}
 
@@ -331,7 +331,7 @@ int BW_Init(void)
 	if (colon)
 		*colon = 0;
 
-	con << "BW_Init: UDP initialized\n";
+	GCon->Log(NAME_Init, "BW_Init: UDP initialized");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -405,7 +405,8 @@ int BW_OpenSocket(int port)
 	regs.x.dx = __tb & 0xf;
 	if (dos_int86(0x21, &regs))
 	{
-		con << "BW_OpenSocket failed: " << BW_TranslateError(regs.x.ax) << endl;
+		GCon->Logf(NAME_DevNet, "BW_OpenSocket failed: %d", 
+			BW_TranslateError(regs.x.ax));
 		return -1;
 	}
 	s = regs.x.ax;
@@ -418,13 +419,13 @@ int BW_OpenSocket(int port)
 
 	if (BW_ioctl(s, reuse_msg, 2))
 	{
-		con << "BW_OpenSocket ioctl(reuse) failed\n";
+		GCon->Log(NAME_DevNet, "BW_OpenSocket ioctl(reuse) failed");
 		return -1;
 	}
 
 	if (BW_ioctl(s, nonblock_msg, 2))
 	{
-		con << "BW_OpenSocket ioctl(nonblocking) failed\n";
+		GCon->Log(NAME_DevNet, "BW_OpenSocket ioctl(nonblocking) failed");
 		return -1;
 	}
 
@@ -468,7 +469,8 @@ int BW_CloseSocket(int socket)
 	regs.x.bx = socket;
 	if (dos_int86(0x21, &regs))
 	{
-		con << "BW_CloseSocket " << socket << " failed: " << BW_TranslateError(regs.x.ax) << endl;
+		GCon->Logf(NAME_DevNet, "BW_CloseSocket %d failed: %d", socket, 
+			BW_TranslateError(regs.x.ax));
 		return -1;
 	}
 	return 0;
@@ -532,7 +534,8 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 	regs.x.bx = s;
 	if (dos_int86(0x21, &regs))
 	{
-		con << "BW UDP read error: " << BW_TranslateError(regs.x.ax) << endl;
+		GCon->Logf(NAME_DevNet, "BW UDP read error: %d", 
+			BW_TranslateError(regs.x.ax));
 		return -1;
 	}
 
@@ -552,7 +555,7 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 	copylen = info2->dataLenPlus8 - 8;
 	if (copylen > len)
 	{
-		con << "BW UDP read packet too large: " << copylen << endl;
+		GCon->Logf(NAME_DevNet, "BW UDP read packet too large: %d", copylen);
 		return -1;
 	}
 	memcpy(buf, info2->data, copylen);
@@ -596,7 +599,7 @@ int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 	regs.x.dx = __tb & 0xf;
 	if (dos_int86(0x21, &regs))
 	{
-		con << "BW_Write failed: " << BW_TranslateError(regs.x.ax) << endl;
+		GCon->Logf(NAME_DevNet, "BW_Write failed: %d", BW_TranslateError(regs.x.ax));
 		return -1;
 	}
 
@@ -638,7 +641,8 @@ int BW_Broadcast(int s, byte *msg, int len)
 	regs.x.dx = __tb & 0xf;
 	if (dos_int86(0x21, &regs))
 	{
-		con << "BW_Broadcast failed: " << BW_TranslateError(regs.x.ax) << endl;
+		GCon->Logf(NAME_DevNet, "BW_Broadcast failed: %d",
+			BW_TranslateError(regs.x.ax));
 		return -1;
 	}
 
@@ -828,9 +832,12 @@ int BW_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
+//	Revision 1.4  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
 //
 //**************************************************************************

@@ -182,7 +182,7 @@ static int _IPX_GetFunction(void)
 	__dpmi_simulate_real_mode_interrupt(0x2f, &regs);
 	if (regs.h.al != 0xff)
 	{
-		con << "IPX not detected\n";
+		GCon->Log(NAME_Init, "IPX not detected");
 		return -1;
 	}
 	ipx_cs = regs.x.es;
@@ -207,17 +207,17 @@ static int _IPX_OpenSocket(word port)
 	__dpmi_simulate_real_mode_procedure_retf(&regs);
 	if (regs.h.al == 0xfe)
 	{
-		cond << "_IPX_OpenSocket: all sockets in use\n";
+		GCon->Log(NAME_DevNet, "_IPX_OpenSocket: all sockets in use");
 		return -1;
 	}
 	if (regs.h.al == 0xff)
 	{
-		cond << "_IPX_OpenSocket: socket already open\n";
+		GCon->Log(NAME_DevNet, "_IPX_OpenSocket: socket already open");
 		return -1;
 	}
 	if (regs.h.al)
 	{
-		cond << "_IPX_OpenSocket: error " << hex << (int)regs.h.al << endl;
+		GCon->Logf(NAME_DevNet, "_IPX_OpenSocket: error %02x", regs.h.al);
 		return -1;
 	}
     return regs.x.dx;
@@ -277,7 +277,7 @@ static int _IPX_SendPacket(unsigned int offset)
 	__dpmi_simulate_real_mode_procedure_retf(&regs);
 	if (regs.h.al)
 	{
-		cond << "_IPX_SendPacket: 0x" << hex << (int)regs.h.al << endl;
+		GCon->Logf(NAME_DevNet, "_IPX_SendPacket: 0x%02x", regs.h.al);
 		return -1;
 	}
 	return 0;
@@ -299,7 +299,7 @@ static int _IPX_ListenForPacket(unsigned int offset)
 	__dpmi_simulate_real_mode_procedure_retf(&regs);
 	if (regs.h.al)
 	{
-		cond << "_IPX_ListenForPacket: 0x" << hex << (int)regs.h.al << endl;
+		GCon->Logf(NAME_DevNet, "_IPX_ListenForPacket: 0x%02x", regs.h.al);
         return -1;
 	}
     return 0;
@@ -354,7 +354,7 @@ static int _InitDOSMemory()
 	packets_info.size = (LOWMEMSIZE + 15) / 16;
 	if (_go32_dpmi_allocate_dos_memory(&packets_info))
 	{
-		con << "Not enough low memory\n";
+		GCon->Log(NAME_Init, "Not enough low memory");
 		return -1;
 	}
     packets_offset = packets_info.rm_segment << 4;
@@ -498,7 +498,7 @@ int IPX_Init(void)
 	if (net_controlsocket == -1)
 	{
 	    _FreeDOSMemory();
-		cond << "IPX_Init: Unable to open control socket\n";
+		GCon->Log(NAME_DevNet, "IPX_Init: Unable to open control socket");
 		return -1;
 	}
 
@@ -511,7 +511,7 @@ int IPX_Init(void)
 		*colon = 0;
 
 	ipxAvailable = true;
-	con << "IPX initialized\n";
+	GCon->Log(NAME_Init, "IPX initialized");
 	return net_controlsocket;
 }
 
@@ -650,7 +650,7 @@ int IPX_Connect(int handle, sockaddr_t *addr)
 	_GetPacket(BasePacket[handle], &packet);
 	if (_IPX_GetLocalTarget(&ipxaddr, packet.ecb.ImmediateAddress))
 	{
-		con << "Get Local Target failed\n";
+		GCon->Log(NAME_DevNet, "Get Local Target failed");
 		return -1;
 	}
 	_PutPacket(BasePacket[handle], &packet);
@@ -723,7 +723,7 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 
 	if (packet.ecb.CompletionCode)
 	{
-		con << "Warning: IPX_Read error " << packet.ecb.CompletionCode << endl;
+		GCon->Logf(NAME_Init, "Warning: IPX_Read error %d", packet.ecb.CompletionCode);
 		packet.ecb.fSize = sizeof(packet_t) - sizeof(ECB);
 		_PutPacket(packetnum, &packet);
 		_IPX_ListenForPacket(_PacketOffset(packetnum));
@@ -782,12 +782,13 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 
 		case 0xfd: // malformed packet
 		default:
-			con << "IPX driver send failure: " << (int)_PacketCompletionCode(BasePacket[handle]) << endl;
+			GCon->Logf(NAME_DevNet, "IPX driver send failure: %d", 
+				(int)_PacketCompletionCode(BasePacket[handle]));
 			break;
 
 		case 0xfe: // packet undeliverable
 		case 0xff: // unable to send packet
-			con << "IPX lost route, trying to re-establish\n";
+			GCon->Log(NAME_DevNet, "IPX lost route, trying to re-establish");
 
 			// look for a new route
 			_GetPacket(BasePacket[handle], &packet);
@@ -813,9 +814,7 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 	// ipx header : destination
 	// set the address
 	memcpy(&packet.ipx.destination, &((sockaddr_ipx*)addr)->sipx_addr, sizeof(IPXAddr));
-//#ifndef FIXME
 	memcpy(packet.ecb.ImmediateAddress, ((sockaddr_ipx*)addr)->sipx_addr.node, 6);
-//#endif
 
 	// sequence number
     packet.sequence = Sequence[handle];
@@ -1022,9 +1021,12 @@ int IPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

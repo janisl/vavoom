@@ -569,89 +569,198 @@ void FL_ExtractFileExtension(const char *path, char *dest)
 
 //==========================================================================
 //
-//  TFile::OpenRead
+//	FArchiveFileReader
 //
 //==========================================================================
 
-bool TFile::OpenRead(const char* filename)
+class FArchiveFileReader:public FArchive
 {
-	handle = Sys_FileOpenRead(filename);
-	return handle != -1;
+public:
+	FArchiveFileReader(FILE* InFile, FOutputDevice *InError) 
+		: File(InFile), Error(InError)
+	{
+		guard(FArchiveFileReader::FArchiveFileReader);
+		fseek(File, 0, SEEK_SET);
+		ArIsLoading = true;
+		ArIsPersistent = true;
+		unguard;
+	}
+	~FArchiveFileReader()
+	{
+		guard(FArchiveFileReader::~FArchiveFileReader);
+		if (File)
+			Close();
+		unguard;
+	}
+	void Seek(int InPos)
+	{
+		guard(FArchiveFileReader::Seek);
+		if (fseek(File, InPos, SEEK_SET))
+		{
+			ArIsError = true;
+			//Error->Logf("seek Failed %i/%i: %i %i", InPos, Size, Pos, ferror(File) );
+		}
+		unguard;
+	}
+	int Tell(void)
+	{
+		return ftell(File);
+	}
+	int TotalSize(void)
+	{
+		int CurPos = ftell(File);
+		fseek(File, 0, SEEK_END);
+		int Size = ftell(File);
+		fseek(File, CurPos, SEEK_SET);
+		return Size;
+	}
+	bool AtEnd(void)
+	{
+		return !!feof(File);
+	}
+	bool Close(void)
+	{
+		guardSlow(FArchiveFileReader::Close);
+		if (File)
+			fclose(File);
+		File = NULL;
+		return !ArIsError;
+		unguardSlow;
+	}
+	void Serialize(void* V, int Length)
+	{
+		guardSlow(FArchiveFileReader::Serialize);
+		if (fread(V, Length, 1, File) != 1)
+		{
+			ArIsError = true;
+			Error->Logf("fread failed: Length=%i Error=%i", Length, ferror(File));
+		}
+		unguardSlow;
+	}
+protected:
+	FILE *File;
+	FOutputDevice *Error;
+};
+
+FArchive* FL_OpenFileRead(const char *Name)
+{
+	char TmpName[256];
+
+	if (!FL_FindFile(Name, TmpName))
+	{
+		return NULL;
+	}
+	FILE *File = fopen(TmpName, "rb");
+	if (!File)
+	{
+		return NULL;
+	}
+	return new FArchiveFileReader(File, GCon);
 }
 
 //==========================================================================
 //
-//  TFile::OpenWrite
+//	FArchiveFileWriter
 //
 //==========================================================================
 
-bool TFile::OpenWrite(const char* filename)
+class FArchiveFileWriter:public FArchive
 {
-	handle = Sys_FileOpenWrite(filename);
-	return handle != -1;
-}
+public:
+	FArchiveFileWriter(FILE *InFile, FOutputDevice *InError) 
+		: File(InFile), Error(InError)
+	{
+		guard(FArchiveFileWriter::FArchiveFileReader);
+		ArIsSaving = true;
+		ArIsPersistent = true;
+		unguard;
+	}
+	~FArchiveFileWriter()
+	{
+		guard(FArchiveFileWriter::~FArchiveFileWriter);
+		if (File)
+			Close();
+		unguard;
+	}
+	void Seek(int InPos)
+	{
+		guard(FArchiveFileWriter::Seek);
+		if (fseek(File, InPos, SEEK_SET))
+		{
+			ArIsError = true;
+			//Error->Logf( TEXT("seek Failed %i/%i: %i %i"), InPos, Size, Pos, ferror(File) );
+		}
+		unguard;
+	}
+	int Tell(void)
+	{
+		return ftell(File);
+	}
+	int TotalSize(void)
+	{
+		int CurPos = ftell(File);
+		fseek(File, 0, SEEK_END);
+		int Size = ftell(File);
+		fseek(File, CurPos, SEEK_SET);
+		return Size;
+	}
+	bool AtEnd(void)
+	{
+		return !!feof(File);
+	}
+	bool Close(void)
+	{
+		guardSlow(FArchiveFileWriter::Close);
+		if (File && fclose(File))
+		{
+			ArIsError = true;
+			Error->Logf("fclose failed");
+		}
+		File = NULL;
+		return !ArIsError;
+		unguardSlow;
+	}
+	void Serialize(void* V, int Length)
+	{
+		guardSlow(FArchiveFileWriter::Serialize);
+		if (fwrite(V, Length, 1, File) != 1)
+		{
+			ArIsError = true;
+			Error->Logf("fwrite failed: Length=%i Error=%i", Length, ferror(File));
+		}
+		unguardSlow;
+	}
+	void Flush()
+	{
+		if (fflush(File))
+		{
+			ArIsError = true;
+			Error->Logf("WriteFailed");
+		}
+	}
+protected:
+	FILE *File;
+	FOutputDevice *Error;
+};
 
-//==========================================================================
-//
-//	TFile::Read
-//
-//==========================================================================
-
-int TFile::Read(void* buf, int size)
+FArchive* FL_OpenFileWrite(const char *Name)
 {
-	return Sys_FileRead(handle, buf, size);
-}
+	char TmpName[256];
 
-//==========================================================================
-//
-//	TFile::Write
-//
-//==========================================================================
-
-int TFile::Write(const void* buf, int size)
-{
-	return Sys_FileWrite(handle, buf, size);
-}
-
-//==========================================================================
-//
-//	TFile::Size
-//
-//==========================================================================
-
-int TFile::Size(void)
-{
-	return Sys_FileSize(handle);
-}
-
-//==========================================================================
-//
-//	TFile::Seek
-//
-//==========================================================================
-
-int TFile::Seek(int offset)
-{
-	return Sys_FileSeek(handle, offset);
-}
-
-//==========================================================================
-//
-//	TFile::Close
-//
-//==========================================================================
-
-int TFile::Close(void)
-{
-	return Sys_FileClose(handle);
+	sprintf(TmpName, "%s/%s", fl_gamedir, Name);
+	FILE *File = fopen(TmpName, "wb");
+	return new FArchiveFileWriter(File, GCon);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.11  2002/02/22 18:09:49  dj_jl
 //	Some improvements, beautification.
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

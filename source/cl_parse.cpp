@@ -830,7 +830,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_print:
-			con << net_msg.ReadString() << endl;
+			C_NotifyMessage(net_msg.ReadString());
 			break;
 
 		 case svc_center_print:
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.24  2002/03/28 17:59:04  dj_jl
 //	Fixed negative frags.
-//
+//	
 //	Revision 1.23  2002/03/12 19:21:55  dj_jl
 //	No need for linefeed in client-printing
 //	

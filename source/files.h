@@ -32,21 +32,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class TFile
-{
- public:
-	bool OpenRead(const char *);
-	bool OpenWrite(const char *);
-	int Read(void* buf, int size);
-	int Write(const void* buf, int size);
-	int Size();
-	int Seek(int);
-	int Close();
-
- protected:
-	int handle;
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void FL_Init(void);
@@ -63,6 +48,9 @@ bool FL_FindFile(const char *fname, char *dest);
 int FL_ReadFile(const char* name, void** buffer, int tag);
 bool FL_WriteFile(const char* name, const void* source, int length);
 
+FArchive* FL_OpenFileRead(const char *Name);
+FArchive* FL_OpenFileWrite(const char *Name);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern bool		fl_devmode;
@@ -72,9 +60,12 @@ extern char		fl_gamedir[MAX_OSPATH];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/09 14:34:24  dj_jl
 //	Added MAX_VPATH
 //	

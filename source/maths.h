@@ -48,10 +48,15 @@
 
 class TAVec
 {
- public:
+public:
 	float pitch;
 	float yaw;
 	float roll;
+
+	friend FArchive& operator << (FArchive &Ar, TAVec &v)
+	{
+		return Ar << v.pitch << v.yaw << v.roll;
+	}
 };
 
 // HEADER FILES ------------------------------------------------------------
@@ -188,9 +193,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/01 17:45:16  dj_jl
 //	Added additional fields to TPlane
 //	

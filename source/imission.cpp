@@ -97,7 +97,6 @@ void IM_Start(void)
 
 	cl.intermission = 1;
 	cl.palette = 0;
-	C_ClearNotify();
 	AM_Stop();
 	SN_StopAllSequences();
 
@@ -133,9 +132,12 @@ void IM_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

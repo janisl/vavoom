@@ -41,11 +41,13 @@
 //	C++ headers
 #include <iostream.h>
 #include <iomanip.h>
-#include <fstream.h>
 
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "misc.h"		//	Misc utilites
+#include "zone.h"		//	Zone memory allocation
+#include "archive.h"
+#include "array.h"		//	Dynamic arrays
 #include "vector.h"
 #include "maths.h"
 #include "sizebuf.h"
@@ -55,8 +57,6 @@
 #include "infostr.h"
 #include "debug.h"		//	Debug file
 #include "system.h"		//	System specific routines
-#include "zone.h"		//	Zone memory allocation
-#include "array.h"		//	Dynamic arrays
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
@@ -94,9 +94,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.20  2002/04/11 16:39:21  dj_jl
 //	Seperated build setings.
-//
+//	
 //	Revision 1.19  2002/03/28 18:06:11  dj_jl
 //	Updated version.
 //	

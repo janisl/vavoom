@@ -86,17 +86,17 @@ int MPATH_Init(void)
 	flat_selector = __dpmi_allocate_ldt_descriptors(1);
 	if (flat_selector == -1)
 	{
-		con << "MPATH_Init: Can't get flat selector\n";
+		GCon->Log(NAME_Init, "MPATH_Init: Can't get flat selector");
 		return -1;
 	}
 	if (__dpmi_set_segment_base_address(flat_selector, 0) == -1)
 	{
-		con << "MPATH_Init: Can't seg flat base!\n";
+		GCon->Log(NAME_Init, "MPATH_Init: Can't seg flat base!");
 		return -1;
 	}
 	if (__dpmi_set_segment_limit(flat_selector, 0xffffffff) == -1)
 	{
-		con << "MPATH_Init: Can't set segment limit\n";
+		GCon->Log(NAME_Init, "MPATH_Init: Can't set segment limit");
 		return -1;
 	}
 
@@ -140,7 +140,7 @@ int MPATH_Init(void)
 	if (colon)
 		*colon = 0;
 
-	con << "MPath Initialized\n";
+	GCon->Log(NAME_Init, "MPath Initialized");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -324,7 +324,7 @@ int MPATH_Broadcast(int socket, byte *buf, int len)
 		// make this socket broadcast capable
 		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) < 0)
 		{
-			con << "Unable to make socket broadcast capable\n";
+			GCon->Log(NAME_DevNet, "Unable to make socket broadcast capable");
 			return -1;
 		}
 
@@ -541,9 +541,12 @@ int MPATH_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

@@ -160,9 +160,9 @@ void NET_Init(void)
 	}
 
 	if (*my_ipx_address)
-		cond << "IPX address " << my_ipx_address << endl;
+		GCon->Logf(NAME_DevNet, "IPX address %s", my_ipx_address);
 	if (*my_tcpip_address)
-		cond << "TCP/IP address " << my_tcpip_address << endl;
+		GCon->Logf(NAME_DevNet, "TCP/IP address %s", my_tcpip_address);
 }
 
 //==========================================================================
@@ -352,7 +352,7 @@ COMMAND(Listen)
 {
 	if (Argc() != 2)
 	{
-		con << "\"listen\" is \"" << (listening ? 1 : 0) << "\"\n";
+		GCon->Logf("\"listen\" is \"%d\"", listening ? 1 : 0);
 		return;
 	}
 
@@ -380,14 +380,14 @@ COMMAND(Port)
 
 	if (Argc() != 2)
 	{
-		con << "\"port\" is \"" << net_hostport << "\"\n";
+		GCon->Logf("\"port\" is \"%d\"", net_hostport);
 		return;
 	}
 
 	n = atoi(Argv(1));
 	if (n < 1 || n > 65534)
 	{
-		con << "Bad value, must be between 1 and 65534\n";
+		GCon->Log("Bad value, must be between 1 and 65534");
 		return;
 	}
 
@@ -412,8 +412,8 @@ COMMAND(Port)
 
 static void PrintSlistHeader(void)
 {
-	con << "Server          Map             Users\n";
-	con << "--------------- --------------- -----\n";
+	GCon->Log("Server          Map             Users");
+	GCon->Log("--------------- --------------- -----");
 	slistLastShown = 0;
 }
 
@@ -429,11 +429,11 @@ static void PrintSlist(void)
 
 	for (n = slistLastShown; n < hostCacheCount; n++)
 	{
-//		con << setw(15) << hostcache[n].name << " " << setw(-15) << hostcache[n].map;
-		con << va("%-15s %-15s", hostcache[n].name, hostcache[n].map);
 		if (hostcache[n].maxusers)
-			con << " " << setw(2) << hostcache[n].users << "/" << setw(2) << hostcache[n].maxusers;
-		con << endl;
+			GCon->Logf("%-15s %-15s %2d/%2d", hostcache[n].name, 
+				hostcache[n].map, hostcache[n].users, hostcache[n].maxusers);
+		else
+			GCon->Logf("%-15s %-15s", hostcache[n].name, hostcache[n].map);
 	}
 	slistLastShown = n;
 }
@@ -447,9 +447,10 @@ static void PrintSlist(void)
 static void PrintSlistTrailer(void)
 {
 	if (hostCacheCount)
-		con << "== end list ==\n\n";
+		GCon->Log("== end list ==");
 	else
-		con << "No Vavoom servers found.\n\n";
+		GCon->Log("No Vavoom servers found.");
+	GCon->Log("");
 }
 
 //==========================================================================
@@ -520,7 +521,7 @@ void NET_Slist(void)
 
 	if (!slistSilent)
 	{
-		con << "Looking for Vavoom servers...\n";
+		GCon->Log("Looking for Vavoom servers...");
 		PrintSlistHeader();
 	}
 
@@ -595,7 +596,9 @@ qsocket_t *NET_Connect(char *host)
 		if (hostCacheCount != 1)
 			return NULL;
 		host = hostcache[0].cname;
-		con << "Connecting to...\n" << hostcache[0].name << " @ " << host << "\n\n";
+		GCon->Log("Connecting to...");
+		GCon->Logf("%s @ %s", hostcache[0].name, host);
+		GCon->Log("");
 	}
 
 	if (hostCacheCount)
@@ -624,7 +627,6 @@ JustDoIt:
 
 	if (host)
 	{
-		con << endl;
 		PrintSlistHeader();
 		PrintSlist();
 		PrintSlistTrailer();
@@ -710,7 +712,7 @@ int	NET_GetMessage(qsocket_t *sock)
 
 	if (sock->disconnected)
 	{
-		con << "NET_GetMessage: disconnected socket\n";
+		GCon->Log(NAME_DevNet, "NET_GetMessage: disconnected socket");
 		return -1;
 	}
 
@@ -764,7 +766,7 @@ int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
 
 	if (sock->disconnected)
 	{
-		con << "NET_SendMessage: disconnected socket\n";
+		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
 		return -1;
 	}
 
@@ -791,7 +793,7 @@ int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 
 	if (sock->disconnected)
 	{
-		con << "NET_SendMessage: disconnected socket\n";
+		GCon->Log(NAME_DevNet, "NET_SendMessage: disconnected socket");
 		return -1;
 	}
 
@@ -890,9 +892,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.8  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

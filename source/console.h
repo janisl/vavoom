@@ -29,6 +29,22 @@
 
 // TYPES -------------------------------------------------------------------
 
+// An output device.
+class FOutputDevice
+{
+public:
+	// FOutputDevice interface.
+	virtual void Serialize(const char* V, EName Event) = 0;
+
+	// Simple text printing.
+	void Log(const char* S);
+	void Log(EName Type, const char* S);
+	void Log(const FString& S);
+	void Log(EName Type, const FString& S);
+	void Logf(const char* Fmt, ...);
+	void Logf(EName Type, const char* Fmt, ...);
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void C_Init(void);
@@ -39,6 +55,7 @@ void C_Start(void);
 void C_StartFull(void);
 void C_Stop(void);
 void C_ClearNotify(void);
+void C_NotifyMessage(const char *msg);
 void C_CenterMessage(const char *msg);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -46,12 +63,17 @@ void C_CenterMessage(const char *msg);
 extern ostream			con;
 extern ostream			cond;
 
+extern FOutputDevice	*GCon;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/08/15 17:26:35  dj_jl
 //	Made console not active when closing
 //	

@@ -71,6 +71,24 @@ inline dword GetTypeHash(const char *S)
 
 //==========================================================================
 //
+//
+//
+//==========================================================================
+
+FArchive& operator << (FArchive& Ar, FNameEntry& E)
+{
+	byte Size;
+	if (Ar.IsSaving())
+	{
+		Size = strlen(E.Name) + 1;
+	}
+	Ar << Size;
+	Ar.Serialize(E.Name, Size);
+	return Ar;
+}
+
+//==========================================================================
+//
 //	AllocateNameEntry
 //
 //==========================================================================
@@ -216,9 +234,12 @@ void FName::DeleteEntry(int i)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.3  2002/01/11 08:10:12  dj_jl
 //	Map empty strings to NAME_None
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

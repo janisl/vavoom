@@ -696,6 +696,79 @@ void* W_CacheLumpName(const char* name,int tag)
 
 //==========================================================================
 //
+//	W_CreateLumpReader
+//
+//==========================================================================
+
+class FArchiveLumpReader:public FArchive
+{
+public:
+	FArchiveLumpReader(byte* InData, int InSize, int InTag)
+		: Data(InData), Pos(0), Size(InSize), Tag(InTag)
+	{
+		ArIsLoading = true;
+		ArIsPersistent = true;
+	}
+	~FArchiveLumpReader(void)
+	{
+		if (Data)
+			Close();
+	}
+	void Serialize(void* V, int Length)
+	{
+		if (Length > Size - Pos)
+		{
+			ArIsError = true;
+		}
+		memcpy(V, Data + Pos, Length);
+		Pos += Length;
+	}
+	int Tell(void)
+	{
+		return Pos;
+	}
+	int TotalSize(void)
+	{
+		return Size;
+	}
+	bool AtEnd(void)
+	{
+		return Pos >= Size;
+	}
+	void Seek(int InPos)
+	{
+		Pos = InPos;
+	}
+	bool Close(void)
+	{
+		if (Tag)
+			Z_ChangeTag(Data, Tag);
+		else
+			Z_Free(Data);
+		return !ArIsError;
+	}
+
+protected:
+	byte *Data;
+	int Pos;
+	int Size;
+	int Tag;
+};
+
+FArchive* W_CreateLumpReader(const char* name, int tag)
+{
+	int UseTag = tag;
+	if (UseTag == 0 || UseTag == PU_CACHE)
+	{
+		UseTag = PU_STATIC;
+	}
+	int LumpNum = W_GetNumForName(name);
+	return new FArchiveLumpReader((byte *)W_CacheLumpNum(LumpNum, tag), 
+		W_LumpLength(LumpNum), tag);
+}
+
+//==========================================================================
+//
 //  W_ForEachLump
 //
 //==========================================================================
@@ -785,6 +858,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/05/18 16:56:35  dj_jl
+//  Added FArchive and FOutputDevice classes.
+//
 //  Revision 1.9  2002/01/07 12:16:43  dj_jl
 //  Changed copyright year
 //

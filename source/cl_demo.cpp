@@ -36,10 +36,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-//#define USEZLIB
-#ifdef USEZLIB
-#include <zlib.h>
-#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -58,10 +54,6 @@ void CL_Disconnect(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-#ifdef USEZLIB
-static gzFile		gzdemofile;
-#endif
 
 // CODE --------------------------------------------------------------------
 
@@ -101,12 +93,7 @@ void CL_StopPlayback(void)
 		return;
 	}
 
-#ifdef USEZLIB
-	gzclose(gzdemofile);
-	gzdemofile = NULL;
-#else
-	fclose(cls.demofile);
-#endif
+	delete cls.demofile;
 	cls.demoplayback = false;
 	cls.demofile = NULL;
 	cls.state = ca_disconnected;
@@ -127,31 +114,10 @@ void CL_StopPlayback(void)
 
 void CL_WriteDemoMessage(void)
 {
-	int len;
-	float a;
-
-#ifdef USEZLIB
-	len = LittleLong(net_msg.CurSize);
-	gzwrite(gzdemofile, &len, 4);
-	a = LittleFloat(cl.viewangles.pitch);
-	gzwrite(gzdemofile, &a, 4);
-	a = LittleFloat(cl.viewangles.yaw);
-	gzwrite(gzdemofile, &a, 4);
-	a = LittleFloat(cl.viewangles.roll);
-	gzwrite(gzdemofile, &a, 4);
-	gzwrite(gzdemofile, net_msg.Data, net_msg.CurSize);
-#else
-	len = LittleLong(net_msg.CurSize);
-	fwrite(&len, 4, 1, cls.demofile);
-	a = LittleFloat(cl.viewangles.pitch);
-	fwrite(&a, 4, 1, cls.demofile);
-	a = LittleFloat(cl.viewangles.yaw);
-	fwrite(&a, 4, 1, cls.demofile);
-	a = LittleFloat(cl.viewangles.roll);
-	fwrite(&a, 4, 1, cls.demofile);
-	fwrite(net_msg.Data, net_msg.CurSize, 1, cls.demofile);
-	fflush(cls.demofile);
-#endif
+	*cls.demofile << net_msg.CurSize;
+	*cls.demofile << cl.viewangles;
+	cls.demofile->Serialize(net_msg.Data, net_msg.CurSize);
+	cls.demofile->Flush();
 }
 
 //==========================================================================
@@ -165,7 +131,6 @@ void CL_WriteDemoMessage(void)
 int CL_GetMessage(void)
 {
 	int r;
-	float a;
 
 	if (cls.demoplayback)
 	{
@@ -193,35 +158,14 @@ int CL_GetMessage(void)
 		}
 
 		// get the next message
-#ifdef USEZLIB
-		gzread(gzdemofile, &net_msg.CurSize, 4);
+		*cls.demofile << net_msg.CurSize;
 //		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
-		gzread(gzdemofile, &a, 4);
-		cl.viewangles.pitch = LittleFloat(a);
-		gzread(gzdemofile, &a, 4);
-		cl.viewangles.yaw = LittleFloat(a);
-		gzread(gzdemofile, &a, 4);
-		cl.viewangles.roll = LittleFloat(a);
-#else
-		fread(&net_msg.CurSize, 4, 1, cls.demofile);
-//		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
-		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.pitch = LittleFloat(a);
-		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.yaw = LittleFloat(a);
-		fread(&a, 4, 1, cls.demofile);
-		cl.viewangles.roll = LittleFloat(a);
-#endif
+		*cls.demofile << cl.viewangles;
 
-		net_msg.CurSize = LittleLong(net_msg.CurSize);
 		if (net_msg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
-#ifdef USEZLIB
-		r = gzread(gzdemofile, net_msg.Data, net_msg.CurSize);
-#else
-		r = fread(net_msg.Data, net_msg.CurSize, 1, cls.demofile);
-#endif
-		if (r != 1)
+		cls.demofile->Serialize(net_msg.Data, net_msg.CurSize);
+		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
 			return 0;
@@ -230,7 +174,7 @@ int CL_GetMessage(void)
 		return 1;
 	}
 
-	while (1)
+	do
 	{
 		r = NET_GetMessage(cls.netcon);
 
@@ -243,6 +187,7 @@ int CL_GetMessage(void)
 		else
 			break;
 	}
+	while (1);
 
 	if (cls.demorecording)
 	{
@@ -266,12 +211,7 @@ void CL_StopRecording(void)
 	CL_WriteDemoMessage();
 
 	// finish up
-#ifdef USEZLIB
-	gzclose(gzdemofile);
-	gzdemofile = NULL;
-#else
-	fclose(cls.demofile);
-#endif
+	delete cls.demofile;
 	cls.demofile = NULL;
 	cls.demorecording = false;
 	con << "Completed demo\n";
@@ -311,7 +251,7 @@ COMMAND(StopDemo)
 COMMAND(Record)
 {
 	int		c;
-	char	name[512];
+	char	name[MAX_VPATH];
 
 	if (cmd_source != src_command)
 	{
@@ -339,7 +279,7 @@ COMMAND(Record)
 	}
 
 	Sys_CreateDirectory(va("%s/demos", fl_gamedir));
-	sprintf(name, "%s/demos/%s", fl_gamedir, Argv(1));
+	sprintf(name, "demos/%s", Argv(1));
 
 	//
 	// start the map up
@@ -355,25 +295,14 @@ COMMAND(Record)
 	FL_DefaultExtension(name, ".dem");
 
 	con << "recording to " << name << ".\n";
-#ifdef USEZLIB
-	gzdemofile = gzopen(name, "wb9");
-	if (!gzdemofile)
-	{
-		con << "ERROR: couldn't open.\n";
-		return;
-	}
-
-	gzwrite(gzdemofile, "VDEM", 4);
-#else
-	cls.demofile = fopen(name, "wb");
+	cls.demofile = FL_OpenFileWrite(name);
 	if (!cls.demofile)
 	{
 		con << "ERROR: couldn't open.\n";
 		return;
 	}
 
-	fwrite("VDEM", 1, 4, cls.demofile);
-#endif
+	cls.demofile->Serialize("VDEM", 4);
 
 	cls.demorecording = true;
 }
@@ -389,7 +318,6 @@ COMMAND(Record)
 COMMAND(PlayDemo)
 {
 	char	name[256];
-	char	fname[MAX_OSPATH];
 	char	magic[8];
 
 	if (cmd_source != src_command)
@@ -415,44 +343,22 @@ COMMAND(PlayDemo)
 	FL_DefaultExtension(name, ".dem");
 
 	con << "Playing demo from " << name << ".\n";
-	if (!FL_FindFile(name, fname))
-	{
-		con << "ERROR: not found\n";
-		return;
-	}
-#ifdef USEZLIB
-	gzdemofile = gzopen(fname, "rb");
-	if (!gzdemofile)
-	{
-		con << "ERROR: couldn't open.\n";
-		return;
-	}
-
-	gzread(gzdemofile, magic, 4);
-	magic[4] = 0;
-	if (strcmp(magic, "VDEM"))
-	{
-		gzclose(gzdemofile);
-		con << "ERROR: not a Vavoom demo.\n";
-		return;
-	}
-#else
-	cls.demofile = fopen(fname, "rb");
+	cls.demofile = FL_OpenFileRead(name);
 	if (!cls.demofile)
 	{
 		con << "ERROR: couldn't open.\n";
 		return;
 	}
 
-	fread(magic, 1, 4, cls.demofile);
+	cls.demofile->Serialize(magic, 4);
 	magic[4] = 0;
 	if (strcmp(magic, "VDEM"))
 	{
-		fclose(cls.demofile);
+		delete cls.demofile;
+		cls.demofile = NULL;
 		con << "ERROR: not a Vavoom demo.\n";
 		return;
 	}
-#endif
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
@@ -492,9 +398,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

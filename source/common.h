@@ -72,6 +72,8 @@
 #define MAXINT      ((int)0x7fffffff)
 #define MAXLONG     ((long)0x7fffffff)
 
+enum ENoInit { E_NoInit };
+
 typedef int					boolean;	//	Must be 4 bytes long
 typedef unsigned char 		byte;
 typedef unsigned short	 	word;
@@ -143,12 +145,27 @@ public:
 	explicit RecoverableError(const char *text) : VavoomError(text) { }
 };
 
+//==========================================================================
+//
+//	Forward declarations
+//
+//==========================================================================
+
+class	FName;
+class	FArchive;
+
+class	VObject;
+class		VClass;
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.10  2002/04/11 16:40:06  dj_jl
 //	Added __declspec modifiers.
-//
+//	
 //	Revision 1.9  2002/03/28 18:05:51  dj_jl
 //	Disabled some Borland warnings.
 //	

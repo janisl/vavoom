@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include <fstream.h>
 
 //#define REAL_TIME
 
@@ -604,9 +605,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.20  2002/04/11 16:40:57  dj_jl
 //	Safe core dumps.
-//
+//	
 //	Revision 1.19  2002/02/22 18:09:51  dj_jl
 //	Some improvements, beautification.
 //	

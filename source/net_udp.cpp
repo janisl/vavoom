@@ -117,7 +117,7 @@ int UDP_Init(void)
 	if (colon)
 		*colon = 0;
 
-	con << "UDP Initialized\n";
+	GCon->Log(NAME_Init, "UDP Initialized");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -295,7 +295,7 @@ int UDP_Broadcast(int socket, byte *buf, int len)
 		// make this socket broadcast capable
 		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) < 0)
 		{
-			con << "Unable to make socket broadcast capable\n";
+			GCon->Log(NAME_DevNet, "Unable to make socket broadcast capable");
 			return -1;
 		}
 
@@ -512,9 +512,12 @@ int UDP_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

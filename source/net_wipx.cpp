@@ -87,7 +87,7 @@ int WIPX_Init(void)
 
 		if (r)
 		{
-			con << "Winsock initialization failed.\n";
+			GCon->Log(NAME_Init, "Winsock initialization failed.");
 			return -1;
 		}
 	}
@@ -122,7 +122,7 @@ int WIPX_Init(void)
     net_controlsocket = WIPX_OpenSocket(0);
 	if (net_controlsocket == -1)
 	{
-		con << "WIPX_Init: Unable to open control socket\n";
+		GCon->Log(NAME_Init, "WIPX_Init: Unable to open control socket");
 		if (--winsock_initialized == 0)
 			WSACleanup();
 		return -1;
@@ -139,7 +139,7 @@ int WIPX_Init(void)
 	if (p)
 		*p = 0;
 
-	con << "Winsock IPX Initialized\n";
+	GCon->Log(NAME_Init, "Winsock IPX Initialized");
 	ipxAvailable = true;
 
 	return net_controlsocket;
@@ -524,9 +524,12 @@ int WIPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/11 08:12:49  dj_jl
 //	Changes for MinGW
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

@@ -191,7 +191,7 @@ void Ser_Connect(void)
 	//
 	// wait for a good packet
 	//
-	con << "Attempting to connect across serial link, press escape to abort.\n";
+	GCon->Log("Attempting to connect across serial link, press escape to abort.");
 
 	//
 	// allow override of automatic player ordering to allow a slower computer
@@ -243,10 +243,10 @@ void Ser_Connect(void)
 	{
     	CheckAbort();
 
-		if (ReadPacket ())
+		if (ReadPacket())
 		{
 			packet[packetlen] = 0;
-			con << "read : " << packet << endl;
+			GCon->Log(NAME_DevNet, "read : %s", packet);
 			if (packetlen != 10)
 				continue;
 			if (strncmp(packet,"ID",2) )
@@ -266,7 +266,7 @@ void Ser_Connect(void)
 			oldsec = time.ti_sec;
 			sprintf (str,"ID%s_%i",idstr,localstage);
 			WritePacket (str,strlen(str));
-			con << "wrote: " << str << endl;
+			GCon->Log(NAME_DevNet, "wrote: %s", str);
 		}
 
 	} while (localstage < 2);
@@ -323,7 +323,7 @@ static void ReadModemCfg(void)
 	{
 		//	Use default settings
 		ComPort->SetModemConfig(true, NULL, NULL, NULL, NULL);
-		con << "Couldn't read MODEM.CFG\n";
+		GCon->Log(NAME_DevNet, "Couldn't read MODEM.CFG");
 		return;
 	}
 	ReadLine(f, startup);
@@ -348,7 +348,9 @@ static void Dial(void)
 {
 	int		p;
 
-	con << "\nDialing...\n\n";
+	GCon->Log("");
+	GCon->Log("Dialing...");
+	GCon->Log("");
 	p = M_CheckParm ("-dial");
 	if (ComPort->Connect(myargv[p + 1]))
     	I_Error("Dial failed\n");
@@ -366,7 +368,9 @@ static void Dial(void)
 
 static void Answer(void)
 {
-	con << "\nWaiting for ring...\n\n";
+	GCon->Log("");
+	GCon->Log("Waiting for ring...");
+	GCon->Log("");
 
     while (!ComPort->CheckForConnection())
     	CheckAbort();
@@ -485,11 +489,6 @@ int Serial_SendMessage(qsocket_t *sock, TSizeBuf *message)
     memcpy(sock->sendMessage, message->Data, message->CurSize);
     sock->sendMessageLength = message->CurSize;
 
-/*	cond << "Send [";
-    for (int i = 0; i < message->CurSize; i++)
-    	cond << (int)message->Data[i] << ' ';
-	cond << "]\n";*/
-
 	word		crc;
 	byte		buf[MAX_MSGLEN];
     TMessage	msg(buf, MAX_MSGLEN);
@@ -516,11 +515,6 @@ int Serial_SendMessage(qsocket_t *sock, TSizeBuf *message)
 
 int Serial_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *message)
 {
-/*	cond << "Send [";
-    for (int i = 0; i < message->CurSize; i++)
-    	cond << (int)message->Data[i] << ' ';
-	cond << "]\n";*/
-
 	word		crc;
 	byte		buf[MAX_MSGLEN];
     TMessage	msg(buf, MAX_MSGLEN);
@@ -602,7 +596,7 @@ int Serial_GetMessage(qsocket_t *sock)
 
 	if (msg.CurSize != len)
     {
-		cond << "Bad len\n";
+		GCon->Log(NAME_DevNet, "Bad len");
     	goto try_again;
 	}
     len -= 8;
@@ -611,18 +605,18 @@ int Serial_GetMessage(qsocket_t *sock)
     {
 		if (seq != sock->sendSequence - 1)
 		{
-			cond << "Stale ACK received\n";
+			GCon->Log(NAME_DevNet, "Stale ACK received");
 			goto try_again;
 		}
 		if (seq == sock->ackSequence)
 		{
 			sock->ackSequence++;
 			if (sock->ackSequence != sock->sendSequence)
-				cond << "ack sequencing error\n";
+				GCon->Log(NAME_DevNet, "ack sequencing error");
 		}
 		else
 		{
-			cond << "Duplicate ACK received\n";
+			GCon->Log(NAME_DevNet, "Duplicate ACK received");
 			goto try_again;
 		}
 
@@ -635,7 +629,7 @@ int Serial_GetMessage(qsocket_t *sock)
 	word buf_crc = NetbufferChecksum(msg.Data + 8, len);
     if (buf_crc != crc)
     {
-    	cond << "bad packet checksum " << buf_crc << ' ' << crc << endl;
+    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04x", buf_crc, crc);
 		goto try_again;
     }
 
@@ -649,7 +643,7 @@ int Serial_GetMessage(qsocket_t *sock)
 
 	if (seq != sock->receiveSequence)
 	{
-		cond << "Invalid rec seq " << seq << " " << sock->receiveSequence << endl;
+		GCon->Logf(NAME_DevNet, "Invalid rec seq %d %d", seq, sock->receiveSequence);
 		goto try_again;
 	}
 	sock->receiveSequence++;
@@ -697,9 +691,12 @@ qsocket_t *Serial_Connect(char *) { return NULL; }
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -54,6 +54,7 @@ const char *W_LumpName(int lump);
 void W_ReadLump(int lump, void *dest);
 void* W_CacheLumpNum(int lump, int tag);
 void* W_CacheLumpName(const char* name, int tag);
+FArchive* W_CreateLumpReader(const char* name, int tag = 0);
 
 bool W_ForEachLump(bool (*func)(int, const char*, int));
 
@@ -64,9 +65,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/09/14 16:52:14  dj_jl
 //	Added dynamic build of GWA file
 //	

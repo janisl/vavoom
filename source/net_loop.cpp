@@ -120,7 +120,7 @@ qsocket_t *Loop_Connect(char *host)
 		loop_client = NET_NewQSocket();
 		if (loop_client == NULL)
 		{
-			con << "Loop_Connect: no qsocket available\n";
+			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
 			return NULL;
 		}
 		strcpy(loop_client->address, "localhost");
@@ -134,7 +134,7 @@ qsocket_t *Loop_Connect(char *host)
 		loop_server = NET_NewQSocket();
 		if (loop_server == NULL)
 		{
-			con << "Loop_Connect: no qsocket available\n";
+			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
 			return NULL;
 		}
 		strcpy(loop_server->address, "LOCAL");
@@ -345,9 +345,12 @@ void Loop_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

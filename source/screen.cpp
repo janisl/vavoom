@@ -223,11 +223,12 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top)
 {
+	guard(WritePCXfile);
 	int i;
 	int j;
 
-	ofstream s(filename, ios::out | ios::binary);
-	if (!s)
+	FArchive *Ar = FL_OpenFileWrite(filename);
+	if (!Ar)
 	{
 		con << "Couldn't write pcx\n";
 		return;
@@ -249,7 +250,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
     pcx.bytes_per_line = LittleShort(width);
     pcx.palette_type = LittleShort(1);	// not a grey scale
     memset(pcx.filler, 0, sizeof(pcx.filler));
-	s.write((char *)&pcx, sizeof(pcx));
+	Ar->Serialize(&pcx, sizeof(pcx));
 
     // pack the image
 	if (bpp == 8)
@@ -261,15 +262,17 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i] & 0xc0) == 0xc0)
 				{
-					s.put((byte)0xc1);
+					byte tmp = 0xc1;
+					*Ar << tmp;
 				}
-				s.put(src[i]);
+				*Ar << src[i];
 			}
 		}
 
 		// write the palette
-		s.put((byte)0x0c);	// palette ID byte
-		s.write((char *)palette, 768);
+		byte PalId = 0x0c;	// palette ID byte
+		*Ar << PalId;
+		Ar->Serialize(palette, 768);
 	}
 	else if	(bpp == 24)
 	{
@@ -280,30 +283,35 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 			{
 				if ((src[i].r & 0xc0) == 0xc0)
 				{
-					s.put((byte)0xc1);
+					byte tmp = 0xc1;
+					*Ar << tmp;
 				}
-				s.put(src[i].r);
+				*Ar << src[i].r;
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].g & 0xc0) == 0xc0)
 				{
-					s.put((byte)0xc1);
+					byte tmp = 0xc1;
+					*Ar << tmp;
 				}
-				s.put(src[i].g);
+				*Ar << src[i].g;
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].b & 0xc0) == 0xc0)
 				{
-					s.put((byte)0xc1);
+					byte tmp = 0xc1;
+					*Ar << tmp;
 				}
-				s.put(src[i].b);
+				*Ar << src[i].b;
 			}
 		}
 	}
     
-	s.close();
+	Ar->Close();
+	delete Ar;
+	unguard;
 }
 
 //==========================================================================
@@ -691,9 +699,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.15  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.14  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
 //	

@@ -30,22 +30,87 @@
 class FArchive
 {
 public:
-
 	// FArchive interface.
-	virtual ~FArchive()
+	virtual ~FArchive(void)
 	{}
 	virtual void Serialize(void*, int)
 	{}
-	/*virtual void SerializeBits(void* V, int LengthBits)
+	virtual void SerializeBits(void* V, int LengthBits)
 	{
 		Serialize(V, (LengthBits + 7) / 8);
 		if (IsLoading())
 			((byte *)V)[LengthBits / 8] &= ((1 << (LengthBits & 7)) - 1);
-	}*/
-	/*virtual void SerializeInt(dword& Value, dword Max)
+	}
+	virtual void SerializeInt(dword& Value, dword)
 	{
 		*this << *(dword*)Value;
-	}*/
+	}
+/*	virtual void Preload(VObject* Object)
+	{}
+	virtual void CountBytes(size_t InNum, size_t InMax)
+	{}*/
+	virtual FArchive& operator<<(FName&)
+	{
+		return *this;
+	}
+	virtual FArchive& operator<<(VObject*&)
+	{
+		return *this;
+	}
+	virtual int MapName(FName*)
+	{
+		return 0;
+	}
+	virtual int MapObject(VObject*)
+	{
+		return 0;
+	}
+	virtual int Tell(void)
+	{
+		return -1;
+	}
+	virtual int TotalSize(void)
+	{
+		return -1;
+	}
+	virtual bool AtEnd(void)
+	{
+		int Pos = Tell();
+		return Pos != -1 && Pos >= TotalSize();
+	}
+	virtual void Seek(int)
+	{}
+	virtual void Flush(void)
+	{}
+	virtual bool Close(void)
+	{
+		return !ArIsError;
+	}
+	virtual bool GetError(void)
+	{
+		return ArIsError;
+	}
+
+	// Hardcoded datatype routines that may not be overridden.
+	FArchive& ByteOrderSerialize(void* V, int Length)
+	{
+#if defined __i386__ || defined _M_IX86
+		Serialize(V, Length);
+#else
+		if (GBigEndian && ArIsPersistent)
+		{
+			// Transferring between memory and file, so flip the byte order.
+			for (int i = Length - 1; i >= 0; i--)
+				Serialize((byte*)V + i, 1);
+		}
+		else
+		{
+			// Transferring around within memory, so keep the byte order.
+			Serialize(V, Length);
+		}
+#endif
+		return *this;
+	}
 
 	// Constructor.
 	FArchive()
@@ -53,7 +118,7 @@ public:
 	,	ArIsSaving		(0)
 //	,   ArIsTrans		(0)
 	,	ArIsPersistent  (0)
-//	,   ArIsError       (0)
+	,   ArIsError       (0)
 	{}
 
 	// Status accessors.
@@ -61,10 +126,10 @@ public:
 	bool IsSaving()		{return ArIsSaving;}
 //	bool IsTrans()		{return ArIsTrans;}
 	bool IsPersistent()	{return ArIsPersistent;}
-//	bool IsError()		{return ArIsError;}
+	bool IsError()		{return ArIsError;}
 
 	// Friend archivers.
-/*	friend FArchive& operator << (FArchive& Ar, char& C)
+	friend FArchive& operator << (FArchive& Ar, char& C)
 	{
 		Ar.Serialize(&C, 1);
 		return Ar;
@@ -81,34 +146,34 @@ public:
 	}
 	friend FArchive& operator << (FArchive& Ar, word& W)
 	{
-		Ar.Serialize(&W, sizeof(W));
+		Ar.ByteOrderSerialize(&W, sizeof(W));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, short& S)
 	{
-		Ar.Serialize(&S, sizeof(S));
+		Ar.ByteOrderSerialize(&S, sizeof(S));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, dword& D)
 	{
-		Ar.Serialize(&D, sizeof(D));
+		Ar.ByteOrderSerialize(&D, sizeof(D));
 		return Ar;
 	}
 	friend FArchive& operator << (FArchive& Ar, int& I)
 	{
-		Ar.Serialize(&I, sizeof(I));
-		return Ar;
-	}*/
-	friend FArchive& operator << (FArchive& Ar, float& F)
-	{
-		Ar.Serialize(&F, sizeof(F));
+		Ar.ByteOrderSerialize(&I, sizeof(I));
 		return Ar;
 	}
-	/*friend FArchive& operator << (FArchive& Ar, double& F)
+	friend FArchive& operator << (FArchive& Ar, float& F)
 	{
-		Ar.Serialize(&F, sizeof(F));
+		Ar.ByteOrderSerialize(&F, sizeof(F));
 		return Ar;
-	}*/
+	}
+	friend FArchive& operator << (FArchive& Ar, double& F)
+	{
+		Ar.ByteOrderSerialize(&F, sizeof(F));
+		return Ar;
+	}
 
 protected:
 	// Status variables.
@@ -116,15 +181,28 @@ protected:
 	bool ArIsSaving;
 //	bool ArIsTrans;
 	bool ArIsPersistent;
-//	bool ArIsError;
+	bool ArIsError;
 };
+
+//
+// Archive constructor.
+//
+template <class T> T Arctor(FArchive& Ar)
+{
+	T Tmp;
+	Ar << Tmp;
+	return Tmp;
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.3  2002/02/15 19:12:53  dj_jl
 //	Got rid of warnings
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

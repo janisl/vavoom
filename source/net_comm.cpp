@@ -274,7 +274,7 @@ void TComPort::Enable(void)
 
 	if (Enabled)
 	{
-		con << "Already enabled\n";
+		GCon->Logf(NAME_DevNet, "Already enabled");
 		return;
 	}
 
@@ -304,12 +304,12 @@ void TComPort::Enable(void)
 		if ((b & IIR_FIFO_ENABLED) == IIR_FIFO_ENABLED)
         {
 			UartType = UART_16550;
-			cond << "UART = 16550\n";
+			GCon->Log(NAME_DevNet, "UART = 16550");
 		}
 		else
 		{
 			UartType = UART_8250;
-			cond << "UART = 8250\n";
+			GCon->Log(NAME_DevNet, "UART = 8250");
 		}
 	}
 
@@ -352,7 +352,7 @@ void TComPort::Enable(void)
 	n = _go32_dpmi_allocate_iret_wrapper(&ProtectedModeInfo);
 	if (n)
 	{
-		con << "serial: protected mode callback allocation failed\n";
+		GCon->Logf(NAME_DevNet, "serial: protected mode callback allocation failed");
 		return;
 	}
 
@@ -530,7 +530,7 @@ void TComPort::Disable(void)
 {
 	if (!Enabled)
 	{
-		con << "Already disabled\n";
+		GCon->Logf(NAME_DevNet, "Already disabled");
 		return;
 	}
 
@@ -567,7 +567,7 @@ void TComPort::InitModem(void)
 	double	start;
 	char	*response;
 
-	con << "Initializing modem...\n";
+	GCon->Logf(NAME_Init, "Initializing modem...");
 
 	// write 0 to MCR, wait 1/2 sec, then write the real value back again
 	// I got this from the guys at head-to-head who say it's necessary.
@@ -588,7 +588,7 @@ void TComPort::InitModem(void)
 		{
 			if ((Sys_Time() - start) > 3.0)
 			{
-				con << "No response - clear failed\n";
+				GCon->Logf(NAME_Init, "No response - clear failed");
 				Disable();
 				return;
 			}
@@ -657,14 +657,15 @@ int TComPort::Connect(char *host)
 
 	if ((ModemStatus & MODEM_STATUS_MASK) != MODEM_STATUS_MASK)
 	{
-		con << "Serial: line not ready (";
+		FString Msg = "Serial: line not ready (";
 		if ((ModemStatus & MSR_CTS) == 0)
-			con << " CTS";
+			Msg += " CTS";
 		if ((ModemStatus & MSR_DSR) == 0)
-			con << " DSR";
+			Msg += " DSR";
 		if ((ModemStatus & MSR_CD) == 0)
-			con << " CD";
-		con << " )\n";
+			Msg += " CD";
+		Msg += " )";
+		GCon->Logf(NAME_DevNet, Msg);
 		return -1;
 	}
 
@@ -680,7 +681,7 @@ int TComPort::Connect(char *host)
 		key_dest = key_console;
 		key_count = -2;*/
 
-		con << "Dialing...\n";
+		GCon->Logf(NAME_DevNet, "Dialing...");
 		sprintf(dialstring, "AT D%c %s\r", DialType, host);
 		ModemCommand(dialstring);
 		start = Sys_Time();
@@ -688,7 +689,7 @@ int TComPort::Connect(char *host)
 		{
 			if ((Sys_Time() - start) > 60.0)
 			{
-				con << "Dialing failure!\n";
+				GCon->Logf(NAME_DevNet, "Dialing failure!");
 				break;
 			}
 
@@ -792,7 +793,7 @@ bool TComPort::CheckForConnection(void)
 		{
 			if ((net_time - Timestamp) > 35.0)
 			{
-				con << "Unable to establish modem connection\n";
+				GCon->Logf(NAME_DevNet, "Unable to establish modem connection");
 				ModemRang = false;
 				return false;
 			}
@@ -808,7 +809,7 @@ bool TComPort::CheckForConnection(void)
 			OutputQueue.head = OutputQueue.tail = 0;
 			InputQueue.head = InputQueue.tail = 0;
 			ENABLE();
-			con << "Modem Connect\n";
+			GCon->Logf(NAME_DevNet, "Modem Connect");
 			return true;
 		}
 		return true;
@@ -837,24 +838,24 @@ int TComPort::CheckStatus(void)
 		if (LineStatus & (LSR_OVERRUN_ERROR | LSR_PARITY_ERROR | LSR_FRAMING_ERROR | LSR_BREAK_DETECT))
 		{
 			if (LineStatus & LSR_OVERRUN_ERROR)
-				cond << "Serial overrun error\n";
+				GCon->Log(NAME_DevNet, "Serial overrun error");
 			if (LineStatus & LSR_PARITY_ERROR)
-				cond << "Serial parity error\n";
+				GCon->Log(NAME_DevNet, "Serial parity error");
 			if (LineStatus & LSR_FRAMING_ERROR)
-				cond << "Serial framing error\n";
+				GCon->Log(NAME_DevNet, "Serial framing error");
 			if (LineStatus & LSR_BREAK_DETECT)
-				cond << "Serial break detect\n";
+				GCon->Log(NAME_DevNet, "Serial break detect");
 			ret = ERR_TTY_LINE_STATUS;
 		}
 
 		if ((ModemStatus & MODEM_STATUS_MASK) != MODEM_STATUS_MASK)
 		{
 			if (!(ModemStatus & MSR_CTS))
-				con << "Serial lost CTS\n";
+				GCon->Logf(NAME_DevNet, "Serial lost CTS");
 			if (!(ModemStatus & MSR_DSR))
-				con << "Serial lost DSR\n";
+				GCon->Logf(NAME_DevNet, "Serial lost DSR");
 			if (!(ModemStatus & MSR_CD))
-				con << "Serial lost Carrier\n";
+				GCon->Logf(NAME_DevNet, "Serial lost Carrier");
 			ret = ERR_TTY_MODEM_STATUS;
 		}
 	}
@@ -915,7 +916,7 @@ char *TComPort::ModemResponse(void)
 		if (b == '\r' && BufferUsed)
 		{
 			Buffer[BufferUsed] = 0;
-			con << Buffer << endl;
+			GCon->Logf(NAME_DevNet, Buffer);
 			SCR_Update();
 			BufferUsed = 0;
 			return Buffer;
@@ -952,7 +953,7 @@ void TComPort::ModemHangup(void)
 {
 	double start;
 
-	con << "Hanging up modem...\n";
+	GCon->Logf(NAME_DevNet, "Hanging up modem...");
 	DISABLE();
 	ModemRang = false;
 	OutputQueue.head = OutputQueue.tail = 0;
@@ -975,16 +976,19 @@ void TComPort::ModemHangup(void)
 		;
 
 	ModemResponse();
-	con << "Hangup complete\n";
+	GCon->Logf(NAME_DevNet, "Hangup complete");
 	ModemConnected = false;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

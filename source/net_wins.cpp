@@ -86,7 +86,7 @@ int WINS_Init(void)
 
 		if (r)
 		{
-			con << "Winsock initialization failed.\n";
+			GCon->Log(NAME_Init, "Winsock initialization failed.");
 			return -1;
 		}
 	}
@@ -95,7 +95,7 @@ int WINS_Init(void)
 	// determine my name
 	if (gethostname(buff, MAXHOSTNAMELEN) == SOCKET_ERROR)
 	{
-		cond << "Winsock TCP/IP Initialization failed.\n";
+		GCon->Log(NAME_DevNet, "Winsock TCP/IP Initialization failed.");
 		if (--winsock_initialized == 0)
 			WSACleanup();
 		return -1;
@@ -144,7 +144,7 @@ int WINS_Init(void)
     net_controlsocket = WINS_OpenSocket(0);
 	if (net_controlsocket == -1)
 	{
-		con << "WINS_Init: Unable to open control socket\n";
+		GCon->Log(NAME_Init, "WINS_Init: Unable to open control socket");
 		if (--winsock_initialized == 0)
 			WSACleanup();
 		return -1;
@@ -154,7 +154,7 @@ int WINS_Init(void)
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
 	((sockaddr_in *)&broadcastaddr)->sin_port = htons((word)net_hostport);
 
-	con << "Winsock TCP/IP Initialized\n";
+	GCon->Log(NAME_Init, "Winsock TCP/IP Initialized");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -403,7 +403,7 @@ int WINS_Broadcast(int socket, byte *buf, int len)
 		// make this socket broadcast capable
 		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) < 0)
 		{
-			con << "Unable to make socket broadcast capable\n";
+			GCon->Log(NAME_DevNet, "Unable to make socket broadcast capable");
 			return -1;
 		}
 	net_broadcastsocket = socket;
@@ -619,9 +619,12 @@ int WINS_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/11 08:12:49  dj_jl
 //	Changes for MinGW
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

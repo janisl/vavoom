@@ -64,7 +64,13 @@ class TConBuf : public streambuf
 
 	bool		dev_only;
 };
-     
+
+class FConsoleDevice:public FOutputDevice
+{
+public:
+	void Serialize(const char* V, EName Event);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void T_DrawCursor640(void);
@@ -73,8 +79,6 @@ void T_DrawString640(int x, int y, const char* String);
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-void C_AddNotifyLine(const char *str);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -87,6 +91,10 @@ static TConBuf			cdbuf(true);
 
 ostream					con(&cbuf);
 ostream					cond(&cdbuf);
+
+FConsoleDevice			Console;
+
+FOutputDevice			*GCon = &Console;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -117,6 +125,45 @@ static const char**		c_ac_Table = NULL;
 static int				c_ac_Count = 0;
 
 // CODE --------------------------------------------------------------------
+
+void FOutputDevice::Log(const char* S)
+{
+	Serialize(S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const char* S)
+{
+	Serialize(S, Type);
+}
+void FOutputDevice::Log(const FString& S)
+{
+	Serialize(*S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const FString& S)
+{
+	Serialize(*S, Type);
+}
+void FOutputDevice::Logf(const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialize(string, NAME_Log);
+}
+void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialize(string, Type);
+}
 
 //==========================================================================
 //
@@ -190,7 +237,6 @@ void C_Start(void)
 	consolestate = cons_opening;
 	c_history_current = -1;
 	c_autocompleteIndex = -1;
-    C_ClearNotify();
 }
 
 //==========================================================================
@@ -207,7 +253,6 @@ void C_StartFull(void)
 	consolestate = cons_open;
 	c_history_current = -1;
 	c_autocompleteIndex = -1;
-    C_ClearNotify();
    	cons_h = 200.0;
 }
 
@@ -544,11 +589,6 @@ static void AddLine(char* Data)
 	{
 		last_line = num_lines;
 	}
-
-    if (!consolestate/* && !MN_Active()*/)
-    {
-		C_AddNotifyLine(clines[(num_lines + first_line - 1) % MAX_LINES]);
-	}
 }
 
 //==========================================================================
@@ -659,6 +699,18 @@ static void AddChar(char ch)
 
 //==========================================================================
 //
+//	FConsoleDevice::Serialize
+//
+//==========================================================================
+
+void FConsoleDevice::Serialize(const char* V, EName Event)
+{
+	DoPrint(V);
+	DoPrint("\n");
+}
+
+//==========================================================================
+//
 //  TConBuf::sync
 //
 //==========================================================================
@@ -706,6 +758,7 @@ static double			notify_times[NUM_NOTIFY_LINES];
 static int				num_notify = 0;
 static int				first_notify = 0;
 static TCvarF			notify_time("notify_time", "5", CVAR_ARCHIVE);
+static TCvarI			msg_echo("msg_echo", "1", CVAR_ARCHIVE);
 
 //==========================================================================
 //
@@ -721,12 +774,17 @@ void C_ClearNotify(void)
 
 //==========================================================================
 //
-//	C_AddNotifyLine
+//	C_NotifyMessage
 //
 //==========================================================================
 
-void C_AddNotifyLine(const char *str)
+void C_NotifyMessage(const char *str)
 {
+	if (msg_echo)
+	{
+		con << str << endl;
+	}
+
 	if (num_notify >= NUM_NOTIFY_LINES)
 	{
 		num_notify--;
@@ -812,9 +870,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.15  2002/03/02 17:30:34  dj_jl
 //	Added suport for Pad-Enter.
-//
+//	
 //	Revision 1.14  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

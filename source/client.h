@@ -102,7 +102,7 @@ struct client_static_t
 	boolean			demorecording;
 	boolean			demoplayback;
 	boolean			timedemo;
-	FILE			*demofile;
+	FArchive		*demofile;
 	int				td_lastframe;	// to meter out one message a frame
 	int				td_startframe;	// host_framecount at start
 	double			td_starttime;	// realtime at second frame of timedemo
@@ -272,9 +272,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/12/18 19:08:12  dj_jl
 //	Beautification
 //	

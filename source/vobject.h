@@ -118,11 +118,6 @@ enum EObjectFlags
 
 // TYPES -------------------------------------------------------------------
 
-class	FArchive;
-
-class	VObject;
-class		VClass;
-
 //==========================================================================
 //
 //	VObject
@@ -318,9 +313,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.8  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
-//
+//	
 //	Revision 1.7  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	

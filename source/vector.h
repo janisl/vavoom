@@ -167,6 +167,11 @@ inline TVec CrossProduct(const TVec &v1, const TVec &v2)
 				v1.x * v2.y - v1.y * v2.x);
 }
 
+inline FArchive& operator << (FArchive &Ar, TVec &v)
+{
+	return Ar << v.x << v.y << v.z;
+}
+
 inline ostream &operator << (ostream &strm, const TVec &v)
 {
 	return strm << '(' << v.x << ',' << v.y << ',' << v.z << ')';
@@ -179,9 +184,12 @@ inline ostream &operator << (ostream &strm, const TVec &v)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:35  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -108,7 +108,7 @@ qsocket_t *NetNull_CheckNewConnections(void)
 	sock = NET_NewQSocket();
 	if (!sock)
 	{
-		con << "Server is full\n";
+		GCon->Log("Server is full");
 		return NULL;
 	}
 	strcpy(sock->address, "NULL");
@@ -193,9 +193,12 @@ void NetNull_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

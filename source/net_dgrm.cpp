@@ -394,7 +394,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 		goto ErrorReturn;
 
 	// send the connection request
-	con << "trying...\n"; SCR_Update();
+	GCon->Log("trying..."); SCR_Update();
 	start_time = net_time;
 
 	for (reps = 0; reps < 3; reps++)
@@ -459,14 +459,14 @@ static qsocket_t *_Datagram_Connect(char *host)
 		while (ret == 0 && (SetNetTime() - start_time) < 2.5);
 		if (ret)
 			break;
-		con << "still trying...\n"; SCR_Update();
+		GCon->Log("still trying..."); SCR_Update();
 		start_time = SetNetTime();
 	}
 
 	if (ret == 0)
 	{
 		reason = "No Response";
-		con << reason << endl;
+		GCon->Log(reason);
 		strcpy(m_return_reason, reason);
 		goto ErrorReturn;
 	}
@@ -474,7 +474,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 	if (ret == -1)
 	{
 		reason = "Network Error";
-		con << reason << endl;
+		GCon->Log(reason);
 		strcpy(m_return_reason, reason);
 		goto ErrorReturn;
 	}
@@ -483,7 +483,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 	if (msgtype == CCREP_REJECT)
 	{
 		net_msg >> reason;
-		con << reason << endl;
+		GCon->Log(reason);
 		strncpy(m_return_reason, reason, 31);
 		goto ErrorReturn;
 	}
@@ -491,7 +491,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 	if (msgtype != CCREP_ACCEPT)
 	{
 		reason = "Bad Response";
-		con << reason << endl;
+		GCon->Log(reason);
 		strcpy(m_return_reason, reason);
 		goto ErrorReturn;
 	}
@@ -503,14 +503,14 @@ static qsocket_t *_Datagram_Connect(char *host)
 
 	dfunc.GetNameFromAddr(&sendaddr, sock->address);
 
-	con << "Connection accepted\n";
+	GCon->Log("Connection accepted");
 	sock->lastMessageTime = SetNetTime();
 
 	// switch the connection to the specified address
 	if (dfunc.Connect(newsock, &sock->addr) == -1)
 	{
 		reason = "Connect to Game failed";
-		con << reason << endl;
+		GCon->Log(reason);
 		strcpy(m_return_reason, reason);
 		goto ErrorReturn;
 	}
@@ -785,7 +785,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 		if ((int)length == -1)
 		{
-			con << "Read error\n";
+			GCon->Log(NAME_DevNet, "Read error");
 			return -1;
 		}
 
@@ -793,8 +793,8 @@ int Datagram_GetMessage(qsocket_t *sock)
 		{
 #ifdef DEBUG
 			Con_DPrintf("Forged packet received\n");
-			Con_DPrintf("Expected: %s\n", StrAddr (&sock->addr));
-			Con_DPrintf("Received: %s\n", StrAddr (&readaddr));
+			Con_DPrintf("Expected: %s\n", StrAddr(&sock->addr));
+			Con_DPrintf("Received: %s\n", StrAddr(&readaddr));
 #endif
 			continue;
 		}
@@ -807,7 +807,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 //		if (length != len)
 //		{
-//			cond << "Bad len\n";
+//			GCon->Log(NAME_DevNet, "Bad len");
 //			continue;
 //		}
 
@@ -827,13 +827,13 @@ int Datagram_GetMessage(qsocket_t *sock)
 			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
 		    if (buf_crc != crc)
 		    {
-		    	cond << "bad packet checksum " << buf_crc << ' ' << crc << endl;
+		    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04d", buf_crc, crc);
 				continue;
 		    }
 
 			if (sequence < sock->unreliableReceiveSequence)
 			{
-				cond << "Got a stale datagram\n";
+				GCon->Log(NAME_DevNet, "Got a stale datagram");
 				ret = 0;
 				break;
 			}
@@ -841,7 +841,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 			{
 				count = sequence - sock->unreliableReceiveSequence;
 				droppedDatagrams += count;
-				cond << "Dropped " << count << " datagram(s)\n";
+				GCon->Logf(NAME_DevNet, "Dropped %d datagram(s)", count);
 			}
 			sock->unreliableReceiveSequence = sequence + 1;
 
@@ -858,18 +858,18 @@ int Datagram_GetMessage(qsocket_t *sock)
 		{
 			if (sequence != sock->sendSequence - 1)
 			{
-				cond << "Stale ACK received\n";
+				GCon->Log(NAME_DevNet, "Stale ACK received");
 				continue;
 			}
 			if (sequence == sock->ackSequence)
 			{
 				sock->ackSequence++;
 				if (sock->ackSequence != sock->sendSequence)
-					cond << "ack sequencing error\n";
+					GCon->Log(NAME_DevNet, "ack sequencing error");
 			}
 			else
 			{
-				cond << "Duplicate ACK received\n";
+				GCon->Log(NAME_DevNet, "Duplicate ACK received");
 				continue;
 			}
 
@@ -893,7 +893,7 @@ int Datagram_GetMessage(qsocket_t *sock)
 			word buf_crc = NetbufferChecksum(packetBuffer.data, length - NET_HEADERSIZE);
 		    if (buf_crc != crc)
 		    {
-		    	cond << "bad packet checksum " << buf_crc << ' ' << crc << endl;
+		    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04x", buf_crc, crc);
 				continue;
 		    }
 
@@ -1169,10 +1169,10 @@ void Datagram_Shutdown(void)
 
 static void PrintStats(qsocket_t *s)
 {
-	con << "canSend = " << setw(4) << s->canSend << "   \n";
-	con << "sendSeq = " << setw(4) << s->sendSequence << "   ";
-	con << "recvSeq = " << setw(4) << s->receiveSequence <<"   \n";
-	con << "\n";
+	GCon->Logf("canSend = %4d", s->canSend);
+	GCon->Logf("sendSeq = %4d", s->sendSequence);
+	GCon->Logf("recvSeq = %4d", s->receiveSequence);
+	GCon->Logf("");
 }
 
 //==========================================================================
@@ -1187,16 +1187,16 @@ COMMAND(NetStats)
 
 	if (Argc() == 1)
 	{
-		con << "unreliable messages sent   = " << unreliableMessagesSent << endl;
-		con << "unreliable messages recv   = " << unreliableMessagesReceived << endl;
-		con << "reliable messages sent     = " << messagesSent << endl;
-		con << "reliable messages received = " << messagesReceived << endl;
-		con << "packetsSent                = " << packetsSent << endl;
-		con << "packetsReSent              = " << packetsReSent << endl;
-		con << "packetsReceived            = " << packetsReceived << endl;
-		con << "receivedDuplicateCount     = " << receivedDuplicateCount << endl;
-		con << "shortPacketCount           = " << shortPacketCount << endl;
-		con << "droppedDatagrams           = " << droppedDatagrams << endl;
+		GCon->Logf("unreliable messages sent   = %d", unreliableMessagesSent);
+		GCon->Logf("unreliable messages recv   = %d", unreliableMessagesReceived);
+		GCon->Logf("reliable messages sent     = %d", messagesSent);
+		GCon->Logf("reliable messages received = %d", messagesReceived);
+		GCon->Logf("packetsSent                = %d", packetsSent);
+		GCon->Logf("packetsReSent              = %d", packetsReSent);
+		GCon->Logf("packetsReceived            = %d", packetsReceived);
+		GCon->Logf("receivedDuplicateCount     = %d", receivedDuplicateCount);
+		GCon->Logf("shortPacketCount           = %d", shortPacketCount);
+		GCon->Logf("droppedDatagrams           = %d", droppedDatagrams);
 	}
 	else if (strcmp(Argv(1), "*") == 0)
 	{
@@ -1223,9 +1223,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

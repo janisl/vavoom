@@ -27,8 +27,6 @@
 //**
 //**************************************************************************
 
-enum ENoInit			{E_NoInit};
-
 template<class T> T Clamp(T val, T low, T high)
 {
 	return val < low ? low : val > high ? high : val;
@@ -604,9 +602,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/05/18 16:56:34  dj_jl
+//	Added FArchive and FOutputDevice classes.
+//
 //	Revision 1.4  2002/01/12 18:03:28  dj_jl
 //	Removed zone tag
-//
+//	
 //	Revision 1.3  2002/01/11 18:24:01  dj_jl
 //	Added dynamic strings
 //	
