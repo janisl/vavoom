@@ -48,20 +48,6 @@ classid PuffType;
 mobj_t *PuffSpawned;
 mobj_t *linetarget;	// who got hit (or NULL)
 
-int PStateNormal[NUMCLASSES] = {
-	S_FPLAY,
-	S_CPLAY,
-	S_MPLAY,
-	S_PIGPLAY
-};
-
-int PStateRun[NUMCLASSES] = {
-	S_FPLAY_RUN1,
-	S_CPLAY_RUN1,
-	S_MPLAY_RUN1,
-	S_PIGPLAY_RUN1
-};
-
 int TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
 mobj_t *TIDMobj[MAX_TID_COUNT];
 
@@ -624,11 +610,11 @@ Actor Actor::ActiveMinotaur(void)
 
 //==========================================================================
 //
-//  Actor::Kill
+//  Actor::KilledBy
 //
 //==========================================================================
 
-void Actor::Kill(Actor source)
+void Actor::KilledBy(Actor source)
 {
 	int dummy[5];
 	mobj_t *master;
@@ -1303,7 +1289,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			// Always extreme death from fourth weapon
 			Health = -5000;
 		}
-		Kill(source);
+		KilledBy(source);
 		return;
 	}
 	if ((P_Random() < PainChance) && !bSkullFly)
@@ -1486,7 +1472,7 @@ void Actor::PoisonDamage(Actor source, int damage, boolean playPainSound)
 				bIceDamage = true;
 			}
 		}
-		Kill(source);
+		KilledBy(source);
 		return;
 	}
 	if (!(level->tictime & 63) && playPainSound)
@@ -2208,6 +2194,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.36  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

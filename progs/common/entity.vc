@@ -34,8 +34,8 @@ class Entity:MapObject
 	bool bNoPassMobj;	// Disable z block checking.  If on,
 						// this flag will prevent the mobj
 						// from passing over/under other mobjs.
-	bool bNoClip;		// player cheat
-	bool bSkullFly;		// skull in flight
+	bool bColideWithThings;
+	bool bColideWithWorld;
 	bool bCheckLineBlocking;
 	bool bCheckLineBlockMonsters;
 
@@ -178,6 +178,8 @@ void BlockedByLine(line_t * ld)
 
 defaultproperties
 {
+	bColideWithThings = true;
+	bColideWithWorld = true;
 }
 
 }
@@ -675,9 +677,6 @@ boolean Entity::CheckRelPosition(TVec Pos)
 	(*validcount)++;
 	tmtrace.NumSpecHit = 0;
 
-	if (bNoClip && !bSkullFly)
-		return true;
-
 	tmtrace.BlockingMobj = none;
 
 	// Check things first, possibly picking things up.
@@ -685,32 +684,34 @@ boolean Entity::CheckRelPosition(TVec Pos)
 	// because mobj_ts are grouped into mapblocks
 	// based on their origin point, and can overlap
 	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, PIT_CheckRelThing))
-				return false;
-
-	if (bNoClip)
+	if (bColideWithThings)
 	{
-		return true;
+		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
+		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
+		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
+		yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy + MAXRADIUS);
+
+		for (bx = xl; bx <= xh; bx++)
+			for (by = yl; by <= yh; by++)
+				if (!P_BlockThingsIterator(bx, by, PIT_CheckRelThing))
+					return false;
+
+		tmtrace.BlockingMobj = none;
 	}
-	tmtrace.BlockingMobj = none;
 
 	// check lines
-	xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx);
-	xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx);
-	yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy);
-	yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy);
+	if (bColideWithWorld)
+	{
+		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx);
+		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx);
+		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy);
+		yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy);
 
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockLinesIterator(bx, by, PIT_CheckRelLine))
-				return false;
+		for (bx = xl; bx <= xh; bx++)
+			for (by = yl; by <= yh; by++)
+				if (!P_BlockLinesIterator(bx, by, PIT_CheckRelLine))
+					return false;
+	}
 
 	return true;
 }
@@ -718,6 +719,9 @@ boolean Entity::CheckRelPosition(TVec Pos)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/04 18:31:35  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.7  2002/03/02 17:39:06  dj_jl
 //  Beautification
 //

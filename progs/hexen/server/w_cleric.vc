@@ -645,7 +645,8 @@ void Actor::A_CHolyAttack2(void)
 		if (linetarget)
 		{
 			mo->Target = *linetarget;
-			mo->bNoClip = true;
+			//	Don't colide with world but colide with things, i.e explode
+			mo->bColideWithWorld = false;
 			mo->bSkullFly = true;
 			mo->bMissile = false;
 		}
@@ -678,7 +679,7 @@ void Actor::CHolyFindTarget(void)
 	if (targ)
 	{
 		Target = targ;
-		bNoClip = true;
+		bColideWithWorld = false;
 		bSkullFly = true;
 		bMissile = false;
 	}
@@ -709,7 +710,7 @@ void Actor::CHolySeekerMissile(float thresh, float turnMax)
 	{
 		// Target died/target isn't a player or creature
 		Target = none;
-		bNoClip = false;
+		bColideWithWorld = true;
 		bSkullFly = false;
 		bMissile = true;
 		CHolyFindTarget();
@@ -946,6 +947,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.20  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

@@ -52,20 +52,6 @@ class TLavaInflictor:mobj_t
 
 void PostMorphWeapon(player_t * player, int weapon);
 
-int PStateAttack[NUMCLASSES] = {
-	S_FPLAY_ATK1,
-	S_CPLAY_ATK1,
-	S_MPLAY_ATK1,
-	S_PIGPLAY_ATK1
-};
-
-int PStateAttackEnd[NUMCLASSES] = {
-	S_FPLAY_ATK2,
-	S_CPLAY_ATK3,
-	S_MPLAY_ATK2,
-	S_PIGPLAY_ATK1
-};
-
 //==========================================================================
 //
 //  InitLava
@@ -192,9 +178,9 @@ boolean UndoPlayerMorph(player_t * player)
 
 void SetPlayerRunState(player_t * player)
 {
-	if (player->mo->StateNum == PStateNormal[player->PClass])
+	if (player->mo->StateNum == player->mo->SpawnState)
 	{
-		player->mo->SetState(PStateRun[player->PClass]);
+		player->mo->SetState(player->mo->SeeState);
 	}
 }
 
@@ -672,6 +658,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.22  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //

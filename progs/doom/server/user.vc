@@ -484,9 +484,15 @@ void PlayerThink(player_t * player)
 
 	// fixme: do this in the cheat code
 	if (player->Cheats & CF_NOCLIP)
-		player->mo->bNoClip = true;
+	{
+		player->mo->bColideWithThings = false;
+		player->mo->bColideWithWorld = false;
+	}
 	else
-		player->mo->bNoClip = false;
+	{
+		player->mo->bColideWithThings = true;
+		player->mo->bColideWithWorld = true;
+	}
 
 	if (player->mo->bJustAttacked)
 	{
@@ -863,22 +869,32 @@ void NetGameReborn(int playernum)
 
 //==========================================================================
 //
+//  PutClientIntoServer
+//
+//==========================================================================
+
+void PutClientIntoServer(player_t * player)
+{
+	player->ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	player->ViewEnts[ps_weapon].Player = player;
+	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	player->ViewEnts[ps_flash].Player = player;
+	if (player->bIsBot)
+	{
+		player->Bot = SpawnObject(BotPlayer, none);
+		player->Bot.player = player;
+		player->Bot.OnBeginPlay();
+	}
+}
+
+//==========================================================================
+//
 //  SpawnClient
 //
 //==========================================================================
 
 void SpawnClient(int i)
 {
-	players[i].ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
-	players[i].ViewEnts[ps_weapon].Player = &players[i];
-	players[i].ViewEnts[ps_flash] = SpawnObject(Weapon, none);
-	players[i].ViewEnts[ps_flash].Player = &players[i];
-	if (players[i].bIsBot)
-	{
-		players[i].Bot = SpawnObject(BotPlayer, none);
-		players[i].Bot.player = &players[i];
-		players[i].Bot.OnBeginPlay();
-	}
 	if (deathmatch)
 	{
 		G_DeathMatchSpawnPlayer(i);
@@ -973,6 +989,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/04 18:31:35  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.22  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

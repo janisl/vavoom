@@ -478,10 +478,10 @@ void Actor::UpdateVelocity(void)
 		{
 			int sn;
 
-			sn = StateNum - PStateRun[Player->PClass];
+			sn = StateNum - SeeState;
 			if (sn >= 0 && sn < 4)
 			{
-				SetState(PStateNormal[Player->PClass]);
+				SetState(SpawnState);
 			}
 		}
 		Velocity.x = 0.0;
@@ -938,7 +938,7 @@ Actor Actor::CheckOnmobj(void)
 	tzorg = Origin;
 	FakeZMovement();
 
-	if (bNoClip)
+	if (!bColideWithThings)
 		return none;
 
 	//
@@ -1474,6 +1474,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.27  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

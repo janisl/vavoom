@@ -129,6 +129,12 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			bCheckLineBlockMonsters = true;
 		}
 	}
+	//	DeHackEd crap
+	if (bNoClip)
+	{
+		bColideWithWorld = false;
+		bColideWithThings = false;
+	}
 
 	if (gameskill == sk_nightmare)
 	{
@@ -654,7 +660,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
 	// thus kick away unless using the chainsaw.
-	if (inflictor && !bNoClip &&
+	if (inflictor && bColideWithThings &&
 		(!source || !source.bIsPlayer ||
 			source.Player->ReadyWeapon != wp_chainsaw))
 	{
@@ -982,6 +988,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/03/04 18:31:35  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.35  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

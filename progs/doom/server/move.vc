@@ -102,7 +102,8 @@ boolean Actor::Touch(MapObject InOther)
 		return !solid;
 	}
 
-	return !Other.bSolid || Other.bNoClip;
+	//return !Other.bSolid || Other.bNoClip;
+	return !Other.bSolid;
 }
 
 boolean floatok;	// if true, move would be ok if
@@ -144,7 +145,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 	}
 
-	if (!thing->bNoClip)
+	if (thing->bColideWithWorld)
 	{
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < thing->Height)
 		{
@@ -186,7 +187,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!thing->bTeleport && !thing->bNoClip)
+	if (!thing->bTeleport && thing->bColideWithWorld)
 	{
 		while (tmtrace.NumSpecHit > 0)
 		{
@@ -239,6 +240,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/04 18:31:35  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.21  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

@@ -80,6 +80,7 @@
 #include "quake.vc"
 #include "batspawn.vc"
 
+#include "player.vc"
 #include "pig.vc"
 #include "ettin.vc"
 #include "centaur.vc"
@@ -100,6 +101,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.11  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //

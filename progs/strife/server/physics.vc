@@ -596,7 +596,7 @@ void Actor::ZMovement(void)
 		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (!bNoClip)
+			if (bColideWithWorld)
 			{
 				P_ExplodeMissile(this);
 				return;
@@ -628,7 +628,7 @@ void Actor::ZMovement(void)
 		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (!bNoClip)
+			if (bColideWithWorld)
 			{
 				P_ExplodeMissile(this);
 				return;
@@ -861,7 +861,7 @@ Actor Actor::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	if (bNoClip)
+	if (!bColideWithThings)
 		return none;
 
 	tzmthing = self;
@@ -1053,6 +1053,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.22  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

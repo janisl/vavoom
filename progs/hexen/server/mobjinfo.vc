@@ -1007,7 +1007,8 @@ class FogPatchSmall:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -1036,7 +1037,8 @@ class FogPatchMedium:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -1065,7 +1067,8 @@ class FogPatchLarge:Actor
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bFloat = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -1999,7 +2002,8 @@ class PoisonCloud:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bNoPassMobj = true;
 		bNoDamageThrust = true;
 		SpawnState = S_POISONCLOUD1;
@@ -5952,7 +5956,8 @@ class HolyTail:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_HOLY_TAIL1;
@@ -6647,41 +6652,7 @@ class Gibs:Actor
 	}
 };
 
-//==========================================================================
-//
-//	PlayerFighter
-//
-//==========================================================================
-
-class PlayerFighter:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		GibsHealth = -50;
-		Radius = 16.0;
-		Height = 64.0;
-		Mass = 100.0;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bPickUp = true;
-		bWindThrust = true;
-		bFloorClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		bActivatePushWall = true;
-		SpawnState = S_FPLAY;
-		SeeState = S_FPLAY_RUN1;
-		MissileState = S_FPLAY_ATK1;
-		PainState = S_FPLAY_PAIN;
-		DeathState = S_FPLAY_DIE1;
-		GibsDeathState = S_FPLAY_XDIE1;
-		IceDeathState = S_FPLAY_ICE;
-		PainSound = 'PlayerFighterPain';
-	}
-};
+class PlayerFighter;
 
 //==========================================================================
 //
@@ -6755,112 +6726,9 @@ class IceChunk:Actor
 	}
 };
 
-//==========================================================================
-//
-//	PlayerCleric
-//
-//==========================================================================
-
-class PlayerCleric:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		GibsHealth = -50;
-		Radius = 16.0;
-		Height = 64.0;
-		Mass = 100.0;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bPickUp = true;
-		bWindThrust = true;
-		bFloorClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		bActivatePushWall = true;
-		SpawnState = S_CPLAY;
-		SeeState = S_CPLAY_RUN1;
-		MissileState = S_CPLAY_ATK1;
-		PainState = S_CPLAY_PAIN;
-		DeathState = S_CPLAY_DIE1;
-		GibsDeathState = S_CPLAY_XDIE1;
-		IceDeathState = S_CPLAY_ICE;
-		PainSound = 'PlayerClericPain';
-	}
-};
-
-//==========================================================================
-//
-//	PlayerMage
-//
-//==========================================================================
-
-class PlayerMage:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		GibsHealth = -50;
-		Radius = 16.0;
-		Height = 64.0;
-		Mass = 100.0;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bPickUp = true;
-		bWindThrust = true;
-		bFloorClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		bActivatePushWall = true;
-		SpawnState = S_MPLAY;
-		SeeState = S_MPLAY_RUN1;
-		MissileState = S_MPLAY_ATK1;
-		PainState = S_MPLAY_PAIN;
-		DeathState = S_MPLAY_DIE1;
-		GibsDeathState = S_MPLAY_XDIE1;
-		IceDeathState = S_MPLAY_ICE;
-		PainSound = 'PlayerMagePain';
-	}
-};
-
-//==========================================================================
-//
-//	PlayerPig
-//
-//==========================================================================
-
-class PlayerPig:Actor
-{
-	defaultproperties
-	{
-		Health = 100;
-		Radius = 16.0;
-		Height = 24.0;
-		Mass = 100.0;
-		PainChance = 255;
-		bSolid = true;
-		bShootable = true;
-		bDropOff = true;
-		bWindThrust = true;
-		bFloorClip = true;
-		bSlide = true;
-		bTelestomp = true;
-		bActivatePushWall = true;
-		SpawnState = S_PIGPLAY;
-		SeeState = S_PIGPLAY_RUN1;
-		MissileState = S_PIGPLAY_ATK1;
-		PainState = S_PIGPLAY_PAIN;
-		DeathState = S_PIG_DIE1;
-		IceDeathState = S_PIG_ICE;
-		PainSound = 'PigPain';
-		DeathSound = 'PigDeath';
-	}
-};
-
+class PlayerCleric;
+class PlayerMage;
+class PlayerPig;
 class Pig;
 class Centaur;
 class CentaurLeader;
@@ -8955,7 +8823,8 @@ class BlastEffect:Actor
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_BLASTEFFECT1;
@@ -9007,7 +8876,8 @@ class KoraxSpirit1:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9034,7 +8904,8 @@ class KoraxSpirit2:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9061,7 +8932,8 @@ class KoraxSpirit3:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9088,7 +8960,8 @@ class KoraxSpirit4:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9115,7 +8988,8 @@ class KoraxSpirit5:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9142,7 +9016,8 @@ class KoraxSpirit6:Actor
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
-		bNoClip = true;
+		bColideWithWorld = false;
+		bColideWithThings = false;
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_KSPIRIT_ROAM1;
@@ -9232,10 +9107,13 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/03/04 18:31:36  dj_jl
+//	Replaced bNoClip with two seperate flags, beautification.
+//
 //	Revision 1.24  2002/03/02 17:58:36  dj_jl
 //	Created Pawn class as a base class for all creatures.
 //	Moved all monster classes into corresponding files.
-//
+//	
 //	Revision 1.23  2002/02/22 18:00:22  dj_jl
 //	A lots of the renaming, beautification.
 //	

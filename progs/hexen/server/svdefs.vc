@@ -219,6 +219,7 @@ class Actor:Entity
 	bool bCorpse;			// don't stop moving halfway off a step
 	bool bInFloat;			// floating to a height for a move, don't
 							// auto float to target's height
+	bool bSkullFly;			// skull in flight
 	bool bCountKill;		// count towards intermission kill total
 	bool bIceCorpse;		// a frozen corpse (for blasting)
 	bool bLowGravity;		// alternate gravity setting
@@ -328,7 +329,7 @@ class Actor:Entity
 	int FaceActor(Actor target, float *delta);
 	void MonsterFallingDamage(void);
 	Actor ActiveMinotaur(void);
-	void Kill(Actor source);
+	void KilledBy(Actor source);
 	void MinotaurSlam(Actor source);
 	boolean MorphPlayer(void);
 	boolean MorphMonster(void);
@@ -567,6 +568,22 @@ class Pawn:Actor
 		bActivatePushWall = true;
 		bActivateMCross = true;
 		bCheckNoMonsters = true;
+	}
+}
+
+class PlayerPawn:Pawn
+{
+	int AttackEndState;
+
+	defaultproperties
+	{
+		ReactionCount = 0;
+		bCountKill = false;
+		bActivateMCross = false;
+		bCheckNoMonsters = false;
+		bDropOff = true;
+		bWindThrust = true;
+		bSlide = true;
 	}
 }
 
@@ -964,6 +981,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.24  2002/03/02 17:58:37  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

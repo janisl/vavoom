@@ -46,7 +46,7 @@
 
 boolean P_TestMobjLocation(mobj_t * mobj)
 {
-	if (mobj->bNoClip)
+	if (!mobj->bColideWithThings && !mobj->bColideWithWorld)
 		return true;
 
 	if (mobj->CheckPosition(mobj->Origin))
@@ -408,7 +408,7 @@ float saved_tmfloorz;
 
 void PushLine(mobj_t * thing)
 {
-	if (!thing->bTeleport && !thing->bNoClip)
+	if (!thing->bTeleport && thing->bColideWithWorld)
 	{
 		int numSpecHitTemp;
 		line_t *ld;
@@ -465,7 +465,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 	}
 
-	if (!thing->bNoClip)
+	if (thing->bColideWithWorld)
 	{
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < thing->Height)
 		{
@@ -552,7 +552,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (!thing->bTeleport && !thing->bNoClip)
+	if (!thing->bTeleport && thing->bColideWithWorld)
 	{
 		while (tmtrace.NumSpecHit > 0)
 		{
@@ -588,6 +588,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.23  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

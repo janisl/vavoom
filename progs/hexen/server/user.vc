@@ -703,9 +703,15 @@ void PlayerThink(player_t * player)
 
 	// fixme: do this in the cheat code
 	if (player->Cheats & CF_NOCLIP)
-		player->mo->bNoClip = true;
+	{
+		player->mo->bColideWithThings = false;
+		player->mo->bColideWithWorld = false;
+	}
 	else
-		player->mo->bNoClip = false;
+	{
+		player->mo->bColideWithThings = true;
+		player->mo->bColideWithWorld = true;
+	}
 
 	if (player->mo->bJustAttacked)
 	{
@@ -1836,6 +1842,26 @@ void SetPlayerColor(player_t * player)
 
 //==========================================================================
 //
+//	PutClientIntoServer
+//
+//==========================================================================
+
+void PutClientIntoServer(player_t * player)
+{
+	player->ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	player->ViewEnts[ps_weapon].Player = player;
+	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	player->ViewEnts[ps_flash].Player = player;
+	if (player->bIsBot)
+	{
+		player->Bot = SpawnObject(BotPlayer, none);
+		player->Bot.player = player;
+		player->Bot.OnBeginPlay();
+	}
+}
+
+//==========================================================================
+//
 //  SpawnClient
 //
 //==========================================================================
@@ -1854,17 +1880,6 @@ void SpawnClient(int i)
 
 	player->Attacker = NULL;
 	player->Poisoner = NULL;
-
-	player->ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
-	player->ViewEnts[ps_weapon].Player = player;
-	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
-	player->ViewEnts[ps_flash].Player = player;
-	if (players[i].bIsBot)
-	{
-		players[i].Bot = SpawnObject(BotPlayer, none);
-		players[i].Bot.player = &players[i];
-		players[i].Bot.OnBeginPlay();
-	}
 
 	if (netgame && !deathmatch)
 	{
@@ -1965,6 +1980,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.29  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //

@@ -248,7 +248,7 @@ void P_FireWeapon(player_t * player)
 	{
 		return;
 	}
-	player->mo->SetState(PStateAttack[player->PClass]);
+	player->mo->SetState(player->mo->MissileState);
 	player->ViewEnts[ps_weapon].SetState(
 		Weapon(player->ViewEnts[ps_weapon]).GetAttackState());
 	P_NoiseAlert(player->mo, player->mo);
@@ -328,10 +328,10 @@ void Weapon::A_WeaponReady(void)
 	float angle;
 
 	// Change player from attack state
-	if (Player->mo->StateNum >= PStateAttack[Player->PClass] &&
-		Player->mo->StateNum <= PStateAttackEnd[Player->PClass])
+	if (Player->mo->StateNum >= Player->mo->MissileState &&
+		Player->mo->StateNum <= PlayerPawn(*Player->mo).AttackEndState)
 	{
-		Player->mo->SetState(PStateNormal[Player->PClass]);
+		Player->mo->SetState(Player->mo->SpawnState);
 	}
 	// Put the weapon away if the player has a pending weapon or has died.
 	if (Player->PendingWeapon != wp_nochange || !Player->Health)
@@ -457,6 +457,9 @@ void Weapon::A_Light0(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.12  2002/03/02 17:35:56  dj_jl
 //  Weapon classes
 //

@@ -56,7 +56,8 @@ void Actor::A_PoisonBagInit(void)
 	mo->Owner = Owner;
 	mo->Radius = 20.0;
 	mo->Height = 30.0;
-	mo->bNoClip = false;
+	mo->bColideWithThings = true;
+	mo->bColideWithWorld = true;
 }
 
 //===========================================================================
@@ -104,6 +105,9 @@ void Actor::A_PoisonShroom(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.13  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

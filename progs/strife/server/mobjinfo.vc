@@ -7686,7 +7686,8 @@ class Thing253:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1488;
 	}
 };
@@ -7708,7 +7709,8 @@ class Thing254:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1489;
 	}
 };
@@ -7730,7 +7732,8 @@ class Thing255:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1490;
 	}
 };
@@ -7752,7 +7755,8 @@ class Thing256:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1491;
 	}
 };
@@ -7774,7 +7778,8 @@ class Thing257:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1492;
 	}
 };
@@ -7796,7 +7801,8 @@ class Thing258:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1493;
 	}
 };
@@ -7818,7 +7824,8 @@ class Thing259:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1494;
 	}
 };
@@ -7840,7 +7847,8 @@ class Thing260:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1495;
 	}
 };
@@ -8574,7 +8582,8 @@ class Thing294:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1300;
 	}
 };
@@ -8595,7 +8604,8 @@ class Thing295:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1320;
 	}
 };
@@ -8616,7 +8626,8 @@ class Thing296:Actor
 		Mass = 100.0;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bNoClip = true;
+		bColideWithThings = false;
+		bColideWithWorld = false;
 		SpawnState = S_1340;
 	}
 };
@@ -9012,9 +9023,12 @@ class Quest6:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/03/04 18:31:36  dj_jl
+//	Replaced bNoClip with two seperate flags, beautification.
+//
 //	Revision 1.22  2002/02/22 18:00:25  dj_jl
 //	A lots of the renaming, beautification.
-//
+//	
 //	Revision 1.21  2002/02/14 19:20:59  dj_jl
 //	Renamed Entity properties to new naming style
 //	

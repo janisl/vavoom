@@ -85,7 +85,7 @@ void F_TextWrite(void)
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_SetDist(-1, 0);
+	T_SetDist(-1, -1);
 	T_DrawNText(20, 5, ARR2STR(FinaleText), count);
 	T_SetDist(-1, 1);
 }
@@ -265,6 +265,9 @@ boolean F_Responder(event_t * event)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/04 18:31:35  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.7  2002/02/02 19:17:25  dj_jl
 //  Replacing pointers with references, beautification.
 //

@@ -275,6 +275,7 @@ class Actor:Entity
 	bool bCorpse;			// don't stop moving halfway off a step
 	bool bInFloat;			// floating to a height for a move, don't
 							// auto float to target's height
+	bool bSkullFly;			// skull in flight
 	bool bCountKill;		// count towards intermission kill total
 	bool bCountItem;		// count towards intermission item total
 	bool bUnknown1;
@@ -545,6 +546,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/04 18:31:36  dj_jl
+//  Replaced bNoClip with two seperate flags, beautification.
+//
 //  Revision 1.23  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
