@@ -92,19 +92,34 @@ void SV_DestroyAllThinkers(void)
 
 //==========================================================================
 //
+//	VThinker::Tick
+//
+//==========================================================================
+
+void VThinker::Tick(float DeltaTime)
+{
+	guard(VThinker::Tick);
+	svpr.Exec(GetVFunction(FIndex_Tick), (int)this, PassFloat(DeltaTime));
+	unguard;
+}
+
+//==========================================================================
+//
 // RunThinkers
 //
 //==========================================================================
 
 static void RunThinkers(void)
 {
+	guard(RunThinkers);
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
 		if (!(It->GetFlags() & OF_Destroyed))
 		{
-			svpr.Exec(It->GetVFunction(FIndex_Tick), (int)*It, PassFloat(host_frametime));
+			It->Tick(host_frametime);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -138,9 +153,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/07/23 13:10:38  dj_jl
+//	Some fixes for switching to floating-point time.
+//
 //	Revision 1.13  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.12  2002/04/11 16:42:10  dj_jl
 //	Renamed Think to Tick.
 //	

@@ -70,7 +70,7 @@ static void G_DoCompleted(void);
 IMPLEMENT_CLASS(VMapObject)
 IMPLEMENT_CLASS(VViewEntity)
 
-TCvarI			real_time("real_time", "0");
+TCvarI			real_time("real_time", "1");
 
 server_t		sv;
 server_static_t	svs;
@@ -2907,9 +2907,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2002/07/23 13:10:37  dj_jl
+//	Some fixes for switching to floating-point time.
+//
 //	Revision 1.44  2002/07/13 07:43:31  dj_jl
 //	Fixed net buffer hack.
-//
+//	
 //	Revision 1.43  2002/06/29 16:00:45  dj_jl
 //	Added total frags count.
 //	

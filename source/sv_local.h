@@ -41,8 +41,11 @@
 //
 class VThinker:public VObject
 {
-	DECLARE_ABSTRACT_CLASS(VThinker, VObject, 0)
+	DECLARE_CLASS(VThinker, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VThinker)
+
+	//	VThinker interface.
+	virtual void Tick(float DeltaTime);
 };
 
 //==========================================================================
@@ -445,9 +448,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2002/07/23 13:10:37  dj_jl
+//	Some fixes for switching to floating-point time.
+//
 //	Revision 1.24  2002/03/28 18:05:25  dj_jl
 //	Added SV_GetModelIndex.
-//
+//	
 //	Revision 1.23  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

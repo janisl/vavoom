@@ -29,8 +29,6 @@
 #include "cl_local.h"
 #include <fstream.h>
 
-//#define REAL_TIME
-
 void CL_Init(void);
 void SV_Init(void);
 void CL_SendMove(void);
@@ -218,6 +216,8 @@ static void Host_GetConsoleCommands(void)
 //
 //==========================================================================
 
+extern TCvarI real_time;
+
 static bool FilterTime(void)
 {
 	guard(FilterTime);
@@ -227,12 +227,16 @@ static bool FilterTime(void)
 
 	realtime += time;
 
-#ifdef REAL_TIME
-	if (realtime - oldrealtime < 1.0 / 72.0)
-#else
-	if (realtime - oldrealtime < 1.0 / 35.0)
-#endif
-		return false;		// framerate is too high
+	if (real_time)
+	{
+		if (realtime - oldrealtime < 1.0 / 72.0)
+			return false;		// framerate is too high
+	}
+	else
+	{
+		if (realtime - oldrealtime < 1.0 / 35.0)
+			return false;		// framerate is too high
+	}
 
 	host_frametime = realtime - oldrealtime;
 
@@ -253,10 +257,8 @@ static bool FilterTime(void)
 
 	thistime = (int)(realtime * TICRATE);
 	host_frametics = thistime - lasttime;
-#ifndef REAL_TIME
-	if (host_frametics < 1)
+	if (!real_time && host_frametics < 1)
 		return false;		//	No tics to run
-#endif
 	if (host_frametics > 3)
 		host_frametics = 3;	//	Don't run too slow
 	oldrealtime = realtime;
@@ -605,9 +607,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2002/07/23 13:10:37  dj_jl
+//	Some fixes for switching to floating-point time.
+//
 //	Revision 1.22  2002/05/29 16:53:27  dj_jl
 //	Got rid of a warning.
-//
+//	
 //	Revision 1.21  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

@@ -61,13 +61,14 @@ class VACS:public VThinker
 	int 		side;
 	int 		number;
 	int 		infoIndex;
-	int 		delayCount;
+	float		DelayTime;
 	int 		stack[ACS_STACK_DEPTH];
 	int			stackPtr;
 	int 		vars[MAX_ACS_SCRIPT_VARS];
 	int 		*ip;
 
-	DECLARE_FUNCTION(Tick)
+	void Tick(float DeltaTime);
+
 	DECLARE_FUNCTION(Archive)
 	DECLARE_FUNCTION(Unarchive)
 };
@@ -418,7 +419,7 @@ static void StartOpenACS(int number, int infoIndex, int *address)
 	script->number = number;
 
 	// World objects are allotted 1 second for initialization
-	script->delayCount = 35;
+	script->DelayTime = 1.0;
 
 	script->infoIndex = infoIndex;
 	script->ip = address;
@@ -445,7 +446,7 @@ void P_CheckACSStore(void)
 			P_StartACS(store->script, 0, store->args, NULL, NULL, 0);
 			if (NewScript)
 			{
-				NewScript->delayCount = 35;
+				NewScript->DelayTime = 1.0;
 			}
 			strcpy(store->map, "-");
 		}
@@ -623,63 +624,47 @@ void P_ACSInitNewGame(void)
 
 //==========================================================================
 //
-// SV_InterpretACS
+//	VAcs::Tick
 //
 //==========================================================================
 
-static void SV_InterpretACS(VACS *script)
+void VACS::Tick(float DeltaTime)
 {
 	int cmd;
 	int action;
 
-	if(ACSInfo[script->infoIndex].state == ASTE_TERMINATING)
+	if (ACSInfo[infoIndex].state == ASTE_TERMINATING)
 	{
-		ACSInfo[script->infoIndex].state = ASTE_INACTIVE;
-		ScriptFinished(ACScript->number);
-		ACScript->Destroy();
+		ACSInfo[infoIndex].state = ASTE_INACTIVE;
+		ScriptFinished(number);
+		Destroy();
 		return;
 	}
-	if(ACSInfo[script->infoIndex].state != ASTE_RUNNING)
+	if (ACSInfo[infoIndex].state != ASTE_RUNNING)
 	{
 		return;
 	}
-	if(script->delayCount)
+	if (DelayTime)
 	{
-		script->delayCount--;
+		DelayTime -= DeltaTime;
+		if (DelayTime < 0)
+			DelayTime = 0;
 		return;
 	}
-	ACScript = script;
-	PCodePtr = ACScript->ip;
+	ACScript = this;
+	PCodePtr = ip;
 	do
 	{
 		cmd = *PCodePtr++;
 		action = PCodeCmds[cmd]();
-	} while(action == SCRIPT_CONTINUE);
-	ACScript->ip = PCodePtr;
-	if(action == SCRIPT_TERMINATE)
+	} while  (action == SCRIPT_CONTINUE);
+	ip = PCodePtr;
+	if (action == SCRIPT_TERMINATE)
 	{
-		ACSInfo[script->infoIndex].state = ASTE_INACTIVE;
-		ScriptFinished(ACScript->number);
-		ACScript->Destroy();
+		ACSInfo[infoIndex].state = ASTE_INACTIVE;
+		ScriptFinished(number);
+		Destroy();
 	}
-}
-
-//==========================================================================
-//
-//	ACS.Tick
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VACS, Tick)
-{
-	guard(VACS.Tick);
-	VACS	*script;
-	float	deltaTime;
-
-	deltaTime = PR_Popf();
-	script = (VACS *)PR_Pop();
-	SV_InterpretACS(script);
-	unguard;
 }
 
 //==========================================================================
@@ -1328,13 +1313,13 @@ static int CmdDrop(void)
 
 static int CmdDelay(void)
 {
-	ACScript->delayCount = Pop();
+	ACScript->DelayTime = float(Pop()) / 35.0;
 	return SCRIPT_STOP;
 }
 
 static int CmdDelayDirect(void)
 {
-	ACScript->delayCount = *PCodePtr++;
+	ACScript->DelayTime = float(*PCodePtr++) / 35.0;
 	return SCRIPT_STOP;
 }
 
@@ -1829,9 +1814,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2002/07/23 13:10:37  dj_jl
+//	Some fixes for switching to floating-point time.
+//
 //	Revision 1.18  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.17  2002/04/11 16:42:09  dj_jl
 //	Renamed Think to Tick.
 //	
