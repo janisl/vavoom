@@ -105,7 +105,7 @@ void Actor::A_Quake(void)
 			if (!pl->bActive || !pl->bSpawned)
 				continue;
 
-			victim = *pl->mo;
+			victim = pl->MO;
 			dist = ftoi(MobjDist(self, victim)) >> 6;
 			// Tested in tile units (64 pixels)
 			if (dist < Args[3])	// In tremor radius
@@ -138,6 +138,9 @@ void Actor::A_Quake(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.16  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -2315,8 +2315,8 @@ string weaponMessages[6] = {
 	TXT_WEAPON_F3,
 	TXT_WEAPON_C2,
 	TXT_WEAPON_C3,
-	TXT_WEAPON_C2,
-	TXT_WEAPON_C3,
+	TXT_WEAPON_M2,
+	TXT_WEAPON_M3,
 };
 string fourthWeaponText[] = {
 	TXT_WEAPON_F4,
@@ -2754,7 +2754,7 @@ void Artifact::TouchSpecial(Actor Toucher)
 	{
 		if (Special)
 		{
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, none);
+			ExecuteLineSpecial(Special, &Args[0], NULL, 0, P);
 			Special = 0;
 		}
 		P.Player->BonusCount += BONUSADD;
@@ -3177,6 +3177,9 @@ void Key::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.19  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

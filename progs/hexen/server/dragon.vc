@@ -132,11 +132,11 @@ void DragonSeek(float thresh, float turnMax)
 			atan2(tempTarget.Origin.y - Origin.y,
 			tempTarget.Origin.x - Origin.x))) < 45.0 / 2.0)
 		{
-			oldTarget = Target;
-			Target = tempTarget;
+			oldTarget = Enemy;
+			Enemy = tempTarget;
 			if (CheckMeleeRange())
 			{
-				Target.Damage(self, self, HITDICE(10));
+				Enemy.Damage(self, self, HITDICE(10));
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange())
@@ -144,18 +144,18 @@ void DragonSeek(float thresh, float turnMax)
 				SpawnMissile(tempTarget, DragonMissile);
 				PlaySound('DragonAttack', CHAN_WEAPON);
 			}
-			Target = oldTarget;
+			Enemy = oldTarget;
 		}
 	}
 	if (dist * 35.0 < 4.0)
 	{
 		// Hit the target thing
-		if (Target && P_Random() < 200)
+		if (Enemy && P_Random() < 200)
 		{
 			bestArg = -1;
 			bestAngle = 360.0;
-			angleToTarget = atan2(Target.Origin.y - Origin.y,
-				Target.Origin.x - Origin.x);
+			angleToTarget = atan2(Enemy.Origin.y - Origin.y,
+				Enemy.Origin.x - Origin.x);
 			for (i = 0; i < 5; i++)
 			{
 				if (!tempTarget.Args[i])
@@ -204,19 +204,19 @@ void A_DragonFlight(void)
 	float angle;
 
 	DragonSeek(4.0, 8.0);
-	if (Target)
+	if (Enemy)
 	{
-		if (!Target.bShootable)
+		if (!Enemy.bShootable)
 		{
 			// enemy died
-			Target = none;
+			Enemy = none;
 			return;
 		}
-		angle = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
+		angle = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
 		if (fabs(AngleMod180(Angles.yaw - angle)) < 45.0 / 2.0
 			&& CheckMeleeRange())
 		{
-			Target.Damage(self, self, HITDICE(8));
+			Enemy.Damage(self, self, HITDICE(8));
 			PlaySound('DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(Angles.yaw - angle)) <= 20.0)
@@ -258,7 +258,7 @@ void A_DragonFlap(void)
 
 void A_DragonAttack(void)
 {
-	SpawnMissile(Target, DragonMissile);
+	SpawnMissile(Enemy, DragonMissile);
 }
 
 //============================================================================
@@ -375,7 +375,7 @@ void Actor::A_DragonFX2(void)
 		if (A)
 		{
 			A.StateTime = delay + Random() * 0.2 * itof(i);
-			A.Owner = Owner;
+			A.Instigator = Instigator;
 		}
 	}
 }
@@ -383,6 +383,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.22  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

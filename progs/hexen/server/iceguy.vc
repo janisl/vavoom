@@ -80,7 +80,7 @@ void A_IceGuyChase(void)
 		if (A)
 		{
 			A.Velocity = Velocity;
-			A.Owner = self;
+			A.Instigator = self;
 		}
 	}
 }
@@ -95,17 +95,17 @@ void A_IceGuyAttack(void)
 {
 	float an;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	an = AngleMod360(Angles.yaw + 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
 
 	an = AngleMod360(Angles.yaw - 90.0);
 	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
-		Radius / 2.0 * sin(an), 40.0), Target, IceGuyMissile);
+		Radius / 2.0 * sin(an), 40.0), Enemy, IceGuyMissile);
 
 	PlaySound(AttackSound, CHAN_WEAPON);
 }
@@ -205,7 +205,7 @@ void Actor::A_IceGuyMissileExplode(void)
 		mo = SpawnMissileAngle(IceGuyMissile2, itof(i) * 45.0, -0.3 * 35.0);
 		if (mo)
 		{
-			mo.Owner = Owner;
+			mo.Instigator = Instigator;
 		}
 	}
 }
@@ -213,6 +213,9 @@ void Actor::A_IceGuyMissileExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.15  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

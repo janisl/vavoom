@@ -140,7 +140,7 @@ void A_KoraxChase(void)
 		return;
 	}
 
-	if (!Target)
+	if (!Enemy)
 		return;
 	if (P_Random() < 30)
 	{
@@ -196,7 +196,7 @@ void KoraxFire1(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM1_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -212,7 +212,7 @@ void KoraxFire2(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM2_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -228,7 +228,7 @@ void KoraxFire3(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM3_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -244,7 +244,7 @@ void KoraxFire4(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM4_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -260,7 +260,7 @@ void KoraxFire5(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM5_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -276,7 +276,7 @@ void KoraxFire6(classid type)
 	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
 	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
 	z = Origin.z - FloorClip + KORAX_ARM6_HEIGHT;
-	SpawnKoraxMissile(vector(x, y, z), Target, type);
+	SpawnKoraxMissile(vector(x, y, z), Enemy, type);
 }
 
 //============================================================================
@@ -510,7 +510,7 @@ void Actor::KSpiritInit(Actor korax)
 
 	Health = KORAX_SPIRIT_LIFETIME;
 
-	Target = korax;	// Swarm around korax
+	Enemy = korax;	// Swarm around korax
 	_Special2 = 32 + (P_Random() & 7);	// Float bob index
 	Args[0] = 10;	// initial turn value
 	Args[1] = 0;	// initial look angle
@@ -543,11 +543,11 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 	float newZ;
 	float deltaZ;
 
-	if (Target == none)
+	if (Enemy == none)
 	{
 		return;
 	}
-	dir = FaceActor(Target, &delta);
+	dir = FaceActor(Enemy, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -571,10 +571,10 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 	Velocity.y = Speed * sin(angle);
 
 	if (!(level->tictime & 15) ||
-		Origin.z > Target.Origin.z + Target.Height ||
-		Origin.z + Height < Target.Origin.z)
+		Origin.z > Enemy.Origin.z + Enemy.Height ||
+		Origin.z + Height < Enemy.Origin.z)
 	{
-		newZ = Target.Origin.z + Random() * Target.Height;
+		newZ = Enemy.Origin.z + Random() * Enemy.Height;
 		deltaZ = newZ - Origin.z;
 		if (fabs(deltaZ) > 15.0)
 		{
@@ -587,7 +587,7 @@ void Actor::A_KSpiritSeeker(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(Target, self);
+		dist = MobjDist2(Enemy, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -640,7 +640,7 @@ void Actor::A_KSpiritRoam(void)
 	}
 	else
 	{
-		if (Target)
+		if (Enemy)
 		{
 			A_KSpiritSeeker(itof(Args[0]), itof(Args[0]) * 2.0);
 		}
@@ -698,6 +698,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.19  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

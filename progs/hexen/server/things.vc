@@ -172,7 +172,7 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 		{
 			newA.PlaySound(newA.SightSound, CHAN_VOICE);
 		}
-		newA.Owner = A;	// Originator
+		newA.Instigator = A;	// Originator
 		newA.Angles.yaw = angle;
 		newA.Velocity.x = speed * cos(angle) * 35.0;
 		newA.Velocity.y = speed * sin(angle) * 35.0;
@@ -520,6 +520,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.25  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

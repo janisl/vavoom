@@ -45,7 +45,7 @@ void A_EttinAttack(void)
 {
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(2));
+		Enemy.Damage(self, self, HITDICE(2));
 	}
 }
 
@@ -65,7 +65,7 @@ void A_DropMace(void)
 		mace.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		mace.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		mace.Velocity.z = (10.0 + Random() * 4.0) * 35.0;
-		mace.Owner = self;
+		mace.Instigator = self;
 	}
 }
 
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.14  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

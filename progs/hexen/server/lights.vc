@@ -81,6 +81,8 @@ class LightEffect:Thinker
 
 void Think(void)
 {
+	int d;
+
 	if (time)
 	{
 		time -= frametime;
@@ -93,7 +95,10 @@ void Think(void)
 	switch (type)
 	{
 	case LITE_FADE:
-		sector->params.lightlevel += ftoi(delta * frametime);
+		d = ftoi(delta * frametime);
+		if (!d)
+			d = direction;
+		sector->params.lightlevel += d;
 		if (direction == 1)
 		{
 			if (sector->params.lightlevel >= value1)
@@ -499,6 +504,9 @@ class misc_static_rgb_light:Actor
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.13  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

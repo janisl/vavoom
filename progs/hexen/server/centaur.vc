@@ -43,13 +43,13 @@ class Centaur:Pawn
 
 void A_CentaurAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, P_Random() % 7 + 3);
+		Enemy.Damage(self, self, P_Random() % 7 + 3);
 	}
 }
 
@@ -115,7 +115,7 @@ void A_CentaurDropStuff(void)
 		A.Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = (8.0 + Random() * 4.0) * 35.0;
-		A.Owner = self;
+		A.Instigator = self;
 	}
 	A = Spawn(CentaurSword, Origin + vector(0.0, 0.0, 45.0));
 	if (A)
@@ -124,7 +124,7 @@ void A_CentaurDropStuff(void)
 		A.Velocity.x = ((Random() - 0.5) * 8.0 + 1.0) * cos(angle) * 35.0;
 		A.Velocity.y = ((Random() - 0.5) * 8.0 + 1.0) * sin(angle) * 35.0;
 		A.Velocity.z = (8.0 + Random() * 4.0) * 35.0;
-		A.Owner = self;
+		A.Instigator = self;
 	}
 }
 
@@ -215,11 +215,11 @@ class CentaurLeader:Centaur
 
 void A_CentaurAttack2(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
-	SpawnMissile(Target, CentaurMissile);
+	SpawnMissile(Enemy, CentaurMissile);
 	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 
@@ -291,6 +291,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.21  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

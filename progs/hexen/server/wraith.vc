@@ -75,7 +75,7 @@ void A_WraithFX3(void)
 			A.Origin.x += (Random() - 0.5) * 8.0;
 			A.Origin.y += (Random() - 0.5) * 8.0;
 			A.Origin.z += Random() * 4.0;
-			A.Owner = self;
+			A.Instigator = self;
 		}
 	}
 }
@@ -123,7 +123,7 @@ void A_WraithFX4(void)
 			mo.Origin.x += (Random() - 0.5) * 16.0;
 			mo.Origin.y += (Random() - 0.5) * 16.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.Owner = self;
+			mo.Instigator = self;
 		}
 	}
 	if (spawn5)
@@ -134,7 +134,7 @@ void A_WraithFX4(void)
 			mo.Origin.x += (Random() - 0.5) * 8.0;
 			mo.Origin.y += (Random() - 0.5) * 8.0;
 			mo.Origin.z += Random() * 4.0;
-			mo.Owner = self;
+			mo.Instigator = self;
 		}
 	}
 }
@@ -184,7 +184,7 @@ void A_WraithMelee(void)
 	if (CheckMeleeRange() && (P_Random() < 220))
 	{
 		amount = HITDICE(2);
-		Target.Damage(self, self, amount);
+		Enemy.Damage(self, self, amount);
 		Health += amount;
 	}
 }
@@ -199,7 +199,7 @@ void A_WraithMissile(void)
 {
 	Actor mo;
 
-	mo = SpawnMissile(Target, WraithMissile);
+	mo = SpawnMissile(Enemy, WraithMissile);
 	if (mo)
 	{
 		PlaySound('WraithMissileFire', CHAN_WEAPON);
@@ -404,7 +404,7 @@ void Actor::A_WraithFX2(void)
 			A.Velocity.z = 0.0;
 			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
 			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
-			A.Owner = self;
+			A.Instigator = self;
 			A.FloorClip = 10.0;
 		}
 	}
@@ -413,6 +413,9 @@ void Actor::A_WraithFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.21  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

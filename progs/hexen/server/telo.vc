@@ -58,7 +58,7 @@ void Actor::A_TeloSpawnA(void)
 	{
 		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		A.Angles.yaw = Angles.yaw;
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Velocity = Velocity / 2.0;
 	}
 }
@@ -78,7 +78,7 @@ void Actor::A_TeloSpawnB(void)
 	{
 		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		A.Angles.yaw = Angles.yaw;
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Velocity = Velocity / 2.0;
 	}
 }
@@ -98,7 +98,7 @@ void Actor::A_TeloSpawnC(void)
 	{
 		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		A.Angles.yaw = Angles.yaw;
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Velocity = Velocity / 2.0;
 	}
 }
@@ -118,7 +118,7 @@ void Actor::A_TeloSpawnD(void)
 	{
 		A._Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		A.Angles.yaw = Angles.yaw;
-		A.Owner = Owner;
+		A.Instigator = Instigator;
 		A.Velocity = Velocity / 2.0;
 	}
 }
@@ -140,6 +140,9 @@ void Actor::A_CheckTeleRing(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.13  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

@@ -262,9 +262,9 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or none).
-	Actor Target;
+	Actor Enemy;
 	// The originator for missiles.
-	Actor Owner;
+	Actor Instigator;
 
 	int _Special1;	// Special info
 	int _Special2;	// Special info
@@ -1008,6 +1008,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.28  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

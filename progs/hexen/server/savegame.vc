@@ -58,7 +58,7 @@ void Actor::Archive(void)
 {
 	if (bCorpse)
 	{
-		Target = none;
+		Enemy = none;
 	}
 
 	switch (Class)
@@ -147,6 +147,9 @@ void Actor::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.16  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

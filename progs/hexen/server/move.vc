@@ -91,7 +91,7 @@ boolean Actor::Touch(MapObject InOther)
 		}
 		else if (Class == HolyFX)
 		{
-			if (Other.bShootable && Other != Owner)
+			if (Other.bShootable && Other != Instigator)
 			{
 				if (netgame && !deathmatch && Other.bIsPlayer)
 				{
@@ -100,13 +100,13 @@ boolean Actor::Touch(MapObject InOther)
 				}
 				if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
 				{
-					Target = Owner;
-					Owner = Other;
+					Enemy = Instigator;
+					Instigator = Other;
 					return true;
 				}
 				if (Other.bCountKill || Other.bIsPlayer)
 				{
-					Target = Other;
+					Enemy = Other;
 				}
 				if (P_Random() < 96)
 				{
@@ -117,7 +117,7 @@ boolean Actor::Touch(MapObject InOther)
 						// ghost burns out faster when attacking players/bosses
 						Health -= 6;
 					}
-					Other.Damage(self, Owner, damage);
+					Other.Damage(self, Instigator, damage);
 					if (P_Random() < 128)
 					{
 						Spawn(HolyPuff, Origin);
@@ -138,7 +138,7 @@ boolean Actor::Touch(MapObject InOther)
 				if (Other.Health <= 0)
 				{
 					_Special1 = 0;
-					Target = none;
+					Enemy = none;
 				}
 			}
 			return true;
@@ -177,7 +177,7 @@ boolean Actor::Touch(MapObject InOther)
 		}
 		if (bFloorBounce)
 		{
-			if (Owner == Other || !Other.bSolid)
+			if (Instigator == Other || !Other.bSolid)
 			{
 				return true;
 			}
@@ -188,7 +188,7 @@ boolean Actor::Touch(MapObject InOther)
 		}
 		if (Class == LightningFloor || Class == LightningCeiling)
 		{
-			if (Other.bShootable && Other != Owner)
+			if (Other.bShootable && Other != Instigator)
 			{
 				if (Other.Mass != 99999.0)
 				{
@@ -202,11 +202,11 @@ boolean Actor::Touch(MapObject InOther)
 						Other.Class == CentaurLeader)
 					{
 						// Lightning does more damage to centaurs
-						Other.Damage(self, Owner, 9);
+						Other.Damage(self, Instigator, 9);
 					}
 					else
 					{
-						Other.Damage(self, Owner, 3);
+						Other.Damage(self, Instigator, 3);
 					}
 					if (!(GetSoundPlayingInfo(self,
 								GetSoundID('MageLightningZap'))))
@@ -248,7 +248,7 @@ boolean Actor::Touch(MapObject InOther)
 		{
 			Actor lmo;
 
-			if (Other.bShootable && Other != Owner)
+			if (Other.bShootable && Other != Instigator)
 			{
 				lmo = *SpecialMobj2;
 				if (lmo)
@@ -272,7 +272,7 @@ boolean Actor::Touch(MapObject InOther)
 				}
 			}
 		}
-		else if (Class == MageStaffFX2 && Other != Owner)
+		else if (Class == MageStaffFX2 && Other != Instigator)
 		{
 			if (!Other.bIsPlayer && !Other.bBoss)
 			{
@@ -283,15 +283,15 @@ boolean Actor::Touch(MapObject InOther)
 				case MageBoss:
 					break;
 				default:
-					Other.Damage(self, Owner, 10);
+					Other.Damage(self, Instigator, 10);
 					return true;
 				}
 			}
 		}
-		if (Owner && Owner.Class == Other.Class)
+		if (Instigator && Instigator.Class == Other.Class)
 		{
 			// Don't hit same species as originator
-			if (Other == Owner)
+			if (Other == Instigator)
 			{
 				// Don't missile self
 				return true;
@@ -315,7 +315,7 @@ boolean Actor::Touch(MapObject InOther)
 				SpawnRipperBlood();
 			}
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
-			Other.Damage(self, Owner, damage);
+			Other.Damage(self, Instigator, damage);
 			if (Other.bPushable && !bCannotPush)
 			{
 				// Push thing
@@ -339,7 +339,7 @@ boolean Actor::Touch(MapObject InOther)
 			{
 				Other.SpawnBloodSplatter(Origin);
 			}
-			Other.Damage(self, Owner, damage);
+			Other.Damage(self, Instigator, damage);
 		}
 		return false;
 	}
@@ -584,6 +584,9 @@ boolean Actor::TryMove(float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.27  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

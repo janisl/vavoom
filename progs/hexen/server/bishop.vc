@@ -133,14 +133,14 @@ void A_BishopChase(void)
 
 void A_BishopAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(4));
+		Enemy.Damage(self, self, HITDICE(4));
 		return;
 	}
 	NumToSpawn = (P_Random() & 3) + 5;
@@ -158,16 +158,16 @@ void A_BishopAttack2(void)
 {
 	Actor mo;
 
-	if (!Target || !NumToSpawn)
+	if (!Enemy || !NumToSpawn)
 	{
 		NumToSpawn = 0;
 		SetState(SeeState);
 		return;
 	}
-	mo = SpawnMissile(Target, BishopMissile);
+	mo = SpawnMissile(Enemy, BishopMissile);
 	if (mo)
 	{
-		mo.Target = Target;
+		mo.Enemy = Enemy;
 		mo._Special2 = 16;	// High word == x/y, Low word == z
 	}
 	NumToSpawn--;
@@ -334,6 +334,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.21  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

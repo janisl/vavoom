@@ -107,7 +107,7 @@ void A_FastChase(void)
 		}
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// look for a new enemy
 		if (LookForPlayers(true))
@@ -140,13 +140,13 @@ void A_FastChase(void)
 		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, Target);
+		dist = MobjDist(self, Enemy);
 		if (dist < CLASS_BOSS_STRAFE_RANGE)
 		{
 			if (P_Random() < 100)
 			{
-				ang = atan2(Target.Origin.y - Origin.y,
-					Target.Origin.x - Origin.x);
+				ang = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
@@ -177,7 +177,7 @@ void A_FastChase(void)
 	//
 	// possibly choose another enemy
 	//
-	if (netgame && !Threshold && !P_CheckSight(self, Target))
+	if (netgame && !Threshold && !P_CheckSight(self, Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy
@@ -221,7 +221,7 @@ class FighterBoss:ClassBoss
 
 void A_FighterAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	SpawnMissileAngle(FighterSwordMissile,
@@ -313,9 +313,9 @@ class ClericBoss:ClassBoss
 
 void A_ClericAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
-	SpawnMissile(Target, HolyMissile);
+	SpawnMissile(Enemy, HolyMissile);
 	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -404,8 +404,8 @@ void MStaffSpawn2(float angle)
 	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0);
 	if (mo)
 	{
-		mo.Owner = self;
-		mo.Target = mo.RoughMonsterSearch(10);
+		mo.Instigator = self;
+		mo.Enemy = mo.RoughMonsterSearch(10);
 	}
 }
 
@@ -417,7 +417,7 @@ void MStaffSpawn2(float angle)
 
 void A_MageAttack(void)
 {
-	if (!Target)
+	if (!Enemy)
 		return;
 
 	MStaffSpawn2(Angles.yaw);
@@ -485,6 +485,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.20  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //

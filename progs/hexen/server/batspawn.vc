@@ -89,7 +89,7 @@ void Actor::A_BatSpawn(void)
 		mo.Args[0] = P_Random() & 63;	// floatbob index
 		mo.Args[4] = Args[4];	// turn degrees
 		mo._Special2 = Args[3] << 3;	// Set lifetime
-		mo.Owner = self;
+		mo.Instigator = self;
 	}
 }
 
@@ -128,13 +128,16 @@ void Actor::A_BatMove(void)
 		PlaySound('BatScream', CHAN_VOICE);
 
 	// Handle Z movement
-	Origin.z = Owner.Origin.z + 2.0 * FloatBobOffsets[Args[0]];
+	Origin.z = Instigator.Origin.z + 2.0 * FloatBobOffsets[Args[0]];
 	Args[0] = (Args[0] + 3) & 63;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.16  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

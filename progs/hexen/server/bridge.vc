@@ -190,14 +190,14 @@ float orbitTableY[256] = {
 
 void Actor::A_BridgeOrbit(void)
 {
-	if (Owner._Special1)
+	if (Instigator._Special1)
 	{
 		SetState(S_NULL);
 	}
 	Args[0] += 3;
-	Origin.x = Owner.Origin.x + orbitTableX[Args[0] & 255];
-	Origin.y = Owner.Origin.y + orbitTableY[Args[0] & 255];
-	Origin.z = Owner.Origin.z;
+	Origin.x = Instigator.Origin.x + orbitTableX[Args[0] & 255];
+	Origin.y = Instigator.Origin.y + orbitTableY[Args[0] & 255];
+	Origin.z = Instigator.Origin.z;
 }
 
 //==========================================================================
@@ -219,15 +219,15 @@ void Actor::A_BridgeInit(void)
 	// Spawn triad into world
 	ball1 = Spawn(BridgeBall, Origin);
 	ball1.Args[0] = startangle;
-	ball1.Owner = self;
+	ball1.Instigator = self;
 
 	ball2 = Spawn(BridgeBall, Origin);
 	ball2.Args[0] = (startangle + 85) & 255;
-	ball2.Owner = self;
+	ball2.Instigator = self;
 
 	ball3 = Spawn(BridgeBall, Origin);
 	ball3.Args[0] = (startangle + 170) & 255;
-	ball3.Owner = self;
+	ball3.Instigator = self;
 
 	ball1.A_BridgeOrbit();
 	ball2.A_BridgeOrbit();
@@ -250,6 +250,9 @@ void Actor::A_BridgeRemove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.17  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

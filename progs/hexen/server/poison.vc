@@ -53,7 +53,7 @@ void Actor::A_PoisonBagInit(void)
 	A.Velocity.x = 0.00001;	// missile objects must move to impact other objects
 	A._Special1 = 24 + (P_Random() & 7);
 	A._Special2 = 0;
-	A.Owner = Owner;
+	A.Instigator = Instigator;
 	A.Radius = 20.0;
 	A.Height = 30.0;
 	A.bColideWithThings = true;
@@ -105,6 +105,9 @@ void Actor::A_PoisonShroom(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.15  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

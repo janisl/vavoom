@@ -100,7 +100,7 @@ Actor Pawn::SpawnMissile(Actor dest, classid type)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
 	}
-	th.Owner = self;	// Originator
+	th.Instigator = self;	// Originator
 	dir = dest.Origin - Origin;
 	if (dest.Translucency)
 	{
@@ -133,7 +133,7 @@ Actor Pawn::SpawnMissileXYZ(TVec org, Actor dest, classid type)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
 	}
-	th.Owner = self;	// Originator
+	th.Instigator = self;	// Originator
 	dir = dest.Origin - Origin;
 	if (dest.Translucency)
 	{
@@ -185,7 +185,7 @@ Actor Actor::SpawnMissileAngle(classid type, float angle, float momz)
 	{
 		mo.PlaySound(mo.SightSound, CHAN_VOICE);
 	}
-	mo.Owner = self;	// Originator
+	mo.Instigator = self;	// Originator
 	mo.Angles.yaw = angle;
 	mo.Velocity.x = mo.Speed * cos(angle);
 	mo.Velocity.y = mo.Speed * sin(angle);
@@ -211,7 +211,7 @@ Actor Actor::SpawnMissileAngleSpeed(classid type, float angle,
 	org = Origin;
 	org.z -= FloorClip;
 	mo = Spawn(type, org);
-	mo.Owner = self;	// Originator
+	mo.Instigator = self;	// Originator
 	mo.Angles.yaw = angle;
 	mo.Velocity.x = speed * cos(angle);
 	mo.Velocity.y = speed * sin(angle);
@@ -236,7 +236,7 @@ Actor Pawn::SpawnKoraxMissile(TVec org, Actor dest, classid type)
 	{
 		th.PlaySound(th.SightSound, CHAN_VOICE);
 	}
-	th.Owner = self;	// Originator
+	th.Instigator = self;	// Originator
 	dir = dest.Origin - org;
 	if (dest.Translucency)
 	{
@@ -264,17 +264,17 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 	float delta;
 	float angle;
 
-	if (!Target)
+	if (!Enemy)
 	{
 		return false;
 	}
-	if (!Target.bShootable)
+	if (!Enemy.bShootable)
 	{
-		// Target died
-		Target = none;
+		// Enemy died
+		Enemy = none;
 		return false;
 	}
-	dir = FaceActor(Target, &delta);
+	dir = FaceActor(Enemy, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -297,17 +297,17 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 	angle = Angles.yaw;
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
-	if (Origin.z + Height < Target.Origin.z ||
-		Target.Origin.z + Target.Height < Origin.z)
+	if (Origin.z + Height < Enemy.Origin.z ||
+		Enemy.Origin.z + Enemy.Height < Origin.z)
 	{
 		// Need to seek vertically
-		dist = MobjDist2(Target, self);
+		dist = MobjDist2(Enemy, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		Velocity.z = (Target.Origin.z + Target.Height / 2.0 -
+		Velocity.z = (Enemy.Origin.z + Enemy.Height / 2.0 -
 			Origin.z - Height / 2.0) / dist;
 	}
 	return true;
@@ -362,7 +362,7 @@ Actor PlayerPawn::SpawnPlayerMissile(classid type)
 		org.z -= FloorClip;
 	}
 	MissileMobj = Spawn(type, org);
-	MissileMobj.Owner = self;
+	MissileMobj.Instigator = self;
 	avcpy(angles, MissileMobj.Angles);
 	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
@@ -423,7 +423,7 @@ Actor PlayerPawn::SpawnPlayerMissileAngle(classid type, float angle)
 	org.z = Origin.z + 4.0 * 8.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
 	th = Spawn(type, org);
-	th.Owner = self;
+	th.Instigator = self;
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
@@ -465,7 +465,7 @@ Actor PlayerPawn::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle
 	org.z += 4.0 * 8.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
 	th = Spawn(type, org);
-	th.Owner = self;
+	th.Instigator = self;
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
@@ -521,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.24  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //

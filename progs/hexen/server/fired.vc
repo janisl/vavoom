@@ -81,7 +81,7 @@ void A_FiredSpawnRock(void)
 	mo = Spawn(rtype, rockOrg);
 	if (mo)
 	{
-		mo.Owner = self;
+		mo.Instigator = self;
 		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.z = Random() * 4.0 * 35.0;
@@ -134,7 +134,7 @@ void A_FiredChase(void)
 		Origin.z += 2.0;
 	}
 
-	if (!Target || !Target.bShootable)
+	if (!Enemy || !Enemy.bShootable)
 	{
 		// Invalid enemy
 		LookForPlayers(true);
@@ -151,13 +151,13 @@ void A_FiredChase(void)
 		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, Target);
+		dist = MobjDist(self, Enemy);
 		if (dist < FIREDEMON_ATTACK_RANGE)
 		{
 			if (P_Random() < 30)
 			{
-				ang = atan2(Target.Origin.y - Origin.y,
-					Target.Origin.x - Origin.x);
+				ang = atan2(Enemy.Origin.y - Origin.y,
+					Enemy.Origin.x - Origin.x);
 				if (P_Random() < 128)
 					ang = AngleMod360(ang + 90.0);
 				else
@@ -212,7 +212,7 @@ void A_FiredAttack(void)
 {
 	Actor mo;
 
-	mo = SpawnMissile(Target, FireDemonMissile);
+	mo = SpawnMissile(Enemy, FireDemonMissile);
 	if (mo)
 	{
 		PlaySound('FireDemonAttack', CHAN_WEAPON);
@@ -331,6 +331,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/28 18:32:51  dj_jl
+//  Little renaming, some bug fixes.
+//
 //  Revision 1.21  2002/03/16 17:47:46  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //
