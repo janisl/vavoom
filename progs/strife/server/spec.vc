@@ -67,9 +67,34 @@ bool CheckLock(Actor user, int lock)
 		return true;
 	}
 
-	if (!(user.Player->Keys & (1 << (lock - 1))))
+	if (lock <= 32)
 	{
-		centerprint(user.Player, "You need a key");
+		//	Regular keys.
+		if (!(user.Player->Keys & (1 << (lock - 1))))
+		{
+			centerprint(user.Player, "You need a key");
+			user.PlaySound('PlayerLand', CHAN_VOICE);
+			return false;
+		}
+	}
+	else if (lock == 129)
+	{
+		//	Quest Piston
+	}
+	else if (lock == 130)
+	{
+		//	Quest Chalice
+	}
+	else if (lock == 254)
+	{
+		centerprint(user.Player,
+			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
+		user.PlaySound('PlayerLand', CHAN_VOICE);
+		return false;
+	}
+	else if (lock == 255)
+	{
+		centerprint(user.Player, "That doesn't seem to work");
 		user.PlaySound('PlayerLand', CHAN_VOICE);
 		return false;
 	}
@@ -302,13 +327,10 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = 1;
 		break;
 	case 74:	// Teleport_NewMap
-		if (side == 0)
-		{	// Only teleport when crossing the front side of a line
-			if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
-			{
-				G_Completed(args[0], args[1]);
-				buttonSuccess = true;
-			}
+		if (!(A && A.bIsPlayer && A.Player->PlayerState == PST_DEAD))	// Players must be alive to teleport
+		{
+			G_Completed(args[0], args[1]);
+			buttonSuccess = true;
 		}
 		break;
 	case 75:	// Teleport_EndGame
@@ -356,10 +378,12 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		buttonSuccess = EV_BuildPillar(line, args, true);
 		break;
 	case 95: // Lower Floor and Ceiling
-		buttonSuccess = EV_DoFloorAndCeiling(line, args, false);
+		buttonSuccess = EV_DoFloorAndCeiling(line, args,
+			FLEV_LOWERFLOORBYVALUE, CLEV_LOWERBYVALUE);
 		break;
 	case 96: // Raise Floor and Ceiling
-		buttonSuccess = EV_DoFloorAndCeiling(line, args, true);
+		buttonSuccess = EV_DoFloorAndCeiling(line, args,
+			FLEV_RAISEFLOORBYVALUE, CLEV_RAISEBYVALUE);
 		break;
 	case 109: // Force Lightning
 		buttonSuccess = true;
@@ -500,11 +524,25 @@ bool ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		break;
 	case 251:	// FloorAndCeiling_LowerRaise
 	case 201:	//FIXME
-		buttonSuccess = EV_DoCeiling(line, args, CLEV_RAISETOHIGHEST);
-		buttonSuccess |= EV_DoFloor(line, args, FLEV_LOWERFLOORTOLOWEST);
+		buttonSuccess = EV_DoFloorAndCeiling(line, args,
+			FLEV_LOWERFLOORTOLOWEST, CLEV_RAISETOHIGHEST);
 		break;
 	case 254:	// Ceiling_LowerToFloor
 		buttonSuccess = EV_DoCeiling(line, args, CLEV_LOWERTOFLOOR);
+		break;
+
+	//
+	//	More correct numbers will be assigned later.
+	//
+	case 256:	//	Raise Alert.
+		if (A.bIsPlayer && args[0] < 2)
+		{
+			//	TODO:
+			//	Arg1 - type (0 - allways, 1 - below height, 2 - have item, 3 - don't have item).
+			//	Arg2 - height or item.
+			buttonSuccess = true;
+			P_NoiseAlert(A, A);
+		}
 		break;
 
 		// Inert Line specials
@@ -813,6 +851,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2003/09/12 16:47:11  dj_jl
+//  Translating most of the line specials
+//
 //  Revision 1.22  2002/11/02 08:22:38  dj_jl
 //  New style classes.
 //

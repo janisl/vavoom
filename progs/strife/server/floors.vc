@@ -314,35 +314,21 @@ bool EV_DoFloor(line_t * line, int *args, int floortype)
 //
 //==========================================================================
 
-int EV_DoFloorAndCeiling(line_t * line, int *args, bool raise)
+int EV_DoFloorAndCeiling(line_t * line, int *args, int ftype, int ctype)
 {
 	bool floor;
 	bool ceiling;
 	int secnum;
 	sector_t *sec;
 
-	if (raise)
+	floor = EV_DoFloor(line, args, ftype);
+	secnum = -1;
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
-		floor = EV_DoFloor(line, args, FLEV_RAISEFLOORBYVALUE);
-		secnum = -1;
-		while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
-		{
-			sec = &GLevel.Sectors[secnum];
-			sec->SpecialData = none;
-		}
-		ceiling = EV_DoCeiling(line, args, CLEV_RAISEBYVALUE);
+		sec = &GLevel.Sectors[secnum];
+		sec->SpecialData = none;
 	}
-	else
-	{
-		floor = EV_DoFloor(line, args, FLEV_LOWERFLOORBYVALUE);
-		secnum = -1;
-		while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
-		{
-			sec = &GLevel.Sectors[secnum];
-			sec->SpecialData = none;
-		}
-		ceiling = EV_DoCeiling(line, args, CLEV_LOWERBYVALUE);
-	}
+	ceiling = EV_DoCeiling(line, args, ctype);
 	return floor || ceiling;
 }
 
@@ -972,6 +958,9 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2003/09/12 16:47:11  dj_jl
+//  Translating most of the line specials
+//
 //  Revision 1.16  2003/09/11 17:24:56  dj_jl
 //  Build stairs down special
 //
