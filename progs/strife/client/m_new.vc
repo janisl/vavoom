@@ -33,9 +33,8 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_new_game_t
+class MenuScreenNewNetGame:MenuScreen
 {
-	menu_t menu;
 	menutext_t start;
 	menuswitch_t players;
 	menuswitch_t monsters;
@@ -44,13 +43,17 @@ struct menu_new_game_t
 	menuswitch_t timelimit;
 	menuswitch_t level;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_new_game_t NewGameMenu;
+MenuScreenNewNetGame NewGameMenu;
 
 string sw_mapnames[99];
 
@@ -99,36 +102,36 @@ void menu_new_game(void)
 	int i;
 	int count = 0;
 
-	InitMenu(&NewGameMenu.menu);
+	NewGameMenu = MenuScreenNewNetGame(SpawnMenu(MenuScreenNewNetGame));
 
 	MenuText_InitFunc(&NewGameMenu.start, x, y, "Start Game", TEXT_SMALLR,
 		StartNewGame);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.start);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.start;
 	y += 10;
 
 	MenuSwitch_Init(&NewGameMenu.players, x, y, "Max players", TEXT_SMALLR, 2,
 		6, &sw_players[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.players);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.players;
 	y += 10;
 
 	MenuSwitch_Init(&NewGameMenu.monsters, x, y, "Monsters", TEXT_SMALLR, 0,
 		2, &sw_offon[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.monsters);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.monsters;
 	y += 10;
 
 	MenuSwitch_Init(&NewGameMenu.deathmatch, x, y, "Game type", TEXT_SMALLR,
 		2, 4, &sw_deathmatch[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.deathmatch);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.deathmatch;
 	y += 10;
 
 	MenuSwitch_Init(&NewGameMenu.skill, x, y, "Skill", TEXT_SMALLR, 2, 5,
 		&sw_skill[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.skill);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.skill;
 	y += 10;
 
 	MenuSwitch_Init(&NewGameMenu.timelimit, x, y, "Time limit", TEXT_SMALLR,
 		0, 13, &sw_cnt5[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.timelimit);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.timelimit;
 	y += 10;
 
 #ifdef FIXME
@@ -152,17 +155,20 @@ void menu_new_game(void)
 
 	MenuSwitch_Init(&NewGameMenu.level, x, y, "Level", TEXT_SMALLR, 0, count,
 		&sw_mapnames[0]);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.level);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.level;
 
 	MenuText_InitTitle(&NewGameMenu.title, 160, 24, "NEW GAME", TEXT_BIGC);
-	AddMenuItem(&NewGameMenu.menu, &NewGameMenu.title);
+	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.title;
 
-	PushMenu(&NewGameMenu.menu);
+	PushMenuScreen(NewGameMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.4  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

@@ -33,14 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_main_t
-{
-	menu_t menu;
-	menubitmap_t logo;
-	menuanim_t anim1;
-	menuanim_t anim2;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void menu_single(void);
@@ -50,8 +42,6 @@ void menu_help(void);
 void menu_quit(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
-
-menu_main_t MainMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -70,7 +60,7 @@ class MenuChoice_SinglePlayer:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Single Player";
+		Text = "Single Player";
 	}
 }
 
@@ -89,7 +79,7 @@ class MenuChoice_Multiplayer:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Multiplayer";
+		Text = "Multiplayer";
 	}
 }
 
@@ -108,7 +98,7 @@ class MenuChoice_Options:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Options";
+		Text = "Options";
 	}
 }
 
@@ -127,7 +117,7 @@ class MenuChoice_Help:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Help";
+		Text = "Help";
 	}
 }
 
@@ -146,83 +136,79 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Quit game";
+		Text = "Quit game";
 	}
 }
 
 //==========================================================================
 //
-//  menu_main
+//	MenuScreenMain
 //
 //==========================================================================
 
-void menu_main(void)
+class MenuScreenMain:MenuScreen
 {
-	MenuObject item;
-	int x;
-	int y;
+	menubitmap_t logo;
+	menuanim_t anim1;
+	menuanim_t anim2;
 
-	x = 110;
-	y = 56;
-
-	InitMenu(&MainMenu.menu);
-
-	if (local_server)
+	void Init(void)
 	{
-		item = Menu_AddItem(&MainMenu.menu, MenuChoice_SinglePlayer);
-		item.x = x;
-		item.y = y;
-		y += 18;
+		MenuBitmap_Init(&logo, 88, 0, MNF_INACTIVE, "M_HTIC", PIC_PATCH);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &logo;
+
+		MenuAnim_Init(&anim1, 37, 80, MNF_INACTIVE, 7, 7, 2, false);
+		anim1.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
+		anim1.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
+		anim1.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
+		anim1.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
+		anim1.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
+		anim1.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
+		anim1.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &anim1;
+
+		MenuAnim_Init(&anim2, 278, 80, MNF_INACTIVE, 7, 7, 0, false);
+		anim2.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
+		anim2.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
+		anim2.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
+		anim2.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
+		anim2.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
+		anim2.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
+		anim2.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &anim2;
+
+		if (!local_server)
+		{
+			Choices[0] = classidNone;
+		}
+
+		::Init();
 	}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Multiplayer);
-	item.x = x;
-	item.y = y;
-	y += 18;
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_SinglePlayer;
+		Choices[1] = MenuChoice_Multiplayer;
+		Choices[2] = MenuChoice_Options;
+		Choices[3] = MenuChoice_Help;
+		Choices[4] = MenuChoice_QuitGame;
+		ChoicesStartX = 110;
+		ChoicesStartY = 56;
+		SelectorType = MenuSelector_BigArrow;
+	}
+}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Options);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Help);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_QuitGame);
-	item.x = x;
-	item.y = y;
-
-	MenuBitmap_Init(&MainMenu.logo, 88, 0, MNF_INACTIVE, "M_HTIC", PIC_PATCH);
-	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
-
-	MenuAnim_Init(&MainMenu.anim1, 37, 80, MNF_INACTIVE, 7, 7, 2, false);
-	MainMenu.anim1.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
-	MainMenu.anim1.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
-	MainMenu.anim1.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
-	MainMenu.anim1.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
-	MainMenu.anim1.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
-	MainMenu.anim1.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
-	MainMenu.anim1.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
-	AddMenuItem(&MainMenu.menu, &MainMenu.anim1);
-
-	MenuAnim_Init(&MainMenu.anim2, 278, 80, MNF_INACTIVE, 7, 7, 0, false);
-	MainMenu.anim2.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
-	MainMenu.anim2.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
-	MainMenu.anim2.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
-	MainMenu.anim2.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
-	MainMenu.anim2.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
-	MainMenu.anim2.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
-	MainMenu.anim2.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
-	AddMenuItem(&MainMenu.menu, &MainMenu.anim2);
-
-	PushMenu(&MainMenu.menu);
+void menu_main(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenMain));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.6  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -33,18 +33,10 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_skill_t
-{
-	menu_t menu;
-	menutext_t skill[5];
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_skill_t SkillMenu;
 int MenuSkill;
 
 // CODE --------------------------------------------------------------------
@@ -111,77 +103,145 @@ void VerifyNightmare(int ch)
 
 void skill_func(void)
 {
-	if (MenuSkill == sk_nightmare)
-	{
-		MB_StartMessage
-			("are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.",
-			VerifyNightmare, true);
-		return;
-	}
-
-	NewGame(MenuSkill);
 }
 
 //==========================================================================
 //
-//  menu_skill
+//	MenuChoice_SkillBaby
 //
 //==========================================================================
 
+class MenuChoice_SkillBaby:MenuBigTextButton
+{
+	int SkillLevel;
+
+	void ActivateEvent(void)
+	{
+		MenuSkill = SkillLevel;
+		if (MenuSkill == sk_nightmare)
+		{
+			MB_StartMessage("are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.",
+				VerifyNightmare, true);
+			return;
+		}
+
+		NewGame(MenuSkill);
+	}
+
+	defaultproperties
+	{
+		Text = "I'm too young to die.";
+		SkillLevel = sk_baby;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SkillEasy
+//
+//==========================================================================
+
+class MenuChoice_SkillEasy:MenuChoice_SkillBaby
+{
+	defaultproperties
+	{
+		Text = "Hey, not too rough.";
+		SkillLevel = sk_easy;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SkillNormal
+//
+//==========================================================================
+
+class MenuChoice_SkillNormal:MenuChoice_SkillBaby
+{
+	defaultproperties
+	{
+		Text = "Hurt me plenty.";
+		SkillLevel = sk_medium;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SkillHard
+//
+//==========================================================================
+
+class MenuChoice_SkillHard:MenuChoice_SkillBaby
+{
+	defaultproperties
+	{
+		Text = "Ultra - Violence.";
+		SkillLevel = sk_hard;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SkillNightmare
+//
+//==========================================================================
+
+class MenuChoice_SkillNightmare:MenuChoice_SkillBaby
+{
+	defaultproperties
+	{
+		Text = "Nightmare";	//""
+		SkillLevel = sk_nightmare;
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenSkill
+//
+//==========================================================================
+
+class MenuScreenSkill:MenuScreen
+{
+	menutext_t title;
+
+	void Init(void)
+	{
+		::Init();
+
+		MenuText_InitTitle(&title, 160, 24, "CHOOSE SKILL LEVEL:", TEXT_BIGC);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
+	}
+
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_SkillBaby;
+		Choices[1] = MenuChoice_SkillEasy;
+		Choices[2] = MenuChoice_SkillNormal;
+		Choices[3] = MenuChoice_SkillHard;
+		Choices[4] = MenuChoice_SkillNightmare;
+		ChoicesStartX = 48;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_Skull;
+	}
+};
+
 void menu_skill(void)
 {
-	int x;
-	int y;
+	MenuScreenSkill SkillMenu;
 
-	x = 48;
-	y = 40;
+	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
 
-	InitMenu(&SkillMenu.menu);
-
-	MenuText_InitFunc(&SkillMenu.skill[0], x, y, "I'm too young to die.",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[0].callback = SkillCallback;
-	SkillMenu.skill[0].id = 0;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[0]);
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[1], x, y, "Hey, not too rough.",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[1].callback = SkillCallback;
-	SkillMenu.skill[1].id = 1;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[1]);
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[2], x, y, "Hurt me plenty.", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[2].callback = SkillCallback;
-	SkillMenu.skill[2].id = 2;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[2]);
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[3], x, y, "Ultra - Violence.",
-		TEXT_BIG, skill_func);
-	SkillMenu.skill[3].callback = SkillCallback;
-	SkillMenu.skill[3].id = 3;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[3]);
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[4], x, y, "Nightmare", TEXT_BIG, skill_func);	//""
-	SkillMenu.skill[4].callback = SkillCallback;
-	SkillMenu.skill[4].id = 4;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[4]);
-
-	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
-		TEXT_BIGC);
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
-
-	PushMenu(&SkillMenu.menu);
-	Menu_SetCursor(&SkillMenu.menu, 2);
+	PushMenuScreen(SkillMenu);
+	SkillMenu.SetCursor(2);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.8  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

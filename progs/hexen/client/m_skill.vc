@@ -33,18 +33,10 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_skill_t
-{
-	menu_t menu;
-	menutext_t skill[5];
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_skill_t SkillMenu;
 int MenuSkill;
 
 // CODE --------------------------------------------------------------------
@@ -85,17 +77,29 @@ void skill_func(void)
 
 //==========================================================================
 //
-//  menu_skill
+//	MenuScreenSkill
 //
 //==========================================================================
 
+class MenuScreenSkill:MenuScreen
+{
+	menutext_t skill[5];
+	menutext_t title;
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
+};
+
 void menu_skill(void)
 {
+	MenuScreenSkill SkillMenu;
 	int x;
 	int y;
 	int i;
 
-	InitMenu(&SkillMenu.menu);
+	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
 
 	switch (MenuPClass)
 	{
@@ -117,7 +121,7 @@ void menu_skill(void)
 			skill_func);
 		SkillMenu.skill[i].callback = SkillCallback;
 		SkillMenu.skill[i].id = i;
-		AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[i]);
+		MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[i];
 		y += 18;
 	}
 
@@ -148,15 +152,18 @@ void menu_skill(void)
 
 	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
 		TEXT_BIGC);
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.title;
 
-	PushMenu(&SkillMenu.menu);
-	Menu_SetCursor(&SkillMenu.menu, 2);
+	PushMenuScreen(SkillMenu);
+	SkillMenu.SetCursor(2);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.8  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

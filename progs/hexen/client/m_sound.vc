@@ -33,21 +33,24 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_sound_t
+class MenuScreenSound:MenuScreen
 {
-	menu_t menu;
 	menuslider_t sound;
 	menuslider_t music;
 	menuswitch_t stereo;
 	menuswitch_t cdmusic;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_sound_t SoundMenu;
+MenuScreenSound SoundMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -95,45 +98,48 @@ void menu_sound(void)
 	int x = 160;
 	int y = 37;
 
-	InitMenu(&SoundMenu.menu);
+	SoundMenu = MenuScreenSound(SpawnMenu(MenuScreenSound));
 
 	MenuSlider_Init(&SoundMenu.sound, x, y, "Sound volume", TEXT_SMALLR,
 		GetCvar("sfx_volume"), 16);
 	SoundMenu.sound.callback = sound_func;
 	SoundMenu.sound.id = 1;
-	AddMenuItem(&SoundMenu.menu, &SoundMenu.sound);
+	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.sound;
 	y += 20;
 
 	MenuSlider_Init(&SoundMenu.music, x, y, "Music volume", TEXT_SMALLR,
 		GetCvar("music_volume"), 16);
 	SoundMenu.music.callback = sound_func;
 	SoundMenu.music.id = 2;
-	AddMenuItem(&SoundMenu.menu, &SoundMenu.music);
+	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.music;
 	y += 20;
 
 	MenuSwitch_Init(&SoundMenu.stereo, x, y, "Swap stereo", TEXT_SMALLR,
 		GetCvar("swap_stereo"), 2, &sw_offon[0]);
 	SoundMenu.stereo.callback = sound_func;
 	SoundMenu.stereo.id = 3;
-	AddMenuItem(&SoundMenu.menu, &SoundMenu.stereo);
+	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.stereo;
 	y += 10;
 
 	MenuSwitch_Init(&SoundMenu.cdmusic, x, y, "CD Music", TEXT_SMALLR,
 		GetCvar("use_cd_music"), 2, &sw_offon[0]);
 	SoundMenu.cdmusic.callback = sound_func;
 	SoundMenu.cdmusic.id = 4;
-	AddMenuItem(&SoundMenu.menu, &SoundMenu.cdmusic);
+	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.cdmusic;
 
 	MenuText_InitTitle(&SoundMenu.title, 160, 24, "SOUND SETTINGS",
 		TEXT_BIGC);
-	AddMenuItem(&SoundMenu.menu, &SoundMenu.title);
+	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.title;
 
-	PushMenu(&SoundMenu.menu);
+	PushMenuScreen(SoundMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -33,9 +33,8 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_mouse_t
+class MenuScreenMouse:MenuScreen
 {
-	menu_t menu;
 	menuslider_t xsens;
 	menuslider_t ysens;
 	menuswitch_t mlook;
@@ -43,13 +42,17 @@ struct menu_mouse_t
 	menuswitch_t lspring;
 	menuswitch_t lstrafe;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_mouse_t MouseMenu;
+MenuScreenMouse MouseMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -99,59 +102,62 @@ void menu_mouse(void)
 	int x = 160;
 	int y = 32;
 
-	InitMenu(&MouseMenu.menu);
+	MouseMenu = MenuScreenMouse(SpawnMenu(MenuScreenMouse));
 
 	MenuSlider_Init(&MouseMenu.xsens, x, y, "Mouse X sensitivity",
 		TEXT_SMALLR, ftoi(GetCvarF("mouse_x_sensitivity") * 4.0), 41);
 	MouseMenu.xsens.callback = mouse_func;
 	MouseMenu.xsens.id = 1;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.xsens);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.xsens;
 	y += 20;
 
 	MenuSlider_Init(&MouseMenu.ysens, x, y, "Mouse Y sensitivity",
 		TEXT_SMALLR, ftoi(GetCvarF("mouse_y_sensitivity") * 4.0), 41);
 	MouseMenu.ysens.callback = mouse_func;
 	MouseMenu.ysens.id = 2;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.ysens);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.ysens;
 	y += 20;
 
 	MenuSwitch_Init(&MouseMenu.mlook, x, y, "Mouse look", TEXT_SMALLR,
 		GetCvar("mouse_look"), 2, &sw_offon[0]);
 	MouseMenu.mlook.callback = mouse_func;
 	MouseMenu.mlook.id = 3;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.mlook);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.mlook;
 	y += 10;
 
 	MenuSwitch_Init(&MouseMenu.invert, x, y, "Invert mouse", TEXT_SMALLR,
 		GetCvar("invert_mouse"), 2, &sw_offon[0]);
 	MouseMenu.invert.callback = mouse_func;
 	MouseMenu.invert.id = 4;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.invert);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.invert;
 	y += 10;
 
 	MenuSwitch_Init(&MouseMenu.lspring, x, y, "Look spring", TEXT_SMALLR,
 		GetCvar("lookspring"), 2, &sw_offon[0]);
 	MouseMenu.lspring.id = 5;
 	MouseMenu.lspring.callback = mouse_func;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.lspring);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.lspring;
 	y += 10;
 
 	MenuSwitch_Init(&MouseMenu.lstrafe, x, y, "Look strafe", TEXT_SMALLR,
 		GetCvar("lookstrafe"), 2, &sw_offon[0]);
 	MouseMenu.lstrafe.callback = mouse_func;
 	MouseMenu.lstrafe.id = 6;
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.lstrafe);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.lstrafe;
 	y += 10;
 
 	MenuText_InitTitle(&MouseMenu.title, 160, 24, "MOUSE OPTIONS", TEXT_BIGC);
-	AddMenuItem(&MouseMenu.menu, &MouseMenu.title);
+	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.title;
 
-	PushMenu(&MouseMenu.menu);
+	PushMenuScreen(MouseMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

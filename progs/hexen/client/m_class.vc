@@ -33,9 +33,18 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_class_t
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+void menu_skill(void);
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+int MenuPClass;
+
+// CODE --------------------------------------------------------------------
+
+class MenuScreenClass:MenuScreen
 {
-	menu_t menu;
 	menutext_t fighter;
 	menutext_t cleric;
 	menutext_t mage;
@@ -46,19 +55,14 @@ struct menu_class_t
 	menuanim_t cwalk;
 	menubitmap_t mbox;
 	menuanim_t mwalk;
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
 };
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-void menu_skill(void);
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-menu_class_t ClassMenu;
-
-int MenuPClass;
-
-// CODE --------------------------------------------------------------------
+MenuScreenClass ClassMenu;
 
 //==========================================================================
 //
@@ -113,7 +117,7 @@ void class_callback(menucommon_t * item, int msg)
 
 //==========================================================================
 //
-//  menu_class
+//	MenuScreenClass
 //
 //==========================================================================
 
@@ -122,34 +126,34 @@ void menu_class(void)
 	int x = 66;
 	int y = 66;
 
-	InitMenu(&ClassMenu.menu);
+	ClassMenu = MenuScreenClass(SpawnMenu(MenuScreenClass));
 
 	MenuText_InitFunc(&ClassMenu.fighter, x, y, "FIGHTER", TEXT_BIG,
 		menu_skill);
 	ClassMenu.fighter.callback = class_callback;
 	ClassMenu.fighter.id = 0;
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.fighter);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fighter;
 	y += 18;
 
 	MenuText_InitFunc(&ClassMenu.cleric, x, y, "CLERIC", TEXT_BIG,
 		menu_skill);
 	ClassMenu.cleric.callback = class_callback;
 	ClassMenu.cleric.id = 1;
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.cleric);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cleric;
 	y += 18;
 
 	MenuText_InitFunc(&ClassMenu.mage, x, y, "MAGE", TEXT_BIG, menu_skill);
 	ClassMenu.mage.callback = class_callback;
 	ClassMenu.mage.id = 2;
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.mage);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mage;
 	y += 18;
 
 	MenuText_InitTitle(&ClassMenu.title, 34, 24, "CHOOSE CLASS:", TEXT_BIG);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.title);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.title;
 
 	MenuBitmap_Init(&ClassMenu.fbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
 		"m_fbox", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.fbox);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fbox;
 
 	MenuAnim_Init(&ClassMenu.fwalk, 174 + 24, 8 + 12,
 		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
@@ -157,11 +161,11 @@ void menu_class(void)
 	ClassMenu.fwalk.pics[1] = R_RegisterPic("m_fwalk2", PIC_PATCH);
 	ClassMenu.fwalk.pics[2] = R_RegisterPic("m_fwalk3", PIC_PATCH);
 	ClassMenu.fwalk.pics[3] = R_RegisterPic("m_fwalk4", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.fwalk);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fwalk;
 
 	MenuBitmap_Init(&ClassMenu.cbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
 		"m_cbox", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.cbox);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cbox;
 
 	MenuAnim_Init(&ClassMenu.cwalk, 174 + 24, 8 + 12,
 		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
@@ -169,11 +173,11 @@ void menu_class(void)
 	ClassMenu.cwalk.pics[1] = R_RegisterPic("m_cwalk2", PIC_PATCH);
 	ClassMenu.cwalk.pics[2] = R_RegisterPic("m_cwalk3", PIC_PATCH);
 	ClassMenu.cwalk.pics[3] = R_RegisterPic("m_cwalk4", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.cwalk);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cwalk;
 
 	MenuBitmap_Init(&ClassMenu.mbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
 		"m_mbox", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.mbox);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mbox;
 
 	MenuAnim_Init(&ClassMenu.mwalk, 174 + 24, 8 + 12,
 		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
@@ -181,14 +185,17 @@ void menu_class(void)
 	ClassMenu.mwalk.pics[1] = R_RegisterPic("m_mwalk2", PIC_PATCH);
 	ClassMenu.mwalk.pics[2] = R_RegisterPic("m_mwalk3", PIC_PATCH);
 	ClassMenu.mwalk.pics[3] = R_RegisterPic("m_mwalk4", PIC_PATCH);
-	AddMenuItem(&ClassMenu.menu, &ClassMenu.mwalk);
+	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mwalk;
 
-	PushMenu(&ClassMenu.menu);
+	PushMenuScreen(ClassMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

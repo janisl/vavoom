@@ -33,26 +33,32 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_controls_t
+class MenuScreenControls:MenuScreen
 {
-	menu_t menu;
 	menucontrol_t ctl[15];
 	menutext_t title;
-};
 
-struct menu_controls2_t
+	defaultproperties
+	{
+	}
+}
+
+class MenuScreenControls2:MenuScreen
 {
-	menu_t menu;
 	menucontrol_t ctl[7];
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_controls_t ControlsMenu;
-menu_controls2_t Controls2Menu;
+MenuScreenControls ControlsMenu;
+MenuScreenControls2 Controls2Menu;
 
 // CODE --------------------------------------------------------------------
 
@@ -67,72 +73,72 @@ void menu_controls(void)
 	int x = 120;
 	int y = 26;
 
-	InitMenu(&ControlsMenu.menu);
+	ControlsMenu = MenuScreenControls(SpawnMenu(MenuScreenControls));
 
-	MenuControl_Init(&ControlsMenu.ctl[0], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[0], ControlsMenu, x, y,
 		"Move foward", "+Forward", "-Forward");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[1], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[1], ControlsMenu, x, y,
 		"Move backward", "+Backward", "-Backward");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[2], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[2], ControlsMenu, x, y,
 		"Turn left", "+Left", "-Left");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[3], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[3], ControlsMenu, x, y,
 		"Turn right", "+Right", "-Right");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[4], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[4], ControlsMenu, x, y,
 		"Move left", "+MoveLeft", "-MoveLeft");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[5], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[5], ControlsMenu, x, y,
 		"Move right", "+MoveRight", "-MoveRight");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[6], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[6], ControlsMenu, x, y,
 		"Look up", "+LookUp", "-LookUp");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[7], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[7], ControlsMenu, x, y,
 		"Look down", "+LookDown", "-LookDown");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[8], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[8], ControlsMenu, x, y,
 		"Center look", "+LookCenter", "-LookCenter");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[9], &ControlsMenu.menu, x, y, "Jump",
+	MenuControl_Init(&ControlsMenu.ctl[9], ControlsMenu, x, y, "Jump",
 		"+Jump", "-Jump");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[10], &ControlsMenu.menu, x, y, "Fire",
+	MenuControl_Init(&ControlsMenu.ctl[10], ControlsMenu, x, y, "Fire",
 		"+Attack", "-Attack");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[11], &ControlsMenu.menu, x, y, "Use",
+	MenuControl_Init(&ControlsMenu.ctl[11], ControlsMenu, x, y, "Use",
 		"+Use", "-Use");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[12], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[12], ControlsMenu, x, y,
 		"Strafe", "+Strafe", "-Strafe");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[13], &ControlsMenu.menu, x, y, "Run",
+	MenuControl_Init(&ControlsMenu.ctl[13], ControlsMenu, x, y, "Run",
 		"+Speed", "-Speed");
 	y += 10;
 
-	MenuControl_Init(&ControlsMenu.ctl[14], &ControlsMenu.menu, x, y,
+	MenuControl_Init(&ControlsMenu.ctl[14], ControlsMenu, x, y,
 		"Mouse look", "+MouseLook", "-MouseLook");
 
 	MenuText_InitTitle(&ControlsMenu.title, 160, 24, "SETUP CONTROLS",
 		TEXT_BIGC);
-	AddMenuItem(&ControlsMenu.menu, &ControlsMenu.title);
+	MenuItemWrapper(ControlsMenu.AddItem(MenuItemWrapper)).item = &ControlsMenu.title;
 
-	PushMenu(&ControlsMenu.menu);
+	PushMenuScreen(ControlsMenu);
 }
 
 //==========================================================================
@@ -146,45 +152,48 @@ void menu_controls2(void)
 	int x = 120;
 	int y = 26;
 
-	InitMenu(&Controls2Menu.menu);
+	Controls2Menu = MenuScreenControls2(SpawnMenu(MenuScreenControls2));
 
-	MenuControl_Init(&Controls2Menu.ctl[0], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[0], Controls2Menu, x, y,
 		"Fly up", "+FlyUp", "-FlyUp");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[1], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[1], Controls2Menu, x, y,
 		"Fly down", "+FlyDown", "-FlyDown");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[2], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[2], Controls2Menu, x, y,
 		"Center flight", "+FlyCenter", "-FlyCenter");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[3], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[3], Controls2Menu, x, y,
 		"Inventory left", "Impulse 13", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[4], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[4], Controls2Menu, x, y,
 		"Inventory right", "Impulse 14", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[5], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[5], Controls2Menu, x, y,
 		"Inventory use", "Impulse 15", "");
 	y += 10;
 
-	MenuControl_Init(&Controls2Menu.ctl[6], &Controls2Menu.menu, x, y,
+	MenuControl_Init(&Controls2Menu.ctl[6], Controls2Menu, x, y,
 		"Talk key", "ChatMode", "");
 
 	MenuText_InitTitle(&Controls2Menu.title, 160, 24, "SETUP CONTROLS",
 		TEXT_BIGC);
-	AddMenuItem(&Controls2Menu.menu, &Controls2Menu.title);
+	MenuItemWrapper(Controls2Menu.AddItem(MenuItemWrapper)).item = &Controls2Menu.title;
 
-	PushMenu(&Controls2Menu.menu);
+	PushMenuScreen(Controls2Menu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

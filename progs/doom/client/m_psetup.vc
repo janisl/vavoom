@@ -35,22 +35,25 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct psetup_menu_t
+class MenuScreenPlayerSetup:MenuScreen
 {
-	menu_t menu;
 	menuinputline_t Name;
 	menuswitch_t color;
 	menuswitch_t skin;
 	menuspriteanim_t anim;
 	menumodel_t mdl;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-psetup_menu_t PSetupMenu;
+MenuScreenPlayerSetup PSetupMenu;
 
 string sw_colors[] =
 	{ "green", "gray", "brown", "red", "light red", "blue", "rose",
@@ -139,27 +142,27 @@ void menu_psetup(void)
 	int i;
 	string curskin;
 
-	InitMenu(&PSetupMenu.menu);
+	PSetupMenu = MenuScreenPlayerSetup(SpawnMenu(MenuScreenPlayerSetup));
 
 	MenuInputLine_Init(&PSetupMenu.Name, x, y, "Name", TEXT_SMALLL, 1);
 	PSetupMenu.Name.callback = psetup_func;
 	PSetupMenu.Name.id = 1;
 	strcpy(ARR2STR(PSetupMenu.Name.value), GetCvarS("Name"));
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.Name);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.Name;
 	y += 20;
 
 	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL,
 		GetCvar("color"), 8, &sw_colors[0]);
 	PSetupMenu.color.callback = psetup_func;
 	PSetupMenu.color.id = 2;
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.color);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.color;
 	y += 10;
 
 	R_InstallSprite("PLAY", 500);
 
 	MenuSpriteAnim_Init(&PSetupMenu.anim, 100, 160, 500, 8, 1);
 	SetColor();
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.anim);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.anim;
 
 	model = InstallModel("models/players/doomguy/tris.md2");
 	if (model)
@@ -184,24 +187,27 @@ void menu_psetup(void)
 			NUMSKINS, &sw_skins[0]);
 		PSetupMenu.skin.callback = psetup_func;
 		PSetupMenu.skin.id = 3;
-		AddMenuItem(&PSetupMenu.menu, &PSetupMenu.skin);
+		MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.skin;
 
 		MenuModel_Init(&PSetupMenu.mdl, vector(-64.0, 32.0, -32.0),
 			345.0, model, 0);
 		PSetupMenu.mdl.skin = ARR2STR(skinbuf);
 		SetSkin();
-		AddMenuItem(&PSetupMenu.menu, &PSetupMenu.mdl);
+		MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.mdl;
 	}
 
 	MenuText_InitTitle(&PSetupMenu.title, 160, 24, "PLAYER SETUP", TEXT_BIGC);
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.title);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.title;
 
-	PushMenu(&PSetupMenu.menu);
+	PushMenuScreen(PSetupMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.8  2002/01/11 08:03:10  dj_jl
 //  Renamed 'name' to "Name'
 //

@@ -82,7 +82,7 @@ void MN_DeactivateMenu(void)
 
 boolean MN_Responder(event_t * event)
 {
-	if (!CurrentMenu)
+	if (!CurrentMenuScreen)
 	{
 		// Pop-up menu?
 		if (event->type == ev_keydown && event->data1 == K_ESCAPE)
@@ -97,7 +97,7 @@ boolean MN_Responder(event_t * event)
 	{
 		return false;
 	}
-	return CurrentMenu->responder(CurrentMenu, event->data1);
+	return CurrentMenuScreen.Key(event->data1);
 }
 
 //==========================================================================
@@ -108,12 +108,12 @@ boolean MN_Responder(event_t * event)
 
 void MN_Drawer(void)
 {
-	if (!CurrentMenu)
+	if (!CurrentMenuScreen)
 	{
 		return;
 	}
 	MenuTime += frametime;
-	CurrentMenu->drawer(CurrentMenu);
+	CurrentMenuScreen.Draw();
 }
 
 //==========================================================================
@@ -124,7 +124,7 @@ void MN_Drawer(void)
 
 boolean MN_Active(void)
 {
-	return CurrentMenu != NULL;
+	return CurrentMenuScreen != none;
 }
 
 //==========================================================================
@@ -151,6 +151,9 @@ void MN_SetMenu(string Name)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.4  2002/01/11 08:03:13  dj_jl
 //  Renamed 'name' to "Name'
 //

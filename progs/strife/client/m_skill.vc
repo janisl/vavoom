@@ -33,18 +33,10 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_skill_t
-{
-	menu_t menu;
-	menutext_t skill[5];
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_skill_t SkillMenu;
 int MenuSkill;
 
 // CODE --------------------------------------------------------------------
@@ -123,12 +115,23 @@ void skill_func(void)
 
 //==========================================================================
 //
-//  menu_skill
+//	MenuScreenSkill
 //
 //==========================================================================
 
+class MenuScreenSkill:MenuScreen
+{
+	menutext_t skill[5];
+	menutext_t title;
+
+	defaultproperties
+	{
+	}
+}
+
 void menu_skill(void)
 {
+	MenuScreenSkill SkillMenu;
 	int x;
 	int y;
 	int i;
@@ -136,53 +139,56 @@ void menu_skill(void)
 	x = 48;
 	y = 40;
 
-	InitMenu(&SkillMenu.menu);
+	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
 
 	MenuText_InitFunc(&SkillMenu.skill[0], x, y, "training", TEXT_BIG,
 		skill_func);
 	SkillMenu.skill[0].callback = SkillCallback;
 	SkillMenu.skill[0].id = 0;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[0]);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[0];
 	y += 18;
 
 	MenuText_InitFunc(&SkillMenu.skill[1], x, y, "rookie", TEXT_BIG,
 		skill_func);
 	SkillMenu.skill[1].callback = SkillCallback;
 	SkillMenu.skill[1].id = 1;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[1]);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[1];
 	y += 18;
 
 	MenuText_InitFunc(&SkillMenu.skill[2], x, y, "veteran", TEXT_BIG,
 		skill_func);
 	SkillMenu.skill[2].callback = SkillCallback;
 	SkillMenu.skill[2].id = 2;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[2]);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[2];
 	y += 18;
 
 	MenuText_InitFunc(&SkillMenu.skill[3], x, y, "elite", TEXT_BIG,
 		skill_func);
 	SkillMenu.skill[3].callback = SkillCallback;
 	SkillMenu.skill[3].id = 3;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[3]);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[3];
 	y += 18;
 
 	MenuText_InitFunc(&SkillMenu.skill[4], x, y, "bloodbath", TEXT_BIG,
 		skill_func);
 	SkillMenu.skill[4].callback = SkillCallback;
 	SkillMenu.skill[4].id = 4;
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.skill[4]);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[4];
 
 	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
 		TEXT_BIGC);
-	AddMenuItem(&SkillMenu.menu, &SkillMenu.title);
+	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.title;
 
-	PushMenu(&SkillMenu.menu);
-	Menu_SetCursor(&SkillMenu.menu, 2);
+	PushMenuScreen(SkillMenu);
+	SkillMenu.SetCursor(2);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.7  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

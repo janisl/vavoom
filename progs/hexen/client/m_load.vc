@@ -37,18 +37,22 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_load_t
+class MenuScreenLoadGame:MenuScreen
 {
-	menu_t menu;
 	menusaveslot_t slot[NUMSLOTS];
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_load_t LoadMenu;
+MenuScreenLoadGame LoadMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -92,7 +96,7 @@ void menu_load(void)
 
 	enteringText = false;
 
-	InitMenu(&LoadMenu.menu);
+	LoadMenu = MenuScreenLoadGame(SpawnMenu(MenuScreenLoadGame));
 
 	for (i = 0; i < NUMSLOTS; i++)
 	{
@@ -101,21 +105,22 @@ void menu_load(void)
 		LoadMenu.slot[i].id = i;
 		LoadMenu.slot[i].status =
 			SV_GetSaveString(i, ARR2STR(LoadMenu.slot[i].text));
-		AddMenuItem(&LoadMenu.menu, &LoadMenu.slot[i]);
+		MenuItemWrapper(LoadMenu.AddItem(MenuItemWrapper)).item = &LoadMenu.slot[i];
 		y += 18;
 	}
 
 	MenuText_InitTitle(&LoadMenu.title, 160, 24, "LOAD GAME", TEXT_BIGC);
-	AddMenuItem(&LoadMenu.menu, &LoadMenu.title);
+	MenuItemWrapper(LoadMenu.AddItem(MenuItemWrapper)).item = &LoadMenu.title;
 
-	PushMenu(&LoadMenu.menu);
-
-	InitSelector();
+	PushMenuScreen(LoadMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.8  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

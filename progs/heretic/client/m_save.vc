@@ -35,18 +35,22 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_save_t
+class MenuScreenSaveGame:MenuScreen
 {
-	menu_t menu;
 	menusaveslot_t slot[NUMSLOTS];
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_save_t SaveMenu;
+MenuScreenSaveGame SaveMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -102,7 +106,7 @@ void menu_save(void)
 
 	enteringText = false;
 
-	InitMenu(&SaveMenu.menu);
+	SaveMenu = MenuScreenSaveGame(SpawnMenu(MenuScreenSaveGame));
 
 	for (i = 0; i < NUMSLOTS; i++)
 	{
@@ -111,21 +115,22 @@ void menu_save(void)
 		SaveMenu.slot[i].id = i;
 		SaveMenu.slot[i].status =
 			SV_GetSaveString(i, ARR2STR(SaveMenu.slot[i].text));
-		AddMenuItem(&SaveMenu.menu, &SaveMenu.slot[i]);
+		MenuItemWrapper(SaveMenu.AddItem(MenuItemWrapper)).item = &SaveMenu.slot[i];
 		y += 18;
 	}
 
 	MenuText_InitTitle(&SaveMenu.title, 160, 24, "SAVE GAME", TEXT_BIGC);
-	AddMenuItem(&SaveMenu.menu, &SaveMenu.title);
+	MenuItemWrapper(SaveMenu.AddItem(MenuItemWrapper)).item = &SaveMenu.title;
 
-	PushMenu(&SaveMenu.menu);
-
-	InitSelector();
+	PushMenuScreen(SaveMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.6  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

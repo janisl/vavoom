@@ -33,12 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_main_t
-{
-	menu_t menu;
-	menubitmap_t logo;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void menu_single(void);
@@ -48,8 +42,6 @@ void menu_help(void);
 void menu_quit(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
-
-menu_main_t MainMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -68,7 +60,7 @@ class MenuChoice_SinglePlayer:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Single Player";
+		Text = "Single Player";
 	}
 }
 
@@ -87,7 +79,7 @@ class MenuChoice_Multiplayer:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Multiplayer";
+		Text = "Multiplayer";
 	}
 }
 
@@ -106,7 +98,7 @@ class MenuChoice_Options:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Options";
+		Text = "Options";
 	}
 }
 
@@ -125,7 +117,7 @@ class MenuChoice_Help:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Help!";
+		Text = "Help!";
 	}
 }
 
@@ -144,64 +136,56 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 	defaultproperties
 	{
-		text = "Quit game";
+		Text = "Quit game";
 	}
 }
 
 //==========================================================================
 //
-//  menu_main
+//	MenuScreenMain
 //
 //==========================================================================
 
-void menu_main(void)
+class MenuScreenMain:MenuScreen
 {
-	MenuObject item;
-	int x;
-	int y;
+	menubitmap_t logo;
 
-	x = 97;
-	y = 64;
-
-	InitMenu(&MainMenu.menu);
-
-	if (local_server)
+	void Init(void)
 	{
-		item = Menu_AddItem(&MainMenu.menu, MenuChoice_SinglePlayer);
-		item.x = x;
-		item.y = y;
-		y += 18;
+		MenuBitmap_Init(&logo, 94, 2, MNF_INACTIVE, "M_STRIFE", PIC_PATCH);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &logo;
+
+		if (!local_server)
+		{
+			Choices[0] = classidNone;
+		}
+
+		::Init();
 	}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Multiplayer);
-	item.x = x;
-	item.y = y;
-	y += 18;
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_SinglePlayer;
+		Choices[1] = MenuChoice_Multiplayer;
+		Choices[2] = MenuChoice_Options;
+		Choices[3] = MenuChoice_Help;
+		Choices[4] = MenuChoice_QuitGame;
+		ChoicesStartX = 97;
+		ChoicesStartY = 64;
+	}
+}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Options);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Help);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_QuitGame);
-	item.x = x;
-	item.y = y;
-
-	MenuBitmap_Init(&MainMenu.logo, 94, 2, MNF_INACTIVE, "M_STRIFE",
-		PIC_PATCH);
-	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
-
-	PushMenu(&MainMenu.menu);
+void menu_main(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenMain));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

@@ -33,16 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_single_t
-{
-	menu_t menu;
-	menutext_t newgame;
-	menutext_t loadgame;
-	menutext_t savegame;
-	menutext_t endgame;
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 #ifdef DOOM2
@@ -55,57 +45,128 @@ void menu_save(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_single_t SingleMenu;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  menu_single
+//	MenuChoice_NewGame
 //
 //==========================================================================
 
+class MenuChoice_NewGame:MenuBigTextButton
+{
+	defaultproperties
+	{
+		Text = "New Game";
+	}
+
+	void ActivateEvent(void)
+	{
+#ifdef DOOM2
+		menu_skill();
+#else
+		menu_episode();
+#endif
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_LoadGame
+//
+//==========================================================================
+
+class MenuChoice_LoadGame:MenuBigTextButton
+{
+	defaultproperties
+	{
+		Text = "Load Game";
+	}
+
+	void ActivateEvent(void)
+	{
+		menu_load();
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SaveGame
+//
+//==========================================================================
+
+class MenuChoice_SaveGame:MenuBigTextButton
+{
+	defaultproperties
+	{
+		Text = "Save Game";
+	}
+
+	void ActivateEvent(void)
+	{
+		menu_save();
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_EndGame
+//
+//==========================================================================
+
+class MenuChoice_EndGame:MenuBigTextButton
+{
+	defaultproperties
+	{
+		Text = "End Game";
+	}
+
+	void ActivateEvent(void)
+	{
+		CmdBuf_AddText("Disconnect\n");
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenSinglePlayer
+//
+//==========================================================================
+
+class MenuScreenSinglePlayer:MenuScreen
+{
+	menutext_t title;
+
+	void Init(void)
+	{
+		MenuText_InitTitle(&title, 160, 24, "SINGLE PLAYER", TEXT_BIGC);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
+		::Init();
+	}
+
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_NewGame;
+		Choices[1] = MenuChoice_LoadGame;
+		Choices[2] = MenuChoice_SaveGame;
+		Choices[3] = MenuChoice_EndGame;
+		ChoicesStartX = 97;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_Skull;
+	}
+}
+
 void menu_single(void)
 {
-	int x = 97;
-	int y = 40;
-
-	InitMenu(&SingleMenu.menu);
-
-#ifdef DOOM2
-	MenuText_InitFunc(&SingleMenu.newgame, x, y, "New Game", TEXT_BIG,
-		menu_skill);
-#else
-	MenuText_InitFunc(&SingleMenu.newgame, x, y, "New Game", TEXT_BIG,
-		menu_episode);
-#endif
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.newgame);
-	y += 18;
-
-	MenuText_InitFunc(&SingleMenu.loadgame, x, y, "Load Game", TEXT_BIG,
-		menu_load);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.loadgame);
-	y += 18;
-
-	MenuText_InitFunc(&SingleMenu.savegame, x, y, "Save Game", TEXT_BIG,
-		menu_save);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.savegame);
-	y += 18;
-
-	MenuText_InitCmd(&SingleMenu.endgame, x, y, "End Game", TEXT_BIG,
-		"Disconnect\n");
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.endgame);
-
-	MenuText_InitTitle(&SingleMenu.title, 160, 24, "SINGLE PLAYER",
-		TEXT_BIGC);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.title);
-
-	PushMenu(&SingleMenu.menu);
+	PushMenuScreen(SpawnMenu(MenuScreenSinglePlayer));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.4  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

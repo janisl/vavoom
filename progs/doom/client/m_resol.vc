@@ -33,14 +33,17 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_resolution_t
+class MenuScreenScreenResolution:MenuScreen
 {
-	menu_t menu;
 	menuswitch_t mode;
 	menuswitch_t bpp;
 	menutext_t set_res;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 struct mode_t
 {
@@ -52,7 +55,7 @@ struct mode_t
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_resolution_t ResolutionMenu;
+MenuScreenScreenResolution ResolutionMenu;
 
 string sw_mode[8] = { "320x200", "320x240", "640x400", "640x480",
 	"800x600", "1024x768", "1152x864", "1280x1024"
@@ -126,32 +129,35 @@ void menu_resolution(void)
 		bi = 0;
 	}
 
-	InitMenu(&ResolutionMenu.menu);
+	ResolutionMenu = MenuScreenScreenResolution(SpawnMenu(MenuScreenScreenResolution));
 
 	MenuSwitch_Init(&ResolutionMenu.mode, x, y, "Resolution", TEXT_SMALLR, mi,
 		8, &sw_mode[0]);
-	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.mode);
+	MenuItemWrapper(ResolutionMenu.AddItem(MenuItemWrapper)).item = &ResolutionMenu.mode;
 	y += 10;
 
 	MenuSwitch_Init(&ResolutionMenu.bpp, x, y, "Bit depth", TEXT_SMALLR, bi,
 		4, &sw_bpp[0]);
-	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.bpp);
+	MenuItemWrapper(ResolutionMenu.AddItem(MenuItemWrapper)).item = &ResolutionMenu.bpp;
 	y += 10;
 
 	MenuText_InitFunc(&ResolutionMenu.set_res, x, y, "Set Resolution",
 		TEXT_SMALLR, set_resolution);
-	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.set_res);
+	MenuItemWrapper(ResolutionMenu.AddItem(MenuItemWrapper)).item = &ResolutionMenu.set_res;
 
 	MenuText_InitTitle(&ResolutionMenu.title, 160, 24, "SCREEN RESOLUTION",
 		TEXT_BIGC);
-	AddMenuItem(&ResolutionMenu.menu, &ResolutionMenu.title);
+	MenuItemWrapper(ResolutionMenu.AddItem(MenuItemWrapper)).item = &ResolutionMenu.title;
 
-	PushMenu(&ResolutionMenu.menu);
+	PushMenuScreen(ResolutionMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

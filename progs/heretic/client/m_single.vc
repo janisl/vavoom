@@ -33,16 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_single_t
-{
-	menu_t menu;
-	menutext_t newgame;
-	menutext_t loadgame;
-	menutext_t savegame;
-	menutext_t endgame;
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void menu_episode(void);
@@ -51,52 +41,67 @@ void menu_save(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_single_t SingleMenu;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  menu_single
+//	MenuScreenSinglePlayer
 //
 //==========================================================================
 
+class MenuScreenSinglePlayer:MenuScreen
+{
+	menutext_t newgame;
+	menutext_t loadgame;
+	menutext_t savegame;
+	menutext_t endgame;
+	menutext_t title;
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
+}
+
 void menu_single(void)
 {
+	MenuScreenSinglePlayer SingleMenu;
 	int x = 97;
 	int y = 40;
 
-	InitMenu(&SingleMenu.menu);
+	SingleMenu = MenuScreenSinglePlayer(SpawnMenu(MenuScreenSinglePlayer));
 
 	MenuText_InitFunc(&SingleMenu.newgame, x, y, "New Game", TEXT_BIG,
 		menu_episode);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.newgame);
+	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.newgame;
 	y += 18;
 
 	MenuText_InitFunc(&SingleMenu.loadgame, x, y, "Load Game", TEXT_BIG,
 		menu_load);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.loadgame);
+	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.loadgame;
 	y += 18;
 
 	MenuText_InitFunc(&SingleMenu.savegame, x, y, "Save Game", TEXT_BIG,
 		menu_save);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.savegame);
+	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.savegame;
 	y += 18;
 
 	MenuText_InitCmd(&SingleMenu.endgame, x, y, "End Game", TEXT_BIG,
 		"Disconnect\n");
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.endgame);
+	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.endgame;
 
-	MenuText_InitTitle(&SingleMenu.title, 160, 24, "SINGLE PLAYER",
-		TEXT_BIGC);
-	AddMenuItem(&SingleMenu.menu, &SingleMenu.title);
+	MenuText_InitTitle(&SingleMenu.title, 160, 24, "SINGLE PLAYER", TEXT_BIGC);
+	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.title;
 
-	PushMenu(&SingleMenu.menu);
+	PushMenuScreen(SingleMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -33,20 +33,23 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct psetup_menu_t
+class MenuScreenPlayerSetup:MenuScreen
 {
-	menu_t menu;
 	menuinputline_t Name;
 	menuswitch_t color;
 	menuspriteanim_t anim;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-psetup_menu_t PSetupMenu;
+MenuScreenPlayerSetup PSetupMenu;
 
 string sw_colors[] =
 	{ "green", "yellow", "red", "blue", "white", "gray", "brown",
@@ -85,37 +88,40 @@ void menu_psetup(void)
 	int x = 16;
 	int y = 40;
 
-	InitMenu(&PSetupMenu.menu);
+	PSetupMenu = MenuScreenPlayerSetup(SpawnMenu(MenuScreenPlayerSetup));
 
 	MenuInputLine_Init(&PSetupMenu.Name, x, y, "Name", TEXT_SMALLL, 1);
 	PSetupMenu.Name.callback = psetup_func;
 	PSetupMenu.Name.id = 1;
 	strcpy(ARR2STR(PSetupMenu.Name.value), GetCvarS("Name"));
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.Name);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.Name;
 	y += 20;
 
 	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL,
 		GetCvar("color"), 8, &sw_colors[0]);
 	PSetupMenu.color.callback = psetup_func;
 	PSetupMenu.color.id = 2;
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.color);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.color;
 	y += 10;
 
 	R_InstallSprite("PLAY", 500);
 
 	MenuSpriteAnim_Init(&PSetupMenu.anim, 200, 120, 500, 8, 4);
 	SetColor();
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.anim);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.anim;
 
 	MenuText_InitTitle(&PSetupMenu.title, 160, 24, "PLAYER SETUP", TEXT_BIGC);
-	AddMenuItem(&PSetupMenu.menu, &PSetupMenu.title);
+	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.title;
 
-	PushMenu(&PSetupMenu.menu);
+	PushMenuScreen(PSetupMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.6  2002/01/11 08:03:12  dj_jl
 //  Renamed 'name' to "Name'
 //

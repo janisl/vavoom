@@ -33,19 +33,22 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_help_t
+class MenuScreenHelp:MenuScreen
 {
-	menu_t menu;
 	menubitmap_t pic;
 	int numpages;
 	int curpage;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_help_t HelpMenu;
+MenuScreenHelp HelpMenu;
 
 string page_names[3] = { "HELP1", "HELP2", "CREDIT" };
 
@@ -83,22 +86,25 @@ boolean UseHelp(menucommon_t * item, int key)
 
 void menu_help(void)
 {
-	InitMenu(&HelpMenu.menu);
+	HelpMenu = MenuScreenHelp(SpawnMenu(MenuScreenHelp));
 
 	HelpMenu.numpages = 3;
 	HelpMenu.curpage = 0;
 
 	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, page_names[HelpMenu.curpage],
 		PIC_RAW);
-	AddMenuItem(&HelpMenu.menu, &HelpMenu.pic);
+	MenuItemWrapper(HelpMenu.AddItem(MenuItemWrapper)).item = &HelpMenu.pic;
 	HelpMenu.pic.responder = UseHelp;
 
-	PushMenu(&HelpMenu.menu);
+	PushMenuScreen(HelpMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.7  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -33,13 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_main_t
-{
-	menu_t menu;
-	menutext_t quit;
-	menubitmap_t logo;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void menu_single(void);
@@ -49,8 +42,6 @@ void menu_help(void);
 void menu_quit(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
-
-menu_main_t MainMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -62,14 +53,14 @@ menu_main_t MainMenu;
 
 class MenuChoice_SinglePlayer:MenuBigTextButton
 {
-	defaultproperties
-	{
-		text = "Single Player";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_single();
+	}
+
+	defaultproperties
+	{
+		Text = "Single Player";
 	}
 }
 
@@ -81,14 +72,14 @@ class MenuChoice_SinglePlayer:MenuBigTextButton
 
 class MenuChoice_Multiplayer:MenuBigTextButton
 {
-	defaultproperties
-	{
-		text = "Multiplayer";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_multi();
+	}
+
+	defaultproperties
+	{
+		Text = "Multiplayer";
 	}
 }
 
@@ -100,14 +91,14 @@ class MenuChoice_Multiplayer:MenuBigTextButton
 
 class MenuChoice_Options:MenuBigTextButton
 {
-	defaultproperties
-	{
-		text = "Options";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_options();
+	}
+
+	defaultproperties
+	{
+		Text = "Options";
 	}
 }
 
@@ -119,17 +110,12 @@ class MenuChoice_Options:MenuBigTextButton
 
 class MenuChoice_Help:MenuBigTextButton
 {
-	defaultproperties
-	{
-		text = "Help";
-	}
-
 #ifndef DOOM2
 	void Init(void)
 	{
 		if (shareware)
 		{
-			text = "Read This!";
+			Text = "Read This!";
 		}
 		::Init();
 	}
@@ -138,6 +124,11 @@ class MenuChoice_Help:MenuBigTextButton
 	void ActivateEvent(void)
 	{
 		menu_help();
+	}
+
+	defaultproperties
+	{
+		Text = "Help";
 	}
 }
 
@@ -149,70 +140,64 @@ class MenuChoice_Help:MenuBigTextButton
 
 class MenuChoice_QuitGame:MenuBigTextButton
 {
-	defaultproperties
-	{
-		text = "Quit game";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_quit();
+	}
+
+	defaultproperties
+	{
+		Text = "Quit game";
 	}
 }
 
 //==========================================================================
 //
-//  menu_main
+//	MenuScreenMain
 //
 //==========================================================================
 
-void menu_main(void)
+class MenuScreenMain:MenuScreen
 {
-	MenuObject item;
-	int x;
-	int y;
+	menubitmap_t logo;
 
-	x = 97;
-	y = 80;
-
-	InitMenu(&MainMenu.menu);
-
-	if (local_server)
+	void Init(void)
 	{
-		item = Menu_AddItem(&MainMenu.menu, MenuChoice_SinglePlayer);
-		item.x = x;
-		item.y = y;
-		y += 18;
+		if (!local_server)
+		{
+			Choices[0] = classidNone;
+		}
+
+		::Init();
+
+		MenuBitmap_Init(&logo, 94, 2, MNF_INACTIVE, "M_DOOM", PIC_PATCH);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &logo;
 	}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Multiplayer);
-	item.x = x;
-	item.y = y;
-	y += 18;
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_SinglePlayer;
+		Choices[1] = MenuChoice_Multiplayer;
+		Choices[2] = MenuChoice_Options;
+		Choices[3] = MenuChoice_Help;
+		Choices[4] = MenuChoice_QuitGame;
+		ChoicesStartX = 97;
+		ChoicesStartY = 80;
+		SelectorType = MenuSelector_Skull;
+	}
+}
 
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Options);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_Help);
-	item.x = x;
-	item.y = y;
-	y += 18;
-
-	item = Menu_AddItem(&MainMenu.menu, MenuChoice_QuitGame);
-	item.x = x;
-	item.y = y;
-
-	MenuBitmap_Init(&MainMenu.logo, 94, 2, MNF_INACTIVE, "M_DOOM", PIC_PATCH);
-	AddMenuItem(&MainMenu.menu, &MainMenu.logo);
-
-	PushMenu(&MainMenu.menu);
+void menu_main(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenMain));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

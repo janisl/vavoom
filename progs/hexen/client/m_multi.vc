@@ -33,15 +33,19 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_multi_t
+class menu_multi_t:MenuScreen
 {
-	menu_t menu;
 	menutext_t newgame;
 	menutext_t joingame;
 	menutext_t setup;
 	menutext_t disconnect;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+		SelectorType = MenuSelector_BigArrow;
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -60,39 +64,42 @@ void menu_multi(void)
 	int x = 97;
 	int y = 40;
 
-	InitMenu(&MultiMenu.menu);
+	MultiMenu = menu_multi_t(SpawnMenu(menu_multi_t));
 
 	if (local_server)
 	{
 		MenuText_InitFunc(&MultiMenu.newgame, x, y, "New Game", TEXT_BIG,
 			menu_new_game);
-		AddMenuItem(&MultiMenu.menu, &MultiMenu.newgame);
+		MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.newgame;
 		y += 18;
 	}
 
 	MenuText_InitFunc(&MultiMenu.joingame, x, y, "Join Game", TEXT_BIG,
 		menu_join_game);
-	AddMenuItem(&MultiMenu.menu, &MultiMenu.joingame);
+	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.joingame;
 	y += 18;
 
 	MenuText_InitFunc(&MultiMenu.setup, x, y, "Player Setup", TEXT_BIG,
 		menu_psetup);
-	AddMenuItem(&MultiMenu.menu, &MultiMenu.setup);
+	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.setup;
 	y += 18;
 
 	MenuText_InitCmd(&MultiMenu.disconnect, x, y, "Disconnect", TEXT_BIG,
 		"Disconnect\n");
-	AddMenuItem(&MultiMenu.menu, &MultiMenu.disconnect);
+	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.disconnect;
 
 	MenuText_InitTitle(&MultiMenu.title, 160, 24, "MULTIPLAYER", TEXT_BIGC);
-	AddMenuItem(&MultiMenu.menu, &MultiMenu.title);
+	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.title;
 
-	PushMenu(&MultiMenu.menu);
+	PushMenuScreen(MultiMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

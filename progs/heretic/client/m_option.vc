@@ -33,9 +33,8 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_options_t
+class MenuScreenOptions:MenuScreen
 {
-	menu_t menu;
 	menutext_t ctl;
 	menutext_t ctl2;
 	menutext_t mouse;
@@ -44,7 +43,11 @@ struct menu_options_t
 	menutext_t sound;
 	menutext_t console;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -57,7 +60,7 @@ void menu_sound(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_options_t OptionsMenu;
+MenuScreenOptions OptionsMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -72,52 +75,55 @@ void menu_options(void)
 	int x = 160;
 	int y = 32;
 
-	InitMenu(&OptionsMenu.menu);
+	OptionsMenu = MenuScreenOptions(SpawnMenu(MenuScreenOptions));
 
 	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR,
 		menu_controls);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.ctl;
 	y += 10;
 
 	MenuText_InitFunc(&OptionsMenu.ctl2, x, y, "Controls 2", TEXT_SMALLR,
 		menu_controls2);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl2);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.ctl2;
 	y += 10;
 
 	MenuText_InitFunc(&OptionsMenu.mouse, x, y, "Mouse Options", TEXT_SMALLR,
 		menu_mouse);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.mouse);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.mouse;
 	y += 10;
 
 	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution",
 		TEXT_SMALLR, menu_resolution);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.res);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.res;
 	y += 10;
 
 	MenuText_InitFunc(&OptionsMenu.video, x, y, "Video options", TEXT_SMALLR,
 		menu_video);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.video);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.video;
 	y += 10;
 
 	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR,
 		menu_sound);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.sound);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.sound;
 	y += 10;
 
 	MenuText_InitCmd(&OptionsMenu.console, x, y, "Go to console", TEXT_SMALLR,
 		"ToggleConsole\n");
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.console);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.console;
 	y += 10;
 
 	MenuText_InitTitle(&OptionsMenu.title, 160, 24, "OPTIONS", TEXT_BIGC);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.title);
+	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.title;
 
-	PushMenu(&OptionsMenu.menu);
+	PushMenuScreen(OptionsMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.5  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -43,6 +43,7 @@
 
 struct menucommon_t;
 class MenuObject;
+class MenuScreen;
 
 typedef void (*menu_item_drawer_t) (menucommon_t *);
 typedef boolean(*menu_item_responder_t) (menucommon_t *, int);
@@ -59,21 +60,6 @@ struct menucommon_t
 	int y;
 };
 
-struct menu_t;
-
-typedef void (*menu_drawer_t) (menu_t *);
-typedef boolean(*menu_responder_t) (menu_t *, int);
-
-struct menu_t
-{
-	menu_drawer_t drawer;
-	menu_responder_t responder;
-	int cursor;
-	int cursor_prev;
-	int numitems;
-	MenuObject Items[MAX_MENU_ITEMS];
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void PopMenu(void);
@@ -81,10 +67,10 @@ void menu_main(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_t *menu_stack[MAX_MENU_STACK];
+MenuScreen menu_stack[MAX_MENU_STACK];
 int menu_sp;
 
-menu_t *CurrentMenu;
+MenuScreen CurrentMenuScreen;
 
 float MenuTime;
 
@@ -98,11 +84,27 @@ float MenuTime;
 
 class MenuObject:Object
 {
-	int x;
-	int y;
-	int width;
-	int height;
-	boolean selected;
+	int X;
+	int Y;
+	int Width;
+	int Height;
+	boolean bSelected;
+	boolean bHidden;
+	boolean bDisabled;
+
+	void SetPos(int NewX, int NewY)
+	{
+		X = NewX;
+		Y = NewY;
+	}
+	int GetX(void)
+	{
+		return X;
+	}
+	int GetY(void)
+	{
+		return Y;
+	}
 
 	void Init(void)
 	{
@@ -123,12 +125,12 @@ class MenuObject:Object
 
 	boolean IsVisible(void)
 	{
-		return true;
+		return !bHidden;
 	}
 
 	boolean IsDisabled(void)
 	{
-		return false;
+		return bDisabled;
 	}
 
 	menucommon_t *GetOldItem(void)
@@ -138,6 +140,13 @@ class MenuObject:Object
 
 	void Destroyed(void)
 	{
+	}
+
+	defaultproperties
+	{
+		bSelected = false;
+		bHidden = false;
+		bDisabled = false;
 	}
 }
 
@@ -151,6 +160,14 @@ class MenuItemWrapper:MenuObject
 {
 	menucommon_t *item;
 
+	int GetX(void)
+	{
+		return item->x;
+	}
+	int GetY(void)
+	{
+		return item->y;
+	}
 	void Draw(void)
 	{
 		if (item->drawer)
@@ -189,6 +206,200 @@ class MenuItemWrapper:MenuObject
 	menucommon_t *GetOldItem(void)
 	{
 		return item;
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuChoice
+//**
+//**************************************************************************
+
+class MenuChoice:MenuObject
+{
+	defaultproperties
+	{
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuScreen
+//**
+//**************************************************************************
+
+class MenuScreen:MenuObject
+{
+	int NumItems;
+	MenuObject Items[MAX_MENU_ITEMS];
+	int CursorPos;
+	int CursorPrev;
+
+	classid Choices[MAX_MENU_ITEMS];
+	int ChoicesStartX;
+	int ChoicesStartY;
+
+	classid SelectorType;
+	MenuObject Selector;
+
+	MenuObject AddItem(classid type)
+	{
+		MenuObject item;
+
+		if (NumItems >= MAX_MENU_ITEMS)
+		{
+			FatalError("Too many menu items");
+		}
+		item = Spawn(type, self);
+		Items[NumItems] = item;
+		item.Init();
+		NumItems++;
+		return item;
+	}
+
+	void CreateChoices(void)
+	{
+		MenuChoice newChoice;
+		int currentY;
+		int i;
+
+		currentY = ChoicesStartY;
+		for (i = 0; i < MAX_MENU_ITEMS; i++)
+		{
+			if (Choices[i])
+			{
+				newChoice = MenuChoice(AddItem(Choices[i]));
+				newChoice.X = ChoicesStartX;
+				newChoice.Y = currentY;
+				currentY += newChoice.Height;
+			}
+		}
+	}
+
+	void CreateSelector(void)
+	{
+		if (SelectorType)
+		{
+			AddItem(SelectorType);
+		}
+	}
+
+	void Init(void)
+	{
+		::Init();
+		CreateChoices();
+		CreateSelector();
+	}
+
+	void CursorMoved(void)
+	{
+		if (CursorPrev == CursorPos)
+			return;
+
+		if (CursorPrev >= 0 && CursorPrev < NumItems)
+		{
+			Items[CursorPrev].Callback(MMSG_LOST_FOCUS);
+			Items[CursorPrev].bSelected = false;
+		}
+
+		if (CursorPos >= 0 && CursorPos < NumItems)
+		{
+			Items[CursorPos].Callback(MMSG_RECEIVE_FOCUS);
+			Items[CursorPos].bSelected = true;
+		}
+
+		if (Selector)
+		{
+			Selector.SetPos(Items[CursorPos].GetX(), Items[CursorPos].GetY());
+		}
+	}
+
+	void SetCursor(int cursor)
+	{
+		if (Items[cursor].IsDisabled())
+		{
+			// cursor can't go there
+			return;
+		}
+
+		CursorPrev = CursorPos;
+		CursorPos = cursor;
+
+		CursorMoved();
+	}
+
+	boolean Key(int key)
+	{
+		if (Items[CursorPos].Key(key))
+		{
+			return true;
+		}
+
+		switch (key)
+		{
+		case K_DOWNARROW:
+			CursorPrev = CursorPos;
+			do
+			{
+				if (CursorPos == NumItems - 1)
+					CursorPos = 0;
+				else
+					CursorPos++;
+			}
+			while (Items[CursorPos].IsDisabled() && CursorPrev != CursorPos);
+			CursorMoved();
+			LocalSound('MenuMove');
+			return true;
+
+		case K_UPARROW:
+			CursorPrev = CursorPos;
+			do
+			{
+				if (!CursorPos)
+					CursorPos = NumItems - 1;
+				else
+					CursorPos--;
+			}
+			while (Items[CursorPos].IsDisabled() && CursorPrev != CursorPos);
+			CursorMoved();
+			LocalSound('MenuMove');
+			return true;
+
+		case K_ESCAPE:
+		case K_MOUSE2:
+			PopMenu();
+			return true;
+		}
+
+		return false;
+	}
+
+	void Draw(void)
+	{
+		int i;
+
+		for (i = 0; i < NumItems; i++)
+		{
+			if (Items[i].IsVisible())
+			{
+				Items[i].Draw();
+			}
+		}
+	}
+
+	void Destroy(void)
+	{
+		int i;
+
+		for (i = 0; i < MAX_MENU_ITEMS; i++)
+		{
+			if (Items[i] != none)
+			{
+				Items[i].Destroyed();
+				Items[i].Destroy();
+			}
+		}
+		::Destroy();
 	}
 }
 
@@ -262,185 +473,15 @@ void InputLine_SetValue(TILine * iline, string text)
 
 //==========================================================================
 //
-//  Menu_CursorMoved
+//  SpawnMenu
 //
 //==========================================================================
 
-void Menu_CursorMoved(menu_t * m)
+MenuScreen SpawnMenu(classid CID)
 {
-	if (m->cursor_prev == m->cursor)
-		return;
-
-	if (m->cursor_prev >= 0 && m->cursor_prev < m->numitems)
-	{
-		m->Items[m->cursor_prev].Callback(MMSG_LOST_FOCUS);
-		m->Items[m->cursor_prev].selected = false;
-	}
-
-	if (m->cursor >= 0 && m->cursor < m->numitems)
-	{
-		m->Items[m->cursor].Callback(MMSG_RECEIVE_FOCUS);
-		m->Items[m->cursor].selected = true;
-	}
-}
-
-//==========================================================================
-//
-//  Menu_SetCursor
-//
-//==========================================================================
-
-void Menu_SetCursor(menu_t * m, int cursor)
-{
-	if (m->Items[cursor].IsDisabled())
-	{
-		// cursor can't go there
-		return;
-	}
-
-	m->cursor_prev = m->cursor;
-	m->cursor = cursor;
-
-	Menu_CursorMoved(m);
-}
-
-//==========================================================================
-//
-//  Menu_Draw
-//
-//==========================================================================
-
-void Menu_Draw(menu_t * menu)
-{
-	int i;
-
-	for (i = 0; i < menu->numitems; i++)
-	{
-		if (menu->Items[i].IsVisible())
-		{
-			menu->Items[i].Draw();
-		}
-	}
-}
-
-//==========================================================================
-//
-//  Menu_Use
-//
-//==========================================================================
-
-boolean Menu_Use(menu_t * menu, int key)
-{
-	if (menu->Items[menu->cursor].Key(key))
-	{
-		return true;
-	}
-
-	switch (key)
-	{
-	case K_DOWNARROW:
-		menu->cursor_prev = menu->cursor;
-		do
-		{
-			if (menu->cursor == menu->numitems - 1)
-				menu->cursor = 0;
-			else
-				menu->cursor++;
-		}
-		while (menu->Items[menu->cursor].IsDisabled() &&
-			menu->cursor_prev != menu->cursor);
-		Menu_CursorMoved(menu);
-		LocalSound('MenuMove');
-		return true;
-
-	case K_UPARROW:
-		menu->cursor_prev = menu->cursor;
-		do
-		{
-			if (!menu->cursor)
-				menu->cursor = menu->numitems - 1;
-			else
-				menu->cursor--;
-		}
-		while (menu->Items[menu->cursor].IsDisabled() &&
-			menu->cursor_prev != menu->cursor);
-		Menu_CursorMoved(menu);
-		LocalSound('MenuMove');
-		return true;
-
-	case K_ESCAPE:
-	case K_MOUSE2:
-		PopMenu();
-		return true;
-	}
-
-	return false;
-}
-
-//==========================================================================
-//
-//  InitMenu
-//
-//==========================================================================
-
-void InitMenu(menu_t * menu)
-{
-	int i;
-
-	menu->numitems = 0;
-	menu->drawer = Menu_Draw;
-	menu->responder = Menu_Use;
-	for (i = 0; i < MAX_MENU_ITEMS; i++)
-	{
-		if (menu->Items[i] != none)
-		{
-			menu->Items[i].Destroyed();
-			menu->Items[i].Destroy();
-			menu->Items[i] = none;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  AddMenuItem
-//
-//==========================================================================
-
-void AddMenuItem(menu_t * menu, menucommon_t * item)
-{
-	MenuItemWrapper it;
-
-	if (menu->numitems >= MAX_MENU_ITEMS)
-	{
-		FatalError("Too many menu items");
-	}
-	it = Spawn(MenuItemWrapper, none);
-	it.item = item;
-	menu->Items[menu->numitems] = it;
-	menu->Items[menu->numitems].Init();
-	menu->numitems++;
-}
-
-//==========================================================================
-//
-//  Menu_AddItem
-//
-//==========================================================================
-
-MenuObject Menu_AddItem(menu_t * menu, classid type)
-{
-	MenuObject item;
-
-	if (menu->numitems >= MAX_MENU_ITEMS)
-	{
-		FatalError("Too many menu items");
-	}
-	item = Spawn(type, none);
-	menu->Items[menu->numitems] = item;
-	item.Init();
-	menu->numitems++;
-	return item;
+	MenuScreen S = Spawn(CID, none);
+	S.Init();
+	return S;
 }
 
 //==========================================================================
@@ -451,7 +492,7 @@ MenuObject Menu_AddItem(menu_t * menu, classid type)
 
 menucommon_t *ActiveItem(void)
 {
-	return CurrentMenu->Items[CurrentMenu->cursor].GetOldItem();
+	return CurrentMenuScreen.Items[CurrentMenuScreen.CursorPos].GetOldItem();
 }
 
 //**************************************************************************
@@ -462,11 +503,11 @@ menucommon_t *ActiveItem(void)
 
 //==========================================================================
 //
-//  PushMenu
+//  PushMenuScreen
 //
 //==========================================================================
 
-void PushMenu(menu_t * menu)
+void PushMenuScreen(MenuScreen menu)
 {
 	int i;
 	MenuObject item;
@@ -474,22 +515,25 @@ void PushMenu(menu_t * menu)
 	// avoid stacking menus invoked by hotkeys
 	for (i = 0; i < menu_sp; i++)
 	{
-		if (menu_stack[i] == menu)
+		if (menu_stack[i].Class == menu.Class)
 		{
+			int j;
+
+			for (j = i; j < menu_sp; j++)
+			{
+				menu_stack[j].Destroy();
+			}
 			menu_sp = i;
 			break;
 		}
 	}
 
-	if (i == menu_sp)
-	{
-		if (menu_sp >= MAX_MENU_STACK)
-			FatalError("PushMenu: menu stack overflow");
+	if (menu_sp >= MAX_MENU_STACK)
+		FatalError("PushMenu: menu stack overflow");
 
-		menu_stack[menu_sp++] = menu;
-	}
+	menu_stack[menu_sp++] = menu;
 
-	if (!CurrentMenu)
+	if (!CurrentMenuScreen)
 	{
 		MenuTime = 0.0;
 /*		if (cl.paused)
@@ -501,21 +545,21 @@ void PushMenu(menu_t * menu)
 		LocalSound('MenuActivate');
 	}
 
-	CurrentMenu = menu;
+	CurrentMenuScreen = menu;
 
 	// default cursor position
-	menu->cursor = 0;
-	menu->cursor_prev = 0;
+	menu.CursorPos = 0;
+	menu.CursorPrev = 0;
 
 	// force first available item to have focus
-	for (i = 0; i < menu->numitems; i++)
+	for (i = 0; i < menu.NumItems; i++)
 	{
-		item = menu->Items[i];
+		item = menu.Items[i];
 		if (!item.IsDisabled())
 		{
-			menu->cursor_prev = -1;
-			menu->cursor = i;
-			Menu_CursorMoved(menu);
+			menu.CursorPrev = -1;
+			menu.CursorPos = i;
+			menu.CursorMoved();
 			break;
 		}
 	}
@@ -534,14 +578,15 @@ void PopMenu(void)
 	if (menu_sp < 0)
 		FatalError("PopMenu: menu stack underflow");
 
+	menu_stack[menu_sp].Destroy();
 	if (menu_sp)
 	{
-		CurrentMenu = menu_stack[menu_sp - 1];
+		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		LocalSound('MenuPrevious');
 	}
 	else
 	{
-		CurrentMenu = NULL;
+		CurrentMenuScreen = none;
 		LocalSound('MenuClose');
 	}
 }
@@ -554,8 +599,14 @@ void PopMenu(void)
 
 void ForceMenuOff(void)
 {
+	int i;
+
+	for (i = 0; i < menu_sp; i++)
+	{
+		menu_stack[i].Destroy();
+	}
 	menu_sp = 0;
-	CurrentMenu = NULL;
+	CurrentMenuScreen = none;
 }
 
 //**************************************************************************
@@ -756,30 +807,26 @@ void MenuSpriteAnim_Init(menuspriteanim_t * item, int x, int y, int sprdef,
 #define SELECTOR_XOFFSET	(-28)
 #define SELECTOR_YOFFSET	(-1)
 
-int selector_pics[2];
-
-//==========================================================================
-//
-//  DrawSelector
-//
-//==========================================================================
-
-void DrawSelector(int x, int y)
+class MenuSelector_BigArrow:MenuObject
 {
-	R_DrawPic(x + SELECTOR_XOFFSET, y + SELECTOR_YOFFSET,
-		selector_pics[ftoi(MenuTime * 2.0) & 1]);
-}
+	int selector_pics[2];
 
-//==========================================================================
-//
-//  InitSelector
-//
-//==========================================================================
+	void Init(void)
+	{
+		::Init();
+		selector_pics[0] = R_RegisterPic("M_SLCTR1", PIC_PATCH);
+		selector_pics[1] = R_RegisterPic("M_SLCTR2", PIC_PATCH);
+	}
 
-void InitSelector(void)
-{
-	selector_pics[0] = R_RegisterPic("M_SLCTR1", PIC_PATCH);
-	selector_pics[1] = R_RegisterPic("M_SLCTR2", PIC_PATCH);
+	void Draw(void)
+	{
+		R_DrawPic(X + SELECTOR_XOFFSET, Y + SELECTOR_YOFFSET,
+			selector_pics[ftoi(MenuTime * 2.0) & 1]);
+	}
+
+	defaultproperties
+	{
+	}
 }
 
 //**************************************************************************
@@ -857,10 +904,6 @@ void MenuText_Draw(menucommon_t * aitem)
 	switch (item->type)
 	{
 	case TEXT_BIG:
-		if (is_active)
-		{
-			DrawSelector(x, y);
-		}
 		T_SetFont(font_big);
 		T_SetAlign(hleft, vtop);
 		break;
@@ -909,7 +952,6 @@ void MenuText_Init(menutext_t * item, int x, int y, int flags, string text,
 	item->responder = MenuText_Use;
 	item->text = text;
 	item->type = type;
-	InitSelector();
 }
 
 //==========================================================================
@@ -1307,7 +1349,7 @@ boolean MenuControl_Use(menucommon_t * aitem, int key)
 //
 //==========================================================================
 
-void MenuControl_Init(menucontrol_t * item, menu_t * parent, int x, int y,
+void MenuControl_Init(menucontrol_t * item, MenuScreen parent, int x, int y,
 	string text, string kbdown, string kbup)
 {
 	MenuCommon_Init(item, x, y, 0);
@@ -1316,7 +1358,7 @@ void MenuControl_Init(menucontrol_t * item, menu_t * parent, int x, int y,
 	item->text = text;
 	item->command_on = kbdown;
 	item->command_off = kbup;
-	AddMenuItem(parent, item);
+	MenuItemWrapper(parent.AddItem(MenuItemWrapper)).item = item;
 }
 
 //**************************************************************************
@@ -1399,10 +1441,6 @@ void MenuSaveSlot_Draw(menucommon_t * aitem)
 	else
 	{
 		DrawSlot(x, y, ARR2STR(item->text), false);
-	}
-	if (is_active)
-	{
-		DrawSelector(x, y);
 	}
 }
 
@@ -1762,17 +1800,17 @@ void MenuSlist_Init(menuslist_t * item)
 //**
 //**************************************************************************
 
-class MenuTextButton:MenuObject
+class MenuTextButton:MenuChoice
 {
-	name activateSound;
-	string text;
-	int textFont;
-	int textHAlign;
-	int textVAlign;
+	name ActivateSound;
+	string Text;
+	int TextFont;
+	int TextHAlign;
+	int TextVAlign;
 
 	defaultproperties
 	{
-		activateSound = 'MenuSelect';
+		ActivateSound = 'MenuSelect';
 	}
 
 	void ActivateEvent(void)
@@ -1784,7 +1822,7 @@ class MenuTextButton:MenuObject
 		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
 		{
 			ActivateEvent();
-			LocalSound(activateSound);
+			LocalSound(ActivateSound);
 			return true;
 		}
 		return false;
@@ -1792,9 +1830,9 @@ class MenuTextButton:MenuObject
 
 	void Draw(void)
 	{
-		T_SetFont(textFont);
-		T_SetAlign(textHAlign, textVAlign);
-		T_DrawText(x, y, text);
+		T_SetFont(TextFont);
+		T_SetAlign(TextHAlign, TextVAlign);
+		T_DrawText(X, Y, Text);
 	}
 }
 
@@ -1808,30 +1846,19 @@ class MenuBigTextButton:MenuTextButton
 {
 	defaultproperties
 	{
-		textFont = font_big;
-		textHAlign = hleft;
-		textVAlign = vtop;
-	}
-
-	void Init(void)
-	{
-		::Init();
-		InitSelector();
-	}
-
-	void Draw(void)
-	{
-		if (selected)
-		{
-			DrawSelector(x, y);
-		}
-		::Draw();
+		TextFont = font_big;
+		TextHAlign = hleft;
+		TextVAlign = vtop;
+		Height = 18;
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/01/21 18:21:33  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.13  2002/01/11 18:19:41  dj_jl
 //  Started to use names in progs
 //

@@ -33,21 +33,24 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_help_t
+class MenuScreenHelp:MenuScreen
 {
-	menu_t menu;
 	menubitmap_t pic;
 #ifndef DOOM2
 	int numpages;
 	int curpage;
 #endif
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_help_t HelpMenu;
+MenuScreenHelp HelpMenu;
 
 // CODE --------------------------------------------------------------------
 
@@ -85,7 +88,7 @@ boolean UseHelp(menucommon_t * item, int key)
 
 void menu_help(void)
 {
-	InitMenu(&HelpMenu.menu);
+	HelpMenu = MenuScreenHelp(SpawnMenu(MenuScreenHelp));
 
 #ifndef DOOM2
 	if (ExtendedWAD)
@@ -105,14 +108,17 @@ void menu_help(void)
 	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, "HELP1", PIC_PATCH);
 #endif
 	HelpMenu.pic.responder = UseHelp;
-	AddMenuItem(&HelpMenu.menu, &HelpMenu.pic);
+	MenuItemWrapper(HelpMenu.AddItem(MenuItemWrapper)).item = &HelpMenu.pic;
 
-	PushMenu(&HelpMenu.menu);
+	PushMenuScreen(HelpMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.6  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

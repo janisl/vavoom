@@ -33,13 +33,16 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_join_game_t
+class menu_join_game_t:MenuScreen
 {
-	menu_t menu;
 	menutext_t search;
 	menuinputline_t joinat;
 	menutext_t title;
-};
+
+	defaultproperties
+	{
+	}
+}
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
@@ -76,52 +79,57 @@ void menu_join_game(void)
 	int x = 64;
 	int y = 40;
 
-	InitMenu(&JoinGameMenu.menu);
+	JoinGameMenu = menu_join_game_t(SpawnMenu(menu_join_game_t));
 
 	MenuText_InitFunc(&JoinGameMenu.search, x, y, "Search for games...",
 		TEXT_SMALLL, menu_search);
-	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.search);
+	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.search;
 	y += 10;
 
 	MenuInputLine_Init(&JoinGameMenu.joinat, x, y, "Join Game At",
 		TEXT_SMALLL, 0);
 	JoinGameMenu.joinat.callback = join_at_func;
 	JoinGameMenu.joinat.value[0] = 0;
-	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.joinat);
+	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.joinat;
 
 	MenuText_InitTitle(&JoinGameMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
-	AddMenuItem(&JoinGameMenu.menu, &JoinGameMenu.title);
+	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.title;
 
-	PushMenu(&JoinGameMenu.menu);
+	PushMenuScreen(JoinGameMenu);
 }
 
-struct SlistMenu_t
+class MenuScreenSlist:MenuScreen
 {
-	menu_t menu;
 	menuslist_t list;
 	menutext_t title;
-};
 
-SlistMenu_t SlistMenu;
+	defaultproperties
+	{
+	}
+}
 
 void menu_search(void)
 {
-	InitMenu(&SlistMenu.menu);
+	MenuScreenSlist SlistMenu;
+	SlistMenu = MenuScreenSlist(SpawnMenu(MenuScreenSlist));
 
 	StartSearch();
 
 	MenuSlist_Init(&SlistMenu.list);
-	AddMenuItem(&SlistMenu.menu, &SlistMenu.list);
+	MenuItemWrapper(SlistMenu.AddItem(MenuItemWrapper)).item = &SlistMenu.list;
 
 	MenuText_InitTitle(&SlistMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
-	AddMenuItem(&SlistMenu.menu, &SlistMenu.title);
+	MenuItemWrapper(SlistMenu.AddItem(MenuItemWrapper)).item = &SlistMenu.title;
 
-	PushMenu(&SlistMenu.menu);
+	PushMenuScreen(SlistMenu);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.4  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

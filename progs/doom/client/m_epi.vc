@@ -35,41 +35,15 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menu_episode_t
-{
-	menu_t menu;
-	menutext_t epi1;
-	menutext_t epi2;
-	menutext_t epi3;
-	menutext_t epi4;
-	menutext_t title;
-};
-
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void menu_skill(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-menu_episode_t EpisodeMenu;
-
 int MenuEpisode;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  menu_episode_callback
-//
-//==========================================================================
-
-void menu_episode_callback(menucommon_t * item, int msg)
-{
-	if (msg == MMSG_RECEIVE_FOCUS)
-	{
-		MenuEpisode = item->id;
-	}
-}
 
 //==========================================================================
 //
@@ -84,65 +58,114 @@ void SharewareResponse(int key)
 
 //==========================================================================
 //
-//  shareware_func
+//	MenuChoice_Episode1
 //
 //==========================================================================
 
-void shareware_func(void)
+class MenuChoice_Episode1:MenuBigTextButton
 {
-	MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-		SharewareResponse, false);
+	int EpisodeNum;
+
+	void ActivateEvent(void)
+	{
+		if (shareware && EpisodeNum > 1)
+		{
+			MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
+				SharewareResponse, false);
+			return;
+		}
+		MenuEpisode = EpisodeNum;
+		menu_skill();
+	}
+
+	defaultproperties
+	{
+		Text = "Knee - Deep in the Dead";
+		EpisodeNum = 1;
+	}
 }
 
 //==========================================================================
 //
-//  menu_episode
+//	MenuChoice_Episode2
 //
 //==========================================================================
 
-void menu_episode(void)
+class MenuChoice_Episode2:MenuChoice_Episode1
 {
-	int x = 48;
-	int y = 40;
-
-	InitMenu(&EpisodeMenu.menu);
-
-	MenuText_InitFunc(&EpisodeMenu.epi1, x, y, "Knee - Deep in the Dead",
-		TEXT_BIG, menu_skill);
-	EpisodeMenu.epi1.callback = menu_episode_callback;
-	EpisodeMenu.epi1.id = 1;
-	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi1);
-	y += 18;
-
-	MenuText_InitFunc(&EpisodeMenu.epi2, x, y, "The Shores of Hell", TEXT_BIG,
-		shareware ? shareware_func : menu_skill);
-	EpisodeMenu.epi2.callback = menu_episode_callback;
-	EpisodeMenu.epi2.id = 2;
-	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi2);
-	y += 18;
-
-	MenuText_InitFunc(&EpisodeMenu.epi3, x, y, "Inferno", TEXT_BIG,
-		shareware ? shareware_func : menu_skill);
-	EpisodeMenu.epi3.callback = menu_episode_callback;
-	EpisodeMenu.epi3.id = 3;
-	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi3);
-	y += 18;
-
-	if (ExtendedWAD)
+	defaultproperties
 	{
-		MenuText_InitFunc(&EpisodeMenu.epi4, x, y, "Thy Flesh Consumed",
-			TEXT_BIG, menu_skill);
-		EpisodeMenu.epi4.callback = menu_episode_callback;
-		EpisodeMenu.epi4.id = 4;
-		AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.epi4);
-		y += 18;
+		Text = "The Shores of Hell";
+		EpisodeNum = 2;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode3
+//
+//==========================================================================
+
+class MenuChoice_Episode3:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "Inferno";
+		EpisodeNum = 3;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode4
+//
+//==========================================================================
+
+class MenuChoice_Episode4:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "Thy Flesh Consumed";
+		EpisodeNum = 4;
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenEpisode
+//
+//==========================================================================
+
+class MenuScreenEpisode:MenuScreen
+{
+	menutext_t title;
+
+	void Init(void)
+	{
+		if (!ExtendedWAD)
+		{
+			Choices[3] = classidNone;
+		}
+		::Init();
+		MenuText_InitTitle(&title, 160, 24, "WHICH EPISODE?", TEXT_BIGC);
+		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
 	}
 
-	MenuText_InitTitle(&EpisodeMenu.title, 160, 24, "WHICH EPISODE?",
-		TEXT_BIGC);
-	AddMenuItem(&EpisodeMenu.menu, &EpisodeMenu.title);
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_Episode1;
+		Choices[1] = MenuChoice_Episode2;
+		Choices[2] = MenuChoice_Episode3;
+		Choices[3] = MenuChoice_Episode4;
+		ChoicesStartX = 48;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_Skull;
+	}
+};
 
-	PushMenu(&EpisodeMenu.menu);
+void menu_episode(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenEpisode));
 }
 
 #endif
@@ -150,6 +173,9 @@ void menu_episode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/01/21 18:21:32  dj_jl
+//  Working on object-oriented menus
+//
 //  Revision 1.4  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //
