@@ -969,19 +969,22 @@ static void GroupLines(cl_level_t &loadlevel)
 //==========================================================================
 
 static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
-	int &lumpnum, int &gl_lumpnum)
+	int &lumpnum, int &gl_lumpnum, bool open_aux)
 {
-	W_CloseAuxiliary();
-	AuxiliaryMap = false;
-	// if working with a devlopment map, reload it
-	if (fl_devmode)
+	if (open_aux)
 	{
-		char aux_file_name[MAX_OSPATH];
-
-		if (FL_FindFile(va("maps/%s.wad", lev.mapname), aux_file_name))
+		W_CloseAuxiliary();
+		AuxiliaryMap = false;
+		// if working with a devlopment map, reload it
+		if (fl_devmode)
 		{
-			W_OpenAuxiliary(aux_file_name);
-			AuxiliaryMap = true;
+			char aux_file_name[MAX_OSPATH];
+
+			if (FL_FindFile(va("maps/%s.wad", lev.mapname), aux_file_name))
+			{
+				W_OpenAuxiliary(aux_file_name);
+				AuxiliaryMap = true;
+			}
 		}
 	}
 
@@ -1008,7 +1011,7 @@ static bool LoadBaseLevel(base_level_t &lev, const char *mapname,
 	if (gl_lumpnum < lumpnum)
 	{
 		// Dedicated servers doesn't have plugins
-		Host_Error("Map %s is missing GL-Nodes\n");
+		Host_Error("Map %s is missing GL-Nodes\n", mapname);
 	}
 #endif
 	bool extended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
@@ -1049,7 +1052,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 	int lumpnum;
 	int gl_lumpnum;
 
-	bool extended = LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum);
+	bool extended = LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum, true);
 	LoadBlockMap(lumpnum + ML_BLOCKMAP, lev);
 	lev.rejectmatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
 
@@ -1070,6 +1073,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 		svpr.Exec("TranslateLevel");
 	}
 
+#ifndef CLIENT
 	//
 	// End of map lump processing
 	//
@@ -1080,6 +1084,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 		// of the current auxiliary WAD (free lumps and info lists).
 		W_CloseAuxiliaryFile();
 	}
+#endif
 }
 
 #endif
@@ -1096,7 +1101,13 @@ void LoadLevel(cl_level_t &lev, const char *mapname)
 	int lumpnum;
 	int gl_lumpnum;
 
-	LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum);
+	LoadBaseLevel(lev, mapname, lumpnum, gl_lumpnum,
+#ifdef SERVER
+			!sv.active
+#else
+			true
+#endif
+		);
 	GroupLines(lev);
 
 	//
@@ -1208,6 +1219,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/10/09 17:25:36  dj_jl
+//  Fixed auxiliary maps
+//
 //  Revision 1.10  2001/10/08 17:33:01  dj_jl
 //  Different client and server level structures
 //
