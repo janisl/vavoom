@@ -36,6 +36,8 @@ struct subsector_t;
 //==========================================================================
 
 class Object
+	native
+	abstract
 {
 	int ObjectInternal[7];
 	classid Class;
@@ -366,6 +368,8 @@ struct base_level_t
 //==========================================================================
 
 class Thinker:Object
+	native
+	abstract
 {
 	void Think(void)
 	{
@@ -457,6 +461,8 @@ struct mobjinfo_t
 
 // Map Object definition.
 class MapObject:Thinker
+	native
+	abstract
 {
 	// Info for drawing: position.
 	TVec Origin;
@@ -536,6 +542,8 @@ class MapObject:Thinker
 //==========================================================================
 
 class ViewEntity:Object
+	native
+	abstract
 {
 	int SpriteIndex;
 	int SpriteFrame;
@@ -728,6 +736,7 @@ struct intercept_t
 #define ACS_STACK_DEPTH 	32
 
 class ACS:Thinker
+	native
 {
 	MapObject activator;
 	line_t *line;
@@ -969,6 +978,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2002/03/12 19:20:24  dj_jl
+//  Added native and abstract class modifiers
+//
 //  Revision 1.34  2002/03/09 17:57:00  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //
