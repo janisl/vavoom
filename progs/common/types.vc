@@ -37,7 +37,7 @@ struct subsector_t;
 
 class Object
 {
-	int ObjectInternal[2];
+	int ObjectInternal[8];
 
 	void Destroy(void);
 }
@@ -379,9 +379,9 @@ class Thinker:Object
 //
 //                              MAPOBJ DATA
 //
-//  NOTES:   Entity
+//  NOTES: Entity
 //
-//  mobj_ts are used to tell the refresh where to draw an image, tell the
+//  Entities are used to tell the refresh where to draw an image, tell the
 // world simulation when objects are contacted, and tell the sound driver
 // how to position a sound.
 //
@@ -456,7 +456,7 @@ struct mobjinfo_t
 };
 
 // Map Object definition.
-class base_mobj_t:Thinker
+class MapObject:Thinker
 {
 	// Info for drawing: position.
 	TVec origin;
@@ -676,7 +676,8 @@ struct sv_level_t:base_level_t
 	int numdeathmatchstarts;
 	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
 
-	int __thinkers[4];	// both the head and tail of the thinker list
+	int __thinkerHead;	// the head of the thinker list
+	int __thinkerTail;	// the tail of the thinker list
 };
 
 //==========================================================================
@@ -959,6 +960,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2001/12/18 18:38:11  dj_jl
+//  Base object got some new fields, new thinker list
+//
 //  Revision 1.19  2001/12/12 19:15:27  dj_jl
 //  Some little changes for state methods
 //
