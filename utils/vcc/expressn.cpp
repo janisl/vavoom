@@ -133,7 +133,8 @@ class TOp2 : public TOp
  public:
 	TOp2(TOp *Aop1, TOp *Aop2, TOperator *Aoper) : TOp(Aoper), op1(Aop1), op2(Aop2)
 	{
-		if (oper->type == &type_void_ptr && op1->type->type == ev_pointer)
+		if ((oper->type == &type_void_ptr && op1->type->type == ev_pointer) ||
+			(oper->type == &type_none_ref && op1->type->type == ev_reference))
 			type = op1->type;
 		else
 			type = oper->type;
@@ -578,6 +579,7 @@ static TOperator	NotLogical_float(TOperator::ID_NEGATELOGICAL, &type_int, &type_
 static TOperator	NotLogical_str(TOperator::ID_NEGATELOGICAL, &type_int, &type_string, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_func(TOperator::ID_NEGATELOGICAL, &type_int, &type_function, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ptr(TOperator::ID_NEGATELOGICAL, &type_int, &type_void_ptr, &type_void, OPC_NEGATELOGICAL);
+static TOperator	NotLogical_ref(TOperator::ID_NEGATELOGICAL, &type_int, &type_none_ref, &type_void, OPC_NEGATELOGICAL);
 
 static TOperator	BitInverse_int(TOperator::ID_BITINVERSE, &type_int, &type_int, &type_void, OPC_BITINVERSE);
 static TOperator	BitInverse_uint(TOperator::ID_BITINVERSE, &type_uint, &type_uint, &type_void, OPC_BITINVERSE);
@@ -672,6 +674,7 @@ static TOperator	Eq_func_func(TOperator::ID_EQ, &type_int, &type_function, &type
 static TOperator	Eq_ptr_ptr(TOperator::ID_EQ, &type_int, &type_void_ptr, &type_void_ptr, OPC_EQ);
 static TOperator	Eq_vec_vec(TOperator::ID_EQ, &type_int, &type_vector, &type_vector, OPC_VEQ);
 static TOperator	Eq_cid_cid(TOperator::ID_EQ, &type_int, &type_classid, &type_classid, OPC_EQ);
+static TOperator	Eq_ref_ref(TOperator::ID_EQ, &type_int, &type_none_ref, &type_none_ref, OPC_EQ);
 
 static TOperator	Ne_int_int(TOperator::ID_NE, &type_int, &type_int, &type_int, OPC_NE);
 static TOperator	Ne_int_uint(TOperator::ID_NE, &type_int, &type_int, &type_uint, OPC_NE);
@@ -683,6 +686,7 @@ static TOperator	Ne_func_func(TOperator::ID_NE, &type_int, &type_function, &type
 static TOperator	Ne_ptr_ptr(TOperator::ID_NE, &type_int, &type_void_ptr, &type_void_ptr, OPC_NE);
 static TOperator	Ne_vec_vec(TOperator::ID_NE, &type_int, &type_vector, &type_vector, OPC_VNE);
 static TOperator	Ne_cid_cid(TOperator::ID_NE, &type_int, &type_classid, &type_classid, OPC_NE);
+static TOperator	Ne_ref_ref(TOperator::ID_NE, &type_int, &type_none_ref, &type_none_ref, OPC_NE);
 
 static TOperator	And_int_int(TOperator::ID_ANDBITWISE, &type_int, &type_int, &type_int, OPC_ANDBITWISE);
 static TOperator	And_int_uint(TOperator::ID_ANDBITWISE, &type_uint, &type_int, &type_uint, OPC_ANDBITWISE);
@@ -709,6 +713,7 @@ static TOperator	Assign_func_func(TOperator::ID_ASSIGN, &type_function, &type_fu
 static TOperator	Assign_ptr_ptr(TOperator::ID_ASSIGN, &type_void_ptr, &type_void_ptr, &type_void_ptr, OPC_ASSIGN);
 static TOperator	Assign_vec_vec(TOperator::ID_ASSIGN, &type_vector, &type_vector, &type_vector, OPC_VASSIGN);
 static TOperator	Assign_cid_cid(TOperator::ID_ASSIGN, &type_classid, &type_classid, &type_classid, OPC_ASSIGN);
+static TOperator	Assign_ref_ref(TOperator::ID_ASSIGN, &type_none_ref, &type_none_ref, &type_none_ref, OPC_ASSIGN);
 
 static TOperator	AddVar_int_int(TOperator::ID_ADDVAR, &type_int, &type_int, &type_int, OPC_ADDVAR);
 static TOperator	AddVar_int_uint(TOperator::ID_ADDVAR, &type_uint, &type_int, &type_uint, OPC_ADDVAR);
@@ -809,6 +814,13 @@ bool TypeCmp(TType *type1, TType *type2)
 	if ((type1->type == ev_pointer) && (type2->type == ev_pointer))
 	{
 		if (type1 == &type_void_ptr || type2 == &type_void_ptr)
+		{
+			return true;
+		}
+	}
+	if ((type1->type == ev_reference) && (type2->type == ev_reference))
+	{
+		if (type1 == &type_none_ref || type2 == &type_none_ref)
 		{
 			return true;
 		}
@@ -1119,17 +1131,37 @@ static TOp *ParseExpressionPriority1(void)
    		}
    		else if (TK_Check(PU_DOT))
    	   	{
-			type = op->type;
-		   	if (op->type->type == ev_array || op->type->type == ev_pointer)
+			if (op->type->type == ev_reference)
 			{
-			   	ERR_Exit(ERR_BAD_EXPR, true, NULL);
+				type = op->type->aux_type;
+				field = ParseField(type);
+				if (field)
+				{
+					if (field->type->type == ev_method)
+					{
+						op = new TOpPushSelfMethod(op, field->ofs, field->type);
+					}
+					else
+					{
+						op = new TOpField(op, field->ofs, field->type);
+						op = new TOpPushPointed(op,	field->type);
+					}
+				}
 			}
-		   	op = op->GetAddress();
-			field = ParseField(type);
-			if (field)
+		   	else if (op->type->type == ev_array || op->type->type == ev_pointer)
 			{
-				op = new TOpField(op, field->ofs, field->type);
-				op = new TOpPushPointed(op,	field->type);
+			   	ParseError(ERR_BAD_EXPR);
+			}
+			else
+			{
+				type = op->type;
+			   	op = op->GetAddress();
+				field = ParseField(type);
+				if (field)
+				{
+					op = new TOpField(op, field->ofs, field->type);
+					op = new TOpPushPointed(op,	field->type);
+				}
 			}
    		}
 		else if (TK_Check(PU_LINDEX))
@@ -1243,14 +1275,27 @@ static TOp *ParseExpressionPriority2(void)
 		if (TK_Check(PU_AND))
 		{
 		   	op = ParseExpressionPriority1();
-			type = MakePointerType(op->type);
-			op = op->GetAddress();
-			op->type = type;
+			if (op->type->type == ev_reference)
+			{
+				op->type = MakePointerType(op->type->aux_type);
+			}
+			else
+			{
+				type = MakePointerType(op->type);
+				op = op->GetAddress();
+				op->type = type;
+			}
 			return op;
 		}
 		if (TK_Check(PU_ASTERISK))
 		{
 		   	op = ParseExpressionPriority2();
+			if (op->type->type == ev_pointer &&
+				op->type->aux_type->type == ev_class)
+			{
+				op->type = MakeReferenceType(op->type->aux_type);
+				return op;
+			}
 			return new TOpPushPointed(op);
 		}
 
@@ -1698,9 +1743,12 @@ TType *ParseExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:42:28  dj_jl
+//	References, beautification
+//
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
-//
+//	
 //	Revision 1.8  2001/10/22 17:29:58  dj_jl
 //	Operators for clasid type
 //	

@@ -46,6 +46,9 @@ using namespace VavoomUtils;
 #define PF_VARARGS				0x8000
 #define PF_COUNT_MASK			0x7fff
 
+#define REF_CPP		// C++ style references
+#define REF_CLASS	// Class variables/fields/params are references
+
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -57,6 +60,7 @@ enum
 	ev_string,
 	ev_function,
 	ev_pointer,
+	ev_reference,
 	ev_array,
 	ev_struct,
 	ev_vector,
@@ -345,6 +349,7 @@ void PC_DumpAsm(char* name);
 TType *CheckForType(void);
 TType *FindType(TType *type);
 TType *MakePointerType(TType *type);
+TType *MakeReferenceType(TType *type);
 TType *MakeArrayType(TType *type, int elcount);
 int TypeSize(TType *t);
 void TypeCheckPassable(TType *type);
@@ -368,8 +373,10 @@ float ConstFloatExpression(void);
 
 TType *ParseExpression(void);
 
-int CheckForFunction(char* name);
-int CheckForGlobalVar(char* name);
+int CheckForFunction(const char* name);
+int CheckForFunction(int s_name);
+int CheckForGlobalVar(const char* name);
+int CheckForGlobalVar(int s_name);
 int CheckForLocalVar(char* name);
 int CheckForConstant(const char *name);
 
@@ -383,6 +390,7 @@ extern int				tk_Line;
 extern int				tk_Number;
 extern float			tk_Float;
 extern char*			tk_String;
+extern int				tk_StringI;
 extern Keyword			tk_Keyword;
 extern Punctuation		tk_Punct;
 
@@ -425,6 +433,7 @@ extern TType			type_mobjinfo;
 extern TType			type_void_ptr;
 extern TType			type_vector;
 extern TType			type_classid;
+extern TType			type_none_ref;
 
 extern int				numclasses;
 
@@ -475,9 +484,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:42:29  dj_jl
+//	References, beautification
+//
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
-//
+//	
 //	Revision 1.8  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
 //	

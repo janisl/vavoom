@@ -56,7 +56,11 @@ struct mobjinfo_t
 	int		class_id;
 };
 
-typedef char ident_t[MAX_IDENTIFIER_LENGTH];
+struct compstate_t
+{
+	char name[MAX_IDENTIFIER_LENGTH];
+	char next_name[MAX_IDENTIFIER_LENGTH];
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -78,8 +82,7 @@ static int				*models;
 
 static int				num_states;
 static state_t			*states = NULL;
-static ident_t			*state_name;
-static ident_t			*nextstate_name;
+static compstate_t		*compstates = NULL;
 
 static mobjinfo_t		*mobj_info = NULL;
 static int				num_mobj_types;
@@ -113,10 +116,8 @@ void InitInfoTables(void)
 
 	states = new state_t[MAX_STATES];
 	memset(states, 0, MAX_STATES * sizeof(state_t));
-	state_name = new ident_t[MAX_STATES];
-	memset(state_name, 0, MAX_STATES * sizeof(ident_t));
-	nextstate_name = new ident_t[MAX_STATES];
-	memset(nextstate_name, 0, MAX_STATES * sizeof(ident_t));
+	compstates = new compstate_t[MAX_STATES];
+	memset(compstates, 0, MAX_STATES * sizeof(compstate_t));
 	num_states = 0;
 
 	mobj_info = new mobjinfo_t[MAX_MOBJ_TYPES];
@@ -182,23 +183,27 @@ void ParseStates(void)
 		{
 			ERR_Exit(ERR_NONE, true, "States overflow.");
 		}
+
+		state_t &s = states[num_states];
+		compstate_t &cs = compstates[num_states];
+
 		//	St∆vokıa identifik∆tors
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		strcpy(state_name[num_states], tk_String);
+		strcpy(cs.name, tk_String);
 		TK_AddConstant(tk_String, num_states);
 		TK_NextToken();
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	Nummurs
-		states[num_states].statenum = num_states;
+		s.statenum = num_states;
 		//	Spraita v∆rds
 		if (tk_Token != TK_STRING)
 		{
 			ERR_Exit(ERR_NONE, true, "Sprite name expected");
 		}
-		if (num_states || tk_String[0])
+		if (tk_String[0])
 		{
 			if (strlen(tk_String) != 4)
 			{
@@ -221,16 +226,16 @@ void ParseStates(void)
 				TK_AddConstant(snc, num_sprite_names);
 				num_sprite_names++;
 			}
-			states[num_states].sprite = i;
+			s.sprite = i;
 		}
 		else
 		{
-			states[num_states].sprite = 0;
+			s.sprite = 0;
 		}
 		TK_NextToken();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Kadrs
-		states[num_states].frame = EvalConstExpression(ev_int);
+		s.frame = EvalConstExpression(ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_STRING)
 		{
@@ -248,43 +253,43 @@ void ParseStates(void)
 			   	models[i] = j;
 				num_models++;
 			}
-			states[num_states].model_index = i;
+			s.model_index = i;
 			TK_NextToken();
 			TK_Expect(PU_COMMA, ERR_NONE);
 			//  Kadrs
-			states[num_states].model_frame = EvalConstExpression(ev_int);
+			s.model_frame = EvalConstExpression(ev_int);
 			TK_Expect(PU_COMMA, ERR_NONE);
 		}
 		else
 		{
-			states[num_states].model_index = 0;
-			states[num_states].model_frame = 0;
+			s.model_index = 0;
+			s.model_frame = 0;
 		}
 		//  Taktis
-		states[num_states].time = ConstFloatExpression();
+		s.time = ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//	Funkcija
-		states[num_states].function = EvalConstExpression(ev_function);
+		s.function = EvalConstExpression(ev_function);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  N∆ko˝ais st∆voklis
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
-		strcpy(nextstate_name[num_states], tk_String);
+		strcpy(cs.next_name, tk_String);
 		TK_NextToken();
 		if (TK_Check(PU_COMMA))
 		{
 			//	Misc1
-			states[num_states].misc1 = ConstFloatExpression();
+			s.misc1 = ConstFloatExpression();
 			TK_Expect(PU_COMMA, ERR_NONE);
 			//	Misc2
-			states[num_states].misc2 = ConstFloatExpression();
+			s.misc2 = ConstFloatExpression();
 		}
 		else
 		{
-			states[num_states].misc1 = 0.0;
-			states[num_states].misc2 = 0.0;
+			s.misc1 = 0.0;
+			s.misc2 = 0.0;
 		}
 		TK_Expect(PU_RBRACE, ERR_NONE);
 
@@ -334,7 +339,7 @@ static void CheckStates(void)
 	{
 		for (j = 0; j < num_states; j++)
 		{
-			if (!strcmp(nextstate_name[i], state_name[j]))
+			if (!strcmp(compstates[i].next_name, compstates[j].name))
 			{
 				states[i].nextstate = j;
 				break;
@@ -343,7 +348,7 @@ static void CheckStates(void)
 		if (j == num_states)
 		{
 			ERR_Exit(ERR_NONE, true, "State name %d \"%s\" was not defined",
-				i, state_name[i]);
+				i, compstates[i].name);
 		}
 	}
 
@@ -397,9 +402,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/11/09 14:42:28  dj_jl
+//	References, beautification
+//
 //	Revision 1.6  2001/10/22 17:28:02  dj_jl
 //	Removed mobjinfo index constants
-//
+//	
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	

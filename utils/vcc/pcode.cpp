@@ -33,7 +33,7 @@
 
 #define CODE_BUFFER_SIZE		(256 * 1024)
 #define	MAX_GLOBALS				(256 * 1024)
-#define MAX_STRINGS				4096
+#define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
 
 // TYPES -------------------------------------------------------------------
@@ -746,9 +746,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/11/09 14:42:28  dj_jl
+//	References, beautification
+//
 //	Revision 1.7  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
-//
+//	
 //	Revision 1.6  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	

@@ -93,7 +93,7 @@ static TType			*FuncRetType;
 //
 //==========================================================================
 
-int CheckForGlobalVar(char* name)
+int CheckForGlobalVar(const char* name)
 {
 	int		i;
 
@@ -109,17 +109,57 @@ int CheckForGlobalVar(char* name)
 
 //==========================================================================
 //
+//	CheckForGlobalVar
+//
+//==========================================================================
+
+int CheckForGlobalVar(int s_name)
+{
+	int		i;
+
+	for (i=1; i<numglobaldefs; i++)
+	{
+		if (globaldefs[i].s_name == s_name)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
 //	CheckForFunction
 //
 //==========================================================================
 
-int CheckForFunction(char* name)
+int CheckForFunction(const char* name)
 {
 	int		i;
 
 	for (i=1; i<numfunctions; i++)
 	{
 		if (!strcmp(strings + functions[i].s_name, name))
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	CheckForFunction
+//
+//==========================================================================
+
+int CheckForFunction(int s_name)
+{
+	int		i;
+
+	for (i=1; i<numfunctions; i++)
+	{
+		if (functions[i].s_name == s_name)
 		{
 			return i;
 		}
@@ -545,13 +585,23 @@ static void ParseCompoundStatement(void)
 				{
 					t = MakePointerType(t);
 				}
+#ifdef REF_CPP
+				while (TK_Check(PU_AND))
+				{
+					t = MakeReferenceType(t);
+				}
+#endif
 				if (t == &type_void)
 				{
 					ParseError(ERR_BAD_VAR_TYPE);
 				}
 				if (t->type == ev_class)
 				{
+#ifdef REF_CLASS
+					t = MakeReferenceType(t);
+#else
 					ParseWarning("Class local variable");
+#endif
 				}
 				if (tk_Token != TK_IDENTIFIER)
 				{
@@ -763,6 +813,12 @@ static void ParseDef(TType *type, boolean builtin)
 	{
 		t = MakePointerType(t);
 	}
+#ifdef REF_CPP
+	while (TK_Check(PU_AND))
+	{
+		t = MakeReferenceType(t);
+	}
+#endif
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -819,6 +875,12 @@ static void ParseDef(TType *type, boolean builtin)
 				{
 					t = MakePointerType(t);
 				}
+#ifdef REF_CPP
+				if (TK_Check(PU_AND))
+				{
+					t = MakeReferenceType(t);
+				}
+#endif
 				if (tk_Token != TK_IDENTIFIER)
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -831,7 +893,11 @@ static void ParseDef(TType *type, boolean builtin)
 			}
 			if (t->type == ev_class)
 			{
+#ifdef REF_CLASS
+				t = MakeReferenceType(t);
+#else
 				ParseWarning("Class variable");
+#endif
 			}
 			if (CheckForGlobalVar(strings + s_name) ||
 				CheckForFunction(strings + s_name) ||
@@ -861,6 +927,12 @@ static void ParseDef(TType *type, boolean builtin)
 		return;
 	}
 
+#ifdef REF_CLASS
+	if (t->type == ev_class)
+	{
+		t = MakeReferenceType(t);
+	}
+#endif
 	BreakLevel = 0;
 	ContinueLevel = 0;
 	FuncRetType = t;
@@ -907,6 +979,18 @@ static void ParseDef(TType *type, boolean builtin)
 		{
 		   	type = MakePointerType(type);
 		}
+#ifdef REF_CPP
+		while (TK_Check(PU_AND))
+		{
+		   	type = MakeReferenceType(type);
+		}
+#endif
+#ifdef REF_CLASS
+		if (type->type == ev_class)
+		{
+			type = MakeReferenceType(type);
+		}
+#endif
 		if (numlocaldefs == 1 && type == &type_void)
 		{
 			break;
@@ -1005,6 +1089,12 @@ static void ParseDef(TType *type, boolean builtin)
 void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	TType *class_type, int method_type)
 {
+#ifdef REF_CLASS
+	if (t->type == ev_class)
+	{
+		t = MakeReferenceType(t);
+	}
+#endif
 	if (t != &type_void)
 	{
 		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
@@ -1042,6 +1132,18 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		{
 		   	type = MakePointerType(type);
 		}
+#ifdef REF_CPP
+		while (TK_Check(PU_AND))
+		{
+		   	type = MakeReferenceType(type);
+		}
+#endif
+#ifdef REF_CLASS
+		if (type->type == ev_class)
+		{
+			type = MakeReferenceType(type);
+		}
+#endif
 		if (functype.num_params == 0 && type == &type_void)
 		{
 			break;
@@ -1352,9 +1454,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:42:28  dj_jl
+//	References, beautification
+//
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
-//
+//	
 //	Revision 1.8  2001/10/22 17:31:34  dj_jl
 //	Posibility to use classid constants in switch statement
 //	

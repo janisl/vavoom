@@ -71,8 +71,9 @@ TType		type_mobjinfo("mobjinfo_t", ev_struct, &type_state, NULL, -1);
 TType		type_void_ptr("", ev_pointer, &type_mobjinfo, &type_void, 4);
 TType		type_vector("", ev_vector, &type_void_ptr, NULL, 12);
 TType		type_classid("classid", ev_classid, &type_vector, NULL, 4);
+TType		type_none_ref("", ev_reference, &type_classid, &type_void, 4);
 
-TType		*types = &type_classid;
+TType		*types = &type_none_ref;
 
 TType		**classtypes;
 
@@ -140,6 +141,27 @@ TType *MakePointerType(TType *type)
 	pointer.aux_type = type;
 	pointer.size = 4;
 	return FindType(&pointer);
+}
+
+//==========================================================================
+//
+//	MakeReferenceType
+//
+//==========================================================================
+
+TType *MakeReferenceType(TType *type)
+{
+	TType reference;
+
+	if (type->type == ev_reference)
+	{
+		ParseError("Can't create reference to reference");
+	}
+	memset(&reference, 0, sizeof(TType));
+	reference.type = ev_reference;
+	reference.aux_type = type;
+	reference.size = 4;
+	return FindType(&reference);
 }
 
 //==========================================================================
@@ -425,6 +447,12 @@ void ParseStruct(void)
 			{
 				t = MakePointerType(t);
 			}
+#ifdef REF_CPP
+			while (TK_Check(PU_AND))
+			{
+				t = MakeReferenceType(t);
+			}
+#endif
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
@@ -437,6 +465,14 @@ void ParseStruct(void)
 			strcpy(fi->name, tk_String);
 			TK_NextToken();
 			fi->ofs = size;
+			if (t->type == ev_class)
+			{
+#ifdef REF_CLASS
+				t = MakeReferenceType(t);
+#else
+				ParseWarning("Class field");
+#endif
+			}
 			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
@@ -445,10 +481,6 @@ void ParseStruct(void)
 			}
 		   	size += TypeSize(t);
 			fi->type = t;
-			if (t->type == ev_class)
-			{
-				ParseWarning("Class field");
-			}
 			num_fields++;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -527,6 +559,12 @@ void AddFields(void)
 			{
 				t = MakePointerType(t);
 			}
+#ifdef REF_CPP
+			while (TK_Check(PU_AND))
+			{
+				t = MakeReferenceType(t);
+			}
+#endif
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
@@ -539,6 +577,14 @@ void AddFields(void)
 			strcpy(fi->name, tk_String);
 			TK_NextToken();
 			fi->ofs = ofs;
+			if (t->type == ev_class)
+			{
+#ifdef REF_CLASS
+				t = MakeReferenceType(t);
+#else
+				ParseWarning("Class field");
+#endif
+			}
 			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
@@ -552,10 +598,6 @@ void AddFields(void)
 	   			ParseError("Additional fields size overflow.");
 			}
 			fi->type = t;
-			if (t->type == ev_class)
-			{
-				ParseWarning("Class field");
-			}
 			num_fields++;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -811,6 +853,12 @@ void ParseClass(void)
 			{
 				t = MakePointerType(t);
 			}
+#ifdef REF_CPP
+			while (TK_Check(PU_AND))
+			{
+				t = MakeReferenceType(t);
+			}
+#endif
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
@@ -839,6 +887,14 @@ void ParseClass(void)
 				ParseError("Field cannot have void type.");
 			}
 			fi->ofs = size;
+			if (t->type == ev_class)
+			{
+#ifdef REF_CLASS
+				t = MakeReferenceType(t);
+#else
+				ParseWarning("Class field");
+#endif
+			}
 			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
@@ -847,10 +903,6 @@ void ParseClass(void)
 			}
 		   	size += TypeSize(t);
 			fi->type = t;
-			if (t->type == ev_class)
-			{
-				ParseWarning("Class field");
-			}
 			class_type->numfields++;
 		} while (TK_Check(PU_COMMA));
 		if (need_semicolon)
@@ -971,6 +1023,12 @@ void ParseTypeDef(void)
 	{
 		type = MakePointerType(type);
 	}
+#ifdef REF_CPP
+	while (TK_Check(PU_AND))
+	{
+		type = MakeReferenceType(type);
+	}
+#endif
 
 	if (TK_Check(PU_LPAREN))
 	{
@@ -1017,6 +1075,12 @@ void ParseTypeDef(void)
 			{
 		   		type = MakePointerType(type);
 			}
+#ifdef REF_CPP
+			while (TK_Check(PU_AND))
+			{
+		   		type = MakeReferenceType(type);
+			}
+#endif
 			if (functype.num_params == 0 && type == &type_void)
 			{
 				break;
@@ -1134,9 +1198,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:42:29  dj_jl
+//	References, beautification
+//
 //	Revision 1.9  2001/10/27 07:54:59  dj_jl
 //	Added support for constructors and destructors
-//
+//	
 //	Revision 1.8  2001/10/09 17:31:55  dj_jl
 //	Addfields to class disabled by default
 //	

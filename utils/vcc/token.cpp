@@ -61,6 +61,7 @@ int 				tk_Line;
 
 tokenType_t 		tk_Token;
 char*				tk_String;
+//int					tk_StringI;
 int 				tk_Number;
 float				tk_Float;
 Keyword				tk_Keyword;
@@ -380,6 +381,7 @@ static void ProcessQuoteToken(void)
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
+//	tk_StringI = FindString(tk_String);
 }
 
 //==========================================================================
@@ -613,6 +615,11 @@ static void ProcessLetterToken(void)
 		}
 		break;
 	}
+
+//	if (tk_Token == TK_IDENTIFIER)
+//	{
+//		tk_StringI = FindString(tk_String);
+//	}
 }
 
 //==========================================================================
@@ -1061,9 +1068,12 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/11/09 14:42:29  dj_jl
+//	References, beautification
+//
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	
