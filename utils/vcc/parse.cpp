@@ -595,7 +595,10 @@ static void ParseCompoundStatement(void)
 					AddStatement(OPC_LOCALADDRESS, localsofs);
 					TType *t1 = ParseExpression();
 					TypeCheck3(t, t1);
-					AddStatement(OPC_ASSIGN);
+					if (t1->type == ev_vector)
+						AddStatement(OPC_VASSIGN);
+					else
+						AddStatement(OPC_ASSIGN);
 					AddDrop(t1);
 				}
 				localdefs[numlocaldefs].type = t;
@@ -1492,11 +1495,14 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/04 18:19:55  dj_jl
+//	Fixed vector assignement in declaration
+//
 //	Revision 1.12  2001/12/03 19:25:44  dj_jl
 //	Fixed calling of parent function
 //	Added defaultproperties
 //	Fixed vectors as arguments to methods
-//
+//	
 //	Revision 1.11  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	
