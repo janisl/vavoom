@@ -76,6 +76,7 @@ boolean A_LocalQuake(int *args, mobj_t * actor);
 //
 void P_ThrustMobj(mobj_t * mo, angle_t angle, float move);
 boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, mobj_t * mo);
+void InitLava(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -566,6 +567,8 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 
 	if (spawn_thinkers)
 	{
+		InitLava();
+
 		//
 		//      Init special SECTORs
 		//
@@ -706,6 +709,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.4  2001/09/24 17:18:15  dj_jl
 //  Created thinker classes
 //

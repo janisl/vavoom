@@ -91,12 +91,14 @@ void EndLevelLoading(void)
 
 void main(void)
 {
-	InitLava();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.1  2001/09/24 17:27:47  dj_jl
 //  Renaming
 //

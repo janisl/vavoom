@@ -53,7 +53,13 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing);
 void P_SpawnPlayer(mthing_t * mthing);
 void P_UseLines(player_t * player);
 
-mobj_t LavaInflictor;
+class TLavaInflictor:mobj_t
+{
+	void Think(void);
+	void Unarchive(void);
+};
+
+TLavaInflictor *LavaInflictor;
 
 boolean onground;
 
@@ -80,6 +86,27 @@ float PSpriteSY[NUMWEAPONS] = {
 	15.0,	// gauntlets
 	15.0	// beak
 };
+
+//==========================================================================
+//
+//	TLavaInflictor::Think
+//
+//==========================================================================
+
+void TLavaInflictor::Think(void)
+{
+}
+
+//==========================================================================
+//
+//	TLavaInflictor::Unarchive
+//
+//==========================================================================
+
+void TLavaInflictor::Unarchive(void)
+{
+	LavaInflictor = this;
+}
 
 //==========================================================================
 //
@@ -432,14 +459,14 @@ void PlayerInSpecialSector(player_t * player)
 	case 5:	// Damage_LavaWimpy
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 5);
+			DamageMobj(player->mo, LavaInflictor, NULL, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
 	case 16:	// Damage_LavaHefty
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 8);
+			DamageMobj(player->mo, LavaInflictor, NULL, 8);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -447,7 +474,7 @@ void PlayerInSpecialSector(player_t * player)
 		ThrustPlayer(player, 0, 1024.0);
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 5);
+			DamageMobj(player->mo, LavaInflictor, NULL, 5);
 			P_HitFloor(player->mo);
 		}
 		break;
@@ -541,7 +568,7 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 15))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 8);
+			DamageMobj(player->mo, LavaInflictor, NULL, 8);
 		}
 		break;
 
@@ -1336,6 +1363,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -52,10 +52,9 @@ int PStateAttackEnd[NUMCLASSES] = {
 
 void InitLava(void)
 {
-	// Not needed, because all globals memory is set to 0
-//  memset(&LavaInflictor, 0, sizeof(mobj_t));
-	LavaInflictor.type = MT_CIRCLEFLAME;
-	LavaInflictor.flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
+	LavaInflictor = NewSpecialThinker(TLavaInflictor);
+	LavaInflictor->type = MT_CIRCLEFLAME;
+	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
 //==========================================================================
@@ -653,6 +652,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

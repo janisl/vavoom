@@ -23,6 +23,12 @@
 //**
 //**************************************************************************
 
+class TLavaInflictor:mobj_t
+{
+	void Think(void);
+	void Unarchive(void);
+};
+
 float air_control = 1.0 / 256.0;
 
 #define HEAL_RADIUS_DIST	255.0
@@ -56,7 +62,7 @@ boolean P_UsePuzzleItem(player_t * player, int itemType);
 void P_UseLines(player_t * player);
 int P_GetThingFloorType(mobj_t * thing);
 
-mobj_t LavaInflictor;
+TLavaInflictor *LavaInflictor;
 
 boolean onground;
 
@@ -67,6 +73,27 @@ float PSpriteSY[NUMCLASSES * NUMWEAPONS] = {
 	9.0, 20.0, 20.0, 20.0,	// Mage
 	10.0, 10.0, 10.0, 10.0	// Pig
 };
+
+//==========================================================================
+//
+//	TLavaInflictor::Think
+//
+//==========================================================================
+
+void TLavaInflictor::Think(void)
+{
+}
+
+//==========================================================================
+//
+//	TLavaInflictor::Unarchive
+//
+//==========================================================================
+
+void TLavaInflictor::Unarchive(void)
+{
+	LavaInflictor = this;
+}
 
 //==========================================================================
 //
@@ -563,7 +590,7 @@ void PlayerOnSpecialFlat(player_t * player, int floorType)
 	case FLOOR_LAVA:
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 10);
+			DamageMobj(player->mo, LavaInflictor, NULL, 10);
 			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
 		}
 		break;
@@ -589,7 +616,7 @@ void PlayerInContents(player_t * player)
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 31))
 		{
-			DamageMobj(player->mo, &LavaInflictor, NULL, 10);
+			DamageMobj(player->mo, LavaInflictor, NULL, 10);
 			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
 		}
 		break;
@@ -1907,6 +1934,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.7  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

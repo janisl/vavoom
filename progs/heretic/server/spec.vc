@@ -36,6 +36,7 @@
 //
 boolean EV_Teleport(int tag, mobj_t * thing, boolean usefog);
 
+void InitLava(void);
 void CloseWeapons(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
@@ -485,6 +486,7 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 
 	if (spawn_thinkers)
 	{
+		InitLava();
 		CloseWeapons();
 
 		//
@@ -732,6 +734,9 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

@@ -891,7 +891,7 @@ boolean PTR_ShootTraverse(intercept_t * in)
 		if (PuffType == MT_FLAMEPUFF2)
 		{
 			// Cleric FlameStrike does fire damage
-			DamageMobj(th, &LavaInflictor, shoot_thing, la_damage);
+			DamageMobj(th, LavaInflictor, shoot_thing, la_damage);
 		}
 		else
 		{
@@ -1101,6 +1101,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/09/27 17:12:14  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.5  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //

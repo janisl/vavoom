@@ -35,9 +35,9 @@ void SetPsprite(player_t * player, int position, int stnum);
 
 void InitLava(void)
 {
-//  memset(&LavaInflictor, 0, sizeof(mobj_t));  //  All globals are set to 0
-	LavaInflictor.type = MT_PHOENIXFX2;
-	LavaInflictor.flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
+	LavaInflictor = NewSpecialThinker(TLavaInflictor);//HACK
+	LavaInflictor->type = MT_PHOENIXFX2;
+	LavaInflictor->flags2 = MF2_FIREDAMAGE | MF2_NODMGTHRUST;
 }
 
 //==========================================================================
@@ -439,6 +439,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/09/27 17:09:51  dj_jl
+//  Changed LavaInflictor to pointer
+//
 //  Revision 1.4  2001/09/24 17:24:10  dj_jl
 //  Beautification
 //
