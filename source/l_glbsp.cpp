@@ -336,16 +336,51 @@ COMMAND(glBSP)
 {
 	if (Argc() > 1)
 	{
-		GLBSP_BuildNodes(Argv(1));
+		nodebuildinfo_t nb_info;
+		nodebuildcomms_t nb_comms;
+
+		nb_info = default_buildinfo;
+		nb_comms = default_buildcomms;
+
+		if (GlbspParseArgs(&nb_info, &nb_comms, (const char**)Cmd_Argv() + 1,
+			Argc() - 1) == GLBSP_E_OK)
+		{
+			bars[0].x = BARX * fScaleX;
+			bars[0].w = BARW * fScaleX;
+			bars[0].y1 = BAR1Y * fScaleY;
+			bars[0].y2 = (BAR1Y + BARH) * fScaleY;
+			bars[1].x = BARX * fScaleX;
+			bars[1].w = BARW * fScaleX;
+			bars[1].y1 = BAR2Y * fScaleY;
+			bars[1].y2 = (BAR2Y + BARH) * fScaleY;
+			barborderw = 2 * fScaleX;
+			barborderh = 2 * fScaleY;
+
+			if (GlbspCheckInfo(&nb_info, &nb_comms) == GLBSP_E_OK)
+			{
+				GlbspBuildNodes(&nb_info, &edge_build_funcs, &nb_comms);
+			}
+			else
+			{
+				GCon->Log("Check info failed");
+			}
+		}
+		else
+		{
+			GCon->Log("Bad arguments");
+		}
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2003/10/23 06:36:15  dj_jl
+//	Parsing all args
+//
 //	Revision 1.5  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
