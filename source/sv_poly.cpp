@@ -469,14 +469,14 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 	{
 		for (i = left; i <= right; i++)
 		{
-			for (mobj = level.blocklinks[j+i]; mobj; mobj = mobj->bnext)
+			for (mobj = level.blocklinks[j + i]; mobj; mobj = mobj->BlockMapNext)
 			{
-				if (mobj->bSolid || mobj->player)
+				if (mobj->bSolid || mobj->bIsPlayer)
 				{
-					tmbbox[BOXTOP] = mobj->origin.y + mobj->radius;
-					tmbbox[BOXBOTTOM] = mobj->origin.y - mobj->radius;
-					tmbbox[BOXLEFT] = mobj->origin.x - mobj->radius;
-					tmbbox[BOXRIGHT] = mobj->origin.x + mobj->radius;
+					tmbbox[BOXTOP] = mobj->Origin.y + mobj->Radius;
+					tmbbox[BOXBOTTOM] = mobj->Origin.y - mobj->Radius;
+					tmbbox[BOXLEFT] = mobj->Origin.x - mobj->Radius;
+					tmbbox[BOXRIGHT] = mobj->Origin.x + mobj->Radius;
 
 					if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
 						tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
@@ -867,9 +867,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.12  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
-//
+//	
 //	Revision 1.11  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

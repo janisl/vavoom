@@ -435,8 +435,8 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 
 	//	Determine subsector entries in GL_PVS table.
 	//	First check for trivial rejection.
-	byte *vis = LeafPVS(level, t1->subsector);
-	s2 = t2->subsector - level.subsectors;
+	byte *vis = LeafPVS(level, t1->SubSector);
+	s2 = t2->SubSector - level.subsectors;
 	if (!(vis[s2 >> 3] & (1 << (s2 & 7))))
 	{
 		// can't possibly be connected
@@ -446,8 +446,8 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	//	Determine subsector entries in REJECT table.
 	//	We must do this because REJECT can have some special effects like
 	// "safe sectors"
-	s1 = t1->subsector->sector - level.sectors;
-	s2 = t2->subsector->sector - level.sectors;
+	s1 = t1->Sector - level.sectors;
+	s2 = t2->Sector - level.sectors;
 	pnum = s1 * level.numsectors + s2;
 	// Check in REJECT table.
 	if (level.rejectmatrix[pnum >> 3] & (1 << (pnum & 7)))
@@ -460,18 +460,18 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	// Now look from eyes of t1 to any part of t2.
 	validcount++;
 
-	sightstart = t1->origin;
-	sightstart.z += t1->height * 0.75;
-	sightend = t2->origin;
-	sightend.z += t2->height * 0.5;
+	sightstart = t1->Origin;
+	sightstart.z += t1->Height * 0.75;
+	sightend = t2->Origin;
+	sightend.z += t2->Height * 0.5;
 
 #ifndef LINE_SIGHT
-	topslope =    t2->origin.z + t2->height - sightstart.z;
-	bottomslope = t2->origin.z - sightstart.z;
+	topslope =    t2->Origin.z + t2->Height - sightstart.z;
+	bottomslope = t2->Origin.z - sightstart.z;
 #endif
 
 	sdelta = sightend - sightstart;
-	strace.SetPointDir(t1->origin, sdelta);
+	strace.SetPointDir(t1->Origin, sdelta);
 
 	linestart = sightstart;
 	// the head node is the last node output
@@ -480,16 +480,19 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 		return false;
 	}
 	lineend = sightend;
-	return CheckPlanes(t2->subsector->sector);
+	return CheckPlanes(t2->Sector);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2002/01/04 18:21:48  dj_jl
 //	A little protection against crashes
 //	

@@ -260,7 +260,7 @@ VMapObject *SV_SpawnMobj(VClass *Class)
 	}
 
 	sv_mobjs[i] = mobj;
-	mobj->netID = i;
+	mobj->NetID = i;
 
 	return mobj;
 }
@@ -275,36 +275,36 @@ int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 {
 	int		bits = 0;
 
-	if (fabs(base.origin.x - mobj.origin.x) >= 1.0)
+	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
 		bits |=	MOB_X;
-	if (fabs(base.origin.y - mobj.origin.y) >= 1.0)
+	if (fabs(base.Origin.y - mobj.Origin.y) >= 1.0)
 		bits |=	MOB_Y;
-	if (fabs(base.origin.z - (mobj.origin.z - mobj.floorclip)) >= 1.0)
+	if (fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
 		bits |=	MOB_Z;
-//	if (fabs(base.angles.yaw - mobj.angles.yaw) >= 1.0)
-	if (AngleToByte(base.angles.yaw) != AngleToByte(mobj.angles.yaw))
+//	if (fabs(base.Angles.yaw - mobj.Angles.yaw) >= 1.0)
+	if (AngleToByte(base.Angles.yaw) != AngleToByte(mobj.Angles.yaw))
 		bits |=	MOB_ANGLE;
-//	if (fabs(base.angles.pitch - mobj.angles.pitch) >= 1.0)
-	if (AngleToByte(base.angles.pitch) != AngleToByte(mobj.angles.pitch))
+//	if (fabs(base.Angles.pitch - mobj.Angles.pitch) >= 1.0)
+	if (AngleToByte(base.Angles.pitch) != AngleToByte(mobj.Angles.pitch))
 		bits |=	MOB_ANGLEP;
-//	if (fabs(base.angles.roll - mobj.angles.roll) >= 1.0)
-	if (AngleToByte(base.angles.roll) != AngleToByte(mobj.angles.roll))
+//	if (fabs(base.Angles.roll - mobj.Angles.roll) >= 1.0)
+	if (AngleToByte(base.Angles.roll) != AngleToByte(mobj.Angles.roll))
 		bits |=	MOB_ANGLER;
-	if (base.sprite != mobj.sprite || base.spritetype != mobj.spritetype)
+	if (base.SpriteIndex != mobj.SpriteIndex || base.SpriteType != mobj.SpriteType)
 		bits |=	MOB_SPRITE;
-	if (base.frame != mobj.frame)
+	if (base.SpriteFrame != mobj.SpriteFrame)
 		bits |=	MOB_FRAME;
-	if (base.translucency != mobj.translucency)
+	if (base.Translucency != mobj.Translucency)
 		bits |=	MOB_TRANSLUC;
-	if (base.translation != mobj.translation)
+	if (base.Translation != mobj.Translation)
 		bits |=	MOB_TRANSL;
-	if (base.effects != mobj.effects)
+	if (base.Effects != mobj.Effects)
 		bits |= MOB_EFFECTS;
-	if (base.model_index != mobj.model_index)
+	if (base.ModelIndex != mobj.ModelIndex)
 		bits |= MOB_MODEL;
-	if (mobj.model_index && mobj.alias_skinnum)
+	if (mobj.ModelIndex && mobj.ModelSkinNum)
 		bits |= MOB_SKIN;
-	if (mobj.model_index && base.alias_frame != mobj.alias_frame)
+	if (mobj.ModelIndex && base.ModelFrame != mobj.ModelFrame)
 		bits |= MOB_FRAME;
 
 	return bits;
@@ -319,35 +319,35 @@ int	SV_GetMobjBits(VMapObject &mobj, mobj_base_t &base)
 void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 {
 	if (bits & MOB_X)
-		msg << (word)mobj.origin.x;
+		msg << (word)mobj.Origin.x;
 	if (bits & MOB_Y)
-		msg << (word)mobj.origin.y;
+		msg << (word)mobj.Origin.y;
 	if (bits & MOB_Z)
-		msg << (word)(mobj.origin.z - mobj.floorclip);
+		msg << (word)(mobj.Origin.z - mobj.FloorClip);
 	if (bits & MOB_ANGLE)
-		msg << (byte)(AngleToByte(mobj.angles.yaw));
+		msg << (byte)(AngleToByte(mobj.Angles.yaw));
 	if (bits & MOB_ANGLEP)
-		msg << (byte)(AngleToByte(mobj.angles.pitch));
+		msg << (byte)(AngleToByte(mobj.Angles.pitch));
 	if (bits & MOB_ANGLER)
-		msg << (byte)(AngleToByte(mobj.angles.roll));
+		msg << (byte)(AngleToByte(mobj.Angles.roll));
 	if (bits & MOB_SPRITE)
-		msg << (word)(mobj.sprite | (mobj.spritetype << 10));
+		msg << (word)(mobj.SpriteIndex | (mobj.SpriteType << 10));
 	if (bits & MOB_FRAME)
-		msg << (byte)mobj.frame;
+		msg << (byte)mobj.SpriteFrame;
 	if (bits & MOB_TRANSLUC)
-		msg << (byte)mobj.translucency;
+		msg << (byte)mobj.Translucency;
 	if (bits & MOB_TRANSL)
-		msg << (byte)mobj.translation;
+		msg << (byte)mobj.Translation;
 	if (bits & MOB_EFFECTS)
-		msg << (byte)mobj.effects;
+		msg << (byte)mobj.Effects;
 	if (bits & MOB_MODEL)
-		msg << (word)mobj.model_index;
+		msg << (word)mobj.ModelIndex;
 	if (bits & MOB_SKIN)
-		msg << (byte)mobj.alias_skinnum;
-	if (mobj.model_index && (bits & MOB_FRAME))
-		msg << (byte)mobj.alias_frame;
+		msg << (byte)mobj.ModelSkinNum;
+	if (mobj.ModelIndex && (bits & MOB_FRAME))
+		msg << (byte)mobj.ModelFrame;
 	if (bits & MOB_WEAPON)
-		msg << (word)mobj.player->weapon_model;
+		msg << (word)mobj.Player->WeaponModel;
 }
 
 //==========================================================================
@@ -364,8 +364,8 @@ void SV_RemoveMobj(VMapObject *mobj)
 		return;
 	}
 
-	if (sv_mobjs[mobj->netID] != mobj)
-		Sys_Error("Invalid mobj num %d", mobj->netID);
+	if (sv_mobjs[mobj->NetID] != mobj)
+		Sys_Error("Invalid mobj num %d", mobj->NetID);
 
 	// unlink from sector and block lists
 	SV_UnlinkFromWorld(mobj);
@@ -373,10 +373,10 @@ void SV_RemoveMobj(VMapObject *mobj)
 	// stop any playing sound
 	SV_StopSound(mobj, 0);
     
-	sv_mobjs[mobj->netID] = NULL;
+	sv_mobjs[mobj->NetID] = NULL;
 	mobj->Destroy();
 
-	sv_mo_free_time[mobj->netID] = level.time;
+	sv_mo_free_time[mobj->NetID] = level.time;
 }
 
 //==========================================================================
@@ -416,36 +416,36 @@ void SV_CreateBaseline(void)
 		VMapObject &mobj = *sv_mobjs[i];
 		mobj_base_t &base = sv_mo_base[i];
 
-		base.origin.x = mobj.origin.x;
-		base.origin.y = mobj.origin.y;
-		base.origin.z = mobj.origin.z - mobj.floorclip;
-		base.angles.yaw = mobj.angles.yaw;
-		base.angles.pitch = mobj.angles.pitch;
-		base.angles.roll = mobj.angles.roll;
-		base.spritetype = mobj.spritetype;
-		base.sprite = mobj.sprite;
-		base.frame = mobj.frame;
-		base.translucency = mobj.translucency;
-		base.translation = mobj.translation;
-		base.effects = mobj.effects;
-		base.model_index = mobj.model_index;
-		base.alias_frame = mobj.alias_frame;
+		base.Origin.x = mobj.Origin.x;
+		base.Origin.y = mobj.Origin.y;
+		base.Origin.z = mobj.Origin.z - mobj.FloorClip;
+		base.Angles.yaw = mobj.Angles.yaw;
+		base.Angles.pitch = mobj.Angles.pitch;
+		base.Angles.roll = mobj.Angles.roll;
+		base.SpriteType = mobj.SpriteType;
+		base.SpriteIndex = mobj.SpriteIndex;
+		base.SpriteFrame = mobj.SpriteFrame;
+		base.Translucency = mobj.Translucency;
+		base.Translation = mobj.Translation;
+		base.Effects = mobj.Effects;
+		base.ModelIndex = mobj.ModelIndex;
+		base.ModelFrame = mobj.ModelFrame;
 
 		sv_signon << (byte)svc_spawn_baseline
 					<< (word)i
-					<< (word)mobj.origin.x
-					<< (word)mobj.origin.y
-					<< (word)(mobj.origin.z - mobj.floorclip)
-					<< (byte)(AngleToByte(mobj.angles.yaw))
-					<< (byte)(AngleToByte(mobj.angles.pitch))
-					<< (byte)(AngleToByte(mobj.angles.roll))
-					<< (word)(mobj.sprite | (mobj.spritetype << 10))
-					<< (word)mobj.frame
-					<< (byte)mobj.translucency
-					<< (byte)mobj.translation
-					<< (byte)mobj.effects
-					<< (word)mobj.model_index
-					<< (byte)mobj.alias_frame;
+					<< (word)mobj.Origin.x
+					<< (word)mobj.Origin.y
+					<< (word)(mobj.Origin.z - mobj.FloorClip)
+					<< (byte)(AngleToByte(mobj.Angles.yaw))
+					<< (byte)(AngleToByte(mobj.Angles.pitch))
+					<< (byte)(AngleToByte(mobj.Angles.roll))
+					<< (word)(mobj.SpriteIndex | (mobj.SpriteType << 10))
+					<< (word)mobj.SpriteFrame
+					<< (byte)mobj.Translucency
+					<< (byte)mobj.Translation
+					<< (byte)mobj.Effects
+					<< (word)mobj.ModelIndex
+					<< (byte)mobj.ModelFrame;
 	}
 }
 
@@ -462,12 +462,12 @@ int GetOriginNum(const VMapObject *mobj)
 		return 0;
 	}
 
-	if (mobj->player)
+	if (mobj->bIsPlayer)
 	{
-		return (mobj->player - players) + 1;
+		return (mobj->Player - players) + 1;
 	}
 
-	return mobj->netID;
+	return mobj->NetID;
 }
 
 //==========================================================================
@@ -520,7 +520,7 @@ void SV_StartSound(const VMapObject * origin, int sound_id, int channel,
 {
 	if (origin)
 	{
-		SV_StartSound(origin->origin, GetOriginNum(origin), sound_id,
+		SV_StartSound(origin->Origin, GetOriginNum(origin), sound_id,
 			channel, volume);
 	}
 	else
@@ -674,7 +674,7 @@ void SV_ClientPrintf(player_t *player, const char *s, ...)
    	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->message << (byte)svc_print << buf;
+	player->Message << (byte)svc_print << buf;
 }
 
 //==========================================================================
@@ -692,7 +692,7 @@ void SV_ClientCenterPrintf(player_t *player, const char *s, ...)
    	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->message << (byte)svc_center_print << buf;
+	player->Message << (byte)svc_center_print << buf;
 }
 
 //==========================================================================
@@ -711,8 +711,8 @@ void SV_BroadcastPrintf(const char *s, ...)
 	va_end(v);
 
 	for (int i = 0; i < svs.max_clients; i++)
-		if (players[i].active)
-			players[i].message << (byte)svc_print << buf;
+		if (players[i].bActive)
+			players[i].Message << (byte)svc_print << buf;
 }
 
 //==========================================================================
@@ -726,63 +726,63 @@ void SV_WriteViewData(player_t &player, TMessage &msg)
 	int		i;
 
 	msg << (byte)svc_view_data
-		<< player.vieworg.x
-		<< player.vieworg.y
-		<< player.vieworg.z
-		<< (byte)player.extralight
-		<< (byte)player.fixedcolormap
-		<< (byte)player.palette
-		<< (byte)player.mo->translucency
-		<< (word)player.pspriteSY;
-	if (player.ViewEnts[0] && player.ViewEnts[0]->statenum)
+		<< player.ViewOrg.x
+		<< player.ViewOrg.y
+		<< player.ViewOrg.z
+		<< (byte)player.ExtraLight
+		<< (byte)player.FixedColormap
+		<< (byte)player.Palette
+		<< (byte)player.MO->Translucency
+		<< (word)player.PSpriteSY;
+	if (player.ViewEnts[0] && player.ViewEnts[0]->StateNum)
 	{
-		msg << (word)player.ViewEnts[0]->sprite
-			<< (byte)player.ViewEnts[0]->frame
-			<< (word)player.ViewEnts[0]->model_index
-			<< (byte)player.ViewEnts[0]->alias_frame
-			<< (word)player.ViewEnts[0]->sx
-			<< (word)player.ViewEnts[0]->sy;
+		msg << (word)player.ViewEnts[0]->SpriteIndex
+			<< (byte)player.ViewEnts[0]->SpriteFrame
+			<< (word)player.ViewEnts[0]->ModelIndex
+			<< (byte)player.ViewEnts[0]->ModelFrame
+			<< (word)player.ViewEnts[0]->SX
+			<< (word)player.ViewEnts[0]->SY;
 	}
 	else
 	{
 		msg << (short)-1;
 	}
-	if (player.ViewEnts[1] && player.ViewEnts[1]->statenum)
+	if (player.ViewEnts[1] && player.ViewEnts[1]->StateNum)
 	{
-		msg << (word)player.ViewEnts[1]->sprite
-			<< (byte)player.ViewEnts[1]->frame
-			<< (word)player.ViewEnts[1]->model_index
-			<< (byte)player.ViewEnts[1]->alias_frame
-			<< (word)player.ViewEnts[1]->sx
-			<< (word)player.ViewEnts[1]->sy;
+		msg << (word)player.ViewEnts[1]->SpriteIndex
+			<< (byte)player.ViewEnts[1]->SpriteFrame
+			<< (word)player.ViewEnts[1]->ModelIndex
+			<< (byte)player.ViewEnts[1]->ModelFrame
+			<< (word)player.ViewEnts[1]->SX
+			<< (word)player.ViewEnts[1]->SY;
 	}
 	else
 	{
 		msg << (short)-1;
 	}
 
-	msg << (byte)player.health
-		<< player.items;
+	msg << (byte)player.Health
+		<< player.Items;
 	for (i = 0; i < MAXPLAYERS; i++)
-		msg << (byte)player.frags[i];
+		msg << (byte)player.Frags[i];
 
 	int bits = 0;
 	for (i = 0; i < NUM_CSHIFTS; i++)
-		if (player.cshifts[i] & 0xff000000)
+		if (player.CShifts[i] & 0xff000000)
 			bits |= (1 << i);
 	msg << (byte)bits;
 	for (i = 0; i < NUM_CSHIFTS; i++)
-		if (player.cshifts[i] & 0xff000000)
-			msg << player.cshifts[i];
+		if (player.CShifts[i] & 0xff000000)
+			msg << player.CShifts[i];
 
 	//	Update bam_angles (after teleportation)
-	if (player.fixangle)
+	if (player.FixAngle)
 	{
-		player.fixangle = false;
+		player.FixAngle = false;
 		msg << (byte)svc_set_angles
-			<< (byte)(AngleToByte(player.viewangles.pitch))
-			<< (byte)(AngleToByte(player.viewangles.yaw))
-			<< (byte)(AngleToByte(player.viewangles.roll));
+			<< (byte)(AngleToByte(player.ViewAngles.pitch))
+			<< (byte)(AngleToByte(player.ViewAngles.yaw))
+			<< (byte)(AngleToByte(player.ViewAngles.roll));
 	}
 }
 
@@ -797,9 +797,9 @@ void SV_UpdateMobj(int i, TMessage &msg)
 	int bits;
 	int sendnum;
 
-	if (sv_mobjs[i]->player)
+	if (sv_mobjs[i]->bIsPlayer)
 	{
-		sendnum = (sv_mobjs[i]->player - players) + 1;
+		sendnum = (sv_mobjs[i]->Player - players) + 1;
 	}
 	else
 	{
@@ -808,11 +808,11 @@ void SV_UpdateMobj(int i, TMessage &msg)
 
 	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
 
-	if (sv_mobjs[i]->player)
+	if (sv_mobjs[i]->bIsPlayer)
 	{
 		//	Clear look angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
-		if (sv_mobjs[i]->player->weapon_model)
+		if (sv_mobjs[i]->Player->WeaponModel)
 		{
 			bits |= MOB_WEAPON;
 		}
@@ -877,7 +877,7 @@ void SV_UpdateLevel(TMessage &msg)
 	int		i;
 	int		bits;
 
-	fatpvs = LeafPVS(level, sv_player->mo->subsector);
+	fatpvs = LeafPVS(level, sv_player->MO->SubSector);
 
 	for (i = 0; i < level.numsectors; i++)
 	{
@@ -994,7 +994,7 @@ void SV_UpdateLevel(TMessage &msg)
 	{
 		if (!sv_mobjs[i])
 			continue;
-		if (!sv_mobjs[i]->player)
+		if (!sv_mobjs[i]->bIsPlayer)
 			continue;
 		if (msg.CurSize > 1000)
 		{
@@ -1005,7 +1005,7 @@ void SV_UpdateLevel(TMessage &msg)
 	}
 
 	//	Then update non-player mobjs in sight
-	int starti = sv_player->mobj_update_start;
+	int starti = sv_player->MobjUpdateStart;
 	for (i = 0; i < MAX_MOBJS; i++)
 	{
 		int index = (i + starti) % MAX_MOBJS;
@@ -1013,13 +1013,13 @@ void SV_UpdateLevel(TMessage &msg)
 			continue;
 		if (sv_mobjs[index]->bNoClient)
 			continue;
-		if (sv_mobjs[index]->player)
+		if (sv_mobjs[index]->bIsPlayer)
 			continue;
-		if (!SV_CheckFatPVS(sv_mobjs[index]->subsector))
+		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
 			continue;
 		if (msg.CurSize > 1000)
 		{
-			if (sv_player->mobj_update_start && show_mobj_overflow)
+			if (sv_player->MobjUpdateStart && show_mobj_overflow)
 			{
 				con << "UpdateLevel: mobj overflow 2\n";
 			}
@@ -1028,12 +1028,12 @@ void SV_UpdateLevel(TMessage &msg)
 				con << "UpdateLevel: mobj overflow\n";
 			}
 			//	Next update starts here
-			sv_player->mobj_update_start = index;
+			sv_player->MobjUpdateStart = index;
 			return;
 		}
 		SV_UpdateMobj(index, msg);
 	}
-	sv_player->mobj_update_start = 0;
+	sv_player->MobjUpdateStart = 0;
 }
 
 //==========================================================================
@@ -1056,9 +1056,9 @@ void SV_SendNop(player_t *client)
 
 	msg << (byte)svc_nop;
 
-	if (NET_SendUnreliableMessage(client->netcon, &msg) == -1)
+	if (NET_SendUnreliableMessage(client->NetCon, &msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
-	client->last_message = realtime;
+	client->LastMessage = realtime;
 }
 
 //==========================================================================
@@ -1074,21 +1074,21 @@ void SV_SendClientDatagram(void)
 
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (!players[i].active)
+		if (!players[i].bActive)
 		{
 			continue;
 		}
 
 		sv_player = &players[i];
 
-		if (!sv_player->spawned)
+		if (!sv_player->bSpawned)
 		{
 			// the player isn't totally in the game yet
 			// send small keepalive messages if too much time has passed
 			// send a full message when the next signon stage has been requested
 			// some other message data (name changes, etc) may accumulate
 			// between signon stages
-			if (realtime - sv_player->last_message > 5)
+			if (realtime - sv_player->LastMessage > 5)
 			{
 				SV_SendNop(sv_player);
 			}
@@ -1107,7 +1107,7 @@ void SV_SendClientDatagram(void)
 
 		SV_UpdateLevel(msg);
 
-		if (NET_SendUnreliableMessage(sv_player->netcon, &msg) == -1)
+		if (NET_SendUnreliableMessage(sv_player->NetCon, &msg) == -1)
 		{
 			SV_DropClient(true);
 		}
@@ -1126,37 +1126,37 @@ void SV_SendReliable(void)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!players[i].active)
+		if (!players[i].bActive)
 			continue;
 
-		players[i].message << sv_reliable;
+		players[i].Message << sv_reliable;
 
-		if (!players[i].spawned)
+		if (!players[i].bSpawned)
 			continue;
 
 		for (j = 0; j < num_stats; j++)
 		{
-			if (players[i].user_fields[j] == players[i].old_stats[j])
+			if (players[i].user_fields[j] == players[i].OldStats[j])
 			{
 				continue;
 			}
 			int sval = players[i].user_fields[j];
 			if (sval >= 0 && sval < 256)
 			{
-				players[i].message << (byte)svc_stats_byte
+				players[i].Message << (byte)svc_stats_byte
 					<< (byte)j << (byte)sval;
 			}
 			else if (sval >= MINSHORT && sval <= MAXSHORT)
 			{
-				players[i].message << (byte)svc_stats_short
+				players[i].Message << (byte)svc_stats_short
 					<< (byte)j << (short)sval;
 			}
 			else
 			{
-				players[i].message << (byte)svc_stats_long
+				players[i].Message << (byte)svc_stats_long
 					<< (byte)j << sval;
 			}
-			players[i].old_stats[j] = players[i].user_fields[j];
+			players[i].OldStats[j] = players[i].user_fields[j];
 		}
 	}
 
@@ -1164,35 +1164,35 @@ void SV_SendReliable(void)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!players[i].active)
+		if (!players[i].bActive)
 		{
 			continue;
 		}
 
-		if (players[i].message.Overflowed)
+		if (players[i].Message.Overflowed)
 		{
 			SV_DropClient(true);
 			cond << "Client message overflowed\n";
 			continue;
 		}
 
-		if (!players[i].message.CurSize)
+		if (!players[i].Message.CurSize)
 		{
 			continue;
 		}
 
-		if (!NET_CanSendMessage(players[i].netcon))
+		if (!NET_CanSendMessage(players[i].NetCon))
 		{
 			continue;
 		}
 
-		if (NET_SendMessage(players[i].netcon, &players[i].message) == -1)
+		if (NET_SendMessage(players[i].NetCon, &players[i].Message) == -1)
 		{
 			SV_DropClient(true);
 			continue;
 		}
-		players[i].message.Clear();
-		players[i].last_message = realtime;
+		players[i].Message.Clear();
+		players[i].LastMessage = realtime;
 	}
 }
 
@@ -1226,31 +1226,31 @@ static void CheckForSkip(void)
 
     for (i = 0, player = players; i < MAXPLAYERS; i++, player++)
     {
-		if (players[i].active)
+		if (players[i].bActive)
 		{
-		    if (player->buttons & BT_ATTACK)
+		    if (player->Buttons & BT_ATTACK)
 		    {
-				if (!player->attackdown)
+				if (!player->AttackDown)
 				{
 				    skip = true;
 				}
-				player->attackdown = true;
+				player->AttackDown = true;
 		    }
 		    else
 			{
-				player->attackdown = false;
+				player->AttackDown = false;
 			}
-		    if (player->buttons & BT_USE)
+		    if (player->Buttons & BT_USE)
 		    {
-				if (!player->usedown)
+				if (!player->UseDown)
 				{
 				    skip = true;
 				}
-				player->usedown = true;
+				player->UseDown = true;
 		    }
 		    else
 			{
-				player->usedown = false;
+				player->UseDown = false;
 			}
 		}
     }
@@ -1291,13 +1291,13 @@ void SV_RunClients(void)
     // get commands
     for (i = 0; i < MAXPLAYERS; i++)
     {
-		if (!players[i].active)
+		if (!players[i].bActive)
 		{
 			continue;
 		}
 
 	    // do player reborns if needed
-		if (players[i].playerstate == PST_REBORN)
+		if (players[i].PlayerState == PST_REBORN)
 		{
 		    G_DoReborn(i);
 		}
@@ -1310,10 +1310,10 @@ void SV_RunClients(void)
 
     	// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
-		if (players[i].spawned && !sv.intermission && !paused &&
+		if (players[i].bSpawned && !sv.intermission && !paused &&
 			(netgame || !(MN_Active() || C_Active())))
 #else
-		if (players[i].spawned && !sv.intermission && !paused)
+		if (players[i].bSpawned && !sv.intermission && !paused)
 #endif
 	    {
 			svpr.Exec(pf_PlayerThink, (int)&players[i]);
@@ -1337,9 +1337,9 @@ void SV_Ticker(void)
 {
 	float	saved_frametime;
 
+	saved_frametime = host_frametime;
 	if (!real_time)
 	{
-		saved_frametime = host_frametime;
 		// Rounded a little bit up to prevent "slow motion"
 		host_frametime = 0.028572f;//1.0 / 35.0;
 	}
@@ -1486,7 +1486,7 @@ static void G_DoCompleted(void)
 	{
 		return;
 	}
-	if (!netgame && !players[0].spawned)
+	if (!netgame && !players[0].bSpawned)
 	{
 		//FIXME Some ACS left from previous visit of the level
 		return;
@@ -1499,7 +1499,7 @@ static void G_DoCompleted(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].active)
+		if (players[i].bActive)
 		{
 			svpr.Exec("G_PlayerExitMap", i,
 				!old_info.cluster || old_info.cluster != new_info.cluster);
@@ -1517,12 +1517,12 @@ static void G_DoCompleted(void)
 				<< sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		sv_reliable << (byte)players[i].active;
+		sv_reliable << (byte)players[i].bActive;
 		for (j = 0; j < MAXPLAYERS; j++)
-			sv_reliable << (byte)players[i].frags[j];
-		sv_reliable << (short)players[i].killcount
-					<< (short)players[i].itemcount
-					<< (short)players[i].secretcount;
+			sv_reliable << (byte)players[i].Frags[j];
+		sv_reliable << (short)players[i].KillCount
+					<< (short)players[i].ItemCount
+					<< (short)players[i].SecretCount;
 	}
 }
 
@@ -1582,9 +1582,9 @@ void G_SecretExitLevel(void)
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].active)
+		if (players[i].bActive)
 		{
-			players[i].didsecret = true;
+			players[i].DidSecret = true;
 		}
 	}
 } 
@@ -1664,12 +1664,12 @@ COMMAND(TeleportNewMap)
 
 static void G_DoReborn(int playernum)
 {
-	if (!players[playernum].spawned)
+	if (!players[playernum].bSpawned)
 		return;
 	if (!netgame && !deathmatch)// For fun now
 	{
 		CmdBuf << "Restart\n";
-		players[playernum].playerstate = PST_LIVE;
+		players[playernum].PlayerState = PST_LIVE;
 	}
 	else
 	{
@@ -1693,13 +1693,13 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 	for (i = 0, sv_player = players; i < svs.max_clients; i++, sv_player++)
 	{
-		if (!players[i].netcon)
+		if (!players[i].NetCon)
 			continue;
-		if (players[i].active)
+		if (players[i].bActive)
 		{
-			if (players[i].netcon->driver == 0)
+			if (players[i].NetCon->driver == 0)
 			{
-				NET_SendMessage(players[i].netcon, data);
+				NET_SendMessage(players[i].NetCon, data);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -1723,14 +1723,14 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 		{
 			if (!state1[i])
 			{
-				if (NET_CanSendMessage(sv_player->netcon))
+				if (NET_CanSendMessage(sv_player->NetCon))
 				{
 					state1[i] = true;
-					NET_SendMessage(sv_player->netcon, data);
+					NET_SendMessage(sv_player->NetCon, data);
 				}
 				else
 				{
-					NET_GetMessage(sv_player->netcon);
+					NET_GetMessage(sv_player->NetCon);
 				}
 				count++;
 				continue;
@@ -1738,13 +1738,13 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 			if (!state2[i])
 			{
-				if (NET_CanSendMessage(sv_player->netcon))
+				if (NET_CanSendMessage(sv_player->NetCon))
 				{
 					state2[i] = true;
 				}
 				else
 				{
-					NET_GetMessage(sv_player->netcon);
+					NET_GetMessage(sv_player->NetCon);
 				}
 				count++;
 				continue;
@@ -1861,7 +1861,7 @@ void SV_SendServerInfo(player_t *player)
 	{
 		msg << (byte)svc_userinfo
 			<< (byte)i
-			<< players[i].userinfo;
+			<< players[i].UserInfo;
 	}
 
 	msg << (byte)svc_sprites
@@ -1887,7 +1887,7 @@ void SV_SendServerInfo(player_t *player)
 
 	msg << (byte)svc_signonnum
 		<< (byte)1;
-	if (NET_SendMessage(player->netcon, &msg) == -1)
+	if (NET_SendMessage(player->NetCon, &msg) == -1)
 	{
 		SV_DropClient(true);
 		cond << "Send failed\n";
@@ -1914,19 +1914,19 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 		//	Level change
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!players[i].active)
+			if (!players[i].bActive)
 				continue;
 
-			players[i].killcount = 0;
-			players[i].secretcount = 0;
-			players[i].itemcount = 0;
+			players[i].KillCount = 0;
+			players[i].SecretCount = 0;
+			players[i].ItemCount = 0;
 
-			players[i].spawned = false;
-			players[i].mo = NULL;
-			memset(players[i].frags, 0, sizeof(players[i].frags));
-			if (players[i].playerstate == PST_DEAD)
-				players[i].playerstate = PST_REBORN;
-			players[i].message.Clear();
+			players[i].bSpawned = false;
+			players[i].MO = NULL;
+			memset(players[i].Frags, 0, sizeof(players[i].Frags));
+			if (players[i].PlayerState == PST_DEAD)
+				players[i].PlayerState = PST_REBORN;
+			players[i].Message.Clear();
 		}
 	}
 	else
@@ -2003,10 +2003,10 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	SV_InitModelLists();
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (players[i].active)
+		if (players[i].bActive)
 		{
 			SV_SendServerInfo(&players[i]);
-			if (players[i].is_bot)
+			if (players[i].bIsBot)
 			{
 				sv_player = &players[i];
 				SV_RunClientCommand("PreSpawn\n");
@@ -2123,8 +2123,8 @@ COMMAND(PreSpawn)
 		return;
 	}
 
-	sv_player->message << sv_signon;
-	sv_player->message << (byte)svc_signonnum << (byte)2;
+	sv_player->Message << sv_signon;
+	sv_player->Message << (byte)svc_signonnum << (byte)2;
 }
 
 //==========================================================================
@@ -2143,11 +2143,11 @@ COMMAND(Spawn)
 
 	if (!sv_loading)
 	{
-		if (sv_player->spawned)
+		if (sv_player->bSpawned)
 		{
 			con << "Already spawned\n";
 		}
-		if (sv_player->mo)
+		if (sv_player->MO)
 		{
 			con << "Mobj already spawned\n";
 		}
@@ -2155,19 +2155,19 @@ COMMAND(Spawn)
 	}
 	else
 	{
-		if (!sv_player->mo)
+		if (!sv_player->MO)
 		{
 			Host_Error("Player without Mobj\n");
 		}
 	}
-	SV_WriteChangedTextures(sv_player->message);
-	sv_player->message << (byte)svc_set_angles
-						<< (byte)(AngleToByte(sv_player->viewangles.pitch))
-						<< (byte)(AngleToByte(sv_player->viewangles.yaw))
+	SV_WriteChangedTextures(sv_player->Message);
+	sv_player->Message << (byte)svc_set_angles
+						<< (byte)(AngleToByte(sv_player->ViewAngles.pitch))
+						<< (byte)(AngleToByte(sv_player->ViewAngles.yaw))
 						<< (byte)0;
-	sv_player->message << (byte)svc_signonnum << (byte)3;
-	sv_player->fixangle = false;
-	memset(sv_player->old_stats, 0, sizeof(sv_player->old_stats));
+	sv_player->Message << (byte)svc_signonnum << (byte)3;
+	sv_player->FixAngle = false;
+	memset(sv_player->OldStats, 0, sizeof(sv_player->OldStats));
 }
 
 //==========================================================================
@@ -2186,7 +2186,7 @@ COMMAND(Begin)
 
 	sv_loading = false;
 
-	sv_player->spawned = true;
+	sv_player->bSpawned = true;
 
 	// For single play, save immediately into the reborn slot
 	if (!netgame)
@@ -2203,16 +2203,16 @@ COMMAND(Begin)
 
 void SV_DropClient(boolean)
 {
-	if (sv_player->spawned)
+	if (sv_player->bSpawned)
 	{
 		svpr.Exec("DisconnectClient", (int)sv_player);
 	}
-	sv_player->active = false;
-	sv_player->spawned = false;
-	NET_Close(sv_player->netcon);
-	sv_player->netcon = NULL;
+	sv_player->bActive = false;
+	sv_player->bSpawned = false;
+	NET_Close(sv_player->NetCon);
+	sv_player->NetCon = NULL;
 	svs.num_connected--;
-	sv_player->userinfo[0] = 0;
+	sv_player->UserInfo[0] = 0;
 	sv_reliable << (byte)svc_userinfo
 				<< (byte)(sv_player - players)
 				<< "";
@@ -2254,12 +2254,12 @@ void SV_ShutdownServer(boolean crash)
 		count = 0;
 		for (i=0, sv_player = svs.clients ; i<svs.maxclients ; i++, sv_player++)
 		{
-			if (sv_player->active && sv_player->message.cursize)
+			if (sv_player->bActive && sv_player->Message.cursize)
 			{
 				if (NET_CanSendMessage (sv_player->netconnection))
 				{
-					NET_SendMessage(sv_player->netconnection, &sv_player->message);
-					SZ_Clear (&sv_player->message);
+					NET_SendMessage(sv_player->netconnection, &sv_player->Message);
+					SZ_Clear (&sv_player->Message);
 				}
 				else
 				{
@@ -2281,7 +2281,7 @@ void SV_ShutdownServer(boolean crash)
 		con << "Shutdown server failed for " << count << " clients\n";
 
 	for (i = 0, sv_player = players; i < svs.max_clients; i++, sv_player++)
-		if (sv_player->active)
+		if (sv_player->bActive)
 			SV_DropClient(crash);
 
 	//
@@ -2360,9 +2360,9 @@ COMMAND(Stats)
 		return;
 	}
 
-	SV_ClientPrintf(sv_player, "Kills: %d of %d\n", sv_player->killcount, level.totalkills);
-	SV_ClientPrintf(sv_player, "Items: %d of %d\n", sv_player->itemcount, level.totalitems);
-	SV_ClientPrintf(sv_player, "Secrets: %d of %d\n", sv_player->secretcount, level.totalsecret);
+	SV_ClientPrintf(sv_player, "Kills: %d of %d\n", sv_player->KillCount, level.totalkills);
+	SV_ClientPrintf(sv_player, "Items: %d of %d\n", sv_player->ItemCount, level.totalitems);
+	SV_ClientPrintf(sv_player, "Secrets: %d of %d\n", sv_player->SecretCount, level.totalsecret);
 }
 
 //==========================================================================
@@ -2376,21 +2376,21 @@ COMMAND(Stats)
 
 void SV_ConnectClient(player_t *player)
 {
-	cond << "Client " << player->netcon->address << " connected\n";
+	cond << "Client " << player->NetCon->address << " connected\n";
 
-	player->active = true;
+	player->bActive = true;
 
-	player->message.Data = player->msgbuf;
-	player->message.MaxSize = MAX_MSGLEN;
-	player->message.CurSize = 0;
-	player->message.AllowOverflow = true;		// we can catch it
-	player->spawned = false;
+	player->Message.Data = player->MsgBuf;
+	player->Message.MaxSize = MAX_MSGLEN;
+	player->Message.CurSize = 0;
+	player->Message.AllowOverflow = true;		// we can catch it
+	player->bSpawned = false;
 	if (!sv_loading)
 	{
-		player->mo = NULL;
-		player->playerstate = PST_REBORN;
+		player->MO = NULL;
+		player->PlayerState = PST_REBORN;
 	}
-	memset(player->frags, 0, sizeof(player->frags));
+	memset(player->Frags, 0, sizeof(player->Frags));
 
 	SV_SendServerInfo(player);
 }
@@ -2419,12 +2419,12 @@ void SV_CheckForNewClients(void)
 		// init a new client structure
 		//
 		for (i = 0; i < svs.max_clients; i++)
-			if (!players[i].active)
+			if (!players[i].bActive)
 				break;
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
 
-		players[i].netcon = sock;
+		players[i].NetCon = sock;
 		SV_ConnectClient(&players[i]);
 		svs.num_connected++;
 	}
@@ -2453,21 +2453,21 @@ void SV_ConnectBot(const char *name)
 	// init a new client structure
 	//
 	for (i = 0; i < svs.max_clients; i++)
-		if (!players[i].active)
+		if (!players[i].bActive)
 			break;
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
 
-	players[i].netcon = sock;
-	players[i].is_bot = true;
-	strcpy(players[i].name, name);
+	players[i].NetCon = sock;
+	players[i].bIsBot = true;
+	strcpy(players[i].Name, name);
 	SV_ConnectClient(&players[i]);
 	svs.num_connected++;
 
 	sv_player = &players[i];
 	SV_RunClientCommand("PreSpawn\n");
 	SV_RunClientCommand("Spawn\n");
-	SV_SetUserInfo(sv_player->userinfo);
+	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Begin\n");
 }
 
@@ -2630,7 +2630,7 @@ COMMAND(Say)
 	if (Argc() < 2)
 		return;
 
-   	SV_BroadcastPrintf("%s: %s\n", sv_player->name, Args());
+   	SV_BroadcastPrintf("%s: %s\n", sv_player->Name, Args());
 	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
 }
 
@@ -2694,9 +2694,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.34  2002/02/14 19:23:58  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.33  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

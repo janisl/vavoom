@@ -409,11 +409,11 @@ int GetMobjNum(VMapObject *mobj)
 {
 	try
 	{
-		if (!mobj || (mobj->player && !SavingPlayers))
+		if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
 		{
 			return MOBJ_NULL;
 		}
-		return mobj->netID;
+		return mobj->NetID;
 	}
 	catch (...)
 	{
@@ -556,11 +556,11 @@ static void ArchivePlayers(void)
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		StreamOutByte((byte)players[i].active);
+		StreamOutByte((byte)players[i].bActive);
 	}
 	for (i=0 ; i<MAXPLAYERS ; i++)
 	{
-		if (!players[i].active)
+		if (!players[i].bActive)
 		{
 			continue;
 		}
@@ -595,18 +595,18 @@ static void UnarchivePlayers(void)
 	AssertSegment(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		players[i].active = GET_BYTE;
+		players[i].bActive = GET_BYTE;
 	}
 	for (i=0 ; i<MAXPLAYERS ; i++)
 	{
-		if (!players[i].active)
+		if (!players[i].bActive)
 		{
 			continue;
 		}
 		Saver.Serialize(&players[i], sizeof(player_t));
-		players[i].mo = NULL; // Will be set when unarc thinker
+		players[i].MO = NULL; // Will be set when unarc thinker
 		svpr.Exec(pf_unarchive_player, (int)&players[i]);
-		players[i].active = false;
+		players[i].bActive = false;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
@@ -615,7 +615,7 @@ static void UnarchivePlayers(void)
 				continue;
 			}
 			players[i].ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
-			players[i].ViewEnts[pi]->player = &players[i];
+			players[i].ViewEnts[pi]->Player = &players[i];
 		}
 	}
 }
@@ -851,7 +851,7 @@ static void ArchiveThinkers(void)
 		VMapObject *mobj = Cast<VMapObject>(th);
 		if (mobj)
 		{
-			if (mobj->player)
+			if (mobj->bIsPlayer)
 			{
 				if (!SavingPlayers)
 				{
@@ -859,7 +859,7 @@ static void ArchiveThinkers(void)
 					Z_Free(th);
 					continue;
 				}
-				mobj->player = (player_t *)((mobj->player - players) + 1);
+				mobj->Player = (player_t *)((mobj->Player - players) + 1);
 			}
 		}
 
@@ -896,14 +896,14 @@ static void UnarchiveThinkers(void)
 		VMapObject *mobj = Cast<VMapObject>(thinker);
 		if (mobj)
 		{
-			if (mobj->player)
+			if (mobj->bIsPlayer)
 			{
-				mobj->player = &players[(int)mobj->player - 1];
-				mobj->player->mo = mobj;
+				mobj->Player = &players[(int)mobj->Player - 1];
+				mobj->Player->MO = mobj;
 			}
-			mobj->subsector = NULL;	//	Must mark as not linked
+			mobj->SubSector = NULL;	//	Must mark as not linked
 			SV_LinkToWorld(mobj);
-			sv_mobjs[mobj->netID] = mobj;
+			sv_mobjs[mobj->NetID] = mobj;
 		}
 	}
 
@@ -1483,9 +1483,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.21  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.20  2002/01/12 18:04:01  dj_jl
 //	Added unarchieving of names
 //	

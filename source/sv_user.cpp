@@ -60,9 +60,9 @@ void SV_ReadMove(void)
 {
     ticcmd_t	cmd;
 
-	sv_player->viewangles.yaw = ByteToAngle(net_msg.ReadByte());
-	sv_player->viewangles.pitch = ByteToAngle(net_msg.ReadByte());
-	sv_player->viewangles.roll = ByteToAngle(net_msg.ReadByte());
+	sv_player->ViewAngles.yaw = ByteToAngle(net_msg.ReadByte());
+	sv_player->ViewAngles.pitch = ByteToAngle(net_msg.ReadByte());
+	sv_player->ViewAngles.roll = ByteToAngle(net_msg.ReadByte());
 	net_msg >> cmd.forwardmove
 			>> cmd.sidemove
 			>> cmd.flymove
@@ -87,13 +87,13 @@ void SV_ReadMove(void)
 		cmd.sidemove = -sv_maxmove;
 	}
 
-	sv_player->forwardmove = cmd.forwardmove;
-	sv_player->sidemove = cmd.sidemove;
-	sv_player->flymove = cmd.flymove;
-	sv_player->buttons = cmd.buttons;
+	sv_player->ForwardMove = cmd.forwardmove;
+	sv_player->SideMove = cmd.sidemove;
+	sv_player->FlyMove = cmd.flymove;
+	sv_player->Buttons = cmd.buttons;
 	if (cmd.impulse)
 	{
-		sv_player->impulse = cmd.impulse;
+		sv_player->Impulse = cmd.impulse;
 	}
 }
 
@@ -118,10 +118,10 @@ void SV_ReadFromUserInfo(void)
 {
 	if (!sv_loading)
 	{
-		sv_player->baseclass = atoi(Info_ValueForKey(sv_player->userinfo, "class"));
+		sv_player->BaseClass = atoi(Info_ValueForKey(sv_player->UserInfo, "class"));
 	}
-	strcpy(sv_player->name, Info_ValueForKey(sv_player->userinfo, "name"));
-	sv_player->color = atoi(Info_ValueForKey(sv_player->userinfo, "color"));
+	strcpy(sv_player->Name, Info_ValueForKey(sv_player->UserInfo, "name"));
+	sv_player->Color = atoi(Info_ValueForKey(sv_player->UserInfo, "color"));
 	svpr.Exec("UserinfoChanged", (int)sv_player);
 }
 
@@ -135,11 +135,11 @@ void SV_SetUserInfo(const char *info)
 {
 	if (!sv_loading)
 	{
-		strcpy(sv_player->userinfo, info);
+		strcpy(sv_player->UserInfo, info);
 		SV_ReadFromUserInfo();
 		sv_reliable << (byte)svc_userinfo
 					<< (byte)(sv_player - players)
-					<< sv_player->userinfo;
+					<< sv_player->UserInfo;
 	}
 }
 
@@ -157,7 +157,7 @@ bool SV_ReadClientMessages(int clientnum)
 	sv_player = &players[clientnum];
 	do
 	{
-		ret = NET_GetMessage(sv_player->netcon);
+		ret = NET_GetMessage(sv_player->NetCon);
 		if (ret == -1)
 		{
 			cond << "Bad read\n";
@@ -231,7 +231,7 @@ COMMAND(SetInfo)
 		return;
 	}
 
-	Info_SetValueForKey(sv_player->userinfo, Argv(1), Argv(2));
+	Info_SetValueForKey(sv_player->UserInfo, Argv(1), Argv(2));
 	sv_reliable << (byte)svc_setinfo
 				<< (byte)(sv_player - players)
 				<< Argv(1)
@@ -242,9 +242,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.8  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

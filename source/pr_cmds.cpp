@@ -998,7 +998,7 @@ PF(MSG_SelectClientMsg)
 	switch (msgtype)
 	{
 	 case MSG_SV_CLIENT:
-		pr_msg = &client->message;
+		pr_msg = &client->Message;
 		break;
 	}
 }
@@ -2206,25 +2206,25 @@ static void PF_ClearPlayer(void)
 
     pl = (player_t*)Pop();
 
-	pl->pclass = 0;
-	pl->forwardmove = 0;
-	pl->sidemove = 0;
-	pl->flymove = 0;
-	pl->buttons = 0;
-	pl->impulse = 0;
-	pl->mo = 0;
-	pl->playerstate = 0;
-	pl->vieworg = TVec(0, 0, 0);
-	pl->fixangle = 0;
-	pl->health = 0;
-	pl->items = 0;
-	pl->attackdown = 0;
-	pl->usedown = 0;
-	pl->extralight = 0;
-	pl->fixedcolormap = 0;
-	pl->palette = 0;
-	memset(pl->cshifts, 0, sizeof(pl->cshifts));
-	pl->pspriteSY = 0;
+	pl->PClass = 0;
+	pl->ForwardMove = 0;
+	pl->SideMove = 0;
+	pl->FlyMove = 0;
+	pl->Buttons = 0;
+	pl->Impulse = 0;
+	pl->MO = NULL;
+	pl->PlayerState = 0;
+	pl->ViewOrg = TVec(0, 0, 0);
+	pl->FixAngle = 0;
+	pl->Health = 0;
+	pl->Items = 0;
+	pl->AttackDown = 0;
+	pl->UseDown = 0;
+	pl->ExtraLight = 0;
+	pl->FixedColormap = 0;
+	pl->Palette = 0;
+	memset(pl->CShifts, 0, sizeof(pl->CShifts));
+	pl->PSpriteSY = 0;
 	memset(pl->user_fields, 0, sizeof(pl->user_fields));
 }
 
@@ -3334,9 +3334,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2002/02/15 19:12:03  dj_jl
+//	Property namig style change
+//
 //	Revision 1.31  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.30  2002/01/29 18:17:27  dj_jl
 //	Fixed saving of mobj pointers
 //	

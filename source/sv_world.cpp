@@ -241,7 +241,7 @@ void SV_UnlinkFromWorld(VMapObject* thing)
     int		blockx;
     int		blocky;
 
-	if (!thing->subsector)
+	if (!thing->SubSector)
 	{
 		return;
 	}
@@ -250,25 +250,26 @@ void SV_UnlinkFromWorld(VMapObject* thing)
     {
 		// inert things don't need to be in blockmap
 		// unlink from block map
-		if (thing->bnext)
-		    thing->bnext->bprev = thing->bprev;
+		if (thing->BlockMapNext)
+		    thing->BlockMapNext->BlockMapPrev = thing->BlockMapPrev;
 	
-		if (thing->bprev)
-		    thing->bprev->bnext = thing->bnext;
+		if (thing->BlockMapPrev)
+		    thing->BlockMapPrev->BlockMapNext = thing->BlockMapNext;
 		else
 		{
-		    blockx = MapBlock(thing->origin.x - level.bmaporgx);
-		    blocky = MapBlock(thing->origin.y - level.bmaporgy);
+		    blockx = MapBlock(thing->Origin.x - level.bmaporgx);
+		    blocky = MapBlock(thing->Origin.y - level.bmaporgy);
 
 		    if (blockx >= 0 && blockx < level.bmapwidth &&
 		    	blocky >= 0 && blocky < level.bmapheight)
 		    {
-				level.blocklinks[blocky * level.bmapwidth + blockx] = thing->bnext;
+				level.blocklinks[blocky * level.bmapwidth + blockx] =
+					thing->BlockMapNext;
 		    }
 		}
     }
-	thing->subsector = NULL;
-	thing->sector = NULL;
+	thing->SubSector = NULL;
+	thing->Sector = NULL;
 }
 
 //==========================================================================
@@ -289,52 +290,52 @@ void SV_LinkToWorld(VMapObject* thing)
     int				blocky;
     VMapObject**		link;
 
-	if (thing->subsector)
+	if (thing->SubSector)
 	{
 		SV_UnlinkFromWorld(thing);
 	}
 
     // link into subsector
-	ss = SV_PointInSubsector(thing->origin.x, thing->origin.y);
-	reg = SV_FindThingGap(ss->sector->botregion, thing->origin,
-		thing->origin.z, thing->origin.z + thing->height);
-	thing->subsector = ss;
-	thing->sector = ss->sector;
+	ss = SV_PointInSubsector(thing->Origin.x, thing->Origin.y);
+	reg = SV_FindThingGap(ss->sector->botregion, thing->Origin,
+		thing->Origin.z, thing->Origin.z + thing->Height);
+	thing->SubSector = ss;
+	thing->Sector = ss->sector;
 
 	r = reg;
 	while (r->floor->flags)
 		r = r->prev;
-	thing->floor = r->floor;
-	thing->floorz = r->floor->GetPointZ(thing->origin);
+	thing->Floor = r->floor;
+	thing->FloorZ = r->floor->GetPointZ(thing->Origin);
 
 	r = reg;
 	while (r->ceiling->flags)
 		r = r->next;
-	thing->ceiling = r->ceiling;
-	thing->ceilingz = r->ceiling->GetPointZ(thing->origin);
+	thing->Ceiling = r->ceiling;
+	thing->CeilingZ = r->ceiling->GetPointZ(thing->Origin);
 
     // link into blockmap
     if (!thing->bNoBlockmap)
     {
 		// inert things don't need to be in blockmap
-		blockx = MapBlock(thing->origin.x - level.bmaporgx);
-		blocky = MapBlock(thing->origin.y - level.bmaporgy);
+		blockx = MapBlock(thing->Origin.x - level.bmaporgx);
+		blocky = MapBlock(thing->Origin.y - level.bmaporgy);
 
 		if (blockx >= 0 && blockx < level.bmapwidth &&
 			blocky >= 0 && blocky < level.bmapheight)
 		{
 		    link = &level.blocklinks[blocky * level.bmapwidth + blockx];
-	    	thing->bprev = NULL;
-		    thing->bnext = *link;
+	    	thing->BlockMapPrev = NULL;
+		    thing->BlockMapNext = *link;
 		    if (*link)
-				(*link)->bprev = thing;
+				(*link)->BlockMapPrev = thing;
 
 		    *link = thing;
 		}
 		else
 		{
 		    // thing is off the map
-		    thing->bnext = thing->bprev = NULL;
+		    thing->BlockMapNext = thing->BlockMapPrev = NULL;
 		}
     }
 }
@@ -443,7 +444,8 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
     }
     
 
-    for (mobj = level.blocklinks[y*level.bmapwidth+x]; mobj; mobj = mobj->bnext)
+    for (mobj = level.blocklinks[y * level.bmapwidth + x]; mobj;
+		mobj = mobj->BlockMapNext)
     {
 		if (func && !func(mobj))
 		    return false;
@@ -543,13 +545,13 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 
 static boolean PIT_AddThingIntercepts(VMapObject* thing)
 {
-	float dot = DotProduct(thing->origin, trace_plane.normal) - trace_plane.dist;
-	if (dot >= thing->radius || dot <= -thing->radius)
+	float dot = DotProduct(thing->Origin, trace_plane.normal) - trace_plane.dist;
+	if (dot >= thing->Radius || dot <= -thing->Radius)
 	{
 		return true;		// line isn't crossed
 	}
 
-	float dist = DotProduct((thing->origin - trace_org), trace_dir);
+	float dist = DotProduct((thing->Origin - trace_org), trace_dir);
 //	dist -= sqrt(thing->radius * thing->radius - dot * dot);
     if (dist < 0)
 	{
@@ -993,9 +995,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.11  2002/02/14 19:23:58  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.10  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

@@ -49,17 +49,17 @@ class VViewEntity:public VObject
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
 
-	int			sprite;	// a -1 sprite means not active
-	int			frame;
-	int			model_index;
-	int			alias_frame;
-	int			alias_skinnum;
-	float		sx;
-	float		sy;
-	int			statenum;
-	int			nextstate;
-    float		time;
-	player_t	*player;
+	int			SpriteIndex;	// a -1 sprite means not active
+	int			SpriteFrame;
+	int			ModelIndex;
+	int			ModelFrame;
+	int			ModelSkinNum;
+	float		SX;
+	float		SY;
+	int			StateNum;
+	int			NextState;
+    float		StateTime;
+	player_t	*Player;
 };
 
 //
@@ -67,84 +67,84 @@ class VViewEntity:public VObject
 //
 struct player_t
 {
-	boolean			active;
-	boolean			spawned;
-	boolean			is_bot;
-	qsocket_t		*netcon;
-	TMessage		message;
-	byte			msgbuf[MAX_MSGLEN];
-	int				mobj_update_start;
-	float			last_message;
+	boolean			bActive;
+	boolean			bSpawned;
+	boolean			bIsBot;
+	qsocket_t		*NetCon;
+	TMessage		Message;
+	byte			MsgBuf[MAX_MSGLEN];
+	int				MobjUpdateStart;
+	float			LastMessage;
 
-	char			userinfo[MAX_INFO_STRING];
+	char			UserInfo[MAX_INFO_STRING];
 
-	char			name[MAXNAME];
-	int				baseclass;
-	int				pclass;			// player class type
-	int				color;
+	char			Name[MAXNAME];
+	int				BaseClass;
+	int				PClass;			// player class type
+	int				Color;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
-	float			forwardmove;	// *2048 for move
-	float			sidemove;		// *2048 for move
-	float			flymove;		// fly up/down/centering
-	int				buttons;		// fire, use
-	int				impulse;		// weapon changes, inventory, etc
+	float			ForwardMove;	// *2048 for move
+	float			SideMove;		// *2048 for move
+	float			FlyMove;		// fly up/down/centering
+	int				Buttons;		// fire, use
+	int				Impulse;		// weapon changes, inventory, etc
 
-    VMapObject*		mo;
-    int				playerstate;
+    VMapObject*		MO;
+    int				PlayerState;
 
 	//	Model of current weapon
-	int				weapon_model;
+	int				WeaponModel;
 
     // Determine POV,
     //  including viewpoint bobbing during movement.
     // Focal origin above r.z
-	TVec			vieworg;
+	TVec			ViewOrg;
 
-	TAVec			viewangles;
-	boolean			fixangle;
+	TAVec			ViewAngles;
+	boolean			FixAngle;
 
     // This is only used between levels,
     // mo->health is used during levels.
-    int				health;
+    int				Health;
 
-	int				items;
+	int				Items;
 
     // Frags, kills of other players.
-    int				frags[MAXPLAYERS];
+    int				Frags[MAXPLAYERS];
 
     // True if button down last tic.
-    int				attackdown;
-    int				usedown;
+    int				AttackDown;
+    int				UseDown;
 
      // For intermission stats.
-    int				killcount;
-    int				itemcount;
-    int				secretcount;
+    int				KillCount;
+    int				ItemCount;
+    int				SecretCount;
 
     // So gun flashes light up areas.
-    int				extralight;
+    int				ExtraLight;
 
 	// For lite-amp and invulnarability powers
-    int				fixedcolormap;
+    int				FixedColormap;
 
     // Current PLAYPAL index
     //  can be set to REDCOLORMAP for pain, etc.
-    int				palette;
+    int				Palette;
 
 	// Color shifts for damage, powerups and content types
-	dword			cshifts[NUM_CSHIFTS];
+	dword			CShifts[NUM_CSHIFTS];
 
     // Overlay view sprites (gun, etc).
     VViewEntity		*ViewEnts[NUMPSPRITES];
-	float			pspriteSY;
+	float			PSpriteSY;
 
     // True if secret level has been done.
-    boolean			didsecret;
+    boolean			DidSecret;
 
-	dword 			worldTimer;				// total time the player's been playing
+	dword 			WorldTimer;				// total time the player's been playing
 
-	int				old_stats[96];
+	int				OldStats[96];
 
 	//	256 integers for user defined fields in PROGS
 	int				user_fields[256];
@@ -157,9 +157,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/15 19:12:03  dj_jl
+//	Property namig style change
+//
 //	Revision 1.10  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	

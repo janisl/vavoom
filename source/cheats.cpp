@@ -73,7 +73,7 @@ static boolean CheatAllowed(void)
 		con << "You are too good to cheat!\n";
 		return false;
 	}
-	if (players[0].health <= 0)
+	if (players[0].Health <= 0)
 	{
 		// Dead players can't cheat
         con << "You must be alive to cheat\n";
@@ -201,7 +201,7 @@ COMMAND(Script)
 		if (script > 99) return;
 		args[0] = args[1] = args[2] = 0;
 
-		if (P_StartACS(script, 0, args, players[0].mo, NULL, 0))
+		if (P_StartACS(script, 0, args, players[0].MO, NULL, 0))
 		{
 			con << "RUNNING SCRIPT " << script << endl;
 		}
@@ -219,11 +219,11 @@ COMMAND(MyPos)
 	if (CheatAllowed())
     {
 		con << "MAP " << level.mapname
-			<< "  X:" << players[0].mo->origin.x
-			<< "  Y:" << players[0].mo->origin.y
-			<< "  Z:" << players[0].mo->origin.z
-			<< "  Ang:" << players[0].mo->angles.yaw
-			<< " Look:" << players[0].mo->angles.pitch
+			<< "  X:" << players[0].MO->Origin.x
+			<< "  Y:" << players[0].MO->Origin.y
+			<< "  Z:" << players[0].MO->Origin.z
+			<< "  Ang:" << players[0].MO->Angles.yaw
+			<< " Look:" << players[0].MO->Angles.pitch
 			<< endl;
 	}
 }
@@ -231,9 +231,12 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/02/15 19:12:29  dj_jl
+//	Property namig style change
+//
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

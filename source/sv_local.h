@@ -112,46 +112,47 @@ class VMapObject:public VThinker
 	virtual ~VMapObject(void);
 
 	// Info for drawing: position.
-	TVec			origin;
+	TVec			Origin;
 
 	// Momentums, used to update position.
-	TVec			velocity;
+	TVec			Velocity;
+
+	TAVec			Angles;	// orientation
 
 	//More drawing info: to determine current sprite.
-	TAVec			angles;	// orientation
-	int				spritetype;
-	int				sprite;	// used to find patch_t and flip value
-	int				frame;	// might be ORed with FF_FULLBRIGHT
+	int				SpriteType;
+	int				SpriteIndex;	// used to find patch_t and flip value
+	int				SpriteFrame;	// might be ORed with FF_FULLBRIGHT
 
-	int				model_index;
-	int				alias_frame;
-	int				alias_skinnum;
+	int				ModelIndex;
+	int				ModelFrame;
+	int				ModelSkinNum;
 
-	int				translucency;
-	int				translation;
+	int				Translucency;
+	int				Translation;
 
-	float			floorclip;		// value to use for floor clipping
+	float			FloorClip;		// value to use for floor clipping
 
-	int				effects;
+	int				Effects;
 
-	subsector_t*	subsector;
-	sector_t*		sector;
+	subsector_t*	SubSector;
+	sector_t*		Sector;
 
 	// Interaction info, by BLOCKMAP.
 	// Links in blocks (if needed).
-	VMapObject*		bnext;
-	VMapObject*		bprev;
+	VMapObject*		BlockMapNext;
+	VMapObject*		BlockMapPrev;
 
 	// The closest interval over all contacted Sectors.
-	float			floorz;
-	float			ceilingz;
+	float			FloorZ;
+	float			CeilingZ;
 
 	//	Closest floor and ceiling, source of floorz and ceilingz
-	sec_plane_t		*floor;
-	sec_plane_t		*ceiling;
+	sec_plane_t		*Floor;
+	sec_plane_t		*Ceiling;
 
 	// If == validcount, already checked.
-	int				validcount;
+	int				ValidCount;
 
 	//	Flags
 	boolean			bSolid;			// Blocks.
@@ -161,21 +162,21 @@ class VMapObject:public VThinker
 									// (inert but displayable)
 	boolean			bIsPlayer;		// Player or player-bot
 
-	int				health;
+	int				Health;
 
 	// For movement checking.
-	float			radius;
-	float			height;
+	float			Radius;
+	float			Height;
 
 	// Additional info record for player avatars only.
 	// Only valid if type == MT_PLAYER
-	player_t		*player;
+	player_t		*Player;
 
-	int				tid;			// thing identifier
-	int				special;		// special
-	int				args[5];		// special arguments
+	int				TID;			// thing identifier
+	int				Special;		// special
+	int				Args[5];		// special arguments
 
-	int				netID;
+	int				NetID;
 };
 
 //==========================================================================
@@ -288,7 +289,7 @@ struct intercept_t
 {
     float		frac;		// along trace line
     boolean		isaline;
-	VMapObject		*thing;
+	VMapObject	*thing;
 	line_t		*line;
 };
 
@@ -376,16 +377,16 @@ int PO_GetPolyobjMirror(int poly);
 //	Mobj baseline type
 struct mobj_base_t
 {
-	TVec		origin;			// position
-	TAVec		angles;			// orientation
-	int			spritetype;		// sprite orientation type
-	int			sprite;			// used to find patch_t and flip value
-	int			frame;			// might be ORed with FF_FULLBRIGHT
-	int			model_index;
-	int			alias_frame;
-	int			translucency;	// translucency, in percents
-	int			translation;	// player color translation
-	int			effects;		// dynamic lights, trails
+	TVec		Origin;			// position
+	TAVec		Angles;			// orientation
+	int			SpriteType;		// sprite orientation type
+	int			SpriteIndex;	// used to find patch_t and flip value
+	int			SpriteFrame;	// might be ORed with FF_FULLBRIGHT
+	int			ModelIndex;
+	int			ModelFrame;
+	int			Translucency;	// translucency, in percents
+	int			Translation;	// player color translation
+	int			Effects;		// dynamic lights, trails
 };
 
 void SV_StartSound(const VMapObject *, int, int, int);
@@ -418,14 +419,14 @@ extern player_t		*sv_player;
 //==========================================================================
 
 // Difficulty/skill settings/filters.
-typedef enum
+enum skill_t
 {
-    sk_baby,
-    sk_easy,
-    sk_medium,
-    sk_hard,
-    sk_nightmare
-} skill_t;
+	sk_baby,
+	sk_easy,
+	sk_medium,
+	sk_hard,
+	sk_nightmare
+};
 
 void G_ExitLevel(void);
 void G_SecretExitLevel(void);
@@ -460,9 +461,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.19  2002/02/14 19:23:58  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.18  2002/02/06 17:30:36  dj_jl
 //	Replaced Actor flags with boolean variables.
 //	

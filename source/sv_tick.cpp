@@ -122,7 +122,7 @@ void P_Ticker(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].active && players[i].spawned)
+		if (players[i].bActive && players[i].bSpawned)
 		{
 			svpr.Exec(pf_SetViewPos, (int)&players[i]);
 		}
@@ -136,9 +136,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.9  2002/01/21 18:25:09  dj_jl
 //	Changed guarding
 //	

@@ -1507,15 +1507,15 @@ static int CmdBeginPrint(void)
 
 static int CmdEndPrint(void)
 {
-	if (ACScript->activator && ACScript->activator->player)
+	if (ACScript->activator && ACScript->activator->bIsPlayer)
 	{
-		SV_ClientCenterPrintf(ACScript->activator->player, "%s\n", PrintBuffer);
+		SV_ClientCenterPrintf(ACScript->activator->Player, "%s\n", PrintBuffer);
 	}
 	else
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (players[i].active)
+			if (players[i].bActive)
 			{
 				SV_ClientCenterPrintf(&players[i], "%s\n", PrintBuffer);
 			}
@@ -1528,7 +1528,7 @@ static int CmdEndPrintBold(void)
 {//FIXME yellow message
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].active)
+		if (players[i].bActive)
 		{
 			SV_ClientCenterPrintf(&players[i], "%s\n", PrintBuffer);
 		}
@@ -1569,7 +1569,7 @@ static int CmdPlayerCount(void)
 	count = 0;
 	for(i = 0; i < MAXPLAYERS; i++)
 	{
-		count += players[i].active;
+		count += players[i].bActive;
 	}
 	Push(count);
 	return SCRIPT_CONTINUE;
@@ -1731,9 +1731,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/02/15 19:12:04  dj_jl
+//	Property namig style change
+//
 //	Revision 1.13  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.12  2002/01/11 08:13:35  dj_jl
 //	Fixed sector sound
 //	
