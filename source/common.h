@@ -64,15 +64,15 @@
 //
 //==========================================================================
 
-#define MINCHAR		((char)0x80)
-#define MINSHORT    ((short)0x8000)
-#define MININT      ((int)0x80000000L)
-#define MINLONG     ((long)0x80000000L)
+#define MINCHAR		((char)-128)
+#define MINSHORT	((short)-32768)
+#define MININT		((int)-2147483648)
+#define MINLONG		((long)-2147483648)
 
 #define MAXCHAR		((char)0x7f)
-#define MAXSHORT    ((short)0x7fff)
-#define MAXINT      ((int)0x7fffffff)
-#define MAXLONG     ((long)0x7fffffff)
+#define MAXSHORT	((short)0x7fff)
+#define MAXINT		((int)0x7fffffff)
+#define MAXLONG		((long)0x7fffffff)
 
 enum ENoInit { E_NoInit };
 
@@ -141,7 +141,7 @@ public:
 	}
 };
 
-class RecoverableError:public VavoomError
+class RecoverableError : public VavoomError
 {
 public:
 	explicit RecoverableError(const char *text) : VavoomError(text) { }
@@ -162,9 +162,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2003/03/08 11:33:39  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.15  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
-//
+//	
 //	Revision 1.14  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

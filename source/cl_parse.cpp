@@ -476,7 +476,7 @@ static void CL_ParseServerInfo(void)
 	P_GetMapInfo(cl_level.mapname, info);
 	strcpy(cl_level.level_name, info.name);
 
-	LoadLevel(cl_level, cl_level.mapname);
+	CL_LoadLevel(cl_level.mapname);
 
 	R_Start(info);
    	S_Start(info);
@@ -978,9 +978,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2003/03/08 11:30:07  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.30  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.29  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

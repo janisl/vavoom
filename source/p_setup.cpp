@@ -135,16 +135,16 @@ void CalcSeg(seg_t *seg)
 
 //==========================================================================
 //
-//  LoadLevel
+//  SV_LoadLevel
 //
 //==========================================================================
 
-void LoadLevel(sv_level_t &lev, const char *mapname)
+void SV_LoadLevel(const char *MapName)
 {
-	guard(LoadLevel);
+	guard(SV_LoadLevel);
 	if (GLevel)
 	{
-		GLevel->Destroy();
+		delete GLevel;
 		GLevel = NULL;
 	}
 
@@ -152,7 +152,7 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 	GLevel->bForServer = true;
 	svpr.SetGlobal("GLevel", (int)GLevel);
 
-	GLevel->LoadMap(mapname);
+	GLevel->LoadMap(MapName);
 
 	if (!GLevel->bExtended)
 	{
@@ -167,23 +167,23 @@ void LoadLevel(sv_level_t &lev, const char *mapname)
 
 //==========================================================================
 //
-//  LoadLevel
+//	CL_LoadLevel
 //
 //==========================================================================
 
-void LoadLevel(cl_level_t &lev, const char *mapname)
+void CL_LoadLevel(const char *MapName)
 {
-	guard(LoadLevel);
+	guard(CL_LoadLevel);
 	if (GClLevel)
 	{
-		GClLevel->Destroy();
+		delete GClLevel;
 		GClLevel = NULL;
 	}
 
 	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), NULL, PU_STATIC);
 	clpr.SetGlobal("GLevel", (int)GClLevel);
 
-	GClLevel->LoadMap(mapname);
+	GClLevel->LoadMap(MapName);
 	unguard;
 }
 
@@ -341,6 +341,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2003/03/08 11:33:39  dj_jl
+//  Got rid of some warnings.
+//
 //  Revision 1.22  2002/09/07 16:31:51  dj_jl
 //  Added Level class.
 //

@@ -351,12 +351,6 @@ void SV_WriteMobj(int bits, VEntity &mobj, TMessage &msg)
 void VEntity::Destroy(void)
 {
 	guard(VEntity::Destroy);
-	if (GetFlags() & OF_Destroyed)
-	{
-		GCon->Log(NAME_Dev, "Entity already destroyed");
-		return;
-	}
-
 	if (sv_mobjs[NetID] != this)
 		Sys_Error("Invalid entity num %d", NetID);
 
@@ -2062,7 +2056,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	svpr.Exec("StartLevelLoading");
 
 	//	Load it
-	LoadLevel(level, level.mapname);
+	SV_LoadLevel(level.mapname);
 
 	//	Spawn slopes, extra floors, etc.
 	svpr.Exec("SpawnWorld");
@@ -2779,7 +2773,7 @@ COMMAND(Say)
 
 #ifndef CLIENT
 
-class FConsoleDevice:public FOutputDevice
+class FConsoleDevice : public FOutputDevice
 {
 public:
 	void Serialize(const char* V, EName)
@@ -2836,9 +2830,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2003/03/08 11:33:39  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.50  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.49  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

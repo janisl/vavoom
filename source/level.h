@@ -413,7 +413,7 @@ struct FRogueConSpeech
 #define MAXDEATHMATCHSTARTS		16
 #define MAX_PLAYER_STARTS 		8
 
-class VLevel:public VObject
+class VLevel : public VObject
 {
 	DECLARE_CLASS(VLevel, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
@@ -561,8 +561,8 @@ struct cl_level_t:base_level_t
 
 void CalcLine(line_t *line);
 void CalcSeg(seg_t *seg);
-void LoadLevel(sv_level_t &lev, const char *mapname);
-void LoadLevel(cl_level_t &lev, const char *mapname);
+void SV_LoadLevel(const char *MapName);
+void CL_LoadLevel(const char *MapName);
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 void SwapPlanes(sector_t *);
 void CalcSecMinMaxs(sector_t *sector);
@@ -580,9 +580,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2003/03/08 11:33:39  dj_jl
+//	Got rid of some warnings.
+//
 //	Revision 1.24  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.23  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	
