@@ -294,6 +294,11 @@ void TProgs::Load(const char *AName)
 			ClassList[i]->Name = NameRemap[ClassInfo[i].name];
 			ClassList[i]->ClassSize = ClassInfo[i].size;
 		}
+		else if (ClassList[i]->ClassSize != ClassInfo[i].size)
+		{
+			Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
+				*ClassList[i]->Name, ClassList[i]->ClassSize, ClassInfo[i].size);
+		}
 		if (!ClassList[i]->ClassVTable)
 		{
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
@@ -1713,9 +1718,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/11/02 17:09:55  dj_jl
+//	Some debugging stuff.
+//
 //	Revision 1.29  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.28  2002/05/03 17:04:35  dj_jl
 //	Mangling of string pointers.
 //	

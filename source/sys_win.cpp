@@ -791,6 +791,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		ShowCursor(FALSE);
 
+#ifndef _DEBUG
 		//	Install signal handlers
 		signal(SIGINT,  signal_handler);
 		signal(SIGILL,  signal_handler);
@@ -799,6 +800,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		signal(SIGTERM, signal_handler);
 		signal(SIGBREAK,signal_handler);
 		signal(SIGABRT, signal_handler);
+#endif
 
 		MaskExceptions();
 		Sys_SetFPCW();
@@ -850,6 +852,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		SendMessage(hwnd, WM_CLOSE, 0, 0);
 		return 1;
 	}
+#ifndef _DEBUG
 	catch (...)
 	{
 		char *tmp_msg;
@@ -864,14 +867,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		throw;
 	}
+#endif
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/11/02 17:09:55  dj_jl
+//	Some debugging stuff.
+//
 //	Revision 1.19  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
-//
+//	
 //	Revision 1.18  2002/06/14 15:38:52  dj_jl
 //	All GUIDs are declared here.
 //	
