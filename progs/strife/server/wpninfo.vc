@@ -37,6 +37,9 @@ class WeaponGrenadeLauncher;
 class WeaponFlamethrower;
 class WeaponMauler;
 class WeaponSigil;
+class WeaponCrossbow2;
+class WeaponGrenadeLauncher2;
+class WeaponMauler2;
 
 classid WeaponClasses[] = {
 	WeaponPunch,
@@ -47,6 +50,9 @@ classid WeaponClasses[] = {
 	WeaponFlamethrower,
 	WeaponMauler,
 	WeaponSigil,
+	WeaponCrossbow2,
+	WeaponGrenadeLauncher2,
+	WeaponMauler2,
 };
 
 int weapon_ammo_type[] =
@@ -59,14 +65,20 @@ int weapon_ammo_type[] =
 	am_cell,
 	am_cell,
 	am_noammo,
+	am_poison_arrow,
+	am_grenade2,
+	am_cell,
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/01/30 17:48:52  dj_jl
+//	Implemented many action functions.
+//
 //	Revision 1.8  2002/05/03 17:17:33  dj_jl
 //	Started work on weapons and items.
-//
+//	
 //	Revision 1.7  2002/04/22 17:22:33  dj_jl
 //	Retail Strife data.
 //	

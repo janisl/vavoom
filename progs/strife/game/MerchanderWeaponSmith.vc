@@ -23,15 +23,40 @@
 //**
 //**************************************************************************
 
-class MerchanderWeaponSmith:Pawn
+class MerchanderWeaponSmith : Pawn
 	__mobjinfo__(116);
 
-void A_MerchanderPain1(void)
+//==========================================================================
+//
+//	A_CloseUpShop
+//
+//==========================================================================
+
+void A_CloseUpShop()
 {
+	int args[5];
+
+	args[0] = 999;
+	args[1] = 64;
+	args[2] = 960;
+	args[3] = 0;
+	args[4] = 0;
+	EV_DoDoor(NULL, &args[0], DREV_CLOSEWAITOPEN);
+	if (Enemy && Enemy.bIsPlayer)
+	{
+		P_NoiseAlert(Enemy, self);
+	}
 }
 
-void A_MerchanderPain2(void)
+//==========================================================================
+//
+//	A_ClearSoundTarget
+//
+//==========================================================================
+
+void A_ClearSoundTarget()
 {
+	Sector->SoundTarget = none;
 }
 
 __states__
@@ -58,10 +83,10 @@ __states__
 	S_MERCHANDER_PAIN1('MRPN', 0, 3.0 / 35.0, S_MERCHANDER_PAIN2) { }
 	S_MERCHANDER_PAIN2('MRPN', 1, 3.0 / 35.0, S_MERCHANDER_PAIN3) { A_Pain(); }
 	S_MERCHANDER_PAIN3('MRPN', 2, 3.0 / 35.0, S_MERCHANDER_PAIN4) { }
-	S_MERCHANDER_PAIN4('MRPN', 3, 9.0 / 35.0, S_MERCHANDER_PAIN5) { A_MerchanderPain1(); }
+	S_MERCHANDER_PAIN4('MRPN', 3, 9.0 / 35.0, S_MERCHANDER_PAIN5) { A_CloseUpShop(); }
 	S_MERCHANDER_PAIN5('MRPN', 2, 4.0 / 35.0, S_MERCHANDER_PAIN6) { }
 	S_MERCHANDER_PAIN6('MRPN', 1, 3.0 / 35.0, S_MERCHANDER_PAIN7) { }
-	S_MERCHANDER_PAIN7('MRPN', 0, 3.0 / 35.0, S_MERCHANDER_STAND1) { A_MerchanderPain2(); }
+	S_MERCHANDER_PAIN7('MRPN', 0, 3.0 / 35.0, S_MERCHANDER_STAND1) { A_ClearSoundTarget(); }
 	S_MERCHANDER_GT1('MRGT', 0, 5.0 / 35.0, S_MERCHANDER_GT2) { }
 	S_MERCHANDER_GT2('MRGT', 1, 5.0 / 35.0, S_MERCHANDER_GT3) { }
 	S_MERCHANDER_GT3('MRGT', 2, 5.0 / 35.0, S_MERCHANDER_GT4) { }
@@ -95,6 +120,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:41:47  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

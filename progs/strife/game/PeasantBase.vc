@@ -23,11 +23,26 @@
 //**
 //**************************************************************************
 
-class PeasantBase:Pawn
+class PeasantBase : Pawn
 	abstract;
 
-void A_PeasantAttack(void)
+//==========================================================================
+//
+//	A_PeasantAttack
+//
+//==========================================================================
+
+void A_PeasantAttack()
 {
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (CheckMeleeRange())
+	{
+		Enemy.Damage(self, self, (P_Random() % 5) * 2 + 2);
+	}
 }
 
 __states__
@@ -51,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:45:33  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

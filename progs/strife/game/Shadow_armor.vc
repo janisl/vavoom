@@ -28,10 +28,10 @@ class Shadow_armor : InventoryItem
 
 __states__
 {
-	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) { A_Unknown56(); }
-	S_SHADOW_ARMOR2('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR3) { A_Unknown64(); }
-	S_SHADOW_ARMOR3('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR4) { A_Unknown55(); }
-	S_SHADOW_ARMOR4('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR1) { A_Unknown64(); }
+	S_SHADOW_ARMOR1('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR2) { A_ClearShadow(); }
+	S_SHADOW_ARMOR2('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR3) { A_BeShadowyFoe(); }
+	S_SHADOW_ARMOR3('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR4) { A_SetShadow(); }
+	S_SHADOW_ARMOR4('SHD1', 0, 17.0 / 35.0, S_SHADOW_ARMOR1) { A_BeShadowyFoe(); }
 }
 
 defaultproperties
@@ -46,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/01/30 17:46:30  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.2  2003/10/02 17:17:21  dj_jl
 //  Inventory items.
 //

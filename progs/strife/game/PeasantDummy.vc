@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class PeasantDummy:PeasantBase
+class PeasantDummy : PeasantBase
 	__mobjinfo__(169);
 
 __states__
 {
-	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ResetHealth(); }
-	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ResetHealth(); }
+	S_PEASANT2_STAND('PEAS', 0, 5.0 / 35.0, S_PEASANT2_STAND) { A_ScrollOrDie(); }
+	S_PEASANT2_PAIN('AGRD', 0, 5.0 / 35.0, S_PEASANT2_PAIN) { A_ScrollOrDie(); }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:45:33  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

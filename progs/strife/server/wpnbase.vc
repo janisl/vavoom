@@ -86,6 +86,22 @@ void BringUpWeapon(Player player)
 
 void ChangeWeapon(Player player, int newweapon)
 {
+	if (newweapon == wp_crossbow && player.WeaponOwned[wp_crossbow2] &&
+		player.ReadyWeapon == wp_crossbow)
+	{
+		newweapon = wp_crossbow2;
+	}
+	if (newweapon == wp_grenade && player.WeaponOwned[wp_grenade2] &&
+		player.ReadyWeapon == wp_grenade)
+	{
+		newweapon = wp_grenade2;
+	}
+	if (newweapon == wp_blaster && player.WeaponOwned[wp_blaster2] &&
+		player.ReadyWeapon == wp_blaster)
+	{
+		newweapon = wp_blaster2;
+	}
+
 	if (player.WeaponOwned[newweapon] && newweapon != player.ReadyWeapon)
 	{
 		// Do not go to ??? in shareware, even if cheated.
@@ -186,11 +202,11 @@ int CheckAmmo(Player player)
 	ammo = Weapon(player.ViewEnts[ps_weapon]).Ammo;
 
 	// Minimal amount for one shot varies.
-#ifdef FIXME
-	if (player.ReadyWeapon == wp_bfg)
-		count = BFGCELLS;
+	if (player.ReadyWeapon == wp_blaster)
+		count = 20;
+	else if (player.ReadyWeapon == wp_blaster2)
+		count = 30;
 	else
-#endif
 		count = 1;	// Regular.
 
 	// Some do not need ammunition anyway.
@@ -255,6 +271,9 @@ void FireWeapon(Player player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2004/01/30 17:48:52  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.5  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemWeaponGrenadeLauncher:WeaponPickup
+class ItemWeaponGrenadeLauncher : WeaponPickup
 	__mobjinfo__(154);
 
 __states__
@@ -37,11 +37,15 @@ defaultproperties
 	PickupString = "Grenade launcher";
 	IdleState = S_GRENADE_LAUNCHER;
 	WeaponType = wp_grenade;
+	Weapon2Type = wp_grenade2;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:38:21  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

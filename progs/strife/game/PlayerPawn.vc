@@ -125,9 +125,10 @@ bool GiveAmmo(int ammo, int num)
 //
 //==========================================================================
 
-bool GiveWeapon(int weapon, bool dropped)
+bool GiveWeapon(int weapon, int weapon2, bool dropped)
 {
 	bool gaveammo;
+	bool gaveammo2;
 	bool gaveweapon;
 
 	if (netgame && (deathmatch < 2) && !dropped)
@@ -145,6 +146,18 @@ bool GiveWeapon(int weapon, bool dropped)
 			GiveAmmo(weapon_ammo_type[weapon], 2);
 		Player.PendingWeapon = weapon;
 
+		if (weapon2 != -1)
+		{
+			Player.WeaponOwned[weapon2] = true;
+			if (weapon_ammo_type[weapon] != weapon_ammo_type[weapon2])
+			{
+				if (deathmatch)
+					GiveAmmo(weapon_ammo_type[weapon], 5);
+				else
+					GiveAmmo(weapon_ammo_type[weapon], 2);
+			}
+		}
+
 		PlaySound('PickupWeapon', CHAN_ITEM);
 		return false;
 	}
@@ -161,16 +174,31 @@ bool GiveWeapon(int weapon, bool dropped)
 	else
 		gaveammo = false;
 
+	if (weapon2 != -1 && weapon_ammo_type[weapon2] != am_noammo &&
+		weapon_ammo_type[weapon] != weapon_ammo_type[weapon2])
+	{
+		// give one clip with a dropped weapon,
+		// two clips with a found weapon
+		if (dropped)
+			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], 1);
+		else
+			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], 2);
+	}
+	else
+		gaveammo2 = false;
+
 	if (Player.WeaponOwned[weapon])
 		gaveweapon = false;
 	else
 	{
 		gaveweapon = true;
 		Player.WeaponOwned[weapon] = true;
+		if (weapon2 != -1)
+			Player.WeaponOwned[weapon2] = true;
 		Player.PendingWeapon = weapon;
 	}
 
-	return (gaveweapon || gaveammo);
+	return (gaveweapon || gaveammo || gaveammo2);
 }
 
 //==========================================================================
@@ -1223,6 +1251,29 @@ Actor SpawnPlayerMissile(classid type)
 	return A;
 }
 
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//  Player death sound
+//
+//==========================================================================
+
+void A_PlayerScream(void)
+{
+	// Default death sound.
+	name sound = 'PlayerDeath';
+
+	if (Health < -50)
+	{
+		// IF THE PLAYER DIES
+		// LESS THAN -50% WITHOUT GIBBING
+		sound = 'PlayerExtremeDeath';
+	}
+
+	PlaySound(sound, CHAN_VOICE);
+}
+
 defaultproperties
 {
 	ReactionCount = 0;
@@ -1234,6 +1285,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/01/30 17:46:30  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.4  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class TrainingTarget:Decoration
+class TrainingTarget : Decoration
 	__mobjinfo__(208);
 
 __states__
 {
-	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) { A_ResetHealth(); }
-	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) { A_ResetHealth(); }
+	S_TRAIN_TARGET('HOGN', 0, 2.0 / 35.0, S_TRAIN_TARGET) { A_ScrollOrDie(); }
+	S_TRAIN_TARGET_P1('HOGN', 1, 1.0 / 35.0, S_TRAIN_TARGET_P2) { A_ScrollOrDie(); }
 	S_TRAIN_TARGET_P2('HOGN', 2, 1.0 / 35.0, S_TRAIN_TARGET) { A_Pain(); }
 }
 
@@ -44,6 +44,7 @@ defaultproperties
 	bShootable = true;
 	bUnknown4 = true;
 	bNoBlood = true;
+	bActivateMCross = true;
 	IdleState = S_TRAIN_TARGET;
 	PainState = S_TRAIN_TARGET_P1;
 	PainSound = 'PunchHitMetal';
@@ -52,6 +53,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:47:06  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

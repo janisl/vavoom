@@ -23,16 +23,16 @@
 //**
 //**************************************************************************
 
-class KneelingGyu:Pawn
+class KneelingGyu : Pawn
 	__mobjinfo__(204);
 
 __states__
 {
 	S_PRAYER_STAND1('NEAL', 0, 15.0 / 35.0, S_PRAYER_STAND2) { A_ActiveSound(); }
 	S_PRAYER_STAND2('NEAL', 1, 40.0 / 35.0, S_PRAYER_STAND1) { A_ActiveSound(); }
-	S_PRAYER_PAIN1('NEAL', 2, 5.0 / 35.0, S_PRAYER_PAIN2) { A_Unknown55(); }
+	S_PRAYER_PAIN1('NEAL', 2, 5.0 / 35.0, S_PRAYER_PAIN2) { A_SetShadow(); }
 	S_PRAYER_PAIN2('NEAL', 1, 4.0 / 35.0, S_PRAYER_PAIN3) { A_Pain(); }
-	S_PRAYER_PAIN3('NEAL', 2, 5.0 / 35.0, S_PRAYER_STAND1) { A_Unknown56(); }
+	S_PRAYER_PAIN3('NEAL', 2, 5.0 / 35.0, S_PRAYER_STAND1) { A_ClearShadow(); }
 	S_PRAYER_DIE1('NEAL', 1, 6.0 / 35.0, S_PRAYER_DIE2) { }
 	S_PRAYER_DIE2('NEAL', 2, 13.0 / 35.0, S_PRAYER_DIE1) { A_Dying(); }
 	S_PRAYER_DIE3('NEAL', 3, 5.0 / 35.0, S_PRAYER_DIE4) { }
@@ -66,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:41:47  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

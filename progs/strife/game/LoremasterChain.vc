@@ -23,7 +23,11 @@
 //**
 //**************************************************************************
 
-class LoremasterChain:Projectile;
+class LoremasterChain : Projectile;
+
+void A_Unknown32()
+{
+}
 
 __states__
 {
@@ -46,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:41:47  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

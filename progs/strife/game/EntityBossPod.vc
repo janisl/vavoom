@@ -23,11 +23,26 @@
 //**
 //**************************************************************************
 
-class EntityBossPod:Decoration
+class EntityBossPod : Decoration
 	__mobjinfo__(198);
 
-void A_EntityBossRaise(void)
+//==========================================================================
+//
+//	A_EntityBossRaise
+//
+//==========================================================================
+
+void A_EntityBossRaise()
 {
+	Actor entity;
+
+	entity = Spawn(EntityBoss, Origin + vector(0.0, 0.0, 70.0));
+	if (entity)
+	{
+		entity.Velocity.z = 5.0 * 35.0;
+		// And then it records the entity's spawn location at
+		// 2F860, 2F864, 2F868
+	}
 }
 
 __states__
@@ -54,6 +69,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:43:11  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

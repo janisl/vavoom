@@ -31,10 +31,18 @@ class WeaponCrossbow : Weapon;
 //
 //==========================================================================
 
-void A_FireElectricArrow(void)
+void A_FireElectricArrow()
 {
+	float savedangle;
+
+	savedangle = Player.MO.Angles.yaw;
+	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
 	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Player.MO.MissileState);
 	PlayerPawn(Player.MO).SpawnPlayerMissile(ElectricArrow);
+	Player.MO.Angles.yaw = savedangle;
+	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -43,18 +51,36 @@ void A_FireElectricArrow(void)
 //
 //==========================================================================
 
-void A_FirePoisonArrow(void)
+void A_FirePoisonArrow()
 {
-	Player.Ammo[Ammo]--;//FIXME
+	float savedangle;
+
+	savedangle = Player.MO.Angles.yaw;
+	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
+	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Player.MO.MissileState);
 	PlayerPawn(Player.MO).SpawnPlayerMissile(PoisonArrow);
+	Player.MO.Angles.yaw = savedangle;
+	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
 }
 
 __states__
 {
-	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW) { A_WeaponReady(); }
-	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN) { A_Lower(); }
+	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW_2)
+	{
+		SetPsprite(Player, ps_flash, S_XBOWFLASH1);
+		A_WeaponReady();
+	}
+	S_XBOW_2('XBOW', 0, 1.0 / 35.0, S_XBOW_2) { A_WeaponReady(); }
+	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2)
+	{
+		SetPsprite(Player, ps_flash, S_NULL);
+		A_Lower();
+	}
+	S_XBOWDOWN_2('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) { A_Lower(); }
 	S_XBOWUP('XBOW', 0, 1.0 / 35.0, S_XBOWUP) { A_Raise(); }
-	S_XBOW1('XBOW', 0, 3.0 / 35.0, S_XBOW2) { A_7(); }
+	S_XBOW1('XBOW', 0, 3.0 / 35.0, S_XBOW2) { A_ClearFlash(); }
 	S_XBOW2('XBOW', 1, 6.0 / 35.0, S_XBOW3) { A_FireElectricArrow(); }
 	S_XBOW3('XBOW', 2, 4.0 / 35.0, S_XBOW4) { }
 	S_XBOW4('XBOW', 3, 6.0 / 35.0, S_XBOW5) { }
@@ -84,11 +110,26 @@ defaultproperties
 	ReadyState = S_XBOW;
 	AttackState = S_XBOW1;
 	FlashState = S_LIGHTDONE;
+	bRaiseNoiseAlert = false;
+}
+
+class WeaponCrossbow2 : WeaponCrossbow;
+
+defaultproperties
+{
+	Ammo = am_poison_arrow;
+	UpState = S_XBOWPOISONUP;
+	DownState = S_XBOWPOISONDOWN;
+	ReadyState = S_XBOWPOISON;
+	AttackState = S_XBOWPOISON1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/01/30 17:39:34  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.2  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

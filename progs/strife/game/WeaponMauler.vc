@@ -25,18 +25,62 @@
 
 class WeaponMauler : Weapon;
 
-void A_FireBlaster1(void)
+//==========================================================================
+//
+//	A_FireBlaster1
+//
+//==========================================================================
+
+void A_FireBlaster1()
 {
+	int i;
+	int damage;
+	TAVec rot;
+	TVec aimDir;
+	TVec dir;
+
+	Player.MO.PlaySound('TemplarAttack', CHAN_WEAPON);
+
+	Player.Ammo[Ammo] -= 20;
+
+	aimDir = Aim(Player.MO, 16.0 * 64.0);
+	for (i = 0; i < 20; i++)
+	{
+		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
+		rot.yaw = (Random() - Random()) * 45.0 / 4.0;
+		rot.roll = 0.0;
+		dir = RotateDirectionVector(aimDir, rot);
+		damage = 5 * (P_Random() % 3 + 1);
+		LineAttack(Player.MO, dir, MAULERRANGE, damage);
+	}
 }
 
-void A_FireBlasterSound(void)
+//==========================================================================
+//
+//	A_FireBlasterSound
+//
+//==========================================================================
+
+void A_FireBlasterSound()
 {
+	Player.MO.PlaySound('MaulerTorpedoOn', CHAN_WEAPON);
+	SX += (Random() - Random()) * 4.0;
+	SY += (Random() - Random()) * 4.0;
 }
 
-void A_FireBlaster2(void)
+//==========================================================================
+//
+//	A_FireBlaster2
+//
+//==========================================================================
+
+void A_FireBlaster2()
 {
-	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Player.MO.MissileState);
+	Player.Ammo[Ammo] -= 30;
 	PlayerPawn(Player.MO).SpawnPlayerMissile(MaulerTorpedoMissile);
+	Player.MO.Damage(Player.MO, none, 20);
+	Player.MO.Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0 * 35.0);
 }
 
 __states__
@@ -79,9 +123,22 @@ defaultproperties
 	AttackState = S_BLASTER1;
 }
 
+class WeaponMauler2 : WeaponMauler;
+
+defaultproperties
+{
+	UpState = S_BLASTERTORPEDOUP;
+	DownState = S_BLASTERTORPEDODOWN;
+	ReadyState = S_BLASTERTORPEDO;
+	AttackState = S_BLASTERTORPEDO1;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/01/30 17:40:09  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.2  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

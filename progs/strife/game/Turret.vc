@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Turret:Pawn
+class Turret : Pawn
 	__mobjinfo__(27);
 
 __states__
@@ -48,7 +48,7 @@ defaultproperties
 	Height = 16.0;
 	Mass = 10000000.0;
 	bSolid = false;
-	bAmbush = true;
+	bStanding = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bNoBlood = true;
@@ -63,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:47:06  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponSigil:Weapon;
+class WeaponSigil : Weapon;
 
 void A_FireSigil1(void)
 {
@@ -53,7 +53,7 @@ __states__
 	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_FireSigil1(); }
 	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_FireSigil2(); }
 	S_SIGIL3('SIGH', 0, 10.0 / 35.0, S_SIGIL4) { A_FireSigil3(); }
-	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_7(); }
+	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL) { A_ClearFlash(); }
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
 	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
@@ -66,12 +66,15 @@ defaultproperties
 	DownState = S_SIGILDOWN;
 	ReadyState = S_SIGIL;
 	AttackState = S_SIGIL1;
-	HoldAttackState = S_SIGILFLASH1;
+	FlashState = S_SIGILFLASH1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/01/30 17:40:09  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

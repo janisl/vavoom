@@ -31,9 +31,10 @@ class WeaponAssaultGun : Weapon;
 //
 //==========================================================================
 
-void A_FireRiffle(void)
+void A_FireRiffle()
 {
 	TVec dir;
+	TAVec angles;
 	int damage;
 
 	Player.MO.PlaySound('AssaultGunFire', CHAN_WEAPON);
@@ -47,14 +48,12 @@ void A_FireRiffle(void)
 	dir = Aim(Player.MO, 16.0 * 64.0);
 	if (Player.Refire)
 	{
-		TAVec angles;
-
 		VectorAngles(&dir, &angles);
 		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 8.0);
+			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player.Accuracy * 5 / 100)));
 		AngleVector(&angles, &dir);
 	}
-	damage = 5 * (P_Random() % 3 + 1);
+	damage = 4 * (P_Random() % 3 + 1);
 	LineAttack(Player.MO, dir, MISSILERANGE, damage);
 	//Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -84,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/01/30 17:39:34  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.2  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

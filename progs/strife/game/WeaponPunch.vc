@@ -25,19 +25,21 @@
 
 class WeaponPunch : Weapon;
 
-//===========================================================================
+//==========================================================================
 //
-//  A_Punch
+//	A_Punch
 //
-//===========================================================================
+//==========================================================================
 
-void A_Punch(void)
+void A_Punch()
 {
+	int power;
 	int damage;
 	TAVec angles;
 	TVec dir;
 
-	damage = (P_Random() % 10 + 1) << 1;
+	power = Player.Stamina / 10;
+	damage = (P_Random() % (power + 8)) * (power + 2);
 
 	if (Player.Powers[pw_strength])
 		damage *= 10;
@@ -45,8 +47,8 @@ void A_Punch(void)
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
+	dir = AimLineAttack(Player.MO, angles, PUNCHRANGE);
+	LineAttack(Player.MO, dir, PUNCHRANGE, damage);
 
 	// turn to face target
 	if (linetarget)
@@ -63,6 +65,8 @@ void A_Punch(void)
 			atan2(linetarget.Origin.y - Player.MO.Origin.y,
 			linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
+		Player.MO.bJustAttacked = true;
+		// Sys1eae0 (actor->player, linetarget);
 	}
 	else
 	{
@@ -96,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2004/01/30 17:40:09  dj_jl
+//  Implemented many action functions.
+//
 //  Revision 1.4  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //
