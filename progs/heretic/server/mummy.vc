@@ -34,14 +34,14 @@ class MummySoul:Effect
 
 __states__
 {
-	S_MUMMY_SOUL1('MUMM', 16, 'monsters/mummysl.md2', 0, 5.0 / 35.0, S_MUMMY_SOUL2) { }
-	S_MUMMY_SOUL2('MUMM', 17, 'monsters/mummysl.md2', 1, 5.0 / 35.0, S_MUMMY_SOUL3) { }
-	S_MUMMY_SOUL3('MUMM', 18, 'monsters/mummysl.md2', 2, 5.0 / 35.0, S_MUMMY_SOUL4) { }
-	S_MUMMY_SOUL4('MUMM', 19, 'monsters/mummysl.md2', 3, 5.0 / 35.0, S_MUMMY_SOUL5) { }
-	S_MUMMY_SOUL5('MUMM', 19, 'monsters/mummysl.md2', 3, 4.0 / 35.0, S_MUMMY_SOUL6) { }
-	S_MUMMY_SOUL6('MUMM', 20, 'monsters/mummysl.md2', 4, 5.0 / 35.0, S_MUMMY_SOUL7) { }
-	S_MUMMY_SOUL7('MUMM', 21, 'monsters/mummysl.md2', 5, 5.0 / 35.0, S_MUMMY_SOUL8) { }
-	S_MUMMY_SOUL8('MUMM', 22, 'monsters/mummysl.md2', 6, 5.0 / 35.0, S_NULL) { }
+	S_MUMMY_SOUL1('MUMM', 16, 'monsters/mumsoul.md2', 0, 5.0 / 35.0, S_MUMMY_SOUL2) { }
+	S_MUMMY_SOUL2('MUMM', 17, 'monsters/mumsoul.md2', 1, 5.0 / 35.0, S_MUMMY_SOUL3) { }
+	S_MUMMY_SOUL3('MUMM', 18, 'monsters/mumsoul.md2', 2, 5.0 / 35.0, S_MUMMY_SOUL4) { }
+	S_MUMMY_SOUL4('MUMM', 19, 'monsters/mumsoul.md2', 3, 5.0 / 35.0, S_MUMMY_SOUL5) { }
+	S_MUMMY_SOUL5('MUMM', 19, 'monsters/mumsoul.md2', 3, 4.0 / 35.0, S_MUMMY_SOUL6) { }
+	S_MUMMY_SOUL6('MUMM', 20, 'monsters/mumsoul.md2', 4, 5.0 / 35.0, S_MUMMY_SOUL7) { }
+	S_MUMMY_SOUL7('MUMM', 21, 'monsters/mumsoul.md2', 5, 5.0 / 35.0, S_MUMMY_SOUL8) { }
+	S_MUMMY_SOUL8('MUMM', 22, 'monsters/mumsoul.md2', 6, 5.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
@@ -320,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/07/20 14:45:44  dj_jl
+//  Fixed soul model name.
+//
 //  Revision 1.23  2002/07/13 07:58:51  dj_jl
 //  Added new models, updated existing ones.
 //
