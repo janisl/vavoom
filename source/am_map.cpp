@@ -86,16 +86,6 @@
 #define CXMTOF(x)		(f_x + MTOF((x) - m_x))
 #define CYMTOF(y)		(f_y + (f_h - MTOF((y) - m_y)))
 
-// Automap colors
-#define WALLCOLORS			REDS
-#define TSWALLCOLORS		GRAYS
-#define FDWALLCOLORS		BROWNS
-#define CDWALLCOLORS		YELLOWS
-#define THINGCOLORS			GREENS
-#define SECRETWALLCOLORS	WALLCOLORS
-#define TELEPORTCOLORS		(Game < Heretic ? WALLCOLORS + 8 : WALLCOLORS)
-#define GRIDCOLORS			BLUES
-
 // the following is crap
 #define LINE_NEVERSEE		ML_DONTDRAW
 
@@ -143,22 +133,26 @@ int 			am_cheating = 0;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-// For use if I do walls with outsides/insides
-static int		REDS;
-static int		BLUES;
-static int		GREENS;
-static int		GRAYS;
-static int		BROWNS;
-static int		YELLOWS;
-static int		BLACK;
-static int		WHITE;
-static int		PARCH;
-static int		BLOODRED;
-static int		BLUEKEY;
-static int		YELLOWKEY;
-static int		GREENKEY;
+// Automap colors
+static dword	WallColor;
+static dword	TSWallColor;
+static dword	FDWallColor;
+static dword	CDWallColor;
+static dword	SecretWallColor;
+static dword	PowerWallColor;
+static dword	GridColor;
+static dword	ThingColor;
+static dword	PlayerColor;
 
-static int 		their_colors[MAXPLAYERS];
+static TCvarS	am_color_wall("am_color_wall", "d0 b0 85", CVAR_ARCHIVE);
+static TCvarS	am_color_tswall("am_color_tswall", "61 64 5f", CVAR_ARCHIVE);
+static TCvarS	am_color_fdwall("am_color_fdwall", "a0 6c 40", CVAR_ARCHIVE);
+static TCvarS	am_color_cdwall("am_color_cdwall", "94 94 ac", CVAR_ARCHIVE);
+static TCvarS	am_color_secretwall("am_color_secretwall", "00 00 00", CVAR_ARCHIVE);
+static TCvarS	am_color_power("am_color_power", "7d 83 79", CVAR_ARCHIVE);
+static TCvarS	am_color_grid("am_color_grid", "4d 9d 42", CVAR_ARCHIVE);
+static TCvarS	am_color_thing("am_color_thing", "2d 2d 2d", CVAR_ARCHIVE);
+static TCvarS	am_color_player("am_color_player", "e6 e6 e6", CVAR_ARCHIVE);
 
 static int 		grid = 0;
 
@@ -234,26 +228,6 @@ static short	mapxstart=0; //x-value for the bitmap.
 
 static boolean	stopped = true;
 
-static byte antialias0[NUMALIAS][8] =
-{
-	{176, 178, 180, 182, 184, 186, 188, 190},
-	{64, 66, 68, 70, 72, 74, 76, 78},
-	{231, 161, 162, 163, 164, 165, 166, 167}
-};
-static byte antialias1[NUMALIAS][8] =
-{
-	{96, 97, 98, 99, 100, 101, 102, 103},
-	{110, 109, 108, 107, 106, 105, 104, 103},
-	{75, 76, 77, 78, 79, 80, 81, 103}
-};
-static byte antialias2[NUMALIAS][8] =
-{
-	{ 83, 84, 85, 86, 87, 88, 89, 90 },
-	{ 96, 96, 95, 94, 93, 92, 91, 90 },
-	{ 107, 108, 109, 110, 111, 112, 89, 90 }
-};
-static byte antialias[NUMALIAS][8];
-
 //
 //	The vector graphics for the automap.
 //
@@ -291,8 +265,7 @@ static mline_t player_arrow2[] =
 
 #undef R
 
-static mline_t	*player_arrow;
-static int		NUMPLYRLINES;
+static TCvarI	am_player_arrow("am_player_arrow", "1", CVAR_ARCHIVE);
 
 #define R	1.0
 static mline_t thintriangle_guy[] =
@@ -304,7 +277,7 @@ static mline_t thintriangle_guy[] =
 #undef R
 #define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy) / sizeof(mline_t))
 
-static TCvar		ShowKills("ShowKills", "0");
+static TCvar	ShowKills("ShowKills", "0");
 
 // CODE --------------------------------------------------------------------
 
@@ -316,86 +289,6 @@ static TCvar		ShowKills("ShowKills", "0");
 
 void AM_Init(void)
 {
-    switch (Game)
-    {
-     case Doom:
-     case Doom2:
-		REDS = (256 - 5 * 16);
-		BLUES = (256 - 4 * 16 + 8);
-		GREENS = (7 * 16);
-		GRAYS = (6 * 16);
-		BROWNS = (4 * 16);
-		YELLOWS = (256 - 32 + 7);
-		BLACK = 0;
-		WHITE = (256 - 47);
-
-	    their_colors[0] = GREENS;
-	    their_colors[1] = GRAYS;
-	    their_colors[2] = BROWNS;
-	    their_colors[3] = REDS;
-
-		player_arrow = player_arrow1;
-		NUMPLYRLINES = NUMPLYRLINES1;
-		memcpy(antialias, antialias0, sizeof(antialias));
-     	break;
-
-     case Heretic:
-		REDS = (12 * 8);
-		BLUES = (256 - 4 * 16 + 8);
-		GREENS = (33 * 8);
-		GRAYS = (5 * 8);
-		BROWNS = (14 * 8);
-		YELLOWS = (10 * 8);
-		BLACK = 0;
-		WHITE = (4 * 8);
-		PARCH = (13 * 8 - 1);
-		BLOODRED = 150;
-		BLUEKEY = 197;
-		YELLOWKEY = 144;
-		GREENKEY = 220;
-
-		their_colors[0] = GREENKEY;
-		their_colors[1] = YELLOWKEY;
-		their_colors[2] = BLOODRED;
-		their_colors[3] = BLUEKEY;
-
-		player_arrow = player_arrow2;
-		NUMPLYRLINES = NUMPLYRLINES2;
-		memcpy(antialias, antialias1, sizeof(antialias));
-     	break;
-
-     case Hexen:
-		REDS = 12*8;
-		BLUES = (256-4*16+8);
-		GREENS = (33*8);
-		GRAYS = (5*8);
-		BROWNS = (14*8);
-		YELLOWS = 10*8;
-		BLACK = 0;
-		WHITE = 4 * 8;
-		PARCH = 13*8-1;
-		BLOODRED = 177;
-		BLUEKEY = 157;
-		YELLOWKEY = 137;
-		GREENKEY = 198;
-
-		their_colors[0] = 157; // Blue
-		their_colors[0] = 177; // Red
-		their_colors[0] = 137; // Yellow
-		their_colors[0] = 198; // Green
-		their_colors[0] = 215; // Jade
-		their_colors[0] = 32;  // White
-		their_colors[0] = 106; // Hazel
-		their_colors[0] = 234; // Purple
-
-		player_arrow = player_arrow2;
-		NUMPLYRLINES = NUMPLYRLINES2;
-		memcpy(antialias, antialias2, sizeof(antialias));
-     	break;
-
-	 case Strife:
-		break;
-    }
 }
 
 //==========================================================================
@@ -1113,7 +1006,7 @@ static boolean AM_clipMline(mline_t* ml, fline_t* fl)
 //
 //==========================================================================
 
-static void AM_drawFline(fline_t* fl, int color)
+static void AM_drawFline(fline_t* fl, dword color)
 {
 	Drawer->DrawLine(fl->a.x, fl->a.y, color, fl->b.x, fl->b.y, color);
 }
@@ -1126,7 +1019,7 @@ static void AM_drawFline(fline_t* fl, int color)
 //
 //==========================================================================
 
-static void AM_drawMline(mline_t *ml, int color)
+static void AM_drawMline(mline_t *ml, dword color)
 {
     static fline_t fl;
 
@@ -1142,7 +1035,7 @@ static void AM_drawMline(mline_t *ml, int color)
 //
 //==========================================================================
 
-static void AM_drawGrid(int color)
+static void AM_drawGrid(dword color)
 {
 	float	x, y;
 	float	start, end;
@@ -1198,7 +1091,7 @@ static void AM_drawWalls(void)
     int 			i;
     static mline_t	l;
 
-    for (i=0; i<cl_level.numlines; i++)
+    for (i = 0; i < cl_level.numlines; i++)
     {
 		l.a.x = cl_level.lines[i].v1->x;
 		l.a.y = cl_level.lines[i].v1->y;
@@ -1210,129 +1103,34 @@ static void AM_drawWalls(void)
 				continue;
 		    if (!cl_level.lines[i].backsector)
 		    {
-				AM_drawMline(&l, WALLCOLORS);
+				AM_drawMline(&l, WallColor);
 		    }
-		    else
-		    {
-            	switch (Game)
-                {
-                 case Doom:
-                 case Doom2:
-					if (cl_level.lines[i].special == 39)
-					{
-						// teleporters
-					    AM_drawMline(&l, TELEPORTCOLORS);
-					}
-					else if (cl_level.lines[i].flags & ML_SECRET) // secret door
-					{
-					    if (am_cheating) AM_drawMline(&l, SECRETWALLCOLORS);
-					    else AM_drawMline(&l, WALLCOLORS);
-					}
-					else if (cl_level.lines[i].backsector->floor.minz
-						   != cl_level.lines[i].frontsector->floor.minz)
-					{
-					    AM_drawMline(&l, FDWALLCOLORS); // floor level change
-					}
-					else if (cl_level.lines[i].backsector->ceiling.maxz
-						   != cl_level.lines[i].frontsector->ceiling.maxz)
-					{
-					    AM_drawMline(&l, CDWALLCOLORS); // ceiling level change
-					}
-					else if (am_cheating)
-					{
-					    AM_drawMline(&l, TSWALLCOLORS);
-					}
-                    break;
-
-				 case Heretic:
-					if (cl_level.lines[i].special == 39)
-					{
-						// teleporters
-					    AM_drawMline(&l, TELEPORTCOLORS);
-					}
-					else if (cl_level.lines[i].flags & ML_SECRET) // secret door
-					{
-						if (am_cheating) AM_drawMline(&l, 0);
-						else AM_drawMline(&l, WALLCOLORS);
-					}
-					else if(cl_level.lines[i].special > 25 && cl_level.lines[i].special < 35)
-					{
-						switch(cl_level.lines[i].special)
-						{
-						 case 26:
-						 case 32:
-							AM_drawMline(&l, BLUEKEY);
-							break;
-						 case 27:
-						 case 34:
-							AM_drawMline(&l, YELLOWKEY);
-							break;
-						 case 28:
-						 case 33:
-							AM_drawMline(&l, GREENKEY);
-							break;
-						 default:
-							break;
-						}
-					}
-					else if (cl_level.lines[i].backsector->floor.minz
-						   != cl_level.lines[i].frontsector->floor.minz)
-					{
-					  AM_drawMline(&l, FDWALLCOLORS); // floor level change
-					}
-					else if (cl_level.lines[i].backsector->ceiling.maxz
-					   != cl_level.lines[i].frontsector->ceiling.maxz)
-					{
-						AM_drawMline(&l, CDWALLCOLORS); // ceiling level change
-					}
-					else if (am_cheating)
-					{
-						AM_drawMline(&l, TSWALLCOLORS);
-					}
-                    break;
-
-				 case Hexen:
-					if (cl_level.lines[i].flags & ML_SECRET) // secret door
-					{
-						if (am_cheating) AM_drawMline(&l, 0);
-						else AM_drawMline(&l, WALLCOLORS);
-					}
-					else if(cl_level.lines[i].special == 13 || cl_level.lines[i].special == 83)
-					{ // Locked door line -- all locked doors are greed
-						AM_drawMline(&l, GREENKEY);
-					}
-					else if(cl_level.lines[i].special == 70 || cl_level.lines[i].special == 71)
-					{ // intra-level teleports are blue
-						AM_drawMline(&l, BLUEKEY);
-					}
-					else if(cl_level.lines[i].special == 74 || cl_level.lines[i].special == 75)
-					{ // inter-level teleport/game-winning exit -- both are red
-						AM_drawMline(&l, BLOODRED);
-					}
-					else if (cl_level.lines[i].backsector->floor.minz
-					   != cl_level.lines[i].frontsector->floor.minz)
-					{
-						AM_drawMline(&l, FDWALLCOLORS); // floor level change
-					}
-					else if (cl_level.lines[i].backsector->ceiling.maxz
-					   != cl_level.lines[i].frontsector->ceiling.maxz)
-					{
-						AM_drawMline(&l, CDWALLCOLORS); // ceiling level change
-					}
-					else if (am_cheating)
-					{
-						AM_drawMline(&l, TSWALLCOLORS);
-					}
-                    break;
-
-				 case Strife:
-					break;
-				}
-		    }
+			else if (cl_level.lines[i].flags & ML_SECRET) // secret door
+			{
+			    if (am_cheating)
+			    	AM_drawMline(&l, SecretWallColor);
+			    else
+			    	AM_drawMline(&l, WallColor);
+			}
+			else if (cl_level.lines[i].backsector->floor.minz
+				   != cl_level.lines[i].frontsector->floor.minz)
+			{
+			    AM_drawMline(&l, FDWallColor); // floor level change
+			}
+			else if (cl_level.lines[i].backsector->ceiling.maxz
+				   != cl_level.lines[i].frontsector->ceiling.maxz)
+			{
+			    AM_drawMline(&l, CDWallColor); // ceiling level change
+			}
+			else if (am_cheating)
+			{
+			    AM_drawMline(&l, TSWallColor);
+			}
 		}
 		else if (cl.items & IT_ALL_MAP)
 		{
-		    if (!(cl_level.lines[i].flags & LINE_NEVERSEE)) AM_drawMline(&l, GRAYS+3);
+		    if (!(cl_level.lines[i].flags & LINE_NEVERSEE))
+		    	AM_drawMline(&l, PowerWallColor);
 		}
     }
 }
@@ -1361,7 +1159,7 @@ static void AM_rotate(float* x, float* y, angle_t a)
 //==========================================================================
 
 static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
-	float scale, angle_t angle, int color, float x, float y)
+	float scale, angle_t angle, dword color, float x, float y)
 {
     int		i;
     mline_t	l;
@@ -1410,6 +1208,20 @@ static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
 
 static void AM_drawPlayers(void)
 {
+	mline_t		*player_arrow;
+	int			NUMPLYRLINES;
+
+    if (am_player_arrow == 1)
+    {
+		player_arrow = player_arrow2;
+		NUMPLYRLINES = NUMPLYRLINES2;
+	}
+	else
+	{
+		player_arrow = player_arrow1;
+		NUMPLYRLINES = NUMPLYRLINES1;
+    }
+
 #ifdef FIXME
     int			i;
     player_t*	p;
@@ -1420,7 +1232,7 @@ static void AM_drawPlayers(void)
     {
 #endif
 	    AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
-	    	cl.viewangles.yaw, WHITE, cl.vieworg.x, cl.vieworg.y);
+	    	cl.viewangles.yaw, PlayerColor, cl.vieworg.x, cl.vieworg.y);
 #ifdef FIXME
 		return;
     }
@@ -1430,7 +1242,7 @@ static void AM_drawPlayers(void)
 		their_color++;
 		p = &players[i];
 
-		if ((deathmatch && !singledemo) && p != plr)
+		if (deathmatch && p != plr)
 		    continue;
 
 		if (!playeringame[i])
@@ -1460,7 +1272,7 @@ static void AM_drawPlayers(void)
 //
 //==========================================================================
 
-static void AM_drawThings(int colors)
+static void AM_drawThings(dword color)
 {
     int			i;
 
@@ -1469,7 +1281,7 @@ static void AM_drawThings(int colors)
 		if (cl_mobjs[i].in_use)
 		{
 		    AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
-				16.0, cl_mobjs[i].angles.yaw, colors, cl_mobjs[i].origin.x,
+				16.0, cl_mobjs[i].angles.yaw, color, cl_mobjs[i].origin.x,
 				cl_mobjs[i].origin.y);
 		}
 	}
@@ -1630,6 +1442,23 @@ static void AM_DrawDeathmatchStats(void)
 
 //==========================================================================
 //
+//	StringToColor
+//
+//==========================================================================
+
+static dword StringToColor(const char *str)
+{
+	int r, g, b;
+	char *p;
+
+	r = strtol(str, &p, 16) & 0xff;
+	g = strtol(p, &p, 16) & 0xff;
+	b = strtol(p, &p, 16) & 0xff;
+	return 0xff000000 | (r << 16) | (g << 8) | b;
+}
+
+//==========================================================================
+//
 //	AM_CheckVariables
 //
 //==========================================================================
@@ -1665,6 +1494,16 @@ static void AM_CheckVariables(void)
 
 		mtof_zoommul = old_mtof_zoommul;
 	}
+
+	WallColor = StringToColor(am_color_wall);
+	TSWallColor = StringToColor(am_color_tswall);
+	FDWallColor = StringToColor(am_color_fdwall);
+	CDWallColor = StringToColor(am_color_cdwall);
+	SecretWallColor = StringToColor(am_color_secretwall);
+	PowerWallColor = StringToColor(am_color_power);
+	GridColor = StringToColor(am_color_grid);
+	ThingColor = StringToColor(am_color_thing);
+	PlayerColor = StringToColor(am_color_player);
 }
 
 //==========================================================================
@@ -1681,10 +1520,10 @@ void AM_Drawer(void)
 	AM_CheckVariables();
     AM_clearFB();
 	Drawer->StartAutomap();
-	if (grid) AM_drawGrid(GRIDCOLORS);
+	if (grid) AM_drawGrid(GridColor);
     AM_drawWalls();
     AM_drawPlayers();
-    if (am_cheating == 2) AM_drawThings(THINGCOLORS);
+    if (am_cheating == 2) AM_drawThings(ThingColor);
 	Drawer->EndAutomap();
     if (use_marks) AM_drawMarks();
 	DrawWorldTimer();
@@ -1700,9 +1539,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:51:20  dj_jl
+//	RGB colors, no game dependency
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
