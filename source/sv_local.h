@@ -257,7 +257,7 @@ class VEntity : public VThinker
 	}
 	bool eventRoughCheckThing(VEntity *Other)
 	{
-		return !!svpr.Exec(GetVFunction(FIndex_SectorChanged), (int)this, (int)Other);
+		return !!svpr.Exec(GetVFunction(FIndex_RoughCheckThing), (int)this, (int)Other);
 	}
 
 	void Remove(void)
@@ -558,7 +558,7 @@ inline int SV_GetPlayerNum(player_t* player)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (player == GPlayers[i])
+		if (player == GPlayersBase[i])
 		{
 		    return i;
 		}
@@ -571,9 +571,12 @@ inline int SV_GetPlayerNum(player_t* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2003/09/24 16:42:31  dj_jl
+//	Fixed rough block checking
+//
 //	Revision 1.29  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.28  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	
