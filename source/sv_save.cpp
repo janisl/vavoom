@@ -625,7 +625,7 @@ static void UnarchiveWorld(void)
 
 static void ArchiveThinkers(void)
 {
-	thinker_t	*thinker;
+	VThinker	*thinker;
 
 	int pf_archive_thinker = svpr.FuncNumForName("ArchiveThinker");
 
@@ -641,7 +641,7 @@ static void ArchiveThinkers(void)
 
 		int size = thinker->vtable[1];
 
-		thinker_t *th = (thinker_t*)Z_Malloc(size);
+		VThinker *th = (VThinker*)Z_Malloc(size);
 		memcpy(th, thinker, size);
 
 		if (svpr.CanCast(th, cid_mobj))
@@ -681,7 +681,7 @@ static void ArchiveThinkers(void)
 
 static void UnarchiveThinkers(void)
 {
-	thinker_t	*thinker;
+	VThinker	*thinker;
 
 	AssertSegment(ASEG_THINKERS);
 
@@ -692,7 +692,7 @@ static void UnarchiveThinkers(void)
 		int cid = GET_LONG;
 
 		//  Allocate thinker and copy data
-		thinker = (thinker_t *)svpr.Spawn(cid, PU_LEVSPEC);
+		thinker = (VThinker *)svpr.Spawn(cid, PU_LEVSPEC);
 		memcpy((byte*)thinker + 4, SavePtr.b, size - 4);
 		SavePtr.b += size - 4;
 
@@ -1286,9 +1286,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/12/04 18:14:46  dj_jl
+//	Renamed thinker_t to VThinker
+//
 //	Revision 1.13  2001/11/09 18:16:10  dj_jl
 //	Fixed copying and deleting when save directory doesn't exist
-//
+//	
 //	Revision 1.12  2001/11/09 14:32:00  dj_jl
 //	Copy and delete using directory listing
 //	

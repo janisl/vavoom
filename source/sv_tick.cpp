@@ -27,7 +27,7 @@
 //**
 //**	All thinkers should be allocated by Z_Malloc so they can be operated
 //**  on uniformly. The actual structures will vary in size, but the first
-//**  element must be thinker_t.
+//**  element must be VThinker.
 //**	
 //**************************************************************************
 
@@ -80,7 +80,7 @@ void P_InitThinkers(void)
 //
 //==========================================================================
 
-void P_AddThinker(thinker_t *thinker)
+void P_AddThinker(VThinker *thinker)
 {
 	level.thinkers.prev->next = thinker;
 	thinker->next = &level.thinkers;
@@ -97,7 +97,7 @@ void P_AddThinker(thinker_t *thinker)
 //
 //==========================================================================
 
-void P_RemoveThinker(thinker_t *thinker)
+void P_RemoveThinker(VThinker *thinker)
 {
 	thinker->destroyed = true;
 }
@@ -110,7 +110,7 @@ void P_RemoveThinker(thinker_t *thinker)
 
 static void RunThinkers(void)
 {
-	thinker_t *currentthinker;
+	VThinker *currentthinker;
 
 	currentthinker = level.thinkers.next;
 	while (currentthinker != &level.thinkers)
@@ -159,9 +159,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/04 18:14:46  dj_jl
+//	Renamed thinker_t to VThinker
+//
 //	Revision 1.4  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

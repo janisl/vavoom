@@ -62,8 +62,10 @@ struct acsInfo_t
 	int 	waitValue;
 };
 
-struct acs_t : public thinker_t
+class acs_t:public VThinker
 {
+	DECLARE_CLASS(acs_t, VThinker, 0)
+public:
 	mobj_t 		*activator;
 	line_t 		*line;
 	int 		side;
@@ -191,8 +193,8 @@ int SV_TerrainType(int pic);
 //==========================================================================
 
 void P_InitThinkers(void);
-void P_AddThinker(thinker_t *thinker);
-void P_RemoveThinker(thinker_t *thinker);
+void P_AddThinker(VThinker *thinker);
+void P_RemoveThinker(VThinker *thinker);
 void P_Ticker(void);
 
 extern int 			TimerGame; // tic countdown for deathmatch
@@ -251,6 +253,8 @@ void SV_SetCeilPic(int i, int texture);
 void SV_SetLineTexture(int side, int position, int texture);
 void SV_SetLineTransluc(line_t *line, int trans);
 const char *SV_GetMapName(int num);
+int SV_FindModel(const char *name);
+int SV_FindSkin(const char *name);
 
 void SV_ReadMove(void);
 
@@ -303,7 +307,7 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return PointInSubsector(level, x, y);
 }
 
-inline bool SV_CanCast(thinker_t *th, int cid)
+inline bool SV_CanCast(VThinker *th, int cid)
 {
 	return !th->destroyed && svpr.CanCast(th, cid);
 }
@@ -313,9 +317,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/04 18:14:46  dj_jl
+//	Renamed thinker_t to VThinker
+//
 //	Revision 1.12  2001/10/27 07:49:29  dj_jl
 //	Fixed map block stuff
-//
+//	
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

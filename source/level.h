@@ -52,12 +52,12 @@
 //
 //	Doubly linked list of actors.
 //
-class thinker_t:public VObject
+class VThinker:public VObject
 {
-	DECLARE_CLASS(thinker_t, VObject, 0)
+	DECLARE_CLASS(VThinker, VObject, 0)
 public:
-	thinker_t	*prev;
-	thinker_t	*next;
+	VThinker	*prev;
+	VThinker	*next;
 	boolean		destroyed;
 };
 
@@ -439,8 +439,10 @@ struct mthing_t
 struct player_t;
 
 // Map Object definition.
-struct mobj_t : public thinker_t
+class mobj_t:public VThinker
 {
+	DECLARE_CLASS(mobj_t, VThinker, 0)
+public:
 	// Info for drawing: position.
 	TVec			origin;
 
@@ -593,7 +595,7 @@ struct sv_level_t:base_level_t
 	int			numdeathmatchstarts;
 	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
  
-	thinker_t	thinkers;// both the head and tail of the thinker list
+	VThinker	thinkers;// both the head and tail of the thinker list
 };
 
 struct cl_level_t:base_level_t
@@ -618,9 +620,12 @@ extern cl_level_t		cl_level;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/04 18:14:46  dj_jl
+//	Renamed thinker_t to VThinker
+//
 //	Revision 1.12  2001/12/01 17:43:12  dj_jl
 //	Renamed ClassBase to VObject
-//
+//	
 //	Revision 1.11  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	
