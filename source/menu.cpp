@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -177,9 +177,12 @@ boolean MN_Active(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.9  2001/12/27 17:36:47  dj_jl
 //	Some speedup
-//
+//	
 //	Revision 1.8  2001/10/09 17:25:02  dj_jl
 //	Finished slist moving stuff
 //	

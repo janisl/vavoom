@@ -69,10 +69,6 @@ typedef struct vertex_s
   // set of wall_tips
   wall_tip_t *tip_set;
 
-  // non-zero if this vertex is part of a polyobj.  Only valid during
-  // the polyobj detection phase.
-  int polyobj;
-
   // contains a duplicate vertex, needed when both normal and V2 GL
   // nodes are being built at the same time (this is the vertex used
   // for the normal segs).  Normally NULL.  Note: the wall tips on
@@ -181,9 +177,6 @@ typedef struct linedef_s
   // Hexen support
   int specials[5];
 
-  // part of a hexen polyobj
-  int polyobj;
- 
   // linedef index.  Always valid after loading & pruning of zero
   // length lines has occurred.
   int index;

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1141,9 +1141,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.11  2001/10/27 07:46:14  dj_jl
 //	Fixed sprite rotations
-//
+//	
 //	Revision 1.10  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

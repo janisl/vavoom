@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -49,9 +49,12 @@ extern ostream			cond;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/08/15 17:26:35  dj_jl
 //	Made console not active when closing
-//
+//	
 //	Revision 1.4  2001/08/07 16:49:26  dj_jl
 //	Added C_Active
 //	

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1668,9 +1668,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.16  2002/01/04 18:22:13  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.15  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	

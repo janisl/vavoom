@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -2890,9 +2890,12 @@ void MarkSpecialWeaponStates(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/07 12:30:06  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.7  2001/12/12 19:20:31  dj_jl
 //	States using methods
-//
+//	
 //	Revision 1.6  2001/11/02 18:36:59  dj_jl
 //	no message
 //	

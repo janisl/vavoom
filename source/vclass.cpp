@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -78,9 +78,12 @@ VClass *VClass::FindClass(const char *AName)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.1  2001/12/27 17:35:41  dj_jl
 //	Split VClass in seperate module
-//
+//	
 //	Revision 1.1  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
 //	

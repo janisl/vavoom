@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -54,8 +54,8 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-//#define PARANOID
-//#define DEVELOPER
+#define PARANOID
+#define DEVELOPER
 #define DO_GUARD
 
 #define VERSION_MAJOR	1
@@ -119,9 +119,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.15  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
-//
+//	
 //	Revision 1.14  2001/12/27 17:41:09  dj_jl
 //	Switched to release
 //	

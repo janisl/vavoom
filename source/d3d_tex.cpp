@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1218,9 +1218,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.15  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
-//
+//	
 //	Revision 1.14  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
 //	

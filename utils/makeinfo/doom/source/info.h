@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1491,9 +1491,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/01/07 12:30:05  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -118,7 +118,7 @@ void WriteHeader(FILE *f)
 	fprintf(f, "//**\n");
 	fprintf(f, "//**\t$""Id:$\n");
 	fprintf(f, "//**\n");
-	fprintf(f, "//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý\n");
+	fprintf(f, "//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý\n");
 	fprintf(f, "//**\n");
 	fprintf(f, "//**	This program is free software; you can redistribute it and/or\n");
 	fprintf(f, "//**  modify it under the terms of the GNU General Public License\n");
@@ -737,9 +737,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/01/07 12:30:05  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.11  2001/12/27 17:45:17  dj_jl
 //	Removed spawnhealth
-//
+//	
 //	Revision 1.10  2001/12/12 19:20:30  dj_jl
 //	States using methods
 //	

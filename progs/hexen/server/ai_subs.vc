@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -722,6 +722,9 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/07 12:25:57  dj_jl
+//  Changed copyright year
+//
 //  Revision 1.6  2001/12/27 17:52:23  dj_jl
 //  Removed Entity property type, replaced with Object property Class
 //

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -453,9 +453,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.7  2001/09/20 16:22:51  dj_jl
 //	Removed workarounds for Allegro bugs that are now fixed
-//
+//	
 //	Revision 1.6  2001/08/23 17:46:18  dj_jl
 //	Better integrity with Allegro, fixed crashes on exit, mouse
 //	

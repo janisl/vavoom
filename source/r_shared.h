@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -193,9 +193,12 @@ extern byte				gammatable[5][256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.13  2001/12/27 17:36:47  dj_jl
 //	Some speedup
-//
+//	
 //	Revision 1.12  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
 //	

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -231,9 +231,12 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.4  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
 //	

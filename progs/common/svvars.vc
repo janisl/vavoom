@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -44,6 +44,9 @@ float frametime = 1.0 / 35.0;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/07 12:19:56  dj_jl
+//  Changed copyright year
+//
 //  Revision 1.5  2001/10/08 17:23:15  dj_jl
 //  Different client and server level structures
 //

@@ -465,6 +465,9 @@ void GetLinedefsHexen(void)
     for (j=0; j < 5; j++)
       line->specials[j] = UINT8(raw->specials[j]);
 
+    // -JL- Added missing twosided flag handling that caused a broken reject
+    line->two_sided = (line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
+
     line->right = (SINT16(raw->sidedef1) < 0) ? NULL :
         LookupSidedef(SINT16(raw->sidedef1));
 
@@ -486,17 +489,6 @@ void GetLinedefsHexen(void)
     }
 
     line->index = i;
-
-    // handle polyobj lines
-    if (line->type == HEXTYPE_POLY_START)
-    {
-      line->polyobj = 1;
-      start->polyobj = end->polyobj = 1;
-    }
-    else if (line->type == HEXTYPE_POLY_EXPLICIT)
-    {
-      line->polyobj = 1;
-    }
   }
 }
 
@@ -630,8 +622,38 @@ void FindPolyobjSectors(void)
 {
   int i, count=-1;
   raw_hexen_thing_t *raw;
-  lump_t *lump = FindLevelLump("THINGS");
+  lump_t *lump;
+  int found;
+  int hexen_style;
 
+  // -JL- There's a conflict between Hexen polyobj thing types and Doom thing
+  //      types. In Doom type 3001 is for Imp and 3002 for Demon. To solve
+  //      this problem, first we are going through all lines to see if the
+  //      level has any polyobjs. If found, we also must detect wat polyobj
+  //      thing types are used - Hexen ones or ZDoom ones. That's why we
+  //      are going through all things searching for ZDoom polyobj thing
+  //      types. If any found, we assume that ZDoom polyobj thing types are
+  //      used, otherwise Hexen polyobj thing types are used.
+
+  // -JL- First go through all lines to see if level contains any polyobjs
+  found = FALSE;
+  for (i = 0; i < num_linedefs; i++)
+  {
+    linedef_t *L = linedefs[i];
+
+    if (L->type == HEXTYPE_POLY_START || L->type == HEXTYPE_POLY_EXPLICIT)
+    {
+      found = TRUE;
+      break;
+    }
+  }
+  if (!found)
+  {
+    // -JL- No polyobjs in this level
+    return;
+  }
+
+  lump = FindLevelLump("THINGS");
   if (lump)
     count = lump->length / sizeof(raw_hexen_thing_t);
 
@@ -643,6 +665,21 @@ void FindPolyobjSectors(void)
 
   raw = (raw_hexen_thing_t*) lump->data;
 
+  // -JL- Detect what polyobj thing types are used - Hexen ones or ZDoom ones
+  hexen_style = TRUE;
+  for (i = 0; i < count; i++, raw++)
+  {
+    int type = UINT16(raw->type);
+
+    // not a polyobj start spot
+    if (type == ZDOOM_PO_SPAWN_TYPE && type != ZDOOM_PO_SPAWNCRUSH_TYPE)
+    {
+      // -JL- A ZDoom style polyobj thing found
+      hexen_style = FALSE;
+      break;
+    }
+  }
+
   for (i = 0; i < count; i++, raw++)
   {
     float_g x = (float_g) SINT16(raw->x);
@@ -650,9 +687,20 @@ void FindPolyobjSectors(void)
 
     int type = UINT16(raw->type);
 
-    // not a polyobj start spot
-    if (type != PO_SPAWN_TYPE && type != PO_SPAWNCRUSH_TYPE)
-      continue;
+    if (hexen_style)
+    {
+      // -JL- Hexen style polyobj things
+      // not a polyobj start spot
+      if (type != PO_SPAWN_TYPE && type != PO_SPAWNCRUSH_TYPE)
+        continue;
+    }
+    else
+    {
+      // -JL- ZDoom style polyobj things
+      // not a polyobj start spot
+      if (type != ZDOOM_PO_SPAWN_TYPE && type != ZDOOM_PO_SPAWNCRUSH_TYPE)
+        continue;
+    }
 
     #if DEBUG_POLYOBJ
     PrintDebug("Thing %d at (%1.0f,%1.0f) is a polyobj spawner.\n",
@@ -756,8 +804,6 @@ static void DetectDuplicateVertices(void)
         B->equiv = A->equiv;
       else
         B->equiv = A;
-
-      B->equiv->polyobj |= B->polyobj;
     }
   }
 
@@ -1262,47 +1308,6 @@ int VertexCheckOpen(vertex_t *vert, float_g dx, float_g dy,
   return FALSE;
 }
 
-static void GroupPolyobjLinedefs(void)
-{
-  int count;
-  int i;
-
-  DisplayTicker();
-
-  do
-  {
-    count = 0;
-
-    for (i=0; i < num_linedefs; i++)
-    {
-      linedef_t *line = linedefs[i];
-
-      if (line->polyobj)
-        continue;
-      
-      if (line->start->polyobj || line->end->polyobj)
-      {
-        line->polyobj = 1;
-        line->start->polyobj = 1;
-        line->end->polyobj = 1;
-
-        count++;
-      }
-    }
-  } while (count > 0);
-
-  #if DEBUG_POLYOBJ
-  PrintDebug("\n");
-  for (i=0; i < num_linedefs; i++)
-  {
-    linedef_t *line = linedefs[i];
-
-    if (line->polyobj)
-      PrintDebug("Linedef #%d belongs to a polyobj\n", i);
-  }
-  #endif
-}
-
 
 /* ----- writing routines ------------------------------ */
 
@@ -1789,8 +1794,6 @@ void LoadLevel(void)
 
   if (doing_hexen)
   {
-    GroupPolyobjLinedefs();
-
     // -JL- Find sectors containing polyobjs
     FindPolyobjSectors();
   }
@@ -1855,10 +1858,8 @@ void SaveLevel(node_t *root_node)
     PutSegs();
     PutSubsecs("SSECTORS", FALSE);
     PutNodes("NODES", FALSE, root_node);
-  }
 
-  if (!cur_info->gwa_mode)
-  {
+    // -JL- Don't touch blockmap and reject if not doing normal nodes
     PutBlockmap();
 
     if (!cur_info->no_reject || !FindLevelLump("REJECT"))

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -89,9 +89,12 @@ TCRC::operator word(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.4  2001/08/21 17:48:15  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

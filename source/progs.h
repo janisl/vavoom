@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -160,9 +160,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.7  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.6  2001/12/01 17:43:13  dj_jl
 //	Renamed ClassBase to VObject
 //	

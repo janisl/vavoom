@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2001 J306nis Legzdi267375
+//**    Copyright (C) 1999-2002 J306nis Legzdi267375
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -267,7 +267,10 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.1  2002/01/03 18:39:42  dj_jl
 //	Added SDL port
-//
+//	
 //**************************************************************************

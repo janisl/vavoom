@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -451,9 +451,12 @@ void D_AliasClipTriangle(mtriangle_t *ptri)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/08/15 17:12:23  dj_jl
 //	Optimized model drawing
-//
+//	
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
 //	

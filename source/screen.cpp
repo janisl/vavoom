@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -691,9 +691,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.14  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
-//
+//	
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

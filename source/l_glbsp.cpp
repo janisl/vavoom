@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -343,9 +343,12 @@ COMMAND(glBSP)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.3  2001/09/20 16:23:40  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/09/14 16:52:14  dj_jl
 //	Added dynamic build of GWA file
 //	

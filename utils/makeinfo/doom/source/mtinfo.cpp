@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -3980,9 +3980,12 @@ void MarkSpecialWeaponStates(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:30:05  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/12/12 19:20:31  dj_jl
 //	States using methods
-//
+//	
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
 //	

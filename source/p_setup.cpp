@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1221,6 +1221,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/07 12:16:43  dj_jl
+//  Changed copyright year
+//
 //  Revision 1.14  2001/12/18 19:08:12  dj_jl
 //  Beautification
 //

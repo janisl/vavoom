@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1017,9 +1017,12 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.8  2001/12/18 19:06:36  dj_jl
 //	Made TCvar a pure C++ class
-//
+//	
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

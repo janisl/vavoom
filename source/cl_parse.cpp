@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1025,9 +1025,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.19  2001/12/27 17:36:47  dj_jl
 //	Some speedup
-//
+//	
 //	Revision 1.18  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

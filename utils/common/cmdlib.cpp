@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -384,9 +384,12 @@ int LoadFile(const char *name, void **bufferptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/07 12:30:04  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.6  2001/12/27 17:42:07  dj_jl
 //	Added FixupPath
-//
+//	
 //	Revision 1.5  2001/12/12 19:18:07  dj_jl
 //	Added Realloc
 //	

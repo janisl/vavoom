@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -75,9 +75,12 @@ int P_GetCDTitleTrack(void);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.2  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.1  2001/10/08 17:30:23  dj_jl
 //	Renamed to mapinfo.*
 //	

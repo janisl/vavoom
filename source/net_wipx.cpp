@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -524,9 +524,12 @@ int WIPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
-//
+//	
 //	Revision 1.4  2001/10/09 17:28:12  dj_jl
 //	no message
 //	

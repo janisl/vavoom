@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -654,9 +654,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.15  2001/12/27 17:36:47  dj_jl
 //	Some speedup
-//
+//	
 //	Revision 1.14  2001/11/09 14:22:09  dj_jl
 //	R_InitTexture now called from Host_init
 //	

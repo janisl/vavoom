@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -664,9 +664,12 @@ int IN_TranslateKey(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.8  2001/11/09 14:31:18  dj_jl
 //	Moved here shift-key table
-//
+//	
 //	Revision 1.7  2001/10/09 17:22:44  dj_jl
 //	Removed message box responder
 //	

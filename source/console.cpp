@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -811,9 +811,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/07 12:16:41  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.13  2001/12/28 16:27:30  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.12  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
 //	

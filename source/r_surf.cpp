@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1746,9 +1746,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.6  2001/12/01 17:51:46  dj_jl
 //	Little changes to compile with MSVC
-//
+//	
 //	Revision 1.5  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	

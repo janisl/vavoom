@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1001,9 +1001,12 @@ state_t	states[NUMDOOMSTATES] = {
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/07 12:30:05  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.6  2001/09/20 16:33:14  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.5  2001/08/07 16:39:28  dj_jl
 //	Changed player model path
 //

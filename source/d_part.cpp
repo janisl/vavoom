@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -761,9 +761,12 @@ void TSoftwareDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.5  2001/12/18 19:01:34  dj_jl
 //	Changes for MSVC asm
-//
+//	
 //	Revision 1.4  2001/11/09 14:28:58  dj_jl
 //	Skip too translucent particles
 //	

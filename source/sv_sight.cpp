@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -487,9 +487,12 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/07 12:16:43  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.6  2002/01/04 18:21:48  dj_jl
 //	A little protection against crashes
-//
+//	
 //	Revision 1.5  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	

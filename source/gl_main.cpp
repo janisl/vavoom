@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -463,10 +463,13 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/01/07 12:16:42  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.16  2001/12/01 17:47:23  dj_jl
 //	Forced GL_POLYGON_SMOOTH to be disabled (possibly this caused those white
 //	dots around polygons)
-//
+//	
 //	Revision 1.15  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

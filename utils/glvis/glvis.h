@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -85,9 +85,12 @@ class TGLVis
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/07 12:30:05  dj_jl
+//	Changed copyright year
+//
 //	Revision 1.6  2001/10/18 17:41:47  dj_jl
 //	Added reject building
-//
+//	
 //	Revision 1.5  2001/09/20 16:38:05  dj_jl
 //	Moved TGLVis out of namespace
 //	
