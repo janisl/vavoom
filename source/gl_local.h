@@ -48,7 +48,7 @@
 
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
-#define NUM_BLOCK_SURFS				16
+#define NUM_BLOCK_SURFS				32
 #define NUM_CACHE_BLOCKS			4000
 
 // TYPES -------------------------------------------------------------------
@@ -293,9 +293,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/28 17:56:52  dj_jl
+//	Increased lightmap texture count.
+//
 //	Revision 1.19  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.18  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	

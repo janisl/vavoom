@@ -33,6 +33,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "winlocal.h"
+#include "gamedefs.h"
 #if 1
 #define D3D_OVERLOADS
 #include <d3d.h>
@@ -40,7 +41,6 @@
 #include <d3d8.h>
 #include <dx7todx8.h>
 #endif
-#include "gamedefs.h"
 #include "cl_local.h"
 #include "r_shared.h"
 
@@ -51,7 +51,7 @@
 
 #define BLOCK_WIDTH					128
 #define BLOCK_HEIGHT				128
-#define NUM_BLOCK_SURFS				16
+#define NUM_BLOCK_SURFS				32
 #define NUM_CACHE_BLOCKS			4000
 
 // TYPES -------------------------------------------------------------------
@@ -436,9 +436,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/03/28 17:56:52  dj_jl
+//	Increased lightmap texture count.
+//
 //	Revision 1.19  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.18  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
 //	
