@@ -25,6 +25,7 @@
 
 class Entity:MapObject
 {
+	name SpriteName;
 	float time;	// state tic counter
 	int statenum;
 	int nextstate;
@@ -33,6 +34,8 @@ class Entity:MapObject
 	boolean bNoPassMobj;	// Disable z block checking.  If on,
 							// this flag will prevent the mobj
 							// from passing over/under other mobjs.
+	boolean bCheckLineBlocking;
+	boolean bCheckLineBlockMonsters;
 
 //==========================================================================
 //
@@ -59,6 +62,7 @@ boolean SetState(int state)
 		st = &states[state];
 		time = st->time;
 		sprite = st->sprite;
+		SpriteName = sprite_names[st->sprite];
 		frame = st->frame;
 		if (!fixed_model)
 			model_index = st->model_index;
@@ -104,6 +108,7 @@ boolean SetStateNF(int state)
 		st = &states[state];
 		time = st->time;
 		sprite = st->sprite;
+		SpriteName = sprite_names[st->sprite];
 		frame = st->frame;
 		if (!fixed_model)
 			model_index = st->model_index;
@@ -233,14 +238,13 @@ boolean PIT_CheckLine(line_t * ld)
 		return false;
 	}
 
-	if (ld->flags & ML_BLOCKING)
+	if (cptrace.Thing.bCheckLineBlocking && ld->flags & ML_BLOCKING)
 	{
 		// Explicitly blocking everything
 		return false;
 	}
 
-	if (!cptrace.Thing.player && ld->flags & ML_BLOCKMONSTERS)
-//!		&& cptrace.Thing.Class != Pod)
+	if (cptrace.Thing.bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
 	{
 		// Block monsters only
 		return false;
@@ -365,6 +369,9 @@ boolean CheckPosition(Entity thing, TVec Pos)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2002/02/09 18:13:46  dj_jl
+//  Added flags that determines what line blocking flags to check
+//
 //  Revision 1.2  2002/02/07 18:50:05  dj_jl
 //  Made CheckPosition shared.
 //

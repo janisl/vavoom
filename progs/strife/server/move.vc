@@ -43,9 +43,6 @@
 
 float tmbbox[4];
 mobj_t *tmthing;
-float tmx;
-float tmy;
-float tmz;
 TVec tmpos;
 float tmfloorz;
 float tmceilingz;
@@ -148,8 +145,8 @@ boolean PIT_CheckRelThing(MapObject Other)
 
 	blockdist = Other.Radius + tmthing->Radius;
 
-	if (fabs(Other.origin.x - tmx) >= blockdist
-		|| fabs(Other.origin.y - tmy) >= blockdist)
+	if (fabs(Other.origin.x - tmpos.x) >= blockdist
+		|| fabs(Other.origin.y - tmpos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
@@ -173,6 +170,16 @@ boolean PIT_CheckRelThing(MapObject Other)
 
 	BlockingMobj = &Actor(Other);
 	return tmthing->Touch(Actor(Other));
+}
+
+//==========================================================================
+//
+//	BlockedByLine
+//
+//==========================================================================
+
+void BlockedByLine(Actor * tmthing, line_t *ld)
+{
 }
 
 //==========================================================================
@@ -211,28 +218,28 @@ boolean PIT_CheckRelLine(line_t * ld)
 	if (!ld->backsector)
 	{
 		// One sided line
+		BlockedByLine(tmthing, ld);
 		return false;
 	}
 
-	if (!tmthing->bMissile)
+	if (tmthing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
 	{
-		if (ld->flags & ML_BLOCKING)
-		{
-			// Explicitly blocking everything
-			return false;
-		}
+		// Explicitly blocking everything
+		BlockedByLine(tmthing, ld);
+		return false;
+	}
 
-		if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS)
-		{
-			// Block monsters only
-			return false;
-		}
+	if (tmthing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+	{
+		// Block monsters only
+		BlockedByLine(tmthing, ld);
+		return false;
 	}
 
 	// set openrange, opentop, openbottom
 	hit_point = tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmz, tmz + tmthing->Height);
+	open = FindOpening(open, tmpos.z, tmpos.z + tmthing->Height);
 
 	if (open)
 	{
@@ -317,9 +324,6 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 
 	tmthing = thing;
 
-	tmx = x;
-	tmy = y;
-	tmz = thing->origin.z;
 	tmpos = vector(x, y, thing->origin.z);
 
 	tmbbox[BOXTOP] = y + tmthing->Radius;
@@ -334,9 +338,8 @@ boolean P_CheckRelPosition(mobj_t * thing, float x, float y)
 	// that contains the point.
 	// Any contacted lines the step closer together
 	// will adjust them.
-	gap =
-		FindThingGap(newsubsec->sector->botregion, tmpos, tmz,
-		tmz + thing->Height);
+	gap = FindThingGap(newsubsec->sector->botregion, tmpos, tmpos.z,
+		tmpos.z + thing->Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		reg = reg->prev;
@@ -504,6 +507,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/09 18:13:46  dj_jl
+//  Added flags that determines what line blocking flags to check
+//
 //  Revision 1.17  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //

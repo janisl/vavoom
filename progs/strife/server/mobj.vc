@@ -125,6 +125,17 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	sound_pain = GetSoundID(PainSound);
 	sound_death = GetSoundID(DeathSound);
 
+	bCheckLineBlocking = false;
+	bCheckLineBlockMonsters = false;
+	if (!bMissile)
+	{
+		bCheckLineBlocking = true;
+		if (Class != PlayerEntity)
+		{
+			bCheckLineBlockMonsters = true;
+		}
+	}
+
 	if (gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
@@ -134,9 +145,9 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
 	st = &states[SpawnState];
-
 	time = st->time;
 	sprite = st->sprite;
+	SpriteName = sprite_names[st->sprite];
 	frame = st->frame;
 	model_index = st->model_index;
 	alias_frame = st->model_frame;
@@ -929,6 +940,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/02/09 18:13:46  dj_jl
+//  Added flags that determines what line blocking flags to check
+//
 //  Revision 1.28  2002/02/07 18:50:09  dj_jl
 //  Made CheckPosition shared.
 //
