@@ -99,13 +99,13 @@ typedef unsigned long	 	dword;
 //==========================================================================
 
 #ifdef DO_GUARD
-#define guard(name)		static const char *__FUNC_NAME__ = #name; try {
+#define guard(name)		static const char __FUNC_NAME__[] = #name; try {
 #define unguard			} catch (RecoverableError &e) { throw e; } \
 	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }
 #define unguardf(msg)	} catch (RecoverableError &e) { throw e; } \
 	catch (...) { Host_CoreDump(__FUNC_NAME__); Host_CoreDump msg; throw; }
 #else
-#define guard(name)		static const char *__FUNC_NAME__ = #name; {
+#define guard(name)		static const char __FUNC_NAME__[] = #name; {
 #define unguard			}
 #define unguardf(msg)	}
 #endif
@@ -161,9 +161,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/07/20 14:47:25  dj_jl
+//	Changed function name in guard macros from pointer to static array.
+//
 //	Revision 1.12  2002/05/29 16:52:42  dj_jl
 //	Disabled another warnong.
-//
+//	
 //	Revision 1.11  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
