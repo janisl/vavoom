@@ -1,0 +1,45 @@
+
+Compiling glBSP
+===============
+
+by Andrew Apted.  7th June 2000.
+
+
+glBSP has been written with portability in mind.  It is purely ANSI C,
+with one minor exception: I use // comments instead of the more
+traditional /* */ comments.
+
+glBSP has been known to compile and work on the following platforms:
+
+   +  Linux 2.1.126, libc5, GCC 2.7.2.1 and GNU make.
+
+   +  MSDOS 6.22, with DJGPP 2.02.
+
+   +  Win32, with Borland C++Builder 5.5.
+
+
+Linux
+-----
+
+The "makefile" makefile is the correct one for Linux and other UN*X
+type OSes.  Simply typing `make' should create the `glbsp' executable.
+Currently there is no automatic installation, just copy the glbsp
+executable to where you want it.
+
+
+MSDOS
+-----
+
+The "makefile.dj" makefile is for compiling under DOS with DJGPP.  Simply
+typing `make -f makefile.dj' should create the `glbsp.exe' executable.
+
+
+Win32
+-----
+
+The "makefile.bcc" makefile is for compiling under Win32 with Borland
+C++Builder 5.5.  Assuming BCC is configured properly (the ".cfg" files
+it needs have been setup), typing `make -f makefile.bcc' should create
+the `glbsp.exe' executable.  Note that glBSP under Win32 is a console
+application and should be run from a DOS box.
+

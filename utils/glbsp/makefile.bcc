@@ -1,0 +1,30 @@
+#
+# glBSP Makefile for Borland C++
+#
+!if !$d(BCB)
+BCB = $(MAKEDIR)\..
+!endif
+MAIN=.
+OUTPUT=.
+CFLAGS=-O2 -tWC
+DEFINES=-DINLINE_G=__inline
+LIBDIR=$(BCB)\LIB
+
+OBJS= $(OUTPUT)\blockmap.obj \
+      $(OUTPUT)\level.obj \
+      $(OUTPUT)\main.obj \
+      $(OUTPUT)\node.obj \
+      $(OUTPUT)\seg.obj \
+      $(OUTPUT)\system.obj \
+      $(OUTPUT)\wad.obj
+
+#
+# Main Source Compilation
+# ^^^^^^^^^^^^^^^^^^^^^^^
+{$(MAIN)\}.c{$(OUTPUT)\}.obj:
+  bcc32 $(CFLAGS) $(DEFINES) -c -n$(OUTPUT) {$< }
+#
+# Link glBSP
+# ^^^^^^^^^^
+glbsp.exe: $(OBJS)
+  ilink32 /ap /L$(LIBDIR) c0x32.obj $(OBJS), $*, $*, import32.lib CW32.LIB
