@@ -31,8 +31,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-//#define REAL_TIME
-
 #define TOCENTER 		-128
 
 #define TEXTURE_TOP		0
@@ -70,6 +68,8 @@ static void G_DoCompleted(void);
 
 IMPLEMENT_CLASS(VMapObject)
 IMPLEMENT_CLASS(VViewEntity)
+
+TCvarI			real_time("real_time", "0");
 
 server_t		sv;
 server_static_t	svs;
@@ -1325,10 +1325,14 @@ void SV_RunClients(void)
 
 void SV_Ticker(void)
 {
-#ifndef REAL_TIME
-	float	saved_frametime = host_frametime;
-	host_frametime = 1.0 / 35.0;
-#endif
+	float	saved_frametime;
+
+	if (!real_time)
+	{
+		saved_frametime = host_frametime;
+		// Rounded a little bit up to prevent "slow motion"
+		host_frametime = 0.028572f;//1.0 / 35.0;
+	}
 
 	svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
 	SV_RunClients();
@@ -1364,9 +1368,10 @@ void SV_Ticker(void)
 		G_DoCompleted();
 	}
 
-#ifndef REAL_TIME
-	host_frametime = saved_frametime;
-#endif
+	if (!real_time)
+	{
+		host_frametime = saved_frametime;
+	}
 }
 
 //==========================================================================
@@ -2563,12 +2568,17 @@ void ServerFrame(int realtics)
 
 	SV_CheckForNewClients();
 
-#ifndef REAL_TIME
-    // run the count dics
-   	while (realtics--)
-#endif
+	if (real_time)
     {
 		SV_Ticker();
+	}
+	else
+	{
+		// run the count dics
+   		while (realtics--)
+		{
+			SV_Ticker();
+		}
 	}
 
 	if (mapteleport_issued)
@@ -2662,9 +2672,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2002/01/24 18:15:23  dj_jl
+//	Fixed "slow motion" bug
+//
 //	Revision 1.29  2002/01/11 18:22:41  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.28  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
