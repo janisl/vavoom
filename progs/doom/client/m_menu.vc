@@ -1455,7 +1455,7 @@ struct menuslist_t:menucommon_t
 	int cursor;
 };
 
-slist_t slist;
+slist_t * slist;
 
 //==========================================================================
 //
@@ -1502,34 +1502,34 @@ void MenuSlist_Draw(menucommon_t * aitem)
 	int y;
 	menuslist_t *item = (menuslist_t *) aitem;
 
-	GetSlist(&slist);
+	slist = GetSlist();
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	for (i = 0; i < slist.count; i++)
+	for (i = 0; i < slist->count; i++)
 	{
-		T_DrawText(16, 32 + 10 * i, ARR2STR(slist.cache[i].name));
-		T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist.cache[i].map));
-		if (slist.cache[i].maxusers)
+		T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].name));
+		T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
+		if (slist->cache[i].maxusers)
 		{
 			T_DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
-					slist.cache[i].users, slist.cache[i].maxusers));
+					slist->cache[i].users, slist->cache[i].maxusers));
 		}
 	}
 	T_DrawText(8, 32 + item->cursor * 10, ">");
 
-	if (slist.return_reason[0])
-		T_DrawText(16, 116, ARR2STR(slist.return_reason));
+	if (slist->return_reason[0])
+		T_DrawText(16, 116, ARR2STR(slist->return_reason));
 
-	if (slist.count)
+	if (slist->count)
 	{
 		x = 8;
 		y = 124;
-		for (i = 0; i < 20 && slist.cache[item->cursor].wadfiles[i][0]; i++)
+		for (i = 0; i < 20 && slist->cache[item->cursor].wadfiles[i][0]; i++)
 		{
 			int w =
 
-				T_TextWidth(ARR2STR(slist.cache[item->cursor].wadfiles[i]));
+				T_TextWidth(ARR2STR(slist->cache[item->cursor].wadfiles[i]));
 			if (x + w > 312)
 			{
 				x = 8;
@@ -1537,16 +1537,16 @@ void MenuSlist_Draw(menucommon_t * aitem)
 				if (y > 190)
 					break;
 			}
-			T_DrawText(x, y, ARR2STR(slist.cache[item->cursor].wadfiles[i]));
+			T_DrawText(x, y, ARR2STR(slist->cache[item->cursor].wadfiles[i]));
 			x += w + 8;
 		}
 	}
 
-	if (slist.inProgress)
+	if (slist->inProgress)
 	{
 		DrawTextBox("Searching...");
 	}
-	else if (!slist.count)
+	else if (!slist->count)
 	{
 		DrawTextBox("No servers found");
 	}
@@ -1562,9 +1562,9 @@ boolean MenuSlist_Use(menucommon_t * aitem, int key)
 {
 	menuslist_t *item = (menuslist_t *) aitem;
 
-	GetSlist(&slist);
+	slist = GetSlist();
 
-	if (slist.inProgress)
+	if (slist->inProgress)
 	{
 		return true;
 	}
@@ -1572,31 +1572,31 @@ boolean MenuSlist_Use(menucommon_t * aitem, int key)
 	switch (key)
 	{
 	case K_DOWNARROW:
-		if (slist.count)
+		if (slist->count)
 		{
 			item->cursor++;
-			if (item->cursor >= slist.count)
+			if (item->cursor >= slist->count)
 				item->cursor = 0;
 			LocalSound("MenuMove");
 		}
 		return true;
 
 	case K_UPARROW:
-		if (slist.count)
+		if (slist->count)
 		{
 			item->cursor--;
 			if (item->cursor < 0)
-				item->cursor = slist.count - 1;
+				item->cursor = slist->count - 1;
 			LocalSound("MenuMove");
 		}
 		return true;
 
 	case K_ENTER:
-		if (slist.count)
+		if (slist->count)
 		{
 			LocalSound("MenuSelect");
 			CmdBuf_AddText("connect \"%s\"\n",
-				slist.cache[item->cursor].cname);
+				slist->cache[item->cursor].cname);
 		}
 		return true;
 
@@ -1625,6 +1625,9 @@ void MenuSlist_Init(menuslist_t * self)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2001/10/08 17:22:11  dj_jl
+//  Changed slist to be returned by engine
+//
 //  Revision 1.6  2001/09/25 17:11:04  dj_jl
 //  Seperated menu API
 //

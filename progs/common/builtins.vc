@@ -94,8 +94,8 @@ extern TVec CrossProduct(TVec v1, TVec v2);
 
 //  Creates vectors for given angle vector
 extern void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
-
 	TVec * up);
+
 //  Simplified version of AngleVectors, creates only forward vector
 extern void AngleVector(TAVec * angles, TVec * forward);
 
@@ -118,8 +118,8 @@ extern int P_Random(void);
 
 //  Pointer to string hack
 extern string ptrtos(void *ptr);
-
 #define ARR2STR(array)	ptrtos(&array[0])
+
 //  String length
 extern int strlen(string s);
 
@@ -243,8 +243,8 @@ extern void R_InstallSprite(string name, int index);
 
 //  Draws a sprite
 extern void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
-
 	int translation);
+
 //  Installs model
 extern model_t *InstallModel(string name);
 
@@ -254,8 +254,8 @@ extern void R_DrawModelFrame(TVec origin, angle_t angle, model_t * model,
 
 //  Draws a rectangle filled with a flat
 extern void R_FillRectWithFlat(int x, int y, int width, int height,
-
 	string name);
+
 //  Darkens a screen region
 extern void R_ShadeRect(int x, int y, int w, int h, int shade);
 
@@ -313,7 +313,7 @@ extern boolean InputLine_Key(TILine * iline, int key);
 extern string P_GetMapName(int map);
 extern boolean SV_GetSaveString(int i, string buf);
 extern void StartSearch(void);
-extern void GetSlist(slist_t * slist);
+extern slist_t * GetSlist(void);
 extern void KeyNameForNum(int KeyNr, string NameString);
 extern void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 extern void IN_SetBinding(int key, string ondown, string onup);
@@ -368,8 +368,8 @@ extern boolean P_PathTraverse(float x1, float y1, float x2, float y2,
 //  Find the best gap that the thing could fit in, given a certain Z
 // position (z1 is foot, z2 is head).
 extern sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, float z1,
-
 	float z2);
+
 //  Find the best opening
 extern opening_t *FindOpening(opening_t * gaps, float z1, float z2);
 
@@ -429,7 +429,6 @@ extern void ACS::Unarchive(void);
 
 extern void StartSound(mobj_t * mobj, int sound, int channel);
 extern void StartSoundAtVolume(mobj_t * mobj, int sound, int channel,
-
 	int volume);
 extern void StopSound(mobj_t * mobj, int channel);
 extern void SectorStartSound(sector_t * sec, int sound, int channel);
@@ -477,6 +476,9 @@ extern void Destroy(void *ptr);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2001/10/08 17:22:12  dj_jl
+//  Changed slist to be returned by engine
+//
 //  Revision 1.11  2001/10/02 17:37:19  dj_jl
 //  Removed status bar widgets
 //
