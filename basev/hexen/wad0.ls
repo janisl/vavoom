@@ -4,6 +4,7 @@ progs/svprogs.dat
 scripts/switches.txt
 scripts/terrains.txt
 scripts/sfxinfo.txt
+scripts/skyboxes.txt
 
 $wad hexendat.wad
 

@@ -2,6 +2,7 @@ progs/clprogs.dat
 progs/svprogs.dat
 
 scripts/mapinfo.txt
+scripts/skyboxes.txt
 scripts/animdefs.txt
 scripts/switches.txt
 scripts/terrains.txt

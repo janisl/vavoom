@@ -1,147 +1,176 @@
 map MAP01 "congo"
 next MAP02
+secret MAP31
 sky1 SKY1 0
 music D_runnin
 
 map MAP02 "well of souls"
 next MAP03
+secret MAP31
 sky1 SKY1 0
 music D_stalks
 
 map MAP03 "aztec"
 next MAP04
+secret MAP31
 sky1 SKY1 0
 music D_countd
 
 map MAP04 "caged"
 next MAP05
+secret MAP31
 sky1 SKY1 0
 music D_betwee
 
 map MAP05 "ghost town"
 next MAP06
+secret MAP31
 sky1 SKY1 0
 music D_doom
 
 map MAP06 "baron's lair"
 next MAP07
+secret MAP31
 sky1 SKY1 0
 music D_the_da
 
 map MAP07 "caughtyard"
 next MAP08
+secret MAP31
 sky1 SKY1 0
 music D_shawn
 
 map MAP08 "realm"
 next MAP09
+secret MAP31
 sky1 SKY1 0
 music D_ddtblu
 
 map MAP09 "abattoire"
 next MAP10
+secret MAP31
 sky1 SKY1 0
 music D_in_cit
 
 map MAP10 "onslaught"
 next MAP11
+secret MAP31
 sky1 SKY1 0
 music D_dead
 
 map MAP11 "hunted"
 next MAP12
+secret MAP31
 sky1 SKY1 0
 music D_stlks2
 
 ;------------------------------------------------------
 map MAP12 "speed"
 next MAP13
+secret MAP31
 sky1 SKY2 0
 music D_theda2
 
 map MAP13 "the crypt"
 next MAP14
+secret MAP31
 sky1 SKY2 0
 music D_doom2
 
 map MAP14 "genesis"
 next MAP15
+secret MAP31
 sky1 SKY2 0
 music D_ddtbl2
 
 map MAP15 "the twilight"
 next MAP16
+secret MAP31
 sky1 SKY2 0
 music D_runni2
 
 map MAP16 "the omen"
 next MAP17
+secret MAP31
 sky1 SKY2 0
 music D_dead2
 
 map MAP17 "compound"
 next MAP18
+secret MAP31
 sky1 SKY2 0
 music D_stlks3
 
 map MAP18 "neurosphere"
 next MAP19
+secret MAP31
 sky1 SKY2 0
 music D_romero
 
 map MAP19 "nme"
 next MAP20
+secret MAP31
 sky1 SKY2 0
 music D_shawn2
 
 map MAP20 "the death domain"
 next MAP21
+secret MAP31
 sky1 SKY2 0
 music D_messag
 
 ;-------------------------------------------------------
 map MAP21 "slayer"
 next MAP22
+secret MAP31
 sky1 SKY3 0
 music D_count2
 
 map MAP22 "impossible mission"
 next MAP23
+secret MAP31
 sky1 SKY3 0
 music D_ddtbl3
 
 map MAP23 "tombstone"
 next MAP24
+secret MAP31
 sky1 SKY3 0
 music D_ampie
 
 map MAP24 "the final frontier"
 next MAP25
+secret MAP31
 sky1 SKY3 0
 music D_theda3
 
 map MAP25 "the temple of darkness"
 next MAP26
+secret MAP31
 sky1 SKY3 0
 music D_adrian
 
 map MAP26 "bunker"
 next MAP27
+secret MAP31
 sky1 SKY3 0
 music D_messg2
 
 map MAP27 "anti-christ"
 next MAP28
+secret MAP31
 sky1 SKY3 0
 music D_romer2
 
 map MAP28 "the sewers"
 next MAP29
+secret MAP31
 sky1 SKY3 0
 music D_tense
 
 map MAP29 "odyssey of noises"
 next MAP30
+secret MAP31
 sky1 SKY3 0
 music D_shawn3
 
@@ -153,6 +182,7 @@ music D_openin
 ;------------------------------------------------------
 map MAP31 "cyberden"
 next MAP32
+secret MAP32
 sky1 SKY3 0
 music D_evil
 

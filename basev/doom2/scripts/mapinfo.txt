@@ -1,148 +1,177 @@
 map MAP01 "entryway"
 next MAP02
+secret MAP31
 SKY1 SKY1 0
 Music D_runnin
 cdtrack 5
 
 map MAP02 "underhalls"
 next MAP03
+secret MAP31
 SKY1 SKY1 0
 Music D_stalks
 
 map MAP03 "the gantlet"
 next MAP04
+secret MAP31
 SKY1 SKY1 0
 Music D_countd
 
 map MAP04 "the focus"
 next MAP05
+secret MAP31
 SKY1 SKY1 0
 Music D_betwee
 
 map MAP05 "the waste tunnels"
 next MAP06
+secret MAP31
 SKY1 SKY1 0
 Music D_doom
 
 map MAP06 "the crusher"
 next MAP07
+secret MAP31
 SKY1 SKY1 0
 Music D_the_da
 
 map MAP07 "dead simple"
 next MAP08
+secret MAP31
 SKY1 SKY1 0
 Music D_shawn
 
 map MAP08 "tricks and traps"
 next MAP09
+secret MAP31
 SKY1 SKY1 0
 Music D_ddtblu
 
 map MAP09 "the pit"
 next MAP10
+secret MAP31
 SKY1 SKY1 0
 Music D_in_cit
 
 map MAP10 "refueling base"
 next MAP11
+secret MAP31
 SKY1 SKY1 0
 Music D_dead
 
 map MAP11 "'o' of destruction!"
 next MAP12
+secret MAP31
 SKY1 SKY1 0
 Music D_stlks2
 
 ;------------------------------------------------------
 map MAP12 "the factory"
 next MAP13
+secret MAP31
 SKY1 SKY2 0
 Music D_theda2
 
 map MAP13 "downtown"
 next MAP14
+secret MAP31
 SKY1 SKY2 0
 Music D_doom2
 
 map MAP14 "the inmost dens"
 next MAP15
+secret MAP31
 SKY1 SKY2 0
 Music D_ddtbl2
 
 map MAP15 "industrial zone"
 next MAP16
+secret MAP31
 SKY1 SKY2 0
 Music D_runni2
 
 map MAP16 "suburbs"
 next MAP17
+secret MAP31
 SKY1 SKY2 0
 Music D_dead2
 
 map MAP17 "tenements"
 next MAP18
+secret MAP31
 SKY1 SKY2 0
 Music D_stlks3
 
 map MAP18 "the courtyard"
 next MAP19
+secret MAP31
 SKY1 SKY2 0
 Music D_romero
 
 map MAP19 "the citadel"
 next MAP20
+secret MAP31
 SKY1 SKY2 0
 Music D_shawn2
 
 map MAP20 "gotcha!"
 next MAP21
+secret MAP31
 SKY1 SKY2 0
 Music D_messag
 
 ;-------------------------------------------------------
 map MAP21 "nirvana"
 next MAP22
+secret MAP31
 SKY1 SKY3 0
 Music D_count2
 
 map MAP22 "the catacombs"
 next MAP23
+secret MAP31
 SKY1 SKY3 0
 Music D_ddtbl3
 
 map MAP23 "barrels o' fun"
 next MAP24
+secret MAP31
 SKY1 SKY3 0
 Music D_ampie
 
 map MAP24 "the chasm"
 next MAP25
+secret MAP31
 SKY1 SKY3 0
 Music D_theda3
 
 map MAP25 "bloodfalls"
 next MAP26
+secret MAP31
 SKY1 SKY3 0
 Music D_adrian
 
 map MAP26 "the abandoned mines"
 next MAP27
+secret MAP31
 SKY1 SKY3 0
 Music D_messg2
 
 map MAP27 "monster condo"
 next MAP28
+secret MAP31
 SKY1 SKY3 0
 Music D_romer2
 
 map MAP28 "the spirit world"
 next MAP29
+secret MAP31
 SKY1 SKY3 0
 Music D_tense
 
 map MAP29 "the living end"
 next MAP30
+secret MAP31
 SKY1 SKY3 0
 Music D_shawn3
 
@@ -154,6 +183,7 @@ Music D_openin
 ;------------------------------------------------------
 map MAP31 "wolfenstein"
 next MAP32
+secret MAP32
 SKY1 SKY3 0
 Music D_evil
 
