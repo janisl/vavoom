@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                     version 1.11
+                                                  version 1.11.1
 
 Contents:
     0. Disclaimer
@@ -97,6 +97,8 @@ Compiler and tools:
     * GNU C++ Compiler, GNU make (every LINUX user must have them)
 Libraries:
     * Allegro 4.0 (http://alleg.sourceforge.net)
+ or
+    * SDL 1.2.2
     * OpenGL: OpenGL implementation from your video card's manufacturer
   or MESA (http://www.mesa3d.org) and X-Windows development libraries.
 
@@ -121,6 +123,9 @@ and change into it:
 
   4. If you don't have OpenGL or have problems with compiling OpenGL driver
 you can disable it by editing Makefile configuration part.
+
+  If you want to use SDL library, it must be enabled by editing Makefile
+configuration part (at the beginning).
 
   5. Run make in the main directory.
 
@@ -740,6 +745,13 @@ Version 1.11
 * Added Skulltag bots.
 * Removed some limitations.
 * Most of the Hexen action specials are now available in all games.
+
+==============================================================================
+Version 1.11.1
+==============================================================================
+
+* Fixed some serious bugs.
+* SDL port for Linux.
 
 *****************************************************************************
 8. Licencing

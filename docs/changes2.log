@@ -645,3 +645,14 @@
 ******************************************************************************
                             VERSIJA 1.11
 ******************************************************************************
+
+02-01-2002
+  Salaboju Straifa galveno menu.
+  Pievienoju guard makors.
+  glVIS pÆrslñdzos no float uz double.
+03-01-2002
+  Salaboju ieroÒus.
+  Pievienoju SDL portu.
+04-01-2002
+  Salaboju ýóØbo ekrÆnu pñc nÆves.
+  P_CheckSight pievienota aizsardzØba kas atrisina problñmas ar botiem.
