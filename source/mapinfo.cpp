@@ -470,6 +470,23 @@ int P_GetCDTitleTrack(void)
 	return cd_NonLevelTracks[MCMD_CD_TITLETRACK-MCMD_CD_STARTTRACK];
 }
 
+//==========================================================================
+//
+//	COMMAND MapList
+//
+//==========================================================================
+
+COMMAND(MapList)
+{
+	for (int i = 0; i < MapCount; i++)
+	{
+		if (W_CheckNumForName(MapInfo[i].lumpname) >= 0)
+		{
+			con << MapInfo[i].lumpname << " - " << MapInfo[i].name << endl;
+		}
+	}
+}
+
 /*
 	int		cluster;    // Defines what cluster level belongs to
 	int		warpTrans;  // Actual map number in case maps are not sequential
@@ -482,9 +499,12 @@ int P_GetCDTitleTrack(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/03/02 17:31:28  dj_jl
+//	Added P_GetMapLumpName for Hexen net menu.
+//
 //	Revision 1.6  2002/02/26 17:53:08  dj_jl
 //	Fixes for menus.
-//
+//	
 //	Revision 1.5  2002/01/28 18:41:43  dj_jl
 //	Fixed Hexen music
 //	
