@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Ripper:Projectile;
+class Ripper : Projectile;
 
 __states__
 {
@@ -43,6 +43,7 @@ defaultproperties
 	Speed = 490.0;
 	MissileDamage = 1;
 	bRip = true;
+	bActivateImpact = true;
 	IdleState = S_RIPPER1;
 	DeathState = S_RIPPERX1;
 	DeathSound = 'SkullRodHit';
@@ -51,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

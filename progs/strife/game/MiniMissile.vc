@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MiniMissile:Projectile;
+class MiniMissile : Projectile;
 
 __states__
 {
@@ -43,6 +43,7 @@ defaultproperties
 	Height = 14.0;
 	Speed = 700.0;
 	MissileDamage = 10;
+	bActivateImpact = true;
 	IdleState = S_MINI_MISSILE;
 	DeathState = S_MISSILE_X1;
 
@@ -53,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:38:24  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -32,6 +32,7 @@ __states__
 
 defaultproperties
 {
+	bActivateImpact = false;
 	MissileDamage = 7;
 	DeathState = S_MISSILE_NO_EXPLODE;
 }
@@ -39,6 +40,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:38:24  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceFX3:Projectile;
+class MaceFX3 : Projectile;
 
 //===========================================================================
 //
@@ -31,7 +31,7 @@ class MaceFX3:Projectile;
 //
 //===========================================================================
 
-void A_MaceBallImpact(void)
+void A_MaceBallImpact()
 {
 	if ((Origin.z <= FloorZ) && (HitFloorEffect() != FLOOR_SOLID))
 	{
@@ -77,6 +77,7 @@ defaultproperties
 	bFloorBounce = true;
 	bThruGhost = true;
 	bNoGravity = false;
+	bActivateImpact = true;
 	IdleState = S_MACEFX3_1;
 	DeathState = S_MACEFXI1_1;
 }
@@ -84,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -54,6 +54,7 @@ defaultproperties
 	ReactionCount = 30;
 	MissileDamage = 1;
 	bNoGravity = false;
+	bActivateImpact = true;
 	IdleState = S_GRENADE_HE_1;
 	DeathState = S_GRENADE_HE_X1;
 	SightSound = 'FireGrenade';
@@ -63,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/28 07:38:24  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.2  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

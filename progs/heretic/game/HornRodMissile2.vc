@@ -33,7 +33,7 @@ int RainColor;
 //
 //===========================================================================
 
-void A_SkullRodPL2Seek(void)
+void A_SkullRodPL2Seek()
 {
 	SeekerMissile(10.0, 30.0);
 }
@@ -44,7 +44,7 @@ void A_SkullRodPL2Seek(void)
 //
 //===========================================================================
 
-void A_AddPlayerRain(void)
+void A_AddPlayerRain()
 {
 	Player player;
 
@@ -96,7 +96,7 @@ void A_AddPlayerRain(void)
 //
 //===========================================================================
 
-void A_HideInCeiling(void)
+void A_HideInCeiling()
 {
 	Origin.z = CeilingZ + 4.0;
 }
@@ -107,7 +107,7 @@ void A_HideInCeiling(void)
 //
 //===========================================================================
 
-void A_SkullRodStorm(void)
+void A_SkullRodStorm()
 {
 	float x;
 	float y;
@@ -188,6 +188,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 770.0;
 	MissileDamage = 10;
+	bActivateImpact = true;
 	IdleState = S_HRODFX2_1;
 	DeathState = S_HRODFXI2_1;
 	SightSound = 'SkullRodFire';
@@ -198,6 +199,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.3  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

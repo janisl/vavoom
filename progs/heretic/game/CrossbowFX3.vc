@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX3:Projectile;
+class CrossbowFX3 : Projectile;
 
 __states__
 {
@@ -39,6 +39,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 700.0;
 	MissileDamage = 2;
+	bActivateImpact = true;
 	bWindThrust = true;
 	bThruGhost = true;
 	IdleState = S_CRBOWFX3;
@@ -50,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

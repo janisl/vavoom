@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixFX2:Projectile;
+class PhoenixFX2 : Projectile;
 
 //===========================================================================
 //
@@ -31,7 +31,7 @@ class PhoenixFX2:Projectile;
 //
 //===========================================================================
 
-void A_FlameEnd(void)
+void A_FlameEnd()
 {
 	Velocity.z += 1.5 * 35.0;
 }
@@ -42,7 +42,7 @@ void A_FlameEnd(void)
 //
 //===========================================================================
 
-void A_FloatPuff(void)
+void A_FloatPuff()
 {
 	Velocity.z += 1.8 * 35.0;
 }
@@ -73,6 +73,7 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 2;
 	bFireDamage = true;
+	bActivateImpact = true;
 	IdleState = S_PHOENIXFX2_1;
 	DeathState = S_PHOENIXFXI2_1;
 	Effects = EF_DL_WHITE;
@@ -81,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

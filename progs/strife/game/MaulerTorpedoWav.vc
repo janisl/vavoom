@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaulerTorpedoWav:Projectile;
+class MaulerTorpedoWav : Projectile;
 
 __states__
 {
@@ -38,6 +38,7 @@ defaultproperties
 	Height = 13.0;
 	Speed = 1225.0;
 	MissileDamage = 10;
+	bActivateImpact = true;
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
 }
@@ -45,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:38:24  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

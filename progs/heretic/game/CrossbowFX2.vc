@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX2:CrossbowFX1;
+class CrossbowFX2 : CrossbowFX1;
 
 //===========================================================================
 //
@@ -31,7 +31,7 @@ class CrossbowFX2:CrossbowFX1;
 //
 //===========================================================================
 
-void A_BoltSpark(void)
+void A_BoltSpark()
 {
 	Actor spark;
 
@@ -58,6 +58,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

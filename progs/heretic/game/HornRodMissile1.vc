@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HornRodMissile1:Projectile;
+class HornRodMissile1 : Projectile;
 
 __states__
 {
@@ -44,6 +44,7 @@ defaultproperties
 	Speed = 770.0;
 	MissileDamage = 3;
 	bWindThrust = true;
+	bActivateImpact = true;
 	IdleState = S_HRODFX1_1;
 	DeathState = S_HRODFXI1_1;
 	SightSound = 'SkullRodFire';
@@ -54,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

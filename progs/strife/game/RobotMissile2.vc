@@ -48,12 +48,16 @@ __states__
 
 defaultproperties
 {
+	bActivateImpact = false;
 	IdleState = S_ROBOT_MISSILE2_1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/28 07:38:24  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.3  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

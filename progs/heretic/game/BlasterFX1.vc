@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterFX1:Projectile;
+class BlasterFX1 : Projectile;
 
 //===========================================================================
 //
@@ -31,7 +31,7 @@ class BlasterFX1:Projectile;
 //
 //===========================================================================
 
-void A_SpawnRippers(void)
+void A_SpawnRippers()
 {
 	int i;
 	float angle;
@@ -67,6 +67,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 6440.0;
 	MissileDamage = 2;
+	bActivateImpact = true;
 	IdleState = S_BLASTERFX1_1;
 	DeathState = S_BLASTERFXI1_1;
 	DeathSound = 'BlasterHit';
@@ -76,6 +77,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:36:10  dj_jl
+//  Player missiles can activate impact lines.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //
