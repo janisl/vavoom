@@ -35,6 +35,12 @@
 #pragma warning(disable : 4710) // inline function not expanded
 #endif
 
+#ifdef __BORLANDC__
+// Disable some unwanted warnings
+#pragma warn -8027		// inline function not expanded
+#pragma warn -8071		// conversation may loose significant digits
+#endif
+
 #ifndef __GNUC__
 #define __attribute__(whatever)
 #endif
@@ -136,9 +142,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/03/28 18:05:51  dj_jl
+//	Disabled some Borland warnings.
+//
 //	Revision 1.8  2002/01/21 18:23:56  dj_jl
 //	Disabled some MSVC warnings
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	
