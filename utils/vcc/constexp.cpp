@@ -320,7 +320,7 @@ static float FConstExprFactor(void)
 		case TK_PUNCT:
 			if (TK_Check(PU_LPAREN))
 			{
-				ret = EvalConstExpression(ev_float);
+				ret = ConstFloatExpression();
 				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
 			}
 			else
@@ -469,9 +469,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/12/27 17:44:00  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.6  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
-//
+//	
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
 //	

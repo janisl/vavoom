@@ -512,10 +512,11 @@ void PC_WriteObject(char *name)
 		dclassinfo_t ci;
 		TType *ct = classtypes[i];
 
-		ci.s_name = ct->s_name;
-		ci.vtable = ct->vtable;
-		ci.size = ct->size;
-		ci.parent = ct->aux_type ? ct->aux_type->classid : 0;
+		ci.s_name = LittleLong(ct->s_name);
+		ci.vtable = LittleLong(ct->vtable);
+		ci.size = LittleShort(ct->size);
+		ci.num_methods = LittleShort(ct->num_methods);
+		ci.parent = LittleLong(ct->aux_type ? ct->aux_type->classid : 0);
 		fwrite(&ci, 1, sizeof(ci), f);
 	}
 
@@ -639,9 +640,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/27 17:44:02  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.12  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
-//
+//	
 //	Revision 1.11  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays

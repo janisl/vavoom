@@ -323,7 +323,7 @@ struct constant_t
 
 void PA_Parse(void);
 void ParseMethodDef(TType *t, field_t *fi, field_t *otherfield,
-	TType *class_type, int method_type);
+	TType *class_type);
 void ParseDefaultProperties(field_t *method, TType *class_type);
 
 void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
@@ -372,7 +372,6 @@ void ParseVector(void);
 field_t* ParseField(TType *t);
 field_t* CheckForField(TType *, bool = true);
 field_t* FindConstructor(TType *t);
-field_t* FindDestructor(TType *t);
 void ParseTypeDef(void);
 void AddVirtualTables(void);
 
@@ -506,9 +505,12 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/27 17:44:02  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.14  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
-//
+//	
 //	Revision 1.13  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays

@@ -237,6 +237,8 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 		StripExtension(ObjectFileName);
 		DefaultExtension(ObjectFileName, ".dat");
 	}
+	FixFileSlashes(SourceFileName);
+	FixFileSlashes(ObjectFileName);
 	dprintf("Main source file: %s\n", SourceFileName);
 	dprintf("  Resulting file: %s\n", ObjectFileName);
 }
@@ -298,10 +300,13 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/27 17:44:02  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.9  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
-//
+//	
 //	Revision 1.8  2001/12/01 18:17:09  dj_jl
 //	Fixed calling of parent method, speedup
 //	

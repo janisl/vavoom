@@ -29,11 +29,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define VTOFFS_CID				0
-#define VTOFFS_SIZE				4
-#define VTOFFS_CTOR				16
-#define VTOFFS_DTOR				20
-#define BASE_NUM_METHODS		6
+#define BASE_NUM_METHODS		1
 
 // TYPES -------------------------------------------------------------------
 
@@ -73,8 +69,6 @@ TType		type_none_ref("", ev_reference, &type_class, &type_class, 4);
 TType		*types = &type_none_ref;
 
 TType		**classtypes;
-
-TType		NoneClass("", ev_class, NULL, NULL, 0);
 
 typedef_t	*typedefs;
 
@@ -116,7 +110,7 @@ TType *FindType(TType *type)
 			type->params_size != check->params_size)
 			continue;
 
-		for (i = 0; i < type->num_params & PF_COUNT_MASK; i++)
+		for (i = 0; i < (type->num_params & PF_COUNT_MASK); i++)
 		{
 			if (type->param_types[i] != check->param_types[i])
 				break;
@@ -867,21 +861,6 @@ void ParseClass(void)
 			continue;
 		}
 
-		if (TK_Check(PU_TILDE))
-		{
-			type = CheckForType();
-			if (type != class_type)
-			{
-				ParseError("Class name expected.");
-			}
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			fi = new(fields) field_t;
-class_type->fields = &fields[0];
-			fi->s_name = FindString(va("~%s", class_type->name));
-			ParseMethodDef(&type_void, fi, NULL, class_type, 2);
-			continue;
-		}
-
 		if (TK_Check(KW_DEFAULTPROPERTIES))
 		{
 			fi = new(fields) field_t;
@@ -895,14 +874,6 @@ class_type->fields = &fields[0];
 		if (!type)
 		{
 			ParseError("Field type expected.");
-		}
-		if (type == class_type && TK_Check(PU_LPAREN))
-		{
-			fi = new(fields) field_t;
-class_type->fields = &fields[0];
-			fi->s_name = class_type->s_name;
-			ParseMethodDef(&type_void, fi, NULL, class_type, 1);
-			continue;
 		}
 
 		bool need_semicolon = true;
@@ -934,7 +905,7 @@ class_type->fields = &fields[0];
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, class_type, 0);
+				ParseMethodDef(t, fi, otherfield, class_type);
 				need_semicolon = false;
 				break;
 			}
@@ -1092,37 +1063,6 @@ field_t* FindConstructor(TType *t)
 
 //==========================================================================
 //
-//	FindDestructor
-//
-//==========================================================================
-
-field_t* FindDestructor(TType *t)
-{
-	if (!t)
-	{
-		return NULL;
-	}
-	if (t->type != ev_class)
-	{
-		return NULL;
-	}
-	if (t->size == -1)
-	{
-		return NULL;
-	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
-	{
-		if (fi[i].s_name == t->s_name)
-		{
-			return &fi[i];
-		}
-	}
-	return FindDestructor(t->aux_type);
-}
-
-//==========================================================================
-//
 //	ParseTypeDef
 //
 //==========================================================================
@@ -1269,7 +1209,7 @@ static void AddVTable(TType *t)
 	classtypes[t->classid] = t;
 	t->vtable = numglobals;
 	int *vtable = globals + numglobals;
-	memset(globalinfo + numglobals + 4, 2, t->num_methods - 4);
+	memset(globalinfo + numglobals, 2, t->num_methods);
 	numglobals += t->num_methods;
 	if (t->aux_type)
 	{
@@ -1279,11 +1219,8 @@ static void AddVTable(TType *t)
 	}
 	else
 	{
-		vtable[4] = 1;
-		vtable[5] = 1;
+		vtable[0] = 1;
 	}
-	vtable[0] = t->classid;
-	vtable[1] = t->size;
 	for (int i = 0; i < t->numfields; i++)
 	{
 		field_t &f = t->fields[i];
@@ -1310,8 +1247,6 @@ void AddVirtualTables(void)
 {
 	classtypes = new TType*[numclasses];
 	memset(classtypes, 0, numclasses * 4);
-	NoneClass.num_methods = BASE_NUM_METHODS;
-	AddVTable(&NoneClass);
 	for (TType *t = types; t; t = t->next)
 	{
 		if (t->type == ev_class)
@@ -1324,9 +1259,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/27 17:44:02  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.14  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
-//
+//	
 //	Revision 1.13  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays

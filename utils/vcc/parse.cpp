@@ -436,10 +436,10 @@ static void ParseStatement(void)
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TType *etype = ParseExpression();
 				TypeCheck1(etype);
-				if (etype->type != ev_int && etype->type != ev_uint)
-				{
-					ParseWarning("Int expression expected");
-				}
+//				if (etype->type != ev_int && etype->type != ev_uint)
+//				{
+//					ParseWarning("Int expression expected");
+//				}
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 				switcherAddrPtr = AddStatement(OPC_GOTO, 0);
@@ -1051,7 +1051,7 @@ static void ParseDef(TType *type, bool IsNative)
 //==========================================================================
 
 void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
-	TType *class_type, int method_type)
+	TType *class_type)
 {
 	if (t->type == ev_class)
 	{
@@ -1146,14 +1146,6 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		}
 		method->ofs = otherfield->ofs;
 	}
-	else if (method_type == 1)
-	{
-		method->ofs = 4;
-	}
-	else if (method_type == 2)
-	{
-		method->ofs = 5;
-	}
 	else
 	{
 		method->ofs = class_type->num_methods;
@@ -1186,31 +1178,7 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 		functions[num].first_statement = CodeBufferSize;
 
-		if (method_type == 1)
-		{
-			//  Call parent constructor
-			field_t *pcon = FindConstructor(class_type->aux_type);
-			if (pcon)
-			{
-				AddStatement(OPC_LOCALADDRESS, 0);
-				AddStatement(OPC_PUSHPOINTED);
-				AddStatement(OPC_CALL, pcon->func_num);
-			}
-		}
-
 	   	ParseCompoundStatement();
-
-		if (method_type == 2)
-		{
-			// Call parent destructor
-			field_t *pdes = FindDestructor(class_type->aux_type);
-			if (pdes)
-			{
-				AddStatement(OPC_LOCALADDRESS, 0);
-				AddStatement(OPC_PUSHPOINTED);
-				AddStatement(OPC_CALL, pdes->func_num);
-			}
-		}
 
 		if (FuncRetType == &type_void)
 		{
@@ -1247,7 +1215,7 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	memcpy(&methodtype, &functype, sizeof(TType));
 	methodtype.type = ev_method;
 	method->type = FindType(&methodtype);
-	method->ofs = 4;
+	method->ofs = 0;
 	class_type->numfields++;
 
 	int s_name = FindString(va("%s::%s",
@@ -1485,9 +1453,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/12/27 17:44:00  dj_jl
+//	Removed support for C++ style constructors and destructors, some fixes
+//
 //	Revision 1.15  2001/12/18 19:09:41  dj_jl
 //	Some extra info in progs and other small changes
-//
+//	
 //	Revision 1.14  2001/12/12 19:22:22  dj_jl
 //	Support for method usage as state functions, dynamic cast
 //	Added dynamic arrays
