@@ -623,13 +623,12 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 {
 	int		i;
 
-#if 0
 	if (mtexable && texture2)
 	{
 		SetSkyTexture(texture1, false);
 		SelectTexture(1);
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		SetSkyTexture(texture2, true);
 		SelectTexture(0);
 
@@ -651,7 +650,6 @@ void TOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		SelectTexture(0);
 	}
 	else
-#endif
 	{
 		SetSkyTexture(texture1, false);
 		glBegin(GL_POLYGON);
@@ -778,7 +776,7 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	glEnable(GL_ALPHA_TEST);
 
 	dword alpha = 255 * (100 - translucency) / 100;
-	SetColor(light | (alpha << 24));
+	SetColor((light & 0x00ffffff) | (alpha << 24));
 
 	glBegin(GL_QUADS);
 
@@ -1025,9 +1023,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/11/12 18:47:08  dj_jl
+//	Some quick fixes
+//
 //	Revision 1.15  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights
-//
+//	
 //	Revision 1.14  2001/11/02 18:35:55  dj_jl
 //	Sky optimizations
 //	
