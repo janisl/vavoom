@@ -89,7 +89,7 @@ ostream					cond(&cdbuf);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TILine			c_iline = {"", 0, 0};
+static TILine			c_iline = {"", 0};
 
 static cons_state_t		consolestate = cons_closed;
 
@@ -538,7 +538,10 @@ static void AddLine(char* Data)
     strncpy(clines[(num_lines + first_line) % MAX_LINES], Data, MAX_LINE_LENGTH);
     clines[(num_lines + first_line) % MAX_LINES][MAX_LINE_LENGTH - 1] = 0;
     num_lines++;
-	last_line = num_lines;
+	if (last_line == num_lines - 1)
+	{
+		last_line = num_lines;
+	}
 
     if (!consolestate/* && !MN_Active()*/)
     {
@@ -796,9 +799,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/11/09 14:36:33  dj_jl
+//	No moving on last line on adding new line if scrolled
+//
 //	Revision 1.9  2001/10/12 17:31:13  dj_jl
 //	no message
-//
+//	
 //	Revision 1.8  2001/10/08 17:34:57  dj_jl
 //	A lots of small changes and cleanups
 //	
