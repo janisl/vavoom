@@ -69,7 +69,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (y2 > ymax)
         return FALSE;
         
-      x1 = x1 + (x2-x1) * (double)(ymax-y1) / (double)(y2-y1);
+      x1 = x1 + (x2-x1) * (int)((double)(ymax-y1) / (double)(y2-y1));
       y1 = ymax;
       
       count = 2;
@@ -81,7 +81,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (y2 < ymin)
         return FALSE;
       
-      x1 = x1 + (x2-x1) * (double)(ymin-y1) / (double)(y2-y1);
+      x1 = x1 + (x2-x1) * (int)((double)(ymin-y1) / (double)(y2-y1));
       y1 = ymin;
       
       count = 2;
@@ -93,7 +93,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (x2 > xmax)
         return FALSE;
         
-      y1 = y1 + (y2-y1) * (double)(xmax-x1) / (double)(x2-x1);
+      y1 = y1 + (y2-y1) * (int)((double)(xmax-x1) / (double)(x2-x1));
       x1 = xmax;
 
       count = 2;
@@ -105,7 +105,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
       if (x2 < xmin)
         return FALSE;
         
-      y1 = y1 + (y2-y1) * (double)(xmin-x1) / (double)(x2-x1);
+      y1 = y1 + (y2-y1) * (int)((double)(xmin-x1) / (double)(x2-x1));
       x1 = xmin;
 
       count = 2;
@@ -478,10 +478,10 @@ static void FindBlockmapLimits(bbox_t *bbox)
       float_g x2 = L->end->x;
       float_g y2 = L->end->y;
 
-      int lx = floor(MIN(x1, x2));
-      int ly = floor(MIN(y1, y2));
-      int hx = ceil(MAX(x1, x2));
-      int hy = ceil(MAX(y1, y2));
+      int lx = (int)floor(MIN(x1, x2));
+      int ly = (int)floor(MIN(y1, y2));
+      int hx = (int)ceil(MAX(x1, x2));
+      int hy = (int)ceil(MAX(y1, y2));
 
       if (lx < bbox->minx) bbox->minx = lx;
       if (ly < bbox->miny) bbox->miny = ly;

@@ -158,7 +158,7 @@ static INLINE_G void AddLevelName(const char *name)
 {
   if ((wad.num_level_names % LEVNAME_BUNCH) == 0)
   {
-    wad.level_names = (const char **) UtilRealloc(wad.level_names,
+    wad.level_names = (const char **) UtilRealloc((void *)wad.level_names,
         (wad.num_level_names + LEVNAME_BUNCH) * sizeof(const char *));
   }
 
@@ -1373,7 +1373,7 @@ void CloseWads(void)
     for (i=0; i < wad.num_level_names; i++)
       UtilFree((char *) wad.level_names[i]);
 
-    UtilFree(wad.level_names);
+    UtilFree((void *)wad.level_names);
     wad.level_names = NULL;
   }
 }

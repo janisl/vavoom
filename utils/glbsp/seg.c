@@ -886,10 +886,10 @@ static void FindLimitWorker(superblock_t *block, bbox_t *bbox)
     float_g x2 = cur->end->x;
     float_g y2 = cur->end->y;
 
-    int lx = floor(MIN(x1, x2));
-    int ly = floor(MIN(y1, y2));
-    int hx = ceil(MAX(x1, x2));
-    int hy = ceil(MAX(y1, y2));
+    int lx = (int)floor(MIN(x1, x2));
+    int ly = (int)floor(MIN(y1, y2));
+    int hx = (int)ceil(MAX(x1, x2));
+    int hy = (int)ceil(MAX(y1, y2));
 
     if (lx < bbox->minx) bbox->minx = lx;
     if (ly < bbox->miny) bbox->miny = ly;
