@@ -100,6 +100,7 @@ struct surfcache_t
 	dword		Light;		// checked for strobe flash
 	int			dlight;
 	surface_t	*surf;
+	dword		lastframe;
 };
 
 class VOpenGLDrawer : public VDrawer
@@ -215,6 +216,7 @@ private:
 	surfcache_t	*freeblocks;
 	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
+	dword		cacheframecount;
 
 	float		tex_iw;
 	float		tex_ih;
@@ -245,8 +247,10 @@ private:
 	void *GetExtFuncPtr(const char*);
 
 	void FlushCaches(bool);
-	surfcache_t	*AllocBlock(int width, int height);
-	void CacheSurface(surface_t *surface);
+	void FlushOldCaches();
+	surfcache_t	*AllocBlock(int, int);
+	surfcache_t	*FreeBlock(surfcache_t*, bool);
+	void CacheSurface(surface_t*);
 
 	int ToPowerOf2(int val);
 	void GenerateTextures(void);
@@ -300,9 +304,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2003/10/22 06:13:52  dj_jl
+//	Freeing old blocks on overflow
+//
 //	Revision 1.23  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.22  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

@@ -134,6 +134,40 @@ void VDirect3DDrawer::FlushCaches(bool free_blocks)
 
 //==========================================================================
 //
+//	VDirect3DDrawer::FlushOldCaches
+//
+//==========================================================================
+
+void VDirect3DDrawer::FlushOldCaches()
+{
+	guard(VDirect3DDrawer::FlushOldCaches);
+	int				i;
+	surfcache_t		*blines;
+	surfcache_t		*block;
+
+	for (i = 0; i < NUM_BLOCK_SURFS; i++)
+	{
+		for (blines = cacheblocks[i]; blines; blines = blines->bnext)
+		{
+			for (block = blines; block; block = block->lnext)
+			{
+				if (block->owner && cacheframecount != block->lastframe)
+				{
+					block = FreeBlock(block, false);
+				}
+			}
+			if (!blines->owner && !blines->lprev && !blines->lnext)
+			{
+				blines = FreeBlock(blines, true);
+			}
+		}
+	}
+	Sys_Error("No more free blocks");
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDirect3DDrawer::AllocBlock
 //
 //==========================================================================
@@ -163,7 +197,7 @@ surfcache_t	*VDirect3DDrawer::AllocBlock(int width, int height)
 				if (block->width > width)
 				{
 					if (!freeblocks)
-						Sys_Error("No more free blocks");
+						FlushOldCaches();
 					other = freeblocks;
 					freeblocks = other->chain;
 					other->s = block->s + width;
@@ -201,7 +235,7 @@ surfcache_t	*VDirect3DDrawer::AllocBlock(int width, int height)
 			if (block->height > height)
 			{
 				if (!freeblocks)
-					Sys_Error("No more free blocks");
+					FlushOldCaches();
 				other = freeblocks;
 				freeblocks = other->chain;
 				other->s = 0;
@@ -221,7 +255,7 @@ surfcache_t	*VDirect3DDrawer::AllocBlock(int width, int height)
 			}
 
 			if (!freeblocks)
-				Sys_Error("No more free blocks");
+				FlushOldCaches();
 			other = freeblocks;
 			freeblocks = other->chain;
 			other->s = block->s + width;
@@ -246,17 +280,20 @@ surfcache_t	*VDirect3DDrawer::AllocBlock(int width, int height)
 
 //==========================================================================
 //
-//	VDirect3DDrawer::FreeSurfCache
+//	VDirect3DDrawer::FreeBlock
 //
 //==========================================================================
 
-void VDirect3DDrawer::FreeSurfCache(surfcache_t *block)
+surfcache_t *VDirect3DDrawer::FreeBlock(surfcache_t *block, bool check_lines)
 {
-	guard(VDirect3DDrawer::FreeSurfCache);
+	guard(VDirect3DDrawer::FreeBlock);
 	surfcache_t		*other;
 
-	*block->owner = NULL;
-	block->owner = NULL;
+	if (block->owner)
+	{
+		*block->owner = NULL;
+		block->owner = NULL;
+	}
 	if (block->lnext && !block->lnext->owner)
 	{
 		other = block->lnext;
@@ -279,9 +316,9 @@ void VDirect3DDrawer::FreeSurfCache(surfcache_t *block)
 		freeblocks = other;
 	}
 
-	if (block->lprev || block->lnext)
+	if (block->lprev || block->lnext || !check_lines)
 	{
-		return;
+		return block;
 	}
 
 	if (block->bnext && !block->bnext->lnext)
@@ -305,7 +342,19 @@ void VDirect3DDrawer::FreeSurfCache(surfcache_t *block)
 		other->chain = freeblocks;
 		freeblocks = other;
 	}
+	return block;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::FreeSurfCache
+//
+//==========================================================================
+
+void VDirect3DDrawer::FreeSurfCache(surfcache_t *block)
+{
+	FreeBlock(block, true);
 }
 
 //==========================================================================
@@ -332,6 +381,7 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 		bnum = cache->blocknum;
 		cache->chain = light_chain[bnum];
 		light_chain[bnum] = cache;
+		cache->lastframe = cacheframecount;
 		return;
 	}
 
@@ -376,6 +426,7 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 	}
 	cache->chain = light_chain[bnum];
 	light_chain[bnum] = cache;
+	cache->lastframe = cacheframecount;
 
 	// specular highlights
 	for (j = 0; j < tmax; j++)
@@ -1182,9 +1233,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2003/10/22 06:13:52  dj_jl
+//	Freeing old blocks on overflow
+//
 //	Revision 1.23  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
-//
+//	
 //	Revision 1.22  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

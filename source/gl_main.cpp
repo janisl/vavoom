@@ -379,6 +379,7 @@ void VOpenGLDrawer::SetupView(const refdef_t *rd)
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
+	cacheframecount++;
 	unguard;
 }
 
@@ -472,9 +473,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2003/10/22 06:13:52  dj_jl
+//	Freeing old blocks on overflow
+//
 //	Revision 1.19  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.18  2002/01/11 18:24:44  dj_jl
 //	Added guard macros
 //	
