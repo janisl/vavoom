@@ -21,11 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
+
 char* flagnames1[32] =
 {
     "MF_SPECIAL",
@@ -103,3 +100,13 @@ char* flagnames2[32] =
     "MF2_REFLECTIVE",
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:33:14  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,11 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
-//**************************************************************************
 //**************************************************************************
 //**
 //** MobjType.h
@@ -174,3 +169,14 @@ char* mt_names[] =
     "MT_PUSH",
     "MT_PULL",
 };
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:33:14  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

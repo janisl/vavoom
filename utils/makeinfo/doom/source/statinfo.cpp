@@ -21,20 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.5  2001/08/07 16:39:28  dj_jl
-//**	Changed player model path
-//**
-//**	Revision 1.4  2001/08/01 17:48:14  dj_jl
-//**	Fixed plasma model
-//**	
-//**	Revision 1.3  2001/07/31 17:05:04  dj_jl
-//**	Added all available Doom models
-//**	
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
+
 #include "info.h"
 #include "../../makeinfo.h"
 
@@ -1010,4 +998,22 @@ state_t	states[NUMDOOMSTATES] = {
     {SPR1_TLP2,32771,4,SA1_NULL,S1_TECH2LAMP,0,0,"lights/techlmp2.md2",3}	// S1_TECH2LAMP4
 };
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.6  2001/09/20 16:33:14  dj_jl
+//	Beautification
+//
+//	Revision 1.5  2001/08/07 16:39:28  dj_jl
+//	Changed player model path
+//
+//	Revision 1.4  2001/08/01 17:48:14  dj_jl
+//	Fixed plasma model
+//
+//	Revision 1.3  2001/07/31 17:05:04  dj_jl
+//	Added all available Doom models
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,11 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
+
 #include "../../makeinfo.h"
 
 string_def_t	strings[] =
@@ -226,3 +223,13 @@ string_def_t	txtlumps[] =
 	{NULL, NULL, NULL}
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:36:47  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

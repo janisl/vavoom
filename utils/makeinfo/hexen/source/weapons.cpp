@@ -21,11 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
+
 #include "../../makeinfo.h"
 #include "info.h"
 
@@ -221,3 +218,13 @@ weaponinfo_t weaponinfo[16] =
 		}
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:35:58  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:56  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

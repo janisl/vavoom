@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #include "makeinfo.h"
@@ -96,7 +92,20 @@ void WriteHeader(FILE *f)
 	fprintf(f, "//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
 	fprintf(f, "//**  GNU General Public License for more details.\n");
 	fprintf(f, "//**\n");
-	fprintf(f, "//**\t$""Log:$\n");
+	fprintf(f, "//**************************************************************************\n");
+}
+
+//==========================================================================
+//
+//	WriteFooter
+//
+//==========================================================================
+
+void WriteFooter(FILE *f)
+{
+	fprintf(f, "//**************************************************************************\n");
+	fprintf(f, "//\n");
+	fprintf(f, "//\t$""Log:$\n");
 	fprintf(f, "//**************************************************************************\n");
 }
 
@@ -173,7 +182,8 @@ void WriteStates(void)
 		}
 		fprintf(f, "}\n");
     }
-	fprintf(f, "}");
+	fprintf(f, "}\n\n");
+    WriteFooter(f);
     fclose(f);
 }
 
@@ -378,7 +388,8 @@ void WriteMobjInfo(void)
     {
     	fprintf(f, "\t%s { %d, %s }\n", mt_names[i], mobjinfo[i].doomednum, mobj_names[i]);
     }
-    fprintf(f, "}");
+    fprintf(f, "}\n\n");
+    WriteFooter(f);
 	fclose(f);
 }
 
@@ -472,6 +483,7 @@ void WriteWeaponInfo(void)
         fprintf(f, "}\n");
         fprintf(f, "\n");
 	}
+    WriteFooter(f);
 	fclose(f);
 }
 
@@ -496,6 +508,8 @@ static void WriteStrings(void)
 		fprintf(f, "#define %s\t\t\"%s\"\n", strings[i].macro,
            	strings[i].new_val ? strings[i].new_val : strings[i].def_val);
     }
+    fprintf(f, "\n");
+    WriteFooter(f);
 	fclose(f);
 }
 
@@ -541,6 +555,8 @@ static void WriteMisc(void)
         fprintf(f, " };\n");
     }
 
+    fprintf(f, "\n");
+    WriteFooter(f);
 	fclose(f);
 }
 
@@ -626,3 +642,14 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:33:14  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

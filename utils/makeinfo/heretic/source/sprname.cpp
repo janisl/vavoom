@@ -21,11 +21,8 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
+
 char *sprnames[] = {
 "IMPX","ACLO","PTN1","SHLD","SHD2","BAGH","SPMP","INVS","PTN2","SOAR",
 "INVU","PWBK","EGGC","EGGM","FX01","SPHL","TRCH","FBMB","XPL1","ATLP",
@@ -42,3 +39,13 @@ char *sprnames[] = {
 "AMC1","AMC2","AMS1","AMS2","AMP1","AMP2","AMB1","AMB2"
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/09/20 16:34:58  dj_jl
+//	Beautification
+//
+//	Revision 1.2  2001/07/27 14:27:55  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
