@@ -195,8 +195,8 @@ void Actor::A_BridgeOrbit(void)
 		SetMobjState(this, S_NULL);
 	}
 	args[0] += 3;
-	origin.x = target->origin.x + orbitTableX[args[0]];
-	origin.y = target->origin.y + orbitTableY[args[0]];
+	origin.x = target->origin.x + orbitTableX[args[0] & 255];
+	origin.y = target->origin.y + orbitTableY[args[0] & 255];
 	origin.z = target->origin.z;
 }
 
@@ -254,6 +254,9 @@ void A_BridgeRemove(mobj_t *actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2001/12/28 16:28:11  dj_jl
+//  Fixed bridge
+//
 //  Revision 1.5  2001/12/12 18:57:42  dj_jl
 //  State functions now are methods of Actor and Weapon classes
 //
