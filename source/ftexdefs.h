@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+#pragma pack(push, 1)
+
 //==========================================================================
 //
 //	Texture definition
@@ -69,12 +71,17 @@ struct maptexture_strife_t
 	mappatch_t	patches[1];
 };
 
+#pragma pack(pop)
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2004/10/11 06:52:36  dj_jl
+//	Packing pragmas.
+//
 //	Revision 1.5  2002/03/20 19:10:27  dj_jl
 //	Added texture scaling.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
