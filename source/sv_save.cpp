@@ -604,6 +604,7 @@ static void UnarchivePlayers(void)
 				continue;
 			}
 			players[i].ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
+			players[i].ViewEnts[pi]->player = &players[i];
 		}
 	}
 }
@@ -1471,9 +1472,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2001/12/28 16:25:32  dj_jl
+//	Fixed loading of ViewEnts
+//
 //	Revision 1.17  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
-//
+//	
 //	Revision 1.16  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
 //	
