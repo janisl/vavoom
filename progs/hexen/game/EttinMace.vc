@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class EttinMace:Carcas;
+class EttinMace : Carcas;
 
 //==========================================================================
 //
@@ -33,7 +33,7 @@ class EttinMace:Carcas;
 //
 //==========================================================================
 
-void A_CheckFloor(void)
+void A_CheckFloor()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -45,13 +45,13 @@ void A_CheckFloor(void)
 
 __states__
 {
-	S_ETTIN_MACE1('ETTB', 12, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
-	S_ETTIN_MACE2('ETTB', 13, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
-	S_ETTIN_MACE3('ETTB', 14, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
-	S_ETTIN_MACE4('ETTB', 15, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
-	S_ETTIN_MACE5('ETTB', 16, 5.0 / 35.0, S_ETTIN_MACE6) { }
-	S_ETTIN_MACE6('ETTB', 17, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
-	S_ETTIN_MACE7('ETTB', 18, -1.0, S_NULL) { }
+	S_ETTIN_MACE1('ETTB', 12, 'monsters/ettin/mace.md2', 0, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
+	S_ETTIN_MACE2('ETTB', 13, 'monsters/ettin/mace.md2', 1, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
+	S_ETTIN_MACE3('ETTB', 14, 'monsters/ettin/mace.md2', 2, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
+	S_ETTIN_MACE4('ETTB', 15, 'monsters/ettin/mace.md2', 3, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
+	S_ETTIN_MACE5('ETTB', 16, 'monsters/ettin/mace.md2', 4, 5.0 / 35.0, S_ETTIN_MACE6) { }
+	S_ETTIN_MACE6('ETTB', 17, 'monsters/ettin/mace.md2', 5, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
+	S_ETTIN_MACE7('ETTB', 18, 'monsters/ettin/mace.md2', 6, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -65,6 +65,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/28 12:12:03  dj_jl
+//  New 3D models.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

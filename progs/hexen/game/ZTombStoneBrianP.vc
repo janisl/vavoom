@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ZTombStoneBrianP:Decoration
+class ZTombStoneBrianP : Decoration
 	__mobjinfo__(69);
 
 __states__
 {
-	S_ZTOMBSTONEBRIANP1('TMS7', 0, -1.0, S_NULL) { }
+	S_ZTOMBSTONEBRIANP1('TMS7', 0, 'objects/tomb7.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/28 12:12:03  dj_jl
+//  New 3D models.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
