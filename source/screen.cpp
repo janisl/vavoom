@@ -88,6 +88,9 @@ float	fScaleY;
 float	fScaleXI;
 float	fScaleYI;
 
+float	ScaleX640;
+float	ScaleY640;
+
 int		usegamma = 0;
 
 boolean				graphics_started = false;
@@ -435,6 +438,9 @@ static void ChangeResolution(int width, int height, int bpp)
     fScaleY = (float)ScreenHeight / 200.0;
     fScaleXI = 320.0 / (float)ScreenWidth;
     fScaleYI = 200.0 / (float)ScreenHeight;
+
+    ScaleX640 = (float)ScreenWidth / 640.0;
+    ScaleY640 = (float)ScreenHeight / 480.0;
 }
 
 //==========================================================================
@@ -615,8 +621,6 @@ void SCR_Update(void)
 	// Menu drawing
 	MN_Drawer();
 
-	MB_Drawer();
-
 	// Console drawing
 	C_Drawer();
 
@@ -676,9 +680,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.11  2001/10/04 17:19:32  dj_jl
 //	Seperated drawing of notify and center messages
-//
+//	
 //	Revision 1.10  2001/09/14 16:52:44  dj_jl
 //	Added vid_restart
 //	

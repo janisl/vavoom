@@ -619,6 +619,11 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 		return NULL;
 	}
 
+	if (!texinfo->pic)
+	{
+		return NULL;
+	}
+
 	surface_t *surf;
 
 	if (texinfo->pic == skyflatnum)
@@ -1741,9 +1746,12 @@ void R_UpdateWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.4  2001/08/30 17:36:47  dj_jl
 //	Faster compares
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

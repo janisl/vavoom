@@ -2741,7 +2741,7 @@ char* P_GetMapName(int map);
 void KeyNameForNum(int KeyNr, char* NameString);
 
 void StartSearch(void);
-void GetSlist(slist_t *slist);
+slist_t * GetSlist(void);
 
 int		mb_func;
 
@@ -2808,10 +2808,7 @@ PF(SV_GetSaveString)
 
 PF(GetSlist)
 {
-	slist_t		*slist;
-
-	slist = (slist_t*)Pop();
-	GetSlist(slist);
+	Push((int)GetSlist());
 }
 
 void LoadTextLump(char *name, char *buf, int bufsize);
@@ -3061,9 +3058,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.14  2001/10/02 17:36:08  dj_jl
 //	Removed status bar widgets
-//
+//	
 //	Revision 1.13  2001/09/27 17:34:22  dj_jl
 //	Fixed bug with input line
 //	

@@ -761,9 +761,6 @@ void R_InitTexture(void)
 	    skyflatnum = R_CheckFlatNumForName("F_SKY001");
 	if (skyflatnum < 0)
 	    skyflatnum = R_FlatNumForName("F_SKY1");
-#ifdef SERVER
-	svpr.SetGlobal("skyflatnum", skyflatnum);
-#endif
 }
 
 #ifndef CLIENT
@@ -1022,6 +1019,29 @@ void R_DrawPic(int x, int y, int handle, int trans)
 
 //==========================================================================
 //
+//	R_DrawPic640
+//
+//==========================================================================
+
+void R_DrawPic640(int x, int y, int handle, int trans)
+{
+	picinfo_t	info;
+
+	if (handle < 0)
+	{
+		return;
+	}
+
+	R_GetPicInfo(handle, &info);
+	x -= info.xoffset;
+	y -= info.yoffset;
+	Drawer->DrawPic(ScaleX640 * x, ScaleY640 * y,
+		ScaleX640 * (x + info.width), ScaleY640 * (y + info.height),
+		0, 0, info.width, info.height, handle, trans);
+}
+
+//==========================================================================
+//
 //	R_DrawShadowedPic
 //
 //==========================================================================
@@ -1045,14 +1065,60 @@ void R_DrawShadowedPic(int x, int y, int handle)
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
 		0, 0, info.width, info.height, handle, 0);
 }
+
+//==========================================================================
+//
+//  R_FillRectWithFlat
+//
+// 	Fills rectangle with flat.
+//
+//==========================================================================
+
+void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
+{
+	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
+		fScaleX * (DestX + width), fScaleY * (DestY + height),
+		0, 0, width, height, fname);
+}
+
+//==========================================================================
+//
+//	V_DarkenScreen
+//
+//  Fade all the screen buffer, so that the menu is more readable,
+// especially now that we use the small hufont in the menus...
+//
+//==========================================================================
+
+void V_DarkenScreen(int darkening)
+{
+	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
+}
+
+//==========================================================================
+//
+//	R_ShadeRect
+//
+//==========================================================================
+
+void R_ShadeRect(int x, int y, int width, int height, int shade)
+{
+	Drawer->ShadeRect((int)(x * fScaleX), (int)(y * fScaleY),
+		(int)((x + width) * fScaleX) - (int)(x * fScaleX),
+		(int)((y + height) * fScaleY) - (int)(y * fScaleY), shade);
+}
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.9  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.8  2001/08/30 17:44:07  dj_jl
 //	Removed memory leaks after startup
 //	

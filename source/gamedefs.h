@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <setjmp.h>
 #include <ctype.h>
 #include <math.h>
 
@@ -69,7 +68,7 @@
 //
 //==========================================================================
 
-#include "common.h"		//	Common types, endianess handling
+#include "common.h"		//	Common types
 #include "misc.h"		//	Misc utilites
 #include "vector.h"
 #include "maths.h"
@@ -92,13 +91,13 @@
 #include "screen.h"
 #include "automap.h"
 #include "level.h"		//	Level data
+#include "mapinfo.h"
 #include "player.h"
 #include "host.h"
 #include "render.h"
 #include "text.h"
 #include "sound.h"
 #include "menu.h"
-#include "play.h"
 #include "console.h"
 #include "cmd.h"
 #include "sbar.h"
@@ -115,9 +114,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.8  2001/10/04 17:25:42  dj_jl
 //	Added support for compiling with disabled asm
-//
+//	
 //	Revision 1.7  2001/09/12 17:33:01  dj_jl
 //	Back to development mode
 //	

@@ -270,6 +270,7 @@ void SV_LinkToWorld(mobj_t* thing)
 {
     subsector_t*	ss;
 	sec_region_t*	reg;
+	sec_region_t*	r;
     int				blockx;
     int				blocky;
     mobj_t**		link;
@@ -284,10 +285,18 @@ void SV_LinkToWorld(mobj_t* thing)
 	reg = SV_FindThingGap(ss->sector->botregion, thing->origin,
 		thing->origin.z, thing->origin.z + thing->height);
 	thing->subsector = ss;
-	thing->floor = reg->floor;
-	thing->ceiling = reg->ceiling;
-	thing->floorz = reg->floor->GetPointZ(thing->origin);
-	thing->ceilingz = reg->ceiling->GetPointZ(thing->origin);
+
+	r = reg;
+	while (r->floor->flags)
+		r = r->prev;
+	thing->floor = r->floor;
+	thing->floorz = r->floor->GetPointZ(thing->origin);
+
+	r = reg;
+	while (r->ceiling->flags)
+		r = r->next;
+	thing->ceiling = r->ceiling;
+	thing->ceilingz = r->ceiling->GetPointZ(thing->origin);
 
     // link into blockmap
     if (!(thing->flags & MF_NOBLOCKMAP))
@@ -960,9 +969,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -425,7 +425,6 @@ void CL_EstablishConnection(char *host)
 	clpr.Exec("StopDemoLoop");
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
-//	cls.message.Clear();
 
 	MN_DeactivateMenu();
 }
@@ -439,17 +438,6 @@ void CL_EstablishConnection(char *host)
 COMMAND(Connect)
 {
 	CL_EstablishConnection(Argv(1));
-}
-
-//==========================================================================
-//
-//	COMMAND Reconnect
-//
-//==========================================================================
-
-COMMAND(Reconnect)
-{
-	cls.signon = 0;
 }
 
 //==========================================================================
@@ -517,9 +505,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.6  2001/08/21 17:43:49  dj_jl
 //	Moved precache to r_main.cpp
-//
+//	
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	

@@ -97,16 +97,21 @@ void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
 model_t *Mod_FindName(char *name);
 void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame);
 
+void R_DrawPic640(int x, int y, int handle, int trans = 0);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern clmobj_t			cl_mobjs[MAX_MOBJS];
 extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
 extern clPlayerInfo_t	clPlayerInfo[MAXPLAYERS];
 
-extern float			fScaleX;
-extern float			fScaleY;
-extern float			fScaleXI;
-extern float			fScaleYI;
+extern float fScaleX;
+extern float fScaleY;
+extern float fScaleXI;
+extern float fScaleYI;
+
+extern float ScaleX640;
+extern float ScaleY640;
 
 inline subsector_t* CL_PointInSubsector(float x, float y)
 {
@@ -120,9 +125,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.6  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.5  2001/08/15 17:24:02  dj_jl
 //	Improved object update on packet overflows
 //	

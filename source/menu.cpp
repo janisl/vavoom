@@ -127,7 +127,12 @@ boolean MN_Responder(event_t* event)
 		return true;
 	}
 
-	return clpr.Exec("MN_Responder", (int)event);
+	if (clpr.Exec("MN_Responder", (int)event))
+	{
+		return true;
+	}
+
+	return clpr.Exec("MB_Responder", (int)event);
 }
 
 //==========================================================================
@@ -140,101 +145,29 @@ void MN_Drawer(void)
 {
 	clpr.SetGlobal("frametime", PassFloat(host_frametime));
 	clpr.Exec("MN_Drawer");
-}
-
-//==========================================================================
-//
-//	Server list menu
-//
-//==========================================================================
-
-void StartSearch(void)
-{
-	slistSilent = true;
-	slistLocal = false;
-	NET_Slist();
-}
-
-struct slist_t
-{
-	boolean		inProgress;
-	int			count;
-	hostcache_t	cache[HOSTCACHESIZE];
-	char		return_reason[32];
-};
-
-void GetSlist(slist_t *slist)
-{
-	int		i, j;
-
-	if (!slistSorted)
-	{
-		if (hostCacheCount > 1)
-		{
-			hostcache_t temp;
-			for (i = 0; i < hostCacheCount; i++)
-				for (j = i + 1; j < hostCacheCount; j++)
-					if (strcmp(hostcache[j].name, hostcache[i].name) < 0)
-					{
-						memcpy(&temp, &hostcache[j], sizeof(hostcache_t));
-						memcpy(&hostcache[j], &hostcache[i], sizeof(hostcache_t));
-						memcpy(&hostcache[i], &temp, sizeof(hostcache_t));
-					}
-		}
-		slistSorted = true;
-		memset(m_return_reason, 0, sizeof(m_return_reason));
-	}
-
-	slist->inProgress = slistInProgress;
-	slist->count = hostCacheCount;
-	memcpy(slist->cache, hostcache, sizeof(hostcache));
-	strcpy(slist->return_reason, m_return_reason);
-}
-
-boolean MN_Active(void)
-{
-	return clpr.Exec("MN_Active");
-}
-
-//==========================================================================
-//
-//	MB_Active
-//
-//==========================================================================
-
-boolean MB_Active(void)
-{
-	return clpr.Exec("MB_Active");
-}
-
-//==========================================================================
-//
-//	MB_Drawer
-//
-//==========================================================================
-
-void MB_Drawer(void)
-{
 	clpr.Exec("MB_Drawer");
 }
 
 //==========================================================================
 //
-//  MB_Responder
+//	MN_Active
 //
 //==========================================================================
 
-boolean MB_Responder(event_t *event)
+boolean MN_Active(void)
 {
-	return clpr.Exec("MB_Responder", (int)event);
+	return clpr.Exec("MN_Active") || clpr.Exec("MB_Active");
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.6  2001/09/25 17:04:45  dj_jl
 //	Replaced menu commands with command SetMenu
-//
+//	
 //	Revision 1.5  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
 //	

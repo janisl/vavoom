@@ -32,7 +32,8 @@
 
 #define MAXHISTORY			32
 #define MAX_LINES			1024
-#define MAX_LINE_LENGTH		40
+//#define MAX_LINE_LENGTH		40
+#define MAX_LINE_LENGTH		80
 
 // TYPES -------------------------------------------------------------------
 
@@ -59,6 +60,8 @@ class TConBuf : public streambuf
 };
      
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+void T_DrawCursor640(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -298,13 +301,15 @@ void C_Drawer(void)
     T_SetAlign(hleft, vtop);
 
     // Input line
-    y = (int)cons_h - 10;
+//	y = (int)cons_h - 10;
+	y = (int)(cons_h * 480 / 200) - 10;
 	T_DrawString8(4, y, ">");
     i = strlen(c_iline.Data) - 37;
     if (i < 0)
     	i = 0;
 	T_DrawString8(12, y, c_iline.Data + i);
-    T_DrawCursor();
+//    T_DrawCursor();
+    T_DrawCursor640();
    	y -= 10;
 
     // Lines
@@ -647,7 +652,7 @@ int TConBuf::overflow(int ch)
 	dprintf("%c", (char)ch);
 	if (ch != EOF && (!dev_only || (int)developer))
 	{
-    	AddChar(ch);
+    	AddChar((char)ch);
 	}
 	return 0;
 }
@@ -768,9 +773,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.7  2001/10/04 17:19:32  dj_jl
 //	Seperated drawing of notify and center messages
-//
+//	
 //	Revision 1.6  2001/09/12 17:33:39  dj_jl
 //	Fixed paranoid errors
 //	

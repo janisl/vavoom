@@ -721,13 +721,12 @@ static boolean convert(char *mus, int length)
 	byte				et;
 	int					MUSchannel;
 	int					MIDIchannel;
-	int					MIDItrack = 0;
+	int					MIDItrack;
 	int					NewEvent;
 	int 				i;
 	int					event;
 	int					data;
 	dword				DeltaTime;
-	dword				TotalTime = 0;
 	byte				MUS2MIDcontrol[15] =
 	{
 	    0,				/* Program change - not a MIDI control change */
@@ -870,7 +869,6 @@ static boolean convert(char *mus, int length)
       	if (last(event))
 		{
 	  		DeltaTime = ReadTime(&mus_ptr);
-	  		TotalTime += DeltaTime;
 	  		for (i = 0; i < (int)TrackCnt; i++)
 	    		tracks[i].DeltaTime += DeltaTime;
 		}
@@ -985,9 +983,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -1041,9 +1041,9 @@ static void AM_drawGrid(dword color)
 
     // Figure out start of vertical gridlines
     start = m_x;
-    if ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS))
-		start += FL((MAPBLOCKUNITS<<FRACBITS)
-		    - ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS)));
+//    if ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS))
+//		start += FL((MAPBLOCKUNITS<<FRACBITS)
+//		    - ((FX(start - cl_level.bmaporgx))%(MAPBLOCKUNITS<<FRACBITS)));
     end = m_x + m_w;
 
     // draw vertical gridlines
@@ -1058,9 +1058,9 @@ static void AM_drawGrid(dword color)
 
     // Figure out start of horizontal gridlines
     start = m_y;
-    if ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS))
-		start += FL((MAPBLOCKUNITS<<FRACBITS)
-		    - ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS)));
+//    if ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS))
+//		start += FL((MAPBLOCKUNITS<<FRACBITS)
+//		    - ((FX(start - cl_level.bmaporgy))%(MAPBLOCKUNITS<<FRACBITS)));
     end = m_y + m_h;
 
     // draw horizontal gridlines
@@ -1537,9 +1537,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.5  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
-//
+//	
 //	Revision 1.4  2001/08/29 17:51:20  dj_jl
 //	RGB colors, no game dependency
 //	

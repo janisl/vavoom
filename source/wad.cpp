@@ -417,6 +417,8 @@ void W_CloseAuxiliaryFile(void)
 	wad_files[AuxiliaryIndex + 1].CloseFile();
 }
 
+#ifdef CLIENT
+
 //==========================================================================
 //
 //	W_BuildGLNodes
@@ -476,6 +478,8 @@ void W_BuildPVS(int lump, int gllump)
 	// Add GWA file
 	wad_files[glfi].Open(glname);
 }
+
+#endif
 
 //==========================================================================
 //
@@ -781,6 +785,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/10/08 17:34:57  dj_jl
+//  A lots of small changes and cleanups
+//
 //  Revision 1.7  2001/09/25 17:07:06  dj_jl
 //  Safe PVS build
 //

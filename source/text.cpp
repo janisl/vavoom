@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -495,6 +496,18 @@ void T_DrawCursorAt(int x, int y)
 
 //==========================================================================
 //
+//	T_DrawCursor640
+//
+//==========================================================================
+
+void T_DrawCursor640(void)
+{
+	if ((int)(host_time * 4) & 1)
+		R_DrawPic640(LastX, LastY, Font->Pics['_' - 32]);
+}
+
+//==========================================================================
+//
 //	T_DrawString8
 //
 //	Write a string using the font with fixed width 8.
@@ -523,14 +536,16 @@ void T_DrawString8(int x, int y, const char* String)
 
 	lenght = (int)strlen(String);
 	
-	if ((cx >= 320) || (cy >= 200))
+//	if ((cx >= 320) || (cy >= 200))
+	if ((cx >= 640) || (cy >= 480))
 	{
 	   	cond << "T_DrawString8: Draw text \"" << String << "\" at ("
 	   		<< cx << "," << cy << ")\n";
 	  	return;
 	}
 
-	for (i = 0; i < lenght && cx < 320; i++)
+//	for (i = 0; i < lenght && cx < 320; i++)
+	for (i = 0; i < lenght && cx < 640; i++)
 	{
 		c = String[i] - 32;
 
@@ -545,10 +560,8 @@ void T_DrawString8(int x, int y, const char* String)
 		}
 		
 		w = Font->PicInfo[c].width;
-		if (t_shadowed)
-			R_DrawShadowedPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
-		else
-			R_DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
+//		R_DrawPic(cx + (8 - w) / 2, cy, Font->Pics[c]);
+		R_DrawPic640(cx + (8 - w) / 2, cy, Font->Pics[c]);
 		cx += 8;
 	}
 	LastX = cx;
@@ -558,9 +571,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.6  2001/09/27 17:34:22  dj_jl
 //	Fixed bug with input line
-//
+//	
 //	Revision 1.5  2001/09/12 17:34:09  dj_jl
 //	Added consts
 //	

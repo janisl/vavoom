@@ -98,6 +98,8 @@ static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
 static int				pf_DrawViewBorder;
 
+static TCvarI			_driver("_driver", "0", CVAR_ROM);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -586,12 +588,68 @@ COMMAND(TimeRefresh)
 	cl.viewangles.yaw = startangle;
 }
 
+//==========================================================================
+//
+//	V_Init
+//
+//==========================================================================
+
+void V_Init(void)
+{
+	if (M_CheckParm("-d3d"))
+	{
+		Drawer = _Direct3DDrawer;
+		_driver = 2;
+		if (!Drawer)
+		{
+			Sys_Error("Direct3D drawer is not available");
+		}
+	}
+	else if (M_CheckParm("-opengl"))
+	{
+		Drawer = _OpenGLDrawer;
+		_driver = 1;
+		if (!Drawer)
+		{
+			Sys_Error("OpenGL drawer is not available");
+		}
+	}
+	else
+	{
+		Drawer = _SoftwareDrawer;
+		_driver = 0;
+		if (!Drawer)
+		{
+			Sys_Error("Software drawer is not available");
+		}
+	}
+	Drawer->Init();
+}
+
+//==========================================================================
+//
+//	V_Shutdown
+//
+//==========================================================================
+
+void V_Shutdown(void)
+{
+	if (Drawer)
+	{
+		Drawer->Shutdown();
+		Drawer = NULL;
+	}
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.9  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
-//
+//	
 //	Revision 1.8  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

@@ -38,18 +38,17 @@ void MN_ActivateMenu(void);
 void MN_DeactivateMenu(void);
 boolean MN_Active(void);
 
-void MB_Drawer(void);
-boolean MB_Active(void);
-boolean MB_Responder(event_t *event);
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:34:57  dj_jl
+//	A lots of small changes and cleanups
+//
 //	Revision 1.4  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
