@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	14
-#define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.14"
+#define VERSION_MINOR	15
+#define VERSION_RELEASE	1
+#define VERSION_TEXT	"1.15 beta 1"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
@@ -45,9 +45,9 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-#define PARANOID		1
+//#define PARANOID		1
 
-#define DEVELOPER		1
+//#define DEVELOPER		1
 
 #define DO_GUARD		1
 
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/11/16 17:14:22  dj_jl
+//	Some changes for release.
+//
 //	Revision 1.6  2002/08/24 14:50:30  dj_jl
 //	Switched to development.
-//
+//	
 //	Revision 1.5  2002/08/05 17:19:14  dj_jl
 //	Switched to release.
 //	

@@ -6,7 +6,7 @@ EXE=
 LIBS=-lstdc++
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
+CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -march=pentiumpro
 LIB_OBJS = cmdlib.o wadlib.o level.o flow.o
 OBJS = glvis.o
 LIBS += -lm

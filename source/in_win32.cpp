@@ -520,7 +520,7 @@ static void ReadKeyboard(void)
 
 	case DIERR_INPUTLOST:
 	case DIERR_NOTACQUIRED:
-		Result = lpKeyboard->Acquire();
+		lpKeyboard->Acquire();
 		return;
 
 	case E_ACCESSDENIED:
@@ -629,9 +629,16 @@ static void ReadMouse(void)
 	case DI_OK:
 		break;
 
+	case DI_BUFFEROVERFLOW:
+		GCon->Log(NAME_Dev, "Mouse buffer overflowed.");
+		break;
+
 	case DIERR_INPUTLOST:
 	case DIERR_NOTACQUIRED:
-		Result = lpMouse->Acquire();
+		lpMouse->Acquire();
+		return;
+
+	case E_ACCESSDENIED:
 		return;
 
 	default:
@@ -836,8 +843,16 @@ static void ReadJoystick(void)
 	case DI_OK:
 		break;
 
+	case DI_BUFFEROVERFLOW:
+		GCon->Log(NAME_Dev, "Joystick buffer overflowed.");
+		break;
+
 	case DIERR_INPUTLOST:
-		Result = lpJoystick->Acquire();
+	case DIERR_NOTACQUIRED:
+		lpJoystick->Acquire();
+		return;
+
+	case E_ACCESSDENIED:
 		return;
 
 	default:
@@ -994,9 +1009,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/11/16 17:14:22  dj_jl
+//	Some changes for release.
+//
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/01/15 18:30:43  dj_jl
 //	Some fixes and improvements suggested by Malcolm Nixon
 //	

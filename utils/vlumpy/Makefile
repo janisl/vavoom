@@ -6,7 +6,7 @@ EXE=
 LIBS=-lm -lstdc++
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -mpentiumpro
+CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -march=pentiumpro
 OBJS = cmdlib.o imglib.o scrlib.o wadlib.o vlumpy.o
 
 all: ../bin/vlumpy$(EXE)

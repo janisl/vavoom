@@ -307,8 +307,8 @@ WAD_FILES = \
 
 # ---------------------------------------
 
-C_ARGS   = -c -W -Wall -mpentiumpro -ffast-math
-CPP_ARGS = -c -W -Wall -mpentiumpro -ffast-math
+C_ARGS   = -c -W -Wall -march=pentiumpro -ffast-math
+CPP_ARGS = -c -W -Wall -march=pentiumpro -ffast-math
 ASM_ARGS = -c -W -Wall -x assembler-with-cpp
 LINK_ARGS = -Wall
 

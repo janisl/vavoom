@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define TEST_MP3
+//#define TEST_MP3
 
 #include "winlocal.h"
 #include <dmusici.h>
@@ -1089,9 +1089,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/11/16 17:14:22  dj_jl
+//	Some changes for release.
+//
 //	Revision 1.9  2002/08/24 14:49:20  dj_jl
 //	Added MP3 test.
-//
+//	
 //	Revision 1.8  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

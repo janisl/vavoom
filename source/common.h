@@ -99,7 +99,7 @@ typedef unsigned long	 	dword;
 //
 //==========================================================================
 
-#ifdef DO_GUARD
+#if !defined(_DEBUG) && DO_GUARD
 #define guard(name)		static const char __FUNC_NAME__[] = #name; try {
 #define unguard			} catch (RecoverableError &e) { throw e; } \
 	catch (...) { Host_CoreDump(__FUNC_NAME__); throw; }
@@ -111,7 +111,7 @@ typedef unsigned long	 	dword;
 #define unguardf(msg)	}
 #endif
 
-#ifdef DO_GUARD_SLOW
+#if !defined(_DEBUG) && DO_GUARD_SLOW
 #define guardSlow(name)		guard(name)
 #define unguardSlow			unguard
 #define unguardfSlow(msg)	unguardf(msg)
@@ -162,9 +162,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/11/16 17:14:22  dj_jl
+//	Some changes for release.
+//
 //	Revision 1.14  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.13  2002/07/20 14:47:25  dj_jl
 //	Changed function name in guard macros from pointer to static array.
 //	

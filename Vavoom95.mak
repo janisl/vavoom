@@ -80,12 +80,12 @@ LIBRARIES = utils\glbsp\plugin\libglbsp.lib utils\glvis\glvis.lib \
 .path.asm = source
 .path.rc  = source
 .path.s   = source
-.path.dll = .;$(WINDIR)/system;$(WINDIR)/system32
+.path.dll = .;$(PATH)
 # ---------------------------------------------------------------------------
 $(PROJECT): $(OBJFILES) $(RESFILES) $(LIBRARIES)
     ilink32 @&&!
     $(LFLAGS) -L$(BCB)\lib c0w32.obj $(OBJFILES), +
-    $(PROJECT),,$(LIBRARIES) fmodbc.lib import32.lib cw32.lib,,$(RESFILES)
+    $(PROJECT),,$(LIBRARIES) import32.lib cw32.lib,,$(RESFILES)
 !
 # ---------------------------------------------------------------------------
 .cpp.obj:
