@@ -38,10 +38,10 @@
 
 struct lumpinfo_t
 {
-    char	name[12];
-    int		handle;
-    int		position;
-    int		size;
+	char	name[12];
+	int		handle;
+	int		position;
+	int		size;
 	int		prev;
 };
 
@@ -109,90 +109,95 @@ void W_CleanupName(const char *src, char *dst)
 
 static void W_AddFile(const char *filename)
 {
-    wadinfo_t		header;
-    lumpinfo_t*		lump_p;
-    int				i;
-    int				handle;
-    int				length;
-    int				startlump;
-    filelump_t*		fileinfo;
-    filelump_t		singleinfo;
+	wadinfo_t		header;
+	lumpinfo_t*		lump_p;
+	int				i;
+	int				handle;
+	int				length;
+	int				startlump;
+	filelump_t*		fileinfo;
+	filelump_t		singleinfo;
 	filelump_t*		fi_p = NULL;
-	int				name_len;
+	int				wadtime;
+	char			ext[8];
 
-    // open the file and add to directory
+	wadtime = Sys_FileTime(filename);
+	if (wadtime == -1)
+	{
+		Sys_Error("Required file %s doesn't exist", filename);
+	}
 
-    if ((handle = Sys_FileOpenRead(filename)) == -1)
-    {
-		con << "couldn't open " << filename << endl;
-		return;
-    }
+	// open the file and add to directory
+	if ((handle = Sys_FileOpenRead(filename)) == -1)
+	{
+		Sys_Error("Couldn't open %s", filename);
+	}
 
 	con << "adding " << filename << endl;
-    startlump = numlumps;
+	startlump = numlumps;
 
-	name_len = strlen(filename);
-    if (stricmp(filename + name_len - 3, "wad") &&
-    	stricmp(filename + name_len - 3, "gwa"))
-    {
+	FL_ExtractFileExtension(filename, ext);
+	if (stricmp(ext, "wad") && stricmp(ext, "gwa"))
+	{
 		// single lump file
 		fileinfo = &singleinfo;
 		singleinfo.filepos = 0;
 		singleinfo.size = LittleLong(Sys_FileSize(handle));
 		FL_ExtractFileBase(filename, singleinfo.name);
 		numlumps++;
-	    Z_Resize((void**)&lumpinfo, numlumps * sizeof(lumpinfo_t));
+		Z_Resize((void**)&lumpinfo, numlumps * sizeof(lumpinfo_t));
 		fi_p = NULL;
-    }
-    else 
-    {
+	}
+	else 
+	{
 		// WAD file
 		Sys_FileRead(handle, &header, sizeof(header));
 		if (strncmp(header.identification, "IWAD", 4))
 		{
-	    	// Homebrew levels?
-	    	if (strncmp(header.identification, "PWAD", 4))
-	    	{
+			// Homebrew levels?
+			if (strncmp(header.identification, "PWAD", 4))
+			{
 				Sys_Error ("Wad file %s doesn't have IWAD "
 			 		"or PWAD id\n", filename);
-	    	}
+			}
 		}
 		header.numlumps = LittleLong(header.numlumps);
 		header.infotableofs = LittleLong(header.infotableofs);
 		numlumps += header.numlumps;
-        //	Moved here to make static data less fragmented
-	    Z_Resize((void**)&lumpinfo, numlumps * sizeof(lumpinfo_t));
+		//	Moved here to make static data less fragmented
+		Z_Resize((void**)&lumpinfo, numlumps * sizeof(lumpinfo_t));
 		length = header.numlumps * sizeof(filelump_t);
 		fi_p = fileinfo = (filelump_t*)Z_Malloc(length, PU_STATIC, 0);
 		Sys_FileSeek(handle, header.infotableofs);
 		Sys_FileRead(handle, fileinfo, length);
-    }
+	}
 
-    // Fill in lumpinfo
-    lump_p = &lumpinfo[startlump];
+	// Fill in lumpinfo
+	lump_p = &lumpinfo[startlump];
 	
-    for (i = startlump; i < numlumps; i++, lump_p++, fileinfo++)
-    {
+	for (i = startlump; i < numlumps; i++, lump_p++, fileinfo++)
+	{
 		W_CleanupName(fileinfo->name, lump_p->name);
 		lump_p->handle = handle;
 		lump_p->position = LittleLong(fileinfo->filepos);
 		lump_p->size = LittleLong(fileinfo->size);
 		lump_p->prev = lumpindex[(int)toupper(lump_p->name[0])];
 		lumpindex[(int)toupper(lump_p->name[0])] = i;
-    }
+	}
 	
 	if (fi_p)
 	{
 		Z_Free(fi_p);
 	}
 
-    if (!stricmp(filename + name_len - 3, "wad"))
+	if (!stricmp(ext, "wad"))
 	{
 		char	gl_name[1024];
 
 		strcpy(gl_name, filename);
-		strcpy(gl_name + name_len - 3, "gwa");
-		if (Sys_FileExists(gl_name))
+		FL_StripExtension(gl_name);
+		strcat(gl_name, ".gwa");
+		if (Sys_FileTime(gl_name) >= wadtime)
 		{
 			W_AddFile(gl_name);
 		}
@@ -214,31 +219,31 @@ static void W_AddFile(const char *filename)
 
 void W_InitMultipleFiles(const char** filenames)
 {	
-    int		i;
+	int		i;
 
-    // open all the files, load headers, and count lumps
-    numlumps = 0;
+	// open all the files, load headers, and count lumps
+	numlumps = 0;
 
-    lumpindex = (int*)Z_Malloc(1024, PU_STATIC, 0);
+	lumpindex = (int*)Z_Malloc(1024, PU_STATIC, 0);
 	for (i=0; i<256; i++)
-       lumpindex[i] = -1;
+	   lumpindex[i] = -1;
 
-    // will be realloced as lumps are added
-    lumpinfo = (lumpinfo_t*)Z_Malloc(1, PU_STATIC, 0);
+	// will be realloced as lumps are added
+	lumpinfo = (lumpinfo_t*)Z_Malloc(1, PU_STATIC, 0);
 
-    for ( ; *filenames ; filenames++)
+	for ( ; *filenames ; filenames++)
 		W_AddFile(*filenames);
 
-    if (!numlumps)
+	if (!numlumps)
 		Sys_Error ("W_InitFiles: no files found");
-    
-    // set up caching
-    lumpcache = (void**)Z_Calloc(numlumps * sizeof(*lumpcache), PU_STATIC, 0);
+	
+	// set up caching
+	lumpcache = (void**)Z_Calloc(numlumps * sizeof(*lumpcache), PU_STATIC, 0);
 
 	PrimaryLumpInfo = lumpinfo;
 	PrimaryLumpCache = lumpcache;
 	PrimaryNumLumps = numlumps;
-    PrimaryLumpIndex = lumpindex;
+	PrimaryLumpIndex = lumpindex;
 }
 
 //==========================================================================
@@ -251,11 +256,11 @@ void W_InitMultipleFiles(const char** filenames)
 
 void W_InitFile(const char* filename)
 {
-    const char*	names[2];
+	const char*	names[2];
 
-    names[0] = filename;
-    names[1] = NULL;
-    W_InitMultipleFiles(names);
+	names[0] = filename;
+	names[1] = NULL;
+	W_InitMultipleFiles(names);
 }
 
 //==========================================================================
@@ -266,7 +271,7 @@ void W_InitFile(const char* filename)
 
 int W_NumLumps(void)
 {
-    return numlumps;
+	return numlumps;
 }
 
 //==========================================================================
@@ -313,10 +318,10 @@ void W_OpenAuxiliary(const char *filename)
 
 	// Init the auxiliary lumpinfo array
 	lumpinfo = (lumpinfo_t*)Z_Malloc(numlumps*sizeof(lumpinfo_t), PU_STATIC, 0);
-    lumpindex = (int*)Z_Malloc(1024, PU_STATIC, 0);
+	lumpindex = (int*)Z_Malloc(1024, PU_STATIC, 0);
 
 	for (i = 0; i < 256; i++)
-       lumpindex[i] = -1;
+	   lumpindex[i] = -1;
 
 	sourceLump = fileinfo;
 	destLump = lumpinfo;
@@ -339,7 +344,7 @@ void W_OpenAuxiliary(const char *filename)
 	AuxiliaryLumpInfo = lumpinfo;
 	AuxiliaryLumpCache = lumpcache;
 	AuxiliaryNumLumps = numlumps;
-    AuxiliaryLumpIndex = lumpindex;
+	AuxiliaryLumpIndex = lumpindex;
 	AuxiliaryOpened = true;
 }
 
@@ -365,7 +370,7 @@ void W_CloseAuxiliary(void)
 		}
 		Z_Free(AuxiliaryLumpInfo);
 		Z_Free(AuxiliaryLumpCache);
-        Z_Free(AuxiliaryLumpIndex);
+		Z_Free(AuxiliaryLumpIndex);
 		W_CloseAuxiliaryFile();
 		AuxiliaryOpened = false;
 	}
@@ -401,7 +406,7 @@ void W_UsePrimary(void)
 	lumpinfo = PrimaryLumpInfo;
 	numlumps = PrimaryNumLumps;
 	lumpcache = PrimaryLumpCache;
-    lumpindex = PrimaryLumpIndex;
+	lumpindex = PrimaryLumpIndex;
 }
 
 //==========================================================================
@@ -417,7 +422,7 @@ void W_UseAuxiliary(void)
 		lumpinfo = AuxiliaryLumpInfo;
 		numlumps = AuxiliaryNumLumps;
 		lumpcache = AuxiliaryLumpCache;
-    	lumpindex = AuxiliaryLumpIndex;
+		lumpindex = AuxiliaryLumpIndex;
 	}
 }
 
@@ -435,16 +440,16 @@ int W_CheckNumForName(const char* name)
 	char		clean[12];
 
 	W_CleanupName(name, clean);
-    for (i = lumpindex[(int)toupper(name[0])]; i >= 0; i = lumpinfo[i].prev)
-    {
+	for (i = lumpindex[(int)toupper(name[0])]; i >= 0; i = lumpinfo[i].prev)
+	{
 		if (!strcmp(clean, lumpinfo[i].name))
 		{
-	    	return i;
+			return i;
 		}
 	}
 
-    // Not found.
-    return -1;
+	// Not found.
+	return -1;
 }
 
 //==========================================================================
@@ -457,16 +462,16 @@ int W_CheckNumForName(const char* name)
 
 int W_GetNumForName(const char* name)
 {
-    int	i;
+	int	i;
 
-    i = W_CheckNumForName(name);
-    
-    if (i == -1)
-    {
+	i = W_CheckNumForName(name);
+	
+	if (i == -1)
+	{
 		Sys_Error("W_GetNumForName: %s not found!", name);
 	}
 
-    return i;
+	return i;
 }
 
 //==========================================================================
@@ -479,11 +484,11 @@ int W_GetNumForName(const char* name)
 
 int W_LumpLength(int lump)
 {
-    if ((dword)lump >= (dword)numlumps)
+	if ((dword)lump >= (dword)numlumps)
 	{
 		Sys_Error("W_LumpLength: %i >= numlumps",lump);
 	}
-    return lumpinfo[lump].size;
+	return lumpinfo[lump].size;
 }
 
 //==========================================================================
@@ -512,19 +517,19 @@ const char *W_LumpName(int lump)
 
 void W_ReadLump(int lump, void* dest)
 {
-    int			c;
-    lumpinfo_t*	l;
+	int			c;
+	lumpinfo_t*	l;
 	
-    if ((dword)lump >= (dword)numlumps)
+	if ((dword)lump >= (dword)numlumps)
 		Sys_Error("W_ReadLump: %i >= numlumps",lump);
 
-    l = lumpinfo + lump;
+	l = lumpinfo + lump;
 	
 //	Sys_BeginRead();
-    Sys_FileSeek(l->handle, l->position);
-    c = Sys_FileRead(l->handle, dest, l->size);
+	Sys_FileSeek(l->handle, l->position);
+	c = Sys_FileRead(l->handle, dest, l->size);
 
-    if (c < l->size)
+	if (c < l->size)
 		Sys_Error("W_ReadLump: only read %i of %i on lump %i",
 			c, l->size, lump);
 
@@ -539,24 +544,24 @@ void W_ReadLump(int lump, void* dest)
 
 void* W_CacheLumpNum(int lump, int tag)
 {
-    byte*	ptr;
+	byte*	ptr;
 
-    if ((unsigned)lump >= (unsigned)numlumps)
+	if ((unsigned)lump >= (unsigned)numlumps)
 		Sys_Error("W_CacheLumpNum: %i >= numlumps",lump);
 		
-    if (!lumpcache[lump])
-    {
+	if (!lumpcache[lump])
+	{
 		// read the lump in
 		ptr = (byte*)Z_Malloc(W_LumpLength(lump) + 1, tag, &lumpcache[lump]);
 		W_ReadLump(lump, lumpcache[lump]);
 		ptr[W_LumpLength(lump)] = 0;
-    }
-    else
-    {
+	}
+	else
+	{
 		Z_ChangeTag(lumpcache[lump], tag);
-    }
+	}
 	
-    return lumpcache[lump];
+	return lumpcache[lump];
 }
 
 //==========================================================================
@@ -567,7 +572,7 @@ void* W_CacheLumpNum(int lump, int tag)
 
 void* W_CacheLumpName(const char* name,int tag)
 {
-    return W_CacheLumpNum(W_GetNumForName(name), tag);
+	return W_CacheLumpNum(W_GetNumForName(name), tag);
 }
 
 //==========================================================================
@@ -579,7 +584,7 @@ void* W_CacheLumpName(const char* name,int tag)
 bool W_ForEachLump(bool (*func)(int, const char*, int))
 {
 	for (int i = 0; i < numlumps; i++)
-    {
+	{
 		if (!func(i, lumpinfo[i].name, lumpinfo[i].size))
 		{
 			return false;
@@ -599,67 +604,70 @@ void W_Profile(void)
 {
 	static int	info[2500][10];
 	static int	profilecount = 0;
-    int			i;
-    memblock_t*	block;
-    void*		ptr;
-    char		ch;
-    FILE*		f;
-    int			j;
-    char		name[16];
+	int			i;
+	memblock_t*	block;
+	void*		ptr;
+	char		ch;
+	FILE*		f;
+	int			j;
+	char		name[16];
 	
 	sprintf(name,"jl/waddump%d.txt", profilecount);
 	
-    for (i = 0; i < numlumps; i++)
-    {	
+	for (i = 0; i < numlumps; i++)
+	{	
 		ptr = lumpcache[i];
 		if (!ptr)
 		{
-	    	ch = ' ';
-	    	continue;
+			ch = ' ';
+			continue;
 		}
 		else
 		{
-	    	block = (memblock_t *)((byte *)ptr - sizeof(memblock_t));
-	    	if (block->tag < PU_PURGELEVEL)
+			block = (memblock_t *)((byte *)ptr - sizeof(memblock_t));
+			if (block->tag < PU_PURGELEVEL)
 				ch = 'S';
-	    	else
+			else
 				ch = 'P';
 		}
 		info[i][profilecount] = ch;
-    }
-    profilecount++;
+	}
+	profilecount++;
 
-    f = fopen(name, "w");
-    name[8] = 0;
+	f = fopen(name, "w");
+	name[8] = 0;
 
-    for (i=0 ; i<numlumps ; i++)
-    {
+	for (i=0 ; i<numlumps ; i++)
+	{
 		memcpy (name,lumpinfo[i].name,8);
 
 		for (j=0 ; j<8 ; j++)
-	    	if (!name[j])
+			if (!name[j])
 				break;
 
 		for ( ; j<8 ; j++)
-	    	name[j] = ' ';
+			name[j] = ' ';
 
 		fprintf (f,"%i %s %i ", i, name, lumpinfo[i].prev);
 
 //		for (j=0 ; j<profilecount ; j++)
-//	    	fprintf (f,"    %c",info[i][j]);
+//			fprintf (f,"    %c",info[i][j]);
 
 		fprintf (f,"\n");
-    }
-    fclose (f);
+	}
+	fclose (f);
 }
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/30 17:42:31  dj_jl
+//	Using file times
+//
 //	Revision 1.4  2001/08/21 17:50:17  dj_jl
 //	Made W_UseAuxiliary safe
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
