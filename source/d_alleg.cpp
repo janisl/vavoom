@@ -41,8 +41,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern byte		gammatable[5][256];
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 BEGIN_COLOR_DEPTH_LIST
@@ -315,9 +313,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/27 07:47:52  dj_jl
+//	Public gamma variables
+//
 //	Revision 1.5  2001/09/12 17:32:10  dj_jl
 //	Made my_create_bitmap static
-//
+//	
 //	Revision 1.4  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
 //	

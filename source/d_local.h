@@ -336,7 +336,6 @@ extern word				scaletable[32][256];
 
 extern byte				*scrn;
 extern word				*scrn16;
-extern int				usegamma;
 
 extern short			*zbuffer;
 
@@ -545,9 +544,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/27 07:47:52  dj_jl
+//	Public gamma variables
+//
 //	Revision 1.14  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
-//
+//	
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

@@ -41,8 +41,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern byte					gammatable[5][256];
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 dword						mmx_mask4 = 0;
@@ -302,9 +300,12 @@ void TSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/27 07:47:52  dj_jl
+//	Public gamma variables
+//
 //	Revision 1.4  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

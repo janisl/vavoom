@@ -172,14 +172,20 @@ extern int				SkinBPP;
 extern byte				*SkinData;
 extern rgba_t			SkinPal[256];
 
+extern int				usegamma;
+extern byte				gammatable[5][256];
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/27 07:47:52  dj_jl
+//	Public gamma variables
+//
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.8  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	
