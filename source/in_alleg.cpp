@@ -74,8 +74,9 @@ static byte					scantokey[KEY_MAX] =
 	K_INSERT, K_DELETE, K_HOME, K_END, K_PAGEUP, K_PAGEDOWN,
 	K_LEFTARROW, K_RIGHTARROW, K_UPARROW, K_DOWNARROW,
 	K_PADDIVIDE, K_PADMULTIPLE, K_PADMINUS, K_PADPLUS,
-	K_PADDOT, K_PADENTER, K_PRINTSCRN, K_PAUSE, 0, 0,
-	K_LSHIFT, K_RSHIFT, K_LCTRL, K_RCTRL, K_LALT, K_RALT, 
+	K_PADDOT, K_PADENTER, K_PRINTSCRN, K_PAUSE,
+	0, 0, 0, 0, 0, 0, 0, 0, 0,
+	K_LSHIFT, K_RSHIFT, K_LCTRL, K_RCTRL, K_LALT, K_RALT,
 	K_LWIN, K_RWIN, K_MENU, K_SCROLLLOCK, K_NUMLOCK, K_CAPSLOCK
 };
 
@@ -445,9 +446,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/23 17:42:06  dj_jl
+//	Added new keys
+//
 //	Revision 1.4  2001/08/07 16:48:54  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
