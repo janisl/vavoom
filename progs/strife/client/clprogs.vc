@@ -49,9 +49,10 @@
 #include "m_join.vc"
 #include "m_psetup.vc"
 #include "m_option.vc"
-#include "m_resol.vc"
 #include "m_ctrl.vc"
 #include "m_mouse.vc"
+#include "m_resol.vc"
+#include "m_video.vc"
 #include "m_sound.vc"
 #include "m_help.vc"
 #include "m_quit.vc"
@@ -65,9 +66,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/23 17:38:15  dj_jl
+//	Added video options menu
+//
 //	Revision 1.3  2001/08/04 17:18:35  dj_jl
 //	Moved title / demo loop to progs
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:53  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

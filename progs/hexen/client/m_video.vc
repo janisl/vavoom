@@ -1,0 +1,186 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	$Id$
+//**
+//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Video options menu
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+enum
+{
+	DRV_SOFTWARE,
+	DRV_OPENGL,
+	DRV_DIRECT3D
+};
+
+// TYPES -------------------------------------------------------------------
+
+struct   menu_video_t
+{
+	menu_t			menu;
+	menuslider_t	scrsize;
+	menuslider_t	gamma;
+	menuslider_t	darkening;
+	menuswitch_t	subdiv;
+	menuswitch_t	croshair;
+	menuswitch_t	darken;
+	menutext_t		title;
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+menu_video_t	VideoMenu;
+
+string			sw_crosh[4] = {"None", "Cross", "Angle", "Dot"};
+string			sw_subdiv[2] = {"Subdivision 8", "Subdivision 16"};
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	video_func
+//
+//==========================================================================
+
+void video_func(menucommon_t *item, int msg)
+{
+	if (msg != MMSG_ACTIVATE)
+	{
+		return;
+	}
+
+	switch (item->id)
+	{
+	 case 1:
+		SetCvar("screen_size", VideoMenu.scrsize.value + 3);
+		break;
+
+	 case 2:
+		SetCvar("brightness", VideoMenu.gamma.value);
+		break;
+
+	 case 3:
+		SetCvar("menu_darkening", VideoMenu.darkening.value);
+		break;
+
+	 case 4:
+		SetCvar("croshair", VideoMenu.croshair.value);
+		break;
+
+	 case 5:
+		SetCvar("r_darken", VideoMenu.darken.value);
+		break;
+
+	 case 10:
+		SetCvar("d_subdiv", VideoMenu.subdiv.value + 1);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	menu_video
+//
+//==========================================================================
+
+void menu_video(void)
+{
+	int x = 120;
+	int y = 26;
+	int drv;
+
+	drv = GetCvar("_driver");
+
+    InitMenu(&VideoMenu.menu);
+
+	MenuSlider_Init(&VideoMenu.scrsize, x, y, "Screen size", TEXT_SMALLR, GetCvar("screen_size") - 3, 9);
+	VideoMenu.scrsize.callback = video_func;
+	VideoMenu.scrsize.id = 1;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.scrsize);
+	y += 20;
+
+	//	Currently brightness works only in software
+	if (drv == DRV_SOFTWARE)
+	{
+		MenuSlider_Init(&VideoMenu.gamma, x, y, "Brightness", TEXT_SMALLR, GetCvar("brightness"), 5);
+		VideoMenu.gamma.callback = video_func;
+		VideoMenu.gamma.id = 2;
+		AddMenuItem(&VideoMenu.menu, &VideoMenu.gamma);
+		y += 20;
+	}
+
+	MenuSlider_Init(&VideoMenu.darkening, x, y, "Menu darkness", TEXT_SMALLR, GetCvar("menu_darkening"), 32);
+	VideoMenu.darkening.callback = video_func;
+	VideoMenu.darkening.id = 3;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.darkening);
+	y += 20;
+
+	MenuSwitch_Init(&VideoMenu.croshair, x, y, "Croshair", TEXT_SMALLR, GetCvar("croshair"), 4, &sw_crosh[0]);
+	VideoMenu.croshair.callback = video_func;
+	VideoMenu.croshair.id = 4;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.croshair);
+	y += 10;
+
+	MenuSwitch_Init(&VideoMenu.darken, x, y, "Darken lights", TEXT_SMALLR, GetCvar("r_darken"), 2, &sw_offon[0]);
+	VideoMenu.darken.callback = video_func;
+	VideoMenu.darken.id = 5;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.darken);
+	y += 10;
+
+	switch (drv)
+	{
+	 case DRV_SOFTWARE:
+		MenuSwitch_Init(&VideoMenu.subdiv, x, y, "Span drawing", TEXT_SMALLR, GetCvar("d_subdiv") - 1, 2, &sw_subdiv[0]);
+		VideoMenu.subdiv.callback = video_func;
+		VideoMenu.subdiv.id = 10;
+		AddMenuItem(&VideoMenu.menu, &VideoMenu.subdiv);
+		y += 10;
+		break;
+
+	 case DRV_OPENGL:
+		break;
+
+	 case DRV_DIRECT3D:
+		break;
+	}
+
+	MenuText_InitTitle(&VideoMenu.title, 160, 24, "VIDEO OPTIONS", TEXT_BIGC);
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.title);
+
+    PushMenu(&VideoMenu.menu);
+}
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.1  2001/08/23 17:38:15  dj_jl
+//	Added video options menu
+//
+//**************************************************************************

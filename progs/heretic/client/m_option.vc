@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Options menu
@@ -40,72 +36,30 @@
 struct menu_options_t
 {
 	menu_t			menu;
-	menutext_t		res;
 	menutext_t		ctl;
 	menutext_t		ctl2;
 	menutext_t		mouse;
+	menutext_t		res;
+	menutext_t		video;
 	menutext_t		sound;
-	menuslider_t	scrsize;
-	menuslider_t	gamma;
-	menuslider_t	darkening;
-	menuswitch_t	subdiv;
-	menuswitch_t	croshair;
+	menutext_t		console;
 	menutext_t		title;
 };
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-void menu_resolution(void);
 void menu_controls(void);
 void menu_controls2(void);
 void menu_mouse(void);
+void menu_resolution(void);
+void menu_video(void);
 void menu_sound(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
 menu_options_t	OptionsMenu;
 
-string			sw_crosh[4] = {"None", "Cross", "Angle", "Dot"};
-string			sw_subdiv[2] = {"Subdivision 8", "Subdivision 16"};
-
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	options_func
-//
-//==========================================================================
-
-void options_func(menucommon_t *item, int msg)
-{
-	if (msg != MMSG_ACTIVATE)
-	{
-		return;
-	}
-
-	switch (item->id)
-	{
-	 case 1:
-		SetCvar("screen_size", OptionsMenu.scrsize.value + 3);
-		break;
-
-	 case 2:
-		SetCvar("brightness", OptionsMenu.gamma.value);
-		break;
-
-	 case 3:
-		SetCvar("menu_darkening", OptionsMenu.darkening.value);
-		break;
-
-	 case 4:
-		SetCvar("d_subdiv", OptionsMenu.subdiv.value + 1);
-		break;
-
-	 case 5:
-		SetCvar("croshair", OptionsMenu.croshair.value);
-		break;
-	}
-}
 
 //==========================================================================
 //
@@ -120,10 +74,6 @@ void menu_options(void)
 
     InitMenu(&OptionsMenu.menu);
 
-	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution", TEXT_SMALLR, menu_resolution);
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.res);
-	y += 10;
-
 	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR, menu_controls);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.ctl);
 	y += 10;
@@ -136,38 +86,21 @@ void menu_options(void)
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.mouse);
 	y += 10;
 
+	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution", TEXT_SMALLR, menu_resolution);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.res);
+	y += 10;
+
+	MenuText_InitFunc(&OptionsMenu.video, x, y, "Video options", TEXT_SMALLR, menu_video);
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.video);
+	y += 10;
+
 	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR, menu_sound);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.sound);
 	y += 10;
 
-	MenuSlider_Init(&OptionsMenu.scrsize, x, y, "Screen size", TEXT_SMALLR, GetCvar("screen_size") - 3, 9);
-	OptionsMenu.scrsize.callback = options_func;
-	OptionsMenu.scrsize.id = 1;
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.scrsize);
-	y += 20;
-
-	MenuSlider_Init(&OptionsMenu.gamma, x, y, "Brightness", TEXT_SMALLR, GetCvar("brightness"), 5);
-	OptionsMenu.gamma.callback = options_func;
-	OptionsMenu.gamma.id = 2;
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.gamma);
-	y += 20;
-
-	MenuSlider_Init(&OptionsMenu.darkening, x, y, "Menu darkness", TEXT_SMALLR, GetCvar("menu_darkening"), 32);
-	OptionsMenu.darkening.callback = options_func;
-	OptionsMenu.darkening.id = 3;
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.darkening);
-	y += 20;
-
-	MenuSwitch_Init(&OptionsMenu.subdiv, x, y, "Span drawing", TEXT_SMALLR, GetCvar("d_subdiv") - 1, 2, &sw_subdiv[0]);
-	OptionsMenu.subdiv.callback = options_func;
-	OptionsMenu.subdiv.id = 4;
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.subdiv);
+	MenuText_InitCmd(&OptionsMenu.console, x, y, "Go to console", TEXT_SMALLR, "ToggleConsole\n");
+	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.console);
 	y += 10;
-
-	MenuSwitch_Init(&OptionsMenu.croshair, x, y, "Croshair", TEXT_SMALLR, GetCvar("croshair"), 4, &sw_crosh[0]);
-	OptionsMenu.croshair.callback = options_func;
-	OptionsMenu.croshair.id = 5;
-	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.croshair);
 
 	MenuText_InitTitle(&OptionsMenu.title, 160, 24, "OPTIONS", TEXT_BIGC);
 	AddMenuItem(&OptionsMenu.menu, &OptionsMenu.title);
@@ -175,4 +108,13 @@ void menu_options(void)
     PushMenu(&OptionsMenu.menu);
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/23 17:38:15  dj_jl
+//	Added video options menu
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
