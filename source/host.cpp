@@ -321,6 +321,9 @@ void Host_Frame(void)
 		//	Fetch results from server
 		CL_ReadFromServer();
 
+		//	Collect all garbage
+		VObject::CollectGarbage();
+
 		//	Update video
 		if (show_time)
 			time1 = Sys_Time();
@@ -546,9 +549,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/12/27 17:37:42  dj_jl
+//	Added garbage collection
+//
 //	Revision 1.14  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
-//
+//	
 //	Revision 1.13  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification
 //	
