@@ -23,16 +23,6 @@
 //**
 //**************************************************************************
 
-struct FFunction
-{
-	FName	Name;
-	int		FirstStatement;
-	short	NumParms;
-	short	NumLocals;
-	short	Type;
-	short	Flags;
-};
-
 //==========================================================================
 //
 //	VClass
@@ -50,7 +40,7 @@ class VClass:public VObject
 	int*		ClassVTable;
 	void (*ClassConstructor)(void*);
 
-	FFunction*	Methods;
+//	FFunction*	Methods;
 	int			ClassNumMethods;
 	byte*		PropretiesInfo;
 
@@ -82,9 +72,12 @@ class VClass:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/11 08:15:40  dj_jl
+//	Removed FFunction
+//
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/27 17:35:42  dj_jl
 //	Split VClass in seperate module
 //	
