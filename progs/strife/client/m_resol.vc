@@ -169,11 +169,11 @@ class MenuScreenScreenResolution:MenuScreen
 
 	void CreateChoices(void)
 	{
-		Mode = MenuChoice_VideoMode(AddItem(MenuChoice_VideoMode));
+		Mode = MenuChoice_VideoMode(NewChild(MenuChoice_VideoMode));
 		Mode.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Mode.Height;
 
-		Depth = MenuChoice_BitDepth(AddItem(MenuChoice_BitDepth));
+		Depth = MenuChoice_BitDepth(NewChild(MenuChoice_BitDepth));
 		Depth.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Depth.Height;
 
@@ -223,6 +223,9 @@ void menu_resolution(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.7  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

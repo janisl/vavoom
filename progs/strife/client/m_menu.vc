@@ -47,8 +47,6 @@ int menu_sp;
 
 MenuScreen CurrentMenuScreen;
 
-float MenuTime;
-
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -57,56 +55,19 @@ float MenuTime;
 //**
 //**************************************************************************
 
-class MenuObject:Object
+class MenuObject:Window
 {
-	int X;
-	int Y;
-	int Width;
-	int Height;
-	MenuObject Parent;
 	boolean bSelected;
-	boolean bHidden;
 	boolean bDisabled;
-
-	void SetPos(int NewX, int NewY)
-	{
-		X = NewX;
-		Y = NewY;
-	}
-	int GetX(void)
-	{
-		return X;
-	}
-	int GetY(void)
-	{
-		return Y;
-	}
-
-	void Init(void)
-	{
-	}
-
-	void Draw(void)
-	{
-	}
 
 	boolean Key(int key)
 	{
 		return false;
 	}
 
-	boolean IsVisible(void)
-	{
-		return !bHidden;
-	}
-
 	boolean IsDisabled(void)
 	{
 		return bDisabled;
-	}
-
-	void Destroyed(void)
-	{
 	}
 
 	void FocusLost(void)
@@ -117,21 +78,12 @@ class MenuObject:Object
 	{
 	}
 
-	void Show(void)
-	{
-		bHidden = false;
-	}
-
-	void Hide(void)
-	{
-		bHidden = true;
-	}
-
 	defaultproperties
 	{
 		bSelected = false;
-		bHidden = false;
 		bDisabled = true;
+		Width = 320;
+		Height = 200;
 	}
 }
 
@@ -159,11 +111,11 @@ class MenuTitleText:MenuObject
 {
 	string Text;
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		T_SetFont(font_big);
 		T_SetAlign(hcenter, vbottom);
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 	}
 
 	defaultproperties
@@ -195,19 +147,17 @@ class MenuScreen:MenuObject
 	int TitleX;
 	int TitleY;
 
-	MenuObject AddItem(classid type)
+	void ChildAdded(Window Child)
 	{
-		MenuObject item;
-
-		if (NumItems >= MAX_MENU_ITEMS)
+		if (MenuObject(Child))
 		{
-			FatalError("Too many menu items");
+			if (NumItems >= MAX_MENU_ITEMS)
+			{
+				FatalError("Too many menu items");
+			}
+			Items[NumItems++] = MenuObject(Child);
 		}
-		item = SpawnObject(type, self);
-		Items[NumItems++] = item;
-		item.Parent = self;
-		item.Init();
-		return item;
+		::ChildAdded(Child);
 	}
 
 	void CreateTitle(void)
@@ -216,7 +166,7 @@ class MenuScreen:MenuObject
 
 		if (Title && Title != "")
 		{
-			newTitle = MenuTitleText(AddItem(MenuTitleText));
+			newTitle = MenuTitleText(NewChild(MenuTitleText));
 			newTitle.SetPos(TitleX, TitleY);
 			newTitle.Text = Title;
 		}
@@ -233,7 +183,7 @@ class MenuScreen:MenuObject
 		{
 			if (Choices[i])
 			{
-				newChoice = MenuChoice(AddItem(Choices[i]));
+				newChoice = MenuChoice(NewChild(Choices[i]));
 				newChoice.X = ChoicesStartX;
 				newChoice.Y = currentY;
 				currentY += newChoice.Height;
@@ -245,7 +195,7 @@ class MenuScreen:MenuObject
 	{
 		if (SelectorType)
 		{
-			Selector = AddItem(SelectorType);
+			Selector = NewChild(SelectorType);
 		}
 	}
 
@@ -268,7 +218,7 @@ class MenuScreen:MenuObject
 
 		if (Selector)
 		{
-			Selector.SetPos(Items[CursorPos].GetX(), Items[CursorPos].GetY());
+			Selector.SetPos(Items[CursorPos].X, Items[CursorPos].Y);
 		}
 	}
 
@@ -293,9 +243,9 @@ class MenuScreen:MenuObject
 		}
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		CreateTitle();
 		CreateChoices();
 		CreateSelector();
@@ -360,34 +310,6 @@ class MenuScreen:MenuObject
 		}
 
 		return false;
-	}
-
-	void Draw(void)
-	{
-		int i;
-
-		for (i = 0; i < NumItems; i++)
-		{
-			if (Items[i].IsVisible())
-			{
-				Items[i].Draw();
-			}
-		}
-	}
-
-	void Destroy(void)
-	{
-		int i;
-
-		for (i = 0; i < MAX_MENU_ITEMS; i++)
-		{
-			if (Items[i] != none)
-			{
-				Items[i].Destroyed();
-				Items[i].Destroy();
-			}
-		}
-		::Destroy();
 	}
 
 	defaultproperties
@@ -473,9 +395,7 @@ void InputLine_SetValue(TILine * iline, string text)
 
 MenuScreen SpawnMenu(classid CID)
 {
-	MenuScreen S = SpawnObject(CID, none);
-	S.Init();
-	return S;
+	return MenuScreen(GRoot.NewChild(CID));
 }
 
 //**************************************************************************
@@ -517,7 +437,6 @@ void PushMenuScreen(MenuScreen menu)
 
 	if (!CurrentMenuScreen)
 	{
-		MenuTime = 0.0;
 /*		if (cl.paused)
 		{
 			S_ResumeSound();
@@ -525,6 +444,10 @@ void PushMenuScreen(MenuScreen menu)
 		C_ClearNotify();*/
 		CmdBuf_AddText("HideConsole\n");
 		LocalSound('MenuActivate');
+	}
+	else
+	{
+		CurrentMenuScreen.Hide();
 	}
 
 	CurrentMenuScreen = menu;
@@ -547,6 +470,8 @@ void PopMenu(void)
 	if (menu_sp)
 	{
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
+		CurrentMenuScreen.Show();
+		CurrentMenuScreen.Raise();
 		LocalSound('MenuPrevious');
 	}
 	else
@@ -586,14 +511,14 @@ class MenuStaticBitmap:MenuObject
 	int PicType;
 	int Handle;
 
-	void Init(void)
+	void InitWindow(void)
 	{
 		Handle = R_RegisterPic(PicName, PicType);
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
-		R_DrawPic(X, Y, Handle);
+		gc.DrawIcon(0, 0, Handle);
 	}
 
 	defaultproperties
@@ -616,13 +541,15 @@ class MenuStaticAnim:MenuObject
 	boolean bBackwards;
 	int Frames[32];
 	string FrameNames[32];
+	float Time;
 
-	void Init(void)
+	void InitWindow(void)
 	{
 		int i;
 
-		::Init();
+		::InitWindow();
 
+		bTickEnabled = true;
 		NumFrames = 0;
 		for (i = 0; i < 32; i++)
 		{
@@ -634,14 +561,19 @@ class MenuStaticAnim:MenuObject
 		}
 	}
 
-	void Draw(void)
+	void Tick(float DeltaTime)
 	{
-		int frame = (ftoi(MenuTime * itof(Speed)) + StartFrame) % NumFrames;
+		Time += DeltaTime;
+	}
+
+	void DrawWindow(GC gc)
+	{
+		int frame = (ftoi(Time * itof(Speed)) + StartFrame) % NumFrames;
 		if (bBackwards)
 		{
 			frame = NumFrames - frame - 1;
 		}
-		R_DrawPic(X, Y, Frames[frame]);
+		gc.DrawIcon(0, 0, Frames[frame]);
 	}
 
 	defaultproperties
@@ -661,10 +593,22 @@ class MenuSpriteAnim:MenuObject
 	int Speed;
 	int NumFrames;
 	int Translation;
+	float Time;
 
-	void Draw(void)
+	void InitWindow(void)
 	{
-		int frame = ftoi(MenuTime * itof(Speed)) % NumFrames;
+		::InitWindow();
+		bTickEnabled = true;
+	}
+
+	void Tick(float DeltaTime)
+	{
+		Time += DeltaTime;
+	}
+
+	void DrawWindow(GC gc)
+	{
+		int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
 		R_DrawSpritePatch(X, Y, SprDef, frame, 0, Translation);
 	}
@@ -683,9 +627,12 @@ class MenuSpriteAnim:MenuObject
 class MenuSelector_Spinner:MenuObject
 {
 	int selector_pics[8];
+	float Time;
 
-	void Init(void)
+	void InitWindow(void)
 	{
+		::InitWindow();
+		bTickEnabled = true;
 		selector_pics[0] = R_RegisterPic("M_CURS1", PIC_PATCH);
 		selector_pics[1] = R_RegisterPic("M_CURS2", PIC_PATCH);
 		selector_pics[2] = R_RegisterPic("M_CURS3", PIC_PATCH);
@@ -696,9 +643,14 @@ class MenuSelector_Spinner:MenuObject
 		selector_pics[7] = R_RegisterPic("M_CURS8", PIC_PATCH);
 	}
 
-	void Draw(void)
+	void Tick(float DeltaTime)
 	{
-		R_DrawPic(X - 32, Y - 5, selector_pics[ftoi(MenuTime * 4.0) & 7]);
+		Time += DeltaTime;
+	}
+
+	void DrawWindow(GC gc)
+	{
+		gc.DrawIcon(-32, -5, selector_pics[ftoi(Time * 4.0) & 7]);
 	}
 
 	defaultproperties
@@ -714,11 +666,11 @@ class MenuSelector_Spinner:MenuObject
 
 class MenuSelector_SmallLeft:MenuObject
 {
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		T_SetFont(font_small);
 		T_SetAlign(hright, vtop);
-		T_DrawText(X - 2, Y, ">");
+		gc.DrawText(-2, 0, ">");
 	}
 
 	defaultproperties
@@ -734,11 +686,11 @@ class MenuSelector_SmallLeft:MenuObject
 
 class MenuSelector_SmallRight:MenuObject
 {
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
-		T_DrawText(X + 2, Y, ">");
+		gc.DrawText(2, 0, ">");
 	}
 
 	defaultproperties
@@ -781,11 +733,11 @@ class MenuTextButton:MenuChoice
 		return false;
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		T_SetFont(TextFont);
 		T_SetAlign(TextHAlign, TextVAlign);
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 	}
 }
 
@@ -848,7 +800,7 @@ class MenuChoiceEnum:MenuChoice
 		return false;
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
 		int i;
 
@@ -868,7 +820,7 @@ class MenuChoiceEnum:MenuChoice
 			Value = MaxValue - 1;
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		int xx;
 
@@ -881,19 +833,18 @@ class MenuChoiceEnum:MenuChoice
 		{
 			T_SetAlign(hright, vtop);
 		}
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 
-		xx = X;
 		if (bLeftAlign)
 		{
-			xx += T_TextWidth(Text) + 8;
+			xx = T_TextWidth(Text) + 8;
 		}
 		else
 		{
-			xx += 10;
+			xx = 10;
 		}
 		T_SetAlign(hleft, vtop);
-		T_DrawText(xx, Y, EnumNames[Value]);
+		gc.DrawText(xx, 0, EnumNames[Value]);
 	}
 
 	boolean Key(int key)
@@ -982,9 +933,9 @@ class MenuChoiceSlider:MenuChoice
 		return false;
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 
 		Value = GetInitialValue();
 		if (Value < MinValue)
@@ -998,26 +949,26 @@ class MenuChoiceSlider:MenuChoice
 		pic_M_THERMO = R_RegisterPic("M_THERMO", PIC_PATCH);
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		int i;
 		int xx;
 
 		T_SetFont(font_small);
 		T_SetAlign(hright, vtop);
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 
-		xx = X + 8;
-		R_DrawPic(xx, Y, pic_M_THERML);
+		xx = 8;
+		gc.DrawIcon(xx, 0, pic_M_THERML);
 		xx += 8;
 		for (i = 0; i < 13; i++)
 		{
-			R_DrawPic(xx, Y, pic_M_THERMM);
+			gc.DrawIcon(xx, 0, pic_M_THERMM);
 			xx += 8;
 		}
-		R_DrawPic(xx, Y, pic_M_THERMR);
-		xx = X + 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
-		R_DrawPic(xx, Y, pic_M_THERMO);
+		gc.DrawIcon(xx, 0, pic_M_THERMR);
+		xx = 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+		gc.DrawIcon(xx, 0, pic_M_THERMO);
 	}
 
 	boolean Key(int key)
@@ -1081,21 +1032,21 @@ int pic_M_LSRGHT;
 //
 //==========================================================================
 
-int DrawSlot(int x, int y, string text, boolean entering)
+int DrawSlot(GC gc, int y, string text, boolean entering)
 {
 	int xx;
 	int j;
 
-	R_DrawPic(x + 2, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = x + 10; j < 24; j++, xx += 8)
+	gc.DrawIcon(2, y + 12, pic_M_LSLEFT);
+	for (j = 0, xx = 10; j < 24; j++, xx += 8)
 	{
-		R_DrawPic(xx, y + 12, pic_M_LSCNTR);
+		gc.DrawIcon(xx, y + 12, pic_M_LSCNTR);
 	}
-	R_DrawPic(xx, y + 12, pic_M_LSRGHT);
+	gc.DrawIcon(xx, y + 12, pic_M_LSRGHT);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(x + 8, y + 5, text);
+	gc.DrawText(8, y + 5, text);
 	if (entering)
 	{
 		T_DrawCursor();
@@ -1133,21 +1084,21 @@ class MenuSaveSlot:MenuChoice
 	int Text[(SLOTTEXTLEN + 4) / 4];
 	int SlotNum;
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		InitSlot();
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		if (enteringText && bSelected)
 		{
-			DrawSlot(X, Y, ARR2STR(slot_enter_text.Data), true);
+			DrawSlot(gc, 0, ARR2STR(slot_enter_text.Data), true);
 		}
 		else
 		{
-			DrawSlot(X, Y, ARR2STR(Text), false);
+			DrawSlot(gc, 0, ARR2STR(Text), false);
 		}
 	}
 
@@ -1216,9 +1167,9 @@ class MenuInputLine:MenuChoice
 	string Text;
 	int Value[32 / 4];
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		InitSlot();
 	}
 
@@ -1226,15 +1177,15 @@ class MenuInputLine:MenuChoice
 	{
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 		if (enteringText)
-			DrawSlot(X, Y + 12, ARR2STR(slot_enter_text.Data), true);
+			DrawSlot(gc, 12, ARR2STR(slot_enter_text.Data), true);
 		else
-			DrawSlot(X, Y + 12, ARR2STR(Value), false);
+			DrawSlot(gc, 12, ARR2STR(Value), false);
 	}
 
 	boolean Key(int key)
@@ -1297,13 +1248,13 @@ class MenuSList:MenuChoice
 	int Cursor;
 	slist_t* slist;
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		StartSearch();
 	}
 
-	void DrawTextBox(string text)
+	void DrawTextBox(GC gc, string text)
 	{
 		int x;
 		int y;
@@ -1326,10 +1277,10 @@ class MenuSList:MenuChoice
 		R_FillRectWithFlat(x, y, w, h, "F_PAVE01");
 		DrawBorder(x, y, w, h);
 
-		T_DrawText(160, 100, text);
+		gc.DrawText(160, 100, text);
 	}
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		int i;
 		int x;
@@ -1342,18 +1293,18 @@ class MenuSList:MenuChoice
 		T_SetAlign(hleft, vtop);
 		for (i = 0; i < slist->count; i++)
 		{
-			T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
-			T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
+			gc.DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
+			gc.DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
 			if (slist->cache[i].maxusers)
 			{
-				T_DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
+				gc.DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
 					slist->cache[i].users, slist->cache[i].maxusers));
 			}
 		}
-		T_DrawText(8, 32 + Cursor * 10, ">");
+		gc.DrawText(8, 32 + Cursor * 10, ">");
 
 		if (slist->return_reason[0])
-			T_DrawText(16, 116, ARR2STR(slist->return_reason));
+			gc.DrawText(16, 116, ARR2STR(slist->return_reason));
 
 		if (slist->count)
 		{
@@ -1369,18 +1320,18 @@ class MenuSList:MenuChoice
 					if (y > 190)
 						break;
 				}
-				T_DrawText(x, y, ARR2STR(slist->cache[Cursor].wadfiles[i]));
+				gc.DrawText(x, y, ARR2STR(slist->cache[Cursor].wadfiles[i]));
 				x += w + 8;
 			}
 		}
 
 		if (slist->inProgress)
 		{
-			DrawTextBox("Searching...");
+			DrawTextBox(gc, "Searching...");
 		}
 		else if (!slist->count)
 		{
-			DrawTextBox("No servers found");
+			DrawTextBox(gc, "No servers found");
 		}
 	}
 
@@ -1441,6 +1392,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.21  2002/03/09 17:52:52  dj_jl
 //  Got rid of function pointers
 //

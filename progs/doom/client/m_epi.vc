@@ -126,13 +126,13 @@ class MenuChoice_Episode4:MenuChoice_Episode1
 
 class MenuScreenEpisode:MenuScreen
 {
-	void Init(void)
+	void InitWindow(void)
 	{
 		if (!ExtendedWAD)
 		{
 			Choices[3] = classidNone;
 		}
-		::Init();
+		::InitWindow();
 	}
 
 	defaultproperties
@@ -158,6 +158,9 @@ void menu_episode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.7  2002/03/09 17:52:49  dj_jl
 //  Got rid of function pointers
 //

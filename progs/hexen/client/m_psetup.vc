@@ -38,9 +38,9 @@ class MenuChoice_PClass;
 
 class MenuChoice_PlayerName:MenuInputLine
 {
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		strcpy(ARR2STR(Value), GetCvarS("Name"));
 	}
 
@@ -104,7 +104,7 @@ class MenuScreenPlayerSetup:MenuScreen
 		R_InstallSprite("CLER", 501);
 		R_InstallSprite("MAGE", 502);
 
-		Anim = MenuSpriteAnim(AddItem(MenuSpriteAnim));
+		Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
 		Anim.SetPos(260, 120);
 		Anim.SprDef = 500;
 		Anim.Speed = 8;
@@ -145,9 +145,9 @@ class MenuChoice_Color:MenuChoiceEnum
 		return true;
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		MenuScreenPlayerSetup(Parent).SetSpriteColor(Value);
 	}
 
@@ -186,9 +186,9 @@ class MenuChoice_PClass:MenuChoiceEnum
 		return true;
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		MenuScreenPlayerSetup(Parent).SetPClass(Value);
 	}
 
@@ -210,6 +210,9 @@ void menu_psetup(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.9  2002/02/26 17:46:50  dj_jl
 //  Fixes for menus.
 //

@@ -73,7 +73,7 @@ class MenuScreenFighterSkill:MenuScreen
 
 		for (i = 0; i < 5; i++)
 		{
-			newChoice = MenuChoice_Skill(AddItem(MenuChoice_Skill));
+			newChoice = MenuChoice_Skill(NewChild(MenuChoice_Skill));
 			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
 			newChoice.Text = SkillNames[i];
 			newChoice.PClass = PClass;
@@ -160,6 +160,9 @@ void menu_skill3(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.11  2002/02/06 17:22:18  dj_jl
 //  Some fixes for the menus.
 //

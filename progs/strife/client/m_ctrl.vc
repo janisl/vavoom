@@ -44,7 +44,7 @@ class MenuControlKey:MenuChoice
 	string CommandOn;
 	string CommandOff;
 
-	void Draw(void)
+	void DrawWindow(GC gc)
 	{
 		int key1;
 		int key2;
@@ -53,7 +53,7 @@ class MenuControlKey:MenuChoice
 
 		T_SetFont(font_small);
 		T_SetAlign(hright, vtop);
-		T_DrawText(X, Y, Text);
+		gc.DrawText(0, 0, Text);
 
 		IN_GetBindingKeys(CommandOn, &key1, &key2);
 
@@ -61,20 +61,20 @@ class MenuControlKey:MenuChoice
 		if (key1 >= 0)
 		{
 			KeyNameForNum(key1, Name);
-			T_DrawText(X + 10, Y, Name);
+			gc.DrawText(10, 0, Name);
 		}
 		else
 		{
-			T_DrawText(X + 10, Y, "---");
+			gc.DrawText(10, 0, "---");
 		}
 		if (key2 >= 0)
 		{
 			KeyNameForNum(key2, Name);
-			T_DrawText(X + 100, Y, Name);
+			gc.DrawText(100, 0, Name);
 		}
 		else
 		{
-			T_DrawText(X + 100, Y, "---");
+			gc.DrawText(100, 0, "---");
 		}
 	}
 
@@ -165,7 +165,7 @@ class MenuScreenControls:MenuScreen
 	{
 		MenuControlKey newCtl;
 
-		newCtl = MenuControlKey(AddItem(MenuControlKey));
+		newCtl = MenuControlKey(NewChild(MenuControlKey));
 		newCtl.SetPos(ChoicesStartX, ChoicesStartY + NumControls * 10);
 		newCtl.Text = Text;
 		newCtl.CommandOn = CommandOn;
@@ -203,8 +203,8 @@ class MenuScreenControls:MenuScreen
 		::CursorMoved();
 		if (Selector)
 		{
-			Selector.SetPos(Items[CursorPos].GetX() + ControlColumn * 90,
-				Items[CursorPos].GetY());
+			Selector.SetPos(Items[CursorPos].X + ControlColumn * 90,
+				Items[CursorPos].Y);
 		}
 	}
 
@@ -254,6 +254,9 @@ void menu_controls2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.9  2002/03/09 17:52:52  dj_jl
 //  Got rid of function pointers
 //

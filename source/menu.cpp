@@ -32,6 +32,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include "ui.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -56,7 +57,6 @@ static FFunction *pf_MN_SetMenu;
 static FFunction *pf_MN_DeactivateMenu;
 static FFunction *pf_MB_Responder;
 static FFunction *pf_MN_Responder;
-static FFunction *pf_MN_Drawer;
 static FFunction *pf_MB_Drawer;
 static FFunction *pf_MN_Active;
 static FFunction *pf_MB_Active;
@@ -92,11 +92,12 @@ void MN_Init(void)
 	pf_MN_DeactivateMenu = clpr.FuncForName("MN_DeactivateMenu");
 	pf_MB_Responder = clpr.FuncForName("MB_Responder");
 	pf_MN_Responder = clpr.FuncForName("MN_Responder");
-	pf_MN_Drawer = clpr.FuncForName("MN_Drawer");
 	pf_MB_Drawer = clpr.FuncForName("MB_Drawer");
 	pf_MN_Active = clpr.FuncForName("MN_Active");
 	pf_MB_Active = clpr.FuncForName("MB_Active");
 	pg_frametime = clpr.GlobalNumForName("frametime");
+
+	VRootWindow::StaticInit();
 }
 
 //==========================================================================
@@ -159,7 +160,8 @@ boolean MN_Responder(event_t* event)
 void MN_Drawer(void)
 {
 	clpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
-	clpr.Exec(pf_MN_Drawer);
+	GRoot->TickWindows(host_frametime);
+	GRoot->PaintWindows();
 	clpr.Exec(pf_MB_Drawer);
 }
 
@@ -177,9 +179,12 @@ boolean MN_Active(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/05/29 16:51:50  dj_jl
+//	Started a work on native Window classes.
+//
 //	Revision 1.11  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

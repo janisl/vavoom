@@ -96,13 +96,13 @@ class MenuChoice_PlayerSetup:MenuBigTextButton
 
 class MenuScreenMultiplayer:MenuScreen
 {
-	void Init(void)
+	void InitWindow(void)
 	{
 		if (!local_server)
 		{
 			Choices[0] = classidNone;
 		}
-		::Init();
+		::InitWindow();
 	}
 
 	defaultproperties
@@ -125,6 +125,9 @@ void menu_multi(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.6  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

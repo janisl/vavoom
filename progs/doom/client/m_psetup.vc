@@ -35,9 +35,9 @@
 
 class MenuChoice_PlayerName:MenuInputLine
 {
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		strcpy(ARR2STR(Value), GetCvarS("Name"));
 	}
 
@@ -190,17 +190,17 @@ class MenuScreenPlayerSetup:MenuScreen
 	{
 		model_t *model;
 
-		PlayerName = MenuChoice_PlayerName(AddItem(MenuChoice_PlayerName));
+		PlayerName = MenuChoice_PlayerName(NewChild(MenuChoice_PlayerName));
 		PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += PlayerName.Height;
 
-		Color = MenuChoice_Color(AddItem(MenuChoice_Color));
+		Color = MenuChoice_Color(NewChild(MenuChoice_Color));
 		Color.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Color.Height;
 
 		R_InstallSprite("PLAY", 500);
 
-		Anim = MenuSpriteAnim(AddItem(MenuSpriteAnim));
+		Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
 		Anim.SetPos(100, 160);
 		Anim.SprDef = 500;
 		Anim.Speed = 8;
@@ -213,11 +213,11 @@ class MenuScreenPlayerSetup:MenuScreen
 		{
 			SetCvarS("model", "doomguy");
 
-			Skin = MenuChoice_Skin(AddItem(MenuChoice_Skin));
+			Skin = MenuChoice_Skin(NewChild(MenuChoice_Skin));
 			Skin.SetPos(ChoicesStartX, ChoicesStartY);
 			ChoicesStartY += Skin.Height;
 
-			Mdl = MenuModel(AddItem(MenuModel));
+			Mdl = MenuModel(NewChild(MenuModel));
 			Mdl.Origin = vector(-64.0, 32.0, -32.0);
 			Mdl.Angle = 345.0;
 			Mdl.Model = model;
@@ -243,6 +243,9 @@ void menu_psetup(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.11  2002/02/26 17:46:50  dj_jl
 //  Fixes for menus.
 //

@@ -115,13 +115,13 @@ class MenuChoice_Options:MenuBigTextButton
 class MenuChoice_Help:MenuBigTextButton
 {
 #ifndef DOOM2
-	void Init(void)
+	void InitWindow(void)
 	{
 		if (shareware)
 		{
 			Text = "Read This!";
 		}
-		::Init();
+		::InitWindow();
 	}
 #endif
 
@@ -163,18 +163,18 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 class MenuScreenMain:MenuScreen
 {
-	void Init(void)
+	void InitWindow(void)
 	{
 		if (!local_server)
 		{
 			Choices[0] = classidNone;
 		}
-		::Init();
+		::InitWindow();
 	}
 
 	void CreateTitle(void)
 	{
-		AddItem(MenuMainTitleImage);
+		NewChild(MenuMainTitleImage);
 	}
 
 	defaultproperties
@@ -198,6 +198,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.8  2002/01/23 17:54:22  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

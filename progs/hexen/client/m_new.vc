@@ -176,9 +176,9 @@ class MenuChoice_Level:MenuChoiceEnum
 		Value = 0;
 	}
 
-	void Init(void)
+	void InitWindow(void)
 	{
-		::Init();
+		::InitWindow();
 		InitMapList();
 	}
 
@@ -207,31 +207,31 @@ class MenuScreenNewNetGame:MenuScreen
 	{
 		MenuChoice newChoice;
 
-		newChoice = MenuChoice(AddItem(MenuChoice_StartGame));
+		newChoice = MenuChoice(NewChild(MenuChoice_StartGame));
 		newChoice.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += newChoice.Height;
 
-		Players = MenuChoice_Players(AddItem(MenuChoice_Players));
+		Players = MenuChoice_Players(NewChild(MenuChoice_Players));
 		Players.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Players.Height;
 
-		Monsters = MenuChoice_Monsters(AddItem(MenuChoice_Monsters));
+		Monsters = MenuChoice_Monsters(NewChild(MenuChoice_Monsters));
 		Monsters.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Monsters.Height;
 
-		DeathMatch = MenuChoice_DeathMatch(AddItem(MenuChoice_DeathMatch));
+		DeathMatch = MenuChoice_DeathMatch(NewChild(MenuChoice_DeathMatch));
 		DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += DeathMatch.Height;
 
-		Skill = MenuChoice_MPSkill(AddItem(MenuChoice_MPSkill));
+		Skill = MenuChoice_MPSkill(NewChild(MenuChoice_MPSkill));
 		Skill.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Skill.Height;
 
-		TimeLimit = MenuChoice_TimeLimit(AddItem(MenuChoice_TimeLimit));
+		TimeLimit = MenuChoice_TimeLimit(NewChild(MenuChoice_TimeLimit));
 		TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += TimeLimit.Height;
 
-		Level = MenuChoice_Level(AddItem(MenuChoice_Level));
+		Level = MenuChoice_Level(NewChild(MenuChoice_Level));
 		Level.SetPos(ChoicesStartX, ChoicesStartY);
 		ChoicesStartY += Level.Height;
 	}
@@ -283,6 +283,9 @@ void menu_new_game(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.8  2002/02/26 17:46:50  dj_jl
 //  Fixes for menus.
 //

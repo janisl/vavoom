@@ -61,7 +61,7 @@ class MenuScreenHelp:MenuScreen
 	void CreateChoices(void)
 	{
 		::CreateChoices();
-		Page = MenuHelpPage(AddItem(MenuHelpPage));
+		Page = MenuHelpPage(NewChild(MenuHelpPage));
 		Page.SetPage(PageNames[CurPage]);
 	}
 
@@ -98,6 +98,9 @@ void menu_help(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.8  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

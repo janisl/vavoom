@@ -72,7 +72,7 @@ class MenuScreenLoadGame:MenuScreen
 
 		for (i = 0; i < 8; i++)
 		{
-			newChoice = MenuChoice_LoadSlot(AddItem(MenuChoice_LoadSlot));
+			newChoice = MenuChoice_LoadSlot(NewChild(MenuChoice_LoadSlot));
 			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
 			newChoice.SlotNum = i;
 			newChoice.Status = SV_GetSaveString(i, ARR2STR(newChoice.Text));
@@ -96,6 +96,9 @@ void menu_load(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.9  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

@@ -1,0 +1,304 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RootWindow;
+
+struct ClipRect
+{
+	float OriginX;		// X origin of rectangle, in absolute coordinates
+	float OriginY;		// Y origin of rectangle, in absolute coordinates
+
+	float ClipX;		// Leftmost edge of rectangle relative to origin
+	float ClipY;		// Topmost edge of rectangle relative to origin
+	float ClipWidth;	// Width of rectangle
+	float ClipHeight;	// Height of rectangle
+};
+
+//**************************************************************************
+//
+//	GC
+//
+//**************************************************************************
+
+class GC:Object
+	native
+{
+
+ClipRect ClipRect;
+
+void DrawIcon(int X, int Y, int Handle)
+{
+	R_DrawPic(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Handle);
+}
+
+void DrawText(int X, int Y, string Text)
+{
+	T_DrawText(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Text);
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//	Window
+//
+//**************************************************************************
+
+class Window:Object
+	native
+{
+
+// Quick class reference
+int WindowType;			// Contains window type
+
+// Booleans
+bool bIsVisible;		// TRUE if the window is visible
+bool bTickEnabled;		// TRUE if Tick() event should be called
+bool bIsInitialized;	// TRUE if the window has been initialized
+
+// Destructor information
+bool bBeingDestroyed;	// TRUE if this window is going bye-bye
+
+int X;
+int Y;
+int Width;
+int Height;
+
+ClipRect ClipRect;
+
+GC WinGC;
+
+// Relatives
+Window Parent;			// Parent window; NULL if this is root
+Window FirstChild;		// "Lowest" child (first one drawn)
+Window LastChild;		// "Highest" child (last one drawn)
+Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
+Window NextSibling;		// Next "highest" sibling (next one drawn)
+
+native void Destroy(void);
+native Window NewChild(classid ChildClass);
+native void Raise(void);
+native void Lower(void);
+native boolean IsVisible(void);
+native void Show(void);
+native void Hide(void);
+
+native RootWindow GetRootWindow(void);
+native Window GetParent(void);
+
+native void SetPos(int NewX, int NewY);
+native void SetSize(int NewWidth, int NewHeight);
+native void SetConfiguration(int NewX, int NewY, int NewWidth, int NewHeight);
+native void SetWidth(int NewWidth);
+native void SetHeight(int NewHeight);
+
+native Window GetBottomChild(boolean bVisibleOnly);
+native Window GetTopChild(boolean bVisibleOnly);
+native Window GetLowerSibling(boolean bVisibleOnly);
+native Window GetHigherSibling(boolean bVisibleOnly);
+
+native void DestroyAllChildren(void);
+
+//==========================================================================
+//
+//	InitWindow
+//
+//	Window constructor.
+//
+//==========================================================================
+
+void InitWindow(void)
+{
+}
+
+//==========================================================================
+//
+//	DestroyWindow
+//
+//	Window destructor.
+//
+//==========================================================================
+
+void DestroyWindow(void)
+{
+}
+
+//==========================================================================
+//
+//	WindowReady
+//
+//	Called just before window is first drawn.
+//
+//==========================================================================
+
+void WindowReady(void)
+{
+}
+
+//==========================================================================
+//
+//	ChildAdded
+//
+//	Called when a child window is added.
+//
+//==========================================================================
+
+void ChildAdded(Window Child)
+{
+}
+
+//==========================================================================
+//
+//	ChildRemoved
+//
+//	Called when a child window is removed.
+//
+//==========================================================================
+
+void ChildRemoved(Window Child)
+{
+}
+
+//==========================================================================
+//
+//	DescendantAdded
+//
+//	Called when a descendant window is added.
+//
+//==========================================================================
+
+void DescendantAdded(Window Descendant)
+{
+}
+
+//==========================================================================
+//
+//	DescendantRemoved
+//
+//	Called when a descendant window is removed.
+//
+//==========================================================================
+
+void DescendantRemoved(Window Descendant)
+{
+}
+
+//==========================================================================
+//
+//	ConfigurationChanged
+//
+//	Called when the parent changes this window's size.
+//
+//==========================================================================
+
+void ConfigurationChanged(void)
+{
+}
+
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//	Called when the parent shows or hides this window.
+//
+//==========================================================================
+
+void VisibilityChanged(boolean bNewVisibility)
+{
+}
+
+//==========================================================================
+//
+//	DrawWindow
+//
+//	Draws the window.
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+}
+
+//==========================================================================
+//
+//	PostDrawWindow
+//
+//	Draws the window (AFTER all children are drawn).
+//
+//==========================================================================
+
+void PostDrawWindow(GC gc)
+{
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//	Called periodicly, but only when bTickEnabled is true.
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+}
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+//
+//	RootWindow
+//
+//**************************************************************************
+
+class RootWindow:Window
+	native
+{
+
+defaultproperties
+{
+}
+
+}
+
+//**************************************************************************
+
+RootWindow GRoot;
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
+//**************************************************************************

@@ -173,26 +173,26 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 class MenuScreenMain:MenuScreen
 {
-	void Init(void)
+	void InitWindow(void)
 	{
 		if (!local_server)
 		{
 			Choices[0] = classidNone;
 		}
-		::Init();
+		::InitWindow();
 	}
 
 	void CreateTitle(void)
 	{
 		MenuStaticAnim newAnim;
 
-		AddItem(MenuMainTitleImage);
+		NewChild(MenuMainTitleImage);
 
-		newAnim = MenuStaticAnim(AddItem(MenuMainAnim));
+		newAnim = MenuStaticAnim(NewChild(MenuMainAnim));
 		newAnim.SetPos(37, 80);
 		newAnim.StartFrame = 2;
 
-		newAnim = MenuStaticAnim(AddItem(MenuMainAnim));
+		newAnim = MenuStaticAnim(NewChild(MenuMainAnim));
 		newAnim.SetPos(278, 80);
 	}
 
@@ -217,6 +217,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.9  2002/01/28 18:46:20  dj_jl
 //  Some fixes, beautification
 //

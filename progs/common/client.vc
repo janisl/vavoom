@@ -27,14 +27,18 @@
 
 #include "defs.vc"
 #include "protocol.vc"
+#include "keys.vc"
 #include "types.vc"
 #include "builtins.vc"
 #include "clvars.vc"
-#include "keys.vc"
+#include "uitypes.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/05/29 16:50:26  dj_jl
+//  Started a work on native Window classes.
+//
 //  Revision 1.5  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //
