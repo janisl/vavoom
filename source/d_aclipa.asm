@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -243,33 +249,33 @@ LDoForwardOrBackward:
  push edi
  push esi
  push ebx
- mov edx,ds:dword ptr[20+0+esp]
- mov ecx,ds:dword ptr[20+4+esp]
- mov ebx,ds:dword ptr[20+12+esp]
- mov esi,ds:dword ptr[20+16+esp]
- mov ebp,ds:dword ptr[4+ecx]
- cmp ds:dword ptr[4+edx],ebp
+ mov edx,dword ptr[20+0+esp]
+ mov ecx,dword ptr[20+4+esp]
+ mov ebx,dword ptr[20+12+esp]
+ mov esi,dword ptr[20+16+esp]
+ mov ebp,dword ptr[4+ecx]
+ cmp dword ptr[4+edx],ebp
  jge LDoForward
  mov ecx,edx
  mov esi,ebx
- mov edx,ds:dword ptr[20+4+esp]
- mov ebx,ds:dword ptr[20+16+esp]
+ mov edx,dword ptr[20+4+esp]
+ mov ebx,dword ptr[20+16+esp]
 LDoForward:
- mov ebp,ds:dword ptr[20+8+esp]
- mov edi,ds:dword ptr[20+20+esp]
- fild ds:dword ptr[edx+eax]
- fild ds:dword ptr[edx+eax]
+ mov ebp,dword ptr[20+8+esp]
+ mov edi,dword ptr[20+20+esp]
+ fild dword ptr[edx+eax]
+ fild dword ptr[edx+eax]
  fxch st(2)
  fsubrp st(1),st
- fild ds:dword ptr[ecx+eax]
+ fild dword ptr[ecx+eax]
  fsubrp st(2),st
  fdivrp st(1),st
- fild ds:dword ptr[0+edx]
- fild ds:dword ptr[0+ecx]
- fild ds:dword ptr[4+edx]
- fild ds:dword ptr[4+ecx]
- fild ds:dword ptr[8+edx]
- fild ds:dword ptr[8+ecx]
+ fild dword ptr[0+edx]
+ fild dword ptr[0+ecx]
+ fild dword ptr[4+edx]
+ fild dword ptr[4+ecx]
+ fild dword ptr[8+edx]
+ fild dword ptr[8+ecx]
  fxch st(5)
  fsub st(4),st(0)
  fxch st(3)
@@ -286,23 +292,23 @@ LDoForward:
  fxch st(4)
  faddp st(3),st(0)
  fxch st(1)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(3)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(2)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(3)
- fistp ds:dword ptr[0+ebp]
+ fistp dword ptr[0+ebp]
  fxch st(1)
- fistp ds:dword ptr[4+ebp]
+ fistp dword ptr[4+ebp]
  fxch st(1)
- fistp ds:dword ptr[8+ebp]
- fild ds:dword ptr[12+edx]
- fild ds:dword ptr[12+ecx]
- fild ds:dword ptr[16+edx]
- fild ds:dword ptr[16+ecx]
- fild ds:dword ptr[20+edx]
- fild ds:dword ptr[20+ecx]
+ fistp dword ptr[8+ebp]
+ fild dword ptr[12+edx]
+ fild dword ptr[12+ecx]
+ fild dword ptr[16+edx]
+ fild dword ptr[16+ecx]
+ fild dword ptr[20+edx]
+ fild dword ptr[20+ecx]
  fxch st(5)
  fsub st(4),st(0)
  fxch st(3)
@@ -319,21 +325,21 @@ LDoForward:
  fxch st(4)
  faddp st(3),st(0)
  fxch st(1)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(3)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(2)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(3)
- fistp ds:dword ptr[12+ebp]
+ fistp dword ptr[12+ebp]
  fxch st(1)
- fistp ds:dword ptr[16+ebp]
+ fistp dword ptr[16+ebp]
  fxch st(1)
- fistp ds:dword ptr[20+ebp]
- fild ds:dword ptr[0+ebx]
- fild ds:dword ptr[0+esi]
- fild ds:dword ptr[4+ebx]
- fild ds:dword ptr[4+esi]
+ fistp dword ptr[20+ebp]
+ fild dword ptr[0+ebx]
+ fild dword ptr[0+esi]
+ fild dword ptr[4+ebx]
+ fild dword ptr[4+esi]
  fxch st(3)
  fsub st(2),st(0)
  fxch st(1)
@@ -345,12 +351,12 @@ LDoForward:
  fxch st(2)
  faddp st(1),st(0)
  fxch st(1)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(1)
- fadd ds:dword ptr[float_point5]
+ fadd dword ptr[float_point5]
  fxch st(1)
- fistp ds:dword ptr[0+edi]
- fistp ds:dword ptr[4+edi]
+ fistp dword ptr[0+edi]
+ fistp dword ptr[4+edi]
  pop ebx
  pop esi
  pop edi
@@ -360,7 +366,7 @@ LDoForward:
  public _D_Alias_clip_right
 _D_Alias_clip_right:
  mov eax,0
- fild ds:dword ptr[_viewwidth]
+ fild dword ptr[_viewwidth]
  jmp LDoForwardOrBackward
  align 4
  public _D_Alias_clip_top
@@ -372,7 +378,7 @@ _D_Alias_clip_top:
  public _D_Alias_clip_bottom
 _D_Alias_clip_bottom:
  mov eax,4
- fild ds:dword ptr[_viewheight]
+ fild dword ptr[_viewheight]
  jmp LDoForwardOrBackward
 _TEXT ENDS
  END

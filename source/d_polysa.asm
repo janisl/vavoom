@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -249,104 +255,104 @@ _D_PolysetDraw:
  mov eax,esp
  add eax,32  - 1
  and eax,offset -32
- mov ds:dword ptr[_a_spans],eax
+ mov dword ptr[_a_spans],eax
  push ebp
  push edi
  push esi
  push ebx
- mov ebp,ds:dword ptr[_d_affinetridesc+24]
- lea ebp,ds:dword ptr[ebp+ebp*2]
+ mov ebp,dword ptr[_d_affinetridesc+24]
+ lea ebp,dword ptr[ebp+ebp*2]
  shl ebp,2
 LTriangleLoop:
- mov edx,ds:dword ptr[_d_affinetridesc+12]
- mov ebx,ds:dword ptr[_d_affinetridesc+16]
- mov esi,ds:dword ptr[_d_affinetridesc+16]
- mov edi,ds:dword ptr[_d_affinetridesc+16]
- movsx eax,ds:word ptr[0-12+edx+ebp]
+ mov edx,dword ptr[_d_affinetridesc+12]
+ mov ebx,dword ptr[_d_affinetridesc+16]
+ mov esi,dword ptr[_d_affinetridesc+16]
+ mov edi,dword ptr[_d_affinetridesc+16]
+ movsx eax,word ptr[0-12+edx+ebp]
  sal eax,5
  add ebx,eax
- movsx eax,ds:word ptr[0+2-12+edx+ebp]
+ movsx eax,word ptr[0+2-12+edx+ebp]
  sal eax,5
  add esi,eax
- movsx eax,ds:word ptr[0+4-12+edx+ebp]
+ movsx eax,word ptr[0+4-12+edx+ebp]
  sal eax,5
  add edi,eax
- mov eax,ds:dword ptr[0+ebx]
- mov edx,ds:dword ptr[4+ebx]
- sub eax,ds:dword ptr[0+edi]
- sub edx,ds:dword ptr[4+esi]
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ sub eax,dword ptr[0+edi]
+ sub edx,dword ptr[4+esi]
  imul edx,eax
- mov eax,ds:dword ptr[0+ebx]
- mov ecx,ds:dword ptr[4+ebx]
- sub eax,ds:dword ptr[0+esi]
- sub ecx,ds:dword ptr[4+edi]
+ mov eax,dword ptr[0+ebx]
+ mov ecx,dword ptr[4+ebx]
+ sub eax,dword ptr[0+esi]
+ sub ecx,dword ptr[4+edi]
  imul eax,ecx
  sub edx,eax
  test edx,edx
  jle LNextTriangle
- mov ds:dword ptr[_d_denom],edx
- fild ds:dword ptr[_d_denom]
+ mov dword ptr[_d_denom],edx
+ fild dword ptr[_d_denom]
  fld1
  fdivrp st(1),st(0)
- mov eax,ds:dword ptr[0+ebx]
- mov edx,ds:dword ptr[4+ebx]
- mov ds:dword ptr[_r_p0],eax
- mov ds:dword ptr[_r_p0+4],edx
- mov eax,ds:dword ptr[8+ebx]
- mov edx,ds:dword ptr[12+ebx]
- mov ds:dword ptr[_r_p0+16],eax
- mov ds:dword ptr[_r_p0+20],edx
- mov eax,ds:dword ptr[16+ebx]
- mov edx,ds:dword ptr[20+ebx]
- mov ds:dword ptr[_r_p0+24],eax
- mov ds:dword ptr[_r_p0+28],edx
- mov eax,ds:dword ptr[0+esi]
- mov edx,ds:dword ptr[4+esi]
- mov ds:dword ptr[_r_p1],eax
- mov ds:dword ptr[_r_p1+4],edx
- mov eax,ds:dword ptr[8+esi]
- mov edx,ds:dword ptr[12+esi]
- mov ds:dword ptr[_r_p1+16],eax
- mov ds:dword ptr[_r_p1+20],edx
- mov eax,ds:dword ptr[16+esi]
- mov edx,ds:dword ptr[20+esi]
- mov ds:dword ptr[_r_p1+24],eax
- mov ds:dword ptr[_r_p1+28],edx
- mov ecx,ds:dword ptr[_d_affinetridesc+12]
- mov eax,ds:dword ptr[0+edi]
- mov edx,ds:dword ptr[4+edi]
- mov ds:dword ptr[_r_p2],eax
- mov ds:dword ptr[_r_p2+4],edx
- mov eax,ds:dword ptr[8+edi]
- mov edx,ds:dword ptr[12+edi]
- mov ds:dword ptr[_r_p2+16],eax
- mov ds:dword ptr[_r_p2+20],edx
- mov eax,ds:dword ptr[16+edi]
- mov edx,ds:dword ptr[20+edi]
- mov ds:dword ptr[_r_p2+24],eax
- mov ds:dword ptr[_r_p2+28],edx
- mov edx,ds:dword ptr[_d_affinetridesc+20]
- movsx ebx,ds:word ptr[6-12+ecx+ebp]
- movsx esi,ds:word ptr[6+2-12+ecx+ebp]
- movsx edi,ds:word ptr[6+4-12+ecx+ebp]
- lea ebx,ds:dword ptr[edx+ebx*8]
- lea esi,ds:dword ptr[edx+esi*8]
- lea edi,ds:dword ptr[edx+edi*8]
- mov eax,ds:dword ptr[0+ebx]
- mov edx,ds:dword ptr[4+ebx]
- mov ds:dword ptr[_r_p0+8],eax
- mov ds:dword ptr[_r_p0+12],edx
- mov eax,ds:dword ptr[0+esi]
- mov edx,ds:dword ptr[4+esi]
- mov ds:dword ptr[_r_p1+8],eax
- mov ds:dword ptr[_r_p1+12],edx
- mov eax,ds:dword ptr[0+edi]
- mov edx,ds:dword ptr[4+edi]
- mov ds:dword ptr[_r_p2+8],eax
- mov ds:dword ptr[_r_p2+12],edx
- fstp ds:dword ptr[_d_denom]
- call near ptr _D_PolysetSetEdgeTable
- call near ptr _D_RasterizeAliasPolySmooth
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ mov dword ptr[_r_p0],eax
+ mov dword ptr[_r_p0+4],edx
+ mov eax,dword ptr[8+ebx]
+ mov edx,dword ptr[12+ebx]
+ mov dword ptr[_r_p0+16],eax
+ mov dword ptr[_r_p0+20],edx
+ mov eax,dword ptr[16+ebx]
+ mov edx,dword ptr[20+ebx]
+ mov dword ptr[_r_p0+24],eax
+ mov dword ptr[_r_p0+28],edx
+ mov eax,dword ptr[0+esi]
+ mov edx,dword ptr[4+esi]
+ mov dword ptr[_r_p1],eax
+ mov dword ptr[_r_p1+4],edx
+ mov eax,dword ptr[8+esi]
+ mov edx,dword ptr[12+esi]
+ mov dword ptr[_r_p1+16],eax
+ mov dword ptr[_r_p1+20],edx
+ mov eax,dword ptr[16+esi]
+ mov edx,dword ptr[20+esi]
+ mov dword ptr[_r_p1+24],eax
+ mov dword ptr[_r_p1+28],edx
+ mov ecx,dword ptr[_d_affinetridesc+12]
+ mov eax,dword ptr[0+edi]
+ mov edx,dword ptr[4+edi]
+ mov dword ptr[_r_p2],eax
+ mov dword ptr[_r_p2+4],edx
+ mov eax,dword ptr[8+edi]
+ mov edx,dword ptr[12+edi]
+ mov dword ptr[_r_p2+16],eax
+ mov dword ptr[_r_p2+20],edx
+ mov eax,dword ptr[16+edi]
+ mov edx,dword ptr[20+edi]
+ mov dword ptr[_r_p2+24],eax
+ mov dword ptr[_r_p2+28],edx
+ mov edx,dword ptr[_d_affinetridesc+20]
+ movsx ebx,word ptr[6-12+ecx+ebp]
+ movsx esi,word ptr[6+2-12+ecx+ebp]
+ movsx edi,word ptr[6+4-12+ecx+ebp]
+ lea ebx,dword ptr[edx+ebx*8]
+ lea esi,dword ptr[edx+esi*8]
+ lea edi,dword ptr[edx+edi*8]
+ mov eax,dword ptr[0+ebx]
+ mov edx,dword ptr[4+ebx]
+ mov dword ptr[_r_p0+8],eax
+ mov dword ptr[_r_p0+12],edx
+ mov eax,dword ptr[0+esi]
+ mov edx,dword ptr[4+esi]
+ mov dword ptr[_r_p1+8],eax
+ mov dword ptr[_r_p1+12],edx
+ mov eax,dword ptr[0+edi]
+ mov edx,dword ptr[4+edi]
+ mov dword ptr[_r_p2+8],eax
+ mov dword ptr[_r_p2+12],edx
+ fstp dword ptr[_d_denom]
+ call _D_PolysetSetEdgeTable
+ call _D_RasterizeAliasPolySmooth
 LNextTriangle:
  sub ebp,12
  jnz LTriangleLoop
@@ -358,12 +364,12 @@ LNextTriangle:
  ret
  public _D_PolysetCalcGradients
 _D_PolysetCalcGradients:
- fild ds:dword ptr[_r_p0]
- fild ds:dword ptr[_r_p1]
- fild ds:dword ptr[_r_p2]
- fild ds:dword ptr[_r_p0+4]
- fild ds:dword ptr[_r_p1+4]
- fild ds:dword ptr[_r_p2+4]
+ fild dword ptr[_r_p0]
+ fild dword ptr[_r_p1]
+ fild dword ptr[_r_p2]
+ fild dword ptr[_r_p0+4]
+ fild dword ptr[_r_p1+4]
+ fild dword ptr[_r_p2+4]
  fxch st(5)
  fsub st(0),st(3)
  fxch st(2)
@@ -371,25 +377,25 @@ _D_PolysetCalcGradients:
  fxch st(4)
  fsubrp st(3),st(0)
  fsubrp st(4),st(0)
- fstp ds:dword ptr[p00_minus_p20]
+ fstp dword ptr[p00_minus_p20]
  fxch st(1)
- fstp ds:dword ptr[p01_minus_p21]
- fstp ds:dword ptr[p10_minus_p20]
- fstp ds:dword ptr[p11_minus_p21]
- fld ds:dword ptr[_d_denom]
- fild ds:dword ptr[_r_p0+8]
- fild ds:dword ptr[_r_p1+8]
- fild ds:dword ptr[_r_p2+8]
+ fstp dword ptr[p01_minus_p21]
+ fstp dword ptr[p10_minus_p20]
+ fstp dword ptr[p11_minus_p21]
+ fld dword ptr[_d_denom]
+ fild dword ptr[_r_p0+8]
+ fild dword ptr[_r_p1+8]
+ fild dword ptr[_r_p2+8]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
@@ -397,21 +403,21 @@ _D_PolysetCalcGradients:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fistp ds:dword ptr[_r_sstepx]
- fistp ds:dword ptr[_r_sstepy]
- fild ds:dword ptr[_r_p0+12]
- fild ds:dword ptr[_r_p1+12]
- fild ds:dword ptr[_r_p2+12]
+ fistp dword ptr[_r_sstepx]
+ fistp dword ptr[_r_sstepy]
+ fild dword ptr[_r_p0+12]
+ fild dword ptr[_r_p1+12]
+ fild dword ptr[_r_p2+12]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
@@ -419,21 +425,21 @@ _D_PolysetCalcGradients:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fistp ds:dword ptr[_r_tstepx]
- fistp ds:dword ptr[_r_tstepy]
- fild ds:dword ptr[_r_p0+16]
- fild ds:dword ptr[_r_p1+16]
- fild ds:dword ptr[_r_p2+16]
+ fistp dword ptr[_r_tstepx]
+ fistp dword ptr[_r_tstepy]
+ fild dword ptr[_r_p0+16]
+ fild dword ptr[_r_p1+16]
+ fild dword ptr[_r_p2+16]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
@@ -441,21 +447,21 @@ _D_PolysetCalcGradients:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fistp ds:dword ptr[_r_zistepx]
- fistp ds:dword ptr[_r_zistepy]
- fild ds:dword ptr[_r_p0+20]
- fild ds:dword ptr[_r_p1+20]
- fild ds:dword ptr[_r_p2+20]
+ fistp dword ptr[_r_zistepx]
+ fistp dword ptr[_r_zistepy]
+ fild dword ptr[_r_p0+20]
+ fild dword ptr[_r_p1+20]
+ fild dword ptr[_r_p2+20]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
@@ -463,23 +469,23 @@ _D_PolysetCalcGradients:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fldcw ds:word ptr[ceil_cw]
- fistp ds:dword ptr[_r_rstepx]
- fistp ds:dword ptr[_r_rstepy]
- fldcw ds:word ptr[single_cw]
- fild ds:dword ptr[_r_p0+24]
- fild ds:dword ptr[_r_p1+24]
- fild ds:dword ptr[_r_p2+24]
+ fldcw word ptr[ceil_cw]
+ fistp dword ptr[_r_rstepx]
+ fistp dword ptr[_r_rstepy]
+ fldcw word ptr[single_cw]
+ fild dword ptr[_r_p0+24]
+ fild dword ptr[_r_p1+24]
+ fild dword ptr[_r_p2+24]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
@@ -487,77 +493,77 @@ _D_PolysetCalcGradients:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fldcw ds:word ptr[ceil_cw]
- fistp ds:dword ptr[_r_gstepx]
- fistp ds:dword ptr[_r_gstepy]
- fldcw ds:word ptr[single_cw]
- fild ds:dword ptr[_r_p0+28]
- fild ds:dword ptr[_r_p1+28]
- fild ds:dword ptr[_r_p2+28]
+ fldcw word ptr[ceil_cw]
+ fistp dword ptr[_r_gstepx]
+ fistp dword ptr[_r_gstepy]
+ fldcw word ptr[single_cw]
+ fild dword ptr[_r_p0+28]
+ fild dword ptr[_r_p1+28]
+ fild dword ptr[_r_p2+28]
  fsub st(1),st(0)
  fsubp st(2),st(0)
  fld st(0)
- fmul ds:dword ptr[p01_minus_p21]
+ fmul dword ptr[p01_minus_p21]
  fld st(2)
- fmul ds:dword ptr[p11_minus_p21]
+ fmul dword ptr[p11_minus_p21]
  fxch st(2)
- fmul ds:dword ptr[p00_minus_p20]
+ fmul dword ptr[p00_minus_p20]
  fxch st(3)
- fmul ds:dword ptr[p10_minus_p20]
+ fmul dword ptr[p10_minus_p20]
  fxch st(1)
  fsubrp st(2),st(0)
  fsubp st(2),st(0)
  fmul st(0),st(2)
  fxch st(1)
  fmulp st(2),st(0)
- fldcw ds:word ptr[ceil_cw]
- fistp ds:dword ptr[_r_bstepx]
- fistp ds:dword ptr[_r_bstepy]
- fldcw ds:word ptr[single_cw]
- mov eax,ds:dword ptr[_r_sstepx]
- mov edx,ds:dword ptr[_r_tstepx]
+ fldcw word ptr[ceil_cw]
+ fistp dword ptr[_r_bstepx]
+ fistp dword ptr[_r_bstepy]
+ fldcw word ptr[single_cw]
+ mov eax,dword ptr[_r_sstepx]
+ mov edx,dword ptr[_r_tstepx]
  shl eax,16
  sal edx,16
- mov ds:dword ptr[_a_sstepxfrac],eax
- mov ds:dword ptr[_a_tstepxfrac],edx
- mov ecx,ds:dword ptr[_r_sstepx]
- mov eax,ds:dword ptr[_r_tstepx]
+ mov dword ptr[_a_sstepxfrac],eax
+ mov dword ptr[_a_tstepxfrac],edx
+ mov ecx,dword ptr[_r_sstepx]
+ mov eax,dword ptr[_r_tstepx]
  sar ecx,16
  sar eax,16
- imul ds:dword ptr[4+0+esp]
+ imul dword ptr[4+0+esp]
  add eax,ecx
- mov ds:dword ptr[_a_ststepxwhole],eax
+ mov dword ptr[_a_ststepxwhole],eax
  ret
  public _D_PolysetSetUpForLineScan
 _D_PolysetSetUpForLineScan:
  push esi
  push ebx
- mov ds:dword ptr[_errorterm],offset -1
- mov edx,ds:dword ptr[12+8+esp]
- mov eax,ds:dword ptr[12+12+esp]
- mov esi,ds:dword ptr[12+4+esp]
- sub edx,ds:dword ptr[12+0+esp]
+ mov dword ptr[_errorterm],offset -1
+ mov edx,dword ptr[12+8+esp]
+ mov eax,dword ptr[12+12+esp]
+ mov esi,dword ptr[12+4+esp]
+ sub edx,dword ptr[12+0+esp]
  sub esi,eax
- lea eax,ds:dword ptr[15+edx]
+ lea eax,dword ptr[15+edx]
  cmp eax,31
  ja LFloorDivMod
- lea ecx,ds:dword ptr[15+esi]
+ lea ecx,dword ptr[15+esi]
  cmp ecx,31
  ja LFloorDivMod
  sal eax,5
  add eax,ecx
  sal eax,3
- mov ds:dword ptr[_erroradjustdown],esi
- mov edx,ds:dword ptr[_adivtab+eax]
- mov eax,ds:dword ptr[_adivtab+4+eax]
- mov ds:dword ptr[_ubasestep],edx
- mov ds:dword ptr[_erroradjustup],eax
+ mov dword ptr[_erroradjustdown],esi
+ mov edx,dword ptr[_adivtab+eax]
+ mov eax,dword ptr[_adivtab+4+eax]
+ mov dword ptr[_ubasestep],edx
+ mov dword ptr[_erroradjustup],eax
  jmp LSetupDone
 LFloorDivMod:
- mov ds:dword ptr[_erroradjustdown],esi
- fild ds:dword ptr[_erroradjustdown]
- mov ds:dword ptr[Ltemp],edx
- fild ds:dword ptr[Ltemp]
+ mov dword ptr[_erroradjustdown],esi
+ fild dword ptr[_erroradjustdown]
+ mov dword ptr[Ltemp],edx
+ fild dword ptr[Ltemp]
  fldz
  fcomp st(1)
  fnstsw ax
@@ -565,32 +571,32 @@ LFloorDivMod:
  je LFloorDivModNegative
  fld st(0)
  fdiv st(0),st(2)
- fldcw ds:word ptr[floor_cw]
+ fldcw word ptr[floor_cw]
  frndint
- fist ds:dword ptr[_ubasestep]
+ fist dword ptr[_ubasestep]
  fmulp st(2),st(0)
  fsubrp st(1),st(0)
- fistp ds:dword ptr[_erroradjustup]
- fldcw ds:word ptr[single_cw]
+ fistp dword ptr[_erroradjustup]
+ fldcw word ptr[single_cw]
  jmp LSetupDone
 LFloorDivModNegative:
  fchs
  fld st(0)
  fdiv st(0),st(2)
- fldcw ds:word ptr[floor_cw]
+ fldcw word ptr[floor_cw]
  frndint
- fist ds:dword ptr[_ubasestep]
+ fist dword ptr[_ubasestep]
  fmulp st(2),st(0)
  fsubrp st(1),st
- fistp ds:dword ptr[_erroradjustup]
- fldcw ds:word ptr[single_cw]
- neg ds:dword ptr[_ubasestep]
- mov edx,ds:dword ptr[_erroradjustup]
+ fistp dword ptr[_erroradjustup]
+ fldcw word ptr[single_cw]
+ neg dword ptr[_ubasestep]
+ mov edx,dword ptr[_erroradjustup]
  test edx,edx
  je LSetupDone
- dec ds:dword ptr[_ubasestep]
+ dec dword ptr[_ubasestep]
  sub esi,edx
- mov ds:dword ptr[_erroradjustup],esi
+ mov dword ptr[_erroradjustup],esi
 LSetupDone:
  pop ebx
  pop esi
@@ -601,63 +607,63 @@ _D_PolysetScanLeftEdge:
  push esi
  push edi
  push ebx
- mov eax,ds:dword ptr[4+16+esp]
- mov ecx,ds:dword ptr[_d_sfrac]
+ mov eax,dword ptr[4+16+esp]
+ mov ecx,dword ptr[_d_sfrac]
  and eax,0FFFFh
- mov ebx,ds:dword ptr[_d_ptex]
+ mov ebx,dword ptr[_d_ptex]
  or ecx,eax
- mov esi,ds:dword ptr[_d_pedgespanpackage]
- mov edx,ds:dword ptr[_d_tfrac]
- mov edi,ds:dword ptr[_d_r]
- mov ebp,ds:dword ptr[_d_zi]
+ mov esi,dword ptr[_d_pedgespanpackage]
+ mov edx,dword ptr[_d_tfrac]
+ mov edi,dword ptr[_d_r]
+ mov ebp,dword ptr[_d_zi]
 LScanLoop:
- mov ds:dword ptr[8+esi],ebx
- mov eax,ds:dword ptr[_d_pdest]
- mov ds:dword ptr[0+esi],eax
- mov eax,ds:dword ptr[_d_pz]
- mov ds:dword ptr[4+esi],eax
- mov eax,ds:dword ptr[_d_aspancount]
- mov ds:word ptr[24+esi],ax
- mov ds:word ptr[26+esi],di
- mov eax,ds:dword ptr[_d_g]
- mov ds:word ptr[28+esi],ax
- mov eax,ds:dword ptr[_d_b]
- mov ds:word ptr[30+esi],ax
- mov ds:dword ptr[20+esi],ebp
- mov ds:dword ptr[12+esi],ecx
- mov ds:dword ptr[16+esi],edx
- mov al,ds:byte ptr[32+esi]
+ mov dword ptr[8+esi],ebx
+ mov eax,dword ptr[_d_pdest]
+ mov dword ptr[0+esi],eax
+ mov eax,dword ptr[_d_pz]
+ mov dword ptr[4+esi],eax
+ mov eax,dword ptr[_d_aspancount]
+ mov word ptr[24+esi],ax
+ mov word ptr[26+esi],di
+ mov eax,dword ptr[_d_g]
+ mov word ptr[28+esi],ax
+ mov eax,dword ptr[_d_b]
+ mov word ptr[30+esi],ax
+ mov dword ptr[20+esi],ebp
+ mov dword ptr[12+esi],ecx
+ mov dword ptr[16+esi],edx
+ mov al,byte ptr[32+esi]
  add esi,32 
- mov eax,ds:dword ptr[_erroradjustup]
- mov ds:dword ptr[_d_pedgespanpackage],esi
- mov esi,ds:dword ptr[_errorterm]
+ mov eax,dword ptr[_erroradjustup]
+ mov dword ptr[_d_pedgespanpackage],esi
+ mov esi,dword ptr[_errorterm]
  add esi,eax
- mov eax,ds:dword ptr[_d_pdest]
+ mov eax,dword ptr[_d_pdest]
  js LNoLeftEdgeTurnover
- sub esi,ds:dword ptr[_erroradjustdown]
- add eax,ds:dword ptr[_d_pdestextrastep]
- mov ds:dword ptr[_errorterm],esi
- mov ds:dword ptr[_d_pdest],eax
- mov eax,ds:dword ptr[_d_pz]
- mov esi,ds:dword ptr[_d_aspancount]
- add eax,ds:dword ptr[_d_pzextrastep]
- add ecx,ds:dword ptr[_d_sfracextrastep]
- adc ebx,ds:dword ptr[_d_ptexextrastep]
- add esi,ds:dword ptr[_d_countextrastep]
- mov ds:dword ptr[_d_pz],eax
- mov eax,ds:dword ptr[_d_tfracextrastep]
- mov ds:dword ptr[_d_aspancount],esi
+ sub esi,dword ptr[_erroradjustdown]
+ add eax,dword ptr[_d_pdestextrastep]
+ mov dword ptr[_errorterm],esi
+ mov dword ptr[_d_pdest],eax
+ mov eax,dword ptr[_d_pz]
+ mov esi,dword ptr[_d_aspancount]
+ add eax,dword ptr[_d_pzextrastep]
+ add ecx,dword ptr[_d_sfracextrastep]
+ adc ebx,dword ptr[_d_ptexextrastep]
+ add esi,dword ptr[_d_countextrastep]
+ mov dword ptr[_d_pz],eax
+ mov eax,dword ptr[_d_tfracextrastep]
+ mov dword ptr[_d_aspancount],esi
  add edx,eax
  jnc LSkip1
- add ebx,ds:dword ptr[_d_affinetridesc+4]
+ add ebx,dword ptr[_d_affinetridesc+4]
 LSkip1:
- add edi,ds:dword ptr[_d_rextrastep]
- mov eax,ds:dword ptr[_d_gextrastep]
- add ds:dword ptr[_d_g],eax
- mov eax,ds:dword ptr[_d_bextrastep]
- add ds:dword ptr[_d_b],eax
- add ebp,ds:dword ptr[_d_ziextrastep]
- mov esi,ds:dword ptr[_d_pedgespanpackage]
+ add edi,dword ptr[_d_rextrastep]
+ mov eax,dword ptr[_d_gextrastep]
+ add dword ptr[_d_g],eax
+ mov eax,dword ptr[_d_bextrastep]
+ add dword ptr[_d_b],eax
+ add ebp,dword ptr[_d_ziextrastep]
+ mov esi,dword ptr[_d_pedgespanpackage]
  dec ecx
  test ecx,0FFFFh
  jnz LScanLoop
@@ -667,29 +673,29 @@ LSkip1:
  pop ebp
  ret
 LNoLeftEdgeTurnover:
- mov ds:dword ptr[_errorterm],esi
- add eax,ds:dword ptr[_d_pdestbasestep]
- mov ds:dword ptr[_d_pdest],eax
- mov eax,ds:dword ptr[_d_pz]
- mov esi,ds:dword ptr[_d_aspancount]
- add eax,ds:dword ptr[_d_pzbasestep]
- add ecx,ds:dword ptr[_d_sfracbasestep]
- adc ebx,ds:dword ptr[_d_ptexbasestep]
- add esi,ds:dword ptr[_ubasestep]
- mov ds:dword ptr[_d_pz],eax
- mov ds:dword ptr[_d_aspancount],esi
- mov esi,ds:dword ptr[_d_tfracbasestep]
+ mov dword ptr[_errorterm],esi
+ add eax,dword ptr[_d_pdestbasestep]
+ mov dword ptr[_d_pdest],eax
+ mov eax,dword ptr[_d_pz]
+ mov esi,dword ptr[_d_aspancount]
+ add eax,dword ptr[_d_pzbasestep]
+ add ecx,dword ptr[_d_sfracbasestep]
+ adc ebx,dword ptr[_d_ptexbasestep]
+ add esi,dword ptr[_ubasestep]
+ mov dword ptr[_d_pz],eax
+ mov dword ptr[_d_aspancount],esi
+ mov esi,dword ptr[_d_tfracbasestep]
  add edx,esi
  jnc LSkip2
- add ebx,ds:dword ptr[_d_affinetridesc+4]
+ add ebx,dword ptr[_d_affinetridesc+4]
 LSkip2:
- add edi,ds:dword ptr[_d_rbasestep]
- mov eax,ds:dword ptr[_d_gbasestep]
- add ds:dword ptr[_d_g],eax
- mov eax,ds:dword ptr[_d_bbasestep]
- add ds:dword ptr[_d_b],eax
- add ebp,ds:dword ptr[_d_zibasestep]
- mov esi,ds:dword ptr[_d_pedgespanpackage]
+ add edi,dword ptr[_d_rbasestep]
+ mov eax,dword ptr[_d_gbasestep]
+ add dword ptr[_d_g],eax
+ mov eax,dword ptr[_d_bbasestep]
+ add dword ptr[_d_b],eax
+ add ebp,dword ptr[_d_zibasestep]
+ mov esi,dword ptr[_d_pedgespanpackage]
  dec ecx
  test ecx,0FFFFh
  jnz LScanLoop

@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -252,37 +258,37 @@ _D_DrawZSpans:
  push edi
  push esi
  push ebx
- fld ds:dword ptr[_d_zistepu]
- mov eax,ds:dword ptr[_d_zistepu]
- mov esi,ds:dword ptr[4+16+esp]
+ fld dword ptr[_d_zistepu]
+ mov eax,dword ptr[_d_zistepu]
+ mov esi,dword ptr[4+16+esp]
  test eax,eax
  jz LFNegSpan
- fmul ds:dword ptr[Float2ToThe31nd]
- fistp ds:dword ptr[izistep]
- mov ebx,ds:dword ptr[izistep]
+ fmul dword ptr[Float2ToThe31nd]
+ fistp dword ptr[izistep]
+ mov ebx,dword ptr[izistep]
 LFSpanLoop:
- fild ds:dword ptr[4+esi]
- fild ds:dword ptr[0+esi]
- mov eax,ds:dword ptr[4+esi]
- mov edi,ds:dword ptr[_zbuffer]
- fmul ds:dword ptr[_d_zistepu]
+ fild dword ptr[4+esi]
+ fild dword ptr[0+esi]
+ mov eax,dword ptr[4+esi]
+ mov edi,dword ptr[_zbuffer]
+ fmul dword ptr[_d_zistepu]
  fxch st(1)
- fmul ds:dword ptr[_d_zistepv]
+ fmul dword ptr[_d_zistepv]
  fxch st(1)
- fadd ds:dword ptr[_d_ziorigin]
- mov eax,ds:dword ptr[_ylookup+eax*4]
- mov ecx,ds:dword ptr[8+esi]
+ fadd dword ptr[_d_ziorigin]
+ mov eax,dword ptr[_ylookup+eax*4]
+ mov ecx,dword ptr[8+esi]
  faddp st(1),st(0)
- fcom ds:dword ptr[float_point5]
- add eax,ds:dword ptr[0+esi]
- lea edi,ds:dword ptr[edi+eax*2]
+ fcom dword ptr[float_point5]
+ add eax,dword ptr[0+esi]
+ lea edi,dword ptr[edi+eax*2]
  push esi
  fnstsw ax
  test ah,045h
  jz LClamp
- fmul ds:dword ptr[Float2ToThe31nd]
- fistp ds:dword ptr[izi]
- mov edx,ds:dword ptr[izi]
+ fmul dword ptr[Float2ToThe31nd]
+ fistp dword ptr[izi]
+ mov edx,dword ptr[izi]
 LZDraw:
  test edi,2
  jz LFMiddle
@@ -290,7 +296,7 @@ LZDraw:
  add edx,ebx
  shr eax,16
  dec ecx
- mov ds:word ptr[edi],ax
+ mov word ptr[edi],ax
  add edi,2
 LFMiddle:
  push ecx
@@ -305,7 +311,7 @@ LFMiddle:
  add edx,ebx
  and esi,0FFFF0000h
  or eax,esi
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
  add edi,4
  and ecx,ecx
  jz LFLast
@@ -318,14 +324,14 @@ LFMiddleLoop:
  and esi,0FFFF0000h
  or eax,esi
  mov ebp,edx
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
  add edx,ebx
  shr ebp,16
  mov esi,edx
  add edx,ebx
  and esi,0FFFF0000h
  or ebp,esi
- mov ds:dword ptr[4+edi],ebp
+ mov dword ptr[4+edi],ebp
  add edi,8
  dec ecx
  jnz LFMiddleLoop
@@ -334,42 +340,42 @@ LFLast:
  and ecx,1
  jz LFSpanDone
  shr edx,16
- mov ds:word ptr[edi],dx
+ mov word ptr[edi],dx
 LFSpanDone:
  pop esi
- mov esi,ds:dword ptr[12+esi]
+ mov esi,dword ptr[12+esi]
  test esi,esi
  jnz LFSpanLoop
  jmp LFDone
 LFNegSpan:
- fmul ds:dword ptr[FloatMinus2ToThe31nd]
- fistp ds:dword ptr[izistep]
- mov ebx,ds:dword ptr[izistep]
+ fmul dword ptr[FloatMinus2ToThe31nd]
+ fistp dword ptr[izistep]
+ mov ebx,dword ptr[izistep]
 LFNegSpanLoop:
- fild ds:dword ptr[4+esi]
- fild ds:dword ptr[0+esi]
- mov ecx,ds:dword ptr[4+esi]
- mov edi,ds:dword ptr[_zbuffer]
- fmul ds:dword ptr[_d_zistepu]
+ fild dword ptr[4+esi]
+ fild dword ptr[0+esi]
+ mov ecx,dword ptr[4+esi]
+ mov edi,dword ptr[_zbuffer]
+ fmul dword ptr[_d_zistepu]
  fxch st(1)
- fmul ds:dword ptr[_d_zistepv]
+ fmul dword ptr[_d_zistepv]
  fxch st(1)
- fadd ds:dword ptr[_d_ziorigin]
- mov ecx,ds:dword ptr[_ylookup+ecx*4]
+ fadd dword ptr[_d_ziorigin]
+ mov ecx,dword ptr[_ylookup+ecx*4]
  faddp st(1),st(0)
- fcom ds:dword ptr[float_point5]
- lea edi,ds:dword ptr[edi+ecx*2]
- mov edx,ds:dword ptr[0+esi]
+ fcom dword ptr[float_point5]
+ lea edi,dword ptr[edi+ecx*2]
+ mov edx,dword ptr[0+esi]
  add edx,edx
- mov ecx,ds:dword ptr[8+esi]
+ mov ecx,dword ptr[8+esi]
  add edi,edx
  push esi
  fnstsw ax
  test ah,045h
  jz LClampNeg
- fmul ds:dword ptr[Float2ToThe31nd]
- fistp ds:dword ptr[izi]
- mov edx,ds:dword ptr[izi]
+ fmul dword ptr[Float2ToThe31nd]
+ fistp dword ptr[izi]
+ mov edx,dword ptr[izi]
 LZDrawNeg:
  test edi,2
  jz LFNegMiddle
@@ -377,7 +383,7 @@ LZDrawNeg:
  sub edx,ebx
  shr eax,16
  dec ecx
- mov ds:word ptr[edi],ax
+ mov word ptr[edi],ax
  add edi,2
 LFNegMiddle:
  push ecx
@@ -392,7 +398,7 @@ LFNegMiddle:
  sub edx,ebx
  and esi,0FFFF0000h
  or eax,esi
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
  add edi,4
  and ecx,ecx
  jz LFNegLast
@@ -405,14 +411,14 @@ LFNegMiddleLoop:
  and esi,0FFFF0000h
  or eax,esi
  mov ebp,edx
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
  sub edx,ebx
  shr ebp,16
  mov esi,edx
  sub edx,ebx
  and esi,0FFFF0000h
  or ebp,esi
- mov ds:dword ptr[4+edi],ebp
+ mov dword ptr[4+edi],ebp
  add edi,8
  dec ecx
  jnz LFNegMiddleLoop
@@ -422,9 +428,9 @@ LFNegLast:
  and ecx,1
  jz LFNegSpanDone
  shr edx,16
- mov ds:word ptr[edi],dx
+ mov word ptr[edi],dx
 LFNegSpanDone:
- mov esi,ds:dword ptr[12+esi]
+ mov esi,dword ptr[12+esi]
  test esi,esi
  jnz LFNegSpanLoop
 LFDone:

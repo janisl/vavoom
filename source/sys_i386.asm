@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -240,9 +246,9 @@ _DATA ENDS
 _TEXT SEGMENT
  public _MaskExceptions
 _MaskExceptions:
- fnstenv ds:dword ptr[fpenv]
- or ds:dword ptr[fpenv],03Fh
- fldenv ds:dword ptr[fpenv]
+ fnstenv dword ptr[fpenv]
+ or dword ptr[fpenv],03Fh
+ fldenv dword ptr[fpenv]
  ret
 _TEXT ENDS
 _DATA SEGMENT
@@ -262,41 +268,41 @@ _TEXT SEGMENT
  align 4
  public _Sys_SetFPCW
 _Sys_SetFPCW:
- fnstcw ds:word ptr[cw]
- mov eax,ds:dword ptr[cw]
+ fnstcw word ptr[cw]
+ mov eax,dword ptr[cw]
  and ah,0F0h
  or ah,003h
- mov ds:dword ptr[full_cw],eax
+ mov dword ptr[full_cw],eax
  and ah,0F0h
  or ah,00Ch
- mov ds:dword ptr[single_cw],eax
+ mov dword ptr[single_cw],eax
  and ah,0F0h
  or ah,004h
- mov ds:dword ptr[floor_cw],eax
+ mov dword ptr[floor_cw],eax
  and ah,0F0h
  or ah,008h
- mov ds:dword ptr[ceil_cw],eax
+ mov dword ptr[ceil_cw],eax
  ret
  align 4
  public _Sys_LowFPPrecision
 _Sys_LowFPPrecision:
- fldcw ds:word ptr[single_cw]
+ fldcw word ptr[single_cw]
  ret
  align 4
  public _Sys_HighFPPrecision
 _Sys_HighFPPrecision:
- fldcw ds:word ptr[full_cw]
+ fldcw word ptr[full_cw]
  ret
  align 4
  public _Sys_PushFPCW_SetHigh
 _Sys_PushFPCW_SetHigh:
- fnstcw ds:word ptr[pushed_cw]
- fldcw ds:word ptr[full_cw]
+ fnstcw word ptr[pushed_cw]
+ fldcw word ptr[full_cw]
  ret
  align 4
  public _Sys_PopFPCW
 _Sys_PopFPCW:
- fldcw ds:word ptr[pushed_cw]
+ fldcw word ptr[pushed_cw]
  ret
 _TEXT ENDS
  END

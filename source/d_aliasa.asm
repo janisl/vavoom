@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -240,108 +246,108 @@ _TEXT SEGMENT
  public _D_AliasTransformFinalVert
 _D_AliasTransformFinalVert:
  push ebx
- mov edx,ds:dword ptr[16+esp]
- mov ebx,ds:dword ptr[8+esp]
- mov ecx,ds:dword ptr[12+esp]
- mov al,ds:byte ptr[edx]
- mov ds:byte ptr[Lcoords],al
- mov al,ds:byte ptr[1+edx]
- mov ds:byte ptr[Lcoords+4],al
- mov al,ds:byte ptr[2+edx]
- mov ds:byte ptr[Lcoords+8],al
+ mov edx,dword ptr[16+esp]
+ mov ebx,dword ptr[8+esp]
+ mov ecx,dword ptr[12+esp]
+ mov al,byte ptr[edx]
+ mov byte ptr[Lcoords],al
+ mov al,byte ptr[1+edx]
+ mov byte ptr[Lcoords+4],al
+ mov al,byte ptr[2+edx]
+ mov byte ptr[Lcoords+8],al
  xor eax,eax
- mov al,ds:byte ptr[3+edx]
- lea eax,ds:dword ptr[eax+eax*2]
- lea eax,ds:dword ptr[_d_avertexnormals+eax*4]
- fild ds:dword ptr[Lcoords]
- fild ds:dword ptr[Lcoords+4]
- fild ds:dword ptr[Lcoords+8]
+ mov al,byte ptr[3+edx]
+ lea eax,dword ptr[eax+eax*2]
+ lea eax,dword ptr[_d_avertexnormals+eax*4]
+ fild dword ptr[Lcoords]
+ fild dword ptr[Lcoords+4]
+ fild dword ptr[Lcoords+8]
  fld st(2)
- fmul ds:dword ptr[_aliastransform+0]
+ fmul dword ptr[_aliastransform+0]
  fld st(2)
- fmul ds:dword ptr[_aliastransform+4]
+ fmul dword ptr[_aliastransform+4]
  fxch st(1)
- fadd ds:dword ptr[_aliastransform+12]
+ fadd dword ptr[_aliastransform+12]
  fld st(2)
- fmul ds:dword ptr[_aliastransform+8]
+ fmul dword ptr[_aliastransform+8]
  fxch st(1)
  faddp st(2),st(0)
  fld st(4)
- fmul ds:dword ptr[_aliastransform+16]
+ fmul dword ptr[_aliastransform+16]
  fld st(4)
- fmul ds:dword ptr[_aliastransform+20]
+ fmul dword ptr[_aliastransform+20]
  fxch st(1)
- fadd ds:dword ptr[_aliastransform+28]
+ fadd dword ptr[_aliastransform+28]
  fld st(4)
- fmul ds:dword ptr[_aliastransform+24]
+ fmul dword ptr[_aliastransform+24]
  fxch st(1)
  faddp st(2),st(0)
  fxch st(6)
- fmul ds:dword ptr[_aliastransform+32]
+ fmul dword ptr[_aliastransform+32]
  fxch st(5)
- fmul ds:dword ptr[_aliastransform+36]
+ fmul dword ptr[_aliastransform+36]
  fxch st(4)
- fmul ds:dword ptr[_aliastransform+40]
+ fmul dword ptr[_aliastransform+40]
  fxch st(5)
- fadd ds:dword ptr[_aliastransform+44]
+ fadd dword ptr[_aliastransform+44]
  fxch st(2)
  faddp st(3),st(0)
  fxch st(3)
  faddp st(4),st(0)
  fxch st(2)
  faddp st(4),st(0)
- fstp ds:dword ptr[ecx]
+ fstp dword ptr[ecx]
  faddp st(1),st(0)
- fld ds:dword ptr[eax]
- fmul ds:dword ptr[_d_plightvec]
- fld ds:dword ptr[4+eax]
- fmul ds:dword ptr[_d_plightvec+4]
- fld ds:dword ptr[8+eax]
- fmul ds:dword ptr[_d_plightvec+8]
+ fld dword ptr[eax]
+ fmul dword ptr[_d_plightvec]
+ fld dword ptr[4+eax]
+ fmul dword ptr[_d_plightvec+4]
+ fld dword ptr[8+eax]
+ fmul dword ptr[_d_plightvec+8]
  fxch st(2)
  faddp st(1),st(0)
  fxch st(3)
- fstp ds:dword ptr[4+ecx]
+ fstp dword ptr[4+ecx]
  faddp st(2),st(0)
- fstp ds:dword ptr[8+ecx]
- mov edx,ds:dword ptr[_d_ambientlightr]
- mov eax,ds:dword ptr[_d_ambientlightg]
- mov ds:dword ptr[16+ebx],eax
- mov eax,ds:dword ptr[_d_ambientlightb]
- mov ds:dword ptr[12+ebx],edx
- mov ds:dword ptr[20+ebx],eax
- fst ds:dword ptr[Ltemp]
- mov ds:dword ptr[24+ebx],0
- mov al,ds:byte ptr[Ltemp+3]
+ fstp dword ptr[8+ecx]
+ mov edx,dword ptr[_d_ambientlightr]
+ mov eax,dword ptr[_d_ambientlightg]
+ mov dword ptr[16+ebx],eax
+ mov eax,dword ptr[_d_ambientlightb]
+ mov dword ptr[12+ebx],edx
+ mov dword ptr[20+ebx],eax
+ fst dword ptr[Ltemp]
+ mov dword ptr[24+ebx],0
+ mov al,byte ptr[Ltemp+3]
  test al,080h
  jz LTFVPopAndDone
- fld ds:dword ptr[_d_shadelightr]
+ fld dword ptr[_d_shadelightr]
  fmul st(0),st(1)
- fld ds:dword ptr[_d_shadelightg]
+ fld dword ptr[_d_shadelightg]
  fmul st(0),st(2)
- fld ds:dword ptr[_d_shadelightb]
+ fld dword ptr[_d_shadelightb]
  fmulp st(3),st(0)
  fxch st(1)
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
  add eax,edx
- mov ds:dword ptr[12+ebx],eax
+ mov dword ptr[12+ebx],eax
  jns LTFVSkip1
- mov ds:dword ptr[12+ebx],0
+ mov dword ptr[12+ebx],0
 LTFVSkip1:
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
- add eax,ds:dword ptr[16+ebx]
- mov ds:dword ptr[16+ebx],eax
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
+ add eax,dword ptr[16+ebx]
+ mov dword ptr[16+ebx],eax
  jns LTFVSkip2
- mov ds:dword ptr[16+ebx],0
+ mov dword ptr[16+ebx],0
 LTFVSkip2:
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
- add eax,ds:dword ptr[20+ebx]
- mov ds:dword ptr[20+ebx],eax
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
+ add eax,dword ptr[20+ebx]
+ mov dword ptr[20+ebx],eax
  jns LTFVDone
- mov ds:dword ptr[20+ebx],0
+ mov dword ptr[20+ebx],0
  jmp LTFVDone
 LTFVPopAndDone:
  fstp st(0)
@@ -350,28 +356,28 @@ LTFVDone:
  ret
  public _D_AliasProjectFinalVert
 _D_AliasProjectFinalVert:
- mov ecx,ds:dword ptr[4+esp]
- mov edx,ds:dword ptr[8+esp]
+ mov ecx,dword ptr[4+esp]
+ mov edx,dword ptr[8+esp]
  fld1
- fld ds:dword ptr[8+edx]
+ fld dword ptr[8+edx]
  fdivp st(1),st(0)
- fld ds:dword ptr[edx]
- fmul ds:dword ptr[_xprojection]
- fld ds:dword ptr[4+edx]
- fmul ds:dword ptr[_yprojection]
- fld ds:dword ptr[_ziscale]
+ fld dword ptr[edx]
+ fmul dword ptr[_xprojection]
+ fld dword ptr[4+edx]
+ fmul dword ptr[_yprojection]
+ fld dword ptr[_ziscale]
  fxch st(3)
  fmul st(2),st(0)
  fmul st(1),st(0)
  fmulp st(3),st(0)
  fxch st(1)
- fadd ds:dword ptr[_aliasxcenter]
+ fadd dword ptr[_aliasxcenter]
  fxch st(1)
- fadd ds:dword ptr[_aliasycenter]
+ fadd dword ptr[_aliasycenter]
  fxch st(2)
- fistp ds:dword ptr[8+ecx]
- fistp ds:dword ptr[ecx]
- fistp ds:dword ptr[4+ecx]
+ fistp dword ptr[8+ecx]
+ fistp dword ptr[ecx]
+ fistp dword ptr[4+ecx]
  ret
  public _D_AliasTransformAndProjectFinalVerts
 _D_AliasTransformAndProjectFinalVerts:
@@ -379,77 +385,77 @@ _D_AliasTransformAndProjectFinalVerts:
  push edi
  push esi
  push ebx
- mov ebp,ds:dword ptr[_d_anumverts]
- mov edi,ds:dword ptr[_d_apverts]
- mov esi,ds:dword ptr[20+esp]
+ mov ebp,dword ptr[_d_anumverts]
+ mov edi,dword ptr[_d_apverts]
+ mov esi,dword ptr[20+esp]
 LTLoop:
  xor eax,eax
- mov al,ds:byte ptr[edi]
- mov ds:byte ptr[Lcoords],al
- mov al,ds:byte ptr[1+edi]
- mov ds:byte ptr[Lcoords+4],al
- mov al,ds:byte ptr[2+edi]
- mov ds:byte ptr[Lcoords+8],al
- mov al,ds:byte ptr[3+edi]
- fild ds:dword ptr[Lcoords]
- fild ds:dword ptr[Lcoords+4]
- lea eax,ds:dword ptr[eax+eax*2]
- fild ds:dword ptr[Lcoords+8]
+ mov al,byte ptr[edi]
+ mov byte ptr[Lcoords],al
+ mov al,byte ptr[1+edi]
+ mov byte ptr[Lcoords+4],al
+ mov al,byte ptr[2+edi]
+ mov byte ptr[Lcoords+8],al
+ mov al,byte ptr[3+edi]
+ fild dword ptr[Lcoords]
+ fild dword ptr[Lcoords+4]
+ lea eax,dword ptr[eax+eax*2]
+ fild dword ptr[Lcoords+8]
  sal eax,2
  fld st(2)
- fmul ds:dword ptr[_aliastransform+32]
+ fmul dword ptr[_aliastransform+32]
  fld st(2)
- fmul ds:dword ptr[_aliastransform+36]
+ fmul dword ptr[_aliastransform+36]
  fxch st(1)
- fadd ds:dword ptr[_aliastransform+44]
- fld ds:dword ptr[_d_avertexnormals+0+eax]
- fmul ds:dword ptr[_d_plightvec+0]
- fld ds:dword ptr[_d_avertexnormals+4+eax]
- fmul ds:dword ptr[_d_plightvec+4]
- fld ds:dword ptr[_d_avertexnormals+8+eax]
- fmul ds:dword ptr[_d_plightvec+8]
+ fadd dword ptr[_aliastransform+44]
+ fld dword ptr[_d_avertexnormals+0+eax]
+ fmul dword ptr[_d_plightvec+0]
+ fld dword ptr[_d_avertexnormals+4+eax]
+ fmul dword ptr[_d_plightvec+4]
+ fld dword ptr[_d_avertexnormals+8+eax]
+ fmul dword ptr[_d_plightvec+8]
  fxch st(2)
  faddp st(1),st(0)
  fxch st(2)
  faddp st(3),st(0)
  fld st(3)
- fmul ds:dword ptr[_aliastransform+40]
+ fmul dword ptr[_aliastransform+40]
  fxch st(2)
  faddp st(1),st(0)
  fld1
  fxch st(2)
  faddp st(3),st(0)
- fst ds:dword ptr[Ltemp]
+ fst dword ptr[Ltemp]
  fxch st(2)
  fdivp st(1),st(0)
- mov ecx,ds:dword ptr[_d_ambientlightr]
- mov edx,ds:dword ptr[_d_ambientlightg]
- mov ebx,ds:dword ptr[_d_ambientlightb]
- mov al,ds:byte ptr[Ltemp+3]
+ mov ecx,dword ptr[_d_ambientlightr]
+ mov edx,dword ptr[_d_ambientlightg]
+ mov ebx,dword ptr[_d_ambientlightb]
+ mov al,byte ptr[Ltemp+3]
  test al,080h
  jz Lp4
- fld ds:dword ptr[_d_shadelightr]
+ fld dword ptr[_d_shadelightr]
  fmul st(0),st(2)
- fld ds:dword ptr[_d_shadelightg]
+ fld dword ptr[_d_shadelightg]
  fmul st(0),st(3)
- fld ds:dword ptr[_d_shadelightb]
+ fld dword ptr[_d_shadelightb]
  fmulp st(4),st(0)
  fxch st(1)
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
  add ecx,eax
  jns Lp1
  xor ecx,ecx
 Lp1:
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
  add edx,eax
  jns Lp2
  xor edx,edx
 Lp2:
  fxch st(1)
- fistp ds:dword ptr[Ltemp]
- mov eax,ds:dword ptr[Ltemp]
+ fistp dword ptr[Ltemp]
+ mov eax,dword ptr[Ltemp]
  add ebx,eax
  jns Lp3
  xor ebx,ebx
@@ -458,42 +464,42 @@ Lp4:
  fstp st(1)
 Lp3:
  fld st(3)
- fmul ds:dword ptr[_aliastransform+0]
+ fmul dword ptr[_aliastransform+0]
  fld st(3)
- fmul ds:dword ptr[_aliastransform+4]
+ fmul dword ptr[_aliastransform+4]
  fxch st(1)
- fadd ds:dword ptr[_aliastransform+12]
+ fadd dword ptr[_aliastransform+12]
  fld st(3)
- fmul ds:dword ptr[_aliastransform+8]
+ fmul dword ptr[_aliastransform+8]
  fxch st(1)
  faddp st(2),st(0)
  fxch st(5)
- fmul ds:dword ptr[_aliastransform+16]
+ fmul dword ptr[_aliastransform+16]
  fxch st(4)
- fmul ds:dword ptr[_aliastransform+20]
+ fmul dword ptr[_aliastransform+20]
  fxch st(1)
  faddp st(5),st(0)
  fxch st(3)
- fadd ds:dword ptr[_aliastransform+28]
+ fadd dword ptr[_aliastransform+28]
  fxch st(2)
- fmul ds:dword ptr[_aliastransform+24]
+ fmul dword ptr[_aliastransform+24]
  fxch st(4)
  fmul st(0),st(1)
  fxch st(2)
  faddp st(3),st(0)
- mov ds:dword ptr[12+esi],ecx
- mov ds:dword ptr[16+esi],edx
+ mov dword ptr[12+esi],ecx
+ mov dword ptr[16+esi],edx
  fxch st(1)
- fadd ds:dword ptr[_aliasxcenter]
+ fadd dword ptr[_aliasxcenter]
  fxch st(2)
  faddp st(3),st(0)
- fist ds:dword ptr[8+esi]
+ fist dword ptr[8+esi]
  fmulp st(2),st(0)
- fistp ds:dword ptr[esi]
- fadd ds:dword ptr[_aliasycenter]
- mov ds:dword ptr[20+esi],ebx
- mov ds:dword ptr[24+esi],0
- fistp ds:dword ptr[4+esi]
+ fistp dword ptr[esi]
+ fadd dword ptr[_aliasycenter]
+ mov dword ptr[20+esi],ebx
+ mov dword ptr[24+esi],0
+ fistp dword ptr[4+esi]
  add edi,4
  add esi,32
  dec ebp

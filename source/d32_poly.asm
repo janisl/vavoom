@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -243,54 +249,54 @@ _D_PolysetAff32Start:
 _D_PolysetDrawSpans_32:
  push esi
  push ebx
- mov esi,ds:dword ptr[4+8+esp]
- mov ecx,ds:dword ptr[_r_zistepx]
+ mov esi,dword ptr[4+8+esp]
+ mov ecx,dword ptr[_r_zistepx]
  push ebp
  push edi
  ror ecx,16
- movsx edx,ds:word ptr[24+esi]
- mov ds:dword ptr[lzistepx],ecx
+ movsx edx,word ptr[24+esi]
+ mov dword ptr[lzistepx],ecx
 LSpanLoop:
- mov eax,ds:dword ptr[_d_aspancount]
+ mov eax,dword ptr[_d_aspancount]
  sub eax,edx
- mov edx,ds:dword ptr[_erroradjustup]
- mov ebx,ds:dword ptr[_errorterm]
+ mov edx,dword ptr[_erroradjustup]
+ mov ebx,dword ptr[_errorterm]
  add ebx,edx
  js LNoTurnover
- mov edx,ds:dword ptr[_erroradjustdown]
- mov edi,ds:dword ptr[_d_countextrastep]
+ mov edx,dword ptr[_erroradjustdown]
+ mov edi,dword ptr[_d_countextrastep]
  sub ebx,edx
- mov ebp,ds:dword ptr[_d_aspancount]
- mov ds:dword ptr[_errorterm],ebx
+ mov ebp,dword ptr[_d_aspancount]
+ mov dword ptr[_errorterm],ebx
  add ebp,edi
- mov ds:dword ptr[_d_aspancount],ebp
+ mov dword ptr[_d_aspancount],ebp
  jmp LRightEdgeStepped
 LNoTurnover:
- mov edi,ds:dword ptr[_d_aspancount]
- mov edx,ds:dword ptr[_ubasestep]
- mov ds:dword ptr[_errorterm],ebx
+ mov edi,dword ptr[_d_aspancount]
+ mov edx,dword ptr[_ubasestep]
+ mov dword ptr[_errorterm],ebx
  add edi,edx
- mov ds:dword ptr[_d_aspancount],edi
+ mov dword ptr[_d_aspancount],edi
 LRightEdgeStepped:
  cmp eax,1
  jl LNextSpan
  jz LExactlyOneLong
- mov ecx,ds:dword ptr[_a_ststepxwhole]
- mov edx,ds:dword ptr[_d_affinetridesc+4]
- mov ds:dword ptr[advancetable+4],ecx
+ mov ecx,dword ptr[_a_ststepxwhole]
+ mov edx,dword ptr[_d_affinetridesc+4]
+ mov dword ptr[advancetable+4],ecx
  add ecx,edx
- mov ds:dword ptr[advancetable],ecx
- mov ecx,ds:dword ptr[_a_tstepxfrac]
- mov cx,ds:word ptr[_r_rstepx]
+ mov dword ptr[advancetable],ecx
+ mov ecx,dword ptr[_a_tstepxfrac]
+ mov cx,word ptr[_r_rstepx]
  mov edx,eax
- mov ds:dword ptr[tstep],ecx
+ mov dword ptr[tstep],ecx
  add edx,7
  shr edx,3
- mov ebx,ds:dword ptr[12+esi]
+ mov ebx,dword ptr[12+esi]
  mov bx,dx
- mov ecx,ds:dword ptr[4+esi]
+ mov ecx,dword ptr[4+esi]
  neg eax
- mov edi,ds:dword ptr[0+esi]
+ mov edi,dword ptr[0+esi]
  and eax,7
  sub edi,eax
  sub ecx,eax
@@ -298,153 +304,153 @@ LRightEdgeStepped:
  sub edi,eax
  sub edi,eax
  sub ecx,eax
- mov edx,ds:dword ptr[16+esi]
- mov dx,ds:word ptr[26+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov edx,dword ptr[16+esi]
+ mov dx,word ptr[26+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
  push esi
- mov esi,ds:dword ptr[8+esi]
- jmp dword ptr[Lentryvec_table+eax*4]
+ mov esi,dword ptr[8+esi]
+ jmp  dword ptr[Lentryvec_table+eax*4]
 Lentryvec_table:
  dd LDraw8, LDraw7, LDraw6, LDraw5
  dd LDraw4, LDraw3, LDraw2, LDraw1
 LDrawLoop:
 LDraw8:
- cmp bp,ds:word ptr[ecx]
+ cmp bp,word ptr[ecx]
  jl Lp1
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch8:
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
 Lp1:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw7:
- cmp bp,ds:word ptr[2+ecx]
+ cmp bp,word ptr[2+ecx]
  jl Lp2
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[2+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[2+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch7:
- mov ds:dword ptr[4+edi],eax
+ mov dword ptr[4+edi],eax
 Lp2:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw6:
- cmp bp,ds:word ptr[4+ecx]
+ cmp bp,word ptr[4+ecx]
  jl Lp3
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[4+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[4+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch6:
- mov ds:dword ptr[8+edi],eax
+ mov dword ptr[8+edi],eax
 Lp3:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw5:
- cmp bp,ds:word ptr[6+ecx]
+ cmp bp,word ptr[6+ecx]
  jl Lp4
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[6+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[6+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch5:
- mov ds:dword ptr[12+edi],eax
+ mov dword ptr[12+edi],eax
 Lp4:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw4:
- cmp bp,ds:word ptr[8+ecx]
+ cmp bp,word ptr[8+ecx]
  jl Lp5
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[8+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[8+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch4:
- mov ds:dword ptr[16+edi],eax
+ mov dword ptr[16+edi],eax
 Lp5:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw3:
- cmp bp,ds:word ptr[10+ecx]
+ cmp bp,word ptr[10+ecx]
  jl Lp6
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[10+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[10+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch3:
- mov ds:dword ptr[20+edi],eax
+ mov dword ptr[20+edi],eax
 Lp6:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw2:
- cmp bp,ds:word ptr[12+ecx]
+ cmp bp,word ptr[12+ecx]
  jl Lp7
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[12+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[12+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch2:
- mov ds:dword ptr[24+edi],eax
+ mov dword ptr[24+edi],eax
 Lp7:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LDraw1:
- cmp bp,ds:word ptr[14+ecx]
+ cmp bp,word ptr[14+ecx]
  jl Lp8
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[14+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[14+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch1:
- mov ds:dword ptr[28+edi],eax
+ mov dword ptr[28+edi],eax
 Lp8:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
  add edi,32
  add ecx,16
  dec bx
@@ -453,7 +459,7 @@ Lp8:
 LNextSpan:
  add esi,32 
 LNextSpanESISet:
- movsx edx,ds:word ptr[24+esi]
+ movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
  jnz LSpanLoop
  pop edi
@@ -462,74 +468,74 @@ LNextSpanESISet:
  pop esi
  ret
 LExactlyOneLong:
- mov ecx,ds:dword ptr[4+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov ecx,dword ptr[4+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
- mov ebx,ds:dword ptr[8+esi]
- cmp bp,ds:word ptr[ecx]
+ mov ebx,dword ptr[8+esi]
+ cmp bp,word ptr[ecx]
  jl LNextSpan
  xor eax,eax
- mov edi,ds:dword ptr[0+esi]
- mov ah,ds:byte ptr[26+1+esi]
+ mov edi,dword ptr[0+esi]
+ mov ah,byte ptr[26+1+esi]
  add esi,32 
- mov al,ds:byte ptr[ebx]
- mov ds:word ptr[ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[ebx]
+ mov word ptr[ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LPatch9:
- mov ds:dword ptr[edi],eax
+ mov dword ptr[edi],eax
  jmp LNextSpanESISet
  public _D_PolysetDrawSpansFuzz_32
 _D_PolysetDrawSpansFuzz_32:
  push esi
  push ebx
- mov esi,ds:dword ptr[4+8+esp]
- mov ecx,ds:dword ptr[_r_zistepx]
+ mov esi,dword ptr[4+8+esp]
+ mov ecx,dword ptr[_r_zistepx]
  push ebp
  push edi
  ror ecx,16
- movsx edx,ds:word ptr[24+esi]
- mov ds:dword ptr[lzistepx],ecx
+ movsx edx,word ptr[24+esi]
+ mov dword ptr[lzistepx],ecx
 LFuzzSpanLoop:
- mov eax,ds:dword ptr[_d_aspancount]
+ mov eax,dword ptr[_d_aspancount]
  sub eax,edx
- mov edx,ds:dword ptr[_erroradjustup]
- mov ebx,ds:dword ptr[_errorterm]
+ mov edx,dword ptr[_erroradjustup]
+ mov ebx,dword ptr[_errorterm]
  add ebx,edx
  js LFuzzNoTurnover
- mov edx,ds:dword ptr[_erroradjustdown]
- mov edi,ds:dword ptr[_d_countextrastep]
+ mov edx,dword ptr[_erroradjustdown]
+ mov edi,dword ptr[_d_countextrastep]
  sub ebx,edx
- mov ebp,ds:dword ptr[_d_aspancount]
- mov ds:dword ptr[_errorterm],ebx
+ mov ebp,dword ptr[_d_aspancount]
+ mov dword ptr[_errorterm],ebx
  add ebp,edi
- mov ds:dword ptr[_d_aspancount],ebp
+ mov dword ptr[_d_aspancount],ebp
  jmp LFuzzRightEdgeStepped
 LFuzzNoTurnover:
- mov edi,ds:dword ptr[_d_aspancount]
- mov edx,ds:dword ptr[_ubasestep]
- mov ds:dword ptr[_errorterm],ebx
+ mov edi,dword ptr[_d_aspancount]
+ mov edx,dword ptr[_ubasestep]
+ mov dword ptr[_errorterm],ebx
  add edi,edx
- mov ds:dword ptr[_d_aspancount],edi
+ mov dword ptr[_d_aspancount],edi
 LFuzzRightEdgeStepped:
  cmp eax,1
  jl LFuzzNextSpan
  jz LFuzzExactlyOneLong
- mov ecx,ds:dword ptr[_a_ststepxwhole]
- mov edx,ds:dword ptr[_d_affinetridesc+4]
- mov ds:dword ptr[advancetable+4],ecx
+ mov ecx,dword ptr[_a_ststepxwhole]
+ mov edx,dword ptr[_d_affinetridesc+4]
+ mov dword ptr[advancetable+4],ecx
  add ecx,edx
- mov ds:dword ptr[advancetable],ecx
- mov ecx,ds:dword ptr[_a_tstepxfrac]
- mov cx,ds:word ptr[_r_rstepx]
+ mov dword ptr[advancetable],ecx
+ mov ecx,dword ptr[_a_tstepxfrac]
+ mov cx,word ptr[_r_rstepx]
  mov edx,eax
- mov ds:dword ptr[tstep],ecx
+ mov dword ptr[tstep],ecx
  add edx,7
  shr edx,3
- mov ebx,ds:dword ptr[12+esi]
+ mov ebx,dword ptr[12+esi]
  mov bx,dx
- mov ecx,ds:dword ptr[4+esi]
+ mov ecx,dword ptr[4+esi]
  neg eax
- mov edi,ds:dword ptr[0+esi]
+ mov edi,dword ptr[0+esi]
  and eax,7
  sub edi,eax
  sub ecx,eax
@@ -537,369 +543,369 @@ LFuzzRightEdgeStepped:
  sub edi,eax
  sub edi,eax
  sub ecx,eax
- mov edx,ds:dword ptr[16+esi]
- mov dx,ds:word ptr[26+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov edx,dword ptr[16+esi]
+ mov dx,word ptr[26+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
  push esi
- mov esi,ds:dword ptr[8+esi]
- jmp dword ptr[LFuzzentryvec_table+eax*4]
+ mov esi,dword ptr[8+esi]
+ jmp  dword ptr[LFuzzentryvec_table+eax*4]
 LFuzzentryvec_table:
  dd LFuzzDraw8, LFuzzDraw7, LFuzzDraw6, LFuzzDraw5
  dd LFuzzDraw4, LFuzzDraw3, LFuzzDraw2, LFuzzDraw1
 LFuzzDrawLoop:
 LFuzzDraw8:
- cmp bp,ds:word ptr[ecx]
+ cmp bp,word ptr[ecx]
  jl LFuzzp1
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch8:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[1+edi]
- mov ds:byte ptr[edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[2+edi]
- mov ds:byte ptr[1+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[1+edi]
+ mov byte ptr[edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[2+edi]
+ mov byte ptr[1+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[2+edi],bh
+ mov byte ptr[2+edi],bh
  pop ebx
 LFuzzp1:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw7:
- cmp bp,ds:word ptr[2+ecx]
+ cmp bp,word ptr[2+ecx]
  jl LFuzzp2
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[2+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[2+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch7:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[4+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[5+edi]
- mov ds:byte ptr[4+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[6+edi]
- mov ds:byte ptr[5+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[4+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[5+edi]
+ mov byte ptr[4+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[6+edi]
+ mov byte ptr[5+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[6+edi],bh
+ mov byte ptr[6+edi],bh
  pop ebx
 LFuzzp2:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw6:
- cmp bp,ds:word ptr[4+ecx]
+ cmp bp,word ptr[4+ecx]
  jl LFuzzp3
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[4+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[4+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch6:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[8+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[9+edi]
- mov ds:byte ptr[8+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[10+edi]
- mov ds:byte ptr[9+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[8+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[9+edi]
+ mov byte ptr[8+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[10+edi]
+ mov byte ptr[9+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[10+edi],bh
+ mov byte ptr[10+edi],bh
  pop ebx
 LFuzzp3:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw5:
- cmp bp,ds:word ptr[6+ecx]
+ cmp bp,word ptr[6+ecx]
  jl LFuzzp4
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[6+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[6+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch5:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[12+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[13+edi]
- mov ds:byte ptr[12+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[14+edi]
- mov ds:byte ptr[13+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[12+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[13+edi]
+ mov byte ptr[12+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[14+edi]
+ mov byte ptr[13+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[14+edi],bh
+ mov byte ptr[14+edi],bh
  pop ebx
 LFuzzp4:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw4:
- cmp bp,ds:word ptr[8+ecx]
+ cmp bp,word ptr[8+ecx]
  jl LFuzzp5
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[8+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[8+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch4:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[16+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[17+edi]
- mov ds:byte ptr[16+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[18+edi]
- mov ds:byte ptr[17+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[16+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[17+edi]
+ mov byte ptr[16+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[18+edi]
+ mov byte ptr[17+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[18+edi],bh
+ mov byte ptr[18+edi],bh
  pop ebx
 LFuzzp5:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw3:
- cmp bp,ds:word ptr[10+ecx]
+ cmp bp,word ptr[10+ecx]
  jl LFuzzp6
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[10+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[10+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch3:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[20+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[21+edi]
- mov ds:byte ptr[20+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[22+edi]
- mov ds:byte ptr[21+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[20+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[21+edi]
+ mov byte ptr[20+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[22+edi]
+ mov byte ptr[21+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[22+edi],bh
+ mov byte ptr[22+edi],bh
  pop ebx
 LFuzzp6:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw2:
- cmp bp,ds:word ptr[12+ecx]
+ cmp bp,word ptr[12+ecx]
  jl LFuzzp7
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[12+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[12+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch2:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[24+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[25+edi]
- mov ds:byte ptr[24+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[26+edi]
- mov ds:byte ptr[25+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[24+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[25+edi]
+ mov byte ptr[24+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[26+edi]
+ mov byte ptr[25+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[26+edi],bh
+ mov byte ptr[26+edi],bh
  pop ebx
 LFuzzp7:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LFuzzDraw1:
- cmp bp,ds:word ptr[14+ecx]
+ cmp bp,word ptr[14+ecx]
  jl LFuzzp8
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[14+ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[esi]
+ mov word ptr[14+ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch1:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[28+edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[29+edi]
- mov ds:byte ptr[28+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[30+edi]
- mov ds:byte ptr[29+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[28+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[29+edi]
+ mov byte ptr[28+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[30+edi]
+ mov byte ptr[29+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[30+edi],bh
+ mov byte ptr[30+edi],bh
  pop ebx
 LFuzzp8:
- add edx,ds:dword ptr[tstep]
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
  add edi,32
  add ecx,16
  dec bx
@@ -908,7 +914,7 @@ LFuzzp8:
 LFuzzNextSpan:
  add esi,32 
 LFuzzNextSpanESISet:
- movsx edx,ds:word ptr[24+esi]
+ movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
  jnz LFuzzSpanLoop
  pop edi
@@ -917,381 +923,381 @@ LFuzzNextSpanESISet:
  pop esi
  ret
 LFuzzExactlyOneLong:
- mov ecx,ds:dword ptr[4+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov ecx,dword ptr[4+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
- mov ebx,ds:dword ptr[8+esi]
- cmp bp,ds:word ptr[ecx]
+ mov ebx,dword ptr[8+esi]
+ cmp bp,word ptr[ecx]
  jl LFuzzNextSpan
  xor eax,eax
- mov edi,ds:dword ptr[0+esi]
- mov ah,ds:byte ptr[26+1+esi]
+ mov edi,dword ptr[0+esi]
+ mov ah,byte ptr[26+1+esi]
  add esi,32 
- mov al,ds:byte ptr[ebx]
- mov ds:word ptr[ecx],bp
- mov eax,ds:dword ptr[12345678h+eax*4]
+ mov al,byte ptr[ebx]
+ mov word ptr[ecx],bp
+ mov eax,dword ptr[12345678h+eax*4]
 LFuzzPatch9:
  push ebx
  push ecx
  push edx
  push esi
  push eax
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
  and eax,0ffh
  xor ecx,ecx
- mov cl,ds:byte ptr[edi]
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[1+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[1+edi]
- mov ds:byte ptr[edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[2+esp]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[2+edi]
- mov ds:byte ptr[1+edi],bh
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov cl,byte ptr[edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[1+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[1+edi]
+ mov byte ptr[edi],bh
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[2+esp]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[2+edi]
+ mov byte ptr[1+edi],bh
+ mov ebx,dword ptr[esi+eax*2]
  pop eax
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[2+edi],bh
+ mov byte ptr[2+edi],bh
  pop ebx
  jmp LFuzzNextSpanESISet
  public _D_PolysetDrawSpansRGB_32
 _D_PolysetDrawSpansRGB_32:
  push esi
  push ebx
- mov esi,ds:dword ptr[4+8+esp]
- mov ecx,ds:dword ptr[_r_zistepx]
+ mov esi,dword ptr[4+8+esp]
+ mov ecx,dword ptr[_r_zistepx]
  push ebp
  push edi
  ror ecx,16
- movsx edx,ds:word ptr[24+esi]
- mov ds:dword ptr[lzistepx],ecx
+ movsx edx,word ptr[24+esi]
+ mov dword ptr[lzistepx],ecx
 LRGBSpanLoop:
- mov eax,ds:dword ptr[_d_aspancount]
+ mov eax,dword ptr[_d_aspancount]
  sub eax,edx
- mov edx,ds:dword ptr[_erroradjustup]
- mov ebx,ds:dword ptr[_errorterm]
+ mov edx,dword ptr[_erroradjustup]
+ mov ebx,dword ptr[_errorterm]
  add ebx,edx
  js LRGBNoTurnover
- mov edx,ds:dword ptr[_erroradjustdown]
- mov edi,ds:dword ptr[_d_countextrastep]
+ mov edx,dword ptr[_erroradjustdown]
+ mov edi,dword ptr[_d_countextrastep]
  sub ebx,edx
- mov ebp,ds:dword ptr[_d_aspancount]
- mov ds:dword ptr[_errorterm],ebx
+ mov ebp,dword ptr[_d_aspancount]
+ mov dword ptr[_errorterm],ebx
  add ebp,edi
- mov ds:dword ptr[_d_aspancount],ebp
+ mov dword ptr[_d_aspancount],ebp
  jmp LRGBRightEdgeStepped
 LRGBNoTurnover:
- mov edi,ds:dword ptr[_d_aspancount]
- mov edx,ds:dword ptr[_ubasestep]
- mov ds:dword ptr[_errorterm],ebx
+ mov edi,dword ptr[_d_aspancount]
+ mov edx,dword ptr[_ubasestep]
+ mov dword ptr[_errorterm],ebx
  add edi,edx
- mov ds:dword ptr[_d_aspancount],edi
+ mov dword ptr[_d_aspancount],edi
 LRGBRightEdgeStepped:
  cmp eax,1
  jl LRGBNextSpan
  jz LRGBExactlyOneLong
- mov ecx,ds:dword ptr[_a_ststepxwhole]
- mov edx,ds:dword ptr[_d_affinetridesc+4]
- mov ds:dword ptr[advancetable+4],ecx
+ mov ecx,dword ptr[_a_ststepxwhole]
+ mov edx,dword ptr[_d_affinetridesc+4]
+ mov dword ptr[advancetable+4],ecx
  add ecx,edx
- mov ds:dword ptr[advancetable],ecx
- mov ecx,ds:dword ptr[_a_tstepxfrac]
- mov cx,ds:word ptr[_r_rstepx]
+ mov dword ptr[advancetable],ecx
+ mov ecx,dword ptr[_a_tstepxfrac]
+ mov cx,word ptr[_r_rstepx]
  mov edx,eax
- mov ds:dword ptr[tstep],ecx
+ mov dword ptr[tstep],ecx
  add edx,7
  shr edx,3
- mov ebx,ds:dword ptr[12+esi]
+ mov ebx,dword ptr[12+esi]
  mov bx,dx
- mov ecx,ds:dword ptr[4+esi]
+ mov ecx,dword ptr[4+esi]
  neg eax
- mov edi,ds:dword ptr[0+esi]
+ mov edi,dword ptr[0+esi]
  and eax,7
  sub edi,eax
  sub ecx,eax
  sub edi,eax
  sub edi,eax
  sub edi,eax
- mov edx,ds:dword ptr[28+esi]
- mov ds:dword ptr[gb],edx
- mov edx,ds:dword ptr[_r_bstepx]
+ mov edx,dword ptr[28+esi]
+ mov dword ptr[gb],edx
+ mov edx,dword ptr[_r_bstepx]
  shr edx,16
- mov dx,ds:word ptr[_r_gstepx]
- mov ds:dword ptr[gbstep],edx
+ mov dx,word ptr[_r_gstepx]
+ mov dword ptr[gbstep],edx
  sub ecx,eax
- mov edx,ds:dword ptr[16+esi]
- mov dx,ds:word ptr[26+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov edx,dword ptr[16+esi]
+ mov dx,word ptr[26+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
  push esi
- mov esi,ds:dword ptr[8+esi]
- jmp dword ptr[LRGBentryvec_table+eax*4]
+ mov esi,dword ptr[8+esi]
+ jmp  dword ptr[LRGBentryvec_table+eax*4]
 LRGBentryvec_table:
  dd LRGBDraw8, LRGBDraw7, LRGBDraw6, LRGBDraw5
  dd LRGBDraw4, LRGBDraw3, LRGBDraw2, LRGBDraw1
 LRGBDrawLoop:
 LRGBDraw8:
- cmp bp,ds:word ptr[ecx]
+ cmp bp,word ptr[ecx]
  jl LRGBp1
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch8:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch8:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch8:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch8:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch8:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch8:
 LRGBp1:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw7:
- cmp bp,ds:word ptr[2+ecx]
+ cmp bp,word ptr[2+ecx]
  jl LRGBp2
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[2+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[2+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch7:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch7:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch7:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch7:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch7:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch7:
 LRGBp2:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw6:
- cmp bp,ds:word ptr[4+ecx]
+ cmp bp,word ptr[4+ecx]
  jl LRGBp3
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[4+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[4+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch6:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch6:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch6:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch6:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch6:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch6:
 LRGBp3:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw5:
- cmp bp,ds:word ptr[6+ecx]
+ cmp bp,word ptr[6+ecx]
  jl LRGBp4
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[6+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[6+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch5:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch5:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch5:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch5:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch5:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch5:
 LRGBp4:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw4:
- cmp bp,ds:word ptr[8+ecx]
+ cmp bp,word ptr[8+ecx]
  jl LRGBp5
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[8+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[8+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch4:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch4:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch4:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch4:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch4:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch4:
 LRGBp5:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw3:
- cmp bp,ds:word ptr[10+ecx]
+ cmp bp,word ptr[10+ecx]
  jl LRGBp6
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[10+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[10+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch3:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch3:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch3:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch3:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch3:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch3:
 LRGBp6:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw2:
- cmp bp,ds:word ptr[12+ecx]
+ cmp bp,word ptr[12+ecx]
  jl LRGBp7
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[12+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[12+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch2:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch2:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch2:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch2:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch2:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch2:
 LRGBp7:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
 LRGBDraw1:
- cmp bp,ds:word ptr[14+ecx]
+ cmp bp,word ptr[14+ecx]
  jl LRGBp8
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[14+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[14+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch1:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch1:
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGPatch1:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch1:
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBPatch1:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch1:
 LRGBp8:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
  add edi,32
  add ecx,16
  dec bx
@@ -1300,7 +1306,7 @@ LRGBp8:
 LRGBNextSpan:
  add esi,32 
 LRGBNextSpanESISet:
- movsx edx,ds:word ptr[24+esi]
+ movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
  jnz LRGBSpanLoop
  pop edi
@@ -1309,159 +1315,159 @@ LRGBNextSpanESISet:
  pop esi
  ret
 LRGBExactlyOneLong:
- mov ecx,ds:dword ptr[4+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov ecx,dword ptr[4+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
- mov ebx,ds:dword ptr[8+esi]
- cmp bp,ds:word ptr[ecx]
+ mov ebx,dword ptr[8+esi]
+ cmp bp,word ptr[ecx]
  jl LRGBNextSpan
  xor eax,eax
- mov edi,ds:dword ptr[0+esi]
- mov ah,ds:byte ptr[26+1+esi]
- mov al,ds:byte ptr[ebx]
- mov ds:word ptr[ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov edi,dword ptr[0+esi]
+ mov ah,byte ptr[26+1+esi]
+ mov al,byte ptr[ebx]
+ mov word ptr[ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRPatch9:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LROffsPatch9:
- mov ah,ds:byte ptr[28+1+esi]
- mov al,ds:byte ptr[ebx]
- mov al,ds:byte ptr[12345678h+eax]
+ mov ah,byte ptr[28+1+esi]
+ mov al,byte ptr[ebx]
+ mov al,byte ptr[12345678h+eax]
 LGPatch9:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LGOffsPatch9:
- mov ah,ds:byte ptr[30+1+esi]
- mov al,ds:byte ptr[ebx]
+ mov ah,byte ptr[30+1+esi]
+ mov al,byte ptr[ebx]
  add esi,32 
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[12345678h+eax]
 LBPatch9:
- mov ds:byte ptr[31+edi],al
+ mov byte ptr[31+edi],al
 LBOffsPatch9:
  jmp LRGBNextSpanESISet
  public _D_PolysetDrawSpansRGBFuzz_32
 _D_PolysetDrawSpansRGBFuzz_32:
  push esi
  push ebx
- mov esi,ds:dword ptr[4+8+esp]
- mov ecx,ds:dword ptr[_r_zistepx]
+ mov esi,dword ptr[4+8+esp]
+ mov ecx,dword ptr[_r_zistepx]
  push ebp
  push edi
  ror ecx,16
- movsx edx,ds:word ptr[24+esi]
- mov ds:dword ptr[lzistepx],ecx
+ movsx edx,word ptr[24+esi]
+ mov dword ptr[lzistepx],ecx
 LRGBFuzzSpanLoop:
- mov eax,ds:dword ptr[_d_aspancount]
+ mov eax,dword ptr[_d_aspancount]
  sub eax,edx
- mov edx,ds:dword ptr[_erroradjustup]
- mov ebx,ds:dword ptr[_errorterm]
+ mov edx,dword ptr[_erroradjustup]
+ mov ebx,dword ptr[_errorterm]
  add ebx,edx
  js LRGBFuzzNoTurnover
- mov edx,ds:dword ptr[_erroradjustdown]
- mov edi,ds:dword ptr[_d_countextrastep]
+ mov edx,dword ptr[_erroradjustdown]
+ mov edi,dword ptr[_d_countextrastep]
  sub ebx,edx
- mov ebp,ds:dword ptr[_d_aspancount]
- mov ds:dword ptr[_errorterm],ebx
+ mov ebp,dword ptr[_d_aspancount]
+ mov dword ptr[_errorterm],ebx
  add ebp,edi
- mov ds:dword ptr[_d_aspancount],ebp
+ mov dword ptr[_d_aspancount],ebp
  jmp LRGBFuzzRightEdgeStepped
 LRGBFuzzNoTurnover:
- mov edi,ds:dword ptr[_d_aspancount]
- mov edx,ds:dword ptr[_ubasestep]
- mov ds:dword ptr[_errorterm],ebx
+ mov edi,dword ptr[_d_aspancount]
+ mov edx,dword ptr[_ubasestep]
+ mov dword ptr[_errorterm],ebx
  add edi,edx
- mov ds:dword ptr[_d_aspancount],edi
+ mov dword ptr[_d_aspancount],edi
 LRGBFuzzRightEdgeStepped:
  cmp eax,1
  jl LRGBFuzzNextSpan
  jz LRGBFuzzExactlyOneLong
- mov ecx,ds:dword ptr[_a_ststepxwhole]
- mov edx,ds:dword ptr[_d_affinetridesc+4]
- mov ds:dword ptr[advancetable+4],ecx
+ mov ecx,dword ptr[_a_ststepxwhole]
+ mov edx,dword ptr[_d_affinetridesc+4]
+ mov dword ptr[advancetable+4],ecx
  add ecx,edx
- mov ds:dword ptr[advancetable],ecx
- mov ecx,ds:dword ptr[_a_tstepxfrac]
- mov cx,ds:word ptr[_r_rstepx]
+ mov dword ptr[advancetable],ecx
+ mov ecx,dword ptr[_a_tstepxfrac]
+ mov cx,word ptr[_r_rstepx]
  mov edx,eax
- mov ds:dword ptr[tstep],ecx
- mov ebx,ds:dword ptr[12+esi]
+ mov dword ptr[tstep],ecx
+ mov ebx,dword ptr[12+esi]
  mov bx,dx
- mov ecx,ds:dword ptr[4+esi]
- mov edi,ds:dword ptr[0+esi]
- mov edx,ds:dword ptr[28+esi]
- mov ds:dword ptr[gb],edx
- mov edx,ds:dword ptr[_r_bstepx]
+ mov ecx,dword ptr[4+esi]
+ mov edi,dword ptr[0+esi]
+ mov edx,dword ptr[28+esi]
+ mov dword ptr[gb],edx
+ mov edx,dword ptr[_r_bstepx]
  shr edx,16
- mov dx,ds:word ptr[_r_gstepx]
- mov ds:dword ptr[gbstep],edx
- mov edx,ds:dword ptr[16+esi]
- mov dx,ds:word ptr[26+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov dx,word ptr[_r_gstepx]
+ mov dword ptr[gbstep],edx
+ mov edx,dword ptr[16+esi]
+ mov dx,word ptr[26+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
  push esi
- mov esi,ds:dword ptr[8+esi]
+ mov esi,dword ptr[8+esi]
 LRGBFuzzDrawLoop:
 LRGBFuzzDraw1:
- cmp bp,ds:word ptr[14+ecx]
+ cmp bp,word ptr[14+ecx]
  jl LRGBFuzzp1
  xor eax,eax
  mov ah,dh
- mov al,ds:byte ptr[esi]
- mov ds:word ptr[14+ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[esi]
+ mov word ptr[14+ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRFuzzPatch1:
- mov ds:byte ptr[Ltemp],al
- mov ah,ds:byte ptr[gb+1]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov byte ptr[Ltemp],al
+ mov ah,byte ptr[gb+1]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LGFuzzPatch1:
- mov ds:byte ptr[Ltemp+1],al
- mov ah,ds:byte ptr[gb+3]
- mov al,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+eax]
+ mov byte ptr[Ltemp+1],al
+ mov ah,byte ptr[gb+3]
+ mov al,byte ptr[esi]
+ mov al,byte ptr[12345678h+eax]
 LBFuzzPatch1:
- mov ds:byte ptr[Ltemp+2],al
+ mov byte ptr[Ltemp+2],al
  xor eax,eax
  push ebx
  push ecx
  push edx
  push esi
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
- mov al,ds:byte ptr[Ltemp]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
+ mov al,byte ptr[Ltemp]
  xor ecx,ecx
- mov cl,ds:byte ptr[31+edi]
+ mov cl,byte ptr[31+edi]
 LRFuzzOffsPatch1:
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[Ltemp+1]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[31+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[Ltemp+1]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[31+edi]
 LGFuzzOffsPatch1:
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LRFuzzOffsPatch2:
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[Ltemp+2]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[31+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[Ltemp+2]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[31+edi]
 LBFuzzOffsPatch1:
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LGFuzzOffsPatch2:
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov ebx,dword ptr[esi+eax*2]
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LBFuzzOffsPatch2:
  pop ebx
 LRGBFuzzp1:
- mov eax,ds:dword ptr[gbstep]
- add ds:dword ptr[gb],eax
- add edx,ds:dword ptr[tstep]
+ mov eax,dword ptr[gbstep]
+ add dword ptr[gb],eax
+ add edx,dword ptr[tstep]
  sbb eax,eax
- add ebp,ds:dword ptr[lzistepx]
+ add ebp,dword ptr[lzistepx]
  adc ebp,0
- add ebx,ds:dword ptr[_a_sstepxfrac]
- adc esi,ds:dword ptr[advancetable+4+eax*4]
+ add ebx,dword ptr[_a_sstepxfrac]
+ adc esi,dword ptr[advancetable+4+eax*4]
  add edi,4
  add ecx,2
  dec bx
@@ -1470,7 +1476,7 @@ LRGBFuzzp1:
 LRGBFuzzNextSpan:
  add esi,32 
 LRGBFuzzNextSpanESISet:
- movsx edx,ds:word ptr[24+esi]
+ movsx edx,word ptr[24+esi]
  cmp edx,offset -9999
  jnz LRGBFuzzSpanLoop
  pop edi
@@ -1479,62 +1485,62 @@ LRGBFuzzNextSpanESISet:
  pop esi
  ret
 LRGBFuzzExactlyOneLong:
- mov ecx,ds:dword ptr[4+esi]
- mov ebp,ds:dword ptr[20+esi]
+ mov ecx,dword ptr[4+esi]
+ mov ebp,dword ptr[20+esi]
  ror ebp,16
- mov ebx,ds:dword ptr[8+esi]
- cmp bp,ds:word ptr[ecx]
+ mov ebx,dword ptr[8+esi]
+ cmp bp,word ptr[ecx]
  jl LRGBFuzzNextSpan
  xor eax,eax
- mov edi,ds:dword ptr[0+esi]
- mov ah,ds:byte ptr[26+1+esi]
- mov al,ds:byte ptr[ebx]
- mov ds:word ptr[ecx],bp
- mov al,ds:byte ptr[12345678h+eax]
+ mov edi,dword ptr[0+esi]
+ mov ah,byte ptr[26+1+esi]
+ mov al,byte ptr[ebx]
+ mov word ptr[ecx],bp
+ mov al,byte ptr[12345678h+eax]
 LRFuzzPatch2:
- mov ds:byte ptr[Ltemp],al
- mov ah,ds:byte ptr[28+1+esi]
- mov al,ds:byte ptr[ebx]
- mov al,ds:byte ptr[12345678h+eax]
+ mov byte ptr[Ltemp],al
+ mov ah,byte ptr[28+1+esi]
+ mov al,byte ptr[ebx]
+ mov al,byte ptr[12345678h+eax]
 LGFuzzPatch2:
- mov ds:byte ptr[Ltemp+1],al
- mov ah,ds:byte ptr[30+1+esi]
- mov al,ds:byte ptr[ebx]
+ mov byte ptr[Ltemp+1],al
+ mov ah,byte ptr[30+1+esi]
+ mov al,byte ptr[ebx]
  add esi,32 
- mov al,ds:byte ptr[12345678h+eax]
+ mov al,byte ptr[12345678h+eax]
 LBFuzzPatch2:
- mov ds:byte ptr[Ltemp+2],al
+ mov byte ptr[Ltemp+2],al
  xor eax,eax
  push ebx
  push ecx
  push edx
  push esi
- mov esi,ds:dword ptr[_d_srctranstab]
- mov edx,ds:dword ptr[_d_dsttranstab]
- mov al,ds:byte ptr[Ltemp]
+ mov esi,dword ptr[_d_srctranstab]
+ mov edx,dword ptr[_d_dsttranstab]
+ mov al,byte ptr[Ltemp]
  xor ecx,ecx
- mov cl,ds:byte ptr[31+edi]
+ mov cl,byte ptr[31+edi]
 LRFuzzOffsPatch3:
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[Ltemp+1]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[31+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[Ltemp+1]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[31+edi]
 LGFuzzOffsPatch3:
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LRFuzzOffsPatch4:
- mov ebx,ds:dword ptr[esi+eax*2]
- mov al,ds:byte ptr[Ltemp+2]
- add ebx,ds:dword ptr[edx+ecx*2]
- mov cl,ds:byte ptr[31+edi]
+ mov ebx,dword ptr[esi+eax*2]
+ mov al,byte ptr[Ltemp+2]
+ add ebx,dword ptr[edx+ecx*2]
+ mov cl,byte ptr[31+edi]
 LBFuzzOffsPatch3:
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LGFuzzOffsPatch4:
- mov ebx,ds:dword ptr[esi+eax*2]
+ mov ebx,dword ptr[esi+eax*2]
  pop esi
- add ebx,ds:dword ptr[edx+ecx*2]
+ add ebx,dword ptr[edx+ecx*2]
  pop edx
  pop ecx
- mov ds:byte ptr[31+edi],bh
+ mov byte ptr[31+edi],bh
 LBFuzzOffsPatch4:
  pop ebx
  jmp LRGBFuzzNextSpanESISet
@@ -1584,90 +1590,90 @@ LBOffsPatchTable:
  dd LBFuzzOffsPatch4-1, 0
  public _D_Aff32Patch
 _D_Aff32Patch:
- mov eax,ds:dword ptr[_fadetable32]
- mov ds:dword ptr[LPatch1-4],eax
- mov ds:dword ptr[LPatch2-4],eax
- mov ds:dword ptr[LPatch3-4],eax
- mov ds:dword ptr[LPatch4-4],eax
- mov ds:dword ptr[LPatch5-4],eax
- mov ds:dword ptr[LPatch6-4],eax
- mov ds:dword ptr[LPatch7-4],eax
- mov ds:dword ptr[LPatch8-4],eax
- mov ds:dword ptr[LPatch9-4],eax
- mov ds:dword ptr[LFuzzPatch1-4],eax
- mov ds:dword ptr[LFuzzPatch2-4],eax
- mov ds:dword ptr[LFuzzPatch3-4],eax
- mov ds:dword ptr[LFuzzPatch4-4],eax
- mov ds:dword ptr[LFuzzPatch5-4],eax
- mov ds:dword ptr[LFuzzPatch6-4],eax
- mov ds:dword ptr[LFuzzPatch7-4],eax
- mov ds:dword ptr[LFuzzPatch8-4],eax
- mov ds:dword ptr[LFuzzPatch9-4],eax
- mov eax,ds:dword ptr[_fadetable32r]
- mov ds:dword ptr[LRPatch1-4],eax
- mov ds:dword ptr[LRPatch2-4],eax
- mov ds:dword ptr[LRPatch3-4],eax
- mov ds:dword ptr[LRPatch4-4],eax
- mov ds:dword ptr[LRPatch5-4],eax
- mov ds:dword ptr[LRPatch6-4],eax
- mov ds:dword ptr[LRPatch7-4],eax
- mov ds:dword ptr[LRPatch8-4],eax
- mov ds:dword ptr[LRPatch9-4],eax
- mov ds:dword ptr[LRFuzzPatch1-4],eax
- mov ds:dword ptr[LRFuzzPatch2-4],eax
- mov eax,ds:dword ptr[_fadetable32g]
- mov ds:dword ptr[LGPatch1-4],eax
- mov ds:dword ptr[LGPatch2-4],eax
- mov ds:dword ptr[LGPatch3-4],eax
- mov ds:dword ptr[LGPatch4-4],eax
- mov ds:dword ptr[LGPatch5-4],eax
- mov ds:dword ptr[LGPatch6-4],eax
- mov ds:dword ptr[LGPatch7-4],eax
- mov ds:dword ptr[LGPatch8-4],eax
- mov ds:dword ptr[LGPatch9-4],eax
- mov ds:dword ptr[LGFuzzPatch1-4],eax
- mov ds:dword ptr[LGFuzzPatch2-4],eax
- mov eax,ds:dword ptr[_fadetable32b]
- mov ds:dword ptr[LBPatch1-4],eax
- mov ds:dword ptr[LBPatch2-4],eax
- mov ds:dword ptr[LBPatch3-4],eax
- mov ds:dword ptr[LBPatch4-4],eax
- mov ds:dword ptr[LBPatch5-4],eax
- mov ds:dword ptr[LBPatch6-4],eax
- mov ds:dword ptr[LBPatch7-4],eax
- mov ds:dword ptr[LBPatch8-4],eax
- mov ds:dword ptr[LBPatch9-4],eax
- mov ds:dword ptr[LBFuzzPatch1-4],eax
- mov ds:dword ptr[LBFuzzPatch2-4],eax
+ mov eax,dword ptr[_fadetable32]
+ mov dword ptr[LPatch1-4],eax
+ mov dword ptr[LPatch2-4],eax
+ mov dword ptr[LPatch3-4],eax
+ mov dword ptr[LPatch4-4],eax
+ mov dword ptr[LPatch5-4],eax
+ mov dword ptr[LPatch6-4],eax
+ mov dword ptr[LPatch7-4],eax
+ mov dword ptr[LPatch8-4],eax
+ mov dword ptr[LPatch9-4],eax
+ mov dword ptr[LFuzzPatch1-4],eax
+ mov dword ptr[LFuzzPatch2-4],eax
+ mov dword ptr[LFuzzPatch3-4],eax
+ mov dword ptr[LFuzzPatch4-4],eax
+ mov dword ptr[LFuzzPatch5-4],eax
+ mov dword ptr[LFuzzPatch6-4],eax
+ mov dword ptr[LFuzzPatch7-4],eax
+ mov dword ptr[LFuzzPatch8-4],eax
+ mov dword ptr[LFuzzPatch9-4],eax
+ mov eax,dword ptr[_fadetable32r]
+ mov dword ptr[LRPatch1-4],eax
+ mov dword ptr[LRPatch2-4],eax
+ mov dword ptr[LRPatch3-4],eax
+ mov dword ptr[LRPatch4-4],eax
+ mov dword ptr[LRPatch5-4],eax
+ mov dword ptr[LRPatch6-4],eax
+ mov dword ptr[LRPatch7-4],eax
+ mov dword ptr[LRPatch8-4],eax
+ mov dword ptr[LRPatch9-4],eax
+ mov dword ptr[LRFuzzPatch1-4],eax
+ mov dword ptr[LRFuzzPatch2-4],eax
+ mov eax,dword ptr[_fadetable32g]
+ mov dword ptr[LGPatch1-4],eax
+ mov dword ptr[LGPatch2-4],eax
+ mov dword ptr[LGPatch3-4],eax
+ mov dword ptr[LGPatch4-4],eax
+ mov dword ptr[LGPatch5-4],eax
+ mov dword ptr[LGPatch6-4],eax
+ mov dword ptr[LGPatch7-4],eax
+ mov dword ptr[LGPatch8-4],eax
+ mov dword ptr[LGPatch9-4],eax
+ mov dword ptr[LGFuzzPatch1-4],eax
+ mov dword ptr[LGFuzzPatch2-4],eax
+ mov eax,dword ptr[_fadetable32b]
+ mov dword ptr[LBPatch1-4],eax
+ mov dword ptr[LBPatch2-4],eax
+ mov dword ptr[LBPatch3-4],eax
+ mov dword ptr[LBPatch4-4],eax
+ mov dword ptr[LBPatch5-4],eax
+ mov dword ptr[LBPatch6-4],eax
+ mov dword ptr[LBPatch7-4],eax
+ mov dword ptr[LBPatch8-4],eax
+ mov dword ptr[LBPatch9-4],eax
+ mov dword ptr[LBFuzzPatch1-4],eax
+ mov dword ptr[LBFuzzPatch2-4],eax
  push ebx
  mov ebx,offset LROffsPatchTable
  mov ecx,13
 LROffsPatchLoop:
- mov edx,ds:dword ptr[ebx]
- mov eax,ds:dword ptr[_roffs]
- add eax,ds:dword ptr[4+ebx]
+ mov edx,dword ptr[ebx]
+ mov eax,dword ptr[_roffs]
+ add eax,dword ptr[4+ebx]
  add ebx,8
- mov ds:byte ptr[edx],al
+ mov byte ptr[edx],al
  dec ecx
  jnz LROffsPatchLoop
  mov ebx,offset LGOffsPatchTable
  mov ecx,13
 LGOffsPatchLoop:
- mov edx,ds:dword ptr[ebx]
- mov eax,ds:dword ptr[_goffs]
- add eax,ds:dword ptr[4+ebx]
+ mov edx,dword ptr[ebx]
+ mov eax,dword ptr[_goffs]
+ add eax,dword ptr[4+ebx]
  add ebx,8
- mov ds:byte ptr[edx],al
+ mov byte ptr[edx],al
  dec ecx
  jnz LGOffsPatchLoop
  mov ebx,offset LBOffsPatchTable
  mov ecx,13
 LBOffsPatchLoop:
- mov edx,ds:dword ptr[ebx]
- mov eax,ds:dword ptr[_boffs]
- add eax,ds:dword ptr[4+ebx]
+ mov edx,dword ptr[ebx]
+ mov eax,dword ptr[_boffs]
+ add eax,dword ptr[4+ebx]
  add ebx,8
- mov ds:byte ptr[edx],al
+ mov byte ptr[edx],al
  dec ecx
  jnz LBOffsPatchLoop
  pop ebx

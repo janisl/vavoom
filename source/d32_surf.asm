@@ -104,6 +104,7 @@
  externdef _fadetable32b
  externdef _viewwidth
  externdef _viewheight
+ externdef _view_clipplanes
  externdef _viewforward
  externdef _viewright
  externdef _viewup
@@ -119,10 +120,14 @@
  externdef _d_lastvertvalid
  externdef _firstvert
  externdef _edge_p
+ externdef _edge_head
+ externdef _edge_tail
  externdef _surfaces
  externdef _surface_p
  externdef _newedges
  externdef _removeedges
+ externdef _span_p
+ externdef _current_iv
  externdef _r_lightptr
  externdef _r_lightptrr
  externdef _r_lightptrg
@@ -223,6 +228,7 @@
  externdef _d_pzbasestep
  externdef _a_spans
  externdef _adivtab
+ externdef _pr_strings
  externdef _pr_globals
  externdef _pr_stackPtr
  externdef _pr_statements
@@ -246,147 +252,147 @@ _D_DrawSurfaceBlock32_mip0:
  push edi
  push esi
  push ebx
- mov ebx,ds:dword ptr[_r_lightptr]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov ds:dword ptr[sb_v],eax
- mov edi,ds:dword ptr[_prowdestbase]
- mov esi,ds:dword ptr[_pbasesource]
+ mov ebx,dword ptr[_r_lightptr]
+ mov eax,dword ptr[_r_numvblocks]
+ mov dword ptr[sb_v],eax
+ mov edi,dword ptr[_prowdestbase]
+ mov esi,dword ptr[_pbasesource]
 Lv_loop_mip0:
- mov eax,ds:dword ptr[ebx]
- mov edx,ds:dword ptr[4+ebx]
+ mov eax,dword ptr[ebx]
+ mov edx,dword ptr[4+ebx]
  mov ebp,eax
- mov ecx,ds:dword ptr[_r_lightwidth]
- mov ds:dword ptr[_lightright],edx
+ mov ecx,dword ptr[_r_lightwidth]
+ mov dword ptr[_lightright],edx
  sub ebp,edx
  and ebp,0FFFFFh
- lea ebx,ds:dword ptr[ebx+ecx*4]
- mov ds:dword ptr[_r_lightptr],ebx
- mov ecx,ds:dword ptr[4+ebx]
- mov ebx,ds:dword ptr[ebx]
+ lea ebx,dword ptr[ebx+ecx*4]
+ mov dword ptr[_r_lightptr],ebx
+ mov ecx,dword ptr[4+ebx]
+ mov ebx,dword ptr[ebx]
  sub ebx,eax
  sub ecx,edx
  sar ecx,4
  or ebp,0F0000000h
  sar ebx,4
- mov ds:dword ptr[_lightrightstep],ecx
+ mov dword ptr[_lightrightstep],ecx
  sub ebx,ecx
  and ebx,0FFFFFh
  or ebx,0F0000000h
  sub ecx,ecx
- mov ds:dword ptr[_lightdeltastep],ebx
+ mov dword ptr[_lightdeltastep],ebx
  sub ebx,ebx
 Lblockloop16_mip0:
- mov ds:dword ptr[_lightdelta],ebp
- mov cl,ds:byte ptr[14+esi]
+ mov dword ptr[_lightdelta],ebp
+ mov cl,byte ptr[14+esi]
  sar ebp,4
  mov bh,dh
- mov bl,ds:byte ptr[15+esi]
+ mov bl,byte ptr[15+esi]
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch0:
- mov bl,ds:byte ptr[13+esi]
- mov ds:dword ptr[60+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[13+esi]
+ mov dword ptr[60+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch1:
- mov cl,ds:byte ptr[12+esi]
+ mov cl,byte ptr[12+esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[56+edi],eax
+ mov dword ptr[56+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch2:
  add edx,ebp
- mov ds:dword ptr[52+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov dword ptr[52+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch3:
- mov bl,ds:byte ptr[11+esi]
- mov cl,ds:byte ptr[10+esi]
- mov ds:dword ptr[48+edi],eax
+ mov bl,byte ptr[11+esi]
+ mov cl,byte ptr[10+esi]
+ mov dword ptr[48+edi],eax
  mov bh,dh
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch4:
- mov bl,ds:byte ptr[9+esi]
- mov ds:dword ptr[44+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[9+esi]
+ mov dword ptr[44+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch5:
- mov cl,ds:byte ptr[8+esi]
+ mov cl,byte ptr[8+esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[40+edi],eax
+ mov dword ptr[40+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch6:
  add edx,ebp
- mov ds:dword ptr[36+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov dword ptr[36+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch7:
- mov bl,ds:byte ptr[7+esi]
- mov cl,ds:byte ptr[6+esi]
- mov ds:dword ptr[32+edi],eax
+ mov bl,byte ptr[7+esi]
+ mov cl,byte ptr[6+esi]
+ mov dword ptr[32+edi],eax
  mov bh,dh
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch8:
- mov bl,ds:byte ptr[5+esi]
- mov ds:dword ptr[28+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[5+esi]
+ mov dword ptr[28+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch9:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[24+edi],eax
+ mov dword ptr[24+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch10:
  add edx,ebp
- mov ds:dword ptr[20+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov dword ptr[20+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch11:
- mov bl,ds:byte ptr[3+esi]
- mov cl,ds:byte ptr[2+esi]
- mov ds:dword ptr[16+edi],eax
+ mov bl,byte ptr[3+esi]
+ mov cl,byte ptr[2+esi]
+ mov dword ptr[16+edi],eax
  mov bh,dh
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch12:
- mov bl,ds:byte ptr[1+esi]
- mov ds:dword ptr[12+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[1+esi]
+ mov dword ptr[12+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch13:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[8+edi],eax
+ mov dword ptr[8+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch14:
- mov edx,ds:dword ptr[_lightright]
- mov ds:dword ptr[4+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov edx,dword ptr[_lightright]
+ mov dword ptr[4+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch15:
- mov ebp,ds:dword ptr[_lightdelta]
- mov ds:dword ptr[edi],eax
- add esi,ds:dword ptr[_sourcetstep]
- add edi,ds:dword ptr[_surfrowbytes]
- add edx,ds:dword ptr[_lightrightstep]
- add ebp,ds:dword ptr[_lightdeltastep]
- mov ds:dword ptr[_lightright],edx
+ mov ebp,dword ptr[_lightdelta]
+ mov dword ptr[edi],eax
+ add esi,dword ptr[_sourcetstep]
+ add edi,dword ptr[_surfrowbytes]
+ add edx,dword ptr[_lightrightstep]
+ add ebp,dword ptr[_lightdeltastep]
+ mov dword ptr[_lightright],edx
  jc Lblockloop16_mip0
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_mip0
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_mip0:
- mov ebx,ds:dword ptr[_r_lightptr]
- dec ds:dword ptr[sb_v]
+ mov ebx,dword ptr[_r_lightptr]
+ dec dword ptr[sb_v]
  jnz Lv_loop_mip0
  pop ebx
  pop esi
@@ -400,103 +406,103 @@ _D_DrawSurfaceBlock32_mip1:
  push edi
  push esi
  push ebx
- mov ebx,ds:dword ptr[_r_lightptr]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov ds:dword ptr[sb_v],eax
- mov edi,ds:dword ptr[_prowdestbase]
- mov esi,ds:dword ptr[_pbasesource]
+ mov ebx,dword ptr[_r_lightptr]
+ mov eax,dword ptr[_r_numvblocks]
+ mov dword ptr[sb_v],eax
+ mov edi,dword ptr[_prowdestbase]
+ mov esi,dword ptr[_pbasesource]
 Lv_loop_mip1:
- mov eax,ds:dword ptr[ebx]
- mov edx,ds:dword ptr[4+ebx]
+ mov eax,dword ptr[ebx]
+ mov edx,dword ptr[4+ebx]
  mov ebp,eax
- mov ecx,ds:dword ptr[_r_lightwidth]
- mov ds:dword ptr[_lightright],edx
+ mov ecx,dword ptr[_r_lightwidth]
+ mov dword ptr[_lightright],edx
  sub ebp,edx
  and ebp,0FFFFFh
- lea ebx,ds:dword ptr[ebx+ecx*4]
- mov ds:dword ptr[_r_lightptr],ebx
- mov ecx,ds:dword ptr[4+ebx]
- mov ebx,ds:dword ptr[ebx]
+ lea ebx,dword ptr[ebx+ecx*4]
+ mov dword ptr[_r_lightptr],ebx
+ mov ecx,dword ptr[4+ebx]
+ mov ebx,dword ptr[ebx]
  sub ebx,eax
  sub ecx,edx
  sar ecx,3
  or ebp,070000000h
  sar ebx,3
- mov ds:dword ptr[_lightrightstep],ecx
+ mov dword ptr[_lightrightstep],ecx
  sub ebx,ecx
  and ebx,0FFFFFh
  or ebx,0F0000000h
  sub ecx,ecx
- mov ds:dword ptr[_lightdeltastep],ebx
+ mov dword ptr[_lightdeltastep],ebx
  sub ebx,ebx
 Lblockloop16_mip1:
- mov ds:dword ptr[_lightdelta],ebp
- mov cl,ds:byte ptr[6+esi]
+ mov dword ptr[_lightdelta],ebp
+ mov cl,byte ptr[6+esi]
  sar ebp,3
  mov bh,dh
- mov bl,ds:byte ptr[7+esi]
+ mov bl,byte ptr[7+esi]
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch22:
- mov bl,ds:byte ptr[5+esi]
- mov ds:dword ptr[28+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[5+esi]
+ mov dword ptr[28+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch23:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[24+edi],eax
+ mov dword ptr[24+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch24:
  add edx,ebp
- mov ds:dword ptr[20+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov dword ptr[20+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch25:
- mov bl,ds:byte ptr[3+esi]
- mov cl,ds:byte ptr[2+esi]
- mov ds:dword ptr[16+edi],eax
+ mov bl,byte ptr[3+esi]
+ mov cl,byte ptr[2+esi]
+ mov dword ptr[16+edi],eax
  mov bh,dh
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch26:
- mov bl,ds:byte ptr[1+esi]
- mov ds:dword ptr[12+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[1+esi]
+ mov dword ptr[12+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch27:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[8+edi],eax
+ mov dword ptr[8+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch28:
- mov edx,ds:dword ptr[_lightright]
- mov ds:dword ptr[4+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov edx,dword ptr[_lightright]
+ mov dword ptr[4+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch29:
- mov ebp,ds:dword ptr[_lightdelta]
- mov ds:dword ptr[edi],eax
- mov eax,ds:dword ptr[_sourcetstep]
+ mov ebp,dword ptr[_lightdelta]
+ mov dword ptr[edi],eax
+ mov eax,dword ptr[_sourcetstep]
  add esi,eax
- mov eax,ds:dword ptr[_surfrowbytes]
+ mov eax,dword ptr[_surfrowbytes]
  add edi,eax
- mov eax,ds:dword ptr[_lightrightstep]
+ mov eax,dword ptr[_lightrightstep]
  add edx,eax
- mov eax,ds:dword ptr[_lightdeltastep]
+ mov eax,dword ptr[_lightdeltastep]
  add ebp,eax
- mov ds:dword ptr[_lightright],edx
+ mov dword ptr[_lightright],edx
  jc Lblockloop16_mip1
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_mip1
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_mip1:
- mov ebx,ds:dword ptr[_r_lightptr]
- dec ds:dword ptr[sb_v]
+ mov ebx,dword ptr[_r_lightptr]
+ dec dword ptr[sb_v]
  jnz Lv_loop_mip1
  pop ebx
  pop esi
@@ -510,79 +516,79 @@ _D_DrawSurfaceBlock32_mip2:
  push edi
  push esi
  push ebx
- mov ebx,ds:dword ptr[_r_lightptr]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov ds:dword ptr[sb_v],eax
- mov edi,ds:dword ptr[_prowdestbase]
- mov esi,ds:dword ptr[_pbasesource]
+ mov ebx,dword ptr[_r_lightptr]
+ mov eax,dword ptr[_r_numvblocks]
+ mov dword ptr[sb_v],eax
+ mov edi,dword ptr[_prowdestbase]
+ mov esi,dword ptr[_pbasesource]
 Lv_loop_mip2:
- mov eax,ds:dword ptr[ebx]
- mov edx,ds:dword ptr[4+ebx]
+ mov eax,dword ptr[ebx]
+ mov edx,dword ptr[4+ebx]
  mov ebp,eax
- mov ecx,ds:dword ptr[_r_lightwidth]
- mov ds:dword ptr[_lightright],edx
+ mov ecx,dword ptr[_r_lightwidth]
+ mov dword ptr[_lightright],edx
  sub ebp,edx
  and ebp,0FFFFFh
- lea ebx,ds:dword ptr[ebx+ecx*4]
- mov ds:dword ptr[_r_lightptr],ebx
- mov ecx,ds:dword ptr[4+ebx]
- mov ebx,ds:dword ptr[ebx]
+ lea ebx,dword ptr[ebx+ecx*4]
+ mov dword ptr[_r_lightptr],ebx
+ mov ecx,dword ptr[4+ebx]
+ mov ebx,dword ptr[ebx]
  sub ebx,eax
  sub ecx,edx
  sar ecx,2
  or ebp,030000000h
  sar ebx,2
- mov ds:dword ptr[_lightrightstep],ecx
+ mov dword ptr[_lightrightstep],ecx
  sub ebx,ecx
  and ebx,0FFFFFh
  or ebx,0F0000000h
  sub ecx,ecx
- mov ds:dword ptr[_lightdeltastep],ebx
+ mov dword ptr[_lightdeltastep],ebx
  sub ebx,ebx
 Lblockloop16_mip2:
- mov ds:dword ptr[_lightdelta],ebp
- mov cl,ds:byte ptr[2+esi]
+ mov dword ptr[_lightdelta],ebp
+ mov cl,byte ptr[2+esi]
  sar ebp,2
  mov bh,dh
- mov bl,ds:byte ptr[3+esi]
+ mov bl,byte ptr[3+esi]
  add edx,ebp
  mov ch,dh
  add edx,ebp
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch18:
- mov bl,ds:byte ptr[1+esi]
- mov ds:dword ptr[12+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov bl,byte ptr[1+esi]
+ mov dword ptr[12+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch19:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:dword ptr[8+edi],eax
+ mov dword ptr[8+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch20:
- mov edx,ds:dword ptr[_lightright]
- mov ds:dword ptr[4+edi],eax
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov edx,dword ptr[_lightright]
+ mov dword ptr[4+edi],eax
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch21:
- mov ebp,ds:dword ptr[_lightdelta]
- mov ds:dword ptr[edi],eax
- mov eax,ds:dword ptr[_sourcetstep]
+ mov ebp,dword ptr[_lightdelta]
+ mov dword ptr[edi],eax
+ mov eax,dword ptr[_sourcetstep]
  add esi,eax
- mov eax,ds:dword ptr[_surfrowbytes]
+ mov eax,dword ptr[_surfrowbytes]
  add edi,eax
- mov eax,ds:dword ptr[_lightrightstep]
+ mov eax,dword ptr[_lightrightstep]
  add edx,eax
- mov eax,ds:dword ptr[_lightdeltastep]
+ mov eax,dword ptr[_lightdeltastep]
  add ebp,eax
- mov ds:dword ptr[_lightright],edx
+ mov dword ptr[_lightright],edx
  jc Lblockloop16_mip2
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_mip2
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_mip2:
- mov ebx,ds:dword ptr[_r_lightptr]
- dec ds:dword ptr[sb_v]
+ mov ebx,dword ptr[_r_lightptr]
+ dec dword ptr[sb_v]
  jnz Lv_loop_mip2
  pop ebx
  pop esi
@@ -596,79 +602,79 @@ _D_DrawSurfaceBlock32_mip3:
  push edi
  push esi
  push ebx
- mov ebx,ds:dword ptr[_r_lightptr]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov ds:dword ptr[sb_v],eax
- mov edi,ds:dword ptr[_prowdestbase]
- mov esi,ds:dword ptr[_pbasesource]
+ mov ebx,dword ptr[_r_lightptr]
+ mov eax,dword ptr[_r_numvblocks]
+ mov dword ptr[sb_v],eax
+ mov edi,dword ptr[_prowdestbase]
+ mov esi,dword ptr[_pbasesource]
 Lv_loop_mip3:
- mov eax,ds:dword ptr[ebx]
- mov edx,ds:dword ptr[4+ebx]
+ mov eax,dword ptr[ebx]
+ mov edx,dword ptr[4+ebx]
  mov ebp,eax
- mov ecx,ds:dword ptr[_r_lightwidth]
- mov ds:dword ptr[_lightright],edx
+ mov ecx,dword ptr[_r_lightwidth]
+ mov dword ptr[_lightright],edx
  sub ebp,edx
  and ebp,0FFFFFh
- lea ebx,ds:dword ptr[ebx+ecx*4]
- mov ds:dword ptr[_lightdelta],ebp
- mov ds:dword ptr[_r_lightptr],ebx
- mov ecx,ds:dword ptr[4+ebx]
- mov ebx,ds:dword ptr[ebx]
+ lea ebx,dword ptr[ebx+ecx*4]
+ mov dword ptr[_lightdelta],ebp
+ mov dword ptr[_r_lightptr],ebx
+ mov ecx,dword ptr[4+ebx]
+ mov ebx,dword ptr[ebx]
  sub ebx,eax
  sub ecx,edx
  sar ecx,1
  sar ebx,1
- mov ds:dword ptr[_lightrightstep],ecx
+ mov dword ptr[_lightrightstep],ecx
  sub ebx,ecx
  and ebx,0FFFFFh
  sar ebp,1
  or ebx,0F0000000h
- mov ds:dword ptr[_lightdeltastep],ebx
+ mov dword ptr[_lightdeltastep],ebx
  sub ebx,ebx
- mov bl,ds:byte ptr[1+esi]
+ mov bl,byte ptr[1+esi]
  sub ecx,ecx
  mov bh,dh
- mov cl,ds:byte ptr[esi]
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov cl,byte ptr[esi]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch16:
  add edx,ebp
- mov ds:dword ptr[4+edi],eax
+ mov dword ptr[4+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch17:
- mov edx,ds:dword ptr[_lightright]
- mov ds:dword ptr[edi],eax
- mov eax,ds:dword ptr[_sourcetstep]
+ mov edx,dword ptr[_lightright]
+ mov dword ptr[edi],eax
+ mov eax,dword ptr[_sourcetstep]
  add esi,eax
- mov eax,ds:dword ptr[_surfrowbytes]
+ mov eax,dword ptr[_surfrowbytes]
  add edi,eax
- mov eax,ds:dword ptr[_lightdeltastep]
- mov ebp,ds:dword ptr[_lightdelta]
- mov cl,ds:byte ptr[esi]
+ mov eax,dword ptr[_lightdeltastep]
+ mov ebp,dword ptr[_lightdelta]
+ mov cl,byte ptr[esi]
  add ebp,eax
- mov eax,ds:dword ptr[_lightrightstep]
+ mov eax,dword ptr[_lightrightstep]
  sar ebp,1
  add edx,eax
  mov bh,dh
- mov bl,ds:byte ptr[1+esi]
- mov eax,ds:dword ptr[12345678h+ebx*4]
+ mov bl,byte ptr[1+esi]
+ mov eax,dword ptr[12345678h+ebx*4]
 LPatch30:
  add edx,ebp
- mov ds:dword ptr[4+edi],eax
+ mov dword ptr[4+edi],eax
  mov ch,dh
- mov eax,ds:dword ptr[12345678h+ecx*4]
+ mov eax,dword ptr[12345678h+ecx*4]
 LPatch31:
- mov edx,ds:dword ptr[_sourcetstep]
- mov ds:dword ptr[edi],eax
- mov ebp,ds:dword ptr[_surfrowbytes]
+ mov edx,dword ptr[_sourcetstep]
+ mov dword ptr[edi],eax
+ mov ebp,dword ptr[_surfrowbytes]
  add esi,edx
  add edi,ebp
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_mip3
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_mip3:
- mov ebx,ds:dword ptr[_r_lightptr]
- dec ds:dword ptr[sb_v]
+ mov ebx,dword ptr[_r_lightptr]
+ dec dword ptr[sb_v]
  jnz Lv_loop_mip3
  pop ebx
  pop esi
@@ -682,388 +688,388 @@ _D_DrawSurfaceBlock32RGB_mip0:
  push edi
  push esi
  push ebx
- mov esi,ds:dword ptr[_pbasesource]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov edi,ds:dword ptr[_prowdestbase]
- mov ds:dword ptr[sb_v],eax
+ mov esi,dword ptr[_pbasesource]
+ mov eax,dword ptr[_r_numvblocks]
+ mov edi,dword ptr[_prowdestbase]
+ mov dword ptr[sb_v],eax
 Lv_loop_RGBmip0:
- mov ebx,ds:dword ptr[_r_lightwidth]
- mov edx,ds:dword ptr[_r_lightptrr]
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_lightrleft],eax
- mov ds:dword ptr[_lightrright],ecx
- mov ds:dword ptr[_r_lightptrr],edx
- mov ebp,ds:dword ptr[edx]
+ mov ebx,dword ptr[_r_lightwidth]
+ mov edx,dword ptr[_r_lightptrr]
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_lightrleft],eax
+ mov dword ptr[_lightrright],ecx
+ mov dword ptr[_r_lightptrr],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,4
- mov ds:dword ptr[_lightrleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrg]
+ mov dword ptr[_lightrleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrg]
  sub eax,ecx
  shr eax,4
- mov ds:dword ptr[_lightrrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightgleft],eax
- mov ds:dword ptr[_lightgright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrg],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightrrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightgleft],eax
+ mov dword ptr[_lightgright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrg],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,4
- mov ds:dword ptr[_lightgleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrb]
+ mov dword ptr[_lightgleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrb]
  sub eax,ecx
  shr eax,4
- mov ds:dword ptr[_lightgrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightbleft],eax
- mov ds:dword ptr[_lightbright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrb],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightgrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightbleft],eax
+ mov dword ptr[_lightbright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrb],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,4
- mov ds:dword ptr[_lightbleftstep],eax
- mov eax,ds:dword ptr[4+edx]
+ mov dword ptr[_lightbleftstep],eax
+ mov eax,dword ptr[4+edx]
  sub eax,ecx
  shr eax,4
- mov ds:dword ptr[_lightbrightstep],eax
- mov ds:dword ptr[counttemp],16
+ mov dword ptr[_lightbrightstep],eax
+ mov dword ptr[counttemp],16
  xor ebx,ebx
  xor ecx,ecx
 Lblockloop_RGBmip0:
- mov edx,ds:dword ptr[_lightrright]
- mov ebp,ds:dword ptr[_lightrleft]
+ mov edx,dword ptr[_lightrright]
+ mov ebp,dword ptr[_lightrleft]
  sub ebp,edx
- mov bl,ds:byte ptr[15+esi]
+ mov bl,byte ptr[15+esi]
  sar ebp,4
- mov cl,ds:byte ptr[14+esi]
+ mov cl,byte ptr[14+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- add edi,ds:dword ptr[_roffs]
- mov al,ds:byte ptr[12345678h+ebx]
+ add edi,dword ptr[_roffs]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch0:
- mov bl,ds:byte ptr[13+esi]
- mov ds:byte ptr[60+edi],al
+ mov bl,byte ptr[13+esi]
+ mov byte ptr[60+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch1:
- mov cl,ds:byte ptr[12+esi]
+ mov cl,byte ptr[12+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[56+edi],al
+ mov byte ptr[56+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch2:
- mov bl,ds:byte ptr[11+esi]
- mov ds:byte ptr[52+edi],al
+ mov bl,byte ptr[11+esi]
+ mov byte ptr[52+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch3:
- mov cl,ds:byte ptr[10+esi]
+ mov cl,byte ptr[10+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[48+edi],al
+ mov byte ptr[48+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch4:
- mov bl,ds:byte ptr[9+esi]
- mov ds:byte ptr[44+edi],al
+ mov bl,byte ptr[9+esi]
+ mov byte ptr[44+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch5:
- mov cl,ds:byte ptr[8+esi]
+ mov cl,byte ptr[8+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[40+edi],al
+ mov byte ptr[40+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch6:
- mov bl,ds:byte ptr[7+esi]
- mov ds:byte ptr[36+edi],al
+ mov bl,byte ptr[7+esi]
+ mov byte ptr[36+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch7:
- mov cl,ds:byte ptr[6+esi]
+ mov cl,byte ptr[6+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[32+edi],al
+ mov byte ptr[32+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch8:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch9:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch10:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch11:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch12:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch13:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch14:
- mov edx,ds:dword ptr[_lightgright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightgleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightgright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightgleft]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch15:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- mov bl,ds:byte ptr[15+esi]
- sub edi,ds:dword ptr[_roffs]
- add edi,ds:dword ptr[_goffs]
+ mov byte ptr[edi],al
+ mov bl,byte ptr[15+esi]
+ sub edi,dword ptr[_roffs]
+ add edi,dword ptr[_goffs]
  sar ebp,4
- mov cl,ds:byte ptr[14+esi]
+ mov cl,byte ptr[14+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch0:
- mov bl,ds:byte ptr[13+esi]
- mov ds:byte ptr[60+edi],al
+ mov bl,byte ptr[13+esi]
+ mov byte ptr[60+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch1:
- mov cl,ds:byte ptr[12+esi]
+ mov cl,byte ptr[12+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[56+edi],al
+ mov byte ptr[56+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch2:
- mov bl,ds:byte ptr[11+esi]
- mov ds:byte ptr[52+edi],al
+ mov bl,byte ptr[11+esi]
+ mov byte ptr[52+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch3:
- mov cl,ds:byte ptr[10+esi]
+ mov cl,byte ptr[10+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[48+edi],al
+ mov byte ptr[48+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch4:
- mov bl,ds:byte ptr[9+esi]
- mov ds:byte ptr[44+edi],al
+ mov bl,byte ptr[9+esi]
+ mov byte ptr[44+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch5:
- mov cl,ds:byte ptr[8+esi]
+ mov cl,byte ptr[8+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[40+edi],al
+ mov byte ptr[40+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch6:
- mov bl,ds:byte ptr[7+esi]
- mov ds:byte ptr[36+edi],al
+ mov bl,byte ptr[7+esi]
+ mov byte ptr[36+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch7:
- mov cl,ds:byte ptr[6+esi]
+ mov cl,byte ptr[6+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[32+edi],al
+ mov byte ptr[32+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch8:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch9:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch10:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch11:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch12:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch13:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch14:
- mov edx,ds:dword ptr[_lightbright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightbleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightbright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightbleft]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch15:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- sub edi,ds:dword ptr[_goffs]
- add edi,ds:dword ptr[_boffs]
+ mov byte ptr[edi],al
+ sub edi,dword ptr[_goffs]
+ add edi,dword ptr[_boffs]
  sar ebp,4
- mov bl,ds:byte ptr[15+esi]
+ mov bl,byte ptr[15+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov cl,ds:byte ptr[14+esi]
- mov al,ds:byte ptr[12345678h+ebx]
+ mov cl,byte ptr[14+esi]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch0:
- mov bl,ds:byte ptr[13+esi]
- mov ds:byte ptr[60+edi],al
+ mov bl,byte ptr[13+esi]
+ mov byte ptr[60+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch1:
- mov cl,ds:byte ptr[12+esi]
+ mov cl,byte ptr[12+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[56+edi],al
+ mov byte ptr[56+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch2:
- mov bl,ds:byte ptr[11+esi]
- mov ds:byte ptr[52+edi],al
+ mov bl,byte ptr[11+esi]
+ mov byte ptr[52+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch3:
- mov cl,ds:byte ptr[10+esi]
+ mov cl,byte ptr[10+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[48+edi],al
+ mov byte ptr[48+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch4:
- mov bl,ds:byte ptr[9+esi]
- mov ds:byte ptr[44+edi],al
+ mov bl,byte ptr[9+esi]
+ mov byte ptr[44+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch5:
- mov cl,ds:byte ptr[8+esi]
+ mov cl,byte ptr[8+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[40+edi],al
+ mov byte ptr[40+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch6:
- mov bl,ds:byte ptr[7+esi]
- mov ds:byte ptr[36+edi],al
+ mov bl,byte ptr[7+esi]
+ mov byte ptr[36+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch7:
- mov cl,ds:byte ptr[6+esi]
+ mov cl,byte ptr[6+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[32+edi],al
+ mov byte ptr[32+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch8:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch9:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch10:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch11:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch12:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch13:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch14:
- mov edx,ds:dword ptr[_lightrrightstep]
- mov ds:byte ptr[4+edi],al
- add ds:dword ptr[_lightrright],edx
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightrrightstep]
+ mov byte ptr[4+edi],al
+ add dword ptr[_lightrright],edx
+ mov al,byte ptr[12345678h+ecx]
 LBPatch15:
- mov edx,ds:dword ptr[_lightrleftstep]
- mov ds:byte ptr[edi],al
- add edi,ds:dword ptr[_surfrowbytes]
- sub edi,ds:dword ptr[_boffs]
- add ds:dword ptr[_lightrleft],edx
- mov eax,ds:dword ptr[_lightgrightstep]
- add ds:dword ptr[_lightgright],eax
- mov eax,ds:dword ptr[_lightgleftstep]
- add ds:dword ptr[_lightgleft],eax
- mov eax,ds:dword ptr[_lightbrightstep]
- add ds:dword ptr[_lightbright],eax
- mov eax,ds:dword ptr[_lightbleftstep]
- add ds:dword ptr[_lightbleft],eax
- add esi,ds:dword ptr[_sourcetstep]
- dec ds:dword ptr[counttemp]
+ mov edx,dword ptr[_lightrleftstep]
+ mov byte ptr[edi],al
+ add edi,dword ptr[_surfrowbytes]
+ sub edi,dword ptr[_boffs]
+ add dword ptr[_lightrleft],edx
+ mov eax,dword ptr[_lightgrightstep]
+ add dword ptr[_lightgright],eax
+ mov eax,dword ptr[_lightgleftstep]
+ add dword ptr[_lightgleft],eax
+ mov eax,dword ptr[_lightbrightstep]
+ add dword ptr[_lightbright],eax
+ mov eax,dword ptr[_lightbleftstep]
+ add dword ptr[_lightbleft],eax
+ add esi,dword ptr[_sourcetstep]
+ dec dword ptr[counttemp]
  jnz Lblockloop_RGBmip0
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_RGBmip0
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_RGBmip0:
- dec ds:dword ptr[sb_v]
+ dec dword ptr[sb_v]
  jnz Lv_loop_RGBmip0
  pop ebx
  pop esi
@@ -1077,244 +1083,244 @@ _D_DrawSurfaceBlock32RGB_mip1:
  push edi
  push esi
  push ebx
- mov esi,ds:dword ptr[_pbasesource]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov edi,ds:dword ptr[_prowdestbase]
- mov ds:dword ptr[sb_v],eax
+ mov esi,dword ptr[_pbasesource]
+ mov eax,dword ptr[_r_numvblocks]
+ mov edi,dword ptr[_prowdestbase]
+ mov dword ptr[sb_v],eax
 Lv_loop_RGBmip1:
- mov ebx,ds:dword ptr[_r_lightwidth]
- mov edx,ds:dword ptr[_r_lightptrr]
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_lightrleft],eax
- mov ds:dword ptr[_lightrright],ecx
- mov ds:dword ptr[_r_lightptrr],edx
- mov ebp,ds:dword ptr[edx]
+ mov ebx,dword ptr[_r_lightwidth]
+ mov edx,dword ptr[_r_lightptrr]
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_lightrleft],eax
+ mov dword ptr[_lightrright],ecx
+ mov dword ptr[_r_lightptrr],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,3
- mov ds:dword ptr[_lightrleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrg]
+ mov dword ptr[_lightrleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrg]
  sub eax,ecx
  shr eax,3
- mov ds:dword ptr[_lightrrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightgleft],eax
- mov ds:dword ptr[_lightgright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrg],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightrrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightgleft],eax
+ mov dword ptr[_lightgright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrg],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,3
- mov ds:dword ptr[_lightgleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrb]
+ mov dword ptr[_lightgleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrb]
  sub eax,ecx
  shr eax,3
- mov ds:dword ptr[_lightgrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightbleft],eax
- mov ds:dword ptr[_lightbright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrb],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightgrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightbleft],eax
+ mov dword ptr[_lightbright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrb],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,3
- mov ds:dword ptr[_lightbleftstep],eax
- mov eax,ds:dword ptr[4+edx]
+ mov dword ptr[_lightbleftstep],eax
+ mov eax,dword ptr[4+edx]
  sub eax,ecx
  shr eax,3
- mov ds:dword ptr[_lightbrightstep],eax
- mov ds:dword ptr[counttemp],8
+ mov dword ptr[_lightbrightstep],eax
+ mov dword ptr[counttemp],8
  xor ebx,ebx
  xor ecx,ecx
 Lblockloop_RGBmip1:
- mov edx,ds:dword ptr[_lightrright]
- mov ebp,ds:dword ptr[_lightrleft]
+ mov edx,dword ptr[_lightrright]
+ mov ebp,dword ptr[_lightrleft]
  sub ebp,edx
- mov bl,ds:byte ptr[7+esi]
+ mov bl,byte ptr[7+esi]
  sar ebp,3
- mov cl,ds:byte ptr[6+esi]
+ mov cl,byte ptr[6+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- add edi,ds:dword ptr[_roffs]
- mov al,ds:byte ptr[12345678h+ebx]
+ add edi,dword ptr[_roffs]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch16:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch17:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch18:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch19:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch20:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch21:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch22:
- mov edx,ds:dword ptr[_lightgright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightgleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightgright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightgleft]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch23:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- mov bl,ds:byte ptr[7+esi]
- sub edi,ds:dword ptr[_roffs]
- add edi,ds:dword ptr[_goffs]
+ mov byte ptr[edi],al
+ mov bl,byte ptr[7+esi]
+ sub edi,dword ptr[_roffs]
+ add edi,dword ptr[_goffs]
  sar ebp,3
- mov cl,ds:byte ptr[6+esi]
+ mov cl,byte ptr[6+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch16:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch17:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch18:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch19:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch20:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch21:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch22:
- mov edx,ds:dword ptr[_lightbright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightbleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightbright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightbleft]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch23:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- sub edi,ds:dword ptr[_goffs]
- add edi,ds:dword ptr[_boffs]
+ mov byte ptr[edi],al
+ sub edi,dword ptr[_goffs]
+ add edi,dword ptr[_boffs]
  sar ebp,3
- mov bl,ds:byte ptr[7+esi]
+ mov bl,byte ptr[7+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov cl,ds:byte ptr[6+esi]
- mov al,ds:byte ptr[12345678h+ebx]
+ mov cl,byte ptr[6+esi]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch16:
- mov bl,ds:byte ptr[5+esi]
- mov ds:byte ptr[28+edi],al
+ mov bl,byte ptr[5+esi]
+ mov byte ptr[28+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch17:
- mov cl,ds:byte ptr[4+esi]
+ mov cl,byte ptr[4+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[24+edi],al
+ mov byte ptr[24+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch18:
- mov bl,ds:byte ptr[3+esi]
- mov ds:byte ptr[20+edi],al
+ mov bl,byte ptr[3+esi]
+ mov byte ptr[20+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch19:
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[16+edi],al
+ mov byte ptr[16+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch20:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch21:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch22:
- mov edx,ds:dword ptr[_lightrrightstep]
- mov ds:byte ptr[4+edi],al
- add ds:dword ptr[_lightrright],edx
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightrrightstep]
+ mov byte ptr[4+edi],al
+ add dword ptr[_lightrright],edx
+ mov al,byte ptr[12345678h+ecx]
 LBPatch23:
- mov edx,ds:dword ptr[_lightrleftstep]
- mov ds:byte ptr[edi],al
- add edi,ds:dword ptr[_surfrowbytes]
- sub edi,ds:dword ptr[_boffs]
- add ds:dword ptr[_lightrleft],edx
- mov eax,ds:dword ptr[_lightgrightstep]
- add ds:dword ptr[_lightgright],eax
- mov eax,ds:dword ptr[_lightgleftstep]
- add ds:dword ptr[_lightgleft],eax
- mov eax,ds:dword ptr[_lightbrightstep]
- add ds:dword ptr[_lightbright],eax
- mov eax,ds:dword ptr[_lightbleftstep]
- add ds:dword ptr[_lightbleft],eax
- add esi,ds:dword ptr[_sourcetstep]
- dec ds:dword ptr[counttemp]
+ mov edx,dword ptr[_lightrleftstep]
+ mov byte ptr[edi],al
+ add edi,dword ptr[_surfrowbytes]
+ sub edi,dword ptr[_boffs]
+ add dword ptr[_lightrleft],edx
+ mov eax,dword ptr[_lightgrightstep]
+ add dword ptr[_lightgright],eax
+ mov eax,dword ptr[_lightgleftstep]
+ add dword ptr[_lightgleft],eax
+ mov eax,dword ptr[_lightbrightstep]
+ add dword ptr[_lightbright],eax
+ mov eax,dword ptr[_lightbleftstep]
+ add dword ptr[_lightbleft],eax
+ add esi,dword ptr[_sourcetstep]
+ dec dword ptr[counttemp]
  jnz Lblockloop_RGBmip1
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_RGBmip1
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_RGBmip1:
- dec ds:dword ptr[sb_v]
+ dec dword ptr[sb_v]
  jnz Lv_loop_RGBmip1
  pop ebx
  pop esi
@@ -1328,172 +1334,172 @@ _D_DrawSurfaceBlock32RGB_mip2:
  push edi
  push esi
  push ebx
- mov esi,ds:dword ptr[_pbasesource]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov edi,ds:dword ptr[_prowdestbase]
- mov ds:dword ptr[sb_v],eax
+ mov esi,dword ptr[_pbasesource]
+ mov eax,dword ptr[_r_numvblocks]
+ mov edi,dword ptr[_prowdestbase]
+ mov dword ptr[sb_v],eax
 Lv_loop_RGBmip2:
- mov ebx,ds:dword ptr[_r_lightwidth]
- mov edx,ds:dword ptr[_r_lightptrr]
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_lightrleft],eax
- mov ds:dword ptr[_lightrright],ecx
- mov ds:dword ptr[_r_lightptrr],edx
- mov ebp,ds:dword ptr[edx]
+ mov ebx,dword ptr[_r_lightwidth]
+ mov edx,dword ptr[_r_lightptrr]
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_lightrleft],eax
+ mov dword ptr[_lightrright],ecx
+ mov dword ptr[_r_lightptrr],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,2
- mov ds:dword ptr[_lightrleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrg]
+ mov dword ptr[_lightrleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrg]
  sub eax,ecx
  shr eax,2
- mov ds:dword ptr[_lightrrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightgleft],eax
- mov ds:dword ptr[_lightgright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrg],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightrrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightgleft],eax
+ mov dword ptr[_lightgright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrg],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,2
- mov ds:dword ptr[_lightgleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrb]
+ mov dword ptr[_lightgleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrb]
  sub eax,ecx
  shr eax,2
- mov ds:dword ptr[_lightgrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightbleft],eax
- mov ds:dword ptr[_lightbright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrb],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightgrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightbleft],eax
+ mov dword ptr[_lightbright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrb],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,2
- mov ds:dword ptr[_lightbleftstep],eax
- mov eax,ds:dword ptr[4+edx]
+ mov dword ptr[_lightbleftstep],eax
+ mov eax,dword ptr[4+edx]
  sub eax,ecx
  shr eax,2
- mov ds:dword ptr[_lightbrightstep],eax
- mov ds:dword ptr[counttemp],4
+ mov dword ptr[_lightbrightstep],eax
+ mov dword ptr[counttemp],4
  xor ebx,ebx
  xor ecx,ecx
 Lblockloop_RGBmip2:
- mov edx,ds:dword ptr[_lightrright]
- mov ebp,ds:dword ptr[_lightrleft]
+ mov edx,dword ptr[_lightrright]
+ mov ebp,dword ptr[_lightrleft]
  sub ebp,edx
- mov bl,ds:byte ptr[3+esi]
+ mov bl,byte ptr[3+esi]
  sar ebp,2
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- add edi,ds:dword ptr[_roffs]
- mov al,ds:byte ptr[12345678h+ebx]
+ add edi,dword ptr[_roffs]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch24:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch25:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch26:
- mov edx,ds:dword ptr[_lightgright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightgleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightgright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightgleft]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch27:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- mov bl,ds:byte ptr[3+esi]
- sub edi,ds:dword ptr[_roffs]
- add edi,ds:dword ptr[_goffs]
+ mov byte ptr[edi],al
+ mov bl,byte ptr[3+esi]
+ sub edi,dword ptr[_roffs]
+ add edi,dword ptr[_goffs]
  sar ebp,2
- mov cl,ds:byte ptr[2+esi]
+ mov cl,byte ptr[2+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch24:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch25:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch26:
- mov edx,ds:dword ptr[_lightbright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightbleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightbright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightbleft]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch27:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- sub edi,ds:dword ptr[_goffs]
- add edi,ds:dword ptr[_boffs]
+ mov byte ptr[edi],al
+ sub edi,dword ptr[_goffs]
+ add edi,dword ptr[_boffs]
  sar ebp,2
- mov bl,ds:byte ptr[3+esi]
+ mov bl,byte ptr[3+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov cl,ds:byte ptr[2+esi]
- mov al,ds:byte ptr[12345678h+ebx]
+ mov cl,byte ptr[2+esi]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch24:
- mov bl,ds:byte ptr[1+esi]
- mov ds:byte ptr[12+edi],al
+ mov bl,byte ptr[1+esi]
+ mov byte ptr[12+edi],al
  add edx,ebp
- mov al,ds:byte ptr[12345678h+ecx]
+ mov al,byte ptr[12345678h+ecx]
 LBPatch25:
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
- mov ds:byte ptr[8+edi],al
+ mov byte ptr[8+edi],al
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch26:
- mov edx,ds:dword ptr[_lightrrightstep]
- mov ds:byte ptr[4+edi],al
- add ds:dword ptr[_lightrright],edx
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightrrightstep]
+ mov byte ptr[4+edi],al
+ add dword ptr[_lightrright],edx
+ mov al,byte ptr[12345678h+ecx]
 LBPatch27:
- mov edx,ds:dword ptr[_lightrleftstep]
- mov ds:byte ptr[edi],al
- add edi,ds:dword ptr[_surfrowbytes]
- sub edi,ds:dword ptr[_boffs]
- add ds:dword ptr[_lightrleft],edx
- mov eax,ds:dword ptr[_lightgrightstep]
- add ds:dword ptr[_lightgright],eax
- mov eax,ds:dword ptr[_lightgleftstep]
- add ds:dword ptr[_lightgleft],eax
- mov eax,ds:dword ptr[_lightbrightstep]
- add ds:dword ptr[_lightbright],eax
- mov eax,ds:dword ptr[_lightbleftstep]
- add ds:dword ptr[_lightbleft],eax
- add esi,ds:dword ptr[_sourcetstep]
- dec ds:dword ptr[counttemp]
+ mov edx,dword ptr[_lightrleftstep]
+ mov byte ptr[edi],al
+ add edi,dword ptr[_surfrowbytes]
+ sub edi,dword ptr[_boffs]
+ add dword ptr[_lightrleft],edx
+ mov eax,dword ptr[_lightgrightstep]
+ add dword ptr[_lightgright],eax
+ mov eax,dword ptr[_lightgleftstep]
+ add dword ptr[_lightgleft],eax
+ mov eax,dword ptr[_lightbrightstep]
+ add dword ptr[_lightbright],eax
+ mov eax,dword ptr[_lightbleftstep]
+ add dword ptr[_lightbleft],eax
+ add esi,dword ptr[_sourcetstep]
+ dec dword ptr[counttemp]
  jnz Lblockloop_RGBmip2
- cmp esi,ds:dword ptr[_r_sourcemax]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_RGBmip2
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_RGBmip2:
- dec ds:dword ptr[sb_v]
+ dec dword ptr[sb_v]
  jnz Lv_loop_RGBmip2
  pop ebx
  pop esi
@@ -1507,185 +1513,185 @@ _D_DrawSurfaceBlock32RGB_mip3:
  push edi
  push esi
  push ebx
- mov esi,ds:dword ptr[_pbasesource]
- mov eax,ds:dword ptr[_r_numvblocks]
- mov edi,ds:dword ptr[_prowdestbase]
- mov ds:dword ptr[sb_v],eax
+ mov esi,dword ptr[_pbasesource]
+ mov eax,dword ptr[_r_numvblocks]
+ mov edi,dword ptr[_prowdestbase]
+ mov dword ptr[sb_v],eax
 Lv_loop_RGBmip3:
- mov ebx,ds:dword ptr[_r_lightwidth]
- mov edx,ds:dword ptr[_r_lightptrr]
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_lightrleft],eax
- mov ds:dword ptr[_lightrright],ecx
- mov ds:dword ptr[_r_lightptrr],edx
- mov ebp,ds:dword ptr[edx]
+ mov ebx,dword ptr[_r_lightwidth]
+ mov edx,dword ptr[_r_lightptrr]
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_lightrleft],eax
+ mov dword ptr[_lightrright],ecx
+ mov dword ptr[_r_lightptrr],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,1
- mov ds:dword ptr[_lightrleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrg]
+ mov dword ptr[_lightrleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrg]
  sub eax,ecx
  shr eax,1
- mov ds:dword ptr[_lightrrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightgleft],eax
- mov ds:dword ptr[_lightgright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrg],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightrrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightgleft],eax
+ mov dword ptr[_lightgright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrg],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,1
- mov ds:dword ptr[_lightgleftstep],eax
- mov eax,ds:dword ptr[4+edx]
- mov edx,ds:dword ptr[_r_lightptrb]
+ mov dword ptr[_lightgleftstep],eax
+ mov eax,dword ptr[4+edx]
+ mov edx,dword ptr[_r_lightptrb]
  sub eax,ecx
  shr eax,1
- mov ds:dword ptr[_lightgrightstep],eax
- mov eax,ds:dword ptr[edx]
- mov ecx,ds:dword ptr[4+edx]
- mov ds:dword ptr[_lightbleft],eax
- mov ds:dword ptr[_lightbright],ecx
- lea edx,ds:dword ptr[edx+ebx*4]
- mov ds:dword ptr[_r_lightptrb],edx
- mov ebp,ds:dword ptr[edx]
+ mov dword ptr[_lightgrightstep],eax
+ mov eax,dword ptr[edx]
+ mov ecx,dword ptr[4+edx]
+ mov dword ptr[_lightbleft],eax
+ mov dword ptr[_lightbright],ecx
+ lea edx,dword ptr[edx+ebx*4]
+ mov dword ptr[_r_lightptrb],edx
+ mov ebp,dword ptr[edx]
  sub ebp,eax
  mov eax,ebp
  shr eax,1
- mov ds:dword ptr[_lightbleftstep],eax
- mov eax,ds:dword ptr[4+edx]
+ mov dword ptr[_lightbleftstep],eax
+ mov eax,dword ptr[4+edx]
  sub eax,ecx
  shr eax,1
- mov ds:dword ptr[_lightbrightstep],eax
+ mov dword ptr[_lightbrightstep],eax
  xor ebx,ebx
  xor ecx,ecx
- mov edx,ds:dword ptr[_lightrright]
- mov ebp,ds:dword ptr[_lightrleft]
+ mov edx,dword ptr[_lightrright]
+ mov ebp,dword ptr[_lightrleft]
  sub ebp,edx
- mov bl,ds:byte ptr[1+esi]
+ mov bl,byte ptr[1+esi]
  sar ebp,1
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- add edi,ds:dword ptr[_roffs]
- mov al,ds:byte ptr[12345678h+ebx]
+ add edi,dword ptr[_roffs]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch28:
- mov edx,ds:dword ptr[_lightgright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightgleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightgright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightgleft]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch29:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- mov bl,ds:byte ptr[1+esi]
- sub edi,ds:dword ptr[_roffs]
- add edi,ds:dword ptr[_goffs]
+ mov byte ptr[edi],al
+ mov bl,byte ptr[1+esi]
+ sub edi,dword ptr[_roffs]
+ add edi,dword ptr[_goffs]
  sar ebp,1
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch28:
- mov edx,ds:dword ptr[_lightbright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightbleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightbright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightbleft]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch29:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- sub edi,ds:dword ptr[_goffs]
- add edi,ds:dword ptr[_boffs]
+ mov byte ptr[edi],al
+ sub edi,dword ptr[_goffs]
+ add edi,dword ptr[_boffs]
  sar ebp,1
- mov bl,ds:byte ptr[1+esi]
+ mov bl,byte ptr[1+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov cl,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+ebx]
+ mov cl,byte ptr[esi]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch28:
- mov edx,ds:dword ptr[_lightrrightstep]
- mov ds:byte ptr[4+edi],al
- add ds:dword ptr[_lightrright],edx
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightrrightstep]
+ mov byte ptr[4+edi],al
+ add dword ptr[_lightrright],edx
+ mov al,byte ptr[12345678h+ecx]
 LBPatch29:
- mov edx,ds:dword ptr[_lightrleftstep]
- mov ds:byte ptr[edi],al
- add edi,ds:dword ptr[_surfrowbytes]
- sub edi,ds:dword ptr[_boffs]
- add ds:dword ptr[_lightrleft],edx
- mov eax,ds:dword ptr[_lightgrightstep]
- add ds:dword ptr[_lightgright],eax
- mov eax,ds:dword ptr[_lightgleftstep]
- add ds:dword ptr[_lightgleft],eax
- mov eax,ds:dword ptr[_lightbrightstep]
- add ds:dword ptr[_lightbright],eax
- mov eax,ds:dword ptr[_lightbleftstep]
- add ds:dword ptr[_lightbleft],eax
- add esi,ds:dword ptr[_sourcetstep]
- mov edx,ds:dword ptr[_lightrright]
- mov ebp,ds:dword ptr[_lightrleft]
+ mov edx,dword ptr[_lightrleftstep]
+ mov byte ptr[edi],al
+ add edi,dword ptr[_surfrowbytes]
+ sub edi,dword ptr[_boffs]
+ add dword ptr[_lightrleft],edx
+ mov eax,dword ptr[_lightgrightstep]
+ add dword ptr[_lightgright],eax
+ mov eax,dword ptr[_lightgleftstep]
+ add dword ptr[_lightgleft],eax
+ mov eax,dword ptr[_lightbrightstep]
+ add dword ptr[_lightbright],eax
+ mov eax,dword ptr[_lightbleftstep]
+ add dword ptr[_lightbleft],eax
+ add esi,dword ptr[_sourcetstep]
+ mov edx,dword ptr[_lightrright]
+ mov ebp,dword ptr[_lightrleft]
  sub ebp,edx
- mov bl,ds:byte ptr[1+esi]
+ mov bl,byte ptr[1+esi]
  sar ebp,1
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- add edi,ds:dword ptr[_roffs]
- mov al,ds:byte ptr[12345678h+ebx]
+ add edi,dword ptr[_roffs]
+ mov al,byte ptr[12345678h+ebx]
 LRPatch30:
- mov edx,ds:dword ptr[_lightgright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightgleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightgright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightgleft]
+ mov al,byte ptr[12345678h+ecx]
 LRPatch31:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- mov bl,ds:byte ptr[1+esi]
- sub edi,ds:dword ptr[_roffs]
- add edi,ds:dword ptr[_goffs]
+ mov byte ptr[edi],al
+ mov bl,byte ptr[1+esi]
+ sub edi,dword ptr[_roffs]
+ add edi,dword ptr[_goffs]
  sar ebp,1
- mov cl,ds:byte ptr[esi]
+ mov cl,byte ptr[esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov al,ds:byte ptr[12345678h+ebx]
+ mov al,byte ptr[12345678h+ebx]
 LGPatch30:
- mov edx,ds:dword ptr[_lightbright]
- mov ds:byte ptr[4+edi],al
- mov ebp,ds:dword ptr[_lightbleft]
- mov al,ds:byte ptr[12345678h+ecx]
+ mov edx,dword ptr[_lightbright]
+ mov byte ptr[4+edi],al
+ mov ebp,dword ptr[_lightbleft]
+ mov al,byte ptr[12345678h+ecx]
 LGPatch31:
  sub ebp,edx
- mov ds:byte ptr[edi],al
- sub edi,ds:dword ptr[_goffs]
- add edi,ds:dword ptr[_boffs]
+ mov byte ptr[edi],al
+ sub edi,dword ptr[_goffs]
+ add edi,dword ptr[_boffs]
  sar ebp,1
- mov bl,ds:byte ptr[1+esi]
+ mov bl,byte ptr[1+esi]
  mov bh,dh
  add edx,ebp
  mov ch,dh
- mov cl,ds:byte ptr[esi]
- mov al,ds:byte ptr[12345678h+ebx]
+ mov cl,byte ptr[esi]
+ mov al,byte ptr[12345678h+ebx]
 LBPatch30:
- mov ds:byte ptr[4+edi],al
- mov al,ds:byte ptr[12345678h+ecx]
+ mov byte ptr[4+edi],al
+ mov al,byte ptr[12345678h+ecx]
 LBPatch31:
- add esi,ds:dword ptr[_sourcetstep]
- mov ds:byte ptr[edi],al
- add edi,ds:dword ptr[_surfrowbytes]
- sub edi,ds:dword ptr[_boffs]
- cmp esi,ds:dword ptr[_r_sourcemax]
+ add esi,dword ptr[_sourcetstep]
+ mov byte ptr[edi],al
+ add edi,dword ptr[_surfrowbytes]
+ sub edi,dword ptr[_boffs]
+ cmp esi,dword ptr[_r_sourcemax]
  jb LSkip_RGBmip3
- sub esi,ds:dword ptr[_r_stepback]
+ sub esi,dword ptr[_r_stepback]
 LSkip_RGBmip3:
- dec ds:dword ptr[sb_v]
+ dec dword ptr[sb_v]
  jnz Lv_loop_RGBmip3
  pop ebx
  pop esi
@@ -1835,40 +1841,40 @@ _TEXT SEGMENT
  public _D_Surf32Patch
 _D_Surf32Patch:
  push ebx
- mov eax,ds:dword ptr[_fadetable32]
+ mov eax,dword ptr[_fadetable32]
  mov ebx,offset LPatchTable
  mov ecx,32
 LPatchLoop:
- mov edx,ds:dword ptr[ebx]
+ mov edx,dword ptr[ebx]
  add ebx,4
- mov ds:dword ptr[edx],eax
+ mov dword ptr[edx],eax
  dec ecx
  jnz LPatchLoop
- mov eax,ds:dword ptr[_fadetable32r]
+ mov eax,dword ptr[_fadetable32r]
  mov ebx,offset LRPatchTable
  mov ecx,32
 LRPatchLoop:
- mov edx,ds:dword ptr[ebx]
+ mov edx,dword ptr[ebx]
  add ebx,4
- mov ds:dword ptr[edx],eax
+ mov dword ptr[edx],eax
  dec ecx
  jnz LRPatchLoop
- mov eax,ds:dword ptr[_fadetable32g]
+ mov eax,dword ptr[_fadetable32g]
  mov ebx,offset LGPatchTable
  mov ecx,32
 LGPatchLoop:
- mov edx,ds:dword ptr[ebx]
+ mov edx,dword ptr[ebx]
  add ebx,4
- mov ds:dword ptr[edx],eax
+ mov dword ptr[edx],eax
  dec ecx
  jnz LGPatchLoop
- mov eax,ds:dword ptr[_fadetable32b]
+ mov eax,dword ptr[_fadetable32b]
  mov ebx,offset LBPatchTable
  mov ecx,32
 LBPatchLoop:
- mov edx,ds:dword ptr[ebx]
+ mov edx,dword ptr[ebx]
  add ebx,4
- mov ds:dword ptr[edx],eax
+ mov dword ptr[edx],eax
  dec ecx
  jnz LBPatchLoop
  pop ebx
