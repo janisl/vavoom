@@ -777,7 +777,7 @@ static void ParseDef(TType *type, boolean builtin)
 			ParseError("Method name expected");
 		}
 		s_name = FindString(va("%s::%s", ctype->name, tk_String));
-		method = CheckForField(ctype);
+		method = CheckForField(ctype, false);
 		if (!method || method->type->type != ev_method)
 		{
 			ParseError("No such method");
@@ -1159,9 +1159,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/24 17:31:38  dj_jl
+//	Some fixes
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

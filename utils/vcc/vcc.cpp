@@ -85,11 +85,11 @@ int main(int argc, char **argv)
 
 	Preprocess();
 	TK_OpenSource(TEMP_FILE_NAME);
+	remove(TEMP_FILE_NAME);
 	PA_Parse();
 	TK_CloseSource();
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
-	remove(TEMP_FILE_NAME);
 	DumpAsm();
 	endtime = time(0);
 	dprintf("Time elapsed: %2d:%2d\n",
@@ -234,9 +234,6 @@ static void Preprocess(void)
 	//	Izdod pazi∑ojumu
 	dprintf("Preprocessing\n");
 
-	//	Iznÿcina pagaidu failu, ja t∆ds jau eksistÒ
-	remove(TEMP_FILE_NAME);
-
 	//	Izpilda komandu
 	cpp_main(SourceFileName, TEMP_FILE_NAME);
 }
@@ -318,9 +315,12 @@ void operator delete[](void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/24 17:31:38  dj_jl
+//	Some fixes
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	

@@ -269,7 +269,7 @@ void ParseClass(void);
 void AddFields(void);
 void ParseVector(void);
 field_t* ParseField(TType *t);
-field_t* CheckForField(TType *t);
+field_t* CheckForField(TType *, bool = true);
 void ParseTypeDef(void);
 void AddVirtualTables(void);
 
@@ -365,9 +365,12 @@ inline int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/24 17:31:38  dj_jl
+//	Some fixes
+//
 //	Revision 1.5  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.4  2001/09/12 17:29:54  dj_jl
 //	VavoomUtils namespace usage
 //	

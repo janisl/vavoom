@@ -946,7 +946,7 @@ field_t* ParseField(TType *t)
 //
 //==========================================================================
 
-field_t* CheckForField(TType *t)
+field_t* CheckForField(TType *t, bool check_aux)
 {
 	if (!t)
 	{
@@ -972,7 +972,11 @@ field_t* CheckForField(TType *t)
 			return &fi[i];
 		}
 	}
-	return CheckForField(t->aux_type);
+	if (check_aux)
+	{
+		return CheckForField(t->aux_type);
+	}
+	return NULL;
 }
 
 //==========================================================================
@@ -1154,9 +1158,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/24 17:31:38  dj_jl
+//	Some fixes
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	
