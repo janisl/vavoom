@@ -217,7 +217,7 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 64, 0, 9, 0, SPAC_USE, true},	//  151
 	{13, -1, 64, 0, 17, 0, SPAC_USE, true},	//  152
 	{13, -1, 64, 0, 12, 0, SPAC_USE, true},	//  153
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  154 SR LowerLift Gold key
+	{206, -1, 32, 105, 0, 0, SPAC_USE, true},	//  154 Gold key
 	{64, -1, 32, 105, 0, 0, SPAC_USE, true},	//  155
 	{13, 0, 16, 0, 17, 0, SPAC_USE, false},	//  156
 	{13, 0, 16, 0, 12, 0, SPAC_USE, false},	//  157
@@ -239,34 +239,34 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 16, 0, 5, 0, SPAC_USE, false},	//  171
 	{13, -1, 16, 0, 7, 0, SPAC_USE, true},	//  172
 	{13, -1, 16, 0, 8, 0, SPAC_USE, true},	//  173
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  174 W1 LowerFloor_RaiseCeiling
+	{251, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  174
 	{256, 1, 16, 0, 0, 0, SPAC_CROSS, false},	//  175
 	{13, -1, 16, 0, 10, 0, SPAC_USE, true},	//  176
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  177 SR LowerLift Power 3
+	{206, -1, 32, 105, 0, 0, SPAC_USE, true},	//  177 Power 3
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_CROSS, false},	//  178
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  179 W1 LowerCeilingToFloor Crush
+	{43, -1, 8, 1, 0, 0, SPAC_CROSS, false},	//  179
 
 	{230, -1, 4, 64, 0, 0, SPAC_IMPACT, false},	//  180
 	{230, -1, 4, 64, 0, 0, SPAC_USE, false},	//  181
 	{257, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  183 (MAP12)
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  184 SR LiftUpNearDownStay
+	{64, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  184 SR?
 	{70, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185 Silent
 	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  186 1-Way
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  187 W1 ClearForceField Crystal
+	{259, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  187 Crystal
 	{13, -1, 16, 0, 129, 0, SPAC_CROSS, false},	//  188
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  189 S1 LowerFloor_RaiseCeiling_O
+	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  189 O
 
 	{13, 0, 16, 150, 14, 0, SPAC_USE, true},	//  190
 	{13, -1, 16, 0, 14, 0, SPAC_USE, true},	//  191
 	{13, -1, 16, 0, 16, 0, SPAC_USE, false},	//  192
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  193 W1 LowerFloor Quest F
+	{21, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  193 Quest F
 	{261, -1, 16, 12, 0, 0, SPAC_USE, false},	//  194
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  195 WR Teleport Monster Chan
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  196 UNUSED
 	{10, -1, 64, 0, 0, 0, SPAC_CROSS, false},	//  197 ??? Q SigilB F
 	{256, 3, 0, 0, 0, 0, SPAC_CROSS, true},	//  198 Uniform
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  199 S1 CrushCeiling Quest Factory
+	{196, -1, 16, 16, 0, 0, SPAC_USE, false},	//  199 Quest Factory
 
 	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  200 ??? Q SigilA UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  201 SR PlaySound UNUSED
@@ -281,22 +281,22 @@ spec_trans_t spec_trans_tab[] = {
 
 	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  210 Teaser only
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  211 S1 PlaySound UNUSED
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  212 W1 LowerFloorToNearest Comm Unit
+	{22, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  212 Comm Unit
 	{13, 0, 16, 150, 130, 0, SPAC_USE, true},	//  213
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  214 SR LowerFloor30
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  215 W1 PlaySoundQuest
+	{68, -1, 8, 4, 0, 0, SPAC_USE, true},	//  214
+	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  215 Quest
 	{13, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  216 ??? Q Quest
 	{13, 0, 16, 150, 23, 0, SPAC_USE, true},	//  217
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  218 W1 Clear NonBlock Quest UNUSED
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  219 S1 LowerFloor Red Crystal
+	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  219 Red Crystal
 
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  220 S1 LowerFloor Blue Crystal
+	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  220 Blue Crystal
 	{13, 0, 16, 150, 24, 0, SPAC_USE, true},	//  221
 	{13, -1, 16, 0, 25, 0, SPAC_USE, false},	//  222 ??? Realy a key?
 	{13, -1, 16, 0, 26, 0, SPAC_USE, true},	//  223
 	{13, 0, 16, 0, 20, 0, SPAC_USE, false},	//  224
 	{13, 0, 16, 0, 21, 0, SPAC_USE, false},	//  225
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  226 S1 LowerFloor Stat Bon
+	{21, -1, 8, 0, 0, 0, SPAC_USE, false},	//  226 Stat Bon
 	{10, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  227 ??? Q Quest
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  228 W1 PlayEntityVoice
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  229 SR Open Sliding Sigil (spcl txt)
@@ -304,9 +304,9 @@ spec_trans_t spec_trans_tab[] = {
 	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  230 ??? Quest
 	{70, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  231 ??? (InSou)
 	{13, 0, 16, 150, 13, 0, SPAC_USE, true},	//  232
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  233 S1 LowerFloor_RaiseCeiling_V
+	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  233 V
 	{11, -1, 16, 0, 0, 0, SPAC_USE, true},	//  234 ??? Q Quest
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  235 S1 LowerFloor_RaiseCeiling_Sigil
+	{251, -1, 8, 0, 0, 0, SPAC_USE, false},	//  235 Sigil
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  236
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  237
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  238
@@ -359,7 +359,7 @@ void TranslateLine(line_t * line)
 	}
 
 	line->special = spec_trans_tab[oldspec].special;
-	if (oldspec == 145 || oldspec == 186)
+	if (oldspec == 145 || oldspec == 186 || oldspec == 215)
 	{
 		//	Split map teleport tag.
 		line->arg2 = line->arg1 % 100;	//	Spot.
@@ -465,6 +465,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/02/16 07:12:48  dj_jl
+//  Many more specials now work
+//
 //  Revision 1.7  2004/01/20 07:13:28  dj_jl
 //  Communicator voices
 //
