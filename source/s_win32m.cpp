@@ -182,11 +182,11 @@ static void PlaySong(void* data, int length, int looping)
 		return;
 	}
 
-    result = Segment->SetParam(GUID_StandardMIDIFile, -1, 0, 0, (void*)Performance);
+    result = Segment->SetParam(GUID_StandardMIDIFile, (DWORD)-1, 0, 0, (void*)Performance);
 	if (result != S_OK)
 		Sys_Error("PlaySong: Failed to set param");
 
-    result = Segment->SetParam(GUID_Download, -1, 0, 0, (void*)Performance);
+    result = Segment->SetParam(GUID_Download, (DWORD)-1, 0, 0, (void*)Performance);
 	if (result != S_OK)
 		Sys_Error("PlaySong: Failed to download segment");
 
@@ -991,9 +991,12 @@ static int qmus2mid(char *mus, char *mid, int length)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/07/20 14:53:02  dj_jl
+//	Got rid of warnings.
+//
 //	Revision 1.6  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
