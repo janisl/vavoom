@@ -81,6 +81,7 @@ void D_DrawDoubleSkySurf_32(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+extern "C" {
 int				blocksize, sourcetstep, blockdivshift;
 int				lightdelta, lightdeltastep;
 int				lightleft,  lightright,  lightleftstep,  lightrightstep;
@@ -99,6 +100,7 @@ int				r_stepback;
 int				r_lightwidth;
 int				r_numhblocks, r_numvblocks;
 byte			*r_source, *r_sourcemax;
+}
 
 miptexture_t	*dsky_mt1;
 miptexture_t	*dsky_mt2;
@@ -2247,9 +2249,12 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.7  2001/11/02 18:35:55  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.6  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

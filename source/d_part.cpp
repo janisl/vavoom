@@ -45,6 +45,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+extern "C" {
+
 float			xscaleshrink;
 float			yscaleshrink;
 
@@ -59,6 +61,8 @@ int				d_y_aspect_shift;
 TVec			r_pright;
 TVec			r_pup;
 TVec			r_ppn;
+
+}
 
 particle_func_t	D_DrawParticle;
 
@@ -757,9 +761,12 @@ void TSoftwareDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.4  2001/11/09 14:28:58  dj_jl
 //	Skip too translucent particles
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

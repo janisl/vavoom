@@ -67,8 +67,10 @@ void D_Aff32Patch(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 #ifdef USEASM
+extern "C" {
 extern int				d_rowbytes;
 extern int				d_zrowbytes;
+}
 #endif
 
 extern bool				d_roverwrapped;
@@ -85,12 +87,14 @@ word					*scrn16;
 word					pal8_to16[256];
 dword					pal2rgb[256];
 
+extern "C" {
 int						rshift = 11;
 int						gshift = 5;
 int						bshift = 0;
 int						roffs;
 int						goffs;
 int						boffs;
+}
 
 int						bppindex;
 
@@ -639,9 +643,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.11  2001/12/01 17:52:52  dj_jl
 //	no message
-//
+//	
 //	Revision 1.10  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
 //	

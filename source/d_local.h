@@ -266,6 +266,8 @@ void D_PolysetDraw(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
+extern "C" {
+
 extern float			d_zistepu;
 extern float			d_zistepv;
 extern float			d_ziorigin;
@@ -287,24 +289,12 @@ extern word*			d_dsttranstab;
 
 extern int				ylookup[MAXSCREENHEIGHT];
 
-extern spanfunc_t		spanfunc;
-extern spritespanfunc_t	spritespanfunc;
-
-extern spanfunc_t		D_DrawSpans;
-extern spritespanfunc_t	D_DrawSpriteSpans;
-extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
-extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;
-extern particle_func_t	D_DrawParticle;
-
 extern float			centerxfrac;
 extern float			centeryfrac;
 extern float			xprojection;
 extern float			yprojection;
 extern float			aliasxcenter;
 extern float			aliasycenter;
-
-extern float			xscaleshrink;
-extern float			yscaleshrink;
 
 extern int				d_pix_shift;
 extern int				d_pix_min;
@@ -314,7 +304,6 @@ extern int				d_y_aspect_shift;
 extern int				d_particle_right;
 extern int				d_particle_top;
 
-extern byte				*colormaps;
 extern byte				*fadetable;
 extern word				*fadetable16;
 extern word				*fadetable16r;
@@ -325,26 +314,14 @@ extern byte				*fadetable32r;
 extern byte				*fadetable32g;
 extern byte				*fadetable32b;
 
-extern byte				*tinttables[5];
-extern word				scaletable[32][256];
-
 extern byte				*scrn;
 extern word				*scrn16;
 
 extern short			*zbuffer;
 
-extern word				pal8_to16[256];
-extern dword			pal2rgb[256];
-
 extern int				rshift;
 extern int				gshift;
 extern int				bshift;
-
-extern int				bppindex;
-
-extern byte				*d_rgbtable;
-
-extern miptexture_t		*miptexture;
 
 extern int				viewwidth;
 extern int				viewheight;
@@ -354,7 +331,36 @@ extern float			vrecty_adj;
 extern float			vrectw_adj;
 extern float			vrecth_adj;
 
+extern byte				*d_rgbtable;
+
 extern affinetridesc_t	d_affinetridesc;
+
+} // extern "C"
+
+extern spanfunc_t		spanfunc;
+extern spritespanfunc_t	spritespanfunc;
+
+extern spanfunc_t		D_DrawSpans;
+extern spritespanfunc_t	D_DrawSpriteSpans;
+extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
+extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;
+extern particle_func_t	D_DrawParticle;
+
+extern float			xscaleshrink;
+extern float			yscaleshrink;
+
+extern byte				*colormaps;
+
+extern byte				*tinttables[5];
+extern word				scaletable[32][256];
+
+extern word				pal8_to16[256];
+extern dword			pal2rgb[256];
+
+extern int				bppindex;
+
+extern miptexture_t		*miptexture;
+
 extern finalvert_t		*pfinalverts;
 extern finalstvert_t	*pfinalstverts;
 extern auxvert_t		*pauxverts;
@@ -538,9 +544,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.16  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.15  2001/10/27 07:47:52  dj_jl
 //	Public gamma variables
 //	

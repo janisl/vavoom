@@ -101,6 +101,8 @@ extern int		d_minmip;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+extern "C" {
+
 #ifndef USEASM
 float			d_zistepu;
 float			d_zistepv;
@@ -149,6 +151,8 @@ edge_t			edge_tail;
 espan_t			*span_p, *max_span_p;
 
 int				current_iv;
+
+}
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1092,9 +1096,12 @@ void TSoftwareDrawer::WorldDrawing(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.8  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.7  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	

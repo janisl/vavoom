@@ -113,6 +113,8 @@ void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t*);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+extern "C" {
+
 int				ubasestep, errorterm, erroradjustup, erroradjustdown;
 
 int				r_p0[8], r_p1[8], r_p2[8];
@@ -139,14 +141,16 @@ int				d_bextrastep, d_bbasestep;
 int				d_ziextrastep, d_zibasestep;
 int				d_pzextrastep, d_pzbasestep;
 
-spanpackage_t	*a_spans;
-
 adivtab_t		adivtab[32*32] =
 {
 #include "adivtab.h"
 };
 
+}
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static spanpackage_t	*a_spans;
 
 static edgetable	*pedgetable;
 
@@ -285,7 +289,7 @@ void D_PolysetDraw(void)
 //
 //==========================================================================
 
-#if !defined USEASM || defined _WIN32
+#ifndef USEASM
 
 extern "C" void D_DrawNonSubdiv(void)
 {
@@ -313,9 +317,6 @@ extern "C" void D_DrawNonSubdiv(void)
 		{
 			continue;
 		}
-#ifdef USEASM
-		*(float*)&d_denom = 1.0 / float(d_denom);
-#endif
 
 		stindex0 = pstv + ptri->stvertindex[0];
 		stindex1 = pstv + ptri->stvertindex[1];
@@ -2218,9 +2219,12 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.8  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.7  2001/09/05 12:56:24  dj_jl
 //	Release changes
 //	

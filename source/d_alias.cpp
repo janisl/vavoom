@@ -82,6 +82,8 @@ finalvert_t		*pfinalverts;
 finalstvert_t	*pfinalstverts;
 auxvert_t		*pauxverts;
 
+extern "C" {
+
 trivertx_t		*d_apverts;
 int				d_anumverts;
 
@@ -102,6 +104,8 @@ float d_avertexnormals[NUMVERTEXNORMALS][3] =
 {
 #include "anorms.h"
 };
+
+}
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -874,9 +878,12 @@ void TSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/12/18 19:01:34  dj_jl
+//	Changes for MSVC asm
+//
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.8  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	
