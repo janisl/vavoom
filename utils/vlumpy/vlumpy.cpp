@@ -469,7 +469,11 @@ void GrabPic15(void)
 		for (int x = x1; x < x2; x++)
 		{
 			const rgba_t &p = GetPixelRGB(x, y);
-			int c = ((p.r << 7) & 0x7c00) | ((p.g << 2) & 0x03e0) | ((p.b >> 3) & 0x001f);
+			int c;
+			if (p.r == 0 && (p.g & 0xf8) == 0xf8 && (p.b & 0xf8) == 0xf8)
+				c = 0x8000;
+			else
+				c = ((p.r << 7) & 0x7c00) | ((p.g << 2) & 0x03e0) | ((p.b >> 3) & 0x001f);
 			dst[0] = byte(c);
 			dst[1] = byte(c >> 8);
 			dst += 2;
@@ -654,9 +658,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/06/22 07:25:43  dj_jl
+//	Added transparent pixels to VPIC.
+//
 //	Revision 1.7  2002/04/11 16:54:01  dj_jl
 //	Added support for 15-bit vpics.
-//
+//	
 //	Revision 1.6  2002/03/20 19:12:56  dj_jl
 //	Added catching of wad errors.
 //	
