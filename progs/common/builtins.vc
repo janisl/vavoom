@@ -246,12 +246,10 @@ extern void InputLine_SetValue(TILine *iline, string text);
 //	Input line responder
 extern boolean InputLine_Key(TILine *iline, int key);
 
-extern void MB_StartMessage(string text, mb_func_t routine, boolean input);
 extern string P_GetMapName(int map);
 extern boolean SV_GetSaveString(int i, string buf);
 extern void StartSearch(void);
 extern void GetSlist(slist_t *slist);
-extern void DrawTextBox(string text);
 extern void KeyNameForNum(int KeyNr, string NameString);
 extern void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 extern void IN_SetBinding(int key, string ondown, string onup);
@@ -354,15 +352,15 @@ extern void PolyobjFinished(int po);
 //	Sound functions
 //
 
-extern void StartSound(degenmobj_t *mobj, int sound);
-extern void StartSoundAtVolume(mobj_t *mobj, int sound, int volume);
-extern void StopSound(degenmobj_t *mobj);
+extern void StartSound(degenmobj_t *mobj, int sound, int channel);
+extern void StartSoundAtVolume(mobj_t *mobj, int sound, int channel, int volume);
+extern void StopSound(degenmobj_t *mobj, int channel);
 extern boolean GetSoundPlayingInfo(mobj_t *mobj, int sound_id);
 extern int GetSoundID(string name);
 extern void StartSequence(degenmobj_t *mobj, string sequence);
 extern void StopSequence(degenmobj_t *mobj);
 
-#define StartSoundName(origin, name)	StartSound(origin, GetSoundID(name))
+#define StartSoundName(origin, name, channel)	StartSound(origin, GetSoundID(name), channel)
 
 //
 //  Savegame archieve / unarchieve utilite functions
@@ -399,9 +397,12 @@ extern void SendCeilingSlope(sector_t *sector);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:42:11  dj_jl
+//	Added sound channel
+//
 //	Revision 1.5  2001/08/23 17:38:55  dj_jl
 //	Fixed Heretic episode 2 finale
-//
+//	
 //	Revision 1.4  2001/08/15 17:05:11  dj_jl
 //	Model setup
 //

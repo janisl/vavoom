@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -77,7 +73,7 @@ void A_HeadAttack(mobj_t* actor)
 	{
 		// Ice ball
 		SpawnMissile(actor, target, MT_HEADFX1);
-		StartSoundName(actor, "HeadAttack2");
+		StartSoundName(actor, "HeadAttack2", CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
@@ -92,7 +88,7 @@ void A_HeadAttack(mobj_t* actor)
 					baseFire->origin.z, MT_HEADFX3);
 				if (i == 0)
 				{
-					StartSoundName(actor, "HeadAttack1");
+					StartSoundName(actor, "HeadAttack1", CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
 				fire->angles.yaw = baseFire->angles.yaw;
@@ -115,7 +111,7 @@ void A_HeadAttack(mobj_t* actor)
 			mo->specialmobj1 = target;
 			mo->special2 = 50; // Timer for active sound
 			mo->health = 20 * TICRATE; // Duration
-			StartSoundName(actor, "HeadAttack3");
+			StartSoundName(actor, "HeadAttack3", CHAN_WEAPON);
 		}
 	}
 }
@@ -180,7 +176,7 @@ void A_WhirlwindSeek(mobj_t* actor)
 	if ((actor->special2 -= 3) < 0)
 	{
 		actor->special2 = 58 + (P_Random() & 31);
-		StartSoundName(actor, "HeadAttack3");
+		StartSoundName(actor, "HeadAttack3", CHAN_WEAPON);
 	}
 	if (actor->specialmobj1 && actor->specialmobj1->translucency)
 	{
@@ -189,3 +185,13 @@ void A_WhirlwindSeek(mobj_t* actor)
 	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 30);
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //***************************************************************************
@@ -45,7 +41,7 @@
 void BringUpWeapon(player_t* player)
 {
     if (player->readyweapon == wp_chainsaw)
-		StartSoundName(player->mo, "ChainsawStart");
+		StartSoundName(player->mo, "ChainsawStart", CHAN_WEAPON);
 		
     player->pendingweapon = wp_nochange;
     player->psprites[ps_weapon].sy = WEAPONBOTTOM;
@@ -382,7 +378,7 @@ void A_WeaponReady(mobj_t *actor)
     
     if (player->readyweapon == wp_chainsaw && psp->statenum == S_SAW)
     {
-		StartSoundName(player->mo, "ChainsawIdle");
+		StartSoundName(player->mo, "ChainsawIdle", CHAN_WEAPON);
     }
     
     // check for change
@@ -609,7 +605,7 @@ void A_Punch(mobj_t *actor)
     // turn to face target
     if (linetarget)
     {
-		StartSoundName(player->mo, "Punch");
+		StartSoundName(player->mo, "Punch", CHAN_WEAPON);
 		player->mo->angles.yaw =
 			atan2(linetarget->origin.y - player->mo->origin.y,
 				linetarget->origin.x - player->mo->origin.x);
@@ -643,10 +639,10 @@ void A_Saw(mobj_t *actor)
 
     if (!linetarget)
     {
-		StartSoundName(player->mo, "ChainsawTriggered");
+		StartSoundName(player->mo, "ChainsawTriggered", CHAN_WEAPON);
 		return;
     }
-    StartSoundName(player->mo, "ChainsawHit");
+    StartSoundName(player->mo, "ChainsawHit", CHAN_WEAPON);
 	
     // turn to face target
     angle = atan2(linetarget->origin.y - player->mo->origin.y,
@@ -681,7 +677,7 @@ void A_FirePistol(mobj_t *actor)
 	TAVec		angles;
 	float		slope;
 
-    StartSoundName(player->mo, "PistolFire");
+    StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
     SetMobjState(player->mo, S_PLAY_ATK2);
     player->ammo[player->w_ammo]--;
@@ -705,7 +701,7 @@ void A_FireShotgun(mobj_t *actor)
     int			i;
 	TAVec		angles;
 
-    StartSoundName(player->mo, "ShotgunFire");
+    StartSoundName(player->mo, "ShotgunFire", CHAN_WEAPON);
     SetMobjState(player->mo, S_PLAY_ATK2);
 
     player->ammo[player->w_ammo]--;
@@ -737,7 +733,7 @@ void A_FireShotgun2(mobj_t *actor)
 	TAVec		angles;
 	TVec		vforward;
 
-    StartSoundName(player->mo, "SuperShotgunFire");
+    StartSoundName(player->mo, "SuperShotgunFire", CHAN_WEAPON);
     SetMobjState(player->mo, S_PLAY_ATK2);
 
     player->ammo[player->w_ammo] -= 2;
@@ -767,7 +763,7 @@ void A_FireShotgun2(mobj_t *actor)
 void A_OpenShotgun2(mobj_t *actor)
 {
 	player_t	*player = actor->player;
-    StartSoundName(player->mo, "SuperShotgunOpen");
+    StartSoundName(player->mo, "SuperShotgunOpen", CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -779,7 +775,7 @@ void A_OpenShotgun2(mobj_t *actor)
 void A_LoadShotgun2(mobj_t *actor)
 {
 	player_t	*player = actor->player;
-    StartSoundName(player->mo, "SuperShotgunLoad");
+    StartSoundName(player->mo, "SuperShotgunLoad", CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -791,7 +787,7 @@ void A_LoadShotgun2(mobj_t *actor)
 void A_CloseShotgun2(mobj_t *actor)
 {
 	player_t	*player = actor->player;
-    StartSoundName(player->mo, "SuperShotgunClose");
+    StartSoundName(player->mo, "SuperShotgunClose", CHAN_WEAPON);
     A_ReFire(actor);
 }
 
@@ -816,7 +812,7 @@ void A_FireCGun(mobj_t *actor)
 	pspdef_t	*psp = &player->psprites[ps_weapon];
 	TAVec		angles;
 
-    StartSoundName(player->mo, "PistolFire");
+    StartSoundName(player->mo, "PistolFire", CHAN_WEAPON);
 
     if (!player->ammo[player->w_ammo])
 		return;
@@ -925,7 +921,7 @@ void A_FirePlasma(mobj_t *actor)
 void A_BFGsound(mobj_t *actor)
 {
 	player_t	*player = actor->player;
-    StartSoundName(player->mo, "BFGFire");
+    StartSoundName(player->mo, "BFGFire", CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -989,3 +985,13 @@ void A_BFGSpray(mobj_t *mo)
     }
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

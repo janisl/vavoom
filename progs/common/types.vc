@@ -21,19 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.5  2001/08/15 17:07:10  dj_jl
-//**	Fixed finale
-//**
-//**	Revision 1.4  2001/08/07 16:42:25  dj_jl
-//**	Added player models, skins and weapon
-//**	
-//**	Revision 1.3  2001/08/04 17:20:28  dj_jl
-//**	Changes to inform new clients about changed textures
-//**	
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 
 typedef int boolean;
@@ -603,6 +590,8 @@ struct player_t
 	void			*__netcon;
 	int				__message[7];
 	int				__msgbuf[MAX_MSGLEN / 4];
+	int				__mobj_update_start;
+	float			__last_message;
 
 	int				userinfo[MAX_INFO_STRING / 4];
 
@@ -918,3 +907,22 @@ struct clmobj_t
 	int			effects;
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.6  2001/08/29 17:42:12  dj_jl
+//	Added sound channel
+//
+//	Revision 1.5  2001/08/15 17:07:10  dj_jl
+//	Fixed finale
+//
+//	Revision 1.4  2001/08/07 16:42:25  dj_jl
+//	Added player models, skins and weapon
+//
+//	Revision 1.3  2001/08/04 17:20:28  dj_jl
+//	Changes to inform new clients about changed textures
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 #ifdef DOOM2
@@ -51,8 +47,8 @@
 
 void A_FatRaise(mobj_t *actor)
 {
-    A_FaceTarget(actor);
-    StartSoundName(actor, "MancubusAttack");
+	A_FaceTarget(actor);
+	StartSoundName(actor, "MancubusAttack", CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -135,3 +131,14 @@ void A_FatAttack2(mobj_t *actor) { NotDoom2(); }
 void A_FatAttack3(mobj_t *actor) { NotDoom2(); }
 
 #endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

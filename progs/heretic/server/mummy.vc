@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -51,14 +47,14 @@ void A_MummyAttack(mobj_t* actor)
 	{
 		return;
 	}
-	StartSound(actor, actor->sound_attack);
+	StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 	if (P_CheckMeleeRange(actor))
 	{
 		DamageMobj(actor->target, actor, actor, HITDICE(2));
-		StartSoundName(actor, "MumyAttack2");
+		StartSoundName(actor, "MumyAttack2", CHAN_WEAPON);
 		return;
 	}
-	StartSoundName(actor, "MumyAttack1");
+	StartSoundName(actor, "MumyAttack1", CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -114,3 +110,13 @@ void A_MummyFX1Seek(mobj_t* actor)
 	P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 20);
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

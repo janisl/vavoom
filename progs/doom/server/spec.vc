@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -77,7 +73,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_bluecard)))
 		{
 		    centerprint(player, "You need a blue keycard");
-		    StartSoundName(player->mo, "PlayerLand");
+		    StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 		    return false;
 		}
 		break;
@@ -86,7 +82,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_redcard)))
 		{
 			centerprint(player, "You need a red keycard");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -95,7 +91,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_yellowcard)))
 		{
 			centerprint(player, "You need a yellow keycard");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -104,7 +100,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_blueskull)))
 		{
 		    centerprint(player, "You need a blue skullkey");
-		    StartSoundName(player->mo, "PlayerLand");
+		    StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 		    return false;
 		}
 		break;
@@ -113,7 +109,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_redskull)))
 		{
 			centerprint(player, "You need a red skullkey");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -122,7 +118,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & (1 << it_yellowskull)))
 		{
 			centerprint(player, "You need a yellow skullkey");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -132,7 +128,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!player->keys)
 		{
 			centerprint(player, "You need any key");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -141,7 +137,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (player->keys != 0x3f)
 		{
 			centerprint(player, "You need all keycards and skullkeys");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -150,7 +146,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 		    centerprint(player, "You need a blue key");
-		    StartSoundName(player->mo, "PlayerLand");
+		    StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 		    return false;
 		}
 		break;
@@ -159,7 +155,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(player, "You need a red key");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -168,7 +164,7 @@ boolean CheckLock(mobj_t *user, int lock)
 		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need a yellow key");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -179,7 +175,7 @@ boolean CheckLock(mobj_t *user, int lock)
 			!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need all keys");
-			StartSoundName(player->mo, "PlayerLand");
+			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -850,3 +846,13 @@ boolean P_ActivateLine(line_t *line, mobj_t *mo, int side, int activationType)
 	return true;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:51  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

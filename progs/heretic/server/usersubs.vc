@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 void UpdateBeak(player_t *player, pspdef_t *psp);
@@ -79,7 +75,7 @@ void ChickenPlayerThink(player_t *player)
 	if (P_Random() < 48)
 	{
 		// Just noise
-		StartSoundName(pmo, "ChickenAttack");
+		StartSoundName(pmo, "ChickenAttack", CHAN_VOICE);
 	}
 }
 
@@ -143,7 +139,7 @@ boolean UndoPlayerChicken(player_t *player)
 	player->mo = mo;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle), y + 20.0 * sin(angle),
 		z + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(fog, "Teleport");
+	StartSoundName(fog, "Teleport", CHAN_VOICE);
 	PostChickenWeapon(player, weapon);
 	return true;
 }
@@ -315,7 +311,7 @@ boolean ArtiTomeOfPower(player_t *player)
 		{
 			// Succeeded
 			player->chickenTics = 0;
-			StartSoundName(player->mo, "PickupWeapon");
+			StartSoundName(player->mo, "PickupWeapon", CHAN_ITEM);
 		}
 	}
 	else
@@ -373,7 +369,7 @@ void P_SetDormantArtifact(mobj_t *arti)
 		// Don't respawn
 		SetMobjState(arti, S_DEADARTI1);
 	}
-	StartSoundName(arti, "PickupArtifact");
+	StartSoundName(arti, "PickupArtifact", CHAN_ITEM);
 }
 
 //==========================================================================
@@ -434,8 +430,18 @@ boolean G_CheckSpot(int playernum, mthing_t* mthing)
  
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(mo, "Teleport");	// don't start sound on first frame
+	StartSoundName(mo, "Teleport", CHAN_VOICE);
 
     return true; 
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/29 17:42:13  dj_jl
+//	Added sound channel
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
