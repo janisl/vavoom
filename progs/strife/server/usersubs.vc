@@ -112,6 +112,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 	z = ONFLOORZ;
 	A = Spawn(StrifePlayer, vector(x, y, z));
+	A.Origin.z += mthing->height;
+	A.LinkToWorld();
 
 	// set color translations for player sprites
 	A.Translation = p.Color;
@@ -148,6 +150,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2004/03/01 07:08:09  dj_jl
+//  Height for player starts
+//
 //  Revision 1.31  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

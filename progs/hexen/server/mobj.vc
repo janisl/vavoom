@@ -198,6 +198,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 		Error("P_SpawnPlayer: Unknown class type");
 		break;
 	}
+	pp.Origin.z += mthing->height;
+	pp.LinkToWorld();
 
 	pp.Angles.yaw = itof(45 * (mthing->angle / 45));
 	pp.Player = p;
@@ -514,6 +516,9 @@ void NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.54  2004/03/01 07:08:48  dj_jl
+//  Height for player starts
+//
 //  Revision 1.53  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

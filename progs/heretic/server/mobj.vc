@@ -142,6 +142,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 
 	z = ONFLOORZ;
 	A = Spawn(HereticPlayer, vector(x, y, z));
+	A.Origin.z += mthing->height;
+	A.LinkToWorld();
 	// set color translations for player sprites
 	A.Translation = p.Color;
 
@@ -403,6 +405,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.53  2004/03/01 07:08:30  dj_jl
+//  Height for player starts
+//
 //  Revision 1.52  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

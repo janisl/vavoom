@@ -111,6 +111,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 	z = ONFLOORZ;
 	PP = PlayerPawn(Spawn(DoomPlayer, vector(x, y, z)));
+	PP.Origin.z += mthing->height;
+	PP.LinkToWorld();
 
 	// set color translations for player sprites
 	PP.Translation = p.Color;
@@ -156,6 +158,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2004/03/01 07:07:42  dj_jl
+//  Height for player starts
+//
 //  Revision 1.33  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //
