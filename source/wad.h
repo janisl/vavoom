@@ -41,8 +41,9 @@ void W_InitFile(const char* filename);
 void W_OpenAuxiliary(const char *filename);
 void W_CloseAuxiliaryFile(void);
 void W_CloseAuxiliary(void);
-void W_UsePrimary(void);
-void W_UseAuxiliary(void);
+
+void W_BuildGLNodes(int lump);
+void W_BuildPVS(int lump, int gllump);
 
 int	W_CheckNumForName(const char* name);
 int	W_GetNumForName(const char* name);
@@ -63,9 +64,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/14 16:52:14  dj_jl
+//	Added dynamic build of GWA file
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

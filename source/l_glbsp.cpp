@@ -75,15 +75,17 @@ static gb_bar_t bars[2];
 static float barborderw;
 static float barborderh;
 
+static double lastprog;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	GB_PrintMsg
+//	GLBSP_PrintMsg
 //
 //==========================================================================
 
-void GB_PrintMsg(const char *str, ...)
+static void GLBSP_PrintMsg(const char *str, ...)
 {
 	va_list args;
 
@@ -96,13 +98,13 @@ void GB_PrintMsg(const char *str, ...)
 
 //==========================================================================
 //
-//	GB_FatalError
+//	GLBSP_FatalError
 //
 //	Terminates the program reporting an error.
 //
 //==========================================================================
 
-void GB_FatalError(const char *str, ...)
+static void GLBSP_FatalError(const char *str, ...)
 {
 	va_list args;
 
@@ -115,21 +117,21 @@ void GB_FatalError(const char *str, ...)
 
 //==========================================================================
 //
-//	GB_Ticker
+//	GLBSP_Ticker
 //
 //==========================================================================
 
-void GB_Ticker(void)
+static void GLBSP_Ticker(void)
 {
 }
 
 //==========================================================================
 //
-// GB_DisplayOpen
+// GLBSP_DisplayOpen
 //
 //==========================================================================
 
-boolean_g GB_DisplayOpen(displaytype_e type)
+static boolean_g GLBSP_DisplayOpen(displaytype_e type)
 {
 	Drawer->StartUpdate();
 
@@ -174,22 +176,22 @@ boolean_g GB_DisplayOpen(displaytype_e type)
 
 //==========================================================================
 //
-//	GB_DisplaySetTitle
+//	GLBSP_DisplaySetTitle
 //
 //==========================================================================
 
-void GB_DisplaySetTitle(const char *)
+static void GLBSP_DisplaySetTitle(const char *)
 {
 	// does nothing
 }
 
 //==========================================================================
 //
-//	GB_DisplaySetBarText
+//	GLBSP_DisplaySetBarText
 //
 //==========================================================================
 
-void GB_DisplaySetBarText(int barnum, const char *str)
+static void GLBSP_DisplaySetBarText(int barnum, const char *str)
 {
 	gb_bar_t &b = bars[barnum - 1];
 	Drawer->BeginDirectUpdate();
@@ -209,57 +211,66 @@ void GB_DisplaySetBarText(int barnum, const char *str)
 
 //==========================================================================
 //
-//	GB_DisplaySetBarLimit
+//	GLBSP_DisplaySetBarLimit
 //
 //==========================================================================
 
-void GB_DisplaySetBarLimit(int barnum, int limit)
+static void GLBSP_DisplaySetBarLimit(int barnum, int limit)
 {
 	bars[barnum - 1].limit = limit;
 }
 
 //==========================================================================
 //
-//	GB_DisplaySetBar
+//	GLBSP_DisplaySetBar
 //
 //==========================================================================
 
-void GB_DisplaySetBar(int barnum, int count)
+static void GLBSP_DisplaySetBar(int barnum, int count)
 {
-	Drawer->BeginDirectUpdate();
 	gb_bar_t &b = bars[barnum - 1];
+	if (barnum == 1 && count > 0 && count < b.limit &&
+		Sys_Time() - lastprog < 0.2)
+	{
+		return;
+	}
+	Drawer->BeginDirectUpdate();
 	Drawer->FillRect(b.x, b.y1, b.x + b.w * float(count) / b.limit, b.y2, 0xff00ff00);
 	Drawer->EndDirectUpdate();
+	if (barnum == 1)
+	{
+		lastprog = Sys_Time();
+	}
 }
 
 //==========================================================================
 //
-//	GB_DisplayClose
+//	GLBSP_DisplayClose
 //
 //==========================================================================
 
-void GB_DisplayClose(void)
+static void GLBSP_DisplayClose(void)
 {
 	// does nothing
 }
 
 const nodebuildfuncs_t edge_build_funcs =
 {
-	GB_FatalError,
-	GB_PrintMsg,
-	GB_Ticker,
+	GLBSP_FatalError,
+	GLBSP_PrintMsg,
+	GLBSP_Ticker,
 
-	GB_DisplayOpen,
-	GB_DisplaySetTitle,
-	GB_DisplaySetBar,
-	GB_DisplaySetBarLimit,
-	GB_DisplaySetBarText,
-	GB_DisplayClose
+	GLBSP_DisplayOpen,
+	GLBSP_DisplaySetTitle,
+	GLBSP_DisplaySetBar,
+	GLBSP_DisplaySetBarLimit,
+	GLBSP_DisplaySetBarText,
+	GLBSP_DisplayClose
 };
 
 //==========================================================================
 //
-//	GB_BuildNodes
+//	GLBSP_BuildNodes
 //
 //	Attempt to build nodes for the WAD file containing the given
 // map_lump (a lump number from w_wad for the start marker, e.g.
@@ -267,7 +278,7 @@ const nodebuildfuncs_t edge_build_funcs =
 //
 //==========================================================================
 
-bool GB_BuildNodes(const char *name)
+bool GLBSP_BuildNodes(const char *name)
 {
 	nodebuildinfo_t nb_info;
 	nodebuildcomms_t nb_comms;
@@ -312,14 +323,17 @@ COMMAND(glBSP)
 {
 	if (Argc() > 1)
 	{
-		GB_BuildNodes(Argv(1));
+		GLBSP_BuildNodes(Argv(1));
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/09/14 16:52:14  dj_jl
+//	Added dynamic build of GWA file
+//
 //	Revision 1.1  2001/09/12 17:37:47  dj_jl
 //	Added glBSP and glVIS plugins
-//
+//	
 //**************************************************************************

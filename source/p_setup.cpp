@@ -63,7 +63,6 @@ static vertex_t *gl_vertexes;
 static int numglvertexes;
 
 static byte novis[32 * 1024 / 8];
-static bool AuxiliaryMap;
 
 // CODE --------------------------------------------------------------------
 
@@ -241,9 +240,6 @@ static void LoadSectors(int lump, level_t &loadlevel)
 	loadlevel.sectors = Z_CNew<sector_t>(loadlevel.numsectors, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(lump, PU_STATIC);
 
-	// Make sure primary lumps are used for flat searching
-	W_UsePrimary();
-
 	ms = (mapsector_t *)data;
 	ss = loadlevel.sectors;
 
@@ -289,11 +285,6 @@ static void LoadSectors(int lump, level_t &loadlevel)
 		ss->base_lightlevel = ss->params.lightlevel;
 	}
 
-	if (AuxiliaryMap)
-	{
-		W_UseAuxiliary();
-	}
-
 	Z_Free(data);
 }
 
@@ -317,9 +308,6 @@ static void LoadSideDefs(int lump, level_t &loadlevel)
 	msd = (mapsidedef_t *)data;
 	sd = loadlevel.sides;
 
-	// Make sure primary lumps are used for texture searching
-	W_UsePrimary();
-
 	for (i = 0; i < loadlevel.numsides; i++, msd++, sd++)
 	{
 		sd->textureoffset = LittleShort(msd->textureoffset);
@@ -334,11 +322,6 @@ static void LoadSideDefs(int lump, level_t &loadlevel)
 		sd->base_midtexture = sd->midtexture;
 		sd->base_toptexture = sd->toptexture;
 		sd->base_bottomtexture = sd->bottomtexture;
-	}
-
-	if (AuxiliaryMap)
-	{
-		W_UseAuxiliary();
 	}
 
 	Z_Free(data);
@@ -912,19 +895,16 @@ static void GroupLines(level_t &loadlevel)
 
 void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 {
+	bool AuxiliaryMap = false;
 	// if working with a devlopment map, reload it
 	if (fl_devmode)
 	{
-		char	aux_file_name[256];
+		char aux_file_name[MAX_OSPATH];
 
 		if (FL_FindFile(va("maps/%s.wad", lev.mapname), aux_file_name))
 		{
 			W_OpenAuxiliary(aux_file_name);
 			AuxiliaryMap = true;
-		}
-		else
-		{
-			AuxiliaryMap = false;
 		}
 	}
 
@@ -936,7 +916,15 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 	int gl_lumpnum = W_CheckNumForName(va("GL_%s", mapname));
 	if (gl_lumpnum < lumpnum)
 	{
-		Host_Error("Map %s haves no \"GL Nodes\"", mapname);
+		W_BuildGLNodes(lumpnum);
+		gl_lumpnum = W_GetNumForName(va("GL_%s", mapname));
+	}
+	else if (strcmp(W_LumpName(gl_lumpnum + ML_GL_PVS), "GL_PVS") ||
+		W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
+	{
+		W_BuildPVS(lumpnum, gl_lumpnum);
+		lumpnum = W_GetNumForName(mapname);
+		gl_lumpnum = W_GetNumForName(va("GL_%s", mapname));
 	}
 	bool extended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
 
@@ -993,7 +981,6 @@ void LoadLevel(level_t &lev, const char *mapname, bool server_level)
 		// The next call to W_OpenAuxiliary() will do a full shutdown
 		// of the current auxiliary WAD (free lumps and info lists).
 		W_CloseAuxiliaryFile();
-		W_UsePrimary();
 	}
 }
 
@@ -1092,6 +1079,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2001/09/14 16:52:14  dj_jl
+//  Added dynamic build of GWA file
+//
 //  Revision 1.7  2001/09/12 17:36:20  dj_jl
 //  Using new zone templates
 //

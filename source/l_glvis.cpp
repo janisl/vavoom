@@ -98,7 +98,7 @@ void TGLVisGUI::DisplayMessage(const char *text, ...)
 	va_start(args, text);
 	vsprintf(message, text, args);
 	va_end(args);
-	cond << message << endl;
+	cond << message;
 }
 
 //==========================================================================
@@ -135,7 +135,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 void TGLVisGUI::DisplayBaseVisProgress(int count, int total)
 {
-	if (count > 0 && count < total && Sys_Time() - lastprog < 0.1)
+	if (count > 0 && count < total && Sys_Time() - lastprog < 0.2)
 	{
 		return;
 	}
@@ -153,7 +153,7 @@ void TGLVisGUI::DisplayBaseVisProgress(int count, int total)
 
 void TGLVisGUI::DisplayPortalVisProgress(int count, int total)
 {
-	if (count > 0 && count < total && Sys_Time() - lastprog < 0.1)
+	if (count > 0 && count < total && Sys_Time() - lastprog < 0.2)
 	{
 		return;
 	}
@@ -199,11 +199,11 @@ static void GLVisFree(void *ptr)
 
 //==========================================================================
 //
-//	GV_main
+//	GLVis_BuildPVS
 //
 //==========================================================================
 
-void GV_main(const char *srcfile)
+void GLVis_BuildPVS(const char *srcfile)
 {
 	try
 	{
@@ -216,7 +216,7 @@ void GV_main(const char *srcfile)
 
 		GLVis.Malloc = GLVisMalloc;
 		GLVis.Free = GLVisFree;
-		GLVis.fastvis = true;
+		GLVis.fastvis = !!glvis_fast;
 		GLVis.Build(srcfile);
 	}
 	catch (GLVisError &e)
@@ -235,14 +235,17 @@ COMMAND(glVIS)
 {
 	if (Argc() > 1)
 	{
-		GV_main(Argv(1));
+		GLVis_BuildPVS(Argv(1));
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/09/14 16:52:14  dj_jl
+//	Added dynamic build of GWA file
+//
 //	Revision 1.1  2001/09/12 17:37:47  dj_jl
 //	Added glBSP and glVIS plugins
-//
+//	
 //**************************************************************************
