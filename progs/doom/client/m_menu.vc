@@ -206,10 +206,9 @@ class MenuScreen:MenuObject
 			FatalError("Too many menu items");
 		}
 		item = Spawn(type, self);
-		Items[NumItems] = item;
+		Items[NumItems++] = item;
 		item.Parent = self;
 		item.Init();
-		NumItems++;
 		return item;
 	}
 
@@ -702,7 +701,7 @@ class MenuModel:MenuObject
 
 //**************************************************************************
 //**    
-//**    MenuSelector_Skull
+//**	MenuSelector_Skull
 //**    
 //**************************************************************************
 
@@ -733,7 +732,7 @@ class MenuSelector_Skull:MenuObject
 
 //**************************************************************************
 //**    
-//**    MenuSelector_SmallLeft
+//**	MenuSelector_SmallLeft
 //**    
 //**************************************************************************
 
@@ -753,7 +752,7 @@ class MenuSelector_SmallLeft:MenuObject
 
 //**************************************************************************
 //**    
-//**    MenuSelector_SmallRight
+//**	MenuSelector_SmallRight
 //**    
 //**************************************************************************
 
@@ -962,7 +961,7 @@ class MenuChoiceEnum:MenuChoice
 
 //**************************************************************************
 //**
-//**    MenuChoice_OnOff
+//**	MenuChoice_OnOff
 //**
 //**************************************************************************
 
@@ -977,7 +976,7 @@ class MenuChoice_OnOff:MenuChoiceEnum
 
 //**************************************************************************
 //**
-//**    MenuChoiceSlider
+//**	MenuChoiceSlider
 //**
 //**************************************************************************
 
@@ -1002,7 +1001,7 @@ class MenuChoiceSlider:MenuChoice
 
 	boolean SetNewValue(float newValue)
 	{
-		return false;
+		return true;
 	}
 
 	void Init(void)
@@ -1217,7 +1216,7 @@ void ControlResponse(int key)
 
 //**************************************************************************
 //**
-//**    Slot for saves and input lines
+//**	Slot for saves and input lines
 //**
 //**************************************************************************
 
@@ -1434,7 +1433,7 @@ class MenuInputLine:MenuObject
 
 //**************************************************************************
 //**
-//**    Server list
+//**	Server list
 //**
 //**************************************************************************
 
@@ -1586,6 +1585,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/01/28 18:46:20  dj_jl
+//  Some fixes, beautification
+//
 //  Revision 1.17  2002/01/23 17:54:22  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

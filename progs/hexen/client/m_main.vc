@@ -188,11 +188,11 @@ class MenuScreenMain:MenuScreen
 
 		AddItem(MenuMainTitleImage);
 
-		newAnim = MenuStaticAnim(AddItem(MenuStaticAnim));
+		newAnim = MenuStaticAnim(AddItem(MenuMainAnim));
 		newAnim.SetPos(37, 80);
 		newAnim.StartFrame = 2;
 
-		newAnim = MenuStaticAnim(AddItem(MenuStaticAnim));
+		newAnim = MenuStaticAnim(AddItem(MenuMainAnim));
 		newAnim.SetPos(278, 80);
 	}
 
@@ -217,6 +217,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/28 18:46:20  dj_jl
+//  Some fixes, beautification
+//
 //  Revision 1.8  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

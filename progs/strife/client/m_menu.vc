@@ -206,10 +206,9 @@ class MenuScreen:MenuObject
 			FatalError("Too many menu items");
 		}
 		item = Spawn(type, self);
-		Items[NumItems] = item;
+		Items[NumItems++] = item;
 		item.Parent = self;
 		item.Init();
-		NumItems++;
 		return item;
 	}
 
@@ -1560,6 +1559,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/28 18:46:20  dj_jl
+//  Some fixes, beautification
+//
 //  Revision 1.16  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //

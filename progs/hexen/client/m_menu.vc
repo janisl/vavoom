@@ -70,6 +70,10 @@ class MenuObject:Object
 	boolean bHidden;
 	boolean bDisabled;
 
+	void Init(void)
+	{
+	}
+
 	void SetPos(int NewX, int NewY)
 	{
 		X = NewX;
@@ -82,10 +86,6 @@ class MenuObject:Object
 	int GetY(void)
 	{
 		return Y;
-	}
-
-	void Init(void)
-	{
 	}
 
 	void Draw(void)
@@ -152,9 +152,9 @@ class MenuChoice:MenuObject
 }
 
 //**************************************************************************
-//**    
+//**
 //**	MenuTitleText
-//**    
+//**
 //**************************************************************************
 
 class MenuTitleText:MenuObject
@@ -181,8 +181,8 @@ class MenuTitleText:MenuObject
 
 class MenuScreen:MenuObject
 {
-	int NumItems;
 	MenuObject Items[MAX_MENU_ITEMS];
+	int NumItems;
 	int CursorPos;
 	int CursorPrev;
 
@@ -206,10 +206,9 @@ class MenuScreen:MenuObject
 			FatalError("Too many menu items");
 		}
 		item = Spawn(type, self);
-		Items[NumItems] = item;
+		Items[NumItems++] = item;
 		item.Parent = self;
 		item.Init();
-		NumItems++;
 		return item;
 	}
 
@@ -234,11 +233,10 @@ class MenuScreen:MenuObject
 		currentY = ChoicesStartY;
 		for (i = 0; i < MAX_MENU_ITEMS; i++)
 		{
-			if (Choices[i])
+			if (Choices[i] && Choices[i] != classidNone)
 			{
 				newChoice = MenuChoice(AddItem(Choices[i]));
-				newChoice.X = ChoicesStartX;
-				newChoice.Y = currentY;
+				newChoice.SetPos(ChoicesStartX, currentY);
 				currentY += newChoice.Height;
 			}
 		}
@@ -246,15 +244,16 @@ class MenuScreen:MenuObject
 
 	void CreateSelector(void)
 	{
-		if (SelectorType)
+		if (SelectorType && SelectorType != classidNone)
 		{
-			AddItem(SelectorType);
+			Selector = AddItem(SelectorType);
 		}
 	}
 
 	void Init(void)
 	{
 		::Init();
+		CreateTitle();
 		CreateChoices();
 		CreateSelector();
 	}
@@ -586,7 +585,10 @@ class MenuStaticBitmap:MenuObject
 
 	void Init(void)
 	{
-		Handle = R_RegisterPic(PicName, PicType);
+		if (PicName)
+		{
+			Handle = R_RegisterPic(PicName, PicType);
+		}
 	}
 
 	void Draw(void)
@@ -844,7 +846,7 @@ class MenuChoiceEnum:MenuChoice
 
 	boolean SetNewValue(int newValue)
 	{
-		return false;
+		return true;
 	}
 
 	void Init(void)
@@ -941,7 +943,7 @@ class MenuChoiceEnum:MenuChoice
 
 //**************************************************************************
 //**
-//**    MenuChoice_OnOff
+//**	MenuChoice_OnOff
 //**
 //**************************************************************************
 
@@ -982,7 +984,7 @@ class MenuChoiceSlider:MenuChoice
 
 	boolean SetNewValue(float newValue)
 	{
-		return false;
+		return true;
 	}
 
 	void Init(void)
@@ -992,7 +994,7 @@ class MenuChoiceSlider:MenuChoice
 		Value = GetInitialValue();
 		if (Value < MinValue)
 			Value = MinValue;
-		if (Value >= MaxValue)
+		if (Value > MaxValue)
 			Value = MaxValue;
 
 		pic_M_SLDLT = R_RegisterPic("M_SLDLT", PIC_PATCH);
@@ -1049,9 +1051,9 @@ class MenuChoiceSlider:MenuChoice
 
 		case K_RIGHTARROW:
 			newValue = Value + ValueDelta;
-			if (Value > MaxValue)
+			if (newValue > MaxValue)
 			{
-				Value = MaxValue;
+				newValue = MaxValue;
 			}
 			if (SetNewValue(newValue))
 			{
@@ -1065,6 +1067,7 @@ class MenuChoiceSlider:MenuChoice
 
 	defaultproperties
 	{
+		Height = 20;
 		Value = 0.0;
 		ValueDelta = 1.0;
 		MinValue = 0.0;
@@ -1205,7 +1208,7 @@ void ControlResponse(int key)
 
 //**************************************************************************
 //**
-//**    Slot for saves and input lines
+//**	Slot for saves and input lines
 //**
 //**************************************************************************
 
@@ -1565,6 +1568,9 @@ class MenuSList:MenuChoice
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/28 18:46:20  dj_jl
+//  Some fixes, beautification
+//
 //  Revision 1.15  2002/01/23 17:54:23  dj_jl
 //  Object-oriented menus, got rid of C-style type casting.
 //
