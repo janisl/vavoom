@@ -102,7 +102,7 @@ void Actor::ObjectSpawning(AttackType *attack, float angle)
 			newobject.Origin) * attack->AssaultSpeed;
 	}
 
-	newobject.SetState(attack->ObjInitState);
+	newobject.SetState(FindState(attack->ObjInitState));
 }
 
 //==========================================================================
@@ -1298,6 +1298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/08/24 14:56:42  dj_jl
+//  Fixes for ObjInitState.
+//
 //  Revision 1.7  2002/08/08 18:04:40  dj_jl
 //  Fixes for renamed functions.
 //
