@@ -23,10 +23,38 @@
 //**
 //**************************************************************************
 
-class PhasedLight:SectorThinker;
+class PhasedLight : Lighting;
 
-float index;
-int base;
+float		Index;
+int			Base;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int InBase, int InIndex)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	if (InIndex == -1)
+	{
+		// sector->lightlevel as the index
+		Index = itof(Sector->params.lightlevel) / 32.0;
+	}
+	else
+	{
+		Index = itof(InIndex) / 32.0;
+	}
+	Base = InBase & 255;
+	Sector->params.lightlevel = Base + PhaseTable[ftoi(Index * 32.0) & 63];
+	if (Sector->params.lightlevel > 255)
+	{
+		Sector->params.lightlevel = 255;
+	}
+}
 
 //============================================================================
 //
@@ -36,8 +64,12 @@ int base;
 
 void Tick(float deltaTime)
 {
-	index += deltaTime;
-	Sector->params.lightlevel = base + PhaseTable[ftoi(index * 32.0) & 63];
+	Index += deltaTime;
+	Sector->params.lightlevel = Base + PhaseTable[ftoi(Index * 32.0) & 63];
+	if (Sector->params.lightlevel > 255)
+	{
+		Sector->params.lightlevel = 255;
+	}
 }
 
 defaultproperties
@@ -47,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

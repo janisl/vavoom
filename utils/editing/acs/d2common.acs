@@ -5,6 +5,7 @@
 //**
 //**************************************************************************
 
+#include "vspecial.acs"
 #include "d2spec.acs"
-#include "d2defs.acs"
-#include "d2wvars.acs"
+#include "vdefs.acs"
+#include "vwvars.acs"

@@ -22,61 +22,90 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	FLOOR WAGGLE
+//**
+//**************************************************************************
 
-class FloorWaggle:SectorMover;
+class FloorWaggle : SectorMover;
 
-float originalHeight;
-float accumulator;
-float accSpeed;
-float targetScale;
-float scale;
-float scaleSpeed;
-float timer;
-int state;
+float	OriginalDist;
+float	Accumulator;
+float	AccSpeed;
+float	TargetScale;
+float	Scale;
+float	ScaleSpeed;
+float	Timer;
+int		State;
 
+//==========================================================================
+//
+//  Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int InTag, int InHeight, int InSpeed,
+	int InOffset, int InTimer)
+{
+	Sector = InSector;
+	Sector->FloorData = self;
+
+	OriginalDist = Sector->floor.dist;
+	Accumulator = itof(InOffset);
+	AccSpeed = itof(InSpeed) / 2.0;
+	Scale = 0.0;
+	TargetScale = itof(InHeight) / 64.0;
+	ScaleSpeed = TargetScale / (1.0 + 3.0 * itof(InHeight) / 255.0);
+	Timer = Timer ? itof(InTimer) : -1.0;
+	State = WGLSTATE_EXPAND;
+}
+ 
 //==========================================================================
 //
 //  Tick
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	switch (state)
+	switch (State)
 	{
 	case WGLSTATE_EXPAND:
-		scale += scaleSpeed * deltaTime;
-		if (scale >= targetScale)
+		Scale += ScaleSpeed * DeltaTime;
+		if (Scale >= TargetScale)
 		{
-			scale = targetScale;
-			state = WGLSTATE_STABLE;
+			Scale = TargetScale;
+			State = WGLSTATE_STABLE;
 		}
 		break;
+
 	case WGLSTATE_REDUCE:
-		scale -= scaleSpeed * deltaTime;
-		if (scale <= 0.0)
+		Scale -= ScaleSpeed * DeltaTime;
+		if (Scale <= 0.0)
 		{
 			// Remove
-			Sector->floorheight = originalHeight;
+			Sector->floor.dist = OriginalDist;
 			P_ChangeSector(Sector, true);
 			Finished();
 			return;
 		}
 		break;
+
 	case WGLSTATE_STABLE:
-		if (timer >= 0.0)
+		if (Timer >= 0.0)
 		{
-			timer -= deltaTime;
-			if (timer <= 0.0)
+			Timer -= DeltaTime;
+			if (Timer <= 0.0)
 			{
-				state = WGLSTATE_REDUCE;
+				State = WGLSTATE_REDUCE;
 			}
 		}
 		break;
 	}
-	accumulator += accSpeed * deltaTime;
-	Sector->floorheight = originalHeight +
-		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
+
+	Accumulator += AccSpeed * DeltaTime;
+	Sector->floor.dist = OriginalDist + FloatBobOffsets[
+		ftoi(Accumulator) & 63] * Scale / Sector->floor.normal.z;
 	P_ChangeSector(Sector, true);
 }
 
@@ -87,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:42  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

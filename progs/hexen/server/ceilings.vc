@@ -132,9 +132,42 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 	return false;
 }
 
+//==========================================================================
+//
+//	EV_StartCeilingWaggle
+//
+//==========================================================================
+
+bool EV_StartCeilingWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int				SectorIndex;
+	sector_t*		Sector;
+	CeilingWaggle	Waggle;
+	bool			RetCode;
+
+	RetCode = false;
+	for (SectorIndex = FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
+		SectorIndex = FindSectorFromTag(Arg1, SectorIndex))
+	{
+		Sector = &GLevel.Sectors[SectorIndex];
+		if (Sector->CeilingData)
+		{
+			// Already busy with another thinker
+			continue;
+		}
+		RetCode = true;
+		Waggle = NewSpecialThinker(CeilingWaggle);
+		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
+	}
+	return RetCode;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/03/16 15:04:40  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.16  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

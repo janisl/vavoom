@@ -182,286 +182,299 @@ LightingInc=0
 0x2455  13      20      ifoga0          Start spot
 0x2456  13      20      ifoga0          Start spot w/crush
 
-;       ID                              used to classify linedefs
-;       Name                    textual description of class
+;	ID				used to classify linedefs
+;	Name			textual description of class
 ;
-;       Note:   When converting a sector to a door, the linedef types
-;                       available are those in class number two.
+;	Note:	When converting a sector to a door, the linedef types
+;			available are those in class number two.
 
 [Specials.Classes]
-0x001   Special
-0x002   Door
-0x003   Ceiling
-0x004   Lift
-0x005   Floor
-0x006   Pillar
-0x007   Stairs
-0x008   ACS
-0x009   Scroll
-0x00a   Thing
-0x00b   Teleport
-0x00c   Lighting
-0x00d   Polyobject
-0x00e   Exit
-0x00f   Elevator
+0x001	Special
+0x002	Door
+0x003	Ceiling
+0x004	Lift
+0x005	Floor
+0x006	Pillar
+0x007	Stairs
+0x008	ACS
+0x009	Scroll
+0x00a	Thing
+0x00b	Teleport
+0x00c	Lighting
+0x00d	Polyobject
+0x00e	Exit
+0x00f	Floor and ceiling
 
-;       ID
-;       class
-;       description
+;	ID
+;	class
+;	description
 
 [Specials.Types]
 
 ; Special
-0x064   1       Scroll_Texture_Left( speed, -, -, -, - )
-0x065   1       Scroll_Texture_Right( speed, -, -, -, - )
-0x066   1       Scroll_Texture_Up( speed, -, -, -, - )
-0x067   1       Scroll_Texture_Down( speed, -, -, -, - )
-0x078   1       Earthquake( intensity, duration, damrad, tremrad, tag )
-0x079   1       Line_SetIdentification( line, -, -, -, - )
-0x08c   1       Sector_ChangeSound( tag, sound, -, -, - )
-0x0a0   1       3d floor( tag, -, -, -, - )
-0x0a1   1       Contents( type, trans, flags, -, - )
-0x0b5   1       Plane_Align( floor, ceiling, line_id, -, - )
-0x0d0   1       TranslucentLine( line, amount, -, -, - )
-0x0fb   1       FloorAndCeiling_LowerRaise( tag, speed, -, -, - )
-;0x081   1       UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
+0x078	1	Earthquake( intensity, duration, damrad, tremrad, tag )
+0x079	1	Line_SetIdentification( line, -, -, -, - )
+0x081	1	UsePuzzleItem( item, script, sArg0, sArg1, sArg2 )
+0x08c	1	Sector_ChangeSound( tag, sound, -, -, - )
+0x0a0	1	3d floor( tag, -, -, -, - )
+0x0a1	1	Contents( type, trans, flags, -, - )
+0x0b5	1	Plane_Align( floor, ceiling, line_id, -, - )
+0x0d0	1	TranslucentLine( line, amount, -, -, - )
 
 ; Door
-0x00a   2       Door_Close( tag, speed, -, -, - )
-0x00b   2       Door_Open( tag, speed, -, -, - )
-0x00c   2       Door_Raise( tag, speed, delay, -, - )
-0x00d   2       Door_LockedRaise( tag, speed, delay, lock, - )
-0x0f9   2       Door_CloseWaitOpen( tag, speed, delay, -, - )
-;0x0ca   2       Generic_Door( tag, speed, kind, delay, lock )
+0x00a	2	Door_Close( tag, speed, light_tag, -, - )
+0x00b	2	Door_Open( tag, speed, light_tag, -, - )
+0x00c	2	Door_Raise( tag, speed, delay, light_tag, - )
+0x00d	2	Door_LockedRaise( tag, speed, delay, lock, light_tag )
+0x0f9	2	Door_CloseWaitOpen( tag, speed, delay, light_tag, - )
+0x0ca	2	Generic_Door( tag, speed, kind, delay, lock )
 
 ; Ceiling
-0x028   3       Ceiling_LowerByValue( tag, speed, height, -, - )
-0x029   3       Ceiling_RaiseByValue( tag, speed, height, -, - )
-0x02a   3       Ceiling_CrushAndRaise( tag, speed, crush, -, - )
-0x02b   3       Ceiling_LowerAndCrush( tag, speed, crush, -, - )
-0x02c   3       Ceiling_CrushStop( tag, -, -, -, - )
-0x02d   3       Ceiling_CrushRaiseAndStay( tag, speed, crush, -, - )
-0x045   3       Ceiling_MoveToValueTimes8( tag, speed, height, negative, - )
-0x0c4   3       Ceiling_CrushAndRaiseA( tag, dnspeed, upspeed, damage, - )
-0x0c5   3       Ceiling_CrushAndRaiseSilentA( tag, dnspeed, upspeed, damage, - )
-0x0fe   3       Ceiling_LowerToFloor( tag, speed, -, -, - )
-;0x0c0   3       Ceiling_LowerToHighestFloor( tag, speed, -, -, - )
-;0x0c1   3       Ceiling_LowerInstant( tag, -, height, -, - )
-;0x0c2   3       Ceiling_RaiseInstant( tag, -, height, -, - )
-;0x0c3   3       Ceiling_CrushRaiseAndStayA( tag, dnspeed, upspeed, damage, - )
-;0x0c6   3       Ceiling_RaiseByValueTimes8( tag, speed, height, -, - )
-;0x0c7   3       Ceiling_LowerByValueTimes8( tag, speed, height, -, - )
-;0x0c9   3       Generic_Ceiling( tag, speed, height, target, chg/mdl/dir/crsh )
-;0x0cd   3       Generic_Crusher( tag, dnspeed, upspeed, silent, damage )
-;0x0fb   3       FloorAndCeiling_LowerRaise( tag, floorspeed, ceilingspeed, -, - )
-;0x0fc   3       Ceiling_RaiseToNearest( tag, speed, -, -, - )
-;0x0fd   3       Ceiling_LowerToLowest( tag, speed, -, -, - )
-;0x0ff   3       Ceiling_CrushRaiseAndStaySilentA( tag, dnspeed, upspeed, damage, - )
+0x026	5	Ceiling_Waggle( tag, height, freq, offset, duration )
+0x028	3	Ceiling_LowerByValue( tag, speed, height, -, - )
+0x029	3	Ceiling_RaiseByValue( tag, speed, height, -, - )
+0x02a	3	Ceiling_CrushAndRaise( tag, speed, crush, -, - )
+0x02b	3	Ceiling_LowerAndCrush( tag, speed, crush, -, - )
+0x02c	3	Ceiling_CrushStop( tag, -, -, -, - )
+0x02d	3	Ceiling_CrushRaiseAndStay( tag, speed, crush, -, - )
+0x045	3	Ceiling_MoveToValueTimes8( tag, speed, height, negative, - )
+0x0c0	3	Ceiling_LowerToHighestFloor( tag, speed, -, -, - )
+0x0c1	3	Ceiling_LowerInstant( tag, -, height, -, - )
+0x0c2	3	Ceiling_RaiseInstant( tag, -, height, -, - )
+0x0c3	3	Ceiling_CrushRaiseAndStayA( tag, dnspeed, upspeed, damage, - )
+0x0c4	3	Ceiling_CrushAndRaiseA( tag, dnspeed, upspeed, damage, - )
+0x0c5	3	Ceiling_CrushAndRaiseSilentA( tag, dnspeed, upspeed, damage, - )
+0x0c6	3	Ceiling_RaiseByValueTimes8( tag, speed, height, -, - )
+0x0c7	3	Ceiling_LowerByValueTimes8( tag, speed, height, -, - )
+0x0c9	3	Generic_Ceiling( tag, speed, height, target, chg/mdl/dir/crsh )
+0x0cd	3	Generic_Crusher( tag, dnspeed, upspeed, silent, damage )
+0x0fc	3	Ceiling_RaiseToNearest( tag, speed, -, -, - )
+0x0fd	3	Ceiling_LowerToLowest( tag, speed, -, -, - )
+0x0fe	3	Ceiling_LowerToFloor( tag, speed, -, -, - )
+0x0ff	3	Ceiling_CrushRaiseAndStaySilentA( tag, dnspeed, upspeed, damage, - )
 
 ; Lift
-0x03c   4       Plat_PerpetualRaise( tag, speed, delay, -, - )
-0x03d   4       Plat_Stop( tag, -, -, -, - )
-0x03e   4       Plat_DownWaitUpStay( tag, speed, delay, -, - )
-0x03f   4       Plat_DownByValue( tag, speed, delay, height, - )
-0x040   4       Plat_UpWaitDownStay( tag, speed, delay, -, - )
-0x041   4       Plat_UpByValue( tag, speed, delay, height, - )
-0x0ce   4       Plat_DownWaitUpStayLip( tag, speed, delay, lip, - )
-0x0cf   4       Plat_PerpetualRaiseLip( tag, speed, delay, lip, - )
-0x0e4   4       Plat_RaiseAndStayTx0( tag, speed, -, -, - )
-0x0e6   4       Plat_UpByValueStayTx( tag, speed, height, -, - )
-;0x0cb   4       Generic_Lift( tag, speed, delay, target, height )
-;0x0e7   4       Plat_ToggleCeiling( tag, -, -, -, - )
+0x03c	4	Plat_PerpetualRaise( tag, speed, delay, -, - )
+0x03d	4	Plat_Stop( tag, -, -, -, - )
+0x03e	4	Plat_DownWaitUpStay( tag, speed, delay, -, - )
+0x03f	4	Plat_DownByValue( tag, speed, delay, height, - )
+0x040	4	Plat_UpWaitDownStay( tag, speed, delay, -, - )
+0x041	4	Plat_UpByValue( tag, speed, delay, height, - )
+0x0ac	4	Plat_UpNearestWaitDownStay( tag, speed, delay, -, - )
+0x0cb	4	Generic_Lift( tag, speed, delay, target, height )
+0x0ce	4	Plat_DownWaitUpStayLip( tag, speed, delay, lip, floor_sound )
+0x0cf	4	Plat_PerpetualRaiseLip( tag, speed, delay, lip, - )
+0x0e4	4	Plat_RaiseAndStayTx0( tag, speed, -, -, - )
+0x0e6	4	Plat_UpByValueStayTx( tag, speed, height, -, - )
+0x0e7	4	Plat_ToggleCeiling( tag, -, -, -, - )
 
 ; Floor
-0x014   5       Floor_LowerByValue( tag, speed, height, -, - )
-0x015   5       Floor_LowerToLowest( tag, speed, -, -, - )
-0x016   5       Floor_LowerToNearest( tag, speed, -, -, - )
-0x017   5       Floor_RaiseByValue( tag, speed, height, -, - )
-0x018   5       Floor_RaiseToHighest( tag, speed, -, -, - )
-0x019   5       Floor_RaiseToNearest( tag, speed, -, -, - )
-0x01c   5       Floor_RaiseAndCrush( tag, speed, crush, -, - )
-0x023   5       Floor_RaiseByValueTimes8( tag, speed, height, -, - )
-0x024   5       Floor_LowerByValueTimes8( tag, speed, height, -, - )
-0x02e   5       Floor_CrushStop( tag, -, -, -, - )
-0x042   5       Floor_LowerInstant( tag, -, height, -, - )
-0x043   5       Floor_RaiseInstant( tag, -, height, -, - )
-0x044   5       Floor_MoveToValueTimes8( tag, speed, height, negative, - )
-0x08a   5       Floor_Waggle( tag, height, freq, offset, duration )
-0x0ee   5       Floor_RaiseToLowestCeiling( tag, speed, -, -, - )
-0x0ef   5       Floor_RaiseByValueTxTy( tag, speed, height, -, - )
-0x0f0   5       Floor_RaiseByTexture( tag, speed, -, -, - )
-0x0f1   5       Floor_LowerToLowestTxTy( tag, speed, -, -, - )
-0x0f2   5       Floor_LowerToHighest( tag, speed, adjust, -, - )
-0x0fa   5       Floor_Donut( tag, pillarspeed, slimespeed, -, - )
-;0x0c8   5       Generic_Floor( tag, speed, height, target, chg/mdl/dir/crsh )
-;0x0eb   5       Floor_TransferTrigger( tag, -, -, -, - )
-;0x0ec   5       Floor_TransferNumeric( tag, -, -, -, - )
+0x014	5	Floor_LowerByValue( tag, speed, height, -, - )
+0x015	5	Floor_LowerToLowest( tag, speed, -, -, - )
+0x016	5	Floor_LowerToNearest( tag, speed, -, -, - )
+0x017	5	Floor_RaiseByValue( tag, speed, height, -, - )
+0x018	5	Floor_RaiseToHighest( tag, speed, -, -, - )
+0x019	5	Floor_RaiseToNearest( tag, speed, -, -, - )
+0x01c	5	Floor_RaiseAndCrush( tag, speed, crush, -, - )
+0x023	5	Floor_RaiseByValueTimes8( tag, speed, height, -, - )
+0x024	5	Floor_LowerByValueTimes8( tag, speed, height, -, - )
+0x02e	5	Floor_CrushStop( tag, -, -, -, - )
+0x042	5	Floor_LowerInstant( tag, -, height, -, - )
+0x043	5	Floor_RaiseInstant( tag, -, height, -, - )
+0x044	5	Floor_MoveToValueTimes8( tag, speed, height, negative, - )
+0x08a	5	Floor_Waggle( tag, height, freq, offset, duration )
+0x0c8	5	Generic_Floor( tag, speed, height, target, chg/mdl/dir/crsh )
+0x0ee	5	Floor_RaiseToLowestCeiling( tag, speed, -, -, - )
+0x0ef	5	Floor_RaiseByValueTxTy( tag, speed, height, -, - )
+0x0f0	5	Floor_RaiseByTexture( tag, speed, -, -, - )
+0x0f1	5	Floor_LowerToLowestTxTy( tag, speed, -, -, - )
+0x0f2	5	Floor_LowerToHighest( tag, speed, adjust, -, - )
+0x0fa	5	Floor_Donut( tag, pillarspeed, slimespeed, -, - )
+0x0eb	5	Floor_TransferTrigger( tag, -, -, -, - )
+0x0ec	5	Floor_TransferNumeric( tag, -, -, -, - )
 
 ; Pillar
-0x01d   6       Pillar_Build( tag, speed, height, -, - )
-0x01e   6       Pillar_Open( tag, speed, f_height, c_height, - )
-0x05e   6       Pillar_BuildAndCrush( tag, speed, height, crush, - )
+0x01d	6	Pillar_Build( tag, speed, height, -, - )
+0x01e	6	Pillar_Open( tag, speed, f_height, c_height, - )
+0x05e	6	Pillar_BuildAndCrush( tag, speed, height, crush, - )
 
 ; Stair
-0x01a   7       Stairs_BuildDown( tag, speed, height, delay, reset )
-0x01b   7       Stairs_BuildUp( tag, speed, height, delay, reset )
-0x01f   7       Stairs_BuildDownSync( tag, speed, height, reset, - )
-0x020   7       Stairs_BuildUpSync( tag, speed, height, reset, - )
+0x01a	7	Stairs_BuildDown( tag, speed, height, delay, reset )
+0x01b	7	Stairs_BuildUp( tag, speed, height, delay, reset )
+0x01f	7	Stairs_BuildDownSync( tag, speed, height, reset, - )
+0x020	7	Stairs_BuildUpSync( tag, speed, height, reset, - )
+
 0x0d9   7       Stairs_BuildUpOld( tag, speed, height, delay, reset )
 ;0x0cc   7       Generic_Stairs (tag, speed, step, dir/idntext, reset )
 
 ; ACS
-0x050   8       ACS_Execute( script, map, sArg0, sArg1, sArg2 )
-0x051   8       ACS_Suspend( script, map, -, -, - )
-0x052   8       ACS_Terminate( script, map, -, -, - )
-0x053   8       ACS_LockedExecute( script, map, sArg0, sArg1, lock )
-0x0e2   8       ACS_ExecuteAlways( script, map, sArg0, sArg1, sArg2 )
+0x050	8	ACS_Execute( script, map, sArg0, sArg1, sArg2 )
+0x051	8	ACS_Suspend( script, map, -, -, - )
+0x052	8	ACS_Terminate( script, map, -, -, - )
+0x053	8	ACS_LockedExecute( script, map, sArg0, sArg1, lock )
+0x054	8	ACS_ExecuteWithResult( script, map, sArg0, sArg1, sArg2 )
+0x0e2	8	ACS_ExecuteAlways( script, map, sArg0, sArg1, sArg2 )
+
+; Scroll
+0x064	9	Scroll_Texture_Left( speed, -, -, -, - )
+0x065	9	Scroll_Texture_Right( speed, -, -, -, - )
+0x066	9	Scroll_Texture_Up( speed, -, -, -, - )
+0x067	9	Scroll_Texture_Down( speed, -, -, -, - )
 
 ; Thing
-0x048   10      ThrustThing( angle, distance, -, -, - )
-0x049   10      DamageThing( damage, -, -, -, - )
-0x082   10      Thing_Activate( tag, -, -, -, - )
-0x083   10      Thing_Deactivate( tag, -, -, -, - )
-0x084   10      Thing_Remove( tag, -, -, -, - )
-0x085   10      Thing_Destroy( tag, -, -, -, - )
-0x086   10      Thing_Projectile( tag, type, angle, speed, vspeed )
-0x088   10      Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
-0x087   10      Thing_Spawn( tag, spawntype, angle, -, - )
-0x089   10      Thing_SpawnNoFog( tag, spawntype, angle, -, - )
-;ZDoom
+0x048	10	ThrustThing( angle, distance, -, -, - )
+0x049	10	DamageThing( damage, -, -, -, - )
+0x082	10	Thing_Activate( tag, -, -, -, - )
+0x083	10	Thing_Deactivate( tag, -, -, -, - )
+0x084	10	Thing_Remove( tag, -, -, -, - )
+0x085	10	Thing_Destroy( tag, -, -, -, - )
+0x086	10	Thing_Projectile( tag, type, angle, speed, vspeed )
+0x087	10	Thing_Spawn( tag, spawntype, angle, -, - )
+0x088	10	Thing_ProjectileGravity( tag, type, angle, speed, vspeed )
+0x089	10	Thing_SpawnNoFog( tag, spawntype, angle, -, - )
+
 ;0x0e5   10      Thing_SetGoal( tag, goal, delay, -, - )
 ;0x0f8   10      HealThing( amount, -, -, -, - )
 
 ; Teleport
-0x046   11      Teleport( tag, -, -, -, - )
-0x047   11      Teleport_NoFog( tag, -, -, -, - )
-0x04a   11      Teleport_NewMap( map, position, -, -, - )
-0x04b   11      Teleport_EndGame( -, -, -, -, - )
-0x0d7   11      Teleport_Line( thisline, destline, reverse, -, - )
+0x027	11	Teleport_ZombieChanger( tag, sector_tag, no_src_fog, -, - )
+0x046	11	Teleport( tag, sector_tag, no_src_fog, -, - )
+0x047	11	Teleport_NoFog( tag, use_angle, sector_tag, -, - )
+0x04a	11	Teleport_NewMap( map, position, save_angle, -, - )
+0x04b	11	Teleport_EndGame( -, -, -, -, - )
+0x04c	11	TeleportOther( other_tid, dest_tid, fog, -, - )
+0x04d	11	TeleportGroup( group_tid, source_tid, dest_tid, moveSource, fog )
+0x04e	11	TeleportInSector( tag, source_tid, dest_tid, fog, group_tid )
+0x0d7	11	Teleport_Line( thisline, destline, reverse, -, - )
 
 ; Lighting
-0x06d   12      Light_ForceLightning( tag, -, -, -, - )
-0x06e   12      Light_RaiseByValue( tag, value, -, -, - )
-0x06f   12      Light_LowerByValue( tag, value, -, -, - )
-0x070   12      Light_ChangeToValue( tag, value, -, -, - )
-0x071   12      Light_Fade( tag, value, tics, -, - )
-0x072   12      Light_Glow( tag, upper, lower, tics, - )
-0x073   12      Light_Flicker( tag, upper, lower, -, - )
-0x074   12      Light_Strobe( tag, upper, lower, u-tics, l-tics )
-0x0e8   12      Light_StrobeDoom( tag, u-tics, l-tics, -, - )
-0x0e9   12      Light_MinNeighbor( tag, -, -, -, - )
-0x0ea   12      Light_MaxNeighbor( tag, -, -, -, - )
+0x06d	12	Light_ForceLightning( tag, -, -, -, - )
+0x06e	12	Light_RaiseByValue( tag, value, -, -, - )
+0x06f	12	Light_LowerByValue( tag, value, -, -, - )
+0x070	12	Light_ChangeToValue( tag, value, -, -, - )
+0x071	12	Light_Fade( tag, value, tics, -, - )
+0x072	12	Light_Glow( tag, upper, lower, tics, - )
+0x073	12	Light_Flicker( tag, upper, lower, -, - )
+0x074	12	Light_Strobe( tag, upper, lower, u-tics, l-tics )
+0x075	12	Light_Stop( tag, -, -, -, -, )
+0x0e8	12	Light_StrobeDoom( tag, u-tics, l-tics, sync, - )
+0x0e9	12	Light_MinNeighbor( tag, -, -, -, - )
+0x0ea	12	Light_MaxNeighbor( tag, -, -, -, - )
 
 ; Polyobject
-0x001   13      Polyobj_StartLine( po, mirror, sound, -, - )
-0x002   13      Polyobj_RotateLeft( po, speed, angle, -, - )
-0x003   13      Polyobj_RotateRight( po, speed, angle, -, - )
-0x004   13      Polyobj_Move( po, speed, angle, distance, - )
-0x005   13      Polyobj_ExplicitLine( po, order, mirror, sound, - )
-0x006   13      Polyobj_MoveTimes8( po, speed, angle, distance, - )
-0x007   13      Polyobj_DoorSwing( po, speed, angle, delay, - )
-0x008   13      Polyobj_DoorSlide( po, speed, angle, distance, delay )
-0x05a   13      Polyobj_OR_RotateLeft( po, speed, angle, -, - )
-0x05b   13      Polyobj_OR_RotateRight( po, speed, angle, -, - )
-0x05c   13      Polyobj_OR_Move( po, speed, angle, distance, - )
-0x05d   13      Polyobj_OR_MoveTimes8( po, speed, angle, distance, - )
+0x001	13	Polyobj_StartLine( po, mirror, sound, -, - )
+0x002	13	Polyobj_RotateLeft( po, speed, angle, -, - )
+0x003	13	Polyobj_RotateRight( po, speed, angle, -, - )
+0x004	13	Polyobj_Move( po, speed, angle, distance, - )
+0x005	13	Polyobj_ExplicitLine( po, order, mirror, sound, - )
+0x006	13	Polyobj_MoveTimes8( po, speed, angle, distance, - )
+0x007	13	Polyobj_DoorSwing( po, speed, angle, delay, - )
+0x008	13	Polyobj_DoorSlide( po, speed, angle, distance, delay )
+0x05a	13	Polyobj_OR_RotateLeft( po, speed, angle, -, - )
+0x05b	13	Polyobj_OR_RotateRight( po, speed, angle, -, - )
+0x05c	13	Polyobj_OR_Move( po, speed, angle, distance, - )
+0x05d	13	Polyobj_OR_MoveTimes8( po, speed, angle, distance, - )
 
 ; Exit
-0x0f3   14      Exit_Normal( position, -, -, -, - )
-0x0f4   14      Exit_Secret( position, -, -, -, - )
+0x0f3	14	Exit_Normal( position, -, -, -, - )
+0x0f4	14	Exit_Secret( position, -, -, -, - )
 
-; Elevator
-0x05f   15      FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
-0x060   15      FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
+; Floor and ceiling
+0x05f	15	FloorAndCeiling_LowerByValue( tag, speed, height, -, - )
+0x060	15	FloorAndCeiling_RaiseByValue( tag, speed, height, -, - )
+0x0f5	15	Elevator_RaiseToNearest( tag, speed, -, -, - )
+0x0f6	15	Elevator_MoveToFloor( tag, speed, -, -, - )
+0x0f7	15	Elevator_LowerToNearest( tag, speed, -, -, - )
+0x0fb	15	FloorAndCeiling_LowerRaise( tag, fspeed, cspeed, -, - )
 
 [Sectors.Types]
-0x0001 Phased light (manual)
-0x0002 Phased light sequence start
-0x0003 Phased light sequence 1
-0x0004 Phased light sequence 2
-0x001a Stairs 1
-0x001b Stairs 2
-0x0028 Wind east (weak)
-0x0029 Wind east (normal)
-0x002a Wind east (strong)
-0x002b Wind north (weak)
-0x002c Wind north (normal)
-0x002d Wind north (strong)
-0x002e Wind south (weak)
-0x002f Wind south (normal)
-0x0030 Wind south (strong)
-0x0031 Wind west (weak)
-0x0032 Wind west (normal)
-0x0033 Wind west (strong)
-0x0041 Blink (random)
-0x0042 Blink (1/2 second)
-0x0043 Blink (1 second)
-0x0044 -10/20% health, blink (1/2 second)
-0x0045 -5/10% health
-0x0046 -2/4% health
-0x0047 -2/5% health
-0x0048 Light oscillates
-0x004a Ceiling drops (after 30 seconds)
-0x004b -10/20% health, end level/game
-0x004c Blink (1 second sync.)
-0x004d Blink (1/2 second sync.)
-0x004e Ceiling rises (after 300 seconds)
-0x004f Reduced floor friction
-0x0050 -10/20% health
-0x0051 Light flickers randomly
-0x0052 -5/10% health, lava
-0x0053 -10/20% health, lava
-0x0054 -10/20% health, lava, scroll east
-0x0069 Hazardous area
-0x0073 Instant death
-0x0074 Double hazardous area
-0x0076 Scroll to current orientation
-0x00c7 Outdoor lightning
-0x00c7 Indoor lightning (bright)
-0x00c6 Indoor lightning (dim)
-0x00c8 Use second sky image
-0x00c9 Scroll north (slow)
-0x00ca Scroll north (normal)
-0x00cb Scroll north (fast)
-0x00cc Scroll east (slow)
-0x00cd Scroll east (normal)
-0x00ce Scroll east (fast)
-0x00cf Scroll south (slow)
-0x00d0 Scroll south (normal)
-0x00d1 Scroll south (fast)
-0x00d2 Scroll west (slow)
-0x00d3 Scroll west (normal)
-0x00d4 Scroll west (fast)
-0x00d5 Scroll northwest (slow)
-0x00d6 Scroll northwest (normal)
-0x00d7 Scroll northwest (fast)
-0x00d8 Scroll northeast (slow)
-0x00d9 Scroll northeast (normal)
-0x00da Scroll northeast (fast)
-0x00db Scroll southeast (slow)
-0x00dc Scroll southeast (normal)
-0x00dd Scroll southeast (fast)
-0x00de Scroll southwest (slow)
-0x00df Scroll southwest (normal)
-0x00e0 Scroll southwest (fast)
-0x00e1 Scroll east (very slow)
-0x00e2 Scroll east (slow)
-0x00e3 Scroll east (normal)
-0x00e4 Scroll east (fast)
-0x00e5 Scroll east (very fast)
-0x00e6 Scroll north (very slow)
-0x00e7 Scroll north (slow)
-0x00e8 Scroll north (normal)
-0x00e9 Scroll north (fast)
-0x00ea Scroll north (very fast)
-0x00eb Scroll south (very slow)
-0x00ec Scroll south (slow)
-0x00ed Scroll south (normal)
-0x00ee Scroll south (fast)
-0x00ef Scroll south (very fast)
-0x00f0 Scroll west (very slow)
-0x00f1 Scroll west (slow)
-0x00f2 Scroll west (normal)
-0x00f3 Scroll west (fast)
-0x00f4 Scroll west (very fast)
-0x0400 Secret
+0x0001	Phased light (manual)
+0x0002	Phased light sequence start
+0x0003	Phased light sequence 1
+0x0004	Phased light sequence 2
+0x001a	Stairs 1
+0x001b	Stairs 2
+0x0028	Wind east (weak)
+0x0029	Wind east (normal)
+0x002a	Wind east (strong)
+0x002b	Wind north (weak)
+0x002c	Wind north (normal)
+0x002d	Wind north (strong)
+0x002e	Wind south (weak)
+0x002f	Wind south (normal)
+0x0030	Wind south (strong)
+0x0031	Wind west (weak)
+0x0032	Wind west (normal)
+0x0033	Wind west (strong)
+0x0041	Blink (random)
+0x0042	Blink (1/2 second)
+0x0043	Blink (1 second)
+0x0044	-10/20% health, blink (1/2 second)
+0x0045	-5/10% health
+0x0046	-2/4% health
+0x0047	-2/5% health
+0x0048	Light oscillates
+0x004a	Ceiling drops (after 30 seconds)
+0x004b	-10/20% health, end level/game
+0x004c	Blink (1 second sync.)
+0x004d	Blink (1/2 second sync.)
+0x004e	Ceiling rises (after 300 seconds)
+0x004f	Reduced floor friction
+0x0050	-10/20% health
+0x0051	Light flickers randomly
+0x0052	-5/10% health, lava
+0x0053	-10/20% health, lava
+0x0054	-10/20% health, lava, scroll east
+0x0069	Hazardous area
+0x0073	Instant death
+0x0074	Double hazardous area
+0x0076	Scroll to current orientation
+0x00c7	Outdoor lightning
+0x00c7	Indoor lightning (bright)
+0x00c6	Indoor lightning (dim)
+0x00c8	Use second sky image
+0x00c9	Scroll north (slow)
+0x00ca	Scroll north (normal)
+0x00cb	Scroll north (fast)
+0x00cc	Scroll east (slow)
+0x00cd	Scroll east (normal)
+0x00ce	Scroll east (fast)
+0x00cf	Scroll south (slow)
+0x00d0	Scroll south (normal)
+0x00d1	Scroll south (fast)
+0x00d2	Scroll west (slow)
+0x00d3	Scroll west (normal)
+0x00d4	Scroll west (fast)
+0x00d5	Scroll northwest (slow)
+0x00d6	Scroll northwest (normal)
+0x00d7	Scroll northwest (fast)
+0x00d8	Scroll northeast (slow)
+0x00d9	Scroll northeast (normal)
+0x00da	Scroll northeast (fast)
+0x00db	Scroll southeast (slow)
+0x00dc	Scroll southeast (normal)
+0x00dd	Scroll southeast (fast)
+0x00de	Scroll southwest (slow)
+0x00df	Scroll southwest (normal)
+0x00e0	Scroll southwest (fast)
+0x00e1	Scroll east (very slow)
+0x00e2	Scroll east (slow)
+0x00e3	Scroll east (normal)
+0x00e4	Scroll east (fast)
+0x00e5	Scroll east (very fast)
+0x00e6	Scroll north (very slow)
+0x00e7	Scroll north (slow)
+0x00e8	Scroll north (normal)
+0x00e9	Scroll north (fast)
+0x00ea	Scroll north (very fast)
+0x00eb	Scroll south (very slow)
+0x00ec	Scroll south (slow)
+0x00ed	Scroll south (normal)
+0x00ee	Scroll south (fast)
+0x00ef	Scroll south (very fast)
+0x00f0	Scroll west (very slow)
+0x00f1	Scroll west (slow)
+0x00f2	Scroll west (normal)
+0x00f3	Scroll west (fast)
+0x00f4	Scroll west (very fast)
+0x0400	Secret

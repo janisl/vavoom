@@ -64,7 +64,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Dir = (InStairsType == STAIRSEV_DownNormal ||
 		InStairsType == STAIRSEV_DownSync) ? -1 : 1;
 
-	Height = FindHighestFloorPoint(InSector, NULL);
+	Height = GetPlanePointZ(&Sector->floor, vector(0.0, 0.0, 0.0));
 	switch (InStairsType)
 	{
 	case STAIRSEV_DownNormal:
@@ -129,8 +129,7 @@ void QueueInit(sector_t* InSector, int InType, float InHeight, int InStairsType,
 
 	QueueHeight += StairStepDelta;
 
-	FindHighestFloorPoint(Sector, &Spot);
-	Spot.z = QueueHeight;
+	Spot = vector(0.0, 0.0, QueueHeight);
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 
 	DelayTotal = InDelay;
@@ -299,6 +298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

@@ -2345,10 +2345,12 @@ bool TeleportMove(TVec newOrg)
 	// the move is ok,
 	// so link the thing into its new position
 	UnlinkFromWorld();
-
 	Origin = newOrg;
-
 	LinkToWorld();
+	if (newOrg.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
 
 	return true;
 }
@@ -2359,7 +2361,7 @@ bool TeleportMove(TVec newOrg)
 //
 //==========================================================================
 
-bool Teleport(float x, float y, float angle, bool usefog)
+bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	TVec oldOrg;
 	float aboveFloor;
@@ -2368,7 +2370,7 @@ bool Teleport(float x, float y, float angle, bool usefog)
 
 	oldOrg = Origin;
 	aboveFloor = Origin.z - FloorZ;
-	if (!TeleportMove(vector(x, y, Origin.z)))
+	if (!TeleportMove(Dst))
 	{
 		return false;
 	}
@@ -2376,7 +2378,7 @@ bool Teleport(float x, float y, float angle, bool usefog)
 	{
 		if (Player.Powers[pw_flight] && aboveFloor)
 		{
-			Origin.z = FloorZ + aboveFloor;
+			Origin.z = Origin.z + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
@@ -2385,9 +2387,8 @@ bool Teleport(float x, float y, float angle, bool usefog)
 		}
 		else
 		{
-			Origin.z = FloorZ;
 			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
-			if (usefog)
+			if (!KeepDir)
 			{
 				Angles.pitch = 0.0;
 			}
@@ -2396,25 +2397,27 @@ bool Teleport(float x, float y, float angle, bool usefog)
 	}
 	else if (bMissile)
 	{
-		Origin.z = FloorZ + aboveFloor;
+		Origin.z = Origin.z + aboveFloor;
 		if (Origin.z + Height > CeilingZ)
 		{
 			Origin.z = CeilingZ - Height;
 		}
 	}
-	else
+	// Spawn teleport fog at source and destination
+	fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
+	if (SrcFog)
 	{
-		Origin.z = FloorZ;
-	}
-	if (usefog)
-	{
-		// Spawn teleport fog at source and destination
-		fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
 		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
 		fog.PlaySound('Teleport', CHAN_VOICE);
-		fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
-			y + 20.0 * sin(angle), Origin.z + fogDelta));
+	}
+	if (DstFog)
+	{
+		fog = Spawn(TeleportFog, vector(Origin.x + 20.0 * cos(angle),
+			Origin.y + 20.0 * sin(angle), Origin.z + fogDelta));
 		fog.PlaySound('Teleport', CHAN_VOICE);
+	}
+	if (!KeepDir)
+	{
 		if (bIsPlayer && !Player.Powers[pw_weaponlevel2])
 		{
 			// Freeze player for about .5 sec
@@ -2435,7 +2438,7 @@ bool Teleport(float x, float y, float angle, bool usefog)
 		Velocity.x = Speed * cos(angle);
 		Velocity.y = Speed * sin(angle);
 	}
-	else if (usefog)
+	else if (!KeepDir)
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -2960,6 +2963,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/16 15:04:21  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.10  2004/12/27 12:23:12  dj_jl
 //  Multiple small changes for version 1.16
 //

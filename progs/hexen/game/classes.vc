@@ -44,6 +44,8 @@
 #include "StairStepMover.vc"
 #include "Pillar.vc"
 #include "FloorWaggle.vc"
+#include "CeilingWaggle.vc"
+#include "Elevator.vc"
 #include "Platform.vc"
 #include "PolyobjThinker.vc"
 #include "PolyobjRotator.vc"
@@ -148,6 +150,8 @@
 #include "TeleportFog.vc"
 #include "TeleSmoke.vc"
 #include "TeleportSpot.vc"
+#include "TeleportSpot2.vc"
+#include "TeleportSpot3.vc"
 #include "Blood.vc"
 #include "BloodSplatter.vc"
 #include "Gibs.vc"
@@ -497,6 +501,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.5  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

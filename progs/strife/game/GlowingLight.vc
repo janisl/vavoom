@@ -22,18 +22,35 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//
-//  GLOWING LIGHT
-//
+//**
+//**	GLOWING LIGHT
+//**
 //**************************************************************************
 
-class GlowingLight:SectorThinker;
+class GlowingLight : Lighting;
 
-int direction;
-int maxlight;
-int minlight;
+float		Speed;
+int			Direction;
+int			MaxLight;
+int			MinLight;
 
-float GlowSpeed;
+//==========================================================================
+//
+//  Init
+//
+//  Initialise glowing light
+//
+//==========================================================================
+
+void Init(sector_t* InSector)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	MinLight = FindMinSurroundingLight(Sector, Sector->params.lightlevel);
+	MaxLight = Sector->params.lightlevel;
+	Direction = -1;
+}
 
 //==========================================================================
 //
@@ -41,27 +58,27 @@ float GlowSpeed;
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	switch (direction)
+	switch (Direction)
 	{
 	case -1:
 		// DOWN
-		Sector->params.lightlevel -= ftoi(GlowSpeed * deltaTime);
-		if (Sector->params.lightlevel <= minlight)
+		Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel <= MinLight)
 		{
-			Sector->params.lightlevel += ftoi(GlowSpeed * deltaTime);
-			direction = 1;
+			Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+			Direction = 1;
 		}
 		break;
 
 	case 1:
 		// UP
-		Sector->params.lightlevel += ftoi(GlowSpeed * deltaTime);
-		if (Sector->params.lightlevel >= maxlight)
+		Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel >= MaxLight)
 		{
-			Sector->params.lightlevel -= ftoi(GlowSpeed * deltaTime);
-			direction = -1;
+			Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+			Direction = -1;
 		}
 		break;
 	}
@@ -69,12 +86,15 @@ void Tick(float deltaTime)
 
 defaultproperties
 {
-	GlowSpeed = 256.0;
+	Speed = 256.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:42  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

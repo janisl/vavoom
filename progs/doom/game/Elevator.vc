@@ -1,0 +1,167 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Elevator : SectorMover;
+
+int			Type;
+int			Direction;
+float		Speed;
+float		FloorDestDist;
+float		CeilingDestDist;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, int InType, line_t* Line)
+{
+	float		FloorHeight;
+	float		CeilingHeight;
+	float		NewHeight;
+	TVec		Spot;
+
+	Sector = InSector;
+	Sector->FloorData = self;
+	Sector->CeilingData = self;
+
+	Type = InType;
+	Speed = itof(Arg2) * 35.0 / 8.0;
+
+	FloorHeight = GetPlanePointZ(&Sector->floor, Sector->soundorg);
+	CeilingHeight = GetPlanePointZ(&Sector->ceiling, Sector->soundorg);
+
+	//	Set up the fields according to the type of elevator action.
+	switch (Type)
+	{
+	//	Elevator down to next floor.
+	case ELEVEV_Down:
+		Direction = -1;
+		NewHeight = FindNextLowestFloor(Sector, &Spot);
+		Spot.z = NewHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Spot.z += GetPlanePointZ(&Sector->ceiling, Spot) -
+			GetPlanePointZ(&Sector->floor, Spot);
+		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
+		break;
+
+	//	Elevator up to next floor.
+	case ELEVEV_Up:
+		Direction = 1;
+		NewHeight = FindNextHighestFloor(Sector, &Spot);
+		Spot.z = NewHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Spot.z += GetPlanePointZ(&Sector->ceiling, Spot) -
+			GetPlanePointZ(&Sector->floor, Spot);
+		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
+		break;
+
+	//	Elevator to floor height of activating switch's front sector.
+	case ELEVEV_Current:
+		Spot = *Line->v1;
+		NewHeight = GetPlanePointZ(&Line->frontsector->floor, Spot);
+		Spot.z = NewHeight;
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Spot.z += GetPlanePointZ(&Sector->ceiling, Spot) -
+			GetPlanePointZ(&Sector->floor, Spot);
+		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
+		Direction = FloorDestDist > Sector->floor.dist ? 1 : -1;
+		break;
+
+	//	Elevate up by a specific amount.
+	case ELEVEV_Raise:
+		Direction = 1;
+		Spot = Sector->soundorg;
+		Spot.z = FloorHeight + itof(Arg3);
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Spot.z = CeilingHeight + itof(Arg3);
+		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
+		break;
+
+	//	Elevate down by a specific amount.
+	case ELEVEV_Lower:
+		Direction = -1;
+		Spot = Sector->soundorg;
+		Spot.z = FloorHeight - itof(Arg3);
+		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		Spot.z = CeilingHeight - itof(Arg3);
+		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
+		break;
+	}
+//	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	int			Res;
+
+	if (Direction < 0)	// moving down
+	{
+		Res = MovePlane(Sector, Speed * DeltaTime, CeilingDestDist, 0, 1,
+			Direction, false);
+		if (Res == RES_OK || Res == RES_PASTDEST)
+		{
+			MovePlane(Sector, Speed * DeltaTime, FloorDestDist, 0, 0,
+				Direction, false);
+		}
+	}
+	else // up
+	{
+		Res = MovePlane(Sector, Speed * DeltaTime, FloorDestDist, 0, 0,
+			Direction, false);
+		if (Res == RES_OK || Res == RES_PASTDEST)
+		{
+			MovePlane(Sector, Speed * DeltaTime, CeilingDestDist, 0, 1,
+				Direction, false);
+		}
+	}
+
+	if (Res == RES_PASTDEST)	// if destination height acheived
+	{
+		// make floor stop sound
+		//SN_StopSequence(Sector);
+		Finished();		// remove elevator from actives
+	}
+}
+
+defaultproperties
+{
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
+//**************************************************************************

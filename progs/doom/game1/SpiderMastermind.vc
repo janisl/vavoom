@@ -140,7 +140,7 @@ void A_BossDeath(void)
 		return;
 	}
 
-	G_ExitLevel();
+	G_ExitLevel(0);
 }
 
 __states__
@@ -203,6 +203,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/03/16 15:04:19  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.4  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

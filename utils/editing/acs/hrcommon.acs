@@ -5,6 +5,7 @@
 //**
 //**************************************************************************
 
+#include "vspecial.acs"
 #include "hrspec.acs"
-#include "hrdefs.acs"
-#include "hrwvars.acs"
+#include "vdefs.acs"
+#include "vwvars.acs"

@@ -56,6 +56,15 @@ enum
 	FLOOREV_Donut
 };
 
+enum
+{
+	ELEVEV_Down,
+	ELEVEV_Up,
+	ELEVEV_Current,
+	ELEVEV_Raise,
+	ELEVEV_Lower
+};
+
 // TYPES -------------------------------------------------------------------
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
@@ -96,34 +105,6 @@ int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
 	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_DoFloorAndCeiling
-//
-//==========================================================================
-
-int EV_DoFloorAndCeiling(line_t * line, int *args, bool raise)
-{
-	bool floor;
-	bool ceiling;
-
-	if (raise)
-	{
-		floor = EV_DoFloor(args[0], args[1], args[2], args[3], args[4],
-			FLOOREV_RaiseByValue, line);
-		ceiling = EV_DoCeiling(args[0], args[1], args[2], args[3], args[4],
-			CEILEV_RaiseByValue, line);
-	}
-	else
-	{
-		floor = EV_DoFloor(args[0], args[1], args[2], args[3], args[4],
-			FLOOREV_LowerByValue, line);
-		ceiling = EV_DoCeiling(args[0], args[1], args[2], args[3], args[4],
-			CEILEV_LowerByValue, line);
-	}
-	return floor || ceiling;
 }
 
 //==========================================================================
@@ -185,7 +166,7 @@ int EV_BuildStairsOld(line_t * line, int *args)
 		// new floor thinker
 		//
 		rtn = 1;
-		height = sec->floorheight + stepDelta;
+		height = GetPlanePointZ(&sec->floor, vector(0.0, 0.0, 0.0)) + stepDelta;
 		Floor = NewSpecialThinker(FloorMover);
 		Floor.InitStair(sec, args[1], 1, height);
 
@@ -364,138 +345,57 @@ int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 //==========================================================================
 //
-//  EV_BuildPillar
+//	EV_BuildPillar
 //
 //==========================================================================
 
-int EV_BuildPillar(line_t * line, int *args, bool crush)
+int EV_BuildPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	bool Crush)
 {
-	int secnum;
-	sector_t *sec;
-	Pillar pillar;
-	float newHeight;
-	int rtn;
+	int			SecNum;
+	sector_t*	Sec;
+	Pillar		pillar;
+	int			Rtn;
 
-	rtn = 0;
-	secnum = -1;
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->FloorData || sec->CeilingData)
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
-		if (sec->floorheight == sec->ceilingheight)
-		{
-			// pillar is already closed
-			continue;
-		}
-		rtn = 1;
-		if (!args[2])
-		{
-			newHeight = sec->floorheight +
-				((sec->ceilingheight - sec->floorheight) / 2.0);
-		}
-		else
-		{
-			newHeight = sec->floorheight + itof(args[2]);
-		}
-
+		Rtn = true;
 		pillar = NewSpecialThinker(Pillar);
-		sec->FloorData = pillar;
-		sec->CeilingData = pillar;
-		pillar.Sector = sec;
-		if (!args[2])
-		{
-			pillar.floorSpeed = itof(args[1]) * 4.0;
-			pillar.ceilingSpeed = pillar.floorSpeed;
-		}
-		else if (newHeight - sec->floorheight >
-			sec->ceilingheight - newHeight)
-		{
-			pillar.floorSpeed = itof(args[1]) * 4.0;
-			pillar.ceilingSpeed = (sec->ceilingheight - newHeight) *
-				pillar.floorSpeed / (newHeight - sec->floorheight);
-		}
-		else
-		{
-			pillar.ceilingSpeed = itof(args[1]) * 4.0;
-			pillar.floorSpeed = (newHeight - sec->floorheight) *
-				pillar.ceilingSpeed / (sec->ceilingheight - newHeight);
-		}
-		pillar.floordest = newHeight;
-		pillar.ceilingdest = newHeight;
-		pillar.direction = 1;
-		pillar.crush = crush * args[3];
-//FIXME		SectorStartSequence(pillar.Sector,
-//			seq_name[SEQ_PLATFORM + pillar.Sector->seqType]);
+		pillar.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Crush);
 	}
-	return rtn;
+	return Rtn;
 }
 
 //==========================================================================
 //
-// EV_OpenPillar
+//	EV_OpenPillar
 //
 //==========================================================================
 
-int EV_OpenPillar(line_t * line, int *args)
+int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
-	int secnum;
-	sector_t *sec;
-	Pillar pillar;
-	int rtn;
+	int			SecNum;
+	sector_t*	Sec;
+	Pillar		pillar;
+	int			Rtn;
 
-	rtn = 0;
-	secnum = -1;
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->FloorData || sec->CeilingData)
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
-		if (sec->floorheight != sec->ceilingheight)
-		{	// pillar isn't closed
-			continue;
-		}
-		rtn = 1;
+		Rtn = true;
 		pillar = NewSpecialThinker(Pillar);
-		sec->FloorData = pillar;
-		sec->CeilingData = pillar;
-		pillar.Sector = sec;
-		if (!args[2])
-		{
-			pillar.floordest = FindLowestFloorSurrounding(sec, NULL);
-		}
-		else
-		{
-			pillar.floordest = sec->floorheight - itof(args[2]);
-		}
-		if (!args[3])
-		{
-			pillar.ceilingdest = FindHighestCeilingSurrounding(sec, NULL);
-		}
-		else
-		{
-			pillar.ceilingdest = sec->ceilingheight + itof(args[3]);
-		}
-		if (sec->floorheight - pillar.floordest >= pillar.ceilingdest -
-			sec->ceilingheight)
-		{
-			pillar.floorSpeed = itof(args[1]) * 4.0;
-			pillar.ceilingSpeed = (sec->ceilingheight -
-				pillar.ceilingdest) * pillar.floorSpeed /
-				(pillar.floordest - sec->floorheight);
-		}
-		else
-		{
-			pillar.ceilingSpeed = itof(args[1]) * 4.0;
-			pillar.floorSpeed = (pillar.floordest -
-				sec->floorheight) * pillar.ceilingSpeed /
-				(sec->ceilingheight - pillar.ceilingdest);
-		}
-		pillar.direction = -1;	// open the pillar
-//FIXME		SectorStartSequence(pillar.Sector,
-//			seq_name[SEQ_PLATFORM + pillar.Sector->seqType]);
+		pillar.InitOpen(Sec, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
-	return rtn;
+	return Rtn;
 }
 
 //**************************************************************************
@@ -504,54 +404,150 @@ int EV_OpenPillar(line_t * line, int *args)
 //
 //**************************************************************************
 
-#define WGLSTATE_EXPAND 1
-#define WGLSTATE_STABLE 2
-#define WGLSTATE_REDUCE 3
-
-//==========================================================================
-//
-//  EV_StartFloorWaggle
-//
-//==========================================================================
-
-bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
-	int timer)
+enum
 {
-	int sectorIndex;
-	sector_t *sector;
-	FloorWaggle Waggle;
-	bool retCode;
+	WGLSTATE_EXPAND,
+	WGLSTATE_STABLE,
+	WGLSTATE_REDUCE
+};
 
-	retCode = false;
-	sectorIndex = -1;
-	while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
+//==========================================================================
+//
+//	EV_StartFloorWaggle
+//
+//==========================================================================
+
+bool EV_StartFloorWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int				SectorIndex;
+	sector_t*		Sector;
+	FloorWaggle		Waggle;
+	bool			RetCode;
+
+	RetCode = false;
+	for (SectorIndex = FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
+		SectorIndex = FindSectorFromTag(Arg1, SectorIndex))
 	{
-		sector = &GLevel.Sectors[sectorIndex];
-		if (sector->FloorData)
+		Sector = &GLevel.Sectors[SectorIndex];
+		if (Sector->FloorData)
 		{
 			// Already busy with another thinker
 			continue;
 		}
-		retCode = true;
+		RetCode = true;
 		Waggle = NewSpecialThinker(FloorWaggle);
-		sector->FloorData = Waggle;
-		Waggle.Sector = sector;
-		Waggle.originalHeight = sector->floor.dist;
-		Waggle.accumulator = itof(offset);
-		Waggle.accSpeed = itof(speed) / 2.0;
-		Waggle.scale = 0.0;
-		Waggle.targetScale = itof(height) / 64.0;
-		Waggle.scaleSpeed = Waggle.targetScale
-			/ (1.0 + 3.0 * itof(height) / 255.0);
-		Waggle.timer = timer ? itof(timer) : -1.0;
-		Waggle.state = WGLSTATE_EXPAND;
+		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
-	return retCode;
+	return RetCode;
+}
+
+//==========================================================================
+//
+//	EV_FloorTransferTrigger
+//
+//==========================================================================
+
+bool EV_FloorTransferTrigger(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, line_t* Line)
+{
+	int			SecNum;
+	bool		Rtn;
+	sector_t*	Sec;
+
+	if (!Line)
+	{
+		return false;
+	}
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Rtn = true;
+
+		Sec->floor.pic = Line->frontsector->floor.pic;
+		Sec->special = (Sec->special & SECSPEC_SECRET_MASK) |
+			(Line->frontsector->special & ~SECSPEC_SECRET_MASK);
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//	EV_FloorTransferNumeric
+//
+//==========================================================================
+
+bool EV_FloorTransferNumeric(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			SecNum;
+	bool		Rtn;
+	sector_t*	Sec;
+	sector_t*	MdlSec;
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Rtn = true;
+
+		MdlSec = FindModelFloorSector(Sec, GetPlanePointZ(&Sec->floor,
+			Sec->soundorg));
+		if (MdlSec)
+		{
+			Sec->floor.pic = MdlSec->floor.pic;
+			Sec->special = MdlSec->special;
+		}
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_DoElevator
+//
+//==========================================================================
+
+int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
+{
+	int			SecNum;
+	int			Rtn;
+	sector_t*	Sec;
+	Elevator	Elev;
+
+	if (!Line && (Type == ELEVEV_Current))
+	{
+		return false;
+	}
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+
+		//	Skip if already busy.
+		if (Sec->FloorData || Sec->CeilingData)
+			continue;
+
+		//	New elevator thinker
+		Rtn = true;
+		Elev = NewSpecialThinker(Elevator);
+		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+	}
+	return Rtn;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/03/16 15:04:22  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.17  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

@@ -1995,7 +1995,10 @@ PF(ClearPlayer)
 
 PF(G_ExitLevel)
 {
-    G_ExitLevel();
+	int Position;
+
+	Position = Pop();
+	G_ExitLevel(Position);
 }
 
 //==========================================================================
@@ -2006,7 +2009,10 @@ PF(G_ExitLevel)
 
 PF(G_SecretExitLevel)
 {
-    G_SecretExitLevel();
+	int Position;
+
+	Position = Pop();
+	G_SecretExitLevel(Position);
 }
 
 //==========================================================================
@@ -2018,11 +2024,13 @@ PF(G_SecretExitLevel)
 PF(G_Completed)
 {
 	int		map;
-    int		pos;
+	int		pos;
+	int		SaveAngle;
 
-    pos = Pop();
-    map = Pop();
-    G_Completed(map, pos);
+	SaveAngle = Pop();
+	pos = Pop();
+	map = Pop();
+	G_Completed(map, pos, SaveAngle);
 }
 
 //==========================================================================
@@ -2086,7 +2094,7 @@ PF(P_ForceLightning)
 PF(SetFloorPic)
 {
 	sector_t	*sec;
- 	int 		texture;
+	int 		texture;
 
 	texture = Pop();
 	sec = (sector_t*)Pop();
@@ -2102,7 +2110,7 @@ PF(SetFloorPic)
 PF(SetCeilPic)
 {
 	sector_t	*sec;
- 	int 		texture;
+	int			texture;
 
 	texture = Pop();
 	sec = (sector_t*)Pop();
@@ -3169,9 +3177,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.53  2005/03/16 15:04:44  dj_jl
+//	More work on line specials.
+//
 //	Revision 1.52  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.51  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
 //	

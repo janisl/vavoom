@@ -22,14 +22,43 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	STROBE LIGHT FLASHING
+//**
+//**************************************************************************
 
-class Strobe : SectorThinker;
+class Strobe : Lighting;
 
-float time;
-int maxlight;
-int minlight;
-float maxtime;
-float mintime;
+float		Time;
+int			MaxLight;
+int			MinLight;
+float		MaxTime;
+float		MinTime;
+
+//==========================================================================
+//
+//  Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int FastOrSlow, int InMaxTime, int InSync)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	MinTime = itof(FastOrSlow) / 35.0;
+	MaxTime = itof(InMaxTime) / 35.0;
+	MaxLight = Sector->params.lightlevel;
+	MinLight = FindMinSurroundingLight(Sector, Sector->params.lightlevel);
+
+	if (MinLight == MaxLight)
+		MinLight = 0;
+
+	if (!InSync)
+		Time = (Random() * 8.0 + 1.0) / 35.0;
+	else
+		Time = 1.0 / 35.0;
+}
 
 //==========================================================================
 //
@@ -37,23 +66,23 @@ float mintime;
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	time -= deltaTime;
-	if (time > 0.0)
+	Time -= DeltaTime;
+	if (Time > 0.0)
 	{
 		return;
 	}
 
-	if (Sector->params.lightlevel == minlight)
+	if (Sector->params.lightlevel == MinLight)
 	{
-		Sector->params.lightlevel = maxlight;
-		time = maxtime;
+		Sector->params.lightlevel = MaxLight;
+		Time = MaxTime;
 	}
 	else
 	{
-		Sector->params.lightlevel = minlight;
-		time = mintime;
+		Sector->params.lightlevel = MinLight;
+		Time = MinTime;
 	}
 }
 
@@ -64,6 +93,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

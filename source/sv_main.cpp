@@ -1683,9 +1683,10 @@ static void G_DoCompleted(void)
 //
 //==========================================================================
 
-void G_ExitLevel(void)
+void G_ExitLevel(int Position)
 { 
 	guard(G_ExitLevel);
+	LeavePosition = Position;
 	completed = true;
 	if (!deathmatch)
 	{
@@ -1715,13 +1716,13 @@ void G_ExitLevel(void)
 //
 //==========================================================================
 
-void G_SecretExitLevel(void)
+void G_SecretExitLevel(int Position)
 {
 	guard(G_SecretExitLevel);
 	if (!sv_secret_map[0])
 	{
 		// No secret map, use normal exit
-		G_ExitLevel();
+		G_ExitLevel(Position);
 		return;
 	}
 
@@ -1729,6 +1730,7 @@ void G_SecretExitLevel(void)
 	{
 		strcpy(mapaftersecret, sv_next_map);
 	}
+	LeavePosition = Position;
 	completed = true;
 
 	strcpy(sv_next_map, sv_secret_map); 	// go to secret level
@@ -1753,10 +1755,10 @@ void G_SecretExitLevel(void)
 //
 //==========================================================================
 
-void G_Completed(int map, int position)
+void G_Completed(int Map, int Position, int SaveAngle)
 {
 	guard(G_Completed);
-	if (map == -1 && position == -1)
+	if (Map == -1 && Position == -1)
 	{
 		if (!deathmatch)
 		{
@@ -1764,12 +1766,12 @@ void G_Completed(int map, int position)
 			sv.intermission = 2;
 		   	return;
 		}
-		map = 1;
-		position = 0;
+		Map = 1;
+		Position = 0;
 	}
-	strcpy(sv_next_map, SV_GetMapName(map));
+	strcpy(sv_next_map, SV_GetMapName(Map));
 
-	LeavePosition = position;
+	LeavePosition = Position;
 	completed = true;
 	unguard;
 }
@@ -2160,6 +2162,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	strcpy(sv_secret_map, info.secretMap);
 	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
 
+	strcpy(level.level_name, info.name);
 	level.levelnum = info.warpTrans;//FIXME does this make sense?
 	level.cluster = info.cluster;
 	level.partime = 0;//FIXME not used in Vavoom.
@@ -2978,9 +2981,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.62  2005/03/16 15:04:44  dj_jl
+//	More work on line specials.
+//
 //	Revision 1.61  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.60  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

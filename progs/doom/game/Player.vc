@@ -1061,8 +1061,8 @@ void PlayerInSpecialSector(float deltaTime)
 	float speed;
 	float finean;
 
-	// Falling, not all the way down yet?
-	if (MO.Origin.z != MO.Sector->floorheight)
+	//	Falling, not all the way down yet?
+	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
 		return;
 
 	if (MO.Sector->special & SECSPEC_SECRET_MASK)
@@ -1125,7 +1125,7 @@ void PlayerInSpecialSector(float deltaTime)
 	
 			if (Health <= 10)
 			{
-				G_ExitLevel();
+				G_ExitLevel(0);
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
@@ -2645,6 +2645,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.7  2004/12/27 12:23:11  dj_jl
 //  Multiple small changes for version 1.16
 //

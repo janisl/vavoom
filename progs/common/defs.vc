@@ -437,7 +437,9 @@ enum
 	LNSPEC_FloorRaiseByValueTimes8 = 35,
 	LNSPEC_FloorLowerByValueTimes8,
 
-	LNSPEC_CeilingLowerByValue = 40,// 40
+	LNSPEC_CeilingWaggle = 38,
+	LNSPEC_TeleportZombieChanger,
+	LNSPEC_CeilingLowerByValue,// 40
 	LNSPEC_CeilingRaiseByValue,
 	LNSPEC_CeilingCrushAndRaise,
 	LNSPEC_CeilingLowerAndCrush,
@@ -461,11 +463,15 @@ enum
 	LNSPEC_ThingDamage,
 	LNSPEC_TeleportNewMap,
 	LNSPEC_TeleportEndGame,
+	LNSPEC_TeleportOther,
+	LNSPEC_TeleportGroup,
+	LNSPEC_TeleportSector,
 
 	LNSPEC_ACSExecute = 80,// 80
 	LNSPEC_ACSSuspend,
 	LNSPEC_ACSTerminate,
 	LNSPEC_ACSLockedExecute,
+	LNSPEC_ACSExecuteWithResult,
 
 	LNSPEC_PolyRotateLeftOverride = 90,// 90
 	LNSPEC_PolyRotateRightOverride,
@@ -488,11 +494,13 @@ enum
 	LNSPEC_LightGlow,
 	LNSPEC_LightFlicker,
 	LNSPEC_LightStrobe,
+	LNSPEC_LightStop,
 
 	LNSPEC_QuakeTremor = 120,// 120
 	LNSPEC_LineSetIdentification,
 
-	LNSPEC_ThingActivate = 130,// 130
+	LNSPEC_UsePuzzleItem = 129,
+	LNSPEC_ThingActivate,// 130
 	LNSPEC_ThingDeactivate,
 	LNSPEC_ThingRemove,
 	LNSPEC_ThingDestroy,
@@ -531,21 +539,34 @@ enum
 
 	LNSPEC_TeleportLine = 215,
 
+	LNSPEC_ScrollTextureOffsets = 225,
+	LNSPEC_ACSExecuteAlways,
+
 	LNSPEC_FloorRaiseToNearestChange = 228,
 
 	LNSPEC_FloorRaiseByValueChangeTex = 230,// 230
 	LNSPEC_PlatToggle,
+	LNSPEC_LightStrobeDoom,
+	LNSPEC_LightMinNeighbor,
+	LNSPEC_LightMaxNeighbor,
+	LNSPEC_FloorTransferTrigger,
+	LNSPEC_FloorTransferNumeric,
 
 	LNSPEC_FloorRaiseToLowestCeiling = 238,
 	LNSPEC_FloorRaiseByValueChange,
 	LNSPEC_FloorRaiseByTexture,// 240
 	LNSPEC_FloorLowerToLowestChange,
 	LNSPEC_FloorLowerToHighest,
+	LNSPEC_ExitNormal,
+	LNSPEC_ExitSecret,
+	LNSPEC_ElevatorRaiseToNearest,
+	LNSPEC_ElevatorMoveToFloor,
+	LNSPEC_ElevatorLowerToNearest,
 
 	LNSPEC_DoorCloseWaitOpen = 249,
 	LNSPEC_FloorDonut,// 250
-
-	LNSPEC_CeilingRaiseToNearest = 252,
+	LNSPEC_FloorAndCeilingLowerRaise,
+	LNSPEC_CeilingRaiseToNearest,
 	LNSPEC_CeilingLowerToLowest,
 	LNSPEC_CeilingLowerToFloor,
 	LNSPEC_CeilingCrushRaiseAndStaySilentA,
@@ -558,6 +579,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2005/03/16 15:04:10  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.24  2005/03/01 14:39:22  dj_jl
 //  Big update of line specials.
 //

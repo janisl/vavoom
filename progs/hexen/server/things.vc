@@ -183,7 +183,8 @@ bool EV_ThingProjectile(int *args, bool gravity, int newtid)
 			newA.bNoGravity = false;
 			newA.Mass = 12.5;
 		}
-		newA.TID = newtid;
+		if (newtid)
+			newA.InsertIntoTIDList(newtid);
 		if (newA.CheckMissileSpawn())
 		{
 			success = true;
@@ -231,6 +232,8 @@ bool EV_ThingSpawn(int *args, bool fog)
 		else
 		{
 			newAct.Angles.yaw = angle;
+			if (args[3])
+				newAct.InsertIntoTIDList(args[3]);
 			if (fog == true)
 			{
 				fogAct = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
@@ -414,6 +417,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2005/03/16 15:04:40  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.30  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

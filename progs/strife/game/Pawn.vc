@@ -985,7 +985,7 @@ void A_BossDeath()
 	else if (Class == Specter1)
 	{
 		EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
-		Enemy.Player.Objectives = 95;
+		Enemy.Player.SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(svc_voice);
 		MSG_WriteShort(95);
@@ -998,7 +998,7 @@ void A_BossDeath()
 		Enemy.Player.GiveSigilPiece();
 		cprint(Enemy.Player, "You've Killed The Bishop!");
 		Enemy.Player.GiveQuest(QUEST_KilledBishop);
-		Enemy.Player.Objectives = 74;
+		Enemy.Player.SetObjectives(74);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(svc_voice);
 		MSG_WriteShort(74);
@@ -1018,14 +1018,14 @@ void A_BossDeath()
 		}
 		if (Enemy.Player.Quests & QUEST_Factory)
 		{
-			Enemy.Player.Objectives = 85;
+			Enemy.Player.SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
-			Enemy.Player.Objectives = 87;
+			Enemy.Player.SetObjectives(87);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(87);
@@ -1042,14 +1042,14 @@ void A_BossDeath()
 		cprint(Enemy.Player, "You've Killed Macil!");
 		if (Enemy.Player.Quests & QUEST_Factory)
 		{
-			Enemy.Player.Objectives = 106;
+			Enemy.Player.SetObjectives(106);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(106);
 		}
 		else
 		{
-			Enemy.Player.Objectives = 79;
+			Enemy.Player.SetObjectives(79);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(79);
@@ -1067,14 +1067,14 @@ void A_BossDeath()
 		Enemy.Player.Stamina += 10;
 		if (Enemy.Player.Sigil == 4)
 		{
-			Enemy.Player.Objectives = 85;
+			Enemy.Player.SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
-			Enemy.Player.Objectives = 83;
+			Enemy.Player.SetObjectives(83);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(83);
@@ -1099,7 +1099,7 @@ void A_BossDeath()
 			MSG_WriteByte(svc_finale_type);
 			MSG_WriteByte(2);
 		}
-		G_Completed(-1, -1);
+		G_Completed(-1, -1, 0);
 	}
 }
 
@@ -1318,6 +1318,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/03/16 15:04:42  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.9  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

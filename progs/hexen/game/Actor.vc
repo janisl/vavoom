@@ -1590,7 +1590,7 @@ void TeleportToPlayerStarts(void)
 	destX = level->playerstarts[i].x;
 	destY = level->playerstarts[i].y;
 	destAngle = itof(45 * (level->playerstarts[i].angle / 45));
-	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true);
+	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true, false);
 }
 
 //==========================================================================
@@ -1612,7 +1612,8 @@ void TeleportToDeathmatchStarts(void)
 		destX = level->deathmatchstarts[i].x;
 		destY = level->deathmatchstarts[i].y;
 		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
-		Teleport(vector(destX, destY, ONFLOORZ), destAngle, true);
+		Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
+			false);
 	}
 	else
 	{
@@ -2982,10 +2983,12 @@ bool TeleportMove(TVec pos)
 	// the move is ok,
 	// so link the thing into its new position
 	UnlinkFromWorld();
-
 	Origin = pos;
-
 	LinkToWorld();
+	if (pos.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
 
 	return true;
 }
@@ -2996,7 +2999,7 @@ bool TeleportMove(TVec pos)
 //
 //==========================================================================
 
-bool Teleport(TVec pos, float angle, bool useFog)
+bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	TVec oldOrg;
 	float aboveFloor;
@@ -3005,7 +3008,6 @@ bool Teleport(TVec pos, float angle, bool useFog)
 
 	oldOrg = Origin;
 	aboveFloor = Origin.z - FloorZ;
-	pos.z = ONFLOORZ;
 	if (!TeleportMove(pos))
 	{
 		return false;
@@ -3014,7 +3016,7 @@ bool Teleport(TVec pos, float angle, bool useFog)
 	{
 		if (Player.Powers[pw_flight] && aboveFloor)
 		{
-			Origin.z = FloorZ + aboveFloor;
+			Origin.z = Origin.z + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
@@ -3023,9 +3025,8 @@ bool Teleport(TVec pos, float angle, bool useFog)
 		}
 		else
 		{
-			Origin.z = FloorZ;
 			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
-			if (useFog)
+			if (!KeepDir)
 			{
 				Angles.pitch = 0.0;
 			}
@@ -3033,25 +3034,27 @@ bool Teleport(TVec pos, float angle, bool useFog)
 	}
 	else if (bMissile)
 	{
-		Origin.z = FloorZ + aboveFloor;
+		Origin.z = Origin.z + aboveFloor;
 		if (Origin.z + Height > CeilingZ)
 		{
 			Origin.z = CeilingZ - Height;
 		}
 	}
-	else
-	{
-		Origin.z = FloorZ;
-	}
 	// Spawn teleport fog at source and destination
-	if (useFog)
+	fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
+	if (SrcFog)
 	{
-		fogDelta = bMissile ? 0.0 : TELEFOGHEIGHT;
 		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
 		fog.PlaySound('Teleport', CHAN_VOICE);
+	}
+	if (DstFog)
+	{
 		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
 			20.0 * sin(angle), fogDelta));
 		fog.PlaySound('Teleport', CHAN_VOICE);
+	}
+	if (!KeepDir)
+	{
 		if (bIsPlayer && !Player.Powers[pw_speed])
 		{
 			// Freeze player for about .5 sec
@@ -3077,7 +3080,7 @@ bool Teleport(TVec pos, float angle, bool useFog)
 		Velocity.x = Speed * cos(angle);
 		Velocity.y = Speed * sin(angle);
 	}
-	else if (useFog)	// no fog doesn't alter the player's momentums
+	else if (KeepDir)	// no fog doesn't alter the player's momentums
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
@@ -3838,6 +3841,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/03/16 15:04:22  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.12  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -60,13 +60,13 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
 
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
-	{243, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11
-	{234, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
+	{LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false},	//  13
 	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, false},	//  14
 	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, false},	//  15
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, false},	//  16
-	{232, -1, 5, 35, 0, 0, SPAC_CROSS, false},	//  17
+	{LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, false},	//  17
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, false},	//  18
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, false},	//  19
 
@@ -90,9 +90,9 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false},	//  36
 	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  37
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  38
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  39
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false},	//  39
 
-	{251, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  40
+	{LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, false},	//  40
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true},	//  42
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
@@ -104,8 +104,8 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false},	//  49
 
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, false},	//  50
-	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51
-	{243, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
+	{LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51
+	{LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
 	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
 	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  54
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false},	//  55
@@ -133,15 +133,15 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  75
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, true},	//  76
 	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, true},	//  77
-	{78, -1, 0, 0, 0, 0, 0, 0},	//  78
+	{0, 0, 0, 0, 0, 0, 0, 0},	//  78
 	{LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, true},	//  79
 
-	{234, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  80
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  80
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, true},	//  81
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  82
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, true},	//  83
 	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  84
-	{85, -1, 0, 0, 0, 0, 0, 0},	//  85
+	{0, 0, 0, 0, 0, 0, 0, 0},	//  85
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  86
 	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true},	//  87
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  88
@@ -154,16 +154,16 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true},	//  94
 	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true},	//  95
 	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  96
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  97
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true},	//  97
 	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true},	//  98
-	{101, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  99
+	{LNSPEC_ScrollTextureRight, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  99
 
 	{LNSPEC_DoorRaise, -1, 48, 150, 0, 0, SPAC_CROSS, true},	//  100
 	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false},	//  101
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false},	//  102
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false},	//  103
-	{233, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  104
-	{244, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  105
+	{LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  104
+	{LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  105
 	{217, -1, 8, 16, 0, 0, SPAC_CROSS, false},	//  106
 	{217, -1, 8, 16, 0, 0, SPAC_USE, false},	//  107
 	{108, -1, 0, 0, 0, 0, 0, 0},	//  108
@@ -234,11 +234,15 @@ spec_trans_t spec_trans_tab[] = {
 //
 //==========================================================================
 
-void TranslateLine(line_t * line)
+void TranslateLine(line_t* line)
 {
-	int oldspec;
+	int			OldSpec;
+	int			OldTag;
+	int			OldFlags;
 
-	oldspec = line->special;
+	OldSpec = line->special;
+	OldTag = line->arg1;
+	OldFlags = line->flags;
 	if (!line->special)
 	{
 		return;
@@ -251,16 +255,59 @@ void TranslateLine(line_t * line)
 		return;
 	}
 
-	line->special = spec_trans_tab[oldspec].special;
-	if (spec_trans_tab[oldspec].arg1 != -1)
-		line->arg1 = spec_trans_tab[oldspec].arg1;
-	line->arg2 = spec_trans_tab[oldspec].arg2;
-	line->arg3 = spec_trans_tab[oldspec].arg3;
-	line->arg4 = spec_trans_tab[oldspec].arg4;
-	line->arg5 = spec_trans_tab[oldspec].arg5;
-	line->flags |= spec_trans_tab[oldspec].spac << ML_SPAC_SHIFT;
-	if (spec_trans_tab[oldspec].repeat)
+	//	Special.
+	line->special = spec_trans_tab[OldSpec].special;
+	//	Arg 1.
+	if (spec_trans_tab[OldSpec].arg1 == -1)
+	{
+		line->arg1 = OldTag;
+	}
+	else
+	{
+		line->arg1 = spec_trans_tab[OldSpec].arg1;
+	}
+	//	Arg 2.
+	if (spec_trans_tab[OldSpec].arg2 == -1)
+	{
+		line->arg2 = OldTag;
+	}
+	else
+	{
+		line->arg2 = spec_trans_tab[OldSpec].arg2;
+	}
+	//	Arg 3.
+	if (spec_trans_tab[OldSpec].arg3 == -1)
+	{
+		line->arg3 = OldTag;
+	}
+	else
+	{
+		line->arg3 = spec_trans_tab[OldSpec].arg3;
+	}
+	//	Arg 4.
+	if (spec_trans_tab[OldSpec].arg4 == -1)
+	{
+		line->arg4 = OldTag;
+	}
+	else
+	{
+		line->arg4 = spec_trans_tab[OldSpec].arg4;
+	}
+	//	Arg 5.
+	if (spec_trans_tab[OldSpec].arg5 == -1)
+	{
+		line->arg5 = OldTag;
+	}
+	else
+	{
+		line->arg5 = spec_trans_tab[OldSpec].arg5;
+	}
+	//	Activation flags.
+	line->flags |= spec_trans_tab[OldSpec].spac << ML_SPAC_SHIFT;
+	if (spec_trans_tab[OldSpec].repeat)
+	{
 		line->flags |= ML_REPEAT_SPECIAL;
+	}
 }
 
 //==========================================================================
@@ -269,7 +316,7 @@ void TranslateLine(line_t * line)
 //
 //==========================================================================
 
-void TranslateSector(sector_t *sector)
+void TranslateSector(sector_t* sector)
 {
 	int special;
 	int high;
@@ -323,7 +370,7 @@ void TranslateSector(sector_t *sector)
 //
 //==========================================================================
 
-void TranslateThing(mthing_t * mthing)
+void TranslateThing(mthing_t* mthing)
 {
 	int flags;
 
@@ -332,11 +379,6 @@ void TranslateThing(mthing_t * mthing)
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
 		mthing->options &= ~MTF_GSINGLE;
-	if (mthing->type == 14)
-	{
-		mthing->tid =
-			GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0))->tag;
-	}
 }
 
 //==========================================================================
@@ -345,7 +387,7 @@ void TranslateThing(mthing_t * mthing)
 //
 //==========================================================================
 
-void TranslateLevel(void)
+void TranslateLevel()
 {
 	int i;
 
@@ -368,6 +410,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/16 15:04:22  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.10  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

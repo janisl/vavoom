@@ -288,7 +288,7 @@ bool CheckChoice(RogueConChoice *Choice)
 	}
 	if (Choice->Objectives)
 	{
-		CurrentSpeakingTo.Player.Objectives = Choice->Objectives;
+		CurrentSpeakingTo.Player.SetObjectives(Choice->Objectives);
 	}
 	return true;
 }
@@ -1235,6 +1235,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2005/03/16 15:04:43  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.37  2004/12/22 07:56:48  dj_jl
 //  Fully working Strife support.
 //

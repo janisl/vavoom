@@ -78,6 +78,7 @@ bool bNoDeathmatch;
 bool bSpawnFlag8;
 bool bSpawnFlag9;
 bool bWindThrust;
+bool bNoTeleport;
 bool bPoisonDamage;		// Does poison damage (doesn't gib enemies).
 bool bFireDamage;		// Causes fire damage.
 bool bDisruptDamage;	// Disrupts enemies.
@@ -361,7 +362,7 @@ void Died(Actor source)
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(svc_finale_type);
 		MSG_WriteByte(1);
-		G_Completed(-1, -1);
+		G_Completed(-1, -1, 0);
 	}
 
 	bShootable = false;
@@ -1823,6 +1824,10 @@ bool TeleportMove(TVec org)
 	UnlinkFromWorld();
 	Origin = org;
 	LinkToWorld();
+	if (org.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
 
 	return true;
 }
@@ -1833,32 +1838,37 @@ bool TeleportMove(TVec org)
 //
 //==========================================================================
 
-int Teleport(float x, float y, float angle, bool usefog)
+int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	TVec oldOrg;
 	Actor fog;
 
 	oldOrg = Origin;
 
-	if (!TeleportMove(vector(x, y, Origin.z)))
+	if (!TeleportMove(Dst))
 		return 0;
 
-	Origin.z = FloorZ;	//fixme: not needed?
 	if (bIsPlayer)
 		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 
-	if (usefog)
+	if (SrcFog)
 	{
 		// spawn teleport fog at source and destination
 		fog = Spawn(TeleportFog, oldOrg);
 		fog.PlaySound('Teleport', CHAN_VOICE);
+	}
 
+	if (DstFog)
+	{
 		fog = Spawn(TeleportFog, Origin +
 			vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
 
 		// emit sound, where?
 		fog.PlaySound('Teleport', CHAN_VOICE);
+	}
 
+	if (!KeepDir)
+	{
 		// don't move for a bit
 		if (bIsPlayer)
 		{
@@ -2574,6 +2584,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/03/16 15:04:42  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.15  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

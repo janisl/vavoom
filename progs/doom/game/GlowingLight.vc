@@ -22,13 +22,35 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	GLOWING LIGHT
+//**
+//**************************************************************************
 
-class GlowingLight:SectorThinker;
+class GlowingLight : Lighting;
 
-float Speed;
-int direction;
-int maxlight;
-int minlight;
+float		Speed;
+int			Direction;
+int			MaxLight;
+int			MinLight;
+
+//==========================================================================
+//
+//  Init
+//
+//  Initialise glowing light
+//
+//==========================================================================
+
+void Init(sector_t* InSector)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	MinLight = FindMinSurroundingLight(Sector, Sector->params.lightlevel);
+	MaxLight = Sector->params.lightlevel;
+	Direction = -1;
+}
 
 //==========================================================================
 //
@@ -36,27 +58,27 @@ int minlight;
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	switch (direction)
+	switch (Direction)
 	{
 	case -1:
 		// DOWN
-		Sector->params.lightlevel -= ftoi(Speed * deltaTime);
-		if (Sector->params.lightlevel <= minlight)
+		Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel <= MinLight)
 		{
-			Sector->params.lightlevel += ftoi(Speed * deltaTime);
-			direction = 1;
+			Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+			Direction = 1;
 		}
 		break;
 
 	case 1:
 		// UP
-		Sector->params.lightlevel += ftoi(Speed * deltaTime);
-		if (Sector->params.lightlevel >= maxlight)
+		Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel >= MaxLight)
 		{
-			Sector->params.lightlevel -= ftoi(Speed * deltaTime);
-			direction = -1;
+			Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+			Direction = -1;
 		}
 		break;
 	}
@@ -70,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:31  dj_jl
 //  Big update of line specials.
 //

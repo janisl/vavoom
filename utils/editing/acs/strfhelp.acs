@@ -65,16 +65,14 @@ script << 0 >> (int type, int tag)
 	{
 	case 40:
 		//	Lower floor, raise ceiling.
-//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
-		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToLowest(tag, VDOORSPEED / 2));
 		break;
 
 	case 52:
 		//	Map teleport.
 		//UNUSED Probably because as once-trigger it makes no use in Strife.
-//		Teleport_NewMap(tag / 100, 0, FALSE);
-		Teleport_NewMap(tag / 100, 0);
+		Teleport_NewMap(tag / 100, 0, FALSE);
 		break;
 
 	case 145:
@@ -86,19 +84,16 @@ script << 0 >> (int type, int tag)
 		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
 		{
 			//	Abandoned front base.
-//			Teleport_NewMap(30, tag % 100, TRUE);
-			Teleport_NewMap(30, tag % 100);
+			Teleport_NewMap(30, tag % 100, TRUE);
 		}
 		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
 		{
 			//	New front base.
-//			Teleport_NewMap(10, tag % 100, TRUE);
-			Teleport_NewMap(10, tag % 100);
+			Teleport_NewMap(10, tag % 100, TRUE);
 		}
 		else
 		{
-//			Teleport_NewMap(tag / 100, tag % 100, TRUE);
-			Teleport_NewMap(tag / 100, tag % 100);
+			Teleport_NewMap(tag / 100, tag % 100, TRUE);
 		}
 		break;
 
@@ -109,9 +104,8 @@ script << 0 >> (int type, int tag)
 
 	case 174:
 		//	Lower floor, raise ceiling.
-//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
-		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToLowest(tag, VDOORSPEED / 2));
 		break;
 
 	case 175:
@@ -135,16 +129,14 @@ script << 0 >> (int type, int tag)
 
 	case 183:
 		//	Lower floor, raise ceiling.
-//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToHighest(tag, VDOORSPEED / 2, 128));
-		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToHighest(tag, VDOORSPEED / 2, 128));
 		break;
 
 	case 184:
 		//	Platform up.
 		// What needs to be fixed?
-//		if (Plat_UpNearestWaitDownStay(tag, 16, 35))
-		if (Plat_UpWaitDownStay(tag, 16, 35))
+		if (Plat_UpNearestWaitDownStay(tag, 16, 35))
 		{
 			// FIXME
 		}
@@ -161,19 +153,16 @@ script << 0 >> (int type, int tag)
 		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
 		{
 			//	Abandoned front base.
-//			Teleport_NewMap(30, tag % 100, TRUE);
-			Teleport_NewMap(30, tag % 100);
+			Teleport_NewMap(30, tag % 100, TRUE);
 		}
 		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
 		{
 			//	New front base.
-//			Teleport_NewMap(10, tag % 100, TRUE);
-			Teleport_NewMap(10, tag % 100);
+			Teleport_NewMap(10, tag % 100, TRUE);
 		}
 		else
 		{
-//			Teleport_NewMap(tag / 100, tag % 100, TRUE);
-			Teleport_NewMap(tag / 100, tag % 100);
+			Teleport_NewMap(tag / 100, tag % 100, TRUE);
 		}
 		break;
 
@@ -210,9 +199,8 @@ script << 0 >> (int type, int tag)
 		
 	case 189:
 		//	Lower floor, raise ceiling.
-//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
-		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToLowest(tag, VDOORSPEED / 2));
 		break;
 
 	case 193:
@@ -355,16 +343,14 @@ script << 0 >> (int type, int tag)
 		}
 		else
 		{
-//			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
-			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT));
+			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
 		}
 		break;
 
 	case 214:
 		//	Platform lower for 30 secs.
 		// This only needs to be ACS for the long delay
-//		SetResultValue(Plat_DownWaitUpStayLip(tag, 8, 1050, 0, 1));
-		SetResultValue(Plat_DownWaitUpStayLip(tag, 8, 1050, 0));
+		SetResultValue(Plat_DownWaitUpStayLip(tag, 8, 1050, 0, 1));
 		break;
 
 	case 215:
@@ -458,16 +444,14 @@ script << 0 >> (int type, int tag)
 		}
 		else
 		{
-//			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
-			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT));
+			SetResultValue(Door_Raise(0, VDOORSPEED, VDOORWAIT, tag));
 		}
 		break;
 
 	case 233:
 		//	Lower floor, raise ceiling, play voice.
-//		if (Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToLowest(tag, VDOORSPEED / 2))
-		if (FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2))
+		if (Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToLowest(tag, VDOORSPEED / 2))
 		{
 			SendToCommunicator(70, 0, 0, 0);
 			SetResultValue(1);
@@ -497,9 +481,8 @@ script << 0 >> (int type, int tag)
 			SetResultValue(0);
 			break;
 		}
-//		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
-//			Floor_LowerToLowest(tag, VDOORSPEED / 2));
-		SetResultValue(FloorAndCeiling_LowerRaise(tag, VDOORSPEED / 2));
+		SetResultValue(Door_Open(tag, VDOORSPEED / 2) |
+			Floor_LowerToLowest(tag, VDOORSPEED / 2));
 		break;
 
 	case 256:

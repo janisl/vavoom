@@ -1000,6 +1000,26 @@ void GiveQuest(int QuestID)
 
 //==========================================================================
 //
+//	SetObjectives
+//
+//==========================================================================
+
+void SetObjectives(int NewObjectives)
+{
+	if (!NewObjectives)
+	{
+		return;
+	}
+	//	Check if log text lump exists in wad file.
+	if (!WadLumpPresent(va("LOG%d", NewObjectives)))
+	{
+		return;
+	}
+	Objectives = NewObjectives;
+}
+
+//==========================================================================
+//
 //  ThrustPlayer
 //
 //  Moves the given origin along a given angle.
@@ -1234,8 +1254,8 @@ void PlayerInSpecialSector(float deltaTime)
 	float speed;
 	float finean;
 
-	// Falling, not all the way down yet?
-	if (MO.Origin.z != MO.Sector->floorheight)
+	//	Falling, not all the way down yet?
+	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
 		return;
 
 	if (MO.Sector->special & SECSPEC_SECRET_MASK)
@@ -1298,7 +1318,7 @@ void PlayerInSpecialSector(float deltaTime)
 	
 			if (Health <= 10)
 			{
-				G_ExitLevel();
+				G_ExitLevel(0);
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
@@ -2317,6 +2337,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/03/16 15:04:43  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.12  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -1189,7 +1189,7 @@ void PlayerInSpecialSector(float deltaTime)
 	float speed;
 	float finean;
 
-	if (MO.Origin.z != MO.Sector->floorheight)
+	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
 	{
 		// Player is not touching the floor
 		return;
@@ -1250,7 +1250,7 @@ void PlayerInSpecialSector(float deltaTime)
 	
 			if (Health <= 10)
 			{
-				G_ExitLevel();
+				G_ExitLevel(0);
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
@@ -2296,7 +2296,8 @@ void UseArtiTele()
 		destY = level->playerstarts[0].y;
 		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
 	}
-	MO.Teleport(destX, destY, destAngle, true);
+	MO.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
+		false);
 	if (ChickenTime)
 	{
 		// Teleporting away will undo any morph effects
@@ -2916,6 +2917,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/03/16 15:04:21  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.7  2004/12/27 12:23:12  dj_jl
 //  Multiple small changes for version 1.16
 //

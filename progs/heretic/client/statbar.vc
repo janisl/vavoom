@@ -72,6 +72,10 @@ int pic_book[16];
 int pic_invgeml[2];
 int pic_invgemr[2];
 int pic_paused;
+// For the Fullscreen stuff
+int pic_health;
+int pic_armor2;
+
 
 // CODE --------------------------------------------------------------------
 
@@ -169,6 +173,10 @@ void SB_StartMap(void)
 	}
 
 	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
+
+	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
+	pic_health = R_RegisterPic("PTN1A0", PIC_PATCH);
+	pic_armor2 = R_RegisterPic("SHD2A0", PIC_PATCH);
 }
 
 //==========================================================================
@@ -407,6 +415,11 @@ void SB_DrawFullscreenStats(void)
 
 	//  Health
 	SB_DrawNumber12(5, 180, cl->health);
+	R_DrawPic(62, 224, pic_health);
+
+	//  Armorpoints
+	SB_DrawNumber12(5, 160, cl->armorpoints);
+	R_DrawPic(62, 200, pic_armor2);
 
 	//  Frags
 	if (deathmatch)
@@ -419,6 +432,20 @@ void SB_DrawFullscreenStats(void)
 	{
 		SB_DrawNumber9(290, 186, cl->stats.readyammo);
 		R_DrawPic(270, 184, pic_ammoicon[cl->readyweapon - 1]);
+	}
+
+	//  Keys
+	if (cl->stats.flags & SBF_KEY_YELLOW)
+	{
+		R_DrawPic(270, 164, pic_ykey);
+	}
+	if (cl->stats.flags & SBF_KEY_GREEN)
+	{
+		R_DrawPic(270, 172, pic_gkey);
+	}
+	if (cl->stats.flags & SBF_KEY_BLUE)
+	{
+		R_DrawPic(270, 180, pic_bkey);
 	}
 
 	if (cl->stats.flags & SBF_INVENTORY_OPEN)
@@ -584,6 +611,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.12  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

@@ -25,7 +25,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define NUM_SPECIALS	150
+#define NUM_SPECIALS	273
 
 // CONSTANTS ---------------------------------------------------------------
 
@@ -60,13 +60,13 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false},	//  9
 
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false},	//  10
-	{243, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11
-	{234, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
+	{LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_USE, false},	//  11
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  12
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false},	//  13
 	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, false},	//  14
 	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, false},	//  15
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, false},	//  16
-	{232, -1, 5, 35, 0, 0, SPAC_CROSS, false},	//  17
+	{LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, false},	//  17
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, false},	//  18
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, false},	//  19
 
@@ -90,9 +90,9 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false},	//  36
 	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  37
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  38
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  39
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false},	//  39
 
-	{251, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  40
+	{LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, false},	//  40
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true},	//  42
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
@@ -104,8 +104,8 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false},	//  49
 
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, false},	//  50
-	{244, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51
-	{243, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
+	{LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_USE, false},	//  51
+	{LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  52
 	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, false},	//  53
 	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  54
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false},	//  55
@@ -133,15 +133,15 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  75
 	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, true},	//  76
 	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, true},	//  77
-	{78, -1, 0, 0, 0, 0, 0, 0},	//  78
+	{LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_USE, true},	//  78
 	{LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, true},	//  79
 
-	{234, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  80
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  80
 	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, true},	//  81
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  82
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, true},	//  83
 	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  84
-	{85, -1, 0, 0, 0, 0, 0, 0},	//  85
+	{LNSPEC_ScrollTextureRight, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  85
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true},	//  86
 	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true},	//  87
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true},	//  88
@@ -154,7 +154,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true},	//  94
 	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true},	//  95
 	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  96
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  97
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true},	//  97
 	{LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true},	//  98
 	{LNSPEC_DoorLockedRaise, -1, 64, 0, 2 | 128, 0, SPAC_USE, true},	//  99
 
@@ -162,7 +162,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false},	//  101
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false},	//  102
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false},	//  103
-	{233, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  104
+	{LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  104
 	{LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_CROSS, true},	//  105
 	{LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_CROSS, true},	//  106
 	{LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_CROSS, true},	//  107
@@ -184,9 +184,9 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_CROSS, false},	//  121
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, false},	//  122
 	{LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, true},	//  123
-	{244, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_MCROSS, false},	//  125
-	{LNSPEC_Teleport, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  126
+	{LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  124
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, false},	//  125
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, true},	//  126
 	{217, -1, 32, 16, 0, 0, SPAC_USE, false},	//  127
 	{LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, true},	//  128
 	{LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true},	//  129
@@ -204,26 +204,150 @@ spec_trans_t spec_trans_tab[] = {
 
 	{LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_USE, false},	//  140
 	{LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  141
-	{142, -1, 0, 0, 0, 0, 0, 0},	//  142
-	{143, -1, 0, 0, 0, 0, 0, 0},	//  143
-	{144, -1, 0, 0, 0, 0, 0, 0},	//  144
-	{145, -1, 0, 0, 0, 0, 0, 0},	//  145
-	{146, -1, 0, 0, 0, 0, 0, 0},	//  146
-	{147, -1, 0, 0, 0, 0, 0, 0},	//  147
-	{148, -1, 0, 0, 0, 0, 0, 0},	//  148
-	{149, -1, 0, 0, 0, 0, 0, 0},	//  149
-/*
-	{ $0, -1, 0, 0, 0, 0, 0, 0 },	//	$0
-	{ $1, -1, 0, 0, 0, 0, 0, 0 },	//	$1
-	{ $2, -1, 0, 0, 0, 0, 0, 0 },	//	$2
-	{ $3, -1, 0, 0, 0, 0, 0, 0 },	//	$3
-	{ $4, -1, 0, 0, 0, 0, 0, 0 },	//	$4
-	{ $5, -1, 0, 0, 0, 0, 0, 0 },	//	$5
-	{ $6, -1, 0, 0, 0, 0, 0, 0 },	//	$6
-	{ $7, -1, 0, 0, 0, 0, 0, 0 },	//	$7
-	{ $8, -1, 0, 0, 0, 0, 0, 0 },	//	$8
-	{ $9, -1, 0, 0, 0, 0, 0, 0 },	//	$9
-*/
+	{LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_CROSS, false},	//  142
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_CROSS, false},	//  143
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_CROSS, false},	//  144
+	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  145
+	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_CROSS, false},	//  146
+	{LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_CROSS, true},	//  147
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_CROSS, true},	//  148
+	{LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_CROSS, true},	//  149
+
+	{LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, true },	//	150
+	{LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, true },	//	151
+	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	152
+	{LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	153
+	{LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	154
+	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_CROSS, true },	//	155
+	{LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, true },	//	156
+	{LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	157
+	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_USE, false },	//	158
+	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_USE, false },	//	159
+
+	{LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_USE, false },	//	160
+	{LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_USE, false },	//	161
+	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_USE, false },	//	162
+	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_USE, false },	//	163
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_USE, false },	//	164
+	{LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_USE, false },	//	165
+	{LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_USE, false },	//	166
+	{LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_USE, false },	//	167
+	{LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_USE, false },	//	168
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_USE, false },	//	169
+
+	{LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_USE, false },	//	170
+	{LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_USE, false },	//	171
+	{LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_USE, false },	//	172
+	{LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_USE, false },	//	173
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_USE, false },	//	174
+	{LNSPEC_DoorCloseWaitOpen, -1, 8, 240, 0, 0, SPAC_USE, false },	//	175
+	{LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_USE, true },	//	176
+	{LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_USE, true },	//	177
+	{LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_USE, true },	//	178
+	{LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_USE, true },	//	179
+
+	{LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_USE, true },	//	180
+	{LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_USE, true },	//	181
+	{LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_USE, true },	//	182
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_USE, true },	//	183
+	{LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, true },	//	184
+	{LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_USE, true },	//	185
+	{LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_USE, true },	//	186
+	{LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_USE, true },	//	187
+	{LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_USE, true },	//	188
+	{LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_USE, false },	//	189
+
+	{LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_USE, true },	//	190
+	{LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, true },	//	191
+	{LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_USE, true },	//	192
+	{LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_USE, true },	//	193
+	{LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_USE, true },	//	194
+	{LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_USE, true },	//	195
+	{LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_USE, true },	//	196
+	{LNSPEC_ExitNormal, 0, 0, 0, 0, 0, SPAC_IMPACT, false },	//	197
+	{LNSPEC_ExitSecret, 0, 0, 0, 0, 0, SPAC_IMPACT, false },	//	198
+	{LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	199
+
+	{LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	200
+	{LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	201
+	{LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	202
+	{LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false },	//	203
+	{LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_USE, false },	//	204
+	{LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true },	//	205
+	{LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_USE, true },	//	206
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, false },	//	207
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, true },	//	208
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_USE, false },	//	209
+
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_USE, true },	//	210
+	{LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_USE, true },	//	211
+	{LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	212
+	{0, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	213 LNSPEC_TransferFloorLight
+	{0, -1, 6, 0, 0, 0, SPAC_CROSS, false },	//	214 LNSPEC_ScrollCeiling
+	{0, -1, 6, 0, 0, 0, SPAC_CROSS, false },	//	215 LNSPEC_ScrollFloor
+	{0, -1, 6, 1, 0, 0, SPAC_CROSS, false },	//	216 LNSPEC_ScrollFloor
+	{0, -1, 6, 2, 0, 0, SPAC_CROSS, false },	//	217 LNSPEC_ScrollFloor
+	{0, -1, 2, 0, 0, 0, SPAC_CROSS, false },	//	218 LNSPEC_ScrollTexture_Model
+	{LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, false },	//	219
+
+	{LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, true },	//	220
+	{LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_USE, false },	//	221
+	{LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_USE, true },	//	222
+	{0, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	223 LNSPEC_SectorSetFriction
+	{0, -1, 0, 0, 1, 0, SPAC_CROSS, false },	//	224 LNSPEC_SectorSetWind
+	{0, -1, 0, 0, 1, 0, SPAC_CROSS, false },	//	225 LNSPEC_SectorSetCurrent
+	{0, -1, 0, 0, 1, 0, SPAC_CROSS, false },	//	226 LNSPEC_PointPushSetForce
+	{LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, false },	//	227
+	{LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true },	//	228
+	{LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, false },	//	229
+
+	{LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, true },	//	230
+	{LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, false },	//	231
+	{LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true },	//	232
+	{LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_USE, false },	//	233
+	{LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_USE, true },	//	234
+	{LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_CROSS, false },	//	235
+	{LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_CROSS, true },	//	236
+	{LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_USE, false },	//	237
+	{LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_USE, true },	//	238
+	{LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	239
+
+	{LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_CROSS, true },	//	240
+	{LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_USE, false },	//	241
+	{0, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	242 LNSPEC_TransferHeights
+	{LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_CROSS, false },	//	243
+	{LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_CROSS, true },	//	244
+	{0, -1, 5, 0, 0, 0, SPAC_CROSS, false },	//	245 LNSPEC_ScrollCeiling
+	{0, -1, 5, 0, 0, 0, SPAC_CROSS, false },	//	246 LNSPEC_ScrollFloor
+	{0, -1, 5, 1, 0, 0, SPAC_CROSS, false },	//	247 LNSPEC_ScrollFloor
+	{0, -1, 5, 2, 0, 0, SPAC_CROSS, false },	//	248 LNSPEC_ScrollFloor
+	{0, -1, 1, 0, 0, 0, SPAC_CROSS, false },	//	249 LNSPEC_ScrollTextureModel
+
+	{0, -1, 4, 0, 0, 0, SPAC_CROSS, false },	//	250 LNSPEC_ScrollCeiling
+	{0, -1, 4, 0, 0, 0, SPAC_CROSS, false },	//	251 LNSPEC_ScrollFloor
+	{0, -1, 4, 1, 0, 0, SPAC_CROSS, false },	//	252 LNSPEC_ScrollFloor
+	{0, -1, 4, 2, 0, 0, SPAC_CROSS, false },	//	253 LNSPEC_ScrollFloor
+	{0, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	254 LNSPEC_ScrollTextureModel
+	{LNSPEC_ScrollTextureOffsets, 0, 0, 0, 0, 0, SPAC_CROSS, false },	//	255
+	{0, -1, 2, 8, 0, 0, SPAC_CROSS, true },	//	256 LNSPEC_StairsBuildUpDoom
+	{0, -1, 32, 16, 0, 0, SPAC_CROSS, true },	//	257 LNSPEC_StairsBuildUpDoom
+	{0, -1, 2, 8, 0, 0, SPAC_USE, true },	//	258 LNSPEC_StairsBuildUpDoom
+	{0, -1, 32, 16, 0, 0, SPAC_USE, true },	//	259 LNSPEC_StairsBuildUpDoom
+
+	{LNSPEC_LineTranslucent, -1, 128, 0, 0, 0, SPAC_CROSS, false },	//	260
+	{0, -1, 0, 0, 0, 0, SPAC_CROSS, false },	//	261 LNSPEC_TransferCeilingLight
+	{LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_CROSS, false },	//	262
+	{LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_CROSS, true },	//	263
+	{LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCROSS, false },	//	264
+	{LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCROSS, true },	//	265
+	{LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCROSS, false },	//	266
+	{LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCROSS, true },	//	267
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCROSS, false },	//	268
+	{LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCROSS, true },	//	269
+
+	{0, 0, 0, 0, 0, 0, 0, 0 },	//	270
+	{0, -1, 255, 0, 0, 0, SPAC_CROSS, false },	//	271 LNSPEC_StaticInit
+	{0, -1, 255, 1, 0, 0, SPAC_CROSS, false },	//	272 LNSPEC_StaticInit
 };
 
 // CODE --------------------------------------------------------------------
@@ -234,17 +358,213 @@ spec_trans_t spec_trans_tab[] = {
 //
 //==========================================================================
 
-void TranslateLine(line_t * line)
+void TranslateLine(line_t* line)
 {
-	int oldspec;
+	int			OldSpec;
+	int			OldTag;
+	int			OldFlags;
 
-	oldspec = line->special;
+	OldSpec = line->special;
+	OldTag = line->arg1;
+	OldFlags = line->flags;
+
+	//	Clear unknown flags.
+	line->flags &= 0x01ff;
+
 	if (!line->special)
 	{
 		return;
 	}
 
-	switch (oldspec)
+	//	Handle Boom's generalized types.
+	if (OldSpec > 0x2F80)
+	{
+		//	Activation flags.
+		switch (OldSpec & 0x0006)
+		{
+		case 0:
+			line->flags |= SPAC_CROSS << ML_SPAC_SHIFT;
+			break;
+
+		case 2:
+		case 6:
+			if (OldFlags & 0x0200)
+				line->flags |= SPAC_USETHROUGH << ML_SPAC_SHIFT;
+			else
+				line->flags |= SPAC_USE << ML_SPAC_SHIFT;
+			break;
+
+		case 4:
+			line->flags |= SPAC_IMPACT << ML_SPAC_SHIFT;
+			break;
+		}
+		if (OldSpec & 1)
+		{
+			line->flags |= ML_REPEAT_SPECIAL;
+		}
+
+		//	We treat push triggers like switch triggers with zero tags.
+		if ((OldSpec & 0x0006) == 6)
+		{
+			line->arg1 = 0;
+		}
+		else
+		{
+			line->arg1 = OldTag;
+		}
+
+		if (OldSpec <= 0x3000)
+		{
+			//	Generalized crusher (tag, dnspeed, upspeed, silent, damage)
+			line->special = LNSPEC_CeilingGenericCrush;
+			if (OldSpec & 0x0020)
+			{
+				line->flags |= ML_MONSTERSCANACTIVATE;
+			}
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 8;		break;
+			case 0x0008:	line->arg2 = 16;	break;
+			case 0x0010:	line->arg2 = 32;	break;
+			case 0x0018:	line->arg2 = 64;	break;
+			}
+			line->arg3 = line->arg2;
+			line->arg4 = (OldSpec & 0x0040) >> 6;
+			line->arg5 = 10;
+		}
+		else if (OldSpec <= 0x3400)
+		{
+			//	Generalized stairs (tag, speed, step, dir/igntxt, reset)
+			line->special = 0;//LNSPEC_StairsGeneric;
+			if (OldSpec & 0x0020)
+			{
+				line->flags |= ML_MONSTERSCANACTIVATE;
+			}
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 2;		break;
+			case 0x0008:	line->arg2 = 4;		break;
+			case 0x0010:	line->arg2 = 16;	break;
+			case 0x0018:	line->arg2 = 32;	break;
+			}
+			switch (OldSpec & 0x00c0)
+			{
+			case 0x0000:	line->arg3 = 4;		break;
+			case 0x0040:	line->arg3 = 8;		break;
+			case 0x0080:	line->arg3 = 16;	break;
+			case 0x00c0:	line->arg3 = 24;	break;
+			}
+			line->arg4 = (OldSpec & 0x0300) >> 8;
+			line->arg5 = 0;
+		}
+		else if (OldSpec <= 0x3800)
+		{
+			//	Generalized lift (tag, speed, delay, target, height)
+			line->special = LNSPEC_PlatGeneric;
+			if (OldSpec & 0x0020)
+			{
+				line->flags |= ML_MONSTERSCANACTIVATE;
+			}
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 16;	break;
+			case 0x0008:	line->arg2 = 32;	break;
+			case 0x0010:	line->arg2 = 64;	break;
+			case 0x0018:	line->arg2 = 128;	break;
+			}
+			switch (OldSpec & 0x00c0)
+			{
+			case 0x0000:	line->arg3 = 8;		break;
+			case 0x0040:	line->arg3 = 24;	break;
+			case 0x0080:	line->arg3 = 40;	break;
+			case 0x00c0:	line->arg3 = 80;	break;
+			}
+			line->arg4 = ((OldSpec & 0x0300) >> 8) + 1;
+			line->arg5 = 0;
+		}
+		else if (OldSpec <= 0x3c00)
+		{
+			//	Generalized locked door (tag, speed, kind, delay, lock)
+			line->special = LNSPEC_DoorGeneric;
+			if (OldSpec & 0x0080)
+			{
+				line->flags |= ML_MONSTERSCANACTIVATE;
+			}
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 16;	break;
+			case 0x0008:	line->arg2 = 32;	break;
+			case 0x0010:	line->arg2 = 64;	break;
+			case 0x0018:	line->arg2 = 128;	break;
+			}
+			line->arg3 = (OldSpec & 0x0020) >> 5;
+			line->arg4 = 0;
+			line->arg5 = (OldSpec & 0x01c0) >> 6;
+			if (line->arg5 == 0)
+			{
+				line->arg5 = 100;
+			}
+			else if (line->arg5 == 7)
+			{
+				line->arg5 = 101;
+			}
+			line->arg5 |= (OldSpec & 0x0200) >> 2;
+		}
+		else if (OldSpec <= 0x4000)
+		{
+			//	Generalized door (tag, speed, kind, delay, lock)
+			line->special = LNSPEC_DoorGeneric;
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 16;	break;
+			case 0x0008:	line->arg2 = 32;	break;
+			case 0x0010:	line->arg2 = 64;	break;
+			case 0x0018:	line->arg2 = 128;	break;
+			}
+			line->arg3 = (OldSpec & 0x0060) >> 5;
+			switch (OldSpec & 0x0300)
+			{
+			case 0x0000:	line->arg4 = 8;		break;
+			case 0x0100:	line->arg4 = 32;	break;
+			case 0x0200:	line->arg4 = 72;	break;
+			case 0x0300:	line->arg4 = 240;	break;
+			}
+			line->arg5 = 0;
+		}
+		else
+		{
+			//	Generalized ceiling (tag, speed, height, target, change/model/direct/crush)
+			//	Generalized floor (tag, speed, height, target, change/model/direct/crush)
+			if (OldSpec <= 0x6000)
+				line->special = LNSPEC_CeilingGeneric;
+			else
+				line->special = LNSPEC_FloorGeneric;
+
+			switch (OldSpec & 0x0018)
+			{
+			case 0x0000:	line->arg2 = 8;		break;
+			case 0x0008:	line->arg2 = 16;	break;
+			case 0x0010:	line->arg2 = 32;	break;
+			case 0x0018:	line->arg2 = 64;	break;
+			}
+			line->arg4 = ((OldSpec & 0x0380) >> 7) + 1;
+			if (line->arg4 >= 7)
+			{
+				line->arg3 = 24 + (line->arg4 - 7) * 8;
+				line->arg4 = 0;
+			}
+			else
+			{
+				line->arg3 = 0;
+			}
+			line->arg5 =  ((OldSpec & 0x0c00) >> 10) |
+						  ((OldSpec & 0x0060) >> 3) |
+						  ((OldSpec & 0x1000) >> 8);
+		}
+		return;
+	}
+
+	switch (OldSpec)
 	{
 	// Doom Legacy 3D floors
 	case 281:
@@ -266,13 +586,16 @@ void TranslateLine(line_t * line)
 	case 415:
 	case 416:
 	case 417:
-		if (line->frontsector->floorheight < line->frontsector->ceilingheight)
+		if (GetPlanePointZ(&line->frontsector->floor,
+			*line->frontsector->lines[0]->v1) < 
+			GetPlanePointZ(&line->frontsector->ceiling,
+			*line->frontsector->lines[0]->v1))
 		{
 			SwapPlanes(line->frontsector);
 		}
 		break;
 	}
-	switch (oldspec)
+	switch (OldSpec)
  	{
  	case 281:
 	case 289:
@@ -388,16 +711,63 @@ void TranslateLine(line_t * line)
 		return;
 	}
 
-	line->special = spec_trans_tab[oldspec].special;
-	if (spec_trans_tab[oldspec].arg1 != -1)
-		line->arg1 = spec_trans_tab[oldspec].arg1;
-	line->arg2 = spec_trans_tab[oldspec].arg2;
-	line->arg3 = spec_trans_tab[oldspec].arg3;
-	line->arg4 = spec_trans_tab[oldspec].arg4;
-	line->arg5 = spec_trans_tab[oldspec].arg5;
-	line->flags |= spec_trans_tab[oldspec].spac << ML_SPAC_SHIFT;
-	if (spec_trans_tab[oldspec].repeat)
+	//	Special.
+	line->special = spec_trans_tab[OldSpec].special;
+	//	Arg 1.
+	if (spec_trans_tab[OldSpec].arg1 == -1)
+	{
+		line->arg1 = OldTag;
+	}
+	else
+	{
+		line->arg1 = spec_trans_tab[OldSpec].arg1;
+	}
+	//	Arg 2.
+	if (spec_trans_tab[OldSpec].arg2 == -1)
+	{
+		line->arg2 = OldTag;
+	}
+	else
+	{
+		line->arg2 = spec_trans_tab[OldSpec].arg2;
+	}
+	//	Arg 3.
+	if (spec_trans_tab[OldSpec].arg3 == -1)
+	{
+		line->arg3 = OldTag;
+	}
+	else
+	{
+		line->arg3 = spec_trans_tab[OldSpec].arg3;
+	}
+	//	Arg 4.
+	if (spec_trans_tab[OldSpec].arg4 == -1)
+	{
+		line->arg4 = OldTag;
+	}
+	else
+	{
+		line->arg4 = spec_trans_tab[OldSpec].arg4;
+	}
+	//	Arg 5.
+	if (spec_trans_tab[OldSpec].arg5 == -1)
+	{
+		line->arg5 = OldTag;
+	}
+	else
+	{
+		line->arg5 = spec_trans_tab[OldSpec].arg5;
+	}
+
+	//	Activation flags.
+	if (OldFlags & 0x0200 && spec_trans_tab[OldSpec].spac == SPAC_USE)
+		line->flags |= SPAC_USETHROUGH << ML_SPAC_SHIFT;
+	else
+		line->flags |= spec_trans_tab[OldSpec].spac << ML_SPAC_SHIFT;
+	if (spec_trans_tab[OldSpec].repeat)
+	{
 		line->flags |= ML_REPEAT_SPECIAL;
+	}
 }
 
 //==========================================================================
@@ -406,7 +776,7 @@ void TranslateLine(line_t * line)
 //
 //==========================================================================
 
-void TranslateSector(sector_t * sector)
+void TranslateSector(sector_t* sector)
 {
 	int special;
 	int high;
@@ -446,7 +816,7 @@ void TranslateSector(sector_t * sector)
 //
 //==========================================================================
 
-void TranslateThing(mthing_t * mthing)
+void TranslateThing(mthing_t* mthing)
 {
 	int flags;
 
@@ -455,11 +825,6 @@ void TranslateThing(mthing_t * mthing)
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
 		mthing->options &= ~MTF_GSINGLE;
-	if (mthing->type == 14)
-	{
-		mthing->tid =
-			GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0))->tag;
-	}
 }
 
 //==========================================================================
@@ -468,7 +833,7 @@ void TranslateThing(mthing_t * mthing)
 //
 //==========================================================================
 
-void TranslateLevel(void)
+void TranslateLevel()
 {
 	int i;
 
@@ -491,6 +856,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.10  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

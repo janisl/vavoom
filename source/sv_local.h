@@ -563,9 +563,9 @@ enum skill_t
 	sk_nightmare
 };
 
-void G_ExitLevel(void);
-void G_SecretExitLevel(void);
-void G_Completed(int map, int position);
+void G_ExitLevel(int Position);
+void G_SecretExitLevel(int Position);
+void G_Completed(int Map, int Position, int SaveAngle);
 void G_TeleportNewMap(int map, int position);
 void G_WorldDone(void);
 void G_PlayerReborn(int player);
@@ -613,9 +613,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/03/16 15:04:44  dj_jl
+//	More work on line specials.
+//
 //	Revision 1.34  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.33  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
 //	

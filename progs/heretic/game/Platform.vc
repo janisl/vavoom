@@ -47,6 +47,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 {
 	float		DestHeight;
 	TVec		Spot;
+	name		StartSound;
 
 	Sector = InSector;
 	Sector->FloorData = self;
@@ -83,6 +84,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Tag = Arg1;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Crush = 0;
+	StartSound = 'PlatformStart';
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
@@ -135,6 +137,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		High = Sector->floor.dist;
 		Wait = itof(Arg3) / 35.0;
 		Status = PLAT_Down;
+		if (Arg5)
+			StartSound = '';
 		break;
 
 	case PLATEV_DownNearestWaitUpStay:
@@ -210,9 +214,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Low = DotProduct(Sector->floor.normal, Spot);
 		High = Sector->floor.dist;
 		Status = PLAT_Down;
+		StartSound = '';
 		break;
 	}
-	SectorStartSoundName(Sector, 'PlatformStart', CHAN_VOICE);
+	if (StartSound != '')
+		SectorStartSoundName(Sector, StartSound, CHAN_VOICE);
 }
 
 //==========================================================================
@@ -344,7 +350,7 @@ void Tick(float deltaTime)
 		if (Time <= 0.0)
 		{
 			Time = 0.0;
-			if (Sector->floorheight == Low)
+			if (Sector->floor.dist == Low)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
@@ -363,6 +369,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:21  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

@@ -117,7 +117,7 @@ void A_KoraxChase(void)
 		spot = Actor(FindMobjFromTID(FirstTeleportTID, &search));
 		if (spot)
 		{
-			Teleport(spot.Origin, spot.Angles.yaw, true);
+			Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
 		}
 
 		StartACS(249, 0, 0, 0, 0, self, NULL, 0, false, false);
@@ -145,7 +145,7 @@ void A_KoraxChase(void)
 			spot = Actor(FindMobjFromTID(TeleportTID, &_Special1));
 			if (spot)
 			{
-				Teleport(spot.Origin, spot.Angles.yaw, true);
+				Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
 			}
 		}
 	}
@@ -515,6 +515,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.4  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -459,12 +459,12 @@ native void PolyobjStopSequence(polyobj_t * mobj);
 native sector_t *SectorToNum(sector_t * sector);
 native sector_t *NumToSector(sector_t * sector);
 
-native void G_ExitLevel(void);
-native void G_SecretExitLevel(void);
+native void G_ExitLevel(int Position);
+native void G_SecretExitLevel(int Position);
 
 native int P_GetPlayerNum(BasePlayer player);
 native void ClearPlayer(BasePlayer p);
-native void G_Completed(int map, int position);
+native void G_Completed(int Map, int Position, int SaveAngle);
 native int TerrainType(int pic);
 native void P_ForceLightning(void);
 native void SB_Start(void);
@@ -486,6 +486,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2005/03/16 15:04:10  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.46  2004/12/27 12:23:09  dj_jl
 //  Multiple small changes for version 1.16
 //

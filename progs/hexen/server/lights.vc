@@ -25,17 +25,18 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
 {
-	LITE_RAISEBYVALUE,
-	LITE_LOWERBYVALUE,
-	LITE_CHANGETOVALUE,
-	LITE_FADE,
-	LITE_GLOW,
-	LITE_FLICKER,
-	LITE_STROBE
+	LIGHTEV_Fade,
+	LIGHTEV_Glow,
+	LIGHTEV_Flicker,
+	LIGHTEV_Strobe
 };
 
 // TYPES -------------------------------------------------------------------
@@ -57,36 +58,19 @@ int PhaseTable[64] = {
 
 // CODE --------------------------------------------------------------------
 
-//**************************************************************************
-//
-//  FIRELIGHT FLICKER
-//
-//**************************************************************************
-
 //==========================================================================
 //
 //  P_SpawnFireFlicker
 //
 //==========================================================================
 
-void P_SpawnFireFlicker(sector_t * sector)
+void P_SpawnFireFlicker(sector_t* sector)
 {
 	FireFlicker Flick;
 
 	Flick = NewSpecialThinker(FireFlicker);
-
-	Flick.Sector = sector;
-	Flick.time = 4.0 / 35.0;
-	Flick.maxlight = sector->params.lightlevel;
-	Flick.minlight = FindMinSurroundingLight(sector,
-		sector->params.lightlevel) + 16;
+	Flick.Init(sector);
 }
-
-//**************************************************************************
-//
-//  GLOWING LIGHT
-//
-//**************************************************************************
 
 //==========================================================================
 //
@@ -96,88 +80,226 @@ void P_SpawnFireFlicker(sector_t * sector)
 //
 //==========================================================================
 
-void P_SpawnGlowingLight(sector_t * sector)
+void P_SpawnGlowingLight(sector_t* sector)
 {
 	GlowingLight G;
 
 	G = NewSpecialThinker(GlowingLight);
-
-	G.Sector = sector;
-	G.minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
-	G.maxlight = sector->params.lightlevel;
-	G.direction = -1;
+	G.Init(sector);
 }
-
-//**************************************************************************
-//
-//  BROKEN LIGHT FLASHING
-//
-//**************************************************************************
 
 //==========================================================================
 //
 //  P_SpawnLightFlash
 //
-//  After the map has been loaded, scan each sector
-// for specials that spawn thinkers
-//
 //==========================================================================
 
-void P_SpawnLightFlash(sector_t * sector)
+void P_SpawnLightFlash(sector_t* sector)
 {
 	LightFlash Flash;
 
 	Flash = NewSpecialThinker(LightFlash);
-
-	Flash.Sector = sector;
-	Flash.maxlight = sector->params.lightlevel;
-	Flash.minlight = FindMinSurroundingLight(sector,
-		sector->params.lightlevel);
-	Flash.maxtime = 64;
-	Flash.mintime = 7;
-	Flash.time = itof((P_Random() & Flash.maxtime) + 1) / 35.0;
+	Flash.Init(sector);
 }
-
-//**************************************************************************
-//
-//  STROBE LIGHT FLASHING
-//
-//**************************************************************************
-
-#define STROBEBRIGHT		5
-#define FASTDARK			15
-#define SLOWDARK			35
 
 //==========================================================================
 //
 //  P_SpawnStrobeFlash
 //
-//  After the map has been loaded, scan each sector for specials that spawn
-// thinkers
-//
 //==========================================================================
 
-void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
+void P_SpawnStrobeFlash(sector_t* sector, int fastOrSlow, int maxtime,
 	int inSync)
 {
 	Strobe Flash;
 
 	Flash = NewSpecialThinker(Strobe);
+	Flash.Init(sector, fastOrSlow, maxtime, inSync);
+}
 
-	Flash.Sector = sector;
-	Flash.mintime = itof(fastOrSlow) / 35.0;
-	Flash.maxtime = itof(maxtime) / 35.0;
-	Flash.maxlight = sector->params.lightlevel;
-	Flash.minlight = FindMinSurroundingLight(sector,
-		sector->params.lightlevel);
+//==========================================================================
+//
+//  EV_StartLightStrobing
+//
+//  Start strobing lights (usually from a trigger)
+//
+//==========================================================================
 
-	if (Flash.minlight == Flash.maxlight)
-		Flash.minlight = 0;
+int EV_StartLightStrobing(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			Ret;
+	int			SecNum;
+	sector_t*	Sec;
+	Strobe		Flash;
 
-	if (!inSync)
-		Flash.time = (Random() * 8.0 + 1.0) / 35.0;
-	else
-		Flash.time = 1.0 / 35.0;
+	Ret = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		if (Sec->LightingData)
+			continue;
+
+		Ret = true;
+		Flash = NewSpecialThinker(Strobe);
+		Flash.Init(Sec, Arg3, Arg2, Arg4);
+	}
+	return Ret;
+}
+
+//**************************************************************************
+//
+//  TURN LINE'S TAG LIGHTS ON / OFF
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_TagLightTurnOn
+//
+//==========================================================================
+
+int EV_TagLightTurnOn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			SecNum;
+	sector_t*	Sec;
+	int			j;
+	sector_t*	TSec;
+	int			Max;
+
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Max = 0;
+		for (j = 0; j < Sec->linecount; j++)
+		{
+			TSec = getNextSector(Sec->lines[j], Sec);
+			if (!TSec)
+				continue;
+			if (TSec->params.lightlevel > Max)
+				Max = TSec->params.lightlevel;
+		}
+		Sec->params.lightlevel = Max;
+	}
+	return 1;
+}
+
+//==========================================================================
+//
+//  EV_TurnTagLightsOff
+//
+//==========================================================================
+
+int EV_TurnTagLightsOff(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			SecNum;
+	sector_t*	Sec;
+	int			i;
+	int			Min;
+	sector_t*	TSec;
+
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Min = Sec->params.lightlevel;
+		for (i = 0; i < Sec->linecount; i++)
+		{
+			TSec = getNextSector(Sec->lines[i], Sec);
+			if (!TSec)
+				continue;
+			if (TSec->params.lightlevel < Min)
+				Min = TSec->params.lightlevel;
+		}
+		Sec->params.lightlevel = Min;
+	}
+	return 1;
+}
+
+//============================================================================
+//
+//  EV_LightRaiseByValue
+//
+//============================================================================
+
+bool EV_LightRaiseByValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	sector_t*	Sec;
+	int			SecNum;
+	bool		Rtn;
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Sec->params.lightlevel += Arg2;
+		if (Sec->params.lightlevel > 255)
+		{
+			Sec->params.lightlevel = 255;
+		}
+		Rtn = true;
+	}
+	return Rtn;
+}
+
+//============================================================================
+//
+//  EV_LightLowerByValue
+//
+//============================================================================
+
+bool EV_LightLowerByValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	sector_t*	Sec;
+	int			SecNum;
+	bool		Rtn;
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Sec->params.lightlevel -= Arg2;
+		if (Sec->params.lightlevel < 0)
+		{
+			Sec->params.lightlevel = 0;
+		}
+		Rtn = true;
+	}
+	return Rtn;
+}
+
+//============================================================================
+//
+//	EV_LightChangeToValue
+//
+//============================================================================
+
+bool EV_LightChangeToValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	sector_t*	Sec;
+	int			SecNum;
+	bool		Rtn;
+
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &GLevel.Sectors[SecNum];
+		Sec->params.lightlevel = Arg2;
+		if (Sec->params.lightlevel < 0)
+		{
+			Sec->params.lightlevel = 0;
+		}
+		else if (Sec->params.lightlevel > 255)
+		{
+			Sec->params.lightlevel = 255;
+		}
+		Rtn = true;
+	}
+	return Rtn;
 }
 
 //============================================================================
@@ -186,118 +308,28 @@ void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
 //
 //============================================================================
 
-bool EV_SpawnLight(line_t * line, int *arg, int type)
+bool EV_SpawnLight(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
 {
-	LightEffect Light;
-	sector_t *sec;
-	int secNum;
-	int arg1, arg2, arg3, arg4;
-	bool think;
-	bool rtn;
+	LightEffect	Light;
+	sector_t*	Sec;
+	int			SecNum;
+	bool		Rtn;
 
-	arg1 = arg[1];
-	arg2 = arg[2];
-	arg3 = arg[3];
-	arg4 = arg[4];
-
-	rtn = false;
-	think = false;
-	for (secNum = FindSectorFromTag(arg[0], -1); secNum >= 0;
-		secNum = FindSectorFromTag(arg[0], secNum))
+	Rtn = false;
+	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		think = false;
-		sec = &GLevel.Sectors[secNum];
-
+		Sec = &GLevel.Sectors[SecNum];
 		Light = NewSpecialThinker(LightEffect);
-		Light.type = type;
-		Light.Sector = sec;
-		Light.time = 0.0;
-		rtn = true;
-		switch (type)
-		{
-		case LITE_RAISEBYVALUE:
-			sec->params.lightlevel += arg1;
-			if (sec->params.lightlevel > 255)
-			{
-				sec->params.lightlevel = 255;
-			}
-			break;
-		case LITE_LOWERBYVALUE:
-			sec->params.lightlevel -= arg1;
-			if (sec->params.lightlevel < 0)
-			{
-				sec->params.lightlevel = 0;
-			}
-			break;
-		case LITE_CHANGETOVALUE:
-			sec->params.lightlevel = arg1;
-			if (sec->params.lightlevel < 0)
-			{
-				sec->params.lightlevel = 0;
-			}
-			else if (sec->params.lightlevel > 255)
-			{
-				sec->params.lightlevel = 255;
-			}
-			break;
-		case LITE_FADE:
-			think = true;
-			Light.value1 = arg1;	// destination lightlevel
-			Light.delta = itof((arg1 - sec->params.lightlevel) / arg2) * 32.0;	// delta lightlevel
-			if (sec->params.lightlevel <= arg1)
-			{
-				Light.direction = 1;	// get brighter
-			}
-			else
-			{
-				Light.direction = -1;
-			}
-			break;
-		case LITE_GLOW:
-			think = true;
-			Light.value1 = arg1;	// upper lightlevel
-			Light.value2 = arg2;	// lower lightlevel
-			Light.delta = itof((arg1 - sec->params.lightlevel) / arg3) * 32.0;	// lightlevel delta
-			if (sec->params.lightlevel <= arg1)
-			{
-				Light.direction = 1;	// get brighter
-			}
-			else
-			{
-				Light.direction = -1;
-			}
-			break;
-		case LITE_FLICKER:
-			think = true;
-			Light.value1 = arg1;	// upper lightlevel
-			Light.value2 = arg2;	// lower lightlevel
-			sec->params.lightlevel = Light.value1;
-			Light.time = itof((P_Random() & 64) + 1) / 32.0;
-			break;
-		case LITE_STROBE:
-			think = true;
-			Light.value1 = arg1;	// upper lightlevel
-			Light.value2 = arg2;	// lower lightlevel
-			Light.time1 = itof(arg3) / 35.0;	// upper tics
-			Light.time2 = itof(arg4) / 35.0;	// lower tics
-			Light.time = itof(arg3) / 35.0;
-			sec->params.lightlevel = Light.value1;
-			break;
-		default:
-			rtn = false;
-			break;
-		}
-		if (!think)
-		{
-			RemoveSpecialThinker(Light);
-		}
+		Light.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		Rtn = true;
 	}
-	return rtn;
+	return Rtn;
 }
 
 //==========================================================================
 //
-// P_SpawnPhasedLight
+//	P_SpawnPhasedLight
 //
 //==========================================================================
 
@@ -306,19 +338,7 @@ void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 	PhasedLight Phase;
 
 	Phase = NewSpecialThinker(PhasedLight);
-	Phase.Sector = sector;
-	if (index == -1)
-	{
-		// sector->lightlevel as the index
-		Phase.index = itof(sector->params.lightlevel) / 32.0;
-	}
-	else
-	{
-		Phase.index = itof(index) / 32.0;
-	}
-	Phase.base = base & 255;
-	sector->params.lightlevel = Phase.base +
-		PhaseTable[ftoi(Phase.index * 32.0) & 63];
+	Phase.Init(sector, base, index);
 }
 
 //==========================================================================
@@ -407,9 +427,34 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 	while (sec);
 }
 
+//==========================================================================
+//
+//	EV_LightStop
+//
+//==========================================================================
+
+bool EV_LightStop(int Tag)
+{
+	Lighting		L;
+
+	FOREACH(Lighting, L)
+	{
+		if (L.Sector->tag == Tag)
+		{
+			if (L.Sector->LightingData == L)
+				L.Sector->LightingData = none;
+			RemoveSpecialThinker(L);
+		}
+	}
+	return true;
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2005/03/16 15:04:40  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.22  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

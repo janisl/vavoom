@@ -41,14 +41,14 @@
 //
 //==========================================================================
 
-void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
+void SpawnScrollingFloor(sector_t* sector, int xdir, int ydir, int speed)
 {
 	FloorScroll Scroll;
 
 	Scroll = NewSpecialThinker(FloorScroll);
 	Scroll.Sector = sector;
-	Scroll.XSpeed = itof(xdir) * itof(1 << speed) * 16.0;
-	Scroll.YSpeed = itof(ydir) * itof(1 << speed) * 16.0;
+	Scroll.XSpeed = itof(xdir) * itof(1 << speed) * 35.0 / 2.0;
+	Scroll.YSpeed = itof(ydir) * itof(1 << speed) * 35.0 / 2.0;
 }
 
 //==========================================================================
@@ -57,19 +57,38 @@ void SpawnScrollingFloor(sector_t * sector, int xdir, int ydir, int speed)
 //
 //==========================================================================
 
-void SpawnWallScroller(line_t * line, int xdir, int ydir)
+void SpawnWallScroller(line_t* line, int xdir, int ydir)
 {
 	WallScroll Scroll;
 
 	Scroll = NewSpecialThinker(WallScroll);
 	Scroll.index = line->sidenum[0];
-	Scroll.XSpeed = itof(xdir * line->arg1) / 2.0;
-	Scroll.YSpeed = itof(ydir * line->arg1) / 2.0;
+	Scroll.XSpeed = itof(xdir * line->arg1) * 35.0 / 64.0;
+	Scroll.YSpeed = itof(ydir * line->arg1) * 35.0 / 64.0;
+}
+
+//==========================================================================
+//
+//  SpawnWallOffsetsScroller
+//
+//==========================================================================
+
+void SpawnWallOffsetsScroller(line_t* line)
+{
+	WallScroll Scroll;
+
+	Scroll = NewSpecialThinker(WallScroll);
+	Scroll.index = line->sidenum[0];
+	Scroll.XSpeed = -GLevel.Sides[Scroll.index].textureoffset * 35.0;
+	Scroll.YSpeed = GLevel.Sides[Scroll.index].rowoffset * 35.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/03/16 15:04:40  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.11  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

@@ -81,6 +81,7 @@ bool bNoGravKill;
 bool bBoss;
 bool bNoRespawn;
 bool bWindThrust;
+bool bNoTeleport;
 #ifdef DDF
 // Extra flags.
 bool bStealth;
@@ -1738,6 +1739,10 @@ bool TeleportMove(TVec org)
 	UnlinkFromWorld();
 	Origin = org;
 	LinkToWorld();
+	if (org.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
 
 	return true;
 }
@@ -1748,21 +1753,20 @@ bool TeleportMove(TVec org)
 //
 //==========================================================================
 
-int Teleport(float x, float y, float angle, bool usefog)
+int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	TVec oldOrg;
 	Actor fog;
 
 	oldOrg = Origin;
 
-	if (!TeleportMove(vector(x, y, Origin.z)))
+	if (!TeleportMove(Dst))
 		return 0;
 
-	Origin.z = FloorZ;	//fixme: not needed?
 	if (bIsPlayer)
 		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
 
-	if (usefog)
+	if (SrcFog)
 	{
 		// spawn teleport fog at source and destination
 		fog = Spawn(TeleportFog, oldOrg);
@@ -1771,15 +1775,21 @@ int Teleport(float x, float y, float angle, bool usefog)
 #else
 		fog.PlaySound('Teleport', CHAN_VOICE);
 #endif
+	}
 
-		fog = Spawn(TeleportFog, vector(x + 20.0 * cos(angle),
-			y + 20.0 * sin(angle), Origin.z));
+	if (DstFog)
+	{
+		fog = Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
+			20.0 * sin(angle), 0.0));
 #ifdef DDF
 		fog.SetState(fog.SeeState);
 #else
 		fog.PlaySound('Teleport', CHAN_VOICE);
 #endif
+	}
 
+	if (!KeepDir)
+	{
 		// don't move for a bit
 		if (bIsPlayer)
 		{
@@ -3958,6 +3968,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/03/16 15:04:20  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.11  2004/12/27 12:23:10  dj_jl
 //  Multiple small changes for version 1.16
 //

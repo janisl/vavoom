@@ -23,16 +23,77 @@
 //**
 //**************************************************************************
 
-class LightEffect:SectorThinker;
+class LightEffect : Lighting;
 
-int type;
-int value1;
-int value2;
-float time1;
-float time2;
-int direction;
-float time;
-float delta;
+int			Type;
+int			Value1;
+int			Value2;
+float		Time1;
+float		Time2;
+int			Direction;
+float		Time;
+float		Delta;
+
+//============================================================================
+//
+//  Init
+//
+//============================================================================
+
+void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	int InType)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	Type = InType;
+	Time = 0.0;
+	switch (Type)
+	{
+	case LIGHTEV_Fade:
+		Value1 = Arg2;	// destination lightlevel
+		Delta = itof((Arg2 - Sector->params.lightlevel) / Arg3) * 32.0;	// delta lightlevel
+		if (Sector->params.lightlevel <= Arg2)
+		{
+			Direction = 1;	// get brighter
+		}
+		else
+		{
+			Direction = -1;
+		}
+		break;
+
+	case LIGHTEV_Glow:
+		Value1 = Arg2;	// upper lightlevel
+		Value2 = Arg3;	// lower lightlevel
+		Delta = itof((Arg2 - Sector->params.lightlevel) / Arg4) * 32.0;	// lightlevel delta
+		if (Sector->params.lightlevel <= Arg2)
+		{
+			Direction = 1;	// get brighter
+		}
+		else
+		{
+			Direction = -1;
+		}
+		break;
+
+	case LIGHTEV_Flicker:
+		Value1 = Arg2;	// upper lightlevel
+		Value2 = Arg3;	// lower lightlevel
+		Sector->params.lightlevel = Value1;
+		Time = itof((P_Random() & 64) + 1) / 32.0;
+		break;
+
+	case LIGHTEV_Strobe:
+		Value1 = Arg2;	// upper lightlevel
+		Value2 = Arg3;	// lower lightlevel
+		Time1 = itof(Arg4) / 35.0;	// upper tics
+		Time2 = itof(Arg5) / 35.0;	// lower tics
+		Time = itof(Arg4) / 35.0;
+		Sector->params.lightlevel = Value1;
+		break;
+	}
+}
 
 //============================================================================
 //
@@ -40,87 +101,84 @@ float delta;
 //
 //============================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
 	int d;
 
-	if (time)
+	if (Time)
 	{
-		time -= deltaTime;
-		if (time <= 0.0)
+		Time -= DeltaTime;
+		if (Time <= 0.0)
 		{
-			time = 0.0;
+			Time = 0.0;
 		}
 		return;
 	}
-	switch (type)
+	switch (Type)
 	{
-	case LITE_FADE:
-		d = ftoi(delta * deltaTime);
+	case LIGHTEV_Fade:
+		d = ftoi(Delta * DeltaTime);
 		if (!d)
-			d = direction;
+			d = Direction;
 		Sector->params.lightlevel += d;
-		if (direction == 1)
+		if (Direction == 1)
 		{
-			if (Sector->params.lightlevel >= value1)
+			if (Sector->params.lightlevel >= Value1)
 			{
-				Sector->params.lightlevel = value1;
+				Sector->params.lightlevel = Value1;
 				RemoveSpecialThinker(self);
 			}
 		}
-		else if (Sector->params.lightlevel <= value1)
+		else if (Sector->params.lightlevel <= Value1)
 		{
-			Sector->params.lightlevel = value1;
+			Sector->params.lightlevel = Value1;
 			RemoveSpecialThinker(self);
 		}
 		break;
 
-	case LITE_GLOW:
-		Sector->params.lightlevel += ftoi(delta * deltaTime);
-		if (direction == 1)
+	case LIGHTEV_Glow:
+		Sector->params.lightlevel += ftoi(Delta * DeltaTime);
+		if (Direction == 1)
 		{
-			if (Sector->params.lightlevel >= value1)
+			if (Sector->params.lightlevel >= Value1)
 			{
-				Sector->params.lightlevel = value1;
-				delta = -delta;
-				direction = -1;	// reverse direction
+				Sector->params.lightlevel = Value1;
+				Delta = -Delta;
+				Direction = -1;	// reverse direction
 			}
 		}
-		else if (Sector->params.lightlevel <= value2)
+		else if (Sector->params.lightlevel <= Value2)
 		{
-			Sector->params.lightlevel = value2;
-			delta = -delta;
-			direction = 1;	// reverse direction
+			Sector->params.lightlevel = Value2;
+			Delta = -Delta;
+			Direction = 1;	// reverse direction
 		}
 		break;
 
-	case LITE_FLICKER:
-		if (Sector->params.lightlevel == value1)
+	case LIGHTEV_Flicker:
+		if (Sector->params.lightlevel == Value1)
 		{
-			Sector->params.lightlevel = value2;
-			time = itof((P_Random() & 7) + 1) / 32.0;
+			Sector->params.lightlevel = Value2;
+			Time = itof((P_Random() & 7) + 1) / 32.0;
 		}
 		else
 		{
-			Sector->params.lightlevel = value1;
-			time = itof((P_Random() & 31) + 1) / 32.0;
+			Sector->params.lightlevel = Value1;
+			Time = itof((P_Random() & 31) + 1) / 32.0;
 		}
 		break;
 
-	case LITE_STROBE:
-		if (Sector->params.lightlevel == value1)
+	case LIGHTEV_Strobe:
+		if (Sector->params.lightlevel == Value1)
 		{
-			Sector->params.lightlevel = value2;
-			time = time2;
+			Sector->params.lightlevel = Value2;
+			Time = Time2;
 		}
 		else
 		{
-			Sector->params.lightlevel = value1;
-			time = time1;
+			Sector->params.lightlevel = Value1;
+			Time = Time1;
 		}
-		break;
-
-	default:
 		break;
 	}
 }
@@ -132,6 +190,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:39  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

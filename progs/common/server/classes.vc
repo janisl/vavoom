@@ -29,11 +29,15 @@
 #include "ViewEntity.vc"
 #include "SectorThinker.vc"
 #include "SectorMover.vc"
+#include "Lighting.vc"
 #include "ACS.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/03/16 15:04:19  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.3  2003/11/12 16:48:02  dj_jl
 //  Changed player structure into a class
 //

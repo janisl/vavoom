@@ -22,18 +22,36 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//
-//  BROKEN LIGHT FLASHING
-//
+//**
+//**	BROKEN LIGHT FLASHING
+//**
 //**************************************************************************
 
-class LightFlash:SectorThinker;
+class LightFlash : Lighting;
 
-float time;
-int maxlight;
-int minlight;
-int maxtime;
-int mintime;
+float		Time;
+int			MaxLight;
+int			MinLight;
+int			MaxTime;
+int			MinTime;
+
+//==========================================================================
+//
+//  Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector)
+{
+	Sector = InSector;
+	Sector->LightingData = self;
+
+	MaxLight = Sector->params.lightlevel;
+	MinLight = FindMinSurroundingLight(Sector, Sector->params.lightlevel);
+	MaxTime = 64;
+	MinTime = 7;
+	Time = itof((P_Random() & MaxTime) + 1) / 35.0;
+}
 
 //==========================================================================
 //
@@ -43,23 +61,23 @@ int mintime;
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	time -= deltaTime;
-	if (time >= 0.0)
+	Time -= DeltaTime;
+	if (Time >= 0.0)
 	{
 		return;
 	}
 
-	if (Sector->params.lightlevel == maxlight)
+	if (Sector->params.lightlevel == MaxLight)
 	{
-		Sector->params.lightlevel = minlight;
-		time = itof((P_Random() & mintime) + 1) / 35.0;
+		Sector->params.lightlevel = MinLight;
+		Time = itof((P_Random() & MinTime) + 1) / 35.0;
 	}
 	else
 	{
-		Sector->params.lightlevel = maxlight;
-		time = itof((P_Random() & maxtime) + 1) / 35.0;
+		Sector->params.lightlevel = MaxLight;
+		Time = itof((P_Random() & MaxTime) + 1) / 35.0;
 	}
 
 }
@@ -71,6 +89,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/03/16 15:04:42  dj_jl
+//  More work on line specials.
+//
 //  Revision 1.2  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

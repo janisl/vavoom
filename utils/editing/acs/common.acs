@@ -5,6 +5,6 @@
 //**
 //**************************************************************************
 
-#include "specials.acs"
-#include "defs.acs"
-#include "wvars.acs"
+#include "vspecial.acs"
+#include "vdefs.acs"
+#include "vwvars.acs"
