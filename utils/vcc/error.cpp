@@ -25,7 +25,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <signal.h>
 #include "vcc.h"
 
 // MACROS ------------------------------------------------------------------
@@ -55,7 +54,7 @@ int			NumErrors = 0;
 static char* ErrorNames[NUM_ERRORS] =
 {
 	"No error.",
-	//  Atmi∑as kı›das
+	//  Memory errors
 	"Internal Error: Too many strings.",
 	"Internal Error: Break stack overflow.",
 	"Internal Error: Continue stack overflow.",
@@ -63,10 +62,10 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Internel Error: Too meny params.",
 	"Internal Error: Local vars overflow.",
 	"Internal Error: Statement overflow.",
-	//  Failu kı›das
+	//  File errors
 	"Couldn't open file.",
 	"Couldn't open debug file.",
-	//  Sadalÿ˝anas kı›das
+	//  Tokenizer errors
 	"Include nesting too deep.",
 	"Radix out of range in integer constant.",
 	"String too long.",
@@ -77,7 +76,7 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Bad character.",
 	"Unterminated comment.",
 	"Too meny constants.",
-	//  Sintakses kı›das
+	//  Syntactic errors
 	"Syntax error in constant expression.",
 	"Syntax error in expression.",
 	"Missing '('.",
@@ -315,9 +314,12 @@ static char *ErrorFileName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/12/22 07:31:11  dj_jl
+//	Increased argument count limit.
+//
 //	Revision 1.6  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.5  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

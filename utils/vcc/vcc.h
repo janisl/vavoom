@@ -48,7 +48,7 @@ using namespace VavoomUtils;
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
-#define	MAX_PARAMS				8
+#define	MAX_PARAMS				16
 #define MAX_LOCAL_DEFS			64
 #define	MAX_FUNCTIONS			8192
 #define MAX_CONSTANTS			10000
@@ -689,9 +689,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2004/12/22 07:31:57  dj_jl
+//	Increased argument count limit.
+//
 //	Revision 1.27  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.26  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.

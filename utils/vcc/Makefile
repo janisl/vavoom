@@ -6,7 +6,9 @@ EXE=
 LIBS=-lstdc++
 endif
 
-CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -march=pentiumpro
+#CFLAGS = -Wall -O3 -ffast-math -fomit-frame-pointer -march=pentiumpro
+#CFLAGS = -Wall -O2 -ffast-math
+CFLAGS = -Wall -g
 
 OBJS = \
 	cmdlib.o \
@@ -50,4 +52,3 @@ vcpp/libcpp.a: $(CPP_OBJS)
 
 vcpp/%.o : vcpp/%.cpp vcpp/cpp.h
 	gcc $(CFLAGS) -c -o $@ $<
-
