@@ -204,8 +204,8 @@ spec_trans_t spec_trans_tab[] = {
 
 	{35, -1, 8, 64, 0, 0, SPAC_USE, false},	//  140
 	{197, -1, 8, 8, 10, 0, SPAC_CROSS, false},	//  141
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  142 -- ScrollTexture
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  143 -- ScrollTextureDown
+	{102, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  142
+	{103, 64, 0, 0, 0, 0, SPAC_CROSS, false},	//  143
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  144 S1 Open Sliding Door (spcl txt)
 	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  145
 	{217, -1, 4, 128 + 16, 0, 0, SPAC_USE, false},	//  146
@@ -251,7 +251,7 @@ spec_trans_t spec_trans_tab[] = {
 	{257, -1, 255, 0, 0, 0, SPAC_IMPACT, false},	//  182
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  183 (MAP12)
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  184 SR LiftUpNearDownStay
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  185 WR TeleportSilent
+	{70, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  185 Silent
 	{74, -1, 0, 0, 0, 0, SPAC_CROSS, true},	//  186 1-Way
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  187 W1 ClearForceField Crystal
 	{13, -1, 16, 0, 129, 0, SPAC_CROSS, false},	//  188
@@ -261,7 +261,7 @@ spec_trans_t spec_trans_tab[] = {
 	{13, -1, 16, 0, 14, 0, SPAC_USE, true},	//  191
 	{13, -1, 16, 0, 16, 0, SPAC_USE, false},	//  192
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  193 W1 LowerFloor Quest F
-	{11, -1, 16, 0, 0, 0, SPAC_USE, false},	//  194 ??? Give QT1
+	{261, -1, 16, 12, 0, 0, SPAC_USE, false},	//  194
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  195 WR Teleport Monster Chan
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  196 UNUSED
 	{10, -1, 64, 0, 0, 0, SPAC_CROSS, false},	//  197 ??? Q SigilB F
@@ -270,7 +270,7 @@ spec_trans_t spec_trans_tab[] = {
 
 	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  200 ??? Q SigilA UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  201 SR PlaySound UNUSED
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  202 W1 ActivateCommUnit Tag=VOC???
+	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  202
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  203 SR PlayMusic UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  204 W1 PlayMusic UNUSED
 	{13, 0, 0, 0, 254, 0, SPAC_USE, true},	//  205
@@ -279,7 +279,7 @@ spec_trans_t spec_trans_tab[] = {
 	{256, 2, 0, 0, 0, 0, SPAC_CROSS, false},	//  208 CommUnit UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  209 S1 LowerStairs Chalice UNUSED
 
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  210 W1 ActivateCommUnit Tag=???
+	{260, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  210 Teaser only
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  211 S1 PlaySound UNUSED
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  212 W1 LowerFloorToNearest Comm Unit
 	{13, 0, 16, 150, 130, 0, SPAC_USE, true},	//  213
@@ -299,10 +299,10 @@ spec_trans_t spec_trans_tab[] = {
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  226 S1 LowerFloor Stat Bon
 	{10, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  227 ??? Q Quest
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  228 W1 PlayEntityVoice
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  229 SR open Sliding Sigil (spcl txt)
+	{0, -1, 0, 0, 0, 0, 0, 0},	//  229 SR Open Sliding Sigil (spcl txt)
 
 	{11, -1, 16, 0, 0, 0, SPAC_CROSS, false},	//  230 ??? Quest
-	{0, -1, 0, 0, 0, 0, 0, 0},	//  231 WR TeleportSilent (InSou)
+	{70, -1, 0, 0, 0, 0, SPAC_MCROSS, true},	//  231 ??? (InSou)
 	{13, 0, 16, 150, 13, 0, SPAC_USE, true},	//  232
 	{0, -1, 0, 0, 0, 0, 0, 0},	//  233 S1 LowerFloor_RaiseCeiling_V
 	{11, -1, 16, 0, 0, 0, SPAC_USE, true},	//  234 ??? Q Quest
@@ -465,6 +465,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/01/20 07:13:28  dj_jl
+//  Communicator voices
+//
 //  Revision 1.6  2003/12/29 08:45:26  dj_jl
 //  Some fixes, commnets
 //

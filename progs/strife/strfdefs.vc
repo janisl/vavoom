@@ -29,7 +29,8 @@ enum
 {
 	svc_gun_shot = USER_PROTOCOL_START,
 	svc_blood,
-	svc_speech
+	svc_speech,
+	svc_voice
 };
 
 enum
@@ -165,6 +166,9 @@ int maxammo[] = { 250, 50, 25, 400, 100, 30, 16 };
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2004/01/20 07:12:32  dj_jl
+//  Communicator voices
+//
 //  Revision 1.12  2003/10/02 18:04:04  dj_jl
 //  Inventory system.
 //

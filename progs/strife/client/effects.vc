@@ -133,6 +133,10 @@ bool ParseServerCommand(int cmd_type)
 		StartSpeech(MSG_ReadShort());
 		break;
 
+	case svc_voice:
+		PlayVoice(va("VOC%d", MSG_ReadShort()));
+		break;
+
 	default:
 		return false;
 	}
@@ -159,6 +163,9 @@ void CL_UpdateMobj(clmobj_t * mobj, int i)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2004/01/20 07:13:06  dj_jl
+//  Communicator voices
+//
 //  Revision 1.7  2002/11/02 08:20:55  dj_jl
 //  New style classes.
 //
