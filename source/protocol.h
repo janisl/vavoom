@@ -27,7 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PROTOCOL_VERSION	6
+#define PROTOCOL_VERSION	7
 
 enum
 {
@@ -141,9 +141,12 @@ enum
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/31 17:26:07  dj_jl
+//	Protocol varsion change
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
