@@ -27,116 +27,140 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_SoundVolume
+//
+//==========================================================================
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenSound:MenuScreen
+class MenuChoice_SoundVolume:MenuChoiceSlider
 {
-	menuslider_t sound;
-	menuslider_t music;
-	menuswitch_t stereo;
-	menuswitch_t cdmusic;
-	menutext_t title;
+	float GetInitialValue(void)
+	{
+		return itof(GetCvar("sfx_volume"));
+	}
+
+	boolean SetNewValue(float newValue)
+	{
+		SetCvar("sfx_volume", ftoi(newValue));
+		return true;
+	}
 
 	defaultproperties
 	{
+		Text = "Sound volume";
+		MaxValue = 15.0;
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenSound SoundMenu;
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  sound_func
+//	MenuChoice_MusicVolume
 //
 //==========================================================================
 
-void sound_func(menucommon_t * item, int msg)
+class MenuChoice_MusicVolume:MenuChoiceSlider
 {
-	if (msg != MMSG_ACTIVATE)
+	float GetInitialValue(void)
 	{
-		return;
+		return itof(GetCvar("music_volume"));
 	}
 
-	switch (item->id)
+	boolean SetNewValue(float newValue)
 	{
-	case 1:
-		SetCvar("sfx_volume", SoundMenu.sound.value);
-		break;
+		SetCvar("music_volume", ftoi(newValue));
+		return true;
+	}
 
-	case 2:
-		SetCvar("music_volume", SoundMenu.music.value);
-		break;
-
-	case 3:
-		SetCvar("swap_stereo", SoundMenu.stereo.value);
-		break;
-
-	case 4:
-		SetCvar("use_cd_music", SoundMenu.cdmusic.value);
-		break;
+	defaultproperties
+	{
+		Text = "Music volume";
+		MaxValue = 15.0;
 	}
 }
 
 //==========================================================================
 //
-//  menu_sound
+//	MenuChoice_SwapStereo
 //
 //==========================================================================
+
+class MenuChoice_SwapStereo:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("swap_stereo");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("swap_stereo", newValue);
+		return true;
+	}
+
+	defaultproperties
+	{
+		Text = "Swap stereo";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_CDMusic
+//
+//==========================================================================
+
+class MenuChoice_CDMusic:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("use_cd_music");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("use_cd_music", newValue);
+		return true;
+	}
+
+	defaultproperties
+	{
+		Text = "CD Music";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenSoundOptions
+//
+//==========================================================================
+
+class MenuScreenSoundOptions:MenuScreen
+{
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_SoundVolume;
+		Choices[1] = MenuChoice_MusicVolume;
+		Choices[2] = MenuChoice_SwapStereo;
+		Choices[3] = MenuChoice_CDMusic;
+		ChoicesStartX = 160;
+		ChoicesStartY = 37;
+		SelectorType = MenuSelector_SmallRight;
+		Title = "SOUND SETTINGS";
+	}
+}
 
 void menu_sound(void)
 {
-	int x = 160;
-	int y = 37;
-
-	SoundMenu = MenuScreenSound(SpawnMenu(MenuScreenSound));
-
-	MenuSlider_Init(&SoundMenu.sound, x, y, "Sound volume", TEXT_SMALLR,
-		GetCvar("sfx_volume"), 16);
-	SoundMenu.sound.callback = sound_func;
-	SoundMenu.sound.id = 1;
-	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.sound;
-	y += 20;
-
-	MenuSlider_Init(&SoundMenu.music, x, y, "Music volume", TEXT_SMALLR,
-		GetCvar("music_volume"), 16);
-	SoundMenu.music.callback = sound_func;
-	SoundMenu.music.id = 2;
-	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.music;
-	y += 20;
-
-	MenuSwitch_Init(&SoundMenu.stereo, x, y, "Swap stereo", TEXT_SMALLR,
-		GetCvar("swap_stereo"), 2, &sw_offon[0]);
-	SoundMenu.stereo.callback = sound_func;
-	SoundMenu.stereo.id = 3;
-	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.stereo;
-	y += 10;
-
-	MenuSwitch_Init(&SoundMenu.cdmusic, x, y, "CD Music", TEXT_SMALLR,
-		GetCvar("use_cd_music"), 2, &sw_offon[0]);
-	SoundMenu.cdmusic.callback = sound_func;
-	SoundMenu.cdmusic.id = 4;
-	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.cdmusic;
-
-	MenuText_InitTitle(&SoundMenu.title, 160, 24, "SOUND SETTINGS",
-		TEXT_BIGC);
-	MenuItemWrapper(SoundMenu.AddItem(MenuItemWrapper)).item = &SoundMenu.title;
-
-	PushMenuScreen(SoundMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenSoundOptions));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

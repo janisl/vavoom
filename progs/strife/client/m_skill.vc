@@ -27,90 +27,30 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int MenuSkill;
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  SkillCallback
+//	MenuChoice_Skill
 //
 //==========================================================================
 
-void SkillCallback(menucommon_t * item, int msg)
+class MenuChoice_Skill:MenuBigTextButton
 {
-	if (msg == MMSG_ACTIVATE)
+	int SkillLevel;
+
+	void ActivateEvent(void)
 	{
-		MenuSkill = item->id;
+		SetCvar("Skill", SkillLevel);
+
+		CmdBuf_AddText("Disconnect\n");
+		CmdBuf_AddText("MaxPlayers 1\n");
+
+		if (shareware)
+			CmdBuf_AddText("Map MAP33\n");
+		else
+			CmdBuf_AddText("Map MAP02\n");
+
+		ForceMenuOff();
 	}
-}
-
-//==========================================================================
-//
-//  NewGame
-//
-//==========================================================================
-
-void NewGame(int skill)
-{
-	SetCvar("Skill", skill);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-
-	if (shareware)
-		CmdBuf_AddText("Map MAP33\n");
-	else
-		CmdBuf_AddText("Map MAP02\n");
-
-	ForceMenuOff();
-}
-
-//==========================================================================
-//
-//  VerifyNightmare
-//
-//  Realy mightmare skill?
-//
-//==========================================================================
-
-void VerifyNightmare(int ch)
-{
-	if (ch != K_y)
-		return;
-
-	NewGame(sk_nightmare);
-}
-
-//==========================================================================
-//
-//  skill_func
-//
-//  Let's play
-//
-//==========================================================================
-
-void skill_func(void)
-{
-	if (MenuSkill == sk_nightmare)
-	{
-		MB_StartMessage
-			("are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.",
-			VerifyNightmare, true);
-		return;
-	}
-
-	NewGame(MenuSkill);
 }
 
 //==========================================================================
@@ -121,71 +61,48 @@ void skill_func(void)
 
 class MenuScreenSkill:MenuScreen
 {
-	menutext_t skill[5];
-	menutext_t title;
+	string SkillNames[5];
+
+	void CreateChoices(void)
+	{
+		MenuChoice_Skill newChoice;
+		int i;
+
+		for (i = 0; i < 5; i++)
+		{
+			newChoice = MenuChoice_Skill(AddItem(MenuChoice_Skill));
+			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+			newChoice.Text = SkillNames[i];
+			newChoice.SkillLevel = i;
+		}
+		//SetCursor(2);
+	}
 
 	defaultproperties
 	{
+		ChoicesStartX = 48;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_Spinner;
+		Title = "CHOOSE SKILL LEVEL:";
+		SkillNames[0] = "training";
+		SkillNames[1] = "rookie";
+		SkillNames[2] = "veteran";
+		SkillNames[3] = "elite";
+		SkillNames[4] = "bloodbath";
 	}
 }
 
 void menu_skill(void)
 {
-	MenuScreenSkill SkillMenu;
-	int x;
-	int y;
-	int i;
-
-	x = 48;
-	y = 40;
-
-	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
-
-	MenuText_InitFunc(&SkillMenu.skill[0], x, y, "training", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[0].callback = SkillCallback;
-	SkillMenu.skill[0].id = 0;
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[0];
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[1], x, y, "rookie", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[1].callback = SkillCallback;
-	SkillMenu.skill[1].id = 1;
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[1];
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[2], x, y, "veteran", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[2].callback = SkillCallback;
-	SkillMenu.skill[2].id = 2;
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[2];
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[3], x, y, "elite", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[3].callback = SkillCallback;
-	SkillMenu.skill[3].id = 3;
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[3];
-	y += 18;
-
-	MenuText_InitFunc(&SkillMenu.skill[4], x, y, "bloodbath", TEXT_BIG,
-		skill_func);
-	SkillMenu.skill[4].callback = SkillCallback;
-	SkillMenu.skill[4].id = 4;
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[4];
-
-	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
-		TEXT_BIGC);
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.title;
-
-	PushMenuScreen(SkillMenu);
-	SkillMenu.SetCursor(2);
+	PushMenuScreen(SpawnMenu(MenuScreenSkill));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.8  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

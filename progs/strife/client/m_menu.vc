@@ -25,14 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MNF_INACTIVE		1
-#define MNF_HIDEN			2
-
-//  callback notifications
-#define MMSG_ACTIVATE		1
-#define MMSG_LOST_FOCUS		2
-#define MMSG_RECEIVE_FOCUS	4
-
 #define MAX_MENU_ITEMS		32
 
 #define MAX_MENU_STACK		32
@@ -41,29 +33,14 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct menucommon_t;
 class MenuObject;
 class MenuScreen;
 
-typedef void (*menu_item_drawer_t) (menucommon_t *);
-typedef boolean(*menu_item_responder_t) (menucommon_t *, int);
-typedef void (*itemcallback_t) (menucommon_t *, int);
-
-struct menucommon_t
-{
-	menu_item_drawer_t drawer;
-	menu_item_responder_t responder;
-	itemcallback_t callback;
-	int flags;
-	int id;
-	int x;
-	int y;
-};
+typedef void (*menufunc_t) (void);
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 void PopMenu(void);
-void menu_main(void);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -88,6 +65,7 @@ class MenuObject:Object
 	int Y;
 	int Width;
 	int Height;
+	MenuObject Parent;
 	boolean bSelected;
 	boolean bHidden;
 	boolean bDisabled;
@@ -119,10 +97,6 @@ class MenuObject:Object
 		return false;
 	}
 
-	void Callback(int ID)
-	{
-	}
-
 	boolean IsVisible(void)
 	{
 		return !bHidden;
@@ -133,79 +107,33 @@ class MenuObject:Object
 		return bDisabled;
 	}
 
-	menucommon_t *GetOldItem(void)
-	{
-		return NULL;
-	}
-
 	void Destroyed(void)
 	{
+	}
+
+	void FocusLost(void)
+	{
+	}
+
+	void FocusReceived(void)
+	{
+	}
+
+	void Show(void)
+	{
+		bHidden = false;
+	}
+
+	void Hide(void)
+	{
+		bHidden = true;
 	}
 
 	defaultproperties
 	{
 		bSelected = false;
 		bHidden = false;
-		bDisabled = false;
-	}
-}
-
-//**************************************************************************
-//**
-//**	MenuItemWrapper
-//**
-//**************************************************************************
-
-class MenuItemWrapper:MenuObject
-{
-	menucommon_t *item;
-
-	int GetX(void)
-	{
-		return item->x;
-	}
-	int GetY(void)
-	{
-		return item->y;
-	}
-	void Draw(void)
-	{
-		if (item->drawer)
-		{
-			item->drawer(item);
-		}
-	}
-
-	boolean Key(int key)
-	{
-		if (item->responder)
-		{
-			return item->responder(item, key);
-		}
-		return false;
-	}
-
-	void Callback(int id)
-	{
-		if (item->callback)
-		{
-			item->callback(item, id);
-		}
-	}
-
-	boolean IsVisible(void)
-	{
-		return !(item->flags & MNF_HIDEN);
-	}
-
-	boolean IsDisabled(void)
-	{
-		return item->flags & MNF_INACTIVE;
-	}
-
-	menucommon_t *GetOldItem(void)
-	{
-		return item;
+		bDisabled = true;
 	}
 }
 
@@ -217,6 +145,29 @@ class MenuItemWrapper:MenuObject
 
 class MenuChoice:MenuObject
 {
+	defaultproperties
+	{
+		bDisabled = false;
+	}
+}
+
+//**************************************************************************
+//**    
+//**	MenuTitleText
+//**    
+//**************************************************************************
+
+class MenuTitleText:MenuObject
+{
+	string Text;
+
+	void Draw(void)
+	{
+		T_SetFont(font_big);
+		T_SetAlign(hcenter, vbottom);
+		T_DrawText(X, Y, Text);
+	}
+
 	defaultproperties
 	{
 	}
@@ -242,6 +193,10 @@ class MenuScreen:MenuObject
 	classid SelectorType;
 	MenuObject Selector;
 
+	string Title;
+	int TitleX;
+	int TitleY;
+
 	MenuObject AddItem(classid type)
 	{
 		MenuObject item;
@@ -252,9 +207,22 @@ class MenuScreen:MenuObject
 		}
 		item = Spawn(type, self);
 		Items[NumItems] = item;
+		item.Parent = self;
 		item.Init();
 		NumItems++;
 		return item;
+	}
+
+	void CreateTitle(void)
+	{
+		MenuTitleText newTitle;
+
+		if (Title && Title != "")
+		{
+			newTitle = MenuTitleText(AddItem(MenuTitleText));
+			newTitle.SetPos(TitleX, TitleY);
+			newTitle.Text = Title;
+		}
 	}
 
 	void CreateChoices(void)
@@ -287,6 +255,7 @@ class MenuScreen:MenuObject
 	void Init(void)
 	{
 		::Init();
+		CreateTitle();
 		CreateChoices();
 		CreateSelector();
 	}
@@ -298,13 +267,13 @@ class MenuScreen:MenuObject
 
 		if (CursorPrev >= 0 && CursorPrev < NumItems)
 		{
-			Items[CursorPrev].Callback(MMSG_LOST_FOCUS);
+			Items[CursorPrev].FocusLost();
 			Items[CursorPrev].bSelected = false;
 		}
 
 		if (CursorPos >= 0 && CursorPos < NumItems)
 		{
-			Items[CursorPos].Callback(MMSG_RECEIVE_FOCUS);
+			Items[CursorPos].FocusReceived();
 			Items[CursorPos].bSelected = true;
 		}
 
@@ -401,6 +370,12 @@ class MenuScreen:MenuObject
 		}
 		::Destroy();
 	}
+
+	defaultproperties
+	{
+		TitleX = 160;
+		TitleY = 24;
+	}
 }
 
 //**************************************************************************
@@ -482,17 +457,6 @@ MenuScreen SpawnMenu(classid CID)
 	MenuScreen S = Spawn(CID, none);
 	S.Init();
 	return S;
-}
-
-//==========================================================================
-//
-//  ActiveItem
-//
-//==========================================================================
-
-menucommon_t *ActiveItem(void)
-{
-	return CurrentMenuScreen.Items[CurrentMenuScreen.CursorPos].GetOldItem();
 }
 
 //**************************************************************************
@@ -611,196 +575,107 @@ void ForceMenuOff(void)
 
 //**************************************************************************
 //**
-//**    Base type of all items
+//**    MenuStaticBitmap
 //**
 //**************************************************************************
 
-//==========================================================================
-//
-//  MenuCommon_Draw
-//
-//==========================================================================
-
-void MenuCommon_Draw(menucommon_t * item)
+class MenuStaticBitmap:MenuObject
 {
-}
+	string PicName;
+	int PicType;
+	int Handle;
 
-//==========================================================================
-//
-//  MenuCommon_Use
-//
-//==========================================================================
-
-boolean MenuCommon_Use(menucommon_t * item, int key)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuCommon_Init
-//
-//==========================================================================
-
-void MenuCommon_Init(menucommon_t * item, int x, int y, int flags)
-{
-	item->drawer = MenuCommon_Draw;
-	item->responder = MenuCommon_Use;
-	item->x = x;
-	item->y = y;
-	item->flags = flags;
-	item->id = 0;
-}
-
-//**************************************************************************
-//**
-//**    Bitmap
-//**
-//**************************************************************************
-
-struct menubitmap_t:menucommon_t
-{
-	int handle;
-};
-
-//==========================================================================
-//
-//  MenuBitmap_Draw
-//
-//==========================================================================
-
-void MenuBitmap_Draw(menucommon_t * aitem)
-{
-	menubitmap_t *item = (menubitmap_t *) aitem;
-
-	int x = item->x;
-	int y = item->y;
-
-	R_DrawPic(x, y, item->handle);
-}
-
-//==========================================================================
-//
-//  MenuBitmap_Init
-//
-//==========================================================================
-
-void MenuBitmap_Init(menubitmap_t * item, int x, int y, int flags,
-	string Name, int type)
-{
-	MenuCommon_Init(item, x, y, flags);
-	item->drawer = MenuBitmap_Draw;
-	item->handle = R_RegisterPic(Name, type);
-}
-
-//**************************************************************************
-//**
-//**    Anims
-//**
-//**************************************************************************
-
-#define MAX_ANIM_FRAMES		18
-
-struct menuanim_t:menucommon_t
-{
-	int speed;
-	int frames;
-	int start;
-	boolean backwards;
-	int pics[MAX_ANIM_FRAMES];
-};
-
-//==========================================================================
-//
-//  MenuAnim_Draw
-//
-//==========================================================================
-
-void MenuAnim_Draw(menucommon_t * aitem)
-{
-	menuanim_t *item = (menuanim_t *) aitem;
-
-	int x = item->x;
-	int y = item->y;
-	int frame =
-
-		ftoi(MenuTime * itof(item->speed) + itof(item->start)) % item->frames;
-	if (item->backwards)
+	void Init(void)
 	{
-		frame = item->frames - frame - 1;
+		Handle = R_RegisterPic(PicName, PicType);
 	}
 
-	R_DrawPic(x, y, item->pics[frame]);
-}
+	void Draw(void)
+	{
+		R_DrawPic(X, Y, Handle);
+	}
 
-//==========================================================================
-//
-//  MenuAnim_Init
-//
-//==========================================================================
-
-void MenuAnim_Init(menuanim_t * item, int x, int y, int flags, int speed,
-	int frames, int start, boolean backwards)
-{
-	MenuCommon_Init(item, x, y, flags);
-	item->drawer = MenuAnim_Draw;
-	item->speed = speed;
-	item->frames = frames;
-	item->start = start;
-	item->backwards = backwards;
+	defaultproperties
+	{
+		PicType = PIC_PATCH;
+	}
 }
 
 //**************************************************************************
 //**
-//**    Sprite animation
+//**	MenuStaticAnim
 //**
 //**************************************************************************
 
-struct menuspriteanim_t:menucommon_t
+class MenuStaticAnim:MenuObject
 {
-	int sprdef;
-	int speed;
-	int frames;
-	int translation;
-};
+	int Speed;
+	int NumFrames;
+	int StartFrame;
+	boolean bBackwards;
+	int Frames[32];
+	string FrameNames[32];
 
-//==========================================================================
-//
-//  MenuSpriteAnim_Draw
-//
-//==========================================================================
+	void Init(void)
+	{
+		int i;
 
-void MenuSpriteAnim_Draw(menucommon_t * aitem)
-{
-	menuspriteanim_t *item = (menuspriteanim_t *) aitem;
+		::Init();
 
-	int x = item->x;
-	int y = item->y;
-	int frame = ftoi(MenuTime * itof(item->speed)) % item->frames;
+		NumFrames = 0;
+		for (i = 0; i < 32; i++)
+		{
+			if (FrameNames[i] && FrameNames[i] != "")
+			{
+				Frames[NumFrames] = R_RegisterPic(FrameNames[i], PIC_PATCH);
+				NumFrames++;
+			}
+		}
+	}
 
-	R_DrawSpritePatch(x, y, item->sprdef, frame, 0, item->translation);
+	void Draw(void)
+	{
+		int frame = (ftoi(MenuTime * itof(Speed)) + StartFrame) % NumFrames;
+		if (bBackwards)
+		{
+			frame = NumFrames - frame - 1;
+		}
+		R_DrawPic(X, Y, Frames[frame]);
+	}
+
+	defaultproperties
+	{
+	}
 }
 
-//==========================================================================
-//
-//  MenuSpriteAnim_Init
-//
-//==========================================================================
+//**************************************************************************
+//**
+//**	MenuSpriteAnim
+//**
+//**************************************************************************
 
-void MenuSpriteAnim_Init(menuspriteanim_t * item, int x, int y, int sprdef,
-	int speed, int frames)
+class MenuSpriteAnim:MenuObject
 {
-	MenuCommon_Init(item, x, y, MNF_INACTIVE);
-	item->drawer = MenuSpriteAnim_Draw;
-	item->sprdef = sprdef;
-	item->speed = speed;
-	item->frames = frames;
-	item->translation = 0;
+	int SprDef;
+	int Speed;
+	int NumFrames;
+	int Translation;
+
+	void Draw(void)
+	{
+		int frame = ftoi(MenuTime * itof(Speed)) % NumFrames;
+
+		R_DrawSpritePatch(X, Y, SprDef, frame, 0, Translation);
+	}
+
+	defaultproperties
+	{
+	}
 }
 
 //**************************************************************************
 //**    
-//**    Selector
+//**	MenuSelector_Spinner
 //**    
 //**************************************************************************
 
@@ -832,971 +707,42 @@ class MenuSelector_Spinner:MenuObject
 
 //**************************************************************************
 //**    
-//**    Text
+//**	MenuSelector_SmallLeft
 //**    
 //**************************************************************************
 
-enum
+class MenuSelector_SmallLeft:MenuObject
 {
-	TEXT_BIG,
-	TEXT_BIGC,
-	TEXT_SMALLL,
-	TEXT_SMALLR
-};
-
-typedef void (*menufunc_t) (void);
-
-struct menutext_t:menucommon_t
-{
-	string text;
-	int type;
-	menufunc_t func;
-	string command;
-};
-
-//==========================================================================
-//
-//  MenuText_Use
-//
-//==========================================================================
-
-boolean MenuText_Use(menucommon_t * aitem, int key)
-{
-	menutext_t *item = (menutext_t *) aitem;
-
-	if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+	void Draw(void)
 	{
-		if (item->callback)
-		{
-			item->callback(aitem, MMSG_ACTIVATE);
-		}
-		if (item->func)
-		{
-			item->func();
-		}
-		else if (item->command)
-		{
-			CmdBuf_AddText(item->command);
-		}
-		else
-		{
-			return false;
-		}
-		LocalSound('MenuSelect');
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuText_Draw
-//
-//==========================================================================
-
-void MenuText_Draw(menucommon_t * aitem)
-{
-	menutext_t *item = (menutext_t *) aitem;
-
-	int x = item->x;
-	int y = item->y;
-	boolean is_active = ActiveItem() == aitem;
-
-	switch (item->type)
-	{
-	case TEXT_BIG:
-		T_SetFont(font_big);
-		T_SetAlign(hleft, vtop);
-		break;
-
-	case TEXT_BIGC:
-		T_SetFont(font_big);
-		T_SetAlign(hcenter, vbottom);
-		break;
-
-	case TEXT_SMALLL:
 		T_SetFont(font_small);
-		if (is_active)
-		{
-			T_SetAlign(hright, vtop);
-			T_DrawText(x - 2, y, ">");
-		}
-		T_SetAlign(hleft, vtop);
-		break;
-
-	case TEXT_SMALLR:
-		T_SetFont(font_small);
-		if (is_active)
-		{
-			T_SetAlign(hleft, vtop);
-			T_DrawText(x + 2, y, ">");
-		}
 		T_SetAlign(hright, vtop);
-		break;
+		T_DrawText(X - 2, Y, ">");
 	}
-	T_DrawText(x, y, item->text);
-}
 
-//==========================================================================
-//
-//  MenuText_Init
-//
-//==========================================================================
-
-void MenuText_Init(menutext_t * item, int x, int y, int flags, string text,
-	int type)
-{
-	MenuCommon_Init(item, x, y, flags);
-	item->drawer = MenuText_Draw;
-	item->responder = MenuText_Use;
-	item->text = text;
-	item->type = type;
-}
-
-//==========================================================================
-//
-//  MenuText_InitFunc
-//
-//==========================================================================
-
-void MenuText_InitFunc(menutext_t * item, int x, int y, string text, int type,
-	menufunc_t func)
-{
-	MenuText_Init(item, x, y, 0, text, type);
-	item->func = func;
-}
-
-//==========================================================================
-//
-//  MenuText_InitCmd
-//
-//==========================================================================
-
-void MenuText_InitCmd(menutext_t * item, int x, int y, string text, int type,
-	string cmd)
-{
-	MenuText_Init(item, x, y, 0, text, type);
-	item->command = cmd;
-}
-
-//==========================================================================
-//
-//  MenuText_InitTitle
-//
-//==========================================================================
-
-void MenuText_InitTitle(menutext_t * item, int x, int y, string text,
-	int type)
-{
-	MenuText_Init(item, x, y, MNF_INACTIVE, text, type);
+	defaultproperties
+	{
+	}
 }
 
 //**************************************************************************
-//**
-//**    Switch
-//**
+//**    
+//**	MenuSelector_SmallRight
+//**    
 //**************************************************************************
 
-struct menuswitch_t:menutext_t
+class MenuSelector_SmallRight:MenuObject
 {
-	int value;
-	int max;
-	string *names;
-};
-
-//  Widely used on/off
-string sw_offon[2] = { "Off", "On" };
-
-//==========================================================================
-//
-//  MenuSwitch_Draw
-//
-//==========================================================================
-
-void MenuSwitch_Draw(menucommon_t * aitem)
-{
-	menuswitch_t *item = (menuswitch_t *) aitem;
-
-	int x = item->x;
-	int y = item->y;
-
-	MenuText_Draw(aitem);
-
-	if (item->type == TEXT_SMALLL)
+	void Draw(void)
 	{
-		x += T_TextWidth(item->text) + 8;
-	}
-	else
-	{
-		x += 10;
-	}
-	T_SetAlign(hleft, vtop);
-	T_DrawText(x, y, item->names[item->value]);
-}
-
-//==========================================================================
-//
-//  MenuSwitch_Use
-//
-//==========================================================================
-
-boolean MenuSwitch_Use(menucommon_t * aitem, int key)
-{
-	menuswitch_t *item = (menuswitch_t *) aitem;
-
-	switch (key)
-	{
-	case K_LEFTARROW:
-		if (item->value > 0)
-			item->value--;
-		else
-			item->value = item->max - 1;
-		LocalSound('MenuSwitch');
-		if (item->callback)
-			item->callback(aitem, MMSG_ACTIVATE);
-		return true;
-	case K_RIGHTARROW:
-	case K_ENTER:
-	case K_MOUSE1:
-		if (item->value < item->max - 1)
-			item->value++;
-		else
-			item->value = 0;
-		LocalSound('MenuSwitch');
-		if (item->callback)
-			item->callback(aitem, MMSG_ACTIVATE);
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuSwitch_Init
-//
-//==========================================================================
-
-void MenuSwitch_Init(menuswitch_t * item, int x, int y, string text, int type,
-	int value, int max, string * names)
-{
-	MenuText_Init(item, x, y, 0, text, type);
-	item->drawer = MenuSwitch_Draw;
-	item->responder = MenuSwitch_Use;
-	item->max = max;
-	if (value < 0)
-		value = 0;
-	if (value >= max)
-		value = max - 1;
-	item->value = value;
-	item->names = names;
-}
-
-//**************************************************************************
-//**
-//**    Slider
-//**
-//**************************************************************************
-
-struct menuslider_t:menutext_t
-{
-	int value;
-	int max;
-};
-
-int pic_M_THERML;
-int pic_M_THERMM;
-int pic_M_THERMR;
-int pic_M_THERMO;
-
-//==========================================================================
-//
-//  MenuSlider_Draw
-//
-//==========================================================================
-
-void MenuSlider_Draw(menucommon_t * aitem)
-{
-	menuslider_t *item = (menuslider_t *) aitem;
-
-	int i;
-	int xx;
-
-	int x = item->x;
-	int y = item->y;
-
-	MenuText_Draw(aitem);
-
-	xx = x + 8;
-	R_DrawPic(xx, y, pic_M_THERML);
-	xx += 8;
-	for (i = 0; i < 13; i++)
-	{
-		R_DrawPic(xx, y, pic_M_THERMM);
-		xx += 8;
-	}
-	R_DrawPic(xx, y, pic_M_THERMR);
-	xx = x + 8 + 6 + item->value * 100 / (item->max - 1);
-	R_DrawPic(xx, y, pic_M_THERMO);
-}
-
-//==========================================================================
-//
-//  MenuSlider_Use
-//
-//==========================================================================
-
-boolean MenuSlider_Use(menucommon_t * aitem, int key)
-{
-	menuslider_t *item = (menuslider_t *) aitem;
-
-	switch (key)
-	{
-	case K_LEFTARROW:
-		if (item->value > 0)
-		{
-			item->value--;
-		}
-		LocalSound('MenuSwitch');
-		if (item->callback)
-			item->callback(aitem, MMSG_ACTIVATE);
-		return true;
-
-	case K_RIGHTARROW:
-		if (item->value < item->max - 1)
-		{
-			item->value++;
-		}
-		LocalSound('MenuSwitch');
-		if (item->callback)
-			item->callback(aitem, MMSG_ACTIVATE);
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuSlider_Init
-//
-//==========================================================================
-
-void MenuSlider_Init(menuslider_t * item, int x, int y, string text, int type,
-	int value, int max)
-{
-	MenuText_Init(item, x, y, 0, text, type);
-	item->drawer = MenuSlider_Draw;
-	item->responder = MenuSlider_Use;
-	item->max = max;
-	if (value < 0)
-		value = 0;
-	if (value >= max)
-		value = max - 1;
-	item->value = value;
-
-	pic_M_THERML = R_RegisterPic("M_THERML", PIC_PATCH);
-	pic_M_THERMM = R_RegisterPic("M_THERMM", PIC_PATCH);
-	pic_M_THERMR = R_RegisterPic("M_THERMR", PIC_PATCH);
-	pic_M_THERMO = R_RegisterPic("M_THERMO", PIC_PATCH);
-}
-
-//**************************************************************************
-//**
-//**    Control key
-//**
-//**************************************************************************
-
-struct menucontrol_t:menucommon_t
-{
-	string text;
-	string command_on;
-	string command_off;
-};
-
-menucontrol_t *current_ctl;
-int ControlColumn;	// menu column for controls
-
-//==========================================================================
-//
-//  MenuControl_Draw
-//
-//==========================================================================
-
-void MenuControl_Draw(menucommon_t * aitem)
-{
-	menucontrol_t *item = (menucontrol_t *) aitem;
-
-	int key1;
-	int key2;
-	int name_buf[32 / 4];
-	string Name = ARR2STR(name_buf);
-
-	int x = item->x;
-	int y = item->y;
-	boolean is_active = ActiveItem() == aitem;
-
-	T_SetFont(font_small);
-	if (is_active)
-	{
+		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
-		T_DrawText(x + 2 + ControlColumn * 90, y, ">");
+		T_DrawText(X + 2, Y, ">");
 	}
 
-	T_SetAlign(hright, vtop);
-	T_DrawText(x, y, item->text);
-
-	IN_GetBindingKeys(item->command_on, &key1, &key2);
-
-	T_SetAlign(hleft, vtop);
-	if (key1 >= 0)
+	defaultproperties
 	{
-		KeyNameForNum(key1, Name);
-		T_DrawText(x + 10, y, Name);
 	}
-	else
-	{
-		T_DrawText(x + 10, y, "---");
-	}
-	if (key2 >= 0)
-	{
-		KeyNameForNum(key2, Name);
-		T_DrawText(x + 100, y, Name);
-	}
-	else
-	{
-		T_DrawText(x + 100, y, "---");
-	}
-}
-
-//==========================================================================
-//
-//  ControlResponse
-//
-//==========================================================================
-
-void ControlResponse(int key)
-{
-	string kb_down;
-	string kb_up;
-	int key1;
-	int key2;
-
-	if (key != K_ESCAPE)
-	{
-		kb_down = current_ctl->command_on;
-		kb_up = current_ctl->command_off;
-		IN_GetBindingKeys(kb_down, &key1, &key2);
-		if (ControlColumn == 0)
-		{
-			IN_SetBinding(key1, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-		if (ControlColumn == 1)
-		{
-			IN_SetBinding(key2, "", "");
-			IN_SetBinding(key, kb_down, kb_up);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  MenuControl_Use
-//
-//==========================================================================
-
-boolean MenuControl_Use(menucommon_t * aitem, int key)
-{
-	menucontrol_t *item = (menucontrol_t *) aitem;
-
-	int key1;
-	int key2;
-
-	switch (key)
-	{
-	case K_LEFTARROW:
-		ControlColumn = 0;
-		return true;
-
-	case K_RIGHTARROW:
-		ControlColumn = 1;
-		return true;
-
-	case K_ENTER:
-	case K_MOUSE1:
-		current_ctl = item;
-		MB_StartMessage("Press new key\n\nESC to cancel", ControlResponse,
-			false);
-		return true;
-
-	case K_BACKSPACE:
-		IN_GetBindingKeys(item->command_on, &key1, &key2);
-		if (ControlColumn == 0)
-			IN_SetBinding(key1, "", "");
-		if (ControlColumn == 1)
-			IN_SetBinding(key2, "", "");
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuControl_Init
-//
-//==========================================================================
-
-void MenuControl_Init(menucontrol_t * item, MenuScreen parent, int x, int y,
-	string text, string kbdown, string kbup)
-{
-	MenuCommon_Init(item, x, y, 0);
-	item->drawer = MenuControl_Draw;
-	item->responder = MenuControl_Use;
-	item->text = text;
-	item->command_on = kbdown;
-	item->command_off = kbup;
-	MenuItemWrapper(parent.AddItem(MenuItemWrapper)).item = item;
-}
-
-//**************************************************************************
-//**
-//**    Slot for saves and input lines
-//**
-//**************************************************************************
-
-int pic_M_LSLEFT;
-int pic_M_LSCNTR;
-int pic_M_LSRGHT;
-
-//==========================================================================
-//
-//  DrawSlot
-//
-//==========================================================================
-
-int DrawSlot(int x, int y, string text, boolean entering)
-{
-	int xx;
-	int j;
-
-	R_DrawPic(x + 2, y + 12, pic_M_LSLEFT);
-	for (j = 0, xx = x + 10; j < 24; j++, xx += 8)
-	{
-		R_DrawPic(xx, y + 12, pic_M_LSCNTR);
-	}
-	R_DrawPic(xx, y + 12, pic_M_LSRGHT);
-
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
-	T_DrawText(x + 8, y + 5, text);
-	if (entering)
-	{
-		T_DrawCursor();
-	}
-	return 16;
-}
-
-//==========================================================================
-//
-//  InitSlot
-//
-//==========================================================================
-
-void InitSlot(void)
-{
-	pic_M_LSLEFT = R_RegisterPic("M_LSLEFT", PIC_PATCH);
-	pic_M_LSCNTR = R_RegisterPic("M_LSCNTR", PIC_PATCH);
-	pic_M_LSRGHT = R_RegisterPic("M_LSRGHT", PIC_PATCH);
-}
-
-//**************************************************************************
-//**
-//**    Save slot
-//**
-//**************************************************************************
-
-#define SLOTTEXTLEN 		24
-
-struct menusaveslot_t:menucommon_t
-{
-	int status;
-	int text[(SLOTTEXTLEN + 4) / 4];
-};
-
-boolean enteringText;
-TILine slot_enter_text;
-
-//==========================================================================
-//
-//  MenuSaveSlot_Draw
-//
-//==========================================================================
-
-void MenuSaveSlot_Draw(menucommon_t * aitem)
-{
-	menusaveslot_t *item = (menusaveslot_t *) aitem;
-
-	int x = item->x;
-	int y = item->y;
-	boolean is_active = ActiveItem() == aitem;
-
-	if (enteringText && is_active)
-	{
-		DrawSlot(x, y, ARR2STR(slot_enter_text.Data), true);
-	}
-	else
-	{
-		DrawSlot(x, y, ARR2STR(item->text), false);
-	}
-}
-
-//==========================================================================
-//
-//  MenuSaveSlot_Use
-//
-//==========================================================================
-
-boolean MenuSaveSlot_Use(menucommon_t * aitem, int key)
-{
-	menusaveslot_t *item = (menusaveslot_t *) aitem;
-
-	if (enteringText)
-	{
-		// Save Game string input
-		switch (key)
-		{
-		case K_ESCAPE:
-		case K_MOUSE2:
-			enteringText = false;
-			break;
-
-		case K_ENTER:
-		case K_MOUSE1:
-			enteringText = false;
-			if (slot_enter_text.Data[0])
-			{
-				strcpy(ARR2STR(item->text), ARR2STR(slot_enter_text.Data));
-				CmdBuf_AddText("Save %d \"%s\"\n", item->id,
-					ARR2STR(item->text));
-				ForceMenuOff();
-			}
-			break;
-
-		default:
-			InputLine_Key(&slot_enter_text, key);
-			if (slot_enter_text.len >= SLOTTEXTLEN - 1)
-			{
-				InputLine_Key(&slot_enter_text, K_BACKSPACE);
-			}
-			break;
-		}
-		return true;
-	}
-
-	if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
-	{
-		if (item->callback)
-			item->callback(aitem, MMSG_ACTIVATE);
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuSaveSlot_Init
-//
-//==========================================================================
-
-void MenuSaveSlot_Init(menusaveslot_t * item, int x, int y)
-{
-	MenuCommon_Init(item, x, y, 0);
-	item->drawer = MenuSaveSlot_Draw;
-	item->responder = MenuSaveSlot_Use;
-	InitSlot();
-}
-
-//**************************************************************************
-//**
-//**    Input line
-//**
-//**************************************************************************
-
-struct menuinputline_t:menutext_t
-{
-	int value[32 / 4];
-	int ilstyle;
-};
-
-//==========================================================================
-//
-//  MenuInputLine_Draw
-//
-//==========================================================================
-
-void MenuInputLine_Draw(menucommon_t * aitem)
-{
-	menuinputline_t *item = (menuinputline_t *) aitem;
-	int x = item->x;
-	int y = item->y;
-
-	MenuText_Draw(aitem);
-	if (item->ilstyle == 1)
-	{
-		x += T_TextWidth(item->text) + 8;
-		y -= 5;
-	}
-	else
-	{
-		y += 12;
-	}
-	if (enteringText)
-		DrawSlot(x, y, ARR2STR(slot_enter_text.Data), true);
-	else
-		DrawSlot(x, y, ARR2STR(item->value), false);
-}
-
-//==========================================================================
-//
-//  MenuInputLine_Use
-//
-//==========================================================================
-
-boolean MenuInputLine_Use(menucommon_t * aitem, int key)
-{
-	menuinputline_t *item = (menuinputline_t *) aitem;
-
-	if (enteringText)
-	{
-		switch (key)
-		{
-		case K_ESCAPE:
-		case K_MOUSE2:
-			enteringText = false;
-			break;
-
-		case K_ENTER:
-		case K_MOUSE1:
-			enteringText = false;
-			strcpy(ARR2STR(item->value), ARR2STR(slot_enter_text.Data));
-			if (item->callback)
-				item->callback(aitem, MMSG_ACTIVATE);
-			break;
-
-		default:
-			InputLine_Key(&slot_enter_text, key);
-			if (slot_enter_text.len >= 30)
-			{
-				InputLine_Key(&slot_enter_text, K_BACKSPACE);
-			}
-			break;
-		}
-		return true;
-	}
-
-	if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
-	{
-		// we are going to be intercepting all chars
-		enteringText = true;
-		InputLine_Init(&slot_enter_text);
-		LocalSound('MenuSelect');
-		InputLine_SetValue(&slot_enter_text, ARR2STR(item->value));
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuInputLine_Init
-//
-//==========================================================================
-
-void MenuInputLine_Init(menuinputline_t * item, int x, int y, string text,
-	int type, int ilstyle)
-{
-	MenuText_Init(item, x, y, 0, text, type);
-	item->drawer = MenuInputLine_Draw;
-	item->responder = MenuInputLine_Use;
-	item->ilstyle = ilstyle;
-	InitSlot();
-}
-
-//**************************************************************************
-//**
-//**    Server list
-//**
-//**************************************************************************
-
-struct menuslist_t:menucommon_t
-{
-	int cursor;
-};
-
-slist_t * slist;
-
-//==========================================================================
-//
-//  Text box
-//
-//==========================================================================
-
-void DrawTextBox(string text)
-{
-	int x;
-	int y;
-	int w;
-	int h;
-
-	// Horiz. & Vertically center string and print it.
-	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
-
-	w = (T_TextWidth(text) + 16) & ~15;
-	h = (T_TextHeight(text) + 16) & ~15;
-	if (w > 304)
-		w = 304;
-	if (h > 184)
-		h = 184;
-	x = (320 - w) / 2;
-	y = (200 - h) / 2;
-
-	R_FillRectWithFlat(x, y, w, h, "F_PAVE01");
-	DrawBorder(x, y, w, h);
-
-	T_DrawText(160, 100, text);
-}
-
-//==========================================================================
-//
-//  MenuSlist_Draw
-//
-//==========================================================================
-
-void MenuSlist_Draw(menucommon_t * aitem)
-{
-	int i;
-	int x;
-	int y;
-	menuslist_t *item = (menuslist_t *) aitem;
-
-	slist = GetSlist();
-
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
-	for (i = 0; i < slist->count; i++)
-	{
-		T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
-		T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
-		if (slist->cache[i].maxusers)
-		{
-			T_DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
-					slist->cache[i].users, slist->cache[i].maxusers));
-		}
-	}
-	T_DrawText(8, 32 + item->cursor * 10, ">");
-
-	if (slist->return_reason[0])
-		T_DrawText(16, 116, ARR2STR(slist->return_reason));
-
-	if (slist->count)
-	{
-		x = 8;
-		y = 124;
-		for (i = 0; i < 20 && slist->cache[item->cursor].wadfiles[i][0]; i++)
-		{
-			int w =
-
-				T_TextWidth(ARR2STR(slist->cache[item->cursor].wadfiles[i]));
-			if (x + w > 312)
-			{
-				x = 8;
-				y += 9;
-				if (y > 190)
-					break;
-			}
-			T_DrawText(x, y, ARR2STR(slist->cache[item->cursor].wadfiles[i]));
-			x += w + 8;
-		}
-	}
-
-	if (slist->inProgress)
-	{
-		DrawTextBox("Searching...");
-	}
-	else if (!slist->count)
-	{
-		DrawTextBox("No servers found");
-	}
-}
-
-//==========================================================================
-//
-//  MenuSlist_Use
-//
-//==========================================================================
-
-boolean MenuSlist_Use(menucommon_t * aitem, int key)
-{
-	menuslist_t *item = (menuslist_t *) aitem;
-
-	slist = GetSlist();
-
-	if (slist->inProgress)
-	{
-		return true;
-	}
-
-	switch (key)
-	{
-	case K_DOWNARROW:
-		if (slist->count)
-		{
-			item->cursor++;
-			if (item->cursor >= slist->count)
-				item->cursor = 0;
-			LocalSound('MenuMove');
-		}
-		return true;
-
-	case K_UPARROW:
-		if (slist->count)
-		{
-			item->cursor--;
-			if (item->cursor < 0)
-				item->cursor = slist->count - 1;
-			LocalSound('MenuMove');
-		}
-		return true;
-
-	case K_ENTER:
-		if (slist->count)
-		{
-			LocalSound('MenuSelect');
-			CmdBuf_AddText("connect \"%s\"\n",
-				slist->cache[item->cursor].cname);
-		}
-		return true;
-
-	case K_SPACE:
-		item->cursor = 0;
-		StartSearch();
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  MenuSlist_Init
-//
-//==========================================================================
-
-void MenuSlist_Init(menuslist_t * item)
-{
-	MenuCommon_Init(item, 0, 0, 0);
-	item->drawer = MenuSlist_Draw;
-	item->responder = MenuSlist_Use;
-	item->cursor = 0;
 }
 
 //**************************************************************************
@@ -1859,8 +805,764 @@ class MenuBigTextButton:MenuTextButton
 }
 
 //**************************************************************************
+//**
+//**	MenuSmallTextButton
+//**
+//**************************************************************************
+
+class MenuSmallTextButton:MenuTextButton
+{
+	defaultproperties
+	{
+		TextFont = font_small;
+		TextHAlign = hright;
+		TextVAlign = vtop;
+		Height = 10;
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuChoiceEnum
+//**
+//**************************************************************************
+
+class MenuChoiceEnum:MenuChoice
+{
+	string Text;
+	boolean bLeftAlign;
+
+	int Value;
+	int MaxValue;
+	string EnumNames[32];
+
+	int GetInitialValue(void)
+	{
+		return 0;
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		return false;
+	}
+
+	void Init(void)
+	{
+		int i;
+
+		MaxValue = 0;
+		for (i = 0; i < 32; i++)
+		{
+			if (EnumNames[i] && EnumNames[i] != "")
+			{
+				MaxValue++;
+			}
+		}
+
+		Value = GetInitialValue();
+		if (Value < 0)
+			Value = 0;
+		if (Value >= MaxValue)
+			Value = MaxValue - 1;
+	}
+
+	void Draw(void)
+	{
+		int xx;
+
+		T_SetFont(font_small);
+		if (bLeftAlign)
+		{
+			T_SetAlign(hleft, vtop);
+		}
+		else
+		{
+			T_SetAlign(hright, vtop);
+		}
+		T_DrawText(X, Y, Text);
+
+		xx = X;
+		if (bLeftAlign)
+		{
+			xx += T_TextWidth(Text) + 8;
+		}
+		else
+		{
+			xx += 10;
+		}
+		T_SetAlign(hleft, vtop);
+		T_DrawText(xx, Y, EnumNames[Value]);
+	}
+
+	boolean Key(int key)
+	{
+		int newValue;
+
+		switch (key)
+		{
+		case K_LEFTARROW:
+			if (Value > 0)
+				newValue = Value - 1;
+			else
+				newValue = MaxValue - 1;
+			if (SetNewValue(newValue))
+			{
+				Value = newValue;
+				LocalSound('MenuSwitch');
+			}
+			return true;
+		case K_RIGHTARROW:
+		case K_ENTER:
+		case K_MOUSE1:
+			if (Value < MaxValue - 1)
+				newValue = Value + 1;
+			else
+				newValue = 0;
+			if (SetNewValue(newValue))
+			{
+				Value = newValue;
+				LocalSound('MenuSwitch');
+			}
+			return true;
+		}
+		return false;
+	}
+
+	defaultproperties
+	{
+		Height = 10;
+	}
+}
+
+//**************************************************************************
+//**
+//**    MenuChoice_OnOff
+//**
+//**************************************************************************
+
+class MenuChoice_OnOff:MenuChoiceEnum
+{
+	defaultproperties
+	{
+		EnumNames[0] = "Off";
+		EnumNames[1] = "On";
+	}
+}
+
+//**************************************************************************
+//**
+//**    MenuChoiceSlider
+//**
+//**************************************************************************
+
+class MenuChoiceSlider:MenuChoice
+{
+	string Text;
+
+	float Value;
+	float ValueDelta;
+	float MinValue;
+	float MaxValue;
+
+	int pic_M_THERML;
+	int pic_M_THERMM;
+	int pic_M_THERMR;
+	int pic_M_THERMO;
+
+	float GetInitialValue(void)
+	{
+		return 0.0;
+	}
+
+	boolean SetNewValue(float newValue)
+	{
+		return false;
+	}
+
+	void Init(void)
+	{
+		::Init();
+
+		Value = GetInitialValue();
+		if (Value < MinValue)
+			Value = MinValue;
+		if (Value > MaxValue)
+			Value = MaxValue;
+
+		pic_M_THERML = R_RegisterPic("M_THERML", PIC_PATCH);
+		pic_M_THERMM = R_RegisterPic("M_THERMM", PIC_PATCH);
+		pic_M_THERMR = R_RegisterPic("M_THERMR", PIC_PATCH);
+		pic_M_THERMO = R_RegisterPic("M_THERMO", PIC_PATCH);
+	}
+
+	void Draw(void)
+	{
+		int i;
+		int xx;
+
+		T_SetFont(font_small);
+		T_SetAlign(hright, vtop);
+		T_DrawText(X, Y, Text);
+
+		xx = X + 8;
+		R_DrawPic(xx, Y, pic_M_THERML);
+		xx += 8;
+		for (i = 0; i < 13; i++)
+		{
+			R_DrawPic(xx, Y, pic_M_THERMM);
+			xx += 8;
+		}
+		R_DrawPic(xx, Y, pic_M_THERMR);
+		xx = X + 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
+		R_DrawPic(xx, Y, pic_M_THERMO);
+	}
+
+	boolean Key(int key)
+	{
+		float newValue;
+
+		switch (key)
+		{
+		case K_LEFTARROW:
+			newValue = Value - ValueDelta;
+			if (newValue < MinValue)
+			{
+				newValue = MinValue;
+			}
+			if (SetNewValue(newValue))
+			{
+				Value = newValue;
+				LocalSound('MenuSwitch');
+			}
+			return true;
+
+		case K_RIGHTARROW:
+			newValue = Value + ValueDelta;
+			if (newValue > MaxValue)
+			{
+				newValue = MaxValue;
+			}
+			if (SetNewValue(newValue))
+			{
+				Value = newValue;
+				LocalSound('MenuSwitch');
+			}
+			return true;
+		}
+		return ::Key(key);
+	}
+
+	defaultproperties
+	{
+		Height = 20;
+		Value = 0.0;
+		ValueDelta = 1.0;
+		MinValue = 0.0;
+		MaxValue = 1.0;
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuControlKey
+//**
+//**************************************************************************
+
+class MenuControlKey;
+
+MenuControlKey CurrentCtl;
+int ControlColumn;	// menu column for controls
+
+void ControlResponse(int key);
+
+class MenuControlKey:MenuChoice
+{
+	string Text;
+	string CommandOn;
+	string CommandOff;
+
+	void Draw(void)
+	{
+		int key1;
+		int key2;
+		int name_buf[32 / 4];
+		string Name = ARR2STR(name_buf);
+
+//	if (is_active)
+//	{
+//		T_SetAlign(hleft, vtop);
+//		T_DrawText(x + 2 + ControlColumn * 90, y, ">");
+//	}
+		T_SetFont(font_small);
+		T_SetAlign(hright, vtop);
+		T_DrawText(X, Y, Text);
+
+		IN_GetBindingKeys(CommandOn, &key1, &key2);
+
+		T_SetAlign(hleft, vtop);
+		if (key1 >= 0)
+		{
+			KeyNameForNum(key1, Name);
+			T_DrawText(X + 10, Y, Name);
+		}
+		else
+		{
+			T_DrawText(X + 10, Y, "---");
+		}
+		if (key2 >= 0)
+		{
+			KeyNameForNum(key2, Name);
+			T_DrawText(X + 100, Y, Name);
+		}
+		else
+		{
+			T_DrawText(X + 100, Y, "---");
+		}
+	}
+
+	boolean Key(int key)
+	{
+		int key1;
+		int key2;
+
+		switch (key)
+		{
+		case K_LEFTARROW:
+			ControlColumn = 0;
+			return true;
+
+		case K_RIGHTARROW:
+			ControlColumn = 1;
+			return true;
+
+		case K_ENTER:
+		case K_MOUSE1:
+			CurrentCtl = self;
+			MB_StartMessage("Press new key\n\nESC to cancel",
+				ControlResponse, false);
+			return true;
+
+		case K_BACKSPACE:
+			IN_GetBindingKeys(CommandOn, &key1, &key2);
+			if (ControlColumn == 0)
+				IN_SetBinding(key1, "", "");
+			if (ControlColumn == 1)
+				IN_SetBinding(key2, "", "");
+			return true;
+		}
+		return false;
+	}
+
+	defaultproperties
+	{
+	}
+}
+
+//==========================================================================
+//
+//  ControlResponse
+//
+//==========================================================================
+
+void ControlResponse(int key)
+{
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
+
+	if (key != K_ESCAPE)
+	{
+		kb_down = CurrentCtl.CommandOn;
+		kb_up = CurrentCtl.CommandOff;
+		IN_GetBindingKeys(kb_down, &key1, &key2);
+		if (ControlColumn == 0)
+		{
+			IN_SetBinding(key1, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+		if (ControlColumn == 1)
+		{
+			IN_SetBinding(key2, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+	}
+}
+
+//**************************************************************************
+//**
+//**    Slot for saves and input lines
+//**
+//**************************************************************************
+
+int pic_M_LSLEFT;
+int pic_M_LSCNTR;
+int pic_M_LSRGHT;
+
+//==========================================================================
+//
+//  DrawSlot
+//
+//==========================================================================
+
+int DrawSlot(int x, int y, string text, boolean entering)
+{
+	int xx;
+	int j;
+
+	R_DrawPic(x + 2, y + 12, pic_M_LSLEFT);
+	for (j = 0, xx = x + 10; j < 24; j++, xx += 8)
+	{
+		R_DrawPic(xx, y + 12, pic_M_LSCNTR);
+	}
+	R_DrawPic(xx, y + 12, pic_M_LSRGHT);
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	T_DrawText(x + 8, y + 5, text);
+	if (entering)
+	{
+		T_DrawCursor();
+	}
+	return 16;
+}
+
+//==========================================================================
+//
+//  InitSlot
+//
+//==========================================================================
+
+void InitSlot(void)
+{
+	pic_M_LSLEFT = R_RegisterPic("M_LSLEFT", PIC_PATCH);
+	pic_M_LSCNTR = R_RegisterPic("M_LSCNTR", PIC_PATCH);
+	pic_M_LSRGHT = R_RegisterPic("M_LSRGHT", PIC_PATCH);
+}
+
+//**************************************************************************
+//**
+//**	MenuSaveSlot
+//**
+//**************************************************************************
+
+#define SLOTTEXTLEN 		24
+
+boolean enteringText;
+TILine slot_enter_text;
+
+class MenuSaveSlot:MenuChoice
+{
+	int Status;
+	int Text[(SLOTTEXTLEN + 4) / 4];
+	int SlotNum;
+
+	void Init(void)
+	{
+		::Init();
+		InitSlot();
+	}
+
+	void Draw(void)
+	{
+		if (enteringText && bSelected)
+		{
+			DrawSlot(X, Y, ARR2STR(slot_enter_text.Data), true);
+		}
+		else
+		{
+			DrawSlot(X, Y, ARR2STR(Text), false);
+		}
+	}
+
+	void ActivateSlot(void)
+	{
+	}
+
+	boolean Key(int key)
+	{
+		if (enteringText)
+		{
+			// Save Game string input
+			switch (key)
+			{
+			case K_ESCAPE:
+			case K_MOUSE2:
+				enteringText = false;
+				break;
+
+			case K_ENTER:
+			case K_MOUSE1:
+				enteringText = false;
+				if (slot_enter_text.Data[0])
+				{
+					strcpy(ARR2STR(Text), ARR2STR(slot_enter_text.Data));
+					CmdBuf_AddText("Save %d \"%s\"\n", SlotNum,
+						ARR2STR(Text));
+					ForceMenuOff();
+				}
+				break;
+
+			default:
+				InputLine_Key(&slot_enter_text, key);
+				if (slot_enter_text.len >= SLOTTEXTLEN - 1)
+				{
+					InputLine_Key(&slot_enter_text, K_BACKSPACE);
+				}
+				break;
+			}
+			return true;
+		}
+
+		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		{
+			ActivateSlot();
+			return true;
+		}
+		return false;
+	}
+
+	defaultproperties
+	{
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuInputLine
+//**
+//**************************************************************************
+
+class MenuInputLine:MenuObject
+{
+	string Text;
+	int Value[32 / 4];
+
+	void Init(void)
+	{
+		::Init();
+		InitSlot();
+	}
+
+	void ValueChanged(void)
+	{
+	}
+
+	void Draw(void)
+	{
+		T_SetFont(font_small);
+		T_SetAlign(hleft, vtop);
+		T_DrawText(X, Y, Text);
+		if (enteringText)
+			DrawSlot(X, Y + 12, ARR2STR(slot_enter_text.Data), true);
+		else
+			DrawSlot(X, Y + 12, ARR2STR(Value), false);
+	}
+
+	boolean Key(int key)
+	{
+		if (enteringText)
+		{
+			switch (key)
+			{
+			case K_ESCAPE:
+			case K_MOUSE2:
+				enteringText = false;
+				break;
+
+			case K_ENTER:
+			case K_MOUSE1:
+				enteringText = false;
+				strcpy(ARR2STR(Value), ARR2STR(slot_enter_text.Data));
+				ValueChanged();
+				break;
+
+			default:
+				InputLine_Key(&slot_enter_text, key);
+				if (slot_enter_text.len >= 30)
+				{
+					InputLine_Key(&slot_enter_text, K_BACKSPACE);
+				}
+				break;
+			}
+			return true;
+		}
+
+		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		{
+			// we are going to be intercepting all chars
+			enteringText = true;
+			InputLine_Init(&slot_enter_text);
+			LocalSound('MenuSelect');
+			InputLine_SetValue(&slot_enter_text, ARR2STR(Value));
+			return true;
+		}
+		return false;
+	}
+
+	defaultproperties
+	{
+		Height = 30;
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuSList
+//**
+//**************************************************************************
+
+class MenuSList:MenuChoice
+{
+	int Cursor;
+	slist_t* slist;
+
+	void Init(void)
+	{
+		::Init();
+		StartSearch();
+	}
+
+	void DrawTextBox(string text)
+	{
+		int x;
+		int y;
+		int w;
+		int h;
+
+		// Horiz. & Vertically center string and print it.
+		T_SetFont(font_small);
+		T_SetAlign(hcenter, vcenter);
+
+		w = (T_TextWidth(text) + 16) & ~15;
+		h = (T_TextHeight(text) + 16) & ~15;
+		if (w > 304)
+			w = 304;
+		if (h > 184)
+			h = 184;
+		x = (320 - w) / 2;
+		y = (200 - h) / 2;
+
+		R_FillRectWithFlat(x, y, w, h, "FLAT20");
+		DrawBorder(x, y, w, h);
+
+		T_DrawText(160, 100, text);
+	}
+
+	void Draw(void)
+	{
+		int i;
+		int x;
+		int y;
+		int w;
+
+		slist = GetSlist();
+
+		T_SetFont(font_small);
+		T_SetAlign(hleft, vtop);
+		for (i = 0; i < slist->count; i++)
+		{
+			T_DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
+			T_DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
+			if (slist->cache[i].maxusers)
+			{
+				T_DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
+					slist->cache[i].users, slist->cache[i].maxusers));
+			}
+		}
+		T_DrawText(8, 32 + Cursor * 10, ">");
+
+		if (slist->return_reason[0])
+			T_DrawText(16, 116, ARR2STR(slist->return_reason));
+
+		if (slist->count)
+		{
+			x = 8;
+			y = 124;
+			for (i = 0; i < 20 && slist->cache[Cursor].wadfiles[i][0]; i++)
+			{
+				w = T_TextWidth(ARR2STR(slist->cache[Cursor].wadfiles[i]));
+				if (x + w > 312)
+				{
+					x = 8;
+					y += 9;
+					if (y > 190)
+						break;
+				}
+				T_DrawText(x, y, ARR2STR(slist->cache[Cursor].wadfiles[i]));
+				x += w + 8;
+			}
+		}
+
+		if (slist->inProgress)
+		{
+			DrawTextBox("Searching...");
+		}
+		else if (!slist->count)
+		{
+			DrawTextBox("No servers found");
+		}
+	}
+
+	boolean Key(int key)
+	{
+		slist = GetSlist();
+
+		if (slist->inProgress)
+		{
+			return true;
+		}
+
+		switch (key)
+		{
+		case K_DOWNARROW:
+			if (slist->count)
+			{
+				Cursor++;
+				if (Cursor >= slist->count)
+					Cursor = 0;
+				LocalSound('MenuMove');
+			}
+			return true;
+
+		case K_UPARROW:
+			if (slist->count)
+			{
+				Cursor--;
+				if (Cursor < 0)
+					Cursor = slist->count - 1;
+				LocalSound('MenuMove');
+			}
+			return true;
+
+		case K_ENTER:
+			if (slist->count)
+			{
+				LocalSound('MenuSelect');
+				CmdBuf_AddText("connect \"%s\"\n",
+					slist->cache[Cursor].cname);
+			}
+			return true;
+
+		case K_SPACE:
+			Cursor = 0;
+			StartSearch();
+			return true;
+		}
+		return false;
+	}
+
+	defaultproperties
+	{
+	}
+}
+
+//**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.15  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

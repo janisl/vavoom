@@ -27,91 +27,196 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_skill(void);
+void menu_skill2(void);
+void menu_skill3(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuFighterBox
+//
+//==========================================================================
 
-int MenuPClass;
-
-// CODE --------------------------------------------------------------------
-
-class MenuScreenClass:MenuScreen
+class MenuFighterBox:MenuStaticBitmap
 {
-	menutext_t fighter;
-	menutext_t cleric;
-	menutext_t mage;
-	menutext_t title;
-	menubitmap_t fbox;
-	menuanim_t fwalk;
-	menubitmap_t cbox;
-	menuanim_t cwalk;
-	menubitmap_t mbox;
-	menuanim_t mwalk;
+	defaultproperties
+	{
+		PicName = "m_fbox";
+	}
+}
+
+//==========================================================================
+//
+//	MenuFighterWalk
+//
+//==========================================================================
+
+class MenuFighterWalk:MenuStaticAnim
+{
+	defaultproperties
+	{
+		Speed = 8;
+		FrameNames[0] = "m_fwalk1";
+		FrameNames[1] = "m_fwalk2";
+		FrameNames[2] = "m_fwalk3";
+		FrameNames[3] = "m_fwalk4";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Fighter
+//
+//==========================================================================
+
+class MenuChoice_Fighter:MenuBigTextButton
+{
+	MenuObject Box;
+	MenuObject Walk;
+	classid BoxType;
+	classid WalkType;
+
+	void Init(void)
+	{
+		::Init();
+
+		Box = MenuScreen(Parent).AddItem(BoxType);
+		Box.SetPos(174, 8);
+		Box.Hide();
+
+		Walk = MenuScreen(Parent).AddItem(WalkType);
+		Walk.SetPos(174 + 24, 8 + 12);
+		Walk.Hide();
+	}
+
+	void FocusLost(void)
+	{
+		::FocusLost();
+		Box.Hide();
+		Walk.Hide();
+	}
+
+	void FocusReceived(void)
+	{
+		::FocusReceived();
+		Box.Show();
+		Walk.Show();
+	}
+
+	void ActivateEvent(void)
+	{
+		menu_skill();
+	}
 
 	defaultproperties
 	{
-		SelectorType = MenuSelector_BigArrow;
+		Text = "FIGHTER";
+		BoxType = MenuFighterBox;
+		WalkType = MenuFighterWalk;
 	}
-};
-
-MenuScreenClass ClassMenu;
+}
 
 //==========================================================================
 //
-//  class_callback
+//	MenuClericBox
 //
 //==========================================================================
 
-void class_callback(menucommon_t * item, int msg)
+class MenuClericBox:MenuStaticBitmap
 {
-	switch (msg)
+	defaultproperties
 	{
-	case MMSG_LOST_FOCUS:
-		switch (item->id)
-		{
-		case 0:
-			ClassMenu.fbox.flags |= MNF_HIDEN;
-			ClassMenu.fwalk.flags |= MNF_HIDEN;
-			break;
-		case 1:
-			ClassMenu.cbox.flags |= MNF_HIDEN;
-			ClassMenu.cwalk.flags |= MNF_HIDEN;
-			break;
-		case 2:
-			ClassMenu.mbox.flags |= MNF_HIDEN;
-			ClassMenu.mwalk.flags |= MNF_HIDEN;
-			break;
-		}
-		break;
+		PicName = "m_cbox";
+	}
+}
 
-	case MMSG_RECEIVE_FOCUS:
-		switch (item->id)
-		{
-		case 0:
-			ClassMenu.fbox.flags &= ~MNF_HIDEN;
-			ClassMenu.fwalk.flags &= ~MNF_HIDEN;
-			MenuPClass = PCLASS_FIGHTER;
-			break;
-		case 1:
-			ClassMenu.cbox.flags &= ~MNF_HIDEN;
-			ClassMenu.cwalk.flags &= ~MNF_HIDEN;
-			MenuPClass = PCLASS_CLERIC;
-			break;
-		case 2:
-			ClassMenu.mbox.flags &= ~MNF_HIDEN;
-			ClassMenu.mwalk.flags &= ~MNF_HIDEN;
-			MenuPClass = PCLASS_MAGE;
-			break;
-		}
-		break;
+//==========================================================================
+//
+//	MenuClericWalk
+//
+//==========================================================================
+
+class MenuClericWalk:MenuFighterWalk
+{
+	defaultproperties
+	{
+		FrameNames[0] = "m_cwalk1";
+		FrameNames[1] = "m_cwalk2";
+		FrameNames[2] = "m_cwalk3";
+		FrameNames[3] = "m_cwalk4";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Cleric
+//
+//==========================================================================
+
+class MenuChoice_Cleric:MenuChoice_Fighter
+{
+	void ActivateEvent(void)
+	{
+		menu_skill2();
+	}
+
+	defaultproperties
+	{
+		Text = "CLERIC";
+		BoxType = MenuClericBox;
+		WalkType = MenuClericWalk;
+	}
+}
+
+//==========================================================================
+//
+//	MenuMageBox
+//
+//==========================================================================
+
+class MenuMageBox:MenuStaticBitmap
+{
+	defaultproperties
+	{
+		PicName = "m_mbox";
+	}
+}
+
+//==========================================================================
+//
+//	MenuMageWalk
+//
+//==========================================================================
+
+class MenuMageWalk:MenuFighterWalk
+{
+	defaultproperties
+	{
+		FrameNames[0] = "m_mwalk1";
+		FrameNames[1] = "m_mwalk2";
+		FrameNames[2] = "m_mwalk3";
+		FrameNames[3] = "m_mwalk4";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Mage
+//
+//==========================================================================
+
+class MenuChoice_Mage:MenuChoice_Fighter
+{
+	void ActivateEvent(void)
+	{
+		menu_skill3();
+	}
+
+	defaultproperties
+	{
+		Text = "MAGE";
+		BoxType = MenuMageBox;
+		WalkType = MenuMageWalk;
 	}
 }
 
@@ -121,78 +226,32 @@ void class_callback(menucommon_t * item, int msg)
 //
 //==========================================================================
 
+class MenuScreenClass:MenuScreen
+{
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_Fighter;
+		Choices[1] = MenuChoice_Cleric;
+		Choices[2] = MenuChoice_Mage;
+		ChoicesStartX = 66;
+		ChoicesStartY = 66;
+		SelectorType = MenuSelector_BigArrow;
+		Title = "CHOOSE CLASS:";
+		// 34, TEXT_BIG
+	}
+};
+
 void menu_class(void)
 {
-	int x = 66;
-	int y = 66;
-
-	ClassMenu = MenuScreenClass(SpawnMenu(MenuScreenClass));
-
-	MenuText_InitFunc(&ClassMenu.fighter, x, y, "FIGHTER", TEXT_BIG,
-		menu_skill);
-	ClassMenu.fighter.callback = class_callback;
-	ClassMenu.fighter.id = 0;
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fighter;
-	y += 18;
-
-	MenuText_InitFunc(&ClassMenu.cleric, x, y, "CLERIC", TEXT_BIG,
-		menu_skill);
-	ClassMenu.cleric.callback = class_callback;
-	ClassMenu.cleric.id = 1;
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cleric;
-	y += 18;
-
-	MenuText_InitFunc(&ClassMenu.mage, x, y, "MAGE", TEXT_BIG, menu_skill);
-	ClassMenu.mage.callback = class_callback;
-	ClassMenu.mage.id = 2;
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mage;
-	y += 18;
-
-	MenuText_InitTitle(&ClassMenu.title, 34, 24, "CHOOSE CLASS:", TEXT_BIG);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.title;
-
-	MenuBitmap_Init(&ClassMenu.fbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
-		"m_fbox", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fbox;
-
-	MenuAnim_Init(&ClassMenu.fwalk, 174 + 24, 8 + 12,
-		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
-	ClassMenu.fwalk.pics[0] = R_RegisterPic("m_fwalk1", PIC_PATCH);
-	ClassMenu.fwalk.pics[1] = R_RegisterPic("m_fwalk2", PIC_PATCH);
-	ClassMenu.fwalk.pics[2] = R_RegisterPic("m_fwalk3", PIC_PATCH);
-	ClassMenu.fwalk.pics[3] = R_RegisterPic("m_fwalk4", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.fwalk;
-
-	MenuBitmap_Init(&ClassMenu.cbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
-		"m_cbox", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cbox;
-
-	MenuAnim_Init(&ClassMenu.cwalk, 174 + 24, 8 + 12,
-		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
-	ClassMenu.cwalk.pics[0] = R_RegisterPic("m_cwalk1", PIC_PATCH);
-	ClassMenu.cwalk.pics[1] = R_RegisterPic("m_cwalk2", PIC_PATCH);
-	ClassMenu.cwalk.pics[2] = R_RegisterPic("m_cwalk3", PIC_PATCH);
-	ClassMenu.cwalk.pics[3] = R_RegisterPic("m_cwalk4", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.cwalk;
-
-	MenuBitmap_Init(&ClassMenu.mbox, 174, 8, MNF_INACTIVE | MNF_HIDEN,
-		"m_mbox", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mbox;
-
-	MenuAnim_Init(&ClassMenu.mwalk, 174 + 24, 8 + 12,
-		MNF_INACTIVE | MNF_HIDEN, 8, 4, 0, false);
-	ClassMenu.mwalk.pics[0] = R_RegisterPic("m_mwalk1", PIC_PATCH);
-	ClassMenu.mwalk.pics[1] = R_RegisterPic("m_mwalk2", PIC_PATCH);
-	ClassMenu.mwalk.pics[2] = R_RegisterPic("m_mwalk3", PIC_PATCH);
-	ClassMenu.mwalk.pics[3] = R_RegisterPic("m_mwalk4", PIC_PATCH);
-	MenuItemWrapper(ClassMenu.AddItem(MenuItemWrapper)).item = &ClassMenu.mwalk;
-
-	PushMenuScreen(ClassMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenClass));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

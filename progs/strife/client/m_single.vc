@@ -27,21 +27,85 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_skill(void);
 void menu_load(void);
 void menu_save(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_NewGame
+//
+//==========================================================================
 
-// CODE --------------------------------------------------------------------
+class MenuChoice_NewGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_skill();
+	}
+
+	defaultproperties
+	{
+		Text = "New Game";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_LoadGame
+//
+//==========================================================================
+
+class MenuChoice_LoadGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_load();
+	}
+
+	defaultproperties
+	{
+		Text = "Load Game";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SaveGame
+//
+//==========================================================================
+
+class MenuChoice_SaveGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_save();
+	}
+
+	defaultproperties
+	{
+		Text = "Save Game";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_EndGame
+//
+//==========================================================================
+
+class MenuChoice_EndGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		CmdBuf_AddText("Disconnect\n");
+	}
+
+	defaultproperties
+	{
+		Text = "End Game";
+	}
+}
 
 //==========================================================================
 //
@@ -51,54 +115,30 @@ void menu_save(void);
 
 class MenuScreenSinglePlayer:MenuScreen
 {
-	menutext_t newgame;
-	menutext_t loadgame;
-	menutext_t savegame;
-	menutext_t endgame;
-	menutext_t title;
-
 	defaultproperties
 	{
+		Choices[0] = MenuChoice_NewGame;
+		Choices[1] = MenuChoice_LoadGame;
+		Choices[2] = MenuChoice_SaveGame;
+		Choices[3] = MenuChoice_EndGame;
+		ChoicesStartX = 97;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_Spinner;
+		Title = "SINGLE PLAYER";
 	}
 }
 
 void menu_single(void)
 {
-	MenuScreenSinglePlayer SingleMenu;
-	int x = 97;
-	int y = 40;
-
-	SingleMenu = MenuScreenSinglePlayer(SpawnMenu(MenuScreenSinglePlayer));
-
-	MenuText_InitFunc(&SingleMenu.newgame, x, y, "New Game", TEXT_BIG,
-		menu_skill);
-	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.newgame;
-	y += 18;
-
-	MenuText_InitFunc(&SingleMenu.loadgame, x, y, "Load Game", TEXT_BIG,
-		menu_load);
-	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.loadgame;
-	y += 18;
-
-	MenuText_InitFunc(&SingleMenu.savegame, x, y, "Save Game", TEXT_BIG,
-		menu_save);
-	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.savegame;
-	y += 18;
-
-	MenuText_InitCmd(&SingleMenu.endgame, x, y, "End Game", TEXT_BIG,
-		"Disconnect\n");
-	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.endgame;
-
-	MenuText_InitTitle(&SingleMenu.title, 160, 24, "SINGLE PLAYER",
-		TEXT_BIGC);
-	MenuItemWrapper(SingleMenu.AddItem(MenuItemWrapper)).item = &SingleMenu.title;
-
-	PushMenuScreen(SingleMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenSinglePlayer));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.5  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

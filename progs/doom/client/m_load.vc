@@ -29,44 +29,30 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-#define NUMSLOTS	8
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  load_func
+//	MenuChoice_LoadSlot
 //
 //==========================================================================
 
-void load_func(menucommon_t * aitem, int msg)
+class MenuChoice_LoadSlot:MenuSaveSlot
 {
-	menusaveslot_t *item = (menusaveslot_t *) aitem;
-
-	if (msg != MMSG_ACTIVATE)
+	void ActivateSlot(void)
 	{
-		return;
+		if (!Status)
+		{
+			// Don't try to load from an empty slot
+			return;
+		}
+
+		CmdBuf_AddText("Load %d\n", SlotNum);
+		ForceMenuOff();
+		LocalSound('MenuSelect');
 	}
 
-	if (!item->status)
+	defaultproperties
 	{
-		// Don't try to load from an empty slot
-		return;
 	}
-
-	CmdBuf_AddText("Load %d\n", item->id);
-	ForceMenuOff();
-	LocalSound('MenuSelect');
 }
 
 //==========================================================================
@@ -77,46 +63,42 @@ void load_func(menucommon_t * aitem, int msg)
 
 class MenuScreenLoadGame:MenuScreen
 {
-	menusaveslot_t slot[NUMSLOTS];
-	menutext_t title;
+	void CreateChoices(void)
+	{
+		MenuChoice_LoadSlot newChoice;
+		int i;
+
+		enteringText = false;
+
+		for (i = 0; i < 8; i++)
+		{
+			newChoice = MenuChoice_LoadSlot(AddItem(MenuChoice_LoadSlot));
+			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+			newChoice.SlotNum = i;
+			newChoice.Status = SV_GetSaveString(i, ARR2STR(newChoice.Text));
+		}
+	}
 
 	defaultproperties
 	{
+		ChoicesStartX = 80;
+		ChoicesStartY = 40;
 		SelectorType = MenuSelector_Skull;
+		Title = "LOAD GAME";
 	}
 }
 
 void menu_load(void)
 {
-	MenuScreenLoadGame LoadMenu;
-	int x = 80;
-	int y = 40;
-	int i;
-
-	enteringText = false;
-
-	LoadMenu = MenuScreenLoadGame(SpawnMenu(MenuScreenLoadGame));
-
-	for (i = 0; i < NUMSLOTS; i++)
-	{
-		MenuSaveSlot_Init(&LoadMenu.slot[i], x, y);
-		LoadMenu.slot[i].callback = load_func;
-		LoadMenu.slot[i].id = i;
-		LoadMenu.slot[i].status =
-			SV_GetSaveString(i, ARR2STR(LoadMenu.slot[i].text));
-		MenuItemWrapper(LoadMenu.AddItem(MenuItemWrapper)).item = &LoadMenu.slot[i];
-		y += 18;
-	}
-
-	MenuText_InitTitle(&LoadMenu.title, 160, 24, "LOAD GAME", TEXT_BIGC);
-	MenuItemWrapper(LoadMenu.AddItem(MenuItemWrapper)).item = &LoadMenu.title;
-
-	PushMenuScreen(LoadMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenLoadGame));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.8  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

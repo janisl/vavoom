@@ -27,80 +27,80 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//==========================================================================
+//
+//	MenuHelpPage
+//
+//==========================================================================
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenHelp:MenuScreen
+class MenuHelpPage:MenuStaticBitmap
 {
-	menubitmap_t pic;
-	int numpages;
-	int curpage;
+	void SetPage(string pageName)
+	{
+		Handle = R_RegisterPic(pageName, PicType);
+	}
 
 	defaultproperties
 	{
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenHelp HelpMenu;
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  UseHelp
+//	MenuScreenHelp
 //
 //==========================================================================
 
-boolean UseHelp(menucommon_t * item, int key)
+class MenuScreenHelp:MenuScreen
 {
-	LocalSound('MenuClose');
-	HelpMenu.curpage++;
-	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
+	MenuHelpPage Page;
+	int NumPages;
+	int CurPage;
+	string PageNames[3];
+
+	void CreateChoices(void)
 	{
-		ForceMenuOff();
-	}
-	else if (HelpMenu.curpage == 1)
-	{
-		HelpMenu.pic.handle = R_RegisterPic("HELP2", PIC_PATCH);
-	}
-	else
-	{
-		HelpMenu.pic.handle = R_RegisterPic("HELP3", PIC_PATCH);
+		::CreateChoices();
+		Page = MenuHelpPage(AddItem(MenuHelpPage));
+		Page.SetPage(PageNames[CurPage]);
 	}
 
-	return true;
+	boolean Key(int key)
+	{
+		LocalSound('MenuClose');
+		CurPage++;
+		if (key == K_ESCAPE || CurPage >= NumPages)
+		{
+			ForceMenuOff();
+		}
+		else
+		{
+			Page.SetPage(PageNames[CurPage]);
+		}
+		return true;
+	}
+
+	defaultproperties
+	{
+		PageNames[0] = "HELP1";
+		PageNames[1] = "HELP2";
+		PageNames[2] = "HELP3";
+		NumPages = 3;
+		CurPage = 0;
+	}
 }
-
-//==========================================================================
-//
-//  menu_help
-//
-//==========================================================================
 
 void menu_help(void)
 {
-	HelpMenu = MenuScreenHelp(SpawnMenu(MenuScreenHelp));
-
-	HelpMenu.numpages = 3;
-	HelpMenu.curpage = 0;
-
-	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, "HELP1", PIC_PATCH);
-	MenuItemWrapper(HelpMenu.AddItem(MenuItemWrapper)).item = &HelpMenu.pic;
-	HelpMenu.pic.responder = UseHelp;
-
-	PushMenuScreen(HelpMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

@@ -27,76 +27,107 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenMultiplayer:MenuScreen
-{
-	menutext_t newgame;
-	menutext_t joingame;
-	menutext_t setup;
-	menutext_t disconnect;
-	menutext_t title;
-
-	defaultproperties
-	{
-		SelectorType = MenuSelector_BigArrow;
-	}
-}
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_new_game(void);
 void menu_join_game(void);
 void menu_psetup(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_NewNetGame
+//
+//==========================================================================
 
-MenuScreenMultiplayer MultiMenu;
+class MenuChoice_NewNetGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_new_game();
+	}
 
-// CODE --------------------------------------------------------------------
+	defaultproperties
+	{
+		Text = "New Game";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_JoinGame
+//
+//==========================================================================
+
+class MenuChoice_JoinGame:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_join_game();
+	}
+
+	defaultproperties
+	{
+		Text = "Join Game";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_PlayerSetup
+//
+//==========================================================================
+
+class MenuChoice_PlayerSetup:MenuBigTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_psetup();
+	}
+
+	defaultproperties
+	{
+		Text = "Player Setup";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenMultiplayer
+//
+//==========================================================================
+
+class MenuScreenMultiplayer:MenuScreen
+{
+	void Init(void)
+	{
+		if (!local_server)
+		{
+			Choices[0] = classidNone;
+		}
+		::Init();
+	}
+
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_NewNetGame;
+		Choices[1] = MenuChoice_JoinGame;
+		Choices[2] = MenuChoice_PlayerSetup;
+		ChoicesStartX = 97;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_BigArrow;
+		Title = "MULTIPLAYER";
+	}
+}
 
 void menu_multi(void)
 {
-	int x = 97;
-	int y = 40;
-
-	MultiMenu = MenuScreenMultiplayer(SpawnMenu(MenuScreenMultiplayer));
-
-	if (local_server)
-	{
-		MenuText_InitFunc(&MultiMenu.newgame, x, y, "New Game", TEXT_BIG,
-			menu_new_game);
-		MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.newgame;
-		y += 18;
-	}
-
-	MenuText_InitFunc(&MultiMenu.joingame, x, y, "Join Game", TEXT_BIG,
-		menu_join_game);
-	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.joingame;
-	y += 18;
-
-	MenuText_InitFunc(&MultiMenu.setup, x, y, "Player Setup", TEXT_BIG,
-		menu_psetup);
-	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.setup;
-	y += 18;
-
-	MenuText_InitCmd(&MultiMenu.disconnect, x, y, "Disconnect", TEXT_BIG,
-		"Disconnect\n");
-	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.disconnect;
-
-	MenuText_InitTitle(&MultiMenu.title, 160, 24, "MULTIPLAYER", TEXT_BIGC);
-	MenuItemWrapper(MultiMenu.AddItem(MenuItemWrapper)).item = &MultiMenu.title;
-
-	PushMenuScreen(MultiMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenMultiplayer));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

@@ -27,14 +27,6 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 #ifdef DOOM2
 void menu_skill(void);
 #else
@@ -42,10 +34,6 @@ void menu_episode(void);
 #endif
 void menu_load(void);
 void menu_save(void);
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
@@ -55,11 +43,6 @@ void menu_save(void);
 
 class MenuChoice_NewGame:MenuBigTextButton
 {
-	defaultproperties
-	{
-		Text = "New Game";
-	}
-
 	void ActivateEvent(void)
 	{
 #ifdef DOOM2
@@ -67,6 +50,11 @@ class MenuChoice_NewGame:MenuBigTextButton
 #else
 		menu_episode();
 #endif
+	}
+
+	defaultproperties
+	{
+		Text = "New Game";
 	}
 }
 
@@ -78,14 +66,14 @@ class MenuChoice_NewGame:MenuBigTextButton
 
 class MenuChoice_LoadGame:MenuBigTextButton
 {
-	defaultproperties
-	{
-		Text = "Load Game";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_load();
+	}
+
+	defaultproperties
+	{
+		Text = "Load Game";
 	}
 }
 
@@ -97,14 +85,14 @@ class MenuChoice_LoadGame:MenuBigTextButton
 
 class MenuChoice_SaveGame:MenuBigTextButton
 {
-	defaultproperties
-	{
-		Text = "Save Game";
-	}
-
 	void ActivateEvent(void)
 	{
 		menu_save();
+	}
+
+	defaultproperties
+	{
+		Text = "Save Game";
 	}
 }
 
@@ -116,14 +104,14 @@ class MenuChoice_SaveGame:MenuBigTextButton
 
 class MenuChoice_EndGame:MenuBigTextButton
 {
-	defaultproperties
-	{
-		Text = "End Game";
-	}
-
 	void ActivateEvent(void)
 	{
 		CmdBuf_AddText("Disconnect\n");
+	}
+
+	defaultproperties
+	{
+		Text = "End Game";
 	}
 }
 
@@ -135,15 +123,6 @@ class MenuChoice_EndGame:MenuBigTextButton
 
 class MenuScreenSinglePlayer:MenuScreen
 {
-	menutext_t title;
-
-	void Init(void)
-	{
-		MenuText_InitTitle(&title, 160, 24, "SINGLE PLAYER", TEXT_BIGC);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
-		::Init();
-	}
-
 	defaultproperties
 	{
 		Choices[0] = MenuChoice_NewGame;
@@ -153,6 +132,7 @@ class MenuScreenSinglePlayer:MenuScreen
 		ChoicesStartX = 97;
 		ChoicesStartY = 40;
 		SelectorType = MenuSelector_Skull;
+		Title = "SINGLE PLAYER";
 	}
 }
 
@@ -164,6 +144,9 @@ void menu_single(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.5  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

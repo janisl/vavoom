@@ -29,21 +29,9 @@
 
 #ifndef DOOM2
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_skill(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
-
 int MenuEpisode;
-
-// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
@@ -138,8 +126,6 @@ class MenuChoice_Episode4:MenuChoice_Episode1
 
 class MenuScreenEpisode:MenuScreen
 {
-	menutext_t title;
-
 	void Init(void)
 	{
 		if (!ExtendedWAD)
@@ -147,8 +133,6 @@ class MenuScreenEpisode:MenuScreen
 			Choices[3] = classidNone;
 		}
 		::Init();
-		MenuText_InitTitle(&title, 160, 24, "WHICH EPISODE?", TEXT_BIGC);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
 	}
 
 	defaultproperties
@@ -160,6 +144,7 @@ class MenuScreenEpisode:MenuScreen
 		ChoicesStartX = 48;
 		ChoicesStartY = 40;
 		SelectorType = MenuSelector_Skull;
+		Title = "WHICH EPISODE?";
 	}
 };
 
@@ -173,6 +158,9 @@ void menu_episode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.5  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

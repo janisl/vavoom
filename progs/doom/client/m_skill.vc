@@ -27,34 +27,6 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int MenuSkill;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  SkillCallback
-//
-//==========================================================================
-
-void SkillCallback(menucommon_t * item, int msg)
-{
-	if (msg == MMSG_ACTIVATE)
-	{
-		MenuSkill = item->id;
-	}
-}
-
 //==========================================================================
 //
 //  NewGame
@@ -95,18 +67,6 @@ void VerifyNightmare(int ch)
 
 //==========================================================================
 //
-//  skill_func
-//
-//  Let's play
-//
-//==========================================================================
-
-void skill_func(void)
-{
-}
-
-//==========================================================================
-//
 //	MenuChoice_SkillBaby
 //
 //==========================================================================
@@ -117,15 +77,14 @@ class MenuChoice_SkillBaby:MenuBigTextButton
 
 	void ActivateEvent(void)
 	{
-		MenuSkill = SkillLevel;
-		if (MenuSkill == sk_nightmare)
+		if (SkillLevel == sk_nightmare)
 		{
 			MB_StartMessage("are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.",
 				VerifyNightmare, true);
 			return;
 		}
 
-		NewGame(MenuSkill);
+		NewGame(SkillLevel);
 	}
 
 	defaultproperties
@@ -203,16 +162,6 @@ class MenuChoice_SkillNightmare:MenuChoice_SkillBaby
 
 class MenuScreenSkill:MenuScreen
 {
-	menutext_t title;
-
-	void Init(void)
-	{
-		::Init();
-
-		MenuText_InitTitle(&title, 160, 24, "CHOOSE SKILL LEVEL:", TEXT_BIGC);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &title;
-	}
-
 	defaultproperties
 	{
 		Choices[0] = MenuChoice_SkillBaby;
@@ -223,22 +172,22 @@ class MenuScreenSkill:MenuScreen
 		ChoicesStartX = 48;
 		ChoicesStartY = 40;
 		SelectorType = MenuSelector_Skull;
+		Title = "CHOOSE SKILL LEVEL:";
+		//	SetCursor(2);
 	}
 };
 
 void menu_skill(void)
 {
-	MenuScreenSkill SkillMenu;
-
-	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
-
-	PushMenuScreen(SkillMenu);
-	SkillMenu.SetCursor(2);
+	PushMenuScreen(SpawnMenu(MenuScreenSkill));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.9  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

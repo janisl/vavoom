@@ -27,23 +27,48 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_single(void);
 void menu_multi(void);
 void menu_options(void);
 void menu_help(void);
 void menu_quit(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuMainTitleImage
+//
+//==========================================================================
 
-// CODE --------------------------------------------------------------------
+class MenuMainTitleImage:MenuStaticBitmap
+{
+	defaultproperties
+	{
+		X = 88;
+		Y = 0;
+		PicName = "M_HTIC";
+	}
+}
+
+//==========================================================================
+//
+//	MenuMainAnim
+//
+//==========================================================================
+
+class MenuMainAnim:MenuStaticAnim
+{
+	defaultproperties
+	{
+		Speed = 7;
+		FrameNames[0] = "FBULA0";
+		FrameNames[1] = "FBULB0";
+		FrameNames[2] = "FBULC0";
+		FrameNames[3] = "FBULD0";
+		FrameNames[4] = "FBULE0";
+		FrameNames[5] = "FBULF0";
+		FrameNames[6] = "FBULG0";
+	}
+}
 
 //==========================================================================
 //
@@ -148,41 +173,27 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 class MenuScreenMain:MenuScreen
 {
-	menubitmap_t logo;
-	menuanim_t anim1;
-	menuanim_t anim2;
-
 	void Init(void)
 	{
-		MenuBitmap_Init(&logo, 88, 0, MNF_INACTIVE, "M_HTIC", PIC_PATCH);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &logo;
-
-		MenuAnim_Init(&anim1, 37, 80, MNF_INACTIVE, 7, 7, 2, false);
-		anim1.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
-		anim1.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
-		anim1.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
-		anim1.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
-		anim1.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
-		anim1.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
-		anim1.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &anim1;
-
-		MenuAnim_Init(&anim2, 278, 80, MNF_INACTIVE, 7, 7, 0, false);
-		anim2.pics[0] = R_RegisterPic("FBULA0", PIC_PATCH);
-		anim2.pics[1] = R_RegisterPic("FBULB0", PIC_PATCH);
-		anim2.pics[2] = R_RegisterPic("FBULC0", PIC_PATCH);
-		anim2.pics[3] = R_RegisterPic("FBULD0", PIC_PATCH);
-		anim2.pics[4] = R_RegisterPic("FBULE0", PIC_PATCH);
-		anim2.pics[5] = R_RegisterPic("FBULF0", PIC_PATCH);
-		anim2.pics[6] = R_RegisterPic("FBULG0", PIC_PATCH);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &anim2;
-
 		if (!local_server)
 		{
 			Choices[0] = classidNone;
 		}
-
 		::Init();
+	}
+
+	void CreateTitle(void)
+	{
+		MenuStaticAnim newAnim;
+
+		AddItem(MenuMainTitleImage);
+
+		newAnim = MenuStaticAnim(AddItem(MenuStaticAnim));
+		newAnim.SetPos(37, 80);
+		newAnim.StartFrame = 2;
+
+		newAnim = MenuStaticAnim(AddItem(MenuStaticAnim));
+		newAnim.SetPos(278, 80);
 	}
 
 	defaultproperties
@@ -206,6 +217,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

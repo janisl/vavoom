@@ -27,107 +27,101 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+void menu_search(void);
 
-// CONSTANTS ---------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_Search
+//
+//==========================================================================
 
-// TYPES -------------------------------------------------------------------
+class MenuChoice_Search:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_search();
+	}
+
+	defaultproperties
+	{
+		Text = "Search for games...";
+		TextHAlign = hleft;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_JoinAt
+//
+//==========================================================================
+
+class MenuChoice_JoinAt:MenuInputLine
+{
+	void ValueChanged(void)
+	{
+		::ValueChanged();
+		if (Value[0])
+		{
+			CmdBuf_AddText("Connect %s\n", ARR2STR(Value));
+		}
+	}
+
+	defaultproperties
+	{
+		Text = "Join Game At";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenJoinGame
+//
+//==========================================================================
 
 class MenuScreenJoinGame:MenuScreen
 {
-	menutext_t search;
-	menuinputline_t joinat;
-	menutext_t title;
-
 	defaultproperties
 	{
-	}
-}
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-void menu_search(void);
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenJoinGame JoinGameMenu;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  join_at_func
-//
-//==========================================================================
-
-void join_at_func(menucommon_t * aitem, int msg)
-{
-	if (msg == MMSG_ACTIVATE && JoinGameMenu.joinat.value[0])
-	{
-		CmdBuf_AddText("Connect %s\n", ARR2STR(JoinGameMenu.joinat.value));
+		Choices[0] = MenuChoice_Search;
+		Choices[1] = MenuChoice_JoinAt;
+		ChoicesStartX = 64;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_SmallLeft;
+		Title = "JOIN GAME";
 	}
 }
 
 //==========================================================================
 //
-//  menu_join_game
+//	MenuScreenSList
 //
 //==========================================================================
-
-void menu_join_game(void)
-{
-	int x = 64;
-	int y = 40;
-
-	JoinGameMenu = MenuScreenJoinGame(SpawnMenu(MenuScreenJoinGame));
-
-	MenuText_InitFunc(&JoinGameMenu.search, x, y, "Search for games...",
-		TEXT_SMALLL, menu_search);
-	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.search;
-	y += 10;
-
-	MenuInputLine_Init(&JoinGameMenu.joinat, x, y, "Join Game At",
-		TEXT_SMALLL, 0);
-	JoinGameMenu.joinat.callback = join_at_func;
-	JoinGameMenu.joinat.value[0] = 0;
-	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.joinat;
-
-	MenuText_InitTitle(&JoinGameMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
-	MenuItemWrapper(JoinGameMenu.AddItem(MenuItemWrapper)).item = &JoinGameMenu.title;
-
-	PushMenuScreen(JoinGameMenu);
-}
 
 class MenuScreenSList:MenuScreen
 {
-	menuslist_t list;
-	menutext_t title;
-
 	defaultproperties
 	{
+		Choices[0] = MenuSList;
+		Title = "JOIN GAME";
 	}
 }
 
-MenuScreenSList SlistMenu;
+void menu_join_game(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenJoinGame));
+}
 
 void menu_search(void)
 {
-	SlistMenu = MenuScreenSList(SpawnMenu(MenuScreenSList));
-
-	StartSearch();
-
-	MenuSlist_Init(&SlistMenu.list);
-	MenuItemWrapper(SlistMenu.AddItem(MenuItemWrapper)).item = &SlistMenu.list;
-
-	MenuText_InitTitle(&SlistMenu.title, 160, 24, "JOIN GAME", TEXT_BIGC);
-	MenuItemWrapper(SlistMenu.AddItem(MenuItemWrapper)).item = &SlistMenu.title;
-
-	PushMenuScreen(SlistMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenSList));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

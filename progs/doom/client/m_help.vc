@@ -27,95 +27,95 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//==========================================================================
+//
+//	MenuHelpPage
+//
+//==========================================================================
 
-// CONSTANTS ---------------------------------------------------------------
+class MenuHelpPage:MenuStaticBitmap
+{
+	void SetPage(string pageName)
+	{
+		Handle = R_RegisterPic(pageName, PicType);
+	}
 
-// TYPES -------------------------------------------------------------------
+	defaultproperties
+	{
+#ifdef DOOM2
+		PicName = "HELP";
+#else
+		PicName = "HELP1";
+#endif
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenHelp
+//
+//==========================================================================
 
 class MenuScreenHelp:MenuScreen
 {
-	menubitmap_t pic;
+	MenuHelpPage Pic;
 #ifndef DOOM2
-	int numpages;
-	int curpage;
+	int NumPages;
+	int CurPage;
 #endif
+
+	void CreateChoices(void)
+	{
+#ifndef DOOM2
+		if (ExtendedWAD)
+		{
+			NumPages = 1;
+		}
+		else
+		{
+			NumPages = 2;
+		}
+		CurPage = 0;
+#endif
+
+		Pic = MenuHelpPage(AddItem(MenuHelpPage));
+	}
+
+	boolean Key(int key)
+	{
+		LocalSound('MenuClose');
+#ifdef DOOM2
+		ForceMenuOff();
+#else
+		CurPage++;
+		if (key == K_ESCAPE || CurPage >= NumPages)
+		{
+			ForceMenuOff();
+		}
+		else
+		{
+			Pic.SetPage("HELP2");
+		}
+#endif
+		return true;
+	}
 
 	defaultproperties
 	{
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenHelp HelpMenu;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  UseHelp
-//
-//==========================================================================
-
-boolean UseHelp(menucommon_t * item, int key)
-{
-	LocalSound('MenuClose');
-#ifdef DOOM2
-	ForceMenuOff();
-#else
-	HelpMenu.curpage++;
-	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
-	{
-		ForceMenuOff();
-	}
-	else
-	{
-		HelpMenu.pic.handle = R_RegisterPic("HELP2", PIC_PATCH);
-	}
-#endif
-
-	return true;
-}
-
-//==========================================================================
-//
-//  menu_help
-//
-//==========================================================================
-
 void menu_help(void)
 {
-	HelpMenu = MenuScreenHelp(SpawnMenu(MenuScreenHelp));
-
-#ifndef DOOM2
-	if (ExtendedWAD)
-	{
-		HelpMenu.numpages = 1;
-	}
-	else
-	{
-		HelpMenu.numpages = 2;
-	}
-	HelpMenu.curpage = 0;
-#endif
-
-#ifdef DOOM2
-	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, "HELP", PIC_PATCH);
-#else
-	MenuBitmap_Init(&HelpMenu.pic, 0, 0, 0, "HELP1", PIC_PATCH);
-#endif
-	HelpMenu.pic.responder = UseHelp;
-	MenuItemWrapper(HelpMenu.AddItem(MenuItemWrapper)).item = &HelpMenu.pic;
-
-	PushMenuScreen(HelpMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenHelp));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

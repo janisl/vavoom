@@ -29,68 +29,64 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_SaveSlot
+//
+//==========================================================================
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class menu_save_t:MenuScreen
+class MenuChoice_SaveSlot:MenuSaveSlot
 {
-	menusaveslot_t slot[NUMSLOTS];
-	menutext_t title;
+	void ActivateSlot(void)
+	{
+		// we are going to be intercepting all chars
+		enteringText = true;
+		InputLine_Init(&slot_enter_text);
+
+		if (Status)
+		{
+			InputLine_SetValue(&slot_enter_text, ARR2STR(Text));
+		}
+		LocalSound('MenuSelect');
+	}
 
 	defaultproperties
 	{
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenSaveGame
+//
+//==========================================================================
+
+class MenuScreenSaveGame:MenuScreen
+{
+	void CreateChoices(void)
+	{
+		MenuChoice_SaveSlot newChoice;
+		int i;
+
+		enteringText = false;
+
+		for (i = 0; i < 8; i++)
+		{
+			newChoice = MenuChoice_SaveSlot(AddItem(MenuChoice_SaveSlot));
+			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+			newChoice.SlotNum = i;
+			newChoice.Status = SV_GetSaveString(i, ARR2STR(newChoice.Text));
+		}
+	}
+
+	defaultproperties
+	{
+		ChoicesStartX = 80;
+		ChoicesStartY = 40;
 		SelectorType = MenuSelector_BigArrow;
+		Title = "SAVE GAME";
 	}
 }
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-menu_save_t SaveMenu;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  save_func
-//
-//==========================================================================
-
-void save_func(menucommon_t * aitem, int msg)
-{
-	menusaveslot_t *item = (menusaveslot_t *) aitem;
-
-	if (msg != MMSG_ACTIVATE)
-	{
-		return;
-	}
-
-	// we are going to be intercepting all chars
-	enteringText = true;
-	InputLine_Init(&slot_enter_text);
-
-	if (item->status)
-	{
-		InputLine_SetValue(&slot_enter_text, ARR2STR(item->text));
-	}
-	LocalSound('MenuSelect');
-}
-
-//==========================================================================
-//
-//  menu_save
-//
-//==========================================================================
-
-void menu_save(void)
-{
-	int x = 80;
-	int y = 40;
-	int i;
 
 /*	if (sv.active && svs.max_clients > 1)
 	{
@@ -104,30 +100,17 @@ void menu_save(void)
 		return;
 	}*/
 
-	enteringText = false;
-
-	SaveMenu = menu_save_t(SpawnMenu(menu_save_t));
-
-	for (i = 0; i < NUMSLOTS; i++)
-	{
-		MenuSaveSlot_Init(&SaveMenu.slot[i], x, y);
-		SaveMenu.slot[i].callback = save_func;
-		SaveMenu.slot[i].id = i;
-		SaveMenu.slot[i].status =
-			SV_GetSaveString(i, ARR2STR(SaveMenu.slot[i].text));
-		MenuItemWrapper(SaveMenu.AddItem(MenuItemWrapper)).item = &SaveMenu.slot[i];
-		y += 18;
-	}
-
-	MenuText_InitTitle(&SaveMenu.title, 160, 24, "SAVE GAME", TEXT_BIGC);
-	MenuItemWrapper(SaveMenu.AddItem(MenuItemWrapper)).item = &SaveMenu.title;
-
-	PushMenuScreen(SaveMenu);
+void menu_save(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenSaveGame));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

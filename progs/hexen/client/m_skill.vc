@@ -27,140 +27,137 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int MenuSkill;
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  SkillCallback
+//	MenuChoice_Skill
 //
 //==========================================================================
 
-void SkillCallback(menucommon_t * item, int msg)
+class MenuChoice_Skill:MenuBigTextButton
 {
-	if (msg == MMSG_ACTIVATE)
+	int SkillLevel;
+	int PClass;
+
+	void ActivateEvent(void)
 	{
-		MenuSkill = item->id;
+		SetCvar("Skill", SkillLevel);
+		SetCvar("Class", PClass);
+
+		CmdBuf_AddText("Disconnect\n");
+		CmdBuf_AddText("MaxPlayers 1\n");
+		CmdBuf_AddText("Map %s\n", P_TranslateMap(1));
+
+		ForceMenuOff();
 	}
-}
-
-//==========================================================================
-//
-//  skill_func
-//
-//  Let's play
-//
-//==========================================================================
-
-void skill_func(void)
-{
-	SetCvar("Skill", MenuSkill);
-	SetCvar("Class", MenuPClass);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-	CmdBuf_AddText("Map %s\n", P_TranslateMap(1));
-
-	ForceMenuOff();
-}
-
-//==========================================================================
-//
-//	MenuScreenSkill
-//
-//==========================================================================
-
-class MenuScreenSkill:MenuScreen
-{
-	menutext_t skill[5];
-	menutext_t title;
 
 	defaultproperties
 	{
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenFighterSkill
+//
+//==========================================================================
+
+class MenuScreenFighterSkill:MenuScreen
+{
+	string SkillNames[5];
+	int PClass;
+
+	void CreateChoices(void)
+	{
+		int i;
+		MenuChoice_Skill newChoice;
+
+		for (i = 0; i < 5; i++)
+		{
+			newChoice = MenuChoice_Skill(AddItem(MenuChoice_Skill));
+			newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
+			newChoice.Text = SkillNames[i];
+			newChoice.PClass = PClass;
+			newChoice.SkillLevel = i;
+		}
+//		SetCursor(2);
+	}
+
+	defaultproperties
+	{
+		SkillNames[0] = "SQUIRE";
+		SkillNames[1] = "KNIGHT";
+		SkillNames[2] = "WARRIOR";
+		SkillNames[3] = "BERSERKER";
+		SkillNames[4] = "TITAN";
+		ChoicesStartX = 120;
+		ChoicesStartY = 44;
+		PClass = PCLASS_FIGHTER;
 		SelectorType = MenuSelector_BigArrow;
+		Title = "CHOOSE SKILL LEVEL:";
 	}
 };
 
+//==========================================================================
+//
+//	MenuScreenClericSkill
+//
+//==========================================================================
+
+class MenuScreenClericSkill:MenuScreenFighterSkill
+{
+	defaultproperties
+	{
+		SkillNames[0] = "ALTAR BOY";
+		SkillNames[1] = "ACOLYTE";
+		SkillNames[2] = "PRIEST";
+		SkillNames[3] = "CARDINAL";
+		SkillNames[4] = "POPE";
+		ChoicesStartX = 116;
+		PClass = PCLASS_CLERIC;
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenMageSkill
+//
+//==========================================================================
+
+class MenuScreenMageSkill:MenuScreenFighterSkill
+{
+	defaultproperties
+	{
+		SkillNames[0] = "APPRENTICE";
+		SkillNames[1] = "ENCHANTER";
+		SkillNames[2] = "SORCERER";
+		SkillNames[3] = "WARLOCK";
+		SkillNames[4] = "ARCHIMAGE";
+		ChoicesStartX = 112;
+		PClass = PCLASS_MAGE;
+	}
+}
+
 void menu_skill(void)
 {
-	MenuScreenSkill SkillMenu;
-	int x;
-	int y;
-	int i;
+	PushMenuScreen(SpawnMenu(MenuScreenFighterSkill));
+}
 
-	SkillMenu = MenuScreenSkill(SpawnMenu(MenuScreenSkill));
+void menu_skill2(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenClericSkill));
+}
 
-	switch (MenuPClass)
-	{
-	case PCLASS_FIGHTER:
-		x = 120;
-		break;
-	case PCLASS_CLERIC:
-		x = 116;
-		break;
-	case PCLASS_MAGE:
-		x = 112;
-		break;
-	}
-	y = 44;
-
-	for (i = 0; i < 5; i++)
-	{
-		MenuText_InitFunc(&SkillMenu.skill[i], x, y, "", TEXT_BIG,
-			skill_func);
-		SkillMenu.skill[i].callback = SkillCallback;
-		SkillMenu.skill[i].id = i;
-		MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.skill[i];
-		y += 18;
-	}
-
-	switch (MenuPClass)
-	{
-	case PCLASS_FIGHTER:
-		SkillMenu.skill[0].text = "SQUIRE";
-		SkillMenu.skill[1].text = "KNIGHT";
-		SkillMenu.skill[2].text = "WARRIOR";
-		SkillMenu.skill[3].text = "BERSERKER";
-		SkillMenu.skill[4].text = "TITAN";
-		break;
-	case PCLASS_CLERIC:
-		SkillMenu.skill[0].text = "ALTAR BOY";
-		SkillMenu.skill[1].text = "ACOLYTE";
-		SkillMenu.skill[2].text = "PRIEST";
-		SkillMenu.skill[3].text = "CARDINAL";
-		SkillMenu.skill[4].text = "POPE";
-		break;
-	case PCLASS_MAGE:
-		SkillMenu.skill[0].text = "APPRENTICE";
-		SkillMenu.skill[1].text = "ENCHANTER";
-		SkillMenu.skill[2].text = "SORCERER";
-		SkillMenu.skill[3].text = "WARLOCK";
-		SkillMenu.skill[4].text = "ARCHIMAGE";
-		break;
-	}
-
-	MenuText_InitTitle(&SkillMenu.title, 160, 24, "CHOOSE SKILL LEVEL:",
-		TEXT_BIGC);
-	MenuItemWrapper(SkillMenu.AddItem(MenuItemWrapper)).item = &SkillMenu.title;
-
-	PushMenuScreen(SkillMenu);
-	SkillMenu.SetCursor(2);
+void menu_skill3(void)
+{
+	PushMenuScreen(SpawnMenu(MenuScreenMageSkill));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.9  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

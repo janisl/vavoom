@@ -27,35 +27,9 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_skill(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
-
 int MenuEpisode;
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  menu_episode_callback
-//
-//==========================================================================
-
-void menu_episode_callback(menucommon_t * item, int msg)
-{
-	if (msg == MMSG_RECEIVE_FOCUS)
-	{
-		MenuEpisode = item->id;
-	}
-}
 
 //==========================================================================
 //
@@ -70,14 +44,91 @@ void SharewareResponse(int key)
 
 //==========================================================================
 //
-//  shareware_func
+//	MenuChoice_Episode1
 //
 //==========================================================================
 
-void shareware_func(void)
+class MenuChoice_Episode1:MenuBigTextButton
 {
-	MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-		SharewareResponse, false);
+	int EpisodeNum;
+
+	void ActivateEvent(void)
+	{
+		if (shareware && EpisodeNum > 1)
+		{
+			MB_StartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
+				SharewareResponse, false);
+			return;
+		}
+		MenuEpisode = EpisodeNum;
+		menu_skill();
+	}
+
+	defaultproperties
+	{
+		Text = "CITY OF THE DAMNED";
+		EpisodeNum = 1;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode2
+//
+//==========================================================================
+
+class MenuChoice_Episode2:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "HELL'S MAW";
+		EpisodeNum = 2;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode3
+//
+//==========================================================================
+
+class MenuChoice_Episode3:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "THE DOME OF D'SPARIL";
+		EpisodeNum = 3;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode4
+//
+//==========================================================================
+
+class MenuChoice_Episode4:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "THE OSSUARY";
+		EpisodeNum = 4;
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Episode5
+//
+//==========================================================================
+
+class MenuChoice_Episode5:MenuChoice_Episode1
+{
+	defaultproperties
+	{
+		Text = "THE STAGNANT DEMESNE";
+		EpisodeNum = 5;
+	}
 }
 
 //==========================================================================
@@ -88,74 +139,39 @@ void shareware_func(void)
 
 class MenuScreenEpisode:MenuScreen
 {
-	menutext_t epi1;
-	menutext_t epi2;
-	menutext_t epi3;
-	menutext_t epi4;
-	menutext_t epi5;
-	menutext_t title;
+	void CreateChoices(void)
+	{
+		if (ExtendedWAD)
+		{
+			Choices[3] = MenuChoice_Episode4;
+			Choices[4] = MenuChoice_Episode5;
+		}
+		::CreateChoices();
+	}
 
 	defaultproperties
 	{
+		Choices[0] = MenuChoice_Episode1;
+		Choices[1] = MenuChoice_Episode2;
+		Choices[2] = MenuChoice_Episode3;
+		ChoicesStartX = 48;
+		ChoicesStartY = 40;
 		SelectorType = MenuSelector_BigArrow;
+		Title = "WHICH EPISODE?";
 	}
 }
 
 void menu_episode(void)
 {
-	MenuScreenEpisode EpisodeMenu;
-	int x = 48;
-	int y = 40;
-
-	EpisodeMenu = MenuScreenEpisode(SpawnMenu(MenuScreenEpisode));
-
-	MenuText_InitFunc(&EpisodeMenu.epi1, x, y, "CITY OF THE DAMNED", TEXT_BIG,
-		menu_skill);
-	EpisodeMenu.epi1.callback = menu_episode_callback;
-	EpisodeMenu.epi1.id = 1;
-	MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.epi1;
-	y += 18;
-
-	MenuText_InitFunc(&EpisodeMenu.epi2, x, y, "HELL'S MAW", TEXT_BIG,
-		shareware ? shareware_func : menu_skill);
-	EpisodeMenu.epi2.callback = menu_episode_callback;
-	EpisodeMenu.epi2.id = 2;
-	MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.epi2;
-	y += 18;
-
-	MenuText_InitFunc(&EpisodeMenu.epi3, x, y, "THE DOME OF D'SPARIL",
-		TEXT_BIG, shareware ? shareware_func : menu_skill);
-	EpisodeMenu.epi3.callback = menu_episode_callback;
-	EpisodeMenu.epi3.id = 3;
-	MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.epi3;
-	y += 18;
-
-	if (ExtendedWAD)
-	{
-		MenuText_InitFunc(&EpisodeMenu.epi4, x, y, "THE OSSUARY", TEXT_BIG,
-			menu_skill);
-		EpisodeMenu.epi4.callback = menu_episode_callback;
-		EpisodeMenu.epi4.id = 4;
-		MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.epi4;
-		y += 18;
-
-		MenuText_InitFunc(&EpisodeMenu.epi5, x, y, "THE STAGNANT DEMESNE",
-			TEXT_BIG, menu_skill);
-		EpisodeMenu.epi5.callback = menu_episode_callback;
-		EpisodeMenu.epi5.id = 5;
-		MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.epi5;
-	}
-
-	MenuText_InitTitle(&EpisodeMenu.title, 160, 24, "WHICH EPISODE?",
-		TEXT_BIGC);
-	MenuItemWrapper(EpisodeMenu.AddItem(MenuItemWrapper)).item = &EpisodeMenu.title;
-
-	PushMenuScreen(EpisodeMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenEpisode));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

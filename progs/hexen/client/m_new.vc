@@ -27,146 +27,268 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class MenuChoice_StartGame;
 
-// CONSTANTS ---------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_Players
+//
+//==========================================================================
 
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenNewNetGame:MenuScreen
+class MenuChoice_Players:MenuChoiceEnum
 {
-	menutext_t start;
-	menuswitch_t players;
-	menuswitch_t monsters;
-	menuswitch_t deathmatch;
-	menuswitch_t skill;
-	menuswitch_t timelimit;
-	menuswitch_t level;
-	menutext_t title;
+	int GetInitialValue(void)
+	{
+		return 2;
+	}
 
 	defaultproperties
 	{
+		Text = "Max players";
+		EnumNames[0] = "2";
+		EnumNames[1] = "3";
+		EnumNames[2] = "4";
+		EnumNames[3] = "5";
+		EnumNames[4] = "6";
+		EnumNames[5] = "7";
+		EnumNames[6] = "8";
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenNewNetGame NewGameMenu;
-
-string sw_mapnames[99];
-
-string sw_players[7] = { "2", "3", "4", "5", "6", "7", "8" };
-string sw_deathmatch[2] = { "Cooperative", "Deathmatch" };
-string sw_skill[5] = { "Baby", "Easy", "Normal", "Hard", "Nightmare" };
-string sw_cnt5[13] =
-	{ "0", "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55",
-	"60"
-};
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  StartNewGame
+//	MenuChoice_Monsters
 //
 //==========================================================================
 
-void StartNewGame(void)
+class MenuChoice_Monsters:MenuChoice_OnOff
 {
-	int buf[16];
-	string str = ARR2STR(buf);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers %d\n", NewGameMenu.players.value + 2);
-	CmdBuf_AddText("NoMonsters %d\n", !NewGameMenu.monsters.value);
-	CmdBuf_AddText("DeathMatch %d\n", NewGameMenu.deathmatch.value);
-	CmdBuf_AddText("TimeLimit %d\n", NewGameMenu.timelimit.value * 5);
-	CmdBuf_AddText("Skill %d\n", NewGameMenu.skill.value);
-	if (NewGameMenu.level.value + 1 < 10)
-		CmdBuf_AddText("Map MAP0%d\n", NewGameMenu.level.value + 1);
-	else
-		CmdBuf_AddText("Map MAP%d\n", NewGameMenu.level.value + 1);
+	defaultproperties
+	{
+		Text = "Monsters";
+	}
 }
 
 //==========================================================================
 //
-//  menu_new_game
+//	MenuChoice_DeathMatch
 //
 //==========================================================================
+
+class MenuChoice_DeathMatch:MenuChoiceEnum
+{
+	int GetInitialValue(void)
+	{
+		return 1;
+	}
+
+	defaultproperties
+	{
+		Text = "Game type";
+		EnumNames[0] = "Cooperative";
+		EnumNames[1] = "Deathmatch";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_MPSkill
+//
+//==========================================================================
+
+class MenuChoice_MPSkill:MenuChoiceEnum
+{
+	int GetInitialValue(void)
+	{
+		return 2;
+	}
+
+	defaultproperties
+	{
+		Text = "Skill";
+		EnumNames[0] = "Baby";
+		EnumNames[1] = "Easy";
+		EnumNames[2] = "Normal";
+		EnumNames[3] = "Hard";
+		EnumNames[4] = "Nightmare";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_TimeLimit
+//
+//==========================================================================
+
+class MenuChoice_TimeLimit:MenuChoiceEnum
+{
+	defaultproperties
+	{
+		Text = "Time limit";
+		EnumNames[0] = "0";
+		EnumNames[1] = "5";
+		EnumNames[2] = "10";
+		EnumNames[3] = "15";
+		EnumNames[4] = "20";
+		EnumNames[5] = "25";
+		EnumNames[6] = "30";
+		EnumNames[7] = "35";
+		EnumNames[8] = "40";
+		EnumNames[9] = "45";
+		EnumNames[10] = "50";
+		EnumNames[11] = "55";
+		EnumNames[12] = "60";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Level
+//
+//==========================================================================
+
+class MenuChoice_Level:MenuChoiceEnum
+{
+	void InitMapList(void)
+	{
+		int i;
+#ifdef FIXME
+		int count = 0;
+
+		for (i = 1; i <= 99; i++)
+		{
+			int map = P_TranslateMap(i);
+
+			if (map != -1)
+			{
+				EnumNames[count] = P_GetMapName(map);
+				count++;
+			}
+		}
+		MaxValue = count;
+#else
+		for (i = 1; i <= 32; i++)
+		{
+			EnumNames[i - 1] = P_GetMapName(i);
+		}
+		MaxValue = 32;
+#endif
+		Value = 0;
+	}
+
+	void Init(void)
+	{
+		::Init();
+		InitMapList();
+	}
+
+	defaultproperties
+	{
+		Text = "Level";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenNewNetGame
+//
+//==========================================================================
+
+class MenuScreenNewNetGame:MenuScreen
+{
+	MenuChoice_Players Players;
+	MenuChoice_Monsters Monsters;
+	MenuChoice_DeathMatch DeathMatch;
+	MenuChoice_MPSkill Skill;
+	MenuChoice_TimeLimit TimeLimit;
+	MenuChoice_Level Level;
+
+	void CreateChoices(void)
+	{
+		MenuChoice newChoice;
+
+		newChoice = MenuChoice(AddItem(MenuChoice_StartGame));
+		newChoice.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += newChoice.Height;
+
+		Players = MenuChoice_Players(AddItem(MenuChoice_Players));
+		Players.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += Players.Height;
+
+		Monsters = MenuChoice_Monsters(AddItem(MenuChoice_Monsters));
+		Monsters.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += Monsters.Height;
+
+		DeathMatch = MenuChoice_DeathMatch(AddItem(MenuChoice_DeathMatch));
+		DeathMatch.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += DeathMatch.Height;
+
+		Skill = MenuChoice_MPSkill(AddItem(MenuChoice_MPSkill));
+		Skill.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += Skill.Height;
+
+		TimeLimit = MenuChoice_TimeLimit(AddItem(MenuChoice_TimeLimit));
+		TimeLimit.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += TimeLimit.Height;
+
+		Level = MenuChoice_Level(AddItem(MenuChoice_Level));
+		Level.SetPos(ChoicesStartX, ChoicesStartY);
+		ChoicesStartY += Level.Height;
+	}
+
+	void StartNewGame(void)
+	{
+		CmdBuf_AddText("Disconnect\n");
+		CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);
+		CmdBuf_AddText("NoMonsters %d\n", !Monsters.Value);
+		CmdBuf_AddText("DeathMatch %d\n", DeathMatch.Value);
+		CmdBuf_AddText("TimeLimit %d\n", TimeLimit.Value * 5);
+		CmdBuf_AddText("Skill %d\n", Skill.Value);
+		if (Level.Value + 1 < 10)
+			CmdBuf_AddText("Map MAP0%d\n", Level.Value + 1);
+		else
+			CmdBuf_AddText("Map MAP%d\n", Level.Value + 1);
+	}
+
+	defaultproperties
+	{
+		ChoicesStartX = 128;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_SmallRight;
+		Title = "NEW GAME";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_StartGame
+//
+//==========================================================================
+
+class MenuChoice_StartGame:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		MenuScreenNewNetGame(Parent).StartNewGame();
+	}
+
+	defaultproperties
+	{
+		Text = "Start Game";
+	}
+}
 
 void menu_new_game(void)
 {
-	int x = 128;
-	int y = 40;
-	int i;
-	int count = 0;
-
-	NewGameMenu = MenuScreenNewNetGame(SpawnMenu(MenuScreenNewNetGame));
-
-	MenuText_InitFunc(&NewGameMenu.start, x, y, "Start Game", TEXT_SMALLR,
-		StartNewGame);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.start;
-	y += 10;
-
-	MenuSwitch_Init(&NewGameMenu.players, x, y, "Max players", TEXT_SMALLR, 2,
-		6, &sw_players[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.players;
-	y += 10;
-
-	MenuSwitch_Init(&NewGameMenu.monsters, x, y, "Monsters", TEXT_SMALLR, 0,
-		2, &sw_offon[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.monsters;
-	y += 10;
-
-	MenuSwitch_Init(&NewGameMenu.deathmatch, x, y, "Game type", TEXT_SMALLR,
-		1, 2, &sw_deathmatch[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.deathmatch;
-	y += 10;
-
-	MenuSwitch_Init(&NewGameMenu.skill, x, y, "Skill", TEXT_SMALLR, 2, 5,
-		&sw_skill[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.skill;
-	y += 10;
-
-	MenuSwitch_Init(&NewGameMenu.timelimit, x, y, "Time limit", TEXT_SMALLR,
-		0, 13, &sw_cnt5[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.timelimit;
-	y += 10;
-
-#ifdef FIXME
-	for (i = 1; i <= 99; i++)
-	{
-		int map = P_TranslateMap(i);
-
-		if (map != -1)
-		{
-			sw_mapnames[count] = P_GetMapName(map);
-			count++;
-		}
-	}
-#else
-	for (i = 1; i <= 32; i++)
-	{
-		sw_mapnames[count] = P_GetMapName(i);
-		count++;
-	}
-#endif
-
-	MenuSwitch_Init(&NewGameMenu.level, x, y, "Level", TEXT_SMALLR, 0, count,
-		&sw_mapnames[0]);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.level;
-
-	MenuText_InitTitle(&NewGameMenu.title, 160, 24, "NEW GAME", TEXT_BIGC);
-	MenuItemWrapper(NewGameMenu.AddItem(MenuItemWrapper)).item = &NewGameMenu.title;
-
-	PushMenuScreen(NewGameMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenNewNetGame));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

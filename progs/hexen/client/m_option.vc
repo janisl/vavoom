@@ -27,30 +27,6 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenOptions:MenuScreen
-{
-	menutext_t ctl;
-	menutext_t ctl2;
-	menutext_t mouse;
-	menutext_t res;
-	menutext_t video;
-	menutext_t sound;
-	menutext_t console;
-	menutext_t title;
-
-	defaultproperties
-	{
-	}
-}
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_controls(void);
 void menu_controls2(void);
 void menu_mouse(void);
@@ -58,69 +34,174 @@ void menu_resolution(void);
 void menu_video(void);
 void menu_sound(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_Controls
+//
+//==========================================================================
 
-MenuScreenOptions OptionsMenu;
+class MenuChoice_Controls:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_controls();
+	}
 
-// CODE --------------------------------------------------------------------
+	defaultproperties
+	{
+		Text = "Controls";
+	}
+}
 
 //==========================================================================
 //
-//  menu_options
+//	MenuChoice_Controls2
 //
 //==========================================================================
+
+class MenuChoice_Controls2:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_controls2();
+	}
+
+	defaultproperties
+	{
+		Text = "Controls 2";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_MouseOptions
+//
+//==========================================================================
+
+class MenuChoice_MouseOptions:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_mouse();
+	}
+
+	defaultproperties
+	{
+		Text = "Mouse Options";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_ScreenResolution
+//
+//==========================================================================
+
+class MenuChoice_ScreenResolution:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_resolution();
+	}
+
+	defaultproperties
+	{
+		Text = "Screen Resolution";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_VideoOptions
+//
+//==========================================================================
+
+class MenuChoice_VideoOptions:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_video();
+	}
+
+	defaultproperties
+	{
+		Text = "Video options";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_SoundSettings
+//
+//==========================================================================
+
+class MenuChoice_SoundSettings:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		menu_sound();
+	}
+
+	defaultproperties
+	{
+		Text = "Sound Settings";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_GoToConsole
+//
+//==========================================================================
+
+class MenuChoice_GoToConsole:MenuSmallTextButton
+{
+	void ActivateEvent(void)
+	{
+		CmdBuf_AddText("ToggleConsole\n");
+	}
+
+	defaultproperties
+	{
+		Text = "Go to console";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenOptions
+//
+//==========================================================================
+
+class MenuScreenOptions:MenuScreen
+{
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_Controls;
+		Choices[1] = MenuChoice_Controls2;
+		Choices[2] = MenuChoice_MouseOptions;
+		Choices[3] = MenuChoice_ScreenResolution;
+		Choices[4] = MenuChoice_VideoOptions;
+		Choices[5] = MenuChoice_SoundSettings;
+		Choices[6] = MenuChoice_GoToConsole;
+		ChoicesStartX = 160;
+		ChoicesStartY = 32;
+		SelectorType = MenuSelector_SmallRight;
+		Title = "OPTIONS";
+	}
+}
 
 void menu_options(void)
 {
-	int x = 160;
-	int y = 32;
-
-	OptionsMenu = MenuScreenOptions(SpawnMenu(MenuScreenOptions));
-
-	MenuText_InitFunc(&OptionsMenu.ctl, x, y, "Controls", TEXT_SMALLR,
-		menu_controls);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.ctl;
-	y += 10;
-
-	MenuText_InitFunc(&OptionsMenu.ctl2, x, y, "Controls 2", TEXT_SMALLR,
-		menu_controls2);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.ctl2;
-	y += 10;
-
-	MenuText_InitFunc(&OptionsMenu.mouse, x, y, "Mouse Options", TEXT_SMALLR,
-		menu_mouse);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.mouse;
-	y += 10;
-
-	MenuText_InitFunc(&OptionsMenu.res, x, y, "Screen Resolution",
-		TEXT_SMALLR, menu_resolution);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.res;
-	y += 10;
-
-	MenuText_InitFunc(&OptionsMenu.video, x, y, "Video options", TEXT_SMALLR,
-		menu_video);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.video;
-	y += 10;
-
-	MenuText_InitFunc(&OptionsMenu.sound, x, y, "Sound Settings", TEXT_SMALLR,
-		menu_sound);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.sound;
-	y += 10;
-
-	MenuText_InitCmd(&OptionsMenu.console, x, y, "Go to console", TEXT_SMALLR,
-		"ToggleConsole\n");
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.console;
-	y += 10;
-
-	MenuText_InitTitle(&OptionsMenu.title, 160, 24, "OPTIONS", TEXT_BIGC);
-	MenuItemWrapper(OptionsMenu.AddItem(MenuItemWrapper)).item = &OptionsMenu.title;
-
-	PushMenuScreen(OptionsMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenOptions));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //

@@ -27,134 +27,194 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_MouseXSensitivity
+//
+//==========================================================================
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenMouse:MenuScreen
+class MenuChoice_MouseXSensitivity:MenuChoiceSlider
 {
-	menuslider_t xsens;
-	menuslider_t ysens;
-	menuswitch_t mlook;
-	menuswitch_t invert;
-	menuswitch_t lspring;
-	menuswitch_t lstrafe;
-	menutext_t title;
+	float GetInitialValue(void)
+	{
+		return GetCvarF("mouse_x_sensitivity");
+	}
+
+	boolean SetNewValue(float newValue)
+	{
+		SetCvarF("mouse_x_sensitivity", newValue);
+		return true;
+	}
 
 	defaultproperties
 	{
+		Text = "Mouse X sensitivity";
+		ValueDelta = 0.25;
+		MaxValue = 10.0;
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenMouse MouseMenu;
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  mouse_func
+//	MenuChoice_MouseYSensitivity
 //
 //==========================================================================
 
-void mouse_func(menucommon_t * item, int msg)
+class MenuChoice_MouseYSensitivity:MenuChoiceSlider
 {
-	if (msg != MMSG_ACTIVATE)
+	float GetInitialValue(void)
 	{
-		return;
+		return GetCvarF("mouse_y_sensitivity");
 	}
 
-	switch (item->id)
+	boolean SetNewValue(float newValue)
 	{
-	case 1:
-		SetCvarF("mouse_x_sensitivity", itof(MouseMenu.xsens.value) / 4.0);
-		break;
+		SetCvarF("mouse_y_sensitivity", newValue);
+		return true;
+	}
 
-	case 2:
-		SetCvarF("mouse_y_sensitivity", itof(MouseMenu.ysens.value) / 4.0);
-		break;
+	defaultproperties
+	{
+		Text = "Mouse Y sensitivity";
+		ValueDelta = 0.25;
+		MaxValue = 10.0;
+	}
+}
 
-	case 3:
-		SetCvar("mouse_look", MouseMenu.mlook.value);
-		break;
+//==========================================================================
+//
+//	MenuChoice_MouseLook
+//
+//==========================================================================
 
-	case 4:
-		SetCvar("invert_mouse", MouseMenu.invert.value);
-		break;
+class MenuChoice_MouseLook:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("mouse_look");
+	}
 
-	case 5:
-		SetCvar("lookspring", MouseMenu.lspring.value);
-		break;
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("mouse_look", newValue);
+		return true;
+	}
 
-	case 6:
-		SetCvar("lookstrafe", MouseMenu.lstrafe.value);
-		break;
+	defaultproperties
+	{
+		Text = "Mouse look";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_InvertMouse
+//
+//==========================================================================
+
+class MenuChoice_InvertMouse:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("invert_mouse");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("invert_mouse", newValue);
+		return true;
+	}
+
+	defaultproperties
+	{
+		Text = "Invert mouse";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_Lookspring
+//
+//==========================================================================
+
+class MenuChoice_Lookspring:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("lookspring");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("lookspring", newValue);
+		return true;
+	}
+
+	defaultproperties
+	{
+		Text = "Look spring";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_LookStrafe
+//
+//==========================================================================
+
+class MenuChoice_LookStrafe:MenuChoice_OnOff
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("lookstrafe");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("lookstrafe", newValue);
+		return true;
+	}
+
+	defaultproperties
+	{
+		Text = "Look strafe";
+	}
+}
+
+//==========================================================================
+//
+//	MenuScreenMouseOptions
+//
+//==========================================================================
+
+class MenuScreenMouseOptions:MenuScreen
+{
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_MouseXSensitivity;
+		Choices[1] = MenuChoice_MouseYSensitivity;
+		Choices[2] = MenuChoice_MouseLook;
+		Choices[3] = MenuChoice_InvertMouse;
+		Choices[4] = MenuChoice_Lookspring;
+		Choices[5] = MenuChoice_LookStrafe;
+		ChoicesStartX = 160;
+		ChoicesStartY = 32;
+		SelectorType = MenuSelector_SmallRight;
+		Title = "MOUSE OPTIONS";
 	}
 }
 
 void menu_mouse(void)
 {
-	int x = 160;
-	int y = 32;
-
-	MouseMenu = MenuScreenMouse(SpawnMenu(MenuScreenMouse));
-
-	MenuSlider_Init(&MouseMenu.xsens, x, y, "Mouse X sensitivity",
-		TEXT_SMALLR, ftoi(GetCvarF("mouse_x_sensitivity") * 4.0), 41);
-	MouseMenu.xsens.callback = mouse_func;
-	MouseMenu.xsens.id = 1;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.xsens;
-	y += 20;
-
-	MenuSlider_Init(&MouseMenu.ysens, x, y, "Mouse Y sensitivity",
-		TEXT_SMALLR, ftoi(GetCvarF("mouse_y_sensitivity") * 4.0), 41);
-	MouseMenu.ysens.callback = mouse_func;
-	MouseMenu.ysens.id = 2;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.ysens;
-	y += 20;
-
-	MenuSwitch_Init(&MouseMenu.mlook, x, y, "Mouse look", TEXT_SMALLR,
-		GetCvar("mouse_look"), 2, &sw_offon[0]);
-	MouseMenu.mlook.callback = mouse_func;
-	MouseMenu.mlook.id = 3;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.mlook;
-	y += 10;
-
-	MenuSwitch_Init(&MouseMenu.invert, x, y, "Invert mouse", TEXT_SMALLR,
-		GetCvar("invert_mouse"), 2, &sw_offon[0]);
-	MouseMenu.invert.callback = mouse_func;
-	MouseMenu.invert.id = 4;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.invert;
-	y += 10;
-
-	MenuSwitch_Init(&MouseMenu.lspring, x, y, "Look spring", TEXT_SMALLR,
-		GetCvar("lookspring"), 2, &sw_offon[0]);
-	MouseMenu.lspring.id = 5;
-	MouseMenu.lspring.callback = mouse_func;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.lspring;
-	y += 10;
-
-	MenuSwitch_Init(&MouseMenu.lstrafe, x, y, "Look strafe", TEXT_SMALLR,
-		GetCvar("lookstrafe"), 2, &sw_offon[0]);
-	MouseMenu.lstrafe.callback = mouse_func;
-	MouseMenu.lstrafe.id = 6;
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.lstrafe;
-	y += 10;
-
-	MenuText_InitTitle(&MouseMenu.title, 160, 24, "MOUSE OPTIONS", TEXT_BIGC);
-	MenuItemWrapper(MouseMenu.AddItem(MenuItemWrapper)).item = &MouseMenu.title;
-
-	PushMenuScreen(MouseMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenMouseOptions));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.6  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

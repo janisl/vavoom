@@ -27,23 +27,27 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
 void menu_single(void);
 void menu_multi(void);
 void menu_options(void);
 void menu_help(void);
 void menu_quit(void);
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	MenuMainTitleImage
+//
+//==========================================================================
 
-// CODE --------------------------------------------------------------------
+class MenuMainTitleImage:MenuStaticBitmap
+{
+	defaultproperties
+	{
+		PicName = "M_DOOM";
+		X = 94;
+		Y = 2;
+	}
+}
 
 //==========================================================================
 //
@@ -159,19 +163,18 @@ class MenuChoice_QuitGame:MenuBigTextButton
 
 class MenuScreenMain:MenuScreen
 {
-	menubitmap_t logo;
-
 	void Init(void)
 	{
 		if (!local_server)
 		{
 			Choices[0] = classidNone;
 		}
-
 		::Init();
+	}
 
-		MenuBitmap_Init(&logo, 94, 2, MNF_INACTIVE, "M_DOOM", PIC_PATCH);
-		MenuItemWrapper(AddItem(MenuItemWrapper)).item = &logo;
+	void CreateTitle(void)
+	{
+		AddItem(MenuMainTitleImage);
 	}
 
 	defaultproperties
@@ -195,6 +198,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:22  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:32  dj_jl
 //  Working on object-oriented menus
 //

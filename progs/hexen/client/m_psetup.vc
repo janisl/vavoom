@@ -27,129 +27,190 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class MenuChoice_Color;
+class MenuChoice_PClass;
 
-// CONSTANTS ---------------------------------------------------------------
+//==========================================================================
+//
+//	MenuChoice_PlayerName
+//
+//==========================================================================
 
-// TYPES -------------------------------------------------------------------
-
-class MenuScreenPlayerSetup:MenuScreen
+class MenuChoice_PlayerName:MenuInputLine
 {
-	menuinputline_t Name;
-	menuswitch_t color;
-	menuswitch_t pclass;
-	menuspriteanim_t anim;
-	menutext_t title;
+	void Init(void)
+	{
+		::Init();
+		strcpy(ARR2STR(Value), GetCvarS("Name"));
+	}
+
+	void ValueChanged(void)
+	{
+		::ValueChanged();
+		SetCvarS("Name", ARR2STR(Value));
+	}
 
 	defaultproperties
 	{
+		Text = "Name";
 	}
 }
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
+//==========================================================================
+//
+//	MenuScreenPlayerSetup
+//
+//==========================================================================
 
-// DATA DECLARATIONS -------------------------------------------------------
-
-MenuScreenPlayerSetup PSetupMenu;
-
-string sw_colors[] =
-	{ "blue", "red", "gold", "light green", "green", "gray", "brown",
-	"magenta"
-};
-string sw_class[] = { "fighter", "cleric", "mage" };
-
-// CODE --------------------------------------------------------------------
-
-void SetColor(void)
+class MenuScreenPlayerSetup:MenuScreen
 {
-	PSetupMenu.anim.sprdef = 500 + PSetupMenu.pclass.value;
-	PSetupMenu.anim.translation = 0;
-	if (PSetupMenu.pclass.value == PCLASS_FIGHTER)
+	MenuSpriteAnim Anim;
+	int Color;
+	int PClass;
+
+	void SetColor(void)
 	{
-		if (PSetupMenu.color.value == 0)
-			PSetupMenu.anim.translation = 2;
-		else if (PSetupMenu.color.value != 2)
-			PSetupMenu.anim.translation = PSetupMenu.color.value;
+		Anim.SprDef = 500 + PClass;
+		Anim.Translation = 0;
+		if (PClass == PCLASS_FIGHTER)
+		{
+			if (Color == 0)
+				Anim.Translation = 2;
+			else if (Color != 2)
+				Anim.Translation = Color;
+		}
+		else
+		{
+			if (Color)
+				Anim.Translation = PClass * (MAXPLAYERS - 1) + Color;
+		}
 	}
-	else
+
+	void SetSpriteColor(int newColor)
 	{
-		if (PSetupMenu.color.value)
-			PSetupMenu.anim.translation =
-				PSetupMenu.pclass.value * (MAXPLAYERS - 1) +
-				PSetupMenu.color.value;
+		Color = newColor;
+		SetColor();
+	}
+
+	void SetPClass(int newPClass)
+	{
+		PClass = newPClass;
+		SetColor();
+	}
+
+	void CreateChoices(void)
+	{
+		R_InstallSprite("PLAY", 500);
+		R_InstallSprite("CLER", 501);
+		R_InstallSprite("MAGE", 502);
+
+		Anim = MenuSpriteAnim(AddItem(MenuSpriteAnim));
+		Anim.SetPos(200, 120);
+		Anim.SprDef = 500;
+		Anim.Speed = 8;
+		Anim.NumFrames = 4;
+
+		::CreateChoices();
+	}
+
+	defaultproperties
+	{
+		Choices[0] = MenuChoice_PlayerName;
+		Choices[1] = MenuChoice_Color;
+		Choices[2] = MenuChoice_PClass;
+		ChoicesStartX = 16;
+		ChoicesStartY = 40;
+		SelectorType = MenuSelector_SmallLeft;
+		Title = "PLAYER SETUP";
 	}
 }
 
-void psetup_func(menucommon_t * item, int msg)
+//==========================================================================
+//
+//	MenuChoice_Color
+//
+//==========================================================================
+
+class MenuChoice_Color:MenuChoiceEnum
 {
-	if (msg != MMSG_ACTIVATE)
+	int GetInitialValue(void)
 	{
-		return;
+		return GetCvar("color");
 	}
 
-	switch (item->id)
+	boolean SetNewValue(int newValue)
 	{
-	case 1:
-		SetCvarS("Name", ARR2STR(PSetupMenu.Name.value));
-		break;
+		SetCvar("color", newValue);
+		MenuScreenPlayerSetup(Parent).SetSpriteColor(newValue);
+		return true;
+	}
 
-	case 2:
-		SetCvar("color", PSetupMenu.color.value);
-		SetColor();
-		break;
+	void Init(void)
+	{
+		::Init();
+		MenuScreenPlayerSetup(Parent).SetSpriteColor(Value);
+	}
 
-	case 3:
-		SetCvar("class", PSetupMenu.pclass.value);
-		SetColor();
-		break;
+	defaultproperties
+	{
+		Text = "Color";
+		EnumNames[0] = "blue";
+		EnumNames[1] = "red";
+		EnumNames[2] = "gold";
+		EnumNames[3] = "light green";
+		EnumNames[4] = "green";
+		EnumNames[5] = "gray";
+		EnumNames[6] = "brown";
+		EnumNames[7] = "magenta";
+	}
+}
+
+//==========================================================================
+//
+//	MenuChoice_PClass
+//
+//==========================================================================
+
+class MenuChoice_PClass:MenuChoiceEnum
+{
+	int GetInitialValue(void)
+	{
+		return GetCvar("class");
+	}
+
+	boolean SetNewValue(int newValue)
+	{
+		SetCvar("class", newValue);
+		MenuScreenPlayerSetup(Parent).SetPClass(newValue);
+		return true;
+	}
+
+	void Init(void)
+	{
+		::Init();
+		MenuScreenPlayerSetup(Parent).SetPClass(Value);
+	}
+
+	defaultproperties
+	{
+		Text = "Class";
+		EnumNames[0] = "fighter";
+		EnumNames[1] = "cleric";
+		EnumNames[2] = "mage";
 	}
 }
 
 void menu_psetup(void)
 {
-	int x = 16;
-	int y = 40;
-
-	PSetupMenu = MenuScreenPlayerSetup(SpawnMenu(MenuScreenPlayerSetup));
-
-	MenuInputLine_Init(&PSetupMenu.Name, x, y, "Name", TEXT_SMALLL, 1);
-	PSetupMenu.Name.callback = psetup_func;
-	PSetupMenu.Name.id = 1;
-	strcpy(ARR2STR(PSetupMenu.Name.value), GetCvarS("Name"));
-	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.Name;
-	y += 20;
-
-	MenuSwitch_Init(&PSetupMenu.color, x, y, "Color", TEXT_SMALLL,
-		GetCvar("color"), 8, &sw_colors[0]);
-	PSetupMenu.color.callback = psetup_func;
-	PSetupMenu.color.id = 2;
-	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.color;
-	y += 10;
-
-	MenuSwitch_Init(&PSetupMenu.pclass, x, y, "Class", TEXT_SMALLL,
-		GetCvar("class"), 3, &sw_class[0]);
-	PSetupMenu.pclass.callback = psetup_func;
-	PSetupMenu.pclass.id = 3;
-	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.pclass;
-	y += 10;
-
-	R_InstallSprite("PLAY", 500);
-	R_InstallSprite("CLER", 501);
-	R_InstallSprite("MAGE", 502);
-
-	MenuSpriteAnim_Init(&PSetupMenu.anim, 200, 120, 500, 8, 4);
-	SetColor();
-	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.anim;
-
-	MenuText_InitTitle(&PSetupMenu.title, 160, 24, "PLAYER SETUP", TEXT_BIGC);
-	MenuItemWrapper(PSetupMenu.AddItem(MenuItemWrapper)).item = &PSetupMenu.title;
-
-	PushMenuScreen(PSetupMenu);
+	PushMenuScreen(SpawnMenu(MenuScreenPlayerSetup));
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/23 17:54:23  dj_jl
+//  Object-oriented menus, got rid of C-style type casting.
+//
 //  Revision 1.7  2002/01/21 18:21:33  dj_jl
 //  Working on object-oriented menus
 //
