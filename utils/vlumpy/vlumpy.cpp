@@ -38,9 +38,11 @@ using namespace VavoomUtils;
 
 struct vpic_t
 {
+	char		magic[4];
 	short		width;
 	short		height;
-	byte		data[4];
+	byte		bpp;
+	byte		reserved[7];
 };
 
 struct RGB_MAP
@@ -93,6 +95,17 @@ int makecol8(int r, int g, int b)
 byte GetPixel(int x, int y)
 {
 	return ImgData[x + y * ImgWidth];
+}
+
+//==========================================================================
+//
+//	GetPixelRGB
+//
+//==========================================================================
+
+rgba_t &GetPixelRGB(int x, int y)
+{
+	return ((rgba_t *)ImgData)[x + y * ImgWidth];
 }
 
 //==========================================================================
@@ -404,10 +417,12 @@ void GrabPic(void)
 	int x2 = x1 + w;
 	int y2 = y1 + h;
 
-	vpic_t *pic = (vpic_t*)Malloc(4 + w * h);
+	vpic_t *pic = (vpic_t*)Malloc(sizeof(vpic_t) + w * h);
+	memcpy(pic->magic, "VPIC", 4);
 	pic->width = LittleShort(w);
 	pic->height = LittleShort(h);
-	byte *dst = pic->data;
+	pic->bpp = 8;
+	byte *dst = (byte *)(pic + 1);
 	for (int y = y1; y < y2; y++)
 	{
 		for (int x = x1; x < x2; x++)
@@ -417,7 +432,51 @@ void GrabPic(void)
 		}
 	}
 
-	outwad.AddLump(lumpname, pic, 4 + w * h);
+	outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h);
+	Free(pic);
+}
+
+//==========================================================================
+//
+//	GrabPic15
+//
+//	lumpname PIC15 x y width height
+//
+//==========================================================================
+
+void GrabPic15(void)
+{
+	SC_MustGetNumber();
+	int x1 = sc_Number;
+	SC_MustGetNumber();
+	int y1 = sc_Number;
+	SC_MustGetNumber();
+	int w = sc_Number;
+	SC_MustGetNumber();
+	int h = sc_Number;
+	int x2 = x1 + w;
+	int y2 = y1 + h;
+
+	ConvertImageTo32Bit();
+	vpic_t *pic = (vpic_t*)Malloc(sizeof(vpic_t) + w * h * 2);
+	memcpy(pic->magic, "VPIC", 4);
+	pic->width = LittleShort(w);
+	pic->height = LittleShort(h);
+	pic->bpp = 15;
+	byte *dst = (byte *)(pic + 1);
+	for (int y = y1; y < y2; y++)
+	{
+		for (int x = x1; x < x2; x++)
+		{
+			const rgba_t &p = GetPixelRGB(x, y);
+			int c = ((p.r << 7) & 0x7c00) | ((p.g << 2) & 0x03e0) | ((p.b >> 3) & 0x001f);
+			dst[0] = byte(c);
+			dst[1] = byte(c >> 8);
+			dst += 2;
+		}
+	}
+
+	outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h * 2);
 	Free(pic);
 }
 
@@ -533,6 +592,10 @@ void ParseScript(const char *name)
 			{
 				GrabPic();
 			}
+			else if (SC_Compare("pic15"))
+			{
+				GrabPic15();
+			}
 			else
 			{
 				SC_ScriptError(va("Unknown command %s", sc_String));
@@ -591,9 +654,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/04/11 16:54:01  dj_jl
+//	Added support for 15-bit vpics.
+//
 //	Revision 1.6  2002/03/20 19:12:56  dj_jl
 //	Added catching of wad errors.
-//
+//	
 //	Revision 1.5  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	
