@@ -1,0 +1,268 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	Environmental Action routines
+//**
+//**************************************************************************
+
+void A_Explode(mobj_t* actor);
+
+//==========================================================================
+//
+// 	A_HideThing
+//
+//==========================================================================
+
+void A_HideThing(mobj_t* actor)
+{
+	actor->translucency += 100;
+}
+
+//==========================================================================
+//
+// 	A_UnHideThing
+//
+//==========================================================================
+
+void A_UnHideThing(mobj_t* actor)
+{
+	actor->translucency -= 100;
+}
+
+//==========================================================================
+//
+//	A_RestoreArtifact
+//
+//==========================================================================
+
+void A_RestoreArtifact(mobj_t* arti)
+{
+	arti->flags |= MF_SPECIAL;
+	SetMobjState(arti, arti->spawnstate);
+	StartSoundName(arti, "Respawn");
+}
+
+//==========================================================================
+//
+// 	A_RestoreSpecialThing1
+//
+// 	Make a special thing visible again.
+//
+//==========================================================================
+
+void A_RestoreSpecialThing1(mobj_t* thing)
+{
+	thing->translucency -= 100;
+	StartSoundName(thing, "Respawn");
+}
+
+//==========================================================================
+//
+// 	A_RestoreSpecialThing2
+//
+//==========================================================================
+
+void A_RestoreSpecialThing2(mobj_t* thing)
+{
+	thing->flags |= MF_SPECIAL;
+	SetMobjState(thing, thing->spawnstate);
+}
+
+//===========================================================================
+//
+// 	A_FlameCheck
+//
+//===========================================================================
+
+void A_FlameCheck(mobj_t* actor)
+{
+	if (!actor->args[0]--)		// Called every 8 tics
+	{
+		SetMobjState(actor, S_NULL);
+	}
+}
+
+//===========================================================================
+//
+//	A_CheckThrowBomb
+//
+//===========================================================================
+
+void A_CheckThrowBomb(mobj_t* actor)
+{
+	if (fabs(actor->velocity.x) < 1.5 * 35.0 &&
+		fabs(actor->velocity.y) < 1.5 * 35.0 &&
+		actor->velocity.z < 2.0 * 35.0 &&
+		actor->statenum == S_THROWINGBOMB6)
+	{
+		SetMobjState(actor, S_THROWINGBOMB7);
+		actor->origin.z = actor->floorz;
+		actor->velocity.z = 0.0;
+		actor->flags2 &= ~MF2_FLOORBOUNCE;
+		actor->flags &= ~MF_MISSILE;
+	}
+	if (!--actor->health)
+	{
+		SetMobjState(actor, actor->deathstate);
+	}
+}
+
+//===========================================================================
+//
+//	A_NoGravity
+//
+//===========================================================================
+
+void A_NoGravity(mobj_t* actor)
+{
+	actor->flags |= MF_NOGRAVITY;
+}
+
+//============================================================================
+//
+// 	A_CorpseBloodDrip
+//
+//============================================================================
+
+void A_CorpseBloodDrip(mobj_t* actor)
+{
+	if(P_Random() > 128)
+	{
+		return;
+	}
+	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z + actor->height / 2.0,
+		MT_CORPSEBLOODDRIP);
+}
+
+//============================================================================
+//
+// 	A_CorpseExplode
+//
+//============================================================================
+
+void A_CorpseExplode(mobj_t* actor)
+{
+	mobj_t*	mo;
+	int 	i;
+
+	for (i = (P_Random()&3)+3; i; i--)
+	{
+		mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_CORPSEBIT);
+		SetMobjState(mo, mo->spawnstate+(P_Random()%3));
+		if(mo)
+		{
+			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		}
+	}
+	// Spawn a skull
+	mo = P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_CORPSEBIT);
+	SetMobjState(mo, S_CORPSEBIT_4);
+	if(mo)
+	{
+		mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		StartSoundName(mo, "FireDemonDeath");
+	}
+	P_RemoveMobj(actor);
+}
+
+//===========================================================================
+//
+//	A_SoAExplode
+//
+//	Suit of Armor Explode
+//
+//===========================================================================
+
+void A_SoAExplode(mobj_t* actor)
+{
+	mobj_t*	mo;
+	int 	i;
+
+	for (i = 0; i < 10; i++)
+	{
+		mo = P_SpawnMobj(actor->origin.x + (Random() - 0.5) * 16.0,
+			actor->origin.y + (Random() - 0.5) * 16.0,
+			actor->origin.z + Random() * actor->height,
+			MT_ZARMORCHUNK);
+		SetMobjState(mo, mo->spawnstate+i);
+		if (mo)
+		{
+			mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			mo->velocity.z = (Random() * 8.0 + 5.0) * 35.0;
+		}
+	}
+	if(actor->args[0])
+	{ // Spawn an item
+		P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z,
+			TranslateThingType[actor->args[0]]);
+	}
+	StartSoundName(mo, "SuitofArmorBreak");
+	P_RemoveMobj(actor);
+}
+
+//==========================================================================
+//
+// 	A_ContMobjSound
+//
+//==========================================================================
+
+void A_ContMobjSound(mobj_t* actor)
+{
+	switch(actor->type)
+	{
+		case MT_SERPENTFX:
+			StartSoundName(actor, "SerpentFXContinuous");
+			break;
+		case MT_HAMMER_MISSILE:
+			StartSoundName(actor, "FighterHammerContinuous");
+			break;
+		case MT_QUAKE_FOCUS:
+			StartSoundName(actor, "Earthquake");
+			break;
+		default:
+			break;
+	}
+}
+
+//==========================================================================
+//
+//	A_ESound
+//
+//==========================================================================
+
+void A_ESound(mobj_t* mo)
+{
+	switch (mo->type)
+	{
+	 case MT_SOUNDWIND:
+		StartSoundName(mo, "Wind");
+		break;
+	}
+}
+
+
