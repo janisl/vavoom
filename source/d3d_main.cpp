@@ -44,7 +44,9 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TDirect3DDrawer		Direct3DDrawer;
+#if DIRECT3D_VERSION >= 0x0800
 static bool					Windowed;
+#endif
 
 // CODE --------------------------------------------------------------------
 
@@ -161,7 +163,7 @@ static HRESULT CALLBACK EnumDevicesCallback(
 	LPSTR lpDeviceDesc,
 	LPSTR lpDeviceName,
 	LPD3DDEVICEDESC7 lpD3DDeviceDesc,
-	LPVOID lpContext)
+	LPVOID)
 {
 	cond << "Device " << lpDeviceName << endl;
 	cond << "Description: " << lpDeviceDesc << endl;
@@ -246,7 +248,7 @@ static HRESULT CALLBACK EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst
 //
 //==========================================================================
 
-inline int GetBits(dword mask)
+int GetBits(dword mask)
 {
 	int answer = 0;
 	while (mask)
@@ -266,7 +268,7 @@ inline int GetBits(dword mask)
 //
 //==========================================================================
 
-inline int GetShift(dword mask)
+int GetShift(dword mask)
 {
 	if (!mask)
 		return 0;
@@ -322,7 +324,7 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 		WindowRect.top = 0;
 		WindowRect.bottom = Height;
 		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
-			WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+			WS_EX_APPWINDOW);
 		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
 			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
 	}
@@ -332,11 +334,12 @@ bool TDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	d3dpp.BackBufferHeight = Height;
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.BackBufferCount = 1;
-	d3dpp.SwapEffect = D3DSWAPEFFECT_FLIP;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;
 	d3dpp.hDeviceWindow = hwnd;
 	d3dpp.Windowed = Windowed;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
@@ -706,11 +709,7 @@ void TDirect3DDrawer::Setup2D(void)
 	RenderDevice->SetViewport(&view2D);
 
 	//	Setup projection
-#if DIRECT3D_VERSION >= 0x0800
-	D3DXMATRIX proj2D = IdentityMatrix;
-#else
-	D3DMATRIX proj2D = IdentityMatrix;
-#endif
+	MyD3DMatrix proj2D = IdentityMatrix;
 	proj2D(0, 0) = 2.0 / (float)ScreenWidth;
 	proj2D(1, 1) = -2.0 / (float)ScreenHeight;
 	proj2D(3, 0) = -1.0;
@@ -772,11 +771,7 @@ void TDirect3DDrawer::SetupView(const refdef_t *rd)
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
 
 	// The view matrix defines the position and orientation of the camera.
-#if DIRECT3D_VERSION >= 0x0800
-	D3DXMATRIX matView;
-#else
-	D3DMATRIX matView;
-#endif
+	MyD3DMatrix matView;
 	matView(0, 0) = viewright.x;
 	matView(1, 0) = viewright.y;
 	matView(2, 0) = viewright.z;
@@ -944,11 +939,6 @@ void TDirect3DDrawer::Shutdown(void)
 
 void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
-#if DIRECT3D_VERSION >= 0x0800
-	return NULL;
-#else
-	DDSURFACEDESC2	ddsd;
-
 	//	Allocate buffer
 	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
 	if (!dst)
@@ -956,12 +946,90 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 		return NULL;
 	}
 
+#if DIRECT3D_VERSION >= 0x0800
+	LPDIRECT3DSURFACE8 surf;
+	RenderDevice->GetRenderTarget(&surf);
+
+	D3DSURFACE_DESC desc;
+	surf->GetDesc(&desc);
+
+
+	//	Decode pixel format
+	int scr_rbits;
+	int scr_rshift;
+	int scr_gbits;
+	int scr_gshift;
+	int scr_bbits;
+	int scr_bshift;
+	int scr_pixbytes;
+	if (desc.Format == D3DFMT_X1R5G5B5)
+	{
+		scr_rbits = 5;
+		scr_rshift = 10;
+		scr_gbits = 5;
+		scr_gshift = 5;
+		scr_bbits = 5;
+		scr_bshift = 0;
+		scr_pixbytes = 2;
+	}
+	else if (desc.Format == D3DFMT_R5G6B5)
+	{
+		scr_rbits = 5;
+		scr_rshift = 11;
+		scr_gbits = 6;
+		scr_gshift = 5;
+		scr_bbits = 5;
+		scr_bshift = 0;
+		scr_pixbytes = 2;
+	}
+	else if (desc.Format == D3DFMT_X8R8G8B8 || desc.Format == D3DFMT_A8R8G8B8)
+	{
+		scr_rbits = 8;
+		scr_rshift = 16;
+		scr_gbits = 8;
+		scr_gshift = 8;
+		scr_bbits = 8;
+		scr_bshift = 0;
+		scr_pixbytes = 4;
+	}
+	else
+	{
+		con << "Invalid pixel format\n";
+		Z_Free(dst);
+		return NULL;
+	}
+
+	D3DLOCKED_RECT lrect;
+	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
+	{
+		Sys_Error("ReadScreen: Failed to lock screen");
+	}
+
+	rgb_t *pdst = (rgb_t*)dst;
+	for (int j = 0; j < ScreenHeight; j++)
+	{
+		byte *psrc = (byte*)lrect.pBits + j * lrect.Pitch;
+		for (int i = 0; i < ScreenWidth; i++)
+		{
+			pdst->r = byte((*(dword*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(dword*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(dword*)psrc >> scr_bshift) << (8 - scr_bbits));
+			psrc += scr_pixbytes;
+			pdst++;
+		}
+	}
+
+	surf->UnlockRect();
+	surf->Release();
+#else
+	DDSURFACEDESC2	ddsd;
+
 	//	Lock surface
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_LPSURFACE | DDSD_PITCH | DDSD_PIXELFORMAT;
 	if (RenderSurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
-		Sys_Error("V_Update: Failed to lock screen");
+		Sys_Error("ReadScreen: Failed to lock screen");
 
 	//	Decode pixel format
 	int scr_rbits = GetBits(ddsd.ddpfPixelFormat.dwRBitMask);
@@ -977,19 +1045,20 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 		byte *psrc = (byte*)ddsd.lpSurface + j * ddsd.lPitch;
 		for (int i = 0; i < ScreenWidth; i++)
 		{
-			pdst->r = ((*(dword*)psrc >> scr_rshift) << (8 - scr_rbits)) & 0xff;
-			pdst->g = ((*(dword*)psrc >> scr_gshift) << (8 - scr_gbits)) & 0xff;
-			pdst->b = ((*(dword*)psrc >> scr_bshift) << (8 - scr_bbits)) & 0xff;
+			pdst->r = byte((*(dword*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(dword*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(dword*)psrc >> scr_bshift) << (8 - scr_bbits));
 			psrc += PixelBytes;
 			pdst++;
 		}
 	}
 
 	RenderSurface->Unlock(NULL);
+#endif
+
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
-#endif
 }
 
 //==========================================================================
@@ -1019,9 +1088,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/04 17:22:05  dj_jl
+//	My overloaded matrix, beautification
+//
 //	Revision 1.12  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
-//
+//	
 //	Revision 1.11  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
 //	

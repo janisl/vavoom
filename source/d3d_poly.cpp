@@ -63,10 +63,15 @@ static byte ptex[8][8] =
 
 // CODE --------------------------------------------------------------------
 
-#if DIRECT3D_VERSION >= 0x0800
-void MatrixMultiply(D3DXMATRIX &out, const D3DXMATRIX& a, const D3DXMATRIX& b)
+//==========================================================================
+//
+//	MatrixMultiply
+//
+//==========================================================================
+
+void MatrixMultiply(MyD3DMatrix &out, const MyD3DMatrix& a, const MyD3DMatrix& b)
 {
-	D3DXMATRIX ret;
+	MyD3DMatrix ret;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
@@ -80,7 +85,6 @@ void MatrixMultiply(D3DXMATRIX &out, const D3DXMATRIX& a, const D3DXMATRIX& b)
     }
 	out = ret;
 }
-#endif
 
 //==========================================================================
 //
@@ -772,13 +776,8 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	MyD3DVertex			out[256];//FIXME
 	D3DPRIMITIVETYPE	primtype;
 	int					i;
-#if DIRECT3D_VERSION >= 0x0800
-	D3DXMATRIX			matWorld;
-	D3DXMATRIX			matTmp;
-#else
-	D3DMATRIX			matWorld;
-	D3DMATRIX			matTmp;
-#endif
+	MyD3DMatrix			matWorld;
+	MyD3DMatrix			matTmp;
 	TVec				alias_forward;
 	TVec				alias_right;
 	TVec				alias_up;
@@ -844,11 +843,7 @@ void TDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 1) = pframedesc->scale_origin[1];
 	matTmp(3, 2) = pframedesc->scale_origin[2];
 
-#if DIRECT3D_VERSION >= 0x0800
-	MatrixMultiply(matWorld, matTmp, matWorld);
-#else
 	matWorld = matTmp * matWorld;
-#endif
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
 	if (skin && *skin)
@@ -1008,9 +1003,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/04 17:22:05  dj_jl
+//	My overloaded matrix, beautification
+//
 //	Revision 1.11  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
-//
+//	
 //	Revision 1.10  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

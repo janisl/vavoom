@@ -67,22 +67,33 @@ int TDirect3DDrawer::ToPowerOf2(int val)
 
 #if DIRECT3D_VERSION >= 0x0800
 LPDIRECT3DTEXTURE8 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
+{
+	LPDIRECT3DTEXTURE8 surf = NULL;
+
+	HRESULT res = RenderDevice->CreateTexture(w, h, mipmaps ? 0 : 1, 0,
+		bpp == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5,
+		D3DPOOL_MANAGED, &surf);
+	if (res != D3D_OK)
+	{
+		if (res == D3DERR_INVALIDCALL)
+			con << "Invalid call\n";
+		else if (res == D3DERR_OUTOFVIDEOMEMORY)
+			con << "Out of vid mem\n";
+		else if (res == E_OUTOFMEMORY)
+			con << "Out of mem\n";
+		else
+			con << "Unknown error " << res << endl;
+		Sys_Error("Create texture failed\n");
+	}
+	return surf;
+}
 #else
 LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
-#endif
 {
-#if DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8 surf = NULL;
-#else
 	DDSURFACEDESC2			ddsd;
 	LPDIRECTDRAWSURFACE7	surf = NULL;
-#endif
 	int i;
 
-#if DIRECT3D_VERSION >= 0x0800
-	UINT levels = mipmaps ? 0 : 1;
-	D3DFORMAT format = bpp == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5;
-#else
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS | DDSD_PIXELFORMAT;
@@ -97,32 +108,13 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat32, sizeof(DDPIXELFORMAT));
 	else
 		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat, sizeof(DDPIXELFORMAT));
-#endif
 
 	do
 	{
-#if DIRECT3D_VERSION >= 0x0800
-		HRESULT res = RenderDevice->CreateTexture(w, h, levels, 0, format,
-			D3DPOOL_MANAGED, &surf);
-		if (res == D3D_OK)
-		{
-			return surf;
-		}
-		if (res == D3DERR_INVALIDCALL)
-			con << "Invalid call\n";
-		else if (res == D3DERR_OUTOFVIDEOMEMORY)
-			con << "Out of vid mem\n";
-		else if (res == E_OUTOFMEMORY)
-			con << "Out of mem\n";
-		else
-			con << "Unknown error " << res << endl;
-		Sys_Error("Texture failed\n");
-#else
 		if (DDraw->CreateSurface(&ddsd, &surf, NULL) == DD_OK)
 		{
 			return surf;
 		}
-#endif
 
 		tscount++;
 		for (i = 0; i < numsurfaces; i++)
@@ -139,6 +131,7 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool 
 	cond << "Not enough video memory\n";
 	return NULL;
 }
+#endif
 
 //==========================================================================
 //
@@ -423,12 +416,10 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	spriteiw[lump] = 1.0 / (float)p2w;
-	spriteih[lump] = 1.0 / (float)p2h;
+	spriteiw[lump] = 1.0 / (float)w;
+	spriteih[lump] = 1.0 / (float)h;
 
-	rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
+	rgba_t *block = (rgba_t*)Z_Calloc(w * h * 4, PU_HIGH, 0);
 
 	for (int x = 0; x < w; x++)
 	{
@@ -439,20 +430,20 @@ void TDirect3DDrawer::GenerateSprite(int lump)
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 	    	while (count--)
 	    	{
 				*dest = r_palette[0][*source ? *source : r_black_color[0]];
 				source++;
-				dest += p2w;
+				dest += w;
 	    	}
 			column = (column_t *)((byte *)column + column->length + 4);
 	    }
 	}
 
-	spritedata[lump] = UploadTexture(p2w, p2h, block);
+	spritedata[lump] = UploadTexture(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 }
@@ -469,12 +460,10 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	trspriw[slot] = 1.0 / (float)p2w;
-	trsprih[slot] = 1.0 / (float)p2h;
+	trspriw[slot] = 1.0 / (float)w;
+	trsprih[slot] = 1.0 / (float)h;
 
-	rgba_t *block = (rgba_t*)Z_Calloc(p2w * p2h * 4, PU_HIGH, 0);
+	rgba_t *block = (rgba_t*)Z_Calloc(w * h * 4, PU_HIGH, 0);
 	trsprlump[slot] = lump;
 	trsprtnum[slot] = translation;
 
@@ -489,7 +478,7 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 	    while (column->topdelta != 0xff)
 	    {
 		    byte* source = (byte *)column + 3;
-		    rgba_t* dest = block + x + column->topdelta * p2w;
+		    rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 	    	while (count--)
@@ -497,13 +486,13 @@ void TDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot, int translati
 				int col = trtab[*source];
 				*dest = r_palette[0][col ? col : r_black_color[0]];
 				source++;
-				dest += p2w;
+				dest += w;
 	    	}
 			column = (column_t *)((byte *)column + column->length + 4);
 	    }
 	}
 
-	trsprdata[slot] = UploadTexture(p2w, p2h, block);
+	trsprdata[slot] = UploadTexture(w, h, block);
 	Z_Free(block);
 	Z_ChangeTag(patch, PU_CACHE);
 }
@@ -736,14 +725,19 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 {
 	LPDIRECT3DSURFACE8 surf;
 	tex->GetSurfaceLevel(level, &surf);
+
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, 0)))
 	{
 		cond << "Failed to lock surface\n";
 		return;
 	}
+
+	D3DSURFACE_DESC desc;
+	surf->GetDesc(&desc);
+
 	rgba_t *in = data;
-//	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
+	if (desc.Format == D3DFMT_A1R5G5B5)
 	{
 		word *out = (word*)lrect.pBits;
 		for (int i = 0; i < width * height; i++, in++, out++)
@@ -751,14 +745,14 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 			*out = MakeCol16(in->r, in->g, in->b, in->a);
 		}
 	}
-/*	else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32)
+	else if (desc.Format == D3DFMT_A8R8G8B8)
 	{
 		dword *out = (dword*)lrect.pBits;
 		for (int i = 0; i < width * height; i++, in++, out++)
 		{
 			*out = MakeCol32(in->r, in->g, in->b, in->a);
 		}
-	}*/
+	}
 	surf->UnlockRect();
 	surf->Release();
 }
@@ -911,8 +905,8 @@ void TDirect3DDrawer::ResampleTexture(int widthin, int heightin,
 							sum += *(datain + (ii * widthin + jj) * 4 + k);
 						}
 					}
-					sum /= (j1-j0+1) * (i1-i0+1);
-					*dst++ = sum;
+					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
+					*dst++ = byte(sum);
 				}
 			}
 		}
@@ -939,10 +933,10 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 		int total = width * height / 2;
 		for (i = 0; i < total; i++, in += 8, out += 4)
 		{
-			out[0] = (in[0] + in[4]) >> 1;
-			out[1] = (in[1] + in[5]) >> 1;
-			out[2] = (in[2] + in[6]) >> 1;
-			out[3] = (in[3] + in[7]) >> 1;
+			out[0] = byte((in[0] + in[4]) >> 1);
+			out[1] = byte((in[1] + in[5]) >> 1);
+			out[2] = byte((in[2] + in[6]) >> 1);
+			out[3] = byte((in[3] + in[7]) >> 1);
 		}
 		return;
 	}
@@ -954,10 +948,10 @@ void TDirect3DDrawer::MipMap(int width, int height, byte *in)
 	{
 		for (j = 0; j < width; j += 8, in += 8, out += 4)
 		{
-			out[0] = (in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2;
-			out[1] = (in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2;
-			out[2] = (in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2;
-			out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
+			out[0] = byte((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
+			out[1] = byte((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
+			out[2] = byte((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
+			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
 		}
 	}
 }
@@ -1143,9 +1137,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/04 17:22:05  dj_jl
+//	My overloaded matrix, beautification
+//
 //	Revision 1.10  2001/09/20 15:59:43  dj_jl
 //	Fixed resampling when one dimansion doesn't change
-//
+//	
 //	Revision 1.9  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

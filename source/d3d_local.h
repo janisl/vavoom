@@ -33,13 +33,11 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "winlocal.h"
-#if 0
+#if 1
 #define D3D_OVERLOADS
 #include <d3d.h>
 #else
-#define sqrtf(x)	sqrt(x)
 #include <d3d8.h>
-#include <d3dx8.h>
 #include <dx7todx8.h>
 #endif
 #include "gamedefs.h"
@@ -47,13 +45,6 @@
 #include "r_shared.h"
 
 // MACROS ------------------------------------------------------------------
-
-#define SAFE_RELEASE(iface) \
-	if (iface) \
-	{ \
-		iface->Release(); \
-		iface = NULL; \
-	}
 
 #define MAX_TRANSLATED_SPRITES		256
 #define MAX_SKIN_CACHE				256
@@ -132,6 +123,43 @@ struct MyD3DVertex
 };
 
 #define MYD3D_VERTEX_FORMAT		(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX2)
+
+struct MyD3DMatrix : public D3DMATRIX
+{
+public:
+	MyD3DMatrix()
+	{
+	}
+	MyD3DMatrix(float f11, float f12, float f13, float f14,
+				float f21, float f22, float f23, float f24,
+				float f31, float f32, float f33, float f34,
+				float f41, float f42, float f43, float f44 )
+	{
+		_11 = f11; _12 = f12; _13 = f13; _14 = f14;
+		_21 = f21; _22 = f22; _23 = f23; _24 = f24;
+		_31 = f31; _32 = f32; _33 = f33; _34 = f34;
+		_41 = f41; _42 = f42; _43 = f43; _44 = f44;
+	}
+
+	// access grants
+	float& operator () ( UINT iRow, UINT iCol )
+	{
+		return m[iRow][iCol];
+	}
+	float operator () ( UINT iRow, UINT iCol ) const
+	{
+		return m[iRow][iCol];
+	}
+
+	friend void MatrixMultiply(MyD3DMatrix &out, const MyD3DMatrix& a,
+		const MyD3DMatrix& b);
+	MyD3DMatrix operator * (const MyD3DMatrix& mat) const
+	{
+		MyD3DMatrix matT;
+		MatrixMultiply(matT, *this, mat);
+		return matT;
+	}
+};
 
 class TDirect3DDrawer : public TDrawer
 {
@@ -246,11 +274,7 @@ class TDirect3DDrawer : public TDrawer
 	LPDIRECT3D8					Direct3D;
 	LPDIRECT3DDEVICE8			RenderDevice;
 
-	D3DXMATRIX					IdentityMatrix;
-
 	D3DVIEWPORT8				viewData;
-	D3DXMATRIX					matProj;
-	D3DXMATRIX					matView;
 #else
 	//	DirectDraw interfaces
 	LPDIRECTDRAW7				DDraw;
@@ -262,15 +286,14 @@ class TDirect3DDrawer : public TDrawer
 	LPDIRECT3D7					Direct3D;
 	LPDIRECT3DDEVICE7			RenderDevice;
 
-	D3DMATRIX					IdentityMatrix;
-
 	D3DVIEWPORT7				viewData;
-	D3DMATRIX					matProj;
-	D3DMATRIX					matView;
 
 	DDPIXELFORMAT				PixelFormat;
 	DDPIXELFORMAT				PixelFormat32;
 #endif
+	MyD3DMatrix					IdentityMatrix;
+	MyD3DMatrix					matProj;
+	MyD3DMatrix					matView;
 	dword						SurfaceMemFlag;
 	bool						square_textures;
 	int							maxTexSize;
@@ -390,9 +413,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/04 17:22:05  dj_jl
+//	My overloaded matrix, beautification
+//
 //	Revision 1.12  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
-//
+//	
 //	Revision 1.11  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
 //	
