@@ -42,6 +42,13 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define SAFE_RELEASE(iface) \
+	if (iface) \
+	{ \
+		iface->Release(); \
+		iface = NULL; \
+	}
+
 // TYPES -------------------------------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -59,9 +66,12 @@ extern HINSTANCE			hInst;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/04 17:26:10  dj_jl
+//	Moved SAFE_RELEASE here
+//
 //	Revision 1.4  2001/08/30 17:42:57  dj_jl
 //	Changes for OpenGL window
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
