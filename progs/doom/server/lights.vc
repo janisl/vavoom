@@ -1,101 +1,152 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.3  2001/09/20 16:19:59  dj_jl
-//**	Start using object-oriented stuff, beautification
-//**
-//**	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 //**
-//**	Light specials
+//**    Light specials
 //**
 //**************************************************************************
 
-#define GLOWSPEED			8
-#define STROBEBRIGHT		5
-#define FASTDARK			15
-#define SLOWDARK			35
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
+
+// TYPES -------------------------------------------------------------------
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
 
 //**************************************************************************
 //
-//	FIRELIGHT FLICKER
+//  FIRELIGHT FLICKER
 //
 //**************************************************************************
 
-//==========================================================================
-//
-//	T_FireFlicker
-//
-//==========================================================================
-
-void T_FireFlicker(special_t* flick)
+class TFireFlicker:Thinker
 {
-    int		amount;
-	
-    if (--flick->count)
+	sector_t *sector;
+	float time;
+	int maxlight;
+	int minlight;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+//==========================================================================
+//
+//	TFireFlicker::Think
+//
+//==========================================================================
+
+void TFireFlicker::Think(void)
+{
+	int amount;
+
+	time -= frametime;
+	if (time > 0.0)
+	{
 		return;
-	
-    amount = (P_Random() & 3) * 16;
-    
-    if (flick->sector->params.lightlevel - amount < flick->minlight)
-		flick->sector->params.lightlevel = flick->minlight;
-    else
-		flick->sector->params.lightlevel = flick->maxlight - amount;
+	}
 
-    flick->count = 4;
+	amount = (P_Random() & 3) * 16;
+
+	if (sector->params.lightlevel - amount < minlight)
+		sector->params.lightlevel = minlight;
+	else
+		sector->params.lightlevel = maxlight - amount;
+
+	time = 4.0 / 35.0;
 }
 
 //==========================================================================
 //
-// P_SpawnFireFlicker
+//	TFireFlicker::Archive
 //
 //==========================================================================
 
-void P_SpawnFireFlicker(sector_t *sector)
+void TFireFlicker::Archive(void)
 {
-    special_t	*flick;
+	sector = SectorToNum(sector);
+}
 
-    // Note that we are resetting sector attributes.
-    // Nothing special about it during gameplay.
-    sector->special = 0;
+//==========================================================================
+//
+//	TFireFlicker::Unarchive
+//
+//==========================================================================
 
-	flick = NewSpecialThinker(special_t);
-	flick->function = T_FireFlicker;
+void TFireFlicker::Unarchive(void)
+{
+	sector = NumToSector(sector);
+}
 
-    flick->sector = sector;
-    flick->count = 4;
-    flick->maxlight = sector->params.lightlevel;
-    flick->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel) + 16;
+//==========================================================================
+//
+//  P_SpawnFireFlicker
+//
+//==========================================================================
+
+void P_SpawnFireFlicker(sector_t * sector)
+{
+	TFireFlicker *flick;
+
+	// Note that we are resetting sector attributes.
+	// Nothing special about it during gameplay.
+	sector->special = 0;
+
+	flick = NewSpecialThinker(TFireFlicker);
+
+	flick->sector = sector;
+	flick->time = 4.0 / 35.0;
+	flick->maxlight = sector->params.lightlevel;
+	flick->minlight =
+		FindMinSurroundingLight(sector, sector->params.lightlevel) + 16;
 }
 
 //**************************************************************************
 //
-//	GLOWING LIGHT
+//  GLOWING LIGHT
 //
 //**************************************************************************
+
+#define GLOWSPEED			256.0
+
+class TGlow:Thinker
+{
+	sector_t *sector;
+	int direction;
+	int maxlight;
+	int minlight;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
 
 //==========================================================================
 //
@@ -103,205 +154,309 @@ void P_SpawnFireFlicker(sector_t *sector)
 //
 //==========================================================================
 
-void T_Glow(special_t *g)
+void TGlow::Think(void)
 {
-    switch (g->direction)
-    {
-      case -1:
+	switch (direction)
+	{
+	case -1:
 		// DOWN
-		g->sector->params.lightlevel -= GLOWSPEED;
-		if (g->sector->params.lightlevel <= g->minlight)
+		sector->params.lightlevel -= ftoi(GLOWSPEED * frametime);
+		if (sector->params.lightlevel <= minlight)
 		{
-		    g->sector->params.lightlevel += GLOWSPEED;
-	    	g->direction = 1;
+			sector->params.lightlevel += ftoi(GLOWSPEED * frametime);
+			direction = 1;
 		}
 		break;
-	
-      case 1:
+
+	case 1:
 		// UP
-		g->sector->params.lightlevel += GLOWSPEED;
-		if (g->sector->params.lightlevel >= g->maxlight)
+		sector->params.lightlevel += ftoi(GLOWSPEED * frametime);
+		if (sector->params.lightlevel >= maxlight)
 		{
-	    	g->sector->params.lightlevel -= GLOWSPEED;
-		    g->direction = -1;
+			sector->params.lightlevel -= ftoi(GLOWSPEED * frametime);
+			direction = -1;
 		}
 		break;
-    }
+	}
+}
+
+//==========================================================================
+//
+//	TGlow::Archive
+//
+//==========================================================================
+
+void TGlow::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//	TGlow::Unarchive
+//
+//==========================================================================
+
+void TGlow::Unarchive(void)
+{
+	sector = NumToSector(sector);
 }
 
 //==========================================================================
 //
 //  P_SpawnGlowingLight
 //
-//	Spawn glowing light
+//  Spawn glowing light
 //
 //==========================================================================
 
-void P_SpawnGlowingLight(sector_t*	sector)
+void P_SpawnGlowingLight(sector_t * sector)
 {
-    special_t	*g;
+	TGlow *g;
 
-    g = NewSpecialThinker(special_t);
-    g->function = T_Glow;
+	g = NewSpecialThinker(TGlow);
 
-    g->sector = sector;
-    g->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
-    g->maxlight = sector->params.lightlevel;
-    g->direction = -1;
+	g->sector = sector;
+	g->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
+	g->maxlight = sector->params.lightlevel;
+	g->direction = -1;
 
-    sector->special = 0;
+	sector->special = 0;
 }
 
 //**************************************************************************
 //
-//	BROKEN LIGHT FLASHING
+//  BROKEN LIGHT FLASHING
 //
 //**************************************************************************
 
+class TLightFlash:Thinker
+{
+	sector_t *sector;
+	float time;
+	int maxlight;
+	int minlight;
+	int maxtime;
+	int mintime;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
 //==========================================================================
 //
-//	T_LightFlash
+//  T_LightFlash
 //
-//	Do flashing lights.
+//  Do flashing lights.
 //
 //==========================================================================
 
-void T_LightFlash(special_t* flash)
+void TLightFlash::Think(void)
 {
-    if (--flash->count)
+	time -= frametime;
+	if (time >= 0.0)
+	{
 		return;
-	
-    if (flash->sector->params.lightlevel == flash->maxlight)
-    {
-		flash->sector->params.lightlevel = flash->minlight;
-		flash->count = (P_Random() & flash->mintime) + 1;
-    }
-    else
-    {
-		flash->sector->params.lightlevel = flash->maxlight;
-		flash->count = (P_Random() & flash->maxtime) + 1;
-    }
+	}
+
+	if (sector->params.lightlevel == maxlight)
+	{
+		sector->params.lightlevel = minlight;
+		time = itof((P_Random() & mintime) + 1) / 35.0;
+	}
+	else
+	{
+		sector->params.lightlevel = maxlight;
+		time = itof((P_Random() & maxtime) + 1) / 35.0;
+	}
 
 }
 
 //==========================================================================
 //
-//	P_SpawnLightFlash
+//  TLightFlash::Archive
 //
-//	After the map has been loaded, scan each sector
+//==========================================================================
+
+void TLightFlash::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//	TLightFlash::Unarchive
+//
+//==========================================================================
+
+void TLightFlash::Unarchive(void)
+{
+	sector = NumToSector(sector);
+}
+
+//==========================================================================
+//
+//  P_SpawnLightFlash
+//
+//  After the map has been loaded, scan each sector
 // for specials that spawn thinkers
 //
 //==========================================================================
 
-void P_SpawnLightFlash(sector_t *sector)
+void P_SpawnLightFlash(sector_t * sector)
 {
-    special_t	*flash;
+	TLightFlash *flash;
 
-    // nothing special about it during gameplay
-    sector->special = 0;
-	
-    flash = NewSpecialThinker(special_t);
-    flash->function = T_LightFlash;
+	// nothing special about it during gameplay
+	sector->special = 0;
 
-    flash->sector = sector;
-    flash->maxlight = sector->params.lightlevel;
-    flash->minlight = FindMinSurroundingLight(sector,sector->params.lightlevel);
-    flash->maxtime = 64;
-    flash->mintime = 7;
-    flash->count = (P_Random() & flash->maxtime) + 1;
+	flash = NewSpecialThinker(TLightFlash);
+
+	flash->sector = sector;
+	flash->maxlight = sector->params.lightlevel;
+	flash->minlight =
+		FindMinSurroundingLight(sector, sector->params.lightlevel);
+	flash->maxtime = 64;
+	flash->mintime = 7;
+	flash->time = itof((P_Random() & flash->maxtime) + 1) / 35.0;
 }
 
 //**************************************************************************
 //
-//	STROBE LIGHT FLASHING
+//  STROBE LIGHT FLASHING
 //
 //**************************************************************************
 
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
+class TStrobe:Thinker
+{
+	sector_t *sector;
+	float time;
+	int maxlight;
+	int minlight;
+	float maxtime;
+	float mintime;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
 //==========================================================================
 //
-//	T_StrobeFlash
+//  T_StrobeFlash
 //
 //==========================================================================
 
-void T_StrobeFlash(special_t *flash)
+void TStrobe::Think(void)
 {
-    if (--flash->count)
+	time -= frametime;
+	if (time > 0.0)
+	{
 		return;
-	
-    if (flash->sector->params.lightlevel == flash->minlight)
-    {
-		flash->sector->params.lightlevel = flash->maxlight;
-		flash->count = flash->maxtime;
-    }
-    else
-    {
-		flash->sector->params.lightlevel = flash->minlight;
-		flash->count = flash->mintime;
-    }
+	}
+
+	if (sector->params.lightlevel == minlight)
+	{
+		sector->params.lightlevel = maxlight;
+		time = maxtime;
+	}
+	else
+	{
+		sector->params.lightlevel = minlight;
+		time = mintime;
+	}
 }
 
 //==========================================================================
 //
-//	P_SpawnStrobeFlash
-//
-//	After the map has been loaded, scan each sector
-// for specials that spawn thinkers
+//	TStrobe::Archive
 //
 //==========================================================================
 
-void P_SpawnStrobeFlash(sector_t* sector, int fastOrSlow, int maxtime, int inSync)
+void TStrobe::Archive(void)
 {
-    special_t*	flash;
+	sector = SectorToNum(sector);
+}
 
-    flash = NewSpecialThinker(special_t);
-    flash->function = T_StrobeFlash;
+//==========================================================================
+//
+//	TStrobe::Unarchive
+//
+//==========================================================================
 
-    flash->sector = sector;
-    flash->mintime = fastOrSlow;
-    flash->maxtime = maxtime;
-    flash->maxlight = sector->params.lightlevel;
-    flash->minlight = FindMinSurroundingLight(sector, sector->params.lightlevel);
-		
-    if (flash->minlight == flash->maxlight)
+void TStrobe::Unarchive(void)
+{
+	sector = NumToSector(sector);
+}
+
+//==========================================================================
+//
+//  P_SpawnStrobeFlash
+//
+//  After the map has been loaded, scan each sector for specials that spawn
+// thinkers
+//
+//==========================================================================
+
+void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int maxtime,
+	int inSync)
+{
+	TStrobe *flash;
+
+	flash = NewSpecialThinker(TStrobe);
+
+	flash->sector = sector;
+	flash->mintime = itof(fastOrSlow) / 35.0;
+	flash->maxtime = itof(maxtime) / 35.0;
+	flash->maxlight = sector->params.lightlevel;
+	flash->minlight =
+		FindMinSurroundingLight(sector, sector->params.lightlevel);
+
+	if (flash->minlight == flash->maxlight)
 		flash->minlight = 0;
 
-    // nothing special about it during gameplay
-    sector->special = 0;
+	// nothing special about it during gameplay
+	sector->special = 0;
 
-    if (!inSync)
-		flash->count = (P_Random() & 7) + 1;
-    else
-		flash->count = 1;
+	if (!inSync)
+		flash->time = (Random() * 8.0 + 1.0) / 35.0;
+	else
+		flash->time = 1.0 / 35.0;
 }
 
 //==========================================================================
 //
 //  EV_StartLightStrobing
 //
-//	Start strobing lights (usually from a trigger)
+//  Start strobing lights (usually from a trigger)
 //
 //==========================================================================
 
-int EV_StartLightStrobing(line_t* line, int *args)
+int EV_StartLightStrobing(line_t * line, int *args)
 {
-    int			secnum;
-    sector_t*	sec;
-	
-    secnum = -1;
-    while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
-    {
+	int secnum;
+	sector_t *sec;
+
+	secnum = -1;
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	{
 		sec = &level->sectors[secnum];
 		if (sec->specialdata)
-		    continue;
-	
+			continue;
+
 		P_SpawnStrobeFlash(sec, args[2], args[1], 0);
-    }
+	}
 	return 1;
 }
 
 //**************************************************************************
 //
-//	TURN LINE'S TAG LIGHTS ON / OFF
+//  TURN LINE'S TAG LIGHTS ON / OFF
 //
 //**************************************************************************
 
@@ -311,17 +466,17 @@ int EV_StartLightStrobing(line_t* line, int *args)
 //
 //==========================================================================
 
-int EV_LightTurnOn(line_t* line, int *args)
+int EV_LightTurnOn(line_t * line, int *args)
 {
-    int			i;
+	int i;
 
-    for (i = 0; i < level->numsectors; i++)
-    {
+	for (i = 0; i < level->numsectors; i++)
+	{
 		if (level->sectors[i].tag == args[0])
 		{
-		    level->sectors[i].params.lightlevel = args[1];
+			level->sectors[i].params.lightlevel = args[1];
 		}
-    }
+	}
 	return 1;
 }
 
@@ -331,37 +486,36 @@ int EV_LightTurnOn(line_t* line, int *args)
 //
 //==========================================================================
 
-int EV_TagLightTurnOn(line_t* line, int *args)
+int EV_TagLightTurnOn(line_t * line, int *args)
 {
-    int			i;
-    int			j;
-    sector_t*	sector;
-    sector_t*	temp;
-    line_t*		templine;
-	int			max;
+	int i;
+	int j;
+	sector_t *sector;
+	sector_t *temp;
+	line_t *templine;
+	int max;
 
-    for (i = 0; i < level->numsectors; i++)
-    {
-	    sector = &level->sectors[i];
-	
+	for (i = 0; i < level->numsectors; i++)
+	{
+		sector = &level->sectors[i];
+
 		if (sector->tag == args[0])
 		{
 			max = 0;
 			for (j = 0; j < sector->linecount; j++)
 			{
-			    templine = sector->lines[j];
-			    temp = getNextSector(templine, sector);
-			    if (!temp)
+				templine = sector->lines[j];
+				temp = getNextSector(templine, sector);
+				if (!temp)
 					continue;
-			    if (temp->params.lightlevel > max)
+				if (temp->params.lightlevel > max)
 					max = temp->params.lightlevel;
-		    }
-		    sector->params.lightlevel = max;
+			}
+			sector->params.lightlevel = max;
 		}
-    }
+	}
 	return 1;
 }
-
 
 //==========================================================================
 //
@@ -369,35 +523,47 @@ int EV_TagLightTurnOn(line_t* line, int *args)
 //
 //==========================================================================
 
-int EV_TurnTagLightsOff(line_t* line, int *args)
+int EV_TurnTagLightsOff(line_t * line, int *args)
 {
-    int			i;
-    int			j;
-    int			min;
-    sector_t*	sector;
-    sector_t*	tsec;
-    line_t*		templine;
-	
-    for (j = 0; j < level->numsectors; j++)
-    {
-	    sector = &level->sectors[j];
-    
+	int i;
+	int j;
+	int min;
+	sector_t *sector;
+	sector_t *tsec;
+	line_t *templine;
+
+	for (j = 0; j < level->numsectors; j++)
+	{
+		sector = &level->sectors[j];
+
 		if (sector->tag == args[0])
 		{
-		    min = sector->params.lightlevel;
-		    for (i = 0; i < sector->linecount; i++)
-	    	{
+			min = sector->params.lightlevel;
+			for (i = 0; i < sector->linecount; i++)
+			{
 				templine = sector->lines[i];
-				tsec = getNextSector(templine,sector);
+				tsec = getNextSector(templine, sector);
 				if (!tsec)
-				    continue;
+					continue;
 				if (tsec->params.lightlevel < min)
-				    min = tsec->params.lightlevel;
-		    }
-	    	sector->params.lightlevel = min;
+					min = tsec->params.lightlevel;
+			}
+			sector->params.lightlevel = min;
 		}
-    }
+	}
 	return 1;
 }
 
-
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.4  2001/09/24 17:13:25  dj_jl
+//  Created thinker classes
+//
+//  Revision 1.3  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

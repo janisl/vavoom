@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -44,12 +44,38 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
+class TLight:Thinker
+{
+	sector_t *sector;
+	int type;
+	int value1;
+	int value2;
+	int tics1;
+	int tics2;
+	int count;
+	int delta;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+class TPhase:Thinker
+{
+	sector_t *sector;
+	int index;
+	int base;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int PhaseTable[64] =
-{
+int PhaseTable[64] = {
 	128, 112, 96, 80, 64, 48, 32, 32,
 	16, 16, 16, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
@@ -64,101 +90,124 @@ int PhaseTable[64] =
 
 //============================================================================
 //
-//	T_Light
+//	TLight::Think
 //
 //============================================================================
 
-void T_Light(special_t *light)
+void TLight::Think(void)
 {
-	if (light->count)
+	if (count)
 	{
-		light->count--;	
+		count--;
 		return;
 	}
-	switch (light->type)
+	switch (type)
 	{
-		case LITE_FADE:
-			light->sector->params.lightlevel += light->delta;
-			if (light->tics2 == 1)
+	case LITE_FADE:
+		sector->params.lightlevel += delta;
+		if (tics2 == 1)
+		{
+			if (sector->params.lightlevel >= value1)
 			{
-				if (light->sector->params.lightlevel >= light->value1)
-				{
-					light->sector->params.lightlevel = light->value1;
-					RemoveSpecialThinker(light);
-				}
+				sector->params.lightlevel = value1;
+				RemoveSpecialThinker(this);
 			}
-			else if (light->sector->params.lightlevel <= light->value1)
-			{
-				light->sector->params.lightlevel = light->value1;
-				RemoveSpecialThinker(light);
-			}
-			break;
+		}
+		else if (sector->params.lightlevel <= value1)
+		{
+			sector->params.lightlevel = value1;
+			RemoveSpecialThinker(this);
+		}
+		break;
 
-		case LITE_GLOW:
-			light->sector->params.lightlevel += light->delta;
-			if (light->tics2 == 1)
+	case LITE_GLOW:
+		sector->params.lightlevel += delta;
+		if (tics2 == 1)
+		{
+			if (sector->params.lightlevel >= value1)
 			{
-				if (light->sector->params.lightlevel >= light->value1)
-				{
-					light->sector->params.lightlevel = light->value1;
-					light->delta = -light->delta;
-					light->tics2 = -1; // reverse direction
-				}
+				sector->params.lightlevel = value1;
+				delta = -delta;
+				tics2 = -1;	// reverse direction
 			}
-			else if (light->sector->params.lightlevel <= light->value2)
-			{
-				light->sector->params.lightlevel = light->value2;
-				light->delta = -light->delta;
-				light->tics2 = 1; // reverse direction
-			}
-			break;
+		}
+		else if (sector->params.lightlevel <= value2)
+		{
+			sector->params.lightlevel = value2;
+			delta = -delta;
+			tics2 = 1;	// reverse direction
+		}
+		break;
 
-		case LITE_FLICKER:
-			if (light->sector->params.lightlevel == light->value1)
-			{
-				light->sector->params.lightlevel = light->value2;
-				light->count = (P_Random() & 7) + 1;
-			}
-			else
-			{
-				light->sector->params.lightlevel = light->value1;
-				light->count = (P_Random() & 31) + 1;
-			}
-			break;
+	case LITE_FLICKER:
+		if (sector->params.lightlevel == value1)
+		{
+			sector->params.lightlevel = value2;
+			count = (P_Random() & 7) + 1;
+		}
+		else
+		{
+			sector->params.lightlevel = value1;
+			count = (P_Random() & 31) + 1;
+		}
+		break;
 
-		case LITE_STROBE:
-			if (light->sector->params.lightlevel == light->value1)
-			{
-				light->sector->params.lightlevel = light->value2;
-				light->count = light->tics2;
-			}
-			else
-			{
-				light->sector->params.lightlevel = light->value1;
-				light->count = light->tics1;
-			}
-			break;
+	case LITE_STROBE:
+		if (sector->params.lightlevel == value1)
+		{
+			sector->params.lightlevel = value2;
+			count = tics2;
+		}
+		else
+		{
+			sector->params.lightlevel = value1;
+			count = tics1;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
+}
+
+//==========================================================================
+//
+//  TLight::Archive
+//
+//==========================================================================
+
+void TLight::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TLight::Unarchive
+//
+//==========================================================================
+
+void TLight::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
 }
 
 //============================================================================
 //
-//	EV_SpawnLight
+//  EV_SpawnLight
 //
 //============================================================================
 
-boolean EV_SpawnLight(line_t *line, int *arg, int type)
+boolean EV_SpawnLight(line_t * line, int *arg, int type)
 {
-	special_t *light;
+	TLight *light;
 	sector_t *sec;
-	int secNum;	
+	int secNum;
 	int arg1, arg2, arg3, arg4;
 	boolean think;
 	boolean rtn;
-	
+
 	arg1 = arg[1] > 255 ? 255 : arg[1];
 	arg1 = arg1 < 0 ? 0 : arg1;
 	arg2 = arg[2] > 255 ? 255 : arg[2];
@@ -176,85 +225,84 @@ boolean EV_SpawnLight(line_t *line, int *arg, int type)
 		think = false;
 		sec = &level->sectors[secNum];
 
-		light = NewSpecialThinker(special_t);
-		light->function = T_Light;
+		light = NewSpecialThinker(TLight);
 		light->type = type;
 		light->sector = sec;
 		light->count = 0;
 		rtn = true;
-		switch(type)
+		switch (type)
 		{
-			case LITE_RAISEBYVALUE:
-				sec->params.lightlevel += arg1;
-				if(sec->params.lightlevel > 255)
-				{
-					sec->params.lightlevel = 255;
-				}
-				break;
-			case LITE_LOWERBYVALUE:
-				sec->params.lightlevel -= arg1;
-				if(sec->params.lightlevel < 0)
-				{
-					sec->params.lightlevel = 0;
-				}
-				break;
-			case LITE_CHANGETOVALUE:
-				sec->params.lightlevel = arg1;
-				if(sec->params.lightlevel < 0)
-				{
-					sec->params.lightlevel = 0;
-				}
-				else if(sec->params.lightlevel > 255)
-				{
-					sec->params.lightlevel = 255;
-				}
-				break;
-			case LITE_FADE:
-				think = true;
-				light->value1 = arg1; // destination lightlevel
-				light->delta = (arg1 - sec->params.lightlevel) / arg2;  // delta lightlevel
-				if (sec->params.lightlevel <= arg1)
-				{
-					light->tics2 = 1; // get brighter
-				}
-				else
-				{
-					light->tics2 = -1;
-				}
-				break;
-			case LITE_GLOW:
-				think = true;
-				light->value1 = arg1; // upper lightlevel
-				light->value2 = arg2; // lower lightlevel
-				light->delta = (arg1 - sec->params.lightlevel) / arg3;  // lightlevel delta
-				if(sec->params.lightlevel <= arg1)
-				{
-					light->tics2 = 1; // get brighter
-				}
-				else
-				{
-					light->tics2 = -1;
-				}
-				break;
-			case LITE_FLICKER:
-				think = true;
-				light->value1 = arg1; // upper lightlevel
-				light->value2 = arg2; // lower lightlevel
-				sec->params.lightlevel = light->value1;
-				light->count = (P_Random()&64)+1;
-				break;
-			case LITE_STROBE:
-				think = true;
-				light->value1 = arg1; // upper lightlevel
-				light->value2 = arg2; // lower lightlevel
-				light->tics1 = arg3;  // upper tics
-				light->tics2 = arg4;  // lower tics
-				light->count = arg3;
-				sec->params.lightlevel = light->value1;
-				break;
-			default:
-				rtn = false;
-				break;
+		case LITE_RAISEBYVALUE:
+			sec->params.lightlevel += arg1;
+			if (sec->params.lightlevel > 255)
+			{
+				sec->params.lightlevel = 255;
+			}
+			break;
+		case LITE_LOWERBYVALUE:
+			sec->params.lightlevel -= arg1;
+			if (sec->params.lightlevel < 0)
+			{
+				sec->params.lightlevel = 0;
+			}
+			break;
+		case LITE_CHANGETOVALUE:
+			sec->params.lightlevel = arg1;
+			if (sec->params.lightlevel < 0)
+			{
+				sec->params.lightlevel = 0;
+			}
+			else if (sec->params.lightlevel > 255)
+			{
+				sec->params.lightlevel = 255;
+			}
+			break;
+		case LITE_FADE:
+			think = true;
+			light->value1 = arg1;	// destination lightlevel
+			light->delta = (arg1 - sec->params.lightlevel) / arg2;	// delta lightlevel
+			if (sec->params.lightlevel <= arg1)
+			{
+				light->tics2 = 1;	// get brighter
+			}
+			else
+			{
+				light->tics2 = -1;
+			}
+			break;
+		case LITE_GLOW:
+			think = true;
+			light->value1 = arg1;	// upper lightlevel
+			light->value2 = arg2;	// lower lightlevel
+			light->delta = (arg1 - sec->params.lightlevel) / arg3;	// lightlevel delta
+			if (sec->params.lightlevel <= arg1)
+			{
+				light->tics2 = 1;	// get brighter
+			}
+			else
+			{
+				light->tics2 = -1;
+			}
+			break;
+		case LITE_FLICKER:
+			think = true;
+			light->value1 = arg1;	// upper lightlevel
+			light->value2 = arg2;	// lower lightlevel
+			sec->params.lightlevel = light->value1;
+			light->count = (P_Random() & 64) + 1;
+			break;
+		case LITE_STROBE:
+			think = true;
+			light->value1 = arg1;	// upper lightlevel
+			light->value2 = arg2;	// lower lightlevel
+			light->tics1 = arg3;	// upper tics
+			light->tics2 = arg4;	// lower tics
+			light->count = arg3;
+			sec->params.lightlevel = light->value1;
+			break;
+		default:
+			rtn = false;
+			break;
 		}
 		if (!think)
 		{
@@ -266,14 +314,37 @@ boolean EV_SpawnLight(line_t *line, int *arg, int type)
 
 //============================================================================
 //
-//	T_Phase
+//	TPhase::Think
 //
 //============================================================================
 
-void T_Phase(special_t *phase)
+void TPhase::Think(void)
 {
-	phase->index = (phase->index+1)&63;
-	phase->sector->params.lightlevel = phase->base+PhaseTable[phase->index];
+	index = (index + 1) & 63;
+	sector->params.lightlevel = base + PhaseTable[index];
+}
+
+//==========================================================================
+//
+//  TPhase::Archive
+//
+//==========================================================================
+
+void TPhase::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TPhase::Unarchive
+//
+//==========================================================================
+
+void TPhase::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
 }
 
 //==========================================================================
@@ -282,12 +353,11 @@ void T_Phase(special_t *phase)
 //
 //==========================================================================
 
-void P_SpawnPhasedLight(sector_t *sector, int base, int index)
+void P_SpawnPhasedLight(sector_t * sector, int base, int index)
 {
-	special_t	*phase;
+	TPhase *phase;
 
-	phase = NewSpecialThinker(special_t);
-	phase->function = T_Phase;
+	phase = NewSpecialThinker(TPhase);
 	phase->sector = sector;
 	if (index == -1)
 	{
@@ -310,7 +380,7 @@ void P_SpawnPhasedLight(sector_t *sector, int base, int index)
 //
 //==========================================================================
 
-void P_SpawnLightSequence(sector_t *sector, float indexStep)
+void P_SpawnLightSequence(sector_t * sector, float indexStep)
 {
 	sector_t *sec;
 	sector_t *nextSec;
@@ -322,23 +392,23 @@ void P_SpawnLightSequence(sector_t *sector, float indexStep)
 	float indexDelta;
 	int base;
 
-	seqSpecial = LIGHT_SEQUENCE; // look for Light_Sequence, first
+	seqSpecial = LIGHT_SEQUENCE;	// look for Light_Sequence, first
 	sec = sector;
 	count = 1.0;
 	do
 	{
 		nextSec = NULL;
-		sec->special = LIGHT_SEQUENCE_START; // make sure that the search doesn't back up.
-		for(i = 0; i < sec->linecount; i++)
+		sec->special = LIGHT_SEQUENCE_START;	// make sure that the search doesn't back up.
+		for (i = 0; i < sec->linecount; i++)
 		{
 			tempSec = getNextSector(sec->lines[i], sec);
-			if(!tempSec)
+			if (!tempSec)
 			{
 				continue;
 			}
-			if(tempSec->special == seqSpecial)
+			if (tempSec->special == seqSpecial)
 			{
-				if(seqSpecial == LIGHT_SEQUENCE)
+				if (seqSpecial == LIGHT_SEQUENCE)
 				{
 					seqSpecial = LIGHT_SEQUENCE_ALT;
 				}
@@ -351,7 +421,8 @@ void P_SpawnLightSequence(sector_t *sector, float indexStep)
 			}
 		}
 		sec = nextSec;
-	} while(sec);
+	}
+	while (sec);
 
 	sec = sector;
 	count *= indexStep;
@@ -367,29 +438,33 @@ void P_SpawnLightSequence(sector_t *sector, float indexStep)
 		}
 		P_SpawnPhasedLight(sec, base, ftoi(index));
 		index += indexDelta;
-		for(i = 0; i < sec->linecount; i++)
+		for (i = 0; i < sec->linecount; i++)
 		{
 			tempSec = getNextSector(sec->lines[i], sec);
-			if(!tempSec)
+			if (!tempSec)
 			{
 				continue;
 			}
-			if(tempSec->special == LIGHT_SEQUENCE_START)
+			if (tempSec->special == LIGHT_SEQUENCE_START)
 			{
 				nextSec = tempSec;
 			}
 		}
 		sec = nextSec;
-	} while(sec);
+	}
+	while (sec);
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:17:17  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

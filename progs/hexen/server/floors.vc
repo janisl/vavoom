@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,18 +25,20 @@
 
 // MACROS ------------------------------------------------------------------
 
-// TYPES -------------------------------------------------------------------
+#define NextFloor(floor)	(TFloor *)NextThinker(floor, TFloor)
+
+// CONSTANTS ---------------------------------------------------------------
 
 enum
 {
-	FLEV_LOWERFLOOR,             // lower floor to highest surrounding floor
-	FLEV_LOWERFLOORTOLOWEST,     // lower floor to lowest surrounding floor
+	FLEV_LOWERFLOOR,	// lower floor to highest surrounding floor
+	FLEV_LOWERFLOORTOLOWEST,	// lower floor to lowest surrounding floor
 	FLEV_LOWERFLOORBYVALUE,
-	FLEV_RAISEFLOOR,             // raise floor to lowest surrounding CEILING
-	FLEV_RAISEFLOORTONEAREST,  // raise floor to next highest surrounding floor
+	FLEV_RAISEFLOOR,	// raise floor to lowest surrounding CEILING
+	FLEV_RAISEFLOORTONEAREST,	// raise floor to next highest surrounding floor
 	FLEV_RAISEFLOORBYVALUE,
 	FLEV_RAISEFLOORCRUSH,
-	FLEV_RAISEBUILDSTEP,        // One step of a staircase
+	FLEV_RAISEBUILDSTEP,	// One step of a staircase
 	FLEV_RAISEBYVALUETIMES8,
 	FLEV_LOWERBYVALUETIMES8,
 	FLEV_LOWERTIMES8INSTANT,
@@ -44,130 +46,147 @@ enum
 	FLEV_MOVETOVALUETIMES8
 };
 
+// TYPES -------------------------------------------------------------------
+
+class TFloor:Thinker
+{
+	sector_t *sector;
+	int type;
+	float speed;
+	int direction;
+	int crush;
+	float floordestheight;
+	int delayCount;
+	int delayTotal;
+	float stairsDelayHeight;
+	float stairsDelayHeightDelta;
+	float resetHeight;
+	int resetDelay;
+	int resetDelayCount;
+	int textureChange;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-special_t	activefloors;
-
 // CODE --------------------------------------------------------------------
 
-//==================================================================
-//
-//  AddActiveFloor
-//
-//	Add an active ceiling
-//
-//==================================================================
-
-void AddActiveFloor(special_t *floor)
-{
-	floor->prev = activefloors.prev;
-    floor->next = &activefloors;
-	floor->prev->next = floor;
-    floor->next->prev = floor;
-}
-
-//==================================================================
-//
-//  RemoveActiveFloor
-//
-//	Remove a ceiling's thinker
-//
-//==================================================================
-
-void RemoveActiveFloor(special_t *floor)
-{
-	floor->prev->next = floor->next;
-    floor->next->prev = floor->prev;
-	floor->sector->specialdata = NULL;
-	TagFinished(floor->sector->tag);
-	RemoveSpecialThinker(floor);
-}
-
 //==========================================================================
 //
-//  T_MoveFloor
+//	TFloor::Think
 //
-//	MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
+//  MOVE A FLOOR TO IT'S DESTINATION (UP OR DOWN)
 //
 //==========================================================================
 
-void T_MoveFloor(special_t *floor)
+void TFloor::Think(void)
 {
-	int			res;
+	int res;
 
-	if (floor->resetDelayCount)
+	if (resetDelayCount)
 	{
-		floor->resetDelayCount--;
-		if (!floor->resetDelayCount)
+		resetDelayCount--;
+		if (!resetDelayCount)
 		{
-			floor->floordestheight = floor->resetHeight;
-			floor->direction = -floor->direction;
-			floor->resetDelay = 0;
-			floor->delayCount = 0;
-			floor->delayTotal = 0;
+			floordestheight = resetHeight;
+			direction = -direction;
+			resetDelay = 0;
+			delayCount = 0;
+			delayTotal = 0;
 		}
-	}					
-	if (floor->delayCount)
+	}
+	if (delayCount)
 	{
-		floor->delayCount--;
-		if (!floor->delayCount && floor->textureChange)
+		delayCount--;
+		if (!delayCount && textureChange)
 		{
-			SetFloorPic(floor->sector, floor->sector->floor.pic + floor->textureChange);
+			SetFloorPic(sector, sector->floor.pic + textureChange);
 		}
 		return;
 	}
 
-	res = T_MovePlane(floor->sector, floor->speed,
-			floor->floordestheight, floor->crush, 0, floor->direction);
+	res = T_MovePlane(sector, speed,
+		floordestheight, crush, 0, direction);
 
-	if (floor->type == FLEV_RAISEBUILDSTEP)
+	if (type == FLEV_RAISEBUILDSTEP)
 	{
-		if ((floor->direction == 1 && floor->sector->floorheight >=
-			floor->stairsDelayHeight) || (floor->direction == -1 &&
-			floor->sector->floorheight <= floor->stairsDelayHeight))
+		if ((direction == 1 && sector->floorheight >=
+				stairsDelayHeight) || (direction == -1 &&
+				sector->floorheight <= stairsDelayHeight))
 		{
-			floor->delayCount = floor->delayTotal;
-			floor->stairsDelayHeight += floor->stairsDelayHeightDelta;
-		}		
+			delayCount = delayTotal;
+			stairsDelayHeight += stairsDelayHeightDelta;
+		}
 	}
 	if (res == RES_PASTDEST)
 	{
-		SectorStopSequence(floor->sector);
-		if (floor->delayTotal)
+		SectorStopSequence(sector);
+		if (delayTotal)
 		{
-			floor->delayTotal = 0;
+			delayTotal = 0;
 		}
-		if (floor->resetDelay)
+		if (resetDelay)
 		{
-//			floor->resetDelayCount = floor->resetDelay;
-//			floor->resetDelay = 0;
+//          resetDelayCount = resetDelay;
+//          resetDelay = 0;
 			return;
-		}			
-		floor->sector->specialdata = NULL;
-		if (floor->textureChange)
-		{
-			SetFloorPic(floor->sector, floor->sector->floor.pic - floor->textureChange);
 		}
-		RemoveActiveFloor(floor);
+		sector->specialdata = NULL;
+		if (textureChange)
+		{
+			SetFloorPic(sector, sector->floor.pic - textureChange);
+		}
+		sector->specialdata = NULL;
+		TagFinished(sector->tag);
+		RemoveSpecialThinker(this);
 	}
+}
+
+//==========================================================================
+//
+//  TFloor::Archive
+//
+//==========================================================================
+
+void TFloor::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TFloor::Unarchive
+//
+//==========================================================================
+
+void TFloor::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
+
+	//  Set sector's specialdata
+	sector->specialdata = this;
 }
 
 //==========================================================================
 //
 //  EV_DoFloor
 //
-//	HANDLE FLOOR TYPES
+//  HANDLE FLOOR TYPES
 //
 //==========================================================================
 
-int EV_DoFloor(line_t *line, int *args, int floortype)
+int EV_DoFloor(line_t * line, int *args, int floortype)
 {
-	int			secnum;
-	int			rtn;
-	sector_t	*sec;
-	special_t	*floor = NULL;
+	int secnum;
+	int rtn;
+	sector_t *sec;
+	TFloor *floor = NULL;
 
 	secnum = -1;
 	rtn = 0;
@@ -183,10 +202,8 @@ int EV_DoFloor(line_t *line, int *args, int floortype)
 		//      new floor thinker
 		//
 		rtn = 1;
-		floor = NewSpecialThinker(special_t);
-		floor->function = T_MoveFloor;
+		floor = NewSpecialThinker(TFloor);
 		sec->specialdata = floor;
-        AddActiveFloor(floor);
 		floor->sector = sec;
 		floor->type = floortype;
 		floor->crush = 0;
@@ -198,74 +215,75 @@ int EV_DoFloor(line_t *line, int *args, int floortype)
 		}
 		switch (floortype)
 		{
-			case FLEV_LOWERFLOOR:
+		case FLEV_LOWERFLOOR:
+			floor->direction = -1;
+			floor->floordestheight = FindHighestFloorSurrounding(sec);
+			break;
+		case FLEV_LOWERFLOORTOLOWEST:
+			floor->direction = -1;
+			floor->floordestheight = FindLowestFloorSurrounding(sec);
+			break;
+		case FLEV_LOWERFLOORBYVALUE:
+			floor->direction = -1;
+			floor->floordestheight = floor->sector->floorheight -
+				itof(args[2]);
+			break;
+		case FLEV_LOWERTIMES8INSTANT:
+		case FLEV_LOWERBYVALUETIMES8:
+			floor->direction = -1;
+			floor->floordestheight = floor->sector->floorheight -
+				itof(args[2]) * 8.0;
+			break;
+		case FLEV_RAISEFLOORCRUSH:
+			floor->crush = args[2];	// arg[2] = crushing value
+			floor->direction = 1;
+			floor->floordestheight = sec->ceilingheight - 8.0;
+			break;
+		case FLEV_RAISEFLOOR:
+			floor->direction = 1;
+			floor->floordestheight = FindLowestCeilingSurrounding(sec);
+			if (floor->floordestheight > sec->ceilingheight)
+				floor->floordestheight = sec->ceilingheight;
+			break;
+		case FLEV_RAISEFLOORTONEAREST:
+			floor->direction = 1;
+			floor->floordestheight =
+				FindNextHighestFloor(sec, sec->floorheight);
+			break;
+		case FLEV_RAISEFLOORBYVALUE:
+			floor->direction = 1;
+			floor->floordestheight = floor->sector->floorheight +
+				itof(args[2]);
+			break;
+		case FLEV_RAISETIMES8INSTANT:
+		case FLEV_RAISEBYVALUETIMES8:
+			floor->direction = 1;
+			floor->floordestheight = floor->sector->floorheight +
+				itof(args[2]) * 8.0;
+			break;
+		case FLEV_MOVETOVALUETIMES8:
+			floor->floordestheight = itof(args[2]) * 8.0;
+			if (args[3])
+			{
+				floor->floordestheight = -floor->floordestheight;
+			}
+			if (floor->floordestheight > floor->sector->floorheight)
+			{
+				floor->direction = 1;
+			}
+			else if (floor->floordestheight < floor->sector->floorheight)
+			{
 				floor->direction = -1;
-				floor->floordestheight = FindHighestFloorSurrounding(sec);
-				break;
-			case FLEV_LOWERFLOORTOLOWEST:
-				floor->direction = -1;
-				floor->floordestheight = FindLowestFloorSurrounding(sec);
-				break;
-			case FLEV_LOWERFLOORBYVALUE:
-				floor->direction = -1;
-				floor->floordestheight = floor->sector->floorheight -
-					itof(args[2]);
-				break;
-			case FLEV_LOWERTIMES8INSTANT:
-			case FLEV_LOWERBYVALUETIMES8:
-				floor->direction = -1;
-				floor->floordestheight = floor->sector->floorheight -
-					itof(args[2]) * 8.0;
-				break;
-			case FLEV_RAISEFLOORCRUSH:
-				floor->crush = args[2]; // arg[2] = crushing value
-				floor->direction = 1;
-				floor->floordestheight = sec->ceilingheight - 8.0;
-				break;
-			case FLEV_RAISEFLOOR:
-				floor->direction = 1;
-				floor->floordestheight = FindLowestCeilingSurrounding(sec);
-				if (floor->floordestheight > sec->ceilingheight)
-					floor->floordestheight = sec->ceilingheight;
-				break;
-			case FLEV_RAISEFLOORTONEAREST:
-				floor->direction = 1;
-				floor->floordestheight = FindNextHighestFloor(sec, sec->floorheight);
-				break;
-			case FLEV_RAISEFLOORBYVALUE:
-				floor->direction = 1;
-				floor->floordestheight = floor->sector->floorheight +
-					itof(args[2]);
-				break;
-			case FLEV_RAISETIMES8INSTANT:
-			case FLEV_RAISEBYVALUETIMES8:
-				floor->direction = 1;
-				floor->floordestheight = floor->sector->floorheight +
-					itof(args[2]) * 8.0;
-				break;
-			case FLEV_MOVETOVALUETIMES8:
-				floor->floordestheight = itof(args[2]) * 8.0;
-				if (args[3])
-				{
-					floor->floordestheight = -floor->floordestheight;
-				}
-				if (floor->floordestheight > floor->sector->floorheight)
-				{
-					floor->direction = 1;
-				}
-				else if (floor->floordestheight < floor->sector->floorheight)
-				{
-					floor->direction = -1;
-				}
-				else
-				{ // already at lowest position
-					rtn = 0;
-				}
-				break;
-			default:
-            	Error("Invalid floor type.");
+			}
+			else
+			{	// already at lowest position
 				rtn = 0;
-				break;
+			}
+			break;
+		default:
+			Error("Invalid floor type.");
+			rtn = 0;
+			break;
 		}
 	}
 	if (rtn)
@@ -278,16 +296,16 @@ int EV_DoFloor(line_t *line, int *args, int floortype)
 
 //==========================================================================
 //
-//	EV_DoFloorAndCeiling
+//  EV_DoFloorAndCeiling
 //
 //==========================================================================
 
-int EV_DoFloorAndCeiling(line_t *line, int *args, boolean raise)
+int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
 {
-	boolean 	floor;
-	boolean		ceiling;
-	int			secnum;
-	sector_t	*sec;
+	boolean floor;
+	boolean ceiling;
+	int secnum;
+	sector_t *sec;
 
 	if (raise)
 	{
@@ -299,8 +317,8 @@ int EV_DoFloorAndCeiling(line_t *line, int *args, boolean raise)
 			sec->specialdata = NULL;
 		}
 		ceiling = EV_DoCeiling(line, args, CLEV_RAISEBYVALUE);
-	}		
-	else 
+	}
+	else
 	{
 		floor = EV_DoFloor(line, args, FLEV_LOWERFLOORBYVALUE);
 		secnum = -1;
@@ -313,20 +331,20 @@ int EV_DoFloorAndCeiling(line_t *line, int *args, boolean raise)
 	}
 	return floor || ceiling;
 }
-			
+
 //==========================================================================
 //
 // EV_FloorCrushStop
 //
 //==========================================================================
 
-int EV_FloorCrushStop(line_t *line, int *args)
+int EV_FloorCrushStop(line_t * line, int *args)
 {
-	special_t	*floor;
-	boolean 	rtn;
+	TFloor *floor;
+	boolean rtn;
 
 	rtn = 0;
-	for (floor = activefloors.next; floor != &activefloors; floor = floor->next)
+	for (floor = NextFloor(NULL); floor; floor = NextFloor(floor))
 	{
 		if (floor->type != FLEV_RAISEFLOORCRUSH)
 		{
@@ -335,7 +353,9 @@ int EV_FloorCrushStop(line_t *line, int *args)
 		// Completely remove the crushing floor
 		SectorStopSequence(floor->sector);
 		floor->sector->specialdata = NULL;
-		RemoveActiveFloor(floor);
+		floor->sector->specialdata = NULL;
+		TagFinished(floor->sector->tag);
+		RemoveSpecialThinker(floor);
 		rtn = 1;
 	}
 	return rtn;
@@ -343,7 +363,7 @@ int EV_FloorCrushStop(line_t *line, int *args)
 
 //**************************************************************************
 //
-//	STAIRS
+//  STAIRS
 //
 //**************************************************************************
 
@@ -361,31 +381,31 @@ enum
 
 struct stairqueue_t
 {
-	sector_t	*sector;
-	int			type;
-	float		height;
+	sector_t *sector;
+	int type;
+	float height;
 };
 
-stairqueue_t	StairQueue[STAIR_QUEUE_SIZE];
-int 			QueueHead;
-int 			QueueTail;
+stairqueue_t StairQueue[STAIR_QUEUE_SIZE];
+int QueueHead;
+int QueueTail;
 
-float			StepDelta;
-int 			Direction;
-float			Speed;
-int 			Texture;
-int 			StartDelay;
-int 			StartDelayDelta;
-int 			TextureChange;
-float			StartHeight;
+float StepDelta;
+int Direction;
+float Speed;
+int Texture;
+int StartDelay;
+int StartDelayDelta;
+int TextureChange;
+float StartHeight;
 
 //==========================================================================
 //
-//	QueueStairSector
+//  QueueStairSector
 //
 //==========================================================================
 
-void QueueStairSector(sector_t *sec, int type, float height)
+void QueueStairSector(sector_t * sec, int type, float height)
 {
 	if ((QueueTail + 1) % STAIR_QUEUE_SIZE == QueueHead)
 	{
@@ -400,7 +420,7 @@ void QueueStairSector(sector_t *sec, int type, float height)
 
 //==========================================================================
 //
-//	DequeueStairSector
+//  DequeueStairSector
 //
 //==========================================================================
 
@@ -423,49 +443,47 @@ sector_t *DequeueStairSector(int *type, float *height)
 
 //==========================================================================
 //
-//	ProcessStairSector
+//  ProcessStairSector
 //
 //==========================================================================
 
-void ProcessStairSector(sector_t *sec, int type, float height,
+void ProcessStairSector(sector_t * sec, int type, float height,
 	int stairsType, int delay, int resetDelay)
 {
-	int			i;
-	sector_t	*tsec;
-	special_t	*floor;
+	int i;
+	sector_t *tsec;
+	TFloor *floor;
 
 	//
 	// new floor thinker
 	//
 	height += StepDelta;
-	floor = NewSpecialThinker(special_t);
-	floor->function = T_MoveFloor;
+	floor = NewSpecialThinker(TFloor);
 	sec->specialdata = floor;
-    AddActiveFloor(floor);
 	floor->type = FLEV_RAISEBUILDSTEP;
 	floor->direction = Direction;
 	floor->sector = sec;
 	floor->floordestheight = height;
 	switch (stairsType)
 	{
-		case STAIRS_NORMAL:
-			floor->speed = Speed;
-			if(delay)
-			{
-				floor->delayTotal = delay;
-				floor->stairsDelayHeight = sec->floorheight + StepDelta;
-				floor->stairsDelayHeightDelta = StepDelta;
-			}
-			floor->resetDelay = resetDelay;
-			floor->resetDelayCount = resetDelay;
-			floor->resetHeight = sec->floorheight;
-			break;
-		case STAIRS_SYNC:
-			floor->speed = Speed * (height - StartHeight) / StepDelta;
-			floor->resetDelay = delay; //arg4
-			floor->resetDelayCount = delay;
-			floor->resetHeight = sec->floorheight;
-			break;
+	case STAIRS_NORMAL:
+		floor->speed = Speed;
+		if (delay)
+		{
+			floor->delayTotal = delay;
+			floor->stairsDelayHeight = sec->floorheight + StepDelta;
+			floor->stairsDelayHeightDelta = StepDelta;
+		}
+		floor->resetDelay = resetDelay;
+		floor->resetDelayCount = resetDelay;
+		floor->resetHeight = sec->floorheight;
+		break;
+	case STAIRS_SYNC:
+		floor->speed = Speed * (height - StartHeight) / StepDelta;
+		floor->resetDelay = delay;	//arg4
+		floor->resetDelayCount = delay;
+		floor->resetHeight = sec->floorheight;
+		break;
 /*
 		case STAIRS_PHASED:
 			floor->floordestheight = sec->floorheight + StepDelta;
@@ -476,8 +494,8 @@ void ProcessStairSector(sector_t *sec, int type, float height,
 			floor->resetDelayCount = StartDelay;
 			break;
 */
-		default:
-			break;
+	default:
+		break;
 	}
 	SectorStartSequence(sec, seq_name[SEQ_PLATFORM + sec->seqType]);
 	//
@@ -486,7 +504,7 @@ void ProcessStairSector(sector_t *sec, int type, float height,
 	//
 	for (i = 0; i < sec->linecount; i++)
 	{
-        line_t*		line;
+		line_t *line;
 
 		line = sec->lines[i];
 		if (!(line->flags & ML_TWOSIDED))
@@ -502,7 +520,7 @@ void ProcessStairSector(sector_t *sec, int type, float height,
 			//tsec->special = 0;
 		}
 		tsec = line->backsector;
-		if (tsec->special == type+STAIR_SECTOR_TYPE && !tsec->specialdata
+		if (tsec->special == type + STAIR_SECTOR_TYPE && !tsec->specialdata
 			&& tsec->floor.pic == Texture && tsec->validcount != *validcount)
 		{
 			QueueStairSector(tsec, type ^ 1, height);
@@ -516,22 +534,22 @@ void ProcessStairSector(sector_t *sec, int type, float height,
 //
 //  EV_BuildStairs
 //
-//	BUILD A STAIRCASE!
+//  BUILD A STAIRCASE!
 //
-//	Direction is either positive or negative, denoting build stairs
+//  Direction is either positive or negative, denoting build stairs
 // up or down.
 //
 //==========================================================================
 
-int EV_BuildStairs(line_t *line, int *args, int direction, int stairsType)
+int EV_BuildStairs(line_t * line, int *args, int direction, int stairsType)
 {
-	int 		secnum;
-	float		height;
-	int			delay;
-	int 		resetDelay;
-	sector_t	*sec;
-	sector_t	*qSec;
-	int 		type;
+	int secnum;
+	float height;
+	int delay;
+	int resetDelay;
+	sector_t *sec;
+	sector_t *qSec;
+	int type;
 
 	// Set global stairs variables
 	TextureChange = 0;
@@ -575,49 +593,90 @@ int EV_BuildStairs(line_t *line, int *args, int direction, int stairsType)
 
 //**************************************************************************
 //
-//	PILLAR
+//  PILLAR
 //
 //**************************************************************************
 
+class TPillar:Thinker
+{
+	sector_t *sector;
+	int direction;
+	int crush;
+	float ceilingSpeed;
+	float floorSpeed;
+	float floordest;
+	float ceilingdest;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
 //==========================================================================
 //
-//	T_BuildPillar
+//	TPillar::Think
 //
 //==========================================================================
 
-void T_BuildPillar(special_t *pillar)
+void TPillar::Think(void)
 {
-	int		res1;
-	int		res2;
+	int res1;
+	int res2;
 
 	// First, raise the floor
-	res1 = T_MovePlane(pillar->sector, pillar->floorSpeed, pillar->floordest,
-		pillar->crush, 0, pillar->direction); // floorOrCeiling, direction
+	res1 = T_MovePlane(sector, floorSpeed * frametime, floordest,
+		crush, 0, direction);	// floorOrCeiling, direction
 	// Then, lower the ceiling
-	res2 = T_MovePlane(pillar->sector, pillar->ceilingSpeed,
-		pillar->ceilingdest, pillar->crush, 1, -pillar->direction);
+	res2 = T_MovePlane(sector, ceilingSpeed * frametime,
+		ceilingdest, crush, 1, -direction);
 	if (res1 == RES_PASTDEST && res2 == RES_PASTDEST)
 	{
-		pillar->sector->specialdata = NULL;
-		SectorStopSequence(pillar->sector);
-        TagFinished(pillar->sector->tag);
-		RemoveSpecialThinker(pillar);
+		sector->specialdata = NULL;
+		SectorStopSequence(sector);
+		TagFinished(sector->tag);
+		RemoveSpecialThinker(this);
 	}
 }
 
 //==========================================================================
 //
-//	EV_BuildPillar
+//  TPillar::Archive
 //
 //==========================================================================
 
-int EV_BuildPillar(line_t *line, int *args, boolean crush)
+void TPillar::Archive(void)
 {
-	int 		secnum;
-	sector_t 	*sec;
-	special_t	*pillar;
-	float		newHeight;
-	int 		rtn;
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TPillar::Unarchive
+//
+//==========================================================================
+
+void TPillar::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
+
+	//  Set sector's specialdata
+	sector->specialdata = this;
+}
+
+//==========================================================================
+//
+//  EV_BuildPillar
+//
+//==========================================================================
+
+int EV_BuildPillar(line_t * line, int *args, boolean crush)
+{
+	int secnum;
+	sector_t *sec;
+	TPillar *pillar;
+	float newHeight;
+	int rtn;
 
 	rtn = 0;
 	secnum = -1;
@@ -625,7 +684,7 @@ int EV_BuildPillar(line_t *line, int *args, boolean crush)
 	{
 		sec = &level->sectors[secnum];
 		if (sec->specialdata)
-			continue; // already moving
+			continue;	// already moving
 		if (sec->floorheight == sec->ceilingheight)
 		{
 			// pillar is already closed
@@ -642,30 +701,30 @@ int EV_BuildPillar(line_t *line, int *args, boolean crush)
 			newHeight = sec->floorheight + itof(args[2]);
 		}
 
-		pillar = NewSpecialThinker(special_t);
-		pillar->function = T_BuildPillar;
+		pillar = NewSpecialThinker(TPillar);
 		sec->specialdata = pillar;
 		pillar->sector = sec;
 		if (!args[2])
 		{
-			pillar->ceilingSpeed = pillar->floorSpeed = itof(args[1]) / 8.0;
+			pillar->ceilingSpeed = pillar->floorSpeed = itof(args[1]) * 4.0;
 		}
-		else if (newHeight - sec->floorheight > sec->ceilingheight - newHeight)
+		else if (newHeight - sec->floorheight >
+			sec->ceilingheight - newHeight)
 		{
-			pillar->floorSpeed = itof(args[1]) / 8.0;
+			pillar->floorSpeed = itof(args[1]) * 4.0;
 			pillar->ceilingSpeed = (sec->ceilingheight - newHeight) *
 				pillar->floorSpeed / (newHeight - sec->floorheight);
 		}
 		else
 		{
-			pillar->ceilingSpeed = itof(args[1]) / 8.0;
+			pillar->ceilingSpeed = itof(args[1]) * 4.0;
 			pillar->floorSpeed = (newHeight - sec->floorheight) *
 				pillar->ceilingSpeed / (sec->ceilingheight - newHeight);
 		}
 		pillar->floordest = newHeight;
 		pillar->ceilingdest = newHeight;
 		pillar->direction = 1;
-		pillar->crush = crush*args[3];
+		pillar->crush = crush * args[3];
 		SectorStartSequence(pillar->sector,
 			seq_name[SEQ_PLATFORM + pillar->sector->seqType]);
 	}
@@ -678,30 +737,29 @@ int EV_BuildPillar(line_t *line, int *args, boolean crush)
 //
 //==========================================================================
 
-int EV_OpenPillar(line_t *line, int *args)
+int EV_OpenPillar(line_t * line, int *args)
 {
-	int 		secnum;
-	sector_t 	*sec;
-	special_t	*pillar;
-	int 		rtn;
+	int secnum;
+	sector_t *sec;
+	TPillar *pillar;
+	int rtn;
 
 	rtn = 0;
 	secnum = -1;
-	while((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if(sec->specialdata)
-			continue; // already moving
-		if(sec->floorheight != sec->ceilingheight)
-		{ // pillar isn't closed
+		if (sec->specialdata)
+			continue;	// already moving
+		if (sec->floorheight != sec->ceilingheight)
+		{	// pillar isn't closed
 			continue;
 		}
 		rtn = 1;
-		pillar = NewSpecialThinker(special_t);
-		pillar->function = T_BuildPillar;
+		pillar = NewSpecialThinker(TPillar);
 		sec->specialdata = pillar;
 		pillar->sector = sec;
-		if(!args[2])
+		if (!args[2])
 		{
 			pillar->floordest = FindLowestFloorSurrounding(sec);
 		}
@@ -709,7 +767,7 @@ int EV_OpenPillar(line_t *line, int *args)
 		{
 			pillar->floordest = sec->floorheight - itof(args[2]);
 		}
-		if(!args[3])
+		if (!args[3])
 		{
 			pillar->ceilingdest = FindHighestCeilingSurrounding(sec);
 		}
@@ -720,93 +778,139 @@ int EV_OpenPillar(line_t *line, int *args)
 		if (sec->floorheight - pillar->floordest >= pillar->ceilingdest -
 			sec->ceilingheight)
 		{
-			pillar->floorSpeed = itof(args[1]) / 8.0;
+			pillar->floorSpeed = itof(args[1]) * 4.0;
 			pillar->ceilingSpeed = (sec->ceilingheight -
 				pillar->ceilingdest) * pillar->floorSpeed /
 				(pillar->floordest - sec->floorheight);
 		}
 		else
 		{
-			pillar->ceilingSpeed = itof(args[1]) / 8.0;
+			pillar->ceilingSpeed = itof(args[1]) * 4.0;
 			pillar->floorSpeed = (pillar->floordest -
 				sec->floorheight) * pillar->ceilingSpeed /
 				(sec->ceilingheight - pillar->ceilingdest);
 		}
-		pillar->direction = -1; // open the pillar
+		pillar->direction = -1;	// open the pillar
 		SectorStartSequence(pillar->sector,
-			seq_name[SEQ_PLATFORM+pillar->sector->seqType]);
+			seq_name[SEQ_PLATFORM + pillar->sector->seqType]);
 	}
 	return rtn;
 }
 
 //**************************************************************************
 //
-//	FLOOR WAGGLE
+//  FLOOR WAGGLE
 //
 //**************************************************************************
-
-//==========================================================================
-//
-// T_FloorWaggle
-//
-//==========================================================================
 
 #define WGLSTATE_EXPAND 1
 #define WGLSTATE_STABLE 2
 #define WGLSTATE_REDUCE 3
 
-void T_FloorWaggle(special_t *waggle)
+class TWaggle:Thinker
 {
-	switch (waggle->state)
+	sector_t *sector;
+	float originalHeight;
+	float accumulator;
+	float accSpeed;
+	float targetScale;
+	float scale;
+	float scaleSpeed;
+	float timer;
+	int state;
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+//==========================================================================
+//
+//  TWaggle::Think
+//
+//==========================================================================
+
+void TWaggle::Think(void)
+{
+	switch (state)
 	{
-		case WGLSTATE_EXPAND:
-			if ((waggle->scale += waggle->scaleDelta) >= waggle->targetScale)
+	case WGLSTATE_EXPAND:
+		scale += scaleSpeed * frametime;
+		if (scale >= targetScale)
+		{
+			scale = targetScale;
+			state = WGLSTATE_STABLE;
+		}
+		break;
+	case WGLSTATE_REDUCE:
+		scale -= scaleSpeed * frametime;
+		if (scale <= 0.0)
+		{
+			// Remove
+			sector->floorheight = originalHeight;
+			P_ChangeSector(sector, true);
+			sector->specialdata = NULL;
+			TagFinished(sector->tag);
+			RemoveSpecialThinker(this);
+			return;
+		}
+		break;
+	case WGLSTATE_STABLE:
+		if (timer >= 0.0)
+		{
+			timer -= frametime;
+			if (timer <= 0.0)
 			{
-				waggle->scale = waggle->targetScale;
-				waggle->state = WGLSTATE_STABLE;
+				state = WGLSTATE_REDUCE;
 			}
-			break;
-		case WGLSTATE_REDUCE:
-			if ((waggle->scale -= waggle->scaleDelta) <= 0.0)
-			{
-				// Remove
-				waggle->sector->floorheight = waggle->originalHeight;
-				P_ChangeSector(waggle->sector, true);
-				waggle->sector->specialdata = NULL;
-                TagFinished(waggle->sector->tag);
-				RemoveSpecialThinker(waggle);
-				return;
-			}
-			break;
-		case WGLSTATE_STABLE:
-			if (waggle->ticker != -1)
-			{
-				if (!--waggle->ticker)
-				{
-					waggle->state = WGLSTATE_REDUCE;
-				}
-			}
-			break;
+		}
+		break;
 	}
-	waggle->accumulator += waggle->accDelta;
-	waggle->sector->floorheight = waggle->originalHeight +
-		FloatBobOffsets[ftoi(waggle->accumulator) & 63] * waggle->scale;
-	P_ChangeSector(waggle->sector, true);
+	accumulator += accSpeed * frametime;
+	sector->floorheight = originalHeight +
+		FloatBobOffsets[ftoi(accumulator) & 63] * scale;
+	P_ChangeSector(sector, true);
 }
 
 //==========================================================================
 //
-//	EV_StartFloorWaggle
+//  TWaggle::Archive
+//
+//==========================================================================
+
+void TWaggle::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TWaggle::Unarchive
+//
+//==========================================================================
+
+void TWaggle::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
+
+	//  Set sector's specialdata
+	sector->specialdata = this;
+}
+
+//==========================================================================
+//
+//  EV_StartFloorWaggle
 //
 //==========================================================================
 
 boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 	int timer)
 {
-	int 		sectorIndex;
-	sector_t 	*sector;
-	special_t 	*waggle;
-	boolean 	retCode;
+	int sectorIndex;
+	sector_t *sector;
+	TWaggle *waggle;
+	boolean retCode;
 
 	retCode = false;
 	sectorIndex = -1;
@@ -819,18 +923,17 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 			continue;
 		}
 		retCode = true;
-		waggle = NewSpecialThinker(special_t);
-		waggle->function = T_FloorWaggle;
+		waggle = NewSpecialThinker(TWaggle);
 		sector->specialdata = waggle;
 		waggle->sector = sector;
 		waggle->originalHeight = sector->floorheight;
 		waggle->accumulator = itof(offset);
-		waggle->accDelta = itof(speed) / 64.0;
+		waggle->accSpeed = itof(speed) / 2.0;
 		waggle->scale = 0.0;
 		waggle->targetScale = itof(height) / 64.0;
-		waggle->scaleDelta = waggle->targetScale
-			/ itof(35 + ((3 * 35) * height) / 255);
-		waggle->ticker = timer ? timer * 35 : -1;
+		waggle->scaleSpeed = waggle->targetScale
+			/ (1.0 + 3.0 * itof(height) / 255.0);
+		waggle->timer = timer ? itof(timer) : -1.0;
 		waggle->state = WGLSTATE_EXPAND;
 	}
 	return retCode;
@@ -838,11 +941,14 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:17:17  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,35 +1,37 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**    CEILINGS
+//**
+//**************************************************************************
 
-//==================================================================
-//==================================================================
-//
-//		CEILINGS
-//
-//==================================================================
-//==================================================================
+// MACROS ------------------------------------------------------------------
+
+#define NextCeil(ceil)	(TCeiling *)NextThinker(ceil, TCeiling)
+
+// CONSTANTS ---------------------------------------------------------------
 
 enum
 {
@@ -43,106 +45,125 @@ enum
 	CLEV_MOVETOVALUETIMES8
 };
 
-special_t	activeceilings;
+// TYPES -------------------------------------------------------------------
 
-//==================================================================
-//
-//  P_AddActiveCeiling
-//
-//	Add an active ceiling
-//
-//==================================================================
-
-void P_AddActiveCeiling(special_t *c)
+class TCeiling:Thinker
 {
-	c->prev = activeceilings.prev;
-    c->next = &activeceilings;
-	c->prev->next = c;
-    c->next->prev = c;
-}
+	sector_t *sector;
+	int type;
+	float topheight;
+	float speed;
+	int direction;
+	float bottomheight;
+	int crush;
+	int tag;	// ID
 
-//==================================================================
-//
-//  P_RemoveActiveCeiling
-//
-//	Remove a ceiling's thinker
-//
-//==================================================================
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
 
-void P_RemoveActiveCeiling(special_t *c)
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	TCeiling::Think
+//
+//==========================================================================
+
+void TCeiling::Think(void)
 {
-	c->prev->next = c->next;
-    c->next->prev = c->prev;
-	c->sector->specialdata = NULL;
-	RemoveSpecialThinker(c);
-	TagFinished(c->sector->tag);
-}
+	int res;
 
-//==================================================================
-//
-//	T_MoveCeiling
-//
-//==================================================================
-
-void T_MoveCeiling(special_t *ceiling)
-{
-	int			res;
-
-	switch (ceiling->direction)
+	switch (direction)
 	{
-		case 1:         // UP
-			res = T_MovePlane(ceiling->sector, ceiling->speed,
-					ceiling->topheight, false, 1, ceiling->direction);
-			if (res == RES_PASTDEST)
+	case 1:	// UP
+		res = T_MovePlane(sector, speed * frametime,
+			topheight, false, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			SectorStopSequence(sector);
+			switch (type)
 			{
-				SectorStopSequence(ceiling->sector);
-				switch (ceiling->type)
-				{
-					case CLEV_CRUSHANDRAISE:
-						ceiling->direction = -1;
-						ceiling->speed = ceiling->speed * 2.0;
-						break;
-					default:
-						P_RemoveActiveCeiling(ceiling);
-						break;
-				}
+			case CLEV_CRUSHANDRAISE:
+				direction = -1;
+				speed = speed * 2.0;
+				break;
+			default:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
 			}
-			break;
-		case -1:        // DOWN
-			res = T_MovePlane(ceiling->sector, ceiling->speed,
-				ceiling->bottomheight, ceiling->crush, 1, ceiling->direction);
-			if (res == RES_PASTDEST)
+		}
+		break;
+	case -1:	// DOWN
+		res = T_MovePlane(sector, speed * frametime,
+			bottomheight, crush, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			SectorStopSequence(sector);
+			switch (type)
 			{
-				SectorStopSequence(ceiling->sector);
-				switch (ceiling->type)
-				{
-					case CLEV_CRUSHANDRAISE:
-					case CLEV_CRUSHRAISEANDSTAY:
-						ceiling->direction = 1;
-						ceiling->speed = ceiling->speed / 2.0;
-						break;
-					default:
-						P_RemoveActiveCeiling(ceiling);
-						break;
-				}
-			} 
-			break;
+			case CLEV_CRUSHANDRAISE:
+			case CLEV_CRUSHRAISEANDSTAY:
+				direction = 1;
+				speed = speed / 2.0;
+				break;
+			default:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
+			}
+		}
+		break;
 	}
 }
 
+//==========================================================================
+//
+//  TCeiling::Archive
+//
+//==========================================================================
+
+void TCeiling::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TCeiling::Unarchive
+//
+//==========================================================================
+
+void TCeiling::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
+
+	//  Set sector's specialdata
+	sector->specialdata = this;
+}
+
 //==================================================================
 //
-//	EV_DoCeiling
+//  EV_DoCeiling
 //
-//	Move a ceiling up/down and all around!
+//  Move a ceiling up/down and all around!
 //
 //==================================================================
 
-int EV_DoCeiling(line_t *line, int *arg, int type)
+int EV_DoCeiling(line_t * line, int *arg, int type)
 {
-	int			secnum,rtn;
-	sector_t	*sec;
-	special_t	*ceiling;
+	int secnum, rtn;
+	sector_t *sec;
+	TCeiling *ceiling;
 
 	secnum = -1;
 	rtn = 0;
@@ -157,45 +178,44 @@ int EV_DoCeiling(line_t *line, int *arg, int type)
 		// new door thinker
 		//
 		rtn = 1;
-		ceiling = NewSpecialThinker(special_t);
-		ceiling->function = T_MoveCeiling;
+		ceiling = NewSpecialThinker(TCeiling);
 		sec->specialdata = ceiling;
 		ceiling->sector = sec;
 		ceiling->crush = 0;
-		ceiling->speed = itof(arg[1]) / 8.0;
+		ceiling->speed = itof(arg[1]) * 4.0;
 		switch (type)
 		{
-			case CLEV_CRUSHRAISEANDSTAY:
-				ceiling->crush = arg[2]; // arg[2] = crushing value
-				ceiling->topheight = sec->ceilingheight;
-				ceiling->bottomheight = sec->floorheight + 8.0;
-				ceiling->direction = -1;
-				break;
-			case CLEV_CRUSHANDRAISE:
-				ceiling->topheight = sec->ceilingheight;
-			case CLEV_LOWERANDCRUSH:
-				ceiling->crush = arg[2]; // arg[2] = crushing value
-			case CLEV_LOWERTOFLOOR:
-				ceiling->bottomheight = sec->floorheight;
-				if (type != CLEV_LOWERTOFLOOR)
-				{
-					ceiling->bottomheight += 8.0;
-				}
-				ceiling->direction = -1;
-				break;
-			case CLEV_RAISETOHIGHEST:
-				ceiling->topheight = FindHighestCeilingSurrounding(sec);
-				ceiling->direction = 1;
-				break;
-			case CLEV_LOWERBYVALUE:
-				ceiling->bottomheight = sec->ceilingheight - itof(arg[2]);
-				ceiling->direction = -1;
-				break;
-			case CLEV_RAISEBYVALUE:
-				ceiling->topheight = sec->ceilingheight + itof(arg[2]);
-				ceiling->direction = 1;
-				break;
-			case CLEV_MOVETOVALUETIMES8:
+		case CLEV_CRUSHRAISEANDSTAY:
+			ceiling->crush = arg[2];	// arg[2] = crushing value
+			ceiling->topheight = sec->ceilingheight;
+			ceiling->bottomheight = sec->floorheight + 8.0;
+			ceiling->direction = -1;
+			break;
+		case CLEV_CRUSHANDRAISE:
+			ceiling->topheight = sec->ceilingheight;
+		case CLEV_LOWERANDCRUSH:
+			ceiling->crush = arg[2];	// arg[2] = crushing value
+		case CLEV_LOWERTOFLOOR:
+			ceiling->bottomheight = sec->floorheight;
+			if (type != CLEV_LOWERTOFLOOR)
+			{
+				ceiling->bottomheight += 8.0;
+			}
+			ceiling->direction = -1;
+			break;
+		case CLEV_RAISETOHIGHEST:
+			ceiling->topheight = FindHighestCeilingSurrounding(sec);
+			ceiling->direction = 1;
+			break;
+		case CLEV_LOWERBYVALUE:
+			ceiling->bottomheight = sec->ceilingheight - itof(arg[2]);
+			ceiling->direction = -1;
+			break;
+		case CLEV_RAISEBYVALUE:
+			ceiling->topheight = sec->ceilingheight + itof(arg[2]);
+			ceiling->direction = 1;
+			break;
+		case CLEV_MOVETOVALUETIMES8:
 			{
 				float destHeight = itof(arg[2]) * 8.0;
 
@@ -219,13 +239,12 @@ int EV_DoCeiling(line_t *line, int *arg, int type)
 				}
 				break;
 			}
-			default:
-				rtn = 0;
-				break;
+		default:
+			rtn = 0;
+			break;
 		}
 		ceiling->tag = sec->tag;
 		ceiling->type = type;
-		P_AddActiveCeiling(ceiling);
 		if (rtn)
 		{
 			SectorStartSequence(ceiling->sector,
@@ -237,22 +256,24 @@ int EV_DoCeiling(line_t *line, int *arg, int type)
 
 //==================================================================
 //
-//	EV_CeilingCrushStop
+//  EV_CeilingCrushStop
 //
-//	Stop a ceiling from crushing!
+//  Stop a ceiling from crushing!
 //
 //==================================================================
 
-int EV_CeilingCrushStop(line_t *line, int *args)
+int EV_CeilingCrushStop(line_t * line, int *args)
 {
-	special_t*	c;
+	TCeiling *c;
 
-	for (c = activeceilings.next; c != &activeceilings; c = c->next)
+	for (c = NextCeil(NULL); c; c = NextCeil(c))
 	{
 		if (c->tag == args[0])
 		{
 			SectorStopSequence(c->sector);
-			P_RemoveActiveCeiling(c);
+			c->sector->specialdata = NULL;
+			TagFinished(c->sector->tag);
+			RemoveSpecialThinker(c);
 			return 1;
 		}
 	}
@@ -261,11 +282,14 @@ int EV_CeilingCrushStop(line_t *line, int *args)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:17:17  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

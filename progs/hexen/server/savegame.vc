@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -24,25 +24,25 @@
 //**************************************************************************
 
 void G_DeathMatchSpawnPlayer(int playernum);
-void P_SpawnPlayer(mthing_t *mthing);
+void P_SpawnPlayer(mthing_t * mthing);
 
 //==========================================================================
 //
-//	ArchivePlayer
+//  ArchivePlayer
 //
 //==========================================================================
 
-void ArchivePlayer(player_t *player)
+void ArchivePlayer(player_t * player)
 {
 }
 
 //==========================================================================
 //
-//	UnarchivePlayer
+//  UnarchivePlayer
 //
 //==========================================================================
 
-void UnarchivePlayer(player_t *player)
+void UnarchivePlayer(player_t * player)
 {
 	player->attacker = NULL;
 	player->poisoner = NULL;
@@ -50,7 +50,7 @@ void UnarchivePlayer(player_t *player)
 
 //==========================================================================
 //
-//	mobj_t::Archive
+//  mobj_t::Archive
 //
 //==========================================================================
 
@@ -71,65 +71,65 @@ void mobj_t::Archive(void)
 	switch (type)
 	{
 		// Just specialmobj1
-		case MT_BISH_FX:
-		case MT_HOLY_FX:
-		case MT_DRAGON:
-		case MT_THRUSTFLOOR_UP:
-		case MT_THRUSTFLOOR_DOWN:
-		case MT_MINOTAUR:
-		case MT_SORCFX1:
-		case MT_MSTAFF_FX2:
-			if (corpse)
-			{
-				specialmobj1 = MobjToNum(NULL);
-			}
-			else
-			{
-				specialmobj1 = MobjToNum(specialmobj1);
-			}
-			break;
+	case MT_BISH_FX:
+	case MT_HOLY_FX:
+	case MT_DRAGON:
+	case MT_THRUSTFLOOR_UP:
+	case MT_THRUSTFLOOR_DOWN:
+	case MT_MINOTAUR:
+	case MT_SORCFX1:
+	case MT_MSTAFF_FX2:
+		if (corpse)
+		{
+			specialmobj1 = MobjToNum(NULL);
+		}
+		else
+		{
+			specialmobj1 = MobjToNum(specialmobj1);
+		}
+		break;
 
 		// Just specialmobj2
-		case MT_LIGHTNING_FLOOR:
-		case MT_LIGHTNING_ZAP:
-			if (corpse)
-			{
-				specialmobj2 = MobjToNum(NULL);
-			}
-			else
-			{
-				specialmobj2 = MobjToNum(specialmobj2);
-			}
-			break;
+	case MT_LIGHTNING_FLOOR:
+	case MT_LIGHTNING_ZAP:
+		if (corpse)
+		{
+			specialmobj2 = MobjToNum(NULL);
+		}
+		else
+		{
+			specialmobj2 = MobjToNum(specialmobj2);
+		}
+		break;
 
 		// Both specialmobj1 and specialmobj2
-		case MT_HOLY_TAIL:
-		case MT_LIGHTNING_CEILING:
-			if (corpse)
-			{
-				specialmobj1 = MobjToNum(NULL);
-				specialmobj2 = MobjToNum(NULL);
-			}
-			else
-			{
-				specialmobj1 = MobjToNum(specialmobj1);
-				specialmobj2 = MobjToNum(specialmobj2);
-			}
-			break;
+	case MT_HOLY_TAIL:
+	case MT_LIGHTNING_CEILING:
+		if (corpse)
+		{
+			specialmobj1 = MobjToNum(NULL);
+			specialmobj2 = MobjToNum(NULL);
+		}
+		else
+		{
+			specialmobj1 = MobjToNum(specialmobj1);
+			specialmobj2 = MobjToNum(specialmobj2);
+		}
+		break;
 
 		// Miscellaneous
-		case MT_KORAX:
-			special1 = 0; // Searching index
-			break;
+	case MT_KORAX:
+		special1 = 0;	// Searching index
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
 //==========================================================================
 //
-//	mobj_t::Unarchive
+//  mobj_t::Unarchive
 //
 //==========================================================================
 
@@ -139,94 +139,44 @@ void mobj_t::Unarchive(void)
 	switch (type)
 	{
 		// Just specialmobj1
-		case MT_BISH_FX:
-		case MT_HOLY_FX:
-		case MT_DRAGON:
-		case MT_THRUSTFLOOR_UP:
-		case MT_THRUSTFLOOR_DOWN:
-		case MT_MINOTAUR:
-		case MT_SORCFX1:
-			specialmobj1 = NumToMobj(specialmobj1);
-			break;
+	case MT_BISH_FX:
+	case MT_HOLY_FX:
+	case MT_DRAGON:
+	case MT_THRUSTFLOOR_UP:
+	case MT_THRUSTFLOOR_DOWN:
+	case MT_MINOTAUR:
+	case MT_SORCFX1:
+		specialmobj1 = NumToMobj(specialmobj1);
+		break;
 
 		// Just special2
-		case MT_LIGHTNING_FLOOR:
-		case MT_LIGHTNING_ZAP:
-			specialmobj2 = NumToMobj(specialmobj2);
-			break;
+	case MT_LIGHTNING_FLOOR:
+	case MT_LIGHTNING_ZAP:
+		specialmobj2 = NumToMobj(specialmobj2);
+		break;
 
 		// Both special1 and special2
-		case MT_HOLY_TAIL:
-		case MT_LIGHTNING_CEILING:
-			specialmobj1 = NumToMobj(specialmobj1);
-			specialmobj2 = NumToMobj(specialmobj2);
-			break;
+	case MT_HOLY_TAIL:
+	case MT_LIGHTNING_CEILING:
+		specialmobj1 = NumToMobj(specialmobj1);
+		specialmobj2 = NumToMobj(specialmobj2);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
-}
-
-//==========================================================================
-//
-//  special_t::Archive
-//
-//==========================================================================
-
-void special_t::Archive(void)
-{
-	sector = SectorToNum(sector);
-}
-
-//==========================================================================
-//
-//  special_t::Unarchive
-//
-//==========================================================================
-
-void special_t::Unarchive(void)
-{
-	//	Restore sector pointer
-	sector = NumToSector(sector);
-
-	//	Set sector's specialdata
-	if (function == T_MoveCeiling ||
-		function == T_VerticalDoor ||
-		function == T_MoveFloor ||
-    	function == T_PlatRaise ||
-        function == T_BuildPillar ||
-        //function == T_FloorWaggle ||
-		false)
-	{
-		sector->specialdata = this;
-	}
-
-	//	Add to active ceilings
-	if (function == T_MoveCeiling)
-	{
-		P_AddActiveCeiling(this);
-	}
-
-	//	Add to active floors
-	if (function == T_MoveFloor)
-	{
-		AddActiveFloor(this);
-	}
-
-	//	Add to active plats
-	if (function == T_PlatRaise)
-    {
-		P_AddActivePlat(this);
-    }
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:18:15  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

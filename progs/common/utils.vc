@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -33,11 +33,11 @@
 	dst.roll = src.roll;\
 }
 
-void P_RemoveMobj(mobj_t* mobj);
+void P_RemoveMobj(mobj_t * mobj);
 
 //==========================================================================
 //
-//	abs
+//  abs
 //
 //==========================================================================
 
@@ -48,7 +48,7 @@ int abs(int val)
 
 //==========================================================================
 //
-//	fabs
+//  fabs
 //
 //==========================================================================
 
@@ -59,9 +59,9 @@ float fabs(float val)
 
 //==========================================================================
 //
-//	HITDICE
+//  HITDICE
 //
-//	Most damage in HERETIC and HEXEN defined using HITDICE
+//  Most damage in HERETIC and HEXEN defined using HITDICE
 //
 //==========================================================================
 
@@ -74,22 +74,22 @@ int HITDICE(int a)
 //
 //  SetMobjState
 //
-//	Returns true if the mobj is still present.
+//  Returns true if the mobj is still present.
 //
 //==========================================================================
 
-boolean SetMobjState(mobj_t* mobj, int state)
+boolean SetMobjState(mobj_t * mobj, int state)
 {
-    state_t*	st;
+	state_t *st;
 
-    do
-    {
+	do
+	{
 		if (!state)
 		{
 			// Remove mobj
-	    	mobj->statenum = 0;
-		    P_RemoveMobj(mobj);
-		    return false;
+			mobj->statenum = 0;
+			P_RemoveMobj(mobj);
+			return false;
 		}
 
 		st = &states[state];
@@ -104,33 +104,34 @@ boolean SetMobjState(mobj_t* mobj, int state)
 		// Modified handling.
 		// Call action functions when the state is set
 		if (st->function)
-        {
+		{
 			st->function(mobj);
 		}
 
 		state = st->nextstate;
-    } while (!mobj->time);
-    return true;
+	}
+	while (!mobj->time);
+	return true;
 }
 
 //==========================================================================
 //
 //  SetMobjStateNF
 //
-//	Same as SetMobjState, but does not call the state function.
+//  Same as SetMobjState, but does not call the state function.
 //
 //==========================================================================
 
-boolean SetMobjStateNF(mobj_t *mobj, int state)
+boolean SetMobjStateNF(mobj_t * mobj, int state)
 {
 	state_t *st;
 
-    do
-    {
+	do
+	{
 		if (!state)
 		{
 			// Remove mobj
-	    	mobj->statenum = 0;
+			mobj->statenum = 0;
 			P_RemoveMobj(mobj);
 			return false;
 		}
@@ -144,7 +145,8 @@ boolean SetMobjStateNF(mobj_t *mobj, int state)
 		mobj->nextstate = st->nextstate;
 
 		state = st->nextstate;
-    } while (!mobj->time);
+	}
+	while (!mobj->time);
 	return true;
 }
 
@@ -154,10 +156,10 @@ boolean SetMobjStateNF(mobj_t *mobj, int state)
 //
 //===========================================================================
 
-void SetPsprite(player_t *player, int position, int stnum)
+void SetPsprite(player_t * player, int position, int stnum)
 {
-    pspdef_t	*psp;
-    state_t		*state;
+	pspdef_t *psp;
+	state_t *state;
 
 	psp = &player->psprites[position];
 	do
@@ -169,7 +171,7 @@ void SetPsprite(player_t *player, int position, int stnum)
 			break;
 		}
 		state = &states[stnum];
-		psp->time = state->time; // could be 0
+		psp->time = state->time;	// could be 0
 		psp->sprite = state->sprite;
 		psp->frame = state->frame;
 		psp->model_index = state->model_index;
@@ -180,13 +182,13 @@ void SetPsprite(player_t *player, int position, int stnum)
 		{
 			// Set coordinates.
 			psp->sx = state->misc1;
-//			psp->sy = state->misc2;//	Was in DOOM and HERETIC
+//          psp->sy = state->misc2;//   Was in DOOM and HERETIC
 		}
 		if (state->misc2)
 		{
-        	//	In DOOM and HERETIC this was set if misc1 != 0. In HEXEN it
-            // is moved outside. This will not affect anything in DOOM and
-            // HERETIC, because there they are not used.
+			//  In DOOM and HERETIC this was set if misc1 != 0. In HEXEN it
+			// is moved outside. This will not affect anything in DOOM and
+			// HERETIC, because there they are not used.
 			psp->sy = state->misc2;
 		}
 		if (state->function)
@@ -199,18 +201,19 @@ void SetPsprite(player_t *player, int position, int stnum)
 			}
 		}
 		stnum = psp->nextstate;
-	} while (!psp->time); // An initial state of 0 could cycle through.
+	}
+	while (!psp->time);	// An initial state of 0 could cycle through.
 }
 
 //==========================================================================
 //
 //  SetPspriteNF
 //
-//	Identical to SetPsprite, without calling the action function
+//  Identical to SetPsprite, without calling the action function
 //
 //==========================================================================
 
-void SetPspriteNF(player_t *player, int position, int stnum)
+void SetPspriteNF(player_t * player, int position, int stnum)
 {
 	pspdef_t *psp;
 	state_t *state;
@@ -219,12 +222,12 @@ void SetPspriteNF(player_t *player, int position, int stnum)
 	do
 	{
 		if (!stnum)
-		{ // Object removed itself.
+		{	// Object removed itself.
 			psp->statenum = 0;
 			break;
 		}
 		state = &states[stnum];
-		psp->time = state->time; // could be 0
+		psp->time = state->time;	// could be 0
 		psp->sprite = state->sprite;
 		psp->frame = state->frame;
 		psp->model_index = state->model_index;
@@ -232,7 +235,7 @@ void SetPspriteNF(player_t *player, int position, int stnum)
 		psp->statenum = state->statenum;
 		psp->nextstate = state->nextstate;
 		if (state->misc1)
-		{ // Set coordinates.
+		{	// Set coordinates.
 			psp->sx = state->misc1;
 		}
 		if (state->misc2)
@@ -240,40 +243,41 @@ void SetPspriteNF(player_t *player, int position, int stnum)
 			psp->sy = state->misc2;
 		}
 		stnum = psp->nextstate;
-	} while (!psp->time); // An initial state of 0 could cycle through.
+	}
+	while (!psp->time);	// An initial state of 0 could cycle through.
 }
 
 //==========================================================================
 //
-//	MapBlock
+//  MapBlock
 //
 //==========================================================================
 
 int MapBlock(float val)
 {
-    return ftoi(val) >> 7;
+	return ftoi(val) >> 7;
 }
 
 //==========================================================================
 //
-//	MobjDist
+//  MobjDist
 //
 //==========================================================================
 
-float MobjDist(mobj_t *mo1, mobj_t *mo2)
+float MobjDist(mobj_t * mo1, mobj_t * mo2)
 {
 	return Length(MobjCenter(mo2) - MobjCenter(mo1));
 }
 
 //==========================================================================
 //
-//	MobjDist2
+//  MobjDist2
 //
 //==========================================================================
 
-float MobjDist2(mobj_t *mo1, mobj_t *mo2)
+float MobjDist2(mobj_t * mo1, mobj_t * mo2)
 {
-	TVec		dir;
+	TVec dir;
 
 	dir = mo2->origin - mo1->origin;
 	dir.z = 0.0;
@@ -282,88 +286,90 @@ float MobjDist2(mobj_t *mo1, mobj_t *mo2)
 
 //==========================================================================
 //
-//	GetPlanePointZ
+//  GetPlanePointZ
 //
-//	Get z of point with given x and y coords
+//  Get z of point with given x and y coords
 // Don't try to use it on a vertical plane
 //
 //==========================================================================
 
-float GetPlanePointZ(TPlane *plane,	TVec point)
+float GetPlanePointZ(TPlane * plane, TVec point)
 {
-	return (plane->dist - plane->normal.x * point.x - plane->normal.y * point.y) / plane->normal.z;
+	return (plane->dist - plane->normal.x * point.x -
+		plane->normal.y * point.y) / plane->normal.z;
 }
 
 //==========================================================================
 //
-//	PointOnPlaneSide
+//  PointOnPlaneSide
 //
-//	Returns side 0 (front) or 1 (back).
+//  Returns side 0 (front) or 1 (back).
 //
 //==========================================================================
 
-int PointOnPlaneSide(TVec point, TPlane* plane)
+int PointOnPlaneSide(TVec point, TPlane * plane)
 {
 	return DotProduct(point, plane->normal) - plane->dist < 0.0;
 }
 
 //==========================================================================
 //
-//	VectorRotateAroundZ
+//  VectorRotateAroundZ
 //
 //==========================================================================
 
-void VectorRotateAroundZ(TVec *vec, angle_t angle)
+void VectorRotateAroundZ(TVec * vec, angle_t angle)
 {
 	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
 	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
+
 	vec->x = dstx;
 	vec->y = dsty;
 }
 
 //**************************************************************************
 //
-//	TRACE A LINE
+//  TRACE A LINE
 //
 //**************************************************************************
 
-TVec		trace_start;
-TVec		trace_end;
-TVec		trace_plane_normal;
+TVec trace_start;
+TVec trace_end;
+TVec trace_plane_normal;
 
-TVec		linestart;
-TVec		lineend;
+TVec linestart;
+TVec lineend;
 
 //==========================================================================
 //
-//	TraceHitPlane
+//  TraceHitPlane
 //
 //==========================================================================
 
-boolean TraceHitPlane(sec_plane_t *plane)
+boolean TraceHitPlane(sec_plane_t * plane)
 {
-	float		org_dist;
-	float		hit_dist;
+	float org_dist;
+	float hit_dist;
 
 	if (plane->flags & SPF_NOBLOCKING)
 	{
-		//	Doesn't block
+		//  Doesn't block
 		return true;
 	}
 	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
 	if (org_dist < 0.0)
 	{
-		//	Back side
+		//  Back side
 		return true;
 	}
 	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
 	if (hit_dist >= 0.0)
 	{
-		//	Didn't hit plane
+		//  Didn't hit plane
 		return true;
 	}
 
-	//	Hit plane
+	//  Hit plane
 	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
 	trace_plane_normal = plane->normal;
 
@@ -373,26 +379,26 @@ boolean TraceHitPlane(sec_plane_t *plane)
 
 //==========================================================================
 //
-//	TraceCheckPlanes
+//  TraceCheckPlanes
 //
 //==========================================================================
 
-boolean	TraceCheckPlanes(sector_t *sec)
+boolean TraceCheckPlanes(sector_t * sec)
 {
-	sec_region_t	*reg;
-	sec_region_t	*startreg;
+	sec_region_t *reg;
+	sec_region_t *startreg;
 
 	startreg = PointInRegion(sec, linestart);
 	for (reg = startreg; reg; reg = reg->next)
 	{
 		if (!TraceHitPlane(reg->floor))
 		{
-			//	Hit floor
+			//  Hit floor
 			return false;
 		}
 		if (!TraceHitPlane(reg->ceiling))
 		{
-			//	Hit ceiling
+			//  Hit ceiling
 			return false;
 		}
 	}
@@ -400,12 +406,12 @@ boolean	TraceCheckPlanes(sector_t *sec)
 	{
 		if (!TraceHitPlane(reg->floor))
 		{
-			//	Hit floor
+			//  Hit floor
 			return false;
 		}
 		if (!TraceHitPlane(reg->ceiling))
 		{
-			//	Hit ceiling
+			//  Hit ceiling
 			return false;
 		}
 	}
@@ -418,14 +424,14 @@ boolean	TraceCheckPlanes(sector_t *sec)
 //
 //==========================================================================
 
-boolean TraceTraverse(intercept_t* in)
+boolean TraceTraverse(intercept_t * in)
 {
-	TVec		hit_point;
-	line_t		*li;
-	sector_t	*sec;
+	TVec hit_point;
+	line_t *li;
+	sector_t *sec;
 
-    if (!in->isaline)
-    {
+	if (!in->isaline)
+	{
 		Error("TraceLine: Not a line?");
 	}
 
@@ -450,19 +456,19 @@ boolean TraceTraverse(intercept_t* in)
 	if (li->flags & ML_TWOSIDED)
 	{
 		// crosses a two sided line
-		opening_t	*open;
+		opening_t *open;
 
 		open = LineOpenings(li, hit_point);
 		while (open)
 		{
-		    if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+			if (open->bottom <= hit_point.z && open->top >= hit_point.z)
 			{
 				return true;
 			}
 			open = open->next;
 		}
 	}
-	//	Hit line
+	//  Hit line
 	if (PointOnPlaneSide(trace_start, li))
 	{
 		trace_plane_normal = -li->normal;
@@ -476,7 +482,7 @@ boolean TraceTraverse(intercept_t* in)
 
 //==========================================================================
 //
-//	TraceLine
+//  TraceLine
 //
 //==========================================================================
 
@@ -486,7 +492,8 @@ boolean TraceLine(TVec start, TVec end)
 	trace_end = end;
 
 	linestart = trace_start;
-    if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES, TraceTraverse))
+	if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
+			TraceTraverse))
 	{
 		lineend = end;
 		return TraceCheckPlanes(PointInSubsector(end.x, end.y)->sector);
@@ -496,7 +503,7 @@ boolean TraceLine(TVec start, TVec end)
 
 //==========================================================================
 //
-//	AddStaticLight
+//  AddStaticLight
 //
 //==========================================================================
 
@@ -512,7 +519,7 @@ void AddStaticLight(TVec origin, float radius)
 
 //==========================================================================
 //
-//	AddStaticLightRGB
+//  AddStaticLightRGB
 //
 //==========================================================================
 
@@ -529,54 +536,58 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 
 //==========================================================================
 //
-//	misc_static_light
+//  misc_static_light
 //
 //==========================================================================
 
-void misc_static_light(mobj_t *self, mthing_t *mthing)
+void misc_static_light(mobj_t * self, mthing_t * mthing)
 {
-	float		l;
+	float l;
 
 	RemoveMobjThinker(self);
 	if (!mthing->arg1)
 		l = 200.0;
 	else
-		l =	itof(mthing->arg1) * 8.0;
+		l = itof(mthing->arg1) * 8.0;
 	AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
 }
 
 //==========================================================================
 //
-//	misc_static_rgb_light
+//  misc_static_rgb_light
 //
 //==========================================================================
 
-void misc_static_rgb_light(mobj_t *self, mthing_t *mthing)
+void misc_static_rgb_light(mobj_t * self, mthing_t * mthing)
 {
-	float		l;
+	float l;
 
 	RemoveMobjThinker(self);
 	if (!mthing->arg1)
 		l = 200.0;
 	else
-		l =	itof(mthing->arg1) * 8.0;
+		l = itof(mthing->arg1) * 8.0;
 	AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
 		RGB(mthing->arg2, mthing->arg3, mthing->arg4));
 }
 
 __mobjinfo__
 {
-	MT_STATIC_LIGHT { 1502, misc_static_light }
-	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
+	MT_STATIC_LIGHT
+	{
+	1502, misc_static_light}
+	MT_STATIC_RGB_LIGHT
+	{
+	1503, misc_static_rgb_light}
 }
 
 //==========================================================================
 //
-//	RunThink
+//  RunThink
 //
 //==========================================================================
 
-void RunThink(thinker_t* th)
+void RunThink(thinker_t * th)
 {
 	th->Think();
 }
@@ -587,7 +598,7 @@ void RunThink(thinker_t* th)
 //
 //==========================================================================
 
-void ArchiveThinker(thinker_t *th)
+void ArchiveThinker(thinker_t * th)
 {
 	th->Archive();
 }
@@ -598,21 +609,24 @@ void ArchiveThinker(thinker_t *th)
 //
 //==========================================================================
 
-void UnarchiveThinker(thinker_t *th)
+void UnarchiveThinker(thinker_t * th)
 {
 	th->Unarchive();
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:11:23  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.3  2001/08/31 17:17:23  dj_jl
-//	Removed vector macros
-//	
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/08/31 17:17:23  dj_jl
+//  Removed vector macros
+//  
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

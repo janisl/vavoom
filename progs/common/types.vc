@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -29,92 +29,93 @@ typedef uint angle_t;
 struct sector_t;
 struct line_t;
 struct subsector_t;
+
 #ifdef SERVER
-class special_t;
+class thinker_t;
 class mobj_t;
 #endif
 
 //==========================================================================
 //
-//	3D math - vectors and panes
+//  3D math - vectors and panes
 //
 //==========================================================================
 
 vector TVec
 {
-	float		x;
-	float		y;
-	float		z;
+	float x;
+	float y;
+	float z;
 };
 
 struct TAVec
 {
-	angle_t		pitch;
-	angle_t		yaw;
-	angle_t		roll;
+	angle_t pitch;
+	angle_t yaw;
+	angle_t roll;
 };
 
 struct TPlane
 {
-	TVec		normal;
-	float		dist;
+	TVec normal;
+	float dist;
 };
 
 //==========================================================================
 //
-//	Level
+//  Level
 //
 //==========================================================================
 
 //
 // LineDef
 //
-struct line_t : TPlane
+struct line_t:TPlane
 {
-    // Vertices, from v1 to v2.
-    TVec		*v1;
-    TVec		*v2;
+	// Vertices, from v1 to v2.
+	TVec *v1;
+	TVec *v2;
 
-    // Precalculated v2 - v1 for side checking.
-	TVec		__dir;
+	// Precalculated v2 - v1 for side checking.
+	TVec __dir;
 
-    // Animation related.
-    int			flags;
+	// Animation related.
+	int flags;
 
-    // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    int			sidenum[2];
+	// Visual appearance: SideDefs.
+	//  sidenum[1] will be -1 if one sided
+	int sidenum[2];
 
-    // Neat. Another bounding box, for the extent
-    //  of the LineDef.
-	float		bbox[4];
+	// Neat. Another bounding box, for the extent
+	//  of the LineDef.
+	float bbox[4];
 
-    // To aid move clipping.
-    int			__slopetype;
+	// To aid move clipping.
+	int __slopetype;
 
-    // Front and back sector.
-    // Note: redundant? Can be retrieved from SideDefs.
-    sector_t	*frontsector;
-    sector_t	*backsector;
+	// Front and back sector.
+	// Note: redundant? Can be retrieved from SideDefs.
+	sector_t *frontsector;
+	sector_t *backsector;
 
-    // if == validcount, already checked
-    int         validcount;
+	// if == validcount, already checked
+	int validcount;
 
 	// thinker_t for reversable actions
 #ifdef SERVER
-	special_t	*__specialdata;
+	thinker_t *__specialdata;
 #else
-	void		*__specialdata;
+	void *__specialdata;
 #endif
 
-	int			translucency;
+	int translucency;
 
-	int			special;
-    int			arg1;
-    int			arg2;
-    int			arg3;
-    int			arg4;
-    int			arg5;
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
 };
 
 //
@@ -123,150 +124,150 @@ struct line_t : TPlane
 struct side_t
 {
 	// add this to the calculated texture column
-	float		textureoffset;
+	float textureoffset;
 
 	// add this to the calculated texture top
-	float		rowoffset;
+	float rowoffset;
 
-	float		__base_textureoffset;
-	float		__base_rowoffset;
+	float __base_textureoffset;
+	float __base_rowoffset;
 
 	// Texture indices.
 	// We do not maintain names here.
-	int			toptexture;
-	int			bottomtexture;
-	int			midtexture;
+	int toptexture;
+	int bottomtexture;
+	int midtexture;
 
-	int			__base_toptexture;
-	int			__base_bottomtexture;
-	int			__base_midtexture;
+	int __base_toptexture;
+	int __base_bottomtexture;
+	int __base_midtexture;
 
 	// Sector the SideDef is facing.
-	sector_t	*sector;
+	sector_t *sector;
 };
 
-struct sec_plane_t : TPlane
+struct sec_plane_t:TPlane
 {
-	float		minz;
-	float		maxz;
+	float minz;
+	float maxz;
 
-	int			pic;
-	int			__base_pic;
+	int pic;
+	int __base_pic;
 
-	float		xoffs;
-	float		yoffs;
+	float xoffs;
+	float yoffs;
 
-	int			flags;
-	int			translucency;
+	int flags;
+	int translucency;
 };
 
 struct sec_params_t
 {
-    int		    lightlevel;
-	int			contents;
+	int lightlevel;
+	int contents;
 };
 
 struct sec_region_t
 {
-	//	Linked list of regions in bottom to top order
-	sec_region_t	*prev;
-	sec_region_t	*next;
+	//  Linked list of regions in bottom to top order
+	sec_region_t *prev;
+	sec_region_t *next;
 
-	//	Planes
-	sec_plane_t		*floor;
-	sec_plane_t		*ceiling;
+	//  Planes
+	sec_plane_t *floor;
+	sec_plane_t *ceiling;
 
-	sec_params_t	*params;
-	line_t			*extraline;
+	sec_params_t *params;
+	line_t *extraline;
 };
 
 //
-//	The SECTORS record, at runtime.
-//	Stores things/mobjs.
+//  The SECTORS record, at runtime.
+//  Stores things/mobjs.
 //
 struct sector_t
 {
-	sec_plane_t		floor;
-	sec_plane_t		ceiling;
-	sec_params_t	params;
+	sec_plane_t floor;
+	sec_plane_t ceiling;
+	sec_params_t params;
 
-	sec_region_t	*topregion;	//	Highest region
-	sec_region_t	*botregion;	//	Lowest region
+	sec_region_t *topregion;	//  Highest region
+	sec_region_t *botregion;	//  Lowest region
 
-	float		floorheight;
-	float		ceilingheight;
-    int		    special;
-    int			tag;
+	float floorheight;
+	float ceilingheight;
+	int special;
+	int tag;
 
-	float		base_floorheight;
-	float		base_ceilingheight;
-    int		    __base_lightlevel;
+	float base_floorheight;
+	float base_ceilingheight;
+	int __base_lightlevel;
 
-	float		skyheight;
+	float skyheight;
 
-    // 0 = untraversed, 1,2 = sndlines -1
-    int         soundtraversed;
+	// 0 = untraversed, 1,2 = sndlines -1
+	int soundtraversed;
 
 	// thing that made a sound (or null)
 #ifdef SERVER
-	mobj_t		*soundtarget;
+	mobj_t *soundtarget;
 #else
-	void		*__soundtarget;
+	void *__soundtarget;
 #endif
 
-    // stone, metal, heavy, etc...
-	int			seqType;
+	// stone, metal, heavy, etc...
+	int seqType;
 
-    // mapblock bounding box for height changes
-    int         blockbox[4];
+	// mapblock bounding box for height changes
+	int blockbox[4];
 
 	// origin for any sounds played by the sector
-	TVec		soundorg;
+	TVec soundorg;
 
-    // if == validcount, already checked
-    int         validcount;
+	// if == validcount, already checked
+	int validcount;
 
 	// thinker_t for reversable actions
 #ifdef SERVER
-	special_t	*specialdata;
+	thinker_t *specialdata;
 #else
-	void		*__specialdata;
+	void *__specialdata;
 #endif
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
-	void		*__subsectors;
+	void *__subsectors;
 
-    int			linecount;
-    line_t		**lines;  // [linecount] size
+	int linecount;
+	line_t **lines;	// [linecount] size
 };
 
 //
-//	Polyobj data
+//  Polyobj data
 //
 struct polyobj_t
 {
-	int 		__numsegs;
-	void 		*__segs;
-	TVec		startSpot;
-	void	 	*__originalPts; 	// used as the base for the rotations
-	void	 	*__prevPts; 		// use to restore the old point values
-	angle_t 	angle;
-	int 		tag;			// reference tag assigned in HereticEd
-	int			__bbox[4];
-	int 		validcount;
-	boolean 	crush; 			// should the polyobj attempt to crush mobjs?
-	int 		seqType;
+	int __numsegs;
+	void *__segs;
+	TVec startSpot;
+	void *__originalPts;	// used as the base for the rotations
+	void *__prevPts;	// use to restore the old point values
+	angle_t angle;
+	int tag;	// reference tag assigned in HereticEd
+	int __bbox[4];
+	int validcount;
+	boolean crush;	// should the polyobj attempt to crush mobjs?
+	int seqType;
 #ifdef SERVER
-	special_t	*specialdata; 	// pointer a thinker, if the poly is moving
+	thinker_t *specialdata;	// pointer a thinker, if the poly is moving
 #else
-	void		*__specialdata; 	// pointer a thinker, if the poly is moving
+	void *__specialdata;	// pointer a thinker, if the poly is moving
 #endif
-	subsector_t	*__subsector;
-	float		__base_x;
-	float		__base_y;
-	angle_t		__base_angle;
-	boolean		__changed;
+	subsector_t *__subsector;
+	float __base_x;
+	float __base_y;
+	angle_t __base_angle;
+	boolean __changed;
 };
 
 //
@@ -274,37 +275,37 @@ struct polyobj_t
 //
 struct mthing_t
 {
-	int 		tid;
-	float		x;
-	float		y;
-	float		height;
-	int 		angle;
-	int			type;
-	int			options;
-	int 		special;
-	int 		arg1;
-	int 		arg2;
-	int 		arg3;
-	int 		arg4;
-	int 		arg5;
+	int tid;
+	float x;
+	float y;
+	float height;
+	int angle;
+	int type;
+	int options;
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
 };
 
 //
-// 	A SubSector.
-// 	References a Sector. Basically, this is a list of LineSegs, indicating
+//  A SubSector.
+//  References a Sector. Basically, this is a list of LineSegs, indicating
 // the visible walls that define (all or some) sides of a convex BSP leaf.
 //
 struct subsector_t
 {
-    sector_t	*sector;
-	void		*__seclink;
-    int			__numlines;
-    int			__firstline;
-	polyobj_t	*__poly;
+	sector_t *sector;
+	void *__seclink;
+	int __numlines;
+	int __firstline;
+	polyobj_t *__poly;
 
-	void		*__parent;
-	int			__visframe;
-	void		*__regions;
+	void *__parent;
+	int __visframe;
+	void *__regions;
 };
 
 struct level_t
@@ -314,82 +315,82 @@ struct level_t
 	// Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 	//
 	// Lookup tables for map data.
-	int			__numvertexes;
-	void		*__vertexes;
+	int __numvertexes;
+	void *__vertexes;
 
-	int			__numsegs;
-	void		*__segs;
+	int __numsegs;
+	void *__segs;
 
-	int			numsectors;
-	sector_t	*sectors;
+	int numsectors;
+	sector_t *sectors;
 
-	int			__numsubsectors;
-	void		*__subsectors;
+	int __numsubsectors;
+	void *__subsectors;
 
-	int			__numnodes;
-	void		*__nodes;
+	int __numnodes;
+	void *__nodes;
 
-	int			numlines;
-	line_t		*lines;
+	int numlines;
+	line_t *lines;
 
-	int			numsides;
-	side_t		*sides;
+	int numsides;
+	side_t *sides;
 
-	int 		__numpolyobjs;
-	void		*__polyobjs; // list of all poly-objects on the level
+	int __numpolyobjs;
+	void *__polyobjs;	// list of all poly-objects on the level
 
 	// !!! Valid only during level loading
-	int			numthings;
-	mthing_t	*things;
-	int			*behavior;
+	int numthings;
+	mthing_t *things;
+	int *behavior;
 
-    //
-	//	BLOCKMAP
-	//	Created from axis aligned bounding box of the map, a rectangular
+	//
+	//  BLOCKMAP
+	//  Created from axis aligned bounding box of the map, a rectangular
 	// array of blocks of size ...
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
-	void		*__blockmaplump;	// offsets in blockmap are from here
-	void		*__blockmap;		// int for larger maps
-	int			bmapwidth;      // Blockmap size.
-	int			bmapheight;     // size in mapblocks
-	float		bmaporgx;       // origin of block map
-	float		bmaporgy;
+	void *__blockmaplump;	// offsets in blockmap are from here
+	void *__blockmap;	// int for larger maps
+	int bmapwidth;	// Blockmap size.
+	int bmapheight;	// size in mapblocks
+	float bmaporgx;	// origin of block map
+	float bmaporgy;
 #ifdef SERVER
-	mobj_t		**blocklinks;	// for thing chains
+	mobj_t **blocklinks;	// for thing chains
 #define BlockLink(num)	level->blocklinks[num]
 #else
-	void		**__blocklinks;	// for thing chains
+	void **__blocklinks;	// for thing chains
 #endif
-	void		*__PolyBlockMap;
+	void *__PolyBlockMap;
 
 	//
-	//	REJECT
-	//	For fast sight rejection.
-	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
-	// 	Without special effect, this could be used as a PVS lookup as well.
+	//  REJECT
+	//  For fast sight rejection.
+	//  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
+	//  Without special effect, this could be used as a PVS lookup as well.
 	//
-	void		*__rejectmatrix;
+	void *__rejectmatrix;
 
 	// Maintain single and multi player starting spots.
-	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
-	int			numdeathmatchstarts;
-	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
+	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
+	int numdeathmatchstarts;
+	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
 
-	float		time;
-	int			tictime;
+	float time;
+	int tictime;
 
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;    // for intermission
- 
-	int			__thinkers[3];// both the head and tail of the thinker list
+	int totalkills;
+	int totalitems;
+	int totalsecret;	// for intermission
 
-	int			mapname[3];
-	int			__nextmap[3];
-	int			__level_name[8];
+	int __thinkers[3];	// both the head and tail of the thinker list
 
-	void		*__vis_data;
+	int mapname[3];
+	int __nextmap[3];
+	int __level_name[8];
+
+	void *__vis_data;
 };
 
 //**************************************************************************
@@ -402,24 +403,24 @@ struct level_t
 
 struct player_t;
 
-typedef void (*mobj_func_t)(mobj_t *);
-typedef void (*spawnfunc_t)(mobj_t *, mthing_t*);
-typedef boolean (*thing_iter_func_t)(mobj_t *);
-typedef boolean (*line_iter_func_t)(line_t *);
+typedef void (*mobj_func_t) (mobj_t *);
+typedef void (*spawnfunc_t) (mobj_t *, mthing_t *);
+typedef boolean(*thing_iter_func_t) (mobj_t *);
+typedef boolean(*line_iter_func_t) (line_t *);
+
 // Weapon info: sprite frames, ammunition use.
-typedef void (*weapon_func_t)(player_t *);
+typedef void (*weapon_func_t) (player_t *);
 
 //==========================================================================
 //
-//	Thinkers
+//  Thinkers
 //
 //==========================================================================
 
 class thinker_t
-{
-	void		*__prev;
-    void		*__next;
-	boolean		destroyed;
+{ void *__prev;
+	void *__next;
+	boolean destroyed;
 
 	void Think(void);
 	void Archive(void);
@@ -440,41 +441,15 @@ void thinker_t::Unarchive(void)
 
 //==========================================================================
 //
-//	Level special
+//                              MAPOBJ DATA
 //
-//==========================================================================
-
-class special_t;
-
-typedef void (*special_func_t)(special_t *);
-
-class special_t : thinker_t
-{
-	special_func_t	function;
-
-	addfields 127;//HACK
-
-	void Think(void);
-	void Archive(void);
-	void Unarchive(void);
-};
-
-void special_t::Think(void)
-{
-	function(this);
-}
-
-//==========================================================================
+//  NOTES: mobj_t
 //
-//								MAPOBJ DATA
-//
-// 	NOTES: mobj_t
-//
-// 	mobj_ts are used to tell the refresh where to draw an image, tell the
+//  mobj_ts are used to tell the refresh where to draw an image, tell the
 // world simulation when objects are contacted, and tell the sound driver
 // how to position a sound.
 //
-// 	The refresh uses the snext and sprev links to follow lists of things in
+//  The refresh uses the snext and sprev links to follow lists of things in
 // sectors as they are being drawn. The sprite, frame, and angle elements
 // determine which patch_t is used to draw the sprite if it is visible.
 // The sprite and frame values are allmost allways set from state_t
@@ -483,21 +458,21 @@ void special_t::Think(void)
 // position for patch_ts grabbed with lumpy.exe. A walking creature will have
 // its z equal to the floor it is standing on.
 //
-// 	The sound code uses the x,y, and z fields to do stereo positioning of any
+//  The sound code uses the x,y, and z fields to do stereo positioning of any
 // sound effited by the mobj_t.
 //
-// 	The play simulation uses the blocklinks, x,y,z, radius, height to
+//  The play simulation uses the blocklinks, x,y,z, radius, height to
 // determine when mobj_ts are touching each other, touching lines in the map,
 // or hit by trace lines (gunshots, lines of sight, etc). The mobj_t->flags
 // element has various bit flags used by the simulation.
 //
-// 	Every mobj_t is linked into a single sector based on its origin
+//  Every mobj_t is linked into a single sector based on its origin
 // coordinates. The subsector_t is found with R_PointInSubsector(x,y), and
 // the sector_t can be found with subsector->sector. The sector links are
 // only used by the rendering code, the play simulation does not care about
 // them at all.
 //
-// 	Any mobj_t that needs to be acted upon by something else in the play
+//  Any mobj_t that needs to be acted upon by something else in the play
 // world (block movement, be shot, etc) will also need to be linked into the
 // blockmap. If the thing has the MF_NOBLOCK flag set, it will not use the
 // block links. It can still interact with other things, but only as the
@@ -506,7 +481,7 @@ void special_t::Think(void)
 // line_t that it contains a piece of, and every interactable mobj_t that has
 // its origin contained.
 //
-// 	A valid mobj_t is a mobj_t that has the proper subsector_t filled in for
+//  A valid mobj_t is a mobj_t that has the proper subsector_t filled in for
 // its xy coordinates and is linked into the sector from which the subsector
 // was made, or has the MF_NOSECTOR flag set (the subsector_t needs to be
 // valid even if MF_NOSECTOR is set), and is linked into a blockmap block or
@@ -514,101 +489,100 @@ void special_t::Think(void)
 // P_[Un]SetThingPosition() functions. Do not change the MF_NO? flags while
 // a thing is valid.
 //
-// 	Any questions?
+//  Any questions?
 //
 //==========================================================================
 
 struct state_t
 {
-	int			sprite;
-	int			frame;
-	int			model_index;
-	int			model_frame;
-	float		time;
-	int			statenum;
-	int			nextstate;
-	float		misc1;
-    float		misc2;
-	mobj_func_t	function;
+	int sprite;
+	int frame;
+	int model_index;
+	int model_frame;
+	float time;
+	int statenum;
+	int nextstate;
+	float misc1;
+	float misc2;
+	mobj_func_t function;
 };
 
 struct mobjinfo_t
 {
-	spawnfunc_t	spawnfunc;
-    int			doomednum;
+	spawnfunc_t spawnfunc;
+	int doomednum;
 };
 
 // Map Object definition.
-class mobj_t : thinker_t
+class mobj_t:thinker_t
 {
-    // Info for drawing: position.
-	TVec			origin;
+	// Info for drawing: position.==============================================s
+		TVec origin;
 
-    // Momentums, used to update position.
-	TVec			velocity;
+	// Momentums, used to update position.
+	TVec velocity;
 
-    //More drawing info: to determine current sprite.
-	TAVec			angles;	// orientation
-	int				spritetype;	//	How to draw sprite
-    int				sprite;	// used to find patch_t and flip value
-    int				frame;	// might be ORed with FF_FULLBRIGHT
+	//More drawing info: to determine current sprite.
+	TAVec angles;	// orientation
+	int spritetype;	//  How to draw sprite
+	int sprite;	// used to find patch_t and flip value
+	int frame;	// might be ORed with FF_FULLBRIGHT
 
-	int				model_index;
-	int				alias_frame;
-	int				alias_skinnum;
+	int model_index;
+	int alias_frame;
+	int alias_skinnum;
 
-    int				translucency;
-    int				translation;
+	int translucency;
+	int translation;
 
-	float			floorclip;		// value to use for floor clipping
+	float floorclip;	// value to use for floor clipping
 
-	int				effects;
+	int effects;
 
-    subsector_t*	subsector;
+	subsector_t *subsector;
 
-    // Interaction info, by BLOCKMAP.
-    // Links in blocks (if needed).
-    mobj_t*			bnext;
-    mobj_t*			bprev;
-    
-    // The closest interval over all contacted Sectors.
-	float			floorz;
-	float			ceilingz;
+	// Interaction info, by BLOCKMAP.
+	// Links in blocks (if needed).
+	mobj_t *bnext;
+	mobj_t *bprev;
 
-	//	Closest floor and ceiling, source of floorz and ceilingz
-	sec_plane_t		*floor;
-	sec_plane_t		*ceiling;
+	// The closest interval over all contacted Sectors.
+	float floorz;
+	float ceilingz;
 
-    // If == validcount, already checked.
-    int				validcount;
+	//  Closest floor and ceiling, source of floorz and ceilingz
+	sec_plane_t *floor;
+	sec_plane_t *ceiling;
 
-    int				type;
+	// If == validcount, already checked.
+	int validcount;
 
-	int				damage;			// For missiles
-    int				flags;
-	int				flags2;			// Heretic flags
-    int				health;
+	int type;
 
-    // For movement checking.
-	float			radius;
-	float			height;
+	int damage;	// For missiles
+	int flags;
+	int flags2;	// Heretic flags
+	int health;
 
-    // Thing being chased/attacked (or NULL),
-    // also the originator for missiles.
-    mobj_t*			target;
+	// For movement checking.
+	float radius;
+	float height;
 
-    // Additional info record for player avatars only.
-    // Only valid if type == MT_PLAYER
-    player_t		*player;
+	// Thing being chased/attacked (or NULL),
+	// also the originator for missiles.
+	mobj_t *target;
 
-	int				__archiveNum;		// Identity during archive
-	int				tid;			// thing identifier
-	int				special;		// special
-	int				args[5];		// special arguments
+	// Additional info record for player avatars only.
+	// Only valid if type == MT_PLAYER
+	player_t *player;
 
-	int				__netID;
+	int tid;	// thing identifier
+	int special;	// special
+	int args[5];	// special arguments
 
-	//	128 integers for user defined fields in PROGS
+	int __netID;
+
+	//  128 integers for user defined fields in PROGS
 	addfields 128;
 
 	void Think(void);
@@ -616,7 +590,7 @@ class mobj_t : thinker_t
 	void Unarchive(void);
 };
 
-void P_MobjThinker(mobj_t *mobj);
+void P_MobjThinker(mobj_t * mobj);
 
 void mobj_t::Think(void)
 {
@@ -625,29 +599,29 @@ void mobj_t::Think(void)
 
 addfields mobj_t
 {
-    float			time;	// state tic counter
-	int				statenum;
-	int				nextstate;
+	float time;	// state tic counter
+	int statenum;
+	int nextstate;
 };
 
 //==========================================================================
 //
-//	Player
+//  Player
 //
 //==========================================================================
 
 struct pspdef_t
 {
-	int			sprite;
-	int			frame;
-	int			model_index;
-	int			alias_frame;
-	int			alias_skinnum;
-	float		sx;
-	float		sy;
-	int			statenum;	// a 0 state means not active
-	int			nextstate;
-    float		time;
+	int sprite;
+	int frame;
+	int model_index;
+	int alias_frame;
+	int alias_skinnum;
+	float sx;
+	float sy;
+	int statenum;	// a 0 state means not active
+	int nextstate;
+	float time;
 };
 
 //
@@ -657,103 +631,103 @@ struct pspdef_t
 #define MAX_MSGLEN	8000
 struct player_t
 {
-	boolean			active;
-	boolean			spawned;
-	boolean			is_bot;
-	void			*__netcon;
-	int				__message[7];
-	int				__msgbuf[MAX_MSGLEN / 4];
-	int				__mobj_update_start;
-	float			__last_message;
+	boolean active;
+	boolean spawned;
+	boolean is_bot;
+	void *__netcon;
+	int __message[7];
+	int __msgbuf[MAX_MSGLEN / 4];
+	int __mobj_update_start;
+	float __last_message;
 
-	int				userinfo[MAX_INFO_STRING / 4];
+	int userinfo[MAX_INFO_STRING / 4];
 
-	int				name[MAXNAME / 4];
-	int				baseclass;
-	int				pclass;			// player class type
-	int				color;
+	int name[MAXNAME / 4];
+	int baseclass;
+	int pclass;	// player class type
+	int color;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
-	float			forwardmove;	// *2048 for move
-	float			sidemove;		// *2048 for move
-	float			flymove;		// fly up/down/centering
-	int				buttons;		// fire, use
-	int				impulse;		// weapon changes, inventory, etc
+	float forwardmove;	// *2048 for move
+	float sidemove;	// *2048 for move
+	float flymove;	// fly up/down/centering
+	int buttons;	// fire, use
+	int impulse;	// weapon changes, inventory, etc
 
-    mobj_t*			mo;
-    int				playerstate;
+	mobj_t *mo;
+	int playerstate;
 
-	//	Model of current weapon
-	int				weapon_model;
+	//  Model of current weapon
+	int weapon_model;
 
-    // Determine POV,
-    //  including viewpoint bobbing during movement.
-    // Focal origin above r.z
-	TVec			vieworg;
+	// Determine POV,
+	//  including viewpoint bobbing during movement.
+	// Focal origin above r.z
+	TVec vieworg;
 
-	boolean			fixangle;
+	boolean fixangle;
 
-    // This is only used between levels,
-    // mo->health is used during levels.
-    int				health;
+	// This is only used between levels,
+	// mo->health is used during levels.
+	int health;
 
-	int				items;
+	int items;
 
-    // Frags, kills of other players.
-    int				frags[MAXPLAYERS];
+	// Frags, kills of other players.
+	int frags[MAXPLAYERS];
 
-    // True if button down last tic.
-    int				attackdown;
-    int				usedown;
+	// True if button down last tic.
+	int attackdown;
+	int usedown;
 
-     // For intermission stats.
-    int				killcount;
-    int				itemcount;
-    int				secretcount;
+	// For intermission stats.
+	int killcount;
+	int itemcount;
+	int secretcount;
 
-    // So gun flashes light up areas.
-    int				extralight;
+	// So gun flashes light up areas.
+	int extralight;
 
 	// For lite-amp and invulnarability powers
-    int				fixedcolormap;
+	int fixedcolormap;
 
-    // Current PLAYPAL index
-    //  can be set to REDCOLORMAP for pain, etc.
-    int				palette;
+	// Current PLAYPAL index
+	//  can be set to REDCOLORMAP for pain, etc.
+	int palette;
 
-	//	color shifts for damage, powerups and content types
-	uint			cshifts[NUM_CSHIFTS];
+	//  color shifts for damage, powerups and content types
+	uint cshifts[NUM_CSHIFTS];
 
-    // Overlay view sprites (gun, etc).
-    pspdef_t		psprites[NUMPSPRITES];
-	float			pspriteSY;
+	// Overlay view sprites (gun, etc).
+	pspdef_t psprites[NUMPSPRITES];
+	float pspriteSY;
 
-    // True if secret level has been done.
-    boolean			didsecret;
+	// True if secret level has been done.
+	boolean didsecret;
 
-	int 			worldTimer;				// total time the player's been playing
+	int worldTimer;	// total time the player's been playing
 
-	int				old_stats[96];
+	int old_stats[96];
 
-	//	128 integers for user defined fields in PROGS
+	//  128 integers for user defined fields in PROGS
 	addfields 128;
 };
 
 //==========================================================================
 //
-//	Other stuff
+//  Other stuff
 //
 //==========================================================================
 
 struct opening_t
 {
-	float		top;
-	float		bottom;
-	float		range;
-	float		lowfloor;
-	sec_plane_t	*floor;
-	sec_plane_t	*ceiling;
-	opening_t	*next;
+	float top;
+	float bottom;
+	float range;
+	float lowfloor;
+	sec_plane_t *floor;
+	sec_plane_t *ceiling;
+	opening_t *next;
 };
 
 #define PT_ADDLINES		1
@@ -762,37 +736,38 @@ struct opening_t
 
 struct intercept_t
 {
-    float		frac;		// along trace line
-    boolean		isaline;
-	mobj_t		*thing;
-	line_t		*line;
+	float frac;	// along trace line
+	boolean isaline;
+	mobj_t *thing;
+	line_t *line;
 };
 
-typedef boolean (*trav_func_t)(intercept_t*);
+typedef boolean(*trav_func_t) (intercept_t *);
 
 //==========================================================================
 //
-//	ACS
+//  ACS
 //
 //==========================================================================
 
 #define MAX_ACS_SCRIPT_VARS	10
 #define ACS_STACK_DEPTH 	32
 
-class ACS : thinker_t
-{
-	mobj_t 		*activator;
-	line_t 		*line;
-	int 		side;
-	int 		number;
-	int 		infoIndex;
-	int 		delayCount;
-	int 		stack[ACS_STACK_DEPTH];
-	int			stackPtr;
-	int 		vars[MAX_ACS_SCRIPT_VARS];
-	int 		*ip;
+class ACS:thinker_t
+{ mobj_t *activator;
+	line_t *line;
+	int side;
+	int number;
+	int infoIndex;
+	int delayCount;
+	int stack[ACS_STACK_DEPTH];
+	int stackPtr;
+	int vars[MAX_ACS_SCRIPT_VARS];
+	int *ip;
 
 	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
 };
 
 #endif
@@ -807,229 +782,232 @@ class ACS : thinker_t
 
 struct sb_widget_t
 {
-	sb_widget_t			*next;
-    int					type;
-    int					x;
-    int					y;
-	int					pindex;
-    int					style;
-    boolean				*on;
-    int					pparam;
-    int					*data;
+	sb_widget_t *next;
+	int type;
+	int x;
+	int y;
+	int pindex;
+	int style;
+	boolean *on;
+	int pparam;
+	int *data;
 };
 
 struct model_t;
 
 struct cl_pspdef_t
 {
-	int			sprite;
-	int			frame;
-	model_t		*__alias_model;
-	int			alias_frame;
-	int			alias_skinnum;
-	float		sx;
-	float		sy;
+	int sprite;
+	int frame;
+	model_t *__alias_model;
+	int alias_frame;
+	int alias_skinnum;
+	float sx;
+	float sy;
 };
 
 struct client_state_t
 {
-	int				clientnum;
+	int clientnum;
 
-	int				pclass;			// player class type
+	int pclass;	// player class type
 
-    // Determine POV,
-    //  including viewpoint bobbing during movement.
-    // Focal origin above r.z
-	TVec			vieworg;
-	TAVec			viewangles;
-	boolean			centering;
+	// Determine POV,
+	//  including viewpoint bobbing during movement.
+	// Focal origin above r.z
+	TVec vieworg;
+	TAVec viewangles;
+	boolean centering;
 
-    // This is only used between levels,
-    // mo->health is used during levels.
-    int				health;
+	// This is only used between levels,
+	// mo->health is used during levels.
+	int health;
 
-	int				items;
+	int items;
 
-    // Frags, kills of other players.
-    int				frags[MAXPLAYERS];
+	// Frags, kills of other players.
+	int frags[MAXPLAYERS];
 
-    // So gun flashes light up areas.
-    int				extralight;
+	// So gun flashes light up areas.
+	int extralight;
 
 	// For lite-amp and invulnarability powers
-    int				fixedcolormap;
+	int fixedcolormap;
 
-    // Current PLAYPAL index
-    //  can be set to REDCOLORMAP for pain, etc.
-    int				palette;
+	// Current PLAYPAL index
+	//  can be set to REDCOLORMAP for pain, etc.
+	int palette;
 
-	uint			cshifts[NUM_CSHIFTS];		//	color shifts for damage,
-	uint			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
+	uint cshifts[NUM_CSHIFTS];	//  color shifts for damage,
+	uint prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
-    // Overlay view sprites (gun, etc).
-	cl_pspdef_t		psprites[NUMPSPRITES];
-	float			pspriteSY;
+	// Overlay view sprites (gun, etc).
+	cl_pspdef_t psprites[NUMPSPRITES];
+	float pspriteSY;
 
-    // True if secret level has been done.
-    boolean			didsecret;
+	// True if secret level has been done.
+	boolean didsecret;
 
-	int 			worldTimer;				// total time the player's been playing
+	int worldTimer;	// total time the player's been playing
 
-	boolean			paused;
+	boolean paused;
 
-    // Overlay view sprites (gun, etc).
-	int				translucency;
+	// Overlay view sprites (gun, etc).
+	int translucency;
 
-	int				maxclients;
-	int				deathmatch;
+	int maxclients;
+	int deathmatch;
 
-	float			time;
+	float time;
 
-	int				serverinfo[MAX_INFO_STRING / 4];
+	int serverinfo[MAX_INFO_STRING / 4];
 
-	int				intermission;
+	int intermission;
 
-	//	128 integers for user defined fields in PROGS
+	//  128 integers for user defined fields in PROGS
 	addfields 128;
 };
 
 //
-//	Input Text Line widget
+//  Input Text Line widget
 //
 
 #define MAX_ILINE_LENGTH	79
 
 struct TILine
 {
-    int			Data[(MAX_ILINE_LENGTH + 1) / 4];	// line of text
-    int			len;		      		// current line length
-    int			lm; // left margin past which I am not to delete characters
+	int Data[(MAX_ILINE_LENGTH + 1) / 4];	// line of text
+	int len;	// current line length
+	int lm;	// left margin past which I am not to delete characters
 };
 
 //
-//	Server list
+//  Server list
 //
 
 #define HOSTCACHESIZE		8
 
 struct hostcache_t
 {
-	int			name[16 / 4];
-	int			map[16 / 4];
-	int			cname[32 / 4];
-	int			wadfiles[20][16 / 4];
-	int			users;
-	int			maxusers;
+	int name[16 / 4];
+	int map[16 / 4];
+	int cname[32 / 4];
+	int wadfiles[20][16 / 4];
+	int users;
+	int maxusers;
 };
 
 struct slist_t
 {
-	boolean		inProgress;
-	int			count;
-	hostcache_t	cache[HOSTCACHESIZE];
-	int			return_reason[32 / 4];
+	boolean inProgress;
+	int count;
+	hostcache_t cache[HOSTCACHESIZE];
+	int return_reason[32 / 4];
 };
 
-typedef void (*mb_func_t)(int key);
+typedef void (*mb_func_t) (int key);
 
 struct scores_t
 {
-	int			name[64 / 4];
-	boolean		active;
-	int			frags[MAXPLAYERS];
-	int			killcount;
-	int			itemcount;
-	int			secretcount;
-	float		time;
-	int			userinfo[MAX_INFO_STRING / 4];
+	int name[64 / 4];
+	boolean active;
+	int frags[MAXPLAYERS];
+	int killcount;
+	int itemcount;
+	int secretcount;
+	float time;
+	int userinfo[MAX_INFO_STRING / 4];
 };
 
 struct im_t
 {
-	int			leavemap[12 / 4];
-	int			leavecluster;
-	int			entermap[12 / 4];
-	int			entercluster;
-	int			leave_name[32 / 4];
-	int			enter_name[32 / 4];
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;
-	float		time;
+	int leavemap[12 / 4];
+	int leavecluster;
+	int entermap[12 / 4];
+	int entercluster;
+	int leave_name[32 / 4];
+	int enter_name[32 / 4];
+	int totalkills;
+	int totalitems;
+	int totalsecret;
+	float time;
 };
 
 struct picinfo_t
 {
-	int		width;
-	int		height;
-	int		xoffset;
-	int		yoffset;
+	int width;
+	int height;
+	int xoffset;
+	int yoffset;
 };
 
 struct dlight_t
 {
-	TVec	origin;
-	float	radius;
-	float	die;				// stop lighting after this time
-	float	decay;				// drop this each second
-	float	minlight;			// don't add when contributing less
-	int		key;
-	int		color;
+	TVec origin;
+	float radius;
+	float die;	// stop lighting after this time
+	float decay;	// drop this each second
+	float minlight;	// don't add when contributing less
+	int key;
+	int color;
 };
 
 struct particle_t
 {
-	TVec		org;
-	int			color;
-	particle_t	*next;
-	TVec		vel;
-	float		die;
+	TVec org;
+	int color;
+	particle_t *next;
+	TVec vel;
+	float die;
 	addfields 7;
 };
 
 struct clmobj_t
 {
-	boolean		in_use;
+	boolean in_use;
 
-	TVec		origin;	// position
-	TAVec		angles;	// orientation
+	TVec origin;	// position
+	TAVec angles;	// orientation
 
-	int			spritetype;	//	How to draw sprite
-    int			sprite;	// used to find patch_t and flip value
-    int			frame;	// might be ORed with FF_FULLBRIGHT
+	int spritetype;	//  How to draw sprite
+	int sprite;	// used to find patch_t and flip value
+	int frame;	// might be ORed with FF_FULLBRIGHT
 
-	int			model_index;
-	model_t		*__alias_model;
-	int			alias_frame;
-	int			skin[64 / 4];
+	int model_index;
+	model_t *__alias_model;
+	int alias_frame;
+	int skin[64 / 4];
 
-    int			translucency;
-    int			translation;
+	int translucency;
+	int translation;
 
-	int			effects;
+	int effects;
 };
 
 #endif
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.7  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.8  2001/09/24 17:11:23  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.6  2001/08/29 17:42:12  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.5  2001/08/15 17:07:10  dj_jl
-//	Fixed finale
+//  Revision 1.7  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.6  2001/08/29 17:42:12  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.5  2001/08/15 17:07:10  dj_jl
+//  Fixed finale
 //
-//	Revision 1.4  2001/08/07 16:42:25  dj_jl
-//	Added player models, skins and weapon
+//  Revision 1.4  2001/08/07 16:42:25  dj_jl
+//  Added player models, skins and weapon
 //
-//	Revision 1.3  2001/08/04 17:20:28  dj_jl
-//	Changes to inform new clients about changed textures
+//  Revision 1.3  2001/08/04 17:20:28  dj_jl
+//  Changes to inform new clients about changed textures
 //
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

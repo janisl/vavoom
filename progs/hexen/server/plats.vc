@@ -1,34 +1,40 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
 
+// MACROS ------------------------------------------------------------------
+
+#define NextPlat(plat)	(TPlat *)NextThinker(plat, TPlat)
+
+// CONSTANTS ---------------------------------------------------------------
+
 enum
 {
 	PLAT_UP,
 	PLAT_DOWN,
 	PLAT_WAITING
-//	PLAT_IN_STASIS
+//  PLAT_IN_STASIS
 };
 
 enum
@@ -40,122 +46,147 @@ enum
 	PLAT_UPBYVALUEWAITDOWNSTAY
 };
 
-special_t	activeplats;
+// TYPES -------------------------------------------------------------------
 
-//==================================================================
-//
-//  P_AddActivePlat
-//
-//==================================================================
-
-void P_AddActivePlat(special_t *plat)
+class TPlat:Thinker
 {
-	plat->prev = activeceilings.prev;
-    plat->next = &activeceilings;
-	plat->prev->next = plat;
-    plat->next->prev = plat;
-}
+	sector_t *sector;
+	float speed;
+	float low;
+	float high;
+	int type;
+	int tag;	// ID
+	int crush;
+	int status;
+	float time;
+	float wait;
 
-//==================================================================
-//
-//  P_RemoveActivePlat
-//
-//==================================================================
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
 
-void P_RemoveActivePlat(special_t *plat)
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	TPlat::Think
+//
+//  Move a plat up and down
+//
+//==========================================================================
+
+void TPlat::Think(void)
 {
-	plat->prev->next = plat->next;
-    plat->next->prev = plat->prev;
-	plat->sector->specialdata = NULL;
-	TagFinished(plat->sector->tag);
-	RemoveSpecialThinker(plat);
-}
+	int res;
 
-//==================================================================
-//
-//  T_PlatRaise
-//
-//	Move a plat up and down
-//
-//==================================================================
-
-void T_PlatRaise(special_t *plat)
-{
-	int		res;
-
-	switch (plat->status)
+	switch (status)
 	{
-		case PLAT_UP:
-			res = T_MovePlane(plat->sector, plat->speed,
-					plat->high, plat->crush, 0, 1);
-			if (res == RES_CRUSHED && (!plat->crush))
+	case PLAT_UP:
+		res = T_MovePlane(sector, speed * frametime, high, crush, 0, 1);
+		if (res == RES_CRUSHED && (!crush))
+		{
+			time = wait;
+			status = PLAT_DOWN;
+			SectorStartSequence(sector,
+				seq_name[SEQ_PLATFORM + sector->seqType]);
+		}
+		else if (res == RES_PASTDEST)
+		{
+			time = wait;
+			status = PLAT_WAITING;
+			SectorStopSequence(sector);
+			switch (type)
 			{
-				plat->count = plat->wait;
-				plat->status = PLAT_DOWN;
-				SectorStartSequence(plat->sector,
-					seq_name[SEQ_PLATFORM + plat->sector->seqType]);
+			case PLAT_DOWNWAITUPSTAY:
+			case PLAT_DOWNBYVALUEWAITUPSTAY:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
+			default:
+				break;
 			}
-			else if (res == RES_PASTDEST)
+		}
+		break;
+	case PLAT_DOWN:
+		res = T_MovePlane(sector, speed * frametime, low, false, 0, -1);
+		if (res == RES_PASTDEST)
+		{
+			time = wait;
+			status = PLAT_WAITING;
+			SectorStopSequence(sector);
+			switch (type)
 			{
-				plat->count = plat->wait;
-				plat->status = PLAT_WAITING;
-				SectorStopSequence(plat->sector);
-				switch (plat->type)
-				{
-					case PLAT_DOWNWAITUPSTAY:
-					case PLAT_DOWNBYVALUEWAITUPSTAY:
-						P_RemoveActivePlat(plat);
-						break;
-					default:
-						break;
-				}
+			case PLAT_UPWAITDOWNSTAY:
+			case PLAT_UPBYVALUEWAITDOWNSTAY:
+				sector->specialdata = NULL;
+				TagFinished(sector->tag);
+				RemoveSpecialThinker(this);
+				break;
+			default:
+				break;
 			}
-			break;
-		case PLAT_DOWN:
-			res = T_MovePlane(plat->sector, plat->speed, plat->low, false, 0, -1);
-			if (res == RES_PASTDEST)
-			{
-				plat->count = plat->wait;
-				plat->status = PLAT_WAITING;
-				switch (plat->type)
-				{
-					case PLAT_UPWAITDOWNSTAY:
-					case PLAT_UPBYVALUEWAITDOWNSTAY:
-						P_RemoveActivePlat(plat);
-						break;
-					default:
-						break;
-				}
-				SectorStopSequence(plat->sector);
-			}
-			break;
-		case PLAT_WAITING:
-			if (!--plat->count)
-			{
-				if (plat->sector->floorheight == plat->low)
-					plat->status = PLAT_UP;
-				else
-					plat->status = PLAT_DOWN;
-				SectorStartSequence(plat->sector,
-					seq_name[SEQ_PLATFORM + plat->sector->seqType]);
-			}
+		}
+		break;
+	case PLAT_WAITING:
+		time -= frametime;
+		if (time <= 0.0)
+		{
+			if (sector->floorheight == low)
+				status = PLAT_UP;
+			else
+				status = PLAT_DOWN;
+			SectorStartSequence(sector,
+				seq_name[SEQ_PLATFORM + sector->seqType]);
+		}
 	}
 }
 
-//==================================================================
+//==========================================================================
+//
+//  TPlat::Archive
+//
+//==========================================================================
+
+void TPlat::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TPlat::Unarchive
+//
+//==========================================================================
+
+void TPlat::Unarchive(void)
+{
+	//  Restore sector pointer
+	sector = NumToSector(sector);
+
+	//  Set sector's specialdata
+	sector->specialdata = this;
+}
+
+//==========================================================================
 //
 //  EV_DoPlat
 //
-//	Do Platforms.
+//  Do Platforms.
 //
-//==================================================================
+//==========================================================================
 
-int EV_DoPlat(line_t *line, int *args, int type)
+int EV_DoPlat(line_t * line, int *args, int type)
 {
-	special_t	*plat;
-	int			secnum;
-	int			rtn;
-	sector_t	*sec;
+	TPlat *plat;
+	int secnum;
+	int rtn;
+	sector_t *sec;
 
 	secnum = -1;
 	rtn = 0;
@@ -170,81 +201,81 @@ int EV_DoPlat(line_t *line, int *args, int type)
 		// Find lowest & highest floors around sector
 		//
 		rtn = 1;
-		plat = NewSpecialThinker(special_t);
-		plat->function = T_PlatRaise;
+		plat = NewSpecialThinker(TPlat);
 
 		plat->type = type;
 		plat->sector = sec;
 		plat->sector->specialdata = plat;
 		plat->crush = false;
 		plat->tag = args[0];
-		plat->speed = itof(args[1]) / 8.0;
+		plat->speed = itof(args[1]) * 4.0;
 		switch (type)
 		{
-			case PLAT_DOWNWAITUPSTAY:
-				plat->low = FindLowestFloorSurrounding(sec) + 8.0;
-				if (plat->low > sec->floorheight)
-					plat->low = sec->floorheight;
-				plat->high = sec->floorheight;
-				plat->wait = args[2];
-				plat->status = PLAT_DOWN;
-				break;
-			case PLAT_DOWNBYVALUEWAITUPSTAY:
-				plat->low = sec->floorheight - itof(args[3]) * 8.0;
-				if (plat->low > sec->floorheight)
-					plat->low = sec->floorheight;
-				plat->high = sec->floorheight;
-				plat->wait = args[2];
-				plat->status = PLAT_DOWN;
-				break;
-			case PLAT_UPWAITDOWNSTAY:
-				plat->high = FindHighestFloorSurrounding(sec);
-				if (plat->high < sec->floorheight)
-					plat->high = sec->floorheight;
+		case PLAT_DOWNWAITUPSTAY:
+			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (plat->low > sec->floorheight)
 				plat->low = sec->floorheight;
-				plat->wait = args[2];
-				plat->status = PLAT_UP;
-				break;
-			case PLAT_UPBYVALUEWAITDOWNSTAY:
-				plat->high = sec->floorheight + itof(args[3]) * 8.0;
-				if (plat->high < sec->floorheight)
-					plat->high = sec->floorheight;
+			plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_DOWN;
+			break;
+		case PLAT_DOWNBYVALUEWAITUPSTAY:
+			plat->low = sec->floorheight - itof(args[3]) * 8.0;
+			if (plat->low > sec->floorheight)
 				plat->low = sec->floorheight;
-				plat->wait = args[2];
-				plat->status = PLAT_UP;
-				break;
-			case PLAT_PERPETUALRAISE:
-				plat->low = FindLowestFloorSurrounding(sec) + 8.0;
-				if (plat->low > sec->floorheight)
-					plat->low = sec->floorheight;
-				plat->high = FindHighestFloorSurrounding(sec);
-				if (plat->high < sec->floorheight)
-					plat->high = sec->floorheight;
-				plat->wait = args[2];
-				plat->status = P_Random()&1;
-				break;
+			plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_DOWN;
+			break;
+		case PLAT_UPWAITDOWNSTAY:
+			plat->high = FindHighestFloorSurrounding(sec);
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->low = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_UP;
+			break;
+		case PLAT_UPBYVALUEWAITDOWNSTAY:
+			plat->high = sec->floorheight + itof(args[3]) * 8.0;
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->low = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = PLAT_UP;
+			break;
+		case PLAT_PERPETUALRAISE:
+			plat->low = FindLowestFloorSurrounding(sec) + 8.0;
+			if (plat->low > sec->floorheight)
+				plat->low = sec->floorheight;
+			plat->high = FindHighestFloorSurrounding(sec);
+			if (plat->high < sec->floorheight)
+				plat->high = sec->floorheight;
+			plat->wait = itof(args[2]) / 35.0;
+			plat->status = P_Random() & 1;
+			break;
 		}
-		P_AddActivePlat(plat);
 		SectorStartSequence(sec, seq_name[SEQ_PLATFORM + sec->seqType]);
 	}
 	return rtn;
 }
 
-//==================================================================
+//==========================================================================
 //
 //  EV_StopPlat
 //
-//==================================================================
+//==========================================================================
 
-void EV_StopPlat(line_t *line, int *args)
+void EV_StopPlat(line_t * line, int *args)
 {
-	special_t*	plat;
+	TPlat *plat;
 
-    for (plat = activeplats.next; plat != &activeplats; plat = plat->next)
-    {
+	for (plat = NextPlat(NULL); plat; plat = NextPlat(plat))
+	{
 		if (plat->tag = args[0])
 		{
-			P_RemoveActivePlat(plat);
+			plat->sector->specialdata = NULL;
+			TagFinished(plat->sector->tag);
+			RemoveSpecialThinker(plat);
 			return;
 		}
 	}
@@ -252,11 +283,14 @@ void EV_StopPlat(line_t *line, int *args)
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.3  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.4  2001/09/24 17:18:15  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

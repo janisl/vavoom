@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -49,14 +49,14 @@
 #define VIEWHEIGHT 		48.0
 
 // player radius for movement checking
-//#define PLAYERRADIUS 	16*FRACUNIT
+//#define PLAYERRADIUS  16*FRACUNIT
 
 // MAXRADIUS is for precalculated sector block boxes
 // the spider demon is larger, but we don't have any moving sectors
 // nearby
 #define MAXRADIUS 		32.0
 
-#define BASETHRESHOLD	100 // follow a player exlusively for 3 seconds
+#define BASETHRESHOLD	100	// follow a player exlusively for 3 seconds
 
 #define ONFLOORZ		-99999.0
 #define ONCEILINGZ		99999.0
@@ -74,23 +74,23 @@
 //
 // Map things flags
 //
-#define	MTF_EASY		0x0001  // Skill flags.
+#define	MTF_EASY		0x0001	// Skill flags.
 #define	MTF_NORMAL		0x0002
 #define	MTF_HARD		0x0004
-#define	MTF_AMBUSH		0x0008  // Deaf monsters/do not react to sound.
-#define MTF_DORMANT		0x0010  // The thing is dormant
-#define MTF_FIGHTER		0x0020  // Thing appearing in player classes
+#define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
+#define MTF_DORMANT		0x0010	// The thing is dormant
+#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
 #define MTF_CLERIC		0x0040
 #define MTF_MAGE		0x0080
-#define MTF_GSINGLE		0x0100  // Appearing in game modes
+#define MTF_GSINGLE		0x0100	// Appearing in game modes
 #define MTF_GCOOP		0x0200
 #define MTF_GDEATHMATCH	0x0400
 
 //
 // Player internal flags, for cheats and debug.
 //
-#define CF_NOCLIP		1   // No clipping, walk through barriers.
-#define CF_GODMODE		2   // No damage, no health loss.
+#define CF_NOCLIP		1	// No clipping, walk through barriers.
+#define CF_GODMODE		2	// No damage, no health loss.
 
 #define MELEERANGE		64.0
 #define MISSILERANGE	(32.0 * 64.0)
@@ -149,11 +149,10 @@ enum
 
 	NUMWEAPONS,
 
-    // No pending weapon change.
-    wp_nochange = -1
-
+	// No pending weapon change.
+	wp_nochange = -1
 };
-	
+
 enum
 {
 	MANA_1,
@@ -249,9 +248,9 @@ enum
 enum
 {
 	SEQ_PLATFORM,
-	SEQ_PLATFORM_HEAVY,		// same script as a normal platform
+	SEQ_PLATFORM_HEAVY,	// same script as a normal platform
 	SEQ_PLATFORM_METAL,
-	SEQ_PLATFORM_CREAK,		// same script as a normal platform
+	SEQ_PLATFORM_CREAK,	// same script as a normal platform
 	SEQ_PLATFORM_SILENCE,
 	SEQ_PLATFORM_LAVA,
 	SEQ_PLATFORM_WATER,
@@ -276,170 +275,165 @@ enum
 
 struct inventory_t
 {
-	int		type;
-	int 	count;
+	int type;
+	int count;
 };
 
 #ifdef SERVER
 
 addfields mobj_t
 {
-	//	States
-    int			spawnstate;
-    int			seestate;
-    int			painstate;
-    int			meleestate;
-    int			missilestate;
-	int			crashstate;
-    int			deathstate;
-    int			xdeathstate;
-    int			raisestate;
+	//  Statesript as a normal platformill floorclip spritesing sectors********** PlayerClass[consoleplayer] + consoleplayer, SB_STYLE_NORMAL, &sb_baron, 0, NULL);È
 
-	//	Sounds
-	int			sound_sight;
-	int			sound_active;
-	int			sound_attack;
-	int			sound_pain;
-	int			sound_death;
+		int spawnstate;
+	int seestate;
+	int painstate;
+	int meleestate;
+	int missilestate;
+	int crashstate;
+	int deathstate;
+	int xdeathstate;
+	int raisestate;
 
-	//	Params
-	float		mass;
-	float		speed;
-	int			painchance;
-	int			spawnhealth;
-	int			gibshealth;
+	//  Sounds
+	int sound_sight;
+	int sound_active;
+	int sound_attack;
+	int sound_pain;
+	int sound_death;
 
-	int			special1;		// Special info
-	int			special2;		// Special info
-	float		special1f;
-	float		special2f;
-	mobj_t		*specialmobj1;
-    mobj_t		*specialmobj2;
+	//  Params
+	float mass;
+	float speed;
+	int painchance;
+	int spawnhealth;
+	int gibshealth;
 
-	boolean		blaster;
+	int special1;	// Special info
+	int special2;	// Special info
+	float special1f;
+	float special2f;
+	mobj_t *specialmobj1;
+	mobj_t *specialmobj2;
 
-    // Player number last looked for.
-    int			lastlook;
+	boolean blaster;
 
-    // Reaction time: if non 0, don't attack yet.
-    // Used by player to freeze a bit after teleporting.
-    int			reactiontime;
+	// Player number last looked for.
+	int lastlook;
 
-    // If >0, the target will be chased
-    // no matter what (even if shot)
-    int			threshold;
+	// Reaction time: if non 0, don't attack yet.
+	// Used by player to freeze a bit after teleporting.
+	int reactiontime;
 
-    // Movement direction, movement generation (zig-zagging).
-    int			movedir;	// 0-7
-    int			movecount;	// when 0, select a new dir
+	// If >0, the target will be chased
+	// no matter what (even if shot)
+	int threshold;
 
-	//	Water
-	int			waterlevel;
-	int			watertype;
+	// Movement direction, movement generation (zig-zagging).
+	int movedir;	// 0-7
+	int movecount;	// when 0, select a new dir
+
+	//  Water
+	int waterlevel;
+	int watertype;
 };
 
 addfields player_t
 {
-	//
-	//	FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
-	//
+////  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR//////  Long stats//ss[consoleplayer] + consoleplayer, SB_STYLE_NORMAL, &sb_baron, 0, NULL);È
+
+		float armorpoints[NUMARMOR];
 
 	//
-	//	Long stats
+	//  Short stats
 	//
 
-	float			armorpoints[NUMARMOR];
+	// Power ups. invinc and invis are tic counters.
+	int powers[NUMPOWERS];
 
-    //
-    //	Short stats
-    //
+	int inventoryTics;
 
-    // Power ups. invinc and invis are tic counters.
-    int				powers[NUMPOWERS];
+	//
+	//  Byte stats
+	//
 
-	int 			inventoryTics;
+	int ArtifactFlash;
+	int readyArtifact;
+	int inv_ptr;
+	int curpos;
+	int inventorySlotNum;
+	inventory_t inventory[NUMARTIFACTS];
 
-    //
-    //	Byte stats
-    //
+	int mana[NUMMANA];
 
-	int				ArtifactFlash;
-	int				readyArtifact;
-	int				inv_ptr;
-	int				curpos;
-	int 			inventorySlotNum;
-	inventory_t		inventory[NUMARTIFACTS];
+	int pieces;	// Fourth Weapon pieces
 
-	int				mana[NUMMANA];
+	int keys;
 
-	int				pieces;					// Fourth Weapon pieces
+	int readyweapon;
 
-	int				keys;
+	//
+	//  ----------
+	//
 
-    int				readyweapon;
-    
-    //
-    //	----------
-    //
+	int arti;	// artitype_t to use
 
-	int				arti;				// artitype_t to use
+	// Base height above floor for viewz.
+	float viewheight;
+	// Bob/squat speed.
+	float deltaviewheight;
+	// bounded/scaled total momentum.
+	float bob;
 
-    // Base height above floor for viewz.
-	float			viewheight;
-    // Bob/squat speed.
-	float			deltaviewheight;
-    // bounded/scaled total momentum.
-	float			bob;
+	int flyheight;
 
-	int				flyheight;
+	int artifactCount;
 
-	int				artifactCount;
+	// Bit flags, for cheats and debug.
+	// See cheat_t, above.
+	int cheats;
 
-    // Bit flags, for cheats and debug.
-    // See cheat_t, above.
-    int				cheats;
+	// Refired shots are less accurate.
+	int refire;
 
-    // Refired shots are less accurate.
-    int				refire;
+	// Is wp_nochange if not changing.
+	int pendingweapon;
 
-    // Is wp_nochange if not changing.
-    int				pendingweapon;
+	int w_mana;
+	int w_upstate;
+	int w_downstate;
+	int w_readystate;
+	int w_atkstate;
+	int w_holdatkstate;
+	int w_flashstate;
 
-	int				w_mana;
-	int				w_upstate;
-	int 			w_downstate;
-	int 			w_readystate;
-	int 			w_atkstate;
-	int 			w_holdatkstate;
-	int 			w_flashstate;
+	boolean weaponowned[NUMWEAPONS];
 
-    boolean			weaponowned[NUMWEAPONS];
+	// Who did damage (NULL for floors/ceilings).
+	mobj_t *attacker;
 
-    // Who did damage (NULL for floors/ceilings).
-    mobj_t*			attacker;
+	// For screen flashing (red or bright).
+	int damagecount;
+	int bonuscount;
 
-    // For screen flashing (red or bright).
-    int				damagecount;
-    int				bonuscount;
+	int poisoncount;	// screen flash for poison damage
+	mobj_t *poisoner;	// NULL for non-player mobjs
 
-	int				poisoncount;			// screen flash for poison damage
-	mobj_t			*poisoner;				// NULL for non-player mobjs
+	int jumpTics;
+	int localQuakeHappening;
 
-    int				jumpTics;
-	int             localQuakeHappening;
+	int newtorch;	// used in the torch flicker effect.
+	int newtorchdelta;
 
-	int 			newtorch; // used in the torch flicker effect.
-	int 			newtorchdelta;
+	int weapon_palette;
+	int morphTics;	// player is a pig if > 0
 
-    int				weapon_palette;
-	int				morphTics;				// player is a pig if > 0
-
-	TVec			movedir;
+	TVec movedir;
 };
 
-int		long_stats = NUMARMOR;
-int		short_stats = NUMPOWERS + 1;
-int		byte_stats = NUMMANA + NUMARTIFACTS * 2 + 8;
+int long_stats = NUMARMOR;
+int short_stats = NUMPOWERS + 1;
+int byte_stats = NUMMANA + NUMARTIFACTS * 2 + 8;
 
 #endif
 
@@ -447,132 +441,44 @@ int		byte_stats = NUMMANA + NUMARTIFACTS * 2 + 8;
 
 addfields client_state_t
 {
-	//
-	//	STATS FOR STATUS BAR
-	//
+////  STATS FOR STATUS BAR//////  Long stats//s.IENT FOR STATUS BAR//////  Long stats//ss[consoleplayer] + consoleplayer, SB_STYLE_NORMAL, &sb_baron, 0, NULL);È
+
+		float armorpoints[NUMARMOR];
 
 	//
-	//	Long stats
+	//  Short stats
 	//
 
-	float			armorpoints[NUMARMOR];
+	// Power ups. invinc and invis are tic counters.
+	int powers[NUMPOWERS];
 
-    //
-    //	Short stats
-    //
+	int inventoryTics;
 
-    // Power ups. invinc and invis are tic counters.
-    int				powers[NUMPOWERS];
+	//
+	//  Byte stats
+	//
 
-	int 			inventoryTics;
+	int ArtifactFlash;
+	int readyArtifact;
+	int inv_ptr;
+	int curpos;
+	int inventorySlotNum;
+	inventory_t inventory[NUMARTIFACTS];
 
-    //
-    //	Byte stats
-    //
+	int mana[NUMMANA];
 
-	int				ArtifactFlash;
-	int				readyArtifact;
-	int				inv_ptr;
-	int				curpos;
-	int 			inventorySlotNum;
-	inventory_t		inventory[NUMARTIFACTS];
+	int pieces;	// Fourth Weapon pieces
 
-	int				mana[NUMMANA];
+	int keys;
 
-	int				pieces;					// Fourth Weapon pieces
-
-	int				keys;
-
-    int				readyweapon;
-};
-
-#endif
-
-#ifdef SERVER
-
-addfields special_t
-{
-	sector_t	*sector;
-	int			type;//Light
-	int 		value1;
-	int			value2;
-	int			tics1;
-	int			tics2;
-	int 		count;
-	int 		index;//Phase
-	int 		base;
-	int			delta;
-	//Door
-	float		topheight;
-	float		speed;
-	int 		direction; // 1 = up, 0 = waiting at top, -1 = down
-	int 		topwait; // tics to wait at the top (keep in case a door going down is reset)
-	int 		topcountdown; // when it reaches 0, start going down
-	//Ceiling
-	special_t*	prev;
-    special_t*	next;
-	float		bottomheight;
-	int 		crush;
-	int 		tag; // ID
-	int 		olddirection;
-	//Plats
-	float		low;
-	float		high;
-	int 		wait;
-	int			status;
-	int			oldstatus;
-	//Floor
-	int 		newspecial;
-	int			texture;
-	float		floordestheight;
-	int			delayCount;
-	int 		delayTotal;
-	float		stairsDelayHeight;
-	float		stairsDelayHeightDelta;
-	float		resetHeight;
-	int 		resetDelay;
-	int 		resetDelayCount;
-	int 		textureChange;
-	//Pillar
-	float		ceilingSpeed;
-	float		floorSpeed;
-	float		floordest;
-	float		ceilingdest;
-	//Floor waggle
-	float		originalHeight;
-	float		accumulator;
-	float		accDelta;
-	float		targetScale;
-	float		scale;
-	float		scaleDelta;
-	int 		ticker;
-	int 		state;
-	//Poly event
-	int 		polyobj;
-	float		dist;
-	int			rot_dist;
-	angle_t		rot_speed;
-	angle_t		angle;
-	float		xSpeed; // for sliding walls
-	float		ySpeed;
-	float		thrust_force;
-	//Poly door
-	float		totalDist;
-	int 		rot_totalDist;
-	int 		tics;
-	int 		waitTics;
-	boolean 	close;
-    //Scrollers
-	float		dx;
-	float		dy;
+	int readyweapon;
 };
 
 #endif
 
 // Hexen only
 
-float	FloatBobOffsets[64] =
-{
+float FloatBobOffsets[64] = {
 	0.0, 0.7841339111, 1.560714722, 2.322265625,
 	3.061462402, 3.77116394, 4.444549561, 5.075134277,
 	5.656845093, 6.184082031, 6.651748657, 7.055358887,
@@ -656,26 +562,25 @@ float	FloatBobOffsets[64] =
 #define MF2_TELESTOMP		0x00040000	// mobj can stomp another
 #define MF2_FLOATBOB		0x00080000	// use float bobbing z movement
 
-#define MF2_IMPACT			0x00200000 	// an MF_MISSILE mobj can activate
-								 		// SPAC_IMPACT
-#define MF2_PUSHWALL		0x00400000 	// mobj can push walls
+#define MF2_IMPACT			0x00200000	// an MF_MISSILE mobj can activate
+										// SPAC_IMPACT
+#define MF2_PUSHWALL		0x00400000	// mobj can push walls
 #define MF2_MCROSS			0x00800000	// can activate monster cross lines
 #define MF2_PCROSS			0x01000000	// can activate projectile cross lines
-#define MF2_CANTLEAVEFLOORPIC 0x02000000 // stay within a certain floor type
-#define MF2_NONSHOOTABLE	0x04000000	// mobj is totally non-shootable, 
+#define MF2_CANTLEAVEFLOORPIC 0x02000000	// stay within a certain floor type
+#define MF2_NONSHOOTABLE	0x04000000	// mobj is totally non-shootable,
 										// but still considered solid
 #define MF2_INVULNERABLE	0x08000000	// mobj is invulnerable
 #define MF2_DORMANT			0x10000000	// thing is dormant
-#define MF2_ICEDAMAGE		0x20000000  // does ice damage
+#define MF2_ICEDAMAGE		0x20000000	// does ice damage
 #define MF2_SEEKERMISSILE	0x40000000	// is a seeker (for reflection)
 #define MF2_REFLECTIVE		0x80000000	// reflects missiles
 
-string seq_name[] =
-{
+string seq_name[] = {
 	"Platform",
-	"Platform",   	// a 'heavy' platform is just a platform
+	"Platform",	// a 'heavy' platform is just a platform
 	"PlatformMetal",
-	"Platform",		// same with a 'creak' platform
+	"Platform",	// same with a 'creak' platform
 	"Silence",
 	"Lava",
 	"Water",
@@ -697,8 +602,7 @@ string seq_name[] =
 	"Wind"
 };
 
-string door_seq_name[] =
-{
+string door_seq_name[] = {
 	"DoorNormal",
 	"DoorHeavy",
 	"DoorMetal",
@@ -711,10 +615,9 @@ string door_seq_name[] =
 	"DoorMetal2"
 };
 
-float	AutoArmorSave[NUMCLASSES] = { 15.0, 10.0, 5.0, 0.0 };
+float AutoArmorSave[NUMCLASSES] = { 15.0, 10.0, 5.0, 0.0 };
 
-float	ArmorIncrement[NUMCLASSES * NUMARMOR] =
-{
+float ArmorIncrement[NUMCLASSES * NUMARMOR] = {
 	25.0, 20.0, 15.0, 5.0,
 	10.0, 25.0, 5.0, 20.0,
 	5.0, 15.0, 10.0, 25.0,
@@ -750,14 +653,17 @@ enum
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:20:00  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:16:41  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -1,22 +1,22 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
@@ -25,111 +25,140 @@
 
 //==========================================================================
 //
-//				COMMON BUILTINS
+//              COMMON BUILTINS
 //
 //==========================================================================
 
 //
-//	Error functions
+//  Error functions
 //
 
-//	Shut down client and server, go to title
+//  Shut down client and server, go to title
 extern void Error(string format, ...);
-//	Exit programm with error
+
+//  Exit programm with error
 extern void FatalError(string format, ...);
 
 //
-//	Cvar functions
+//  Cvar functions
 //
 
-//	Read value
+//  Read value
 extern int GetCvar(string name);
-//	Set cvar value
+
+//  Set cvar value
 extern void SetCvar(string name, int value);
-//	Read float value
+
+//  Read float value
 extern float GetCvarF(string name);
-//	Set cvar float value
+
+//  Set cvar float value
 extern void SetCvarF(string name, float value);
-//	Read string value
+
+//  Read string value
 extern string GetCvarS(string name);
-//	Set cvar string value
+
+//  Set cvar string value
 extern void SetCvarS(string name, string value);
 
 //
-//	Math functions
+//  Math functions
 //
 
-//	Sine
+//  Sine
 extern float sin(angle_t angle);
-//	Cosine
+
+//  Cosine
 extern float cos(angle_t angle);
-//	Tangent
+
+//  Tangent
 extern float tan(angle_t angle);
-//	Arctangent
+
+//  Arctangent
 extern angle_t atan(float slope);
-//	Arctangent
+
+//  Arctangent
 extern angle_t atan2(float y, float x);
-//	Vector length
+
+//  Vector length
 extern float Length(TVec vec);
-//	Normalizes vector
+
+//  Normalizes vector
 extern TVec Normalize(TVec vec);
-//	Dot product
+
+//  Dot product
 extern float DotProduct(TVec v1, TVec v2);
-//	Cross product (perpendicular vector)
+
+//  Cross product (perpendicular vector)
 extern TVec CrossProduct(TVec v1, TVec v2);
-//	Creates vectors for given angle vector
-extern void AngleVectors(TAVec *angles, TVec *forward, TVec *right, TVec *up);
-//	Simplified version of AngleVectors, creates only forward vector
-extern void AngleVector(TAVec *angles, TVec *forward);
-//	Create angle vector for a vector
-extern void VectorAngles(TVec *vec, TAVec *angles);
+
+//  Creates vectors for given angle vector
+extern void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
+
+	TVec * up);
+//  Simplified version of AngleVectors, creates only forward vector
+extern void AngleVector(TAVec * angles, TVec * forward);
+
+//  Create angle vector for a vector
+extern void VectorAngles(TVec * vec, TAVec * angles);
 
 //
-//	Random numbers
+//  Random numbers
 //
 
-//	Floating random number 0.0 ... 0.999999
+//  Floating random number 0.0 ... 0.999999
 extern float Random(void);
-//	Integer random number 1 .. 255
+
+//  Integer random number 1 .. 255
 extern int P_Random(void);
 
 //
-//	String functions
+//  String functions
 //
 
-//	Pointer to string hack
+//  Pointer to string hack
 extern string ptrtos(void *ptr);
+
 #define ARR2STR(array)	ptrtos(&array[0])
-//	String length
+//  String length
 extern int strlen(string s);
-//	Compare strings
+
+//  Compare strings
 extern int strcmp(string s1, string s2);
-//	Copy string
+
+//  Copy string
 extern void strcpy(string s1, string s2);
-//	Clear string
+
+//  Clear string
 extern void strclr(string s);
-//	Append string to string
+
+//  Append string to string
 extern void strcat(string s1, string s2);
-//	Print into a string
+
+//  Print into a string
 extern void sprint(string dest, string format, ...);
-//	Does varargs print into a temporary buffer
+
+//  Does varargs print into a temporary buffer
 extern string va(string format, ...);
-//	Converts string to integer
+
+//  Converts string to integer
 extern int atoi(string str);
-//	Converts string to float
+
+//  Converts string to float
 extern float atof(string str);
 
 //
-//	Printing to console
+//  Printing to console
 //
 
-//	Print to console
+//  Print to console
 extern void print(string format, ...);
-//	Print to console only when developer == 1
+
+//  Print to console only when developer == 1
 extern void dprint(string format, ...);
 
 //
-//	Texture / flat number retrieval
+//  Texture / flat number retrieval
 //
 
 extern int CheckTextureNumForName(string name);
@@ -139,11 +168,11 @@ extern int FlatNumForName(string name);
 extern float TextureHeight(int pic);
 
 //
-//	Message IO functions
+//  Message IO functions
 //
 
 #ifdef SERVER
-extern void MSG_Select(int msgtype, player_t *client);
+extern void MSG_Select(int msgtype, player_t * client);
 #else
 extern void MSG_Select(int msgtype, void *client);
 #endif
@@ -157,103 +186,131 @@ extern int MSG_ReadWord(void);
 extern int MSG_ReadLong(void);
 
 //
-//	Misc
+//  Misc
 //
 
-//	float -> int
+//  float -> int
 extern int ftoi(float f);
-//	int -> float
+
+//  int -> float
 extern float itof(int f);
 extern int Cmd_CheckParm(string str);
-//	Adds text to command buffer, same as typing it in console
+
+//  Adds text to command buffer, same as typing it in console
 extern void CmdBuf_AddText(string format, ...);
-//	Reads key value from info string (userinfo or serverinfo)
+
+//  Reads key value from info string (userinfo or serverinfo)
 extern string Info_ValueForKey(string info, string key);
-//	Checks if WAD lump is present, used to check for shareware/extended WADs
+
+//  Checks if WAD lump is present, used to check for shareware/extended WADs
 extern boolean WadLumpPresent(string name);
 
 //==========================================================================
 //
-//				CLIENT BUILTINS
+//              CLIENT BUILTINS
 //
 //==========================================================================
 
 #ifdef CLIENT
 
 //
-//	Graphics
+//  Graphics
 //
 
-//	Registers a graphic, returns handle
+//  Registers a graphic, returns handle
 extern int R_RegisterPic(string name, int type);
-//	Registers a graphic with custom palette, returns handle
+
+//  Registers a graphic with custom palette, returns handle
 extern int R_RegisterPicPal(string name, int type, string palname);
-//	Retrieves pic info
-extern void R_GetPicInfo(int handle, picinfo_t *info);
-//	Draws a pic
+
+//  Retrieves pic info
+extern void R_GetPicInfo(int handle, picinfo_t * info);
+
+//  Draws a pic
 extern void R_DrawPic(int x, int y, int handle);
-//	Draws a translucent pic
+
+//  Draws a translucent pic
 extern void R_DrawPic2(int x, int y, int handle, int trans);
-//	Draws a shadowed pic
+
+//  Draws a shadowed pic
 extern void R_DrawShadowedPic(int x, int y, int handle);
-//	Installs a sprite model
+
+//  Installs a sprite model
 extern void R_InstallSprite(string name, int index);
-//	Draws a sprite
-extern void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation);
-//	Installs model
+
+//  Draws a sprite
+extern void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
+
+	int translation);
+//  Installs model
 extern model_t *InstallModel(string name);
-//	Draws a model
-extern void R_DrawModelFrame(TVec origin, angle_t angle, model_t *model, int frame, string skin);
-//	Draws a rectangle filled with a flat
-extern void R_FillRectWithFlat(int x, int y, int width, int height, string name);
-//	Darkens a screen region
+
+//  Draws a model
+extern void R_DrawModelFrame(TVec origin, angle_t angle, model_t * model,
+	int frame, string skin);
+
+//  Draws a rectangle filled with a flat
+extern void R_FillRectWithFlat(int x, int y, int width, int height,
+
+	string name);
+//  Darkens a screen region
 extern void R_ShadeRect(int x, int y, int w, int h, int shade);
 
 //
-//	Text
+//  Text
 //
 
-//	Selects active font
+//  Selects active font
 extern void T_SetFont(int font);
-//	Changes text alignement
+
+//  Changes text alignement
 extern void T_SetAlign(int halign, int valign);
-//	Enable/disable text shadow
+
+//  Enable/disable text shadow
 extern void T_SetShadow(boolean on);
-//	Calculates text width
+
+//  Calculates text width
 extern int T_TextWidth(string text);
-//	Calculates text height
+
+//  Calculates text height
 extern int T_TextHeight(string text);
-//	Draws text
+
+//  Draws text
 extern void T_DrawText(int x, int y, string text);
-//	Draws text, but no more than n characters
+
+//  Draws text, but no more than n characters
 extern void T_DrawNText(int x, int y, string text, int n);
-//	Draws a cursor at the end of last drawn string
+
+//  Draws a cursor at the end of last drawn string
 extern void T_DrawCursor(void);
 
 //
-//	Client sound stuff
+//  Client sound stuff
 //
 
-//	Plays a sound
+//  Plays a sound
 extern void LocalSound(string name);
-//	Plays a sound and waits untill it finishes
+
+//  Plays a sound and waits untill it finishes
 extern void LocalSoundTillDone(string name);
 
 //
-//	Input text line widget
+//  Input text line widget
 //
 
-//	Initializes input line
-extern void InputLine_Init(TILine *iline);
-//	Sets input line value
-extern void InputLine_SetValue(TILine *iline, string text);
-//	Input line responder
-extern boolean InputLine_Key(TILine *iline, int key);
+//  Initializes input line
+extern void InputLine_Init(TILine * iline);
+
+//  Sets input line value
+extern void InputLine_SetValue(TILine * iline, string text);
+
+//  Input line responder
+extern boolean InputLine_Key(TILine * iline, int key);
 
 extern string P_GetMapName(int map);
 extern boolean SV_GetSaveString(int i, string buf);
 extern void StartSearch(void);
-extern void GetSlist(slist_t *slist);
+extern void GetSlist(slist_t * slist);
 extern void KeyNameForNum(int KeyNr, string NameString);
 extern void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 extern void IN_SetBinding(int key, string ondown, string onup);
@@ -261,7 +318,7 @@ extern void IN_SetBinding(int key, string ondown, string onup);
 extern void LoadTextLump(string name, void *buf, int bufsize);
 
 extern sb_widget_t *SB_CreateWidget(int type, int x, int y,
-	int pindex, int style, boolean *on, int pparam, int *data);
+	int pindex, int style, boolean * on, int pparam, int *data);
 
 extern dlight_t *AllocDlight(int key);
 extern particle_t *NewParticle(void);
@@ -270,68 +327,79 @@ extern particle_t *NewParticle(void);
 
 //==========================================================================
 //
-//				SERVER BUILTINS
+//              SERVER BUILTINS
 //
 //==========================================================================
 
 #ifdef SERVER
 
 //
-//	Print functions
+//  Print functions
 //
 
-//	Broadcast message (print to all clients)
+//  Broadcast message (print to all clients)
 extern void bprint(string format, ...);
-//	Print to client
-extern void cprint(player_t *player, string format, ...);
-//	Client's center message
-extern void centerprint(player_t *player, string format, ...);
+
+//  Print to client
+extern void cprint(player_t * player, string format, ...);
+
+//  Client's center message
+extern void centerprint(player_t * player, string format, ...);
 
 //
-//	Map utilites
+//  Map utilites
 //
 
-extern opening_t *LineOpenings(line_t* linedef, TVec point);
-//	Returns 0 - front, 1 - back, -1 - on
-extern int P_BoxOnLineSide(float* tmbox, line_t* ld);
+extern opening_t *LineOpenings(line_t * linedef, TVec point);
+
+//  Returns 0 - front, 1 - back, -1 - on
+extern int P_BoxOnLineSide(float *tmbox, line_t * ld);
+
 //
-extern boolean P_BlockThingsIterator(int x,int y, thing_iter_func_t func);
+extern boolean P_BlockThingsIterator(int x, int y, thing_iter_func_t func);
+
 //
 extern boolean P_BlockLinesIterator(int x, int y, line_iter_func_t func);
+
 //
 extern boolean P_PathTraverse(float x1, float y1, float x2, float y2,
 	int flags, trav_func_t trav);
-//	Find the best gap that the thing could fit in, given a certain Z
+
+//  Find the best gap that the thing could fit in, given a certain Z
 // position (z1 is foot, z2 is head).
-extern sec_region_t *FindThingGap(sec_region_t *gaps, TVec point, float z1, float z2);
-//	Find the best opening
-extern opening_t *FindOpening(opening_t *gaps, float z1, float z2);
-//	Find best region in sector for a given point
-extern sec_region_t *PointInRegion(sector_t *sector, TVec p);
-extern int PointContents(sector_t *sector, TVec p);
-extern sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
+extern sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, float z1,
+
+	float z2);
+//  Find the best opening
+extern opening_t *FindOpening(opening_t * gaps, float z1, float z2);
+
+//  Find best region in sector for a given point
+extern sec_region_t *PointInRegion(sector_t * sector, TVec p);
+extern int PointContents(sector_t * sector, TVec p);
+extern sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
 
 //
-//	Mobj utilites
+//  Mobj utilites
 //
 
 extern mobj_t *NewMobjThinker(void);
-extern void RemoveMobjThinker(mobj_t *mobj);
-extern void P_SetThingPosition(mobj_t *thing);
-extern void P_UnsetThingPosition(mobj_t *thing);
-extern mobj_t *NextMobj(mobj_t *mo);
-extern boolean P_CheckSight(mobj_t *mobj1, mobj_t *mobj2);
+extern void RemoveMobjThinker(mobj_t * mobj);
+extern void P_SetThingPosition(mobj_t * thing);
+extern void P_UnsetThingPosition(mobj_t * thing);
+extern mobj_t *NextMobj(mobj_t * mo);
+extern boolean P_CheckSight(mobj_t * mobj1, mobj_t * mobj2);
 
 //
-//	Special thinker utilites
+//  Special thinker utilites
 //
 
 extern void *NewSpecialThinker(classid);
-extern void RemoveSpecialThinker(special_t *spec);
-extern void P_ChangeSwitchTexture(line_t* line, int useAgain);
+extern void RemoveSpecialThinker(thinker_t * spec);
+extern void P_ChangeSwitchTexture(line_t * line, int useAgain);
+extern thinker_t *NextThinker(thinker_t * last, classid id);
 
 //
-//	Polyobj functions
+//  Polyobj functions
 //
 
 extern void SpawnPolyobj(float x, float y, int tag, int flags);
@@ -342,32 +410,36 @@ extern boolean PO_RotatePolyobj(int num, angle_t angle);
 extern boolean PO_MovePolyobj(int num, float x, float y);
 
 //
-//	ACS functions
+//  ACS functions
 //
 
-extern boolean StartACS(int number, int map, int *args, mobj_t *activator,
-	line_t *line, int side);
+extern boolean StartACS(int number, int map, int *args, mobj_t * activator,
+	line_t * line, int side);
 extern boolean SuspendACS(int number, int map);
 extern boolean TerminateACS(int number, int map);
 extern void TagFinished(int tag);
 extern void PolyobjFinished(int po);
 extern void ACS::Think(void);
+extern void ACS::Archive(void);
+extern void ACS::Unarchive(void);
 
 //
-//	Sound functions
+//  Sound functions
 //
 
-extern void StartSound(mobj_t *mobj, int sound, int channel);
-extern void StartSoundAtVolume(mobj_t *mobj, int sound, int channel, int volume);
-extern void StopSound(mobj_t *mobj, int channel);
-extern void SectorStartSound(sector_t *sec, int sound, int channel);
-extern void SectorStopSound(sector_t *sec, int channel);
-extern boolean GetSoundPlayingInfo(mobj_t *mobj, int sound_id);
+extern void StartSound(mobj_t * mobj, int sound, int channel);
+extern void StartSoundAtVolume(mobj_t * mobj, int sound, int channel,
+
+	int volume);
+extern void StopSound(mobj_t * mobj, int channel);
+extern void SectorStartSound(sector_t * sec, int sound, int channel);
+extern void SectorStopSound(sector_t * sec, int channel);
+extern boolean GetSoundPlayingInfo(mobj_t * mobj, int sound_id);
 extern int GetSoundID(string name);
-extern void SectorStartSequence(sector_t *sector, string sequence);
-extern void SectorStopSequence(sector_t *sector);
-extern void PolyobjStartSequence(polyobj_t *mobj, string sequence);
-extern void PolyobjStopSequence(polyobj_t *mobj);
+extern void SectorStartSequence(sector_t * sector, string sequence);
+extern void SectorStopSequence(sector_t * sector);
+extern void PolyobjStartSequence(polyobj_t * mobj, string sequence);
+extern void PolyobjStopSequence(polyobj_t * mobj);
 
 #define StartSoundName(origin, name, channel)	StartSound(origin, GetSoundID(name), channel)
 #define SectorStartSoundName(sec, name, channel)	SectorStartSound(sec, GetSoundID(name), channel)
@@ -376,26 +448,26 @@ extern void PolyobjStopSequence(polyobj_t *mobj);
 //  Savegame archieve / unarchieve utilite functions
 //
 
-extern sector_t *SectorToNum(sector_t *sector);
-extern sector_t *NumToSector(sector_t *sector);
-extern mobj_t *MobjToNum(mobj_t *mobj);
-extern mobj_t *NumToMobj(mobj_t *mobj);
+extern sector_t *SectorToNum(sector_t * sector);
+extern sector_t *NumToSector(sector_t * sector);
+extern mobj_t *MobjToNum(mobj_t * mobj);
+extern mobj_t *NumToMobj(mobj_t * mobj);
 
 extern void G_ExitLevel(void);
 extern void G_SecretExitLevel(void);
 
-extern int P_GetPlayerNum(player_t *player);
-extern subsector_t* PointInSubsector(float x, float y);
-extern void ClearPlayer(player_t *p);
+extern int P_GetPlayerNum(player_t * player);
+extern subsector_t *PointInSubsector(float x, float y);
+extern void ClearPlayer(player_t * p);
 extern void G_Completed(int map, int position);
 extern int TerrainType(int pic);
 extern void P_ForceLightning(void);
 extern void SB_Start(void);
-extern void SetFloorPic(sector_t *sec, int texture);
-extern void SetCeilPic(sector_t *sec, int texture);
-extern void SetLineTransluc(line_t *line, int trans);
-extern void SendFloorSlope(sector_t *sector);
-extern void SendCeilingSlope(sector_t *sector);
+extern void SetFloorPic(sector_t * sec, int texture);
+extern void SetCeilPic(sector_t * sec, int texture);
+extern void SetLineTransluc(line_t * line, int trans);
+extern void SendFloorSlope(sector_t * sector);
+extern void SendCeilingSlope(sector_t * sector);
 
 extern void *Spawn(classid cid);
 extern void Destroy(void *ptr);
@@ -404,23 +476,26 @@ extern void Destroy(void *ptr);
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.7  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.8  2001/09/24 17:11:23  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.6  2001/08/29 17:42:11  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.5  2001/08/23 17:38:55  dj_jl
-//	Fixed Heretic episode 2 finale
-//	
-//	Revision 1.4  2001/08/15 17:05:11  dj_jl
-//	Model setup
+//  Revision 1.7  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.6  2001/08/29 17:42:11  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.5  2001/08/23 17:38:55  dj_jl
+//  Fixed Heretic episode 2 finale
+//  
+//  Revision 1.4  2001/08/15 17:05:11  dj_jl
+//  Model setup
 //
-//	Revision 1.3  2001/07/31 16:57:52  dj_jl
-//	Checking for shareware/extended wad by the presence of wad lump
+//  Revision 1.3  2001/07/31 16:57:52  dj_jl
+//  Checking for shareware/extended wad by the presence of wad lump
 //
-//	Revision 1.2  2001/07/27 14:27:51  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.2  2001/07/27 14:27:51  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

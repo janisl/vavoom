@@ -1,27 +1,35 @@
 //**************************************************************************
 //**
-//**	##   ##    ##    ##   ##   ####     ####   ###     ###
-//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
-//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
-//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
-//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
-//**	   #    ##    ##    #      ####     ####   ##       ##
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**    $Id$
 //**
-//**	Copyright (C) 1999-2001 JÆnis Legzdi·ý
+//**    Copyright (C) 1999-2001 JÆnis Legzdi·ý
 //**
-//**	This program is free software; you can redistribute it and/or
+//**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
 //**  as published by the Free Software Foundation; either version 2
 //**  of the License, or (at your option) any later version.
 //**
-//**	This program is distributed in the hope that it will be useful,
+//**    This program is distributed in the hope that it will be useful,
 //**  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**    VERTICAL DOORS
+//**
+//**************************************************************************
+
+// MACROS ------------------------------------------------------------------
+
+// CONSTANTS ---------------------------------------------------------------
 
 enum
 {
@@ -32,182 +40,225 @@ enum
 	raiseIn5Mins
 };
 
-string keymsg[] =
+// TYPES -------------------------------------------------------------------
+
+class TDoor:Thinker
 {
+	sector_t *sector;
+	int type;
+	float topheight;
+	float speed;
+	int direction;	// 1 = up, 0 = waiting, -1 = down
+	float topwait;	// tics to wait at the top
+					// (keep in case a door going down is reset)
+	float toptime;	// when it reaches 0, start going down
+
+	void Think(void);
+	void Archive(void);
+	void Unarchive(void);
+};
+
+// FUNCTION PROTOTYPES -----------------------------------------------------
+
+// DATA DECLARATIONS -------------------------------------------------------
+
+string keymsg[] = {
 	"YOU NEED A YELLOW KEY TO OPEN THIS DOOR",
 	"YOU NEED A GREEN KEY TO OPEN THIS DOOR",
 	"YOU NEED A BLUE KEY TO OPEN THIS DOOR"
 };
 
-//==================================================================
-//==================================================================
-//
-//							VERTICAL DOORS
-//
-//==================================================================
-//==================================================================
+// CODE --------------------------------------------------------------------
 
-//==================================================================
+//==========================================================================
 //
-//	T_VerticalDoor
+//	TDoor::Think
 //
-//==================================================================
+//==========================================================================
 
-void T_VerticalDoor(special_t *door)
+void TDoor::Think(void)
 {
-	int		res;
+	int res;
 
-	switch(door->direction)
+	switch (direction)
 	{
-		case 0: // WAITING
-			if(!--door->topcountdown)
-				switch(door->type)
-				{
-					case vd_normal:
-						door->direction = -1; // time to go back down
-						SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-						break;
-					case DREV_CLOSEWAITOPEN:
-						door->direction = 1;
-						SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-						break;
-					default:
-						break;
-				}
-			break;
-		case 2: // INITIAL WAIT
-			if(!--door->topcountdown)
+	case 0:	// WAITING
+		toptime -= frametime;
+		if (toptime <= 0.0)
+		{
+			toptime = 0.0;
+			switch (type)
 			{
-				switch(door->type)
-				{
-					case raiseIn5Mins:
-						door->direction = 1;
-						door->type = vd_normal;
-						SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-						break;
-					default:
-						break;
-				}
+			case vd_normal:
+				direction = -1;	// time to go back down
+				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				break;
+			case DREV_CLOSEWAITOPEN:
+				direction = 1;
+				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				break;
+			default:
+				break;
 			}
-			break;
-		case -1: // DOWN
-			res = T_MovePlane(door->sector, door->speed,
-				door->sector->floorheight, false, 1, door->direction);
-			if(res == RES_PASTDEST)
+		}
+		break;
+	case 2:	// INITIAL WAIT
+		toptime -= frametime;
+		if (toptime <= 0.0)
+		{
+			toptime = 0.0;
+			switch (type)
 			{
-				switch(door->type)
-				{
-					case vd_normal:
-					case vd_close:
-						door->sector->specialdata = NULL;
-						RemoveSpecialThinker(door);  // unlink and free
-						SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
-						break;
-					case DREV_CLOSEWAITOPEN:
-						door->direction = 0;
-						door->topcountdown = door->topwait;
-						break;
-					default:
-						break;
-				}
+			case raiseIn5Mins:
+				direction = 1;
+				type = vd_normal;
+				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				break;
+			default:
+				break;
 			}
-			else if(res == RES_CRUSHED)
+		}
+		break;
+	case -1:	// DOWN
+		res = T_MovePlane(sector, speed * frametime,
+			sector->floorheight, false, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			switch (type)
 			{
-				switch(door->type)
-				{
-					case vd_close: // DON'T GO BACK UP!
-						break;
-					default:
-						door->direction = 1;
-						SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-						break;
-				}
+			case vd_normal:
+			case vd_close:
+				sector->specialdata = NULL;
+				RemoveSpecialThinker(this);	// unlink and free
+				SectorStartSoundName(sector, "DoorClose", CHAN_VOICE);
+				break;
+			case DREV_CLOSEWAITOPEN:
+				direction = 0;
+				toptime = topwait;
+				break;
+			default:
+				break;
 			}
-			break;
-		case 1: // UP
-			res = T_MovePlane(door->sector, door->speed,
-				door->topheight, false, 1, door->direction);
-			if(res == RES_PASTDEST)
+		}
+		else if (res == RES_CRUSHED)
+		{
+			switch (type)
 			{
-				switch(door->type)
-				{
-					case vd_normal:
-						door->direction = 0; // wait at top
-						door->topcountdown = door->topwait;
-						break;
-					case DREV_CLOSEWAITOPEN:
-					case vd_open:
-						door->sector->specialdata = NULL;
-						RemoveSpecialThinker(door); // unlink and free
-						SectorStopSound(door->sector, CHAN_AUTO);
-						break;
-					default:
-						break;
-				}
+			case vd_close:	// DON'T GO BACK UP!
+				break;
+			default:
+				direction = 1;
+				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				break;
 			}
-			break;
+		}
+		break;
+	case 1:	// UP
+		res = T_MovePlane(sector, speed * frametime,
+			topheight, false, 1, direction);
+		if (res == RES_PASTDEST)
+		{
+			switch (type)
+			{
+			case vd_normal:
+				direction = 0;	// wait at top
+				toptime = topwait;
+				break;
+			case DREV_CLOSEWAITOPEN:
+			case vd_open:
+				sector->specialdata = NULL;
+				RemoveSpecialThinker(this);	// unlink and free
+				SectorStopSound(sector, CHAN_AUTO);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
 	}
 }
 
-//----------------------------------------------------------------------------
+//==========================================================================
 //
-//	EV_DoDoor
+//  TDoor::Archive
 //
-//	Move a door up/down
-//
-//----------------------------------------------------------------------------
+//==========================================================================
 
-int EV_DoDoor(line_t *line, int *args, int type)
+void TDoor::Archive(void)
+{
+	sector = SectorToNum(sector);
+}
+
+//==========================================================================
+//
+//  TDoor::Unarchive
+//
+//==========================================================================
+
+void TDoor::Unarchive(void)
+{
+	sector = NumToSector(sector);
+	sector->specialdata = this;
+}
+
+//==========================================================================
+//
+//  EV_DoDoor
+//
+//  Move a door up/down
+//
+//==========================================================================
+
+int EV_DoDoor(line_t * line, int *args, int type)
 {
 	int secnum;
 	int retcode;
 	sector_t *sec;
-	special_t *door;
+	TDoor *door;
 
 	secnum = -1;
 	retcode = 0;
 	while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
 	{
 		sec = &level->sectors[secnum];
-		if(sec->specialdata)
+		if (sec->specialdata)
 		{
 			continue;
 		}
 		// Add new door thinker
 		retcode = 1;
-		door = NewSpecialThinker(special_t);
-		door->function = T_VerticalDoor;
+		door = NewSpecialThinker(TDoor);
 		sec->specialdata = door;
 		door->sector = sec;
 		door->type = type;
-		door->speed = itof(args[1]) / 8.0;
-		door->topwait = args[2];
+		door->speed = itof(args[1]) * 4.0;
+		door->topwait = itof(args[2]) / 35.0;
 		switch (type)
 		{
-			case vd_close:
-				door->topheight = FindLowestCeilingSurrounding(sec);
-				door->topheight -= 4.0;
-				door->direction = -1;
+		case vd_close:
+			door->topheight = FindLowestCeilingSurrounding(sec);
+			door->topheight -= 4.0;
+			door->direction = -1;
+			SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
+			break;
+		case DREV_CLOSEWAITOPEN:
+			door->topheight = sec->ceilingheight;
+			door->topwait *= 4.0;
+			door->direction = -1;
+			SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
+			break;
+		case vd_normal:
+		case vd_open:
+			door->direction = 1;
+			door->topheight = FindLowestCeilingSurrounding(sec);
+			door->topheight -= 4.0;
+			if (door->topheight != sec->ceilingheight)
+			{
 				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-				break;
-			case DREV_CLOSEWAITOPEN:
-				door->topheight = sec->ceilingheight;
-				door->topwait *= 4;
-				door->direction = -1;
-				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-				break;
-			case vd_normal:
-			case vd_open:
-				door->direction = 1;
-				door->topheight = FindLowestCeilingSurrounding(sec);
-				door->topheight -= 4.0;
-				if (door->topheight != sec->ceilingheight)
-				{
-					SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
-				}
-				break;
-			default:
-				break;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 	return retcode;
@@ -215,13 +266,13 @@ int EV_DoDoor(line_t *line, int *args, int type)
 
 //==========================================================================
 //
-//	CheckLockedDoor
+//  CheckLockedDoor
 //
 //==========================================================================
 
-boolean	CheckLockedDoor(mobj_t *user, int lock)
+boolean CheckLockedDoor(mobj_t * user, int lock)
 {
-	player_t		*player;
+	player_t *player;
 
 	player = user->player;
 	if (!player)
@@ -241,44 +292,42 @@ boolean	CheckLockedDoor(mobj_t *user, int lock)
 	return true;
 }
 
-//==================================================================
+//==========================================================================
 //
-//	EV_VerticalDoor : open a door manually, no tag value
+//  EV_VerticalDoor : open a door manually, no tag value
 //
-//==================================================================
+//==========================================================================
 
-boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
+boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 {
-	sector_t		*sec;
-	special_t		*door;
-	int				side;
+	sector_t *sec;
+	TDoor *door;
+	int side;
 
-	side = 0; // only front sides can be used
+	side = 0;	// only front sides can be used
 
 	// if the sector has an active thinker, use it
 	sec = level->sides[line->sidenum[side ^ 1]].sector;
 	if (sec->specialdata)
 	{
-		door = sec->specialdata;
+		door = (TDoor *)sec->specialdata;
 		switch (line->special)
 		{
-			case 1: // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
-			case 26:
-			case 27:
-			case 28:
-				if (door->direction == -1)
-				{
-					door->direction = 1; // go back up
+		case 12:	// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+		case 13:
+			if (door->direction == -1)
+			{
+				door->direction = 1;	// go back up
+			}
+			else
+			{
+				if (!thing->player)
+				{	// Monsters don't close doors
+					return false;
 				}
-				else
-				{
-					if (!thing->player)
-					{ // Monsters don't close doors
-						return false;
-					}
-					door->direction = -1; // start going down immediately
-				}
-				return true;
+				door->direction = -1;	// start going down immediately
+			}
+			return true;
 		}
 	}
 
@@ -288,26 +337,25 @@ boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
 	//
 	// new door thinker
 	//
-	door = NewSpecialThinker(special_t);
-	door->function = T_VerticalDoor;
+	door = NewSpecialThinker(TDoor);
 	sec->specialdata = door;
 	door->sector = sec;
 	door->direction = 1;
 	switch (line->special)
 	{
-		case 12:
-			door->type = vd_normal;
-			break;
-		case 11:
-			door->type = vd_open;
-			break;
-		case 13:
-			door->type = line->arg3 ? vd_normal : vd_open;
-			break;
+	case 12:
+		door->type = vd_normal;
+		break;
+	case 11:
+		door->type = vd_open;
+		break;
+	case 13:
+		door->type = line->arg3 ? vd_normal : vd_open;
+		break;
 	}
-	door->speed = itof(line->arg2) / 8.0;
-	door->topwait = line->arg3;
-	
+	door->speed = itof(line->arg2) * 4.0;
+	door->topwait = itof(line->arg3) / 35.0;
+
 	//
 	// find the top and bottom of the movement range
 	//
@@ -316,61 +364,62 @@ boolean EV_VerticalDoor(line_t *line, mobj_t *thing)
 	return true;
 }
 
-//==================================================================
+//==========================================================================
 //
-//	Spawn a door that closes after 30 seconds
+//  Spawn a door that closes after 30 seconds
 //
-//==================================================================
+//==========================================================================
 
-void P_SpawnDoorCloseIn30(sector_t *sec)
+void P_SpawnDoorCloseIn30(sector_t * sec)
 {
-	special_t *door;
+	TDoor *door;
 
-	door = NewSpecialThinker(special_t);
-	door->function = T_VerticalDoor;
+	door = NewSpecialThinker(TDoor);
 	sec->specialdata = door;
 	sec->special = 0;
 	door->sector = sec;
 	door->direction = 0;
 	door->type = vd_normal;
-	door->speed = 2.0;
-	door->topcountdown = 30 * 35;
+	door->speed = 2.0 * 35.0;
+	door->toptime = 30.0;
 }
 
-//==================================================================
+//==========================================================================
 //
-//	Spawn a door that opens after 5 minutes
+//  Spawn a door that opens after 5 minutes
 //
-//==================================================================
+//==========================================================================
 
-void P_SpawnDoorRaiseIn5Mins(sector_t *sec, int secnum)
+void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 {
-	special_t *door;
+	TDoor *door;
 
-	door = NewSpecialThinker(special_t);
-	door->function = T_VerticalDoor;
+	door = NewSpecialThinker(TDoor);
 	sec->specialdata = door;
 	sec->special = 0;
 	door->sector = sec;
 	door->direction = 2;
 	door->type = raiseIn5Mins;
-	door->speed = 2.0;
+	door->speed = 2.0 * 35.0;
 	door->topheight = FindLowestCeilingSurrounding(sec);
 	door->topheight -= 4.0;
-	door->topwait = 150;
-	door->topcountdown = 5 * 60 * 35;
+	door->topwait = 150.0 / 35.0;
+	door->toptime = 5.0 * 60.0;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.4  2001/09/20 16:19:59  dj_jl
-//	Start using object-oriented stuff, beautification
+//  $Log$
+//  Revision 1.5  2001/09/24 17:15:39  dj_jl
+//  Created thinker classes
 //
-//	Revision 1.3  2001/08/29 17:42:13  dj_jl
-//	Added sound channel
-//	
-//	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//  Revision 1.4  2001/09/20 16:19:59  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.3  2001/08/29 17:42:13  dj_jl
+//  Added sound channel
+//  
+//  Revision 1.2  2001/07/27 14:27:52  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************
