@@ -321,7 +321,7 @@ boolean TraceLine(TVec start, TVec end)
 
 void AddStaticLight(TVec origin, float radius)
 {
-	MSG_Select(MSG_SV_SIGNON, NULL);
+	MSG_Select(MSG_SV_SIGNON);
 	MSG_WriteByte(svc_static_light);
 	MSG_WriteShort(ftoi(origin.x));
 	MSG_WriteShort(ftoi(origin.y));
@@ -337,7 +337,7 @@ void AddStaticLight(TVec origin, float radius)
 
 void AddStaticLightRGB(TVec origin, float radius, int color)
 {
-	MSG_Select(MSG_SV_SIGNON, NULL);
+	MSG_Select(MSG_SV_SIGNON);
 	MSG_WriteByte(svc_static_light_rgb);
 	MSG_WriteShort(ftoi(origin.x));
 	MSG_WriteShort(ftoi(origin.y));
@@ -386,6 +386,9 @@ void UnarchiveThinker(Thinker * th)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2001/12/01 18:10:10  dj_jl
+//  Started to use class references
+//
 //  Revision 1.12  2001/10/27 07:42:00  dj_jl
 //  Made MapBlock a builtin
 //

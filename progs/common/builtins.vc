@@ -189,11 +189,7 @@ extern float TextureHeight(int pic);
 //  Message IO functions
 //
 
-#ifdef SERVER
-extern void MSG_Select(int msgtype, player_t * client);
-#else
-extern void MSG_Select(int msgtype, void *client);
-#endif
+extern void MSG_Select(int msgtype);
 extern void MSG_WriteByte(int data);
 extern void MSG_WriteShort(int data);
 extern void MSG_WriteLong(int data);
@@ -223,8 +219,8 @@ extern string Info_ValueForKey(string info, string key);
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 extern boolean WadLumpPresent(string name);
 
-extern void *Spawn(classid cid);
-extern void Destroy(void *ptr);
+extern Object Spawn(classid cid, Object owner);
+extern void Object::Destroy(void);
 
 //==========================================================================
 //
@@ -478,11 +474,16 @@ extern void SetLineTransluc(line_t * line, int trans);
 extern void SendFloorSlope(sector_t * sector);
 extern void SendCeilingSlope(sector_t * sector);
 
+extern void MSG_SelectClientMsg(int msgtype, player_t * client);
+
 #endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2001/12/01 18:10:10  dj_jl
+//  Started to use class references
+//
 //  Revision 1.17  2001/11/09 14:38:45  dj_jl
 //  Moved input line to progs
 //

@@ -31,6 +31,19 @@ struct subsector_t;
 
 //==========================================================================
 //
+//	Base class for all classes
+//
+//==========================================================================
+
+class Object
+{
+	int ObjectInternal[2];
+
+	void Destroy(void);
+}
+
+//==========================================================================
+//
 //  3D math - vectors and panes
 //
 //==========================================================================
@@ -53,6 +66,10 @@ struct TPlane
 {
 	TVec normal;
 	float dist;
+	int __type;
+	int __signbits;
+	int __reserved1;
+	int __reserved2;
 };
 
 //==========================================================================
@@ -339,7 +356,7 @@ typedef boolean(*line_iter_func_t) (line_t *);
 //
 //==========================================================================
 
-class Thinker
+class Thinker:Object
 {
 	void *__prev;
 	void *__next;
@@ -627,6 +644,7 @@ struct sv_level_t:base_level_t
 	// !!! Valid only during level loading
 	int numthings;
 	mthing_t *things;
+	int behaviorsize;
 	int *behavior;
 
 	//
@@ -940,6 +958,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2001/12/01 18:10:10  dj_jl
+//  Started to use class references
+//
 //  Revision 1.17  2001/10/22 17:23:08  dj_jl
 //  Floatification of angles
 //
