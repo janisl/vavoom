@@ -95,6 +95,33 @@ int FTNumForName(const char* name)
 
 //==========================================================================
 //
+//	TFNumForName
+//
+//	Retrieval, get a texture or flat number for a name.
+//
+//==========================================================================
+
+int TFNumForName(const char* name)
+{
+	char	namet[9];
+	int		i;
+
+	i = R_CheckTextureNumForName(name);
+	if (i == -1)
+	{
+		i = R_CheckFlatNumForName(name);
+		if (i == -1)
+		{
+			namet[8] = 0;
+			memcpy(namet, name,8);
+			Host_Error("TFNumForName: %s not found", namet);
+		}
+	}
+	return i;
+}
+
+//==========================================================================
+//
 //	LoadBlockMap
 //
 //==========================================================================
@@ -301,9 +328,9 @@ static void LoadSideDefs(int lump, level_t &loadlevel)
 		sd->textureoffset = LittleShort(msd->textureoffset);
 		sd->rowoffset = LittleShort(msd->rowoffset);
 		sd->sector = &loadlevel.sectors[LittleShort(msd->sector)];
-      	sd->midtexture = FTNumForName(msd->midtexture);
-       	sd->toptexture = FTNumForName(msd->toptexture);
-       	sd->bottomtexture = FTNumForName(msd->bottomtexture);
+      	sd->midtexture = TFNumForName(msd->midtexture);
+       	sd->toptexture = TFNumForName(msd->toptexture);
+       	sd->bottomtexture = TFNumForName(msd->bottomtexture);
 
 		sd->base_textureoffset = sd->textureoffset;
 		sd->base_rowoffset = sd->rowoffset;
@@ -1053,9 +1080,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/01 17:37:34  dj_jl
+//	Made walls check texture list before flats
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
