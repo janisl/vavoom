@@ -48,13 +48,13 @@ int botskill = 2;
 
 //==========================================================================
 //
-//	BotPlayer::Think
+//	BotPlayer::BotTick
 //
 //  Main bot function
 //
 //==========================================================================
 
-void BotPlayer::Think(void)
+void BotPlayer::BotTick(float deltaTime)
 {
 	botmo = player->MO;
 
@@ -134,7 +134,7 @@ void BotPlayer::Think(void)
 
 	// Moving towards destination
 	Attack();
-	Move();
+	Move(deltaTime);
 
 	Pitch();
 
@@ -155,7 +155,7 @@ void BotPlayer::Think(void)
 	player->ForwardMove = forwardmove;
 
 #define DECT(var) \
-	var -= frametime; \
+	var -= deltaTime; \
 	if (var <= 0.0) \
 	{ \
 		var = 0.0; \
@@ -1515,7 +1515,7 @@ void BotPlayer::Roam(void)
 //
 //==========================================================================
 
-void BotPlayer::Move(void)
+void BotPlayer::Move(float deltaTime)
 {
 	float dist;
 	
@@ -1524,7 +1524,7 @@ void BotPlayer::Move(void)
 	{
 		if (t_strafe)
 		{
-			t_strafe -= frametime;
+			t_strafe -= deltaTime;
 			if (!t_strafe)
 			{
 				// Don't change direction while dodging missiles (that could be bad)
@@ -1566,7 +1566,7 @@ void BotPlayer::Move(void)
 			// Just switch directions every couple seconds
 			if (t_strafe)
 			{
-				t_strafe -= frametime;
+				t_strafe -= deltaTime;
 				if (t_strafe <= 0.0)
 				{
 					sidemove = -sidemove;
@@ -1649,7 +1649,7 @@ void BotPlayer::Move(void)
 
 		if (t_strafe)
 		{
-			t_strafe -= frametime;
+			t_strafe -= deltaTime;
 			if (t_strafe <= 0.0)
 			{
 				sidemove = -sidemove;
@@ -1708,7 +1708,7 @@ void BotPlayer::Move(void)
 
 		if (t_strafe)
 		{
-			t_strafe -= frametime;
+			t_strafe -= deltaTime;
 			if (t_strafe)
 			{
 				sidemove = -sidemove;
@@ -1731,7 +1731,7 @@ void BotPlayer::Move(void)
 
 	if (t_strafe)
 	{
-		t_strafe -= frametime;
+		t_strafe -= deltaTime;
 		if (t_strafe <= 0.0)
 		{
 			sidemove = -sidemove;
@@ -2241,6 +2241,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/04/11 16:49:50  dj_jl
+//  Tick function.
+//
 //  Revision 1.6  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

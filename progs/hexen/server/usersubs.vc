@@ -29,7 +29,7 @@
 
 class TLavaInflictor:Actor
 {
-	void Think(void)
+	void Tick(float deltaTime)
 	{
 	}
 
@@ -625,6 +625,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/04/11 16:49:50  dj_jl
+//  Tick function.
+//
 //  Revision 1.26  2002/03/28 18:15:35  dj_jl
 //  Renamed mo in player_t to MO.
 //

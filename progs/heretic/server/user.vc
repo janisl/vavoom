@@ -592,7 +592,7 @@ void PlayerPawn::PlayerTick(float deltaTime)
 
 	if (Player->bIsBot)
 	{
-		Player->Bot.Think();
+		Player->Bot.BotTick(deltaTime);
 	}
 
 	// Copy view angles
@@ -1402,6 +1402,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2002/04/11 16:49:50  dj_jl
+//  Tick function.
+//
 //  Revision 1.31  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //
