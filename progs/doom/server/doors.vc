@@ -33,11 +33,12 @@
 
 enum
 {
-	doorRaise,
-	DREV_CLOSEWAITOPEN,
-	doorClose,
-	doorOpen,
-	raiseIn5Mins
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
 };
 
 // TYPES -------------------------------------------------------------------
@@ -52,173 +53,81 @@ enum
 //
 //  EV_DoDoor
 //
+//  Move a door up/down
+//
 //==========================================================================
 
-int EV_DoDoor(line_t * line, int *args, int type)
+int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line, Actor Thing)
 {
-	int secnum;
-	int rtn;
-	sector_t *sec;
-	VerticalDoor Door;
-	float speed;
+	int				SecNum;
+	int				RetCode;
+	sector_t*		Sec;
+	VerticalDoor	Door;
 
-	speed = itof(args[1]) * 4.0;
-
-	secnum = -1;
-	rtn = 0;
-
-	//HACK delay 0 means open
-	if (type == doorRaise && !args[2])
+	RetCode = false;
+	if (!Arg1)
 	{
-		type = doorOpen;
-	}
-
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
-	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
-			continue;
-
-		// new door thinker
-		rtn = 1;
-		Door = NewSpecialThinker(VerticalDoor);
-		sec->SpecialData = Door;
-
-		Door.sector = sec;
-		Door.type = type;
-		Door.topwait = itof(args[2]) / 35.0;
-		Door.speed = speed;
-
-		switch (type)
+		if (!Line)
+			return false;
+	
+		//	Make sure it's a two-sided line.
+		if (Line->sidenum[1] < 0)
+			return false;
+	
+		// if the sector has an active thinker, use it
+		Sec = GLevel.Sides[Line->sidenum[1]].sector;
+	
+		if (Sec->SpecialData)
 		{
-		case doorClose:
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			Door.direction = -1;
-			if (speed >= 256.0)
+			Door = VerticalDoor(Sec->SpecialData);
+			if (Door && Type == DOOREV_Raise && Door.Type == DOOREV_Raise)
 			{
-				SectorStartSoundName(Door.sector, 'BlazeDoorClose',
-					CHAN_VOICE);
-			}
-			else
-			{
-				SectorStartSoundName(Door.sector, 'DoorClose', CHAN_VOICE);
-			}
-			break;
-
-		case DREV_CLOSEWAITOPEN:
-			Door.topheight = sec->ceilingheight;
-			Door.topwait *= 4.0;
-			Door.direction = -1;
-			if (speed >= 256.0)
-			{
-				SectorStartSoundName(Door.sector, 'BlazeDoorClose',
-					CHAN_VOICE);
-			}
-			else
-			{
-				SectorStartSoundName(Door.sector, 'DoorClose', CHAN_VOICE);
-			}
-			break;
-
-		case doorRaise:
-		case doorOpen:
-			Door.direction = 1;
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			if (Door.topheight != sec->ceilingheight)
-			{
-				if (speed >= 256.0)
+				// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+				if (Door.Direction == -1)
 				{
-					SectorStartSoundName(Door.sector, 'BlazeDoorOpen',
-						CHAN_VOICE);
+					Door.Direction = 1;	// go back up
+				}
+				else if (GET_SPAC(Line->flags) != SPAC_PUSH)
+					// [RH] activate push doors don't go back down when you
+					//		run into them (otherwise opening them would be
+					//		a real pain).
+				{
+					if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
+						return false;	// JDC: bad guys never close doors
+					Door.Direction = -1;	// start going down immediately
 				}
 				else
 				{
-					SectorStartSoundName(Door.sector, 'DoorOpen',
-						CHAN_VOICE);
+					return false;
 				}
+				return true;
 			}
-			break;
+			return false;
 		}
-
-	}
-	return rtn;
-}
-
-//==========================================================================
-//
-//  EV_VerticalDoor : open a door manually, no tag value
-//
-//  int return value?
-//
-//==========================================================================
-
-int EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
-{
-	sector_t *sec;
-	VerticalDoor Door;
-	int side;
-	float speed;
-
-	side = 0;	// only front sides can be used
-
-	//HACK delay 0 means open
-	if (type == doorRaise && !args[2])
-	{
-		type = doorOpen;
-	}
-
-	speed = itof(args[1]) * 4.0;
-
-	// if the sector has an active thinker, use it
-	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
-
-	if (sec->SpecialData)
-	{
-		Door = VerticalDoor(sec->SpecialData);
-		if (type == doorRaise)
-		{
-			// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
-			if (Door.direction == -1)
-			{
-				Door.direction = 1;	// go back up
-			}
-			else
-			{
-				if (!thing.bIsPlayer)
-					return 0;	// JDC: bad guys never close doors
-				Door.direction = -1;	// start going down immediately
-			}
-			return 1;
-		}
-	}
-
-	// for proper sound
-	if (speed >= 256.0)
-	{
-		// BLAZING DOOR
-		SectorStartSoundName(sec, 'BlazeDoorOpen', CHAN_VOICE);
+	
+		// new door thinker
+		Door = NewSpecialThinker(VerticalDoor);
+		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		RetCode = true;
 	}
 	else
 	{
-		// NORMAL DOOR SOUND
-		SectorStartSoundName(sec, 'DoorOpen', CHAN_VOICE);
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &GLevel.Sectors[SecNum];
+			if (Sec->SpecialData)
+			{
+				continue;
+			}
+			// Add new door thinker
+			RetCode = true;
+			Door = NewSpecialThinker(VerticalDoor);
+			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		}
 	}
-
-	// new door thinker
-	Door = NewSpecialThinker(VerticalDoor);
-	sec->SpecialData = Door;
-	Door.sector = sec;
-	Door.direction = 1;
-	Door.speed = speed;
-	Door.topwait = itof(args[2]) / 35.0;
-	Door.type = type;
-
-	// find the top and bottom of the movement range
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	return 1;
+	return RetCode;
 }
 
 //==========================================================================
@@ -231,7 +140,8 @@ int EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
 
 void P_SpawnDoorCloseIn30(sector_t * sec)
 {
-	VerticalDoor Door;
+	VerticalDoor	Door;
+	float			Height;
 
 	Door = NewSpecialThinker(VerticalDoor);
 
@@ -239,10 +149,16 @@ void P_SpawnDoorCloseIn30(sector_t * sec)
 	sec->special = 0;
 
 	Door.sector = sec;
-	Door.direction = 0;
-	Door.type = doorRaise;
-	Door.speed = 70.0;
-	Door.toptime = 30.0;
+	Door.Direction = 0;
+	Door.Type = DOOREV_Raise;
+	Door.Speed = 70.0;
+	Door.TopTime = 30.0;
+	Height = FindHighestFloorPoint(sec, &Door.BotSpot);
+	Door.BotDist = DotProduct(vector(Door.BotSpot.x, Door.BotSpot.y, 
+		Height), sec->ceiling.normal);
+	Door.OldFloorDist = sec->floor.dist;
+	Door.TopHeight = sec->ceiling.dist;
+	Door.LightTag = 0;
 }
 
 //==========================================================================
@@ -257,24 +173,28 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 {
 	VerticalDoor Door;
 
-	Door = NewSpecialThinker(VerticalDoor);
-
-	sec->SpecialData = Door;
 	sec->special = 0;
+	Door = NewSpecialThinker(VerticalDoor);
+	Door.Init(sec, 0, 16, 150, 0, 0, DOOREV_RaiseIn5Mins);
+}
 
-	Door.sector = sec;
-	Door.direction = 2;
-	Door.type = raiseIn5Mins;
-	Door.speed = 70.0;
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	Door.topwait = 150.0 / 35.0;
-	Door.toptime = 5.0 * 60.0;
+//==========================================================================
+//
+//  EV_LightTurnOnPartway
+//
+//==========================================================================
+
+void EV_LightTurnOnPartway(int LightTag, float Delta)
+{
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/01/25 17:45:12  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.15  2004/12/22 07:54:40  dj_jl
 //  More extended ACS support, more linedef flags.
 //

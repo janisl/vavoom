@@ -124,7 +124,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 		switch (type)
 		{
 		case PLAT_DOWNWAITUPSTAYLIP:
-			Plat.low = FindLowestFloorSurrounding(sec) + itof(args[3]);
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + itof(args[3]);
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
 			Plat.high = sec->floorheight;
@@ -132,17 +132,17 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			Plat.status = PLAT_DOWN;
 			break;
 		case PLAT_PERPETUALRAISELIP:
-			Plat.low = FindLowestFloorSurrounding(sec) + itof(args[3]);
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + itof(args[3]);
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
-			Plat.high = FindHighestFloorSurrounding(sec);
+			Plat.high = FindHighestFloorSurrounding(sec, NULL);
 			if (Plat.high < sec->floorheight)
 				Plat.high = sec->floorheight;
 			Plat.wait = itof(args[2]) / 35.0;
 			Plat.status = P_Random() & 1;
 			break;
 		case PLAT_DOWNWAITUPSTAY:
-			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
 			Plat.high = sec->floorheight;
@@ -158,7 +158,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			Plat.status = PLAT_DOWN;
 			break;
 		case PLAT_UPWAITDOWNSTAY:
-			Plat.high = FindHighestFloorSurrounding(sec);
+			Plat.high = FindHighestFloorSurrounding(sec, NULL);
 			if (Plat.high < sec->floorheight)
 				Plat.high = sec->floorheight;
 			Plat.low = sec->floorheight;
@@ -174,10 +174,10 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			Plat.status = PLAT_UP;
 			break;
 		case PLAT_PERPETUALRAISE:
-			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
-			Plat.high = FindHighestFloorSurrounding(sec);
+			Plat.high = FindHighestFloorSurrounding(sec, NULL);
 			if (Plat.high < sec->floorheight)
 				Plat.high = sec->floorheight;
 			Plat.wait = itof(args[2]) / 35.0;
@@ -213,6 +213,10 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/01/25 17:45:12  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.14  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

@@ -33,10 +33,12 @@
 
 enum
 {
-	DREV_NORMAL,
-	DREV_CLOSE,
-	DREV_OPEN,
-	raiseIn5Mins
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
 };
 
 // TYPES -------------------------------------------------------------------
@@ -55,105 +57,77 @@ enum
 //
 //==========================================================================
 
-int EV_DoDoor(line_t * line, int *args, int type)
+int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line, Actor Thing)
 {
-	int secnum;
-	int retcode;
-	sector_t *sec;
-	VerticalDoor Door;
-	float speed;
+	int				SecNum;
+	int				RetCode;
+	sector_t*		Sec;
+	VerticalDoor	Door;
 
-	if (type == DREV_NORMAL && !args[2])
+	RetCode = false;
+	if (!Arg1)
 	{
-		type = DREV_OPEN;
-	}
-	speed = itof(args[1]) * 4.0;
-	retcode = 0;
-	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
-		secnum = FindSectorFromTag(args[0], secnum))
-	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (!Line)
+			return false;
+
+		//	Make sure it's a two-sided line.
+		if (Line->sidenum[1] < 0)
+			return false;
+
+		// if the sector has an active thinker, use it
+		Sec = GLevel.Sides[Line->sidenum[1]].sector;
+		if (Sec->SpecialData)
 		{
-			continue;
+			Door = VerticalDoor(Sec->SpecialData);
+			if (Door && Type == DOOREV_Raise && Door.Type == DOOREV_Raise)
+			{
+				// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+				if (Door.Direction == -1)
+				{
+					Door.Direction = 1;	// go back up
+				}
+				else if (GET_SPAC(Line->flags) != SPAC_PUSH)
+					// [RH] activate push doors don't go back down when you
+					//		run into them (otherwise opening them would be
+					//		a real pain).
+				{
+					if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
+						return false;	// JDC: bad guys never close doors
+					Door.Direction = -1;	// start going down immediately
+				}
+				else
+				{
+					return false;
+				}
+				return true;
+			}
+			return false;
 		}
-		// Add new door thinker
-		retcode = 1;
+		//
+		// new door thinker
+		//
 		Door = NewSpecialThinker(VerticalDoor);
-		sec->SpecialData = Door;
-		Door.sector = sec;
-		switch (type)
+		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		RetCode = true;
+	}
+	else
+	{
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-		case DREV_CLOSE:
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			Door.direction = -1;
-			break;
-		case DREV_NORMAL:
-		case DREV_OPEN:
-			Door.direction = 1;
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			break;
-		default:
-			break;
+			Sec = &GLevel.Sectors[SecNum];
+			if (Sec->SpecialData)
+			{
+				continue;
+			}
+			// Add new door thinker
+			RetCode = true;
+			Door = NewSpecialThinker(VerticalDoor);
+			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
-		Door.type = type;
-		Door.speed = speed;
-		Door.topwait = itof(args[2]) / 35.0;	// line->arg3
-		SectorStartSequence(Door.sector,
-			seq_name[SEQ_DOOR_STONE + Door.sector->seqType]);
 	}
-	return retcode;
-}
-
-//==========================================================================
-//
-//  EV_VerticalDoor
-//
-//  Open a door manually, no tag value
-//
-//==========================================================================
-
-bool EV_VerticalDoor(line_t * line, int* args, int type)
-{
-	sector_t *sec;
-	VerticalDoor Door;
-	int side;
-
-	side = 0;	// only front sides can be used
-
-	//HACK delay 0 means open
-	if (type == DREV_NORMAL && !args[2])
-	{
-		type = DREV_OPEN;
-	}
-
-	// if the sector has an active thinker, use it
-	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
-	if (sec->SpecialData)
-	{
-		return false;
-	}
-	//
-	// new door thinker
-	//
-	Door = NewSpecialThinker(VerticalDoor);
-	sec->SpecialData = Door;
-	Door.sector = sec;
-	Door.direction = 1;
-	Door.type = type;
-	Door.speed = itof(args[1]) * 4.0;
-	Door.topwait = itof(args[2]) / 35.0;
-
-	//
-	// find the top and bottom of the movement range
-	//
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	SectorStartSequence(Door.sector,
-		seq_name[SEQ_DOOR_STONE + Door.sector->seqType]);
-	return true;
+	return RetCode;
 }
 
 //==========================================================================
@@ -166,7 +140,8 @@ bool EV_VerticalDoor(line_t * line, int* args, int type)
 
 void P_SpawnDoorCloseIn30(sector_t * sec)
 {
-	VerticalDoor Door;
+	VerticalDoor	Door;
+	float			Height;
 
 	Door = NewSpecialThinker(VerticalDoor);
 
@@ -174,10 +149,16 @@ void P_SpawnDoorCloseIn30(sector_t * sec)
 	sec->special = 0;
 
 	Door.sector = sec;
-	Door.direction = 0;
-	Door.type = DREV_NORMAL;
-	Door.speed = 70.0;
-	Door.toptime = 30.0;
+	Door.Direction = 0;
+	Door.Type = DOOREV_Raise;
+	Door.Speed = 70.0;
+	Door.TopTime = 30.0;
+	Height = FindHighestFloorPoint(sec, &Door.BotSpot);
+	Door.BotDist = DotProduct(vector(Door.BotSpot.x, Door.BotSpot.y, 
+		Height), sec->ceiling.normal);
+	Door.OldFloorDist = sec->floor.dist;
+	Door.TopHeight = sec->ceiling.dist;
+	Door.LightTag = 0;
 }
 
 //==========================================================================
@@ -192,24 +173,28 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 {
 	VerticalDoor Door;
 
-	Door = NewSpecialThinker(VerticalDoor);
-
-	sec->SpecialData = Door;
 	sec->special = 0;
+	Door = NewSpecialThinker(VerticalDoor);
+	Door.Init(sec, 0, 16, 150, 0, 0, DOOREV_RaiseIn5Mins);
+}
 
-	Door.sector = sec;
-	Door.direction = 2;
-	Door.type = raiseIn5Mins;
-	Door.speed = 70.0;
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	Door.topwait = 150.0 / 35.0;
-	Door.toptime = 5.0 * 60.0;
+//==========================================================================
+//
+//  EV_LightTurnOnPartway
+//
+//==========================================================================
+
+void EV_LightTurnOnPartway(int LightTag, float Delta)
+{
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/01/25 17:45:16  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.14  2004/12/22 07:54:42  dj_jl
 //  More extended ACS support, more linedef flags.
 //

@@ -33,11 +33,12 @@
 
 enum
 {
-	vd_normal,
-	DREV_CLOSEWAITOPEN,
-	vd_close,
-	vd_open,
-	raiseIn5Mins
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
 };
 
 // TYPES -------------------------------------------------------------------
@@ -62,59 +63,80 @@ string keymsg[] = {
 //
 //==========================================================================
 
-int EV_DoDoor(line_t * line, int *args, int type)
+int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line, Actor Thing)
 {
-	int secnum;
-	int retcode;
-	sector_t *sec;
-	VerticalDoor Door;
+	int				SecNum;
+	int				RetCode;
+	sector_t*		Sec;
+	VerticalDoor	Door;
 
-	secnum = -1;
-	retcode = 0;
-	while ((secnum = FindSectorFromTag(line->arg1, secnum)) >= 0)
+	RetCode = false;
+	if (!Arg1)
 	{
-		sec = &GLevel.Sectors[secnum];
-		if (sec->SpecialData)
+		if (!Line)
+			return false;
+
+		//	Make sure it's a two-sided line.
+		if (Line->sidenum[1] < 0)
+			return false;
+	
+		// if the sector has an active thinker, use it
+		Sec = GLevel.Sides[Line->sidenum[1]].sector;
+		if (Sec->SpecialData)
 		{
-			continue;
-		}
-		// Add new door thinker
-		retcode = 1;
-		Door = NewSpecialThinker(VerticalDoor);
-		sec->SpecialData = Door;
-		Door.sector = sec;
-		Door.type = type;
-		Door.speed = itof(args[1]) * 4.0;
-		Door.topwait = itof(args[2]) / 35.0;
-		switch (type)
-		{
-		case vd_close:
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			Door.direction = -1;
-			SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
-			break;
-		case DREV_CLOSEWAITOPEN:
-			Door.topheight = sec->ceilingheight;
-			Door.topwait *= 4.0;
-			Door.direction = -1;
-			SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
-			break;
-		case vd_normal:
-		case vd_open:
-			Door.direction = 1;
-			Door.topheight = FindLowestCeilingSurrounding(sec);
-			Door.topheight -= 4.0;
-			if (Door.topheight != sec->ceilingheight)
+			Door = VerticalDoor(Sec->SpecialData);
+			if (Door && Type == DOOREV_Raise && Door.Type == DOOREV_Raise)
 			{
-				SectorStartSoundName(Door.sector, 'DoorOpen', CHAN_VOICE);
+				if (Door.Direction == -1)
+				{
+					Door.Direction = 1;	// go back up
+				}
+				else if (GET_SPAC(Line->flags) != SPAC_PUSH)
+					// [RH] activate push doors don't go back down when you
+					//		run into them (otherwise opening them would be
+					//		a real pain).
+				{
+					if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
+					{
+						// Monsters don't close doors
+						return false;
+					}
+					Door.Direction = -1;	// start going down immediately
+				}
+				else
+				{
+					return false;
+				}
+				return true;
 			}
-			break;
-		default:
-			break;
+			return false;
+		}
+	
+		//
+		// new door thinker
+		//
+		Door = NewSpecialThinker(VerticalDoor);
+		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		RetCode = true;
+	}
+	else
+	{
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &GLevel.Sectors[SecNum];
+			if (Sec->SpecialData)
+			{
+				continue;
+			}
+			// Add new door thinker
+			RetCode = true;
+			Door = NewSpecialThinker(VerticalDoor);
+			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
 	}
-	return retcode;
+	return RetCode;
 }
 
 //==========================================================================
@@ -144,87 +166,31 @@ bool CheckLockedDoor(Actor user, int lock)
 
 //==========================================================================
 //
-//  EV_VerticalDoor : open a door manually, no tag value
-//
-//==========================================================================
-
-bool EV_VerticalDoor(line_t * line, int* args, int type, Actor thing)
-{
-	sector_t *sec;
-	VerticalDoor Door;
-	int side;
-
-	side = 0;	// only front sides can be used
-
-	//HACK delay 0 means open
-	if (type == vd_normal && !args[2])
-	{
-		type = vd_open;
-	}
-
-	// if the sector has an active thinker, use it
-	sec = GLevel.Sides[line->sidenum[side ^ 1]].sector;
-	if (sec->SpecialData)
-	{
-		Door = VerticalDoor(sec->SpecialData);
-		if (type == vd_normal)
-		{
-			if (Door.direction == -1)
-			{
-				Door.direction = 1;	// go back up
-			}
-			else
-			{
-				if (!thing.bIsPlayer)
-				{
-					// Monsters don't close doors
-					return false;
-				}
-				Door.direction = -1;	// start going down immediately
-			}
-			return true;
-		}
-	}
-
-	SectorStartSoundName(sec, 'DoorOpen', CHAN_VOICE);
-
-	//
-	// new door thinker
-	//
-	Door = NewSpecialThinker(VerticalDoor);
-	sec->SpecialData = Door;
-	Door.sector = sec;
-	Door.direction = 1;
-	Door.type = type;
-	Door.speed = itof(args[1]) * 4.0;
-	Door.topwait = itof(args[2]) / 35.0;
-
-	//
-	// find the top and bottom of the movement range
-	//
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	return true;
-}
-
-//==========================================================================
-//
 //  Spawn a door that closes after 30 seconds
 //
 //==========================================================================
 
 void P_SpawnDoorCloseIn30(sector_t * sec)
 {
-	VerticalDoor Door;
+	VerticalDoor	Door;
+	float			Height;
 
 	Door = NewSpecialThinker(VerticalDoor);
+
 	sec->SpecialData = Door;
 	sec->special = 0;
+
 	Door.sector = sec;
-	Door.direction = 0;
-	Door.type = vd_normal;
-	Door.speed = 2.0 * 35.0;
-	Door.toptime = 30.0;
+	Door.Direction = 0;
+	Door.Type = DOOREV_Raise;
+	Door.Speed = 70.0;
+	Door.TopTime = 30.0;
+	Height = FindHighestFloorPoint(sec, &Door.BotSpot);
+	Door.BotDist = DotProduct(vector(Door.BotSpot.x, Door.BotSpot.y, 
+		Height), sec->ceiling.normal);
+	Door.OldFloorDist = sec->floor.dist;
+	Door.TopHeight = sec->ceiling.dist;
+	Door.LightTag = 0;
 }
 
 //==========================================================================
@@ -237,22 +203,28 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 {
 	VerticalDoor Door;
 
-	Door = NewSpecialThinker(VerticalDoor);
-	sec->SpecialData = Door;
 	sec->special = 0;
-	Door.sector = sec;
-	Door.direction = 2;
-	Door.type = raiseIn5Mins;
-	Door.speed = 2.0 * 35.0;
-	Door.topheight = FindLowestCeilingSurrounding(sec);
-	Door.topheight -= 4.0;
-	Door.topwait = 150.0 / 35.0;
-	Door.toptime = 5.0 * 60.0;
+	Door = NewSpecialThinker(VerticalDoor);
+	Door.Init(sec, 0, 16, 150, 0, 0, DOOREV_RaiseIn5Mins);
+}
+
+//==========================================================================
+//
+//  EV_LightTurnOnPartway
+//
+//==========================================================================
+
+void EV_LightTurnOnPartway(int LightTag, float Delta)
+{
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/01/25 17:45:13  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.18  2004/12/22 07:54:41  dj_jl
 //  More extended ACS support, more linedef flags.
 //

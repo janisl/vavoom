@@ -324,6 +324,7 @@ enum
 	SECSPEC_DamageSludge,//70
 	SECSPEC_DamageNukage,
 	SECSPEC_LightGlow,
+
 	SECSPEC_DoorCloseIn30 = 74,
 	SECSPEC_DamageSuperHellslimeExit,
 	SECSPEC_LightSyncStrobeSlow,
@@ -337,8 +338,10 @@ enum
 	SECSPEC_ScrollEastLavaDamage,
 
 	SECSPEC_DamageHazard = 105,
+
 	SECSPEC_DamageInstantDeath = 115,
 	SECSPEC_DamageSuperHazard,
+
 	SECSPEC_ScrollCurrent = 118,
 
 	//	These are handled by the engine.
@@ -346,7 +349,6 @@ enum
 	SECSPEC_LightningIndoor1,
 	SECSPEC_Lightningindoor2,
 	SECSPEC_Sky2,//200
-
 	SECSPEC_ScrollNorthSlow,
 	SECSPEC_ScrollNorthMedium,
 	SECSPEC_ScrollNorthFast,
@@ -371,7 +373,6 @@ enum
 	SECSPEC_ScrollSouthWestSlow,
 	SECSPEC_ScrollSouthWestMedium,
 	SECSPEC_ScrollSouthWestFast,
-
 	SECSPEC_ScrollEast5,
 	SECSPEC_ScrollEast10,
 	SECSPEC_ScrollEast25,
@@ -402,11 +403,130 @@ enum
 #define SECSPEC_FRICTION_MASK	0x0800
 #define SECSPEC_PUSH_MASK		0x1000
 
+enum
+{
+	LNSPEC_None,
+	LNSPEC_PolyStartLine,
+	LNSPEC_PolyRotateLeft,
+	LNSPEC_PolyRotateRight,
+	LNSPEC_PolyMove,
+	LNSPEC_PolyExplicitLine,
+	LNSPEC_PolyMoveTimes8,
+	LNSPEC_PolyDoorSwing,
+	LNSPEC_PolyDoorSlide,
+
+	LNSPEC_DoorClose = 10,// 10
+	LNSPEC_DoorOpen,
+	LNSPEC_DoorRaise,
+	LNSPEC_DoorLockedRaise,
+
+	LNSPEC_FloorLowerByValue = 20,// 20
+	LNSPEC_FloorLowerToLowest,
+	LNSPEC_FloorLowerToNearest,
+	LNSPEC_FloorRaiseByValue,
+	LNSPEC_FloorRaiseToHighest,
+	LNSPEC_FloorRaiseToNearest,
+	LNSPEC_StairsBuildDownNormal,
+	LNSPEC_StairsBuildUpNormal,
+	LNSPEC_FloorRaiseAndCrush,
+	LNSPEC_PillarBuild,
+	LNSPEC_PillarOpen,// 30
+	LNSPEC_StairsBuildDownSync,
+	LNSPEC_StairsBuildUpSync,
+
+	LNSPEC_FloorRaiseByValueTimes8 = 35,
+	LNSPEC_FloorLowerByValueTimes8,
+
+	LNSPEC_CeilingLowerByValue = 40,// 40
+	LNSPEC_CeilingRaiseByValue,
+	LNSPEC_CeilingCrushAndRaise,
+	LNSPEC_CeilingLowerAndCrush,
+	LNSPEC_CeilingCrushStop,
+	LNSPEC_CeilingCrushRaiseAndStay,
+	LNSPEC_FloorCrushStop,
+
+	LNSPEC_PlatPerpetualRaise = 60,
+	LNSPEC_PlatStop,
+	LNSPEC_PlatDownWaitUpStay,
+	LNSPEC_PlatDownByValueWaitUpStay,
+	LNSPEC_PlatUpWaitDownStay,
+	LNSPEC_PlatUpByValueWaitDownStay,
+	LNSPEC_FloorLowerTimes8Instant,
+	LNSPEC_FloorRaiseTimes8Instant,
+	LNSPEC_FloorMoveToValueTimes8,
+	LNSPEC_CeilingMoveToValueTimes8,
+	LNSPEC_Teleport,// 70
+	LNSPEC_TeleportNoFog,
+	LNSPEC_ThingThrust,
+	LNSPEC_ThingDamage,
+	LNSPEC_TeleportNewMap,
+	LNSPEC_TeleportEndGame,
+
+	LNSPEC_ACSExecute = 80,// 80
+	LNSPEC_ACSSuspend,
+	LNSPEC_ACSTerminate,
+	LNSPEC_ACSLockedExecute,
+
+	LNSPEC_PolyRotateLeftOverride = 90,// 90
+	LNSPEC_PolyRotateRightOverride,
+	LNSPEC_PolyMoveOverride,
+	LNSPEC_PolyMoveTimes8Override,
+	LNSPEC_PillarBuildCrush,
+	LNSPEC_FloorAndCeilingLowerByValue,
+	LNSPEC_FloorAndCeilingRaiseByValue,
+
+	LNSPEC_ScrollTextureLeft = 100,// 100
+	LNSPEC_ScrollTextureRight,
+	LNSPEC_ScrollTextureUp,
+	LNSPEC_ScrollTextureDown,
+
+	LNSPEC_LightForceLightning = 109,
+	LNSPEC_LightRaiseByValue,// 110
+	LNSPEC_LightLowerByValue,
+	LNSPEC_LightChangeToValue,
+	LNSPEC_LightFade,
+	LNSPEC_LightGlow,
+	LNSPEC_LightFlicker,
+	LNSPEC_LightStrobe,
+
+	LNSPEC_QuakeTremor = 120,// 120
+	LNSPEC_LineSetIdentification,
+
+	LNSPEC_ThingActivate = 130,// 130
+	LNSPEC_ThingDeactivate,
+	LNSPEC_ThingRemove,
+	LNSPEC_ThingDestroy,
+	LNSPEC_ThingProjectile,
+	LNSPEC_ThingSpawn,
+	LNSPEC_ThingProjectileGravity,
+	LNSPEC_ThingSpawnNoFog,
+	LNSPEC_FloorWaggle,
+
+	LNSPEC_SectorSoundChange = 140,// 140
+
+	LNSPEC_3DFloor = 160,// 160
+	LNSPEC_Contents,
+
+	LNSPEC_PlaneAlign = 181,
+
+	LNSPEC_LineTranslucent = 208,
+
+	LNSPEC_TeleportLine = 215,
+
+	LNSPEC_DoorCloseWaitOpen = 249,
+
+	LNSPEC_Max
+};
+
 #endif
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2005/01/25 17:44:36  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.22  2004/12/22 07:54:31  dj_jl
 //  More extended ACS support, more linedef flags.
 //

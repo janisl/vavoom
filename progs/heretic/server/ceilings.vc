@@ -128,7 +128,7 @@ int EV_DoCeiling(line_t * line, int *args, int type)
 			break;
 
 		case CLEV_RAISETOHIGHEST:
-			Ceiling.topheight = FindHighestCeilingSurrounding(sec);
+			Ceiling.topheight = FindHighestCeilingSurrounding(sec, NULL);
 			Ceiling.direction = 1;
 			break;
 
@@ -231,6 +231,10 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/01/25 17:45:13  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.14  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

@@ -36,8 +36,6 @@ class CommanderKeen:Pawn
 
 void A_KeenDie(void)
 {
-	int args[5];
-
 	A_Fall();
 
 	// scan the remaining thinkers to see if all Keens are dead
@@ -45,11 +43,7 @@ void A_KeenDie(void)
 	{
 		return;
 	}
-	args[0] = 666;
-	args[1] = 16;
-	args[2] = 150;
-	args[3] = 0;
-	EV_DoDoor(NULL, &args[0], doorOpen);
+	EV_DoDoor(666, 16, 150, 0, 0, DOOREV_Open, NULL, none);
 }
 
 __states__
@@ -90,6 +84,10 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/01/25 17:45:11  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

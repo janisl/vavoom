@@ -56,7 +56,7 @@ void A_LightGoesOut()
 	Actor foo;
 
 	Sector->params.lightlevel = 0;
-	Sector->floor.dist = FindLowestFloorSurrounding(Sector);
+	Sector->floor.dist = FindLowestFloorSurrounding(Sector, NULL);
 	for (i = 0; i < 8; i++)
 	{
 		foo = Spawn(Rub1, Origin);
@@ -137,6 +137,10 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/01/25 17:45:17  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.5  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

@@ -1042,12 +1042,7 @@ void A_BossDeath()
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(87);
 		}
-		args[0] = 222;
-		args[1] = 256;
-		args[2] = 0;
-		args[3] = 0;
-		args[4] = 0;
-		EV_DoDoor(NULL, &args[0], doorOpen);
+		EV_DoDoor(222, 256, 0, 0, 0, DOOREV_Open, NULL, none);
 	}
 	else if (Class == Specter4)
 	{
@@ -1108,7 +1103,8 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		if (Enemy.Player.Quests & QUEST_GotCatacombKey)
+		if ((Enemy.Player.Quests & QUEST_Factory) ||
+			(Enemy.Player.Quests & QUEST_BlownUpComputer))
 		{
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(svc_finale_type);
@@ -1339,6 +1335,10 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/01/25 17:45:17  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.7  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -90,7 +90,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 		switch (type)
 		{
 		case PLAT_DOWNWAITUPSTAY:
-			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
 			Plat.high = sec->floorheight;
@@ -106,7 +106,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			Plat.status = PLAT_DOWN;
 			break;
 		case PLAT_UPWAITDOWNSTAY:
-			Plat.high = FindHighestFloorSurrounding(sec);
+			Plat.high = FindHighestFloorSurrounding(sec, NULL);
 			if (Plat.high < sec->floorheight)
 				Plat.high = sec->floorheight;
 			Plat.low = sec->floorheight;
@@ -122,10 +122,10 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			Plat.status = PLAT_UP;
 			break;
 		case PLAT_PERPETUALRAISE:
-			Plat.low = FindLowestFloorSurrounding(sec) + 8.0;
+			Plat.low = FindLowestFloorSurrounding(sec, NULL) + 8.0;
 			if (Plat.low > sec->floorheight)
 				Plat.low = sec->floorheight;
-			Plat.high = FindHighestFloorSurrounding(sec);
+			Plat.high = FindHighestFloorSurrounding(sec, NULL);
 			if (Plat.high < sec->floorheight)
 				Plat.high = sec->floorheight;
 			Plat.wait = itof(args[2]) / 35.0;
@@ -162,6 +162,10 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/01/25 17:45:16  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.13  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //

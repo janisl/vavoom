@@ -431,7 +431,7 @@ void SetSlopes(void)
 
 	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special == 181)
+		if (GLevel.Lines[i].special == LNSPEC_PlaneAlign)
 		{
 			GLevel.Lines[i].special = 0;
 //			GLevel.Lines[i].id = GLevel.Lines[i].args[2];
@@ -567,13 +567,15 @@ void SpawnWorld(void)
 	//  Spawn 3D floors
 	for (i = 0; i < GLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special == 160)
+		if (GLevel.Lines[i].special == LNSPEC_3DFloor)
 		{
 			SpawnExtraFloors(&GLevel.Lines[i]);
+			GLevel.Lines[i].special = 0;
 		}
-		if (GLevel.Lines[i].special == 161)
+		if (GLevel.Lines[i].special == LNSPEC_Contents)
 		{
 			CreateContents(&GLevel.Lines[i]);
+			GLevel.Lines[i].special = 0;
 		}
 	}
 }
@@ -581,6 +583,10 @@ void SpawnWorld(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/01/25 17:45:17  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.10  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

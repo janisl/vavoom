@@ -34,14 +34,7 @@ class MerchanderWeaponSmith : Pawn
 
 void A_CloseUpShop()
 {
-	int args[5];
-
-	args[0] = 999;
-	args[1] = 64;
-	args[2] = 960;
-	args[3] = 0;
-	args[4] = 0;
-	EV_DoDoor(NULL, &args[0], DREV_CLOSEWAITOPEN);
+	EV_DoDoor(999, 64, 960, 0, 0, DOOREV_CloseWaitOpen, NULL, none);
 	if (Enemy && Enemy.bIsPlayer)
 	{
 		P_NoiseAlert(Enemy, self);
@@ -120,6 +113,10 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/01/25 17:45:17  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.2  2004/01/30 17:41:47  dj_jl
 //  Implemented many action functions.
 //

@@ -115,17 +115,17 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 		{
 		case FLEV_LOWERFLOOR:
 			Floor.direction = -1;
-			Floor.floordestheight = FindHighestFloorSurrounding(sec);
+			Floor.floordestheight = FindHighestFloorSurrounding(sec, NULL);
 			break;
 
 		case FLEV_LOWERFLOORTOLOWEST:
 			Floor.direction = -1;
-			Floor.floordestheight = FindLowestFloorSurrounding(sec);
+			Floor.floordestheight = FindLowestFloorSurrounding(sec, NULL);
 			break;
 
 		case FLEV_RAISEFLOOR:
 			Floor.direction = 1;
-			Floor.floordestheight = FindLowestCeilingSurrounding(sec);
+			Floor.floordestheight = FindLowestCeilingSurrounding(sec, NULL);
 			if (Floor.floordestheight > sec->ceilingheight)
 				Floor.floordestheight = sec->ceilingheight;
 			break;
@@ -135,7 +135,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 			Floor.direction = 1;
 #if 1
 			// Doom behavior
-			Floor.floordestheight = FindLowestCeilingSurrounding(sec);
+			Floor.floordestheight = FindLowestCeilingSurrounding(sec, NULL);
 			if (Floor.floordestheight > sec->ceilingheight)
 				Floor.floordestheight = sec->ceilingheight;
 			Floor.floordestheight -= 8.0;
@@ -147,8 +147,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 
 		case FLEV_RAISEFLOORTONEAREST:
 			Floor.direction = 1;
-			Floor.floordestheight =
-				FindNextHighestFloor(sec, sec->floorheight);
+			Floor.floordestheight = FindNextHighestFloor(sec, NULL);
 			break;
 
 		case FLEV_RAISEFLOORBYVALUE:
@@ -168,14 +167,14 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 
 		case FLEV_LOWERTOHIGHEST:
 			Floor.direction = -1;
-			Floor.floordestheight = FindHighestFloorSurrounding(sec);
+			Floor.floordestheight = FindHighestFloorSurrounding(sec, NULL);
 			if (Floor.floordestheight != sec->floorheight)
 				Floor.floordestheight += itof(args[2]) - 128.0;
 			break;
 
 		case FLEV_RAISEFLOORTOHIGHEST:
 			Floor.direction = 1;
-			Floor.floordestheight = FindHighestCeilingSurrounding(sec);
+			Floor.floordestheight = FindHighestCeilingSurrounding(sec, NULL);
 			if (Floor.floordestheight > sec->ceilingheight)
 				Floor.floordestheight = sec->ceilingheight;
 			break;
@@ -219,7 +218,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 
 		case FLEV_LOWERTOLOWESTCHANGE:
 			Floor.direction = -1;
-			Floor.floordestheight = FindLowestFloorSurrounding(sec);
+			Floor.floordestheight = FindLowestFloorSurrounding(sec, NULL);
 			Floor.texture = sec->floor.pic;
 			for (i = 0; i < sec->linecount; i++)
 			{
@@ -256,8 +255,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 
 		case FLEV_RAISEFLOORTONEARESTCHANGE:
 			Floor.direction = 1;
-			Floor.floordestheight =
-				FindNextHighestFloor(sec, sec->floorheight);
+			Floor.floordestheight = FindNextHighestFloor(sec, NULL);
 			SetFloorPic(sec, line->frontsector->floor.pic);
 			// NO MORE DAMAGE, IF APPLICABLE
 			sec->special &= SECSPEC_SECRET_MASK;
@@ -882,7 +880,7 @@ int EV_OpenPillar(line_t * line, int *args)
 		pillar.sector = sec;
 		if (!args[2])
 		{
-			pillar.floordest = FindLowestFloorSurrounding(sec);
+			pillar.floordest = FindLowestFloorSurrounding(sec, NULL);
 		}
 		else
 		{
@@ -890,7 +888,7 @@ int EV_OpenPillar(line_t * line, int *args)
 		}
 		if (!args[3])
 		{
-			pillar.ceilingdest = FindHighestCeilingSurrounding(sec);
+			pillar.ceilingdest = FindHighestCeilingSurrounding(sec, NULL);
 		}
 		else
 		{
@@ -975,6 +973,10 @@ bool EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/01/25 17:45:12  dj_jl
+//  Constants for common line specials
+//  Updated special utilites.
+//
 //  Revision 1.16  2004/11/22 07:36:24  dj_jl
 //  Implemented all sector specials in all games.
 //
