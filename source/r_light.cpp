@@ -457,6 +457,11 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 			surf->lightmap_rgb = (rgb_t*)Z_Malloc(w * h * 3, PU_LEVEL, 0);
 			light_mem += w * h * 3;
 		}
+		else
+		{
+			//	Must do this, because with scrolling textures extents can change
+			Z_Resize((void**)&surf->lightmap_rgb, w * h * 3);
+		}
 
 		i = 0;
 		for (t = 0; t < h; t++)
@@ -529,6 +534,11 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	{
 		surf->lightmap = (byte*)Z_Malloc(w * h, PU_LEVEL, 0);
 		light_mem += w * h;
+	}
+	else
+	{
+		//	Must do this, because with scrolling textures extents can change
+		Z_Resize((void**)&surf->lightmap, w * h);
 	}
 
 	i = 0;
@@ -913,9 +923,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/30 17:36:21  dj_jl
+//	Fixed memory allocation bug
+//
 //	Revision 1.6  2001/08/24 17:04:32  dj_jl
 //	Added extra sampling
-//
+//	
 //	Revision 1.5  2001/08/21 17:47:05  dj_jl
 //	Made r_darked off by default
 //	
