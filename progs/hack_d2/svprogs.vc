@@ -1,0 +1,91 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	Copyright (C) 1999-2000 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**	
+//**************************************************************************
+//**
+//**	DOOM and DOOM II progs
+//**
+//**************************************************************************
+
+#define DOOM2
+
+#include "../../common/server.c"
+
+#include "../doomdefs.c"
+#include "../gendefs.c"
+#include "strings.c"
+
+#include "xlat.c"
+#include "specutl.c"
+#include "ceilings.c"
+#include "doors.c"
+#include "floors.c"
+#include "plats.c"
+#include "lights.c"
+#include "spec.c"
+
+#include "world.c"
+
+#include "savegame.c"
+#include "states.c"
+#include "mobjinfo.c"
+
+#ifdef GRENADE_LAUNCHER
+#include "grlaunch.c"
+#endif
+
+#include "wpninfo.c"
+#include "inter.c"
+#include "user.c"
+#include "mobj.c"
+#include "move.c"
+#include "physics.c"
+#include "map.c"
+#include "teleport.c"
+#include "usersubs.c"
+#include "ai_subs.c"
+#include "weapons.c"
+#include "enemy.c"
+#include "finale.c"
+#include "cheat.c"
+
+#include "zombiemn.c"
+#include "shotguy.c"
+#include "imp.c"
+#include "demon.c"
+#include "caco.c"
+#include "knight.c"
+#include "lostsoul.c"
+#include "cyber.c"
+#include "spider.c"
+
+#include "heavy.c"
+#include "arach.c"
+#include "painelem.c"
+#include "ravenant.c"
+#include "mancubus.c"
+#include "archvile.c"
+#include "brain.c"
+
+#include "keen.c"
+
+#include "main.c"
+
