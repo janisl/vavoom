@@ -517,6 +517,20 @@ COMMAND(SetResolution)
 	}
 }
 
+//==========================================================================
+//
+//	COMMAND vid_restart
+//
+//==========================================================================
+
+COMMAND(vid_restart)
+{
+	setwidth = ScreenWidth;
+	setheight = ScreenHeight;
+	setbpp = ScreenBPP;
+	setresolutionneeded = true;
+}
+
 //**************************************************************************
 //
 //	General (pubic) stuff
@@ -657,9 +671,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/14 16:52:44  dj_jl
+//	Added vid_restart
+//
 //	Revision 1.9  2001/09/12 17:35:13  dj_jl
 //	Direct update for Hexen icons
-//
+//	
 //	Revision 1.8  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
 //	
