@@ -75,10 +75,10 @@ struct compstate_t
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int				num_sprite_names;
-static int				*sprite_names;
+static FName			*sprite_names;
 
 static int				num_models;
-static int				*models;
+static FName			*models;
 
 static int				num_states;
 static state_t			*states = NULL;
@@ -106,11 +106,11 @@ static int				gv_mobj_info;
 
 void InitInfoTables(void)
 {
-	sprite_names = new int[MAX_SPRITE_NAMES];
+	sprite_names = new FName[MAX_SPRITE_NAMES];
 	memset(sprite_names, 0, MAX_SPRITE_NAMES * 4);
 	num_sprite_names = 0;
 
-	models = new int[MAX_MODELS];
+	models = new FName[MAX_MODELS];
 	memset(models, 0, MAX_MODELS * 4);
 	num_models = 1; // 0 indicates no-model
 
@@ -130,7 +130,7 @@ void InitInfoTables(void)
 	gv_num_sprite_names = numglobaldefs++;
 
 	globaldefs[numglobaldefs].Name = "sprite_names";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_name, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_sprite_names = numglobaldefs++;
 
@@ -140,7 +140,7 @@ void InitInfoTables(void)
 	gv_num_models = numglobaldefs++;
 
 	globaldefs[numglobaldefs].Name = "models";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_int, -1);
+	globaldefs[numglobaldefs].type = MakeArrayType(&type_name, -1);
 	globaldefs[numglobaldefs].ofs = 0;
 	gv_models = numglobaldefs++;
 
@@ -174,7 +174,6 @@ void InitInfoTables(void)
 void ParseStates(TType *class_type)
 {
 	int i;
-	int j;
 
 	if (!class_type && TK_Check(PU_LPAREN))
 	{
@@ -208,28 +207,27 @@ void ParseStates(TType *class_type)
 		//	Nummurs
 		s.statenum = num_states;
 		//	Spraita v∆rds
-		if (tk_Token != TK_STRING)
+		if (tk_Token != TK_NAME)
 		{
 			ERR_Exit(ERR_NONE, true, "Sprite name expected");
 		}
-		if (tk_String[0])
+		if (tk_Name != NAME_None)
 		{
-			if (strlen(tk_String) != 4)
+			if (strlen(*tk_Name) != 4)
 			{
 				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
 			}
-			j = tk_StringI;
-			for (i=0; i<num_sprite_names; i++)
+			for (i = 0; i < num_sprite_names; i++)
 			{
-		   		if (sprite_names[i] == j)
+		   		if (sprite_names[i] == tk_Name)
 				{
 				   	break;
 				}
 			}
 			if (i == num_sprite_names)
 			{
-			   	sprite_names[i] = j;
-				AddConstant(va("SPR_%s", tk_String), num_sprite_names);
+			   	sprite_names[i] = tk_Name;
+				AddConstant(va("SPR_%s", *tk_Name), num_sprite_names);
 				num_sprite_names++;
 			}
 			s.sprite = i;
@@ -243,20 +241,19 @@ void ParseStates(TType *class_type)
 		//  Kadrs
 		s.frame = EvalConstExpression(ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
-		if (tk_Token == TK_STRING)
+		if (tk_Token == TK_NAME)
 		{
 			//	Modelis
-			j = tk_StringI;
 			for (i = 0; i < num_models; i++)
 			{
-		   		if (models[i] == j)
+		   		if (models[i] == tk_Name)
 				{
 				   	break;
 				}
 			}
 			if (i == num_models)
 			{
-			   	models[i] = j;
+			   	models[i] = tk_Name;
 				num_models++;
 			}
 			s.model_index = i;
@@ -378,13 +375,13 @@ static void CheckStates(void)
 //
 //==========================================================================
 
-static void AddInfoData(int globaldef, void *data, int size, bool strings)
+static void AddInfoData(int globaldef, void *data, int size, bool names)
 {
 	globaldefs[globaldef].ofs = numglobals;
 	memcpy(&globals[numglobals], data, size);
-	if (strings)
+	if (names)
 	{
-		memset(globalinfo + numglobals, 1, size / 4);
+		memset(globalinfo + numglobals, 4, size / 4);
 	}
 	numglobals += size / 4;
 }
@@ -433,9 +430,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/01/11 18:21:49  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.12  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
-//
+//	
 //	Revision 1.11  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
 //	

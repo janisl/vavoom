@@ -202,7 +202,7 @@ void Actor::A_Chase(void)
 		}
 		else if (Class == MT_PIG)
 		{
-			StartSound(this, GetSoundID("PigActive1") + (P_Random() & 1),
+			StartSound(this, GetSoundID('PigActive1') + (P_Random() & 1),
 				CHAN_VOICE);
 		}
 		else if (flags2 & MF2_BOSS)
@@ -292,7 +292,7 @@ void Actor::A_Scream(void)
 			if (velocity.z <= -39.0 * 35.0)
 			{
 				// Falling splat
-				StartSoundName(this, "PlayerFallingSplat", CHAN_VOICE);
+				StartSoundName(this, 'PlayerFallingSplat', CHAN_VOICE);
 			}
 			else if (health > -50)
 			{
@@ -300,15 +300,15 @@ void Actor::A_Scream(void)
 				switch (player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(this, "PlayerFighterNormalDeath",
+					StartSoundName(this, 'PlayerFighterNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(this, "PlayerClericNormalDeath",
+					StartSoundName(this, 'PlayerClericNormalDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(this, "PlayerMageNormalDeath",
+					StartSoundName(this, 'PlayerMageNormalDeath',
 						CHAN_VOICE);
 					break;
 				}
@@ -319,15 +319,15 @@ void Actor::A_Scream(void)
 				switch (player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					StartSoundName(this, "PlayerFighterCrazyDeath",
+					StartSoundName(this, 'PlayerFighterCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_CLERIC:
-					StartSoundName(this, "PlayerClericCrazyDeath",
+					StartSoundName(this, 'PlayerClericCrazyDeath',
 						CHAN_VOICE);
 					break;
 				case PCLASS_MAGE:
-					StartSoundName(this, "PlayerMageCrazyDeath", CHAN_VOICE);
+					StartSoundName(this, 'PlayerMageCrazyDeath', CHAN_VOICE);
 					break;
 				}
 			}
@@ -338,13 +338,13 @@ void Actor::A_Scream(void)
 				switch (player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					sound = GetSoundID("PlayerFighterExtreme1Death");
+					sound = GetSoundID('PlayerFighterExtreme1Death');
 					break;
 				case PCLASS_CLERIC:
-					sound = GetSoundID("PlayerClericExtreme1Death");
+					sound = GetSoundID('PlayerClericExtreme1Death');
 					break;
 				case PCLASS_MAGE:
-					sound = GetSoundID("PlayerMageExtreme1Death");
+					sound = GetSoundID('PlayerMageExtreme1Death');
 					break;
 				}
 				sound += P_Random() % 3;	// Three different extreme deaths
@@ -521,7 +521,7 @@ void Actor::A_FreezeDeath(void)
 	flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
 	flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_PASSMOBJ | MF2_SLIDE;
 	height *= 4.0;
-	StartSoundName(this, "FreezeDeath", CHAN_VOICE);
+	StartSoundName(this, 'FreezeDeath', CHAN_VOICE);
 
 	if (player)
 	{
@@ -577,7 +577,7 @@ void Actor::A_FreezeDeathChunks(void)
 		time = 3.0;
 		return;
 	}
-	StartSoundName(this, "FreezeShatter", CHAN_VOICE);
+	StartSoundName(this, 'FreezeShatter', CHAN_VOICE);
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
@@ -655,7 +655,7 @@ void Actor::A_CheckSkullFloor(void)
 	if (origin.z <= floorz)
 	{
 		SetMobjState(this, S_BLOODYSKULLX1);
-		StartSoundName(this, "Drip", CHAN_VOICE);
+		StartSoundName(this, 'Drip', CHAN_VOICE);
 	}
 }
 
@@ -821,6 +821,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -73,7 +73,7 @@ void save_func(menucommon_t * aitem, int msg)
 	{
 		InputLine_SetValue(&slot_enter_text, ARR2STR(item->text));
 	}
-	LocalSound("MenuSelect");
+	LocalSound('MenuSelect');
 }
 
 //==========================================================================
@@ -126,6 +126,9 @@ void menu_save(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.5  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

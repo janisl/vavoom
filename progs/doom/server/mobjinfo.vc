@@ -52,8 +52,8 @@ class MT_PLAYER:Actor
 		painstate = S_PLAY_PAIN;
 		deathstate = S_PLAY_DIE1;
 		xdeathstate = S_PLAY_XDIE1;
-		sound_pain = GetSoundID("PlayerPain");
-		sound_death = GetSoundID("PlayerDeath");
+		sound_pain = GetSoundID('PlayerPain');
+		sound_death = GetSoundID('PlayerDeath');
 	}
 };
 
@@ -83,11 +83,11 @@ class MT_POSSESSED:Actor
 		deathstate = S_POSS_DIE1;
 		xdeathstate = S_POSS_XDIE1;
 		raisestate = S_POSS_RAISE1;
-		sound_sight = GetSoundID("ZombieSight1");
-		sound_active = GetSoundID("ZombieActive");
-		sound_attack = GetSoundID("PistolFire");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("ZombieDeath1");
+		sound_sight = GetSoundID('ZombieSight1');
+		sound_active = GetSoundID('ZombieActive');
+		sound_attack = GetSoundID('PistolFire');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('ZombieDeath1');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -127,10 +127,10 @@ class MT_SHOTGUY:Actor
 		deathstate = S_SPOS_DIE1;
 		xdeathstate = S_SPOS_XDIE1;
 		raisestate = S_SPOS_RAISE1;
-		sound_sight = GetSoundID("ZombieSight2");
-		sound_active = GetSoundID("ZombieActive");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("ZombieDeath2");
+		sound_sight = GetSoundID('ZombieSight2');
+		sound_active = GetSoundID('ZombieActive');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('ZombieDeath2');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -167,10 +167,10 @@ class MT_VILE:Actor
 		missilestate = S_VILE_ATK1;
 		painstate = S_VILE_PAIN;
 		deathstate = S_VILE_DIE1;
-		sound_sight = GetSoundID("ArchVileSight");
-		sound_active = GetSoundID("ArchVileActive");
-		sound_pain = GetSoundID("ArchVilePain");
-		sound_death = GetSoundID("ArchVileDeath");
+		sound_sight = GetSoundID('ArchVileSight');
+		sound_active = GetSoundID('ArchVileActive');
+		sound_pain = GetSoundID('ArchVilePain');
+		sound_death = GetSoundID('ArchVileDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -231,10 +231,10 @@ class MT_UNDEAD:Actor
 		painstate = S_SKEL_PAIN;
 		deathstate = S_SKEL_DIE1;
 		raisestate = S_SKEL_RAISE1;
-		sound_sight = GetSoundID("RavenantSight");
-		sound_active = GetSoundID("RavenantActive");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("RavenantDeath");
+		sound_sight = GetSoundID('RavenantSight');
+		sound_active = GetSoundID('RavenantActive');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('RavenantDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -269,8 +269,8 @@ class MT_TRACER:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_TRACER;
 		deathstate = S_TRACEEXP1;
-		sound_sight = GetSoundID("RavenantAttack");
-		sound_death = GetSoundID("BarrelExplode");
+		sound_sight = GetSoundID('RavenantAttack');
+		sound_death = GetSoundID('BarrelExplode');
 		effects = EF_DL_RBALL;
 	}
 };
@@ -320,10 +320,10 @@ class MT_FATSO:Actor
 		painstate = S_FATT_PAIN;
 		deathstate = S_FATT_DIE1;
 		raisestate = S_FATT_RAISE1;
-		sound_sight = GetSoundID("MancubusSight");
-		sound_active = GetSoundID("ZombieActive");
-		sound_pain = GetSoundID("MancubusPain");
-		sound_death = GetSoundID("MancubusDeath");
+		sound_sight = GetSoundID('MancubusSight');
+		sound_active = GetSoundID('ZombieActive');
+		sound_pain = GetSoundID('MancubusPain');
+		sound_death = GetSoundID('MancubusDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -358,8 +358,8 @@ class MT_FATSHOT:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_FATSHOT1;
 		deathstate = S_FATSHOTX1;
-		sound_sight = GetSoundID("FireballShoot");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('FireballShoot');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_RBALL;
 	}
 };
@@ -390,10 +390,10 @@ class MT_CHAINGUY:Actor
 		deathstate = S_CPOS_DIE1;
 		xdeathstate = S_CPOS_XDIE1;
 		raisestate = S_CPOS_RAISE1;
-		sound_sight = GetSoundID("ZombieSight2");
-		sound_active = GetSoundID("ZombieActive");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("ZombieDeath2");
+		sound_sight = GetSoundID('ZombieSight2');
+		sound_active = GetSoundID('ZombieActive');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('ZombieDeath2');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -434,10 +434,10 @@ class MT_TROOP:Actor
 		deathstate = S_TROO_DIE1;
 		xdeathstate = S_TROO_XDIE1;
 		raisestate = S_TROO_RAISE1;
-		sound_sight = GetSoundID("ImpSight1");
-		sound_active = GetSoundID("ImpActive");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("ImpDeath1");
+		sound_sight = GetSoundID('ImpSight1');
+		sound_active = GetSoundID('ImpActive');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('ImpDeath1');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -475,11 +475,11 @@ class MT_SERGEANT:Actor
 		painstate = S_SARG_PAIN;
 		deathstate = S_SARG_DIE1;
 		raisestate = S_SARG_RAISE1;
-		sound_sight = GetSoundID("DemonSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_attack = GetSoundID("DemonAttack");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("DemonDeath");
+		sound_sight = GetSoundID('DemonSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_attack = GetSoundID('DemonAttack');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('DemonDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -518,11 +518,11 @@ class MT_SHADOWS:Actor
 		painstate = S_SARG_PAIN;
 		deathstate = S_SARG_DIE1;
 		raisestate = S_SARG_RAISE1;
-		sound_sight = GetSoundID("DemonSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_attack = GetSoundID("DemonAttack");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("DemonDeath");
+		sound_sight = GetSoundID('DemonSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_attack = GetSoundID('DemonAttack');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('DemonDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -560,10 +560,10 @@ class MT_HEAD:Actor
 		painstate = S_HEAD_PAIN;
 		deathstate = S_HEAD_DIE1;
 		raisestate = S_HEAD_RAISE1;
-		sound_sight = GetSoundID("CacoSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("CacoDeath");
+		sound_sight = GetSoundID('CacoSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('CacoDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -602,10 +602,10 @@ class MT_BRUISER:Actor
 		painstate = S_BOSS_PAIN;
 		deathstate = S_BOSS_DIE1;
 		raisestate = S_BOSS_RAISE1;
-		sound_sight = GetSoundID("BaronSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("BaronDeath");
+		sound_sight = GetSoundID('BaronSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('BaronDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -640,8 +640,8 @@ class MT_BRUISERSHOT:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_BRBALL1;
 		deathstate = S_BRBALLX1;
-		sound_sight = GetSoundID("FireballShoot");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('FireballShoot');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_GBALL;
 	}
 };
@@ -671,10 +671,10 @@ class MT_KNIGHT:Actor
 		painstate = S_BOS2_PAIN;
 		deathstate = S_BOS2_DIE1;
 		raisestate = S_BOS2_RAISE1;
-		sound_sight = GetSoundID("KnightSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("KnightDeath");
+		sound_sight = GetSoundID('KnightSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('KnightDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -713,10 +713,10 @@ class MT_SKULL:Actor
 		missilestate = S_SKULL_ATK1;
 		painstate = S_SKULL_PAIN;
 		deathstate = S_SKULL_DIE1;
-		sound_active = GetSoundID("DemonActive");
-		sound_attack = GetSoundID("LostSoulAttack");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("FireballExplode");
+		sound_active = GetSoundID('DemonActive');
+		sound_attack = GetSoundID('LostSoulAttack');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_MISSILE;
 	}
 
@@ -754,11 +754,11 @@ class MT_SPIDER:Actor
 		missilestate = S_SPID_ATK1;
 		painstate = S_SPID_PAIN;
 		deathstate = S_SPID_DIE1;
-		sound_sight = GetSoundID("SpiderSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_attack = GetSoundID("ShotgunFire");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("SpiderDeath");
+		sound_sight = GetSoundID('SpiderSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_attack = GetSoundID('ShotgunFire');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('SpiderDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -796,10 +796,10 @@ class MT_BABY:Actor
 		painstate = S_BSPI_PAIN;
 		deathstate = S_BSPI_DIE1;
 		raisestate = S_BSPI_RAISE1;
-		sound_sight = GetSoundID("BabySight");
-		sound_active = GetSoundID("BabyActive");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("BabyDeath");
+		sound_sight = GetSoundID('BabySight');
+		sound_active = GetSoundID('BabyActive');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('BabyDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -836,10 +836,10 @@ class MT_CYBORG:Actor
 		missilestate = S_CYBER_ATK1;
 		painstate = S_CYBER_PAIN;
 		deathstate = S_CYBER_DIE1;
-		sound_sight = GetSoundID("CyberSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_pain = GetSoundID("DemonPain");
-		sound_death = GetSoundID("CyberDeath");
+		sound_sight = GetSoundID('CyberSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_pain = GetSoundID('DemonPain');
+		sound_death = GetSoundID('CyberDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -877,10 +877,10 @@ class MT_PAIN:Actor
 		painstate = S_PAIN_PAIN;
 		deathstate = S_PAIN_DIE1;
 		raisestate = S_PAIN_RAISE1;
-		sound_sight = GetSoundID("PainElementalSight");
-		sound_active = GetSoundID("DemonActive");
-		sound_pain = GetSoundID("PainElementalPain");
-		sound_death = GetSoundID("PainElementalDeath");
+		sound_sight = GetSoundID('PainElementalSight');
+		sound_active = GetSoundID('DemonActive');
+		sound_pain = GetSoundID('PainElementalPain');
+		sound_death = GetSoundID('PainElementalDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -920,10 +920,10 @@ class MT_WOLFSS:Actor
 		deathstate = S_SSWV_DIE1;
 		xdeathstate = S_SSWV_XDIE1;
 		raisestate = S_SSWV_RAISE1;
-		sound_sight = GetSoundID("SSNaziSight");
-		sound_active = GetSoundID("ZombieActive");
-		sound_pain = GetSoundID("ZombiePain");
-		sound_death = GetSoundID("SSNaziDeath");
+		sound_sight = GetSoundID('SSNaziSight');
+		sound_active = GetSoundID('ZombieActive');
+		sound_pain = GetSoundID('ZombiePain');
+		sound_death = GetSoundID('SSNaziDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -957,8 +957,8 @@ class MT_KEEN:Actor
 		spawnstate = S_KEENSTND;
 		painstate = S_KEENPAIN;
 		deathstate = S_COMMKEEN;
-		sound_pain = GetSoundID("KeenPain");
-		sound_death = GetSoundID("KeenDeath");
+		sound_pain = GetSoundID('KeenPain');
+		sound_death = GetSoundID('KeenDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -992,8 +992,8 @@ class MT_BOSSBRAIN:Actor
 		spawnstate = S_BRAIN;
 		painstate = S_BRAIN_PAIN;
 		deathstate = S_BRAIN_DIE1;
-		sound_pain = GetSoundID("BossPain");
-		sound_death = GetSoundID("BossDeath");
+		sound_pain = GetSoundID('BossPain');
+		sound_death = GetSoundID('BossDeath');
 	}
 };
 
@@ -1056,8 +1056,8 @@ class MT_SPAWNSHOT:Actor
 		damage = 3;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_NOCLIP|MF_MISSILE;
 		spawnstate = S_SPAWN1;
-		sound_sight = GetSoundID("BossFire");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('BossFire');
+		sound_death = GetSoundID('FireballExplode');
 	}
 };
 
@@ -1101,7 +1101,7 @@ class MT_BARREL:Actor
 		flags = MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD;
 		spawnstate = S_BAR1;
 		deathstate = S_BEXP;
-		sound_death = GetSoundID("BarrelExplode");
+		sound_death = GetSoundID('BarrelExplode');
 	}
 };
 
@@ -1126,8 +1126,8 @@ class MT_TROOPSHOT:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_TBALL1;
 		deathstate = S_TBALLX1;
-		sound_sight = GetSoundID("FireballShoot");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('FireballShoot');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_RBALL;
 	}
 };
@@ -1153,8 +1153,8 @@ class MT_HEADSHOT:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_RBALL1;
 		deathstate = S_RBALLX1;
-		sound_sight = GetSoundID("FireballShoot");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('FireballShoot');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_RBALL;
 	}
 };
@@ -1179,8 +1179,8 @@ class MT_ROCKET:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_ROCKET;
 		deathstate = S_EXPLODE1;
-		sound_sight = GetSoundID("LauncherFire");
-		sound_death = GetSoundID("BarrelExplode");
+		sound_sight = GetSoundID('LauncherFire');
+		sound_death = GetSoundID('BarrelExplode');
 		effects = EF_DL_MISSILE | EF_ROCKET;
 	}
 };
@@ -1206,8 +1206,8 @@ class MT_PLASMA:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_PLASBALL;
 		deathstate = S_PLASEXP;
-		sound_sight = GetSoundID("PlasmaFire");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('PlasmaFire');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_PLASMA;
 	}
 };
@@ -1233,7 +1233,7 @@ class MT_BFG:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_BFGSHOT;
 		deathstate = S_BFGLAND;
-		sound_death = GetSoundID("RocketExplode");
+		sound_death = GetSoundID('RocketExplode');
 		effects = EF_DL_GBALL;
 	}
 };
@@ -1259,8 +1259,8 @@ class MT_ARACHPLAZ:Actor
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DROPOFF|MF_MISSILE;
 		spawnstate = S_ARACH_PLAZ;
 		deathstate = S_ARACH_PLEX;
-		sound_sight = GetSoundID("PlasmaFire");
-		sound_death = GetSoundID("FireballExplode");
+		sound_sight = GetSoundID('PlasmaFire');
+		sound_death = GetSoundID('FireballExplode');
 		effects = EF_DL_MISSILE;
 	}
 };
@@ -3471,9 +3471,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/01/11 18:19:40  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.13  2002/01/07 12:21:10  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.12  2001/12/27 17:48:11  dj_jl
 //	Removed spawnhealth
 //	

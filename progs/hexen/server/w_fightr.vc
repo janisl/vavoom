@@ -72,11 +72,11 @@ void Weapon::A_FPunchAttack(void)
 			{
 				if (PuffType == MT_HAMMERPUFF)
 				{
-					StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+					StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 				}
 				else
 				{
-					StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
+					StartSoundName(pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
@@ -103,11 +103,11 @@ void Weapon::A_FPunchAttack(void)
 			{
 				if (PuffType == MT_HAMMERPUFF)
 				{
-					StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+					StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 				}
 				else
 				{
-					StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
+					StartSoundName(pmo, 'FighterPunchMiss', CHAN_WEAPON);
 				}
 			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
@@ -128,7 +128,7 @@ void Weapon::A_FPunchAttack(void)
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
 		{
-			StartSoundName(pmo, "FighterPunchMiss", CHAN_WEAPON);
+			StartSoundName(pmo, 'FighterPunchMiss', CHAN_WEAPON);
 		}
 	}
 
@@ -136,7 +136,7 @@ void Weapon::A_FPunchAttack(void)
 	{
 		pmo->special1 = 0;
 		SetPsprite(player, ps_weapon, S_PUNCHATK2_1);
-		StartSoundName(pmo, "FighterGrunt", CHAN_VOICE);
+		StartSoundName(pmo, 'FighterGrunt', CHAN_VOICE);
 	}
 }
 
@@ -182,7 +182,7 @@ void Weapon::A_FAxeAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
 			{
-				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
@@ -200,7 +200,7 @@ void Weapon::A_FAxeAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, AXERANGE, damage))
 			{
-				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
 			{
@@ -221,7 +221,7 @@ void Weapon::A_FAxeAttack(void)
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, MELEERANGE, damage))
 		{
-			StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+			StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 		}
 	}
 
@@ -266,7 +266,7 @@ void Weapon::A_FHammerAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 			{
-				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
@@ -284,7 +284,7 @@ void Weapon::A_FHammerAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 			{
-				StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(pmo);
 			if (linetarget->flags & MF_COUNTKILL || linetarget->player)
@@ -304,7 +304,7 @@ void Weapon::A_FHammerAttack(void)
 		AngleVector(&angles, &vforward);
 		if (LineAttack(pmo, &vforward, HAMMER_RANGE, damage))
 		{
-			StartSoundName(pmo, "FighterHammerMiss", CHAN_WEAPON);
+			StartSoundName(pmo, 'FighterHammerMiss', CHAN_WEAPON);
 		}
 		if (PuffSpawned)
 		{
@@ -377,7 +377,7 @@ void Weapon::A_FSwordAttack(void)
 	SpawnPlayerMissileAngleXYZ(pmo, pmo->origin.x, pmo->origin.y,
 		pmo->origin.z + 10.0, MT_FSWORD_MISSILE,
 		AngleMod360(pmo->angles.yaw - 45.0 / 4.0));
-	StartSoundName(pmo, "FighterSwordFire", CHAN_WEAPON);
+	StartSoundName(pmo, 'FighterSwordFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -401,6 +401,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

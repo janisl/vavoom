@@ -65,7 +65,7 @@ void Actor::A_RestoreArtifact(void)
 {
 	flags |= MF_SPECIAL;
 	SetMobjState(this, spawnstate);
-	StartSoundName(this, "Respawn", CHAN_VOICE);
+	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -79,7 +79,7 @@ void Actor::A_RestoreArtifact(void)
 void Actor::A_RestoreSpecialThing1(void)
 {
 	translucency -= 100;
-	StartSoundName(this, "Respawn", CHAN_VOICE);
+	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -189,7 +189,7 @@ void Actor::A_CorpseExplode(void)
 		mo->velocity.x = (Random() - Random()) * 4.0 * 35.0;
 		mo->velocity.y = (Random() - Random()) * 4.0 * 35.0;
 		mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
-		StartSoundName(mo, "FireDemonDeath", CHAN_VOICE);
+		StartSoundName(mo, 'FireDemonDeath', CHAN_VOICE);
 	}
 	P_RemoveMobj(this);
 }
@@ -226,7 +226,7 @@ void Actor::A_SoAExplode(void)
 		P_SpawnMobj(origin.x, origin.y, origin.z,
 			TranslateThingType[args[0]]);
 	}
-	StartSoundName(mo, "SuitofArmorBreak", CHAN_VOICE);
+	StartSoundName(mo, 'SuitofArmorBreak', CHAN_VOICE);
 	P_RemoveMobj(this);
 }
 
@@ -241,13 +241,13 @@ void Actor::A_ContMobjSound(void)
 	switch (Class)
 	{
 	case MT_SERPENTFX:
-		StartSoundName(this, "SerpentFXContinuous", CHAN_VOICE);
+		StartSoundName(this, 'SerpentFXContinuous', CHAN_VOICE);
 		break;
 	case MT_HAMMER_MISSILE:
-		StartSoundName(this, "FighterHammerContinuous", CHAN_VOICE);
+		StartSoundName(this, 'FighterHammerContinuous', CHAN_VOICE);
 		break;
 	case MT_QUAKE_FOCUS:
-		StartSoundName(this, "Earthquake", CHAN_VOICE);
+		StartSoundName(this, 'Earthquake', CHAN_VOICE);
 		break;
 	default:
 		break;
@@ -265,7 +265,7 @@ void Actor::A_ESound(void)
 	switch (Class)
 	{
 	case MT_SOUNDWIND:
-		StartSoundName(this, "Wind", CHAN_VOICE);
+		StartSoundName(this, 'Wind', CHAN_VOICE);
 		break;
 	}
 }
@@ -295,6 +295,9 @@ void Actor::A_UnSetInvulnerable(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -196,7 +196,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
 				SetMobjState(thing, S_GIBS1);
 				thing->height = 0.0;
 				thing->radius = 0.0;
-				StartSoundName(thing, "PlayerFallingSplat", CHAN_VOICE);
+				StartSoundName(thing, 'PlayerFallingSplat', CHAN_VOICE);
 			}
 		}
 		return true;	// keep checking
@@ -281,7 +281,7 @@ TVec useDir;
 
 boolean PTR_UseTraverse(intercept_t * in)
 {
-	string sound;
+	name sound;
 	float pheight;
 	TVec hit_point;
 	opening_t *open;
@@ -299,19 +299,19 @@ boolean PTR_UseTraverse(intercept_t * in)
 				switch (usething->player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					sound = "PlayerFighterFailedUse";
+					sound = 'PlayerFighterFailedUse';
 					break;
 				case PCLASS_CLERIC:
-					sound = "PlayerClericFailedUse";
+					sound = 'PlayerClericFailedUse';
 					break;
 				case PCLASS_MAGE:
-					sound = "PlayerMageFailedUse";
+					sound = 'PlayerMageFailedUse';
 					break;
 				case PCLASS_PIG:
-					sound = "PigActive1";
+					sound = 'PigActive1';
 					break;
 				default:
-					sound = "";
+					sound = 'None';
 					break;
 				}
 				StartSoundName(usething, sound, CHAN_VOICE);
@@ -326,19 +326,19 @@ boolean PTR_UseTraverse(intercept_t * in)
 				switch (usething->player->pclass)
 				{
 				case PCLASS_FIGHTER:
-					sound = "PlayerFighterFailedUse";
+					sound = 'PlayerFighterFailedUse';
 					break;
 				case PCLASS_CLERIC:
-					sound = "PlayerClericFailedUse";
+					sound = 'PlayerClericFailedUse';
 					break;
 				case PCLASS_MAGE:
-					sound = "PlayerMageFailedUse";
+					sound = 'PlayerMageFailedUse';
 					break;
 				case PCLASS_PIG:
-					sound = "PigActive1";
+					sound = 'PigActive1';
 					break;
 				default:
-					sound = "";
+					sound = 'None';
 					break;
 				}
 				StartSoundName(usething, sound, CHAN_VOICE);
@@ -415,21 +415,21 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
 			open = LineOpenings(in->line, hit_point);
 			if (!open || open->range <= 0.0)
 			{
-				string sound;
+				name sound;
 
-				sound = "";
+				sound = 'None';
 				if (PuzzleItemUser->player)
 				{
 					switch (PuzzleItemUser->player->pclass)
 					{
 					case PCLASS_FIGHTER:
-						sound = "PuzzleFailFighter";
+						sound = 'PuzzleFailFighter';
 						break;
 					case PCLASS_CLERIC:
-						sound = "PuzzleFailCleric";
+						sound = 'PuzzleFailCleric';
 						break;
 					case PCLASS_MAGE:
-						sound = "PuzzleFailMage";
+						sound = 'PuzzleFailMage';
 						break;
 					}
 				}
@@ -1101,6 +1101,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.11  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

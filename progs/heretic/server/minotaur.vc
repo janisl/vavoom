@@ -51,7 +51,7 @@ void Actor::A_MinotaurAtk1(void)
 	{
 		return;
 	}
-	StartSoundName(this, "StaffHit2", CHAN_WEAPON);
+	StartSoundName(this, 'StaffHit2', CHAN_WEAPON);
 	if (P_CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(4));
@@ -79,7 +79,7 @@ void Actor::A_MinotaurDecide(void)
 	{
 		return;
 	}
-	StartSoundName(this, "MinotaurSight", CHAN_VOICE);
+	StartSoundName(this, 'MinotaurSight', CHAN_VOICE);
 	dist = MobjDist(this, target);
 	if (target->origin.z + target->height > origin.z &&
 		target->origin.z + target->height < origin.z + height &&
@@ -127,7 +127,7 @@ void Actor::A_MinotaurAtk2(void)
 	{
 		return;
 	}
-	StartSoundName(this, "MinotaurAttack2", CHAN_WEAPON);
+	StartSoundName(this, 'MinotaurAttack2', CHAN_WEAPON);
 	if (P_CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(5));
@@ -136,7 +136,7 @@ void Actor::A_MinotaurAtk2(void)
 	mo = SpawnMissile(this, target, MT_MNTRFX1);
 	if (mo)
 	{
-		StartSoundName(mo, "MinotaurAttack2", CHAN_WEAPON);
+		StartSoundName(mo, 'MinotaurAttack2', CHAN_WEAPON);
 		VectorAngles(&mo->velocity, &ang);
 		angle = mo->angles.yaw;
 		SpawnMissileAngles(this, MT_MNTRFX1,
@@ -180,7 +180,7 @@ void Actor::A_MinotaurAtk3(void)
 		mo = SpawnMissile(this, target, MT_MNTRFX2);
 		if (mo != NULL)
 		{
-			StartSoundName(mo, "MinotaurAttack1", CHAN_VOICE);
+			StartSoundName(mo, 'MinotaurAttack1', CHAN_VOICE);
 		}
 	}
 	if (P_Random() < 192 && special2 == 0)
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.10  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -104,9 +104,9 @@ void DSparilTeleport(mobj_t * actor)
 	if (P_TeleportMove(actor, x, y))
 	{
 		mo = P_SpawnMobj(prevX, prevY, prevZ, MT_SOR2TELEFADE);
-		StartSoundName(mo, "Teleport", CHAN_VOICE);
+		StartSoundName(mo, 'Teleport', CHAN_VOICE);
 		SetMobjState(actor, S_SOR2_TELE1);
-		StartSoundName(actor, "Teleport", CHAN_VOICE);
+		StartSoundName(actor, 'Teleport', CHAN_VOICE);
 		actor->origin.z = actor->floorz;
 		actor->angles.yaw = BossSpot_angle[i % BossSpotCount];
 		actor->velocity.x = actor->velocity.y = actor->velocity.z = 0.0;
@@ -240,7 +240,7 @@ int UpdateChicken(mobj_t * actor, int tics)
 	mo->angles.yaw = angle;
 	mo->target = target;
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -526,6 +526,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

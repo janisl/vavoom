@@ -176,7 +176,7 @@ boolean PIT_CheckThing(mobj_t * thing)
 				// Ok to spawn some blood
 				P_RipperBlood(tmthing);
 			}
-			StartSoundName(tmthing, "RipSlop", CHAN_VOICE);
+			StartSoundName(tmthing, 'RipSlop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * tmthing->damage;
 			thing->Damage(tmthing, tmthing->target, damage);
 			if (thing->flags2 & MF2_PUSHABLE &&
@@ -687,6 +687,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -75,7 +75,7 @@ void Actor::A_BishopDoBlur(void)
 		// Thrust forward
 		P_ThrustMobj(this, angles.yaw, 11.0);
 	}
-	StartSoundName(this, "BishopBlur", CHAN_VOICE);
+	StartSoundName(this, 'BishopBlur', CHAN_VOICE);
 }
 
 //============================================================================
@@ -262,6 +262,9 @@ void Actor::A_BishopMissileSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

@@ -173,16 +173,16 @@ boolean PIT_CheckThing(mobj_t * thing)
 					{
 						P_SpawnMobj(tmthing->origin.x, tmthing->origin.y,
 							tmthing->origin.z, MT_HOLY_PUFF);
-						StartSoundName(tmthing, "SpiritAttack", CHAN_VOICE);
+						StartSoundName(tmthing, 'SpiritAttack', CHAN_VOICE);
 						if (thing->flags & MF_COUNTKILL && P_Random() < 128
 							&& !GetSoundPlayingInfo(thing,
-								GetSoundID("PuppyBeat")))
+								GetSoundID('PuppyBeat')))
 						{
 							if ((thing->Class == MT_CENTAUR) ||
 								(thing->Class == MT_CENTAURLEADER) ||
 								(thing->Class == MT_ETTIN))
 							{
-								StartSoundName(thing, "PuppyBeat",
+								StartSoundName(thing, 'PuppyBeat',
 									CHAN_VOICE);
 							}
 						}
@@ -271,20 +271,20 @@ boolean PIT_CheckThing(mobj_t * thing)
 						thing->Damage(tmthing, tmthing->target, 3);
 					}
 					if (!(GetSoundPlayingInfo(tmthing,
-								GetSoundID("MageLightningZap"))))
+								GetSoundID('MageLightningZap'))))
 					{
-						StartSoundName(tmthing, "MageLightningZap",
+						StartSoundName(tmthing, 'MageLightningZap',
 							CHAN_VOICE);
 					}
 					if (thing->flags & MF_COUNTKILL && P_Random() < 64
 						&& !GetSoundPlayingInfo(thing,
-							GetSoundID("PuppyBeat")))
+							GetSoundID('PuppyBeat')))
 					{
 						if ((thing->Class == MT_CENTAUR) ||
 							(thing->Class == MT_CENTAURLEADER) ||
 							(thing->Class == MT_ETTIN))
 						{
-							StartSoundName(thing, "PuppyBeat", CHAN_VOICE);
+							StartSoundName(thing, 'PuppyBeat', CHAN_VOICE);
 						}
 					}
 				}
@@ -954,6 +954,9 @@ boolean P_Move(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

@@ -89,19 +89,19 @@ void TPlat::Think(void)
 		res = T_MovePlane(sector, speed * frametime, high, crush, 0, 1);
 		if (!(level->tictime & 31))
 		{
-			SectorStartSoundName(sector, "PlatformMove", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
 		}
 		if (res == RES_CRUSHED && (!crush))
 		{
 			time = wait;
 			status = PLAT_DOWN;
-			SectorStartSoundName(sector, "PlatformStart", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
 		}
 		else if (res == RES_PASTDEST)
 		{
 			time = wait;
 			status = PLAT_WAITING;
-			SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 			switch (type)
 			{
 			case PLAT_DOWNWAITUPSTAY:
@@ -122,7 +122,7 @@ void TPlat::Think(void)
 		{
 			time = wait;
 			status = PLAT_WAITING;
-			SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 			switch (type)
 			{
 			case PLAT_UPWAITDOWNSTAY:
@@ -139,7 +139,7 @@ void TPlat::Think(void)
 		{
 			if (!(level->tictime & 31))
 			{
-				SectorStartSoundName(sector, "PlatformMove", CHAN_VOICE);
+				SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
 			}
 		}
 		break;
@@ -152,7 +152,7 @@ void TPlat::Think(void)
 				status = PLAT_UP;
 			else
 				status = PLAT_DOWN;
-			SectorStartSoundName(sector, "PlatformStart", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformStart', CHAN_VOICE);
 		}
 		break;
 	case PLAT_IN_STASIS:
@@ -285,7 +285,7 @@ int EV_DoPlat(line_t * line, int *args, int type)
 			plat->status = P_Random() & 1;
 			break;
 		}
-		SectorStartSoundName(sec, "PlatformStart", CHAN_VOICE);
+		SectorStartSoundName(sec, 'PlatformStart', CHAN_VOICE);
 	}
 	return rtn;
 }
@@ -350,6 +350,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

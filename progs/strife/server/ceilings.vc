@@ -102,7 +102,7 @@ void CeilingMover::Think(void)
 			case CLEV_CRUSHRAISEANDSTAYSILA:
 				break;
 			default:
-				SectorStartSoundName(sector, "StoneMoving", CHAN_VOICE);
+				SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
 				break;
 			}
 		}
@@ -117,7 +117,7 @@ void CeilingMover::Think(void)
 				break;
 
 			case CLEV_CRUSHRAISEANDSTAYSILA:
-				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+				SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 			case CLEV_CRUSHANDRAISEA:
 				direction = -1;
 				speed = dnspeed;
@@ -146,7 +146,7 @@ void CeilingMover::Think(void)
 			case CLEV_CRUSHRAISEANDSTAYSILA:
 				break;
 			default:
-				SectorStartSoundName(sector, "StoneMoving", CHAN_VOICE);
+				SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
 			}
 		}
 
@@ -161,7 +161,7 @@ void CeilingMover::Think(void)
 				break;
 
 			case CLEV_CRUSHRAISEANDSTAYSILA:
-				SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+				SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 			case CLEV_CRUSHANDRAISEA:
 				speed = upspeed;
 				direction = 1;
@@ -367,6 +367,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

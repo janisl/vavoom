@@ -105,9 +105,9 @@ void FloorMover::Think(void)
 	{
 		if (type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
 			type == FLEV_RAISEFLOORTONEARESTCHANGE)
-			SectorStartSoundName(sector, "PlatformMove", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformMove', CHAN_VOICE);
 		else
-			SectorStartSoundName(sector, "DoorMove", CHAN_VOICE);
+			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
 	}
 
 	if (res == RES_PASTDEST)
@@ -118,7 +118,7 @@ void FloorMover::Think(void)
 			type == FLEV_RAISEFLOORBYVALUECHANGE2 ||
 			type == FLEV_RAISEFLOORTONEARESTCHANGE)
 		{
-			SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+			SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 		}
 		if ((direction == 1 && type == FLEV_DONUT) ||
 			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
@@ -300,7 +300,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 			SetFloorPic(sec,
 				level->sides[line->sidenum[0]].sector->floor.pic);
 			sec->special = 0;	// NO MORE DAMAGE, IF APPLICABLE
-			SectorStartSoundName(sec, "PlatformMove", CHAN_VOICE);
+			SectorStartSoundName(sec, 'PlatformMove', CHAN_VOICE);
 			break;
 
 		case FLEV_RAISEFLOORBYVALUECHANGE2:
@@ -308,7 +308,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 			floor->floordestheight = sec->floorheight + itof(args[2]) * 8.0;
 			SetFloorPic(sec,
 				level->sides[line->sidenum[0]].sector->floor.pic);
-			SectorStartSoundName(sec, "PlatformMove", CHAN_VOICE);
+			SectorStartSoundName(sec, 'PlatformMove', CHAN_VOICE);
 			break;
 
 
@@ -1215,6 +1215,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

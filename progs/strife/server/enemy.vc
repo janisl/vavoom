@@ -269,7 +269,7 @@ void Actor::A_Scream(void)
 
 void A_XScream(mobj_t * actor)
 {
-	StartSoundName(actor, "Slop", CHAN_VOICE);
+	StartSoundName(actor, 'Slop', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -300,13 +300,13 @@ void Actor::A_Fall(void)
 void Actor::A_PlayerScream(void)
 {
 	// Default death sound.
-	string sound = "PlayerDeath";
+	name sound = 'PlayerDeath';
 
 	if (health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
-		sound = "PlayerExtremeDeath";
+		sound = 'PlayerExtremeDeath';
 	}
 
 	StartSoundName(this, sound, CHAN_VOICE);
@@ -315,6 +315,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //

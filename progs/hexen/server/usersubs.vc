@@ -92,18 +92,18 @@ void MorphPlayerThink(player_t * player)
 	{
 		// Snout sniff
 		SetPspriteNF(player, ps_weapon, S_SNOUTATK2);
-		StartSoundName(pmo, "PigActive1", CHAN_VOICE);	// snort
+		StartSoundName(pmo, 'PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
 	if (P_Random() < 48)
 	{
 		if (P_Random() < 128)
 		{
-			StartSoundName(pmo, "PigActive1", CHAN_VOICE);
+			StartSoundName(pmo, 'PigActive1', CHAN_VOICE);
 		}
 		else
 		{
-			StartSoundName(pmo, "PigActive2", CHAN_VOICE);
+			StartSoundName(pmo, 'PigActive2', CHAN_VOICE);
 		}
 	}
 }
@@ -182,7 +182,7 @@ boolean UndoPlayerMorph(player_t * player)
 	player->pclass = player->baseclass;
 	fog = P_SpawnMobj(x + 20.0 * cos(angle),
 		y + 20.0 * sin(angle), z + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	PostMorphWeapon(player, weapon);
 	return true;
 }
@@ -569,7 +569,7 @@ void ArtiBlastRadius(player_t * player)
 	mobj_t *pmo = player->mo;
 	float dist;
 
-	StartSoundName(pmo, "BlastRadius", CHAN_ITEM);
+	StartSoundName(pmo, 'BlastRadius', CHAN_ITEM);
 	P_NoiseAlert(player->mo, player->mo);
 
 	mo = NULL;
@@ -667,7 +667,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(mo, "Teleport", CHAN_VOICE);
+	StartSoundName(mo, 'Teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -675,6 +675,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.10  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

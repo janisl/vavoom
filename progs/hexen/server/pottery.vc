@@ -57,7 +57,7 @@ void Actor::A_PotteryExplode(void)
 			mo->velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
 		}
 	}
-	StartSoundName(mo, "PotteryExplode", CHAN_VOICE);
+	StartSoundName(mo, 'PotteryExplode', CHAN_VOICE);
 	if (args[0])
 	{
 		// Spawn an item
@@ -111,6 +111,9 @@ void Actor::A_PotteryCheck(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

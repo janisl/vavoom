@@ -567,7 +567,7 @@ void PlayerOnSpecialFlat(player_t * player, int floorType)
 		if (!(level->tictime & 31))
 		{
 			player->mo->Damage(LavaInflictor, NULL, 10);
-			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
+			StartSoundName(player->mo, 'LavaSizzle', CHAN_BODY);
 		}
 		break;
 	default:
@@ -593,7 +593,7 @@ void PlayerInContents(player_t * player)
 		if (!(level->tictime & 31))
 		{
 			player->mo->Damage(LavaInflictor, NULL, 10);
-			StartSoundName(player->mo, "LavaSizzle", CHAN_BODY);
+			StartSoundName(player->mo, 'LavaSizzle', CHAN_BODY);
 		}
 		break;
 	}
@@ -802,9 +802,9 @@ void PlayerThink(player_t * player)
 		if (player->mo->velocity.z <= -35.0 * 35.0
 			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(player->mo,
-				GetSoundID("PlayerFighterFallingScream")))
+				GetSoundID('PlayerFighterFallingScream')))
 		{
-			StartSoundName(player->mo, "PlayerFighterFallingScream",
+			StartSoundName(player->mo, 'PlayerFighterFallingScream',
 				CHAN_VOICE);
 		}
 		break;
@@ -812,9 +812,9 @@ void PlayerThink(player_t * player)
 		if (player->mo->velocity.z <= -35.0 * 35.0
 			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(player->mo,
-				GetSoundID("PlayerClericFallingScream")))
+				GetSoundID('PlayerClericFallingScream')))
 		{
-			StartSoundName(player->mo, "PlayerClericFallingScream",
+			StartSoundName(player->mo, 'PlayerClericFallingScream',
 				CHAN_VOICE);
 		}
 		break;
@@ -822,9 +822,9 @@ void PlayerThink(player_t * player)
 		if (player->mo->velocity.z <= -35.0 * 35.0
 			&& player->mo->velocity.z >= -40.0 * 35.0 && !player->morphTics
 			&& !GetSoundPlayingInfo(player->mo,
-				GetSoundID("PlayerMageFallingScream")))
+				GetSoundID('PlayerMageFallingScream')))
 		{
-			StartSoundName(player->mo, "PlayerMageFallingScream", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerMageFallingScream', CHAN_VOICE);
 		}
 		break;
 	default:
@@ -1181,7 +1181,7 @@ boolean ArtiHealRadius(player_t * player)
 				(P_GiveArmor(mo->player, ARMOR_AMULET, 1)))
 			{
 				effective = true;
-				StartSoundName(mo, "MysticIncant", CHAN_ITEM);
+				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_CLERIC:	// Radius heal
@@ -1189,7 +1189,7 @@ boolean ArtiHealRadius(player_t * player)
 			if (P_GiveBody(mo->player, amount))
 			{
 				effective = true;
-				StartSoundName(mo, "MysticIncant", CHAN_ITEM);
+				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_MAGE:	// Radius mana boost
@@ -1198,7 +1198,7 @@ boolean ArtiHealRadius(player_t * player)
 				(P_GiveMana(mo->player, MANA_2, amount)))
 			{
 				effective = true;
-				StartSoundName(mo, "MysticIncant", CHAN_ITEM);
+				StartSoundName(mo, 'MysticIncant', CHAN_ITEM);
 			}
 			break;
 		case PCLASS_PIG:
@@ -1405,11 +1405,11 @@ void PlayerUseArtifact(player_t * player, int arti)
 				PlayerRemoveArtifact(player, i);
 				if (arti < arti_firstpuzzitem)
 				{
-					StartSoundName(player->mo, "UseArtifact", CHAN_ITEM);
+					StartSoundName(player->mo, 'UseArtifact', CHAN_ITEM);
 				}
 				else
 				{
-					StartSoundName(player->mo, "PuzzleSuccess", CHAN_ITEM);
+					StartSoundName(player->mo, 'PuzzleSuccess', CHAN_ITEM);
 				}
 				player->ArtifactFlash = 4;
 			}
@@ -1620,11 +1620,11 @@ boolean EV_LineSearchForPuzzleItem(line_t * line, int *args, mobj_t * mo)
 				PlayerRemoveArtifact(player, i);
 				if (arti < arti_firstpuzzitem)
 				{
-					StartSoundName(player->mo, "UseArtifact", CHAN_ITEM);
+					StartSoundName(player->mo, 'UseArtifact', CHAN_ITEM);
 				}
 				else
 				{
-					StartSoundName(player->mo, "PuzzleSuccess", CHAN_ITEM);
+					StartSoundName(player->mo, 'PuzzleSuccess', CHAN_ITEM);
 				}
 				player->ArtifactFlash = 4;
 				return true;
@@ -1948,7 +1948,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	StartSoundName(NULL, "Chat", CHAN_AUTO);
+	StartSoundName(NULL, 'Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -1969,6 +1969,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.18  2002/01/11 08:03:13  dj_jl
 //  Renamed 'name' to "Name'
 //

@@ -520,10 +520,10 @@ boolean P_ExplodeMissile(mobj_t * mo)
 	case MT_SORCBALL1:
 	case MT_SORCBALL2:
 	case MT_SORCBALL3:
-		StartSoundName(NULL, "SorcererBigBallExplode", CHAN_AUTO);
+		StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_AUTO);
 		break;
 	case MT_SORCFX1:
-		StartSoundName(NULL, "SorcererHeadScream", CHAN_AUTO);
+		StartSoundName(NULL, 'SorcererHeadScream', CHAN_AUTO);
 		break;
 	default:
 		if (mo->sound_death)
@@ -548,6 +548,9 @@ boolean P_ExplodeMissile(mobj_t * mo)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.10  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

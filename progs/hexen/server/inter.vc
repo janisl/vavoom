@@ -317,7 +317,7 @@ void TryPickupWeapon(player_t * player, int weaponClass,
 	}
 
 	player->bonuscount += BONUSADD;
-	StartSoundName(player->mo, "PickupWeapon", CHAN_ITEM);
+	StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -420,12 +420,12 @@ void TryPickupWeaponPiece(player_t * player, int matchClass,
 	{
 		cprint(player, "%s\n", fourthWeaponText[matchClass]);
 		// Play the build-sound full volume for all players
-		StartSoundName(NULL, "WeaponBuild", CHAN_ITEM);
+		StartSoundName(NULL, 'WeaponBuild', CHAN_ITEM);
 	}
 	else
 	{
 		cprint(player, "%s\n", weaponPieceText[matchClass]);
-		StartSoundName(player->mo, "PickupWeapon", CHAN_ITEM);	//FIXME must be PickupPiece
+		StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
 	}
 }
 
@@ -692,13 +692,13 @@ void TryPickupArtifact(player_t * player, int artifactType, mobj_t * artifact)
 		if (artifactType < arti_firstpuzzitem)
 		{
 			SetDormantArtifact(artifact);
-			StartSoundName(artifact, "PickupArtifact", CHAN_ITEM);
+			StartSoundName(artifact, 'PickupArtifact', CHAN_ITEM);
 			cprint(player, "%s\n", artifactMessages[artifactType]);
 		}
 		else
 		{
 			// Puzzle item
-			StartSoundName(NULL, "PickupItem", CHAN_ITEM);
+			StartSoundName(NULL, 'PickupItem', CHAN_ITEM);
 			cprint(player, "%s\n", artifactMessages[artifactType]);
 			if (!netgame || deathmatch)
 			{
@@ -719,7 +719,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 {
 	player_t *player;
 	float delta;
-	string sound;
+	name sound;
 	boolean respawn;
 
 	delta = special->origin.z - toucher->origin.z;
@@ -733,7 +733,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		// Toucher is dead
 		return;
 	}
-	sound = "PickupItem";
+	sound = 'PickupItem';
 	player = toucher->player;
 	respawn = true;
 	switch (special->sprite)
@@ -792,7 +792,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 			return;
 		}
 		cprint(player, "%s\n", TextKeyMessages[special->sprite - SPR_KEY1]);
-		sound = "PickupKey";
+		sound = 'PickupKey';
 
 		// Check and process the special now in case the key doesn't
 		// get removed for coop netplay
@@ -1025,6 +1025,9 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.5  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

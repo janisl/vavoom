@@ -61,8 +61,8 @@ void Actor::A_Look(void)
 	// go into chase state
 	if (sound_sight)
 	{
-		int sfx_posit = GetSoundID("ZombieSight1");
-		int sfx_bgsit = GetSoundID("ImpSight1");
+		int sfx_posit = GetSoundID('ZombieSight1');
+		int sfx_bgsit = GetSoundID('ImpSight1');
 
 		sound = sound_sight;
 		if (sound >= sfx_posit && sound <= sfx_posit + 2)
@@ -306,8 +306,8 @@ void Actor::A_Scream(void)
 
 	if (sound_death)
 	{
-		int sfx_podth = GetSoundID("ZombieDeath1");
-		int sfx_bgdth = GetSoundID("ImpDeath1");
+		int sfx_podth = GetSoundID('ZombieDeath1');
+		int sfx_bgdth = GetSoundID('ImpDeath1');
 
 		sound = sound_death;
 		if (sound >= sfx_podth && sound <= sfx_podth + 2)
@@ -348,7 +348,7 @@ void Actor::A_XScream(void)
 		effects &= ~EF_DLIGHT_MASK;
 	}
 
-	StartSoundName(this, "Slop", CHAN_BODY);
+	StartSoundName(this, 'Slop', CHAN_BODY);
 }
 
 //==========================================================================
@@ -385,14 +385,14 @@ void Actor::A_Fall(void)
 void Actor::A_PlayerScream(void)
 {
 	// Default death sound.
-	string sound = "PlayerDeath";
+	name sound = 'PlayerDeath';
 
 #ifdef DOOM2
 	if (health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
-		sound = "PlayerExtremeDeath";
+		sound = 'PlayerExtremeDeath';
 	}
 #endif
 
@@ -560,6 +560,9 @@ void Actor::A_BossDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -579,7 +579,7 @@ void Entity::ZMovement(void)
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
 				player->deltaviewheight = vdot / 8.0 * frametime;
-				StartSoundName(this, "PlayerLand", CHAN_VOICE);
+				StartSoundName(this, 'PlayerLand', CHAN_VOICE);
 			}
 		}
 		origin.z = floorz;
@@ -887,7 +887,7 @@ void Entity::PlayerLandedOnThing(void)
 	player->deltaviewheight = velocity.z * frametime / 8.0;
 	if (velocity.z < -GRAVITY * 0.375)
 	{
-		StartSoundName(this, "PlayerLand", CHAN_VOICE);
+		StartSoundName(this, 'PlayerLand', CHAN_VOICE);
 	}
 }
 
@@ -1037,6 +1037,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.12  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

@@ -85,18 +85,18 @@ void TDoor::Think(void)
 				direction = -1;	// time to go back down
 				if (speed >= 256.0)
 				{
-					SectorStartSoundName(sector, "BlazeDoorClose",
+					SectorStartSoundName(sector, 'BlazeDoorClose',
 						CHAN_VOICE);
 				}
 				else
 				{
-					SectorStartSoundName(sector, "DoorClose", CHAN_VOICE);
+					SectorStartSoundName(sector, 'DoorClose', CHAN_VOICE);
 				}
 				break;
 
 			case DREV_CLOSEWAITOPEN:
 				direction = 1;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -115,7 +115,7 @@ void TDoor::Think(void)
 			case raiseIn5Mins:
 				direction = 1;
 				type = doorRaise;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 
 			default:
@@ -137,7 +137,7 @@ void TDoor::Think(void)
 				sector->specialdata = NULL;
 				if (speed >= 256.0)
 				{
-					SectorStartSoundName(sector, "BlazeDoorClose",
+					SectorStartSoundName(sector, 'BlazeDoorClose',
 						CHAN_VOICE);
 				}
 				RemoveSpecialThinker(this);	// unlink and free
@@ -160,7 +160,7 @@ void TDoor::Think(void)
 
 			default:
 				direction = 1;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			}
 		}
@@ -243,12 +243,12 @@ int EV_DoDoor(line_t * line, int *args, int type)
 			door->direction = -1;
 			if (speed >= 256.0)
 			{
-				SectorStartSoundName(door->sector, "BlazeDoorClose",
+				SectorStartSoundName(door->sector, 'BlazeDoorClose',
 					CHAN_VOICE);
 			}
 			else
 			{
-				SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
+				SectorStartSoundName(door->sector, 'DoorClose', CHAN_VOICE);
 			}
 			break;
 
@@ -258,12 +258,12 @@ int EV_DoDoor(line_t * line, int *args, int type)
 			door->direction = -1;
 			if (speed >= 256.0)
 			{
-				SectorStartSoundName(door->sector, "BlazeDoorClose",
+				SectorStartSoundName(door->sector, 'BlazeDoorClose',
 					CHAN_VOICE);
 			}
 			else
 			{
-				SectorStartSoundName(door->sector, "DoorClose", CHAN_VOICE);
+				SectorStartSoundName(door->sector, 'DoorClose', CHAN_VOICE);
 			}
 			break;
 
@@ -276,12 +276,12 @@ int EV_DoDoor(line_t * line, int *args, int type)
 			{
 				if (speed >= 256.0)
 				{
-					SectorStartSoundName(door->sector, "BlazeDoorOpen",
+					SectorStartSoundName(door->sector, 'BlazeDoorOpen',
 						CHAN_VOICE);
 				}
 				else
 				{
-					SectorStartSoundName(door->sector, "DoorOpen",
+					SectorStartSoundName(door->sector, 'DoorOpen',
 						CHAN_VOICE);
 				}
 			}
@@ -353,12 +353,12 @@ int EV_VerticalDoor(line_t * line, mobj_t * thing)
 	if (speed >= 256.0)
 	{
 		// BLAZING DOOR
-		SectorStartSoundName(sec, "BlazeDoorOpen", CHAN_VOICE);
+		SectorStartSoundName(sec, 'BlazeDoorOpen', CHAN_VOICE);
 	}
 	else
 	{
 		// NORMAL DOOR SOUND
-		SectorStartSoundName(sec, "DoorOpen", CHAN_VOICE);
+		SectorStartSoundName(sec, 'DoorOpen', CHAN_VOICE);
 	}
 
 	// new door thinker
@@ -430,6 +430,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

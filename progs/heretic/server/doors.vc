@@ -88,11 +88,11 @@ void TDoor::Think(void)
 			{
 			case vd_normal:
 				direction = -1;	// time to go back down
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			case DREV_CLOSEWAITOPEN:
 				direction = 1;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -109,7 +109,7 @@ void TDoor::Think(void)
 			case raiseIn5Mins:
 				direction = 1;
 				type = vd_normal;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -127,7 +127,7 @@ void TDoor::Think(void)
 			case vd_close:
 				sector->specialdata = NULL;
 				RemoveSpecialThinker(this);	// unlink and free
-				SectorStartSoundName(sector, "DoorClose", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorClose', CHAN_VOICE);
 				break;
 			case DREV_CLOSEWAITOPEN:
 				direction = 0;
@@ -145,7 +145,7 @@ void TDoor::Think(void)
 				break;
 			default:
 				direction = 1;
-				SectorStartSoundName(sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(sector, 'DoorOpen', CHAN_VOICE);
 				break;
 			}
 		}
@@ -213,13 +213,13 @@ int EV_DoDoor(line_t * line, int *args, int type)
 			door->topheight = FindLowestCeilingSurrounding(sec);
 			door->topheight -= 4.0;
 			door->direction = -1;
-			SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
+			SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
 			break;
 		case DREV_CLOSEWAITOPEN:
 			door->topheight = sec->ceilingheight;
 			door->topwait *= 4.0;
 			door->direction = -1;
-			SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
+			SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
 			break;
 		case vd_normal:
 		case vd_open:
@@ -228,7 +228,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 			door->topheight -= 4.0;
 			if (door->topheight != sec->ceilingheight)
 			{
-				SectorStartSoundName(door->sector, "DoorOpen", CHAN_VOICE);
+				SectorStartSoundName(door->sector, 'DoorOpen', CHAN_VOICE);
 			}
 			break;
 		default:
@@ -260,7 +260,7 @@ boolean CheckLockedDoor(mobj_t * user, int lock)
 	if (!(player->keys & (1 << (lock - 1))))
 	{
 		centerprint(player, keymsg[lock - 1]);
-		StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+		StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 		return false;
 	}
 	return true;
@@ -305,8 +305,7 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 		}
 	}
 
-	SectorStartSoundName(sec, "DoorOpen", CHAN_VOICE);
-	//SectorStartSoundName(sec, "DoorMove", CHAN_VOICE);
+	SectorStartSoundName(sec, 'DoorOpen', CHAN_VOICE);
 
 	//
 	// new door thinker
@@ -384,6 +383,9 @@ void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

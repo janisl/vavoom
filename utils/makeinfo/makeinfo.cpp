@@ -61,6 +61,8 @@ extern int					god_health;
 extern int					shadow;
 extern int					altshadow;
 
+bool						Hacked;
+
 //==========================================================================
 //
 //	MarkWeaponState
@@ -174,7 +176,7 @@ void WriteStates(void)
     fprintf(f, "//**************************************************************************\n");
 	fprintf(f, "\n");
 
-	fprintf(f, "class Actor:Entity\n{\n");
+/*	fprintf(f, "class Actor:Entity\n{\n");
     for (i=1; StateActionInfo[i].fname; i++)
     {
     	if (!StateActionInfo[i].weapon_action)
@@ -192,9 +194,9 @@ void WriteStates(void)
 			fprintf(f, "\tvoid %s(void);\n", StateActionInfo[i].fname);
         }
     }
-	fprintf(f, "}\n");
+	fprintf(f, "}\n\n");*/
 
-	fprintf(f, "\n__states__(Actor)\n{\n");
+	fprintf(f, "__states__(Actor)\n{\n");
 	bool in_weapon = false;
 //	fprintf(f, "\tS_NULL {\"\", 0, -1, NULL, S_NULL}\n");//- Dehacked fails
 	for (i=0; i<numstates; i++)
@@ -210,7 +212,7 @@ void WriteStates(void)
 			in_weapon = true;
 		}
 
-		fprintf(f, "\t%s {\"%s\", %d",
+		fprintf(f, "\t%s {\'%s\', %d",
 			statename[i], sprnames[states[i].sprite],
 			states[i].frame & 0x7fff);
 		if (states[i].frame & 0x8000)
@@ -219,7 +221,7 @@ void WriteStates(void)
         }
 		if (states[i].model_name)
 		{
-			fprintf(f, ", \"%s\", %d", states[i].model_name, states[i].model_frame);
+			fprintf(f, ", \'%s\', %d", states[i].model_name, states[i].model_frame);
 		}
 #if 1
 		if (states[i].tics == -1)
@@ -420,15 +422,15 @@ void WriteMobjInfo(void)
 
 		//	Sounds
         if (mobjinfo[i].seesound)
-			fprintf(f, "\t\tsound_sight = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].seesound].tagName);
+			fprintf(f, "\t\tsound_sight = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].seesound].tagName);
 		if (mobjinfo[i].activesound)
-			fprintf(f, "\t\tsound_active = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].activesound].tagName);
+			fprintf(f, "\t\tsound_active = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].activesound].tagName);
 		if (mobjinfo[i].attacksound)
-			fprintf(f, "\t\tsound_attack = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].attacksound].tagName);
+			fprintf(f, "\t\tsound_attack = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].attacksound].tagName);
 		if (mobjinfo[i].painsound)
-			fprintf(f, "\t\tsound_pain = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].painsound].tagName);
+			fprintf(f, "\t\tsound_pain = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].painsound].tagName);
 		if (mobjinfo[i].deathsound)
-			fprintf(f, "\t\tsound_death = GetSoundID(\"%s\");\n", sfx[mobjinfo[i].deathsound].tagName);
+			fprintf(f, "\t\tsound_death = GetSoundID(\'%s\');\n", sfx[mobjinfo[i].deathsound].tagName);
 
 		//  Effects
 		if (mobjinfo[i].effects)
@@ -726,9 +728,12 @@ int main(int argc, char** argv)
     WriteMobjInfo();
     WriteWeaponInfo();
 #ifndef NODEH
-    WriteStrings();
-    WriteMisc();
-	WriteTxtLumps();
+	if (Hacked)
+	{
+	    WriteStrings();
+    	WriteMisc();
+		WriteTxtLumps();
+	}
 #endif
 
 	return 0;
@@ -737,9 +742,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/01/11 18:21:49  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.12  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.11  2001/12/27 17:45:17  dj_jl
 //	Removed spawnhealth
 //	

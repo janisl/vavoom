@@ -67,7 +67,7 @@ void Actor::A_MakePod(void)
 	}
 	SetMobjState(mo, S_POD_GROW1);
 	P_ThrustMobj(mo, Random() * 360.0, 4.5);
-	StartSoundName(mo, "PodNew", CHAN_VOICE);
+	StartSoundName(mo, 'PodNew', CHAN_VOICE);
 	special1++;	// Increment generated pod count
 	mo->specialmobj2 = this;	// Link the generator to the pod
 }
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

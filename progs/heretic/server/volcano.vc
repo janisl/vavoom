@@ -70,7 +70,7 @@ void Actor::A_VolcanoBlast(void)
 		blast->velocity.x = cos(angle) * 35.0;
 		blast->velocity.y = sin(angle) * 35.0;
 		blast->velocity.z = (2.5 + Random() * 4.0) * 35.0;
-		StartSoundName(blast, "VolcanoBlast", CHAN_VOICE);
+		StartSoundName(blast, 'VolcanoBlast', CHAN_VOICE);
 		CheckMissileSpawn(blast);
 	}
 }
@@ -110,6 +110,9 @@ void Actor::A_VolcBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

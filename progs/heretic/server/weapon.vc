@@ -210,7 +210,7 @@ void BringUpWeapon(player_t * player)
 	weaponinfo[player->readyweapon] (player);
 	if (player->readyweapon == wp_gauntlets)
 	{
-		StartSoundName(player->mo, "GauntletActive", CHAN_WEAPON);
+		StartSoundName(player->mo, 'GauntletActive', CHAN_WEAPON);
 	}
 	player->pendingweapon = wp_nochange;
 	player->ViewEnts[ps_weapon].sy = WEAPONBOTTOM;
@@ -446,7 +446,7 @@ void FireWeapon(player_t * player)
 	if (player->readyweapon == wp_gauntlets && !player->refire)
 	{
 		// Play the sound for the initial gauntlet attack
-		StartSoundName(player->mo, "GauntletUse", CHAN_WEAPON);
+		StartSoundName(player->mo, 'GauntletUse', CHAN_WEAPON);
 	}
 }
 
@@ -554,7 +554,7 @@ void Weapon::A_WeaponReady(void)
 	if ((player->readyweapon == wp_staff) &&
 		(statenum == S_STAFFREADY2_1) && P_Random() < 128)
 	{
-		StartSoundName(player->mo, "StaffActive", CHAN_WEAPON);
+		StartSoundName(player->mo, 'StaffActive', CHAN_WEAPON);
 	}
 	// Put the weapon away if the player has a pending weapon or has
 	// died.
@@ -850,7 +850,7 @@ void Weapon::A_GauntletAttack(void)
 		{
 			player->extralight = !player->extralight;
 		}
-		StartSoundName(player->mo, "GauntletFull", CHAN_WEAPON);
+		StartSoundName(player->mo, 'GauntletFull', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
@@ -869,11 +869,11 @@ void Weapon::A_GauntletAttack(void)
 	if (player->powers[pw_weaponlevel2])
 	{
 		P_GiveBody(player, damage >> 1);
-		StartSoundName(player->mo, "GauntletHit2", CHAN_WEAPON);
+		StartSoundName(player->mo, 'GauntletHit2', CHAN_WEAPON);
 	}
 	else
 	{
-		StartSoundName(player->mo, "GauntletHit", CHAN_WEAPON);
+		StartSoundName(player->mo, 'GauntletHit', CHAN_WEAPON);
 	}
 	// turn to face target
 	angle = atan2(linetarget->origin.y - player->mo->origin.y,
@@ -920,7 +920,7 @@ void Weapon::A_FireGoldWandPL1(void)
 	AngleVector(&angles, &vforward);
 	PuffType = MT_GOLDWANDPUFF1;
 	LineAttack(mo, &vforward, MISSILERANGE, damage);
-	StartSoundName(player->mo, "GoldWandFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'GoldWandFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -955,7 +955,7 @@ void Weapon::A_FireGoldWandPL2(void)
 		LineAttack(mo, &vforward, MISSILERANGE, damage);
 		angles.yaw = AngleMod360(angles.yaw + (((45.0 / 8.0) * 2.0) / 4.0));
 	}
-	StartSoundName(player->mo, "GoldWandFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'GoldWandFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1016,7 +1016,7 @@ void Weapon::A_FireBlasterPL1(void)
 	TVec vforward;
 
 	mo = player->mo;
-	StartSoundName(mo, "GoldWandFire", CHAN_WEAPON);
+	StartSoundName(mo, 'GoldWandFire', CHAN_WEAPON);
 	player->ammo[am_blaster] -= USE_BLSR_AMMO_1;
 	BulletSlope(mo, &angles);
 	damage = HITDICE(4);
@@ -1028,7 +1028,7 @@ void Weapon::A_FireBlasterPL1(void)
 	PuffType = MT_BLASTERPUFF1;
 	AngleVector(&angles, &vforward);
 	LineAttack(mo, &vforward, MISSILERANGE, damage);
-	StartSoundName(player->mo, "BlasterFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'BlasterFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1048,7 +1048,7 @@ void Weapon::A_FireBlasterPL2(void)
 	{
 		mo->blaster = true;
 	}
-	StartSoundName(player->mo, "BlasterFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'BlasterFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1106,7 +1106,7 @@ void Weapon::A_FireSkullRodPL2(void)
 	{
 		MissileMobj->specialmobj1 = linetarget;
 	}
-	StartSoundName(MissileMobj, "SkullRodFire2", CHAN_WEAPON);
+	StartSoundName(MissileMobj, 'SkullRodFire2', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1171,7 +1171,7 @@ void Weapon::A_FirePhoenixPL2(void)
 	mo->velocity = pmo->velocity + mo->speed * dir;
 	if (!player->refire || !(level->tictime % 38))
 	{
-		StartSoundName(player->mo, "PhoenixHit2", CHAN_WEAPON);
+		StartSoundName(player->mo, 'PhoenixHit2', CHAN_WEAPON);
 	}
 	CheckMissileSpawn(mo);
 }
@@ -1216,7 +1216,7 @@ void A_FireMacePL1B(mobj_t * actor)
 	ball->origin.z += 173.0 * -tan(player->mo->angles.pitch) / 16.0;
 	ball->velocity.x = pmo->velocity.x / 2.0 + ball->speed * cos(angle);
 	ball->velocity.y = pmo->velocity.y / 2.0 + ball->speed * sin(angle);
-	StartSoundName(ball, "MaceFire", CHAN_WEAPON);
+	StartSoundName(ball, 'MaceFire', CHAN_WEAPON);
 	CheckMissileSpawn(ball);
 }
 
@@ -1273,7 +1273,7 @@ void Weapon::A_FireMacePL2(void)
 			mo->specialmobj1 = linetarget;
 		}
 	}
-	StartSoundName(player->mo, "MaceFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'MaceFire', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -1301,7 +1301,7 @@ void Weapon::A_BeakAttackPL1(void)
 			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
-	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3),
+	StartSound(player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
 		CHAN_VOICE);
 	player->chickenPeck = 12;
 	time -= Random() * 0.25;
@@ -1332,7 +1332,7 @@ void Weapon::A_BeakAttackPL2(void)
 			linetarget->origin.x - player->mo->origin.x);
 		player->fixangle = 1;
 	}
-	StartSound(player->mo, GetSoundID("ChickenPeak1") + (P_Random() % 3),
+	StartSound(player->mo, GetSoundID('ChickenPeak1') + (P_Random() % 3),
 		CHAN_VOICE);
 	player->chickenPeck = 12;
 	time -= Random() * 0.125;
@@ -1513,7 +1513,7 @@ void Actor::A_SkullRodStorm(void)
 	CheckMissileSpawn(mo);
 	if (!(special1 & 31))
 	{
-		StartSoundName(this, "SkullRodRain", CHAN_VOICE);
+		StartSoundName(this, 'SkullRodRain', CHAN_VOICE);
 	}
 	special1++;
 }
@@ -1641,14 +1641,14 @@ void Actor::A_MaceBallImpact(void)
 		velocity.z = velocity.z * 192.0 / 256.0;
 		flags2 &= ~MF2_FLOORBOUNCE;
 		SetMobjState(this, spawnstate);
-		StartSoundName(this, "Bounce", CHAN_VOICE);
+		StartSoundName(this, 'Bounce', CHAN_VOICE);
 	}
 	else
 	{
 		// Explode
 		flags |= MF_NOGRAVITY;
 		flags2 &= ~MF2_LOGRAV;
-		StartSoundName(this, "MaceHit", CHAN_VOICE);
+		StartSoundName(this, 'MaceHit', CHAN_VOICE);
 	}
 }
 
@@ -1773,19 +1773,22 @@ void Actor::A_DeathBallImpact(void)
 			velocity.y = speed * sin(angle);
 		}
 		SetMobjState(this, spawnstate);
-		StartSoundName(this, "PlatformStop", CHAN_VOICE);
+		StartSoundName(this, 'PlatformStop', CHAN_VOICE);
 	}
 	else
 	{	// Explode
 		flags |= MF_NOGRAVITY;
 		flags2 &= ~MF2_LOGRAV;
-		StartSoundName(this, "PhoenixHit", CHAN_VOICE);
+		StartSoundName(this, 'PhoenixHit', CHAN_VOICE);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.10  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

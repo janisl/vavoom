@@ -78,6 +78,8 @@ extern int					soulsphere_health;
 extern int					megasphere_health;
 extern int					god_health;
 
+extern bool					Hacked;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -699,6 +701,8 @@ void ProcessDehackedFiles(int argc, char **argv)
     	return;
     }
 
+	Hacked = true;
+
     functions = (int*)malloc(numstates * 4);
 	for (i = 0; i < numstates; i++)
 		functions[i] = states[i].action_num;
@@ -714,9 +718,12 @@ void ProcessDehackedFiles(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/11 18:21:49  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.6  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/10/22 17:28:56  dj_jl
 //	Removed mobjinfo index constants
 //	

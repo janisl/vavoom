@@ -437,7 +437,7 @@ int P_HitFloor(mobj_t * thing)
 				MT_SPLASHBASE);
 			if (mo)
 				mo->floorclip += SMALLSPLASHCLIP;
-			StartSoundName(mo, "Ambient10", CHAN_VOICE);	// small drip
+			StartSoundName(mo, 'Ambient10', CHAN_VOICE);	// small drip
 		}
 		else
 		{
@@ -453,7 +453,7 @@ int P_HitFloor(mobj_t * thing)
 				MT_SPLASHBASE);
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
-			StartSoundName(mo, "WaterSplash", CHAN_VOICE);
+			StartSoundName(mo, 'WaterSplash', CHAN_VOICE);
 		}
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
@@ -477,7 +477,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(mo, "LavaSizzle", CHAN_VOICE);
+		StartSoundName(mo, 'LavaSizzle', CHAN_VOICE);
 		if (thing->player && level->tictime & 31)
 		{
 			thing->Damage(LavaInflictor, NULL, 5);
@@ -507,7 +507,7 @@ int P_HitFloor(mobj_t * thing)
 			if (thing->player)
 				P_NoiseAlert(thing, thing);
 		}
-		StartSoundName(mo, "SludgeGloop", CHAN_VOICE);
+		StartSoundName(mo, 'SludgeGloop', CHAN_VOICE);
 		return FLOOR_SLUDGE;
 	}
 	return FLOOR_SOLID;
@@ -762,15 +762,15 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			switch (target->player->pclass)
 			{
 			case PCLASS_FIGHTER:
-				StartSoundName(target, "PlayerFighterBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerFighterBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_F_FDTH1);
 				return;
 			case PCLASS_CLERIC:
-				StartSoundName(target, "PlayerClericBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerClericBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_C_FDTH1);
 				return;
 			case PCLASS_MAGE:
-				StartSoundName(target, "PlayerMageBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerMageBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -809,15 +809,15 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 			switch (target->Class)
 			{
 			case MT_FIGHTER_BOSS:
-				StartSoundName(target, "PlayerFighterBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerFighterBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_F_FDTH1);
 				return;
 			case MT_CLERIC_BOSS:
-				StartSoundName(target, "PlayerClericBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerClericBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_C_FDTH1);
 				return;
 			case MT_MAGE_BOSS:
-				StartSoundName(target, "PlayerMageBurnDeath", CHAN_VOICE);
+				StartSoundName(target, 'PlayerMageBurnDeath', CHAN_VOICE);
 				SetMobjState(target, S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -828,7 +828,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
 		{
 			SetMobjState(target, S_ZTREEDES_X1);
 			target->height = 24.0;
-			StartSoundName(target, "TreeExplode", CHAN_VOICE);
+			StartSoundName(target, 'TreeExplode', CHAN_VOICE);
 			return;
 		}
 	}
@@ -977,7 +977,7 @@ boolean P_MorphPlayer(player_t * player)
 	oldFlags2 = pmo->flags2;
 	SetMobjState(pmo, S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	beastMo = P_SpawnMobj(x, y, z, MT_PIGPLAYER);
 	beastMo->special1 = player->readyweapon;
 	beastMo->angles.yaw = angle;
@@ -1056,7 +1056,7 @@ boolean P_MorphMonster(mobj_t * actor)
 	P_RemoveMobjFromTIDList(actor);
 	SetMobjState(actor, S_FREETARGMOBJ);
 	fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 	monster = P_SpawnMobj(x, y, z, MT_PIG);
 	monster->specialcid = moType;
 	monster->special1 = ftoi(MORPHTIME * 35.0) + P_Random();
@@ -1321,7 +1321,7 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 					P_PoisonDamage(player, source,
 						15 + (P_Random() & 15), false);	// Don't play painsound
 					P_PoisonPlayer(player, source, 50);
-					StartSoundName(this, "PlayerPoisonCough", CHAN_VOICE);
+					StartSoundName(this, 'PlayerPoisonCough', CHAN_VOICE);
 				}
 				return;
 			}
@@ -1471,13 +1471,13 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 				// "electrocute" the target
 				frame |= FF_FULLBRIGHT;
 				if (flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(this, GetSoundID("PuppyBeat")))
+					&& !GetSoundPlayingInfo(this, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == MT_CENTAUR) ||
 						(Class == MT_CENTAURLEADER) ||
 						(Class == MT_ETTIN))
 					{
-						StartSoundName(this, "PuppyBeat", CHAN_VOICE);
+						StartSoundName(this, 'PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
@@ -1489,13 +1489,13 @@ void Entity::Damage(Entity * inflictor, Entity * source, int damage)
 			if (inflictor && inflictor->Class == MT_POISONCLOUD)
 			{
 				if (flags & MF_COUNTKILL && P_Random() < 128
-					&& !GetSoundPlayingInfo(this, GetSoundID("PuppyBeat")))
+					&& !GetSoundPlayingInfo(this, GetSoundID('PuppyBeat')))
 				{
 					if ((Class == MT_CENTAUR) ||
 						(Class == MT_CENTAURLEADER) ||
 						(Class == MT_ETTIN))
 					{
-						StartSoundName(this, "PuppyBeat", CHAN_VOICE);
+						StartSoundName(this, 'PuppyBeat', CHAN_VOICE);
 					}
 				}
 			}
@@ -1550,7 +1550,7 @@ void P_FallingDamage(player_t * player)
 		// No-death threshold
 		damage = player->mo->health - 1;
 	}
-	StartSoundName(player->mo, "PlayerLand", CHAN_BODY);
+	StartSoundName(player->mo, 'PlayerLand', CHAN_BODY);
 	player->mo->Damage(NULL, NULL, damage);
 }
 
@@ -2385,6 +2385,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.20  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

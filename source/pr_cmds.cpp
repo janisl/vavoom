@@ -161,6 +161,28 @@ static TVec Popv(void)
 	return v;
 }
 
+//==========================================================================
+//
+//	PushName
+//
+//==========================================================================
+
+static void PushName(FName value)
+{
+	*((FName*)pr_stackPtr++) = value;
+}
+
+//==========================================================================
+//
+//	Popf
+//
+//==========================================================================
+
+static FName PopName(void)
+{
+	return *((FName*)--pr_stackPtr);
+}
+
 //**************************************************************************
 //
 //	Vararg strings
@@ -1985,12 +2007,12 @@ static void PF_GetSoundPlayingInfo(void)
 //
 //==========================================================================
 
-static void PF_GetSoundID(void)
+PF(GetSoundID)
 {
-	int		str;
+	FName	Name;
 
-    str = Pop();
-	Push(S_GetSoundID(PROG_TO_STR(str)));
+    Name = PopName();
+	Push(S_GetSoundID(Name));
 }
 
 //==========================================================================
@@ -2002,11 +2024,11 @@ static void PF_GetSoundID(void)
 PF(SectorStartSequence)
 {
 	sector_t*	sec;
-	int 		name;
+	FName		name;
 
-    name = Pop();
+    name = PopName();
     sec = (sector_t*)Pop();
-	SV_SectorStartSequence(sec, PROG_TO_STR(name));
+	SV_SectorStartSequence(sec, *name);
 }
 
 //==========================================================================
@@ -2032,11 +2054,11 @@ PF(SectorStopSequence)
 PF(PolyobjStartSequence)
 {
 	polyobj_t*	poly;
-	int 		name;
+	FName		name;
 
-    name = Pop();
+    name = PopName();
     poly = (polyobj_t*)Pop();
-	SV_PolyobjStartSequence(poly, PROG_TO_STR(name));
+	SV_PolyobjStartSequence(poly, *name);
 }
 
 //==========================================================================
@@ -2801,10 +2823,10 @@ PF(T_DrawNText)
 
 PF(LocalSound)
 {
-	int		name;
+	FName	name;
 
-	name = Pop();
-	S_StartSoundName(PROG_TO_STR(name));
+	name = PopName();
+	S_StartSoundName(*name);
 }
 
 //==========================================================================
@@ -2815,10 +2837,10 @@ PF(LocalSound)
 
 PF(LocalSoundTillDone)
 {
-	int		name;
+	FName	name;
 
-	name = Pop();
-	S_PlayTillDone(PROG_TO_STR(name));
+	name = PopName();
+	S_PlayTillDone(const_cast<char*>(*name));
 }
 
 //==========================================================================
@@ -3292,10 +3314,13 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2002/01/11 18:22:41  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.27  2002/01/11 08:08:26  dj_jl
 //	Added names to progs
 //	Added sector plane swapping
-//
+//	
 //	Revision 1.26  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

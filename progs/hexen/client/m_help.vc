@@ -60,7 +60,7 @@ string page_names[3] = { "HELP1", "HELP2", "CREDIT" };
 boolean UseHelp(menucommon_t * item, int key)
 {
 	HelpMenu.curpage++;
-	LocalSound("MenuClose");
+	LocalSound('MenuClose');
 
 	if (key == K_ESCAPE || HelpMenu.curpage >= HelpMenu.numpages)
 	{
@@ -99,6 +99,9 @@ void menu_help(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

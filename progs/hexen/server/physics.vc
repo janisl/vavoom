@@ -1039,19 +1039,19 @@ boolean Entity::HitFloor(void)
 				else if (vdot < -GRAVITY * 0.375
 					&& !player->morphTics)
 				{
-					StartSoundName(this, "PlayerLand", CHAN_BODY);
+					StartSoundName(this, 'PlayerLand', CHAN_BODY);
 					switch (player->pclass)
 					{
 					case PCLASS_FIGHTER:
-						StartSoundName(this, "PlayerFighterGrunt",
+						StartSoundName(this, 'PlayerFighterGrunt',
 							CHAN_VOICE);
 						break;
 					case PCLASS_CLERIC:
-						StartSoundName(this, "PlayerClericGrunt",
+						StartSoundName(this, 'PlayerClericGrunt',
 							CHAN_VOICE);
 						break;
 					case PCLASS_MAGE:
-						StartSoundName(this, "PlayerMageGrunt",
+						StartSoundName(this, 'PlayerMageGrunt',
 							CHAN_VOICE);
 						break;
 					default:
@@ -1061,7 +1061,7 @@ boolean Entity::HitFloor(void)
 				else if ((P_GetThingFloorType(this) < FLOOR_LIQUID) &&
 					(!player->morphTics))
 				{
-					StartSoundName(this, "PlayerLand", CHAN_BODY);
+					StartSoundName(this, 'PlayerLand', CHAN_BODY);
 				}
 //FIXME				player->centering = true;
 			}
@@ -1242,17 +1242,17 @@ void Entity::PlayerLandedOnThing(void)
 	}
 	else if (velocity.z < -GRAVITY * 0.375 && !player->morphTics)
 	{
-		StartSoundName(this, "PlayerLand", CHAN_BODY);
+		StartSoundName(this, 'PlayerLand', CHAN_BODY);
 		switch (player->pclass)
 		{
 		case PCLASS_FIGHTER:
-			StartSoundName(this, "PlayerFighterGrunt", CHAN_VOICE);
+			StartSoundName(this, 'PlayerFighterGrunt', CHAN_VOICE);
 			break;
 		case PCLASS_CLERIC:
-			StartSoundName(this, "PlayerClericGrunt", CHAN_VOICE);
+			StartSoundName(this, 'PlayerClericGrunt', CHAN_VOICE);
 			break;
 		case PCLASS_MAGE:
-			StartSoundName(this, "PlayerMageGrunt", CHAN_VOICE);
+			StartSoundName(this, 'PlayerMageGrunt', CHAN_VOICE);
 			break;
 		default:
 			break;
@@ -1260,7 +1260,7 @@ void Entity::PlayerLandedOnThing(void)
 	}
 	else if (!player->morphTics)
 	{
-		StartSoundName(this, "PlayerLand", CHAN_BODY);
+		StartSoundName(this, 'PlayerLand', CHAN_BODY);
 	}
 //FIXME player->centering = true;
 }
@@ -1480,6 +1480,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.14  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

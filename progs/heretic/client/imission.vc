@@ -304,7 +304,7 @@ void IM_DrawSingleStats(void)
 	}
 	if (im_sounds < 1 && intertime >= 1.0)
 	{
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 		im_sounds++;
 	}
 	T_SetShadow(true);
@@ -322,7 +322,7 @@ void IM_DrawSingleStats(void)
 	}
 	if (im_sounds < 2 && intertime >= 2.0)
 	{
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 		im_sounds++;
 	}
 	T_SetShadow(true);
@@ -340,7 +340,7 @@ void IM_DrawSingleStats(void)
 	}
 	if (im_sounds < 3 && intertime >= 3.0)
 	{
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 		im_sounds++;
 	}
 	T_SetShadow(true);
@@ -358,7 +358,7 @@ void IM_DrawSingleStats(void)
 	}
 	if (im_sounds < 4 && intertime >= 5.0)
 	{
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 		im_sounds++;
 	}
 
@@ -429,7 +429,7 @@ void IM_DrawCoopStats(void)
 			}
 			else if (intertime >= 1.25 && im_sounds < 1)
 			{
-				LocalSound("DoorClose");
+				LocalSound('DoorClose');
 				im_sounds++;
 			}
 			T_DrawText(87, ypos + 10, va("%d", killPercent[i]));
@@ -488,12 +488,12 @@ void IM_DrawDMStats(void)
 	}
 	if (intertime >= 0.625 && im_sounds < 1)
 	{
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 		im_sounds++;
 	}
 	if (intertime >= 3.0 && slaughterboy && im_sounds < 2)
 	{
-		LocalSound("PickupWeapon");
+		LocalSound('PickupWeapon');
 		im_sounds++;
 	}
 	T_SetShadow(true);
@@ -653,7 +653,7 @@ void IM_Drawer(void)
 	}
 	if (oldinterstate != 2 && interstate == 2)
 	{
-		LocalSound("PlatformStop");
+		LocalSound('PlatformStop');
 	}
 	oldinterstate = interstate;
 
@@ -750,13 +750,13 @@ void IM_UpdateStats(void)
 		{
 			interstate = 2;
 			skipintermission = false;
-			LocalSound("DoorClose");
+			LocalSound('DoorClose');
 			return;
 		}
 		interstate = 3;
 		cnt = 0.3;
 		skipintermission = false;
-		LocalSound("DoorClose");
+		LocalSound('DoorClose');
 	}
 }
 
@@ -821,6 +821,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/11 08:03:11  dj_jl
 //  Renamed 'name' to "Name'
 //

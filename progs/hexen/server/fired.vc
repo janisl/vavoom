@@ -215,7 +215,7 @@ void Actor::A_FiredAttack(void)
 
 	mo = SpawnMissile(this, target, MT_FIREDEMON_FX6);
 	if (mo)
-		StartSoundName(this, "FireDemonAttack", CHAN_WEAPON);
+		StartSoundName(this, 'FireDemonAttack', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -262,6 +262,9 @@ void Actor::A_SmBounce(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

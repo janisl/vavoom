@@ -176,7 +176,7 @@ int AmbientSoundStart;
 
 void P_InitAmbientSound(void)
 {
-	AmbientSoundStart = GetSoundID("Ambient1") - 1;
+	AmbientSoundStart = GetSoundID('Ambient1') - 1;
 	AmbSfxCount = 0;
 	AmbSfxVolume = 0;
 	AmbSfxTics = 10 * TICRATE;
@@ -246,7 +246,7 @@ void P_AmbientSound(void)
 			if (sound)
 				sound += AmbientSoundStart;
 			else
-				sound = GetSoundID("BeastSight");
+				sound = GetSoundID('BeastSight');
 			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			break;
@@ -258,7 +258,7 @@ void P_AmbientSound(void)
 			if (sound)
 				sound += AmbientSoundStart;
 			else
-				sound = GetSoundID("BeastSight");
+				sound = GetSoundID('BeastSight');
 			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_playrelvol:
@@ -277,7 +277,7 @@ void P_AmbientSound(void)
 			if (sound)
 				sound += AmbientSoundStart;
 			else
-				sound = GetSoundID("BeastSight");
+				sound = GetSoundID('BeastSight');
 			StartSoundAtVolume(NULL, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_delay:
@@ -306,6 +306,9 @@ void P_AmbientSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

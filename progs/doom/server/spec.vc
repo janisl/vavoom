@@ -73,7 +73,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_bluecard)))
 		{
 			centerprint(player, "You need a blue keycard");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -82,7 +82,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_redcard)))
 		{
 			centerprint(player, "You need a red keycard");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -91,7 +91,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_yellowcard)))
 		{
 			centerprint(player, "You need a yellow keycard");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -100,7 +100,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_blueskull)))
 		{
 			centerprint(player, "You need a blue skullkey");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -109,7 +109,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_redskull)))
 		{
 			centerprint(player, "You need a red skullkey");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -118,7 +118,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & (1 << it_yellowskull)))
 		{
 			centerprint(player, "You need a yellow skullkey");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -128,7 +128,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!player->keys)
 		{
 			centerprint(player, "You need any key");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -137,7 +137,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (player->keys != 0x3f)
 		{
 			centerprint(player, "You need all keycards and skullkeys");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -146,7 +146,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(player, "You need a blue key");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -155,7 +155,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(player, "You need a red key");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -164,7 +164,7 @@ boolean CheckLock(mobj_t * user, int lock)
 		if (!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need a yellow key");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -175,7 +175,7 @@ boolean CheckLock(mobj_t * user, int lock)
 			!(player->keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(player, "You need all keys");
-			StartSoundName(player->mo, "PlayerLand", CHAN_VOICE);
+			StartSoundName(player->mo, 'PlayerLand', CHAN_VOICE);
 			return false;
 		}
 		break;
@@ -843,6 +843,9 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

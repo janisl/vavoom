@@ -312,7 +312,7 @@ void A_CastSorcererSpell(mobj_t * actor)
 	float z;
 	mobj_t *parent = actor->target;
 
-	StartSoundName(NULL, "SorcererSpellCast", CHAN_VOICE);
+	StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
 	if (parent->health > 0)
@@ -448,7 +448,7 @@ void Actor::A_SorcBallOrbit(void)
 
 			if (Class == MT_SORCBALL1 && P_Random() < 200)
 			{
-				StartSoundName(NULL, "SorcererSpellCast", CHAN_VOICE);
+				StartSoundName(NULL, 'SorcererSpellCast', CHAN_VOICE);
 				special2 = SORCFX4_RAPIDFIRE_TIME;
 				args[4] = 128;
 				parent->args[3] = SORC_FIRING_SPELL;
@@ -487,7 +487,7 @@ void Actor::A_SorcBallOrbit(void)
 	{
 		parent->args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
-		StartSoundName(this, "SorcererBallWoosh", CHAN_VOICE);
+		StartSoundName(this, 'SorcererBallWoosh', CHAN_VOICE);
 	}
 	special1f = angle;	// Set previous angle
 	x = parent->origin.x + dist * cos(angle);
@@ -554,7 +554,7 @@ void Actor::A_SpawnFizzle(void)
 
 void Actor::A_SorcBallPop(void)
 {
-	StartSoundName(NULL, "SorcererBallPop", CHAN_VOICE);
+	StartSoundName(NULL, 'SorcererBallPop', CHAN_VOICE);
 	flags &= ~MF_NOGRAVITY;
 	flags2 |= MF2_LOGRAV;
 	velocity.x = (Random() * 10.0 - 5.0) * 35.0;
@@ -584,10 +584,10 @@ void Actor::A_BounceCheck(void)
 			case MT_SORCBALL1:
 			case MT_SORCBALL2:
 			case MT_SORCBALL3:
-				StartSoundName(NULL, "SorcererBigBallExplode", CHAN_VOICE);
+				StartSoundName(NULL, 'SorcererBigBallExplode', CHAN_VOICE);
 				break;
 			case MT_SORCFX1:
-				StartSoundName(NULL, "SorcererHeadScream", CHAN_VOICE);
+				StartSoundName(NULL, 'SorcererHeadScream', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -770,6 +770,9 @@ void Actor::A_SorcFX4Check(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

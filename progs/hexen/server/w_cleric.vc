@@ -60,7 +60,7 @@ void Weapon::A_CMaceAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				StartSoundName(player->mo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(player->mo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(player->mo);
 			return;
@@ -73,7 +73,7 @@ void Weapon::A_CMaceAttack(void)
 			AngleVector(&angles, &vforward);
 			if (LineAttack(player->mo, &vforward, 2.0 * MELEERANGE, damage))
 			{
-				StartSoundName(player->mo, "FighterHammerMiss", CHAN_WEAPON);
+				StartSoundName(player->mo, 'FighterHammerMiss', CHAN_WEAPON);
 			}
 			AdjustPlayerAngle(player->mo);
 			return;
@@ -87,7 +87,7 @@ void Weapon::A_CMaceAttack(void)
 	AngleVector(&angles, &vforward);
 	if (LineAttack(player->mo, &vforward, MELEERANGE, damage))
 	{
-		StartSoundName(player->mo, "FighterHammerMiss", CHAN_WEAPON);
+		StartSoundName(player->mo, 'FighterHammerMiss', CHAN_WEAPON);
 	}
 }
 
@@ -207,7 +207,7 @@ void Weapon::A_CStaffAttack(void)
 	{
 		mo->special2 = 0;
 	}
-	StartSoundName(player->mo, "ClericCStaffFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'ClericCStaffFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -252,7 +252,7 @@ void Weapon::A_CFlameAttack(void)
 
 	player->mana[MANA_2] -=
 		WeaponManaUse(player->pclass, player->readyweapon);
-	StartSoundName(player->mo, "ClericFlameFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'ClericFlameFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -272,7 +272,7 @@ void Actor::A_CFlameMissile(void)
 	mobj_t *bmo;
 
 	A_UnHideThing();
-	StartSoundName(this, "ClericFlameExplode", CHAN_VOICE);
+	StartSoundName(this, 'ClericFlameExplode', CHAN_VOICE);
 	bmo = BlockingMobj;
 	if (bmo && bmo->flags & MF_SHOOTABLE)
 	{
@@ -336,7 +336,7 @@ void Actor::A_CFlamePuff(void)
 {
 	A_UnHideThing();
 	velocity = vector(0.0, 0.0, 0.0);
-	StartSoundName(this, "ClericFlameExplode", CHAN_VOICE);
+	StartSoundName(this, 'ClericFlameExplode', CHAN_VOICE);
 }
 
 //============================================================================
@@ -357,7 +357,7 @@ void Weapon::A_CHolyAttack(void)
 	player->damagecount = 0;
 	player->bonuscount = 0;
 	player->weapon_palette = STARTHOLYPAL;
-	StartSoundName(player->mo, "HolySymbolFire", CHAN_WEAPON);
+	StartSoundName(player->mo, 'HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -620,7 +620,7 @@ void Actor::A_CHolyCheckScream(void)
 	A_CHolySeek();
 	if (P_Random() < 20)
 	{
-		StartSoundName(this, "SpiritActive", CHAN_VOICE);
+		StartSoundName(this, 'SpiritActive', CHAN_VOICE);
 	}
 	if (!specialmobj1)
 	{
@@ -734,6 +734,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

@@ -133,7 +133,7 @@ void Actor::A_VileChase(void)
 					target = temp;
 
 					SetMobjState(this, S_VILE_HEAL1);
-					StartSoundName(corpsehit, "Slop", CHAN_BODY);
+					StartSoundName(corpsehit, 'Slop', CHAN_BODY);
 
 					SetMobjState(corpsehit, corpsehit->raisestate);
 					corpsehit->height *= 4.0;
@@ -165,7 +165,7 @@ void Actor::A_VileChase(void)
 
 void Actor::A_VileStart(void)
 {
-	StartSoundName(this, "ArchVileAttack", CHAN_WEAPON);
+	StartSoundName(this, 'ArchVileAttack', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -214,7 +214,7 @@ void Actor::A_VileAttack(void)
 	if (!P_CheckSight(this, target))
 		return;
 
-	StartSoundName(this, "BarrelExplode", CHAN_WEAPON);
+	StartSoundName(this, 'BarrelExplode', CHAN_WEAPON);
 	target->Damage(this, this, 20);
 	target->velocity.z = 1000.0 / target->mass * 35.0;
 
@@ -239,7 +239,7 @@ void Actor::A_VileAttack(void)
 
 void Actor::A_StartFire(void)
 {
-	StartSoundName(this, "FlameStart", CHAN_VOICE);
+	StartSoundName(this, 'FlameStart', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -280,7 +280,7 @@ void Actor::A_Fire(void)
 
 void Actor::A_FireCrackle(void)
 {
-	StartSoundName(this, "Flame", CHAN_VOICE);
+	StartSoundName(this, 'Flame', CHAN_VOICE);
 	A_Fire();
 }
 
@@ -326,6 +326,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

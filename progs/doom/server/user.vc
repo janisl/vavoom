@@ -913,7 +913,7 @@ void DisconnectClient(player_t * player)
 		}
 	}
 	bprint("%s left the game\n", ARR2STR(player->Name));
-	StartSoundName(NULL, "Chat", CHAN_AUTO);
+	StartSoundName(NULL, 'Chat', CHAN_AUTO);
 }
 
 //==========================================================================
@@ -967,6 +967,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.14  2002/01/11 08:03:10  dj_jl
 //  Renamed 'name' to "Name'
 //

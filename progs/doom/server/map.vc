@@ -275,7 +275,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 		open = FindOpening(open, hit_point.z, hit_point.z + usething->height);
 		if (!open)
 		{
-			StartSoundName(usething, "Blocked", CHAN_VOICE);
+			StartSoundName(usething, 'Blocked', CHAN_VOICE);
 
 			// can't use through a wall
 			return false;
@@ -862,6 +862,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.12  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -282,7 +282,7 @@ void Actor::A_Scream(void)
 		// Handle the different player death screams
 		if (special1 < 10)
 		{	// Wimpy death sound
-			StartSoundName(this, "PlayerWimpyDeath", CHAN_VOICE);
+			StartSoundName(this, 'PlayerWimpyDeath', CHAN_VOICE);
 		}
 		else if (health > -50)
 		{	// Normal death sound
@@ -290,11 +290,11 @@ void Actor::A_Scream(void)
 		}
 		else if (health > -100)
 		{	// Crazy death sound
-			StartSoundName(this, "PlayerCrazyDeath", CHAN_VOICE);
+			StartSoundName(this, 'PlayerCrazyDeath', CHAN_VOICE);
 		}
 		else
 		{	// Extreme death sound
-			StartSoundName(this, "PlayerExtremeDeath", CHAN_VOICE);
+			StartSoundName(this, 'PlayerExtremeDeath', CHAN_VOICE);
 		}
 		break;
 	default:
@@ -477,7 +477,7 @@ void Actor::A_SkullPop(void)
 
 void Actor::A_FlameSnd(void)
 {
-	StartSoundName(this, "HeadAttack1", CHAN_WEAPON);	// Burn sound
+	StartSoundName(this, 'HeadAttack1', CHAN_WEAPON);	// Burn sound
 }
 
 //==========================================================================
@@ -614,10 +614,10 @@ void Actor::A_ContMobjSound(void)
 	switch (Class)
 	{
 	case MT_KNIGHTAXE:
-		StartSoundName(this, "KnightAttack1", CHAN_VOICE);
+		StartSoundName(this, 'KnightAttack1', CHAN_VOICE);
 		break;
 	case MT_MUMMYFX1:
-		StartSoundName(this, "MumyHeadExplode", CHAN_VOICE);
+		StartSoundName(this, 'MumyHeadExplode', CHAN_VOICE);
 		break;
 	default:
 		break;
@@ -627,6 +627,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -92,7 +92,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 
 	mo = P_SpawnMobj(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		ss->sector->floorheight, MT_TFOG);
-	StartSoundName(mo, "Teleport", CHAN_VOICE);	// don't start sound on first frame
+	StartSoundName(mo, 'Teleport', CHAN_VOICE);	// don't start sound on first frame
 
 	return true;
 }
@@ -217,6 +217,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/11 18:19:43  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.10  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //

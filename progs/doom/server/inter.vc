@@ -154,7 +154,7 @@ boolean P_GiveWeapon(player_t * player, int weapon, boolean dropped)
 			P_GiveAmmo(player, weapon_ammo_type[weapon], 2);
 		player->pendingweapon = weapon;
 
-		StartSoundName(player->mo, "PickupWeapon", CHAN_ITEM);
+		StartSoundName(player->mo, 'PickupWeapon', CHAN_ITEM);
 		return false;
 	}
 
@@ -315,7 +315,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 	player_t *player;
 	int i;
 	float delta;
-	string sound;
+	name sound;
 
 	delta = special->origin.z - toucher->origin.z;
 
@@ -325,7 +325,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		return;
 	}
 
-	sound = "PickupItem";
+	sound = 'PickupItem';
 	player = toucher->player;
 
 	// Dead thing touching.
@@ -373,7 +373,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 			player->health = SOULSPHERE_MAX;
 		player->mo->health = player->health;
 		cprint(player, "%s\n", GOTSUPER);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 #ifdef DOOM2
@@ -382,7 +382,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		player->mo->health = player->health;
 		P_GiveArmor(player, 2);
 		cprint(player, "%s\n", GOTMSPHERE);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 #endif
 
@@ -452,7 +452,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		if (!P_GivePower(player, pw_invulnerability))
 			return;
 		cprint(player, "%s\n", GOTINVUL);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 	case SPR_PSTR:
@@ -461,28 +461,28 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		cprint(player, "%s\n", GOTBERSERK);
 		if (player->readyweapon != wp_fist)
 			player->pendingweapon = wp_fist;
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 	case SPR_PINS:
 		if (!P_GivePower(player, pw_invisibility))
 			return;
 		cprint(player, "%s\n", GOTINVIS);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 	case SPR_SUIT:
 		if (!P_GivePower(player, pw_ironfeet))
 			return;
 		cprint(player, "%s\n", GOTSUIT);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 	case SPR_PVIS:
 		if (!P_GivePower(player, pw_infrared))
 			return;
 		cprint(player, "%s\n", GOTVISOR);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 		//  Items
@@ -490,7 +490,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		if (!P_GiveItem(player, IT_ALL_MAP))
 			return;
 		cprint(player, "%s\n", GOTMAP);
-		sound = "PickupPower";
+		sound = 'PickupPower';
 		break;
 
 		// ammo
@@ -564,42 +564,42 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		if (!P_GiveWeapon(player, wp_bfg, false))
 			return;
 		cprint(player, "%s\n", GOTBFG9000);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 	case SPR_MGUN:
 		if (!P_GiveWeapon(player, wp_chaingun, special->flags & MF_DROPPED))
 			return;
 		cprint(player, "%s\n", GOTCHAINGUN);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 	case SPR_CSAW:
 		if (!P_GiveWeapon(player, wp_chainsaw, false))
 			return;
 		cprint(player, "%s\n", GOTCHAINSAW);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 	case SPR_LAUN:
 		if (!P_GiveWeapon(player, wp_missile, false))
 			return;
 		cprint(player, "%s\n", GOTLAUNCHER);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 	case SPR_PLAS:
 		if (!P_GiveWeapon(player, wp_plasma, false))
 			return;
 		cprint(player, "%s\n", GOTPLASMA);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 	case SPR_SHOT:
 		if (!P_GiveWeapon(player, wp_shotgun, special->flags & MF_DROPPED))
 			return;
 		cprint(player, "%s\n", GOTSHOTGUN);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 
 #ifdef DOOM2
@@ -608,7 +608,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 				special->flags & MF_DROPPED))
 			return;
 		cprint(player, "%s\n", GOTSHOTGUN2);
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 #endif
 
@@ -617,7 +617,7 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 		if (!P_GiveWeapon(player, wp_grenade, false))
 			return;
 		cprint(player, "Piched up a grenade launcher\n");
-		sound = "PickupWeapon";
+		sound = 'PickupWeapon';
 		break;
 #endif
 
@@ -635,6 +635,9 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.5  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

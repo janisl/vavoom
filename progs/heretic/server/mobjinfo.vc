@@ -366,7 +366,7 @@ class MT_FIREBOMB:Actor
 		translucency = 33;
 		flags = MF_NOGRAVITY;
 		spawnstate = S_FIREBOMB1;
-		sound_death = GetSoundID("PhoenixHit");
+		sound_death = GetSoundID('PhoenixHit');
 	}
 };
 
@@ -412,7 +412,7 @@ class MT_POD:Actor
 		spawnstate = S_POD_WAIT1;
 		painstate = S_POD_PAIN1;
 		deathstate = S_POD_DIE1;
-		sound_death = GetSoundID("PodExplode");
+		sound_death = GetSoundID('PodExplode');
 	}
 };
 
@@ -1092,7 +1092,7 @@ class MT_VOLCANOBLAST:Actor
 		flags2 = MF2_LOGRAV|MF2_NOTELEPORT|MF2_FIREDAMAGE;
 		spawnstate = S_VOLCANOBALL1;
 		deathstate = S_VOLCANOBALLX1;
-		sound_death = GetSoundID("VolcanoHit");
+		sound_death = GetSoundID('VolcanoHit');
 		effects = EF_DL_RED;
 	}
 };
@@ -1258,7 +1258,7 @@ class MT_STAFFPUFF:Actor
 		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF1;
-		sound_attack = GetSoundID("StaffHit");
+		sound_attack = GetSoundID('StaffHit');
 	}
 };
 
@@ -1279,7 +1279,7 @@ class MT_STAFFPUFF2:Actor
 		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF2_1;
-		sound_attack = GetSoundID("StaffHit2");
+		sound_attack = GetSoundID('StaffHit2');
 	}
 };
 
@@ -1300,7 +1300,7 @@ class MT_BEAKPUFF:Actor
 		reactiontime = 8;
 		flags = MF_NOBLOCKMAP|MF_NOGRAVITY;
 		spawnstate = S_STAFFPUFF1;
-		sound_attack = GetSoundID("ChickenAttack");
+		sound_attack = GetSoundID('ChickenAttack');
 	}
 };
 
@@ -1407,7 +1407,7 @@ class MT_BLASTERFX1:Actor
 		flags2 = MF2_NOTELEPORT;
 		spawnstate = S_BLASTERFX1_1;
 		deathstate = S_BLASTERFXI1_1;
-		sound_death = GetSoundID("BlasterHit");
+		sound_death = GetSoundID('BlasterHit');
 		effects = EF_DL_BLUE;
 	}
 };
@@ -1455,7 +1455,7 @@ class MT_RIPPER:Actor
 		flags2 = MF2_NOTELEPORT|MF2_RIP;
 		spawnstate = S_RIPPER1;
 		deathstate = S_RIPPERX1;
-		sound_death = GetSoundID("SkullRodHit");
+		sound_death = GetSoundID('SkullRodHit');
 	}
 };
 
@@ -1540,7 +1540,7 @@ class MT_MACEFX1:Actor
 		flags2 = MF2_FLOORBOUNCE|MF2_THRUGHOST|MF2_NOTELEPORT;
 		spawnstate = S_MACEFX1_1;
 		deathstate = S_MACEFXI1_1;
-		sound_sight = GetSoundID("MaceFire");
+		sound_sight = GetSoundID('MaceFire');
 	}
 };
 
@@ -1657,8 +1657,8 @@ class MT_HORNRODFX1:Actor
 		flags2 = MF2_WINDTHRUST|MF2_NOTELEPORT;
 		spawnstate = S_HRODFX1_1;
 		deathstate = S_HRODFXI1_1;
-		sound_sight = GetSoundID("SkullRodFire");
-		sound_death = GetSoundID("SkullRodHit");
+		sound_sight = GetSoundID('SkullRodFire');
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_RED;
 	}
 };
@@ -1684,8 +1684,8 @@ class MT_HORNRODFX2:Actor
 		flags2 = MF2_NOTELEPORT;
 		spawnstate = S_HRODFX2_1;
 		deathstate = S_HRODFXI2_1;
-		sound_sight = GetSoundID("SkullRodFire");
-		sound_death = GetSoundID("SkullRodHit");
+		sound_sight = GetSoundID('SkullRodFire');
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_RED;
 	}
 };
@@ -1807,7 +1807,7 @@ class MT_GOLDWANDFX1:Actor
 		flags2 = MF2_NOTELEPORT;
 		spawnstate = S_GWANDFX1_1;
 		deathstate = S_GWANDFXI1_1;
-		sound_death = GetSoundID("GoldWandFire");
+		sound_death = GetSoundID('GoldWandFire');
 		effects = EF_DL_WHITE;
 	}
 };
@@ -1918,8 +1918,8 @@ class MT_PHOENIXFX1:Actor
 		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
 		spawnstate = S_PHOENIXFX1_1;
 		deathstate = S_PHOENIXFXI1_1;
-		sound_sight = GetSoundID("PhoenixFire");
-		sound_death = GetSoundID("PhoenixHit");
+		sound_sight = GetSoundID('PhoenixFire');
+		sound_death = GetSoundID('PhoenixHit');
 		effects = EF_DL_RED;
 	}
 };
@@ -2012,8 +2012,8 @@ class MT_CRBOWFX1:Actor
 		flags2 = MF2_NOTELEPORT;
 		spawnstate = S_CRBOWFX1;
 		deathstate = S_CRBOWFXI1_1;
-		sound_sight = GetSoundID("BowFire");
-		sound_death = GetSoundID("SkullRodHit");
+		sound_sight = GetSoundID('BowFire');
+		sound_death = GetSoundID('SkullRodHit');
 	}
 };
 
@@ -2038,8 +2038,8 @@ class MT_CRBOWFX2:Actor
 		flags2 = MF2_NOTELEPORT;
 		spawnstate = S_CRBOWFX2;
 		deathstate = S_CRBOWFXI1_1;
-		sound_sight = GetSoundID("BowFire");
-		sound_death = GetSoundID("SkullRodHit");
+		sound_sight = GetSoundID('BowFire');
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_GREEN;
 	}
 };
@@ -2065,7 +2065,7 @@ class MT_CRBOWFX3:Actor
 		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
 		spawnstate = S_CRBOWFX3;
 		deathstate = S_CRBOWFXI3_1;
-		sound_death = GetSoundID("SkullRodHit");
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_GREEN;
 	}
 };
@@ -2157,8 +2157,8 @@ class MT_PLAYER:Actor
 		painstate = S_PLAY_PAIN;
 		deathstate = S_PLAY_DIE1;
 		xdeathstate = S_PLAY_XDIE1;
-		sound_pain = GetSoundID("PlayerPain");
-		sound_death = GetSoundID("PlayerDeath");
+		sound_pain = GetSoundID('PlayerPain');
+		sound_death = GetSoundID('PlayerDeath');
 	}
 };
 
@@ -2205,8 +2205,8 @@ class MT_CHICPLAYER:Actor
 		missilestate = S_CHICPLAY_ATK1;
 		painstate = S_CHICPLAY_PAIN;
 		deathstate = S_CHICKEN_DIE1;
-		sound_pain = GetSoundID("ChickenPain");
-		sound_death = GetSoundID("ChickenDeath");
+		sound_pain = GetSoundID('ChickenPain');
+		sound_death = GetSoundID('ChickenDeath');
 	}
 };
 
@@ -2234,11 +2234,11 @@ class MT_CHICKEN:Actor
 		meleestate = S_CHICKEN_ATK1;
 		painstate = S_CHICKEN_PAIN1;
 		deathstate = S_CHICKEN_DIE1;
-		sound_sight = GetSoundID("ChickenPain");
-		sound_active = GetSoundID("ChickenActive");
-		sound_attack = GetSoundID("ChickenAttack");
-		sound_pain = GetSoundID("ChickenPain");
-		sound_death = GetSoundID("ChickenDeath");
+		sound_sight = GetSoundID('ChickenPain');
+		sound_active = GetSoundID('ChickenActive');
+		sound_attack = GetSoundID('ChickenAttack');
+		sound_pain = GetSoundID('ChickenPain');
+		sound_death = GetSoundID('ChickenDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2298,11 +2298,11 @@ class MT_MUMMY:Actor
 		meleestate = S_MUMMY_ATK1;
 		painstate = S_MUMMY_PAIN1;
 		deathstate = S_MUMMY_DIE1;
-		sound_sight = GetSoundID("MumySight");
-		sound_active = GetSoundID("MumyActive");
-		sound_attack = GetSoundID("MumyAttack1");
-		sound_pain = GetSoundID("MumyPain");
-		sound_death = GetSoundID("MumyDeath");
+		sound_sight = GetSoundID('MumySight');
+		sound_active = GetSoundID('MumyActive');
+		sound_attack = GetSoundID('MumyAttack1');
+		sound_pain = GetSoundID('MumyPain');
+		sound_death = GetSoundID('MumyDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2341,11 +2341,11 @@ class MT_MUMMYLEADER:Actor
 		missilestate = S_MUMMYL_ATK1;
 		painstate = S_MUMMY_PAIN1;
 		deathstate = S_MUMMY_DIE1;
-		sound_sight = GetSoundID("MumySight");
-		sound_active = GetSoundID("MumyActive");
-		sound_attack = GetSoundID("MumyAttack1");
-		sound_pain = GetSoundID("MumyPain");
-		sound_death = GetSoundID("MumyDeath");
+		sound_sight = GetSoundID('MumySight');
+		sound_active = GetSoundID('MumyActive');
+		sound_attack = GetSoundID('MumyAttack1');
+		sound_pain = GetSoundID('MumyPain');
+		sound_death = GetSoundID('MumyDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2384,11 +2384,11 @@ class MT_MUMMYGHOST:Actor
 		meleestate = S_MUMMY_ATK1;
 		painstate = S_MUMMY_PAIN1;
 		deathstate = S_MUMMY_DIE1;
-		sound_sight = GetSoundID("MumySight");
-		sound_active = GetSoundID("MumyActive");
-		sound_attack = GetSoundID("MumyAttack1");
-		sound_pain = GetSoundID("MumyPain");
-		sound_death = GetSoundID("MumyDeath");
+		sound_sight = GetSoundID('MumySight');
+		sound_active = GetSoundID('MumyActive');
+		sound_attack = GetSoundID('MumyAttack1');
+		sound_pain = GetSoundID('MumyPain');
+		sound_death = GetSoundID('MumyDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2428,11 +2428,11 @@ class MT_MUMMYLEADERGHOST:Actor
 		missilestate = S_MUMMYL_ATK1;
 		painstate = S_MUMMY_PAIN1;
 		deathstate = S_MUMMY_DIE1;
-		sound_sight = GetSoundID("MumySight");
-		sound_active = GetSoundID("MumyActive");
-		sound_attack = GetSoundID("MumyAttack1");
-		sound_pain = GetSoundID("MumyPain");
-		sound_death = GetSoundID("MumyDeath");
+		sound_sight = GetSoundID('MumySight');
+		sound_active = GetSoundID('MumyActive');
+		sound_attack = GetSoundID('MumyAttack1');
+		sound_pain = GetSoundID('MumyPain');
+		sound_death = GetSoundID('MumyDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2517,11 +2517,11 @@ class MT_BEAST:Actor
 		painstate = S_BEAST_PAIN1;
 		deathstate = S_BEAST_DIE1;
 		xdeathstate = S_BEAST_XDIE1;
-		sound_sight = GetSoundID("BeastSight");
-		sound_active = GetSoundID("BeastActive");
-		sound_attack = GetSoundID("BeastAttack");
-		sound_pain = GetSoundID("BeastPain");
-		sound_death = GetSoundID("BeastDeath");
+		sound_sight = GetSoundID('BeastSight');
+		sound_active = GetSoundID('BeastActive');
+		sound_attack = GetSoundID('BeastAttack');
+		sound_pain = GetSoundID('BeastPain');
+		sound_death = GetSoundID('BeastDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2658,11 +2658,11 @@ class MT_SNAKE:Actor
 		missilestate = S_SNAKE_ATK1;
 		painstate = S_SNAKE_PAIN1;
 		deathstate = S_SNAKE_DIE1;
-		sound_sight = GetSoundID("SnakeSight");
-		sound_active = GetSoundID("SnakeActive");
-		sound_attack = GetSoundID("SnakeAttack");
-		sound_pain = GetSoundID("SnakePain");
-		sound_death = GetSoundID("SnakeDeath");
+		sound_sight = GetSoundID('SnakeSight');
+		sound_active = GetSoundID('SnakeActive');
+		sound_attack = GetSoundID('SnakeAttack');
+		sound_pain = GetSoundID('SnakePain');
+		sound_death = GetSoundID('SnakeDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2750,11 +2750,11 @@ class MT_HEAD:Actor
 		missilestate = S_HEAD_ATK1;
 		painstate = S_HEAD_PAIN1;
 		deathstate = S_HEAD_DIE1;
-		sound_sight = GetSoundID("HeadSight");
-		sound_active = GetSoundID("HeadActive");
-		sound_attack = GetSoundID("HeadAttack1");
-		sound_pain = GetSoundID("HeadPain");
-		sound_death = GetSoundID("HeadDeath");
+		sound_sight = GetSoundID('HeadSight');
+		sound_active = GetSoundID('HeadActive');
+		sound_attack = GetSoundID('HeadAttack1');
+		sound_pain = GetSoundID('HeadPain');
+		sound_death = GetSoundID('HeadDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2892,11 +2892,11 @@ class MT_CLINK:Actor
 		meleestate = S_CLINK_ATK1;
 		painstate = S_CLINK_PAIN1;
 		deathstate = S_CLINK_DIE1;
-		sound_sight = GetSoundID("ClinkSight");
-		sound_active = GetSoundID("ClinkActive");
-		sound_attack = GetSoundID("ClinkAttack");
-		sound_pain = GetSoundID("ClinkPain");
-		sound_death = GetSoundID("ClinkDeath");
+		sound_sight = GetSoundID('ClinkSight');
+		sound_active = GetSoundID('ClinkActive');
+		sound_attack = GetSoundID('ClinkAttack');
+		sound_pain = GetSoundID('ClinkPain');
+		sound_death = GetSoundID('ClinkDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -2934,11 +2934,11 @@ class MT_WIZARD:Actor
 		missilestate = S_WIZARD_ATK1;
 		painstate = S_WIZARD_PAIN1;
 		deathstate = S_WIZARD_DIE1;
-		sound_sight = GetSoundID("WizardSight");
-		sound_active = GetSoundID("WizardActive");
-		sound_attack = GetSoundID("WizardAttack");
-		sound_pain = GetSoundID("WizardPain");
-		sound_death = GetSoundID("WizardDeath");
+		sound_sight = GetSoundID('WizardSight');
+		sound_active = GetSoundID('WizardActive');
+		sound_attack = GetSoundID('WizardAttack');
+		sound_pain = GetSoundID('WizardPain');
+		sound_death = GetSoundID('WizardDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3005,11 +3005,11 @@ class MT_IMP:Actor
 		crashstate = S_IMP_CRASH1;
 		deathstate = S_IMP_DIE1;
 		xdeathstate = S_IMP_XDIE1;
-		sound_sight = GetSoundID("ImpSight");
-		sound_active = GetSoundID("ImpActive");
-		sound_attack = GetSoundID("ImpAttack1");
-		sound_pain = GetSoundID("ImpPain");
-		sound_death = GetSoundID("ImpDeath");
+		sound_sight = GetSoundID('ImpSight');
+		sound_active = GetSoundID('ImpActive');
+		sound_attack = GetSoundID('ImpAttack1');
+		sound_pain = GetSoundID('ImpPain');
+		sound_death = GetSoundID('ImpDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3050,11 +3050,11 @@ class MT_IMPLEADER:Actor
 		crashstate = S_IMP_CRASH1;
 		deathstate = S_IMP_DIE1;
 		xdeathstate = S_IMP_XDIE1;
-		sound_sight = GetSoundID("ImpSight");
-		sound_active = GetSoundID("ImpActive");
-		sound_attack = GetSoundID("ImpAttack2");
-		sound_pain = GetSoundID("ImpPain");
-		sound_death = GetSoundID("ImpDeath");
+		sound_sight = GetSoundID('ImpSight');
+		sound_active = GetSoundID('ImpActive');
+		sound_attack = GetSoundID('ImpAttack2');
+		sound_pain = GetSoundID('ImpPain');
+		sound_death = GetSoundID('ImpDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3158,11 +3158,11 @@ class MT_KNIGHT:Actor
 		missilestate = S_KNIGHT_ATK1;
 		painstate = S_KNIGHT_PAIN1;
 		deathstate = S_KNIGHT_DIE1;
-		sound_sight = GetSoundID("KnightSight");
-		sound_active = GetSoundID("KnightActive");
-		sound_attack = GetSoundID("KnightAttack1");
-		sound_pain = GetSoundID("KnightPain");
-		sound_death = GetSoundID("KnightDeath");
+		sound_sight = GetSoundID('KnightSight');
+		sound_active = GetSoundID('KnightActive');
+		sound_attack = GetSoundID('KnightAttack1');
+		sound_pain = GetSoundID('KnightPain');
+		sound_death = GetSoundID('KnightDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3202,11 +3202,11 @@ class MT_KNIGHTGHOST:Actor
 		missilestate = S_KNIGHT_ATK1;
 		painstate = S_KNIGHT_PAIN1;
 		deathstate = S_KNIGHT_DIE1;
-		sound_sight = GetSoundID("KnightSight");
-		sound_active = GetSoundID("KnightActive");
-		sound_attack = GetSoundID("KnightAttack1");
-		sound_pain = GetSoundID("KnightPain");
-		sound_death = GetSoundID("KnightDeath");
+		sound_sight = GetSoundID('KnightSight');
+		sound_active = GetSoundID('KnightActive');
+		sound_attack = GetSoundID('KnightAttack1');
+		sound_pain = GetSoundID('KnightPain');
+		sound_death = GetSoundID('KnightDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3241,7 +3241,7 @@ class MT_KNIGHTAXE:Actor
 		flags2 = MF2_WINDTHRUST|MF2_THRUGHOST|MF2_NOTELEPORT;
 		spawnstate = S_SPINAXE1;
 		deathstate = S_SPINAXEX1;
-		sound_death = GetSoundID("SkullRodHit");
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_GREEN;
 	}
 };
@@ -3267,7 +3267,7 @@ class MT_REDAXE:Actor
 		flags2 = MF2_THRUGHOST|MF2_NOTELEPORT;
 		spawnstate = S_REDAXE1;
 		deathstate = S_REDAXEX1;
-		sound_death = GetSoundID("SkullRodHit");
+		sound_death = GetSoundID('SkullRodHit');
 		effects = EF_DL_RED;
 	}
 };
@@ -3296,11 +3296,11 @@ class MT_SORCERER1:Actor
 		missilestate = S_SRCR1_ATK1;
 		painstate = S_SRCR1_PAIN1;
 		deathstate = S_SRCR1_DIE1;
-		sound_sight = GetSoundID("SorcererDemonSight");
-		sound_active = GetSoundID("SorcererDemonActive");
-		sound_attack = GetSoundID("SorcererDemonAttack");
-		sound_pain = GetSoundID("SorcererDemonPain");
-		sound_death = GetSoundID("SorcererDemonDeath");
+		sound_sight = GetSoundID('SorcererDemonSight');
+		sound_active = GetSoundID('SorcererDemonActive');
+		sound_attack = GetSoundID('SorcererDemonAttack');
+		sound_pain = GetSoundID('SorcererDemonPain');
+		sound_death = GetSoundID('SorcererDemonDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3363,10 +3363,10 @@ class MT_SORCERER2:Actor
 		missilestate = S_SOR2_ATK1;
 		painstate = S_SOR2_PAIN1;
 		deathstate = S_SOR2_DIE1;
-		sound_sight = GetSoundID("SorcererSight");
-		sound_active = GetSoundID("SorcererActive");
-		sound_attack = GetSoundID("SorcererAttack");
-		sound_pain = GetSoundID("SorcererPain");
+		sound_sight = GetSoundID('SorcererSight');
+		sound_active = GetSoundID('SorcererActive');
+		sound_attack = GetSoundID('SorcererAttack');
+		sound_pain = GetSoundID('SorcererPain');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3497,11 +3497,11 @@ class MT_MINOTAUR:Actor
 		missilestate = S_MNTR_ATK2_1;
 		painstate = S_MNTR_PAIN1;
 		deathstate = S_MNTR_DIE1;
-		sound_sight = GetSoundID("MinotaurSight");
-		sound_active = GetSoundID("MinotaurActive");
-		sound_attack = GetSoundID("MinotaurAttack1");
-		sound_pain = GetSoundID("MinotaurPain");
-		sound_death = GetSoundID("MinotaurDeath");
+		sound_sight = GetSoundID('MinotaurSight');
+		sound_active = GetSoundID('MinotaurActive');
+		sound_attack = GetSoundID('MinotaurAttack1');
+		sound_pain = GetSoundID('MinotaurPain');
+		sound_death = GetSoundID('MinotaurDeath');
 	}
 
 	void OnMapSpawn(mthing_t *mthing)
@@ -3561,7 +3561,7 @@ class MT_MNTRFX2:Actor
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
 		spawnstate = S_MNTRFX2_1;
 		deathstate = S_MNTRFXI2_1;
-		sound_death = GetSoundID("PhoenixHit");
+		sound_death = GetSoundID('PhoenixHit');
 		effects = EF_DL_WHITE;
 	}
 };
@@ -3586,7 +3586,7 @@ class MT_MNTRFX3:Actor
 		flags2 = MF2_NOTELEPORT|MF2_FIREDAMAGE;
 		spawnstate = S_MNTRFX3_1;
 		deathstate = S_MNTRFXI2_1;
-		sound_death = GetSoundID("PhoenixHit");
+		sound_death = GetSoundID('PhoenixHit');
 		effects = EF_DL_WHITE;
 	}
 };
@@ -4018,9 +4018,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/01/11 18:19:41  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.12  2002/01/07 12:23:17  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.11  2001/12/27 17:48:17  dj_jl
 //	Removed spawnhealth
 //	

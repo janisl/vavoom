@@ -53,7 +53,7 @@ void Actor::A_SPosAttack(void)
 	if (!target)
 		return;
 
-	StartSoundName(this, "ShotgunFire", CHAN_WEAPON);
+	StartSoundName(this, 'ShotgunFire', CHAN_WEAPON);
 	A_FaceTarget();
 	aimDir = AimLineAttack(this, angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
@@ -70,6 +70,9 @@ void Actor::A_SPosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

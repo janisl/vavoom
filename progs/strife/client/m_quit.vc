@@ -33,12 +33,12 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string quitsounds[5] = {
-	"QuitMessage1",
-	"QuitMessage2",
-	"QuitMessage3",
-	"QuitMessage4",
-	"QuitMessage5",
+name quitsounds[5] = {
+	'QuitMessage1',
+	'QuitMessage2',
+	'QuitMessage3',
+	'QuitMessage4',
+	'QuitMessage5',
 };
 
 // CODE --------------------------------------------------------------------
@@ -74,6 +74,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.5  2002/01/07 12:27:41  dj_jl
 //  Changed copyright year
 //

@@ -90,7 +90,7 @@ void Actor::A_Summon(void)
 
 		// Make smoke puff
 		P_SpawnMobj(origin.x, origin.y, origin.z, MT_MNTRSMOKE);
-		StartSoundName(this, "MaulatorActive", CHAN_VOICE);
+		StartSoundName(this, 'MaulatorActive', CHAN_VOICE);
 	}
 }
 
@@ -287,7 +287,7 @@ void Actor::A_MinotaurAtk1(void)
 		return;
 	}
 
-	StartSoundName(this, "MaulatorHamSwing", CHAN_WEAPON);
+	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(4));
@@ -355,7 +355,7 @@ void Actor::A_MinotaurAtk2(void)
 	if (!target)
 		return;
 
-	StartSoundName(this, "MaulatorHamSwing", CHAN_WEAPON);
+	StartSoundName(this, 'MaulatorHamSwing', CHAN_WEAPON);
 	if (CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(3));
@@ -408,7 +408,7 @@ void Actor::A_MinotaurAtk3(void)
 		mo = SpawnMissile(this, target, MT_MNTRFX2);
 		if (mo != NULL)
 		{
-			StartSoundName(mo, "MaulatorHamHit", CHAN_VOICE);
+			StartSoundName(mo, 'MaulatorHamHit', CHAN_VOICE);
 		}
 	}
 	if (P_Random() < 192 && special2 == 0)
@@ -511,6 +511,9 @@ void Actor::A_SmokePuffExit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.11  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

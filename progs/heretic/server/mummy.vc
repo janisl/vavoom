@@ -51,10 +51,10 @@ void Actor::A_MummyAttack(void)
 	if (P_CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(2));
-		StartSoundName(this, "MumyAttack2", CHAN_WEAPON);
+		StartSoundName(this, 'MumyAttack2', CHAN_WEAPON);
 		return;
 	}
-	StartSoundName(this, "MumyAttack1", CHAN_WEAPON);
+	StartSoundName(this, 'MumyAttack1', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

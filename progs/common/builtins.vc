@@ -308,10 +308,10 @@ native void T_DrawCursor(void);
 //
 
 //  Plays a sound
-native void LocalSound(string Name);
+native void LocalSound(name Name);
 
 //  Plays a sound and waits untill it finishes
-native void LocalSoundTillDone(string Name);
+native void LocalSoundTillDone(name Name);
 
 //  Handle shift+key
 native int TranslateKey(int c);
@@ -446,10 +446,10 @@ native void StopSound(Entity * mobj, int channel);
 native void SectorStartSound(sector_t * sec, int sound, int channel);
 native void SectorStopSound(sector_t * sec, int channel);
 native boolean GetSoundPlayingInfo(Entity * mobj, int sound_id);
-native int GetSoundID(string Name);
-native void SectorStartSequence(sector_t * sector, string sequence);
+native int GetSoundID(name Name);
+native void SectorStartSequence(sector_t * sector, name sequence);
 native void SectorStopSequence(sector_t * sector);
-native void PolyobjStartSequence(polyobj_t * mobj, string sequence);
+native void PolyobjStartSequence(polyobj_t * mobj, name sequence);
 native void PolyobjStopSequence(polyobj_t * mobj);
 
 #define StartSoundName(origin, Name, channel)	StartSound(origin, GetSoundID(Name), channel)
@@ -491,6 +491,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.23  2002/01/11 08:04:00  dj_jl
 //  Renamed 'name' to "Name'
 //  Added support for EDGE 3D floors

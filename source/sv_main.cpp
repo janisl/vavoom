@@ -1746,20 +1746,20 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 static void SV_InitModelLists(void)
 {
 	int i;
-	int num;
+	FName* list;
 
 	numsprites = svpr.GetGlobal("num_sprite_names");
-    num = svpr.GlobalNumForName("sprite_names");
+    list = (FName*)svpr.GlobalAddr("sprite_names");
 	for (i = 0; i < numsprites; i++)
 	{
-		strcpy(sprites[i], (char*)svpr.GetGlobal(num + i));
+		strcpy(sprites[i], *list[i]);
 	}
 
 	nummodels = svpr.GetGlobal("num_models");
-    num = svpr.GlobalNumForName("models");
+    list = (FName*)svpr.GlobalAddr("models");
 	for (i = 1; i < nummodels; i++)
 	{
-		strcpy(models[i], (char*)svpr.GetGlobal(num + i));
+		strcpy(models[i], *list[i]);
 	}
 
 	numskins = 1;
@@ -2662,9 +2662,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2002/01/11 18:22:41  dj_jl
+//	Started to use names in progs
+//
 //	Revision 1.28  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.27  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	

@@ -276,13 +276,16 @@ void Actor::A_WraithMissile(void)
 	mo = SpawnMissile(this, target, MT_WRAITHFX1);
 	if (mo)
 	{
-		StartSoundName(this, "WraithMissileFire", CHAN_WEAPON);
+		StartSoundName(this, 'WraithMissileFire', CHAN_WEAPON);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

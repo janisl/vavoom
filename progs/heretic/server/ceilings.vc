@@ -89,7 +89,7 @@ void CeilingMover::Think(void)
 		res = T_MovePlane(sector, speed * frametime,
 			topheight, false, 1, direction);
 		if (!(level->tictime & 7))
-			SectorStartSoundName(sector, "DoorMove", CHAN_VOICE);
+			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
 		if (res == RES_PASTDEST)
 			switch (type)
 			{
@@ -113,7 +113,7 @@ void CeilingMover::Think(void)
 		res = T_MovePlane(sector, speed * frametime,
 			bottomheight, crush, 1, direction);
 		if (!(level->tictime & 7))
-			SectorStartSoundName(sector, "DoorMove", CHAN_VOICE);
+			SectorStartSoundName(sector, 'DoorMove', CHAN_VOICE);
 		if (res == RES_PASTDEST)
 			switch (type)
 			{
@@ -323,6 +323,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

@@ -67,7 +67,7 @@ void Actor::A_BrainAwake(void)
 	}
 	braintargeton = 0;
 
-	StartSoundName(NULL, "BossSight", CHAN_VOICE);
+	StartSoundName(NULL, 'BossSight', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -97,7 +97,7 @@ void Actor::A_BrainSpit(void)
 	newmobj->reactiontime = ftoi((targ->origin.y - origin.y) /
 		newmobj->velocity.y / newmobj->time);
 
-	StartSoundName(NULL, "BossFire", CHAN_WEAPON);
+	StartSoundName(NULL, 'BossFire', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -110,7 +110,7 @@ void Actor::A_BrainSpit(void)
 
 void Actor::A_BrainPain(void)
 {
-	StartSoundName(NULL, "BossPain", CHAN_VOICE);
+	StartSoundName(NULL, 'BossPain', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -142,7 +142,7 @@ void Actor::A_BrainScream(void)
 			th->time = 0.1;
 	}
 
-	StartSoundName(NULL, "BossDeath", CHAN_VOICE);
+	StartSoundName(NULL, 'BossDeath', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -196,7 +196,7 @@ void Actor::A_BrainDie(void)
 
 void Actor::A_SpawnSound(void)
 {
-	StartSoundName(this, "CubeFly", CHAN_VOICE);
+	StartSoundName(this, 'CubeFly', CHAN_VOICE);
 	A_SpawnFly();
 }
 
@@ -224,7 +224,7 @@ void Actor::A_SpawnFly(void)
 	// First spawn teleport fog.
 	fog = P_SpawnMobj(targ->origin.x, targ->origin.y, targ->origin.z,
 		MT_SPAWNFIRE);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 
 	// Randomly select monster to spawn.
 	r = P_Random();
@@ -313,6 +313,9 @@ void Actor::A_SpawnFly(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

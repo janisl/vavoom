@@ -107,7 +107,7 @@ void Actor::A_KoraxStep(void)
 
 void Actor::A_KoraxStep2(void)
 {
-	StartSoundName(NULL, "KoraxStep", CHAN_BODY);
+	StartSoundName(NULL, 'KoraxStep', CHAN_BODY);
 	A_Chase();
 }
 
@@ -148,7 +148,7 @@ void Actor::A_KoraxChase(void)
 	}
 	else if (P_Random() < 30)
 	{
-		StartSoundName(NULL, "KoraxActive", CHAN_VOICE);
+		StartSoundName(NULL, 'KoraxActive', CHAN_VOICE);
 	}
 
 	// Teleport away
@@ -295,35 +295,35 @@ void KoraxFire6(mobj_t * actor, classid type)
 void Actor::A_KoraxMissile(void)
 {
 	classid mtype;
-	string sound;
+	name sound;
 
-	StartSoundName(this, "KoraxAttack", CHAN_VOICE);
+	StartSoundName(this, 'KoraxAttack', CHAN_VOICE);
 
 	switch (P_Random() % 6)
 	{
 	case 0:
 		mtype = MT_WRAITHFX1;
-		sound = "WraithMissileFire";
+		sound = 'WraithMissileFire';
 		break;
 	case 1:
 		mtype = MT_DEMONFX1;
-		sound = "DemonMissileFire";
+		sound = 'DemonMissileFire';
 		break;
 	case 2:
 		mtype = MT_DEMON2FX1;
-		sound = "DemonMissileFire";
+		sound = 'DemonMissileFire';
 		break;
 	case 3:
 		mtype = MT_FIREDEMON_FX6;
-		sound = "FireDemonAttack";
+		sound = 'FireDemonAttack';
 		break;
 	case 4:
 		mtype = MT_CENTAUR_FX;
-		sound = "CentaurLeaderAttack";
+		sound = 'CentaurLeaderAttack';
 		break;
 	case 5:
 		mtype = MT_SERPENTFX;
-		sound = "CentaurLeaderAttack";
+		sound = 'CentaurLeaderAttack';
 		break;
 	}
 
@@ -349,7 +349,7 @@ void Actor::A_KoraxCommand(void)
 	int args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	StartSoundName(this, "KoraxCommand", CHAN_VOICE);
+	StartSoundName(this, 'KoraxCommand', CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
 	ang = AngleMod360(angles.yaw - 90.0);
@@ -567,7 +567,7 @@ void Actor::A_KSpiritRoam(void)
 {
 	if (health-- <= 0)
 	{
-		StartSoundName(this, "SpiritDie", CHAN_VOICE);
+		StartSoundName(this, 'SpiritDie', CHAN_VOICE);
 		SetMobjState(this, S_KSPIRIT_DEATH1);
 	}
 	else
@@ -579,7 +579,7 @@ void Actor::A_KSpiritRoam(void)
 		A_KSpiritWeave(this);
 		if (P_Random() < 50)
 		{
-			StartSoundName(NULL, "SpiritActive", CHAN_VOICE);
+			StartSoundName(NULL, 'SpiritActive', CHAN_VOICE);
 		}
 	}
 }
@@ -630,6 +630,9 @@ void Actor::A_KBolt(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

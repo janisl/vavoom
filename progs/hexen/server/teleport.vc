@@ -197,10 +197,10 @@ boolean P_Teleport(mobj_t * thing, float x, float y, float angle,
 	{
 		fogDelta = thing->flags & MF_MISSILE ? 0.0 : TELEFOGHEIGHT;
 		fog = P_SpawnMobj(oldx, oldy, oldz + fogDelta, MT_TFOG);
-		StartSoundName(fog, "Teleport", CHAN_VOICE);
+		StartSoundName(fog, 'Teleport', CHAN_VOICE);
 		fog = P_SpawnMobj(x + 20.0 * cos(angle),
 			y + 20.0 * sin(angle), thing->origin.z + fogDelta, MT_TFOG);
-		StartSoundName(fog, "Teleport", CHAN_VOICE);
+		StartSoundName(fog, 'Teleport', CHAN_VOICE);
 		if (thing->player && !thing->player->powers[pw_speed])
 		{	// Freeze player for about .5 sec
 			thing->reactiontime = 18;
@@ -278,6 +278,9 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

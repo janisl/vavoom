@@ -52,7 +52,7 @@ void Actor::A_BruisAttack(void)
 
 	if (P_CheckMeleeRange(this))
 	{
-		StartSoundName(this, "ImpAttack", CHAN_WEAPON);
+		StartSoundName(this, 'ImpAttack', CHAN_WEAPON);
 		damage = (P_Random() % 8 + 1) * 10;
 		target->Damage(this, this, damage);
 		return;
@@ -65,6 +65,9 @@ void Actor::A_BruisAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

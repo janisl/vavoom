@@ -54,7 +54,7 @@ void Weapon::A_SnoutAttack(void)
 	PuffSpawned = NULL;
 	AngleVector(&angles, &vforward);
 	LineAttack(player->mo, &vforward, MELEERANGE, damage);
-	StartSound(player->mo, GetSoundID("PigActive1") + (P_Random() & 1),
+	StartSound(player->mo, GetSoundID('PigActive1') + (P_Random() & 1),
 		CHAN_VOICE);
 	if (linetarget)
 	{
@@ -62,7 +62,7 @@ void Weapon::A_SnoutAttack(void)
 		if (PuffSpawned)
 		{
 			// Bit something
-			StartSoundName(player->mo, "PigAttack", CHAN_VOICE);
+			StartSoundName(player->mo, 'PigAttack', CHAN_VOICE);
 		}
 	}
 }
@@ -70,6 +70,9 @@ void Weapon::A_SnoutAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

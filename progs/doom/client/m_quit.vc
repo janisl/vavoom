@@ -35,25 +35,25 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-string quitsounds[8] = {
+name quitsounds[8] = {
 #ifndef DOOM2
-	"PlayerDeath",
-	"DemonPain",
-	"ZombiePain",
-	"Slop",
-	"Teleport",
-	"ZombieSight1",
-	"ZombieSight3",
-	"DemonAttack"
+	'PlayerDeath',
+	'DemonPain',
+	'ZombiePain',
+	'Slop',
+	'Teleport',
+	'ZombieSight1',
+	'ZombieSight3',
+	'DemonAttack'
 #else
-	"ArchVileActive",
-	"PickupPower",
-	"CubeFly",
-	"Slop",
-	"RavenantSwing",
-	"KnightDeath",
-	"BabyActive",
-	"DemonAttack"
+	'ArchVileActive',
+	'PickupPower',
+	'CubeFly',
+	'Slop',
+	'RavenantSwing',
+	'KnightDeath',
+	'BabyActive',
+	'DemonAttack'
 #endif
 };
 
@@ -102,7 +102,7 @@ void QuitResponse(int ch)
 
 void menu_quit(void)
 {
-	LocalSound("Chat");
+	LocalSound('Chat');
 	MB_StartMessage(va("%s\n\n(press y to quit)",
 			endmsg[P_Random() % NUM_END_MESSAGES]), QuitResponse, true);
 }
@@ -110,6 +110,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

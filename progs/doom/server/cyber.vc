@@ -45,7 +45,7 @@
 
 void Actor::A_Hoof(void)
 {
-	StartSoundName(this, "CyberWalk1", CHAN_BODY);
+	StartSoundName(this, 'CyberWalk1', CHAN_BODY);
 	A_Chase();
 }
 
@@ -59,7 +59,7 @@ void Actor::A_Hoof(void)
 
 void Actor::A_Metal(void)
 {
-	StartSoundName(this, "CyberWalk2", CHAN_BODY);
+	StartSoundName(this, 'CyberWalk2', CHAN_BODY);
 	A_Chase();
 }
 
@@ -83,6 +83,9 @@ void Actor::A_CyberAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

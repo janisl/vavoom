@@ -109,12 +109,12 @@ void DragonSeek(mobj_t * actor, float thresh, float turnMax)
 			if (CheckMeleeRange(actor))
 			{
 				actor->target->Damage(actor, actor, HITDICE(10));
-				StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
+				StartSoundName(actor, 'DragonAttack', CHAN_WEAPON);
 			}
 			else if (P_Random() < 128 && CheckMissileRange(actor))
 			{
 				SpawnMissile(actor, target, MT_DRAGON_FX);
-				StartSoundName(actor, "DragonAttack", CHAN_WEAPON);
+				StartSoundName(actor, 'DragonAttack', CHAN_WEAPON);
 			}
 			actor->target = oldTarget;
 		}
@@ -214,12 +214,12 @@ void Actor::A_DragonFlight(void)
 			&& CheckMeleeRange(this))
 		{
 			target->Damage(this, this, HITDICE(8));
-			StartSoundName(this, "DragonAttack", CHAN_WEAPON);
+			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
 		}
 		else if (fabs(AngleMod180(angles.yaw - angle)) <= 20.0)
 		{
 			SetMobjState(this, missilestate);
-			StartSoundName(this, "DragonAttack", CHAN_WEAPON);
+			StartSoundName(this, 'DragonAttack', CHAN_WEAPON);
 		}
 	}
 	else
@@ -239,7 +239,7 @@ void Actor::A_DragonFlap(void)
 	A_DragonFlight();
 	if (P_Random() < 240)
 	{
-		StartSoundName(this, "DragonWingflap", CHAN_BODY);
+		StartSoundName(this, 'DragonWingflap', CHAN_BODY);
 	}
 	else
 	{
@@ -317,6 +317,9 @@ void Actor::A_DragonFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

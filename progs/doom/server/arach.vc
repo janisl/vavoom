@@ -47,7 +47,7 @@
 
 void Actor::A_BabyMetal(void)
 {
-	StartSoundName(this, "BabyWalk", CHAN_BODY);
+	StartSoundName(this, 'BabyWalk', CHAN_BODY);
 	A_Chase();
 }
 
@@ -87,6 +87,9 @@ void Actor::A_BspiAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2002/01/11 18:19:40  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.6  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

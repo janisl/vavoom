@@ -39,7 +39,7 @@ void Actor::A_RestoreSpecialThing1(void)
 		RepositionMace(this);
 	}
 	translucency -= 100;
-	StartSoundName(this, "Respawn", CHAN_VOICE);
+	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -86,7 +86,7 @@ void Actor::A_RestoreArtifact(void)
 {
 	flags |= MF_SPECIAL;
 	SetMobjState(this, spawnstate);
-	StartSoundName(this, "Respawn", CHAN_VOICE);
+	StartSoundName(this, 'Respawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -126,23 +126,23 @@ void Actor::A_InitKeyGizmo(void)
 
 void Actor::A_ESound(void)
 {
-	string sound = "";
-
 	switch (Class)
 	{
 	case MT_SOUNDWATERFALL:
-		sound = "Waterfall";
+		StartSoundName(this, 'Waterfall', CHAN_VOICE);
 		break;
 	case MT_SOUNDWIND:
-		sound = "Wind";
+		StartSoundName(this, 'Wind', CHAN_VOICE);
 		break;
 	}
-	StartSoundName(this, sound, CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.7  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

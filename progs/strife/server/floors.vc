@@ -101,13 +101,13 @@ void FloorMover::Think(void)
 	//FIXME sound sequence
 	if (!(level->tictime & 7))
 	{
-		SectorStartSoundName(sector, "StoneMoving", CHAN_VOICE);
+		SectorStartSoundName(sector, 'StoneMoving', CHAN_VOICE);
 	}
 
 	if (res == RES_PASTDEST)
 	{
 		//FIXME sound sequence
-		SectorStartSoundName(sector, "PlatformStop", CHAN_VOICE);
+		SectorStartSoundName(sector, 'PlatformStop', CHAN_VOICE);
 		sector->specialdata = NULL;
 		if ((direction == 1 && type == FLEV_DONUT) ||
 			(direction == -1 && type == FLEV_LOWERTOLOWESTCHANGE))
@@ -247,7 +247,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 			floor->direction = 1;
 			floor->floordestheight = sec->floorheight + itof(args[2]) * 8.0;
 			SetFloorPic(sec, line->frontsector->floor.pic);
-			SectorStartSoundName(sec, "StoneMoving", CHAN_VOICE);
+			SectorStartSoundName(sec, 'StoneMoving', CHAN_VOICE);
 			break;
 
 		case FLEV_RAISETOTEXTURE:
@@ -313,7 +313,7 @@ int EV_DoFloor(line_t * line, int *args, int floortype)
 			SetFloorPic(sec, line->frontsector->floor.pic);
 			// NO MORE DAMAGE, IF APPLICABLE
 			sec->special = 0;
-			SectorStartSoundName(sec, "StoneMoving", CHAN_VOICE);
+			SectorStartSoundName(sec, 'StoneMoving', CHAN_VOICE);
 			break;
 
 		// Hexen specials
@@ -1217,6 +1217,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:27:42  dj_jl
 //  Changed copyright year
 //

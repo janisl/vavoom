@@ -193,7 +193,7 @@ void Actor::A_SerpentHumpDecide(void)
 		else
 		{
 			SetMobjState(this, S_SERPENT_HUMP1);
-			StartSoundName(this, "SerpentActive", CHAN_VOICE);
+			StartSoundName(this, 'SerpentActive', CHAN_VOICE);
 		}
 	}
 }
@@ -278,7 +278,7 @@ void Actor::A_UnSetShootable(void)
 
 void Actor::A_SerpentBirthScream(void)
 {
-	StartSoundName(this, "SerpentBirth", CHAN_VOICE);
+	StartSoundName(this, 'SerpentBirth', CHAN_VOICE);
 }
 
 //============================================================================
@@ -326,7 +326,7 @@ void Actor::A_SerpentCheckForAttack(void)
 
 void Actor::A_SerpentDiveSound(void)
 {
-	StartSoundName(this, "SerpentActive", CHAN_VOICE);
+	StartSoundName(this, 'SerpentActive', CHAN_VOICE);
 }
 
 //============================================================================
@@ -465,7 +465,7 @@ void Actor::A_SerpentMeleeAttack(void)
 	if (CheckMeleeRange(this))
 	{
 		target->Damage(this, this, HITDICE(5));
-		StartSoundName(this, "SerpentMeleeHit", CHAN_WEAPON);
+		StartSoundName(this, 'SerpentMeleeHit', CHAN_WEAPON);
 	}
 	if (P_Random() < 96)
 	{
@@ -598,6 +598,9 @@ void Actor::A_DelayGib(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:42  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

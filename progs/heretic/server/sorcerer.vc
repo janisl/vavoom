@@ -131,7 +131,7 @@ void Actor::A_Sor1Pain(void)
 
 void Actor::A_SorZap(void)
 {
-	StartSoundName(NULL, "SorcererZap", CHAN_BODY);
+	StartSoundName(NULL, 'SorcererZap', CHAN_BODY);
 }
 
 //==========================================================================
@@ -159,7 +159,7 @@ void Actor::A_SorcererRise(void)
 
 void Actor::A_SorRise(void)
 {
-	StartSoundName(NULL, "SorcererRise", CHAN_VOICE);
+	StartSoundName(NULL, 'SorcererRise', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -170,7 +170,7 @@ void Actor::A_SorRise(void)
 
 void Actor::A_SorSightSnd(void)
 {
-	StartSoundName(NULL, "SorcererSight", CHAN_VOICE);
+	StartSoundName(NULL, 'SorcererSight', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -280,7 +280,7 @@ void Actor::A_Sor2DthInit(void)
 
 void Actor::A_SorDSph(void)
 {
-	StartSoundName(NULL, "SorcererDeath", CHAN_VOICE);
+	StartSoundName(NULL, 'SorcererDeath', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -306,7 +306,7 @@ void Actor::A_Sor2DthLoop(void)
 
 void Actor::A_SorDExp(void)
 {
-	StartSoundName(NULL, "SorcererExplodes", CHAN_BODY);
+	StartSoundName(NULL, 'SorcererExplodes', CHAN_BODY);
 }
 
 //==========================================================================
@@ -317,7 +317,7 @@ void Actor::A_SorDExp(void)
 
 void Actor::A_SorDBon(void)
 {
-	StartSoundName(NULL, "SorcererBones", CHAN_BODY);
+	StartSoundName(NULL, 'SorcererBones', CHAN_BODY);
 }
 
 //==========================================================================
@@ -363,12 +363,15 @@ void Actor::A_GenWizard(void)
 	SetMobjState(this, deathstate);
 	flags &= ~MF_MISSILE;
 	fog = P_SpawnMobj(origin.x, origin.y, origin.z, MT_TFOG);
-	StartSoundName(fog, "Teleport", CHAN_VOICE);
+	StartSoundName(fog, 'Teleport', CHAN_VOICE);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //

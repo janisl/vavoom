@@ -71,7 +71,7 @@ void Actor::A_HeadAttack(void)
 	{
 		// Ice ball
 		SpawnMissile(this, target, MT_HEADFX1);
-		StartSoundName(this, "HeadAttack2", CHAN_WEAPON);
+		StartSoundName(this, 'HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
@@ -86,7 +86,7 @@ void Actor::A_HeadAttack(void)
 					baseFire->origin.z, MT_HEADFX3);
 				if (i == 0)
 				{
-					StartSoundName(this, "HeadAttack1", CHAN_WEAPON);
+					StartSoundName(this, 'HeadAttack1', CHAN_WEAPON);
 				}
 				fire->target = baseFire->target;
 				fire->angles.yaw = baseFire->angles.yaw;
@@ -107,7 +107,7 @@ void Actor::A_HeadAttack(void)
 			mo->specialmobj1 = target;
 			mo->special2 = 50;	// Timer for active sound
 			mo->health = 20 * TICRATE;	// Duration
-			StartSoundName(this, "HeadAttack3", CHAN_WEAPON);
+			StartSoundName(this, 'HeadAttack3', CHAN_WEAPON);
 		}
 	}
 }
@@ -172,7 +172,7 @@ void Actor::A_WhirlwindSeek(void)
 	if ((special2 -= 3) < 0)
 	{
 		special2 = 58 + (P_Random() & 31);
-		StartSoundName(this, "HeadAttack3", CHAN_WEAPON);
+		StartSoundName(this, 'HeadAttack3', CHAN_WEAPON);
 	}
 	if (specialmobj1 && specialmobj1->translucency)
 	{
@@ -184,6 +184,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.8  2002/01/07 12:23:17  dj_jl
 //  Changed copyright year
 //

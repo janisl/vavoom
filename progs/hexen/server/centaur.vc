@@ -66,7 +66,7 @@ void Actor::A_CentaurAttack2(void)
 		return;
 	}
 	SpawnMissile(this, target, MT_CENTAUR_FX);
-	StartSoundName(this, "CentaurLeaderAttack", CHAN_WEAPON);
+	StartSoundName(this, 'CentaurLeaderAttack', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -171,6 +171,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/11 18:19:41  dj_jl
+//  Started to use names in progs
+//
 //  Revision 1.9  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //
