@@ -337,25 +337,24 @@ obj/sv/%.o : source/%.s
 utils:
 	$(MAKE) -C utils/vcc
 	$(MAKE) -C utils/vlumpy
-	$(MAKE) -C utils/glbsp
 	$(MAKE) -C utils/glvis
 
-progs: utils/vcc/vcc$(EXE)
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/doom1/progs -C progs/doom
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/doom2/progs -C progs/doom2
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/heretic/progs -C progs/heretic
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/hexen/progs -C progs/hexen
-	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) OUTDIR=../../basev/strife/progs -C progs/strife
+progs: utils/bin/vcc$(EXE)
+	$(MAKE) VCC=../../utils/bin/vcc$(EXE) OUTDIR=../../basev/doom1/progs -C progs/doom
+	$(MAKE) VCC=../../utils/bin/vcc$(EXE) OUTDIR=../../basev/doom2/progs -C progs/doom2
+	$(MAKE) VCC=../../utils/bin/vcc$(EXE) OUTDIR=../../basev/heretic/progs -C progs/heretic
+	$(MAKE) VCC=../../utils/bin/vcc$(EXE) OUTDIR=../../basev/hexen/progs -C progs/hexen
+	$(MAKE) VCC=../../utils/bin/vcc$(EXE) OUTDIR=../../basev/strife/progs -C progs/strife
 
 data: progs $(WAD_FILES)
 
-basev/%/wad0.wad: basev/%/wad0.ls utils/vlumpy/vlumpy$(EXE)
-	utils/vlumpy/vlumpy$(EXE) $<
+basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXE)
+	utils/bin/vlumpy$(EXE) $<
 
-utils/vcc/vcc$(EXE):
+utils/bin/vcc$(EXE):
 	$(MAKE) -C utils/vcc
 
-utils/vlumpy/vlumpy$(EXE):
+utils/bin/vlumpy$(EXE):
 	$(MAKE) -C utils/vlumpy
 
 basev/doom1/wad0.wad : basev/doom1/progs/clprogs.dat basev/doom1/progs/svprogs.dat
