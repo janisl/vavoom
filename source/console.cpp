@@ -146,7 +146,7 @@ void C_AddToAutoComplete(const char* string)
 	for (i=0; i<c_ac_Count; i++)
     {
     	if (!stricmp(string, c_ac_Table[i]))
-	    	I_Error("C_AddToAutoComplete: %s is allready registered.", string);
+	    	Sys_Error("C_AddToAutoComplete: %s is allready registered.", string);
 	}
 #endif
 
@@ -732,9 +732,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/12 17:33:39  dj_jl
+//	Fixed paranoid errors
+//
 //	Revision 1.5  2001/08/15 17:26:35  dj_jl
 //	Made console not active when closing
-//
+//	
 //	Revision 1.4  2001/08/07 16:49:26  dj_jl
 //	Added C_Active
 //	

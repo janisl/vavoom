@@ -242,7 +242,6 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 static void RenderSubRegion(subregion_t *region, int clipflags)
 {
     int				count;
-    seg_t*			line;
 	int 			polyCount;
 	seg_t**			polySeg;
 	float			d;
@@ -274,8 +273,6 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 		RenderLine(ds, clipflags);
 		ds++;
     }
-
-    line = &cl_level.segs[r_sub->firstline];
 
 	RenderSecSurface(region->floor, clipflags);
 	RenderSecSurface(region->ceil, clipflags);
@@ -309,7 +306,7 @@ static void RenderSubsector(int num, int clipflags)
 //FIXME do this in node loading
 #ifdef PARANOID
     if (num >= cl_level.numsubsectors)
-		I_Error("RenderSubsector: ss %i with numss = %i", num, cl_level.numsubsectors);
+		Sys_Error("RenderSubsector: ss %i with numss = %i", num, cl_level.numsubsectors);
 #endif
 
     r_sub = &cl_level.subsectors[num];
@@ -444,9 +441,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/09/12 17:33:39  dj_jl
+//	Fixed paranoid errors
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
