@@ -77,13 +77,16 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/console.o \
 	obj/crc.o \
 	obj/cvar.o \
+	obj/d_aclip.o \
+	obj/d_alias.o \
 	obj/d_alleg.o \
 	obj/d_data.o \
 	obj/d_draw.o \
+	obj/d_edge.o \
 	obj/d_main.o \
 	obj/d_part.o \
+	obj/d_polyse.o \
 	obj/d_scache.o \
-	obj/d_scan.o \
 	obj/d_span.o \
 	obj/d_sprite.o \
 	obj/d_surf.o \
@@ -117,6 +120,7 @@ OBJ_FILES = $(SYS_OBJS) \
 	obj/menu.o \
 	obj/message.o \
 	obj/misc.o \
+	obj/model.o \
 	obj/msgbox.o \
 	obj/net_dgrm.o \
 	obj/net_loop.o \
@@ -164,9 +168,9 @@ OBJ_FILES += \
 	obj/gl_poly.o \
 	obj/gl_tex.o
 ifdef MESAGL
-LIBS := -lMesaGL $(LIBS)
+LIBS := -lMesaGL -lMesaGLU $(LIBS)
 else
-LIBS := -lGL $(LIBS)
+LIBS := -lGL -lGLU $(LIBS)
 endif
 endif
 
@@ -236,19 +240,19 @@ SV_OBJ_FILES = $(SV_SYS_OBJS) \
 #---------------------------------------
 
 WAD_FILES = \
-	jl/doomx/palette.wad \
-	jl/heretic/palette.wad \
-	jl/hexen/palette.wad \
-	jl/strife/palette.wad \
-	jl/jldoom.wad \
-	jl/doomdat.wad \
-	jl/doom2dat.wad \
-	jl/tntdat.wad \
-	jl/plutdat.wad \
-	jl/d2progs.wad \
-	jl/hticdat.wad \
-	jl/hexendat.wad \
-	jl/strifdat.wad
+	basev/doomx/palette.wad \
+	basev/heretic/palette.wad \
+	basev/hexen/palette.wad \
+	basev/strife/palette.wad \
+	basev/jldoom.wad \
+	basev/doomdat.wad \
+	basev/doom2dat.wad \
+	basev/tntdat.wad \
+	basev/plutdat.wad \
+	basev/d2progs.wad \
+	basev/hticdat.wad \
+	basev/hexendat.wad \
+	basev/strifdat.wad
 
 # ---------------------------------------
 
@@ -271,11 +275,13 @@ endif
 
 # ---------------------------------------
 
-.PHONY: all suid crash sv progs data clean
+.PHONY: all exe suid crash sv svexe utils progs data clean
 
 # ---------------------------------------
 
-all: Vavoom$(EXE)
+all: exe data
+
+exe: Vavoom$(EXE)
 
 Vavoom$(EXE): $(OBJ_FILES)
 	gcc $(LINK_ARGS) -o $@ $(OBJ_FILES) $(LIBS)
@@ -285,7 +291,7 @@ suid:
 	chmod 4755 Vavoom
 
 crash:
-	addr2line -e Vavoom -f < crash.txt >> jl/debug.txt
+	addr2line -e Vavoom -f < crash.txt >> basev/debug.txt
 
 obj/%.o : source/%.c
 	gcc $(C_ARGS) -o $@ $<
@@ -298,7 +304,9 @@ obj/%.o : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
-sv: VavoomSV$(EXE)
+sv: svexe data
+
+svexe: VavoomSV$(EXE)
 
 VavoomSV$(EXE): $(SV_OBJ_FILES)
 	gcc $(LINK_ARGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
@@ -314,6 +322,12 @@ obj/sv/%.o : source/%.s
 
 # ---------------------------------------
 
+utils:
+	$(MAKE) -C utils/vcc
+	$(MAKE) -C utils/vlumpy
+	$(MAKE) -C utils/glbsp
+	$(MAKE) -C utils/glvis
+
 progs: utils/vcc/vcc$(EXE)
 	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/doom
 	$(MAKE) VCC=../../utils/vcc/vcc$(EXE) -C progs/doom2
@@ -323,10 +337,10 @@ progs: utils/vcc/vcc$(EXE)
 
 data: progs $(WAD_FILES)
 
-jl/%/palette.wad: jl/%/palette.ls utils/vlumpy/vlumpy$(EXE)
+basev/%/palette.wad: basev/%/palette.ls utils/vlumpy/vlumpy$(EXE)
 	utils/vlumpy/vlumpy$(EXE) $<
 
-jl/%.wad: jl/%.ls utils/vlumpy/vlumpy$(EXE)
+basev/%.wad: basev/%.ls utils/vlumpy/vlumpy$(EXE)
 	utils/vlumpy/vlumpy$(EXE) $<
 
 utils/vcc/vcc$(EXE):
@@ -335,11 +349,11 @@ utils/vcc/vcc$(EXE):
 utils/vlumpy/vlumpy$(EXE):
 	$(MAKE) -C utils/vlumpy
 
-jl/doomdat.wad : progs/doom/clprogs.dat progs/doom/svprogs.dat
-jl/d2progs.wad : progs/doom2/clprogs.dat progs/doom2/svprogs.dat
-jl/hticdat.wad : progs/heretic/clprogs.dat progs/heretic/svprogs.dat
-jl/hexendat.wad : progs/hexen/clprogs.dat progs/hexen/svprogs.dat
-jl/strifdat.wad : progs/strife/clprogs.dat progs/strife/svprogs.dat
+basev/doomdat.wad : progs/doom/clprogs.dat progs/doom/svprogs.dat
+basev/d2progs.wad : progs/doom2/clprogs.dat progs/doom2/svprogs.dat
+basev/hticdat.wad : progs/heretic/clprogs.dat progs/heretic/svprogs.dat
+basev/hexendat.wad : progs/hexen/clprogs.dat progs/hexen/svprogs.dat
+basev/strifdat.wad : progs/strife/clprogs.dat progs/strife/svprogs.dat
 
 # ---------------------------------------
 
