@@ -82,6 +82,9 @@ static HANDLE		tevent;
 
 boolean		ActiveApp, Minimized;
 
+static TCvarI		win_priority("win_priority", "0", CVAR_ARCHIVE);
+static TCvarI		win_sys_keys("win_sys_keys", "1", CVAR_ARCHIVE);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -184,9 +187,9 @@ int	Sys_FileTime(const char *path)
 {
 	struct	stat	buf;
 	
-	if (stat(path,&buf) == -1)
+	if (stat(path, &buf) == -1)
 		return -1;
-	
+
 	return buf.st_mtime;
 }
 
@@ -622,7 +625,14 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
 		break;
 
 	 case WM_SETFOCUS:
-		SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+		if (win_priority)
+		{
+			SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+		}
+		else
+		{
+			SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+		}
 		break;
 	}
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
@@ -765,9 +775,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 					dprintf("Quit message\n");
 					Sys_Quit();
 				}
-//				else if (msg.message == WM_SYSKEYDOWN || msg.message == WM_SYSKEYUP)
-//				{
-//				}
+				else if (!win_sys_keys && (msg.message == WM_SYSKEYDOWN ||
+					msg.message == WM_SYSKEYUP))
+				{
+				}
 				else if (!TranslateAccelerator(msg.hwnd, ghAccel, &msg))
 				{
 					TranslateMessage(&msg);
@@ -805,9 +816,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/12/01 17:52:52  dj_jl
+//	no message
+//
 //	Revision 1.8  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
-//
+//	
 //	Revision 1.7  2001/10/08 17:26:17  dj_jl
 //	Started to use exceptions
 //	

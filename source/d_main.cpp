@@ -94,6 +94,8 @@ int						boffs;
 
 int						bppindex;
 
+int						viewx;
+int						viewy;
 int						viewwidth;
 int						viewheight;
 
@@ -318,7 +320,7 @@ void TSoftwareDrawer::InitResolution(void)
 //
 //==========================================================================
 
-static void InitViewBorder(void)
+static void InitViewBorder(const refdef_t *rd)
 { 
     if (r_backscreen)
     {
@@ -326,7 +328,7 @@ static void InitViewBorder(void)
 		r_backscreen = NULL;
     }
 
-    if (viewwidth == ScreenWidth)
+    if (rd->width == ScreenWidth)
 		return;
 
     r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes);
@@ -359,35 +361,35 @@ static void VideoErase(unsigned ofs, int count)
 //
 //==========================================================================
 
-static void EraseViewBorder(void)
+static void EraseViewBorder(const refdef_t *rd)
 { 
-    int		top;
-    int		side;
-    int		ofs;
-    int		i; 
- 
-    if (viewwidth == ScreenWidth)
+	int top;
+	int side;
+	int ofs;
+	int i;
+
+	if (rd->width == ScreenWidth)
 		return;
-  
-    top = ((ScreenHeight - SB_REALHEIGHT) - viewheight) / 2;
-    side = (ScreenWidth - viewwidth) / 2;
- 
-    // copy top and one line of left side 
-    VideoErase(0, top * ScreenWidth + side);
- 
-    // copy one line of right side and bottom 
-    ofs = (viewheight + top - 1) * ScreenWidth + ScreenWidth - side;
-    VideoErase(ofs, top * ScreenWidth + side);
- 
-    // copy sides using wraparound 
-    ofs = top * ScreenWidth + ScreenWidth - side;
-    side = side << 1;
-    
-    for (i=1 ; i<viewheight ; i++) 
-    { 
+
+	top = ((ScreenHeight - SB_REALHEIGHT) - rd->height) / 2;
+	side = (ScreenWidth - rd->width) / 2;
+
+	// copy top and one line of left side
+	VideoErase(0, top * ScreenWidth + side);
+
+	// copy one line of right side and bottom
+	ofs = (rd->height + top - 1) * ScreenWidth + ScreenWidth - side;
+	VideoErase(ofs, top * ScreenWidth + side);
+
+	// copy sides using wraparound
+	ofs = top * ScreenWidth + ScreenWidth - side;
+	side = side << 1;
+
+	for (i=1 ; i < rd->height ; i++)
+	{
 		VideoErase(ofs, side);
 		ofs += ScreenWidth;
-    }
+	}
 } 
 
 //==========================================================================
@@ -429,25 +431,27 @@ void TSoftwareDrawer::EndDirectUpdate(void)
 
 void TSoftwareDrawer::SetupView(const refdef_t *rd)
 {
-	int			i;
+	int i;
 
+	viewx = rd->x;
+	viewy = rd->y;
 	viewwidth = rd->width;
 	viewheight = rd->height;
 
 	//	Setup projection
-	xprojection = (float)(rd->width / 2) / rd->fovx;
-	yprojection = (float)(rd->height / 2) / rd->fovy;
+	xprojection = (float)(viewwidth / 2) / rd->fovx;
+	yprojection = (float)(viewheight / 2) / rd->fovy;
 
-    centerxfrac = (float)(rd->width / 2) - 0.5;
-    centeryfrac = (float)(rd->height / 2) - 0.5;
+    centerxfrac = (float)(viewwidth / 2) - 0.5;
+    centeryfrac = (float)(viewheight / 2) - 0.5;
 
-    aliasxcenter = (float)(rd->width / 2);
-    aliasycenter = (float)(rd->height / 2);
+    aliasxcenter = (float)(viewwidth / 2);
+    aliasycenter = (float)(viewheight / 2);
 
     // Preclaculate all row offsets.
-    for (i = 0; i < rd->height; i++)
+    for (i = 0; i < viewheight; i++)
 	{
-		ylookup[i] = rd->x + (rd->height - 1 - i + rd->y) * ScreenWidth;
+		ylookup[i] = viewx + (viewheight - 1 - i + viewy) * ScreenWidth;
 	}
 
 	if (!rd->drawworld)
@@ -474,15 +478,15 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 		scale_for_mip = yprojection;
 
 	//	Setup for particles
-	xscaleshrink = (float)(rd->width - 6) / 2 / rd->fovx;
+	xscaleshrink = (float)(viewwidth - 6) / 2 / rd->fovx;
 	yscaleshrink = xscaleshrink * PixelAspect;
 
-	d_pix_min = rd->width / 320;
+	d_pix_min = viewwidth / 320;
 	if (d_pix_min < 1)
 		d_pix_min = 1;
 
-	d_pix_max = (int)((float)rd->width / (320.0 / 4.0) + 0.5);
-	d_pix_shift = 8 - (int)((float)rd->width / 320.0 + 0.5);
+	d_pix_max = (int)((float)viewwidth / (320.0 / 4.0) + 0.5);
+	d_pix_shift = 8 - (int)((float)viewwidth / 320.0 + 0.5);
 	if (d_pix_max < 1)
 		d_pix_max = 1;
 
@@ -491,18 +495,18 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
 	else
 		d_y_aspect_shift = 0;
 
-	d_particle_right = rd->width - d_pix_max;
-	d_particle_top = rd->height - (d_pix_max << d_y_aspect_shift);
+	d_particle_right = viewwidth - d_pix_max;
+	d_particle_top = viewheight - (d_pix_max << d_y_aspect_shift);
 
 	// draw the border
 	if (rd->width * rd->height != viewarea)
 	{
-		InitViewBorder();
+		InitViewBorder(rd);
 		viewarea = rd->width * rd->height;
 	}
 	else if (rd->width != ScreenWidth)
 	{
-		EraseViewBorder();
+		EraseViewBorder(rd);
 	}
 
 #ifdef USEASM
@@ -635,9 +639,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/01 17:52:52  dj_jl
+//	no message
+//
 //	Revision 1.10  2001/11/02 18:35:54  dj_jl
 //	Sky optimizations
-//
+//	
 //	Revision 1.9  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
 //	
