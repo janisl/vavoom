@@ -375,87 +375,30 @@ void emitonedata (void)
 
 void emitonecalldata (void)
 {
-	int	i, isaddr, len;
-
 	if (tokens[1][0] == '*')
 	{
-#if 0
-		printf (" dword ptr[%s]", &tokens[1][1]);
-#else
 		printf (" ");
 		emitanoperand (1, " dword ptr", 1);
-#endif
 	}
 	else
 	{
-		isaddr = 0;
-		len = strlen(tokens[1]);
-
-		for (i=0 ; i<len ; i++)
-		{
-			if (tokens[1][i] == '(')
-			{
-				isaddr = 1;
-				break;
-			}
-		}
-
-		if (!isaddr)
-		{
-			printf (" near ptr %s", tokens[1]);
-		}
-		else
-		{
-			emitanoperand (1, " dword ptr", 1);
-		}
+//		printf (" near ptr %s", tokens[1]);
+		printf (" %s", tokens[1]);
 	}
 }
 
 
 void emitonejumpdata (void)
 {
-#if 0
-	int	i, isaddr, len;
-
-#if 0
 	if (tokens[1][0] == '*')
 	{
-		printf (" dword ptr[%s]", &tokens[1][1]);
-	}
-	else
-#endif
-	{
-		isaddr = 0;
-		len = strlen(tokens[1]);
-
-		for (i=0 ; i<len ; i++)
-		{
-			if (tokens[1][i] == '(')
-			{
-				isaddr = 1;
-				break;
-			}
-		}
-
-		if (!isaddr)
-		{
-			printf (" %s", tokens[1]);
-		}
-		else
-		{
-			emitanoperand (1, " dword ptr", 1);
-		}
-	}
-#else
-	if (tokens[1][0] == '*')
-	{
+		printf (" ");
 		emitanoperand (1, " dword ptr", 1);
 	}
 	else
 	{
 		printf (" %s", tokens[1]);
 	}
-#endif
 }
 
 
@@ -476,7 +419,7 @@ void emitoneoperandl (void)
 {
 
 	printf (" ");
-	emitanoperand (1, "ds:dword ptr", 1);
+	emitanoperand (1, "dword ptr", 1);
 }
 
 
@@ -484,7 +427,7 @@ void emitoneoperandb (void)
 {
 
 	printf (" ");
-	emitanoperand (1, "ds:byte ptr", 1);
+	emitanoperand (1, "byte ptr", 1);
 }
 
 
@@ -492,7 +435,7 @@ void emitoneoperandw (void)
 {
 
 	printf (" ");
-	emitanoperand (1, "ds:word ptr", 1);
+	emitanoperand (1, "word ptr", 1);
 }
 
 
@@ -500,9 +443,9 @@ void emittwooperandsl (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:dword ptr", 1);
+	emitanoperand (2, "dword ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:dword ptr", 1);
+	emitanoperand (1, "dword ptr", 1);
 }
 
 
@@ -510,9 +453,9 @@ void emittwooperandsq (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:qword ptr", 1);
+	emitanoperand (2, "qword ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:qword ptr", 1);
+	emitanoperand (1, "qword ptr", 1);
 }
 
 
@@ -520,9 +463,9 @@ void emittwooperandsb (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:byte ptr", 1);
+	emitanoperand (2, "byte ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:byte ptr", 1);
+	emitanoperand (1, "byte ptr", 1);
 }
 
 
@@ -530,9 +473,9 @@ void emittwooperandsw (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:word ptr", 1);
+	emitanoperand (2, "word ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:word ptr", 1);
+	emitanoperand (1, "word ptr", 1);
 }
 
 
@@ -540,9 +483,9 @@ void emittwooperandsbl (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:dword ptr", 1);
+	emitanoperand (2, "dword ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:byte ptr", 1);
+	emitanoperand (1, "byte ptr", 1);
 }
 
 
@@ -550,9 +493,9 @@ void emittwooperandswl (void)
 {
 
 	printf (" ");
-	emitanoperand (2, "ds:dword ptr", 1);
+	emitanoperand (2, "dword ptr", 1);
 	printf (",");
-	emitanoperand (1, "ds:word ptr", 1);
+	emitanoperand (1, "word ptr", 1);
 }
 
 
@@ -562,7 +505,7 @@ void emit_0_or_1_operandsl (void)
 	if (tokennum == 2)
 	{
 		printf (" ");
-		emitanoperand (1, "ds:dword ptr", 1);
+		emitanoperand (1, "dword ptr", 1);
 	}
 }
 
@@ -574,14 +517,14 @@ void emit_1_or_2_operandsl (void)
 	if (tokennum == 2)
 	{
 		printf (" ");
-		emitanoperand (1, "ds:dword ptr", 1);
+		emitanoperand (1, "dword ptr", 1);
 	}
 	else if (tokennum == 3)
 	{
 		printf (" ");
-		emitanoperand (2, "ds:dword ptr", 1);
+		emitanoperand (2, "dword ptr", 1);
 		printf (",");
-		emitanoperand (1, "ds:dword ptr", 1);
+		emitanoperand (1, "dword ptr", 1);
 	}
 	else
 	{
@@ -604,7 +547,7 @@ void emit_1_or_2_operandsl_vartext (char *str0, char *str1)
 	if (tokennum == 2)
 	{
 		printf (" %s ", str0);
-		emitanoperand (1, "ds:dword ptr", 1);
+		emitanoperand (1, "dword ptr", 1);
 	}
 	else if (tokennum == 3)
 	{
@@ -613,9 +556,9 @@ void emit_1_or_2_operandsl_vartext (char *str0, char *str1)
 		else
 			printf (" %s ", str1);
 
-		emitanoperand (2, "ds:dword ptr", 1);
+		emitanoperand (2, "dword ptr", 1);
 		printf (",");
-		emitanoperand (1, "ds:dword ptr", 1);
+		emitanoperand (1, "dword ptr", 1);
 	}
 	else
 	{
@@ -1183,6 +1126,9 @@ int main (int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.5  2001/08/21 17:20:09  dj_jl
+ * Removed ds:
+ *
  * Revision 1.4  2001/08/15 17:16:36  dj_jl
  * Added missing opcodes
  *
