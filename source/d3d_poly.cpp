@@ -492,6 +492,7 @@ void TDirect3DDrawer::WorldDrawing(void)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_SRCCOLOR);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -536,11 +537,9 @@ void TDirect3DDrawer::WorldDrawing(void)
 			}
 		}
 
-		if (!tex_linear)
-		{
-			RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_POINT);
-			RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_POINT);
-		}
+		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
+		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -936,9 +935,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/08/29 17:47:55  dj_jl
+//	Added texture filtering variables
+//
 //	Revision 1.8  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
-//
+//	
 //	Revision 1.7  2001/08/21 17:46:08  dj_jl
 //	Added R_TextureAnimation, made SetTexture recognize flats
 //	

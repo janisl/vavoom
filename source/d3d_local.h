@@ -210,6 +210,10 @@ class TDirect3DDrawer : public TDrawer
 	int							numsurfaces;
 	int							tscount;
 
+	D3DTEXTUREMAGFILTER			magfilter;
+	D3DTEXTUREMINFILTER			minfilter;
+	D3DTEXTUREMIPFILTER			mipfilter;
+
 	LPDIRECTDRAWSURFACE7		*texturedata;
 	float						*textureiw;
 	float						*textureih;
@@ -242,6 +246,9 @@ class TDirect3DDrawer : public TDrawer
 	TCvarI						clear;
 	TCvarI						tex_linear;
 	TCvarI						dither;
+
+	friend ostream &operator << (ostream &str, const LPD3DDEVICEDESC7 dd);
+	friend ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -253,9 +260,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/08/29 17:47:55  dj_jl
+//	Added texture filtering variables
+//
 //	Revision 1.9  2001/08/24 17:03:57  dj_jl
 //	Added mipmapping, removed bumpmap test code
-//
+//	
 //	Revision 1.8  2001/08/23 17:47:57  dj_jl
 //	Started work on mipmapping
 //	
