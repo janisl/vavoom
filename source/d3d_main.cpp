@@ -61,6 +61,7 @@ TDirect3DDrawer::TDirect3DDrawer(void) :
 	clear("d3d_clear", "0", CVAR_ARCHIVE),
 	tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE),
 	dither("d3d_dither", "0", CVAR_ARCHIVE),
+	blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE),
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -1088,9 +1089,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.13  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
-//
+//	
 //	Revision 1.12  2001/09/14 16:48:22  dj_jl
 //	Switched to DirectX 8
 //	

@@ -397,6 +397,7 @@ class TDirect3DDrawer : public TDrawer
 	TCvarI						clear;
 	TCvarI						tex_linear;
 	TCvarI						dither;
+	TCvarI						blend_sprites;
 
 #if DIRECT3D_VERSION >= 0x0800
 	friend ostream &operator << (ostream &str, const D3DCAPS8 *dd);
@@ -415,9 +416,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.14  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.13  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
 //	

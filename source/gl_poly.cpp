@@ -612,7 +612,7 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 
 	SetTexture(texture);
 	glEnable(GL_ALPHA_TEST);
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
@@ -645,7 +645,7 @@ void TOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	}
 	glEnd();
 
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);
@@ -666,7 +666,7 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 
 	SetSpriteLump(lump, translation);
 
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
 		glEnable(GL_BLEND);
@@ -700,7 +700,7 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 
 	glEnd();
 
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_BLEND);
@@ -914,9 +914,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.11  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.10  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

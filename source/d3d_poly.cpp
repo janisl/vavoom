@@ -705,7 +705,7 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
@@ -718,7 +718,7 @@ void TDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 #endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
@@ -748,7 +748,7 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 			DotProduct(texpt, r_taxis) * tex_ih);
 	}
 
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
@@ -761,7 +761,7 @@ void TDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
 #endif
 
-	if (translucency)
+	if (blend_sprites || translucency)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
@@ -1021,9 +1021,12 @@ void TDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.13  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.12  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
 //	

@@ -60,6 +60,7 @@ static TOpenGLDrawer	OpenGLDrawer;
 TOpenGLDrawer::TOpenGLDrawer(void) :
 	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
 	clear("gl_clear", "0", CVAR_ARCHIVE),
+	blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE),
 	ext_multitexture("ext_multitexture", "1", CVAR_ARCHIVE),
 	ext_point_parameters("ext_point_parameters", "1", CVAR_ARCHIVE),
 	ext_anisotropy("ext_anisotropy", "1", CVAR_ARCHIVE)
@@ -440,9 +441,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.11  2001/09/14 16:53:17  dj_jl
 //	Added glFinish to direct update
-//
+//	
 //	Revision 1.10  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
 //	

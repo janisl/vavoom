@@ -206,6 +206,7 @@ class TOpenGLDrawer : public TDrawer
 
 	TCvarI		tex_linear;
 	TCvarI		clear;
+	TCvarI		blend_sprites;
 	TCvarI		ext_multitexture;
 	TCvarI		ext_point_parameters;
 	TCvarI		ext_anisotropy;
@@ -276,9 +277,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2001/10/12 17:28:26  dj_jl
+//	Blending of sprite borders
+//
 //	Revision 1.14  2001/10/09 17:21:39  dj_jl
 //	Added sky begining and ending functions
-//
+//	
 //	Revision 1.13  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	
