@@ -25,10 +25,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-// keep track of special lines as they are hit,
-// but don't process them until the move is proven valid
-#define MAXSPECIALCROSS	32
-
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -37,17 +33,52 @@
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-boolean floatok;	// if true, move would be ok if
+// CODE --------------------------------------------------------------------
 
-							// within tmfloorz - tmceilingz
+//==========================================================================
+//
+//  P_TestMobjLocation
+//
+//  Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//==========================================================================
+
+boolean P_TestMobjLocation(mobj_t * mobj)
+{
+	if (mobj->bNoClip)
+		return true;
+
+	if (CheckPosition(*mobj, mobj->origin))
+	{
+		// XY is ok, now check Z
+		if ((mobj->origin.z < mobj->floorz) ||
+			(mobj->origin.z + mobj->Height > mobj->ceilingz))
+		{
+			// Bad Z
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+//**************************************************************************
+//
+//  CHECK RELATIVE POSITION
+//
+//**************************************************************************
+
+// keep track of special lines as they are hit,
+// but don't process them until the move is proven valid
+#define MAXSPECIALCROSS	32
+
+boolean floatok;	// if true, move would be ok if
+					// within tmfloorz - tmceilingz
 float saved_tmfloorz;
 
-// keep track of the line that lowers the ceiling,
-// so missiles don't explode against sky hack walls
-line_t *ceilingline;
-
-float tmbbox[4];
 mobj_t *tmthing;
+float tmbbox[4];
 float tmx;
 float tmy;
 float tmz;
@@ -58,242 +89,12 @@ float tmdropoffz;
 sec_plane_t *tmfloor;
 sec_plane_t *tmceiling;
 
+// keep track of the line that lowers the ceiling,
+// so missiles don't explode against sky hack walls
+line_t *ceilingline;
+
 line_t *spechit[MAXSPECIALCROSS];
 int numspechit;
-
-// CODE --------------------------------------------------------------------
-
-//**************************************************************************
-//
-//  CHECK ABSOLUTE POSITION
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  PIT_CheckThing
-//
-//==========================================================================
-
-boolean PIT_CheckThing(MapObject Other)
-{
-	float blockdist;
-
-	if (!Other.bSolid)
-		return true;
-
-	blockdist = Other.Radius + tmthing->Radius;
-
-	if (fabs(Other.origin.x - tmx) >= blockdist
-		|| fabs(Other.origin.y - tmy) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == *tmthing)
-		return true;
-
-	BlockingMobj = &Actor(Other);
-	if (!tmthing->bNoPassMobj)
-	{
-		// check if a mobj passed over/under another object
-		if (tmthing->Class == Bishop && Other.Class == Bishop)
-		{
-			// don't let bishops fly over other bishops
-			return false;
-		}
-		if (tmthing->origin.z >= Other.origin.z + Other.Height)
-		{
-			return true;
-		}
-		else if (tmthing->origin.z + tmthing->Height < Other.origin.z)
-		{
-			// under thing
-			return true;
-		}
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  PIT_CheckLine
-//
-//  Adjusts tmfloorz and tmceilingz as lines are contacted
-//
-//==========================================================================
-
-boolean PIT_CheckLine(line_t * ld)
-{
-	TVec hit_point;
-	opening_t *open;
-
-	if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-		return true;
-
-	if (P_BoxOnLineSide(&tmbbox[0], ld) != -1)
-		return true;
-
-	// A line has been hit
-	if (!ld->backsector)
-	{
-		return false;
-	}
-
-	if (ld->flags & ML_BLOCKING)
-	{
-		return false;
-	}
-
-	if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS)
-	{
-		return false;
-	}
-
-	// set openrange, opentop, openbottom
-	hit_point =
-		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
-	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmz, tmz + tmthing->Height);
-
-	if (open)
-	{
-		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING)
-			&& open->top < tmceilingz)
-		{
-			tmceiling = open->ceiling;
-			tmceilingz = open->top;
-			ceilingline = ld;
-		}
-
-		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > tmfloorz)
-		{
-			tmfloor = open->floor;
-			tmfloorz = open->bottom;
-		}
-
-		if (open->lowfloor < tmdropoffz)
-			tmdropoffz = open->lowfloor;
-	}
-	else
-	{
-		tmceilingz = tmfloorz;
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-//  P_CheckPosition
-//
-//  This is purely informative, nothing is modified
-// 
-// in:
-//  a mobj_t (can be valid or invalid)
-//  a position to be checked
-//   (doesn't need to be related to the mobj_t->x,y)
-//
-//==========================================================================
-
-boolean P_CheckPosition(mobj_t * thing, float x, float y)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-	subsector_t *newsubsec;
-	sec_region_t *gap;
-	sec_region_t *reg;
-
-	tmthing = thing;
-
-	tmx = x;
-	tmy = y;
-	tmz = thing->origin.z;
-	tmpos = vector(x, y, thing->origin.z);
-
-	tmbbox[BOXTOP] = y + tmthing->Radius;
-	tmbbox[BOXBOTTOM] = y - tmthing->Radius;
-	tmbbox[BOXRIGHT] = x + tmthing->Radius;
-	tmbbox[BOXLEFT] = x - tmthing->Radius;
-
-	newsubsec = PointInSubsector(x, y);
-	ceilingline = NULL;
-
-	// The base floor / ceiling is from the subsector
-	// that contains the point.
-	// Any contacted lines the step closer together
-	// will adjust them.
-	gap =
-		FindThingGap(newsubsec->sector->botregion, tmpos, tmz,
-		tmz + thing->Height);
-	reg = gap;
-	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
-		reg = reg->prev;
-	tmfloor = reg->floor;
-	tmfloorz = tmdropoffz = GetPlanePointZ(reg->floor, tmpos);
-	reg = gap;
-	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
-		reg = reg->next;
-	tmceiling = reg->ceiling;
-	tmceilingz = GetPlanePointZ(reg->ceiling, tmpos);
-
-	(*validcount)++;
-	numspechit = 0;
-
-	if (tmthing->bNoClip && !tmthing->bSkullFly)
-		return true;
-	BlockingMobj = NULL;
-
-	// Check things first, possibly picking things up.
-	// The bounding box is extended by MAXRADIUS
-	// because mobj_ts are grouped into mapblocks
-	// based on their origin point, and can overlap
-	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
-				return false;
-
-	// check lines
-	if (tmthing->bNoClip)
-	{
-		return true;
-	}
-	BlockingMobj = NULL;
-
-	xl = MapBlock(tmbbox[BOXLEFT] - level->bmaporgx);
-	xh = MapBlock(tmbbox[BOXRIGHT] - level->bmaporgx);
-	yl = MapBlock(tmbbox[BOXBOTTOM] - level->bmaporgy);
-	yh = MapBlock(tmbbox[BOXTOP] - level->bmaporgy);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
-				return false;
-
-	return true;
-}
-
-//**************************************************************************
-//
-//  CHECK RELATIVE POSITION
-//
-//**************************************************************************
 
 //==========================================================================
 //
@@ -730,7 +531,7 @@ boolean PIT_CheckRelLine(line_t * ld)
 	hit_point =
 		tmpos - (DotProduct(tmpos, ld->normal) - ld->dist) * ld->normal;
 	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmz, tmz + tmthing->Height);
+	open = FindOpening(open, cptrace.Pos.z, cptrace.Pos.z + tmthing->Height);
 
 	if (open)
 	{
@@ -1077,6 +878,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.17  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

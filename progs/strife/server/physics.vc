@@ -33,6 +33,8 @@
 
 #define BOUNCE_VAL		1.5
 
+#define FLOATSPEED		140.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -1050,6 +1052,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.16  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -50,7 +50,7 @@ addfields polyobj_t
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-boolean P_CheckPosition(mobj_t * thing, float x, float y);
+boolean P_CheckRelPosition(mobj_t * thing, float x, float y);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -610,7 +610,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		TVec testPos;
 
 		testPos = mobj->origin + force * thrustDir * frametime;
-		if (!P_CheckPosition(mobj, testPos.x, testPos.y))
+		if (!P_CheckRelPosition(mobj, testPos.x, testPos.y))
 		{
 			mobj->Damage(none, none, 3);
 		}
@@ -641,6 +641,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.14  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

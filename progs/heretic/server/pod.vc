@@ -59,7 +59,7 @@ void Actor::A_MakePod(void)
 	y = origin.y;
 	z = origin.z;
 	mo = P_SpawnMobj(x, y, ONFLOORZ, Pod);
-	if (!P_CheckPosition(mo, x, y))
+	if (!CheckPosition(*mo, mo->origin))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/07 18:50:08  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.11  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

@@ -836,7 +836,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	y = mobj->spawnpoint.y;
 
 	// somthing is occupying it's position?
-	if (!P_CheckPosition(mobj, x, y, ONFLOORZ))
+	if (!CheckPosition(*mobj, vector(x, y, ONFLOORZ)))
 		return;	// no respwan
 
 	// spawn a teleport fog at old spot
@@ -977,6 +977,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/02/07 18:50:08  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.28  2002/02/06 17:28:51  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -36,7 +36,6 @@ void ActivateBeak(player_t * player);
 void SetupPsprites(player_t * player);
 void AddBossSpot(float x, float y, float angle);
 void AddMaceSpot(float x, float y);
-boolean P_CheckPosition(mobj_t * thing, float x, float y);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -306,31 +305,6 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, float * delta)
 			return 0;
 		}
 	}
-}
-
-//===========================================================================
-//
-//  P_TestMobjLocation
-//
-//  Returns true if the mobj is not blocked by anything at its current
-// location, otherwise returns false.
-//
-//===========================================================================
-
-boolean P_TestMobjLocation(mobj_t * mobj)
-{
-	if (P_CheckPosition(mobj, mobj->origin.x, mobj->origin.y))
-	{
-		// XY is ok, now check Z
-		if ((mobj->origin.z < mobj->floorz) ||
-			(mobj->origin.z + mobj->Height > mobj->ceilingz))
-		{
-			// Bad Z
-			return false;
-		}
-		return true;
-	}
-	return false;
 }
 
 //===========================================================================
@@ -1437,7 +1411,7 @@ void P_NightmareRespawn(mobj_t * mobj)
 	x = mobj->spawnpoint.x;
 	y = mobj->spawnpoint.y;
 
-	if (!P_CheckPosition(mobj, x, y))
+	if (!CheckPosition(*mobj, vector(x, y, ONFLOORZ)))
 		return;	// somthing is occupying it's position
 
 	// spawn a teleport fog at old spot
@@ -1473,6 +1447,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/02/07 18:50:08  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.29  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -75,7 +75,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!P_CheckPosition(players[playernum].mo, x, y, ONFLOORZ))
+	if (!CheckPosition(*players[playernum].mo, vector(x, y, ONFLOORZ)))
 	{
 		return false;
 	}
@@ -206,6 +206,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/07 18:50:08  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.17  2002/01/28 18:50:18  dj_jl
 //  Made some functions Actor members.
 //  Replaced some pointers with references.

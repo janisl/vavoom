@@ -2227,31 +2227,6 @@ mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
 	return NULL;
 }
 
-//==========================================================================
-//
-//  P_TestMobjLocation
-//
-//  Returns true if the mobj is not blocked by anything at its current
-// location, otherwise returns false.
-//
-//==========================================================================
-
-boolean P_TestMobjLocation(mobj_t * mobj)
-{
-	if (P_CheckPosition(mobj, mobj->origin.x, mobj->origin.y))
-	{
-		// XY is ok, now check Z
-		if ((mobj->origin.z < mobj->floorz) ||
-			(mobj->origin.z + mobj->Height > mobj->ceilingz))
-		{
-			// Bad Z
-			return false;
-		}
-		return true;
-	}
-	return false;
-}
-
 //**************************************************************************
 //
 //      NOISE ALERT
@@ -2332,6 +2307,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.29  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

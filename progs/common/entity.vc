@@ -30,6 +30,10 @@ class Entity:MapObject
 	int nextstate;
 	boolean fixed_model;
 
+	boolean bNoPassMobj;	// Disable z block checking.  If on,
+							// this flag will prevent the mobj
+							// from passing over/under other mobjs.
+
 //==========================================================================
 //
 //  SetState
@@ -127,7 +131,243 @@ defaultproperties
 
 //**************************************************************************
 //
+//	CHECK ABSOLUTE POSITION
+//
+//**************************************************************************
+
+struct cptrace_t
+{
+	Entity Thing;
+	TVec Pos;
+	float bbox[4];
+	float FloorZ;
+	float CeilingZ;
+	float DropOffZ;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
+};
+
+cptrace_t cptrace;
+
+//==========================================================================
+//
+//	PIT_CheckThing
+//
+//==========================================================================
+
+boolean PIT_CheckThing(MapObject Other)
+{
+	float blockdist;
+
+	if (!Other.bSolid)
+		return true;
+
+	blockdist = Other.Radius + cptrace.Thing.Radius;
+
+	if (fabs(Other.origin.x - cptrace.Pos.x) >= blockdist ||
+		fabs(Other.origin.y - cptrace.Pos.y) >= blockdist)
+	{
+		// didn't hit it
+		return true;
+	}
+
+	// don't clip against self
+	if (Other == cptrace.Thing)
+		return true;
+
+	if (!cptrace.Thing.bNoPassMobj)
+	{
+		// check if a mobj passed over/under another object
+/*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
+			(Other.Class == Imp || Other.Class == Wizard))
+		{
+			// don't let imps/wizards fly over other imps/wizards
+			return false;
+		}*/
+/*!		if (cptrace.Thing.Class == Bishop && Other.Class == Bishop)
+		{
+			// don't let bishops fly over other bishops
+			return false;
+		}*/
+		if (cptrace.Pos.z >= Other.origin.z + Other.Height)
+		{
+			return true;
+		}
+		if (cptrace.Pos.z + cptrace.Thing.Height < Other.origin.z)
+		{
+			// under thing
+			return true;
+		}
+	}
+
+//!	return Actor(Other).bNoClip;
+	return false;
+}
+
+//==========================================================================
+//
+//	PIT_CheckLine
+//
+//  Adjusts cptrace.FoorZ and cptrace.CeilingZ as lines are contacted
+//
+//==========================================================================
+
+boolean PIT_CheckLine(line_t * ld)
+{
+	TVec hit_point;
+	opening_t *open;
+
+	if (cptrace.bbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+		cptrace.bbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+		cptrace.bbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+		return true;
+
+	if (P_BoxOnLineSide(&cptrace.bbox[0], ld) != -1)
+		return true;
+
+	// A line has been hit
+	if (!ld->backsector)
+	{
+		// One sided line
+		return false;
+	}
+
+	if (ld->flags & ML_BLOCKING)
+	{
+		// Explicitly blocking everything
+		return false;
+	}
+
+	if (!cptrace.Thing.player && ld->flags & ML_BLOCKMONSTERS)
+//!		&& cptrace.Thing.Class != Pod)
+	{
+		// Block monsters only
+		return false;
+	}
+
+	// set openrange, opentop, openbottom
+	hit_point = cptrace.Pos - (DotProduct(cptrace.Pos, ld->normal) -
+		ld->dist) * ld->normal;
+	open = LineOpenings(ld, hit_point);
+	open = FindOpening(open, cptrace.Pos.z, cptrace.Pos.z + cptrace.Thing.Height);
+
+	if (open)
+	{
+		// adjust floor / ceiling heights
+		if (!(open->ceiling->flags & SPF_NOBLOCKING)
+			&& open->top < cptrace.CeilingZ)
+		{
+			cptrace.Ceiling = open->ceiling;
+			cptrace.CeilingZ = open->top;
+		}
+
+		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > cptrace.FloorZ)
+		{
+			cptrace.Floor = open->floor;
+			cptrace.FloorZ = open->bottom;
+		}
+
+		if (open->lowfloor < cptrace.DropOffZ)
+			cptrace.DropOffZ = open->lowfloor;
+	}
+	else
+	{
+		cptrace.CeilingZ = cptrace.FloorZ;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  CheckPosition
+//
+//  This is purely informative, nothing is modified
+// 
+// in:
+//  a mobj_t (can be valid or invalid)
+//  a position to be checked
+//   (doesn't need to be related to the mobj_t->x,y)
+//
+//==========================================================================
+
+boolean CheckPosition(Entity thing, TVec Pos)
+{
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
+	subsector_t *newsubsec;
+	sec_region_t *gap;
+	sec_region_t *reg;
+
+	cptrace.Thing = thing;
+
+	cptrace.Pos = Pos;
+
+	cptrace.bbox[BOXTOP] = Pos.y + thing.Radius;
+	cptrace.bbox[BOXBOTTOM] = Pos.y - thing.Radius;
+	cptrace.bbox[BOXRIGHT] = Pos.x + thing.Radius;
+	cptrace.bbox[BOXLEFT] = Pos.x - thing.Radius;
+
+	newsubsec = PointInSubsector(Pos.x, Pos.y);
+
+	// The base floor / ceiling is from the subsector that contains the point.
+	// Any contacted lines the step closer together will adjust them.
+	gap = FindThingGap(newsubsec->sector->botregion, Pos,
+		Pos.z, Pos.z + thing.Height);
+	reg = gap;
+	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
+		reg = reg->prev;
+	cptrace.Floor = reg->floor;
+	cptrace.FloorZ = GetPlanePointZ(reg->floor, Pos);
+	cptrace.DropOffZ = cptrace.FloorZ;
+	reg = gap;
+	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
+		reg = reg->next;
+	cptrace.Ceiling = reg->ceiling;
+	cptrace.CeilingZ = GetPlanePointZ(reg->ceiling, Pos);
+
+	(*validcount)++;
+
+	// Check things first, possibly picking things up.
+	// The bounding box is extended by MAXRADIUS
+	// because mobj_ts are grouped into mapblocks
+	// based on their origin point, and can overlap
+	// into adjacent blocks by up to MAXRADIUS units.
+	xl = MapBlock(cptrace.bbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(cptrace.bbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
+
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
+				return false;
+
+	// check lines
+	xl = MapBlock(cptrace.bbox[BOXLEFT] - level->bmaporgx);
+	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level->bmaporgx);
+	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level->bmaporgy);
+	yh = MapBlock(cptrace.bbox[BOXTOP] - level->bmaporgy);
+
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
+				return false;
+
+	return true;
+}
+
+//**************************************************************************
+//
 //  $Log$
+//  Revision 1.2  2002/02/07 18:50:05  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.1  2002/01/24 18:19:25  dj_jl
 //  Split common class Entity, made SetMobjState an Entity function
 //

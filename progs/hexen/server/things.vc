@@ -215,8 +215,7 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 	angle = itof(args[2]) * 360.0 / 256.0;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		newMobj =
-			P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
+		newMobj = P_SpawnMobj(mobj->origin.x, mobj->origin.y, mobj->origin.z,
 			moType);
 		if (newMobj->bFloatBob)
 		{
@@ -250,79 +249,79 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 
 //==========================================================================
 //
-// ActivateThing
+//	Actor::Activate
 //
 //==========================================================================
 
-boolean ActivateThing(mobj_t * mobj)
+boolean Actor::Activate(void)
 {
-	if (mobj->bCountKill)
+	if (bCountKill)
 	{
 		// Monster
-		if (mobj->bDormant)
+		if (bDormant)
 		{
-			mobj->bDormant = false;
-			mobj->time = 0.1;
+			bDormant = false;
+			time = 0.1;
 			return true;
 		}
 		return false;
 	}
-	switch (mobj->Class)
+	switch (Class)
 	{
 	case ZTWinedTorch:
 	case ZTWinedTorchUnlit:
-		mobj->SetState(S_ZTWINEDTORCH_1);
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
+		SetState(S_ZTWINEDTORCH_1);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
 		break;
 	case ZWallTorch:
 	case ZWallTorchUnlit:
-		mobj->SetState(S_ZWALLTORCH1);
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
+		SetState(S_ZWALLTORCH1);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
 		break;
 	case ZGemPedestal:
-		mobj->SetState(S_ZGEMPEDESTAL2);
+		SetState(S_ZGEMPEDESTAL2);
 		break;
 	case ZWingedStatueNoSkull:
-		mobj->SetState(S_ZWINGEDSTATUENOSKULL2);
+		SetState(S_ZWINGEDSTATUENOSKULL2);
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
-		if (mobj->args[0] == 0)
+		if (args[0] == 0)
 		{
-			StartSoundName(*mobj, 'ThrustSpikeLower', CHAN_VOICE);
-			mobj->Translucency = 0;
-			if (mobj->args[1])
-				mobj->SetState(S_BTHRUSTRAISE1);
+			StartSoundName(self, 'ThrustSpikeLower', CHAN_VOICE);
+			Translucency = 0;
+			if (args[1])
+				SetState(S_BTHRUSTRAISE1);
 			else
-				mobj->SetState(S_THRUSTRAISE1);
+				SetState(S_THRUSTRAISE1);
 		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
-		mobj->SetState(S_ZFIREBULL_BIRTH);
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
+		SetState(S_ZFIREBULL_BIRTH);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
 		break;
 	case ZBell:
-		if (mobj->Health > 0)
+		if (Health > 0)
 		{
-			mobj->Damage(none, none, 10);	// 'ring' the bell
+			Damage(none, none, 10);	// 'ring' the bell
 		}
 		break;
 	case ZCauldron:
 	case ZCauldronUnlit:
-		mobj->SetState(S_ZCAULDRON1);
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
+		SetState(S_ZCAULDRON1);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
 		break;
 	case FlameSmall:
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
-		mobj->SetState(S_FLAME_SMALL1);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		SetState(S_FLAME_SMALL1);
 		break;
 	case FlameLarge:
-		StartSoundName(*mobj, 'Ignite', CHAN_VOICE);
-		mobj->SetState(S_FLAME_LARGE1);
+		StartSoundName(self, 'Ignite', CHAN_VOICE);
+		SetState(S_FLAME_LARGE1);
 		break;
 	case BatSpawner:
-		mobj->SetState(S_SPAWNBATS1);
+		SetState(S_SPAWNBATS1);
 		break;
 	default:
 		return false;
@@ -333,7 +332,7 @@ boolean ActivateThing(mobj_t * mobj)
 
 //==========================================================================
 //
-// EV_ThingActivate
+//	EV_ThingActivate
 //
 //==========================================================================
 
@@ -347,7 +346,7 @@ boolean EV_ThingActivate(int tid)
 	searcher = -1;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		if (ActivateThing(mobj) == true)
+		if (mobj->Activate())
 		{
 			success = true;
 		}
@@ -357,60 +356,60 @@ boolean EV_ThingActivate(int tid)
 
 //==========================================================================
 //
-// DeactivateThing
+//	Actor::Deactivate
 //
 //==========================================================================
 
-boolean DeactivateThing(mobj_t * mobj)
+boolean Actor::Deactivate(void)
 {
-	if (mobj->bCountKill)
+	if (bCountKill)
 	{
 		// Monster
-		if (!mobj->bDormant)
+		if (!bDormant)
 		{
-			mobj->bDormant = true;
-			mobj->time = -1.0;
+			bDormant = true;
+			time = -1.0;
 			return true;
 		}
 		return false;
 	}
-	switch (mobj->Class)
+	switch (Class)
 	{
 	case ZTWinedTorch:
 	case ZTWinedTorchUnlit:
-		mobj->SetState(S_ZTWINEDTORCH_UNLIT);
+		SetState(S_ZTWINEDTORCH_UNLIT);
 		break;
 	case ZWallTorch:
 	case ZWallTorchUnlit:
-		mobj->SetState(S_ZWALLTORCH_U);
+		SetState(S_ZWALLTORCH_U);
 		break;
 	case ThrustFloorUp:
 	case ThrustFloorDown:
-		if (mobj->args[0] == 1)
+		if (args[0] == 1)
 		{
-			StartSoundName(*mobj, 'ThrustSpikeRaise', CHAN_VOICE);
-			if (mobj->args[1])
-				mobj->SetState(S_BTHRUSTLOWER);
+			StartSoundName(self, 'ThrustSpikeRaise', CHAN_VOICE);
+			if (args[1])
+				SetState(S_BTHRUSTLOWER);
 			else
-				mobj->SetState(S_THRUSTLOWER);
+				SetState(S_THRUSTLOWER);
 		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
-		mobj->SetState(S_ZFIREBULL_DEATH);
+		SetState(S_ZFIREBULL_DEATH);
 		break;
 	case ZCauldron:
 	case ZCauldronUnlit:
-		mobj->SetState(S_ZCAULDRON_U);
+		SetState(S_ZCAULDRON_U);
 		break;
 	case FlameSmall:
-		mobj->SetState(S_FLAME_SDORM1);
+		SetState(S_FLAME_SDORM1);
 		break;
 	case FlameLarge:
-		mobj->SetState(S_FLAME_LDORM1);
+		SetState(S_FLAME_LDORM1);
 		break;
 	case BatSpawner:
-		mobj->SetState(S_SPAWNBATS_OFF);
+		SetState(S_SPAWNBATS_OFF);
 		break;
 	default:
 		return false;
@@ -435,7 +434,7 @@ boolean EV_ThingDeactivate(int tid)
 	searcher = -1;
 	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
 	{
-		if (DeactivateThing(mobj))
+		if (mobj->Deactivate())
 		{
 			success = true;
 		}
@@ -561,6 +560,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.18  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -76,8 +76,6 @@ enum
 #define ONFLOORZ		-99999.0
 #define ONCEILINGZ		99999.0
 
-#define MAXRADIUS		32.0
-
 //
 // Player internal flags, for cheats and debug.
 //
@@ -355,7 +353,6 @@ class Actor:Entity
 	{
 	}
 }
-boolean P_CheckPosition(mobj_t * thing, float x, float y, float z);
 
 class Weapon:ViewEntity
 {
@@ -700,6 +697,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/02/07 18:50:08  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.18  2002/02/06 17:28:52  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -31,6 +31,13 @@ int diags[] = {
 	DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST
 };
 
+float xspeed[8] =
+	{ 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0, -0.7171630859, 0.0,
+		0.7171630859 };
+float yspeed[8] =
+	{ 0.0, 0.7171630859, 1.0, 0.7171630859, 0.0, -0.7171630859, -1.0,
+		-0.7171630859 };
+
 //==========================================================================
 //
 //  P_CheckMeleeRange
@@ -281,6 +288,80 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 
 //==========================================================================
 //
+//  P_Move
+//
+//  Move in the current direction, returns false if the move is blocked.
+//
+//==========================================================================
+
+boolean P_Move(mobj_t * actor)
+{
+	float tryx;
+	float tryy;
+
+	line_t *ld;
+	boolean good;
+
+	if (actor->movedir == DI_NODIR)
+		return false;
+
+#ifdef RANGECHECK
+	if (actor->movedir >= 8 || actor->movedir < 0)
+		I_Error("Weird actor->movedir!");
+#endif
+
+	tryx =
+		actor->origin.x + actor->Speed * frametime * xspeed[actor->movedir];
+	tryy =
+		actor->origin.y + actor->Speed * frametime * yspeed[actor->movedir];
+
+	if (!P_TryMove(actor, tryx, tryy))
+	{
+		// open any specials
+		if (actor->bFloat && floatok)
+		{
+			// must adjust height
+			if (actor->origin.z < saved_tmfloorz)
+				actor->origin.z += FLOATSPEED * frametime;
+			else
+				actor->origin.z -= FLOATSPEED * frametime;
+
+			actor->bInFloat = true;
+			return true;
+		}
+
+		if (!numspechit)
+			return false;
+
+		actor->movedir = DI_NODIR;
+		good = false;
+		while (numspechit--)
+		{
+			ld = spechit[numspechit];
+			// if the special is not a door
+			// that can be opened,
+			// return false
+			if (P_ActivateLine(ld, actor, 0, SPAC_USE))
+			{
+				good = true;
+			}
+		}
+		return good;
+	}
+	else
+	{
+		actor->bInFloat = false;
+	}
+
+	if (!actor->bFloat)
+	{
+		actor->origin.z = actor->floorz;
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //  P_TryWalk
 //
 //  Attempts to move actor on in its current (ob->moveangle) direction.
@@ -434,6 +515,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.11  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

@@ -53,11 +53,6 @@
 // player radius for movement checking
 //#define PLAYERRADIUS  16*FRACUNIT
 
-// MAXRADIUS is for precalculated sector block boxes
-// the spider demon is larger, but we don't have any moving sectors
-// nearby
-#define MAXRADIUS 		32.0
-
 #define BASETHRESHOLD	100	// follow a player exlusively for 3 seconds
 
 #define ONFLOORZ		-99999.0
@@ -246,9 +241,6 @@ class Actor:Entity
 	boolean bPushable;		// can be pushed by other moving mobjs
 	boolean bSlide;			// slides against walls
 	boolean bOnMobj;		// mobj is resting on top of another mobj
-	boolean bNoPassMobj;	// Disable z block checking.  If off, this flag
-							// will allow the mobj to pass over/under other
-							// mobjs.
 	boolean bCannotPush;	// cannot push other pushable mobjs
 	boolean bDropped;		// dropped by a demon
 	boolean bBoss;			// mobj is a major boss
@@ -332,6 +324,9 @@ class Actor:Entity
 	void Think(void);
 
 	void Damage(Actor inflictor, Actor source, int damage);
+
+	boolean Activate(void);
+	boolean Deactivate(void);
 
 	//  Physics
 	boolean Physics(void);
@@ -1018,6 +1013,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.17  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

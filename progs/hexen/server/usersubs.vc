@@ -649,7 +649,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	y = mthing->y;
 
 	players[playernum].mo->bNoPassMobj = true;
-	if (!P_CheckPosition(players[playernum].mo, x, y))
+	if (!CheckPosition(*players[playernum].mo, vector(x, y, ONFLOORZ)))
 	{
 		players[playernum].mo->bNoPassMobj = false;
 		return false;
@@ -670,6 +670,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.17  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

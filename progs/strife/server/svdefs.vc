@@ -55,8 +55,6 @@
 #define ONFLOORZ		-99999.0
 #define ONCEILINGZ		99999.0
 
-#define MAXRADIUS		32.0
-
 //
 // Player internal flags, for cheats and debug.
 //
@@ -568,6 +566,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/02/07 18:50:09  dj_jl
+//  Made CheckPosition shared.
+//
 //  Revision 1.17  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //
