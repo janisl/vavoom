@@ -310,37 +310,37 @@ static void WritePickupBenefits(FILE *f, benefit_t *list)
 			break;
 		case BENEFIT_Ammo:
 			fprintf(f, "\tif (Toucher.GiveAmmo(%s, %d))\n", GetAmmoName(b->subtype), (int)b->amount);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		case BENEFIT_AmmoLimit:
 			fprintf(f, "\tif (Toucher.Player->MaxAmmo[%s] < %d)\n", GetAmmoName(b->subtype), (int)b->amount);
 			fprintf(f, "\t{\n");
 			fprintf(f, "\t\tToucher.Player->MaxAmmo[%s] = %d;\n", GetAmmoName(b->subtype), (int)b->amount);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			fprintf(f, "\t}\n");
 			break;
 		case BENEFIT_Weapon:
 			fprintf(f, "\tif (Toucher.GiveWeapon(%d, bDropped))\n", b->subtype - num_disabled_weapons);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		case BENEFIT_Key:
 			fprintf(f, "\tif (Toucher.GiveCard(%s))\n", GetKeyName(b->subtype));
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		case BENEFIT_Health:
 			fprintf(f, "\tif (Toucher.GiveBody(%d, %d))\n", (int)b->amount, (int)b->limit);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		case BENEFIT_Armour:
 			fprintf(f, "\tif (Toucher.GiveArmor2(%d, %d, %d))\n", b->subtype + 1, (int)b->amount, (int)b->limit);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		case BENEFIT_Powerup:
 			if (b->subtype == PW_AllMap)
 				fprintf(f, "\tif (Toucher.GiveItem(IT_ALL_MAP))\n");
 			else
 				fprintf(f, "\tif (Toucher.GivePower2(%s, %1.1f, %1.1f))\n", PowerNames[b->subtype], b->amount, b->limit);
-			fprintf(f, "\t\tret = true;\n");
+			fprintf(f, "\t\tRet = true;\n");
 			break;
 		}
 	}
@@ -380,42 +380,47 @@ void VC_WriteMobjs(void)
 	FILE *f;
 	char fname[256];
 
-	sprintf(fname, "%s/things.vc", progsdir);
+	sprintf(fname, "%s/ddfgame/classes.vc", progsdir);
 	I_Printf("Writing %s\n", fname);
 	f = fopen(fname, "w");
 	cur_file = f;
-	fprintf(f, "// Forward declarations.\n");
 	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
 	{
-		fprintf(f, "class %s;\n", GetClassName(mobjinfo[i]));
+		fprintf(f, "#include \"%s.vc\"\n", GetClassName(mobjinfo[i]));
 	}
-	fprintf(f, "\n");
+	for (i = num_disabled_weapons; i < numweapons; i++)
+	{
+		fprintf(f, "#include \"Weapon%d.vc\"\n", i);
+	}
+	fclose(f);
 	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
 	{
 		mobjinfo_t *m = mobjinfo[i];
 
+		sprintf(fname, "%s/ddfgame/%s.vc", progsdir, GetClassName(m));
+		f = fopen(fname, "w");
+		cur_file = f;
 		fprintf(f, "//**************************************************************************\n");
 		fprintf(f, "//\n");
 		fprintf(f, "// %s\n", m->ddf.name);
 		fprintf(f, "//\n");
 		fprintf(f, "//**************************************************************************\n");
 		if (m->playernum == 1)
-			fprintf(f, "\nclass %s:PlayerPawn\n", GetClassName(m));
+			fprintf(f, "\nclass %s : PlayerPawn", GetClassName(m));
 		else
-			fprintf(f, "\nclass %s:Actor\n", GetClassName(m));
+			fprintf(f, "\nclass %s : Actor", GetClassName(m));
 		if (m->ddf.number)
-			fprintf(f, "\t__mobjinfo__(%d)\n", m->ddf.number);
-		fprintf(f, "{\n\n");
+			fprintf(f, "\n\t__mobjinfo__(%d)", m->ddf.number);
+		fprintf(f, ";\n\n");
 
 		if (m->lose_benefits || m->pickup_benefits)
 		{
-			fprintf(f, "boolean HandlePickup(Actor Toucher)\n");
+			fprintf(f, "bool HandlePickup(Actor Toucher)\n");
 			fprintf(f, "{\n");
-			fprintf(f, "\tboolean ret = false;\n");
-			fprintf(f, "\n");
+			fprintf(f, "\tbool Ret;\n\n\tRet = false;\n");
 			//WritePickupBenefits(f, m->lose_benefits);
 			WritePickupBenefits(f, m->pickup_benefits);
-			fprintf(f, "\treturn ret;\n");
+			fprintf(f, "\treturn Ret;\n");
 			fprintf(f, "}\n");
 			fprintf(f, "\n");
 		}
@@ -762,9 +767,7 @@ void VC_WriteMobjs(void)
 			fprintf(f, "\tSpitSpot = %s; // %s\n", GetClassName(m->spitspot), m->spitspot_ref);
 
 		fprintf(f, "}\n");
-		fprintf(f, "\n}\n");
-		fprintf(f, "\n");
+		fclose(f);
 	}
-	fclose(f);
 }
 

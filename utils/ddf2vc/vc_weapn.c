@@ -49,23 +49,51 @@ void VC_WriteWeapons(void)
 	{
 		fprintf(f, "\t%s,\n", GetAmmoName(weaponinfo[i]->ammo));
 	}
-	fprintf(f, "};\n");
+	fprintf(f, "};\n\n");
+
+	fprintf(f, "//==========================================================================\n");
+    fprintf(f, "//\n");
+    fprintf(f, "//\tSetInitialWeapons\n");
+    fprintf(f, "//\n");
+    fprintf(f, "//==========================================================================\n");
+    fprintf(f, "\n");
+	fprintf(f, "void SetInitialWeapons(player_t *player)\n");
+	fprintf(f, "{\n");
+	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
+	{
+		if (mobjinfo[i]->playernum == 1)
+		{
+			WriteInitialBenefits(f, mobjinfo[i]->initial_benefits);
+			break;
+		}
+	}
+	best = 0;
+	for (i = num_disabled_weapons; i < numweapons; i++)
+	{
+		weaponinfo_t *w = weaponinfo[i];
+		if (w->autogive)
+		{
+			fprintf(f, "\tplayer->WeaponOwned[%d] = true;\n", i);
+			best = i;
+		}
+	}
+	fprintf(f, "\tSetWeapon(player, %d);\n", best);
+	fprintf(f, "}\n");
 	fclose(f);
 
-	sprintf(fname, "%s/weapons.vc", progsdir);
-	I_Printf("Writing %s\n", fname);
-	f = fopen(fname, "w");
-	cur_file = f;
 	for (i = num_disabled_weapons; i < numweapons; i++)
 	{
 		weaponinfo_t *w = weaponinfo[i];
 
+		sprintf(fname, "%s/ddfgame/Weapon%d.vc", progsdir, i);
+		f = fopen(fname, "w");
+		cur_file = f;
 		fprintf(f, "//**************************************************************************\n");
 		fprintf(f, "//\n");
 		fprintf(f, "//\t%s\n", w->ddf.name);
 		fprintf(f, "//\n");
 		fprintf(f, "//**************************************************************************\n");
-		fprintf(f, "\nclass Weapon%d:Weapon\n{\n\n", i);
+		fprintf(f, "\nclass Weapon%d : Weapon;\n\n", i);
 
 		if (w->first_state || w->last_state)
 		{
@@ -184,37 +212,7 @@ void VC_WriteWeapons(void)
 		if (w->swaying != 1.0f)
 			fprintf(f, "\tSwaying = %1.2f;\n", w->swaying);
 		fprintf(f, "}\n");
-		fprintf(f, "\n}\n\n");
+		fclose(f);
 	}
-
-	fprintf(f, "//==========================================================================\n");
-    fprintf(f, "//\n");
-    fprintf(f, "//\tSetInitialWeapons\n");
-    fprintf(f, "//\n");
-    fprintf(f, "//==========================================================================\n");
-    fprintf(f, "\n");
-	fprintf(f, "void SetInitialWeapons(player_t *player)\n");
-	fprintf(f, "{\n");
-	for (i = num_disabled_mobjinfo; i < num_mobjinfo; i++)
-	{
-		if (mobjinfo[i]->playernum == 1)
-		{
-			WriteInitialBenefits(f, mobjinfo[i]->initial_benefits);
-			break;
-		}
-	}
-	best = 0;
-	for (i = num_disabled_weapons; i < numweapons; i++)
-	{
-		weaponinfo_t *w = weaponinfo[i];
-		if (w->autogive)
-		{
-			fprintf(f, "\tplayer->WeaponOwned[%d] = true;\n", i);
-			best = i;
-		}
-	}
-	fprintf(f, "\tSetWeapon(player, %d);\n", best);
-	fprintf(f, "}\n");
-	fclose(f);
 }
 

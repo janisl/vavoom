@@ -182,7 +182,7 @@ const linedeftype_t template_line =
   0,           // scroll parts
   NULL,        // security message
   NULL,        // colourmap
-  M_PI,        // gravity     \ 
+  M_PI,        // gravity     \.
   M_PI,        // friction     M_PI means "not changed"
   M_PI,        // viscosity    /
   M_PI,        // drag        /
