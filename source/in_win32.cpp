@@ -75,6 +75,7 @@ static LPDIRECTINPUTDEVICE	lpMouse = NULL;
 static boolean				mousepresent = false;
 static int					old_mouse_x;
 static int					old_mouse_y;
+static int					old_mouse_z;
 static TCvarI				m_filter("m_filter", "1", CVAR_ARCHIVE);
 
 static LPDIRECTINPUTDEVICE2	lpJoystick = NULL;
@@ -693,6 +694,17 @@ static void ReadMouse(void)
 		}
 		lastbuttons[i] = MouseState.rgbButtons[i];
 	}
+
+	//	Handle mouse wheel.
+	if (MouseState.lZ > 0 || old_mouse_z > 0)
+	{
+		IN_KeyEvent(K_MWHEELUP, MouseState.lZ > 0);
+	}
+	if (MouseState.lZ < 0 || old_mouse_z < 0)
+	{
+		IN_KeyEvent(K_MWHEELDOWN, MouseState.lZ < 0);
+	}
+	old_mouse_z = MouseState.lZ;
 	unguard;
 }
 
@@ -1009,9 +1021,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/04/19 06:50:36  dj_jl
+//	Mousewheel support.
+//
 //	Revision 1.10  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	
