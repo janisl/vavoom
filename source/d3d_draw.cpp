@@ -232,14 +232,8 @@ void TDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-static rgb_t	*pal2rgb = NULL;
 void TDirect3DDrawer::StartAutomap(void)
 {
-	if (!pal2rgb)
-	{
-		pal2rgb = (rgb_t*)Z_Malloc(256 * 3);
-		memcpy(pal2rgb, W_CacheLumpName("PLAYPAL", PU_CACHE), 256 * 3);
-	}
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
@@ -259,9 +253,9 @@ void TDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c
 		dword		color;
 	} out[2];
  	out[0].origin = TVec(x1, y1, 0);
-	out[0].color =	0xff000000 | (pal2rgb[c1].r << 16) | (pal2rgb[c1].g << 8) | pal2rgb[c1].b;
+	out[0].color =	c1;
  	out[1].origin = TVec(x2, y2, 0);
-	out[1].color =	0xff000000 | (pal2rgb[c2].r << 16) | (pal2rgb[c2].g << 8) | pal2rgb[c2].b;
+	out[1].color =	c2;
 	RenderDevice->DrawPrimitive(D3DPT_LINELIST, D3DFVF_XYZ | D3DFVF_DIFFUSE, out, 2, 0);
 }
 
@@ -281,9 +275,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:49:01  dj_jl
+//	Line colors in RGBA format
+//
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	

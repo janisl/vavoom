@@ -926,12 +926,12 @@ void TSoftwareDrawer::StartAutomap(void)
 
 void TSoftwareDrawer::PutDot(int x, int y, dword c)
 {
-	if (ScreenBPP == 8)
+	if (PixelBytes == 1)
 		((byte*)scrn)[y * ScreenWidth + x] = c;
 	else if (PixelBytes == 2)
-		((word*)scrn)[y * ScreenWidth + x] = pal8_to16[c];
+		((word*)scrn)[y * ScreenWidth + x] = c;
 	else
-		((dword*)scrn)[y * ScreenWidth + x] = pal2rgb[c];
+		((dword*)scrn)[y * ScreenWidth + x] = c;
 }
 
 #if 0
@@ -1153,6 +1153,15 @@ void TSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
 	}
 #endif
 
+	if (ScreenBPP == 8)
+		color = d_rgbtable[((color >> 9) & 0x7c00) | ((color >> 6) & 0x03e0) | ((color >> 3) & 0x1f)];
+	else if (ScreenBPP == 15)
+		color = MakeCol15((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+	else if (ScreenBPP == 16)
+		color = MakeCol16((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+	else
+		color = MakeCol32((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+
     dx = x2 - x1;
     ax = 2 * (dx < 0 ? -dx : dx);
 	sx = dx < 0 ? -1 : 1;
@@ -1213,9 +1222,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/29 17:49:01  dj_jl
+//	Line colors in RGBA format
+//
 //	Revision 1.6  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
 //	

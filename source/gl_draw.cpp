@@ -255,9 +255,9 @@ void TOpenGLDrawer::StartAutomap(void)
 
 void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
-	glColor4ub(pal8_to24[c1].r, pal8_to24[c1].g, pal8_to24[c1].b, 255);
+	glColor4ub((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff, c1 >> 24);
 	glVertex2f(x1, y1);
-	glColor4ub(pal8_to24[c2].r, pal8_to24[c2].g, pal8_to24[c2].b, 255);
+	glColor4ub((c2 >> 16) & 0xff, (c2 >> 8) & 0xff, c2 & 0xff, c2 >> 24);
 	glVertex2f(x2, y2);
 }
 
@@ -279,9 +279,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/29 17:49:01  dj_jl
+//	Line colors in RGBA format
+//
 //	Revision 1.5  2001/08/15 17:15:55  dj_jl
 //	Drawer API changes, removed wipes
-//
+//	
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
 //	
