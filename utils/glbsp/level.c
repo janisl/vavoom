@@ -680,6 +680,9 @@ void FindPolyobjSectors(void)
     }
   }
 
+  // -JL- Reset to the begining.
+  raw = (raw_hexen_thing_t*) lump->data;
+
   for (i = 0; i < count; i++, raw++)
   {
     float_g x = (float_g) SINT16(raw->x);
