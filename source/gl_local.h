@@ -257,6 +257,12 @@ class TOpenGLDrawer : public TDrawer
 	bool				pointparmsable;
 	PointParameterf_t	p_PointParameterf;
 	PointParameterfv_t	p_PointParameterfv;
+
+	void SetColor(dword c)
+	{
+		glColor4ub(byte((c >> 16) & 0xff), byte((c >> 8) & 0xff),
+			byte(c & 0xff), byte(c >> 24));
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -268,9 +274,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.12  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.11  2001/09/05 12:21:42  dj_jl
 //	Release changes
 //	

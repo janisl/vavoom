@@ -148,7 +148,7 @@ extern dword			blocklightsg[18 * 18];
 extern dword			blocklightsb[18 * 18];
 
 extern rgba_t			r_palette[MAX_PALETTES][256];
-extern int				r_black_color[MAX_PALETTES];
+extern byte				r_black_color[MAX_PALETTES];
 
 extern int				SkinWidth;
 extern int				SkinHeight;
@@ -160,9 +160,12 @@ extern rgb_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.7  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.6  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

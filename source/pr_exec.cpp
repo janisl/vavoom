@@ -1630,6 +1630,9 @@ int TProgs::GetClassID(const char *name)
 		}
 	}
 	Sys_Error("Class %s not found", name);
+#ifndef __GNUC__
+	return 0;// Shut up compiler
+#endif
 }
 
 //==========================================================================
@@ -1689,9 +1692,12 @@ bool TProgs::CanCast(int fromid, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/10/04 17:24:21  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.7  2001/09/25 17:06:22  dj_jl
 //	Added parent's vtable to vtable
-//
+//	
 //	Revision 1.6  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

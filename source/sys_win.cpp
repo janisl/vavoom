@@ -399,12 +399,12 @@ void Sys_Error(const char *error, ...)
 //
 //==========================================================================
 
-volatile int					sys_checksum;
+volatile int sys_checksum;
 
 void Sys_PageIn(void *ptr, int size)
 {
 	byte	*x;
-	int		j, m, n;
+	int		m, n;
 
 	// touch all the memory to make sure it's there. The 16-page skip is to
 	// keep Win 95 from thinking we're trying to page ourselves in (we are
@@ -588,6 +588,34 @@ void SleepUntilInput(int time)
 	MsgWaitForMultipleObjects(1, &tevent, FALSE, time, QS_ALLINPUT);
 }
 
+#ifndef USEASM
+
+void MaskExceptions(void)
+{
+}
+
+void Sys_SetFPCW(void)
+{
+}
+
+void Sys_PushFPCW_SetHigh(void)
+{
+}
+
+void Sys_PopFPCW(void)
+{
+}
+
+void Sys_LowFPPrecision(void)
+{
+}
+
+void Sys_HighFPPrecision(void)
+{
+}
+
+#endif
+
 //==========================================================================
 //
 //	WinMain
@@ -707,9 +735,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.5  2001/09/20 16:27:43  dj_jl
 //	Improved zone allocation
-//
+//	
 //	Revision 1.4  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
 //	

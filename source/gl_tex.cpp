@@ -131,7 +131,7 @@ void TOpenGLDrawer::GenerateTextures(void)
 			pbuf[j][i].r = 255;
 			pbuf[j][i].g = 255;
 			pbuf[j][i].b = 255;
-			pbuf[j][i].a = ptex[j][i] * 255;
+			pbuf[j][i].a = byte(ptex[j][i] * 255);
 		}
 	}
 	glBindTexture(GL_TEXTURE_2D, particle_texture);
@@ -395,12 +395,10 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	spriteiw[lump] = 1.0 / (float)p2w;
-	spriteih[lump] = 1.0 / (float)p2h;
+	spriteiw[lump] = 1.0 / (float)w;
+	spriteih[lump] = 1.0 / (float)h;
 
-	rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * w * h);
 
 	for (int x = 0; x < w; x++)
 	{
@@ -411,21 +409,21 @@ void TOpenGLDrawer::GenerateSprite(int lump)
 		while (column->topdelta != 0xff)
 		{
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * p2w;
+			rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 			while (count--)
 			{
 				*dest = pal8_to24[*source];
 				source++;
-				dest += p2w;
+				dest += w;
 			}
 			column = (column_t *)((byte *)column + column->length + 4);
 		}
 	}
 
 	// Generate The Texture
-	UploadTexture(p2w, p2h, block);
+	UploadTexture(w, h, block);
 	sprite_sent[lump] = true;
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -446,12 +444,10 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	int w = LittleShort(patch->width);
 	int h = LittleShort(patch->height);
-	int p2w = ToPowerOf2(w);
-	int p2h = ToPowerOf2(h);
-	trspriw[slot] = 1.0 / (float)p2w;
-	trsprih[slot] = 1.0 / (float)p2h;
+	trspriw[slot] = 1.0 / (float)w;
+	trsprih[slot] = 1.0 / (float)h;
 
-	rgba_t *block = (rgba_t*)Z_Calloc(4 * p2w * p2h);
+	rgba_t *block = (rgba_t*)Z_Calloc(4 * w * h);
 	trspr_lump[slot] = lump;
 	trspr_tnum[slot] = translation;
 	trspr_sent[slot] = true;
@@ -467,21 +463,21 @@ void TOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 		while (column->topdelta != 0xff)
 		{
 			byte* source = (byte *)column + 3;
-			rgba_t* dest = block + x + column->topdelta * p2w;
+			rgba_t* dest = block + x + column->topdelta * w;
 			int count = column->length;
 
 			while (count--)
 			{
 				*dest = pal8_to24[trtab[*source]];
 				source++;
-				dest += p2w;
+				dest += w;
 			}
 			column = (column_t *)((byte *)column + column->length + 4);
 		}
 	}
 
 	// Generate The Texture
-	UploadTexture(p2w, p2h, block);
+	UploadTexture(w, h, block);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -839,8 +835,8 @@ void TOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 							sum += *(datain + (ii * widthin + jj) * 4 + k);
 						}
 					}
-					sum /= (j1-j0+1) * (i1-i0+1);
-					*dst++ = sum;
+					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
+					*dst++ = byte(sum);
 				}
 			}
 		}
@@ -867,10 +863,10 @@ void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 		int total = width * height / 2;
 		for (i = 0; i < total; i++, in += 8, out += 4)
 		{
-			out[0] = (in[0] + in[4]) >> 1;
-			out[1] = (in[1] + in[5]) >> 1;
-			out[2] = (in[2] + in[6]) >> 1;
-			out[3] = (in[3] + in[7]) >> 1;
+			out[0] = byte((in[0] + in[4]) >> 1);
+			out[1] = byte((in[1] + in[5]) >> 1);
+			out[2] = byte((in[2] + in[6]) >> 1);
+			out[3] = byte((in[3] + in[7]) >> 1);
 		}
 		return;
 	}
@@ -882,10 +878,10 @@ void TOpenGLDrawer::MipMap(int width, int height, byte *in)
 	{
 		for (j = 0; j < width; j += 8, in += 8, out += 4)
 		{
-			out[0] = (in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2;
-			out[1] = (in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2;
-			out[2] = (in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2;
-			out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
+			out[0] = byte((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
+			out[1] = byte((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
+			out[2] = byte((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
+			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
 		}
 	}
 }
@@ -1000,9 +996,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.10  2001/09/24 17:36:21  dj_jl
 //	Added clamping
-//
+//	
 //	Revision 1.9  2001/09/20 15:59:43  dj_jl
 //	Fixed resampling when one dimansion doesn't change
 //	

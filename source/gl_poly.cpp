@@ -325,10 +325,12 @@ void TOpenGLDrawer::CacheSurface(surface_t *surface)
 	{
 		for (i = 0; i < smax; i++)
 		{
-			light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s].r = blocklightsr[j * smax + i] >> 8;
-			light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s].g = blocklightsg[j * smax + i] >> 8;
-			light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s].b = blocklightsb[j * smax + i] >> 8;
-			light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s].a = 255;
+			rgba_t &lb = light_block[bnum][(j + cache->t) * BLOCK_WIDTH +
+				i + cache->s];
+			lb.r = byte(blocklightsr[j * smax + i] >> 8);
+			lb.g = byte(blocklightsg[j * smax + i] >> 8);
+			lb.b = byte(blocklightsb[j * smax + i] >> 8);
+			lb.a = 255;
 		}
 	}
 	cache->chain = light_chain[bnum];
@@ -378,7 +380,8 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	}
 	else
 	{
-		glColor4ub(surf->lightlevel, surf->lightlevel, surf->lightlevel, 255);
+		float lev = float(surf->lightlevel) / 255.0;
+		glColor4f(lev, lev, lev, 1.0);
 	}
 
 	glBegin(GL_POLYGON);
@@ -652,8 +655,8 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	}
 	glEnable(GL_ALPHA_TEST);
 
-	int alpha = 255 * (100 - translucency) / 100;
-	glColor4ub(light >> 16, light >> 8, light, alpha);
+	dword alpha = 255 * (100 - translucency) / 100;
+	SetColor(light | (alpha << 24));
 
 	glBegin(GL_QUADS);
 
@@ -857,8 +860,7 @@ void TOpenGLDrawer::StartParticles(void)
 
 void TOpenGLDrawer::DrawParticle(particle_t *p)
 {
-	glColor4ub((p->color >> 16) & 0xff, (p->color >> 8) & 0xff,
-		p->color & 0xff, p->color >> 24);
+	SetColor(p->color);
 	if (pointparmsable)
 	{
 		glVertex(p->org);
@@ -894,9 +896,12 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.9  2001/09/05 12:21:42  dj_jl
 //	Release changes
-//
+//	
 //	Revision 1.8  2001/08/31 17:27:15  dj_jl
 //	Beautification
 //	

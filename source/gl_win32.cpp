@@ -188,7 +188,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		PFD_SUPPORT_OPENGL |			// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,				// Must Support Double Buffering
 		PFD_TYPE_RGBA,					// Request An RGBA Format
-		BPP,							// Select Our Color Depth
+		byte(BPP),						// Select Our Color Depth
 		0, 0, 0, 0, 0, 0,				// Color Bits Ignored
 		0,								// No Alpha Buffer
 		0,								// Shift Bit Ignored
@@ -309,9 +309,12 @@ void TOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.8  2001/09/20 16:21:58  dj_jl
 //	Fixed error message box
-//
+//	
 //	Revision 1.7  2001/09/12 17:35:40  dj_jl
 //	Added windowed mode
 //	

@@ -143,7 +143,7 @@ byte*			translationtables;
 pic_info_t		pic_list[MAX_PICS];
 
 rgba_t			r_palette[MAX_PALETTES][256];
-int				r_black_color[MAX_PALETTES];
+byte			r_black_color[MAX_PALETTES];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1050,9 +1050,12 @@ void R_DrawShadowedPic(int x, int y, int handle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.8  2001/08/30 17:44:07  dj_jl
 //	Removed memory leaks after startup
-//
+//	
 //	Revision 1.7  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

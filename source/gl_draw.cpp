@@ -148,8 +148,7 @@ void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 void TOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dword color)
 {
-	glColor4ub((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff,
-		color >> 24);
+	SetColor(color);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
 	glBegin(GL_QUADS);
@@ -278,9 +277,9 @@ void TOpenGLDrawer::StartAutomap(void)
 
 void TOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 {
-	glColor4ub((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff, c1 >> 24);
+	SetColor(c1);
 	glVertex2f(x1, y1);
-	glColor4ub((c2 >> 16) & 0xff, (c2 >> 8) & 0xff, c2 & 0xff, c2 >> 24);
+	SetColor(c2);
 	glVertex2f(x2, y2);
 }
 
@@ -302,9 +301,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.8  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.7  2001/08/31 17:27:15  dj_jl
 //	Beautification
 //	

@@ -354,6 +354,18 @@ extern auxvert_t		*pauxverts;
 
 //==========================================================================
 //
+//	Inlines for 8bpp
+//
+//==========================================================================
+
+inline dword MakeCol8(byte r, byte g, byte b)
+{
+	return d_rgbtable[((r << 5) & 0x7c00) +
+		(g & 0x3e0) + ((b >> 5) & 0x1f)];
+}
+
+//==========================================================================
+//
 //	Inlines for 15bpp
 //
 //==========================================================================
@@ -367,17 +379,17 @@ inline dword MakeCol15(byte r, byte g, byte b)
 
 inline byte GetCol15R(dword col)
 {
-	return ((col >> rshift) << 3) & 0xff;
+	return byte((col >> rshift) << 3);
 }
 
 inline byte GetCol15G(dword col)
 {
-	return ((col >> gshift) << 3) & 0xff;
+	return byte((col >> gshift) << 3);
 }
 
 inline byte GetCol15B(dword col)
 {
-	return ((col >> bshift) << 3) & 0xff;
+	return byte((col >> bshift) << 3);
 }
 
 //==========================================================================
@@ -395,17 +407,17 @@ inline dword MakeCol16(byte r, byte g, byte b)
 
 inline byte GetCol16R(dword col)
 {
-	return ((col >> rshift) << 3) & 0xff;
+	return byte((col >> rshift) << 3);
 }
 
 inline byte GetCol16G(dword col)
 {
-	return ((col >> gshift) << 2) & 0xff;
+	return byte((col >> gshift) << 2);
 }
 
 inline byte GetCol16B(dword col)
 {
-	return ((col >> bshift) << 3) & 0xff;
+	return byte((col >> bshift) << 3);
 }
 
 //==========================================================================
@@ -423,17 +435,17 @@ inline dword MakeCol32(byte r, byte g, byte b)
 
 inline byte GetCol32R(dword col)
 {
-	return (col >> rshift) & 0xff;
+	return byte(col >> rshift);
 }
 
 inline byte GetCol32G(dword col)
 {
-	return (col >> gshift) & 0xff;
+	return byte(col >> gshift);
 }
 
 inline byte GetCol32B(dword col)
 {
-	return (col >> bshift) & 0xff;
+	return byte(col >> bshift);
 }
 
 //==========================================================================
@@ -444,62 +456,74 @@ inline byte GetCol32B(dword col)
 
 inline dword MakeCol(byte r, byte g, byte b)
 {
-	switch (ScreenBPP)
+	if (ScreenBPP == 8)
 	{
-	 case 15:
-		return MakeCol15(r, g, b);
-	 case 16:
-		return MakeCol16(r, g, b);
-	 case 32:
-		return MakeCol32(r, g, b);
-	 default:
-		return 0;
+		return MakeCol8(r, g, b);
 	}
+	if (ScreenBPP == 15)
+	{
+		return MakeCol15(r, g, b);
+	}
+	if (ScreenBPP == 16)
+	{
+		return MakeCol16(r, g, b);
+	}
+	if (ScreenBPP == 32)
+	{
+		return MakeCol32(r, g, b);
+	}
+	return 0;
 }
 
 inline byte GetColR(dword col)
 {
-	switch (ScreenBPP)
+	if (ScreenBPP == 15)
 	{
-	 case 15:
 		return GetCol15R(col);
-	 case 16:
-		return GetCol16R(col);
-	 case 32:
-		return GetCol32R(col);
-	 default:
-		return 0;
 	}
+	if (ScreenBPP == 16)
+	{
+		return GetCol16R(col);
+	}
+	if (ScreenBPP == 32)
+	{
+		return GetCol32R(col);
+	}
+	return 0;
 }
 
 inline byte GetColG(dword col)
 {
-	switch (ScreenBPP)
+	if (ScreenBPP == 15)
 	{
-	 case 15:
 		return GetCol15G(col);
-	 case 16:
-		return GetCol16G(col);
-	 case 32:
-		return GetCol32G(col);
-	 default:
-		return 0;
 	}
+	if (ScreenBPP == 16)
+	{
+		return GetCol16G(col);
+	}
+	if (ScreenBPP == 32)
+	{
+		return GetCol32G(col);
+	}
+	return 0;
 }
 
 inline byte GetColB(dword col)
 {
-	switch (ScreenBPP)
+	if (ScreenBPP == 15)
 	{
-	 case 15:
 		return GetCol15B(col);
-	 case 16:
-		return GetCol16B(col);
-	 case 32:
-		return GetCol32B(col);
-	 default:
-		return 0;
 	}
+	if (ScreenBPP == 16)
+	{
+		return GetCol16B(col);
+	}
+	if (ScreenBPP == 32)
+	{
+		return GetCol32B(col);
+	}
+	return 0;
 }
 
 #endif
@@ -507,9 +531,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.10  2001/09/12 17:31:27  dj_jl
 //	Rectangle drawing and direct update for plugins
-//
+//	
 //	Revision 1.9  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
 //	

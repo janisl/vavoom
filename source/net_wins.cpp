@@ -354,7 +354,7 @@ int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 	int addrlen = sizeof(sockaddr_t);
 	int ret;
 
-	ret = recvfrom(socket, buf, len, 0, (sockaddr *)addr, &addrlen);
+	ret = recvfrom(socket, (char*)buf, len, 0, (sockaddr *)addr, &addrlen);
 	if (ret == -1)
 	{
 		int errno = WSAGetLastError();
@@ -376,7 +376,7 @@ int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 {
 	int ret;
 
-	ret = sendto(socket, buf, len, 0, (sockaddr *)addr, sizeof(sockaddr_t));
+	ret = sendto(socket, (char*)buf, len, 0, (sockaddr *)addr, sizeof(sockaddr_t));
 	if (ret == -1)
 		if (WSAGetLastError() == WSAEWOULDBLOCK)
 			return 0;
@@ -620,9 +620,12 @@ int WINS_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/04 17:23:29  dj_jl
+//	Got rid of some warnings
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
