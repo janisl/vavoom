@@ -151,16 +151,12 @@ void menu_video(void)
 	AddMenuItem(&VideoMenu.menu, &VideoMenu.scrsize);
 	y += 20;
 
-	//  Currently brightness works only in software
-	if (drv == DRV_SOFTWARE)
-	{
-		MenuSlider_Init(&VideoMenu.gamma, x, y, "Brightness", TEXT_SMALLR,
-			GetCvar("brightness"), 5);
-		VideoMenu.gamma.callback = video_func;
-		VideoMenu.gamma.id = 2;
-		AddMenuItem(&VideoMenu.menu, &VideoMenu.gamma);
-		y += 20;
-	}
+	MenuSlider_Init(&VideoMenu.gamma, x, y, "Brightness", TEXT_SMALLR,
+		GetCvar("brightness"), 5);
+	VideoMenu.gamma.callback = video_func;
+	VideoMenu.gamma.id = 2;
+	AddMenuItem(&VideoMenu.menu, &VideoMenu.gamma);
+	y += 20;
 
 	MenuSlider_Init(&VideoMenu.darkening, x, y, "Menu darkness", TEXT_SMALLR,
 		GetCvar("menu_darkening"), 32);
@@ -243,6 +239,9 @@ void menu_video(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/27 07:36:58  dj_jl
+//  Gamma controls for all drivers
+//
 //  Revision 1.4  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //
