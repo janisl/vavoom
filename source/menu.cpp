@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**	
 //**	DOOM selection menu, options, episode etc.
@@ -153,8 +149,6 @@ COMMAND(QuitConfirm)
 //
 //==========================================================================
 
-extern TCvarI	shareware;
-
 void MN_Init(void)
 {
 #ifdef SERVER
@@ -162,10 +156,6 @@ void MN_Init(void)
 #else
 	clpr.SetGlobal("local_server", 0);
 #endif
-	if (Game == Doom || Game == Heretic || Game == Strife)
-		clpr.SetGlobal("shareware", shareware);
-	if (Game == Doom || Game == Heretic)
-		clpr.SetGlobal("ExtendedWAD", ExtendedWAD);
 }
 
 //==========================================================================
@@ -319,3 +309,13 @@ boolean MN_Active(void)
 	return clpr.Exec("MN_Active");
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:09:34  dj_jl
+//	Removed seting shareware and ExtendedWAD in progs
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
