@@ -139,6 +139,9 @@ enum
 	K_MOUSED2,
 	K_MOUSED3,
 
+	K_MWHEELUP,
+	K_MWHEELDOWN,
+
 	K_JOY1,
 	K_JOY2,
 	K_JOY3,
@@ -180,6 +183,9 @@ struct event_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2004/04/16 06:26:22  dj_jl
+//  Added mousewheel key codes
+//
 //  Revision 1.6  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

@@ -116,6 +116,9 @@ enum
 	K_MOUSED2,
 	K_MOUSED3,
 
+	K_MWHEELUP,
+	K_MWHEELDOWN,
+
 	K_JOY1,
 	K_JOY2,
 	K_JOY3,
@@ -183,9 +186,12 @@ extern int		altdown;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2004/04/16 06:25:42  dj_jl
+//	Added mousewheel key codes
+//
 //	Revision 1.8  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -146,6 +146,9 @@ static char*	KeyNames[SCANCODECOUNT] =
 	"MOUSED2",
 	"MOUSED3",
 
+	"MWHEELUP",
+	"MWHEELDOWN",
+
 	"JOY1",
 	"JOY2",
 	"JOY3",
@@ -690,9 +693,12 @@ int IN_TranslateKey(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2004/04/16 06:25:52  dj_jl
+//	Added mousewheel key codes
+//
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.10  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	
