@@ -148,19 +148,14 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	Window root;
 	XVisualInfo *visinfo;
 
-	DISABLE();
-	
+	XLOCK();
+
 	RenderDisplay = _xwin.display;
 	if (!RenderDisplay)
 	{
 		cond << "No display - Allegro X-Windows driver not initialized\n";
-		ENABLE();
+		XUNLOCK();
 		return false;
-	}
-	if (_xwin.window)
-	{
-		XDestroyWindow(_xwin.display, _xwin.window);
-		_xwin.window = 0;
 	}
 
 	RenderScreen = _xwin.screen;
@@ -170,11 +165,11 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	// Get video mode list
 	int MajorVersion, MinorVersion;
 	MajorVersion = MinorVersion = 0;
-	if (!XF86VidModeQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion)) 
-	{ 
+	if (!XF86VidModeQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
+	{
 		vidmode_ext = false;
-	} 
-	else 
+	}
+	else
 	{
 		con << "Using XFree86-VidModeExtension Version " << MajorVersion << '.' << MinorVersion << endl;
 		vidmode_ext = true;
@@ -182,25 +177,25 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 #endif
 
 	visinfo = glXChooseVisual(RenderDisplay, RenderScreen, attrib);
-	if (!visinfo) 
+	if (!visinfo)
 	{
 		cond << "Failed to choose visual\n";
-		ENABLE();
+		XUNLOCK();
 		return false;
 	}
 
 #ifdef USE_FULLSCREEN
-	if (vidmode_ext) 
+	if (vidmode_ext)
 	{
 		int best_fit;
-		
+
 		XF86VidModeGetAllModeLines(RenderDisplay, RenderScreen, &num_vidmodes, &vidmodes);
 
 		// Let's change video mode
 		best_fit = -1;
 		int i;
 
-		for (i = 0; i < num_vidmodes; i++) 
+		for (i = 0; i < num_vidmodes; i++)
 		{
 			if (Width != vidmodes[i]->hdisplay ||
 				Height != vidmodes[i]->vdisplay)
@@ -208,7 +203,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 			best_fit = i;
 		}
 
-		if (best_fit != -1) 
+		if (best_fit != -1)
 		{
 			// change to the mode
 			XF86VidModeSwitchToMode(RenderDisplay, RenderScreen, vidmodes[best_fit]);
@@ -222,7 +217,7 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 			// No such mode, if we are trying to set default mode,
 			// we will use windowed mode, otherwise complain.
 			cond << "No such video mode\n";
-			ENABLE();
+			XUNLOCK();
 			return false;
 		}
 	}
@@ -240,29 +235,35 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		/*| MappingNotifyMask (SubstructureRedirectMask?)*/
 	);
 #ifdef USE_FULLSCREEN
-	if (vidmode_active) 
+	if (vidmode_active)
 	{
-		mask = CWBackPixel | CWColormap | CWSaveUnder | CWBackingStore | 
+		mask = CWBackPixel | CWColormap | CWSaveUnder | CWBackingStore |
 			CWEventMask | CWOverrideRedirect;
 		attr.override_redirect = True;
 		attr.backing_store = NotUseful;
 		attr.save_under = False;
-	} 
+	}
 	else
 #endif
 	{
 		mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 	}
 
+	if (_xwin.window)
+	{
+		XDestroyWindow(_xwin.display, _xwin.window);
+		_xwin.window = 0;
+	}
 	RenderWindow = XCreateWindow(RenderDisplay, root, 0, 0, Width, Height,
 						0, visinfo->depth, InputOutput,
 						visinfo->visual, mask, &attr);
+	_xwin.window = RenderWindow;
 	// Set title.
 	XStoreName(RenderDisplay, RenderWindow, "Vavoom");
 	XMapWindow(RenderDisplay, RenderWindow);
 
-#ifdef USE_FULLSCREEN	
-	if (vidmode_active) 
+#ifdef USE_FULLSCREEN
+	if (vidmode_active)
 	{
 		XMoveWindow(RenderDisplay, RenderWindow, 0, 0);
 		XRaiseWindow(RenderDisplay, RenderWindow);
@@ -279,13 +280,13 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	if (!RenderContext)
 	{
 		cond << "Failed to create OpenGL context\n";
-		ENABLE();
+		XUNLOCK();
 		return false;
 	}
 	glXMakeCurrent(RenderDisplay, RenderWindow, RenderContext);
 
 	// Create invisible X cursor.
-	Pixmap cursormask; 
+	Pixmap cursormask;
 	XGCValues xgc;
 	GC gc;
 	XColor dummycolour;
@@ -307,51 +308,62 @@ bool TOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 		XDefineCursor(RenderDisplay, RenderWindow, cursor);
 	}
 
-	XGrabPointer(RenderDisplay, RenderWindow,
+	if (XGrabPointer(RenderDisplay, RenderWindow,
 				 True,
 				 0,
 				 GrabModeAsync, GrabModeAsync,
 				 RenderWindow,
 				 None,
-				 CurrentTime);
+				 CurrentTime) != GrabSuccess)
+	{
+		con << "Failed to grab mouse\n";
+		return false;
+	}
+	_xwin.mouse_grabbed = 1;
 
 #ifdef USE_FULLSCREEN
 	// Allow workaround for buggy servers (e.g. 3dfx Voodoo 3/Banshee).
 	if (get_config_int(NULL, "dga_mouse", 1) == 0)
 		_xwin.disable_dga_mouse = 1;
 
-	if (!_xwin.disable_dga_mouse) 
+	if (!_xwin.disable_dga_mouse)
 	{
-		if (!XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion)) 
-		{ 
+		if (!XF86DGAQueryVersion(RenderDisplay, &MajorVersion, &MinorVersion))
+		{
 			// unable to query, probalby not supported
 			con << "Failed to detect XF86DGA Mouse\n";
 			XWarpPointer(RenderDisplay, None, RenderWindow,
 				0, 0, 0, 0, Width / 2, Height / 2);
-		} 
-		else 
+		}
+		else
 		{
 			dgamouse = true;
+			_xwin.in_dga_mode = 2;
 			XF86DGADirectVideo(RenderDisplay, RenderScreen, XF86DGADirectMouse);
 			XWarpPointer(RenderDisplay, None, RenderWindow, 0, 0, 0, 0, 0, 0);
 		}
-	} 
-	else 
-#endif	
+	}
+	else
+#endif
 	{
 		XWarpPointer(RenderDisplay, None, RenderWindow,
 			0, 0, 0, 0, Width / 2, Height / 2);
 	}
 
-	XGrabKeyboard(RenderDisplay, RenderWindow, False,
-		GrabModeAsync, GrabModeAsync, CurrentTime);
+	if (XGrabKeyboard(RenderDisplay, RenderWindow, False,
+		GrabModeAsync, GrabModeAsync, CurrentTime) != GrabSuccess)
+	{
+		con << "Failed to grab keyboard\n";
+		return false;
+	}
+	_xwin.keyboard_grabbed = 1;
 
 	ScreenWidth = Width;
 	ScreenHeight = Height;
 	ScreenBPP = BPP;
 
-	ENABLE();
-	
+	XUNLOCK();
+
 	return true;
 }
 
@@ -398,8 +410,8 @@ void TOpenGLDrawer::Update(void)
 
 void TOpenGLDrawer::Shutdown(void)
 {
-	DISABLE();
-	
+	XLOCK();
+
 	DeleteTextures();
 	if (RenderDisplay)
 	{
@@ -411,17 +423,26 @@ void TOpenGLDrawer::Shutdown(void)
 		if (RenderWindow)
 		{
 #ifdef USE_FULLSCREEN
-			if (dgamouse) 
+			if (dgamouse)
 			{
 				dgamouse = false;
+				_xwin.in_dga_mode = 0;
 				XF86DGADirectVideo(RenderDisplay, RenderScreen, 0);
 			}
 #endif
-			XUngrabPointer(RenderDisplay, CurrentTime);
-			XUngrabKeyboard(RenderDisplay, CurrentTime);
 			XUndefineCursor(RenderDisplay, RenderWindow);
-			XDestroyWindow(RenderDisplay, RenderWindow);
+//			XDestroyWindow(RenderDisplay, RenderWindow);
 			RenderWindow = 0;
+		}
+		if (_xwin.mouse_grabbed)
+		{
+			XUngrabPointer(_xwin.display, CurrentTime);
+			_xwin.mouse_grabbed = 0;
+		}
+		if (_xwin.keyboard_grabbed)
+		{
+			XUngrabKeyboard(_xwin.display, CurrentTime);
+			_xwin.keyboard_grabbed = 0;
 		}
 #ifdef USE_FULLSCREEN
 		if (vidmode_active)
@@ -432,22 +453,25 @@ void TOpenGLDrawer::Shutdown(void)
 #endif
 		RenderDisplay = NULL;
 	}
-	
-	ENABLE();
+
+	XUNLOCK();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/23 17:46:18  dj_jl
+//	Better integrity with Allegro, fixed crashes on exit, mouse
+//
 //	Revision 1.5  2001/08/17 17:43:40  dj_jl
 //	LINUX fixes
 //
 //	Revision 1.4  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
-//	
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//	
+//
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
