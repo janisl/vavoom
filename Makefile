@@ -395,6 +395,7 @@ obj/sv/%.o : source/%.s
 # ---------------------------------------
 
 utils:
+	$(MAKE) -C utils/acc
 	$(MAKE) -C utils/vcc
 	$(MAKE) -C utils/vlumpy
 	$(MAKE) -C utils/glvis
@@ -411,6 +412,12 @@ data: progs $(WAD_FILES)
 basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXE)
 	utils/bin/vlumpy$(EXE) $<
 
+basev/strife/strfhelp.o: basev/strife/*.acs utils/bin/acc$(EXE)
+	utils/bin/acc$(EXE) basev/strife/strfhelp.acs
+
+utils/bin/acc$(EXE):
+	$(MAKE) -C utils/acc
+
 utils/bin/vcc$(EXE):
 	$(MAKE) -C utils/vcc
 
@@ -421,7 +428,7 @@ basev/doom1/wad0.wad : basev/doom1/progs/clprogs.dat basev/doom1/progs/svprogs.d
 basev/doom2/wad0.wad : basev/doom2/progs/clprogs.dat basev/doom2/progs/svprogs.dat
 basev/heretic/wad0.wad : basev/heretic/progs/clprogs.dat basev/heretic/progs/svprogs.dat
 basev/hexen/wad0.wad : basev/hexen/progs/clprogs.dat basev/hexen/progs/svprogs.dat
-basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprogs.dat
+basev/strife/wad0.wad : basev/strife/progs/clprogs.dat basev/strife/progs/svprogs.dat basev/strife/strfhelp.o
 
 # ---------------------------------------
 

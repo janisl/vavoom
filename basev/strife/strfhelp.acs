@@ -1,0 +1,42 @@
+#include "stcommon.acs"
+
+script 255 (int type, int tag)
+{
+	switch (type)
+	{
+	case 145:
+	case 186:	//	1-Way?
+		if (gametype() == GAME_NET_DEATHMATCH)
+		{
+			Floor_RaiseByValue(tag, 128, 64);
+		}
+		else
+		{
+			Teleport_NewMap(tag / 100, tag % 100);
+		}
+		break;
+
+	case 154:
+	case 177:
+		Plat_DownWaitUpStayLip(tag, 32, 105, 0);
+		break;
+
+	case 187:
+		RemoveForceField(tag);
+		break;
+
+	case 194:
+		Door_Open(tag, 16);
+		GiveQuest(12);
+		break;
+
+	case 215:
+		CommUnitSound(tag / 100);
+		break;
+
+	case 219:
+	case 220:
+		Floor_LowerToLowest(tag, 8);
+		break;
+	}
+}

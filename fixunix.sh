@@ -8,7 +8,8 @@ echo "Converting files to Unix format..."
 find . -type f "(" \
    -name "*.c" -o -name "*.cpp" -o -name "*.h" -o -name "*.s" -o \
    -name "*.asm" -o -name "*.inc" -o -name "*.vc" -o -name "*.ls" -o \
-   -name "*.cfg" -o -name "*.txt" -o -name "*.vs" -o -name "*.mak" -o \
+   -name "*.acs" -o -name "*.cfg" -o -name "*.txt" -o -name "*.vs" -o \
+   -name "*.mak" -o -name "*.mgw" -o \
    -name "makefile.*" -o -name "makefile" -o -name "Makefile" \
    ")" \
    -exec sh -c "echo {};
