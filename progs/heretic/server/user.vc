@@ -84,7 +84,7 @@ void G_PlayerReborn(int player)
 	player_t *p;
 	BotPlayer b;
 
-	p = &players[player];
+	p = GPlayers[player];
 
 	b = p->Bot;
 	ClearPlayer(p);
@@ -116,7 +116,7 @@ void G_PlayerExitMap(int player, bool clusterChange)
 	player_t *p;
 	int i;
 
-	p = &players[player];
+	p = GPlayers[player];
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
@@ -198,12 +198,18 @@ void G_DeathMatchSpawnPlayer(int playernum)
 void NetGameReborn(int playernum)
 {
 	int i;
+	player_t* player;
 
 	// respawn at the start
+	player = GPlayers[playernum];
+
+	// remove pitch and roll angles from corpse
+	player->MO.Angles.pitch = 0.0;
+	player->MO.Angles.roll = 0.0;
 
 	// first dissasociate the corpse
-	players[playernum].MO.Player = NULL;
-	players[playernum].MO.bIsPlayer = false;
+	player->MO.Player = NULL;
+	player->MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -329,6 +335,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.37  2003/03/08 12:34:46  dj_jl
 //  Removing class pointers.
 //

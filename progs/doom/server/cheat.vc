@@ -43,16 +43,19 @@
 
 void Cheat_God(void)
 {
-	players[0].Cheats ^= CF_GODMODE;
-	if (players[0].Cheats & CF_GODMODE)
+	player_t* player;
+
+	player = GPlayers[0];
+	player->Cheats ^= CF_GODMODE;
+	if (player->Cheats & CF_GODMODE)
 	{
-		if (players[0].MO)
-			players[0].MO.Health = GOD_HEALTH;
-		players[0].Health = GOD_HEALTH;
-		cprint(&players[0], "Degreelessness Mode On");
+		if (player->MO)
+			player->MO.Health = GOD_HEALTH;
+		player->Health = GOD_HEALTH;
+		cprint(player, "Degreelessness Mode On");
 	}
 	else
-		cprint(&players[0], "Degreelessness Mode Off");
+		cprint(player, "Degreelessness Mode Off");
 }
 
 //==========================================================================
@@ -63,12 +66,14 @@ void Cheat_God(void)
 
 void Cheat_NoClip(void)
 {
-	players[0].Cheats ^= CF_NOCLIP;
+	player_t* player;
 
-	if (players[0].Cheats & CF_NOCLIP)
-		cprint(&players[0], "No Clipping Mode ON");
+	player = GPlayers[0];
+	player->Cheats ^= CF_NOCLIP;
+	if (player->Cheats & CF_NOCLIP)
+		cprint(player, "No Clipping Mode ON");
 	else
-		cprint(&players[0], "No Clipping Mode OFF");
+		cprint(player, "No Clipping Mode OFF");
 }
 
 //==========================================================================
@@ -120,6 +125,9 @@ void Cheat_Gimme(void)
 #define GIMME_ALL				0xffffffff
 
 	int i1;
+	player_t* player;
+
+	player = GPlayers[0];
 
 /*	if (Cmd_Argc() == 1)
     {
@@ -223,96 +231,96 @@ void Cheat_Gimme(void)
 
 	// Weapons
 	if (i1 & GIMME_SHOTGUN)
-		players[0].WeaponOwned[wp_shotgun] = true;
+		player->WeaponOwned[wp_shotgun] = true;
 	if (i1 & GIMME_CHAINGUN)
-		players[0].WeaponOwned[wp_chaingun] = true;
+		player->WeaponOwned[wp_chaingun] = true;
 	if (i1 & GIMME_LAUNCHER)
-		players[0].WeaponOwned[wp_missile] = true;
+		player->WeaponOwned[wp_missile] = true;
 	if (i1 & GIMME_PLASMA)
-		players[0].WeaponOwned[wp_plasma] = true;
+		player->WeaponOwned[wp_plasma] = true;
 	if (i1 & GIMME_BFG)
-		players[0].WeaponOwned[wp_bfg] = true;
+		player->WeaponOwned[wp_bfg] = true;
 	if (i1 & GIMME_CHAINSAW)
-		players[0].WeaponOwned[wp_chainsaw] = true;
+		player->WeaponOwned[wp_chainsaw] = true;
 #ifdef DOOM2
 	if (i1 & GIMME_SUPERSHOTGUN)
-		players[0].WeaponOwned[wp_supershotgun] = true;
+		player->WeaponOwned[wp_supershotgun] = true;
 #endif
 #ifdef GRENADE_LAUNCHER
 	if (i1 & GIMME_GRENADE)
-		players[0].WeaponOwned[wp_grenade] = true;
+		player->WeaponOwned[wp_grenade] = true;
 #endif
 
 	// Backpack
 	if (i1 & GIMME_BACKPACK)
-		players[0].Backpack = true;
+		player->Backpack = true;
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-		players[0].Ammo[am_clip] =
-			maxammo[am_clip] * (players[0].Backpack ? 2 : 1);
+		player->Ammo[am_clip] =
+			maxammo[am_clip] * (player->Backpack ? 2 : 1);
 	if (i1 & GIMME_SHELLS)
-		players[0].Ammo[am_shell] =
-			maxammo[am_shell] * (players[0].Backpack ? 2 : 1);
+		player->Ammo[am_shell] =
+			maxammo[am_shell] * (player->Backpack ? 2 : 1);
 	if (i1 & GIMME_ROCKETS)
-		players[0].Ammo[am_misl] =
-			maxammo[am_misl] * (players[0].Backpack ? 2 : 1);
+		player->Ammo[am_misl] =
+			maxammo[am_misl] * (player->Backpack ? 2 : 1);
 	if (i1 & GIMME_CELLS)
-		players[0].Ammo[am_cell] =
-			maxammo[am_cell] * (players[0].Backpack ? 2 : 1);
+		player->Ammo[am_cell] =
+			maxammo[am_cell] * (player->Backpack ? 2 : 1);
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)
-		players[0].Keys |= 1 << it_bluecard;
+		player->Keys |= 1 << it_bluecard;
 	if (i1 & GIMME_YELLOWCARD)
-		players[0].Keys |= 1 << it_yellowcard;
+		player->Keys |= 1 << it_yellowcard;
 	if (i1 & GIMME_REDCARD)
-		players[0].Keys |= 1 << it_redcard;
+		player->Keys |= 1 << it_redcard;
 	if (i1 & GIMME_BLUESKULL)
-		players[0].Keys |= 1 << it_blueskull;
+		player->Keys |= 1 << it_blueskull;
 	if (i1 & GIMME_YELLOWSKULL)
-		players[0].Keys |= 1 << it_yellowskull;
+		player->Keys |= 1 << it_yellowskull;
 	if (i1 & GIMME_REDSKULL)
-		players[0].Keys |= 1 << it_redskull;
+		player->Keys |= 1 << it_redskull;
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		players[0].MO.GivePower(pw_invulnerability);
+		player->MO.GivePower(pw_invulnerability);
 	if (i1 & GIMME_STRENGTH)
-		players[0].MO.GivePower(pw_strength);
+		player->MO.GivePower(pw_strength);
 	if (i1 & GIMME_INVISIBILITY)
-		players[0].MO.GivePower(pw_invisibility);
+		player->MO.GivePower(pw_invisibility);
 	if (i1 & GIMME_IRONFEET)
-		players[0].MO.GivePower(pw_ironfeet);
+		player->MO.GivePower(pw_ironfeet);
 	if (i1 & GIMME_INFRARED)
-		players[0].MO.GivePower(pw_infrared);
+		player->MO.GivePower(pw_infrared);
 
 	//  Items
 	if (i1 & GIMME_ALLMAP)
-		players[0].MO.GiveItem(IT_ALL_MAP);
+		player->MO.GiveItem(IT_ALL_MAP);
 
 	// Health
-	if ((i1 & GIMME_HEALTH) && (players[0].Health < 100))
+	if ((i1 & GIMME_HEALTH) && (player->Health < 100))
 	{
-		players[0].Health = 100;
-		players[0].MO.Health = 100;
+		player->Health = 100;
+		player->MO.Health = 100;
 	}
 	if (i1 & GIMME_HEALTH2)
 	{
-		players[0].Health = 200;
-		players[0].MO.Health = 200;
+		player->Health = 200;
+		player->MO.Health = 200;
 	}
 
 	// Armor
-	if ((i1 & GIMME_ARMOR) && (players[0].ArmorPoints < 100))
+	if ((i1 & GIMME_ARMOR) && (player->ArmorPoints < 100))
 	{
-		players[0].ArmorType = 1;
-		players[0].ArmorPoints = 100;
+		player->ArmorType = 1;
+		player->ArmorPoints = 100;
 	}
 	if (i1 & GIMME_ARMOR2)
 	{
-		players[0].ArmorType = 2;
-		players[0].ArmorPoints = 200;
+		player->ArmorType = 2;
+		player->ArmorPoints = 200;
 	}
 }
 
@@ -355,6 +363,9 @@ void Cheat_KillAll(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.13  2002/03/28 18:15:34  dj_jl
 //  Renamed mo in player_t to MO.
 //

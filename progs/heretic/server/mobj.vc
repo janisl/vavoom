@@ -128,9 +128,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 	float x, y, z;
 	Actor A;
 
-	p = &players[mthing->type - 1];
+	p = GPlayers[mthing->type - 1];
 
-	if (!p->bActive)
+	if (!p)
 		return;	// not playing
 
 	if (p->PlayerState == PST_REBORN)
@@ -403,6 +403,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.51  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.50  2003/03/08 12:34:46  dj_jl
 //  Removing class pointers.
 //

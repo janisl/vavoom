@@ -471,16 +471,16 @@ static void ArchivePlayers(void)
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		StreamOutByte((byte)players[i].bActive);
+		StreamOutByte((byte)!!GPlayers[i]);
 	}
-	for (i=0 ; i<MAXPLAYERS ; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!players[i].bActive)
+		if (!GPlayers[i])
 		{
 			continue;
 		}
 
-		tempPlayer = players[i];
+		tempPlayer = *GPlayers[i];
 		svpr.Exec(pf_archive_player, (int)&tempPlayer);
 		StreamOutBuffer(&tempPlayer, sizeof(player_t));
 
@@ -512,28 +512,34 @@ static void UnarchivePlayers(void)
 	AssertSegment(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		players[i].bActive = GET_BYTE;
+		byte Active = GET_BYTE;
+		GPlayersBase[i]->bActive = Active;
+		if (Active)
+			GPlayers[i] = GPlayersBase[i];
+		else
+			GPlayers[i] = NULL;
 	}
-	for (i=0 ; i<MAXPLAYERS ; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!players[i].bActive)
+		if (!GPlayers[i])
 		{
 			continue;
 		}
-		Loader->Serialize(&players[i], sizeof(player_t));
-		players[i].MO = NULL; // Will be set when unarc thinker
-		svpr.Exec(pf_unarchive_player, (int)&players[i]);
-		players[i].bActive = false;
+		Loader->Serialize(GPlayers[i], sizeof(player_t));
+		GPlayers[i]->MO = NULL; // Will be set when unarc thinker
+		svpr.Exec(pf_unarchive_player, (int)GPlayers[i]);
+		GPlayers[i]->bActive = false;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
-			if (!players[i].ViewEnts[pi])
+			if (!GPlayers[i]->ViewEnts[pi])
 			{
 				continue;
 			}
-			players[i].ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
-			players[i].ViewEnts[pi]->Player = &players[i];
+			GPlayers[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
+			GPlayers[i]->ViewEnts[pi]->Player = GPlayers[i];
 		}
+		GPlayers[i] = NULL;
 	}
 	unguard;
 }
@@ -786,7 +792,7 @@ static void ArchiveThinkers(void)
 					Z_Free(th);
 					continue;
 				}
-				mobj->Player = (player_t *)((mobj->Player - players) + 1);
+				mobj->Player = (player_t *)(SV_GetPlayerNum(mobj->Player) + 1);
 			}
 		}
 
@@ -828,7 +834,7 @@ static void UnarchiveThinkers(void)
 		{
 			if (Ent->bIsPlayer)
 			{
-				Ent->Player = &players[(int)Ent->Player - 1];
+				Ent->Player = GPlayersBase[(int)Ent->Player - 1];
 				Ent->Player->MO = Ent;
 			}
 			Ent->SubSector = NULL;	//	Must mark as not linked
@@ -1433,9 +1439,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2003/07/11 16:45:20  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.30  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.29  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

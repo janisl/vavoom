@@ -1647,7 +1647,7 @@ void TeleportToPlayerStarts(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!players[i].bActive)
+		if (!GPlayers[i])
 			continue;
 		selections++;
 	}
@@ -3929,6 +3929,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2003/03/08 12:41:43  dj_jl
 //  Removing class pointers.
 //

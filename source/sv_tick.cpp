@@ -139,9 +139,9 @@ void P_Ticker(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].bActive && players[i].bSpawned)
+		if (GPlayers[i] && GPlayers[i]->bSpawned)
 		{
-			svpr.Exec(pf_SetViewPos, (int)&players[i]);
+			svpr.Exec(pf_SetViewPos, (int)GPlayers[i]);
 		}
 	}
 
@@ -153,9 +153,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2003/07/11 16:45:20  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.15  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.14  2002/07/23 13:10:38  dj_jl
 //	Some fixes for switching to floating-point time.
 //	

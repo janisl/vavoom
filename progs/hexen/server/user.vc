@@ -117,7 +117,7 @@ void G_PlayerExitMap(int playerNumber, bool clusterChange)
 	player_t *player;
 	float flightPower;
 
-	player = &players[playerNumber];
+	player = GPlayers[playerNumber];
 
 	// Strip all current powers (retain flight)
 	flightPower = player->Powers[pw_flight];
@@ -204,12 +204,18 @@ void NetGameReborn(int playernum)
 	int oldPieces;
 	bool foundSpot;
 	int bestWeapon;
+	player_t* player;
 
 	// respawn at the start
+	player = GPlayers[playernum];
+
+	// remove pitch and roll angles from corpse
+	player->MO.Angles.pitch = 0.0;
+	player->MO.Angles.roll = 0.0;
 
 	// first dissasociate the corpse
-	players[playernum].MO.Player = NULL;
-	players[playernum].MO.bIsPlayer = false;
+	player->MO.Player = NULL;
+	player->MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
 	if (deathmatch)
@@ -219,11 +225,11 @@ void NetGameReborn(int playernum)
 	}
 
 	// Cooperative net-play, retain keys and weapons
-	oldKeys = players[playernum].Keys;
-	oldPieces = players[playernum].Pieces;
+	oldKeys = player->Keys;
+	oldPieces = player->Pieces;
 	for (i = 0; i < NUMWEAPONS; i++)
 	{
-		oldWeaponowned[i] = players[playernum].WeaponOwned[i];
+		oldWeaponowned[i] = player->WeaponOwned[i];
 	}
 
 	foundSpot = false;
@@ -267,22 +273,22 @@ void NetGameReborn(int playernum)
 	}
 
 	// Restore keys and weapons
-	players[playernum].Keys = oldKeys;
-	players[playernum].Pieces = oldPieces;
+	player->Keys = oldKeys;
+	player->Pieces = oldPieces;
 	for (bestWeapon = 0, i = 0; i < NUMWEAPONS; i++)
 	{
 		if (oldWeaponowned[i])
 		{
 			bestWeapon = i;
-			players[playernum].WeaponOwned[i] = true;
+			player->WeaponOwned[i] = true;
 		}
 	}
-	players[playernum].Mana[MANA_1] = 25;
-	players[playernum].Mana[MANA_2] = 25;
+	player->Mana[MANA_1] = 25;
+	player->Mana[MANA_2] = 25;
 	if (bestWeapon)
 	{
 		// Bring up the best weapon
-		players[playernum].PendingWeapon = bestWeapon;
+		player->PendingWeapon = bestWeapon;
 	}
 }
 
@@ -352,7 +358,7 @@ void SpawnClient(int i)
 	bool playerWasReborn;
 	int bestWeapon;
 
-	player = &players[i];
+	player = GPlayers[i];
 
 	player->Attacker = none;
 	player->Poisoner = none;
@@ -456,6 +462,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.40  2003/03/08 12:41:45  dj_jl
 //  Removing class pointers.
 //

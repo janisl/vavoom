@@ -1550,7 +1550,7 @@ void A_BossDeath(void)
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (players[i].bSpawned && players[i].Health > 0)
+		if (GPlayers[i] && GPlayers[i]->bSpawned && GPlayers[i]->Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -1669,6 +1669,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.7  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

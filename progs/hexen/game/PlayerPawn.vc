@@ -1125,7 +1125,7 @@ void PlayerTick(float deltaTime)
 				speedA.SpriteIndex = SpriteIndex;
 				speedA.FloorClip = FloorClip;
 #ifdef FIXME
-				if (Player == &players[consoleplayer])
+				if (Player == GPlayers[consoleplayer])
 				{
 					speedA.bHidden = true;
 				}
@@ -2529,6 +2529,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2003/03/08 12:41:44  dj_jl
 //  Removing class pointers.
 //

@@ -1234,34 +1234,34 @@ static void AM_drawPlayers(void)
 	    	cl.viewangles.yaw, PlayerColor, cl.vieworg.x, cl.vieworg.y);
 #ifdef FIXME
 		return;
-    }
+	}
 
-    for (i=0;i<MAXPLAYERS;i++)
-    {
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
 		their_color++;
-		p = &players[i];
+		p = GPlayers[i];
+
+		if (!p)
+			continue;
 
 		if (deathmatch && p != plr)
-		    continue;
-
-		if (!playeringame[i])
-	    	continue;
+			continue;
 
 /*		if (Game != Hexen && p->powers[pw_invisibility])
-        {
-        	if (Game != Heretic)
-			    color = 246; // *close* to black
+		{
+			if (Game != Heretic)
+				color = 246; // *close* to black
 			else
-	    		color = 102; // *close* to the automap color
+				color = 102; // *close* to the automap color
 		}
 		else*/
-        {
-		    color = their_colors[their_color];
+		{
+			color = their_colors[their_color];
 		}
 	
 		AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0, p->mo->angle,
 			color, p->mo->x, p->mo->y);
-    }
+	}
 #endif
 }
 
@@ -1329,7 +1329,7 @@ static void DrawWorldTimer(void)
 	char dayBuffer[20];
 
 //FIXME
-	worldTimer = 0;//players[consoleplayer].worldTimer;
+	worldTimer = 0;//GPlayers[consoleplayer]->worldTimer;
 
 	if (!worldTimer) return;
 
@@ -1383,9 +1383,9 @@ static void AM_DrawDeathmatchStats(void)
 	{
 		order[i] = -1;
 	}
-	for(i = 0; i < MAXPLAYERS; i++)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!playeringame[i])
+		if (!GPlayers[i])
 		{
 			continue;
 		}
@@ -1396,9 +1396,9 @@ static void AM_DrawDeathmatchStats(void)
 				order[k] = i;
 				break;
 			}
-			else if (players[i].Frags > players[order[k]].Frags)
+			else if (GPlayers[i]->Frags > GPlayers[order[k]]->Frags)
 			{
-				for(m = MAXPLAYERS-1; m > k; m--)
+				for (m = MAXPLAYERS - 1; m > k; m--)
 				{
 					 order[m] = order[m-1];
 				}
@@ -1410,14 +1410,14 @@ static void AM_DrawDeathmatchStats(void)
 	yPosition = 15;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!playeringame[order[i]])
+		if (order[i] == -1)
 		{
-			continue;
+			break;
 		}
 		T_SetFont(font_small);
 	    T_SetAlign(hleft, vtop);
-	    T_DrawString(8, yPosition, PlayerName[order[i]]);
-		sprintf(textBuffer, "%d", players[order[i]].Frags);
+	    T_DrawString(8, yPosition, GPlayers[order[i]]->Name);
+		sprintf(textBuffer, "%d", GPlayers[order[i]]->Frags);
 	    T_DrawString(80, yPosition, textBuffer);
 		yPosition += 10;
 	}
@@ -1523,9 +1523,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2003/07/11 16:45:19  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.14  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.13  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
 //	

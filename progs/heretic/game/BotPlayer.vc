@@ -319,12 +319,12 @@ void SetEnemy(void)
 		// If we can see the terminator, go for him no matter what
 		for (int i=0; i<MAXPLAYERS; i++)
 		{
-			if (!playeringame[i] || players[i].mo == bot->player->mo)
+			if (!GPlayers[i] || GPlayers[i]->MO == bot->player->MO)
 				continue;
 
-			if (players[i].powers[pw_terminator] &&
-				P_CheckSight (bot->player->mo, players[i].mo))
-				bot->enemy = players[i].mo;
+			if (GPlayers[i]->powers[pw_terminator] &&
+				P_CheckSight(bot->player->MO, GPlayers[i]->MO))
+				bot->enemy = GPlayers[i]->MO;
 		}
 	}
 #endif
@@ -468,11 +468,8 @@ void Scan(void)
 				missile = actor;
 			}
 #if 0
-			else if (!bot->node && actor->flags3 & MF3_NODE)// && P_CheckSight (mo, actor, false) && (bot->prev != actor && P_AproxDistance (mo->x - actor->x, mo->y - actor->y) <= 32*FRACUNIT))
+			else if (!bot->node && actor->flags3 & MF3_NODE)// && P_CheckSight(MO, actor, false) && (bot->prev != actor && P_AproxDistance(MO->x - actor->x, MO->y - actor->y) <= 32*FRACUNIT))
 			{
-				// Note: Debug messages are fun!
-				if (players[consoleplayer].camera == mo)
-					Printf (PRINT_HIGH, "Spotted a node\n");
 				if (actor->Class == MT_BOTPATH || actor->Class == MT_BOTSNIPE)
 					bot->node = actor;
 				else if (teamgame.value && bot->player->team != TM_NONE)
@@ -481,20 +478,14 @@ void Scan(void)
 					{
 						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTBLUEGUARD))
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Blue defense node\n");
 							bot->node = actor;
 						}
 						else if (bot->state == BST_OFFENSE && ((int)actor->Class == (int)MT_BOTBLUEPATH))
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Blue offense node\n");
 							bot->node = actor;
 						}
 						else if (bot->state == BST_RETURN && actor->Class == MT_BOTBLUEGOAL)
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Blue return node\n");
 							bot->node = actor;
 						}
 					}
@@ -503,20 +494,14 @@ void Scan(void)
 						if (bot->state == BST_DEFENSE && ((int)actor->Class == (int)MT_BOTREDGUARD))
 	
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Red defense node\n");
 							bot->node = actor;
 						}
 						else if (bot->state == BST_OFFENSE && ((int)actor->Class == MT_BOTREDPATH))
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Red offense node\n");
 							bot->node = actor;
 						}
 						else if (bot->state == BST_RETURN && ((int)actor->Class == MT_BOTREDGOAL))
 						{
-							if (players[consoleplayer].camera == mo)
-								Printf (PRINT_HIGH, "Red return node\n");
 							bot->node = actor;
 						}
 					}
@@ -749,10 +734,10 @@ void BotAim(void)
 	/*
 			{
 			//Here goes the prediction.
-			dist = P_AproxDistance (mo->x - enemy->x, mo->y - enemy->y);
+			dist = P_AproxDistance(MO->x - enemy->x, MO->y - enemy->y);
 			fixed_t m = (dist/FRACUNIT) / mobjinfo[MT_PLASMA].speed;
-			bot->SetAngle (R_PointToAngle2 (mo->x,
-											mo->y,
+			bot->SetAngle(R_PointToAngle2(MO->x,
+											MO->y,
 											enemy->x + FixedMul (enemy->momx, (m*2*FRACUNIT)),
 											enemy->y + FixedMul (enemy->momy, (m*2*FRACUNIT))));
 			}
@@ -763,7 +748,7 @@ void BotAim(void)
 	{
 		// Splash weapons
 	case wp_phoenixrod:
-//		bot->SetAngle (R_PointToAngle2 (mo->x, mo->y, enemy->x, enemy->y));
+//		bot->SetAngle(R_PointToAngle2(MO->x, MO->y, enemy->x, enemy->y));
 //		break;
 
 		// Projectile weapons
@@ -876,9 +861,9 @@ Actor FindEnemy(void)
 		{
 			if (!(actor->flags3 & MF3_ENEMY))
 				continue;
-			if (!Check_LOS (mo, actor, vangle))
+			if (!Check_LOS(MO, actor, vangle))
 				continue;
-			if (!P_CheckSight (mo, actor))
+			if (!P_CheckSight(MO, actor))
 				continue;
 
 			return actor;
@@ -895,20 +880,20 @@ Actor FindEnemy(void)
 	// Search for player enemies
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (players[i].bActive /*&& !mo->IsTeammate (players[i].mo)*/ &&
-			players[i].MO.Health > 0 && botmo != players[i].MO)
+		if (GPlayers[i] /*&& !MO->IsTeammate(GPlayers[i]->MO)*/ &&
+			GPlayers[i]->MO.Health > 0 && botmo != GPlayers[i]->MO)
 		{
 			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up.
-			if (Check_LOS(players[i].MO, vangle))
+			if (Check_LOS(GPlayers[i]->MO, vangle))
 			{
-				if (botmo.CanSee(players[i].MO))
+				if (botmo.CanSee(GPlayers[i]->MO))
 				{
-					temp = MobjDist(players[i].MO, botmo);
+					temp = MobjDist(GPlayers[i]->MO, botmo);
 
 #if 0
 					//Too dark?
 					if (temp > DARK_DIST &&
-						players[i].mo->subsector->sector->lightlevel < WHATS_DARK &&
+						GPlayers[i]->MO->subsector->sector->lightlevel < WHATS_DARK &&
 						bot->player->powers[pw_infrared])
 						continue;
 #endif
@@ -916,7 +901,7 @@ Actor FindEnemy(void)
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = players[i].MO;
+						target = GPlayers[i]->MO;
 					}
 				}
 			}
@@ -1212,7 +1197,7 @@ void Move(float deltaTime)
 		case wp_supershotgun:
 
 		default:
-			if (!B_CheckTo(mo, bot->enemy)
+			if (!B_CheckTo(MO, bot->enemy)
 */
 
 		if (CheckTo(enemy.Origin) && dist > combatdist[player->ReadyWeapon])
@@ -1239,7 +1224,7 @@ void Move(float deltaTime)
 			}
 		}
 
-		SetAngle(R_PointToAngle2(mo->x, mo->y, bot->ally->x, bot->ally->y));
+		SetAngle(R_PointToAngle2(MO->x, MO->y, bot->ally->x, bot->ally->y));
 		matedist = MobjDist(&botmo, &ally);
 
 		if (matedist > (FRIEND_DIST*2))
@@ -1537,6 +1522,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

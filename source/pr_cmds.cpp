@@ -2037,18 +2037,9 @@ PF(TerrainType)
 PF(P_GetPlayerNum)
 {
 	player_t*	player;
-	int 		i;
 
-    player = (player_t*)Pop();
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (player == &players[i])
-		{
-		    Push(i);
-            return;
-		}
-	}
-	Push(0);
+	player = (player_t*)Pop();
+	Push(SV_GetPlayerNum(player));
 }
 
 //==========================================================================
@@ -3110,9 +3101,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2003/07/11 16:45:20  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.45  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.44  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

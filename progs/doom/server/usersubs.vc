@@ -46,12 +46,12 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	int sfxnum;
 	int i;
 
-	if (!players[playernum].MO)
+	if (!GPlayers[playernum]->MO)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < playernum; i++)
-			if (players[i].MO.Origin.x == mthing->x &&
-				players[i].MO.Origin.y == mthing->y)
+			if (GPlayers[i] && GPlayers[i]->MO.Origin.x == mthing->x &&
+				GPlayers[i]->MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -59,7 +59,7 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!players[playernum].MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	if (!GPlayers[playernum]->MO.CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		return false;
 	}
@@ -67,7 +67,7 @@ bool G_CheckSpot(int playernum, mthing_t * mthing)
 	// flush an old corpse if needed 
 	if (bodyqueslot >= BODYQUESIZE)
 		bodyque[bodyqueslot % BODYQUESIZE].Remove();
-	bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].MO;
+	bodyque[bodyqueslot % BODYQUESIZE] = GPlayers[playernum]->MO;
 	bodyqueslot++;
 
 	// spawn a teleport fog 
@@ -98,10 +98,10 @@ void P_SpawnPlayer(mthing_t * mthing)
 	float z;
 	PlayerPawn PP;
 
-	p = &players[mthing->type - 1];
+	p = GPlayers[mthing->type - 1];
 
 	// not playing?
-	if (!p->bActive)
+	if (!p)
 		return;
 
 	if (p->PlayerState == PST_REBORN)
@@ -156,6 +156,9 @@ void P_SpawnPlayer(mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.31  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

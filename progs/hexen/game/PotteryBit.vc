@@ -50,11 +50,11 @@ void A_PotteryCheck(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!players[i].bActive || !players[i].bSpawned)
+		if (!GPlayers[i] || !GPlayers[i]->bSpawned)
 		{
 			continue;
 		}
-		pmo = players[i].MO;
+		pmo = GPlayers[i]->MO;
 		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
@@ -99,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -145,7 +145,7 @@ void SV_SetUserInfo(const char *info)
 		strcpy(sv_player->UserInfo, info);
 		SV_ReadFromUserInfo();
 		sv_reliable << (byte)svc_userinfo
-					<< (byte)(sv_player - players)
+					<< (byte)SV_GetPlayerNum(sv_player)
 					<< sv_player->UserInfo;
 	}
 	unguard;
@@ -163,7 +163,7 @@ bool SV_ReadClientMessages(int clientnum)
 	int			ret;
 	byte		cmd_type;
 
-	sv_player = &players[clientnum];
+	sv_player = GPlayers[clientnum];
 	sv_player->bNeedsUpdate = false;
 	do
 	{
@@ -247,7 +247,7 @@ COMMAND(SetInfo)
 
 	Info_SetValueForKey(sv_player->UserInfo, Argv(1), Argv(2));
 	sv_reliable << (byte)svc_setinfo
-				<< (byte)(sv_player - players)
+				<< (byte)SV_GetPlayerNum(sv_player)
 				<< Argv(1)
 				<< Argv(2);
 	SV_ReadFromUserInfo();
@@ -257,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2003/07/11 16:45:20  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.12  2003/03/08 16:02:53  dj_jl
 //	A little multiplayer fix.
-//
+//	
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

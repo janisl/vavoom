@@ -681,7 +681,7 @@ void Died(Actor source)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
-		players[0].KillCount++;
+		GPlayers[0]->KillCount++;
 	}
 
 	if (bIsPlayer)
@@ -697,7 +697,7 @@ void Died(Actor source)
 		Player->PlayerState = PST_DEAD;
 		DropWeapon(Player);
 #ifdef FIXME
-		if (Player == &players[consoleplayer] && automapactive)
+		if (Player == GPlayers[consoleplayer] && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying
@@ -1839,7 +1839,7 @@ bool LookForMonsters(bool allaround)
 	float an;
 	float dist;
 
-	if (!players[0].MO.CanSee(self))
+	if (!GPlayers[0]->MO.CanSee(self))
 	{
 		return false;	//  Not seen by player
 	}
@@ -1898,7 +1898,7 @@ bool LookForPlayers(bool allaround)
 	float an;
 	float dist;
 
-	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
+	if (!netgame && GPlayers[0] && GPlayers[0]->bSpawned && GPlayers[0]->Health <= 0)
 	{
 		return LookForMonsters(allaround);
 	}
@@ -1914,9 +1914,9 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		player = &players[LastLook];
+		player = GPlayers[LastLook];
 
-		if (!player->bActive)
+		if (!player)
 			continue;
 
 		if (c++ == 2)
@@ -2713,6 +2713,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2003/03/08 12:41:45  dj_jl
 //  Removing class pointers.
 //

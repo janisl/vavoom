@@ -45,34 +45,31 @@
 
 #include "world.vc"
 
-#include "savegame.vc"
 #include "mobjinfo.vc"
 #include "wpninfo.vc"
 
-#include "inter.vc"
+#include "../game/classes.vc"
+
+#include "savegame.vc"
 #include "user.vc"
 #include "mobj.vc"
-#include "move.vc"
-#include "physics.vc"
 #include "map.vc"
 #include "teleport.vc"
 #include "usersubs.vc"
 #include "ai_subs.vc"
 #include "wpnbase.vc"
-#include "enemy.vc"
 #include "cheat.vc"
 
-#include "ddf_act.vc"
-#include "ddf_wpn.vc"
-
-#include "things.vc"
-#include "weapons.vc"
+#include "ddfgame/classes.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:38  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2002/06/14 15:51:20  dj_jl
 //  A lots of changes, new functions etc for DDF.
 //

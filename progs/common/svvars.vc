@@ -30,7 +30,7 @@ int respawn;
 int nomonsters;
 int fastparm;
 
-player_t *players;
+player_t** GPlayers;
 
 int *validcount;
 int skyflatnum;
@@ -47,6 +47,9 @@ tmtrace_t *tmtrace;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2003/07/11 16:47:38  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.8  2002/10/26 16:32:14  dj_jl
 //  New style of defining classes.
 //

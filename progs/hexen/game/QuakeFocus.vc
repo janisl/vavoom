@@ -51,8 +51,8 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = &players[playnum];
-			if (!pl->bActive || !pl->bSpawned)
+			pl = GPlayers[playnum];
+			if (!pl || !pl->bSpawned)
 				continue;
 
 			victim = pl->MO;
@@ -78,7 +78,8 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			players[playnum].LocalQuakeHappening = 0;
+			if (GPlayers[playnum])
+				GPlayers[playnum]->LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -160,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -54,14 +54,14 @@ int botskill = 2;
 weapontype_t B_ChooseWeapon (skullb_s *bot)
 {
 	player_t *player = bot->player;
-	AActor *mo = bot->player->mo;
+	AActor *MO = bot->player->MO;
 	AActor *enemy = bot->enemy;
 	fixed_t dist;
 
 	if (!enemy)
 		return player->readyweapon;
 
-	dist = P_AproxDistance (mo->x - enemy->x, mo->y - enemy->y);
+	dist = P_AproxDistance(MO->x - enemy->x, MO->y - enemy->y);
 
 	if (dist <= MELEERANGE)
 	{
@@ -164,18 +164,18 @@ bool B_Chat (skullb_s *bot)
 		// Chat time has expired, time to say our line
 		if (!bot->t_chat)
 		{
-			int plyrnum = bot->player - players;
-			Net_Command (DEM_SAY, 0, bot->chatline->string, plyrnum);
+			int plyrnum = P_GetPlayerNum(bot->player);
+			Net_Command(DEM_SAY, 0, bot->chatline->string, plyrnum);
 
 			// Handle responses
 			for (int i=0; i<MAXPLAYERS; i++)
 			{
-				if (!players[i].skullb || !playeringame[i])
+				if (!GPlayers[i] || !GPlayers[i]->skullb)
 					continue;
-				if ((bot->info.chatinfo != CT_NONE) && (bot->chatline->bot == players[i].skullb->info.chatinfo))
+				if ((bot->info.chatinfo != CT_NONE) && (bot->chatline->bot == GPlayers[i]->skullb->info.chatinfo))
 				{
-					players[i].skullb->chatline = bot->chatline->line;
-					players[i].skullb->t_chat = players[i].skullb->info.chattime;
+					GPlayers[i]->skullb->chatline = bot->chatline->line;
+					GPlayers[i]->skullb->t_chat = GPlayers[i]->skullb->info.chattime;
 				}
 			}
 			bot->chatline = NULL;
@@ -333,7 +333,7 @@ bool PTR_BotPathTraverse(intercept_t *in)
 			{
 /*				if (front->SSpecial == ThrustThingZ || front->springpadzone)
 				{
-					if (bot->player - players == displayplayer && netstate != NS_SERVER)
+					if (P_GetPlayerNum(bot->player) == displayplayer && netstate != NS_SERVER)
 						Printf (PRINT_HIGH, "B_CheckPath: Bouncy sector, should be okay\n");
 					return true;
 				}
@@ -384,7 +384,7 @@ bool PTR_BotPathTraverse(intercept_t *in)
 //
 void B_SetAction (skullb_s *bot)
 {
-	AActor *mo = bot->player->mo;
+	AActor *MO = bot->player->MO;
 	int defenders = 0;
 	int attackers = 0;
 
@@ -400,11 +400,11 @@ void B_SetAction (skullb_s *bot)
 		// off of that
 		for (int i=0; i<MAXPLAYERS; i++)
 		{
-			if (playeringame[i] && players[i].mo->IsTeammate (mo) && players[i].skullb)
+			if (GPlayers[i] && GPlayers[i]->MO->IsTeammate(MO) && GPlayers[i]->skullb)
 			{
-				if (players[i].skullb->state == BST_OFFENSE)
+				if (GPlayers[i]->skullb->state == BST_OFFENSE)
 					attackers++;
-				if (players[i].skullb->state == BST_DEFENSE)
+				if (GPlayers[i]->skullb->state == BST_DEFENSE)
 					defenders++;
 			}
 		}
@@ -421,7 +421,7 @@ void B_SetGoal (skullb_s *bot)
 {
 	return;
 
-	AActor *mo = bot->player->mo;
+	AActor *MO = bot->player->MO;
 	AActor *actor;
 
 	if (bot->player->team == TM_NONE)
@@ -474,18 +474,18 @@ AActor *B_SetAlly (skullb_s *bot)
 
 	for (int i=0; i<MAXPLAYERS; i++)
 	{
-		if (!playeringame[i] || !players[i].team || i == consoleplayer)
+		if (!GPlayers[i] || !GPlayers[i]->team || i == consoleplayer)
 			continue;
-		if (players[i].team == bot->player->team)
+		if (GPlayers[i]->team == bot->player->team)
 		{
-			bot->ally = players[i].mo;
+			bot->ally = GPlayers[i]->MO;
 			break;
 		}
 
 		p_leader[i] = false;
 		for (int j=0; j<MAXPLAYERS; j++)
 		{
-			if (players[j].skullb->ally == players[i].mo)
+			if (GPlayers[j]->skullb->ally == GPlayers[i]->MO)
 			{
 				p_leader[i] = true;
 				break;
@@ -499,24 +499,24 @@ AActor *B_SetAlly (skullb_s *bot)
 	//Check for player friends
 	for (i=0; i<MAXPLAYERS; i++)
 	{
-		if (playeringame[i]
-			&& players[i].mo
-			&& bot->player->mo != players[i].mo
-			&& (bot->player->mo->IsTeammate (players[i].mo) || !deathmatch.value)
-			&& players[i].mo->Health
-			&& ((bot->player->health/2) <= players[i].mo->Health || !deathmatch.value)
+		if (GPlayers[i]
+			&& GPlayers[i]->MO
+			&& bot->player->MO != GPlayers[i]->MO
+			&& (bot->player->MO->IsTeammate (GPlayers[i]->MO) || !deathmatch.value)
+			&& GPlayers[i]->MO->Health
+			&& ((bot->player->health/2) <= GPlayers[i]->MO->Health || !deathmatch.value)
 			&& !p_leader[i]) //taken?
 		{
 
-			if (P_CheckSight (bot->player->mo, players[i].mo, true))
+			if (P_CheckSight(bot->player->MO, GPlayers[i]->MO, true))
 			{
-				test = P_AproxDistance (players[i].mo->x - bot->player->mo->x,
-										players[i].mo->y - bot->player->mo->y);
+				test = P_AproxDistance(GPlayers[i]->MO->x - bot->player->MO->x,
+										GPlayers[i]->MO->y - bot->player->MO->y);
 
 				if (test < closest_dist)
 				{
 					closest_dist = test;
-					target = players[i].mo;
+					target = GPlayers[i]->MO;
 				}
 			}
 		}
@@ -815,6 +815,9 @@ botinfo_t botinfo[30] =
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.22  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

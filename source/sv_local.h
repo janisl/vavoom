@@ -107,8 +107,6 @@ class VThinker : public VObject
 //
 //==========================================================================
 
-struct player_t;
-
 class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
@@ -504,7 +502,7 @@ int SV_FindSkin(const char *name);
 
 void SV_ReadMove(void);
 
-extern player_t		*sv_player;
+extern player_t*		sv_player;
 
 //==========================================================================
 //
@@ -533,7 +531,8 @@ void G_StartNewInit(void);
 int GetMobjNum(VEntity *mobj);
 VEntity* SetMobjPtr(int archiveNum);
 
-extern player_t			players[MAXPLAYERS]; // Bookkeeping on players - state.
+extern player_t*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state.
+extern player_t*		GPlayers[MAXPLAYERS]; // Bookkeeping on players - state.
 
 extern skill_t			gameskill;
  
@@ -553,14 +552,31 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 	return GLevel->PointInSubsector(TVec(x, y, 0));
 }
 
+inline int SV_GetPlayerNum(player_t* player)
+{
+	int		i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (player == GPlayers[i])
+		{
+		    return i;
+		}
+	}
+	return 0;
+}
+
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2003/07/11 16:45:20  dj_jl
+//	Made array of players with pointers
+//
 //	Revision 1.28  2003/03/08 12:10:13  dj_jl
 //	API fixes.
-//
+//	
 //	Revision 1.27  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

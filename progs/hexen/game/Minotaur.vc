@@ -177,9 +177,9 @@ void A_MinotaurLook(void)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!players[i].bSpawned)
+			if (!GPlayers[i] || !GPlayers[i]->bSpawned)
 				continue;
-			mo = players[i].MO;
+			mo = GPlayers[i]->MO;
 			if (mo == Instigator)
 				continue;
 			if (mo.Health <= 0)
@@ -640,6 +640,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2003/03/08 12:41:43  dj_jl
 //  Removing class pointers.
 //

@@ -354,7 +354,7 @@ bool LookForMonsters(void)
 	int count;
 	Actor mo;
 
-	if (!players[0].MO.CanSee(self))
+	if (!GPlayers[0]->MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -418,7 +418,7 @@ bool LookForPlayers(bool allaround)
 	float an;
 	float dist;
 
-	if (!netgame && players[0].bSpawned && players[0].Health <= 0)
+	if (!netgame && GPlayers[0] && GPlayers[0]->bSpawned && GPlayers[0]->Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
@@ -430,13 +430,13 @@ bool LookForPlayers(bool allaround)
 		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!players[LastLook].bActive)
+		if (!GPlayers[LastLook])
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = &players[LastLook];
+		P = GPlayers[LastLook];
 		if (!P->bSpawned || !P->MO)
 			continue;	//  not spawned yet
 		if (P->Health <= 0)
@@ -1030,6 +1030,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.2  2003/03/08 12:41:43  dj_jl
 //  Removing class pointers.
 //

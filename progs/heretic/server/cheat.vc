@@ -43,14 +43,17 @@
 
 void Cheat_God(void)
 {
-	players[0].Cheats ^= CF_GODMODE;
-	if (players[0].Cheats & CF_GODMODE)
+	player_t* player;
+
+	player = GPlayers[0];
+	player->Cheats ^= CF_GODMODE;
+	if (player->Cheats & CF_GODMODE)
 	{
-		cprint(&players[0], "GOD MODE ON");
+		cprint(player, "GOD MODE ON");
 	}
 	else
 	{
-		cprint(&players[0], "GOD MODE OFF");
+		cprint(player, "GOD MODE OFF");
 	}
 }
 
@@ -62,14 +65,17 @@ void Cheat_God(void)
 
 void Cheat_NoClip(void)
 {
-	players[0].Cheats ^= CF_NOCLIP;
-	if (players[0].Cheats & CF_NOCLIP)
+	player_t* player;
+
+	player = GPlayers[0];
+	player->Cheats ^= CF_NOCLIP;
+	if (player->Cheats & CF_NOCLIP)
 	{
-		cprint(&players[0], "NO CLIPPING ON");
+		cprint(player, "NO CLIPPING ON");
 	}
 	else
 	{
-		cprint(&players[0], "NO CLIPPING OFF");
+		cprint(player, "NO CLIPPING OFF");
 	}
 }
 
@@ -81,60 +87,63 @@ void Cheat_NoClip(void)
 
 void Cheat_Gimme(void)
 {
+	player_t* player;
+
+	player = GPlayers[0];
 	if (Cmd_CheckParm("weapons"))
 	{
 		int i;
 
-		players[0].ArmorPoints = 200;
-		players[0].ArmorType = 2;
-		players[0].Backpack = true;
+		player->ArmorPoints = 200;
+		player->ArmorType = 2;
+		player->Backpack = true;
 		for (i = 0; i < NUMWEAPONS - 1; i++)
 		{
-			players[0].WeaponOwned[i] = true;
+			player->WeaponOwned[i] = true;
 		}
 		if (shareware)
 		{
-			players[0].WeaponOwned[wp_skullrod] = false;
-			players[0].WeaponOwned[wp_phoenixrod] = false;
-			players[0].WeaponOwned[wp_mace] = false;
+			player->WeaponOwned[wp_skullrod] = false;
+			player->WeaponOwned[wp_phoenixrod] = false;
+			player->WeaponOwned[wp_mace] = false;
 		}
 		for (i = 0; i < 6 /*NUMAMMO2 */ ; i++)
 		{
-			players[0].Ammo[i] = maxammo[i] * 2;
+			player->Ammo[i] = maxammo[i] * 2;
 		}
-		cprint(&players[0], "ALL WEAPONS");
+		cprint(player, "ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("power"))
 	{
-		if (players[0].Powers[pw_weaponlevel2])
+		if (player->Powers[pw_weaponlevel2])
 		{
-			players[0].Powers[pw_weaponlevel2] = 0.0;
-			cprint(&players[0], "POWER OFF");
+			player->Powers[pw_weaponlevel2] = 0.0;
+			cprint(player, "POWER OFF");
 		}
 		else
 		{
-			PlayerPawn(players[0].MO).UseArtifact(arti_tomeofpower);
-			cprint(&players[0], "POWER ON");
+			PlayerPawn(player->MO).UseArtifact(arti_tomeofpower);
+			cprint(player, "POWER ON");
 		}
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (players[0].ChickenTime)
+		if (player->ChickenTime)
 		{
-			players[0].MO.Health = MAXCHICKENHEALTH;
-			players[0].Health = players[0].MO.Health;
+			player->MO.Health = MAXCHICKENHEALTH;
+			player->Health = player->MO.Health;
 		}
 		else
 		{
-			players[0].MO.Health = MAXHEALTH;
-			players[0].Health = players[0].MO.Health;
+			player->MO.Health = MAXHEALTH;
+			player->Health = player->MO.Health;
 		}
-		cprint(&players[0], "FULL HEALTH");
+		cprint(player, "FULL HEALTH");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
-		players[0].Keys = 7;
-		cprint(&players[0], "ALL KEYS");
+		player->Keys = 7;
+		cprint(player, "ALL KEYS");
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
@@ -150,10 +159,10 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				PlayerPawn(players[0].MO).GiveArtifact(i);
+				PlayerPawn(player->MO).GiveArtifact(i);
 			}
 		}
-		cprint(&players[0], "YOU GOT IT");
+		cprint(player, "YOU GOT IT");
 	}
 /*	int i;
 	int j;
@@ -172,28 +181,28 @@ void Cheat_Gimme(void)
 			}
 			for (j = 0; j < 16; j++)
 			{
-				P_GiveArtifact(&players[0], i, NULL);
+				P_GiveArtifact(player, i, NULL);
 			}
 		}
-		P_SetMessage(&players[0], "YOU GOT IT", false);
+		P_SetMessage(player, "YOU GOT IT", false);
 	}
 	else if (type > arti_none && type < NUMARTIFACTS
 		&& count > 0 && count < 10)
 	{
 		if (shareware && (type == arti_superhealth || type == arti_teleport))
 		{
-			P_SetMessage(&players[0], "BAD INPUT", false);
+			P_SetMessage(player, "BAD INPUT", false);
 			return;
 		}
 		for (i = 0; i < count; i++)
 		{
-			P_GiveArtifact(&players[0], type, NULL);
+			P_GiveArtifact(player, type, NULL);
 		}
-		P_SetMessage(&players[0], "YOU GOT IT", false);
+		P_SetMessage(player, "YOU GOT IT", false);
 	}
 	else
 	{ // Bad input
-		P_SetMessage(&players[0], "BAD INPUT", false);
+		P_SetMessage(player, "BAD INPUT", false);
 	}*/
 }
 
@@ -205,8 +214,11 @@ void Cheat_Gimme(void)
 
 void Cheat_KillAll(void)
 {
+	player_t* player;
+
+	player = GPlayers[0];
 	P_Massacre();
-	cprint(&players[0], "MASSACRE");
+	cprint(player, "MASSACRE");
 }
 
 //==========================================================================
@@ -217,16 +229,19 @@ void Cheat_KillAll(void)
 
 void Cheat_Morph(void)
 {
-	if (players[0].ChickenTime)
+	player_t* player;
+
+	player = GPlayers[0];
+	if (player->ChickenTime)
 	{
-		if (PlayerPawn(players[0].MO).UndoPlayerChicken())
+		if (PlayerPawn(player->MO).UndoPlayerChicken())
 		{
-			cprint(&players[0], "CHICKEN OFF");
+			cprint(player, "CHICKEN OFF");
 		}
 	}
-	else if (players[0].MO.ChickenMorphPlayer())
+	else if (player->MO.ChickenMorphPlayer())
 	{
-		cprint(&players[0], "CHICKEN ON");
+		cprint(player, "CHICKEN ON");
 	}
 }
 
@@ -239,17 +254,19 @@ void Cheat_Morph(void)
 void Cheat_NoWeapons(void)
 {
 	int i;
+	player_t* player;
 
-	if (players[0].ChickenTime)
+	player = GPlayers[0];
+	if (player->ChickenTime)
 	{
 		return;
 	}
 	for (i = 1; i < 8; i++)
 	{
-		players[0].WeaponOwned[i] = false;
+		player->WeaponOwned[i] = false;
 	}
-	players[0].PendingWeapon = wp_staff;
-	cprint(&players[0], "CHEATER - YOU DON'T DESERVE WEAPONS");
+	player->PendingWeapon = wp_staff;
+	cprint(player, "CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
 //==========================================================================
@@ -265,6 +282,9 @@ void Cheat_Class(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2003/07/11 16:47:39  dj_jl
+//  Made array of players with pointers
+//
 //  Revision 1.17  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //
