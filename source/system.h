@@ -52,8 +52,9 @@ bool Sys_DirExists(const char *);
 
 void* Sys_ZoneBase(int*);
 
-void Sys_Error(const char*, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
-void Sys_Quit(void) __attribute__ ((noreturn));
+void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn) 
+	Sys_Error(const char*, ...);
+void __attribute__((noreturn)) __declspec(noreturn) Sys_Quit(void);
 void Sys_Shutdown(void);
 
 double Sys_Time(void);
@@ -77,9 +78,12 @@ void Sys_MakeCodeWriteable(unsigned long, unsigned long);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/04/11 16:40:32  dj_jl
+//	Added __declspec modifiers.
+//
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.6  2001/11/09 14:19:42  dj_jl
 //	Functions for directory listing
 //	

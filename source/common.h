@@ -45,6 +45,10 @@
 #define __attribute__(whatever)
 #endif
 
+#ifndef _WIN32
+#define __declspec(whatever)
+#endif
+
 #if defined __unix__ && !defined DJGPP
 #undef stricmp	//	Allegro defines them
 #undef strnicmp
@@ -103,7 +107,7 @@ typedef unsigned long	 	dword;
 #define unguardf(msg)	}
 #endif
 
-#ifdef PARANOID
+#ifdef DO_GUARD_SLOW
 #define guardSlow(name)		guard(name)
 #define unguardSlow			unguard
 #define unguardfSlow(msg)	unguardf(msg)
@@ -142,9 +146,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/04/11 16:40:06  dj_jl
+//	Added __declspec modifiers.
+//
 //	Revision 1.9  2002/03/28 18:05:51  dj_jl
 //	Disabled some Borland warnings.
-//
+//	
 //	Revision 1.8  2002/01/21 18:23:56  dj_jl
 //	Disabled some MSVC warnings
 //	

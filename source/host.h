@@ -34,11 +34,12 @@
 void Host_Init(void);
 void Host_Shutdown(void);
 void Host_Frame(void);
-void Host_EndGame(const char *message, ...)
-	__attribute__((noreturn, format(printf, 1, 2)));
-void Host_Error(const char *error, ...)
-	__attribute__((noreturn, format(printf, 1, 2)));
+void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
+	Host_EndGame(const char *message, ...);
+void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn)
+	Host_Error(const char *error, ...);
 void Host_CoreDump(const char *fmt, ...);
+const char *Host_GetCoreDump(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -52,14 +53,15 @@ extern double		host_time;
 extern double		realtime;
 extern int			host_framecount;
 
-extern char			*host_error_string;
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/04/11 16:40:32  dj_jl
+//	Added __declspec modifiers.
+//
 //	Revision 1.9  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2002/01/03 18:38:25  dj_jl
 //	Added guard macros and core dumps
 //	
