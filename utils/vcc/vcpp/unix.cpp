@@ -71,7 +71,7 @@ void *memmove(void *dp, const void *sp, size_t n)
 	unsigned char *cdp, *csp;
 
 	if (n <= 0)
-		return 0;
+		return dp;
 	cdp = (unsigned char *)dp;
 	csp = (unsigned char *)sp;
 	if (cdp < csp)
@@ -92,5 +92,5 @@ void *memmove(void *dp, const void *sp, size_t n)
 		}
 		while (--n);
 	}
-	return 0;
+	return dp;
 }
