@@ -39,8 +39,6 @@ using namespace VavoomUtils;
 
 // MACROS ------------------------------------------------------------------
 
-#define USE_2_PASSES
-
 //	Number of elements in an array.
 #define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
 
@@ -84,7 +82,7 @@ enum
 	NUM_BASIC_TYPES
 };
 
-enum error_t
+enum ECompileError
 {
 	ERR_NONE,
 	//  Atmi·as kõÝdas
@@ -153,7 +151,7 @@ enum error_t
     NUM_ERRORS
 };
 
-enum tokenType_t
+enum ETokenType
 {
 	TK_NONE,
 	TK_EOF,				//	Sasniegtas faila biegas
@@ -166,7 +164,7 @@ enum tokenType_t
 	TK_FLOAT,			//	peldoýÆ komata skaitlis, vñrtØba: tk_Float
 };
 
-enum Keyword
+enum EKeyword
 {
 	KW_STATES = 1,
 	KW_MOBJINFO,
@@ -197,13 +195,12 @@ enum Keyword
 	KW_STRING,
 	KW_STRUCT,
 	KW_SWITCH,
-	KW_THIS,
 	KW_VECTOR,
    	KW_VOID,
 	KW_WHILE,
 };
 
-enum Punctuation
+enum EPunctuation
 {
 	PU_VARARGS = 1,
 	PU_LSHIFT_ASSIGN,
@@ -454,9 +451,9 @@ struct constant_t:public FField
 
 // -- Common --
 
-void ERR_Exit(error_t error, boolean info, char *text, ...) __attribute__((noreturn));
-void ParseError(error_t error);
-void ParseError(error_t error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
+void ERR_Exit(ECompileError error, boolean info, char *text, ...) __attribute__((noreturn));
+void ParseError(ECompileError error);
+void ParseError(ECompileError error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 void ParseWarning(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 void BailOut(void) __attribute__((noreturn));
@@ -470,9 +467,9 @@ void TK_Restart(void);
 void TK_CloseSource(void);
 void TK_NextToken(void);
 bool TK_Check(const char *string);
-void TK_Expect(const char *string, error_t error);
-void TK_Expect(Keyword kwd, error_t error);
-void TK_Expect(Punctuation punct, error_t error);
+void TK_Expect(const char *string, ECompileError error);
+void TK_Expect(EKeyword kwd, ECompileError error);
+void TK_Expect(EPunctuation punct, ECompileError error);
 
 void PC_Init(void);
 int FindString(const char *str);
@@ -538,20 +535,13 @@ namespace Pass2
 void PA_Parse(void);
 void ParseLocalVar(TType *type);
 void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
-#ifdef USE_2_PASSES
 void ParseStateCode(TType *class_type, int funcnum);
-#else
-int ParseStateCode(TType *class_type);
-#endif
 void ParseDefaultProperties(field_t *method, TType *class_type);
 
 int CheckForFunction(TType *InClass, FName Name);
 int CheckForGlobalVar(FName Name);
 int CheckForLocalVar(FName Name);
 int CheckForConstant(FName Name);
-#ifndef USE_2_PASSES
-void AddConstant(FName Name, int value);
-#endif
 
 TType *ParseExpression(bool = false);
 
@@ -572,11 +562,7 @@ void AddVirtualTables(void);
 
 void ParseStates(TType *class_type);
 void AddInfoTables(void);
-#ifndef USE_2_PASSES
-void AddToMobjInfo(int Index, int ClassID);
-#endif
 
-extern TType			*ThisType;
 extern TType			*SelfType;
 
 extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
@@ -588,14 +574,14 @@ extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
 extern bool				ClassAddfields;
 extern char				tk_SourceName[MAX_FILE_NAME_LENGTH];
 extern int				tk_IncludedLines;
-extern tokenType_t		tk_Token;
+extern ETokenType		tk_Token;
 extern int				tk_Line;
 extern int				tk_Number;
 extern float			tk_Float;
 extern char*			tk_String;
 extern int				tk_StringI;
-extern Keyword			tk_Keyword;
-extern Punctuation		tk_Punct;
+extern EKeyword			tk_Keyword;
+extern EPunctuation		tk_Punct;
 extern FName			tk_Name;
 
 extern int*				CodeBuffer;
@@ -678,7 +664,7 @@ inline bool TK_Check(FName Name)
 	return false;
 }
 
-inline bool TK_Check(Keyword kwd)
+inline bool TK_Check(EKeyword kwd)
 {
 	if (tk_Token == TK_KEYWORD && tk_Keyword == kwd)
 	{
@@ -688,7 +674,7 @@ inline bool TK_Check(Keyword kwd)
 	return false;
 }
 
-inline bool TK_Check(Punctuation punct)
+inline bool TK_Check(EPunctuation punct)
 {
 	if (tk_Token == TK_PUNCT && tk_Punct == punct)
 	{
@@ -703,10 +689,13 @@ inline bool TK_Check(Punctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.26  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.25  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

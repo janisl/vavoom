@@ -59,13 +59,13 @@ static void NextChr(void);
 char				tk_SourceName[MAX_FILE_NAME_LENGTH];
 int 				tk_Line;
 
-tokenType_t 		tk_Token;
+ETokenType	 		tk_Token;
 char*				tk_String;
 int					tk_StringI;
 int 				tk_Number;
 float				tk_Float;
-Keyword				tk_Keyword;
-Punctuation			tk_Punct;
+EKeyword			tk_Keyword;
+EPunctuation			tk_Punct;
 FName				tk_Name;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -657,14 +657,6 @@ static void ProcessLetterToken(void)
 		}
 		break;
 
-	case 't':
-		if (!strcmp(tk_String, "this"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_THIS;
-		}
-		break;
-
 	case 'v':
 		if (!strcmp(tk_String, "vector"))
 		{
@@ -1120,7 +1112,7 @@ bool TK_Check(const char *string)
 //
 //==========================================================================
 
-void TK_Expect(const char *string, error_t error)
+void TK_Expect(const char *string, ECompileError error)
 {
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
@@ -1143,7 +1135,7 @@ void TK_Expect(const char *string, error_t error)
 //
 //==========================================================================
 
-void TK_Expect(Keyword kwd, error_t error)
+void TK_Expect(EKeyword kwd, ECompileError error)
 {
 	if (tk_Token != TK_KEYWORD)
 	{
@@ -1165,7 +1157,7 @@ void TK_Expect(Keyword kwd, error_t error)
 //
 //==========================================================================
 
-void TK_Expect(Punctuation punct, error_t error)
+void TK_Expect(EPunctuation punct, ECompileError error)
 {
 	if (tk_Token != TK_PUNCT || tk_Punct != punct)
 	{
@@ -1177,10 +1169,13 @@ void TK_Expect(Punctuation punct, error_t error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.18  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.17  2002/03/12 19:17:30  dj_jl
 //	Added keyword abstract
 //	

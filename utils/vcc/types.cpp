@@ -140,6 +140,8 @@ TType *MakePointerType(TType *type)
 {
 	TType	pointer;
 
+	if (type->type == ev_class)
+		ParseWarning("Class pointer");
 	memset(&pointer, 0, sizeof(TType));
 	pointer.type = ev_pointer;
 	pointer.aux_type = type;
@@ -372,9 +374,9 @@ void TypeCheck3(TType *t1, TType *t2)
 	{
 		return;
 	}
-	if ((t1->type == ev_function) && (t2->type == ev_function))
+	if ((t1->type == ev_function) || (t2->type == ev_function))
 	{
-		ParseWarning("Different function types");
+		ParseError("Function types");
 		return;
 	}
 	if ((t1->type == ev_vector) && (t2->type == ev_vector))
@@ -445,7 +447,6 @@ void TypeCheck3(TType *t1, TType *t2)
 
 void ParseStruct(void)
 {
-#ifdef USE_2_PASSES
 	CheckForType();
 
 	if (TK_Check(PU_SEMICOLON))
@@ -488,165 +489,6 @@ void ParseStruct(void)
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-#else
-	field_t		fields[128];
-	field_t		*fi;
-	int			num_fields;
-	int			size;
-	int			i;
-	TType		*t;
-	TType		*type;
-	TType		*struct_type;
-
-	struct_type = CheckForType();
-	if (struct_type)
-	{
-		if (struct_type->type != ev_struct)
-		{
-			ParseError("Not a struct type");
-			return;
-		}
-		if (struct_type->size != -1)
-		{
-			ParseError("Struct type already completed");
-			return;
-		}
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Struct name expected");
-		}
-		//  Pievieno pie tipiem
-		struct_type = new TType;
-		memset(struct_type, 0, sizeof(TType));
-		struct_type->Name = tk_Name;
-		struct_type->type = ev_struct;
-		struct_type->next = types;
-		types = struct_type;
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		struct_type->size = -1;
-		return;
-	}
-
-	num_fields = 0;
-	size = 0;
-
-	if (TK_Check(PU_COLON))
-	{
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Parent type expected");
-		}
-		else if (type->type != ev_struct)
-		{
-			ParseError("Parent type must be a struct");
-		}
-		else
-		{
-			struct_type->aux_type = type;
-			size = TypeSize(type);
-		}
-	}
-
-   	struct_type->available_size = 0;
-   	struct_type->available_ofs = 0;
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		if (TK_Check(KW_ADDFIELDS))
-		{
-	   		if (struct_type->available_size)
-			{
-				ParseError("Addfields already defined");
-			}
-			if (tk_Token != TK_INTEGER)
-			{
-				ParseError("Field count expacted");
-			}
-	   		struct_type->available_size = tk_Number * 4;
-   			struct_type->available_ofs = size;
-			size += tk_Number * 4;
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Field type expected.");
-		}
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
-			if (t == &type_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
-			fi = &fields[num_fields];
-			fi->Name = tk_Name;
-			TK_NextToken();
-			if (t->type == ev_bool && num_fields)
-			{
-				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
-				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
-					fi->type = FindType(&btype);
-					fi->ofs = prevbool.ofs;
-					num_fields++;
-					continue;
-				}
-			}
-			fi->ofs = size;
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
-		   	size += TypeSize(t);
-			fi->type = t;
-			num_fields++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-	//	Pievieno pie tipa
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->size = size;
-#endif
 }
 
 //==========================================================================
@@ -657,7 +499,6 @@ void ParseStruct(void)
 
 void AddFields(void)
 {
-#ifdef USE_2_PASSES
 	CheckForType();
 
 	//	Pievieno laukus
@@ -685,128 +526,6 @@ void AddFields(void)
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-#else
-	TType			*struct_type;
-	TType			*type;
-	field_t			*fi;
-	int				num_fields;
-	field_t			fields[128];
-	int				size;
-	int				ofs;
-	int				i;
-	TType			*t;
-
-	//  Nolasa tipu, kuram tiks pievienoti jaunie lauki.
-	struct_type = CheckForType();
-   	if (!struct_type)
-	{
-	   	ParseError("Parent type expected.");
-		return;
-	}
-
-	//  PÆrbauda, vai tas ir struktÝras tips
-	if (struct_type->type != ev_struct && (
-		!ClassAddfields || struct_type->type != ev_class))
-	{
-	 	ParseError("Parent must be a struct.");
-		return;
-	}
-
-	//  PÆrbauda, vai tipam ir atmi·a papildu laukiem
-	if (!struct_type->available_size)
-	{
-		ParseError("Parent type don't have available memory for additional fields.");
-		return;
-	}
-
-	//  Nolasa informÆciju
-	num_fields = struct_type->numfields;
-	memcpy(fields, struct_type->fields, num_fields * sizeof(*fields));
-	delete struct_type->fields;
-	size = struct_type->available_size;
-	ofs = struct_type->available_ofs;
-
-	//	Pievieno laukus
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Field type expected.");
-			continue;
-		}
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
-			if (t == &type_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
-			fi = &fields[num_fields];
-			fi->Name = tk_Name;
-			TK_NextToken();
-			if (t->type == ev_bool && num_fields)
-			{
-				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
-				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
-					fi->type = FindType(&btype);
-					fi->ofs = prevbool.ofs;
-					num_fields++;
-					continue;
-				}
-			}
-			fi->ofs = ofs;
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
-		   	size -= TypeSize(t);
-		   	ofs += TypeSize(t);
-		   	if (size < 0)
-			{
-	   			ParseError("Additional fields size overflow.");
-			}
-			fi->type = t;
-			num_fields++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-	//	Atjauno TypeInfo
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->available_size = size;
-   	struct_type->available_ofs = ofs;
-#endif
 }
 
 //==========================================================================
@@ -817,7 +536,6 @@ void AddFields(void)
 
 void ParseVector(void)
 {
-#ifdef USE_2_PASSES
 	if (!CheckForType())
 	{
 		ParseError("Not a vector type");
@@ -845,101 +563,6 @@ void ParseVector(void)
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-#else
-	field_t		fields[3];
-	field_t		*fi;
-	int			num_fields;
-	int			size;
-	TType		*type;
-	TType		*struct_type;
-
-	struct_type = CheckForType();
-	if (struct_type)
-	{
-		if (struct_type->type != ev_vector)
-		{
-			ParseError("Not a vector type");
-			return;
-		}
-		if (struct_type->size != -1)
-		{
-			ParseError("Vector type already completed");
-			return;
-		}
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Vector type name expected");
-		}
-		//  Pievieno pie tipiem
-		struct_type = new TType;
-		memset(struct_type, 0, sizeof(TType));
-		struct_type->Name = tk_Name;
-		struct_type->type = ev_vector;
-		struct_type->next = types;
-		types = struct_type;
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		struct_type->size = -1;
-		return;
-	}
-
-	num_fields = 0;
-	size = 0;
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Field type expected.");
-			continue;
-		}
-		if (type != &type_float)
-		{
-			ParseError("Vector can have only float fields");
-			continue;
-		}
-		do
-		{
-			if (num_fields == 3)
-			{
-				ParseError("Vector must have exactly 3 float fields");
-				continue;
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			fi = &fields[num_fields];
-			fi->Name = tk_Name;
-			TK_NextToken();
-			fi->ofs = size;
-		   	size += TypeSize(type);
-			fi->type = type;
-			num_fields++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if (num_fields != 3)
-	{
-		ParseError("Vector must have exactly 3 float fields");
-	}
-
-	//	Pievieno pie tipa
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->size = size;
-#endif
 }
 
 //==========================================================================
@@ -950,7 +573,6 @@ void ParseVector(void)
 
 void ParseClass(void)
 {
-#ifdef USE_2_PASSES
 	field_t		*fi;
 	field_t		*otherfield;
 	int			i;
@@ -995,15 +617,8 @@ void ParseClass(void)
 		}
 	} while (1);
 
-	bool OldStyle = true;
-	if (TK_Check(PU_SEMICOLON))
-		OldStyle = false;
-	else
-	{
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		ParseWarning("Old style %s", *class_type->Name);
-	}
-	while (OldStyle ? !TK_Check(PU_RBRACE) : !TK_Check(KW_DEFAULTPROPERTIES))
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	while (!TK_Check(KW_DEFAULTPROPERTIES))
 	{
 		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
 		{
@@ -1107,276 +722,18 @@ void ParseClass(void)
 		}
 	}
 
-	if (!OldStyle)
+	for (i = 0; i < class_type->numfields; i++)
 	{
-		for (i = 0; i < class_type->numfields; i++)
-		{
-			fi = &class_type->fields[i];
-			if (fi->type->type == ev_method &&
-				fi->Name == NAME_None && fi->ofs == 0)
-			{
-				break;
-			}
-		}
-		if (i == class_type->numfields)
-			ERR_Exit(ERR_NONE, true, "DP Field not found");
-		ParseDefaultProperties(fi, class_type);
-	}
-	else
-	{
-		//  Semikols beigÆs nav nepiecieýams
-		TK_Check(PU_SEMICOLON);
-	}
-#else
-	TArray<field_t>		fields;
-	field_t		*fi;
-	field_t		*otherfield;
-	int			size;
-	int			i;
-	TType		*t;
-	TType		*type;
-	TType		*class_type;
-
-	class_type = CheckForType();
-	if (class_type)
-	{
-		if (class_type->type != ev_class)
-		{
-			ParseError("Not a class type");
-			return;
-		}
-		if (class_type->size != -1)
-		{
-			ParseError("Class definition already completed");
-			return;
-		}
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Class name expected");
-		}
-		//  Pievieno pie tipiem
-		class_type = new TType;
-		memset(class_type, 0, sizeof(TType));
-		class_type->Name = tk_Name;
-		class_type->type = ev_class;
-		class_type->next = types;
-		class_type->classid = numclasses++;
-		types = class_type;
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		class_type->size = -1;
-		return;
-	}
-
-	class_type->numfields = 0;
-	class_type->num_methods = BASE_NUM_METHODS;
-	size = 0;
-
-	if (TK_Check(PU_COLON))
-	{
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Parent class type expected");
-		}
-		else if (type->type != ev_class)
-		{
-			ParseError("Parent type must be a class");
-		}
-		else
-		{
-			class_type->aux_type = type;
-			class_type->num_methods = type->num_methods;
-			size = TypeSize(type);
-		}
-	}
-
-	do
-	{
-		if (TK_Check(KW_MOBJINFO))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(ev_int), class_type->classid);
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else if (TK_Check(KW_NATIVE))
-		{
-		}
-		else if (TK_Check(KW_ABSTRACT))
-		{
-		}
-		else
+		fi = &class_type->fields[i];
+		if (fi->type->type == ev_method &&
+			fi->Name == NAME_None && fi->ofs == 0)
 		{
 			break;
 		}
-	} while (1);
-
-   	class_type->available_size = 0;
-   	class_type->available_ofs = 0;
-	class_type->fields = &fields[0];
-	class_type->size = size;
-	bool OldStyle = true;
-	if (TK_Check(PU_SEMICOLON))
-		OldStyle = false;
-	else
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (OldStyle ? !TK_Check(PU_RBRACE) : !TK_Check(KW_DEFAULTPROPERTIES))
-	{
-		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
-		{
-	   		if (class_type->available_size)
-			{
-				ParseError("Addfields already defined");
-			}
-			if (tk_Token != TK_INTEGER)
-			{
-				ParseError("Field count expacted");
-			}
-	   		class_type->available_size = tk_Number * 4;
-   			class_type->available_ofs = size;
-			size += tk_Number * 4;
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
-		if (TK_Check(KW_STATES))
-		{
-		   	ParseStates(class_type);
-			continue;
-		}
-
-		if (TK_Check(KW_DEFAULTPROPERTIES))
-		{
-			fi = new(fields) field_t;
-class_type->fields = &fields[0];
-			ParseDefaultProperties(fi, class_type);
-			continue;
-		}
-
-		int Flags = 0;
-		bool flags_done = false;
-		do
-		{
-			if (TK_Check(KW_NATIVE))
-			{
-				Flags |= FUNC_Native;
-			}
-			else
-			{
-				flags_done = true;
-			}
-		} while (!flags_done);
-
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Field type expected.");
-		}
-
-		bool need_semicolon = true;
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			fi = new(fields) field_t;
-class_type->fields = &fields[0];
-			fi->Name = tk_Name;
-			otherfield = CheckForField(class_type);
-			if (!otherfield)
-			{
-				TK_NextToken();
-			}
-			if (TK_Check(PU_LPAREN))
-			{
-				ParseMethodDef(t, fi, otherfield, class_type, Flags);
-				need_semicolon = false;
-				break;
-			}
-			if (otherfield)
-			{
-				ParseError("Redeclared field");
-				continue;
-			}
-			if (t == &type_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			if (t->type == ev_bool && fields.Num() > 1)
-			{
-				field_t &prevbool = fields[fields.Num() - 2];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
-				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
-					fi->type = FindType(&btype);
-					fi->ofs = prevbool.ofs;
-					class_type->numfields++;
-					continue;
-				}
-			}
-			fi->ofs = size;
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
-		   	size += TypeSize(t);
-			fi->type = t;
-			class_type->numfields++;
-		} while (TK_Check(PU_COMMA));
-		if (need_semicolon)
-		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		}
 	}
-
-	if (!OldStyle)
-	{
-		fi = new(fields) field_t;
-class_type->fields = &fields[0];
-		ParseDefaultProperties(fi, class_type);
-	}
-	else
-	{
-		//  Semikols beigÆs nav nepiecieýams
-		TK_Check(PU_SEMICOLON);
-	}
-
-	//	Pievieno pie tipa
-	class_type->fields = new field_t[class_type->numfields];
-	memcpy(class_type->fields, fields.GetData(),
-		class_type->numfields * sizeof(field_t));
-   	class_type->size = size;
-#endif
+	if (i == class_type->numfields)
+		ERR_Exit(ERR_NONE, true, "DP Field not found");
+	ParseDefaultProperties(fi, class_type);
 }
 
 //==========================================================================
@@ -1694,8 +1051,6 @@ void AddVirtualTables(void)
 //**
 //**
 //**************************************************************************
-
-#ifdef USE_2_PASSES
 
 namespace Pass1 {
 
@@ -2231,12 +1586,8 @@ void ParseClass(void)
    	class_type->available_ofs = 0;
 	class_type->fields = &fields[0];
 	class_type->size = size;
-	bool OldStyle = true;
-	if (TK_Check(PU_SEMICOLON))
-		OldStyle = false;
-	else
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (OldStyle ? !TK_Check(PU_RBRACE) : !TK_Check(KW_DEFAULTPROPERTIES))
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	while (!TK_Check(KW_DEFAULTPROPERTIES))
 	{
 		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
 		{
@@ -2377,17 +1728,9 @@ class_type->fields = &fields[0];
 		}
 	}
 
-	if (!OldStyle)
-	{
-		fi = new(fields) field_t;
+	fi = new(fields) field_t;
 class_type->fields = &fields[0];
-		ParseDefaultProperties(fi, class_type);
-	}
-	else
-	{
-		//  Semikols beigÆs nav nepiecieýams
-		TK_Check(PU_SEMICOLON);
-	}
+	ParseDefaultProperties(fi, class_type);
 
 	//	Pievieno pie tipa
 	class_type->fields = new field_t[class_type->numfields];
@@ -2494,14 +1837,15 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 
 } // namespace Pass1
 
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.29  2002/11/02 17:11:13  dj_jl
 //	New style classes.
-//
+//	
 //	Revision 1.28  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.

@@ -91,11 +91,9 @@ int main(int argc, char **argv)
 	dprintf("Preprocessing in %02d:%02d\n",
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	TK_OpenSource(buf, size);
-#ifdef USE_2_PASSES
 	CurrentPass = 1;
 	Pass1::PA_Parse();
 	TK_Restart();
-#endif
 	int pass1time = time(0);
 	dprintf("Pass 1 in %02d:%02d\n",
 		(pass1time - preptime) / 60, (pass1time - preptime) % 60);
@@ -311,9 +309,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.14  2002/11/02 17:11:13  dj_jl
 //	New style classes.
-//
+//	
 //	Revision 1.13  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

@@ -27,8 +27,6 @@
 
 #include "vcc.h"
 
-#ifdef USE_2_PASSES
-
 namespace Pass1 {
 
 // MACROS ------------------------------------------------------------------
@@ -213,10 +211,6 @@ static void ParseExpressionPriority0(void)
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
 			ParseExpressionPriority14();
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			return;
-		}
-		if (TK_Check(KW_THIS))
-		{
 			return;
 		}
 		if (TK_Check(KW_SELF))
@@ -545,7 +539,7 @@ static void ParseExpressionPriority13(void)
 
 static void ParseExpressionPriority14(void)
 {
-	static const Punctuation AssignOps[] =
+	static const EPunctuation AssignOps[] =
 	{
 		PU_ASSIGN,
 		PU_ADD_ASSIGN,
@@ -895,7 +889,6 @@ static void ParseDef(TType *type, bool IsNative)
 	FName		Name;
 	int			num;
 	TType		*t;
-	field_t		*method = NULL;
 
 	t = type;
 	while (TK_Check(PU_ASTERISK))
@@ -915,38 +908,10 @@ static void ParseDef(TType *type, bool IsNative)
 
 	numlocaldefs = 1;
 	int localsofs = 0;
+	Name = tk_Name;
+	TK_NextToken();
 
-	TType *ctype = CheckForType();
-	if (ctype)
-	{
-		TK_Expect(PU_DCOLON, ERR_NONE);
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Method name expected");
-		}
-		Name = tk_Name;
-		method = CheckForField(ctype, false);
-		if (!method || method->type->type != ev_method)
-		{
-			ParseError("No such method");
-		}
-		if (!method)
-		{
-			TK_NextToken();
-		}
-		localsofs = 1;
-	}
-	else
-	{
-		Name = tk_Name;
-		TK_NextToken();
-	}
-
-	if (method)
-	{
-		TK_Expect(PU_LPAREN, ERR_NONE);
-	}
-	else if (!TK_Check(PU_LPAREN))
+	if (!TK_Check(PU_LPAREN))
 	{
 		if (IsNative)
 		{
@@ -1021,16 +986,13 @@ static void ParseDef(TType *type, bool IsNative)
 	functype.size = 4;
 	functype.aux_type = t;
 
-	if (!ctype)
+	if (CheckForGlobalVar(Name))
 	{
-		if (CheckForGlobalVar(Name))
-		{
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-		}
-		if (CheckForConstant(Name) != -1)
-		{
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-		}
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
+	}
+	if (CheckForConstant(Name) != -1)
+	{
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
 
 	do
@@ -1087,7 +1049,7 @@ static void ParseDef(TType *type, bool IsNative)
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	functype.params_size = localsofs;
 
-	num = CheckForFunction(ctype, Name);
+	num = CheckForFunction(NULL, Name);
 	if (num)
 	{
 		if (IsNative && functions[num].first_statement > 0)
@@ -1104,7 +1066,7 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		num = numfunctions;
 		functions[num].Name = Name;
-		functions[num].OuterClass = ctype;
+		functions[num].OuterClass = NULL;
 		functions[num].first_statement = 0;
 		functions[num].type = FindType(&functype);
 		numfunctions++;
@@ -1114,29 +1076,12 @@ static void ParseDef(TType *type, bool IsNative)
 		functions[num].first_statement = -numbuiltins;
 		functions[num].flags |= FUNC_Native;
 		numbuiltins++;
-	}
-	if (method)
-	{
-		TType methodtype;
-		memcpy(&methodtype, &functype, sizeof(TType));
-		methodtype.type = ev_method;
-		if (method->type != FindType(&methodtype))
-		{
-	   		ERR_Exit(ERR_TYPE_MISTMATCH, true, NULL);
-		}
-		method->func_num = num;
-	}
-
-	if (TK_Check(PU_LBRACE))
-	{
-	   	ParseCompoundStatement();
-	}
-	else
-	{
-		//  Funkcijas prototips
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
 	}
+
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+   	ParseCompoundStatement();
 }
 
 //==========================================================================
@@ -1513,15 +1458,16 @@ void PA_Parse(void)
 
 } // namespace Pass1
 
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.2  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.1  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

@@ -127,7 +127,7 @@ static char* ErrorNames[NUM_ERRORS] =
 //
 //==========================================================================
 
-void ERR_Exit(error_t error, boolean info, char *text, ...)
+void ERR_Exit(ECompileError error, boolean info, char *text, ...)
 {
 	char	workString[256];
 	va_list	argPtr;
@@ -183,7 +183,7 @@ void ERR_Exit(error_t error, boolean info, char *text, ...)
 //
 //==========================================================================
 
-void ParseError(error_t error)
+void ParseError(ECompileError error)
 {
 	NumErrors++;
 
@@ -207,7 +207,7 @@ void ParseError(error_t error)
 //
 //==========================================================================
 
-void ParseError(error_t error, const char *text, ...)
+void ParseError(ECompileError error, const char *text, ...)
 {
 	va_list	argPtr;
 
@@ -315,9 +315,12 @@ static char *ErrorFileName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.5  2002/01/07 12:31:36  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
 //	

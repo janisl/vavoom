@@ -508,20 +508,6 @@ class TOpVector : public TTree
 	}
 };
 
-class TOpPushThis:public TTree
-{
- public:
-	TOpPushThis(void)
-	{
-		type = ThisType;
-	}
-	void Code(void)
-	{
-		AddStatement(OPC_LOCALADDRESS, 0);
-		AddStatement(OPC_PUSHPOINTED);
-	}
-};
-
 class TOpPushSelf:public TTree
 {
  public:
@@ -600,7 +586,6 @@ static TOperator	NotLogical_int(TOperator::ID_NEGATELOGICAL, &type_int, &type_in
 static TOperator	NotLogical_float(TOperator::ID_NEGATELOGICAL, &type_int, &type_float, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_name(TOperator::ID_NEGATELOGICAL, &type_int, &type_name, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_str(TOperator::ID_NEGATELOGICAL, &type_int, &type_string, &type_void, OPC_NEGATELOGICAL);
-static TOperator	NotLogical_func(TOperator::ID_NEGATELOGICAL, &type_int, &type_function, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ptr(TOperator::ID_NEGATELOGICAL, &type_int, &type_void_ptr, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_ref(TOperator::ID_NEGATELOGICAL, &type_int, &type_none_ref, &type_void, OPC_NEGATELOGICAL);
 static TOperator	NotLogical_cid(TOperator::ID_NEGATELOGICAL, &type_int, &type_classid, &type_void, OPC_NEGATELOGICAL);
@@ -654,7 +639,6 @@ static TOperator	Eq_int_int(TOperator::ID_EQ, &type_int, &type_int, &type_int, O
 static TOperator	Eq_float_float(TOperator::ID_EQ, &type_int, &type_float, &type_float, OPC_FEQ);
 static TOperator	Eq_name_name(TOperator::ID_EQ, &type_int, &type_name, &type_name, OPC_EQ);
 static TOperator	Eq_str_str(TOperator::ID_EQ, &type_int, &type_string, &type_string, OPC_EQ);
-static TOperator	Eq_func_func(TOperator::ID_EQ, &type_int, &type_function, &type_function, OPC_EQ);
 static TOperator	Eq_ptr_ptr(TOperator::ID_EQ, &type_int, &type_void_ptr, &type_void_ptr, OPC_EQ);
 static TOperator	Eq_vec_vec(TOperator::ID_EQ, &type_int, &type_vector, &type_vector, OPC_VEQ);
 static TOperator	Eq_cid_cid(TOperator::ID_EQ, &type_int, &type_classid, &type_classid, OPC_EQ);
@@ -664,7 +648,6 @@ static TOperator	Ne_int_int(TOperator::ID_NE, &type_int, &type_int, &type_int, O
 static TOperator	Ne_float_float(TOperator::ID_NE, &type_int, &type_float, &type_float, OPC_FNE);
 static TOperator	Ne_name_name(TOperator::ID_NE, &type_int, &type_name, &type_name, OPC_NE);
 static TOperator	Ne_str_str(TOperator::ID_NE, &type_int, &type_string, &type_string, OPC_NE);
-static TOperator	Ne_func_func(TOperator::ID_NE, &type_int, &type_function, &type_function, OPC_NE);
 static TOperator	Ne_ptr_ptr(TOperator::ID_NE, &type_int, &type_void_ptr, &type_void_ptr, OPC_NE);
 static TOperator	Ne_vec_vec(TOperator::ID_NE, &type_int, &type_vector, &type_vector, OPC_VNE);
 static TOperator	Ne_cid_cid(TOperator::ID_NE, &type_int, &type_classid, &type_classid, OPC_NE);
@@ -680,7 +663,6 @@ static TOperator	Assign_int_int(TOperator::ID_ASSIGN, &type_int, &type_int, &typ
 static TOperator	Assign_float_float(TOperator::ID_ASSIGN, &type_float, &type_float, &type_float, OPC_ASSIGN);
 static TOperator	Assign_name_name(TOperator::ID_ASSIGN, &type_name, &type_name, &type_name, OPC_ASSIGN);
 static TOperator	Assign_str_str(TOperator::ID_ASSIGN, &type_string, &type_string, &type_string, OPC_ASSIGN);
-static TOperator	Assign_func_func(TOperator::ID_ASSIGN, &type_function, &type_function, &type_function, OPC_ASSIGN);
 static TOperator	Assign_ptr_ptr(TOperator::ID_ASSIGN, &type_void_ptr, &type_void_ptr, &type_void_ptr, OPC_ASSIGN);
 static TOperator	Assign_vec_vec(TOperator::ID_ASSIGN, &type_vector, &type_vector, &type_vector, OPC_VASSIGN);
 static TOperator	Assign_cid_cid(TOperator::ID_ASSIGN, &type_classid, &type_classid, &type_classid, OPC_ASSIGN);
@@ -751,11 +733,6 @@ bool TypeCmp(TType *type1, TType *type2)
 	}
 	if ((type1->type == ev_vector) && (type2->type == ev_vector))
 	{
-		return true;
-	}
-	if ((type1->type == ev_function) && (type2->type == ev_function))
-	{
-		ParseWarning("Different function types");
 		return true;
 	}
 	if ((type1->type == ev_pointer) && (type2->type == ev_pointer))
@@ -829,7 +806,7 @@ static TTree *ParseFunctionCall(int num, bool is_method)
 	}
 	if (is_method)
 	{
-		fop->AddToList(new TOpPushThis());
+		fop->AddToList(new TOpPushSelf());
 	}
 	if (!TK_Check(PU_RPAREN))
 	{
@@ -956,12 +933,12 @@ static TTree *ParseExpressionPriority0(void)
 
 		if (TK_Check(PU_DCOLON))
 		{
-			if (!ThisType)
+			if (!SelfType)
 			{
 				ParseError(":: not in method");
 				break;
 			}
-			field = CheckForField(ThisType->aux_type->aux_type);
+			field = CheckForField(SelfType->aux_type->aux_type);
 			if (!field)
 			{
 				ParseError("No such method %s", *tk_Name);
@@ -988,18 +965,6 @@ static TTree *ParseExpressionPriority0(void)
 			TTree *op3 = ParseExpressionPriority14();
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			return new TOpVector(op1, op2, op3);
-		}
-		if (TK_Check(KW_THIS))
-		{
-			if (!ThisType)
-			{
-				ParseError("this used outside member function\n");
-			}
-			else
-			{
-				op = new TOpPushThis();
-				return op;
-			}
 		}
 		if (TK_Check(KW_SELF))
 		{
@@ -1062,12 +1027,12 @@ static TTree *ParseExpressionPriority0(void)
 				return ParseFunctionCall(num, false);
 			}
 
-			if (!op && ThisType)
+			if (!op && SelfType)
 			{
-				field = CheckForField(Name, ThisType->aux_type);
+				field = CheckForField(Name, SelfType->aux_type);
 				if (field)
 				{
-					op = new TOpPushThis();
+					op = new TOpPushSelf();
 					if (field->type->type == ev_method)
 					{
 						op = new TOpPushSelfMethod(op, field->ofs, field->type);
@@ -1124,12 +1089,12 @@ static TTree *ParseExpressionPriority0(void)
 			return op;
 		}
 
-		if (ThisType)
+		if (SelfType)
 		{
-			field = CheckForField(Name, ThisType->aux_type);
+			field = CheckForField(Name, SelfType->aux_type);
 			if (field)
 			{
-				op = new TOpPushThis();
+				op = new TOpPushSelf();
 				if (field->type->type == ev_method)
 				{
 					op = new TOpPushSelfMethod(op, field->ofs, field->type);
@@ -1735,7 +1700,7 @@ static TTree* ParseExpressionPriority14(void)
 	int			i;
 	static const struct
 	{
-		Punctuation			punct;
+		EPunctuation		punct;
 		TOperator::id_t		opid;
 	} AssignOps[] =
 	{
@@ -1799,10 +1764,13 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2003/03/08 12:47:52  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.26  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.25  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

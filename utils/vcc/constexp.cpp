@@ -80,12 +80,8 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-#ifdef USE_2_PASSES
 			num = CurrentPass == 1 ? Pass1::CheckForConstant(tk_Name) :
 				Pass2::CheckForConstant(tk_Name);
-#else
-			num = Pass2::CheckForConstant(tk_Name);
-#endif
 			if (num != -1)
 			{
 				TK_NextToken();
@@ -485,10 +481,13 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2003/03/08 12:47:51  dj_jl
+//	Code cleanup.
+//
 //	Revision 1.11  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.
-//
+//	
 //	Revision 1.10  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	
