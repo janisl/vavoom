@@ -118,17 +118,6 @@ void PR_OnAbort(void)
 
 //==========================================================================
 //
-//	PR_GetString
-//
-//==========================================================================
-
-char* PR_GetString(int ofs)
-{
-	return pr_strings + ofs;
-}
-
-//==========================================================================
-//
 //  PR_FuncName
 //
 //==========================================================================
@@ -203,6 +192,7 @@ void TProgs::Load(const char *AName)
 {
 	int		i;
 	int		len;
+	char	progfilename[256];
 
 	i = M_CheckParm("-progs");
     if (i && i < myargc - 1)
@@ -210,6 +200,11 @@ void TProgs::Load(const char *AName)
     	//	Load PROGS from a specified file
     	len = M_ReadFile(va("%s%s.dat", myargv[i + 1], AName), (byte**)&Progs);
     }
+    else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName), progfilename))
+	{
+    	//	Load PROGS from a specified file
+    	len = M_ReadFile(progfilename, (byte**)&Progs);
+	}
     else
     {
     	//	Load PROGS from wad file
@@ -242,7 +237,6 @@ void TProgs::Load(const char *AName)
 	Functions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
 	Globaldefs = (globaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
 
-	//	Don't waste time in byte swap if we are in little endian
 	// byte swap the lumps
 	for (i = 0; i < Progs->num_statements; i++)
 	{
@@ -265,6 +259,16 @@ void TProgs::Load(const char *AName)
 		Globaldefs[i].type = LittleShort(Globaldefs[i].type);
 		Globaldefs[i].ofs = LittleShort(Globaldefs[i].ofs);
 		Globaldefs[i].s_name = LittleLong(Globaldefs[i].s_name);
+	}
+
+	//	Setup string pointers in globals
+	byte *globalinfo = (byte*)Progs + Progs->ofs_globalinfo;
+	for (i = 0; i < Progs->num_globals; i++)
+	{
+		if (globalinfo[i] == 1)
+		{
+			Globals[i] += int(Strings);
+		}
 	}
 
 	//	Set up builtins
@@ -1211,6 +1215,12 @@ static void RunFunction(int fnum)
 
 //=====================================
 
+	 case OPC_PUSHSTRING:
+		*sp++ = int(pr_strings) + (*current_statement++);
+		break;
+
+//=====================================
+
 	 default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
@@ -1585,9 +1595,13 @@ void TProgs::DumpProfile(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/21 17:40:24  dj_jl
+//	Real string pointers in progs
+//	In devgame mode look for progs in <gamedir>/progs
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
