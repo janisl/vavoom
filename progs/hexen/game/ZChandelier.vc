@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class ZChandelier:Decoration
+class ZChandelier : Decoration
 	__mobjinfo__(17);
 
 void OnMapSpawn(mthing_t *mthing)
 {
 	::OnMapSpawn(mthing);
-	if (!TID)
+	if (mthing && !TID)
 		AddStaticLight(Origin, 128.0);
 }
 
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/04 05:34:17  dj_jl
+//  Spawnable static light source fix.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

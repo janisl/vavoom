@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class ZFireBull:Decoration
+class ZFireBull : Decoration
 	__mobjinfo__(8042);
 
 void OnMapSpawn(mthing_t *mthing)
 {
 	::OnMapSpawn(mthing);
-	if (!TID && Class == ZFireBull)
+	if (mthing && !TID && Class == ZFireBull)
 		AddStaticLight(Origin + vector(0.0, 0.0, 32.0), 200.0);
 }
 
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/08/04 05:34:17  dj_jl
+//  Spawnable static light source fix.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
