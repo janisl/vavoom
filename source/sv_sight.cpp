@@ -417,10 +417,22 @@ static boolean CrossBSPNode(int bspnum)
 
 boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 {
+	guard(P_CheckSight);
 	int			s1;
 	int			s2;
 	int			pnum;
-	
+
+	if (!t1 || !t2)
+	{
+//		cond << "Bad check sight\n";
+		return false;
+	}
+	if ((t1->GetFlags() & OF_Destroyed) || (t2->GetFlags() & OF_Destroyed))
+	{
+//		cond << "Check sight with destroyed thing\n";
+		return false;
+	}
+
 	//	Determine subsector entries in GL_PVS table.
 	//	First check for trivial rejection.
 	byte *vis = LeafPVS(level, t1->subsector);
@@ -469,14 +481,18 @@ boolean P_CheckSight(VMapObject* t1, VMapObject* t2)
 	}
 	lineend = sightend;
 	return CheckPlanes(t2->subsector->sector);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/04 18:21:48  dj_jl
+//	A little protection against crashes
+//
 //	Revision 1.5  2001/12/18 19:03:16  dj_jl
 //	A lots of work on VObject
-//
+//	
 //	Revision 1.4  2001/08/31 17:28:00  dj_jl
 //	Removed RANGECHECK
 //	
