@@ -91,6 +91,68 @@ float MenuTime;
 
 //==========================================================================
 //
+//	InputLine_Init
+//
+//  Initializes input line
+//
+//==========================================================================
+
+void InputLine_Init(TILine * iline)
+{
+    iline->len = 0;
+    strsetchar(ARR2STR(iline->Data), 0, 0);
+}
+
+//==========================================================================
+//
+//	InputLine_Key
+//
+// 	Wrapper function for handling general keyed input.
+//	Returns true if it ate the key
+//
+//==========================================================================
+
+boolean InputLine_Key(TILine * iline, int ch)
+{
+    if (ch >= ' ' && ch < 128)
+	{
+  		ch = TranslateKey(ch);
+	    if (iline->len < MAX_ILINE_LENGTH)
+    	{
+			strsetchar(ARR2STR(iline->Data), iline->len++, ch);
+			strsetchar(ARR2STR(iline->Data), iline->len, 0);
+    	}
+	}
+    else if (ch == K_BACKSPACE)
+	{
+	    if (iline->len)
+		{
+			strsetchar(ARR2STR(iline->Data), --iline->len, 0);
+		}
+	}
+	else if (ch != K_ENTER)
+	{
+		return false; // did not eat key
+	}
+    return true; // ate the key
+}
+
+//==========================================================================
+//
+//	InputLine_SetValue
+//
+//  Sets input line value
+//
+//==========================================================================
+
+void InputLine_SetValue(TILine * iline, string text)
+{
+	strcpy(ARR2STR(iline->Data), text);
+	iline->len = strlen(text);
+}
+
+//==========================================================================
+//
 //  Menu_CursorMoved
 //
 //==========================================================================
@@ -1625,6 +1687,9 @@ void MenuSlist_Init(menuslist_t * self)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/11/09 14:38:45  dj_jl
+//  Moved input line to progs
+//
 //  Revision 1.8  2001/10/18 17:39:33  dj_jl
 //  A lots of changes for Alpha 2
 //

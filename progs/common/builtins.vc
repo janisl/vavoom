@@ -129,6 +129,12 @@ extern int P_Random(void);
 extern string ptrtos(void *ptr);
 #define ARR2STR(array)	ptrtos(&array[0])
 
+//  Get char s[i]
+extern int strgetchar(string s, int i);
+
+//  Set char s[i]
+extern void strsetchar(string s, int i, int c);
+
 //  String length
 extern int strlen(string s);
 
@@ -309,18 +315,8 @@ extern void LocalSound(string name);
 //  Plays a sound and waits untill it finishes
 extern void LocalSoundTillDone(string name);
 
-//
-//  Input text line widget
-//
-
-//  Initializes input line
-extern void InputLine_Init(TILine * iline);
-
-//  Sets input line value
-extern void InputLine_SetValue(TILine * iline, string text);
-
-//  Input line responder
-extern boolean InputLine_Key(TILine * iline, int key);
+//  Handle shift+key
+extern int TranslateKey(int c);
 
 extern string P_GetMapName(int map);
 extern string P_TranslateMap(int map);
@@ -487,6 +483,9 @@ extern void SendCeilingSlope(sector_t * sector);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2001/11/09 14:38:45  dj_jl
+//  Moved input line to progs
+//
 //  Revision 1.16  2001/10/27 07:37:39  dj_jl
 //  Possibility to create new console variables
 //
