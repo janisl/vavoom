@@ -372,13 +372,23 @@ ifndef INSTALL_DIR
 INSTALL_DIR = /usr/local/games/Vavoom
 endif
 
-ifndef INSTALL_UTILS_DIR
-INSTALL_UTILS_DIR = /usr/local/bin
+ifndef INSTALL_GROUP
+INSTALL_GROUP=root
 endif
 
-INSTALL_PARMS=-g root -o root -m 0755
-INSTALL_EXEPARMS=-g root -o root -m 4755
-INSTALL_DIRPARMS=-m 0777 -d
+ifndef INSTALL_OWNER
+INSTALL_OWNER=root
+endif
+
+ifdef INSTALL_GROUP_ONLY
+INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0750
+INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4750
+INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0770 -d
+else
+INSTALL_PARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0755
+INSTALL_EXEPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 4755
+INSTALL_DIRPARMS=-g $(INSTALL_GROUP) -o $(INSTALL_OWNER) -m 0777 -d
+endif
 
 INSTALL_DIRS = $(INSTALL_DIR) \
 		$(INSTALL_DIR)/basev \
@@ -391,7 +401,7 @@ INSTALL_DIRS = $(INSTALL_DIR) \
 		$(INSTALL_DIR)/basev/hexen \
 		$(INSTALL_DIR)/basev/strife
 
-install: installdata installutils
+install: installdata
 	$(INSTALL) $(INSTALL_EXEPARMS) Vavoom$(EXE) $(INSTALL_DIR)
 
 installsv: installdata
@@ -408,9 +418,6 @@ installdata:
 	$(INSTALL) $(INSTALL_PARMS) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
 	$(INSTALL) $(INSTALL_PARMS) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
 	$(INSTALL) $(INSTALL_PARMS) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
-
-installutils:
-	$(INSTALL) $(INSTALL_PARMS) utils/glbsp/glbsp$(EXE) utils/glvis/glvis$(EXE) $(INSTALL_UTILS_DIR)
 
 # ---------------------------------------
 

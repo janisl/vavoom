@@ -7,7 +7,7 @@ BCB = $(MAKEDIR)\..
 CFLAGS = -O2 -X- -a4 -4 -b -k- -vi -q -c -w -w-8071 -w-8027 \
          -Ic:\mssdk\include -D_NO_VCL
 RFLAGS = /l 0x426
-AFLAGS = /ml /w2 /zn
+AFLAGS = /ml /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
 
 PROJECT = Vavoom95.exe
@@ -65,7 +65,7 @@ OBJFILES = $(OBJFILES) \
     obj\d32_part.obj obj\d32_poly.obj obj\d32_s16.obj obj\d32_span.obj \
     obj\d32_spr.obj obj\d32_surf.obj
 !else
-CFLAGS += -DNOASM
+CFLAGS = $(CFLAGS) -DNOASM
 !endif
 
 RESFILES = obj\vavoom.res
