@@ -50,7 +50,7 @@ void Actor::A_CPosAttack(void)
 	int damage;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	PlaySound('ShotgunFire', CHAN_WEAPON);
@@ -79,7 +79,7 @@ void Actor::A_CPosRefire(void)
 	if (P_Random() < 40)
 		return;
 
-	if (!Enemy || Enemy.Health <= 0 || !P_CheckSight(self, Enemy))
+	if (!Target || Target.Health <= 0 || !P_CheckSight(self, Target))
 	{
 		SetState(SeeState);
 	}
@@ -102,6 +102,9 @@ void Actor::A_CPosRefire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.15  2002/02/26 17:49:47  dj_jl
 //  no message
 //

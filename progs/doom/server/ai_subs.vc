@@ -48,19 +48,19 @@ boolean Actor::CheckMeleeRange(void)
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
 
-	dist = MobjDist(Enemy, self);
+	dist = MobjDist(Target, self);
 
-	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	if (dist >= MELEERANGE - 20.0 + Target.Radius)
 	{
 		return false;
 	}
 
-	if (!P_CheckSight(self, Enemy))
+	if (!P_CheckSight(self, Target))
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Enemy))
+	if (!P_CheckSight(self, Target))
 	{
 		return false;
 	}
@@ -97,7 +97,7 @@ boolean Actor::CheckMissileRange(void)
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(self, Enemy) - 64.0;
+	dist = MobjDist(self, Target) - 64.0;
 
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -196,7 +196,7 @@ boolean Actor::LookForMonsters(boolean allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -250,7 +250,7 @@ boolean Actor::LookForMonsters2(boolean allaround)
 			}
 		}
 
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -328,7 +328,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 			}
 		}
 
-		Enemy = *P->mo;
+		Target = *P->mo;
 		return true;
 	}
 
@@ -447,16 +447,16 @@ void Actor::NewChaseDir(void)
 
 	int turnaround;
 
-	if (!Enemy)
+	if (!Target)
 	{
-		Error("P_NewChaseDir: called with no Enemy");
+		Error("P_NewChaseDir: called with no target");
 	}
 
 	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
+	deltax = Target.Origin.x - Origin.x;
+	deltay = Target.Origin.y - Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -562,6 +562,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.15  2002/02/26 17:49:47  dj_jl
 //  no message
 //

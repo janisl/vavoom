@@ -212,7 +212,7 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or NULL).
-	Actor Enemy;
+	Actor Target;
 	// The originator for missiles.
 	Actor Owner;
 
@@ -344,6 +344,15 @@ class Actor:Entity
 
 class Weapon:ViewEntity
 {
+	int Ammo;
+	int UpState;
+	int DownState;
+	int ReadyState;
+	int AttackState;
+	int HoldAttackState;
+	int FlashState;
+	string ThirdPersonModel;
+
 	void A_Light0(void);
 	void A_WeaponReady(void);
 	void A_Lower(void);
@@ -366,9 +375,6 @@ class Weapon:ViewEntity
 	void A_FirePlasma(void);
 	void A_BFGsound(void);
 	void A_FireBFG(void);
-#ifdef GRENADE_LAUNCHER
-	void A_FireGrenade(void);
-#endif
 }
 
 /*
@@ -626,14 +632,6 @@ addfields player_t
 	// Is wp_nochange if not changing.
 	int PendingWeapon;
 
-	int w_Ammo;
-	int w_UpState;
-	int w_DownState;
-	int w_ReadyState;
-	int w_AttackState;
-	int w_HoldAttackState;
-	int w_FlashState;
-
 	// Who did damage (NULL for floors/ceilings).
 	mobj_t *Attacker;
 
@@ -685,6 +683,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.23  2002/02/26 17:49:47  dj_jl
 //  no message
 //

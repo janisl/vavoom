@@ -296,7 +296,7 @@ class Actor:Entity
 	name ClassName;
 
 	// Thing being chased/attacked (or NULL),
-	Actor Enemy;
+	Actor Target;
 	// also the originator for missiles.
 	Actor Owner;
 
@@ -445,29 +445,23 @@ class Actor:Entity
 
 class Weapon:ViewEntity
 {
+	int Ammo;
+	int UpState;
+	int DownState;
+	int ReadyState;
+	int AttackState;
+	int HoldAttackState;
+	int FlashState;
+
 	void A_Light0(void);
 	void A_WeaponReady(void);
 	void A_Lower(void);
 	void A_Raise(void);
-	void A_Punch(void);
 	void A_ReFire(void);
 	void A_7(void);
-	void A_8(void);
 	void A_9(void);
-	void A_10(void);
-	void A_11(void);
 	void A_12(void);
 	void A_13(void);
-	void A_14(void);
-	void A_15(void);
-	void A_16(void);
-	void A_17(void);
-	void A_18(void);
-	void A_19(void);
-	void A_20(void);
-	void A_21(void);
-	void A_22(void);
-	void A_23(void);
 }
 
 addfields player_t
@@ -508,14 +502,6 @@ addfields player_t
 
 	// Is wp_nochange if not changing.
 	int PendingWeapon;
-
-	int w_Ammo;
-	int w_UpState;
-	int w_DownState;
-	int w_ReadyState;
-	int w_AttackState;
-	int w_HoldAttackState;
-	int w_FlashState;
 
 	// Who did damage (NULL for floors/ceilings).
 	mobj_t *Attacker;
@@ -559,6 +545,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.22  2002/02/26 17:49:49  dj_jl
 //  no message
 //

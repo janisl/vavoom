@@ -47,19 +47,22 @@
 
 void Actor::A_SkullAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	bSkullFly = true;
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalize(MobjCenter(Enemy) - Origin) * SKULLSPEED;
+	Velocity = Normalize(MobjCenter(Target) - Origin) * SKULLSPEED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.14  2002/02/26 17:49:47  dj_jl
 //  no message
 //

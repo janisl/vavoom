@@ -43,14 +43,14 @@
 
 void Actor::A_ImpMeAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 5 + (P_Random() & 7));
+		Target.Damage(self, self, 5 + (P_Random() & 7));
 	}
 }
 
@@ -62,7 +62,7 @@ void Actor::A_ImpMeAttack(void)
 
 void Actor::A_ImpMsAttack(void)
 {
-	if (!Enemy || P_Random() > 64)
+	if (!Target || P_Random() > 64)
 	{
 		SetState(SeeState);
 		return;
@@ -77,15 +77,15 @@ void Actor::A_ImpMsAttack(void)
 	an = Angles.yaw;
 	Velocity.x = 12.0 * cos(an) * 35.0;
 	Velocity.y = 12.0 * sin(an) * 35.0;
-	dist = MobjDist2(Enemy, self);
+	dist = MobjDist2(Target, self);
 	dist = dist / (12.0 * 35.0);
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
-	Velocity.z = (Enemy.Origin.z + Enemy.Height / 2.0 - Origin.z) / dist;
+	Velocity.z = (Target.Origin.z + Target.Height / 2.0 - Origin.z) / dist;
 #else
-	Velocity = Normalize(MobjCenter(Enemy) - Origin) * 12.0 * 35.0;
+	Velocity = Normalize(MobjCenter(Target) - Origin) * 12.0 * 35.0;
 #endif
 }
 
@@ -99,17 +99,17 @@ void Actor::A_ImpMsAttack(void)
 
 void Actor::A_ImpMsAttack2(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 5 + (P_Random() & 7));
+		Target.Damage(self, self, 5 + (P_Random() & 7));
 		return;
 	}
-	SpawnMissile(this, &Enemy, ImpBall);
+	SpawnMissile(this, &Target, ImpBall);
 }
 
 //==========================================================================
@@ -185,6 +185,9 @@ void Actor::A_ImpExplode(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.19  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -252,7 +252,7 @@ class Actor:Entity
 	int GibsHealth;
 
 	// Thing being chased/attacked (or NULL).
-	Actor Enemy;
+	Actor Target;
 	// The originator for missiles.
 	Actor Owner;
 
@@ -454,32 +454,27 @@ class Actor:Entity
 
 class Weapon:ViewEntity
 {
+	int Ammo;
+	int UpState;
+	int DownState;
+	int ReadyState;
+	int AttackState;
+	int HoldAttackState;
+	int UpState2;
+	int DownState2;
+	int ReadyState2;
+	int AttackState2;
+	int HoldAttackState2;
+	float PSpriteSY;
+
+	void WeaponLevel2Init(void) { }
+	void WeaponLevel2Fade(void) { }
+
 	void A_Light0(void);
 	void A_WeaponReady(void);
 	void A_Lower(void);
 	void A_Raise(void);
-	void A_StaffAttackPL1(void);
 	void A_ReFire(void);
-	void A_StaffAttackPL2(void);
-	void A_BeakReady(void);
-	void A_BeakRaise(void);
-	void A_BeakAttackPL1(void);
-	void A_BeakAttackPL2(void);
-	void A_GauntletAttack(void);
-	void A_FireBlasterPL1(void);
-	void A_FireBlasterPL2(void);
-	void A_FireMacePL1(void);
-	void A_FireMacePL2(void);
-	void A_FireSkullRodPL1(void);
-	void A_FireSkullRodPL2(void);
-	void A_FireGoldWandPL1(void);
-	void A_FireGoldWandPL2(void);
-	void A_FirePhoenixPL1(void);
-	void A_InitPhoenixPL2(void);
-	void A_FirePhoenixPL2(void);
-	void A_ShutdownPhoenixPL2(void);
-	void A_FireCrossbowPL1(void);
-	void A_FireCrossbowPL2(void);
 }
 
 /*
@@ -748,21 +743,6 @@ addfields player_t
 	// Is wp_nochange if not changing.
 	int PendingWeapon;
 
-	int w_Ammo;
-	int w_UpState;
-	int w_DownState;
-	int w_ReadyState;
-	int w_AttackState;
-	int w_HoldAttackState;
-	int w_FlashState;
-	int w2_Ammo;
-	int w2_UpState;
-	int w2_DownState;
-	int w2_ReadyState;
-	int w2_AttackState;
-	int w2_HoldAttackState;
-	int w2_FlashState;
-
 	boolean WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
@@ -827,6 +807,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.23  2002/02/26 17:49:48  dj_jl
 //  no message
 //

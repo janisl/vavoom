@@ -48,7 +48,7 @@ void Actor::A_PosAttack(void)
 	int damage;
 	TVec dir;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -68,6 +68,9 @@ void Actor::A_PosAttack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.14  2002/02/26 17:49:47  dj_jl
 //  no message
 //

@@ -342,14 +342,7 @@ boolean ArtiTomeOfPower(player_t * player)
 		{
 			return false;
 		}
-		if (player->ReadyWeapon == wp_staff)
-		{
-			SetPsprite(player, ps_weapon, S_STAFFREADY2_1);
-		}
-		else if (player->ReadyWeapon == wp_gauntlets)
-		{
-			SetPsprite(player, ps_weapon, S_GAUNTLETREADY2_1);
-		}
+		Weapon(player->ViewEnts[ps_weapon]).WeaponLevel2Init();
 	}
 	return true;
 }
@@ -440,7 +433,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	y = mthing->y;
 
 	players[playernum].mo->bNoPassMobj = true;
-	if (!CheckPosition(*players[playernum].mo, vector(x, y, ONFLOORZ)))
+	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		players[playernum].mo->bNoPassMobj = false;
 		return false;
@@ -461,6 +454,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.22  2002/02/26 17:49:48  dj_jl
 //  no message
 //

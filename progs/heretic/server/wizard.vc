@@ -72,17 +72,17 @@ void Actor::A_WizAtk3(void)
 	TAVec ang;
 
 	Translucency = 0;
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
+		Target.Damage(self, self, HITDICE(4));
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, WizardMissile);
+	mo = SpawnMissile(this, &Target, WizardMissile);
 	if (mo)
 	{
 		VectorAngles(&mo->Velocity, &ang);
@@ -108,6 +108,9 @@ void Actor::A_GhostOff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.18  2002/02/26 17:49:48  dj_jl
 //  no message
 //

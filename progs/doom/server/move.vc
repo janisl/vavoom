@@ -126,7 +126,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	int oldside;
 	line_t *ld;
 
-	check = P_CheckRelPosition(thing, x, y);
+	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
 	saved_tmfloorz = tmtrace.FloorZ;
 	floatok = false;
 	if (!check)
@@ -239,6 +239,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.20  2002/02/26 17:49:47  dj_jl
 //  no message
 //

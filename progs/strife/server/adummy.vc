@@ -23,57 +23,6 @@
 //**
 //**************************************************************************
 
-void Weapon::A_7(void)
-{
-}
-void Weapon::A_8(void)
-{
-}
-void Weapon::A_9(void)
-{
-}
-void Weapon::A_10(void)
-{
-}
-void Weapon::A_11(void)
-{
-}
-void Weapon::A_12(void)
-{
-}
-void Weapon::A_13(void)
-{
-}
-void Weapon::A_14(void)
-{
-}
-void Weapon::A_15(void)
-{
-}
-void Weapon::A_16(void)
-{
-}
-void Weapon::A_17(void)
-{
-}
-void Weapon::A_18(void)
-{
-}
-void Weapon::A_19(void)
-{
-}
-void Weapon::A_20(void)
-{
-}
-void Weapon::A_21(void)
-{
-}
-void Weapon::A_22(void)
-{
-}
-void Weapon::A_23(void)
-{
-}
 void Actor::A_24(void)
 {
 }
@@ -334,6 +283,9 @@ void Actor::A_112(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.7  2002/02/16 16:26:56  dj_jl
 //  Removed precalculated sound IDs
 //

@@ -43,13 +43,13 @@
 
 void Actor::A_KnightAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(3));
+		Target.Damage(self, self, HITDICE(3));
 		PlaySound('KnightAttack2', CHAN_WEAPON);
 		return;
 	}
@@ -58,11 +58,11 @@ void Actor::A_KnightAttack(void)
 	if (Class == KnightGhost || P_Random() < 40)
 	{
 		// Red axe
-		SpawnMissile(this, &Enemy, KnightRedAxe);
+		SpawnMissile(this, &Target, KnightRedAxe);
 		return;
 	}
 	// Green axe
-	SpawnMissile(this, &Enemy, KnightAxe);
+	SpawnMissile(this, &Target, KnightAxe);
 }
 
 //==========================================================================
@@ -85,6 +85,9 @@ void Actor::A_DripBlood(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.19  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -67,18 +67,6 @@ boolean WeaponInShareware[9] = {
 	true	// Beak
 };
 
-float PSpriteSY[NUMWEAPONS] = {
-	0.0,	// staff
-	5.0,	// goldwand
-	15.0,	// crossbow
-	15.0,	// blaster
-	15.0,	// skullrod
-	15.0,	// phoenix rod
-	15.0,	// mace
-	15.0,	// gauntlets
-	15.0	// beak
-};
-
 //==========================================================================
 //
 //  ThrustPlayer
@@ -925,7 +913,8 @@ void SetViewPos(player_t * player)
 	}
 
 	if (player->ReadyWeapon > 0 && player->ReadyWeapon < 7)
-		player->Stats.readyammo = player->Ammo[player->w_Ammo];
+		player->Stats.readyammo = player->Ammo[
+			Weapon(player->ViewEnts[ps_weapon]).Ammo];
 	else
 		player->Stats.readyammo = 0;
 }
@@ -1325,13 +1314,13 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
-	players[i].ViewEnts[ps_weapon] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_weapon].Player = &players[i];
-	players[i].ViewEnts[ps_flash] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_flash] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_flash].Player = &players[i];
 	if (players[i].bIsBot)
 	{
-		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot = SpawnObject(BotPlayer, none);
 		players[i].Bot.player = &players[i];
 		players[i].Bot.OnBeginPlay();
 	}
@@ -1396,6 +1385,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.26  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -66,7 +66,7 @@ boolean Actor::UpdateChicken(int tics)
 		return false;
 	}
 	mo->Angles.yaw = Angles.yaw;
-	mo->Enemy = Enemy;
+	mo->Target = Target;
 	SetState(S_FREETARGMOBJ);
 	fog = P_SpawnMobj(Origin.x, Origin.y, Origin.z + TELEFOGHEIGHT, TeleportFog);
 	fog->PlaySound('Teleport', CHAN_VOICE);
@@ -148,13 +148,13 @@ void Actor::A_ChicAttack(void)
 	{
 		return;
 	}
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, 1 + (P_Random() & 1));
+		Target.Damage(self, self, 1 + (P_Random() & 1));
 	}
 }
 
@@ -176,6 +176,9 @@ void Actor::A_ChicPain(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.17  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -45,7 +45,7 @@ void Actor::A_ClinkAttack(void)
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
@@ -53,13 +53,16 @@ void Actor::A_ClinkAttack(void)
 	if (CheckMeleeRange())
 	{
 		damage = ((P_Random() % 7) + 3);
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.13  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -75,7 +75,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	if (!CheckPosition(*players[playernum].mo, vector(x, y, ONFLOORZ)))
+	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		return false;
 	}
@@ -218,6 +218,9 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.20  2002/02/26 17:49:49  dj_jl
 //  no message
 //

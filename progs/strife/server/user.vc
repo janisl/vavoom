@@ -668,10 +668,11 @@ void SetViewPos(player_t * player)
 
 	SB_PaletteFlash(player);
 
-	if (player->w_Ammo == am_noammo)
+	if (Weapon(player->ViewEnts[ps_weapon]).Ammo == am_noammo)
 		player->ReadyAmmo = 1994;	// means "n/a"
 	else
-		player->ReadyAmmo = player->Ammo[player->w_Ammo];
+		player->ReadyAmmo = player->Ammo[
+			Weapon(player->ViewEnts[ps_weapon]).Ammo];
 }
 
 //==========================================================================
@@ -815,9 +816,9 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
-	players[i].ViewEnts[ps_weapon] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_weapon].Player = &players[i];
-	players[i].ViewEnts[ps_flash] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_flash] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_flash].Player = &players[i];
 	if (deathmatch)
 	{
@@ -875,6 +876,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.18  2002/02/22 18:00:26  dj_jl
 //  A lots of the renaming, beautification.
 //

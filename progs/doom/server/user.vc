@@ -704,10 +704,10 @@ void SetViewPos(player_t * player)
 	if ((player->Cheats & CF_GODMODE) || player->Powers[pw_invulnerability])
 		player->Stats.flags |= SBF_GOD_MODE;
 
-	if (player->w_Ammo == am_noammo)
+	if (Weapon(player->ViewEnts[ps_weapon]).Ammo == am_noammo)
 		player->ReadyAmmo = 1994;	// means "n/a"
 	else
-		player->ReadyAmmo = player->Ammo[player->w_Ammo];
+		player->ReadyAmmo = player->Ammo[Weapon(player->ViewEnts[ps_weapon]).Ammo];
 }
 
 //==========================================================================
@@ -869,13 +869,13 @@ void NetGameReborn(int playernum)
 
 void SpawnClient(int i)
 {
-	players[i].ViewEnts[ps_weapon] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_weapon].Player = &players[i];
-	players[i].ViewEnts[ps_flash] = Spawn(Weapon, none);
+	players[i].ViewEnts[ps_flash] = SpawnObject(Weapon, none);
 	players[i].ViewEnts[ps_flash].Player = &players[i];
 	if (players[i].bIsBot)
 	{
-		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot = SpawnObject(BotPlayer, none);
 		players[i].Bot.player = &players[i];
 		players[i].Bot.OnBeginPlay();
 	}
@@ -973,6 +973,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.21  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -87,7 +87,7 @@ void Actor::A_PainShootSkull(float angle)
 		return;
 	}
 
-	newmobj->Enemy = Enemy;
+	newmobj->Target = Target;
 	newmobj->A_SkullAttack();
 }
 
@@ -101,7 +101,7 @@ void Actor::A_PainShootSkull(float angle)
 
 void Actor::A_PainAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -141,6 +141,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.16  2002/02/26 17:49:47  dj_jl
 //  no message
 //

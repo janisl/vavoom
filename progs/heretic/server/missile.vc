@@ -166,23 +166,24 @@ mobj_t *SpawnMissileAngles(mobj_t * source, classid type, float yaw,
 mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 {
 	TAVec angles;
-	TVec vforward;
+	TVec dir;
 	float x, y, z;
 
 	// Try to find a target
-	avcpy(source->Angles, angles);
-	AimLineAttack(source, &angles, 16.0 * 64.0);
+	angles = source->Angles;
+	dir = AimLineAttack(source, angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(source, &angles, 16.0 * 64.0);
+		dir = AimLineAttack(source, angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(source, &angles, 16.0 * 64.0);
+			dir = AimLineAttack(source, angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
+				AngleVector(&angles, &dir);
 			}
 		}
 	}
@@ -197,9 +198,8 @@ mobj_t *SpawnPlayerMissile(mobj_t * source, classid type)
 		MissileMobj->PlaySound(MissileMobj->SightSound, CHAN_VOICE);
 	}
 	MissileMobj->Owner = *source;
-	MissileMobj->Angles = angles;
-	AngleVector(&angles, &vforward);
-	MissileMobj->Velocity = vforward * MissileMobj->Speed;
+	MissileMobj->Velocity = dir * MissileMobj->Speed;
+	VectorAngles(&dir, &MissileMobj->Angles);
 	if (MissileMobj->Class == BlasterFX1)
 	{
 		// Ultra-fast ripper spawning missile
@@ -229,7 +229,7 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 {
 	mobj_t *th;
 	TAVec angles;
-	TVec vforward;
+	TVec dir;
 	float x, y, z;
 
 	//
@@ -237,18 +237,19 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 	//
 	angles = source->Angles;
 	angles.yaw = angle;
-	AimLineAttack(source, &angles, 16.0 * 64.0);
+	dir = AimLineAttack(source, angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(source, &angles, 16.0 * 64.0);
+		dir = AimLineAttack(source, angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(source, &angles, 16.0 * 64.0);
+			dir = AimLineAttack(source, angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = angle;
+				AngleVector(&angles, &dir);
 			}
 		}
 	}
@@ -262,9 +263,8 @@ mobj_t *SpawnPlayerMissileAngle(mobj_t * source, classid type, float angle)
 		th->PlaySound(th->SightSound, CHAN_VOICE);
 	}
 	th->Owner = *source;
-	th->Angles = angles;
-	AngleVector(&angles, &vforward);
-	th->Velocity = vforward * th->Speed;
+	th->Velocity = dir * th->Speed;
+	VectorAngles(&dir, &th->Angles);
 	return (CheckMissileSpawn(th) ? th : NULL);
 }
 
@@ -334,6 +334,9 @@ boolean P_SeekerMissile(mobj_t * actor, float thresh, float turnMax)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.18  2002/02/26 17:49:48  dj_jl
 //  no message
 //

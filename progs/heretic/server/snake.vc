@@ -43,14 +43,14 @@
 
 void Actor::A_SnakeAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(this, &Enemy, SnakeProjectileA);
+	SpawnMissile(this, &Target, SnakeProjectileA);
 }
 
 //==========================================================================
@@ -61,19 +61,22 @@ void Actor::A_SnakeAttack(void)
 
 void Actor::A_SnakeAttack2(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		SetState(S_SNAKE_WALK1);
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
-	SpawnMissile(this, &Enemy, SnakeProjectileB);
+	SpawnMissile(this, &Target, SnakeProjectileB);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.12  2002/02/26 17:49:48  dj_jl
 //  no message
 //

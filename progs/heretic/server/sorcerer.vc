@@ -103,25 +103,25 @@ void Actor::A_Srcr1Attack(void)
 	TAVec ang;
 	float angle;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(8));
+		Target.Damage(self, self, HITDICE(8));
 		return;
 	}
 	if (Health > (SpawnHealth / 3) * 2)
 	{
 		// Spit one fireball
-		SpawnMissile(this, &Enemy, Sorcerer1Missile);
+		SpawnMissile(this, &Target, Sorcerer1Missile);
 	}
 	else
 	{
 		// Spit three fireballs
-		mo = SpawnMissile(this, &Enemy, Sorcerer1Missile);
+		mo = SpawnMissile(this, &Target, Sorcerer1Missile);
 		if (mo)
 		{
 			VectorAngles(&mo->Velocity, &ang);
@@ -186,7 +186,7 @@ void Actor::A_SorcererRise(void)
 	mo = SpawnActor(Origin, Sorcerer2);
 	mo.SetState(S_SOR2_RISE1);
 	mo.Angles.yaw = Angles.yaw;
-	mo.Enemy = Enemy;
+	mo.Target = Target;
 }
 
 //==========================================================================
@@ -313,14 +313,14 @@ void Actor::A_Srcr2Attack(void)
 {
 	int chance;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlayFullVolumeSound(AttackSound, CHAN_AUTO);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(20));
+		Target.Damage(self, self, HITDICE(20));
 		return;
 	}
 	chance = Health < SpawnHealth / 2 ? 96 : 48;
@@ -335,7 +335,7 @@ void Actor::A_Srcr2Attack(void)
 	else
 	{
 		// Blue bolt
-		SpawnMissile(this, &Enemy, Sorcerer2Missile1);
+		SpawnMissile(this, &Target, Sorcerer2Missile1);
 	}
 }
 
@@ -448,6 +448,9 @@ void Actor::A_GenWizard(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.20  2002/02/26 17:49:48  dj_jl
 //  no message
 //

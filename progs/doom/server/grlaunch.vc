@@ -90,40 +90,47 @@ class missile_grenade:Actor
 
 //==========================================================================
 //
-//  set_weapon_grenade
+//	WeaponGrenade
 //
 //==========================================================================
 
-__states__(Weapon)
+class WeaponGrenade:Weapon
 {
-	//  Weapon in player view
-	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
-	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
-	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
-	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
-	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
-	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
-	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
-	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
-	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
-	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
-}
+	void A_FireGrenade(void);
 
-void set_weapon_grenade(player_t * player)
-{
-	player->w_Ammo = am_misl;
-	player->w_UpState = S_GRENLAUNCHUP;
-	player->w_DownState = S_GRENLAUNCHDOWN;
-	player->w_ReadyState = S_GRENLAUNCH;
-	player->w_AttackState = S_GRENLAUNCH1;
-	player->w_HoldAttackState = S_NULL;
-	player->w_FlashState = S_GRENLAUNCHFLASH1;
-	player->WeaponModel = 0;
+	__states__
+	{
+		//  Weapon in player view
+		S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
+		S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
+		S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
+		S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
+		S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); }
+		S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
+		S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
+		S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
+		S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
+		S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	}
+
+	defaultproperties
+	{
+		Ammo = am_misl;
+		UpState = S_GRENLAUNCHUP;
+		DownState = S_GRENLAUNCHDOWN;
+		ReadyState = S_GRENLAUNCH;
+		AttackState = S_GRENLAUNCH1;
+		HoldAttackState = S_NULL;
+		FlashState = S_GRENLAUNCHFLASH1;
+	}
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.12  2002/02/22 18:00:07  dj_jl
 //  A lots of the renaming, beautification.
 //

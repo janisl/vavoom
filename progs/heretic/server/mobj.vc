@@ -598,7 +598,7 @@ boolean Actor::ChickenMorph(void)
 	chicken.SpecialCID = Class;
 	chicken.Special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
 	chicken.Translucency = Translucency;
-	chicken.Enemy = Enemy;
+	chicken.Target = Target;
 	chicken.Angles.yaw = Angles.yaw;
 
 	SetState(S_FREETARGMOBJ);
@@ -951,7 +951,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 	{
 		// Target actor is not intent on another actor,
 		// so make him chase after source
-		Enemy = source;
+		Target = source;
 		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
@@ -1416,7 +1416,7 @@ void Actor::NightmareRespawn(void)
 	x = SpawnSpot.x;
 	y = SpawnSpot.y;
 
-	if (!CheckPosition(self, vector(x, y, ONFLOORZ)))
+	if (!CheckPosition(vector(x, y, ONFLOORZ)))
 		return;	// somthing is occupying it's position
 
 	// spawn a teleport fog at old spot
@@ -1452,6 +1452,9 @@ void Actor::NightmareRespawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.35  2002/02/26 17:49:48  dj_jl
 //  no message
 //

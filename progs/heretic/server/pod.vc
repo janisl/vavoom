@@ -59,7 +59,7 @@ void Actor::A_MakePod(void)
 	y = Origin.y;
 	z = Origin.z;
 	mo = P_SpawnMobj(x, y, ONFLOORZ, Pod);
-	if (!CheckPosition(*mo, mo->Origin))
+	if (!mo->CheckPosition(mo->Origin))
 	{
 		// Didn't fit
 		P_RemoveMobj(mo);
@@ -124,6 +124,9 @@ void Actor::A_RemovePod(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.15  2002/02/26 17:49:48  dj_jl
 //  no message
 //

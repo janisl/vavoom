@@ -47,18 +47,18 @@
 
 void Actor::A_MinotaurAtk1(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('StaffHit2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(4));
-		if (Enemy.bIsPlayer)
+		Target.Damage(self, self, HITDICE(4));
+		if (Target.bIsPlayer)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -16.0;
+			Target.Player->DeltaViewHeight = -16.0;
 		}
 	}
 }
@@ -75,14 +75,14 @@ void Actor::A_MinotaurDecide(void)
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('MinotaurSight', CHAN_VOICE);
-	dist = MobjDist(self, Enemy);
-	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
-		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
+	dist = MobjDist(self, Target);
+	if (Target.Origin.z + Target.Height > Origin.z &&
+		Target.Origin.z + Target.Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
 	{
 		// Charge attack
@@ -90,10 +90,10 @@ void Actor::A_MinotaurDecide(void)
 		SetStateNF(S_MNTR_ATK4_1);
 		bSkullFly = true;
 		A_FaceTarget();
-		Velocity = Normalize(Enemy.Origin - Origin) * MNTR_CHARGE_SPEED;
+		Velocity = Normalize(Target.Origin - Origin) * MNTR_CHARGE_SPEED;
 		Special1 = 35 / 2;	// Charge duration
 	}
-	else if (Enemy.Origin.z == Enemy.FloorZ &&
+	else if (Target.Origin.z == Target.FloorZ &&
 		dist < 9.0 * 64.0 && P_Random() < 220)
 	{
 		// Floor fire attack
@@ -123,17 +123,17 @@ void Actor::A_MinotaurAtk2(void)
 	float angle;
 	TAVec ang;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound('MinotaurAttack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(5));
+		Target.Damage(self, self, HITDICE(5));
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, MinotaurMissile);
+	mo = SpawnMissile(this, &Target, MinotaurMissile);
 	if (mo)
 	{
 		mo->PlaySound('MinotaurAttack2', CHAN_WEAPON);
@@ -162,22 +162,22 @@ void Actor::A_MinotaurAtk3(void)
 {
 	mobj_t *mo;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(5));
-		if (Enemy.Player)
+		Target.Damage(self, self, HITDICE(5));
+		if (Target.Player)
 		{
 			// Squish the player
-			Enemy.Player->DeltaViewHeight = -16.0;
+			Target.Player->DeltaViewHeight = -16.0;
 		}
 	}
 	else
 	{
-		mo = SpawnMissile(this, &Enemy, MinotaurFloorFire);
+		mo = SpawnMissile(this, &Target, MinotaurFloorFire);
 		if (mo != NULL)
 		{
 			mo->PlaySound('MinotaurAttack1', CHAN_VOICE);
@@ -237,6 +237,9 @@ void Actor::A_MntrFloorFire(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.21  2002/02/26 17:49:48  dj_jl
 //  no message
 //

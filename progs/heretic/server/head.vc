@@ -55,28 +55,28 @@ void Actor::A_HeadAttack(void)
 	// Whirlwind    (close 40% : far 20%)
 	// Distance threshold = 8 cells
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(6));
+		Target.Damage(self, self, HITDICE(6));
 		return;
 	}
-	dist = MobjDist2(self, Enemy) > 8.0 * 64.0;
+	dist = MobjDist2(self, Target) > 8.0 * 64.0;
 	randAttack = P_Random();
 	if (randAttack < (dist ? 150 : 50))
 	{
 		// Ice ball
-		SpawnMissile(this, &Enemy, HeadMissile1);
+		SpawnMissile(this, &Target, HeadMissile1);
 		PlaySound('HeadAttack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
 		// Fire column
-		baseFire = SpawnMissile(this, &Enemy, HeadMissile3);
+		baseFire = SpawnMissile(this, &Target, HeadMissile3);
 		if (baseFire != NULL)
 		{
 			baseFire->SetState(S_HEADFX3_4);	// Don't grow
@@ -99,11 +99,11 @@ void Actor::A_HeadAttack(void)
 	else
 	{
 		// Whirlwind
-		mo = SpawnMissile(this, &Enemy, WhirlWind);
+		mo = SpawnMissile(this, &Target, WhirlWind);
 		if (mo != NULL)
 		{
 			mo->Origin.z -= 32.0;
-			mo->SpecialMobj1 = &Enemy;
+			mo->SpecialMobj1 = &Target;
 			mo->Special2 = 50;	// Timer for active sound
 			mo->Health = 20 * TICRATE;	// Duration
 			PlaySound('HeadAttack3', CHAN_WEAPON);
@@ -183,6 +183,9 @@ void Actor::A_WhirlwindSeek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.19  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -40,11 +40,11 @@ void Actor::A_Look(void)
 
 	if (targ && targ.bShootable)
 	{
-		Enemy = targ;
+		Target = targ;
 
 		if (bAmbush)
 		{
-			if (!P_CheckSight(self, Enemy))
+			if (!P_CheckSight(self, Target))
 			{
 				if (!LookForPlayers(false))
 					return;
@@ -94,7 +94,7 @@ void Actor::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Enemy || Enemy.Health <= 0)
+		if (!Target || Target.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -130,12 +130,12 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
-		// look for a new enemy
+		// look for a new target
 		if (LookForPlayers(true))
 		{
-			return;	// got a new enemy
+			return;	// got a new target
 		}
 		SetState(SpawnState);
 		return;
@@ -180,7 +180,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!P_CheckSight(self, Target))
 		{
 			if (LookForPlayers(true))
 				return;	// got a new target
@@ -219,14 +219,14 @@ void Actor::A_Chase(void)
 
 void Actor::A_FaceTarget(void)
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	bAmbush = false;
 
-	Angles.yaw = atan2(Enemy.Origin.y - Origin.y, Enemy.Origin.x - Origin.x);
+	Angles.yaw = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
 
-	if (Enemy.Translucency)
+	if (Target.Translucency)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -633,6 +633,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.21  2002/02/26 17:49:48  dj_jl
 //  no message
 //

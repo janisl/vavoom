@@ -47,16 +47,16 @@ boolean Actor::CheckMeleeRange(void)
 {
 	float dist;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return false;
 	}
-	dist = MobjDist(Enemy, self);
+	dist = MobjDist(Target, self);
 	if (dist >= MELEERANGE)
 	{
 		return false;
 	}
-	if (!P_CheckSight(self, Enemy))
+	if (!P_CheckSight(self, Target))
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ boolean Actor::CheckMissileRange(void)
 {
 	float dist;
 
-	if (!P_CheckSight(self, Enemy))
+	if (!P_CheckSight(self, Target))
 	{
 		return false;
 	}
@@ -88,7 +88,7 @@ boolean Actor::CheckMissileRange(void)
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(self, Enemy) - 64.0;
+	dist = MobjDist(self, Target) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -178,7 +178,7 @@ boolean Actor::LookForMonsters(void)
 			continue;
 		}
 		// Found a target monster
-		Enemy = mo;
+		Target = mo;
 		return true;
 	}
 	return false;
@@ -254,7 +254,7 @@ boolean Actor::LookForPlayers(boolean allaround)
 				return false;
 			}
 		}
-		Enemy = *P->mo;
+		Target = *P->mo;
 		return true;
 	}
 	return false;
@@ -369,14 +369,14 @@ void Actor::NewChaseDir(void)
 	int d[3];
 	int tdir, olddir, turnaround;
 
-	if (!Enemy)
-		Error("NewChaseDir: called with no Enemy");
+	if (!Target)
+		Error("NewChaseDir: called with no Target");
 
 	olddir = MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
+	deltax = Target.Origin.x - Origin.x;
+	deltay = Target.Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -472,6 +472,9 @@ void Actor::NewChaseDir(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.20  2002/02/26 17:49:48  dj_jl
 //  no message
 //

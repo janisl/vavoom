@@ -47,7 +47,7 @@
 
 void Actor::A_SkelWhoosh(void)
 {
-	if (!Enemy)
+	if (!Target)
 		return;
 	A_FaceTarget();
 	PlaySound('RavenantSwing', CHAN_WEAPON);
@@ -65,7 +65,7 @@ void Actor::A_SkelFist(void)
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -74,7 +74,7 @@ void Actor::A_SkelFist(void)
 	{
 		damage = ((P_Random() % 10) + 1) * 6;
 		PlaySound('RavenantPunch', CHAN_WEAPON);
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 	}
 }
 
@@ -90,16 +90,16 @@ void Actor::A_SkelMissile(void)
 {
 	mobj_t *mo;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 	Origin.z += 16.0;	// so missile spawns higher
-	mo = SpawnMissile(this, &Enemy, RevenantTracer);
+	mo = SpawnMissile(this, &Target, RevenantTracer);
 	Origin.z -= 16.0;	// back to normal
 
 	mo->Origin = mo->Origin + mo->Velocity * 0.03;
-	mo->Enemy = Enemy;
+	mo->Target = Target;
 }
 
 //==========================================================================
@@ -136,10 +136,10 @@ void Actor::A_Tracer(void)
 		th->StateTime = 0.1;
 
 	// adjust direction
-	if (!Enemy || Enemy.Health <= 0)
+	if (!Target || Target.Health <= 0)
 		return;
 
-	wishdir = Normalize(MobjCenter(Enemy) - Origin);
+	wishdir = Normalize(MobjCenter(Target) - Origin);
 	currdir = Normalize(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
@@ -177,6 +177,9 @@ void Actor::A_Tracer(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.8  2002/02/26 17:49:47  dj_jl
 //  no message
 //

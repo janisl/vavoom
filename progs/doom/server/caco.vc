@@ -47,24 +47,27 @@ void Actor::A_HeadAttack(void)
 {
 	int damage;
 
-	if (!Enemy)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
 		damage = (P_Random() % 6 + 1) * 10;
-		Enemy.Damage(self, self, damage);
+		Target.Damage(self, self, damage);
 		return;
 	}
 
 	// launch a missile
-	SpawnMissile(this, &Enemy, CacodemonMissile);
+	SpawnMissile(this, &Target, CacodemonMissile);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.10  2002/02/26 17:49:47  dj_jl
 //  no message
 //

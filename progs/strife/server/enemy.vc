@@ -41,11 +41,11 @@ void A_Look(mobj_t * actor)
 
 	if (targ && targ.bShootable)
 	{
-		actor->Enemy = targ;
+		actor->Target = targ;
 
 		if (actor->bAmbush)
 		{
-			if (!P_CheckSight(*actor, actor->Enemy))
+			if (!P_CheckSight(*actor, actor->Target))
 			{
 				if (!P_LookForPlayers(actor, false))
 					return;
@@ -87,7 +87,7 @@ void Actor::A_Chase(void)
 	// modify target threshold
 	if (Threshold)
 	{
-		if (!Enemy || Enemy.Health <= 0)
+		if (!Target || Target.Health <= 0)
 		{
 			Threshold = 0;
 		}
@@ -113,7 +113,7 @@ void Actor::A_Chase(void)
 		}
 	}
 
-	if (!Enemy || !Enemy.bShootable)
+	if (!Target || !Target.bShootable)
 	{
 		// look for a new target
 		if (P_LookForPlayers(this, true))
@@ -163,7 +163,7 @@ void Actor::A_Chase(void)
 	// possibly choose another target
 	if (netgame && !Threshold)
 	{
-		if (!P_CheckSight(self, Enemy))
+		if (!P_CheckSight(self, Target))
 		{
 			if (P_LookForPlayers(this, true))
 				return;	// got a new target
@@ -191,15 +191,15 @@ void Actor::A_Chase(void)
 
 void A_FaceTarget(mobj_t * actor)
 {
-	if (!actor->Enemy)
+	if (!actor->Target)
 		return;
 
 	actor->bAmbush = false;
 
-	actor->Angles.yaw = atan2(actor->Enemy.Origin.y - actor->Origin.y,
-		actor->Enemy.Origin.x - actor->Origin.x);
+	actor->Angles.yaw = atan2(actor->Target.Origin.y - actor->Origin.y,
+		actor->Target.Origin.x - actor->Origin.x);
 
-	if (actor->Enemy.Translucency)
+	if (actor->Target.Translucency)
 	{
 		actor->Angles.yaw = AngleMod360(actor->Angles.yaw +
 			(Random() - Random()) * 45.0);
@@ -231,7 +231,7 @@ void Actor::A_Pain(void)
 void A_Explode(mobj_t * thingy)
 {
 	thingy->Translucency = 50;
-	P_RadiusAttack(thingy, &thingy->Enemy, 128, 0, 0);
+	P_RadiusAttack(thingy, &thingy->Target, 128, 0, 0);
 }
 
 //==========================================================================
@@ -303,6 +303,9 @@ void Actor::A_PlayerScream(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.17  2002/02/26 17:49:49  dj_jl
 //  no message
 //

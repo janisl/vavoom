@@ -134,7 +134,7 @@ boolean P_ThingHeightClip(mobj_t * thing)
 
 	onfloor = (thing->Origin.z == thing->FloorZ);
 
-	P_CheckRelPosition(thing, thing->Origin.x, thing->Origin.y);
+	thing->CheckRelPosition(thing->Origin);
 	// what about stranding a monster partially off an edge?
 
 	thing->Floor = tmtrace.Floor;
@@ -863,6 +863,9 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/02 17:41:12  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.22  2002/02/22 18:00:08  dj_jl
 //  A lots of the renaming, beautification.
 //

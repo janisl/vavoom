@@ -43,14 +43,14 @@
 
 void Actor::A_MummyAttack(void)
 {
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 		PlaySound('MumyAttack2', CHAN_WEAPON);
 		return;
 	}
@@ -69,19 +69,19 @@ void Actor::A_MummyAttack2(void)
 {
 	mobj_t *mo;
 
-	if (!Enemy)
+	if (!Target)
 	{
 		return;
 	}
 	if (CheckMeleeRange())
 	{
-		Enemy.Damage(self, self, HITDICE(2));
+		Target.Damage(self, self, HITDICE(2));
 		return;
 	}
-	mo = SpawnMissile(this, &Enemy, MummyMissile);
+	mo = SpawnMissile(this, &Target, MummyMissile);
 	if (mo)
 	{
-		mo->SpecialMobj1 = &Enemy;
+		mo->SpecialMobj1 = &Target;
 	}
 }
 
@@ -113,6 +113,9 @@ void Actor::A_MummyFX1Seek(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.17  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -49,12 +49,12 @@ int P_CheckMeleeRange(mobj_t * actor)
 	mobj_t *pl;
 	float dist;
 
-	if (!actor->Enemy)
+	if (!actor->Target)
 	{
 		return false;
 	}
 
-	pl = &actor->Enemy;
+	pl = &actor->Target;
 	dist = MobjDist(*pl, *actor);
 
 	if (dist >= MELEERANGE - 20.0 + pl->Radius)
@@ -62,7 +62,7 @@ int P_CheckMeleeRange(mobj_t * actor)
 		return false;
 	}
 
-	if (!P_CheckSight(*actor, actor->Enemy))
+	if (!P_CheckSight(*actor, actor->Target))
 	{
 		return false;
 	}
@@ -80,7 +80,7 @@ int P_CheckMissileRange(mobj_t * actor)
 {
 	float dist;
 
-	if (!P_CheckSight(*actor, actor->Enemy))
+	if (!P_CheckSight(*actor, actor->Target))
 	{
 		return false;
 	}
@@ -99,7 +99,7 @@ int P_CheckMissileRange(mobj_t * actor)
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(*actor, actor->Enemy) - 64.0;
+	dist = MobjDist(*actor, actor->Target) - 64.0;
 
 	if (!actor->MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -206,7 +206,7 @@ boolean P_LookForMonsters(mobj_t * actor, boolean allaround)
 			}
 		}
 
-		actor->Enemy = mo;
+		actor->Target = mo;
 		return true;
 	}
 	return false;
@@ -279,7 +279,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 			}
 		}
 
-		actor->Enemy = *player->mo;
+		actor->Target = *player->mo;
 		return true;
 	}
 
@@ -398,16 +398,16 @@ void P_NewChaseDir(mobj_t * actor)
 
 	int turnaround;
 
-	if (!actor->Enemy)
+	if (!actor->Target)
 	{
-		Error("P_NewChaseDir: called with no Enemy");
+		Error("P_NewChaseDir: called with no target");
 	}
 
 	olddir = actor->MoveDir;
 	turnaround = opposite[olddir];
 
-	deltax = actor->Enemy.Origin.x - actor->Origin.x;
-	deltay = actor->Enemy.Origin.y - actor->Origin.y;
+	deltax = actor->Target.Origin.x - actor->Origin.x;
+	deltay = actor->Target.Origin.y - actor->Origin.y;
 
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
@@ -513,6 +513,9 @@ void P_NewChaseDir(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 17:41:13  dj_jl
+//  Renamed Enemy to Target. Beautification.
+//
 //  Revision 1.15  2002/02/26 17:49:49  dj_jl
 //  no message
 //
