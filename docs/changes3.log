@@ -149,7 +149,7 @@
 14-09-2002
   S∆ku p∆rveidot klases jaun∆ stil∆.
 21-09-2002
-  Turpinu sadali. –odien k∆rta Hexex. Ak, vai!
+  Turpinu sadali. –odien k∆rta Hexen. Ak, vai!
 28-09-2002
   Turpinu. K∆rta vÒl vienai kaudzei kla˝u.
 05-10-2002
@@ -293,3 +293,51 @@
   Saku parnest visparigas klienta funkcijas uz speletaja klasi.
 28-08-2004
   Pabeidzu ar visparigajam klienta funkcijam.
+04-10-2004
+  I've got my own computer at home and I'm back to Vavoom development. I also
+ decided to write further logs in English, partly because most user's don't
+ speek Latvian (now they will understand this) and because in Linux typing logs
+ in Latvian might have compatibility problems. But don't expect me to translate
+ all old logs.
+05-10-2004
+  Added behavior lump size check. Levels with BEHAVIOR lump of 0 bytes will
+ load fine now.
+06-10-2004
+  Working on better rendering of old skies, almost done.
+07-10-2004
+  Finished improved old sky rendering.
+08-10-2004
+  Added SDL patches (with some modifications). Probably I have a very old
+ version of SDL since I had to comment out some lines that most likely do work
+ with newer versions.
+  Updated to latest glBSP version.
+10-10-2004
+  Added support for version 3.0 GL-Nodes in engine and glVIS.
+  Fixed flying blood n Hexen.
+  In Doom and Strife added definitions for texture and flat animations for all
+ frames.
+  Added toggle always run to controls menu.
+  In Linux end text replace characters below 32 with dot.
+  For Strife added helper ACS scripts lump. Coorect locks by quests.
+11-10-2004
+  Joystick yaw speed default value fixed.
+  Added acc and compiling of helper ACS to build process.
+  In Strife stamina affects maximal health.
+12-10-2004
+  Working on Strife. By looking at SvDoom source found out that items and
+ blowable objects have give quest flag with quest number in speed. It made a
+ lots of quest triggers work fine. Also implemented animated door. Now it's
+ playable till killing of Programmer.
+13-10-2004
+  More work on Strife. Fully implemented alarm indicators, turrets, stalkers
+ and Programmer. Killing Programmer informs helper ACS about death so that
+ map traversals to new and abandoned front base work fine.
+15-10-2004
+  Upgrasded to latest SDL. Amyways there's some delay till sound is played.
+17-10-2004
+  Working on Strife monsters. Implemented templar, inquisitor, Bishop, Macil,
+ Oracle, Loremaster, specters, Entity. Also implemented sigil.
+
+******************************************************************************
+                            VERSION 1.15.3
+******************************************************************************

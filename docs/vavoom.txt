@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  version 1.15.2
+                                                  version 1.15.3
 
 Contents:
     0. Disclaimer
@@ -98,7 +98,7 @@ Compiler and tools:
 Libraries:
     * Allegro 4.0 (http://alleg.sourceforge.net)
  or
-    * SDL 1.2.2
+    * SDL 1.2.2 (http://www.libsdl.org)
     * OpenGL: OpenGL implementation from your video card's manufacturer
   or MESA (http://www.mesa3d.org) and X-Windows development libraries.
 Optional:
@@ -159,6 +159,8 @@ a symbolic link to it:
    or:
         cd /usr/local/games/Vavoom
         ln -s <where-your-wad-file-is> .
+
+  Also make sure that the file/symbolic link name is in lower case.
 
   8. Run Allegro setup utility, setup your sound and music card, save changes
 and then copy allegro.cfg into Vavoom directory.
@@ -871,6 +873,19 @@ Version 1.15.2
 
 * Several bug fixes, improved Strife support.
 
+==============================================================================
+Version 1.15.3
+==============================================================================
+
+* Windowed mode for all Windows renderers.
+* Mouse wheel support.
+* Improved old sky rendering.
+* Added SDL patches (with some modifications).
+* Updated to latest glBSP version.
+* Added support for version 3.0 GL-Nodes in engine and glVIS.
+* Even more improved Strife support.
+* Several other small bug fixes.
+
 *****************************************************************************
 8. Licencing
 *****************************************************************************
@@ -891,7 +906,7 @@ Version 1.15.2
     http://glbsp.sourceforge.net/
 
   The homepage for glVIS:
-    http://www.vavoom-engine.com/glvis.html
+    http://www.vavoom-engine.com/glvis.php
 
   The home of ID-Software:
     http://www.idsoftware.com/
