@@ -127,13 +127,8 @@ void TOpenGLDrawer::GenerateTextures(void)
 	glGenTextures(NUM_BLOCK_SURFS, lmap_id);
 	glGenTextures(MAX_SKIN_CACHE, skin_id);
 	glGenTextures(1, &particle_texture);
-	memset(texture_sent, 0, numtextures);
-	memset(flat_sent, 0, numflats);
-	memset(skymap_sent, 0, numskymaps);
-	memset(sprite_sent, 0, numspritelumps);
-	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
-	memset(pic_sent, 0, MAX_PICS);
-	memset(skin_name, 0, sizeof(skin_name));
+
+	FlushTextures();
 
 	for (j = 0; j < 8; j++)
 	{
@@ -149,6 +144,23 @@ void TOpenGLDrawer::GenerateTextures(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, pbuf);
 
 	texturesGenerated = true;
+}
+
+//==========================================================================
+//
+//	TOpenGLDrawer::FlushTextures
+//
+//==========================================================================
+
+void TOpenGLDrawer::FlushTextures(void)
+{
+	memset(texture_sent, 0, numtextures);
+	memset(flat_sent, 0, numflats);
+	memset(skymap_sent, 0, numskymaps);
+	memset(sprite_sent, 0, numspritelumps);
+	memset(trspr_sent, 0, MAX_TRANSLATED_SPRITES);
+	memset(pic_sent, 0, MAX_PICS);
+	memset(skin_name, 0, sizeof(skin_name));
 }
 
 //==========================================================================
@@ -778,6 +790,23 @@ void TOpenGLDrawer::SetSkin(const char *name)
 
 //==========================================================================
 //
+//	TOpenGLDrawer::AdjustGamma
+//
+//==========================================================================
+
+void TOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
+{
+	byte *gt = gammatable[usegamma];
+	for (int i = 0; i < size; i++)
+	{
+		data[i].r = gt[data[i].r];
+		data[i].g = gt[data[i].g];
+		data[i].b = gt[data[i].b];
+	}
+}
+
+//==========================================================================
+//
 //	TOpenGLDrawer::ResampleTexture
 //
 //	Resizes	texture.
@@ -955,6 +984,8 @@ void TOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	int		level;
 	byte	stackbuf[256 * 128 * 4];
 
+	AdjustGamma(data, width * height);
+
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -1014,6 +1045,8 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 	byte	*image;
 	byte	stackbuf[64 * 1024];
 
+	AdjustGamma(data, width * height);
+
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -1052,9 +1085,12 @@ void TOpenGLDrawer::UploadTextureNoMip(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/27 07:45:01  dj_jl
+//	Added gamma controls
+//
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.11  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
 //	

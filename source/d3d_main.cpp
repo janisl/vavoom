@@ -57,6 +57,7 @@ static bool					Windowed;
 //==========================================================================
 
 TDirect3DDrawer::TDirect3DDrawer(void) :
+	lastgamma(0),
 	device("d3d_device", "0", CVAR_ARCHIVE),
 	clear("d3d_clear", "0", CVAR_ARCHIVE),
 	tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE),
@@ -655,6 +656,12 @@ void TDirect3DDrawer::StartUpdate(void)
 	}
 #endif
 
+	if (lastgamma != usegamma)
+	{
+		FlushTextures();
+		lastgamma = usegamma;
+	}
+
 	RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
 	RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
 	RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
@@ -1096,9 +1103,12 @@ void TDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2001/10/27 07:45:01  dj_jl
+//	Added gamma controls
+//
 //	Revision 1.15  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.14  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
 //	

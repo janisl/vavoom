@@ -178,6 +178,20 @@ void TDirect3DDrawer::InitTextures(void)
 
 //==========================================================================
 //
+//	TDirect3DDrawer::FlushTextures
+//
+//==========================================================================
+
+void TDirect3DDrawer::FlushTextures(void)
+{
+	for (int i = 0; i < numsurfaces; i++)
+	{
+		SAFE_RELEASE(texturesurfaces[i]);
+	}
+}
+
+//==========================================================================
+//
 //	TDirect3DDrawer::ReleaseTextures
 //
 //==========================================================================
@@ -834,6 +848,23 @@ void TDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 
 //==========================================================================
 //
+//	TDirect3DDrawer::AdjustGamma
+//
+//==========================================================================
+
+void TDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
+{
+	byte *gt = gammatable[usegamma];
+	for (int i = 0; i < size; i++)
+	{
+		data[i].r = gt[data[i].r];
+		data[i].g = gt[data[i].g];
+		data[i].b = gt[data[i].b];
+	}
+}
+
+//==========================================================================
+//
 //	TDirect3DDrawer::ResampleTexture
 //
 //	Resizes	texture.
@@ -1023,6 +1054,8 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTexture(int width, int height, rgba_
 	HRESULT					ddres;
 #endif
 
+	AdjustGamma(data, width * height);
+
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -1127,6 +1160,8 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 	LPDIRECTDRAWSURFACE7	surf;
 #endif
 
+	AdjustGamma(data, width * height);
+
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -1179,9 +1214,12 @@ LPDIRECTDRAWSURFACE7 TDirect3DDrawer::UploadTextureNoMip(int width, int height, 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/10/27 07:45:01  dj_jl
+//	Added gamma controls
+//
 //	Revision 1.12  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.11  2001/10/04 17:22:05  dj_jl
 //	My overloaded matrix, beautification
 //	

@@ -58,6 +58,7 @@ static TOpenGLDrawer	OpenGLDrawer;
 //==========================================================================
 
 TOpenGLDrawer::TOpenGLDrawer(void) :
+	lastgamma(0),
 	tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE),
 	clear("gl_clear", "0", CVAR_ARCHIVE),
 	blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE),
@@ -239,6 +240,7 @@ void TOpenGLDrawer::StartUpdate(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
+
 	if (tex_linear == 3)
 	{
 		maxfilter = GL_LINEAR;
@@ -263,6 +265,13 @@ void TOpenGLDrawer::StartUpdate(void)
 		minfilter = GL_NEAREST;
 		mipfilter = GL_NEAREST;
 	}
+
+	if (usegamma != lastgamma)
+	{
+		FlushTextures();
+		lastgamma = usegamma;
+	}
+
 	Setup2D();
 }
 
@@ -446,9 +455,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2001/10/27 07:45:01  dj_jl
+//	Added gamma controls
+//
 //	Revision 1.13  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.12  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
 //	

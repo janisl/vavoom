@@ -221,6 +221,7 @@ class TDirect3DDrawer : public TDrawer
 
  private:
 	void Setup2D(void);
+	void FlushTextures(void);
 	void ReleaseTextures(void);
 	int ToPowerOf2(int);
 #if DIRECT3D_VERSION >= 0x0800
@@ -242,6 +243,7 @@ class TDirect3DDrawer : public TDrawer
 #else
 	void UploadTextureImage(LPDIRECTDRAWSURFACE7, int, int, rgba_t*);
 #endif
+	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
 #if DIRECT3D_VERSION >= 0x0800
@@ -317,6 +319,8 @@ class TDirect3DDrawer : public TDrawer
 
 	float						tex_iw;
 	float						tex_ih;
+
+	int							lastgamma;
 
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DTEXTURE8			*texturesurfaces;
@@ -420,9 +424,12 @@ class TDirect3DDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2001/10/27 07:45:01  dj_jl
+//	Added gamma controls
+//
 //	Revision 1.16  2001/10/18 17:36:31  dj_jl
 //	A lots of changes for Alpha 2
-//
+//	
 //	Revision 1.15  2001/10/12 17:28:26  dj_jl
 //	Blending of sprite borders
 //	
