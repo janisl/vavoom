@@ -33,6 +33,7 @@
 #include <direct.h>
 #include <conio.h>
 #include <sys/timeb.h>
+#include <sys/stat.h>
 #include "gamedefs.h"
 
 // MACROS ------------------------------------------------------------------
@@ -144,6 +145,24 @@ int Sys_FileClose(int handle)
 int Sys_FileExists(const char* filename)
 {
     return !access(filename, R_OK);
+}
+
+//==========================================================================
+//
+//	Sys_FileTime
+//
+//	Returns -1 if not present
+//
+//==========================================================================
+
+int	Sys_FileTime(const char *path)
+{
+	struct	stat	buf;
+	
+	if (stat(path,&buf) == -1)
+		return -1;
+	
+	return buf.st_mtime;
 }
 
 //==========================================================================
@@ -381,9 +400,12 @@ int main(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:49:36  dj_jl
+//	Added file time functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

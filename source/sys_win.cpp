@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <direct.h>
+#include <sys/stat.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -45,8 +46,6 @@
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-LONG CD_MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 extern "C" {
 
@@ -168,6 +167,24 @@ int Sys_FileClose(int handle)
 int Sys_FileExists(const char* filename)
 {
 	return !access(filename, R_OK);
+}
+
+//==========================================================================
+//
+//	Sys_FileTime
+//
+//	Returns -1 if not present
+//
+//==========================================================================
+
+int	Sys_FileTime(const char *path)
+{
+	struct	stat	buf;
+	
+	if (stat(path,&buf) == -1)
+		return -1;
+	
+	return buf.st_mtime;
 }
 
 //==========================================================================
@@ -581,11 +598,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 	//	Create window class
 	wndclass.cbSize        = sizeof(wndclass);
-#if 0//def USE_GL
-	wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-#else
 	wndclass.style         = 0;
-#endif
 	wndclass.lpfnWndProc   = WndProc;
 	wndclass.cbClsExtra    = 0;
 	wndclass.cbWndExtra    = 0;
@@ -594,7 +607,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 	wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wndclass.hbrBackground = NULL;
 	wndclass.lpszMenuName  = NULL;
-	wndclass.lpszClassName = "VAVOOM for Windows'95";
+	wndclass.lpszClassName = "VAVOOM";
 	wndclass.hIconSm       = NULL;
 
 	if (!RegisterClassEx(&wndclass))
@@ -604,16 +617,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 	}
 
 	//	Create window
-#if 0//def USE_GL
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
-		"VAVOOM for Windows'95", "VAVOOM for Windows'95",
-		WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-		0, 0, 660, 500, NULL, NULL, hInst, NULL);
-#else
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
-		"VAVOOM for Windows'95", "VAVOOM for Windows'95", WS_POPUP,
+		"VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
 		0, 0, 2, 2, NULL, NULL, hInst, NULL);
-#endif
 	if (!hwnd)
 	{
 		MessageBox(NULL, "Couldn't create window", "Error", MB_OK);
@@ -691,9 +697,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:49:36  dj_jl
+//	Added file time functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

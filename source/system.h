@@ -34,20 +34,22 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-int Sys_FileOpenRead(const char* filename);
-int Sys_FileOpenWrite(const char* filename);
-int Sys_FileRead(int handle, void* buf, int size);
-int Sys_FileWrite(int handle, const void* buf, int size);
-int Sys_FileSize(int handle);
-int Sys_FileSeek(int handle, int offset);
-int Sys_FileClose(int handle);
-int Sys_FileExists(const char* filename);
+int Sys_FileOpenRead(const char*);
+int Sys_FileOpenWrite(const char*);
+int Sys_FileRead(int, void*, int);
+int Sys_FileWrite(int, const void*, int);
+int Sys_FileSize(int);
+int Sys_FileSeek(int, int);
+int Sys_FileClose(int);
+int Sys_FileExists(const char*);
+int Sys_FileTime(const char*);
 
-int Sys_CreateDirectory(const char* path);
+int Sys_CreateDirectory(const char*);
+void Sys_GetBaseDir(char*);
 
-void* Sys_ZoneBase(int* size);
+void* Sys_ZoneBase(int*);
 
-void Sys_Error(const char *error, ...) __attribute__ ((noreturn))
+void Sys_Error(const char*, ...) __attribute__ ((noreturn))
 	__attribute__ ((format(printf, 1, 2)));
 void Sys_Quit(void) __attribute__ ((noreturn));
 void Sys_Shutdown(void);
@@ -66,16 +68,19 @@ void Sys_HighFPPrecision(void);
 //
 // memory protection
 //
-void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length);
+void Sys_MakeCodeWriteable(unsigned long, unsigned long);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/29 17:49:36  dj_jl
+//	Added file time functions
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
