@@ -1,160 +1,160 @@
 //------------------------------------------------------
-//  Retail maps, I guess ;-)
+//  Retail maps
 
 map MAP01 "sanctuary"
 next MAP02
 sky1 SKYMNT02 0
-music D_MAP1
+music d_action
 
 map MAP02 "town"
 next MAP03
 sky1 SKYMNT02 0
-music D_MAP2
+music d_tavern
 
 map MAP03 "front base"
 next MAP04
 sky1 SKYMNT02 0
-music D_MAP3
+music d_danger
 
 map MAP04 "power station"
 next MAP05
 sky1 SKYMNT02 0
-music D_MAP4
+music d_fast
 
 map MAP05 "prison"
 next MAP06
 sky1 SKYMNT02 0
-music D_MAP5
+music d_intro
 
 map MAP06 "sewers"
 next MAP07
 sky1 SKYMNT02 0
-music D_MAP6
+music d_darker
 
 map MAP07 "castle"
 next MAP08
 sky1 SKYMNT02 0
-music D_MAP7
+music d_strike
 
 map MAP08 "Audience Chamber"
 next MAP09
 sky1 SKYMNT02 0
-music D_MAP8
+music d_slide
 
 map MAP09 "Castle: Programmer's Keep"
 next MAP10
 sky1 SKYMNT02 0
-music D_MAP9
+music d_tribal
 
 map MAP10 "New Front Base"
 next MAP11
 sky1 SKYMNT02 0
-music D_MAP10
+music d_march
 
 map MAP11 "Borderlands"
 next MAP12
 sky1 SKYMNT02 0
-music D_MAP11
+music d_danger
 
 map MAP12 "temple of the oracle"
 next MAP13
 sky1 SKYMNT02 0
-music D_MAP12
+music d_mood
 
 map MAP13 "Catacombs"
 next MAP14
 sky1 SKYMNT02 0
-music D_MAP13
+music d_castle
 
 map MAP14 "mines"
 next MAP15
 sky1 SKYMNT02 0
-music D_MAP14
+music d_darker
 
 map MAP15 "Fortress: Administration"
 next MAP16
 sky1 SKYMNT02 0
-music D_MAP15
+music d_action
 
 map MAP16 "Fortress: Bishop's Tower"
 next MAP17
 sky1 SKYMNT02 0
-music D_MAP16
+music d_fight
 
 map MAP17 "Fortress: The Bailey"
 next MAP18
 sky1 SKYMNT02 0
-music D_MAP17
+music d_spense
 
 map MAP18 "Fortress: Stores"
 next MAP19
 sky1 SKYMNT02 0
-music D_MAP18
+music d_slide
 
 map MAP19 "Fortress: Security Complex"
 next MAP20
 sky1 SKYMNT02 0
-music D_MAP19
+music d_strike
 
 map MAP20 "Factory: Receiving"
 next MAP21
 sky1 SKYMNT02 0
-music D_MAP20
+music d_dark
 
 map MAP21 "Factory: Manufacturing"
 next MAP22
 sky1 SKYMNT02 0
-music D_MAP21
+music d_tech
 
 map MAP22 "Factory: Forge"
 next MAP23
 sky1 SKYMNT02 0
-music D_MAP22
+music d_slide
 
 map MAP23 "Order Commons"
 next MAP24
 sky1 SKYMNT02 0
-music D_MAP23
+music d_drone
 
-map MAP24 "Order Chapel"
+map MAP24 "Factory: Conversion Chapel"
 next MAP25
 sky1 SKYMNT02 0
-music D_MAP24
+music d_panthr
 
-map MAP25 "Ruins"
+map MAP25 "Catacombs: Ruined Temple"
 next MAP26
 sky1 SKYMNT02 0
-music D_MAP25
+music d_sad
 
 map MAP26 "proving grounds"
 next MAP27
 sky1 SKYMNT02 0
-music D_MAP26
+music d_instry
 
 map MAP27 "The Lab"
 next MAP28
 sky1 SKYMNT02 0
-music D_MAP26
+music d_tech
 
 map MAP28 "Alien Ship"
 next MAP29
 sky1 SKYMNT02 0
-music D_MAP28
+music d_action
 
 map MAP29 "Entity's Lair"
 next MAP30
 sky1 SKYMNT02 0
-music D_MAP29
+music d_instry
 
 map MAP30 "Abondoned Front Base"
 next MAP31
 sky1 SKYMNT02 0
-music D_MAP30
+music d_drone
 
 map MAP31 "Training Facility"
 next MAP01
 sky1 SKYMNT02 0
-music D_MAP31
+music d_fight
 
 //------------------------------------------------------
 //  Shareware maps
