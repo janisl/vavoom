@@ -56,6 +56,10 @@ class TSizeBuf
 	void Clear(void);
 	void *GetSpace(int length);
 	void Write(const void *data, int length);
+	bool CheckSpace(int length)
+	{
+		return CurSize + length <= MaxSize;
+	}
 
 	boolean	AllowOverflow;	// if false, do a Sys_Error
 	boolean	Overflowed;		// set to true if the buffer size failed
@@ -96,9 +100,12 @@ class TTextBuf : public TSizeBuf
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2002/07/13 07:43:03  dj_jl
+//	Added space checking.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
