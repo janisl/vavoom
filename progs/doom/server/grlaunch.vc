@@ -36,7 +36,7 @@ class weapon_grenade_launcher:Actor
 	__states__
 	{
 		//  Weapon on ground
-		S_GLAUNCH { "GLAU", 0, -1.0, NULL, S_NULL}
+		S_GLAUNCH('GLAU', 0, -1.0, S_NULL) { }
 	}
 
 	defaultproperties
@@ -69,8 +69,8 @@ class missile_grenade:Actor
 	__states__
 	{
 		//  Flying grenade
-		S_GRENADE { "GREN", 0 | FF_FULLBRIGHT, 3.0, NULL, S_GRENADE_EXPLODE}
-		S_GRENADE_EXPLODE { "GREN", 0 | FF_FULLBRIGHT, 0.0, A_ExplodeMissile, S_EXPLODE1}
+		S_GRENADE('GREN', 0 | FF_FULLBRIGHT, 3.0, S_GRENADE_EXPLODE) { }
+		S_GRENADE_EXPLODE('GREN', 0 | FF_FULLBRIGHT, 0.0, S_EXPLODE1) { A_ExplodeMissile(); }
 	}
 
 	defaultproperties
@@ -83,9 +83,9 @@ class missile_grenade:Actor
 		flags = MF_NOBLOCKMAP | MF_DROPOFF | MF_MISSILE | MF_BOUNCE;
 		spawnstate = S_GRENADE;
 		deathstate = S_EXPLODE1;
-		sound_sight = GetSoundID("LauncherFire");
-		sound_pain = GetSoundID("GrenadeBounce");
-		sound_death = GetSoundID("BarrelExplode");
+		SightSound = 'LauncherFire';
+		PainSound = 'GrenadeBounce';
+		DeathSound = 'BarrelExplode';
 	}
 };
 
@@ -98,16 +98,16 @@ class missile_grenade:Actor
 __states__(Weapon)
 {
 	//  Weapon in player view
-	S_GRENLAUNCH { "GRLG", 0, 1.0 / 35.0, A_WeaponReady, S_GRENLAUNCH}
-	S_GRENLAUNCHDOWN { "GRLG", 0, 1.0 / 35.0, A_Lower, S_GRENLAUNCHDOWN}
-	S_GRENLAUNCHUP { "GRLG", 0, 1.0 / 35.0, A_Raise, S_GRENLAUNCHUP}
-	S_GRENLAUNCH1 { "GRLG", 1, 8.0 / 35.0, A_GunFlash, S_GRENLAUNCH2}
-	S_GRENLAUNCH2 { "GRLG", 1, 12.0 / 35.0, A_FireGrenade, S_GRENLAUNCH3}
-	S_GRENLAUNCH3 { "GRLG", 1, 0.0 / 35.0, A_ReFire, S_GRENLAUNCH}
-	S_GRENLAUNCHFLASH1 { "GRLF", 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light1, S_GRENLAUNCHFLASH2}
-	S_GRENLAUNCHFLASH2 { "GRLF", 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_GRENLAUNCHFLASH3}
-	S_GRENLAUNCHFLASH3 { "GRLF", 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_GRENLAUNCHFLASH4}
-	S_GRENLAUNCHFLASH4 { "GRLF", 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
+	S_GRENLAUNCH('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCH) { A_WeaponReady(); }
+	S_GRENLAUNCHDOWN('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHDOWN) {	A_Lower(); }
+	S_GRENLAUNCHUP('GRLG', 0, 1.0 / 35.0, S_GRENLAUNCHUP) {	A_Raise(); }
+	S_GRENLAUNCH1('GRLG', 1, 8.0 / 35.0, S_GRENLAUNCH2) { A_GunFlash(); }
+	S_GRENLAUNCH2('GRLG', 1, 12.0 / 35.0, S_GRENLAUNCH3) { A_FireGrenade(); };
+	S_GRENLAUNCH3('GRLG', 1, 0.0 / 35.0, S_GRENLAUNCH) { A_ReFire(); }
+	S_GRENLAUNCHFLASH1('GRLF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_GRENLAUNCHFLASH2) { A_Light1();	}
+	S_GRENLAUNCHFLASH2('GRLF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH3) { }
+	S_GRENLAUNCHFLASH3('GRLF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_GRENLAUNCHFLASH4) {	A_Light2(); }
+	S_GRENLAUNCHFLASH4('GRLF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
 }
 
 void set_weapon_grenade(player_t * player)
@@ -125,6 +125,9 @@ void set_weapon_grenade(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/12 17:58:03  dj_jl
+//  New style state functions
+//
 //  Revision 1.9  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

@@ -31,987 +31,990 @@
 
 __states__(Actor)
 {
-	S_NULL {'TROO', 0, -1.0, NULL, S_NULL}
+	S_NULL('TROO', 0, -1.0, S_NULL) { }
 }
 __states__(Weapon)
 {
-	S_LIGHTDONE {'SHTG', 4, 0.0 / 35.0, A_Light0, S_NULL}
-	S_PUNCH {'PUNG', 0, 'weapons/v_fists.md2', 0, 1.0 / 35.0, A_WeaponReady, S_PUNCH}
-	S_PUNCHDOWN {'PUNG', 0, 'weapons/v_fists.md2', 1, 1.0 / 35.0, A_Lower, S_PUNCHDOWN}
-	S_PUNCHUP {'PUNG', 0, 'weapons/v_fists.md2', 2, 1.0 / 35.0, A_Raise, S_PUNCHUP}
-	S_PUNCH1 {'PUNG', 1, 'weapons/v_fists.md2', 3, 4.0 / 35.0, NULL, S_PUNCH2}
-	S_PUNCH2 {'PUNG', 2, 'weapons/v_fists.md2', 4, 4.0 / 35.0, A_Punch, S_PUNCH3}
-	S_PUNCH3 {'PUNG', 3, 'weapons/v_fists.md2', 5, 5.0 / 35.0, NULL, S_PUNCH4}
-	S_PUNCH4 {'PUNG', 2, 'weapons/v_fists.md2', 6, 4.0 / 35.0, NULL, S_PUNCH5}
-	S_PUNCH5 {'PUNG', 1, 'weapons/v_fists.md2', 7, 5.0 / 35.0, A_ReFire, S_PUNCH}
-	S_PISTOL {'PISG', 0, 'weapons/v_pistol.md2', 0, 1.0 / 35.0, A_WeaponReady, S_PISTOL}
-	S_PISTOLDOWN {'PISG', 0, 'weapons/v_pistol.md2', 1, 1.0 / 35.0, A_Lower, S_PISTOLDOWN}
-	S_PISTOLUP {'PISG', 0, 'weapons/v_pistol.md2', 2, 1.0 / 35.0, A_Raise, S_PISTOLUP}
-	S_PISTOL1 {'PISG', 0, 'weapons/v_pistol.md2', 3, 4.0 / 35.0, NULL, S_PISTOL2}
-	S_PISTOL2 {'PISG', 1, 'weapons/v_pistol.md2', 4, 6.0 / 35.0, A_FirePistol, S_PISTOL3}
-	S_PISTOL3 {'PISG', 2, 'weapons/v_pistol.md2', 5, 4.0 / 35.0, NULL, S_PISTOL4}
-	S_PISTOL4 {'PISG', 1, 'weapons/v_pistol.md2', 6, 5.0 / 35.0, A_ReFire, S_PISTOL}
-	S_PISTOLFLASH {'PISF', 0 | FF_FULLBRIGHT, 7.0 / 35.0, A_Light1, S_LIGHTDONE}
-	S_SGUN {'SHTG', 0, 'weapons/v_shotg.md2', 0, 1.0 / 35.0, A_WeaponReady, S_SGUN}
-	S_SGUNDOWN {'SHTG', 0, 'weapons/v_shotg.md2', 1, 1.0 / 35.0, A_Lower, S_SGUNDOWN}
-	S_SGUNUP {'SHTG', 0, 'weapons/v_shotg.md2', 2, 1.0 / 35.0, A_Raise, S_SGUNUP}
-	S_SGUN1 {'SHTG', 0, 'weapons/v_shotg.md2', 3, 3.0 / 35.0, NULL, S_SGUN2}
-	S_SGUN2 {'SHTG', 0, 'weapons/v_shotg.md2', 4, 7.0 / 35.0, A_FireShotgun, S_SGUN3}
-	S_SGUN3 {'SHTG', 1, 'weapons/v_shotg.md2', 5, 5.0 / 35.0, NULL, S_SGUN4}
-	S_SGUN4 {'SHTG', 2, 'weapons/v_shotg.md2', 6, 5.0 / 35.0, NULL, S_SGUN5}
-	S_SGUN5 {'SHTG', 3, 'weapons/v_shotg.md2', 7, 4.0 / 35.0, NULL, S_SGUN6}
-	S_SGUN6 {'SHTG', 2, 'weapons/v_shotg.md2', 8, 5.0 / 35.0, NULL, S_SGUN7}
-	S_SGUN7 {'SHTG', 1, 'weapons/v_shotg.md2', 9, 5.0 / 35.0, NULL, S_SGUN8}
-	S_SGUN8 {'SHTG', 0, 'weapons/v_shotg.md2', 10, 3.0 / 35.0, NULL, S_SGUN9}
-	S_SGUN9 {'SHTG', 0, 'weapons/v_shotg.md2', 11, 7.0 / 35.0, A_ReFire, S_SGUN}
-	S_SGUNFLASH1 {'SHTF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light1, S_SGUNFLASH2}
-	S_SGUNFLASH2 {'SHTF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light2, S_LIGHTDONE}
-	S_DSGUN {'SHT2', 0, 'weapons/v_super.md2', 0, 1.0 / 35.0, A_WeaponReady, S_DSGUN}
-	S_DSGUNDOWN {'SHT2', 0, 'weapons/v_super.md2', 1, 1.0 / 35.0, A_Lower, S_DSGUNDOWN}
-	S_DSGUNUP {'SHT2', 0, 'weapons/v_super.md2', 2, 1.0 / 35.0, A_Raise, S_DSGUNUP}
-	S_DSGUN1 {'SHT2', 0, 'weapons/v_super.md2', 3, 3.0 / 35.0, NULL, S_DSGUN2}
-	S_DSGUN2 {'SHT2', 0, 'weapons/v_super.md2', 4, 7.0 / 35.0, A_FireShotgun2, S_DSGUN3}
-	S_DSGUN3 {'SHT2', 1, 'weapons/v_super.md2', 5, 7.0 / 35.0, NULL, S_DSGUN4}
-	S_DSGUN4 {'SHT2', 2, 'weapons/v_super.md2', 6, 7.0 / 35.0, A_CheckReload, S_DSGUN5}
-	S_DSGUN5 {'SHT2', 3, 'weapons/v_super.md2', 7, 7.0 / 35.0, A_OpenShotgun2, S_DSGUN6}
-	S_DSGUN6 {'SHT2', 4, 'weapons/v_super.md2', 8, 7.0 / 35.0, NULL, S_DSGUN7}
-	S_DSGUN7 {'SHT2', 5, 'weapons/v_super.md2', 9, 7.0 / 35.0, A_LoadShotgun2, S_DSGUN8}
-	S_DSGUN8 {'SHT2', 6, 'weapons/v_super.md2', 10, 6.0 / 35.0, NULL, S_DSGUN9}
-	S_DSGUN9 {'SHT2', 7, 'weapons/v_super.md2', 11, 6.0 / 35.0, A_CloseShotgun2, S_DSGUN10}
-	S_DSGUN10 {'SHT2', 0, 'weapons/v_super.md2', 12, 5.0 / 35.0, A_ReFire, S_DSGUN}
-	S_DSNR1 {'SHT2', 1, 7.0 / 35.0, NULL, S_DSNR2}
-	S_DSNR2 {'SHT2', 0, 3.0 / 35.0, NULL, S_DSGUNDOWN}
-	S_DSGUNFLASH1 {'SHT2', 8 | FF_FULLBRIGHT, 5.0 / 35.0, A_Light1, S_DSGUNFLASH2}
-	S_DSGUNFLASH2 {'SHT2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
-	S_CHAIN {'CHGG', 0, 'weapons/v_chain.md2', 0, 1.0 / 35.0, A_WeaponReady, S_CHAIN}
-	S_CHAINDOWN {'CHGG', 0, 'weapons/v_chain.md2', 1, 1.0 / 35.0, A_Lower, S_CHAINDOWN}
-	S_CHAINUP {'CHGG', 0, 'weapons/v_chain.md2', 2, 1.0 / 35.0, A_Raise, S_CHAINUP}
-	S_CHAIN1 {'CHGG', 0, 'weapons/v_chain.md2', 3, 4.0 / 35.0, A_FireCGun, S_CHAIN2}
-	S_CHAIN2 {'CHGG', 1, 'weapons/v_chain.md2', 4, 4.0 / 35.0, A_FireCGun, S_CHAIN3}
-	S_CHAIN3 {'CHGG', 1, 'weapons/v_chain.md2', 4, 0.0 / 35.0, A_ReFire, S_CHAIN}
-	S_CHAINFLASH1 {'CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, A_Light1, S_LIGHTDONE}
-	S_CHAINFLASH2 {'CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, A_Light2, S_LIGHTDONE}
-	S_MISSILE {'MISG', 0, 'weapons/v_launch.md2', 0, 1.0 / 35.0, A_WeaponReady, S_MISSILE}
-	S_MISSILEDOWN {'MISG', 0, 'weapons/v_launch.md2', 1, 1.0 / 35.0, A_Lower, S_MISSILEDOWN}
-	S_MISSILEUP {'MISG', 0, 'weapons/v_launch.md2', 2, 1.0 / 35.0, A_Raise, S_MISSILEUP}
-	S_MISSILE1 {'MISG', 1, 'weapons/v_launch.md2', 3, 8.0 / 35.0, A_GunFlash, S_MISSILE2}
-	S_MISSILE2 {'MISG', 1, 'weapons/v_launch.md2', 4, 12.0 / 35.0, A_FireMissile, S_MISSILE3}
-	S_MISSILE3 {'MISG', 1, 'weapons/v_launch.md2', 5, 0.0 / 35.0, A_ReFire, S_MISSILE}
-	S_MISSILEFLASH1 {'MISF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, A_Light1, S_MISSILEFLASH2}
-	S_MISSILEFLASH2 {'MISF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_MISSILEFLASH3}
-	S_MISSILEFLASH3 {'MISF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_MISSILEFLASH4}
-	S_MISSILEFLASH4 {'MISF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light2, S_LIGHTDONE}
-	S_SAW {'SAWG', 2, 'weapons/v_saw.md2', 0, 4.0 / 35.0, A_WeaponReady, S_SAWB}
-	S_SAWB {'SAWG', 3, 'weapons/v_saw.md2', 1, 4.0 / 35.0, A_WeaponReady, S_SAW}
-	S_SAWDOWN {'SAWG', 2, 'weapons/v_saw.md2', 2, 1.0 / 35.0, A_Lower, S_SAWDOWN}
-	S_SAWUP {'SAWG', 2, 'weapons/v_saw.md2', 3, 1.0 / 35.0, A_Raise, S_SAWUP}
-	S_SAW1 {'SAWG', 0, 'weapons/v_saw.md2', 4, 4.0 / 35.0, A_Saw, S_SAW2}
-	S_SAW2 {'SAWG', 1, 'weapons/v_saw.md2', 5, 4.0 / 35.0, A_Saw, S_SAW3}
-	S_SAW3 {'SAWG', 1, 'weapons/v_saw.md2', 5, 0.0 / 35.0, A_ReFire, S_SAW}
-	S_PLASMA {'PLSG', 0, 'weapons/v_plasma.md2', 0, 1.0 / 35.0, A_WeaponReady, S_PLASMA}
-	S_PLASMADOWN {'PLSG', 0, 'weapons/v_plasma.md2', 1, 1.0 / 35.0, A_Lower, S_PLASMADOWN}
-	S_PLASMAUP {'PLSG', 0, 'weapons/v_plasma.md2', 2, 1.0 / 35.0, A_Raise, S_PLASMAUP}
-	S_PLASMA1 {'PLSG', 0, 'weapons/v_plasma.md2', 3, 3.0 / 35.0, A_FirePlasma, S_PLASMA2}
-	S_PLASMA2 {'PLSG', 1, 'weapons/v_plasma.md2', 4, 20.0 / 35.0, A_ReFire, S_PLASMA}
-	S_PLASMAFLASH1 {'PLSF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light1, S_LIGHTDONE}
-	S_PLASMAFLASH2 {'PLSF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, A_Light1, S_LIGHTDONE}
-	S_BFG {'BFGG', 0, 'weapons/v_bfg.md2', 0, 1.0 / 35.0, A_WeaponReady, S_BFG}
-	S_BFGDOWN {'BFGG', 0, 'weapons/v_bfg.md2', 1, 1.0 / 35.0, A_Lower, S_BFGDOWN}
-	S_BFGUP {'BFGG', 0, 'weapons/v_bfg.md2', 2, 1.0 / 35.0, A_Raise, S_BFGUP}
-	S_BFG1 {'BFGG', 0, 'weapons/v_bfg.md2', 3, 20.0 / 35.0, A_BFGsound, S_BFG2}
-	S_BFG2 {'BFGG', 1, 'weapons/v_bfg.md2', 4, 10.0 / 35.0, A_GunFlash, S_BFG3}
-	S_BFG3 {'BFGG', 1, 'weapons/v_bfg.md2', 5, 10.0 / 35.0, A_FireBFG, S_BFG4}
-	S_BFG4 {'BFGG', 1, 'weapons/v_bfg.md2', 6, 20.0 / 35.0, A_ReFire, S_BFG}
-	S_BFGFLASH1 {'BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, A_Light1, S_BFGFLASH2}
-	S_BFGFLASH2 {'BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, A_Light2, S_LIGHTDONE}
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, S_NULL) { A_Light0(); }
+	S_PUNCH('PUNG', 0, 'weapons/v_fists.md2', 0, 1.0 / 35.0, S_PUNCH) { A_WeaponReady(); }
+	S_PUNCHDOWN('PUNG', 0, 'weapons/v_fists.md2', 1, 1.0 / 35.0, S_PUNCHDOWN) { A_Lower(); }
+	S_PUNCHUP('PUNG', 0, 'weapons/v_fists.md2', 2, 1.0 / 35.0, S_PUNCHUP) { A_Raise(); }
+	S_PUNCH1('PUNG', 1, 'weapons/v_fists.md2', 3, 4.0 / 35.0, S_PUNCH2) { }
+	S_PUNCH2('PUNG', 2, 'weapons/v_fists.md2', 4, 4.0 / 35.0, S_PUNCH3) { A_Punch(); }
+	S_PUNCH3('PUNG', 3, 'weapons/v_fists.md2', 5, 5.0 / 35.0, S_PUNCH4) { }
+	S_PUNCH4('PUNG', 2, 'weapons/v_fists.md2', 6, 4.0 / 35.0, S_PUNCH5) { }
+	S_PUNCH5('PUNG', 1, 'weapons/v_fists.md2', 7, 5.0 / 35.0, S_PUNCH) { A_ReFire(); }
+	S_PISTOL('PISG', 0, 'weapons/v_pistol.md2', 0, 1.0 / 35.0, S_PISTOL) { A_WeaponReady(); }
+	S_PISTOLDOWN('PISG', 0, 'weapons/v_pistol.md2', 1, 1.0 / 35.0, S_PISTOLDOWN) { A_Lower(); }
+	S_PISTOLUP('PISG', 0, 'weapons/v_pistol.md2', 2, 1.0 / 35.0, S_PISTOLUP) { A_Raise(); }
+	S_PISTOL1('PISG', 0, 'weapons/v_pistol.md2', 3, 4.0 / 35.0, S_PISTOL2) { }
+	S_PISTOL2('PISG', 1, 'weapons/v_pistol.md2', 4, 6.0 / 35.0, S_PISTOL3) { A_FirePistol(); }
+	S_PISTOL3('PISG', 2, 'weapons/v_pistol.md2', 5, 4.0 / 35.0, S_PISTOL4) { }
+	S_PISTOL4('PISG', 1, 'weapons/v_pistol.md2', 6, 5.0 / 35.0, S_PISTOL) { A_ReFire(); }
+	S_PISTOLFLASH('PISF', 0 | FF_FULLBRIGHT, 7.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_SGUN('SHTG', 0, 'weapons/v_shotg.md2', 0, 1.0 / 35.0, S_SGUN) { A_WeaponReady(); }
+	S_SGUNDOWN('SHTG', 0, 'weapons/v_shotg.md2', 1, 1.0 / 35.0, S_SGUNDOWN) { A_Lower(); }
+	S_SGUNUP('SHTG', 0, 'weapons/v_shotg.md2', 2, 1.0 / 35.0, S_SGUNUP) { A_Raise(); }
+	S_SGUN1('SHTG', 0, 'weapons/v_shotg.md2', 3, 3.0 / 35.0, S_SGUN2) { }
+	S_SGUN2('SHTG', 0, 'weapons/v_shotg.md2', 4, 7.0 / 35.0, S_SGUN3) { A_FireShotgun(); }
+	S_SGUN3('SHTG', 1, 'weapons/v_shotg.md2', 5, 5.0 / 35.0, S_SGUN4) { }
+	S_SGUN4('SHTG', 2, 'weapons/v_shotg.md2', 6, 5.0 / 35.0, S_SGUN5) { }
+	S_SGUN5('SHTG', 3, 'weapons/v_shotg.md2', 7, 4.0 / 35.0, S_SGUN6) { }
+	S_SGUN6('SHTG', 2, 'weapons/v_shotg.md2', 8, 5.0 / 35.0, S_SGUN7) { }
+	S_SGUN7('SHTG', 1, 'weapons/v_shotg.md2', 9, 5.0 / 35.0, S_SGUN8) { }
+	S_SGUN8('SHTG', 0, 'weapons/v_shotg.md2', 10, 3.0 / 35.0, S_SGUN9) { }
+	S_SGUN9('SHTG', 0, 'weapons/v_shotg.md2', 11, 7.0 / 35.0, S_SGUN) { A_ReFire(); }
+	S_SGUNFLASH1('SHTF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SGUNFLASH2) { A_Light1(); }
+	S_SGUNFLASH2('SHTF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_DSGUN('SHT2', 0, 'weapons/v_super.md2', 0, 1.0 / 35.0, S_DSGUN) { A_WeaponReady(); }
+	S_DSGUNDOWN('SHT2', 0, 'weapons/v_super.md2', 1, 1.0 / 35.0, S_DSGUNDOWN) { A_Lower(); }
+	S_DSGUNUP('SHT2', 0, 'weapons/v_super.md2', 2, 1.0 / 35.0, S_DSGUNUP) { A_Raise(); }
+	S_DSGUN1('SHT2', 0, 'weapons/v_super.md2', 3, 3.0 / 35.0, S_DSGUN2) { }
+	S_DSGUN2('SHT2', 0, 'weapons/v_super.md2', 4, 7.0 / 35.0, S_DSGUN3) { A_FireShotgun2(); }
+	S_DSGUN3('SHT2', 1, 'weapons/v_super.md2', 5, 7.0 / 35.0, S_DSGUN4) { }
+	S_DSGUN4('SHT2', 2, 'weapons/v_super.md2', 6, 7.0 / 35.0, S_DSGUN5) { A_CheckReload(); }
+	S_DSGUN5('SHT2', 3, 'weapons/v_super.md2', 7, 7.0 / 35.0, S_DSGUN6) { A_OpenShotgun2(); }
+	S_DSGUN6('SHT2', 4, 'weapons/v_super.md2', 8, 7.0 / 35.0, S_DSGUN7) { }
+	S_DSGUN7('SHT2', 5, 'weapons/v_super.md2', 9, 7.0 / 35.0, S_DSGUN8) { A_LoadShotgun2(); }
+	S_DSGUN8('SHT2', 6, 'weapons/v_super.md2', 10, 6.0 / 35.0, S_DSGUN9) { }
+	S_DSGUN9('SHT2', 7, 'weapons/v_super.md2', 11, 6.0 / 35.0, S_DSGUN10) { A_CloseShotgun2(); }
+	S_DSGUN10('SHT2', 0, 'weapons/v_super.md2', 12, 5.0 / 35.0, S_DSGUN) { A_ReFire(); }
+	S_DSNR1('SHT2', 1, 7.0 / 35.0, S_DSNR2) { }
+	S_DSNR2('SHT2', 0, 3.0 / 35.0, S_DSGUNDOWN) { }
+	S_DSGUNFLASH1('SHT2', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_DSGUNFLASH2) { A_Light1(); }
+	S_DSGUNFLASH2('SHT2', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_CHAIN('CHGG', 0, 'weapons/v_chain.md2', 0, 1.0 / 35.0, S_CHAIN) { A_WeaponReady(); }
+	S_CHAINDOWN('CHGG', 0, 'weapons/v_chain.md2', 1, 1.0 / 35.0, S_CHAINDOWN) { A_Lower(); }
+	S_CHAINUP('CHGG', 0, 'weapons/v_chain.md2', 2, 1.0 / 35.0, S_CHAINUP) { A_Raise(); }
+	S_CHAIN1('CHGG', 0, 'weapons/v_chain.md2', 3, 4.0 / 35.0, S_CHAIN2) { A_FireCGun(); }
+	S_CHAIN2('CHGG', 1, 'weapons/v_chain.md2', 4, 4.0 / 35.0, S_CHAIN3) { A_FireCGun(); }
+	S_CHAIN3('CHGG', 1, 'weapons/v_chain.md2', 4, 0.0 / 35.0, S_CHAIN) { A_ReFire(); }
+	S_CHAINFLASH1('CHGF', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_CHAINFLASH2('CHGF', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_MISSILE('MISG', 0, 'weapons/v_launch.md2', 0, 1.0 / 35.0, S_MISSILE) { A_WeaponReady(); }
+	S_MISSILEDOWN('MISG', 0, 'weapons/v_launch.md2', 1, 1.0 / 35.0, S_MISSILEDOWN) { A_Lower(); }
+	S_MISSILEUP('MISG', 0, 'weapons/v_launch.md2', 2, 1.0 / 35.0, S_MISSILEUP) { A_Raise(); }
+	S_MISSILE1('MISG', 1, 'weapons/v_launch.md2', 3, 8.0 / 35.0, S_MISSILE2) { A_GunFlash(); }
+	S_MISSILE2('MISG', 1, 'weapons/v_launch.md2', 4, 12.0 / 35.0, S_MISSILE3) { A_FireMissile(); }
+	S_MISSILE3('MISG', 1, 'weapons/v_launch.md2', 5, 0.0 / 35.0, S_MISSILE) { A_ReFire(); }
+	S_MISSILEFLASH1('MISF', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_MISSILEFLASH2) { A_Light1(); }
+	S_MISSILEFLASH2('MISF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH3) { }
+	S_MISSILEFLASH3('MISF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_MISSILEFLASH4) { A_Light2(); }
+	S_MISSILEFLASH4('MISF', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
+	S_SAW('SAWG', 2, 'weapons/v_saw.md2', 0, 4.0 / 35.0, S_SAWB) { A_WeaponReady(); }
+	S_SAWB('SAWG', 3, 'weapons/v_saw.md2', 1, 4.0 / 35.0, S_SAW) { A_WeaponReady(); }
+	S_SAWDOWN('SAWG', 2, 'weapons/v_saw.md2', 2, 1.0 / 35.0, S_SAWDOWN) { A_Lower(); }
+	S_SAWUP('SAWG', 2, 'weapons/v_saw.md2', 3, 1.0 / 35.0, S_SAWUP) { A_Raise(); }
+	S_SAW1('SAWG', 0, 'weapons/v_saw.md2', 4, 4.0 / 35.0, S_SAW2) { A_Saw(); }
+	S_SAW2('SAWG', 1, 'weapons/v_saw.md2', 5, 4.0 / 35.0, S_SAW3) { A_Saw(); }
+	S_SAW3('SAWG', 1, 'weapons/v_saw.md2', 5, 0.0 / 35.0, S_SAW) { A_ReFire(); }
+	S_PLASMA('PLSG', 0, 'weapons/v_plasma.md2', 0, 1.0 / 35.0, S_PLASMA) { A_WeaponReady(); }
+	S_PLASMADOWN('PLSG', 0, 'weapons/v_plasma.md2', 1, 1.0 / 35.0, S_PLASMADOWN) { A_Lower(); }
+	S_PLASMAUP('PLSG', 0, 'weapons/v_plasma.md2', 2, 1.0 / 35.0, S_PLASMAUP) { A_Raise(); }
+	S_PLASMA1('PLSG', 0, 'weapons/v_plasma.md2', 3, 3.0 / 35.0, S_PLASMA2) { A_FirePlasma(); }
+	S_PLASMA2('PLSG', 1, 'weapons/v_plasma.md2', 4, 20.0 / 35.0, S_PLASMA) { A_ReFire(); }
+	S_PLASMAFLASH1('PLSF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_PLASMAFLASH2('PLSF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE) { A_Light1(); }
+	S_BFG('BFGG', 0, 'weapons/v_bfg.md2', 0, 1.0 / 35.0, S_BFG) { A_WeaponReady(); }
+	S_BFGDOWN('BFGG', 0, 'weapons/v_bfg.md2', 1, 1.0 / 35.0, S_BFGDOWN) { A_Lower(); }
+	S_BFGUP('BFGG', 0, 'weapons/v_bfg.md2', 2, 1.0 / 35.0, S_BFGUP) { A_Raise(); }
+	S_BFG1('BFGG', 0, 'weapons/v_bfg.md2', 3, 20.0 / 35.0, S_BFG2) { A_BFGsound(); }
+	S_BFG2('BFGG', 1, 'weapons/v_bfg.md2', 4, 10.0 / 35.0, S_BFG3) { A_GunFlash(); }
+	S_BFG3('BFGG', 1, 'weapons/v_bfg.md2', 5, 10.0 / 35.0, S_BFG4) { A_FireBFG(); }
+	S_BFG4('BFGG', 1, 'weapons/v_bfg.md2', 6, 20.0 / 35.0, S_BFG) { A_ReFire(); }
+	S_BFGFLASH1('BFGF', 0 | FF_FULLBRIGHT, 11.0 / 35.0, S_BFGFLASH2) { A_Light1(); }
+	S_BFGFLASH2('BFGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
 }
 __states__(Actor)
 {
-	S_BLOOD1 {'BLUD', 2, 8.0 / 35.0, NULL, S_BLOOD2}
-	S_BLOOD2 {'BLUD', 1, 8.0 / 35.0, NULL, S_BLOOD3}
-	S_BLOOD3 {'BLUD', 0, 8.0 / 35.0, NULL, S_NULL}
-	S_PUFF1 {'PUFF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_PUFF2}
-	S_PUFF2 {'PUFF', 1, 4.0 / 35.0, NULL, S_PUFF3}
-	S_PUFF3 {'PUFF', 2, 4.0 / 35.0, NULL, S_PUFF4}
-	S_PUFF4 {'PUFF', 3, 4.0 / 35.0, NULL, S_NULL}
-	S_TBALL1 {'BAL1', 0 | FF_FULLBRIGHT, 'missiles/impball.md2', 0, 4.0 / 35.0, NULL, S_TBALL2}
-	S_TBALL2 {'BAL1', 1 | FF_FULLBRIGHT, 'missiles/impball.md2', 1, 4.0 / 35.0, NULL, S_TBALL1}
-	S_TBALLX1 {'BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TBALLX2}
-	S_TBALLX2 {'BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TBALLX3}
-	S_TBALLX3 {'BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
-	S_RBALL1 {'BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 0, 4.0 / 35.0, NULL, S_RBALL2}
-	S_RBALL2 {'BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 1, 4.0 / 35.0, NULL, S_RBALL1}
-	S_RBALLX1 {'BAL2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_RBALLX2}
-	S_RBALLX2 {'BAL2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_RBALLX3}
-	S_RBALLX3 {'BAL2', 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
-	S_PLASBALL {'PLSS', 0 | FF_FULLBRIGHT, 'missiles/plasma.md2', 0, 6.0 / 35.0, NULL, S_PLASBALL2}
-	S_PLASBALL2 {'PLSS', 1 | FF_FULLBRIGHT, 'missiles/plasma.md2', 1, 6.0 / 35.0, NULL, S_PLASBALL}
-	S_PLASEXP {'PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_PLASEXP2}
-	S_PLASEXP2 {'PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_PLASEXP3}
-	S_PLASEXP3 {'PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_PLASEXP4}
-	S_PLASEXP4 {'PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_PLASEXP5}
-	S_PLASEXP5 {'PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
-	S_ROCKET {'MISL', 0 | FF_FULLBRIGHT, 'missiles/rocket.md2', 0, 1.0 / 35.0, NULL, S_ROCKET}
-	S_BFGSHOT {'BFS1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_BFGSHOT2}
-	S_BFGSHOT2 {'BFS1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_BFGSHOT}
-	S_BFGLAND {'BFE1', 0 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGLAND2}
-	S_BFGLAND2 {'BFE1', 1 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGLAND3}
-	S_BFGLAND3 {'BFE1', 2 | FF_FULLBRIGHT, 8.0 / 35.0, A_BFGSpray, S_BFGLAND4}
-	S_BFGLAND4 {'BFE1', 3 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGLAND5}
-	S_BFGLAND5 {'BFE1', 4 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGLAND6}
-	S_BFGLAND6 {'BFE1', 5 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_NULL}
-	S_BFGEXP {'BFE2', 0 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGEXP2}
-	S_BFGEXP2 {'BFE2', 1 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGEXP3}
-	S_BFGEXP3 {'BFE2', 2 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_BFGEXP4}
-	S_BFGEXP4 {'BFE2', 3 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_NULL}
-	S_EXPLODE1 {'MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, A_Explode, S_EXPLODE2}
-	S_EXPLODE2 {'MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_EXPLODE3}
-	S_EXPLODE3 {'MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
-	S_TFOG {'TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG01}
-	S_TFOG01 {'TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG02}
-	S_TFOG02 {'TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG2}
-	S_TFOG2 {'TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG3}
-	S_TFOG3 {'TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG4}
-	S_TFOG4 {'TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG5}
-	S_TFOG5 {'TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG6}
-	S_TFOG6 {'TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG7}
-	S_TFOG7 {'TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG8}
-	S_TFOG8 {'TFOG', 7 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG9}
-	S_TFOG9 {'TFOG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TFOG10}
-	S_TFOG10 {'TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
-	S_IFOG {'IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG01}
-	S_IFOG01 {'IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG02}
-	S_IFOG02 {'IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG2}
-	S_IFOG2 {'IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG3}
-	S_IFOG3 {'IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG4}
-	S_IFOG4 {'IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_IFOG5}
-	S_IFOG5 {'IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
-	S_PLAY {'PLAY', 0, 'players/doomguy/tris.md2', 0, -1.0, NULL, S_NULL}
-	S_PLAY_RUN1 {'PLAY', 0, 'players/doomguy/tris.md2', 1, 4.0 / 35.0, NULL, S_PLAY_RUN2}
-	S_PLAY_RUN2 {'PLAY', 1, 'players/doomguy/tris.md2', 2, 4.0 / 35.0, NULL, S_PLAY_RUN3}
-	S_PLAY_RUN3 {'PLAY', 2, 'players/doomguy/tris.md2', 3, 4.0 / 35.0, NULL, S_PLAY_RUN4}
-	S_PLAY_RUN4 {'PLAY', 3, 'players/doomguy/tris.md2', 4, 4.0 / 35.0, NULL, S_PLAY_RUN1}
-	S_PLAY_ATK1 {'PLAY', 4, 'players/doomguy/tris.md2', 5, 12.0 / 35.0, NULL, S_PLAY}
-	S_PLAY_ATK2 {'PLAY', 5 | FF_FULLBRIGHT, 'players/doomguy/tris.md2', 6, 6.0 / 35.0, NULL, S_PLAY_ATK1}
-	S_PLAY_PAIN {'PLAY', 6, 'players/doomguy/tris.md2', 7, 4.0 / 35.0, NULL, S_PLAY_PAIN2}
-	S_PLAY_PAIN2 {'PLAY', 6, 'players/doomguy/tris.md2', 8, 4.0 / 35.0, A_Pain, S_PLAY}
-	S_PLAY_DIE1 {'PLAY', 7, 'players/doomguy/tris.md2', 9, 10.0 / 35.0, NULL, S_PLAY_DIE2}
-	S_PLAY_DIE2 {'PLAY', 8, 'players/doomguy/tris.md2', 10, 10.0 / 35.0, A_PlayerScream, S_PLAY_DIE3}
-	S_PLAY_DIE3 {'PLAY', 9, 'players/doomguy/tris.md2', 11, 10.0 / 35.0, A_Fall, S_PLAY_DIE4}
-	S_PLAY_DIE4 {'PLAY', 10, 'players/doomguy/tris.md2', 12, 10.0 / 35.0, NULL, S_PLAY_DIE5}
-	S_PLAY_DIE5 {'PLAY', 11, 'players/doomguy/tris.md2', 13, 10.0 / 35.0, NULL, S_PLAY_DIE6}
-	S_PLAY_DIE6 {'PLAY', 12, 'players/doomguy/tris.md2', 14, 10.0 / 35.0, NULL, S_PLAY_DIE7}
-	S_PLAY_DIE7 {'PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, NULL, S_NULL}
-	S_PLAY_XDIE1 {'PLAY', 14, 'players/doomguy/xplode.md2', 0, 5.0 / 35.0, NULL, S_PLAY_XDIE2}
-	S_PLAY_XDIE2 {'PLAY', 15, 'players/doomguy/xplode.md2', 1, 5.0 / 35.0, A_XScream, S_PLAY_XDIE3}
-	S_PLAY_XDIE3 {'PLAY', 16, 'players/doomguy/xplode.md2', 2, 5.0 / 35.0, A_Fall, S_PLAY_XDIE4}
-	S_PLAY_XDIE4 {'PLAY', 17, 'players/doomguy/xplode.md2', 3, 5.0 / 35.0, NULL, S_PLAY_XDIE5}
-	S_PLAY_XDIE5 {'PLAY', 18, 'players/doomguy/xplode.md2', 4, 5.0 / 35.0, NULL, S_PLAY_XDIE6}
-	S_PLAY_XDIE6 {'PLAY', 19, 'players/doomguy/xplode.md2', 5, 5.0 / 35.0, NULL, S_PLAY_XDIE7}
-	S_PLAY_XDIE7 {'PLAY', 20, 'players/doomguy/xplode.md2', 6, 5.0 / 35.0, NULL, S_PLAY_XDIE8}
-	S_PLAY_XDIE8 {'PLAY', 21, 'players/doomguy/xplode.md2', 7, 5.0 / 35.0, NULL, S_PLAY_XDIE9}
-	S_PLAY_XDIE9 {'PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, NULL, S_NULL}
-	S_POSS_STND {'POSS', 0, 'monsters/trooper.md2', 0, 10.0 / 35.0, A_Look, S_POSS_STND2}
-	S_POSS_STND2 {'POSS', 1, 'monsters/trooper.md2', 1, 10.0 / 35.0, A_Look, S_POSS_STND}
-	S_POSS_RUN1 {'POSS', 0, 'monsters/trooper.md2', 2, 4.0 / 35.0, A_Chase, S_POSS_RUN2}
-	S_POSS_RUN2 {'POSS', 0, 'monsters/trooper.md2', 3, 4.0 / 35.0, A_Chase, S_POSS_RUN3}
-	S_POSS_RUN3 {'POSS', 1, 'monsters/trooper.md2', 4, 4.0 / 35.0, A_Chase, S_POSS_RUN4}
-	S_POSS_RUN4 {'POSS', 1, 'monsters/trooper.md2', 5, 4.0 / 35.0, A_Chase, S_POSS_RUN5}
-	S_POSS_RUN5 {'POSS', 2, 'monsters/trooper.md2', 6, 4.0 / 35.0, A_Chase, S_POSS_RUN6}
-	S_POSS_RUN6 {'POSS', 2, 'monsters/trooper.md2', 7, 4.0 / 35.0, A_Chase, S_POSS_RUN7}
-	S_POSS_RUN7 {'POSS', 3, 'monsters/trooper.md2', 8, 4.0 / 35.0, A_Chase, S_POSS_RUN8}
-	S_POSS_RUN8 {'POSS', 3, 'monsters/trooper.md2', 9, 4.0 / 35.0, A_Chase, S_POSS_RUN1}
-	S_POSS_ATK1 {'POSS', 4, 'monsters/trooper.md2', 10, 10.0 / 35.0, A_FaceTarget, S_POSS_ATK2}
-	S_POSS_ATK2 {'POSS', 5, 'monsters/trooper.md2', 11, 8.0 / 35.0, A_PosAttack, S_POSS_ATK3}
-	S_POSS_ATK3 {'POSS', 4, 'monsters/trooper.md2', 12, 8.0 / 35.0, NULL, S_POSS_RUN1}
-	S_POSS_PAIN {'POSS', 6, 'monsters/trooper.md2', 13, 3.0 / 35.0, NULL, S_POSS_PAIN2}
-	S_POSS_PAIN2 {'POSS', 6, 'monsters/trooper.md2', 14, 3.0 / 35.0, A_Pain, S_POSS_RUN1}
-	S_POSS_DIE1 {'POSS', 7, 'monsters/troopdie.md2', 0, 5.0 / 35.0, NULL, S_POSS_DIE2}
-	S_POSS_DIE2 {'POSS', 8, 'monsters/troopdie.md2', 1, 5.0 / 35.0, A_Scream, S_POSS_DIE3}
-	S_POSS_DIE3 {'POSS', 9, 'monsters/troopdie.md2', 2, 5.0 / 35.0, A_Fall, S_POSS_DIE4}
-	S_POSS_DIE4 {'POSS', 10, 'monsters/troopdie.md2', 3, 5.0 / 35.0, NULL, S_POSS_DIE5}
-	S_POSS_DIE5 {'POSS', 11, 'monsters/troopdie.md2', 4, -1.0, NULL, S_NULL}
-	S_POSS_XDIE1 {'POSS', 12, 'gibs/troopgib.md2', 0, 5.0 / 35.0, NULL, S_POSS_XDIE2}
-	S_POSS_XDIE2 {'POSS', 13, 'gibs/troopgib.md2', 1, 5.0 / 35.0, A_XScream, S_POSS_XDIE3}
-	S_POSS_XDIE3 {'POSS', 14, 'gibs/troopgib.md2', 2, 5.0 / 35.0, A_Fall, S_POSS_XDIE4}
-	S_POSS_XDIE4 {'POSS', 15, 'gibs/troopgib.md2', 3, 5.0 / 35.0, NULL, S_POSS_XDIE5}
-	S_POSS_XDIE5 {'POSS', 16, 'gibs/troopgib.md2', 4, 5.0 / 35.0, NULL, S_POSS_XDIE6}
-	S_POSS_XDIE6 {'POSS', 17, 'gibs/troopgib.md2', 5, 5.0 / 35.0, NULL, S_POSS_XDIE7}
-	S_POSS_XDIE7 {'POSS', 18, 'gibs/troopgib.md2', 6, 5.0 / 35.0, NULL, S_POSS_XDIE8}
-	S_POSS_XDIE8 {'POSS', 19, 'gibs/troopgib.md2', 7, 5.0 / 35.0, NULL, S_POSS_XDIE9}
-	S_POSS_XDIE9 {'POSS', 20, 'gibs/troopgib.md2', 8, -1.0, NULL, S_NULL}
-	S_POSS_RAISE1 {'POSS', 10, 'monsters/troopdie.md2', 5, 5.0 / 35.0, NULL, S_POSS_RAISE2}
-	S_POSS_RAISE2 {'POSS', 9, 'monsters/troopdie.md2', 6, 5.0 / 35.0, NULL, S_POSS_RAISE3}
-	S_POSS_RAISE3 {'POSS', 8, 'monsters/troopdie.md2', 7, 5.0 / 35.0, NULL, S_POSS_RAISE4}
-	S_POSS_RAISE4 {'POSS', 7, 'monsters/troopdie.md2', 8, 5.0 / 35.0, NULL, S_POSS_RUN1}
-	S_SPOS_STND {'SPOS', 0, 'monsters/sargeant.md2', 0, 10.0 / 35.0, A_Look, S_SPOS_STND2}
-	S_SPOS_STND2 {'SPOS', 1, 'monsters/sargeant.md2', 1, 10.0 / 35.0, A_Look, S_SPOS_STND}
-	S_SPOS_RUN1 {'SPOS', 0, 'monsters/sargeant.md2', 2, 3.0 / 35.0, A_Chase, S_SPOS_RUN2}
-	S_SPOS_RUN2 {'SPOS', 0, 'monsters/sargeant.md2', 3, 3.0 / 35.0, A_Chase, S_SPOS_RUN3}
-	S_SPOS_RUN3 {'SPOS', 1, 'monsters/sargeant.md2', 4, 3.0 / 35.0, A_Chase, S_SPOS_RUN4}
-	S_SPOS_RUN4 {'SPOS', 1, 'monsters/sargeant.md2', 5, 3.0 / 35.0, A_Chase, S_SPOS_RUN5}
-	S_SPOS_RUN5 {'SPOS', 2, 'monsters/sargeant.md2', 6, 3.0 / 35.0, A_Chase, S_SPOS_RUN6}
-	S_SPOS_RUN6 {'SPOS', 2, 'monsters/sargeant.md2', 7, 3.0 / 35.0, A_Chase, S_SPOS_RUN7}
-	S_SPOS_RUN7 {'SPOS', 3, 'monsters/sargeant.md2', 8, 3.0 / 35.0, A_Chase, S_SPOS_RUN8}
-	S_SPOS_RUN8 {'SPOS', 3, 'monsters/sargeant.md2', 9, 3.0 / 35.0, A_Chase, S_SPOS_RUN1}
-	S_SPOS_ATK1 {'SPOS', 4, 'monsters/sargeant.md2', 10, 10.0 / 35.0, A_FaceTarget, S_SPOS_ATK2}
-	S_SPOS_ATK2 {'SPOS', 5 | FF_FULLBRIGHT, 'monsters/sargeant.md2', 11, 10.0 / 35.0, A_SPosAttack, S_SPOS_ATK3}
-	S_SPOS_ATK3 {'SPOS', 4, 'monsters/sargeant.md2', 12, 10.0 / 35.0, NULL, S_SPOS_RUN1}
-	S_SPOS_PAIN {'SPOS', 6, 'monsters/sargeant.md2', 13, 3.0 / 35.0, NULL, S_SPOS_PAIN2}
-	S_SPOS_PAIN2 {'SPOS', 6, 'monsters/sargeant.md2', 14, 3.0 / 35.0, A_Pain, S_SPOS_RUN1}
-	S_SPOS_DIE1 {'SPOS', 7, 'monsters/sargdie.md2', 0, 5.0 / 35.0, NULL, S_SPOS_DIE2}
-	S_SPOS_DIE2 {'SPOS', 8, 'monsters/sargdie.md2', 1, 5.0 / 35.0, A_Scream, S_SPOS_DIE3}
-	S_SPOS_DIE3 {'SPOS', 9, 'monsters/sargdie.md2', 2, 5.0 / 35.0, A_Fall, S_SPOS_DIE4}
-	S_SPOS_DIE4 {'SPOS', 10, 'monsters/sargdie.md2', 3, 5.0 / 35.0, NULL, S_SPOS_DIE5}
-	S_SPOS_DIE5 {'SPOS', 11, 'monsters/sargdie.md2', 4, -1.0, NULL, S_NULL}
-	S_SPOS_XDIE1 {'SPOS', 12, 'gibs/sarggib.md2', 0, 5.0 / 35.0, NULL, S_SPOS_XDIE2}
-	S_SPOS_XDIE2 {'SPOS', 13, 'gibs/sarggib.md2', 1, 5.0 / 35.0, A_XScream, S_SPOS_XDIE3}
-	S_SPOS_XDIE3 {'SPOS', 14, 'gibs/sarggib.md2', 2, 5.0 / 35.0, A_Fall, S_SPOS_XDIE4}
-	S_SPOS_XDIE4 {'SPOS', 15, 'gibs/sarggib.md2', 3, 5.0 / 35.0, NULL, S_SPOS_XDIE5}
-	S_SPOS_XDIE5 {'SPOS', 16, 'gibs/sarggib.md2', 4, 5.0 / 35.0, NULL, S_SPOS_XDIE6}
-	S_SPOS_XDIE6 {'SPOS', 17, 'gibs/sarggib.md2', 5, 5.0 / 35.0, NULL, S_SPOS_XDIE7}
-	S_SPOS_XDIE7 {'SPOS', 18, 'gibs/sarggib.md2', 6, 5.0 / 35.0, NULL, S_SPOS_XDIE8}
-	S_SPOS_XDIE8 {'SPOS', 19, 'gibs/sarggib.md2', 7, 5.0 / 35.0, NULL, S_SPOS_XDIE9}
-	S_SPOS_XDIE9 {'SPOS', 20, 'gibs/sarggib.md2', 8, -1.0, NULL, S_NULL}
-	S_SPOS_RAISE1 {'SPOS', 11, 'monsters/sargdie.md2', 5, 5.0 / 35.0, NULL, S_SPOS_RAISE2}
-	S_SPOS_RAISE2 {'SPOS', 10, 'monsters/sargdie.md2', 6, 5.0 / 35.0, NULL, S_SPOS_RAISE3}
-	S_SPOS_RAISE3 {'SPOS', 9, 'monsters/sargdie.md2', 7, 5.0 / 35.0, NULL, S_SPOS_RAISE4}
-	S_SPOS_RAISE4 {'SPOS', 8, 'monsters/sargdie.md2', 8, 5.0 / 35.0, NULL, S_SPOS_RAISE5}
-	S_SPOS_RAISE5 {'SPOS', 7, 'monsters/sargdie.md2', 9, 5.0 / 35.0, NULL, S_SPOS_RUN1}
-	S_VILE_STND {'VILE', 0, 'monsters/vile.md2', 0, 10.0 / 35.0, A_Look, S_VILE_STND2}
-	S_VILE_STND2 {'VILE', 1, 'monsters/vile.md2', 1, 10.0 / 35.0, A_Look, S_VILE_STND}
-	S_VILE_RUN1 {'VILE', 0, 'monsters/vile.md2', 2, 2.0 / 35.0, A_VileChase, S_VILE_RUN2}
-	S_VILE_RUN2 {'VILE', 0, 'monsters/vile.md2', 3, 2.0 / 35.0, A_VileChase, S_VILE_RUN3}
-	S_VILE_RUN3 {'VILE', 1, 'monsters/vile.md2', 4, 2.0 / 35.0, A_VileChase, S_VILE_RUN4}
-	S_VILE_RUN4 {'VILE', 1, 'monsters/vile.md2', 5, 2.0 / 35.0, A_VileChase, S_VILE_RUN5}
-	S_VILE_RUN5 {'VILE', 2, 'monsters/vile.md2', 6, 2.0 / 35.0, A_VileChase, S_VILE_RUN6}
-	S_VILE_RUN6 {'VILE', 2, 'monsters/vile.md2', 7, 2.0 / 35.0, A_VileChase, S_VILE_RUN7}
-	S_VILE_RUN7 {'VILE', 3, 'monsters/vile.md2', 8, 2.0 / 35.0, A_VileChase, S_VILE_RUN8}
-	S_VILE_RUN8 {'VILE', 3, 'monsters/vile.md2', 9, 2.0 / 35.0, A_VileChase, S_VILE_RUN9}
-	S_VILE_RUN9 {'VILE', 4, 'monsters/vile.md2', 10, 2.0 / 35.0, A_VileChase, S_VILE_RUN10}
-	S_VILE_RUN10 {'VILE', 4, 'monsters/vile.md2', 11, 2.0 / 35.0, A_VileChase, S_VILE_RUN11}
-	S_VILE_RUN11 {'VILE', 5, 'monsters/vile.md2', 12, 2.0 / 35.0, A_VileChase, S_VILE_RUN12}
-	S_VILE_RUN12 {'VILE', 5, 'monsters/vile.md2', 13, 2.0 / 35.0, A_VileChase, S_VILE_RUN1}
-	S_VILE_ATK1 {'VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 0.0 / 35.0, A_VileStart, S_VILE_ATK2}
-	S_VILE_ATK2 {'VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 10.0 / 35.0, A_FaceTarget, S_VILE_ATK3}
-	S_VILE_ATK3 {'VILE', 7 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 1, 8.0 / 35.0, A_VileTarget, S_VILE_ATK4}
-	S_VILE_ATK4 {'VILE', 8 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 2, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK5}
-	S_VILE_ATK5 {'VILE', 9 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 3, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK6}
-	S_VILE_ATK6 {'VILE', 10 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 4, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK7}
-	S_VILE_ATK7 {'VILE', 11 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 5, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK8}
-	S_VILE_ATK8 {'VILE', 12 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 6, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK9}
-	S_VILE_ATK9 {'VILE', 13 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 7, 8.0 / 35.0, A_FaceTarget, S_VILE_ATK10}
-	S_VILE_ATK10 {'VILE', 14 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 8, 8.0 / 35.0, A_VileAttack, S_VILE_ATK11}
-	S_VILE_ATK11 {'VILE', 15 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 9, 20.0 / 35.0, NULL, S_VILE_RUN1}
-	S_VILE_HEAL1 {'VILE', 26 | FF_FULLBRIGHT, 'monsters/vile.md2', 14, 10.0 / 35.0, NULL, S_VILE_HEAL2}
-	S_VILE_HEAL2 {'VILE', 27 | FF_FULLBRIGHT, 'monsters/vile.md2', 15, 10.0 / 35.0, NULL, S_VILE_HEAL3}
-	S_VILE_HEAL3 {'VILE', 28 | FF_FULLBRIGHT, 'monsters/vile.md2', 16, 10.0 / 35.0, NULL, S_VILE_RUN1}
-	S_VILE_PAIN {'VILE', 16, 'monsters/vile.md2', 17, 5.0 / 35.0, NULL, S_VILE_PAIN2}
-	S_VILE_PAIN2 {'VILE', 16, 'monsters/vile.md2', 18, 5.0 / 35.0, A_Pain, S_VILE_RUN1}
-	S_VILE_DIE1 {'VILE', 16, 'monsters/viledie.md2', 0, 7.0 / 35.0, NULL, S_VILE_DIE2}
-	S_VILE_DIE2 {'VILE', 17, 'monsters/viledie.md2', 1, 7.0 / 35.0, A_Scream, S_VILE_DIE3}
-	S_VILE_DIE3 {'VILE', 18, 'monsters/viledie.md2', 2, 7.0 / 35.0, A_Fall, S_VILE_DIE4}
-	S_VILE_DIE4 {'VILE', 19, 'monsters/viledie.md2', 3, 7.0 / 35.0, NULL, S_VILE_DIE5}
-	S_VILE_DIE5 {'VILE', 20, 'monsters/viledie.md2', 4, 7.0 / 35.0, NULL, S_VILE_DIE6}
-	S_VILE_DIE6 {'VILE', 21, 'monsters/viledie.md2', 5, 7.0 / 35.0, NULL, S_VILE_DIE7}
-	S_VILE_DIE7 {'VILE', 22, 'monsters/viledie.md2', 6, 7.0 / 35.0, NULL, S_VILE_DIE8}
-	S_VILE_DIE8 {'VILE', 23, 'monsters/viledie.md2', 7, 5.0 / 35.0, NULL, S_VILE_DIE9}
-	S_VILE_DIE9 {'VILE', 24, 'monsters/viledie.md2', 8, 5.0 / 35.0, NULL, S_VILE_DIE10}
-	S_VILE_DIE10 {'VILE', 25, 'monsters/viledie.md2', 9, -1.0, NULL, S_NULL}
-	S_FIRE1 {'FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, A_StartFire, S_FIRE2}
-	S_FIRE2 {'FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE3}
-	S_FIRE3 {'FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE4}
-	S_FIRE4 {'FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE5}
-	S_FIRE5 {'FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_FireCrackle, S_FIRE6}
-	S_FIRE6 {'FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE7}
-	S_FIRE7 {'FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE8}
-	S_FIRE8 {'FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE9}
-	S_FIRE9 {'FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE10}
-	S_FIRE10 {'FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE11}
-	S_FIRE11 {'FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE12}
-	S_FIRE12 {'FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE13}
-	S_FIRE13 {'FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE14}
-	S_FIRE14 {'FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE15}
-	S_FIRE15 {'FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE16}
-	S_FIRE16 {'FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE17}
-	S_FIRE17 {'FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE18}
-	S_FIRE18 {'FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE19}
-	S_FIRE19 {'FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, A_FireCrackle, S_FIRE20}
-	S_FIRE20 {'FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE21}
-	S_FIRE21 {'FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE22}
-	S_FIRE22 {'FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE23}
-	S_FIRE23 {'FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE24}
-	S_FIRE24 {'FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE25}
-	S_FIRE25 {'FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE26}
-	S_FIRE26 {'FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE27}
-	S_FIRE27 {'FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE28}
-	S_FIRE28 {'FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE29}
-	S_FIRE29 {'FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_FIRE30}
-	S_FIRE30 {'FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, A_Fire, S_NULL}
-	S_SMOKE1 {'PUFF', 1, 4.0 / 35.0, NULL, S_SMOKE2}
-	S_SMOKE2 {'PUFF', 2, 4.0 / 35.0, NULL, S_SMOKE3}
-	S_SMOKE3 {'PUFF', 1, 4.0 / 35.0, NULL, S_SMOKE4}
-	S_SMOKE4 {'PUFF', 2, 4.0 / 35.0, NULL, S_SMOKE5}
-	S_SMOKE5 {'PUFF', 3, 4.0 / 35.0, NULL, S_NULL}
-	S_TRACER {'FATB', 0 | FF_FULLBRIGHT, 2.0 / 35.0, A_Tracer, S_TRACER2}
-	S_TRACER2 {'FATB', 1 | FF_FULLBRIGHT, 2.0 / 35.0, A_Tracer, S_TRACER}
-	S_TRACEEXP1 {'FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_TRACEEXP2}
-	S_TRACEEXP2 {'FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_TRACEEXP3}
-	S_TRACEEXP3 {'FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
-	S_SKEL_STND {'SKEL', 0, 'monsters/revenant.md2', 0, 10.0 / 35.0, A_Look, S_SKEL_STND2}
-	S_SKEL_STND2 {'SKEL', 1, 'monsters/revenant.md2', 1, 10.0 / 35.0, A_Look, S_SKEL_STND}
-	S_SKEL_RUN1 {'SKEL', 0, 'monsters/revenant.md2', 2, 2.0 / 35.0, A_Chase, S_SKEL_RUN2}
-	S_SKEL_RUN2 {'SKEL', 0, 'monsters/revenant.md2', 3, 2.0 / 35.0, A_Chase, S_SKEL_RUN3}
-	S_SKEL_RUN3 {'SKEL', 1, 'monsters/revenant.md2', 4, 2.0 / 35.0, A_Chase, S_SKEL_RUN4}
-	S_SKEL_RUN4 {'SKEL', 1, 'monsters/revenant.md2', 5, 2.0 / 35.0, A_Chase, S_SKEL_RUN5}
-	S_SKEL_RUN5 {'SKEL', 2, 'monsters/revenant.md2', 6, 2.0 / 35.0, A_Chase, S_SKEL_RUN6}
-	S_SKEL_RUN6 {'SKEL', 2, 'monsters/revenant.md2', 7, 2.0 / 35.0, A_Chase, S_SKEL_RUN7}
-	S_SKEL_RUN7 {'SKEL', 3, 'monsters/revenant.md2', 8, 2.0 / 35.0, A_Chase, S_SKEL_RUN8}
-	S_SKEL_RUN8 {'SKEL', 3, 'monsters/revenant.md2', 9, 2.0 / 35.0, A_Chase, S_SKEL_RUN9}
-	S_SKEL_RUN9 {'SKEL', 4, 'monsters/revenant.md2', 10, 2.0 / 35.0, A_Chase, S_SKEL_RUN10}
-	S_SKEL_RUN10 {'SKEL', 4, 'monsters/revenant.md2', 11, 2.0 / 35.0, A_Chase, S_SKEL_RUN11}
-	S_SKEL_RUN11 {'SKEL', 5, 'monsters/revenant.md2', 12, 2.0 / 35.0, A_Chase, S_SKEL_RUN12}
-	S_SKEL_RUN12 {'SKEL', 5, 'monsters/revenant.md2', 13, 2.0 / 35.0, A_Chase, S_SKEL_RUN1}
-	S_SKEL_FIST1 {'SKEL', 6, 'monsters/revenant.md2', 14, 0.0 / 35.0, A_FaceTarget, S_SKEL_FIST2}
-	S_SKEL_FIST2 {'SKEL', 6, 'monsters/revenant.md2', 14, 6.0 / 35.0, A_SkelWhoosh, S_SKEL_FIST3}
-	S_SKEL_FIST3 {'SKEL', 7, 'monsters/revenant.md2', 15, 6.0 / 35.0, A_FaceTarget, S_SKEL_FIST4}
-	S_SKEL_FIST4 {'SKEL', 8, 'monsters/revenant.md2', 16, 6.0 / 35.0, A_SkelFist, S_SKEL_RUN1}
-	S_SKEL_MISS1 {'SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant.md2', 17, 0.0 / 35.0, A_FaceTarget, S_SKEL_MISS2}
-	S_SKEL_MISS2 {'SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant.md2', 17, 10.0 / 35.0, A_FaceTarget, S_SKEL_MISS3}
-	S_SKEL_MISS3 {'SKEL', 10, 'monsters/revenant.md2', 18, 10.0 / 35.0, A_SkelMissile, S_SKEL_MISS4}
-	S_SKEL_MISS4 {'SKEL', 10, 'monsters/revenant.md2', 19, 10.0 / 35.0, A_FaceTarget, S_SKEL_RUN1}
-	S_SKEL_PAIN {'SKEL', 11, 'monsters/revenant.md2', 20, 5.0 / 35.0, NULL, S_SKEL_PAIN2}
-	S_SKEL_PAIN2 {'SKEL', 11, 'monsters/revenant.md2', 21, 5.0 / 35.0, A_Pain, S_SKEL_RUN1}
-	S_SKEL_DIE1 {'SKEL', 11, 'monsters/revdie.md2', 0, 7.0 / 35.0, NULL, S_SKEL_DIE2}
-	S_SKEL_DIE2 {'SKEL', 12, 'monsters/revdie.md2', 1, 7.0 / 35.0, NULL, S_SKEL_DIE3}
-	S_SKEL_DIE3 {'SKEL', 13, 'monsters/revdie.md2', 2, 7.0 / 35.0, A_Scream, S_SKEL_DIE4}
-	S_SKEL_DIE4 {'SKEL', 14, 'monsters/revdie.md2', 3, 7.0 / 35.0, A_Fall, S_SKEL_DIE5}
-	S_SKEL_DIE5 {'SKEL', 15, 'monsters/revdie.md2', 4, 7.0 / 35.0, NULL, S_SKEL_DIE6}
-	S_SKEL_DIE6 {'SKEL', 16, 'monsters/revdie.md2', 5, -1.0, NULL, S_NULL}
-	S_SKEL_RAISE1 {'SKEL', 16, 'monsters/revdie.md2', 6, 5.0 / 35.0, NULL, S_SKEL_RAISE2}
-	S_SKEL_RAISE2 {'SKEL', 15, 'monsters/revdie.md2', 7, 5.0 / 35.0, NULL, S_SKEL_RAISE3}
-	S_SKEL_RAISE3 {'SKEL', 14, 'monsters/revdie.md2', 8, 5.0 / 35.0, NULL, S_SKEL_RAISE4}
-	S_SKEL_RAISE4 {'SKEL', 13, 'monsters/revdie.md2', 9, 5.0 / 35.0, NULL, S_SKEL_RAISE5}
-	S_SKEL_RAISE5 {'SKEL', 12, 'monsters/revdie.md2', 10, 5.0 / 35.0, NULL, S_SKEL_RAISE6}
-	S_SKEL_RAISE6 {'SKEL', 11, 'monsters/revdie.md2', 11, 5.0 / 35.0, NULL, S_SKEL_RUN1}
-	S_FATSHOT1 {'MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_FATSHOT2}
-	S_FATSHOT2 {'MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_FATSHOT1}
-	S_FATSHOTX1 {'MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_FATSHOTX2}
-	S_FATSHOTX2 {'MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_FATSHOTX3}
-	S_FATSHOTX3 {'MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, NULL, S_NULL}
-	S_FATT_STND {'FATT', 0, 'monsters/mancubus.md2', 0, 15.0 / 35.0, A_Look, S_FATT_STND2}
-	S_FATT_STND2 {'FATT', 1, 'monsters/mancubus.md2', 1, 15.0 / 35.0, A_Look, S_FATT_STND}
-	S_FATT_RUN1 {'FATT', 0, 'monsters/mancubus.md2', 2, 4.0 / 35.0, A_Chase, S_FATT_RUN2}
-	S_FATT_RUN2 {'FATT', 0, 'monsters/mancubus.md2', 3, 4.0 / 35.0, A_Chase, S_FATT_RUN3}
-	S_FATT_RUN3 {'FATT', 1, 'monsters/mancubus.md2', 4, 4.0 / 35.0, A_Chase, S_FATT_RUN4}
-	S_FATT_RUN4 {'FATT', 1, 'monsters/mancubus.md2', 5, 4.0 / 35.0, A_Chase, S_FATT_RUN5}
-	S_FATT_RUN5 {'FATT', 2, 'monsters/mancubus.md2', 6, 4.0 / 35.0, A_Chase, S_FATT_RUN6}
-	S_FATT_RUN6 {'FATT', 2, 'monsters/mancubus.md2', 7, 4.0 / 35.0, A_Chase, S_FATT_RUN7}
-	S_FATT_RUN7 {'FATT', 3, 'monsters/mancubus.md2', 8, 4.0 / 35.0, A_Chase, S_FATT_RUN8}
-	S_FATT_RUN8 {'FATT', 3, 'monsters/mancubus.md2', 9, 4.0 / 35.0, A_Chase, S_FATT_RUN9}
-	S_FATT_RUN9 {'FATT', 4, 'monsters/mancubus.md2', 10, 4.0 / 35.0, A_Chase, S_FATT_RUN10}
-	S_FATT_RUN10 {'FATT', 4, 'monsters/mancubus.md2', 11, 4.0 / 35.0, A_Chase, S_FATT_RUN11}
-	S_FATT_RUN11 {'FATT', 5, 'monsters/mancubus.md2', 12, 4.0 / 35.0, A_Chase, S_FATT_RUN12}
-	S_FATT_RUN12 {'FATT', 5, 'monsters/mancubus.md2', 13, 4.0 / 35.0, A_Chase, S_FATT_RUN1}
-	S_FATT_ATK1 {'FATT', 6, 'monsters/mancubus.md2', 14, 20.0 / 35.0, A_FatRaise, S_FATT_ATK2}
-	S_FATT_ATK2 {'FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, A_FatAttack1, S_FATT_ATK3}
-	S_FATT_ATK3 {'FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, A_FaceTarget, S_FATT_ATK4}
-	S_FATT_ATK4 {'FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, A_FaceTarget, S_FATT_ATK5}
-	S_FATT_ATK5 {'FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, A_FatAttack2, S_FATT_ATK6}
-	S_FATT_ATK6 {'FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, A_FaceTarget, S_FATT_ATK7}
-	S_FATT_ATK7 {'FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, A_FaceTarget, S_FATT_ATK8}
-	S_FATT_ATK8 {'FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, A_FatAttack3, S_FATT_ATK9}
-	S_FATT_ATK9 {'FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, A_FaceTarget, S_FATT_ATK10}
-	S_FATT_ATK10 {'FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, A_FaceTarget, S_FATT_RUN1}
-	S_FATT_PAIN {'FATT', 9, 'monsters/mancubus.md2', 16, 3.0 / 35.0, NULL, S_FATT_PAIN2}
-	S_FATT_PAIN2 {'FATT', 9, 'monsters/mancubus.md2', 17, 3.0 / 35.0, A_Pain, S_FATT_RUN1}
-	S_FATT_DIE1 {'FATT', 10, 'monsters/mancdie.md2', 0, 6.0 / 35.0, NULL, S_FATT_DIE2}
-	S_FATT_DIE2 {'FATT', 11, 'monsters/mancdie.md2', 1, 6.0 / 35.0, A_Scream, S_FATT_DIE3}
-	S_FATT_DIE3 {'FATT', 12, 'monsters/mancdie.md2', 2, 6.0 / 35.0, A_Fall, S_FATT_DIE4}
-	S_FATT_DIE4 {'FATT', 13, 'monsters/mancdie.md2', 3, 6.0 / 35.0, NULL, S_FATT_DIE5}
-	S_FATT_DIE5 {'FATT', 14, 'monsters/mancdie.md2', 4, 6.0 / 35.0, NULL, S_FATT_DIE6}
-	S_FATT_DIE6 {'FATT', 15, 'monsters/mancdie.md2', 5, 6.0 / 35.0, NULL, S_FATT_DIE7}
-	S_FATT_DIE7 {'FATT', 16, 'monsters/mancdie.md2', 6, 6.0 / 35.0, NULL, S_FATT_DIE8}
-	S_FATT_DIE8 {'FATT', 17, 'monsters/mancdie.md2', 7, 6.0 / 35.0, NULL, S_FATT_DIE9}
-	S_FATT_DIE9 {'FATT', 18, 'monsters/mancdie.md2', 8, 6.0 / 35.0, NULL, S_FATT_DIE10}
-	S_FATT_DIE10 {'FATT', 19, 'monsters/mancdie.md2', 9, -1.0, A_BossDeath, S_NULL}
-	S_FATT_RAISE1 {'FATT', 17, 'monsters/mancdie.md2', 10, 5.0 / 35.0, NULL, S_FATT_RAISE2}
-	S_FATT_RAISE2 {'FATT', 16, 'monsters/mancdie.md2', 11, 5.0 / 35.0, NULL, S_FATT_RAISE3}
-	S_FATT_RAISE3 {'FATT', 15, 'monsters/mancdie.md2', 12, 5.0 / 35.0, NULL, S_FATT_RAISE4}
-	S_FATT_RAISE4 {'FATT', 14, 'monsters/mancdie.md2', 13, 5.0 / 35.0, NULL, S_FATT_RAISE5}
-	S_FATT_RAISE5 {'FATT', 13, 'monsters/mancdie.md2', 14, 5.0 / 35.0, NULL, S_FATT_RAISE6}
-	S_FATT_RAISE6 {'FATT', 12, 'monsters/mancdie.md2', 15, 5.0 / 35.0, NULL, S_FATT_RAISE7}
-	S_FATT_RAISE7 {'FATT', 11, 'monsters/mancdie.md2', 16, 5.0 / 35.0, NULL, S_FATT_RAISE8}
-	S_FATT_RAISE8 {'FATT', 10, 'monsters/mancdie.md2', 17, 5.0 / 35.0, NULL, S_FATT_RUN1}
-	S_CPOS_STND {'CPOS', 0, 'monsters/chainguy.md2', 0, 10.0 / 35.0, A_Look, S_CPOS_STND2}
-	S_CPOS_STND2 {'CPOS', 1, 'monsters/chainguy.md2', 1, 10.0 / 35.0, A_Look, S_CPOS_STND}
-	S_CPOS_RUN1 {'CPOS', 0, 'monsters/chainguy.md2', 2, 3.0 / 35.0, A_Chase, S_CPOS_RUN2}
-	S_CPOS_RUN2 {'CPOS', 0, 'monsters/chainguy.md2', 3, 3.0 / 35.0, A_Chase, S_CPOS_RUN3}
-	S_CPOS_RUN3 {'CPOS', 1, 'monsters/chainguy.md2', 4, 3.0 / 35.0, A_Chase, S_CPOS_RUN4}
-	S_CPOS_RUN4 {'CPOS', 1, 'monsters/chainguy.md2', 5, 3.0 / 35.0, A_Chase, S_CPOS_RUN5}
-	S_CPOS_RUN5 {'CPOS', 2, 'monsters/chainguy.md2', 6, 3.0 / 35.0, A_Chase, S_CPOS_RUN6}
-	S_CPOS_RUN6 {'CPOS', 2, 'monsters/chainguy.md2', 7, 3.0 / 35.0, A_Chase, S_CPOS_RUN7}
-	S_CPOS_RUN7 {'CPOS', 3, 'monsters/chainguy.md2', 8, 3.0 / 35.0, A_Chase, S_CPOS_RUN8}
-	S_CPOS_RUN8 {'CPOS', 3, 'monsters/chainguy.md2', 9, 3.0 / 35.0, A_Chase, S_CPOS_RUN1}
-	S_CPOS_ATK1 {'CPOS', 4, 'monsters/chainguy.md2', 10, 10.0 / 35.0, A_FaceTarget, S_CPOS_ATK2}
-	S_CPOS_ATK2 {'CPOS', 5 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 11, 4.0 / 35.0, A_CPosAttack, S_CPOS_ATK3}
-	S_CPOS_ATK3 {'CPOS', 4 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 12, 4.0 / 35.0, A_CPosAttack, S_CPOS_ATK4}
-	S_CPOS_ATK4 {'CPOS', 5, 'monsters/chainguy.md2', 13, 1.0 / 35.0, A_CPosRefire, S_CPOS_ATK2}
-	S_CPOS_PAIN {'CPOS', 6, 'monsters/chainguy.md2', 14, 3.0 / 35.0, NULL, S_CPOS_PAIN2}
-	S_CPOS_PAIN2 {'CPOS', 6, 'monsters/chainguy.md2', 15, 3.0 / 35.0, A_Pain, S_CPOS_RUN1}
-	S_CPOS_DIE1 {'CPOS', 7, 'monsters/chaindie.md2', 0, 5.0 / 35.0, NULL, S_CPOS_DIE2}
-	S_CPOS_DIE2 {'CPOS', 8, 'monsters/chaindie.md2', 1, 5.0 / 35.0, A_Scream, S_CPOS_DIE3}
-	S_CPOS_DIE3 {'CPOS', 9, 'monsters/chaindie.md2', 2, 5.0 / 35.0, A_Fall, S_CPOS_DIE4}
-	S_CPOS_DIE4 {'CPOS', 10, 'monsters/chaindie.md2', 3, 5.0 / 35.0, NULL, S_CPOS_DIE5}
-	S_CPOS_DIE5 {'CPOS', 11, 'monsters/chaindie.md2', 4, 5.0 / 35.0, NULL, S_CPOS_DIE6}
-	S_CPOS_DIE6 {'CPOS', 12, 'monsters/chaindie.md2', 5, 5.0 / 35.0, NULL, S_CPOS_DIE7}
-	S_CPOS_DIE7 {'CPOS', 13, 'monsters/chaindie.md2', 6, -1.0, NULL, S_NULL}
-	S_CPOS_XDIE1 {'CPOS', 14, 'gibs/chaingib.md2', 0, 5.0 / 35.0, NULL, S_CPOS_XDIE2}
-	S_CPOS_XDIE2 {'CPOS', 15, 'gibs/chaingib.md2', 1, 5.0 / 35.0, A_XScream, S_CPOS_XDIE3}
-	S_CPOS_XDIE3 {'CPOS', 16, 'gibs/chaingib.md2', 2, 5.0 / 35.0, A_Fall, S_CPOS_XDIE4}
-	S_CPOS_XDIE4 {'CPOS', 17, 'gibs/chaingib.md2', 3, 5.0 / 35.0, NULL, S_CPOS_XDIE5}
-	S_CPOS_XDIE5 {'CPOS', 18, 'gibs/chaingib.md2', 4, 5.0 / 35.0, NULL, S_CPOS_XDIE6}
-	S_CPOS_XDIE6 {'CPOS', 19, 'gibs/chaingib.md2', 5, -1.0, NULL, S_NULL}
-	S_CPOS_RAISE1 {'CPOS', 13, 'monsters/chaindie.md2', 7, 5.0 / 35.0, NULL, S_CPOS_RAISE2}
-	S_CPOS_RAISE2 {'CPOS', 12, 'monsters/chaindie.md2', 8, 5.0 / 35.0, NULL, S_CPOS_RAISE3}
-	S_CPOS_RAISE3 {'CPOS', 11, 'monsters/chaindie.md2', 9, 5.0 / 35.0, NULL, S_CPOS_RAISE4}
-	S_CPOS_RAISE4 {'CPOS', 10, 'monsters/chaindie.md2', 10, 5.0 / 35.0, NULL, S_CPOS_RAISE5}
-	S_CPOS_RAISE5 {'CPOS', 9, 'monsters/chaindie.md2', 11, 5.0 / 35.0, NULL, S_CPOS_RAISE6}
-	S_CPOS_RAISE6 {'CPOS', 8, 'monsters/chaindie.md2', 12, 5.0 / 35.0, NULL, S_CPOS_RAISE7}
-	S_CPOS_RAISE7 {'CPOS', 7, 'monsters/chaindie.md2', 13, 5.0 / 35.0, NULL, S_CPOS_RUN1}
-	S_TROO_STND {'TROO', 0, 'monsters/imp.md2', 0, 10.0 / 35.0, A_Look, S_TROO_STND2}
-	S_TROO_STND2 {'TROO', 1, 'monsters/imp.md2', 1, 10.0 / 35.0, A_Look, S_TROO_STND}
-	S_TROO_RUN1 {'TROO', 0, 'monsters/imp.md2', 8, 3.0 / 35.0, A_Chase, S_TROO_RUN2}
-	S_TROO_RUN2 {'TROO', 0, 'monsters/imp.md2', 9, 3.0 / 35.0, A_Chase, S_TROO_RUN3}
-	S_TROO_RUN3 {'TROO', 1, 'monsters/imp.md2', 10, 3.0 / 35.0, A_Chase, S_TROO_RUN4}
-	S_TROO_RUN4 {'TROO', 1, 'monsters/imp.md2', 11, 3.0 / 35.0, A_Chase, S_TROO_RUN5}
-	S_TROO_RUN5 {'TROO', 2, 'monsters/imp.md2', 12, 3.0 / 35.0, A_Chase, S_TROO_RUN6}
-	S_TROO_RUN6 {'TROO', 2, 'monsters/imp.md2', 13, 3.0 / 35.0, A_Chase, S_TROO_RUN7}
-	S_TROO_RUN7 {'TROO', 3, 'monsters/imp.md2', 14, 3.0 / 35.0, A_Chase, S_TROO_RUN8}
-	S_TROO_RUN8 {'TROO', 3, 'monsters/imp.md2', 15, 3.0 / 35.0, A_Chase, S_TROO_RUN1}
-	S_TROO_ATK1 {'TROO', 4, 'monsters/imp.md2', 16, 8.0 / 35.0, A_FaceTarget, S_TROO_ATK2}
-	S_TROO_ATK2 {'TROO', 5, 'monsters/imp.md2', 17, 8.0 / 35.0, A_FaceTarget, S_TROO_ATK3}
-	S_TROO_ATK3 {'TROO', 6, 'monsters/imp.md2', 18, 6.0 / 35.0, A_TroopAttack, S_TROO_RUN1}
-	S_TROO_PAIN {'TROO', 7, 'monsters/imp.md2', 19, 2.0 / 35.0, NULL, S_TROO_PAIN2}
-	S_TROO_PAIN2 {'TROO', 7, 'monsters/imp.md2', 20, 2.0 / 35.0, A_Pain, S_TROO_RUN1}
-	S_TROO_DIE1 {'TROO', 8, 'monsters/impdie.md2', 0, 8.0 / 35.0, NULL, S_TROO_DIE2}
-	S_TROO_DIE2 {'TROO', 9, 'monsters/impdie.md2', 1, 8.0 / 35.0, A_Scream, S_TROO_DIE3}
-	S_TROO_DIE3 {'TROO', 10, 'monsters/impdie.md2', 2, 6.0 / 35.0, NULL, S_TROO_DIE4}
-	S_TROO_DIE4 {'TROO', 11, 'monsters/impdie.md2', 3, 6.0 / 35.0, A_Fall, S_TROO_DIE5}
-	S_TROO_DIE5 {'TROO', 12, 'monsters/impdie.md2', 4, -1.0, NULL, S_NULL}
-	S_TROO_XDIE1 {'TROO', 13, 'gibs/impgib.md2', 0, 5.0 / 35.0, NULL, S_TROO_XDIE2}
-	S_TROO_XDIE2 {'TROO', 14, 'gibs/impgib.md2', 1, 5.0 / 35.0, A_XScream, S_TROO_XDIE3}
-	S_TROO_XDIE3 {'TROO', 15, 'gibs/impgib.md2', 2, 5.0 / 35.0, NULL, S_TROO_XDIE4}
-	S_TROO_XDIE4 {'TROO', 16, 'gibs/impgib.md2', 3, 5.0 / 35.0, A_Fall, S_TROO_XDIE5}
-	S_TROO_XDIE5 {'TROO', 17, 'gibs/impgib.md2', 4, 5.0 / 35.0, NULL, S_TROO_XDIE6}
-	S_TROO_XDIE6 {'TROO', 18, 'gibs/impgib.md2', 5, 5.0 / 35.0, NULL, S_TROO_XDIE7}
-	S_TROO_XDIE7 {'TROO', 19, 'gibs/impgib.md2', 6, 5.0 / 35.0, NULL, S_TROO_XDIE8}
-	S_TROO_XDIE8 {'TROO', 20, 'gibs/impgib.md2', 7, -1.0, NULL, S_NULL}
-	S_TROO_RAISE1 {'TROO', 12, 'monsters/impdie.md2', 5, 8.0 / 35.0, NULL, S_TROO_RAISE2}
-	S_TROO_RAISE2 {'TROO', 11, 'monsters/impdie.md2', 6, 8.0 / 35.0, NULL, S_TROO_RAISE3}
-	S_TROO_RAISE3 {'TROO', 10, 'monsters/impdie.md2', 7, 6.0 / 35.0, NULL, S_TROO_RAISE4}
-	S_TROO_RAISE4 {'TROO', 9, 'monsters/impdie.md2', 8, 6.0 / 35.0, NULL, S_TROO_RAISE5}
-	S_TROO_RAISE5 {'TROO', 8, 'monsters/impdie.md2', 9, 6.0 / 35.0, NULL, S_TROO_RUN1}
-	S_SARG_STND {'SARG', 0, 'monsters/demon.md2', 0, 10.0 / 35.0, A_Look, S_SARG_STND2}
-	S_SARG_STND2 {'SARG', 1, 'monsters/demon.md2', 1, 10.0 / 35.0, A_Look, S_SARG_STND}
-	S_SARG_RUN1 {'SARG', 0, 'monsters/demon.md2', 2, 2.0 / 35.0, A_Chase, S_SARG_RUN2}
-	S_SARG_RUN2 {'SARG', 0, 'monsters/demon.md2', 3, 2.0 / 35.0, A_Chase, S_SARG_RUN3}
-	S_SARG_RUN3 {'SARG', 1, 'monsters/demon.md2', 4, 2.0 / 35.0, A_Chase, S_SARG_RUN4}
-	S_SARG_RUN4 {'SARG', 1, 'monsters/demon.md2', 5, 2.0 / 35.0, A_Chase, S_SARG_RUN5}
-	S_SARG_RUN5 {'SARG', 2, 'monsters/demon.md2', 6, 2.0 / 35.0, A_Chase, S_SARG_RUN6}
-	S_SARG_RUN6 {'SARG', 2, 'monsters/demon.md2', 7, 2.0 / 35.0, A_Chase, S_SARG_RUN7}
-	S_SARG_RUN7 {'SARG', 3, 'monsters/demon.md2', 8, 2.0 / 35.0, A_Chase, S_SARG_RUN8}
-	S_SARG_RUN8 {'SARG', 3, 'monsters/demon.md2', 9, 2.0 / 35.0, A_Chase, S_SARG_RUN1}
-	S_SARG_ATK1 {'SARG', 4, 'monsters/demon.md2', 10, 8.0 / 35.0, A_FaceTarget, S_SARG_ATK2}
-	S_SARG_ATK2 {'SARG', 5, 'monsters/demon.md2', 11, 8.0 / 35.0, A_FaceTarget, S_SARG_ATK3}
-	S_SARG_ATK3 {'SARG', 6, 'monsters/demon.md2', 12, 8.0 / 35.0, A_SargAttack, S_SARG_RUN1}
-	S_SARG_PAIN {'SARG', 7, 'monsters/demon.md2', 13, 2.0 / 35.0, NULL, S_SARG_PAIN2}
-	S_SARG_PAIN2 {'SARG', 7, 'monsters/demon.md2', 14, 2.0 / 35.0, A_Pain, S_SARG_RUN1}
-	S_SARG_DIE1 {'SARG', 8, 'monsters/demondie.md2', 0, 8.0 / 35.0, NULL, S_SARG_DIE2}
-	S_SARG_DIE2 {'SARG', 9, 'monsters/demondie.md2', 1, 8.0 / 35.0, A_Scream, S_SARG_DIE3}
-	S_SARG_DIE3 {'SARG', 10, 'monsters/demondie.md2', 2, 4.0 / 35.0, NULL, S_SARG_DIE4}
-	S_SARG_DIE4 {'SARG', 11, 'monsters/demondie.md2', 3, 4.0 / 35.0, A_Fall, S_SARG_DIE5}
-	S_SARG_DIE5 {'SARG', 12, 'monsters/demondie.md2', 4, 4.0 / 35.0, NULL, S_SARG_DIE6}
-	S_SARG_DIE6 {'SARG', 13, 'monsters/demondie.md2', 5, -1.0, NULL, S_NULL}
-	S_SARG_RAISE1 {'SARG', 13, 'monsters/demondie.md2', 6, 5.0 / 35.0, NULL, S_SARG_RAISE2}
-	S_SARG_RAISE2 {'SARG', 12, 'monsters/demondie.md2', 7, 5.0 / 35.0, NULL, S_SARG_RAISE3}
-	S_SARG_RAISE3 {'SARG', 11, 'monsters/demondie.md2', 8, 5.0 / 35.0, NULL, S_SARG_RAISE4}
-	S_SARG_RAISE4 {'SARG', 10, 'monsters/demondie.md2', 9, 5.0 / 35.0, NULL, S_SARG_RAISE5}
-	S_SARG_RAISE5 {'SARG', 9, 'monsters/demondie.md2', 10, 5.0 / 35.0, NULL, S_SARG_RAISE6}
-	S_SARG_RAISE6 {'SARG', 8, 'monsters/demondie.md2', 11, 5.0 / 35.0, NULL, S_SARG_RUN1}
-	S_HEAD_STND {'HEAD', 0, 'monsters/caco.md2', 0, 10.0 / 35.0, A_Look, S_HEAD_STND}
-	S_HEAD_RUN1 {'HEAD', 0, 'monsters/caco.md2', 1, 3.0 / 35.0, A_Chase, S_HEAD_RUN1}
-	S_HEAD_ATK1 {'HEAD', 1, 'monsters/caco.md2', 2, 5.0 / 35.0, A_FaceTarget, S_HEAD_ATK2}
-	S_HEAD_ATK2 {'HEAD', 2, 'monsters/caco.md2', 3, 5.0 / 35.0, A_FaceTarget, S_HEAD_ATK3}
-	S_HEAD_ATK3 {'HEAD', 3 | FF_FULLBRIGHT, 'monsters/caco.md2', 4, 5.0 / 35.0, A_HeadAttack, S_HEAD_RUN1}
-	S_HEAD_PAIN {'HEAD', 4, 'monsters/caco.md2', 5, 3.0 / 35.0, NULL, S_HEAD_PAIN2}
-	S_HEAD_PAIN2 {'HEAD', 4, 'monsters/caco.md2', 6, 3.0 / 35.0, A_Pain, S_HEAD_PAIN3}
-	S_HEAD_PAIN3 {'HEAD', 5, 'monsters/caco.md2', 7, 6.0 / 35.0, NULL, S_HEAD_RUN1}
-	S_HEAD_DIE1 {'HEAD', 6, 'monsters/cacodie.md2', 0, 8.0 / 35.0, NULL, S_HEAD_DIE2}
-	S_HEAD_DIE2 {'HEAD', 7, 'monsters/cacodie.md2', 1, 8.0 / 35.0, A_Scream, S_HEAD_DIE3}
-	S_HEAD_DIE3 {'HEAD', 8, 'monsters/cacodie.md2', 2, 8.0 / 35.0, NULL, S_HEAD_DIE4}
-	S_HEAD_DIE4 {'HEAD', 9, 'monsters/cacodie.md2', 3, 8.0 / 35.0, NULL, S_HEAD_DIE5}
-	S_HEAD_DIE5 {'HEAD', 10, 'monsters/cacodie.md2', 4, 8.0 / 35.0, A_Fall, S_HEAD_DIE6}
-	S_HEAD_DIE6 {'HEAD', 11, 'monsters/cacodie.md2', 5, -1.0, NULL, S_NULL}
-	S_HEAD_RAISE1 {'HEAD', 11, 'monsters/cacodie.md2', 6, 8.0 / 35.0, NULL, S_HEAD_RAISE2}
-	S_HEAD_RAISE2 {'HEAD', 10, 'monsters/cacodie.md2', 7, 8.0 / 35.0, NULL, S_HEAD_RAISE3}
-	S_HEAD_RAISE3 {'HEAD', 9, 'monsters/cacodie.md2', 8, 8.0 / 35.0, NULL, S_HEAD_RAISE4}
-	S_HEAD_RAISE4 {'HEAD', 8, 'monsters/cacodie.md2', 9, 8.0 / 35.0, NULL, S_HEAD_RAISE5}
-	S_HEAD_RAISE5 {'HEAD', 7, 'monsters/cacodie.md2', 10, 8.0 / 35.0, NULL, S_HEAD_RAISE6}
-	S_HEAD_RAISE6 {'HEAD', 6, 'monsters/cacodie.md2', 11, 8.0 / 35.0, NULL, S_HEAD_RUN1}
-	S_BRBALL1 {'BAL7', 0 | FF_FULLBRIGHT, 'missiles/grenball.md2', 0, 4.0 / 35.0, NULL, S_BRBALL2}
-	S_BRBALL2 {'BAL7', 1 | FF_FULLBRIGHT, 'missiles/grenball.md2', 1, 4.0 / 35.0, NULL, S_BRBALL1}
-	S_BRBALLX1 {'BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_BRBALLX2}
-	S_BRBALLX2 {'BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_BRBALLX3}
-	S_BRBALLX3 {'BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_NULL}
-	S_BOSS_STND {'BOSS', 0, 'monsters/baron.md2', 0, 10.0 / 35.0, A_Look, S_BOSS_STND2}
-	S_BOSS_STND2 {'BOSS', 1, 'monsters/baron.md2', 1, 10.0 / 35.0, A_Look, S_BOSS_STND}
-	S_BOSS_RUN1 {'BOSS', 0, 'monsters/baron.md2', 2, 3.0 / 35.0, A_Chase, S_BOSS_RUN2}
-	S_BOSS_RUN2 {'BOSS', 0, 'monsters/baron.md2', 3, 3.0 / 35.0, A_Chase, S_BOSS_RUN3}
-	S_BOSS_RUN3 {'BOSS', 1, 'monsters/baron.md2', 4, 3.0 / 35.0, A_Chase, S_BOSS_RUN4}
-	S_BOSS_RUN4 {'BOSS', 1, 'monsters/baron.md2', 5, 3.0 / 35.0, A_Chase, S_BOSS_RUN5}
-	S_BOSS_RUN5 {'BOSS', 2, 'monsters/baron.md2', 6, 3.0 / 35.0, A_Chase, S_BOSS_RUN6}
-	S_BOSS_RUN6 {'BOSS', 2, 'monsters/baron.md2', 7, 3.0 / 35.0, A_Chase, S_BOSS_RUN7}
-	S_BOSS_RUN7 {'BOSS', 3, 'monsters/baron.md2', 8, 3.0 / 35.0, A_Chase, S_BOSS_RUN8}
-	S_BOSS_RUN8 {'BOSS', 3, 'monsters/baron.md2', 9, 3.0 / 35.0, A_Chase, S_BOSS_RUN1}
-	S_BOSS_ATK1 {'BOSS', 4, 'monsters/baron.md2', 10, 8.0 / 35.0, A_FaceTarget, S_BOSS_ATK2}
-	S_BOSS_ATK2 {'BOSS', 5, 'monsters/baron.md2', 11, 8.0 / 35.0, A_FaceTarget, S_BOSS_ATK3}
-	S_BOSS_ATK3 {'BOSS', 6, 'monsters/baron.md2', 12, 8.0 / 35.0, A_BruisAttack, S_BOSS_RUN1}
-	S_BOSS_PAIN {'BOSS', 7, 'monsters/baron.md2', 13, 2.0 / 35.0, NULL, S_BOSS_PAIN2}
-	S_BOSS_PAIN2 {'BOSS', 7, 'monsters/baron.md2', 14, 2.0 / 35.0, A_Pain, S_BOSS_RUN1}
-	S_BOSS_DIE1 {'BOSS', 8, 'monsters/barondie.md2', 0, 8.0 / 35.0, NULL, S_BOSS_DIE2}
-	S_BOSS_DIE2 {'BOSS', 9, 'monsters/barondie.md2', 1, 8.0 / 35.0, A_Scream, S_BOSS_DIE3}
-	S_BOSS_DIE3 {'BOSS', 10, 'monsters/barondie.md2', 2, 8.0 / 35.0, NULL, S_BOSS_DIE4}
-	S_BOSS_DIE4 {'BOSS', 11, 'monsters/barondie.md2', 3, 8.0 / 35.0, A_Fall, S_BOSS_DIE5}
-	S_BOSS_DIE5 {'BOSS', 12, 'monsters/barondie.md2', 4, 8.0 / 35.0, NULL, S_BOSS_DIE6}
-	S_BOSS_DIE6 {'BOSS', 13, 'monsters/barondie.md2', 5, 8.0 / 35.0, NULL, S_BOSS_DIE7}
-	S_BOSS_DIE7 {'BOSS', 14, 'monsters/barondie.md2', 6, -1.0, A_BossDeath, S_NULL}
-	S_BOSS_RAISE1 {'BOSS', 14, 'monsters/barondie.md2', 7, 8.0 / 35.0, NULL, S_BOSS_RAISE2}
-	S_BOSS_RAISE2 {'BOSS', 13, 'monsters/barondie.md2', 8, 8.0 / 35.0, NULL, S_BOSS_RAISE3}
-	S_BOSS_RAISE3 {'BOSS', 12, 'monsters/barondie.md2', 9, 8.0 / 35.0, NULL, S_BOSS_RAISE4}
-	S_BOSS_RAISE4 {'BOSS', 11, 'monsters/barondie.md2', 10, 8.0 / 35.0, NULL, S_BOSS_RAISE5}
-	S_BOSS_RAISE5 {'BOSS', 10, 'monsters/barondie.md2', 11, 8.0 / 35.0, NULL, S_BOSS_RAISE6}
-	S_BOSS_RAISE6 {'BOSS', 9, 'monsters/barondie.md2', 12, 8.0 / 35.0, NULL, S_BOSS_RAISE7}
-	S_BOSS_RAISE7 {'BOSS', 8, 'monsters/barondie.md2', 13, 8.0 / 35.0, NULL, S_BOSS_RUN1}
-	S_BOS2_STND {'BOS2', 0, 'monsters/knight.md2', 0, 10.0 / 35.0, A_Look, S_BOS2_STND2}
-	S_BOS2_STND2 {'BOS2', 1, 'monsters/knight.md2', 1, 10.0 / 35.0, A_Look, S_BOS2_STND}
-	S_BOS2_RUN1 {'BOS2', 0, 'monsters/knight.md2', 2, 3.0 / 35.0, A_Chase, S_BOS2_RUN2}
-	S_BOS2_RUN2 {'BOS2', 0, 'monsters/knight.md2', 3, 3.0 / 35.0, A_Chase, S_BOS2_RUN3}
-	S_BOS2_RUN3 {'BOS2', 1, 'monsters/knight.md2', 4, 3.0 / 35.0, A_Chase, S_BOS2_RUN4}
-	S_BOS2_RUN4 {'BOS2', 1, 'monsters/knight.md2', 5, 3.0 / 35.0, A_Chase, S_BOS2_RUN5}
-	S_BOS2_RUN5 {'BOS2', 2, 'monsters/knight.md2', 6, 3.0 / 35.0, A_Chase, S_BOS2_RUN6}
-	S_BOS2_RUN6 {'BOS2', 2, 'monsters/knight.md2', 7, 3.0 / 35.0, A_Chase, S_BOS2_RUN7}
-	S_BOS2_RUN7 {'BOS2', 3, 'monsters/knight.md2', 8, 3.0 / 35.0, A_Chase, S_BOS2_RUN8}
-	S_BOS2_RUN8 {'BOS2', 3, 'monsters/knight.md2', 9, 3.0 / 35.0, A_Chase, S_BOS2_RUN1}
-	S_BOS2_ATK1 {'BOS2', 4, 'monsters/knight.md2', 10, 8.0 / 35.0, A_FaceTarget, S_BOS2_ATK2}
-	S_BOS2_ATK2 {'BOS2', 5, 'monsters/knight.md2', 11, 8.0 / 35.0, A_FaceTarget, S_BOS2_ATK3}
-	S_BOS2_ATK3 {'BOS2', 6, 'monsters/knight.md2', 12, 8.0 / 35.0, A_BruisAttack, S_BOS2_RUN1}
-	S_BOS2_PAIN {'BOS2', 7, 'monsters/knight.md2', 13, 2.0 / 35.0, NULL, S_BOS2_PAIN2}
-	S_BOS2_PAIN2 {'BOS2', 7, 'monsters/knight.md2', 14, 2.0 / 35.0, A_Pain, S_BOS2_RUN1}
-	S_BOS2_DIE1 {'BOS2', 8, 'monsters/knidie.md2', 0, 8.0 / 35.0, NULL, S_BOS2_DIE2}
-	S_BOS2_DIE2 {'BOS2', 9, 'monsters/knidie.md2', 1, 8.0 / 35.0, A_Scream, S_BOS2_DIE3}
-	S_BOS2_DIE3 {'BOS2', 10, 'monsters/knidie.md2', 2, 8.0 / 35.0, NULL, S_BOS2_DIE4}
-	S_BOS2_DIE4 {'BOS2', 11, 'monsters/knidie.md2', 3, 8.0 / 35.0, A_Fall, S_BOS2_DIE5}
-	S_BOS2_DIE5 {'BOS2', 12, 'monsters/knidie.md2', 4, 8.0 / 35.0, NULL, S_BOS2_DIE6}
-	S_BOS2_DIE6 {'BOS2', 13, 'monsters/knidie.md2', 5, 8.0 / 35.0, NULL, S_BOS2_DIE7}
-	S_BOS2_DIE7 {'BOS2', 14, 'monsters/knidie.md2', 6, -1.0, NULL, S_NULL}
-	S_BOS2_RAISE1 {'BOS2', 14, 'monsters/knidie.md2', 7, 8.0 / 35.0, NULL, S_BOS2_RAISE2}
-	S_BOS2_RAISE2 {'BOS2', 13, 'monsters/knidie.md2', 8, 8.0 / 35.0, NULL, S_BOS2_RAISE3}
-	S_BOS2_RAISE3 {'BOS2', 12, 'monsters/knidie.md2', 9, 8.0 / 35.0, NULL, S_BOS2_RAISE4}
-	S_BOS2_RAISE4 {'BOS2', 11, 'monsters/knidie.md2', 10, 8.0 / 35.0, NULL, S_BOS2_RAISE5}
-	S_BOS2_RAISE5 {'BOS2', 10, 'monsters/knidie.md2', 11, 8.0 / 35.0, NULL, S_BOS2_RAISE6}
-	S_BOS2_RAISE6 {'BOS2', 9, 'monsters/knidie.md2', 12, 8.0 / 35.0, NULL, S_BOS2_RAISE7}
-	S_BOS2_RAISE7 {'BOS2', 8, 'monsters/knidie.md2', 13, 8.0 / 35.0, NULL, S_BOS2_RUN1}
-	S_SKULL_STND {'SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 0, 10.0 / 35.0, A_Look, S_SKULL_STND2}
-	S_SKULL_STND2 {'SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 1, 10.0 / 35.0, A_Look, S_SKULL_STND}
-	S_SKULL_RUN1 {'SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 2, 6.0 / 35.0, A_Chase, S_SKULL_RUN2}
-	S_SKULL_RUN2 {'SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 3, 6.0 / 35.0, A_Chase, S_SKULL_RUN1}
-	S_SKULL_ATK1 {'SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 4, 10.0 / 35.0, A_FaceTarget, S_SKULL_ATK2}
-	S_SKULL_ATK2 {'SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 5, 4.0 / 35.0, A_SkullAttack, S_SKULL_ATK3}
-	S_SKULL_ATK3 {'SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 6, 4.0 / 35.0, NULL, S_SKULL_ATK4}
-	S_SKULL_ATK4 {'SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 7, 4.0 / 35.0, NULL, S_SKULL_ATK3}
-	S_SKULL_PAIN {'SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 8, 3.0 / 35.0, NULL, S_SKULL_PAIN2}
-	S_SKULL_PAIN2 {'SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 9, 3.0 / 35.0, A_Pain, S_SKULL_RUN1}
-	S_SKULL_DIE1 {'SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_SKULL_DIE2}
-	S_SKULL_DIE2 {'SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, A_Scream, S_SKULL_DIE3}
-	S_SKULL_DIE3 {'SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, NULL, S_SKULL_DIE4}
-	S_SKULL_DIE4 {'SKUL', 8 | FF_FULLBRIGHT, 6.0 / 35.0, A_Fall, S_SKULL_DIE5}
-	S_SKULL_DIE5 {'SKUL', 9, 6.0 / 35.0, NULL, S_SKULL_DIE6}
-	S_SKULL_DIE6 {'SKUL', 10, 6.0 / 35.0, NULL, S_NULL}
-	S_SPID_STND {'SPID', 0, 'monsters/spider.md2', 0, 10.0 / 35.0, A_Look, S_SPID_STND2}
-	S_SPID_STND2 {'SPID', 1, 'monsters/spider.md2', 1, 10.0 / 35.0, A_Look, S_SPID_STND}
-	S_SPID_RUN1 {'SPID', 0, 'monsters/spider.md2', 2, 3.0 / 35.0, A_Metal, S_SPID_RUN2}
-	S_SPID_RUN2 {'SPID', 0, 'monsters/spider.md2', 3, 3.0 / 35.0, A_Chase, S_SPID_RUN3}
-	S_SPID_RUN3 {'SPID', 1, 'monsters/spider.md2', 4, 3.0 / 35.0, A_Chase, S_SPID_RUN4}
-	S_SPID_RUN4 {'SPID', 1, 'monsters/spider.md2', 5, 3.0 / 35.0, A_Chase, S_SPID_RUN5}
-	S_SPID_RUN5 {'SPID', 2, 'monsters/spider.md2', 6, 3.0 / 35.0, A_Metal, S_SPID_RUN6}
-	S_SPID_RUN6 {'SPID', 2, 'monsters/spider.md2', 7, 3.0 / 35.0, A_Chase, S_SPID_RUN7}
-	S_SPID_RUN7 {'SPID', 3, 'monsters/spider.md2', 8, 3.0 / 35.0, A_Chase, S_SPID_RUN8}
-	S_SPID_RUN8 {'SPID', 3, 'monsters/spider.md2', 9, 3.0 / 35.0, A_Chase, S_SPID_RUN9}
-	S_SPID_RUN9 {'SPID', 4, 'monsters/spider.md2', 10, 3.0 / 35.0, A_Metal, S_SPID_RUN10}
-	S_SPID_RUN10 {'SPID', 4, 'monsters/spider.md2', 11, 3.0 / 35.0, A_Chase, S_SPID_RUN11}
-	S_SPID_RUN11 {'SPID', 5, 'monsters/spider.md2', 12, 3.0 / 35.0, A_Chase, S_SPID_RUN12}
-	S_SPID_RUN12 {'SPID', 5, 'monsters/spider.md2', 13, 3.0 / 35.0, A_Chase, S_SPID_RUN1}
-	S_SPID_ATK1 {'SPID', 0 | FF_FULLBRIGHT, 'monsters/spider.md2', 14, 20.0 / 35.0, A_FaceTarget, S_SPID_ATK2}
-	S_SPID_ATK2 {'SPID', 6 | FF_FULLBRIGHT, 'monsters/spider.md2', 15, 4.0 / 35.0, A_SPosAttack, S_SPID_ATK3}
-	S_SPID_ATK3 {'SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 4.0 / 35.0, A_SPosAttack, S_SPID_ATK4}
-	S_SPID_ATK4 {'SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 1.0 / 35.0, A_SpidRefire, S_SPID_ATK2}
-	S_SPID_PAIN {'SPID', 8, 'monsters/spider.md2', 16, 3.0 / 35.0, NULL, S_SPID_PAIN2}
-	S_SPID_PAIN2 {'SPID', 8, 'monsters/spider.md2', 17, 3.0 / 35.0, A_Pain, S_SPID_RUN1}
-	S_SPID_DIE1 {'SPID', 9, 'monsters/spiddie.md2', 0, 20.0 / 35.0, A_Scream, S_SPID_DIE2}
-	S_SPID_DIE2 {'SPID', 10, 'monsters/spiddie.md2', 1, 10.0 / 35.0, A_Fall, S_SPID_DIE3}
-	S_SPID_DIE3 {'SPID', 11, 'monsters/spiddie.md2', 2, 10.0 / 35.0, NULL, S_SPID_DIE4}
-	S_SPID_DIE4 {'SPID', 12, 'monsters/spiddie.md2', 3, 10.0 / 35.0, NULL, S_SPID_DIE5}
-	S_SPID_DIE5 {'SPID', 13, 'monsters/spiddie.md2', 4, 10.0 / 35.0, NULL, S_SPID_DIE6}
-	S_SPID_DIE6 {'SPID', 14, 'monsters/spiddie.md2', 5, 10.0 / 35.0, NULL, S_SPID_DIE7}
-	S_SPID_DIE7 {'SPID', 15, 'monsters/spiddie.md2', 6, 10.0 / 35.0, NULL, S_SPID_DIE8}
-	S_SPID_DIE8 {'SPID', 16, 'monsters/spiddie.md2', 7, 10.0 / 35.0, NULL, S_SPID_DIE9}
-	S_SPID_DIE9 {'SPID', 17, 'monsters/spiddie.md2', 8, 10.0 / 35.0, NULL, S_SPID_DIE10}
-	S_SPID_DIE10 {'SPID', 18, 'monsters/spiddie.md2', 9, 30.0 / 35.0, NULL, S_SPID_DIE11}
-	S_SPID_DIE11 {'SPID', 18, 'monsters/spiddie.md2', 10, -1.0, A_BossDeath, S_NULL}
-	S_BSPI_STND {'BSPI', 0, 'monsters/arach.md2', 0, 10.0 / 35.0, A_Look, S_BSPI_STND2}
-	S_BSPI_STND2 {'BSPI', 1, 'monsters/arach.md2', 1, 10.0 / 35.0, A_Look, S_BSPI_STND}
-	S_BSPI_SIGHT {'BSPI', 0, 'monsters/arach.md2', 2, 20.0 / 35.0, NULL, S_BSPI_RUN1}
-	S_BSPI_RUN1 {'BSPI', 0, 'monsters/arach.md2', 3, 3.0 / 35.0, A_BabyMetal, S_BSPI_RUN2}
-	S_BSPI_RUN2 {'BSPI', 0, 'monsters/arach.md2', 4, 3.0 / 35.0, A_Chase, S_BSPI_RUN3}
-	S_BSPI_RUN3 {'BSPI', 1, 'monsters/arach.md2', 5, 3.0 / 35.0, A_Chase, S_BSPI_RUN4}
-	S_BSPI_RUN4 {'BSPI', 1, 'monsters/arach.md2', 6, 3.0 / 35.0, A_Chase, S_BSPI_RUN5}
-	S_BSPI_RUN5 {'BSPI', 2, 'monsters/arach.md2', 7, 3.0 / 35.0, A_Chase, S_BSPI_RUN6}
-	S_BSPI_RUN6 {'BSPI', 2, 'monsters/arach.md2', 8, 3.0 / 35.0, A_Chase, S_BSPI_RUN7}
-	S_BSPI_RUN7 {'BSPI', 3, 'monsters/arach.md2', 9, 3.0 / 35.0, A_BabyMetal, S_BSPI_RUN8}
-	S_BSPI_RUN8 {'BSPI', 3, 'monsters/arach.md2', 10, 3.0 / 35.0, A_Chase, S_BSPI_RUN9}
-	S_BSPI_RUN9 {'BSPI', 4, 'monsters/arach.md2', 11, 3.0 / 35.0, A_Chase, S_BSPI_RUN10}
-	S_BSPI_RUN10 {'BSPI', 4, 'monsters/arach.md2', 12, 3.0 / 35.0, A_Chase, S_BSPI_RUN11}
-	S_BSPI_RUN11 {'BSPI', 5, 'monsters/arach.md2', 13, 3.0 / 35.0, A_Chase, S_BSPI_RUN12}
-	S_BSPI_RUN12 {'BSPI', 5, 'monsters/arach.md2', 14, 3.0 / 35.0, A_Chase, S_BSPI_RUN1}
-	S_BSPI_ATK1 {'BSPI', 0 | FF_FULLBRIGHT, 'monsters/arach.md2', 15, 20.0 / 35.0, A_FaceTarget, S_BSPI_ATK2}
-	S_BSPI_ATK2 {'BSPI', 6 | FF_FULLBRIGHT, 'monsters/arach.md2', 16, 4.0 / 35.0, A_BspiAttack, S_BSPI_ATK3}
-	S_BSPI_ATK3 {'BSPI', 7 | FF_FULLBRIGHT, 'monsters/arachatk.md2', 0, 4.0 / 35.0, NULL, S_BSPI_ATK4}
-	S_BSPI_ATK4 {'BSPI', 7 | FF_FULLBRIGHT, 'monsters/arachatk.md2', 0, 1.0 / 35.0, A_SpidRefire, S_BSPI_ATK2}
-	S_BSPI_PAIN {'BSPI', 8, 'monsters/arach.md2', 17, 3.0 / 35.0, NULL, S_BSPI_PAIN2}
-	S_BSPI_PAIN2 {'BSPI', 8, 'monsters/arach.md2', 18, 3.0 / 35.0, A_Pain, S_BSPI_RUN1}
-	S_BSPI_DIE1 {'BSPI', 9, 'monsters/arachdie.md2', 0, 20.0 / 35.0, A_Scream, S_BSPI_DIE2}
-	S_BSPI_DIE2 {'BSPI', 10, 'monsters/arachdie.md2', 1, 7.0 / 35.0, A_Fall, S_BSPI_DIE3}
-	S_BSPI_DIE3 {'BSPI', 11, 'monsters/arachdie.md2', 2, 7.0 / 35.0, NULL, S_BSPI_DIE4}
-	S_BSPI_DIE4 {'BSPI', 12, 'monsters/arachdie.md2', 3, 7.0 / 35.0, NULL, S_BSPI_DIE5}
-	S_BSPI_DIE5 {'BSPI', 13, 'monsters/arachdie.md2', 4, 7.0 / 35.0, NULL, S_BSPI_DIE6}
-	S_BSPI_DIE6 {'BSPI', 14, 'monsters/arachdie.md2', 5, 7.0 / 35.0, NULL, S_BSPI_DIE7}
-	S_BSPI_DIE7 {'BSPI', 15, 'monsters/arachdie.md2', 6, -1.0, A_BossDeath, S_NULL}
-	S_BSPI_RAISE1 {'BSPI', 15, 'monsters/arachdie.md2', 7, 5.0 / 35.0, NULL, S_BSPI_RAISE2}
-	S_BSPI_RAISE2 {'BSPI', 14, 'monsters/arachdie.md2', 8, 5.0 / 35.0, NULL, S_BSPI_RAISE3}
-	S_BSPI_RAISE3 {'BSPI', 13, 'monsters/arachdie.md2', 9, 5.0 / 35.0, NULL, S_BSPI_RAISE4}
-	S_BSPI_RAISE4 {'BSPI', 12, 'monsters/arachdie.md2', 10, 5.0 / 35.0, NULL, S_BSPI_RAISE5}
-	S_BSPI_RAISE5 {'BSPI', 11, 'monsters/arachdie.md2', 11, 5.0 / 35.0, NULL, S_BSPI_RAISE6}
-	S_BSPI_RAISE6 {'BSPI', 10, 'monsters/arachdie.md2', 12, 5.0 / 35.0, NULL, S_BSPI_RAISE7}
-	S_BSPI_RAISE7 {'BSPI', 9, 'monsters/arachdie.md2', 13, 5.0 / 35.0, NULL, S_BSPI_RUN1}
-	S_ARACH_PLAZ {'APLS', 0 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 0, 5.0 / 35.0, NULL, S_ARACH_PLAZ2}
-	S_ARACH_PLAZ2 {'APLS', 1 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 1, 5.0 / 35.0, NULL, S_ARACH_PLAZ}
-	S_ARACH_PLEX {'APBX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ARACH_PLEX2}
-	S_ARACH_PLEX2 {'APBX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ARACH_PLEX3}
-	S_ARACH_PLEX3 {'APBX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ARACH_PLEX4}
-	S_ARACH_PLEX4 {'APBX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_ARACH_PLEX5}
-	S_ARACH_PLEX5 {'APBX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_NULL}
-	S_CYBER_STND {'CYBR', 0, 'monsters/cyber.md2', 0, 10.0 / 35.0, A_Look, S_CYBER_STND2}
-	S_CYBER_STND2 {'CYBR', 1, 'monsters/cyber.md2', 1, 10.0 / 35.0, A_Look, S_CYBER_STND}
-	S_CYBER_RUN1 {'CYBR', 0, 'monsters/cyber.md2', 2, 3.0 / 35.0, A_Hoof, S_CYBER_RUN2}
-	S_CYBER_RUN2 {'CYBR', 0, 'monsters/cyber.md2', 3, 3.0 / 35.0, A_Chase, S_CYBER_RUN3}
-	S_CYBER_RUN3 {'CYBR', 1, 'monsters/cyber.md2', 4, 3.0 / 35.0, A_Chase, S_CYBER_RUN4}
-	S_CYBER_RUN4 {'CYBR', 1, 'monsters/cyber.md2', 5, 3.0 / 35.0, A_Chase, S_CYBER_RUN5}
-	S_CYBER_RUN5 {'CYBR', 2, 'monsters/cyber.md2', 6, 3.0 / 35.0, A_Chase, S_CYBER_RUN6}
-	S_CYBER_RUN6 {'CYBR', 2, 'monsters/cyber.md2', 7, 3.0 / 35.0, A_Chase, S_CYBER_RUN7}
-	S_CYBER_RUN7 {'CYBR', 3, 'monsters/cyber.md2', 8, 3.0 / 35.0, A_Metal, S_CYBER_RUN8}
-	S_CYBER_RUN8 {'CYBR', 3, 'monsters/cyber.md2', 9, 3.0 / 35.0, A_Chase, S_CYBER_RUN1}
-	S_CYBER_ATK1 {'CYBR', 4, 'monsters/cyber.md2', 10, 6.0 / 35.0, A_FaceTarget, S_CYBER_ATK2}
-	S_CYBER_ATK2 {'CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, A_CyberAttack, S_CYBER_ATK3}
-	S_CYBER_ATK3 {'CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, A_FaceTarget, S_CYBER_ATK4}
-	S_CYBER_ATK4 {'CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, A_CyberAttack, S_CYBER_ATK5}
-	S_CYBER_ATK5 {'CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, A_FaceTarget, S_CYBER_ATK6}
-	S_CYBER_ATK6 {'CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, A_CyberAttack, S_CYBER_RUN1}
-	S_CYBER_PAIN {'CYBR', 6, 'monsters/cyber.md2', 11, 10.0 / 35.0, A_Pain, S_CYBER_RUN1}
-	S_CYBER_DIE1 {'CYBR', 7, 'monsters/cyberdie.md2', 0, 10.0 / 35.0, NULL, S_CYBER_DIE2}
-	S_CYBER_DIE2 {'CYBR', 8, 'monsters/cyberdie.md2', 1, 10.0 / 35.0, A_Scream, S_CYBER_DIE3}
-	S_CYBER_DIE3 {'CYBR', 9, 'monsters/cyberdie.md2', 2, 10.0 / 35.0, NULL, S_CYBER_DIE4}
-	S_CYBER_DIE4 {'CYBR', 10, 'monsters/cyberdie.md2', 3, 10.0 / 35.0, NULL, S_CYBER_DIE5}
-	S_CYBER_DIE5 {'CYBR', 11, 'monsters/cyberdie.md2', 4, 10.0 / 35.0, NULL, S_CYBER_DIE6}
-	S_CYBER_DIE6 {'CYBR', 12, 'monsters/cyberdie.md2', 5, 10.0 / 35.0, A_Fall, S_CYBER_DIE7}
-	S_CYBER_DIE7 {'CYBR', 13, 'monsters/cyberdie.md2', 6, 10.0 / 35.0, NULL, S_CYBER_DIE8}
-	S_CYBER_DIE8 {'CYBR', 14, 'monsters/cyberdie.md2', 7, 10.0 / 35.0, NULL, S_CYBER_DIE9}
-	S_CYBER_DIE9 {'CYBR', 15, 'monsters/cyberdie.md2', 8, 30.0 / 35.0, NULL, S_CYBER_DIE10}
-	S_CYBER_DIE10 {'CYBR', 15, 'monsters/cyberdie.md2', 9, -1.0, A_BossDeath, S_NULL}
-	S_PAIN_STND {'PAIN', 0, 'monsters/pain.md2', 0, 10.0 / 35.0, A_Look, S_PAIN_STND}
-	S_PAIN_RUN1 {'PAIN', 0, 'monsters/pain.md2', 1, 3.0 / 35.0, A_Chase, S_PAIN_RUN2}
-	S_PAIN_RUN2 {'PAIN', 0, 'monsters/pain.md2', 2, 3.0 / 35.0, A_Chase, S_PAIN_RUN3}
-	S_PAIN_RUN3 {'PAIN', 1, 'monsters/pain.md2', 3, 3.0 / 35.0, A_Chase, S_PAIN_RUN4}
-	S_PAIN_RUN4 {'PAIN', 1, 'monsters/pain.md2', 4, 3.0 / 35.0, A_Chase, S_PAIN_RUN5}
-	S_PAIN_RUN5 {'PAIN', 2, 'monsters/pain.md2', 5, 3.0 / 35.0, A_Chase, S_PAIN_RUN6}
-	S_PAIN_RUN6 {'PAIN', 2, 'monsters/pain.md2', 6, 3.0 / 35.0, A_Chase, S_PAIN_RUN1}
-	S_PAIN_ATK1 {'PAIN', 3, 'monsters/painatk.md2', 0, 5.0 / 35.0, A_FaceTarget, S_PAIN_ATK2}
-	S_PAIN_ATK2 {'PAIN', 4, 'monsters/painatk.md2', 1, 5.0 / 35.0, A_FaceTarget, S_PAIN_ATK3}
-	S_PAIN_ATK3 {'PAIN', 5 | FF_FULLBRIGHT, 'monsters/painatk.md2', 2, 5.0 / 35.0, A_FaceTarget, S_PAIN_ATK4}
-	S_PAIN_ATK4 {'PAIN', 5 | FF_FULLBRIGHT, 'monsters/painatk.md2', 2, 0.0 / 35.0, A_PainAttack, S_PAIN_RUN1}
-	S_PAIN_PAIN {'PAIN', 6, 'monsters/pain.md2', 7, 6.0 / 35.0, NULL, S_PAIN_PAIN2}
-	S_PAIN_PAIN2 {'PAIN', 6, 'monsters/pain.md2', 8, 6.0 / 35.0, A_Pain, S_PAIN_RUN1}
-	S_PAIN_DIE1 {'PAIN', 7 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_PAIN_DIE2}
-	S_PAIN_DIE2 {'PAIN', 8 | FF_FULLBRIGHT, 8.0 / 35.0, A_Scream, S_PAIN_DIE3}
-	S_PAIN_DIE3 {'PAIN', 9 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_PAIN_DIE4}
-	S_PAIN_DIE4 {'PAIN', 10 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_PAIN_DIE5}
-	S_PAIN_DIE5 {'PAIN', 11 | FF_FULLBRIGHT, 8.0 / 35.0, A_PainDie, S_PAIN_DIE6}
-	S_PAIN_DIE6 {'PAIN', 12 | FF_FULLBRIGHT, 8.0 / 35.0, NULL, S_NULL}
-	S_PAIN_RAISE1 {'PAIN', 12, 8.0 / 35.0, NULL, S_PAIN_RAISE2}
-	S_PAIN_RAISE2 {'PAIN', 11, 8.0 / 35.0, NULL, S_PAIN_RAISE3}
-	S_PAIN_RAISE3 {'PAIN', 10, 8.0 / 35.0, NULL, S_PAIN_RAISE4}
-	S_PAIN_RAISE4 {'PAIN', 9, 8.0 / 35.0, NULL, S_PAIN_RAISE5}
-	S_PAIN_RAISE5 {'PAIN', 8, 8.0 / 35.0, NULL, S_PAIN_RAISE6}
-	S_PAIN_RAISE6 {'PAIN', 7, 8.0 / 35.0, NULL, S_PAIN_RUN1}
-	S_SSWV_STND {'SSWV', 0, 'monsters/ss.md2', 0, 10.0 / 35.0, A_Look, S_SSWV_STND2}
-	S_SSWV_STND2 {'SSWV', 1, 'monsters/ss.md2', 1, 10.0 / 35.0, A_Look, S_SSWV_STND}
-	S_SSWV_RUN1 {'SSWV', 0, 'monsters/ss.md2', 2, 3.0 / 35.0, A_Chase, S_SSWV_RUN2}
-	S_SSWV_RUN2 {'SSWV', 0, 'monsters/ss.md2', 3, 3.0 / 35.0, A_Chase, S_SSWV_RUN3}
-	S_SSWV_RUN3 {'SSWV', 1, 'monsters/ss.md2', 4, 3.0 / 35.0, A_Chase, S_SSWV_RUN4}
-	S_SSWV_RUN4 {'SSWV', 1, 'monsters/ss.md2', 5, 3.0 / 35.0, A_Chase, S_SSWV_RUN5}
-	S_SSWV_RUN5 {'SSWV', 2, 'monsters/ss.md2', 6, 3.0 / 35.0, A_Chase, S_SSWV_RUN6}
-	S_SSWV_RUN6 {'SSWV', 2, 'monsters/ss.md2', 7, 3.0 / 35.0, A_Chase, S_SSWV_RUN7}
-	S_SSWV_RUN7 {'SSWV', 3, 'monsters/ss.md2', 8, 3.0 / 35.0, A_Chase, S_SSWV_RUN8}
-	S_SSWV_RUN8 {'SSWV', 3, 'monsters/ss.md2', 9, 3.0 / 35.0, A_Chase, S_SSWV_RUN1}
-	S_SSWV_ATK1 {'SSWV', 4, 'monsters/ss.md2', 10, 10.0 / 35.0, A_FaceTarget, S_SSWV_ATK2}
-	S_SSWV_ATK2 {'SSWV', 5, 'monsters/ss.md2', 11, 10.0 / 35.0, A_FaceTarget, S_SSWV_ATK3}
-	S_SSWV_ATK3 {'SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, A_CPosAttack, S_SSWV_ATK4}
-	S_SSWV_ATK4 {'SSWV', 5, 'monsters/ss.md2', 13, 6.0 / 35.0, A_FaceTarget, S_SSWV_ATK5}
-	S_SSWV_ATK5 {'SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, A_CPosAttack, S_SSWV_ATK6}
-	S_SSWV_ATK6 {'SSWV', 5, 'monsters/ss.md2', 13, 1.0 / 35.0, A_CPosRefire, S_SSWV_ATK2}
-	S_SSWV_PAIN {'SSWV', 7, 'monsters/ss.md2', 14, 3.0 / 35.0, NULL, S_SSWV_PAIN2}
-	S_SSWV_PAIN2 {'SSWV', 7, 'monsters/ss.md2', 15, 3.0 / 35.0, A_Pain, S_SSWV_RUN1}
-	S_SSWV_DIE1 {'SSWV', 8, 'monsters/ssdie.md2', 0, 5.0 / 35.0, NULL, S_SSWV_DIE2}
-	S_SSWV_DIE2 {'SSWV', 9, 'monsters/ssdie.md2', 1, 5.0 / 35.0, A_Scream, S_SSWV_DIE3}
-	S_SSWV_DIE3 {'SSWV', 10, 'monsters/ssdie.md2', 2, 5.0 / 35.0, A_Fall, S_SSWV_DIE4}
-	S_SSWV_DIE4 {'SSWV', 11, 'monsters/ssdie.md2', 3, 5.0 / 35.0, NULL, S_SSWV_DIE5}
-	S_SSWV_DIE5 {'SSWV', 12, 'monsters/ssdie.md2', 4, -1.0, NULL, S_NULL}
-	S_SSWV_XDIE1 {'SSWV', 13, 'gibs/ssgib.md2', 0, 5.0 / 35.0, NULL, S_SSWV_XDIE2}
-	S_SSWV_XDIE2 {'SSWV', 14, 'gibs/ssgib.md2', 1, 5.0 / 35.0, A_XScream, S_SSWV_XDIE3}
-	S_SSWV_XDIE3 {'SSWV', 15, 'gibs/ssgib.md2', 2, 5.0 / 35.0, A_Fall, S_SSWV_XDIE4}
-	S_SSWV_XDIE4 {'SSWV', 16, 'gibs/ssgib.md2', 3, 5.0 / 35.0, NULL, S_SSWV_XDIE5}
-	S_SSWV_XDIE5 {'SSWV', 17, 'gibs/ssgib.md2', 4, 5.0 / 35.0, NULL, S_SSWV_XDIE6}
-	S_SSWV_XDIE6 {'SSWV', 18, 'gibs/ssgib.md2', 5, 5.0 / 35.0, NULL, S_SSWV_XDIE7}
-	S_SSWV_XDIE7 {'SSWV', 19, 'gibs/ssgib.md2', 6, 5.0 / 35.0, NULL, S_SSWV_XDIE8}
-	S_SSWV_XDIE8 {'SSWV', 20, 'gibs/ssgib.md2', 7, 5.0 / 35.0, NULL, S_SSWV_XDIE9}
-	S_SSWV_XDIE9 {'SSWV', 21, 'gibs/ssgib.md2', 8, -1.0, NULL, S_NULL}
-	S_SSWV_RAISE1 {'SSWV', 12, 'monsters/ssdie.md2', 5, 5.0 / 35.0, NULL, S_SSWV_RAISE2}
-	S_SSWV_RAISE2 {'SSWV', 11, 'monsters/ssdie.md2', 6, 5.0 / 35.0, NULL, S_SSWV_RAISE3}
-	S_SSWV_RAISE3 {'SSWV', 10, 'monsters/ssdie.md2', 7, 5.0 / 35.0, NULL, S_SSWV_RAISE4}
-	S_SSWV_RAISE4 {'SSWV', 9, 'monsters/ssdie.md2', 8, 5.0 / 35.0, NULL, S_SSWV_RAISE5}
-	S_SSWV_RAISE5 {'SSWV', 8, 'monsters/ssdie.md2', 9, 5.0 / 35.0, NULL, S_SSWV_RUN1}
-	S_KEENSTND {'KEEN', 0, -1.0, NULL, S_KEENSTND}
-	S_COMMKEEN {'KEEN', 0, 6.0 / 35.0, NULL, S_COMMKEEN2}
-	S_COMMKEEN2 {'KEEN', 1, 6.0 / 35.0, NULL, S_COMMKEEN3}
-	S_COMMKEEN3 {'KEEN', 2, 6.0 / 35.0, A_Scream, S_COMMKEEN4}
-	S_COMMKEEN4 {'KEEN', 3, 6.0 / 35.0, NULL, S_COMMKEEN5}
-	S_COMMKEEN5 {'KEEN', 4, 6.0 / 35.0, NULL, S_COMMKEEN6}
-	S_COMMKEEN6 {'KEEN', 5, 6.0 / 35.0, NULL, S_COMMKEEN7}
-	S_COMMKEEN7 {'KEEN', 6, 6.0 / 35.0, NULL, S_COMMKEEN8}
-	S_COMMKEEN8 {'KEEN', 7, 6.0 / 35.0, NULL, S_COMMKEEN9}
-	S_COMMKEEN9 {'KEEN', 8, 6.0 / 35.0, NULL, S_COMMKEEN10}
-	S_COMMKEEN10 {'KEEN', 9, 6.0 / 35.0, NULL, S_COMMKEEN11}
-	S_COMMKEEN11 {'KEEN', 10, 6.0 / 35.0, A_KeenDie, S_COMMKEEN12}
-	S_COMMKEEN12 {'KEEN', 11, -1.0, NULL, S_NULL}
-	S_KEENPAIN {'KEEN', 12, 4.0 / 35.0, NULL, S_KEENPAIN2}
-	S_KEENPAIN2 {'KEEN', 12, 8.0 / 35.0, A_Pain, S_KEENSTND}
-	S_BRAIN {'BBRN', 0, -1.0, NULL, S_NULL}
-	S_BRAIN_PAIN {'BBRN', 1, 36.0 / 35.0, A_BrainPain, S_BRAIN}
-	S_BRAIN_DIE1 {'BBRN', 0, 100.0 / 35.0, A_BrainScream, S_BRAIN_DIE2}
-	S_BRAIN_DIE2 {'BBRN', 0, 10.0 / 35.0, NULL, S_BRAIN_DIE3}
-	S_BRAIN_DIE3 {'BBRN', 0, 10.0 / 35.0, NULL, S_BRAIN_DIE4}
-	S_BRAIN_DIE4 {'BBRN', 0, -1.0, A_BrainDie, S_NULL}
-	S_BRAINEYE {'SSWV', 0, 10.0 / 35.0, A_Look, S_BRAINEYE}
-	S_BRAINEYESEE {'SSWV', 0, 181.0 / 35.0, A_BrainAwake, S_BRAINEYE1}
-	S_BRAINEYE1 {'SSWV', 0, 150.0 / 35.0, A_BrainSpit, S_BRAINEYE1}
-	S_SPAWN1 {'BOSF', 0 | FF_FULLBRIGHT, 'monsters/cube.md2', 0, 3.0 / 35.0, A_SpawnSound, S_SPAWN2}
-	S_SPAWN2 {'BOSF', 1 | FF_FULLBRIGHT, 'monsters/cube.md2', 1, 3.0 / 35.0, A_SpawnFly, S_SPAWN3}
-	S_SPAWN3 {'BOSF', 2 | FF_FULLBRIGHT, 'monsters/cube.md2', 2, 3.0 / 35.0, A_SpawnFly, S_SPAWN4}
-	S_SPAWN4 {'BOSF', 3 | FF_FULLBRIGHT, 'monsters/cube.md2', 3, 3.0 / 35.0, A_SpawnFly, S_SPAWN1}
-	S_SPAWNFIRE1 {'FIRE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE2}
-	S_SPAWNFIRE2 {'FIRE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE3}
-	S_SPAWNFIRE3 {'FIRE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE4}
-	S_SPAWNFIRE4 {'FIRE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE5}
-	S_SPAWNFIRE5 {'FIRE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE6}
-	S_SPAWNFIRE6 {'FIRE', 5 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE7}
-	S_SPAWNFIRE7 {'FIRE', 6 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_SPAWNFIRE8}
-	S_SPAWNFIRE8 {'FIRE', 7 | FF_FULLBRIGHT, 4.0 / 35.0, A_Fire, S_NULL}
-	S_BRAINEXPLODE1 {'MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, NULL, S_BRAINEXPLODE2}
-	S_BRAINEXPLODE2 {'MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, NULL, S_BRAINEXPLODE3}
-	S_BRAINEXPLODE3 {'MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, A_BrainExplode, S_NULL}
-	S_ARM1 {'ARM1', 0, 'items/grnarmor.md2', 0, 6.0 / 35.0, NULL, S_ARM1A}
-	S_ARM1A {'ARM1', 1 | FF_FULLBRIGHT, 'items/grnarmor.md2', 1, 7.0 / 35.0, NULL, S_ARM1}
-	S_ARM2 {'ARM2', 0, 'items/bluarmor.md2', 0, 6.0 / 35.0, NULL, S_ARM2A}
-	S_ARM2A {'ARM2', 1 | FF_FULLBRIGHT, 'items/bluarmor.md2', 1, 6.0 / 35.0, NULL, S_ARM2}
-	S_BAR1 {'BAR1', 0, 'objects/barrel.md2', 0, 6.0 / 35.0, NULL, S_BAR2}
-	S_BAR2 {'BAR1', 1, 'objects/barrel.md2', 1, 6.0 / 35.0, NULL, S_BAR1}
-	S_BEXP {'BEXP', 0 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_BEXP2}
-	S_BEXP2 {'BEXP', 1 | FF_FULLBRIGHT, 5.0 / 35.0, A_Scream, S_BEXP3}
-	S_BEXP3 {'BEXP', 2 | FF_FULLBRIGHT, 5.0 / 35.0, NULL, S_BEXP4}
-	S_BEXP4 {'BEXP', 3 | FF_FULLBRIGHT, 10.0 / 35.0, A_Explode, S_BEXP5}
-	S_BEXP5 {'BEXP', 4 | FF_FULLBRIGHT, 10.0 / 35.0, NULL, S_NULL}
-	S_BBAR1 {'FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 0, 4.0 / 35.0, NULL, S_BBAR2}
-	S_BBAR2 {'FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 1, 4.0 / 35.0, NULL, S_BBAR3}
-	S_BBAR3 {'FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 2, 4.0 / 35.0, NULL, S_BBAR1}
-	S_BON1 {'BON1', 0, 'items/bottle.md2', 0, 6.0 / 35.0, NULL, S_BON1A}
-	S_BON1A {'BON1', 1, 'items/bottle.md2', 1, 6.0 / 35.0, NULL, S_BON1B}
-	S_BON1B {'BON1', 2, 'items/bottle.md2', 2, 6.0 / 35.0, NULL, S_BON1C}
-	S_BON1C {'BON1', 3, 'items/bottle.md2', 3, 6.0 / 35.0, NULL, S_BON1D}
-	S_BON1D {'BON1', 2, 'items/bottle.md2', 4, 6.0 / 35.0, NULL, S_BON1E}
-	S_BON1E {'BON1', 1, 'items/bottle.md2', 5, 6.0 / 35.0, NULL, S_BON1}
-	S_BON2 {'BON2', 0, 'items/helmet.md2', 0, 6.0 / 35.0, NULL, S_BON2A}
-	S_BON2A {'BON2', 1, 'items/helmet.md2', 1, 6.0 / 35.0, NULL, S_BON2B}
-	S_BON2B {'BON2', 2, 'items/helmet.md2', 2, 6.0 / 35.0, NULL, S_BON2C}
-	S_BON2C {'BON2', 3, 'items/helmet.md2', 3, 6.0 / 35.0, NULL, S_BON2D}
-	S_BON2D {'BON2', 2, 'items/helmet.md2', 4, 6.0 / 35.0, NULL, S_BON2E}
-	S_BON2E {'BON2', 1, 'items/helmet.md2', 5, 6.0 / 35.0, NULL, S_BON2}
-	S_BKEY {'BKEY', 0, 'keys/bluecard.md2', 0, 10.0 / 35.0, NULL, S_BKEY2}
-	S_BKEY2 {'BKEY', 1 | FF_FULLBRIGHT, 'keys/bluecard.md2', 1, 10.0 / 35.0, NULL, S_BKEY}
-	S_RKEY {'RKEY', 0, 'keys/redcard.md2', 0, 10.0 / 35.0, NULL, S_RKEY2}
-	S_RKEY2 {'RKEY', 1 | FF_FULLBRIGHT, 'keys/redcard.md2', 1, 10.0 / 35.0, NULL, S_RKEY}
-	S_YKEY {'YKEY', 0, 'keys/yelcard.md2', 0, 10.0 / 35.0, NULL, S_YKEY2}
-	S_YKEY2 {'YKEY', 1 | FF_FULLBRIGHT, 'keys/yelcard.md2', 1, 10.0 / 35.0, NULL, S_YKEY}
-	S_BSKULL {'BSKU', 0, 'keys/blueskul.md2', 0, 10.0 / 35.0, NULL, S_BSKULL2}
-	S_BSKULL2 {'BSKU', 1 | FF_FULLBRIGHT, 'keys/blueskul.md2', 1, 10.0 / 35.0, NULL, S_BSKULL}
-	S_RSKULL {'RSKU', 0, 'keys/redskul.md2', 0, 10.0 / 35.0, NULL, S_RSKULL2}
-	S_RSKULL2 {'RSKU', 1 | FF_FULLBRIGHT, 'keys/redskul.md2', 1, 10.0 / 35.0, NULL, S_RSKULL}
-	S_YSKULL {'YSKU', 0, 'keys/yelskul.md2', 0, 10.0 / 35.0, NULL, S_YSKULL2}
-	S_YSKULL2 {'YSKU', 1 | FF_FULLBRIGHT, 'keys/yelskul.md2', 1, 10.0 / 35.0, NULL, S_YSKULL}
-	S_STIM {'STIM', 0, 'items/stim.md2', 0, -1.0, NULL, S_NULL}
-	S_MEDI {'MEDI', 0, 'items/medi.md2', 0, -1.0, NULL, S_NULL}
-	S_SOUL {'SOUL', 0 | FF_FULLBRIGHT, 'items/soul.md2', 0, 6.0 / 35.0, NULL, S_SOUL2}
-	S_SOUL2 {'SOUL', 1 | FF_FULLBRIGHT, 'items/soul.md2', 1, 6.0 / 35.0, NULL, S_SOUL3}
-	S_SOUL3 {'SOUL', 2 | FF_FULLBRIGHT, 'items/soul.md2', 2, 6.0 / 35.0, NULL, S_SOUL4}
-	S_SOUL4 {'SOUL', 3 | FF_FULLBRIGHT, 'items/soul.md2', 3, 6.0 / 35.0, NULL, S_SOUL5}
-	S_SOUL5 {'SOUL', 2 | FF_FULLBRIGHT, 'items/soul.md2', 4, 6.0 / 35.0, NULL, S_SOUL6}
-	S_SOUL6 {'SOUL', 1 | FF_FULLBRIGHT, 'items/soul.md2', 5, 6.0 / 35.0, NULL, S_SOUL}
-	S_PINV {'PINV', 0 | FF_FULLBRIGHT, 'items/invuln.md2', 0, 6.0 / 35.0, NULL, S_PINV2}
-	S_PINV2 {'PINV', 1 | FF_FULLBRIGHT, 'items/invuln.md2', 1, 6.0 / 35.0, NULL, S_PINV3}
-	S_PINV3 {'PINV', 2 | FF_FULLBRIGHT, 'items/invuln.md2', 2, 6.0 / 35.0, NULL, S_PINV4}
-	S_PINV4 {'PINV', 3 | FF_FULLBRIGHT, 'items/invuln.md2', 3, 6.0 / 35.0, NULL, S_PINV}
-	S_PSTR {'PSTR', 0 | FF_FULLBRIGHT, 'items/bersek.md2', 0, -1.0, NULL, S_NULL}
-	S_PINS {'PINS', 0 | FF_FULLBRIGHT, 'items/invis.md2', 0, 6.0 / 35.0, NULL, S_PINS2}
-	S_PINS2 {'PINS', 1 | FF_FULLBRIGHT, 'items/invis.md2', 1, 6.0 / 35.0, NULL, S_PINS3}
-	S_PINS3 {'PINS', 2 | FF_FULLBRIGHT, 'items/invis.md2', 2, 6.0 / 35.0, NULL, S_PINS4}
-	S_PINS4 {'PINS', 3 | FF_FULLBRIGHT, 'items/invis.md2', 3, 6.0 / 35.0, NULL, S_PINS}
-	S_MEGA {'MEGA', 0 | FF_FULLBRIGHT, 'items/mega.md2', 0, 6.0 / 35.0, NULL, S_MEGA2}
-	S_MEGA2 {'MEGA', 1 | FF_FULLBRIGHT, 'items/mega.md2', 1, 6.0 / 35.0, NULL, S_MEGA3}
-	S_MEGA3 {'MEGA', 2 | FF_FULLBRIGHT, 'items/mega.md2', 2, 6.0 / 35.0, NULL, S_MEGA4}
-	S_MEGA4 {'MEGA', 3 | FF_FULLBRIGHT, 'items/mega.md2', 3, 6.0 / 35.0, NULL, S_MEGA}
-	S_SUIT {'SUIT', 0 | FF_FULLBRIGHT, 'items/suit.md2', 0, -1.0, NULL, S_NULL}
-	S_PMAP {'PMAP', 0 | FF_FULLBRIGHT, 'items/map.md2', 0, 6.0 / 35.0, NULL, S_PMAP2}
-	S_PMAP2 {'PMAP', 1 | FF_FULLBRIGHT, 'items/map.md2', 1, 6.0 / 35.0, NULL, S_PMAP3}
-	S_PMAP3 {'PMAP', 2 | FF_FULLBRIGHT, 'items/map.md2', 2, 6.0 / 35.0, NULL, S_PMAP4}
-	S_PMAP4 {'PMAP', 3 | FF_FULLBRIGHT, 'items/map.md2', 3, 6.0 / 35.0, NULL, S_PMAP5}
-	S_PMAP5 {'PMAP', 2 | FF_FULLBRIGHT, 'items/map.md2', 4, 6.0 / 35.0, NULL, S_PMAP6}
-	S_PMAP6 {'PMAP', 1 | FF_FULLBRIGHT, 'items/map.md2', 5, 6.0 / 35.0, NULL, S_PMAP}
-	S_PVIS {'PVIS', 0 | FF_FULLBRIGHT, 'items/visor.md2', 0, 6.0 / 35.0, NULL, S_PVIS2}
-	S_PVIS2 {'PVIS', 1, 'items/visor.md2', 1, 6.0 / 35.0, NULL, S_PVIS}
-	S_CLIP {'CLIP', 0, 'ammo/clip.md2', 0, -1.0, NULL, S_NULL}
-	S_AMMO {'AMMO', 0, 'ammo/ammo.md2', 0, -1.0, NULL, S_NULL}
-	S_ROCK {'ROCK', 0, 'ammo/rocket.md2', 0, -1.0, NULL, S_NULL}
-	S_BROK {'BROK', 0, 'ammo/rocktbox.md2', 0, -1.0, NULL, S_NULL}
-	S_CELL {'CELL', 0, 'ammo/cell.md2', 0, -1.0, NULL, S_NULL}
-	S_CELP {'CELP', 0, 'ammo/bigcells.md2', 0, -1.0, NULL, S_NULL}
-	S_SHEL {'SHEL', 0, 'ammo/shells.md2', 0, -1.0, NULL, S_NULL}
-	S_SBOX {'SBOX', 0, 'ammo/shellbox.md2', 0, -1.0, NULL, S_NULL}
-	S_BPAK {'BPAK', 0, 'ammo/backpack.md2', 0, -1.0, NULL, S_NULL}
-	S_BFUG {'BFUG', 0, 'weapons/g_bfg.md2', 0, -1.0, NULL, S_NULL}
-	S_MGUN {'MGUN', 0, 'weapons/g_chain.md2', 0, -1.0, NULL, S_NULL}
-	S_CSAW {'CSAW', 0, 'weapons/g_saw.md2', 0, -1.0, NULL, S_NULL}
-	S_LAUN {'LAUN', 0, 'weapons/g_launch.md2', 0, -1.0, NULL, S_NULL}
-	S_PLAS {'PLAS', 0, 'weapons/g_plasma.md2', 0, -1.0, NULL, S_NULL}
-	S_SHOT {'SHOT', 0, 'weapons/g_shotg.md2', 0, -1.0, NULL, S_NULL}
-	S_SHOT2 {'SGN2', 0, 'weapons/g_super.md2', 0, -1.0, NULL, S_NULL}
-	S_COLU {'COLU', 0 | FF_FULLBRIGHT, 'lights/lamp.md2', 0, -1.0, NULL, S_NULL}
-	S_STALAG {'SMT2', 0, -1.0, NULL, S_NULL}
-	S_BLOODYTWITCH {'GOR1', 0, 'bodies/twitch.md2', 0, 10.0 / 35.0, NULL, S_BLOODYTWITCH2}
-	S_BLOODYTWITCH2 {'GOR1', 1, 'bodies/twitch.md2', 1, 15.0 / 35.0, NULL, S_BLOODYTWITCH3}
-	S_BLOODYTWITCH3 {'GOR1', 2, 'bodies/twitch.md2', 2, 8.0 / 35.0, NULL, S_BLOODYTWITCH4}
-	S_BLOODYTWITCH4 {'GOR1', 1, 'bodies/twitch.md2', 3, 6.0 / 35.0, NULL, S_BLOODYTWITCH}
-	S_DEADTORSO {'PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, NULL, S_NULL}
-	S_DEADBOTTOM {'PLAY', 18, 'players/doomguy/xplode.md2', 8, -1.0, NULL, S_NULL}
-	S_HEADSONSTICK {'POL2', 0, 'bodies/poleskls.md2', 0, -1.0, NULL, S_NULL}
-	S_GIBS {'POL5', 0, 'gibs/gibs.md2', 0, -1.0, NULL, S_NULL}
-	S_HEADONASTICK {'POL4', 0, 'bodies/poleskul.md2', 0, -1.0, NULL, S_NULL}
-	S_HEADCANDLES {'POL3', 0 | FF_FULLBRIGHT, 'bodies/polescan.md2', 0, 6.0 / 35.0, NULL, S_HEADCANDLES2}
-	S_HEADCANDLES2 {'POL3', 1 | FF_FULLBRIGHT, 'bodies/polescan.md2', 1, 6.0 / 35.0, NULL, S_HEADCANDLES}
-	S_DEADSTICK {'POL1', 0, 'bodies/onstick1.md2', 0, -1.0, NULL, S_NULL}
-	S_LIVESTICK {'POL6', 0, 'bodies/onstick2.md2', 0, 6.0 / 35.0, NULL, S_LIVESTICK2}
-	S_LIVESTICK2 {'POL6', 1, 'bodies/onstick2.md2', 1, 8.0 / 35.0, NULL, S_LIVESTICK}
-	S_MEAT2 {'GOR2', 0, 'bodies/hangguy.md2', 0, -1.0, NULL, S_NULL}
-	S_MEAT3 {'GOR3', 0, 'bodies/noleg.md2', 0, -1.0, NULL, S_NULL}
-	S_MEAT4 {'GOR4', 0, 'bodies/legs.md2', 0, -1.0, NULL, S_NULL}
-	S_MEAT5 {'GOR5', 0, 'bodies/leg.md2', 0, -1.0, NULL, S_NULL}
-	S_STALAGTITE {'SMIT', 0, 'objects/stub.md2', 0, -1.0, NULL, S_NULL}
-	S_TALLGRNCOL {'COL1', 0, 'objects/pillargt.md2', 0, -1.0, NULL, S_NULL}
-	S_SHRTGRNCOL {'COL2', 0, 'objects/pillargs.md2', 0, -1.0, NULL, S_NULL}
-	S_TALLREDCOL {'COL3', 0, 'objects/pillarrt.md2', 0, -1.0, NULL, S_NULL}
-	S_SHRTREDCOL {'COL4', 0, 'objects/pillarrs.md2', 0, -1.0, NULL, S_NULL}
-	S_CANDLESTIK {'CAND', 0 | FF_FULLBRIGHT, 'lights/candle.md2', 0, -1.0, NULL, S_NULL}
-	S_CANDELABRA {'CBRA', 0 | FF_FULLBRIGHT, 'lights/candabra.md2', 0, -1.0, NULL, S_NULL}
-	S_SKULLCOL {'COL6', 0, 'objects/pillarsk.md2', 0, -1.0, NULL, S_NULL}
-	S_TORCHTREE {'TRE1', 0, 'objects/tree.md2', 0, -1.0, NULL, S_NULL}
-	S_BIGTREE {'TRE2', 0, 'objects/bigtree.md2', 0, -1.0, NULL, S_NULL}
-	S_TECHPILLAR {'ELEC', 0, 'objects/techpilr.md2', 0, -1.0, NULL, S_NULL}
-	S_EVILEYE {'CEYE', 0 | FF_FULLBRIGHT, 'objects/evileye.md2', 0, 6.0 / 35.0, NULL, S_EVILEYE2}
-	S_EVILEYE2 {'CEYE', 1 | FF_FULLBRIGHT, 'objects/evileye.md2', 1, 6.0 / 35.0, NULL, S_EVILEYE3}
-	S_EVILEYE3 {'CEYE', 2 | FF_FULLBRIGHT, 'objects/evileye.md2', 2, 6.0 / 35.0, NULL, S_EVILEYE4}
-	S_EVILEYE4 {'CEYE', 1 | FF_FULLBRIGHT, 'objects/evileye.md2', 3, 6.0 / 35.0, NULL, S_EVILEYE}
-	S_FLOATSKULL {'FSKU', 0 | FF_FULLBRIGHT, 'objects/fskulls.md2', 0, 6.0 / 35.0, NULL, S_FLOATSKULL2}
-	S_FLOATSKULL2 {'FSKU', 1 | FF_FULLBRIGHT, 'objects/fskulls.md2', 1, 6.0 / 35.0, NULL, S_FLOATSKULL3}
-	S_FLOATSKULL3 {'FSKU', 2 | FF_FULLBRIGHT, 'objects/fskulls.md2', 2, 6.0 / 35.0, NULL, S_FLOATSKULL}
-	S_HEARTCOL {'COL5', 0, 'objects/pillargh.md2', 0, 14.0 / 35.0, NULL, S_HEARTCOL2}
-	S_HEARTCOL2 {'COL5', 1, 'objects/pillargh.md2', 1, 14.0 / 35.0, NULL, S_HEARTCOL}
-	S_BLUETORCH {'TBLU', 0 | FF_FULLBRIGHT, 'lights/torchblu.md2', 0, 4.0 / 35.0, NULL, S_BLUETORCH2}
-	S_BLUETORCH2 {'TBLU', 1 | FF_FULLBRIGHT, 'lights/torchblu.md2', 1, 4.0 / 35.0, NULL, S_BLUETORCH3}
-	S_BLUETORCH3 {'TBLU', 2 | FF_FULLBRIGHT, 'lights/torchblu.md2', 2, 4.0 / 35.0, NULL, S_BLUETORCH4}
-	S_BLUETORCH4 {'TBLU', 3 | FF_FULLBRIGHT, 'lights/torchblu.md2', 3, 4.0 / 35.0, NULL, S_BLUETORCH}
-	S_GREENTORCH {'TGRN', 0 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 0, 4.0 / 35.0, NULL, S_GREENTORCH2}
-	S_GREENTORCH2 {'TGRN', 1 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 1, 4.0 / 35.0, NULL, S_GREENTORCH3}
-	S_GREENTORCH3 {'TGRN', 2 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 2, 4.0 / 35.0, NULL, S_GREENTORCH4}
-	S_GREENTORCH4 {'TGRN', 3 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 3, 4.0 / 35.0, NULL, S_GREENTORCH}
-	S_REDTORCH {'TRED', 0 | FF_FULLBRIGHT, 'lights/torchred.md2', 0, 4.0 / 35.0, NULL, S_REDTORCH2}
-	S_REDTORCH2 {'TRED', 1 | FF_FULLBRIGHT, 'lights/torchred.md2', 1, 4.0 / 35.0, NULL, S_REDTORCH3}
-	S_REDTORCH3 {'TRED', 2 | FF_FULLBRIGHT, 'lights/torchred.md2', 2, 4.0 / 35.0, NULL, S_REDTORCH4}
-	S_REDTORCH4 {'TRED', 3 | FF_FULLBRIGHT, 'lights/torchred.md2', 3, 4.0 / 35.0, NULL, S_REDTORCH}
-	S_BTORCHSHRT {'SMBT', 0 | FF_FULLBRIGHT, 'lights/stickblu.md2', 0, 4.0 / 35.0, NULL, S_BTORCHSHRT2}
-	S_BTORCHSHRT2 {'SMBT', 1 | FF_FULLBRIGHT, 'lights/stickblu.md2', 1, 4.0 / 35.0, NULL, S_BTORCHSHRT3}
-	S_BTORCHSHRT3 {'SMBT', 2 | FF_FULLBRIGHT, 'lights/stickblu.md2', 2, 4.0 / 35.0, NULL, S_BTORCHSHRT4}
-	S_BTORCHSHRT4 {'SMBT', 3 | FF_FULLBRIGHT, 'lights/stickblu.md2', 3, 4.0 / 35.0, NULL, S_BTORCHSHRT}
-	S_GTORCHSHRT {'SMGT', 0 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 0, 4.0 / 35.0, NULL, S_GTORCHSHRT2}
-	S_GTORCHSHRT2 {'SMGT', 1 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 1, 4.0 / 35.0, NULL, S_GTORCHSHRT3}
-	S_GTORCHSHRT3 {'SMGT', 2 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 2, 4.0 / 35.0, NULL, S_GTORCHSHRT4}
-	S_GTORCHSHRT4 {'SMGT', 3 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 3, 4.0 / 35.0, NULL, S_GTORCHSHRT}
-	S_RTORCHSHRT {'SMRT', 0 | FF_FULLBRIGHT, 'lights/stickred.md2', 0, 4.0 / 35.0, NULL, S_RTORCHSHRT2}
-	S_RTORCHSHRT2 {'SMRT', 1 | FF_FULLBRIGHT, 'lights/stickred.md2', 1, 4.0 / 35.0, NULL, S_RTORCHSHRT3}
-	S_RTORCHSHRT3 {'SMRT', 2 | FF_FULLBRIGHT, 'lights/stickred.md2', 2, 4.0 / 35.0, NULL, S_RTORCHSHRT4}
-	S_RTORCHSHRT4 {'SMRT', 3 | FF_FULLBRIGHT, 'lights/stickred.md2', 3, 4.0 / 35.0, NULL, S_RTORCHSHRT}
-	S_HANGNOGUTS {'HDB1', 0, 'bodies/hnoguts.md2', 0, -1.0, NULL, S_NULL}
-	S_HANGBNOBRAIN {'HDB2', 0, 'bodies/hnobrain.md2', 0, -1.0, NULL, S_NULL}
-	S_HANGTLOOKDN {'HDB3', 0, 'bodies/htlookdn.md2', 0, -1.0, NULL, S_NULL}
-	S_HANGTSKULL {'HDB4', 0, 'bodies/htskull.md2', 0, -1.0, NULL, S_NULL}
-	S_HANGTLOOKUP {'HDB5', 0, 'bodies/htlookup.md2', 0, -1.0, NULL, S_NULL}
-	S_HANGTNOBRAIN {'HDB6', 0, 'bodies/htnobrn.md2', 0, -1.0, NULL, S_NULL}
-	S_COLONGIBS {'POB1', 0, 'gibs/blood.md2', 0, -1.0, NULL, S_NULL}
-	S_SMALLPOOL {'POB2', 0, 'gibs/blood2.md2', 0, -1.0, NULL, S_NULL}
-	S_BRAINSTEM {'BRS1', 0, 'gibs/brain.md2', 0, -1.0, NULL, S_NULL}
-	S_TECHLAMP {'TLMP', 0 | FF_FULLBRIGHT, 'lights/techlamp.md2', 0, 4.0 / 35.0, NULL, S_TECHLAMP2}
-	S_TECHLAMP2 {'TLMP', 1 | FF_FULLBRIGHT, 'lights/techlamp.md2', 1, 4.0 / 35.0, NULL, S_TECHLAMP3}
-	S_TECHLAMP3 {'TLMP', 2 | FF_FULLBRIGHT, 'lights/techlamp.md2', 2, 4.0 / 35.0, NULL, S_TECHLAMP4}
-	S_TECHLAMP4 {'TLMP', 3 | FF_FULLBRIGHT, 'lights/techlamp.md2', 3, 4.0 / 35.0, NULL, S_TECHLAMP}
-	S_TECH2LAMP {'TLP2', 0 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 0, 4.0 / 35.0, NULL, S_TECH2LAMP2}
-	S_TECH2LAMP2 {'TLP2', 1 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 1, 4.0 / 35.0, NULL, S_TECH2LAMP3}
-	S_TECH2LAMP3 {'TLP2', 2 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 2, 4.0 / 35.0, NULL, S_TECH2LAMP4}
-	S_TECH2LAMP4 {'TLP2', 3 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 3, 4.0 / 35.0, NULL, S_TECH2LAMP}
+	S_BLOOD1('BLUD', 2, 8.0 / 35.0, S_BLOOD2) { }
+	S_BLOOD2('BLUD', 1, 8.0 / 35.0, S_BLOOD3) { }
+	S_BLOOD3('BLUD', 0, 8.0 / 35.0, S_NULL) { }
+	S_PUFF1('PUFF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PUFF2) { }
+	S_PUFF2('PUFF', 1, 4.0 / 35.0, S_PUFF3) { }
+	S_PUFF3('PUFF', 2, 4.0 / 35.0, S_PUFF4) { }
+	S_PUFF4('PUFF', 3, 4.0 / 35.0, S_NULL) { }
+	S_TBALL1('BAL1', 0 | FF_FULLBRIGHT, 'missiles/impball.md2', 0, 4.0 / 35.0, S_TBALL2) { }
+	S_TBALL2('BAL1', 1 | FF_FULLBRIGHT, 'missiles/impball.md2', 1, 4.0 / 35.0, S_TBALL1) { }
+	S_TBALLX1('BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX2) { }
+	S_TBALLX2('BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX3) { }
+	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_RBALL1('BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 0, 4.0 / 35.0, S_RBALL2) { }
+	S_RBALL2('BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 1, 4.0 / 35.0, S_RBALL1) { }
+	S_RBALLX1('BAL2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX2) { }
+	S_RBALLX2('BAL2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX3) { }
+	S_RBALLX3('BAL2', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_PLASBALL('PLSS', 0 | FF_FULLBRIGHT, 'missiles/plasma.md2', 0, 6.0 / 35.0, S_PLASBALL2) { }
+	S_PLASBALL2('PLSS', 1 | FF_FULLBRIGHT, 'missiles/plasma.md2', 1, 6.0 / 35.0, S_PLASBALL) { }
+	S_PLASEXP('PLSE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP2) { }
+	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) { }
+	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) { }
+	S_PLASEXP4('PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP5) { }
+	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_ROCKET('MISL', 0 | FF_FULLBRIGHT, 'missiles/rocket.md2', 0, 1.0 / 35.0, S_ROCKET) { }
+	S_BFGSHOT('BFS1', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_BFGSHOT2) { }
+	S_BFGSHOT2('BFS1', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_BFGSHOT) { }
+	S_BFGLAND('BFE1', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND2) { }
+	S_BFGLAND2('BFE1', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND3) { }
+	S_BFGLAND3('BFE1', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND4) { A_BFGSpray(); }
+	S_BFGLAND4('BFE1', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND5) { }
+	S_BFGLAND5('BFE1', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGLAND6) { }
+	S_BFGLAND6('BFE1', 5 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_BFGEXP('BFE2', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP2) { }
+	S_BFGEXP2('BFE2', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP3) { }
+	S_BFGEXP3('BFE2', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_BFGEXP4) { }
+	S_BFGEXP4('BFE2', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_EXPLODE1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_EXPLODE2) { A_Explode(); }
+	S_EXPLODE2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_EXPLODE3) { }
+	S_EXPLODE3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_TFOG('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG01) { }
+	S_TFOG01('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG02) { }
+	S_TFOG02('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
+	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
+	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
+	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
+	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
+	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
+	S_TFOG7('TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
+	S_TFOG8('TFOG', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
+	S_TFOG9('TFOG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
+	S_TFOG10('TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_IFOG('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG01) { }
+	S_IFOG01('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG02) { }
+	S_IFOG02('IFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG2) { }
+	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) { }
+	S_IFOG3('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) { }
+	S_IFOG4('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) { }
+	S_IFOG5('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_PLAY('PLAY', 0, 'players/doomguy/tris.md2', 0, -1.0, S_NULL) { }
+	S_PLAY_RUN1('PLAY', 0, 'players/doomguy/tris.md2', 1, 4.0 / 35.0, S_PLAY_RUN2) { }
+	S_PLAY_RUN2('PLAY', 1, 'players/doomguy/tris.md2', 2, 4.0 / 35.0, S_PLAY_RUN3) { }
+	S_PLAY_RUN3('PLAY', 2, 'players/doomguy/tris.md2', 3, 4.0 / 35.0, S_PLAY_RUN4) { }
+	S_PLAY_RUN4('PLAY', 3, 'players/doomguy/tris.md2', 4, 4.0 / 35.0, S_PLAY_RUN1) { }
+	S_PLAY_ATK1('PLAY', 4, 'players/doomguy/tris.md2', 5, 12.0 / 35.0, S_PLAY) { }
+	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 'players/doomguy/tris.md2', 6, 6.0 / 35.0, S_PLAY_ATK1) { }
+	S_PLAY_PAIN('PLAY', 6, 'players/doomguy/tris.md2', 7, 4.0 / 35.0, S_PLAY_PAIN2) { }
+	S_PLAY_PAIN2('PLAY', 6, 'players/doomguy/tris.md2', 8, 4.0 / 35.0, S_PLAY) { A_Pain(); }
+	S_PLAY_DIE1('PLAY', 7, 'players/doomguy/tris.md2', 9, 10.0 / 35.0, S_PLAY_DIE2) { }
+	S_PLAY_DIE2('PLAY', 8, 'players/doomguy/tris.md2', 10, 10.0 / 35.0, S_PLAY_DIE3) { A_PlayerScream(); }
+	S_PLAY_DIE3('PLAY', 9, 'players/doomguy/tris.md2', 11, 10.0 / 35.0, S_PLAY_DIE4) { A_Fall(); }
+	S_PLAY_DIE4('PLAY', 10, 'players/doomguy/tris.md2', 12, 10.0 / 35.0, S_PLAY_DIE5) { }
+	S_PLAY_DIE5('PLAY', 11, 'players/doomguy/tris.md2', 13, 10.0 / 35.0, S_PLAY_DIE6) { }
+	S_PLAY_DIE6('PLAY', 12, 'players/doomguy/tris.md2', 14, 10.0 / 35.0, S_PLAY_DIE7) { }
+	S_PLAY_DIE7('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, S_NULL) { }
+	S_PLAY_XDIE1('PLAY', 14, 'players/doomguy/xplode.md2', 0, 5.0 / 35.0, S_PLAY_XDIE2) { }
+	S_PLAY_XDIE2('PLAY', 15, 'players/doomguy/xplode.md2', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
+	S_PLAY_XDIE3('PLAY', 16, 'players/doomguy/xplode.md2', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
+	S_PLAY_XDIE4('PLAY', 17, 'players/doomguy/xplode.md2', 3, 5.0 / 35.0, S_PLAY_XDIE5) { }
+	S_PLAY_XDIE5('PLAY', 18, 'players/doomguy/xplode.md2', 4, 5.0 / 35.0, S_PLAY_XDIE6) { }
+	S_PLAY_XDIE6('PLAY', 19, 'players/doomguy/xplode.md2', 5, 5.0 / 35.0, S_PLAY_XDIE7) { }
+	S_PLAY_XDIE7('PLAY', 20, 'players/doomguy/xplode.md2', 6, 5.0 / 35.0, S_PLAY_XDIE8) { }
+	S_PLAY_XDIE8('PLAY', 21, 'players/doomguy/xplode.md2', 7, 5.0 / 35.0, S_PLAY_XDIE9) { }
+	S_PLAY_XDIE9('PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, S_NULL) { }
+	S_POSS_STND('POSS', 0, 'monsters/trooper.md2', 0, 10.0 / 35.0, S_POSS_STND2) { A_Look(); }
+	S_POSS_STND2('POSS', 1, 'monsters/trooper.md2', 1, 10.0 / 35.0, S_POSS_STND) { A_Look(); }
+	S_POSS_RUN1('POSS', 0, 'monsters/trooper.md2', 2, 4.0 / 35.0, S_POSS_RUN2) { A_Chase(); }
+	S_POSS_RUN2('POSS', 0, 'monsters/trooper.md2', 3, 4.0 / 35.0, S_POSS_RUN3) { A_Chase(); }
+	S_POSS_RUN3('POSS', 1, 'monsters/trooper.md2', 4, 4.0 / 35.0, S_POSS_RUN4) { A_Chase(); }
+	S_POSS_RUN4('POSS', 1, 'monsters/trooper.md2', 5, 4.0 / 35.0, S_POSS_RUN5) { A_Chase(); }
+	S_POSS_RUN5('POSS', 2, 'monsters/trooper.md2', 6, 4.0 / 35.0, S_POSS_RUN6) { A_Chase(); }
+	S_POSS_RUN6('POSS', 2, 'monsters/trooper.md2', 7, 4.0 / 35.0, S_POSS_RUN7) { A_Chase(); }
+	S_POSS_RUN7('POSS', 3, 'monsters/trooper.md2', 8, 4.0 / 35.0, S_POSS_RUN8) { A_Chase(); }
+	S_POSS_RUN8('POSS', 3, 'monsters/trooper.md2', 9, 4.0 / 35.0, S_POSS_RUN1) { A_Chase(); }
+	S_POSS_ATK1('POSS', 4, 'monsters/trooper.md2', 10, 10.0 / 35.0, S_POSS_ATK2) { A_FaceTarget(); }
+	S_POSS_ATK2('POSS', 5, 'monsters/trooper.md2', 11, 8.0 / 35.0, S_POSS_ATK3) { A_PosAttack(); }
+	S_POSS_ATK3('POSS', 4, 'monsters/trooper.md2', 12, 8.0 / 35.0, S_POSS_RUN1) { }
+	S_POSS_PAIN('POSS', 6, 'monsters/trooper.md2', 13, 3.0 / 35.0, S_POSS_PAIN2) { }
+	S_POSS_PAIN2('POSS', 6, 'monsters/trooper.md2', 14, 3.0 / 35.0, S_POSS_RUN1) { A_Pain(); }
+	S_POSS_DIE1('POSS', 7, 'monsters/troopdie.md2', 0, 5.0 / 35.0, S_POSS_DIE2) { }
+	S_POSS_DIE2('POSS', 8, 'monsters/troopdie.md2', 1, 5.0 / 35.0, S_POSS_DIE3) { A_Scream(); }
+	S_POSS_DIE3('POSS', 9, 'monsters/troopdie.md2', 2, 5.0 / 35.0, S_POSS_DIE4) { A_Fall(); }
+	S_POSS_DIE4('POSS', 10, 'monsters/troopdie.md2', 3, 5.0 / 35.0, S_POSS_DIE5) { }
+	S_POSS_DIE5('POSS', 11, 'monsters/troopdie.md2', 4, -1.0, S_NULL) { }
+	S_POSS_XDIE1('POSS', 12, 'gibs/troopgib.md2', 0, 5.0 / 35.0, S_POSS_XDIE2) { }
+	S_POSS_XDIE2('POSS', 13, 'gibs/troopgib.md2', 1, 5.0 / 35.0, S_POSS_XDIE3) { A_XScream(); }
+	S_POSS_XDIE3('POSS', 14, 'gibs/troopgib.md2', 2, 5.0 / 35.0, S_POSS_XDIE4) { A_Fall(); }
+	S_POSS_XDIE4('POSS', 15, 'gibs/troopgib.md2', 3, 5.0 / 35.0, S_POSS_XDIE5) { }
+	S_POSS_XDIE5('POSS', 16, 'gibs/troopgib.md2', 4, 5.0 / 35.0, S_POSS_XDIE6) { }
+	S_POSS_XDIE6('POSS', 17, 'gibs/troopgib.md2', 5, 5.0 / 35.0, S_POSS_XDIE7) { }
+	S_POSS_XDIE7('POSS', 18, 'gibs/troopgib.md2', 6, 5.0 / 35.0, S_POSS_XDIE8) { }
+	S_POSS_XDIE8('POSS', 19, 'gibs/troopgib.md2', 7, 5.0 / 35.0, S_POSS_XDIE9) { }
+	S_POSS_XDIE9('POSS', 20, 'gibs/troopgib.md2', 8, -1.0, S_NULL) { }
+	S_POSS_RAISE1('POSS', 10, 'monsters/troopdie.md2', 5, 5.0 / 35.0, S_POSS_RAISE2) { }
+	S_POSS_RAISE2('POSS', 9, 'monsters/troopdie.md2', 6, 5.0 / 35.0, S_POSS_RAISE3) { }
+	S_POSS_RAISE3('POSS', 8, 'monsters/troopdie.md2', 7, 5.0 / 35.0, S_POSS_RAISE4) { }
+	S_POSS_RAISE4('POSS', 7, 'monsters/troopdie.md2', 8, 5.0 / 35.0, S_POSS_RUN1) { }
+	S_SPOS_STND('SPOS', 0, 'monsters/sargeant.md2', 0, 10.0 / 35.0, S_SPOS_STND2) { A_Look(); }
+	S_SPOS_STND2('SPOS', 1, 'monsters/sargeant.md2', 1, 10.0 / 35.0, S_SPOS_STND) { A_Look(); }
+	S_SPOS_RUN1('SPOS', 0, 'monsters/sargeant.md2', 2, 3.0 / 35.0, S_SPOS_RUN2) { A_Chase(); }
+	S_SPOS_RUN2('SPOS', 0, 'monsters/sargeant.md2', 3, 3.0 / 35.0, S_SPOS_RUN3) { A_Chase(); }
+	S_SPOS_RUN3('SPOS', 1, 'monsters/sargeant.md2', 4, 3.0 / 35.0, S_SPOS_RUN4) { A_Chase(); }
+	S_SPOS_RUN4('SPOS', 1, 'monsters/sargeant.md2', 5, 3.0 / 35.0, S_SPOS_RUN5) { A_Chase(); }
+	S_SPOS_RUN5('SPOS', 2, 'monsters/sargeant.md2', 6, 3.0 / 35.0, S_SPOS_RUN6) { A_Chase(); }
+	S_SPOS_RUN6('SPOS', 2, 'monsters/sargeant.md2', 7, 3.0 / 35.0, S_SPOS_RUN7) { A_Chase(); }
+	S_SPOS_RUN7('SPOS', 3, 'monsters/sargeant.md2', 8, 3.0 / 35.0, S_SPOS_RUN8) { A_Chase(); }
+	S_SPOS_RUN8('SPOS', 3, 'monsters/sargeant.md2', 9, 3.0 / 35.0, S_SPOS_RUN1) { A_Chase(); }
+	S_SPOS_ATK1('SPOS', 4, 'monsters/sargeant.md2', 10, 10.0 / 35.0, S_SPOS_ATK2) { A_FaceTarget(); }
+	S_SPOS_ATK2('SPOS', 5 | FF_FULLBRIGHT, 'monsters/sargeant.md2', 11, 10.0 / 35.0, S_SPOS_ATK3) { A_SPosAttack(); }
+	S_SPOS_ATK3('SPOS', 4, 'monsters/sargeant.md2', 12, 10.0 / 35.0, S_SPOS_RUN1) { }
+	S_SPOS_PAIN('SPOS', 6, 'monsters/sargeant.md2', 13, 3.0 / 35.0, S_SPOS_PAIN2) { }
+	S_SPOS_PAIN2('SPOS', 6, 'monsters/sargeant.md2', 14, 3.0 / 35.0, S_SPOS_RUN1) { A_Pain(); }
+	S_SPOS_DIE1('SPOS', 7, 'monsters/sargdie.md2', 0, 5.0 / 35.0, S_SPOS_DIE2) { }
+	S_SPOS_DIE2('SPOS', 8, 'monsters/sargdie.md2', 1, 5.0 / 35.0, S_SPOS_DIE3) { A_Scream(); }
+	S_SPOS_DIE3('SPOS', 9, 'monsters/sargdie.md2', 2, 5.0 / 35.0, S_SPOS_DIE4) { A_Fall(); }
+	S_SPOS_DIE4('SPOS', 10, 'monsters/sargdie.md2', 3, 5.0 / 35.0, S_SPOS_DIE5) { }
+	S_SPOS_DIE5('SPOS', 11, 'monsters/sargdie.md2', 4, -1.0, S_NULL) { }
+	S_SPOS_XDIE1('SPOS', 12, 'gibs/sarggib.md2', 0, 5.0 / 35.0, S_SPOS_XDIE2) { }
+	S_SPOS_XDIE2('SPOS', 13, 'gibs/sarggib.md2', 1, 5.0 / 35.0, S_SPOS_XDIE3) { A_XScream(); }
+	S_SPOS_XDIE3('SPOS', 14, 'gibs/sarggib.md2', 2, 5.0 / 35.0, S_SPOS_XDIE4) { A_Fall(); }
+	S_SPOS_XDIE4('SPOS', 15, 'gibs/sarggib.md2', 3, 5.0 / 35.0, S_SPOS_XDIE5) { }
+	S_SPOS_XDIE5('SPOS', 16, 'gibs/sarggib.md2', 4, 5.0 / 35.0, S_SPOS_XDIE6) { }
+	S_SPOS_XDIE6('SPOS', 17, 'gibs/sarggib.md2', 5, 5.0 / 35.0, S_SPOS_XDIE7) { }
+	S_SPOS_XDIE7('SPOS', 18, 'gibs/sarggib.md2', 6, 5.0 / 35.0, S_SPOS_XDIE8) { }
+	S_SPOS_XDIE8('SPOS', 19, 'gibs/sarggib.md2', 7, 5.0 / 35.0, S_SPOS_XDIE9) { }
+	S_SPOS_XDIE9('SPOS', 20, 'gibs/sarggib.md2', 8, -1.0, S_NULL) { }
+	S_SPOS_RAISE1('SPOS', 11, 'monsters/sargdie.md2', 5, 5.0 / 35.0, S_SPOS_RAISE2) { }
+	S_SPOS_RAISE2('SPOS', 10, 'monsters/sargdie.md2', 6, 5.0 / 35.0, S_SPOS_RAISE3) { }
+	S_SPOS_RAISE3('SPOS', 9, 'monsters/sargdie.md2', 7, 5.0 / 35.0, S_SPOS_RAISE4) { }
+	S_SPOS_RAISE4('SPOS', 8, 'monsters/sargdie.md2', 8, 5.0 / 35.0, S_SPOS_RAISE5) { }
+	S_SPOS_RAISE5('SPOS', 7, 'monsters/sargdie.md2', 9, 5.0 / 35.0, S_SPOS_RUN1) { }
+	S_VILE_STND('VILE', 0, 'monsters/vile.md2', 0, 10.0 / 35.0, S_VILE_STND2) { A_Look(); }
+	S_VILE_STND2('VILE', 1, 'monsters/vile.md2', 1, 10.0 / 35.0, S_VILE_STND) { A_Look(); }
+	S_VILE_RUN1('VILE', 0, 'monsters/vile.md2', 2, 2.0 / 35.0, S_VILE_RUN2) { A_VileChase(); }
+	S_VILE_RUN2('VILE', 0, 'monsters/vile.md2', 3, 2.0 / 35.0, S_VILE_RUN3) { A_VileChase(); }
+	S_VILE_RUN3('VILE', 1, 'monsters/vile.md2', 4, 2.0 / 35.0, S_VILE_RUN4) { A_VileChase(); }
+	S_VILE_RUN4('VILE', 1, 'monsters/vile.md2', 5, 2.0 / 35.0, S_VILE_RUN5) { A_VileChase(); }
+	S_VILE_RUN5('VILE', 2, 'monsters/vile.md2', 6, 2.0 / 35.0, S_VILE_RUN6) { A_VileChase(); }
+	S_VILE_RUN6('VILE', 2, 'monsters/vile.md2', 7, 2.0 / 35.0, S_VILE_RUN7) { A_VileChase(); }
+	S_VILE_RUN7('VILE', 3, 'monsters/vile.md2', 8, 2.0 / 35.0, S_VILE_RUN8) { A_VileChase(); }
+	S_VILE_RUN8('VILE', 3, 'monsters/vile.md2', 9, 2.0 / 35.0, S_VILE_RUN9) { A_VileChase(); }
+	S_VILE_RUN9('VILE', 4, 'monsters/vile.md2', 10, 2.0 / 35.0, S_VILE_RUN10) { A_VileChase(); }
+	S_VILE_RUN10('VILE', 4, 'monsters/vile.md2', 11, 2.0 / 35.0, S_VILE_RUN11) { A_VileChase(); }
+	S_VILE_RUN11('VILE', 5, 'monsters/vile.md2', 12, 2.0 / 35.0, S_VILE_RUN12) { A_VileChase(); }
+	S_VILE_RUN12('VILE', 5, 'monsters/vile.md2', 13, 2.0 / 35.0, S_VILE_RUN1) { A_VileChase(); }
+	S_VILE_ATK1('VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 0.0 / 35.0, S_VILE_ATK2) { A_VileStart(); }
+	S_VILE_ATK2('VILE', 6 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 0, 10.0 / 35.0, S_VILE_ATK3) { A_FaceTarget(); }
+	S_VILE_ATK3('VILE', 7 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 1, 8.0 / 35.0, S_VILE_ATK4) { A_VileTarget(); }
+	S_VILE_ATK4('VILE', 8 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 2, 8.0 / 35.0, S_VILE_ATK5) { A_FaceTarget(); }
+	S_VILE_ATK5('VILE', 9 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 3, 8.0 / 35.0, S_VILE_ATK6) { A_FaceTarget(); }
+	S_VILE_ATK6('VILE', 10 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 4, 8.0 / 35.0, S_VILE_ATK7) { A_FaceTarget(); }
+	S_VILE_ATK7('VILE', 11 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 5, 8.0 / 35.0, S_VILE_ATK8) { A_FaceTarget(); }
+	S_VILE_ATK8('VILE', 12 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 6, 8.0 / 35.0, S_VILE_ATK9) { A_FaceTarget(); }
+	S_VILE_ATK9('VILE', 13 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 7, 8.0 / 35.0, S_VILE_ATK10) { A_FaceTarget(); }
+	S_VILE_ATK10('VILE', 14 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 8, 8.0 / 35.0, S_VILE_ATK11) { A_VileAttack(); }
+	S_VILE_ATK11('VILE', 15 | FF_FULLBRIGHT, 'monsters/vileatk.md2', 9, 20.0 / 35.0, S_VILE_RUN1) { }
+	S_VILE_HEAL1('VILE', 26 | FF_FULLBRIGHT, 'monsters/vile.md2', 14, 10.0 / 35.0, S_VILE_HEAL2) { }
+	S_VILE_HEAL2('VILE', 27 | FF_FULLBRIGHT, 'monsters/vile.md2', 15, 10.0 / 35.0, S_VILE_HEAL3) { }
+	S_VILE_HEAL3('VILE', 28 | FF_FULLBRIGHT, 'monsters/vile.md2', 16, 10.0 / 35.0, S_VILE_RUN1) { }
+	S_VILE_PAIN('VILE', 16, 'monsters/vile.md2', 17, 5.0 / 35.0, S_VILE_PAIN2) { }
+	S_VILE_PAIN2('VILE', 16, 'monsters/vile.md2', 18, 5.0 / 35.0, S_VILE_RUN1) { A_Pain(); }
+	S_VILE_DIE1('VILE', 16, 'monsters/viledie.md2', 0, 7.0 / 35.0, S_VILE_DIE2) { }
+	S_VILE_DIE2('VILE', 17, 'monsters/viledie.md2', 1, 7.0 / 35.0, S_VILE_DIE3) { A_Scream(); }
+	S_VILE_DIE3('VILE', 18, 'monsters/viledie.md2', 2, 7.0 / 35.0, S_VILE_DIE4) { A_Fall(); }
+	S_VILE_DIE4('VILE', 19, 'monsters/viledie.md2', 3, 7.0 / 35.0, S_VILE_DIE5) { }
+	S_VILE_DIE5('VILE', 20, 'monsters/viledie.md2', 4, 7.0 / 35.0, S_VILE_DIE6) { }
+	S_VILE_DIE6('VILE', 21, 'monsters/viledie.md2', 5, 7.0 / 35.0, S_VILE_DIE7) { }
+	S_VILE_DIE7('VILE', 22, 'monsters/viledie.md2', 6, 7.0 / 35.0, S_VILE_DIE8) { }
+	S_VILE_DIE8('VILE', 23, 'monsters/viledie.md2', 7, 5.0 / 35.0, S_VILE_DIE9) { }
+	S_VILE_DIE9('VILE', 24, 'monsters/viledie.md2', 8, 5.0 / 35.0, S_VILE_DIE10) { }
+	S_VILE_DIE10('VILE', 25, 'monsters/viledie.md2', 9, -1.0, S_NULL) { }
+	S_FIRE1('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE2) { A_StartFire(); }
+	S_FIRE2('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE3) { A_Fire(); }
+	S_FIRE3('FIRE', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE4) { A_Fire(); }
+	S_FIRE4('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE5) { A_Fire(); }
+	S_FIRE5('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE6) { A_FireCrackle(); }
+	S_FIRE6('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE7) { A_Fire(); }
+	S_FIRE7('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE8) { A_Fire(); }
+	S_FIRE8('FIRE', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE9) { A_Fire(); }
+	S_FIRE9('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE10) { A_Fire(); }
+	S_FIRE10('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE11) { A_Fire(); }
+	S_FIRE11('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE12) { A_Fire(); }
+	S_FIRE12('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE13) { A_Fire(); }
+	S_FIRE13('FIRE', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE14) { A_Fire(); }
+	S_FIRE14('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE15) { A_Fire(); }
+	S_FIRE15('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE16) { A_Fire(); }
+	S_FIRE16('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE17) { A_Fire(); }
+	S_FIRE17('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE18) { A_Fire(); }
+	S_FIRE18('FIRE', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE19) { A_Fire(); }
+	S_FIRE19('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE20) { A_FireCrackle(); }
+	S_FIRE20('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE21) { A_Fire(); }
+	S_FIRE21('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE22) { A_Fire(); }
+	S_FIRE22('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE23) { A_Fire(); }
+	S_FIRE23('FIRE', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE24) { A_Fire(); }
+	S_FIRE24('FIRE', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE25) { A_Fire(); }
+	S_FIRE25('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE26) { A_Fire(); }
+	S_FIRE26('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE27) { A_Fire(); }
+	S_FIRE27('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE28) { A_Fire(); }
+	S_FIRE28('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE29) { A_Fire(); }
+	S_FIRE29('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE30) { A_Fire(); }
+	S_FIRE30('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { A_Fire(); }
+	S_SMOKE1('PUFF', 1, 4.0 / 35.0, S_SMOKE2) { }
+	S_SMOKE2('PUFF', 2, 4.0 / 35.0, S_SMOKE3) { }
+	S_SMOKE3('PUFF', 1, 4.0 / 35.0, S_SMOKE4) { }
+	S_SMOKE4('PUFF', 2, 4.0 / 35.0, S_SMOKE5) { }
+	S_SMOKE5('PUFF', 3, 4.0 / 35.0, S_NULL) { }
+	S_TRACER('FATB', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER2) { A_Tracer(); }
+	S_TRACER2('FATB', 1 | FF_FULLBRIGHT, 2.0 / 35.0, S_TRACER) { A_Tracer(); }
+	S_TRACEEXP1('FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TRACEEXP2) { }
+	S_TRACEEXP2('FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TRACEEXP3) { }
+	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_SKEL_STND('SKEL', 0, 'monsters/revenant.md2', 0, 10.0 / 35.0, S_SKEL_STND2) { A_Look(); }
+	S_SKEL_STND2('SKEL', 1, 'monsters/revenant.md2', 1, 10.0 / 35.0, S_SKEL_STND) { A_Look(); }
+	S_SKEL_RUN1('SKEL', 0, 'monsters/revenant.md2', 2, 2.0 / 35.0, S_SKEL_RUN2) { A_Chase(); }
+	S_SKEL_RUN2('SKEL', 0, 'monsters/revenant.md2', 3, 2.0 / 35.0, S_SKEL_RUN3) { A_Chase(); }
+	S_SKEL_RUN3('SKEL', 1, 'monsters/revenant.md2', 4, 2.0 / 35.0, S_SKEL_RUN4) { A_Chase(); }
+	S_SKEL_RUN4('SKEL', 1, 'monsters/revenant.md2', 5, 2.0 / 35.0, S_SKEL_RUN5) { A_Chase(); }
+	S_SKEL_RUN5('SKEL', 2, 'monsters/revenant.md2', 6, 2.0 / 35.0, S_SKEL_RUN6) { A_Chase(); }
+	S_SKEL_RUN6('SKEL', 2, 'monsters/revenant.md2', 7, 2.0 / 35.0, S_SKEL_RUN7) { A_Chase(); }
+	S_SKEL_RUN7('SKEL', 3, 'monsters/revenant.md2', 8, 2.0 / 35.0, S_SKEL_RUN8) { A_Chase(); }
+	S_SKEL_RUN8('SKEL', 3, 'monsters/revenant.md2', 9, 2.0 / 35.0, S_SKEL_RUN9) { A_Chase(); }
+	S_SKEL_RUN9('SKEL', 4, 'monsters/revenant.md2', 10, 2.0 / 35.0, S_SKEL_RUN10) { A_Chase(); }
+	S_SKEL_RUN10('SKEL', 4, 'monsters/revenant.md2', 11, 2.0 / 35.0, S_SKEL_RUN11) { A_Chase(); }
+	S_SKEL_RUN11('SKEL', 5, 'monsters/revenant.md2', 12, 2.0 / 35.0, S_SKEL_RUN12) { A_Chase(); }
+	S_SKEL_RUN12('SKEL', 5, 'monsters/revenant.md2', 13, 2.0 / 35.0, S_SKEL_RUN1) { A_Chase(); }
+	S_SKEL_FIST1('SKEL', 6, 'monsters/revenant.md2', 14, 0.0 / 35.0, S_SKEL_FIST2) { A_FaceTarget(); }
+	S_SKEL_FIST2('SKEL', 6, 'monsters/revenant.md2', 14, 6.0 / 35.0, S_SKEL_FIST3) { A_SkelWhoosh(); }
+	S_SKEL_FIST3('SKEL', 7, 'monsters/revenant.md2', 15, 6.0 / 35.0, S_SKEL_FIST4) { A_FaceTarget(); }
+	S_SKEL_FIST4('SKEL', 8, 'monsters/revenant.md2', 16, 6.0 / 35.0, S_SKEL_RUN1) { A_SkelFist(); }
+	S_SKEL_MISS1('SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant.md2', 17, 0.0 / 35.0, S_SKEL_MISS2) { A_FaceTarget(); }
+	S_SKEL_MISS2('SKEL', 9 | FF_FULLBRIGHT, 'monsters/revenant.md2', 17, 10.0 / 35.0, S_SKEL_MISS3) { A_FaceTarget(); }
+	S_SKEL_MISS3('SKEL', 10, 'monsters/revenant.md2', 18, 10.0 / 35.0, S_SKEL_MISS4) { A_SkelMissile(); }
+	S_SKEL_MISS4('SKEL', 10, 'monsters/revenant.md2', 19, 10.0 / 35.0, S_SKEL_RUN1) { A_FaceTarget(); }
+	S_SKEL_PAIN('SKEL', 11, 'monsters/revenant.md2', 20, 5.0 / 35.0, S_SKEL_PAIN2) { }
+	S_SKEL_PAIN2('SKEL', 11, 'monsters/revenant.md2', 21, 5.0 / 35.0, S_SKEL_RUN1) { A_Pain(); }
+	S_SKEL_DIE1('SKEL', 11, 'monsters/revdie.md2', 0, 7.0 / 35.0, S_SKEL_DIE2) { }
+	S_SKEL_DIE2('SKEL', 12, 'monsters/revdie.md2', 1, 7.0 / 35.0, S_SKEL_DIE3) { }
+	S_SKEL_DIE3('SKEL', 13, 'monsters/revdie.md2', 2, 7.0 / 35.0, S_SKEL_DIE4) { A_Scream(); }
+	S_SKEL_DIE4('SKEL', 14, 'monsters/revdie.md2', 3, 7.0 / 35.0, S_SKEL_DIE5) { A_Fall(); }
+	S_SKEL_DIE5('SKEL', 15, 'monsters/revdie.md2', 4, 7.0 / 35.0, S_SKEL_DIE6) { }
+	S_SKEL_DIE6('SKEL', 16, 'monsters/revdie.md2', 5, -1.0, S_NULL) { }
+	S_SKEL_RAISE1('SKEL', 16, 'monsters/revdie.md2', 6, 5.0 / 35.0, S_SKEL_RAISE2) { }
+	S_SKEL_RAISE2('SKEL', 15, 'monsters/revdie.md2', 7, 5.0 / 35.0, S_SKEL_RAISE3) { }
+	S_SKEL_RAISE3('SKEL', 14, 'monsters/revdie.md2', 8, 5.0 / 35.0, S_SKEL_RAISE4) { }
+	S_SKEL_RAISE4('SKEL', 13, 'monsters/revdie.md2', 9, 5.0 / 35.0, S_SKEL_RAISE5) { }
+	S_SKEL_RAISE5('SKEL', 12, 'monsters/revdie.md2', 10, 5.0 / 35.0, S_SKEL_RAISE6) { }
+	S_SKEL_RAISE6('SKEL', 11, 'monsters/revdie.md2', 11, 5.0 / 35.0, S_SKEL_RUN1) { }
+	S_FATSHOT1('MANF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT2) { }
+	S_FATSHOT2('MANF', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_FATSHOT1) { }
+	S_FATSHOTX1('MISL', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_FATSHOTX2) { }
+	S_FATSHOTX2('MISL', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_FATSHOTX3) { }
+	S_FATSHOTX3('MISL', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_FATT_STND('FATT', 0, 'monsters/mancubus.md2', 0, 15.0 / 35.0, S_FATT_STND2) { A_Look(); }
+	S_FATT_STND2('FATT', 1, 'monsters/mancubus.md2', 1, 15.0 / 35.0, S_FATT_STND) { A_Look(); }
+	S_FATT_RUN1('FATT', 0, 'monsters/mancubus.md2', 2, 4.0 / 35.0, S_FATT_RUN2) { A_Chase(); }
+	S_FATT_RUN2('FATT', 0, 'monsters/mancubus.md2', 3, 4.0 / 35.0, S_FATT_RUN3) { A_Chase(); }
+	S_FATT_RUN3('FATT', 1, 'monsters/mancubus.md2', 4, 4.0 / 35.0, S_FATT_RUN4) { A_Chase(); }
+	S_FATT_RUN4('FATT', 1, 'monsters/mancubus.md2', 5, 4.0 / 35.0, S_FATT_RUN5) { A_Chase(); }
+	S_FATT_RUN5('FATT', 2, 'monsters/mancubus.md2', 6, 4.0 / 35.0, S_FATT_RUN6) { A_Chase(); }
+	S_FATT_RUN6('FATT', 2, 'monsters/mancubus.md2', 7, 4.0 / 35.0, S_FATT_RUN7) { A_Chase(); }
+	S_FATT_RUN7('FATT', 3, 'monsters/mancubus.md2', 8, 4.0 / 35.0, S_FATT_RUN8) { A_Chase(); }
+	S_FATT_RUN8('FATT', 3, 'monsters/mancubus.md2', 9, 4.0 / 35.0, S_FATT_RUN9) { A_Chase(); }
+	S_FATT_RUN9('FATT', 4, 'monsters/mancubus.md2', 10, 4.0 / 35.0, S_FATT_RUN10) { A_Chase(); }
+	S_FATT_RUN10('FATT', 4, 'monsters/mancubus.md2', 11, 4.0 / 35.0, S_FATT_RUN11) { A_Chase(); }
+	S_FATT_RUN11('FATT', 5, 'monsters/mancubus.md2', 12, 4.0 / 35.0, S_FATT_RUN12) { A_Chase(); }
+	S_FATT_RUN12('FATT', 5, 'monsters/mancubus.md2', 13, 4.0 / 35.0, S_FATT_RUN1) { A_Chase(); }
+	S_FATT_ATK1('FATT', 6, 'monsters/mancubus.md2', 14, 20.0 / 35.0, S_FATT_ATK2) { A_FatRaise(); }
+	S_FATT_ATK2('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK3) { A_FatAttack1(); }
+	S_FATT_ATK3('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK4) { A_FaceTarget(); }
+	S_FATT_ATK4('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_ATK5) { A_FaceTarget(); }
+	S_FATT_ATK5('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK6) { A_FatAttack2(); }
+	S_FATT_ATK6('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK7) { A_FaceTarget(); }
+	S_FATT_ATK7('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_ATK8) { A_FaceTarget(); }
+	S_FATT_ATK8('FATT', 7 | FF_FULLBRIGHT, 'monsters/mancatk.md2', 0, 10.0 / 35.0, S_FATT_ATK9) { A_FatAttack3(); }
+	S_FATT_ATK9('FATT', 8, 'monsters/mancubus.md2', 15, 5.0 / 35.0, S_FATT_ATK10) { A_FaceTarget(); }
+	S_FATT_ATK10('FATT', 6, 'monsters/mancubus.md2', 14, 5.0 / 35.0, S_FATT_RUN1) { A_FaceTarget(); }
+	S_FATT_PAIN('FATT', 9, 'monsters/mancubus.md2', 16, 3.0 / 35.0, S_FATT_PAIN2) { }
+	S_FATT_PAIN2('FATT', 9, 'monsters/mancubus.md2', 17, 3.0 / 35.0, S_FATT_RUN1) { A_Pain(); }
+	S_FATT_DIE1('FATT', 10, 'monsters/mancdie.md2', 0, 6.0 / 35.0, S_FATT_DIE2) { }
+	S_FATT_DIE2('FATT', 11, 'monsters/mancdie.md2', 1, 6.0 / 35.0, S_FATT_DIE3) { A_Scream(); }
+	S_FATT_DIE3('FATT', 12, 'monsters/mancdie.md2', 2, 6.0 / 35.0, S_FATT_DIE4) { A_Fall(); }
+	S_FATT_DIE4('FATT', 13, 'monsters/mancdie.md2', 3, 6.0 / 35.0, S_FATT_DIE5) { }
+	S_FATT_DIE5('FATT', 14, 'monsters/mancdie.md2', 4, 6.0 / 35.0, S_FATT_DIE6) { }
+	S_FATT_DIE6('FATT', 15, 'monsters/mancdie.md2', 5, 6.0 / 35.0, S_FATT_DIE7) { }
+	S_FATT_DIE7('FATT', 16, 'monsters/mancdie.md2', 6, 6.0 / 35.0, S_FATT_DIE8) { }
+	S_FATT_DIE8('FATT', 17, 'monsters/mancdie.md2', 7, 6.0 / 35.0, S_FATT_DIE9) { }
+	S_FATT_DIE9('FATT', 18, 'monsters/mancdie.md2', 8, 6.0 / 35.0, S_FATT_DIE10) { }
+	S_FATT_DIE10('FATT', 19, 'monsters/mancdie.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
+	S_FATT_RAISE1('FATT', 17, 'monsters/mancdie.md2', 10, 5.0 / 35.0, S_FATT_RAISE2) { }
+	S_FATT_RAISE2('FATT', 16, 'monsters/mancdie.md2', 11, 5.0 / 35.0, S_FATT_RAISE3) { }
+	S_FATT_RAISE3('FATT', 15, 'monsters/mancdie.md2', 12, 5.0 / 35.0, S_FATT_RAISE4) { }
+	S_FATT_RAISE4('FATT', 14, 'monsters/mancdie.md2', 13, 5.0 / 35.0, S_FATT_RAISE5) { }
+	S_FATT_RAISE5('FATT', 13, 'monsters/mancdie.md2', 14, 5.0 / 35.0, S_FATT_RAISE6) { }
+	S_FATT_RAISE6('FATT', 12, 'monsters/mancdie.md2', 15, 5.0 / 35.0, S_FATT_RAISE7) { }
+	S_FATT_RAISE7('FATT', 11, 'monsters/mancdie.md2', 16, 5.0 / 35.0, S_FATT_RAISE8) { }
+	S_FATT_RAISE8('FATT', 10, 'monsters/mancdie.md2', 17, 5.0 / 35.0, S_FATT_RUN1) { }
+	S_CPOS_STND('CPOS', 0, 'monsters/chainguy.md2', 0, 10.0 / 35.0, S_CPOS_STND2) { A_Look(); }
+	S_CPOS_STND2('CPOS', 1, 'monsters/chainguy.md2', 1, 10.0 / 35.0, S_CPOS_STND) { A_Look(); }
+	S_CPOS_RUN1('CPOS', 0, 'monsters/chainguy.md2', 2, 3.0 / 35.0, S_CPOS_RUN2) { A_Chase(); }
+	S_CPOS_RUN2('CPOS', 0, 'monsters/chainguy.md2', 3, 3.0 / 35.0, S_CPOS_RUN3) { A_Chase(); }
+	S_CPOS_RUN3('CPOS', 1, 'monsters/chainguy.md2', 4, 3.0 / 35.0, S_CPOS_RUN4) { A_Chase(); }
+	S_CPOS_RUN4('CPOS', 1, 'monsters/chainguy.md2', 5, 3.0 / 35.0, S_CPOS_RUN5) { A_Chase(); }
+	S_CPOS_RUN5('CPOS', 2, 'monsters/chainguy.md2', 6, 3.0 / 35.0, S_CPOS_RUN6) { A_Chase(); }
+	S_CPOS_RUN6('CPOS', 2, 'monsters/chainguy.md2', 7, 3.0 / 35.0, S_CPOS_RUN7) { A_Chase(); }
+	S_CPOS_RUN7('CPOS', 3, 'monsters/chainguy.md2', 8, 3.0 / 35.0, S_CPOS_RUN8) { A_Chase(); }
+	S_CPOS_RUN8('CPOS', 3, 'monsters/chainguy.md2', 9, 3.0 / 35.0, S_CPOS_RUN1) { A_Chase(); }
+	S_CPOS_ATK1('CPOS', 4, 'monsters/chainguy.md2', 10, 10.0 / 35.0, S_CPOS_ATK2) { A_FaceTarget(); }
+	S_CPOS_ATK2('CPOS', 5 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 11, 4.0 / 35.0, S_CPOS_ATK3) { A_CPosAttack(); }
+	S_CPOS_ATK3('CPOS', 4 | FF_FULLBRIGHT, 'monsters/chainguy.md2', 12, 4.0 / 35.0, S_CPOS_ATK4) { A_CPosAttack(); }
+	S_CPOS_ATK4('CPOS', 5, 'monsters/chainguy.md2', 13, 1.0 / 35.0, S_CPOS_ATK2) { A_CPosRefire(); }
+	S_CPOS_PAIN('CPOS', 6, 'monsters/chainguy.md2', 14, 3.0 / 35.0, S_CPOS_PAIN2) { }
+	S_CPOS_PAIN2('CPOS', 6, 'monsters/chainguy.md2', 15, 3.0 / 35.0, S_CPOS_RUN1) { A_Pain(); }
+	S_CPOS_DIE1('CPOS', 7, 'monsters/chaindie.md2', 0, 5.0 / 35.0, S_CPOS_DIE2) { }
+	S_CPOS_DIE2('CPOS', 8, 'monsters/chaindie.md2', 1, 5.0 / 35.0, S_CPOS_DIE3) { A_Scream(); }
+	S_CPOS_DIE3('CPOS', 9, 'monsters/chaindie.md2', 2, 5.0 / 35.0, S_CPOS_DIE4) { A_Fall(); }
+	S_CPOS_DIE4('CPOS', 10, 'monsters/chaindie.md2', 3, 5.0 / 35.0, S_CPOS_DIE5) { }
+	S_CPOS_DIE5('CPOS', 11, 'monsters/chaindie.md2', 4, 5.0 / 35.0, S_CPOS_DIE6) { }
+	S_CPOS_DIE6('CPOS', 12, 'monsters/chaindie.md2', 5, 5.0 / 35.0, S_CPOS_DIE7) { }
+	S_CPOS_DIE7('CPOS', 13, 'monsters/chaindie.md2', 6, -1.0, S_NULL) { }
+	S_CPOS_XDIE1('CPOS', 14, 'gibs/chaingib.md2', 0, 5.0 / 35.0, S_CPOS_XDIE2) { }
+	S_CPOS_XDIE2('CPOS', 15, 'gibs/chaingib.md2', 1, 5.0 / 35.0, S_CPOS_XDIE3) { A_XScream(); }
+	S_CPOS_XDIE3('CPOS', 16, 'gibs/chaingib.md2', 2, 5.0 / 35.0, S_CPOS_XDIE4) { A_Fall(); }
+	S_CPOS_XDIE4('CPOS', 17, 'gibs/chaingib.md2', 3, 5.0 / 35.0, S_CPOS_XDIE5) { }
+	S_CPOS_XDIE5('CPOS', 18, 'gibs/chaingib.md2', 4, 5.0 / 35.0, S_CPOS_XDIE6) { }
+	S_CPOS_XDIE6('CPOS', 19, 'gibs/chaingib.md2', 5, -1.0, S_NULL) { }
+	S_CPOS_RAISE1('CPOS', 13, 'monsters/chaindie.md2', 7, 5.0 / 35.0, S_CPOS_RAISE2) { }
+	S_CPOS_RAISE2('CPOS', 12, 'monsters/chaindie.md2', 8, 5.0 / 35.0, S_CPOS_RAISE3) { }
+	S_CPOS_RAISE3('CPOS', 11, 'monsters/chaindie.md2', 9, 5.0 / 35.0, S_CPOS_RAISE4) { }
+	S_CPOS_RAISE4('CPOS', 10, 'monsters/chaindie.md2', 10, 5.0 / 35.0, S_CPOS_RAISE5) { }
+	S_CPOS_RAISE5('CPOS', 9, 'monsters/chaindie.md2', 11, 5.0 / 35.0, S_CPOS_RAISE6) { }
+	S_CPOS_RAISE6('CPOS', 8, 'monsters/chaindie.md2', 12, 5.0 / 35.0, S_CPOS_RAISE7) { }
+	S_CPOS_RAISE7('CPOS', 7, 'monsters/chaindie.md2', 13, 5.0 / 35.0, S_CPOS_RUN1) { }
+	S_TROO_STND('TROO', 0, 'monsters/imp.md2', 0, 10.0 / 35.0, S_TROO_STND2) { A_Look(); }
+	S_TROO_STND2('TROO', 1, 'monsters/imp.md2', 1, 10.0 / 35.0, S_TROO_STND) { A_Look(); }
+	S_TROO_RUN1('TROO', 0, 'monsters/imp.md2', 8, 3.0 / 35.0, S_TROO_RUN2) { A_Chase(); }
+	S_TROO_RUN2('TROO', 0, 'monsters/imp.md2', 9, 3.0 / 35.0, S_TROO_RUN3) { A_Chase(); }
+	S_TROO_RUN3('TROO', 1, 'monsters/imp.md2', 10, 3.0 / 35.0, S_TROO_RUN4) { A_Chase(); }
+	S_TROO_RUN4('TROO', 1, 'monsters/imp.md2', 11, 3.0 / 35.0, S_TROO_RUN5) { A_Chase(); }
+	S_TROO_RUN5('TROO', 2, 'monsters/imp.md2', 12, 3.0 / 35.0, S_TROO_RUN6) { A_Chase(); }
+	S_TROO_RUN6('TROO', 2, 'monsters/imp.md2', 13, 3.0 / 35.0, S_TROO_RUN7) { A_Chase(); }
+	S_TROO_RUN7('TROO', 3, 'monsters/imp.md2', 14, 3.0 / 35.0, S_TROO_RUN8) { A_Chase(); }
+	S_TROO_RUN8('TROO', 3, 'monsters/imp.md2', 15, 3.0 / 35.0, S_TROO_RUN1) { A_Chase(); }
+	S_TROO_ATK1('TROO', 4, 'monsters/imp.md2', 16, 8.0 / 35.0, S_TROO_ATK2) { A_FaceTarget(); }
+	S_TROO_ATK2('TROO', 5, 'monsters/imp.md2', 17, 8.0 / 35.0, S_TROO_ATK3) { A_FaceTarget(); }
+	S_TROO_ATK3('TROO', 6, 'monsters/imp.md2', 18, 6.0 / 35.0, S_TROO_RUN1) { A_TroopAttack(); }
+	S_TROO_PAIN('TROO', 7, 'monsters/imp.md2', 19, 2.0 / 35.0, S_TROO_PAIN2) { }
+	S_TROO_PAIN2('TROO', 7, 'monsters/imp.md2', 20, 2.0 / 35.0, S_TROO_RUN1) { A_Pain(); }
+	S_TROO_DIE1('TROO', 8, 'monsters/impdie.md2', 0, 8.0 / 35.0, S_TROO_DIE2) { }
+	S_TROO_DIE2('TROO', 9, 'monsters/impdie.md2', 1, 8.0 / 35.0, S_TROO_DIE3) { A_Scream(); }
+	S_TROO_DIE3('TROO', 10, 'monsters/impdie.md2', 2, 6.0 / 35.0, S_TROO_DIE4) { }
+	S_TROO_DIE4('TROO', 11, 'monsters/impdie.md2', 3, 6.0 / 35.0, S_TROO_DIE5) { A_Fall(); }
+	S_TROO_DIE5('TROO', 12, 'monsters/impdie.md2', 4, -1.0, S_NULL) { }
+	S_TROO_XDIE1('TROO', 13, 'gibs/impgib.md2', 0, 5.0 / 35.0, S_TROO_XDIE2) { }
+	S_TROO_XDIE2('TROO', 14, 'gibs/impgib.md2', 1, 5.0 / 35.0, S_TROO_XDIE3) { A_XScream(); }
+	S_TROO_XDIE3('TROO', 15, 'gibs/impgib.md2', 2, 5.0 / 35.0, S_TROO_XDIE4) { }
+	S_TROO_XDIE4('TROO', 16, 'gibs/impgib.md2', 3, 5.0 / 35.0, S_TROO_XDIE5) { A_Fall(); }
+	S_TROO_XDIE5('TROO', 17, 'gibs/impgib.md2', 4, 5.0 / 35.0, S_TROO_XDIE6) { }
+	S_TROO_XDIE6('TROO', 18, 'gibs/impgib.md2', 5, 5.0 / 35.0, S_TROO_XDIE7) { }
+	S_TROO_XDIE7('TROO', 19, 'gibs/impgib.md2', 6, 5.0 / 35.0, S_TROO_XDIE8) { }
+	S_TROO_XDIE8('TROO', 20, 'gibs/impgib.md2', 7, -1.0, S_NULL) { }
+	S_TROO_RAISE1('TROO', 12, 'monsters/impdie.md2', 5, 8.0 / 35.0, S_TROO_RAISE2) { }
+	S_TROO_RAISE2('TROO', 11, 'monsters/impdie.md2', 6, 8.0 / 35.0, S_TROO_RAISE3) { }
+	S_TROO_RAISE3('TROO', 10, 'monsters/impdie.md2', 7, 6.0 / 35.0, S_TROO_RAISE4) { }
+	S_TROO_RAISE4('TROO', 9, 'monsters/impdie.md2', 8, 6.0 / 35.0, S_TROO_RAISE5) { }
+	S_TROO_RAISE5('TROO', 8, 'monsters/impdie.md2', 9, 6.0 / 35.0, S_TROO_RUN1) { }
+	S_SARG_STND('SARG', 0, 'monsters/demon.md2', 0, 10.0 / 35.0, S_SARG_STND2) { A_Look(); }
+	S_SARG_STND2('SARG', 1, 'monsters/demon.md2', 1, 10.0 / 35.0, S_SARG_STND) { A_Look(); }
+	S_SARG_RUN1('SARG', 0, 'monsters/demon.md2', 2, 2.0 / 35.0, S_SARG_RUN2) { A_Chase(); }
+	S_SARG_RUN2('SARG', 0, 'monsters/demon.md2', 3, 2.0 / 35.0, S_SARG_RUN3) { A_Chase(); }
+	S_SARG_RUN3('SARG', 1, 'monsters/demon.md2', 4, 2.0 / 35.0, S_SARG_RUN4) { A_Chase(); }
+	S_SARG_RUN4('SARG', 1, 'monsters/demon.md2', 5, 2.0 / 35.0, S_SARG_RUN5) { A_Chase(); }
+	S_SARG_RUN5('SARG', 2, 'monsters/demon.md2', 6, 2.0 / 35.0, S_SARG_RUN6) { A_Chase(); }
+	S_SARG_RUN6('SARG', 2, 'monsters/demon.md2', 7, 2.0 / 35.0, S_SARG_RUN7) { A_Chase(); }
+	S_SARG_RUN7('SARG', 3, 'monsters/demon.md2', 8, 2.0 / 35.0, S_SARG_RUN8) { A_Chase(); }
+	S_SARG_RUN8('SARG', 3, 'monsters/demon.md2', 9, 2.0 / 35.0, S_SARG_RUN1) { A_Chase(); }
+	S_SARG_ATK1('SARG', 4, 'monsters/demon.md2', 10, 8.0 / 35.0, S_SARG_ATK2) { A_FaceTarget(); }
+	S_SARG_ATK2('SARG', 5, 'monsters/demon.md2', 11, 8.0 / 35.0, S_SARG_ATK3) { A_FaceTarget(); }
+	S_SARG_ATK3('SARG', 6, 'monsters/demon.md2', 12, 8.0 / 35.0, S_SARG_RUN1) { A_SargAttack(); }
+	S_SARG_PAIN('SARG', 7, 'monsters/demon.md2', 13, 2.0 / 35.0, S_SARG_PAIN2) { }
+	S_SARG_PAIN2('SARG', 7, 'monsters/demon.md2', 14, 2.0 / 35.0, S_SARG_RUN1) { A_Pain(); }
+	S_SARG_DIE1('SARG', 8, 'monsters/demondie.md2', 0, 8.0 / 35.0, S_SARG_DIE2) { }
+	S_SARG_DIE2('SARG', 9, 'monsters/demondie.md2', 1, 8.0 / 35.0, S_SARG_DIE3) { A_Scream(); }
+	S_SARG_DIE3('SARG', 10, 'monsters/demondie.md2', 2, 4.0 / 35.0, S_SARG_DIE4) { }
+	S_SARG_DIE4('SARG', 11, 'monsters/demondie.md2', 3, 4.0 / 35.0, S_SARG_DIE5) { A_Fall(); }
+	S_SARG_DIE5('SARG', 12, 'monsters/demondie.md2', 4, 4.0 / 35.0, S_SARG_DIE6) { }
+	S_SARG_DIE6('SARG', 13, 'monsters/demondie.md2', 5, -1.0, S_NULL) { }
+	S_SARG_RAISE1('SARG', 13, 'monsters/demondie.md2', 6, 5.0 / 35.0, S_SARG_RAISE2) { }
+	S_SARG_RAISE2('SARG', 12, 'monsters/demondie.md2', 7, 5.0 / 35.0, S_SARG_RAISE3) { }
+	S_SARG_RAISE3('SARG', 11, 'monsters/demondie.md2', 8, 5.0 / 35.0, S_SARG_RAISE4) { }
+	S_SARG_RAISE4('SARG', 10, 'monsters/demondie.md2', 9, 5.0 / 35.0, S_SARG_RAISE5) { }
+	S_SARG_RAISE5('SARG', 9, 'monsters/demondie.md2', 10, 5.0 / 35.0, S_SARG_RAISE6) { }
+	S_SARG_RAISE6('SARG', 8, 'monsters/demondie.md2', 11, 5.0 / 35.0, S_SARG_RUN1) { }
+	S_HEAD_STND('HEAD', 0, 'monsters/caco.md2', 0, 10.0 / 35.0, S_HEAD_STND) { A_Look(); }
+	S_HEAD_RUN1('HEAD', 0, 'monsters/caco.md2', 1, 3.0 / 35.0, S_HEAD_RUN1) { A_Chase(); }
+	S_HEAD_ATK1('HEAD', 1, 'monsters/caco.md2', 2, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
+	S_HEAD_ATK2('HEAD', 2, 'monsters/caco.md2', 3, 5.0 / 35.0, S_HEAD_ATK3) { A_FaceTarget(); }
+	S_HEAD_ATK3('HEAD', 3 | FF_FULLBRIGHT, 'monsters/caco.md2', 4, 5.0 / 35.0, S_HEAD_RUN1) { A_HeadAttack(); }
+	S_HEAD_PAIN('HEAD', 4, 'monsters/caco.md2', 5, 3.0 / 35.0, S_HEAD_PAIN2) { }
+	S_HEAD_PAIN2('HEAD', 4, 'monsters/caco.md2', 6, 3.0 / 35.0, S_HEAD_PAIN3) { A_Pain(); }
+	S_HEAD_PAIN3('HEAD', 5, 'monsters/caco.md2', 7, 6.0 / 35.0, S_HEAD_RUN1) { }
+	S_HEAD_DIE1('HEAD', 6, 'monsters/cacodie.md2', 0, 8.0 / 35.0, S_HEAD_DIE2) { }
+	S_HEAD_DIE2('HEAD', 7, 'monsters/cacodie.md2', 1, 8.0 / 35.0, S_HEAD_DIE3) { A_Scream(); }
+	S_HEAD_DIE3('HEAD', 8, 'monsters/cacodie.md2', 2, 8.0 / 35.0, S_HEAD_DIE4) { }
+	S_HEAD_DIE4('HEAD', 9, 'monsters/cacodie.md2', 3, 8.0 / 35.0, S_HEAD_DIE5) { }
+	S_HEAD_DIE5('HEAD', 10, 'monsters/cacodie.md2', 4, 8.0 / 35.0, S_HEAD_DIE6) { A_Fall(); }
+	S_HEAD_DIE6('HEAD', 11, 'monsters/cacodie.md2', 5, -1.0, S_NULL) { }
+	S_HEAD_RAISE1('HEAD', 11, 'monsters/cacodie.md2', 6, 8.0 / 35.0, S_HEAD_RAISE2) { }
+	S_HEAD_RAISE2('HEAD', 10, 'monsters/cacodie.md2', 7, 8.0 / 35.0, S_HEAD_RAISE3) { }
+	S_HEAD_RAISE3('HEAD', 9, 'monsters/cacodie.md2', 8, 8.0 / 35.0, S_HEAD_RAISE4) { }
+	S_HEAD_RAISE4('HEAD', 8, 'monsters/cacodie.md2', 9, 8.0 / 35.0, S_HEAD_RAISE5) { }
+	S_HEAD_RAISE5('HEAD', 7, 'monsters/cacodie.md2', 10, 8.0 / 35.0, S_HEAD_RAISE6) { }
+	S_HEAD_RAISE6('HEAD', 6, 'monsters/cacodie.md2', 11, 8.0 / 35.0, S_HEAD_RUN1) { }
+	S_BRBALL1('BAL7', 0 | FF_FULLBRIGHT, 'missiles/grenball.md2', 0, 4.0 / 35.0, S_BRBALL2) { }
+	S_BRBALL2('BAL7', 1 | FF_FULLBRIGHT, 'missiles/grenball.md2', 1, 4.0 / 35.0, S_BRBALL1) { }
+	S_BRBALLX1('BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX2) { }
+	S_BRBALLX2('BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX3) { }
+	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_BOSS_STND('BOSS', 0, 'monsters/baron.md2', 0, 10.0 / 35.0, S_BOSS_STND2) { A_Look(); }
+	S_BOSS_STND2('BOSS', 1, 'monsters/baron.md2', 1, 10.0 / 35.0, S_BOSS_STND) { A_Look(); }
+	S_BOSS_RUN1('BOSS', 0, 'monsters/baron.md2', 2, 3.0 / 35.0, S_BOSS_RUN2) { A_Chase(); }
+	S_BOSS_RUN2('BOSS', 0, 'monsters/baron.md2', 3, 3.0 / 35.0, S_BOSS_RUN3) { A_Chase(); }
+	S_BOSS_RUN3('BOSS', 1, 'monsters/baron.md2', 4, 3.0 / 35.0, S_BOSS_RUN4) { A_Chase(); }
+	S_BOSS_RUN4('BOSS', 1, 'monsters/baron.md2', 5, 3.0 / 35.0, S_BOSS_RUN5) { A_Chase(); }
+	S_BOSS_RUN5('BOSS', 2, 'monsters/baron.md2', 6, 3.0 / 35.0, S_BOSS_RUN6) { A_Chase(); }
+	S_BOSS_RUN6('BOSS', 2, 'monsters/baron.md2', 7, 3.0 / 35.0, S_BOSS_RUN7) { A_Chase(); }
+	S_BOSS_RUN7('BOSS', 3, 'monsters/baron.md2', 8, 3.0 / 35.0, S_BOSS_RUN8) { A_Chase(); }
+	S_BOSS_RUN8('BOSS', 3, 'monsters/baron.md2', 9, 3.0 / 35.0, S_BOSS_RUN1) { A_Chase(); }
+	S_BOSS_ATK1('BOSS', 4, 'monsters/baron.md2', 10, 8.0 / 35.0, S_BOSS_ATK2) { A_FaceTarget(); }
+	S_BOSS_ATK2('BOSS', 5, 'monsters/baron.md2', 11, 8.0 / 35.0, S_BOSS_ATK3) { A_FaceTarget(); }
+	S_BOSS_ATK3('BOSS', 6, 'monsters/baron.md2', 12, 8.0 / 35.0, S_BOSS_RUN1) { A_BruisAttack(); }
+	S_BOSS_PAIN('BOSS', 7, 'monsters/baron.md2', 13, 2.0 / 35.0, S_BOSS_PAIN2) { }
+	S_BOSS_PAIN2('BOSS', 7, 'monsters/baron.md2', 14, 2.0 / 35.0, S_BOSS_RUN1) { A_Pain(); }
+	S_BOSS_DIE1('BOSS', 8, 'monsters/barondie.md2', 0, 8.0 / 35.0, S_BOSS_DIE2) { }
+	S_BOSS_DIE2('BOSS', 9, 'monsters/barondie.md2', 1, 8.0 / 35.0, S_BOSS_DIE3) { A_Scream(); }
+	S_BOSS_DIE3('BOSS', 10, 'monsters/barondie.md2', 2, 8.0 / 35.0, S_BOSS_DIE4) { }
+	S_BOSS_DIE4('BOSS', 11, 'monsters/barondie.md2', 3, 8.0 / 35.0, S_BOSS_DIE5) { A_Fall(); }
+	S_BOSS_DIE5('BOSS', 12, 'monsters/barondie.md2', 4, 8.0 / 35.0, S_BOSS_DIE6) { }
+	S_BOSS_DIE6('BOSS', 13, 'monsters/barondie.md2', 5, 8.0 / 35.0, S_BOSS_DIE7) { }
+	S_BOSS_DIE7('BOSS', 14, 'monsters/barondie.md2', 6, -1.0, S_NULL) { A_BossDeath(); }
+	S_BOSS_RAISE1('BOSS', 14, 'monsters/barondie.md2', 7, 8.0 / 35.0, S_BOSS_RAISE2) { }
+	S_BOSS_RAISE2('BOSS', 13, 'monsters/barondie.md2', 8, 8.0 / 35.0, S_BOSS_RAISE3) { }
+	S_BOSS_RAISE3('BOSS', 12, 'monsters/barondie.md2', 9, 8.0 / 35.0, S_BOSS_RAISE4) { }
+	S_BOSS_RAISE4('BOSS', 11, 'monsters/barondie.md2', 10, 8.0 / 35.0, S_BOSS_RAISE5) { }
+	S_BOSS_RAISE5('BOSS', 10, 'monsters/barondie.md2', 11, 8.0 / 35.0, S_BOSS_RAISE6) { }
+	S_BOSS_RAISE6('BOSS', 9, 'monsters/barondie.md2', 12, 8.0 / 35.0, S_BOSS_RAISE7) { }
+	S_BOSS_RAISE7('BOSS', 8, 'monsters/barondie.md2', 13, 8.0 / 35.0, S_BOSS_RUN1) { }
+	S_BOS2_STND('BOS2', 0, 'monsters/knight.md2', 0, 10.0 / 35.0, S_BOS2_STND2) { A_Look(); }
+	S_BOS2_STND2('BOS2', 1, 'monsters/knight.md2', 1, 10.0 / 35.0, S_BOS2_STND) { A_Look(); }
+	S_BOS2_RUN1('BOS2', 0, 'monsters/knight.md2', 2, 3.0 / 35.0, S_BOS2_RUN2) { A_Chase(); }
+	S_BOS2_RUN2('BOS2', 0, 'monsters/knight.md2', 3, 3.0 / 35.0, S_BOS2_RUN3) { A_Chase(); }
+	S_BOS2_RUN3('BOS2', 1, 'monsters/knight.md2', 4, 3.0 / 35.0, S_BOS2_RUN4) { A_Chase(); }
+	S_BOS2_RUN4('BOS2', 1, 'monsters/knight.md2', 5, 3.0 / 35.0, S_BOS2_RUN5) { A_Chase(); }
+	S_BOS2_RUN5('BOS2', 2, 'monsters/knight.md2', 6, 3.0 / 35.0, S_BOS2_RUN6) { A_Chase(); }
+	S_BOS2_RUN6('BOS2', 2, 'monsters/knight.md2', 7, 3.0 / 35.0, S_BOS2_RUN7) { A_Chase(); }
+	S_BOS2_RUN7('BOS2', 3, 'monsters/knight.md2', 8, 3.0 / 35.0, S_BOS2_RUN8) { A_Chase(); }
+	S_BOS2_RUN8('BOS2', 3, 'monsters/knight.md2', 9, 3.0 / 35.0, S_BOS2_RUN1) { A_Chase(); }
+	S_BOS2_ATK1('BOS2', 4, 'monsters/knight.md2', 10, 8.0 / 35.0, S_BOS2_ATK2) { A_FaceTarget(); }
+	S_BOS2_ATK2('BOS2', 5, 'monsters/knight.md2', 11, 8.0 / 35.0, S_BOS2_ATK3) { A_FaceTarget(); }
+	S_BOS2_ATK3('BOS2', 6, 'monsters/knight.md2', 12, 8.0 / 35.0, S_BOS2_RUN1) { A_BruisAttack(); }
+	S_BOS2_PAIN('BOS2', 7, 'monsters/knight.md2', 13, 2.0 / 35.0, S_BOS2_PAIN2) { }
+	S_BOS2_PAIN2('BOS2', 7, 'monsters/knight.md2', 14, 2.0 / 35.0, S_BOS2_RUN1) { A_Pain(); }
+	S_BOS2_DIE1('BOS2', 8, 'monsters/knidie.md2', 0, 8.0 / 35.0, S_BOS2_DIE2) { }
+	S_BOS2_DIE2('BOS2', 9, 'monsters/knidie.md2', 1, 8.0 / 35.0, S_BOS2_DIE3) { A_Scream(); }
+	S_BOS2_DIE3('BOS2', 10, 'monsters/knidie.md2', 2, 8.0 / 35.0, S_BOS2_DIE4) { }
+	S_BOS2_DIE4('BOS2', 11, 'monsters/knidie.md2', 3, 8.0 / 35.0, S_BOS2_DIE5) { A_Fall(); }
+	S_BOS2_DIE5('BOS2', 12, 'monsters/knidie.md2', 4, 8.0 / 35.0, S_BOS2_DIE6) { }
+	S_BOS2_DIE6('BOS2', 13, 'monsters/knidie.md2', 5, 8.0 / 35.0, S_BOS2_DIE7) { }
+	S_BOS2_DIE7('BOS2', 14, 'monsters/knidie.md2', 6, -1.0, S_NULL) { }
+	S_BOS2_RAISE1('BOS2', 14, 'monsters/knidie.md2', 7, 8.0 / 35.0, S_BOS2_RAISE2) { }
+	S_BOS2_RAISE2('BOS2', 13, 'monsters/knidie.md2', 8, 8.0 / 35.0, S_BOS2_RAISE3) { }
+	S_BOS2_RAISE3('BOS2', 12, 'monsters/knidie.md2', 9, 8.0 / 35.0, S_BOS2_RAISE4) { }
+	S_BOS2_RAISE4('BOS2', 11, 'monsters/knidie.md2', 10, 8.0 / 35.0, S_BOS2_RAISE5) { }
+	S_BOS2_RAISE5('BOS2', 10, 'monsters/knidie.md2', 11, 8.0 / 35.0, S_BOS2_RAISE6) { }
+	S_BOS2_RAISE6('BOS2', 9, 'monsters/knidie.md2', 12, 8.0 / 35.0, S_BOS2_RAISE7) { }
+	S_BOS2_RAISE7('BOS2', 8, 'monsters/knidie.md2', 13, 8.0 / 35.0, S_BOS2_RUN1) { }
+	S_SKULL_STND('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 0, 10.0 / 35.0, S_SKULL_STND2) { A_Look(); }
+	S_SKULL_STND2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 1, 10.0 / 35.0, S_SKULL_STND) { A_Look(); }
+	S_SKULL_RUN1('SKUL', 0 | FF_FULLBRIGHT, 'monsters/skull.md2', 2, 6.0 / 35.0, S_SKULL_RUN2) { A_Chase(); }
+	S_SKULL_RUN2('SKUL', 1 | FF_FULLBRIGHT, 'monsters/skull.md2', 3, 6.0 / 35.0, S_SKULL_RUN1) { A_Chase(); }
+	S_SKULL_ATK1('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 4, 10.0 / 35.0, S_SKULL_ATK2) { A_FaceTarget(); }
+	S_SKULL_ATK2('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 5, 4.0 / 35.0, S_SKULL_ATK3) { A_SkullAttack(); }
+	S_SKULL_ATK3('SKUL', 2 | FF_FULLBRIGHT, 'monsters/skull.md2', 6, 4.0 / 35.0, S_SKULL_ATK4) { }
+	S_SKULL_ATK4('SKUL', 3 | FF_FULLBRIGHT, 'monsters/skull.md2', 7, 4.0 / 35.0, S_SKULL_ATK3) { }
+	S_SKULL_PAIN('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 8, 3.0 / 35.0, S_SKULL_PAIN2) { }
+	S_SKULL_PAIN2('SKUL', 4 | FF_FULLBRIGHT, 'monsters/skull.md2', 9, 3.0 / 35.0, S_SKULL_RUN1) { A_Pain(); }
+	S_SKULL_DIE1('SKUL', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE2) { }
+	S_SKULL_DIE2('SKUL', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE3) { A_Scream(); }
+	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE4) { }
+	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); }
+	S_SKULL_DIE5('SKUL', 9, 6.0 / 35.0, S_SKULL_DIE6) { }
+	S_SKULL_DIE6('SKUL', 10, 6.0 / 35.0, S_NULL) { }
+	S_SPID_STND('SPID', 0, 'monsters/spider.md2', 0, 10.0 / 35.0, S_SPID_STND2) { A_Look(); }
+	S_SPID_STND2('SPID', 1, 'monsters/spider.md2', 1, 10.0 / 35.0, S_SPID_STND) { A_Look(); }
+	S_SPID_RUN1('SPID', 0, 'monsters/spider.md2', 2, 3.0 / 35.0, S_SPID_RUN2) { A_Metal(); }
+	S_SPID_RUN2('SPID', 0, 'monsters/spider.md2', 3, 3.0 / 35.0, S_SPID_RUN3) { A_Chase(); }
+	S_SPID_RUN3('SPID', 1, 'monsters/spider.md2', 4, 3.0 / 35.0, S_SPID_RUN4) { A_Chase(); }
+	S_SPID_RUN4('SPID', 1, 'monsters/spider.md2', 5, 3.0 / 35.0, S_SPID_RUN5) { A_Chase(); }
+	S_SPID_RUN5('SPID', 2, 'monsters/spider.md2', 6, 3.0 / 35.0, S_SPID_RUN6) { A_Metal(); }
+	S_SPID_RUN6('SPID', 2, 'monsters/spider.md2', 7, 3.0 / 35.0, S_SPID_RUN7) { A_Chase(); }
+	S_SPID_RUN7('SPID', 3, 'monsters/spider.md2', 8, 3.0 / 35.0, S_SPID_RUN8) { A_Chase(); }
+	S_SPID_RUN8('SPID', 3, 'monsters/spider.md2', 9, 3.0 / 35.0, S_SPID_RUN9) { A_Chase(); }
+	S_SPID_RUN9('SPID', 4, 'monsters/spider.md2', 10, 3.0 / 35.0, S_SPID_RUN10) { A_Metal(); }
+	S_SPID_RUN10('SPID', 4, 'monsters/spider.md2', 11, 3.0 / 35.0, S_SPID_RUN11) { A_Chase(); }
+	S_SPID_RUN11('SPID', 5, 'monsters/spider.md2', 12, 3.0 / 35.0, S_SPID_RUN12) { A_Chase(); }
+	S_SPID_RUN12('SPID', 5, 'monsters/spider.md2', 13, 3.0 / 35.0, S_SPID_RUN1) { A_Chase(); }
+	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 'monsters/spider.md2', 14, 20.0 / 35.0, S_SPID_ATK2) { A_FaceTarget(); }
+	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 'monsters/spider.md2', 15, 4.0 / 35.0, S_SPID_ATK3) { A_SPosAttack(); }
+	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 4.0 / 35.0, S_SPID_ATK4) { A_SPosAttack(); }
+	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 'monsters/spidatk.md2', 0, 1.0 / 35.0, S_SPID_ATK2) { A_SpidRefire(); }
+	S_SPID_PAIN('SPID', 8, 'monsters/spider.md2', 16, 3.0 / 35.0, S_SPID_PAIN2) { }
+	S_SPID_PAIN2('SPID', 8, 'monsters/spider.md2', 17, 3.0 / 35.0, S_SPID_RUN1) { A_Pain(); }
+	S_SPID_DIE1('SPID', 9, 'monsters/spiddie.md2', 0, 20.0 / 35.0, S_SPID_DIE2) { A_Scream(); }
+	S_SPID_DIE2('SPID', 10, 'monsters/spiddie.md2', 1, 10.0 / 35.0, S_SPID_DIE3) { A_Fall(); }
+	S_SPID_DIE3('SPID', 11, 'monsters/spiddie.md2', 2, 10.0 / 35.0, S_SPID_DIE4) { }
+	S_SPID_DIE4('SPID', 12, 'monsters/spiddie.md2', 3, 10.0 / 35.0, S_SPID_DIE5) { }
+	S_SPID_DIE5('SPID', 13, 'monsters/spiddie.md2', 4, 10.0 / 35.0, S_SPID_DIE6) { }
+	S_SPID_DIE6('SPID', 14, 'monsters/spiddie.md2', 5, 10.0 / 35.0, S_SPID_DIE7) { }
+	S_SPID_DIE7('SPID', 15, 'monsters/spiddie.md2', 6, 10.0 / 35.0, S_SPID_DIE8) { }
+	S_SPID_DIE8('SPID', 16, 'monsters/spiddie.md2', 7, 10.0 / 35.0, S_SPID_DIE9) { }
+	S_SPID_DIE9('SPID', 17, 'monsters/spiddie.md2', 8, 10.0 / 35.0, S_SPID_DIE10) { }
+	S_SPID_DIE10('SPID', 18, 'monsters/spiddie.md2', 9, 30.0 / 35.0, S_SPID_DIE11) { }
+	S_SPID_DIE11('SPID', 18, 'monsters/spiddie.md2', 10, -1.0, S_NULL) { A_BossDeath(); }
+	S_BSPI_STND('BSPI', 0, 'monsters/arach.md2', 0, 10.0 / 35.0, S_BSPI_STND2) { A_Look(); }
+	S_BSPI_STND2('BSPI', 1, 'monsters/arach.md2', 1, 10.0 / 35.0, S_BSPI_STND) { A_Look(); }
+	S_BSPI_SIGHT('BSPI', 0, 'monsters/arach.md2', 2, 20.0 / 35.0, S_BSPI_RUN1) { }
+	S_BSPI_RUN1('BSPI', 0, 'monsters/arach.md2', 3, 3.0 / 35.0, S_BSPI_RUN2) { A_BabyMetal(); }
+	S_BSPI_RUN2('BSPI', 0, 'monsters/arach.md2', 4, 3.0 / 35.0, S_BSPI_RUN3) { A_Chase(); }
+	S_BSPI_RUN3('BSPI', 1, 'monsters/arach.md2', 5, 3.0 / 35.0, S_BSPI_RUN4) { A_Chase(); }
+	S_BSPI_RUN4('BSPI', 1, 'monsters/arach.md2', 6, 3.0 / 35.0, S_BSPI_RUN5) { A_Chase(); }
+	S_BSPI_RUN5('BSPI', 2, 'monsters/arach.md2', 7, 3.0 / 35.0, S_BSPI_RUN6) { A_Chase(); }
+	S_BSPI_RUN6('BSPI', 2, 'monsters/arach.md2', 8, 3.0 / 35.0, S_BSPI_RUN7) { A_Chase(); }
+	S_BSPI_RUN7('BSPI', 3, 'monsters/arach.md2', 9, 3.0 / 35.0, S_BSPI_RUN8) { A_BabyMetal(); }
+	S_BSPI_RUN8('BSPI', 3, 'monsters/arach.md2', 10, 3.0 / 35.0, S_BSPI_RUN9) { A_Chase(); }
+	S_BSPI_RUN9('BSPI', 4, 'monsters/arach.md2', 11, 3.0 / 35.0, S_BSPI_RUN10) { A_Chase(); }
+	S_BSPI_RUN10('BSPI', 4, 'monsters/arach.md2', 12, 3.0 / 35.0, S_BSPI_RUN11) { A_Chase(); }
+	S_BSPI_RUN11('BSPI', 5, 'monsters/arach.md2', 13, 3.0 / 35.0, S_BSPI_RUN12) { A_Chase(); }
+	S_BSPI_RUN12('BSPI', 5, 'monsters/arach.md2', 14, 3.0 / 35.0, S_BSPI_RUN1) { A_Chase(); }
+	S_BSPI_ATK1('BSPI', 0 | FF_FULLBRIGHT, 'monsters/arach.md2', 15, 20.0 / 35.0, S_BSPI_ATK2) { A_FaceTarget(); }
+	S_BSPI_ATK2('BSPI', 6 | FF_FULLBRIGHT, 'monsters/arach.md2', 16, 4.0 / 35.0, S_BSPI_ATK3) { A_BspiAttack(); }
+	S_BSPI_ATK3('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arachatk.md2', 0, 4.0 / 35.0, S_BSPI_ATK4) { }
+	S_BSPI_ATK4('BSPI', 7 | FF_FULLBRIGHT, 'monsters/arachatk.md2', 0, 1.0 / 35.0, S_BSPI_ATK2) { A_SpidRefire(); }
+	S_BSPI_PAIN('BSPI', 8, 'monsters/arach.md2', 17, 3.0 / 35.0, S_BSPI_PAIN2) { }
+	S_BSPI_PAIN2('BSPI', 8, 'monsters/arach.md2', 18, 3.0 / 35.0, S_BSPI_RUN1) { A_Pain(); }
+	S_BSPI_DIE1('BSPI', 9, 'monsters/arachdie.md2', 0, 20.0 / 35.0, S_BSPI_DIE2) { A_Scream(); }
+	S_BSPI_DIE2('BSPI', 10, 'monsters/arachdie.md2', 1, 7.0 / 35.0, S_BSPI_DIE3) { A_Fall(); }
+	S_BSPI_DIE3('BSPI', 11, 'monsters/arachdie.md2', 2, 7.0 / 35.0, S_BSPI_DIE4) { }
+	S_BSPI_DIE4('BSPI', 12, 'monsters/arachdie.md2', 3, 7.0 / 35.0, S_BSPI_DIE5) { }
+	S_BSPI_DIE5('BSPI', 13, 'monsters/arachdie.md2', 4, 7.0 / 35.0, S_BSPI_DIE6) { }
+	S_BSPI_DIE6('BSPI', 14, 'monsters/arachdie.md2', 5, 7.0 / 35.0, S_BSPI_DIE7) { }
+	S_BSPI_DIE7('BSPI', 15, 'monsters/arachdie.md2', 6, -1.0, S_NULL) { A_BossDeath(); }
+	S_BSPI_RAISE1('BSPI', 15, 'monsters/arachdie.md2', 7, 5.0 / 35.0, S_BSPI_RAISE2) { }
+	S_BSPI_RAISE2('BSPI', 14, 'monsters/arachdie.md2', 8, 5.0 / 35.0, S_BSPI_RAISE3) { }
+	S_BSPI_RAISE3('BSPI', 13, 'monsters/arachdie.md2', 9, 5.0 / 35.0, S_BSPI_RAISE4) { }
+	S_BSPI_RAISE4('BSPI', 12, 'monsters/arachdie.md2', 10, 5.0 / 35.0, S_BSPI_RAISE5) { }
+	S_BSPI_RAISE5('BSPI', 11, 'monsters/arachdie.md2', 11, 5.0 / 35.0, S_BSPI_RAISE6) { }
+	S_BSPI_RAISE6('BSPI', 10, 'monsters/arachdie.md2', 12, 5.0 / 35.0, S_BSPI_RAISE7) { }
+	S_BSPI_RAISE7('BSPI', 9, 'monsters/arachdie.md2', 13, 5.0 / 35.0, S_BSPI_RUN1) { }
+	S_ARACH_PLAZ('APLS', 0 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 0, 5.0 / 35.0, S_ARACH_PLAZ2) { }
+	S_ARACH_PLAZ2('APLS', 1 | FF_FULLBRIGHT, 'missiles/aplasma.md2', 1, 5.0 / 35.0, S_ARACH_PLAZ) { }
+	S_ARACH_PLEX('APBX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX2) { }
+	S_ARACH_PLEX2('APBX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX3) { }
+	S_ARACH_PLEX3('APBX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX4) { }
+	S_ARACH_PLEX4('APBX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_ARACH_PLEX5) { }
+	S_ARACH_PLEX5('APBX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_CYBER_STND('CYBR', 0, 'monsters/cyber.md2', 0, 10.0 / 35.0, S_CYBER_STND2) { A_Look(); }
+	S_CYBER_STND2('CYBR', 1, 'monsters/cyber.md2', 1, 10.0 / 35.0, S_CYBER_STND) { A_Look(); }
+	S_CYBER_RUN1('CYBR', 0, 'monsters/cyber.md2', 2, 3.0 / 35.0, S_CYBER_RUN2) { A_Hoof(); }
+	S_CYBER_RUN2('CYBR', 0, 'monsters/cyber.md2', 3, 3.0 / 35.0, S_CYBER_RUN3) { A_Chase(); }
+	S_CYBER_RUN3('CYBR', 1, 'monsters/cyber.md2', 4, 3.0 / 35.0, S_CYBER_RUN4) { A_Chase(); }
+	S_CYBER_RUN4('CYBR', 1, 'monsters/cyber.md2', 5, 3.0 / 35.0, S_CYBER_RUN5) { A_Chase(); }
+	S_CYBER_RUN5('CYBR', 2, 'monsters/cyber.md2', 6, 3.0 / 35.0, S_CYBER_RUN6) { A_Chase(); }
+	S_CYBER_RUN6('CYBR', 2, 'monsters/cyber.md2', 7, 3.0 / 35.0, S_CYBER_RUN7) { A_Chase(); }
+	S_CYBER_RUN7('CYBR', 3, 'monsters/cyber.md2', 8, 3.0 / 35.0, S_CYBER_RUN8) { A_Metal(); }
+	S_CYBER_RUN8('CYBR', 3, 'monsters/cyber.md2', 9, 3.0 / 35.0, S_CYBER_RUN1) { A_Chase(); }
+	S_CYBER_ATK1('CYBR', 4, 'monsters/cyber.md2', 10, 6.0 / 35.0, S_CYBER_ATK2) { A_FaceTarget(); }
+	S_CYBER_ATK2('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_ATK3) { A_CyberAttack(); }
+	S_CYBER_ATK3('CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, S_CYBER_ATK4) { A_FaceTarget(); }
+	S_CYBER_ATK4('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_ATK5) { A_CyberAttack(); }
+	S_CYBER_ATK5('CYBR', 4, 'monsters/cyber.md2', 10, 12.0 / 35.0, S_CYBER_ATK6) { A_FaceTarget(); }
+	S_CYBER_ATK6('CYBR', 5, 'monsters/cyberatk.md2', 0, 12.0 / 35.0, S_CYBER_RUN1) { A_CyberAttack(); }
+	S_CYBER_PAIN('CYBR', 6, 'monsters/cyber.md2', 11, 10.0 / 35.0, S_CYBER_RUN1) { A_Pain(); }
+	S_CYBER_DIE1('CYBR', 7, 'monsters/cyberdie.md2', 0, 10.0 / 35.0, S_CYBER_DIE2) { }
+	S_CYBER_DIE2('CYBR', 8, 'monsters/cyberdie.md2', 1, 10.0 / 35.0, S_CYBER_DIE3) { A_Scream(); }
+	S_CYBER_DIE3('CYBR', 9, 'monsters/cyberdie.md2', 2, 10.0 / 35.0, S_CYBER_DIE4) { }
+	S_CYBER_DIE4('CYBR', 10, 'monsters/cyberdie.md2', 3, 10.0 / 35.0, S_CYBER_DIE5) { }
+	S_CYBER_DIE5('CYBR', 11, 'monsters/cyberdie.md2', 4, 10.0 / 35.0, S_CYBER_DIE6) { }
+	S_CYBER_DIE6('CYBR', 12, 'monsters/cyberdie.md2', 5, 10.0 / 35.0, S_CYBER_DIE7) { A_Fall(); }
+	S_CYBER_DIE7('CYBR', 13, 'monsters/cyberdie.md2', 6, 10.0 / 35.0, S_CYBER_DIE8) { }
+	S_CYBER_DIE8('CYBR', 14, 'monsters/cyberdie.md2', 7, 10.0 / 35.0, S_CYBER_DIE9) { }
+	S_CYBER_DIE9('CYBR', 15, 'monsters/cyberdie.md2', 8, 30.0 / 35.0, S_CYBER_DIE10) { }
+	S_CYBER_DIE10('CYBR', 15, 'monsters/cyberdie.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
+	S_PAIN_STND('PAIN', 0, 'monsters/pain.md2', 0, 10.0 / 35.0, S_PAIN_STND) { A_Look(); }
+	S_PAIN_RUN1('PAIN', 0, 'monsters/pain.md2', 1, 3.0 / 35.0, S_PAIN_RUN2) { A_Chase(); }
+	S_PAIN_RUN2('PAIN', 0, 'monsters/pain.md2', 2, 3.0 / 35.0, S_PAIN_RUN3) { A_Chase(); }
+	S_PAIN_RUN3('PAIN', 1, 'monsters/pain.md2', 3, 3.0 / 35.0, S_PAIN_RUN4) { A_Chase(); }
+	S_PAIN_RUN4('PAIN', 1, 'monsters/pain.md2', 4, 3.0 / 35.0, S_PAIN_RUN5) { A_Chase(); }
+	S_PAIN_RUN5('PAIN', 2, 'monsters/pain.md2', 5, 3.0 / 35.0, S_PAIN_RUN6) { A_Chase(); }
+	S_PAIN_RUN6('PAIN', 2, 'monsters/pain.md2', 6, 3.0 / 35.0, S_PAIN_RUN1) { A_Chase(); }
+	S_PAIN_ATK1('PAIN', 3, 'monsters/painatk.md2', 0, 5.0 / 35.0, S_PAIN_ATK2) { A_FaceTarget(); }
+	S_PAIN_ATK2('PAIN', 4, 'monsters/painatk.md2', 1, 5.0 / 35.0, S_PAIN_ATK3) { A_FaceTarget(); }
+	S_PAIN_ATK3('PAIN', 5 | FF_FULLBRIGHT, 'monsters/painatk.md2', 2, 5.0 / 35.0, S_PAIN_ATK4) { A_FaceTarget(); }
+	S_PAIN_ATK4('PAIN', 5 | FF_FULLBRIGHT, 'monsters/painatk.md2', 2, 0.0 / 35.0, S_PAIN_RUN1) { A_PainAttack(); }
+	S_PAIN_PAIN('PAIN', 6, 'monsters/pain.md2', 7, 6.0 / 35.0, S_PAIN_PAIN2) { }
+	S_PAIN_PAIN2('PAIN', 6, 'monsters/pain.md2', 8, 6.0 / 35.0, S_PAIN_RUN1) { A_Pain(); }
+	S_PAIN_DIE1('PAIN', 7 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE2) { }
+	S_PAIN_DIE2('PAIN', 8 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE3) { A_Scream(); }
+	S_PAIN_DIE3('PAIN', 9 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE4) { }
+	S_PAIN_DIE4('PAIN', 10 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE5) { }
+	S_PAIN_DIE5('PAIN', 11 | FF_FULLBRIGHT, 8.0 / 35.0, S_PAIN_DIE6) { A_PainDie(); }
+	S_PAIN_DIE6('PAIN', 12 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_PAIN_RAISE1('PAIN', 12, 8.0 / 35.0, S_PAIN_RAISE2) { }
+	S_PAIN_RAISE2('PAIN', 11, 8.0 / 35.0, S_PAIN_RAISE3) { }
+	S_PAIN_RAISE3('PAIN', 10, 8.0 / 35.0, S_PAIN_RAISE4) { }
+	S_PAIN_RAISE4('PAIN', 9, 8.0 / 35.0, S_PAIN_RAISE5) { }
+	S_PAIN_RAISE5('PAIN', 8, 8.0 / 35.0, S_PAIN_RAISE6) { }
+	S_PAIN_RAISE6('PAIN', 7, 8.0 / 35.0, S_PAIN_RUN1) { }
+	S_SSWV_STND('SSWV', 0, 'monsters/ss.md2', 0, 10.0 / 35.0, S_SSWV_STND2) { A_Look(); }
+	S_SSWV_STND2('SSWV', 1, 'monsters/ss.md2', 1, 10.0 / 35.0, S_SSWV_STND) { A_Look(); }
+	S_SSWV_RUN1('SSWV', 0, 'monsters/ss.md2', 2, 3.0 / 35.0, S_SSWV_RUN2) { A_Chase(); }
+	S_SSWV_RUN2('SSWV', 0, 'monsters/ss.md2', 3, 3.0 / 35.0, S_SSWV_RUN3) { A_Chase(); }
+	S_SSWV_RUN3('SSWV', 1, 'monsters/ss.md2', 4, 3.0 / 35.0, S_SSWV_RUN4) { A_Chase(); }
+	S_SSWV_RUN4('SSWV', 1, 'monsters/ss.md2', 5, 3.0 / 35.0, S_SSWV_RUN5) { A_Chase(); }
+	S_SSWV_RUN5('SSWV', 2, 'monsters/ss.md2', 6, 3.0 / 35.0, S_SSWV_RUN6) { A_Chase(); }
+	S_SSWV_RUN6('SSWV', 2, 'monsters/ss.md2', 7, 3.0 / 35.0, S_SSWV_RUN7) { A_Chase(); }
+	S_SSWV_RUN7('SSWV', 3, 'monsters/ss.md2', 8, 3.0 / 35.0, S_SSWV_RUN8) { A_Chase(); }
+	S_SSWV_RUN8('SSWV', 3, 'monsters/ss.md2', 9, 3.0 / 35.0, S_SSWV_RUN1) { A_Chase(); }
+	S_SSWV_ATK1('SSWV', 4, 'monsters/ss.md2', 10, 10.0 / 35.0, S_SSWV_ATK2) { A_FaceTarget(); }
+	S_SSWV_ATK2('SSWV', 5, 'monsters/ss.md2', 11, 10.0 / 35.0, S_SSWV_ATK3) { A_FaceTarget(); }
+	S_SSWV_ATK3('SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, S_SSWV_ATK4) { A_CPosAttack(); }
+	S_SSWV_ATK4('SSWV', 5, 'monsters/ss.md2', 13, 6.0 / 35.0, S_SSWV_ATK5) { A_FaceTarget(); }
+	S_SSWV_ATK5('SSWV', 6 | FF_FULLBRIGHT, 'monsters/ss.md2', 12, 4.0 / 35.0, S_SSWV_ATK6) { A_CPosAttack(); }
+	S_SSWV_ATK6('SSWV', 5, 'monsters/ss.md2', 13, 1.0 / 35.0, S_SSWV_ATK2) { A_CPosRefire(); }
+	S_SSWV_PAIN('SSWV', 7, 'monsters/ss.md2', 14, 3.0 / 35.0, S_SSWV_PAIN2) { }
+	S_SSWV_PAIN2('SSWV', 7, 'monsters/ss.md2', 15, 3.0 / 35.0, S_SSWV_RUN1) { A_Pain(); }
+	S_SSWV_DIE1('SSWV', 8, 'monsters/ssdie.md2', 0, 5.0 / 35.0, S_SSWV_DIE2) { }
+	S_SSWV_DIE2('SSWV', 9, 'monsters/ssdie.md2', 1, 5.0 / 35.0, S_SSWV_DIE3) { A_Scream(); }
+	S_SSWV_DIE3('SSWV', 10, 'monsters/ssdie.md2', 2, 5.0 / 35.0, S_SSWV_DIE4) { A_Fall(); }
+	S_SSWV_DIE4('SSWV', 11, 'monsters/ssdie.md2', 3, 5.0 / 35.0, S_SSWV_DIE5) { }
+	S_SSWV_DIE5('SSWV', 12, 'monsters/ssdie.md2', 4, -1.0, S_NULL) { }
+	S_SSWV_XDIE1('SSWV', 13, 'gibs/ssgib.md2', 0, 5.0 / 35.0, S_SSWV_XDIE2) { }
+	S_SSWV_XDIE2('SSWV', 14, 'gibs/ssgib.md2', 1, 5.0 / 35.0, S_SSWV_XDIE3) { A_XScream(); }
+	S_SSWV_XDIE3('SSWV', 15, 'gibs/ssgib.md2', 2, 5.0 / 35.0, S_SSWV_XDIE4) { A_Fall(); }
+	S_SSWV_XDIE4('SSWV', 16, 'gibs/ssgib.md2', 3, 5.0 / 35.0, S_SSWV_XDIE5) { }
+	S_SSWV_XDIE5('SSWV', 17, 'gibs/ssgib.md2', 4, 5.0 / 35.0, S_SSWV_XDIE6) { }
+	S_SSWV_XDIE6('SSWV', 18, 'gibs/ssgib.md2', 5, 5.0 / 35.0, S_SSWV_XDIE7) { }
+	S_SSWV_XDIE7('SSWV', 19, 'gibs/ssgib.md2', 6, 5.0 / 35.0, S_SSWV_XDIE8) { }
+	S_SSWV_XDIE8('SSWV', 20, 'gibs/ssgib.md2', 7, 5.0 / 35.0, S_SSWV_XDIE9) { }
+	S_SSWV_XDIE9('SSWV', 21, 'gibs/ssgib.md2', 8, -1.0, S_NULL) { }
+	S_SSWV_RAISE1('SSWV', 12, 'monsters/ssdie.md2', 5, 5.0 / 35.0, S_SSWV_RAISE2) { }
+	S_SSWV_RAISE2('SSWV', 11, 'monsters/ssdie.md2', 6, 5.0 / 35.0, S_SSWV_RAISE3) { }
+	S_SSWV_RAISE3('SSWV', 10, 'monsters/ssdie.md2', 7, 5.0 / 35.0, S_SSWV_RAISE4) { }
+	S_SSWV_RAISE4('SSWV', 9, 'monsters/ssdie.md2', 8, 5.0 / 35.0, S_SSWV_RAISE5) { }
+	S_SSWV_RAISE5('SSWV', 8, 'monsters/ssdie.md2', 9, 5.0 / 35.0, S_SSWV_RUN1) { }
+	S_KEENSTND('KEEN', 0, -1.0, S_KEENSTND) { }
+	S_COMMKEEN('KEEN', 0, 6.0 / 35.0, S_COMMKEEN2) { }
+	S_COMMKEEN2('KEEN', 1, 6.0 / 35.0, S_COMMKEEN3) { }
+	S_COMMKEEN3('KEEN', 2, 6.0 / 35.0, S_COMMKEEN4) { A_Scream(); }
+	S_COMMKEEN4('KEEN', 3, 6.0 / 35.0, S_COMMKEEN5) { }
+	S_COMMKEEN5('KEEN', 4, 6.0 / 35.0, S_COMMKEEN6) { }
+	S_COMMKEEN6('KEEN', 5, 6.0 / 35.0, S_COMMKEEN7) { }
+	S_COMMKEEN7('KEEN', 6, 6.0 / 35.0, S_COMMKEEN8) { }
+	S_COMMKEEN8('KEEN', 7, 6.0 / 35.0, S_COMMKEEN9) { }
+	S_COMMKEEN9('KEEN', 8, 6.0 / 35.0, S_COMMKEEN10) { }
+	S_COMMKEEN10('KEEN', 9, 6.0 / 35.0, S_COMMKEEN11) { }
+	S_COMMKEEN11('KEEN', 10, 6.0 / 35.0, S_COMMKEEN12) { A_KeenDie(); }
+	S_COMMKEEN12('KEEN', 11, -1.0, S_NULL) { }
+	S_KEENPAIN('KEEN', 12, 4.0 / 35.0, S_KEENPAIN2) { }
+	S_KEENPAIN2('KEEN', 12, 8.0 / 35.0, S_KEENSTND) { A_Pain(); }
+	S_BRAIN('BBRN', 0, -1.0, S_NULL) { }
+	S_BRAIN_PAIN('BBRN', 1, 36.0 / 35.0, S_BRAIN) { A_BrainPain(); }
+	S_BRAIN_DIE1('BBRN', 0, 100.0 / 35.0, S_BRAIN_DIE2) { A_BrainScream(); }
+	S_BRAIN_DIE2('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE3) { }
+	S_BRAIN_DIE3('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE4) { }
+	S_BRAIN_DIE4('BBRN', 0, -1.0, S_NULL) { A_BrainDie(); }
+	S_BRAINEYE('SSWV', 0, 10.0 / 35.0, S_BRAINEYE) { A_Look(); }
+	S_BRAINEYESEE('SSWV', 0, 181.0 / 35.0, S_BRAINEYE1) { A_BrainAwake(); }
+	S_BRAINEYE1('SSWV', 0, 150.0 / 35.0, S_BRAINEYE1) { A_BrainSpit(); }
+	S_SPAWN1('BOSF', 0 | FF_FULLBRIGHT, 'monsters/cube.md2', 0, 3.0 / 35.0, S_SPAWN2) { A_SpawnSound(); }
+	S_SPAWN2('BOSF', 1 | FF_FULLBRIGHT, 'monsters/cube.md2', 1, 3.0 / 35.0, S_SPAWN3) { A_SpawnFly(); }
+	S_SPAWN3('BOSF', 2 | FF_FULLBRIGHT, 'monsters/cube.md2', 2, 3.0 / 35.0, S_SPAWN4) { A_SpawnFly(); }
+	S_SPAWN4('BOSF', 3 | FF_FULLBRIGHT, 'monsters/cube.md2', 3, 3.0 / 35.0, S_SPAWN1) { A_SpawnFly(); }
+	S_SPAWNFIRE1('FIRE', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE2) { A_Fire(); }
+	S_SPAWNFIRE2('FIRE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE3) { A_Fire(); }
+	S_SPAWNFIRE3('FIRE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE4) { A_Fire(); }
+	S_SPAWNFIRE4('FIRE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE5) { A_Fire(); }
+	S_SPAWNFIRE5('FIRE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE6) { A_Fire(); }
+	S_SPAWNFIRE6('FIRE', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE7) { A_Fire(); }
+	S_SPAWNFIRE7('FIRE', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SPAWNFIRE8) { A_Fire(); }
+	S_SPAWNFIRE8('FIRE', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { A_Fire(); }
+	S_BRAINEXPLODE1('MISL', 1 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE2) { }
+	S_BRAINEXPLODE2('MISL', 2 | FF_FULLBRIGHT, 10.0 / 35.0, S_BRAINEXPLODE3) { }
+	S_BRAINEXPLODE3('MISL', 3 | FF_FULLBRIGHT, 10.0 / 35.0, S_NULL) { A_BrainExplode(); }
+	S_ARM1('ARM1', 0, 'items/grnarmor.md2', 0, 6.0 / 35.0, S_ARM1A) { }
+	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 'items/grnarmor.md2', 1, 7.0 / 35.0, S_ARM1) { }
+	S_ARM2('ARM2', 0, 'items/bluarmor.md2', 0, 6.0 / 35.0, S_ARM2A) { }
+	S_ARM2A('ARM2', 1 | FF_FULLBRIGHT, 'items/bluarmor.md2', 1, 6.0 / 35.0, S_ARM2) { }
+	S_BAR1('BAR1', 0, 'objects/barrel.md2', 0, 6.0 / 35.0, S_BAR2) { }
+	S_BAR2('BAR1', 1, 'objects/barrel.md2', 1, 6.0 / 35.0, S_BAR1) { }
+	S_BEXP('BEXP', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP2) { }
+	S_BEXP2('BEXP', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP3) { A_Scream(); }
+	S_BEXP3('BEXP', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_BEXP4) { }
+	S_BEXP4('BEXP', 3 | FF_FULLBRIGHT, 10.0 / 35.0, S_BEXP5) { A_Explode(); }
+	S_BEXP5('BEXP', 4 | FF_FULLBRIGHT, 10.0 / 35.0, S_NULL) { }
+	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 0, 4.0 / 35.0, S_BBAR2) { }
+	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 1, 4.0 / 35.0, S_BBAR3) { }
+	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 2, 4.0 / 35.0, S_BBAR1) { }
+	S_BON1('BON1', 0, 'items/bottle.md2', 0, 6.0 / 35.0, S_BON1A) { }
+	S_BON1A('BON1', 1, 'items/bottle.md2', 1, 6.0 / 35.0, S_BON1B) { }
+	S_BON1B('BON1', 2, 'items/bottle.md2', 2, 6.0 / 35.0, S_BON1C) { }
+	S_BON1C('BON1', 3, 'items/bottle.md2', 3, 6.0 / 35.0, S_BON1D) { }
+	S_BON1D('BON1', 2, 'items/bottle.md2', 4, 6.0 / 35.0, S_BON1E) { }
+	S_BON1E('BON1', 1, 'items/bottle.md2', 5, 6.0 / 35.0, S_BON1) { }
+	S_BON2('BON2', 0, 'items/helmet.md2', 0, 6.0 / 35.0, S_BON2A) { }
+	S_BON2A('BON2', 1, 'items/helmet.md2', 1, 6.0 / 35.0, S_BON2B) { }
+	S_BON2B('BON2', 2, 'items/helmet.md2', 2, 6.0 / 35.0, S_BON2C) { }
+	S_BON2C('BON2', 3, 'items/helmet.md2', 3, 6.0 / 35.0, S_BON2D) { }
+	S_BON2D('BON2', 2, 'items/helmet.md2', 4, 6.0 / 35.0, S_BON2E) { }
+	S_BON2E('BON2', 1, 'items/helmet.md2', 5, 6.0 / 35.0, S_BON2) { }
+	S_BKEY('BKEY', 0, 'keys/bluecard.md2', 0, 10.0 / 35.0, S_BKEY2) { }
+	S_BKEY2('BKEY', 1 | FF_FULLBRIGHT, 'keys/bluecard.md2', 1, 10.0 / 35.0, S_BKEY) { }
+	S_RKEY('RKEY', 0, 'keys/redcard.md2', 0, 10.0 / 35.0, S_RKEY2) { }
+	S_RKEY2('RKEY', 1 | FF_FULLBRIGHT, 'keys/redcard.md2', 1, 10.0 / 35.0, S_RKEY) { }
+	S_YKEY('YKEY', 0, 'keys/yelcard.md2', 0, 10.0 / 35.0, S_YKEY2) { }
+	S_YKEY2('YKEY', 1 | FF_FULLBRIGHT, 'keys/yelcard.md2', 1, 10.0 / 35.0, S_YKEY) { }
+	S_BSKULL('BSKU', 0, 'keys/blueskul.md2', 0, 10.0 / 35.0, S_BSKULL2) { }
+	S_BSKULL2('BSKU', 1 | FF_FULLBRIGHT, 'keys/blueskul.md2', 1, 10.0 / 35.0, S_BSKULL) { }
+	S_RSKULL('RSKU', 0, 'keys/redskul.md2', 0, 10.0 / 35.0, S_RSKULL2) { }
+	S_RSKULL2('RSKU', 1 | FF_FULLBRIGHT, 'keys/redskul.md2', 1, 10.0 / 35.0, S_RSKULL) { }
+	S_YSKULL('YSKU', 0, 'keys/yelskul.md2', 0, 10.0 / 35.0, S_YSKULL2) { }
+	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 'keys/yelskul.md2', 1, 10.0 / 35.0, S_YSKULL) { }
+	S_STIM('STIM', 0, 'items/stim.md2', 0, -1.0, S_NULL) { }
+	S_MEDI('MEDI', 0, 'items/medi.md2', 0, -1.0, S_NULL) { }
+	S_SOUL('SOUL', 0 | FF_FULLBRIGHT, 'items/soul.md2', 0, 6.0 / 35.0, S_SOUL2) { }
+	S_SOUL2('SOUL', 1 | FF_FULLBRIGHT, 'items/soul.md2', 1, 6.0 / 35.0, S_SOUL3) { }
+	S_SOUL3('SOUL', 2 | FF_FULLBRIGHT, 'items/soul.md2', 2, 6.0 / 35.0, S_SOUL4) { }
+	S_SOUL4('SOUL', 3 | FF_FULLBRIGHT, 'items/soul.md2', 3, 6.0 / 35.0, S_SOUL5) { }
+	S_SOUL5('SOUL', 2 | FF_FULLBRIGHT, 'items/soul.md2', 4, 6.0 / 35.0, S_SOUL6) { }
+	S_SOUL6('SOUL', 1 | FF_FULLBRIGHT, 'items/soul.md2', 5, 6.0 / 35.0, S_SOUL) { }
+	S_PINV('PINV', 0 | FF_FULLBRIGHT, 'items/invuln.md2', 0, 6.0 / 35.0, S_PINV2) { }
+	S_PINV2('PINV', 1 | FF_FULLBRIGHT, 'items/invuln.md2', 1, 6.0 / 35.0, S_PINV3) { }
+	S_PINV3('PINV', 2 | FF_FULLBRIGHT, 'items/invuln.md2', 2, 6.0 / 35.0, S_PINV4) { }
+	S_PINV4('PINV', 3 | FF_FULLBRIGHT, 'items/invuln.md2', 3, 6.0 / 35.0, S_PINV) { }
+	S_PSTR('PSTR', 0 | FF_FULLBRIGHT, 'items/bersek.md2', 0, -1.0, S_NULL) { }
+	S_PINS('PINS', 0 | FF_FULLBRIGHT, 'items/invis.md2', 0, 6.0 / 35.0, S_PINS2) { }
+	S_PINS2('PINS', 1 | FF_FULLBRIGHT, 'items/invis.md2', 1, 6.0 / 35.0, S_PINS3) { }
+	S_PINS3('PINS', 2 | FF_FULLBRIGHT, 'items/invis.md2', 2, 6.0 / 35.0, S_PINS4) { }
+	S_PINS4('PINS', 3 | FF_FULLBRIGHT, 'items/invis.md2', 3, 6.0 / 35.0, S_PINS) { }
+	S_MEGA('MEGA', 0 | FF_FULLBRIGHT, 'items/mega.md2', 0, 6.0 / 35.0, S_MEGA2) { }
+	S_MEGA2('MEGA', 1 | FF_FULLBRIGHT, 'items/mega.md2', 1, 6.0 / 35.0, S_MEGA3) { }
+	S_MEGA3('MEGA', 2 | FF_FULLBRIGHT, 'items/mega.md2', 2, 6.0 / 35.0, S_MEGA4) { }
+	S_MEGA4('MEGA', 3 | FF_FULLBRIGHT, 'items/mega.md2', 3, 6.0 / 35.0, S_MEGA) { }
+	S_SUIT('SUIT', 0 | FF_FULLBRIGHT, 'items/suit.md2', 0, -1.0, S_NULL) { }
+	S_PMAP('PMAP', 0 | FF_FULLBRIGHT, 'items/map.md2', 0, 6.0 / 35.0, S_PMAP2) { }
+	S_PMAP2('PMAP', 1 | FF_FULLBRIGHT, 'items/map.md2', 1, 6.0 / 35.0, S_PMAP3) { }
+	S_PMAP3('PMAP', 2 | FF_FULLBRIGHT, 'items/map.md2', 2, 6.0 / 35.0, S_PMAP4) { }
+	S_PMAP4('PMAP', 3 | FF_FULLBRIGHT, 'items/map.md2', 3, 6.0 / 35.0, S_PMAP5) { }
+	S_PMAP5('PMAP', 2 | FF_FULLBRIGHT, 'items/map.md2', 4, 6.0 / 35.0, S_PMAP6) { }
+	S_PMAP6('PMAP', 1 | FF_FULLBRIGHT, 'items/map.md2', 5, 6.0 / 35.0, S_PMAP) { }
+	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 'items/visor.md2', 0, 6.0 / 35.0, S_PVIS2) { }
+	S_PVIS2('PVIS', 1, 'items/visor.md2', 1, 6.0 / 35.0, S_PVIS) { }
+	S_CLIP('CLIP', 0, 'ammo/clip.md2', 0, -1.0, S_NULL) { }
+	S_AMMO('AMMO', 0, 'ammo/ammo.md2', 0, -1.0, S_NULL) { }
+	S_ROCK('ROCK', 0, 'ammo/rocket.md2', 0, -1.0, S_NULL) { }
+	S_BROK('BROK', 0, 'ammo/rocktbox.md2', 0, -1.0, S_NULL) { }
+	S_CELL('CELL', 0, 'ammo/cell.md2', 0, -1.0, S_NULL) { }
+	S_CELP('CELP', 0, 'ammo/bigcells.md2', 0, -1.0, S_NULL) { }
+	S_SHEL('SHEL', 0, 'ammo/shells.md2', 0, -1.0, S_NULL) { }
+	S_SBOX('SBOX', 0, 'ammo/shellbox.md2', 0, -1.0, S_NULL) { }
+	S_BPAK('BPAK', 0, 'ammo/backpack.md2', 0, -1.0, S_NULL) { }
+	S_BFUG('BFUG', 0, 'weapons/g_bfg.md2', 0, -1.0, S_NULL) { }
+	S_MGUN('MGUN', 0, 'weapons/g_chain.md2', 0, -1.0, S_NULL) { }
+	S_CSAW('CSAW', 0, 'weapons/g_saw.md2', 0, -1.0, S_NULL) { }
+	S_LAUN('LAUN', 0, 'weapons/g_launch.md2', 0, -1.0, S_NULL) { }
+	S_PLAS('PLAS', 0, 'weapons/g_plasma.md2', 0, -1.0, S_NULL) { }
+	S_SHOT('SHOT', 0, 'weapons/g_shotg.md2', 0, -1.0, S_NULL) { }
+	S_SHOT2('SGN2', 0, 'weapons/g_super.md2', 0, -1.0, S_NULL) { }
+	S_COLU('COLU', 0 | FF_FULLBRIGHT, 'lights/lamp.md2', 0, -1.0, S_NULL) { }
+	S_STALAG('SMT2', 0, -1.0, S_NULL) { }
+	S_BLOODYTWITCH('GOR1', 0, 'bodies/twitch.md2', 0, 10.0 / 35.0, S_BLOODYTWITCH2) { }
+	S_BLOODYTWITCH2('GOR1', 1, 'bodies/twitch.md2', 1, 15.0 / 35.0, S_BLOODYTWITCH3) { }
+	S_BLOODYTWITCH3('GOR1', 2, 'bodies/twitch.md2', 2, 8.0 / 35.0, S_BLOODYTWITCH4) { }
+	S_BLOODYTWITCH4('GOR1', 1, 'bodies/twitch.md2', 3, 6.0 / 35.0, S_BLOODYTWITCH) { }
+	S_DEADTORSO('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, S_NULL) { }
+	S_DEADBOTTOM('PLAY', 18, 'players/doomguy/xplode.md2', 8, -1.0, S_NULL) { }
+	S_HEADSONSTICK('POL2', 0, 'bodies/poleskls.md2', 0, -1.0, S_NULL) { }
+	S_GIBS('POL5', 0, 'gibs/gibs.md2', 0, -1.0, S_NULL) { }
+	S_HEADONASTICK('POL4', 0, 'bodies/poleskul.md2', 0, -1.0, S_NULL) { }
+	S_HEADCANDLES('POL3', 0 | FF_FULLBRIGHT, 'bodies/polescan.md2', 0, 6.0 / 35.0, S_HEADCANDLES2) { }
+	S_HEADCANDLES2('POL3', 1 | FF_FULLBRIGHT, 'bodies/polescan.md2', 1, 6.0 / 35.0, S_HEADCANDLES) { }
+	S_DEADSTICK('POL1', 0, 'bodies/onstick1.md2', 0, -1.0, S_NULL) { }
+	S_LIVESTICK('POL6', 0, 'bodies/onstick2.md2', 0, 6.0 / 35.0, S_LIVESTICK2) { }
+	S_LIVESTICK2('POL6', 1, 'bodies/onstick2.md2', 1, 8.0 / 35.0, S_LIVESTICK) { }
+	S_MEAT2('GOR2', 0, 'bodies/hangguy.md2', 0, -1.0, S_NULL) { }
+	S_MEAT3('GOR3', 0, 'bodies/noleg.md2', 0, -1.0, S_NULL) { }
+	S_MEAT4('GOR4', 0, 'bodies/legs.md2', 0, -1.0, S_NULL) { }
+	S_MEAT5('GOR5', 0, 'bodies/leg.md2', 0, -1.0, S_NULL) { }
+	S_STALAGTITE('SMIT', 0, 'objects/stub.md2', 0, -1.0, S_NULL) { }
+	S_TALLGRNCOL('COL1', 0, 'objects/pillargt.md2', 0, -1.0, S_NULL) { }
+	S_SHRTGRNCOL('COL2', 0, 'objects/pillargs.md2', 0, -1.0, S_NULL) { }
+	S_TALLREDCOL('COL3', 0, 'objects/pillarrt.md2', 0, -1.0, S_NULL) { }
+	S_SHRTREDCOL('COL4', 0, 'objects/pillarrs.md2', 0, -1.0, S_NULL) { }
+	S_CANDLESTIK('CAND', 0 | FF_FULLBRIGHT, 'lights/candle.md2', 0, -1.0, S_NULL) { }
+	S_CANDELABRA('CBRA', 0 | FF_FULLBRIGHT, 'lights/candabra.md2', 0, -1.0, S_NULL) { }
+	S_SKULLCOL('COL6', 0, 'objects/pillarsk.md2', 0, -1.0, S_NULL) { }
+	S_TORCHTREE('TRE1', 0, 'objects/tree.md2', 0, -1.0, S_NULL) { }
+	S_BIGTREE('TRE2', 0, 'objects/bigtree.md2', 0, -1.0, S_NULL) { }
+	S_TECHPILLAR('ELEC', 0, 'objects/techpilr.md2', 0, -1.0, S_NULL) { }
+	S_EVILEYE('CEYE', 0 | FF_FULLBRIGHT, 'objects/evileye.md2', 0, 6.0 / 35.0, S_EVILEYE2) { }
+	S_EVILEYE2('CEYE', 1 | FF_FULLBRIGHT, 'objects/evileye.md2', 1, 6.0 / 35.0, S_EVILEYE3) { }
+	S_EVILEYE3('CEYE', 2 | FF_FULLBRIGHT, 'objects/evileye.md2', 2, 6.0 / 35.0, S_EVILEYE4) { }
+	S_EVILEYE4('CEYE', 1 | FF_FULLBRIGHT, 'objects/evileye.md2', 3, 6.0 / 35.0, S_EVILEYE) { }
+	S_FLOATSKULL('FSKU', 0 | FF_FULLBRIGHT, 'objects/fskulls.md2', 0, 6.0 / 35.0, S_FLOATSKULL2) { }
+	S_FLOATSKULL2('FSKU', 1 | FF_FULLBRIGHT, 'objects/fskulls.md2', 1, 6.0 / 35.0, S_FLOATSKULL3) { }
+	S_FLOATSKULL3('FSKU', 2 | FF_FULLBRIGHT, 'objects/fskulls.md2', 2, 6.0 / 35.0, S_FLOATSKULL) { }
+	S_HEARTCOL('COL5', 0, 'objects/pillargh.md2', 0, 14.0 / 35.0, S_HEARTCOL2) { }
+	S_HEARTCOL2('COL5', 1, 'objects/pillargh.md2', 1, 14.0 / 35.0, S_HEARTCOL) { }
+	S_BLUETORCH('TBLU', 0 | FF_FULLBRIGHT, 'lights/torchblu.md2', 0, 4.0 / 35.0, S_BLUETORCH2) { }
+	S_BLUETORCH2('TBLU', 1 | FF_FULLBRIGHT, 'lights/torchblu.md2', 1, 4.0 / 35.0, S_BLUETORCH3) { }
+	S_BLUETORCH3('TBLU', 2 | FF_FULLBRIGHT, 'lights/torchblu.md2', 2, 4.0 / 35.0, S_BLUETORCH4) { }
+	S_BLUETORCH4('TBLU', 3 | FF_FULLBRIGHT, 'lights/torchblu.md2', 3, 4.0 / 35.0, S_BLUETORCH) { }
+	S_GREENTORCH('TGRN', 0 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 0, 4.0 / 35.0, S_GREENTORCH2) { }
+	S_GREENTORCH2('TGRN', 1 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 1, 4.0 / 35.0, S_GREENTORCH3) { }
+	S_GREENTORCH3('TGRN', 2 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 2, 4.0 / 35.0, S_GREENTORCH4) { }
+	S_GREENTORCH4('TGRN', 3 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 3, 4.0 / 35.0, S_GREENTORCH) { }
+	S_REDTORCH('TRED', 0 | FF_FULLBRIGHT, 'lights/torchred.md2', 0, 4.0 / 35.0, S_REDTORCH2) { }
+	S_REDTORCH2('TRED', 1 | FF_FULLBRIGHT, 'lights/torchred.md2', 1, 4.0 / 35.0, S_REDTORCH3) { }
+	S_REDTORCH3('TRED', 2 | FF_FULLBRIGHT, 'lights/torchred.md2', 2, 4.0 / 35.0, S_REDTORCH4) { }
+	S_REDTORCH4('TRED', 3 | FF_FULLBRIGHT, 'lights/torchred.md2', 3, 4.0 / 35.0, S_REDTORCH) { }
+	S_BTORCHSHRT('SMBT', 0 | FF_FULLBRIGHT, 'lights/stickblu.md2', 0, 4.0 / 35.0, S_BTORCHSHRT2) { }
+	S_BTORCHSHRT2('SMBT', 1 | FF_FULLBRIGHT, 'lights/stickblu.md2', 1, 4.0 / 35.0, S_BTORCHSHRT3) { }
+	S_BTORCHSHRT3('SMBT', 2 | FF_FULLBRIGHT, 'lights/stickblu.md2', 2, 4.0 / 35.0, S_BTORCHSHRT4) { }
+	S_BTORCHSHRT4('SMBT', 3 | FF_FULLBRIGHT, 'lights/stickblu.md2', 3, 4.0 / 35.0, S_BTORCHSHRT) { }
+	S_GTORCHSHRT('SMGT', 0 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 0, 4.0 / 35.0, S_GTORCHSHRT2) { }
+	S_GTORCHSHRT2('SMGT', 1 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 1, 4.0 / 35.0, S_GTORCHSHRT3) { }
+	S_GTORCHSHRT3('SMGT', 2 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 2, 4.0 / 35.0, S_GTORCHSHRT4) { }
+	S_GTORCHSHRT4('SMGT', 3 | FF_FULLBRIGHT, 'lights/stickgrn.md2', 3, 4.0 / 35.0, S_GTORCHSHRT) { }
+	S_RTORCHSHRT('SMRT', 0 | FF_FULLBRIGHT, 'lights/stickred.md2', 0, 4.0 / 35.0, S_RTORCHSHRT2) { }
+	S_RTORCHSHRT2('SMRT', 1 | FF_FULLBRIGHT, 'lights/stickred.md2', 1, 4.0 / 35.0, S_RTORCHSHRT3) { }
+	S_RTORCHSHRT3('SMRT', 2 | FF_FULLBRIGHT, 'lights/stickred.md2', 2, 4.0 / 35.0, S_RTORCHSHRT4) { }
+	S_RTORCHSHRT4('SMRT', 3 | FF_FULLBRIGHT, 'lights/stickred.md2', 3, 4.0 / 35.0, S_RTORCHSHRT) { }
+	S_HANGNOGUTS('HDB1', 0, 'bodies/hnoguts.md2', 0, -1.0, S_NULL) { }
+	S_HANGBNOBRAIN('HDB2', 0, 'bodies/hnobrain.md2', 0, -1.0, S_NULL) { }
+	S_HANGTLOOKDN('HDB3', 0, 'bodies/htlookdn.md2', 0, -1.0, S_NULL) { }
+	S_HANGTSKULL('HDB4', 0, 'bodies/htskull.md2', 0, -1.0, S_NULL) { }
+	S_HANGTLOOKUP('HDB5', 0, 'bodies/htlookup.md2', 0, -1.0, S_NULL) { }
+	S_HANGTNOBRAIN('HDB6', 0, 'bodies/htnobrn.md2', 0, -1.0, S_NULL) { }
+	S_COLONGIBS('POB1', 0, 'gibs/blood.md2', 0, -1.0, S_NULL) { }
+	S_SMALLPOOL('POB2', 0, 'gibs/blood2.md2', 0, -1.0, S_NULL) { }
+	S_BRAINSTEM('BRS1', 0, 'gibs/brain.md2', 0, -1.0, S_NULL) { }
+	S_TECHLAMP('TLMP', 0 | FF_FULLBRIGHT, 'lights/techlamp.md2', 0, 4.0 / 35.0, S_TECHLAMP2) { }
+	S_TECHLAMP2('TLMP', 1 | FF_FULLBRIGHT, 'lights/techlamp.md2', 1, 4.0 / 35.0, S_TECHLAMP3) { }
+	S_TECHLAMP3('TLMP', 2 | FF_FULLBRIGHT, 'lights/techlamp.md2', 2, 4.0 / 35.0, S_TECHLAMP4) { }
+	S_TECHLAMP4('TLMP', 3 | FF_FULLBRIGHT, 'lights/techlamp.md2', 3, 4.0 / 35.0, S_TECHLAMP) { }
+	S_TECH2LAMP('TLP2', 0 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 0, 4.0 / 35.0, S_TECH2LAMP2) { }
+	S_TECH2LAMP2('TLP2', 1 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 1, 4.0 / 35.0, S_TECH2LAMP3) { }
+	S_TECH2LAMP3('TLP2', 2 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 2, 4.0 / 35.0, S_TECH2LAMP4) { }
+	S_TECH2LAMP4('TLP2', 3 | FF_FULLBRIGHT, 'lights/techlmp2.md2', 3, 4.0 / 35.0, S_TECH2LAMP) { }
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/01/12 17:58:03  dj_jl
+//	New style state functions
+//
 //	Revision 1.9  2002/01/11 18:19:40  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.8  2002/01/07 12:21:11  dj_jl
 //	Changed copyright year
 //	

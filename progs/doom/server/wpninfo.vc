@@ -76,7 +76,7 @@ int weapon_ammo_type[] =
 
 __states__
 {
-	S_WEAPON { 'TROO', 0, 'weapons/g_pistol.md2', 0, 0.0, NULL, S_NULL }
+	S_WEAPON('TROO', 0, 'weapons/g_pistol.md2', 0, 0.0, S_NULL) { }
 }
 
 //==========================================================================
@@ -244,9 +244,12 @@ void set_weapon_supershotgun(player_t *player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/12 17:58:03  dj_jl
+//	New style state functions
+//
 //	Revision 1.7  2002/01/11 18:19:40  dj_jl
 //	Started to use names in progs
-//
+//	
 //	Revision 1.6  2002/01/07 12:21:11  dj_jl
 //	Changed copyright year
 //	
