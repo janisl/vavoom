@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
@@ -556,10 +552,14 @@ static void	CL_ParseModelList(void)
 	int count = net_msg.ReadShort();
 	for (int i = 1; i < count; i++)
 	{
-		char *name = net_msg.ReadString();
+		char *name = va("models/%s", net_msg.ReadString());
 		if (FL_FindFile(name, NULL))
 		{
 			model_precache[i] = Mod_FindName(name);
+		}
+		else if (Cvar_Value("r_models"))
+		{
+			con << "Can't find " << name << endl;
 		}
 	}
 }
@@ -912,3 +912,13 @@ void CL_ParseServerMessage(void)
    	}
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:16:30  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

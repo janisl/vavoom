@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.1  2001/07/27 13:08:34  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	x86 assembly-language DOS-dependent routines.
@@ -32,6 +28,8 @@
 //**************************************************************************
 
 #include "asm_i386.h"
+
+#ifdef USEASM
 
 	.data
 
@@ -109,3 +107,15 @@ C(Sys_PopFPCW):
 	fldcw	pushed_cw
 	ret
 
+#endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.2  2001/07/31 17:16:31  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.1  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

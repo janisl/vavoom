@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Datagram driver, handles all LAN drivers
@@ -120,7 +116,7 @@ extern char			m_return_reason[32];
 #endif
 
 extern int			num_connected;
-extern const char	**wadfiles;
+extern const char	*wadfiles[];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -1228,3 +1224,14 @@ COMMAND(NetStats)
 		PrintStats(s);
 	}
 }
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:16:31  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

@@ -18,11 +18,6 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-$Log$
-Revision 1.2  2001/07/27 14:27:54  dj_jl
-Update with Id-s and Log-s, some fixes
-
 */
 //
 // gas to MASM source code converter
@@ -1184,3 +1179,12 @@ int main (int argc, char **argv)
     return 0;
 }
 
+/*
+ * $Log$
+ * Revision 1.3  2001/07/31 17:16:30  dj_jl
+ * Just moved Log to the end of file
+ *
+ * Revision 1.2  2001/07/27 14:27:54  dj_jl
+ * Update with Id-s and Log-s, some fixes
+ *
+ */

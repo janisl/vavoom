@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Builtins.
@@ -2495,6 +2491,20 @@ static void PF_ftoi(void)
 
 //==========================================================================
 //
+//	PF_WadLumpPresent
+//
+//==========================================================================
+
+PF(WadLumpPresent)
+{
+	int			name;
+
+	name = Pop();
+	Push(W_CheckNumForName(PROG_TO_STR(name)) >= 0);
+}
+
+//==========================================================================
+//
 //	Temporary menu stuff
 //
 //==========================================================================
@@ -2720,6 +2730,7 @@ builtin_info_t BuiltinInfo[] =
     {"Cmd_CheckParm", PF_Cmd_CheckParm},
 	{"CmdBuf_AddText", PF_CmdBuf_AddText},
 	{"Info_ValueForKey", PF_Info_ValueForKey},
+	_(WadLumpPresent),
 
 #ifdef CLIENT
 	//	Graphics
@@ -2833,3 +2844,13 @@ builtin_info_t BuiltinInfo[] =
     {NULL, NULL}
 };
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:16:31  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

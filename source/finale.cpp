@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**
 //**	Game completion, final screen animation.
@@ -131,3 +127,13 @@ void F_Drawer(void)
 	clpr.Exec("F_Drawer");
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:16:30  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

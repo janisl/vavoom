@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**	
 //**	x86 assembly-language PROGS virtual machine code.
@@ -1969,3 +1965,14 @@ LEND_RUN_FUNCTION:
 	ret
 
 #endif
+
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:16:31  dj_jl
+//	Just moved Log to the end of file
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
