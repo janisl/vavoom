@@ -31,8 +31,9 @@
 
 enum
 {
-	PIC_PATCH,
-	PIC_RAW
+	PIC_PATCH,	// A standard Doom patch
+	PIC_RAW,	// Raw screens in Heretic and Hexen
+	PIC_IMAGE	// External graphic image file
 };
 
 struct picinfo_t
@@ -45,34 +46,30 @@ struct picinfo_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-// R_Main
-subsector_t* SV_PointInSubsector(float x, float y);
-subsector_t* CL_PointInSubsector(float x, float y);
-void R_SetViewSize(int blocks);
-void R_RenderPlayerView(void);
+// r_main
 void R_Init(void); // Called by startup code.
 void R_Start(const mapInfo_t &info);
-void R_PreRender(void);
-void R_SegMoved(seg_t *seg);
+void R_SetViewSize(int blocks);
+void R_RenderPlayerView(void);
 
-// R_Data
+// r_tex
+void R_InitTexture(void);
 int R_TextureNumForName(const char *name);
 int R_CheckTextureNumForName(const char *name);
 int R_FlatNumForName(const char* name);
 int R_CheckFlatNumForName(const char* name);
+float R_TextureHeight(int pic);
+void R_AnimateSurfaces(void);
 
-// R_Border
-void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fname);
-void R_DrawBorder(int x,int y,int w,int h);
+// r_surf
+void R_PreRender(void);
+void R_SegMoved(seg_t *seg);
 
-// R_Things
+// r_things
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);
 void R_InitSprites(void);
 
-// R_Anim
-void R_AnimateSurfaces(void);
-
-// R_Sky
+// r_sky
 void R_ForceLightning(void);
 
 //	2D graphics
@@ -81,21 +78,23 @@ int R_RegisterPicPal(const char *name, int type, const char*);
 void R_GetPicInfo(int handle, picinfo_t *info);
 void R_DrawPic(int x, int y, int handle, int trans = 0);
 void R_DrawShadowedPic(int x, int y, int handle);
+void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fname);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				validcount;
-
-extern int				numflats;
 
 extern int				skyflatnum;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/11/09 14:25:15  dj_jl
+//	Cleaned up
+//
 //	Revision 1.4  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
