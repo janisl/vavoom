@@ -247,6 +247,11 @@ void mobj_t::OnMapSpawn(mthing_t * mthing)
 {
 	state_t *st;
 
+	if (gameskill == sk_nightmare)
+	{
+		reactiontime = 0;
+	}
+
 	lastlook = P_Random() % MAXPLAYERS;
 
 	// Set the state, but do not use P_SetMobjState, because action
@@ -1995,6 +2000,7 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->extralight = 0;
 	p->fixedcolormap = 0;
 	p->viewheight = VIEWHEIGHT;
+	p->viewangles = mobj->angles;
 	p->fixangle = true;
 	SetupPsprites(p);
 	if (deathmatch)
@@ -2380,6 +2386,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2001/12/04 18:40:22  dj_jl
+//  Some fixes
+//
 //  Revision 1.16  2001/12/01 18:14:09  dj_jl
 //  Changed MSG_Select, beautification
 //
