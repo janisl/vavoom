@@ -90,10 +90,10 @@
 #define ST_MAXAMMO3Y		185
 
 //  Fullscreen widgets
-#define ST_TDHEALTHX	50
+#define ST_TDHEALTHX	64
 #define ST_TDHEALTHY	180
 
-#define ST_TDARMORX		100
+#define ST_TDARMORX		140
 #define ST_TDARMORY		180
 
 #define ST_TDAMMOX		315
@@ -182,6 +182,10 @@ int pic_faceback;
 int pic_faces[ST_NUMFACES];
 int pic_keys[6];
 int pic_pause;
+//For Icons in Fullscreen HUD
+int pic_ammoicon[4];
+int pic_health;
+int pic_armor2;
 
 // CODE --------------------------------------------------------------------
 
@@ -244,6 +248,14 @@ void SB_StartMap(void)
 	pic_faces[ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
+
+	// Fullscreen HUD stuff
+	pic_ammoicon[0] = R_RegisterPic("CLIPA0", PIC_PATCH);
+	pic_ammoicon[1] = R_RegisterPic("SBOXA0", PIC_PATCH);
+	pic_ammoicon[2] = R_RegisterPic("CELLA0", PIC_PATCH);
+	pic_ammoicon[3] = R_RegisterPic("ROCKA0", PIC_PATCH);
+	pic_health = R_RegisterPic("STIMA0", PIC_PATCH);
+	pic_armor2 = R_RegisterPic("ARM2A0", PIC_PATCH);
 
 	st_faceindex = 0;
 	st_oldhealth = -1;
@@ -442,12 +454,61 @@ void SB_DrawFullscreenStats(void)
 {
 	// health
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl->health, 40, false);
+	R_DrawPic(10, 195, pic_health);
 
 	// armor
-	SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->ArmorPoints, 40, false);
+	if (cl->ArmorPoints)
+	{
+		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl->ArmorPoints, 40, false);
+		R_DrawPic(90, 195, pic_armor2);
+	}
 
-	// ready weapon ammo
+	// ready weapon ammo with icon
 	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl->ReadyAmmo, 40, false);
+	if ((cl->ReadyWeapon == wp_pistol) || (cl->ReadyWeapon == wp_chaingun))
+	{
+		R_DrawPic(260, 195, pic_ammoicon[0]);
+	}
+	else if ((cl->ReadyWeapon == wp_shotgun) || (cl->ReadyWeapon == wp_supershotgun))
+	{
+		R_DrawPic(260, 195, pic_ammoicon[1]);
+	}
+	else if ((cl->ReadyWeapon == wp_plasma) || (cl->ReadyWeapon == wp_bfg))
+	{
+		R_DrawPic(260, 195, pic_ammoicon[2]);
+	}
+	else if ((cl->ReadyWeapon == wp_missile)) //|| (cl->ReadyWeapon & wp_grenade))
+	{
+		R_DrawPic(260, 195, pic_ammoicon[3]);
+	}
+
+	// keys
+	if (cl->Stats.flags & SBF_BLUE_SKULL)
+	{
+		R_DrawPic(240, 190, pic_keys[3]);
+	}
+	else if (cl->Stats.flags & SBF_BLUE_CARD)
+	{
+		R_DrawPic(240, 190, pic_keys[0]);
+	}
+
+	if (cl->Stats.flags & SBF_YELLOW_SKULL)
+	{
+		R_DrawPic(230, 190, pic_keys[4]);
+	}
+	else if (cl->Stats.flags & SBF_YELLOW_CARD)
+	{
+		R_DrawPic(230, 190, pic_keys[1]);
+	}
+
+	if (cl->Stats.flags & SBF_RED_SKULL)
+	{
+		R_DrawPic(220, 190, pic_keys[5]);
+	}
+	else if (cl->Stats.flags & SBF_RED_CARD)
+	{
+		R_DrawPic(220, 190, pic_keys[2]);
+	}
 
 	if (deathmatch)
 	{
@@ -703,6 +764,9 @@ void SB_UpdateWidgets(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/04/04 07:44:03  dj_jl
+//  Improved fullscreen statusbar.
+//
 //  Revision 1.13  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //
