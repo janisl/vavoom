@@ -1161,7 +1161,7 @@ field_t* FindConstructor(TType *t)
 	field_t *fi = t->fields;
 	for (int i = 0; i < t->numfields; i++)
 	{
-		if (fi[i].Name == t->Name)
+		if (fi[i].type->type == ev_method && fi[i].ofs == 0)
 		{
 			return &fi[i];
 		}
@@ -1325,10 +1325,6 @@ static void AddVTable(TType *t)
 		memcpy(vtable, globals + t->aux_type->vtable,
 			t->aux_type->num_methods * 4);
 	}
-	else
-	{
-		vtable[0] = 1;
-	}
 	for (int i = 0; i < t->numfields; i++)
 	{
 		field_t &f = t->fields[i];
@@ -1341,6 +1337,10 @@ static void AddVTable(TType *t)
 			ParseError("Method %s::%s not defined", *t->Name, *f.Name);
 		}
 		vtable[f.ofs] = f.func_num;
+	}
+	if (!vtable[0])
+	{
+		ERR_Exit(ERR_NONE, false, "Missing defaultproperties");
 	}
 }
 
@@ -1366,9 +1366,12 @@ void AddVirtualTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2002/01/21 18:23:09  dj_jl
+//	Constructors with no names
+//
 //	Revision 1.19  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
-//
+//	
 //	Revision 1.18  2002/01/15 18:29:36  dj_jl
 //	no message
 //	

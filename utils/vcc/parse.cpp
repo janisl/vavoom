@@ -1304,7 +1304,7 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	methodtype.type = ev_method;
 	method->type = FindType(&methodtype);
 	method->ofs = 0;
-	method->Name = class_type->Name;
+	method->Name = NAME_None;
 	class_type->numfields++;
 
 	if (CheckForFunction(class_type, class_type->Name))
@@ -1316,7 +1316,6 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	int num = numfunctions;
 	numfunctions++;
 	method->func_num = num;
-	functions[num].Name = class_type->Name;
 	functions[num].OuterClass = class_type;
 	functions[num].type = FindType(&functype);
 	functions[num].first_statement = 0;
@@ -1535,9 +1534,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/01/21 18:23:09  dj_jl
+//	Constructors with no names
+//
 //	Revision 1.20  2002/01/17 18:19:52  dj_jl
 //	New style of adding to mobjinfo, some fixes
-//
+//	
 //	Revision 1.19  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
 //	

@@ -1267,7 +1267,7 @@ static TTree *ParseExpressionPriority1(void)
 		}
 		else if (TK_Check(PU_LPAREN))
 		{
-			return ParseIFunctionCall(op);
+			op = ParseIFunctionCall(op);
 		}
 		else
 		{
@@ -1801,9 +1801,12 @@ TType *ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/01/21 18:23:09  dj_jl
+//	Constructors with no names
+//
 //	Revision 1.17  2002/01/12 18:06:34  dj_jl
 //	New style of state functions, some other changes
-//
+//	
 //	Revision 1.16  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	
