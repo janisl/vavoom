@@ -500,6 +500,75 @@ void T_DrawText(int x, int y, const char* String)
 
 //==========================================================================
 //
+//	T_DrawTextW
+//
+//==========================================================================
+
+void T_DrawTextW(int x, int y, const char* String, int w)
+{
+	guard(T_DrawTextW);
+	int			start = 0;
+	int			cx;
+	int			cy;
+	char		cs[80];
+	int			i;
+	bool		wordStart = true;
+
+	cx = x;
+	cy = y;
+
+	//	These won't work correctly so don't use them for now.
+	if (VAlign == vcenter)
+		cy -= T_TextHeight(String) / 2;
+	if (VAlign == vbottom)
+		cy -= T_TextHeight(String);
+
+	//	Need this for correct cursor position with empty strings.
+	LastX = cx;
+	LastY = cy;
+
+	for (i = 0; String[i]; i++)
+	{
+		if (String[i] == '\n')
+		{
+			memset(cs, 0, sizeof(cs));
+			strncpy(cs, String + start, i - start);
+			T_DrawNString(cx, cy, cs, i - start);
+			cy += T_StringHeight(cs) + VDistance;
+			start = i + 1;
+			wordStart = true;
+		}
+		else if (wordStart && String[i] > ' ')
+		{
+			int j = i;
+			while (String[j] > ' ')
+				j++;
+			memset(cs, 0, sizeof(cs));
+			strncpy(cs, String + start, j - start);
+			if (T_StringWidth(cs) > w)
+			{
+				memset(cs, 0, sizeof(cs));
+				strncpy(cs, String + start, i - start);
+				T_DrawNString(cx, cy, cs, i - start);
+				cy += T_StringHeight(cs) + VDistance;
+				start = i;
+			}
+			wordStart = false;
+		}
+		else if (String[i] <= ' ')
+		{
+			wordStart = true;
+		}
+		if (!String[i + 1])
+		{
+			T_DrawNString(cx, cy, String + start, i - start + 1);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	T_DrawCursor
 //
 //==========================================================================
@@ -662,9 +731,12 @@ void T_DrawString640(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2003/09/26 16:58:42  dj_jl
+//	Wrapped text printing
+//
 //	Revision 1.12  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.11  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

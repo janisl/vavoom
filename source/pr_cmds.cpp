@@ -54,6 +54,7 @@ enum
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void T_DrawTextW(int x, int y, const char* String, int w);
 VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
@@ -2592,6 +2593,26 @@ PF(T_DrawNText)
 	T_DrawNText(x, y, (char*)txt, n);
 }
 
+//==========================================================================
+//
+//	PF_T_DrawTextW
+//
+//==========================================================================
+
+PF(T_DrawTextW)
+{
+	int			x;
+	int			y;
+	int			txt;
+	int			w;
+
+	w = Pop();
+	txt = Pop();
+	y = Pop();
+	x = Pop();
+	T_DrawTextW(x, y, (char*)txt, w);
+}
+
 //**************************************************************************
 //
 //	Client side sound
@@ -3008,6 +3029,7 @@ builtin_info_t BuiltinInfo[] =
 	_(T_TextHeight),
 	_(T_DrawText),
 	_(T_DrawNText),
+	_(T_DrawTextW),
 	__(T_DrawCursor),
 
 	//	Client side sound
@@ -3101,9 +3123,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2003/09/26 16:58:42  dj_jl
+//	Wrapped text printing
+//
 //	Revision 1.46  2003/07/11 16:45:20  dj_jl
 //	Made array of players with pointers
-//
+//	
 //	Revision 1.45  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	
