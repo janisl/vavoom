@@ -121,7 +121,7 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 	}
 
 	// check for players specially
-	if (mthing->type <= 4)
+	if (mthing->type <= 8)
 	{
 		// save spots for respawning in network games
 		CopyMThing(mthing, &level->playerstarts[mthing->arg1 * MAXPLAYERS +
@@ -316,6 +316,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.51  2003/09/12 16:46:11  dj_jl
+//  8 player starts
+//
 //  Revision 1.50  2002/11/02 08:22:38  dj_jl
 //  New style classes.
 //
