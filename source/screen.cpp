@@ -323,24 +323,23 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 
 COMMAND(ScreenShot)
 {
-    int		i;
+	int		i;
 	int		bpp;
 	bool	bot2top;
 	void	*data;
-    char	filename[16];
+	char	filename[128];
     
-    // find a file name to save it to
-
-    for (i=0; i <= 9999; i++)
-    {
+	//	Find a file name to save it to
+	for (i = 0; i <= 9999; i++)
+	{
 		sprintf(filename, "%s/shot%04d.pcx", fl_gamedir, i);
 		if (!Sys_FileExists(filename))
-	    	break;	// file doesn't exist
-    }
-    if (i == 100)
-    {
+			break;	//	File doesn't exist
+	}
+	if (i == 10000)
+	{
 		con << "Couldn't create a PCX";
-        return;
+		return;
 	}
     
     // save the pcx file
@@ -718,10 +717,13 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/07 16:47:44  dj_jl
+//	Fixed screenshots
+//
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
