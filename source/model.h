@@ -35,8 +35,6 @@
 #define IDPOLY2HEADER		(('2'<<24)+('P'<<16)+('D'<<8)+'I')
 #define ALIAS_VERSION		8
 
-#define MAX_SKIN_HEIGHT		480
-
 #define MAXALIASVERTS		2000	// TODO: tune this
 #define MAXALIASSTVERTS		2000	// TODO: tune this
 
@@ -115,9 +113,12 @@ void Mod_LoadSkin(const char *name, void **bufptr);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:18:05  dj_jl
+//	Removed MAX_SKIN_HEIGHT
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
