@@ -668,6 +668,7 @@ void PC_DumpAsm(char* name)
 	{
 		cname = buf;
 		fname = strstr(buf, "::") + 2;
+		fname[-2] = 0;
 	}
 	else
 	{
@@ -693,9 +694,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2003/09/24 16:44:26  dj_jl
+//	Fixed asm dump of class members
+//
 //	Revision 1.18  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
-//
+//	
 //	Revision 1.17  2002/02/26 17:52:20  dj_jl
 //	Exporting special property info into progs.
 //	
