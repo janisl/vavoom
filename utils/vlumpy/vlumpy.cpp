@@ -445,15 +445,15 @@ void GrabPatch(void)
 
 	int TransColor = 0;
 	patch_t* Patch = (patch_t*)Malloc(8 + 4 * w + w * h * 4);
-	Patch->width = w;
-	Patch->height = h;
-	Patch->leftoffset = leftoffset;
-	Patch->topoffset = topoffset;
+	Patch->width = LittleShort(w);
+	Patch->height = LittleShort(h);
+	Patch->leftoffset = LittleShort(leftoffset);
+	Patch->topoffset = LittleShort(topoffset);
 	column_t* Col = (column_t*)&Patch->columnofs[w];
 
 	for (int x = 0; x < w; x++)
 	{
-		Patch->columnofs[x] = (byte*)Col - (byte*)Patch;
+		Patch->columnofs[x] = LittleLong((byte*)Col - (byte*)Patch);
 		int y = 0;
 		int PrevTop = -1;
 		while (y < h)
@@ -775,9 +775,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/12/27 12:21:19  dj_jl
+//	Byte swapping for patches.
+//
 //	Revision 1.10  2003/11/03 07:20:30  dj_jl
 //	Grabbing of patches
-//
+//	
 //	Revision 1.9  2002/08/24 14:41:35  dj_jl
 //	Removed usage of the iostream.
 //	
