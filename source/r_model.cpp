@@ -38,6 +38,8 @@
 
 // TYPES -------------------------------------------------------------------
 
+#pragma pack(1)
+
 struct pcx_t
 {
 	char			manufacturer;
@@ -63,6 +65,24 @@ struct pcx_t
 	char			filler[58];
 	unsigned char	data;		// unbounded
 };
+
+struct tgaHeader_t
+{
+	byte id_length;
+	byte pal_type;
+	byte img_type;
+	word first_color;
+	word pal_colors;
+	byte pal_entry_size;
+	word left;
+	word top;
+	word width;
+	word height;
+	byte bpp;
+	byte descriptor_bits;
+};
+
+#pragma pack()
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -359,13 +379,65 @@ static void LoadPCX(const char *filename, void **bufptr)
 
 //==========================================================================
 //
+//	LoadTGA
+//
+//==========================================================================
+
+static void LoadTGA(const char *filename, void **bufptr)
+{
+	tgaHeader_t *hdr;
+	byte *data;
+
+	if (FL_ReadFile(filename, (void**)&hdr, PU_STATIC) < 0)
+		Sys_Error("Couldn't find skin %s", filename);
+
+	if (hdr->pal_type != 1 || hdr->img_type != 1 || hdr->bpp != 8)
+	{
+		Sys_Error("Not a 8 bit tga");
+	}
+
+	data = (byte*)(hdr + 1) + hdr->id_length +
+		hdr->pal_colors * (hdr->pal_entry_size >> 3);
+
+	SkinWidth = LittleShort(hdr->width);
+	SkinHeight = LittleShort(hdr->height);
+	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC, bufptr);
+
+	for (int y = SkinHeight; y; y--)
+	{
+		int yc = hdr->descriptor_bits & 0x20 ? SkinHeight - y : y - 1;
+		byte *dst = SkinData + yc * SkinWidth;
+
+		memcpy(dst, data, SkinWidth);
+		data += SkinWidth;
+	}
+
+	Z_Free(hdr);
+}
+
+//==========================================================================
+//
 //	Mod_LoadSkin
 //
 //==========================================================================
 
 void Mod_LoadSkin(const char *name, void **bufptr)
 {
-	LoadPCX(name, bufptr);
+	char ext[8];
+
+	FL_ExtractFileExtension(name, ext);
+	if (!strcmp(ext, "pcx"))
+	{
+		LoadPCX(name, bufptr);
+	}
+	else if (!strcmp(ext, "tga"))
+	{
+		LoadTGA(name, bufptr);
+	}
+	else
+	{
+		Sys_Error("Unsupported graphics format");
+	}
 }
 
 //==========================================================================
@@ -405,9 +477,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2001/09/20 16:24:16  dj_jl
+//	Added support for tga skins
+//
 //	Revision 1.1  2001/09/06 17:46:37  dj_jl
 //	no message
-//
+//	
 //	Revision 1.4  2001/08/15 17:18:05  dj_jl
 //	Removed MAX_SKIN_HEIGHT
 //	
