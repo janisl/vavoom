@@ -1567,14 +1567,16 @@ static void PF_PolyobjFinished(void)
 //
 //==========================================================================
 
-static void PF_StartSound(void)
+PF(StartSound)
 {
 	mobj_t*		mobj;
     int			sound;
+	int			channel;
 
+	channel = Pop();
     sound = Pop();
     mobj = (mobj_t*)Pop();
-	SV_StartSound(mobj, sound, 127);
+	SV_StartSound(mobj, sound, channel, 127);
 }
 
 //==========================================================================
@@ -1583,16 +1585,18 @@ static void PF_StartSound(void)
 //
 //==========================================================================
 
-static void PF_StartSoundAtVolume(void)
+PF(StartSoundAtVolume)
 {
 	mobj_t*		mobj;
     int			sound;
+	int			channel;
     int			vol;
 
     vol = Pop();
+	channel = Pop();
     sound = Pop();
     mobj = (mobj_t*)Pop();
-    SV_StartSound(mobj, sound, vol);
+    SV_StartSound(mobj, sound, channel, vol);
 }
 
 //==========================================================================
@@ -1601,12 +1605,14 @@ static void PF_StartSoundAtVolume(void)
 //
 //==========================================================================
 
-static void PF_StopSound(void)
+PF(StopSound)
 {
 	mobj_t*		mobj;
+	int			channel;
 
+	channel = Pop();
     mobj = (mobj_t*)Pop();
-    SV_StopSound(mobj);
+    SV_StopSound(mobj, channel);
 }
 
 //==========================================================================
@@ -2577,24 +2583,12 @@ void KeyNameForNum(int KeyNr, char* NameString);
 
 void StartSearch(void);
 void GetSlist(slist_t *slist);
-void DrawTextBox(char *string);
 
 int		mb_func;
 
 void ProgResponse(int key)
 {
 	clpr.Exec(mb_func, key);
-}
-
-PF(MB_StartMessage)
-{
-	int		str;
-	int		inp;
-
-	inp = Pop();
-	mb_func = Pop();
-	str = Pop();
-	MB_StartMessage(PROG_TO_STR(str), (void*)ProgResponse, inp);
 }
 
 PF(P_GetMapName)
@@ -2661,14 +2655,6 @@ PF(GetSlist)
 	GetSlist(slist);
 }
 
-PF(DrawTextBox)
-{
-	int		string;
-
-	string = Pop();
-	DrawTextBox(PROG_TO_STR(string));
-}
-
 void LoadTextLump(char *name, char *buf, int bufsize);
 
 PF(LoadTextLump)
@@ -2705,7 +2691,6 @@ PF(NewParticle)
 builtin_info_t BuiltinInfo[] =
 {
 #ifdef CLIENT
-	_(MB_StartMessage),
 	_(P_GetMapName),
 	_(KeyNameForNum),
 	_(IN_GetBindingKeys),
@@ -2713,7 +2698,6 @@ builtin_info_t BuiltinInfo[] =
 	_(SV_GetSaveString),
 	__(StartSearch),
 	_(GetSlist),
-	_(DrawTextBox),
 
 	_(LoadTextLump),
 	_(AllocDlight),
@@ -2909,9 +2893,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/30 17:45:35  dj_jl
+//	Sound channels, moving messsage box to progs
+//
 //	Revision 1.7  2001/08/23 17:47:22  dj_jl
 //	Started work on pics with custom palettes
-//
+//	
 //	Revision 1.6  2001/08/21 17:39:22  dj_jl
 //	Real string pointers in progs
 //	
