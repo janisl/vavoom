@@ -41,12 +41,15 @@ void ArchivePlayer(player_t * player)
 
 void UnarchivePlayer(player_t * player)
 {
-	player->Attacker = NULL;
+	player->Attacker = none;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2003/03/08 12:34:46  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.12  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

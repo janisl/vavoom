@@ -474,7 +474,7 @@ addfields player_t
 	bool WeaponOwned[NUMWEAPONS];
 
 	// Who did damage (NULL for floors/ceilings).
-	Actor *Attacker;
+	Actor Attacker;
 
 	// For screen flashing (red or bright).
 	float DamageFlash;
@@ -486,8 +486,8 @@ addfields player_t
 	int ArmorType;
 
 	int ChickenPeck;	// chicken peck countdown
-	Actor *Rain1;	// active rain maker 1
-	Actor *Rain2;	// active rain maker 2
+	Actor Rain1;	// active rain maker 1
+	Actor Rain2;	// active rain maker 2
 
 	int NewTorch;	// used in the torch flicker effect.
 	int NewTorchDelta;
@@ -533,6 +533,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2003/03/08 12:34:46  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.36  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -62,31 +62,31 @@ void A_AddPlayerRain(void)
 	if (player->Rain1 && player->Rain2)
 	{
 		// Terminate an active rain
-		if (player->Rain1->Health < player->Rain2->Health)
+		if (player->Rain1.Health < player->Rain2.Health)
 		{
-			if (player->Rain1->Health > 16)
+			if (player->Rain1.Health > 16)
 			{
-				player->Rain1->Health = 16;
+				player->Rain1.Health = 16;
 			}
-			player->Rain1 = NULL;
+			player->Rain1 = none;
 		}
 		else
 		{
-			if (player->Rain2->Health > 16)
+			if (player->Rain2.Health > 16)
 			{
-				player->Rain2->Health = 16;
+				player->Rain2.Health = 16;
 			}
-			player->Rain2 = NULL;
+			player->Rain2 = none;
 		}
 	}
 	// Add rain mobj to list
 	if (player->Rain1)
 	{
-		player->Rain2 = this;
+		player->Rain2 = self;
 	}
 	else
 	{
-		player->Rain1 = this;
+		player->Rain1 = self;
 	}
 }
 
@@ -129,13 +129,13 @@ void A_SkullRodStorm(void)
 			// Player is dead
 			return;
 		}
-		if (player->Rain1 == this)
+		if (player->Rain1 == self)
 		{
-			player->Rain1 = NULL;
+			player->Rain1 = none;
 		}
-		else if (player->Rain2 == this)
+		else if (player->Rain2 == self)
 		{
-			player->Rain2 = NULL;
+			player->Rain2 = none;
 		}
 		return;
 	}
@@ -198,6 +198,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:34:45  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

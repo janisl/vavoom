@@ -138,8 +138,8 @@ void G_PlayerExitMap(int player, bool clusterChange)
 	p->FixedColormap = 0;	// cancel ir gogles
 	p->DamageFlash = 0.0;	// no palette changes
 	p->BonusFlash = 0.0;
-	p->Rain1 = NULL;
-	p->Rain2 = NULL;
+	p->Rain1 = none;
+	p->Rain2 = none;
 
 	for (i = 0; i < p->InventorySlotNum; i++)
 	{
@@ -329,6 +329,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2003/03/08 12:34:46  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.36  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -155,8 +155,8 @@ void P_SpawnPlayer(mthing_t * mthing)
 	p->DamageFlash = 0.0;
 	p->BonusFlash = 0.0;
 	p->ChickenTime = 0.0;
-	p->Rain1 = NULL;
-	p->Rain2 = NULL;
+	p->Rain1 = none;
+	p->Rain2 = none;
 	p->ExtraLight = 0;
 	p->FixedColormap = 0;
 	p->ViewHeight = VIEWHEIGHT;
@@ -403,6 +403,9 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.50  2003/03/08 12:34:46  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.49  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -1691,10 +1691,10 @@ void DeathPlayerTick(float deltaTime)
 	}
 	CalcHeight(deltaTime);
 
-	if (Player->Attacker && Player->Attacker != this)
+	if (Player->Attacker && Player->Attacker != self)
 	{
-		angle = atan2(Player->Attacker->Origin.y - Origin.y,
-			Player->Attacker->Origin.x - Origin.x);
+		angle = atan2(Player->Attacker.Origin.y - Origin.y,
+			Player->Attacker.Origin.x - Origin.x);
 		delta = AngleMod180(angle - Angles.yaw);
 		if (delta < 5.0 && delta > -5.0)
 		{
@@ -1831,6 +1831,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/03/08 12:34:45  dj_jl
+//  Removing class pointers.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //
