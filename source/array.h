@@ -29,6 +29,11 @@
 
 enum ENoInit			{E_NoInit};
 
+template<class T> T Clamp(T val, T low, T high)
+{
+	return val < low ? low : val > high ? high : val;
+}
+
 //
 // Base dynamic array.
 //
@@ -366,12 +371,250 @@ template <class T> void* operator new(size_t, TArray<T>& Array, int Index)
 	return &Array[Index];
 }
 
+//==========================================================================
+//
+//	Dynamic strings.
+//
+//==========================================================================
+
+//
+// A dynamically sizeable string.
+//
+class FString : protected TArray<char>
+{
+public:
+	FString() : TArray<char>()
+	{}
+	FString(const FString& Other) : TArray<char>(Other.ArrayNum)
+	{
+		if (ArrayNum)
+			memcpy(&(*this)[0], &Other[0], ArrayNum * sizeof(char));
+	}
+	FString(const char* In) : TArray<char>(*In ? (strlen(In) + 1) : 0)
+	{
+		if (ArrayNum)
+			memcpy(&(*this)[0], In, ArrayNum * sizeof(char));
+	}
+	FString(ENoInit) : TArray<char>(E_NoInit)
+	{}
+	/*explicit FString( BYTE   Arg, INT Digits=1 );
+	explicit FString( SBYTE  Arg, INT Digits=1 );
+	explicit FString( _WORD  Arg, INT Digits=1 );
+	explicit FString( SWORD  Arg, INT Digits=1 );
+	explicit FString( INT    Arg, INT Digits=1 );
+	explicit FString( DWORD  Arg, INT Digits=1 );
+	explicit FString( FLOAT  Arg, INT Digits=1, INT RightDigits=0, UBOOL LeadZero=1 );
+	explicit FString( DOUBLE Arg, INT Digits=1, INT RightDigits=0, UBOOL LeadZero=1 );*/
+	FString& operator = (const char* Other)
+	{
+		if (&(*this)[0] != Other)
+		{
+			ArrayNum = ArrayMax = *Other ? strlen(Other) + 1 : 0;
+			Realloc(sizeof(char));
+			if (ArrayNum)
+				memcpy(&(*this)[0], Other, ArrayNum * sizeof(char));
+		}
+		return *this;
+	}
+	FString& operator = (const FString& Other)
+	{
+		if (this != &Other)
+		{
+			ArrayNum = ArrayMax = Other.Num();
+			Realloc(sizeof(char));
+			if (ArrayNum)
+				memcpy(&(*this)[0], *Other, ArrayNum * sizeof(char));
+		}
+		return *this;
+	}
+	~FString()
+	{
+		TArray<char>::Empty();		
+	}
+	void Empty()
+	{
+		TArray<char>::Empty();
+	}
+	void Shrink()
+	{
+		TArray<char>::Shrink();
+	}
+	const char* operator * () const
+	{
+		return Num() ? &(*this)[0] : "";
+	}
+	operator bool() const
+	{
+		return Num() != 0;
+	}
+	TArray<char>& GetCharArray()
+	{
+		//warning: Operations on the TArray<char> can be unsafe, such as adding
+		// non-terminating 0's or removing the terminating zero.
+		return (TArray<char>&)*this;
+	}
+	FString& operator += (const char* Str)
+	{
+		if (ArrayNum)
+		{
+			int Index = ArrayNum - 1;
+			Add(strlen(Str));
+			strcpy(&(*this)[Index], Str);
+		}
+		else if (*Str)
+		{
+			Add(strlen(Str) + 1);
+			strcpy(&(*this)[0], Str);
+		}
+		return *this;
+	}
+	FString& operator += (const FString& Str)
+	{
+		return operator += (*Str);
+	}
+	FString operator + (const char* Str)
+	{
+		return FString(*this) += Str;
+	}
+	FString operator + (const FString& Str)
+	{
+		return operator + (*Str);
+	}
+	FString& operator *= (const char* Str)
+	{
+		if (ArrayNum > 1 && (*this)[ArrayNum - 2] != '/')
+			*this += "/";
+		return *this += Str;
+	}
+	FString& operator *= (const FString& Str)
+	{
+		return operator *= (*Str);
+	}
+	FString operator * (const char* Str) const
+	{
+		return FString(*this) *= Str;
+	}
+	FString operator * (const FString& Str) const
+	{
+		return operator * (*Str);
+	}
+	bool operator == (const char* Other) const
+	{
+		return stricmp(**this, Other) == 0;
+	}
+	bool operator == (const FString& Other) const
+	{
+		return stricmp(**this, *Other) == 0;
+	}
+	bool operator != (const char* Other) const
+	{
+		return stricmp(**this, Other) != 0;
+	}
+	bool operator != (const FString& Other) const
+	{
+		return stricmp(**this, *Other) != 0;
+	}
+	int Len() const
+	{
+		return Num() ? Num() - 1 : 0;
+	}
+	FString Left(int Count) const
+	{
+		return FString(Clamp(Count, 0, Len()), **this);
+	}
+	FString LeftChop(int Count) const
+	{
+		return FString(Clamp(Len() - Count, 0, Len()), **this);
+	}
+	FString Right(int Count) const
+	{
+		return FString(**this + Len() - Clamp(Count, 0, Len()));
+	}
+	FString Mid(int Start, dword Count = MAXINT) const
+	{
+		dword End = Start + Count;
+		Start = Clamp((dword)Start, (dword)0,     (dword)Len());
+		End   = Clamp((dword)End,   (dword)Start, (dword)Len());
+		return FString(End - Start, **this + Start);
+	}
+	int InStr(const char* SubStr, bool Right = false) const
+	{
+		if (!Right)
+		{
+			char* Tmp = strstr(**this, SubStr);
+			return Tmp ? (Tmp - **this) : -1;
+		}
+		else
+		{
+			for (int i = Len() - 1; i >= 0; i--)
+			{
+				int j;
+				for (j = 0; SubStr[j]; j++)
+					if ((*this)[i + j] != SubStr[j])
+						break;
+				if (!SubStr[j])
+					return i;
+			}
+			return -1;
+		}
+	}
+	int InStr(const FString& SubStr, bool Right = false) const
+	{
+		return InStr(*SubStr, Right);
+	}
+	bool Split(const FString& InS, FString* LeftS, FString* RightS, bool Right = false) const
+	{
+		int InPos = InStr(InS, Right);
+		if (InPos < 0)
+			return 0;
+		if (LeftS)
+			*LeftS = Left(InPos);
+		if (RightS)
+			*RightS = Mid(InPos + InS.Len());
+		return 1;
+	}
+	FString Caps() const
+	{
+		FString New(**this);
+		for (int i = 0; i < ArrayNum; i++)
+			New[i] = toupper(New[i]);
+		return New;
+	}
+	FString Locs() const
+	{
+		FString New(**this);
+		for (int i = 0; i < ArrayNum; i++)
+			New[i] = tolower(New[i]);
+		return New;
+	}
+	//static FString Printf( const TCHAR* Fmt, ... );
+	//static FString Chr( TCHAR Ch );
+	//friend FArchive& operator<<( FArchive& Ar, FString& S );
+private:
+	FString(int InCount, const char* InSrc) 
+		: TArray<char>(InCount ? InCount + 1 : 0)
+	{
+		if (ArrayNum)
+		{
+			strncpy(&(*this)[0], InSrc, InCount);
+			(*this)[InCount] = 0;
+		}
+	}
+};
+/*inline DWORD GetTypeHash( const FString& S )
+{
+	return appStrihash(*S);
+}*/
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2002/01/11 18:24:01  dj_jl
+//	Added dynamic strings
+//
 //	Revision 1.2  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/12 19:26:40  dj_jl
 //	Added dynamic arrays
 //	
