@@ -31,7 +31,7 @@
 
 #define CODE_BUFFER_SIZE		(256 * 1024)
 #define	MAX_GLOBALS				(256 * 1024)
-#define MAX_STRINGS				2048
+#define MAX_STRINGS				4096
 #define	MAX_STRINGS_BUF			500000
 
 // TYPES -------------------------------------------------------------------
@@ -708,9 +708,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/09/27 17:05:24  dj_jl
+//	Increased strings limit
+//
 //	Revision 1.4  2001/09/20 16:09:55  dj_jl
 //	Added basic object-oriented support
-//
+//	
 //	Revision 1.3  2001/08/21 17:52:54  dj_jl
 //	Added support for real string pointers, beautification
 //	
