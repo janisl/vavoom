@@ -63,6 +63,9 @@ bool bInFloat;		// floating to a height for a move, don't
 bool bCountKill;	// count towards intermission kill total
 bool bCountItem;	// count towards intermission item total
 bool bOnMobj;		// mobj is resting on top of another mobj
+bool bActivateImpact;	// an MF_MISSILE mobj can activate
+						// SPAC_IMPACT
+bool bActivatePushWall;	// mobj can push walls
 bool bActivateMCross;	// can activate monster cross lines
 bool bActivatePCross;	// can activate projectile cross lines
 bool bDormant;		// thing is dormant
@@ -978,6 +981,73 @@ bool Touch(Entity InOther)
 	return !Other.bSolid;
 }
 
+//===========================================================================
+//
+//	CheckForPushSpecial
+//
+//===========================================================================
+
+void CheckForPushSpecial(line_t * line, int side)
+{
+	if (line->special)
+	{
+		if (bActivatePushWall)
+		{
+			P_ActivateLine(line, self, side, SPAC_PUSH);
+		}
+		else if (bActivateImpact)
+		{
+			P_ActivateLine(line, bMissile ? Instigator : self, side,
+				SPAC_IMPACT);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	BlockedByLine
+//
+//==========================================================================
+
+void BlockedByLine(line_t * ld)
+{
+	if (bBlasted)
+	{
+		Damage(none, none, ftoi(Mass) >> 5);
+	}
+	CheckForPushSpecial(ld, 0);
+}
+
+//==========================================================================
+//
+//  PushLine
+//
+//==========================================================================
+
+void PushLine()
+{
+	if (bColideWithWorld)
+	{
+		int numSpecHitTemp;
+		line_t *ld;
+		int side;
+
+		if (bBlasted)
+		{
+			Damage(none, none, ftoi(Mass) >> 5);
+		}
+		numSpecHitTemp = tmtrace->NumSpecHit;
+		while (numSpecHitTemp > 0)
+		{
+			numSpecHitTemp--;
+			// see if the line was crossed
+			ld = tmtrace->SpecHit[numSpecHitTemp];
+			side = PointOnPlaneSide(Origin, ld);
+			CheckForPushSpecial(ld, side);
+		}
+	}
+}
+
 //==========================================================================
 //
 //	CrossSpecialLine
@@ -998,7 +1068,7 @@ void CrossSpecialLine(line_t *ld, int side)
 	{
 		P_ActivateLine(ld, self, side, SPAC_PCROSS);
 	}
-	else if (ld->special == 70)
+	else if (ld->special == LNSPEC_Teleport)
 	{
 		//	Teleport hack
 		P_ActivateLine(ld, self, side, SPAC_MCROSS);
@@ -1365,7 +1435,7 @@ void ApplyFriction(void)
 		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
 			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
 		{
-			if (FloorZ != Sector->floorheight)
+			if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
 				return;
 		}
 	}
@@ -1386,19 +1456,32 @@ void ApplyFriction(void)
 	else
 	{
 		// slow down
-		if (WaterLevel > 1)
-		{
-			Velocity -= Velocity * (FRICTION_WATER * frametime);
-		}
-		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
-		{
-			Velocity -= Velocity * FRICTION_LOW * frametime;
-		}
-		else
-		{
-			Velocity -= Velocity * (FRICTION * frametime);
-		}
+		Velocity -= Velocity * (GetFriction() * frametime);
 	}
+}
+
+//===========================================================================
+//
+//  GetFriction
+//
+//===========================================================================
+
+float GetFriction()
+{
+	// slow down
+	if (WaterLevel > 1)
+	{
+		return FRICTION_WATER;
+	}
+	if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow)
+	{
+		return FRICTION_LOW;
+	}
+	if (Sector->special & SECSPEC_FRICTION_MASK)
+	{
+		return Sector->Friction;
+	}
+	return FRICTION;
 }
 
 //===========================================================================
@@ -3968,6 +4051,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/03/28 07:34:31  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.12  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

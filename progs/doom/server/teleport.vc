@@ -164,6 +164,10 @@ bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 				}
 				break;
 			}
+			if (A)
+			{
+				break;
+			}
 		}
 	}
 	if (!A)
@@ -495,6 +499,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2005/03/28 07:34:49  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.31  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

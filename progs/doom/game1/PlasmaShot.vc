@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlasmaShot:Projectile;
+class PlasmaShot : Projectile;
 
 __states__
 {
@@ -43,6 +43,7 @@ defaultproperties
 	Speed = 875.0;
 	MissileDamage = 5;
 	Translucency = 33;
+	bActivateImpact = true;
 	IdleState = S_PLASBALL;
 	DeathState = S_PLASEXP;
 	SightSound = 'PlasmaFire';
@@ -53,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:34:30  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

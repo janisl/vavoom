@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Rocket:Projectile;
+class Rocket : Projectile;
 
 __states__
 {
@@ -39,6 +39,7 @@ defaultproperties
 	Height = 8.0;
 	Speed = 700.0;
 	MissileDamage = 20;
+	bActivateImpact = true;
 	IdleState = S_ROCKET;
 	DeathState = S_EXPLODE1;
 	SightSound = 'LauncherFire';
@@ -49,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/03/28 07:34:30  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

@@ -232,10 +232,13 @@ void SpawnPuff(float x, float y, float z)
 {
 #if 1
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(svc_gun_shot);
-	MSG_WriteShort(ftoi(x));
-	MSG_WriteShort(ftoi(y));
-	MSG_WriteShort(ftoi(z));
+	if (MSG_CheckSpace(7))
+	{
+		MSG_WriteByte(svc_gun_shot);
+		MSG_WriteShort(ftoi(x));
+		MSG_WriteShort(ftoi(y));
+		MSG_WriteShort(ftoi(z));
+	}
 #else
 	Actor A;
 
@@ -441,6 +444,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.56  2005/03/28 07:34:49  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.55  2004/12/27 12:23:11  dj_jl
 //  Multiple small changes for version 1.16
 //

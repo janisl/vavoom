@@ -71,7 +71,8 @@ enum
 //
 //==========================================================================
 
-int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
+int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
 {
 	Platform	Plat;
 	int			SecNum;
@@ -80,33 +81,62 @@ int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
 
 	Rtn = false;
 
-	//  Activate all <type> plats that are in stasis.
-	if (Type == PLATEV_PerpetualRaise ||
-		Type == PLATEV_PerpetualRaiseLip ||
-		Type == PLATEV_Toggle)
+	if (!Arg1)
 	{
-		//  Activate in stasis
-		FOREACH(Platform, Plat)
+		if (!Line || !Line->backsector)
+			return false;
+
+		//  Activate all <type> plats that are in stasis.
+		if ((Type == PLATEV_PerpetualRaise ||
+			Type == PLATEV_PerpetualRaiseLip ||
+			Type == PLATEV_Toggle) && Platform(Line->backsector->FloorData))
 		{
-			Plat.ActivateInStasis(Arg1);
+			//  Activate in stasis
+			Platform(Line->backsector->FloorData).ActivateInStasis(Arg1);
+			if (Type == PLATEV_Toggle)
+			{
+				Rtn = true;
+			}
 		}
-		if (Type == PLATEV_Toggle)
+
+		if (!Line->backsector->FloorData)
 		{
-			Rtn = true;
+			// Find lowest & highest floors around sector
+			Rtn = 1;
+			Plat = NewSpecialThinker(Platform);
+			Plat.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
 	}
-
-	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = FindSectorFromTag(Arg1, SecNum))
+	else
 	{
-		Sec = &GLevel.Sectors[SecNum];
-		if (Sec->FloorData)
-			continue;
+		//  Activate all <type> plats that are in stasis.
+		if (Type == PLATEV_PerpetualRaise ||
+			Type == PLATEV_PerpetualRaiseLip ||
+			Type == PLATEV_Toggle)
+		{
+			//  Activate in stasis
+			FOREACH(Platform, Plat)
+			{
+				Plat.ActivateInStasis(Arg1);
+			}
+			if (Type == PLATEV_Toggle)
+			{
+				Rtn = true;
+			}
+		}
 
-		// Find lowest & highest floors around sector
-		Rtn = 1;
-		Plat = NewSpecialThinker(Platform);
-		Plat.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &GLevel.Sectors[SecNum];
+			if (Sec->FloorData)
+				continue;
+
+			// Find lowest & highest floors around sector
+			Rtn = 1;
+			Plat = NewSpecialThinker(Platform);
+			Plat.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		}
 	}
 	return Rtn;
 }
@@ -131,6 +161,9 @@ int EV_StopPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/03/28 07:34:49  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.16  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

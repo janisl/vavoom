@@ -59,8 +59,7 @@
 #include "Strobe.vc"
 #include "LightEffect.vc"
 #include "PhasedLight.vc"
-#include "FloorScroll.vc"
-#include "WallScroll.vc"
+#include "Scroller.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"
 #include "QuakeFocus.vc"
@@ -72,6 +71,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/03/28 07:34:49  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.7  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

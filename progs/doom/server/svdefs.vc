@@ -136,6 +136,12 @@ enum
 
 #define	BODYQUESIZE				32
 
+//
+// ------ Spec ------
+//
+
+#define MAX_TAGGED_LINES		1024
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -277,6 +283,11 @@ struct AttackType
 	classid Puff;
 };
 #endif
+
+addfields line_t
+{
+	int			LineTag;
+};
 
 #ifndef	NO_BOTS
 /*
@@ -430,6 +441,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2005/03/28 07:34:49  dj_jl
+//  Some Boom line specials and other improvements.
+//
 //  Revision 1.44  2004/11/22 07:36:25  dj_jl
 //  Implemented all sector specials in all games.
 //
