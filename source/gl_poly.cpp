@@ -358,6 +358,18 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	bool		lightmaped;
 	surface_t	*surf = r_surface;
 
+	lightmaped = surf->lightmap != NULL ||
+		surf->dlightframe == r_dlightframecount;
+
+	if (lightmaped)
+	{
+		CacheSurface(surf);
+		if (mtexable)
+		{
+			return;
+		}
+	}
+
 	if (texture & TEXF_FLAT)
 	{
 		SetFlat(texture);
@@ -366,9 +378,6 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 	{
 		SetTexture(texture);
 	}
-
-	lightmaped = surf->lightmap != NULL ||
-		surf->dlightframe == r_dlightframecount;
 
 	if (lightmaped)
 	{
@@ -388,11 +397,6 @@ void TOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		glVertex(cv[i]);
 	}
 	glEnd();
-
-	if (lightmaped)
-	{
-		CacheSurface(surf);
-	}
 }
 
 //==========================================================================
@@ -405,56 +409,125 @@ void TOpenGLDrawer::WorldDrawing(void)
 {
 	int			lb, i;
 	surfcache_t	*cache;
-	float		s, t;
+	GLfloat		s, t;
+	GLfloat		lights, lightt;
 	surface_t	*surf;
 	texinfo_t	*tex;
 
-	glDepthMask(0);		// don't bother writing Z
-	glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-	glEnable(GL_BLEND);
-	glColor4f(1, 1, 1, 1);
-
-	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	if (mtexable)
 	{
-		if (!light_chain[lb])
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		SelectTexture(1);
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+		SelectTexture(0);
+		glColor4f(1, 1, 1, 1);
+
+		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			continue;
-		}
-
-		glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		if (block_changed[lb])
-		{
-			block_changed[lb] = false;
-			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-				0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
-		}
-
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
-		{
-			surf = cache->surf;
-			tex = surf->texinfo;
-
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
+			if (!light_chain[lb])
 			{
-				TVec texpt = surf->verts[i] - tex->texorg;
-				s =	(DotProduct(texpt, tex->saxis) - surf->texturemins[0] +
-					cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
-				t =	(DotProduct(texpt, tex->taxis) - surf->texturemins[1] +
-					cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
-				glTexCoord2f(s, t);
-				glVertex(surf->verts[i]);
+				continue;
 			}
-			glEnd();
-		}
-	}
 
-	glDisable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask(1);		// back to normal Z buffering
+			SelectTexture(1);
+			glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			if (block_changed[lb])
+			{
+				block_changed[lb] = false;
+				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+			}
+			SelectTexture(0);
+
+			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			{
+				surf = cache->surf;
+				tex = surf->texinfo;
+
+				if (tex->pic & TEXF_FLAT)
+				{
+					SetFlat(tex->pic);
+				}
+				else
+				{
+					SetTexture(tex->pic);
+				}
+				glBegin(GL_POLYGON);
+				for (i = 0; i < surf->count; i++)
+				{
+					TVec texpt = surf->verts[i] - tex->texorg;
+					s = DotProduct(texpt, tex->saxis);
+					t = DotProduct(texpt, tex->taxis);
+					lights = (s - surf->texturemins[0] +
+						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+					lightt = (t - surf->texturemins[1] +
+						cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+					MultiTexCoord(0, s * tex_iw, t * tex_ih);
+					MultiTexCoord(1, lights, lightt);
+					glVertex(surf->verts[i]);
+				}
+				glEnd();
+			}
+		}
+
+		SelectTexture(1);
+		glDisable(GL_TEXTURE_2D);
+		SelectTexture(0);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+	else
+	{
+		glDepthMask(0);		// don't bother writing Z
+		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+		glEnable(GL_BLEND);
+		glColor4f(1, 1, 1, 1);
+
+		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+		{
+			if (!light_chain[lb])
+			{
+				continue;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			if (block_changed[lb])
+			{
+				block_changed[lb] = false;
+				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+			}
+
+			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			{
+				surf = cache->surf;
+				tex = surf->texinfo;
+
+				glBegin(GL_POLYGON);
+				for (i = 0; i < surf->count; i++)
+				{
+					TVec texpt = surf->verts[i] - tex->texorg;
+					s = (DotProduct(texpt, tex->saxis) - surf->texturemins[0] +
+						cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+					t = (DotProduct(texpt, tex->taxis) - surf->texturemins[1] +
+						cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+					glTexCoord2f(s, t);
+					glVertex(surf->verts[i]);
+				}
+				glEnd();
+			}
+		}
+
+		glDisable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(1);		// back to normal Z buffering
+	}
 }
 
 //==========================================================================
@@ -642,7 +715,8 @@ void TOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skinnum, dword light, int translucency)
+	model_t *model, int frame, int skinnum, dword light, int translucency,
+	bool is_view_model)
 {
 	mmdl_t		*pmdl;
 	mframe_t	*framedesc;
@@ -657,6 +731,12 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	float		shadelightb;
 	float		*shadedots;
 	float		alpha;
+
+	if (is_view_model)
+	{
+		// hack the depth range to prevent view model from poking into walls
+		glDepthRange(0.0, 0.3);
+	}
 
 	//
 	// get lighting information
@@ -747,6 +827,10 @@ void TOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 
 	glPopMatrix();
+	if (is_view_model)
+	{
+		glDepthRange(0.0, 1.0);
+	}
 }
 
 //==========================================================================
@@ -807,9 +891,13 @@ void TOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:31:16  dj_jl
+//	Added depth hack for weapon models
+//	Added support for multitexture extensions
+//
 //	Revision 1.4  2001/08/01 17:36:11  dj_jl
 //	Added alpha test to the particle drawing
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

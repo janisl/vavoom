@@ -34,6 +34,10 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+
 #include "gamedefs.h"
 #include "cl_local.h"
 #include "r_shared.h"
@@ -49,6 +53,20 @@
 #define NUM_CACHE_BLOCKS			4000
 
 // TYPES -------------------------------------------------------------------
+
+//
+//	Extensions
+//
+
+#if !GL_ARB_multitexture
+
+#define GL_TEXTURE0_ARB						0x84c0
+#define GL_TEXTURE1_ARB						0x84c1
+
+#endif
+
+typedef void (APIENTRY*MultiTexCoord2f_t)(GLenum, GLfloat, GLfloat);
+typedef void (APIENTRY*SelectTexture_t)(GLenum);
 
 struct surfcache_t
 {
@@ -107,7 +125,7 @@ class TOpenGLDrawer : public TDrawer
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int);
+	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, dword, int, bool);
 
 	//	Particles
 	void StartParticles(void);
@@ -174,11 +192,8 @@ class TOpenGLDrawer : public TDrawer
 
 	rgba_t		pal8_to24[256];
 
-	int			trickframe;
-
 	TCvarI		tex_linear;
 	TCvarI		clear;
-	TCvarI		ztrick;
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
@@ -187,6 +202,10 @@ class TOpenGLDrawer : public TDrawer
 	surfcache_t	*freeblocks;
 	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
+
+	//	Extensions
+	bool CheckExtension(const char*);
+	void *GetExtFuncPtr(const char*);
 
 	void FlushCaches(bool);
 	surfcache_t	*AllocBlock(int width, int height);
@@ -204,6 +223,19 @@ class TOpenGLDrawer : public TDrawer
 	void GeneratePicFromPatch(int);
 	void GeneratePicFromRaw(int);
 	void SetSkin(const char*);
+
+	bool				mtexable;
+	MultiTexCoord2f_t	p_MultiTexCoord2f;
+	SelectTexture_t		p_SelectTexture;
+
+	void MultiTexCoord(int level, GLfloat s, GLfloat t)
+	{
+		p_MultiTexCoord2f(GLenum(GL_TEXTURE0_ARB + level), s, t);
+	}
+	void SelectTexture(int level)
+	{
+		p_SelectTexture(GLenum(GL_TEXTURE0_ARB + level));
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -215,9 +247,13 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:31:16  dj_jl
+//	Added depth hack for weapon models
+//	Added support for multitexture extensions
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	
