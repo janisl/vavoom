@@ -110,8 +110,9 @@ void V_Shutdown(void)
 
 void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
 {
-	Drawer->FillRectWithFlat((int)(fScaleX * DestX), (int)(fScaleY * DestY),
-		(int)(fScaleX * width), (int)(fScaleY * height), fname);
+	Drawer->FillRectWithFlat(fScaleX * DestX, fScaleY * DestY,
+		fScaleX * (DestX + width), fScaleY * (DestY + height),
+		0, 0, width, height, fname);
 }
 
 //==========================================================================
@@ -131,9 +132,12 @@ void V_DarkenScreen(int darkening)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

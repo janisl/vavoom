@@ -119,17 +119,18 @@ void TDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void TDirect3DDrawer::FillRectWithFlat(int x, int y, int w, int h, const char* fname)
+void TDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, const char* fname)
 {
 	D3DLVERTEX	dv[4];
 	int l = 0xffffffff;
 
 	SetFlat(R_FlatNumForName(fname));
 
-	dv[0] = D3DLVERTEX(D3DVECTOR(x, y, 0), l, 0, 0, 0);
-	dv[1] = D3DLVERTEX(D3DVECTOR(x + w, y, 0), l, 0, w / 64.0, 0);
-	dv[2] = D3DLVERTEX(D3DVECTOR(x + w, y + h, 0), l, 0, w / 64.0, h / 64.0);
-	dv[3] = D3DLVERTEX(D3DVECTOR(x, y + h, 0), l, 0, 0, h / 64.0);
+	dv[0] = D3DLVERTEX(D3DVECTOR(x1, y1, 0), l, 0, s1 * tex_iw, t1 * tex_ih);
+	dv[1] = D3DLVERTEX(D3DVECTOR(x2, y1, 0), l, 0, s2 * tex_iw, t1 * tex_ih);
+	dv[2] = D3DLVERTEX(D3DVECTOR(x2, y2, 0), l, 0, s2 * tex_iw, t2 * tex_ih);
+	dv[3] = D3DLVERTEX(D3DVECTOR(x1, y2, 0), l, 0, s1 * tex_iw, t2 * tex_ih);
 
 	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_LVERTEX, dv, 4, 0);
 }
@@ -280,9 +281,12 @@ void TDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

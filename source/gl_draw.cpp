@@ -121,20 +121,21 @@ void TOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void TOpenGLDrawer::FillRectWithFlat(int x, int y, int width, int height, const char* fname)
+void TOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, const char* fname)
 {
 	SetFlat(R_FlatNumForName(fname));
 
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex2f(x, y);
-	glTexCoord2f(width / 64.0, 0);
-	glVertex2f(x + width, y);
-	glTexCoord2f(width / 64.0, height / 64.0);
-	glVertex2f(x + width, y + height);
-	glTexCoord2f(0, height / 64.0);
-	glVertex2f(x, y + height);
+	glTexCoord2f(s1 * tex_iw, t1 * tex_ih);
+	glVertex2f(x1, y1);
+	glTexCoord2f(s2 * tex_iw, t1 * tex_ih);
+	glVertex2f(x2, y1);
+	glTexCoord2f(s2 * tex_iw, t2 * tex_ih);
+	glVertex2f(x2, y2);
+	glTexCoord2f(s1 * tex_iw, t2 * tex_ih);
+	glVertex2f(x1, y2);
 	glEnd();
 }
 
@@ -278,9 +279,12 @@ void TOpenGLDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

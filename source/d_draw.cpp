@@ -63,7 +63,7 @@ static int				picwidth[MAX_PICS];
 //
 //==========================================================================
 
-void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -85,7 +85,7 @@ void D_DrawPicSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int coun
 //
 //==========================================================================
 
-void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -94,7 +94,7 @@ void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int 
 		byte color = src[s >> FRACBITS];
 		if (color)
 		{
-			*dest = ds_transluc[*dest + (color << 8)];
+			*dest = d_transluc[*dest + (color << 8)];
 		}
 		s += sstep;
 		dest++;
@@ -107,7 +107,7 @@ void D_DrawPicSpanFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int 
 //
 //==========================================================================
 
-void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -116,7 +116,7 @@ void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 		byte color = src[s >> FRACBITS];
 		if (color)
 		{
-			*dest = ds_transluc[(*dest << 8) + color];
+			*dest = d_transluc[(*dest << 8) + color];
 		}
 		s += sstep;
 		dest++;
@@ -129,7 +129,7 @@ void D_DrawPicSpanAltFuzz_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -152,7 +152,7 @@ void D_DrawPicSpanShadow_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, in
 //
 //==========================================================================
 
-void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> 10) & 0xfc0;
     byte *dest = scrn + x + y * ScreenWidth;
@@ -174,7 +174,7 @@ void D_DrawFlatSpan_8(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int cou
 //
 //==========================================================================
 
-void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
+static void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -201,7 +201,7 @@ void D_ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 //
 //==========================================================================
 
-void D_DrawConsoleBackground_8(int h)
+static void D_DrawConsoleBackground_8(int h)
 {
 	static byte *consbgmap = NULL;
     if (!consbgmap)
@@ -231,7 +231,7 @@ void D_DrawConsoleBackground_8(int h)
 //
 //==========================================================================
 
-void D_DrawPicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     word *dest = scrn16 + x + y * ScreenWidth;
@@ -253,7 +253,7 @@ void D_DrawPicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int cou
 //
 //==========================================================================
 
-void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
+static void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
 {
 	word *src = (word*)_src;
 	src += (t >> FRACBITS) * cachewidth;
@@ -276,7 +276,7 @@ void D_DrawSpritePicSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
+static void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *_src)
 {
 	dword *src = (dword*)_src;
 	src += (t >> FRACBITS) * cachewidth;
@@ -299,7 +299,7 @@ void D_DrawSpritePicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     word *dest = scrn16 + x + y * ScreenWidth;
@@ -315,9 +315,9 @@ void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int
 			byte r2 = GetColR(color16);
 			byte g2 = GetColG(color16);
 			byte b2 = GetColB(color16);
-			byte r = (r1 * ds_transluc16 + r2 * (100 - ds_transluc16)) / 100;
-			byte g = (g1 * ds_transluc16 + g2 * (100 - ds_transluc16)) / 100;
-			byte b = (b1 * ds_transluc16 + b2 * (100 - ds_transluc16)) / 100;
+			byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
+			byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
+			byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
 			*dest = MakeCol(r, g, b);
 		}
 		s += sstep;
@@ -331,7 +331,7 @@ void D_DrawPicSpanFuzz_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int
 //
 //==========================================================================
 
-void D_DrawPicSpanShadow_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanShadow_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     word *dest = scrn16 + x + y * ScreenWidth;
@@ -357,7 +357,7 @@ void D_DrawPicSpanShadow_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> 10) & 0xfc0;
     word *dest = scrn16 + x + y * ScreenWidth;
@@ -379,7 +379,7 @@ void D_DrawFlatSpan_16(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int co
 //
 //==========================================================================
 
-void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
+static void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -409,7 +409,7 @@ void D_ShadeRect_16(int xx, int yy, int ww, int hh, int darkening)
 //
 //==========================================================================
 
-void D_DrawConsoleBackground_16(int h)
+static void D_DrawConsoleBackground_16(int h)
 {
 	for (int y = 0; y < h; y++)
 	{
@@ -432,7 +432,7 @@ void D_DrawConsoleBackground_16(int h)
 //
 //==========================================================================
 
-void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     dword *dest = (dword*)scrn + x + y * ScreenWidth;
@@ -454,7 +454,7 @@ void D_DrawPicSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int cou
 //
 //==========================================================================
 
-void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     dword *dest = (dword*)scrn + x + y * ScreenWidth;
@@ -470,9 +470,9 @@ void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int
 			byte r2 = GetCol32R(color32);
 			byte g2 = GetCol32G(color32);
 			byte b2 = GetCol32B(color32);
-			byte r = (r1 * ds_transluc16 + r2 * (100 - ds_transluc16)) / 100;
-			byte g = (g1 * ds_transluc16 + g2 * (100 - ds_transluc16)) / 100;
-			byte b = (b1 * ds_transluc16 + b2 * (100 - ds_transluc16)) / 100;
+			byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
+			byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
+			byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
 			*dest = MakeCol32(r, g, b);
 		}
 		s += sstep;
@@ -486,7 +486,7 @@ void D_DrawPicSpanFuzz_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int
 //
 //==========================================================================
 
-void D_DrawPicSpanShadow_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawPicSpanShadow_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> FRACBITS) * cachewidth;
     dword *dest = (dword*)scrn + x + y * ScreenWidth;
@@ -512,7 +512,7 @@ void D_DrawPicSpanShadow_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, i
 //
 //==========================================================================
 
-void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
+static void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int count, byte *src)
 {
 	src += (t >> 10) & 0xfc0;
     dword *dest = (dword*)scrn + x + y * ScreenWidth;
@@ -534,7 +534,7 @@ void D_DrawFlatSpan_32(int x, int y, fixed_t s, fixed_t t, fixed_t sstep, int co
 //
 //==========================================================================
 
-void D_ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
+static void D_ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
 {
 	int x1 = xx;
 	int y1 = yy;
@@ -564,7 +564,7 @@ void D_ShadeRect_32(int xx, int yy, int ww, int hh, int darkening)
 //
 //==========================================================================
 
-void D_DrawConsoleBackground_32(int h)
+static void D_DrawConsoleBackground_32(int h)
 {
 	for (int y = 0; y < h; y++)
 	{
@@ -624,7 +624,7 @@ static void GeneratePicFromPatch(int handle)
 //
 //==========================================================================
 
-void GeneratePicFromRaw(int handle)
+static void GeneratePicFromRaw(int handle)
 {
 	picdata[handle] = (byte*)Z_Malloc(320 * 200, PU_CACHE, (void**)&picdata[handle]);
 	W_ReadLump(W_GetNumForName(pic_list[handle].name), picdata[handle]);
@@ -644,7 +644,7 @@ void GeneratePicFromRaw(int handle)
 //
 //==========================================================================
 
-void SetPic(int handle)
+static void SetPic(int handle)
 {
 	if (!picdata[handle])
 	{
@@ -669,7 +669,7 @@ void SetPic(int handle)
 //
 //==========================================================================
 
-void D_DrawPic(float x1, float y1, float x2, float y2,
+static void D_DrawPic(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2)
 {
 	if (x1 < 0)
@@ -744,12 +744,12 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		}
 		else if (trans < 45)
 		{
-			ds_transluc = tinttables[(trans - 5) / 10];
+			d_transluc = tinttables[(trans - 5) / 10];
 			picspanfunc = D_DrawPicSpanFuzz_8;
 		}
 		else if (trans < 95)
 		{
-			ds_transluc = tinttables[(94 - trans) / 10];
+			d_transluc = tinttables[(94 - trans) / 10];
 			picspanfunc = D_DrawPicSpanAltFuzz_8;
 		}
 		else
@@ -765,7 +765,9 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		}
 		else if (trans < 100)
 		{
-			ds_transluc16 = trans;
+			int trindex = trans * 31 / 100;
+			d_dsttranstab = scaletable[trindex];
+			d_srctranstab = scaletable[31 - trindex];
 			picspanfunc = D_DrawPicSpanFuzz_16;
 		}
 		else
@@ -781,7 +783,9 @@ void TSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		}
 		else if (trans < 100)
 		{
-			ds_transluc16 = trans;
+			int trindex = trans * 31 / 100;
+			d_dsttranstab = scaletable[trindex];
+			d_srctranstab = scaletable[31 - trindex];
 			picspanfunc = D_DrawPicSpanFuzz_32;
 		}
 		else
@@ -826,7 +830,8 @@ void TSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void TSoftwareDrawer::FillRectWithFlat(int DestX, int DestY, int width, int height, const char* fname)
+void TSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
+	float s1, float t1, float s2, float t2, const char* fname)
 {
 	SetFlat(R_FlatNumForName(fname));
 	picsource = (byte*)cacheblock;
@@ -842,7 +847,7 @@ void TSoftwareDrawer::FillRectWithFlat(int DestX, int DestY, int width, int heig
 	{
 		picspanfunc = D_DrawFlatSpan_32;
 	}
-	D_DrawPic(DestX, DestY, DestX + width, DestY + height, 0, 0, width, height);
+	D_DrawPic(x1, y1, x2, y2, s1, t1, s2, t2);
 }
 
 //==========================================================================
@@ -1208,9 +1213,12 @@ void TSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.4  2001/08/01 17:33:58  dj_jl
 //	Fixed drawing of spite lump for player setup menu, beautification
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -47,6 +47,16 @@ void D_Surf16Patch(void);
 void D_Surf32Start(void);
 void D_Surf32End(void);
 void D_Surf32Patch(void);
+
+void D_PolysetAff8Start(void);
+void D_PolysetAff8End(void);
+void D_Aff8Patch(void);
+void D_PolysetAff16Start(void);
+void D_PolysetAff16End(void);
+void D_Aff16Patch(void);
+void D_PolysetAff32Start(void);
+void D_PolysetAff32End(void);
+void D_Aff32Patch(void);
 }
 #endif
 
@@ -87,6 +97,11 @@ int						bppindex;
 int						viewwidth;
 int						viewheight;
 
+float					vrectx_adj;
+float					vrecty_adj;
+float					vrectw_adj;
+float					vrecth_adj;
+
 float					centerxfrac;
 float					centeryfrac;
 float					xprojection;
@@ -115,7 +130,6 @@ int						d_minmip;
 static TSoftwareDrawer	SoftwareDrawer;
 
 static TCvarI			d_subdiv("d_subdiv", "1", CVAR_ARCHIVE);
-static TCvarI			d_smooth("d_smooth", "0", CVAR_ARCHIVE);
 
 static TCvarI			d_mipcap("d_mipcap", "0");
 static TCvarF			d_mipscale("d_mipscale", "1");
@@ -227,6 +241,9 @@ void TSoftwareDrawer::InitResolution(void)
 		Sys_MakeCodeWriteable((long)D_Surf8Start,
 			(long)D_Surf8End - (long)D_Surf8Start);
 		D_Surf8Patch();
+		Sys_MakeCodeWriteable((long)D_PolysetAff8Start,
+			(long)D_PolysetAff8End - (long)D_PolysetAff8Start);
+		D_Aff8Patch();
 #endif
 	}
 	else if (ScreenBPP == 15)
@@ -244,6 +261,9 @@ void TSoftwareDrawer::InitResolution(void)
 		Sys_MakeCodeWriteable((long)D_Surf16Start,
 			(long)D_Surf16End - (long)D_Surf16Start);
 		D_Surf16Patch();
+		Sys_MakeCodeWriteable((long)D_PolysetAff16Start,
+			(long)D_PolysetAff16End - (long)D_PolysetAff16Start);
+		D_Aff16Patch();
 #endif
 	}
 	else if (ScreenBPP == 16)
@@ -261,6 +281,9 @@ void TSoftwareDrawer::InitResolution(void)
 		Sys_MakeCodeWriteable((long)D_Surf16Start,
 			(long)D_Surf16End - (long)D_Surf16Start);
 		D_Surf16Patch();
+		Sys_MakeCodeWriteable((long)D_PolysetAff16Start,
+			(long)D_PolysetAff16End - (long)D_PolysetAff16Start);
+		D_Aff16Patch();
 #endif
 	}
 	else if (ScreenBPP == 32)
@@ -281,6 +304,9 @@ void TSoftwareDrawer::InitResolution(void)
 		Sys_MakeCodeWriteable((long)D_Surf32Start,
 			(long)D_Surf32End - (long)D_Surf32Start);
 		D_Surf32Patch();
+		Sys_MakeCodeWriteable((long)D_PolysetAff32Start,
+			(long)D_PolysetAff32End - (long)D_PolysetAff32Start);
+		D_Aff32Patch();
 #endif
 	}
 	else
@@ -398,11 +424,19 @@ void TSoftwareDrawer::SetupView(const refdef_t *rd)
     centerxfrac = (float)(rd->width / 2) - 0.5;
     centeryfrac = (float)(rd->height / 2) - 0.5;
 
+    aliasxcenter = (float)(rd->width / 2);
+    aliasycenter = (float)(rd->height / 2);
+
 	xprojection = (float)(rd->width / 2) / rd->fovx;
 	yprojection = (float)(rd->height / 2) / rd->fovy;
 
 	viewwidth = rd->width;
 	viewheight = rd->height;
+
+	vrectx_adj = -0.5;
+	vrecty_adj = -0.5;
+	vrectw_adj = viewwidth - 0.5;
+	vrecth_adj = viewheight - 0.5;
 
     // Preclaculate all row offsets.
     for (i = 0; i < rd->height; i++)
@@ -587,9 +621,12 @@ void *TSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/02 17:45:37  dj_jl
 //	Added support for colored lit and translucent models
 //	

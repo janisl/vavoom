@@ -744,27 +744,6 @@ void *TDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 //==========================================================================
 //
-//	TDirect3DDrawer::InitWipe
-//
-//==========================================================================
-
-bool TDirect3DDrawer::InitWipe(void)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	TDirect3DDrawer::DoWipe
-//
-//==========================================================================
-
-void TDirect3DDrawer::DoWipe(int)
-{
-}
-
-//==========================================================================
-//
 //	TDirect3DDrawer::SetPalette
 //
 //==========================================================================
@@ -1708,9 +1687,12 @@ ostream &operator << (ostream &str, const LPDDPIXELFORMAT pf)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:29:54  dj_jl
 //	Fixed fog, beautification
 //	

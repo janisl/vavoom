@@ -195,12 +195,11 @@ static int		setheight;
 static int		setbpp;
 
 static TCvarI	menu_darkening("menu_darkening", "16", CVAR_ARCHIVE);
-static TCvarI	use_wipe("use_wipe", "2", CVAR_ARCHIVE);
 static TCvarI	draw_pause("draw_pause", "1");
 
-static TCvarI	screen_width("screen_width", "320", CVAR_ARCHIVE);
-static TCvarI	screen_height("screen_height", "200", CVAR_ARCHIVE);
-static TCvarI	screen_bpp("screen_bpp", "8", CVAR_ARCHIVE);
+static TCvarI	screen_width("screen_width", "0", CVAR_ARCHIVE);
+static TCvarI	screen_height("screen_height", "0", CVAR_ARCHIVE);
+static TCvarI	screen_bpp("screen_bpp", "0", CVAR_ARCHIVE);
 static TCvarI	brightness("brightness", "0", CVAR_ARCHIVE);
 
 static TCvarI	draw_fps("draw_fps", "0", CVAR_ARCHIVE);
@@ -332,7 +331,11 @@ COMMAND(ScreenShot)
 	//	Find a file name to save it to
 	for (i = 0; i <= 9999; i++)
 	{
+#ifdef DEVELOPER
+		sprintf(filename, "basev/shot%04d.pcx", i);
+#else
 		sprintf(filename, "%s/shot%04d.pcx", fl_gamedir, i);
+#endif
 		if (!Sys_FileExists(filename))
 			break;	//	File doesn't exist
 	}
@@ -454,13 +457,10 @@ static void ChangeResolution(int width, int height, int bpp)
    			if (!Drawer->SetResolution(0, 0, 0))
    				Sys_Error("ChangeResolution: Failed to set default resolution");
 			else
-           		con << "Setting default resolution " << width << "x" << height << "x" << bpp << ".\n";
+           		con << "Setting default resolution\n";
 	  	}
    	}
-   	else
-   	{
-   		con << "Setting resolution " << width << "x" << height << "x" << bpp << ".\n";
-   	}
+	con << ScreenWidth << "x" << ScreenHeight << "x" << ScreenBPP << ".\n";
 
 	screen_width = ScreenWidth;
 	screen_height = ScreenHeight;
@@ -582,8 +582,6 @@ void SCR_Init(void)
 
 void SCR_Update(void)
 {
-	boolean				wipe;
-
 	if (cls.state == ca_connected && cls.signon != SIGNONS)
 	{
 		return;
@@ -599,21 +597,6 @@ void SCR_Update(void)
 		Drawer->SetPalette(cl.palette);
 		scr_cur_pal = cl.palette;
 	}
-
-#if 0
-	// save the current screen if about to wipe
-	if (use_wipe > 0 && use_wipe < NUMWIPES && gamestate != wipegamestate)
-	{
-		wipe = Drawer->InitWipe();
-	}
-	else
-#endif
-	{
-		wipe = false;
-	}
-#if 0
-	wipegamestate = gamestate;
-#endif
 
 	// do buffered drawing
 	if (cls.state == ca_disconnected)
@@ -664,15 +647,7 @@ void SCR_Update(void)
 
 	DrawFPS();
 
-	if (wipe)
-	{
-		Drawer->DoWipe(use_wipe);
-	}
-	else
-	{
-		// normal update
-		Drawer->Update();              // page flip or blit buffer
-	}
+	Drawer->Update();              // page flip or blit buffer
 }
 
 //==========================================================================
@@ -717,9 +692,12 @@ void Draw_LoadIcon(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.5  2001/08/07 16:47:44  dj_jl
 //	Fixed screenshots
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine

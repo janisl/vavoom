@@ -111,6 +111,10 @@ void TOpenGLDrawer::InitResolution(void)
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
 
+	glClear(GL_COLOR_BUFFER_BIT);
+	Update();
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	glEnable(GL_TEXTURE_2D);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	GenerateTextures();
@@ -303,27 +307,6 @@ void TOpenGLDrawer::EndView(void)
 
 //==========================================================================
 //
-//	TOpenGLDrawer::InitWipe
-//
-//==========================================================================
-
-bool TOpenGLDrawer::InitWipe(void)
-{
-	return false;
-}
-
-//==========================================================================
-//
-//	TOpenGLDrawer::DoWipe
-//
-//==========================================================================
-
-void TOpenGLDrawer::DoWipe(int)
-{
-}
-
-//==========================================================================
-//
 //	TOpenGLDrawer::ReadScreen
 //
 //==========================================================================
@@ -368,9 +351,12 @@ void TOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.5  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.4  2001/08/04 17:32:04  dj_jl
 //	Added support for multitexture extensions
 //	

@@ -103,10 +103,6 @@ class TOpenGLDrawer : public TDrawer
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
 
-	//	Screen wipes
-	bool InitWipe(void);
-	void DoWipe(int);
-
 	//	Rendering stuff
 	void SetupView(const refdef_t*);
 	void WorldDrawing(void);
@@ -134,7 +130,7 @@ class TOpenGLDrawer : public TDrawer
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
-	void FillRectWithFlat(int, int, int, int, const char*);
+	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
@@ -239,9 +235,12 @@ class TOpenGLDrawer : public TDrawer
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:31:16  dj_jl
 //	Added depth hack for weapon models
 //	Added support for multitexture extensions

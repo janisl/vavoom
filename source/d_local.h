@@ -44,6 +44,16 @@
 
 #define	CACHE_SIZE			32
 
+#define ALIAS_Z_CLIP_PLANE	5
+
+// flags in finalvert_t.flags
+#define ALIAS_LEFT_CLIP				0x0001
+#define ALIAS_TOP_CLIP				0x0002
+#define ALIAS_RIGHT_CLIP			0x0004
+#define ALIAS_BOTTOM_CLIP			0x0008
+#define ALIAS_Z_CLIP				0x0010
+#define ALIAS_XY_CLIP_MASK			0x000F
+
 // TYPES -------------------------------------------------------------------
 
 struct miptexture_t
@@ -53,19 +63,19 @@ struct miptexture_t
 	dword	offsets[4];
 };
 
-struct sspan_t
-{
-	int			u;
-	int			v;
-	int			count;
-};
-
 struct espan_t
 {
 	int			u;
 	int			v;
 	int			count;
 	espan_t		*pnext;
+};
+
+struct sspan_t
+{
+	int			u;
+	int			v;
+	int			count;
 };
 
 struct surfcache_t
@@ -80,6 +90,41 @@ struct surfcache_t
 	float		mipscale;
 	int			texture;	// checked for animating textures
 	byte		data[4];	// width*height elements
+};
+
+struct finalvert_t
+{
+	int		u;
+	int		v;
+	int		zi;
+	int		r;
+	int		g;
+	int		b;
+	int		flags;
+	int		reserved;
+};
+
+struct finalstvert_t
+{
+	int			s;
+	int			t;
+};
+
+struct affinetridesc_t
+{
+	void				*pskin;
+	int					skinwidth;
+	int					skinheight;
+	mtriangle_t			*ptriangles;
+	finalvert_t			*pfinalverts;
+	finalstvert_t		*pstverts;
+	int					numtriangles;
+	boolean				coloredlight;
+};
+
+struct auxvert_t
+{
+	float	fv[3];		// viewspace x, y
 };
 
 typedef void (*spanfunc_t)(espan_t*);
@@ -104,10 +149,6 @@ class TSoftwareDrawer : public TDrawer
 	void Shutdown(void);
 	void* ReadScreen(int*, bool*);
 	void FreeSurfCache(surfcache_t*);
-
-	//	Screen wipes
-	bool InitWipe(void);
-	void DoWipe(int);
 
 	//	Rendering stuff
 	void SetupView(const refdef_t*);
@@ -136,7 +177,7 @@ class TSoftwareDrawer : public TDrawer
 	//	Drawing
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
-	void FillRectWithFlat(int, int, int, int, const char*);
+	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, boolean);
@@ -206,6 +247,11 @@ surfcache_t *D_CacheSurface(surface_t *surface, int miplevel);
 
 void SetSpriteLump(int, dword, int);
 
+extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
+void D_AliasClipTriangle(mtriangle_t *ptri);
+void D_PolysetSetupDrawer(int);
+extern "C" void D_PolysetDraw(void);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern float			d_zistepu;
@@ -223,8 +269,9 @@ extern fixed_t			bbextents;
 extern fixed_t			bbextentt;
 extern void*			cacheblock;
 extern int				cachewidth;
-extern byte*			ds_transluc;
-extern int				ds_transluc16;
+extern byte*			d_transluc;
+extern word*			d_srctranstab;
+extern word*			d_dsttranstab;
 
 extern int				ylookup[MAXSCREENHEIGHT];
 
@@ -243,6 +290,8 @@ extern float			centerxfrac;
 extern float			centeryfrac;
 extern float			xprojection;
 extern float			yprojection;
+extern float			aliasxcenter;
+extern float			aliasycenter;
 
 extern float			xscaleshrink;
 extern float			yscaleshrink;
@@ -267,6 +316,7 @@ extern byte				*fadetable32g;
 extern byte				*fadetable32b;
 
 extern byte				*tinttables[5];
+extern word				scaletable[32][256];
 
 extern byte				*scrn;
 extern word				*scrn16;
@@ -281,6 +331,8 @@ extern int				rshift;
 extern int				gshift;
 extern int				bshift;
 
+extern int				bppindex;
+
 extern int				black_color;
 
 extern byte				*d_rgbtable;
@@ -289,6 +341,16 @@ extern miptexture_t		*miptexture;
 
 extern int				viewwidth;
 extern int				viewheight;
+
+extern float			vrectx_adj;
+extern float			vrecty_adj;
+extern float			vrectw_adj;
+extern float			vrecth_adj;
+
+extern affinetridesc_t	d_affinetridesc;
+extern finalvert_t		*pfinalverts;
+extern finalstvert_t	*pfinalstverts;
+extern auxvert_t		*pauxverts;
 
 //==========================================================================
 //
@@ -445,9 +507,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
 //	

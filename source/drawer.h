@@ -114,10 +114,6 @@ class TDrawer
 	virtual void* ReadScreen(int*, bool*) = 0;
 	virtual void FreeSurfCache(surfcache_t*) = 0;
 
-	//	Screen wipes
-	virtual bool InitWipe(void) = 0;
-	virtual void DoWipe(int) = 0;
-
 	//	Rendring stuff
 	virtual void SetupView(const refdef_t*) = 0;
 	virtual void WorldDrawing(void) = 0;
@@ -144,7 +140,7 @@ class TDrawer
 	//	Drawing
 	virtual void DrawPic(float, float, float, float, float, float, float, float, int, int) = 0;
 	virtual void DrawPicShadow(float, float, float, float, float, float, float, float, int, int) = 0;
-	virtual void FillRectWithFlat(int, int, int, int, const char*) = 0;
+	virtual void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*) = 0;
 	virtual void ShadeRect(int, int, int, int, int) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
 	virtual void DrawSpriteLump(float, float, float, float, int, int, boolean) = 0;
@@ -167,9 +163,12 @@ extern TDrawer			*_Direct3DDrawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/08/15 17:15:55  dj_jl
+//	Drawer API changes, removed wipes
+//
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.5  2001/08/04 17:29:11  dj_jl
 //	Added depth hack for weapon models
 //	
