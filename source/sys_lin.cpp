@@ -250,6 +250,183 @@ void Sys_Shutdown(void)
 
 //==========================================================================
 //
+//	PutEndText
+//
+//	Function to write the Doom end message text
+//
+//	Copyright (C) 1998 by Udo Munk <udo@umserver.umnet.de>
+//
+//	This code is provided AS IS and there are no guarantees, none.
+//	Feel free to share and modify.
+//
+//==========================================================================
+
+static void PutEndText(const char *name)
+{
+	int i, j;
+	int att = 0;
+	int nlflag = 0;
+	char *text;
+	char *col;
+
+	/* if option -noendtxt is set, don't print the text */
+	if (M_CheckParm("-noendtxt"))
+		return;
+
+	/* if the xterm has more then 80 columns we need to add nl's */
+	col = getenv("COLUMNS");
+	if (col)
+	{
+		if (atoi(col) > 80)
+			nlflag++;
+	}
+
+	/* get the lump with the text */
+	text = (char*)W_CacheLumpName(name, PU_CACHE);
+
+	/* print 80x25 text and deal with the attributes too */
+	for (i = 1; i <= 80 * 25; i++, text += 2)
+	{
+		/* attribute first */
+		/* attribute changed? */
+		j = (byte)text[1];
+		if (j != att)
+		{
+			/* save current attribute */
+			att = j;
+			/* set new attribute, forground color first */
+			printf("\033[");
+			switch (j & 0x0f)
+			{
+			case 0:		/* black */
+				printf("30");
+				break;
+			case 1:		/* blue */
+				printf("34");
+				break;
+			case 2:		/* green */
+				printf("32");
+				break;
+			case 3:		/* cyan */
+				printf("36");
+				break;
+			case 4:		/* red */
+				printf("31");
+				break;
+			case 5:		/* magenta */
+				printf("35");
+				break;
+			case 6:		/* brown */
+				printf("33");
+				break;
+			case 7:		/* bright grey */
+				printf("37");
+				break;
+			case 8:		/* dark grey */
+				printf("1;30");
+				break;
+			case 9:		/* bright blue */
+				printf("1;34");
+				break;
+			case 10:	/* bright green */
+				printf("1;32");
+				break;
+			case 11:	/* bright cyan */
+				printf("1;36");
+				break;
+			case 12:	/* bright red */
+				printf("1;31");
+				break;
+			case 13:	/* bright magenta */
+				printf("1;35");
+				break;
+			case 14:	/* yellow */
+				printf("1;33");
+				break;
+			case 15:	/* white */
+				printf("1;37");
+				break;
+			}
+			printf("m");
+			/* now background color */
+			printf("\033[");
+			switch ((j >> 4) & 0x0f)
+			{
+			case 0:		/* black */
+				printf("40");
+				break;
+			case 1:		/* blue */
+				printf("44");
+				break;
+			case 2:		/* green */
+				printf("42");
+				break;
+			case 3:		/* cyan */
+				printf("46");
+				break;
+			case 4:		/* red */
+				printf("41");
+				break;
+			case 5:		/* magenta */
+				printf("45");
+				break;
+			case 6:		/* brown */
+				printf("43");
+				break;
+			case 7:		/* bright grey */
+				printf("47");
+				break;
+			case 8:		/* dark grey */
+				printf("1;40");
+				break;
+			case 9:		/* bright blue */
+				printf("1;44");
+				break;
+			case 10:	/* bright green */
+				printf("1;42");
+				break;
+			case 11:	/* bright cyan */
+				printf("1;46");
+				break;
+			case 12:	/* bright red */
+				printf("1;41");
+				break;
+			case 13:	/* bright magenta */
+				printf("1;45");
+				break;
+			case 14:	/* yellow */
+				printf("1;43");
+				break;
+			case 15:	/* white */
+				printf("1;47");
+				break;
+			}
+			printf("m");
+		}
+
+		/* now the text */
+		putchar(*text);
+
+		/* do we need a nl? */
+		if (nlflag)
+		{
+			if (!(i % 80))
+			{
+				printf("\033[0m");
+				att = 0;
+				printf("\n");
+			}
+		}
+	}
+	/* all attributes off */
+	printf("\033[0m");
+
+	if (nlflag)
+		printf("\n");
+}
+
+//==========================================================================
+//
 // 	Sys_Quit
 //
 // 	Shuts down net game, saves defaults, prints the exit text message,
@@ -261,6 +438,24 @@ void Sys_Quit(void)
 {
     // Shutdown system
 	Host_Shutdown();
+
+    // Throw the end text at the screen
+	if (W_CheckNumForName("ENDOOM") >= 0)
+    {
+	    PutEndText("ENDOOM");
+	}
+    else if (W_CheckNumForName("ENDTEXT") >= 0)
+    {
+	    PutEndText("ENDTEXT");
+	}
+    else if (W_CheckNumForName("ENDSTRF") >= 0)
+    {
+	    PutEndText("ENDSTRF");
+	}
+    else
+    {
+		printf("\nHexen: Beyound Heretic");
+	}
 
     // Exit
 	exit(0);
@@ -563,9 +758,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/30 17:41:00  dj_jl
+//	Added end text
+//
 //	Revision 1.5  2001/08/29 17:49:36  dj_jl
 //	Added file time functions
-//
+//	
 //	Revision 1.4  2001/08/23 17:42:53  dj_jl
 //	Directories now are created with full rights
 //	
