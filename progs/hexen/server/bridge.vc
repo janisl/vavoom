@@ -233,9 +233,9 @@ void Actor::A_BridgeInit(void)
 	ball3->args[0] = (startangle + 170) & 255;
 	ball3->target = this;
 
-	((Actor *)ball1)->A_BridgeOrbit();
-	((Actor *)ball2)->A_BridgeOrbit();
-	((Actor *)ball3)->A_BridgeOrbit();
+	Actor(*ball1).A_BridgeOrbit();
+	Actor(*ball2).A_BridgeOrbit();
+	Actor(*ball3).A_BridgeOrbit();
 }
 
 //==========================================================================
@@ -254,6 +254,9 @@ void A_BridgeRemove(mobj_t *actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/12 18:02:48  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.7  2002/01/07 12:25:57  dj_jl
 //  Changed copyright year
 //

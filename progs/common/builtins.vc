@@ -408,7 +408,7 @@ native boolean P_CheckSight(Entity * mobj1, Entity * mobj2);
 native void *NewSpecialThinker(classid);
 native void RemoveSpecialThinker(Thinker * spec);
 native void P_ChangeSwitchTexture(line_t * line, int useAgain);
-native Thinker *NextThinker(Thinker * last, classid id);
+native Thinker NextThinker(Thinker last, classid id);
 
 //
 //  Polyobj functions
@@ -465,6 +465,7 @@ native Entity *MobjToNum(Entity * mobj);
 native Entity *NumToMobj(Entity * mobj);
 native classid ClassIDToNum(classid cid);
 native classid NumToClassID(classid cid);
+native name UnarchiveName(name Name);
 
 native void G_ExitLevel(void);
 native void G_SecretExitLevel(void);
@@ -491,6 +492,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.24  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

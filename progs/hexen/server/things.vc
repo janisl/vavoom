@@ -506,7 +506,7 @@ int ThingCount(int type, int tid)
 {
 	int count;
 	int searcher;
-	mobj_t *mobj;
+	Entity Ent;
 	classid moType;
 
 	if (!(type + tid))
@@ -520,16 +520,16 @@ int ThingCount(int type, int tid)
 	if (tid)
 	{
 		// Count TID things
-		while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+		while ((Ent = *P_FindMobjFromTID(tid, &searcher)) != none)
 		{
 			if (type == 0)
 			{
 				// Just count TIDs
 				count++;
 			}
-			else if (moType == mobj->Class)
+			else if (moType == Ent.Class)
 			{
-				if (mobj->flags & MF_COUNTKILL && mobj->health <= 0)
+				if (Ent.flags & MF_COUNTKILL && Ent.health <= 0)
 				{
 					// Don't count dead monsters
 					continue;
@@ -541,14 +541,14 @@ int ThingCount(int type, int tid)
 	else
 	{
 		// Count only types
-		FOREACH(mobj_t, mobj)
+		FOREACH(Entity, Ent)
 		{
-			if (mobj->Class != moType)
+			if (Ent.Class != moType)
 			{
 				// Doesn't match
 				continue;
 			}
-			if (mobj->flags & MF_COUNTKILL && mobj->health <= 0)
+			if (Ent.flags & MF_COUNTKILL && Ent.health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -562,6 +562,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/01/12 18:02:48  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.11  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //

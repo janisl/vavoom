@@ -410,22 +410,22 @@ int EV_DoFloorAndCeiling(line_t * line, int *args, boolean raise)
 
 int EV_FloorCrushStop(line_t * line, int *args)
 {
-	FloorMover *floor;
+	FloorMover floor;
 	boolean rtn;
 
 	rtn = 0;
 	FOREACH(FloorMover, floor)
 	{
-		if (floor->type != FLEV_RAISEFLOORCRUSH)
+		if (floor.type != FLEV_RAISEFLOORCRUSH)
 		{
 			continue;
 		}
 		// Completely remove the crushing floor
-		SectorStopSequence(floor->sector);
-		floor->sector->specialdata = NULL;
-		floor->sector->specialdata = NULL;
-		TagFinished(floor->sector->tag);
-		RemoveSpecialThinker(floor);
+		SectorStopSequence(floor.sector);
+		floor.sector->specialdata = NULL;
+		floor.sector->specialdata = NULL;
+		TagFinished(floor.sector->tag);
+		RemoveSpecialThinker(&floor);
 		rtn = 1;
 	}
 	return rtn;
@@ -1217,6 +1217,9 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.9  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

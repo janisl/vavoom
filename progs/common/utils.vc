@@ -400,8 +400,8 @@ void UnarchiveThinker(Thinker * th)
 }
 
 #define FOREACH(type, var) \
-	for (var = (type *)NextThinker(NULL, type); var; \
-		var = (type *)NextThinker(var, type))
+	for (var = type(NextThinker(none, type)); var; \
+		var = type(NextThinker(var, type)))
 
 //==========================================================================
 //
@@ -429,6 +429,9 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.16  2002/01/07 12:19:56  dj_jl
 //  Changed copyright year
 //

@@ -236,15 +236,15 @@ int EV_DoPlat(line_t * line, int *args, int type)
 
 void EV_StopPlat(line_t * line, int *args)
 {
-	TPlat *plat;
+	TPlat plat;
 
 	FOREACH(TPlat, plat)
 	{
-		if (plat->tag = args[0])
+		if (plat.tag = args[0])
 		{
-			plat->sector->specialdata = NULL;
-			TagFinished(plat->sector->tag);
-			RemoveSpecialThinker(plat);
+			plat.sector->specialdata = NULL;
+			TagFinished(plat.sector->tag);
+			RemoveSpecialThinker(&plat);
 			return;
 		}
 	}
@@ -253,6 +253,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/01/12 18:02:48  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.7  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //

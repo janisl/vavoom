@@ -89,7 +89,7 @@ void A_PainShootSkull(mobj_t * actor, float angle)
 	}
 
 	newmobj->target = actor->target;
-	((Actor *)newmobj)->A_SkullAttack();
+	Actor(*newmobj).A_SkullAttack();
 }
 
 //==========================================================================
@@ -142,6 +142,9 @@ void Actor::A_PainDie(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.8  2002/01/07 12:21:11  dj_jl
 //  Changed copyright year
 //

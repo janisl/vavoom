@@ -169,13 +169,13 @@ void TPlat::Think(void)
 
 void P_ActivateInStasis(int tag)
 {
-	TPlat *plat;
+	TPlat plat;
 
 	FOREACH(TPlat, plat)
 	{
-		if ((plat->tag == tag) && (plat->status == PLAT_IN_STASIS))
+		if ((plat.tag == tag) && (plat.status == PLAT_IN_STASIS))
 		{
-			plat->status = plat->oldstatus;
+			plat.status = plat.oldstatus;
 		}
 	}
 }
@@ -299,14 +299,14 @@ int EV_DoPlat(line_t * line, int *args, int type)
 
 int EV_StopPlat(line_t * line, int *args)
 {
-	TPlat *plat;
+	TPlat plat;
 
 	FOREACH(TPlat, plat)
 	{
-		if ((plat->status != PLAT_IN_STASIS) && (plat->tag == args[0]))
+		if ((plat.status != PLAT_IN_STASIS) && (plat.tag == args[0]))
 		{
-			plat->oldstatus = plat->status;
-			plat->status = PLAT_IN_STASIS;
+			plat.oldstatus = plat.status;
+			plat.status = PLAT_IN_STASIS;
 		}
 	}
 	return 1;
@@ -315,6 +315,9 @@ int EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.9  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

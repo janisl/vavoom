@@ -191,7 +191,7 @@ void Actor::A_VileTarget(void)
 	tracer = fog;
 	fog->target = this;
 	fog->tracer = target;
-	((Actor *)fog)->A_Fire();
+	Actor(*fog).A_Fire();
 }
 
 //==========================================================================
@@ -326,6 +326,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/01/12 18:02:47  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.8  2002/01/11 18:19:40  dj_jl
 //  Started to use names in progs
 //

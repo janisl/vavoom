@@ -590,7 +590,7 @@ void Actor::A_FreezeDeathChunks(void)
 			mo->velocity.z = (mo->origin.z - origin.z) / height * 4.0 * 35.0;
 			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-			((Actor *)mo)->A_IceSetTics();	// set a random tic wait
+			Actor(*mo).A_IceSetTics();	// set a random tic wait
 		}
 	}
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
@@ -604,7 +604,7 @@ void Actor::A_FreezeDeathChunks(void)
 			mo->velocity.z = (mo->origin.z - origin.z) / height * 4.0 * 35.0;
 			mo->velocity.x = (Random() - Random()) * 2.0 * 35.0;
 			mo->velocity.y = (Random() - Random()) * 2.0 * 35.0;
-			((Actor *)mo)->A_IceSetTics();	// set a random tic wait
+			Actor(*mo).A_IceSetTics();	// set a random tic wait
 		}
 	}
 	if (player)
@@ -810,7 +810,7 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		case MT_DEMON2CHUNK5:
 		case MT_FIREDEMON_SPLOTCH1:
 		case MT_FIREDEMON_SPLOTCH2:
-			((Actor *)mo)->A_QueueCorpse();	// Add corpse to queue
+			Actor(*mo).A_QueueCorpse();	// Add corpse to queue
 			break;
 		default:
 			break;
@@ -821,6 +821,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/01/12 18:02:48  dj_jl
+//  Replaced some C style casts with dynamic casts
+//
 //  Revision 1.10  2002/01/11 18:19:42  dj_jl
 //  Started to use names in progs
 //
