@@ -111,14 +111,12 @@ static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
 
 static void KeyboardHandler(void)
 {
-	// Get the scan code
-
+	//	Get the scan code
 	keyboardque[kbdhead & (KBDQUESIZE - 1)] = inportb(0x60);
 	kbdhead++;
 
-	// acknowledge the interrupt
-
-    outportb(0x20, 0x20);
+	//	Acknowledge the interrupt
+	outportb(0x20, 0x20);
 }
 END_OF_FUNCTION(KeyboardHandler)
 
@@ -131,7 +129,6 @@ END_OF_FUNCTION(KeyboardHandler)
 static void ReadKeyboard(void)
 {
     unsigned char 	ch;
-//	static   int  	ctrl = 0;
 
     if (!keyboard_started)
     	return;
@@ -162,15 +159,6 @@ static void ReadKeyboard(void)
 		IN_KeyEvent(scantokey[nextkeyextended ? (ch | 0x80) : (ch & 0x7f)],
             !(ch & 0x80));
 		nextkeyextended = false;
-
-//		if (event.data1 == K_LCTRL || event.data1 == K_RCTRL)
-//  			ctrl = (event.type == ev_keydown);
-//	    if ((ctrl) && (ch & 0x7f == 0x2e)) // crtl-c
-//    	{
-//			asm ("movb $0x79, %%al
-//		     call ___djgpp_hw_exception"
-//		     : : :"%eax","%ebx","%ecx","%edx","%esi","%edi","memory");
-//	    }
 	}
 }
 
@@ -519,9 +507,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:48:54  dj_jl
+//	Beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

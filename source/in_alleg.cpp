@@ -123,24 +123,16 @@ END_OF_FUNCTION(KeyboardHandler)
 static void ReadKeyboard(void)
 {
     unsigned char 	ch;
-//	static   int  	ctrl = 0;
 
     if (!keyboard_started)
     	return;
 
 	while (kbdtail < kbdhead)
 	{
-	    ch = keyboardque[kbdtail&(KBDQUESIZE-1)];
+	    ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
 		kbdtail++;
 
 		IN_KeyEvent(scantokey[ch & 0x7f], !(ch & 0x80));
-
-//		if (event.data1 == K_LCTRL || event.data1 == K_RCTRL)
-//			ctrl = (event.type == ev_keydown);
-//	    if ((ctrl) && (ch == 0x2e)) // crtl-c
-//    	{
-//	    	raise(SIGINT);
-//	    }
 	}
 }
 
@@ -317,7 +309,7 @@ static void StartupJoystick(void)
 	}
 
 	//	Make sure that we really do have a joystick
-	if (joy_type == JOY_TYPE_NONE)
+	if (!num_joysticks)
 	{
 		return;
 	}
@@ -333,7 +325,7 @@ static void StartupJoystick(void)
 		IN_ReadKey();
 
 		// Initialize the joystick driver
-		if (install_joystick(joy_type))
+		if (install_joystick(JOY_TYPE_AUTODETECT))
 		{
 			Sys_Error("Error initialising joystick\n%s\n", allegro_error);
 		}
@@ -453,9 +445,12 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:48:54  dj_jl
+//	Beautification
+//
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

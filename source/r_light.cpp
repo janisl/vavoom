@@ -61,7 +61,6 @@ dword				blocklightsb[18 * 18];
 
 byte				light_remap[256];
 TCvarI				r_darken("r_darken", "1", CVAR_ARCHIVE);
-TCvarI				r_lens_flares("r_lens_flares", "0", CVAR_ARCHIVE);
 TCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
 
@@ -859,9 +858,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/07 16:48:54  dj_jl
+//	Beautification
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
