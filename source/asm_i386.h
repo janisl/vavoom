@@ -207,9 +207,9 @@
 .extern	C(rshift)
 .extern	C(gshift)
 .extern	C(bshift)
-.extern C(roffs)
-.extern C(goffs)
-.extern C(boffs)
+.extern	C(roffs)
+.extern	C(goffs)
+.extern	C(boffs)
 .extern	C(fadetable)
 .extern	C(fadetable16)
 .extern	C(fadetable16r)
@@ -237,9 +237,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:32:39  dj_jl
+//	Beautification
+//
 //	Revision 1.4  2001/08/02 17:41:19  dj_jl
 //	Added new asm for 32-bits
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

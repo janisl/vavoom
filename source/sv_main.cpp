@@ -1698,7 +1698,6 @@ void SV_SendServerInfo(player_t *player)
 
 	msg << (byte)svc_signonnum
 		<< (byte)1;
-	cond << "Server infp " << msg.CurSize << " bytes\n";
 	if (NET_SendMessage(player->netcon, &msg) == -1)
 	{
 		SV_DropClient(true);
@@ -2409,9 +2408,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/04 17:32:39  dj_jl
+//	Beautification
+//
 //	Revision 1.4  2001/08/02 17:46:38  dj_jl
 //	Added sending info about changed textures to new clients
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
