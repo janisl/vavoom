@@ -60,7 +60,7 @@ static sockaddr_t	broadcastaddr;
 static int			ipxsocket[IPXSOCKETS];
 static int			sequence[IPXSOCKETS];
 
-static byte			packetBuffer[NET_DATAGRAMSIZE + 4];
+static char			packetBuffer[NET_DATAGRAMSIZE + 4];
 
 // CODE --------------------------------------------------------------------
 
@@ -524,9 +524,12 @@ int WIPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/09 17:28:12  dj_jl
+//	no message
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
