@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 //**	
 //**	Refresh of things, i.e. objects represented by sprites.
@@ -139,6 +135,7 @@ static spritedef_t		sprites[MAX_SPRITE_MODELS];
 static TCvarI			r_draw_mobjs("r_draw_mobjs", "1", CVAR_ARCHIVE);
 static TCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_ARCHIVE);
 static TCvarI			r_models("r_models", "1", CVAR_ARCHIVE);
+static TCvarI			r_view_models("r_view_models", "1", CVAR_ARCHIVE);
 static TCvarI			r_sort_sprites("r_sort_sprites", "0");
 static TCvarI			croshair("croshair", "0", CVAR_ARCHIVE);
 static TCvarI			croshair_trans("croshair_trans", "0", CVAR_ARCHIVE);
@@ -685,7 +682,15 @@ static void RenderAliasModel(clmobj_t *mobj)
 		return;
 	}
 
-	dword light = R_LightPoint(mobj->origin);
+	dword light;
+	if (mobj->frame & FF_FULLBRIGHT || fixedlight)
+	{
+		light = 0xffffffff;
+	}
+	else
+	{
+		light = R_LightPoint(mobj->origin);
+	}
 
 	if (mobj->translucency)
 	{
@@ -952,21 +957,24 @@ static void RenderPSprite(cl_pspdef_t* psp)
 //
 //==========================================================================
 
-TCvarI		w_test("w_test", "0");
-TCvarI		w_frame("w_frame", "0");
-TCvarI		w_skin("w_skin", "0");
-TCvarS		w_model("w_model", "md2/v_dpistol/tris.md2");
-TCvarF		w_xscale("w_xscale", "32");
-TCvarF		w_yscale("w_yscale", "32");
-
 static void RenderViewModel(cl_pspdef_t *psp)
 {
-	TVec origin = vieworg + psp->sx * viewright / w_xscale -
-		psp->sy * viewup / w_yscale;
+	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 16.0 -
+		(psp->sy - 32.0) * viewup / 16.0;
 	TAVec angles = cl.viewangles;
 
-	Drawer->DrawAliasModel(origin, angles, Mod_ForName(w_model),
-		w_frame, w_skin, R_LightPoint(origin), cl.translucency);
+	dword light;
+	if (psp->frame & FF_FULLBRIGHT)
+	{
+		light = 0xffffffff;
+	}
+	else
+	{
+		light = R_LightPoint(origin);
+	}
+
+	Drawer->DrawAliasModel(origin, angles, psp->alias_model,
+		psp->alias_frame, 0, light, cl.translucency);
 }
 
 //==========================================================================
@@ -980,22 +988,24 @@ void R_DrawPlayerSprites(void)
     int         i;
     cl_pspdef_t	*psp;
 
-	if (w_test)
-	{
-		RenderViewModel(cl.psprites);
-	}
-
 	if (!r_draw_psprites || r_chasecam)
 	{
 		return;
 	}
 
-    // add all active psprites
-	for (i = 0, psp = cl.psprites; i < NUMPSPRITES; i++, psp++)
+	if (cl.psprites[0].alias_model && r_view_models)
 	{
-		if (psp->sprite != -1)
+		RenderViewModel(cl.psprites);
+	}
+	else
+	{
+	    // add all active psprites
+		for (i = 0, psp = cl.psprites; i < NUMPSPRITES; i++, psp++)
 		{
-			RenderPSprite(psp);
+			if (psp->sprite != -1)
+			{
+				RenderPSprite(psp);
+			}
 		}
 	}
 }
@@ -1047,3 +1057,13 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	Drawer->DrawSpriteLump(x, y, lump, translation, flip);
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/07/31 17:11:56  dj_jl
+//	Some fixes in model rendering
+//
+//	Revision 1.2  2001/07/27 14:27:54  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
