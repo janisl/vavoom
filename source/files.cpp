@@ -42,10 +42,9 @@ struct search_path_t
 struct version_t
 {
 	Game_t		game;
-    boolean		shareware;
     const char	*mainwad;
-	const char	*basegame;
 	const char	*gamedir;
+	const char	*checkparm;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -54,9 +53,9 @@ struct version_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+static void SetupGameDir(const char *dirname);
 
-extern TCvarI	shareware;
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -72,87 +71,75 @@ static version_t		games[] =
 {
 	{
 		Doom,
-        true,
         "doom1.wad",
-		"basev/doom",
 		"basev/doom1",
+		"-doom"
 	},
 	{
 		Doom,
-        false,
         "doom.wad",
-		"basev/doom",
 		"basev/doom1",
+		"-doom"
 	},
 	{
 		Doom,
-        false,
         "doomu.wad",
-		"basev/doom",
 		"basev/doom1",
+		"-doom"
 	},
 	{
 		Doom2,
-        false,
         "doom2.wad",
-		"basev/doom",
 		"basev/doom2",
+		"-doom2"
 	},
 	{
 		Doom2,
-        false,
         "doom2f.wad",
-		"basev/doom",
 		"basev/doom2",
+		"-doom2"
 	},
 	{
 		Doom2,
-        false,
         "tnt.wad",
-		"basev/doom",
 		"basev/tnt",
+		"-tnt"
 	},
 	{
 		Doom2,
-        false,
         "plutonia.wad",
-		"basev/doom",
 		"basev/plutonia",
+		"-plutonia"
 	},
 	{
 		Heretic,
-        true,
         "heretic1.wad",
-		NULL,
 		"basev/heretic",
+		"-heretic"
 	},
 	{
 		Heretic,
-        false,
         "heretic.wad",
-		NULL,
 		"basev/heretic",
+		"-heretic"
 	},
 	{
 		Hexen,
-        false,
         "hexen.wad",
-		NULL,
 		"basev/hexen",
+		"-hexen"
 	},
 	{
 		Strife,
-        true,
         "strife0.wad",
-		NULL,
 		"basev/strife",
+		"-strife"
 	},
 	{
 		Strife,
-        false,
         "strife1.wad",
-		NULL,
 		"basev/strife",
+		"-strife"
 	}
 };
 
@@ -209,6 +196,45 @@ static void AddGameDir(const char *dir)
 
 //==========================================================================
 //
+//	ParseBase
+//
+//==========================================================================
+
+static void ParseBase(const char *name)
+{
+	char		tmp[256];
+
+	if (!Sys_FileExists(name))
+	{
+		return;
+	}
+
+	SC_OpenFile(name);
+	SC_MustGetStringName("base");
+	SC_MustGetString();
+	strcpy(tmp, sc_String);
+	SC_MustGetStringName("end");
+	SC_Close();
+	SetupGameDir(tmp);
+}
+
+//==========================================================================
+//
+//	SetupGameDir
+//
+//==========================================================================
+
+static void SetupGameDir(const char *dirname)
+{
+	char		tmp[256];
+
+	sprintf(tmp, "%s/base.txt", dirname);
+	ParseBase(tmp);
+	AddGameDir(dirname);
+}
+
+//==========================================================================
+//
 //	IdentifyVersion
 //	Checks availability of IWAD files by name, to determine whether
 // registered/commercial features should be executed (notably loading PWAD's).
@@ -251,11 +277,8 @@ static void IdentifyVersion (void)
 	    if (Sys_FileExists(games[i].mainwad))
 	    {
 	        Game = games[i].game;
-	      	shareware = games[i].shareware;
 			FL_AddFile(games[i].mainwad);
-			if (games[i].basegame)
-				AddGameDir(games[i].basegame);
-			AddGameDir(games[i].gamedir);
+			SetupGameDir(games[i].gamedir);
 	      	return;
 	    }
     }
@@ -281,7 +304,7 @@ void FL_Init(void)
 	int p =	M_CheckParm("-game");
 	if (p && p < myargc - 1)
 	{
-		AddGameDir(myargv[p + 1]);
+		SetupGameDir(myargv[p + 1]);
 	}
 
 	p = M_CheckParm("-file");
@@ -588,9 +611,13 @@ int TFile::Close(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/04 17:26:59  dj_jl
+//	Removed shareware / ExtendedWAD from engine
+//	Added support for script base.txt in game directory
+//
 //	Revision 1.3  2001/07/31 17:08:37  dj_jl
 //	Reworking filesystem
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
