@@ -30,7 +30,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define USE640
+//#define USE640
 
 #define MAXHISTORY			32
 #define MAX_LINES			1024
@@ -811,9 +811,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2001/12/28 16:27:30  dj_jl
+//	Beautification
+//
 //	Revision 1.12  2001/12/18 19:05:03  dj_jl
 //	Made TCvar a pure C++ class
-//
+//	
 //	Revision 1.11  2001/12/04 18:11:59  dj_jl
 //	Fixes for compiling with MSVC
 //	
