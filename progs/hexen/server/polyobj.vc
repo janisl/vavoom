@@ -574,12 +574,12 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
+void PolyThrustMobj(Actor Other, TVec thrustDir, polyobj_t * po)
 {
 	float force;
 	PolyobjThinker pe;
 
-	if (!mobj->bShootable && !mobj->bIsPlayer)
+	if (!Other.bShootable && !Other.bIsPlayer)
 	{
 		return;
 	}
@@ -602,15 +602,15 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		force = 1.0;
 	}
 
-	mobj->Velocity += force * thrustDir;
+	Other.Velocity += force * thrustDir;
 	if (po->crush)
 	{
 		TVec testPos;
 
-		testPos = mobj->Origin + force * thrustDir * frametime;
-		if (!P_CheckRelPosition(mobj, testPos.x, testPos.y))
+		testPos = Other.Origin + force * thrustDir * frametime;
+		if (!Other.CheckRelPosition(testPos))
 		{
-			mobj->Damage(none, none, 3);
+			Other.Damage(none, none, 3);
 		}
 	}
 }
@@ -639,6 +639,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/02 18:00:16  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.17  2002/02/22 18:00:23  dj_jl
 //  A lots of the renaming, beautification.
 //

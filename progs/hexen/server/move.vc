@@ -49,7 +49,7 @@ boolean P_TestMobjLocation(mobj_t * mobj)
 	if (mobj->bNoClip)
 		return true;
 
-	if (CheckPosition(*mobj, mobj->Origin))
+	if (mobj->CheckPosition(mobj->Origin))
 	{
 		// XY is ok, now check Z
 		if ((mobj->Origin.z < mobj->FloorZ) ||
@@ -101,13 +101,13 @@ boolean Actor::Touch(MapObject InOther)
 				}
 				if (Other.bReflective && (Other.bIsPlayer || Other.bBoss))
 				{
-					SpecialMobj1 = &Owner;
+					Target = Owner;
 					Owner = Other;
 					return true;
 				}
 				if (Other.bCountKill || Other.bIsPlayer)
 				{
-					SpecialMobj1 = &Other;
+					Target = Other;
 				}
 				if (P_Random() < 96)
 				{
@@ -138,8 +138,8 @@ boolean Actor::Touch(MapObject InOther)
 				}
 				if (Other.Health <= 0)
 				{
-					Special1 = 0;
-					SpecialMobj1 = NULL;
+					_Special1 = 0;
+					Target = none;
 				}
 			}
 			return true;
@@ -187,7 +187,7 @@ boolean Actor::Touch(MapObject InOther)
 				return false;
 			}
 		}
-		if (Class ==  LightningFloor || Class == LightningCeiling)
+		if (Class == LightningFloor || Class == LightningCeiling)
 		{
 			if (Other.bShootable && Other != Owner)
 			{
@@ -233,14 +233,14 @@ boolean Actor::Touch(MapObject InOther)
 				}
 				if (Class == LightningFloor)
 				{
-					if (SpecialMobj2 && !SpecialMobj2->SpecialMobj1)
+					if (SpecialMobj2 && !SpecialMobj2->_SpecialMobj1)
 					{
-						SpecialMobj2->SpecialMobj1 = &Other;
+						SpecialMobj2->_SpecialMobj1 = &Other;
 					}
 				}
-				else if (!SpecialMobj1)
+				else if (!_SpecialMobj1)
 				{
-					SpecialMobj1 = &Other;
+					_SpecialMobj1 = &Other;
 				}
 			}
 			return true;	// lightning zaps through all sprites
@@ -257,14 +257,14 @@ boolean Actor::Touch(MapObject InOther)
 					if (lmo->Class == LightningFloor)
 					{
 						if (lmo->SpecialMobj2 &&
-							!lmo->SpecialMobj2->SpecialMobj1)
+							!lmo->SpecialMobj2->_SpecialMobj1)
 						{
-							lmo->SpecialMobj2->SpecialMobj1 = &Other;
+							lmo->SpecialMobj2->_SpecialMobj1 = &Other;
 						}
 					}
-					else if (!lmo->SpecialMobj1)
+					else if (!lmo->_SpecialMobj1)
 					{
-						lmo->SpecialMobj1 = &Other;
+						lmo->_SpecialMobj1 = &Other;
 					}
 					if (!(level->tictime & 3))
 					{
@@ -447,7 +447,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	int oldside;
 	line_t *ld;
 
-	check = P_CheckRelPosition(thing, x, y);
+	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
 	floatok = false;
 	saved_tmfloorz = tmtrace.FloorZ;
 	if (!check)
@@ -588,6 +588,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.22  2002/02/26 17:49:49  dj_jl
 //  no message
 //

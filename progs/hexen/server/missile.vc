@@ -253,8 +253,7 @@ Actor Actor::SpawnKoraxMissile(TVec org, Actor dest, classid type)
 //
 //  Actor::SeekerMissile
 //
-//  The missile specialmobj1 field must be mobj_t Enemy.  Returns true if
-// target was tracked, false if not.
+//  Returns true if target was tracked, false if not.
 //
 //==========================================================================
 
@@ -264,20 +263,18 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 	float dist;
 	float delta;
 	float angle;
-	mobj_t *target;
 
-	target = SpecialMobj1;
-	if (!target)
+	if (!Target)
 	{
 		return false;
 	}
-	if (!target->bShootable)
+	if (!Target.bShootable)
 	{
 		// Target died
-		SpecialMobj1 = NULL;
+		Target = none;
 		return false;
 	}
-	dir = FaceActor(*target, &delta);
+	dir = FaceActor(Target, &delta);
 	if (delta > thresh)
 	{
 		delta /= 2.0;
@@ -300,17 +297,17 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 	angle = Angles.yaw;
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
-	if (Origin.z + Height < target->Origin.z ||
-		target->Origin.z + target->Height < Origin.z)
+	if (Origin.z + Height < Target.Origin.z ||
+		Target.Origin.z + Target.Height < Origin.z)
 	{
 		// Need to seek vertically
-		dist = MobjDist2(*target, self);
+		dist = MobjDist2(Target, self);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
 			dist = 1.0;
 		}
-		Velocity.z = (target->Origin.z + target->Height / 2.0 -
+		Velocity.z = (Target.Origin.z + Target.Height / 2.0 -
 			Origin.z - Height / 2.0) / dist;
 	}
 	return true;
@@ -524,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.21  2002/02/26 17:49:49  dj_jl
 //  no message
 //

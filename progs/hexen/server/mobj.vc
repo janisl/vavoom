@@ -271,12 +271,7 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 		}
 		if (mthing->options & MTF_DORMANT)
 		{
-			bDormant = true;
-			if (Class == IceGuy)
-			{
-				SetState(S_ICEGUY_DORMANT);
-			}
-			StateTime = -1.0;
+			SetDormant();
 		}
 	}
 	else
@@ -287,11 +282,11 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 
 //==========================================================================
 //
-//	SpawnActor
+//	Spawn
 //
 //==========================================================================
 
-Actor SpawnActor(TVec position, classid type)
+Actor Spawn(classid type, TVec position)
 {
 	Actor A;
 
@@ -300,6 +295,7 @@ Actor SpawnActor(TVec position, classid type)
 	A.OnMapSpawn(NULL);
 	return A;
 }
+#define SpawnActor(position, type)	Spawn(type, position)
 
 //==========================================================================
 //
@@ -620,7 +616,7 @@ Actor Actor::ActiveMinotaur(void)
 			continue;
 		if ((level->tictime - mo.Args[0]) >= ftoi(MAULATORTIME * 35.0))
 			continue;
-		if (mo.SpecialMobj1 == this)
+		if (mo._SpecialMobj1 == this)
 			return mo;
 	}
 	return none;
@@ -726,23 +722,8 @@ void Actor::Kill(Actor source)
 			// Player ice death
 			Translation = 0;	//no translation
 			bIceCorpse  = true;
-			switch (Player->PClass)
-			{
-			case PCLASS_FIGHTER:
-				SetState(S_FPLAY_ICE);
-				return;
-			case PCLASS_CLERIC:
-				SetState(S_CPLAY_ICE);
-				return;
-			case PCLASS_MAGE:
-				SetState(S_MPLAY_ICE);
-				return;
-			case PCLASS_PIG:
-				SetState(S_PIG_ICE);
-				return;
-			default:
-				break;
-			}
+			SetState(IceDeathState);
+			return;
 		}
 	}
 	if (bFireDamage)
@@ -773,57 +754,16 @@ void Actor::Kill(Actor source)
 			return;
 		}
 	}
-	if (bIceDamage)
+	if (bIceDamage && IceDeathState)
 	{
 		bIceCorpse = true;
-		switch (Class)
-		{
-		case Bishop:
-			SetState(S_BISHOP_ICE);
-			return;
-		case Centaur:
-		case CentaurLeader:
-			SetState(S_CENTAUR_ICE);
-			return;
-		case Demon:
-		case Demon2:
-			SetState(S_DEMON_ICE);
-			return;
-		case Serpent:
-		case SerpentLeader:
-			SetState(S_SERPENT_ICE);
-			return;
-		case Wraith:
-		case WraithBuried:
-			SetState(S_WRAITH_ICE);
-			return;
-		case Ettin:
-			SetState(S_ETTIN_ICE1);
-			return;
-		case FireDemon:
-			SetState(S_FIRED_ICE1);
-			return;
-		case FighterBoss:
-			SetState(S_FIGHTER_ICE);
-			return;
-		case ClericBoss:
-			SetState(S_CLERIC_ICE);
-			return;
-		case MageBoss:
-			SetState(S_MAGE_ICE);
-			return;
-		case Pig:
-			SetState(S_PIG_ICE);
-			return;
-		default:
-			bIceCorpse = false;
-			break;
-		}
+		SetState(IceDeathState);
+		return;
 	}
 
 	if (Class == Minotaur)
 	{
-		master = SpecialMobj1;
+		master = _SpecialMobj1;
 		if (master->Health > 0)
 		{
 			if (!master->ActiveMinotaur())
@@ -909,7 +849,7 @@ boolean Actor::MorphPlayer(void)
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	beastMo = SpawnActor(Origin, PlayerPig);
-	beastMo.Special1 = Player->ReadyWeapon;
+	beastMo._Special1 = Player->ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
 	beastMo.bIsPlayer = true;
@@ -965,9 +905,9 @@ boolean Actor::MorphMonster(void)
 
 	monster = SpawnActor(Origin, Pig);
 	monster.SpecialCID = Class;
-	monster.Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
+	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.Translucency = Translucency;
-	monster.Enemy = Enemy;
+	monster.Target = Target;
 	monster.Angles.yaw = Angles.yaw;
 	monster.TID = TID;
 	monster.Special = Special;
@@ -980,7 +920,7 @@ boolean Actor::MorphMonster(void)
 	// check for turning off minotaur power for active icon
 	if (Class == Minotaur)
 	{
-		master = *SpecialMobj1;
+		master = *_SpecialMobj1;
 		if (master.Health > 0)
 		{
 			if (!master.ActiveMinotaur())
@@ -1190,7 +1130,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			damage >>= 1;
 			break;
 		case ShardMissile:
-			switch (inflictor.Special2)
+			switch (inflictor._Special2)
 			{
 			case 3:
 				damage <<= 3;
@@ -1350,7 +1290,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		if (source && (source.Class == Minotaur))
 		{
 			// Minotaur's kills go to his master
-			master = source.SpecialMobj1;
+			master = source._SpecialMobj1;
 			// Make sure still alive and not a pointer to fighter head
 			if (master->bIsPlayer && (master->Player->mo == master))
 			{
@@ -1422,7 +1362,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 		{
 			return;
 		}
-		Enemy = source;
+		Target = source;
 		Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
@@ -1533,7 +1473,7 @@ void Actor::PoisonDamage(Actor source, int damage, boolean playPainSound)
 	if (Health <= 0)
 	{
 		// Death
-		Special1 = damage;
+		_Special1 = damage;
 		if (bIsPlayer && inflictor && !Player->MorphTics)
 		{
 			// Check for flame death
@@ -1690,7 +1630,7 @@ boolean Actor::RaiseFromFloor(void)
 			break;
 		case ThrustFloorDown:
 		case ThrustFloorUp:
-			FloorClip -= itof(Special2);
+			FloorClip -= itof(_Special2);
 			break;
 		default:
 			FloorClip -= 2.0;
@@ -2268,6 +2208,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.35  2002/02/26 17:49:49  dj_jl
 //  no message
 //

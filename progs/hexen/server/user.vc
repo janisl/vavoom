@@ -56,14 +56,6 @@ mobj_t *LavaInflictor;
 
 boolean onground;
 
-// Y-adjustment values for full screen (4 weapons)
-float PSpriteSY[NUMCLASSES * NUMWEAPONS] = {
-	0.0, -12.0, -10.0, 10.0,	// Fighter
-	-8.0, 10.0, 10.0, 0.0,	// Cleric
-	9.0, 20.0, 20.0, 20.0,	// Mage
-	10.0, 10.0, 10.0, 10.0	// Pig
-};
-
 //==========================================================================
 //
 //  MovePlayer
@@ -766,10 +758,10 @@ void PlayerThink(player_t * player)
 				speedMo->Angles.yaw = pmo->Angles.yaw;
 				speedMo->Translation = pmo->Translation;
 				speedMo->Owner = *pmo;
-				speedMo->Special1 = player->PClass;
-				if (speedMo->Special1 > 2)
+				speedMo->_Special1 = player->PClass;
+				if (speedMo->_Special1 > 2)
 				{
-					speedMo->Special1 = 0;
+					speedMo->_Special1 = 0;
 				}
 				speedMo->SpriteIndex = pmo->SpriteIndex;
 				speedMo->FloorClip = pmo->FloorClip;
@@ -1675,7 +1667,7 @@ void G_PlayerExitMap(int playerNumber, boolean clusterChange)
 
 	if (player->MorphTics)
 	{
-		SetWeapon(player, player->mo->Special1);	// Restore weapon
+		SetWeapon(player, player->mo->_Special1);	// Restore weapon
 		player->MorphTics = 0;
 	}
 	player->mo->Angles.pitch = 0.0;
@@ -1863,13 +1855,13 @@ void SpawnClient(int i)
 	player->Attacker = NULL;
 	player->Poisoner = NULL;
 
-	player->ViewEnts[ps_weapon] = Spawn(Weapon, none);
+	player->ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
 	player->ViewEnts[ps_weapon].Player = player;
-	player->ViewEnts[ps_flash] = Spawn(Weapon, none);
+	player->ViewEnts[ps_flash] = SpawnObject(Weapon, none);
 	player->ViewEnts[ps_flash].Player = player;
 	if (players[i].bIsBot)
 	{
-		players[i].Bot = Spawn(BotPlayer, none);
+		players[i].Bot = SpawnObject(BotPlayer, none);
 		players[i].Bot.player = &players[i];
 		players[i].Bot.OnBeginPlay();
 	}
@@ -1973,6 +1965,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.28  2002/02/26 17:49:49  dj_jl
 //  no message
 //

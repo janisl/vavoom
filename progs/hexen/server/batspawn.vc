@@ -58,7 +58,7 @@
 
 void Actor::A_BatSpawnInit(void)
 {
-	Special1 = 0;	// Frequency count
+	_Special1 = 0;	// Frequency count
 }
 
 //===========================================================================
@@ -74,9 +74,9 @@ void Actor::A_BatSpawn(void)
 	float angle;
 
 	// Countdown until next spawn
-	if (Special1-- > 0)
+	if (_Special1-- > 0)
 		return;
-	Special1 = Args[0];	// Reset frequency count
+	_Special1 = Args[0];	// Reset frequency count
 
 	delta = itof(Args[1]);
 	if (delta == 0.0)
@@ -88,7 +88,7 @@ void Actor::A_BatSpawn(void)
 	{
 		mo.Args[0] = P_Random() & 63;	// floatbob index
 		mo.Args[4] = Args[4];	// turn degrees
-		mo.Special2 = Args[3] << 3;	// Set lifetime
+		mo._Special2 = Args[3] << 3;	// Set lifetime
 		mo.Owner = self;
 	}
 }
@@ -104,11 +104,11 @@ void Actor::A_BatMove(void)
 	float newangle;
 	float newSpeed;
 
-	if (Special2 < 0)
+	if (_Special2 < 0)
 	{
 		SetState(DeathState);
 	}
-	Special2 -= 2;	// Called every 2 tics
+	_Special2 -= 2;	// Called every 2 tics
 
 	if (P_Random() < 128)
 	{
@@ -135,6 +135,9 @@ void Actor::A_BatMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.15  2002/02/26 17:49:48  dj_jl
 //  no message
 //

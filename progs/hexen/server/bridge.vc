@@ -190,7 +190,7 @@ float orbitTableY[256] = {
 
 void Actor::A_BridgeOrbit(void)
 {
-	if (Owner.Special1)
+	if (Owner._Special1)
 	{
 		SetState(S_NULL);
 	}
@@ -214,7 +214,7 @@ void Actor::A_BridgeInit(void)
 	Actor ball3;
 
 	startangle = P_Random();
-	Special1 = 0;
+	_Special1 = 0;
 
 	// Spawn triad into world
 	ball1 = SpawnActor(Origin, BridgeBall);
@@ -242,7 +242,7 @@ void Actor::A_BridgeInit(void)
 
 void Actor::A_BridgeRemove(void)
 {
-	Special1 = true;	// Removing the bridge
+	_Special1 = true;	// Removing the bridge
 	bSolid = false;
 	SetState(S_FREE_BRIDGE1);
 }
@@ -250,6 +250,9 @@ void Actor::A_BridgeRemove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.15  2002/02/22 18:00:20  dj_jl
 //  A lots of the renaming, beautification.
 //

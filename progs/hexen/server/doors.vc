@@ -206,7 +206,7 @@ int EV_DoDoor(line_t * line, int *args, int type)
 //
 //==========================================================================
 
-boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
+boolean EV_VerticalDoor(line_t * line)
 {
 	sector_t *sec;
 	VerticalDoor Door;
@@ -257,6 +257,9 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.7  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

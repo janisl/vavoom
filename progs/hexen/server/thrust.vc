@@ -54,7 +54,7 @@
 
 void Actor::A_ThrustInitUp(void)
 {
-	Special2 = 5;	// Raise speed
+	_Special2 = 5;	// Raise speed
 	Args[0] = 1;	// Mark as up
 	FloorClip = 0.0;
 	bSolid = true;
@@ -62,7 +62,7 @@ void Actor::A_ThrustInitUp(void)
 	bNoTeleport = true;
 	bFloorClip = true;
 	//Flags2 = 0;
-	SpecialMobj1 = NULL;
+	_SpecialMobj1 = NULL;
 }
 
 //==========================================================================
@@ -75,7 +75,7 @@ void Actor::A_ThrustInitDn(void)
 {
 	Actor dirt;
 
-	Special2 = 5;	// Raise speed
+	_Special2 = 5;	// Raise speed
 	Args[0] = 0;	// Mark as down
 	FloorClip = Height;
 	//Flags = 0;
@@ -84,7 +84,7 @@ void Actor::A_ThrustInitDn(void)
 	//Flags2 = 0;
 	Translucency = 100;
 	dirt = SpawnActor(Origin, DirtClump);
-	SpecialMobj1 = &dirt;
+	_SpecialMobj1 = &dirt;
 }
 
 //==========================================================================
@@ -106,16 +106,16 @@ void Actor::A_ThrustRaise(void)
 	}
 
 	// Lose the dirt clump
-	if ((FloorClip < Height) && SpecialMobj1)
+	if ((FloorClip < Height) && _SpecialMobj1)
 	{
-		P_RemoveMobj(SpecialMobj1);
-		SpecialMobj1 = NULL;
+		P_RemoveMobj(_SpecialMobj1);
+		_SpecialMobj1 = NULL;
 	}
 
 	// Spawn some dirt
 	if (P_Random() < 40)
 		SpawnDirt(Radius);
-	Special2++;	// Increase raise speed
+	_Special2++;	// Increase raise speed
 }
 
 //==========================================================================
@@ -162,6 +162,9 @@ void Actor::A_ThrustImpale(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.13  2002/02/26 17:49:49  dj_jl
 //  no message
 //

@@ -216,7 +216,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 11:	// Door Open
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, mo);
+			buttonSuccess = EV_VerticalDoor(line);
 		}
 		else
 		{
@@ -226,7 +226,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 	case 12:	// Door Raise
 		if (!args[0])
 		{
-			buttonSuccess = EV_VerticalDoor(line, mo);
+			buttonSuccess = EV_VerticalDoor(line);
 		}
 		else
 		{
@@ -238,7 +238,7 @@ boolean ExecuteLineSpecial(int special, int *args, line_t * line, int side,
 		{
 			if (!args[0])
 			{
-				buttonSuccess = EV_VerticalDoor(line, mo);
+				buttonSuccess = EV_VerticalDoor(line);
 			}
 			else
 			{
@@ -745,6 +745,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/02 18:00:16  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.18  2002/02/26 17:49:49  dj_jl
 //  no message
 //

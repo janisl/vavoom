@@ -136,7 +136,7 @@ boolean Actor::HeightClip(void)
 
 	onfloor = (Origin.z == FloorZ);
 
-	P_CheckRelPosition(this, Origin.x, Origin.y);
+	CheckRelPosition(Origin);
 	// what about stranding a monster partially off an edge?
 
 	FloorZ = tmtrace.FloorZ;
@@ -1105,6 +1105,9 @@ void PIT_ThrustSpike(mobj_t * actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.22  2002/02/26 17:49:49  dj_jl
 //  no message
 //

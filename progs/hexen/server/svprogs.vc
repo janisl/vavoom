@@ -25,7 +25,6 @@
 
 #include <server.vc>
 
-#define mobj_t Actor
 #include "../hexndefs.vc"
 #include "svdefs.vc"
 
@@ -37,6 +36,7 @@
 #include "plats.vc"
 #include "polyobj.vc"
 #include "lights.vc"
+#define mobj_t Actor
 #include "spec.vc"
 
 #include "world.vc"
@@ -100,6 +100,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.10  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //

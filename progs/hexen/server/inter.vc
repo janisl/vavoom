@@ -97,7 +97,6 @@
 
 #define BONUSADD 	6
 
-void SetFighterAxe(player_t * player);
 void P_RemoveMobj(mobj_t * mobj);
 
 float ArmorMax[NUMCLASSES] = { 20.0, 18.0, 16.0, 1.0 };
@@ -197,10 +196,9 @@ boolean Actor::GiveMana(int mana, int count)
 	{
 		Player->Mana[mana] = MAX_MANA;
 	}
-	if (Player->PClass == PCLASS_FIGHTER && Player->ReadyWeapon == WP_SECOND
-		&& mana == MANA_1 && prevMana <= 0)
+	if (prevMana <= 0)
 	{
-		SetFighterAxe(Player);
+		Weapon(Player->ViewEnts[ps_weapon]).GotMana(mana);
 	}
 	return true;
 }
@@ -1011,6 +1009,9 @@ void Actor::TouchSpecial(Actor Toucher)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.16  2002/02/26 17:49:48  dj_jl
 //  no message
 //

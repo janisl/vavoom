@@ -51,7 +51,6 @@ class TLavaInflictor:mobj_t
 }
 
 void PostMorphWeapon(player_t * player, int weapon);
-void SetPspriteNF(player_t * player, int position, int stnum);
 
 int PStateAttack[NUMCLASSES] = {
 	S_FPLAY_ATK1,
@@ -97,7 +96,7 @@ void MorphPlayerThink(player_t * player)
 	if (!(pmo->Velocity.x + pmo->Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		SetPspriteNF(player, ps_weapon, S_SNOUTATK2);
+		Weapon(player->ViewEnts[ps_weapon]).SnoutSniff();
 		pmo->PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
@@ -138,7 +137,7 @@ boolean UndoPlayerMorph(player_t * player)
 	y = pmo->Origin.y;
 	z = pmo->Origin.z;
 	angle = pmo->Angles.yaw;
-	weapon = pmo->Special1;
+	weapon = pmo->_Special1;
 	OldbFly = pmo->bFly;
 	switch (player->BaseClass)
 	{
@@ -327,14 +326,14 @@ void DeathPlayerThink(player_t * player)
 		player->NewTorch = 0;
 		player->NewTorchDelta = 0;
 		player->PlayerState = PST_REBORN;
-		player->mo->Special1 = player->PClass;
-		if (player->mo->Special1 > 2)
+		player->mo->_Special1 = player->PClass;
+		if (player->mo->_Special1 > 2)
 		{
-			player->mo->Special1 = 0;
+			player->mo->_Special1 = 0;
 		}
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
-		player->mo->Special2 = 666;
+		player->mo->_Special2 = 666;
 	}
 }
 
@@ -383,7 +382,7 @@ void ArtiSummon(player_t * player)
 	if (mo)
 	{
 		mo.Owner = *player->mo;
-		mo.SpecialMobj1 = player->mo;
+		mo._SpecialMobj1 = player->mo;
 		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
@@ -503,7 +502,7 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 				return;
 				break;
 			case MageStaffFX2:	// Reflect to originator
-				victim->SpecialMobj1 = &victim->Owner;
+				victim->Target = victim->Owner;
 				victim->Owner = *source;
 				break;
 			default:
@@ -512,9 +511,9 @@ void BlastMobj(mobj_t * source, mobj_t * victim, float strength)
 		}
 		if (victim->Class == HolyFX)
 		{
-			if (victim->SpecialMobj1 == source)
+			if (victim->Target == *source)
 			{
-				victim->SpecialMobj1 = &victim->Owner;
+				victim->Target = victim->Owner;
 				victim->Owner = *source;
 			}
 		}
@@ -652,7 +651,7 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 	y = mthing->y;
 
 	players[playernum].mo->bNoPassMobj = true;
-	if (!CheckPosition(*players[playernum].mo, vector(x, y, ONFLOORZ)))
+	if (!players[playernum].mo->CheckPosition(vector(x, y, ONFLOORZ)))
 	{
 		players[playernum].mo->bNoPassMobj = false;
 		return false;
@@ -673,6 +672,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.21  2002/02/26 17:49:49  dj_jl
 //  no message
 //

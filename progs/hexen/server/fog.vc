@@ -59,10 +59,10 @@ void Actor::A_FogSpawn(void)
 	mobj_t *mo = NULL;
 	float delta;
 
-	if (Special1-- > 0)
+	if (_Special1-- > 0)
 		return;
 
-	Special1 = Args[2];	// Reset frequency count
+	_Special1 = Args[2];	// Reset frequency count
 
 	switch (P_Random() % 3)
 	{
@@ -90,7 +90,7 @@ void Actor::A_FogSpawn(void)
 		mo->Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
 		mo->Args[3] = Args[3];	// Set lifetime
 		mo->Args[4] = 1;	// Set to moving
-		mo->Special2 = P_Random() & 63;
+		mo->_Special2 = P_Random() & 63;
 	}
 }
 
@@ -117,9 +117,9 @@ void Actor::A_FogMove(void)
 
 	if ((Args[3] % 4) == 0)
 	{
-		weaveindex = Special2;
+		weaveindex = _Special2;
 		Origin.z += FloatBobOffsets[weaveindex] / 2.0;
-		Special2 = (weaveindex + 1) & 63;
+		_Special2 = (weaveindex + 1) & 63;
 	}
 
 	angle = Angles.yaw;
@@ -130,6 +130,9 @@ void Actor::A_FogMove(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.12  2002/02/22 18:00:21  dj_jl
 //  A lots of the renaming, beautification.
 //

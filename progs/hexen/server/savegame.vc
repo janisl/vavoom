@@ -58,25 +58,20 @@ void mobj_t::Archive(void)
 {
 	if (bCorpse)
 	{
-		Enemy = none;
+		Target = none;
 	}
 
 	switch (Class)
 	{
 		// Just	SpecialMobj1
-	case BishopMissile:
-	case HolyFX:
-	case Dragon:
 	case ThrustFloorUp:
 	case ThrustFloorDown:
 	case Minotaur:
-	case SorcererFX1:
-	case MageStaffFX2:
 		if (bCorpse)
 		{
-			SpecialMobj1 = NULL;
+			_SpecialMobj1 = NULL;
 		}
-		MobjToNum(&SpecialMobj1);
+		MobjToNum(&_SpecialMobj1);
 		break;
 
 		// Just specialmobj2
@@ -94,19 +89,19 @@ void mobj_t::Archive(void)
 	case LightningCeiling:
 		if (bCorpse)
 		{
-			SpecialMobj1 = NULL;
+			_SpecialMobj1 = NULL;
 			SpecialMobj2 = NULL;
 		}
 		else
 		{
-			MobjToNum(&SpecialMobj1);
+			MobjToNum(&_SpecialMobj1);
 			MobjToNum(&SpecialMobj2);
 		}
 		break;
 
 		// Miscellaneous
 	case Korax:
-		Special1 = 0;	// Searching index
+		_Special1 = 0;	// Searching index
 		break;
 
 	default:
@@ -125,14 +120,10 @@ void mobj_t::Unarchive(void)
 	switch (Class)
 	{
 		// Just	SpecialMobj1
-	case BishopMissile:
-	case HolyFX:
-	case Dragon:
 	case ThrustFloorUp:
 	case ThrustFloorDown:
 	case Minotaur:
-	case SorcererFX1:
-		NumToMobj(&SpecialMobj1);
+		NumToMobj(&_SpecialMobj1);
 		break;
 
 		// Just special2
@@ -144,7 +135,7 @@ void mobj_t::Unarchive(void)
 		// Both special1 and special2
 	case HolyTail:
 	case LightningCeiling:
-		NumToMobj(&SpecialMobj1);
+		NumToMobj(&_SpecialMobj1);
 		NumToMobj(&SpecialMobj2);
 		break;
 
@@ -156,6 +147,9 @@ void mobj_t::Unarchive(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/02 18:00:16  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.14  2002/02/26 17:49:49  dj_jl
 //  no message
 //

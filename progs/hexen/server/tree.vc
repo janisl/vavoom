@@ -56,7 +56,7 @@ void Actor::A_LeafSpawn(void)
 		{
 			mo->Thrust(Angles.yaw, Random() * 2.0 + 3.0);
 			mo->Owner = self;
-			mo->Special1 = 0;
+			mo->_Special1 = 0;
 		}
 	}
 }
@@ -84,8 +84,8 @@ void Actor::A_LeafThrust(void)
 
 void Actor::A_LeafCheck(void)
 {
-	Special1++;
-	if (Special1 >= 20)
+	_Special1++;
+	if (_Special1 >= 20)
 	{
 		SetState(S_NULL);
 		return;
@@ -130,6 +130,9 @@ void Actor::A_TreeDeath(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.14  2002/02/26 17:49:49  dj_jl
 //  no message
 //

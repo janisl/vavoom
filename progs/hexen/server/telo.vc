@@ -56,7 +56,7 @@ void Actor::A_TeloSpawnA(void)
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX2);
 	if (mo)
 	{
-		mo->Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		mo->Angles.yaw = Angles.yaw;
 		mo->Owner = Owner;
 		mo->Velocity = Velocity / 2.0;
@@ -76,7 +76,7 @@ void Actor::A_TeloSpawnB(void)
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX3);
 	if (mo)
 	{
-		mo->Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		mo->Angles.yaw = Angles.yaw;
 		mo->Owner = Owner;
 		mo->Velocity = Velocity / 2.0;
@@ -96,7 +96,7 @@ void Actor::A_TeloSpawnC(void)
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX4);
 	if (mo)
 	{
-		mo->Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		mo->Angles.yaw = Angles.yaw;
 		mo->Owner = Owner;
 		mo->Velocity = Velocity / 2.0;
@@ -116,7 +116,7 @@ void Actor::A_TeloSpawnD(void)
 	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z, TeleportOtherFX5);
 	if (mo)
 	{
-		mo->Special1 = TELEPORT_LIFE;	// Lifetime countdown
+		mo->_Special1 = TELEPORT_LIFE;	// Lifetime countdown
 		mo->Angles.yaw = Angles.yaw;
 		mo->Owner = Owner;
 		mo->Velocity = Velocity / 2.0;
@@ -131,7 +131,7 @@ void Actor::A_TeloSpawnD(void)
 
 void Actor::A_CheckTeleRing(void)
 {
-	if (Special1-- <= 0)
+	if (_Special1-- <= 0)
 	{
 		SetState(DeathState);
 	}
@@ -140,6 +140,9 @@ void Actor::A_CheckTeleRing(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.11  2002/02/22 18:00:24  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -595,7 +595,7 @@ boolean Actor::HitMobj(void)
 //				Velocity.z = -Velocity.z;
 				if (bSeekerMissile)
 				{
-					SpecialMobj1 = &Owner;
+					Target = Owner;
 				}
 				Owner = tmtrace.BlockingMobj;
 				return true;
@@ -884,13 +884,13 @@ void Actor::FakeZMovement(void)
 	//  adjust height
 	//
 	tzorg.z += Velocity.z * frametime;
-	if (bFloat && Enemy)
+	if (bFloat && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Enemy);
-			delta = Enemy.Origin.z + Height / 2.0 - tzorg.z;
+			dist = MobjDist2(self, Target);
+			delta = Target.Origin.z + Height / 2.0 - tzorg.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzorg.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
@@ -1170,13 +1170,13 @@ boolean Actor::ZMovement(void)
 	// adjust height
 	//
 	Origin.z += Velocity.z * frametime;
-	if (bFloat && Enemy)
+	if (bFloat && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Enemy);
-			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
+			dist = MobjDist2(self, Target);
+			delta = Target.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
 				Origin.z -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < delta * 3.0)
@@ -1317,9 +1317,9 @@ boolean Actor::BlasterPhysics(void)
 					}
 					P_SpawnMobj(Origin.x, Origin.y, z, MageWandSmoke);
 				}
-				else if (Class != MageWandMissile && !--Special1)
+				else if (Class != MageWandMissile && !--_Special1)
 				{
-					Special1 = 4;
+					_Special1 = 4;
 					z = Origin.z - 12.0;
 					if (z < FloorZ)
 					{
@@ -1474,6 +1474,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2002/03/02 18:00:15  dj_jl
+//  Some smaller changes, beautification.
+//
 //  Revision 1.26  2002/02/26 17:49:49  dj_jl
 //  no message
 //
