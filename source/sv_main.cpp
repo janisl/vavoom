@@ -1127,6 +1127,9 @@ void SV_SendClientDatagram(void)
 			continue;
 		}
 
+		if (!players[i].bNeedsUpdate)
+			continue;
+
 		msg.Clear();
 
 		msg << (byte)svc_time
@@ -2830,9 +2833,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2003/03/08 16:02:53  dj_jl
+//	A little multiplayer fix.
+//
 //	Revision 1.51  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
-//
+//	
 //	Revision 1.50  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

@@ -78,6 +78,7 @@ struct player_t
 	dword			bAttackDown:1;	// True if button down last tic.
 	dword			bUseDown:1;
 	dword			bDidSecret:1;	// True if secret level has been done.
+	dword			bNeedsUpdate:1;
 
 	qsocket_t		*NetCon;
 	TMessage		Message;
@@ -159,9 +160,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2003/03/08 16:02:52  dj_jl
+//	A little multiplayer fix.
+//
 //	Revision 1.16  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.15  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

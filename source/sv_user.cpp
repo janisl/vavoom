@@ -164,6 +164,7 @@ bool SV_ReadClientMessages(int clientnum)
 	byte		cmd_type;
 
 	sv_player = &players[clientnum];
+	sv_player->bNeedsUpdate = false;
 	do
 	{
 		ret = NET_GetMessage(sv_player->NetCon);
@@ -175,6 +176,8 @@ bool SV_ReadClientMessages(int clientnum)
 
 		if (ret == 0)
 			return true;
+
+		sv_player->bNeedsUpdate = true;
 
 		net_msg.BeginReading();
 
@@ -254,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2003/03/08 16:02:53  dj_jl
+//	A little multiplayer fix.
+//
 //	Revision 1.11  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.10  2002/07/13 07:50:58  dj_jl
 //	Added guarding.
 //	

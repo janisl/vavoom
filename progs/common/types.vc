@@ -388,6 +388,7 @@ struct player_t
 	bool bAttackDown;	// True if button down last tic.
 	bool bUseDown;
 	bool bDidSecret;	// True if secret level has been done.
+	bool bNeedsUpdate;
 
 	void *__NetCon;
 	int __Message[7];
@@ -757,6 +758,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2003/03/08 16:01:44  dj_jl
+//  A little multiplayer fix.
+//
 //  Revision 1.46  2003/03/08 12:15:40  dj_jl
 //  Menu code cleanup.
 //
