@@ -149,7 +149,7 @@ static void LoadBlockMap(int lump, sv_level_t &loadlevel)
 
 	// clear out mobj chains
 	count = loadlevel.bmapwidth * loadlevel.bmapheight;
-	loadlevel.blocklinks = Z_CNew<mobj_t*>(count, PU_LEVEL, 0);
+	loadlevel.blocklinks = Z_CNew<VMapObject*>(count, PU_LEVEL, 0);
 }
 
 #endif
@@ -1221,6 +1221,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2001/12/18 19:08:12  dj_jl
+//  Beautification
+//
 //  Revision 1.13  2001/12/01 17:48:09  dj_jl
 //  Added behaviorsize
 //

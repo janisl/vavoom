@@ -27,6 +27,14 @@
 
 // MACROS ------------------------------------------------------------------
 
+// Player macros shared with client
+
+#define MAXNAME			32
+
+#define IT_ALL_MAP		1
+
+#define NUM_CSHIFTS		8
+
 #define SIGNONS		4
 
 //
@@ -37,6 +45,18 @@
 #define BT_JUMP			4
 
 // TYPES -------------------------------------------------------------------
+
+//
+// Overlay psprites are scaled shapes
+// drawn directly on the view screen,
+// coordinates are given for a 320*200 view screen.
+//
+enum psprnum_t
+{
+    ps_weapon,
+    ps_flash,	//	Only DOOM uses it
+    NUMPSPRITES
+};
 
 // The data sampled per tick (single player)
 // and transmitted to other peers (multiplayer).
@@ -252,9 +272,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/12/18 19:08:12  dj_jl
+//	Beautification
+//
 //	Revision 1.5  2001/08/15 17:08:59  dj_jl
 //	Fixed finale
-//
+//	
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
