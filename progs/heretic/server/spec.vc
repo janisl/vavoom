@@ -515,32 +515,32 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 				continue;
 			switch (sector->special)
 			{
-			case 1:	// FLICKERING LIGHTS
+			case 1 + 64:	// FLICKERING LIGHTS
 				P_SpawnLightFlash(sector);
 				break;
-			case 2:	// STROBE FAST
+			case 2 + 64:	// STROBE FAST
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
 				break;
-			case 3:	// STROBE SLOW
+			case 3 + 64:	// STROBE SLOW
 				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 0);
 				break;
-			case 4:	// STROBE FAST/DEATH SLIME
+			case 4 + 64:	// STROBE FAST/DEATH SLIME
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 0);
 				sector->special = 4;
 				break;
-			case 8:	// GLOWING LIGHT
+			case 8 + 64:	// GLOWING LIGHT
 				P_SpawnGlowingLight(sector);
 				break;
-			case 10:	// DOOR CLOSE IN 30 SECONDS
+			case 10 + 64:	// DOOR CLOSE IN 30 SECONDS
 				P_SpawnDoorCloseIn30(sector);
 				break;
-			case 12:	// SYNC STROBE SLOW
+			case 12 + 64:	// SYNC STROBE SLOW
 				P_SpawnStrobeFlash(sector, SLOWDARK, STROBEBRIGHT, 1);
 				break;
-			case 13:	// SYNC STROBE FAST
+			case 13 + 64:	// SYNC STROBE FAST
 				P_SpawnStrobeFlash(sector, FASTDARK, STROBEBRIGHT, 1);
 				break;
-			case 14:	// DOOR RAISE IN 5 MINUTES
+			case 14 + 64:	// DOOR RAISE IN 5 MINUTES
 				P_SpawnDoorRaiseIn5Mins(sector, i);
 				break;
 			}
@@ -549,7 +549,7 @@ void P_SpawnSpecials(boolean spawn_thinkers)
 
 	for (i = 0; i < level->numsectors; i++)
 	{
-		if (level->sectors[i].special == 9)
+		if (level->sectors[i].special & SECRET_MASK)
 		{
 			// SECRET SECTOR
 			level->totalsecret++;
@@ -676,15 +676,15 @@ void P_UpdateSpecials(void)
 		sec = &level->sectors[i];
 		switch (sec->special)
 		{
-		case 20:
-		case 21:
-		case 22:
-		case 23:
-		case 24:	// Scroll_East
+		case 20 + 205:
+		case 21 + 205:
+		case 22 + 205:
+		case 23 + 205:
+		case 24 + 205:	// Scroll_East
 			xoffs = (63 - scrollOffset) << (sec->special - 20) & 63;
 			yoffs = 0;
 			break;
-		case 4:	// Scroll_EastLavaDamage
+		case 84:	// Scroll_EastLavaDamage
 			xoffs = ((63 - scrollOffset) << 3) & 63;
 			yoffs = 0;
 			break;
@@ -828,6 +828,9 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/28 18:29:29  dj_jl
+//  Translated sector specials.
+//
 //  Revision 1.18  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

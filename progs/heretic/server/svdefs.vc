@@ -91,6 +91,8 @@ enum
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
 
+#define SECRET_MASK		0x0400
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -839,6 +841,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2002/03/28 18:31:13  dj_jl
+//  Translated sector specials.
+//
 //  Revision 1.28  2002/03/20 19:07:47  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

@@ -265,6 +265,52 @@ void TranslateLine(line_t * line)
 
 //==========================================================================
 //
+//	TranslateSector
+//
+//==========================================================================
+
+void TranslateSector(sector_t *sector)
+{
+	int special;
+	int high;
+
+	special = sector->special;
+	if (special == 9)
+	{
+		sector->special = SECRET_MASK;
+		return;
+	}
+
+	high = (special & 0xfc0) << 3;
+	special &= 0x3f;
+	if (special == 5)
+	{
+		sector->special = high | 82;
+	}
+	else if (special == 16)
+	{
+		sector->special = high | 83;
+	}
+	else if (special == 4)
+	{
+		sector->special = high | 84;
+	}
+	else if (special < 20)
+	{
+		sector->special = high | (special + 64);
+	}
+	else if (special < 40)
+	{
+		sector->special = high | (special + 205);
+	}
+	else
+	{
+		sector->special = high | special;
+	}
+}
+
+//==========================================================================
+//
 //  TranslateThing
 //
 //==========================================================================
@@ -299,6 +345,11 @@ void TranslateLevel(void)
 		TranslateLine(&level->lines[i]);
 	}
 
+	for (i = 0; i < level->numsectors; i++)
+	{
+		TranslateSector(&level->sectors[i]);
+	}
+
 	for (i = 0; i < level->numthings; i++)
 	{
 		TranslateThing(&level->things[i]);
@@ -308,6 +359,9 @@ void TranslateLevel(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2002/03/28 18:29:30  dj_jl
+//  Translated sector specials.
+//
 //  Revision 1.5  2002/01/07 12:23:18  dj_jl
 //  Changed copyright year
 //
