@@ -38,17 +38,17 @@ enum
 #define MAX_INFO_STRING		1024
 
 #define CVAR_ARCHIVE		1	//	Set to cause it to be saved to vavoom.cfg
-#define	CVAR_USERINFO		2	//	Added to userinfo  when changed
-#define	CVAR_SERVERINFO		4	//	Added to serverinfo when changed
-#define	CVAR_INIT			8	//	Don't allow change from console at all,
+#define CVAR_USERINFO		2	//	Added to userinfo  when changed
+#define CVAR_SERVERINFO		4	//	Added to serverinfo when changed
+#define CVAR_INIT			8	//	Don't allow change from console at all,
 								// but can be set from the command line
-#define	CVAR_LATCH			16	//	Save changes until server restart
-#define	CVAR_ROM			32	//	Display only, cannot be set by user at all
+#define CVAR_LATCH			16	//	Save changes until server restart
+#define CVAR_ROM			32	//	Display only, cannot be set by user at all
 #define CVAR_CHEAT			64	//	Can not be changed if cheats are disabled
 #define CVAR_MODIFIED		128	//	Set each time the cvar is changed
 
-#define MININT	  0x80000000
-#define MAXINT	  0x7fffffff
+#define MININT				0x80000000
+#define MAXINT				0x7fffffff
 
 #define TICRATE				35
 
@@ -96,7 +96,7 @@ enum
 //  Frame flags:
 //  handles maximum brightness (torches, muzzle flare, light sources)
 //
-#define FF_FULLBRIGHT   0x80	// flag in thing->frame
+#define FF_FULLBRIGHT	0x80	// flag in thing->frame
 #define FF_FRAMEMASK	0x7f
 
 enum
@@ -109,8 +109,8 @@ enum
 //
 // Button/action code definitions.
 //
-#define	BT_ATTACK		1	// Press "Fire".
-#define	BT_USE			2	// Use button, to open doors, activate switches.
+#define BT_ATTACK		1	// Press "Fire".
+#define BT_USE			2	// Use button, to open doors, activate switches.
 #define BT_JUMP			4
 
 //
@@ -150,26 +150,33 @@ enum
 };
 
 #define MAXDEATHMATCHSTARTS		16
-#define MAX_PLAYER_STARTS 		8
+#define MAX_PLAYER_STARTS		8
 
 #define MAXRADIUS		32.0
 
 //
 // LineDef attributes.
 //
-#define	ML_BLOCKING			0x0001	// Solid, is an obstacle.
-#define	ML_BLOCKMONSTERS	0x0002	// Blocks monsters only.
-#define	ML_TWOSIDED			0x0004	// Backside will not be present at all
-#define	ML_DONTPEGTOP		0x0008	// upper texture unpegged
-#define	ML_DONTPEGBOTTOM	0x0010	// lower texture unpegged
+#define ML_BLOCKING			0x0001	// Solid, is an obstacle.
+#define ML_BLOCKMONSTERS	0x0002	// Blocks monsters only.
+#define ML_TWOSIDED			0x0004	// Backside will not be present at all
+#define ML_DONTPEGTOP		0x0008	// upper texture unpegged
+#define ML_DONTPEGBOTTOM	0x0010	// lower texture unpegged
 #define ML_SECRET			0x0020	// don't map as two sided: IT'S A SECRET!
 #define ML_SOUNDBLOCK		0x0040	// don't let sound cross two of these
-#define	ML_DONTDRAW			0x0080	// don't draw on the automap
-#define	ML_MAPPED			0x0100	// set if already drawn in automap
+#define ML_DONTDRAW			0x0080	// don't draw on the automap
+#define ML_MAPPED			0x0100	// set if already drawn in automap
 #define ML_REPEAT_SPECIAL	0x0200	// special is repeatable
 #define ML_SPAC_SHIFT		10
 #define ML_SPAC_MASK		0x1c00
 #define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
+#define ML_MONSTERSCANACTIVATE	0x2000	//	Monsters (as well as players) can activate the line
+#define ML_BLOCKEVERYTHING	0x8000	//	Line blocks everything.
+#define ML_PASSUSE_BOOM		0x0200	//	Boom's ML_PASSUSE flag (conflicts with ML_REPEAT_SPECIAL)
+#define ML_BLOCKTEXTURE_STRIFE	0x0200
+#define ML_UNKNOWN1_STRIFE	0x0400
+#define ML_UNKNOWN2_STRIFE	0x0800
+#define ML_TRANSLUCENT_STRIFE	0x1000
 
 //
 // Special activation types
@@ -180,6 +187,7 @@ enum
 #define SPAC_IMPACT		3	// when projectile hits line
 #define SPAC_PUSH		4	// when player/monster pushes line
 #define SPAC_PCROSS		5	// when projectile crosses line
+#define SPAC_USETHROUGH	6	// SPAC_USE, but passes it through
 
 //
 //  SECTOR PLANE FLAGS
@@ -271,6 +279,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2003/09/26 16:53:26  dj_jl
+//  Added more line flags
+//
 //  Revision 1.17  2002/09/07 16:28:21  dj_jl
 //  Added Level class.
 //
