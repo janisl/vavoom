@@ -223,7 +223,7 @@ public:
 		for (int Index = 0; Index < ArrayNum; Index++ )
 			if ((*this)[Index] == Item)
 				return Index;
-		return INDEX_NONE;
+		return -1;
 	}
 	/*friend FArchive& operator<<( FArchive& Ar, TArray& A )
 	{
@@ -362,7 +362,10 @@ template <class T> void* operator new(size_t, TArray<T>& Array, int Index)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2004/08/21 14:57:09  dj_jl
+//	Fix.
+//
 //	Revision 1.1  2002/05/03 17:01:08  dj_jl
 //	Moved to common.
-//
+//	
 //**************************************************************************

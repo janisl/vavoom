@@ -228,7 +228,7 @@ public:
 		for (int Index = 0; Index < ArrayNum; Index++ )
 			if ((*this)[Index] == Item)
 				return Index;
-		return INDEX_NONE;
+		return -1;
 	}
 	/*friend FArchive& operator<<( FArchive& Ar, TArray& A )
 	{
@@ -602,9 +602,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/08/21 14:54:06  dj_jl
+//	Fix.
+//
 //	Revision 1.6  2003/09/26 16:59:23  dj_jl
 //	Added zone tag to array
-//
+//	
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
