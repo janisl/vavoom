@@ -1,2 +1,2 @@
-vcc client/clprogs.c clprogs.dat
-vcc server/svprogs.c svprogs.dat
+vcc client/clprogs.vc clprogs.dat
+vcc server/svprogs.vc svprogs.dat
