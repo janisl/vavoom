@@ -56,6 +56,7 @@ struct mapInfo_t
 	char songLump[12];	// Background music (MUS or MIDI)
 	char skybox[32];	// Sky box
 	char speechLump[12];// Strife conversations lump for this level
+	char acsLump[12];	// Strife helper ACS script lump.
 	mapalias_t mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
@@ -76,9 +77,12 @@ int P_GetCDTitleTrack(void);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/10/11 06:50:54  dj_jl
+//	ACS helper scripts lump.
+//
 //	Revision 1.4  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.3  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

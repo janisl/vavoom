@@ -52,6 +52,7 @@ enum
 	MCMD_MUSIC,
 	MCMD_CDTRACK,
 	MCMD_ROGUECONSCRIPT,
+	MCMD_ACSHELPER,
 	MCMD_CD_STARTTRACK,
 	MCMD_CD_END1TRACK,
 	MCMD_CD_END2TRACK,
@@ -101,6 +102,7 @@ static const char *MapCmdNames[] =
     "MUSIC",
 	"CDTRACK",
 	"ROGUECONSCRIPT",
+	"ACSHELPER",
 	"CD_START_TRACK",
 	"CD_END1_TRACK",
 	"CD_END2_TRACK",
@@ -282,6 +284,10 @@ void InitMapInfo(void)
 				case MCMD_ROGUECONSCRIPT:
 					SC_MustGetString();
 					strcpy(info->speechLump, sc_String);
+					break;
+				case MCMD_ACSHELPER:
+					SC_MustGetString();
+					strcpy(info->acsLump, sc_String);
 					break;
 				case MCMD_CD_STARTTRACK:
 				case MCMD_CD_END1TRACK:
@@ -515,9 +521,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/10/11 06:50:54  dj_jl
+//	ACS helper scripts lump.
+//
 //	Revision 1.10  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	
