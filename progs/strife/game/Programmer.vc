@@ -23,14 +23,43 @@
 //**
 //**************************************************************************
 
-class Programmer:Pawn
+class Programmer : Pawn
 	__mobjinfo__(71);
 
-void A_ProgrammerMelee(void)
+//==========================================================================
+//
+//	A_ProgrammerMelee
+//
+//==========================================================================
+
+void A_ProgrammerMelee()
 {
+	if (!Enemy)
+		return;
+
+	A_FaceTarget();
+
+	if (CheckMeleeRange())
+	{
+		Enemy.ReactionTime = 20.0 / 35.0;
+		Enemy.Damage(self, self, ((P_Random() % 10) + 1) * 4);
+    }
 }
-void A_ProgrammerDeath(void)
+
+//==========================================================================
+//
+//	A_ProgrammerDeath
+//
+//==========================================================================
+
+void A_ProgrammerDeath()
 {
+	//	Spawn separate base object.
+	TossUpObject(ProgrammersBase);
+
+	//	Give Silil piece to the player.
+	Enemy.Player.GiveSigilPiece();
+	cprint(Enemy.Player, "You've Killed the Programmer!");
 }
 
 __states__
@@ -100,6 +129,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2004/10/14 06:21:35  dj_jl
+//  Implemented Programmer.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

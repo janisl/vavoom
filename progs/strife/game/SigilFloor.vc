@@ -25,14 +25,51 @@
 
 class SigilFloor : Effect;
 
-void A_Unknown92()
+//==========================================================================
+//
+//	A_SigilFloorAttack
+//
+//==========================================================================
+
+void A_SigilFloorAttack()
 {
+	Actor	lightning1;
+	Actor	lightning2;
+	float	x;
+	float	y;
+
+	x = Origin.x + itof(P_Random() & 191) - 64.0;
+	y = Origin.y + itof(P_Random() & 191) - 64.0;
+
+	//	Spawn bolt in the center.
+	lightning1 = Spawn(SigilFX4, vector(Origin.x, Origin.y, ONCEILINGZ));
+	lightning1.Instigator = Instigator;
+	lightning1.bNoGravity = false;
+	if (Programmer(Instigator) || Specter1(Instigator))
+	{
+		lightning1.bUnknown3 = false;
+	}
+	lightning1.Velocity.x = 0.001;
+	lightning1.Velocity.y = 0.001;
+	lightning1.CheckMissileSpawn();
+
+	//	Spawn a random bolt.
+	lightning2 = Spawn(SpecterFX4, vector(x, y, ONCEILINGZ));
+	lightning2.Instigator = Instigator;
+	lightning2.bNoGravity = false;
+	if (Programmer(Instigator) || Specter1(Instigator))
+	{
+		lightning2.bUnknown3 = false;
+	}
+	lightning2.Velocity.x = 0.001;
+	lightning2.Velocity.y = 0.001;
+	lightning2.CheckMissileSpawn();
 }
 
 __states__
 {
 	S_SIGIL_FLOOR_1('ZAP5', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_2) { A_DecReactionCount(); }
-	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) { A_Unknown92(); }
+	S_SIGIL_FLOOR_2('ZAP5', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_3) { A_SigilFloorAttack(); }
 	S_SIGIL_FLOOR_3('ZAP5', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_4) { A_DecReactionCount(); }
 	S_SIGIL_FLOOR_4('ZAP5', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGIL_FLOOR_1) { A_DecReactionCount(); }
 }
@@ -50,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2004/10/14 06:21:35  dj_jl
+//  Implemented Programmer.
+//
 //  Revision 1.2  2004/01/29 07:33:53  dj_jl
 //  Implemented many action functions
 //

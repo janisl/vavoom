@@ -1,5 +1,13 @@
 #include "stcommon.acs"
 
+world int 1:	KilledProgrammer;
+
+script 254 (void)
+{
+	KilledProgrammer = TRUE;
+	Teleport_NewMap(10, 0);
+}
+
 script 255 (int type, int tag)
 {
 	switch (type)
@@ -9,6 +17,16 @@ script 255 (int type, int tag)
 		if (gametype() == GAME_NET_DEATHMATCH)
 		{
 			Floor_RaiseByValue(tag, 128, 64);
+		}
+		else if (KilledProgrammer && ((tag / 100) == 3))
+		{
+			//	Abandoned front base.
+			Teleport_NewMap(30, tag % 100);
+		}
+		else if (KilledProgrammer && ((tag / 100) == 7))
+		{
+			//	New front base.
+			Teleport_NewMap(10, tag % 100);
 		}
 		else
 		{
