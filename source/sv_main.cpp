@@ -99,7 +99,6 @@ char			sv_next_map[12];
 int 		TimerGame;
 
 int				cid_mobj;
-int				cid_special;
 int				cid_acs;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -148,7 +147,6 @@ void SV_Init(void)
 	svpr.SetGlobal("level", (int)&level);
 
 	cid_mobj = svpr.GetClassID("mobj_t");
-	cid_special = svpr.GetClassID("special_t");
 	cid_acs = svpr.GetClassID("ACS");
 
 	long_stats = svpr.GetGlobal("long_stats");
@@ -2494,9 +2492,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/09/24 17:35:24  dj_jl
+//	Support for thinker classes
+//
 //	Revision 1.10  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.9  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
 //	

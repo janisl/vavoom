@@ -28,6 +28,8 @@
 #include "gamedefs.h"
 #include "cl_local.h"
 
+//#define REAL_TIME
+
 //#define PROGS_PROFILE
 
 void CL_Init(void);
@@ -321,8 +323,11 @@ static bool FilterTime(void)
 
 	realtime += time;
 
-//	if (realtime - oldrealtime < 1.0 / 72.0)
+#ifdef REAL_TIME
+	if (realtime - oldrealtime < 1.0 / 72.0)
+#else
 	if (realtime - oldrealtime < 1.0 / 35.0)
+#endif
 		return false;		// framerate is too high
 
 	host_frametime = realtime - oldrealtime;
@@ -344,8 +349,10 @@ static bool FilterTime(void)
 
 	thistime = (int)(realtime * TICRATE);
 	host_frametics = thistime - lasttime;
+#ifndef REAL_TIME
 	if (host_frametics < 1)
 		return false;		//	No tics to run
+#endif
 	if (host_frametics > 3)
 		host_frametics = 3;	//	Don't run too slow
 	oldrealtime = realtime;
@@ -593,9 +600,12 @@ COMMAND(Quit)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/24 17:35:24  dj_jl
+//	Support for thinker classes
+//
 //	Revision 1.7  2001/08/31 17:28:00  dj_jl
 //	Removed RANGECHECK
-//
+//	
 //	Revision 1.6  2001/08/30 17:46:21  dj_jl
 //	Removed game dependency
 //	

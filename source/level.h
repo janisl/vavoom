@@ -76,21 +76,14 @@ struct mobj_t;
 typedef TVec vertex_t;
 
 //
-//	Level special
-//
-struct special_t : public thinker_t
-{
-};
-
-//
 //  Bounding box
 //
 enum
 {
-    BOXTOP,
-    BOXBOTTOM,
-    BOXLEFT,
-    BOXRIGHT
+	BOXTOP,
+	BOXBOTTOM,
+	BOXLEFT,
+	BOXRIGHT
 };
 
 //
@@ -98,10 +91,10 @@ enum
 //
 enum slopetype_t
 {
-    ST_HORIZONTAL,
-    ST_VERTICAL,
-    ST_POSITIVE,
-    ST_NEGATIVE
+	ST_HORIZONTAL,
+	ST_VERTICAL,
+	ST_POSITIVE,
+	ST_NEGATIVE
 };
 
 //
@@ -109,46 +102,46 @@ enum slopetype_t
 //
 struct line_t : public TPlane
 {
-    // Vertices, from v1 to v2.
-    vertex_t	*v1;
-    vertex_t	*v2;
+	// Vertices, from v1 to v2.
+	vertex_t	*v1;
+	vertex_t	*v2;
 
-    // Precalculated v2 - v1 for side checking.
+	// Precalculated v2 - v1 for side checking.
 	TVec		dir;
 
-    // Animation related.
-    int			flags;
+	// Animation related.
+	int			flags;
 
-    // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    int			sidenum[2];
+	// Visual appearance: SideDefs.
+	//  sidenum[1] will be -1 if one sided
+	int			sidenum[2];
 
-    // Neat. Another bounding box, for the extent
-    //  of the LineDef.
+	// Neat. Another bounding box, for the extent
+	//  of the LineDef.
 	float		bbox[4];
 
-    // To aid move clipping.
-    slopetype_t slopetype;
+	// To aid move clipping.
+	slopetype_t slopetype;
 
-    // Front and back sector.
-    // Note: redundant? Can be retrieved from SideDefs.
-    sector_t	*frontsector;
-    sector_t	*backsector;
+	// Front and back sector.
+	// Note: redundant? Can be retrieved from SideDefs.
+	sector_t	*frontsector;
+	sector_t	*backsector;
 
-    // if == validcount, already checked
-    int         validcount;
+	// if == validcount, already checked
+	int			validcount;
 
-    // thinker_t for reversable actions
-    special_t	*specialdata;
+	// thinker_t for reversable actions
+	thinker_t	*specialdata;
 
 	int			translucency;
 
 	int			special;
-    int			arg1;
-    int			arg2;
-    int			arg3;
-    int			arg4;
-    int			arg5;
+	int			arg1;
+	int			arg2;
+	int			arg3;
+	int			arg4;
+	int			arg5;
 };
 
 //
@@ -156,20 +149,20 @@ struct line_t : public TPlane
 //
 struct side_t
 {
-    // add this to the calculated texture column
+	// add this to the calculated texture column
 	float		textureoffset;
 
-    // add this to the calculated texture top
+	// add this to the calculated texture top
 	float		rowoffset;
 
 	float		base_textureoffset;
 	float		base_rowoffset;
 
-    // Texture indices.
-    // We do not maintain names here.
-    int			toptexture;
-    int			bottomtexture;
-    int			midtexture;
+	// Texture indices.
+	// We do not maintain names here.
+	int			toptexture;
+	int			bottomtexture;
+	int			midtexture;
 
 	//	Remember base textures so we can inform new clients about
 	// changed textures
@@ -177,8 +170,8 @@ struct side_t
 	int			base_bottomtexture;
 	int			base_midtexture;
 
-    // Sector the SideDef is facing.
-    sector_t	*sector;
+	// Sector the SideDef is facing.
+	sector_t	*sector;
 };
 
 struct subsector_t;
@@ -189,20 +182,20 @@ struct subsector_t;
 struct drawseg_t;
 struct seg_t : public TPlane
 {
-    vertex_t	*v1;
-    vertex_t	*v2;
+	vertex_t	*v1;
+	vertex_t	*v2;
 
 	float		offset;
 	float		length;
 
-    side_t		*sidedef;
-    line_t		*linedef;
+	side_t		*sidedef;
+	line_t		*linedef;
 
-    // Sector references.
-    // Could be retrieved from linedef, too.
-    // backsector is NULL for one sided lines
-    sector_t	*frontsector;
-    sector_t	*backsector;
+	// Sector references.
+	// Could be retrieved from linedef, too.
+	// backsector is NULL for one sided lines
+	sector_t	*frontsector;
+	sector_t	*backsector;
 
 	//	Side of line (for light calculations)
 	int			side;
@@ -231,7 +224,7 @@ struct sec_plane_t : public TPlane
 
 struct sec_params_t
 {
-    int		    lightlevel;
+	int			lightlevel;
 	int			contents;
 };
 
@@ -264,42 +257,42 @@ struct sector_t
 
 	float		floorheight;
 	float		ceilingheight;
-    int		    special;
-    int			tag;
+	int			special;
+	int			tag;
 
 	float		base_floorheight;
 	float		base_ceilingheight;
-    int		    base_lightlevel;
+	int			base_lightlevel;
 
 	float		skyheight;
 
-    // 0 = untraversed, 1,2 = sndlines -1
-    int         soundtraversed;
+	// 0 = untraversed, 1,2 = sndlines -1
+	int			soundtraversed;
 
-    // thing that made a sound (or null)
-    mobj_t		*soundtarget;
+	// thing that made a sound (or null)
+	mobj_t		*soundtarget;
 
-    // stone, metal, heavy, etc...
+	// stone, metal, heavy, etc...
 	int			seqType;
 
-    // mapblock bounding box for height changes
-    int         blockbox[4];
+	// mapblock bounding box for height changes
+	int			blockbox[4];
 
 	// origin for any sounds played by the sector
 	TVec		soundorg;
 
-    // if == validcount, already checked
-    int         validcount;
+	// if == validcount, already checked
+	int			validcount;
 
-    // thinker_t for reversable actions
-    special_t	*specialdata;
+	// thinker_t for reversable actions
+	thinker_t	*specialdata;
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
 	subsector_t	*subsectors;
 
-    int			linecount;
-    line_t		**lines;  // [linecount] size
+	int			linecount;
+	line_t		**lines;  // [linecount] size
 };
 
 //
@@ -318,7 +311,7 @@ struct polyobj_t
 	int 		validcount;
 	boolean 	crush; 			// should the polyobj attempt to crush mobjs?
 	int 		seqType;
-	special_t	*specialdata; 	// pointer a thinker, if the poly is moving
+	thinker_t	*specialdata; 	// pointer a thinker, if the poly is moving
 	subsector_t	*subsector;
 	float		base_x;
 	float		base_y;
@@ -341,11 +334,11 @@ struct polyblock_t
 //
 struct node_t : public TPlane
 {
-    // Bounding box for each child.
+	// Bounding box for each child.
 	float		bbox[2][6];
 
-    // If NF_SUBSECTOR its a subsector.
-    word		children[2];
+	// If NF_SUBSECTOR its a subsector.
+	word		children[2];
 
 	node_t		*parent;
 	int			visframe;
@@ -359,10 +352,10 @@ struct node_t : public TPlane
 struct subregion_t;
 struct subsector_t
 {
-    sector_t	*sector;
+	sector_t	*sector;
 	subsector_t	*seclink;
-    int			numlines;
-    int			firstline;
+	int			numlines;
+	int			firstline;
 	polyobj_t	*poly;
 
 	node_t		*parent;
@@ -454,37 +447,37 @@ struct player_t;
 // Map Object definition.
 struct mobj_t : public thinker_t
 {
-    // Info for drawing: position.
+	// Info for drawing: position.
 	TVec			origin;
 
-    // Momentums, used to update position.
+	// Momentums, used to update position.
 	TVec			velocity;
 
-    //More drawing info: to determine current sprite.
+	//More drawing info: to determine current sprite.
 	TAVec			angles;	// orientation
 	int				spritetype;
-    int				sprite;	// used to find patch_t and flip value
-    int				frame;	// might be ORed with FF_FULLBRIGHT
+	int				sprite;	// used to find patch_t and flip value
+	int				frame;	// might be ORed with FF_FULLBRIGHT
 
 	int				model_index;
 	int				alias_frame;
 	int				alias_skinnum;
 
-    int				translucency;
-    int				translation;
+	int				translucency;
+	int				translation;
 
 	float			floorclip;		// value to use for floor clipping
 
 	int				effects;
 
-    subsector_t*	subsector;
+	subsector_t*	subsector;
 
-    // Interaction info, by BLOCKMAP.
-    // Links in blocks (if needed).
-    mobj_t*			bnext;
-    mobj_t*			bprev;
-    
-    // The closest interval over all contacted Sectors.
+	// Interaction info, by BLOCKMAP.
+	// Links in blocks (if needed).
+	mobj_t*			bnext;
+	mobj_t*			bprev;
+
+	// The closest interval over all contacted Sectors.
 	float			floorz;
 	float			ceilingz;
 
@@ -492,29 +485,28 @@ struct mobj_t : public thinker_t
 	sec_plane_t		*floor;
 	sec_plane_t		*ceiling;
 
-    // If == validcount, already checked.
-    int				validcount;
+	// If == validcount, already checked.
+	int				validcount;
 
-    int				type;
+	int				type;
 
 	int				damage;			// For missiles
-    int				flags;
+	int				flags;
 	int				flags2;			// Heretic flags
-    int				health;
+	int				health;
 
-    // For movement checking.
+	// For movement checking.
 	float			radius;
 	float			height;
 
-    // Thing being chased/attacked (or NULL),
-    // also the originator for missiles.
-    mobj_t*			target;
+	// Thing being chased/attacked (or NULL),
+	// also the originator for missiles.
+	mobj_t*			target;
 
-    // Additional info record for player avatars only.
-    // Only valid if type == MT_PLAYER
-    player_t		*player;
+	// Additional info record for player avatars only.
+	// Only valid if type == MT_PLAYER
+	player_t		*player;
 
-	int				archiveNum;		// Identity during archive
 	int				tid;			// thing identifier
 	int				special;		// special
 	int				args[5];		// special arguments
@@ -587,7 +579,7 @@ struct level_t
 	mthing_t	*things;
 	int			*behavior;
 
-    //
+	//
 	//	BLOCKMAP
 	//	Created from axis aligned bounding box of the map, a rectangular
 	// array of blocks of size ...
@@ -646,9 +638,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/09/24 17:35:24  dj_jl
+//	Support for thinker classes
+//
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.4  2001/08/02 17:46:38  dj_jl
 //	Added sending info about changed textures to new clients
 //	

@@ -259,7 +259,6 @@ void SV_ReadMove(void);
 extern player_t		*sv_player;
 
 extern int			cid_mobj;
-extern int			cid_special;
 extern int			cid_acs;
 
 //==========================================================================
@@ -316,9 +315,12 @@ inline bool SV_CanCast(thinker_t *th, int cid)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/09/24 17:35:24  dj_jl
+//	Support for thinker classes
+//
 //	Revision 1.7  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.6  2001/08/29 17:56:11  dj_jl
 //	Added sound channels
 //	

@@ -1318,11 +1318,10 @@ static void PF_P_CheckSight(void)
 PF(NewSpecialThinker)
 {
 	int			cid;
-	special_t	*spec;
+	thinker_t	*spec;
 
 	cid = Pop();
-	spec = (special_t*)svpr.Spawn(cid, PU_LEVSPEC);
-con << "Special " << spec->vtable[1] << " bytes\n";
+	spec = (thinker_t*)svpr.Spawn(cid, PU_LEVSPEC);
 	P_AddThinker(spec);
 	Push((int)spec);
 }
@@ -1335,9 +1334,9 @@ con << "Special " << spec->vtable[1] << " bytes\n";
 
 static void PF_RemoveSpecialThinker(void)
 {
-	special_t	*spec;
+	thinker_t	*spec;
 
-    spec = (special_t*)Pop();
+    spec = (thinker_t*)Pop();
     P_RemoveThinker(spec);
 }
 
@@ -1355,6 +1354,34 @@ static void PF_P_ChangeSwitchTexture(void)
     useAgain = Pop();
     line = (line_t*)Pop();
 	P_ChangeSwitchTexture(line, useAgain);
+}
+
+//==========================================================================
+//
+//	PF_NextThinker
+//
+//==========================================================================
+
+PF(NextThinker)
+{
+	thinker_t *th;
+	int cid;
+
+	cid = Pop();
+	th = (thinker_t*)Pop();
+	if (!th)
+	{
+		th = &level.thinkers;
+	}
+	for (th = th->next; th != &level.thinkers; th = th->next)
+	{
+		if (SV_CanCast(th, cid))
+		{
+			Push((int)th);
+			return;
+		}
+	}
+	Push(0);
 }
 
 //**************************************************************************
@@ -1565,6 +1592,45 @@ PF(InterpretACS)
 
 	script = (acs_t *)Pop();
 	SV_InterpretACS(script);
+}
+
+//==========================================================================
+//
+//	PF_ACS::Archive
+//
+//==========================================================================
+
+PF(ACS__Archive)
+{
+	acs_t		*acs;
+
+	acs = (acs_t *)Pop();
+	acs->ip = (int *)((int)(acs->ip) - (int)ActionCodeBase);
+	acs->line = acs->line ? (line_t *)(acs->line - level.lines) : (line_t *)-1;
+	acs->activator = (mobj_t *)GetMobjNum(acs->activator);
+}
+
+//==========================================================================
+//
+//	PF_ACS::Unarchive
+//
+//==========================================================================
+
+PF(ACS__Unarchive)
+{
+	acs_t		*acs;
+
+	acs = (acs_t *)Pop();
+	acs->ip = (int *)(ActionCodeBase + (int)acs->ip);
+	if ((int)acs->line == -1)
+	{
+		acs->line = NULL;
+	}
+	else
+	{
+		acs->line = &level.lines[(int)acs->line];
+	}
+	acs->activator = SetMobjPtr((int)acs->activator);
 }
 
 //**************************************************************************
@@ -2944,6 +3010,7 @@ builtin_info_t BuiltinInfo[] =
     {"NewSpecialThinker", PF_NewSpecialThinker},
     {"RemoveSpecialThinker", PF_RemoveSpecialThinker},
     {"P_ChangeSwitchTexture", PF_P_ChangeSwitchTexture},
+	_(NextThinker),
 
     //	Polyobj functions
     {"SpawnPolyobj", PF_SpawnPolyobj},
@@ -2960,6 +3027,8 @@ builtin_info_t BuiltinInfo[] =
     {"TagFinished", PF_TagFinished},
     {"PolyobjFinished", PF_PolyobjFinished},
 	{"ACS::Think", PF_InterpretACS},
+	{"ACS::Archive", PF_ACS__Archive},
+	{"ACS::Unarchive", PF_ACS__Unarchive},
 
 	//	Sound functions
     _(StartSound),
@@ -3003,9 +3072,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/09/24 17:35:24  dj_jl
+//	Support for thinker classes
+//
 //	Revision 1.9  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.8  2001/08/30 17:45:35  dj_jl
 //	Sound channels, moving messsage box to progs
 //	
