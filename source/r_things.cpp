@@ -994,7 +994,7 @@ static void RenderPSprite(cl_pspdef_t* psp)
 static void RenderViewModel(cl_pspdef_t *psp)
 {
 	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
-		(psp->sy - 32.0) * viewup / 8.0;
+		(psp->sy - 32.0) * viewup / 6.0;
 	TAVec angles = cl.viewangles;
 
 	dword light;
@@ -1140,9 +1140,12 @@ void R_DrawModelFrame(const TVec &origin, angle_t angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2001/08/31 17:28:47  dj_jl
+//	Tried to fix weapon model position when dead
+//
 //	Revision 1.7  2001/08/15 17:21:47  dj_jl
 //	Added model drawing for menu
-//
+//	
 //	Revision 1.6  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
 //	
