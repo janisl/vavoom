@@ -25,6 +25,7 @@
 
 #ifdef _MSC_VER
 // Disable some unwanted warnings
+#pragma warning(disable : 4097) // typedef-name '' used as synonym for class-name ''
 #pragma warning(disable : 4127) // Conditional expression is constant
 #pragma warning(disable : 4244) // conversion to float, possible loss of data
 #pragma warning(disable : 4284) // return type is not a UDT or reference to a UDT
@@ -160,9 +161,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/05/29 16:52:42  dj_jl
+//	Disabled another warnong.
+//
 //	Revision 1.11  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.10  2002/04/11 16:40:06  dj_jl
 //	Added __declspec modifiers.
 //	
