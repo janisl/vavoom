@@ -307,7 +307,7 @@ void WriteMobjInfo(void)
 
 		//	Misc params
 		if (mobjinfo[i].spawnhealth)
-			fprintf(f, "\t\thealth = %d;\n\t\tspawnhealth = health;\n", mobjinfo[i].spawnhealth);
+			fprintf(f, "\t\thealth = %d;\n", mobjinfo[i].spawnhealth);
 		if (mobjinfo[i].spawnhealth && mobjinfo[i].xdeathstate)
 #ifdef NODEH
 			fprintf(f, "\t\tgibshealth = -%d;\n", mobjinfo[i].spawnhealth >> 1);
@@ -737,9 +737,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/27 17:45:17  dj_jl
+//	Removed spawnhealth
+//
 //	Revision 1.10  2001/12/12 19:20:30  dj_jl
 //	States using methods
-//
+//	
 //	Revision 1.9  2001/12/03 19:28:41  dj_jl
 //	Using defaultproperties, not constructors
 //	

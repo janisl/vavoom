@@ -40,7 +40,6 @@ class MT_0:Actor
 	defaultproperties
 	{
 		health = 10;
-		spawnhealth = health;
 		radius = 2.0;
 		height = 1.0;
 		mass = 10000.0;
@@ -62,7 +61,6 @@ class MT_PLAYER:Actor
 	defaultproperties
 	{
 		health = 100;
-		spawnhealth = health;
 		gibshealth = -50;
 		radius = 18.0;
 		height = 56.0;
@@ -92,7 +90,6 @@ class MT_MERCHANDER1:Actor
 	{
 		classname = "Weapon_Smith";
 		health = 10000000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 5000.0;
@@ -118,7 +115,6 @@ class MT_MERCHANDER2:Actor
 	{
 		classname = "Bar_Keep";
 		health = 10000000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 5000.0;
@@ -146,7 +142,6 @@ class MT_MERCHANDER3:Actor
 	{
 		classname = "Amorer";
 		health = 10000000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 5000.0;
@@ -173,7 +168,6 @@ class MT_MERCHANDER4:Actor
 	{
 		classname = "Medic";
 		health = 10000000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 50000.0;
@@ -199,7 +193,6 @@ class MT_6:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -244,7 +237,6 @@ class MT_7:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -289,7 +281,6 @@ class MT_8:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -334,7 +325,6 @@ class MT_9:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -380,7 +370,6 @@ class MT_10:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -426,7 +415,6 @@ class MT_11:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -472,7 +460,6 @@ class MT_12:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -518,7 +505,6 @@ class MT_13:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -564,7 +550,6 @@ class MT_14:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -610,7 +595,6 @@ class MT_15:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -656,7 +640,6 @@ class MT_16:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -702,7 +685,6 @@ class MT_17:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -748,7 +730,6 @@ class MT_18:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -794,7 +775,6 @@ class MT_19:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -840,7 +820,6 @@ class MT_20:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -886,7 +865,6 @@ class MT_21:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -932,7 +910,6 @@ class MT_22:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -978,7 +955,6 @@ class MT_23:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -1024,7 +1000,6 @@ class MT_24:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -1070,7 +1045,6 @@ class MT_25:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -1116,7 +1090,6 @@ class MT_26:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -1162,7 +1135,6 @@ class MT_27:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		gibshealth = -15;
 		radius = 20.0;
 		height = 56.0;
@@ -1208,7 +1180,6 @@ class MT_28:Actor
 	defaultproperties
 	{
 		health = 31;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 100.0;
@@ -1243,7 +1214,6 @@ class MT_29:Actor
 	defaultproperties
 	{
 		health = 61;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 100.0;
@@ -1278,7 +1248,6 @@ class MT_30:Actor
 	defaultproperties
 	{
 		health = 20;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -1300,7 +1269,6 @@ class MT_31:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 192.0;
 		mass = 50000.0;
@@ -1321,7 +1289,6 @@ class MT_32:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 192.0;
 		mass = 50000.0;
@@ -1342,7 +1309,6 @@ class MT_33:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 192.0;
 		mass = 50000.0;
@@ -1363,7 +1329,6 @@ class MT_34:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 56.0;
 		mass = 50000.0;
@@ -1384,7 +1349,6 @@ class MT_35:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 56.0;
 		mass = 50000.0;
@@ -1405,7 +1369,6 @@ class MT_36:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 56.0;
 		mass = 50000.0;
@@ -1426,7 +1389,6 @@ class MT_37:Actor
 	defaultproperties
 	{
 		health = 51;
-		spawnhealth = health;
 		radius = 6.0;
 		height = 6.0;
 		mass = 50000.0;
@@ -1466,7 +1428,6 @@ class MT_38:Actor
 	{
 		classname = "Beggar";
 		health = 20;
-		spawnhealth = health;
 		gibshealth = -10;
 		radius = 20.0;
 		height = 56.0;
@@ -1509,7 +1470,6 @@ class MT_39:Actor
 	{
 		classname = "Beggar";
 		health = 20;
-		spawnhealth = health;
 		gibshealth = -10;
 		radius = 20.0;
 		height = 56.0;
@@ -1552,7 +1512,6 @@ class MT_40:Actor
 	{
 		classname = "Beggar";
 		health = 20;
-		spawnhealth = health;
 		gibshealth = -10;
 		radius = 20.0;
 		height = 56.0;
@@ -1595,7 +1554,6 @@ class MT_41:Actor
 	{
 		classname = "Beggar";
 		health = 20;
-		spawnhealth = health;
 		gibshealth = -10;
 		radius = 20.0;
 		height = 56.0;
@@ -1638,7 +1596,6 @@ class MT_42:Actor
 	{
 		classname = "Beggar";
 		health = 20;
-		spawnhealth = health;
 		gibshealth = -10;
 		radius = 20.0;
 		height = 56.0;
@@ -1681,7 +1638,6 @@ class MT_43:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1725,7 +1681,6 @@ class MT_44:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1769,7 +1724,6 @@ class MT_45:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1813,7 +1767,6 @@ class MT_46:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1857,7 +1810,6 @@ class MT_47:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1901,7 +1853,6 @@ class MT_48:Actor
 	{
 		classname = "Rebel";
 		health = 60;
-		spawnhealth = health;
 		gibshealth = -30;
 		radius = 20.0;
 		height = 56.0;
@@ -1945,7 +1896,6 @@ class MT_49:Actor
 	{
 		classname = "MACIL";
 		health = 95;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 100.0;
@@ -1986,7 +1936,6 @@ class MT_50:Actor
 	{
 		classname = "MACIL";
 		health = 95;
-		spawnhealth = health;
 		gibshealth = -47;
 		radius = 20.0;
 		height = 56.0;
@@ -2029,7 +1978,6 @@ class MT_51:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -2052,7 +2000,6 @@ class MT_52:Actor
 	defaultproperties
 	{
 		health = 150;
-		spawnhealth = health;
 		gibshealth = -75;
 		radius = 20.0;
 		height = 60.0;
@@ -2097,7 +2044,6 @@ class MT_53:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2142,7 +2088,6 @@ class MT_54:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2188,7 +2133,6 @@ class MT_55:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2234,7 +2178,6 @@ class MT_56:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2280,7 +2223,6 @@ class MT_57:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2326,7 +2268,6 @@ class MT_58:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2372,7 +2313,6 @@ class MT_59:Actor
 	{
 		classname = "ACOLYTE";
 		health = 70;
-		spawnhealth = health;
 		gibshealth = -35;
 		radius = 24.0;
 		height = 64.0;
@@ -2416,7 +2356,6 @@ class MT_60:Actor
 	defaultproperties
 	{
 		health = 400;
-		spawnhealth = health;
 		radius = 40.0;
 		height = 56.0;
 		mass = 400.0;
@@ -2457,7 +2396,6 @@ class MT_61:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 40.0;
 		height = 56.0;
 		mass = 500.0;
@@ -2499,7 +2437,6 @@ class MT_62:Actor
 	{
 		classname = "Enforcer";
 		health = 300;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 60.0;
 		mass = 500.0;
@@ -2542,7 +2479,6 @@ class MT_63:Actor
 	{
 		classname = "ORACLE";
 		health = 31;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 56.0;
 		mass = 100.0;
@@ -2578,7 +2514,6 @@ class MT_64:Actor
 	{
 		classname = "PRIEST";
 		health = 800;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 56.0;
 		mass = 100.0;
@@ -2619,7 +2554,6 @@ class MT_65:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 64.0;
 		height = 64.0;
 		mass = 1000.0;
@@ -2663,7 +2597,6 @@ class MT_66:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -2685,7 +2618,6 @@ class MT_67:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -2706,7 +2638,6 @@ class MT_68:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -2727,7 +2658,6 @@ class MT_69:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 64.0;
 		mass = 1000.0;
@@ -2771,7 +2701,6 @@ class MT_70:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 64.0;
 		mass = 1000.0;
@@ -2815,7 +2744,6 @@ class MT_71:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 64.0;
 		mass = 1000.0;
@@ -2859,7 +2787,6 @@ class MT_72:Actor
 	defaultproperties
 	{
 		health = 500;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 64.0;
 		mass = 1000.0;
@@ -2903,7 +2830,6 @@ class MT_73:Actor
 	defaultproperties
 	{
 		health = 1500;
-		spawnhealth = health;
 		radius = 130.0;
 		height = 200.0;
 		mass = 1000.0;
@@ -2947,7 +2873,6 @@ class MT_74:Actor
 	defaultproperties
 	{
 		health = 100;
-		spawnhealth = health;
 		radius = 130.0;
 		height = 200.0;
 		mass = 1000.0;
@@ -2991,7 +2916,6 @@ class MT_75:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 84.0;
 		height = 47.0;
 		mass = 100.0;
@@ -3012,7 +2936,6 @@ class MT_76:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 25.0;
 		height = 91.0;
 		mass = 100.0;
@@ -3035,7 +2958,6 @@ class MT_77:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3061,7 +2983,6 @@ class MT_78:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3087,7 +3008,6 @@ class MT_79:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3113,7 +3033,6 @@ class MT_80:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3139,7 +3058,6 @@ class MT_81:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3165,7 +3083,6 @@ class MT_82:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3186,7 +3103,6 @@ class MT_83:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 40.0;
 		mass = 100.0;
@@ -3212,7 +3128,6 @@ class MT_84:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 40.0;
 		mass = 100.0;
@@ -3238,7 +3153,6 @@ class MT_85:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 24.0;
 		mass = 100.0;
@@ -3264,7 +3178,6 @@ class MT_86:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3288,7 +3201,6 @@ class MT_87:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3314,7 +3226,6 @@ class MT_88:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3340,7 +3251,6 @@ class MT_89:Actor
 	defaultproperties
 	{
 		health = 100;
-		spawnhealth = health;
 		radius = 23.0;
 		height = 53.0;
 		mass = 300.0;
@@ -3380,7 +3290,6 @@ class MT_90:Actor
 	defaultproperties
 	{
 		health = 80;
-		spawnhealth = health;
 		radius = 31.0;
 		height = 25.0;
 		mass = 100.0;
@@ -3422,7 +3331,6 @@ class MT_91:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 40.0;
 		height = 110.0;
 		mass = 1000.0;
@@ -3460,7 +3368,6 @@ class MT_92:Actor
 	defaultproperties
 	{
 		health = 1100;
-		spawnhealth = health;
 		radius = 45.0;
 		height = 60.0;
 		mass = 800.0;
@@ -3503,7 +3410,6 @@ class MT_93:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3524,7 +3430,6 @@ class MT_94:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 14.0;
 		mass = 100.0;
@@ -3550,7 +3455,6 @@ class MT_95:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3572,7 +3476,6 @@ class MT_96:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 14.0;
 		mass = 100.0;
@@ -3598,7 +3501,6 @@ class MT_97:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 14.0;
 		mass = 100.0;
@@ -3624,7 +3526,6 @@ class MT_98:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 14.0;
 		mass = 100.0;
@@ -3650,7 +3551,6 @@ class MT_99:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 10.0;
 		mass = 100.0;
@@ -3677,7 +3577,6 @@ class MT_100:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 10.0;
 		mass = 100.0;
@@ -3703,7 +3602,6 @@ class MT_101:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 8.0;
 		mass = 100.0;
@@ -3726,7 +3624,6 @@ class MT_102:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 8.0;
 		mass = 100.0;
@@ -3751,7 +3648,6 @@ class MT_103:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 13.0;
 		mass = 20.0;
@@ -3777,7 +3673,6 @@ class MT_104:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 13.0;
 		mass = 20.0;
@@ -3803,7 +3698,6 @@ class MT_105:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 13.0;
 		mass = 20.0;
@@ -3829,7 +3723,6 @@ class MT_106:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 13.0;
 		mass = 15.0;
@@ -3854,7 +3747,6 @@ class MT_107:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3876,7 +3768,6 @@ class MT_108:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -3898,7 +3789,6 @@ class MT_109:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 8.0;
 		mass = 100.0;
@@ -3924,7 +3814,6 @@ class MT_110:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 13.0;
 		height = 13.0;
 		mass = 100.0;
@@ -3948,7 +3837,6 @@ class MT_111:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 11.0;
 		mass = 10.0;
@@ -3973,7 +3861,6 @@ class MT_112:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 11.0;
 		mass = 50.0;
@@ -3998,7 +3885,6 @@ class MT_113:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4019,7 +3905,6 @@ class MT_PUFF:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4041,7 +3926,6 @@ class MT_115:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4062,7 +3946,6 @@ class MT_116:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4083,7 +3966,6 @@ class MT_TFOG:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4105,7 +3987,6 @@ class MT_IFOG:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4127,7 +4008,6 @@ class MT_TELEPORTMAN:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4147,7 +4027,6 @@ class MT_120:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4169,7 +4048,6 @@ class MT_121:Actor
 	defaultproperties
 	{
 		health = 125;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 10000000.0;
@@ -4205,7 +4083,6 @@ class MT_122:Actor
 	defaultproperties
 	{
 		health = 100;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 76.0;
 		mass = 10000000.0;
@@ -4228,7 +4105,6 @@ class MT_123:Actor
 	defaultproperties
 	{
 		health = 80;
-		spawnhealth = health;
 		radius = 26.0;
 		height = 128.0;
 		mass = 100000.0;
@@ -4252,7 +4128,6 @@ class MT_124:Actor
 	{
 		classname = "Med_patch";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 20.0;
@@ -4274,7 +4149,6 @@ class MT_125:Actor
 	{
 		classname = "Medical_kit";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 15.0;
@@ -4296,7 +4170,6 @@ class MT_126:Actor
 	{
 		classname = "full_health";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 5.0;
@@ -4318,7 +4191,6 @@ class MT_127:Actor
 	{
 		classname = "Thalite_Ore";
 		health = 10;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 4.0;
@@ -4342,7 +4214,6 @@ class MT_128:Actor
 	{
 		classname = "Metal_Armor";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 3.0;
@@ -4364,7 +4235,6 @@ class MT_129:Actor
 	{
 		classname = "Leather_Armor";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 5.0;
@@ -4385,7 +4255,6 @@ class MT_130:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4405,7 +4274,6 @@ class MT_131:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4426,7 +4294,6 @@ class MT_132:Actor
 	{
 		classname = "Base_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4448,7 +4315,6 @@ class MT_133:Actor
 	{
 		classname = "Rebel_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4470,7 +4336,6 @@ class MT_134:Actor
 	{
 		classname = "Passcard";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4492,7 +4357,6 @@ class MT_135:Actor
 	{
 		classname = "ID_Badge";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4514,7 +4378,6 @@ class MT_136:Actor
 	{
 		classname = "Prison_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4536,7 +4399,6 @@ class MT_137:Actor
 	{
 		classname = "Severed_Hand";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4558,7 +4420,6 @@ class MT_138:Actor
 	{
 		classname = "Power1_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4580,7 +4441,6 @@ class MT_139:Actor
 	{
 		classname = "Power2_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4602,7 +4462,6 @@ class MT_140:Actor
 	{
 		classname = "Power3_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4624,7 +4483,6 @@ class MT_141:Actor
 	{
 		classname = "Gold_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4646,7 +4504,6 @@ class MT_142:Actor
 	{
 		classname = "ID_Card";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4668,7 +4525,6 @@ class MT_143:Actor
 	{
 		classname = "Silver_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4690,7 +4546,6 @@ class MT_144:Actor
 	{
 		classname = "Oracle_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4712,7 +4567,6 @@ class MT_145:Actor
 	{
 		classname = "Military_ID";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4734,7 +4588,6 @@ class MT_146:Actor
 	{
 		classname = "Order_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4756,7 +4609,6 @@ class MT_147:Actor
 	{
 		classname = "Warehouse_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4778,7 +4630,6 @@ class MT_148:Actor
 	{
 		classname = "Brass_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4800,7 +4651,6 @@ class MT_149:Actor
 	{
 		classname = "Red_Crystal_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4822,7 +4672,6 @@ class MT_150:Actor
 	{
 		classname = "Blue_Crystal_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4844,7 +4693,6 @@ class MT_151:Actor
 	{
 		classname = "Chapel_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4866,7 +4714,6 @@ class MT_152:Actor
 	{
 		classname = "Tunnel_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4888,7 +4735,6 @@ class MT_153:Actor
 	{
 		classname = "Security_Key";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4910,7 +4756,6 @@ class MT_154:Actor
 	{
 		classname = "New_Key1";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4932,7 +4777,6 @@ class MT_155:Actor
 	{
 		classname = "New_Key2";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4954,7 +4798,6 @@ class MT_156:Actor
 	{
 		classname = "New_Key3";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4976,7 +4819,6 @@ class MT_157:Actor
 	{
 		classname = "New_Key4";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -4998,7 +4840,6 @@ class MT_158:Actor
 	{
 		classname = "New_Key5";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5020,7 +4861,6 @@ class MT_159:Actor
 	{
 		classname = "Shadow_armor";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 2.0;
@@ -5042,7 +4882,6 @@ class MT_160:Actor
 	{
 		classname = "Environmental_Suit";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 5.0;
@@ -5064,7 +4903,6 @@ class MT_161:Actor
 	{
 		classname = "Guard_Uniform";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5086,7 +4924,6 @@ class MT_162:Actor
 	{
 		classname = "Officer's_Uniform";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5108,7 +4945,6 @@ class MT_163:Actor
 	{
 		classname = "Map";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5130,7 +4966,6 @@ class MT_164:Actor
 	{
 		classname = "Map-Radar";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5152,7 +4987,6 @@ class MT_165:Actor
 	{
 		classname = "coin";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 99999.0;
@@ -5174,7 +5008,6 @@ class MT_166:Actor
 	{
 		classname = "10_gold";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5196,7 +5029,6 @@ class MT_167:Actor
 	{
 		classname = "25_gold";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5218,7 +5050,6 @@ class MT_168:Actor
 	{
 		classname = "50_gold";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5240,7 +5071,6 @@ class MT_169:Actor
 	{
 		classname = "ring";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5262,7 +5092,6 @@ class MT_170:Actor
 	{
 		classname = "Offering_Chalice";
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5284,7 +5113,6 @@ class MT_171:Actor
 	{
 		classname = "ear";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5306,7 +5134,6 @@ class MT_172:Actor
 	{
 		classname = "Communicator";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5328,7 +5155,6 @@ class MT_173:Actor
 	{
 		classname = "Targeter";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5350,7 +5176,6 @@ class MT_174:Actor
 	{
 		classname = "HE-Grenade_Rounds";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5372,7 +5197,6 @@ class MT_175:Actor
 	{
 		classname = "Fire-Grenade_Rounds";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5394,7 +5218,6 @@ class MT_176:Actor
 	{
 		classname = "Gas-Grenade_Rounds";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5416,7 +5239,6 @@ class MT_177:Actor
 	{
 		classname = "bullets";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5438,7 +5260,6 @@ class MT_178:Actor
 	{
 		classname = "ammo";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5460,7 +5281,6 @@ class MT_179:Actor
 	{
 		classname = "rocket";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5482,7 +5302,6 @@ class MT_180:Actor
 	{
 		classname = "box_of_rockets";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5504,7 +5323,6 @@ class MT_181:Actor
 	{
 		classname = "energy_pod";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5526,7 +5344,6 @@ class MT_182:Actor
 	{
 		classname = "energy_pack";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5548,7 +5365,6 @@ class MT_183:Actor
 	{
 		classname = "poison_arrows";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5570,7 +5386,6 @@ class MT_184:Actor
 	{
 		classname = "electric_arrows";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5592,7 +5407,6 @@ class MT_185:Actor
 	{
 		classname = "Back_pack";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5614,7 +5428,6 @@ class MT_186:Actor
 	{
 		classname = "assault_gun";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5636,7 +5449,6 @@ class MT_187:Actor
 	{
 		classname = "pulse_rifle";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5658,7 +5470,6 @@ class MT_188:Actor
 	{
 		classname = "flame_thrower";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5680,7 +5491,6 @@ class MT_189:Actor
 	{
 		classname = "flame_thrower_Parts";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5702,7 +5512,6 @@ class MT_190:Actor
 	{
 		classname = "missile_gun";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5724,7 +5533,6 @@ class MT_191:Actor
 	{
 		classname = "blaster";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5746,7 +5554,6 @@ class MT_192:Actor
 	{
 		classname = "crossbow";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5768,7 +5575,6 @@ class MT_193:Actor
 	{
 		classname = "Grenade_launcher";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5790,7 +5596,6 @@ class MT_194:Actor
 	{
 		classname = "SIGIL";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5812,7 +5617,6 @@ class MT_195:Actor
 	{
 		classname = "SIGIL";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5834,7 +5638,6 @@ class MT_196:Actor
 	{
 		classname = "SIGIL";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5856,7 +5659,6 @@ class MT_197:Actor
 	{
 		classname = "SIGIL";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5878,7 +5680,6 @@ class MT_198:Actor
 	{
 		classname = "SIGIL";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5899,7 +5700,6 @@ class MT_199:Actor
 	defaultproperties
 	{
 		health = 50;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5924,7 +5724,6 @@ class MT_200:Actor
 	{
 		classname = "rat_buddy";
 		health = 5;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 16.0;
 		mass = 100.0;
@@ -5962,7 +5761,6 @@ class MT_201:Actor
 	defaultproperties
 	{
 		health = 10;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 32.0;
 		mass = 100.0;
@@ -5985,7 +5783,6 @@ class MT_202:Actor
 	defaultproperties
 	{
 		health = 30;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 32.0;
 		mass = 100.0;
@@ -6008,7 +5805,6 @@ class MT_203:Actor
 	defaultproperties
 	{
 		health = 99999999;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 72.0;
 		mass = 9999999.0;
@@ -6032,7 +5828,6 @@ class MT_204:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 4.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6053,7 +5848,6 @@ class MT_205:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 4.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6074,7 +5868,6 @@ class MT_206:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 4.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6095,7 +5888,6 @@ class MT_207:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6116,7 +5908,6 @@ class MT_208:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 128.0;
 		mass = 100.0;
@@ -6137,7 +5928,6 @@ class MT_209:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -6158,7 +5948,6 @@ class MT_210:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 80.0;
 		mass = 100.0;
@@ -6179,7 +5968,6 @@ class MT_211:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 40.0;
 		mass = 100.0;
@@ -6200,7 +5988,6 @@ class MT_212:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 192.0;
 		mass = 100.0;
@@ -6221,7 +6008,6 @@ class MT_213:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 192.0;
 		mass = 100.0;
@@ -6243,7 +6029,6 @@ class MT_214:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 54.0;
 		mass = 100.0;
@@ -6264,7 +6049,6 @@ class MT_215:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 40.0;
 		mass = 100.0;
@@ -6285,7 +6069,6 @@ class MT_216:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 40.0;
 		mass = 100.0;
@@ -6306,7 +6089,6 @@ class MT_217:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -6327,7 +6109,6 @@ class MT_218:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -6348,7 +6129,6 @@ class MT_219:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 25.0;
 		mass = 100.0;
@@ -6369,7 +6149,6 @@ class MT_220:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6389,7 +6168,6 @@ class MT_221:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 40.0;
 		mass = 100.0;
@@ -6410,7 +6188,6 @@ class MT_222:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6432,7 +6209,6 @@ class MT_223:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6454,7 +6230,6 @@ class MT_224:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 1.0;
 		mass = 100.0;
@@ -6475,7 +6250,6 @@ class MT_225:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6497,7 +6271,6 @@ class MT_226:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 56.0;
 		mass = 100.0;
@@ -6518,7 +6291,6 @@ class MT_227:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6540,7 +6312,6 @@ class MT_228:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6560,7 +6331,6 @@ class MT_229:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6580,7 +6350,6 @@ class MT_230:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6600,7 +6369,6 @@ class MT_231:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6620,7 +6388,6 @@ class MT_232:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6640,7 +6407,6 @@ class MT_233:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6660,7 +6426,6 @@ class MT_234:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6680,7 +6445,6 @@ class MT_235:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6700,7 +6464,6 @@ class MT_236:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 32.0;
 		mass = 100.0;
@@ -6721,7 +6484,6 @@ class MT_237:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6743,7 +6505,6 @@ class MT_238:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 32.0;
 		mass = 100.0;
@@ -6765,7 +6526,6 @@ class MT_239:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 0.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6787,7 +6547,6 @@ class MT_240:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 0.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6808,7 +6567,6 @@ class MT_241:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 93.0;
 		mass = 100.0;
@@ -6829,7 +6587,6 @@ class MT_242:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 3.0;
 		mass = 100.0;
@@ -6850,7 +6607,6 @@ class MT_243:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 64.0;
 		mass = 100.0;
@@ -6871,7 +6627,6 @@ class MT_244:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 56.0;
 		mass = 100.0;
@@ -6892,7 +6647,6 @@ class MT_245:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 4.0;
 		height = 72.0;
 		mass = 100.0;
@@ -6913,7 +6667,6 @@ class MT_246:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 3.0;
 		height = 80.0;
 		mass = 100.0;
@@ -6934,7 +6687,6 @@ class MT_247:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 3.0;
 		height = 80.0;
 		mass = 100.0;
@@ -6955,7 +6707,6 @@ class MT_248:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6976,7 +6727,6 @@ class MT_249:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -6997,7 +6747,6 @@ class MT_250:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7018,7 +6767,6 @@ class MT_251:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7039,7 +6787,6 @@ class MT_252:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7061,7 +6808,6 @@ class MT_253:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7082,7 +6828,6 @@ class MT_254:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7103,7 +6848,6 @@ class MT_255:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7124,7 +6868,6 @@ class MT_256:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7145,7 +6888,6 @@ class MT_257:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7166,7 +6908,6 @@ class MT_258:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7187,7 +6928,6 @@ class MT_259:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7208,7 +6948,6 @@ class MT_260:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7229,7 +6968,6 @@ class MT_261:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7250,7 +6988,6 @@ class MT_262:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 72.0;
 		mass = 100.0;
@@ -7272,7 +7009,6 @@ class MT_263:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 10.0;
 		height = 80.0;
 		mass = 100.0;
@@ -7294,7 +7030,6 @@ class MT_264:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 109.0;
 		mass = 100.0;
@@ -7315,7 +7050,6 @@ class MT_265:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 109.0;
 		mass = 100.0;
@@ -7336,7 +7070,6 @@ class MT_266:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 64.0;
 		mass = 100.0;
@@ -7357,7 +7090,6 @@ class MT_267:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 80.0;
 		mass = 100.0;
@@ -7378,7 +7110,6 @@ class MT_268:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 15.0;
 		height = 40.0;
 		mass = 100.0;
@@ -7399,7 +7130,6 @@ class MT_269:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 64.0;
 		mass = 100.0;
@@ -7420,7 +7150,6 @@ class MT_270:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 64.0;
 		mass = 100.0;
@@ -7441,7 +7170,6 @@ class MT_271:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -7462,7 +7190,6 @@ class MT_272:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 12.0;
 		height = 24.0;
 		mass = 100.0;
@@ -7483,7 +7210,6 @@ class MT_273:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 12.0;
 		height = 32.0;
 		mass = 100.0;
@@ -7504,7 +7230,6 @@ class MT_274:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 6.0;
 		height = 24.0;
 		mass = 100.0;
@@ -7525,7 +7250,6 @@ class MT_275:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7546,7 +7270,6 @@ class MT_276:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7567,7 +7290,6 @@ class MT_277:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 32.0;
 		mass = 100.0;
@@ -7588,7 +7310,6 @@ class MT_278:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 11.0;
 		height = 64.0;
 		mass = 100.0;
@@ -7609,7 +7330,6 @@ class MT_279:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 8.0;
 		height = 64.0;
 		mass = 100.0;
@@ -7630,7 +7350,6 @@ class MT_280:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 40.0;
 		mass = 100.0;
@@ -7651,7 +7370,6 @@ class MT_281:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 12.0;
 		height = 24.0;
 		mass = 100.0;
@@ -7672,7 +7390,6 @@ class MT_282:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 24.0;
 		height = 96.0;
 		mass = 100.0;
@@ -7693,7 +7410,6 @@ class MT_283:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7714,7 +7430,6 @@ class MT_284:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7735,7 +7450,6 @@ class MT_285:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7756,7 +7470,6 @@ class MT_286:Actor
 	defaultproperties
 	{
 		health = 40;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 24.0;
 		mass = 999999.0;
@@ -7778,7 +7491,6 @@ class MT_287:Actor
 	{
 		classname = "POWER_COUPLING";
 		health = 40;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 1.0;
@@ -7799,7 +7511,6 @@ class MT_288:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -7821,7 +7532,6 @@ class MT_289:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 72.0;
 		mass = 100.0;
@@ -7843,7 +7553,6 @@ class MT_290:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 72.0;
 		mass = 100.0;
@@ -7865,7 +7574,6 @@ class MT_291:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 128.0;
 		mass = 100.0;
@@ -7887,7 +7595,6 @@ class MT_292:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 32.0;
 		height = 56.0;
 		mass = 100.0;
@@ -7910,7 +7617,6 @@ class MT_293:Actor
 	{
 		classname = "Teleportor_Beacon";
 		health = 5;
-		spawnhealth = health;
 		radius = 16.0;
 		height = 16.0;
 		mass = 3.0;
@@ -7932,7 +7638,6 @@ class MT_294:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7953,7 +7658,6 @@ class MT_295:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7974,7 +7678,6 @@ class MT_296:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -7996,7 +7699,6 @@ class MT_297:Actor
 	{
 		classname = "Ammo";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8018,7 +7720,6 @@ class MT_298:Actor
 	{
 		classname = "Health";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8040,7 +7741,6 @@ class MT_299:Actor
 	{
 		classname = "info";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8062,7 +7762,6 @@ class MT_300:Actor
 	{
 		classname = "alarm";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8083,7 +7782,6 @@ class MT_301:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8104,7 +7802,6 @@ class MT_302:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8126,7 +7823,6 @@ class MT_303:Actor
 	{
 		classname = "Prison_pass";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8147,7 +7843,6 @@ class MT_304:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8168,7 +7863,6 @@ class MT_305:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8190,7 +7884,6 @@ class MT_306:Actor
 	{
 		classname = "report";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8212,7 +7905,6 @@ class MT_307:Actor
 	{
 		classname = "Toughness";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8234,7 +7926,6 @@ class MT_308:Actor
 	{
 		classname = "Accuracy";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8256,7 +7947,6 @@ class MT_309:Actor
 	{
 		classname = "Oracle_Pass";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8277,7 +7967,6 @@ class MT_310:Actor
 	defaultproperties
 	{
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8298,7 +7987,6 @@ class MT_311:Actor
 	{
 		classname = "Blown_Up_the_Crystal";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8319,7 +8007,6 @@ class MT_312:Actor
 	{
 		classname = "Blown_Up_the_Gates";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8340,7 +8027,6 @@ class MT_313:Actor
 	{
 		classname = "quest4";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8361,7 +8047,6 @@ class MT_314:Actor
 	{
 		classname = "quest5";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8382,7 +8067,6 @@ class MT_315:Actor
 	{
 		classname = "quest6";
 		health = 1000;
-		spawnhealth = health;
 		radius = 20.0;
 		height = 16.0;
 		mass = 100.0;
@@ -8631,9 +8315,12 @@ __mobjinfo__
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2001/12/27 17:48:28  dj_jl
+//	Removed spawnhealth
+//
 //	Revision 1.10  2001/12/12 18:57:43  dj_jl
 //	State functions now are methods of Actor and Weapon classes
-//
+//	
 //	Revision 1.9  2001/12/04 18:25:36  dj_jl
 //	Replaced constructors with defaultproperties
 //	
