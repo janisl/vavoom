@@ -795,6 +795,7 @@ void FACScriptsObject::LoadOldObject()
 	}
 
 	//	Set up map vars.
+	memset(MapVarStore, 0, sizeof(MapVarStore));
 	for (i = 0; i < MAX_ACS_MAP_VARS; i++)
 	{
 		MapVars[i] = &MapVarStore[i];
@@ -2418,7 +2419,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_IncMapVar:
-			*activeObject->MapVars[NEXTBYTE]++;
+			(*activeObject->MapVars[NEXTBYTE])++;
 			break;
 
 		case PCD_IncWorldVar:
@@ -2430,7 +2431,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_DecMapVar:
-			*activeObject->MapVars[NEXTBYTE]--;
+			(*activeObject->MapVars[NEXTBYTE])--;
 			break;
 
 		case PCD_DecWorldVar:
@@ -4626,9 +4627,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/01/24 12:56:30  dj_jl
+//	Fixed inc/dec of map variables.
+//
 //	Revision 1.31  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.30  2004/12/22 07:49:13  dj_jl
 //	More extended ACS support, more linedef flags.
 //	
