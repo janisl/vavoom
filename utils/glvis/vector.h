@@ -26,29 +26,29 @@
 class  TVec
 {
  public:
-	float		x;
-	float		y;
+	double		x;
+	double		y;
 
 	TVec(void) { }
 
-	TVec(float Ax, float Ay)
+	TVec(double Ax, double Ay)
 	{
 		x = Ax;
 		y = Ay;
 	}
 
-	TVec (const float f[2])
+	TVec (const double f[2])
 	{
 		x = f[0];
 		y = f[1];
 	}
 
-	const float& operator[](int i) const
+	const double& operator[](int i) const
 	{
 		return (&x)[i];
 	}
 
-	float& operator[](int i)
+	double& operator[](int i)
 	{
 		return (&x)[i];
 	}
@@ -67,14 +67,14 @@ class  TVec
 		return *this;
 	}
 
-	TVec &operator *= (float scale)
+	TVec &operator *= (double scale)
 	{
 		x *= scale;
 		y *= scale;
 		return *this;
 	}
 
-	TVec &operator /= (float scale)
+	TVec &operator /= (double scale)
 	{
 		x /= scale;
 		y /= scale;
@@ -91,7 +91,7 @@ class  TVec
 		return TVec(-x,	-y);
 	}
 
-	float Length(void) const
+	double Length(void) const
 	{
 		return sqrt(x * x + y * y);
 	}
@@ -107,17 +107,17 @@ inline TVec operator - (const TVec &v1, const TVec &v2)
 	return TVec(v1.x - v2.x, v1.y - v2.y);
 }
 
-inline TVec operator * (const TVec& v, float s)
+inline TVec operator * (const TVec& v, double s)
 {
 	return TVec(s * v.x, s * v.y);
 }
 
-inline TVec operator * (float s, const TVec& v)
+inline TVec operator * (double s, const TVec& v)
 {
 	return TVec(s * v.x, s * v.y);
 }
 
-inline TVec operator / (const TVec& v, float s)
+inline TVec operator / (const TVec& v, double s)
 {
 	return TVec(v.x / s, v.y / s);
 }
@@ -132,7 +132,7 @@ inline bool operator != (const TVec& v1, const TVec& v2)
 	return v1.x != v2.x || v1.y != v2.y;
 }
 
-inline float Length(const TVec &v)
+inline double Length(const TVec &v)
 {
 	return sqrt(v.x * v.x + v.y * v.y);
 }
@@ -142,7 +142,7 @@ inline TVec Normalize(const TVec& v)
    return v / v.Length();
 }
 
-inline float DotProduct(const TVec& v1, const TVec& v2)
+inline double DotProduct(const TVec& v1, const TVec& v2)
 {
 	return v1.x * v2.x + v1.y * v2.y;
 }
@@ -162,9 +162,9 @@ class TPlane
 {
  public:
 	TVec		normal;
-	float		dist;
+	double		dist;
 
-	void Set(const TVec &Anormal, float Adist)
+	void Set(const TVec &Anormal, double Adist)
 	{
 		normal = Anormal;
 		dist = Adist;
@@ -187,9 +187,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/01/03 18:35:14  dj_jl
+//	Switched to doubles, some fixes
+//
 //	Revision 1.3  2001/08/24 17:08:34  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

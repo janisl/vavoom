@@ -59,6 +59,11 @@ namespace VavoomUtils {
 
 static void *GLVisMalloc(size_t size)
 {
+	if (!size)
+	{
+		size = 4;
+	}
+	size = (size + 3) & ~3;
 	void *ptr = malloc(size);
 	if (!ptr)
 	{
@@ -157,8 +162,8 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 		// Copy and convert vertex, internal representation as vector.
 		for (i = 0; i < gl_verts; i++, li++, glml++)
 		{
-			*li = TVec((float)LittleLong(glml->x) / (float)0x10000,
-					   (float)LittleLong(glml->y) / (float)0x10000);
+			*li = TVec((double)LittleLong(glml->x) / (double)0x10000,
+					   (double)LittleLong(glml->y) / (double)0x10000);
 		}
 	}
 	else
@@ -382,8 +387,8 @@ void TVisBuilder::LoadSubsectors(int lump)
 	for (i = 0; i < numsubsectors; i++, ss++, ms++)
 	{
 		//	Set seg subsector links
-		int count = LittleShort(ms->numsegs);
-		seg_t *line = &segs[LittleShort(ms->firstseg)];
+		int count = (word)LittleShort(ms->numsegs);
+		seg_t *line = &segs[(word)LittleShort(ms->firstseg)];
 		ss->secnum = -1;
 		while (count--)
 		{
@@ -795,9 +800,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2002/01/03 18:35:14  dj_jl
+//	Switched to doubles, some fixes
+//
 //	Revision 1.7  2001/10/27 07:53:03  dj_jl
 //	Fixes for non-closed sectors
-//
+//	
 //	Revision 1.6  2001/10/18 17:41:47  dj_jl
 //	Added reject building
 //	

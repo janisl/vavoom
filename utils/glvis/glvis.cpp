@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
 				break;
 
 			 case 'm':
-				strcpy(arg + 2, GLVis.specified_maps[GLVis.num_specified_maps++]);
+				strcpy(GLVis.specified_maps[GLVis.num_specified_maps++], arg + 2);
 				break;
 
 			 case 'n':
@@ -264,9 +264,12 @@ int main(int argc, char *argv[])
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/01/03 18:35:14  dj_jl
+//	Switched to doubles, some fixes
+//
 //	Revision 1.8  2001/11/09 18:15:02  dj_jl
 //	Added missing include
-//
+//	
 //	Revision 1.7  2001/10/18 17:41:47  dj_jl
 //	Added reject building
 //	

@@ -92,7 +92,7 @@ void TVisBuilder::BasePortalVis(void)
 {
 	int			i, j, k;
 	portal_t	*tp, *p;
-	float		d;
+	double		d;
 	winding_t	*w;
 
 	portalsee = New<byte>(numportals);
@@ -197,8 +197,8 @@ winding_t *TVisBuilder::CopyWinding(winding_t *w)
 
 winding_t *TVisBuilder::ClipWinding(winding_t *in, TPlane *split)
 {
-	float		dists[2];
-	float		dot;
+	double		dists[2];
+	double		dot;
 	TVec		mid;
 	winding_t	*neww;
 	
@@ -273,8 +273,8 @@ winding_t *TVisBuilder::ClipToSeperators(winding_t *source, winding_t *pass,
 	int			i, j;
 	TPlane		plane;
 	TVec		v2;
-	float		d;
-	float		length;
+	double		d;
+	double		length;
 
 	// check all combinations
 	for (i = 0; i < 2; i++)
@@ -730,9 +730,12 @@ void TVisBuilder::BuildReject(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/01/03 18:35:14  dj_jl
+//	Switched to doubles, some fixes
+//
 //	Revision 1.6  2001/10/18 17:41:47  dj_jl
 //	Added reject building
-//
+//	
 //	Revision 1.5  2001/09/12 17:28:38  dj_jl
 //	Created glVIS plugin
 //	
