@@ -732,7 +732,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		//	Create window
 		hwnd = CreateWindowEx(WS_EX_APPWINDOW,
-			"VAVOOM", "VAVOOM for Windows'95", WS_POPUP,
+			"VAVOOM", "VAVOOM for Windows'95", 
+			M_CheckParm("-window") ? WS_OVERLAPPEDWINDOW : WS_POPUP,
 			0, 0, 2, 2, NULL, NULL, hInst, NULL);
 		if (!hwnd)
 		{
@@ -842,9 +843,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2002/01/11 18:25:14  dj_jl
+//	Beautification
+//
 //	Revision 1.14  2002/01/11 08:12:49  dj_jl
 //	Changes for MinGW
-//
+//	
 //	Revision 1.13  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
