@@ -131,9 +131,6 @@ struct line_t : public TPlane
 	// if == validcount, already checked
 	int			validcount;
 
-	// thinker_t for reversable actions
-	thinker_t	*specialdata;
-
 	int			translucency;
 
 	int			special;
@@ -142,6 +139,8 @@ struct line_t : public TPlane
 	int			arg3;
 	int			arg4;
 	int			arg5;
+
+	int			user_fields[5];
 };
 
 //
@@ -266,12 +265,6 @@ struct sector_t
 
 	float		skyheight;
 
-	// 0 = untraversed, 1,2 = sndlines -1
-	int			soundtraversed;
-
-	// thing that made a sound (or null)
-	mobj_t		*soundtarget;
-
 	// stone, metal, heavy, etc...
 	int			seqType;
 
@@ -284,15 +277,14 @@ struct sector_t
 	// if == validcount, already checked
 	int			validcount;
 
-	// thinker_t for reversable actions
-	thinker_t	*specialdata;
-
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
 	subsector_t	*subsectors;
 
 	int			linecount;
 	line_t		**lines;  // [linecount] size
+
+	int			user_fields[8];
 };
 
 //
@@ -311,12 +303,12 @@ struct polyobj_t
 	int 		validcount;
 	boolean 	crush; 			// should the polyobj attempt to crush mobjs?
 	int 		seqType;
-	thinker_t	*specialdata; 	// pointer a thinker, if the poly is moving
 	subsector_t	*subsector;
 	float		base_x;
 	float		base_y;
 	angle_t		base_angle;
 	boolean		changed;
+	int			user_fields[3];
 };
 
 //
@@ -638,9 +630,12 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/02 17:43:50  dj_jl
+//	Added addfields to lines, sectors and polyobjs
+//
 //	Revision 1.6  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
-//
+//	
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

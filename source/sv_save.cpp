@@ -588,8 +588,6 @@ static void UnarchiveWorld(void)
 		sec->special = GET_WORD;
 		sec->tag = GET_WORD;
 		sec->seqType = GET_WORD;
-		sec->specialdata = 0;
-		sec->soundtarget = 0;
 		CalcSecMinMaxs(sec);
 	}
 
@@ -1301,9 +1299,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/02 17:43:50  dj_jl
+//	Added addfields to lines, sectors and polyobjs
+//
 //	Revision 1.9  2001/09/24 17:35:24  dj_jl
 //	Support for thinker classes
-//
+//	
 //	Revision 1.8  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
 //	

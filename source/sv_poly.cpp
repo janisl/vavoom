@@ -906,25 +906,18 @@ void PO_Init(void)
 
 boolean PO_Busy(int polyobj)
 {
-	polyobj_t *poly;
-
-	poly = PO_GetPolyobj(polyobj);
-	if(!poly->specialdata)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	return svpr.Exec("PolyBusy", polyobj);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/02 17:43:50  dj_jl
+//	Added addfields to lines, sectors and polyobjs
+//
 //	Revision 1.4  2001/09/20 16:27:02  dj_jl
 //	Removed degenmobj
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

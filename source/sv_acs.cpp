@@ -718,17 +718,7 @@ static int FindSectorFromTag(int tag, int start)
 
 static boolean TagBusy(int tag)
 {
-	int sectorIndex;
-
-	sectorIndex = -1;
-	while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
-	{
-		if (level.sectors[sectorIndex].specialdata)
-		{
-			return true;
-		}
-	}
-	return false;
+	return svpr.Exec("TagBusy", tag);
 }
 
 //==========================================================================
@@ -1786,9 +1776,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/02 17:43:50  dj_jl
+//	Added addfields to lines, sectors and polyobjs
+//
 //	Revision 1.5  2001/09/20 16:30:28  dj_jl
 //	Started to use object-oriented stuff in progs
-//
+//	
 //	Revision 1.4  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	
