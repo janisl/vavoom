@@ -28,9 +28,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>//
+#include <arpa/inet.h>
 #include <errno.h>
-#include <unistd.h>//
+#include <unistd.h>
 #include <netdb.h>
 #include <sys/ioctl.h>
 
@@ -95,8 +95,14 @@ int UDP_Init(void)
 
 	//	determine my name & address
 	gethostname(buff, MAXHOSTNAMELEN);
+	GCon->Logf(NAME_Init, "Host name: %s", buff);
 	local = gethostbyname(buff);
-	myAddr = *(int *)local->h_addr_list[0];
+	if (!local)
+	{
+		Sys_Error("UDP_Init: Couldn't get local host by name %s,\n"
+			"Check your /etc/hosts file.", buff);
+	}
+	myAddr = *(int*)local->h_addr_list[0];
 
 	// if the quake hostname isn't set, set it to the machine name
 	if (strcmp(hostname, "UNNAMED") == 0)
@@ -117,6 +123,7 @@ int UDP_Init(void)
 	colon = strrchr(my_tcpip_address, ':');
 	if (colon)
 		*colon = 0;
+	GCon->Logf(NAME_Init, "My TCP/IP address: %s", my_tcpip_address);
 
 	GCon->Log(NAME_Init, "UDP Initialized");
 	tcpipAvailable = true;
@@ -153,7 +160,7 @@ void UDP_Listen(boolean state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-            net_acceptsocket = UDP_OpenSocket(net_hostport);
+			net_acceptsocket = UDP_OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("UDP_Listen: Unable to open accept socket\n");
 		}
@@ -429,7 +436,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 	int mask;
 	int run;
 	int port;
-	
+
 	buff[0] = '.';
 	b = buff;
 	strcpy(buff + 1, in);
@@ -445,9 +452,9 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 		run = 0;
 		while (!(*b < '0' || *b > '9'))
 		{
-		  num = num*10 + *b++ - '0';
-		  if (++run > 3)
-		  	return -1;
+			num = num*10 + *b++ - '0';
+			if (++run > 3)
+				return -1;
 		}
 		if ((*b < '0' || *b > '9') && *b != '.' && *b != ':' && *b != 0)
 			return -1;
@@ -456,7 +463,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 		mask <<= 8;
 		addr = (addr << 8) + num;
 	}
-	
+
 	if (*b++ == ':')
 		port = atoi(b);
 	else
@@ -465,7 +472,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
 	((sockaddr_in *)hostaddr)->sin_addr.s_addr = (myAddr & htonl(mask)) | htonl(addr);
-	
+
 	return 0;
 	unguard;
 }
@@ -483,7 +490,7 @@ int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
 
 	if (name[0] >= '0' && name[0] <= '9')
 		return PartialIPAddress(name, addr);
-	
+
 	hostentry = gethostbyname(name);
 	if (!hostentry)
 		return -1;
@@ -548,9 +555,12 @@ int UDP_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/03/16 15:06:16  dj_jl
+//	Abort if can't get loal IP from host name.
+//
 //	Revision 1.7  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.6  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
