@@ -277,10 +277,10 @@ void Weapon::A_WeaponReady(void)
 		Player->MO.SetState(Player->MO.IdleState);
 	}
 
-/*    if (Player->ReadyWeapon == wp_chainsaw && statenum == S_SAW)
-    {
+/*	if (Player->ReadyWeapon == wp_chainsaw && StateNum == S_SAW)
+	{
 		StartSoundName(Player->mo, "ChainsawIdle");
-    }*/
+	}*/
 
 	// check for change
 	//  if player is dead, put the weapon away
@@ -896,6 +896,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/06/14 15:48:49  dj_jl
+//  Beautification.
+//
 //  Revision 1.21  2002/05/18 17:00:05  dj_jl
 //  Renamed SpawnState to IdleState, other changes.
 //
