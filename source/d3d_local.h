@@ -165,8 +165,7 @@ public:
 
 class VDirect3DDrawer : public VDrawer
 {
-	DECLARE_CLASS(VDirect3DDrawer, VDrawer, 0)
-
+public:
 	VDirect3DDrawer(void);
 	void Init(void);
 	void InitData(void);
@@ -448,9 +447,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.25  2004/02/09 17:29:58  dj_jl
 //	Increased block count
-//
+//	
 //	Revision 1.24  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
 //	

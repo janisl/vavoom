@@ -84,9 +84,9 @@ refdef_t				refdef;
 
 float					PixelAspect;
 
-IMPLEMENT_CLASS(V, Drawer);
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static FDrawerDesc		*DrawerList[DRAWER_MAX];
 
 static TCvarI			screen_size("screen_size", "10", CVAR_ARCHIVE);
 static boolean			set_resolutioon_needed = true;
@@ -112,6 +112,24 @@ static int				pg_frametime;
 static TCvarI			_driver("_driver", "0", CVAR_ROM);
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//  FDrawerDesc::FDrawerDesc
+//
+//==========================================================================
+
+FDrawerDesc::FDrawerDesc(int Type, const char* AName, const char* ADescription,
+	const char* ACmdLineArg, VDrawer* (*ACreator)())
+: Name(AName)
+, Description(ADescription)
+, CmdLineArg(ACmdLineArg)
+, Creator(ACreator)
+{
+	guard(FDrawerDesc::FDrawerDesc);
+	DrawerList[Type] = this;
+	unguard
+}
 
 //==========================================================================
 //
@@ -644,36 +662,24 @@ COMMAND(TimeRefresh)
 void V_Init(void)
 {
 	guard(V_Init);
-	VClass *DrawerClass;
-
-	if (M_CheckParm("-d3d"))
+	int DIdx = -1;
+	for (int i = 0; i < DRAWER_MAX; i++)
 	{
-		DrawerClass = VClass::FindClass("Direct3DDrawer");
-		_driver = 2;
-		if (!DrawerClass)
-		{
-			Sys_Error("Direct3D drawer is not available");
-		}
+		if (!DrawerList[i])
+			continue;
+		//	Pick first available as default.
+		if (DIdx == -1)
+			DIdx = i;
+		//	Check for user driver selection.
+		if (DrawerList[i]->CmdLineArg && M_CheckParm(DrawerList[i]->CmdLineArg))
+			DIdx = i;
 	}
-	else if (M_CheckParm("-opengl"))
-	{
-		DrawerClass = VClass::FindClass("OpenGLDrawer");
-		_driver = 1;
-		if (!DrawerClass)
-		{
-			Sys_Error("OpenGL drawer is not available");
-		}
-	}
-	else
-	{
-		DrawerClass = VClass::FindClass("SoftwareDrawer");
-		_driver = 0;
-		if (!DrawerClass)
-		{
-			Sys_Error("Software drawer is not available");
-		}
-	}
-	Drawer = (VDrawer *)VObject::StaticSpawnObject(DrawerClass, NULL, PU_STATIC);
+	if (DIdx == -1)
+		Sys_Error("No drawers are available");
+	_driver = DIdx;
+	GCon->Logf(NAME_Init, "Selected %s", DrawerList[DIdx]->Description);
+	//	Create drawer.
+	Drawer = DrawerList[DIdx]->Creator();
 	Drawer->Init();
 	unguard;
 }
@@ -699,9 +705,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.25  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.24  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	

@@ -52,10 +52,6 @@ REGISTER_NAME(DevNet)
 REGISTER_NAME(Object)
 REGISTER_NAME(Level)
 REGISTER_NAME(Subsystem)
-REGISTER_NAME(SoftwareDrawer)
-REGISTER_NAME(OpenGLDrawer)
-REGISTER_NAME(Direct3DDrawer)
-REGISTER_NAME(Drawer)
 REGISTER_NAME(OpenALDevice)
 REGISTER_NAME(SoundDevice)
 REGISTER_NAME(DefaultSoundDevice)
@@ -80,9 +76,12 @@ REGISTER_NAME(Thinker)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.4  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

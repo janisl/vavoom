@@ -45,7 +45,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, OpenGLDrawer);
+IMPLEMENT_DRAWER(VOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"OpenGL rasterizer device", "-opengl");
 
 TCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE);
 TCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_ARCHIVE);
@@ -473,9 +474,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.21  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.20  2003/10/22 06:13:52  dj_jl
 //	Freeing old blocks on overflow
 //	

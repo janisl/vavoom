@@ -41,7 +41,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, Direct3DDrawer);
+IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
+	"Direct3D rasterizer device", "-d3d");
 
 TCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_ARCHIVE);
 TCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_ARCHIVE);
@@ -1143,9 +1144,12 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.24  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.23  2004/04/08 15:19:40  dj_jl
 //	Windowed mode
 //	

@@ -75,10 +75,15 @@ struct model_t
 	void		*data;		// only access through Mod_Extradata
 };
 
-class VDrawer : public VSubsystem
+class VDrawer
 {
-	DECLARE_ABSTRACT_CLASS(VDrawer, VSubsystem, 0)
-	NO_DEFAULT_CONSTRUCTOR(VDrawer)
+public:
+	virtual ~VDrawer()
+	{}
+	void* operator new(size_t Size, int Tag)
+	{ return Z_Calloc(Size, Tag, 0); }
+	void operator delete(void* Object, size_t)
+	{ Z_Free(Object); }
 
 	virtual void Init(void) = 0;
 	virtual void InitData(void) = 0;
@@ -134,6 +139,36 @@ class VDrawer : public VSubsystem
 	virtual void EndAutomap(void) = 0;
 };
 
+//	Drawer types, menu system uses these numbers.
+enum
+{
+	DRAWER_Software,
+	DRAWER_OpenGL,
+	DRAWER_Direct3D,
+
+	DRAWER_MAX
+};
+
+//	Drawer description.
+struct FDrawerDesc
+{
+	const char*		Name;
+	const char*		Description;
+	const char*		CmdLineArg;
+	VDrawer*		(*Creator)();
+
+	FDrawerDesc(int Type, const char* AName, const char* ADescription,
+		const char* ACmdLineArg, VDrawer* (*ACreator)());
+};
+
+//	Drawer driver declaration macro.
+#define IMPLEMENT_DRAWER(TClass, Type, Name, Description, CmdLineArg) \
+static VDrawer* Create##TClass() \
+{ \
+	return new(PU_STATIC) TClass(); \
+} \
+FDrawerDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -143,9 +178,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.16  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.15  2002/07/23 13:12:00  dj_jl
 //	Some compatibility fixes, beautification.
 //	

@@ -149,9 +149,7 @@ typedef void (*picspanfunc_t)(fixed_t, fixed_t, fixed_t, int, byte*, void*);
 
 class VSoftwareDrawer : public VDrawer
 {
-	DECLARE_CLASS(VSoftwareDrawer, VDrawer, 0)
-	NO_DEFAULT_CONSTRUCTOR(VSoftwareDrawer)
-
+public:
 	void Init(void);
 	void InitData(void);
 	bool SetResolution(int, int, int);
@@ -647,9 +645,12 @@ inline byte GetColB(dword col)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/08/21 17:22:15  dj_jl
+//	Changed rendering driver declaration.
+//
 //	Revision 1.23  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.22  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	
