@@ -62,7 +62,7 @@ menu_main_t MainMenu;
 
 class MenuChoice_SinglePlayer:MenuBigTextButton
 {
-	MenuChoice_SinglePlayer(void)
+	defaultproperties
 	{
 		text = "Single Player";
 	}
@@ -81,7 +81,7 @@ class MenuChoice_SinglePlayer:MenuBigTextButton
 
 class MenuChoice_Multiplayer:MenuBigTextButton
 {
-	MenuChoice_Multiplayer(void)
+	defaultproperties
 	{
 		text = "Multiplayer";
 	}
@@ -100,7 +100,7 @@ class MenuChoice_Multiplayer:MenuBigTextButton
 
 class MenuChoice_Options:MenuBigTextButton
 {
-	MenuChoice_Options(void)
+	defaultproperties
 	{
 		text = "Options";
 	}
@@ -119,7 +119,7 @@ class MenuChoice_Options:MenuBigTextButton
 
 class MenuChoice_Help:MenuBigTextButton
 {
-	MenuChoice_Help(void)
+	defaultproperties
 	{
 		text = "Help";
 	}
@@ -149,7 +149,7 @@ class MenuChoice_Help:MenuBigTextButton
 
 class MenuChoice_QuitGame:MenuBigTextButton
 {
-	MenuChoice_QuitGame(void)
+	defaultproperties
 	{
 		text = "Quit game";
 	}
@@ -213,6 +213,9 @@ void menu_main(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/12/04 18:22:08  dj_jl
+//  Reworking menus
+//
 //  Revision 1.4  2001/12/01 18:04:21  dj_jl
 //  Started reworking menus
 //

@@ -98,6 +98,12 @@ float MenuTime;
 
 class MenuObject:Object
 {
+	int x;
+	int y;
+	int width;
+	int height;
+	boolean selected;
+
 	void Init(void)
 	{
 	}
@@ -129,6 +135,10 @@ class MenuObject:Object
 	{
 		return NULL;
 	}
+
+	void Destroyed(void)
+	{
+	}
 }
 
 //**************************************************************************
@@ -143,17 +153,27 @@ class MenuItemWrapper:MenuObject
 
 	void Draw(void)
 	{
-		item->drawer(item);
+		if (item->drawer)
+		{
+			item->drawer(item);
+		}
 	}
 
 	boolean Key(int key)
 	{
-		return item->responder(item, key);
+		if (item->responder)
+		{
+			return item->responder(item, key);
+		}
+		return false;
 	}
 
 	void Callback(int id)
 	{
-		item->callback(item, id);
+		if (item->callback)
+		{
+			item->callback(item, id);
+		}
 	}
 
 	boolean IsVisible(void)
@@ -254,11 +274,13 @@ void Menu_CursorMoved(menu_t * m)
 	if (m->cursor_prev >= 0 && m->cursor_prev < m->numitems)
 	{
 		m->Items[m->cursor_prev].Callback(MMSG_LOST_FOCUS);
+		m->Items[m->cursor_prev].selected = false;
 	}
 
 	if (m->cursor >= 0 && m->cursor < m->numitems)
 	{
 		m->Items[m->cursor].Callback(MMSG_RECEIVE_FOCUS);
+		m->Items[m->cursor].selected = true;
 	}
 }
 
@@ -363,9 +385,20 @@ boolean Menu_Use(menu_t * menu, int key)
 
 void InitMenu(menu_t * menu)
 {
+	int i;
+
 	menu->numitems = 0;
 	menu->drawer = Menu_Draw;
 	menu->responder = Menu_Use;
+	for (i = 0; i < MAX_MENU_ITEMS; i++)
+	{
+		if (menu->Items[i] != none)
+		{
+			menu->Items[i].Destroyed();
+			menu->Items[i].Destroy();
+			menu->Items[i] = none;
+		}
+	}
 }
 
 //==========================================================================
@@ -1721,8 +1754,84 @@ void MenuSlist_Init(menuslist_t * item)
 }
 
 //**************************************************************************
+//**
+//**	MenuTextButton
+//**
+//**************************************************************************
+
+class MenuTextButton:MenuObject
+{
+	string activateSound;
+	string text;
+	int textFont;
+	int textHAlign;
+	int textVAlign;
+
+	defaultproperties
+	{
+		activateSound = "MenuSelect";
+	}
+
+	void ActivateEvent(void)
+	{
+	}
+
+	boolean Key(int key)
+	{
+		if (key == K_ENTER || key == K_MOUSE1 || key == K_JOY1)
+		{
+			ActivateEvent();
+			LocalSound(activateSound);
+			return true;
+		}
+		return false;
+	}
+
+	void Draw(void)
+	{
+		T_SetFont(textFont);
+		T_SetAlign(textHAlign, textVAlign);
+		T_DrawText(x, y, text);
+	}
+}
+
+//**************************************************************************
+//**
+//**	MenuBigTextButton
+//**
+//**************************************************************************
+
+class MenuBigTextButton:MenuTextButton
+{
+	defaultproperties
+	{
+		textFont = font_big;
+		textHAlign = hleft;
+		textVAlign = vtop;
+	}
+
+	void Init(void)
+	{
+		::Init();
+		InitSelector();
+	}
+
+	void Draw(void)
+	{
+		if (selected)
+		{
+			DrawSelector(x, y);
+		}
+		::Draw();
+	}
+}
+
+//**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2001/12/04 18:22:08  dj_jl
+//  Reworking menus
+//
 //  Revision 1.8  2001/12/01 18:04:23  dj_jl
 //  Started reworking menus
 //

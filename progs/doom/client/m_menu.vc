@@ -1810,36 +1810,19 @@ void MenuSlist_Init(menuslist_t * item)
 
 //**************************************************************************
 //**
-//**	MenuText
+//**	MenuTextButton
 //**
 //**************************************************************************
 
-class MenuText:MenuObject
+class MenuTextButton:MenuObject
 {
+	string activateSound;
 	string text;
 	int textFont;
 	int textHAlign;
 	int textVAlign;
 
-	void Draw(void)
-	{
-		T_SetFont(textFont);
-		T_SetAlign(textHAlign, textVAlign);
-		T_DrawText(x, y, text);
-	}
-}
-
-//**************************************************************************
-//**
-//**	MenuTextButton
-//**
-//**************************************************************************
-
-class MenuTextButton:MenuText
-{
-	string activateSound;
-
-	MenuTextButton(void)
+	defaultproperties
 	{
 		activateSound = "MenuSelect";
 	}
@@ -1858,6 +1841,13 @@ class MenuTextButton:MenuText
 		}
 		return false;
 	}
+
+	void Draw(void)
+	{
+		T_SetFont(textFont);
+		T_SetAlign(textHAlign, textVAlign);
+		T_DrawText(x, y, text);
+	}
 }
 
 //**************************************************************************
@@ -1868,7 +1858,7 @@ class MenuTextButton:MenuText
 
 class MenuBigTextButton:MenuTextButton
 {
-	MenuBigTextButton(void)
+	defaultproperties
 	{
 		textFont = font_big;
 		textHAlign = hleft;
@@ -1894,6 +1884,9 @@ class MenuBigTextButton:MenuTextButton
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2001/12/04 18:22:08  dj_jl
+//  Reworking menus
+//
 //  Revision 1.10  2001/12/01 18:04:21  dj_jl
 //  Started reworking menus
 //
