@@ -27,6 +27,7 @@
 
 #define GRAVITY 			1225.0
 #define MAXMOVE 			1050.0
+#define MAXMOVESTEP			15.0	//MAXMOVE / (35.0 * 2.0)
 #define STOPSPEED			2.1875
 
 #define FRICTION_NORMAL		3.28125
@@ -40,7 +41,7 @@
 
 // FUNCTION PROTOTYPES -----------------------------------------------------
 
-boolean P_ExplodeMissile(mobj_t * mo);
+boolean P_ExplodeMissile(Entity * mo);
 
 // DATA DECLARATIONS -------------------------------------------------------
 
@@ -73,7 +74,7 @@ float secondslidefrac;
 line_t *bestslideline;
 line_t *secondslideline;
 
-mobj_t *slidemo;
+Entity *slidemo;
 TVec slideorg;
 TVec slidedir;
 
@@ -149,7 +150,7 @@ void SlidePathTraverse(float x, float y)
 
 //==========================================================================
 //
-//  P_SlideMove
+//  Entity::SlideMove
 //
 //  The momx / momy move is bad, so try to slide along a wall.
 //  Find the first line hit, move flush to it, and slide along it.
@@ -157,7 +158,7 @@ void SlidePathTraverse(float x, float y)
 //
 //==========================================================================
 
-void P_SlideMove(mobj_t * mo)
+void Entity::SlideMove(void)
 {
 	float leadx;
 	float leady;
@@ -167,7 +168,7 @@ void P_SlideMove(mobj_t * mo)
 	float newy;
 	int hitcount;
 
-	slidemo = mo;
+	slidemo = this;
 	hitcount = 0;
 
 	do
@@ -175,34 +176,34 @@ void P_SlideMove(mobj_t * mo)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!P_TryMove(mo, mo->origin.x,
-					mo->origin.y + mo->velocity.y * frametime))
-				P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
-					mo->origin.y);
+			if (!P_TryMove(this, origin.x, origin.y + velocity.y * frametime))
+			{
+				P_TryMove(this, origin.x + velocity.x * frametime, origin.y);
+			}
 			return;
 		}
 
 		// trace along the three leading corners
-		if (mo->velocity.x > 0.0)
+		if (velocity.x > 0.0)
 		{
-			leadx = mo->origin.x + mo->radius;
-			trailx = mo->origin.x - mo->radius;
+			leadx = origin.x + radius;
+			trailx = origin.x - radius;
 		}
 		else
 		{
-			leadx = mo->origin.x - mo->radius;
-			trailx = mo->origin.x + mo->radius;
+			leadx = origin.x - radius;
+			trailx = origin.x + radius;
 		}
 
-		if (mo->velocity.y > 0.0)
+		if (velocity.y > 0.0)
 		{
-			leady = mo->origin.y + mo->radius;
-			traily = mo->origin.y - mo->radius;
+			leady = origin.y + radius;
+			traily = origin.y - radius;
 		}
 		else
 		{
-			leady = mo->origin.y - mo->radius;
-			traily = mo->origin.y + mo->radius;
+			leady = origin.y - radius;
+			traily = origin.y + radius;
 		}
 
 		bestslidefrac = 1.00001;
@@ -215,10 +216,10 @@ void P_SlideMove(mobj_t * mo)
 		if (bestslidefrac == 1.00001)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!P_TryMove(mo, mo->origin.x,
-					mo->origin.y + mo->velocity.y * frametime))
-				P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
-					mo->origin.y);
+			if (!P_TryMove(this, origin.x, origin.y + velocity.y * frametime))
+			{
+				P_TryMove(this, origin.x + velocity.x * frametime, origin.y);
+			}
 			return;
 		}
 
@@ -226,15 +227,17 @@ void P_SlideMove(mobj_t * mo)
 		bestslidefrac -= 0.03125;
 		if (bestslidefrac > 0.0)
 		{
-			newx = mo->velocity.x * frametime * bestslidefrac;
-			newy = mo->velocity.y * frametime * bestslidefrac;
+			newx = velocity.x * frametime * bestslidefrac;
+			newy = velocity.y * frametime * bestslidefrac;
 
-			if (!P_TryMove(mo, mo->origin.x + newx, mo->origin.y + newy))
+			if (!P_TryMove(this, origin.x + newx, origin.y + newy))
 			{
-				if (!P_TryMove(mo, mo->origin.x,
-						mo->origin.y + mo->velocity.y * frametime))
-					P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
-						mo->origin.y);
+				if (!P_TryMove(this, origin.x,
+						origin.y + velocity.y * frametime))
+				{
+					P_TryMove(this, origin.x + velocity.x * frametime,
+						origin.y);
+				}
 				return;
 			}
 		}
@@ -250,13 +253,12 @@ void P_SlideMove(mobj_t * mo)
 			return;
 
 		// clip the moves
-		mo->velocity =
-			ClipVelocity(mo->velocity * bestslidefrac, bestslideline->normal,
-			1.0);
+		velocity = ClipVelocity(velocity * bestslidefrac,
+			bestslideline->normal, 1.0);
 
 	}
-	while (!P_TryMove(mo, mo->origin.x + mo->velocity.x * frametime,
-			mo->origin.y + mo->velocity.y * frametime));
+	while (!P_TryMove(this, origin.x + velocity.x * frametime,
+			origin.y + velocity.y * frametime));
 }
 
 //**************************************************************************
@@ -317,42 +319,41 @@ boolean PTR_BounceTraverse(intercept_t * in)
 
 //============================================================================
 //
-//  P_BounceWall
+//  Entity::BounceWall
 //
 //============================================================================
 
-void P_BounceWall(mobj_t * mo)
+void Entity::BounceWall(void)
 {
 	float leadx, leady;
 
-	slidemo = mo;
+	slidemo = this;
 
 	//
 	// trace along the three leading corners
 	//
-	if (mo->velocity.x > 0.0)
+	if (velocity.x > 0.0)
 	{
-		leadx = mo->origin.x + mo->radius;
+		leadx = origin.x + radius;
 	}
 	else
 	{
-		leadx = mo->origin.x - mo->radius;
+		leadx = origin.x - radius;
 	}
-	if (mo->velocity.y > 0.0)
+	if (velocity.y > 0.0)
 	{
-		leady = mo->origin.y + mo->radius;
+		leady = origin.y + radius;
 	}
 	else
 	{
-		leady = mo->origin.y - mo->radius;
+		leady = origin.y - radius;
 	}
 	bestslidefrac = 1.00001;
-	slideorg = vector(leadx, leady, slidemo->origin.z);
-	slidedir = mo->velocity * frametime;
+	slideorg = vector(leadx, leady, origin.z);
+	slidedir = velocity * frametime;
 	P_PathTraverse(leadx, leady, leadx + slidedir.x, leady + slidedir.y,
 		PT_ADDLINES, PTR_BounceTraverse);
-	mo->velocity =
-		ClipVelocity(mo->velocity * 0.75, bestslideline->normal, 2.0);
+	velocity = ClipVelocity(velocity * 0.75, bestslideline->normal, 2.0);
 }
 
 //**************************************************************************
@@ -508,6 +509,208 @@ void Entity::UpdateVelocity(void)
 
 //==========================================================================
 //
+//	Entity::HitMobj
+//
+//==========================================================================
+
+boolean Entity::HitMobj(void)
+{
+	float angle;
+
+	if (flags & MF_MISSILE)
+	{
+		if (flags2 & MF2_FLOORBOUNCE)
+		{
+			if ((BlockingMobj->flags2 & MF2_REFLECTIVE) ||
+				((!BlockingMobj->player) &&
+					(!(BlockingMobj->flags & MF_COUNTKILL))))
+			{
+				float speed;
+
+				angle = AngleMod360(
+					atan2(origin.y - BlockingMobj->origin.y,
+						origin.x - BlockingMobj->origin.x) +
+						Random() * 16.0 - 8.0);
+				speed = Length(velocity);
+				speed = speed * 0.75;
+				angles.yaw = angle;
+				velocity.x = speed * cos(angle);
+				velocity.y = speed * sin(angle);
+				if (sound_sight)
+				{
+					StartSound(this, sound_sight, CHAN_VOICE);
+				}
+				return true;
+			}
+			else
+			{
+				// Struck a player/creature
+				return P_ExplodeMissile(this);
+			}
+		}
+		if (BlockingMobj->flags2 & MF2_REFLECTIVE)
+		{
+			int explode = false;
+
+			angle = atan2(origin.y - BlockingMobj->origin.y,
+				origin.x - BlockingMobj->origin.x);
+
+			// Change angle for delflection/reflection
+			switch (BlockingMobj->type)
+			{
+			case MT_CENTAUR:
+			case MT_CENTAURLEADER:
+				if (fabs(AngleMod180(angle -
+					BlockingMobj->angles.yaw)) > 45.0 * 45.0 / 32.0)
+				{
+					explode = true;
+					break;
+				}
+				if (type == MT_HOLY_FX)
+				{
+					explode = true;
+					break;
+				}
+				// Drop through to sorcerer full reflection
+			case MT_SORCBOSS:
+				// Deflection
+				if (P_Random() < 128)
+					angle = AngleMod360(angle + 45.0);
+				else
+					angle = AngleMod360(angle - 45.0);
+				break;
+			default:
+				// Reflection
+				angle = AngleMod360(angle + itof((P_Random() % 16) - 8));
+				break;
+			}
+
+			if (!explode)
+			{
+				// Reflect the missile along angle
+				angles.yaw = angle;
+				velocity.x = (speed / 2.0) * cos(angle);
+				velocity.y = (speed / 2.0) * sin(angle);
+//				velocity.z = -velocity.z;
+				if (flags2 & MF2_SEEKERMISSILE)
+				{
+					specialmobj1 = target;
+				}
+				target = BlockingMobj;
+				return true;
+			}
+		}
+		// Explode a missile
+		return P_ExplodeMissile(this);
+	}
+	else
+	{
+		if (flags2 & MF2_SLIDE)
+		{
+			// Try to slide along it
+			// Slide against mobj
+//			if (P_TryMove(this, origin.x, ptryy))
+			if (P_TryMove(this, origin.x, origin.y + velocity.y * frametime))
+			{
+				velocity.x = 0.0;
+			}
+//			else if (P_TryMove(this, ptryx, origin.y))
+			else if (P_TryMove(this, origin.x + velocity.x * frametime,
+				origin.y))
+			{
+				velocity.y = 0.0;
+			}
+			else
+			{
+				velocity.x = velocity.y = 0.0;
+			}
+		}
+		else
+		{
+			velocity.x = velocity.y = 0.0;
+		}
+		return true;
+	}
+}
+
+//==========================================================================
+//
+//	Entity::HitLine
+//
+//==========================================================================
+
+boolean Entity::HitLine(void)
+{
+	if (flags & MF_MISSILE)
+	{
+		if (flags2 & MF2_FLOORBOUNCE)
+		{
+			// Struck a wall
+			BounceWall();
+			switch (type)
+			{
+			case MT_SORCBALL1:
+			case MT_SORCBALL2:
+			case MT_SORCBALL3:
+			case MT_SORCFX1:
+				break;
+			default:
+				if (sound_sight)
+				{
+					StartSound(this, sound_sight, CHAN_VOICE);
+				}
+				break;
+			}
+			return true;
+		}
+
+		// Explode a missile
+		if (ceilingline && ceilingline->backsector
+			&& ceilingline->backsector->ceiling.pic == skyflatnum)
+		{
+			// Hack to prevent missiles exploding against the sky
+			if (type == MT_BLOODYSKULL)
+			{
+				velocity.x = velocity.y = 0.0;
+				velocity.z = -1.0 * 35.0;
+			}
+			else if (type == MT_HOLY_FX)
+			{
+				if (!P_ExplodeMissile(this))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				P_RemoveMobj(this);
+				return false;
+			}
+			return true;
+		}
+		if (!P_ExplodeMissile(this))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (flags2 & MF2_SLIDE)
+		{
+			// Try to slide along it
+			// Slide against wall
+			SlideMove();
+		}
+		else
+		{
+			velocity.x = velocity.y = 0.0;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	Entity::XYMovement
 //
 //==========================================================================
@@ -517,25 +720,10 @@ boolean Entity::XYMovement(void)
 	float ptryx, ptryy;
 	float xmove, ymove;
 	int special;
-	float angle;
 
-	if (!velocity.x && !velocity.y)
-	{
-		if (flags & MF_SKULLFLY)
-		{
-			// A flying mobj slammed into something
-			flags &= ~MF_SKULLFLY;
-			velocity = vector(0.0, 0.0, 0.0);
-			if (!SetMobjState(this, seestate))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	special = subsector->sector->special;
 	if (flags2 & MF2_WINDTHRUST)
 	{
+		special = subsector->sector->special;
 		switch (special)
 		{
 		case 40:
@@ -580,7 +768,7 @@ boolean Entity::XYMovement(void)
 	ymove = velocity.y * frametime;
 	do
 	{
-		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
+		if (xmove > MAXMOVESTEP || ymove > MAXMOVESTEP)
 		{
 			ptryx = origin.x + xmove / 2.0;
 			ptryy = origin.y + ymove / 2.0;
@@ -591,177 +779,19 @@ boolean Entity::XYMovement(void)
 		{
 			ptryx = origin.x + xmove;
 			ptryy = origin.y + ymove;
-			xmove = ymove = 0.0;
+			xmove = 0.0;
+			ymove = 0.0;
 		}
 		if (!P_TryMove(this, ptryx, ptryy))
 		{
 			// Blocked move
-			if (flags & MF_MISSILE)
+			if (BlockingMobj)
 			{
-				if (flags2 & MF2_FLOORBOUNCE)
-				{
-					if (BlockingMobj)
-					{
-						if ((BlockingMobj->flags2 & MF2_REFLECTIVE) ||
-							((!BlockingMobj->player) &&
-								(!(BlockingMobj->flags & MF_COUNTKILL))))
-						{
-							float speed;
-
-							angle = AngleMod360(
-								atan2(origin.y - BlockingMobj->origin.y,
-									origin.x - BlockingMobj->origin.x) +
-									Random() * 16.0 - 8.0);
-							speed = Length(velocity);
-							speed = speed * 0.75;
-							angles.yaw = angle;
-							velocity.x = speed * cos(angle);
-							velocity.y = speed * sin(angle);
-							if (sound_sight)
-							{
-								StartSound(this, sound_sight, CHAN_VOICE);
-							}
-							return true;
-						}
-						else
-						{
-							// Struck a player/creature
-							return P_ExplodeMissile(this);
-						}
-					}
-					else
-					{
-						// Struck a wall
-						P_BounceWall(this);
-						switch (type)
-						{
-						case MT_SORCBALL1:
-						case MT_SORCBALL2:
-						case MT_SORCBALL3:
-						case MT_SORCFX1:
-							break;
-						default:
-							if (sound_sight)
-							{
-								StartSound(this, sound_sight, CHAN_VOICE);
-							}
-							break;
-						}
-						return true;
-					}
-				}
-				if (BlockingMobj && (BlockingMobj->flags2 & MF2_REFLECTIVE))
-				{
-					int explode = false;
-
-					angle = atan2(origin.y - BlockingMobj->origin.y,
-						origin.x - BlockingMobj->origin.x);
-
-					// Change angle for delflection/reflection
-					switch (BlockingMobj->type)
-					{
-					case MT_CENTAUR:
-					case MT_CENTAURLEADER:
-						if (fabs(AngleMod180(angle -
-							BlockingMobj->angles.yaw)) > 45.0 * 45.0 / 32.0)
-						{
-							explode = true;
-							break;
-						}
-						if (type == MT_HOLY_FX)
-						{
-							explode = true;
-							break;
-						}
-						// Drop through to sorcerer full reflection
-					case MT_SORCBOSS:
-						// Deflection
-						if (P_Random() < 128)
-							angle = AngleMod360(angle + 45.0);
-						else
-							angle = AngleMod360(angle - 45.0);
-						break;
-					default:
-						// Reflection
-						angle = AngleMod360(angle + itof((P_Random() % 16) - 8));
-						break;
-					}
-
-					if (!explode)
-					{
-						// Reflect the missile along angle
-						angles.yaw = angle;
-						velocity.x = (speed / 2.0) * cos(angle);
-						velocity.y = (speed / 2.0) * sin(angle);
-//						velocity.z = -velocity.z;
-						if (flags2 & MF2_SEEKERMISSILE)
-						{
-							specialmobj1 = target;
-						}
-						target = BlockingMobj;
-						return true;
-					}
-				}
-				// Explode a missile
-				if (ceilingline && ceilingline->backsector
-					&& ceilingline->backsector->ceiling.pic == skyflatnum)
-				{
-					// Hack to prevent missiles exploding against the sky
-					if (type == MT_BLOODYSKULL)
-					{
-						velocity.x = velocity.y = 0.0;
-						velocity.z = -1.0 * 35.0;
-					}
-					else if (type == MT_HOLY_FX)
-					{
-						if (!P_ExplodeMissile(this))
-						{
-							return false;
-						}
-					}
-					else
-					{
-						P_RemoveMobj(this);
-						return false;
-					}
-					return true;
-				}
-				if (!P_ExplodeMissile(this))
-				{
-					return false;
-				}
+				return HitMobj();
 			}
 			else
 			{
-				if (flags2 & MF2_SLIDE)
-				{
-					// Try to slide along it
-					if (!BlockingMobj)
-					{
-						// Slide against wall
-						P_SlideMove(this);
-					}
-					else
-					{
-						// Slide against mobj
-						if (P_TryMove(this, origin.x, ptryy))
-						{
-							velocity.x = 0.0;
-						}
-						else if (P_TryMove(this, ptryx, origin.y))
-						{
-							velocity.y = 0.0;
-						}
-						else
-						{
-							velocity.x = velocity.y = 0.0;
-						}
-					}
-				}
-				else
-				{
-					velocity.x = velocity.y = 0.0;
-				}
+				return HitLine();
 			}
 		}
 	}
@@ -776,12 +806,12 @@ boolean Entity::XYMovement(void)
 //
 //==========================================================================
 
-mobj_t *tzmthing;
+Entity *tzmthing;
 float tzmx;
 float tzmy;
 float tzmz;
 
-mobj_t *onmobj;	//generic global onmobj...used for landing on pods/players
+Entity *onmobj;	//generic global onmobj...used for landing on pods/players
 
 //==========================================================================
 //
@@ -789,7 +819,7 @@ mobj_t *onmobj;	//generic global onmobj...used for landing on pods/players
 //
 //==========================================================================
 
-boolean PIT_CheckOnmobjZ(mobj_t * thing)
+boolean PIT_CheckOnmobjZ(Entity * thing)
 {
 	float blockdist;
 
@@ -828,13 +858,13 @@ boolean PIT_CheckOnmobjZ(mobj_t * thing)
 
 //=============================================================================
 //
-//  P_FakeZMovement
+//  Entity::FakeZMovement
 //
 //  Fake the zmovement so that we can check if a move is legal
 //
 //=============================================================================
 
-void P_FakeZMovement(mobj_t * mo)
+void Entity::FakeZMovement(void)
 {
 	float dist;
 	float delta;
@@ -842,21 +872,21 @@ void P_FakeZMovement(mobj_t * mo)
 	//
 	//  adjust height
 	//
-	tzmz += mo->velocity.z * frametime;
-	if (mo->flags & MF_FLOAT && mo->target)
+	tzmz += velocity.z * frametime;
+	if (flags & MF_FLOAT && target)
 	{
 		// float down towards target if too close
-		if (!(mo->flags & MF_SKULLFLY) && !(mo->flags & MF_INFLOAT))
+		if (!(flags & MF_SKULLFLY) && !(flags & MF_INFLOAT))
 		{
-			dist = MobjDist2(mo, mo->target);
-			delta = mo->target->origin.z + mo->height / 2.0 - tzmz;
+			dist = MobjDist2(this, target);
+			delta = target->origin.z + height / 2.0 - tzmz;
 			if (delta < 0.0 && dist < -(delta * 3.0))
 				tzmz -= FLOATSPEED * frametime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
 				tzmz += FLOATSPEED * frametime;
 		}
 	}
-	if (mo->player && mo->flags2 & MF2_FLY && !(tzmz <= mo->floorz)
+	if (player && flags2 & MF2_FLY && !(tzmz <= floorz)
 		&& level->tictime & 2)
 	{
 		tzmz += sin(90.0 * 35.0 / 20.0 * level->time);
@@ -865,42 +895,42 @@ void P_FakeZMovement(mobj_t * mo)
 	//
 	//  clip movement
 	//
-	if (tzmz <= mo->floorz)
+	if (tzmz <= floorz)
 	{
 		// Hit the floor
-		tzmz = mo->floorz;
-		if (mo->crashstate && (mo->flags & MF_CORPSE))
+		tzmz = floorz;
+		if (crashstate && (flags & MF_CORPSE))
 		{
 			return;
 		}
 	}
 
-	if (tzmz + mo->height > mo->ceilingz)
+	if (tzmz + height > ceilingz)
 	{
 		// hit the ceiling
-		tzmz = mo->ceilingz - mo->height;
+		tzmz = ceilingz - height;
 	}
 }
 
 //=============================================================================
 //
-//  P_CheckOnmobj
+//  Entity::CheckOnmobj
 //
 //  Checks if the new Z position is legal
 //
 //=============================================================================
 
-mobj_t *P_CheckOnmobj(mobj_t * thing)
+Entity *Entity::CheckOnmobj(void)
 {
 	int xl, xh, yl, yh, bx, by;
 
-	tzmthing = thing;
-	tzmx = thing->origin.x;
-	tzmy = thing->origin.y;
-	tzmz = thing->origin.z;
-	P_FakeZMovement(tzmthing);
+	tzmthing = this;
+	tzmx = origin.x;
+	tzmy = origin.y;
+	tzmz = origin.z;
+	FakeZMovement();
 
-	if (thing->flags & MF_NOCLIP)
+	if (flags & MF_NOCLIP)
 		return NULL;
 
 	//
@@ -909,14 +939,10 @@ mobj_t *P_CheckOnmobj(mobj_t * thing)
 	// into mapblocks based on their origin point, and can overlap into adjacent
 	// blocks by up to MAXRADIUS units
 	//
-	xl = MapBlock(thing->origin.x - thing->radius - level->bmaporgx -
-		MAXRADIUS);
-	xh = MapBlock(thing->origin.x + thing->radius - level->bmaporgx +
-		MAXRADIUS);
-	yl = MapBlock(thing->origin.y - thing->radius - level->bmaporgy -
-		MAXRADIUS);
-	yh = MapBlock(thing->origin.y + thing->radius - level->bmaporgy +
-		MAXRADIUS);
+	xl = MapBlock(origin.x - radius - level->bmaporgx - MAXRADIUS);
+	xh = MapBlock(origin.x + radius - level->bmaporgx + MAXRADIUS);
+	yl = MapBlock(origin.y - radius - level->bmaporgy - MAXRADIUS);
+	yh = MapBlock(origin.y + radius - level->bmaporgy + MAXRADIUS);
 
 	for (bx = xl; bx <= xh; bx++)
 	{
@@ -933,6 +959,195 @@ mobj_t *P_CheckOnmobj(mobj_t * thing)
 
 //==========================================================================
 //
+//	Entity::HitFloor
+//
+//==========================================================================
+
+boolean Entity::HitFloor(void)
+{
+	float vdot;
+
+	if (flags & MF_MISSILE)
+	{
+		origin.z = floorz;
+		if (flags2 & MF2_FLOORBOUNCE)
+		{
+			P_FloorBounceMissile(this);
+			return true;
+		}
+		else if (type == MT_HOLY_FX)
+		{
+			// The spirit struck the ground
+			velocity.z = 0.0;
+			P_HitFloor(this);
+			return true;
+		}
+		else if (type == MT_MNTRFX2 || type == MT_LIGHTNING_FLOOR)
+		{
+			// Minotaur floor fire can go up steps
+			return true;
+		}
+		else
+		{
+			P_HitFloor(this);
+			return P_ExplodeMissile(this);
+		}
+	}
+
+	vdot = DotProduct(velocity, floor->normal);
+	if (flags & MF_COUNTKILL)	// Blasted mobj falling
+	{
+		if (vdot < -23.0 * 35.0)
+		{
+			P_MonsterFallingDamage(this);
+		}
+	}
+	if (origin.z - velocity.z * frametime > floorz)
+	{
+		// Spawn splashes, etc.
+		P_HitFloor(this);
+	}
+	origin.z = floorz;
+	if (vdot < -0.1)
+	{
+		if (flags2 & MF2_ICEDAMAGE && vdot < -GRAVITY * 0.25)
+		{
+			time = 0.1;
+			velocity.x = 0.0;
+			velocity.y = 0.0;
+			velocity.z = 0.0;
+			return true;
+		}
+		if (player)
+		{
+			player->jumpTics = 7;	// delay any jumping for a short time
+			if (vdot < -GRAVITY * 0.25 && !(flags2 & MF2_FLY))
+			{
+				// squat down
+				player->deltaviewheight = vdot * frametime / 8.0;
+				if (vdot < -23.0 * 35.0)
+				{
+					P_FallingDamage(player);
+					P_NoiseAlert(this, this);
+				}
+				else if (vdot < -GRAVITY * 0.375
+					&& !player->morphTics)
+				{
+					StartSoundName(this, "PlayerLand", CHAN_BODY);
+					switch (player->pclass)
+					{
+					case PCLASS_FIGHTER:
+						StartSoundName(this, "PlayerFighterGrunt",
+							CHAN_VOICE);
+						break;
+					case PCLASS_CLERIC:
+						StartSoundName(this, "PlayerClericGrunt",
+							CHAN_VOICE);
+						break;
+					case PCLASS_MAGE:
+						StartSoundName(this, "PlayerMageGrunt",
+							CHAN_VOICE);
+						break;
+					default:
+						break;
+					}
+				}
+				else if ((P_GetThingFloorType(this) < FLOOR_LIQUID) &&
+					(!player->morphTics))
+				{
+					StartSoundName(this, "PlayerLand", CHAN_BODY);
+				}
+//FIXME				player->centering = true;
+			}
+		}
+		else if (type == MT_POTTERY1 || type == MT_POTTERY2 || type == MT_POTTERY3)
+		{
+			DamageMobj(this, NULL, NULL, 25);
+		}
+		else if (flags & MF_COUNTKILL)
+		{
+			if (vdot < -23.0 * 35.0)
+			{
+				// Doesn't get here
+			}
+		}
+		velocity -= vdot * floor->normal;
+	}
+	if (flags & MF_SKULLFLY)
+	{
+		// The skull slammed into something
+		velocity = ClipVelocity(velocity, floor->normal, 2.0);
+	}
+	if (crashstate && (flags & MF_CORPSE) && !(flags2 & MF2_ICEDAMAGE))
+	{
+		return SetMobjState(this, crashstate);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Entity::HitCeiling
+//
+//==========================================================================
+
+boolean Entity::HitCeiling(void)
+{
+	float vdot;
+
+	vdot = DotProduct(velocity, ceiling->normal);
+	if (vdot < 0.0)
+	{
+		velocity -= vdot * ceiling->normal;
+	}
+	origin.z = ceilingz - height;
+	if (flags & MF_MISSILE)
+	{
+		if (flags2 & MF2_FLOORBOUNCE)
+		{
+			// Reverse momentum here for ceiling bounce
+			velocity -= vdot * ceiling->normal;
+
+			if (sound_sight)
+			{
+				StartSound(this, sound_sight, CHAN_VOICE);
+			}
+			return true;
+		}
+		if (type == MT_LIGHTNING_CEILING)
+		{
+			return true;
+		}
+		if (ceiling->pic == skyflatnum)
+		{
+			if (type == MT_BLOODYSKULL)
+			{
+				velocity.x = velocity.y = 0.0;
+				velocity.z = -1.0 * 35.0;
+			}
+			else if (type == MT_HOLY_FX)
+			{
+				return P_ExplodeMissile(this);
+			}
+			else
+			{
+				P_RemoveMobj(this);
+				return false;
+			}
+			return true;
+		}
+		return P_ExplodeMissile(this);
+	}
+	if (flags & MF_SKULLFLY)
+	{
+		// the skull slammed into something
+		velocity.z = -velocity.z;
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	Entity::ZMovement
 //
 //==========================================================================
@@ -941,7 +1156,6 @@ boolean Entity::ZMovement(void)
 {
 	float dist;
 	float delta;
-	float vdot;
 
 	//
 	// check for smooth step up
@@ -980,172 +1194,13 @@ boolean Entity::ZMovement(void)
 	if (origin.z <= floorz + 0.1)
 	{
 		// Hit the floor
-		if (flags & MF_MISSILE)
-		{
-			origin.z = floorz;
-			if (flags2 & MF2_FLOORBOUNCE)
-			{
-				P_FloorBounceMissile(this);
-				return true;
-			}
-			else if (type == MT_HOLY_FX)
-			{
-				// The spirit struck the ground
-				velocity.z = 0.0;
-				P_HitFloor(this);
-				return true;
-			}
-			else if (type == MT_MNTRFX2 || type == MT_LIGHTNING_FLOOR)
-			{
-				// Minotaur floor fire can go up steps
-				return true;
-			}
-			else
-			{
-				P_HitFloor(this);
-				return P_ExplodeMissile(this);
-			}
-		}
-
-		vdot = DotProduct(velocity, floor->normal);
-		if (flags & MF_COUNTKILL)	// Blasted mobj falling
-		{
-			if (vdot < -23.0 * 35.0)
-			{
-				P_MonsterFallingDamage(this);
-			}
-		}
-		if (origin.z - velocity.z * frametime > floorz)
-		{
-			// Spawn splashes, etc.
-			P_HitFloor(this);
-		}
-		origin.z = floorz;
-		if (vdot < -0.1)
-		{
-			if (flags2 & MF2_ICEDAMAGE && vdot < -GRAVITY * 0.25)
-			{
-				time = 0.1;
-				velocity.x = 0.0;
-				velocity.y = 0.0;
-				velocity.z = 0.0;
-				return true;
-			}
-			if (player)
-			{
-				player->jumpTics = 7;	// delay any jumping for a short time
-				if (vdot < -GRAVITY * 0.25 && !(flags2 & MF2_FLY))
-				{
-					// squat down
-					player->deltaviewheight = vdot * frametime / 8.0;
-					if (vdot < -23.0 * 35.0)
-					{
-						P_FallingDamage(player);
-						P_NoiseAlert(this, this);
-					}
-					else if (vdot < -GRAVITY * 0.375
-						&& !player->morphTics)
-					{
-						StartSoundName(this, "PlayerLand", CHAN_BODY);
-						switch (player->pclass)
-						{
-						case PCLASS_FIGHTER:
-							StartSoundName(this, "PlayerFighterGrunt",
-								CHAN_VOICE);
-							break;
-						case PCLASS_CLERIC:
-							StartSoundName(this, "PlayerClericGrunt",
-								CHAN_VOICE);
-							break;
-						case PCLASS_MAGE:
-							StartSoundName(this, "PlayerMageGrunt",
-								CHAN_VOICE);
-							break;
-						default:
-							break;
-						}
-					}
-					else if ((P_GetThingFloorType(this) < FLOOR_LIQUID) &&
-						(!player->morphTics))
-					{
-						StartSoundName(this, "PlayerLand", CHAN_BODY);
-					}
-//FIXME					player->centering = true;
-				}
-			}
-			else if (type == MT_POTTERY1 || type == MT_POTTERY2 || type == MT_POTTERY3)
-			{
-				DamageMobj(this, NULL, NULL, 25);
-			}
-			else if (flags & MF_COUNTKILL)
-			{
-				if (vdot < -23.0 * 35.0)
-				{
-					// Doesn't get here
-				}
-			}
-			velocity -= vdot * floor->normal;
-		}
-		if (flags & MF_SKULLFLY)
-		{
-			// The skull slammed into something
-			velocity = ClipVelocity(velocity, floor->normal, 2.0);
-		}
-		if (crashstate &&
-			(flags & MF_CORPSE) && !(flags2 & MF2_ICEDAMAGE))
-		{
-			return SetMobjState(this, crashstate);
-		}
+		return HitFloor();
 	}
 
 	if (origin.z + height > ceilingz)
 	{
 		// hit the ceiling
-		vdot = DotProduct(velocity, ceiling->normal);
-		if (vdot < 0.0)
-			velocity -= vdot * ceiling->normal;
-		origin.z = ceilingz - height;
-		if (flags & MF_MISSILE)
-		{
-			if (flags2 & MF2_FLOORBOUNCE)
-			{
-				// Maybe reverse momentum here for ceiling bounce
-				// Currently won't happen
-
-				if (sound_sight)
-				{
-					StartSound(this, sound_sight, CHAN_VOICE);
-				}
-				return true;
-			}
-			if (type == MT_LIGHTNING_CEILING)
-			{
-				return true;
-			}
-			if (ceiling->pic == skyflatnum)
-			{
-				if (type == MT_BLOODYSKULL)
-				{
-					velocity.x = velocity.y = 0.0;
-					velocity.z = -1.0 * 35.0;
-				}
-				else if (type == MT_HOLY_FX)
-				{
-					return P_ExplodeMissile(this);
-				}
-				else
-				{
-					P_RemoveMobj(this);
-					return false;
-				}
-				return true;
-			}
-			return P_ExplodeMissile(this);
-		}
-		if (flags & MF_SKULLFLY)
-		{	// the skull slammed into something
-			velocity.z = -velocity.z;
-		}
+		return HitCeiling();
 	}
 	return true;
 }
@@ -1171,7 +1226,7 @@ void Entity::ResetBlasted(void)
 //
 //===========================================================================
 
-void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj)
+void PlayerLandedOnThing(Entity * mo, Entity * onmobj)
 {
 	mo->player->deltaviewheight = mo->velocity.z * frametime / 8.0;
 	if (mo->velocity.z < -23.0 * 35.0)
@@ -1218,7 +1273,7 @@ boolean Entity::BlasterPhysics(void)
 	float zfrac;
 	float z;
 	boolean changexy;
-	mobj_t *mo;
+	Entity *mo;
 
 	// Handle movement
 	if (velocity.x || velocity.y || (origin.z != floorz) || velocity.z)
@@ -1303,9 +1358,19 @@ boolean Entity::Physics(void)
 
 	// Handle X and Y momentums
 	BlockingMobj = NULL;
-	if (velocity.x || velocity.y || (flags & MF_SKULLFLY))
+	if (velocity.x || velocity.y)
 	{
 		if (!XYMovement())
+		{
+			return false;
+		}
+	}
+	else if (flags & MF_SKULLFLY)
+	{
+		// A flying mobj slammed into something
+		flags &= ~MF_SKULLFLY;
+		velocity = vector(0.0, 0.0, 0.0);
+		if (!SetMobjState(this, seestate))
 		{
 			return false;
 		}
@@ -1326,7 +1391,7 @@ boolean Entity::Physics(void)
 		// Handle Z momentum and gravity
 		if (flags2 & MF2_PASSMOBJ)
 		{
-			if (!(onmo = P_CheckOnmobj(this)))
+			if (!(onmo = CheckOnmobj()))
 			{
 				if (!ZMovement())
 				{
@@ -1409,6 +1474,9 @@ void Entity::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2001/10/27 07:40:58  dj_jl
+//  Switched some functions into class members
+//
 //  Revision 1.9  2001/10/22 17:23:13  dj_jl
 //  Floatification of angles
 //
