@@ -2540,6 +2540,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->Message.MaxSize = MAX_MSGLEN;
 	player->Message.CurSize = 0;
 	player->Message.AllowOverflow = true;		// we can catch it
+	player->Message.Overflowed = false;
 	player->bSpawned = false;
 	if (!sv_loading)
 	{
@@ -2627,10 +2628,14 @@ void SV_ConnectBot(const char *name)
 	svs.num_connected++;
 
 	sv_player = svvars.Players[i];
+	sv_player->Message.Clear();
 	SV_RunClientCommand("PreSpawn\n");
+	sv_player->Message.Clear();
 	SV_RunClientCommand("Spawn\n");
+	sv_player->Message.Clear();
 	SV_SetUserInfo(sv_player->UserInfo);
 	SV_RunClientCommand("Begin\n");
+	sv_player->Message.Clear();
 	unguard;
 }
 
@@ -2868,9 +2873,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.57  2004/02/09 17:28:45  dj_jl
+//	Bots fix
+//
 //	Revision 1.56  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
-//
+//	
 //	Revision 1.55  2003/10/22 06:16:54  dj_jl
 //	Secret level info saved in savegame
 //	
