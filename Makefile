@@ -5,7 +5,7 @@
 #---------------------------------------
 
 # Uncomment to compile a debug version
-DEBUG = 1
+#DEBUG = 1
 
 # Uncomment to compile without OpenGL driver
 #NOGL = 1

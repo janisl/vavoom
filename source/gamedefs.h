@@ -55,16 +55,13 @@
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
-#define RANGECHECK
 //#define PARANOID
-#define DEVELOPER
+//#define DEVELOPER
 
-#define VERSION			1.9
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	9
 #define VERSION_RELEASE	0
-#define VERSION_INT		109
-#define VERSION_TEXT	"v1.9"
+#define VERSION_TEXT	"1.9"
 
 //==========================================================================
 //
@@ -118,9 +115,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/08/31 17:29:45  dj_jl
+//	Changes for release
+//
 //	Revision 1.5  2001/08/30 17:39:51  dj_jl
 //	Moved view border and message box to progs
-//
+//	
 //	Revision 1.4  2001/08/04 17:25:14  dj_jl
 //	Moved title / demo loop to progs
 //	Removed shareware / ExtendedWAD from engine
