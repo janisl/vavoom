@@ -45,6 +45,18 @@ Ld1:			.long	0
 #define clip		20+8
 #define clipflags	20+12
 
+// clipplane_t structure
+// !!! if this is changed, it must be changed in r_shared.h too !!!
+#define cp_normal		0
+#define cp_dist			12
+#define cp_next			32
+#define cp_clipflag		36
+#define cp_enter		40
+#define cp_exit			52
+#define cp_entered		64
+#define cp_exited		68
+#define cp_size			72
+
 //==========================================================================
 //
 //	D_ClipEdge
@@ -68,7 +80,7 @@ C(D_ClipEdge):
 
 LClipLoop:
 	movl	%ebp,%eax
-	movl	20(%ebx),%ecx
+	movl	cp_clipflag(%ebx),%ecx
 	testl	%ecx,%eax
 	jz		LNoClip
 
@@ -111,7 +123,7 @@ LClipLoop:
 	js		LIsClipped
 
 LNoClip:
-	movl	16(%ebx),%ebx
+	movl	cp_next(%ebx),%ebx
 	testl	%ebx,%ebx
 	jne		LClipLoop
 
@@ -502,8 +514,8 @@ LPoint0IsClipped:
 	fld		%st(1)			// d0 | d1 | d0
 	fsubp	%st(0),%st(1)	// d0 - d1 | d0
 	fdivrp	%st(0),%st(1)	// f
-	movl	$1,52(%ebx)
-	leal	36(%ebx),%ecx
+	movl	$1,cp_exited(%ebx)
+	leal	cp_exit(%ebx),%ecx
 	flds	(%edi)
 	fsubs	(%esi)
 	flds	4(%edi)
@@ -526,23 +538,23 @@ LPoint0IsClipped:
 	fxch	%st(1)			// y | z
 	fstps	4(%ecx)			// z
 	fstps	8(%ecx)			//
-	cmpl	$0,48(%ebx)
+	cmpl	$0,cp_entered(%ebx)
 	je		LNoEntered
-	movl	$0,48(%ebx)
-	movl	$0,52(%ebx)
+	movl	$0,cp_entered(%ebx)
+	movl	$0,cp_exited(%ebx)
 	movl	%ebp,%eax
-	xorl	20(%ebx),%eax
+	xorl	cp_clipflag(%ebx),%eax
 	pushl	%eax
 	pushl	$C(view_clipplanes)
 	pushl	%ecx
-	leal	24(%ebx),%eax
+	leal	cp_enter(%ebx),%eax
 	pushl	%eax
 	call	C(D_ClipEdge)
 	addl	$16,%esp
-	leal	36(%ebx),%ecx
+	leal	cp_exit(%ebx),%ecx
 LNoEntered:
 	pushl	%ebp
-	movl	16(%ebx),%eax
+	movl	cp_next(%ebx),%eax
 	pushl	%eax
 	pushl	%edi
 	pushl	%ecx
@@ -556,10 +568,10 @@ LPoint1IsClipped:
 	fld		%st(1)			// d0 | d1 | d0
 	fsubp	%st(0),%st(1)	// d0 - d1 | d0
 	fdivrp	%st(0),%st(1)	// f
-	movl	$1,48(%ebx)
-	leal	24(%ebx),%ecx
+	movl	$1,cp_entered(%ebx)
+	leal	cp_enter(%ebx),%ecx
 	pushl	%ebp
-	movl	16(%ebx),%eax
+	movl	cp_next(%ebx),%eax
 	pushl	%eax
 	pushl	%ecx
 	pushl	%esi
@@ -587,15 +599,15 @@ LPoint1IsClipped:
 	fstps	8(%ecx)			//
 	call	C(D_ClipEdge)
 	addl	$16,%esp
-	cmpl	$0,52(%ebx)
+	cmpl	$0,cp_exited(%ebx)
 	je		LClipDone
-	movl	$0,48(%ebx)
-	movl	$0,52(%ebx)
-	xorl	20(%ebx),%ebp
+	movl	$0,cp_entered(%ebx)
+	movl	$0,cp_exited(%ebx)
+	xorl	cp_clipflag(%ebx),%ebp
 	pushl	%ebp
 	pushl	$C(view_clipplanes)
-	leal	36(%ebx),%eax
-	leal	24(%ebx),%ecx
+	leal	cp_exit(%ebx),%eax
+	leal	cp_enter(%ebx),%ecx
 	pushl	%eax
 	pushl	%ecx
 	call	C(D_ClipEdge)
@@ -763,9 +775,12 @@ LResetSurfacesLoop:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2001/12/12 19:24:38  dj_jl
+//	Fixed clipping
+//
 //	Revision 1.2  2001/08/21 17:22:28  dj_jl
 //	Optimized rendering with some asm
-//
+//	
 //	Revision 1.1  2001/08/15 17:13:05  dj_jl
 //	Implemented D_EmitEdge in asm
 //	

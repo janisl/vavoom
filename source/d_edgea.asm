@@ -264,7 +264,7 @@ _D_ClipEdge:
  jz LEmitEdge
 LClipLoop:
  mov eax,ebp
- mov ecx,dword ptr[20+ebx]
+ mov ecx,dword ptr[36+ebx]
  test eax,ecx
  jz LNoClip
  fld dword ptr[esi]
@@ -297,7 +297,7 @@ LClipLoop:
  or ecx,eax
  js LIsClipped
 LNoClip:
- mov ebx,dword ptr[16+ebx]
+ mov ebx,dword ptr[32+ebx]
  test ebx,ebx
  jne LClipLoop
 LEmitEdge:
@@ -619,8 +619,8 @@ LPoint0IsClipped:
  fld st(1)
  fsubrp st(1),st(0)
  fdivp st(1),st(0)
- mov dword ptr[52+ebx],1
- lea ecx,dword ptr[36+ebx]
+ mov dword ptr[68+ebx],1
+ lea ecx,dword ptr[52+ebx]
  fld dword ptr[edi]
  fsub dword ptr[esi]
  fld dword ptr[4+edi]
@@ -643,23 +643,23 @@ LPoint0IsClipped:
  fxch st(1)
  fstp dword ptr[4+ecx]
  fstp dword ptr[8+ecx]
- cmp dword ptr[48+ebx],0
+ cmp dword ptr[64+ebx],0
  je LNoEntered
- mov dword ptr[48+ebx],0
- mov dword ptr[52+ebx],0
+ mov dword ptr[64+ebx],0
+ mov dword ptr[68+ebx],0
  mov eax,ebp
- xor eax,dword ptr[20+ebx]
+ xor eax,dword ptr[36+ebx]
  push eax
  push offset _view_clipplanes
  push ecx
- lea eax,dword ptr[24+ebx]
+ lea eax,dword ptr[40+ebx]
  push eax
  call _D_ClipEdge
  add esp,16
- lea ecx,dword ptr[36+ebx]
+ lea ecx,dword ptr[52+ebx]
 LNoEntered:
  push ebp
- mov eax,dword ptr[16+ebx]
+ mov eax,dword ptr[32+ebx]
  push eax
  push edi
  push ecx
@@ -672,10 +672,10 @@ LPoint1IsClipped:
  fld st(1)
  fsubrp st(1),st(0)
  fdivp st(1),st(0)
- mov dword ptr[48+ebx],1
- lea ecx,dword ptr[24+ebx]
+ mov dword ptr[64+ebx],1
+ lea ecx,dword ptr[40+ebx]
  push ebp
- mov eax,dword ptr[16+ebx]
+ mov eax,dword ptr[32+ebx]
  push eax
  push ecx
  push esi
@@ -703,15 +703,15 @@ LPoint1IsClipped:
  fstp dword ptr[8+ecx]
  call _D_ClipEdge
  add esp,16
- cmp dword ptr[52+ebx],0
+ cmp dword ptr[68+ebx],0
  je LClipDone
- mov dword ptr[48+ebx],0
- mov dword ptr[52+ebx],0
- xor ebp,dword ptr[20+ebx]
+ mov dword ptr[64+ebx],0
+ mov dword ptr[68+ebx],0
+ xor ebp,dword ptr[36+ebx]
  push ebp
  push offset _view_clipplanes
- lea eax,dword ptr[36+ebx]
- lea ecx,dword ptr[24+ebx]
+ lea eax,dword ptr[52+ebx]
+ lea ecx,dword ptr[40+ebx]
  push eax
  push ecx
  call _D_ClipEdge
