@@ -705,6 +705,7 @@ static void AddChar(char ch)
 
 void FConsoleDevice::Serialize(const char* V, EName Event)
 {
+	dprintf("%s\n", V);
 	DoPrint(V);
 	DoPrint("\n");
 }
@@ -870,9 +871,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/07/13 07:47:05  dj_jl
+//	Console device now echos messages to debugfile.
+//
 //	Revision 1.16  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.15  2002/03/02 17:30:34  dj_jl
 //	Added suport for Pad-Enter.
 //	
