@@ -23,8 +23,20 @@
 //**
 //**************************************************************************
 
-class Communicator:Pickup
+class Communicator : Pickup
 	__mobjinfo__(206);
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	Toucher.Player->Communicator = true;
+	return true;
+}
 
 __states__
 {
@@ -34,7 +46,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 176;
-	ClassName = 'Communicator';
+	PickupString = "Communicator";
 	bNoDeathmatch = true;
 	IdleState = S_COMMUNICATOR;
 }
@@ -42,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 18:01:17  dj_jl
+//  Special items for conversations
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

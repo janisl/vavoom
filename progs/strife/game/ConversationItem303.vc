@@ -23,17 +23,33 @@
 //**
 //**************************************************************************
 
-class ConversationItem303:Pickup;
+class ConversationItem303 : Pickup;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	cprint(Toucher.Player, "You killed Haris in teaser version of Strife");
+	return true;
+}
 
 defaultproperties
 {
 	ConversationID = 303;
 	IdleState = S_TOKENS;
+	bDropAutoGive = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 18:00:34  dj_jl
+//  Special items for conversations
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

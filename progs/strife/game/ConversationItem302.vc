@@ -23,7 +23,25 @@
 //**
 //**************************************************************************
 
-class ConversationItem302:Pickup;
+class ConversationItem302 : Pickup;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	int Args[5];
+
+	Args[0] = 222;
+	Args[1] = 16;
+	Args[2] = 0;
+	Args[3] = 0;
+	Args[4] = 0;
+	return ExecuteLineSpecial(11, &Args[0], NULL, 0, Toucher);
+}
 
 defaultproperties
 {
@@ -34,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 18:00:34  dj_jl
+//  Special items for conversations
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

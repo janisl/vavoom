@@ -23,18 +23,34 @@
 //**
 //**************************************************************************
 
-class Alarm1:Pickup;
+class Alarm1 : Pickup;
+
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	P_NoiseAlert(Toucher, Toucher);
+	return true;
+}
 
 defaultproperties
 {
 	ConversationID = 301;
-	ClassName = 'alarm';
+	PickupString = "alarm";
 	IdleState = S_TOKENS;
+	bDropAutoGive = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2003/10/02 18:00:34  dj_jl
+//  Special items for conversations
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //
