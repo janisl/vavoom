@@ -32,6 +32,8 @@
 
 #define	MAX_NET_DRIVERS		8
 
+#define HOSTCACHESIZE		8
+
 // TYPES -------------------------------------------------------------------
 
 struct net_driver_t
@@ -107,6 +109,23 @@ extern double			net_time;
 extern qsocket_t		*net_activeSockets;
 extern qsocket_t		*net_freeSockets;
 
+extern boolean			slistInProgress;
+extern boolean			slistSilent;
+extern boolean			slistLocal;
+
+extern int				hostCacheCount;
+extern hostcache_t		hostcache[HOSTCACHESIZE];
+
+extern int				net_hostport;
+extern TCvarS			hostname;
+
+extern char				my_ipx_address[NET_NAMELEN];
+extern char				my_tcpip_address[NET_NAMELEN];
+
+extern boolean			serialAvailable;
+extern boolean			ipxAvailable;
+extern boolean			tcpipAvailable;
+
 extern int				messagesSent;
 extern int				messagesReceived;
 extern int				unreliableMessagesSent;
@@ -117,9 +136,12 @@ extern int				unreliableMessagesReceived;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/08 17:27:53  dj_jl
+//	Moved slist menu builtins here
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

@@ -83,12 +83,6 @@ int messagesReceived = 0;
 int unreliableMessagesSent = 0;
 int unreliableMessagesReceived = 0;
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static PollProcedure	*pollProcedureList = NULL;
-
-static boolean			listening = false;
-
 #ifdef CLIENT
 boolean			slistInProgress = false;
 boolean			slistSilent = false;
@@ -100,6 +94,12 @@ static int		slistLastShown;
 PollProcedure	slistSendProcedure = {NULL, 0.0, Slist_Send, NULL};
 PollProcedure	slistPollProcedure = {NULL, 0.0, Slist_Poll, NULL};
 #endif
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static PollProcedure	*pollProcedureList = NULL;
+
+static boolean			listening = false;
 
 // CODE --------------------------------------------------------------------
 
@@ -213,21 +213,6 @@ double SetNetTime(void)
 
 void NET_Poll(void)
 {
-/*	if (!configRestored)
-	{
-		qboolean	useModem;
-		if (serialAvailable)
-		{
-			if (config_com_modem.value == 1.0)
-				useModem = true;
-			else
-				useModem = false;
-			SetComPortConfig (0, (int)config_com_port.value, (int)config_com_irq.value, (int)config_com_baud.value, useModem);
-			SetModemConfig (0, config_modem_dialtype.string, config_modem_clear.string, config_modem_init.string, config_modem_hangup.string);
-		}
-		configRestored = true;
-	}*/
-
 	SetNetTime();
 
 	for (PollProcedure *pp = pollProcedureList; pp; pp = pp->next)
@@ -844,12 +829,67 @@ boolean NET_CanSendMessage(qsocket_t *sock)
 	return r;
 }
 
+//==========================================================================
+//
+//	Server list menu
+//
+//==========================================================================
+
+struct slist_t
+{
+	boolean		inProgress;
+	int			count;
+	hostcache_t	cache[HOSTCACHESIZE];
+	char		return_reason[32];
+};
+
+slist_t slist;
+
+void StartSearch(void)
+{
+	slistSilent = true;
+	slistLocal = false;
+	NET_Slist();
+}
+
+slist_t * GetSlist(void)
+{
+	int		i, j;
+
+	if (!slistSorted)
+	{
+		if (hostCacheCount > 1)
+		{
+			hostcache_t temp;
+			for (i = 0; i < hostCacheCount; i++)
+				for (j = i + 1; j < hostCacheCount; j++)
+					if (strcmp(hostcache[j].name, hostcache[i].name) < 0)
+					{
+						memcpy(&temp, &hostcache[j], sizeof(hostcache_t));
+						memcpy(&hostcache[j], &hostcache[i], sizeof(hostcache_t));
+						memcpy(&hostcache[i], &temp, sizeof(hostcache_t));
+					}
+		}
+		slistSorted = true;
+		memset(m_return_reason, 0, sizeof(m_return_reason));
+	}
+
+	slist.inProgress = slistInProgress;
+	slist.count = hostCacheCount;
+	memcpy(slist.cache, hostcache, sizeof(hostcache));
+	strcpy(slist.return_reason, m_return_reason);
+	return &slist;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/08 17:27:53  dj_jl
+//	Moved slist menu builtins here
+//
 //	Revision 1.4  2001/10/04 17:23:29  dj_jl
 //	Got rid of some warnings
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -35,8 +35,6 @@
 #define NET_HEADERSIZE		(2 * sizeof(unsigned int))
 #define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
 
-#define HOSTCACHESIZE		8
-
 // TYPES -------------------------------------------------------------------
 
 struct sockaddr_t
@@ -102,31 +100,17 @@ void NET_Poll(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern char			my_ipx_address[NET_NAMELEN];
-extern char			my_tcpip_address[NET_NAMELEN];
-
-extern boolean		serialAvailable;
-extern boolean		ipxAvailable;
-extern boolean		tcpipAvailable;
-
 extern TMessage		net_msg;
-
-extern boolean		slistInProgress;
-extern boolean		slistSilent;
-extern boolean		slistLocal;
-
-extern int			hostCacheCount;
-extern hostcache_t	hostcache[HOSTCACHESIZE];
-
-extern int			net_hostport;
-extern TCvarS		hostname;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/10/08 17:27:53  dj_jl
+//	Moved slist menu builtins here
+//
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:54  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //
