@@ -30,7 +30,6 @@ void ProcessDehackedFiles(int argc, char** argv);
 extern char*				sprnames[];
 extern char* 				statename[];
 extern char*				mt_names[];
-extern char*				mobj_names[];
 extern char*				snd_names[];
 extern char* 				flagnames1[32];
 extern char* 				flagnames2[32];
@@ -201,6 +200,7 @@ void WriteMobjInfo(void)
 	int			firstflag;
     int			flags;
 	int			flags2;
+    const char *parent;
 
 	f = fopen("mobjinfo.vc", "w");
     if (!f)
@@ -223,7 +223,7 @@ void WriteMobjInfo(void)
     	//	A standard comment before function
 		fprintf(f, "//==========================================================================\n");
 		fprintf(f, "//\n");
-		fprintf(f, "//\t%s\n", mobj_names[i]);
+		fprintf(f, "//\t%s\n", mt_names[i]);
 		fprintf(f, "//\n");
 		fprintf(f, "//==========================================================================\n");
 		fprintf(f, "\n");
@@ -233,9 +233,10 @@ void WriteMobjInfo(void)
 
 		//  Class declaration
 		if (flags & MF_MISSILE)
-			fprintf(f, "class %s:Missile\n", mobj_names[i]);
+			parent = "Missile";
 		else
-			fprintf(f, "class %s:Actor\n", mobj_names[i]);
+			parent = "Actor";
+		fprintf(f, "class %s:%s\n", mt_names[i], parent);
 		fprintf(f, "{\n");
 
         //	Start of function
@@ -402,7 +403,10 @@ void WriteMobjInfo(void)
 	fprintf(f, "__mobjinfo__\n{\n");
 	for (i=0; i<nummobjtypes; i++)
     {
-    	fprintf(f, "\t%s { %d, %s }\n", mt_names[i], mobjinfo[i].doomednum, mobj_names[i]);
+		if (mobjinfo[i].doomednum > 0)
+		{
+	    	fprintf(f, "\t{ %d, %s }\n", mobjinfo[i].doomednum, mt_names[i]);
+		}
     }
     fprintf(f, "}\n\n");
     WriteFooter(f);
@@ -662,9 +666,12 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2001/10/22 17:28:02  dj_jl
+//	Removed mobjinfo index constants
+//
 //	Revision 1.6  2001/10/18 17:42:19  dj_jl
 //	Seperate class for missiles
-//
+//	
 //	Revision 1.5  2001/10/02 17:40:48  dj_jl
 //	Possibility to declare function's code inside class declaration
 //	

@@ -425,7 +425,7 @@ static void FindString(char *oldStr, char *newStr)
     	return;
     }
 
-	for (i = 0; mobj_names[i]; i++)
+/*	for (i = 0; mobj_names[i]; i++)
     {
     	if (!strcmp(mobj_names[i], oldStr))
         {
@@ -433,7 +433,7 @@ static void FindString(char *oldStr, char *newStr)
     		strcpy(mobj_names[i], newStr);
             return;
         }
-    }
+    }*/
 
 	for (i = 0; sprnames[i]; i++)
     {
@@ -714,9 +714,12 @@ void ProcessDehackedFiles(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/10/22 17:28:56  dj_jl
+//	Removed mobjinfo index constants
+//
 //	Revision 1.4  2001/09/27 17:04:39  dj_jl
 //	Effects and static lights in mobjinfo, mobj classes
-//
+//	
 //	Revision 1.3  2001/09/20 16:33:14  dj_jl
 //	Beautification
 //	

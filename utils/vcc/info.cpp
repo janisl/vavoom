@@ -307,12 +307,6 @@ void ParseMobjInfo(void)
 		{
 			ERR_Exit(ERR_NONE, true, "Mobj types overflow.");
 		}
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-		}
-		TK_AddConstant(tk_String, num_mobj_types);
-		TK_NextToken();
 		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 		//	doomednum
 		mobj_info[num_mobj_types].doomednum = EvalConstExpression(ev_int);
@@ -403,9 +397,12 @@ void AddInfoTables(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2001/10/22 17:28:02  dj_jl
+//	Removed mobjinfo index constants
+//
 //	Revision 1.5  2001/10/02 17:44:52  dj_jl
 //	Some optimizations
-//
+//	
 //	Revision 1.4  2001/09/27 17:05:57  dj_jl
 //	Removed spawn functions, added mobj classes
 //	
