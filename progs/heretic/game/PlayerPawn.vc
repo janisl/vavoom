@@ -426,8 +426,9 @@ void InventoryTick(float deltaTime)
 	if (Player->InventoryTime)
 	{
 		Player->InventoryTime -= deltaTime;
-		if (!Player->InventoryTime)
+		if (Player->InventoryTime <= 0.0)
 		{
+			Player->InventoryTime = 0.0;
 			Player->ReadyArtifact = Player->Inventory[Player->InvPtr].type;
 		}
 	}
@@ -1831,6 +1832,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2003/10/16 17:01:59  dj_jl
+//  Fixed inventory timer
+//
 //  Revision 1.2  2003/03/08 12:34:45  dj_jl
 //  Removing class pointers.
 //
