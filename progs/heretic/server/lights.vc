@@ -434,9 +434,61 @@ int EV_TagLightTurnOn(line_t * line, int *args)
 	return 1;
 }
 
+//==========================================================================
+//
+//  misc_static_light
+//
+//==========================================================================
+
+class misc_static_light:mobj_t
+{
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		float l;
+
+		RemoveMobjThinker(this);
+		if (!mthing->arg1)
+			l = 200.0;
+		else
+			l = itof(mthing->arg1) * 8.0;
+		AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
+	}
+};
+
+//==========================================================================
+//
+//  misc_static_rgb_light
+//
+//==========================================================================
+
+class misc_static_rgb_light:mobj_t
+{
+	void OnMapSpawn(mthing_t * mthing)
+	{
+		float l;
+
+		RemoveMobjThinker(this);
+		if (!mthing->arg1)
+			l = 200.0;
+		else
+			l = itof(mthing->arg1) * 8.0;
+		AddStaticLightRGB(vector(mthing->x, mthing->y, mthing->height), l,
+			RGB(mthing->arg2, mthing->arg3, mthing->arg4));
+	}
+};
+
+__mobjinfo__
+{
+	MT_STATIC_LIGHT { 1502, misc_static_light }
+	MT_STATIC_RGB_LIGHT { 1503, misc_static_rgb_light }
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2001/10/09 17:33:29  dj_jl
+//  Moved static light sources into games
+//
 //  Revision 1.4  2001/09/24 17:15:39  dj_jl
 //  Created thinker classes
 //
