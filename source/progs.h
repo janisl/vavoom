@@ -50,7 +50,7 @@ class TProgs
 	void Load(const char*);
 	void Unload(void);
 
-	int FuncNumForName(const char* name);
+	FFunction *FuncForName(const char* name);
 	int GlobalNumForName(const char* name);
 
 	void SetGlobal(int num, int val)
@@ -78,60 +78,60 @@ class TProgs
 		return &Globals[GlobalNumForName(name)];
 	}
 
-	static int Exec(int fnum);
-	static int Exec(int fnum, int parm1);
-	static int Exec(int fnum, int parm1, int parm2);
-	static int Exec(int fnum, int parm1, int parm2, int parm3);
-	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4);
-	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(FFunction *func);
+	static int Exec(FFunction *func, int parm1);
+	static int Exec(FFunction *func, int parm1, int parm2);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4);
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 						int parm5);
-	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6);
-	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6, int parm7);
-	static int Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+	static int Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 						int parm5, int parm6, int parm7, int parm8);
 	int Exec(const char *name)
 	{
-		return Exec(FuncNumForName(name));
+		return Exec(FuncForName(name));
 	}
 	int Exec(const char *name, int parm1)
 	{
-		return Exec(FuncNumForName(name), parm1);
+		return Exec(FuncForName(name), parm1);
 	}
 	int Exec(const char *name, int parm1, int parm2)
 	{
-		return Exec(FuncNumForName(name), parm1, parm2);
+		return Exec(FuncForName(name), parm1, parm2);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3)
 	{
-		return Exec(FuncNumForName(name), parm1, parm2, parm3);
+		return Exec(FuncForName(name), parm1, parm2, parm3);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4)
 	{
-		return Exec(FuncNumForName(name), parm1, parm2, parm3, parm4);
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
 								int parm5)
 	{
-		return Exec(FuncNumForName(name), parm1, parm2, parm3, parm4, parm5);
+		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6)
 	{
-		return Exec(FuncNumForName(name),
+		return Exec(FuncForName(name),
 			parm1, parm2, parm3, parm4, parm5, parm6);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6, int parm7)
 	{
-		return Exec(FuncNumForName(name),
+		return Exec(FuncForName(name),
 			parm1, parm2, parm3, parm4, parm5, parm6, parm7);
 	}
 	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6, int parm7, int parm8)
 	{
-		return Exec(FuncNumForName(name),
+		return Exec(FuncForName(name),
 			parm1, parm2, parm3, parm4, parm5, parm6, parm7, parm8);
 	}
 	void DumpProfile(void);
@@ -142,10 +142,10 @@ class TProgs
 	FFunction	*Functions;
 	FGlobalDef	*Globaldefs;
 
-	int CheckFuncNumForName(const char* name);
+	FFunction *CheckFuncForName(const char* name);
 	int CheckGlobalNumForName(const char* name);
 	char* FuncName(int fnum);
-	static int ExecuteFunction(int fnum);
+	static int ExecuteFunction(FFunction *func);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -161,9 +161,12 @@ extern TProgs			svpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.9  2002/01/11 08:07:18  dj_jl
 //	Added names to progs
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

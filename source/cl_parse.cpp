@@ -77,7 +77,7 @@ static model_t			*model_precache[1024];
 static model_t			*weapon_model_precache[1024];
 static char				skin_list[256][MAX_VPATH];
 
-static int				pf_ParseServerCommand;
+static FFunction *pf_ParseServerCommand;
 
 // CODE --------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ void CL_Clear(void)
 	}
 	cls.signon = 0;
 
-	pf_ParseServerCommand = clpr.FuncNumForName("ParseServerCommand");
+	pf_ParseServerCommand = clpr.FuncForName("ParseServerCommand");
 }
 
 static void CL_ReadMobjBase(clmobjbase_t &mobj)
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.21  2002/01/11 08:09:34  dj_jl
 //	Added sector plane swapping
-//
+//	
 //	Revision 1.20  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

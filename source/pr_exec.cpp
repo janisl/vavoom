@@ -302,7 +302,7 @@ void TProgs::Load(const char *AName)
 		if (!ClassList[i]->ClassVTable)
 		{
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
-			ClassList[i]->ClassVTable = (int *)(Globals + ClassInfo[i].vtable);
+			ClassList[i]->ClassVTable = (FFunction **)(Globals + ClassInfo[i].vtable);
 		}
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
@@ -477,11 +477,11 @@ void TProgs::Unload(void)
 
 //==========================================================================
 //
-//	TProgs::CheckFuncNumForName
+//	TProgs::CheckFuncForName
 //
 //==========================================================================
 
-int TProgs::CheckFuncNumForName(const char* name)
+FFunction *TProgs::CheckFuncForName(const char* name)
 {
 	int		i;
 
@@ -489,28 +489,28 @@ int TProgs::CheckFuncNumForName(const char* name)
     {
     	if (!Functions[i].OuterClass && !strcmp(*Functions[i].Name, name))
 		{
-			return (int)(Functions + i);
+			return &Functions[i];
 		}
     }
-	return 0;
+	return NULL;
 }
 
 //==========================================================================
 //
-//	TProgs::FuncNumForName
+//	TProgs::FuncForName
 //
 //==========================================================================
 
-int TProgs::FuncNumForName(const char* name)
+FFunction *TProgs::FuncForName(const char* name)
 {
-	int		i;
+	FFunction *func;
 
-	i = CheckFuncNumForName(name);
-    if (!i)
+	func = CheckFuncForName(name);
+    if (!func)
     {
     	Sys_Error("FuncNumForName: function %s not found", name);
     }
-    return i;
+    return func;
 }
 
 //==========================================================================
@@ -1319,12 +1319,11 @@ static void RunFunction(FFunction *func)
 //
 //==========================================================================
 
-int TProgs::ExecuteFunction(int fnum)
+int TProgs::ExecuteFunction(FFunction *func)
 {
 	guard(TProgs::ExecuteFunction);
 	FFunction		*prev_func;
 	int				ret = 0;
-	FFunction		*func = (FFunction *)fnum;
 
 	//	Run function
 	prev_func = current_func;
@@ -1364,7 +1363,7 @@ int TProgs::ExecuteFunction(int fnum)
 
 	//	All done
 	return ret;
-	unguardf(("(%s)", *((FFunction *)fnum)->Name));
+	unguardf(("(%s)", *func->Name));
 }
 
 //==========================================================================
@@ -1373,7 +1372,7 @@ int TProgs::ExecuteFunction(int fnum)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum)
+int TProgs::Exec(FFunction *func)
 {
 #ifdef CHECK_PARM_COUNT
     if (Functions[fnum].NumParms != 0)
@@ -1382,7 +1381,7 @@ int TProgs::Exec(int fnum)
     		FuncName(fnum), Functions[fnum].NumParms);
     }
 #endif
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1391,7 +1390,7 @@ int TProgs::Exec(int fnum)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1)
+int TProgs::Exec(FFunction *func, int parm1)
 {
 	int		*p;
 
@@ -1405,7 +1404,7 @@ int TProgs::Exec(int fnum, int parm1)
 	p = pr_stackPtr;
 	pr_stackPtr += 1;
 	p[0] = parm1;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1414,7 +1413,7 @@ int TProgs::Exec(int fnum, int parm1)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2)
+int TProgs::Exec(FFunction *func, int parm1, int parm2)
 {
 	int		*p;
 
@@ -1429,7 +1428,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2)
 	pr_stackPtr += 2;
 	p[0] = parm1;
 	p[1] = parm2;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1438,7 +1437,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3)
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3)
 {
 	int		*p;
 
@@ -1454,7 +1453,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3)
 	p[0] = parm1;
 	p[1] = parm2;
 	p[2] = parm3;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1463,7 +1462,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4)
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4)
 {
 	int		*p;
 
@@ -1480,7 +1479,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4)
 	p[1] = parm2;
 	p[2] = parm3;
 	p[3] = parm4;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1489,7 +1488,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4)
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 								int parm5)
 {
 	int		*p;
@@ -1508,7 +1507,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	p[2] = parm3;
 	p[3] = parm4;
 	p[4] = parm5;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1517,7 +1516,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6)
 {
 	int		*p;
@@ -1537,7 +1536,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	p[3] = parm4;
 	p[4] = parm5;
 	p[5] = parm6;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1546,7 +1545,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6, int parm7)
 {
 	int		*p;
@@ -1567,7 +1566,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	p[4] = parm5;
 	p[5] = parm6;
 	p[6] = parm7;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1576,7 +1575,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 								int parm5, int parm6, int parm7, int parm8)
 {
 	int		*p;
@@ -1598,7 +1597,7 @@ int TProgs::Exec(int fnum, int parm1, int parm2, int parm3, int parm4,
 	p[5] = parm6;
 	p[6] = parm7;
 	p[7] = parm8;
-    return ExecuteFunction(fnum);
+    return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1670,9 +1669,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.21  2002/01/28 18:44:44  dj_jl
 //	Fixed dynamic cast
-//
+//	
 //	Revision 1.20  2002/01/25 18:06:53  dj_jl
 //	Little changes for progs profiling
 //	

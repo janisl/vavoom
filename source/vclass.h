@@ -37,10 +37,9 @@ class VClass:public VObject
 
 	size_t		ClassSize;
 	dword		ClassFlags;
-	int*		ClassVTable;
+	FFunction	**ClassVTable;
 	void (*ClassConstructor)(void*);
 
-//	FFunction*	Methods;
 	int			ClassNumMethods;
 	byte*		PropretiesInfo;
 
@@ -72,9 +71,12 @@ class VClass:public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.3  2002/01/11 08:15:40  dj_jl
 //	Removed FFunction
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

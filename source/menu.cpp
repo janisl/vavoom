@@ -52,14 +52,14 @@ void CL_Disconnect(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int pf_MN_SetMenu;
-static int pf_MN_DeactivateMenu;
-static int pf_MB_Responder;
-static int pf_MN_Responder;
-static int pf_MN_Drawer;
-static int pf_MB_Drawer;
-static int pf_MN_Active;
-static int pf_MB_Active;
+static FFunction *pf_MN_SetMenu;
+static FFunction *pf_MN_DeactivateMenu;
+static FFunction *pf_MB_Responder;
+static FFunction *pf_MN_Responder;
+static FFunction *pf_MN_Drawer;
+static FFunction *pf_MB_Drawer;
+static FFunction *pf_MN_Active;
+static FFunction *pf_MB_Active;
 static int pg_frametime;
 
 // CODE --------------------------------------------------------------------
@@ -88,14 +88,14 @@ void MN_Init(void)
 #else
 	clpr.SetGlobal("local_server", 0);
 #endif
-	pf_MN_SetMenu = clpr.FuncNumForName("MN_SetMenu");
-	pf_MN_DeactivateMenu = clpr.FuncNumForName("MN_DeactivateMenu");
-	pf_MB_Responder = clpr.FuncNumForName("MB_Responder");
-	pf_MN_Responder = clpr.FuncNumForName("MN_Responder");
-	pf_MN_Drawer = clpr.FuncNumForName("MN_Drawer");
-	pf_MB_Drawer = clpr.FuncNumForName("MB_Drawer");
-	pf_MN_Active = clpr.FuncNumForName("MN_Active");
-	pf_MB_Active = clpr.FuncNumForName("MB_Active");
+	pf_MN_SetMenu = clpr.FuncForName("MN_SetMenu");
+	pf_MN_DeactivateMenu = clpr.FuncForName("MN_DeactivateMenu");
+	pf_MB_Responder = clpr.FuncForName("MB_Responder");
+	pf_MN_Responder = clpr.FuncForName("MN_Responder");
+	pf_MN_Drawer = clpr.FuncForName("MN_Drawer");
+	pf_MB_Drawer = clpr.FuncForName("MB_Drawer");
+	pf_MN_Active = clpr.FuncForName("MN_Active");
+	pf_MB_Active = clpr.FuncForName("MB_Active");
 	pg_frametime = clpr.GlobalNumForName("frametime");
 }
 
@@ -177,9 +177,12 @@ boolean MN_Active(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.10  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.9  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

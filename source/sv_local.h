@@ -292,10 +292,12 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld);
 void SV_UnlinkFromWorld(VMapObject* thing);
 void SV_LinkToWorld(VMapObject* thing);
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*), int prfunc);
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*), int prfunc);
+boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
+	FFunction *prfunc);
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
+	FFunction *prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, boolean(*trav)(intercept_t *), int prtrav);
+	int flags, boolean(*trav)(intercept_t *), FFunction *prtrav);
 
 sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2);
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);
@@ -451,9 +453,12 @@ inline subsector_t* SV_PointInSubsector(float x, float y)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.16  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.15  2001/12/27 17:33:29  dj_jl
 //	Removed thinker list
 //	

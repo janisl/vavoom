@@ -550,9 +550,9 @@ static void ArchivePlayers(void)
 {
 	int			i;
 	player_t 	tempPlayer;
-	int			pf_archive_player;
+	FFunction *pf_archive_player;
 
-	pf_archive_player = svpr.FuncNumForName("ArchivePlayer");
+	pf_archive_player = svpr.FuncForName("ArchivePlayer");
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -589,9 +589,9 @@ static void ArchivePlayers(void)
 static void UnarchivePlayers(void)
 {
 	int		i;
-	int		pf_unarchive_player;
+	FFunction *pf_unarchive_player;
 
-	pf_unarchive_player = svpr.FuncNumForName("UnarchivePlayer");
+	pf_unarchive_player = svpr.FuncForName("UnarchivePlayer");
 	AssertSegment(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -837,7 +837,7 @@ static void UnarchiveWorld(void)
 
 static void ArchiveThinkers(void)
 {
-	int pf_archive_thinker = svpr.FuncNumForName("ArchiveThinker");
+	FFunction *pf_archive_thinker = svpr.FuncForName("ArchiveThinker");
 
 	StreamOutLong(ASEG_THINKERS);
 
@@ -908,7 +908,7 @@ static void UnarchiveThinkers(void)
 	}
 
 	//  Call unarchive function for each thinker.
-	int pf_unarchive_thinker = svpr.FuncNumForName("UnarchiveThinker");
+	FFunction *pf_unarchive_thinker = svpr.FuncForName("UnarchiveThinker");
 
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
@@ -1483,9 +1483,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.20  2002/01/12 18:04:01  dj_jl
 //	Added unarchieving of names
-//
+//	
 //	Revision 1.19  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

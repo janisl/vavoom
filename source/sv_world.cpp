@@ -358,7 +358,8 @@ void SV_LinkToWorld(VMapObject* thing)
 //
 //==========================================================================
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*), int prfunc)
+boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*),
+	FFunction *prfunc)
 {
     int			offset;
     short*		list;
@@ -430,7 +431,8 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*), int prfunc)
 //
 //==========================================================================
 
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*), int prfunc)
+boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VMapObject*),
+	FFunction *prfunc)
 {
     VMapObject*		mobj;
 	
@@ -579,7 +581,7 @@ static boolean PIT_AddThingIntercepts(VMapObject* thing)
 //==========================================================================
 
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
-		int flags, boolean(*trav)(intercept_t *), int prtrav)
+		int flags, boolean(*trav)(intercept_t *), FFunction *prtrav)
 {
 	int			xt1;
 	int			yt1;
@@ -990,9 +992,12 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.7  2001/12/18 19:03:17  dj_jl
 //	A lots of work on VObject
 //	

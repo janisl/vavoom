@@ -102,8 +102,8 @@ subsector_t				*r_oldviewleaf;
 // if true, load all graphics at start
 static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
-static int				pf_DrawViewBorder;
-static int				pf_UpdateParticle;
+static FFunction *pf_DrawViewBorder;
+static FFunction *pf_UpdateParticle;
 static int				pg_frametime;
 
 static TCvarI			_driver("_driver", "0", CVAR_ROM);
@@ -124,8 +124,8 @@ void R_Init(void)
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
-	pf_DrawViewBorder = clpr.FuncNumForName("DrawViewBorder");
-	pf_UpdateParticle = clpr.FuncNumForName("UpdateParticle");
+	pf_DrawViewBorder = clpr.FuncForName("DrawViewBorder");
+	pf_UpdateParticle = clpr.FuncForName("UpdateParticle");
 	pg_frametime = clpr.GlobalNumForName("frametime");
 }
 
@@ -654,9 +654,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.17  2002/01/25 18:08:19  dj_jl
 //	Beautification
-//
+//	
 //	Revision 1.16  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

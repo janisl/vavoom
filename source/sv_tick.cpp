@@ -54,9 +54,9 @@
 
 IMPLEMENT_CLASS(VThinker)
 
-static int	pf_UpdateSpecials;
-static int	pf_SetViewPos;
-static int	pf_RunThink;
+static FFunction *pf_UpdateSpecials;
+static FFunction *pf_SetViewPos;
+static FFunction *pf_RunThink;
 
 // CODE --------------------------------------------------------------------
 
@@ -68,9 +68,9 @@ static int	pf_RunThink;
 
 void P_InitThinkers(void)
 {
-	pf_UpdateSpecials = svpr.FuncNumForName("P_UpdateSpecials");
-    pf_SetViewPos = svpr.FuncNumForName("SetViewPos");
-	pf_RunThink = svpr.FuncNumForName("RunThink");
+	pf_UpdateSpecials = svpr.FuncForName("P_UpdateSpecials");
+    pf_SetViewPos = svpr.FuncForName("SetViewPos");
+	pf_RunThink = svpr.FuncForName("RunThink");
 }
 
 //==========================================================================
@@ -136,9 +136,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.9  2002/01/21 18:25:09  dj_jl
 //	Changed guarding
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

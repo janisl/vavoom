@@ -41,9 +41,6 @@
 #define _M(cname, name)		{#name, PF_##cname##__##name, V##cname::StaticClass()}
 #define __(name)			{#name, name, NULL}
 
-#define PROG_TO_STR(ofs)	((char*)(ofs))
-#define STR_TO_PROG(str)	(int(str))
-
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -204,7 +201,7 @@ static char *PF_FormatString(void)
 	{
 		params[pi] = Pop();
 	}
-	str = PROG_TO_STR(Pop());
+	str = (char*)Pop();
 
 	char *src = str;
 	char *dst = vastring;
@@ -243,7 +240,7 @@ static char *PF_FormatString(void)
 				break;
 
 			 case 's':
-				strcat(vastring, PROG_TO_STR(params[pi]));
+				strcat(vastring, (char*)params[pi]);
 				pi++;
 				break;
 
@@ -333,7 +330,7 @@ PF(CreateCvar)
 	flags = Pop();
 	def = Pop();
 	name = Pop();
-	new TCvar(PROG_TO_STR(name), PROG_TO_STR(def), flags);
+	new TCvar((char*)name, (char*)def, flags);
 }
 
 //==========================================================================
@@ -347,7 +344,7 @@ static void PF_GetCvar(void)
 	int		name;
 
     name = Pop();
-    Push(TCvar::Value(PROG_TO_STR(name)));
+    Push(TCvar::Value((char*)name));
 }
 
 //==========================================================================
@@ -363,7 +360,7 @@ static void PF_SetCvar(void)
 
     value = Pop();
     name = Pop();
-    TCvar::Set(PROG_TO_STR(name), value);
+    TCvar::Set((char*)name, value);
 }
 
 //==========================================================================
@@ -377,7 +374,7 @@ static void PF_GetCvarF(void)
 	int		name;
 
     name = Pop();
-    Pushf(TCvar::Float(PROG_TO_STR(name)));
+    Pushf(TCvar::Float((char*)name));
 }
 
 //==========================================================================
@@ -393,7 +390,7 @@ static void PF_SetCvarF(void)
 
     value = Popf();
     name = Pop();
-    TCvar::Set(PROG_TO_STR(name), value);
+    TCvar::Set((char*)name, value);
 }
 
 //==========================================================================
@@ -407,7 +404,7 @@ static void PF_GetCvarS(void)
 	int		name;
 
     name = Pop();
-    Push((int)STR_TO_PROG(TCvar::String(PROG_TO_STR(name))));
+    Push((int)TCvar::String((char*)name));
 }
 
 //==========================================================================
@@ -423,7 +420,7 @@ static void PF_SetCvarS(void)
 
     value = Pop();
     name = Pop();
-    TCvar::Set(PROG_TO_STR(name), PROG_TO_STR(value));
+    TCvar::Set((char*)name, (char*)value);
 }
 
 //**************************************************************************
@@ -658,10 +655,7 @@ PF(VectorAngles)
 
 static void PF_ptrtos(void)
 {
-	char	*ptr;
-
-	ptr = (char*)Pop();
-	Push(STR_TO_PROG(ptr));
+	//	Nothing to do
 }
 
 //==========================================================================
@@ -672,12 +666,12 @@ static void PF_ptrtos(void)
 
 PF(strgetchar)
 {
-	int		str;
+	char*	str;
 	int		i;
 
 	i = Pop();
-	str = Pop();
-	Push(byte(PROG_TO_STR(str)[i]));
+	str = (char*)Pop();
+	Push(byte(str[i]));
 }
 
 //==========================================================================
@@ -688,14 +682,14 @@ PF(strgetchar)
 
 PF(strsetchar)
 {
-	int		str;
+	char*	str;
 	int		i;
 	int		chr;
 
 	chr = Pop();
 	i = Pop();
-	str = Pop();
-	PROG_TO_STR(str)[i] = chr;
+	str = (char*)Pop();
+	str[i] = chr;
 }
 
 //==========================================================================
@@ -709,7 +703,7 @@ static void PF_strlen(void)
 	int		s;
 
 	s = Pop();
-	Push(strlen(PROG_TO_STR(s)));
+	Push(strlen((char*)s));
 }
 
 //==========================================================================
@@ -725,7 +719,7 @@ static void PF_strcmp(void)
 
 	s2 = Pop();
 	s1 = Pop();
-	Push(strcmp(PROG_TO_STR(s1), PROG_TO_STR(s2)));
+	Push(strcmp((char*)s1, (char*)s2));
 }
 
 //==========================================================================
@@ -741,7 +735,7 @@ static void PF_stricmp(void)
 
 	s2 = Pop();
 	s1 = Pop();
-	Push(stricmp(PROG_TO_STR(s1), PROG_TO_STR(s2)));
+	Push(stricmp((char*)s1, (char*)s2));
 }
 
 //==========================================================================
@@ -757,7 +751,7 @@ static void PF_strcpy(void)
 
 	s2 = Pop();
 	s1 = Pop();
-	strcpy(PROG_TO_STR(s1), PROG_TO_STR(s2));
+	strcpy((char*)s1, (char*)s2);
 }
 
 //==========================================================================
@@ -768,10 +762,10 @@ static void PF_strcpy(void)
 
 static void PF_strclr(void)
 {
-	int		s;
+	char*	s;
 
-	s = Pop();
-	PROG_TO_STR(s)[0] = 0;
+	s = (char*)Pop();
+	s[0] = 0;
 }
 
 //==========================================================================
@@ -787,7 +781,7 @@ static void PF_strcat(void)
 
 	s2 = Pop();
 	s1 = Pop();
-	strcat(PROG_TO_STR(s1), PROG_TO_STR(s2));
+	strcat((char*)s1, (char*)s2);
 }
 
 //==========================================================================
@@ -802,7 +796,7 @@ static void PF_sprint(void)
 
 	PF_FormatString();
 	dst = Pop();
-	strcpy(PROG_TO_STR(dst), vastring);
+	strcpy((char*)dst, vastring);
 }
 
 //==========================================================================
@@ -813,7 +807,7 @@ static void PF_sprint(void)
 
 static void PF_va(void)
 {
-	Push(STR_TO_PROG(PF_FormatString()));
+	Push((int)PF_FormatString());
 }
 
 //==========================================================================
@@ -827,7 +821,7 @@ static void PF_atoi(void)
 	int		str;
 
 	str = Pop();
-	Push(atoi(PROG_TO_STR(str)));
+	Push(atoi((char*)str));
 }
 
 //==========================================================================
@@ -841,7 +835,7 @@ static void PF_atof(void)
 	int		str;
 
 	str = Pop();
-	Pushf(atof(PROG_TO_STR(str)));
+	Pushf(atof((char*)str));
 }
 
 //**************************************************************************
@@ -889,7 +883,7 @@ static void	PF_CheckTextureNumForName(void)
 	int		name;
 
 	name = Pop();
-	Push(R_CheckTextureNumForName(PROG_TO_STR(name)));
+	Push(R_CheckTextureNumForName((char*)name));
 }
 
 //==========================================================================
@@ -903,7 +897,7 @@ static void	PF_TextureNumForName(void)
 	int		name;
 
 	name = Pop();
-	Push(R_TextureNumForName(PROG_TO_STR(name)));
+	Push(R_TextureNumForName((char*)name));
 }
 
 //==========================================================================
@@ -917,7 +911,7 @@ static void	PF_CheckFlatNumForName(void)
 	int		name;
 
 	name = Pop();
-	Push(R_CheckFlatNumForName(PROG_TO_STR(name)));
+	Push(R_CheckFlatNumForName((char*)name));
 }
 
 //==========================================================================
@@ -931,7 +925,7 @@ static void	PF_FlatNumForName(void)
 	int		name;
 
 	name = Pop();
-	Push(R_FlatNumForName(PROG_TO_STR(name)));
+	Push(R_FlatNumForName((char*)name));
 }
 
 //==========================================================================
@@ -1273,9 +1267,9 @@ static void PF_P_BlockThingsIterator(void)
 {
 	int		x;
     int		y;
-    int		func;
+    FFunction *func;
 
-	func = Pop();
+	func = (FFunction *)Pop();
     y = Pop();
     x = Pop();
 	Push(SV_BlockThingsIterator(x, y, NULL, func));
@@ -1291,9 +1285,9 @@ static void PF_P_BlockLinesIterator(void)
 {
 	int			x;
 	int			y;
-	int			func;
+	FFunction *func;
 
-	func = Pop();
+	func = (FFunction *)Pop();
 	y = Pop();
 	x = Pop();
 	Push(SV_BlockLinesIterator(x, y, NULL, func));
@@ -1312,9 +1306,9 @@ static void PF_P_PathTraverse(void)
 	float	x2;
 	float	y2;
 	int		flags;
-	int		trav;
+	FFunction *trav;
 
-	trav = Pop();
+	trav = (FFunction *)Pop();
 	flags = Pop();
 	y2 = Popf();
 	x2 = Popf();
@@ -2447,7 +2441,7 @@ PF(FindModel)
 {
 	char *name;
 
-	name = PROG_TO_STR(Pop());
+	name = (char*)Pop();
 	Push(SV_FindModel(name));
 }
 
@@ -2461,7 +2455,7 @@ PF(FindSkin)
 {
 	char *name;
 
-	name = PROG_TO_STR(Pop());
+	name = (char*)Pop();
 	Push(SV_FindSkin(name));
 }
 #endif
@@ -2486,7 +2480,7 @@ PF(R_RegisterPic)
 
 	type = Pop();
 	name = Pop();
-	Push(R_RegisterPic(PROG_TO_STR(name), type));
+	Push(R_RegisterPic((char*)name, type));
 }
 
 //==========================================================================
@@ -2504,7 +2498,7 @@ PF(R_RegisterPicPal)
 	palname = Pop();
 	type = Pop();
 	name = Pop();
-	Push(R_RegisterPicPal(PROG_TO_STR(name), type, PROG_TO_STR(palname)));
+	Push(R_RegisterPicPal((char*)name, type, (char*)palname));
 }
 
 //==========================================================================
@@ -2592,7 +2586,7 @@ PF(R_InstallSprite)
 
 	index = Pop();
 	name = Pop();
-	R_InstallSprite(PROG_TO_STR(name), index);
+	R_InstallSprite((char*)name, index);
 }
 
 //==========================================================================
@@ -2630,9 +2624,9 @@ PF(InstallModel)
 	int			name;
 
 	name = Pop();
-	if (FL_FindFile(PROG_TO_STR(name), NULL))
+	if (FL_FindFile((char*)name, NULL))
 	{
-		Push((int)Mod_FindName(PROG_TO_STR(name)));
+		Push((int)Mod_FindName((char*)name));
 	}
 	else
 	{
@@ -2659,7 +2653,7 @@ PF(R_DrawModelFrame)
 	model = (model_t*)Pop();
 	angle = Popf();
 	origin = Popv();
-	R_DrawModelFrame(origin, angle, model, frame, PROG_TO_STR(skin));
+	R_DrawModelFrame(origin, angle, model, frame, (char*)skin);
 }
 
 //==========================================================================
@@ -2681,7 +2675,7 @@ PF(R_FillRectWithFlat)
 	width = Pop();
 	y = Pop();
 	x = Pop();
-	R_FillRectWithFlat(x, y, width, height, PROG_TO_STR(name));
+	R_FillRectWithFlat(x, y, width, height, (char*)name);
 }
 
 //==========================================================================
@@ -2746,6 +2740,22 @@ PF(T_SetAlign)
 
 //==========================================================================
 //
+//	PF_T_SetDist
+//
+//==========================================================================
+
+PF(T_SetDist)
+{
+	int			hdist;
+	int			vdist;
+
+	vdist = Pop();
+	hdist = Pop();
+	T_SetDist(hdist, vdist);
+}
+
+//==========================================================================
+//
 //	PF_T_SetShadow
 //
 //==========================================================================
@@ -2769,7 +2779,7 @@ PF(T_TextWidth)
 	int			text;
 
 	text = Pop();
-	Push(T_TextWidth(PROG_TO_STR(text)));
+	Push(T_TextWidth((char*)text));
 }
 
 //==========================================================================
@@ -2783,7 +2793,7 @@ PF(T_TextHeight)
 	int			text;
 
 	text = Pop();
-	Push(T_TextHeight(PROG_TO_STR(text)));
+	Push(T_TextHeight((char*)text));
 }
 
 //==========================================================================
@@ -2801,7 +2811,7 @@ PF(T_DrawText)
 	txt = Pop();
 	y = Pop();
 	x = Pop();
-	T_DrawText(x, y, PROG_TO_STR(txt));
+	T_DrawText(x, y, (char*)txt);
 }
 
 //==========================================================================
@@ -2821,7 +2831,7 @@ PF(T_DrawNText)
 	txt = Pop();
 	y = Pop();
 	x = Pop();
-	T_DrawNText(x, y, PROG_TO_STR(txt), n);
+	T_DrawNText(x, y, (char*)txt, n);
 }
 
 //**************************************************************************
@@ -2907,7 +2917,7 @@ static void PF_Cmd_CheckParm(void)
 	int		str;
 
     str = Pop();
-    Push(Cmd_CheckParm(PROG_TO_STR(str)));
+    Push(Cmd_CheckParm((char*)str));
 }
 
 //==========================================================================
@@ -2934,7 +2944,7 @@ static void	PF_Info_ValueForKey(void)
 
 	key = Pop();
 	info = Pop();
-	Push(STR_TO_PROG(Info_ValueForKey(PROG_TO_STR(info), PROG_TO_STR(key))));
+	Push((int)Info_ValueForKey((char*)info, (char*)key));
 }
 
 //==========================================================================
@@ -2976,7 +2986,7 @@ PF(WadLumpPresent)
 	int			name;
 
 	name = Pop();
-	Push(W_CheckNumForName(PROG_TO_STR(name)) >= 0);
+	Push(W_CheckNumForName((char*)name) >= 0);
 }
 
 //==========================================================================
@@ -2996,19 +3006,12 @@ void KeyNameForNum(int KeyNr, char* NameString);
 void StartSearch(void);
 slist_t * GetSlist(void);
 
-int		mb_func;
-
-void ProgResponse(int key)
-{
-	clpr.Exec(mb_func, key);
-}
-
 PF(P_GetMapName)
 {
 	int		map;
 
 	map = Pop();
-	Push(STR_TO_PROG(P_GetMapName(map)));
+	Push((int)P_GetMapName(map));
 }
 
 PF(P_TranslateMap)
@@ -3016,7 +3019,7 @@ PF(P_TranslateMap)
 	int map;
 
 	map = Pop();
-	Push(STR_TO_PROG(P_TranslateMap(map)));
+	Push((int)P_TranslateMap(map));
 }
 
 PF(KeyNameForNum)
@@ -3026,7 +3029,7 @@ PF(KeyNameForNum)
 
 	str = Pop();
 	keynum = Pop();
-	KeyNameForNum(keynum, PROG_TO_STR(str));
+	KeyNameForNum(keynum, (char*)str);
 }
 
 PF(IN_GetBindingKeys)
@@ -3038,7 +3041,7 @@ PF(IN_GetBindingKeys)
 	key2 = (int*)Pop();
 	key1 = (int*)Pop();
 	name = Pop();
-	IN_GetBindingKeys(PROG_TO_STR(name), *key1, *key2);
+	IN_GetBindingKeys((char*)name, *key1, *key2);
 }
 
 PF(IN_SetBinding)
@@ -3050,7 +3053,7 @@ PF(IN_SetBinding)
 	onup = Pop();
 	ondown = Pop();
 	keynum = Pop();
-	IN_SetBinding(keynum, PROG_TO_STR(ondown), PROG_TO_STR(onup));
+	IN_SetBinding(keynum, (char*)ondown, (char*)onup);
 }
 
 PF(SV_GetSaveString)
@@ -3061,7 +3064,7 @@ PF(SV_GetSaveString)
 	buf = Pop();
 	i = Pop();
 #ifdef SERVER
-	Push(SV_GetSaveString(i, PROG_TO_STR(buf)));
+	Push(SV_GetSaveString(i, (char*)buf));
 #else
 	Push(0);
 #endif
@@ -3083,7 +3086,7 @@ PF(LoadTextLump)
 	bufsize = Pop();
 	buf = (char*)Pop();
 	name = Pop();
-	LoadTextLump(PROG_TO_STR(name), buf, bufsize);
+	LoadTextLump((char*)name, buf, bufsize);
 }
 
 PF(AllocDlight)
@@ -3219,6 +3222,7 @@ builtin_info_t BuiltinInfo[] =
 	//	Text
 	_(T_SetFont),
 	_(T_SetAlign),
+	_(T_SetDist),
 	_(T_SetShadow),
 	_(T_TextWidth),
 	_(T_TextHeight),
@@ -3330,9 +3334,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.30  2002/01/29 18:17:27  dj_jl
 //	Fixed saving of mobj pointers
-//
+//	
 //	Revision 1.29  2002/01/12 18:04:01  dj_jl
 //	Added unarchieving of names
 //	

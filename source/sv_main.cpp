@@ -120,7 +120,7 @@ static bool		completed;
 
 static int		num_stats;
 
-static int		pf_PlayerThink;
+static FFunction *pf_PlayerThink;
 
 static TCvarI	TimeLimit("TimeLimit", "0");
 static TCvarI	DeathMatch("DeathMatch", "0", CVAR_SERVERINFO);
@@ -168,7 +168,7 @@ void SV_Init(void)
 	num_stats = svpr.GetGlobal("num_stats");
 	if (num_stats > 96)
 		Sys_Error("Too many stats %d", num_stats);
-    pf_PlayerThink = svpr.FuncNumForName("PlayerThink");
+    pf_PlayerThink = svpr.FuncForName("PlayerThink");
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
@@ -358,6 +358,12 @@ void SV_WriteMobj(int bits, VMapObject &mobj, TMessage &msg)
 
 void SV_RemoveMobj(VMapObject *mobj)
 {
+	if (mobj->GetFlags() & OF_Destroyed)
+	{
+		cond << "Mobj already destroyed\n";
+		return;
+	}
+
 	if (sv_mobjs[mobj->netID] != mobj)
 		Sys_Error("Invalid mobj num %d", mobj->netID);
 
@@ -1637,6 +1643,10 @@ COMMAND(TeleportNewMap)
 		strcpy(sv_next_map, Argv(1));
 		LeavePosition = atoi(Argv(2));
 	}
+	else if (sv.intermission != 1)
+	{
+		return;
+	}
 
 #ifdef CLIENT
 	Draw_TeleportIcon();
@@ -1954,7 +1964,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	svpr.Exec("SpawnWorld");
 
     P_InitThinkers();
-	int pf_spawn_map_thing = svpr.FuncNumForName("P_SpawnMapThing");
+	FFunction *pf_spawn_map_thing = svpr.FuncForName("P_SpawnMapThing");
 	for (i = 0; i < level.numthings; i++)
 	{
 		svpr.Exec(pf_spawn_map_thing, (int)&level.things[i], spawn_thinkers);
@@ -2676,9 +2686,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.31  2002/01/28 18:43:48  dj_jl
 //	Fixed "floating players"
-//
+//	
 //	Revision 1.30  2002/01/24 18:15:23  dj_jl
 //	Fixed "slow motion" bug
 //	

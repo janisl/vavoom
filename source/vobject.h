@@ -109,6 +109,8 @@ enum EObjectFlags
 
 // TYPES -------------------------------------------------------------------
 
+struct	FFunction;
+
 class	FArchive;
 
 class	VObject;
@@ -145,7 +147,7 @@ class VObject:public VVirtualObjectBase
 
 private:
 	// Internal per-object variables.
-	int						*vtable;
+	FFunction**				vtable;
 	int						Index;				// Index of object into table.
 	VObject*				HashNext;			// Next object in this hash bin.
 	VObject*				Outer;				// Object this object resides in.
@@ -301,9 +303,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2002/01/03 18:36:40  dj_jl
 //	Added GObjInitialized
 //	

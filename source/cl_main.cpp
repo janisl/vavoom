@@ -64,7 +64,7 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int pf_CL_UpdateMobj;
+static FFunction *pf_CL_UpdateMobj;
 
 static bool UserInfoSent;
 
@@ -82,7 +82,7 @@ void CL_Init(void)
 	clpr.SetGlobal("cl", (int)&cl);
 	clpr.SetGlobal("level", (int)&cl_level);
 
-	pf_CL_UpdateMobj = clpr.FuncNumForName("CL_UpdateMobj");
+	pf_CL_UpdateMobj = clpr.FuncForName("CL_UpdateMobj");
 
 	cls.message.Alloc(NET_MAXMESSAGE);
 }
@@ -516,9 +516,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.11  2002/01/17 18:21:40  dj_jl
 //	Fixed Hexen class bug
-//
+//	
 //	Revision 1.10  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

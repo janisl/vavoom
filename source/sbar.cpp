@@ -59,9 +59,9 @@ int 					sb_height = 32;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int pf_SB_UpdateWidgets;
-static int pf_SB_Drawer;
-static int pf_SB_StartMap;
+static FFunction *pf_SB_UpdateWidgets;
+static FFunction *pf_SB_Drawer;
+static FFunction *pf_SB_StartMap;
 
 // CODE --------------------------------------------------------------------
 
@@ -73,9 +73,9 @@ static int pf_SB_StartMap;
 
 void SB_Init(void)
 {
-	pf_SB_UpdateWidgets = clpr.FuncNumForName("SB_UpdateWidgets");
-	pf_SB_Drawer = clpr.FuncNumForName("SB_Drawer");
-	pf_SB_StartMap = clpr.FuncNumForName("SB_StartMap");
+	pf_SB_UpdateWidgets = clpr.FuncForName("SB_UpdateWidgets");
+	pf_SB_Drawer = clpr.FuncForName("SB_Drawer");
+	pf_SB_StartMap = clpr.FuncForName("SB_StartMap");
 	sb_height = clpr.GetGlobal("sb_height");
 }
 
@@ -131,9 +131,12 @@ void SB_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.8  2001/12/27 17:36:47  dj_jl
 //	Some speedup
 //	

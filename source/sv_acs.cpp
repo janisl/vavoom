@@ -195,7 +195,7 @@ static char **ACStrings;
 static char PrintBuffer[PRINT_BUFFER_SIZE];
 static VACS *NewScript;
 
-static int pf_TagBusy;
+static FFunction *pf_TagBusy;
 
 static int (*PCodeCmds[])(void) =
 {
@@ -335,7 +335,7 @@ void P_LoadACScripts(boolean spawn_thinkers)
 	acsHeader_t *header;
 	acsInfo_t *info;
 
-	pf_TagBusy = svpr.FuncNumForName("TagBusy");
+	pf_TagBusy = svpr.FuncForName("TagBusy");
 
 	if (!level.behavior)
     {
@@ -1731,9 +1731,12 @@ static int CmdSetLineSpecial(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2002/02/02 19:20:41  dj_jl
+//	FFunction pointers used instead of the function numbers
+//
 //	Revision 1.12  2002/01/11 08:13:35  dj_jl
 //	Fixed sector sound
-//
+//	
 //	Revision 1.11  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
