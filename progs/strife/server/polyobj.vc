@@ -606,7 +606,7 @@ void PolyThrustMobj(mobj_t * mobj, TVec thrustDir, polyobj_t * po)
 		TVec testPos;
 
 		testPos = mobj->Origin + force * thrustDir * frametime;
-		if (!mobj->CheckRelPosition(testPos))
+		if (!mobj->CheckPosition(testPos))
 		{
 			mobj->Damage(none, none, 3);
 		}
@@ -637,6 +637,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/16 17:36:38  dj_jl
+//  Changed to use CheckPosition since object is not moving yet.
+//
 //  Revision 1.10  2002/03/02 17:41:13  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

@@ -615,7 +615,7 @@ void PolyThrustMobj(Actor Other, TVec thrustDir, polyobj_t * po)
 		TVec testPos;
 
 		testPos = Other.Origin + force * thrustDir * frametime;
-		if (!Other.CheckRelPosition(testPos))
+		if (!Other.CheckPosition(testPos))
 		{
 			Other.Damage(none, none, 3);
 		}
@@ -646,6 +646,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/16 17:36:38  dj_jl
+//  Changed to use CheckPosition since object is not moving yet.
+//
 //  Revision 1.19  2002/03/09 17:57:02  dj_jl
 //  Got rid of function pointers, made most of the physics functions native.
 //
