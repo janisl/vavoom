@@ -52,6 +52,7 @@ void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
 void SV_DestroyAllThinkers(void);
 void SV_RunClientCommand(const char *cmd);
+void EntInit(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -162,6 +163,7 @@ void SV_Init(void)
     svpr.SetGlobal("validcount", (int)&validcount);
 	svpr.SetGlobal("level", (int)&level);
 	svpr.SetGlobal("skyflatnum", skyflatnum);
+	EntInit();
 
 	pg_frametime = svpr.GlobalNumForName("frametime");
 
@@ -2699,9 +2701,12 @@ int TConBuf::overflow(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2002/03/09 18:06:25  dj_jl
+//	Made Entity class and most of it's functions native
+//
 //	Revision 1.38  2002/03/04 18:27:49  dj_jl
 //	Fixes for weapons
-//
+//	
 //	Revision 1.37  2002/02/22 18:09:52  dj_jl
 //	Some improvements, beautification.
 //	
