@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //===========================================================================
@@ -111,7 +107,7 @@ void A_KoraxStep(mobj_t* actor)
 
 void A_KoraxStep2(mobj_t* actor)
 {
-	StartSoundName(NULL, "KoraxStep");
+	StartSoundName(NULL, "KoraxStep", CHAN_BODY);
 	A_Chase(actor);
 }
 
@@ -150,7 +146,7 @@ void A_KoraxChase(mobj_t* actor)
 	}
 	else if (P_Random()<30)
 	{
-		StartSoundName(NULL, "KoraxActive");
+		StartSoundName(NULL, "KoraxActive", CHAN_VOICE);
 	}
 
 	// Teleport away
@@ -298,7 +294,7 @@ void A_KoraxMissile(mobj_t* actor)
 	int		type = P_Random() % 6;
 	string	sound;
 
-	StartSoundName(actor, "KoraxAttack");
+	StartSoundName(actor, "KoraxAttack", CHAN_VOICE);
 
 	switch(type)
 	{
@@ -329,7 +325,7 @@ void A_KoraxMissile(mobj_t* actor)
 	}
 
 	// Fire all 6 missiles at once
-	StartSoundName(NULL, sound);
+	StartSoundName(NULL, sound, CHAN_VOICE);
 	KoraxFire1(actor, type);
 	KoraxFire2(actor, type);
 	KoraxFire3(actor, type);
@@ -350,7 +346,7 @@ void A_KoraxCommand(mobj_t* actor)
 	int		args[3];
 
 	args[0] = args[1] = args[2] = 0;
-	StartSoundName(actor, "KoraxCommand");
+	StartSoundName(actor, "KoraxCommand", CHAN_VOICE);
 
 	// Shoot stream of lightning to ceiling
 	ang = actor->angles.yaw - ANG90;
@@ -556,7 +552,7 @@ void A_KSpiritRoam(mobj_t* actor)
 {
 	if (actor->health-- <= 0)
 	{
-		StartSoundName(actor, "SpiritDie");
+		StartSoundName(actor, "SpiritDie", CHAN_VOICE);
 		SetMobjState(actor, S_KSPIRIT_DEATH1);
 	}
 	else
@@ -569,7 +565,7 @@ void A_KSpiritRoam(mobj_t* actor)
 		A_KSpiritWeave(actor);
 		if (P_Random()<50)
 		{
-			StartSoundName(NULL, "SpiritActive");
+			StartSoundName(NULL, "SpiritActive", CHAN_VOICE);
 		}
 	}
 }
@@ -617,3 +613,13 @@ void A_KBolt(mobj_t* actor)
 	}
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

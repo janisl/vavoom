@@ -440,7 +440,7 @@ void P_ExplodeMissile(mobj_t *mo)
 		default:
 			if (mo->sound_death)
 			{
-				StartSound(mo, mo->sound_death);
+				StartSound(mo, mo->sound_death, CHAN_VOICE);
 			}
 			break;
 	}
@@ -513,10 +513,10 @@ void P_FloorBounceMissile(mobj_t *mo)
 			case MT_SORCBALL1:
 			case MT_SORCBALL2:
 			case MT_SORCBALL3:
-				if (!mo->args[0]) StartSound(mo, mo->sound_sight);
+				if (!mo->args[0]) StartSound(mo, mo->sound_sight, CHAN_VOICE);
 				break;
 			default:
-				StartSound(mo, mo->sound_sight);
+				StartSound(mo, mo->sound_sight, CHAN_VOICE);
 				break;
 		}
 //		StartSound(mo, mo->sound_sight);
@@ -1608,11 +1608,11 @@ void SpawnPuff(float x, float y, float z)
 	if (linetarget && puff->sound_sight)
 	{
 		// Hit thing sound
-		StartSound(puff, puff->sound_sight);
+		StartSound(puff, puff->sound_sight, CHAN_VOICE);
 	}
 	else if (puff->sound_attack)
 	{
-		StartSound(puff, puff->sound_attack);
+		StartSound(puff, puff->sound_attack, CHAN_VOICE);
 	}
 	switch (PuffType)
 	{
@@ -2325,9 +2325,12 @@ void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
 //	Revision 1.4  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.3  2001/07/31 16:59:30  dj_jl
 //	Set model when spawning object
 //

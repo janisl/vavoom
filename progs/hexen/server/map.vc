@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -198,7 +194,7 @@ boolean PIT_ChangeSector(mobj_t* thing)
 				SetMobjState(thing, S_GIBS1);
 				thing->height = 0.0;
 				thing->radius = 0.0;
-				StartSoundName(thing, "PlayerFallingSplat");
+				StartSoundName(thing, "PlayerFallingSplat", CHAN_VOICE);
 			}
 		}
 		return true;            // keep checking
@@ -314,7 +310,7 @@ boolean PTR_UseTraverse(intercept_t* in)
 						sound = "";
 						break;
 				}
-				StartSoundName(usething, sound);
+				StartSoundName(usething, sound, CHAN_VOICE);
 			}
 			return false;   // can't use through a wall
 		}
@@ -341,7 +337,7 @@ boolean PTR_UseTraverse(intercept_t* in)
 						sound = "";
 						break;
 				}
-				StartSoundName(usething, sound);
+				StartSoundName(usething, sound, CHAN_VOICE);
 			}
 		}
 		return true ;           // not a special line, but keep checking
@@ -432,7 +428,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t *in)
 						break;
 					}
 				}
-				StartSoundName(PuzzleItemUser, sound);
+				StartSoundName(PuzzleItemUser, sound, CHAN_VOICE);
 				return false; // can't use through a wall
 			}
 			return true; // Continue searching
@@ -1102,4 +1098,13 @@ void PIT_ThrustSpike(mobj_t *actor)
 			P_BlockThingsIterator(bx, by, PIT_ThrustStompThing);
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

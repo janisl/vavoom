@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //==========================================================================
@@ -66,11 +62,11 @@ void A_Look(mobj_t* actor)
 	{
 		if (actor->flags2 & MF2_BOSS)
 		{ // Full volume
-			StartSound(NULL, actor->sound_sight);
+			StartSound(NULL, actor->sound_sight, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(actor, actor->sound_sight);
+			StartSound(actor, actor->sound_sight, CHAN_VOICE);
 		}
 	}
 
@@ -160,7 +156,7 @@ void A_Chase(mobj_t* actor)
     {
 		if (actor->sound_attack)
         {
-		    StartSound(actor, actor->sound_attack);
+		    StartSound(actor, actor->sound_attack, CHAN_WEAPON);
 		}
 		SetMobjState(actor, actor->meleestate);
 		return;
@@ -201,19 +197,19 @@ void A_Chase(mobj_t* actor)
     {
 		if (actor->type == MT_BISHOP && P_Random() < 128)
 		{
-			StartSound(actor, actor->sound_sight);
+			StartSound(actor, actor->sound_sight, CHAN_VOICE);
 		}
 		else if (actor->type == MT_PIG)
 		{
-			StartSound(actor, GetSoundID("PigActive1") + (P_Random() & 1));
+			StartSound(actor, GetSoundID("PigActive1") + (P_Random() & 1), CHAN_VOICE);
 		}
 		else if (actor->flags2 & MF2_BOSS)
 		{
-			StartSound(NULL, actor->sound_active);
+			StartSound(NULL, actor->sound_active, CHAN_VOICE);
 		}
 		else
 		{
-			StartSound(actor, actor->sound_active);
+			StartSound(actor, actor->sound_active, CHAN_VOICE);
 		}
     }
 }
@@ -250,7 +246,7 @@ void A_Pain(mobj_t* actor)
 {
     if (actor->sound_pain)
     {
-		StartSound(actor, actor->sound_pain);
+		StartSound(actor, actor->sound_pain, CHAN_VOICE);
 	}
 }
 
@@ -280,32 +276,32 @@ void A_FreeTargMobj(mobj_t* mo)
 
 void A_Scream(mobj_t* actor)
 {
-	S_StopSound(actor);
+	S_StopSound(actor, CHAN_AUTO);
 	if (actor->player)
 	{
 		if (actor->player->morphTics)
 		{
-			StartSound(actor, actor->sound_death);
+			StartSound(actor, actor->sound_death, CHAN_VOICE);
 		}
 		else
 		{
 			// Handle the different player death screams
 			if (actor->velocity.z <= -39.0 * 35.0)
 			{ // Falling splat
-				StartSoundName(actor, "PlayerFallingSplat");
+				StartSoundName(actor, "PlayerFallingSplat", CHAN_VOICE);
 			}
 			else if (actor->health > -50)
 			{ // Normal death sound
 				switch (actor->player->pclass)
 				{
 					case PCLASS_FIGHTER:
-						StartSoundName(actor, "PlayerFighterNormalDeath");
+						StartSoundName(actor, "PlayerFighterNormalDeath", CHAN_VOICE);
 						break;
 					case PCLASS_CLERIC:
-						StartSoundName(actor, "PlayerClericNormalDeath");
+						StartSoundName(actor, "PlayerClericNormalDeath", CHAN_VOICE);
 						break;
 					case PCLASS_MAGE:
-						StartSoundName(actor, "PlayerMageNormalDeath");
+						StartSoundName(actor, "PlayerMageNormalDeath", CHAN_VOICE);
 						break;
 				}
 			}
@@ -314,13 +310,13 @@ void A_Scream(mobj_t* actor)
 				switch (actor->player->pclass)
 				{
 					case PCLASS_FIGHTER:
-						StartSoundName(actor, "PlayerFighterCrazyDeath");
+						StartSoundName(actor, "PlayerFighterCrazyDeath", CHAN_VOICE);
 						break;
 					case PCLASS_CLERIC:
-						StartSoundName(actor, "PlayerClericCrazyDeath");
+						StartSoundName(actor, "PlayerClericCrazyDeath", CHAN_VOICE);
 						break;
 					case PCLASS_MAGE:
-						StartSoundName(actor, "PlayerMageCrazyDeath");
+						StartSoundName(actor, "PlayerMageCrazyDeath", CHAN_VOICE);
 						break;
 				}
 			}
@@ -341,13 +337,13 @@ void A_Scream(mobj_t* actor)
 						break;
 				}
 				sound += P_Random() % 3; // Three different extreme deaths
-				StartSound(actor, sound);
+				StartSound(actor, sound, CHAN_VOICE);
 			}
 		}
 	}
 	else
 	{
-		StartSound(actor, actor->sound_death);
+		StartSound(actor, actor->sound_death, CHAN_VOICE);
 	}
 }
 
@@ -517,7 +513,7 @@ void A_FreezeDeath(mobj_t* actor)
 	actor->flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
 	actor->flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_PASSMOBJ | MF2_SLIDE;
 	actor->height *= 4.0;
-	StartSoundName(actor, "FreezeDeath");
+	StartSoundName(actor, "FreezeDeath", CHAN_VOICE);
 
 	if (actor->player)
 	{
@@ -573,7 +569,7 @@ void A_FreezeDeathChunks(mobj_t* actor)
 		actor->time = 3.0;
 		return;
 	}
-	StartSoundName(actor, "FreezeShatter");
+	StartSoundName(actor, "FreezeShatter", CHAN_VOICE);
 
 	for (i = 12 + (P_Random() & 15); i >= 0; i--)
 	{
@@ -651,7 +647,7 @@ void A_CheckSkullFloor(mobj_t* actor)
 	if (actor->origin.z <= actor->floorz)
 	{
 		SetMobjState(actor, S_BLOODYSKULLX1);
-		StartSoundName(actor, "Drip");
+		StartSoundName(actor, "Drip", CHAN_VOICE);
 	}
 }
 
@@ -809,4 +805,13 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 	}
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

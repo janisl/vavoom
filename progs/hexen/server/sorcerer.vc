@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //============================================================================
@@ -314,7 +310,7 @@ void A_CastSorcererSpell(mobj_t* actor)
 	float	z;
 	mobj_t*	parent = actor->target;
 
-	StartSoundName(NULL, "SorcererSpellCast");
+	StartSoundName(NULL, "SorcererSpellCast", CHAN_VOICE);
 
 	// Put sorcerer into throw spell animation
 	if (parent->health > 0) SetMobjStateNF(parent, S_SORC_ATTACK4);
@@ -441,7 +437,7 @@ void A_SorcBallOrbit(mobj_t* actor)
 
 				if (actor->type==MT_SORCBALL1 && P_Random()<200)
 				{
-					StartSoundName(NULL, "SorcererSpellCast");
+					StartSoundName(NULL, "SorcererSpellCast", CHAN_VOICE);
 					actor->special2 = SORCFX4_RAPIDFIRE_TIME;
 					actor->args[4] = 128;
 					parent->args[3] = SORC_FIRING_SPELL;
@@ -480,7 +476,7 @@ void A_SorcBallOrbit(mobj_t* actor)
 	{
 		parent->args[1]++;			// Bump rotation counter
 		// Completed full rotation - make woosh sound
-		StartSoundName(actor, "SorcererBallWoosh");
+		StartSoundName(actor, "SorcererBallWoosh", CHAN_VOICE);
 	}
 	actor->special1 = angle;		// Set previous angle
 	x = parent->origin.x + dist * cos(angle);
@@ -548,7 +544,7 @@ void A_SpawnFizzle(mobj_t* actor)
 
 void A_SorcBallPop(mobj_t* actor)
 {
-	StartSoundName(NULL, "SorcererBallPop");
+	StartSoundName(NULL, "SorcererBallPop", CHAN_VOICE);
 	actor->flags &= ~MF_NOGRAVITY;
 	actor->flags2 |= MF2_LOGRAV;
 	actor->velocity.x = (Random() * 10.0 - 5.0) * 35.0;
@@ -578,10 +574,10 @@ void A_BounceCheck(mobj_t* actor)
 				case MT_SORCBALL1:
 				case MT_SORCBALL2:
 				case MT_SORCBALL3:
-					StartSoundName(NULL, "SorcererBigBallExplode");
+					StartSoundName(NULL, "SorcererBigBallExplode", CHAN_VOICE);
 					break;
 				case MT_SORCFX1:
-					StartSoundName(NULL, "SorcererHeadScream");
+					StartSoundName(NULL, "SorcererHeadScream", CHAN_VOICE);
 					break;
 				default:
 					break;
@@ -741,7 +737,7 @@ void A_SpawnBishop(mobj_t* actor)
 void A_SorcererBishopEntry(mobj_t* actor)
 {
 	P_SpawnMobj(actor->origin.x, actor->origin.y, actor->origin.z, MT_SORCFX3_EXPLOSION);
-	StartSound(actor, actor->sound_sight);
+	StartSound(actor, actor->sound_sight, CHAN_VOICE);
 }
 
 //============================================================================
@@ -760,3 +756,13 @@ void A_SorcFX4Check(mobj_t* actor)
 	}
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

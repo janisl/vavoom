@@ -21,13 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.3  2001/07/31 16:59:30  dj_jl
-//**	Set model when spawning object
-//**
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**	
 //**************************************************************************
 //**
 //**	Moving object handling.
@@ -340,7 +333,7 @@ void P_ExplodeMissile(mobj_t* mo)
     mo->flags &= ~MF_MISSILE;
 
     if (mo->sound_death)
-		StartSound(mo, mo->sound_death);
+		StartSound(mo, mo->sound_death, CHAN_VOICE);
 }
 
 //==========================================================================
@@ -379,7 +372,7 @@ mobj_t* SpawnMissile(mobj_t* source, mobj_t* dest, int type)
     th = P_SpawnMobj(source->origin.x, source->origin.y, source->origin.z + 32.0, type);
     
     if (th->sound_sight)
-		StartSound(th, th->sound_sight);
+		StartSound(th, th->sound_sight, CHAN_VOICE);
 
     th->target = source;	// where it came from
 
@@ -673,7 +666,7 @@ void P_RespawnSpecials(void)
 	  
     // spawn a teleport fog at the new spot
     mo = P_SpawnMobj(x, y, ONFLOORZ, MT_IFOG);
-    StartSoundName(mo, "ItemRespawn");
+    StartSoundName(mo, "ItemRespawn", CHAN_VOICE);
 
     // find which type to spawn
     for (i = 0; i < num_mobj_types; i++)
@@ -724,12 +717,12 @@ void P_NightmareRespawn(mobj_t* mobj)
     mo = P_SpawnMobj(mobj->origin.x, mobj->origin.y, ONFLOORZ, MT_TFOG);
 
     // initiate teleport sound
-    StartSoundName(mo, "Teleport");
+    StartSoundName(mo, "Teleport", CHAN_VOICE);
 
     // spawn a teleport fog at the new spot
     mo = P_SpawnMobj(x, y, ONFLOORZ, MT_TFOG);
 
-    StartSoundName(mo, "Teleport");
+    StartSoundName(mo, "Teleport", CHAN_VOICE);
 
     // spawn the new monster
     mthing = &mobj->spawnpoint;
@@ -854,4 +847,16 @@ void P_NoiseAlert(mobj_t* target, mobj_t* emmiter)
     P_RecursiveSound(emmiter->subsector->sector, 0);
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.4  2001/08/30 17:33:18  dj_jl
+//	Added sound channels
+//
+//	Revision 1.3  2001/07/31 16:59:30  dj_jl
+//	Set model when spawning object
+//
+//	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

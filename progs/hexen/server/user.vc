@@ -167,7 +167,7 @@ void MovePlayer(player_t* player)
 				if (player->mo->velocity.z <= -39.0 * 35.0)
 				{
 					// stop falling scream
-					S_StopSound(player->mo);
+					S_StopSound(player->mo, CHAN_AUTO);
 				}
 			}
 		}
@@ -1208,7 +1208,7 @@ boolean UseArtifact(player_t *player, int arti)
 			}
 			if (player->mo->velocity.z <= -35.0 * 35.0)
 			{ // stop falling scream
-				S_StopSound(player->mo);
+				S_StopSound(player->mo, CHAN_AUTO);
 			}
 			break;
 		case arti_teleport:
@@ -1859,9 +1859,12 @@ void UserinfoChanged(player_t *player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
 //	Revision 1.3  2001/08/29 17:42:13  dj_jl
 //	Added sound channel
-//
+//	
 //	Revision 1.2  2001/07/27 14:27:53  dj_jl
 //	Update with Id-s and Log-s, some fixes
 //

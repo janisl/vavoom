@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 //============================================================================
@@ -200,7 +196,7 @@ void A_FiredChase(mobj_t* actor)
 	// make active sound
 	if (actor->sound_active && P_Random() < 3)
 	{
-		StartSound(actor, actor->sound_active);
+		StartSound(actor, actor->sound_active, CHAN_VOICE);
 	}
 }
 
@@ -215,7 +211,7 @@ void A_FiredAttack(mobj_t* actor)
 	mobj_t*	mo;
 
 	mo = SpawnMissile(actor, actor->target, MT_FIREDEMON_FX6);
-	if (mo) StartSoundName(actor, "FireDemonAttack");
+	if (mo) StartSoundName(actor, "FireDemonAttack", CHAN_WEAPON);
 }
 
 //============================================================================
@@ -259,3 +255,13 @@ void A_SmBounce(mobj_t* actor)
 	actor->velocity.y = Random() * 3.0 * 35.0;
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

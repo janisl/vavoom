@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:52  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -211,7 +207,7 @@ void A_FSwordAttack2(mobj_t* actor)
 	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle,         0.0);
 	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle-ANG45/8, 0.0);
 	SpawnMissileAngle(actor, MT_FSWORD_MISSILE,angle-ANG45/4, 0.0);
-	StartSoundName(actor, "FighterSwordFire");
+	StartSoundName(actor, "FighterSwordFire", CHAN_WEAPON);
 }
 
 //============================================================================
@@ -236,7 +232,7 @@ void A_FighterAttack(mobj_t* actor)
 void A_CHolyAttack3(mobj_t* actor)
 {
 	SpawnMissile(actor, actor->target, MT_HOLY_MISSILE);
-	StartSoundName(actor, "HolySymbolFire");
+	StartSoundName(actor, "HolySymbolFire", CHAN_WEAPON);
 }
 
 //============================================================================
@@ -283,7 +279,7 @@ void A_MStaffAttack2(mobj_t* actor)
 	MStaffSpawn2(actor, angle);
 	MStaffSpawn2(actor, angle-ANGLE_1*5);
 	MStaffSpawn2(actor, angle+ANGLE_1*5);
-	StartSoundName(actor, "MageStaffFire");
+	StartSoundName(actor, "MageStaffFire", CHAN_WEAPON);
 }
 
 //============================================================================
@@ -298,3 +294,13 @@ void A_MageAttack(mobj_t* actor)
 	A_MStaffAttack2(actor);
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:17  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:52  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

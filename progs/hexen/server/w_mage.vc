@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 // MACROS ------------------------------------------------------------------
@@ -55,7 +51,7 @@ void A_MWandAttack(mobj_t *actor)
 	{
     	mo->blaster = true;
 	}
-	StartSoundName(player->mo, "MageWandFire");
+	StartSoundName(player->mo, "MageWandFire", CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -76,7 +72,7 @@ void A_FireConePL1(mobj_t *actor)
 
 	pmo = player->mo;
 	player->mana[MANA_1] -= WeaponManaUse(player->pclass, player->readyweapon);
-	StartSoundName(pmo, "MageShardsFire");
+	StartSoundName(pmo, "MageShardsFire", CHAN_WEAPON);
 
 	damage = 90 + (P_Random() & 15);
 	for (i = 0; i < 16; i++)
@@ -200,7 +196,7 @@ void A_LightningReady(mobj_t *actor)
 	A_WeaponReady(actor);
 	if (P_Random() < 160)
 	{
-		StartSoundName(player->mo, "MageLightningReady");
+		StartSoundName(player->mo, "MageLightningReady", CHAN_WEAPON);
 	}
 }
 
@@ -231,7 +227,7 @@ void A_MLightningAttack2(mobj_t* actor)
 		cmo->specialmobj2 = fmo;
 		A_LightningZap(cmo);	
 	}
-	StartSoundName(actor, "MageLightningFire");
+	StartSoundName(actor, "MageLightningFire", CHAN_WEAPON);
 }
 
 //============================================================================
@@ -359,7 +355,7 @@ void A_LightningZap(mobj_t* actor)
 	}
 	if (actor->type == MT_LIGHTNING_FLOOR && P_Random() < 160)
 	{
-		StartSoundName(actor, "MageLightningContinuous");
+		StartSoundName(actor, "MageLightningContinuous", CHAN_VOICE);
 	}
 }
 
@@ -462,7 +458,7 @@ void A_MStaffAttack(mobj_t *actor)
 	MStaffSpawn(pmo, angle);
 	MStaffSpawn(pmo, angle-ANGLE_1*5);
 	MStaffSpawn(pmo, angle+ANGLE_1*5);
-	StartSoundName(player->mo, "MageStaffFire");
+	StartSoundName(player->mo, "MageStaffFire", CHAN_WEAPON);
 	player->damagecount = 0;
 	player->bonuscount = 0;
 	player->weapon_palette = STARTSCOURGEPAL;
@@ -534,3 +530,13 @@ void A_MStaffTrack(mobj_t* actor)
 	SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 10);
 }
 
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:18  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************

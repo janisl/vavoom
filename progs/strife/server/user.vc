@@ -21,10 +21,6 @@
 //**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //**  GNU General Public License for more details.
 //**
-//**	$Log$
-//**	Revision 1.2  2001/07/27 14:27:53  dj_jl
-//**	Update with Id-s and Log-s, some fixes
-//**
 //**************************************************************************
 
 float air_control = 1.0 / 256.0;
@@ -834,7 +830,7 @@ void DisconnectClient(player_t *player)
 		DamageMobj(player->mo, NULL, NULL, 10000);
 	}
    	bprint("%s left the game\n", ARR2STR(player->name));
-	StartSoundName(NULL, "Chat");
+	StartSoundName(NULL, "Chat", CHAN_AUTO);
 }
 
 //==========================================================================
@@ -852,4 +848,13 @@ void UserinfoChanged(player_t *player)
 	player->mo->translation = player->color;
 }
 
-
+//**************************************************************************
+//
+//	$Log$
+//	Revision 1.3  2001/08/30 17:33:18  dj_jl
+//	Added sound channels
+//
+//	Revision 1.2  2001/07/27 14:27:53  dj_jl
+//	Update with Id-s and Log-s, some fixes
+//
+//**************************************************************************
