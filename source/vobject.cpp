@@ -54,8 +54,6 @@ TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjHash[4096];
 
-IMPLEMENT_CLASS(V, Subsystem);	// FIXME
-
 //==========================================================================
 //
 //	VObject::VObject
@@ -405,9 +403,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.12  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.11  2003/03/08 11:36:03  dj_jl
 //	API fixes.
 //	

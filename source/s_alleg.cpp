@@ -55,11 +55,9 @@ struct channel_t
 	int			voice;
 };
 
-class VDefaultSoundDevice : public VSoundDevice
+class VAllegroSoundDevice : public VSoundDevice
 {
-	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0);
-	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice);
-
+public:
 	void Tick(float DeltaTime);
 
 	void Init(void);
@@ -85,7 +83,8 @@ static void StopChannel(int chan_num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, DefaultSoundDevice);
+IMPLEMENT_SOUND_DEVICE(VAllegroSoundDevice, SNDDRV_Default, "Default",
+	"Allegro sound device", NULL);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -106,15 +105,15 @@ static TVec			listener_up;
 
 //==========================================================================
 //
-//  VDefaultSoundDevice::Init
+//  VAllegroSoundDevice::Init
 //
 // 	Inits sound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Init(void)
+void VAllegroSoundDevice::Init(void)
 {
-	guard(VDefaultSoundDevice::Init);
+	guard(VAllegroSoundDevice::Init);
 	int		sound_card;
     int		music_card;
 	int		i;
@@ -154,13 +153,13 @@ void VDefaultSoundDevice::Init(void)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::Shutdown
+//	VAllegroSoundDevice::Shutdown
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Shutdown(void)
+void VAllegroSoundDevice::Shutdown(void)
 {
-	guard(VDefaultSoundDevice::Shutdown);
+	guard(VAllegroSoundDevice::Shutdown);
 	remove_sound();
 	unguard;
 }
@@ -333,17 +332,17 @@ static int CalcPitch(int freq, int sound_id)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlaySound
+//	VAllegroSoundDevice::PlaySound
 //
 // 	This function adds a sound to the list of currently active sounds, which
 // is maintained as a given number of internal channels.
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
+void VAllegroSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	const TVec &velocity, int origin_id, int channel, float volume)
 {
-	guard(VDefaultSoundDevice::PlaySound);
+	guard(VAllegroSoundDevice::PlaySound);
 	SAMPLE*		spl;
 	int 		dist;
 	int 		priority;
@@ -435,13 +434,13 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlayVoice
+//	VAllegroSoundDevice::PlayVoice
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlayVoice(const char *Name)
+void VAllegroSoundDevice::PlayVoice(const char *Name)
 {
-	guard(VDefaultSoundDevice::PlayVoice);
+	guard(VAllegroSoundDevice::PlayVoice);
 	SAMPLE*		spl;
 	int 		priority;
     int			chan;
@@ -510,13 +509,13 @@ void VDefaultSoundDevice::PlayVoice(const char *Name)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlaySoundTillDone
+//	VAllegroSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
+void VAllegroSoundDevice::PlaySoundTillDone(char *sound)
 {
-	guard(VDefaultSoundDevice::PlaySoundTillDone);
+	guard(VAllegroSoundDevice::PlaySoundTillDone);
     int			sound_id;
 	double		start;
 	SAMPLE		spl;
@@ -582,16 +581,16 @@ void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 
 //==========================================================================
 //
-//  VDefaultSoundDevice::Tick
+//  VAllegroSoundDevice::Tick
 //
 // 	Update the sound parameters. Used to control volume, pan, and pitch
 // changes such as when a player turns.
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Tick(float DeltaTime)
+void VAllegroSoundDevice::Tick(float DeltaTime)
 {
-	guard(VDefaultSoundDevice::Tick);
+	guard(VAllegroSoundDevice::Tick);
 	int 		i;
 	int			dist;
 	int			vol;
@@ -698,13 +697,13 @@ static void StopChannel(int chan_num)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::StopSound
+//	VAllegroSoundDevice::StopSound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::StopSound(int origin_id, int channel)
+void VAllegroSoundDevice::StopSound(int origin_id, int channel)
 {
-	guard(VDefaultSoundDevice::StopSound);
+	guard(VAllegroSoundDevice::StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -720,13 +719,13 @@ void VDefaultSoundDevice::StopSound(int origin_id, int channel)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::StopAllSound
+//	VAllegroSoundDevice::StopAllSound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::StopAllSound(void)
+void VAllegroSoundDevice::StopAllSound(void)
 {
-	guard(VDefaultSoundDevice::StopAllSound);
+	guard(VAllegroSoundDevice::StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -739,13 +738,13 @@ void VDefaultSoundDevice::StopAllSound(void)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::IsSoundPlaying
+//	VAllegroSoundDevice::IsSoundPlaying
 //
 //==========================================================================
 
-bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
+bool VAllegroSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
-	guard(VDefaultSoundDevice::IsSoundPlaying);
+	guard(VAllegroSoundDevice::IsSoundPlaying);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -767,9 +766,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.14  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.13  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

@@ -54,9 +54,6 @@ struct FALChannel
 
 class VOpenALDevice : public VSoundDevice
 {
-	DECLARE_CLASS(VOpenALDevice, VSoundDevice, 0)
-	NO_DEFAULT_CONSTRUCTOR(VOpenALDevice)
-
 private:
 	enum { MAX_VOICES = 256 };
 
@@ -122,7 +119,8 @@ private:
 	}
 };
 
-IMPLEMENT_CLASS(V, OpenALDevice);
+IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
+	"OpenAL sound device", "-openal");
 
 TCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_ARCHIVE);
 TCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_ARCHIVE);
@@ -832,9 +830,12 @@ bool VOpenALDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.6  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.5  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

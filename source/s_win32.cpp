@@ -62,11 +62,9 @@ struct free_buf_t
 	double					free_time;
 };
 
-class VDefaultSoundDevice : public VSoundDevice
+class VDirectSoundDevice : public VSoundDevice
 {
-	DECLARE_CLASS(VDefaultSoundDevice, VSoundDevice, 0)
-	NO_DEFAULT_CONSTRUCTOR(VDefaultSoundDevice)
-
+public:
 	void Tick(float DeltaTime);
 
 	void Init(void);
@@ -96,7 +94,8 @@ static void StopChannel(int chan_num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, DefaultSoundDevice);
+IMPLEMENT_SOUND_DEVICE(VDirectSoundDevice, SNDDRV_Default, "Default",
+	"DirectSound sound device", NULL);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -133,15 +132,15 @@ static TCvarI		eax_environment("eax_environment", "0");
 
 //==========================================================================
 //
-//  VDefaultSoundDevice::Init
+//  VDirectSoundDevice::Init
 //
 // 	Inits sound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Init(void)
+void VDirectSoundDevice::Init(void)
 {
-	guard(VDefaultSoundDevice::Init);
+	guard(VDirectSoundDevice::Init);
 	HRESULT			result;
 	DSBUFFERDESC	dsbdesc;
 	WAVEFORMATEX	wfx;
@@ -327,13 +326,13 @@ void VDefaultSoundDevice::Init(void)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::Shutdown
+//	VDirectSoundDevice::Shutdown
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Shutdown(void)
+void VDirectSoundDevice::Shutdown(void)
 {
-	guard(VDefaultSoundDevice::Shutdown);
+	guard(VDirectSoundDevice::Shutdown);
 	//	Shutdown sound
 	if (DSound)
 	{
@@ -681,17 +680,17 @@ static LPDIRECTSOUNDBUFFER CreateBuffer(int sound_id, const char *VoiceName)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlaySound
+//	VDirectSoundDevice::PlaySound
 //
 // 	This function adds a sound to the list of currently active sounds, which
 // is maintained as a given number of internal channels.
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
+void VDirectSoundDevice::PlaySound(int sound_id, const TVec &origin,
 	const TVec &velocity, int origin_id, int channel, float volume)
 {
-	guard(VDefaultSoundDevice::PlaySound);
+	guard(VDirectSoundDevice::PlaySound);
 	int 					dist;
 	int 					priority;
 	int						chan;
@@ -804,13 +803,13 @@ void VDefaultSoundDevice::PlaySound(int sound_id, const TVec &origin,
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlayVoice
+//	VDirectSoundDevice::PlayVoice
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlayVoice(const char *Name)
+void VDirectSoundDevice::PlayVoice(const char *Name)
 {
-	guard(VDefaultSoundDevice::PlayVoice);
+	guard(VDirectSoundDevice::PlayVoice);
 	int 					priority;
 	int						chan;
 	HRESULT					result;
@@ -870,13 +869,13 @@ void VDefaultSoundDevice::PlayVoice(const char *Name)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::PlaySoundTillDone
+//	VDirectSoundDevice::PlaySoundTillDone
 //
 //==========================================================================
 
-void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
+void VDirectSoundDevice::PlaySoundTillDone(char *sound)
 {
-	guard(VDefaultSoundDevice::PlaySoundTillDone);
+	guard(VDirectSoundDevice::PlaySoundTillDone);
     int						sound_id;
 	double					start;
     HRESULT					result;
@@ -948,16 +947,16 @@ void VDefaultSoundDevice::PlaySoundTillDone(char *sound)
 
 //==========================================================================
 //
-//  VDefaultSoundDevice::Tick
+//  VDirectSoundDevice::Tick
 //
 // 	Update the sound parameters. Used to control volume and pan
 // changes such as when a player turns.
 //
 //==========================================================================
 
-void VDefaultSoundDevice::Tick(float DeltaTime)
+void VDirectSoundDevice::Tick(float DeltaTime)
 {
-	guard(VDefaultSoundDevice::Tick);
+	guard(VDirectSoundDevice::Tick);
 	int 		i;
 	int			dist;
     DWORD		Status;
@@ -1140,13 +1139,13 @@ static void StopChannel(int chan_num)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::StopSound
+//	VDirectSoundDevice::StopSound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::StopSound(int origin_id, int channel)
+void VDirectSoundDevice::StopSound(int origin_id, int channel)
 {
-	guard(VDefaultSoundDevice::StopSound);
+	guard(VDirectSoundDevice::StopSound);
 	int i;
 
     for (i = 0; i < snd_Channels; i++)
@@ -1162,13 +1161,13 @@ void VDefaultSoundDevice::StopSound(int origin_id, int channel)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::StopAllSound
+//	VDirectSoundDevice::StopAllSound
 //
 //==========================================================================
 
-void VDefaultSoundDevice::StopAllSound(void)
+void VDirectSoundDevice::StopAllSound(void)
 {
-	guard(VDefaultSoundDevice::StopAllSound);
+	guard(VDirectSoundDevice::StopAllSound);
 	int i;
 
 	//	stop all sounds
@@ -1181,13 +1180,13 @@ void VDefaultSoundDevice::StopAllSound(void)
 
 //==========================================================================
 //
-//	VDefaultSoundDevice::IsSoundPlaying
+//	VDirectSoundDevice::IsSoundPlaying
 //
 //==========================================================================
 
-bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
+bool VDirectSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 {
-	guard(VDefaultSoundDevice::IsSoundPlaying);
+	guard(VDirectSoundDevice::IsSoundPlaying);
 	int i;
 
 	for (i = 0; i < snd_Channels; i++)
@@ -1212,9 +1211,12 @@ bool VDefaultSoundDevice::IsSoundPlaying(int origin_id, int sound_id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.23  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.22  2004/08/04 05:36:47  dj_jl
 //	Structure alignment fix.
 //	

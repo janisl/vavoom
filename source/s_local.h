@@ -34,6 +34,17 @@
 
 enum { VOICE_SOUND_ID = -1 };
 
+//	Sound device types.
+//??? Should Default be replaced with all default drivers?
+enum
+{
+	SNDDRV_Default,
+	SNDDRV_OpenAL,
+	SNDDRV_Null,
+
+	SNDDRV_MAX
+};
+
 // TYPES -------------------------------------------------------------------
 
 //
@@ -59,15 +70,22 @@ struct sfxinfo_t
 //
 //	Sound device interface. This class implements dummy driver.
 //
-class VSoundDevice : public VSubsystem
+class VSoundDevice
 {
-	DECLARE_CLASS(VSoundDevice, VSubsystem, 0)
-	NO_DEFAULT_CONSTRUCTOR(VSoundDevice)
+public:
+	void* operator new(size_t Size, int Tag)
+	{ return Z_Calloc(Size, Tag, 0); }
+	void operator delete(void* Object, size_t)
+	{ Z_Free(Object); }
+	virtual ~VSoundDevice()
+	{}
 
 	//	VSoundDevice interface.
 	virtual void Init(void)
 	{}
 	virtual void Shutdown(void)
+	{}
+	virtual void Tick(float)
 	{}
 	virtual void PlaySound(int, const TVec &, const TVec &, int, int, float)
 	{}
@@ -82,6 +100,26 @@ class VSoundDevice : public VSubsystem
 	virtual bool IsSoundPlaying(int, int)
 	{ return false; }
 };
+
+//	Describtion of a sound driver.
+struct FSoundDeviceDesc
+{
+	const char*		Name;
+	const char*		Description;
+	const char*		CmdLineArg;
+	VSoundDevice*	(*Creator)();
+
+	FSoundDeviceDesc(int Type, const char* AName, const char* ADescription,
+		const char* ACmdLineArg, VSoundDevice* (*ACreator)());
+};
+
+//	Sound device registration helper.
+#define IMPLEMENT_SOUND_DEVICE(TClass, Type, Name, Description, CmdLineArg) \
+VSoundDevice* Create##TClass() \
+{ \
+	return new(PU_STATIC) TClass(); \
+} \
+FSoundDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -129,9 +167,12 @@ extern TCvarI		swap_stereo;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.10  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.9  2002/07/27 18:10:11  dj_jl
 //	Implementing Strife conversations.
 //	

@@ -50,19 +50,15 @@ REGISTER_NAME(DevNet)
 
 //	Native class names.
 REGISTER_NAME(Object)
-REGISTER_NAME(Level)
-REGISTER_NAME(Subsystem)
-REGISTER_NAME(OpenALDevice)
-REGISTER_NAME(SoundDevice)
-REGISTER_NAME(DefaultSoundDevice)
-REGISTER_NAME(GC)
-REGISTER_NAME(ModalWindow)
-REGISTER_NAME(RootWindow)
-REGISTER_NAME(Window)
-REGISTER_NAME(ACS)
+REGISTER_NAME(Thinker)
 REGISTER_NAME(Entity)
 REGISTER_NAME(ViewEntity)
-REGISTER_NAME(Thinker)
+REGISTER_NAME(ACS)
+REGISTER_NAME(Level)
+REGISTER_NAME(GC)
+REGISTER_NAME(Window)
+REGISTER_NAME(ModalWindow)
+REGISTER_NAME(RootWindow)
 
 // Closing -----------------------------------------------------------------
 
@@ -76,9 +72,12 @@ REGISTER_NAME(Thinker)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.5  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.4  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

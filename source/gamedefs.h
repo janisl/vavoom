@@ -61,22 +61,6 @@
 #include "progs.h"		//	Progs
 #include "vobject.h"
 #include "vclass.h"
-
-//
-//	VSubsystem
-//
-//	FIXME Make a file for this.
-//
-class VSubsystem : public VObject
-{
-	DECLARE_ABSTRACT_CLASS(VSubsystem, VObject, CLASS_Transient)
-	NO_DEFAULT_CONSTRUCTOR(VSubsystem)
-
-	//	VSubsystem interface.
-	virtual void Tick(float)
-	{}
-};
-
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
 #include "waddefs.h"    // 	External data types
@@ -106,9 +90,12 @@ class VSubsystem : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.24  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.23  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

@@ -42,23 +42,42 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, SoundDevice);
+IMPLEMENT_SOUND_DEVICE(VSoundDevice, SNDDRV_Null, "Null",
+	"Null sound device", "-nosound");
 
-TCvarI				sfx_volume("sfx_volume", "8", CVAR_ARCHIVE);
-TCvarI				music_volume("music_volume", "8", CVAR_ARCHIVE);
-TCvarI				swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
+TCvarI					sfx_volume("sfx_volume", "8", CVAR_ARCHIVE);
+TCvarI					music_volume("music_volume", "8", CVAR_ARCHIVE);
+TCvarI					swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char			mapSong[12];
-static int			mapCDTrack;
+static char				mapSong[12];
+static int				mapCDTrack;
 
-static TCvarI		cd_music("use_cd_music", "0", CVAR_ARCHIVE);
-static boolean		CDMusic = false;
+static TCvarI			cd_music("use_cd_music", "0", CVAR_ARCHIVE);
+static boolean			CDMusic = false;
 
-static VSoundDevice	*GSoundDevice;
+static VSoundDevice		*GSoundDevice;
+static FSoundDeviceDesc	*SoundDeviceList[SNDDRV_MAX];
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	FSoundDeviceDesc::FSoundDeviceDesc
+//
+//==========================================================================
+
+FSoundDeviceDesc::FSoundDeviceDesc(int Type, const char* AName,
+	const char* ADescription, const char* ACmdLineArg,
+	VSoundDevice* (*ACreator)())
+: Name(AName)
+, Description(ADescription)
+, CmdLineArg(ACmdLineArg)
+, Creator(ACreator)
+{
+	SoundDeviceList[Type] = this;
+}
 
 //==========================================================================
 //
@@ -78,25 +97,21 @@ void S_Init(void)
 	S_InitScript();
 	SN_InitSequenceScript();
 
-	VClass *DeviceClass;
-	if (M_CheckParm("-openal"))
+	int SIdx = -1;
+	for (int i = 0; i < SNDDRV_MAX; i++)
 	{
-		DeviceClass = VClass::FindClass("OpenALDevice");
-		if (!DeviceClass)
-		{
-			Sys_Error("OpenAL driver not available");
-		}
+		if (!SoundDeviceList[i])
+			continue;
+		//	Default to first available non-null sound device.
+		if (SIdx == -1)
+			SIdx = i;
+		//	Check for user selection.
+		if (SoundDeviceList[i]->CmdLineArg &&
+			M_CheckParm(SoundDeviceList[i]->CmdLineArg))
+			SIdx = i;
 	}
-	else
-	{
-		DeviceClass = VClass::FindClass("DefaultSoundDevice");
-		if (!DeviceClass)
-		{
-			//	No sound driver, use no-sound driver.
-			DeviceClass = VSoundDevice::StaticClass();
-		}
-	}
-	GSoundDevice = (VSoundDevice *)VObject::StaticSpawnObject(DeviceClass, NULL, PU_STATIC);
+	GCon->Logf(NAME_Init, "Selected %s", SoundDeviceList[SIdx]->Description);
+	GSoundDevice = SoundDeviceList[SIdx]->Creator();
 
 	GSoundDevice->Init();
 	S_InitMusic();
@@ -329,9 +344,12 @@ void S_UpdateSounds(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2004/08/21 19:10:44  dj_jl
+//	Changed sound driver declaration.
+//
 //	Revision 1.10  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.9  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	
