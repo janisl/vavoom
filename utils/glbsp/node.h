@@ -2,7 +2,7 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -32,12 +32,6 @@ int BoxOnLineSide(superblock_t *box, seg_t *part);
 // add the seg to the given list
 void AddSegToSuper(superblock_t *block, seg_t *seg);
 
-// add the _whole block_ to the destination superblock.  Will clean
-// out the source superblock (may even transfer some of its sub-blocks
-// to the destination holus bolus).
-//
-void AddSuperToSuper(superblock_t *dest, superblock_t *src);
-
 // increase the counts within the superblock, to account for the given
 // seg being split.
 //
@@ -55,10 +49,11 @@ void FreeSuper(superblock_t *block);
 // segs are converted to a subsector, and `*S' is the new subsector
 // (and `*N' is set to NULL).  Otherwise the seg list is divided into
 // two halves, a node is created by calling this routine recursively,
-// and `*N' is the new node (and `*S' is set to NULL).
+// and `*N' is the new node (and `*S' is set to NULL).  Normally
+// returns GLBSP_E_OK, or GLBSP_E_Cancelled if user stopped it.
 //
-void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
-    int depth);
+glbsp_ret_e BuildNodes(superblock_t *seg_list,
+    node_t ** N, subsec_t ** S, int depth);
 
 // compute the height of the bsp tree, starting at `node'.
 int ComputeHeight(node_t *node);

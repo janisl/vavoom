@@ -1,0 +1,68 @@
+
+CHANGELOG
+=========
+
+Changes in V1.95  (unreleased)
+------------------------------
+
+ - new GUI version using the FLTK toolkit.
+ 
+ - many fixes for Hexen wads, thanks to Janis Legzdinsh, including
+   auto-detection of a hexen wad (don't need -hexen option).
+
+ - level names (MAP01, E2M3, etc) are detected automatically now,
+   allowing arbitrary names (e.g. RUINS, QD05, etc).
+ 
+ - improved wad.c to return error values instead of doing
+   FatalError(), setting up the comms->message appropriately.
+ 
+ - removed `display_setText' function from nodebuildfuncs API.
+
+ - fixed the memory semantics for the glbsp API, with new functions
+   GlbspStrDup() and GlbspFree().
+ 
+ - documented the nodebuildfuncs in glbsp.h.
+
+ - improved the semantics of the GlbspCheckInfo() function, adding a
+   new error code GLBSP_E_BadInfoFixed to show that (a) there was a
+   problem but (b) the parameter causing it has been reset.
+
+
+Changes in V1.94  (6th June 2001)
+---------------------------------
+
+ - shows percentage while loading and saving.
+ - shows warnings when results overflow normal DOOM limits.
+ - shows warnings for extremely long linedefs and nodes.
+ - fixed serious bug with blockmap truncation code.
+ - new -maxblock option gives control over blockmap truncation.
+ - fixed some build problems with very narrow subsectors.
+ - fixed warnings about 2s linedefs with no left side.
+ - new "slightly better than nothing" reject support.
+ - code is much more modular: UI has been separated out.
+ - improved debugging code.
+
+
+Changes in V1.91  (10th September 2000)
+---------------------------------------
+
+ - optimised, DOOM2.WAD: 50% faster, ETERNAL.WAD: 3 times faster.
+ - builds "V2 GL Nodes" which are more accurate.
+ - no longer balks at bad sidedefs (with sector of #-1).
+ - removes unused sectors & sidedefs.
+ - packs the blockmap, and can pack identical sidedefs.
+ - shows the percentage complete while building.
+ - floatified: nodes are computed using high precision math.
+ - source code is now under the GNU General Public License.
+
+
+Changes in V1.8  (20th June 2000)
+---------------------------------
+
+ - fixed major bug causing thin (but ugly looking) gaps to appear
+   between some subsectors.
+
+ - fixed some bugs with partner segs not being split properly.
+
+ - fixed crashing bug when splitting very short segs.
+

@@ -2,7 +2,7 @@
 // LEVEL : Level structures & read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -37,10 +37,7 @@ typedef struct wall_tip_s
   struct wall_tip_s *next;
   struct wall_tip_s *prev;
   
-  // delta coordinates (away from vertex) to other end
-  float_g dx, dy;
-
-  // angle that (dx, dy) makes from vertex (degrees).
+  // angle that line makes at vertex (degrees).
   angle_g angle;
 
   // sectors on each side of wall.  Left is the side of increasing
@@ -72,12 +69,9 @@ typedef struct vertex_s
   // set of wall_tips
   wall_tip_t *tip_set;
 
-  // -JL- Can't ignore polyobj lines, because polyobjs are built from segs
-#if 0
   // non-zero if this vertex is part of a polyobj.  Only valid during
   // the polyobj detection phase.
   int polyobj;
-#endif
 
   // contains a duplicate vertex, needed when both normal and V2 GL
   // nodes are being built at the same time (this is the vertex used
@@ -114,6 +108,16 @@ typedef struct sector_s
 
   // -JL- non-zero if this sector contains a polyobj.
   int polyobj;
+
+  // used when building REJECT table.  Each set of sectors that are
+  // isolated from other sectors will have a different group number.
+  // Thus: on every 2-sided linedef, the sectors on both sides will be
+  // in the same group.  The rej_next, rej_prev fields are a link in a
+  // RING, containing all sectors of the same group.
+  int rej_group;
+
+  struct sector_s *rej_next;
+  struct sector_s *rej_prev;
 }
 sector_t;
 
@@ -177,12 +181,9 @@ typedef struct linedef_s
   // Hexen support
   int specials[5];
 
-  // -JL- Can't ignore polyobj lines, because polyobjs are built from segs
-#if 0
-  // part of a hexen polyobj (ignored for building nodes)
+  // part of a hexen polyobj
   int polyobj;
-#endif
-  
+ 
   // linedef index.  Always valid after loading & pruning of zero
   // length lines has occurred.
   int index;
@@ -296,6 +297,10 @@ typedef struct node_s
   // node index.  Only valid once the NODES or GL_NODES lump has been
   // created.
   int index;
+
+  // the node is too long, and the (dx,dy) values should be halved
+  // when writing into the NODES lump.
+  int too_long;
 }
 node_t;
 

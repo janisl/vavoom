@@ -2,7 +2,7 @@
 // SEG : Choose the best Seg to use for a node line.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -51,14 +51,11 @@
 #include "node.h"
 #include "seg.h"
 #include "structs.h"
+#include "util.h"
 #include "wad.h"
 
 
-int factor = 5;
-
 #define PRECIOUS_MULTIPLY  64
-// -JL- multiply cost with this, if polyobj will be split
-#define POLYOBJ_MULTIPLY   64
 
 
 #define DEBUG_PICKNODE  0
@@ -87,7 +84,7 @@ static intersection_t *quick_alloc_cuts = NULL;
 //
 // ComputeAngle
 //
-// Translate (dx, dy) into an angle value (radians)
+// Translate (dx, dy) into an angle value (degrees)
 //
 angle_g ComputeAngle(float_g dx, float_g dy)
 {
@@ -119,7 +116,7 @@ static intersection_t *NewIntersection(void)
   }
   else
   {
-    cut = SysCalloc(sizeof(intersection_t));
+    cut = UtilCalloc(sizeof(intersection_t));
   }
 
   return cut;
@@ -135,7 +132,7 @@ void FreeQuickAllocCuts(void)
     intersection_t *cut = quick_alloc_cuts;
     quick_alloc_cuts = cut->next;
 
-    SysFree(cut);
+    UtilFree(cut);
   }
 }
 
@@ -367,6 +364,7 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
   float_g a, b, fa, fb;
 
   int num;
+  int factor = cur_info->factor;
 
   // -AJA- this is the heart of my superblock idea, it tests the
   //       _whole_ block against the partition line to quickly handle
@@ -507,17 +505,6 @@ static int EvalPartitionWorker(superblock_t *seg_list, seg_t *part,
 
     info->splits++;
 
-    // -JL- check if splitting this line will also split a sector containing
-    //      a polyobj. If so, mark it with very big cost to be sure that it
-    //      will be never splitted unless all other options are exhausted.
-
-    if ((check->sector && check->sector->polyobj) ||
-        (check->partner && check->partner->sector && check->partner->sector->polyobj))
-    {
-      info->cost += 100 * factor * POLYOBJ_MULTIPLY;
-      continue;
-    }
-
     // If the linedef associated with this seg has a tag >= 900, treat
     // it as precious; i.e. don't split it unless all other options
     // are exhausted. This is used to protect deep water and invisible
@@ -626,7 +613,8 @@ static int EvalPartition(superblock_t *seg_list, seg_t *part,
 }
 
 
-static void PickNodeWorker(superblock_t *part_list, 
+// returns FALSE if cancelled
+static boolean_g PickNodeWorker(superblock_t *part_list, 
     superblock_t *seg_list, seg_t ** best, int *best_cost,
     int *progress, int prog_step)
 {
@@ -638,6 +626,9 @@ static void PickNodeWorker(superblock_t *part_list,
   // use each Seg as partition
   for (part=part_list->segs; part; part = part->next)
   {
+    if (cur_comms->cancelled)
+      return FALSE;
+
     #if DEBUG_PICKNODE
     PrintDebug("PickNode:   %sSEG %p  sector=%d  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
       part->linedef ? "" : "MINI", part, 
@@ -649,7 +640,13 @@ static void PickNodeWorker(superblock_t *part_list,
     (*progress) += 1;
 
     if ((*progress % prog_step) == 0)
-      ShowProgress(1);
+    {
+      cur_build_pos++;
+      DisplaySetBar(1, cur_build_pos);
+      DisplaySetBar(2, cur_file_pos + cur_build_pos / 10);
+    }
+
+    DisplayTicker();
 
     // ignore minisegs as partition candidates
     if (! part->linedef)
@@ -676,6 +673,8 @@ static void PickNodeWorker(superblock_t *part_list,
       PickNodeWorker(part_list->subs[num], seg_list, best, best_cost,
         progress, prog_step);
   }
+
+  return TRUE;
 }
 
 //
@@ -707,11 +706,19 @@ seg_t *PickNode(superblock_t *seg_list, int depth)
     prog_step = 1 + ((total - 1) / want);
 
     if (total / prog_step < want)
-      ShowProgress(want - total / prog_step);
+    {
+      cur_build_pos += want - total / prog_step;
+      DisplaySetBar(1, cur_build_pos);
+      DisplaySetBar(2, cur_file_pos + cur_build_pos / 10);
+    }
   }
  
-  PickNodeWorker(seg_list, seg_list, &best, &best_cost, &progress,
-      prog_step);
+  if (FALSE == PickNodeWorker(seg_list, seg_list, &best, &best_cost, 
+      &progress, prog_step))
+  {
+    // hack here : BuildNodes will detect the cancellation
+    return NULL;
+  }
 
   #if DEBUG_PICKNODE
   if (! best)
@@ -834,32 +841,8 @@ void SeparateSegs(superblock_t *seg_list, seg_t *part,
 {
   int num;
 
-  // -AJA- Another optimisation (pretty small this time), we can save
-  //       time by checking the superblock against the partition line,
-  //       and transferring the whole block if it lies totally on the
-  //       left or the right.
- 
-#if 0
-  num = BoxOnLineSide(seg_list, part);
+  DisplayTicker();
 
-  if (num < 0)
-  {
-    // LEFT
-
-    AddSuperToSuper(lefts, seg_list);
-    return;
-  }
-  else if (num > 0)
-  {
-    // RIGHT
-
-    AddSuperToSuper(rights, seg_list);
-    return;
-  }
-#endif
- 
-  // test the segs individually
-  
   while (seg_list->segs)
   {
     seg_t *cur = seg_list->segs;
@@ -870,6 +853,7 @@ void SeparateSegs(superblock_t *seg_list, seg_t *part,
     DivideOneSeg(cur, part, lefts, rights, cut_list);
   }
 
+  // recursively handle sub-blocks
   for (num=0; num < 2; num++)
   {
     superblock_t *A = seg_list->subs[num];

@@ -2,7 +2,7 @@
 // BLOCKMAP : Generate the blockmap
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -34,7 +34,9 @@
 #include "node.h"
 #include "seg.h"
 #include "structs.h"
+#include "util.h"
 #include "wad.h"
+
 
 
 #define DEBUG_BLOCKMAP  0
@@ -132,7 +134,7 @@ static int CheckLinedefInside(int xmin, int ymin, int xmax, int ymax,
 #define BK_XOR    2
 #define BK_FIRST  3
 
-#define BK_QUANTUM  16
+#define BK_QUANTUM  32
 
 static void BlockAdd(int blk_num, int line_index)
 {
@@ -148,7 +150,7 @@ static void BlockAdd(int blk_num, int line_index)
   if (! cur)
   {
     // create empty block
-    block_lines[blk_num] = cur = SysCalloc(BK_QUANTUM * 
+    block_lines[blk_num] = cur = UtilCalloc(BK_QUANTUM * 
         sizeof(uint16_g));
     cur[BK_NUM] = 0;
     cur[BK_MAX] = BK_QUANTUM;
@@ -160,7 +162,7 @@ static void BlockAdd(int blk_num, int line_index)
     // no more room, so allocate some more...
     cur[BK_MAX] += BK_QUANTUM;
 
-    block_lines[blk_num] = cur = SysRealloc(cur, cur[BK_MAX] * 
+    block_lines[blk_num] = cur = UtilRealloc(cur, cur[BK_MAX] * 
         sizeof(uint16_g));
   }
 
@@ -245,7 +247,9 @@ static void CreateBlockmap(void)
 {
   int i;
 
-  block_lines = SysCalloc(block_count * sizeof(uint16_g *));
+  block_lines = UtilCalloc(block_count * sizeof(uint16_g *));
+
+  DisplayTicker();
 
   for (i=0; i < num_linedefs; i++)
   {
@@ -295,8 +299,10 @@ static void CompressBlockmap(void)
 
   int orig_size, new_size;
 
-  block_ptrs = SysCalloc(block_count * sizeof(uint16_g));
-  block_dups = SysCalloc(block_count * sizeof(uint16_g));
+  block_ptrs = UtilCalloc(block_count * sizeof(uint16_g));
+  block_dups = UtilCalloc(block_count * sizeof(uint16_g));
+
+  DisplayTicker();
 
   // sort duplicate-detecting array.  After the sort, all duplicates
   // will be next to each other.  The duplicate array gives the order
@@ -313,6 +319,8 @@ static void CompressBlockmap(void)
 
   orig_size = 4 + block_count;
   new_size  = cur_offset;
+
+  DisplayTicker();
 
   for (i=0; i < block_count; i++)
   {
@@ -341,7 +349,7 @@ static void CompressBlockmap(void)
       block_dups[i] = DUMMY_DUP;
 
       // free the memory of the duplicated block
-      SysFree(block_lines[blk_num]);
+      UtilFree(block_lines[blk_num]);
       block_lines[blk_num] = NULL;
       
       dup_count++;
@@ -362,10 +370,11 @@ static void CompressBlockmap(void)
   }
 
   if (cur_offset > 65535)
-    PrintWarn("Blockmap is VERY LARGE, it may cause problems\n");
+    PrintWarn("Blockmap has OVERFLOWED!  May cause problems "
+        "or even crash\n");
 
   #if DEBUG_BLOCKMAP
-  PrintMsg("Blockmap: Last ptr = %d  duplicates = %d\n", 
+  PrintDebug("Blockmap: Last ptr = %d  duplicates = %d\n", 
       cur_offset, dup_count);
   #endif
 
@@ -440,12 +449,12 @@ static void FreeBlockmap(void)
   for (i=0; i < block_count; i++)
   {
     if (block_lines[i])
-      SysFree(block_lines[i]);
+      UtilFree(block_lines[i]);
   }
 
-  SysFree(block_lines);
-  SysFree(block_ptrs);
-  SysFree(block_dups);
+  UtilFree(block_lines);
+  UtilFree(block_ptrs);
+  UtilFree(block_dups);
 }
 
 
@@ -483,6 +492,30 @@ static void FindBlockmapLimits(bbox_t *bbox)
 }
 
 //
+// TruncateBlockmap
+//
+static void TruncateBlockmap(void)
+{
+  int orig_w = block_w;
+  int orig_h = block_h;
+
+  while (block_w * block_h > cur_info->block_limit)
+  {
+    block_w -= block_w / 8;
+    block_h -= block_h / 8;
+  }
+
+  block_count = block_w * block_h;
+
+  PrintWarn("Blockmap too large!  Truncated to %dx%d blocks\n",
+      block_w, block_h);
+
+  // center the truncated blockmap
+  block_x += (block_w - orig_w) * 128 / 2;
+  block_y += (block_h - orig_h) * 128 / 2;
+}
+
+//
 // InitBlockmap
 //
 void InitBlockmap(void)
@@ -502,36 +535,6 @@ void InitBlockmap(void)
   block_h = ((map_bbox.maxy - block_y) / 128) + 1;
   block_count = block_w * block_h;
 
-  // truncate blockmap if too large.  I really doubt that this will
-  // occur in practice, but just in case...
- 
-  if (block_count > 65535)
-  {
-    int orig_w = block_w;
-    int orig_h = block_h;
-
-    if (block_w > 256 && block_h > 256)
-    {
-      block_w = block_h = 256;
-    }
-    else
-    {
-      while (block_w * block_h > 65535)
-      {
-        block_w -= block_w / 8;
-        block_h -= block_h / 8;
-      }
-    }
-
-    block_count = block_w * block_h;
-
-    PrintWarn("Blockmap too large: truncated to %dx%d blocks\n",
-        block_w, block_h);
-
-    // center the truncated blockmap
-    block_x += (block_w - orig_w) * 128 / 2;
-    block_y += (block_h - orig_h) * 128 / 2;
-  }
 }
 
 //
@@ -539,6 +542,13 @@ void InitBlockmap(void)
 //
 void PutBlockmap(void)
 {
+  // truncate blockmap if too large.  We're limiting the number of
+  // blocks to around 44000 (user changeable), this leaves about 20K
+  // of shorts for the actual line lists.
+ 
+  if (block_count > cur_info->block_limit)
+    TruncateBlockmap();
+
   // initial phase: create internal blockmap containing the index of
   // all lines in each block.
   
@@ -558,25 +568,5 @@ void PutBlockmap(void)
       block_compression);
 
   FreeBlockmap();
-}
-
-//
-// PutReject
-//
-void PutReject(void)
-{
-  lump_t *lump;
-  int i, reject_size = (num_sectors * num_sectors + 7) / 8;
-
-  uint8_g zero = 0;
-
-  lump = CreateLevelLump("REJECT");
-
-  for (i=0; i < reject_size; i++)
-  {
-    AppendLevelLump(lump, &zero, 1);
-  }
-
-  PrintMsg("Added empty reject lump\n");
 }
 

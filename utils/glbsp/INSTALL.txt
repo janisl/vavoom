@@ -2,7 +2,7 @@
 Compiling glBSP
 ===============
 
-by Andrew Apted.  7th June 2000.
+by Andrew Apted.  Last updated: 8th June 2001.
 
 
 glBSP has been written with portability in mind.  It is purely ANSI C,
@@ -11,7 +11,9 @@ traditional /* */ comments.
 
 glBSP has been known to compile and work on the following platforms:
 
-   +  Linux 2.1.126, libc5, GCC 2.7.2.1 and GNU make.
+   +  Linux 2.1.126, libc5, GCC 2.7.2.1.
+
+   +  Linux 2.2.18, glibc 2.2, GCC 2.95.2.
 
    +  MSDOS 6.22, with DJGPP 2.02.
 
@@ -21,25 +23,39 @@ glBSP has been known to compile and work on the following platforms:
 Linux
 -----
 
-The "makefile" makefile is the correct one for Linux and other UN*X
-type OSes.  Simply typing `make' should create the `glbsp' executable.
-Currently there is no automatic installation, just copy the glbsp
-executable to where you want it.
+CD into the cmdline directory.  The "makefile" makefile is the correct
+one for Linux and other UN*X type OSes.  Simply typing `make' should
+create the `glbsp' executable.  Currently there is no automatic
+installation, just copy the glbsp executable to where you want it.
 
 
 MSDOS
 -----
 
-The "makefile.dj" makefile is for compiling under DOS with DJGPP.  Simply
-typing `make -f makefile.dj' should create the `glbsp.exe' executable.
+CD into the cmdline directory.  The "makefile.dj" makefile is for
+compiling under DOS with DJGPP.  Simply typing `make -f makefile.dj'
+should create the glbsp.exe executable.
 
 
 Win32
 -----
 
-The "makefile.bcc" makefile is for compiling under Win32 with Borland
-C++Builder 5.5.  Assuming BCC is configured properly (the ".cfg" files
-it needs have been setup), typing `make -f makefile.bcc' should create
-the `glbsp.exe' executable.  Note that glBSP under Win32 is a console
-application and should be run from a DOS box.
+CD into the cmdline directory.  The "makefile.bcc" makefile is for
+compiling under Win32 with Borland C++Builder 5.5.  Assuming BCC is
+configured properly (the ".cfg" files it needs have been setup),
+typing `make -f makefile.bcc' should create the glbsp.exe executable.
+
+
+Plugin
+------
+
+The plugin version of glBSP is a special version that can be used
+within other programs, e.g. a DOOM engine.  Instructions for making
+the plugin are similiar to the above, but CD into the `plugin'
+directory instead.  The result is a library file: libglbsp.a under
+Linux and MSDOS, libglbsp.lib under Win32.
+
+NOTE: since glBSP is under the GNU General Public License (GPL), it
+can only be incorporated into other programs that are also under the
+GPL.  See the file COPYING.txt for the full details.
 

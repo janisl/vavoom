@@ -2,7 +2,7 @@
 // WAD : WAD read/write functions.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -23,21 +23,6 @@
 
 #include "structs.h"
 #include "system.h"
-
-
-// options for whole wad
-
-extern int hexen_mode;
-extern int load_all;
-extern int no_reject;
-extern int no_gl;
-extern int no_normal;
-extern int force_normal;
-extern int gwa_mode;
-extern int v1_vert;
-extern int keep_sect;
-extern int no_prune;
-extern int pack_sides;
 
 
 struct lump_s;
@@ -62,6 +47,10 @@ typedef struct wad_s
 
   // current level
   struct lump_s *current_level;
+
+  // array of level names found
+  const char ** level_names;
+  int num_level_names;
 }
 wad_t;
 
@@ -114,9 +103,6 @@ lump_t;
 #define LUMP_READ_ME      0x0100
 
 
-extern wad_t wad;
-
-
 /* ----- function prototypes --------------------- */
 
 // check if the filename has the given extension.  Returns 1 if yes,
@@ -133,16 +119,27 @@ char *ReplaceExtension(const char *filename, const char *ext);
 // `load_all' is false, lumps other than level info will be marked as
 // copyable instead of loaded.
 //
-void ReadWadFile(char *filename);
+// Returns GLBSP_E_OK if all went well, otherwise an error code (in
+// which case cur_comms->message has been set and all files/memory
+// have been freed).
+//
+glbsp_ret_e ReadWadFile(const char *filename);
 
 // open the output wad file and write the contents.  Any lumps marked
 // as copyable will be copied from the input file instead of from
 // memory.  Lumps marked as ignorable will be skipped.
 //
-void WriteWadFile(char *filename);
+// Returns GLBSP_E_OK if all went well, otherwise an error code (in
+// which case cur_comms->message has been set -- but no files/memory
+// are freed).
+//
+glbsp_ret_e WriteWadFile(const char *filename);
 
 // close all wad files and free any memory.
 void CloseWads(void);
+
+// returns the number of levels found in the wad.
+int CountLevels(void);
 
 // find the next level lump in the wad directory, and store the
 // reference in `wad.current_level'.  Call this straight after
@@ -151,12 +148,18 @@ void CloseWads(void);
 //
 int FindNextLevel(void);
 
+// return the current level name
+const char *GetLevelName(void);
+
 // find the level lump with the given name in the current level, and
 // return a reference to it.  Returns NULL if no such lump exists.
 // Level lumps are always present in memory (i.e. never marked
 // copyable).
 //
 lump_t *FindLevelLump(const char *name);
+
+// tests if the level lump contains nothing but zeros.
+int CheckLevelLumpZero(lump_t *lump);
 
 // create a new lump in the current level with the given name.  If
 // such a lump already exists, it is truncated to zero length.
@@ -174,7 +177,7 @@ void AppendLevelLump(lump_t *lump, void *data, int length);
 
 
 // -AJA- I wanted this to simply be `BIG_ENDIAN', but some
-//       system header already defines it.  Grrrr !!
+//       system header already defines it.  Grrrr !
 #ifdef CPU_BIG_ENDIAN
 
 #define UINT16(x)  \

@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------
-// SYSTEM : System specific code (memory, I/O, etc).
+// SYSTEM : System specific code
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -29,346 +29,168 @@
 #include <limits.h>
 #include <assert.h>
 
-#if defined(MSDOS) || defined(__MSDOS__)
-#include <dos.h>
-#endif
-
-#if defined(__TURBOC__)
-#include <alloc.h>
-#endif
-
-#if defined(UNIX) || defined(__UNIX__)
-#include <unistd.h>  // Unix: isatty()
-#endif
-
 
 #define DEBUG_ENABLED   0
-#define DEBUG_COREDUMP  0
+
+#define DEBUGGING_FILE  "gb_debug.txt"
 
 
-int mini_warnings=0;
-int no_progress = 0;
-
-static int progress_target;
-static int progress_current;
-static int progress_shown;
+int total_big_warn;
+int total_small_warn;
 
 
-//
-// PrintMsg
-//
-void PrintMsg(char *str, ...)
-{
-  va_list args;
+static char message_buf[1024];
 
-  va_start(args, str);
-  vprintf(str, args);
-  va_end(args);
-
-  fflush(stdout);
-}
-
-//
-// PrintWarn
-//
-void PrintWarn(char *str, ...)
-{
-  va_list args;
-
-  printf("Warning: ");
-
-  va_start(args, str);
-  vprintf(str, args);
-  va_end(args);
-
-  fflush(stdout);
-}
-
-//
-// PrintMiniWarn
-//
-void PrintMiniWarn(char *str, ...)
-{
-  if (mini_warnings)
-  {
-    va_list args;
-
-    printf("Warning: ");
-
-    va_start(args, str);
-    vprintf(str, args);
-    va_end(args);
-
-    fflush(stdout);
-  }
-}
-
-//
-// PrintDebug
-//
-void PrintDebug(char *str, ...)
-{
 #if DEBUG_ENABLED
-  va_list args;
-
-  fprintf(stderr, "Debug: ");
-
-  va_start(args, str);
-  vfprintf(stderr, str, args);
-  va_end(args);
-#else
-  (void) str;
+static FILE *debug_fp = NULL;
 #endif
-}
+
 
 //
 // FatalError
 //
-// Terminate the program reporting an error.
-//
-void FatalError(char *str, ...)
+void FatalError(const char *str, ...)
 {
   va_list args;
 
-  fprintf(stderr, " \nProgram Error: *** ");
-
   va_start(args, str);
-  vfprintf(stderr, str, args);
+  vsprintf(message_buf, str, args);
   va_end(args);
 
-  fprintf(stderr, " ***\n\n");
-
-  #if DEBUG_COREDUMP
-  raise(11);
-  #endif
-
-  exit(5);
+  (* cur_funcs->fatal_error)("\nError: *** %s ***\n\n", message_buf);
 }
 
 //
 // InternalError
 //
-// Terminate the program reporting an internal error.
-//
-void InternalError(char *str, ...)
+void InternalError(const char *str, ...)
 {
   va_list args;
 
-  fprintf(stderr, " \nINTERNAL ERROR: *** ");
-
   va_start(args, str);
-  vfprintf(stderr, str, args);
+  vsprintf(message_buf, str, args);
   va_end(args);
 
-  fprintf(stderr, " ***\n\n");
-
-  #if DEBUG_COREDUMP
-  raise(11);
-  #endif
-
-  exit(6);
+  (* cur_funcs->fatal_error)("\nINTERNAL ERROR: *** %s ***\n\n", message_buf);
 }
 
 //
-// SysCalloc
+// PrintMsg
 //
-// Allocate memory with error checking.  Zeros the memory.
-//
-void *SysCalloc(int size)
+void PrintMsg(const char *str, ...)
 {
-  void *ret = calloc(1, size);
-  
-  if (!ret)
-    FatalError("Out of memory (cannot allocate %d bytes)", size);
+  va_list args;
 
-  return ret;
-}
+  va_start(args, str);
+  vsprintf(message_buf, str, args);
+  va_end(args);
 
-//
-// SysRealloc
-//
-// Reallocate memory with error checking.
-//
-void *SysRealloc(void *old, int size)
-{
-  void *ret = realloc(old, size);
+  (* cur_funcs->print_msg)("%s", message_buf);
 
-  if (!ret)
-    FatalError("Out of memory (cannot reallocate %d bytes)", size);
-
-  return ret;
-}
-
-//
-// SysFree
-//
-// Free the memory with error checking.
-//
-void SysFree(void *data)
-{
-  if (data == NULL)
-    InternalError("Trying to free a NULL pointer");
-  
-  free(data);
-}
-
-//
-// SysStrdup
-//
-// Duplicate a string with error checking.
-//
-char *SysStrdup(const char *str)
-{
-  char *result;
-  int len = strlen(str);
-
-  result = SysCalloc(len+1);
-
-  if (len > 0)
-    memcpy(result, str, len);
-  
-  result[len] = 0;
-
-  return result;
-}
-
-//
-// SysStrndup
-//
-// Duplicate a limited length string.
-//
-char *SysStrndup(const char *str, int size)
-{
-  char *result;
-  int len;
-
-  for (len=0; len < size && str[len]; len++)
-  { }
-
-  result = SysCalloc(len+1);
-
-  if (len > 0)
-    memcpy(result, str, len);
-  
-  result[len] = 0;
-
-  return result;
-}
-
-int StrCaseCmp(const char *A, const char *B)
-{
-  for (; *A || *B; A++, B++)
-  {
-    if (toupper(*A) != toupper(*B))
-      return (toupper(*A) - toupper(*B));
-  }
-
-  // strings are equal
-  return 0;
-}
-
-
-//
-// InitProgress
-//
-void InitProgress(void)
-{
-  setbuf(stdout, NULL);
-
-#ifdef UNIX  
-  // Unix: no whirling baton if stderr is redirected
-  if (! isatty(2))
-    no_progress=1;
+#if DEBUG_ENABLED
+  PrintDebug(">>> %s", message_buf);
 #endif
 }
 
 //
-// TermProgress
+// PrintWarn
 //
-void TermProgress(void)
+void PrintWarn(const char *str, ...)
 {
-  /* nothing to do */
+  va_list args;
+
+  va_start(args, str);
+  vsprintf(message_buf, str, args);
+  va_end(args);
+
+  (* cur_funcs->print_msg)("Warning: %s", message_buf);
+
+  total_big_warn++;
+
+#if DEBUG_ENABLED
+  PrintDebug("Warning: %s", message_buf);
+#endif
 }
 
 //
-// StartProgress
+// PrintMiniWarn
 //
-void StartProgress(int target)
+void PrintMiniWarn(const char *str, ...)
 {
-  progress_target  = target;
-  progress_current = 0;
-  progress_shown   = -1;
-}
+  va_list args;
 
-//
-// ShowProgress
-//
-void ShowProgress(int step)
-{
-  int perc;
-  
-  if (no_progress)
-    return;
- 
-  // whirling baton ?
-  if (progress_target == 0)
+  if (cur_info->mini_warnings)
   {
-    progress_current += step ? 128 : 1;
+    va_start(args, str);
+    vsprintf(message_buf, str, args);
+    va_end(args);
 
-    if (step || (progress_current & 127) == 0)
-      fprintf(stderr, "%c\b", "/-\\|"[((progress_current)>>7) & 3]);
-
-    return;
-  }
- 
-  progress_current += step;
-
-  if (progress_current > progress_target)
-    InternalError("Progress went past target !");
- 
-  perc = progress_current * 100 / progress_target;
-
-  if (perc == progress_shown)
-    return;
-
-  fprintf(stderr, "--%3d%%--\b\b\b\b\b\b\b\b", perc);
-
-  progress_shown = perc;
-}
-
-//
-// ClearProgress
-//
-void ClearProgress(void)
-{
-  if (no_progress)
-    return;
-
-  // whirling baton ?
-  if (progress_target == 0)
-  {
-    fprintf(stderr, " \b");
-    return;
+    (* cur_funcs->print_msg)("Warning: %s", message_buf);
   }
 
-  fprintf(stderr, "                \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+  total_small_warn++;
+
+#if DEBUG_ENABLED
+  va_start(args, str);
+  vsprintf(message_buf, str, args);
+  va_end(args);
+
+  PrintDebug("MiniWarn: %s", message_buf);
+#endif
+}
+
+
+/* -------- debugging code ----------------------------- */
+
+//
+// InitDebug
+//
+void InitDebug(void)
+{
+#if DEBUG_ENABLED
+  debug_fp = fopen(DEBUGGING_FILE, "w");
+
+  if (! debug_fp)
+    PrintWarn("Unable to open DEBUG FILE: %s\n", DEBUGGING_FILE);
+
+  PrintDebug("=== START OF DEBUG FILE ===\n");
+#endif
 }
 
 //
-// RoundPOW2
+// TermDebug
 //
-int RoundPOW2(int x)
+void TermDebug(void)
 {
-  int tmp;
+#if DEBUG_ENABLED
+  if (debug_fp)
+  {
+    PrintDebug("=== END OF DEBUG FILE ===\n");
 
-  if (x <= 2)
-    return x;
+    fclose(debug_fp);
+    debug_fp = NULL;
+  }
+#endif
+}
 
-  x--;
-  
-  for (tmp=x / 2; tmp; tmp /= 2)
-    x |= tmp;
-  
-  return (x + 1);
+//
+// PrintDebug
+//
+void PrintDebug(const char *str, ...)
+{
+#if DEBUG_ENABLED
+  if (debug_fp)
+  {
+    va_list args;
+
+    va_start(args, str);
+    vfprintf(debug_fp, str, args);
+    va_end(args);
+
+    fflush(debug_fp);
+  }
+#else
+  (void) str;
+#endif
 }
 

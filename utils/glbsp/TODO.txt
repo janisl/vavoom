@@ -2,14 +2,11 @@
 TODO
 ====
 
--  rework memory allocation, to cope with buggy DJGPP malloc().
+*  update GLNODE info with GWA-timestamp issue.
 
--  make loading/saving progress into percentage.
++  proper INSTALL for UNIX.
 
--  un-recursivify AddSegToSuper() and co.
++  improve file errors in wad.c, return GLBSP_E_{Read,Write}Error.
 
--  rotate subsectors if the first seg has a different sector from the
-   second and third.
-
-+  implement REJECT building code.
+-  implement a Unix/GTK+ version.
 

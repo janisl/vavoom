@@ -2,7 +2,7 @@
 // SEG : Choose the best Seg to use for a node line.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -23,7 +23,8 @@
 
 #include "structs.h"
 
-extern int factor;
+
+#define DEFAULT_FACTOR  7
 
 #define IFFY_LEN  4.0
 
@@ -32,7 +33,7 @@ extern int factor;
 #define DIST_EPSILON  (1.0 / 128.0)
 
 // smallest degrees between two angles before being considered equal
-#define ANG_EPSILON  (1.0 / 64.0)
+#define ANG_EPSILON  (1.0 / 1024.0)
 
 
 typedef struct intersect_tip_s

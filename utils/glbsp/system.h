@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------
-// SYSTEM : System specific code (memory, I/O, etc).
+// SYSTEM : Bridging code
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -21,99 +21,59 @@
 #ifndef __GLBSP_SYSTEM_H__
 #define __GLBSP_SYSTEM_H__
 
-/* ----- types --------------------------- */
+#include "glbsp.h"
 
-typedef char  sint8_g;
-typedef short sint16_g;
-typedef int   sint32_g;
-   
-typedef unsigned char  uint8_g;
-typedef unsigned short uint16_g;
-typedef unsigned int   uint32_g;
 
-typedef double float_g;
-typedef double angle_g;  // degrees, 0 is E, 90 is N
-
-/* ----- variables --------------------------- */
-
-extern int no_progress;
-extern int mini_warnings;
-
-/* ----- constants ----------------------------- */
-
-#define TRUE   1
-#define FALSE  0
-
-#ifndef M_PI
-#define M_PI  3.14159265358979323846
+// consistency check
+#if (!defined(GLBSP_TEXT) && !defined(GLBSP_GUI) && !defined(GLBSP_PLUGIN))
+#error Must define one of GLBSP_TEXT, GLBSP_GUI or GLBSP_PLUGIN 
 #endif
 
-/* ----- useful macros ---------------------------- */
 
-#ifndef MAX
-#define MAX(x,y)  ((x) > (y) ? (x) : (y))
-#endif
-
-#ifndef MIN
-#define MIN(x,y)  ((x) < (y) ? (x) : (y))
-#endif
-
-#ifndef ABS
-#define ABS(x)  ((x) >= 0 ? (x) : -(x))
-#endif
-
+// use this for inlining.  Usually defined in the makefile.
 #ifndef INLINE_G
 #define INLINE_G  /* nothing */
 #endif
 
+
+// internal storage of node building parameters
+
+extern const nodebuildinfo_t *cur_info;
+extern const nodebuildfuncs_t *cur_funcs;
+extern volatile nodebuildcomms_t *cur_comms;
+
+extern int cur_build_pos;
+extern int cur_file_pos;
+
+extern int total_big_warn;
+extern int total_small_warn;
+
+
 /* ----- function prototypes ---------------------------- */
 
+// fatal error messages (these don't return)
+void FatalError(const char *str, ...);
+void InternalError(const char *str, ...);
+
 // display normal messages & warnings to the screen
-void PrintMsg(char *str, ...);
-void PrintWarn(char *str, ...);
-void PrintMiniWarn(char *str, ...);
+void PrintMsg(const char *str, ...);
+void PrintWarn(const char *str, ...);
+void PrintMiniWarn(const char *str, ...);
 
-// this only used for debugging
-void PrintDebug(char *str, ...);
+// these are only used for debugging
+void InitDebug(void);
+void TermDebug(void);
+void PrintDebug(const char *str, ...);
 
-// display a fatal error message and abort the program
-void FatalError(char *str, ...);
-void InternalError(char *str, ...);
+// macros for the display stuff
+#define DisplayOpen        (* cur_funcs->display_open)
+#define DisplaySetTitle    (* cur_funcs->display_setTitle)
+#define DisplaySetBar      (* cur_funcs->display_setBar)
+#define DisplaySetBarLimit (* cur_funcs->display_setBarLimit)
+#define DisplaySetBarText  (* cur_funcs->display_setBarText)
+#define DisplayClose       (* cur_funcs->display_close)
 
-// allocate and clear some memory.  guaranteed not to fail.
-void *SysCalloc(int size);
-
-// re-allocate some memory.  guaranteed not to fail.
-void *SysRealloc(void *old, int size);
-
-// duplicate a string
-char *SysStrdup(const char *str);
-char *SysStrndup(const char *str, int size);
-
-// compare two strings case insensitively
-int StrCaseCmp(const char *A, const char *B);
-
-// free some memory or a string
-void SysFree(void *data);
-
-// prepare screen for progress indicator
-void InitProgress(void);
-void TermProgress(void);
-
-// begin the progress indicator.  `target' is the target value that
-// each ShowProgress() call will move towards, or ZERO to get the
-// whirling baton.
-//
-void StartProgress(int target);
-
-// update and show the progress indicator
-void ShowProgress(int step);
-
-// hide the progress indicator
-void ClearProgress(void);
-
-// round a positive value up to the nearest power of two.
-int RoundPOW2(int x);
+#define DisplayTicker      (* cur_funcs->ticker)
 
 
 #endif /* __GLBSP_SYSTEM_H__ */

@@ -2,7 +2,7 @@
 // NODE : Recursively create nodes and return the pointers.
 //------------------------------------------------------------------------
 //
-//  GL-Friendly Node Builder (C) 2000 Andrew Apted
+//  GL-Friendly Node Builder (C) 2000-2001 Andrew Apted
 //
 //  Based on `BSP 2.3' by Colin Reed, Lee Killough and others.
 //
@@ -49,6 +49,7 @@
 #include "node.h"
 #include "seg.h"
 #include "structs.h"
+#include "util.h"
 #include "wad.h"
 
 
@@ -139,7 +140,7 @@ static superblock_t *NewSuperBlock(void)
   superblock_t *block;
 
   if (quick_alloc_supers == NULL)
-    return SysCalloc(sizeof(superblock_t));
+    return UtilCalloc(sizeof(superblock_t));
 
   block = quick_alloc_supers;
   quick_alloc_supers = block->subs[0];
@@ -160,7 +161,7 @@ void FreeQuickAllocSupers(void)
     superblock_t *block = quick_alloc_supers;
     quick_alloc_supers = block->subs[0];
 
-    SysFree(block);
+    UtilFree(block);
   }
 }
 
@@ -172,7 +173,12 @@ void FreeSuper(superblock_t *block)
   int num;
 
   if (block->segs)
+#if 0  // this can happen, but only under abnormal circumstances, in
+       // particular when the node-building was cancelled by the GUI.
     InternalError("FreeSuper: block contains segs");
+#else
+    block->segs = NULL;
+#endif
 
   // recursively handle sub-blocks
   for (num=0; num < 2; num++)
@@ -230,90 +236,91 @@ void TestSuper(superblock_t *block)
 //
 void AddSegToSuper(superblock_t *block, seg_t *seg)
 {
-  int p1, p2;
-  int child;
-
-  int x_mid = (block->x1 + block->x2) / 2;
-  int y_mid = (block->y1 + block->y2) / 2;
-
-  superblock_t *sub;
-
-  // update seg counts
-  if (seg->linedef)
-    block->real_num++;
-  else
-    block->mini_num++;
- 
-  if (SUPER_IS_LEAF(block))
+  for (;;)
   {
-    // block is a leaf -- no subdivision possible
+    int p1, p2;
+    int child;
 
-    seg->next = block->segs;
-    seg->block = block;
+    int x_mid = (block->x1 + block->x2) / 2;
+    int y_mid = (block->y1 + block->y2) / 2;
 
-    block->segs = seg;
-    return;
-  }
+    superblock_t *sub;
 
-  if (block->x2 - block->x1 >= block->y2 - block->y1)
-  {
-    // block is wider than it is high, or square
+    // update seg counts
+    if (seg->linedef)
+      block->real_num++;
+    else
+      block->mini_num++;
+   
+    if (SUPER_IS_LEAF(block))
+    {
+      // block is a leaf -- no subdivision possible
 
-    p1 = seg->start->x >= x_mid;
-    p2 = seg->end->x   >= x_mid;
-  }
-  else
-  {
-    // block is higher than it is wide
+      seg->next = block->segs;
+      seg->block = block;
 
-    p1 = seg->start->y >= y_mid;
-    p2 = seg->end->y   >= y_mid;
-  }
-
-  if (p1 && p2)
-    child = 1;
-  else if (!p1 && !p2)
-    child = 0;
-  else
-  {
-    // line crosses midpoint -- link it in and return
-
-    seg->next = block->segs;
-    seg->block = block;
-
-    block->segs = seg;
-
-    return;
-  }
-
-  // OK, the seg lies in one half of this block.  Recursively add it
-  // to the destination block, creating the block if it doesn't
-  // already exist.
-
-  if (! block->subs[child])
-  {
-    block->subs[child] = sub = NewSuperBlock();
-    sub->parent = block;
+      block->segs = seg;
+      return;
+    }
 
     if (block->x2 - block->x1 >= block->y2 - block->y1)
     {
-      sub->x1 = child ? x_mid : block->x1;
-      sub->y1 = block->y1;
+      // block is wider than it is high, or square
 
-      sub->x2 = child ? block->x2 : x_mid;
-      sub->y2 = block->y2;
+      p1 = seg->start->x >= x_mid;
+      p2 = seg->end->x   >= x_mid;
     }
     else
     {
-      sub->x1 = block->x1;
-      sub->y1 = child ? y_mid : block->y1;
+      // block is higher than it is wide
 
-      sub->x2 = block->x2;
-      sub->y2 = child ? block->y2 : y_mid;
+      p1 = seg->start->y >= y_mid;
+      p2 = seg->end->y   >= y_mid;
     }
-  }
 
-  AddSegToSuper(block->subs[child], seg);
+    if (p1 && p2)
+      child = 1;
+    else if (!p1 && !p2)
+      child = 0;
+    else
+    {
+      // line crosses midpoint -- link it in and return
+
+      seg->next = block->segs;
+      seg->block = block;
+
+      block->segs = seg;
+      return;
+    }
+
+    // OK, the seg lies in one half of this block.  Create the block
+    // if it doesn't already exist, and loop back to add the seg.
+
+    if (! block->subs[child])
+    {
+      block->subs[child] = sub = NewSuperBlock();
+      sub->parent = block;
+
+      if (block->x2 - block->x1 >= block->y2 - block->y1)
+      {
+        sub->x1 = child ? x_mid : block->x1;
+        sub->y1 = block->y1;
+
+        sub->x2 = child ? block->x2 : x_mid;
+        sub->y2 = block->y2;
+      }
+      else
+      {
+        sub->x1 = block->x1;
+        sub->y1 = child ? y_mid : block->y1;
+
+        sub->x2 = block->x2;
+        sub->y2 = child ? block->y2 : y_mid;
+      }
+    }
+
+    block = block->subs[child];
+  }
 }
 
 //
@@ -332,109 +339,6 @@ void SplitSegInSuper(superblock_t *block, seg_t *seg)
     block = block->parent;
   }
   while (block != NULL);
-}
-
-//
-// AddSuperToSuper
-//
-void AddSuperToSuper(superblock_t *dest, superblock_t *src)
-{
-  int child;
-
-  int x_mid = (dest->x1 + dest->x2) / 2;
-  int y_mid = (dest->y1 + dest->y2) / 2;
-
-  superblock_t *sub;
-
-  if (src->x1 < dest->x1 || src->y1 < dest->y1 ||
-      src->x2 > dest->x2 || src->y2 > dest->y2)
-  {
-    InternalError("AddSuperToSuper: src larger than dest");
-  }
-
-  // update seg counts
-
-  dest->real_num += src->real_num;
-  dest->mini_num += src->mini_num;
- 
-  // recurse into dest, when src is smaller than dest
-
-  if (src->x1 != dest->x1 || src->y1 != dest->y1 ||
-      src->x2 != dest->x2 || src->y2 != dest->y2)
-  {
-    if (SUPER_IS_LEAF(dest))
-      InternalError("AddSuperToSuper: src smaller than leaf ?");
-    
-    if (dest->x2 - dest->x1 >= dest->y2 - dest->y1)
-      child = src->x1 >= x_mid;
-    else
-      child = src->y1 >= y_mid;
-
-    // if child doesn't exist yet, create it
-    if (dest->subs[child] == NULL)
-    {
-      int new_x1 = dest->x1;
-      int new_y1 = dest->y1;
-      int new_x2 = dest->x2;
-      int new_y2 = dest->y2;
-      
-      if (dest->x2 - dest->x1 >= dest->y2 - dest->y1)
-      {
-        new_x1 = child ? x_mid : dest->x1;
-        new_x2 = child ? dest->x2 : x_mid;
-      }
-      else
-      {
-        new_y1 = child ? y_mid : dest->y1;
-        new_y2 = child ? dest->y2 : y_mid;
-      }
-
-      // create new sub-block
-      dest->subs[child] = sub = NewSuperBlock();
-      sub->parent = dest;
-
-      sub->x1 = new_x1;
-      sub->y1 = new_y1;
-      sub->x2 = new_x2;
-      sub->y2 = new_y2;
-    }
-
-    AddSuperToSuper(dest->subs[child], src);
-    return;
-  }
-
-  // transfer segs
-
-  while (src->segs)
-  {
-    seg_t *cur = src->segs;
-    src->segs = cur->next;
-
-    cur->next = dest->segs;
-    cur->block = dest;
-
-    dest->segs = cur;
-  }
-
-  src->real_num = src->mini_num = 0;
-
-  // recurse into source
-
-  for (child=0; child < 2; child++)
-  {
-    superblock_t *A = src->subs[child];
-
-    if (A)
-    {
-      AddSuperToSuper(dest, A);
-
-      if (A->real_num + A->mini_num > 0)
-        InternalError("AddSuperToSuper: child %d not empty !", child);
-
-      FreeSuper(A);
-      src->subs[child] = NULL;
-    }
-  }
 }
 
 static seg_t *CreateOneSeg(linedef_t *line, vertex_t *start, vertex_t *end,
@@ -488,6 +392,8 @@ superblock_t *CreateSegs(void)
 
   // step through linedefs and get side numbers
 
+  DisplayTicker();
+
   for (i=0; i < num_linedefs; i++)
   {
     linedef_t *line = LookupLinedef(i);
@@ -498,20 +404,25 @@ superblock_t *CreateSegs(void)
     if (line->zero_len)
       continue;
     
-    // -JL- Can't ignore polyobj lines, because polyobjs are built from segs
-#if 0
-    // ignore hexen polyobj lines
-    if (line->polyobj)
-      continue;
-#endif
-
+    // check for Humungously long lines
+    if (ABS(line->start->x - line->end->x) >= 10000 ||
+        ABS(line->start->y - line->end->y) >= 10000)
+    {
+      if (ComputeDist(line->start->x - line->end->x,
+          line->start->y - line->end->y) >= 30000)
+      {
+        PrintWarn("Linedef #%d is VERY long, it may cause problems\n",
+            line->index);
+      }
+    }
+    
     if (line->right)
     {
       right = CreateOneSeg(line, line->start, line->end, line->right, 0);
       AddSegToSuper(block, right);
     }
     else
-      PrintWarn("Linedef #%d has no right sidedef\n", line->index);
+      PrintWarn("Linedef #%d has no right sidedef!\n", line->index);
 
     if (line->left)
     {
@@ -592,7 +503,7 @@ static void ClockwiseOrder(subsec_t *sub)
   if (total <= 32)
     array = seg_buffer;
   else
-    array = SysCalloc(total * sizeof(seg_t *));
+    array = UtilCalloc(total * sizeof(seg_t *));
 
   for (cur=sub->seg_list, i=0; cur; cur=cur->next, i++)
     array[i] = cur;
@@ -642,7 +553,7 @@ static void ClockwiseOrder(subsec_t *sub)
   }
  
   if (total > 32)
-    SysFree(array);
+    UtilFree(array);
 
   #if DEBUG_SORTER
   PrintDebug("Sorted SEGS around (%1.1f,%1.1f)\n", sub->mid_x, sub->mid_y);
@@ -652,7 +563,7 @@ static void ClockwiseOrder(subsec_t *sub)
     angle_g angle = ComputeAngle(cur->start->x - sub->mid_x,
         cur->start->y - sub->mid_y);
     
-    PrintDebug("  Seg %p: Angle %1.1f  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
+    PrintDebug("  Seg %p: Angle %1.6f  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
       cur, angle, cur->start->x, cur->start->y, cur->end->x, cur->end->y);
   }
   #endif
@@ -681,6 +592,14 @@ static void SanityCheckClosed(subsec_t *sub)
     PrintMiniWarn("Subsector #%d near (%1.1f,%1.1f) is not closed "
         "(%d gaps, %d segs)\n", sub->index, 
         sub->mid_x, sub->mid_y, gaps, total);
+
+    #if DEBUG_SUBSEC
+    for (cur=sub->seg_list; cur; cur=cur->next)
+    {
+      PrintDebug("  SEG %p  (%1.1f,%1.1f) --> (%1.1f,%1.1f)\n", cur,
+          cur->start->x, cur->start->y, cur->end->x, cur->end->y);
+    }
+    #endif
   }
 }
 
@@ -715,7 +634,7 @@ static void SanityCheckSameSector(subsec_t *sub)
     if (cur->sector == compare->sector)
       continue;
  
-    // All ssectors must come from same sector unless it's marked
+    // All subsectors must come from same sector unless it's marked
     // "special" with sector tag >= 900. Original idea, Lee Killough
     if (cur->sector->coalesce)
       continue;
@@ -841,11 +760,33 @@ int ComputeHeight(node_t *node)
 }
 
 
+#ifdef DEBUG_BUILDER
+
+static void DebugShowSegs(superblock_t *seg_list)
+{
+  seg_t *cur;
+  int num;
+
+  for (cur=seg_list->segs; cur; cur=cur->next)
+  {
+    PrintDebug("Build:   %sSEG %p  sector=%d  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
+        cur->linedef ? "" : "MINI", cur, cur->sector->index,
+        cur->start->x, cur->start->y, cur->end->x, cur->end->y);
+  }
+
+  for (num=0; num < 2; num++)
+  {
+    if (seg_list->subs[num])
+      DebugShowSegs(seg_list->subs[num]);
+  }
+}
+#endif
+
 //
 // BuildNodes
 //
-void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
-    int depth)
+glbsp_ret_e BuildNodes(superblock_t *seg_list, 
+    node_t ** N, subsec_t ** S, int depth)
 {
   node_t *node;
   seg_t *best;
@@ -855,17 +796,17 @@ void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
 
   intersection_t *cut_list;
 
+  glbsp_ret_e ret;
+
   *N = NULL;
   *S = NULL;
 
+  if (cur_comms->cancelled)
+    return GLBSP_E_Cancelled;
+
   #if DEBUG_BUILDER
   PrintDebug("Build: BEGUN @ %d\n", depth);
-  for (cur=seg_list; cur; cur=cur->next)
-  {
-    PrintDebug("Build:   %sSEG %p  sector=%d  (%1.1f,%1.1f) -> (%1.1f,%1.1f)\n",
-        cur->linedef ? "" : "MINI", cur, cur->sector->index,
-        cur->start->x, cur->start->y, cur->end->x, cur->end->y);
-  }
+  DebugShowSegs(seg_list);
   #endif
 
   // pick best node to use.  None indicates convexicity.
@@ -873,17 +814,20 @@ void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
 
   if (best == NULL)
   {
+    if (cur_comms->cancelled)
+      return GLBSP_E_Cancelled;
+
     #if DEBUG_BUILDER
     PrintDebug("Build: CONVEX\n");
     #endif
 
     *S = CreateSubsec(seg_list);
-    return;
+    return GLBSP_E_OK;
   }
 
   #if DEBUG_BUILDER
-  PrintDebug("Build: PARTITION (%1.0f,%1.0f) -> (%1.0f,%1.0f)\n",
-      best->start->x, best->start->y, best->end->x, best->end->y);
+  PrintDebug("Build: PARTITION %p (%1.0f,%1.0f) -> (%1.0f,%1.0f)\n",
+      best, best->start->x, best->start->y, best->end->x, best->end->y);
   #endif
 
   // create left and right super blocks
@@ -907,6 +851,8 @@ void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
   if (lefts->real_num + lefts->mini_num == 0)
     InternalError("Separated seg-list has no LEFT side");
 
+  DisplayTicker();
+
   AddMinisegs(best, lefts, rights, cut_list);
 
   *N = node = NewNode();
@@ -916,6 +862,19 @@ void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
   node->dx = (int)best->pdx;
   node->dy = (int)best->pdy;
 
+  // check for really long partition (overflows dx,dy in NODES)
+  if (best->p_length >= 30000)
+  {
+    if (node->dx && node->dy && ((node->dx & 1) || (node->dy & 1)))
+    {
+      PrintMiniWarn("Loss of accuracy on VERY long node: "
+          "(%d,%d) -> (%d,%d)\n", node->x, node->y, 
+          node->x + node->dx, node->y + node->dy);
+    }
+
+    node->too_long = 1;
+  }
+
   // find limits of vertices
   FindLimits(lefts,  &node->l.bounds);
   FindLimits(rights, &node->r.bounds);
@@ -924,19 +883,27 @@ void BuildNodes(superblock_t *seg_list, node_t ** N, subsec_t ** S,
   PrintDebug("Build: Going LEFT\n");
   #endif
 
-  BuildNodes(lefts,  &node->l.node, &node->l.subsec, depth+1);
+  ret = BuildNodes(lefts,  &node->l.node, &node->l.subsec, depth+1);
   FreeSuper(lefts);
+
+  if (ret != GLBSP_E_OK)
+  {
+    FreeSuper(rights);
+    return ret;
+  }
 
   #if DEBUG_BUILDER
   PrintDebug("Build: Going RIGHT\n");
   #endif
 
-  BuildNodes(rights, &node->r.node, &node->r.subsec, depth+1);
+  ret = BuildNodes(rights, &node->r.node, &node->r.subsec, depth+1);
   FreeSuper(rights);
 
   #if DEBUG_BUILDER
   PrintDebug("Build: DONE\n");
   #endif
+
+  return ret;
 }
 
 //
@@ -947,6 +914,8 @@ void ClockwiseBspTree(node_t *root)
   int i;
 
   (void) root;
+
+  DisplayTicker();
 
   for (i=0; i < num_subsecs; i++)
   {
@@ -1017,6 +986,8 @@ void NormaliseBspTree(node_t *root)
   int i;
 
   (void) root;
+
+  DisplayTicker();
 
   // unlink all minisegs from each subsector:
 
@@ -1153,6 +1124,8 @@ void RoundOffBspTree(node_t *root)
   (void) root;
 
   num_complete_seg = 0;
+
+  DisplayTicker();
 
   for (i=0; i < num_subsecs; i++)
   {
