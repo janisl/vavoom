@@ -56,6 +56,7 @@ void S_StartSong(char* name, int track, boolean loop);
 void S_PauseSound(void);
 void S_ResumeSound(void);
 void S_UpdateSounds(void);
+int S_GetSoundID(FName Name);
 int S_GetSoundID(char *name);
 void S_Shutdown(void);
 
@@ -93,9 +94,12 @@ extern seqnode_t	*SequenceListHead;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2002/01/11 08:15:06  dj_jl
+//	Sound index retrieval by FName
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/08/29 17:55:42  dj_jl
 //	Added sound channels
 //	
