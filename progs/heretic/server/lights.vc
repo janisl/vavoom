@@ -475,6 +475,8 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 			base = sec->params.lightlevel;
 		}
 		P_SpawnPhasedLight(sec, base, ftoi(index));
+		//	Clear sector special.
+		sec->special &= ~SECSPEC_BASE_MASK;
 		index += indexDelta;
 		for (i = 0; i < sec->linecount; i++)
 		{
@@ -497,6 +499,9 @@ void P_SpawnLightSequence(sector_t * sector, float indexStep)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/01/20 08:15:08  dj_jl
+//  Fixed endless loop of phased lights.
+//
 //  Revision 1.18  2004/11/22 07:36:26  dj_jl
 //  Implemented all sector specials in all games.
 //
