@@ -85,6 +85,11 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\utils\glbsp\analyze.c
+# ADD CPP /W3 /D "GLBSP_PLUGIN"
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\glbsp\blockmap.c
 # ADD CPP /W3 /D "GLBSP_PLUGIN"
 # End Source File
