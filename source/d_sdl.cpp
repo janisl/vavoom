@@ -104,7 +104,12 @@ bool VSoftwareDrawer::SetResolution(int Width, int Height, int BPP)
 	{
 		flags |= SDL_HWPALETTE;
 	}
-	flags |= SDL_HWSURFACE | SDL_FULLSCREEN;
+	if (!M_CheckParm("-window"))
+	{
+		flags |= SDL_FULLSCREEN;
+	}
+	flags |= SDL_HWSURFACE;
+
 	hw_screen = SDL_SetVideoMode(Width, Height, BPP, flags);
 	if (hw_screen == NULL)
 		return false;
@@ -234,9 +239,12 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/10/08 12:39:01  dj_jl
+//	Added windowing mode.
+//
 //	Revision 1.3  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

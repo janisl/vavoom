@@ -91,7 +91,13 @@ bool VOpenGLDrawer::SetResolution(int Width, int Height, int BPP)
 	// Sut down current mode
 	Shutdown();
 
-	hw_screen = SDL_SetVideoMode(Width, Height, BPP, SDL_OPENGL | SDL_FULLSCREEN);
+	Uint32 flags = SDL_OPENGL;
+	if (!M_CheckParm("-window"))
+	{
+		flags |= SDL_FULLSCREEN;
+	}
+
+	hw_screen = SDL_SetVideoMode(Width, Height, BPP, flags);
 	if (hw_screen == NULL)
 		return false;
 
@@ -151,9 +157,12 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2004/10/08 12:39:01  dj_jl
+//	Added windowing mode.
+//
 //	Revision 1.3  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
-//
+//	
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	
