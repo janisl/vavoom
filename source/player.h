@@ -85,6 +85,8 @@ struct player_t
 	qsocket_t		*netcon;
 	TMessage		message;
 	byte			msgbuf[MAX_MSGLEN];
+	int				mobj_update_start;
+	float			last_message;
 
 	char			userinfo[MAX_INFO_STRING];
 
@@ -166,9 +168,12 @@ struct player_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2001/08/30 17:46:52  dj_jl
+//	Changes for better updates
+//
 //	Revision 1.4  2001/08/07 16:46:23  dj_jl
 //	Added player models, skins and weapon
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	
