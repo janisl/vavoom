@@ -1020,7 +1020,7 @@ void CL_ParseServerMessage(void)
 			cond <<	net_msg.CurSize << " [ ";
 			for (i = 0; i < net_msg.CurSize; i++)
 				cond << (int)net_msg.Data[i] << ' ';
-			cond << "]\n";
+			cond << "] " << net_msg.readcount << endl;
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}
@@ -1030,9 +1030,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2001/10/09 17:24:05  dj_jl
+//	Changes after bug chatching
+//
 //	Revision 1.9  2001/10/08 17:33:01  dj_jl
 //	Different client and server level structures
-//
+//	
 //	Revision 1.8  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags
 //	
