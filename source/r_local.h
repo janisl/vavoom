@@ -135,7 +135,6 @@ dword R_LightPoint(const TVec &p);
 extern int      		screenblocks;
 extern int				r_visframecount;
 extern subsector_t		*r_viewleaf;
-extern bool				r_back2front;
 
 extern byte				light_remap[256];
 extern TCvarI			r_darken;
@@ -147,9 +146,12 @@ extern refdef_t			refdef;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2002/07/13 07:39:08  dj_jl
+//	Removed back to front drawing.
+//
 //	Revision 1.8  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

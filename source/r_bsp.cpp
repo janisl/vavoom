@@ -248,14 +248,14 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 	float			d;
 
 	d = DotProduct(vieworg, region->floor->secplane->normal) - region->floor->secplane->dist;
-	if (region->next && ((r_back2front && d > 0.0) || (!r_back2front && d <= 0.0)))
+	if (region->next && d <= 0.0)
 	{
 		RenderSubRegion(region->next, clipflags);
 	}
 
 	r_region = region->secregion;
 
-	if (r_sub->poly && !r_back2front)
+	if (r_sub->poly)
 	{
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
@@ -278,19 +278,7 @@ static void RenderSubRegion(subregion_t *region, int clipflags)
 	RenderSecSurface(region->floor, clipflags);
 	RenderSecSurface(region->ceil, clipflags);
 
-	if (r_sub->poly && r_back2front)
-	{
-		//	Render the polyobj
-		polyCount = r_sub->poly->numsegs;
-		polySeg = r_sub->poly->segs;
-		while (polyCount--)
-		{
-			RenderLine((*polySeg)->drawsegs, clipflags);
-			polySeg++;
-		}
-	}
-
-	if (region->next && ((r_back2front && d <= 0.0) || (!r_back2front && d > 0.0)))
+	if (region->next && d > 0.0)
 	{
 		RenderSubRegion(region->next, clipflags);
 	}
@@ -401,22 +389,11 @@ static void RenderBSPNode(int bspnum, float *bbox, int clipflags)
     // Decide which side the view point is on.
 	int side = bsp->PointOnSide(vieworg);
 
-	if (r_back2front)
-	{
-    	// Divide back space.
-		RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
+   	// Recursively divide front space.
+    RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
 
-    	// Recursively divide front space.
-	    RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
-	}
-	else
-	{
-    	// Recursively divide front space.
-	    RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
-
-    	// Divide back space.
-		RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
-	}
+   	// Divide back space.
+	RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
 	unguard;
 }
 
@@ -449,9 +426,12 @@ void R_RenderWorld(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2002/07/13 07:39:08  dj_jl
+//	Removed back to front drawing.
+//
 //	Revision 1.9  2002/03/28 17:58:02  dj_jl
 //	Added support for scaled textures.
-//
+//	
 //	Revision 1.8  2002/03/20 19:11:21  dj_jl
 //	Added guarding.
 //	
