@@ -22,9 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**	$Log$
+//**	Revision 1.4  2001/08/04 17:38:19  dj_jl
+//**	Added moving of texture vertexes
+//**
 //**	Revision 1.3  2001/07/31 17:03:38  dj_jl
 //**	Added checks for model file
-//**
+//**	
 //**	Revision 1.2  2001/07/27 14:27:55  dj_jl
 //**	Update with Id-s and Log-s, some fixes
 //**	
@@ -137,6 +140,58 @@ static void FixModelSkin(const char *name)
 
 //==========================================================================
 //
+//	MoveSTVerts
+//
+//==========================================================================
+
+static void MoveSTVerts(const char *str)
+{
+	int			olds1, oldt1;
+	int			olds2, oldt2;
+	int			news, newt;
+	char		*sp;
+	mstvert_t	*vert;
+	int			i;
+
+	olds1 = strtol(str, &sp, 0);
+	if (*sp != ',')
+		Error("Bad syntax");
+	sp++;
+	oldt1 = strtol(sp, &sp, 0);
+	if (*sp != ',')
+		Error("Bad syntax");
+	sp++;
+	olds2 = strtol(sp, &sp, 0);
+	if (*sp != ',')
+		Error("Bad syntax");
+	sp++;
+	oldt2 = strtol(sp, &sp, 0);
+	if (*sp != ',')
+		Error("Bad syntax");
+	sp++;
+	news = strtol(sp, &sp, 0);
+	if (*sp != ',')
+		Error("Bad syntax");
+	sp++;
+	newt = strtol(sp, &sp, 0);
+	if (*sp)
+		Error("Bad syntax");
+
+	vert = (mstvert_t*)((byte*)model + model->ofsstverts);
+	for (i = 0; i < model->numstverts; i++)
+	{
+		if (vert[i].s >= olds1 && vert[i].t >= oldt1 &&
+			vert[i].s < olds2 && vert[i].t < oldt2)
+		{
+			vert[i].s = vert[i].s - olds1 + news;
+			vert[i].t = vert[i].t - oldt1 + newt;
+		}
+	}
+	//FIXME process GL commands
+}
+
+//==========================================================================
+//
 //	main
 //
 //==========================================================================
@@ -163,25 +218,33 @@ int main(int argc, char *argv[])
 		{
 			ScaleModel(atof(argv[i] + 1));
 		}
-		if (argv[i][0] == 'i')
+		else if (argv[i][0] == 'i')
 		{
 			ScaleModel(1.0 / atof(argv[i] + 1));
 		}
-		if (argv[i][0] == 'x')
+		else if (argv[i][0] == 'x')
 		{
 			ShiftModel(atof(argv[i] + 1), 0, 0);
 		}
-		if (argv[i][0] == 'y')
+		else if (argv[i][0] == 'y')
 		{
 			ShiftModel(0, atof(argv[i] + 1), 0);
 		}
-		if (argv[i][0] == 'z')
+		else if (argv[i][0] == 'z')
 		{
 			ShiftModel(0, 0, atof(argv[i] + 1));
 		}
-		if (argv[i][0] == '/')
+		else if (argv[i][0] == '/')
 		{
 			FixModelSkin(argv[i] + 1);
+		}
+		else if (argv[i][0] == 'm')
+		{
+			MoveSTVerts(argv[i] + 1);
+		}
+		else
+		{
+			Error("Bad args\n");
 		}
 	}
 	WriteModel();
