@@ -483,12 +483,11 @@ class PodGoo:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
@@ -533,12 +532,11 @@ class Splash:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
@@ -625,12 +623,11 @@ class SludgeChunk:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bCannotPush = true;
 		bActivatePCross = true;
@@ -1220,14 +1217,13 @@ class VolcanoBlast:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 8.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 70.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
@@ -1251,14 +1247,13 @@ class VolcanoTBlast:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 6.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 70.0;
 		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bFireDamage = true;
 		bActivatePCross = true;
@@ -1727,7 +1722,7 @@ class MaceFX1:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 6.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 700.0;
 		ReactionCount = 8;
 		MissileDamage = 2;
@@ -1758,14 +1753,13 @@ class MaceFX2:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 6.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 350.0;
 		ReactionCount = 8;
 		MissileDamage = 6;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bFloorBounce = true;
 		bThruGhost = true;
 		bNoTeleport = true;
@@ -1788,14 +1782,13 @@ class MaceFX3:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 6.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 245.0;
 		ReactionCount = 8;
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bFloorBounce = true;
 		bThruGhost = true;
 		bNoTeleport = true;
@@ -1818,14 +1811,13 @@ class MaceFX4:Actor
 		Health = 1000;
 		Radius = 8.0;
 		Height = 6.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 245.0;
 		ReactionCount = 8;
 		MissileDamage = 18;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bFloorBounce = true;
 		bThruGhost = true;
 		bTelestomp = true;
@@ -2372,10 +2364,9 @@ class CrossbowFX4:Actor
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
-		bLowGravity = true;
 		bNoPassMobj = true;
 		SpawnState = S_CRBOWFX4_1;
 	}
@@ -2394,7 +2385,7 @@ class Blood:Actor
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
@@ -2476,11 +2467,10 @@ class BloodySkull:Actor
 		Health = 1000;
 		Radius = 4.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
-		bLowGravity = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
 		SpawnState = S_BLOODYSKULL1;
@@ -2500,12 +2490,11 @@ class ChickenPlayer:Actor
 		Health = 100;
 		Radius = 16.0;
 		Height = 24.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		PainChance = 255;
 		bSolid = true;
 		bShootable = true;
 		bDropOff = true;
-		bLowGravity = true;
 		bWindThrust = true;
 		bFootClip = true;
 		bSlide = true;
@@ -2580,12 +2569,11 @@ class Feather:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bWindThrust = true;
 		bNoTeleport = true;
 		bCannotPush = true;
@@ -4496,9 +4484,12 @@ class SoundWaterfall:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2002/03/09 17:57:01  dj_jl
+//	Got rid of function pointers, made most of the physics functions native.
+//
 //	Revision 1.23  2002/02/22 18:00:17  dj_jl
 //	A lots of the renaming, beautification.
-//
+//	
 //	Revision 1.22  2002/02/14 19:20:58  dj_jl
 //	Renamed Entity properties to new naming style
 //	

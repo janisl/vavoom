@@ -25,13 +25,49 @@
 
 //==========================================================================
 //
-//  Actor::A_Look
+//	Pawn::Activate
+//
+//==========================================================================
+
+boolean Pawn::Activate(void)
+{
+	// Monster
+	if (bDormant)
+	{
+		bDormant = false;
+		StateTime = 0.1;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Pawn::Deactivate
+//
+//==========================================================================
+
+boolean Pawn::Deactivate(void)
+{
+	// Monster
+	if (!bDormant)
+	{
+		bDormant = true;
+		StateTime = -1.0;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  Pawn::A_Look
 //
 //  Stay in state until a player is sighted
 //
 //==========================================================================
 
-void Actor::A_Look(void)
+void Pawn::A_Look(void)
 {
 	Actor targ;
 
@@ -76,13 +112,13 @@ void Actor::A_Look(void)
 
 //==========================================================================
 //
-//  Actor::A_Chase
+//  Pawn::A_Chase
 //
 //  Actor has a melee attack, so it tries to close as fast as possible
 //
 //==========================================================================
 
-void Actor::A_Chase(void)
+void Pawn::A_Chase(void)
 {
 	float delta;
 
@@ -218,11 +254,11 @@ void Actor::A_Chase(void)
 
 //==========================================================================
 //
-//  Actor::A_FaceTarget
+//  Pawn::A_FaceTarget
 //
 //==========================================================================
 
-void Actor::A_FaceTarget(void)
+void Pawn::A_FaceTarget(void)
 {
 	if (!Target)
 		return;
@@ -270,7 +306,6 @@ void Actor::A_FreeTargMobj(void)
 	bDropOff = true;
 	bNoGravity = true;
 	bCorpse = true;
-	bLowGravity = false;
 	bNoPassMobj = true;
 	Translucency = 100;
 	Player = NULL;
@@ -522,42 +557,11 @@ void Actor::A_AddPlayerCorpse(void)
 
 //============================================================================
 //
-//  Actor::A_SkullPop
+//	Pawn::A_FreezeDeath
 //
 //============================================================================
 
-void Actor::A_SkullPop(void)
-{
-	mobj_t *mo;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	bSolid = false;
-	mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + 48.0, BloodySkull);
-	mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	mo->Velocity.z = (2.0 + Random() / 4.0) * 35.0;
-	// Attach player mobj to bloody skull
-	mo->Player = Player;
-	mo->bIsPlayer = true;
-	Player = NULL;
-	bIsPlayer = false;
-	_Special1 = mo->Player->PClass;
-	mo->Health = Health;
-	mo->Angles.yaw = Angles.yaw;
-	mo->Player->mo = mo;
-	mo->Player->DamageCount = 32;
-}
-
-//============================================================================
-//
-//	Actor::A_FreezeDeath
-//
-//============================================================================
-
-void Actor::A_FreezeDeath(void)
+void Pawn::A_FreezeDeath(void)
 {
 	StateTime = 2.0 + Random() * 8.0 + Random() * 8.0;
 	bSolid = true;
@@ -610,11 +614,11 @@ void Actor::A_IceSetTics(void)
 
 //============================================================================
 //
-//  Actor::A_FreezeDeathChunks
+//  Pawn::A_FreezeDeathChunks
 //
 //============================================================================
 
-void Actor::A_FreezeDeathChunks(void)
+void Pawn::A_FreezeDeathChunks(void)
 {
 	int i;
 	mobj_t *mo;
@@ -657,13 +661,11 @@ void Actor::A_FreezeDeathChunks(void)
 	if (bIsPlayer)
 	{
 		// attach the player's view to a chunk of ice
-		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + VIEWHEIGHT, IceChunk);
-		mo->SetState(S_ICECHUNK_HEAD);
+		mo = P_SpawnMobj(Origin.x, Origin.y, Origin.z + VIEWHEIGHT,
+			IceChunkHead);
 		mo->Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		mo->Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		mo->Velocity.z = (mo->Origin.z - Origin.z) / Height * 4.0 * 35.0;
-		mo->bIceDamage = true;	// used to force blue palette
-		mo->bFloorClip = false;
 		mo->Player = Player;
 		mo->bIsPlayer = true;
 		Player = NULL;
@@ -694,35 +696,6 @@ void Actor::A_CheckBurnGone(void)
 
 //============================================================================
 //
-//  Actor::A_CheckSkullFloor
-//
-//============================================================================
-
-void Actor::A_CheckSkullFloor(void)
-{
-	if (Origin.z <= FloorZ)
-	{
-		SetState(S_BLOODYSKULLX1);
-		PlaySound('Drip', CHAN_VOICE);
-	}
-}
-
-//============================================================================
-//
-//  Actor::A_CheckSkullDone
-//
-//============================================================================
-
-void Actor::A_CheckSkullDone(void)
-{
-	if (_Special2 == 666)
-	{
-		SetState(S_BLOODYSKULLX2);
-	}
-}
-
-//============================================================================
-//
 //	Actor::A_SpeedFade
 //
 //============================================================================
@@ -731,20 +704,6 @@ void Actor::A_SpeedFade(void)
 {
 	Translucency = 66;
 	SpriteIndex = Owner.SpriteIndex;
-}
-
-//============================================================================
-//
-//	Actor::A_IceCheckHeadDone
-//
-//============================================================================
-
-void Actor::A_IceCheckHeadDone(void)
-{
-	if (_Special2 == 666)
-	{
-		SetState(S_ICECHUNK_HEAD2);
-	}
 }
 
 //============================================================================
@@ -868,6 +827,9 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.23  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

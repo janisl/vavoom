@@ -283,7 +283,7 @@ void Actor::A_CheckFloor(void)
 	if (Origin.z <= FloorZ)
 	{
 		Origin.z = FloorZ;
-		bLowGravity = false;
+		//bLowGravity = false;
 		SetState(DeathState);
 	}
 }
@@ -291,6 +291,9 @@ void Actor::A_CheckFloor(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.20  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

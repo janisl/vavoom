@@ -59,14 +59,14 @@ boolean Actor::CheckMissileSpawn(void)
 
 //==========================================================================
 //
-//  Actor::SpawnMissile
+//  Pawn::SpawnMissile
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
 // a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Actor Actor::SpawnMissile(Actor dest, classid type)
+Actor Pawn::SpawnMissile(Actor dest, classid type)
 {
 	Actor th;
 	TVec org;
@@ -115,14 +115,14 @@ Actor Actor::SpawnMissile(Actor dest, classid type)
 
 //==========================================================================
 //
-//  Actor::SpawnMissileXYZ
+//  Pawn::SpawnMissileXYZ
 //
 //  Returns NULL if the missile exploded immediately, otherwise returns
 // a mobj_t pointer to the missile.
 //
 //==========================================================================
 
-Actor Actor::SpawnMissileXYZ(TVec org, Actor dest, classid type)
+Actor Pawn::SpawnMissileXYZ(TVec org, Actor dest, classid type)
 {
 	TVec dir;
 	Actor th;
@@ -221,11 +221,11 @@ Actor Actor::SpawnMissileAngleSpeed(classid type, float angle,
 
 //============================================================================
 //
-//  Actor::SpawnKoraxMissile
+//  Pawn::SpawnKoraxMissile
 //
 //============================================================================
 
-Actor Actor::SpawnKoraxMissile(TVec org, Actor dest, classid type)
+Actor Pawn::SpawnKoraxMissile(TVec org, Actor dest, classid type)
 {
 	TVec dir;
 	Actor th;
@@ -315,13 +315,13 @@ boolean Actor::SeekerMissile(float thresh, float turnMax)
 
 //==========================================================================
 //
-//  Actor::SpawnPlayerMissile
+//  PlayerPawn::SpawnPlayerMissile
 //
 //  Tries to aim at a nearby monster
 //
 //==========================================================================
 
-Actor Actor::SpawnPlayerMissile(classid type)
+Actor PlayerPawn::SpawnPlayerMissile(classid type)
 {
 	Actor MissileMobj;
 	TAVec angles;
@@ -388,11 +388,11 @@ Actor Actor::SpawnPlayerMissile(classid type)
 
 //===========================================================================
 //
-//  Actor::SpawnPlayerMissileAngle
+//  PlayerPawn::SpawnPlayerMissileAngle
 //
 //===========================================================================
 
-Actor Actor::SpawnPlayerMissileAngle(classid type, float angle)
+Actor PlayerPawn::SpawnPlayerMissileAngle(classid type, float angle)
 {
 	TAVec angles;
 	TVec vforward;
@@ -432,11 +432,11 @@ Actor Actor::SpawnPlayerMissileAngle(classid type, float angle)
 
 //===========================================================================
 //
-//  Actor::SpawnPlayerMissileAngleXYZ
+//  PlayerPawn::SpawnPlayerMissileAngleXYZ
 //
 //===========================================================================
 
-Actor Actor::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
+Actor PlayerPawn::SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 {
 	Actor th;
 	TAVec angles;
@@ -521,6 +521,9 @@ boolean Actor::ExplodeMissile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.22  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

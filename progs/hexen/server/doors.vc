@@ -159,9 +159,9 @@ int EV_DoDoor(line_t * line, int *args, int type)
 		type = DREV_OPEN;
 	}
 	speed = itof(args[1]) * 4.0;
-	secnum = -1;
 	retcode = 0;
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
+		secnum = FindSectorFromTag(args[0], secnum))
 	{
 		sec = &level->sectors[secnum];
 		if (sec->SpecialData)
@@ -257,6 +257,9 @@ boolean EV_VerticalDoor(line_t * line)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.8  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

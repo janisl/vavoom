@@ -137,7 +137,8 @@ int EV_DoCeiling(line_t * line, int *arg, int type)
 	secnum = -1;
 	rtn = 0;
 
-	while ((secnum = FindSectorFromTag(arg[0], secnum)) >= 0)
+	for (secnum = FindSectorFromTag(arg[0], secnum); secnum >= 0;
+		secnum = FindSectorFromTag(arg[0], secnum))
 	{
 		sec = &level->sectors[secnum];
 		if (sec->SpecialData)
@@ -249,6 +250,9 @@ int EV_CeilingCrushStop(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.10  2002/01/29 18:16:19  dj_jl
 //  Adjusted speed to fix timing
 //

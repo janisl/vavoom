@@ -137,10 +137,10 @@ boolean P_ThingHeightClip(mobj_t * thing)
 	thing->CheckRelPosition(thing->Origin);
 	// what about stranding a monster partially off an edge?
 
-	thing->Floor = tmtrace.Floor;
-	thing->Ceiling = tmtrace.Ceiling;
-	thing->FloorZ = tmtrace.FloorZ;
-	thing->CeilingZ = tmtrace.CeilingZ;
+	thing->Floor = tmtrace->Floor;
+	thing->Ceiling = tmtrace->Ceiling;
+	thing->FloorZ = tmtrace->FloorZ;
+	thing->CeilingZ = tmtrace->CeilingZ;
 
 	if (onfloor)
 	{
@@ -242,7 +242,7 @@ boolean P_ChangeSector(sector_t * sector, int crunch)
 	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
 		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP];
 			y++)
-			P_BlockThingsIterator(x, y, PIT_ChangeSector);
+			P_BlockThingsIterator(x, y, 'PIT_ChangeSector');
 
 	return nofit;
 }
@@ -316,7 +316,7 @@ void P_UseLines(player_t * player)
 	y1 = player->mo->Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse);
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_UseTraverse');
 }
 
 //**************************************************************************
@@ -476,7 +476,7 @@ TVec AimLineAttack(mobj_t * t1, TAVec angles, float distance)
 	linetarget = NULL;
 
 	P_PathTraverse(t1->Origin.x, t1->Origin.y, x2, y2,
-		PT_ADDLINES | PT_ADDTHINGS, PTR_AimTraverse);
+		PT_ADDLINES | PT_ADDTHINGS, 'PTR_AimTraverse');
 
 	if (linetarget)
 	{
@@ -770,7 +770,7 @@ int LineAttack(mobj_t * t1, TVec * dir, float distance, int damage)
 	dst = shoot_origin + shoot_range * shoot_dir;
 	linestart = shoot_origin;
 	if (!P_PathTraverse(t1->Origin.x, t1->Origin.y, dst.x, dst.y,
-			PT_ADDLINES | PT_ADDTHINGS, PTR_ShootTraverse))
+			PT_ADDLINES | PT_ADDTHINGS, 'PTR_ShootTraverse'))
 	{
 		return false;
 	}
@@ -857,12 +857,15 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage, int distance,
 
 	for (y = yl; y <= yh; y++)
 		for (x = xl; x <= xh; x++)
-			P_BlockThingsIterator(x, y, PIT_RadiusAttack);
+			P_BlockThingsIterator(x, y, 'PIT_RadiusAttack');
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.23  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

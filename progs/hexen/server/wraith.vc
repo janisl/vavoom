@@ -304,6 +304,35 @@ void A_WraithRaiseInit(void)
 	FloorClip = Height;
 }
 
+//============================================================================
+//
+//  RaiseFromFloor
+//
+//  Raise incrementally from the floor
+// 
+//============================================================================
+
+boolean RaiseFromFloor(void)
+{
+	boolean done = true;
+
+	// Raise a mobj from the ground
+	if (FloorClip > 0.0)
+	{
+		FloorClip -= 2.0;
+		if (FloorClip <= 0.0)
+		{
+			FloorClip = 0.0;
+			done = true;
+		}
+		else
+		{
+			done = false;
+		}
+	}
+	return done;	// Reached target height
+}
+
 //==========================================================================
 //
 //  A_WraithRaise
@@ -384,6 +413,9 @@ void Actor::A_WraithFX2(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.19  2002/03/02 17:58:37  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

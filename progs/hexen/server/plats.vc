@@ -156,10 +156,10 @@ int EV_DoPlat(line_t * line, int *args, int type)
 	int rtn;
 	sector_t *sec;
 
-	secnum = -1;
 	rtn = 0;
 
-	while ((secnum = FindSectorFromTag(args[0], secnum)) >= 0)
+	for (secnum = FindSectorFromTag(args[0], -1); secnum >= 0;
+		secnum = FindSectorFromTag(args[0], secnum))
 	{
 		sec = &level->sectors[secnum];
 		if (sec->SpecialData)
@@ -252,6 +252,9 @@ void EV_StopPlat(line_t * line, int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.9  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

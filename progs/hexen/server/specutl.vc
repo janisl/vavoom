@@ -449,8 +449,8 @@ boolean TagBusy(int tag)
 {
 	int sectorIndex;
 
-	sectorIndex = -1;
-	while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
+	for (sectorIndex = FindSectorFromTag(tag, -1); sectorIndex >= 0;
+		sectorIndex = FindSectorFromTag(tag, sectorIndex))
 	{
 		if (level->sectors[sectorIndex].SpecialData)
 		{
@@ -463,6 +463,9 @@ boolean TagBusy(int tag)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.7  2002/01/15 08:12:26  dj_jl
 //  Replaced some pointers with references
 //

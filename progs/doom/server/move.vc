@@ -128,18 +128,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	line_t *ld;
 
 	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
-	saved_tmfloorz = tmtrace.FloorZ;
+	saved_tmfloorz = tmtrace->FloorZ;
 	floatok = false;
 	if (!check)
 	{
-		if (!tmtrace.BlockingMobj || tmtrace.BlockingMobj.bIsPlayer ||
-			!thing->bIsPlayer || tmtrace.BlockingMobj.Origin.z +
-			tmtrace.BlockingMobj.Height - thing->Origin.z > 24.0 ||
-			(tmtrace.BlockingMobj.Sector->ceilingheight -
-				(tmtrace.BlockingMobj.Origin.z +
-				tmtrace.BlockingMobj.Height) < thing->Height) ||
-		   	(tmtrace.CeilingZ - (tmtrace.BlockingMobj.Origin.z +
-			   	tmtrace.BlockingMobj.Height) < thing->Height))
+		if (!tmtrace->BlockingMobj || tmtrace->BlockingMobj.bIsPlayer ||
+			!thing->bIsPlayer || tmtrace->BlockingMobj.Origin.z +
+			tmtrace->BlockingMobj.Height - thing->Origin.z > 24.0 ||
+			(tmtrace->BlockingMobj.Sector->ceilingheight -
+				(tmtrace->BlockingMobj.Origin.z +
+				tmtrace->BlockingMobj.Height) < thing->Height) ||
+		   	(tmtrace->CeilingZ - (tmtrace->BlockingMobj.Origin.z +
+			   	tmtrace->BlockingMobj.Height) < thing->Height))
 		{
 			return false;
 		}
@@ -147,7 +147,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	if (thing->bColideWithWorld)
 	{
-		if (tmtrace.CeilingZ - tmtrace.FloorZ < thing->Height)
+		if (tmtrace->CeilingZ - tmtrace->FloorZ < thing->Height)
 		{
 			// Doesn't fit
 			return false;
@@ -156,17 +156,17 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmtrace.CeilingZ - thing->Origin.z < thing->Height)
+			tmtrace->CeilingZ - thing->Origin.z < thing->Height)
 		{
 			// mobj must lower itself to fit
 			return false;
 		}
 
-		if (!thing->bTeleport && tmtrace.FloorZ - thing->Origin.z > 24.0)
+		if (!thing->bTeleport && tmtrace->FloorZ - thing->Origin.z > 24.0)
 			return false;	// too big a step up
 
 		if (!thing->bDropOff && !thing->bFloat &&
-			tmtrace.FloorZ - tmtrace.DropOffZ > 24.0)
+			tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
 			return false;	// don't stand over a dropoff
 	}
 
@@ -179,21 +179,21 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->FloorZ = tmtrace.FloorZ;
-	thing->CeilingZ = tmtrace.CeilingZ;
-	thing->Floor = tmtrace.Floor;
-	thing->Ceiling = tmtrace.Ceiling;
+	thing->FloorZ = tmtrace->FloorZ;
+	thing->CeilingZ = tmtrace->CeilingZ;
+	thing->Floor = tmtrace->Floor;
+	thing->Ceiling = tmtrace->Ceiling;
 
 	//
 	// if any special lines were hit, do the effect
 	//
 	if (!thing->bTeleport && thing->bColideWithWorld)
 	{
-		while (tmtrace.NumSpecHit > 0)
+		while (tmtrace->NumSpecHit > 0)
 		{
-			tmtrace.NumSpecHit--;
+			tmtrace->NumSpecHit--;
 			// see if the line was crossed
-			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
 			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
@@ -240,6 +240,9 @@ void P_ThrustMobj(mobj_t * mo, float angle, float move)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.22  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

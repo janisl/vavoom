@@ -103,7 +103,7 @@ boolean P_TeleportMove(mobj_t * thing, float x, float y)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+			if (!P_BlockThingsIterator(bx, by, 'PIT_StompThing'))
 				return false;
 
 	// the move is ok,
@@ -310,6 +310,9 @@ boolean EV_SilentLineTeleport(line_t *line, int side, Actor *thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.18  2002/02/22 18:00:14  dj_jl
 //  A lots of the renaming, beautification.
 //

@@ -23,145 +23,261 @@
 //**
 //**************************************************************************
 
-//===========================================================================
+//**************************************************************************
+//**************************************************************************
 //
-// Thrust floor stuff
+//	ThrustFloorDown
+//
+//**************************************************************************
+//**************************************************************************
+
+class ThrustFloorDown:Actor
+	__mobjinfo__(10090)
+{
+
 //
 // Thrust Spike Variables
-//      SpecialMobj1    pointer to dirt clump mobj
-//      special2        speed of raise
+//
+
+int UpState;
+int BloodyUpState;
+int DownState;
+int BloodyDownState;
+
+Actor SpawnedDirt;	//	pointer to dirt clump mobj
+float RaiseSpeed;	//	speed of raise
 //      args[0]     0 = lowered,  1 = raised
 //      args[1]     0 = normal,   1 = bloody
-//===========================================================================
-
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  Actor::A_ThrustInitUp
+//  A_ThrustInitUp
 //
 //==========================================================================
 
-void Actor::A_ThrustInitUp(void)
+void A_ThrustInitUp(void)
 {
-	_Special2 = 5;	// Raise speed
-	Args[0] = 1;	// Mark as up
+	RaiseSpeed = 5.0;	// Raise speed
+	Args[0] = 1;		// Mark as up
 	FloorClip = 0.0;
 	bSolid = true;
-	//Flags = 0;
-	bNoTeleport = true;
-	bFloorClip = true;
-	//Flags2 = 0;
-	_SpecialMobj1 = NULL;
+	SpawnedDirt = none;
 }
 
 //==========================================================================
 //
-//  Actor::A_ThrustInitDn
+//  A_ThrustInitDn
 //
 //==========================================================================
 
-void Actor::A_ThrustInitDn(void)
+void A_ThrustInitDn(void)
 {
-	Actor dirt;
-
-	_Special2 = 5;	// Raise speed
-	Args[0] = 0;	// Mark as down
+	RaiseSpeed = 5.0;	// Raise speed
+	Args[0] = 0;		// Mark as down
 	FloorClip = Height;
-	//Flags = 0;
-	bNoTeleport = true;
-	bFloorClip = true;
-	//Flags2 = 0;
-	Translucency = 100;
-	dirt = SpawnActor(Origin, DirtClump);
-	_SpecialMobj1 = &dirt;
+	bSolid = false;
+	bHidden = true;
+	SpawnedDirt = Spawn(DirtClump, Origin);
 }
 
 //==========================================================================
 //
-//  Actor::A_ThrustRaise
+//  A_ThrustRaise
 //
+//  Raise incrementally from the floor
+// 
 //==========================================================================
 
-void Actor::A_ThrustRaise(void)
+void A_ThrustRaise(void)
 {
-	if (RaiseFromFloor())
+	// Raise spike from the ground
+	FloorClip -= RaiseSpeed;
+	if (FloorClip <= 0.0)
 	{
 		// Reached it's target height
+		FloorClip = 0.0;
 		Args[0] = 1;
 		if (Args[1])
-			SetStateNF(S_BTHRUSTINIT2_1);
+			SetState(BloodyUpState);
 		else
-			SetStateNF(S_THRUSTINIT2_1);
+			SetState(UpState);
 	}
 
 	// Lose the dirt clump
-	if ((FloorClip < Height) && _SpecialMobj1)
+	if ((FloorClip < Height) && SpawnedDirt)
 	{
-		P_RemoveMobj(_SpecialMobj1);
-		_SpecialMobj1 = NULL;
+		P_RemoveMobj(&SpawnedDirt);
+		SpawnedDirt = none;
 	}
 
 	// Spawn some dirt
 	if (P_Random() < 40)
 		SpawnDirt(Radius);
-	_Special2++;	// Increase raise speed
+	RaiseSpeed += 1.0;	// Increase raise speed
 }
 
 //==========================================================================
 //
-//  Actor::A_ThrustLower
+//  A_ThrustLower
+//
+//  Sink incrementally into the floor
 //
 //==========================================================================
 
-void Actor::A_ThrustLower(void)
+void A_ThrustLower(void)
 {
-	if (SinkIntoFloor())
+	if (FloorClip < Height)
+	{
+		FloorClip += 6.0;
+	}
+	else
 	{
 		Args[0] = 0;
 		if (Args[1])
-			SetStateNF(S_BTHRUSTINIT1_1);
+			SetState(BloodyDownState);
 		else
-			SetStateNF(S_THRUSTINIT1_1);
+			SetState(DownState);
 	}
 }
 
 //==========================================================================
 //
-//  Actor::A_ThrustBlock
+//  A_ThrustBlock
 //
 //==========================================================================
 
-void Actor::A_ThrustBlock(void)
+void A_ThrustBlock(void)
 {
 	bSolid = true;
 }
 
 //==========================================================================
 //
-//  Actor::A_ThrustImpale
+//  A_ThrustImpale
 //
 //==========================================================================
 
-void Actor::A_ThrustImpale(void)
+void A_ThrustImpale(void)
 {
 	// Impale all shootables in radius
 	PIT_ThrustSpike(this);
 }
 
+__states__
+{
+	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) { }
+	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) { A_ThrustInitUp(); }
+	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) { }
+	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) { A_ThrustInitUp(); }
+	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) { }
+	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) { A_ThrustInitDn(); }
+	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) { }
+	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) { A_ThrustInitDn(); }
+	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) { A_ThrustRaise(); }
+	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) { A_ThrustRaise(); }
+	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) { A_ThrustRaise(); }
+	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) { A_ThrustBlock(); }
+	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) { A_ThrustBlock(); }
+	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustImpale(); }
+	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustImpale(); }
+	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustRaise(); }
+	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustRaise(); }
+	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) { }
+	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) { }
+	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) { A_ThrustLower(); }
+	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) { A_ThrustLower(); }
+	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) { }
+	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) { }
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+boolean Activate(void)
+{
+	if (Args[0] == 0)
+	{
+		PlaySound('ThrustSpikeLower', CHAN_VOICE);
+		bHidden = false;
+		if (Args[1])
+			SetState(S_BTHRUSTRAISE1);
+		else
+			SetState(S_THRUSTRAISE1);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+boolean Deactivate(void)
+{
+	if (Args[0] == 1)
+	{
+		PlaySound('ThrustSpikeRaise', CHAN_VOICE);
+		if (Args[1])
+			SetState(S_BTHRUSTLOWER);
+		else
+			SetState(S_THRUSTLOWER);
+	}
+	return true;
+}
+
+defaultproperties
+{
+	Health = 1000;
+	Radius = 20.0;
+	Height = 128.0;
+	Mass = 100.0;
+	bFloorClip = true;
+	bNoTeleport = true;
+	bNoPassMobj = true;
+	bHidden = true;
+	SpawnState = S_THRUSTINIT1_1;
+	UpState = S_THRUSTINIT2_1;
+	BloodyUpState = S_BTHRUSTINIT2_1;
+	DownState = S_THRUSTINIT1_1;
+	BloodyDownState = S_BTHRUSTINIT1_1;
+}
+
+}
+
+//**************************************************************************
+//**************************************************************************
+//
+//	ThrustFloorUp
+//
+//**************************************************************************
+//**************************************************************************
+
+class ThrustFloorUp:ThrustFloorDown
+	__mobjinfo__(10091)
+{
+
+defaultproperties
+{
+	bSolid = true;
+	bHidden = false;
+	SpawnState = S_THRUSTINIT2_1;
+}
+
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.14  2002/03/02 18:00:17  dj_jl
 //  Some smaller changes, beautification.
 //

@@ -181,7 +181,6 @@ class Actor:Entity
 	bool bJustHit;		// try to attack right back
 	bool bJustAttacked;	// take at least one step before attacking
 	bool bSpawnCeiling;	// hang from ceiling instead of floor
-	bool bNoGravity;	// don't apply gravity every tic
 	// movement flags
 	bool bDropOff;		// allow jumps from high places
 	bool bPickUp;		// for players to pick up items
@@ -206,7 +205,6 @@ class Actor:Entity
 	bool bSkullFly;		// skull in flight
 
 	//  Params
-	float Mass;
 	float Speed;
 	float StepSpeed;
 	int PainChance;
@@ -239,10 +237,6 @@ class Actor:Entity
 	int MoveDir;	// 0-7
 	int MoveCount;	// when 0, select a new dir
 
-	//  Water
-	int WaterLevel;
-	int WaterType;
-
 	boolean GiveAmmo(int ammo, int num);
 	boolean GiveWeapon(int weapon, boolean dropped);
 	boolean GiveBody(int num);
@@ -262,13 +256,9 @@ class Actor:Entity
 	// Physics
 	void SlideMove(void);
 	void BounceWall(float overbounce);
-	boolean CheckWater(void);
 	boolean XYMovement(void);
 	void ZMovement(void);
-	void UpdateVelocity(void);
-	void FakeZMovement(void);
-	boolean Iter_CheckOnmobjZ(Actor thing);
-	Actor CheckOnmobj(void);
+	void ApplyFriction(void);
 	void PlayerLandedOnThing(void);
 	boolean Physics(void);
 
@@ -685,6 +675,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.25  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

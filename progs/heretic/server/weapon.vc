@@ -418,8 +418,8 @@ void FireWeapon(player_t * player)
 	if (player->Powers[pw_weaponlevel2])
 	{
 		attackState = player->Refire ?
-			Weapon(player->ViewEnts[ps_weapon]).HoldAttackState :
-			Weapon(player->ViewEnts[ps_weapon]).AttackState;
+			Weapon(player->ViewEnts[ps_weapon]).HoldAttackState2 :
+			Weapon(player->ViewEnts[ps_weapon]).AttackState2;
 	}
 	else
 	{
@@ -526,7 +526,7 @@ void Weapon::A_WeaponReady(void)
 	{
 		if (Player->Powers[pw_weaponlevel2])
 		{
-			SetPsprite(Player, ps_weapon, DownState);
+			SetPsprite(Player, ps_weapon, DownState2);
 		}
 		else
 		{
@@ -614,7 +614,7 @@ void Weapon::A_Raise(void)
 	SY = WEAPONTOP;
 	if (Player->Powers[pw_weaponlevel2])
 	{
-		SetPsprite(Player, ps_weapon, ReadyState);
+		SetPsprite(Player, ps_weapon, ReadyState2);
 	}
 	else
 	{
@@ -931,7 +931,7 @@ void Actor::A_MacePL1Check(void)
 		return;
 	}
 	Special1 = 0;
-	bLowGravity = true;
+	bNoGravity = false;
 	angle = Angles.yaw;
 	Velocity.x = 7.0 * cos(angle) * 35.0;
 	Velocity.y = 7.0 * sin(angle) * 35.0;
@@ -965,7 +965,6 @@ void Actor::A_MaceBallImpact(void)
 	{
 		// Explode
 		bNoGravity = true;
-		bLowGravity = false;
 		PlaySound('MaceHit', CHAN_VOICE);
 	}
 }
@@ -992,7 +991,6 @@ void Actor::A_MaceBallImpact2(void)
 		// Explode
 		Velocity = vector(0.0, 0.0, 0.0);
 		bNoGravity = true;
-		bLowGravity = false;
 		bFloorBounce = false;
 	}
 	else
@@ -1095,9 +1093,9 @@ void Actor::A_DeathBallImpact(void)
 		PlaySound('PlatformStop', CHAN_VOICE);
 	}
 	else
-	{	// Explode
+	{
+		// Explode
 		bNoGravity = true;
-		bLowGravity = false;
 		PlaySound('PhoenixHit', CHAN_VOICE);
 	}
 }
@@ -2272,6 +2270,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.21  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

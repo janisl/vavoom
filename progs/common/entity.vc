@@ -31,6 +31,7 @@ class Entity:MapObject
 	int NextState;
 	bool bFixedModel;
 
+	bool bNoGravity;	// don't apply gravity every tic
 	bool bNoPassMobj;	// Disable z block checking.  If on,
 						// this flag will prevent the mobj
 						// from passing over/under other mobjs.
@@ -39,54 +40,22 @@ class Entity:MapObject
 	bool bCheckLineBlocking;
 	bool bCheckLineBlockMonsters;
 
-boolean CheckPosition(TVec Pos);
-boolean CheckRelPosition(TVec Pos);
+	//  Params
+	float Mass;
 
-//==========================================================================
-//
-//  SetState
-//
-//  Returns true if the actor is still present.
-//
-//==========================================================================
+	//  Water
+	int WaterLevel;
+	int WaterType;
 
-boolean SetState(int state)
-{
-	state_t *st;
+native boolean SetState(int state);
 
-	do
-	{
-		if (!state)
-		{
-			// Remove mobj
-			StateNum = 0;
-			P_RemoveMobj(&Actor(self));
-			return false;
-		}
+native void PlaySound(name SoundName, int Channel);
+native void PlayFullVolumeSound(name SoundName, int Channel);
 
-		st = &states[state];
-		StateTime = st->time;
-		SpriteIndex = st->sprite;
-		SpriteName = sprite_names[st->sprite];
-		SpriteFrame = st->frame;
-		if (!bFixedModel)
-			ModelIndex = st->model_index;
-		ModelFrame = st->model_frame;
-		StateNum = st->statenum;
-		NextState = st->nextstate;
+native boolean CheckPosition(TVec Pos);
+native boolean CheckRelPosition(TVec Pos);
 
-		// Modified handling.
-		// Call action functions when the state is set
-		if (st->function)
-		{
-			st->function(self);
-		}
-
-		state = st->nextstate;
-	}
-	while (!StateTime);
-	return true;
-}
+native boolean CheckWater(void);
 
 //==========================================================================
 //
@@ -129,28 +98,6 @@ boolean SetStateNF(int state)
 
 //==========================================================================
 //
-//	PlaySound
-//
-//==========================================================================
-
-void PlaySound(name SoundName, int Channel)
-{
-	StartSound(self, GetSoundID(SoundName), Channel);
-}
-
-//==========================================================================
-//
-//	PlayFullVolumeSound
-//
-//==========================================================================
-
-void PlayFullVolumeSound(name SoundName, int Channel)
-{
-	StartSound(none, GetSoundID(SoundName), Channel);
-}
-
-//==========================================================================
-//
 //	Touch
 //
 //==========================================================================
@@ -172,6 +119,22 @@ void BlockedByLine(line_t * ld)
 
 //==========================================================================
 //
+//	ApplyFriction
+//
+//==========================================================================
+
+void ApplyFriction(void)
+{
+}
+
+#define GRAVITY			1225.0
+
+native void UpdateVelocity(void);
+
+native Entity CheckOnmobj(void);
+
+//==========================================================================
+//
 //
 //
 //==========================================================================
@@ -183,244 +146,6 @@ defaultproperties
 }
 
 }
-
-//**************************************************************************
-//
-//	CHECK ABSOLUTE POSITION
-//
-//**************************************************************************
-
-struct cptrace_t
-{
-	Entity Thing;
-	TVec Pos;
-	float bbox[4];
-	float FloorZ;
-	float CeilingZ;
-	float DropOffZ;
-	sec_plane_t *Floor;
-	sec_plane_t *Ceiling;
-};
-
-cptrace_t cptrace;
-
-//==========================================================================
-//
-//	PIT_CheckThing
-//
-//==========================================================================
-
-boolean PIT_CheckThing(MapObject Other)
-{
-	float blockdist;
-
-	if (!Other.bSolid)
-		return true;
-
-	blockdist = Other.Radius + cptrace.Thing.Radius;
-
-	if (fabs(Other.Origin.x - cptrace.Pos.x) >= blockdist ||
-		fabs(Other.Origin.y - cptrace.Pos.y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == cptrace.Thing)
-		return true;
-
-	if (!cptrace.Thing.bNoPassMobj)
-	{
-		// check if a mobj passed over/under another object
-/*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
-			(Other.Class == Imp || Other.Class == Wizard))
-		{
-			// don't let imps/wizards fly over other imps/wizards
-			return false;
-		}*/
-/*!		if (cptrace.Thing.Class == Bishop && Other.Class == Bishop)
-		{
-			// don't let bishops fly over other bishops
-			return false;
-		}*/
-		if (cptrace.Pos.z >= Other.Origin.z + Other.Height)
-		{
-			return true;
-		}
-		if (cptrace.Pos.z + cptrace.Thing.Height < Other.Origin.z)
-		{
-			// under thing
-			return true;
-		}
-	}
-
-//!	return Actor(Other).bNoClip;
-	return false;
-}
-
-//==========================================================================
-//
-//	PIT_CheckLine
-//
-//  Adjusts cptrace.FoorZ and cptrace.CeilingZ as lines are contacted
-//
-//==========================================================================
-
-boolean PIT_CheckLine(line_t * ld)
-{
-	TVec hit_point;
-	opening_t *open;
-
-	if (cptrace.bbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		cptrace.bbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		cptrace.bbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-		return true;
-
-	if (P_BoxOnLineSide(&cptrace.bbox[0], ld) != -1)
-		return true;
-
-	// A line has been hit
-	if (!ld->backsector)
-	{
-		// One sided line
-		return false;
-	}
-
-	if (cptrace.Thing.bCheckLineBlocking && ld->flags & ML_BLOCKING)
-	{
-		// Explicitly blocking everything
-		return false;
-	}
-
-	if (cptrace.Thing.bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
-	{
-		// Block monsters only
-		return false;
-	}
-
-	// set openrange, opentop, openbottom
-	hit_point = cptrace.Pos - (DotProduct(cptrace.Pos, ld->normal) -
-		ld->dist) * ld->normal;
-	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, cptrace.Pos.z, cptrace.Pos.z + cptrace.Thing.Height);
-
-	if (open)
-	{
-		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING)
-			&& open->top < cptrace.CeilingZ)
-		{
-			cptrace.Ceiling = open->ceiling;
-			cptrace.CeilingZ = open->top;
-		}
-
-		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > cptrace.FloorZ)
-		{
-			cptrace.Floor = open->floor;
-			cptrace.FloorZ = open->bottom;
-		}
-
-		if (open->lowfloor < cptrace.DropOffZ)
-			cptrace.DropOffZ = open->lowfloor;
-	}
-	else
-	{
-		cptrace.CeilingZ = cptrace.FloorZ;
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-//  Entity::CheckPosition
-//
-//  This is purely informative, nothing is modified
-// 
-// in:
-//  a mobj_t (can be valid or invalid)
-//  a position to be checked
-//   (doesn't need to be related to the mobj_t->x,y)
-//
-//==========================================================================
-
-boolean Entity::CheckPosition(TVec Pos)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-	subsector_t *newsubsec;
-	sec_region_t *gap;
-	sec_region_t *reg;
-
-	cptrace.Thing = self;
-
-	cptrace.Pos = Pos;
-
-	cptrace.bbox[BOXTOP] = Pos.y + Radius;
-	cptrace.bbox[BOXBOTTOM] = Pos.y - Radius;
-	cptrace.bbox[BOXRIGHT] = Pos.x + Radius;
-	cptrace.bbox[BOXLEFT] = Pos.x - Radius;
-
-	newsubsec = PointInSubsector(Pos.x, Pos.y);
-
-	// The base floor / ceiling is from the subsector that contains the point.
-	// Any contacted lines the step closer together will adjust them.
-	gap = FindThingGap(newsubsec->sector->botregion, Pos,
-		Pos.z, Pos.z + Height);
-	reg = gap;
-	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
-		reg = reg->prev;
-	cptrace.Floor = reg->floor;
-	cptrace.FloorZ = GetPlanePointZ(reg->floor, Pos);
-	cptrace.DropOffZ = cptrace.FloorZ;
-	reg = gap;
-	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
-		reg = reg->next;
-	cptrace.Ceiling = reg->ceiling;
-	cptrace.CeilingZ = GetPlanePointZ(reg->ceiling, Pos);
-
-	(*validcount)++;
-
-	// Check things first, possibly picking things up.
-	// The bounding box is extended by MAXRADIUS
-	// because mobj_ts are grouped into mapblocks
-	// based on their origin point, and can overlap
-	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - level->bmaporgy + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
-				return false;
-
-	// check lines
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - level->bmaporgx);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - level->bmaporgx);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - level->bmaporgy);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - level->bmaporgy);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
-				return false;
-
-	return true;
-}
-
-//**************************************************************************
-//
-//  MOVEMENT CLIPPING
-//
-//**************************************************************************
 
 struct tmtrace_t
 {
@@ -446,279 +171,14 @@ struct tmtrace_t
 	MapObject BlockingMobj;
 };
 
-tmtrace_t tmtrace;
-
-//==========================================================================
-//
-//	PIT_CheckRelThing
-//
-//==========================================================================
-
-boolean PIT_CheckRelThing(MapObject Other)
-{
-	float blockdist;
-
-	blockdist = Other.Radius + tmtrace.Thing.Radius;
-
-	if (fabs(Other.Origin.x - tmtrace.End.x) >= blockdist ||
-		fabs(Other.Origin.y - tmtrace.End.y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == tmtrace.Thing)
-		return true;
-
-	//if (!tmtrace.Thing.bNoPassMobj || Actor(Other).bSpecial)
-	if (!tmtrace.Thing.bNoPassMobj)
-	{
-		// check if a mobj passed over/under another object
-/*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
-			&& (Other.Class == Imp || Other.Class == Wizard))
-		{
-			// don't let imps/wizards fly over other imps/wizards
-			return false;
-		}*/
-/*		if (tmtrace.Thing.Class == Bishop && Other.Class == Bishop)
-		{
-			// don't let bishops fly over other bishops
-			return false;
-		}*/
-		if (tmtrace.Thing.Origin.z > Other.Origin.z + Other.Height)
-		{
-			return true;	// overhead
-		}
-		if (tmtrace.Thing.Origin.z + tmtrace.Thing.Height < Other.Origin.z)
-		{
-			return true;	// underneath
-		}
-	}
-
-	tmtrace.BlockingMobj = Other;
-	return tmtrace.Thing.Touch(Other);
-}
-
-//==========================================================================
-//
-//	PIT_CheckRelLine
-//
-//  Adjusts tmtrace.FloorZ and tmtrace.CeilingZ as lines are contacted
-//
-//==========================================================================
-
-boolean PIT_CheckRelLine(line_t * ld)
-{
-	TVec hit_point;
-	opening_t *open;
-
-	if (tmtrace.BBox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		tmtrace.BBox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		tmtrace.BBox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		tmtrace.BBox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-		return true;
-
-	if (P_BoxOnLineSide(&tmtrace.BBox[0], ld) != -1)
-		return true;
-
-	// A line has been hit
-
-	// The moving thing's destination position will cross
-	// the given line.
-	// If this should not be allowed, return false.
-	// If the line is special, keep track of it
-	// to process later if the move is proven ok.
-	// NOTE: specials are NOT sorted by order,
-	// so two special lines that are only 8 pixels apart
-	// could be crossed in either order.
-
-	if (!ld->backsector)
-	{
-		// One sided line
-		tmtrace.Thing.BlockedByLine(ld);
-		return false;
-	}
-
-	if (tmtrace.Thing.bCheckLineBlocking && ld->flags & ML_BLOCKING)
-	{
-		// Explicitly blocking everything
-		tmtrace.Thing.BlockedByLine(ld);
-		return false;
-	}
-
-	if (tmtrace.Thing.bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
-	{
-		// Block monsters only
-		tmtrace.Thing.BlockedByLine(ld);
-		return false;
-	}
-
-	// set openrange, opentop, openbottom
-	hit_point = tmtrace.End - (DotProduct(tmtrace.End, ld->normal) -
-		ld->dist) * ld->normal;
-	open = LineOpenings(ld, hit_point);
-	open = FindOpening(open, tmtrace.End.z,
-		tmtrace.End.z + tmtrace.Thing.Height);
-
-	if (open)
-	{
-		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING) &&
-			open->top < tmtrace.CeilingZ)
-		{
-			tmtrace.Ceiling = open->ceiling;
-			tmtrace.CeilingZ = open->top;
-			tmtrace.CeilingLine = ld;
-		}
-
-		if (!(open->floor->flags & SPF_NOBLOCKING) &&
-			open->bottom > tmtrace.FloorZ)
-		{
-			tmtrace.Floor = open->floor;
-			tmtrace.FloorZ = open->bottom;
-		}
-
-		if (open->lowfloor < tmtrace.DropOffZ)
-			tmtrace.DropOffZ = open->lowfloor;
-	}
-	else
-	{
-		tmtrace.CeilingZ = tmtrace.FloorZ;
-	}
-
-	// if contacted a special line, add it to the list
-	if (ld->special)
-	{
-		if (tmtrace.NumSpecHit >= MAXSPECIALCROSS)
-		{
-			//cond << "Spechit overflow\n";
-		}
-		else
-		{
-			tmtrace.SpecHit[tmtrace.NumSpecHit] = ld;
-			tmtrace.NumSpecHit++;
-		}
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-//  P_CheckRelPosition
-//
-//  This is purely informative, nothing is modified
-// (except things picked up).
-// 
-// in:
-//  a mobj_t (can be valid or invalid)
-//  a position to be checked
-//   (doesn't need to be related to the mobj_t->x,y)
-//
-// during:
-//  special things are touched if MF_PICKUP
-//  early out on solid lines?
-//
-// out:
-//  newsubsec
-//  floorz
-//  ceilingz
-//  tmdropoffz
-//   the lowest point contacted
-//   (monsters won't move to a dropoff)
-//  speciallines[]
-//  numspeciallines
-//
-//==========================================================================
-
-boolean Entity::CheckRelPosition(TVec Pos)
-{
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-	subsector_t *newsubsec;
-	sec_region_t *gap;
-	sec_region_t *reg;
-
-	tmtrace.Thing = self;
-
-	tmtrace.End = Pos;
-
-	tmtrace.BBox[BOXTOP] = Pos.y + Radius;
-	tmtrace.BBox[BOXBOTTOM] = Pos.y - Radius;
-	tmtrace.BBox[BOXRIGHT] = Pos.x + Radius;
-	tmtrace.BBox[BOXLEFT] = Pos.x - Radius;
-
-	newsubsec = PointInSubsector(Pos.x, Pos.y);
-	tmtrace.CeilingLine = NULL;
-
-	// The base floor / ceiling is from the subsector
-	// that contains the point.
-	// Any contacted lines the step closer together
-	// will adjust them.
-	gap = FindThingGap(newsubsec->sector->botregion, tmtrace.End,
-		tmtrace.End.z, tmtrace.End.z + Height);
-	reg = gap;
-	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
-		reg = reg->prev;
-	tmtrace.Floor = reg->floor;
-	tmtrace.FloorZ = GetPlanePointZ(reg->floor, tmtrace.End);
-	tmtrace.DropOffZ = tmtrace.FloorZ;
-	reg = gap;
-	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
-		reg = reg->next;
-	tmtrace.Ceiling = reg->ceiling;
-	tmtrace.CeilingZ = GetPlanePointZ(reg->ceiling, tmtrace.End);
-
-	(*validcount)++;
-	tmtrace.NumSpecHit = 0;
-
-	tmtrace.BlockingMobj = none;
-
-	// Check things first, possibly picking things up.
-	// The bounding box is extended by MAXRADIUS
-	// because mobj_ts are grouped into mapblocks
-	// based on their origin point, and can overlap
-	// into adjacent blocks by up to MAXRADIUS units.
-	if (bColideWithThings)
-	{
-		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx - MAXRADIUS);
-		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx + MAXRADIUS);
-		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy - MAXRADIUS);
-		yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy + MAXRADIUS);
-
-		for (bx = xl; bx <= xh; bx++)
-			for (by = yl; by <= yh; by++)
-				if (!P_BlockThingsIterator(bx, by, PIT_CheckRelThing))
-					return false;
-
-		tmtrace.BlockingMobj = none;
-	}
-
-	// check lines
-	if (bColideWithWorld)
-	{
-		xl = MapBlock(tmtrace.BBox[BOXLEFT] - level->bmaporgx);
-		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - level->bmaporgx);
-		yl = MapBlock(tmtrace.BBox[BOXBOTTOM] - level->bmaporgy);
-		yh = MapBlock(tmtrace.BBox[BOXTOP] - level->bmaporgy);
-
-		for (bx = xl; bx <= xh; bx++)
-			for (by = yl; by <= yh; by++)
-				if (!P_BlockLinesIterator(bx, by, PIT_CheckRelLine))
-					return false;
-	}
-
-	return true;
-}
+tmtrace_t *tmtrace;
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2002/03/09 17:57:00  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.8  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

@@ -39,11 +39,11 @@ float yspeed[8] =
 
 //==========================================================================
 //
-//  Actor::CheckMeleeRange
+//  Pawn::CheckMeleeRange
 //
 //==========================================================================
 
-boolean Actor::CheckMeleeRange(void)
+boolean Pawn::CheckMeleeRange(void)
 {
 	float dist;
 
@@ -75,11 +75,11 @@ boolean Actor::CheckMeleeRange(void)
 
 //==========================================================================
 //
-//  Actor::CheckMeleeRange2
+//  Pawn::CheckMeleeRange2
 //
 //==========================================================================
 
-boolean Actor::CheckMeleeRange2(void)
+boolean Pawn::CheckMeleeRange2(void)
 {
 	float dist;
 
@@ -111,11 +111,11 @@ boolean Actor::CheckMeleeRange2(void)
 
 //==========================================================================
 //
-//  Actor::CheckMissileRange
+//  Pawn::CheckMissileRange
 //
 //==========================================================================
 
-boolean Actor::CheckMissileRange(void)
+boolean Pawn::CheckMissileRange(void)
 {
 	float dist;
 
@@ -153,11 +153,11 @@ boolean Actor::CheckMissileRange(void)
 
 //==========================================================================
 //
-//  Actor::FaceMovementDirection
+//  Pawn::FaceMovementDirection
 //
 //==========================================================================
 
-void Actor::FaceMovementDirection(void)
+void Pawn::FaceMovementDirection(void)
 {
 	switch (MoveDir)
 	{
@@ -190,14 +190,14 @@ void Actor::FaceMovementDirection(void)
 
 //============================================================================
 //
-//  Actor::LookForMonsters
+//  Pawn::LookForMonsters
 //
 //============================================================================
 
 #define MONS_LOOK_RANGE (16.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
-boolean Actor::LookForMonsters(void)
+boolean Pawn::LookForMonsters(void)
 {
 	int count;
 	Actor mo;
@@ -251,14 +251,14 @@ boolean Actor::LookForMonsters(void)
 
 //============================================================================
 //
-//  Actor::LookForPlayers
+//  Pawn::LookForPlayers
 //
 //  If allaround is false, only look 180 degrees in front
 //  returns true if a player is targeted
 //
 //============================================================================
 
-boolean Actor::LookForPlayers(boolean allaround)
+boolean Pawn::LookForPlayers(boolean allaround)
 {
 	int c;
 	int stop;
@@ -334,13 +334,13 @@ boolean Actor::LookForPlayers(boolean allaround)
 
 //==========================================================================
 //
-//  Actor::StepMove
+//  Pawn::StepMove
 //
 //  Move in the current direction, returns false if the move is blocked.
 //
 //==========================================================================
 
-boolean Actor::StepMove(void)
+boolean Pawn::StepMove(void)
 {
 	float tryx;
 	float tryy;
@@ -376,14 +376,14 @@ boolean Actor::StepMove(void)
 			return true;
 		}
 
-		if (!tmtrace.NumSpecHit)
+		if (!tmtrace->NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (tmtrace.NumSpecHit--)
+		while (tmtrace->NumSpecHit--)
 		{
-			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -412,7 +412,7 @@ boolean Actor::StepMove(void)
 
 //==========================================================================
 //
-//  Actor::TryWalk
+//  Pawn::TryWalk
 //
 //  Attempts to move actor in its current (ob->moveangle) direction.
 //  If blocked by either a wall or an actor returns FALSE.
@@ -421,7 +421,7 @@ boolean Actor::StepMove(void)
 //
 //==========================================================================
 
-boolean Actor::TryWalk(void)
+boolean Pawn::TryWalk(void)
 {
 	if (!StepMove())
 	{
@@ -433,11 +433,11 @@ boolean Actor::TryWalk(void)
 
 //============================================================================
 //
-//  Actor::NewChaseDir
+//  Pawn::NewChaseDir
 //
 //============================================================================
 
-void Actor::NewChaseDir(void)
+void Pawn::NewChaseDir(void)
 {
 	float deltax, deltay;
 	int d[3];
@@ -583,7 +583,6 @@ Actor Actor::RoughBlockCheck(int index)
 					return link;
 				}
 			}
-			link = Actor(link.BlockMapNext);
 		}
 		else if (Class == Minotaur)	// looking around minotaur
 		{
@@ -611,11 +610,10 @@ Actor Actor::RoughBlockCheck(int index)
 					return link;
 				}
 			}
-			link = Actor(link.BlockMapNext);
 		}
 		else if (Class == MageStaffFX2)	// bloodscourge
 		{
-			if ((link.bCountKill || (link.bIsPlayer && link != Owner)) &&
+			if ((link.bCountKill || link.bIsPlayer) && link != Owner &&
 				!link.bDormant)
 			{
 				if (!link.bShootable)
@@ -639,12 +637,10 @@ Actor Actor::RoughBlockCheck(int index)
 					}
 				}
 			}
-			link = Actor(link.BlockMapNext);
 		}
 		else	// spirits
 		{
-			if ((link.bCountKill || (link.bIsPlayer && link != Owner)) &&
-				!link.bDormant)
+			if ((link.bCountKill || link.bIsPlayer) && !link.bDormant)
 			{
 				if (!link.bShootable)
 				{
@@ -794,6 +790,9 @@ Actor Actor::RoughMonsterSearch(int distance)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.17  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

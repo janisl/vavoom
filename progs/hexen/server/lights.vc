@@ -204,10 +204,10 @@ boolean EV_SpawnLight(line_t * line, int *arg, int type)
 	arg3 = arg[3];
 	arg4 = arg[4];
 
-	secNum = -1;
 	rtn = false;
 	think = false;
-	while ((secNum = FindSectorFromTag(arg[0], secNum)) >= 0)
+	for (secNum = FindSectorFromTag(arg[0], -1); secNum >= 0;
+		secNum = FindSectorFromTag(arg[0], secNum))
 	{
 		think = false;
 		sec = &level->sectors[secNum];
@@ -499,6 +499,9 @@ class misc_static_rgb_light:Actor
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.12  2002/03/02 18:00:15  dj_jl
 //  Some smaller changes, beautification.
 //

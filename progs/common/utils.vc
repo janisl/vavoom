@@ -342,7 +342,7 @@ boolean TraceLine(TVec start, TVec end)
 
 	linestart = trace_start;
 	if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
-			TraceTraverse))
+			'TraceTraverse'))
 	{
 		lineend = end;
 		return TraceCheckPlanes(PointInSubsector(end.x, end.y)->sector);
@@ -447,6 +447,9 @@ class SectorThinker:Thinker
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.22  2002/02/14 19:20:54  dj_jl
 //  Renamed Entity properties to new naming style
 //

@@ -1015,7 +1015,7 @@ boolean BotPlayer::CheckPath(float ang, float dist)
 
 	P_UseLines(player);
 
-	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_BotPathTraverse))
+	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_BotPathTraverse'))
 		return false;
 	else
 		return true;
@@ -2241,6 +2241,9 @@ void BotPlayer::OnSpawn(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.4  2002/02/26 17:49:48  dj_jl
 //  no message
 //

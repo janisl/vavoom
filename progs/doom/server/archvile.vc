@@ -124,7 +124,7 @@ void Actor::A_VileChase(void)
 			{
 				// Call PIT_VileCheck to check whether object is a corpse
 				// that canbe raised.
-				if (!P_BlockThingsIterator(bx, by, PIT_VileCheck))
+				if (!P_BlockThingsIterator(bx, by, 'PIT_VileCheck'))
 				{
 					// got one!
 					temp = Target;
@@ -323,6 +323,9 @@ void Actor::A_FireCrackle(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.20  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //

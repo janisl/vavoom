@@ -147,6 +147,7 @@ boolean UndoPlayerMorph(player_t * player)
 		player->MorphTics = 2 * 35;
 		return false;
 	}
+	P_SetThingPosition(*pmo);
 	pmo->SetState(S_FREETARGMOBJ);
 	SetPlayerColor(player);
 	mo->Angles.yaw = angle;
@@ -343,14 +344,14 @@ mobj_t *SpawnSpeedMobj(mobj_t * pmo)
 
 void ArtiPig(mobj_t * mo)
 {
-	mo->SpawnPlayerMissile(EggMissile);
-	mo->SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(*mo).SpawnPlayerMissile(EggMissile);
+	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw - 45.0 / 6.0));
-	mo->SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw + 45.0 / 6.0));
-	mo->SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw - 45.0 / 3.0));
-	mo->SpawnPlayerMissileAngle(EggMissile,
+	PlayerPawn(*mo).SpawnPlayerMissileAngle(EggMissile,
 		AngleMod360(mo->Angles.yaw + 45.0 / 3.0));
 }
 
@@ -364,7 +365,7 @@ void ArtiSummon(player_t * player)
 {
 	Actor mo;
 
-	mo = player->mo->SpawnPlayerMissile(SummonMissile);
+	mo = PlayerPawn(*player->mo).SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
 		mo.Owner = *player->mo;
@@ -438,7 +439,7 @@ void ArtiTeleportOther(player_t * player)
 {
 	Actor mo;
 
-	mo = player->mo->SpawnPlayerMissile(TeleportOtherFX1);
+	mo = PlayerPawn(*player->mo).SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
 		mo.Owner = *player->mo;
@@ -658,6 +659,9 @@ boolean G_CheckSpot(int playernum, mthing_t * mthing)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.23  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

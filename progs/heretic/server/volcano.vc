@@ -89,7 +89,6 @@ void Actor::A_VolcBallImpact(void)
 	if (Origin.z <= FloorZ)
 	{
 		bNoGravity = true;
-		bLowGravity = false;
 		Origin.z += 28.0;
 	}
 	P_RadiusAttack(this, &Owner, 25, 0, 0);
@@ -109,6 +108,9 @@ void Actor::A_VolcBallImpact(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.15  2002/02/26 17:49:48  dj_jl
 //  no message
 //

@@ -118,7 +118,8 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	polyobj_t *poly;
 
 	polyNum = args[0];
-	if ((poly = GetPolyobj(polyNum)))
+	poly = GetPolyobj(polyNum);
+	if (poly)
 	{
 		if (poly->SpecialData && !overRide)
 		{	// poly is already moving
@@ -154,7 +155,8 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 	poly->SpecialData = pe;
 	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
-	while ((mirror = GetPolyobjMirror(polyNum)))
+	for (mirror = GetPolyobjMirror(polyNum); mirror;
+		mirror = GetPolyobjMirror(polyNum))
 	{
 		poly = GetPolyobj(mirror);
 		if (poly && poly->SpecialData && !overRide)
@@ -179,7 +181,8 @@ boolean EV_RotatePoly(line_t * line, int *args, int direction, boolean
 		{
 			pe.dist = 360.0;
 		}
-		if ((poly = GetPolyobj(polyNum)))
+		poly = GetPolyobj(polyNum);
+		if (poly)
 		{
 			poly->SpecialData = pe;
 		}
@@ -264,7 +267,8 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	float an;
 
 	polyNum = args[0];
-	if ((poly = GetPolyobj(polyNum)))
+	poly = GetPolyobj(polyNum);
+	if (poly)
 	{
 		if (poly->SpecialData && !overRide)
 		{	// poly is already moving
@@ -297,7 +301,8 @@ boolean EV_MovePoly(line_t * line, int *args, boolean timesEight, boolean
 	pe.angle = an;
 	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
 
-	while ((mirror = GetPolyobjMirror(polyNum)))
+	for (mirror = GetPolyobjMirror(polyNum); mirror;
+		mirror = GetPolyobjMirror(polyNum))
 	{
 		poly = GetPolyobj(mirror);
 		if (poly && poly->SpecialData && !overRide)
@@ -481,7 +486,8 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 	float an = 0.0;
 
 	polyNum = args[0];
-	if ((poly = GetPolyobj(polyNum)))
+	poly = GetPolyobj(polyNum);
+	if (poly)
 	{
 		if (poly->SpecialData)
 		{	// poly is already moving
@@ -525,7 +531,8 @@ boolean EV_OpenPolyDoor(line_t * line, int *args, int type)
 
 	poly->SpecialData = pd;
 
-	while ((mirror = GetPolyobjMirror(polyNum)))
+	for (mirror = GetPolyobjMirror(polyNum); mirror;
+		mirror = GetPolyobjMirror(polyNum))
 	{
 		poly = GetPolyobj(mirror);
 		if (poly && poly->SpecialData)
@@ -639,6 +646,9 @@ boolean PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.18  2002/03/02 18:00:16  dj_jl
 //  Some smaller changes, beautification.
 //

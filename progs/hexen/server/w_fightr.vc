@@ -542,7 +542,7 @@ void A_FHammerThrow(void)
 	}
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->mo->SpawnPlayerMissile(HammerMissile);
+	PlayerPawn(*Player->mo).SpawnPlayerMissile(HammerMissile);
 }
 
 __states__
@@ -596,7 +596,7 @@ class WeaponFighterSword:Weapon
 
 void A_FSwordAttack(void)
 {
-	Actor Owner = *Player->mo;
+	PlayerPawn Owner = PlayerPawn(*Player->mo);
 
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
@@ -682,6 +682,9 @@ void Actor::A_FSwordFlames(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.17  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

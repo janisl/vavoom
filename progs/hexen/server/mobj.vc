@@ -166,12 +166,6 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 			bCheckLineBlockMonsters = true;
 		}
 	}
-	if (gameskill == sk_nightmare)
-	{
-		ReactionCount = 0;
-	}
-
-	LastLook = P_Random() % MAXPLAYERS;
 
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
@@ -264,6 +258,29 @@ void Actor::OnMapSpawn(mthing_t * mthing)
 	{
 		SetOrigin2(Origin);
 	}
+}
+
+//==========================================================================
+//
+//	Pawn::OnMapSpawn
+//
+//==========================================================================
+
+void Pawn::OnMapSpawn(mthing_t * mthing)
+{
+	if (bCheckNoMonsters && nomonsters)
+	{
+		RemoveMobjThinker(self);
+		return;
+	}
+	if (gameskill == sk_nightmare)
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+
+	::OnMapSpawn(mthing);
 }
 
 //==========================================================================
@@ -610,11 +627,11 @@ Actor Actor::ActiveMinotaur(void)
 
 //==========================================================================
 //
-//  Actor::KilledBy
+//  Actor::Died
 //
 //==========================================================================
 
-void Actor::KilledBy(Actor source)
+void Actor::Died(Actor source)
 {
 	int dummy[5];
 	mobj_t *master;
@@ -1289,7 +1306,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			// Always extreme death from fourth weapon
 			Health = -5000;
 		}
-		KilledBy(source);
+		Died(source);
 		return;
 	}
 	if ((P_Random() < PainChance) && !bSkullFly)
@@ -1337,8 +1354,13 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			}
 		}
 	}
-	ReactionCount = 0;	// we're awake now...
-	if (!Threshold && source && !source.bBoss &&
+	//FIXME
+	if (!Pawn(self))
+	{
+		return;
+	}
+	Pawn(self).ReactionCount = 0;	// we're awake now...
+	if (!Pawn(self).Threshold && source && !source.bBoss &&
 		!(Class == Bishop) && !(Class == Minotaur))
 	{
 		// Target actor is not intent on another actor,
@@ -1349,7 +1371,7 @@ void Actor::Damage(Actor inflictor, Actor source, int damage)
 			return;
 		}
 		Target = source;
-		Threshold = BASETHRESHOLD;
+		Pawn(self).Threshold = BASETHRESHOLD;
 		if (StateNum == SpawnState && SeeState != S_NULL)
 		{
 			SetState(SeeState);
@@ -1472,7 +1494,7 @@ void Actor::PoisonDamage(Actor source, int damage, boolean playPainSound)
 				bIceDamage = true;
 			}
 		}
-		KilledBy(source);
+		Died(source);
 		return;
 	}
 	if (!(level->tictime & 63) && playPainSound)
@@ -1565,74 +1587,6 @@ void Actor::SpawnRipperBlood(void)
 	th.Velocity.x = Velocity.x / 2.0;
 	th.Velocity.y = Velocity.y / 2.0;
 	th.StateTime += Random() * 0.1;
-}
-
-//============================================================================
-//
-//  Actor::SinkIntoFloor
-//
-//  Sink a mobj incrementally into the floor
-//
-//============================================================================
-
-boolean Actor::SinkIntoFloor(void)
-{
-	if (FloorClip < Height)
-	{
-		switch (Class)
-		{
-		case ThrustFloorDown:
-		case ThrustFloorUp:
-			FloorClip += 6.0;
-			break;
-		default:
-			FloorClip += 1.0;
-			break;
-		}
-		return false;
-	}
-	return true;
-}
-
-//============================================================================
-//
-//  Actor::RaiseFromFloor
-//
-//  Raise a mobj incrementally from the floor to
-// 
-//============================================================================
-
-boolean Actor::RaiseFromFloor(void)
-{
-	boolean done = true;
-
-	// Raise a mobj from the ground
-	if (FloorClip > 0.0)
-	{
-		switch (Class)
-		{
-		case WraithBuried:
-			FloorClip -= 2.0;
-			break;
-		case ThrustFloorDown:
-		case ThrustFloorUp:
-			FloorClip -= itof(_Special2);
-			break;
-		default:
-			FloorClip -= 2.0;
-			break;
-		}
-		if (FloorClip <= 0.0)
-		{
-			FloorClip = 0.0;
-			done = true;
-		}
-		else
-		{
-			done = false;
-		}
-	}
-	return done;	// Reached target height
 }
 
 //============================================================================
@@ -2194,6 +2148,9 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.37  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

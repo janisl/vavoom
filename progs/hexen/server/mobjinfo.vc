@@ -44,7 +44,6 @@ class MapSpot:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -68,7 +67,6 @@ class MapSpotGravity:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bNoPassMobj = true;
 		SpawnState = S_MAPSPOT;
@@ -90,7 +88,6 @@ class FireBall1:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 70.0;
-		ReactionCount = 8;
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -120,7 +117,6 @@ class Arrow:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		Speed = 210.0;
-		ReactionCount = 8;
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -147,7 +143,6 @@ class Dart:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		Speed = 210.0;
-		ReactionCount = 8;
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -174,7 +169,6 @@ class PoisonDart:Actor
 		Height = 4.0;
 		Mass = 100.0;
 		Speed = 210.0;
-		ReactionCount = 8;
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -201,7 +195,6 @@ class RipperBall:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 210.0;
-		ReactionCount = 8;
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -229,7 +222,6 @@ class ProjectileBlade:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 210.0;
-		ReactionCount = 8;
 		MissileDamage = 3;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -256,7 +248,6 @@ class IceShard:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 875.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -286,7 +277,6 @@ class FlameSmallTemp:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_FLAME_TSMALL1;
@@ -308,7 +298,6 @@ class FlameLargeTemp:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_FLAME_TLARGE1;
@@ -337,7 +326,6 @@ class FlameSmall:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -367,7 +355,6 @@ class FlameLarge:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -381,7 +368,7 @@ class FlameLarge:Actor
 //
 //==========================================================================
 
-class ItemHealingBottle:Actor
+class ItemHealingBottle:Pickup
 	__mobjinfo__(81)
 {
 	defaultproperties
@@ -390,9 +377,6 @@ class ItemHealingBottle:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ITEM_PTN1_1;
 	}
@@ -404,7 +388,7 @@ class ItemHealingBottle:Actor
 //
 //==========================================================================
 
-class ArtifactHealthFlask:Actor
+class ArtifactHealthFlask:Pickup
 	__mobjinfo__(82)
 {
 	defaultproperties
@@ -413,9 +397,6 @@ class ArtifactHealthFlask:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_PTN2_1;
 	}
@@ -427,7 +408,7 @@ class ArtifactHealthFlask:Actor
 //
 //==========================================================================
 
-class ArtifactFly:Actor
+class ArtifactFly:Pickup
 	__mobjinfo__(83)
 {
 	defaultproperties
@@ -436,9 +417,6 @@ class ArtifactFly:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_SOAR1;
 	}
@@ -450,7 +428,7 @@ class ArtifactFly:Actor
 //
 //==========================================================================
 
-class ArtifactInvulnerability:Actor
+class ArtifactInvulnerability:Pickup
 	__mobjinfo__(84)
 {
 	defaultproperties
@@ -459,9 +437,6 @@ class ArtifactInvulnerability:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_INVU1;
 	}
@@ -473,7 +448,7 @@ class ArtifactInvulnerability:Actor
 //
 //==========================================================================
 
-class ArtifactSummonMaulator:Actor
+class ArtifactSummonMaulator:Pickup
 	__mobjinfo__(86)
 {
 	defaultproperties
@@ -482,9 +457,6 @@ class ArtifactSummonMaulator:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_SUMMON;
 	}
@@ -505,7 +477,6 @@ class SummonMissile:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -515,53 +486,8 @@ class SummonMissile:Actor
 	}
 };
 
-//==========================================================================
-//
-//	ThrustFloorUp
-//
-//==========================================================================
-
-class ThrustFloorUp:Actor
-	__mobjinfo__(10091)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bSolid = true;
-		bFloorClip = true;
-		bNoTeleport = true;
-		bNoPassMobj = true;
-		SpawnState = S_THRUSTINIT2_1;
-	}
-};
-
-//==========================================================================
-//
-//	ThrustFloorDown
-//
-//==========================================================================
-
-class ThrustFloorDown:Actor
-	__mobjinfo__(10090)
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 20.0;
-		Height = 128.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		Translucency = 100;
-		bFloorClip = true;
-		bNoTeleport = true;
-		bNoPassMobj = true;
-		SpawnState = S_THRUSTINIT1_1;
-	}
-};
+class ThrustFloorUp;
+class ThrustFloorDown;
 
 //==========================================================================
 //
@@ -569,7 +495,7 @@ class ThrustFloorDown:Actor
 //
 //==========================================================================
 
-class ArtifactTeleportOther:Actor
+class ArtifactTeleportOther:Pickup
 	__mobjinfo__(10040)
 {
 	defaultproperties
@@ -578,9 +504,6 @@ class ArtifactTeleportOther:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_TELOTHER1;
 	}
@@ -601,7 +524,6 @@ class TeleportOtherFX1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
 		MissileDamage = 10001;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -628,7 +550,6 @@ class TeleportOtherFX2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 560.0;
-		ReactionCount = 8;
 		MissileDamage = 10001;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -655,7 +576,6 @@ class TeleportOtherFX3:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 560.0;
-		ReactionCount = 8;
 		MissileDamage = 10001;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -682,7 +602,6 @@ class TeleportOtherFX4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 560.0;
-		ReactionCount = 8;
 		MissileDamage = 10001;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -709,7 +628,6 @@ class TeleportOtherFX5:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 560.0;
-		ReactionCount = 8;
 		MissileDamage = 10001;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -735,7 +653,6 @@ class Dirt1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -759,7 +676,6 @@ class Dirt2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -783,7 +699,6 @@ class Dirt3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -806,12 +721,10 @@ class Dirt4:Actor
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_DIRT4_1;
 		DeathState = S_DIRT4_D;
@@ -831,12 +744,10 @@ class Dirt5:Actor
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_DIRT5_1;
 		DeathState = S_DIRT5_D;
@@ -856,12 +767,10 @@ class Dirt6:Actor
 		Health = 1000;
 		Radius = 20.0;
 		Height = 16.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_DIRT6_1;
 		DeathState = S_DIRT6_D;
@@ -882,7 +791,6 @@ class DirtClump:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
@@ -904,7 +812,6 @@ class Rock1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -928,7 +835,6 @@ class Rock2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -952,7 +858,6 @@ class Rock3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -977,7 +882,6 @@ class FogSpawner:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bHidden = true;
 		bNoBlockmap = true;
@@ -1003,7 +907,6 @@ class FogPatchSmall:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 35.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1033,7 +936,6 @@ class FogPatchMedium:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 35.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1063,7 +965,6 @@ class FogPatchLarge:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 35.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1091,7 +992,6 @@ class QuakeFocus:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bHidden = true;
 		bNoBlockmap = true;
@@ -1114,7 +1014,6 @@ class StainedGlassShard1:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1140,7 +1039,6 @@ class StainedGlassShard2:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1166,7 +1064,6 @@ class StainedGlassShard3:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1192,7 +1089,6 @@ class StainedGlassShard4:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1218,7 +1114,6 @@ class StainedGlassShard5:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1244,7 +1139,6 @@ class StainedGlassShard6:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1270,7 +1164,6 @@ class StainedGlassShard7:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1296,7 +1189,6 @@ class StainedGlassShard8:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1322,7 +1214,6 @@ class StainedGlassShard9:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1348,7 +1239,6 @@ class StainedGlassShard0:Actor
 		Radius = 5.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -1366,7 +1256,7 @@ class StainedGlassShard0:Actor
 //
 //==========================================================================
 
-class ArtifactEgg:Actor
+class ArtifactEgg:Pickup
 	__mobjinfo__(30)
 {
 	defaultproperties
@@ -1375,9 +1265,6 @@ class ArtifactEgg:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_EGGC1;
 	}
@@ -1398,7 +1285,6 @@ class EggMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 630.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -1416,7 +1302,7 @@ class EggMissile:Actor
 //
 //==========================================================================
 
-class ArtifactSuperHeal:Actor
+class ArtifactSuperHeal:Pickup
 	__mobjinfo__(32)
 {
 	defaultproperties
@@ -1425,9 +1311,6 @@ class ArtifactSuperHeal:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_SPHL1;
 	}
@@ -1448,7 +1331,6 @@ class ZWingedStatueNoSkull:Actor
 		Radius = 10.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZWINGEDSTATUENOSKULL;
@@ -1470,7 +1352,6 @@ class ZGemPedestal:Actor
 		Radius = 10.0;
 		Height = 40.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZGEMPEDESTAL1;
@@ -1483,7 +1364,7 @@ class ZGemPedestal:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleSkull:Actor
+class ArtifactPuzzleSkull:Pickup
 	__mobjinfo__(9002)
 {
 	defaultproperties
@@ -1492,10 +1373,7 @@ class ArtifactPuzzleSkull:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZSKULL;
 	}
 };
@@ -1506,7 +1384,7 @@ class ArtifactPuzzleSkull:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemBig:Actor
+class ArtifactPuzzleGemBig:Pickup
 	__mobjinfo__(9003)
 {
 	defaultproperties
@@ -1515,10 +1393,7 @@ class ArtifactPuzzleGemBig:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMBIG;
 	}
 };
@@ -1529,7 +1404,7 @@ class ArtifactPuzzleGemBig:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemRed:Actor
+class ArtifactPuzzleGemRed:Pickup
 	__mobjinfo__(9004)
 {
 	defaultproperties
@@ -1538,10 +1413,7 @@ class ArtifactPuzzleGemRed:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMRED;
 	}
 };
@@ -1552,7 +1424,7 @@ class ArtifactPuzzleGemRed:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemGreen1:Actor
+class ArtifactPuzzleGemGreen1:Pickup
 	__mobjinfo__(9005)
 {
 	defaultproperties
@@ -1561,10 +1433,7 @@ class ArtifactPuzzleGemGreen1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMGREEN1;
 	}
 };
@@ -1575,7 +1444,7 @@ class ArtifactPuzzleGemGreen1:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemGreen2:Actor
+class ArtifactPuzzleGemGreen2:Pickup
 	__mobjinfo__(9009)
 {
 	defaultproperties
@@ -1584,10 +1453,7 @@ class ArtifactPuzzleGemGreen2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMGREEN2;
 	}
 };
@@ -1598,7 +1464,7 @@ class ArtifactPuzzleGemGreen2:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemBlue1:Actor
+class ArtifactPuzzleGemBlue1:Pickup
 	__mobjinfo__(9006)
 {
 	defaultproperties
@@ -1607,10 +1473,7 @@ class ArtifactPuzzleGemBlue1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMBLUE1;
 	}
 };
@@ -1621,7 +1484,7 @@ class ArtifactPuzzleGemBlue1:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGemBlue2:Actor
+class ArtifactPuzzleGemBlue2:Pickup
 	__mobjinfo__(9010)
 {
 	defaultproperties
@@ -1630,10 +1493,7 @@ class ArtifactPuzzleGemBlue2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEMBLUE2;
 	}
 };
@@ -1644,7 +1504,7 @@ class ArtifactPuzzleGemBlue2:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleBook1:Actor
+class ArtifactPuzzleBook1:Pickup
 	__mobjinfo__(9007)
 {
 	defaultproperties
@@ -1653,10 +1513,7 @@ class ArtifactPuzzleBook1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZBOOK1;
 	}
 };
@@ -1667,7 +1524,7 @@ class ArtifactPuzzleBook1:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleBook2:Actor
+class ArtifactPuzzleBook2:Pickup
 	__mobjinfo__(9008)
 {
 	defaultproperties
@@ -1676,10 +1533,7 @@ class ArtifactPuzzleBook2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZBOOK2;
 	}
 };
@@ -1690,7 +1544,7 @@ class ArtifactPuzzleBook2:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleSkull2:Actor
+class ArtifactPuzzleSkull2:Pickup
 	__mobjinfo__(9014)
 {
 	defaultproperties
@@ -1699,10 +1553,7 @@ class ArtifactPuzzleSkull2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZSKULL2;
 	}
 };
@@ -1713,7 +1564,7 @@ class ArtifactPuzzleSkull2:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleFWeapon:Actor
+class ArtifactPuzzleFWeapon:Pickup
 	__mobjinfo__(9015)
 {
 	defaultproperties
@@ -1722,10 +1573,7 @@ class ArtifactPuzzleFWeapon:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZFWEAPON;
 	}
 };
@@ -1736,7 +1584,7 @@ class ArtifactPuzzleFWeapon:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleCWeapon:Actor
+class ArtifactPuzzleCWeapon:Pickup
 	__mobjinfo__(9016)
 {
 	defaultproperties
@@ -1745,10 +1593,7 @@ class ArtifactPuzzleCWeapon:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZCWEAPON;
 	}
 };
@@ -1759,7 +1604,7 @@ class ArtifactPuzzleCWeapon:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleMWeapon:Actor
+class ArtifactPuzzleMWeapon:Pickup
 	__mobjinfo__(9017)
 {
 	defaultproperties
@@ -1768,10 +1613,7 @@ class ArtifactPuzzleMWeapon:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZMWEAPON;
 	}
 };
@@ -1782,7 +1624,7 @@ class ArtifactPuzzleMWeapon:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGear:Actor
+class ArtifactPuzzleGear:Pickup
 	__mobjinfo__(9018)
 {
 	defaultproperties
@@ -1791,10 +1633,7 @@ class ArtifactPuzzleGear:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEAR_1;
 	}
 };
@@ -1805,7 +1644,7 @@ class ArtifactPuzzleGear:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGear2:Actor
+class ArtifactPuzzleGear2:Pickup
 	__mobjinfo__(9019)
 {
 	defaultproperties
@@ -1814,10 +1653,7 @@ class ArtifactPuzzleGear2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEAR2_1;
 	}
 };
@@ -1828,7 +1664,7 @@ class ArtifactPuzzleGear2:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGear3:Actor
+class ArtifactPuzzleGear3:Pickup
 	__mobjinfo__(9020)
 {
 	defaultproperties
@@ -1837,10 +1673,7 @@ class ArtifactPuzzleGear3:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEAR3_1;
 	}
 };
@@ -1851,7 +1684,7 @@ class ArtifactPuzzleGear3:Actor
 //
 //==========================================================================
 
-class ArtifactPuzzleGear4:Actor
+class ArtifactPuzzleGear4:Pickup
 	__mobjinfo__(9021)
 {
 	defaultproperties
@@ -1860,10 +1693,7 @@ class ArtifactPuzzleGear4:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARTIPUZZGEAR4_1;
 	}
 };
@@ -1874,7 +1704,7 @@ class ArtifactPuzzleGear4:Actor
 //
 //==========================================================================
 
-class ArtifactTorch:Actor
+class ArtifactTorch:Pickup
 	__mobjinfo__(33)
 {
 	defaultproperties
@@ -1883,9 +1713,6 @@ class ArtifactTorch:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_TRCH1;
 	}
@@ -1905,7 +1732,6 @@ class FireBomb:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -1921,7 +1747,7 @@ class FireBomb:Actor
 //
 //==========================================================================
 
-class ArtifactTeleport:Actor
+class ArtifactTeleport:Pickup
 	__mobjinfo__(36)
 {
 	defaultproperties
@@ -1930,9 +1756,6 @@ class ArtifactTeleport:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_ATLP1;
 	}
@@ -1944,7 +1767,7 @@ class ArtifactTeleport:Actor
 //
 //==========================================================================
 
-class ArtifactFlechette:Actor
+class ArtifactFlechette:Pickup
 	__mobjinfo__(8000)
 {
 	defaultproperties
@@ -1953,9 +1776,6 @@ class ArtifactFlechette:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_PSBG1;
 	}
@@ -1975,7 +1795,6 @@ class PoisonBag:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -1997,7 +1816,6 @@ class PoisonCloud:Actor
 		Radius = 1.0;
 		Height = 1.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -2026,7 +1844,6 @@ class ThrowingBomb:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 420.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -2045,7 +1862,7 @@ class ThrowingBomb:Actor
 //
 //==========================================================================
 
-class ArtifactSpeedBoots:Actor
+class ArtifactSpeedBoots:Pickup
 	__mobjinfo__(8002)
 {
 	defaultproperties
@@ -2054,9 +1871,6 @@ class ArtifactSpeedBoots:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_BOOTS1;
 	}
@@ -2068,7 +1882,7 @@ class ArtifactSpeedBoots:Actor
 //
 //==========================================================================
 
-class ArtifactBoostMana:Actor
+class ArtifactBoostMana:Pickup
 	__mobjinfo__(8003)
 {
 	defaultproperties
@@ -2077,9 +1891,6 @@ class ArtifactBoostMana:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_MANA;
 	}
@@ -2091,7 +1902,7 @@ class ArtifactBoostMana:Actor
 //
 //==========================================================================
 
-class ArtifactBoostArmor:Actor
+class ArtifactBoostArmor:Pickup
 	__mobjinfo__(8041)
 {
 	defaultproperties
@@ -2100,9 +1911,6 @@ class ArtifactBoostArmor:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_ARMOR1;
 	}
@@ -2114,7 +1922,7 @@ class ArtifactBoostArmor:Actor
 //
 //==========================================================================
 
-class ArtifactBlastRadius:Actor
+class ArtifactBlastRadius:Pickup
 	__mobjinfo__(10110)
 {
 	defaultproperties
@@ -2123,9 +1931,6 @@ class ArtifactBlastRadius:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_BLAST1;
 	}
@@ -2137,7 +1942,7 @@ class ArtifactBlastRadius:Actor
 //
 //==========================================================================
 
-class ArtifactHealRadius:Actor
+class ArtifactHealRadius:Pickup
 	__mobjinfo__(10120)
 {
 	defaultproperties
@@ -2146,9 +1951,6 @@ class ArtifactHealRadius:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_ARTI_HEALRAD1;
 	}
@@ -2167,12 +1969,10 @@ class Splash:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bCannotPush = true;
 		SpawnState = S_SPLASH1;
@@ -2194,7 +1994,6 @@ class SplashBase:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SPLASHBASE1;
@@ -2215,7 +2014,6 @@ class LavaSplash:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_LAVASPLASH1;
@@ -2236,7 +2034,6 @@ class LavaSmoke:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -2258,12 +2055,10 @@ class SludgeChunk:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bCannotPush = true;
 		SpawnState = S_SLUDGECHUNK1;
@@ -2285,7 +2080,6 @@ class SludgeSplash:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_SLUDGESPLASH1;
@@ -2307,7 +2101,6 @@ class ZWingedStatue:Actor
 		Radius = 10.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZWINGEDSTATUE1;
@@ -2329,7 +2122,6 @@ class ZRock1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCK1_1;
 	}
@@ -2350,7 +2142,6 @@ class ZRock2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCK2_1;
 	}
@@ -2371,7 +2162,6 @@ class ZRock3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCK3_1;
 	}
@@ -2392,7 +2182,6 @@ class ZRock4:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCK4_1;
@@ -2421,7 +2210,6 @@ class ZChandelier:Actor
 		Radius = 20.0;
 		Height = 60.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -2444,7 +2232,6 @@ class ZChandelierUnlit:Actor
 		Radius = 20.0;
 		Height = 60.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -2467,7 +2254,6 @@ class ZTreeDead:Actor
 		Radius = 10.0;
 		Height = 96.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREEDEAD1;
@@ -2489,7 +2275,6 @@ class ZTree:Actor
 		Radius = 15.0;
 		Height = 128.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREE;
@@ -2511,7 +2296,6 @@ class TreeDestructible:Actor
 		Radius = 15.0;
 		Height = 180.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -2537,7 +2321,6 @@ class ZTreeSwamp1:Actor
 		Radius = 10.0;
 		Height = 150.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREESWAMP182_1;
@@ -2559,7 +2342,6 @@ class ZTreeSwamp2:Actor
 		Radius = 10.0;
 		Height = 120.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREESWAMP172_1;
@@ -2581,7 +2363,6 @@ class ZStumpBurned:Actor
 		Radius = 12.0;
 		Height = 20.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTUMPBURNED1;
@@ -2603,7 +2384,6 @@ class ZStumpBare:Actor
 		Radius = 12.0;
 		Height = 20.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTUMPBARE1;
@@ -2625,7 +2405,6 @@ class ZStumpSwamp1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTUMPSWAMP1_1;
 	}
@@ -2646,7 +2425,6 @@ class ZStumpSwamp2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTUMPSWAMP2_1;
 	}
@@ -2667,7 +2445,6 @@ class ZShroomLarge1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMLARGE1_1;
 	}
@@ -2688,7 +2465,6 @@ class ZShroomLarge2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMLARGE2_1;
 	}
@@ -2709,7 +2485,6 @@ class ZShroomLarge3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMLARGE3_1;
 	}
@@ -2730,7 +2505,6 @@ class ZShroomSmall1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMSMALL1_1;
 	}
@@ -2751,7 +2525,6 @@ class ZShroomSmall2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMSMALL2_1;
 	}
@@ -2772,7 +2545,6 @@ class ZShroomSmall3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMSMALL3_1;
 	}
@@ -2793,7 +2565,6 @@ class ZShroomSmall4:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMSMALL4_1;
 	}
@@ -2814,7 +2585,6 @@ class ZShroomSmall5:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZSHROOMSMALL5_1;
 	}
@@ -2835,7 +2605,6 @@ class ZStalagmitePillar:Actor
 		Radius = 8.0;
 		Height = 138.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEPILLAR1;
@@ -2857,7 +2626,6 @@ class ZStalagmiteLarge:Actor
 		Radius = 8.0;
 		Height = 48.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITELARGE1;
@@ -2879,7 +2647,6 @@ class ZStalagmiteMedium:Actor
 		Radius = 6.0;
 		Height = 40.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEMEDIUM1;
@@ -2901,7 +2668,6 @@ class ZStalagmiteSmall:Actor
 		Radius = 8.0;
 		Height = 36.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITESMALL1;
@@ -2923,7 +2689,6 @@ class ZStalactiteLarge:Actor
 		Radius = 8.0;
 		Height = 66.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -2947,7 +2712,6 @@ class ZStalactiteMedium:Actor
 		Radius = 6.0;
 		Height = 50.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -2971,7 +2735,6 @@ class ZStalactiteSmall:Actor
 		Radius = 8.0;
 		Height = 40.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -2995,7 +2758,6 @@ class ZMossCeiling1:Actor
 		Radius = 20.0;
 		Height = 20.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -3018,7 +2780,6 @@ class ZMossCeiling2:Actor
 		Radius = 20.0;
 		Height = 24.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSpawnCeiling = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -3041,7 +2802,6 @@ class ZSwampVine:Actor
 		Radius = 8.0;
 		Height = 52.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSWAMPVINE1;
@@ -3063,7 +2823,6 @@ class ZCorpseKabob:Actor
 		Radius = 10.0;
 		Height = 92.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZCORPSEKABOB1;
@@ -3085,7 +2844,6 @@ class ZCorpseSleeping:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoPassMobj = true;
 		SpawnState = S_ZCORPSESLEEPING1;
 	}
@@ -3106,7 +2864,6 @@ class ZTombStoneRip:Actor
 		Radius = 10.0;
 		Height = 46.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONERIP1;
@@ -3128,7 +2885,6 @@ class ZTombStoneShane:Actor
 		Radius = 10.0;
 		Height = 46.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONESHANE1;
@@ -3150,7 +2906,6 @@ class ZTombStoneBigCross:Actor
 		Radius = 10.0;
 		Height = 46.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONEBIGCROSS1;
@@ -3172,7 +2927,6 @@ class ZTombStoneBrianR:Actor
 		Radius = 10.0;
 		Height = 52.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONEBRIANR1;
@@ -3194,7 +2948,6 @@ class ZTombStoneCrossCircle:Actor
 		Radius = 10.0;
 		Height = 52.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONECROSSCIRCLE1;
@@ -3216,7 +2969,6 @@ class ZTombStoneSmallCross:Actor
 		Radius = 8.0;
 		Height = 46.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONESMALLCROSS1;
@@ -3238,7 +2990,6 @@ class ZTombStoneBrianP:Actor
 		Radius = 8.0;
 		Height = 46.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTOMBSTONEBRIANP1;
@@ -3260,7 +3011,6 @@ class CorpseHanging:Actor
 		Radius = 6.0;
 		Height = 75.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -3284,7 +3034,6 @@ class ZStatueGargoyleGreenTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEGREENTALL_1;
@@ -3306,7 +3055,6 @@ class ZStatueGargoyleBlueTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEBLUETALL_1;
@@ -3328,7 +3076,6 @@ class ZStatueGargoyleGreenShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEGREENSHORT_1;
@@ -3350,7 +3097,6 @@ class ZStatueGargoyleBlueShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEBLUESHORT_1;
@@ -3372,7 +3118,6 @@ class ZStatueGargoyleStripeTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLESTRIPETALL_1;
@@ -3394,7 +3139,6 @@ class ZStatueGargoyleDarkRedTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEDARKREDTALL_1;
@@ -3416,7 +3160,6 @@ class ZStatueGargoyleRedTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEREDTALL_1;
@@ -3438,7 +3181,6 @@ class ZStatueGargoyleTanTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLETANTALL_1;
@@ -3460,7 +3202,6 @@ class ZStatueGargoyleRustTall:Actor
 		Radius = 14.0;
 		Height = 108.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLERUSTTALL_1;
@@ -3482,7 +3223,6 @@ class ZStatueGargoyleDarkRedShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEDARKREDSHORT_1;
@@ -3504,7 +3244,6 @@ class ZStatueGargoyleRedShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLEREDSHORT_1;
@@ -3526,7 +3265,6 @@ class ZStatueGargoyleTanShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLETANSHORT_1;
@@ -3548,7 +3286,6 @@ class ZStatueGargoyleRustShort:Actor
 		Radius = 14.0;
 		Height = 62.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTATUEGARGOYLERUSTSHORT_1;
@@ -3570,7 +3307,6 @@ class ZBannerTattered:Actor
 		Radius = 8.0;
 		Height = 120.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZBANNERTATTERED_1;
@@ -3592,7 +3328,6 @@ class ZTreeLarge1:Actor
 		Radius = 15.0;
 		Height = 180.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREELARGE1;
@@ -3615,7 +3350,6 @@ class ZTreeLarge2:Actor
 		Radius = 15.0;
 		Height = 180.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREELARGE2;
@@ -3638,7 +3372,6 @@ class ZTreeGnarled1:Actor
 		Radius = 22.0;
 		Height = 100.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREEGNARLED1;
@@ -3660,7 +3393,6 @@ class ZTreeGnarled2:Actor
 		Radius = 22.0;
 		Height = 100.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTREEGNARLED2;
@@ -3682,7 +3414,6 @@ class ZLog:Actor
 		Radius = 20.0;
 		Height = 25.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZLOG;
@@ -3704,7 +3435,6 @@ class ZStalactiteIceLarge:Actor
 		Radius = 8.0;
 		Height = 66.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -3728,7 +3458,6 @@ class ZStalactiteIceMedium:Actor
 		Radius = 5.0;
 		Height = 50.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -3752,7 +3481,6 @@ class ZStalactiteIceSmall:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -3776,7 +3504,6 @@ class ZStalactiteIceTiny:Actor
 		Radius = 4.0;
 		Height = 8.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -3800,7 +3527,6 @@ class ZStalagmiteIceLarge:Actor
 		Radius = 8.0;
 		Height = 66.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEICELARGE;
@@ -3822,7 +3548,6 @@ class ZStalagmiteIceMedium:Actor
 		Radius = 5.0;
 		Height = 50.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEICEMEDIUM;
@@ -3844,7 +3569,6 @@ class ZStalagmiteIceSmall:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEICESMALL;
@@ -3866,7 +3590,6 @@ class ZStalagmiteIceTiny:Actor
 		Radius = 4.0;
 		Height = 8.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZSTALAGMITEICETINY;
@@ -3888,7 +3611,6 @@ class ZRockBrown1:Actor
 		Radius = 17.0;
 		Height = 72.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCKBROWN1;
@@ -3910,7 +3632,6 @@ class ZRockBrown2:Actor
 		Radius = 15.0;
 		Height = 50.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCKBROWN2;
@@ -3932,7 +3653,6 @@ class ZRockBlack:Actor
 		Radius = 20.0;
 		Height = 40.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZROCKBLACK;
@@ -3954,7 +3674,7 @@ class ZRubble1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoPassMobj = true;
 		SpawnState = S_ZRUBBLE1;
 	}
@@ -3975,7 +3695,7 @@ class ZRubble2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoPassMobj = true;
 		SpawnState = S_ZRUBBLE2;
 	}
@@ -3996,7 +3716,7 @@ class ZRubble3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoPassMobj = true;
 		SpawnState = S_ZRUBBLE3;
 	}
@@ -4017,7 +3737,7 @@ class ZVasePillar:Actor
 		Radius = 12.0;
 		Height = 54.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZVASEPILLAR;
@@ -4039,7 +3759,7 @@ class Pottery1:Actor
 		Radius = 10.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bDropOff = true;
@@ -4067,7 +3787,7 @@ class Pottery2:Actor
 		Radius = 10.0;
 		Height = 25.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bDropOff = true;
@@ -4095,7 +3815,7 @@ class Pottery3:Actor
 		Radius = 15.0;
 		Height = 25.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bDropOff = true;
@@ -4122,7 +3842,7 @@ class PotteryBit:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bMissile = true;
 		bNoTeleport = true;
 		SpawnState = S_POTTERYBIT_1;
@@ -4145,7 +3865,7 @@ class ZCorpseLynched:Actor
 		Radius = 11.0;
 		Height = 95.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -4169,7 +3889,7 @@ class ZLynchedNoHeart:Actor
 		Radius = 10.0;
 		Height = 100.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -4193,7 +3913,7 @@ class ZCorpseSitting:Actor
 		Radius = 15.0;
 		Height = 35.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -4217,7 +3937,7 @@ class CorpseBit:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		bTelestomp = true;
@@ -4238,10 +3958,9 @@ class CorpseBloodDrip:Actor
 		Health = 1000;
 		Radius = 1.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
+
 		bMissile = true;
-		bLowGravity = true;
 		SpawnState = S_CORPSEBLOODDRIP;
 		DeathState = S_CORPSEBLOODDRIP_X1;
 		DeathSound = 'Drip';
@@ -4263,7 +3982,7 @@ class BloodPool:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_BLOODPOOL;
@@ -4291,7 +4010,7 @@ class ZCandle:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -4314,7 +4033,7 @@ class ZLeafSpawner:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 100;
 		bHidden = true;
 		bNoBlockmap = true;
@@ -4336,11 +4055,10 @@ class Leaf1:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
+
 		bNoBlockmap = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_LEAF1_1;
 		DeathState = S_LEAF_X1;
@@ -4360,11 +4078,10 @@ class Leaf2:Actor
 		Health = 1000;
 		Radius = 2.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
+
 		bNoBlockmap = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_LEAF2_1;
 		DeathState = S_LEAF_X1;
@@ -4392,7 +4109,7 @@ class ZTWinedTorch:Actor
 		Radius = 10.0;
 		Height = 64.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTWINEDTORCH_1;
@@ -4414,7 +4131,7 @@ class ZTWinedTorchUnlit:Actor
 		Radius = 10.0;
 		Height = 64.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZTWINEDTORCH_UNLIT;
@@ -4436,7 +4153,7 @@ class Bridge:Actor
 		Radius = 32.0;
 		Height = 2.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 100;
 		bSolid = true;
 		bNoGravity = true;
@@ -4459,7 +4176,7 @@ class BridgeBall:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoTeleport = true;
@@ -4491,7 +4208,7 @@ class ZWallTorch:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -4514,7 +4231,7 @@ class ZWallTorchUnlit:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -4537,7 +4254,7 @@ class ZBarrel:Actor
 		Radius = 15.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZBARREL1;
@@ -4559,7 +4276,7 @@ class ZShrub1:Actor
 		Radius = 8.0;
 		Height = 24.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -4586,7 +4303,7 @@ class ZShrub2:Actor
 		Radius = 16.0;
 		Height = 40.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -4613,7 +4330,7 @@ class ZBucket:Actor
 		Radius = 8.0;
 		Height = 72.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -4637,7 +4354,7 @@ class ZPoisonShroom:Actor
 		Radius = 6.0;
 		Height = 20.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		PainChance = 255;
 		bSolid = true;
 		bShootable = true;
@@ -4673,7 +4390,7 @@ class ZFireBull:Actor
 		Radius = 20.0;
 		Height = 80.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZFIREBULL1;
@@ -4695,7 +4412,7 @@ class ZFireBullUnlit:Actor
 		Radius = 20.0;
 		Height = 80.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZFIREBULL_U;
@@ -4724,7 +4441,7 @@ class FireThing:Actor
 		Radius = 5.0;
 		Height = 10.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZFIRETHING1;
@@ -4753,7 +4470,7 @@ class BrassTorch:Actor
 		Radius = 6.0;
 		Height = 35.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZBRASSTORCH1;
@@ -4775,7 +4492,7 @@ class ZSuitOfArmor:Actor
 		Radius = 16.0;
 		Height = 72.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -4800,7 +4517,7 @@ class ZArmorChunk:Actor
 		Radius = 4.0;
 		Height = 8.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoPassMobj = true;
 		SpawnState = S_ZARMORCHUNK1;
 	}
@@ -4821,7 +4538,7 @@ class ZBell:Actor
 		Radius = 56.0;
 		Height = 120.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bSpawnCeiling = true;
@@ -4856,7 +4573,7 @@ class ZBlueCandle:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZBLUE_CANDLE1;
@@ -4878,7 +4595,7 @@ class ZIronMaiden:Actor
 		Radius = 12.0;
 		Height = 60.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZIRON_MAIDEN;
@@ -4900,7 +4617,7 @@ class ZXmasTree:Actor
 		Radius = 11.0;
 		Height = 130.0;
 		Mass = 99999.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bShootable = true;
 		bNoBlood = true;
@@ -4934,7 +4651,7 @@ class ZCauldron:Actor
 		Radius = 12.0;
 		Height = 26.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZCAULDRON1;
@@ -4956,7 +4673,7 @@ class ZCauldronUnlit:Actor
 		Radius = 12.0;
 		Height = 26.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bSolid = true;
 		bNoPassMobj = true;
 		SpawnState = S_ZCAULDRON_U;
@@ -4978,7 +4695,7 @@ class ZChainBit32:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5002,7 +4719,7 @@ class ZChainBit64:Actor
 		Radius = 4.0;
 		Height = 64.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5026,7 +4743,7 @@ class ZChainEndHearth:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5050,7 +4767,7 @@ class ZChainEndHook1:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5074,7 +4791,7 @@ class ZChainEndHook2:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5098,7 +4815,7 @@ class ZChainEndSpike:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5122,7 +4839,7 @@ class ZChainEndSkull:Actor
 		Radius = 4.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bSpawnCeiling = true;
 		bNoGravity = true;
@@ -5146,7 +4863,7 @@ class TableShit1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT1;
@@ -5168,7 +4885,7 @@ class TableShit2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT2;
@@ -5190,7 +4907,7 @@ class TableShit3:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT3;
@@ -5212,7 +4929,7 @@ class TableShit4:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT4;
@@ -5234,7 +4951,7 @@ class TableShit5:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT5;
@@ -5256,7 +4973,7 @@ class TableShit6:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT6;
@@ -5278,7 +4995,7 @@ class TableShit7:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT7;
@@ -5300,7 +5017,7 @@ class TableShit8:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT8;
@@ -5322,7 +5039,7 @@ class TableShit9:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT9;
@@ -5344,7 +5061,7 @@ class TableShit10:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_TABLE_SHIT10;
@@ -5365,7 +5082,7 @@ class TeleportFog:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5388,7 +5105,7 @@ class TeleSmoke:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5411,7 +5128,7 @@ class TeleportSpot:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
@@ -5432,7 +5149,7 @@ class PunchPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5449,7 +5166,7 @@ class PunchPuff:Actor
 //
 //==========================================================================
 
-class WeaponFAxe:Actor
+class WeaponFAxe:Pickup
 	__mobjinfo__(8010)
 {
 	defaultproperties
@@ -5458,9 +5175,6 @@ class WeaponFAxe:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_AXE;
 	}
 };
@@ -5479,7 +5193,7 @@ class AxePuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5504,7 +5218,7 @@ class AxePuffGlow:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5528,7 +5242,7 @@ class AxeBlood:Actor
 		Radius = 2.0;
 		Height = 4.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -5546,7 +5260,7 @@ class AxeBlood:Actor
 //
 //==========================================================================
 
-class WeaponFHammer:Actor
+class WeaponFHammer:Pickup
 	__mobjinfo__(123)
 {
 	defaultproperties
@@ -5555,9 +5269,6 @@ class WeaponFHammer:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_HAMM;
 	}
 };
@@ -5577,7 +5288,7 @@ class HammerMissile:Actor
 		Height = 20.0;
 		Mass = 100.0;
 		Speed = 875.0;
-		ReactionCount = 8;
+
 		MissileDamage = 10;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5608,7 +5319,7 @@ class HammerPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5634,7 +5345,7 @@ class FighterSwordMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
+
 		MissileDamage = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5664,7 +5375,7 @@ class FighterSwordFlame:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5679,7 +5390,7 @@ class FighterSwordFlame:Actor
 //
 //==========================================================================
 
-class WeaponCSerpentStaff:Actor
+class WeaponCSerpentStaff:Pickup
 	__mobjinfo__(10)
 {
 	defaultproperties
@@ -5688,9 +5399,6 @@ class WeaponCSerpentStaff:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_CSTAFF;
 	}
 };
@@ -5710,7 +5418,7 @@ class ClericStaffMissile:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 770.0;
-		ReactionCount = 8;
+
 		MissileDamage = 5;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5740,7 +5448,7 @@ class ClericStaffPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5756,7 +5464,7 @@ class ClericStaffPuff:Actor
 //
 //==========================================================================
 
-class WeaponCFlame:Actor
+class WeaponCFlame:Pickup
 	__mobjinfo__(8009)
 {
 	defaultproperties
@@ -5765,10 +5473,7 @@ class WeaponCFlame:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_CFLAME1;
 	}
 };
@@ -5787,7 +5492,7 @@ class ClericFlameFloor:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5809,7 +5514,7 @@ class FlamePuff:Actor
 		Radius = 1.0;
 		Height = 1.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5833,7 +5538,7 @@ class FlamePuff2:Actor
 		Radius = 1.0;
 		Height = 1.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -5857,7 +5562,7 @@ class CircleFlame:Actor
 		Radius = 6.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5887,7 +5592,7 @@ class ClericFlameMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 7000.0;
-		ReactionCount = 8;
+
 		MissileDamage = 8;
 		Translucency = 100;
 		bNoBlockmap = true;
@@ -5919,7 +5624,7 @@ class HolyFX:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 420.0;
-		ReactionCount = 8;
+
 		MissileDamage = 3;
 		Translucency = 33;
 		bNoBlockmap = true;
@@ -5951,7 +5656,7 @@ class HolyTail:Actor
 		Radius = 1.0;
 		Height = 1.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -5978,7 +5683,7 @@ class HolyPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6002,7 +5707,7 @@ class HolyMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 1050.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6029,7 +5734,7 @@ class HolyMissilePuff:Actor
 		Radius = 4.0;
 		Height = 8.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6054,7 +5759,7 @@ class MageWandPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoTeleport = true;
@@ -6079,7 +5784,7 @@ class MageWandSmoke:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6106,7 +5811,7 @@ class MageWandMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 6440.0;
-		ReactionCount = 8;
+
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6130,7 +5835,7 @@ class MageWandMissile:Actor
 //
 //==========================================================================
 
-class WeaponMLightning:Actor
+class WeaponMLightning:Pickup
 	__mobjinfo__(8040)
 {
 	defaultproperties
@@ -6139,10 +5844,7 @@ class WeaponMLightning:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_MW_LIGHTNING1;
 	}
 };
@@ -6162,7 +5864,7 @@ class LightningCeiling:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		Speed = 875.0;
-		ReactionCount = 8;
+
 		MissileDamage = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6192,7 +5894,7 @@ class LightningFloor:Actor
 		Height = 40.0;
 		Mass = 100.0;
 		Speed = 875.0;
-		ReactionCount = 8;
+
 		MissileDamage = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6221,7 +5923,7 @@ class LightningZap:Actor
 		Radius = 15.0;
 		Height = 35.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		MissileDamage = 2;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6248,7 +5950,7 @@ class MageStaffFX:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
+
 		MissileDamage = 6;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6281,7 +5983,7 @@ class MageStaffFX2:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 595.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6305,7 +6007,7 @@ class MageStaffFX2:Actor
 //
 //==========================================================================
 
-class WeaponFSwordPiece1:Actor
+class WeaponFSwordPiece1:Pickup
 	__mobjinfo__(12)
 {
 	defaultproperties
@@ -6314,9 +6016,6 @@ class WeaponFSwordPiece1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_FSWORD1;
 	}
@@ -6328,7 +6027,7 @@ class WeaponFSwordPiece1:Actor
 //
 //==========================================================================
 
-class WeaponFSwordPiece2:Actor
+class WeaponFSwordPiece2:Pickup
 	__mobjinfo__(13)
 {
 	defaultproperties
@@ -6337,9 +6036,6 @@ class WeaponFSwordPiece2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_FSWORD2;
 	}
@@ -6351,7 +6047,7 @@ class WeaponFSwordPiece2:Actor
 //
 //==========================================================================
 
-class WeaponFSwordPiece3:Actor
+class WeaponFSwordPiece3:Pickup
 	__mobjinfo__(16)
 {
 	defaultproperties
@@ -6360,9 +6056,6 @@ class WeaponFSwordPiece3:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_FSWORD3;
 	}
@@ -6374,7 +6067,7 @@ class WeaponFSwordPiece3:Actor
 //
 //==========================================================================
 
-class WeaponCHolyPiece1:Actor
+class WeaponCHolyPiece1:Pickup
 	__mobjinfo__(18)
 {
 	defaultproperties
@@ -6383,9 +6076,6 @@ class WeaponCHolyPiece1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_CHOLY1;
 	}
@@ -6397,7 +6087,7 @@ class WeaponCHolyPiece1:Actor
 //
 //==========================================================================
 
-class WeaponCHolyPiece2:Actor
+class WeaponCHolyPiece2:Pickup
 	__mobjinfo__(19)
 {
 	defaultproperties
@@ -6406,9 +6096,6 @@ class WeaponCHolyPiece2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_CHOLY2;
 	}
@@ -6420,7 +6107,7 @@ class WeaponCHolyPiece2:Actor
 //
 //==========================================================================
 
-class WeaponCHolyPiece3:Actor
+class WeaponCHolyPiece3:Pickup
 	__mobjinfo__(20)
 {
 	defaultproperties
@@ -6429,9 +6116,6 @@ class WeaponCHolyPiece3:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_CHOLY3;
 	}
@@ -6443,7 +6127,7 @@ class WeaponCHolyPiece3:Actor
 //
 //==========================================================================
 
-class WeaponMStaffPiece1:Actor
+class WeaponMStaffPiece1:Pickup
 	__mobjinfo__(21)
 {
 	defaultproperties
@@ -6452,9 +6136,6 @@ class WeaponMStaffPiece1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MSTAFF1;
 	}
@@ -6466,7 +6147,7 @@ class WeaponMStaffPiece1:Actor
 //
 //==========================================================================
 
-class WeaponMStaffPiece2:Actor
+class WeaponMStaffPiece2:Pickup
 	__mobjinfo__(22)
 {
 	defaultproperties
@@ -6475,9 +6156,6 @@ class WeaponMStaffPiece2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MSTAFF2;
 	}
@@ -6489,7 +6167,7 @@ class WeaponMStaffPiece2:Actor
 //
 //==========================================================================
 
-class WeaponMStaffPiece3:Actor
+class WeaponMStaffPiece3:Pickup
 	__mobjinfo__(23)
 {
 	defaultproperties
@@ -6498,9 +6176,6 @@ class WeaponMStaffPiece3:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MSTAFF3;
 	}
@@ -6520,7 +6195,7 @@ class SnoutPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6535,7 +6210,7 @@ class SnoutPuff:Actor
 //
 //==========================================================================
 
-class WeaponMCone:Actor
+class WeaponMCone:Pickup
 	__mobjinfo__(53)
 {
 	defaultproperties
@@ -6544,9 +6219,6 @@ class WeaponMCone:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_COS1;
 	}
 };
@@ -6566,7 +6238,7 @@ class ShardMissile:Actor
 		Height = 8.0;
 		Mass = 100.0;
 		Speed = 875.0;
-		ReactionCount = 8;
+
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6596,7 +6268,7 @@ class Blood:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoPassMobj = true;
 		SpawnState = S_BLOOD1;
@@ -6617,7 +6289,7 @@ class BloodSplatter:Actor
 		Radius = 2.0;
 		Height = 4.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6642,7 +6314,7 @@ class Gibs:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bCorpse = true;
@@ -6653,30 +6325,7 @@ class Gibs:Actor
 };
 
 class PlayerFighter;
-
-//==========================================================================
-//
-//	BloodySkull
-//
-//==========================================================================
-
-class BloodySkull:Actor
-{
-	defaultproperties
-	{
-		Health = 1000;
-		Radius = 4.0;
-		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
-		bNoBlockmap = true;
-		bDropOff = true;
-		bLowGravity = true;
-		bNoPassMobj = true;
-		bCannotPush = true;
-		SpawnState = S_BLOODYSKULL1;
-	}
-};
+class BloodySkull;
 
 //==========================================================================
 //
@@ -6692,7 +6341,7 @@ class PlayerSpeed:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6714,11 +6363,10 @@ class IceChunk:Actor
 		Health = 1000;
 		Radius = 3.0;
 		Height = 4.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
+
 		bNoBlockmap = true;
 		bDropOff = true;
-		bLowGravity = true;
 		bFloorClip = true;
 		bNoPassMobj = true;
 		bCannotPush = true;
@@ -6726,6 +6374,7 @@ class IceChunk:Actor
 	}
 };
 
+class IceChunkHead;
 class PlayerCleric;
 class PlayerMage;
 class PlayerPig;
@@ -6748,7 +6397,7 @@ class CentaurMissile:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6778,7 +6427,7 @@ class CentaurShield:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bDropOff = true;
 		bCorpse = true;
 		bNoTeleport = true;
@@ -6802,7 +6451,7 @@ class CentaurSword:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bDropOff = true;
 		bCorpse = true;
 		bNoTeleport = true;
@@ -6828,7 +6477,7 @@ class DemonChunk1:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6854,7 +6503,7 @@ class DemonChunk2:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6880,7 +6529,7 @@ class DemonChunk3:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6906,7 +6555,7 @@ class DemonChunk4:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6932,7 +6581,7 @@ class DemonChunk5:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -6959,7 +6608,7 @@ class DemonMissile:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 525.0;
-		ReactionCount = 8;
+
 		MissileDamage = 5;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -6992,7 +6641,7 @@ class Demon2Chunk1:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7018,7 +6667,7 @@ class Demon2Chunk2:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7044,7 +6693,7 @@ class Demon2Chunk3:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7070,7 +6719,7 @@ class Demon2Chunk4:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7096,7 +6745,7 @@ class Demon2Chunk5:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7123,7 +6772,7 @@ class Demon2Missile:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 525.0;
-		ReactionCount = 8;
+
 		MissileDamage = 5;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7158,7 +6807,7 @@ class WraithMissile:Actor
 		Height = 6.0;
 		Mass = 5.0;
 		Speed = 490.0;
-		ReactionCount = 8;
+
 		MissileDamage = 5;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7190,7 +6839,7 @@ class WraithSparkDrip:Actor
 		Radius = 2.0;
 		Height = 5.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bFloorClip = true;
@@ -7214,7 +6863,7 @@ class WraithFX3:Actor
 		Radius = 2.0;
 		Height = 5.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7240,7 +6889,7 @@ class WraithFleshDrip1:Actor
 		Radius = 2.0;
 		Height = 5.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7265,7 +6914,7 @@ class WraithFleshDrip2:Actor
 		Radius = 2.0;
 		Height = 5.0;
 		Mass = 5.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -7293,7 +6942,7 @@ class MinotaurMissile:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 700.0;
-		ReactionCount = 8;
+
 		MissileDamage = 3;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7322,7 +6971,7 @@ class MinotaurFloorFire1:Actor
 		Height = 12.0;
 		Mass = 100.0;
 		Speed = 490.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7350,7 +6999,7 @@ class MinotaurFloorFire2:Actor
 		Radius = 8.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7378,7 +7027,7 @@ class MinotaurSmoke:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7402,7 +7051,7 @@ class MinotaurSmokeExit:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7430,7 +7079,7 @@ class SerpentMissile:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 525.0;
-		ReactionCount = 8;
+
 		MissileDamage = 4;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7457,10 +7106,9 @@ class SerpentHead:Actor
 		Health = 1000;
 		Radius = 5.0;
 		Height = 10.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
+
 		bNoBlockmap = true;
-		bLowGravity = true;
 		bNoPassMobj = true;
 		SpawnState = S_SERPENT_HEAD1;
 	}
@@ -7480,7 +7128,7 @@ class SerpentGib1:Actor
 		Radius = 3.0;
 		Height = 3.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -7502,7 +7150,7 @@ class SerpentGib2:Actor
 		Radius = 3.0;
 		Height = 3.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -7524,7 +7172,7 @@ class SerpentGib3:Actor
 		Radius = 3.0;
 		Height = 3.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoPassMobj = true;
@@ -7548,7 +7196,7 @@ class BishopPuff:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7571,7 +7219,7 @@ class BishopBlur:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7594,7 +7242,7 @@ class BishopPainBlur:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7618,7 +7266,7 @@ class BishopMissile:Actor
 		Height = 6.0;
 		Mass = 100.0;
 		Speed = 350.0;
-		ReactionCount = 8;
+
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7650,7 +7298,7 @@ class DragonMissile:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 840.0;
-		ReactionCount = 8;
+
 		MissileDamage = 6;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -7679,7 +7327,7 @@ class DragonFX2:Actor
 		Radius = 8.0;
 		Height = 8.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 100;
 		bNoBlockmap = true;
 		bNoTeleport = true;
@@ -7696,7 +7344,7 @@ class DragonFX2:Actor
 //
 //==========================================================================
 
-class ItemArmor1:Actor
+class ItemArmor1:Pickup
 	__mobjinfo__(8005)
 {
 	defaultproperties
@@ -7705,10 +7353,7 @@ class ItemArmor1:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARMOR_1;
 	}
 };
@@ -7719,7 +7364,7 @@ class ItemArmor1:Actor
 //
 //==========================================================================
 
-class ItemArmor2:Actor
+class ItemArmor2:Pickup
 	__mobjinfo__(8006)
 {
 	defaultproperties
@@ -7728,10 +7373,7 @@ class ItemArmor2:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARMOR_2;
 	}
 };
@@ -7742,7 +7384,7 @@ class ItemArmor2:Actor
 //
 //==========================================================================
 
-class ItemArmor3:Actor
+class ItemArmor3:Pickup
 	__mobjinfo__(8007)
 {
 	defaultproperties
@@ -7751,10 +7393,7 @@ class ItemArmor3:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARMOR_3;
 	}
 };
@@ -7765,7 +7404,7 @@ class ItemArmor3:Actor
 //
 //==========================================================================
 
-class ItemArmor4:Actor
+class ItemArmor4:Pickup
 	__mobjinfo__(8008)
 {
 	defaultproperties
@@ -7774,10 +7413,7 @@ class ItemArmor4:Actor
 		Radius = 20.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
 		bNoGravity = true;
-		bNoPassMobj = true;
 		SpawnState = S_ARMOR_4;
 	}
 };
@@ -7788,7 +7424,7 @@ class ItemArmor4:Actor
 //
 //==========================================================================
 
-class ItemManaBlue:Actor
+class ItemManaBlue:Pickup
 	__mobjinfo__(122)
 {
 	defaultproperties
@@ -7797,9 +7433,6 @@ class ItemManaBlue:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MANA1_1;
 	}
@@ -7811,7 +7444,7 @@ class ItemManaBlue:Actor
 //
 //==========================================================================
 
-class ItemManaGreen:Actor
+class ItemManaGreen:Pickup
 	__mobjinfo__(124)
 {
 	defaultproperties
@@ -7820,9 +7453,6 @@ class ItemManaGreen:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MANA2_1;
 	}
@@ -7834,7 +7464,7 @@ class ItemManaGreen:Actor
 //
 //==========================================================================
 
-class ItemManaCombined:Actor
+class ItemManaCombined:Pickup
 	__mobjinfo__(8004)
 {
 	defaultproperties
@@ -7843,9 +7473,6 @@ class ItemManaCombined:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		bFloatBob = true;
 		SpawnState = S_MANA3_1;
 	}
@@ -7857,7 +7484,7 @@ class ItemManaCombined:Actor
 //
 //==========================================================================
 
-class ItemKey1:Actor
+class ItemKey1:Pickup
 	__mobjinfo__(8030)
 {
 	defaultproperties
@@ -7866,9 +7493,6 @@ class ItemKey1:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY1;
 	}
 };
@@ -7879,7 +7503,7 @@ class ItemKey1:Actor
 //
 //==========================================================================
 
-class ItemKey2:Actor
+class ItemKey2:Pickup
 	__mobjinfo__(8031)
 {
 	defaultproperties
@@ -7888,9 +7512,6 @@ class ItemKey2:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY2;
 	}
 };
@@ -7901,7 +7522,7 @@ class ItemKey2:Actor
 //
 //==========================================================================
 
-class ItemKey3:Actor
+class ItemKey3:Pickup
 	__mobjinfo__(8032)
 {
 	defaultproperties
@@ -7910,9 +7531,6 @@ class ItemKey3:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY3;
 	}
 };
@@ -7923,7 +7541,7 @@ class ItemKey3:Actor
 //
 //==========================================================================
 
-class ItemKey4:Actor
+class ItemKey4:Pickup
 	__mobjinfo__(8033)
 {
 	defaultproperties
@@ -7932,9 +7550,6 @@ class ItemKey4:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY4;
 	}
 };
@@ -7945,7 +7560,7 @@ class ItemKey4:Actor
 //
 //==========================================================================
 
-class ItemKey5:Actor
+class ItemKey5:Pickup
 	__mobjinfo__(8034)
 {
 	defaultproperties
@@ -7954,9 +7569,6 @@ class ItemKey5:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY5;
 	}
 };
@@ -7967,7 +7579,7 @@ class ItemKey5:Actor
 //
 //==========================================================================
 
-class ItemKey6:Actor
+class ItemKey6:Pickup
 	__mobjinfo__(8035)
 {
 	defaultproperties
@@ -7976,9 +7588,6 @@ class ItemKey6:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY6;
 	}
 };
@@ -7989,7 +7598,7 @@ class ItemKey6:Actor
 //
 //==========================================================================
 
-class ItemKey7:Actor
+class ItemKey7:Pickup
 	__mobjinfo__(8036)
 {
 	defaultproperties
@@ -7998,9 +7607,6 @@ class ItemKey7:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY7;
 	}
 };
@@ -8011,7 +7617,7 @@ class ItemKey7:Actor
 //
 //==========================================================================
 
-class ItemKey8:Actor
+class ItemKey8:Pickup
 	__mobjinfo__(8037)
 {
 	defaultproperties
@@ -8020,9 +7626,6 @@ class ItemKey8:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY8;
 	}
 };
@@ -8033,7 +7636,7 @@ class ItemKey8:Actor
 //
 //==========================================================================
 
-class ItemKey9:Actor
+class ItemKey9:Pickup
 	__mobjinfo__(8038)
 {
 	defaultproperties
@@ -8042,9 +7645,6 @@ class ItemKey9:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEY9;
 	}
 };
@@ -8055,7 +7655,7 @@ class ItemKey9:Actor
 //
 //==========================================================================
 
-class ItemKeyA:Actor
+class ItemKeyA:Pickup
 	__mobjinfo__(8039)
 {
 	defaultproperties
@@ -8064,9 +7664,6 @@ class ItemKeyA:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEYA;
 	}
 };
@@ -8077,7 +7674,7 @@ class ItemKeyA:Actor
 //
 //==========================================================================
 
-class ItemKeyB:Actor
+class ItemKeyB:Pickup
 	__mobjinfo__(8200)
 {
 	defaultproperties
@@ -8086,9 +7683,6 @@ class ItemKeyB:Actor
 		Radius = 8.0;
 		Height = 32.0;
 		Mass = 100.0;
-		ReactionCount = 8;
-		bSpecial = true;
-		bNoPassMobj = true;
 		SpawnState = S_KEYB;
 	}
 };
@@ -8108,7 +7702,7 @@ class SoundWind:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
@@ -8131,7 +7725,7 @@ class SoundWaterfall:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bHidden = true;
 		bNoBlockmap = true;
 		bNoPassMobj = true;
@@ -8155,7 +7749,7 @@ class EttinMace:Actor
 		Radius = 5.0;
 		Height = 5.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bDropOff = true;
 		bCorpse = true;
 		bFloorClip = true;
@@ -8182,7 +7776,7 @@ class FireDemonSplotch1:Actor
 		Radius = 3.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bDropOff = true;
 		bCorpse = true;
 		bFloorClip = true;
@@ -8206,7 +7800,7 @@ class FireDemonSplotch2:Actor
 		Radius = 3.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		bDropOff = true;
 		bCorpse = true;
 		bFloorClip = true;
@@ -8231,7 +7825,7 @@ class FireDemonRock1:Actor
 		Radius = 3.0;
 		Height = 5.0;
 		Mass = 16.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -8257,7 +7851,7 @@ class FireDemonRock2:Actor
 		Radius = 3.0;
 		Height = 5.0;
 		Mass = 16.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -8283,7 +7877,7 @@ class FireDemonRock3:Actor
 		Radius = 3.0;
 		Height = 5.0;
 		Mass = 16.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -8309,7 +7903,6 @@ class FireDemonRock4:Actor
 		Radius = 3.0;
 		Height = 5.0;
 		Mass = 16.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -8335,7 +7928,6 @@ class FireDemonRock5:Actor
 		Radius = 3.0;
 		Height = 5.0;
 		Mass = 16.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
@@ -8361,7 +7953,6 @@ class FireDemonMissile:Actor
 		Height = 6.0;
 		Mass = 15.0;
 		Speed = 350.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8396,7 +7987,6 @@ class IceGuyMissile:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 490.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8425,7 +8015,7 @@ class IceGuyMissilePuff:Actor
 		Radius = 1.0;
 		Height = 1.0;
 		Mass = 100.0;
-		ReactionCount = 8;
+
 		Translucency = 66;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8449,14 +8039,12 @@ class IceGuyMissile2:Actor
 		Health = 1000;
 		Radius = 4.0;
 		Height = 4.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 350.0;
-		ReactionCount = 8;
 		MissileDamage = 1;
 		bNoBlockmap = true;
 		bDropOff = true;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bIceDamage = true;
 		SpawnState = S_ICEGUY_FX2_1;
@@ -8476,11 +8064,9 @@ class IceGuyBit:Actor
 		Health = 1000;
 		Radius = 1.0;
 		Height = 1.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_ICEGUY_BIT1;
@@ -8501,7 +8087,6 @@ class IceGuyWisp1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8526,7 +8111,6 @@ class IceGuyWisp2:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8555,9 +8139,8 @@ class SorcererBall1:Actor
 		Health = 1000;
 		Radius = 5.0;
 		Height = 5.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 350.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
@@ -8583,9 +8166,8 @@ class SorcererBall2:Actor
 		Health = 1000;
 		Radius = 5.0;
 		Height = 5.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 350.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
@@ -8613,7 +8195,6 @@ class SorcererBall3:Actor
 		Height = 5.0;
 		Mass = 100.0;
 		Speed = 350.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
@@ -8640,9 +8221,8 @@ class SorcererFX1:Actor
 		GibsHealth = -500;
 		Radius = 5.0;
 		Height = 5.0;
-		Mass = 100.0;
+		Mass = 12.5;
 		Speed = 245.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bMissile = true;
 		bFloorBounce = true;
@@ -8670,7 +8250,6 @@ class SorcererFX2:Actor
 		Height = 5.0;
 		Mass = 100.0;
 		Speed = 525.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bNoTeleport = true;
@@ -8694,7 +8273,6 @@ class SorcererFX2_T1:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8719,7 +8297,6 @@ class SorcererFX3:Actor
 		Height = 65.0;
 		Mass = 100.0;
 		Speed = 525.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bMissile = true;
 		bNoTeleport = true;
@@ -8744,7 +8321,6 @@ class SorcererFX3Explosion:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8769,7 +8345,7 @@ class SorcererFX4:Actor
 		Height = 10.0;
 		Mass = 100.0;
 		Speed = 420.0;
-		ReactionCount = 8;
+
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
@@ -8794,11 +8370,9 @@ class SorcererSpark:Actor
 		Health = 1000;
 		Radius = 5.0;
 		Height = 5.0;
-		Mass = 100.0;
-		ReactionCount = 8;
+		Mass = 12.5;
 		bNoBlockmap = true;
 		bDropOff = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		bNoPassMobj = true;
 		SpawnState = S_SORCSPARK1;
@@ -8819,7 +8393,6 @@ class BlastEffect:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8845,9 +8418,7 @@ class WaterDrip:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 1.0;
-		ReactionCount = 8;
 		bMissile = true;
-		bLowGravity = true;
 		bNoTeleport = true;
 		SpawnState = S_WATERDRIP1;
 		DeathSound = 'Drip';
@@ -8871,7 +8442,6 @@ class KoraxSpirit1:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8899,7 +8469,6 @@ class KoraxSpirit2:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8927,7 +8496,6 @@ class KoraxSpirit3:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8955,7 +8523,6 @@ class KoraxSpirit4:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -8983,7 +8550,6 @@ class KoraxSpirit5:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -9011,7 +8577,6 @@ class KoraxSpirit6:Actor
 		Height = 16.0;
 		Mass = 100.0;
 		Speed = 280.0;
-		ReactionCount = 8;
 		Translucency = 33;
 		bNoBlockmap = true;
 		bNoGravity = true;
@@ -9043,7 +8608,6 @@ class KoraxBolt:Actor
 		Radius = 15.0;
 		Height = 35.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bDropOff = true;
@@ -9069,7 +8633,6 @@ class BatSpawner:Actor
 		Radius = 20.0;
 		Height = 16.0;
 		Mass = 100.0;
-		ReactionCount = 8;
 		Translucency = 100;
 		bHidden = true;
 		bNoBlockmap = true;
@@ -9094,7 +8657,6 @@ class Bat:Actor
 		Height = 3.0;
 		Mass = 100.0;
 		Speed = 175.0;
-		ReactionCount = 8;
 		bNoBlockmap = true;
 		bNoGravity = true;
 		bMissile = true;
@@ -9107,9 +8669,12 @@ class Bat:Actor
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2002/03/09 17:57:02  dj_jl
+//	Got rid of function pointers, made most of the physics functions native.
+//
 //	Revision 1.25  2002/03/04 18:31:36  dj_jl
 //	Replaced bNoClip with two seperate flags, beautification.
-//
+//	
 //	Revision 1.24  2002/03/02 17:58:36  dj_jl
 //	Created Pawn class as a base class for all creatures.
 //	Moved all monster classes into corresponding files.

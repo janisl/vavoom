@@ -787,7 +787,8 @@ void PlayerThink(player_t * player)
 	{
 		PlayerInSpecialSector(player);
 	}
-	if ((floorType = player->mo->GetFloorType()) != FLOOR_SOLID)
+	floorType = player->mo->GetFloorType();
+	if (floorType != FLOOR_SOLID)
 	{
 		PlayerOnSpecialFlat(player, floorType);
 	}
@@ -1980,6 +1981,9 @@ void UserinfoChanged(player_t * player)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.30  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

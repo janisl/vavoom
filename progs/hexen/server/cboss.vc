@@ -257,7 +257,7 @@ __states__
 	S_FIGHTER_DIE6('PLAY', 12, 6.0 / 35.0, S_FIGHTER_DIE7) { }
 	S_FIGHTER_DIE7('PLAY', 13, -1.0, S_NULL) { }
 	S_FIGHTER_XDIE1('PLAY', 14, 5.0 / 35.0, S_FIGHTER_XDIE2) { A_Scream(); }
-	S_FIGHTER_XDIE2('PLAY', 15, 5.0 / 35.0, S_FIGHTER_XDIE3) { A_SkullPop(); }
+	S_FIGHTER_XDIE2('PLAY', 15, 5.0 / 35.0, S_FIGHTER_XDIE3) { }
 	S_FIGHTER_XDIE3('PLAY', 17, 5.0 / 35.0, S_FIGHTER_XDIE4) { A_NoBlocking(); }
 	S_FIGHTER_XDIE4('PLAY', 18, 5.0 / 35.0, S_FIGHTER_XDIE5) { }
 	S_FIGHTER_XDIE5('PLAY', 19, 5.0 / 35.0, S_FIGHTER_XDIE6) { }
@@ -485,6 +485,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.19  2002/03/02 17:58:36  dj_jl
 //  Created Pawn class as a base class for all creatures.
 //  Moved all monster classes into corresponding files.

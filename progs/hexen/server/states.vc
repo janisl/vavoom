@@ -224,32 +224,6 @@ __states__(Actor)
 	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) { }
 	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) { }
 	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, S_NULL) { A_Summon(); }
-	S_THRUSTINIT2_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT2_2) { }
-	S_THRUSTINIT2_2('TSPK', 0, 4.0 / 35.0, S_THRUSTBLOCK) { A_ThrustInitUp(); }
-	S_BTHRUSTINIT2_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT2_2) { }
-	S_BTHRUSTINIT2_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTBLOCK) { A_ThrustInitUp(); }
-	S_THRUSTINIT1_1('TSPK', 0, 3.0 / 35.0, S_THRUSTINIT1_2) { }
-	S_THRUSTINIT1_2('TSPK', 0, 4.0 / 35.0, S_THRUSTSTAY) { A_ThrustInitDn(); }
-	S_BTHRUSTINIT1_1('TSPK', 1, 3.0 / 35.0, S_BTHRUSTINIT1_2) { }
-	S_BTHRUSTINIT1_2('TSPK', 1, 4.0 / 35.0, S_BTHRUSTSTAY) { A_ThrustInitDn(); }
-	S_THRUSTRAISE1('TSPK', 0, 8.0 / 35.0, S_THRUSTRAISE2) { A_ThrustRaise(); }
-	S_THRUSTRAISE2('TSPK', 0, 6.0 / 35.0, S_THRUSTRAISE3) { A_ThrustRaise(); }
-	S_THRUSTRAISE3('TSPK', 0, 4.0 / 35.0, S_THRUSTRAISE4) { A_ThrustRaise(); }
-	S_THRUSTRAISE4('TSPK', 0, 3.0 / 35.0, S_THRUSTIMPALE) { A_ThrustBlock(); }
-	S_BTHRUSTRAISE1('TSPK', 1, 8.0 / 35.0, S_BTHRUSTRAISE2) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE2('TSPK', 1, 6.0 / 35.0, S_BTHRUSTRAISE3) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE3('TSPK', 1, 4.0 / 35.0, S_BTHRUSTRAISE4) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE4('TSPK', 1, 3.0 / 35.0, S_BTHRUSTIMPALE) { A_ThrustBlock(); }
-	S_THRUSTIMPALE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustImpale(); }
-	S_BTHRUSTIMPALE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustImpale(); }
-	S_THRUSTRAISE('TSPK', 0, 2.0 / 35.0, S_THRUSTRAISE) { A_ThrustRaise(); }
-	S_BTHRUSTRAISE('TSPK', 1, 2.0 / 35.0, S_BTHRUSTRAISE) { A_ThrustRaise(); }
-	S_THRUSTBLOCK('TSPK', 0, 10.0 / 35.0, S_THRUSTBLOCK) { }
-	S_BTHRUSTBLOCK('TSPK', 1, 10.0 / 35.0, S_BTHRUSTBLOCK) { }
-	S_THRUSTLOWER('TSPK', 0, 2.0 / 35.0, S_THRUSTLOWER) { A_ThrustLower(); }
-	S_BTHRUSTLOWER('TSPK', 1, 2.0 / 35.0, S_BTHRUSTLOWER) { A_ThrustLower(); }
-	S_THRUSTSTAY('TSPK', 0, -1.0, S_THRUSTSTAY) { }
-	S_BTHRUSTSTAY('TSPK', 1, -1.0, S_BTHRUSTSTAY) { }
 	S_ARTI_TELOTHER1('TELO', 0, 5.0 / 35.0, S_ARTI_TELOTHER2) { }
 	S_ARTI_TELOTHER2('TELO', 1, 5.0 / 35.0, S_ARTI_TELOTHER3) { }
 	S_ARTI_TELOTHER3('TELO', 2, 5.0 / 35.0, S_ARTI_TELOTHER4) { }
@@ -1359,23 +1333,12 @@ __states__(Actor)
 	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
 	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
 	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, S_NULL) { }
-	S_BLOODYSKULL1('BSKL', 0, 5.0 / 35.0, S_BLOODYSKULL2) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL2('BSKL', 1, 5.0 / 35.0, S_BLOODYSKULL3) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL3('BSKL', 2, 5.0 / 35.0, S_BLOODYSKULL4) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL4('BSKL', 3, 5.0 / 35.0, S_BLOODYSKULL5) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL5('BSKL', 5, 5.0 / 35.0, S_BLOODYSKULL6) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL6('BSKL', 6, 5.0 / 35.0, S_BLOODYSKULL7) { A_CheckSkullFloor(); }
-	S_BLOODYSKULL7('BSKL', 7, 5.0 / 35.0, S_BLOODYSKULL1) { A_CheckSkullFloor(); }
-	S_BLOODYSKULLX1('BSKL', 8, 16.0 / 35.0, S_BLOODYSKULLX1) { A_CheckSkullDone(); }
-	S_BLOODYSKULLX2('BSKL', 8, 1050.0 / 35.0, S_NULL) { }
 	S_PLAYER_SPEED1('PLAY', 0, 5.0 / 35.0, S_PLAYER_SPEED2) { }
 	S_PLAYER_SPEED2('PLAY', 0, 3.0 / 35.0, S_NULL) { A_SpeedFade(); }
 	S_ICECHUNK1('ICEC', 0, 10.0 / 35.0, S_ICECHUNK2) { }
 	S_ICECHUNK2('ICEC', 1, 10.0 / 35.0, S_ICECHUNK3) { A_IceSetTics(); }
 	S_ICECHUNK3('ICEC', 2, 10.0 / 35.0, S_ICECHUNK4) { A_IceSetTics(); }
 	S_ICECHUNK4('ICEC', 3, 10.0 / 35.0, S_NULL) { A_IceSetTics(); }
-	S_ICECHUNK_HEAD('ICEC', 0, 10.0 / 35.0, S_ICECHUNK_HEAD) { A_IceCheckHeadDone(); }
-	S_ICECHUNK_HEAD2('ICEC', 0, 1050.0 / 35.0, S_NULL) { }
 	S_CENTAUR_FX1('CTFX', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_CENTAUR_FX_X1('CTFX', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_CENTAUR_FX_X2) { }
 	S_CENTAUR_FX_X2('CTFX', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_CENTAUR_FX_X3) { }
@@ -1943,9 +1906,12 @@ __states__(Actor)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2002/03/09 17:57:02  dj_jl
+//	Got rid of function pointers, made most of the physics functions native.
+//
 //	Revision 1.13  2002/03/04 18:31:36  dj_jl
 //	Replaced bNoClip with two seperate flags, beautification.
-//
+//	
 //	Revision 1.12  2002/03/02 17:58:36  dj_jl
 //	Created Pawn class as a base class for all creatures.
 //	Moved all monster classes into corresponding files.

@@ -241,24 +241,24 @@ void A_CStaffCheck(void)
 void A_CStaffAttack(void)
 {
 	Actor mo;
-	mobj_t *pmo;
+	PlayerPawn playPawn;
 
 	Player->Mana[MANA_1] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	pmo = Player->mo;
-	mo = pmo->SpawnPlayerMissileAngle(ClericStaffMissile,
-		pmo->Angles.yaw - (45.0 / 15.0));
+	playPawn = PlayerPawn(*Player->mo);
+	mo = playPawn.SpawnPlayerMissileAngle(ClericStaffMissile,
+		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		mo._Special2 = 32;
 	}
-	mo = pmo->SpawnPlayerMissileAngle(ClericStaffMissile,
-		pmo->Angles.yaw + (45.0 / 15.0));
+	mo = playPawn.SpawnPlayerMissileAngle(ClericStaffMissile,
+		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
 		mo._Special2 = 0;
 	}
-	Player->mo->PlaySound('ClericCStaffFire', CHAN_WEAPON);
+	playPawn.PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
 
 __states__
@@ -333,7 +333,7 @@ void A_CFlameAttack(void)
 {
 	Actor mo;
 
-	mo = Player->mo->SpawnPlayerMissile(ClericFlameMissile);
+	mo = PlayerPawn(*Player->mo).SpawnPlayerMissile(ClericFlameMissile);
 	if (mo)
 	{
 		mo.bBlaster = true;
@@ -407,7 +407,7 @@ void A_CHolyAttack(void)
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
 	Player->Mana[MANA_2] -=
 		WeaponManaUse(Player->PClass, Player->ReadyWeapon);
-	Player->mo->SpawnPlayerMissile(HolyMissile);
+	PlayerPawn(*Player->mo).SpawnPlayerMissile(HolyMissile);
 	Player->DamageCount = 0;
 	Player->BonusCount = 0;
 	Player->WeaponPalette = STARTHOLYPAL;
@@ -521,7 +521,7 @@ void Actor::A_CFlameMissile(void)
 
 	A_UnHideThing();
 	PlaySound('ClericFlameExplode', CHAN_VOICE);
-	bmo = &tmtrace.BlockingMobj;
+	bmo = &tmtrace->BlockingMobj;
 	if (bmo && bmo->bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing
@@ -947,6 +947,9 @@ void Actor::A_CHolySpawnPuff(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.21  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

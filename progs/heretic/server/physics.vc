@@ -27,7 +27,6 @@
 
 #define	FLOATSPEED		140.0
 
-#define	GRAVITY			1225.0
 #define	MAXMOVE			1050.0
 #define STOPSPEED		2.1875
 
@@ -146,7 +145,7 @@ void SlidePathTraverse(float x, float y)
 	slideorg = vector(x, y, slidemo.Origin.z);
 	slidedir = slidemo.Velocity * frametime;
 	P_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
-		PT_ADDLINES, PTR_SlideTraverse);
+		PT_ADDLINES, 'PTR_SlideTraverse');
 }
 
 //==========================================================================
@@ -363,84 +362,12 @@ void Actor::BounceWall(void)
 
 //==========================================================================
 //
-//  Actor::CheckWater
+//  Actor::ApplyFriction
 //
 //==========================================================================
 
-boolean Actor::CheckWater(void)
+void Actor::ApplyFriction(void)
 {
-	TVec point;
-	int cont;
-
-	point = Origin;
-	point.z += 1.0;
-
-	WaterLevel = 0;
-	WaterType = CONTENTS_EMPTY;
-	cont = PointContents(Sector, point);
-	if (cont >= CONTENTS_WATER)
-	{
-		WaterType = cont;
-		WaterLevel = 1;
-		point.z = Origin.z + Height * 0.5;
-		cont = PointContents(Sector, point);
-		if (cont >= CONTENTS_WATER)
-		{
-			WaterLevel = 2;
-			if (bIsPlayer)
-			{
-				point = Player->ViewOrg;
-				cont = PointContents(Sector, point);
-				if (cont >= CONTENTS_WATER)
-					WaterLevel = 3;
-			}
-		}
-	}
-	return WaterLevel > 1;
-}
-
-//==========================================================================
-//
-//  Actor::UpdateVelocity
-//
-//==========================================================================
-
-void Actor::UpdateVelocity(void)
-{
-	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
-		!Velocity.z && !bCountKill && !bIsPlayer)
-	{
-		//  No gravity for non-moving things on ground to prevent
-		// static objects from sliding on slopes
-		return;
-	}
-
-	if (Origin.z > FloorZ || Floor->normal.z < 0.7)
-	{
-		if (WaterLevel < 2)
-		{
-			if (bLowGravity)
-			{
-				Velocity.z -= GRAVITY / 8.0 * frametime;
-			}
-			else if (!bNoGravity)
-			{
-				Velocity.z -= GRAVITY * frametime;
-			}
-		}
-		else if (!bIsPlayer)
-		{
-			if (bLowGravity)
-			{
-				Velocity.z = -10.0;
-			}
-			else if (!bNoGravity)
-			{
-				Velocity.z = -60.0;
-			}
-		}
-	}
-
 	// Friction
 
 	if (bMissile || bSkullFly)
@@ -626,8 +553,8 @@ void Actor::XYMovement(void)
 			else if (bMissile)
 			{
 				// Explode a missile
-				if (tmtrace.CeilingLine && tmtrace.CeilingLine->backsector &&
-					tmtrace.CeilingLine->backsector->ceiling.pic == skyflatnum)
+				if (tmtrace->CeilingLine && tmtrace->CeilingLine->backsector &&
+					tmtrace->CeilingLine->backsector->ceiling.pic == skyflatnum)
 				{
 					// Hack to prevent missiles exploding against the sky
 					if (Class == BloodySkull)
@@ -656,168 +583,6 @@ void Actor::XYMovement(void)
 		}
 	}
 	while (xmove || ymove);
-}
-
-//**************************************************************************
-//
-//  TEST ON MOBJ
-//
-//**************************************************************************
-
-Actor tzmthing;
-TVec tzorg;
-Actor onmobj;	//generic global onmobj...used for landing on pods/players
-
-//==========================================================================
-//
-//  Actor::Iter_CheckOnmobjZ
-//
-//==========================================================================
-
-boolean Actor::Iter_CheckOnmobjZ(Actor thing)
-{
-	float blockdist;
-
-	if (!thing.bSolid && !thing.bSpecial && !thing.bShootable)
-	{
-		// Can't hit thing
-		return true;
-	}
-	blockdist = thing.Radius + Radius;
-	if (fabs(thing.Origin.x - tzorg.x) >= blockdist
-		|| fabs(thing.Origin.y - tzorg.y) >= blockdist)
-	{
-		// Didn't hit thing
-		return true;
-	}
-	if (thing == self)
-	{
-		// Don't clip against self
-		return true;
-	}
-	if (tzorg.z > thing.Origin.z + thing.Height)
-	{
-		return true;
-	}
-	else if (tzorg.z + Height < thing.Origin.z)
-	{
-		// under thing
-		return true;
-	}
-	if (thing.bSolid)
-	{
-		onmobj = thing;
-	}
-	return !thing.bSolid;
-}
-
-//==========================================================================
-//
-//  PIT_CheckOnmobjZ
-//
-//==========================================================================
-
-boolean PIT_CheckOnmobjZ(MapObject Other)
-{
-	return tzmthing.Iter_CheckOnmobjZ(Actor(Other));
-}
-
-//=============================================================================
-//
-//  Actor::FakeZMovement
-//
-//  Fake the zmovement so that we can check if a move is legal
-//
-//=============================================================================
-
-void Actor::FakeZMovement(void)
-{
-	float dist;
-	float delta;
-
-	//
-	//  adjust height
-	//
-	tzorg.z += Velocity.z * frametime;
-	if (bFloat && Target)
-	{
-		// float down towards enemy if too close
-		if (!bSkullFly && !bInFloat)
-		{
-			dist = MobjDist2(self, Target);
-			delta = Target.Origin.z + Height / 2.0 - tzorg.z;
-			if (delta < 0.0 && dist < -(delta * 3.0))
-				tzorg.z -= FLOATSPEED * frametime;
-			else if (delta > 0.0 && dist < (delta * 3.0))
-				tzorg.z += FLOATSPEED * frametime;
-		}
-	}
-	if (bIsPlayer && bFly && !(tzorg.z <= FloorZ) && level->tictime & 2)
-	{
-		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
-	}
-
-	//
-	//  clip movement
-	//
-	if (tzorg.z <= FloorZ)
-	{
-		// Hit the floor
-		tzorg.z = FloorZ;
-		if (CrashState && bCorpse)
-		{
-			return;
-		}
-	}
-
-	if (tzorg.z + Height > CeilingZ)
-	{
-		// hit the ceiling
-		tzorg.z = CeilingZ - Height;
-	}
-}
-
-//=============================================================================
-//
-//  Actor::CheckOnmobj
-//
-//  Checks if the new Z position is legal
-//
-//=============================================================================
-
-Actor Actor::CheckOnmobj(void)
-{
-	int xl, xh, yl, yh, bx, by;
-
-	if (!bColideWithThings)
-		return none;
-
-	tzmthing = self;
-	tzorg = Origin;
-	FakeZMovement();
-
-	//
-	// check things first, possibly picking things up
-	// the bounding box is extended by MAXRADIUS because mobj_ts are grouped
-	// into mapblocks based on their origin point, and can overlap into adjacent
-	// blocks by up to MAXRADIUS units
-	//
-	xl = MapBlock(Origin.x - Radius - level->bmaporgx - MAXRADIUS);
-	xh = MapBlock(Origin.x + Radius - level->bmaporgx + MAXRADIUS);
-	yl = MapBlock(Origin.y - Radius - level->bmaporgy - MAXRADIUS);
-	yh = MapBlock(Origin.y + Radius - level->bmaporgy + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-	{
-		for (by = yl; by <= yh; by++)
-		{
-			if (!P_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ))
-			{
-				return onmobj;
-			}
-		}
-	}
-	return none;
 }
 
 //===========================================================================
@@ -1056,7 +821,8 @@ boolean Actor::Physics(void)
 		// Handle Z momentum and gravity
 		if (!bNoPassMobj)
 		{
-			if (!(onmo = CheckOnmobj()))
+			onmo = Actor(CheckOnmobj());
+			if (!onmo)
 			{
 				ZMovement();
 			}
@@ -1159,6 +925,9 @@ void Actor::Think(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.25  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

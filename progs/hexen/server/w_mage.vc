@@ -49,7 +49,7 @@ void A_MWandAttack(void)
 {
 	Actor mo;
 
-	mo = Player->mo->SpawnPlayerMissile(MageWandMissile);
+	mo = PlayerPawn(*Player->mo).SpawnPlayerMissile(MageWandMissile);
 	if (mo)
 	{
 		mo.bBlaster = true;
@@ -131,7 +131,7 @@ void A_FireConePL1(void)
 	// didn't find any creatures, so fire projectiles
 	if (!conedone)
 	{
-		mo = pmo->SpawnPlayerMissile(ShardMissile);
+		mo = PlayerPawn(*pmo).SpawnPlayerMissile(ShardMissile);
 		if (mo)
 		{
 			mo._Special1 = SHARDSPAWN_LEFT | SHARDSPAWN_DOWN | SHARDSPAWN_UP
@@ -208,8 +208,8 @@ void A_MLightningAttack(void)
 	Actor fmo;
 	Actor cmo;
 
-	fmo = Player->mo->SpawnPlayerMissile(LightningFloor);
-	cmo = Player->mo->SpawnPlayerMissile(LightningCeiling);
+	fmo = PlayerPawn(*Player->mo).SpawnPlayerMissile(LightningFloor);
+	cmo = PlayerPawn(*Player->mo).SpawnPlayerMissile(LightningCeiling);
 	if (fmo)
 	{
 		fmo._SpecialMobj1 = NULL;
@@ -302,7 +302,7 @@ void MStaffSpawn(float angle)
 {
 	Actor mo;
 
-	mo = Player->mo->SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = PlayerPawn(*Player->mo).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
 		mo.Owner = *Player->mo;
@@ -741,6 +741,9 @@ void Actor::A_MStaffTrack(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.22  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

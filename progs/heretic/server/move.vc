@@ -183,14 +183,14 @@ float saved_tmfloorz;
 
 void PushLine(mobj_t * thing)
 {
-	if (tmtrace.NumSpecHit && thing->bMissile &&
+	if (tmtrace->NumSpecHit && thing->bMissile &&
 		thing->Owner && thing->Owner.bIsPlayer)
 	{
 		int i;
 
-		for (i = tmtrace.NumSpecHit - 1; i >= 0; i--)
+		for (i = tmtrace->NumSpecHit - 1; i >= 0; i--)
 		{
-			P_ActivateLine(tmtrace.SpecHit[i], &thing->Owner, 0, SPAC_IMPACT);
+			P_ActivateLine(tmtrace->SpecHit[i], &thing->Owner, 0, SPAC_IMPACT);
 		}
 	}
 }
@@ -214,7 +214,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	check = thing->CheckRelPosition(vector(x, y, thing->Origin.z));
 	floatok = false;
-	saved_tmfloorz = tmtrace.FloorZ;
+	saved_tmfloorz = tmtrace->FloorZ;
 	if (!check)
 	{
 		PushLine(thing);
@@ -223,7 +223,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 
 	if (thing->bColideWithWorld)
 	{
-		if (tmtrace.CeilingZ - tmtrace.FloorZ < thing->Height)
+		if (tmtrace->CeilingZ - tmtrace->FloorZ < thing->Height)
 		{
 			// Doesn't fit
 			PushLine(thing);
@@ -233,7 +233,7 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		floatok = true;
 
 		if (!thing->bTeleport &&
-			tmtrace.CeilingZ - thing->Origin.z < thing->Height && !thing->bFly)
+			tmtrace->CeilingZ - thing->Origin.z < thing->Height && !thing->bFly)
 		{
 			// mobj must lower itself to fit
 			PushLine(thing);
@@ -241,13 +241,13 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		}
 		if (thing->bFly)
 		{
-			if (thing->Origin.z + thing->Height > tmtrace.CeilingZ)
+			if (thing->Origin.z + thing->Height > tmtrace->CeilingZ)
 			{
 				thing->Velocity.z = -8.0 * 35.0;
 				return false;
 			}
-			else if (thing->Origin.z < tmtrace.FloorZ &&
-				tmtrace.FloorZ - tmtrace.DropOffZ > 24.0)
+			else if (thing->Origin.z < tmtrace->FloorZ &&
+				tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
 			{
 				thing->Velocity.z = 8.0 * 35.0;
 				return false;
@@ -256,18 +256,18 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 		if (!thing->bTeleport &&
 			// The Minotaur floor fire can step up any amount
 			thing->Class != MinotaurFloorFire &&
-			tmtrace.FloorZ - thing->Origin.z > 24.0)
+			tmtrace->FloorZ - thing->Origin.z > 24.0)
 		{
 			// Too big a step up
 			PushLine(thing);
 			return false;
 		}
-		if (thing->bMissile && tmtrace.FloorZ > thing->Origin.z)
+		if (thing->bMissile && tmtrace->FloorZ > thing->Origin.z)
 		{
 			PushLine(thing);
 		}
 		if (!thing->bDropOff && !thing->bFloat &&
-			tmtrace.FloorZ - tmtrace.DropOffZ > 24.0)
+			tmtrace->FloorZ - tmtrace->DropOffZ > 24.0)
 		{
 			// Can't move over a dropoff
 			return false;
@@ -283,10 +283,10 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	thing->Origin.y = y;
 
 	P_SetThingPosition(*thing);
-	thing->Floor = tmtrace.Floor;
-	thing->Ceiling = tmtrace.Ceiling;
-	thing->FloorZ = tmtrace.FloorZ;
-	thing->CeilingZ = tmtrace.CeilingZ;
+	thing->Floor = tmtrace->Floor;
+	thing->Ceiling = tmtrace->Ceiling;
+	thing->FloorZ = tmtrace->FloorZ;
+	thing->CeilingZ = tmtrace->CeilingZ;
 
 	if (thing->bFootClip && thing->GetFloorType() != FLOOR_SOLID)
 	{
@@ -302,11 +302,11 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 	//
 	if (thing->bColideWithWorld && !thing->bTeleport)
 	{
-		while (tmtrace.NumSpecHit > 0)
+		while (tmtrace->NumSpecHit > 0)
 		{
-			tmtrace.NumSpecHit--;
+			tmtrace->NumSpecHit--;
 			// see if the line was crossed
-			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
+			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
 			side = PointOnPlaneSide(thing->Origin, ld);
 			oldside = PointOnPlaneSide(oldorg, ld);
 			if (side != oldside)
@@ -341,6 +341,9 @@ boolean P_TryMove(mobj_t * thing, float x, float y)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.24  2002/03/04 18:31:35  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //

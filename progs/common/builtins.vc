@@ -364,14 +364,11 @@ native opening_t *LineOpenings(line_t * linedef, TVec point);
 native int P_BoxOnLineSide(float *tmbox, line_t * ld);
 
 //
-native boolean P_BlockThingsIterator(int x, int y, thing_iter_func_t func);
-
-//
-native boolean P_BlockLinesIterator(int x, int y, line_iter_func_t func);
+native boolean P_BlockThingsIterator(int x, int y, name FuncName);
 
 //
 native boolean P_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, trav_func_t trav);
+	int flags, name FuncName);
 
 //  Find the best gap that the thing could fit in, given a certain Z
 // position (z1 is foot, z2 is head).
@@ -436,7 +433,6 @@ native void PolyobjFinished(int po);
 //  Sound functions
 //
 
-native void StartSound(MapObject mobj, int sound, int channel);
 native void StartSoundAtVolume(MapObject mobj, int sound, int channel,
 	int volume);
 native void StopSound(MapObject mobj, int channel);
@@ -485,6 +481,9 @@ native void MSG_SelectClientMsg(int msgtype, player_t * client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/03/09 17:57:00  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.33  2002/03/02 17:29:54  dj_jl
 //  Renamed builtin Spawn to SpawnObject
 //  Added suport for Pad-Enter, some fixes.

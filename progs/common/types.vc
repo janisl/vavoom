@@ -359,8 +359,6 @@ struct base_level_t
 
 #ifdef SERVER
 
-typedef boolean(*line_iter_func_t) (line_t *);
-
 //==========================================================================
 //
 //  Thinkers
@@ -439,8 +437,6 @@ class Thinker:Object
 struct player_t;
 class Actor;
 
-typedef void (*state_func_t) (Object);
-
 struct state_t
 {
 	int sprite;
@@ -450,7 +446,7 @@ struct state_t
 	float time;
 	int statenum;
 	int nextstate;
-	state_func_t function;
+	int __function;
 };
 
 struct mobjinfo_t
@@ -533,8 +529,6 @@ class MapObject:Thinker
 	}
 }
 
-typedef boolean(*thing_iter_func_t) (MapObject);
-
 //==========================================================================
 //
 //  Player
@@ -555,45 +549,7 @@ class ViewEntity:Object
 	float StateTime;
 	player_t *Player;
 
-//===========================================================================
-//
-//  SetState
-//
-//===========================================================================
-
-void SetState(int stnum)
-{
-	state_t *state;
-
-	do
-	{
-		if (!stnum)
-		{
-			// Object removed itself.
-			StateNum = 0;
-			break;
-		}
-		state = &states[stnum];
-		StateTime = state->time;	// could be 0
-		SpriteIndex = state->sprite;
-		SpriteFrame = state->frame;
-		ModelIndex = state->model_index;
-		ModelFrame = state->model_frame;
-		StateNum = state->statenum;
-		NextState = state->nextstate;
-		if (state->function)
-		{
-			// Call action routine.
-			state->function(self);
-			if (!StateNum)
-			{
-				break;
-			}
-		}
-		stnum = NextState;
-	}
-	while (!StateTime);	// An initial state of 0 could cycle through.
-}
+native void SetState(int stnum);
 
 defaultproperties
 {
@@ -761,8 +717,6 @@ struct intercept_t
 	MapObject Thing;
 	line_t *line;
 };
-
-typedef boolean(*trav_func_t) (intercept_t *);
 
 //==========================================================================
 //
@@ -933,8 +887,6 @@ struct slist_t
 	int return_reason[32 / 4];
 };
 
-typedef void (*mb_func_t) (int key);
-
 struct scores_t
 {
 	int Name[64 / 4];
@@ -1017,6 +969,9 @@ struct clmobj_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2002/03/09 17:57:00  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.33  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //

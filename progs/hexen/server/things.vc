@@ -164,7 +164,8 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 	angle = itof(args[2]) * (360.0 / 256.0);
 	speed = itof(args[3]) / 8.0;
 	vspeed = itof(args[4]) / 8.0;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y,
 			mobj->Origin.z, moType);
@@ -181,7 +182,7 @@ boolean EV_ThingProjectile(int *args, boolean gravity)
 		if (gravity)
 		{
 			newMobj->bNoGravity = false;
-			newMobj->bLowGravity = true;
+			newMobj->Mass = 12.5;
 		}
 		if (newMobj->CheckMissileSpawn())
 		{
@@ -213,7 +214,8 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 	tid = args[0];
 	moType = TranslateThingType[args[1]];
 	angle = itof(args[2]) * 360.0 / 256.0;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		newMobj = P_SpawnMobj(mobj->Origin.x, mobj->Origin.y, mobj->Origin.z,
 			moType);
@@ -255,17 +257,6 @@ boolean EV_ThingSpawn(int *args, boolean fog)
 
 boolean Actor::Activate(void)
 {
-	if (bCountKill)
-	{
-		// Monster
-		if (bDormant)
-		{
-			bDormant = false;
-			StateTime = 0.1;
-			return true;
-		}
-		return false;
-	}
 	switch (Class)
 	{
 	case ZTWinedTorch:
@@ -283,18 +274,6 @@ boolean Actor::Activate(void)
 		break;
 	case ZWingedStatueNoSkull:
 		SetState(S_ZWINGEDSTATUENOSKULL2);
-		break;
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-		if (Args[0] == 0)
-		{
-			PlaySound('ThrustSpikeLower', CHAN_VOICE);
-			Translucency = 0;
-			if (Args[1])
-				SetState(S_BTHRUSTRAISE1);
-			else
-				SetState(S_THRUSTRAISE1);
-		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
@@ -344,7 +323,8 @@ boolean EV_ThingActivate(int tid)
 
 	success = false;
 	searcher = -1;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		if (mobj->Activate())
 		{
@@ -362,17 +342,6 @@ boolean EV_ThingActivate(int tid)
 
 boolean Actor::Deactivate(void)
 {
-	if (bCountKill)
-	{
-		// Monster
-		if (!bDormant)
-		{
-			bDormant = true;
-			StateTime = -1.0;
-			return true;
-		}
-		return false;
-	}
 	switch (Class)
 	{
 	case ZTWinedTorch:
@@ -382,17 +351,6 @@ boolean Actor::Deactivate(void)
 	case ZWallTorch:
 	case ZWallTorchUnlit:
 		SetState(S_ZWALLTORCH_U);
-		break;
-	case ThrustFloorUp:
-	case ThrustFloorDown:
-		if (Args[0] == 1)
-		{
-			PlaySound('ThrustSpikeRaise', CHAN_VOICE);
-			if (Args[1])
-				SetState(S_BTHRUSTLOWER);
-			else
-				SetState(S_THRUSTLOWER);
-		}
 		break;
 	case ZFireBull:
 	case ZFireBullUnlit:
@@ -432,7 +390,8 @@ boolean EV_ThingDeactivate(int tid)
 
 	success = false;
 	searcher = -1;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		if (mobj->Deactivate())
 		{
@@ -456,7 +415,8 @@ boolean EV_ThingRemove(int tid)
 
 	success = false;
 	searcher = -1;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		if (mobj->Class == Bridge)
 		{
@@ -483,7 +443,8 @@ boolean EV_ThingDestroy(int tid)
 
 	success = false;
 	searcher = -1;
-	while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
+	for (mobj = P_FindMobjFromTID(tid, &searcher); mobj != NULL;
+		mobj = P_FindMobjFromTID(tid, &searcher))
 	{
 		if (mobj->bShootable)
 		{
@@ -518,7 +479,8 @@ int ThingCount(int type, int tid)
 	if (tid)
 	{
 		// Count TID things
-		while ((Ent = *P_FindMobjFromTID(tid, &searcher)) != none)
+		for (Ent = *P_FindMobjFromTID(tid, &searcher); Ent != none;
+			Ent = *P_FindMobjFromTID(tid, &searcher))
 		{
 			if (type == 0)
 			{
@@ -560,6 +522,9 @@ int ThingCount(int type, int tid)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2002/03/09 17:57:02  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.23  2002/02/26 17:49:49  dj_jl
 //  no message
 //

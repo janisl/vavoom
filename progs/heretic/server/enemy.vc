@@ -263,7 +263,6 @@ void Actor::A_FreeTargMobj(void)
 	bNoGravity = true;
 	bDropOff = true;
 	bCorpse = true;
-	bLowGravity = false;
 	bNoPassMobj = true;
 	Player = NULL;
 	bIsPlayer = false;
@@ -633,6 +632,9 @@ void Actor::A_ContMobjSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2002/03/09 17:57:01  dj_jl
+//  Got rid of function pointers, made most of the physics functions native.
+//
 //  Revision 1.22  2002/03/02 17:41:12  dj_jl
 //  Renamed Enemy to Target. Beautification.
 //
